@@ -45,7 +45,6 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div class="navbar-nav">
-                  <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
 
                 {% if current_user.is_authenticated %}
                   <li class="nav-item dropdown">
@@ -61,8 +60,8 @@
                   </li>
 
                 {% else %}
-                  <a class="nav-item nav-link" href="{{ url_for('security.login') }}">Login</a>
-                  <a class="nav-item nav-link" href="{{ url_for('security.register') }}">Register</a>
+                  <a class="nav-item nav-link" href="{{ url_for('security.login') }}">Anmelden</a>
+                  <a class="nav-item nav-link" href="{{ url_for('security.register') }}">Registrieren</a>
                 {% endif %}
 
               </div>
@@ -71,6 +70,9 @@
       {%- endblock navbar %}
 
       <div class="body-content">
+
+          {% include "_messages.html" %}
+
           {% block content -%}
           {%- endblock content %}
       </div>
