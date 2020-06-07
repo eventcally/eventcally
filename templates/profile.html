@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block title %}
-Prototyp
+{{ _('Profile') }}
 {% endblock %}
 {% block content %}
 
-    {{ _('Hi there!') }}
+{{ current_user.email }}
 
 {% endblock %}
