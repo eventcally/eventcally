@@ -2,6 +2,11 @@ a, a:hover {
     color: #009688;
 }
 
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.8rem;
+}
+
 .navbar {
     background-color: lightslategray;
     font-size: 1em;
