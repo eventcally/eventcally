@@ -49,19 +49,19 @@
                 {% if current_user.is_authenticated %}
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Profil
+                      {{ _('Profile') }}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                       <h6 class="dropdown-header">{{ current_user.email }}</h6>
 
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="{{ url_for('security.logout') }}">Logout</a>
+                      <a class="dropdown-item" href="{{ url_for('security.logout') }}">{{ _('Logout') }}</a>
                     </div>
                   </li>
 
                 {% else %}
-                  <a class="nav-item nav-link" href="{{ url_for('security.login') }}">Anmelden</a>
-                  <a class="nav-item nav-link" href="{{ url_for('security.register') }}">Registrieren</a>
+                  <a class="nav-item nav-link" href="{{ url_for('security.login') }}">{{ _fsdomain('Login') }}</a>
+                  <a class="nav-item nav-link" href="{{ url_for('security.register') }}">{{ _fsdomain('Register') }}</a>
                 {% endif %}
 
               </div>

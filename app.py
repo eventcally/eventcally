@@ -1,7 +1,8 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, current_user, auth_required, hash_password, SQLAlchemySessionUserDatastore
+from flask_babelex import Babel, gettext, lazy_gettext
 
 # Create app
 app = Flask(__name__)
@@ -11,12 +12,18 @@ app.config['SECURITY_CONFIRMABLE'] = False
 app.config['SECURITY_TRACKABLE'] = True
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+app.config['LANGUAGES'] = ['en', 'de']
 
 # Generate a nice key using secrets.token_urlsafe()
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", 'pf9Wkove4IKEAXvy-cQkeDPhv9Cb3Ag-wyJILbq_dFw')
 # Bcrypt is set as default SECURITY_PASSWORD_HASH, which requires a salt
 # Generate a good salt using: secrets.SystemRandom().getrandbits(128)
 app.config['SECURITY_PASSWORD_SALT'] = os.environ.get("SECURITY_PASSWORD_SALT", '146585145368132386173505678016728509634')
+
+# i18n
+app.config['BABEL_DEFAULT_LOCALE'] = 'de'
+app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Berlin'
+babel = Babel(app)
 
 # create db
 db = SQLAlchemy(app)
@@ -26,6 +33,10 @@ db = SQLAlchemy(app)
 from models import User, Role
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 # Create a user to test with
 @app.before_first_request
