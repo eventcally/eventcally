@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import Security, current_user, auth_required, hash_password, SQLAlchemySessionUserDatastore
+from flask_security import Security, current_user, auth_required, roles_required, hash_password, SQLAlchemySessionUserDatastore
 from flask_babelex import Babel, gettext, lazy_gettext
 
 # Create app
@@ -64,6 +64,16 @@ def home():
 @auth_required()
 def profile():
     return render_template('profile.html')
+
+@app.route("/admin")
+@roles_required("admin")
+def admin():
+    return render_template('admin/admin.html')
+
+@app.route("/admin/admin_units")
+@roles_required("admin")
+def admin_admin_units():
+    return render_template('admin/admin_units.html')
 
 if __name__ == '__main__':
     app.run()

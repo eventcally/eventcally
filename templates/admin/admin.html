@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}
+{{ _('Admin') }}
+{% endblock %}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">{{ _('Admin') }}</li>
+    </ol>
+</nav>
+
+<div class="list-group">
+    <a href="{{ url_for('admin_admin_units') }}" class="list-group-item list-group-item-action">{{ _('Admin Units') }}</a>
+</div>
+
+{% endblock %}
