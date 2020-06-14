@@ -1,21 +1,20 @@
 {% extends "layout.html" %}
 {% block title %}
-Prototyp
+{{ admin_unit.name }}
 {% endblock %}
 {% block content %}
 
-    <h1>{{ _('Hi there!') }}</h1>
+    <h1>{{ admin_unit.name }}</h1>
 
-    <!--
-    <div class="list-group">
-        <a href="{{ url_for('events') }}" class="list-group-item list-group-item-action">
-            {{ _('Events') }}
-            <i class="fa fa-caret-right"></i>
-        </a>
-    </div>-->
+    {% if current_user_member %}
+    <div class="my-4">
+        {{ _('You are a member of this admin unit.') }}
+        ({% for role in current_user_member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %})
+    </div>
+    {% endif %}
 
-    {% if admin_unit_members %}
-    <p class="h5 mt-5">{{ _('Your Admin Units') }}</p>
+    {% if can_list_admin_unit_members %}
+    <p class="h5 mt-5">{{ _('Members') }}</p>
     <div class="table-responsive">
         <table class="table table-sm table-bordered table-hover table-striped">
             <thead>
@@ -25,9 +24,9 @@ Prototyp
                 </tr>
             </thead>
             <tbody>
-                {% for member in admin_unit_members %}
+                {% for member in admin_unit.members %}
                     <tr>
-                        <td><a href="{{ url_for('admin_unit', admin_unit_id=member.adminunit.id) }}">{{ member.adminunit.name }}</a></td>
+                        <td>{{ member.user.email }}</td>
                         <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
                     </tr>
                 {% endfor %}
@@ -36,8 +35,7 @@ Prototyp
     </div>
     {% endif %}
 
-    {% if organization_members %}
-    <p class="h5 mt-5">{{ _('Your Organizations') }}</p>
+    <p class="h5 mt-5">{{ _('Organizations') }}</p>
     <div class="table-responsive">
         <table class="table table-sm table-bordered table-hover table-striped">
             <thead>
@@ -47,15 +45,14 @@ Prototyp
                 </tr>
             </thead>
             <tbody>
-                {% for member in organization_members %}
+                {% for admin_unit_org in admin_unit.organizations %}
                     <tr>
-                        <td>{{ member.organization.name }}</td>
-                        <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                        <td><a href="{{ url_for('organization', organization_id=admin_unit_org.organization_id) }}">{{ admin_unit_org.organization.name }}</a></td>
+                        <td>{% for role in admin_unit_org.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    {% endif %}
 
 {% endblock %}

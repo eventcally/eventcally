@@ -1,15 +1,10 @@
 {% extends "layout.html" %}
 {% block title %}
-{{ _('Admin Units') }}
+{{ _('Organizations') }}
 {% endblock %}
 {% block content %}
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ url_for('admin') }}">{{ _('Admin') }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ _('Admin Units') }}</li>
-    </ol>
-</nav>
+<h1>{{ _('Organizations') }}</h1>
 
 <div class="table-responsive">
     <table class="table table-sm table-bordered table-hover table-striped">
@@ -19,9 +14,9 @@
             </tr>
         </thead>
         <tbody>
-            {% for admin_unit in admin_units %}
+            {% for organization in organizations %}
                 <tr>
-                    <td>{{ admin_unit.name }}</td>
+                    <td><a href="{{ url_for('organization', organization_id=organization.id) }}">{{ organization.name }}</a></td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -27,6 +27,10 @@
 
     <script>
       moment.locale('de')
+
+      $( function() {
+				$('[data-toggle="tooltip"]').tooltip();
+      })
     </script>
 
     {% block header %}
@@ -36,7 +40,7 @@
   <body{% block body_attribs %}{% endblock body_attribs %}>
     {% block body -%}
       {% block navbar %}
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="navbar-brand" href="{{ url_for('home') }}">
             Prototyp
           </a>
@@ -44,15 +48,18 @@
               <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-              <div class="navbar-nav">
-
+              <div class="navbar-nav mr-auto">
+                <a class="nav-item nav-link" href="{{ url_for('admin_units') }}">{{ _('Admin Units') }}</a>
+                <a class="nav-item nav-link" href="{{ url_for('organizations') }}">{{ _('Organizations') }}</a>
+                <a class="nav-item nav-link" href="{{ url_for('events') }}">{{ _('Events') }}</a>
+              </div>
+              <div class="navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      {{ _('You') }}
+                      {{ current_user.email }}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <h6 class="dropdown-header">{{ current_user.email }}</h6>
                       <a class="dropdown-item" href="{{ url_for('profile') }}">{{ _('Profile') }}</a>
 
                       {% if current_user.has_role('admin') %}

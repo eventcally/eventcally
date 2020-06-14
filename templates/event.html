@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}
+{{ event.name }}
+{% endblock %}
+{% block content %}
+
+    <h1>{{ event.name }}</h1>
+
+    {% if user_can_verify_event %}
+    <div class="my-4">
+        <form action="{{ url_for('event', event_id=event.id) }}" method="POST">
+            {% if event.verified %}
+            <input name="action" type="hidden" value="unverify">
+            <p><input class="btn btn-danger" name="submit" type="submit" value="{{ _('Mark event as unverified') }}"></p>
+            {% else %}
+            <input name="action" type="hidden" value="verify">
+            <p><input class="btn btn-success" name="submit" type="submit" value="{{ _('Mark event as verified') }}"></p>
+            {% endif %}
+          </form>
+    </div>
+    {% endif %}
+
+    <div class="my-4">
+        <div><i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i> {{ event.dates[0].start | datetimeformat }}</div>
+        <div><i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i> {{ event.location }}</div>
+        {% if event.verified %}
+        <div><i class="fa fa-fw fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i> {{ _('Verified') }}</div>
+        {% endif %}
+    </div>
+
+    <div class="my-4">{{ event.description }}</div>
+
+{% if event.external_link %}
+<div class="my-4">
+    <i class="fa fa-fw fa-external-link" data-toggle="tooltip" title="{{ _('Link') }}"></i>
+    <a href="{{ event.external_link }}">{{ event.external_link }}</a>
+</div>
+{% endif %}
+
+<div class="my-4">
+    <div><i class="fa fa-fw fa-users" data-toggle="tooltip" title="{{ _('Host') }}"></i> {{ event.host }}</div>
+</div>
+
+{% endblock %}

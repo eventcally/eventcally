@@ -4,6 +4,50 @@
 {% endblock %}
 {% block content %}
 
-{{ current_user.email }}
+<h1>{{ current_user.email }}</h1>
+
+{% if admin_unit_members %}
+<p class="h5 mt-5">{{ _('Admin Units') }}</p>
+<div class="table-responsive">
+    <table class="table table-sm table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Roles') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in admin_unit_members %}
+                <tr>
+                    <td><a href="{{ url_for('admin_unit', admin_unit_id=member.adminunit.id) }}">{{ member.adminunit.name }}</a></td>
+                    <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if organization_members %}
+<p class="h5 mt-5">{{ _('Organizations') }}</p>
+<div class="table-responsive">
+    <table class="table table-sm table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Roles') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in organization_members %}
+                <tr>
+                    <td>{{ member.organization.name }}</td>
+                    <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
 
 {% endblock %}
