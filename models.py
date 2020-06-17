@@ -1,7 +1,22 @@
 from app import db
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy import Boolean, DateTime, Column, Integer, String, ForeignKey, Unicode, UnicodeText
+from sqlalchemy import UniqueConstraint, Boolean, DateTime, Column, Integer, String, ForeignKey, Unicode, UnicodeText, Numeric
 from flask_security import UserMixin, RoleMixin
+import datetime
+
+### Base
+
+class TrackableMixin(object):
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    @declared_attr
+    def created_by_id(cls):
+        return Column('created_by_id', ForeignKey('user.id'))
+
+    @declared_attr
+    def created_by(cls):
+        return relationship("User")
 
 ### User
 
@@ -56,11 +71,10 @@ class OrgMember(db.Model):
     organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('orgmembers', lazy=True))
-
     roles = relationship('OrgMemberRole', secondary='orgmemberroles_members',
                          backref=backref('members', lazy='dynamic'))
 
-class Organization(db.Model):
+class Organization(db.Model, TrackableMixin):
     __tablename__ = 'organization'
     id = Column(Integer(), primary_key=True)
     name = Column(String(255), unique=True)
@@ -112,35 +126,102 @@ class AdminUnitOrg(db.Model):
     roles = relationship('AdminUnitOrgRole', secondary='adminunitorgroles_organizations',
                          backref=backref('organizations', lazy='dynamic'))
 
-class AdminUnit(db.Model):
+class AdminUnit(db.Model, TrackableMixin):
     __tablename__ = 'adminunit'
     id = Column(Integer(), primary_key=True)
     name = Column(String(255), unique=True)
     members = relationship('AdminUnitMember', backref=backref('adminunit', lazy=True))
     organizations = relationship('AdminUnitOrg', backref=backref('adminunit', lazy=True))
 
+# Universal Types
+class Actor(db.Model):
+    __tablename__ = 'actor'
+    __table_args__ = (UniqueConstraint('user_id', 'organization_id', 'admin_unit_id'),)
+    id = Column(Integer(), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User')
+    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
+    organization = db.relationship('Organization')
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'))
+    admin_unit = db.relationship('AdminUnit')
+
+class OrgOrAdminUnit(db.Model):
+    __tablename__ = 'org_or_adminunit'
+    __table_args__ = (UniqueConstraint('organization_id', 'admin_unit_id'),)
+    id = Column(Integer(), primary_key=True)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
+    organization = db.relationship('Organization')
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'))
+    admin_unit = db.relationship('AdminUnit')
+
+class Location(db.Model, TrackableMixin):
+    __tablename__ = 'location'
+    id = Column(Integer(), primary_key=True)
+    street = Column(Unicode(255))
+    postalCode = Column(Unicode(255))
+    city = Column(Unicode(255))
+    state = Column(Unicode(255))
+    country = Column(Unicode(255))
+    latitude = Column(Numeric(18,16))
+    longitude = Column(Numeric(19,16))
+
+class Place(db.Model, TrackableMixin):
+    __tablename__ = 'place'
+    id = Column(Integer(), primary_key=True)
+    name = Column(Unicode(255), nullable=False, unique=True)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location = db.relationship('Location')
+
 # Events
-class Event(db.Model):
+class Event(db.Model, TrackableMixin):
     __tablename__ = 'event'
     id = Column(Integer(), primary_key=True)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=False)
     admin_unit = db.relationship('AdminUnit', backref=db.backref('events', lazy=True))
-    host = Column(Unicode(255), nullable=False) # org|adminunit|string
-    #co_hosts: -"-
-    #format: real|online
-    external_link = Column(String(255))
-    #ticket_link = Column(String(255))
-    location = Column(Unicode(255), nullable=False) # place|address
-    dates = relationship('EventDate', backref=backref('event', lazy=False))
+    host_id = db.Column(db.Integer, db.ForeignKey('org_or_adminunit.id'), nullable=False)
+    host = db.relationship('OrgOrAdminUnit', backref=db.backref('events', lazy=True))
+    place_id = db.Column(db.Integer, db.ForeignKey('place.id'), nullable=False)
+    place = db.relationship('Place', backref=db.backref('events', lazy=True))
     name = Column(Unicode(255), nullable=False)
     description = Column(UnicodeText(), nullable=False)
-    #photo: image(1200x628)
-    #category: relationship, nullable=False
-    #keywords = Column(String(255)) oder liste?
-    #kid_friendly: bool
+    external_link = Column(String(255))
+    ticket_link = Column(String(255))
     verified = Column(Boolean())
 
+    dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")
+    # wiederkehrende Dates sind zeitlich eingeschränkt
+    # beim event müsste man dann auch nochmal start_time (nullable=False) und end_time machen.
+    #photo: image(1200x628)
+    #category: relationship, nullable=False
+    # Facebook: ART_EVENT, BOOK_EVENT, MOVIE_EVENT, FUNDRAISER, VOLUNTEERING, FAMILY_EVENT, FESTIVAL_EVENT, NEIGHBORHOOD, RELIGIOUS_EVENT, SHOPPING, COMEDY_EVENT, MUSIC_EVENT, DANCE_EVENT, NIGHTLIFE, THEATER_EVENT, DINING_EVENT, FOOD_TASTING, CONFERENCE_EVENT, MEETUP, CLASS_EVENT, LECTURE, WORKSHOP, FITNESS, SPORTS_EVENT, OTHER
+    # Kärnten: https://veranstaltungen.kaernten.at/api/v2/categories
+    #keywords/tags = Column(String(255)) oder liste?
+    #kid_friendly: bool
+    # target_group:
+    #     age_from: int
+    #     age_to: int
+    #     mainly_for_tourists: bool
+    #
+    #
+    # = kärnten =
+    # categories: Feste Kategorien sind für Werbung interessant
+    # subEvents: List<Event>, konkrete Events mit allen Eigenschaften, An Event that is part of this event. For example, a conference event includes many presentations, each of which is a subEvent of the conference.
+    # superEvent: siehe oben
+    # eventSchedules: RepeatFrequency (wiederkehrende Beschreibung, keine konkreten Daten)
+    # allDay: bool
+    # status: Scheduled (Default), Cancelled, MovedOnline, Postponed, Rescheduled
+    # previousStartDates: DateTime (see status)
+    # attendanceMode: Offline, Online, Mixed
+    # isAccessibleForFree: bool
+    # typicalAgeRange: string (9-99)
+    # Zusätzliche Organisationen oder Personen: composer, contributor, funder, organizer, sponsor
+
 # (Multiple Events möglich, wiederholend oder frei, dann aber mit endzeit)
+# Facebook Limitations:
+# An event can't last longer than a day
+# An event can't span more than 52 weeks
+# Each event can have a max of 52 instances
+# Once the event has begun, you can't add instances totaling more than 52 weeks after the initial start date
 class EventDate(db.Model):
     __tablename__ = 'eventdate'
     id = Column(Integer(), primary_key=True)

@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from "_macros.html" import render_ooa, render_place %}
 {% block title %}
 {{ _('Events') }}
 {% endblock %}
@@ -30,8 +31,8 @@
                             <i class="fa fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i>
                             {% endif %}
                         </td>
-                        <td>{{ event.host }}</td>
-                        <td>{{ event.location }}</td>
+                        <td>{{ render_ooa(event.host) }}</td>
+                        <td>{{ render_place(event.place) }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

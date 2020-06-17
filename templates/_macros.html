@@ -33,3 +33,16 @@
     {% endif %}
   </p>
 {% endmacro %}
+
+{% macro render_ooa(ooa) %}
+  {% if ooa.admin_unit %}
+    {{ ooa.admin_unit.name }}
+  {% endif %}
+  {% if ooa.organization %}
+    {{ ooa.organization.name }}
+  {% endif %}
+{% endmacro %}
+
+{% macro render_place(place) %}
+  {{ place.name }}
+{% endmacro %}

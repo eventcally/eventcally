@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from "_macros.html" import render_ooa, render_place %}
 {% block title %}
 {{ event.name }}
 {% endblock %}
@@ -22,7 +23,7 @@
 
     <div class="my-4">
         <div><i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i> {{ event.dates[0].start | datetimeformat }}</div>
-        <div><i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i> {{ event.location }}</div>
+        <div><i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i> {{ render_place(event.place) }}</div>
         {% if event.verified %}
         <div><i class="fa fa-fw fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i> {{ _('Verified') }}</div>
         {% endif %}
@@ -38,7 +39,7 @@
 {% endif %}
 
 <div class="my-4">
-    <div><i class="fa fa-fw fa-users" data-toggle="tooltip" title="{{ _('Host') }}"></i> {{ event.host }}</div>
+    <div><i class="fa fa-fw fa-users" data-toggle="tooltip" title="{{ _('Host') }}"></i> {{ render_ooa(event.host) }}</div>
 </div>
 
 {% endblock %}

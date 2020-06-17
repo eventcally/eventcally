@@ -35,7 +35,7 @@ db = SQLAlchemy(app)
 
 # Setup Flask-Security
 # Define models
-from models import User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
+from models import OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 
@@ -143,20 +143,55 @@ def upsert_organization(org_name):
 def create_berlin_date(year, month, day, hour, minute = 0):
     return pytz.timezone('Europe/Berlin').localize(datetime(year, month, day, hour=hour, minute=minute))
 
-def upsert_event(event_name, host, location, start, description, link = None, verified = False):
-    result = Event().query.filter_by(name = event_name).first()
+def upsert_actor_for_admin_unit(admin_unit_id):
+    result = Actor.query.filter_by(admin_unit_id = admin_unit_id).first()
+    if result is None:
+        result = Actor(admin_unit_id = admin_unit_id)
+        db.session.add(result)
+    return result
+
+def upsert_org_or_admin_unit_for_admin_unit(admin_unit):
+    result = OrgOrAdminUnit.query.filter_by(admin_unit_id = admin_unit.id).first()
+    if result is None:
+        result = OrgOrAdminUnit(admin_unit_id = admin_unit.id)
+        db.session.add(result)
+    return result
+
+def upsert_org_or_admin_unit_for_organization(organization):
+    result = OrgOrAdminUnit.query.filter_by(organization_id = organization.id).first()
+    if result is None:
+        result = OrgOrAdminUnit(organization_id = organization.id)
+        db.session.add(result)
+    return result
+
+def upsert_place(name):
+    result = Place.query.filter_by(name = name).first()
+    if result is None:
+        result = Place(name = name)
+        db.session.add(result)
+    return result
+
+def upsert_event(event_name, host, location_name, start, description, link = None, verified = False):
+    admin_unit = get_admin_unit('Stadt Goslar')
+    place = upsert_place(location_name)
+
+    result = Event.query.filter_by(name = event_name).first()
     if result is None:
         result = Event()
-        result.name = event_name
-        result.host = host
-        result.location = location
-        result.description = description
-        result.external_link = link
-        result.admin_unit = get_admin_unit('Stadt Goslar')
-        result.verified = verified
-        eventDate = EventDate(event_id = result.id, start=start)
-        result.dates.append(eventDate)
         db.session.add(result)
+
+    result.name = event_name
+    result.description = description
+    result.external_link = link
+    result.verified = verified
+    result.admin_unit = admin_unit
+    result.host = host
+    result.place = place
+
+    eventDate = EventDate(event_id = result.id, start=start)
+    result.dates = []
+    result.dates.append(eventDate)
+
     return result
 
 def has_admin_unit_member_permission(admin_unit_id, permission):
@@ -243,12 +278,24 @@ def create_user():
     admin_unit_org_event_verifier_role = upsert_admin_unit_org_role('event_verifier', ['event:verify'])
     gmg = upsert_organization("GOSLAR marketing gmbh")
     gz = upsert_organization("Goslarsche Zeitung")
+    kloster_woelteringerode = upsert_organization("Kloster Wöltingerode")
 
     gmg_admin_unit_org = add_organization_to_admin_unit(gmg, goslar)
     add_role_to_admin_unit_org(gmg_admin_unit_org, admin_unit_org_event_verifier_role)
 
     gz_admin_unit_org = add_organization_to_admin_unit(gz, goslar)
     add_role_to_admin_unit_org(gz_admin_unit_org, admin_unit_org_event_verifier_role)
+
+    # Places
+    upsert_place('Vienenburger See')
+
+    # Org or admins
+    goslar_ooa = upsert_org_or_admin_unit_for_admin_unit(goslar)
+    kloster_woelteringerode_ooa = upsert_org_or_admin_unit_for_organization(kloster_woelteringerode)
+    gmg_ooa = upsert_org_or_admin_unit_for_organization(gmg)
+
+    # Commit
+    db.session.commit()
 
     # Users
     admin_role = user_datastore.find_or_create_role("admin")
@@ -281,7 +328,7 @@ def create_user():
     # Events
     berlin = pytz.timezone('Europe/Berlin')
     upsert_event("Vienenburger Seefest",
-        "Stadt Goslar",
+        goslar_ooa,
         "Vienenburger See",
         create_berlin_date(2020, 8, 14, 17, 0),
         'Vom 14. bis 16. August 2020 findet im ausgewiesenen Naherholungsgebiet am Fuße des Harzes, dem Goslarer Ortsteil Vienenburg, das Seefest unter dem Motto „Feuer & Wasser“ statt.',
@@ -289,39 +336,39 @@ def create_user():
         True)
 
     upsert_event("Tausend Schritte durch die Altstadt",
-        "Stadt Goslar",
+        goslar_ooa,
         "Tourist-Information Goslar",
         create_berlin_date(2020, 9, 1, 10, 0),
         'Tausend Schritte durch die Altstadt Erleben Sie einen geführten Stadtrundgang durch den historischen Stadtkern. Lassen Sie sich von Fachwerkromantik und kaiserlichen Bauten inmitten der UNESCO-Welterbestätte verzaubern. ganzjährig (außer 01.01.) täglich 10:00 Uhr Treffpunkt: Tourist-Information am Marktplatz (Dauer ca. 2 Std.) Erwachsene 8,00 Euro Inhaber Gastkarte Goslar/Kurkarte Hahnenklee 7,00 Euro Schüler/Studenten 6,00 Euro')
 
     upsert_event("Spaziergang am Nachmittag",
-        "Stadt Goslar",
+        goslar_ooa,
         "Tourist-Information Goslar",
         create_berlin_date(2020, 9, 1, 13, 30),
         'Spaziergang am Nachmittag Begeben Sie sich auf einen geführten Rundgang durch die historische Altstadt. Entdecken Sie malerische Fachwerkgassen und imposante Bauwerke bei einem Streifzug durch das UNESCO-Weltkulturerbe. April – Oktober und 25.11. – 30.12. Montag – Samstag 13:30 Uhr Treffpunkt: Tourist-Information am Marktplatz (Dauer ca. 1,5 Std.) Erwachsene 7,00 Euro Inhaber Gastkarte Goslar/Kurkarte Hahnenklee 6,00 Euro Schüler/Studenten 5,00 Euro')
 
     upsert_event("Ein Blick hinter die Kulissen - Rathausbaustelle",
-        "Stadt Goslar",
+        goslar_ooa,
         "Nagelkopf am Rathaus",
         create_berlin_date(2020, 9, 3, 17, 0),
         'Allen interessierten Bürgern wird die Möglichkeit geboten, unter fachkundiger Führung des Goslarer Gebäudemanagement (GGM) einen Blick hinter die Kulissen durch das derzeit gesperrte historische Rathaus und die Baustelle Kulturmarktplatz zu werfen. Da bei beiden Führungen die Anzahl der Teilnehmer auf 16 Personen begrenzt ist, ist eine Anmeldung unbedingt notwendig sowie festes Schuhhwerk. Bitte melden Sie sich bei Interesse in der Tourist-Information (Tel. 05321-78060) an. Kinder unter 18 Jahren sind aus Sicherheitsgründen auf der Baustelle nicht zugelassen.')
 
     upsert_event("Wöltingerode unter Dampf",
-        "Kloster Wöltingerode",
+        kloster_woelteringerode_ooa,
         "Kloster Wöltingerode",
         create_berlin_date(2020, 9, 5, 12, 0),
         'Mit einem ländlichen Programm rund um historische Trecker und Landmaschinen, köstliche Produkte aus Brennerei und Region, einem Kunsthandwerkermarkt und besonderen Führungen findet das Hoffest auf dem Klostergut statt.',
         'https://www.woelti-unter-dampf.de')
 
     upsert_event("Altstadtfest",
-        "GOSLAR marketing gmbh",
+        gmg_ooa,
         "Goslar",
         create_berlin_date(2020, 9, 11, 15, 0),
         'Drei Tage lang dürfen sich die Besucher des Goslarer Altstadtfestes auf ein unterhaltsames und abwechslungsreiches Veranstaltungsprogramm freuen. Der Flohmarkt auf der Kaiserpfalzwiese lädt zum Stöbern vor historischer Kulisse ein.',
         'https://www.goslar.de/kultur-freizeit/veranstaltungen/altstadtfest')
 
     upsert_event("Adventsmarkt auf der Vienenburg",
-        "Vienenburg",
+        goslar_ooa,
         "Vienenburg",
         create_berlin_date(2020, 12, 13, 12, 0),
         'Inmitten der mittelalterlichen Burg mit dem restaurierten Burgfried findet der „Advent auf der Burg“ statt. Der Adventsmarkt wird von gemeinnützigen und sozialen Vereinen sowie den Kirchen ausgerichtet.')
