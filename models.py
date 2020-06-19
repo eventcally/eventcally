@@ -77,7 +77,7 @@ class OrgMember(db.Model):
 class Organization(db.Model, TrackableMixin):
     __tablename__ = 'organization'
     id = Column(Integer(), primary_key=True)
-    name = Column(String(255), unique=True)
+    name = Column(Unicode(255), unique=True)
     members = relationship('OrgMember', backref=backref('organization', lazy=True))
 
 ### Admin Unit
@@ -129,7 +129,7 @@ class AdminUnitOrg(db.Model):
 class AdminUnit(db.Model, TrackableMixin):
     __tablename__ = 'adminunit'
     id = Column(Integer(), primary_key=True)
-    name = Column(String(255), unique=True)
+    name = Column(Unicode(255), unique=True)
     members = relationship('AdminUnitMember', backref=backref('adminunit', lazy=True))
     organizations = relationship('AdminUnitOrg', backref=backref('adminunit', lazy=True))
 
@@ -150,9 +150,9 @@ class OrgOrAdminUnit(db.Model):
     __table_args__ = (UniqueConstraint('organization_id', 'admin_unit_id'),)
     id = Column(Integer(), primary_key=True)
     organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
-    organization = db.relationship('Organization')
+    organization = db.relationship('Organization', lazy="joined", backref=backref('org_or_adminunit', uselist=False, lazy=True))
     admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'))
-    admin_unit = db.relationship('AdminUnit')
+    admin_unit = db.relationship('AdminUnit', lazy="joined", backref=backref('org_or_adminunit', uselist=False, lazy=True))
 
 class Location(db.Model, TrackableMixin):
     __tablename__ = 'location'
@@ -173,6 +173,30 @@ class Place(db.Model, TrackableMixin):
     location = db.relationship('Location')
 
 # Events
+class EventSuggestion(db.Model, TrackableMixin):
+    __tablename__ = 'eventsuggestion'
+    id = Column(Integer(), primary_key=True)
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=False)
+    admin_unit = db.relationship('AdminUnit', backref=db.backref('eventsuggestions', lazy=True))
+    host_name = Column(Unicode(255), nullable=False)
+    event_name = Column(Unicode(255), nullable=False)
+    description = Column(UnicodeText(), nullable=False)
+    place_name = Column(Unicode(255), nullable=False)
+    place_street = Column(Unicode(255))
+    place_postalCode = Column(Unicode(255), nullable=False)
+    place_city = Column(Unicode(255), nullable=False)
+    contact_name = Column(Unicode(255), nullable=False)
+    contact_email = Column(Unicode(255), nullable=False)
+    external_link = Column(String(255))
+    dates = relationship('EventSuggestionDate', backref=backref('eventsuggestion', lazy=False), cascade="all, delete-orphan")
+
+class EventSuggestionDate(db.Model):
+    __tablename__ = 'eventsuggestiondate'
+    id = Column(Integer(), primary_key=True)
+    event_suggestion_id = db.Column(db.Integer, db.ForeignKey('eventsuggestion.id'), nullable=False)
+    start = db.Column(db.DateTime(timezone=True), nullable=False)
+    #end: date_time
+
 class Event(db.Model, TrackableMixin):
     __tablename__ = 'event'
     id = Column(Integer(), primary_key=True)

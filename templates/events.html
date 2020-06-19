@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_ooa, render_place %}
+{% from "_macros.html" import render_ooa, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Events') }}
 {% endblock %}
@@ -7,9 +7,7 @@
 
     <h1>{{ _('Events') }}</h1>
 
-    <div class="my-4">
-        <a class="btn btn-primary" href="{{ url_for('create_event') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
-    </div>
+    {{ render_events_sub_menu(user_can_create_event, user_can_list_event_suggestion) }}
 
     <div class="table-responsive">
         <table class="table table-sm table-bordered table-hover table-striped">

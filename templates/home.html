@@ -15,7 +15,7 @@ Prototyp
     </div>-->
 
     {% if admin_unit_members %}
-    <p class="h5 mt-5">{{ _('Your Admin Units') }}</p>
+    <h2>{{ _('Your Admin Units') }}</h2>
     <div class="table-responsive">
         <table class="table table-sm table-bordered table-hover table-striped">
             <thead>
@@ -37,7 +37,7 @@ Prototyp
     {% endif %}
 
     {% if organization_members %}
-    <p class="h5 mt-5">{{ _('Your Organizations') }}</p>
+    <h2>{{ _('Your Organizations') }}</h2>
     <div class="table-responsive">
         <table class="table table-sm table-bordered table-hover table-striped">
             <thead>
@@ -49,7 +49,7 @@ Prototyp
             <tbody>
                 {% for member in organization_members %}
                     <tr>
-                        <td>{{ member.organization.name }}</td>
+                        <td><a href="{{ url_for('organization', organization_id=member.organization.id) }}">{{ member.organization.name }}</a></td>
                         <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
                     </tr>
                 {% endfor %}

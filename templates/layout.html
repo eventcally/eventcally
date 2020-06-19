@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     {%- block styles %}
     {%- endblock styles %}
 
@@ -22,6 +23,7 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/i18n/jquery-ui-i18n.js" integrity="sha256-HwXB0HPJCXhungCtZoScc1a53ngQOXua64nb0cI6PHY=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js" integrity="sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 
     <title>{% block title %}{{ title|default }}{% endblock title %}</title>
 
@@ -29,8 +31,10 @@
       moment.locale('de')
 
       $( function() {
-				$('[data-toggle="tooltip"]').tooltip();
-      })
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.autocomplete').select2();
+      });
+
     </script>
 
     {% block header %}

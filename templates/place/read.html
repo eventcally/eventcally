@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_place, render_events %}
+{% block title %}
+{{ place.name }}
+{% endblock %}
+{% block content %}
+
+    <h1>{{ place.name }}</h1>
+
+    {% if place.location %}
+    <div class="card card-body">
+        <p>
+            {{ place.location.street }}<br />
+            {{ place.location.postalCode }} {{ place.location.city }}
+        </p>
+
+        <p>
+            <a href="http://www.google.com/maps?q={{ render_place(place) | quote_plus }}">{{ _('Show on Google Maps') }}</a>
+        </p>
+
+    </div>
+    {% endif %}
+
+    <h2>{{ _('Events') }}</h2>
+    {{ render_events(place.events) }}
+
+{% endblock %}

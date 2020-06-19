@@ -1,19 +1,23 @@
 {% macro render_field_with_errors(field) %}
+    {% set label_text = field.label.text + ' *' if field.flags.required else field.label.text %}
     <div class="form-group row {% if field.errors %} has-error{% endif -%}">
-    {{ field.label(class="col-sm-2 col-form-label") }}
+    {{ field.label(text=label_text, class="col-sm-2 col-form-label") }}
     <div class="input-group col-sm-10">
-    {% if field.errors %}
-    {{ field(class="form-control is-invalid", **kwargs)|safe }}
-    {% else %}
-    {{ field(class="form-control", **kwargs)|safe }}
-    {% endif %}
-        {% if field.errors %}
-        <div class="invalid-feedback">
-            {% for error in field.errors %}
-            <div>{{ error }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
+      {% set field_class = kwargs['class'] if 'class' in kwargs else '' %}
+      {% set field_class = field_class + ' form-control' %}
+      {% if field.errors %}
+        {% set field_class = field_class + ' is-invalid' %}
+      {% endif %}
+
+      {{ field(class=field_class, **kwargs)|safe }}
+
+      {% if field.errors %}
+      <div class="invalid-feedback">
+          {% for error in field.errors %}
+          <div>{{ error }}</div>
+          {% endfor %}
+      </div>
+      {% endif %}
     </div>
     </div>
 {% endmacro %}
@@ -43,6 +47,77 @@
   {% endif %}
 {% endmacro %}
 
-{% macro render_place(place) %}
-  {{ place.name }}
+{% macro render_ooa_with_link(ooa) %}
+  {% if ooa.admin_unit %}
+    <a href="{{ url_for('admin_unit', admin_unit_id=ooa.admin_unit.id) }}">{{ ooa.admin_unit.name }}</a>
+  {% endif %}
+  {% if ooa.organization %}
+    <a href="{{ url_for('organization', organization_id=ooa.organization.id) }}">{{ ooa.organization.name }}</a>
+  {% endif %}
 {% endmacro %}
+
+{% macro render_location(location) %}
+  {{ location.street }}, {{ location.postalCode }} {{ location.city }}
+{% endmacro %}
+
+{% macro render_place(place) %}
+{% if place.location %}
+  {{ place.name }}, {{render_location(place.location)}}
+{% else %}
+  {{ place.name }}
+{% endif %}
+{% endmacro %}
+
+{% macro render_events_sub_menu(user_can_create_event, user_can_list_event_suggestion) %}
+<div class="my-4">
+{% if user_can_create_event %}
+  <a class="btn btn-primary" href="{{ url_for('event_create') }}" role="button"><i class="fa fa-lock"></i> {{ _('Create event') }}</a>
+{% endif %}
+  <a class="btn btn-secondary" href="{{ url_for('event_suggestion_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Suggest event') }}</a>
+</div>
+
+{% if user_can_list_event_suggestion %}
+<div class="list-group my-4">
+  <a href="{{ url_for('eventsuggestions') }}" class="list-group-item list-group-item-action">
+      {{ _('Event suggestions') }}
+      <i class="fa fa-caret-right"></i>
+  </a>
+</div>
+{% endif %}
+
+{% endmacro %}
+
+{% macro render_events(events) %}
+<div class="table-responsive">
+  <table class="table table-sm table-bordered table-hover table-striped">
+      <thead>
+          <tr>
+              <th>{{ _('Date') }}</th>
+              <th>{{ _('Name') }}</th>
+              <th>{{ _('Host') }}</th>
+              <th>{{ _('Location') }}</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for event in events %}
+              <tr>
+                  <td>{{ event.dates[0].start | datetimeformat }}</td>
+                  <td>
+                      <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
+                  </td>
+                  <td>{{ render_ooa(event.host) }}</td>
+                  <td>{{ render_place(event.place) }}</td>
+              </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="list-group my-4">
+    <a href="{{ url_for('events') }}" class="list-group-item list-group-item-action list-group-item-primary">
+        {{ _('Show all events') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
+  </div>
+
+  {% endmacro %}

@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block title %}
+{{ suggestion.event_name }}
+{% endblock %}
+{% block content %}
+
+    <h1>{{ suggestion.event_name }}</h1>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th colspan="2">{{ _('Event') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ _('Date') }}</td>
+                    <td>{{ suggestion.dates[0].start | datetimeformat }}</td>
+                </tr>
+                <tr>
+                    <td>{{ _('Event name') }}</td>
+                    <td>{{ suggestion.event_name }}</td>
+                </tr>
+                <tr>
+                    <td>{{ _('Description') }}</td>
+                    <td>{{ suggestion.description }}</td>
+                </tr>
+                <tr>
+                    <td>{{ _('Link URL') }}</td>
+                    <td>{% if suggestion.external_link %}<a href="{{ suggestion.external_link }}">{{ suggestion.external_link }}</a>{% endif %}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th colspan="2">{{ _('Location') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ _('Event place') }}</td>
+                    <td>{{ suggestion.place_name }}</td>
+                </tr>
+                <tr>
+                    <td>{{ _('Street') }}</td>
+                    <td>{{ suggestion.place_street }}</td>
+                </tr>
+                <tr>
+                    <td>{{ _('Postal code') }}</td>
+                    <td>{{ suggestion.place_postalCode }}</td>
+                </tr>
+                <tr>
+                    <td>{{ _('City') }}</td>
+                    <td>{{ suggestion.place_city }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th colspan="2">{{ _('Contact') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ _('Event host') }}</td>
+                    <td>{{ suggestion.host_name }}</td>
+                </tr>
+                <tr>
+                    <td>{{ _('Contact name') }}</td>
+                    <td>{{ suggestion.contact_name }}</td>
+                </tr>
+                <tr>
+                    <td>{{ _('Contact email') }}</td>
+                    <td>{% if suggestion.contact_email %}<a href="mailto:{{ suggestion.contact_email }}">{{ suggestion.contact_email }}</a>{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>{{ _('Created at') }}</td>
+                    <td>{{ suggestion.created_at | datetimeformat }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

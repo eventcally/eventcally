@@ -4,6 +4,11 @@ h1 {
     margin: 1rem 0 2rem;
 }
 
+h2 {
+    font-size: 1.2rem;
+    margin: 2rem 0 1rem;
+}
+
 .navbar {
     background-color: lightslategray;
     font-size: 1em;

@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from "_macros.html" import render_events %}
 {% block title %}
 {{ admin_unit.name }}
 {% endblock %}
@@ -6,53 +7,81 @@
 
     <h1>{{ admin_unit.name }}</h1>
 
-    {% if current_user_member %}
-    <div class="my-4">
-        {{ _('You are a member of this admin unit.') }}
-        ({% for role in current_user_member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %})
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+    {% if current_user_member or can_list_admin_unit_members %}
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="#members" role="tab" area-selected="true">{{ _('Members') }}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#organizations" role="tab">{{ _('Organizations') }}</a>
+    </li>
+    {% else %}
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#organizations" role="tab" area-selected="true">{{ _('Organizations') }}</a>
+      </li>
+    {% endif %}
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#events" role="tab">{{ _('Events') }}</a>
+    </li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    {% if current_user_member or can_list_admin_unit_members %}
+    <div class="tab-pane pt-4 active" id="members" role="tabpanel">
+        {% if current_user_member %}
+        <div class="my-4">
+            {{ _('You are a member of this admin unit.') }}
+            ({% for role in current_user_member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %})
+        </div>
+        {% endif %}
+
+        {% if can_list_admin_unit_members %}
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>{{ _('Name') }}</th>
+                        <th>{{ _('Roles') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in admin_unit.members %}
+                        <tr>
+                            <td>{{ member.user.email }}</td>
+                            <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
     </div>
     {% endif %}
-
-    {% if can_list_admin_unit_members %}
-    <p class="h5 mt-5">{{ _('Members') }}</p>
-    <div class="table-responsive">
-        <table class="table table-sm table-bordered table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>{{ _('Name') }}</th>
-                    <th>{{ _('Roles') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for member in admin_unit.members %}
+    <div class="tab-pane pt-4{% if not current_user_member and not can_list_admin_unit_members %} active{% endif %}" id="organizations" role="tabpanel">
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered table-hover table-striped">
+                <thead>
                     <tr>
-                        <td>{{ member.user.email }}</td>
-                        <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                        <th>{{ _('Name') }}</th>
+                        <th>{{ _('Roles') }}</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for admin_unit_org in admin_unit.organizations %}
+                        <tr>
+                            <td><a href="{{ url_for('organization', organization_id=admin_unit_org.organization_id) }}">{{ admin_unit_org.organization.name }}</a></td>
+                            <td>{% for role in admin_unit_org.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-    {% endif %}
-
-    <p class="h5 mt-5">{{ _('Organizations') }}</p>
-    <div class="table-responsive">
-        <table class="table table-sm table-bordered table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>{{ _('Name') }}</th>
-                    <th>{{ _('Roles') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for admin_unit_org in admin_unit.organizations %}
-                    <tr>
-                        <td><a href="{{ url_for('organization', organization_id=admin_unit_org.organization_id) }}">{{ admin_unit_org.organization.name }}</a></td>
-                        <td>{% for role in admin_unit_org.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="tab-pane pt-4" id="events" role="tabpanel">
+        {{ render_events(admin_unit.events) }}
     </div>
+  </div>
 
 {% endblock %}
