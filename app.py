@@ -276,7 +276,7 @@ def get_event_hosts():
             result.append(admin_unit.org_or_adminunit)
 
         for admin_unit_org in admin_unit.organizations:
-            if not any(aao.id == admin_unit_org.organization.org_or_adminunit.id for aao in result):
+            if not any(admin_unit_org.organization is not None and aao.id == admin_unit_org.organization.org_or_adminunit.id for aao in result):
                 result.append(admin_unit_org.organization.org_or_adminunit)
 
     for organization in organizations_the_user_is_member_of:
