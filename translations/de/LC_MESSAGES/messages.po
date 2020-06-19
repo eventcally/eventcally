@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-07 19:43+0200\n"
+"POT-Creation-Date: 2020-06-19 15:08+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -18,19 +18,202 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
+#: app.py:869
+msgid "Event successfully created"
+msgstr "Veranstaltung erfolgreich erstellt"
+
+#: app.py:901
+msgid "Event suggestion successfully created"
+msgstr "Veranstaltungsvorschlag erfolgreich erstellt"
+
+#: templates/_macros.html:74 templates/event/create.html:6
+msgid "Create event"
+msgstr "Veranstaltung erstellen"
+
+#: templates/_macros.html:76 templates/event_suggestion/create.html:6
+msgid "Suggest event"
+msgstr "Veranstaltung vorschlagen"
+
+#: templates/_macros.html:82 templates/event_suggestion/list.html:3
+#: templates/event_suggestion/list.html:7
+msgid "Event suggestions"
+msgstr "Veranstaltungsvorschläge"
+
+#: templates/_macros.html:95 templates/event.html:25
+#: templates/event_suggestion/list.html:13
+#: templates/event_suggestion/read.html:18 templates/events.html:16
+msgid "Date"
+msgstr "Datum"
+
+#: templates/_macros.html:96 templates/admin/admin_units.html:18
+#: templates/admin_unit.html:45 templates/admin_unit.html:67
+#: templates/admin_units.html:13 templates/event_suggestion/list.html:14
+#: templates/events.html:17 templates/home.html:23 templates/home.html:45
+#: templates/organization.html:42 templates/organizations.html:13
+#: templates/profile.html:15 templates/profile.html:37
+msgid "Name"
+msgstr "Name"
+
+#: templates/_macros.html:97 templates/event.html:42
+#: templates/event/create.html:23 templates/event_suggestion/list.html:15
+#: templates/events.html:18
+msgid "Host"
+msgstr "Veranstalter"
+
+#: templates/_macros.html:98 templates/event.html:26
+#: templates/event_suggestion/list.html:16
+#: templates/event_suggestion/read.html:41 templates/events.html:19
+msgid "Location"
+msgstr "Ort"
+
+#: templates/_macros.html:118
+msgid "Show all events"
+msgstr "Alle Veranstaltungen anzeigen"
+
+#: templates/admin_unit.html:14 templates/organization.html:14
+msgid "Members"
+msgstr "Mitglieder"
+
+#: templates/admin_unit.html:17 templates/admin_unit.html:21
+#: templates/layout.html:57 templates/organizations.html:3
+#: templates/organizations.html:7 templates/profile.html:32
+msgid "Organizations"
+msgstr "Organisationen"
+
+#: templates/admin_unit.html:25 templates/events.html:4 templates/events.html:8
+#: templates/home.html:12 templates/layout.html:58
+#: templates/organization.html:17 templates/organization.html:21
+#: templates/place/read.html:24
+msgid "Events"
+msgstr "Veranstaltungen"
+
+#: templates/admin_unit.html:35
+msgid "You are a member of this admin unit."
+msgstr "Du bist Mitglied dieser Verwaltungseinheit"
+
+#: templates/admin_unit.html:46 templates/admin_unit.html:68
+#: templates/home.html:24 templates/home.html:46 templates/organization.html:43
+#: templates/profile.html:16 templates/profile.html:38
+msgid "Roles"
+msgstr "Rollen"
+
+#: templates/admin/admin.html:15 templates/admin/admin_units.html:3
+#: templates/admin/admin_units.html:10 templates/admin_units.html:3
+#: templates/admin_units.html:7 templates/layout.html:56
+#: templates/profile.html:10
+msgid "Admin Units"
+msgstr "Verwaltungseinheiten"
+
+#: templates/event.html:15
+msgid "Mark event as unverified"
+msgstr "Diese Veranstaltung als nicht verifiziert markieren"
+
+#: templates/event.html:18
+msgid "Mark event as verified"
+msgstr "Diese Veranstaltung als verifiziert markieren"
+
+#: templates/event.html:28 templates/events.html:29
+msgid "Verified"
+msgstr "Verifiziert"
+
+#: templates/event.html:36
+msgid "Link"
+msgstr "Link"
+
 #: templates/home.html:7
 msgid "Hi there!"
 msgstr "Moin!"
 
-#: templates/layout.html:52
-msgid "You"
-msgstr "Du"
+#: templates/home.html:18
+msgid "Your Admin Units"
+msgstr "Deine Verwaltungseinheiten"
 
-#: templates/layout.html:56 templates/profile.html:3
+#: templates/home.html:40
+msgid "Your Organizations"
+msgstr "Deine Organisationen"
+
+#: templates/layout.html:67 templates/profile.html:3
 msgid "Profile"
 msgstr "Profil"
 
-#: templates/layout.html:58
+#: templates/admin/admin.html:3 templates/admin/admin.html:9
+#: templates/admin/admin_units.html:9 templates/layout.html:70
+msgid "Admin"
+msgstr "Administration"
+
+#: templates/layout.html:74
 msgid "Logout"
 msgstr "Ausloggen"
+
+#: templates/organization.html:32
+msgid "You are a member of this organization."
+msgstr "Du bist Mitglied dieser Organisation"
+
+#: templates/event/create.html:12 templates/event_suggestion/read.html:13
+msgid "Event"
+msgstr "Veranstaltung"
+
+#: templates/event/create.html:32
+msgid "Place"
+msgstr "Ort"
+
+#: templates/event/create.html:41
+msgid "Additional information"
+msgstr "Zusätzliche Informationen"
+
+#: templates/event_suggestion/list.html:17
+#: templates/event_suggestion/read.html:86
+msgid "Created at"
+msgstr "Erstellt am"
+
+#: templates/event_suggestion/read.html:22
+msgid "Event name"
+msgstr "Name"
+
+#: templates/event_suggestion/read.html:26
+msgid "Description"
+msgstr "Beschreibung"
+
+#: templates/event_suggestion/read.html:30
+msgid "Link URL"
+msgstr "Link URL"
+
+#: templates/event_suggestion/read.html:46
+msgid "Event place"
+msgstr "Veranstaltungsort"
+
+#: templates/event_suggestion/read.html:50
+msgid "Street"
+msgstr "Straße"
+
+#: templates/event_suggestion/read.html:54
+msgid "Postal code"
+msgstr "Postleitzahl"
+
+#: templates/event_suggestion/read.html:58
+msgid "City"
+msgstr "Stadt/Ort"
+
+#: templates/event_suggestion/read.html:69
+msgid "Contact"
+msgstr "Kontakt"
+
+#: templates/event_suggestion/read.html:74
+msgid "Event host"
+msgstr "Veranstalter"
+
+#: templates/event_suggestion/read.html:78
+msgid "Contact name"
+msgstr "Kontakt Name"
+
+#: templates/event_suggestion/read.html:82
+msgid "Contact email"
+msgstr "Kontakt Email"
+
+#: templates/place/read.html:18
+msgid "Show on Google Maps"
+msgstr "Auf Google Maps anzeigen"
+
+#~ msgid "You"
+#~ msgstr "Du"
 
