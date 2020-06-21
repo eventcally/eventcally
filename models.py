@@ -1,6 +1,7 @@
 from app import db
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.schema import CheckConstraint
 from sqlalchemy import UniqueConstraint, Boolean, DateTime, Column, Integer, String, ForeignKey, Unicode, UnicodeText, Numeric
 from flask_security import UserMixin, RoleMixin
 import datetime
@@ -147,12 +148,15 @@ class Actor(db.Model):
 
 class OrgOrAdminUnit(db.Model):
     __tablename__ = 'org_or_adminunit'
-    __table_args__ = (UniqueConstraint('organization_id', 'admin_unit_id'),)
+    __table_args__ = (
+        CheckConstraint('NOT(organization_id IS NULL AND admin_unit_id IS NULL)'),
+        UniqueConstraint('organization_id', 'admin_unit_id'),
+    )
     id = Column(Integer(), primary_key=True)
     organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
-    organization = db.relationship('Organization', lazy="joined", backref=backref('org_or_adminunit', uselist=False, lazy=True))
+    organization = db.relationship('Organization', lazy="joined", backref=backref('org_or_adminunit', cascade="all, delete-orphan", uselist=False, lazy=True))
     admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'))
-    admin_unit = db.relationship('AdminUnit', lazy="joined", backref=backref('org_or_adminunit', uselist=False, lazy=True))
+    admin_unit = db.relationship('AdminUnit', lazy="joined", backref=backref('org_or_adminunit', cascade="all, delete-orphan", uselist=False, lazy=True))
 
 class Location(db.Model, TrackableMixin):
     __tablename__ = 'location'

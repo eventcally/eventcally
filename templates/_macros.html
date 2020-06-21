@@ -104,6 +104,9 @@
                   <td>{{ event.dates[0].start | datetimeformat }}</td>
                   <td>
                       <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
+                      {% if event.verified %}
+                        <i class="fa fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i>
+                      {% endif %}
                   </td>
                   <td>{{ render_ooa(event.host) }}</td>
                   <td>{{ render_place(event.place) }}</td>

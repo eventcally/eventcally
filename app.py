@@ -159,25 +159,19 @@ def upsert_actor_for_admin_unit(admin_unit_id):
         db.session.add(result)
     return result
 
-def upsert_org_or_admin_unit_for_admin_unit_id(admin_unit_id):
-    result = OrgOrAdminUnit.query.filter_by(admin_unit_id = admin_unit_id).first()
-    if result is None:
-        result = OrgOrAdminUnit(admin_unit_id = admin_unit_id)
-        db.session.add(result)
-    return result
-
 def upsert_org_or_admin_unit_for_admin_unit(admin_unit):
-    return upsert_org_or_admin_unit_for_admin_unit_id(admin_unit.id)
-
-def upsert_org_or_admin_unit_for_organization_id(organization_id):
-    result = OrgOrAdminUnit.query.filter_by(organization_id = organization_id).first()
+    result = OrgOrAdminUnit.query.filter_by(admin_unit = admin_unit).first()
     if result is None:
-        result = OrgOrAdminUnit(organization_id = organization_id)
+        result = OrgOrAdminUnit(admin_unit = admin_unit)
         db.session.add(result)
     return result
 
 def upsert_org_or_admin_unit_for_organization(organization):
-    return upsert_org_or_admin_unit_for_organization_id(organization.id)
+    result = OrgOrAdminUnit.query.filter_by(organization = organization).first()
+    if result is None:
+        result = OrgOrAdminUnit(organization = organization)
+        db.session.add(result)
+    return result
 
 def upsert_location(street, postalCode, city, latitude = 0, longitude = 0):
     result = Location.query.filter_by(street = street, postalCode=postalCode, city=city).first()
