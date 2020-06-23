@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_place, render_events %}
+{% from "_macros.html" import render_place, render_events, render_location_card, render_link_prop, render_image %}
 {% block title %}
 {{ place.name }}
 {% endblock %}
@@ -7,21 +7,39 @@
 
     <h1>{{ place.name }}</h1>
 
-    {% if place.location %}
-    <div class="card card-body">
-        <p>
-            {{ place.location.street }}<br />
-            {{ place.location.postalCode }} {{ place.location.city }}
-        </p>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#info" role="tab" area-selected="true">{{ _('Info') }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#events" role="tab">{{ _('Events') }}</a>
+        </li>
+    </ul>
 
-        <p>
-            <a href="http://www.google.com/maps?q={{ render_place(place) | quote_plus }}">{{ _('Show on Google Maps') }}</a>
-        </p>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane pt-4 active" id="info" role="tabpanel">
 
+            {{ render_location_card(place.location, place) }}
+
+            <div class="my-4">
+                {{ render_link_prop(place.url) }}
+            </div>
+
+            {% if place.photo_id %}
+            <div class="my-4">{{ render_image(place.photo_id) }}</div>
+            {% endif %}
+
+            {% if place.description %}
+            <div class="my-4">{{ place.description }}</div>
+            {% endif %}
+
+        </div>
+
+        <div class="tab-pane pt-4" id="events" role="tabpanel">
+            {{ render_events(place.events) }}
+        </div>
     </div>
-    {% endif %}
-
-    <h2>{{ _('Events') }}</h2>
-    {{ render_events(place.events) }}
 
 {% endblock %}

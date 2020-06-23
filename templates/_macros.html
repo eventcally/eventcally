@@ -56,16 +56,14 @@
   {% endif %}
 {% endmacro %}
 
-{% macro render_location(location) %}
-  {{ location.street }}, {{ location.postalCode }} {{ location.city }}
-{% endmacro %}
+{% macro render_location(location) %}{{ location.street }}, {{ location.postalCode }} {{ location.city }}{% endmacro %}
 
 {% macro render_place(place) %}
-{% if place.location %}
+{%- if place.location -%}
   {{ place.name }}, {{render_location(place.location)}}
-{% else %}
+{%- else -%}
   {{ place.name }}
-{% endif %}
+{%- endif -%}
 {% endmacro %}
 
 {% macro render_events_sub_menu(user_can_create_event, user_can_list_event_suggestion) %}
@@ -124,3 +122,43 @@
   </div>
 
   {% endmacro %}
+
+{% macro render_location_card(location, place=None) %}
+{% if location %}
+<div class="card card-body">
+  <p>
+      {{ location.street }}<br />
+      {{ location.postalCode }} {{ location.city }}
+  </p>
+
+  <p>
+      <a href="http://www.google.com/maps?q={% if place %}{{ render_place(place) | quote_plus }}{% else %}{{ render_location(location) | quote_plus }}{% endif %}">{{ _('Show on Google Maps') }}</a>
+  </p>
+
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_link_prop(link) %}
+{% if link %}
+<div>
+  <i class="fa fa-fw fa-external-link" data-toggle="tooltip" title="{{ _('Link') }}"></i>
+  <a href="{{ link }}">{{ link }}</a>
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_location_prop(location) %}
+{% if location %}
+<div>
+  <i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i>
+  {{ render_location(location) }}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_image(image_id) %}
+{% if image_id %}
+<img src="{{ url_for('image', id=image_id) }}"/>
+{% endif %}
+{% endmacro %}

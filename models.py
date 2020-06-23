@@ -2,7 +2,7 @@ from app import db
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import CheckConstraint
-from sqlalchemy import UniqueConstraint, Boolean, DateTime, Column, Integer, String, ForeignKey, Unicode, UnicodeText, Numeric
+from sqlalchemy import UniqueConstraint, Boolean, DateTime, Column, Integer, String, ForeignKey, Unicode, UnicodeText, Numeric, LargeBinary
 from flask_security import UserMixin, RoleMixin
 import datetime
 
@@ -18,6 +18,14 @@ class TrackableMixin(object):
     @declared_attr
     def created_by(cls):
         return relationship("User")
+
+### Multi purpose
+
+class Image(db.Model, TrackableMixin):
+    __tablename__ = 'image'
+    id = Column(Integer(), primary_key=True)
+    data = db.Column(db.LargeBinary)
+    encoding_format = Column(String(80))
 
 ### User
 
@@ -79,6 +87,12 @@ class Organization(db.Model, TrackableMixin):
     __tablename__ = 'organization'
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), unique=True)
+    legal_name = Column(Unicode(255))
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location = db.relationship('Location')
+    logo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
+    logo = db.relationship('Image', uselist=False)
+    url = Column(String(255))
     members = relationship('OrgMember', backref=backref('organization', lazy=True))
 
 ### Admin Unit
@@ -135,6 +149,7 @@ class AdminUnit(db.Model, TrackableMixin):
     organizations = relationship('AdminUnitOrg', backref=backref('adminunit', lazy=True))
 
 # Universal Types
+
 class Actor(db.Model):
     __tablename__ = 'actor'
     __table_args__ = (UniqueConstraint('user_id', 'organization_id', 'admin_unit_id'),)
@@ -175,6 +190,10 @@ class Place(db.Model, TrackableMixin):
     name = Column(Unicode(255), nullable=False, unique=True)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     location = db.relationship('Location')
+    photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
+    photo = db.relationship('Image', uselist=False)
+    url = Column(String(255))
+    description = Column(UnicodeText())
 
 # Events
 class EventSuggestion(db.Model, TrackableMixin):
@@ -215,6 +234,8 @@ class Event(db.Model, TrackableMixin):
     external_link = Column(String(255))
     ticket_link = Column(String(255))
     verified = Column(Boolean())
+    photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
+    photo = db.relationship('Image', uselist=False)
 
     dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")
     # wiederkehrende Dates sind zeitlich eingeschränkt

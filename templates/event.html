@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_ooa_with_link, render_place %}
+{% from "_macros.html" import render_image, render_ooa_with_link, render_place, render_link_prop %}
 {% block title %}
 {{ event.name }}
 {% endblock %}
@@ -29,14 +29,18 @@
         {% endif %}
     </div>
 
+    {% if event.photo_id %}
+        <div class="my-4">{{ render_image(event.photo_id) }}</div>
+    {% endif %}
+
     <div class="my-4">{{ event.description }}</div>
 
-{% if event.external_link %}
-<div class="my-4">
-    <i class="fa fa-fw fa-external-link" data-toggle="tooltip" title="{{ _('Link') }}"></i>
-    <a href="{{ event.external_link }}">{{ event.external_link }}</a>
-</div>
-{% endif %}
+    {% if event.external_link or event.ticket_link %}
+    <div class="my-4">
+        {{ render_link_prop(event.external_link) }}
+        {{ render_link_prop(event.ticket_link) }}
+    </div>
+    {% endif %}
 
 <div class="my-4">
     <div><i class="fa fa-fw fa-users" data-toggle="tooltip" title="{{ _('Host') }}"></i> {{ render_ooa_with_link(event.host) }}</div>

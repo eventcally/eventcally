@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 93158b40fde6
+Revision ID: ea09dc1839df
 Revises: 
-Create Date: 2020-06-21 15:45:24.988479
+Create Date: 2020-06-23 12:04:01.423454
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '93158b40fde6'
+revision = 'ea09dc1839df'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -75,6 +75,15 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
+    op.create_table('image',
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('data', sa.LargeBinary(), nullable=True),
+    sa.Column('encoding_format', sa.String(length=80), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('location',
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
@@ -89,15 +98,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('organization',
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.Unicode(length=255), nullable=True),
-    sa.Column('created_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('name')
-    )
     op.create_table('roles_users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
@@ -106,31 +106,12 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('actor',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('organization_id', sa.Integer(), nullable=True),
-    sa.Column('admin_unit_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['admin_unit_id'], ['adminunit.id'], ),
-    sa.ForeignKeyConstraint(['organization_id'], ['organization.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('user_id', 'organization_id', 'admin_unit_id')
-    )
     op.create_table('adminunitmember',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('admin_unit_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['admin_unit_id'], ['adminunit.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('adminunitorg',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('admin_unit_id', sa.Integer(), nullable=False),
-    sa.Column('organization_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['admin_unit_id'], ['adminunit.id'], ),
-    sa.ForeignKeyConstraint(['organization_id'], ['organization.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('eventsuggestion',
@@ -152,6 +133,70 @@ def upgrade():
     sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('organization',
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.Unicode(length=255), nullable=True),
+    sa.Column('legal_name', sa.Unicode(length=255), nullable=True),
+    sa.Column('location_id', sa.Integer(), nullable=True),
+    sa.Column('logo_id', sa.Integer(), nullable=True),
+    sa.Column('url', sa.String(length=255), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['location_id'], ['location.id'], ),
+    sa.ForeignKeyConstraint(['logo_id'], ['image.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
+    op.create_table('place',
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.Unicode(length=255), nullable=False),
+    sa.Column('location_id', sa.Integer(), nullable=True),
+    sa.Column('photo_id', sa.Integer(), nullable=True),
+    sa.Column('url', sa.String(length=255), nullable=True),
+    sa.Column('description', sa.UnicodeText(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['location_id'], ['location.id'], ),
+    sa.ForeignKeyConstraint(['photo_id'], ['image.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
+    op.create_table('actor',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('organization_id', sa.Integer(), nullable=True),
+    sa.Column('admin_unit_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['admin_unit_id'], ['adminunit.id'], ),
+    sa.ForeignKeyConstraint(['organization_id'], ['organization.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('user_id', 'organization_id', 'admin_unit_id')
+    )
+    op.create_table('adminunitmemberroles_members',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('member_id', sa.Integer(), nullable=True),
+    sa.Column('role_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['member_id'], ['adminunitmember.id'], ),
+    sa.ForeignKeyConstraint(['role_id'], ['adminunitmemberrole.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('adminunitorg',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('admin_unit_id', sa.Integer(), nullable=False),
+    sa.Column('organization_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['admin_unit_id'], ['adminunit.id'], ),
+    sa.ForeignKeyConstraint(['organization_id'], ['organization.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('eventsuggestiondate',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('event_suggestion_id', sa.Integer(), nullable=False),
+    sa.Column('start', sa.DateTime(timezone=True), nullable=False),
+    sa.ForeignKeyConstraint(['event_suggestion_id'], ['eventsuggestion.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('org_or_adminunit',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('organization_id', sa.Integer(), nullable=True),
@@ -168,25 +213,6 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['organization_id'], ['organization.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('place',
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.Unicode(length=255), nullable=False),
-    sa.Column('location_id', sa.Integer(), nullable=True),
-    sa.Column('created_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['location_id'], ['location.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('name')
-    )
-    op.create_table('adminunitmemberroles_members',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('member_id', sa.Integer(), nullable=True),
-    sa.Column('role_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['member_id'], ['adminunitmember.id'], ),
-    sa.ForeignKeyConstraint(['role_id'], ['adminunitmemberrole.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('adminunitorgroles_organizations',
@@ -208,18 +234,13 @@ def upgrade():
     sa.Column('external_link', sa.String(length=255), nullable=True),
     sa.Column('ticket_link', sa.String(length=255), nullable=True),
     sa.Column('verified', sa.Boolean(), nullable=True),
+    sa.Column('photo_id', sa.Integer(), nullable=True),
     sa.Column('created_by_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['admin_unit_id'], ['adminunit.id'], ),
     sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['host_id'], ['org_or_adminunit.id'], ),
+    sa.ForeignKeyConstraint(['photo_id'], ['image.id'], ),
     sa.ForeignKeyConstraint(['place_id'], ['place.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('eventsuggestiondate',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('event_suggestion_id', sa.Integer(), nullable=False),
-    sa.Column('start', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['event_suggestion_id'], ['eventsuggestion.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('orgmemberroles_members',
@@ -244,20 +265,21 @@ def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('eventdate')
     op.drop_table('orgmemberroles_members')
-    op.drop_table('eventsuggestiondate')
     op.drop_table('event')
     op.drop_table('adminunitorgroles_organizations')
-    op.drop_table('adminunitmemberroles_members')
-    op.drop_table('place')
     op.drop_table('orgmember')
     op.drop_table('org_or_adminunit')
-    op.drop_table('eventsuggestion')
+    op.drop_table('eventsuggestiondate')
     op.drop_table('adminunitorg')
-    op.drop_table('adminunitmember')
+    op.drop_table('adminunitmemberroles_members')
     op.drop_table('actor')
-    op.drop_table('roles_users')
+    op.drop_table('place')
     op.drop_table('organization')
+    op.drop_table('eventsuggestion')
+    op.drop_table('adminunitmember')
+    op.drop_table('roles_users')
     op.drop_table('location')
+    op.drop_table('image')
     op.drop_table('adminunit')
     op.drop_table('user')
     op.drop_table('role')

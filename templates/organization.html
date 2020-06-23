@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_events %}
+{% from "_macros.html" import render_events, render_location_prop, render_link_prop, render_image %}
 {% block title %}
 {{ organization.name }}
 {% endblock %}
@@ -9,24 +9,40 @@
 
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#info" role="tab" area-selected="true">{{ _('Info') }}</a>
+        </li>
         {% if current_user_member or can_list_members %}
         <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#members" role="tab" area-selected="true">{{ _('Members') }}</a>
+            <a class="nav-link" data-toggle="tab" href="#members" role="tab">{{ _('Members') }}</a>
         </li>
+        {% endif %}
         <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#events" role="tab">{{ _('Events') }}</a>
         </li>
-        {% else %}
-        <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#events" role="tab" area-selected="true">{{ _('Events') }}</a>
-            </li>
-        {% endif %}
     </ul>
 
     <!-- Tab panes -->
     <div class="tab-content">
+        <div class="tab-pane pt-4 active" id="info" role="tabpanel">
+
+            {% if organization.legal_name %}
+            <div>{{ organization.legal_name }}</div>
+            {% endif %}
+
+            <div class="my-4">
+                {{ render_location_prop(organization.location) }}
+                {{ render_link_prop(organization.url) }}
+            </div>
+
+            {% if organization.logo_id %}
+            <div class="my-4">{{ render_image(organization.logo_id) }}</div>
+            {% endif %}
+
+        </div>
+
         {% if current_user_member or can_list_members %}
-        <div class="tab-pane pt-4 active" id="members" role="tabpanel">
+        <div class="tab-pane pt-4" id="members" role="tabpanel">
             {% if current_user_member %}
             <div class="my-4">
                 {{ _('You are a member of this organization.') }}
@@ -56,7 +72,8 @@
             {% endif %}
         </div>
         {% endif %}
-        <div class="tab-pane pt-4{% if not current_user_member and not can_list_members %} active{% endif %}" id="events" role="tabpanel">
+
+        <div class="tab-pane pt-4" id="events" role="tabpanel">
             {{ render_events(events) }}
         </div>
     </div>

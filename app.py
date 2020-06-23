@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, request, url_for, redirect, abort, flash
+from base64 import b64decode
+from flask import Flask, render_template, request, url_for, redirect, abort, flash, current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import asc, func
@@ -39,13 +40,17 @@ db = SQLAlchemy(app)
 
 # Setup Flask-Security
 # Define models
-from models import EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
+from models import Image, EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 
 @babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+def get_img_resource(res):
+    with current_app.open_resource('static/img/' + res) as f:
+        return f.read()
 
 # Create a user to test with
 def upsert_user(email, password="password"):
@@ -140,11 +145,38 @@ def add_role_to_org_member(org_member, role):
     if OrgMemberRole.query.with_parent(org_member).filter_by(name = role.name).first() is None:
         org_member.roles.append(role)
 
-def upsert_organization(org_name):
+def upsert_image_with_data(image, data):
+    if image is None:
+        image = Image()
+
+    image.data = b64decode(data)
+    image.encoding_format = "image/jpeg"
+
+    return image
+
+def upsert_image_with_res(image, res):
+    if image is None:
+        image = Image()
+
+    image.data = get_img_resource(res)
+    image.encoding_format = "image/jpeg"
+
+    return image
+
+def upsert_organization(org_name, street = None, postalCode = None, city = None, latitude = 0, longitude = 0, legal_name = None, url=None, logo_res=None):
     result = Organization.query.filter_by(name = org_name).first()
     if result is None:
         result = Organization(name = org_name)
         db.session.add(result)
+
+    result.legal_name = legal_name
+    result.url = url
+
+    if city is not None:
+        result.location = upsert_location(street, postalCode, city, latitude, longitude)
+
+    if logo_res is not None:
+        result.logo = upsert_image_with_res(result.logo, logo_res)
 
     upsert_org_or_admin_unit_for_organization(result)
     return result
@@ -184,14 +216,23 @@ def upsert_location(street, postalCode, city, latitude = 0, longitude = 0):
 
     return result
 
-def upsert_place(name, street = None, postalCode = None, city = None, latitude = 0, longitude = 0):
+def upsert_place(name, street = None, postalCode = None, city = None, latitude = 0, longitude = 0, url=None, description=None, photo_res=None):
     result = Place.query.filter_by(name = name).first()
     if result is None:
         result = Place(name = name)
         db.session.add(result)
 
+    if url:
+        result.url=url
+
+    if description:
+        result.description=description
+
     if city is not None:
         result.location = upsert_location(street, postalCode, city, latitude, longitude)
+
+    if photo_res is not None:
+        result.photo = upsert_image_with_res(result.photo, photo_res)
 
     return result
 
@@ -222,7 +263,7 @@ def upsert_event_suggestion(event_name, host_name, place_name, start, descriptio
 
     return result
 
-def upsert_event(event_name, host, location_name, start, description, link = None, verified = False, admin_unit = None):
+def upsert_event(event_name, host, location_name, start, description, link = None, verified = False, admin_unit = None, ticket_link=None, photo_res=None):
     if admin_unit is None:
         admin_unit = get_admin_unit('Stadt Goslar')
     place = upsert_place(location_name)
@@ -239,10 +280,14 @@ def upsert_event(event_name, host, location_name, start, description, link = Non
     result.admin_unit = admin_unit
     result.host = host
     result.place = place
+    result.ticket_link = ticket_link
 
     eventDate = EventDate(event_id = result.id, start=start)
     result.dates = []
     result.dates.append(eventDate)
+
+    if photo_res is not None:
+        result.photo = upsert_image_with_res(result.photo, photo_res)
 
     return result
 
@@ -544,6 +589,7 @@ def create_user():
     gz = upsert_organization("Goslarsche Zeitung")
     celtic_inn = upsert_organization("Celtic Inn")
     kloster_woelteringerode = upsert_organization("Kloster Wöltingerode")
+    miners_rock = upsert_organization("Miner's Rock", "Kuhlenkamp 36", "38640", "Goslar", legal_name="Miner's Rock UG (haftungsbeschränkt)", url="https://www.miners-rock.de/", logo_res="minersrock.jpeg")
 
     gmg_admin_unit_org = add_organization_to_admin_unit(gmg, goslar)
     add_role_to_admin_unit_org(gmg_admin_unit_org, admin_unit_org_event_verifier_role)
@@ -552,6 +598,7 @@ def create_user():
     add_role_to_admin_unit_org(gz_admin_unit_org, admin_unit_org_event_verifier_role)
 
     add_organization_to_admin_unit(celtic_inn, goslar)
+    add_organization_to_admin_unit(miners_rock, goslar)
     add_organization_to_admin_unit(upsert_organization("Aids-Hilfe Goslar"), goslar)
     add_organization_to_admin_unit(upsert_organization("Akademie St. Jakobushaus"), goslar)
     add_organization_to_admin_unit(upsert_organization("Aktiv für Hahndorf e. V."), goslar)
@@ -610,7 +657,6 @@ def create_user():
     add_organization_to_admin_unit(upsert_organization("Marktkirche Goslar"), goslar)
     add_organization_to_admin_unit(upsert_organization("Media Markt "), goslar)
     add_organization_to_admin_unit(upsert_organization("MGV Juventa von 1877 e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Miners' Rock!"), goslar)
     add_organization_to_admin_unit(upsert_organization("Mönchehaus Museum"), goslar)
     add_organization_to_admin_unit(upsert_organization("MTV Goslar e. V."), goslar)
     add_organization_to_admin_unit(upsert_organization("Museumsverein Goslar e. V."), goslar)
@@ -650,7 +696,8 @@ def create_user():
     upsert_place("Marktplatz Goslar", 'Markt 6', '38640', 'Goslar', 51.9063601, 10.4249433)
     upsert_place("Burg Vienenburg", 'Burgweg 2', '38690', 'Goslar', 51.9476558, 10.5617368)
     upsert_place("Kurhaus Bad Harzburg", 'Kurhausstraße 11', '38667', 'Bad Harzburg', 51.8758165, 10.5593392)
-    upsert_place("Goslarsche Höfe", 'Okerstraße 32', '38640', 'Goslar', 51.911571, 10.4391331)
+    upsert_place("Goslarsche Höfe", 'Okerstraße 32', '38640', 'Goslar', 51.911571, 10.4391331, 'https://www.goslarsche-hoefe.de/', 'Dir Rosserei', photo_res="schlosserei.jpeg")
+    upsert_place("Schlosserei im Rammelsberg", 'Bergtal 19', '38640', 'Goslar', 51.890527, 10.418880, 'http://www.rammelsberg.de/', 'Die "Schlosserei" ist erprobter Veranstaltungsort und bietet Platz für ca. 700 Besucher. Das Ambiente ist technisch gut ausgestattet und flexibel genug, für jeden Künstler individuell wandelbar zu sein. Dabei lebt nicht nur der Veranstaltungsraum, es wirkt der gesamte Komplex des Rammelsberges und macht den Besuch zu einem unvergeßlichen Erlebnis.', photo_res="schlosserei.jpeg")
 
     # Org or admins
     goslar_ooa = upsert_org_or_admin_unit_for_admin_unit(goslar)
@@ -693,6 +740,10 @@ def create_user():
     jason = upsert_user("jason@test.de")
     jason_celtic_inn_member = add_user_to_organization(jason, celtic_inn)
     add_role_to_org_member(jason_celtic_inn_member, org_member_event_creator_role)
+
+    grzno = upsert_user("grzno@test.de")
+    grzno_miners_rock_member = add_user_to_organization(grzno, miners_rock)
+    add_role_to_org_member(grzno_miners_rock_member, org_member_event_creator_role)
 
     # Events
     berlin = pytz.timezone('Europe/Berlin')
@@ -757,6 +808,15 @@ def create_user():
         'Zum letzten Mal in dieser Saison gibt es einen Hof-Flohmarkt. Wir bieten zwar nicht den größten, aber vielleicht den gemütlichsten Flohmarkt in der Region. Frei von gewerblichen Anbietern, dafür mit Kaffee, Kuchen, Bier und Bratwurst, alles auf unserem schönen Hofgelände.',
         'https://www.goslarsche-hoefe.de/veranstaltungen/10/2175252/2020/10/10/herbst-flohmarkt.html')
 
+    upsert_event('"MINER\'S ROCK" Schickt XVI - Lotte',
+        miners_rock.org_or_adminunit,
+        "Schlosserei im Rammelsberg",
+        create_berlin_date(2020, 10, 31, 19, 0),
+        'Auch im Jahr 2020 wagt sich das MINER’S ROCK wieder an eine Doppel-Schicht. LOTTE wird bei uns das Wochenende am Berg abrunden! Nach der bereits ausverkauften Schicht am 30. Oktober mit Subway to Sally, wird Lotte den Samstagabend zu einem Pop-Erlebnis machen.\nAb Anfang Februar ist sie in den Konzerthallen in Deutschland unterwegs und wird ihr neues Album „Glück“ vorstellen. Glück ist der langersehnte Nachfolger von LOTTEs Debütalbum „Querfeldein". Mit Songs wie der ersten Single „Schau mich nicht so an" oder dem Duett mit Max Giesinger „Auf das was da noch kommt“, durchmisst LOTTE dabei die Höhen und Tiefen des menschlichen Glücksstrebens. Und auch wenn jeder der zwölf Songs seine eigene Geschichte erzählt – sie alle eint die Suche nach der ganz persönlichen Bedeutung dieses großen Wortes. Glück ist kein Werk über einen abgeschlossenen Prozess, sondern ein beeindruckend ehrliches und facettenreiches Album über eine menschliche Suche. „Auf das was da noch kommt“ läuft derzeit in den Radiostationen auf und ab und macht einfach Spaß.\n\nWichtig zu wissen:\n\nEinlass: 19:00 Uhr\nBeginn des Musikprogramms: 20:00 Uhr\nTickets gibt es ab sofort im Shop des MINER‘S ROCK unter www.miners-rock.de und in den Geschäftsstellen der Goslarschen Zeitung.',
+        'https://www.miners-rock.de/xvi-lotte',
+        ticket_link='https://www.regiolights.de/tickets/product/schicht-xvi-lotte',
+        photo_res="lotte.jpeg")
+
     db.session.commit()
 
 # Views
@@ -790,7 +850,7 @@ def organizations():
 
 @app.route('/organization/<int:organization_id>')
 def organization(organization_id):
-    organization = Organization.query.filter_by(id = organization_id).first()
+    organization = Organization.query.get_or_404(organization_id)
     current_user_member = OrgMember.query.with_parent(organization).filter_by(user_id = current_user.id).first() if current_user.is_authenticated else None
 
     ooa = upsert_org_or_admin_unit_for_organization(organization)
@@ -802,10 +862,21 @@ def organization(organization_id):
         can_list_members=can_list_org_members(organization),
         events=events)
 
+@app.route('/image/<int:id>')
+def image(id):
+    image = Image.query.get_or_404(id)
+    return app.response_class(image.data, mimetype=image.encoding_format)
+
 @app.route("/profile")
 @auth_required()
 def profile():
     return render_template('profile.html')
+
+@app.route("/places")
+def places():
+    places = Place.query.order_by(asc(func.lower(Place.name))).all()
+    return render_template('place/list.html',
+        places=places)
 
 @app.route('/place/<int:place_id>')
 def place(place_id):

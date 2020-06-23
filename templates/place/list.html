@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}
+{{ _('Places') }}
+{% endblock %}
+{% block content %}
+
+    <h1>{{ _('Places') }}</h1>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>{{ _('Name') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for place in places %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('place', place_id=place.id) }}">{{ place.name }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
