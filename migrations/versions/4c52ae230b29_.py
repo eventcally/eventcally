@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: ea09dc1839df
+Revision ID: 4c52ae230b29
 Revises: 
-Create Date: 2020-06-23 12:04:01.423454
+Create Date: 2020-06-23 14:55:52.652970
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ea09dc1839df'
+revision = '4c52ae230b29'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,6 +31,12 @@ def upgrade():
     sa.Column('name', sa.String(length=80), nullable=True),
     sa.Column('description', sa.String(length=255), nullable=True),
     sa.Column('permissions', sa.UnicodeText(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
+    op.create_table('eventcategory',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.Unicode(length=255), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
@@ -235,8 +241,10 @@ def upgrade():
     sa.Column('ticket_link', sa.String(length=255), nullable=True),
     sa.Column('verified', sa.Boolean(), nullable=True),
     sa.Column('photo_id', sa.Integer(), nullable=True),
+    sa.Column('category_id', sa.Integer(), nullable=True),
     sa.Column('created_by_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['admin_unit_id'], ['adminunit.id'], ),
+    sa.ForeignKeyConstraint(['category_id'], ['eventcategory.id'], ),
     sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['host_id'], ['org_or_adminunit.id'], ),
     sa.ForeignKeyConstraint(['photo_id'], ['image.id'], ),
@@ -284,6 +292,7 @@ def downgrade():
     op.drop_table('user')
     op.drop_table('role')
     op.drop_table('orgmemberrole')
+    op.drop_table('eventcategory')
     op.drop_table('adminunitorgrole')
     op.drop_table('adminunitmemberrole')
     # ### end Alembic commands ###

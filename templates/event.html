@@ -33,6 +33,12 @@
         <div class="my-4">{{ render_image(event.photo_id) }}</div>
     {% endif %}
 
+    {% if event.category_id %}
+        <div class="my-4">
+            <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {{ _('Event_' + event.category.name) }}</div>
+        </div>
+    {% endif %}
+
     <div class="my-4">{{ event.description }}</div>
 
     {% if event.external_link or event.ticket_link %}

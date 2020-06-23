@@ -196,6 +196,11 @@ class Place(db.Model, TrackableMixin):
     description = Column(UnicodeText())
 
 # Events
+class EventCategory(db.Model):
+    __tablename__ = 'eventcategory'
+    id = Column(Integer(), primary_key=True)
+    name = Column(Unicode(255), nullable=False, unique=True)
+
 class EventSuggestion(db.Model, TrackableMixin):
     __tablename__ = 'eventsuggestion'
     id = Column(Integer(), primary_key=True)
@@ -236,14 +241,12 @@ class Event(db.Model, TrackableMixin):
     verified = Column(Boolean())
     photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
     photo = db.relationship('Image', uselist=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('eventcategory.id'))
+    category = relationship('EventCategory', uselist=False)
 
     dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")
     # wiederkehrende Dates sind zeitlich eingeschränkt
     # beim event müsste man dann auch nochmal start_time (nullable=False) und end_time machen.
-    #photo: image(1200x628)
-    #category: relationship, nullable=False
-    # Facebook: ART_EVENT, BOOK_EVENT, MOVIE_EVENT, FUNDRAISER, VOLUNTEERING, FAMILY_EVENT, FESTIVAL_EVENT, NEIGHBORHOOD, RELIGIOUS_EVENT, SHOPPING, COMEDY_EVENT, MUSIC_EVENT, DANCE_EVENT, NIGHTLIFE, THEATER_EVENT, DINING_EVENT, FOOD_TASTING, CONFERENCE_EVENT, MEETUP, CLASS_EVENT, LECTURE, WORKSHOP, FITNESS, SPORTS_EVENT, OTHER
-    # Kärnten: https://veranstaltungen.kaernten.at/api/v2/categories
     #keywords/tags = Column(String(255)) oder liste?
     #kid_friendly: bool
     # target_group:
@@ -253,9 +256,6 @@ class Event(db.Model, TrackableMixin):
     #
     #
     # = kärnten =
-    # categories: Feste Kategorien sind für Werbung interessant
-    # subEvents: List<Event>, konkrete Events mit allen Eigenschaften, An Event that is part of this event. For example, a conference event includes many presentations, each of which is a subEvent of the conference.
-    # superEvent: siehe oben
     # eventSchedules: RepeatFrequency (wiederkehrende Beschreibung, keine konkreten Daten)
     # allDay: bool
     # status: Scheduled (Default), Cancelled, MovedOnline, Postponed, Rescheduled
@@ -263,7 +263,6 @@ class Event(db.Model, TrackableMixin):
     # attendanceMode: Offline, Online, Mixed
     # isAccessibleForFree: bool
     # typicalAgeRange: string (9-99)
-    # Zusätzliche Organisationen oder Personen: composer, contributor, funder, organizer, sponsor
 
 # (Multiple Events möglich, wiederholend oder frei, dann aber mit endzeit)
 # Facebook Limitations:

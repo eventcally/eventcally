@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-19 15:08+0200\n"
+"POT-Creation-Date: 2020-06-23 15:12+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -18,59 +18,144 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: app.py:869
+#: app.py:52
+msgid "Event_Art"
+msgstr "Kunst"
+
+#: app.py:53
+msgid "Event_Book"
+msgstr "Literatur"
+
+#: app.py:54
+msgid "Event_Movie"
+msgstr "Film"
+
+#: app.py:55
+msgid "Event_Family"
+msgstr "Familie"
+
+#: app.py:56
+msgid "Event_Festival"
+msgstr "Festival"
+
+#: app.py:57
+msgid "Event_Religious"
+msgstr "Religion"
+
+#: app.py:58
+msgid "Event_Shopping"
+msgstr "Shopping"
+
+#: app.py:59
+msgid "Event_Comedy"
+msgstr "Comedy"
+
+#: app.py:60
+msgid "Event_Music"
+msgstr "Musik"
+
+#: app.py:61
+msgid "Event_Dance"
+msgstr "Tanz"
+
+#: app.py:62
+msgid "Event_Nightlife"
+msgstr "Party"
+
+#: app.py:63
+msgid "Event_Theater"
+msgstr "Theater"
+
+#: app.py:64
+msgid "Event_Dining"
+msgstr "Essen"
+
+#: app.py:65
+msgid "Event_Conference"
+msgstr "Konferenz"
+
+#: app.py:66
+msgid "Event_Meetup"
+msgstr "Networking"
+
+#: app.py:67
+msgid "Event_Fitness"
+msgstr "Fitness"
+
+#: app.py:68
+msgid "Event_Sports"
+msgstr "Sport"
+
+#: app.py:69
+msgid "Event_Other"
+msgstr "Sonstiges"
+
+#: app.py:986
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:901
+#: app.py:1018
 msgid "Event suggestion successfully created"
 msgstr "Veranstaltungsvorschlag erfolgreich erstellt"
 
-#: templates/_macros.html:74 templates/event/create.html:6
+#: templates/_macros.html:72 templates/event/create.html:6
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
-#: templates/_macros.html:76 templates/event_suggestion/create.html:6
+#: templates/_macros.html:74 templates/event_suggestion/create.html:6
 msgid "Suggest event"
 msgstr "Veranstaltung vorschlagen"
 
-#: templates/_macros.html:82 templates/event_suggestion/list.html:3
+#: templates/_macros.html:80 templates/event_suggestion/list.html:3
 #: templates/event_suggestion/list.html:7
 msgid "Event suggestions"
 msgstr "Veranstaltungsvorschläge"
 
-#: templates/_macros.html:95 templates/event.html:25
+#: templates/_macros.html:93 templates/event.html:25
 #: templates/event_suggestion/list.html:13
 #: templates/event_suggestion/read.html:18 templates/events.html:16
 msgid "Date"
 msgstr "Datum"
 
-#: templates/_macros.html:96 templates/admin/admin_units.html:18
+#: templates/_macros.html:94 templates/admin/admin_units.html:18
 #: templates/admin_unit.html:45 templates/admin_unit.html:67
 #: templates/admin_units.html:13 templates/event_suggestion/list.html:14
 #: templates/events.html:17 templates/home.html:23 templates/home.html:45
-#: templates/organization.html:42 templates/organizations.html:13
-#: templates/profile.html:15 templates/profile.html:37
+#: templates/organization.html:58 templates/organizations.html:13
+#: templates/place/list.html:13 templates/profile.html:15
+#: templates/profile.html:37
 msgid "Name"
 msgstr "Name"
 
-#: templates/_macros.html:97 templates/event.html:42
+#: templates/_macros.html:95 templates/event.html:52
 #: templates/event/create.html:23 templates/event_suggestion/list.html:15
 #: templates/events.html:18
 msgid "Host"
 msgstr "Veranstalter"
 
-#: templates/_macros.html:98 templates/event.html:26
+#: templates/_macros.html:96 templates/_macros.html:154 templates/event.html:26
 #: templates/event_suggestion/list.html:16
 #: templates/event_suggestion/read.html:41 templates/events.html:19
 msgid "Location"
 msgstr "Ort"
 
-#: templates/_macros.html:118
+#: templates/_macros.html:106 templates/event.html:28 templates/events.html:29
+msgid "Verified"
+msgstr "Verifiziert"
+
+#: templates/_macros.html:119
 msgid "Show all events"
 msgstr "Alle Veranstaltungen anzeigen"
 
-#: templates/admin_unit.html:14 templates/organization.html:14
+#: templates/_macros.html:135
+msgid "Show on Google Maps"
+msgstr "Auf Google Maps anzeigen"
+
+#: templates/_macros.html:145
+msgid "Link"
+msgstr "Link"
+
+#: templates/admin_unit.html:14 templates/organization.html:17
 msgid "Members"
 msgstr "Mitglieder"
 
@@ -82,8 +167,7 @@ msgstr "Organisationen"
 
 #: templates/admin_unit.html:25 templates/events.html:4 templates/events.html:8
 #: templates/home.html:12 templates/layout.html:58
-#: templates/organization.html:17 templates/organization.html:21
-#: templates/place/read.html:24
+#: templates/organization.html:21 templates/place/read.html:16
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -92,7 +176,7 @@ msgid "You are a member of this admin unit."
 msgstr "Du bist Mitglied dieser Verwaltungseinheit"
 
 #: templates/admin_unit.html:46 templates/admin_unit.html:68
-#: templates/home.html:24 templates/home.html:46 templates/organization.html:43
+#: templates/home.html:24 templates/home.html:46 templates/organization.html:59
 #: templates/profile.html:16 templates/profile.html:38
 msgid "Roles"
 msgstr "Rollen"
@@ -112,13 +196,9 @@ msgstr "Diese Veranstaltung als nicht verifiziert markieren"
 msgid "Mark event as verified"
 msgstr "Diese Veranstaltung als verifiziert markieren"
 
-#: templates/event.html:28 templates/events.html:29
-msgid "Verified"
-msgstr "Verifiziert"
-
-#: templates/event.html:36
-msgid "Link"
-msgstr "Link"
+#: templates/event.html:38
+msgid "Category"
+msgstr "Kategorie"
 
 #: templates/home.html:7
 msgid "Hi there!"
@@ -132,20 +212,29 @@ msgstr "Deine Verwaltungseinheiten"
 msgid "Your Organizations"
 msgstr "Deine Organisationen"
 
-#: templates/layout.html:67 templates/profile.html:3
+#: templates/layout.html:59 templates/place/list.html:3
+#: templates/place/list.html:7
+msgid "Places"
+msgstr "Orte"
+
+#: templates/layout.html:68 templates/profile.html:3
 msgid "Profile"
 msgstr "Profil"
 
 #: templates/admin/admin.html:3 templates/admin/admin.html:9
-#: templates/admin/admin_units.html:9 templates/layout.html:70
+#: templates/admin/admin_units.html:9 templates/layout.html:71
 msgid "Admin"
 msgstr "Administration"
 
-#: templates/layout.html:74
+#: templates/layout.html:75
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: templates/organization.html:32
+#: templates/organization.html:13 templates/place/read.html:13
+msgid "Info"
+msgstr "Info"
+
+#: templates/organization.html:48
 msgid "You are a member of this organization."
 msgstr "Du bist Mitglied dieser Organisation"
 
@@ -209,10 +298,6 @@ msgstr "Kontakt Name"
 #: templates/event_suggestion/read.html:82
 msgid "Contact email"
 msgstr "Kontakt Email"
-
-#: templates/place/read.html:18
-msgid "Show on Google Maps"
-msgstr "Auf Google Maps anzeigen"
 
 #~ msgid "You"
 #~ msgstr "Du"

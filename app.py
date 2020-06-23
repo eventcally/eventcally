@@ -40,13 +40,33 @@ db = SQLAlchemy(app)
 
 # Setup Flask-Security
 # Define models
-from models import Image, EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
+from models import EventCategory, Image, EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 
 @babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+def print_dynamic_texts():
+    gettext('Event_Art')
+    gettext('Event_Book')
+    gettext('Event_Movie')
+    gettext('Event_Family')
+    gettext('Event_Festival')
+    gettext('Event_Religious')
+    gettext('Event_Shopping')
+    gettext('Event_Comedy')
+    gettext('Event_Music')
+    gettext('Event_Dance')
+    gettext('Event_Nightlife')
+    gettext('Event_Theater')
+    gettext('Event_Dining')
+    gettext('Event_Conference')
+    gettext('Event_Meetup')
+    gettext('Event_Fitness')
+    gettext('Event_Sports')
+    gettext('Event_Other')
 
 def get_img_resource(res):
     with current_app.open_resource('static/img/' + res) as f:
@@ -263,7 +283,15 @@ def upsert_event_suggestion(event_name, host_name, place_name, start, descriptio
 
     return result
 
-def upsert_event(event_name, host, location_name, start, description, link = None, verified = False, admin_unit = None, ticket_link=None, photo_res=None):
+def upsert_event_category(category_name):
+    result = EventCategory.query.filter_by(name = category_name).first()
+    if result is None:
+        result = EventCategory(name = category_name)
+        db.session.add(result)
+
+    return result
+
+def upsert_event(event_name, host, location_name, start, description, link = None, verified = False, admin_unit = None, ticket_link=None, photo_res=None, category=None):
     if admin_unit is None:
         admin_unit = get_admin_unit('Stadt Goslar')
     place = upsert_place(location_name)
@@ -288,6 +316,9 @@ def upsert_event(event_name, host, location_name, start, description, link = Non
 
     if photo_res is not None:
         result.photo = upsert_image_with_res(result.photo, photo_res)
+
+    if category is not None:
+        result.category = upsert_event_category(category)
 
     return result
 
@@ -568,6 +599,26 @@ def get_event_suggestions_for_current_user():
 
 @app.before_first_request
 def create_user():
+    # Event categories
+    upsert_event_category('Art')
+    upsert_event_category('Book')
+    upsert_event_category('Movie')
+    upsert_event_category('Family')
+    upsert_event_category('Festival')
+    upsert_event_category('Religious')
+    upsert_event_category('Shopping')
+    upsert_event_category('Comedy')
+    upsert_event_category('Music')
+    upsert_event_category('Dance')
+    upsert_event_category('Nightlife')
+    upsert_event_category('Theater')
+    upsert_event_category('Dining')
+    upsert_event_category('Conference')
+    upsert_event_category('Meetup')
+    upsert_event_category('Fitness')
+    upsert_event_category('Sports')
+    upsert_event_category('Other')
+
     # Admin units
     goslar = upsert_admin_unit('Stadt Goslar')
     harzburg = upsert_admin_unit('Stadt Bad Harzburg')
@@ -815,7 +866,8 @@ def create_user():
         'Auch im Jahr 2020 wagt sich das MINER’S ROCK wieder an eine Doppel-Schicht. LOTTE wird bei uns das Wochenende am Berg abrunden! Nach der bereits ausverkauften Schicht am 30. Oktober mit Subway to Sally, wird Lotte den Samstagabend zu einem Pop-Erlebnis machen.\nAb Anfang Februar ist sie in den Konzerthallen in Deutschland unterwegs und wird ihr neues Album „Glück“ vorstellen. Glück ist der langersehnte Nachfolger von LOTTEs Debütalbum „Querfeldein". Mit Songs wie der ersten Single „Schau mich nicht so an" oder dem Duett mit Max Giesinger „Auf das was da noch kommt“, durchmisst LOTTE dabei die Höhen und Tiefen des menschlichen Glücksstrebens. Und auch wenn jeder der zwölf Songs seine eigene Geschichte erzählt – sie alle eint die Suche nach der ganz persönlichen Bedeutung dieses großen Wortes. Glück ist kein Werk über einen abgeschlossenen Prozess, sondern ein beeindruckend ehrliches und facettenreiches Album über eine menschliche Suche. „Auf das was da noch kommt“ läuft derzeit in den Radiostationen auf und ab und macht einfach Spaß.\n\nWichtig zu wissen:\n\nEinlass: 19:00 Uhr\nBeginn des Musikprogramms: 20:00 Uhr\nTickets gibt es ab sofort im Shop des MINER‘S ROCK unter www.miners-rock.de und in den Geschäftsstellen der Goslarschen Zeitung.',
         'https://www.miners-rock.de/xvi-lotte',
         ticket_link='https://www.regiolights.de/tickets/product/schicht-xvi-lotte',
-        photo_res="lotte.jpeg")
+        photo_res="lotte.jpeg",
+        category='Music')
 
     db.session.commit()
 
