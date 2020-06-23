@@ -48,6 +48,11 @@ security = Security(app, user_datastore)
 def get_locale():
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
+def get_event_category_name(category):
+    return lazy_gettext('Event_' + category.name)
+
+app.jinja_env.filters['event_category_name'] = lambda u: get_event_category_name(u)
+
 def print_dynamic_texts():
     gettext('Event_Art')
     gettext('Event_Book')
@@ -165,12 +170,12 @@ def add_role_to_org_member(org_member, role):
     if OrgMemberRole.query.with_parent(org_member).filter_by(name = role.name).first() is None:
         org_member.roles.append(role)
 
-def upsert_image_with_data(image, data):
+def upsert_image_with_data(image, data, encoding_format = "image/jpeg"):
     if image is None:
         image = Image()
 
-    image.data = b64decode(data)
-    image.encoding_format = "image/jpeg"
+    image.data = data
+    image.encoding_format = encoding_format
 
     return image
 
@@ -319,6 +324,8 @@ def upsert_event(event_name, host, location_name, start, description, link = Non
 
     if category is not None:
         result.category = upsert_event_category(category)
+    else:
+        result.category = upsert_event_category('Other')
 
     return result
 
@@ -969,22 +976,30 @@ def event_create():
     if not can_create_event():
         abort(401)
 
-    form = CreateEventForm()
+    form = CreateEventForm(category_id=upsert_event_category('Other').id)
 
     form.host_id.choices = sorted([(ooa.id, ooa.organization.name if ooa.organization is not None else ooa.admin_unit.name) for ooa in get_event_hosts()], key=lambda ooa: ooa[1])
     form.host_id.choices.insert(0, (0, ''))
     form.place_id.choices = [(p.id, p.name) for p in Place.query.order_by('name')]
     form.place_id.choices.insert(0, (0, ''))
+    form.category_id.choices = sorted([(c.id, get_event_category_name(c)) for c in EventCategory.query.all()], key=lambda ooa: ooa[1])
 
     if form.validate_on_submit():
         event = Event()
         form.populate_obj(event)
+
         event.admin_unit = get_admin_unit('Stadt Goslar')
+
         eventDate = EventDate(event_id = event.id, start=form.start.data)
         event.dates.append(eventDate)
+
+        if form.photo_file.data:
+            fs = form.photo_file.data
+            event.photo = upsert_image_with_data(event.photo, fs.read(), fs.content_type)
+
         db.session.commit()
-        flash(gettext('Event successfully created'))
-        return redirect(url_for('events'))
+        flash(gettext('Event successfully created'), 'success')
+        return redirect(url_for('event', event_id=event.id))
     return render_template('event/create.html', form=form)
 
 @app.route("/eventsuggestions")
@@ -1015,7 +1030,7 @@ def event_suggestion_create():
         eventDate = EventSuggestionDate(event_suggestion_id = event.id, start=form.start.data)
         event.dates.append(eventDate)
         db.session.commit()
-        flash(gettext('Event suggestion successfully created'))
+        flash(gettext('Event suggestion successfully created'), 'success')
         return redirect(url_for('home'))
     return render_template('event_suggestion/create.html', form=form)
 

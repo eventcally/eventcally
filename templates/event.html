@@ -35,7 +35,7 @@
 
     {% if event.category_id %}
         <div class="my-4">
-            <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {{ _('Event_' + event.category.name) }}</div>
+            <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {{ event.category | event_category_name }}</div>
         </div>
     {% endif %}
 

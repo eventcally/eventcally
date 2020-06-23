@@ -241,7 +241,7 @@ class Event(db.Model, TrackableMixin):
     verified = Column(Boolean())
     photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
     photo = db.relationship('Image', uselist=False)
-    category_id = db.Column(db.Integer, db.ForeignKey('eventcategory.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('eventcategory.id'), nullable=False)
     category = relationship('EventCategory', uselist=False)
 
     dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")

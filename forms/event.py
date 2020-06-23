@@ -1,5 +1,6 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField, TextAreaField, SelectField
 from wtforms.fields.html5 import DateTimeLocalField
 from wtforms.validators import DataRequired, Optional
@@ -14,3 +15,6 @@ class CreateEventForm(FlaskForm):
 
     place_id = SelectField(lazy_gettext('Place'), validators=[DataRequired()], coerce=int)
     host_id = SelectField(lazy_gettext('Host'), validators=[DataRequired()], coerce=int)
+    category_id = SelectField(lazy_gettext('Category'), validators=[DataRequired()], coerce=int)
+
+    photo_file = FileField(lazy_gettext('Photo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])

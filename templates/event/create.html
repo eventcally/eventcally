@@ -4,7 +4,7 @@
 {% block content %}
 
 <h1>{{ _('Create event') }}</h1>
-<form action="{{ url_for('event_create') }}" method="POST">
+<form action="{{ url_for('event_create') }}" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
   <div class="card mb-4">
@@ -41,6 +41,8 @@
       {{ _('Additional information') }}
     </div>
     <div class="card-body">
+      {{ render_field_with_errors(form.photo_file) }}
+      {{ render_field_with_errors(form.category_id, class="autocomplete w-100") }}
       {{ render_field_with_errors(form.external_link) }}
       {{ render_field_with_errors(form.ticket_link) }}
     </div>
