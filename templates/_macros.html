@@ -69,9 +69,9 @@
 {% macro render_events_sub_menu(user_can_create_event, user_can_list_event_suggestion) %}
 <div class="my-4">
 {% if user_can_create_event %}
-  <a class="btn btn-primary" href="{{ url_for('event_create') }}" role="button"><i class="fa fa-lock"></i> {{ _('Create event') }}</a>
+  <a class="btn btn-primary my-1" href="{{ url_for('event_create') }}" role="button"><i class="fa fa-lock"></i> {{ _('Create event') }}</a>
 {% endif %}
-  <a class="btn btn-secondary" href="{{ url_for('event_suggestion_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Suggest event') }}</a>
+  <a class="btn btn-secondary my-1" href="{{ url_for('event_suggestion_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Suggest event') }}</a>
 </div>
 
 {% if user_can_list_event_suggestion %}
