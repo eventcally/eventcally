@@ -20,17 +20,17 @@
                 </tr>
             </thead>
             <tbody>
-                {% for event in events %}
+                {% for date in dates %}
                     <tr>
-                        <td>{{ event.dates[0].start | datetimeformat }}</td>
+                        <td>{{ date.start | datetimeformat }}</td>
                         <td>
-                            <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
-                            {% if event.verified %}
+                            <a href="{{ url_for('event', event_id=date.event.id) }}">{{ date.event.name }}</a>
+                            {% if date.event.verified %}
                             <i class="fa fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i>
                             {% endif %}
                         </td>
-                        <td>{{ render_ooa(event.host) }}</td>
-                        <td>{{ render_place(event.place) }}</td>
+                        <td>{{ render_ooa(date.event.host) }}</td>
+                        <td>{{ render_place(date.event.place) }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

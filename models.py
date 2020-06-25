@@ -244,6 +244,7 @@ class Event(db.Model, TrackableMixin):
     category_id = db.Column(db.Integer, db.ForeignKey('eventcategory.id'), nullable=False)
     category = relationship('EventCategory', uselist=False)
 
+    recurrence_rule = Column(UnicodeText())
     dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")
     # wiederkehrende Dates sind zeitlich eingeschränkt
     # beim event müsste man dann auch nochmal start_time (nullable=False) und end_time machen.

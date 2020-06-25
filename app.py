@@ -11,6 +11,7 @@ from flask_principal import Permission
 from datetime import datetime
 import pytz
 from urllib.parse import quote_plus
+from dateutil.rrule import rrulestr, rruleset, rrule
 
 # Create app
 app = Flask(__name__)
@@ -43,6 +44,10 @@ db = SQLAlchemy(app)
 from models import EventCategory, Image, EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
+
+berlin_tz = pytz.timezone('Europe/Berlin')
+now = datetime.now(tz=berlin_tz)
+today = datetime(now.year, now.month, now.day, tzinfo=now.tzinfo)
 
 @babel.localeselector
 def get_locale():
@@ -207,7 +212,7 @@ def upsert_organization(org_name, street = None, postalCode = None, city = None,
     return result
 
 def create_berlin_date(year, month, day, hour, minute = 0):
-    return pytz.timezone('Europe/Berlin').localize(datetime(year, month, day, hour=hour, minute=minute))
+    return berlin_tz.localize(datetime(year, month, day, hour=hour, minute=minute))
 
 def upsert_actor_for_admin_unit(admin_unit_id):
     result = Actor.query.filter_by(admin_unit_id = admin_unit_id).first()
@@ -296,10 +301,15 @@ def upsert_event_category(category_name):
 
     return result
 
-def upsert_event(event_name, host, location_name, start, description, link = None, verified = False, admin_unit = None, ticket_link=None, photo_res=None, category=None):
+def upsert_event(event_name, host, location_name, start, description, link = None, verified = False, admin_unit = None, ticket_link=None, photo_res=None, category=None, recurrence_rule=None):
     if admin_unit is None:
         admin_unit = get_admin_unit('Stadt Goslar')
     place = upsert_place(location_name)
+
+    if category is not None:
+        category_object = upsert_event_category(category)
+    else:
+        category_object = upsert_event_category('Other')
 
     result = Event.query.filter_by(name = event_name).first()
     if result is None:
@@ -314,18 +324,24 @@ def upsert_event(event_name, host, location_name, start, description, link = Non
     result.host = host
     result.place = place
     result.ticket_link = ticket_link
+    result.category = category_object
 
-    eventDate = EventDate(event_id = result.id, start=start)
     result.dates = []
-    result.dates.append(eventDate)
+
+    if recurrence_rule is not None:
+        result.recurrence_rule = recurrence_rule
+        start_wo_tz = start.replace(tzinfo=None)
+        rule_set = rrulestr(recurrence_rule, forceset=True, dtstart=start_wo_tz)
+        for rule_date in list(rule_set):
+            rule_data_w_tz = berlin_tz.localize(rule_date)
+            eventDate = EventDate(event_id = result.id, start=rule_data_w_tz)
+            result.dates.append(eventDate)
+    else:
+        eventDate = EventDate(event_id = result.id, start=start)
+        result.dates.append(eventDate)
 
     if photo_res is not None:
         result.photo = upsert_image_with_res(result.photo, photo_res)
-
-    if category is not None:
-        result.category = upsert_event_category(category)
-    else:
-        result.category = upsert_event_category('Other')
 
     return result
 
@@ -625,6 +641,7 @@ def create_user():
     upsert_event_category('Fitness')
     upsert_event_category('Sports')
     upsert_event_category('Other')
+    db.session.commit()
 
     # Admin units
     goslar = upsert_admin_unit('Stadt Goslar')
@@ -643,7 +660,7 @@ def create_user():
 
     # Organizations
     admin_unit_org_event_verifier_role = upsert_admin_unit_org_role('event_verifier', ['event:verify', "event:create"])
-    gmg = upsert_organization("GOSLAR marketing gmbh")
+    gmg = upsert_organization("GOSLAR marketing gmbh", "Markt 7", "38640", "Goslar", url='https://www.goslar.de/kontakt', logo_res="gmg.jpeg")
     gz = upsert_organization("Goslarsche Zeitung")
     celtic_inn = upsert_organization("Celtic Inn")
     kloster_woelteringerode = upsert_organization("Kloster Wöltingerode")
@@ -748,13 +765,13 @@ def create_user():
     upsert_place('Mehrzweckhalle Hahndorf')
     upsert_place('Sportplatz Hahndorf')
     upsert_place('St. Kilian Hahndorf')
-    upsert_place("Tourist-Information Goslar", 'Markt 7', '38644', 'Goslar', 51.906172, 10.429346)
+    upsert_place("Tourist-Information Goslar", 'Markt 7', '38644', 'Goslar', 51.906172, 10.429346, 'http://www.goslar.de/kontakt', "Zentral am Marktplatz gelegen, ist die Tourist-Information die erste Anlaufstelle für Goslar-Besucher. 14 motivierte und serviceorientierte Mitarbeiter sorgen dafür, dass sich der Gast rundherum wohl fühlt. Die ständige Qualitätsverbesserung und der flexible Umgang mit den Kundenwünschen sind Teil unserer Leitsätze.", 'touristinfo.jpeg')
     upsert_place("Nagelkopf am Rathaus Goslar", 'Marktkirchhof 3', '38640', 'Goslar', 51.9055939, 10.4263286)
     upsert_place("Kloster Wöltingerode", 'Wöltingerode 3', '38690', 'Goslar', 51.9591156, 10.5371815)
     upsert_place("Marktplatz Goslar", 'Markt 6', '38640', 'Goslar', 51.9063601, 10.4249433)
     upsert_place("Burg Vienenburg", 'Burgweg 2', '38690', 'Goslar', 51.9476558, 10.5617368)
     upsert_place("Kurhaus Bad Harzburg", 'Kurhausstraße 11', '38667', 'Bad Harzburg', 51.8758165, 10.5593392)
-    upsert_place("Goslarsche Höfe", 'Okerstraße 32', '38640', 'Goslar', 51.911571, 10.4391331, 'https://www.goslarsche-hoefe.de/', 'Dir Rosserei', photo_res="schlosserei.jpeg")
+    upsert_place("Goslarsche Höfe", 'Okerstraße 32', '38640', 'Goslar', 51.911571, 10.4391331, 'https://www.goslarsche-hoefe.de/')
     upsert_place("Schlosserei im Rammelsberg", 'Bergtal 19', '38640', 'Goslar', 51.890527, 10.418880, 'http://www.rammelsberg.de/', 'Die "Schlosserei" ist erprobter Veranstaltungsort und bietet Platz für ca. 700 Besucher. Das Ambiente ist technisch gut ausgestattet und flexibel genug, für jeden Künstler individuell wandelbar zu sein. Dabei lebt nicht nur der Veranstaltungsraum, es wirkt der gesamte Komplex des Rammelsberges und macht den Besuch zu einem unvergeßlichen Erlebnis.', photo_res="schlosserei.jpeg")
 
     # Org or admins
@@ -804,7 +821,6 @@ def create_user():
     add_role_to_org_member(grzno_miners_rock_member, org_member_event_creator_role)
 
     # Events
-    berlin = pytz.timezone('Europe/Berlin')
     upsert_event("Vienenburger Seefest",
         goslar_ooa,
         "Vienenburger See",
@@ -814,16 +830,20 @@ def create_user():
         True)
 
     upsert_event("Tausend Schritte durch die Altstadt",
-        goslar_ooa,
+        gmg_ooa,
         "Tourist-Information Goslar",
-        create_berlin_date(2020, 9, 1, 10, 0),
-        'Tausend Schritte durch die Altstadt Erleben Sie einen geführten Stadtrundgang durch den historischen Stadtkern. Lassen Sie sich von Fachwerkromantik und kaiserlichen Bauten inmitten der UNESCO-Welterbestätte verzaubern. ganzjährig (außer 01.01.) täglich 10:00 Uhr Treffpunkt: Tourist-Information am Marktplatz (Dauer ca. 2 Std.) Erwachsene 8,00 Euro Inhaber Gastkarte Goslar/Kurkarte Hahnenklee 7,00 Euro Schüler/Studenten 6,00 Euro')
+        create_berlin_date(2020, 1, 2, 10, 0),
+        'Tausend Schritte durch die Altstadt Erleben Sie einen geführten Stadtrundgang durch den historischen Stadtkern. Lassen Sie sich von Fachwerkromantik und kaiserlichen Bauten inmitten der UNESCO-Welterbestätte verzaubern. ganzjährig (außer 01.01.) täglich 10:00 Uhr Treffpunkt: Tourist-Information am Marktplatz (Dauer ca. 2 Std.) Erwachsene 8,00 Euro Inhaber Gastkarte Goslar/Kurkarte Hahnenklee 7,00 Euro Schüler/Studenten 6,00 Euro',
+        photo_res="tausend.jpeg",
+        recurrence_rule="FREQ=DAILY;UNTIL=20201231T235959")
 
     upsert_event("Spaziergang am Nachmittag",
-        goslar_ooa,
+        gmg_ooa,
         "Tourist-Information Goslar",
-        create_berlin_date(2020, 9, 1, 13, 30),
-        'Spaziergang am Nachmittag Begeben Sie sich auf einen geführten Rundgang durch die historische Altstadt. Entdecken Sie malerische Fachwerkgassen und imposante Bauwerke bei einem Streifzug durch das UNESCO-Weltkulturerbe. April – Oktober und 25.11. – 30.12. Montag – Samstag 13:30 Uhr Treffpunkt: Tourist-Information am Marktplatz (Dauer ca. 1,5 Std.) Erwachsene 7,00 Euro Inhaber Gastkarte Goslar/Kurkarte Hahnenklee 6,00 Euro Schüler/Studenten 5,00 Euro')
+        create_berlin_date(2020, 4, 1, 13, 30),
+        'Spaziergang am Nachmittag Begeben Sie sich auf einen geführten Rundgang durch die historische Altstadt. Entdecken Sie malerische Fachwerkgassen und imposante Bauwerke bei einem Streifzug durch das UNESCO-Weltkulturerbe. April – Oktober und 25.11. – 30.12. Montag – Samstag 13:30 Uhr Treffpunkt: Tourist-Information am Marktplatz (Dauer ca. 1,5 Std.) Erwachsene 7,00 Euro Inhaber Gastkarte Goslar/Kurkarte Hahnenklee 6,00 Euro Schüler/Studenten 5,00 Euro',
+        photo_res="nachmittag.jpeg",
+        recurrence_rule="""RRULE:FREQ=WEEKLY;UNTIL=20201031T235959;BYDAY=MO,TU,WE,TH,FR,SA""")
 
     upsert_event("Ein Blick hinter die Kulissen - Rathausbaustelle",
         goslar_ooa,
@@ -946,9 +966,9 @@ def place(place_id):
 
 @app.route("/events")
 def events():
-    events = Event.query.all()
+    dates = EventDate.query.filter(EventDate.start >= today).order_by(EventDate.start).all()
     return render_template('events.html',
-        events=events,
+        dates=dates,
         user_can_create_event=can_create_event(),
         user_can_list_event_suggestion=can_list_event_suggestion())
 

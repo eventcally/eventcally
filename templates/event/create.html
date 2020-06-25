@@ -4,6 +4,7 @@
 {% block content %}
 
 <h1>{{ _('Create event') }}</h1>
+
 <form action="{{ url_for('event_create') }}" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
@@ -15,6 +16,11 @@
       {{ render_field_with_errors(form.name) }}
       {{ render_field_with_errors(form.description) }}
       {{ render_field_with_errors(form.start) }}
+
+      <!-- <textarea name="repeat"></textarea>
+      <script type="text/javascript">
+          $("textarea[name=repeat]").recurrenceinput({startField: "start"});
+      </script> -->
     </div>
   </div>
 
