@@ -28,7 +28,7 @@
 
     {{ render_event_props(event, event.dates[0]) }}
 
-    {% if event.dates|length > 1 %}
+    {% if event.dates|length > 0 %}
         <div class="card mt-4">
             <div class="card-header">
                 {{ _('Event Dates') }}

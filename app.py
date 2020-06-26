@@ -1,6 +1,6 @@
 import os
 from base64 import b64decode
-from flask import Flask, render_template, request, url_for, redirect, abort, flash, current_app
+from flask import jsonify, Flask, render_template, request, url_for, redirect, abort, flash, current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import asc, func
@@ -10,8 +10,10 @@ from flask_babelex import Babel, gettext, lazy_gettext, format_datetime
 from flask_principal import Permission
 from datetime import datetime
 import pytz
+import json
 from urllib.parse import quote_plus
 from dateutil.rrule import rrulestr, rruleset, rrule
+from jsonld import DateTimeEncoder, get_sd_for_event_date
 
 # Create app
 app = Flask(__name__)
@@ -35,6 +37,8 @@ app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Berlin'
 babel = Babel(app)
 
 app.jinja_env.filters['quote_plus'] = lambda u: quote_plus(u)
+
+app.json_encoder = DateTimeEncoder
 
 # create db
 db = SQLAlchemy(app)
@@ -326,7 +330,7 @@ def upsert_event(event_name, host, location_name, start, description, link = Non
     result.ticket_link = ticket_link
     result.category = category_object
 
-    result.dates = []
+    new_dates = list()
 
     if recurrence_rule is not None:
         result.recurrence_rule = recurrence_rule
@@ -335,10 +339,13 @@ def upsert_event(event_name, host, location_name, start, description, link = Non
         for rule_date in list(rule_set):
             rule_data_w_tz = berlin_tz.localize(rule_date)
             eventDate = EventDate(event_id = result.id, start=rule_data_w_tz)
-            result.dates.append(eventDate)
+            new_dates.append(eventDate)
     else:
         eventDate = EventDate(event_id = result.id, start=start)
-        result.dates.append(eventDate)
+        new_dates.append(eventDate)
+
+    if len(new_dates) != len(result.dates):
+        result.dates = new_dates
 
     if photo_res is not None:
         result.photo = upsert_image_with_res(result.photo, photo_res)
@@ -907,6 +914,10 @@ def home():
         admin_unit_members=admin_unit_members,
         organization_members=organization_members)
 
+@app.route("/developer")
+def developer():
+    return render_template('developer/read.html')
+
 @app.route("/admin_units")
 def admin_units():
     return render_template('admin_units.html',
@@ -993,10 +1004,29 @@ def event_dates():
     return render_template('event_date/list.html',
         dates=dates)
 
-@app.route('/eventdate/<int:id>', methods=('GET', 'POST'))
+@app.route('/eventdate/<int:id>')
 def event_date(id):
     event_date = EventDate.query.get_or_404(id)
-    return render_template('event_date/read.html', event_date=event_date)
+    structured_data = json.dumps(get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder)
+    return render_template('event_date/read.html',
+        event_date=event_date,
+        structured_data=structured_data)
+
+@app.route("/api/events")
+def api_events():
+    dates = EventDate.query.filter(EventDate.start >= today).order_by(EventDate.start).all()
+    structured_events = list()
+    for event_date in dates:
+        structured_event = get_sd_for_event_date(event_date)
+        structured_event.pop('@context', None)
+        structured_events.append(structured_event)
+
+    result = {}
+    result["@context"] = "https://schema.org"
+    result["@type"] = "Project"
+    result["name"] = "Prototyp"
+    result['event'] = structured_events
+    return jsonify(result)
 
 from forms.event import CreateEventForm
 from forms.event_suggestion import CreateEventSuggestionForm

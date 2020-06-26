@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_event_props, render_image, render_ooa_with_link, render_place, render_link_prop %}
+{% block title %}
+{{ _('Developer') }}
+{% endblock %}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">{{ _('Developer') }}</li>
+    </ol>
+</nav>
+
+<h2>Schema.org</h2>
+<ul>
+    <li>Format: <a href="https://schema.org/Project" target="_blank">https://schema.org/Project</a></li>
+    <li><a href="{{ url_for('api_events') }}" target="_blank">Public Endpoint</a> for all events</li>
+</ul>
+
+
+{% endblock %}
