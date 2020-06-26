@@ -966,9 +966,9 @@ def place(place_id):
 
 @app.route("/events")
 def events():
-    dates = EventDate.query.filter(EventDate.start >= today).order_by(EventDate.start).all()
+    events = Event.query.all()
     return render_template('events.html',
-        dates=dates,
+        events=events,
         user_can_create_event=can_create_event(),
         user_can_list_event_suggestion=can_list_event_suggestion())
 
@@ -986,6 +986,17 @@ def event(event_id):
         db.session.commit()
 
     return render_template('event.html', event=event, user_can_verify_event=user_can_verify_event)
+
+@app.route("/eventdates")
+def event_dates():
+    dates = EventDate.query.filter(EventDate.start >= today).order_by(EventDate.start).all()
+    return render_template('event_date/list.html',
+        dates=dates)
+
+@app.route('/eventdate/<int:id>', methods=('GET', 'POST'))
+def event_date(id):
+    event_date = EventDate.query.get_or_404(id)
+    return render_template('event_date/read.html', event_date=event_date)
 
 from forms.event import CreateEventForm
 from forms.event_suggestion import CreateEventSuggestionForm

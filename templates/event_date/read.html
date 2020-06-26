@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_event_props, render_image, render_ooa_with_link, render_place, render_link_prop %}
+{% set event = event_date.event %}
+{% block title %}
+{{ event.name }}
+{% endblock %}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('events') }}">{{ _('Events') }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ event_date.start | datetimeformat('short') }}</li>
+    </ol>
+</nav>
+
+    {{ render_event_props(event, event_date) }}
+
+{% endblock %}

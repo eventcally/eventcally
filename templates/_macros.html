@@ -159,6 +159,37 @@
 
 {% macro render_image(image_id) %}
 {% if image_id %}
-<img src="{{ url_for('image', id=image_id) }}"/>
+<img src="{{ url_for('image', id=image_id) }}" class="img-fluid rounded" />
 {% endif %}
+{% endmacro %}
+
+{% macro render_event_props(event, date) %}
+  <div class="card">
+    <div class="card-header">
+      {{ event.name }}
+    </div>
+
+    <div class="card-body">
+      <div><i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i> {{ date.start | datetimeformat }}</div>
+      <div><i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i> <a href="{{ url_for('place', place_id=event.place.id) }}">{{ render_place(event.place) }}</a></div>
+      {% if event.verified %}
+      <div><i class="fa fa-fw fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i> {{ _('Verified') }}</div>
+      {% endif %}
+
+      {% if event.photo_id %}
+        <div class="my-4">{{ render_image(event.photo_id) }}</div>
+      {% endif %}
+
+      <div class="my-4">{{ event.description }}</div>
+
+      <div class="mt-4">
+        {{ render_link_prop(event.external_link) }}
+        {{ render_link_prop(event.ticket_link) }}
+        {% if event.category_id %}
+          <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {{ event.category | event_category_name }}</div>
+        {% endif %}
+        <div><i class="fa fa-fw fa-users" data-toggle="tooltip" title="{{ _('Host') }}"></i> {{ render_ooa_with_link(event.host) }}</div>
+      </div>
+    </div>
+  </div>
 {% endmacro %}

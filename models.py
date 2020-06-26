@@ -246,31 +246,7 @@ class Event(db.Model, TrackableMixin):
 
     recurrence_rule = Column(UnicodeText())
     dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")
-    # wiederkehrende Dates sind zeitlich eingeschränkt
-    # beim event müsste man dann auch nochmal start_time (nullable=False) und end_time machen.
-    #keywords/tags = Column(String(255)) oder liste?
-    #kid_friendly: bool
-    # target_group:
-    #     age_from: int
-    #     age_to: int
-    #     mainly_for_tourists: bool
-    #
-    #
-    # = kärnten =
-    # eventSchedules: RepeatFrequency (wiederkehrende Beschreibung, keine konkreten Daten)
-    # allDay: bool
-    # status: Scheduled (Default), Cancelled, MovedOnline, Postponed, Rescheduled
-    # previousStartDates: DateTime (see status)
-    # attendanceMode: Offline, Online, Mixed
-    # isAccessibleForFree: bool
-    # typicalAgeRange: string (9-99)
 
-# (Multiple Events möglich, wiederholend oder frei, dann aber mit endzeit)
-# Facebook Limitations:
-# An event can't last longer than a day
-# An event can't span more than 52 weeks
-# Each event can have a max of 52 instances
-# Once the event has begun, you can't add instances totaling more than 52 weeks after the initial start date
 class EventDate(db.Model):
     __tablename__ = 'eventdate'
     id = Column(Integer(), primary_key=True)
