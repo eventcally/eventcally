@@ -1,4 +1,5 @@
 import datetime
+import decimal
 from json import JSONEncoder
 from flask import url_for
 
@@ -8,6 +9,8 @@ class DateTimeEncoder(JSONEncoder):
         def default(self, obj):
             if isinstance(obj, (datetime.date, datetime.datetime)):
                 return obj.isoformat()
+            if isinstance(obj, decimal.Decimal):
+                return float(obj)
 
 def get_sd_for_org(organization):
     result = {}
@@ -49,6 +52,13 @@ def get_sd_for_location(location):
 
     return result
 
+def get_sd_for_geo(location):
+    result = {}
+    result["@type"] = "GeoCoordinates"
+    result["latitude"] = location.latitude
+    result["longitude"] = location.longitude
+    return result
+
 def get_sd_for_place(place):
     result = {}
     result["@type"] = "Place"
@@ -58,6 +68,9 @@ def get_sd_for_place(place):
 
     if place.location:
         result["address"] = get_sd_for_location(place.location)
+
+        if place.location.latitude != 0:
+            result["geo"] = get_sd_for_geo(place.location)
 
     if place.photo_id:
         result["photo"] = url_for('image', id=place.photo_id)
