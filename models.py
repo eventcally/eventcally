@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import CheckConstraint
 from sqlalchemy import UniqueConstraint, Boolean, DateTime, Column, Integer, String, ForeignKey, Unicode, UnicodeText, Numeric, LargeBinary
 from flask_security import UserMixin, RoleMixin
+from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 import datetime
 
 ### Base
@@ -58,6 +59,11 @@ class User(db.Model, UserMixin):
     confirmed_at = Column(DateTime())
     roles = relationship('Role', secondary='roles_users',
                          backref=backref('users', lazy='dynamic'))
+
+class OAuth(OAuthConsumerMixin, db.Model):
+    provider_user_id = Column(String(256), unique=True, nullable=False)
+    user_id = Column(Integer(), ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User')
 
 ### Organization
 

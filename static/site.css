@@ -77,6 +77,11 @@ tr.table-line-through td {
     z-index: 1025 !important;
 }
 
+.btn-google {
+    color: white;
+    background-color: #ea4335;
+}
+
 @media (max-width: 320px) {
     td, th {
         word-break: break-all;

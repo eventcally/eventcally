@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-26 12:23+0200\n"
+"POT-Creation-Date: 2020-07-01 08:43+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -18,89 +18,93 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: app.py:61
+#: app.py:66
 msgid "Event_"
 msgstr ""
 
-#: app.py:66
+#: app.py:71
 msgid "Event_Art"
 msgstr "Kunst"
 
-#: app.py:67
+#: app.py:72
 msgid "Event_Book"
 msgstr "Literatur"
 
-#: app.py:68
+#: app.py:73
 msgid "Event_Movie"
 msgstr "Film"
 
-#: app.py:69
+#: app.py:74
 msgid "Event_Family"
 msgstr "Familie"
 
-#: app.py:70
+#: app.py:75
 msgid "Event_Festival"
 msgstr "Festival"
 
-#: app.py:71
+#: app.py:76
 msgid "Event_Religious"
 msgstr "Religion"
 
-#: app.py:72
+#: app.py:77
 msgid "Event_Shopping"
 msgstr "Shopping"
 
-#: app.py:73
+#: app.py:78
 msgid "Event_Comedy"
 msgstr "Comedy"
 
-#: app.py:74
+#: app.py:79
 msgid "Event_Music"
 msgstr "Musik"
 
-#: app.py:75
+#: app.py:80
 msgid "Event_Dance"
 msgstr "Tanz"
 
-#: app.py:76
+#: app.py:81
 msgid "Event_Nightlife"
 msgstr "Party"
 
-#: app.py:77
+#: app.py:82
 msgid "Event_Theater"
 msgstr "Theater"
 
-#: app.py:78
+#: app.py:83
 msgid "Event_Dining"
 msgstr "Essen"
 
-#: app.py:79
+#: app.py:84
 msgid "Event_Conference"
 msgstr "Konferenz"
 
-#: app.py:80
+#: app.py:85
 msgid "Event_Meetup"
 msgstr "Networking"
 
-#: app.py:81
+#: app.py:86
 msgid "Event_Fitness"
 msgstr "Fitness"
 
-#: app.py:82
+#: app.py:87
 msgid "Event_Sports"
 msgstr "Sport"
 
-#: app.py:83
+#: app.py:88
 msgid "Event_Other"
 msgstr "Sonstiges"
 
-#: app.py:1062
+#: app.py:1067
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:1094
+#: app.py:1099
 msgid "Event suggestion successfully created"
 msgstr "Veranstaltungsvorschlag erfolgreich erstellt"
+
+#: oauth.py:41 oauth.py:54
+msgid "Successfully signed in."
+msgstr "Erfolgreich eingeloggt."
 
 #: templates/_macros.html:72 templates/event/create.html:6
 msgid "Create event"
@@ -163,6 +167,10 @@ msgstr "Link"
 #: templates/_macros.html:189
 msgid "Category"
 msgstr "Kategorie"
+
+#: templates/_macros.html:198
+msgid "Sign in with Google"
+msgstr "Mit Google anmelden"
 
 #: templates/admin_unit.html:14 templates/organization.html:17
 msgid "Members"

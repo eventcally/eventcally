@@ -193,3 +193,7 @@
     </div>
   </div>
 {% endmacro %}
+
+{% macro render_google_sign_in_button() %}
+<a href="{{ url_for('google.login') }}" class="btn btn-google" role="button"><i class="fab fa-google mr-2"></i> {{ _('Sign in with Google') }}</a>
+{% endmacro %}

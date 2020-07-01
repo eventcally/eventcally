@@ -24,6 +24,8 @@ app.config['SECURITY_TRACKABLE'] = True
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
 app.config['LANGUAGES'] = ['en', 'de']
+app.config['GOOGLE_OAUTH_CLIENT_ID'] = os.environ['GOOGLE_OAUTH_CLIENT_ID']
+app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = os.environ['GOOGLE_OAUTH_CLIENT_SECRET']
 
 # Generate a nice key using secrets.token_urlsafe()
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", 'pf9Wkove4IKEAXvy-cQkeDPhv9Cb3Ag-wyJILbq_dFw')
@@ -48,6 +50,9 @@ db = SQLAlchemy(app)
 from models import EventCategory, Image, EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
+from oauth import blueprint
+
+app.register_blueprint(blueprint, url_prefix="/login")
 
 berlin_tz = pytz.timezone('Europe/Berlin')
 now = datetime.now(tz=berlin_tz)
