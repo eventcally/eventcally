@@ -142,7 +142,7 @@
 {% macro render_link_prop(link) %}
 {% if link %}
 <div>
-  <i class="fa fa-fw fa-external-link" data-toggle="tooltip" title="{{ _('Link') }}"></i>
+  <i class="fa fa-fw fa-link" data-toggle="tooltip" title="{{ _('Link') }}"></i>
   <a href="{{ link }}">{{ link }}</a>
 </div>
 {% endif %}
@@ -196,4 +196,65 @@
 
 {% macro render_google_sign_in_button() %}
 <a href="{{ url_for('google.login') }}" class="btn btn-google" role="button"><i class="fab fa-google mr-2"></i> {{ _('Sign in with Google') }}</a>
+{% endmacro %}
+
+{% macro render_google_place_autocomplete_header() %}
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=***REMOVED***&libraries=places"></script>
+<script>
+    function initialize() {
+      var input = document.getElementById('location_search');
+      var autocomplete = new google.maps.places.Autocomplete(input);
+      google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var place = autocomplete.getPlace();
+
+            var street_number = "";
+            var route = "";
+            var city = "";
+
+            for (var i = 0; i < place.address_components.length; i++) {
+              var component = place.address_components[i]
+              var addressType = component.types[0];
+              var val = component.long_name
+
+              if (addressType == 'street_number') {
+                street_number = val;
+              } else if (addressType == 'route') {
+                route = val;
+              } else if (addressType == 'locality') {
+                city = val;
+              } else if (addressType == 'administrative_area_level_1') {
+                $('#location-state').val(val);
+              } else if (addressType == 'postal_code') {
+                $('#location-postalCode').val(val);
+              }
+            }
+
+            $('#name').val(place.name);
+            $('#location-street').val([route, street_number].join(' '));
+            $('#location-city').val(city);
+            $('#location-latitude').val(place.geometry.location.lat());
+            $('#location-longitude').val(place.geometry.location.lng());
+
+            if (place.website) {
+              $('#url').val(place.website);
+            }
+
+            $('#location_search').val('');
+        });
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+{% endmacro %}
+
+{% macro render_google_place_autocomplete_field() %}
+<div class="my-5">
+  <div class="form-group row">
+    <div class="input-group col-sm-12">
+      <div class="input-group-prepend">
+        <span class="input-group-text"><i class="fab fa-google"></i></span>
+      </div>
+      <input id="location_search" type="text" class="form-control" placeholder="{{ _('Search location on Google') }}" autocomplete="on" runat="server" />
+    </div>
+  </div>
+</div>
 {% endmacro %}

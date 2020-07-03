@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-07-01 08:43+0200\n"
+"POT-Creation-Date: 2020-07-03 10:07+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -18,87 +18,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: app.py:66
+#: app.py:67
 msgid "Event_"
 msgstr ""
 
-#: app.py:71
+#: app.py:72
 msgid "Event_Art"
 msgstr "Kunst"
 
-#: app.py:72
+#: app.py:73
 msgid "Event_Book"
 msgstr "Literatur"
 
-#: app.py:73
+#: app.py:74
 msgid "Event_Movie"
 msgstr "Film"
 
-#: app.py:74
+#: app.py:75
 msgid "Event_Family"
 msgstr "Familie"
 
-#: app.py:75
+#: app.py:76
 msgid "Event_Festival"
 msgstr "Festival"
 
-#: app.py:76
+#: app.py:77
 msgid "Event_Religious"
 msgstr "Religion"
 
-#: app.py:77
+#: app.py:78
 msgid "Event_Shopping"
 msgstr "Shopping"
 
-#: app.py:78
+#: app.py:79
 msgid "Event_Comedy"
 msgstr "Comedy"
 
-#: app.py:79
+#: app.py:80
 msgid "Event_Music"
 msgstr "Musik"
 
-#: app.py:80
+#: app.py:81
 msgid "Event_Dance"
 msgstr "Tanz"
 
-#: app.py:81
+#: app.py:82
 msgid "Event_Nightlife"
 msgstr "Party"
 
-#: app.py:82
+#: app.py:83
 msgid "Event_Theater"
 msgstr "Theater"
 
-#: app.py:83
+#: app.py:84
 msgid "Event_Dining"
 msgstr "Essen"
 
-#: app.py:84
+#: app.py:85
 msgid "Event_Conference"
 msgstr "Konferenz"
 
-#: app.py:85
+#: app.py:86
 msgid "Event_Meetup"
 msgstr "Networking"
 
-#: app.py:86
+#: app.py:87
 msgid "Event_Fitness"
 msgstr "Fitness"
 
-#: app.py:87
+#: app.py:88
 msgid "Event_Sports"
 msgstr "Sport"
 
-#: app.py:88
+#: app.py:89
 msgid "Event_Other"
 msgstr "Sonstiges"
 
-#: app.py:1067
+#: app.py:1020
+msgid "Place successfully updated"
+msgstr "Ort erfolgreich aktualisiert"
+
+#: app.py:1043
+msgid "Place successfully created"
+msgstr "Ort erfolgreich erstellt"
+
+#: app.py:1134
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:1099
+#: app.py:1166
 msgid "Event suggestion successfully created"
 msgstr "Veranstaltungsvorschlag erfolgreich erstellt"
 
@@ -130,7 +138,7 @@ msgstr "Datum"
 #: templates/admin_units.html:13 templates/event_suggestion/list.html:14
 #: templates/events.html:17 templates/home.html:22 templates/home.html:44
 #: templates/organization.html:58 templates/organizations.html:13
-#: templates/place/list.html:13 templates/profile.html:15
+#: templates/place/list.html:19 templates/profile.html:15
 #: templates/profile.html:37
 msgid "Name"
 msgstr "Name"
@@ -144,8 +152,9 @@ msgstr "Veranstalter"
 #: templates/_macros.html:96 templates/_macros.html:154
 #: templates/_macros.html:174 templates/event_suggestion/list.html:16
 #: templates/event_suggestion/read.html:41 templates/events.html:19
+#: templates/place/create.html:27 templates/place/update.html:27
 msgid "Location"
-msgstr "Ort"
+msgstr "Standort"
 
 #: templates/_macros.html:106 templates/_macros.html:176
 #: templates/events.html:29
@@ -172,6 +181,10 @@ msgstr "Kategorie"
 msgid "Sign in with Google"
 msgstr "Mit Google anmelden"
 
+#: templates/_macros.html:256
+msgid "Search location on Google"
+msgstr "Ort bei Google suchen"
+
 #: templates/admin_unit.html:14 templates/organization.html:17
 msgid "Members"
 msgstr "Mitglieder"
@@ -185,7 +198,7 @@ msgstr "Organisationen"
 #: templates/admin_unit.html:25 templates/event.html:10
 #: templates/event_date/read.html:16 templates/events.html:4
 #: templates/events.html:8 templates/layout.html:61
-#: templates/organization.html:21 templates/place/read.html:16
+#: templates/organization.html:21 templates/place/read.html:22
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -255,7 +268,7 @@ msgstr "Administration"
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: templates/organization.html:13 templates/place/read.html:13
+#: templates/organization.html:13 templates/place/read.html:19
 msgid "Info"
 msgstr "Info"
 
@@ -267,11 +280,13 @@ msgstr "Du bist Mitglied dieser Organisation"
 msgid "Event"
 msgstr "Veranstaltung"
 
-#: templates/event/create.html:38
+#: templates/event/create.html:38 templates/place/create.html:18
+#: templates/place/update.html:18
 msgid "Place"
 msgstr "Ort"
 
-#: templates/event/create.html:47
+#: templates/event/create.html:47 templates/place/create.html:42
+#: templates/place/update.html:42
 msgid "Additional information"
 msgstr "Zusätzliche Informationen"
 
@@ -323,6 +338,14 @@ msgstr "Kontakt Name"
 #: templates/event_suggestion/read.html:82
 msgid "Contact email"
 msgstr "Kontakt Email"
+
+#: templates/place/create.html:10 templates/place/list.html:11
+msgid "Create place"
+msgstr "Ort hinzufügen"
+
+#: templates/place/read.html:12 templates/place/update.html:10
+msgid "Update place"
+msgstr "Ort aktualisieren"
 
 #~ msgid "You"
 #~ msgstr "Du"

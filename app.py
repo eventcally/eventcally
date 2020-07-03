@@ -2,6 +2,7 @@ import os
 from base64 import b64decode
 from flask import jsonify, Flask, render_template, request, url_for, redirect, abort, flash, current_app
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import asc, func
 from flask_security import Security, current_user, auth_required, roles_required, hash_password, SQLAlchemySessionUserDatastore
@@ -86,6 +87,11 @@ def print_dynamic_texts():
     gettext('Event_Fitness')
     gettext('Event_Sports')
     gettext('Event_Other')
+
+def handleSqlError(e):
+    message = str(e.__dict__['orig'])
+    print(message)
+    return message
 
 def get_img_resource(res):
     with current_app.open_resource('static/img/' + res) as f:
@@ -244,10 +250,10 @@ def upsert_org_or_admin_unit_for_organization(organization):
         db.session.add(result)
     return result
 
-def upsert_location(street, postalCode, city, latitude = 0, longitude = 0):
-    result = Location.query.filter_by(street = street, postalCode=postalCode, city=city).first()
+def upsert_location(street, postalCode, city, latitude = 0, longitude = 0, state = None):
+    result = Location.query.filter_by(street = street, postalCode=postalCode, city=city, state=state).first()
     if result is None:
-        result = Location(street = street, postalCode=postalCode, city=city)
+        result = Location(street = street, postalCode=postalCode, city=city, state=state)
         db.session.add(result)
 
     result.latitude = latitude
@@ -587,6 +593,12 @@ def has_current_user_any_permission(user_permission, admin_unit_member_permissio
 def can_create_event():
     return has_current_user_any_permission('event:create')
 
+def can_create_place():
+    return can_create_event()
+
+def can_update_place(place):
+    return can_create_place()
+
 def can_verify_event(event):
     if not current_user.is_authenticated:
         return False
@@ -633,7 +645,9 @@ def get_event_suggestions_for_current_user():
 # Routes
 
 @app.before_first_request
-def create_user():
+def create_initial_data():
+    return
+
     # Event categories
     upsert_event_category('Art')
     upsert_event_category('Book')
@@ -971,14 +985,66 @@ def profile():
 def places():
     places = Place.query.order_by(asc(func.lower(Place.name))).all()
     return render_template('place/list.html',
-        places=places)
+        places=places,
+        can_create_place=can_create_place())
 
 @app.route('/place/<int:place_id>')
 def place(place_id):
-    place = Place.query.filter_by(id = place_id).first()
+    place = Place.query.get_or_404(place_id)
 
     return render_template('place/read.html',
+        place=place,
+        can_update_place=can_update_place(place))
+
+def update_place_with_form(place, form):
+    form.populate_obj(place)
+
+    if form.photo_file.data:
+        fs = form.photo_file.data
+        place.photo = upsert_image_with_data(place.photo, fs.read(), fs.content_type)
+
+@app.route('/place/<int:place_id>/update', methods=('GET', 'POST'))
+def place_update(place_id):
+    place = Place.query.get_or_404(place_id)
+
+    if not can_update_place(place):
+        abort(401)
+
+    form = UpdatePlaceForm(obj=place)
+
+    if form.validate_on_submit():
+        update_place_with_form(place, form)
+
+        try:
+            db.session.commit()
+            flash(gettext('Place successfully updated'), 'success')
+            return redirect(url_for('place', place_id=place.id))
+        except SQLAlchemyError as e:
+            flash(handleSqlError(e), 'danger')
+
+    return render_template('place/update.html',
+        form=form,
         place=place)
+
+@app.route("/place/create", methods=('GET', 'POST'))
+def place_create():
+    if not can_create_place():
+        abort(401)
+
+    form = CreatePlaceForm()
+    if form.validate_on_submit():
+        place = Place()
+        place.location = Location()
+        update_place_with_form(place, form)
+
+        try:
+            db.session.add(place)
+            db.session.commit()
+            flash(gettext('Place successfully created'), 'success')
+            return redirect(url_for('place', place_id=place.id))
+        except SQLAlchemyError as e:
+            flash(handleSqlError(e), 'danger')
+    return render_template('place/create.html', form=form)
 
 @app.route("/events")
 def events():
@@ -1035,6 +1101,7 @@ def api_events():
 
 from forms.event import CreateEventForm
 from forms.event_suggestion import CreateEventSuggestionForm
+from forms.place import CreatePlaceForm, UpdatePlaceForm
 
 @app.route("/events/create", methods=('GET', 'POST'))
 @auth_required()
