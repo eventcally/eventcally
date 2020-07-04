@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-07-03 10:07+0200\n"
+"POT-Creation-Date: 2020-07-04 21:11+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -94,19 +94,27 @@ msgstr "Sport"
 msgid "Event_Other"
 msgstr "Sonstiges"
 
-#: app.py:1020
+#: app.py:1003
+msgid "Organization successfully created"
+msgstr "Organisation erfolgreich erstellt"
+
+#: app.py:1023
+msgid "Organization successfully updated"
+msgstr "Organisation erfolgreich aktualisiert"
+
+#: app.py:1078
 msgid "Place successfully updated"
 msgstr "Ort erfolgreich aktualisiert"
 
-#: app.py:1043
+#: app.py:1101
 msgid "Place successfully created"
 msgstr "Ort erfolgreich erstellt"
 
-#: app.py:1134
+#: app.py:1193
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:1166
+#: app.py:1225
 msgid "Event suggestion successfully created"
 msgstr "Veranstaltungsvorschlag erfolgreich erstellt"
 
@@ -137,7 +145,7 @@ msgstr "Datum"
 #: templates/admin_unit.html:45 templates/admin_unit.html:67
 #: templates/admin_units.html:13 templates/event_suggestion/list.html:14
 #: templates/events.html:17 templates/home.html:22 templates/home.html:44
-#: templates/organization.html:58 templates/organizations.html:13
+#: templates/organization/list.html:19 templates/organization/read.html:64
 #: templates/place/list.html:19 templates/profile.html:15
 #: templates/profile.html:37
 msgid "Name"
@@ -152,7 +160,8 @@ msgstr "Veranstalter"
 #: templates/_macros.html:96 templates/_macros.html:154
 #: templates/_macros.html:174 templates/event_suggestion/list.html:16
 #: templates/event_suggestion/read.html:41 templates/events.html:19
-#: templates/place/create.html:27 templates/place/update.html:27
+#: templates/organization/create.html:26 templates/organization/update.html:26
+#: templates/place/create.html:29 templates/place/update.html:29
 msgid "Location"
 msgstr "Standort"
 
@@ -181,24 +190,24 @@ msgstr "Kategorie"
 msgid "Sign in with Google"
 msgstr "Mit Google anmelden"
 
-#: templates/_macros.html:256
+#: templates/_macros.html:258
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
-#: templates/admin_unit.html:14 templates/organization.html:17
+#: templates/admin_unit.html:14 templates/organization/read.html:23
 msgid "Members"
 msgstr "Mitglieder"
 
 #: templates/admin_unit.html:17 templates/admin_unit.html:21
-#: templates/layout.html:64 templates/organizations.html:3
-#: templates/organizations.html:7 templates/profile.html:32
+#: templates/layout.html:64 templates/organization/list.html:3
+#: templates/organization/list.html:7 templates/profile.html:32
 msgid "Organizations"
 msgstr "Organisationen"
 
 #: templates/admin_unit.html:25 templates/event.html:10
 #: templates/event_date/read.html:16 templates/events.html:4
 #: templates/events.html:8 templates/layout.html:61
-#: templates/organization.html:21 templates/place/read.html:22
+#: templates/organization/read.html:27 templates/place/read.html:22
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -207,8 +216,9 @@ msgid "You are a member of this admin unit."
 msgstr "Du bist Mitglied dieser Verwaltungseinheit"
 
 #: templates/admin_unit.html:46 templates/admin_unit.html:68
-#: templates/home.html:23 templates/home.html:45 templates/organization.html:59
-#: templates/profile.html:16 templates/profile.html:38
+#: templates/home.html:23 templates/home.html:45
+#: templates/organization/read.html:65 templates/profile.html:16
+#: templates/profile.html:38
 msgid "Roles"
 msgstr "Rollen"
 
@@ -268,25 +278,18 @@ msgstr "Administration"
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: templates/organization.html:13 templates/place/read.html:19
-msgid "Info"
-msgstr "Info"
-
-#: templates/organization.html:48
-msgid "You are a member of this organization."
-msgstr "Du bist Mitglied dieser Organisation"
-
 #: templates/event/create.html:13 templates/event_suggestion/read.html:13
 msgid "Event"
 msgstr "Veranstaltung"
 
-#: templates/event/create.html:38 templates/place/create.html:18
-#: templates/place/update.html:18
+#: templates/event/create.html:38 templates/place/create.html:20
+#: templates/place/update.html:20
 msgid "Place"
 msgstr "Ort"
 
-#: templates/event/create.html:47 templates/place/create.html:42
-#: templates/place/update.html:42
+#: templates/event/create.html:47 templates/organization/create.html:44
+#: templates/organization/update.html:44 templates/place/create.html:44
+#: templates/place/update.html:44
 msgid "Additional information"
 msgstr "Zusätzliche Informationen"
 
@@ -338,6 +341,26 @@ msgstr "Kontakt Name"
 #: templates/event_suggestion/read.html:82
 msgid "Contact email"
 msgstr "Kontakt Email"
+
+#: templates/organization/create.html:10 templates/organization/list.html:11
+msgid "Create organization"
+msgstr "Organisation hinzufügen"
+
+#: templates/organization/create.html:16 templates/organization/update.html:16
+msgid "Organization"
+msgstr "Organisation"
+
+#: templates/organization/read.html:12 templates/organization/update.html:10
+msgid "Update organization"
+msgstr "Organisation aktualisieren"
+
+#: templates/organization/read.html:19 templates/place/read.html:19
+msgid "Info"
+msgstr "Info"
+
+#: templates/organization/read.html:54
+msgid "You are a member of this organization."
+msgstr "Du bist Mitglied dieser Organisation"
 
 #: templates/place/create.html:10 templates/place/list.html:11
 msgid "Create place"

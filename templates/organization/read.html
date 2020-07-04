@@ -7,6 +7,12 @@
 
     <h1>{{ organization.name }}</h1>
 
+    {% if can_update_organization %}
+    <div class="my-4">
+        <a class="btn btn-primary my-1" href="{{ url_for('organization_update', organization_id=organization.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Update organization') }}</a>
+    </div>
+    {% endif %}
+
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">

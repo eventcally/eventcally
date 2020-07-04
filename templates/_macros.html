@@ -198,7 +198,7 @@
 <a href="{{ url_for('google.login') }}" class="btn btn-google" role="button"><i class="fab fa-google mr-2"></i> {{ _('Sign in with Google') }}</a>
 {% endmacro %}
 
-{% macro render_google_place_autocomplete_header() %}
+{% macro render_google_place_autocomplete_header(location_only = False) %}
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCHA6ZKMjDrjx2dTJ3wm_q1ywcidLcctcc&libraries=places"></script>
 <script>
     function initialize() {
@@ -229,15 +229,18 @@
               }
             }
 
-            $('#name').val(place.name);
+            {% if not location_only %}
+              $('#name').val(place.name);
+
+              if (place.website) {
+                $('#url').val(place.website);
+              }
+            {% endif %}
+
             $('#location-street').val([route, street_number].join(' '));
             $('#location-city').val(city);
             $('#location-latitude').val(place.geometry.location.lat());
             $('#location-longitude').val(place.geometry.location.lng());
-
-            if (place.website) {
-              $('#url').val(place.website);
-            }
 
             $('#location_search').val('');
         });
@@ -247,7 +250,6 @@
 {% endmacro %}
 
 {% macro render_google_place_autocomplete_field() %}
-<div class="my-5">
   <div class="form-group row">
     <div class="input-group col-sm-12">
       <div class="input-group-prepend">
@@ -256,5 +258,4 @@
       <input id="location_search" type="text" class="form-control" placeholder="{{ _('Search location on Google') }}" autocomplete="on" runat="server" />
     </div>
   </div>
-</div>
 {% endmacro %}

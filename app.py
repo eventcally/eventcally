@@ -599,6 +599,12 @@ def can_create_place():
 def can_update_place(place):
     return can_create_place()
 
+def can_create_organization():
+    return can_create_event()
+
+def can_update_organization(organization):
+    return can_create_organization()
+
 def can_verify_event(event):
     if not current_user.is_authenticated:
         return False
@@ -954,8 +960,9 @@ def admin_unit(admin_unit_id):
 
 @app.route("/organizations")
 def organizations():
-    return render_template('organizations.html',
-        organizations=Organization.query.order_by(asc(func.lower(Organization.name))).all())
+    return render_template('organization/list.html',
+        organizations=Organization.query.order_by(asc(func.lower(Organization.name))).all(),
+        can_create_organization=can_create_organization())
 
 @app.route('/organization/<int:organization_id>')
 def organization(organization_id):
@@ -965,11 +972,62 @@ def organization(organization_id):
     ooa = upsert_org_or_admin_unit_for_organization(organization)
     events = ooa.events
 
-    return render_template('organization.html',
+    return render_template('organization/read.html',
         organization=organization,
         current_user_member=current_user_member,
         can_list_members=can_list_org_members(organization),
-        events=events)
+        events=events,
+        can_update_organization=can_update_organization(organization))
+
+def update_organization_with_form(organization, form):
+    form.populate_obj(organization)
+
+    if form.logo_file.data:
+        fs = form.logo_file.data
+        organization.logo = upsert_image_with_data(organization.logo, fs.read(), fs.content_type)
+
+@app.route("/organization/create", methods=('GET', 'POST'))
+def organization_create():
+    if not can_create_organization():
+        abort(401)
+
+    form = CreateOrganizationForm()
+    if form.validate_on_submit():
+        organization = Organization()
+        organization.location = Location()
+        update_organization_with_form(organization, form)
+
+        try:
+            db.session.add(organization)
+            db.session.commit()
+            flash(gettext('Organization successfully created'), 'success')
+            return redirect(url_for('organization', organization_id=organization.id))
+        except SQLAlchemyError as e:
+            flash(handleSqlError(e), 'danger')
+    return render_template('organization/create.html', form=form)
+
+@app.route('/organization/<int:organization_id>/update', methods=('GET', 'POST'))
+def organization_update(organization_id):
+    organization = Organization.query.get_or_404(organization_id)
+
+    if not can_update_organization(organization):
+        abort(401)
+
+    form = UpdateOrganizationForm(obj=organization)
+
+    if form.validate_on_submit():
+        update_organization_with_form(organization, form)
+
+        try:
+            db.session.commit()
+            flash(gettext('Organization successfully updated'), 'success')
+            return redirect(url_for('organization', organization_id=organization.id))
+        except SQLAlchemyError as e:
+            flash(handleSqlError(e), 'danger')
+
+    return render_template('organization/update.html',
+        form=form,
+        organization=organization)
 
 @app.route('/image/<int:id>')
 def image(id):
@@ -1102,6 +1160,7 @@ def api_events():
 from forms.event import CreateEventForm
 from forms.event_suggestion import CreateEventSuggestionForm
 from forms.place import CreatePlaceForm, UpdatePlaceForm
+from forms.organization import CreateOrganizationForm, UpdateOrganizationForm
 
 @app.route("/events/create", methods=('GET', 'POST'))
 @auth_required()
