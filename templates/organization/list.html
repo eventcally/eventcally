@@ -6,6 +6,12 @@
 
 <h1>{{ _('Organizations') }}</h1>
 
+{% if can_create_organization %}
+<div class="my-4">
+    <a class="btn btn-primary my-1" href="{{ url_for('organization_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create organization') }}</a>
+</div>
+{% endif %}
+
 <div class="table-responsive">
     <table class="table table-sm table-bordered table-hover table-striped">
         <thead>
