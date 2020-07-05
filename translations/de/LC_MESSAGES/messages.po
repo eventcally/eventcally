@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-07-04 21:11+0200\n"
+"POT-Creation-Date: 2020-07-05 17:27+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -94,27 +94,27 @@ msgstr "Sport"
 msgid "Event_Other"
 msgstr "Sonstiges"
 
-#: app.py:1003
+#: app.py:1023
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: app.py:1023
+#: app.py:1043
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: app.py:1078
+#: app.py:1098
 msgid "Place successfully updated"
 msgstr "Ort erfolgreich aktualisiert"
 
-#: app.py:1101
+#: app.py:1121
 msgid "Place successfully created"
 msgstr "Ort erfolgreich erstellt"
 
-#: app.py:1193
+#: app.py:1213
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:1225
+#: app.py:1245
 msgid "Event suggestion successfully created"
 msgstr "Veranstaltungsvorschlag erfolgreich erstellt"
 
@@ -349,6 +349,10 @@ msgstr "Organisation hinzufügen"
 #: templates/organization/create.html:16 templates/organization/update.html:16
 msgid "Organization"
 msgstr "Organisation"
+
+#: templates/organization/create.html:54
+msgid "Admin unit"
+msgstr "Verwaltungseinheit"
 
 #: templates/organization/read.html:12 templates/organization/update.html:10
 msgid "Update organization"

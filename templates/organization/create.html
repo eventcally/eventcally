@@ -49,6 +49,15 @@
     </div>
   </div>
 
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Admin unit') }}
+    </div>
+    <div class="card-body">
+      {{ render_field_with_errors(form.admin_unit_id, class="autocomplete w-100") }}
+    </div>
+  </div>
+
   {{ render_field(form.submit) }}
 </form>
 

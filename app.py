@@ -363,6 +363,12 @@ def upsert_event(event_name, host, location_name, start, description, link = Non
 
     return result
 
+def get_admin_units_for_organizations():
+    if has_current_user_permission('event:create'):
+        return AdminUnit.query.all()
+
+    return admin_units_the_current_user_is_member_of()
+
 def get_event_hosts():
     # User permission, e.g. user is global admin
     if has_current_user_permission('event:create'):
@@ -479,6 +485,14 @@ def admin_units_with_current_user_member_permission(permission):
     for admin_unit_member in admin_unit_members:
         if has_admin_unit_member_permission(admin_unit_member, permission):
             result.append(admin_unit_member.adminunit)
+
+    return result
+
+def admin_units_the_current_user_is_member_of():
+    result = list()
+    admin_unit_members = AdminUnitMember.query.filter_by(user_id=current_user.id).all()
+    for admin_unit_member in admin_unit_members:
+        result.append(admin_unit_member.adminunit)
 
     return result
 
@@ -992,13 +1006,19 @@ def organization_create():
         abort(401)
 
     form = CreateOrganizationForm()
+    form.admin_unit_id.choices = sorted([(admin_unit.id, admin_unit.name) for admin_unit in get_admin_units_for_organizations()], key=lambda admin_unit: admin_unit[1])
+
     if form.validate_on_submit():
         organization = Organization()
         organization.location = Location()
         update_organization_with_form(organization, form)
 
+        admin_unit = AdminUnit.query.get_or_404(form.admin_unit_id.data)
+        add_organization_to_admin_unit(organization, admin_unit)
+
         try:
             db.session.add(organization)
+            upsert_org_or_admin_unit_for_organization(organization)
             db.session.commit()
             flash(gettext('Organization successfully created'), 'success')
             return redirect(url_for('organization', organization_id=organization.id))
