@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-07-05 17:27+0200\n"
+"POT-Creation-Date: 2020-07-06 15:25+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -135,7 +135,7 @@ msgstr "Veranstaltung vorschlagen"
 msgid "Event suggestions"
 msgstr "Veranstaltungsvorschläge"
 
-#: templates/_macros.html:93 templates/_macros.html:173
+#: templates/_macros.html:93 templates/_macros.html:174
 #: templates/event_suggestion/list.html:13
 #: templates/event_suggestion/read.html:18 templates/events.html:16
 msgid "Date"
@@ -151,21 +151,21 @@ msgstr "Datum"
 msgid "Name"
 msgstr "Name"
 
-#: templates/_macros.html:95 templates/_macros.html:191
-#: templates/event/create.html:29 templates/event_suggestion/list.html:15
-#: templates/events.html:18
+#: templates/_macros.html:95 templates/_macros.html:192
+#: templates/_macros.html:231 templates/event/create.html:29
+#: templates/event_suggestion/list.html:15 templates/events.html:18
 msgid "Host"
 msgstr "Veranstalter"
 
 #: templates/_macros.html:96 templates/_macros.html:154
-#: templates/_macros.html:174 templates/event_suggestion/list.html:16
+#: templates/_macros.html:175 templates/event_suggestion/list.html:16
 #: templates/event_suggestion/read.html:41 templates/events.html:19
 #: templates/organization/create.html:26 templates/organization/update.html:26
 #: templates/place/create.html:29 templates/place/update.html:29
 msgid "Location"
 msgstr "Standort"
 
-#: templates/_macros.html:106 templates/_macros.html:176
+#: templates/_macros.html:106 templates/_macros.html:177
 #: templates/events.html:29
 msgid "Verified"
 msgstr "Verifiziert"
@@ -182,15 +182,29 @@ msgstr "Auf Google Maps anzeigen"
 msgid "Link"
 msgstr "Link"
 
-#: templates/_macros.html:189
+#: templates/_macros.html:169 templates/event/create.html:13
+#: templates/event_suggestion/read.html:13
+msgid "Event"
+msgstr "Veranstaltung"
+
+#: templates/_macros.html:190
 msgid "Category"
 msgstr "Kategorie"
 
-#: templates/_macros.html:198
+#: templates/_macros.html:199 templates/event/create.html:38
+#: templates/place/create.html:20 templates/place/update.html:20
+msgid "Place"
+msgstr "Ort"
+
+#: templates/_macros.html:223
+msgid "Show directions"
+msgstr "Anreise planen"
+
+#: templates/_macros.html:264
 msgid "Sign in with Google"
 msgstr "Mit Google anmelden"
 
-#: templates/_macros.html:258
+#: templates/_macros.html:324
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
@@ -237,7 +251,7 @@ msgstr "Diese Veranstaltung als nicht verifiziert markieren"
 msgid "Mark event as verified"
 msgstr "Diese Veranstaltung als verifiziert markieren"
 
-#: templates/event.html:34 templates/event_date/list.html:4
+#: templates/event.html:36 templates/event_date/list.html:4
 #: templates/event_date/list.html:8 templates/home.html:11
 #: templates/layout.html:60
 msgid "Event Dates"
@@ -277,15 +291,6 @@ msgstr "Administration"
 #: templates/layout.html:81
 msgid "Logout"
 msgstr "Ausloggen"
-
-#: templates/event/create.html:13 templates/event_suggestion/read.html:13
-msgid "Event"
-msgstr "Veranstaltung"
-
-#: templates/event/create.html:38 templates/place/create.html:20
-#: templates/place/update.html:20
-msgid "Place"
-msgstr "Ort"
 
 #: templates/event/create.html:47 templates/organization/create.html:44
 #: templates/organization/update.html:44 templates/place/create.html:44

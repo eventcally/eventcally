@@ -164,14 +164,15 @@
 {% endmacro %}
 
 {% macro render_event_props(event, date) %}
-  <div class="card">
+  <div class="card mb-3">
     <div class="card-header">
-      {{ event.name }}
+      {{ _('Event') }}
     </div>
 
     <div class="card-body">
-      <div><i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i> {{ date.start | datetimeformat }}</div>
-      <div><i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i> <a href="{{ url_for('place', place_id=event.place.id) }}">{{ render_place(event.place) }}</a></div>
+      <h5 class="card-title">{{ event.name }}</h5>
+      <div><i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i> {{ date.start | datetimeformat('short') }}</div>
+      <!--<div><i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i> <a href="{{ url_for('place', place_id=event.place.id) }}">{{ render_place(event.place) }}</a></div>-->
       {% if event.verified %}
       <div><i class="fa fa-fw fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i> {{ _('Verified') }}</div>
       {% endif %}
@@ -188,8 +189,73 @@
         {% if event.category_id %}
           <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {{ event.category | event_category_name }}</div>
         {% endif %}
-        <div><i class="fa fa-fw fa-users" data-toggle="tooltip" title="{{ _('Host') }}"></i> {{ render_ooa_with_link(event.host) }}</div>
+        <!--<div><i class="fa fa-fw fa-users" data-toggle="tooltip" title="{{ _('Host') }}"></i> {{ render_ooa_with_link(event.host) }}</div>-->
       </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">
+      {{ _('Place') }}
+    </div>
+    <div class="card-body">
+      <h5 class="card-title"><a href="{{ url_for('place', place_id=event.place.id) }}" class="text-dark">{{ event.place.name }}</a></h5>
+
+      {% if event.place.photo_id %}
+        <div class="my-4">{{ render_image(event.place.photo_id) }}</div>
+      {% endif %}
+
+      {% if event.place.description %}
+      <div class="my-4">{{ event.place.description }}</div>
+      {% endif %}
+
+      {% if event.place.url %}
+      <div class="my-4">{{ render_link_prop(event.place.url) }}</div>
+      {% endif %}
+
+      {% if event.place.location %}
+      <p>
+        {{ event.place.location.street }}<br />
+        {{ event.place.location.postalCode }} {{ event.place.location.city }}
+      </p>
+
+      <p>
+          <a href="http://www.google.com/maps?q={{ render_place(event.place) | quote_plus }}">{{ _('Show directions') }}</a>
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">
+      {{ _('Host') }}
+    </div>
+    <div class="card-body">
+
+      {% if event.host.admin_unit %}
+        <h5 class="card-title"><a href="{{ url_for('admin_unit', admin_unit_id=event.host.admin_unit.id) }}" class="text-dark">{{ event.host.admin_unit.name }}</a></h5>
+      {% endif %}
+
+      {% if event.host.organization %}
+        <h5 class="card-title"><a href="{{ url_for('organization', organization_id=event.host.organization.id) }}" class="text-dark">{{ event.host.organization.name }}</a></h5>
+
+        {% if event.host.organization.logo_id %}
+          <div class="my-4">{{ render_image(event.host.organization.logo_id) }}</div>
+        {% endif %}
+
+        {% if event.host.organization.url %}
+        <div class="my-4">{{ render_link_prop(event.host.organization.url) }}</div>
+        {% endif %}
+
+        {% if event.host.organization.location %}
+        <p>
+          {{ event.host.organization.location.street }}<br />
+          {{ event.host.organization.location.postalCode }} {{ event.host.organization.location.city }}
+        </p>
+        {% endif %}
+
+      {% endif %}
+
     </div>
   </div>
 {% endmacro %}

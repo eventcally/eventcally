@@ -26,19 +26,23 @@
     </div>
     {% endif %}
 
-    {{ render_event_props(event, event.dates[0]) }}
+    <div style="max-width: 768px;">
 
-    {% if event.dates|length > 0 %}
-        <div class="card mt-4">
-            <div class="card-header">
-                {{ _('Event Dates') }}
+        {{ render_event_props(event, event.dates[0]) }}
+
+        {% if event.dates|length > 0 %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    {{ _('Event Dates') }}
+                </div>
+                <div class="list-group list-group-flush">
+                {% for date in event.dates %}
+                    <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item list-group-item-action">{{ date.start | datetimeformat('short') }}</a>
+                {% endfor %}
+                </div>
             </div>
-            <div class="list-group list-group-flush">
-            {% for date in event.dates %}
-                <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item list-group-item-action">{{ date.start | datetimeformat('short') }}</a>
-            {% endfor %}
-            </div>
-        </div>
-    {% endif %}
+        {% endif %}
+
+    </div>
 
 {% endblock %}
