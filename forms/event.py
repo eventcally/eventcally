@@ -16,5 +16,9 @@ class CreateEventForm(FlaskForm):
     place_id = SelectField(lazy_gettext('Place'), validators=[DataRequired()], coerce=int)
     host_id = SelectField(lazy_gettext('Host'), validators=[DataRequired()], coerce=int)
     category_id = SelectField(lazy_gettext('Category'), validators=[DataRequired()], coerce=int)
+    admin_unit_id = SelectField(lazy_gettext('Admin unit'), validators=[DataRequired()], coerce=int)
 
     photo_file = FileField(lazy_gettext('Photo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
+
+class UpdateEventForm(CreateEventForm):
+    submit = SubmitField(lazy_gettext("Update event"))

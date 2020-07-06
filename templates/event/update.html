@@ -3,9 +3,9 @@
 
 {% block content %}
 
-<h1>{{ _('Create event') }}</h1>
+<h1>{{ _('Update event') }}</h1>
 
-<form action="{{ url_for('event_create') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ url_for('event_update', event_id=event.id) }}" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
   <div class="card mb-4">
