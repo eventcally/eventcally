@@ -26,6 +26,12 @@
     </div>
     {% endif %}
 
+    {% if can_update_event %}
+    <div class="my-4">
+        <a class="btn btn-primary my-1" href="{{ url_for('event_update', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Update event') }}</a>
+    </div>
+    {% endif %}
+
     <div style="max-width: 768px;">
 
         {{ render_event_props(event, event.dates[0]) }}

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-07-06 15:25+0200\n"
+"POT-Creation-Date: 2020-07-06 18:36+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -94,27 +94,31 @@ msgstr "Sport"
 msgid "Event_Other"
 msgstr "Sonstiges"
 
-#: app.py:1023
+#: app.py:1026
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: app.py:1043
+#: app.py:1046
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: app.py:1098
+#: app.py:1101
 msgid "Place successfully updated"
 msgstr "Ort erfolgreich aktualisiert"
 
-#: app.py:1121
+#: app.py:1124
 msgid "Place successfully created"
 msgstr "Ort erfolgreich erstellt"
 
-#: app.py:1213
+#: app.py:1225
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:1245
+#: app.py:1246
+msgid "Event successfully updated"
+msgstr "Veranstaltung erfolgreich aktualisiert"
+
+#: app.py:1283
 msgid "Event suggestion successfully created"
 msgstr "Veranstaltungsvorschlag erfolgreich erstellt"
 
@@ -136,37 +140,39 @@ msgid "Event suggestions"
 msgstr "Veranstaltungsvorschläge"
 
 #: templates/_macros.html:93 templates/_macros.html:174
-#: templates/event_suggestion/list.html:13
-#: templates/event_suggestion/read.html:18 templates/events.html:16
+#: templates/event/list.html:16 templates/event_suggestion/list.html:13
+#: templates/event_suggestion/read.html:18
 msgid "Date"
 msgstr "Datum"
 
 #: templates/_macros.html:94 templates/admin/admin_units.html:18
 #: templates/admin_unit.html:45 templates/admin_unit.html:67
-#: templates/admin_units.html:13 templates/event_suggestion/list.html:14
-#: templates/events.html:17 templates/home.html:22 templates/home.html:44
-#: templates/organization/list.html:19 templates/organization/read.html:64
-#: templates/place/list.html:19 templates/profile.html:15
-#: templates/profile.html:37
+#: templates/admin_units.html:13 templates/event/list.html:17
+#: templates/event_suggestion/list.html:14 templates/home.html:22
+#: templates/home.html:44 templates/organization/list.html:19
+#: templates/organization/read.html:64 templates/place/list.html:19
+#: templates/profile.html:15 templates/profile.html:37
 msgid "Name"
 msgstr "Name"
 
 #: templates/_macros.html:95 templates/_macros.html:192
 #: templates/_macros.html:231 templates/event/create.html:29
-#: templates/event_suggestion/list.html:15 templates/events.html:18
+#: templates/event/list.html:18 templates/event/update.html:29
+#: templates/event_suggestion/list.html:15
 msgid "Host"
 msgstr "Veranstalter"
 
 #: templates/_macros.html:96 templates/_macros.html:154
-#: templates/_macros.html:175 templates/event_suggestion/list.html:16
-#: templates/event_suggestion/read.html:41 templates/events.html:19
+#: templates/_macros.html:175 templates/event/list.html:19
+#: templates/event_suggestion/list.html:16
+#: templates/event_suggestion/read.html:41
 #: templates/organization/create.html:26 templates/organization/update.html:26
 #: templates/place/create.html:29 templates/place/update.html:29
 msgid "Location"
 msgstr "Standort"
 
 #: templates/_macros.html:106 templates/_macros.html:177
-#: templates/events.html:29
+#: templates/event/list.html:29
 msgid "Verified"
 msgstr "Verifiziert"
 
@@ -183,7 +189,7 @@ msgid "Link"
 msgstr "Link"
 
 #: templates/_macros.html:169 templates/event/create.html:13
-#: templates/event_suggestion/read.html:13
+#: templates/event/update.html:13 templates/event_suggestion/read.html:13
 msgid "Event"
 msgstr "Veranstaltung"
 
@@ -192,7 +198,8 @@ msgid "Category"
 msgstr "Kategorie"
 
 #: templates/_macros.html:199 templates/event/create.html:38
-#: templates/place/create.html:20 templates/place/update.html:20
+#: templates/event/update.html:38 templates/place/create.html:20
+#: templates/place/update.html:20
 msgid "Place"
 msgstr "Ort"
 
@@ -218,9 +225,9 @@ msgstr "Mitglieder"
 msgid "Organizations"
 msgstr "Organisationen"
 
-#: templates/admin_unit.html:25 templates/event.html:10
-#: templates/event_date/read.html:16 templates/events.html:4
-#: templates/events.html:8 templates/layout.html:61
+#: templates/admin_unit.html:25 templates/event/list.html:4
+#: templates/event/list.html:8 templates/event/read.html:10
+#: templates/event_date/read.html:16 templates/layout.html:61
 #: templates/organization/read.html:27 templates/place/read.html:22
 msgid "Events"
 msgstr "Veranstaltungen"
@@ -243,23 +250,15 @@ msgstr "Rollen"
 msgid "Admin Units"
 msgstr "Verwaltungseinheiten"
 
-#: templates/event.html:20
-msgid "Mark event as unverified"
-msgstr "Diese Veranstaltung als nicht verifiziert markieren"
+#: templates/home.html:7
+msgid "Hi there!"
+msgstr "Moin!"
 
-#: templates/event.html:23
-msgid "Mark event as verified"
-msgstr "Diese Veranstaltung als verifiziert markieren"
-
-#: templates/event.html:36 templates/event_date/list.html:4
+#: templates/event/read.html:42 templates/event_date/list.html:4
 #: templates/event_date/list.html:8 templates/home.html:11
 #: templates/layout.html:60
 msgid "Event Dates"
 msgstr "Termine"
-
-#: templates/home.html:7
-msgid "Hi there!"
-msgstr "Moin!"
 
 #: templates/home.html:17
 msgid "Your Admin Units"
@@ -292,11 +291,28 @@ msgstr "Administration"
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: templates/event/create.html:47 templates/organization/create.html:44
-#: templates/organization/update.html:44 templates/place/create.html:44
-#: templates/place/update.html:44
+#: templates/event/create.html:47 templates/event/update.html:47
+#: templates/organization/create.html:44 templates/organization/update.html:44
+#: templates/place/create.html:44 templates/place/update.html:44
 msgid "Additional information"
 msgstr "Zusätzliche Informationen"
+
+#: templates/event/create.html:59 templates/event/update.html:59
+#: templates/organization/create.html:54
+msgid "Admin unit"
+msgstr "Verwaltungseinheit"
+
+#: templates/event/read.html:20
+msgid "Mark event as unverified"
+msgstr "Diese Veranstaltung als nicht verifiziert markieren"
+
+#: templates/event/read.html:23
+msgid "Mark event as verified"
+msgstr "Diese Veranstaltung als verifiziert markieren"
+
+#: templates/event/read.html:31 templates/event/update.html:6
+msgid "Update event"
+msgstr "Veranstaltung aktualisieren"
 
 #: templates/event_suggestion/list.html:17
 #: templates/event_suggestion/read.html:86
@@ -354,10 +370,6 @@ msgstr "Organisation hinzufügen"
 #: templates/organization/create.html:16 templates/organization/update.html:16
 msgid "Organization"
 msgstr "Organisation"
-
-#: templates/organization/create.html:54
-msgid "Admin unit"
-msgstr "Verwaltungseinheit"
 
 #: templates/organization/read.html:12 templates/organization/update.html:10
 msgid "Update organization"

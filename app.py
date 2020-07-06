@@ -607,6 +607,9 @@ def has_current_user_any_permission(user_permission, admin_unit_member_permissio
 def can_create_event():
     return has_current_user_any_permission('event:create')
 
+def can_update_event(event):
+    return can_create_event()
+
 def can_create_place():
     return can_create_event()
 
@@ -1127,7 +1130,7 @@ def place_create():
 @app.route("/events")
 def events():
     events = Event.query.all()
-    return render_template('events.html',
+    return render_template('event/list.html',
         events=events,
         user_can_create_event=can_create_event(),
         user_can_list_event_suggestion=can_list_event_suggestion())
@@ -1145,7 +1148,10 @@ def event(event_id):
             event.verified = False
         db.session.commit()
 
-    return render_template('event.html', event=event, user_can_verify_event=user_can_verify_event)
+    return render_template('event/read.html',
+        event=event,
+        user_can_verify_event=user_can_verify_event,
+        can_update_event=can_update_event(event))
 
 @app.route("/eventdates")
 def event_dates():
@@ -1177,10 +1183,26 @@ def api_events():
     result['event'] = structured_events
     return jsonify(result)
 
-from forms.event import CreateEventForm
+from forms.event import CreateEventForm, UpdateEventForm
 from forms.event_suggestion import CreateEventSuggestionForm
 from forms.place import CreatePlaceForm, UpdatePlaceForm
 from forms.organization import CreateOrganizationForm, UpdateOrganizationForm
+
+def update_event_with_form(event, form):
+    form.populate_obj(event)
+
+    eventDate = EventDate(event_id = event.id, start=form.start.data)
+    event.dates = [eventDate]
+
+    if form.photo_file.data:
+        fs = form.photo_file.data
+        event.photo = upsert_image_with_data(event.photo, fs.read(), fs.content_type)
+
+def prepare_event_form(form):
+    form.host_id.choices = sorted([(ooa.id, ooa.organization.name if ooa.organization is not None else ooa.admin_unit.name) for ooa in get_event_hosts()], key=lambda ooa: ooa[1])
+    form.place_id.choices = [(p.id, p.name) for p in Place.query.order_by('name')]
+    form.category_id.choices = sorted([(c.id, get_event_category_name(c)) for c in EventCategory.query.all()], key=lambda ooa: ooa[1])
+    form.admin_unit_id.choices = sorted([(admin_unit.id, admin_unit.name) for admin_unit in get_admin_units_for_organizations()], key=lambda admin_unit: admin_unit[1])
 
 @app.route("/events/create", methods=('GET', 'POST'))
 @auth_required()
@@ -1189,30 +1211,46 @@ def event_create():
         abort(401)
 
     form = CreateEventForm(category_id=upsert_event_category('Other').id)
-
-    form.host_id.choices = sorted([(ooa.id, ooa.organization.name if ooa.organization is not None else ooa.admin_unit.name) for ooa in get_event_hosts()], key=lambda ooa: ooa[1])
+    prepare_event_form(form)
     form.host_id.choices.insert(0, (0, ''))
-    form.place_id.choices = [(p.id, p.name) for p in Place.query.order_by('name')]
     form.place_id.choices.insert(0, (0, ''))
-    form.category_id.choices = sorted([(c.id, get_event_category_name(c)) for c in EventCategory.query.all()], key=lambda ooa: ooa[1])
 
     if form.validate_on_submit():
         event = Event()
-        form.populate_obj(event)
+        update_event_with_form(event, form)
 
-        event.admin_unit = get_admin_unit('Stadt Goslar')
-
-        eventDate = EventDate(event_id = event.id, start=form.start.data)
-        event.dates.append(eventDate)
-
-        if form.photo_file.data:
-            fs = form.photo_file.data
-            event.photo = upsert_image_with_data(event.photo, fs.read(), fs.content_type)
-
-        db.session.commit()
-        flash(gettext('Event successfully created'), 'success')
-        return redirect(url_for('event', event_id=event.id))
+        try:
+            db.session.add(event)
+            db.session.commit()
+            flash(gettext('Event successfully created'), 'success')
+            return redirect(url_for('event', event_id=event.id))
+        except SQLAlchemyError as e:
+            flash(handleSqlError(e), 'danger')
     return render_template('event/create.html', form=form)
+
+@app.route('/event/<int:event_id>/update', methods=('GET', 'POST'))
+def event_update(event_id):
+    event = Event.query.get_or_404(event_id)
+
+    if not can_update_event(event):
+        abort(401)
+
+    form = UpdateEventForm(obj=event,start=event.dates[0].start)
+    prepare_event_form(form)
+
+    if form.validate_on_submit():
+        update_event_with_form(event, form)
+
+        try:
+            db.session.commit()
+            flash(gettext('Event successfully updated'), 'success')
+            return redirect(url_for('event', event_id=event.id))
+        except SQLAlchemyError as e:
+            flash(handleSqlError(e), 'danger')
+
+    return render_template('event/update.html',
+        form=form,
+        event=event)
 
 @app.route("/eventsuggestions")
 @auth_required()
