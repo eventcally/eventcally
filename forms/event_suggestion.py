@@ -1,7 +1,7 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
-from wtforms.fields.html5 import DateTimeLocalField
+from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 
 class CreateEventSuggestionForm(FlaskForm):
@@ -18,4 +18,4 @@ class CreateEventSuggestionForm(FlaskForm):
 
     host_name = StringField(lazy_gettext('Event host'), validators=[DataRequired()])
     contact_name = StringField(lazy_gettext('Contact name'), validators=[DataRequired()])
-    contact_email = StringField(lazy_gettext('Contact email'), validators=[DataRequired()])
+    contact_email = EmailField(lazy_gettext('Contact email'), validators=[DataRequired()])

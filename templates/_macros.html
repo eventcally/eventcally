@@ -56,7 +56,13 @@
   {% endif %}
 {% endmacro %}
 
-{% macro render_location(location) %}{{ location.street }}, {{ location.postalCode }} {{ location.city }}{% endmacro %}
+{% macro render_location(location) %}
+{%- if location.street -%}
+  {{ location.street }}, {{ location.postalCode }} {{ location.city }}
+{%- else -%}
+  {{ location.postalCode }} {{ location.city }}
+{%- endif -%}
+{% endmacro %}
 
 {% macro render_place(place) %}
 {%- if place.location -%}
@@ -148,6 +154,24 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_email_prop(email) %}
+{% if email %}
+<div>
+  <i class="fa fa-fw fa-envelope" data-toggle="tooltip" title="{{ _('Email') }}"></i>
+  <a href="mailto:{{ email }}">{{ email }}</a>
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_phone_prop(phone) %}
+{% if phone %}
+<div>
+  <i class="fa fa-fw fa-phone" data-toggle="tooltip" title="{{ _('Phone') }}"></i>
+  <a href="tel:{{ phone }}">{{ phone }}</a>
+</div>
+{% endif %}
+{% endmacro %}
+
 {% macro render_location_prop(location) %}
 {% if location %}
 <div>
@@ -159,7 +183,13 @@
 
 {% macro render_image(image_id) %}
 {% if image_id %}
-<img src="{{ url_for('image', id=image_id) }}" class="img-fluid rounded" />
+<img src="{{ url_for('image', id=image_id) }}" class="img-fluid rounded" style="max-width:700px;" />
+{% endif %}
+{% endmacro %}
+
+{% macro render_logo(image_id) %}
+{% if image_id %}
+<img src="{{ url_for('image', id=image_id) }}" class="img-fluid rounded" style="max-width:200px;" />
 {% endif %}
 {% endmacro %}
 
@@ -209,20 +239,14 @@
       <div class="my-4">{{ event.place.description }}</div>
       {% endif %}
 
-      {% if event.place.url %}
-      <div class="my-4">{{ render_link_prop(event.place.url) }}</div>
-      {% endif %}
-
-      {% if event.place.location %}
-      <p>
-        {{ event.place.location.street }}<br />
-        {{ event.place.location.postalCode }} {{ event.place.location.city }}
-      </p>
+      <div class="my-4">
+        {{ render_link_prop(event.place.url) }}
+        {{ render_location_prop(event.place.location) }}
+      </div>
 
       <p>
-          <a href="http://www.google.com/maps?q={{ render_place(event.place) | quote_plus }}">{{ _('Show directions') }}</a>
+          <a href="http://www.google.com/maps?q={{ render_place(event.place) | quote_plus }}" class="btn btn-secondary">{{ _('Show directions') }}</a>
       </p>
-      {% endif %}
     </div>
   </div>
 
@@ -234,25 +258,33 @@
 
       {% if event.host.admin_unit %}
         <h5 class="card-title"><a href="{{ url_for('admin_unit', admin_unit_id=event.host.admin_unit.id) }}" class="text-dark">{{ event.host.admin_unit.name }}</a></h5>
+
+        {% if event.host.admin_unit.logo_id %}
+          <div class="my-4">{{ render_logo(event.host.admin_unit.logo_id) }}</div>
+        {% endif %}
+
+        <div class="my-4">
+          {{ render_link_prop(event.host.admin_unit.url) }}
+          {{ render_email_prop(event.host.admin_unit.email) }}
+          {{ render_phone_prop(event.host.admin_unit.phone) }}
+          {{ render_location_prop(event.host.admin_unit.location) }}
+        </div>
+
       {% endif %}
 
       {% if event.host.organization %}
         <h5 class="card-title"><a href="{{ url_for('organization', organization_id=event.host.organization.id) }}" class="text-dark">{{ event.host.organization.name }}</a></h5>
 
         {% if event.host.organization.logo_id %}
-          <div class="my-4">{{ render_image(event.host.organization.logo_id) }}</div>
+          <div class="my-4">{{ render_logo(event.host.organization.logo_id) }}</div>
         {% endif %}
 
-        {% if event.host.organization.url %}
-        <div class="my-4">{{ render_link_prop(event.host.organization.url) }}</div>
-        {% endif %}
-
-        {% if event.host.organization.location %}
-        <p>
-          {{ event.host.organization.location.street }}<br />
-          {{ event.host.organization.location.postalCode }} {{ event.host.organization.location.city }}
-        </p>
-        {% endif %}
+        <div class="my-4">
+          {{ render_link_prop(event.host.organization.url) }}
+          {{ render_email_prop(event.host.organization.email) }}
+          {{ render_phone_prop(event.host.organization.phone) }}
+          {{ render_location_prop(event.host.organization.location) }}
+        </div>
 
       {% endif %}
 
