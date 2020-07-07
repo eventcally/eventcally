@@ -22,6 +22,12 @@ def get_sd_for_org(organization):
     if organization.logo_id:
         result["logo"] = url_for('image', id=organization.logo_id)
 
+    if organization.email:
+        result["email"] = organization.email
+
+    if organization.phone:
+        result["phone"] = organization.phone
+
     return result
 
 def get_sd_for_admin_unit(admin_unit):

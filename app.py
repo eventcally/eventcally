@@ -25,8 +25,8 @@ app.config['SECURITY_TRACKABLE'] = True
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
 app.config['LANGUAGES'] = ['en', 'de']
-app.config['GOOGLE_OAUTH_CLIENT_ID'] = os.environ['GOOGLE_OAUTH_CLIENT_ID']
-app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = os.environ['GOOGLE_OAUTH_CLIENT_SECRET']
+app.config['GOOGLE_OAUTH_CLIENT_ID'] = os.getenv('GOOGLE_OAUTH_CLIENT_ID')
+app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET')
 
 # Generate a nice key using secrets.token_urlsafe()
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", 'pf9Wkove4IKEAXvy-cQkeDPhv9Cb3Ag-wyJILbq_dFw')
@@ -669,8 +669,6 @@ def get_event_suggestions_for_current_user():
 
 @app.before_first_request
 def create_initial_data():
-    return
-
     # Event categories
     upsert_event_category('Art')
     upsert_event_category('Book')
@@ -834,7 +832,13 @@ def create_initial_data():
 
     # Users
     admin_role = user_datastore.find_or_create_role("admin")
-    admin_role.add_permissions(["user:create", "event:verify", "event:create", "event_suggestion:read", "admin_unit.members:read", "organization.members:read"])
+    admin_role.add_permissions(["user:create",
+        "event:verify",
+        "event:create",
+        "event_suggestion:read",
+        "admin_unit:update",
+        "admin_unit.members:read",
+        "organization.members:read"])
 
     admin_unit_admin_role = upsert_admin_unit_member_role('admin', ["admin_unit.members:read", "admin_unit.organizations.members:read"])
     admin_unit_event_verifier_role = upsert_admin_unit_member_role('event_verifier', ["event:verify", "event:create", "event_suggestion:read"])
@@ -962,18 +966,50 @@ def developer():
 
 @app.route("/admin_units")
 def admin_units():
-    return render_template('admin_units.html',
+    return render_template('admin_unit/list.html',
         admin_units=AdminUnit.query.order_by(asc(func.lower(AdminUnit.name))).all())
 
 @app.route('/admin_unit/<int:admin_unit_id>')
 def admin_unit(admin_unit_id):
-    admin_unit = AdminUnit.query.filter_by(id = admin_unit_id).first()
+    admin_unit = AdminUnit.query.get_or_404(admin_unit_id)
     current_user_member = AdminUnitMember.query.with_parent(admin_unit).filter_by(user_id = current_user.id).first() if current_user.is_authenticated else None
 
-    return render_template('admin_unit.html',
+    return render_template('admin_unit/read.html',
         admin_unit=admin_unit,
         current_user_member=current_user_member,
-        can_list_admin_unit_members=can_list_admin_unit_members(admin_unit))
+        can_list_admin_unit_members=can_list_admin_unit_members(admin_unit),
+        can_update_admin_unit=has_current_user_permission('admin_unit:update'))
+
+def update_admin_unit_with_form(admin_unit, form):
+    form.populate_obj(admin_unit)
+
+    if form.logo_file.data:
+        fs = form.logo_file.data
+        admin_unit.logo = upsert_image_with_data(admin_unit.logo, fs.read(), fs.content_type)
+
+@app.route('/admin_unit/<int:admin_unit_id>/update', methods=('GET', 'POST'))
+def admin_unit_update(admin_unit_id):
+    if not has_current_user_permission('admin_unit:update'):
+        abort(401)
+
+    admin_unit = AdminUnit.query.get_or_404(admin_unit_id)
+    form = UpdateAdminUnitForm(obj=admin_unit)
+
+    if form.validate_on_submit():
+        if not admin_unit.location:
+            admin_unit.location = Location()
+        update_admin_unit_with_form(admin_unit, form)
+
+        try:
+            db.session.commit()
+            flash(gettext('Admin unit successfully updated'), 'success')
+            return redirect(url_for('admin_unit', admin_unit_id=admin_unit.id))
+        except SQLAlchemyError as e:
+            flash(handleSqlError(e), 'danger')
+
+    return render_template('admin_unit/update.html',
+        form=form,
+        admin_unit=admin_unit)
 
 @app.route("/organizations")
 def organizations():
@@ -1187,6 +1223,7 @@ from forms.event import CreateEventForm, UpdateEventForm
 from forms.event_suggestion import CreateEventSuggestionForm
 from forms.place import CreatePlaceForm, UpdatePlaceForm
 from forms.organization import CreateOrganizationForm, UpdateOrganizationForm
+from forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
 
 def update_event_with_form(event, form):
     form.populate_obj(event)

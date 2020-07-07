@@ -7,17 +7,16 @@
 
 {% block content %}
 
-<h1>{{ _('Update organization') }}</h1>
-<form action="{{ url_for('organization_update', organization_id=organization.id) }}" method="POST" enctype="multipart/form-data">
+<h1>{{ _('Update admin unit') }}</h1>
+<form action="{{ url_for('admin_unit_update', admin_unit_id=admin_unit.id) }}" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
   <div class="card mb-4">
     <div class="card-header">
-      {{ _('Organization') }}
+      {{ _('Admin unit') }}
     </div>
     <div class="card-body">
       {{ render_field_with_errors(form.name) }}
-      {{ render_field_with_errors(form.legal_name) }}
     </div>
   </div>
 

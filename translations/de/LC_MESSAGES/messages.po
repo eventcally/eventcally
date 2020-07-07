@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-07-06 18:36+0200\n"
+"POT-Creation-Date: 2020-07-07 11:37+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -94,31 +94,35 @@ msgstr "Sport"
 msgid "Event_Other"
 msgstr "Sonstiges"
 
-#: app.py:1026
+#: app.py:1005
+msgid "Admin unit successfully updated"
+msgstr "Verwaltungseinheit erfolgreich aktualisiert"
+
+#: app.py:1062
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: app.py:1046
+#: app.py:1082
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: app.py:1101
+#: app.py:1137
 msgid "Place successfully updated"
 msgstr "Ort erfolgreich aktualisiert"
 
-#: app.py:1124
+#: app.py:1160
 msgid "Place successfully created"
 msgstr "Ort erfolgreich erstellt"
 
-#: app.py:1225
+#: app.py:1262
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:1246
+#: app.py:1283
 msgid "Event successfully updated"
 msgstr "Veranstaltung erfolgreich aktualisiert"
 
-#: app.py:1283
+#: app.py:1320
 msgid "Event suggestion successfully created"
 msgstr "Veranstaltungsvorschlag erfolgreich erstellt"
 
@@ -126,129 +130,102 @@ msgstr "Veranstaltungsvorschlag erfolgreich erstellt"
 msgid "Successfully signed in."
 msgstr "Erfolgreich eingeloggt."
 
-#: templates/_macros.html:72 templates/event/create.html:6
+#: templates/_macros.html:78 templates/event/create.html:6
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
-#: templates/_macros.html:74 templates/event_suggestion/create.html:6
+#: templates/_macros.html:80 templates/event_suggestion/create.html:6
 msgid "Suggest event"
 msgstr "Veranstaltung vorschlagen"
 
-#: templates/_macros.html:80 templates/event_suggestion/list.html:3
+#: templates/_macros.html:86 templates/event_suggestion/list.html:3
 #: templates/event_suggestion/list.html:7
 msgid "Event suggestions"
 msgstr "Veranstaltungsvorschläge"
 
-#: templates/_macros.html:93 templates/_macros.html:174
+#: templates/_macros.html:99 templates/_macros.html:204
 #: templates/event/list.html:16 templates/event_suggestion/list.html:13
 #: templates/event_suggestion/read.html:18
 msgid "Date"
 msgstr "Datum"
 
-#: templates/_macros.html:94 templates/admin/admin_units.html:18
-#: templates/admin_unit.html:45 templates/admin_unit.html:67
-#: templates/admin_units.html:13 templates/event/list.html:17
+#: templates/_macros.html:100 templates/admin/admin_units.html:18
+#: templates/admin_unit/list.html:13 templates/admin_unit/read.html:65
+#: templates/admin_unit/read.html:87 templates/event/list.html:17
 #: templates/event_suggestion/list.html:14 templates/home.html:22
 #: templates/home.html:44 templates/organization/list.html:19
-#: templates/organization/read.html:64 templates/place/list.html:19
+#: templates/organization/read.html:66 templates/place/list.html:19
 #: templates/profile.html:15 templates/profile.html:37
 msgid "Name"
 msgstr "Name"
 
-#: templates/_macros.html:95 templates/_macros.html:192
-#: templates/_macros.html:231 templates/event/create.html:29
+#: templates/_macros.html:101 templates/_macros.html:222
+#: templates/_macros.html:255 templates/event/create.html:29
 #: templates/event/list.html:18 templates/event/update.html:29
 #: templates/event_suggestion/list.html:15
 msgid "Host"
 msgstr "Veranstalter"
 
-#: templates/_macros.html:96 templates/_macros.html:154
-#: templates/_macros.html:175 templates/event/list.html:19
-#: templates/event_suggestion/list.html:16
+#: templates/_macros.html:102 templates/_macros.html:178
+#: templates/_macros.html:205 templates/admin_unit/update.html:25
+#: templates/event/list.html:19 templates/event_suggestion/list.html:16
 #: templates/event_suggestion/read.html:41
 #: templates/organization/create.html:26 templates/organization/update.html:26
 #: templates/place/create.html:29 templates/place/update.html:29
 msgid "Location"
 msgstr "Standort"
 
-#: templates/_macros.html:106 templates/_macros.html:177
+#: templates/_macros.html:112 templates/_macros.html:207
 #: templates/event/list.html:29
 msgid "Verified"
 msgstr "Verifiziert"
 
-#: templates/_macros.html:119
+#: templates/_macros.html:125
 msgid "Show all events"
 msgstr "Alle Veranstaltungen anzeigen"
 
-#: templates/_macros.html:135
+#: templates/_macros.html:141
 msgid "Show on Google Maps"
 msgstr "Auf Google Maps anzeigen"
 
-#: templates/_macros.html:145
+#: templates/_macros.html:151
 msgid "Link"
 msgstr "Link"
 
-#: templates/_macros.html:169 templates/event/create.html:13
+#: templates/_macros.html:160
+msgid "Email"
+msgstr "Email"
+
+#: templates/_macros.html:169
+msgid "Phone"
+msgstr "Telefon"
+
+#: templates/_macros.html:199 templates/event/create.html:13
 #: templates/event/update.html:13 templates/event_suggestion/read.html:13
 msgid "Event"
 msgstr "Veranstaltung"
 
-#: templates/_macros.html:190
+#: templates/_macros.html:220
 msgid "Category"
 msgstr "Kategorie"
 
-#: templates/_macros.html:199 templates/event/create.html:38
+#: templates/_macros.html:229 templates/event/create.html:38
 #: templates/event/update.html:38 templates/place/create.html:20
 #: templates/place/update.html:20
 msgid "Place"
 msgstr "Ort"
 
-#: templates/_macros.html:223
+#: templates/_macros.html:248
 msgid "Show directions"
 msgstr "Anreise planen"
 
-#: templates/_macros.html:264
+#: templates/_macros.html:296
 msgid "Sign in with Google"
 msgstr "Mit Google anmelden"
 
-#: templates/_macros.html:324
+#: templates/_macros.html:356
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
-
-#: templates/admin_unit.html:14 templates/organization/read.html:23
-msgid "Members"
-msgstr "Mitglieder"
-
-#: templates/admin_unit.html:17 templates/admin_unit.html:21
-#: templates/layout.html:64 templates/organization/list.html:3
-#: templates/organization/list.html:7 templates/profile.html:32
-msgid "Organizations"
-msgstr "Organisationen"
-
-#: templates/admin_unit.html:25 templates/event/list.html:4
-#: templates/event/list.html:8 templates/event/read.html:10
-#: templates/event_date/read.html:16 templates/layout.html:61
-#: templates/organization/read.html:27 templates/place/read.html:22
-msgid "Events"
-msgstr "Veranstaltungen"
-
-#: templates/admin_unit.html:35
-msgid "You are a member of this admin unit."
-msgstr "Du bist Mitglied dieser Verwaltungseinheit"
-
-#: templates/admin_unit.html:46 templates/admin_unit.html:68
-#: templates/home.html:23 templates/home.html:45
-#: templates/organization/read.html:65 templates/profile.html:16
-#: templates/profile.html:38
-msgid "Roles"
-msgstr "Rollen"
-
-#: templates/admin/admin.html:15 templates/admin/admin_units.html:3
-#: templates/admin/admin_units.html:10 templates/admin_units.html:3
-#: templates/admin_units.html:7 templates/layout.html:63
-#: templates/profile.html:10
-msgid "Admin Units"
-msgstr "Verwaltungseinheiten"
 
 #: templates/home.html:7
 msgid "Hi there!"
@@ -264,14 +241,41 @@ msgstr "Termine"
 msgid "Your Admin Units"
 msgstr "Deine Verwaltungseinheiten"
 
+#: templates/admin_unit/read.html:66 templates/admin_unit/read.html:88
+#: templates/home.html:23 templates/home.html:45
+#: templates/organization/read.html:67 templates/profile.html:16
+#: templates/profile.html:38
+msgid "Roles"
+msgstr "Rollen"
+
 #: templates/home.html:39
 msgid "Your Organizations"
 msgstr "Deine Organisationen"
+
+#: templates/admin_unit/read.html:30 templates/event/list.html:4
+#: templates/event/list.html:8 templates/event/read.html:10
+#: templates/event_date/read.html:16 templates/layout.html:61
+#: templates/organization/read.html:27 templates/place/read.html:22
+msgid "Events"
+msgstr "Veranstaltungen"
 
 #: templates/layout.html:62 templates/place/list.html:3
 #: templates/place/list.html:7
 msgid "Places"
 msgstr "Orte"
+
+#: templates/admin/admin.html:15 templates/admin/admin_units.html:3
+#: templates/admin/admin_units.html:10 templates/admin_unit/list.html:3
+#: templates/admin_unit/list.html:7 templates/layout.html:63
+#: templates/profile.html:10
+msgid "Admin Units"
+msgstr "Verwaltungseinheiten"
+
+#: templates/admin_unit/read.html:27 templates/layout.html:64
+#: templates/organization/list.html:3 templates/organization/list.html:7
+#: templates/profile.html:32
+msgid "Organizations"
+msgstr "Organisationen"
 
 #: templates/developer/read.html:4 templates/developer/read.html:10
 #: templates/layout.html:65
@@ -291,16 +295,34 @@ msgstr "Administration"
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: templates/event/create.html:47 templates/event/update.html:47
-#: templates/organization/create.html:44 templates/organization/update.html:44
-#: templates/place/create.html:44 templates/place/update.html:44
-msgid "Additional information"
-msgstr "Zusätzliche Informationen"
+#: templates/admin_unit/read.html:12 templates/admin_unit/update.html:10
+msgid "Update admin unit"
+msgstr "Verwaltungseinheit aktualisieren"
 
-#: templates/event/create.html:59 templates/event/update.html:59
-#: templates/organization/create.html:54
+#: templates/admin_unit/read.html:19 templates/organization/read.html:19
+#: templates/place/read.html:19
+msgid "Info"
+msgstr "Info"
+
+#: templates/admin_unit/read.html:23 templates/organization/read.html:23
+msgid "Members"
+msgstr "Mitglieder"
+
+#: templates/admin_unit/read.html:55
+msgid "You are a member of this admin unit."
+msgstr "Du bist Mitglied dieser Verwaltungseinheit"
+
+#: templates/admin_unit/update.html:16 templates/event/create.html:59
+#: templates/event/update.html:59 templates/organization/create.html:56
 msgid "Admin unit"
 msgstr "Verwaltungseinheit"
+
+#: templates/admin_unit/update.html:43 templates/event/create.html:47
+#: templates/event/update.html:47 templates/organization/create.html:44
+#: templates/organization/update.html:44 templates/place/create.html:44
+#: templates/place/update.html:44
+msgid "Additional information"
+msgstr "Zusätzliche Informationen"
 
 #: templates/event/read.html:20
 msgid "Mark event as unverified"
@@ -375,11 +397,7 @@ msgstr "Organisation"
 msgid "Update organization"
 msgstr "Organisation aktualisieren"
 
-#: templates/organization/read.html:19 templates/place/read.html:19
-msgid "Info"
-msgstr "Info"
-
-#: templates/organization/read.html:54
+#: templates/organization/read.html:56
 msgid "You are a member of this organization."
 msgstr "Du bist Mitglied dieser Organisation"
 

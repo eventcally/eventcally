@@ -99,6 +99,8 @@ class Organization(db.Model, TrackableMixin):
     logo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
     logo = db.relationship('Image', uselist=False)
     url = Column(String(255))
+    email = Column(Unicode(255))
+    phone = Column(Unicode(255))
     members = relationship('OrgMember', backref=backref('organization', lazy=True))
 
 ### Admin Unit
@@ -153,6 +155,13 @@ class AdminUnit(db.Model, TrackableMixin):
     name = Column(Unicode(255), unique=True)
     members = relationship('AdminUnitMember', backref=backref('adminunit', lazy=True))
     organizations = relationship('AdminUnitOrg', backref=backref('adminunit', lazy=True))
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location = db.relationship('Location')
+    logo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
+    logo = db.relationship('Image', uselist=False)
+    url = Column(String(255))
+    email = Column(Unicode(255))
+    phone = Column(Unicode(255))
 
 # Universal Types
 
