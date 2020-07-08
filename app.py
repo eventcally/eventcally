@@ -14,7 +14,6 @@ import pytz
 import json
 from urllib.parse import quote_plus
 from dateutil.rrule import rrulestr, rruleset, rrule
-from jsonld import DateTimeEncoder, get_sd_for_event_date
 
 # Create app
 app = Flask(__name__)
@@ -41,10 +40,11 @@ babel = Babel(app)
 
 app.jinja_env.filters['quote_plus'] = lambda u: quote_plus(u)
 
-app.json_encoder = DateTimeEncoder
-
 # create db
 db = SQLAlchemy(app)
+
+from jsonld import DateTimeEncoder, get_sd_for_event_date
+app.json_encoder = DateTimeEncoder
 
 # Setup Flask-Security
 # Define models
@@ -68,6 +68,11 @@ def get_event_category_name(category):
 
 app.jinja_env.filters['event_category_name'] = lambda u: get_event_category_name(u)
 
+def get_localized_enum_name(enum):
+    return lazy_gettext(enum.__class__.__name__ + '.' + enum.name)
+
+app.jinja_env.filters['loc_enum'] = lambda u: get_localized_enum_name(u)
+
 def print_dynamic_texts():
     gettext('Event_Art')
     gettext('Event_Book')
@@ -87,6 +92,7 @@ def print_dynamic_texts():
     gettext('Event_Fitness')
     gettext('Event_Sports')
     gettext('Event_Other')
+    gettext('Typical Age range')
 
 def handleSqlError(e):
     message = str(e.__dict__['orig'])
@@ -951,6 +957,14 @@ def create_initial_data():
 
     db.session.commit()
 
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(gettext("Error in the %s field - %s") % (
+                getattr(form, field).label.text,
+                error
+            ), 'danger')
+
 # Views
 @app.route("/")
 def home():
@@ -1228,7 +1242,7 @@ from forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
 def update_event_with_form(event, form):
     form.populate_obj(event)
 
-    eventDate = EventDate(event_id = event.id, start=form.start.data)
+    eventDate = EventDate(event_id = event.id, start=form.start.data, end=form.end.data)
     event.dates = [eventDate]
 
     if form.photo_file.data:
@@ -1272,7 +1286,7 @@ def event_update(event_id):
     if not can_update_event(event):
         abort(401)
 
-    form = UpdateEventForm(obj=event,start=event.dates[0].start)
+    form = UpdateEventForm(obj=event,start=event.dates[0].start,end=event.dates[0].end)
     prepare_event_form(form)
 
     if form.validate_on_submit():
@@ -1284,6 +1298,8 @@ def event_update(event_id):
             return redirect(url_for('event', event_id=event.id))
         except SQLAlchemyError as e:
             flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
 
     return render_template('event/update.html',
         form=form,

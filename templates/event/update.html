@@ -16,6 +16,9 @@
       {{ render_field_with_errors(form.name) }}
       {{ render_field_with_errors(form.description) }}
       {{ render_field_with_errors(form.start) }}
+      {{ render_field_with_errors(form.end) }}
+      {{ render_field_with_errors(form.status, class="autocomplete w-100") }}
+      {{ render_field_with_errors(form.previous_start_date) }}
 
       <!-- <textarea name="repeat"></textarea>
       <script type="text/javascript">
@@ -44,6 +47,18 @@
 
   <div class="card mb-4">
     <div class="card-header">
+      {{ _('Target group') }}
+    </div>
+    <div class="card-body">
+      {{ render_field_with_errors(form.target_group_origin, class="autocomplete w-100") }}
+      {{ render_field_with_errors(form.kid_friendly, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.age_from) }}
+      {{ render_field_with_errors(form.age_to) }}
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
       {{ _('Additional information') }}
     </div>
     <div class="card-body">
@@ -51,6 +66,9 @@
       {{ render_field_with_errors(form.category_id, class="autocomplete w-100") }}
       {{ render_field_with_errors(form.external_link) }}
       {{ render_field_with_errors(form.ticket_link) }}
+      {{ render_field_with_errors(form.tags) }}
+      {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
+      {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
     </div>
   </div>
 
