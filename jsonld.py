@@ -2,6 +2,7 @@ import datetime
 import decimal
 from json import JSONEncoder
 from flask import url_for
+from models import EventAttendanceMode, EventStatus
 
 # subclass JSONEncoder
 class DateTimeEncoder(JSONEncoder):
@@ -96,6 +97,38 @@ def get_sd_for_event_date(event_date):
     result["startDate"] = event_date.start
     result["location"] = get_sd_for_place(event.place)
     result["organizer"] = get_sd_for_ooa(event.host)
+
+    if event_date.end:
+        result["endDate"] = event_date.end
+
+    if event.previous_start_date:
+        result["previousStartDate"] = event.previous_start_date
+
+    if event.accessible_for_free:
+        result["accessible_for_free"] = event.accessible_for_free
+
+    if event.age_from or event.age_to:
+        result["typicalAgeRange"] = "%d-%d" % (event.age_from, event.age_to)
+
+    if event.attendance_mode:
+        if event.attendance_mode == EventAttendanceMode.offline:
+            result["eventAttendanceMode"] = "OfflineEventAttendanceMode"
+        elif event.attendance_mode == EventAttendanceMode.online:
+            result["eventAttendanceMode"] = "OnlineEventAttendanceMode"
+        elif event.attendance_mode == EventAttendanceMode.mixed:
+            result["eventAttendanceMode"] = "MixedEventAttendanceMode"
+
+    if event.status:
+        if event.status == EventStatus.scheduled:
+            result["eventStatus"] = "EventScheduled"
+        elif event.status == EventStatus.cancelled:
+            result["eventStatus"] = "EventCancelled"
+        elif event.status == EventStatus.movedOnline:
+            result["eventStatus"] = "EventMovedOnline"
+        elif event.status == EventStatus.postponed:
+            result["eventStatus"] = "EventPostponed"
+        elif event.status == EventStatus.rescheduled:
+            result["eventStatus"] = "EventRescheduled"
 
     if event.photo_id:
         result["image"] = url_for('image', id=event.photo_id)

@@ -145,6 +145,42 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_bool_prop(prop, icon, label_key) %}
+{% if prop %}
+<div>
+  <i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>
+  {{ _(label_key) }}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_enum_prop(prop, icon, label_key) %}
+{% if prop and prop.value > 1 %}
+<div>
+  <i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>
+  {{ prop | loc_enum }}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_range_prop(from, to, icon, label_key) %}
+{% if from or to %}
+<div>
+  <i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>
+  {{ from }} - {{ to }}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_tag_prop(tags) %}
+{% if tags %}
+<div>
+  <i class="fa fa-fw fa-tags" data-toggle="tooltip" title="{{ _('Tags') }}"></i>
+  {{ tags }}
+</div>
+{% endif %}
+{% endmacro %}
+
 {% macro render_link_prop(link) %}
 {% if link %}
 <div>
@@ -201,7 +237,11 @@
 
     <div class="card-body">
       <h5 class="card-title">{{ event.name }}</h5>
-      <div><i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i> {{ date.start | datetimeformat('short') }}</div>
+      <div><i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i> {{ date.start | datetimeformat('short') }} {% if date.end %}- {{ date.end | datetimeformat('short') }}{% endif %}</div>
+      {{ render_enum_prop(event.status, 'fa-info-circle', 'Status') }}
+      {% if event.previous_start_date %}
+      <div><i class="fa fa-fw fa-calendar-times" data-toggle="tooltip" title="{{ _('Previous start date') }}"></i> {{ event.previous_start_date | datetimeformat('short') }}</div>
+      {% endif %}
       <!--<div><i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i> <a href="{{ url_for('place', place_id=event.place.id) }}">{{ render_place(event.place) }}</a></div>-->
       {% if event.verified %}
       <div><i class="fa fa-fw fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i> {{ _('Verified') }}</div>
@@ -219,6 +259,12 @@
         {% if event.category_id %}
           <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {{ event.category | event_category_name }}</div>
         {% endif %}
+        {{ render_tag_prop(event.tags) }}
+        {{ render_bool_prop(event.kid_friendly, 'fa-child', 'Kid friendly') }}
+        {{ render_bool_prop(event.accessible_for_free, 'fa-door-open', 'Accessible for free') }}
+        {{ render_range_prop(event.age_from, event.age_to, 'fa-people-arrows', 'Typical Age range') }}
+        {{ render_enum_prop(event.target_group_origin, 'fa-users', 'Target group origin') }}
+        {{ render_enum_prop(event.attendance_mode, 'fa-mouse-pointer', 'Attendance mode') }}
         <!--<div><i class="fa fa-fw fa-users" data-toggle="tooltip" title="{{ _('Host') }}"></i> {{ render_ooa_with_link(event.host) }}</div>-->
       </div>
     </div>

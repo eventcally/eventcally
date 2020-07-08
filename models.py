@@ -2,10 +2,13 @@ from app import db
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import CheckConstraint
+from sqlalchemy.types import TypeDecorator
 from sqlalchemy import UniqueConstraint, Boolean, DateTime, Column, Integer, String, ForeignKey, Unicode, UnicodeText, Numeric, LargeBinary
 from flask_security import UserMixin, RoleMixin
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
+from enum import IntEnum
 import datetime
+from db import IntegerEnum
 
 ### Base
 
@@ -240,6 +243,23 @@ class EventSuggestionDate(db.Model):
     start = db.Column(db.DateTime(timezone=True), nullable=False)
     #end: date_time
 
+class EventTargetGroupOrigin(IntEnum):
+    both = 1
+    tourist = 2
+    resident = 3
+
+class EventAttendanceMode(IntEnum):
+    offline = 1
+    online = 2
+    mixed = 3
+
+class EventStatus(IntEnum):
+    scheduled = 1
+    cancelled = 2
+    movedOnline = 3
+    postponed = 4
+    rescheduled = 5
+
 class Event(db.Model, TrackableMixin):
     __tablename__ = 'event'
     id = Column(Integer(), primary_key=True)
@@ -258,6 +278,15 @@ class Event(db.Model, TrackableMixin):
     photo = db.relationship('Image', uselist=False)
     category_id = db.Column(db.Integer, db.ForeignKey('eventcategory.id'), nullable=False)
     category = relationship('EventCategory', uselist=False)
+    tags = Column(UnicodeText())
+    kid_friendly = Column(Boolean())
+    accessible_for_free = Column(Boolean())
+    age_from = Column(Integer())
+    age_to = Column(Integer())
+    target_group_origin = Column(IntegerEnum(EventTargetGroupOrigin))
+    attendance_mode = Column(IntegerEnum(EventAttendanceMode))
+    status = Column(IntegerEnum(EventStatus))
+    previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
 
     recurrence_rule = Column(UnicodeText())
     dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")
@@ -267,4 +296,4 @@ class EventDate(db.Model):
     id = Column(Integer(), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     start = db.Column(db.DateTime(timezone=True), nullable=False)
-    #end: date_time
+    end = db.Column(db.DateTime(timezone=True), nullable=True)
