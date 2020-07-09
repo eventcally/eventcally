@@ -3,12 +3,13 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
+from .widgets import CustomDateTimeField
 
 class CreateEventSuggestionForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Suggest event"))
     event_name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
     description = TextAreaField(lazy_gettext('Description'), validators=[DataRequired()])
-    start = DateTimeLocalField(lazy_gettext('Start'), format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
+    start = CustomDateTimeField(lazy_gettext('Start'), validators=[DataRequired()])
     external_link = StringField(lazy_gettext('Link URL'), validators=[Optional()])
 
     place_name = StringField(lazy_gettext('Event place'), validators=[DataRequired()])
