@@ -403,3 +403,24 @@
     </div>
   </div>
 {% endmacro %}
+
+{% macro render_datepicker_js(input_id) %}
+  {
+    var picker = $('#{{ input_id }}-date').datepicker({
+      dateFormat: "D, dd.mm.yy",
+      altField: "#{{ input_id }}-date-hidden",
+      altFormat: "yy-mm-dd"
+    });
+
+    var hidden_value = $("#{{ input_id }}-date-hidden").val();
+    if (hidden_value) {
+      picker.datepicker("setDate", moment(hidden_value).toDate());
+    }
+
+    $("#{{ input_id }}-clear-button").click(function() {
+      $('#{{ input_id }}-date').datepicker("setDate", null);
+      $("#{{ input_id }}-hour").val("00");
+      $("#{{ input_id }}-minute").val("00");
+    });
+  }
+{% endmacro %}

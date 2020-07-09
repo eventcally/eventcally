@@ -73,7 +73,7 @@ tr.table-line-through td {
     width: 1%;
 }
 
-.ui-autocomplete {
+.ui-autocomplete, .ui-datepicker {
     z-index: 1025 !important;
 }
 
