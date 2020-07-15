@@ -14,6 +14,7 @@ import pytz
 import json
 from urllib.parse import quote_plus
 from dateutil.rrule import rrulestr, rruleset, rrule
+from dateutil.relativedelta import relativedelta
 
 # Create app
 app = Flask(__name__)
@@ -322,6 +323,55 @@ def upsert_event_category(category_name):
 
     return result
 
+def dates_from_recurrence_rule(start, recurrence_rule):
+    result = list()
+
+    adv_recurrence_rule = recurrence_rule.replace('T000000', 'T235959')
+    start_wo_tz = start.replace(tzinfo=None)
+    rule_set = rrulestr(adv_recurrence_rule, forceset=True, dtstart=start_wo_tz)
+
+    start_date = start_wo_tz
+    end_date = start_date + relativedelta(years=1)
+    start_date_begin_of_day = datetime(start_date.year, start_date.month, start_date.day)
+    end_date_end_of_day = datetime(end_date.year, end_date.month, end_date.day, hour=23, minute=59, second=59)
+
+    for rule_date in rule_set.between(start_date_begin_of_day, end_date_end_of_day):
+        rule_data_w_tz = berlin_tz.localize(rule_date)
+        result.append(rule_data_w_tz)
+
+    return result
+
+def update_event_dates_with_recurrence_rule(event, start, end):
+    event.start = start
+    event.end = end
+
+    if end:
+        time_difference = relativedelta(end, start)
+
+    dates_to_add = list()
+    dates_to_remove = list(event.dates)
+
+    if event.recurrence_rule:
+        rr_dates = dates_from_recurrence_rule(start, event.recurrence_rule)
+    else:
+        rr_dates = [start]
+
+    for rr_date in rr_dates:
+        if end:
+            rr_date_end = rr_date + time_difference
+        else:
+            rr_date_end = None
+
+        existing_date = next((date for date in event.dates if date.start == rr_date and date.end == rr_date_end), None)
+        if existing_date:
+            dates_to_remove.remove(existing_date)
+        else:
+            new_date = EventDate(event_id = event.id, start=rr_date, end=rr_date_end)
+            dates_to_add.append(new_date)
+
+    event.dates = [date for date in event.dates if date not in dates_to_remove]
+    event.dates.extend(dates_to_add)
+
 def upsert_event(event_name, host, location_name, start, description, link = None, verified = False, admin_unit = None, ticket_link=None, photo_res=None, category=None, recurrence_rule=None):
     if admin_unit is None:
         admin_unit = get_admin_unit('Stadt Goslar')
@@ -347,22 +397,8 @@ def upsert_event(event_name, host, location_name, start, description, link = Non
     result.ticket_link = ticket_link
     result.category = category_object
 
-    new_dates = list()
-
-    if recurrence_rule is not None:
-        result.recurrence_rule = recurrence_rule
-        start_wo_tz = start.replace(tzinfo=None)
-        rule_set = rrulestr(recurrence_rule, forceset=True, dtstart=start_wo_tz)
-        for rule_date in list(rule_set):
-            rule_data_w_tz = berlin_tz.localize(rule_date)
-            eventDate = EventDate(event_id = result.id, start=rule_data_w_tz)
-            new_dates.append(eventDate)
-    else:
-        eventDate = EventDate(event_id = result.id, start=start)
-        new_dates.append(eventDate)
-
-    if len(new_dates) != len(result.dates):
-        result.dates = new_dates
+    result.recurrence_rule = recurrence_rule
+    update_event_dates_with_recurrence_rule(result, start, None)
 
     if photo_res is not None:
         result.photo = upsert_image_with_res(result.photo, photo_res)
@@ -894,7 +930,7 @@ def create_initial_data():
         create_berlin_date(2020, 1, 2, 10, 0),
         'Erleben Sie einen geführten Stadtrundgang durch den historischen Stadtkern. Lassen Sie sich von Fachwerkromantik und kaiserlichen Bauten inmitten der UNESCO-Welterbestätte verzaubern. ganzjährig (außer 01.01.) täglich 10:00 Uhr Treffpunkt: Tourist-Information am Marktplatz (Dauer ca. 2 Std.) Erwachsene 8,00 Euro Inhaber Gastkarte Goslar/Kurkarte Hahnenklee 7,00 Euro Schüler/Studenten 6,00 Euro',
         photo_res="tausend.jpeg",
-        recurrence_rule="FREQ=DAILY;UNTIL=20201231T235959")
+        recurrence_rule="RRULE:FREQ=DAILY;UNTIL=20201231T235959")
 
     upsert_event("Spaziergang am Nachmittag",
         gmg_ooa,
@@ -954,6 +990,13 @@ def create_initial_data():
         ticket_link='https://www.regiolights.de/tickets/product/schicht-xvi-lotte',
         photo_res="lotte.jpeg",
         category='Music')
+
+    db.session.commit()
+
+    events = Event.query.filter_by(start = None).all()
+    for event in events:
+        event.start = event.dates[0].start
+        event.end = event.dates[0].end
 
     db.session.commit()
 
@@ -1179,7 +1222,7 @@ def place_create():
 
 @app.route("/events")
 def events():
-    events = Event.query.all()
+    events = Event.query.order_by(Event.start).all()
     return render_template('event/list.html',
         events=events,
         user_can_create_event=can_create_event(),
@@ -1188,6 +1231,7 @@ def events():
 @app.route('/event/<int:event_id>', methods=('GET', 'POST'))
 def event(event_id):
     event = Event.query.filter_by(id = event_id).first()
+    dates = EventDate.query.with_parent(event).filter(EventDate.start >= today).order_by(EventDate.start).all()
     user_can_verify_event = can_verify_event(event)
 
     if user_can_verify_event and request.method == 'POST':
@@ -1200,6 +1244,7 @@ def event(event_id):
 
     return render_template('event/read.html',
         event=event,
+        dates=dates,
         user_can_verify_event=user_can_verify_event,
         can_update_event=can_update_event(event))
 
@@ -1242,8 +1287,7 @@ from forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
 def update_event_with_form(event, form):
     form.populate_obj(event)
 
-    eventDate = EventDate(event_id = event.id, start=form.start.data, end=form.end.data)
-    event.dates = [eventDate]
+    update_event_dates_with_recurrence_rule(event, form.start.data, form.end.data)
 
     if form.photo_file.data:
         fs = form.photo_file.data
@@ -1286,7 +1330,7 @@ def event_update(event_id):
     if not can_update_event(event):
         abort(401)
 
-    form = UpdateEventForm(obj=event,start=event.dates[0].start,end=event.dates[0].end)
+    form = UpdateEventForm(obj=event,start=event.start,end=event.end)
     prepare_event_form(form)
 
     if form.validate_on_submit():
@@ -1304,6 +1348,21 @@ def event_update(event_id):
     return render_template('event/update.html',
         form=form,
         event=event)
+
+@app.route("/events/rrule", methods=['POST'])
+def event_rrule():
+    year = request.json['year']
+    month = request.json['month']
+    day = request.json['day']
+    rrule_str = request.json['rrule']
+    output_format = request.json['format']
+    start = int(request.json['start'])
+    batch_size = 10
+    start_date = datetime(year, month, day)
+
+    from utils import calculate_occurrences
+    result = calculate_occurrences(start_date, '"%d.%m.%Y"', rrule_str, start, batch_size)
+    return jsonify(result)
 
 @app.route("/eventsuggestions")
 @auth_required()

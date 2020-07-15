@@ -22,16 +22,11 @@ class CustomDateTimeWidget:
             hour = field.data.hour
             minute = field.data.minute
 
-        date_user_kwargs = dict(kwargs)
-        date_user_kwargs['class'] = kwargs['class'] + " datepicker"
-        date_user_kwargs['autocomplete'] = "off"
-
-        date_hidden_params = html_params(name=field.name, id=id + '-date-hidden', value=date, **kwargs)
-        date_user_params = html_params(name="", id=id + '-date', value=date, **date_user_kwargs)
+        date_params = html_params(name=field.name, id=id, value=date, **kwargs)
         time_hour_params = html_params(name=field.name, id=id + '-hour', **kwargs)
         time_minute_params = html_params(name=field.name, id=id + '-minute', **kwargs)
         clear_button_id = id + '-clear-button'
-        return HTMLString('<input type="hidden" {}/><div class="input-group-prepend mt-1"><input type="text" {}/><button class="btn btn-outline-secondary" type="button" id="{}"><i class="fa fa-times"></i></button></div><div class="mx-2"></div><div class="input-group-append mt-1"><select {}>{}</select><span class="input-group-text">:</span><select {}>{}</select></div>'.format(date_hidden_params, date_user_params, clear_button_id, time_hour_params, create_option_string(24, hour), time_minute_params, create_option_string(60, minute)))
+        return HTMLString('<div class="input-group-prepend mt-1"><input type="text" class="datepicker" {}/><button class="btn btn-outline-secondary" type="button" id="{}"><i class="fa fa-times"></i></button></div><div class="mx-2"></div><div class="input-group-append mt-1"><select {}>{}</select><span class="input-group-text">:</span><select {}>{}</select></div>'.format(date_params, clear_button_id, time_hour_params, create_option_string(24, hour), time_minute_params, create_option_string(60, minute)))
 
 class CustomDateTimeField(DateTimeField):
     widget = CustomDateTimeWidget()

@@ -34,15 +34,15 @@
 
     <div style="max-width: 768px;">
 
-        {{ render_event_props(event, event.dates[0]) }}
+        {{ render_event_props(event, event.start, event.end, dates) }}
 
-        {% if event.dates|length > 0 %}
+        {% if dates|length > 0 %}
             <div class="card mt-4">
                 <div class="card-header">
-                    {{ _('Event Dates') }}
+                    <a name="event-dates">{{ _('Event Dates') }}</a>
                 </div>
                 <div class="list-group list-group-flush">
-                {% for date in event.dates %}
+                {% for date in dates %}
                     <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item list-group-item-action">{{ date.start | datetimeformat('short') }}</a>
                 {% endfor %}
                 </div>

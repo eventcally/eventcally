@@ -11,6 +11,16 @@
 
       {{ field(class=field_class, **kwargs)|safe }}
 
+      {% if 'ri' in kwargs %}
+        {% if kwargs['ri'] == 'rrule' %}
+          <script type="text/javascript">
+            $( function() {
+              $("textarea[name=recurrence_rule]").recurrenceinput({lang:'de', startField: "start",  ajaxURL: "{{ url_for('event_rrule') }}", firstDay: 1});
+            });
+          </script>
+        {% endif %}
+      {% endif %}
+
       {% if field.errors %}
       <div class="invalid-feedback">
           {% for error in field.errors %}
@@ -105,7 +115,7 @@
       <tbody>
           {% for event in events %}
               <tr>
-                  <td>{{ event.dates[0].start | datetimeformat }}</td>
+                  <td>{{ render_event_date(event) }}</td>
                   <td>
                       <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
                       {% if event.verified %}
@@ -229,7 +239,7 @@
 {% endif %}
 {% endmacro %}
 
-{% macro render_event_props(event, date) %}
+{% macro render_event_props(event, start, end, dates = None) %}
   <div class="card mb-3">
     <div class="card-header">
       {{ _('Event') }}
@@ -237,7 +247,20 @@
 
     <div class="card-body">
       <h5 class="card-title">{{ event.name }}</h5>
-      <div><i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i> {{ date.start | datetimeformat('short') }} {% if date.end %}- {{ date.end | datetimeformat('short') }}{% endif %}</div>
+      {% if dates and dates|length > 1 %}
+      <div>
+        <i class="fa fa-fw fas fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i>
+        {{ start | timeformat('short') }}
+        {% if end %}- {{ end | timeformat('short') }}{% endif %}
+        | <a href="#event-dates">{{ _('%(count)d event dates', count=dates|length) }}</a>
+      </div>
+      {% else %}
+      <div>
+        <i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i>
+        {{ start | datetimeformat('short') }}
+        {% if end %}- {{ end | datetimeformat('short') }}{% endif %}
+      </div>
+      {% endif %}
       {{ render_enum_prop(event.status, 'fa-info-circle', 'Status') }}
       {% if event.previous_start_date %}
       <div><i class="fa fa-fw fa-calendar-times" data-toggle="tooltip" title="{{ _('Previous start date') }}"></i> {{ event.previous_start_date | datetimeformat('short') }}</div>
@@ -404,23 +427,9 @@
   </div>
 {% endmacro %}
 
-{% macro render_datepicker_js(input_id) %}
-  {
-    var picker = $('#{{ input_id }}-date').datepicker({
-      dateFormat: "D, dd.mm.yy",
-      altField: "#{{ input_id }}-date-hidden",
-      altFormat: "yy-mm-dd"
-    });
-
-    var hidden_value = $("#{{ input_id }}-date-hidden").val();
-    if (hidden_value) {
-      picker.datepicker("setDate", moment(hidden_value).toDate());
-    }
-
-    $("#{{ input_id }}-clear-button").click(function() {
-      $('#{{ input_id }}-date').datepicker("setDate", null);
-      $("#{{ input_id }}-hour").val("00");
-      $("#{{ input_id }}-minute").val("00");
-    });
-  }
+{% macro render_event_date(event) %}
+  {{ event.start | datetimeformat('short') }}
+  {% if event.recurrence_rule %}
+  <i class="fas fa-history"></i>
+  {% endif %}
 {% endmacro %}

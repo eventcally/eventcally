@@ -289,6 +289,8 @@ class Event(db.Model, TrackableMixin):
     previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
 
     recurrence_rule = Column(UnicodeText())
+    start = db.Column(db.DateTime(timezone=True), nullable=True)
+    end = db.Column(db.DateTime(timezone=True), nullable=True)
     dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")
 
 class EventDate(db.Model):
