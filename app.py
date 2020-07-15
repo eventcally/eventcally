@@ -711,6 +711,8 @@ def get_event_suggestions_for_current_user():
 
 @app.before_first_request
 def create_initial_data():
+    return
+
     # Event categories
     upsert_event_category('Art')
     upsert_event_category('Book')
