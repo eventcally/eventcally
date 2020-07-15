@@ -10,7 +10,7 @@ jQuery.tools.recurrenceinput.localize('de', {
     add: 'Hinzufügen',
     refresh: 'Aktualisieren',
     title: 'Wiederholung',
-    preview: 'Aufgewählte Termine',
+    preview: 'Ausgewählte Termine',
     addDate: 'Termin hinzufügen',
     recurrenceType: 'Wiederholt sich:',
     dailyInterval1: 'Wiederholung :',
