@@ -18,9 +18,10 @@ class CustomDateTimeWidget:
         date = ''
         hour = minute = 0
         if field.data:
-            date = field.data.strftime("%Y-%m-%d")
-            hour = field.data.hour
-            minute = field.data.minute
+            date_value = field.data.replace(tzinfo=pytz.utc)
+            date = date_value.strftime("%Y-%m-%d")
+            hour = date_value.hour
+            minute = date_value.minute
 
         date_params = html_params(name=field.name, id=id, value=date, **kwargs)
         time_hour_params = html_params(name=field.name, id=id + '-hour', **kwargs)
