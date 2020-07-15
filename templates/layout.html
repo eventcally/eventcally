@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.recurrenceinput.css')}}" /> -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.recurrenceinput.css')}}" />
     {%- block styles %}
     {%- endblock styles %}
 
@@ -25,22 +25,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/i18n/jquery-ui-i18n.js" integrity="sha256-HwXB0HPJCXhungCtZoScc1a53ngQOXua64nb0cI6PHY=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js" integrity="sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-tools/1.2.7/jquery.tools.min.js" integrity="sha256-MxBycAbJaZYkVUCna8pQ6wfU77HziLeBohh5jnr1ttI=" crossorigin="anonymous"></script>
-    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
-    <script src="{{ url_for('static', filename='jquery.recurrenceinput.js')}}"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/1.0.6/jsrender.js" integrity="sha512-DtWD/uCp2x1mspIw6vhZGPuJP85aKEL0HFI0jFVxcEiWw1OHJn36LqtkX9G9chzKVYLtTT0G8uJ2miDEL7ucTQ==" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='jquery.recurrenceinput.js')}}"></script>
+    <script src="{{ url_for('static', filename='site.js')}}"></script>
 
     <title>{% block title %}{{ title|default }}{% endblock title %}</title>
-
-    <script>
-      moment.locale('de')
-      $.datepicker.setDefaults($.datepicker.regional["de"]);
-
-      $( function() {
-        $('[data-toggle="tooltip"]').tooltip();
-        $('.autocomplete').select2();
-      });
-
-    </script>
 
     {% block header %}
     {% endblock %}

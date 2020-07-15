@@ -14,6 +14,7 @@ class CreateEventForm(FlaskForm):
     external_link = StringField(lazy_gettext('Link URL'), validators=[Optional()])
     ticket_link = StringField(lazy_gettext('Ticket Link URL'), validators=[Optional()])
     description = TextAreaField(lazy_gettext('Description'), validators=[DataRequired()])
+    recurrence_rule = TextAreaField(lazy_gettext('Recurrence rule'), validators=[Optional()])
     start = CustomDateTimeField(lazy_gettext('Start'), validators=[DataRequired()])
     end = CustomDateTimeField(lazy_gettext('End'), validators=[Optional()])
     previous_start_date = CustomDateTimeField(lazy_gettext('Previous start date'), validators=[Optional()])

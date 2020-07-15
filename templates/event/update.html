@@ -1,15 +1,6 @@
 {% extends "layout.html" %}
 {% from "_macros.html" import render_datepicker_js, render_field_with_errors, render_field %}
 
-{% block header %}
-<script>
-  $( function() {
-    {{ render_datepicker_js('start') }}
-    {{ render_datepicker_js('end') }}
-    {{ render_datepicker_js('previous_start_date') }}
-  });
-</script>
-{% endblock %}
 {% block content %}
 
 <h1>{{ _('Update event') }}</h1>
@@ -24,15 +15,27 @@
     <div class="card-body">
       {{ render_field_with_errors(form.name) }}
       {{ render_field_with_errors(form.description) }}
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Event date') }}
+    </div>
+    <div class="card-body">
       {{ render_field_with_errors(form.start) }}
       {{ render_field_with_errors(form.end) }}
+      {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Status') }}
+    </div>
+    <div class="card-body">
       {{ render_field_with_errors(form.status, class="autocomplete w-100") }}
       {{ render_field_with_errors(form.previous_start_date) }}
-
-      <!-- <textarea name="repeat"></textarea>
-      <script type="text/javascript">
-          $("textarea[name=repeat]").recurrenceinput({startField: "start"});
-      </script> -->
     </div>
   </div>
 

@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_ooa, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_event_date, render_ooa, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Events') }}
 {% endblock %}
@@ -22,7 +22,7 @@
             <tbody>
                 {% for event in events %}
                     <tr>
-                        <td>{{ event.dates[0].start | datetimeformat('short') }}</td>
+                        <td>{{ render_event_date(event) }}</td>
                         <td>
                             <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
                             {% if event.verified %}
