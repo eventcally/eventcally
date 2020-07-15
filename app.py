@@ -9,6 +9,7 @@ from flask_security import Security, current_user, auth_required, roles_required
 from flask_security.utils import FsPermNeed
 from flask_babelex import Babel, gettext, lazy_gettext, format_datetime
 from flask_principal import Permission
+from flask_cors import CORS
 from datetime import datetime
 import pytz
 import json
@@ -40,6 +41,9 @@ app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Berlin'
 babel = Babel(app)
 
 app.jinja_env.filters['quote_plus'] = lambda u: quote_plus(u)
+
+# cors
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # create db
 db = SQLAlchemy(app)
