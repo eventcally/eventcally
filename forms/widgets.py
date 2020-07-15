@@ -18,7 +18,7 @@ class CustomDateTimeWidget:
         date = ''
         hour = minute = 0
         if field.data:
-            date_value = field.data.replace(tzinfo=pytz.utc)
+            date_value = field.data.replace(tzinfo=None)
             date = date_value.strftime("%Y-%m-%d")
             hour = date_value.hour
             minute = date_value.minute
