@@ -2,6 +2,7 @@ from wtforms import DateTimeField
 from wtforms.widgets import html_params, HTMLString
 import pytz
 from datetime import datetime
+from flask_babelex import to_user_timezone
 
 def create_option_string(count, value):
     result = ""
@@ -18,7 +19,7 @@ class CustomDateTimeWidget:
         date = ''
         hour = minute = 0
         if field.data:
-            date_value = field.data.replace(tzinfo=berlin_tz)
+            date_value = to_user_timezone(field.data)
             date = date_value.strftime("%Y-%m-%d")
             hour = date_value.hour
             minute = date_value.minute
