@@ -45,20 +45,15 @@
     </div>
     <div class="card-body">
       {{ render_field_with_errors(form.host_id, class="autocomplete w-100") }}
-    </div>
-  </div>
 
-  <div class="card mb-4">
-    <div class="card-header">
-      {{ _('Organizer') }}
-    </div>
-    <div class="card-body">
-      {{ form.organizer.hidden_tag() }}
-      {{ render_field_with_errors(form.organizer.form.name) }}
-      {{ render_field_with_errors(form.organizer.form.org_name) }}
-      {{ render_field_with_errors(form.organizer.form.url) }}
-      {{ render_field_with_errors(form.organizer.form.email) }}
-      {{ render_field_with_errors(form.organizer.form.phone) }}
+      <div class="my-4">
+        {{ form.organizer.hidden_tag() }}
+        {{ render_field_with_errors(form.organizer.form.name) }}
+        {{ render_field_with_errors(form.organizer.form.org_name) }}
+        {{ render_field_with_errors(form.organizer.form.url) }}
+        {{ render_field_with_errors(form.organizer.form.email) }}
+        {{ render_field_with_errors(form.organizer.form.phone) }}
+      </div>
     </div>
   </div>
 
@@ -68,6 +63,16 @@
     </div>
     <div class="card-body">
       {{ render_field_with_errors(form.place_id, class="autocomplete w-100") }}
+
+      <div class="my-4">
+        {{ form.event_place.hidden_tag() }}
+        {{ render_field_with_errors(form.event_place.form.name) }}
+
+        {{ form.event_place.form.location.hidden_tag() }}
+        {{ render_field_with_errors(form.event_place.form.location.street) }}
+        {{ render_field_with_errors(form.event_place.form.location.postalCode) }}
+        {{ render_field_with_errors(form.event_place.form.location.city) }}
+      </div>
     </div>
   </div>
 

@@ -215,7 +215,7 @@
 {% endmacro %}
 
 {% macro render_location_prop(location) %}
-{% if location %}
+{% if location and not location.is_empty() %}
 <div>
   <i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i>
   {{ render_location(location) }}
@@ -261,7 +261,6 @@
       {% if event.previous_start_date %}
       <div><i class="fa fa-fw fa-calendar-times" data-toggle="tooltip" title="{{ _('Previous start date') }}"></i> {{ event.previous_start_date | datetimeformat('short') }}</div>
       {% endif %}
-      <!--<div><i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i> <a href="{{ url_for('place', place_id=event.place.id) }}">{{ render_place(event.place) }}</a></div>-->
       {% if event.verified %}
       <div><i class="fa fa-fw fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i> {{ _('Verified') }}</div>
       {% endif %}
@@ -294,24 +293,46 @@
       {{ _('Place') }}
     </div>
     <div class="card-body">
-      <h5 class="card-title"><a href="{{ url_for('place', place_id=event.place.id) }}" class="text-dark">{{ event.place.name }}</a></h5>
+      {% if event.place %}
+        <h5 class="card-title"><a href="{{ url_for('place', place_id=event.place.id) }}" class="text-dark">{{ event.place.name }}</a></h5>
 
-      {% if event.place.photo_id %}
-        <div class="my-4">{{ render_image(event.place.photo_id) }}</div>
+        {% if event.place.photo_id %}
+          <div class="my-4">{{ render_image(event.place.photo_id) }}</div>
+        {% endif %}
+
+        {% if event.place.description %}
+        <div class="my-4">{{ event.place.description }}</div>
+        {% endif %}
+
+        <div class="my-4">
+          {{ render_link_prop(event.place.url) }}
+          {{ render_location_prop(event.place.location) }}
+        </div>
+
+        <p>
+            <a href="http://www.google.com/maps?q={{ render_place(event.place) | quote_plus }}" class="btn btn-secondary">{{ _('Show directions') }}</a>
+        </p>
       {% endif %}
+      {% if event.event_place %}
+        <h5 class="card-title">{{ event.event_place.name }}</h5>
 
-      {% if event.place.description %}
-      <div class="my-4">{{ event.place.description }}</div>
+        {% if event.event_place.photo_id %}
+          <div class="my-4">{{ render_image(event.event_place.photo_id) }}</div>
+        {% endif %}
+
+        {% if event.event_place.description %}
+        <div class="my-4">{{ event.event_place.description }}</div>
+        {% endif %}
+
+        <div class="my-4">
+          {{ render_link_prop(event.event_place.url) }}
+          {{ render_location_prop(event.event_place.location) }}
+        </div>
+
+        <p>
+            <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-secondary">{{ _('Show directions') }}</a>
+        </p>
       {% endif %}
-
-      <div class="my-4">
-        {{ render_link_prop(event.place.url) }}
-        {{ render_location_prop(event.place.location) }}
-      </div>
-
-      <p>
-          <a href="http://www.google.com/maps?q={{ render_place(event.place) | quote_plus }}" class="btn btn-secondary">{{ _('Show directions') }}</a>
-      </p>
     </div>
   </div>
 

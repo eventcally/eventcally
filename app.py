@@ -53,7 +53,7 @@ app.json_encoder = DateTimeEncoder
 
 # Setup Flask-Security
 # Define models
-from models import EventOrganizer, EventCategory, Image, EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
+from models import EventPlace, EventOrganizer, EventCategory, Image, EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 from oauth import blueprint
@@ -721,20 +721,6 @@ def can_verify_event(event):
 
 @app.before_first_request
 def create_initial_data():
-    events = Event.query.filter_by(organizer = None).all()
-    for event in events:
-        if event.host:
-            ooa = event.host.admin_unit if event.host.admin_unit else event.host.organization
-
-            organizer = EventOrganizer()
-            organizer.org_name = ooa.name
-            organizer.url = ooa.url
-            organizer.email = ooa.email
-            organizer.phone = ooa.phone
-
-            event.organizer = organizer
-
-    db.session.commit()
     return
 
     # Event categories
@@ -1314,6 +1300,9 @@ def update_event_with_form(event, form):
     if event.host_id == 0:
         event.host_id = None
 
+    if event.place_id == 0:
+        event.place_id = None
+
     update_event_dates_with_recurrence_rule(event, form.start.data, form.end.data)
 
     if form.photo_file.data:
@@ -1336,7 +1325,6 @@ def event_create():
 
     if form.validate_on_submit():
         event = Event()
-        event.organizer = EventOrganizer()
         update_event_with_form(event, form)
 
         try:
