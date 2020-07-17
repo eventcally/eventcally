@@ -29,6 +29,7 @@
     {% if can_update_event %}
     <div class="my-4">
         <a class="btn btn-primary my-1" href="{{ url_for('event_update', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Update event') }}</a>
+        <a class="btn btn-danger my-1" href="{{ url_for('event_delete', event_id=event.id) }}" role="button"><i class="fa fa-trash"></i> {{ _('Delete event') }}...</a>
     </div>
     {% endif %}
 

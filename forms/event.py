@@ -100,3 +100,7 @@ class CreateEventForm(FlaskForm):
 
 class UpdateEventForm(CreateEventForm):
     submit = SubmitField(lazy_gettext("Update event"))
+
+class DeleteEventForm(FlaskForm):
+    submit = SubmitField(lazy_gettext("Delete event"))
+    name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
