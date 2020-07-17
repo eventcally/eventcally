@@ -39,6 +39,7 @@
     </div>
   </div>
 
+  {% if form.host_id.choices|length > 1 %}
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Host') }}
@@ -47,6 +48,7 @@
       {{ render_field_with_errors(form.host_id, class="autocomplete w-100") }}
     </div>
   </div>
+  {% endif %}
 
   <div class="card mb-4">
     <div class="card-header">

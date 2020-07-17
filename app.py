@@ -292,32 +292,32 @@ def upsert_place(name, street = None, postalCode = None, city = None, latitude =
 
     return result
 
-def upsert_event_suggestion(event_name, host_name, place_name, start, description, link = None, admin_unit = None):
-    if admin_unit is None:
-        admin_unit = get_admin_unit('Stadt Goslar')
+# def upsert_event_suggestion(event_name, host_name, place_name, start, description, link = None, admin_unit = None):
+#     if admin_unit is None:
+#         admin_unit = get_admin_unit('Stadt Goslar')
 
-    result = EventSuggestion.query.filter_by(event_name = event_name).first()
-    if result is None:
-        result = EventSuggestion()
-        db.session.add(result)
+#     result = EventSuggestion.query.filter_by(event_name = event_name).first()
+#     if result is None:
+#         result = EventSuggestion()
+#         db.session.add(result)
 
-    result.admin_unit = admin_unit
-    result.event_name = event_name
-    result.description = description
-    result.external_link = link
-    result.place_name = place_name
-    result.host_name = host_name
+#     result.admin_unit = admin_unit
+#     result.event_name = event_name
+#     result.description = description
+#     result.external_link = link
+#     result.place_name = place_name
+#     result.host_name = host_name
 
-    result.place_postalCode = "Dummy postal code"
-    result.place_city = "Dummy city"
-    result.contact_name = "Dummy contact name"
-    result.contact_email = "Dummy contact email"
+#     result.place_postalCode = "Dummy postal code"
+#     result.place_city = "Dummy city"
+#     result.contact_name = "Dummy contact name"
+#     result.contact_email = "Dummy contact email"
 
-    eventDate = EventSuggestionDate(event_suggestion_id = result.id, start=start)
-    result.dates = []
-    result.dates.append(eventDate)
+#     eventDate = EventSuggestionDate(event_suggestion_id = result.id, start=start)
+#     result.dates = []
+#     result.dates.append(eventDate)
 
-    return result
+#     return result
 
 def upsert_event_category(category_name):
     result = EventCategory.query.filter_by(name = category_name).first()
@@ -415,7 +415,13 @@ def get_admin_units_for_organizations():
 
     return admin_units_the_current_user_is_member_of()
 
+def get_admin_units_for_event():
+    return AdminUnit.query.all()
+
 def get_event_hosts():
+    if current_user.is_anonymous:
+        return list()
+
     # User permission, e.g. user is global admin
     if has_current_user_permission('event:create'):
         return OrgOrAdminUnit.query.all()
@@ -689,27 +695,27 @@ def can_verify_event(event):
 
     return False
 
-def can_list_event_suggestion():
-    return has_current_user_any_permission('event:verify')
+# def can_list_event_suggestion():
+#     return has_current_user_any_permission('event:verify')
 
-def can_read_event_suggestion(suggestion):
-    allowed_admin_units = admin_units_from_aaos(get_event_hosts())
-    allowed_admin_unit_ids = [a.id for a in allowed_admin_units]
+# def can_read_event_suggestion(suggestion):
+#     allowed_admin_units = admin_units_from_aaos(get_event_hosts())
+#     allowed_admin_unit_ids = [a.id for a in allowed_admin_units]
 
-    return suggestion.admin_unit_id in allowed_admin_unit_ids
+#     return suggestion.admin_unit_id in allowed_admin_unit_ids
 
-def get_event_suggestions_for_current_user():
-    result = list()
+# def get_event_suggestions_for_current_user():
+#     result = list()
 
-    allowed_admin_units = admin_units_from_aaos(get_event_hosts())
-    allowed_admin_unit_ids = [a.id for a in allowed_admin_units]
+#     allowed_admin_units = admin_units_from_aaos(get_event_hosts())
+#     allowed_admin_unit_ids = [a.id for a in allowed_admin_units]
 
-    suggestions = EventSuggestion.query.all()
-    for suggestion in suggestions:
-        if suggestion.admin_unit_id in allowed_admin_unit_ids:
-            result.append(suggestion)
+#     suggestions = EventSuggestion.query.all()
+#     for suggestion in suggestions:
+#         if suggestion.admin_unit_id in allowed_admin_unit_ids:
+#             result.append(suggestion)
 
-    return result
+#     return result
 
 # Routes
 
@@ -986,20 +992,20 @@ def create_initial_data():
         create_berlin_date(2020, 12, 13, 12, 0),
         'Inmitten der mittelalterlichen Burg mit dem restaurierten Burgfried findet der „Advent auf der Burg“ statt. Der Adventsmarkt wird von gemeinnützigen und sozialen Vereinen sowie den Kirchen ausgerichtet.')
 
-    upsert_event_suggestion("Der Blaue Vogel",
-        "Freese-Baus Ballettschule",
-        "Kurhaus Bad Harzburg",
-        create_berlin_date(2020, 9, 12, 16, 0),
-        'Die Freese-Baus Ballettschule zeigt 2020 ein wenig bekanntes französisches Märchen nach einer Erzählung Maurice Maeterlinck. Die Leiterin der Schule, Hanna-Sibylle Werner, hat die Grundidee übernommen, aber für ein Ballett überarbeitet, verändert und einstudiert. Das Märchen handelt von zwei Mädchen, die einen kleinen blauen Vogel lieb gewonnen haben, der über Nacht verschwunden ist. Mit Hilfe der Berylune und der Fee des Lichts machen sie sich auf den Weg, den Vogel wieder zu finden. Ihre Reise führt sie ins Reich der Erinnerung, des Glücks, der Phantasie und der Elemente. ( Die Einstudierung der Elemente: Luft, Wasser, Feuer übernahm der Choreograf Marco Barbieri, der auch zum Team der Ballettschule gehört ). Im Reich der Königin der Nacht finden sie ihren kleinen Vogel wieder, aber ob sie ihn mit nehmen dürfen, wird nicht verraten. Die Aufführungen werden durch farbenfrohe Kostüme ( Eigentum der Schule ) und Bühnenbilder ( Günter Werner ) ergänzt. Die Musik stammt von verschiedenen Komponisten. Die Tänzer*innen sind im Alter von 3 bis 40 Jahren, die Teilnahme ist für die älteren Schüler*innen freiwillig.',
-        'https://veranstaltungen.meinestadt.de/bad-harzburg/event-detail/35486361/98831674',
-        admin_unit = get_admin_unit('Stadt Bad Harzburg'))
+    # upsert_event_suggestion("Der Blaue Vogel",
+    #     "Freese-Baus Ballettschule",
+    #     "Kurhaus Bad Harzburg",
+    #     create_berlin_date(2020, 9, 12, 16, 0),
+    #     'Die Freese-Baus Ballettschule zeigt 2020 ein wenig bekanntes französisches Märchen nach einer Erzählung Maurice Maeterlinck. Die Leiterin der Schule, Hanna-Sibylle Werner, hat die Grundidee übernommen, aber für ein Ballett überarbeitet, verändert und einstudiert. Das Märchen handelt von zwei Mädchen, die einen kleinen blauen Vogel lieb gewonnen haben, der über Nacht verschwunden ist. Mit Hilfe der Berylune und der Fee des Lichts machen sie sich auf den Weg, den Vogel wieder zu finden. Ihre Reise führt sie ins Reich der Erinnerung, des Glücks, der Phantasie und der Elemente. ( Die Einstudierung der Elemente: Luft, Wasser, Feuer übernahm der Choreograf Marco Barbieri, der auch zum Team der Ballettschule gehört ). Im Reich der Königin der Nacht finden sie ihren kleinen Vogel wieder, aber ob sie ihn mit nehmen dürfen, wird nicht verraten. Die Aufführungen werden durch farbenfrohe Kostüme ( Eigentum der Schule ) und Bühnenbilder ( Günter Werner ) ergänzt. Die Musik stammt von verschiedenen Komponisten. Die Tänzer*innen sind im Alter von 3 bis 40 Jahren, die Teilnahme ist für die älteren Schüler*innen freiwillig.',
+    #     'https://veranstaltungen.meinestadt.de/bad-harzburg/event-detail/35486361/98831674',
+    #     admin_unit = get_admin_unit('Stadt Bad Harzburg'))
 
-    upsert_event_suggestion("Herbst-Flohmarkt",
-        "Goslarsche Höfe - Integrationsbetrieb - gGmbH",
-        "Goslarsche Höfe",
-        create_berlin_date(2020, 10, 10, 10, 0),
-        'Zum letzten Mal in dieser Saison gibt es einen Hof-Flohmarkt. Wir bieten zwar nicht den größten, aber vielleicht den gemütlichsten Flohmarkt in der Region. Frei von gewerblichen Anbietern, dafür mit Kaffee, Kuchen, Bier und Bratwurst, alles auf unserem schönen Hofgelände.',
-        'https://www.goslarsche-hoefe.de/veranstaltungen/10/2175252/2020/10/10/herbst-flohmarkt.html')
+    # upsert_event_suggestion("Herbst-Flohmarkt",
+    #     "Goslarsche Höfe - Integrationsbetrieb - gGmbH",
+    #     "Goslarsche Höfe",
+    #     create_berlin_date(2020, 10, 10, 10, 0),
+    #     'Zum letzten Mal in dieser Saison gibt es einen Hof-Flohmarkt. Wir bieten zwar nicht den größten, aber vielleicht den gemütlichsten Flohmarkt in der Region. Frei von gewerblichen Anbietern, dafür mit Kaffee, Kuchen, Bier und Bratwurst, alles auf unserem schönen Hofgelände.',
+    #     'https://www.goslarsche-hoefe.de/veranstaltungen/10/2175252/2020/10/10/herbst-flohmarkt.html')
 
     upsert_event('"MINER\'S ROCK" Schickt XVI - Lotte',
         miners_rock.org_or_adminunit,
@@ -1244,9 +1250,7 @@ def place_create():
 def events():
     events = Event.query.order_by(Event.start).all()
     return render_template('event/list.html',
-        events=events,
-        user_can_create_event=can_create_event(),
-        user_can_list_event_suggestion=can_list_event_suggestion())
+        events=events)
 
 @app.route('/event/<int:event_id>', methods=('GET', 'POST'))
 def event(event_id):
@@ -1320,17 +1324,13 @@ def prepare_event_form(form):
     form.host_id.choices = sorted([(ooa.id, ooa.organization.name if ooa.organization is not None else ooa.admin_unit.name) for ooa in get_event_hosts()], key=lambda ooa: ooa[1])
     form.place_id.choices = [(p.id, p.name) for p in Place.query.order_by('name')]
     form.category_id.choices = sorted([(c.id, get_event_category_name(c)) for c in EventCategory.query.all()], key=lambda ooa: ooa[1])
-    form.admin_unit_id.choices = sorted([(admin_unit.id, admin_unit.name) for admin_unit in get_admin_units_for_organizations()], key=lambda admin_unit: admin_unit[1])
+    form.admin_unit_id.choices = sorted([(admin_unit.id, admin_unit.name) for admin_unit in get_admin_units_for_event()], key=lambda admin_unit: admin_unit[1])
 
     form.host_id.choices.insert(0, (0, ''))
     form.place_id.choices.insert(0, (0, ''))
 
 @app.route("/events/create", methods=('GET', 'POST'))
-@auth_required()
 def event_create():
-    if not can_create_event():
-        abort(401)
-
     form = CreateEventForm(category_id=upsert_event_category('Other').id)
     prepare_event_form(form)
 
@@ -1391,37 +1391,37 @@ def event_rrule():
     result = calculate_occurrences(start_date, '"%d.%m.%Y"', rrule_str, start, batch_size)
     return jsonify(result)
 
-@app.route("/eventsuggestions")
-@auth_required()
-def eventsuggestions():
-    if not can_list_event_suggestion():
-        abort(401)
+# @app.route("/eventsuggestions")
+# @auth_required()
+# def eventsuggestions():
+#     if not can_list_event_suggestion():
+#         abort(401)
 
-    return render_template('event_suggestion/list.html',
-        suggestions=get_event_suggestions_for_current_user())
+#     return render_template('event_suggestion/list.html',
+#         suggestions=get_event_suggestions_for_current_user())
 
-@app.route('/eventsuggestion/<int:event_suggestion_id>')
-@auth_required()
-def eventsuggestion(event_suggestion_id):
-    suggestion = EventSuggestion.query.filter_by(id = event_suggestion_id).first()
-    if not can_read_event_suggestion(suggestion):
-        abort(401)
+# @app.route('/eventsuggestion/<int:event_suggestion_id>')
+# @auth_required()
+# def eventsuggestion(event_suggestion_id):
+#     suggestion = EventSuggestion.query.filter_by(id = event_suggestion_id).first()
+#     if not can_read_event_suggestion(suggestion):
+#         abort(401)
 
-    return render_template('event_suggestion/read.html', suggestion=suggestion)
+#     return render_template('event_suggestion/read.html', suggestion=suggestion)
 
-@app.route("/eventsuggestions/create", methods=('GET', 'POST'))
-def event_suggestion_create():
-    form = CreateEventSuggestionForm()
-    if form.validate_on_submit():
-        event = EventSuggestion()
-        form.populate_obj(event)
-        event.admin_unit = get_admin_unit('Stadt Goslar')
-        eventDate = EventSuggestionDate(event_suggestion_id = event.id, start=form.start.data)
-        event.dates.append(eventDate)
-        db.session.commit()
-        flash(gettext('Event suggestion successfully created'), 'success')
-        return redirect(url_for('home'))
-    return render_template('event_suggestion/create.html', form=form)
+# @app.route("/eventsuggestions/create", methods=('GET', 'POST'))
+# def event_suggestion_create():
+#     form = CreateEventSuggestionForm()
+#     if form.validate_on_submit():
+#         event = EventSuggestion()
+#         form.populate_obj(event)
+#         event.admin_unit = get_admin_unit('Stadt Goslar')
+#         eventDate = EventSuggestionDate(event_suggestion_id = event.id, start=form.start.data)
+#         event.dates.append(eventDate)
+#         db.session.commit()
+#         flash(gettext('Event suggestion successfully created'), 'success')
+#         return redirect(url_for('home'))
+#     return render_template('event_suggestion/create.html', form=form)
 
 @app.route("/admin")
 @roles_required("admin")
