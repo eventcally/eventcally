@@ -53,7 +53,7 @@ app.json_encoder = DateTimeEncoder
 
 # Setup Flask-Security
 # Define models
-from models import EventCategory, Image, EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
+from models import EventOrganizer, EventCategory, Image, EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 from oauth import blueprint
@@ -715,6 +715,20 @@ def get_event_suggestions_for_current_user():
 
 @app.before_first_request
 def create_initial_data():
+    events = Event.query.filter_by(organizer = None).all()
+    for event in events:
+        if event.host:
+            ooa = event.host.admin_unit if event.host.admin_unit else event.host.organization
+
+            organizer = EventOrganizer()
+            organizer.org_name = ooa.name
+            organizer.url = ooa.url
+            organizer.email = ooa.email
+            organizer.phone = ooa.phone
+
+            event.organizer = organizer
+
+    db.session.commit()
     return
 
     # Event categories
@@ -1293,6 +1307,9 @@ from forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
 def update_event_with_form(event, form):
     form.populate_obj(event)
 
+    if event.host_id == 0:
+        event.host_id = None
+
     update_event_dates_with_recurrence_rule(event, form.start.data, form.end.data)
 
     if form.photo_file.data:
@@ -1305,6 +1322,9 @@ def prepare_event_form(form):
     form.category_id.choices = sorted([(c.id, get_event_category_name(c)) for c in EventCategory.query.all()], key=lambda ooa: ooa[1])
     form.admin_unit_id.choices = sorted([(admin_unit.id, admin_unit.name) for admin_unit in get_admin_units_for_organizations()], key=lambda admin_unit: admin_unit[1])
 
+    form.host_id.choices.insert(0, (0, ''))
+    form.place_id.choices.insert(0, (0, ''))
+
 @app.route("/events/create", methods=('GET', 'POST'))
 @auth_required()
 def event_create():
@@ -1313,11 +1333,10 @@ def event_create():
 
     form = CreateEventForm(category_id=upsert_event_category('Other').id)
     prepare_event_form(form)
-    form.host_id.choices.insert(0, (0, ''))
-    form.place_id.choices.insert(0, (0, ''))
 
     if form.validate_on_submit():
         event = Event()
+        event.organizer = EventOrganizer()
         update_event_with_form(event, form)
 
         try:
@@ -1327,6 +1346,8 @@ def event_create():
             return redirect(url_for('event', event_id=event.id))
         except SQLAlchemyError as e:
             flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
     return render_template('event/create.html', form=form)
 
 @app.route('/event/<int:event_id>/update', methods=('GET', 'POST'))

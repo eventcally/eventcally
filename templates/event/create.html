@@ -50,6 +50,20 @@
 
   <div class="card mb-4">
     <div class="card-header">
+      {{ _('Organizer') }}
+    </div>
+    <div class="card-body">
+      {{ form.organizer.hidden_tag() }}
+      {{ render_field_with_errors(form.organizer.form.name) }}
+      {{ render_field_with_errors(form.organizer.form.org_name) }}
+      {{ render_field_with_errors(form.organizer.form.url) }}
+      {{ render_field_with_errors(form.organizer.form.email) }}
+      {{ render_field_with_errors(form.organizer.form.phone) }}
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
       {{ _('Place') }}
     </div>
     <div class="card-body">

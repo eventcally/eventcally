@@ -39,6 +39,60 @@ def get_sd_for_admin_unit(admin_unit):
     result["name"] = admin_unit.name
     return result
 
+def get_sd_for_organizer_organization_contact(organizer):
+    result = {}
+    result["@type"] = "ContactPoint"
+    result["name"] = organizer.name
+
+    if organizer.email:
+        result["email"] = organizer.email
+
+    if organizer.phone:
+        result["telephone"] = organizer.phone
+
+    return result
+
+def get_sd_for_organizer_organization(organizer):
+    result = {}
+    result["@type"] = "Organization"
+    result["name"] = organizer.org_name
+
+    if organizer.name:
+        result["contactPoint"] = get_sd_for_organizer_organization_contact(organizer)
+    else:
+        if organizer.email:
+            result["email"] = organizer.email
+
+        if organizer.phone:
+            result["phone"] = organizer.phone
+
+    if organizer.url:
+        result["url"] = organizer.url
+
+    return result
+
+def get_sd_for_organizer_person(organizer):
+    result = {}
+    result["@type"] = "Person"
+    result["name"] = organizer.name
+
+    if organizer.email:
+        result["email"] = organizer.email
+
+    if organizer.phone:
+        result["phone"] = organizer.phone
+
+    if organizer.url:
+        result["url"] = organizer.url
+
+    return result
+
+def get_sd_for_organizer(organizer):
+    if organizer.org_name:
+        return get_sd_for_organizer_organization(organizer)
+
+    return get_sd_for_organizer_person(organizer)
+
 def get_sd_for_ooa(ooa):
     if ooa.organization:
         return get_sd_for_org(ooa.organization)
@@ -96,7 +150,13 @@ def get_sd_for_event_date(event_date):
     result["description"] = event.description
     result["startDate"] = event_date.start
     result["location"] = get_sd_for_place(event.place)
-    result["organizer"] = get_sd_for_ooa(event.host)
+
+    organizer_list = list()
+    if event.organizer:
+        organizer_list.append(get_sd_for_organizer(event.organizer))
+    if event.host:
+        organizer_list.append(get_sd_for_ooa(event.host))
+    result["organizer"] = organizer_list
 
     if event_date.end:
         result["endDate"] = event_date.end
