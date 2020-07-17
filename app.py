@@ -662,6 +662,9 @@ def can_create_event():
 def can_update_event(event):
     return can_create_event()
 
+def can_delete_event(event):
+    return can_update_event(event)
+
 def can_create_place():
     return can_create_event()
 
@@ -1288,7 +1291,7 @@ def api_events():
     result['event'] = structured_events
     return jsonify(result)
 
-from forms.event import CreateEventForm, UpdateEventForm
+from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm
 from forms.event_suggestion import CreateEventSuggestionForm
 from forms.place import CreatePlaceForm, UpdatePlaceForm
 from forms.organization import CreateOrganizationForm, UpdateOrganizationForm
@@ -1361,6 +1364,33 @@ def event_update(event_id):
         flash_errors(form)
 
     return render_template('event/update.html',
+        form=form,
+        event=event)
+
+@app.route('/event/<int:event_id>/delete', methods=('GET', 'POST'))
+def event_delete(event_id):
+    event = Event.query.get_or_404(event_id)
+
+    if not can_delete_event(event):
+        abort(401)
+
+    form = DeleteEventForm()
+
+    if form.validate_on_submit():
+        if form.name.data != event.name:
+            flash(gettext('Entered name does not match event name'), 'danger')
+        else:
+            try:
+                db.session.delete(event)
+                db.session.commit()
+                flash(gettext('Event successfully deleted'), 'success')
+                return redirect(url_for('events'))
+            except SQLAlchemyError as e:
+                flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
+
+    return render_template('event/delete.html',
         form=form,
         event=event)
 
