@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import CheckConstraint
 from sqlalchemy.types import TypeDecorator
+from sqlalchemy.event import listens_for
 from sqlalchemy import UniqueConstraint, Boolean, DateTime, Column, Integer, String, ForeignKey, Unicode, UnicodeText, Numeric, LargeBinary
 from flask_security import UserMixin, RoleMixin
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
@@ -202,18 +203,56 @@ class Location(db.Model, TrackableMixin):
     latitude = Column(Numeric(18,16))
     longitude = Column(Numeric(19,16))
 
+    def is_empty(self):
+        return (not self.street
+            and not self.postalCode
+            and not self.city
+            and not self.state
+            and not self.country
+            and not self.latitude
+            and not self.longitude)
+
 class Place(db.Model, TrackableMixin):
     __tablename__ = 'place'
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
-    location = db.relationship('Location')
+    location = db.relationship('Location', uselist=False)
     photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
     photo = db.relationship('Image', uselist=False)
     url = Column(String(255))
     description = Column(UnicodeText())
 
+    def is_empty(self):
+        return (not self.name)
+
+@listens_for(Place, 'before_insert')
+@listens_for(Place, 'before_update')
+def purge_place(mapper, connect, self):
+    if self.location and self.location.is_empty():
+        self.location_id = None
+
 # Events
+class EventPlace(db.Model, TrackableMixin):
+    __tablename__ = 'eventplace'
+    id = Column(Integer(), primary_key=True)
+    name = Column(Unicode(255), nullable=False)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location = db.relationship('Location', uselist=False)
+    photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
+    photo = db.relationship('Image', uselist=False)
+    url = Column(String(255))
+    description = Column(UnicodeText())
+
+    def is_empty(self):
+        return (not self.name)
+
+@listens_for(EventPlace, 'before_insert')
+@listens_for(EventPlace, 'before_update')
+def purge_event_place(mapper, connect, self):
+    if self.location and self.location.is_empty():
+        self.location_id = None
+
 class EventCategory(db.Model):
     __tablename__ = 'eventcategory'
     id = Column(Integer(), primary_key=True)
@@ -272,6 +311,10 @@ class EventOrganizer(db.Model, TrackableMixin):
     email = Column(Unicode(255))
     phone = Column(Unicode(255))
 
+    def is_empty(self):
+        return (not self.name
+            and not self.org_name)
+
 class Event(db.Model, TrackableMixin):
     __tablename__ = 'event'
     id = Column(Integer(), primary_key=True)
@@ -283,6 +326,8 @@ class Event(db.Model, TrackableMixin):
     host = db.relationship('OrgOrAdminUnit', backref=db.backref('events', lazy=True))
     place_id = db.Column(db.Integer, db.ForeignKey('place.id'), nullable=True)
     place = db.relationship('Place', backref=db.backref('events', lazy=True))
+    event_place_id = db.Column(db.Integer, db.ForeignKey('eventplace.id'), nullable=True)
+    event_place = db.relationship('EventPlace', uselist=False)
     name = Column(Unicode(255), nullable=False)
     description = Column(UnicodeText(), nullable=False)
     external_link = Column(String(255))
@@ -306,6 +351,14 @@ class Event(db.Model, TrackableMixin):
     start = db.Column(db.DateTime(timezone=True), nullable=True)
     end = db.Column(db.DateTime(timezone=True), nullable=True)
     dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")
+
+@listens_for(Event, 'before_insert')
+@listens_for(Event, 'before_update')
+def purge_event(mapper, connect, self):
+    if self.organizer and self.organizer.is_empty():
+        self.organizer_id = None
+    if self.event_place and self.event_place.is_empty():
+        self.event_place_id = None
 
 class EventDate(db.Model):
     __tablename__ = 'eventdate'

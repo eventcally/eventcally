@@ -120,11 +120,9 @@ def get_sd_for_geo(location):
     result["longitude"] = location.longitude
     return result
 
-def get_sd_for_place(place):
+def get_sd_for_place(place, use_ref=True):
     result = {}
     result["@type"] = "Place"
-    result["identifier"] = str(place.id)
-    result["url"] = url_for('place', place_id=place.id)
     result["name"] = place.name
 
     if place.location:
@@ -135,6 +133,9 @@ def get_sd_for_place(place):
 
     if place.photo_id:
         result["photo"] = url_for('image', id=place.photo_id)
+
+    if place.url:
+        result["url"] = place.url
 
     return result
 
@@ -149,7 +150,13 @@ def get_sd_for_event_date(event_date):
     result["name"] = event.name
     result["description"] = event.description
     result["startDate"] = event_date.start
-    result["location"] = get_sd_for_place(event.place)
+
+    location_list = list()
+    if event.place:
+        location_list.append(get_sd_for_place(event.place))
+    if event.event_place:
+        location_list.append(get_sd_for_place(event.event_place))
+    result["location"] = location_list
 
     organizer_list = list()
     if event.organizer:
