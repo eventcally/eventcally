@@ -1,12 +1,29 @@
-from flask_babelex import lazy_gettext
+from flask_babelex import lazy_gettext, gettext
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import DateTimeField, StringField, SubmitField, TextAreaField, SelectField, BooleanField, IntegerField
-from wtforms.fields.html5 import DateTimeLocalField
+from wtforms import DateTimeField, StringField, SubmitField, TextAreaField, SelectField, BooleanField, IntegerField, FormField
+from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 from models import EventTargetGroupOrigin, EventAttendanceMode, EventStatus
 from .widgets import CustomDateTimeField
+
+class EventOrganizerForm(FlaskForm):
+    name = StringField(lazy_gettext('Name'), validators=[Optional()])
+    org_name = StringField(lazy_gettext('Organization'), validators=[Optional()])
+    url = StringField(lazy_gettext('Link URL'), validators=[Optional()])
+    email = EmailField(lazy_gettext('Email'), validators=[Optional()])
+    phone = StringField(lazy_gettext('Phone'), validators=[Optional()])
+
+    def validate(self):
+        if not super(EventOrganizerForm, self).validate():
+            return False
+        if not self.name.data and not self.org_name.data:
+            msg = gettext('At least one of name and organization must be set')
+            self.name.errors.append(msg)
+            self.org_name.errors.append(msg)
+            return False
+        return True
 
 class CreateEventForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Create event"))
@@ -20,8 +37,10 @@ class CreateEventForm(FlaskForm):
     previous_start_date = CustomDateTimeField(lazy_gettext('Previous start date'), validators=[Optional()])
     tags = StringField(lazy_gettext('Tags'), validators=[Optional()])
 
+    organizer = FormField(EventOrganizerForm)
+
     place_id = SelectField(lazy_gettext('Place'), validators=[DataRequired()], coerce=int)
-    host_id = SelectField(lazy_gettext('Host'), validators=[DataRequired()], coerce=int)
+    host_id = SelectField(lazy_gettext('Host'), validators=[Optional()], coerce=int)
     category_id = SelectField(lazy_gettext('Category'), validators=[DataRequired()], coerce=int)
     admin_unit_id = SelectField(lazy_gettext('Admin unit'), validators=[DataRequired()], coerce=int)
 

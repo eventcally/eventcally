@@ -205,7 +205,7 @@ class Location(db.Model, TrackableMixin):
 class Place(db.Model, TrackableMixin):
     __tablename__ = 'place'
     id = Column(Integer(), primary_key=True)
-    name = Column(Unicode(255), nullable=False, unique=True)
+    name = Column(Unicode(255), nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     location = db.relationship('Location')
     photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
@@ -260,14 +260,28 @@ class EventStatus(IntEnum):
     postponed = 4
     rescheduled = 5
 
+class EventOrganizer(db.Model, TrackableMixin):
+    __tablename__ = 'eventorganizer'
+    __table_args__ = (
+        CheckConstraint('NOT(name IS NULL AND org_name IS NULL)'),
+    )
+    id = Column(Integer(), primary_key=True)
+    name = Column(Unicode(255))
+    org_name = Column(Unicode(255))
+    url = Column(String(255))
+    email = Column(Unicode(255))
+    phone = Column(Unicode(255))
+
 class Event(db.Model, TrackableMixin):
     __tablename__ = 'event'
     id = Column(Integer(), primary_key=True)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=False)
     admin_unit = db.relationship('AdminUnit', backref=db.backref('events', lazy=True))
-    host_id = db.Column(db.Integer, db.ForeignKey('org_or_adminunit.id'), nullable=False)
+    organizer_id = db.Column(db.Integer, db.ForeignKey('eventorganizer.id'), nullable=True)
+    organizer = db.relationship('EventOrganizer', uselist=False)
+    host_id = db.Column(db.Integer, db.ForeignKey('org_or_adminunit.id'), nullable=True)
     host = db.relationship('OrgOrAdminUnit', backref=db.backref('events', lazy=True))
-    place_id = db.Column(db.Integer, db.ForeignKey('place.id'), nullable=False)
+    place_id = db.Column(db.Integer, db.ForeignKey('place.id'), nullable=True)
     place = db.relationship('Place', backref=db.backref('events', lazy=True))
     name = Column(Unicode(255), nullable=False)
     description = Column(UnicodeText(), nullable=False)

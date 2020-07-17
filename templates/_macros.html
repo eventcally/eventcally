@@ -155,6 +155,15 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_string_prop(prop, icon = None, label_key = None) %}
+{% if prop %}
+<div>
+  {% if icon %}<i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>{% endif %}
+  {{ prop }}
+</div>
+{% endif %}
+{% endmacro %}
+
 {% macro render_bool_prop(prop, icon, label_key) %}
 {% if prop %}
 <div>
@@ -319,6 +328,25 @@
     </div>
   </div>
 
+  {% if event.organizer %}
+
+  <div class="card mb-3">
+    <div class="card-header">
+      {{ _('Organizer') }}
+    </div>
+    <div class="card-body">
+          {{ render_string_prop(event.organizer.name) }}
+          {{ render_string_prop(event.organizer.org_name) }}
+          {{ render_link_prop(event.organizer.url) }}
+          {{ render_email_prop(event.organizer.email) }}
+          {{ render_phone_prop(event.organizer.phone) }}
+    </div>
+  </div>
+
+  {% endif %}
+
+  {% if event.host %}
+
   <div class="card mb-3">
     <div class="card-header">
       {{ _('Host') }}
@@ -359,6 +387,8 @@
 
     </div>
   </div>
+
+  {% endif %}
 {% endmacro %}
 
 {% macro render_google_sign_in_button() %}
