@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-07-17 21:45+0200\n"
+"POT-Creation-Date: 2020-07-19 15:53+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -18,128 +18,128 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: app.py:72
+#: app.py:73
 msgid "Event_"
 msgstr ""
 
-#: app.py:77
+#: app.py:78
 msgid "."
 msgstr ""
 
-#: app.py:82
+#: app.py:83
 msgid "Event_Art"
 msgstr "Kunst"
 
-#: app.py:83
+#: app.py:84
 msgid "Event_Book"
 msgstr "Literatur"
 
-#: app.py:84
+#: app.py:85
 msgid "Event_Movie"
 msgstr "Film"
 
-#: app.py:85
+#: app.py:86
 msgid "Event_Family"
 msgstr "Familie"
 
-#: app.py:86
+#: app.py:87
 msgid "Event_Festival"
 msgstr "Festival"
 
-#: app.py:87
+#: app.py:88
 msgid "Event_Religious"
 msgstr "Religion"
 
-#: app.py:88
+#: app.py:89
 msgid "Event_Shopping"
 msgstr "Shopping"
 
-#: app.py:89
+#: app.py:90
 msgid "Event_Comedy"
 msgstr "Comedy"
 
-#: app.py:90
+#: app.py:91
 msgid "Event_Music"
 msgstr "Musik"
 
-#: app.py:91
+#: app.py:92
 msgid "Event_Dance"
 msgstr "Tanz"
 
-#: app.py:92
+#: app.py:93
 msgid "Event_Nightlife"
 msgstr "Party"
 
-#: app.py:93
+#: app.py:94
 msgid "Event_Theater"
 msgstr "Theater"
 
-#: app.py:94
+#: app.py:95
 msgid "Event_Dining"
 msgstr "Essen"
 
-#: app.py:95
+#: app.py:96
 msgid "Event_Conference"
 msgstr "Konferenz"
 
-#: app.py:96
+#: app.py:97
 msgid "Event_Meetup"
 msgstr "Networking"
 
-#: app.py:97
+#: app.py:98
 msgid "Event_Fitness"
 msgstr "Fitness"
 
-#: app.py:98
+#: app.py:99
 msgid "Event_Sports"
 msgstr "Sport"
 
-#: app.py:99
+#: app.py:100
 msgid "Event_Other"
 msgstr "Sonstiges"
 
-#: app.py:100
+#: app.py:101
 msgid "Typical Age range"
 msgstr "Typische Altersspanne"
 
-#: app.py:1021
+#: app.py:1026
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: app.py:1077
+#: app.py:1078
 msgid "Admin unit successfully updated"
 msgstr "Verwaltungseinheit erfolgreich aktualisiert"
 
-#: app.py:1134
+#: app.py:1135
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: app.py:1154
+#: app.py:1155
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: app.py:1209
+#: app.py:1214
 msgid "Place successfully updated"
 msgstr "Ort erfolgreich aktualisiert"
 
-#: app.py:1232
+#: app.py:1237
 msgid "Place successfully created"
 msgstr "Ort erfolgreich erstellt"
 
-#: app.py:1336
+#: app.py:1341
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:1359
+#: app.py:1364
 msgid "Event successfully updated"
 msgstr "Veranstaltung erfolgreich aktualisiert"
 
-#: app.py:1381
+#: app.py:1386
 msgid "Entered name does not match event name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
 
-#: app.py:1386
+#: app.py:1391
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
 
@@ -182,8 +182,7 @@ msgstr "Längengrad"
 #: templates/_macros.html:97 templates/admin/admin_units.html:18
 #: templates/admin_unit/list.html:13 templates/admin_unit/read.html:65
 #: templates/admin_unit/read.html:87 templates/event/list.html:17
-#: templates/event_suggestion/list.html:14 templates/home.html:22
-#: templates/home.html:44 templates/organization/list.html:19
+#: templates/event_suggestion/list.html:14 templates/organization/list.html:19
 #: templates/organization/read.html:66 templates/place/list.html:19
 #: templates/profile.html:15 templates/profile.html:37
 msgid "Name"
@@ -495,30 +494,11 @@ msgstr "Mit Google anmelden"
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
-#: templates/home.html:7
-msgid "Hi there!"
-msgstr "Moin!"
-
 #: templates/event/read.html:43 templates/event_date/list.html:4
-#: templates/event_date/list.html:8 templates/home.html:11
+#: templates/event_date/list.html:8 templates/home.html:8
 #: templates/layout.html:50
 msgid "Event Dates"
 msgstr "Termine"
-
-#: templates/home.html:17
-msgid "Your Admin Units"
-msgstr "Deine Verwaltungseinheiten"
-
-#: templates/admin_unit/read.html:66 templates/admin_unit/read.html:88
-#: templates/home.html:23 templates/home.html:45
-#: templates/organization/read.html:67 templates/profile.html:16
-#: templates/profile.html:38
-msgid "Roles"
-msgstr "Rollen"
-
-#: templates/home.html:39
-msgid "Your Organizations"
-msgstr "Deine Organisationen"
 
 #: templates/admin_unit/read.html:30 templates/event/list.html:4
 #: templates/event/list.html:8 templates/event/read.html:10
@@ -562,6 +542,12 @@ msgstr "Administration"
 #: templates/layout.html:71
 msgid "Logout"
 msgstr "Ausloggen"
+
+#: templates/admin_unit/read.html:66 templates/admin_unit/read.html:88
+#: templates/organization/read.html:67 templates/profile.html:16
+#: templates/profile.html:38
+msgid "Roles"
+msgstr "Rollen"
 
 #: templates/admin_unit/read.html:19 templates/organization/read.html:19
 #: templates/place/read.html:19
@@ -621,6 +607,22 @@ msgstr "Kontakt"
 msgid "You are a member of this organization."
 msgstr "Du bist Mitglied dieser Organisation"
 
+#: templates/widget/read.html:4
+msgid "Widget"
+msgstr "WIDGET"
+
+#: templates/widget/read.html:14
+msgid "From"
+msgstr "Von"
+
+#: templates/widget/read.html:21
+msgid "to"
+msgstr "bis"
+
+#: templates/widget/read.html:26
+msgid "Find"
+msgstr "Finden"
+
 #~ msgid "You"
 #~ msgstr "Du"
 
@@ -629,4 +631,13 @@ msgstr "Du bist Mitglied dieser Organisation"
 
 #~ msgid "At least one of name and organization must be set"
 #~ msgstr "Name oder Organisation muss gesetzt sein"
+
+#~ msgid "Hi there!"
+#~ msgstr "Moin!"
+
+#~ msgid "Your Admin Units"
+#~ msgstr "Deine Verwaltungseinheiten"
+
+#~ msgid "Your Organizations"
+#~ msgstr "Deine Organisationen"
 
