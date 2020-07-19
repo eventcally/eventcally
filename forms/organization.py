@@ -5,6 +5,7 @@ from wtforms import StringField, SubmitField, DecimalField, TextAreaField, FormF
 from wtforms.fields.html5 import EmailField, TelField
 from wtforms.validators import DataRequired, Optional
 import decimal
+from models import Location
 
 class OrganizationLocationForm(FlaskForm):
     street = StringField(lazy_gettext('Street'), validators=[Optional()])
@@ -22,6 +23,12 @@ class BaseOrganizationForm(FlaskForm):
     logo_file = FileField(lazy_gettext('Logo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
     legal_name = TextAreaField(lazy_gettext('Legal name'), validators=[Optional()])
     location = FormField(OrganizationLocationForm)
+
+    def populate_obj(self, obj):
+        for name, field in self._fields.items():
+            if name == 'location' and not obj.location:
+                obj.location = Location()
+            field.populate_obj(obj, name)
 
 class CreateOrganizationForm(BaseOrganizationForm):
     submit = SubmitField(lazy_gettext("Create organization"))
