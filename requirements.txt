@@ -1,6 +1,7 @@
 alembic==1.4.2
 Babel==2.8.0
 bcrypt==3.1.7
+beautifulsoup4==4.9.1
 blinker==1.4
 certifi==2020.6.20
 cffi==1.14.0
@@ -39,6 +40,7 @@ pytz==2020.1
 requests==2.24.0
 requests-oauthlib==1.3.0
 six==1.15.0
+soupsieve==2.0.1
 speaklater==1.3
 SQLAlchemy==1.3.17
 SQLAlchemy-Utils==0.36.6
@@ -47,3 +49,4 @@ URLObject==2.4.3
 visitor==0.1.3
 Werkzeug==1.0.1
 WTForms==2.3.1
+WTForms-SQLAlchemy==0.1
