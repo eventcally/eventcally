@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import asc, func
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 from flask_security import Security, current_user, auth_required, roles_required, hash_password, SQLAlchemySessionUserDatastore
 from flask_security.utils import FsPermNeed
 from flask_babelex import Babel, gettext, lazy_gettext, format_datetime, to_user_timezone
@@ -1477,6 +1477,7 @@ def widget():
     date_to = date_set_end_of_day(today + relativedelta(days=7))
     date_from_str = form_input_from_date(date_from)
     date_to_str = form_input_from_date(date_to)
+    keyword = ''
 
     if request.method == 'POST':
         date_from_str = request.form['date_from']
@@ -1484,10 +1485,21 @@ def widget():
         date_from = form_input_to_date(date_from_str)
         date_to = form_input_to_date(date_to_str, 23, 59, 59)
 
-    dates = EventDate.query.filter(and_(EventDate.start >= date_from, EventDate.start < date_to)).order_by(EventDate.start).all()
+        if 'keyword' in request.form:
+            keyword = request.form['keyword']
+
+    date_filter = and_(EventDate.start >= date_from, EventDate.start < date_to)
+
+    if keyword:
+        like_keyword = '%' + keyword + '%'
+        dates = EventDate.query.join(Event).filter(date_filter).filter(or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword))).order_by(EventDate.start).all()
+    else:
+        dates = EventDate.query.join(Event).filter(date_filter).order_by(EventDate.start).all()
+
     return render_template('widget/read.html',
         date_from_str=date_from_str,
         date_to_str=date_to_str,
+        keyword=keyword,
         dates=dates)
 
 if __name__ == '__main__':

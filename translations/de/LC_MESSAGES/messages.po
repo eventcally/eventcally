@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-07-19 15:53+0200\n"
+"POT-Creation-Date: 2020-07-19 17:19+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -619,7 +619,11 @@ msgstr "Von"
 msgid "to"
 msgstr "bis"
 
-#: templates/widget/read.html:26
+#: templates/widget/read.html:28
+msgid "Keyword"
+msgstr "Stichwort"
+
+#: templates/widget/read.html:33
 msgid "Find"
 msgstr "Finden"
 
