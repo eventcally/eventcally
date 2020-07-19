@@ -5,9 +5,10 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import asc, func
+from sqlalchemy import and_
 from flask_security import Security, current_user, auth_required, roles_required, hash_password, SQLAlchemySessionUserDatastore
 from flask_security.utils import FsPermNeed
-from flask_babelex import Babel, gettext, lazy_gettext, format_datetime
+from flask_babelex import Babel, gettext, lazy_gettext, format_datetime, to_user_timezone
 from flask_principal import Permission
 from flask_cors import CORS
 from datetime import datetime
@@ -724,6 +725,8 @@ def can_verify_event(event):
 
 @app.before_first_request
 def create_initial_data():
+    return
+
     # Event categories
     upsert_event_category('Art')
     upsert_event_category('Book')
@@ -1028,9 +1031,7 @@ def flash_errors(form):
 # Views
 @app.route("/")
 def home():
-    dates = EventDate.query.filter(EventDate.start >= today).order_by(EventDate.start).all()
-    return render_template('home.html',
-        dates=dates)
+    return render_template('home.html')
 
 @app.route("/developer")
 def developer():
@@ -1455,6 +1456,39 @@ def admin():
 def admin_admin_units():
     return render_template('admin/admin_units.html',
         admin_units=AdminUnit.query.all())
+
+def date_add_time(date, hour=0, minute=0, second=0):
+    return datetime(date.year, date.month, date.day, hour=hour, minute=minute, second=second)
+
+def date_set_end_of_day(date):
+    return date_add_time(date, hour=23, minute=59, second=59)
+
+def form_input_to_date(date_str, hour=0, minute=0, second=0):
+    date = datetime.strptime(date_str, "%Y-%m-%d")
+    date_time = date_add_time(date, hour=hour, minute=minute, second=second)
+    return berlin_tz.localize(date_time)
+
+def form_input_from_date(date):
+    return date.strftime("%Y-%m-%d")
+
+@app.route("/widget", methods=('GET', 'POST'))
+def widget():
+    date_from = today
+    date_to = date_set_end_of_day(today + relativedelta(days=7))
+    date_from_str = form_input_from_date(date_from)
+    date_to_str = form_input_from_date(date_to)
+
+    if request.method == 'POST':
+        date_from_str = request.form['date_from']
+        date_to_str = request.form['date_to']
+        date_from = form_input_to_date(date_from_str)
+        date_to = form_input_to_date(date_to_str, 23, 59, 59)
+
+    dates = EventDate.query.filter(and_(EventDate.start >= date_from, EventDate.start < date_to)).order_by(EventDate.start).all()
+    return render_template('widget/read.html',
+        date_from_str=date_from_str,
+        date_to_str=date_to_str,
+        dates=dates)
 
 if __name__ == '__main__':
     app.run()

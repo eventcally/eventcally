@@ -9,19 +9,6 @@ Prototyp
 
 {{ render_events_sub_menu() }}
 
-{% for date in dates %}
-<div class="card mb-3" style="max-width: 768px;">
-    {% if date.event.photo_id %}
-        <img src="{{ url_for('image', id=date.event.photo_id) }}" class="card-img-top" style="object-fit: cover; height: 20vh;" />
-    {% endif %}
-    <div class="card-body" style="padding:1rem">
-        <h5 class="card-title">{{ date.event.name }}</h5>
-        <h6 class="card-subtitle mb-2 text-muted"><i class="fa fa-calendar"></i> {{ date.start | datetimeformat('short') }}</h6>
-        <p class="card-text">{{ date.event.description | truncate(100) }}</p>
-        <small class="text-muted"><i class="fa fa-map-marker"></i> {% if date.event.place %}{{ date.event.place.name }}{% else %}{{ date.event.event_place.name }}{% endif %}</small>
-        <a href="{{ url_for('event_date', id=date.id) }}" class="stretched-link"></a>
-    </div>
-</div>
-{% endfor %}
+<iframe src="{{ url_for('widget') }}" style="display: block; width: 100vw; height: 70vh; max-width: 100%;"></iframe>
 
 {% endblock %}

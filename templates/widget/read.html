@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_ooa, render_place, render_events_sub_menu %}
+{% block title %}
+{{ _('Widget') }}
+{% endblock %}
+{% block navbar %}
+{% endblock %}
+{% block content %}
+
+    <form action="{{ url_for('widget') }}" class="form-inline mb-4" method="POST" autocomplete="off">
+
+        <div class="input-group mb-2 mr-sm-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">{{ _('From') }}</span>
+            </div>
+            <input type="text" id="date_from" name="date_from" value="{{ date_from_str }}" class="form-control datepicker" />
+        </div>
+
+        <div class="input-group mb-2 mr-sm-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">{{ _('to') }}</span>
+            </div>
+            <input type="text" id="date_to" name="date_to" value="{{ date_to_str }}" class="form-control datepicker" />
+        </div>
+
+        <button type="submit" class="btn btn-primary mb-2">{{ _('Find') }}</button>
+    </form>
+
+    {% for date in dates %}
+
+    <div class="row mb-3">
+        <div class="col-sm">
+            <div class="card">
+                <div class="d-lg-none">
+                    {% if date.event.photo_id %}
+                        <img src="{{ url_for('image', id=date.event.photo_id) }}" class="card-img-top" style="object-fit: cover; height: 20vh;" />
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="card-title">{{ date.event.name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted"><i class="fa fa-calendar"></i> {{ date.start | dateformat('medium') }} {{ date.start | timeformat('short') }}</h6>
+                            <p class="card-text">{{ date.event.description | truncate(100) }}</p>
+                            <small class="text-muted"><i class="fa fa-map-marker"></i> {% if date.event.place %}{{ date.event.place.name }}{% else %}{{ date.event.event_place.name }}{% endif %}</small>
+                            <a href="{{ url_for('event_date', id=date.id) }}" class="stretched-link"></a>
+                        </div>
+                        <div class="col-sm-6 text-right d-none d-lg-block">
+                            {% if date.event.photo_id %}
+                                <img src="{{ url_for('image', id=date.event.photo_id) }}" style="object-fit: cover; width: 200px;" />
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+{% endblock %}
