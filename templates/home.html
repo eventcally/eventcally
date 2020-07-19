@@ -1,60 +1,27 @@
 {% extends "layout.html" %}
+{% from "_macros.html" import render_ooa, render_place, render_events_sub_menu %}
 {% block title %}
 Prototyp
 {% endblock %}
 {% block content %}
 
-    <h1>{{ _('Hi there!') }}</h1>
+<h1>{{ _('Event Dates') }}</h1>
 
-    <div class="list-group my-4">
-        <a href="{{ url_for('event_dates') }}" class="list-group-item list-group-item-action">
-            {{ _('Event Dates') }}
-            <i class="fa fa-caret-right"></i>
-        </a>
-    </div>
+{{ render_events_sub_menu() }}
 
-    {% if admin_unit_members %}
-    <h2>{{ _('Your Admin Units') }}</h2>
-    <div class="table-responsive">
-        <table class="table table-sm table-bordered table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>{{ _('Name') }}</th>
-                    <th>{{ _('Roles') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for member in admin_unit_members %}
-                    <tr>
-                        <td><a href="{{ url_for('admin_unit', admin_unit_id=member.adminunit.id) }}">{{ member.adminunit.name }}</a></td>
-                        <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+{% for date in dates %}
+<div class="card mb-3" style="max-width: 768px;">
+    {% if date.event.photo_id %}
+        <img src="{{ url_for('image', id=date.event.photo_id) }}" class="card-img-top" style="object-fit: cover; height: 20vh;" />
     {% endif %}
-
-    {% if organization_members %}
-    <h2>{{ _('Your Organizations') }}</h2>
-    <div class="table-responsive">
-        <table class="table table-sm table-bordered table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>{{ _('Name') }}</th>
-                    <th>{{ _('Roles') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for member in organization_members %}
-                    <tr>
-                        <td><a href="{{ url_for('organization', organization_id=member.organization.id) }}">{{ member.organization.name }}</a></td>
-                        <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="card-body" style="padding:1rem">
+        <h5 class="card-title">{{ date.event.name }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted"><i class="fa fa-calendar"></i> {{ date.start | datetimeformat('short') }}</h6>
+        <p class="card-text">{{ date.event.description | truncate(100) }}</p>
+        <small class="text-muted"><i class="fa fa-map-marker"></i> {% if date.event.place %}{{ date.event.place.name }}{% else %}{{ date.event.event_place.name }}{% endif %}</small>
+        <a href="{{ url_for('event_date', id=date.id) }}" class="stretched-link"></a>
     </div>
-    {% endif %}
+</div>
+{% endfor %}
 
 {% endblock %}

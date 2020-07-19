@@ -724,8 +724,6 @@ def can_verify_event(event):
 
 @app.before_first_request
 def create_initial_data():
-    return
-
     # Event categories
     upsert_event_category('Art')
     upsert_event_category('Book')
@@ -918,6 +916,10 @@ def create_initial_data():
     mia_gmg_member = add_user_to_organization(mia, gmg)
     add_role_to_org_member(mia_gmg_member, org_member_event_verifier_role)
 
+    marina_vetter = upsert_user("marina.vetter@goslar.de")
+    marina_vetter_gmg_member = add_user_to_organization(marina_vetter, gmg)
+    add_role_to_org_member(marina_vetter_gmg_member, org_member_event_verifier_role)
+
     tom = upsert_user("tom@test.de")
     tom_gz_member = add_user_to_organization(tom, gz)
     add_role_to_org_member(tom_gz_member, org_member_event_verifier_role)
@@ -1026,11 +1028,9 @@ def flash_errors(form):
 # Views
 @app.route("/")
 def home():
-    admin_unit_members = AdminUnitMember.query.filter_by(user_id = current_user.id).all() if current_user.is_authenticated else None
-    organization_members = OrgMember.query.filter_by(user_id = current_user.id).all() if current_user.is_authenticated else None
+    dates = EventDate.query.filter(EventDate.start >= today).order_by(EventDate.start).all()
     return render_template('home.html',
-        admin_unit_members=admin_unit_members,
-        organization_members=organization_members)
+        dates=dates)
 
 @app.route("/developer")
 def developer():
@@ -1168,7 +1168,11 @@ def image(id):
 @app.route("/profile")
 @auth_required()
 def profile():
-    return render_template('profile.html')
+    admin_unit_members = AdminUnitMember.query.filter_by(user_id = current_user.id).all() if current_user.is_authenticated else None
+    organization_members = OrgMember.query.filter_by(user_id = current_user.id).all() if current_user.is_authenticated else None
+    return render_template('profile.html',
+        admin_unit_members=admin_unit_members,
+        organization_members=organization_members)
 
 @app.route("/places")
 def places():
