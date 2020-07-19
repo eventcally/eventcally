@@ -23,6 +23,13 @@
             <input type="text" id="date_to" name="date_to" value="{{ date_to_str }}" class="form-control datepicker" />
         </div>
 
+        <div class="input-group mb-2 mr-sm-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">{{ _('Keyword') }}</span>
+            </div>
+            <input type="text" name="keyword" value="{{ keyword }}" class="form-control" />
+        </div>
+
         <button type="submit" class="btn btn-primary mb-2">{{ _('Find') }}</button>
     </form>
 
