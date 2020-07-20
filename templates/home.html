@@ -5,10 +5,17 @@ Prototyp
 {% endblock %}
 {% block content %}
 
-<h1>{{ _('Event Dates') }}</h1>
+<h1>Terminkalender für Goslar und Hahnenklee</h1>
 
 {{ render_events_sub_menu() }}
 
-<iframe src="{{ url_for('widget') }}" style="display: block; width: 100vw; height: 70vh; max-width: 100%;"></iframe>
+<div class="input-group mb-2 mr-sm-2">
+    <div class="input-group-prepend">
+        <span class="input-group-text">{{ _('Widget als iFrame einbetten') }}</span>
+    </div>
+    <input type="text" value="{{ url_for('widget_event_dates', _external=True) }}" class="form-control" />
+</div>
+
+<iframe src="{{ url_for('widget_event_dates') }}" style="display: block; width: 100vw; height: 70vh; max-width: 100%;"></iframe>
 
 {% endblock %}

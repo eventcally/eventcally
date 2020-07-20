@@ -1473,8 +1473,8 @@ def form_input_to_date(date_str, hour=0, minute=0, second=0):
 def form_input_from_date(date):
     return date.strftime("%Y-%m-%d")
 
-@app.route("/widget", methods=('GET', 'POST'))
-def widget():
+@app.route("/widget/eventdates", methods=('GET', 'POST'))
+def widget_event_dates():
     date_from = today
     date_to = date_set_end_of_day(today + relativedelta(days=7))
     date_from_str = form_input_from_date(date_from)
@@ -1494,15 +1494,23 @@ def widget():
 
     if keyword:
         like_keyword = '%' + keyword + '%'
-        dates = EventDate.query.join(Event).filter(date_filter).filter(or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword))).order_by(EventDate.start).all()
+        dates = EventDate.query.join(Event).filter(date_filter).filter(and_(Event.verified, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))).order_by(EventDate.start).all()
     else:
-        dates = EventDate.query.join(Event).filter(date_filter).order_by(EventDate.start).all()
+        dates = EventDate.query.join(Event).filter(date_filter).filter(Event.verified).order_by(EventDate.start).all()
 
-    return render_template('widget/read.html',
+    return render_template('widget/event_date/list.html',
         date_from_str=date_from_str,
         date_to_str=date_to_str,
         keyword=keyword,
         dates=dates)
+
+@app.route('/widget/eventdate/<int:id>')
+def widget_event_date(id):
+    event_date = EventDate.query.get_or_404(id)
+    structured_data = json.dumps(get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder)
+    return render_template('widget/event_date/read.html',
+        event_date=event_date,
+        structured_data=structured_data)
 
 if __name__ == '__main__':
     app.run()

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_event_props, render_image, render_ooa_with_link, render_place, render_link_prop %}
+{% set event = event_date.event %}
+{% block title %}
+{{ event.name }}
+{% endblock %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='widget.css')}}" />
+{% endblock %}
+{% block header %}
+<script type="application/ld+json">
+{{ structured_data | safe }}
+</script>
+{% endblock %}
+{% block navbar %}
+{% endblock %}
+{% block content %}
+
+<div style="max-width: 768px;">
+    {{ render_event_props(event, event_date.start, event_date.end) }}
+</div>
+
+{% endblock %}
