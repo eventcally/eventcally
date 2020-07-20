@@ -74,7 +74,7 @@ jQuery.tools.recurrenceinput.localize('de', {
     weekdays: [
         'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag',
         'Freitag', 'Samstag'],
-    shortWeekdays: ['Son', 'Die', 'Mit', 'Don', 'Fre', 'Sam'],
+    shortWeekdays: ['Son', 'Mon', 'Die', 'Mit', 'Don', 'Fre', 'Sam'],
     longDateFormat: 'D, dd.mm.yy',
     shortDateFormat: 'dd.mm.yy',
     unsupportedFeatures: 'Warning: This event uses recurrence features not supported by this widget. Saving the recurrence may change the recurrence in unintended ways: ',
