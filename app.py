@@ -362,7 +362,7 @@ def update_event_dates_with_recurrence_rule(event, start, end):
         rr_dates = [start]
 
     for rr_date in rr_dates:
-        rr_date_start = date_add_time(rr_date, start.hour, start.minute, start.second)
+        rr_date_start = date_add_time(rr_date, start.hour, start.minute, start.second, rr_date.tzinfo)
 
         if end:
             rr_date_end = rr_date_start + time_difference
@@ -1459,8 +1459,8 @@ def admin_admin_units():
     return render_template('admin/admin_units.html',
         admin_units=AdminUnit.query.all())
 
-def date_add_time(date, hour=0, minute=0, second=0):
-    return datetime(date.year, date.month, date.day, hour=hour, minute=minute, second=second)
+def date_add_time(date, hour=0, minute=0, second=0, tzinfo=None):
+    return datetime(date.year, date.month, date.day, hour=hour, minute=minute, second=second, tzinfo=tzinfo)
 
 def date_set_end_of_day(date):
     return date_add_time(date, hour=23, minute=59, second=59)
