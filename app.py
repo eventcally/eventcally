@@ -362,16 +362,18 @@ def update_event_dates_with_recurrence_rule(event, start, end):
         rr_dates = [start]
 
     for rr_date in rr_dates:
+        rr_date_start = date_add_time(rr_date, start.hour, start.minute, start.second)
+
         if end:
-            rr_date_end = rr_date + time_difference
+            rr_date_end = rr_date_start + time_difference
         else:
             rr_date_end = None
 
-        existing_date = next((date for date in event.dates if date.start == rr_date and date.end == rr_date_end), None)
+        existing_date = next((date for date in event.dates if date.start == rr_date_start and date.end == rr_date_end), None)
         if existing_date:
             dates_to_remove.remove(existing_date)
         else:
-            new_date = EventDate(event_id = event.id, start=rr_date, end=rr_date_end)
+            new_date = EventDate(event_id = event.id, start=rr_date_start, end=rr_date_end)
             dates_to_add.append(new_date)
 
     event.dates = [date for date in event.dates if date not in dates_to_remove]
