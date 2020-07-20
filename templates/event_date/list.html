@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_ooa, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_event_status_pill, render_ooa, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Event Dates') }}
 {% endblock %}
@@ -13,7 +13,7 @@
             <img src="{{ url_for('image', id=date.event.photo_id) }}" class="card-img-top" style="object-fit: cover; height: 20vh;" />
         {% endif %}
         <div class="card-body" style="padding:1rem">
-            <h5 class="card-title">{{ date.event.name }}</h5>
+            <h5 class="card-title">{{ date.event.name }}{{ render_event_status_pill(date.event) }}</h5>
             <h6 class="card-subtitle mb-2 text-muted"><i class="fa fa-calendar"></i> {{ date.start | datetimeformat('short') }}</h6>
             <p class="card-text">{{ date.event.description | truncate(100) }}</p>
             <small class="text-muted"><i class="fa fa-map-marker"></i> {% if date.event.place %}{{ date.event.place.name }}{% else %}{{ date.event.event_place.name }}{% endif %}</small>

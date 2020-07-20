@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_ooa, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_event_status_pill, render_event_status_pill, render_ooa, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Widget') }}
 {% endblock %}
@@ -45,7 +45,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-8">
-                            <h5 class="card-title">{{ date.event.name }}</h5>
+                            <h5 class="card-title">{{ date.event.name }}{{ render_event_status_pill(date.event) }}</h5>
                             <h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> {{ date.start | dateformat('medium') }} {{ date.start | timeformat('short') }}</h6>
                             <p class="card-text">{{ date.event.description | truncate(200) }}</p>
                             <small class="text-muted"><i class="fa fa-map-marker"></i> {% if date.event.place %}{{ date.event.place.name }}{% else %}{{ date.event.event_place.name }}{% endif %}</small>
@@ -74,7 +74,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-12">
-                            <h5 class="card-title">{{ date.event.name }}</h5>
+                            <h5 class="card-title">{{ date.event.name }}{{ render_event_status_pill(date.event) }}</h5>
                             <h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> {{ date.start | dateformat('medium') }} {{ date.start | timeformat('short') }}</h6>
                             <p class="card-text">{{ date.event.description | truncate(100) }}</p>
                             <small class="text-muted"><i class="fa fa-map-marker"></i> {% if date.event.place %}{{ date.event.place.name }}{% else %}{{ date.event.event_place.name }}{% endif %}</small>

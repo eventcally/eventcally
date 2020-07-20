@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_event_date, render_ooa, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_event_status_pill, render_event_date, render_ooa, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Events') }}
 {% endblock %}
@@ -25,6 +25,7 @@
                         <td>{{ render_event_date(event) }}</td>
                         <td>
                             <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
+                            {{ render_event_status_pill(event) }}
                             {% if event.verified %}
                             <i class="fa fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i>
                             {% endif %}

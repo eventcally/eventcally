@@ -174,8 +174,12 @@ def get_sd_for_event_date(event_date):
     if event.accessible_for_free:
         result["accessible_for_free"] = event.accessible_for_free
 
-    if event.age_from or event.age_to:
+    if event.age_from and event.age_to:
         result["typicalAgeRange"] = "%d-%d" % (event.age_from, event.age_to)
+    elif event.age_from:
+        result["typicalAgeRange"] = "%d-" % event.age_from
+    elif event.age_to:
+        result["typicalAgeRange"] = "-%d" % event.age_to
 
     if event.attendance_mode:
         if event.attendance_mode == EventAttendanceMode.offline:

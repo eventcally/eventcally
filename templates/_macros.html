@@ -69,7 +69,7 @@
 {% macro render_location(location) %}
 {%- if location.street -%}
   {{ location.street }}, {{ location.postalCode }} {{ location.city }}
-{%- else -%}
+{%- elif location.postalCode or location.city -%}
   {{ location.postalCode }} {{ location.city }}
 {%- endif -%}
 {% endmacro %}
@@ -105,6 +105,7 @@
                   <td>{{ render_event_date(event) }}</td>
                   <td>
                       <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
+                      {{ render_event_status_pill(event) }}
                       {% if event.verified %}
                         <i class="fa fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i>
                       {% endif %}
@@ -173,7 +174,7 @@
 {% if from or to %}
 <div>
   <i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>
-  {{ from }} - {{ to }}
+  {{ from if from }} - {{ to if to }}
 </div>
 {% endif %}
 {% endmacro %}
@@ -191,7 +192,7 @@
 {% if link %}
 <div>
   <i class="fa fa-fw fa-link" data-toggle="tooltip" title="{{ _('Link') }}"></i>
-  <a href="{{ link }}">{{ link }}</a>
+  <a href="{{ link }}" target="_blank">{{ link }}</a>
 </div>
 {% endif %}
 {% endmacro %}
@@ -205,6 +206,12 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_event_status_pill(event) %}
+{% if event.status and event.status != 1 %}
+ <span class="badge badge-pill badge-warning">{{ event.status | loc_enum }}</span>
+{% endif %}
+{% endmacro %}
+
 {% macro render_phone_prop(phone) %}
 {% if phone %}
 <div>
@@ -215,7 +222,7 @@
 {% endmacro %}
 
 {% macro render_location_prop(location) %}
-{% if location and not location.is_empty() %}
+{% if location and location.street or location.postalCode or location.city %}
 <div>
   <i class="fa fa-fw fa-map-marker" data-toggle="tooltip" title="{{ _('Location') }}"></i>
   {{ render_location(location) }}
@@ -242,7 +249,7 @@
     </div>
 
     <div class="card-body">
-      <h5 class="card-title">{{ event.name }}</h5>
+      <h5 class="card-title">{{ event.name }}{{ render_event_status_pill(event) }}</h5>
       {% if dates and dates|length > 1 %}
       <div>
         <i class="fa fa-fw fas fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i>
@@ -330,7 +337,7 @@
         </div>
 
         <p>
-            <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-secondary">{{ _('Show directions') }}</a>
+            <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-secondary" target="_blank">{{ _('Show directions') }}</a>
         </p>
       {% endif %}
     </div>
