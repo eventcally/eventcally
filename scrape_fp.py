@@ -152,4 +152,4 @@ def parse_date_time_str(date_time_str):
     return berlin_tz.localize(date_time)
 
 if __name__ == '__main__':
-    scrape(__debug__)
+    scrape(False)
