@@ -1,0 +1,25 @@
+body {
+	background-color:#eceef0;
+    font-family: Verdana;
+    color: #3c444b;
+}
+
+.btn-primary {
+    background-color: #B09641;
+    color: black;
+    border-color: #B09641;
+}
+
+.btn-primary:hover {
+    background-color: #B09641;
+    color: black;
+    border-color: #B09641;
+}
+
+.card {
+    background-color: transparent;
+}
+
+.card-title {
+    color: #7B2424;
+}
