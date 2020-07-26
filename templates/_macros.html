@@ -221,6 +221,12 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_fax_prop(fax) %}
+{% if fax %}
+<div><i class="fa fa-fw fa-fax" data-toggle="tooltip" title="{{ _('Fax') }}"></i> {{ fax }}</div>
+{% endif %}
+{% endmacro %}
+
 {% macro render_location_prop(location) %}
 {% if location and location.street or location.postalCode or location.city %}
 <div>
@@ -355,6 +361,7 @@
           {{ render_link_prop(event.organizer.url) }}
           {{ render_email_prop(event.organizer.email) }}
           {{ render_phone_prop(event.organizer.phone) }}
+          {{ render_fax_prop(event.organizer.fax) }}
     </div>
   </div>
 
@@ -379,6 +386,7 @@
           {{ render_link_prop(event.host.admin_unit.url) }}
           {{ render_email_prop(event.host.admin_unit.email) }}
           {{ render_phone_prop(event.host.admin_unit.phone) }}
+          {{ render_fax_prop(event.host.admin_unit.fax) }}
           {{ render_location_prop(event.host.admin_unit.location) }}
         </div>
 
@@ -395,6 +403,7 @@
           {{ render_link_prop(event.host.organization.url) }}
           {{ render_email_prop(event.host.organization.email) }}
           {{ render_phone_prop(event.host.organization.phone) }}
+          {{ render_fax_prop(event.host.organization.fax) }}
           {{ render_location_prop(event.host.organization.location) }}
         </div>
 

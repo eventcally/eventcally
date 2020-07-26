@@ -29,6 +29,7 @@ class EventOrganizerForm(FlaskForm):
     url = StringField(lazy_gettext('Link URL'), validators=[Optional()])
     email = EmailField(lazy_gettext('Email'), validators=[Optional()])
     phone = StringField(lazy_gettext('Phone'), validators=[Optional()])
+    fax = StringField(lazy_gettext('Fax'), validators=[Optional()])
 
 class CreateEventForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Create event"))

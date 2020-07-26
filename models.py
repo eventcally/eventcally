@@ -105,6 +105,7 @@ class Organization(db.Model, TrackableMixin):
     url = Column(String(255))
     email = Column(Unicode(255))
     phone = Column(Unicode(255))
+    fax = Column(Unicode(255))
     members = relationship('OrgMember', backref=backref('organization', lazy=True))
 
 ### Admin Unit
@@ -166,6 +167,7 @@ class AdminUnit(db.Model, TrackableMixin):
     url = Column(String(255))
     email = Column(Unicode(255))
     phone = Column(Unicode(255))
+    fax = Column(Unicode(255))
 
 # Universal Types
 
@@ -310,6 +312,7 @@ class EventOrganizer(db.Model, TrackableMixin):
     url = Column(String(255))
     email = Column(Unicode(255))
     phone = Column(Unicode(255))
+    fax = Column(Unicode(255))
 
     def is_empty(self):
         return (not self.name
