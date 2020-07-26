@@ -413,6 +413,30 @@
   </div>
 
   {% endif %}
+
+  <div class="card mb-3">
+    <div class="card-header">
+      {{ _('Admin unit') }}
+    </div>
+    <div class="card-body">
+
+        <h5 class="card-title"><a href="{{ url_for('admin_unit', admin_unit_id=event.admin_unit.id) }}" class="text-dark">{{ event.admin_unit.name }}</a></h5>
+
+        {% if event.admin_unit.logo_id %}
+          <div class="my-4">{{ render_logo(event.admin_unit.logo_id) }}</div>
+        {% endif %}
+
+        <div class="my-4">
+          {{ render_link_prop(event.admin_unit.url) }}
+          {{ render_email_prop(event.admin_unit.email) }}
+          {{ render_phone_prop(event.admin_unit.phone) }}
+          {{ render_fax_prop(event.admin_unit.fax) }}
+          {{ render_location_prop(event.admin_unit.location) }}
+        </div>
+
+    </div>
+  </div>
+
 {% endmacro %}
 
 {% macro render_google_sign_in_button() %}
