@@ -98,6 +98,7 @@ class Organization(db.Model, TrackableMixin):
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), unique=True)
     legal_name = Column(Unicode(255))
+    short_name = Column(Unicode(100), unique=True)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     location = db.relationship('Location')
     logo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
@@ -158,6 +159,7 @@ class AdminUnit(db.Model, TrackableMixin):
     __tablename__ = 'adminunit'
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), unique=True)
+    short_name = Column(Unicode(100), unique=True)
     members = relationship('AdminUnitMember', backref=backref('adminunit', lazy=True))
     organizations = relationship('AdminUnitOrg', backref=backref('adminunit', lazy=True))
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))

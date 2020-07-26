@@ -116,12 +116,13 @@ def upsert_user(email, password="password"):
         result = user_datastore.create_user(email=email, password=hash_password(password))
     return result
 
-def upsert_admin_unit(unit_name):
+def upsert_admin_unit(unit_name, short_name):
     admin_unit = AdminUnit.query.filter_by(name = unit_name).first()
     if admin_unit is None:
         admin_unit = AdminUnit(name = unit_name)
         db.session.add(admin_unit)
 
+    admin_unit.short_name = short_name
     upsert_org_or_admin_unit_for_admin_unit(admin_unit)
     return admin_unit
 
@@ -751,7 +752,7 @@ def create_initial_data():
     db.session.commit()
 
     # Admin units
-    goslar = upsert_admin_unit('Stadt Goslar')
+    goslar = upsert_admin_unit('Stadt Goslar', 'goslar')
     harzburg = upsert_admin_unit('Stadt Bad Harzburg')
     upsert_admin_unit('Stadt Clausthal')
     upsert_admin_unit('Gemeinde Walkenried')

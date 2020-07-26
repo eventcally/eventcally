@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField, DecimalField, TextAreaField, FormField, SelectField
 from wtforms.fields.html5 import EmailField, TelField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Optional, Regexp
 import decimal
 from models import Location
 
@@ -22,7 +22,8 @@ class BaseOrganizationForm(FlaskForm):
     phone = TelField(lazy_gettext('Phone'), validators=[Optional()])
     fax = TelField(lazy_gettext('Fax'), validators=[Optional()])
     logo_file = FileField(lazy_gettext('Logo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
-    legal_name = TextAreaField(lazy_gettext('Legal name'), validators=[Optional()])
+    short_name = StringField(lazy_gettext('Short name'), validators=[Optional(), Regexp('^\w+$', message=lazy_gettext("Short name must contain only letters numbers or underscore"))])
+    legal_name = StringField(lazy_gettext('Legal name'), validators=[Optional()])
     location = FormField(OrganizationLocationForm)
 
     def populate_obj(self, obj):
