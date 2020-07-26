@@ -1329,10 +1329,13 @@ def prepare_event_form(form):
     form.host_id.choices.insert(0, (0, ''))
     form.place_id.choices.insert(0, (0, ''))
 
-@app.route("/events/create", methods=('GET', 'POST'))
-def event_create():
+def event_create_base(admin_unit = None):
     form = CreateEventForm(category_id=upsert_event_category('Other').id)
     prepare_event_form(form)
+
+    if admin_unit:
+        form.admin_unit_id.data = admin_unit.id
+        form.admin_unit_is_readonly = True
 
     if form.validate_on_submit():
         event = Event()
@@ -1348,6 +1351,15 @@ def event_create():
     else:
         flash_errors(form)
     return render_template('event/create.html', form=form)
+
+@app.route("/events/create", methods=('GET', 'POST'))
+def event_create():
+    return event_create_base()
+
+@app.route("/<string:au_short_name>/events/create", methods=('GET', 'POST'))
+def event_create_for_admin_unit(au_short_name):
+    admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
+    return event_create_base(admin_unit)
 
 @app.route('/event/<int:event_id>/update', methods=('GET', 'POST'))
 def event_update(event_id):
@@ -1474,8 +1486,10 @@ def form_input_to_date(date_str, hour=0, minute=0, second=0):
 def form_input_from_date(date):
     return date.strftime("%Y-%m-%d")
 
-@app.route("/widget/eventdates", methods=('GET', 'POST'))
-def widget_event_dates():
+@app.route("/<string:au_short_name>/widget/eventdates", methods=('GET', 'POST'))
+def widget_event_dates(au_short_name):
+    admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
+
     date_from = today
     date_to = date_set_end_of_day(today + relativedelta(days=7))
     date_from_str = form_input_from_date(date_from)
@@ -1495,9 +1509,9 @@ def widget_event_dates():
 
     if keyword:
         like_keyword = '%' + keyword + '%'
-        dates = EventDate.query.join(Event).filter(date_filter).filter(and_(Event.verified, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))).order_by(EventDate.start).all()
+        dates = EventDate.query.join(Event).filter(date_filter).filter(and_(Event.admin_unit_id == admin_unit.id, Event.verified, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))).order_by(EventDate.start).all()
     else:
-        dates = EventDate.query.join(Event).filter(date_filter).filter(Event.verified).order_by(EventDate.start).all()
+        dates = EventDate.query.join(Event).filter(date_filter).filter(and_(Event.admin_unit_id == admin_unit.id, Event.verified)).order_by(EventDate.start).all()
 
     return render_template('widget/event_date/list.html',
         date_from_str=date_from_str,

@@ -5,8 +5,19 @@
 
 <h1>{{ _('Create event') }}</h1>
 
-<form action="{{ url_for('event_create') }}" method="POST" enctype="multipart/form-data">
+<form action="" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
+
+  {% if not form.admin_unit_is_readonly %}
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Admin unit') }}
+    </div>
+    <div class="card-body">
+      {{ render_field_with_errors(form.admin_unit_id, class="autocomplete w-100") }}
+    </div>
+  </div>
+  {% endif %}
 
   <div class="card mb-4">
     <div class="card-header">
@@ -104,15 +115,6 @@
       {{ render_field_with_errors(form.tags) }}
       {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
       {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
-    </div>
-  </div>
-
-  <div class="card mb-4">
-    <div class="card-header">
-      {{ _('Admin unit') }}
-    </div>
-    <div class="card-body">
-      {{ render_field_with_errors(form.admin_unit_id, class="autocomplete w-100") }}
     </div>
   </div>
 

@@ -50,6 +50,7 @@ class CreateEventForm(FlaskForm):
     host_id = SelectField(lazy_gettext('Host'), validators=[Optional()], coerce=int)
     category_id = SelectField(lazy_gettext('Category'), validators=[DataRequired()], coerce=int)
     admin_unit_id = SelectField(lazy_gettext('Admin unit'), validators=[DataRequired()], coerce=int)
+    admin_unit_is_readonly = False
 
     kid_friendly = BooleanField(lazy_gettext('Kid friendly'), validators=[Optional()])
     accessible_for_free = BooleanField(lazy_gettext('Accessible for free'), validators=[Optional()])
