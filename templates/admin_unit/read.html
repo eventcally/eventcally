@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_logo, render_phone_prop, render_email_prop, render_events, render_location_prop, render_link_prop, render_image %}
+{% from "_macros.html" import render_logo, render_phone_prop, render_fax_prop, render_email_prop, render_events, render_location_prop, render_link_prop, render_image %}
 {% block title %}
 {{ admin_unit.name }}
 {% endblock %}
@@ -40,6 +40,7 @@
             {{ render_link_prop(admin_unit.url) }}
             {{ render_email_prop(admin_unit.email) }}
             {{ render_phone_prop(admin_unit.phone) }}
+            {{ render_fax_prop(admin_unit.fax) }}
         </div>
 
         {% if admin_unit.logo_id %}

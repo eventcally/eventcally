@@ -29,6 +29,9 @@ def get_sd_for_org(organization):
     if organization.phone:
         result["phone"] = organization.phone
 
+    if organization.fax:
+        result["faxNumber"] = organization.fax
+
     return result
 
 def get_sd_for_admin_unit(admin_unit):
@@ -50,6 +53,9 @@ def get_sd_for_organizer_organization_contact(organizer):
     if organizer.phone:
         result["telephone"] = organizer.phone
 
+    if organization.fax:
+        result["faxNumber"] = organization.fax
+
     return result
 
 def get_sd_for_organizer_organization(organizer):
@@ -66,6 +72,9 @@ def get_sd_for_organizer_organization(organizer):
         if organizer.phone:
             result["phone"] = organizer.phone
 
+        if organizer.fax:
+            result["faxNumber"] = organizer.fax
+
     if organizer.url:
         result["url"] = organizer.url
 
@@ -81,6 +90,9 @@ def get_sd_for_organizer_person(organizer):
 
     if organizer.phone:
         result["phone"] = organizer.phone
+
+    if organizer.fax:
+        result["faxNumber"] = organizer.fax
 
     if organizer.url:
         result["url"] = organizer.url

@@ -20,6 +20,7 @@ class BaseAdminUnitForm(FlaskForm):
     url = StringField(lazy_gettext('Link URL'), validators=[Optional()])
     email = EmailField(lazy_gettext('Email'), validators=[Optional()])
     phone = TelField(lazy_gettext('Phone'), validators=[Optional()])
+    fax = TelField(lazy_gettext('Fax'), validators=[Optional()])
     logo_file = FileField(lazy_gettext('Logo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
     location = FormField(AdminUnitLocationForm, default=lambda: Location())
 
