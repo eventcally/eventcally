@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-07-26 15:20+0200\n"
+"POT-Creation-Date: 2020-07-26 16:04+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -102,44 +102,44 @@ msgstr "Sonstiges"
 msgid "Typical Age range"
 msgstr "Typische Altersspanne"
 
-#: app.py:1028
+#: app.py:1029
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: app.py:1080
+#: app.py:1081
 msgid "Admin unit successfully updated"
 msgstr "Verwaltungseinheit erfolgreich aktualisiert"
 
-#: app.py:1137
+#: app.py:1138
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: app.py:1157
+#: app.py:1158
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: app.py:1216
+#: app.py:1217
 msgid "Place successfully updated"
 msgstr "Ort erfolgreich aktualisiert"
 
-#: app.py:1239
+#: app.py:1240
 msgid "Place successfully created"
 msgstr "Ort erfolgreich erstellt"
 
-#: app.py:1343
+#: app.py:1344
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:1366
+#: app.py:1367
 msgid "Event successfully updated"
 msgstr "Veranstaltung erfolgreich aktualisiert"
 
-#: app.py:1388
+#: app.py:1389
 msgid "Entered name does not match event name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
 
-#: app.py:1393
+#: app.py:1394
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
 
@@ -183,46 +183,54 @@ msgstr "Längengrad"
 #: templates/admin_unit/list.html:13 templates/admin_unit/read.html:66
 #: templates/admin_unit/read.html:88 templates/event/list.html:17
 #: templates/event_suggestion/list.html:14 templates/organization/list.html:19
-#: templates/organization/read.html:67 templates/place/list.html:19
+#: templates/organization/read.html:64 templates/place/list.html:19
 #: templates/profile.html:15 templates/profile.html:37
 msgid "Name"
 msgstr "Name"
 
-#: forms/admin_unit.py:20 forms/event.py:29 forms/event.py:37
+#: forms/admin_unit.py:20 forms/organization.py:25
+msgid "Short name"
+msgstr "Kurzname"
+
+#: forms/admin_unit.py:20 forms/organization.py:25
+msgid "Short name must contain only letters numbers or underscore"
+msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
+
+#: forms/admin_unit.py:21 forms/event.py:29 forms/event.py:37
 #: forms/event_suggestion.py:13 forms/organization.py:20 forms/place.py:20
 #: templates/event_suggestion/read.html:30
 msgid "Link URL"
 msgstr "Link URL"
 
-#: forms/admin_unit.py:21 forms/event.py:30 forms/organization.py:21
+#: forms/admin_unit.py:22 forms/event.py:30 forms/organization.py:21
 #: templates/_macros.html:203
 msgid "Email"
 msgstr "Email"
 
-#: forms/admin_unit.py:22 forms/event.py:31 forms/organization.py:22
+#: forms/admin_unit.py:23 forms/event.py:31 forms/organization.py:22
 #: templates/_macros.html:218
 msgid "Phone"
 msgstr "Telefon"
 
-#: forms/admin_unit.py:23 forms/event.py:32 forms/organization.py:23
+#: forms/admin_unit.py:24 forms/event.py:32 forms/organization.py:23
 #: templates/_macros.html:226
 msgid "Fax"
 msgstr "Fax"
 
-#: forms/admin_unit.py:24 forms/organization.py:24
+#: forms/admin_unit.py:25 forms/organization.py:24
 msgid "Logo"
 msgstr "Logo"
 
-#: forms/admin_unit.py:24 forms/event.py:76 forms/organization.py:24
+#: forms/admin_unit.py:25 forms/event.py:76 forms/organization.py:24
 #: forms/place.py:21
 msgid "Images only!"
 msgstr "Nur Fotos!"
 
-#: forms/admin_unit.py:28
+#: forms/admin_unit.py:29
 msgid "Create admin unit"
 msgstr "Verwaltungseinheit erstellen"
 
-#: forms/admin_unit.py:31 templates/admin_unit/read.html:12
+#: forms/admin_unit.py:32 templates/admin_unit/read.html:12
 #: templates/admin_unit/update.html:10
 msgid "Update admin unit"
 msgstr "Verwaltungseinheit aktualisieren"
@@ -288,9 +296,9 @@ msgstr "Veranstalter"
 msgid "Category"
 msgstr "Kategorie"
 
-#: forms/event.py:52 forms/organization.py:36
+#: forms/event.py:52 forms/organization.py:37
 #: templates/admin_unit/update.html:16 templates/event/create.html:112
-#: templates/event/update.html:109 templates/organization/create.html:57
+#: templates/event/update.html:109 templates/organization/create.html:58
 msgid "Admin unit"
 msgstr "Verwaltungseinheit"
 
@@ -409,16 +417,16 @@ msgstr "Kontakt Name"
 msgid "Contact email"
 msgstr "Kontakt Email"
 
-#: forms/organization.py:25
+#: forms/organization.py:26
 msgid "Legal name"
 msgstr "Offizieller Name"
 
-#: forms/organization.py:35 templates/organization/create.html:10
+#: forms/organization.py:36 templates/organization/create.html:10
 #: templates/organization/list.html:11
 msgid "Create organization"
 msgstr "Organisation hinzufügen"
 
-#: forms/organization.py:39 templates/organization/read.html:12
+#: forms/organization.py:40 templates/organization/read.html:12
 #: templates/organization/update.html:10
 msgid "Update organization"
 msgstr "Organisation aktualisieren"
@@ -441,10 +449,10 @@ msgid "Date"
 msgstr "Datum"
 
 #: templates/_macros.html:99 templates/_macros.html:233
-#: templates/admin_unit/update.html:25 templates/event/list.html:19
+#: templates/admin_unit/update.html:26 templates/event/list.html:19
 #: templates/event_suggestion/list.html:16
 #: templates/event_suggestion/read.html:41
-#: templates/organization/create.html:26 templates/organization/update.html:26
+#: templates/organization/create.html:27 templates/organization/update.html:27
 #: templates/place/create.html:29 templates/place/update.html:29
 msgid "Location"
 msgstr "Standort"
@@ -552,7 +560,7 @@ msgid "Logout"
 msgstr "Ausloggen"
 
 #: templates/admin_unit/read.html:67 templates/admin_unit/read.html:89
-#: templates/organization/read.html:68 templates/profile.html:16
+#: templates/organization/read.html:65 templates/profile.html:16
 #: templates/profile.html:38
 msgid "Roles"
 msgstr "Rollen"
@@ -570,9 +578,9 @@ msgstr "Mitglieder"
 msgid "You are a member of this admin unit."
 msgstr "Du bist Mitglied dieser Verwaltungseinheit"
 
-#: templates/admin_unit/update.html:43 templates/event/create.html:97
-#: templates/event/update.html:94 templates/organization/create.html:44
-#: templates/organization/update.html:44 templates/place/create.html:44
+#: templates/admin_unit/update.html:44 templates/event/create.html:97
+#: templates/event/update.html:94 templates/organization/create.html:45
+#: templates/organization/update.html:45 templates/place/create.html:44
 #: templates/place/update.html:44
 msgid "Additional information"
 msgstr "Zusätzliche Informationen"
@@ -611,7 +619,7 @@ msgstr "Name"
 msgid "Contact"
 msgstr "Kontakt"
 
-#: templates/organization/read.html:57
+#: templates/organization/read.html:54
 msgid "You are a member of this organization."
 msgstr "Du bist Mitglied dieser Organisation"
 

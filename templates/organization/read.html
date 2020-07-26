@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_logo, render_phone_prop, render_fax_prop, render_email_prop, render_events, render_location_prop, render_link_prop, render_image %}
+{% from "_macros.html" import render_string_prop, render_logo, render_phone_prop, render_fax_prop, render_email_prop, render_events, render_location_prop, render_link_prop, render_image %}
 {% block title %}
 {{ organization.name }}
 {% endblock %}
@@ -32,11 +32,8 @@
     <div class="tab-content">
         <div class="tab-pane pt-4 active" id="info" role="tabpanel">
 
-            {% if organization.legal_name %}
-            <div>{{ organization.legal_name }}</div>
-            {% endif %}
-
             <div class="my-4">
+                {{ render_string_prop(organization.legal_name) }}
                 {{ render_location_prop(organization.location) }}
                 {{ render_link_prop(organization.url) }}
                 {{ render_email_prop(organization.email) }}
