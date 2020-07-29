@@ -53,7 +53,7 @@ def get_sd_for_organizer_organization_contact(organizer):
     if organizer.phone:
         result["telephone"] = organizer.phone
 
-    if organization.fax:
+    if organizer.fax:
         result["faxNumber"] = organization.fax
 
     return result
