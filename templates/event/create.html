@@ -8,17 +8,6 @@
 <form action="" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
-  {% if not form.admin_unit_is_readonly %}
-  <div class="card mb-4">
-    <div class="card-header">
-      {{ _('Admin unit') }}
-    </div>
-    <div class="card-body">
-      {{ render_field_with_errors(form.admin_unit_id, class="autocomplete w-100") }}
-    </div>
-  </div>
-  {% endif %}
-
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Event') }}
@@ -42,22 +31,10 @@
 
   <div class="card mb-4">
     <div class="card-header">
-      {{ _('Host') }} *
+      {{ _('Organizer') }} *
     </div>
     <div class="card-body">
-      {% if form.host_id.choices|length > 1 %}
-        {{ render_field_with_errors(form.host_id, class="autocomplete w-100") }}
-      {% endif %}
-
-      <div class="my-4">
-        {{ form.organizer.hidden_tag() }}
-        {{ render_field_with_errors(form.organizer.form.name) }}
-        {{ render_field_with_errors(form.organizer.form.org_name) }}
-        {{ render_field_with_errors(form.organizer.form.url) }}
-        {{ render_field_with_errors(form.organizer.form.email) }}
-        {{ render_field_with_errors(form.organizer.form.phone) }}
-        {{ render_field_with_errors(form.organizer.form.fax) }}
-      </div>
+      {{ render_field_with_errors(form.organizer_id, class="autocomplete w-100") }}
     </div>
   </div>
 

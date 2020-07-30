@@ -54,7 +54,7 @@ app.json_encoder = DateTimeEncoder
 
 # Setup Flask-Security
 # Define models
-from models import EventPlace, EventOrganizer, EventCategory, Image, EventSuggestion, EventSuggestionDate, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
+from models import EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 from oauth import blueprint
@@ -116,7 +116,7 @@ def upsert_user(email, password="password"):
         result = user_datastore.create_user(email=email, password=hash_password(password))
     return result
 
-def upsert_admin_unit(unit_name, short_name):
+def upsert_admin_unit(unit_name, short_name = None):
     admin_unit = AdminUnit.query.filter_by(name = unit_name).first()
     if admin_unit is None:
         admin_unit = AdminUnit(name = unit_name)
@@ -221,10 +221,10 @@ def upsert_image_with_res(image, res):
 
     return image
 
-def upsert_organization(org_name, street = None, postalCode = None, city = None, latitude = 0, longitude = 0, legal_name = None, url=None, logo_res=None):
-    result = Organization.query.filter_by(name = org_name).first()
+def upsert_organization(name, street = None, postalCode = None, city = None, latitude = 0, longitude = 0, legal_name = None, url=None, logo_res=None):
+    result = Organization.query.filter_by(name = name).first()
     if result is None:
-        result = Organization(name = org_name)
+        result = Organization(name = name)
         db.session.add(result)
 
     result.legal_name = legal_name
@@ -274,6 +274,24 @@ def upsert_location(street, postalCode, city, latitude = 0, longitude = 0, state
 
     return result
 
+def upsert_event_organizer(admin_unit_id, name):
+    result = EventOrganizer.query.filter(and_(EventOrganizer.name == name, EventOrganizer.admin_unit_id == admin_unit_id)).first()
+    if result is None:
+        result = EventOrganizer(name = name, admin_unit_id=admin_unit_id)
+        result.location = Location()
+        db.session.add(result)
+
+    return result
+
+def upsert_event_place(admin_unit_id, organizer_id, name):
+    result = EventPlace.query.filter(and_(EventPlace.name == name, EventPlace.admin_unit_id == admin_unit_id, EventPlace.organizer_id == organizer_id)).first()
+    if result is None:
+        result = EventPlace(name = name, admin_unit_id=admin_unit_id, organizer_id=organizer_id)
+        result.location = Location()
+        db.session.add(result)
+
+    return result
+
 def upsert_place(name, street = None, postalCode = None, city = None, latitude = 0, longitude = 0, url=None, description=None, photo_res=None):
     result = Place.query.filter_by(name = name).first()
     if result is None:
@@ -293,33 +311,6 @@ def upsert_place(name, street = None, postalCode = None, city = None, latitude =
         result.photo = upsert_image_with_res(result.photo, photo_res)
 
     return result
-
-# def upsert_event_suggestion(event_name, host_name, place_name, start, description, link = None, admin_unit = None):
-#     if admin_unit is None:
-#         admin_unit = get_admin_unit('Stadt Goslar')
-
-#     result = EventSuggestion.query.filter_by(event_name = event_name).first()
-#     if result is None:
-#         result = EventSuggestion()
-#         db.session.add(result)
-
-#     result.admin_unit = admin_unit
-#     result.event_name = event_name
-#     result.description = description
-#     result.external_link = link
-#     result.place_name = place_name
-#     result.host_name = host_name
-
-#     result.place_postalCode = "Dummy postal code"
-#     result.place_city = "Dummy city"
-#     result.contact_name = "Dummy contact name"
-#     result.contact_email = "Dummy contact email"
-
-#     eventDate = EventSuggestionDate(event_suggestion_id = result.id, start=start)
-#     result.dates = []
-#     result.dates.append(eventDate)
-
-#     return result
 
 def upsert_event_category(category_name):
     result = EventCategory.query.filter_by(name = category_name).first()
@@ -380,39 +371,6 @@ def update_event_dates_with_recurrence_rule(event, start, end):
     event.dates = [date for date in event.dates if date not in dates_to_remove]
     event.dates.extend(dates_to_add)
 
-def upsert_event(event_name, host, location_name, start, description, link = None, verified = False, admin_unit = None, ticket_link=None, photo_res=None, category=None, recurrence_rule=None):
-    if admin_unit is None:
-        admin_unit = get_admin_unit('Stadt Goslar')
-    place = upsert_place(location_name)
-
-    if category is not None:
-        category_object = upsert_event_category(category)
-    else:
-        category_object = upsert_event_category('Other')
-
-    result = Event.query.filter_by(name = event_name).first()
-    if result is None:
-        result = Event()
-        db.session.add(result)
-
-    result.name = event_name
-    result.description = description
-    result.external_link = link
-    result.verified = verified
-    result.admin_unit = admin_unit
-    result.host = host
-    result.place = place
-    result.ticket_link = ticket_link
-    result.category = category_object
-
-    result.recurrence_rule = recurrence_rule
-    update_event_dates_with_recurrence_rule(result, start, None)
-
-    if photo_res is not None:
-        result.photo = upsert_image_with_res(result.photo, photo_res)
-
-    return result
-
 def get_admin_units_for_organizations():
     if has_current_user_permission('event:create'):
         return AdminUnit.query.all()
@@ -421,6 +379,34 @@ def get_admin_units_for_organizations():
 
 def get_admin_units_for_event():
     return AdminUnit.query.all()
+
+def get_admin_units_for_manage():
+    # Global admin
+    if current_user.has_role('admin'):
+        return AdminUnit.query.all()
+
+    # Admin unit member permissions (Holger, Artur)
+    admin_units_the_user_is_member_of = admin_units_with_current_user_member_permission('event:verify')
+
+    # Admin org permissions (Marina)
+    admin_units_via_orgs = admin_units_with_current_user_org_member_permission('event:verify', 'event:verify')
+
+    admin_units = admin_units_the_user_is_member_of
+    admin_units.extend(admin_units_via_orgs)
+
+    return admin_units
+
+def get_admin_unit_for_manage(admin_unit_id):
+    admin_units = get_admin_units_for_manage()
+    return next((au for au in admin_units if au.id == admin_unit_id), None)
+
+def get_admin_unit_for_manage_or_404(admin_unit_id):
+    admin_unit = get_admin_unit_for_manage(admin_unit_id)
+
+    if not admin_unit:
+        abort(404)
+
+    return admin_unit
 
 def get_event_hosts():
     if current_user.is_anonymous:
@@ -681,6 +667,9 @@ def can_create_organization():
 def can_update_organization(organization):
     return can_create_organization()
 
+def can_update_organizer(organizer):
+    return get_admin_unit_for_manage(organizer.admin_unit_id) is not None
+
 def can_verify_event(event):
     if not current_user.is_authenticated:
         return False
@@ -702,324 +691,56 @@ def can_verify_event(event):
 
     return False
 
-# def can_list_event_suggestion():
-#     return has_current_user_any_permission('event:verify')
-
-# def can_read_event_suggestion(suggestion):
-#     allowed_admin_units = admin_units_from_aaos(get_event_hosts())
-#     allowed_admin_unit_ids = [a.id for a in allowed_admin_units]
-
-#     return suggestion.admin_unit_id in allowed_admin_unit_ids
-
-# def get_event_suggestions_for_current_user():
-#     result = list()
-
-#     allowed_admin_units = admin_units_from_aaos(get_event_hosts())
-#     allowed_admin_unit_ids = [a.id for a in allowed_admin_units]
-
-#     suggestions = EventSuggestion.query.all()
-#     for suggestion in suggestions:
-#         if suggestion.admin_unit_id in allowed_admin_unit_ids:
-#             result.append(suggestion)
-
-#     return result
+def assign_location_values(target, origin):
+    if origin:
+        target.street = origin.street
+        target.postalCode = origin.postalCode
+        target.city = origin.city
+        target.state = origin.state
+        target.country = origin.country
+        target.latitude = origin.latitude
+        target.longitude = origin.longitude
 
 # Routes
 
 @app.before_first_request
 def create_initial_data():
-    return
-
-    # Event categories
-    upsert_event_category('Art')
-    upsert_event_category('Book')
-    upsert_event_category('Movie')
-    upsert_event_category('Family')
-    upsert_event_category('Festival')
-    upsert_event_category('Religious')
-    upsert_event_category('Shopping')
-    upsert_event_category('Comedy')
-    upsert_event_category('Music')
-    upsert_event_category('Dance')
-    upsert_event_category('Nightlife')
-    upsert_event_category('Theater')
-    upsert_event_category('Dining')
-    upsert_event_category('Conference')
-    upsert_event_category('Meetup')
-    upsert_event_category('Fitness')
-    upsert_event_category('Sports')
-    upsert_event_category('Other')
-    db.session.commit()
-
-    # Admin units
-    goslar = upsert_admin_unit('Stadt Goslar', 'goslar')
-    harzburg = upsert_admin_unit('Stadt Bad Harzburg')
-    upsert_admin_unit('Stadt Clausthal')
-    upsert_admin_unit('Gemeinde Walkenried')
-    upsert_admin_unit('Stadt Bad Lauterberg')
-    upsert_admin_unit('Stadt Harzgerode')
-    upsert_admin_unit('Stadt Ilsenburg')
-    upsert_admin_unit('Stadt Osterode')
-    upsert_admin_unit('Stadt Quedlinburg')
-    upsert_admin_unit('Stadt Wernigerode')
-    upsert_admin_unit('Stadt Halberstadt')
-    upsert_admin_unit('Gemeinde Wennigsen')
-    upsert_admin_unit('Stadt Hildesheim')
-
-    # Organizations
-    admin_unit_org_event_verifier_role = upsert_admin_unit_org_role('event_verifier', ['event:verify', "event:create"])
-    gmg = upsert_organization("GOSLAR marketing gmbh", "Markt 7", "38640", "Goslar", url='https://www.goslar.de/kontakt', logo_res="gmg.jpeg")
-    gz = upsert_organization("Goslarsche Zeitung")
-    celtic_inn = upsert_organization("Celtic Inn")
-    kloster_woelteringerode = upsert_organization("Kloster Wöltingerode")
-    miners_rock = upsert_organization("Miner's Rock", "Kuhlenkamp 36", "38640", "Goslar", legal_name="Miner's Rock UG (haftungsbeschränkt)", url="https://www.miners-rock.de/", logo_res="minersrock.jpeg")
-
-    gmg_admin_unit_org = add_organization_to_admin_unit(gmg, goslar)
-    add_role_to_admin_unit_org(gmg_admin_unit_org, admin_unit_org_event_verifier_role)
-
-    gz_admin_unit_org = add_organization_to_admin_unit(gz, goslar)
-    add_role_to_admin_unit_org(gz_admin_unit_org, admin_unit_org_event_verifier_role)
-
-    add_organization_to_admin_unit(celtic_inn, goslar)
-    add_organization_to_admin_unit(miners_rock, goslar)
-    add_organization_to_admin_unit(upsert_organization("Aids-Hilfe Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Akademie St. Jakobushaus"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Aktiv für Hahndorf e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Aquantic Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Arbeitsgemeinschaft Hahndorfer Vereine und Verbände"), goslar)
-    add_organization_to_admin_unit(upsert_organization("attac-Regionalgruppe Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Bildungshaus Zeppelin e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Brauhaus Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Buchhandlung Brumby"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Bühnenreif Goslar e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Bürgerstiftung Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Celtic-Inn Irish-Pub im Bahnhof"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Cineplex"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Der Zwinger zu Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("DERPART Reisebüro Goslar GmbH"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Deutscher Alpenverein Sektion Goslar e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("DGB - Frauen Goslar in der Region Südniedersachsen/Harz"), goslar)
-    add_organization_to_admin_unit(upsert_organization("DGB-Kreisvorstand Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Die Butterhanne"), goslar)
-    add_organization_to_admin_unit(upsert_organization("E-Bike Kasten"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Energie-Forschungszentrum der TU Clausthal - Geschäftsstelle Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("engesser marketing GmbH"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Ev. Kirchengemeinde St. Georg"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Förderkreis Goslarer Kleinkunsttage e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Frankenberger Kirche"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Frankenberger Winterabend"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Frauen-Arbeitsgemeinschaft im Landkreis Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("FreiwilligenAgentur Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Galerie Stoetzel-Tiedt"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Geschichtsverein GS e.V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Gesellschaft der Freunde und Förderer des Internationalen Musikfestes Goslar - Harz e.V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("GOSLAR marketing gmbh"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Goslarer Museum"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Goslarer Theater"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Goslarsche Höfe"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Goslarsche Zeitung"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Große Karnevalsgesellschaft Goslar e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Großes Heiliges Kreuz"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Hahndorfer Tennis Club 77 e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("HAHNENKLEE tourismus marketing gmbh"), goslar)
-    add_organization_to_admin_unit(upsert_organization("HANSA Seniorenzentrum Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Harz Hochzeit"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Hotel Der Achtermann"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Internationale Goslarer Klaviertage "), goslar)
-    add_organization_to_admin_unit(upsert_organization("Judo-Karate-Club Sportschule Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Kloster Wöltingerode Brennen &amp; Brauen GmbH"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Klosterhotel Wöltingerode"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Kontaktstelle Musik - Stadtmusikrat Goslar e.V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Kreisjugendpflege Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Kreismusikschule Goslar e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("KUBIK Event- und Musikklub"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Kulturgemeinschaft Vienenburg"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Kulturinitiative Goslar e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Lions Club Goslar Rammelsberg"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Marketing Club Harz"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Marktkirche Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Media Markt "), goslar)
-    add_organization_to_admin_unit(upsert_organization("MGV Juventa von 1877 e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Mönchehaus Museum"), goslar)
-    add_organization_to_admin_unit(upsert_organization("MTV Goslar e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Museumsverein Goslar e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("NABU Kreisgruppe Goslar e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Naturwissenschaftlicher Verein Goslar e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("PT Lounge Christian Brink"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Rampen für Goslar e.V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Residenz Schwiecheldthaus"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Romantik Hotel Alte Münze"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Schiefer"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Schwimmpark Aquantic"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Seniorenvertretung der Stadt Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Soup &amp; Soul Kitchen"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Stadtbibliothek Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Stadtjugendpflege Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Stadtteilverein Jerstedt e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Stiftung \"Maria in Horto\""), goslar)
-    add_organization_to_admin_unit(upsert_organization("Verlag Goslarsche Zeitung"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Vienenburger Bürgerverein e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Volksfest Goslar e. V."), goslar)
-    add_organization_to_admin_unit(upsert_organization("Weltkulturerbe Rammelsberg"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Zinnfigurenmuseum Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Zonta Club Goslar"), goslar)
-    add_organization_to_admin_unit(upsert_organization("Zontaclub Goslar St. Barbar"), goslar)
-
-    # Places
-    upsert_place('Vienenburger See', 'In der Siedlung 4', '38690', 'Goslar', 51.958375, 10.559621)
-    upsert_place('Feuerwehrhaus Hahndorf')
-    upsert_place('Gemeindehaus St. Kilian Hahndorf')
-    upsert_place('Grundschule Hahndorf')
-    upsert_place('Mehrzweckhalle Hahndorf')
-    upsert_place('Sportplatz Hahndorf')
-    upsert_place('St. Kilian Hahndorf')
-    upsert_place("Tourist-Information Goslar", 'Markt 7', '38644', 'Goslar', 51.906172, 10.429346, 'http://www.goslar.de/kontakt', "Zentral am Marktplatz gelegen, ist die Tourist-Information die erste Anlaufstelle für Goslar-Besucher. 14 motivierte und serviceorientierte Mitarbeiter sorgen dafür, dass sich der Gast rundherum wohl fühlt. Die ständige Qualitätsverbesserung und der flexible Umgang mit den Kundenwünschen sind Teil unserer Leitsätze.", 'touristinfo.jpeg')
-    upsert_place("Nagelkopf am Rathaus Goslar", 'Marktkirchhof 3', '38640', 'Goslar', 51.9055939, 10.4263286)
-    upsert_place("Kloster Wöltingerode", 'Wöltingerode 3', '38690', 'Goslar', 51.9591156, 10.5371815)
-    upsert_place("Marktplatz Goslar", 'Markt 6', '38640', 'Goslar', 51.9063601, 10.4249433)
-    upsert_place("Burg Vienenburg", 'Burgweg 2', '38690', 'Goslar', 51.9476558, 10.5617368)
-    upsert_place("Kurhaus Bad Harzburg", 'Kurhausstraße 11', '38667', 'Bad Harzburg', 51.8758165, 10.5593392)
-    upsert_place("Goslarsche Höfe", 'Okerstraße 32', '38640', 'Goslar', 51.911571, 10.4391331, 'https://www.goslarsche-hoefe.de/')
-    upsert_place("Schlosserei im Rammelsberg", 'Bergtal 19', '38640', 'Goslar', 51.890527, 10.418880, 'http://www.rammelsberg.de/', 'Die "Schlosserei" ist erprobter Veranstaltungsort und bietet Platz für ca. 700 Besucher. Das Ambiente ist technisch gut ausgestattet und flexibel genug, für jeden Künstler individuell wandelbar zu sein. Dabei lebt nicht nur der Veranstaltungsraum, es wirkt der gesamte Komplex des Rammelsberges und macht den Besuch zu einem unvergeßlichen Erlebnis.', photo_res="schlosserei.jpeg")
-
-    # Org or admins
-    goslar_ooa = upsert_org_or_admin_unit_for_admin_unit(goslar)
-    kloster_woelteringerode_ooa = upsert_org_or_admin_unit_for_organization(kloster_woelteringerode)
-    gmg_ooa = upsert_org_or_admin_unit_for_organization(gmg)
-    harzburg_ooa = upsert_org_or_admin_unit_for_admin_unit(harzburg)
-
-    # Commit
-    db.session.commit()
-
-    # Users
-    admin_role = user_datastore.find_or_create_role("admin")
-    admin_role.add_permissions(["user:create",
-        "event:verify",
-        "event:create",
-        "event_suggestion:read",
-        "admin_unit:update",
-        "admin_unit.members:read",
-        "organization.members:read"])
-
-    admin_unit_admin_role = upsert_admin_unit_member_role('admin', ["admin_unit.members:read", "admin_unit.organizations.members:read"])
-    admin_unit_event_verifier_role = upsert_admin_unit_member_role('event_verifier', ["event:verify", "event:create", "event_suggestion:read"])
-    org_member_event_verifier_role = upsert_org_member_role('event_verifier', ["event:verify", "event:create", "event_suggestion:read"])
-    org_member_event_creator_role = upsert_org_member_role('event_creator', ["event:create"])
-
-    daniel = upsert_user("grams.daniel@gmail.com")
-    user_datastore.add_role_to_user(daniel, admin_role)
-
-    holger = upsert_user("holger@test.de")
-    holger_goslar_member = add_user_to_admin_unit(holger, goslar)
-    add_role_to_admin_unit_member(holger_goslar_member, admin_unit_admin_role)
-    add_role_to_admin_unit_member(holger_goslar_member, admin_unit_event_verifier_role)
-
-    artur = upsert_user("artur@test.de")
-    artur_goslar_member = add_user_to_admin_unit(artur, goslar)
-    add_role_to_admin_unit_member(artur_goslar_member, admin_unit_event_verifier_role)
-
-    mia = upsert_user("mia@test.de")
-    mia_gmg_member = add_user_to_organization(mia, gmg)
-    add_role_to_org_member(mia_gmg_member, org_member_event_verifier_role)
-
-    marina_vetter = upsert_user("marina.vetter@goslar.de")
-    marina_vetter_gmg_member = add_user_to_organization(marina_vetter, gmg)
-    add_role_to_org_member(marina_vetter_gmg_member, org_member_event_verifier_role)
-
-    tom = upsert_user("tom@test.de")
-    tom_gz_member = add_user_to_organization(tom, gz)
-    add_role_to_org_member(tom_gz_member, org_member_event_verifier_role)
-
-    jason = upsert_user("jason@test.de")
-    jason_celtic_inn_member = add_user_to_organization(jason, celtic_inn)
-    add_role_to_org_member(jason_celtic_inn_member, org_member_event_creator_role)
-
-    grzno = upsert_user("grzno@test.de")
-    grzno_miners_rock_member = add_user_to_organization(grzno, miners_rock)
-    add_role_to_org_member(grzno_miners_rock_member, org_member_event_creator_role)
-
-    # Events
-    upsert_event("Vienenburger Seefest",
-        goslar_ooa,
-        "Vienenburger See",
-        create_berlin_date(2020, 8, 14, 17, 0),
-        'Vom 14. bis 16. August 2020 findet im ausgewiesenen Naherholungsgebiet am Fuße des Harzes, dem Goslarer Ortsteil Vienenburg, das Seefest unter dem Motto „Feuer & Wasser“ statt.',
-        'https://www.goslar.de/kultur-freizeit/veranstaltungen/156-vienenburger-seefest?layout=*',
-        True)
-
-    upsert_event("Tausend Schritte durch die Altstadt",
-        gmg_ooa,
-        "Tourist-Information Goslar",
-        create_berlin_date(2020, 1, 2, 10, 0),
-        'Erleben Sie einen geführten Stadtrundgang durch den historischen Stadtkern. Lassen Sie sich von Fachwerkromantik und kaiserlichen Bauten inmitten der UNESCO-Welterbestätte verzaubern. ganzjährig (außer 01.01.) täglich 10:00 Uhr Treffpunkt: Tourist-Information am Marktplatz (Dauer ca. 2 Std.) Erwachsene 8,00 Euro Inhaber Gastkarte Goslar/Kurkarte Hahnenklee 7,00 Euro Schüler/Studenten 6,00 Euro',
-        photo_res="tausend.jpeg",
-        recurrence_rule="RRULE:FREQ=DAILY;UNTIL=20201231T235959")
-
-    upsert_event("Spaziergang am Nachmittag",
-        gmg_ooa,
-        "Tourist-Information Goslar",
-        create_berlin_date(2020, 4, 1, 13, 30),
-        'Begeben Sie sich auf einen geführten Rundgang durch die historische Altstadt. Entdecken Sie malerische Fachwerkgassen und imposante Bauwerke bei einem Streifzug durch das UNESCO-Weltkulturerbe. April – Oktober und 25.11. – 30.12. Montag – Samstag 13:30 Uhr Treffpunkt: Tourist-Information am Marktplatz (Dauer ca. 1,5 Std.) Erwachsene 7,00 Euro Inhaber Gastkarte Goslar/Kurkarte Hahnenklee 6,00 Euro Schüler/Studenten 5,00 Euro',
-        photo_res="nachmittag.jpeg",
-        recurrence_rule="""RRULE:FREQ=WEEKLY;UNTIL=20201031T235959;BYDAY=MO,TU,WE,TH,FR,SA""")
-
-    upsert_event("Ein Blick hinter die Kulissen - Rathausbaustelle",
-        goslar_ooa,
-        "Nagelkopf am Rathaus Goslar",
-        create_berlin_date(2020, 9, 3, 17, 0),
-        'Allen interessierten Bürgern wird die Möglichkeit geboten, unter fachkundiger Führung des Goslarer Gebäudemanagement (GGM) einen Blick hinter die Kulissen durch das derzeit gesperrte historische Rathaus und die Baustelle Kulturmarktplatz zu werfen. Da bei beiden Führungen die Anzahl der Teilnehmer auf 16 Personen begrenzt ist, ist eine Anmeldung unbedingt notwendig sowie festes Schuhhwerk. Bitte melden Sie sich bei Interesse in der Tourist-Information (Tel. 05321-78060) an. Kinder unter 18 Jahren sind aus Sicherheitsgründen auf der Baustelle nicht zugelassen.')
-
-    upsert_event("Wöltingerode unter Dampf",
-        kloster_woelteringerode_ooa,
-        "Kloster Wöltingerode",
-        create_berlin_date(2020, 9, 5, 12, 0),
-        'Mit einem ländlichen Programm rund um historische Trecker und Landmaschinen, köstliche Produkte aus Brennerei und Region, einem Kunsthandwerkermarkt und besonderen Führungen findet das Hoffest auf dem Klostergut statt.',
-        'https://www.woelti-unter-dampf.de')
-
-    upsert_event("Altstadtfest",
-        gmg_ooa,
-        "Marktplatz Goslar",
-        create_berlin_date(2020, 9, 11, 15, 0),
-        'Drei Tage lang dürfen sich die Besucher des Goslarer Altstadtfestes auf ein unterhaltsames und abwechslungsreiches Veranstaltungsprogramm freuen. Der Flohmarkt auf der Kaiserpfalzwiese lädt zum Stöbern vor historischer Kulisse ein.',
-        'https://www.goslar.de/kultur-freizeit/veranstaltungen/altstadtfest')
-
-    upsert_event("Adventsmarkt auf der Vienenburg",
-        goslar_ooa,
-        "Burg Vienenburg",
-        create_berlin_date(2020, 12, 13, 12, 0),
-        'Inmitten der mittelalterlichen Burg mit dem restaurierten Burgfried findet der „Advent auf der Burg“ statt. Der Adventsmarkt wird von gemeinnützigen und sozialen Vereinen sowie den Kirchen ausgerichtet.')
-
-    # upsert_event_suggestion("Der Blaue Vogel",
-    #     "Freese-Baus Ballettschule",
-    #     "Kurhaus Bad Harzburg",
-    #     create_berlin_date(2020, 9, 12, 16, 0),
-    #     'Die Freese-Baus Ballettschule zeigt 2020 ein wenig bekanntes französisches Märchen nach einer Erzählung Maurice Maeterlinck. Die Leiterin der Schule, Hanna-Sibylle Werner, hat die Grundidee übernommen, aber für ein Ballett überarbeitet, verändert und einstudiert. Das Märchen handelt von zwei Mädchen, die einen kleinen blauen Vogel lieb gewonnen haben, der über Nacht verschwunden ist. Mit Hilfe der Berylune und der Fee des Lichts machen sie sich auf den Weg, den Vogel wieder zu finden. Ihre Reise führt sie ins Reich der Erinnerung, des Glücks, der Phantasie und der Elemente. ( Die Einstudierung der Elemente: Luft, Wasser, Feuer übernahm der Choreograf Marco Barbieri, der auch zum Team der Ballettschule gehört ). Im Reich der Königin der Nacht finden sie ihren kleinen Vogel wieder, aber ob sie ihn mit nehmen dürfen, wird nicht verraten. Die Aufführungen werden durch farbenfrohe Kostüme ( Eigentum der Schule ) und Bühnenbilder ( Günter Werner ) ergänzt. Die Musik stammt von verschiedenen Komponisten. Die Tänzer*innen sind im Alter von 3 bis 40 Jahren, die Teilnahme ist für die älteren Schüler*innen freiwillig.',
-    #     'https://veranstaltungen.meinestadt.de/bad-harzburg/event-detail/35486361/98831674',
-    #     admin_unit = get_admin_unit('Stadt Bad Harzburg'))
-
-    # upsert_event_suggestion("Herbst-Flohmarkt",
-    #     "Goslarsche Höfe - Integrationsbetrieb - gGmbH",
-    #     "Goslarsche Höfe",
-    #     create_berlin_date(2020, 10, 10, 10, 0),
-    #     'Zum letzten Mal in dieser Saison gibt es einen Hof-Flohmarkt. Wir bieten zwar nicht den größten, aber vielleicht den gemütlichsten Flohmarkt in der Region. Frei von gewerblichen Anbietern, dafür mit Kaffee, Kuchen, Bier und Bratwurst, alles auf unserem schönen Hofgelände.',
-    #     'https://www.goslarsche-hoefe.de/veranstaltungen/10/2175252/2020/10/10/herbst-flohmarkt.html')
-
-    upsert_event('"MINER\'S ROCK" Schickt XVI - Lotte',
-        miners_rock.org_or_adminunit,
-        "Schlosserei im Rammelsberg",
-        create_berlin_date(2020, 10, 31, 19, 0),
-        'Auch im Jahr 2020 wagt sich das MINER’S ROCK wieder an eine Doppel-Schicht. LOTTE wird bei uns das Wochenende am Berg abrunden! Nach der bereits ausverkauften Schicht am 30. Oktober mit Subway to Sally, wird Lotte den Samstagabend zu einem Pop-Erlebnis machen.\nAb Anfang Februar ist sie in den Konzerthallen in Deutschland unterwegs und wird ihr neues Album „Glück“ vorstellen. Glück ist der langersehnte Nachfolger von LOTTEs Debütalbum „Querfeldein". Mit Songs wie der ersten Single „Schau mich nicht so an" oder dem Duett mit Max Giesinger „Auf das was da noch kommt“, durchmisst LOTTE dabei die Höhen und Tiefen des menschlichen Glücksstrebens. Und auch wenn jeder der zwölf Songs seine eigene Geschichte erzählt – sie alle eint die Suche nach der ganz persönlichen Bedeutung dieses großen Wortes. Glück ist kein Werk über einen abgeschlossenen Prozess, sondern ein beeindruckend ehrliches und facettenreiches Album über eine menschliche Suche. „Auf das was da noch kommt“ läuft derzeit in den Radiostationen auf und ab und macht einfach Spaß.\n\nWichtig zu wissen:\n\nEinlass: 19:00 Uhr\nBeginn des Musikprogramms: 20:00 Uhr\nTickets gibt es ab sofort im Shop des MINER‘S ROCK unter www.miners-rock.de und in den Geschäftsstellen der Goslarschen Zeitung.',
-        'https://www.miners-rock.de/xvi-lotte',
-        ticket_link='https://www.regiolights.de/tickets/product/schicht-xvi-lotte',
-        photo_res="lotte.jpeg",
-        category='Music')
-
-    db.session.commit()
-
-    events = Event.query.filter_by(start = None).all()
+    events = Event.query.all()
     for event in events:
-        event.start = event.dates[0].start
-        event.end = event.dates[0].end
+        if not event.organizer:
+            ooa = event.host.organization if event.host.organization else event.host.admin_unit
+            event.organizer = upsert_event_organizer(event.admin_unit_id, ooa.name)
+            event.organizer.name = ooa.name
+            event.organizer.url = ooa.url
+            event.organizer.email = ooa.email
+            event.organizer.phone = ooa.phone
+            event.organizer.fax = ooa.fax
+            event.organizer.logo = ooa.logo
+
+            if not event.organizer.location and ooa.location:
+                event.organizer.location = Location()
+            assign_location_values(event.organizer.location, ooa.location)
+
+        event.organizer.adminunit = event.admin_unit
+
+        if not event.event_place:
+            event.event_place = upsert_event_place(event.admin_unit_id, event.organizer_id, event.place.name)
+            event.event_place.url = event.place.url
+            event.event_place.photo = event.place.photo
+            event.event_place.description = event.place.description
+
+            if not event.event_place.location and event.place.location:
+                event.event_place.location.location = Location()
+            assign_location_values(event.event_place.location, event.place.location)
+
+        event.event_place.adminunit = event.admin_unit
+        event.event_place.eventorganizer = event.organizer
+        event.event_place.public = True
+
+    organizers = EventOrganizer.query.all()
+    for organizer in organizers:
+        if not organizer.name:
+            organizer.name = organizer.org_name
 
     db.session.commit()
 
@@ -1081,6 +802,7 @@ def admin_unit_update(admin_unit_id):
             flash(gettext('Admin unit successfully updated'), 'success')
             return redirect(url_for('admin_unit', admin_unit_id=admin_unit.id))
         except SQLAlchemyError as e:
+            db.session.rollback()
             flash(handleSqlError(e), 'danger')
 
     return render_template('admin_unit/update.html',
@@ -1138,6 +860,7 @@ def organization_create():
             flash(gettext('Organization successfully created'), 'success')
             return redirect(url_for('organization', organization_id=organization.id))
         except SQLAlchemyError as e:
+            db.session.rollback()
             flash(handleSqlError(e), 'danger')
     return render_template('organization/create.html', form=form)
 
@@ -1158,6 +881,7 @@ def organization_update(organization_id):
             flash(gettext('Organization successfully updated'), 'success')
             return redirect(url_for('organization', organization_id=organization.id))
         except SQLAlchemyError as e:
+            db.session.rollback()
             flash(handleSqlError(e), 'danger')
 
     return render_template('organization/update.html',
@@ -1217,6 +941,7 @@ def place_update(place_id):
             flash(gettext('Place successfully updated'), 'success')
             return redirect(url_for('place', place_id=place.id))
         except SQLAlchemyError as e:
+            db.session.rollback()
             flash(handleSqlError(e), 'danger')
 
     return render_template('place/update.html',
@@ -1240,6 +965,7 @@ def place_create():
             flash(gettext('Place successfully created'), 'success')
             return redirect(url_for('place', place_id=place.id))
         except SQLAlchemyError as e:
+            db.session.rollback()
             flash(handleSqlError(e), 'danger')
     return render_template('place/create.html', form=form)
 
@@ -1300,9 +1026,9 @@ def api_events():
     return jsonify(result)
 
 from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm
-from forms.event_suggestion import CreateEventSuggestionForm
 from forms.place import CreatePlaceForm, UpdatePlaceForm
 from forms.organization import CreateOrganizationForm, UpdateOrganizationForm
+from forms.organizer import CreateOrganizerForm, UpdateOrganizerForm, DeleteOrganizerForm
 from forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
 
 def update_event_with_form(event, form):
@@ -1321,21 +1047,17 @@ def update_event_with_form(event, form):
         event.photo = upsert_image_with_data(event.photo, fs.read(), fs.content_type)
 
 def prepare_event_form(form):
-    form.host_id.choices = sorted([(ooa.id, ooa.organization.name if ooa.organization is not None else ooa.admin_unit.name) for ooa in get_event_hosts()], key=lambda ooa: ooa[1])
+    form.organizer_id.choices = [(o.id, o.name) for o in EventOrganizer.query.filter(EventOrganizer.admin_unit_id == form.admin_unit_id.data).order_by(func.lower(EventOrganizer.name))]
     form.place_id.choices = [(p.id, p.name) for p in Place.query.order_by('name')]
     form.category_id.choices = sorted([(c.id, get_event_category_name(c)) for c in EventCategory.query.all()], key=lambda ooa: ooa[1])
     form.admin_unit_id.choices = sorted([(admin_unit.id, admin_unit.name) for admin_unit in get_admin_units_for_event()], key=lambda admin_unit: admin_unit[1])
 
-    form.host_id.choices.insert(0, (0, ''))
+    form.organizer_id.choices.insert(0, (0, ''))
     form.place_id.choices.insert(0, (0, ''))
 
-def event_create_base(admin_unit = None):
-    form = CreateEventForm(category_id=upsert_event_category('Other').id)
+def event_create_base(admin_unit, organizer_id=0):
+    form = CreateEventForm(admin_unit_id=admin_unit.id, organizer_id=organizer_id, category_id=upsert_event_category('Other').id)
     prepare_event_form(form)
-
-    if admin_unit:
-        form.admin_unit_id.data = admin_unit.id
-        form.admin_unit_is_readonly = True
 
     if form.validate_on_submit():
         event = Event()
@@ -1347,19 +1069,22 @@ def event_create_base(admin_unit = None):
             flash(gettext('Event successfully created'), 'success')
             return redirect(url_for('event', event_id=event.id))
         except SQLAlchemyError as e:
+            db.session.rollback()
             flash(handleSqlError(e), 'danger')
     else:
         flash_errors(form)
     return render_template('event/create.html', form=form)
 
-@app.route("/events/create", methods=('GET', 'POST'))
-def event_create():
-    return event_create_base()
-
 @app.route("/<string:au_short_name>/events/create", methods=('GET', 'POST'))
 def event_create_for_admin_unit(au_short_name):
     admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
     return event_create_base(admin_unit)
+
+@app.route("/admin_unit/<int:id>/events/create", methods=('GET', 'POST'))
+def event_create_for_admin_unit_id(id):
+    admin_unit = AdminUnit.query.get_or_404(id)
+    organizer_id = request.args.get('organizer_id') if 'organizer_id' in request.args else 0
+    return event_create_base(admin_unit, organizer_id)
 
 @app.route('/event/<int:event_id>/update', methods=('GET', 'POST'))
 def event_update(event_id):
@@ -1379,6 +1104,7 @@ def event_update(event_id):
             flash(gettext('Event successfully updated'), 'success')
             return redirect(url_for('event', event_id=event.id))
         except SQLAlchemyError as e:
+            db.session.rollback()
             flash(handleSqlError(e), 'danger')
     else:
         flash_errors(form)
@@ -1406,6 +1132,7 @@ def event_delete(event_id):
                 flash(gettext('Event successfully deleted'), 'success')
                 return redirect(url_for('events'))
             except SQLAlchemyError as e:
+                db.session.rollback()
                 flash(handleSqlError(e), 'danger')
     else:
         flash_errors(form)
@@ -1429,38 +1156,6 @@ def event_rrule():
     result = calculate_occurrences(start_date, '"%d.%m.%Y"', rrule_str, start, batch_size)
     return jsonify(result)
 
-# @app.route("/eventsuggestions")
-# @auth_required()
-# def eventsuggestions():
-#     if not can_list_event_suggestion():
-#         abort(401)
-
-#     return render_template('event_suggestion/list.html',
-#         suggestions=get_event_suggestions_for_current_user())
-
-# @app.route('/eventsuggestion/<int:event_suggestion_id>')
-# @auth_required()
-# def eventsuggestion(event_suggestion_id):
-#     suggestion = EventSuggestion.query.filter_by(id = event_suggestion_id).first()
-#     if not can_read_event_suggestion(suggestion):
-#         abort(401)
-
-#     return render_template('event_suggestion/read.html', suggestion=suggestion)
-
-# @app.route("/eventsuggestions/create", methods=('GET', 'POST'))
-# def event_suggestion_create():
-#     form = CreateEventSuggestionForm()
-#     if form.validate_on_submit():
-#         event = EventSuggestion()
-#         form.populate_obj(event)
-#         event.admin_unit = get_admin_unit('Stadt Goslar')
-#         eventDate = EventSuggestionDate(event_suggestion_id = event.id, start=form.start.data)
-#         event.dates.append(eventDate)
-#         db.session.commit()
-#         flash(gettext('Event suggestion successfully created'), 'success')
-#         return redirect(url_for('home'))
-#     return render_template('event_suggestion/create.html', form=form)
-
 @app.route("/admin")
 @roles_required("admin")
 def admin():
@@ -1471,6 +1166,125 @@ def admin():
 def admin_admin_units():
     return render_template('admin/admin_units.html',
         admin_units=AdminUnit.query.all())
+
+@app.route("/manage")
+def manage():
+    admin_units = get_admin_units_for_manage()
+
+    if len(admin_units) == 1:
+        return redirect(url_for('manage_admin_unit', id=admin_units[0].id))
+
+    return render_template('manage/admin_units.html',
+        admin_units=admin_units)
+
+@app.route('/manage/admin_unit/<int:id>')
+def manage_admin_unit(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+
+    return redirect(url_for('manage_admin_unit_organizers', id=admin_unit.id))
+
+    return render_template('manage/admin_unit.html',
+        admin_unit=admin_unit)
+
+@app.route('/manage/admin_unit/<int:id>/organizers')
+def manage_admin_unit_organizers(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).all()
+
+    return render_template('manage/organizers.html',
+        admin_unit=admin_unit,
+        organizers=organizers)
+
+@app.route('/organizer/<int:id>')
+def organizer(id):
+    organizer = EventOrganizer.query.get_or_404(id)
+
+    return render_template('organizer/read.html',
+        organizer=organizer,
+        can_update_organizer=can_update_organizer(organizer))
+
+def update_organizer_with_form(organizer, form):
+    form.populate_obj(organizer)
+
+    if form.logo_file.data:
+        fs = form.logo_file.data
+        organizer.logo = upsert_image_with_data(organizer.logo, fs.read(), fs.content_type)
+
+@app.route('/manage/admin_unit/<int:id>/organizers/create', methods=('GET', 'POST'))
+def manage_admin_unit_organizer_create(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+
+    form = CreateOrganizerForm()
+
+    if form.validate_on_submit():
+        organizer = EventOrganizer()
+        organizer.admin_unit_id = admin_unit.id
+        organizer.location = Location()
+        update_organizer_with_form(organizer, form)
+
+        try:
+            db.session.add(organizer)
+            db.session.commit()
+            flash(gettext('Organizer successfully created'), 'success')
+            #return redirect(url_for('organizer', id=organizer.id))
+            return redirect(url_for('manage_admin_unit_organizers', id=organizer.admin_unit_id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+    return render_template('organizer/create.html', form=form)
+
+@app.route('/organizer/<int:id>/update', methods=('GET', 'POST'))
+def organizer_update(id):
+    organizer = EventOrganizer.query.get_or_404(id)
+
+    if not can_update_organizer(organizer):
+        abort(401)
+
+    form = UpdateOrganizerForm(obj=organizer)
+
+    if form.validate_on_submit():
+        update_organizer_with_form(organizer, form)
+
+        try:
+            db.session.commit()
+            flash(gettext('Organizer successfully updated'), 'success')
+            #return redirect(url_for('organizer', id=organizer.id))
+            return redirect(url_for('manage_admin_unit_organizers', id=organizer.admin_unit_id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+
+    return render_template('organizer/update.html',
+        form=form,
+        organizer=organizer)
+
+@app.route('/organizer/<int:id>/delete', methods=('GET', 'POST'))
+def organizer_delete(id):
+    organizer = EventOrganizer.query.get_or_404(id)
+
+    if not can_update_organizer(organizer):
+        abort(401)
+
+    form = DeleteOrganizerForm()
+
+    if form.validate_on_submit():
+        if form.name.data != organizer.name:
+            flash(gettext('Entered name does not match organizer name'), 'danger')
+        else:
+            try:
+                db.session.delete(organizer)
+                db.session.commit()
+                flash(gettext('Organizer successfully deleted'), 'success')
+                return redirect(url_for('manage_admin_unit_organizers', id=organizer.admin_unit_id))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
+
+    return render_template('organizer/delete.html',
+        form=form,
+        organizer=organizer)
 
 def date_add_time(date, hour=0, minute=0, second=0, tzinfo=None):
     return datetime(date.year, date.month, date.day, hour=hour, minute=minute, second=second, tzinfo=tzinfo)

@@ -115,8 +115,7 @@ def scrape(debug):
                 event.organizer = EventOrganizer()
 
             js_organizer = js_event['organizer']
-            event.organizer.name = js_event['name_public']
-            event.organizer.org_name = js_organizer['name']
+            event.organizer.name = js_event['name_public'] if js_event['name_public'] else js_organizer['name']
             event.organizer.phone = js_event['phone_public'] if js_event['phone_public'] else js_organizer['phone']
             event.organizer.email = js_event['email_public'] if js_event['email_public'] else js_organizer['email']
             event.organizer.url = js_organizer['website'] if js_organizer['website'] else js_organizer['facebook']

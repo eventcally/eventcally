@@ -48,6 +48,10 @@
   </p>
 {% endmacro %}
 
+{% macro render_event_organizer(organizer) %}
+    {{ organizer.name }}
+{% endmacro %}
+
 {% macro render_ooa(ooa) %}
   {% if ooa.admin_unit %}
     {{ ooa.admin_unit.name }}
@@ -110,7 +114,7 @@
                         <i class="fa fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i>
                       {% endif %}
                   </td>
-                  <td>{{ render_ooa(event.host) }}</td>
+                  <td>{{ render_event_organizer(event.organizer) }}</td>
                   <td>{{ render_place(event.place) }}</td>
               </tr>
           {% endfor %}
@@ -296,7 +300,6 @@
         {{ render_range_prop(event.age_from, event.age_to, 'fa-people-arrows', 'Typical Age range') }}
         {{ render_enum_prop(event.target_group_origin, 'fa-users', 'Target group origin') }}
         {{ render_enum_prop(event.attendance_mode, 'fa-mouse-pointer', 'Attendance mode') }}
-        <!--<div><i class="fa fa-fw fa-users" data-toggle="tooltip" title="{{ _('Host') }}"></i> {{ render_ooa_with_link(event.host) }}</div>-->
       </div>
     </div>
   </div>
@@ -357,58 +360,10 @@
     </div>
     <div class="card-body">
           {{ render_string_prop(event.organizer.name) }}
-          {{ render_string_prop(event.organizer.org_name) }}
           {{ render_link_prop(event.organizer.url) }}
           {{ render_email_prop(event.organizer.email) }}
           {{ render_phone_prop(event.organizer.phone) }}
           {{ render_fax_prop(event.organizer.fax) }}
-    </div>
-  </div>
-
-  {% endif %}
-
-  {% if event.host %}
-
-  <div class="card mb-3">
-    <div class="card-header">
-      {{ _('Host') }}
-    </div>
-    <div class="card-body">
-
-      {% if event.host.admin_unit %}
-        <h5 class="card-title"><a href="{{ url_for('admin_unit', admin_unit_id=event.host.admin_unit.id) }}" class="text-dark">{{ event.host.admin_unit.name }}</a></h5>
-
-        {% if event.host.admin_unit.logo_id %}
-          <div class="my-4">{{ render_logo(event.host.admin_unit.logo_id) }}</div>
-        {% endif %}
-
-        <div class="my-4">
-          {{ render_link_prop(event.host.admin_unit.url) }}
-          {{ render_email_prop(event.host.admin_unit.email) }}
-          {{ render_phone_prop(event.host.admin_unit.phone) }}
-          {{ render_fax_prop(event.host.admin_unit.fax) }}
-          {{ render_location_prop(event.host.admin_unit.location) }}
-        </div>
-
-      {% endif %}
-
-      {% if event.host.organization %}
-        <h5 class="card-title"><a href="{{ url_for('organization', organization_id=event.host.organization.id) }}" class="text-dark">{{ event.host.organization.name }}</a></h5>
-
-        {% if event.host.organization.logo_id %}
-          <div class="my-4">{{ render_logo(event.host.organization.logo_id) }}</div>
-        {% endif %}
-
-        <div class="my-4">
-          {{ render_link_prop(event.host.organization.url) }}
-          {{ render_email_prop(event.host.organization.email) }}
-          {{ render_phone_prop(event.host.organization.phone) }}
-          {{ render_fax_prop(event.host.organization.fax) }}
-          {{ render_location_prop(event.host.organization.location) }}
-        </div>
-
-      {% endif %}
-
     </div>
   </div>
 
@@ -510,4 +465,16 @@
   {% if event.recurrence_rule %}
   <i class="fas fa-history"></i>
   {% endif %}
+{% endmacro %}
+
+{% macro render_tab(id, title, link, active_id=None) %}
+  <li class="nav-item">
+    <a class="nav-link{% if active_id == id %} active{% endif %}" href="{{ link }}">{{ title }}</a>
+  </li>
+{% endmacro %}
+
+{% macro render_manage_menu(admin_unit, active_id=None) %}
+<ul class="nav nav-tabs">
+  {{ render_tab('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
+</ul>
 {% endmacro %}
