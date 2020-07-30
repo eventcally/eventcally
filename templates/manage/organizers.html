@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_event_organizer, render_manage_menu %}
+{% block title %}
+{{ _('Organizers') }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ admin_unit.name }}</h1>
+
+{{ render_manage_menu(admin_unit, 'organizers') }}
+
+<div class="my-4">
+    <a class="btn btn-outline-secondary my-1" href="{{ url_for('manage_admin_unit_organizer_create', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create organizer') }}</a>
+</div>
+
+<ul class="list-group">
+{% for organizer in organizers %}
+    <li class="list-group-item">
+        <div class="dropdown d-inline-block">
+            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ render_event_organizer(organizer) }}</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id, organizer_id=organizer.id) }}">{{ _('Create event') }}</a>
+                <a class="dropdown-item" href="{{ url_for('organizer_update', id=organizer.id) }}">{{ _('Edit') }}</a>
+                <a class="dropdown-item" href="{{ url_for('organizer_delete', id=organizer.id) }}">{{ _('Delete') }}...</a>
+                <!--<a class="dropdown-item" href="#">{{ _('Assistents') }}</a>-->
+            </div>
+        </div>
+    </li>
+{% endfor %}
+</ul>
+
+{% endblock %}

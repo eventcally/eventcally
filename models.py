@@ -162,6 +162,8 @@ class AdminUnit(db.Model, TrackableMixin):
     short_name = Column(Unicode(100), unique=True)
     members = relationship('AdminUnitMember', backref=backref('adminunit', lazy=True))
     organizations = relationship('AdminUnitOrg', backref=backref('adminunit', lazy=True))
+    event_organizers = relationship('EventOrganizer', backref=backref('adminunit', lazy=True))
+    event_places = relationship('EventPlace', backref=backref('adminunit', lazy=True))
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     location = db.relationship('Location')
     logo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
@@ -247,6 +249,9 @@ class EventPlace(db.Model, TrackableMixin):
     photo = db.relationship('Image', uselist=False)
     url = Column(String(255))
     description = Column(UnicodeText())
+    public = Column(Boolean())
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=True)
+    organizer_id = db.Column(db.Integer, db.ForeignKey('eventorganizer.id'), nullable=True)
 
     def is_empty(self):
         return (not self.name)
@@ -315,6 +320,12 @@ class EventOrganizer(db.Model, TrackableMixin):
     email = Column(Unicode(255))
     phone = Column(Unicode(255))
     fax = Column(Unicode(255))
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location = db.relationship('Location')
+    logo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
+    logo = db.relationship('Image', uselist=False)
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=True)
+    event_places = relationship('EventPlace', backref=backref('organizer', lazy=True))
 
     def is_empty(self):
         return (not self.name

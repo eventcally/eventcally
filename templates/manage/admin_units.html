@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %}
+{{ _('Admin Units') }}
+{% endblock %}
+{% block content %}
+
+<div class="list-group list-group-flush">
+{% for admin_unit in admin_units %}
+    <a href="{{ url_for('manage_admin_unit', id=admin_unit.id) }}" class="list-group-item list-group-item-action">{{ admin_unit.name }}</a>
+{% endfor %}
+</div>
+
+{% endblock %}

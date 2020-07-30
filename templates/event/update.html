@@ -41,20 +41,15 @@
 
   <div class="card mb-4">
     <div class="card-header">
-      {{ _('Host') }}
+      {{ _('Organizer') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.host_id, class="autocomplete w-100") }}
-
-      <div class="my-4">
-        {{ form.organizer.hidden_tag() }}
-        {{ render_field_with_errors(form.organizer.form.name) }}
-        {{ render_field_with_errors(form.organizer.form.org_name) }}
-        {{ render_field_with_errors(form.organizer.form.url) }}
-        {{ render_field_with_errors(form.organizer.form.email) }}
-        {{ render_field_with_errors(form.organizer.form.phone) }}
-        {{ render_field_with_errors(form.organizer.form.fax) }}
-      </div>
+      {{ form.organizer.hidden_tag() }}
+      {{ render_field_with_errors(form.organizer.form.name) }}
+      {{ render_field_with_errors(form.organizer.form.url) }}
+      {{ render_field_with_errors(form.organizer.form.email) }}
+      {{ render_field_with_errors(form.organizer.form.phone) }}
+      {{ render_field_with_errors(form.organizer.form.fax) }}
     </div>
   </div>
 

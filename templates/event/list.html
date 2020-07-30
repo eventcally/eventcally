@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_event_status_pill, render_event_date, render_ooa, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_event_organizer, render_event_status_pill, render_event_date, render_ooa, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Events') }}
 {% endblock %}
@@ -30,7 +30,7 @@
                             <i class="fa fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i>
                             {% endif %}
                         </td>
-                        <td>{{ render_ooa(event.host) }}</td>
+                        <td>{{ render_event_organizer(event.organizer) }}</td>
                         <td>{{ render_place(event.place) }}</td>
                     </tr>
                 {% endfor %}
