@@ -1093,7 +1093,7 @@ def event_delete(event_id):
                 db.session.delete(event)
                 db.session.commit()
                 flash(gettext('Event successfully deleted'), 'success')
-                return redirect(url_for('events'))
+                return redirect(url_for('manage_organizer_events', id=event.organizer_id))
             except SQLAlchemyError as e:
                 db.session.rollback()
                 flash(handleSqlError(e), 'danger')
@@ -1144,7 +1144,7 @@ def manage():
 def manage_admin_unit(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
-    return redirect(url_for('manage_admin_unit_organizers', id=admin_unit.id))
+    return redirect(url_for('manage_admin_unit_events', id=admin_unit.id))
 
     return render_template('manage/admin_unit.html',
         admin_unit=admin_unit)
@@ -1168,7 +1168,7 @@ def manage_admin_unit_event_places(id):
 
     abort(404)
 
-from forms.event_place import FindEventForm
+from forms.event_place import FindEventPlaceForm
 
 @app.route('/manage/organizer/<int:id>/event_places', methods=('GET', 'POST'))
 def manage_organizer_event_places(id):
@@ -1176,7 +1176,7 @@ def manage_organizer_event_places(id):
     admin_unit = get_admin_unit_for_manage_or_404(organizer.admin_unit_id)
     organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).all()
 
-    form = FindEventForm(organizer_id=organizer.id)
+    form = FindEventPlaceForm(organizer_id=organizer.id)
     form.organizer_id.choices = [(o.id, o.name) for o in organizers]
 
     if form.validate_on_submit():
@@ -1188,6 +1188,49 @@ def manage_organizer_event_places(id):
         organizer=organizer,
         form=form,
         places=places)
+
+@app.route('/manage/admin_unit/<int:id>/events')
+def manage_admin_unit_events(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    organizer = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).first()
+
+    if organizer:
+        return redirect(url_for('manage_organizer_events', id=organizer.id))
+
+    abort(404)
+
+from forms.event import FindEventForm
+
+@app.route('/manage/organizer/<int:id>/events', methods=('GET', 'POST'))
+def manage_organizer_events(id):
+    organizer = EventOrganizer.query.get_or_404(id)
+    admin_unit = get_admin_unit_for_manage_or_404(organizer.admin_unit_id)
+    organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).all()
+
+    form = FindEventForm(organizer_id=organizer.id)
+    form.organizer_id.choices = [(o.id, o.name) for o in organizers]
+
+    keyword = request.args.get('keyword') if 'keyword' in request.args else ""
+
+    if form.validate_on_submit():
+        if form.organizer_id.data != organizer.id:
+            return redirect(url_for('manage_organizer_events', id=form.organizer_id.data, keyword=keyword))
+
+        if form.keyword.data:
+            keyword = form.keyword.data
+
+    if keyword:
+        like_keyword = '%' + keyword + '%'
+        event_filter = and_(Event.organizer_id == organizer.id, Event.name.ilike(like_keyword))
+    else:
+        event_filter = Event.organizer_id == organizer.id
+
+    events = Event.query.filter(event_filter).order_by(Event.start).all()
+    return render_template('manage/events.html',
+        admin_unit=admin_unit,
+        organizer=organizer,
+        form=form,
+        events=events)
 
 @app.route('/organizer/<int:id>')
 def organizer(id):
