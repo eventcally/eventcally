@@ -705,77 +705,7 @@ def assign_location_values(target, origin):
 
 @app.before_first_request
 def create_initial_data():
-    events = Event.query.all()
-    for event in events:
-        if event.host:
-            ooa = event.host.organization if event.host.organization else event.host.admin_unit
-
-            if not event.organizer:
-                event.organizer = upsert_event_organizer(event.admin_unit_id, ooa.name)
-
-            event.organizer.name = ooa.name
-            event.organizer.url = ooa.url
-            event.organizer.email = ooa.email
-            event.organizer.phone = ooa.phone
-            event.organizer.fax = ooa.fax
-            event.organizer.logo = ooa.logo
-
-            if not event.organizer.location and ooa.location:
-                event.organizer.location = Location()
-            assign_location_values(event.organizer.location, ooa.location)
-
-        event.organizer.adminunit = event.admin_unit
-
-    db.session.commit()
-
-    events = Event.query.all()
-    for event in events:
-        if event.event_place:
-            best_place = EventPlace.query.filter(and_(EventPlace.name == event.event_place.name)).order_by(EventPlace.id).first()
-            if best_place.id is not event.event_place.id:
-                event.event_place = best_place
-
-    db.session.commit()
-
-    places = EventPlace.query.all()
-    for place in places:
-        if Event.query.filter(Event.event_place_id == place.id).count() == 0:
-            db.session.delete(place)
-
-    db.session.commit()
-
-    events = Event.query.all()
-    for event in events:
-        if not event.event_place:
-            event.event_place = upsert_event_place(event.admin_unit_id, event.organizer_id, event.place.name)
-
-        if event.place:
-            event.event_place.url = event.place.url
-            event.event_place.photo = event.place.photo
-            event.event_place.description = event.place.description
-
-            if not event.event_place.location and event.place.location:
-                event.event_place.location = Location()
-            assign_location_values(event.event_place.location, event.place.location)
-
-        event.event_place.adminunit = event.admin_unit
-        event.event_place.organizer = event.organizer
-        event.event_place.public = True
-
-    db.session.commit()
-
-    events = Event.query.all()
-    for event in events:
-        best_organizer = EventOrganizer.query.filter(and_(EventOrganizer.name == event.organizer.name, EventOrganizer.admin_unit_id == event.organizer.admin_unit_id)).order_by(EventOrganizer.id).first()
-        if best_organizer.id != event.organizer.id:
-            event.organizer = best_organizer
-
-    organizers = EventOrganizer.query.all()
-    for organizer in organizers:
-        if Event.query.filter(Event.organizer_id == organizer.id).count() == 0:
-            db.session.delete(organizer)
-
-    db.session.commit()
+    pass
 
 def flash_errors(form):
     for field, errors in form.errors.items():
