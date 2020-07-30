@@ -44,12 +44,7 @@
       {{ _('Organizer') }}
     </div>
     <div class="card-body">
-      {{ form.organizer.hidden_tag() }}
-      {{ render_field_with_errors(form.organizer.form.name) }}
-      {{ render_field_with_errors(form.organizer.form.url) }}
-      {{ render_field_with_errors(form.organizer.form.email) }}
-      {{ render_field_with_errors(form.organizer.form.phone) }}
-      {{ render_field_with_errors(form.organizer.form.fax) }}
+      {{ render_field_with_errors(form.organizer_id, class="autocomplete w-100") }}
     </div>
   </div>
 

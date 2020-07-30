@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_event_date, render_field_with_errors, render_event_organizer, render_manage_menu %}
+{% block title %}
+{{ _('Events') }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ admin_unit.name }}</h1>
+
+{{ render_manage_menu(admin_unit, 'events') }}
+
+<div class="my-4">
+    <form action="" class="form-inline" method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="input-group mb-2 mr-sm-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">{{ _('Organizer') }}</span>
+            </div>
+            {{ form.organizer_id(class="form-control", onchange="javascript:this.form.submit()")|safe }}
+        </div>
+
+        <div class="input-group mb-2 mr-sm-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">{{ _('Keyword') }}</span>
+            </div>
+            {{ form.keyword(class="form-control")|safe }}
+        </div>
+
+        <button type="submit" class="btn btn-secondary mb-2">{{ _('Find') }}</button>
+
+    </form>
+</div>
+
+<div class="my-4">
+    <a class="btn btn-outline-secondary my-1" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id, organizer_id=organizer.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
+</div>
+
+<ul class="list-group">
+{% for event in events %}
+    <li class="list-group-item">
+        {{ render_event_date(event) }}
+        <div class="dropdown d-inline-block">
+            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ event.name }}</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('event', event_id=event.id) }}">{{ _('View') }}</a>
+                <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}">{{ _('Edit') }}</a>
+                <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}">{{ _('Delete') }}...</a>
+            </div>
+        </div>
+    </li>
+{% endfor %}
+</ul>
+
+{% endblock %}

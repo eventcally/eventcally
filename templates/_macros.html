@@ -87,9 +87,6 @@
 {% endmacro %}
 
 {% macro render_events_sub_menu() %}
-<div class="my-4">
-  <a class="btn btn-secondary my-1" href="{{ url_for('event_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
-</div>
 {% endmacro %}
 
 {% macro render_events(events) %}
@@ -475,6 +472,7 @@
 
 {% macro render_manage_menu(admin_unit, active_id=None) %}
 <ul class="nav nav-pills">
+  {{ render_tab('events', _('Events'), url_for('manage_admin_unit_events', id=admin_unit.id), active_id) }}
   {{ render_tab('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
   {{ render_tab('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
 </ul>

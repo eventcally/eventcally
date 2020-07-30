@@ -28,6 +28,6 @@ class CreateEventPlaceForm(FlaskForm):
 class UpdateEventPlaceForm(CreateEventPlaceForm):
     submit = SubmitField(lazy_gettext("Update place"))
 
-class FindEventForm(FlaskForm):
+class FindEventPlaceForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Find places"))
     organizer_id = SelectField(lazy_gettext('Organizer'), validators=[DataRequired()], coerce=int)
