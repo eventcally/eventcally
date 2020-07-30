@@ -707,19 +707,24 @@ def assign_location_values(target, origin):
 def create_initial_data():
     events = Event.query.all()
     for event in events:
-        if not event.organizer:
-            ooa = event.host.organization if event.host.organization else event.host.admin_unit
-            event.organizer = upsert_event_organizer(event.admin_unit_id, ooa.name)
-            event.organizer.name = ooa.name
-            event.organizer.url = ooa.url
-            event.organizer.email = ooa.email
-            event.organizer.phone = ooa.phone
-            event.organizer.fax = ooa.fax
-            event.organizer.logo = ooa.logo
+        if not event.host:
+            continue
 
-            if not event.organizer.location and ooa.location:
-                event.organizer.location = Location()
-            assign_location_values(event.organizer.location, ooa.location)
+        ooa = event.host.organization if event.host.organization else event.host.admin_unit
+
+        if not event.organizer:
+            event.organizer = upsert_event_organizer(event.admin_unit_id, ooa.name)
+
+        event.organizer.name = ooa.name
+        event.organizer.url = ooa.url
+        event.organizer.email = ooa.email
+        event.organizer.phone = ooa.phone
+        event.organizer.fax = ooa.fax
+        event.organizer.logo = ooa.logo
+
+        if not event.organizer.location and ooa.location:
+            event.organizer.location = Location()
+        assign_location_values(event.organizer.location, ooa.location)
 
         event.organizer.adminunit = event.admin_unit
 
@@ -737,10 +742,15 @@ def create_initial_data():
         event.event_place.eventorganizer = event.organizer
         event.event_place.public = True
 
+    for event in events:
+        best_organizer = EventOrganizer.query.filter(and_(EventOrganizer.name == event.organizer.name, EventOrganizer.admin_unit_id == event.organizer.admin_unit_id)).order_by(EventOrganizer.id).first()
+        if best_organizer.id != event.organizer.id:
+            event.organizer = best_organizer
+
     organizers = EventOrganizer.query.all()
     for organizer in organizers:
-        if not organizer.name:
-            organizer.name = organizer.org_name
+        if Event.query.filter(Event.organizer_id == organizer.id).count() == 0:
+            db.session.delete(organizer)
 
     db.session.commit()
 
