@@ -474,7 +474,8 @@
 {% endmacro %}
 
 {% macro render_manage_menu(admin_unit, active_id=None) %}
-<ul class="nav nav-tabs">
+<ul class="nav nav-pills">
   {{ render_tab('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
+  {{ render_tab('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
 </ul>
 {% endmacro %}

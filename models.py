@@ -241,6 +241,7 @@ def purge_place(mapper, connect, self):
 # Events
 class EventPlace(db.Model, TrackableMixin):
     __tablename__ = 'eventplace'
+    __table_args__ = (UniqueConstraint('name', 'organizer_id', 'admin_unit_id'),)
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
@@ -310,12 +311,9 @@ class EventStatus(IntEnum):
 
 class EventOrganizer(db.Model, TrackableMixin):
     __tablename__ = 'eventorganizer'
-    __table_args__ = (
-        CheckConstraint('NOT(name IS NULL AND org_name IS NULL)'),
-    )
+    __table_args__ = (UniqueConstraint('name', 'admin_unit_id'),)
     id = Column(Integer(), primary_key=True)
-    name = Column(Unicode(255))
-    org_name = Column(Unicode(255))
+    name = Column(Unicode(255), nullable=False)
     url = Column(String(255))
     email = Column(Unicode(255))
     phone = Column(Unicode(255))
@@ -328,8 +326,7 @@ class EventOrganizer(db.Model, TrackableMixin):
     event_places = relationship('EventPlace', backref=backref('organizer', lazy=True))
 
     def is_empty(self):
-        return (not self.name
-            and not self.org_name)
+        return not self.name
 
 class Event(db.Model, TrackableMixin):
     __tablename__ = 'event'

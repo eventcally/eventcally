@@ -707,41 +707,64 @@ def assign_location_values(target, origin):
 def create_initial_data():
     events = Event.query.all()
     for event in events:
-        if not event.host:
-            continue
+        if event.host:
+            ooa = event.host.organization if event.host.organization else event.host.admin_unit
 
-        ooa = event.host.organization if event.host.organization else event.host.admin_unit
+            if not event.organizer:
+                event.organizer = upsert_event_organizer(event.admin_unit_id, ooa.name)
 
-        if not event.organizer:
-            event.organizer = upsert_event_organizer(event.admin_unit_id, ooa.name)
+            event.organizer.name = ooa.name
+            event.organizer.url = ooa.url
+            event.organizer.email = ooa.email
+            event.organizer.phone = ooa.phone
+            event.organizer.fax = ooa.fax
+            event.organizer.logo = ooa.logo
 
-        event.organizer.name = ooa.name
-        event.organizer.url = ooa.url
-        event.organizer.email = ooa.email
-        event.organizer.phone = ooa.phone
-        event.organizer.fax = ooa.fax
-        event.organizer.logo = ooa.logo
-
-        if not event.organizer.location and ooa.location:
-            event.organizer.location = Location()
-        assign_location_values(event.organizer.location, ooa.location)
+            if not event.organizer.location and ooa.location:
+                event.organizer.location = Location()
+            assign_location_values(event.organizer.location, ooa.location)
 
         event.organizer.adminunit = event.admin_unit
 
+    db.session.commit()
+
+    events = Event.query.all()
+    for event in events:
+        if event.event_place:
+            best_place = EventPlace.query.filter(and_(EventPlace.name == event.event_place.name)).order_by(EventPlace.id).first()
+            if best_place.id is not event.event_place.id:
+                event.event_place = best_place
+
+    db.session.commit()
+
+    places = EventPlace.query.all()
+    for place in places:
+        if Event.query.filter(Event.event_place_id == place.id).count() == 0:
+            db.session.delete(place)
+
+    db.session.commit()
+
+    events = Event.query.all()
+    for event in events:
         if not event.event_place:
             event.event_place = upsert_event_place(event.admin_unit_id, event.organizer_id, event.place.name)
+
+        if event.place:
             event.event_place.url = event.place.url
             event.event_place.photo = event.place.photo
             event.event_place.description = event.place.description
 
             if not event.event_place.location and event.place.location:
-                event.event_place.location.location = Location()
+                event.event_place.location = Location()
             assign_location_values(event.event_place.location, event.place.location)
 
         event.event_place.adminunit = event.admin_unit
-        event.event_place.eventorganizer = event.organizer
+        event.event_place.organizer = event.organizer
         event.event_place.public = True
 
+    db.session.commit()
+
+    events = Event.query.all()
     for event in events:
         best_organizer = EventOrganizer.query.filter(and_(EventOrganizer.name == event.organizer.name, EventOrganizer.admin_unit_id == event.organizer.admin_unit_id)).order_by(EventOrganizer.id).first()
         if best_organizer.id != event.organizer.id:
@@ -1205,6 +1228,37 @@ def manage_admin_unit_organizers(id):
         admin_unit=admin_unit,
         organizers=organizers)
 
+@app.route('/manage/admin_unit/<int:id>/event_places')
+def manage_admin_unit_event_places(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    organizer = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).first()
+
+    if organizer:
+        return redirect(url_for('manage_organizer_event_places', id=organizer.id))
+
+    abort(404)
+
+from forms.event_place import FindEventForm
+
+@app.route('/manage/organizer/<int:id>/event_places', methods=('GET', 'POST'))
+def manage_organizer_event_places(id):
+    organizer = EventOrganizer.query.get_or_404(id)
+    admin_unit = get_admin_unit_for_manage_or_404(organizer.admin_unit_id)
+    organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).all()
+
+    form = FindEventForm(organizer_id=organizer.id)
+    form.organizer_id.choices = [(o.id, o.name) for o in organizers]
+
+    if form.validate_on_submit():
+        return redirect(url_for('manage_organizer_event_places', id=form.organizer_id.data))
+
+    places = EventPlace.query.filter(EventPlace.organizer_id == organizer.id).order_by(func.lower(EventPlace.name)).all()
+    return render_template('manage/places.html',
+        admin_unit=admin_unit,
+        organizer=organizer,
+        form=form,
+        places=places)
+
 @app.route('/organizer/<int:id>')
 def organizer(id):
     organizer = EventOrganizer.query.get_or_404(id)
@@ -1295,6 +1349,65 @@ def organizer_delete(id):
     return render_template('organizer/delete.html',
         form=form,
         organizer=organizer)
+
+def update_event_place_with_form(place, form):
+    form.populate_obj(place)
+
+    if form.photo_file.data:
+        fs = form.photo_file.data
+        place.photo = upsert_image_with_data(place.photo, fs.read(), fs.content_type)
+
+from forms.event_place import UpdateEventPlaceForm, CreateEventPlaceForm
+
+@app.route('/event_place/<int:id>/update', methods=('GET', 'POST'))
+def event_place_update(id):
+    place = EventPlace.query.get_or_404(id)
+
+    if not can_update_organizer(place.organizer):
+        abort(401)
+
+    form = UpdateEventPlaceForm(obj=place)
+
+    if form.validate_on_submit():
+        update_event_place_with_form(place, form)
+
+        try:
+            db.session.commit()
+            flash(gettext('Place successfully updated'), 'success')
+            return redirect(url_for('manage_organizer_event_places', id=place.organizer.id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+
+    return render_template('event_place/update.html',
+        form=form,
+        place=place)
+
+@app.route('/manage/organizer/<int:id>/places/create', methods=('GET', 'POST'))
+def manage_organizer_places_create(id):
+    organizer = EventOrganizer.query.get_or_404(id)
+
+    if not can_update_organizer(organizer):
+        abort(401)
+
+    form = CreateEventPlaceForm()
+
+    if form.validate_on_submit():
+        place = EventPlace()
+        place.organizer_id = organizer.id
+        place.admin_unit_id = organizer.admin_unit_id
+        place.location = Location()
+        update_event_place_with_form(place, form)
+
+        try:
+            db.session.add(place)
+            db.session.commit()
+            flash(gettext('Place successfully created'), 'success')
+            return redirect(url_for('manage_organizer_event_places', id=organizer.id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+    return render_template('event_place/create.html', form=form)
 
 def date_add_time(date, hour=0, minute=0, second=0, tzinfo=None):
     return datetime(date.year, date.month, date.day, hour=hour, minute=minute, second=second, tzinfo=tzinfo)
