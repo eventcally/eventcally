@@ -140,12 +140,7 @@ def get_sd_for_event_date(event_date):
 
     result["url"] = url_list
 
-    location_list = list()
-    if event.place:
-        location_list.append(get_sd_for_place(event.place))
-    if event.event_place:
-        location_list.append(get_sd_for_place(event.event_place))
-    result["location"] = location_list
+    result["location"] = get_sd_for_place(event.event_place)
 
     organizer_list = list()
     if event.organizer:
