@@ -3,13 +3,16 @@ import decimal
 from json import JSONEncoder
 from flask import url_for
 from models import EventAttendanceMode, EventStatus
+import pytz
+
+berlin_tz = pytz.timezone('Europe/Berlin')
 
 # subclass JSONEncoder
 class DateTimeEncoder(JSONEncoder):
         #Override the default method
         def default(self, obj):
             if isinstance(obj, (datetime.date, datetime.datetime)):
-                return obj.isoformat()
+                return (obj.astimezone(berlin_tz)).isoformat()
             if isinstance(obj, decimal.Decimal):
                 return float(obj)
 
@@ -17,8 +20,10 @@ def get_sd_for_org(organization):
     result = {}
     result["@type"] = "Organization"
     result["identifier"] = str(organization.id)
-    result["url"] = url_for('organization', organization_id=organization.id)
     result["name"] = organization.name
+
+    if organization.url:
+        result["url"] = url_for('organization', organization_id=organization.id)
 
     if organization.logo_id:
         result["logo"] = url_for('image', id=organization.logo_id)
@@ -36,10 +41,13 @@ def get_sd_for_org(organization):
 
 def get_sd_for_admin_unit(admin_unit):
     result = {}
-    result["@type"] = "GovernmentOrganization"
+    result["@type"] = "Organization"
     result["identifier"] = str(admin_unit.id)
-    result["url"] = url_for('admin_unit', admin_unit_id=admin_unit.id)
     result["name"] = admin_unit.name
+
+    if admin_unit.url:
+        result["url"] = admin_unit.url
+
     return result
 
 def get_sd_for_organizer_organization(organizer):
@@ -117,10 +125,20 @@ def get_sd_for_event_date(event_date):
     result["@context"] = "https://schema.org"
     result["@type"] = "Event"
     result["identifier"] = str(event_date.id)
-    result["url"] = url_for('event_date', id=event_date.id)
     result["name"] = event.name
     result["description"] = event.description
     result["startDate"] = event_date.start
+
+    url_list = list()
+    url_list.append(url_for('event_date', id=event_date.id))
+
+    if event.external_link:
+        url_list.append(event.external_link)
+
+    if event.ticket_link:
+        url_list.append(event.ticket_link)
+
+    result["url"] = url_list
 
     location_list = list()
     if event.place:
@@ -132,6 +150,8 @@ def get_sd_for_event_date(event_date):
     organizer_list = list()
     if event.organizer:
         organizer_list.append(get_sd_for_organizer(event.organizer))
+    if event.admin_unit:
+        organizer_list.append(get_sd_for_admin_unit(event.admin_unit))
     result["organizer"] = organizer_list
 
     if event_date.end:
