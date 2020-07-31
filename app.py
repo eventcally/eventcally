@@ -705,18 +705,7 @@ def assign_location_values(target, origin):
 
 @app.before_first_request
 def create_initial_data():
-    admin_unit = upsert_admin_unit('Ferienpass Goslar', 'ferienpass_gs')
-    db.session.commit()
-
-    events = Event.query.all()
-    for event in events:
-        if event.external_link and event.external_link.startswith('https://goslar.feripro.de/programm/40/anmeldung/veranstaltungen'):
-            event.event_place.public = True
-            event.event_place.admin_unit_id = admin_unit.id
-            event.organizer.admin_unit_id = admin_unit.id
-            event.admin_unit_id = admin_unit.id
-
-    db.session.commit()
+    pass
 
 def flash_errors(form):
     for field, errors in form.errors.items():
