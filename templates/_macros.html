@@ -477,3 +477,34 @@
   {{ render_tab('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
 </ul>
 {% endmacro %}
+
+{% macro render_event_organizer_places_header() %}
+<script>
+$( function() {
+
+  $("#organizer_id").change(function(){
+      var organizer_id = $(this).val();
+
+      $.ajax({
+          url: '/api/organizer/' + organizer_id + '/event_places',
+          type: 'get',
+          dataType: 'json',
+          success:function(response){
+
+              var len = response.length;
+
+              $("#event_place_id").empty();
+              $("#event_place_id").append("<option value='"+0+"'></option>");
+              for( var i = 0; i<len; i++){
+                  var id = response[i]['id'];
+                  var name = response[i]['name'];
+
+                  $("#event_place_id").append("<option value='"+id+"'>"+name+"</option>");
+
+              }
+          }
+      });
+  });
+});
+</script>
+{% endmacro %}

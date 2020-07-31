@@ -14,8 +14,9 @@ class EventPlaceLocationForm(FlaskForm):
     city = StringField(lazy_gettext('City'), validators=[Optional()])
 
 class EventPlaceForm(FlaskForm):
-    name = StringField(lazy_gettext('New place'), validators=[Optional()])
+    name = StringField(lazy_gettext('Name'), validators=[Optional()])
     location = FormField(EventPlaceLocationForm, default=lambda: Location())
+    public = BooleanField(lazy_gettext('Other organizers can use this location'), default="checked", render_kw ={'checked':''}, validators=[Optional()])
 
     def populate_obj(self, obj):
         for name, field in self._fields.items():
@@ -30,8 +31,7 @@ class EventOrganizerForm(FlaskForm):
     phone = StringField(lazy_gettext('Phone'), validators=[Optional()])
     fax = StringField(lazy_gettext('Fax'), validators=[Optional()])
 
-class CreateEventForm(FlaskForm):
-    submit = SubmitField(lazy_gettext("Create event"))
+class BaseEventForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
     external_link = StringField(lazy_gettext('Link URL'), validators=[Optional()])
     ticket_link = StringField(lazy_gettext('Ticket Link URL'), validators=[Optional()])
@@ -42,10 +42,7 @@ class CreateEventForm(FlaskForm):
     previous_start_date = CustomDateTimeField(lazy_gettext('Previous start date'), validators=[Optional()])
     tags = StringField(lazy_gettext('Tags'), validators=[Optional()])
 
-    event_place = FormField(EventPlaceForm, default=lambda: EventPlace())
-
     organizer_id = SelectField(lazy_gettext('Organizer'), validators=[DataRequired()], coerce=int)
-    place_id = SelectField(lazy_gettext('Existing place'), validators=[Optional()], coerce=int)
     category_id = SelectField(lazy_gettext('Category'), validators=[DataRequired()], coerce=int)
     admin_unit_id = SelectField(lazy_gettext('Admin unit'), validators=[DataRequired()], coerce=int)
 
@@ -66,23 +63,36 @@ class CreateEventForm(FlaskForm):
 
     photo_file = FileField(lazy_gettext('Photo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
 
+class CreateEventForm(BaseEventForm):
+    event_place_choice = RadioField(lazy_gettext('Place'), choices=[(1,lazy_gettext('Select existing place')), (2,lazy_gettext('Enter new place'))], default=1, coerce=int)
+    event_place_id = SelectField(lazy_gettext('Place'), validators=[Optional()], coerce=int)
+    new_event_place = FormField(EventPlaceForm, default=lambda: EventPlace())
+
+    submit = SubmitField(lazy_gettext("Create event"))
+
     def populate_obj(self, obj):
         for name, field in self._fields.items():
-            if name == 'event_place' and not obj.event_place:
-                obj.event_place = EventPlace()
+            if name == 'new_event_place':
+                if self.event_place_choice.data != 2:
+                    continue
+                if not obj.event_place:
+                    obj.event_place = EventPlace()
+                field.populate_obj(obj, 'event_place')
             field.populate_obj(obj, name)
 
     def validate(self):
-        if not super(CreateEventForm, self).validate():
+        if not super(BaseEventForm, self).validate():
             return False
-        if self.place_id.data == 0 and not self.event_place.form.name.data:
+        if self.event_place_id.data == 0 and not self.new_event_place.form.name.data:
             msg = gettext('Select existing place or enter new place')
-            self.place_id.errors.append(msg)
-            self.event_place.form.name.errors.append(msg)
+            self.event_place_id.errors.append(msg)
+            self.new_event_place.form.name.errors.append(msg)
             return False
         return True
 
-class UpdateEventForm(CreateEventForm):
+class UpdateEventForm(BaseEventForm):
+    event_place_id = SelectField(lazy_gettext('Place'), validators=[DataRequired()], coerce=int)
+
     status = SelectField(lazy_gettext('Status'), coerce=int, choices=[
         (int(EventStatus.scheduled), lazy_gettext('EventStatus.scheduled')),
         (int(EventStatus.cancelled), lazy_gettext('EventStatus.cancelled')),
