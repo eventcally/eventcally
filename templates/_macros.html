@@ -112,7 +112,7 @@
                       {% endif %}
                   </td>
                   <td>{{ render_event_organizer(event.organizer) }}</td>
-                  <td>{{ render_place(event.place) }}</td>
+                  <td>{{ render_place(event.event_place) }}</td>
               </tr>
           {% endfor %}
       </tbody>
@@ -306,26 +306,6 @@
       {{ _('Place') }}
     </div>
     <div class="card-body">
-      {% if event.place %}
-        <h5 class="card-title"><a href="{{ url_for('place', place_id=event.place.id) }}" class="text-dark">{{ event.place.name }}</a></h5>
-
-        {% if event.place.photo_id %}
-          <div class="my-4">{{ render_image(event.place.photo_id) }}</div>
-        {% endif %}
-
-        {% if event.place.description %}
-        <div class="my-4">{{ event.place.description }}</div>
-        {% endif %}
-
-        <div class="my-4">
-          {{ render_link_prop(event.place.url) }}
-          {{ render_location_prop(event.place.location) }}
-        </div>
-
-        <p>
-            <a href="http://www.google.com/maps?q={{ render_place(event.place) | quote_plus }}" class="btn btn-secondary">{{ _('Show directions') }}</a>
-        </p>
-      {% endif %}
       {% if event.event_place %}
         <h5 class="card-title">{{ event.event_place.name }}</h5>
 
