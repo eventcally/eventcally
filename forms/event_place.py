@@ -38,5 +38,7 @@ class UpdateEventPlaceForm(BaseEventPlaceForm):
     submit = SubmitField(lazy_gettext("Update place"))
 
 class FindEventPlaceForm(FlaskForm):
+    class Meta:
+        csrf = False
     submit = SubmitField(lazy_gettext("Find places"))
     organizer_id = SelectField(lazy_gettext('Organizer'), validators=[DataRequired()], coerce=int)

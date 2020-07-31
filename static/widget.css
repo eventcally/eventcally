@@ -20,6 +20,6 @@ body {
     background-color: transparent;
 }
 
-.card-title {
+.card-title, .page-link, .page-link:hover {
     color: #7B2424;
 }

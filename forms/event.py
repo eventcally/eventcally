@@ -107,6 +107,8 @@ class DeleteEventForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
 
 class FindEventForm(FlaskForm):
+    class Meta:
+        csrf = False
     submit = SubmitField(lazy_gettext("Find events"))
     keyword = StringField(lazy_gettext('Keyword'), validators=[Optional()])
     organizer_id = SelectField(lazy_gettext('Organizer'), validators=[DataRequired()], coerce=int)

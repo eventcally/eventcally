@@ -701,6 +701,24 @@ def assign_location_values(target, origin):
         target.latitude = origin.latitude
         target.longitude = origin.longitude
 
+def get_pagination_urls(pagination, **kwargs):
+    result = {}
+
+    if pagination.has_prev:
+        args = request.args.copy()
+        args.update(kwargs)
+        args["page"] = pagination.prev_num
+        result["prev_url"] = url_for(request.endpoint, **args)
+
+    if pagination.has_next:
+        args = request.args.copy()
+        args.update(kwargs)
+        args["page"] = pagination.next_num
+        result["next_url"] = url_for(request.endpoint, **args)
+
+    return result
+
+
 # Routes
 
 @app.before_first_request
@@ -1119,7 +1137,7 @@ def event_delete(event_id):
                 db.session.delete(event)
                 db.session.commit()
                 flash(gettext('Event successfully deleted'), 'success')
-                return redirect(url_for('manage_organizer_events', id=event.organizer_id))
+                return redirect(url_for('manage_organizer_events', organizer_id=event.organizer_id))
             except SQLAlchemyError as e:
                 db.session.rollback()
                 flash(handleSqlError(e), 'danger')
@@ -1178,11 +1196,12 @@ def manage_admin_unit(id):
 @app.route('/manage/admin_unit/<int:id>/organizers')
 def manage_admin_unit_organizers(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).all()
+    organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).paginate()
 
     return render_template('manage/organizers.html',
         admin_unit=admin_unit,
-        organizers=organizers)
+        organizers=organizers.items,
+        pagination=get_pagination_urls(organizers, id=id))
 
 @app.route('/manage/admin_unit/<int:id>/event_places')
 def manage_admin_unit_event_places(id):
@@ -1190,30 +1209,28 @@ def manage_admin_unit_event_places(id):
     organizer = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).first()
 
     if organizer:
-        return redirect(url_for('manage_organizer_event_places', id=organizer.id))
+        return redirect(url_for('manage_organizer_event_places', organizer_id=organizer.id))
 
     abort(404)
 
 from forms.event_place import FindEventPlaceForm
 
-@app.route('/manage/organizer/<int:id>/event_places', methods=('GET', 'POST'))
-def manage_organizer_event_places(id):
-    organizer = EventOrganizer.query.get_or_404(id)
+@app.route('/manage/event_places')
+def manage_organizer_event_places():
+    organizer = EventOrganizer.query.get_or_404(request.args.get('organizer_id'))
     admin_unit = get_admin_unit_for_manage_or_404(organizer.admin_unit_id)
     organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).all()
 
-    form = FindEventPlaceForm(organizer_id=organizer.id)
+    form = FindEventPlaceForm(**request.args)
     form.organizer_id.choices = [(o.id, o.name) for o in organizers]
 
-    if form.validate_on_submit():
-        return redirect(url_for('manage_organizer_event_places', id=form.organizer_id.data))
-
-    places = EventPlace.query.filter(EventPlace.organizer_id == organizer.id).order_by(func.lower(EventPlace.name)).all()
+    places = EventPlace.query.filter(EventPlace.organizer_id == organizer.id).order_by(func.lower(EventPlace.name)).paginate()
     return render_template('manage/places.html',
         admin_unit=admin_unit,
         organizer=organizer,
         form=form,
-        places=places)
+        places=places.items,
+        pagination=get_pagination_urls(places))
 
 @app.route('/manage/admin_unit/<int:id>/events')
 def manage_admin_unit_events(id):
@@ -1221,29 +1238,22 @@ def manage_admin_unit_events(id):
     organizer = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).first()
 
     if organizer:
-        return redirect(url_for('manage_organizer_events', id=organizer.id))
+        return redirect(url_for('manage_organizer_events', organizer_id=organizer.id))
 
     abort(404)
 
 from forms.event import FindEventForm
 
-@app.route('/manage/organizer/<int:id>/events', methods=('GET', 'POST'))
-def manage_organizer_events(id):
-    organizer = EventOrganizer.query.get_or_404(id)
+@app.route('/manage/events')
+def manage_organizer_events():
+    organizer = EventOrganizer.query.get_or_404(request.args.get('organizer_id'))
     admin_unit = get_admin_unit_for_manage_or_404(organizer.admin_unit_id)
     organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).all()
 
-    form = FindEventForm(organizer_id=organizer.id)
-    form.organizer_id.choices = [(o.id, o.name) for o in organizers]
-
     keyword = request.args.get('keyword') if 'keyword' in request.args else ""
 
-    if form.validate_on_submit():
-        if form.organizer_id.data != organizer.id:
-            return redirect(url_for('manage_organizer_events', id=form.organizer_id.data, keyword=keyword))
-
-        if form.keyword.data:
-            keyword = form.keyword.data
+    form = FindEventForm(**request.args)
+    form.organizer_id.choices = [(o.id, o.name) for o in organizers]
 
     if keyword:
         like_keyword = '%' + keyword + '%'
@@ -1251,12 +1261,13 @@ def manage_organizer_events(id):
     else:
         event_filter = Event.organizer_id == organizer.id
 
-    events = Event.query.filter(event_filter).order_by(Event.start).all()
+    events = Event.query.filter(event_filter).order_by(Event.start).paginate()
     return render_template('manage/events.html',
         admin_unit=admin_unit,
         organizer=organizer,
         form=form,
-        events=events)
+        events=events.items,
+        pagination=get_pagination_urls(events))
 
 @app.route('/organizer/<int:id>')
 def organizer(id):
@@ -1373,7 +1384,7 @@ def event_place_update(id):
         try:
             db.session.commit()
             flash(gettext('Place successfully updated'), 'success')
-            return redirect(url_for('manage_organizer_event_places', id=place.organizer.id))
+            return redirect(url_for('manage_organizer_event_places', organizer_id=place.organizer.id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), 'danger')
@@ -1402,7 +1413,7 @@ def manage_organizer_places_create(id):
             db.session.add(place)
             db.session.commit()
             flash(gettext('Place successfully created'), 'success')
-            return redirect(url_for('manage_organizer_event_places', id=organizer.id))
+            return redirect(url_for('manage_organizer_event_places', organizer_id=organizer.id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), 'danger')
@@ -1422,38 +1433,43 @@ def form_input_to_date(date_str, hour=0, minute=0, second=0):
 def form_input_from_date(date):
     return date.strftime("%Y-%m-%d")
 
-@app.route("/<string:au_short_name>/widget/eventdates", methods=('GET', 'POST'))
+@app.route("/<string:au_short_name>/widget/eventdates")
 def widget_event_dates(au_short_name):
     admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
 
     date_from = today
-    date_to = date_set_end_of_day(today + relativedelta(days=7))
+    date_to = date_set_end_of_day(today + relativedelta(months=12))
     date_from_str = form_input_from_date(date_from)
     date_to_str = form_input_from_date(date_to)
     keyword = ''
 
-    if request.method == 'POST':
-        date_from_str = request.form['date_from']
-        date_to_str = request.form['date_to']
+    if 'date_from' in request.args:
+        date_from_str = request.args['date_from']
         date_from = form_input_to_date(date_from_str)
-        date_to = form_input_to_date(date_to_str, 23, 59, 59)
 
-        if 'keyword' in request.form:
-            keyword = request.form['keyword']
+    if 'date_to' in request.args:
+        date_to_str = request.args['date_to']
+        date_to = form_input_to_date(date_to_str)
+
+    if 'keyword' in request.args:
+        keyword = request.args['keyword']
 
     date_filter = and_(EventDate.start >= date_from, EventDate.start < date_to)
 
     if keyword:
         like_keyword = '%' + keyword + '%'
-        dates = EventDate.query.join(Event).filter(date_filter).filter(and_(Event.admin_unit_id == admin_unit.id, Event.verified, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))).order_by(EventDate.start).all()
+        event_filter = and_(Event.admin_unit_id == admin_unit.id, Event.verified, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))
     else:
-        dates = EventDate.query.join(Event).filter(date_filter).filter(and_(Event.admin_unit_id == admin_unit.id, Event.verified)).order_by(EventDate.start).all()
+        event_filter = and_(Event.admin_unit_id == admin_unit.id, Event.verified)
+
+    dates = EventDate.query.join(Event).filter(date_filter).filter(event_filter).order_by(EventDate.start).paginate()
 
     return render_template('widget/event_date/list.html',
         date_from_str=date_from_str,
         date_to_str=date_to_str,
         keyword=keyword,
-        dates=dates)
+        dates=dates.items,
+        pagination=get_pagination_urls(dates, au_short_name=au_short_name))
 
 @app.route('/widget/eventdate/<int:id>')
 def widget_event_date(id):
