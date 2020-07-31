@@ -1,6 +1,31 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_datepicker_js, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_event_organizer_places_header, render_datepicker_js, render_field_with_errors, render_field %}
+{% block header %}
+<script>
+$( function() {
 
+  function update_place_container(value) {
+    switch (value) {
+      case '1':
+        $('#existing_place_container').show();
+        $('#new_place_container').hide();
+        break;
+      case '2':
+        $('#existing_place_container').hide();
+        $('#new_place_container').show();
+        break;
+    }
+  }
+
+  $('input[type=radio][name=event_place_choice]').on('change', function() {
+    update_place_container($(this).val());
+  });
+
+  update_place_container($('input[type=radio][name=event_place_choice]:checked').val());
+});
+</script>
+{{ render_event_organizer_places_header() }}
+{% endblock %}
 {% block content %}
 
 <h1>{{ _('Create event') }}</h1>
@@ -43,16 +68,28 @@
       {{ _('Place') }} *
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.place_id, class="autocomplete w-100") }}
 
-      <div class="my-4">
-        {{ form.event_place.hidden_tag() }}
-        {{ render_field_with_errors(form.event_place.form.name) }}
+      <div>
+        {% for subfield in form.event_place_choice %}
+        <div class="form-check form-check-inline">
+          <td>{{ subfield(class="form-check-input") }}</td>
+          <td>{{ subfield.label(class="form-check-label") }}</td>
+        </div>
+        {% endfor %}
+      </div>
 
-        {{ form.event_place.form.location.hidden_tag() }}
-        {{ render_field_with_errors(form.event_place.form.location.street) }}
-        {{ render_field_with_errors(form.event_place.form.location.postalCode) }}
-        {{ render_field_with_errors(form.event_place.form.location.city) }}
+      <div class="my-4" id="existing_place_container">
+        {{ render_field_with_errors(form.event_place_id, class="autocomplete w-100") }}
+      </div>
+
+      <div class="my-4" id="new_place_container">
+        {{ form.new_event_place.hidden_tag() }}
+        {{ render_field_with_errors(form.new_event_place.form.name) }}
+        {{ form.new_event_place.form.location.hidden_tag() }}
+        {{ render_field_with_errors(form.new_event_place.form.location.street) }}
+        {{ render_field_with_errors(form.new_event_place.form.location.postalCode) }}
+        {{ render_field_with_errors(form.new_event_place.form.location.city) }}
+        {{ render_field_with_errors(form.new_event_place.form.public, style="width: fit-content; flex: initial;") }}
       </div>
 
     </div>

@@ -705,7 +705,12 @@ def assign_location_values(target, origin):
 
 @app.before_first_request
 def create_initial_data():
-    pass
+    events = Event.query.all()
+    for event in events:
+        if event.external_link and event.external_link.startswith('https://goslar.feripro.de/programm/40/anmeldung/veranstaltungen'):
+            event.event_place.public = False
+
+    db.session.commit()
 
 def flash_errors(form):
     for field, errors in form.errors.items():
@@ -988,6 +993,19 @@ def api_events():
     result['event'] = structured_events
     return jsonify(result)
 
+@app.route("/api/organizer/<int:id>/event_places")
+def api_event_places(id):
+    places = get_event_places(id)
+    result = list()
+
+    for place in places:
+        item = {}
+        item["id"] = place.id
+        item["name"] = place.name
+        result.append(item)
+
+    return jsonify(result)
+
 from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm
 from forms.place import CreatePlaceForm, UpdatePlaceForm
 from forms.organization import CreateOrganizationForm, UpdateOrganizationForm
@@ -1009,14 +1027,23 @@ def update_event_with_form(event, form):
         fs = form.photo_file.data
         event.photo = upsert_image_with_data(event.photo, fs.read(), fs.content_type)
 
+def get_event_places(organizer_id):
+    organizer = EventOrganizer.query.get(organizer_id)
+    return EventPlace.query.filter(or_(EventPlace.organizer_id == organizer_id, and_(EventPlace.public, EventPlace.admin_unit_id==organizer.admin_unit_id))).order_by(func.lower(EventPlace.name)).all()
+
 def prepare_event_form(form):
     form.organizer_id.choices = [(o.id, o.name) for o in EventOrganizer.query.filter(EventOrganizer.admin_unit_id == form.admin_unit_id.data).order_by(func.lower(EventOrganizer.name))]
-    form.place_id.choices = [(p.id, p.name) for p in Place.query.order_by('name')]
     form.category_id.choices = sorted([(c.id, get_event_category_name(c)) for c in EventCategory.query.all()], key=lambda ooa: ooa[1])
     form.admin_unit_id.choices = sorted([(admin_unit.id, admin_unit.name) for admin_unit in get_admin_units_for_event()], key=lambda admin_unit: admin_unit[1])
 
+    if form.organizer_id.data:
+        places = get_event_places(form.organizer_id.data)
+        form.event_place_id.choices = [(p.id, p.name) for p in places]
+    else:
+        form.event_place_id.choices = list()
+
     form.organizer_id.choices.insert(0, (0, ''))
-    form.place_id.choices.insert(0, (0, ''))
+    form.event_place_id.choices.insert(0, (0, ''))
 
 def event_create_base(admin_unit, organizer_id=0):
     form = CreateEventForm(admin_unit_id=admin_unit.id, organizer_id=organizer_id, category_id=upsert_event_category('Other').id)
@@ -1025,6 +1052,10 @@ def event_create_base(admin_unit, organizer_id=0):
     if form.validate_on_submit():
         event = Event()
         update_event_with_form(event, form)
+
+        if form.event_place_choice.data == 2:
+            event.event_place.organizer_id = event.organizer_id
+            event.event_place.admin_unit_id = event.admin_unit_id
 
         try:
             db.session.add(event)

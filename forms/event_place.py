@@ -23,7 +23,7 @@ class CreateEventPlaceForm(FlaskForm):
     photo_file = FileField(lazy_gettext('Photo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
     description = TextAreaField(lazy_gettext('Description'), validators=[Optional()])
     location = FormField(EventPlaceLocationForm)
-    public = BooleanField(lazy_gettext('Other organizers can use this location'), validators=[Optional()])
+    public = BooleanField(lazy_gettext('Other organizers can use this location'), default="checked", render_kw ={'checked':''}, validators=[Optional()])
 
 class UpdateEventPlaceForm(CreateEventPlaceForm):
     submit = SubmitField(lazy_gettext("Update place"))

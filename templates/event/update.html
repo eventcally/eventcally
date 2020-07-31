@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_datepicker_js, render_field_with_errors, render_field %}
-
+{% from "_macros.html" import render_event_organizer_places_header, render_datepicker_js, render_field_with_errors, render_field %}
+{% block header %}
+{{ render_event_organizer_places_header() }}
+{% endblock %}
 {% block content %}
 
 <h1>{{ _('Update event') }}</h1>
@@ -53,17 +55,7 @@
       {{ _('Place') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.place_id, class="autocomplete w-100") }}
-
-      <div class="my-4">
-        {{ form.event_place.hidden_tag() }}
-        {{ render_field_with_errors(form.event_place.form.name) }}
-
-        {{ form.event_place.form.location.hidden_tag() }}
-        {{ render_field_with_errors(form.event_place.form.location.street) }}
-        {{ render_field_with_errors(form.event_place.form.location.postalCode) }}
-        {{ render_field_with_errors(form.event_place.form.location.city) }}
-      </div>
+      {{ render_field_with_errors(form.event_place_id, class="autocomplete w-100") }}
     </div>
   </div>
 
