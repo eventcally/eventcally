@@ -6,6 +6,7 @@ from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 import decimal
+from models import Location
 
 class EventPlaceLocationForm(FlaskForm):
     street = StringField(lazy_gettext('Street'), validators=[Optional()])
@@ -15,17 +16,25 @@ class EventPlaceLocationForm(FlaskForm):
     latitude = DecimalField(lazy_gettext('Latitude'), places=16, validators=[Optional()])
     longitude = DecimalField(lazy_gettext('Longitude'), places=16, validators=[Optional()])
 
-class CreateEventPlaceForm(FlaskForm):
-    submit = SubmitField(lazy_gettext("Create place"))
-
+class BaseEventPlaceForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
     url = StringField(lazy_gettext('Link URL'), validators=[Optional()])
     photo_file = FileField(lazy_gettext('Photo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
     description = TextAreaField(lazy_gettext('Description'), validators=[Optional()])
     location = FormField(EventPlaceLocationForm)
-    public = BooleanField(lazy_gettext('Other organizers can use this location'), default="checked", render_kw ={'checked':''}, validators=[Optional()])
 
-class UpdateEventPlaceForm(CreateEventPlaceForm):
+    def populate_obj(self, obj):
+        for name, field in self._fields.items():
+            if name == 'location' and not obj.location:
+                obj.location = Location()
+            field.populate_obj(obj, name)
+
+class CreateEventPlaceForm(BaseEventPlaceForm):
+    public = BooleanField(lazy_gettext('Other organizers can use this location'), default="checked", render_kw ={'checked':''}, validators=[Optional()])
+    submit = SubmitField(lazy_gettext("Create place"))
+
+class UpdateEventPlaceForm(BaseEventPlaceForm):
+    public = BooleanField(lazy_gettext('Other organizers can use this location'), validators=[Optional()])
     submit = SubmitField(lazy_gettext("Update place"))
 
 class FindEventPlaceForm(FlaskForm):
