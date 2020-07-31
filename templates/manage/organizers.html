@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_event_organizer, render_manage_menu %}
+{% from "_macros.html" import render_pagination, render_event_organizer, render_manage_menu %}
 {% block title %}
 {{ _('Organizers') }}
 {% endblock %}
@@ -28,5 +28,7 @@
     </li>
 {% endfor %}
 </ul>
+
+<div class="my-4">{{ render_pagination(pagination) }}</div>
 
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_event_status_pill, render_event_status_pill, render_ooa, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_pagination, render_event_status_pill, render_event_status_pill, render_ooa, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Widget') }}
 {% endblock %}
@@ -10,7 +10,7 @@
 {% endblock %}
 {% block content %}
 
-    <form action="{{ url_for('widget_event_dates', au_short_name='goslar') }}" class="form-inline mb-4" method="POST" autocomplete="off">
+    <form action="{{ url_for('widget_event_dates', au_short_name='goslar') }}" class="form-inline mb-4" method="GET" autocomplete="off">
 
         <div class="input-group mb-2 mr-sm-2">
             <div class="input-group-prepend">
@@ -87,5 +87,7 @@
     </div>
 
     {% endfor %}
+
+    {{ render_pagination(pagination) }}
 
 {% endblock %}
