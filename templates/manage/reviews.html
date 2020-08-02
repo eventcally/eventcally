@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_pagination, render_event_date, render_field_with_errors, render_event_organizer, render_manage_menu %}
+{% block title %}
+{{ _('Events') }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ admin_unit.name }}</h1>
+
+{{ render_manage_menu(admin_unit, 'reviews') }}
+
+<ul class="list-group my-4">
+{% for event in events %}
+    <li class="list-group-item">
+        {{ render_event_date(event) }}
+        <div class="dropdown d-inline-block">
+            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ event.name }}</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('event_review', event_id=event.id) }}">{{ _('Review event') }}...</a>
+            </div>
+        </div>
+        <small>{{ event.organizer.name }}</small>
+    </li>
+{% endfor %}
+</ul>
+
+<div class="my-4">{{ render_pagination(pagination) }}</div>
+
+{% endblock %}

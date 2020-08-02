@@ -1,11 +1,11 @@
 from flask_babelex import lazy_gettext, gettext
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import RadioField, DateTimeField, StringField, SubmitField, TextAreaField, SelectField, BooleanField, IntegerField, FormField
+from wtforms import FieldList, RadioField, DateTimeField, StringField, SubmitField, TextAreaField, SelectField, BooleanField, IntegerField, FormField
 from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
-from models import EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, Place, EventOrganizer
+from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, Place, EventOrganizer, EventRejectionReason, EventReviewStatus
 from .widgets import CustomDateTimeField
 
 class EventPlaceLocationForm(FlaskForm):
@@ -30,6 +30,11 @@ class EventOrganizerForm(FlaskForm):
     email = EmailField(lazy_gettext('Email'), validators=[Optional()])
     phone = StringField(lazy_gettext('Phone'), validators=[Optional()])
     fax = StringField(lazy_gettext('Fax'), validators=[Optional()])
+
+class EventContactForm(FlaskForm):
+    name = StringField(lazy_gettext('Name'), validators=[Optional()])
+    email = EmailField(lazy_gettext('Email'), validators=[Optional()])
+    phone = StringField(lazy_gettext('Phone'), validators=[Optional()])
 
 class BaseEventForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
@@ -68,6 +73,8 @@ class CreateEventForm(BaseEventForm):
     event_place_id = SelectField(lazy_gettext('Place'), validators=[Optional()], coerce=int)
     new_event_place = FormField(EventPlaceForm, default=lambda: EventPlace())
 
+    contact = FieldList(FormField(EventContactForm, default=lambda: EventContact()), max_entries=1)
+
     submit = SubmitField(lazy_gettext("Create event"))
 
     def populate_obj(self, obj):
@@ -79,6 +86,9 @@ class CreateEventForm(BaseEventForm):
                     obj.event_place = EventPlace()
                 field.populate_obj(obj, 'event_place')
             field.populate_obj(obj, name)
+
+        if isinstance(obj.contact, list):
+            obj.contact = obj.contact[0] if len(obj.contact) > 0 else None
 
     def validate(self):
         if not super(BaseEventForm, self).validate():
@@ -105,6 +115,20 @@ class UpdateEventForm(BaseEventForm):
 class DeleteEventForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Delete event"))
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
+
+class ReviewEventForm(FlaskForm):
+    review_status = SelectField(lazy_gettext('Review status'), coerce=int, choices=[
+        (int(EventReviewStatus.inbox), lazy_gettext('EventReviewStatus.inbox')),
+        (int(EventReviewStatus.verified), lazy_gettext('EventReviewStatus.verified')),
+        (int(EventReviewStatus.rejected), lazy_gettext('EventReviewStatus.rejected'))])
+
+    rejection_resaon = SelectField(lazy_gettext('Rejection reason'), coerce=int, choices=[
+        (0, ''),
+        (int(EventRejectionReason.duplicate), lazy_gettext('EventRejectionReason.duplicate')),
+        (int(EventRejectionReason.untrustworthy), lazy_gettext('EventRejectionReason.untrustworthy')),
+        (int(EventRejectionReason.illegal), lazy_gettext('EventRejectionReason.illegal'))])
+
+    submit = SubmitField(lazy_gettext("Save review"))
 
 class FindEventForm(FlaskForm):
     class Meta:

@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_event_review_status, render_event_props, render_image, render_ooa_with_link, render_place, render_link_prop %}
+{% block title %}
+{{ event.name }}
+{% endblock %}
+{% block content %}
+
+    <h1>{{ event.name }}</h1>
+
+    <div class="alert alert-info" role="alert">
+        {{ _('You can visit this page again to check the status.') }}
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+          {{ _('Review status') }}
+        </div>
+        <div class="card-body">
+            {{ render_event_review_status(event) }}
+            {% if event.verified %}
+                <a href="{{ url_for('event', event_id=event.id) }}">{{ _('View') }}</a>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
