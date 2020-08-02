@@ -163,7 +163,7 @@
 {% endmacro %}
 
 {% macro render_enum_prop(prop, icon, label_key) %}
-{% if prop and prop.value > 1 %}
+{% if prop and prop.value > 0 %}
 <div>
   <i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>
   {{ prop | loc_enum }}
@@ -213,6 +213,12 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_event_review_status_pill(event) %}
+{% if event.review_status and event.review_status != 2 %}
+ <span class="badge badge-pill {% if event.review_status == 1 %}badge-info{% else %}badge-danger{% endif %}">{{ event.review_status | loc_enum }}</span>
+{% endif %}
+{% endmacro %}
+
 {% macro render_phone_prop(phone) %}
 {% if phone %}
 <div>
@@ -249,6 +255,11 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_event_review_status(event) %}
+  {{ render_enum_prop(event.review_status, 'fa-certificate', 'Review status') }}
+  {{ render_enum_prop(event.rejection_resaon, 'fa-search-minus', 'Rejection reason') }}
+{% endmacro %}
+
 {% macro render_event_props(event, start, end, dates = None) %}
   <div class="card mb-3">
     <div class="card-header">
@@ -277,6 +288,8 @@
       {% endif %}
       {% if event.verified %}
       <div><i class="fa fa-fw fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i> {{ _('Verified') }}</div>
+      {% else %}
+      {{ render_event_review_status(event) }}
       {% endif %}
 
       {% if event.photo_id %}
@@ -452,6 +465,7 @@
 
 {% macro render_manage_menu(admin_unit, active_id=None) %}
 <ul class="nav nav-pills">
+  {{ render_tab('reviews', _('Reviews'), url_for('manage_admin_unit_event_reviews', id=admin_unit.id), active_id) }}
   {{ render_tab('events', _('Events'), url_for('manage_admin_unit_events', id=admin_unit.id), active_id) }}
   {{ render_tab('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
   {{ render_tab('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}

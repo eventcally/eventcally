@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import CheckConstraint
 from sqlalchemy.types import TypeDecorator
@@ -309,6 +310,16 @@ class EventStatus(IntEnum):
     postponed = 4
     rescheduled = 5
 
+class EventReviewStatus(IntEnum):
+    inbox = 1
+    verified = 2
+    rejected = 3
+
+class EventRejectionReason(IntEnum):
+    duplicate = 1
+    untrustworthy = 2
+    illegal = 3
+
 class EventOrganizer(db.Model, TrackableMixin):
     __tablename__ = 'eventorganizer'
     __table_args__ = (UniqueConstraint('name', 'admin_unit_id'),)
@@ -324,6 +335,16 @@ class EventOrganizer(db.Model, TrackableMixin):
     logo = db.relationship('Image', uselist=False)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=True)
     event_places = relationship('EventPlace', backref=backref('organizer', lazy=True))
+
+    def is_empty(self):
+        return not self.name
+
+class EventContact(db.Model, TrackableMixin):
+    __tablename__ = 'eventcontact'
+    id = Column(Integer(), primary_key=True)
+    name = Column(Unicode(255), nullable=False)
+    email = Column(Unicode(255))
+    phone = Column(Unicode(255))
 
     def is_empty(self):
         return not self.name
@@ -345,7 +366,7 @@ class Event(db.Model, TrackableMixin):
     description = Column(UnicodeText(), nullable=False)
     external_link = Column(String(255))
     ticket_link = Column(String(255))
-    verified = Column(Boolean())
+
     photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
     photo = db.relationship('Image', uselist=False)
     category_id = db.Column(db.Integer, db.ForeignKey('eventcategory.id'), nullable=False)
@@ -359,6 +380,16 @@ class Event(db.Model, TrackableMixin):
     attendance_mode = Column(IntegerEnum(EventAttendanceMode))
     status = Column(IntegerEnum(EventStatus))
     previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
+    review_status = Column(IntegerEnum(EventReviewStatus))
+    rejection_resaon = Column(IntegerEnum(EventRejectionReason))
+
+    @hybrid_property
+    def verified(self):
+        return self.review_status == EventReviewStatus.verified
+
+    # suggestion
+    contact_id = db.Column(db.Integer, db.ForeignKey('eventcontact.id'), nullable=True)
+    contact = db.relationship('EventContact', uselist=False)
 
     recurrence_rule = Column(UnicodeText())
     start = db.Column(db.DateTime(timezone=True), nullable=True)
@@ -372,6 +403,8 @@ def purge_event(mapper, connect, self):
         self.organizer_id = None
     if self.event_place and self.event_place.is_empty():
         self.event_place_id = None
+    if self.contact and self.contact.is_empty():
+        self.contact_id = None
 
 class EventDate(db.Model):
     __tablename__ = 'eventdate'

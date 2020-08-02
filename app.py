@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import asc, func
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, not_
 from flask_security import Security, current_user, auth_required, roles_required, hash_password, SQLAlchemySessionUserDatastore
 from flask_security.utils import FsPermNeed
 from flask_babelex import Babel, gettext, lazy_gettext, format_datetime, to_user_timezone
@@ -54,7 +54,7 @@ app.json_encoder = DateTimeEncoder
 
 # Setup Flask-Security
 # Define models
-from models import EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
+from models import EventRejectionReason, EventReviewStatus, EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 from oauth import blueprint
@@ -704,17 +704,18 @@ def assign_location_values(target, origin):
 def get_pagination_urls(pagination, **kwargs):
     result = {}
 
-    if pagination.has_prev:
-        args = request.args.copy()
-        args.update(kwargs)
-        args["page"] = pagination.prev_num
-        result["prev_url"] = url_for(request.endpoint, **args)
+    if pagination:
+        if pagination.has_prev:
+            args = request.args.copy()
+            args.update(kwargs)
+            args["page"] = pagination.prev_num
+            result["prev_url"] = url_for(request.endpoint, **args)
 
-    if pagination.has_next:
-        args = request.args.copy()
-        args.update(kwargs)
-        args["page"] = pagination.next_num
-        result["next_url"] = url_for(request.endpoint, **args)
+        if pagination.has_next:
+            args = request.args.copy()
+            args.update(kwargs)
+            args["page"] = pagination.next_num
+            result["next_url"] = url_for(request.endpoint, **args)
 
     return result
 
@@ -723,7 +724,10 @@ def get_pagination_urls(pagination, **kwargs):
 
 @app.before_first_request
 def create_initial_data():
-    pass
+    events = Event.query.filter(Event.review_status == None).all()
+    for event in events:
+        event.review_status = EventReviewStatus.inbox
+    db.session.commit()
 
 def flash_errors(form):
     for field, errors in form.errors.items():
@@ -956,25 +960,56 @@ def events():
     return render_template('event/list.html',
         events=events)
 
-@app.route('/event/<int:event_id>', methods=('GET', 'POST'))
+@app.route('/event/<int:event_id>')
 def event(event_id):
-    event = Event.query.filter_by(id = event_id).first()
+    event = Event.query.get_or_404(event_id)
     dates = EventDate.query.with_parent(event).filter(EventDate.start >= today).order_by(EventDate.start).all()
     user_can_verify_event = can_verify_event(event)
+    user_can_update_event = can_update_event(event)
 
-    if user_can_verify_event and request.method == 'POST':
-        action = request.form['action']
-        if action == 'verify':
-            event.verified = True
-        elif action == 'unverify':
-            event.verified = False
-        db.session.commit()
+    if not event.verified and not user_can_verify_event and not user_can_update_event:
+        abort(401)
 
     return render_template('event/read.html',
         event=event,
         dates=dates,
         user_can_verify_event=user_can_verify_event,
-        can_update_event=can_update_event(event))
+        can_update_event=user_can_update_event)
+
+@app.route('/event/<int:event_id>/review', methods=('GET', 'POST'))
+def event_review(event_id):
+    event = Event.query.get_or_404(event_id)
+    dates = EventDate.query.with_parent(event).filter(EventDate.start >= today).order_by(EventDate.start).all()
+    user_can_verify_event = can_verify_event(event)
+
+    if not user_can_verify_event:
+        abort(401)
+
+    form = ReviewEventForm(obj=event)
+
+    if form.validate_on_submit():
+        form.populate_obj(event)
+
+        if event.review_status != EventReviewStatus.rejected:
+            event.rejection_resaon = None
+
+        if event.rejection_resaon == 0:
+            event.rejection_resaon = None
+
+        try:
+            db.session.commit()
+            flash(gettext('Event successfully updated'), 'success')
+            return redirect(url_for('manage_admin_unit_event_reviews', id=event.admin_unit_id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
+
+    return render_template('event/review.html',
+        form=form,
+        dates=dates,
+        event=event)
 
 @app.route("/eventdates")
 def event_dates():
@@ -992,7 +1027,7 @@ def event_date(id):
 
 @app.route("/api/events")
 def api_events():
-    dates = EventDate.query.filter(EventDate.start >= today).order_by(EventDate.start).all()
+    dates = EventDate.query.join(Event).filter(EventDate.start >= today).filter(Event.verified).order_by(EventDate.start).all()
     structured_events = list()
     for event_date in dates:
         structured_event = get_sd_for_event_date(event_date)
@@ -1019,7 +1054,7 @@ def api_event_places(id):
 
     return jsonify(result)
 
-from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm
+from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm, EventContactForm, ReviewEventForm
 from forms.place import CreatePlaceForm, UpdatePlaceForm
 from forms.organization import CreateOrganizationForm, UpdateOrganizationForm
 from forms.organizer import CreateOrganizerForm, UpdateOrganizerForm, DeleteOrganizerForm
@@ -1062,6 +1097,13 @@ def event_create_base(admin_unit, organizer_id=0):
     form = CreateEventForm(admin_unit_id=admin_unit.id, organizer_id=organizer_id, category_id=upsert_event_category('Other').id)
     prepare_event_form(form)
 
+    current_user_can_create_event = can_create_event()
+
+    if not current_user_can_create_event:
+        form.contact.min_entries = 1
+        if len(form.contact.entries) == 0:
+            form.contact.append_entry()
+
     if form.validate_on_submit():
         event = Event()
         update_event_with_form(event, form)
@@ -1070,17 +1112,35 @@ def event_create_base(admin_unit, organizer_id=0):
             event.event_place.organizer_id = event.organizer_id
             event.event_place.admin_unit_id = event.admin_unit_id
 
+        current_user_can_verify_event = can_verify_event(event)
+        if current_user_can_verify_event:
+            event.review_status = EventReviewStatus.verified
+        else:
+            event.review_status = EventReviewStatus.inbox
+
         try:
             db.session.add(event)
             db.session.commit()
-            flash(gettext('Event successfully created'), 'success')
-            return redirect(url_for('event', event_id=event.id))
+
+            if current_user_can_verify_event:
+                flash(gettext('Event successfully created'), 'success')
+                return redirect(url_for('event', event_id=event.id))
+            else:
+                flash(gettext('Thank you so much! The event is being verified.'), 'success')
+                return redirect(url_for('event_review_status', event_id=event.id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), 'danger')
     else:
         flash_errors(form)
     return render_template('event/create.html', form=form)
+
+@app.route('/event/<int:event_id>/review_status')
+def event_review_status(event_id):
+    event = Event.query.get_or_404(event_id)
+
+    return render_template('event/review_status.html',
+        event=event)
 
 @app.route("/<string:au_short_name>/events/create", methods=('GET', 'POST'))
 def event_create_for_admin_unit(au_short_name):
@@ -1188,7 +1248,7 @@ def manage():
 def manage_admin_unit(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
-    return redirect(url_for('manage_admin_unit_events', id=admin_unit.id))
+    return redirect(url_for('manage_admin_unit_event_reviews', id=admin_unit.id))
 
     return render_template('manage/admin_unit.html',
         admin_unit=admin_unit)
@@ -1257,9 +1317,9 @@ def manage_organizer_events():
 
     if keyword:
         like_keyword = '%' + keyword + '%'
-        event_filter = and_(Event.organizer_id == organizer.id, Event.name.ilike(like_keyword))
+        event_filter = and_(Event.organizer_id == organizer.id, Event.review_status != EventReviewStatus.inbox, Event.name.ilike(like_keyword))
     else:
-        event_filter = Event.organizer_id == organizer.id
+        event_filter = and_(Event.organizer_id == organizer.id, Event.review_status != EventReviewStatus.inbox)
 
     events = Event.query.filter(event_filter).order_by(Event.start).paginate()
     return render_template('manage/events.html',
@@ -1268,6 +1328,24 @@ def manage_organizer_events():
         form=form,
         events=events.items,
         pagination=get_pagination_urls(events))
+
+@app.route('/manage/admin_unit/<int:id>/reviews')
+def manage_admin_unit_event_reviews(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+
+    if not has_current_user_any_permission('event:verify'):
+        events = list()
+        events_paginate = None
+    else:
+        events_paginate = Event.query.filter(and_(Event.admin_unit_id == admin_unit.id, Event.review_status == EventReviewStatus.inbox)).order_by(Event.start).paginate()
+        events = events_paginate.items
+
+    return render_template('manage/reviews.html',
+        admin_unit=admin_unit,
+        events=events,
+        pagination = get_pagination_urls(events_paginate, id=id))
+
+from forms.event import FindEventForm
 
 @app.route('/organizer/<int:id>')
 def organizer(id):

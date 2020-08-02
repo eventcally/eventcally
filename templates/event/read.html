@@ -5,24 +5,15 @@
 {% endblock %}
 {% block content %}
 
-    {% if user_can_verify_event %}
+    {% if can_update_event or user_can_verify_event %}
     <div class="my-4">
-        <form action="{{ url_for('event', event_id=event.id) }}" method="POST">
-            {% if event.verified %}
-            <input name="action" type="hidden" value="unverify">
-            <p><input class="btn btn-danger" name="submit" type="submit" value="{{ _('Mark event as unverified') }}"></p>
-            {% else %}
-            <input name="action" type="hidden" value="verify">
-            <p><input class="btn btn-success" name="submit" type="submit" value="{{ _('Mark event as verified') }}"></p>
-            {% endif %}
-          </form>
-    </div>
-    {% endif %}
-
-    {% if can_update_event %}
-    <div class="my-4">
-        <a class="btn btn-primary my-1" href="{{ url_for('event_update', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Update event') }}</a>
-        <a class="btn btn-danger my-1" href="{{ url_for('event_delete', event_id=event.id) }}" role="button"><i class="fa fa-trash"></i> {{ _('Delete event') }}...</a>
+        {% if user_can_verify_event %}
+            <a class="btn btn-primary my-1" href="{{ url_for('event_review', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Review event') }}</a>
+        {% endif %}
+        {% if can_update_event %}
+            <a class="btn btn-primary my-1" href="{{ url_for('event_update', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
+            <a class="btn btn-danger my-1" href="{{ url_for('event_delete', event_id=event.id) }}" role="button"><i class="fa fa-trash"></i> {{ _('Delete event') }}...</a>
+        {% endif %}
     </div>
     {% endif %}
 

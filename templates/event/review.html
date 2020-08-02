@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_phone_prop, render_email_prop, render_string_prop, render_field_with_errors, render_field, render_event_props, render_image, render_ooa_with_link, render_place, render_link_prop %}
+{% block title %}
+{{ event.name }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ _('Review event') }}</h1>
+
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ render_field_with_errors(form.review_status) }}
+    {{ render_field_with_errors(form.rejection_resaon) }}
+    {{ render_field(form.submit) }}
+
+    <a class="btn btn-outline-secondary my-1" href="{{ url_for('event_update', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Edit event') }}...</a>
+</form>
+
+<div class="mt-5" style="max-width: 768px;">
+
+    <div class="card mb-3">
+        <div class="card-header">
+          {{ _('Contact') }}
+        </div>
+        <div class="card-body">
+              {{ render_string_prop(event.contact.name) }}
+              {{ render_email_prop(event.contact.email) }}
+              {{ render_phone_prop(event.contact.phone) }}
+        </div>
+      </div>
+
+    {{ render_event_props(event, event.start, event.end, dates) }}
+
+    {% if dates|length > 0 %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <a name="event-dates">{{ _('Event Dates') }}</a>
+            </div>
+            <div class="list-group list-group-flush">
+            {% for date in dates %}
+                <a href="#" class="list-group-item list-group-item-action">{{ date.start | datetimeformat('short') }}</a>
+            {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

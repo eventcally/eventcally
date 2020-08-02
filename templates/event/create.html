@@ -63,6 +63,22 @@ $( function() {
     </div>
   </div>
 
+  {% if form.contact.min_entries > 0 %}
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Contact') }}
+    </div>
+    <div class="card-body">
+      {% for contact_form in form.contact %}
+          {{ contact_form.hidden_tag() }}
+          {{ render_field_with_errors(contact_form.form.name) }}
+          {{ render_field_with_errors(contact_form.form.email) }}
+          {{ render_field_with_errors(contact_form.form.phone) }}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Place') }} *
