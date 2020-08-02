@@ -724,12 +724,7 @@ def get_pagination_urls(pagination, **kwargs):
 
 @app.before_first_request
 def create_initial_data():
-    admin_unit = upsert_admin_unit('Ferienpass Goslar', 'ferienpass_gs')
-    events = Event.query.filter(Event.admin_unit_id == admin_unit.id).all()
-    for event in events:
-        event.review_status = EventReviewStatus.verified
-
-    db.session.commit()
+    pass
 
 def flash_errors(form):
     for field, errors in form.errors.items():
