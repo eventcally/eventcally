@@ -21,6 +21,12 @@
         {% endif %}
       {% endif %}
 
+      {% if field.description %}
+      <small class="form-text text-muted w-100">
+        {{ field.description }}
+      </small>
+      {% endif %}
+
       {% if field.errors %}
       <div class="invalid-feedback">
           {% for error in field.errors %}

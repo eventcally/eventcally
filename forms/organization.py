@@ -22,7 +22,7 @@ class BaseOrganizationForm(FlaskForm):
     phone = TelField(lazy_gettext('Phone'), validators=[Optional()])
     fax = TelField(lazy_gettext('Fax'), validators=[Optional()])
     logo_file = FileField(lazy_gettext('Logo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
-    short_name = StringField(lazy_gettext('Short name'), validators=[Optional(), Regexp('^\w+$', message=lazy_gettext("Short name must contain only letters numbers or underscore"))])
+    short_name = StringField(lazy_gettext('Short name'), validators=[DataRequired(), Regexp('^\w+$', message=lazy_gettext("Short name must contain only letters numbers or underscore"))])
     legal_name = StringField(lazy_gettext('Legal name'), validators=[Optional()])
     location = FormField(OrganizationLocationForm)
 
