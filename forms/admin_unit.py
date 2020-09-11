@@ -17,13 +17,19 @@ class AdminUnitLocationForm(FlaskForm):
 
 class BaseAdminUnitForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
-    short_name = StringField(lazy_gettext('Short name'), validators=[Optional(), Regexp('^\w+$', message=lazy_gettext("Short name must contain only letters numbers or underscore"))])
+    short_name = StringField(lazy_gettext('Short name'), description=lazy_gettext('The short name is used to create a unique identifier for your events'), validators=[DataRequired(), Regexp('^\w+$', message=lazy_gettext("Short name must contain only letters numbers or underscore"))])
     url = StringField(lazy_gettext('Link URL'), validators=[Optional()])
     email = EmailField(lazy_gettext('Email'), validators=[Optional()])
     phone = TelField(lazy_gettext('Phone'), validators=[Optional()])
     fax = TelField(lazy_gettext('Fax'), validators=[Optional()])
     logo_file = FileField(lazy_gettext('Logo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
     location = FormField(AdminUnitLocationForm, default=lambda: Location())
+
+    def populate_obj(self, obj):
+        for name, field in self._fields.items():
+            if name == 'location' and not obj.location:
+                obj.location = Location()
+            field.populate_obj(obj, name)
 
 class CreateAdminUnitForm(BaseAdminUnitForm):
     submit = SubmitField(lazy_gettext("Create admin unit"))

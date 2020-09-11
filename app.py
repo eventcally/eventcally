@@ -168,14 +168,6 @@ def add_user_to_organization(user, organization):
     return result
 
 def add_user_to_admin_unit(user, admin_unit):
-    result = OrgMember.query.with_parent(admin_unit).filter_by(user_id = user.id).first()
-    if result is None:
-        result = OrgMember(user = user)
-        admin_unit.members.append(result)
-        db.session.add(result)
-    return result
-
-def add_user_to_admin_unit(user, admin_unit):
     result = AdminUnitMember.query.with_parent(admin_unit).filter_by(user_id = user.id).first()
     if result is None:
         result = AdminUnitMember(user = user, admin_unit_id=admin_unit.id)
@@ -670,6 +662,9 @@ def can_update_organization(organization):
 def can_update_organizer(organizer):
     return get_admin_unit_for_manage(organizer.admin_unit_id) is not None
 
+def can_create_admin_unit():
+    return current_user.is_authenticated
+
 def can_verify_event(event):
     if not current_user.is_authenticated:
         return False
@@ -766,30 +761,30 @@ def update_admin_unit_with_form(admin_unit, form):
         fs = form.logo_file.data
         admin_unit.logo = upsert_image_with_data(admin_unit.logo, fs.read(), fs.content_type)
 
-@app.route('/admin_unit/<int:admin_unit_id>/update', methods=('GET', 'POST'))
-def admin_unit_update(admin_unit_id):
-    if not has_current_user_permission('admin_unit:update'):
-        abort(401)
+# @app.route('/admin_unit/<int:admin_unit_id>/update', methods=('GET', 'POST'))
+# def admin_unit_update(admin_unit_id):
+#     if not has_current_user_permission('admin_unit:update'):
+#         abort(401)
 
-    admin_unit = AdminUnit.query.get_or_404(admin_unit_id)
-    form = UpdateAdminUnitForm(obj=admin_unit)
+#     admin_unit = AdminUnit.query.get_or_404(admin_unit_id)
+#     form = UpdateAdminUnitForm(obj=admin_unit)
 
-    if form.validate_on_submit():
-        if not admin_unit.location:
-            admin_unit.location = Location()
-        update_admin_unit_with_form(admin_unit, form)
+#     if form.validate_on_submit():
+#         if not admin_unit.location:
+#             admin_unit.location = Location()
+#         update_admin_unit_with_form(admin_unit, form)
 
-        try:
-            db.session.commit()
-            flash(gettext('Admin unit successfully updated'), 'success')
-            return redirect(url_for('admin_unit', admin_unit_id=admin_unit.id))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), 'danger')
+#         try:
+#             db.session.commit()
+#             flash(gettext('Admin unit successfully updated'), 'success')
+#             return redirect(url_for('admin_unit', admin_unit_id=admin_unit.id))
+#         except SQLAlchemyError as e:
+#             db.session.rollback()
+#             flash(handleSqlError(e), 'danger')
 
-    return render_template('admin_unit/update.html',
-        form=form,
-        admin_unit=admin_unit)
+#     return render_template('admin_unit/update.html',
+#         form=form,
+#         admin_unit=admin_unit)
 
 @app.route("/organizations")
 def organizations():
@@ -869,6 +864,82 @@ def organization_update(organization_id):
     return render_template('organization/update.html',
         form=form,
         organization=organization)
+
+def update_admin_unit_with_form(admin_unit, form):
+    form.populate_obj(admin_unit)
+
+    if form.logo_file.data:
+        fs = form.logo_file.data
+        admin_unit.logo = upsert_image_with_data(admin_unit.logo, fs.read(), fs.content_type)
+
+@app.route("/admin_unit/create", methods=('GET', 'POST'))
+@auth_required()
+def admin_unit_create():
+    if not can_create_admin_unit():
+        abort(401)
+
+    form = CreateAdminUnitForm()
+
+    if form.validate_on_submit():
+        admin_unit = AdminUnit()
+        admin_unit.location = Location()
+        update_admin_unit_with_form(admin_unit, form)
+
+        try:
+            db.session.add(admin_unit)
+            upsert_org_or_admin_unit_for_admin_unit(admin_unit)
+
+            # Aktuellen Nutzer als Admin hinzufügen
+            member = add_user_to_admin_unit(current_user, admin_unit)
+            admin_unit_admin_role = upsert_admin_unit_member_role('admin', ["admin_unit.members:read", "admin_unit.organizations.members:read"])
+            admin_unit_event_verifier_role = upsert_admin_unit_member_role('event_verifier', ["event:verify", "event:create", "event_suggestion:read"])
+            add_role_to_admin_unit_member(member, admin_unit_admin_role)
+            add_role_to_admin_unit_member(member, admin_unit_event_verifier_role)
+            db.session.commit()
+
+            # Organizer anlegen
+            organizer = EventOrganizer()
+            organizer.admin_unit_id = admin_unit.id
+            organizer.name = admin_unit.name
+            organizer.url = admin_unit.url
+            organizer.email = admin_unit.email
+            organizer.phone = admin_unit.phone
+            organizer.fax = admin_unit.fax
+            organizer.location = Location()
+            assign_location_values(organizer.location, admin_unit.location)
+            if admin_unit.logo:
+                organizer.logo = upsert_image_with_data(organizer.logo, admin_unit.logo.data, admin_unit.logo.encoding_format)
+            db.session.add(organizer)
+            db.session.commit()
+
+            flash(gettext('Admin unit successfully created'), 'success')
+            return redirect(url_for('manage_admin_unit', id=admin_unit.id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+    return render_template('admin_unit/create.html', form=form)
+
+@app.route('/admin_unit/<int:admin_unit_id>/update', methods=('GET', 'POST'))
+@auth_required()
+def admin_unit_update(admin_unit_id):
+    admin_unit = get_admin_unit_for_manage_or_404(admin_unit_id)
+
+    form = UpdateAdminUnitForm(obj=admin_unit)
+
+    if form.validate_on_submit():
+        update_admin_unit_with_form(admin_unit, form)
+
+        try:
+            db.session.commit()
+            flash(gettext('AdminUnit successfully updated'), 'success')
+            return redirect(url_for('manage_admin_unit', id=admin_unit.id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+
+    return render_template('admin_unit/update.html',
+        form=form,
+        admin_unit=admin_unit)
 
 @app.route('/image/<int:id>')
 def image(id):
@@ -1235,8 +1306,8 @@ def admin_admin_units():
 def manage():
     admin_units = get_admin_units_for_manage()
 
-    if len(admin_units) == 1:
-        return redirect(url_for('manage_admin_unit', id=admin_units[0].id))
+    # if len(admin_units) == 1:
+    #     return redirect(url_for('manage_admin_unit', id=admin_units[0].id))
 
     return render_template('manage/admin_units.html',
         admin_units=admin_units)
@@ -1268,7 +1339,8 @@ def manage_admin_unit_event_places(id):
     if organizer:
         return redirect(url_for('manage_organizer_event_places', organizer_id=organizer.id))
 
-    abort(404)
+    flash('Please create an organizer before you create a place', 'danger')
+    return redirect(url_for('manage_admin_unit_organizers', id=id))
 
 from forms.event_place import FindEventPlaceForm
 
@@ -1297,7 +1369,8 @@ def manage_admin_unit_events(id):
     if organizer:
         return redirect(url_for('manage_organizer_events', organizer_id=organizer.id))
 
-    abort(404)
+    flash('Please create an organizer before you create an event', 'danger')
+    return redirect(url_for('manage_admin_unit_organizers', id=id))
 
 from forms.event import FindEventForm
 
