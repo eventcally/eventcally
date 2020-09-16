@@ -17,6 +17,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.recurrenceinput.css')}}" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
     {%- block styles %}
     {%- endblock styles %}
 
@@ -40,7 +41,7 @@
       {% block navbar %}
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="navbar-brand" href="{{ url_for('home') }}">
-            Prototyp
+            oveda
           </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -51,6 +52,7 @@
                 <a class="nav-item nav-link" href="{{ url_for('manage') }}">{{ _('Manage') }}</a>
                 {% endif %}
 
+                <a class="nav-item nav-link" href="{{ url_for('example') }}">{{ _('Example') }}</a>
                 <a class="nav-item nav-link" href="{{ url_for('developer') }}">{{ _('Developer') }}</a>
               </div>
               <div class="navbar-nav navbar-right">
@@ -81,12 +83,36 @@
       </nav>
       {%- endblock navbar %}
 
-      <div class="body-content">
+      <div class="body-content"{% block body_content__attribs %}{% endblock body_content__attribs %}>
 
           {% include "_messages.html" %}
 
           {% block content -%}
           {%- endblock content %}
+
+          <!-- Footer -->
+          <footer class="footer mt-5">
+            <div class="container">
+              <div class="row">
+                <div class="col h-100 text-center my-auto">
+                  <ul class="list-inline mb-2">
+                    <li class="list-inline-item">
+                      <a href="{{ url_for('impressum') }}" class="text-muted">Impressum</a>
+                    </li>
+                    <li class="list-inline-item">&sdot;</li>
+                    <li class="list-inline-item">
+                      <a href="{{ url_for('impressum') }}" class="text-muted">Kontakt</a>
+                    </li>
+                    <li class="list-inline-item">&sdot;</li>
+                    <li class="list-inline-item">
+                      <a href="{{ url_for('datenschutz') }}" class="text-muted">Datenschutz</a>
+                    </li>
+                  </ul>
+                  <p class="text-muted small mb-4 mb-lg-0">Mit <i class="fa fa-heart"></i> in Goslar entwickelt.</p>
+                </div>
+            </div>
+          </footer>
+
       </div>
 
       <!-- Optional JavaScript -->

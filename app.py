@@ -734,6 +734,18 @@ def flash_errors(form):
 def home():
     return render_template('home.html')
 
+@app.route("/example")
+def example():
+    return render_template('example.html')
+
+@app.route("/impressum")
+def impressum():
+    return render_template('impressum.html')
+
+@app.route("/datenschutz")
+def datenschutz():
+    return render_template('datenschutz.html')
+
 @app.route("/developer")
 def developer():
     return render_template('developer/read.html')
