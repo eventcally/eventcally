@@ -9,10 +9,9 @@ h2 {
     margin: 2rem 0 1rem;
 }
 
-.navbar {
+/* .navbar {
     background-color: lightslategray;
     font-size: 1em;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: white;
     padding: 8px 5px 8px 5px;
 }
@@ -30,11 +29,10 @@ h2 {
 .navbar-item {
     font-variant: small-caps;
     margin-left: 30px;
-}
+} */
 
 .body-content {
     padding: 10px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 footer {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-08-02 13:35+0200\n"
+"POT-Creation-Date: 2020-09-16 15:18+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -102,64 +102,68 @@ msgstr "Sonstiges"
 msgid "Typical Age range"
 msgstr "Typische Altersspanne"
 
-#: app.py:735
+#: app.py:727
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: app.py:787
-msgid "Admin unit successfully updated"
-msgstr "Verwaltungseinheit erfolgreich aktualisiert"
-
-#: app.py:845
+#: app.py:849
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: app.py:866
+#: app.py:870
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: app.py:926 app.py:1464
+#: app.py:927
+msgid "Admin unit successfully created"
+msgstr "Verwaltungseinheit erfolgreich erstellt"
+
+#: app.py:946
+msgid "AdminUnit successfully updated"
+msgstr "Verwaltungseinheit erfolgreich aktualisiert"
+
+#: app.py:1006 app.py:1546
 msgid "Place successfully updated"
 msgstr "Ort erfolgreich aktualisiert"
 
-#: app.py:950 app.py:1493
+#: app.py:1030 app.py:1575
 msgid "Place successfully created"
 msgstr "Ort erfolgreich erstellt"
 
-#: app.py:1001 app.py:1171
+#: app.py:1081 app.py:1251
 msgid "Event successfully updated"
 msgstr "Veranstaltung erfolgreich aktualisiert"
 
-#: app.py:1126
+#: app.py:1206
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:1129
+#: app.py:1209
 msgid "Thank you so much! The event is being verified."
 msgstr "Vielen Dank! Die Veranstaltung wird geprüft."
 
-#: app.py:1194
+#: app.py:1274
 msgid "Entered name does not match event name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
 
-#: app.py:1199
+#: app.py:1279
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
 
-#: app.py:1380
+#: app.py:1462
 msgid "Organizer successfully created"
 msgstr "Veranstalter erfolgreich erstellt"
 
-#: app.py:1402
+#: app.py:1484
 msgid "Organizer successfully updated"
 msgstr "Veranstalter erfolgreich aktualisiert"
 
-#: app.py:1424
+#: app.py:1506
 msgid "Entered name does not match organizer name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen des Veranstalters"
 
-#: app.py:1429
+#: app.py:1511
 msgid "Organizer successfully deleted"
 msgstr "Veranstalter erfolgreich gelöscht"
 
@@ -200,7 +204,7 @@ msgstr "Längengrad"
 #: forms/admin_unit.py:19 forms/event.py:17 forms/event.py:35 forms/event.py:40
 #: forms/event.py:117 forms/event_place.py:20 forms/organization.py:19
 #: forms/organizer.py:19 forms/organizer.py:41 forms/place.py:19
-#: templates/_macros.html:98 templates/admin/admin_units.html:18
+#: templates/_macros.html:104 templates/admin/admin_units.html:18
 #: templates/admin_unit/list.html:13 templates/admin_unit/read.html:66
 #: templates/admin_unit/read.html:88 templates/event/list.html:17
 #: templates/event_place/list.html:19 templates/organization/list.html:19
@@ -213,6 +217,10 @@ msgstr "Name"
 msgid "Short name"
 msgstr "Kurzname"
 
+#: forms/admin_unit.py:20
+msgid "The short name is used to create a unique identifier for your events"
+msgstr "Der Kurzname wird verwendet, um Ihre Veranstaltungen eindeutig identifizieren zu können"
+
 #: forms/admin_unit.py:20 forms/organization.py:25
 msgid "Short name must contain only letters numbers or underscore"
 msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
@@ -224,17 +232,17 @@ msgid "Link URL"
 msgstr "Link URL"
 
 #: forms/admin_unit.py:22 forms/event.py:30 forms/event.py:36
-#: forms/organization.py:21 forms/organizer.py:21 templates/_macros.html:204
+#: forms/organization.py:21 forms/organizer.py:21 templates/_macros.html:210
 msgid "Email"
 msgstr "Email"
 
 #: forms/admin_unit.py:23 forms/event.py:31 forms/event.py:37
-#: forms/organization.py:22 forms/organizer.py:22 templates/_macros.html:225
+#: forms/organization.py:22 forms/organizer.py:22 templates/_macros.html:231
 msgid "Phone"
 msgstr "Telefon"
 
 #: forms/admin_unit.py:24 forms/event.py:32 forms/organization.py:23
-#: forms/organizer.py:23 templates/_macros.html:233
+#: forms/organizer.py:23 templates/_macros.html:239
 msgid "Fax"
 msgstr "Fax"
 
@@ -247,11 +255,12 @@ msgstr "Logo"
 msgid "Images only!"
 msgstr "Nur Fotos!"
 
-#: forms/admin_unit.py:29
+#: forms/admin_unit.py:35 templates/admin_unit/create.html:10
+#: templates/manage/admin_units.html:8
 msgid "Create admin unit"
 msgstr "Verwaltungseinheit erstellen"
 
-#: forms/admin_unit.py:32 templates/admin_unit/read.html:12
+#: forms/admin_unit.py:38 templates/admin_unit/read.html:12
 #: templates/admin_unit/update.html:10
 msgid "Update admin unit"
 msgstr "Verwaltungseinheit aktualisieren"
@@ -284,29 +293,29 @@ msgstr "Beginn"
 msgid "End"
 msgstr "Ende"
 
-#: forms/event.py:47 templates/_macros.html:287
+#: forms/event.py:47 templates/_macros.html:293
 msgid "Previous start date"
 msgstr "Vorheriges Startdatum"
 
-#: forms/event.py:48 templates/_macros.html:186
+#: forms/event.py:48 templates/_macros.html:192
 msgid "Tags"
 msgstr "Stichworte"
 
 #: forms/event.py:50 forms/event.py:138 forms/event_place.py:44
-#: templates/_macros.html:349 templates/event/create.html:59
+#: templates/_macros.html:355 templates/event/create.html:59
 #: templates/event/update.html:46 templates/manage/events.html:18
 #: templates/manage/places.html:18 templates/organizer/create.html:16
 #: templates/organizer/delete.html:13 templates/organizer/update.html:16
 msgid "Organizer"
 msgstr "Veranstalter"
 
-#: forms/event.py:51 templates/_macros.html:305
+#: forms/event.py:51 templates/_macros.html:311
 msgid "Category"
 msgstr "Kategorie"
 
-#: forms/event.py:52 forms/organization.py:37 templates/_macros.html:364
-#: templates/admin_unit/update.html:16 templates/event/update.html:91
-#: templates/organization/create.html:58
+#: forms/event.py:52 forms/organization.py:37 templates/_macros.html:370
+#: templates/admin_unit/create.html:16 templates/admin_unit/update.html:16
+#: templates/event/update.html:91 templates/organization/create.html:58
 msgid "Admin unit"
 msgstr "Verwaltungseinheit"
 
@@ -363,7 +372,7 @@ msgid "Photo"
 msgstr "Foto"
 
 #: forms/event.py:72 forms/event.py:73 forms/event.py:104
-#: templates/_macros.html:319 templates/event/create.html:84
+#: templates/_macros.html:325 templates/event/create.html:84
 #: templates/event/update.html:55 templates/event_place/create.html:20
 #: templates/event_place/update.html:20 templates/place/create.html:20
 #: templates/place/update.html:20
@@ -378,7 +387,7 @@ msgstr "Vorhandenen Ort auswählen"
 msgid "Enter new place"
 msgstr "Neuen Ort eingeben"
 
-#: forms/event.py:78 templates/event/create.html:31 templates/home.html:11
+#: forms/event.py:78 templates/event/create.html:31 templates/example.html:10
 #: templates/manage/events.html:36 templates/manage/organizers.html:22
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
@@ -411,8 +420,7 @@ msgstr "Verschoben"
 msgid "EventStatus.rescheduled"
 msgstr "Neu angesetzt"
 
-#: forms/event.py:113 templates/event/read.html:14
-#: templates/event/update.html:8
+#: forms/event.py:113 templates/event/update.html:8
 msgid "Update event"
 msgstr "Veranstaltung aktualisieren"
 
@@ -511,68 +519,69 @@ msgstr "Veranstalter aktualisieren"
 msgid "Delete organizer"
 msgstr "Veranstalter löschen"
 
-#: templates/_macros.html:97 templates/_macros.html:273
-#: templates/_macros.html:280 templates/event/list.html:16
+#: templates/_macros.html:103 templates/_macros.html:279
+#: templates/_macros.html:286 templates/event/list.html:16
 msgid "Date"
 msgstr "Datum"
 
-#: templates/_macros.html:99 templates/event/list.html:18
+#: templates/_macros.html:105 templates/event/list.html:18
 msgid "Host"
 msgstr "Veranstalter"
 
-#: templates/_macros.html:100 templates/_macros.html:240
-#: templates/admin_unit/update.html:26 templates/event/list.html:19
-#: templates/event_place/create.html:29 templates/event_place/update.html:29
-#: templates/organization/create.html:27 templates/organization/update.html:27
-#: templates/organizer/create.html:25 templates/organizer/update.html:25
-#: templates/place/create.html:29 templates/place/update.html:29
+#: templates/_macros.html:106 templates/_macros.html:246
+#: templates/admin_unit/create.html:26 templates/admin_unit/update.html:26
+#: templates/event/list.html:19 templates/event_place/create.html:29
+#: templates/event_place/update.html:29 templates/organization/create.html:27
+#: templates/organization/update.html:27 templates/organizer/create.html:25
+#: templates/organizer/update.html:25 templates/place/create.html:29
+#: templates/place/update.html:29
 msgid "Location"
 msgstr "Standort"
 
-#: templates/_macros.html:111 templates/_macros.html:290
+#: templates/_macros.html:117 templates/_macros.html:296
 #: templates/event/list.html:30
 msgid "Verified"
 msgstr "Verifiziert"
 
-#: templates/_macros.html:124
+#: templates/_macros.html:130
 msgid "Show all events"
 msgstr "Alle Veranstaltungen anzeigen"
 
-#: templates/_macros.html:140
+#: templates/_macros.html:146
 msgid "Show on Google Maps"
 msgstr "Auf Google Maps anzeigen"
 
-#: templates/_macros.html:195
+#: templates/_macros.html:201
 msgid "Link"
 msgstr "Link"
 
-#: templates/_macros.html:266 templates/event/create.html:38
+#: templates/_macros.html:272 templates/event/create.html:38
 #: templates/event/delete.html:13 templates/event/update.html:15
 msgid "Event"
 msgstr "Veranstaltung"
 
-#: templates/_macros.html:276
+#: templates/_macros.html:282
 #, python-format
 msgid "%(count)d event dates"
 msgstr "%(count)d Termine"
 
-#: templates/_macros.html:339
+#: templates/_macros.html:345
 msgid "Show directions"
 msgstr "Anreise planen"
 
-#: templates/_macros.html:388
+#: templates/_macros.html:394
 msgid "Sign in with Google"
 msgstr "Mit Google anmelden"
 
-#: templates/_macros.html:448
+#: templates/_macros.html:454
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
-#: templates/_macros.html:468
+#: templates/_macros.html:474
 msgid "Reviews"
 msgstr "Prüfungen"
 
-#: templates/_macros.html:469 templates/admin_unit/read.html:30
+#: templates/_macros.html:475 templates/admin_unit/read.html:30
 #: templates/event/list.html:4 templates/event/list.html:8
 #: templates/event_place/read.html:22 templates/manage/events.html:4
 #: templates/manage/reviews.html:4 templates/organization/read.html:27
@@ -580,47 +589,51 @@ msgstr "Prüfungen"
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: templates/_macros.html:470 templates/manage/organizers.html:4
+#: templates/_macros.html:476 templates/manage/organizers.html:4
 msgid "Organizers"
 msgstr "Veranstalter"
 
-#: templates/_macros.html:471 templates/event_place/list.html:3
+#: templates/_macros.html:477 templates/event_place/list.html:3
 #: templates/event_place/list.html:7 templates/manage/places.html:4
 #: templates/place/list.html:3 templates/place/list.html:7
 msgid "Places"
 msgstr "Orte"
 
-#: templates/_macros.html:511 templates/_macros.html:513
+#: templates/_macros.html:517 templates/_macros.html:519
 msgid "Previous"
 msgstr "Zurück"
 
-#: templates/_macros.html:516 templates/_macros.html:518
+#: templates/_macros.html:522 templates/_macros.html:524
 msgid "Next"
 msgstr "Weiter"
 
-#: templates/home.html:16
+#: templates/example.html:15
 msgid "Widget als iFrame einbetten"
 msgstr "Widget als iFrame einbetten"
 
-#: templates/layout.html:51
+#: templates/layout.html:52
 msgid "Manage"
 msgstr "Verwaltung"
 
+#: templates/layout.html:55
+msgid "Example"
+msgstr "Beispiel"
+
 #: templates/developer/read.html:4 templates/developer/read.html:10
-#: templates/layout.html:54
+#: templates/layout.html:56
 msgid "Developer"
 msgstr "Entwickler"
 
-#: templates/layout.html:63 templates/profile.html:3
+#: templates/layout.html:65 templates/profile.html:3
 msgid "Profile"
 msgstr "Profil"
 
 #: templates/admin/admin.html:3 templates/admin/admin.html:9
-#: templates/admin/admin_units.html:9 templates/layout.html:66
+#: templates/admin/admin_units.html:9 templates/layout.html:68
 msgid "Admin"
 msgstr "Administration"
 
-#: templates/layout.html:70
+#: templates/layout.html:72
 msgid "Logout"
 msgstr "Ausloggen"
 
@@ -642,6 +655,15 @@ msgstr "Rollen"
 msgid "Organizations"
 msgstr "Organisationen"
 
+#: templates/admin_unit/create.html:44 templates/admin_unit/update.html:44
+#: templates/event/create.html:128 templates/event/update.html:76
+#: templates/event_place/create.html:44 templates/event_place/update.html:44
+#: templates/organization/create.html:45 templates/organization/update.html:45
+#: templates/organizer/create.html:43 templates/organizer/update.html:43
+#: templates/place/create.html:44 templates/place/update.html:44
+msgid "Additional information"
+msgstr "Zusätzliche Informationen"
+
 #: templates/admin_unit/read.html:19 templates/event_place/read.html:19
 #: templates/organization/read.html:19 templates/place/read.html:19
 msgid "Info"
@@ -654,15 +676,6 @@ msgstr "Mitglieder"
 #: templates/admin_unit/read.html:56
 msgid "You are a member of this admin unit."
 msgstr "Du bist Mitglied dieser Verwaltungseinheit"
-
-#: templates/admin_unit/update.html:44 templates/event/create.html:128
-#: templates/event/update.html:76 templates/event_place/create.html:44
-#: templates/event_place/update.html:44 templates/organization/create.html:45
-#: templates/organization/update.html:45 templates/organizer/create.html:43
-#: templates/organizer/update.html:43 templates/place/create.html:44
-#: templates/place/update.html:44
-msgid "Additional information"
-msgstr "Zusätzliche Informationen"
 
 #: templates/event/create.html:48 templates/event/update.html:25
 msgid "Event date"
@@ -681,14 +694,14 @@ msgstr "Zielgruppe"
 msgid "Review event"
 msgstr "Veranstaltung prüfen"
 
+#: templates/event/read.html:14 templates/event/review.html:17
+msgid "Edit event"
+msgstr "Veranstaltung bearbeiten"
+
 #: templates/event/read.html:27 templates/event/review.html:38
 #: templates/event_date/list.html:4 templates/event_date/list.html:8
 msgid "Event Dates"
 msgstr "Termine"
-
-#: templates/event/review.html:17
-msgid "Edit event"
-msgstr "Veranstaltung bearbeiten"
 
 #: templates/event/review_status.html:11
 msgid "You can visit this page again to check the status."
@@ -794,4 +807,7 @@ msgstr "bis"
 
 #~ msgid "Mark event as verified"
 #~ msgstr "Diese Veranstaltung als verifiziert markieren"
+
+#~ msgid "Admin unit successfully updated"
+#~ msgstr "Verwaltungseinheit erfolgreich aktualisiert"
 

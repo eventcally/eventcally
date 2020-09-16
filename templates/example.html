@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}
+oveda - Terminkalender für Goslar und Hahnenklee
+{% endblock %}
+{% block content %}
+
+<h1>Terminkalender für Goslar und Hahnenklee</h1>
+
+<div class="my-4">
+    <a class="btn btn-secondary my-1" href="{{ url_for('event_create_for_admin_unit', au_short_name='goslar') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
+  </div>
+
+<div class="input-group mb-2 mr-sm-2">
+    <div class="input-group-prepend">
+        <span class="input-group-text">{{ _('Widget als iFrame einbetten') }}</span>
+    </div>
+    <input type="text" value="{{ url_for('widget_event_dates', au_short_name='goslar', _external=True) }}" class="form-control" />
+</div>
+
+<iframe src="{{ url_for('widget_event_dates', au_short_name='goslar') }}" style="display: block; width: 100vw; height: 70vh; max-width: 100%;"></iframe>
+
+{% endblock %}
