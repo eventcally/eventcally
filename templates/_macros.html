@@ -475,6 +475,7 @@
   {{ render_tab('events', _('Events'), url_for('manage_admin_unit_events', id=admin_unit.id), active_id) }}
   {{ render_tab('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
   {{ render_tab('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
+  {{ render_tab('widgets', _('Widgets'), url_for('manage_admin_unit_widgets', id=admin_unit.id), active_id) }}
 </ul>
 {% endmacro %}
 

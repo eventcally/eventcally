@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_pagination, render_event_date, render_field_with_errors, render_event_organizer, render_manage_menu %}
+{% block title %}
+{{ _('Widgets') }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ admin_unit.name }}</h1>
+
+{{ render_manage_menu(admin_unit, 'widgets') }}
+
+<h2>{{ _('Veranstaltungen als iFrame einbetten') }}</h2>
+<textarea class="form-control"><iframe src="{{ url_for('widget_event_dates', au_short_name=admin_unit.short_name, _external=True) }}"></iframe></textarea>
+<p><a class="btn btn-outline-info my-2" data-toggle="collapse" href="#iFrameContainer" aria-expanded="false" aria-controls="iFrameContainer">Vorschau</a></p>
+<div class="collapse" id="iFrameContainer">
+    <iframe src="{{ url_for('widget_event_dates', au_short_name=admin_unit.short_name) }}" style="display: block; width: 90vw; height: 40vh; max-width: 100%;"></iframe>
+</div>
+
+<h2>{{ _('Link, um Veranstaltungen vorzuschlagen') }}</h2>
+<textarea class="form-control"><a href="{{ url_for('event_create_for_admin_unit', au_short_name=admin_unit.short_name, _external=True) }}">{{ _('Create event') }}</a></textarea>
+<p><a class="btn btn-outline-info my-2" data-toggle="collapse" href="#addButtonContainer" aria-expanded="false" aria-controls="addButtonContainer">Vorschau</a></p>
+<div class="collapse" id="addButtonContainer">
+    <a class="btn btn-secondary my-1" href="{{ url_for('event_create_for_admin_unit', au_short_name=admin_unit.short_name, _external=True) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
+</div>
+
+
+{% endblock %}
