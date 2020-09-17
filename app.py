@@ -1427,6 +1427,11 @@ def manage_admin_unit_event_reviews(id):
         events=events,
         pagination = get_pagination_urls(events_paginate, id=id))
 
+@app.route('/manage/admin_unit/<int:id>/widgets')
+def manage_admin_unit_widgets(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    return render_template('manage/widgets.html', admin_unit=admin_unit)
+
 from forms.event import FindEventForm
 
 @app.route('/organizer/<int:id>')
