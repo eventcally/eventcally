@@ -23,5 +23,9 @@
     <a class="btn btn-secondary my-1" href="{{ url_for('event_create_for_admin_unit', au_short_name=admin_unit.short_name, _external=True) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
 </div>
 
+<h2>{{ _('URL für Infoscreen') }}</h2>
+<input class="form-control" value="{{ url_for('widget_infoscreen', au_short_name=admin_unit.short_name, _external=True) }}" />
+<p><a class="btn btn-outline-info my-2" href="{{ url_for('widget_infoscreen', au_short_name=admin_unit.short_name, _external=True) }}" target="_blank">Vorschau <i class="fa fa-external-link-alt"></i></a></p>
+
 
 {% endblock %}
