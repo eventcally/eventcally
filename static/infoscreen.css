@@ -1,0 +1,42 @@
+html, body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    font-size: 2.5vmin;
+}
+
+
+.body-content {
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+}
+
+h1 {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+h2 {
+    margin: 0.4rem 0 0rem;
+}
+
+h3 {
+    font-size: 1.4rem;
+    margin: 0rem 0 1rem;
+}
+
+h4 {
+    font-size: 1.1rem;
+}
+
+/* Add an extra .carousel parent class to increase specificity
+   avoiding the use of !important flag. */
+.carousel .carousel-indicators li {
+background-color: #fff;
+background-color: rgba(70, 70, 70, 0.25);
+}
+
+.carousel .carousel-indicators .active {
+background-color: #444;
+}

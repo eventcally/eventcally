@@ -412,3 +412,11 @@ class EventDate(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     start = db.Column(db.DateTime(timezone=True), nullable=False)
     end = db.Column(db.DateTime(timezone=True), nullable=True)
+
+class Analytics(db.Model):
+    __tablename__ = 'analytics'
+    id = Column(Integer(), primary_key=True)
+    key = Column(Unicode(255))
+    value1 = Column(Unicode(255))
+    value2 = Column(Unicode(255))
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)

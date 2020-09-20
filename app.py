@@ -17,6 +17,7 @@ import json
 from urllib.parse import quote_plus
 from dateutil.rrule import rrulestr, rruleset, rrule
 from dateutil.relativedelta import relativedelta
+from flask_qrcode import QRcode
 
 # Create app
 app = Flask(__name__)
@@ -49,12 +50,15 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 # create db
 db = SQLAlchemy(app)
 
+# qr code
+QRcode(app)
+
 from jsonld import DateTimeEncoder, get_sd_for_event_date
 app.json_encoder = DateTimeEncoder
 
 # Setup Flask-Security
 # Define models
-from models import EventRejectionReason, EventReviewStatus, EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
+from models import Analytics, EventRejectionReason, EventReviewStatus, EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 from oauth import blueprint
@@ -309,6 +313,17 @@ def upsert_event_category(category_name):
     if result is None:
         result = EventCategory(name = category_name)
         db.session.add(result)
+
+    return result
+
+def track_analytics(key, value1, value2):
+    result = Analytics(key = key, value1 = value1)
+
+    if value2 is not None:
+        result.value2 = value2
+
+    db.session.add(result)
+    db.session.commit()
 
     return result
 
@@ -732,6 +747,9 @@ def flash_errors(form):
 # Views
 @app.route("/")
 def home():
+    if 'src' in request.args:
+        track_analytics("home", '', request.args['src'])
+        return redirect(url_for('home'))
     return render_template('home.html')
 
 @app.route("/example")
@@ -1130,14 +1148,17 @@ def event_dates():
 @app.route('/eventdate/<int:id>')
 def event_date(id):
     event_date = EventDate.query.get_or_404(id)
+
+    if 'src' in request.args:
+        track_analytics("event_date", str(id), request.args['src'])
+        return redirect(url_for('event_date', id=id))
+
     structured_data = json.dumps(get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder)
     return render_template('event_date/read.html',
         event_date=event_date,
         structured_data=structured_data)
 
-@app.route("/api/events")
-def api_events():
-    dates = EventDate.query.join(Event).filter(EventDate.start >= today).filter(Event.verified).order_by(EventDate.start).all()
+def json_from_event_dates(dates):
     structured_events = list()
     for event_date in dates:
         structured_event = get_sd_for_event_date(event_date)
@@ -1150,6 +1171,17 @@ def api_events():
     result["name"] = "Prototyp"
     result['event'] = structured_events
     return jsonify(result)
+
+@app.route("/api/events")
+def api_events():
+    dates = EventDate.query.join(Event).filter(EventDate.start >= today).filter(Event.verified).order_by(EventDate.start).all()
+    return json_from_event_dates(dates)
+
+@app.route("/api/<string:au_short_name>/events/infoscreen")
+def api_infoscreen(au_short_name):
+    admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
+    dates = EventDate.query.join(Event).filter(EventDate.start >= today).filter(and_(Event.admin_unit_id == admin_unit.id, Event.verified)).order_by(EventDate.start).paginate()
+    return json_from_event_dates(dates.items)
 
 @app.route("/api/organizer/<int:id>/event_places")
 def api_event_places(id):
@@ -1673,6 +1705,17 @@ def widget_event_date(id):
     return render_template('widget/event_date/read.html',
         event_date=event_date,
         structured_data=structured_data)
+
+@app.route("/<string:au_short_name>/widget/infoscreen")
+def widget_infoscreen(au_short_name):
+    admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
+
+    in24hours = now + relativedelta(hours=24)
+    dates = EventDate.query.join(Event).filter(and_(EventDate.start >= now, EventDate.start <= in24hours)).filter(and_(Event.admin_unit_id == admin_unit.id, Event.verified)).order_by(EventDate.start).paginate()
+
+    return render_template('widget/infoscreen/read.html',
+        admin_unit=admin_unit,
+        dates=dates.items)
 
 if __name__ == '__main__':
     app.run()
