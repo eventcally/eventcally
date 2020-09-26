@@ -39,7 +39,7 @@
             </div>
             <div class="list-group list-group-flush">
             {% for date in dates %}
-                <a href="#" class="list-group-item list-group-item-action">{{ date.start | datetimeformat('short') }}</a>
+                <a href="#" class="list-group-item">{{ date.start | datetimeformat('short') }}</a>
             {% endfor %}
             </div>
         </div>

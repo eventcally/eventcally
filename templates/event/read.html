@@ -28,7 +28,7 @@
                 </div>
                 <div class="list-group list-group-flush">
                 {% for date in dates %}
-                    <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item list-group-item-action">{{ date.start | datetimeformat('short') }}</a>
+                    <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item">{{ date.start | datetimeformat('short') }}</a>
                 {% endfor %}
                 </div>
             </div>
