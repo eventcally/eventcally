@@ -45,6 +45,7 @@ class Role(db.Model, RoleMixin):
     __tablename__ = 'role'
     id = Column(Integer(), primary_key=True)
     name = Column(String(80), unique=True)
+    title = Column(Unicode(255))
     description = Column(String(255))
     permissions = Column(UnicodeText())
 
@@ -122,6 +123,7 @@ class AdminUnitMemberRole(db.Model, RoleMixin):
     __tablename__ = 'adminunitmemberrole'
     id = Column(Integer(), primary_key=True)
     name = Column(String(80), unique=True)
+    title = Column(Unicode(255))
     description = Column(String(255))
     permissions = Column(UnicodeText())
 
@@ -132,7 +134,18 @@ class AdminUnitMember(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('adminunitmembers', lazy=True))
     roles = relationship('AdminUnitMemberRole', secondary='adminunitmemberroles_members',
+                         order_by="AdminUnitMemberRole.id",
                          backref=backref('members', lazy='dynamic'))
+
+class AdminUnitMemberInvitation(db.Model):
+    __tablename__ = 'adminunitmemberinvitation'
+    __table_args__ = (
+        UniqueConstraint('email', 'admin_unit_id'),
+    )
+    id = Column(Integer(), primary_key=True)
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=False)
+    email = Column(String(255))
+    roles = Column(UnicodeText())
 
 class AdminUnitOrgRoleOrganizations(db.Model):
     __tablename__ = 'adminunitorgroles_organizations'
@@ -162,6 +175,7 @@ class AdminUnit(db.Model, TrackableMixin):
     name = Column(Unicode(255), unique=True)
     short_name = Column(Unicode(100), unique=True)
     members = relationship('AdminUnitMember', backref=backref('adminunit', lazy=True))
+    invitations = relationship('AdminUnitMemberInvitation', backref=backref('adminunit', lazy=True))
     organizations = relationship('AdminUnitOrg', backref=backref('adminunit', lazy=True))
     event_organizers = relationship('EventOrganizer', backref=backref('adminunit', lazy=True))
     event_places = relationship('EventPlace', backref=backref('adminunit', lazy=True))

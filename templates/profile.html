@@ -1,10 +1,31 @@
 {% extends "layout.html" %}
+{% from "_macros.html" import render_roles %}
 {% block title %}
 {{ _('Profile') }}
 {% endblock %}
 {% block content %}
 
 <h1>{{ current_user.email }}</h1>
+
+{% if invitations %}
+<h2>{{ _('Invitations') }}</h2>
+<div class="table-responsive">
+    <table class="table table-sm table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>{{ _('Name') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invitation in invitations %}
+                <tr>
+                    <td><a href="{{ url_for('admin_unit_member_invitation', id=invitation.id) }}">{{ invitation.adminunit.name }}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
 
 {% if admin_unit_members %}
 <h2>{{ _('Admin Units') }}</h2>
@@ -19,8 +40,8 @@
         <tbody>
             {% for member in admin_unit_members %}
                 <tr>
-                    <td><a href="{{ url_for('admin_unit', admin_unit_id=member.adminunit.id) }}">{{ member.adminunit.name }}</a></td>
-                    <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                    <td><a href="{{ url_for('manage_admin_unit', id=member.adminunit.id) }}">{{ member.adminunit.name }}</a></td>
+                    <td>{{ render_roles(member.roles)}}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -42,7 +63,7 @@
             {% for member in organization_members %}
                 <tr>
                     <td>{{ member.organization.name }}</td>
-                    <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                    <td>{{ render_roles(member.roles)}}</td>
                 </tr>
             {% endfor %}
         </tbody>

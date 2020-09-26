@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_string_prop, render_logo, render_phone_prop, render_fax_prop, render_email_prop, render_events, render_location_prop, render_link_prop, render_image %}
+{% from "_macros.html" import render_rolesm render_string_prop, render_logo, render_phone_prop, render_fax_prop, render_email_prop, render_events, render_location_prop, render_link_prop, render_image %}
 {% block title %}
 {{ organization.name }}
 {% endblock %}
@@ -69,7 +69,7 @@
                         {% for member in organization.members %}
                             <tr>
                                 <td>{{ member.user.email }}</td>
-                                <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                                <td>{{ render_roles(member.roles)}}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

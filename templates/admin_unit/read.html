@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_string_prop, render_logo, render_phone_prop, render_fax_prop, render_email_prop, render_events, render_location_prop, render_link_prop, render_image %}
+{% from "_macros.html" import render_roles, render_string_prop, render_logo, render_phone_prop, render_fax_prop, render_email_prop, render_events, render_location_prop, render_link_prop, render_image %}
 {% block title %}
 {{ admin_unit.name }}
 {% endblock %}
@@ -71,7 +71,7 @@
                     {% for member in admin_unit.members %}
                         <tr>
                             <td>{{ member.user.email }}</td>
-                            <td>{% for role in member.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{{ render_roles(member.roles)}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -93,7 +93,7 @@
                     {% for admin_unit_org in admin_unit.organizations %}
                         <tr>
                             <td><a href="{{ url_for('organization', organization_id=admin_unit_org.organization_id) }}">{{ admin_unit_org.organization.name }}</a></td>
-                            <td>{% for role in admin_unit_org.roles %}{{ role.name }}{%if not loop.last %}, {% endif %}{% endfor %}</td>
+                            <td>{{ render_roles(admin_unit_org.roles)}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

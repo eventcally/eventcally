@@ -18,8 +18,16 @@
   {{ render_field(login_user_form.submit) }}
 </form>
 
-<hr class="my-4">
-
-{{ render_google_sign_in_button() }}
+<div class="card" class="my-4">
+  <div class="card-body">
+    <p class="card-text">{{ _('You do not have an account yet? Not a problem!') }}</p>
+    <div class="my-2">
+      <a href="{{ url_for_security('register') }}" class="btn btn-dark"><i class="fa fa-user-plus mr-2"></i> {{ _('Register for free') }}</a>
+    </div>
+    <div class="my-2">
+      {{ render_google_sign_in_button() }}
+    </div>
+  </div>
+</div>
 
 {% endblock %}
