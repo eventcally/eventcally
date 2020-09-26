@@ -9,7 +9,18 @@
         {% set field_class = field_class + ' is-invalid' %}
       {% endif %}
 
-      {{ field(class=field_class, **kwargs)|safe }}
+      {% if 'ri' in kwargs and kwargs['ri'] == 'multicheckbox' %}
+        <fieldset class="form-group">
+          {% for choice in field %}
+              <div class="form-check">
+                  {{ choice(class="form-check-input") }}
+                  {{ choice.label(class="form-check-label") }}
+              </div>
+          {% endfor %}
+        </fieldset>
+      {% else %}
+        {{ field(class=field_class, **kwargs)|safe }}
+      {% endif %}
 
       {% if 'ri' in kwargs %}
         {% if kwargs['ri'] == 'rrule' %}
@@ -475,6 +486,7 @@
   {{ render_tab('events', _('Events'), url_for('manage_admin_unit_events', id=admin_unit.id), active_id) }}
   {{ render_tab('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
   {{ render_tab('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
+  {{ render_tab('members', _('Members'), url_for('manage_admin_unit_members', id=admin_unit.id), active_id) }}
   {{ render_tab('widgets', _('Widgets'), url_for('manage_admin_unit_widgets', id=admin_unit.id), active_id) }}
 </ul>
 {% endmacro %}
@@ -526,5 +538,11 @@ $( function() {
         {% endif %}
     </ul>
 </nav>
+{% endif %}
+{% endmacro %}
+
+{% macro render_roles(roles) %}
+{% if roles %}
+  {% for role in roles %}{{ _(role.title) }}{%if not loop.last %}, {% endif %}{% endfor %}
 {% endif %}
 {% endmacro %}

@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field %}
+{% block title %}
+{{ _('Invitation') }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ _('Invitation') }}</h1>
+
+<p>{{ _('Would you like to accept the invitation from %(name)s?', name=invitation.adminunit.name) }}</p>
+
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-auto">
+                {{ render_field(form.accept, class='btn btn-success') }}
+            </div>
+            <div class="col-auto">
+                {{ render_field(form.decline, class='btn btn-secondary') }}
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

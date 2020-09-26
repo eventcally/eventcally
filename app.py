@@ -18,6 +18,7 @@ from urllib.parse import quote_plus
 from dateutil.rrule import rrulestr, rruleset, rrule
 from dateutil.relativedelta import relativedelta
 from flask_qrcode import QRcode
+from flask_mail import Mail, Message
 
 # Create app
 app = Flask(__name__)
@@ -47,6 +48,16 @@ app.jinja_env.filters['quote_plus'] = lambda u: quote_plus(u)
 # cors
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+# Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'oveda.app@gmail.com'
+app.config['MAIL_PASSWORD'] = 'UPF7ujUi2zfa22E-'
+app.config['MAIL_DEFAULT_SENDER'] = 'oveda.app@gmail.com'
+mail = Mail(app)
+
 # create db
 db = SQLAlchemy(app)
 
@@ -58,7 +69,7 @@ app.json_encoder = DateTimeEncoder
 
 # Setup Flask-Security
 # Define models
-from models import Analytics, EventRejectionReason, EventReviewStatus, EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
+from models import AdminUnitMemberInvitation, Analytics, EventRejectionReason, EventReviewStatus, EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 from oauth import blueprint
@@ -103,6 +114,8 @@ def print_dynamic_texts():
     gettext('Event_Sports')
     gettext('Event_Other')
     gettext('Typical Age range')
+    gettext('Administrator')
+    gettext('Event expert')
 
 def handleSqlError(e):
     message = str(e.__dict__['orig'])
@@ -119,6 +132,11 @@ def upsert_user(email, password="password"):
     if result is None:
         result = user_datastore.create_user(email=email, password=hash_password(password))
     return result
+
+def add_roles_to_user(user_name, role_names):
+    user = upsert_user(user_name)
+    for role_name in role_names:
+        user_datastore.add_role_to_user(user, role_name)
 
 def upsert_admin_unit(unit_name, short_name = None):
     admin_unit = AdminUnit.query.filter_by(name = unit_name).first()
@@ -143,15 +161,27 @@ def upsert_org_member_role(role_name, permissions):
     result.add_permissions(permissions)
     return result
 
-def upsert_admin_unit_member_role(role_name, permissions):
+def get_admin_unit_member_role(role_name):
+    return AdminUnitMemberRole.query.filter_by(name = role_name).first()
+
+def upsert_admin_unit_member_role(role_name, role_title, permissions):
     result = AdminUnitMemberRole.query.filter_by(name = role_name).first()
     if result is None:
         result = AdminUnitMemberRole(name = role_name)
         db.session.add(result)
 
+    result.title = role_title
     result.remove_permissions(result.get_permissions())
     result.add_permissions(permissions)
     return result
+
+def upsert_user_role(role_name, role_title, permissions):
+    role = user_datastore.find_or_create_role(role_name)
+    role.title = role_title
+    role.remove_permissions(role.get_permissions())
+    role.add_permissions(permissions)
+    return role
+
 
 def upsert_admin_unit_org_role(role_name, permissions):
     result = AdminUnitOrgRole.query.filter_by(name = role_name).first()
@@ -178,6 +208,17 @@ def add_user_to_admin_unit(user, admin_unit):
         admin_unit.members.append(result)
         db.session.add(result)
     return result
+
+def add_user_to_admin_unit_with_roles(user, admin_unit, role_names):
+    member = add_user_to_admin_unit(current_user, admin_unit)
+    add_roles_to_admin_unit_member(member, role_names)
+
+    return member
+
+def add_roles_to_admin_unit_member(member, role_names):
+    for role_name in role_names:
+        role = get_admin_unit_member_role(role_name)
+        add_role_to_admin_unit_member(member, role)
 
 def add_organization_to_admin_unit(organization, admin_unit):
     result = AdminUnitOrg.query.with_parent(admin_unit).filter_by(organization_id = organization.id).first()
@@ -595,17 +636,20 @@ def has_current_user_permissions_for_admin_unit_and_any_org(admin_unit_id, org_m
 
 # Type permissions
 
-def can_list_admin_unit_members(admin_unit):
+def has_current_user_permission_for_admin_unit(admin_unit, permission):
     if not current_user.is_authenticated:
         return False
 
-    if has_current_user_permission('admin_unit.members:read'):
+    if has_current_user_permission(permission):
         return True
 
-    if has_current_user_member_permission_for_admin_unit(admin_unit.id, 'admin_unit.members:read'):
+    if has_current_user_member_permission_for_admin_unit(admin_unit.id, permission):
         return True
 
     return False
+
+def can_list_admin_unit_members(admin_unit):
+    return has_current_user_permission_for_admin_unit(admin_unit, 'admin_unit.members:read')
 
 def can_list_org_members(organization):
     if not current_user.is_authenticated:
@@ -734,7 +778,27 @@ def get_pagination_urls(pagination, **kwargs):
 
 @app.before_first_request
 def create_initial_data():
-    pass
+    admin_permissions = [
+        "admin_unit:update",
+        "admin_unit.members:invite",
+        "admin_unit.members:read",
+        "admin_unit.members:update",
+        "admin_unit.members:delete",
+        "admin_unit.organizations.members:read"]
+    event_permissions = [
+        "event:verify",
+        "event:create",
+        "event_suggestion:read"]
+
+    upsert_admin_unit_member_role('admin', 'Administrator', admin_permissions)
+    upsert_admin_unit_member_role('event_verifier', 'Event expert', event_permissions)
+
+    upsert_user_role('admin', 'Administrator', admin_permissions)
+    upsert_user_role('event_verifier', 'Event expert', event_permissions)
+    add_roles_to_user('grams.daniel@gmail.com', ['admin', 'event_verifier'])
+
+    db.session.commit()
+
 
 def flash_errors(form):
     for field, errors in form.errors.items():
@@ -744,12 +808,20 @@ def flash_errors(form):
                 error
             ), 'danger')
 
+def send_mail(recipient, subject, template, **context):
+    msg = Message(subject)
+    msg.recipients = [recipient]
+    msg.body = render_template("email/%s.txt" % template, **context)
+    msg.html = render_template("email/%s.html" % template, **context)
+    mail.send(msg)
+
 # Views
 @app.route("/")
 def home():
     if 'src' in request.args:
         track_analytics("home", '', request.args['src'])
         return redirect(url_for('home'))
+
     return render_template('home.html')
 
 @app.route("/example")
@@ -783,6 +855,39 @@ def admin_unit(admin_unit_id):
         current_user_member=current_user_member,
         can_list_admin_unit_members=can_list_admin_unit_members(admin_unit),
         can_update_admin_unit=has_current_user_permission('admin_unit:update'))
+
+from forms.admin_unit_member import NegotiateAdminUnitMemberInvitationForm
+
+@app.route('/invitations/<int:id>', methods=('GET', 'POST'))
+@auth_required()
+def admin_unit_member_invitation(id):
+    invitation = AdminUnitMemberInvitation.query.get_or_404(id)
+
+    if invitation.email != current_user.email:
+        return permission_missing(url_for('profile'))
+
+    form = NegotiateAdminUnitMemberInvitationForm()
+
+    if form.validate_on_submit():
+        try:
+            if form.accept.data:
+                message = gettext('Invitation successfully accepted')
+                roles = invitation.roles.split(',')
+                add_user_to_admin_unit_with_roles(current_user, invitation.adminunit, roles)
+            else:
+                message = gettext('Invitation successfully declined')
+
+            db.session.delete(invitation)
+            db.session.commit()
+            flash(message, 'success')
+            return redirect(url_for('manage'))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+
+    return render_template('invitation/read.html',
+        form=form,
+        invitation=invitation)
 
 def update_admin_unit_with_form(admin_unit, form):
     form.populate_obj(admin_unit)
@@ -920,11 +1025,7 @@ def admin_unit_create():
             upsert_org_or_admin_unit_for_admin_unit(admin_unit)
 
             # Aktuellen Nutzer als Admin hinzufügen
-            member = add_user_to_admin_unit(current_user, admin_unit)
-            admin_unit_admin_role = upsert_admin_unit_member_role('admin', ["admin_unit.members:read", "admin_unit.organizations.members:read"])
-            admin_unit_event_verifier_role = upsert_admin_unit_member_role('event_verifier', ["event:verify", "event:create", "event_suggestion:read"])
-            add_role_to_admin_unit_member(member, admin_unit_admin_role)
-            add_role_to_admin_unit_member(member, admin_unit_event_verifier_role)
+            add_user_to_admin_unit_with_roles(current_user, admin_unit, ['admin', 'event_verifier'])
             db.session.commit()
 
             # Organizer anlegen
@@ -979,10 +1080,13 @@ def image(id):
 @app.route("/profile")
 @auth_required()
 def profile():
-    admin_unit_members = AdminUnitMember.query.filter_by(user_id = current_user.id).all() if current_user.is_authenticated else None
-    organization_members = OrgMember.query.filter_by(user_id = current_user.id).all() if current_user.is_authenticated else None
+    admin_unit_members = AdminUnitMember.query.filter_by(user_id = current_user.id).all()
+    organization_members = None #OrgMember.query.filter_by(user_id = current_user.id).all()
+    invitations = AdminUnitMemberInvitation.query.filter(AdminUnitMemberInvitation.email == current_user.email).all()
+
     return render_template('profile.html',
         admin_unit_members=admin_unit_members,
+        invitations=invitations,
         organization_members=organization_members)
 
 @app.route("/places")
@@ -1201,6 +1305,7 @@ from forms.place import CreatePlaceForm, UpdatePlaceForm
 from forms.organization import CreateOrganizationForm, UpdateOrganizationForm
 from forms.organizer import CreateOrganizerForm, UpdateOrganizerForm, DeleteOrganizerForm
 from forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
+from forms.admin_unit_member import InviteAdminUnitMemberForm
 
 def update_event_with_form(event, form):
     form.populate_obj(event)
@@ -1377,16 +1482,17 @@ def admin_admin_units():
         admin_units=AdminUnit.query.all())
 
 @app.route("/manage")
+@auth_required()
 def manage():
     admin_units = get_admin_units_for_manage()
-
-    # if len(admin_units) == 1:
-    #     return redirect(url_for('manage_admin_unit', id=admin_units[0].id))
+    invitations = AdminUnitMemberInvitation.query.filter(AdminUnitMemberInvitation.email == current_user.email).all()
 
     return render_template('manage/admin_units.html',
+        invitations=invitations,
         admin_units=admin_units)
 
 @app.route('/manage/admin_unit/<int:id>')
+@auth_required()
 def manage_admin_unit(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
@@ -1396,6 +1502,7 @@ def manage_admin_unit(id):
         admin_unit=admin_unit)
 
 @app.route('/manage/admin_unit/<int:id>/organizers')
+@auth_required()
 def manage_admin_unit_organizers(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
     organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).paginate()
@@ -1405,7 +1512,160 @@ def manage_admin_unit_organizers(id):
         organizers=organizers.items,
         pagination=get_pagination_urls(organizers, id=id))
 
+def permission_missing(redirect_location):
+    flash('You do not have permission for this action', 'danger')
+    return redirect(redirect_location)
+
+@app.route('/manage/admin_unit/<int:id>/members')
+@auth_required()
+def manage_admin_unit_members(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+
+    if not has_current_user_permission_for_admin_unit(admin_unit, 'admin_unit.members:read'):
+        return permission_missing(url_for('manage_admin_unit', id=id))
+
+    members = AdminUnitMember.query.join(User).filter(AdminUnitMember.admin_unit_id == admin_unit.id).order_by(func.lower(User.email)).paginate()
+    invitations = AdminUnitMemberInvitation.query.filter(AdminUnitMember.admin_unit_id == admin_unit.id).order_by(func.lower(AdminUnitMemberInvitation.email)).all()
+
+    return render_template('manage/members.html',
+        admin_unit=admin_unit,
+        can_invite_users=has_current_user_permission_for_admin_unit(admin_unit, 'admin_unit.members:invite'),
+        members=members.items,
+        invitations=invitations,
+        pagination=get_pagination_urls(members, id=id))
+
+@app.route('/manage/admin_unit/<int:id>/members/invite', methods=('GET', 'POST'))
+@auth_required()
+def manage_admin_unit_member_invite(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+
+    if not has_current_user_permission_for_admin_unit(admin_unit, 'admin_unit.members:invite'):
+        return permission_missing(url_for('manage_admin_unit', id=admin_unit.id))
+
+    form = InviteAdminUnitMemberForm()
+    form.roles.choices = [(c.name, gettext(c.title)) for c in AdminUnitMemberRole.query.order_by(AdminUnitMemberRole.id).all()]
+
+    if form.validate_on_submit():
+        invitation = AdminUnitMemberInvitation()
+        invitation.admin_unit_id = admin_unit.id
+        form.populate_obj(invitation)
+        invitation.roles = ','.join(form.roles.data)
+
+        try:
+            db.session.add(invitation)
+            db.session.commit()
+
+            send_mail(invitation.email,
+                gettext('You have received an invitation'),
+                'invitation_notice',
+                invitation=invitation)
+
+            flash(gettext('Invitation successfully sent'), 'success')
+            return redirect(url_for('manage_admin_unit_members', id=admin_unit.id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+    return render_template('admin_unit/invite_member.html',
+        admin_unit=admin_unit,
+        form=form)
+
+from forms.admin_unit_member import DeleteAdminUnitMemberForm, UpdateAdminUnitMemberForm
+
+@app.route('/manage/member/<int:id>/update', methods=('GET', 'POST'))
+@auth_required()
+def manage_admin_unit_member_update(id):
+    member = AdminUnitMember.query.get_or_404(id)
+    admin_unit = member.adminunit
+
+    if not has_current_user_permission_for_admin_unit(admin_unit, 'admin_unit.members:update'):
+        return permission_missing(url_for('manage_admin_unit', id=admin_unit.id))
+
+    form = UpdateAdminUnitMemberForm()
+    form.roles.choices = [(c.name, gettext(c.title)) for c in AdminUnitMemberRole.query.order_by(AdminUnitMemberRole.id).all()]
+
+    if form.validate_on_submit():
+        member.roles.clear()
+        add_roles_to_admin_unit_member(member, form.roles.data)
+
+        try:
+            db.session.commit()
+            flash(gettext('Member successfully updated'), 'success')
+            return redirect(url_for('manage_admin_unit_members', id=admin_unit.id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+    else:
+        form.roles.data = [c.name for c in member.roles]
+
+    return render_template('admin_unit/update_member.html',
+        admin_unit=admin_unit,
+        member=member,
+        form=form)
+
+@app.route('/manage/member/<int:id>/delete', methods=('GET', 'POST'))
+@auth_required()
+def manage_admin_unit_member_delete(id):
+    member = AdminUnitMember.query.get_or_404(id)
+    admin_unit = member.adminunit
+
+    if not has_current_user_permission_for_admin_unit(admin_unit, 'admin_unit.members:delete'):
+        return permission_missing(url_for('manage_admin_unit', id=admin_unit.id))
+
+    form = DeleteAdminUnitMemberForm()
+
+    if form.validate_on_submit():
+        if form.email.data != member.user.email:
+            flash(gettext('Entered email does not match member email'), 'danger')
+        else:
+            try:
+                db.session.delete(member)
+                db.session.commit()
+                flash(gettext('Member successfully deleted'), 'success')
+                return redirect(url_for('manage_admin_unit_members', id=admin_unit.id))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
+
+    return render_template('manage/delete_member.html',
+        form=form,
+        member=member)
+
+from forms.admin_unit_member import DeleteAdminUnitInvitationForm
+
+@app.route('/manage/invitation/<int:id>/delete', methods=('GET', 'POST'))
+@auth_required()
+def manage_admin_unit_invitation_delete(id):
+    invitation = AdminUnitMemberInvitation.query.get_or_404(id)
+    admin_unit = invitation.adminunit
+
+    if not has_current_user_permission_for_admin_unit(admin_unit, 'admin_unit.members:invite'):
+        return permission_missing(url_for('manage_admin_unit', id=id))
+
+    form = DeleteAdminUnitInvitationForm()
+
+    if form.validate_on_submit():
+        if form.email.data != invitation.email:
+            flash(gettext('Entered email does not match invitation email'), 'danger')
+        else:
+            try:
+                db.session.delete(invitation)
+                db.session.commit()
+                flash(gettext('Invitation successfully deleted'), 'success')
+                return redirect(url_for('manage_admin_unit_members', id=admin_unit.id))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
+
+    return render_template('manage/delete_invitation.html',
+        form=form,
+        invitation=invitation)
+
 @app.route('/manage/admin_unit/<int:id>/event_places')
+@auth_required()
 def manage_admin_unit_event_places(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
     organizer = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).first()
@@ -1419,6 +1679,7 @@ def manage_admin_unit_event_places(id):
 from forms.event_place import FindEventPlaceForm
 
 @app.route('/manage/event_places')
+@auth_required()
 def manage_organizer_event_places():
     organizer = EventOrganizer.query.get_or_404(request.args.get('organizer_id'))
     admin_unit = get_admin_unit_for_manage_or_404(organizer.admin_unit_id)
@@ -1436,6 +1697,7 @@ def manage_organizer_event_places():
         pagination=get_pagination_urls(places))
 
 @app.route('/manage/admin_unit/<int:id>/events')
+@auth_required()
 def manage_admin_unit_events(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
     organizer = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).first()
@@ -1449,6 +1711,7 @@ def manage_admin_unit_events(id):
 from forms.event import FindEventForm
 
 @app.route('/manage/events')
+@auth_required()
 def manage_organizer_events():
     organizer = EventOrganizer.query.get_or_404(request.args.get('organizer_id'))
     admin_unit = get_admin_unit_for_manage_or_404(organizer.admin_unit_id)
@@ -1474,6 +1737,7 @@ def manage_organizer_events():
         pagination=get_pagination_urls(events))
 
 @app.route('/manage/admin_unit/<int:id>/reviews')
+@auth_required()
 def manage_admin_unit_event_reviews(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
@@ -1490,6 +1754,7 @@ def manage_admin_unit_event_reviews(id):
         pagination = get_pagination_urls(events_paginate, id=id))
 
 @app.route('/manage/admin_unit/<int:id>/widgets')
+@auth_required()
 def manage_admin_unit_widgets(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
     return render_template('manage/widgets.html', admin_unit=admin_unit)
@@ -1512,6 +1777,7 @@ def update_organizer_with_form(organizer, form):
         organizer.logo = upsert_image_with_data(organizer.logo, fs.read(), fs.content_type)
 
 @app.route('/manage/admin_unit/<int:id>/organizers/create', methods=('GET', 'POST'))
+@auth_required()
 def manage_admin_unit_organizer_create(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
@@ -1527,7 +1793,6 @@ def manage_admin_unit_organizer_create(id):
             db.session.add(organizer)
             db.session.commit()
             flash(gettext('Organizer successfully created'), 'success')
-            #return redirect(url_for('organizer', id=organizer.id))
             return redirect(url_for('manage_admin_unit_organizers', id=organizer.admin_unit_id))
         except SQLAlchemyError as e:
             db.session.rollback()
@@ -1535,6 +1800,7 @@ def manage_admin_unit_organizer_create(id):
     return render_template('organizer/create.html', form=form)
 
 @app.route('/organizer/<int:id>/update', methods=('GET', 'POST'))
+@auth_required()
 def organizer_update(id):
     organizer = EventOrganizer.query.get_or_404(id)
 
@@ -1560,6 +1826,7 @@ def organizer_update(id):
         organizer=organizer)
 
 @app.route('/organizer/<int:id>/delete', methods=('GET', 'POST'))
+@auth_required()
 def organizer_delete(id):
     organizer = EventOrganizer.query.get_or_404(id)
 
@@ -1597,6 +1864,7 @@ def update_event_place_with_form(place, form):
 from forms.event_place import UpdateEventPlaceForm, CreateEventPlaceForm
 
 @app.route('/event_place/<int:id>/update', methods=('GET', 'POST'))
+@auth_required()
 def event_place_update(id):
     place = EventPlace.query.get_or_404(id)
 
@@ -1621,6 +1889,7 @@ def event_place_update(id):
         place=place)
 
 @app.route('/manage/organizer/<int:id>/places/create', methods=('GET', 'POST'))
+@auth_required()
 def manage_organizer_places_create(id):
     organizer = EventOrganizer.query.get_or_404(id)
 

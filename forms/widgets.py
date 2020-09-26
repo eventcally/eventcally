@@ -1,8 +1,12 @@
-from wtforms import DateTimeField
-from wtforms.widgets import html_params, HTMLString
+from wtforms import DateTimeField, SelectMultipleField
+from wtforms.widgets import html_params, HTMLString, ListWidget, CheckboxInput
 import pytz
 from datetime import datetime
 from flask_babelex import to_user_timezone
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = ListWidget(prefix_label=False)
+    option_widget = CheckboxInput()
 
 def create_option_string(count, value):
     result = ""
