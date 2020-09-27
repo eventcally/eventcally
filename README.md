@@ -17,6 +17,13 @@ OAUTHLIB_RELAX_TOKEN_SCOPE=true
 GOOGLE_MAPS_API_KEY=
 ```
 
+### Install and run
+
+```
+pip install -r requirements.txt
+flask run --host 0.0.0.0
+```
+
 ## Development
 
 ### Database

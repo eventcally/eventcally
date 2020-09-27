@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 .env
+runlocal.sh
 tmp/
 
 # C extensions
