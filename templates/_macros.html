@@ -406,7 +406,7 @@
 {% endmacro %}
 
 {% macro render_google_place_autocomplete_header(location_only = False) %}
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCHA6ZKMjDrjx2dTJ3wm_q1ywcidLcctcc&libraries=places"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ "dev" | env_override('GOOGLE_MAPS_API_KEY') }}&libraries=places"></script>
 <script>
     function initialize() {
       var input = document.getElementById('location_search');

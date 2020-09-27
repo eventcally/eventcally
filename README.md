@@ -1,34 +1,67 @@
-# Database
+# Goslar Event Prototype
 
+Website prototype using Python, Flask and Postgres running on Heroku.
+
+## Setup
+
+### Environment variables
+
+Create `.env` file in the root directory and define the following variables:
+
+```
+DATABASE_URL=
+GOOGLE_OAUTH_CLIENT_ID=
+GOOGLE_OAUTH_CLIENT_SECRET=
+OAUTHLIB_INSECURE_TRANSPORT=true
+OAUTHLIB_RELAX_TOKEN_SCOPE=true
+GOOGLE_MAPS_API_KEY=
+```
+
+## Development
+
+### Database
+
+```
 python manage.py db init
 python manage.py db migrate
 python manage.py db upgrade
+```
 
-## Development only
+#### Local development only
 
+```
 python manage.py db history
 python manage.py db downgrade
 // reset git: migrations/versions
 python manage.py db migrate
 python manage.py db upgrade
+```
 
-## Kill local detached server
+### Kill local detached server
 
+```
 lsof -i :5000
 kill -9 PIDNUMBER
+```
 
-## i18n
+### i18n
 
 <https://pythonhosted.org/Flask-BabelEx/>
 
-## Init
+#### Init
 
+```
 pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot . && pybabel init -i messages.pot -d translations -l de
+```
 
-## Neue msgid's scannen und in *.po mergen
+#### Neue msgid's scannen und in *.po mergen
 
+```
 pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot . && pybabel update -i messages.pot -d translations
+```
 
-## Nach dem Übersetzen
+#### Nach dem Übersetzen
 
+```
 pybabel compile -d translations
+```

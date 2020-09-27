@@ -94,6 +94,11 @@ def get_localized_enum_name(enum):
 
 app.jinja_env.filters['loc_enum'] = lambda u: get_localized_enum_name(u)
 
+def env_override(value, key):
+  return os.getenv(key, value)
+
+app.jinja_env.filters['env_override'] = env_override
+
 def print_dynamic_texts():
     gettext('Event_Art')
     gettext('Event_Book')
