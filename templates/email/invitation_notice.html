@@ -1,19 +1,6 @@
 {% extends "email/layout.html" %}
+{% from "_macros.html" import render_email_button %}
 {% block content %}
 <p>{{ _('You have been invited to join %(admin_unit_name)s.', admin_unit_name=invitation.adminunit.name) }}</p>
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
-    <tbody>
-        <tr>
-            <td align="left">
-                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                    <tbody>
-                        <tr>
-                            <td> <a href="{{ url_for('admin_unit_member_invitation', id=invitation.id, _external=True) }}" target="_blank">{{ _('Click here to view the invitation') }}</a> </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-    </tbody>
-</table>
+{{ render_email_button(url_for('admin_unit_member_invitation', id=invitation.id, _external=True), _('Click here to view the invitation')) }}
 {% endblock %}
