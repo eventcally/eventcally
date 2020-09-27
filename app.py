@@ -1286,7 +1286,7 @@ def api_events():
     dates = EventDate.query.join(Event).filter(EventDate.start >= today).filter(Event.verified).order_by(EventDate.start).all()
     return json_from_event_dates(dates)
 
-@app.route("/api/<string:au_short_name>/events/infoscreen")
+@app.route("/api/<string:au_short_name>/event_dates")
 def api_infoscreen(au_short_name):
     admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
     dates = EventDate.query.join(Event).filter(EventDate.start >= today).filter(and_(Event.admin_unit_id == admin_unit.id, Event.verified)).order_by(EventDate.start).paginate()
