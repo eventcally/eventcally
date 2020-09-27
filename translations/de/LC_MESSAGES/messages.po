@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-09-26 13:22+0200\n"
+"POT-Creation-Date: 2020-09-27 16:09+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -26,188 +26,196 @@ msgstr "Event_"
 msgid "."
 msgstr "."
 
-#: app.py:98
+#: app.py:103
 msgid "Event_Art"
 msgstr "Kunst"
 
-#: app.py:99
+#: app.py:104
 msgid "Event_Book"
 msgstr "Literatur"
 
-#: app.py:100
+#: app.py:105
 msgid "Event_Movie"
 msgstr "Film"
 
-#: app.py:101
+#: app.py:106
 msgid "Event_Family"
 msgstr "Familie"
 
-#: app.py:102
+#: app.py:107
 msgid "Event_Festival"
 msgstr "Festival"
 
-#: app.py:103
+#: app.py:108
 msgid "Event_Religious"
 msgstr "Religion"
 
-#: app.py:104
+#: app.py:109
 msgid "Event_Shopping"
 msgstr "Shopping"
 
-#: app.py:105
+#: app.py:110
 msgid "Event_Comedy"
 msgstr "Comedy"
 
-#: app.py:106
+#: app.py:111
 msgid "Event_Music"
 msgstr "Musik"
 
-#: app.py:107
+#: app.py:112
 msgid "Event_Dance"
 msgstr "Tanz"
 
-#: app.py:108
+#: app.py:113
 msgid "Event_Nightlife"
 msgstr "Party"
 
-#: app.py:109
+#: app.py:114
 msgid "Event_Theater"
 msgstr "Theater"
 
-#: app.py:110
+#: app.py:115
 msgid "Event_Dining"
 msgstr "Essen"
 
-#: app.py:111
+#: app.py:116
 msgid "Event_Conference"
 msgstr "Konferenz"
 
-#: app.py:112
+#: app.py:117
 msgid "Event_Meetup"
 msgstr "Networking"
 
-#: app.py:113
+#: app.py:118
 msgid "Event_Fitness"
 msgstr "Fitness"
 
-#: app.py:114
+#: app.py:119
 msgid "Event_Sports"
 msgstr "Sport"
 
-#: app.py:115
+#: app.py:120
 msgid "Event_Other"
 msgstr "Sonstiges"
 
-#: app.py:116
+#: app.py:121
 msgid "Typical Age range"
 msgstr "Typische Altersspanne"
 
-#: app.py:117
+#: app.py:122
 msgid "Administrator"
 msgstr "Administrator:in"
 
-#: app.py:118
+#: app.py:123
 msgid "Event expert"
 msgstr "Veranstaltungsexpert:in"
 
-#: app.py:806
+#: app.py:796
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: app.py:874
+#: app.py:867
 msgid "Invitation successfully accepted"
 msgstr "Einladung erfolgreich akzeptiert"
 
-#: app.py:878
+#: app.py:871
 msgid "Invitation successfully declined"
 msgstr "Einladung erfolgreich abgelehnt"
 
-#: app.py:972
+#: app.py:965
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: app.py:993
+#: app.py:986
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: app.py:1046
+#: app.py:1039
 msgid "Admin unit successfully created"
 msgstr "Verwaltungseinheit erfolgreich erstellt"
 
-#: app.py:1065
+#: app.py:1058
 msgid "AdminUnit successfully updated"
 msgstr "Verwaltungseinheit erfolgreich aktualisiert"
 
-#: app.py:1128 app.py:1881
+#: app.py:1121 app.py:1893
 msgid "Place successfully updated"
 msgstr "Ort erfolgreich aktualisiert"
 
-#: app.py:1152 app.py:1911
+#: app.py:1145 app.py:1923
 msgid "Place successfully created"
 msgstr "Ort erfolgreich erstellt"
 
-#: app.py:1203 app.py:1418
+#: app.py:1177
+msgid "Event review status updated"
+msgstr "Prüfungsstatus aktualisiert"
+
+#: app.py:1204 app.py:1430
 msgid "Event successfully updated"
 msgstr "Veranstaltung erfolgreich aktualisiert"
 
-#: app.py:1373
+#: app.py:1350
+msgid "New event review"
+msgstr "Neue Veranstaltung zu prüfen"
+
+#: app.py:1384
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: app.py:1376
+#: app.py:1388
 msgid "Thank you so much! The event is being verified."
 msgstr "Vielen Dank! Die Veranstaltung wird geprüft."
 
-#: app.py:1441
+#: app.py:1453
 msgid "Entered name does not match event name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
 
-#: app.py:1446
+#: app.py:1458
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
 
-#: app.py:1559
+#: app.py:1571
 msgid "You have received an invitation"
 msgstr "Du hast eine Einladung erhalten"
 
-#: app.py:1563
+#: app.py:1575
 msgid "Invitation successfully sent"
 msgstr "Einladung erfolgreich gesendet"
 
-#: app.py:1592
+#: app.py:1604
 msgid "Member successfully updated"
 msgstr "Mitglied erfolgreich aktualisiert"
 
-#: app.py:1618
+#: app.py:1630
 msgid "Entered email does not match member email"
 msgstr "Die eingegebene Email passt nicht zur Email des Mitglieds"
 
-#: app.py:1623
+#: app.py:1635
 msgid "Member successfully deleted"
 msgstr "Mitglied erfolgreich gelöscht"
 
-#: app.py:1650
+#: app.py:1662
 msgid "Entered email does not match invitation email"
 msgstr "Die eingegebene Email passt nicht zur Email der Einladung"
 
-#: app.py:1655
+#: app.py:1667
 msgid "Invitation successfully deleted"
 msgstr "Einladung erfolgreich gelöscht"
 
-#: app.py:1795
+#: app.py:1807
 msgid "Organizer successfully created"
 msgstr "Veranstalter erfolgreich erstellt"
 
-#: app.py:1817
+#: app.py:1829
 msgid "Organizer successfully updated"
 msgstr "Veranstalter erfolgreich aktualisiert"
 
-#: app.py:1840
+#: app.py:1852
 msgid "Entered name does not match organizer name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen des Veranstalters"
 
-#: app.py:1845
+#: app.py:1857
 msgid "Organizer successfully deleted"
 msgstr "Veranstalter erfolgreich gelöscht"
 
@@ -263,9 +271,9 @@ msgstr "Kurzname"
 
 #: forms/admin_unit.py:20
 msgid "The short name is used to create a unique identifier for your events"
-msgstr "Der Kurzname wird verwendet, um Ihre Veranstaltungen eindeutig identifizieren zu können"
-"Der Kurzname wird verwendet, um Ihre Veranstaltungen eindeutig "
-"identifizieren zu können"
+msgstr ""
+"Der Kurzname wird verwendet, um Ihre Veranstaltungen eindeutig zu "
+"identifizieren"
 
 #: forms/admin_unit.py:20 forms/organization.py:25
 msgid "Short name must contain only letters numbers or underscore"
@@ -767,22 +775,38 @@ msgstr "Info"
 msgid "You are a member of this admin unit."
 msgstr "Du bist Mitglied dieser Verwaltungseinheit"
 
-#: templates/email/invitation_notice.html:1
+#: templates/email/invitation_notice.html:4
 #, python-format
 msgid "You have been invited to join %(admin_unit_name)s."
 msgstr "Du wurdest eingeladen, %(admin_unit_name)s beizutreten."
 
-#: templates/email/invitation_notice.html:2
+#: templates/email/invitation_notice.html:5
 msgid "Click here to view the invitation"
 msgstr "Klicke hier, um die Einladung anzunehmen."
 
-#: templates/email/layout.html:351
+#: templates/email/layout.html:350
 msgid "Hi there"
 msgstr "Moin"
 
-#: templates/email/layout.html:352
+#: templates/email/layout.html:351
 msgid "this is a message from Oveda - Die offene Veranstaltungsdatenbank."
 msgstr "das ist eine Nachricht von Oveda - Die offene Veranstaltungsdatenbank."
+
+#: templates/email/review_notice.html:4
+msgid "There is a new event that needs to be reviewed."
+msgstr "Es wurde eine neue Veranstaltung eingetragen, die geprüft werden muss."
+
+#: templates/email/review_notice.html:5
+msgid "Click here to review the event"
+msgstr "Klicker hier, um die Veranstaltung zu prüfen."
+
+#: templates/email/review_status_notice.html:4
+msgid "The review status of your event has been updated."
+msgstr "Der Prüfungsstatus deiner Veranstaltung wurde aktualisiert"
+
+#: templates/email/review_status_notice.html:5
+msgid "Click here to view the status"
+msgstr "Klicke hier, um den Status anzuzeigen"
 
 #: templates/event/create.html:48 templates/event/update.html:25
 msgid "Event date"

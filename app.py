@@ -702,23 +702,23 @@ def has_current_user_any_permission(user_permission, admin_unit_member_permissio
 
     return False
 
-def can_create_event():
-    return has_current_user_any_permission('event:create')
+def can_create_event(admin_unit):
+    return has_current_user_permission_for_admin_unit(admin_unit, 'event:create')
 
 def can_update_event(event):
-    return can_create_event()
+    return has_current_user_permission_for_admin_unit(event.admin_unit, 'event:update')
 
 def can_delete_event(event):
-    return can_update_event(event)
+    return has_current_user_permission_for_admin_unit(event.admin_unit, 'event:delete')
 
 def can_create_place():
-    return can_create_event()
+    return has_current_user_any_permission('event:create')
 
 def can_update_place(place):
     return can_create_place()
 
 def can_create_organization():
-    return can_create_event()
+    return can_create_place()
 
 def can_update_organization(organization):
     return can_create_organization()
@@ -730,25 +730,7 @@ def can_create_admin_unit():
     return current_user.is_authenticated
 
 def can_verify_event(event):
-    if not current_user.is_authenticated:
-        return False
-
-    # User permission, e.g. user is global admin
-    if has_current_user_permission('event:verify'):
-        return True
-
-    # Admin unit member permissions (Holger, Artur)
-    if has_current_user_member_permission_for_admin_unit(event.admin_unit_id, 'event:verify'):
-        return True
-
-    # Event has Admin Unit
-    # Admin Unit has organization members with roles with permission 'event:verify'
-    # This organization has members with roles with permission 'event:verify'
-    # Der aktuelle nutzer muss unter diesen nutzern sein
-    if has_current_user_permissions_for_admin_unit_and_any_org(event.admin_unit_id, 'event:verify', 'event:verify'):
-        return True
-
-    return False
+    return has_current_user_permission_for_admin_unit(event.admin_unit, 'event:verify')
 
 def assign_location_values(target, origin):
     if origin:
@@ -793,6 +775,9 @@ def create_initial_data():
     event_permissions = [
         "event:verify",
         "event:create",
+        "event:read",
+        "event:update",
+        "event:delete",
         "event_suggestion:read"]
 
     upsert_admin_unit_member_role('admin', 'Administrator', admin_permissions)
@@ -814,8 +799,11 @@ def flash_errors(form):
             ), 'danger')
 
 def send_mail(recipient, subject, template, **context):
+    send_mails([recipient], subject, template, **context)
+
+def send_mails(recipients, subject, template, **context):
     msg = Message(subject)
-    msg.recipients = [recipient]
+    msg.recipients = recipients
     msg.body = render_template("email/%s.txt" % template, **context)
     msg.html = render_template("email/%s.html" % template, **context)
     mail.send(msg)
@@ -1183,6 +1171,13 @@ def event(event_id):
         user_can_verify_event=user_can_verify_event,
         can_update_event=user_can_update_event)
 
+def send_event_review_status_mail(event):
+    if event.contact.email:
+        send_mail(event.contact.email,
+            gettext('Event review status updated'),
+            'review_status_notice',
+            event=event)
+
 @app.route('/event/<int:event_id>/review', methods=('GET', 'POST'))
 def event_review(event_id):
     event = Event.query.get_or_404(event_id)
@@ -1205,6 +1200,7 @@ def event_review(event_id):
 
         try:
             db.session.commit()
+            send_event_review_status_mail(event)
             flash(gettext('Event successfully updated'), 'success')
             return redirect(url_for('manage_admin_unit_event_reviews', id=event.admin_unit_id))
         except SQLAlchemyError as e:
@@ -1345,11 +1341,21 @@ def prepare_event_form(form):
     form.organizer_id.choices.insert(0, (0, ''))
     form.event_place_id.choices.insert(0, (0, ''))
 
+def send_event_inbox_mails(admin_unit, event):
+    members = AdminUnitMember.query.join(User).filter(AdminUnitMember.admin_unit_id == admin_unit.id).all()
+
+    for member in members:
+        if has_admin_unit_member_permission(member, 'event:verify'):
+            send_mail(member.user.email,
+                gettext('New event review'),
+                'review_notice',
+                event=event)
+
 def event_create_base(admin_unit, organizer_id=0):
     form = CreateEventForm(admin_unit_id=admin_unit.id, organizer_id=organizer_id, category_id=upsert_event_category('Other').id)
     prepare_event_form(form)
 
-    current_user_can_create_event = can_create_event()
+    current_user_can_create_event = can_create_event(admin_unit)
 
     if not current_user_can_create_event:
         form.contact.min_entries = 1
@@ -1378,6 +1384,7 @@ def event_create_base(admin_unit, organizer_id=0):
                 flash(gettext('Event successfully created'), 'success')
                 return redirect(url_for('event', event_id=event.id))
             else:
+                send_event_inbox_mails(admin_unit, event)
                 flash(gettext('Thank you so much! The event is being verified.'), 'success')
                 return redirect(url_for('event_review_status', event_id=event.id))
         except SQLAlchemyError as e:
@@ -1530,7 +1537,7 @@ def manage_admin_unit_members(id):
         return permission_missing(url_for('manage_admin_unit', id=id))
 
     members = AdminUnitMember.query.join(User).filter(AdminUnitMember.admin_unit_id == admin_unit.id).order_by(func.lower(User.email)).paginate()
-    invitations = AdminUnitMemberInvitation.query.filter(AdminUnitMember.admin_unit_id == admin_unit.id).order_by(func.lower(AdminUnitMemberInvitation.email)).all()
+    invitations = AdminUnitMemberInvitation.query.filter(AdminUnitMemberInvitation.admin_unit_id == admin_unit.id).order_by(func.lower(AdminUnitMemberInvitation.email)).all()
 
     return render_template('manage/members.html',
         admin_unit=admin_unit,

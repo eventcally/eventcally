@@ -1,0 +1,3 @@
+{{ _('There is a new event that needs to be reviewed.') }}
+{{ _('Click the link below to review the event') }}
+{{ url_for('event_review', event_id=event.id, _external=True) }}
