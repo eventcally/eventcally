@@ -19,7 +19,7 @@
 
     <div style="max-width: 768px;">
 
-        {{ render_event_props(event, event.start, event.end, dates) }}
+        {{ render_event_props(event, event.start, event.end, dates, user_can_verify_event) }}
 
         {% if dates|length > 0 %}
             <div class="card mt-4">
