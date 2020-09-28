@@ -382,6 +382,10 @@ class FeaturedEvent(db.Model, TrackableMixin):
     rejection_resaon = Column(IntegerEnum(FeaturedEventRejectionReason))
     rating = Column(Integer())
 
+    @hybrid_property
+    def verified(self):
+        return self.review_status == FeaturedEventReviewStatus.verified
+
 class Event(db.Model, TrackableMixin):
     __tablename__ = 'event'
     id = Column(Integer(), primary_key=True)

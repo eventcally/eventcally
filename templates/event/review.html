@@ -10,25 +10,11 @@
 <form action="" method="POST">
     {{ form.hidden_tag() }}
 
-    <div class="card mb-4">
-        <div class="card-header">
-          {{ _('Review') }}
-        </div>
-        <div class="card-body">
-            {{ render_field_with_errors(form.review_status) }}
-            {{ render_field_with_errors(form.rejection_resaon) }}
-        </div>
-    </div>
+    {{ render_field_with_errors(form.review_status) }}
+    {{ render_field_with_errors(form.rejection_resaon) }}
 
     {% if form.rating.choices|length > 1 %}
-    <div class="card mb-4">
-      <div class="card-header">
-        {{ _('Rating') }}
-      </div>
-      <div class="card-body">
-        {{ render_radio_buttons(form.rating) }}
-      </div>
-    </div>
+        {{ render_field_with_errors(form.rating) }}
     {% endif %}
 
     {{ render_field(form.submit) }}

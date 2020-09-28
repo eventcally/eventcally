@@ -67,7 +67,7 @@ class BaseEventForm(FlaskForm):
         (int(EventAttendanceMode.mixed), lazy_gettext('EventAttendanceMode.mixed'))])
 
     photo_file = FileField(lazy_gettext('Photo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
-    rating = RadioField(lazy_gettext('Rating'), default=50, coerce=int, choices=[
+    rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=[
             (0,lazy_gettext('0 (Little relevant)')),
             (10,'1'),
             (20,'2'),
@@ -141,7 +141,7 @@ class ReviewEventForm(FlaskForm):
         (int(EventRejectionReason.untrustworthy), lazy_gettext('EventRejectionReason.untrustworthy')),
         (int(EventRejectionReason.illegal), lazy_gettext('EventRejectionReason.illegal'))])
 
-    rating = RadioField(lazy_gettext('Rating'), default=50, coerce=int, choices=[
+    rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=[
             (0,lazy_gettext('0 (Little relevant)')),
             (10,'1'),
             (20,'2'),
