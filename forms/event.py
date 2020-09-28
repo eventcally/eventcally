@@ -67,6 +67,19 @@ class BaseEventForm(FlaskForm):
         (int(EventAttendanceMode.mixed), lazy_gettext('EventAttendanceMode.mixed'))])
 
     photo_file = FileField(lazy_gettext('Photo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
+    rating = RadioField(lazy_gettext('Rating'), default=50, coerce=int, choices=[
+            (0,lazy_gettext('0 (Little relevant)')),
+            (10,'1'),
+            (20,'2'),
+            (30,'3'),
+            (40,'4'),
+            (50,'5'),
+            (60,'6'),
+            (70,'7'),
+            (80,'8'),
+            (90,'9'),
+            (100,lazy_gettext('10 (Highlight)'))
+        ])
 
 class CreateEventForm(BaseEventForm):
     event_place_choice = RadioField(lazy_gettext('Place'), choices=[(1,lazy_gettext('Select existing place')), (2,lazy_gettext('Enter new place'))], default=1, coerce=int)
@@ -127,6 +140,20 @@ class ReviewEventForm(FlaskForm):
         (int(EventRejectionReason.duplicate), lazy_gettext('EventRejectionReason.duplicate')),
         (int(EventRejectionReason.untrustworthy), lazy_gettext('EventRejectionReason.untrustworthy')),
         (int(EventRejectionReason.illegal), lazy_gettext('EventRejectionReason.illegal'))])
+
+    rating = RadioField(lazy_gettext('Rating'), default=50, coerce=int, choices=[
+            (0,lazy_gettext('0 (Little relevant)')),
+            (10,'1'),
+            (20,'2'),
+            (30,'3'),
+            (40,'4'),
+            (50,'5'),
+            (60,'6'),
+            (70,'7'),
+            (80,'8'),
+            (90,'9'),
+            (100,lazy_gettext('10 (Highlight)'))
+        ])
 
     submit = SubmitField(lazy_gettext("Save review"))
 

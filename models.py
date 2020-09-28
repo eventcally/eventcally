@@ -334,6 +334,17 @@ class EventRejectionReason(IntEnum):
     untrustworthy = 2
     illegal = 3
 
+class FeaturedEventReviewStatus(IntEnum):
+    inbox = 1
+    verified = 2
+    rejected = 3
+
+class FeaturedEventRejectionReason(IntEnum):
+    duplicate = 1
+    untrustworthy = 2
+    illegal = 3
+    irrelevant = 4
+
 class EventOrganizer(db.Model, TrackableMixin):
     __tablename__ = 'eventorganizer'
     __table_args__ = (UniqueConstraint('name', 'admin_unit_id'),)
@@ -362,6 +373,14 @@ class EventContact(db.Model, TrackableMixin):
 
     def is_empty(self):
         return not self.name
+
+class FeaturedEvent(db.Model, TrackableMixin):
+    __tablename__ = 'featuredevent'
+    id = Column(Integer(), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    review_status = Column(IntegerEnum(FeaturedEventReviewStatus))
+    rejection_resaon = Column(IntegerEnum(FeaturedEventRejectionReason))
+    rating = Column(Integer())
 
 class Event(db.Model, TrackableMixin):
     __tablename__ = 'event'
@@ -396,6 +415,7 @@ class Event(db.Model, TrackableMixin):
     previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
     review_status = Column(IntegerEnum(EventReviewStatus))
     rejection_resaon = Column(IntegerEnum(EventRejectionReason))
+    rating = Column(Integer())
 
     @hybrid_property
     def verified(self):
@@ -409,6 +429,8 @@ class Event(db.Model, TrackableMixin):
     start = db.Column(db.DateTime(timezone=True), nullable=True)
     end = db.Column(db.DateTime(timezone=True), nullable=True)
     dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")
+
+    features = relationship('FeaturedEvent', backref=backref('event', lazy=False), cascade="all, delete-orphan")
 
 @listens_for(Event, 'before_insert')
 @listens_for(Event, 'before_update')

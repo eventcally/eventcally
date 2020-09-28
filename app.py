@@ -729,8 +729,11 @@ def can_update_organizer(organizer):
 def can_create_admin_unit():
     return current_user.is_authenticated
 
+def can_verify_event_for_admin_unit(admin_unit):
+    return has_current_user_permission_for_admin_unit(admin_unit, 'event:verify')
+
 def can_verify_event(event):
-    return has_current_user_permission_for_admin_unit(event.admin_unit, 'event:verify')
+    return can_verify_event_for_admin_unit(event.admin_unit)
 
 def assign_location_values(target, origin):
     if origin:
@@ -1172,7 +1175,7 @@ def event(event_id):
         can_update_event=user_can_update_event)
 
 def send_event_review_status_mail(event):
-    if event.contact.email:
+    if event.contact and event.contact.email:
         send_mail(event.contact.email,
             gettext('Event review status updated'),
             'review_status_notice',
@@ -1356,11 +1359,16 @@ def event_create_base(admin_unit, organizer_id=0):
     prepare_event_form(form)
 
     current_user_can_create_event = can_create_event(admin_unit)
+    current_user_can_verify_event = can_verify_event_for_admin_unit(admin_unit)
 
     if not current_user_can_create_event:
         form.contact.min_entries = 1
         if len(form.contact.entries) == 0:
             form.contact.append_entry()
+
+    if not current_user_can_verify_event:
+        form.rating.choices = [(0, '0')]
+        form.rating.data = 0
 
     if form.validate_on_submit():
         event = Event()
@@ -1370,7 +1378,6 @@ def event_create_base(admin_unit, organizer_id=0):
             event.event_place.organizer_id = event.organizer_id
             event.event_place.admin_unit_id = event.admin_unit_id
 
-        current_user_can_verify_event = can_verify_event(event)
         if current_user_can_verify_event:
             event.review_status = EventReviewStatus.verified
         else:

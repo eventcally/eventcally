@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_phone_prop, render_email_prop, render_string_prop, render_field_with_errors, render_field, render_event_props, render_image, render_ooa_with_link, render_place, render_link_prop %}
+{% from "_macros.html" import render_radio_buttons, render_phone_prop, render_email_prop, render_string_prop, render_field_with_errors, render_field, render_event_props, render_image, render_ooa_with_link, render_place, render_link_prop %}
 {% block title %}
 {{ event.name }}
 {% endblock %}
@@ -10,14 +10,33 @@
 <form action="" method="POST">
     {{ form.hidden_tag() }}
 
-    {{ render_field_with_errors(form.review_status) }}
-    {{ render_field_with_errors(form.rejection_resaon) }}
+    <div class="card mb-4">
+        <div class="card-header">
+          {{ _('Review') }}
+        </div>
+        <div class="card-body">
+            {{ render_field_with_errors(form.review_status) }}
+            {{ render_field_with_errors(form.rejection_resaon) }}
+        </div>
+    </div>
+
+    {% if form.rating.choices|length > 1 %}
+    <div class="card mb-4">
+      <div class="card-header">
+        {{ _('Rating') }}
+      </div>
+      <div class="card-body">
+        {{ render_radio_buttons(form.rating) }}
+      </div>
+    </div>
+    {% endif %}
+
     {{ render_field(form.submit) }}
 
-    <a class="btn btn-outline-secondary my-1" href="{{ url_for('event_update', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Edit event') }}...</a>
+    <a class="btn btn-outline-secondary mt-5" href="{{ url_for('event_update', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Edit event') }}...</a>
 </form>
 
-<div class="mt-5" style="max-width: 768px;">
+<div class="mt-3" style="max-width: 768px;">
 
     <div class="card mb-3">
         <div class="card-header">

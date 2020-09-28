@@ -277,7 +277,7 @@
   {{ render_enum_prop(event.rejection_resaon, 'fa-search-minus', 'Rejection reason') }}
 {% endmacro %}
 
-{% macro render_event_props(event, start, end, dates = None) %}
+{% macro render_event_props(event, start, end, dates = None, show_rating = False) %}
   <div class="card mb-3">
     <div class="card-header">
       {{ _('Event') }}
@@ -307,6 +307,10 @@
       <div><i class="fa fa-fw fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i> {{ _('Verified') }}</div>
       {% else %}
       {{ render_event_review_status(event) }}
+      {% endif %}
+
+      {% if show_rating %}
+          {{ render_string_prop("%d/10" % (event.rating/10), 'fa-adjust', 'Rating') }}
       {% endif %}
 
       {% if event.photo_id %}
@@ -563,4 +567,13 @@ $( function() {
       </tr>
   </tbody>
 </table>
+{% endmacro %}
+
+{% macro render_radio_buttons(field) %}
+{% for subfield in field %}
+    <div class="form-check form-check-inline">
+      <td>{{ subfield(class="form-check-input") }}</td>
+      <td>{{ subfield.label(class="form-check-label") }}</td>
+    </div>
+{% endfor %}
 {% endmacro %}
