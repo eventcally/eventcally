@@ -69,7 +69,7 @@ app.json_encoder = DateTimeEncoder
 
 # Setup Flask-Security
 # Define models
-from models import AdminUnitMemberInvitation, Analytics, EventRejectionReason, EventReviewStatus, EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate
+from models import AdminUnitMemberInvitation, Analytics, EventRejectionReason, EventReviewStatus, EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate, EventReference, EventReferenceRequestRejectionReason, EventReferenceRequestReviewStatus
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 from oauth import blueprint
@@ -433,13 +433,33 @@ def get_admin_units_for_organizations():
 def get_admin_units_for_event():
     return AdminUnit.query.all()
 
+def get_admin_units_with_current_user_permission(permission):
+    result = list()
+
+    admin_units = get_admin_units_for_manage()
+    for admin_unit in admin_units:
+        if has_current_user_permission_for_admin_unit(admin_unit, permission):
+            result.append(admin_unit)
+
+    return result
+
+def get_admin_units_for_event_reference(event):
+    result = list()
+
+    admin_units = get_admin_units_with_current_user_permission('event:reference')
+    for admin_unit in admin_units:
+        if admin_unit.id != event.admin_unit_id:
+            result.append(admin_unit)
+
+    return result
+
 def get_admin_units_for_manage():
     # Global admin
     if current_user.has_role('admin'):
         return AdminUnit.query.all()
 
     # Admin unit member permissions (Holger, Artur)
-    admin_units_the_user_is_member_of = admin_units_with_current_user_member_permission('event:verify')
+    admin_units_the_user_is_member_of = admin_units_the_current_user_is_member_of()
 
     # Admin org permissions (Marina)
     admin_units_via_orgs = admin_units_with_current_user_org_member_permission('event:verify', 'event:verify')
@@ -711,6 +731,12 @@ def can_update_event(event):
 def can_delete_event(event):
     return has_current_user_permission_for_admin_unit(event.admin_unit, 'event:delete')
 
+def can_reference_event(event):
+    return len(get_admin_units_for_event_reference(event)) > 0
+
+def can_delete_reference(reference):
+    return has_current_user_permission_for_admin_unit(reference.admin_unit, 'reference:delete')
+
 def can_create_place():
     return has_current_user_any_permission('event:create')
 
@@ -781,7 +807,9 @@ def create_initial_data():
         "event:read",
         "event:update",
         "event:delete",
-        "event_suggestion:read"]
+        "event:reference",
+        "event_suggestion:read",
+        "reference:delete"]
 
     upsert_admin_unit_member_role('admin', 'Administrator', admin_permissions)
     upsert_admin_unit_member_role('event_verifier', 'Event expert', event_permissions)
@@ -1168,11 +1196,14 @@ def event(event_id):
     if not event.verified and not user_can_verify_event and not user_can_update_event:
         abort(401)
 
+    user_can_reference_event = can_reference_event(event)
+
     return render_template('event/read.html',
         event=event,
         dates=dates,
         user_can_verify_event=user_can_verify_event,
-        can_update_event=user_can_update_event)
+        can_update_event=user_can_update_event,
+        user_can_reference_event=user_can_reference_event)
 
 def send_event_review_status_mail(event):
     if event.contact and event.contact.email:
@@ -1216,6 +1247,77 @@ def event_review(event_id):
         form=form,
         dates=dates,
         event=event)
+
+@app.route('/event/<int:event_id>/reference', methods=('GET', 'POST'))
+def event_reference(event_id):
+    event = Event.query.get_or_404(event_id)
+    user_can_reference_event = can_reference_event(event)
+
+    if not user_can_reference_event:
+        abort(401)
+
+    form = ReferenceEventForm()
+    form.admin_unit_id.choices = sorted([(admin_unit.id, admin_unit.name) for admin_unit in get_admin_units_for_event_reference(event)], key=lambda admin_unit: admin_unit[1])
+
+    if form.validate_on_submit():
+        reference = EventReference()
+        form.populate_obj(reference)
+        reference.event = event
+        reference.review_status = EventReferenceRequestReviewStatus.verified
+
+        try:
+            db.session.add(reference)
+            db.session.commit()
+            flash(gettext('Event successfully referenced'), 'success')
+            return redirect(url_for('event', event_id=event.id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
+
+    return render_template('event/reference.html',
+        form=form,
+        event=event)
+
+@app.route('/manage/admin_unit/<int:id>/references')
+@auth_required()
+def manage_admin_unit_references(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    references = EventReference.query.filter(EventReference.admin_unit_id == admin_unit.id).order_by(EventReference.created_at).paginate()
+
+    return render_template('manage/references.html',
+        admin_unit=admin_unit,
+        references=references.items,
+        pagination=get_pagination_urls(references, id=id))
+
+@app.route('/reference/<int:id>/delete', methods=('GET', 'POST'))
+def reference_delete(id):
+    reference = EventReference.query.get_or_404(id)
+
+    if not can_delete_reference(reference):
+        abort(401)
+
+    form = DeleteReferenceForm()
+
+    if form.validate_on_submit():
+        if form.name.data != reference.event.name:
+            flash(gettext('Entered name does not match event name'), 'danger')
+        else:
+            try:
+                db.session.delete(reference)
+                db.session.commit()
+                flash(gettext('Reference successfully deleted'), 'success')
+                return redirect(url_for('manage_admin_unit_references', id=reference.admin_unit_id))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
+
+    return render_template('reference/delete.html',
+        form=form,
+        reference=reference)
 
 @app.route("/eventdates")
 def event_dates():
@@ -1285,10 +1387,20 @@ def api_events():
     dates = EventDate.query.join(Event).filter(EventDate.start >= today).filter(Event.verified).order_by(EventDate.start).all()
     return json_from_event_dates(dates)
 
+def get_event_dates_query_for_admin_unit(admin_unit_id, date_filter = None, keyword = None):
+    my_event_filter = and_(or_(Event.admin_unit_id == admin_unit_id, Event.references.any(EventReference.admin_unit_id == admin_unit_id)), Event.verified)
+    my_date_filter = date_filter if date_filter is not None else (EventDate.start >= today)
+
+    if keyword:
+        like_keyword = '%' + keyword + '%'
+        my_event_filter = and_(my_event_filter, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))
+
+    return EventDate.query.join(Event).filter(my_date_filter).filter(my_event_filter).order_by(EventDate.start)
+
 @app.route("/api/<string:au_short_name>/event_dates")
 def api_infoscreen(au_short_name):
     admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
-    dates = EventDate.query.join(Event).filter(EventDate.start >= today).filter(and_(Event.admin_unit_id == admin_unit.id, Event.verified)).order_by(EventDate.start).paginate()
+    dates = get_event_dates_query_for_admin_unit(admin_unit.id).paginate()
     return json_from_event_dates(dates.items)
 
 @app.route("/api/organizer/<int:id>/event_places")
@@ -1304,7 +1416,7 @@ def api_event_places(id):
 
     return jsonify(result)
 
-from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm, EventContactForm, ReviewEventForm
+from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm, DeleteReferenceForm, EventContactForm, ReviewEventForm, ReferenceEventForm
 from forms.place import CreatePlaceForm, UpdatePlaceForm
 from forms.organization import CreateOrganizationForm, UpdateOrganizationForm
 from forms.organizer import CreateOrganizerForm, UpdateOrganizerForm, DeleteOrganizerForm
@@ -1970,14 +2082,7 @@ def widget_event_dates(au_short_name):
         keyword = request.args['keyword']
 
     date_filter = and_(EventDate.start >= date_from, EventDate.start < date_to)
-
-    if keyword:
-        like_keyword = '%' + keyword + '%'
-        event_filter = and_(Event.admin_unit_id == admin_unit.id, Event.verified, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))
-    else:
-        event_filter = and_(Event.admin_unit_id == admin_unit.id, Event.verified)
-
-    dates = EventDate.query.join(Event).filter(date_filter).filter(event_filter).order_by(EventDate.start).paginate()
+    dates = get_event_dates_query_for_admin_unit(admin_unit.id, date_filter, keyword).paginate()
 
     return render_template('widget/event_date/list.html',
         date_from_str=date_from_str,
@@ -1999,7 +2104,8 @@ def widget_infoscreen(au_short_name):
     admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
 
     in24hours = now + relativedelta(hours=24)
-    dates = EventDate.query.join(Event).filter(and_(EventDate.start >= now, EventDate.start <= in24hours)).filter(and_(Event.admin_unit_id == admin_unit.id, Event.verified)).order_by(EventDate.start).paginate()
+    date_filter = and_(EventDate.start >= now, EventDate.start <= in24hours)
+    dates = get_event_dates_query_for_admin_unit(admin_unit.id, date_filter).paginate()
 
     return render_template('widget/infoscreen/read.html',
         admin_unit=admin_unit,

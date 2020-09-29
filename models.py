@@ -334,6 +334,19 @@ class EventRejectionReason(IntEnum):
     untrustworthy = 2
     illegal = 3
 
+
+class EventReferenceRequestReviewStatus(IntEnum):
+    inbox = 1
+    verified = 2
+    rejected = 3
+
+class EventReferenceRequestRejectionReason(IntEnum):
+    duplicate = 1
+    untrustworthy = 2
+    illegal = 3
+    irrelevant = 4
+
+# Deprecated begin
 class FeaturedEventReviewStatus(IntEnum):
     inbox = 1
     verified = 2
@@ -344,6 +357,7 @@ class FeaturedEventRejectionReason(IntEnum):
     untrustworthy = 2
     illegal = 3
     irrelevant = 4
+# Deprecated end
 
 class EventOrganizer(db.Model, TrackableMixin):
     __tablename__ = 'eventorganizer'
@@ -374,17 +388,26 @@ class EventContact(db.Model, TrackableMixin):
     def is_empty(self):
         return not self.name
 
-class FeaturedEvent(db.Model, TrackableMixin):
-    __tablename__ = 'featuredevent'
+class EventReference(db.Model, TrackableMixin):
+    __tablename__ = 'eventreference'
     id = Column(Integer(), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
-    review_status = Column(IntegerEnum(FeaturedEventReviewStatus))
-    rejection_resaon = Column(IntegerEnum(FeaturedEventRejectionReason))
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=False)
+    admin_unit = db.relationship('AdminUnit', backref=db.backref('references', lazy=True))
     rating = Column(Integer())
+
+class EventReferenceRequest(db.Model, TrackableMixin):
+    __tablename__ = 'eventreferencerequest'
+    id = Column(Integer(), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=False)
+    admin_unit = db.relationship('AdminUnit', backref=db.backref('reference_requests', lazy=True))
+    review_status = Column(IntegerEnum(EventReferenceRequestReviewStatus))
+    rejection_reason = Column(IntegerEnum(EventReferenceRequestRejectionReason))
 
     @hybrid_property
     def verified(self):
-        return self.review_status == FeaturedEventReviewStatus.verified
+        return self.review_status == EventReferenceRequestReviewStatus.verified
 
 class Event(db.Model, TrackableMixin):
     __tablename__ = 'event'
@@ -434,7 +457,8 @@ class Event(db.Model, TrackableMixin):
     end = db.Column(db.DateTime(timezone=True), nullable=True)
     dates = relationship('EventDate', backref=backref('event', lazy=False), cascade="all, delete-orphan")
 
-    features = relationship('FeaturedEvent', backref=backref('event', lazy=False), cascade="all, delete-orphan")
+    references = relationship('EventReference', backref=backref('event', lazy=False), cascade="all, delete-orphan")
+    reference_requests = relationship('EventReferenceRequest', backref=backref('event', lazy=False), cascade="all, delete-orphan")
 
 @listens_for(Event, 'before_insert')
 @listens_for(Event, 'before_update')
