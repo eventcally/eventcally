@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_reference_review_status_pill, render_event_status_pill, render_event_date, render_pagination, render_event_organizer, render_manage_menu %}
+{% block title %}
+{{ _('References') }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ admin_unit.name }}</h1>
+
+{{ render_manage_menu(admin_unit, 'references') }}
+
+<ul class="list-group mt-4">
+{% for reference in references %}
+    <li class="list-group-item">
+        {{ render_event_date(reference.event) }}
+        <div class="dropdown d-inline-block">
+            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ reference.event.name }}</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('event', event_id=reference.event.id) }}">{{ _('View') }}</a>
+                <a class="dropdown-item" href="{{ url_for('reference_delete', id=reference.id) }}">{{ _('Delete') }}...</a>
+            </div>
+        </div>
+        {{ render_event_status_pill(reference.event) }}
+        <small>{{ reference.event.admin_unit.name }}</small>
+    </li>
+{% endfor %}
+</ul>
+
+<div class="my-4">{{ render_pagination(pagination) }}</div>
+
+{% endblock %}

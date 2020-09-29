@@ -157,6 +157,28 @@ class ReviewEventForm(FlaskForm):
 
     submit = SubmitField(lazy_gettext("Save review"))
 
+class ReferenceEventForm(FlaskForm):
+    admin_unit_id = SelectField(lazy_gettext('Admin unit'), validators=[DataRequired()], coerce=int)
+    rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=[
+            (0,lazy_gettext('0 (Little relevant)')),
+            (10,'1'),
+            (20,'2'),
+            (30,'3'),
+            (40,'4'),
+            (50,'5'),
+            (60,'6'),
+            (70,'7'),
+            (80,'8'),
+            (90,'9'),
+            (100,lazy_gettext('10 (Highlight)'))
+        ])
+
+    submit = SubmitField(lazy_gettext("Save reference"))
+
+class DeleteReferenceForm(FlaskForm):
+    submit = SubmitField(lazy_gettext("Delete reference"))
+    name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
+
 class FindEventForm(FlaskForm):
     class Meta:
         csrf = False

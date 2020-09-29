@@ -14,6 +14,9 @@
             <a class="btn btn-primary my-1" href="{{ url_for('event_update', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
             <a class="btn btn-danger my-1" href="{{ url_for('event_delete', event_id=event.id) }}" role="button"><i class="fa fa-trash"></i> {{ _('Delete event') }}...</a>
         {% endif %}
+        {% if user_can_reference_event %}
+            <a class="btn btn-outline-primary my-1" href="{{ url_for('event_reference', event_id=event.id) }}" role="button"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
+        {% endif %}
     </div>
     {% endif %}
 
