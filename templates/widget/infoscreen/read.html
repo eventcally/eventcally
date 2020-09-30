@@ -45,11 +45,11 @@
                 <div class="carousel-item  {%if loop.first %}active{% endif %}">
                     <div class="container-fluid h-100">
                         <div class="row">
+                            {% if date.event.photo_id %}
                             <div class="col-auto h-100" style="padding:1rem">
-                                {% if date.event.photo_id %}
-                                    <img src="{{ url_for('image', id=date.event.photo_id) }}" class="img-fluid" style="object-fit: cover; max-width:20vmin;" />
-                                {% endif %}
+                                <img src="{{ url_for('image', id=date.event.photo_id) }}" class="img-fluid" style="object-fit: cover; max-width:20vmin;" />
                             </div>
+                            {% endif %}
                             <div class="col" style="padding:1rem">
                                 <h3>{{ date.event.name }}{{ render_event_status_pill(date.event) }}</h3>
                                 <p>{{ date.event.description | truncate(300) }}</p>

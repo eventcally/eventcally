@@ -2103,9 +2103,9 @@ def widget_event_date(id):
 def widget_infoscreen(au_short_name):
     admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
 
-    in24hours = now + relativedelta(hours=24)
-    date_filter = and_(EventDate.start >= now, EventDate.start <= in24hours)
-    dates = get_event_dates_query_for_admin_unit(admin_unit.id, date_filter).paginate()
+    #in24hours = now + relativedelta(hours=24)
+    #date_filter = and_(EventDate.start >= now, EventDate.start <= in24hours)
+    dates = get_event_dates_query_for_admin_unit(admin_unit.id).paginate(max_per_page=5)
 
     return render_template('widget/infoscreen/read.html',
         admin_unit=admin_unit,
