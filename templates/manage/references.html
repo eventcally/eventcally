@@ -17,6 +17,7 @@
             <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ reference.event.name }}</button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ url_for('event', event_id=reference.event.id) }}">{{ _('View') }}</a>
+                <a class="dropdown-item" href="{{ url_for('event_reference_update', id=reference.id) }}">{{ _('Edit') }}</a>
                 <a class="dropdown-item" href="{{ url_for('reference_delete', id=reference.id) }}">{{ _('Delete') }}...</a>
             </div>
         </div>

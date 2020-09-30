@@ -69,7 +69,7 @@ app.json_encoder = DateTimeEncoder
 
 # Setup Flask-Security
 # Define models
-from models import AdminUnitMemberInvitation, Analytics, EventRejectionReason, EventReviewStatus, EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate, EventReference, EventReferenceRequestRejectionReason, EventReferenceRequestReviewStatus
+from models import AdminUnitMemberInvitation, Analytics, EventRejectionReason, EventReviewStatus, EventPlace, EventOrganizer, EventCategory, Image, OrgOrAdminUnit, Actor, Place, Location, User, Role, AdminUnit, AdminUnitMember, AdminUnitMemberRole, OrgMember, OrgMemberRole, Organization, AdminUnitOrg, AdminUnitOrgRole, Event, EventDate, EventReference
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
 from oauth import blueprint
@@ -734,6 +734,9 @@ def can_delete_event(event):
 def can_reference_event(event):
     return len(get_admin_units_for_event_reference(event)) > 0
 
+def can_update_reference(reference):
+    return has_current_user_permission_for_admin_unit(reference.admin_unit, 'reference:update')
+
 def can_delete_reference(reference):
     return has_current_user_permission_for_admin_unit(reference.admin_unit, 'reference:delete')
 
@@ -809,6 +812,7 @@ def create_initial_data():
         "event:delete",
         "event:reference",
         "event_suggestion:read",
+        "reference:update",
         "reference:delete"]
 
     upsert_admin_unit_member_role('admin', 'Administrator', admin_permissions)
@@ -1248,76 +1252,7 @@ def event_review(event_id):
         dates=dates,
         event=event)
 
-@app.route('/event/<int:event_id>/reference', methods=('GET', 'POST'))
-def event_reference(event_id):
-    event = Event.query.get_or_404(event_id)
-    user_can_reference_event = can_reference_event(event)
-
-    if not user_can_reference_event:
-        abort(401)
-
-    form = ReferenceEventForm()
-    form.admin_unit_id.choices = sorted([(admin_unit.id, admin_unit.name) for admin_unit in get_admin_units_for_event_reference(event)], key=lambda admin_unit: admin_unit[1])
-
-    if form.validate_on_submit():
-        reference = EventReference()
-        form.populate_obj(reference)
-        reference.event = event
-        reference.review_status = EventReferenceRequestReviewStatus.verified
-
-        try:
-            db.session.add(reference)
-            db.session.commit()
-            flash(gettext('Event successfully referenced'), 'success')
-            return redirect(url_for('event', event_id=event.id))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), 'danger')
-    else:
-        flash_errors(form)
-
-    return render_template('event/reference.html',
-        form=form,
-        event=event)
-
-@app.route('/manage/admin_unit/<int:id>/references')
-@auth_required()
-def manage_admin_unit_references(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    references = EventReference.query.filter(EventReference.admin_unit_id == admin_unit.id).order_by(EventReference.created_at).paginate()
-
-    return render_template('manage/references.html',
-        admin_unit=admin_unit,
-        references=references.items,
-        pagination=get_pagination_urls(references, id=id))
-
-@app.route('/reference/<int:id>/delete', methods=('GET', 'POST'))
-def reference_delete(id):
-    reference = EventReference.query.get_or_404(id)
-
-    if not can_delete_reference(reference):
-        abort(401)
-
-    form = DeleteReferenceForm()
-
-    if form.validate_on_submit():
-        if form.name.data != reference.event.name:
-            flash(gettext('Entered name does not match event name'), 'danger')
-        else:
-            try:
-                db.session.delete(reference)
-                db.session.commit()
-                flash(gettext('Reference successfully deleted'), 'success')
-                return redirect(url_for('manage_admin_unit_references', id=reference.admin_unit_id))
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                flash(handleSqlError(e), 'danger')
-    else:
-        flash_errors(form)
-
-    return render_template('reference/delete.html',
-        form=form,
-        reference=reference)
+from views import reference
 
 @app.route("/eventdates")
 def event_dates():
@@ -1416,7 +1351,7 @@ def api_event_places(id):
 
     return jsonify(result)
 
-from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm, DeleteReferenceForm, EventContactForm, ReviewEventForm, ReferenceEventForm
+from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm, EventContactForm, ReviewEventForm
 from forms.place import CreatePlaceForm, UpdatePlaceForm
 from forms.organization import CreateOrganizationForm, UpdateOrganizationForm
 from forms.organizer import CreateOrganizerForm, UpdateOrganizerForm, DeleteOrganizerForm

@@ -6,6 +6,7 @@ from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, Place, EventOrganizer, EventRejectionReason, EventReviewStatus
+from .common import event_rating_choices
 from .widgets import CustomDateTimeField
 
 class EventPlaceLocationForm(FlaskForm):
@@ -67,19 +68,7 @@ class BaseEventForm(FlaskForm):
         (int(EventAttendanceMode.mixed), lazy_gettext('EventAttendanceMode.mixed'))])
 
     photo_file = FileField(lazy_gettext('Photo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
-    rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=[
-            (0,lazy_gettext('0 (Little relevant)')),
-            (10,'1'),
-            (20,'2'),
-            (30,'3'),
-            (40,'4'),
-            (50,'5'),
-            (60,'6'),
-            (70,'7'),
-            (80,'8'),
-            (90,'9'),
-            (100,lazy_gettext('10 (Highlight)'))
-        ])
+    rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=event_rating_choices)
 
 class CreateEventForm(BaseEventForm):
     event_place_choice = RadioField(lazy_gettext('Place'), choices=[(1,lazy_gettext('Select existing place')), (2,lazy_gettext('Enter new place'))], default=1, coerce=int)
@@ -141,43 +130,9 @@ class ReviewEventForm(FlaskForm):
         (int(EventRejectionReason.untrustworthy), lazy_gettext('EventRejectionReason.untrustworthy')),
         (int(EventRejectionReason.illegal), lazy_gettext('EventRejectionReason.illegal'))])
 
-    rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=[
-            (0,lazy_gettext('0 (Little relevant)')),
-            (10,'1'),
-            (20,'2'),
-            (30,'3'),
-            (40,'4'),
-            (50,'5'),
-            (60,'6'),
-            (70,'7'),
-            (80,'8'),
-            (90,'9'),
-            (100,lazy_gettext('10 (Highlight)'))
-        ])
+    rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=event_rating_choices)
 
     submit = SubmitField(lazy_gettext("Save review"))
-
-class ReferenceEventForm(FlaskForm):
-    admin_unit_id = SelectField(lazy_gettext('Admin unit'), validators=[DataRequired()], coerce=int)
-    rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=[
-            (0,lazy_gettext('0 (Little relevant)')),
-            (10,'1'),
-            (20,'2'),
-            (30,'3'),
-            (40,'4'),
-            (50,'5'),
-            (60,'6'),
-            (70,'7'),
-            (80,'8'),
-            (90,'9'),
-            (100,lazy_gettext('10 (Highlight)'))
-        ])
-
-    submit = SubmitField(lazy_gettext("Save reference"))
-
-class DeleteReferenceForm(FlaskForm):
-    submit = SubmitField(lazy_gettext("Delete reference"))
-    name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
 
 class FindEventForm(FlaskForm):
     class Meta:
