@@ -315,7 +315,7 @@
       {{ render_event_review_status(event) }}
       {% endif %}
 
-      {% if show_rating %}
+      {% if show_rating and event.rating %}
           {{ render_string_prop("%d/10" % (event.rating/10), 'fa-adjust', 'Rating') }}
       {% endif %}
 
