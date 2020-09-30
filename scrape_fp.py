@@ -11,12 +11,13 @@ import json
 import re
 import unicodedata
 import decimal
-from models import EventTargetGroupOrigin, Location, Event, EventStatus, EventCategory, EventPlace, EventOrganizer, AdminUnit
+from models import EventReviewStatus, EventTargetGroupOrigin, Location, Event, EventStatus, EventCategory, EventPlace, EventOrganizer, AdminUnit
+from sqlalchemy import and_, or_, not_
 
 berlin_tz = pytz.timezone('Europe/Berlin')
 
 def scrape(debug):
-    url = 'https://goslar.feripro.de/programm/40/anmeldung/veranstaltungen'
+    url = 'https://goslar.feripro.de/programm/42/anmeldung/veranstaltungen'
 
     if debug:
         filename = "tmp/fp.html"
@@ -51,7 +52,7 @@ def scrape(debug):
                 js_assigns[key] = value
             break
 
-    admin_unit = get_admin_unit('Stadt Goslar')
+    admin_unit = get_admin_unit('Ferienpass Goslar')
     category = upsert_event_category('Other')
 
     for js_event in js_assigns['events']:
@@ -75,28 +76,51 @@ def scrape(debug):
 
                 event = Event()
                 event.admin_unit = admin_unit
-                event.category = category
-                event.external_link = external_link
-                event.verified = True
-                event.target_group_origin = EventTargetGroupOrigin.resident
                 did_create = True
 
+            event.category = category
+            event.external_link = external_link
+            event.review_status = EventReviewStatus.verified
+            event.rating = 5
+            event.target_group_origin = EventTargetGroupOrigin.resident
             event.name = js_event['name']
             event.description = js_event['description']
             start = parse_date_time_str(js_event['start'])
             end = parse_date_time_str(js_event['end'])
             update_event_dates_with_recurrence_rule(event, start, end)
 
+            # Organizer
+            js_organizer = js_event['organizer']
+            organizer_name = js_event['name_public'] if js_event['name_public'] else js_organizer['name']
+            organizer_phone = js_event['phone_public'] if js_event['phone_public'] else js_organizer['phone']
+            organizer_email = js_event['email_public'] if js_event['email_public'] else js_organizer['email']
+            organizer_url = js_organizer['website'] if js_organizer['website'] else js_organizer['facebook']
+
+            organizer = EventOrganizer.query.filter(and_(
+                EventOrganizer.admin_unit_id == admin_unit.id,
+                EventOrganizer.name == organizer_name)).first()
+
+            if organizer is None:
+                organizer = EventOrganizer(
+                    admin_unit_id = admin_unit.id,
+                    name = organizer_name)
+
+            organizer.phone = organizer_phone
+            organizer.email = organizer_email
+            organizer.url = organizer_url
+            event.organizer = organizer
+
             # Place
-            if event.event_place is None:
-                event.event_place = EventPlace()
+            place_name = ""
+            place_description = ""
+            place_location = None
 
             meeting_point = js_event['meeting_point'].replace('\r\n', ', ')
             if len(meeting_point) > 80:
-                event.event_place.name = meeting_point[:80] + '...'
-                event.event_place.description = meeting_point
+                place_name = meeting_point[:80] + '...'
+                place_description = meeting_point
             else:
-                event.event_place.name = meeting_point
+                place_name = meeting_point
 
             if 'meeting_point_latitude' in js_event and 'meeting_point_longitude' in js_event:
                 meeting_point_latitude = js_event['meeting_point_latitude']
@@ -105,20 +129,24 @@ def scrape(debug):
                     latitude = decimal.Decimal(meeting_point_latitude)
                     longitude = decimal.Decimal(meeting_point_longitude)
                     if latitude != 0 and longitude != 0:
-                        if event.event_place.location is None:
-                            event.event_place.location = Location()
-                        event.event_place.location.latitude = latitude
-                        event.event_place.location.longitude = longitude
+                        place_location = Location()
+                        place_location.latitude = latitude
+                        place_location.longitude = longitude
 
-            # Organizer
-            if event.organizer is None:
-                event.organizer = EventOrganizer()
+            place = EventPlace.query.filter(and_(
+                EventPlace.admin_unit_id == admin_unit.id,
+                EventPlace.organizer_id == organizer.id,
+                EventPlace.name == place_name)).first()
 
-            js_organizer = js_event['organizer']
-            event.organizer.name = js_event['name_public'] if js_event['name_public'] else js_organizer['name']
-            event.organizer.phone = js_event['phone_public'] if js_event['phone_public'] else js_organizer['phone']
-            event.organizer.email = js_event['email_public'] if js_event['email_public'] else js_organizer['email']
-            event.organizer.url = js_organizer['website'] if js_organizer['website'] else js_organizer['facebook']
+            if place is None:
+                place = EventPlace(
+                    admin_unit_id = admin_unit.id,
+                    organizer_id = organizer.id,
+                    name = place_name)
+
+            place.description = place_description
+            place.location = place_location
+            event.event_place = place
 
             # Additional data
             event.status = EventStatus.cancelled if js_event['canceled'] else EventStatus.scheduled
@@ -135,6 +163,7 @@ def scrape(debug):
             if js_event['max_age']:
                 event.age_to = int(js_event['max_age'])
 
+            print("%s %s %s %s" % (event.dates[0].start, event.name, organizer.id, organizer.name))
             if did_create:
                 db.session.add(event)
 
