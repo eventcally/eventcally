@@ -49,26 +49,4 @@
 </div>
 {% endif %}
 
-{% if organization_members %}
-<h2>{{ _('Organizations') }}</h2>
-<div class="table-responsive">
-    <table class="table table-sm table-bordered table-hover table-striped">
-        <thead>
-            <tr>
-                <th>{{ _('Name') }}</th>
-                <th>{{ _('Roles') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for member in organization_members %}
-                <tr>
-                    <td>{{ member.organization.name }}</td>
-                    <td>{{ render_roles(member.roles)}}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endif %}
-
 {% endblock %}

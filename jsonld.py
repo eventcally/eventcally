@@ -16,29 +16,6 @@ class DateTimeEncoder(JSONEncoder):
             if isinstance(obj, decimal.Decimal):
                 return float(obj)
 
-def get_sd_for_org(organization):
-    result = {}
-    result["@type"] = "Organization"
-    result["identifier"] = str(organization.id)
-    result["name"] = organization.name
-
-    if organization.url:
-        result["url"] = url_for('organization', organization_id=organization.id)
-
-    if organization.logo_id:
-        result["logo"] = url_for('image', id=organization.logo_id)
-
-    if organization.email:
-        result["email"] = organization.email
-
-    if organization.phone:
-        result["phone"] = organization.phone
-
-    if organization.fax:
-        result["faxNumber"] = organization.fax
-
-    return result
-
 def get_sd_for_admin_unit(admin_unit):
     result = {}
     result["@type"] = "Organization"
@@ -71,12 +48,6 @@ def get_sd_for_organizer_organization(organizer):
 
 def get_sd_for_organizer(organizer):
     return get_sd_for_organizer_organization(organizer)
-
-def get_sd_for_ooa(ooa):
-    if ooa.organization:
-        return get_sd_for_org(ooa.organization)
-
-    return get_sd_for_admin_unit(ooa.admin_unit)
 
 def get_sd_for_location(location):
     result = {}

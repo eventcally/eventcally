@@ -5,16 +5,12 @@
 {% endblock %}
 {% block content %}
 
-<h1>{{ _('Reference event "%(name)s"', name=event.name) }}</h1>
+<h1>{{ _('Request reference for event "%(name)s"', name=event.name) }}</h1>
 
 <form action="" method="POST">
     {{ form.hidden_tag() }}
 
     {{ render_field_with_errors(form.admin_unit_id) }}
-
-    {% if form.rating.choices|length > 1 %}
-        {{ render_field_with_errors(form.rating) }}
-    {% endif %}
 
     {{ render_field(form.submit) }}
 </form>
