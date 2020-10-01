@@ -46,13 +46,20 @@ app.jinja_env.filters['quote_plus'] = lambda u: quote_plus(u)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Mail
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'oveda.app@gmail.com'
-app.config['MAIL_PASSWORD'] = 'UPF7ujUi2zfa22E-'
-app.config['MAIL_DEFAULT_SENDER'] = 'oveda.app@gmail.com'
+mail_server = os.getenv("MAIL_SERVER")
+
+if mail_server is None:
+    app.config['MAIL_SUPPRESS_SEND'] = True
+else:
+    app.config['MAIL_SUPPRESS_SEND'] = False
+    app.config['MAIL_SERVER'] = mail_server
+    app.config['MAIL_PORT'] = os.getenv("MAIL_PORT")
+    app.config['MAIL_USE_TLS'] = os.getenv("MAIL_USE_TLS", True)
+    app.config['MAIL_USE_SSL'] = os.getenv("MAIL_USE_SSL", False)
+    app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+    app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_DEFAULT_SENDER")
+
 mail = Mail(app)
 
 # create db
