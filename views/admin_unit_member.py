@@ -7,6 +7,7 @@ from forms.admin_unit_member import DeleteAdminUnitMemberForm, UpdateAdminUnitMe
 from .utils import permission_missing, send_mail, handleSqlError, flash_errors
 from access import get_admin_unit_for_manage_or_404, has_access
 from services.admin_unit import add_roles_to_admin_unit_member
+from sqlalchemy.exc import SQLAlchemyError
 
 @app.route('/manage/member/<int:id>/update', methods=('GET', 'POST'))
 @auth_required()

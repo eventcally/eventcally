@@ -2,7 +2,6 @@ import os
 from base64 import b64decode
 from flask import jsonify, Flask, render_template, request, url_for, redirect, abort, flash, current_app
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import asc, func
 from sqlalchemy import and_, or_, not_
@@ -13,7 +12,6 @@ from flask_principal import Permission
 from flask_cors import CORS
 import pytz
 import json
-from urllib.parse import quote_plus
 from flask_qrcode import QRcode
 from flask_mail import Mail, Message
 
@@ -39,8 +37,6 @@ app.config['SECURITY_PASSWORD_SALT'] = os.environ.get("SECURITY_PASSWORD_SALT", 
 app.config['BABEL_DEFAULT_LOCALE'] = 'de'
 app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Berlin'
 babel = Babel(app)
-
-app.jinja_env.filters['quote_plus'] = lambda u: quote_plus(u)
 
 # cors
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -100,6 +96,7 @@ from views import (
     organizer,
     reference,
     reference_request,
+    reference_request_review,
     root,
     user,
     widget

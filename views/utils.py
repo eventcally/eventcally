@@ -67,4 +67,10 @@ def send_mails(recipients, subject, template, **context):
     msg.recipients = recipients
     msg.body = render_template("email/%s.txt" % template, **context)
     msg.html = render_template("email/%s.html" % template, **context)
+
+    if not mail.default_sender:
+        print(msg.subject)
+        print(msg.body)
+        return
+
     mail.send(msg)

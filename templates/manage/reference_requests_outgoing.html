@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_request_review_status_pill, render_event_status_pill, render_event_date, render_pagination, render_event_organizer, render_manage_menu %}
+{% from "_macros.html" import render_reference_request_review_status_pill, render_event_status_pill, render_event_date, render_pagination, render_event_organizer, render_manage_menu %}
 {% block title %}
 {{ _('Reference requests') }}
 {% endblock %}
@@ -7,7 +7,7 @@
 
 <h1>{{ admin_unit.name }}</h1>
 
-{{ render_manage_menu(admin_unit, 'reference_requests') }}
+{{ render_manage_menu(admin_unit, 'reference_requests_outgoing') }}
 
 <ul class="list-group mt-4">
 {% for request in requests %}
@@ -16,11 +16,11 @@
         <div class="dropdown d-inline-block">
             <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ request.event.name }}</button>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="url_for('event_reference_request_review', event_id=event.id)">{{ _('Review request') }}...</a>
+                <a class="dropdown-item" href="{{ url_for('event_reference_request_review_status', id=request.id) }}">{{ _('Show review status') }}</a>
             </div>
         </div>
-        {{ render_event_status_pill(request.event) }}
-        <small>{{ request.event.admin_unit.name }}</small>
+        {{ render_reference_request_review_status_pill(request) }}
+        <small>{{ request.admin_unit.name }}</small>
     </li>
 {% endfor %}
 </ul>

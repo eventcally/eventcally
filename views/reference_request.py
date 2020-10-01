@@ -1,14 +1,39 @@
 from app import app, db
-from .utils import get_pagination_urls, flash_errors, handleSqlError
+from .utils import get_pagination_urls, flash_errors, handleSqlError, send_mail
 from forms.reference_request import CreateEventReferenceRequestForm, DeleteReferenceRequestForm
 from flask import render_template, flash, redirect, url_for
 from flask_babelex import gettext
 from flask_security import auth_required
-from models import EventReferenceRequest, Event, AdminUnit
-from access import access_or_401, get_admin_unit_for_manage_or_404
+from models import EventReferenceRequest, Event, AdminUnit, AdminUnitMember, User, EventReferenceRequestReviewStatus
+from access import access_or_401, get_admin_unit_for_manage_or_404, has_admin_unit_member_permission
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import and_, or_, not_
+from sqlalchemy.sql import desc
 
-@app.route('/event/<int:event_id>/reference_request', methods=('GET', 'POST'))
-def event_reference_request(event_id):
+@app.route('/manage/admin_unit/<int:id>/reference_requests/incoming')
+@auth_required()
+def manage_admin_unit_reference_requests_incoming(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    requests = EventReferenceRequest.query.filter(and_(EventReferenceRequest.review_status != EventReferenceRequestReviewStatus.verified, EventReferenceRequest.admin_unit_id == admin_unit.id)).order_by(desc(EventReferenceRequest.created_at)).paginate()
+
+    return render_template('manage/reference_requests_incoming.html',
+        admin_unit=admin_unit,
+        requests=requests.items,
+        pagination=get_pagination_urls(requests, id=id))
+
+@app.route('/manage/admin_unit/<int:id>/reference_requests/outgoing')
+@auth_required()
+def manage_admin_unit_reference_requests_outgoing(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    requests = EventReferenceRequest.query.join(Event).filter(Event.admin_unit_id == admin_unit.id).order_by(desc(EventReferenceRequest.created_at)).paginate()
+
+    return render_template('manage/reference_requests_outgoing.html',
+        admin_unit=admin_unit,
+        requests=requests.items,
+        pagination=get_pagination_urls(requests, id=id))
+
+@app.route('/event/<int:event_id>/reference_request/create', methods=('GET', 'POST'))
+def event_reference_request_create(event_id):
     event = Event.query.get_or_404(event_id)
     access_or_401(event.admin_unit, 'reference_request:create')
 
@@ -17,12 +42,14 @@ def event_reference_request(event_id):
 
     if form.validate_on_submit():
         request = EventReferenceRequest()
+        request.review_status = EventReferenceRequestReviewStatus.inbox
         form.populate_obj(request)
         request.event = event
 
         try:
             db.session.add(request)
             db.session.commit()
+            send_reference_request_inbox_mails(request)
             flash(gettext('Request successfully created'), 'success')
             return redirect(url_for('event', event_id=event.id))
         except SQLAlchemyError as e:
@@ -35,78 +62,13 @@ def event_reference_request(event_id):
         form=form,
         event=event)
 
-@app.route('/manage/admin_unit/<int:id>/reference_requests')
-@auth_required()
-def manage_admin_unit_reference_requests(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    requests = EventReferenceRequest.query.filter(EventReferenceRequest.admin_unit_id == admin_unit.id).order_by(EventReferenceRequest.created_at).paginate()
+def send_reference_request_inbox_mails(request):
+    # Benachrichtige alle Mitglieder der AdminUnit, die diesen Request verifizieren können
+    members = AdminUnitMember.query.join(User).filter(AdminUnitMember.admin_unit_id == request.admin_unit_id).all()
 
-    return render_template('manage/reference_requests.html',
-        admin_unit=admin_unit,
-        requests=requests.items,
-        pagination=get_pagination_urls(requests, id=id))
-
-# @app.route('/reference_request/<int:id>/review', methods=('GET', 'POST'))
-# def event_reference_request_review(id):
-#     request = EventReferenceRequest.query.get_or_404(id)
-#     event = Event.query.get_or_404(request.event_id)
-#     dates = EventDate.query.with_parent(event).filter(EventDate.start >= today).order_by(EventDate.start).all()
-#     user_can_verify_event = can_verify_event(event)
-
-#     if not user_can_verify_event:
-#         abort(401)
-
-#     form = ReviewEventForm(obj=event)
-
-#     if form.validate_on_submit():
-#         form.populate_obj(event)
-
-#         if event.review_status != EventReviewStatus.rejected:
-#             event.rejection_resaon = None
-
-#         if event.rejection_resaon == 0:
-#             event.rejection_resaon = None
-
-#         try:
-#             db.session.commit()
-#             send_event_review_status_mail(event)
-#             flash(gettext('Event successfully updated'), 'success')
-#             return redirect(url_for('manage_admin_unit_event_reviews', id=event.admin_unit_id))
-#         except SQLAlchemyError as e:
-#             db.session.rollback()
-#             flash(handleSqlError(e), 'danger')
-#     else:
-#         flash_errors(form)
-
-#     return render_template('event/review.html',
-#         form=form,
-#         dates=dates,
-#         event=event)
-
-# @app.route('/reference/<int:id>/delete', methods=('GET', 'POST'))
-# def reference_delete(id):
-#     reference = EventReference.query.get_or_404(id)
-
-#     if not can_delete_reference(reference):
-#         abort(401)
-
-#     form = DeleteReferenceForm()
-
-#     if form.validate_on_submit():
-#         if form.name.data != reference.event.name:
-#             flash(gettext('Entered name does not match event name'), 'danger')
-#         else:
-#             try:
-#                 db.session.delete(reference)
-#                 db.session.commit()
-#                 flash(gettext('Reference successfully deleted'), 'success')
-#                 return redirect(url_for('manage_admin_unit_references', id=reference.admin_unit_id))
-#             except SQLAlchemyError as e:
-#                 db.session.rollback()
-#                 flash(handleSqlError(e), 'danger')
-#     else:
-#         flash_errors(form)
-
-#     return render_template('reference/delete.html',
-#         form=form,
-#         reference=reference)
+    for member in members:
+        if has_admin_unit_member_permission(member, 'reference_request:verify'):
+            send_mail(member.user.email,
+                gettext('New reference request'),
+                'reference_request_notice',
+                request=request)

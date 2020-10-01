@@ -218,9 +218,9 @@
 {% endif %}
 {% endmacro %}
 
-{% macro render_reference_review_status_pill(reference) %}
-{% if reference.review_status and reference.review_status != 2 %}
- <span class="badge badge-pill {% if reference.review_status == 1 %}badge-info{% else %}badge-danger{% endif %}">{{ reference.review_status | loc_enum }}</span>
+{% macro render_reference_request_review_status_pill(reference_request) %}
+{% if reference_request.review_status %}
+ <span class="badge badge-pill {% if reference_request.review_status == 1 %}badge-info{% elif reference_request.review_status == 2 %}badge-success{% else %}badge-danger{% endif %}">{{ reference_request.review_status | loc_enum }}</span>
 {% endif %}
 {% endmacro %}
 
@@ -263,6 +263,11 @@
 {% macro render_event_review_status(event) %}
   {{ render_enum_prop(event.review_status, 'fa-certificate', 'Review status') }}
   {{ render_enum_prop(event.rejection_resaon, 'fa-search-minus', 'Rejection reason') }}
+{% endmacro %}
+
+{% macro render_reference_request_review_status(reference_request) %}
+  {{ render_enum_prop(reference_request.review_status, 'fa-certificate', 'Review status') }}
+  {{ render_enum_prop(reference_request.rejection_reason, 'fa-search-minus', 'Rejection reason') }}
 {% endmacro %}
 
 {% macro render_event_props(event, start, end, dates = None, show_rating = False) %}
@@ -476,8 +481,10 @@
 <ul class="nav nav-pills">
   {{ render_tab('reviews', _('Reviews'), url_for('manage_admin_unit_event_reviews', id=admin_unit.id), active_id) }}
   {{ render_tab('events', _('Events'), url_for('manage_admin_unit_events', id=admin_unit.id), active_id) }}
-  {{ render_tab('references', _('References'), url_for('manage_admin_unit_references', id=admin_unit.id), active_id) }}
-  {{ render_tab('reference_requests', _('Reference requests'), url_for('manage_admin_unit_reference_requests', id=admin_unit.id), active_id) }}
+  {{ render_tab('references_incoming', _('Incoming references'), url_for('manage_admin_unit_references_incoming', id=admin_unit.id), active_id) }}
+  {{ render_tab('references_outgoing', _('Outgoing references'), url_for('manage_admin_unit_references_outgoing', id=admin_unit.id), active_id) }}
+  {{ render_tab('reference_requests_incoming', _('Incoming reference requests'), url_for('manage_admin_unit_reference_requests_incoming', id=admin_unit.id), active_id) }}
+  {{ render_tab('reference_requests_outgoing', _('Outgoing reference requests'), url_for('manage_admin_unit_reference_requests_outgoing', id=admin_unit.id), active_id) }}
   {{ render_tab('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
   {{ render_tab('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
   {{ render_tab('members', _('Members'), url_for('manage_admin_unit_members', id=admin_unit.id), active_id) }}
