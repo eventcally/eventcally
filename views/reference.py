@@ -1,9 +1,12 @@
-from app import app, db, can_update_reference, get_admin_unit_for_manage_or_404, get_pagination_urls, can_reference_event, get_admin_units_for_event_reference, flash_errors, handleSqlError, can_delete_reference
+from app import app, db
+from .utils import get_pagination_urls, flash_errors, handleSqlError
+from access import get_admin_unit_for_manage_or_404, get_admin_units_for_event_reference
 from forms.reference import CreateEventReferenceForm, UpdateEventReferenceForm, DeleteReferenceForm
 from flask import render_template, flash, redirect, url_for
 from flask_babelex import gettext
 from flask_security import auth_required
 from models import EventReference, Event
+from access import access_or_401, can_reference_event
 
 @app.route('/event/<int:event_id>/reference', methods=('GET', 'POST'))
 def event_reference(event_id):
@@ -39,9 +42,7 @@ def event_reference(event_id):
 @app.route('/reference/<int:id>/update', methods=('GET', 'POST'))
 def event_reference_update(id):
     reference = EventReference.query.get_or_404(id)
-
-    if not can_update_reference(reference):
-        abort(401)
+    access_or_401(reference.admin_unit, 'reference:update')
 
     form = UpdateEventReferenceForm(obj=reference)
 
@@ -76,9 +77,7 @@ def manage_admin_unit_references(id):
 @app.route('/reference/<int:id>/delete', methods=('GET', 'POST'))
 def reference_delete(id):
     reference = EventReference.query.get_or_404(id)
-
-    if not can_delete_reference(reference):
-        abort(401)
+    access_or_401(reference.admin_unit, 'reference:delete')
 
     form = DeleteReferenceForm()
 

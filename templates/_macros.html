@@ -69,24 +69,6 @@
     {{ organizer.name }}
 {% endmacro %}
 
-{% macro render_ooa(ooa) %}
-  {% if ooa.admin_unit %}
-    {{ ooa.admin_unit.name }}
-  {% endif %}
-  {% if ooa.organization %}
-    {{ ooa.organization.name }}
-  {% endif %}
-{% endmacro %}
-
-{% macro render_ooa_with_link(ooa) %}
-  {% if ooa.admin_unit %}
-    <a href="{{ url_for('admin_unit', admin_unit_id=ooa.admin_unit.id) }}">{{ ooa.admin_unit.name }}</a>
-  {% endif %}
-  {% if ooa.organization %}
-    <a href="{{ url_for('organization', organization_id=ooa.organization.id) }}">{{ ooa.organization.name }}</a>
-  {% endif %}
-{% endmacro %}
-
 {% macro render_location(location) %}
 {%- if location.street -%}
   {{ location.street }}, {{ location.postalCode }} {{ location.city }}
@@ -392,7 +374,7 @@
     </div>
     <div class="card-body">
 
-        <h5 class="card-title"><a href="{{ url_for('admin_unit', admin_unit_id=event.admin_unit.id) }}" class="text-dark">{{ event.admin_unit.name }}</a></h5>
+        <h5 class="card-title">{{ event.admin_unit.name }}</h5>
 
         {% if event.admin_unit.logo_id %}
           <div class="my-4">{{ render_logo(event.admin_unit.logo_id) }}</div>
@@ -495,6 +477,7 @@
   {{ render_tab('reviews', _('Reviews'), url_for('manage_admin_unit_event_reviews', id=admin_unit.id), active_id) }}
   {{ render_tab('events', _('Events'), url_for('manage_admin_unit_events', id=admin_unit.id), active_id) }}
   {{ render_tab('references', _('References'), url_for('manage_admin_unit_references', id=admin_unit.id), active_id) }}
+  {{ render_tab('reference_requests', _('Reference requests'), url_for('manage_admin_unit_reference_requests', id=admin_unit.id), active_id) }}
   {{ render_tab('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
   {{ render_tab('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
   {{ render_tab('members', _('Members'), url_for('manage_admin_unit_members', id=admin_unit.id), active_id) }}

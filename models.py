@@ -71,46 +71,6 @@ class OAuth(OAuthConsumerMixin, db.Model):
     user_id = Column(Integer(), ForeignKey('user.id'), nullable=False)
     user = db.relationship('User')
 
-### Organization
-
-class OrgMemberRolesMembers(db.Model):
-    __tablename__ = 'orgmemberroles_members'
-    id = Column(Integer(), primary_key=True)
-    member_id = Column('member_id', Integer(), ForeignKey('orgmember.id'))
-    role_id = Column('role_id', Integer(), ForeignKey('orgmemberrole.id'))
-
-class OrgMemberRole(db.Model, RoleMixin):
-    __tablename__ = 'orgmemberrole'
-    id = Column(Integer(), primary_key=True)
-    name = Column(String(80), unique=True)
-    description = Column(String(255))
-    permissions = Column(UnicodeText())
-
-class OrgMember(db.Model):
-    __tablename__ = 'orgmember'
-    id = Column(Integer(), primary_key=True)
-    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('orgmembers', lazy=True))
-    roles = relationship('OrgMemberRole', secondary='orgmemberroles_members',
-                         backref=backref('members', lazy='dynamic'))
-
-class Organization(db.Model, TrackableMixin):
-    __tablename__ = 'organization'
-    id = Column(Integer(), primary_key=True)
-    name = Column(Unicode(255), unique=True)
-    legal_name = Column(Unicode(255))
-    short_name = Column(Unicode(100), unique=True)
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
-    location = db.relationship('Location')
-    logo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
-    logo = db.relationship('Image', uselist=False)
-    url = Column(String(255))
-    email = Column(Unicode(255))
-    phone = Column(Unicode(255))
-    fax = Column(Unicode(255))
-    members = relationship('OrgMember', backref=backref('organization', lazy=True))
-
 ### Admin Unit
 
 class AdminUnitMemberRolesMembers(db.Model):
@@ -147,28 +107,6 @@ class AdminUnitMemberInvitation(db.Model):
     email = Column(String(255))
     roles = Column(UnicodeText())
 
-class AdminUnitOrgRoleOrganizations(db.Model):
-    __tablename__ = 'adminunitorgroles_organizations'
-    id = Column(Integer(), primary_key=True)
-    admin_unit_org_id = Column('admin_unit_org_id', Integer(), ForeignKey('adminunitorg.id'))
-    role_id = Column('role_id', Integer(), ForeignKey('adminunitorgrole.id'))
-
-class AdminUnitOrgRole(db.Model, RoleMixin):
-    __tablename__ = 'adminunitorgrole'
-    id = Column(Integer(), primary_key=True)
-    name = Column(String(80), unique=True)
-    description = Column(String(255))
-    permissions = Column(UnicodeText())
-
-class AdminUnitOrg(db.Model):
-    __tablename__ = 'adminunitorg'
-    id = Column(Integer(), primary_key=True)
-    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=False)
-    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=False)
-    organization = db.relationship('Organization', backref=db.backref('adminunitorgs', lazy=True))
-    roles = relationship('AdminUnitOrgRole', secondary='adminunitorgroles_organizations',
-                         backref=backref('organizations', lazy='dynamic'))
-
 class AdminUnit(db.Model, TrackableMixin):
     __tablename__ = 'adminunit'
     id = Column(Integer(), primary_key=True)
@@ -176,7 +114,6 @@ class AdminUnit(db.Model, TrackableMixin):
     short_name = Column(Unicode(100), unique=True)
     members = relationship('AdminUnitMember', backref=backref('adminunit', lazy=True))
     invitations = relationship('AdminUnitMemberInvitation', backref=backref('adminunit', lazy=True))
-    organizations = relationship('AdminUnitOrg', backref=backref('adminunit', lazy=True))
     event_organizers = relationship('EventOrganizer', backref=backref('adminunit', lazy=True))
     event_places = relationship('EventPlace', backref=backref('adminunit', lazy=True))
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
@@ -189,29 +126,6 @@ class AdminUnit(db.Model, TrackableMixin):
     fax = Column(Unicode(255))
 
 # Universal Types
-
-class Actor(db.Model):
-    __tablename__ = 'actor'
-    __table_args__ = (UniqueConstraint('user_id', 'organization_id', 'admin_unit_id'),)
-    id = Column(Integer(), primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User')
-    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
-    organization = db.relationship('Organization')
-    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'))
-    admin_unit = db.relationship('AdminUnit')
-
-class OrgOrAdminUnit(db.Model):
-    __tablename__ = 'org_or_adminunit'
-    __table_args__ = (
-        CheckConstraint('NOT(organization_id IS NULL AND admin_unit_id IS NULL)'),
-        UniqueConstraint('organization_id', 'admin_unit_id'),
-    )
-    id = Column(Integer(), primary_key=True)
-    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
-    organization = db.relationship('Organization', lazy="joined", backref=backref('org_or_adminunit', cascade="all, delete-orphan", uselist=False, lazy=True))
-    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'))
-    admin_unit = db.relationship('AdminUnit', lazy="joined", backref=backref('org_or_adminunit', cascade="all, delete-orphan", uselist=False, lazy=True))
 
 class Location(db.Model, TrackableMixin):
     __tablename__ = 'location'
@@ -232,26 +146,6 @@ class Location(db.Model, TrackableMixin):
             and not self.country
             and not self.latitude
             and not self.longitude)
-
-class Place(db.Model, TrackableMixin):
-    __tablename__ = 'place'
-    id = Column(Integer(), primary_key=True)
-    name = Column(Unicode(255), nullable=False)
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
-    location = db.relationship('Location', uselist=False)
-    photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
-    photo = db.relationship('Image', uselist=False)
-    url = Column(String(255))
-    description = Column(UnicodeText())
-
-    def is_empty(self):
-        return (not self.name)
-
-@listens_for(Place, 'before_insert')
-@listens_for(Place, 'before_update')
-def purge_place(mapper, connect, self):
-    if self.location and self.location.is_empty():
-        self.location_id = None
 
 # Events
 class EventPlace(db.Model, TrackableMixin):
@@ -283,30 +177,6 @@ class EventCategory(db.Model):
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), nullable=False, unique=True)
 
-class EventSuggestion(db.Model, TrackableMixin):
-    __tablename__ = 'eventsuggestion'
-    id = Column(Integer(), primary_key=True)
-    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=False)
-    admin_unit = db.relationship('AdminUnit', backref=db.backref('eventsuggestions', lazy=True))
-    host_name = Column(Unicode(255), nullable=False)
-    event_name = Column(Unicode(255), nullable=False)
-    description = Column(UnicodeText(), nullable=False)
-    place_name = Column(Unicode(255), nullable=False)
-    place_street = Column(Unicode(255))
-    place_postalCode = Column(Unicode(255), nullable=False)
-    place_city = Column(Unicode(255), nullable=False)
-    contact_name = Column(Unicode(255), nullable=False)
-    contact_email = Column(Unicode(255), nullable=False)
-    external_link = Column(String(255))
-    dates = relationship('EventSuggestionDate', backref=backref('eventsuggestion', lazy=False), cascade="all, delete-orphan")
-
-class EventSuggestionDate(db.Model):
-    __tablename__ = 'eventsuggestiondate'
-    id = Column(Integer(), primary_key=True)
-    event_suggestion_id = db.Column(db.Integer, db.ForeignKey('eventsuggestion.id'), nullable=False)
-    start = db.Column(db.DateTime(timezone=True), nullable=False)
-    #end: date_time
-
 class EventTargetGroupOrigin(IntEnum):
     both = 1
     tourist = 2
@@ -334,7 +204,6 @@ class EventRejectionReason(IntEnum):
     untrustworthy = 2
     illegal = 3
 
-
 class EventReferenceRequestReviewStatus(IntEnum):
     inbox = 1
     verified = 2
@@ -345,19 +214,6 @@ class EventReferenceRequestRejectionReason(IntEnum):
     untrustworthy = 2
     illegal = 3
     irrelevant = 4
-
-# Deprecated begin
-class FeaturedEventReviewStatus(IntEnum):
-    inbox = 1
-    verified = 2
-    rejected = 3
-
-class FeaturedEventRejectionReason(IntEnum):
-    duplicate = 1
-    untrustworthy = 2
-    illegal = 3
-    irrelevant = 4
-# Deprecated end
 
 class EventOrganizer(db.Model, TrackableMixin):
     __tablename__ = 'eventorganizer'
@@ -416,10 +272,6 @@ class Event(db.Model, TrackableMixin):
     admin_unit = db.relationship('AdminUnit', backref=db.backref('events', lazy=True))
     organizer_id = db.Column(db.Integer, db.ForeignKey('eventorganizer.id'), nullable=True)
     organizer = db.relationship('EventOrganizer', uselist=False)
-    host_id = db.Column(db.Integer, db.ForeignKey('org_or_adminunit.id'), nullable=True)
-    host = db.relationship('OrgOrAdminUnit', backref=db.backref('events', lazy=True))
-    place_id = db.Column(db.Integer, db.ForeignKey('place.id'), nullable=True)
-    place = db.relationship('Place', backref=db.backref('events', lazy=True))
     event_place_id = db.Column(db.Integer, db.ForeignKey('eventplace.id'), nullable=True)
     event_place = db.relationship('EventPlace', uselist=False)
     name = Column(Unicode(255), nullable=False)
@@ -484,3 +336,16 @@ class Analytics(db.Model):
     value1 = Column(Unicode(255))
     value2 = Column(Unicode(255))
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+# Deprecated begin
+class FeaturedEventReviewStatus(IntEnum):
+    inbox = 1
+    verified = 2
+    rejected = 3
+
+class FeaturedEventRejectionReason(IntEnum):
+    duplicate = 1
+    untrustworthy = 2
+    illegal = 3
+    irrelevant = 4
+# Deprecated end

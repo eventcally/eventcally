@@ -5,7 +5,7 @@ from wtforms import FieldList, RadioField, DateTimeField, StringField, SubmitFie
 from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
-from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, Place, EventOrganizer, EventRejectionReason, EventReviewStatus
+from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus
 from .common import event_rating_choices
 from .widgets import CustomDateTimeField
 
@@ -50,7 +50,6 @@ class BaseEventForm(FlaskForm):
 
     organizer_id = SelectField(lazy_gettext('Organizer'), validators=[DataRequired()], coerce=int)
     category_id = SelectField(lazy_gettext('Category'), validators=[DataRequired()], coerce=int)
-    admin_unit_id = SelectField(lazy_gettext('Admin unit'), validators=[DataRequired()], coerce=int)
 
     kid_friendly = BooleanField(lazy_gettext('Kid friendly'), validators=[Optional()])
     accessible_for_free = BooleanField(lazy_gettext('Accessible for free'), validators=[Optional()])
