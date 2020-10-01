@@ -18,7 +18,7 @@
             <a class="btn btn-outline-primary my-1" href="{{ url_for('event_reference', event_id=event.id) }}" role="button"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
         {% endif %}
         {% if user_can_create_reference_request %}
-            <a class="btn btn-outline-primary my-1" href="{{ url_for('event_reference_request', event_id=event.id) }}" role="button"><i class="fa fa-link"></i> {{ _('Empfehlung anfragen') }}</a>
+            <a class="btn btn-outline-primary my-1" href="{{ url_for('event_reference_request_create', event_id=event.id) }}" role="button"><i class="fa fa-link"></i> {{ _('Empfehlung anfragen') }}</a>
         {% endif %}
     </div>
     {% endif %}

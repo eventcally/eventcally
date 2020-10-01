@@ -7,6 +7,8 @@ from flask_babelex import gettext
 from flask_security import auth_required
 from models import EventReference, Event
 from access import access_or_401, can_reference_event
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.sql import desc
 
 @app.route('/event/<int:event_id>/reference', methods=('GET', 'POST'))
 def event_reference(event_id):
@@ -52,7 +54,7 @@ def event_reference_update(id):
         try:
             db.session.commit()
             flash(gettext('Reference successfully updated'), 'success')
-            return redirect(url_for('manage_admin_unit_references', id=reference.admin_unit_id))
+            return redirect(url_for('manage_admin_unit_references_incoming', id=reference.admin_unit_id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), 'danger')
@@ -63,13 +65,24 @@ def event_reference_update(id):
         form=form,
         reference=reference)
 
-@app.route('/manage/admin_unit/<int:id>/references')
+@app.route('/manage/admin_unit/<int:id>/references/incoming')
 @auth_required()
-def manage_admin_unit_references(id):
+def manage_admin_unit_references_incoming(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    references = EventReference.query.filter(EventReference.admin_unit_id == admin_unit.id).order_by(EventReference.created_at).paginate()
+    references = EventReference.query.filter(EventReference.admin_unit_id == admin_unit.id).order_by(desc(EventReference.created_at)).paginate()
 
-    return render_template('manage/references.html',
+    return render_template('manage/references_incoming.html',
+        admin_unit=admin_unit,
+        references=references.items,
+        pagination=get_pagination_urls(references, id=id))
+
+@app.route('/manage/admin_unit/<int:id>/references/outgoing')
+@auth_required()
+def manage_admin_unit_references_outgoing(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    references = EventReference.query.join(Event).filter(Event.admin_unit_id == admin_unit.id).order_by(desc(EventReference.created_at)).paginate()
+
+    return render_template('manage/references_outgoing.html',
         admin_unit=admin_unit,
         references=references.items,
         pagination=get_pagination_urls(references, id=id))
@@ -89,7 +102,7 @@ def reference_delete(id):
                 db.session.delete(reference)
                 db.session.commit()
                 flash(gettext('Reference successfully deleted'), 'success')
-                return redirect(url_for('manage_admin_unit_references', id=reference.admin_unit_id))
+                return redirect(url_for('manage_admin_unit_references_incoming', id=reference.admin_unit_id))
             except SQLAlchemyError as e:
                 db.session.rollback()
                 flash(handleSqlError(e), 'danger')

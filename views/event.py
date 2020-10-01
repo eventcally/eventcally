@@ -12,6 +12,7 @@ from utils import get_event_category_name
 from services.event import upsert_event_category, update_event_dates_with_recurrence_rule
 from services.organizer import get_event_places
 from sqlalchemy.sql import asc, func
+from sqlalchemy.exc import SQLAlchemyError
 
 @app.route('/event/<int:event_id>')
 def event(event_id):

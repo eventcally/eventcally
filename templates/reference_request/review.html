@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_radio_buttons, render_phone_prop, render_email_prop, render_string_prop, render_field_with_errors, render_field, render_event_props, render_image_with_link, render_place, render_link_prop %}
+{% block title %}
+{{ event.name }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ _('Review event reference request') }}</h1>
+
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ render_field_with_errors(form.review_status) }}
+    {{ render_field_with_errors(form.rejection_reason) }}
+
+    {% if form.rating.choices|length > 1 %}
+        {{ render_field_with_errors(form.rating) }}
+    {% endif %}
+
+    {{ render_field(form.submit) }}
+</form>
+
+<div class="mt-3" style="max-width: 768px;">
+
+    {{ render_event_props(event, event.start, event.end, dates) }}
+
+    {% if dates|length > 0 %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <a name="event-dates">{{ _('Event Dates') }}</a>
+            </div>
+            <div class="list-group list-group-flush">
+            {% for date in dates %}
+                <a href="#" class="list-group-item">{{ date.start | datetimeformat('short') }}</a>
+            {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

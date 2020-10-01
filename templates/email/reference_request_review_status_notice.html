@@ -1,0 +1,6 @@
+{% extends "email/layout.html" %}
+{% from "_macros.html" import render_email_button %}
+{% block content %}
+<p>{{ _('The review status of your event reference request has been updated.') }}</p>
+{{ render_email_button(url_for('event_review_status', event_id=event.id, _external=True), _('Click here to view the status')) }}
+{% endblock %}

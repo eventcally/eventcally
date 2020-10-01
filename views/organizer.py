@@ -7,6 +7,7 @@ from access import has_access, access_or_401, get_admin_unit_for_manage_or_404
 from forms.organizer import CreateOrganizerForm, UpdateOrganizerForm, DeleteOrganizerForm
 from .utils import flash_errors, upsert_image_with_data, send_mail
 from sqlalchemy.sql import asc, func
+from sqlalchemy.exc import SQLAlchemyError
 
 @app.route('/manage/admin_unit/<int:id>/organizers/create', methods=('GET', 'POST'))
 @auth_required()

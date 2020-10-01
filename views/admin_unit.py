@@ -2,6 +2,7 @@ from app import app
 from flask import url_for, render_template, request, redirect
 from flask_security import auth_required
 from models import AdminUnitMemberInvitation
+from sqlalchemy.exc import SQLAlchemyError
 
 def update_admin_unit_with_form(admin_unit, form):
     form.populate_obj(admin_unit)
