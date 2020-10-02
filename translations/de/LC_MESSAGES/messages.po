@@ -850,7 +850,7 @@ msgstr "Empfehlungsanfragen"
 
 #: templates/manage/reference_requests_incoming.html:19
 msgid "Review request"
-msgstr "Empfehlungsanfragen"
+msgstr "Anfrage prüfen"
 
 #: templates/manage/reference_requests_outgoing.html:19
 msgid "Show review status"
