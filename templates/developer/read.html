@@ -5,16 +5,20 @@
 {% endblock %}
 {% block content %}
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">{{ _('Developer') }}</li>
-    </ol>
-</nav>
+<h1>Developer</h1>
 
-<h2>Schema.org</h2>
+<h2>Endpoint for all events</h2>
+<input class="form-control" value="{{ url_for('api_events', _external=True) }}" />
+<p><a class="btn btn-outline-info my-2" href="{{ url_for('api_events', _external=True) }}" target="_blank">Open <i class="fa fa-external-link-alt"></i></a></p>
+
+<h2>Endpoint to search events</h2>
+{% set search_url = url_for('api_event_dates', page='1', per_page='10', coordinate='51.9077888,10.4333312', distance='1000', date_from='2020-10-03', date_to='2021-10-03', keyword='stadtrundgang', _external=True) %}
+<input class="form-control" value="{{ search_url }}" />
+<p><a class="btn btn-outline-info my-2" href="{{ search_url }}" target="_blank">Open <i class="fa fa-external-link-alt"></i></a></p>
+
+<h2>Documentation</h2>
 <ul>
     <li>Format: <a href="https://schema.org/Project" target="_blank">https://schema.org/Project</a></li>
-    <li><a href="{{ url_for('api_events') }}" target="_blank">Public Endpoint</a> for all events</li>
 </ul>
 
 

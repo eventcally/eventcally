@@ -3,7 +3,8 @@ from models import EventDate, Event, AdminUnit
 from dateutils import today
 from flask import jsonify
 from jsonld import get_sd_for_event_date
-from services.event import get_event_dates_query_for_admin_unit
+from services.event import get_event_dates_query
+from services.event_search import EventSearchParams
 from services.organizer import get_event_places
 
 @app.route("/api/events")
@@ -11,10 +12,23 @@ def api_events():
     dates = EventDate.query.join(Event).filter(EventDate.start >= today).filter(Event.verified).order_by(EventDate.start).all()
     return json_from_event_dates(dates)
 
+@app.route("/api/event_dates")
+def api_event_dates():
+    params = EventSearchParams()
+    params.load_from_request()
+
+    dates = get_event_dates_query(params).paginate()
+    return json_from_event_dates(dates.items)
+
 @app.route("/api/<string:au_short_name>/event_dates")
 def api_infoscreen(au_short_name):
     admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
-    dates = get_event_dates_query_for_admin_unit(admin_unit.id).paginate()
+
+    params = EventSearchParams()
+    params.load_from_request()
+    params.admin_unit_id = admin_unit.id
+
+    dates = get_event_dates_query(params).paginate()
     return json_from_event_dates(dates.items)
 
 @app.route("/api/organizer/<int:id>/event_places")

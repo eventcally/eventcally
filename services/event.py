@@ -1,6 +1,6 @@
-from models import EventCategory, Event, EventDate, EventReference
-from dateutils import dates_from_recurrence_rule, today, date_add_time
-from sqlalchemy import and_, or_, not_
+from models import EventCategory, Event, EventDate, EventReference, EventPlace, Location
+from dateutils import dates_from_recurrence_rule, today, date_add_time, date_set_end_of_day
+from sqlalchemy import and_, or_, not_, func
 
 def upsert_event_category(category_name):
     result = EventCategory.query.filter_by(name = category_name).first()
@@ -10,15 +10,28 @@ def upsert_event_category(category_name):
 
     return result
 
-def get_event_dates_query_for_admin_unit(admin_unit_id, date_filter = None, keyword = None):
-    my_event_filter = and_(or_(Event.admin_unit_id == admin_unit_id, Event.references.any(EventReference.admin_unit_id == admin_unit_id)), Event.verified)
-    my_date_filter = date_filter if date_filter is not None else (EventDate.start >= today)
+def get_event_dates_query(params):
+    event_filter = Event.verified
+    date_filter = (EventDate.start >= today)
 
-    if keyword:
-        like_keyword = '%' + keyword + '%'
-        my_event_filter = and_(my_event_filter, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))
+    if params.admin_unit_id:
+        event_filter = and_(event_filter, or_(Event.admin_unit_id == params.admin_unit_id, Event.references.any(EventReference.admin_unit_id == params.admin_unit_id)))
 
-    return EventDate.query.join(Event).filter(my_date_filter).filter(my_event_filter).order_by(EventDate.start)
+    if params.date_from:
+        date_filter = (EventDate.start >= params.date_from)
+
+    if params.date_to:
+        date_filter = and_(date_filter, EventDate.start < params.date_to)
+
+    if params.keyword:
+        like_keyword = '%' + params.keyword + '%'
+        event_filter = and_(event_filter, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))
+
+    if params.latitude and params.longitude and params.distance:
+        point = 'POINT({} {})'.format(params.longitude, params.latitude)
+        event_filter = and_(event_filter, func.ST_DistanceSphere(Location.coordinate, point) <= params.distance)
+
+    return EventDate.query.join(Event).join(EventPlace, isouter=True).join(Location, isouter=True).filter(date_filter).filter(event_filter).order_by(EventDate.start)
 
 def update_event_dates_with_recurrence_rule(event, start, end):
     event.start = start

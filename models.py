@@ -11,6 +11,8 @@ from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from enum import IntEnum
 import datetime
 from db import IntegerEnum
+from geoalchemy2 import Geometry
+from sqlalchemy import and_
 
 ### Base
 
@@ -137,6 +139,7 @@ class Location(db.Model, TrackableMixin):
     country = Column(Unicode(255))
     latitude = Column(Numeric(18,16))
     longitude = Column(Numeric(19,16))
+    coordinate = Column(Geometry(geometry_type="POINT"))
 
     def is_empty(self):
         return (not self.street
@@ -146,6 +149,27 @@ class Location(db.Model, TrackableMixin):
             and not self.country
             and not self.latitude
             and not self.longitude)
+
+    def update_coordinate(self):
+        if self.latitude and self.longitude:
+            point = 'POINT({} {})'.format(self.longitude, self.latitude)
+            self.coordinate = point
+        else:
+            self.coordinate = None
+
+    @classmethod
+    def update_coordinates(cls):
+        locations = Location.query.filter(and_(Location.latitude != None, Location.latitude != 0, Location.coordinate == None)).all()
+
+        for location in locations:
+            location.update_coordinate()
+
+        db.session.commit()
+
+@listens_for(Location, 'before_insert')
+@listens_for(Location, 'before_update')
+def update_location_coordinate(mapper, connect, self):
+    self.update_coordinate()
 
 # Events
 class EventPlace(db.Model, TrackableMixin):
