@@ -13,21 +13,21 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">{{ _('From') }}</span>
             </div>
-            <input type="text" id="date_from" name="date_from" value="{{ date_from_str }}" class="form-control datepicker" />
+            <input type="text" id="date_from" name="date_from" value="{{ params.date_from_str }}" class="form-control datepicker" />
         </div>
 
         <div class="input-group mb-2 mr-sm-2">
             <div class="input-group-prepend">
                 <span class="input-group-text">{{ _('to') }}</span>
             </div>
-            <input type="text" id="date_to" name="date_to" value="{{ date_to_str }}" class="form-control datepicker" />
+            <input type="text" id="date_to" name="date_to" value="{{ params.date_to_str }}" class="form-control datepicker" />
         </div>
 
         <div class="input-group mb-2 mr-sm-2">
             <div class="input-group-prepend">
                 <span class="input-group-text">{{ _('Keyword') }}</span>
             </div>
-            <input type="text" name="keyword" value="{{ (keyword or '') }}" class="form-control" />
+            <input type="text" name="keyword" value="{{ (params.keyword or '') }}" class="form-control" />
         </div>
 
         <button type="submit" class="btn btn-primary mb-2">{{ _('Find') }}</button>
@@ -42,6 +42,7 @@
             <h5 class="card-title">{{ date.event.name }}{{ render_event_status_pill(date.event) }}</h5>
             <h6 class="card-subtitle mb-2 text-muted"><i class="fa fa-calendar"></i> {{ date.start | datetimeformat('short') }}</h6>
             <p class="card-text">{{ date.event.description | truncate(100) }}</p>
+            <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ date.event.admin_unit.name }}</small>
             <small class="text-muted"><i class="fa fa-map-marker"></i> {{ date.event.event_place.name }}</small>
             <a href="{{ url_for('event_date', id=date.id) }}" class="stretched-link"></a>
         </div>

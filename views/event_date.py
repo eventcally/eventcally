@@ -20,9 +20,7 @@ def event_dates():
     dates = get_event_dates_query(params).paginate()
 
     return render_template('event_date/list.html',
-        date_from_str=params.date_from_str,
-        date_to_str=params.date_to_str,
-        keyword=params.keyword,
+        params=params,
         dates=dates.items,
         pagination=get_pagination_urls(dates))
 

@@ -61,6 +61,9 @@
                             </div>
                             <div class="col" style="padding:1rem">
                                 <h4><i class="fa fa-calendar"></i> {{ date.start | dateformat('EEEE') }}, {{ date.start | dateformat('medium') }} {{ date.start | timeformat('short') }} Uhr</h4>
+                                {% if date.event.admin_unit_id != params.admin_unit_id %}
+                                    <h4><i class="fa fa-database"></i> {{ date.event.admin_unit.name }}</h4>
+                                {% endif %}
                                 <h4><i class="fa fa-map-marker"></i> {{ date.event.event_place.name }}, {{ render_location(date.event.event_place.location) }}</h4>
                                 <h4><i class="fa fa-arrow-left"></i> Scanne den QR-Code mit deinem Handy für mehr Infos!</h4>
                             </div>

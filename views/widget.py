@@ -22,9 +22,7 @@ def widget_event_dates(au_short_name):
     dates = get_event_dates_query(params).paginate()
 
     return render_template('widget/event_date/list.html',
-        date_from_str=params.date_from_str,
-        date_to_str=params.date_to_str,
-        keyword=params.keyword,
+        params=params,
         dates=dates.items,
         pagination=get_pagination_urls(dates, au_short_name=au_short_name))
 
@@ -48,4 +46,5 @@ def widget_infoscreen(au_short_name):
 
     return render_template('widget/infoscreen/read.html',
         admin_unit=admin_unit,
+        params=params,
         dates=dates.items)
