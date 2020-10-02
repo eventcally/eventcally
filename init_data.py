@@ -1,6 +1,7 @@
 from app import app, db
 from services.user import upsert_user_role, add_roles_to_user
 from services.admin_unit import upsert_admin_unit_member_role
+from models import Location
 
 @app.before_first_request
 def create_initial_data():
@@ -38,5 +39,7 @@ def create_initial_data():
     upsert_user_role('admin', 'Administrator', admin_permissions)
     upsert_user_role('event_verifier', 'Event expert', event_permissions)
     add_roles_to_user('grams.daniel@gmail.com', ['admin', 'event_verifier'])
+
+    Location.update_coordinates()
 
     db.session.commit()

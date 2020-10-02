@@ -30,7 +30,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">{{ _('Keyword') }}</span>
             </div>
-            <input type="text" name="keyword" value="{{ keyword }}" class="form-control" />
+            <input type="text" name="keyword" value="{{ (keyword or '') }}" class="form-control" />
         </div>
 
         <button type="submit" class="btn btn-primary mb-2">{{ _('Find') }}</button>

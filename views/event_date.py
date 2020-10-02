@@ -8,40 +8,21 @@ from .utils import flash_errors, track_analytics, get_pagination_urls
 from sqlalchemy import and_, or_, not_
 import json
 from jsonld import get_sd_for_event_date, DateTimeEncoder
+from services.event_search import EventSearchParams
+from services.event import get_event_dates_query
 
 @app.route("/eventdates")
 def event_dates():
-    date_from = today
-    date_to = date_set_end_of_day(today + relativedelta(months=12))
-    date_from_str = form_input_from_date(date_from)
-    date_to_str = form_input_from_date(date_to)
-    keyword = ''
+    params = EventSearchParams()
+    params.set_default_date_range()
+    params.load_from_request()
 
-    if 'date_from' in request.args:
-        date_from_str = request.args['date_from']
-        date_from = form_input_to_date(date_from_str)
-
-    if 'date_to' in request.args:
-        date_to_str = request.args['date_to']
-        date_to = form_input_to_date(date_to_str)
-
-    if 'keyword' in request.args:
-        keyword = request.args['keyword']
-
-    date_filter = and_(EventDate.start >= date_from, EventDate.start < date_to)
-
-    if keyword:
-        like_keyword = '%' + keyword + '%'
-        event_filter = and_(Event.verified, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))
-    else:
-        event_filter = Event.verified
-
-    dates = EventDate.query.join(Event).filter(date_filter).filter(event_filter).order_by(EventDate.start).paginate()
+    dates = get_event_dates_query(params).paginate()
 
     return render_template('event_date/list.html',
-        date_from_str=date_from_str,
-        date_to_str=date_to_str,
-        keyword=keyword,
+        date_from_str=params.date_from_str,
+        date_to_str=params.date_to_str,
+        keyword=params.keyword,
         dates=dates.items,
         pagination=get_pagination_urls(dates))
 
