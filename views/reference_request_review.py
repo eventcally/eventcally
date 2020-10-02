@@ -3,7 +3,7 @@ from models import Event, EventDate, EventReferenceRequest, EventReferenceReques
 from flask import render_template, flash, url_for, redirect
 from flask_babelex import gettext
 from flask_security import auth_required
-from access import has_access, access_or_401, can_reference_event
+from access import has_access, access_or_401, can_reference_event, has_admin_unit_member_permission
 from dateutils import today
 from forms.reference_request import ReferenceRequestReviewForm
 from .utils import flash_errors, send_mail
