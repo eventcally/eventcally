@@ -158,9 +158,12 @@ def event_create_base(admin_unit, organizer_id=0):
         flash_errors(form)
     return render_template('event/create.html', form=form)
 
+def get_event_category_choices():
+    return sorted([(c.id, get_event_category_name(c)) for c in EventCategory.query.all()], key=lambda category: category[1])
+
 def prepare_event_form(form, admin_unit):
     form.organizer_id.choices = [(o.id, o.name) for o in EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name))]
-    form.category_id.choices = sorted([(c.id, get_event_category_name(c)) for c in EventCategory.query.all()], key=lambda category: category[1])
+    form.category_id.choices = get_event_category_choices()
 
     if form.organizer_id.data:
         places = get_event_places(form.organizer_id.data)

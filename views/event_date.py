@@ -10,16 +10,28 @@ import json
 from jsonld import get_sd_for_event_date, DateTimeEncoder
 from services.event_search import EventSearchParams
 from services.event import get_event_dates_query
+from forms.event_date import FindEventDateForm
+from .event import get_event_category_choices
+
+def prepare_event_date_form(form):
+    form.category_id.choices = get_event_category_choices()
+    form.category_id.choices.insert(0, (0, ''))
 
 @app.route("/eventdates")
 def event_dates():
     params = EventSearchParams()
     params.set_default_date_range()
-    params.load_from_request()
+
+    form = FindEventDateForm(formdata=request.args, obj=params)
+    prepare_event_date_form(form)
+
+    if form.validate():
+        form.populate_obj(params)
 
     dates = get_event_dates_query(params).paginate()
 
     return render_template('event_date/list.html',
+        form=form,
         params=params,
         dates=dates.items,
         pagination=get_pagination_urls(dates))
