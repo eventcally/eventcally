@@ -574,3 +574,37 @@ $( function() {
     </div>
 {% endfor %}
 {% endmacro %}
+
+{% macro render_event_dates_filter_form(form) %}
+<form action="" class="form-inline mb-4" method="GET" autocomplete="off">
+  <div class="input-group mb-2 mr-sm-2">
+      <div class="input-group-prepend">
+          <span class="input-group-text">{{ form.date_from.label() }}</span>
+      </div>
+      {{ form.date_from(class="form-control datepicker")|safe }}
+  </div>
+
+  <div class="input-group mb-2 mr-sm-2">
+    <div class="input-group-prepend">
+        <span class="input-group-text">{{ form.date_to.label() }}</span>
+    </div>
+    {{ form.date_to(class="form-control datepicker")|safe }}
+  </div>
+
+  <div class="input-group mb-2 mr-sm-2">
+      <div class="input-group-prepend">
+          <span class="input-group-text">{{ form.category_id.label() }}</span>
+      </div>
+      {{ form.category_id(class="form-control")|safe }}
+  </div>
+
+  <div class="input-group mb-2 mr-sm-2">
+      <div class="input-group-prepend">
+          <span class="input-group-text">{{ form.keyword.label() }}</span>
+      </div>
+      {{ form.keyword(class="form-control")|safe }}
+  </div>
+
+  <button type="submit" class="btn btn-primary mb-2">{{ _('Find') }}</button>
+</form>
+{% endmacro %}

@@ -9,6 +9,8 @@ from services.event_search import EventSearchParams
 from .utils import get_pagination_urls
 import json
 from jsonld import DateTimeEncoder, get_sd_for_event_date
+from forms.event_date import FindEventDateForm
+from .event_date import prepare_event_date_form
 
 @app.route("/<string:au_short_name>/widget/eventdates")
 def widget_event_dates(au_short_name):
@@ -16,12 +18,18 @@ def widget_event_dates(au_short_name):
 
     params = EventSearchParams()
     params.set_default_date_range()
-    params.load_from_request()
-    params.admin_unit_id = admin_unit.id
 
+    form = FindEventDateForm(formdata=request.args, obj=params)
+    prepare_event_date_form(form)
+
+    if form.validate():
+        form.populate_obj(params)
+
+    params.admin_unit_id = admin_unit.id
     dates = get_event_dates_query(params).paginate()
 
     return render_template('widget/event_date/list.html',
+        form=form,
         params=params,
         dates=dates.items,
         pagination=get_pagination_urls(dates, au_short_name=au_short_name))

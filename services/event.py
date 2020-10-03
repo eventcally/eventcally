@@ -27,6 +27,13 @@ def get_event_dates_query(params):
         like_keyword = '%' + params.keyword + '%'
         event_filter = and_(event_filter, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))
 
+    if params.category_id:
+        if type(params.category_id) is list:
+            category_ids = params.category_id
+        else:
+            category_ids = [params.category_id]
+        event_filter = and_(event_filter, Event.category_id.in_(category_ids))
+
     if params.latitude and params.longitude and params.distance:
         point = 'POINT({} {})'.format(params.longitude, params.latitude)
         event_filter = and_(event_filter, func.ST_DistanceSphere(Location.coordinate, point) <= params.distance)

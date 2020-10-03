@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_pagination, render_event_status_pill, render_event_status_pill, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_event_dates_filter_form, render_pagination, render_event_status_pill, render_event_status_pill, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Widget') }}
 {% endblock %}
@@ -10,31 +10,7 @@
 {% endblock %}
 {% block content %}
 
-    <form action="" class="form-inline mb-4" method="GET" autocomplete="off">
-
-        <div class="input-group mb-2 mr-sm-2">
-            <div class="input-group-prepend">
-                <span class="input-group-text">{{ _('From') }}</span>
-            </div>
-            <input type="text" id="date_from" name="date_from" value="{{ params.date_from_str }}" class="form-control datepicker" />
-        </div>
-
-        <div class="input-group mb-2 mr-sm-2">
-            <div class="input-group-prepend">
-                <span class="input-group-text">{{ _('to') }}</span>
-            </div>
-            <input type="text" id="date_to" name="date_to" value="{{ params.date_to_str }}" class="form-control datepicker" />
-        </div>
-
-        <div class="input-group mb-2 mr-sm-2">
-            <div class="input-group-prepend">
-                <span class="input-group-text">{{ _('Keyword') }}</span>
-            </div>
-            <input type="text" name="keyword" value="{{ (params.keyword or '') }}" class="form-control" />
-        </div>
-
-        <button type="submit" class="btn btn-primary mb-2">{{ _('Find') }}</button>
-    </form>
+    {{ render_event_dates_filter_form(form) }}
 
     {% for date in dates %}
 

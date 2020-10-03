@@ -3,6 +3,7 @@ from wtforms.widgets import html_params, HTMLString, ListWidget, CheckboxInput
 import pytz
 from datetime import datetime
 from flask_babelex import to_user_timezone
+from dateutils import berlin_tz
 
 class MultiCheckboxField(SelectMultipleField):
     widget = ListWidget(prefix_label=False)
@@ -14,8 +15,6 @@ def create_option_string(count, value):
         selected = " selected" if i == value else ""
         result = result + '<option value="%02d"%s>%02d</option>' % (i, selected, i)
     return result
-
-berlin_tz = pytz.timezone('Europe/Berlin')
 
 class CustomDateTimeWidget:
     def __call__(self, field, **kwargs):
@@ -50,3 +49,30 @@ class CustomDateTimeField(DateTimeField):
                 self.data = berlin_tz.localize(date_time)
             except:
                 raise ValueError('Not a valid datetime value. Looking for YYYY-MM-DD HH:mm.')
+
+class CustomDateWidget:
+    def __call__(self, field, **kwargs):
+        id = kwargs.pop('id', field.id)
+        date = ''
+        if field.data:
+            date_value = to_user_timezone(field.data)
+            date = date_value.strftime("%Y-%m-%d")
+
+        date_params = html_params(name=field.name, id=id, value=date, **kwargs)
+        return HTMLString('<input type="text" {}/>'.format(date_params))
+
+class CustomDateField(DateTimeField):
+    widget = CustomDateWidget()
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                date_str = valuelist[0]
+                if not date_str:
+                    self.data = None
+                    return
+
+                date = datetime.strptime(date_str, "%Y-%m-%d")
+                self.data = berlin_tz.localize(date)
+            except:
+                raise ValueError('Not a valid date value. Looking for YYYY-MM-DD.')
