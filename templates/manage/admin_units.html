@@ -5,7 +5,7 @@
 {% block content %}
 
 {% if invitations %}
-<h2>{{ _('Invitations') }}</h2>
+<h1>{{ _('Invitations') }}</h1>
 <div class="list-group">
     {% for invitation in invitations %}
         <a href="{{ url_for('admin_unit_member_invitation', id=invitation.id) }}" class="list-group-item">{{ invitation.adminunit.name }}</a>
@@ -13,7 +13,7 @@
 </div>
 {% endif %}
 
-<h2>{{ _('Admin Units') }}</h2>
+<h1>{{ _('Admin Units') }}</h1>
 <div class="my-4">
     <a class="btn btn-outline-secondary my-1" href="{{ url_for('admin_unit_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create admin unit') }}</a>
 </div>

@@ -1,13 +1,12 @@
-{% extends "layout.html" %}
-{% from "_macros.html" import render_pagination, render_field_with_errors, render_event_organizer, render_manage_menu %}
+{% extends "layout_manage.html" %}
+{% set active_id = "places" %}
+{% from "_macros.html" import render_pagination, render_field_with_errors, render_event_organizer %}
 {% block title %}
 {{ _('Places') }}
 {% endblock %}
 {% block content %}
 
-<h1>{{ admin_unit.name }}</h1>
-
-{{ render_manage_menu(admin_unit, 'places') }}
+<h1>{{ _('Places') }}</h1>
 
 <div class="my-4">
     <form action="" class="form-inline" method="GET">
