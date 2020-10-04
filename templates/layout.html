@@ -41,7 +41,7 @@
       {% block navbar %}
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="navbar-brand" href="{{ url_for('home') }}">
-            oveda
+            <i class="fa fa-bullseye fa-fw"></i> oveda
           </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -88,8 +88,12 @@
 
           {% include "_messages.html" %}
 
-          {% block content -%}
-          {%- endblock content %}
+          {% block content_container -%}
+          <main class="p-3">
+            {% block content -%}
+            {%- endblock content %}
+          </main>
+          {%- endblock content_container %}
 
           <!-- Footer -->
           {% block footer -%}

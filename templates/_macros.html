@@ -471,27 +471,6 @@
   {% endif %}
 {% endmacro %}
 
-{% macro render_tab(id, title, link, active_id=None) %}
-  <li class="nav-item">
-    <a class="nav-link{% if active_id == id %} active{% endif %}" href="{{ link }}">{{ title }}</a>
-  </li>
-{% endmacro %}
-
-{% macro render_manage_menu(admin_unit, active_id=None) %}
-<ul class="nav nav-pills">
-  {{ render_tab('reviews', _('Reviews'), url_for('manage_admin_unit_event_reviews', id=admin_unit.id), active_id) }}
-  {{ render_tab('events', _('Events'), url_for('manage_admin_unit_events', id=admin_unit.id), active_id) }}
-  {{ render_tab('references_incoming', _('Incoming references'), url_for('manage_admin_unit_references_incoming', id=admin_unit.id), active_id) }}
-  {{ render_tab('references_outgoing', _('Outgoing references'), url_for('manage_admin_unit_references_outgoing', id=admin_unit.id), active_id) }}
-  {{ render_tab('reference_requests_incoming', _('Incoming reference requests'), url_for('manage_admin_unit_reference_requests_incoming', id=admin_unit.id), active_id) }}
-  {{ render_tab('reference_requests_outgoing', _('Outgoing reference requests'), url_for('manage_admin_unit_reference_requests_outgoing', id=admin_unit.id), active_id) }}
-  {{ render_tab('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
-  {{ render_tab('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
-  {{ render_tab('members', _('Members'), url_for('manage_admin_unit_members', id=admin_unit.id), active_id) }}
-  {{ render_tab('widgets', _('Widgets'), url_for('manage_admin_unit_widgets', id=admin_unit.id), active_id) }}
-</ul>
-{% endmacro %}
-
 {% macro render_event_organizer_places_header() %}
 <script>
 $( function() {

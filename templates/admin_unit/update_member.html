@@ -1,12 +1,9 @@
-{% extends "layout.html" %}
-{% from "_macros.html" import render_manage_menu, render_field_with_errors, render_field %}
+{% extends "layout_manage.html" %}
+{% set active_id = "members" %}
+{% from "_macros.html" import render_field_with_errors, render_field %}
 {% block content %}
 
-<h1>{{ admin_unit.name }}</h1>
-
-{{ render_manage_menu(admin_unit, 'members') }}
-
-<h2>{{ _('Update member') }}</h2>
+<h1>{{ _('Update member') }}</h1>
 <form action="" method="POST">
   {{ form.hidden_tag() }}
 
