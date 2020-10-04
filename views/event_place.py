@@ -5,7 +5,7 @@ from flask_babelex import gettext
 from flask_security import auth_required
 from access import has_access, access_or_401, get_admin_unit_for_manage_or_404
 from forms.event_place import UpdateEventPlaceForm, CreateEventPlaceForm
-from .utils import flash_errors, upsert_image_with_data, send_mail
+from .utils import flash_errors, upsert_image_with_data, send_mail, handleSqlError
 from sqlalchemy.sql import asc, func
 from sqlalchemy.exc import SQLAlchemyError
 

@@ -6,7 +6,7 @@ from flask_security import auth_required
 from access import has_access, access_or_401, can_reference_event, has_admin_unit_member_permission
 from dateutils import today
 from forms.reference_request import ReferenceRequestReviewForm
-from .utils import flash_errors, send_mail
+from .utils import flash_errors, send_mail, handleSqlError
 from services.reference import create_event_reference_for_request
 from sqlalchemy.exc import SQLAlchemyError
 

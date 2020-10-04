@@ -7,7 +7,7 @@ from access import has_access, access_or_401, can_reference_event, has_admin_uni
 from dateutils import today
 from datetime import datetime
 from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm
-from .utils import flash_errors, upsert_image_with_data, send_mail
+from .utils import flash_errors, upsert_image_with_data, send_mail, handleSqlError
 from utils import get_event_category_name
 from services.event import upsert_event_category, update_event_dates_with_recurrence_rule
 from services.organizer import get_event_places

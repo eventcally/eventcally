@@ -6,7 +6,7 @@ from flask_security import auth_required
 from access import has_access, access_or_401, can_reference_event
 from dateutils import today
 from forms.event import ReviewEventForm
-from .utils import flash_errors, send_mail
+from .utils import flash_errors, send_mail, handleSqlError
 from sqlalchemy.exc import SQLAlchemyError
 
 @app.route('/event/<int:event_id>/review', methods=('GET', 'POST'))
