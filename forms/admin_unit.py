@@ -35,4 +35,4 @@ class CreateAdminUnitForm(BaseAdminUnitForm):
     submit = SubmitField(lazy_gettext("Create admin unit"))
 
 class UpdateAdminUnitForm(BaseAdminUnitForm):
-    submit = SubmitField(lazy_gettext("Update admin unit"))
+    submit = SubmitField(lazy_gettext("Update settings"))

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-01 21:20+0200\n"
+"POT-Creation-Date: 2020-10-04 12:59+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -158,7 +158,8 @@ msgstr "Kurzname"
 msgid "The short name is used to create a unique identifier for your events"
 msgstr ""
 "Der Kurzname wird verwendet, um Ihre Veranstaltungen eindeutig zu "
-"identifizieren"
+"identifizieren. Der Kurzname darf nur Buchstaben, Nummern und "
+"Unterstriche enthalten."
 
 #: forms/admin_unit.py:20
 msgid "Short name must contain only letters numbers or underscore"
@@ -200,9 +201,9 @@ msgstr "Nur Fotos!"
 msgid "Create admin unit"
 msgstr "Verwaltungseinheit erstellen"
 
-#: forms/admin_unit.py:38 templates/admin_unit/update.html:10
-msgid "Update admin unit"
-msgstr "Verwaltungseinheit aktualisieren"
+#: forms/admin_unit.py:38
+msgid "Update settings"
+msgstr "Einstellungen speichern"
 
 #: forms/admin_unit_member.py:13 forms/admin_unit_member.py:29
 #: templates/profile.html:37
@@ -229,7 +230,7 @@ msgstr "Einladung löschen"
 msgid "Delete member"
 msgstr "Mitglied löschen"
 
-#: forms/admin_unit_member.py:30 templates/admin_unit/update_member.html:9
+#: forms/admin_unit_member.py:30 templates/admin_unit/update_member.html:6
 msgid "Update member"
 msgstr "Mitglied aktualisieren"
 
@@ -279,13 +280,13 @@ msgstr "Stichworte"
 
 #: forms/event.py:51 forms/event.py:141 forms/event_place.py:44
 #: templates/_macros.html:363 templates/event/create.html:59
-#: templates/event/update.html:46 templates/manage/events.html:18
-#: templates/manage/places.html:18 templates/organizer/create.html:16
+#: templates/event/update.html:46 templates/manage/events.html:17
+#: templates/manage/places.html:17 templates/organizer/create.html:16
 #: templates/organizer/delete.html:13 templates/organizer/update.html:16
 msgid "Organizer"
 msgstr "Veranstalter"
 
-#: forms/event.py:52 templates/_macros.html:319
+#: forms/event.py:52 forms/event_date.py:20 templates/_macros.html:319
 msgid "Category"
 msgstr "Kategorie"
 
@@ -363,8 +364,8 @@ msgid "Enter new place"
 msgstr "Neuen Ort eingeben"
 
 #: forms/event.py:79 templates/event/create.html:31 templates/example.html:10
-#: templates/manage/events.html:36 templates/manage/organizers.html:22
-#: templates/manage/widgets.html:20 templates/manage/widgets.html:23
+#: templates/manage/events.html:35 templates/manage/organizers.html:21
+#: templates/manage/widgets.html:19 templates/manage/widgets.html:22
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
@@ -447,13 +448,25 @@ msgstr "Prüfung speichern"
 msgid "Find events"
 msgstr "Veranstaltungen finden"
 
-#: forms/event.py:140 templates/event_date/list.html:28
-#: templates/manage/events.html:25 templates/widget/event_date/list.html:31
+#: forms/event.py:140 forms/event_date.py:18 templates/manage/events.html:24
 msgid "Keyword"
 msgstr "Stichwort"
 
+#: forms/event_date.py:16
+msgid "From"
+msgstr "Von"
+
+#: forms/event_date.py:17
+msgid "to"
+msgstr "bis"
+
+#: forms/event_date.py:22 templates/_macros.html:587
+#: templates/manage/events.html:29
+msgid "Find"
+msgstr "Finden"
+
 #: forms/event_place.py:34 templates/event_place/create.html:10
-#: templates/event_place/list.html:11 templates/manage/places.html:26
+#: templates/event_place/list.html:11 templates/manage/places.html:25
 msgid "Create place"
 msgstr "Ort hinzufügen"
 
@@ -466,7 +479,7 @@ msgstr "Ort aktualisieren"
 msgid "Find places"
 msgstr "Orte finden"
 
-#: forms/organizer.py:34 templates/manage/organizers.html:13
+#: forms/organizer.py:34 templates/manage/organizers.html:12
 #: templates/organizer/create.html:10
 msgid "Create organizer"
 msgstr "Veranstalter hinzufügen"
@@ -480,7 +493,7 @@ msgid "Delete organizer"
 msgstr "Veranstalter löschen"
 
 #: forms/reference.py:8 forms/reference_request.py:9 templates/_macros.html:378
-#: templates/admin_unit/create.html:16 templates/admin_unit/update.html:16
+#: templates/admin_unit/create.html:16 templates/admin_unit/update.html:17
 msgid "Admin unit"
 msgstr "Verwaltungseinheit"
 
@@ -542,7 +555,7 @@ msgid "Host"
 msgstr "Veranstalter"
 
 #: templates/_macros.html:99 templates/_macros.html:245
-#: templates/admin_unit/create.html:26 templates/admin_unit/update.html:26
+#: templates/admin_unit/create.html:26 templates/admin_unit/update.html:27
 #: templates/event_place/create.html:29 templates/event_place/update.html:29
 #: templates/organizer/create.html:25 templates/organizer/update.html:25
 msgid "Location"
@@ -587,54 +600,11 @@ msgstr "Mit Google anmelden"
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
-#: templates/_macros.html:482 templates/manage/reviews.html:4
-msgid "Reviews"
-msgstr "Prüfungen"
-
-#: templates/_macros.html:483 templates/event_place/read.html:22
-#: templates/layout.html:55 templates/manage/events.html:4
-msgid "Events"
-msgstr "Veranstaltungen"
-
-#: templates/_macros.html:484
-msgid "Incoming references"
-msgstr "Eingehende Empfehlungen"
-
-#: templates/_macros.html:485
-msgid "Outgoing references"
-msgstr "Ausgehende Empfehlungen"
-
-#: templates/_macros.html:486
-msgid "Incoming reference requests"
-msgstr "Eingehende Empfehlungsanfragen"
-
-#: templates/_macros.html:487
-msgid "Outgoing reference requests"
-msgstr "Ausgehende Empfehlungsanfragen"
-
-#: templates/_macros.html:488 templates/manage/organizers.html:4
-msgid "Organizers"
-msgstr "Veranstalter"
-
-#: templates/_macros.html:489 templates/event_place/list.html:3
-#: templates/event_place/list.html:7 templates/manage/places.html:4
-msgid "Places"
-msgstr "Orte"
-
-#: templates/_macros.html:490 templates/manage/members.html:4
-#: templates/manage/members.html:31
-msgid "Members"
-msgstr "Mitglieder"
-
-#: templates/_macros.html:491 templates/manage/widgets.html:4
-msgid "Widgets"
-msgstr "Widgets"
-
-#: templates/_macros.html:531 templates/_macros.html:533
+#: templates/_macros.html:510 templates/_macros.html:512
 msgid "Previous"
 msgstr "Zurück"
 
-#: templates/_macros.html:536 templates/_macros.html:538
+#: templates/_macros.html:515 templates/_macros.html:517
 msgid "Next"
 msgstr "Weiter"
 
@@ -651,12 +621,17 @@ msgstr "Kostenlos registrieren"
 msgid "Manage"
 msgstr "Verwaltung"
 
+#: templates/event_place/read.html:22 templates/layout.html:55
+#: templates/layout_manage.html:21 templates/manage/events.html:5
+#: templates/manage/events.html:9
+msgid "Events"
+msgstr "Veranstaltungen"
+
 #: templates/layout.html:56
 msgid "Example"
 msgstr "Beispiel"
 
-#: templates/developer/read.html:4 templates/developer/read.html:10
-#: templates/layout.html:57
+#: templates/developer/read.html:4 templates/layout.html:57
 msgid "Developer"
 msgstr "Entwickler"
 
@@ -673,7 +648,55 @@ msgstr "Administration"
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: templates/manage/admin_units.html:8 templates/manage/members.html:12
+#: templates/layout_manage.html:20 templates/manage/reviews.html:5
+#: templates/manage/reviews.html:9
+msgid "Reviews"
+msgstr "Prüfungen"
+
+#: templates/layout_manage.html:22 templates/manage/references_incoming.html:9
+msgid "Incoming references"
+msgstr "Eingehende Empfehlungen"
+
+#: templates/layout_manage.html:23 templates/manage/references_outgoing.html:9
+msgid "Outgoing references"
+msgstr "Ausgehende Empfehlungen"
+
+#: templates/layout_manage.html:24
+#: templates/manage/reference_requests_incoming.html:9
+msgid "Incoming reference requests"
+msgstr "Eingehende Empfehlungsanfragen"
+
+#: templates/layout_manage.html:25
+#: templates/manage/reference_requests_outgoing.html:9
+msgid "Outgoing reference requests"
+msgstr "Ausgehende Empfehlungsanfragen"
+
+#: templates/layout_manage.html:26 templates/manage/organizers.html:5
+#: templates/manage/organizers.html:9
+msgid "Organizers"
+msgstr "Veranstalter"
+
+#: templates/event_place/list.html:3 templates/event_place/list.html:7
+#: templates/layout_manage.html:27 templates/manage/places.html:5
+#: templates/manage/places.html:9
+msgid "Places"
+msgstr "Orte"
+
+#: templates/layout_manage.html:28 templates/manage/members.html:5
+#: templates/manage/members.html:28
+msgid "Members"
+msgstr "Mitglieder"
+
+#: templates/layout_manage.html:29 templates/manage/widgets.html:5
+#: templates/manage/widgets.html:9
+msgid "Widgets"
+msgstr "Widgets"
+
+#: templates/admin_unit/update.html:11 templates/layout_manage.html:30
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: templates/manage/admin_units.html:8 templates/manage/members.html:9
 #: templates/profile.html:11
 msgid "Invitations"
 msgstr "Einladungen"
@@ -684,14 +707,14 @@ msgstr "Einladungen"
 msgid "Admin Units"
 msgstr "Verwaltungseinheiten"
 
-#: templates/admin_unit/create.html:44 templates/admin_unit/update.html:44
+#: templates/admin_unit/create.html:44 templates/admin_unit/update.html:45
 #: templates/event/create.html:123 templates/event/update.html:76
 #: templates/event_place/create.html:44 templates/event_place/update.html:44
 #: templates/organizer/create.html:43 templates/organizer/update.html:43
 msgid "Additional information"
 msgstr "Zusätzliche Informationen"
 
-#: templates/admin_unit/invite_member.html:9 templates/manage/members.html:15
+#: templates/admin_unit/invite_member.html:6 templates/manage/members.html:12
 msgid "Invite user"
 msgstr "Nutzer:in einladen"
 
@@ -754,7 +777,7 @@ msgid "Target group"
 msgstr "Zielgruppe"
 
 #: templates/event/read.html:11 templates/event/review.html:8
-#: templates/manage/reviews.html:19
+#: templates/manage/reviews.html:18
 msgid "Review event"
 msgstr "Veranstaltung prüfen"
 
@@ -790,24 +813,11 @@ msgstr "Empfehlung anfragen für Veranstaltung \"%(name)s\""
 msgid "You can visit this page again to check the status."
 msgstr "Sie können diese Seite erneut besuchen, um den Status zu prüfen."
 
-#: templates/event/review_status.html:21 templates/manage/events.html:46
-#: templates/manage/references_incoming.html:19
-#: templates/manage/references_outgoing.html:19
+#: templates/event/review_status.html:21 templates/manage/events.html:45
+#: templates/manage/references_incoming.html:18
+#: templates/manage/references_outgoing.html:18
 msgid "View"
 msgstr "Anzeigen"
-
-#: templates/event_date/list.html:14 templates/widget/event_date/list.html:17
-msgid "From"
-msgstr "Von"
-
-#: templates/event_date/list.html:21 templates/widget/event_date/list.html:24
-msgid "to"
-msgstr "bis"
-
-#: templates/event_date/list.html:33 templates/manage/events.html:30
-#: templates/widget/event_date/list.html:36
-msgid "Find"
-msgstr "Finden"
 
 #: templates/event_place/read.html:19
 msgid "Info"
@@ -827,49 +837,49 @@ msgstr "Möchtest du die Einladung von %(name)s akzeptieren?"
 msgid "Member"
 msgstr "Mitglied"
 
-#: templates/manage/events.html:47 templates/manage/members.html:38
-#: templates/manage/organizers.html:23 templates/manage/places.html:35
-#: templates/manage/references_incoming.html:20
+#: templates/manage/events.html:46 templates/manage/members.html:35
+#: templates/manage/organizers.html:22 templates/manage/places.html:34
+#: templates/manage/references_incoming.html:19
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: templates/manage/events.html:48 templates/manage/members.html:24
-#: templates/manage/members.html:39 templates/manage/organizers.html:24
-#: templates/manage/references_incoming.html:21
+#: templates/manage/events.html:47 templates/manage/members.html:21
+#: templates/manage/members.html:36 templates/manage/organizers.html:23
+#: templates/manage/references_incoming.html:20
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/manage/organizers.html:25
+#: templates/manage/organizers.html:24
 msgid "Assistents"
 msgstr "Assistenten"
 
-#: templates/manage/reference_requests_incoming.html:4
-#: templates/manage/reference_requests_outgoing.html:4
+#: templates/manage/reference_requests_incoming.html:5
+#: templates/manage/reference_requests_outgoing.html:5
 msgid "Reference requests"
 msgstr "Empfehlungsanfragen"
 
-#: templates/manage/reference_requests_incoming.html:19
+#: templates/manage/reference_requests_incoming.html:18
 msgid "Review request"
 msgstr "Anfrage prüfen"
 
-#: templates/manage/reference_requests_outgoing.html:19
+#: templates/manage/reference_requests_outgoing.html:18
 msgid "Show review status"
 msgstr "Prüfungsstatus anzeigen"
 
-#: templates/manage/references_incoming.html:4
-#: templates/manage/references_outgoing.html:4
+#: templates/manage/references_incoming.html:5
+#: templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr "Empfehlungen"
 
-#: templates/manage/widgets.html:12
+#: templates/manage/widgets.html:11
 msgid "Veranstaltungen als iFrame einbetten"
 msgstr "Veranstaltungen als iFrame einbetten"
 
-#: templates/manage/widgets.html:19
+#: templates/manage/widgets.html:18
 msgid "Link, um Veranstaltungen vorzuschlagen"
 msgstr "Link, um Veranstaltungen vorzuschlagen"
 
-#: templates/manage/widgets.html:26
+#: templates/manage/widgets.html:25
 msgid "URL für Infoscreen"
 msgstr "URL für Infoscreen"
 
@@ -894,11 +904,11 @@ msgstr "Du hast noch keinen Account? Kein Problem!"
 msgid "Widget"
 msgstr "Widget"
 
-#: views/admin_unit.py:50
+#: views/admin_unit.py:53
 msgid "Admin unit successfully created"
 msgstr "Verwaltungseinheit erfolgreich erstellt"
 
-#: views/admin_unit.py:69
+#: views/admin_unit.py:75
 msgid "AdminUnit successfully updated"
 msgstr "Verwaltungseinheit erfolgreich aktualisiert"
 
@@ -958,7 +968,7 @@ msgstr "Veranstaltung erfolgreich erstellt"
 msgid "Thank you so much! The event is being verified."
 msgstr "Vielen Dank! Die Veranstaltung wird geprüft."
 
-#: views/event.py:189
+#: views/event.py:192
 msgid "New event review"
 msgstr "Neue Veranstaltung zu prüfen"
 
@@ -1119,4 +1129,7 @@ msgstr "Fehler im Feld %s: %s"
 
 #~ msgid "Organization"
 #~ msgstr "Organisation"
+
+#~ msgid "Update admin unit"
+#~ msgstr "Verwaltungseinheit aktualisieren"
 

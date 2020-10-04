@@ -86,10 +86,10 @@
 
       <div class="body-content"{% block body_content__attribs %}{% endblock body_content__attribs %}>
 
-          {% include "_messages.html" %}
-
           {% block content_container -%}
           <main class="p-3">
+            {% include "_messages.html" %}
+
             {% block content -%}
             {%- endblock content %}
           </main>

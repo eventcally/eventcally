@@ -27,11 +27,14 @@
             {{ render_submenu_item('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
             {{ render_submenu_item('members', _('Members'), url_for('manage_admin_unit_members', id=admin_unit.id), active_id) }}
             {{ render_submenu_item('widgets', _('Widgets'), url_for('manage_admin_unit_widgets', id=admin_unit.id), active_id) }}
+            {{ render_submenu_item('settings', _('Settings'), url_for('admin_unit_update', id=admin_unit.id), active_id) }}
           </ul>
         </div>
       </nav>
     </aside>
     <main class="col bg-faded p-3">
+      {% include "_messages.html" %}
+
       {% block content -%}
       {%- endblock content %}
     </main>

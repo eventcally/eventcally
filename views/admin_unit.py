@@ -1,8 +1,15 @@
-from app import app
-from flask import url_for, render_template, request, redirect
-from flask_security import auth_required
+from app import app, db
+from flask import url_for, render_template, request, redirect, flash
+from flask_babelex import gettext
+from flask_security import auth_required, current_user
 from models import AdminUnitMemberInvitation
 from sqlalchemy.exc import SQLAlchemyError
+from access import get_admin_unit_for_manage_or_404, access_or_401, has_access
+from forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
+from .utils import upsert_image_with_data, handleSqlError, permission_missing
+from models import AdminUnit, Location, EventOrganizer
+from services.admin_unit import add_user_to_admin_unit_with_roles
+from services.location import assign_location_values
 
 def update_admin_unit_with_form(admin_unit, form):
     form.populate_obj(admin_unit)
@@ -14,9 +21,6 @@ def update_admin_unit_with_form(admin_unit, form):
 @app.route("/admin_unit/create", methods=('GET', 'POST'))
 @auth_required()
 def admin_unit_create():
-    if not can_create_admin_unit():
-        abort(401)
-
     form = CreateAdminUnitForm()
 
     if form.validate_on_submit():
@@ -26,7 +30,6 @@ def admin_unit_create():
 
         try:
             db.session.add(admin_unit)
-            upsert_org_or_admin_unit_for_admin_unit(admin_unit)
 
             # Aktuellen Nutzer als Admin hinzufügen
             add_user_to_admin_unit_with_roles(current_user, admin_unit, ['admin', 'event_verifier'])
@@ -54,10 +57,13 @@ def admin_unit_create():
             flash(handleSqlError(e), 'danger')
     return render_template('admin_unit/create.html', form=form)
 
-@app.route('/admin_unit/<int:admin_unit_id>/update', methods=('GET', 'POST'))
+@app.route('/admin_unit/<int:id>/update', methods=('GET', 'POST'))
 @auth_required()
-def admin_unit_update(admin_unit_id):
-    admin_unit = get_admin_unit_for_manage_or_404(admin_unit_id)
+def admin_unit_update(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+
+    if not has_access(admin_unit, 'admin_unit:update'):
+        return permission_missing(url_for('manage_admin_unit', id=admin_unit.id))
 
     form = UpdateAdminUnitForm(obj=admin_unit)
 
@@ -67,7 +73,6 @@ def admin_unit_update(admin_unit_id):
         try:
             db.session.commit()
             flash(gettext('AdminUnit successfully updated'), 'success')
-            return redirect(url_for('manage_admin_unit', id=admin_unit.id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), 'danger')
