@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-04 12:59+0200\n"
+"POT-Creation-Date: 2020-10-04 13:28+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -142,11 +142,11 @@ msgid "Longitude"
 msgstr "Längengrad"
 
 #: forms/admin_unit.py:19 forms/event.py:18 forms/event.py:36 forms/event.py:41
-#: forms/event.py:118 forms/event_place.py:20 forms/organizer.py:19
-#: forms/organizer.py:41 forms/reference.py:18 forms/reference_request.py:14
-#: templates/_macros.html:97 templates/admin/admin_units.html:18
-#: templates/event_place/list.html:19 templates/profile.html:16
-#: templates/profile.html:36
+#: forms/event.py:118 forms/event_place.py:20 forms/event_place.py:42
+#: forms/organizer.py:19 forms/organizer.py:41 forms/reference.py:18
+#: forms/reference_request.py:14 templates/_macros.html:97
+#: templates/admin/admin_units.html:18 templates/event_place/list.html:19
+#: templates/profile.html:16 templates/profile.html:36
 msgid "Name"
 msgstr "Name"
 
@@ -278,7 +278,7 @@ msgstr "Vorheriges Startdatum"
 msgid "Tags"
 msgstr "Stichworte"
 
-#: forms/event.py:51 forms/event.py:141 forms/event_place.py:44
+#: forms/event.py:51 forms/event.py:141 forms/event_place.py:48
 #: templates/_macros.html:363 templates/event/create.html:59
 #: templates/event/update.html:46 templates/manage/events.html:17
 #: templates/manage/places.html:17 templates/organizer/create.html:16
@@ -351,7 +351,7 @@ msgstr "Bewertung"
 #: forms/event.py:73 forms/event.py:74 forms/event.py:105
 #: templates/_macros.html:333 templates/event/create.html:84
 #: templates/event/update.html:55 templates/event_place/create.html:20
-#: templates/event_place/update.html:20
+#: templates/event_place/delete.html:13 templates/event_place/update.html:20
 msgid "Place"
 msgstr "Ort"
 
@@ -475,7 +475,11 @@ msgstr "Ort hinzufügen"
 msgid "Update place"
 msgstr "Ort aktualisieren"
 
-#: forms/event_place.py:43
+#: forms/event_place.py:41 templates/event_place/delete.html:6
+msgid "Delete place"
+msgstr "Ort löschen"
+
+#: forms/event_place.py:47
 msgid "Find places"
 msgstr "Orte finden"
 
@@ -845,7 +849,7 @@ msgstr "Bearbeiten"
 
 #: templates/manage/events.html:47 templates/manage/members.html:21
 #: templates/manage/members.html:36 templates/manage/organizers.html:23
-#: templates/manage/references_incoming.html:20
+#: templates/manage/places.html:35 templates/manage/references_incoming.html:20
 msgid "Delete"
 msgstr "Löschen"
 
@@ -979,6 +983,14 @@ msgstr "Ort erfolgreich erstellt"
 #: views/event_place.py:50
 msgid "Place successfully updated"
 msgstr "Ort erfolgreich aktualisiert"
+
+#: views/event_place.py:70
+msgid "Entered name does not match place name"
+msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
+
+#: views/event_place.py:75
+msgid "Place successfully deleted"
+msgstr "Ort erfolgreich gelöscht"
 
 #: views/event_review.py:55 views/reference_request_review.py:76
 msgid "Event review status updated"

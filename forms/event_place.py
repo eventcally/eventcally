@@ -37,6 +37,10 @@ class UpdateEventPlaceForm(BaseEventPlaceForm):
     public = BooleanField(lazy_gettext('Other organizers can use this location'), validators=[Optional()])
     submit = SubmitField(lazy_gettext("Update place"))
 
+class DeleteEventPlaceForm(FlaskForm):
+    submit = SubmitField(lazy_gettext("Delete place"))
+    name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
+
 class FindEventPlaceForm(FlaskForm):
     class Meta:
         csrf = False
