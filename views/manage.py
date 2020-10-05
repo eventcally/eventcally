@@ -1,9 +1,9 @@
 from app import app, db
 from models import AdminUnit, AdminUnitMember, AdminUnitMemberInvitation, Event, EventPlace, EventReviewStatus, EventOrganizer, User
-from flask import render_template, flash, url_for, redirect, request, jsonify
+from flask import render_template, flash, url_for, redirect, request, jsonify, make_response
 from flask_babelex import gettext
 from flask_security import auth_required, roles_required, current_user
-from access import has_access, access_or_401, get_admin_units_for_manage, get_admin_unit_for_manage_or_404
+from access import has_access, access_or_401, get_admin_unit_for_manage, get_admin_units_for_manage, get_admin_unit_for_manage_or_404
 from sqlalchemy.sql import asc, func
 from sqlalchemy import and_, or_, not_
 from .utils import get_pagination_urls, permission_missing
@@ -13,6 +13,21 @@ from forms.event import FindEventForm
 @app.route("/manage")
 @auth_required()
 def manage():
+    try:
+        if 'manage_admin_unit_id' in request.cookies:
+            manage_admin_unit_id = int(request.cookies.get('manage_admin_unit_id'))
+            admin_unit = get_admin_unit_for_manage(manage_admin_unit_id)
+
+            if admin_unit:
+                return redirect(url_for('manage_admin_unit', id=admin_unit.id))
+    except:
+        pass
+
+    return redirect(url_for('manage_admin_units'))
+
+@app.route("/manage/admin_units")
+@auth_required()
+def manage_admin_units():
     admin_units = get_admin_units_for_manage()
     invitations = AdminUnitMemberInvitation.query.filter(AdminUnitMemberInvitation.email == current_user.email).all()
 
@@ -24,7 +39,10 @@ def manage():
 @auth_required()
 def manage_admin_unit(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    return redirect(url_for('manage_admin_unit_event_reviews', id=admin_unit.id))
+
+    response = make_response(redirect(url_for('manage_admin_unit_events', id=admin_unit.id)))
+    response.set_cookie('manage_admin_unit_id', str(admin_unit.id))
+    return response
 
 @app.route('/manage/admin_unit/<int:id>/reviews')
 @auth_required()

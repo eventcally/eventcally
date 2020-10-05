@@ -11,20 +11,27 @@
   <div class="row wrapper min-vh-100 flex-column flex-sm-row">
     <aside class="col-12 col-sm-3 p-0 bg-light flex-shrink-1">
       <nav class="navbar navbar-expand-sm navbar-light bg-light align-items-start flex-sm-column flex-row">
-        <a class="navbar-brand" href="#">{{ admin_unit.name }}</a>
+        <a class="navbar-brand" href="{{ url_for('manage_admin_units') }}">{{ admin_unit.name }} <i class="fa fa-exchange-alt text-muted ml-1 small"></i></a>
         <a href class="navbar-toggler" data-toggle="collapse" data-target=".sidebar">
           <span class="navbar-toggler-icon"></span>
         </a>
         <div class="collapse navbar-collapse sidebar">
           <ul class="flex-column navbar-nav w-100 justify-content-between">
-            {{ render_submenu_item('reviews', _('Reviews'), url_for('manage_admin_unit_event_reviews', id=admin_unit.id), active_id) }}
             {{ render_submenu_item('events', _('Events'), url_for('manage_admin_unit_events', id=admin_unit.id), active_id) }}
-            {{ render_submenu_item('references_incoming', _('Incoming references'), url_for('manage_admin_unit_references_incoming', id=admin_unit.id), active_id) }}
-            {{ render_submenu_item('references_outgoing', _('Outgoing references'), url_for('manage_admin_unit_references_outgoing', id=admin_unit.id), active_id) }}
-            {{ render_submenu_item('reference_requests_incoming', _('Incoming reference requests'), url_for('manage_admin_unit_reference_requests_incoming', id=admin_unit.id), active_id) }}
-            {{ render_submenu_item('reference_requests_outgoing', _('Outgoing reference requests'), url_for('manage_admin_unit_reference_requests_outgoing', id=admin_unit.id), active_id) }}
             {{ render_submenu_item('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
             {{ render_submenu_item('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
+            {{ render_submenu_item('reviews', _('Reviews'), url_for('manage_admin_unit_event_reviews', id=admin_unit.id), active_id) }}
+            <li class="nav-item dropdown">
+              <a class="nav-link pl-0 dropdown-toggle{% if active_id.startswith('reference') %} active{% endif %}" href="#" id="navbarDropdownReferences" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ 'References' }}
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownReferences">
+                <a class="dropdown-item" href="{{ url_for('manage_admin_unit_references_incoming', id=admin_unit.id) }}">{{ _('Incoming references') }}</a>
+                <a class="dropdown-item" href="{{ url_for('manage_admin_unit_references_outgoing', id=admin_unit.id) }}">{{ _('Outgoing references') }}</a>
+                <a class="dropdown-item" href="{{ url_for('manage_admin_unit_reference_requests_incoming', id=admin_unit.id) }}">{{ _('Incoming reference requests') }}</a>
+                <a class="dropdown-item" href="{{ url_for('manage_admin_unit_reference_requests_outgoing', id=admin_unit.id) }}">{{ _('Outgoing reference requests') }}</a>
+              </div>
+            </li>
             {{ render_submenu_item('members', _('Members'), url_for('manage_admin_unit_members', id=admin_unit.id), active_id) }}
             {{ render_submenu_item('widgets', _('Widgets'), url_for('manage_admin_unit_widgets', id=admin_unit.id), active_id) }}
             {{ render_submenu_item('settings', _('Settings'), url_for('admin_unit_update', id=admin_unit.id), active_id) }}
