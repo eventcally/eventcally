@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_event_dates_filter_form, render_pagination, render_event_status_pill, render_event_status_pill, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_pagination, render_event_status_pill, render_event_status_pill, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Widget') }}
 {% endblock %}
@@ -10,7 +10,41 @@
 {% endblock %}
 {% block content %}
 
-    {{ render_event_dates_filter_form(form) }}
+    <form action="" class="form-inline mb-4" method="GET" autocomplete="off">
+        {{ form.hidden_tag() }}
+
+        <div class="input-group mb-2 mr-sm-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">{{ form.date_from.label.text }}</span>
+            </div>
+            {{ form.date_from(class="form-control datepicker")|safe }}
+        </div>
+
+        <div class="input-group mb-2 mr-sm-2">
+          <div class="input-group-prepend">
+              <span class="input-group-text">{{ form.date_to.label.text }}</span>
+          </div>
+          {{ form.date_to(class="form-control datepicker")|safe }}
+        </div>
+
+        {% if form.category_id %}
+        <div class="input-group mb-2 mr-sm-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">{{ form.category_id.label.text }}</span>
+            </div>
+            {{ form.category_id(class="form-control")|safe }}
+        </div>
+        {% endif %}
+
+        <div class="input-group mb-2 mr-sm-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">{{ form.keyword.label.text }}</span>
+            </div>
+            {{ form.keyword(class="form-control")|safe }}
+        </div>
+
+        <button type="submit" class="btn btn-primary mb-2">{{ _('Find') }}</button>
+    </form>
 
     {% for date in dates %}
 
