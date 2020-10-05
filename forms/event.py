@@ -7,7 +7,7 @@ from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus, Image
 from .common import event_rating_choices, BaseImageForm
-from .widgets import CustomDateTimeField
+from .widgets import CustomDateTimeField, CustomDateField
 
 class EventPlaceLocationForm(FlaskForm):
     street = StringField(lazy_gettext('Street'), validators=[Optional()])
@@ -144,6 +144,10 @@ class ReviewEventForm(FlaskForm):
 class FindEventForm(FlaskForm):
     class Meta:
         csrf = False
-    submit = SubmitField(lazy_gettext("Find events"))
+    date_from = CustomDateField(lazy_gettext('From'), validators=[Optional()])
+    date_to = CustomDateField(lazy_gettext('to'), validators=[Optional()])
     keyword = StringField(lazy_gettext('Keyword'), validators=[Optional()])
-    organizer_id = SelectField(lazy_gettext('Organizer'), validators=[DataRequired()], coerce=int)
+
+    organizer_id = SelectField(lazy_gettext('Organizer'), validators=[Optional()], coerce=int)
+
+    submit = SubmitField(lazy_gettext("Find events"))

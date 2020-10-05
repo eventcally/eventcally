@@ -9,6 +9,8 @@ from sqlalchemy import and_, or_, not_
 from .utils import get_pagination_urls, permission_missing
 from forms.event_place import FindEventPlaceForm
 from forms.event import FindEventForm
+from services.event_search import EventSearchParams
+from services.event import get_events_query
 
 @app.route("/manage")
 @auth_required()
@@ -65,39 +67,26 @@ def manage_admin_unit_event_reviews(id):
 @auth_required()
 def manage_admin_unit_events(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    organizer = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).first()
 
-    if organizer:
-        return redirect(url_for('manage_organizer_events', organizer_id=organizer.id))
+    params = EventSearchParams()
+    params.set_default_date_range()
 
-    flash('Please create an organizer before you create an event', 'danger')
-    return redirect(url_for('manage_admin_unit_organizers', id=id))
+    form = FindEventForm(formdata=request.args, obj=params)
 
-@app.route('/manage/events')
-@auth_required()
-def manage_organizer_events():
-    organizer = EventOrganizer.query.get_or_404(request.args.get('organizer_id'))
-    admin_unit = get_admin_unit_for_manage_or_404(organizer.admin_unit_id)
     organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).all()
-
-    keyword = request.args.get('keyword') if 'keyword' in request.args else ""
-
-    form = FindEventForm(**request.args)
     form.organizer_id.choices = [(o.id, o.name) for o in organizers]
+    form.organizer_id.choices.insert(0, (0, ''))
 
-    if keyword:
-        like_keyword = '%' + keyword + '%'
-        event_filter = and_(Event.organizer_id == organizer.id, Event.review_status != EventReviewStatus.inbox, Event.name.ilike(like_keyword))
-    else:
-        event_filter = and_(Event.organizer_id == organizer.id, Event.review_status != EventReviewStatus.inbox)
+    if form.validate():
+        form.populate_obj(params)
 
-    events = Event.query.filter(event_filter).order_by(Event.start).paginate()
+    params.admin_unit_id = admin_unit.id
+    events = get_events_query(params).paginate()
     return render_template('manage/events.html',
         admin_unit=admin_unit,
-        organizer=organizer,
         form=form,
         events=events.items,
-        pagination=get_pagination_urls(events))
+        pagination=get_pagination_urls(events, id=id))
 
 @app.route('/manage/admin_unit/<int:id>/organizers')
 @auth_required()

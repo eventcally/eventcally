@@ -1,4 +1,4 @@
-from models import EventCategory, Event, EventDate, EventReference, EventPlace, Location
+from models import EventReviewStatus, EventCategory, Event, EventDate, EventReference, EventPlace, Location
 from dateutils import dates_from_recurrence_rule, today, date_add_time, date_set_end_of_day
 from sqlalchemy import and_, or_, not_, func
 
@@ -10,19 +10,7 @@ def upsert_event_category(category_name):
 
     return result
 
-def get_event_dates_query(params):
-    event_filter = Event.verified
-    date_filter = (EventDate.start >= today)
-
-    if params.admin_unit_id:
-        event_filter = and_(event_filter, or_(Event.admin_unit_id == params.admin_unit_id, Event.references.any(EventReference.admin_unit_id == params.admin_unit_id)))
-
-    if params.date_from:
-        date_filter = (EventDate.start >= params.date_from)
-
-    if params.date_to:
-        date_filter = and_(date_filter, EventDate.start < params.date_to)
-
+def fill_event_filter(event_filter, params):
     if params.keyword:
         like_keyword = '%' + params.keyword + '%'
         event_filter = and_(event_filter, or_(Event.name.ilike(like_keyword), Event.description.ilike(like_keyword), Event.tags.ilike(like_keyword)))
@@ -34,11 +22,49 @@ def get_event_dates_query(params):
             category_ids = [params.category_id]
         event_filter = and_(event_filter, Event.category_id.in_(category_ids))
 
+    if params.organizer_id:
+        event_filter = and_(event_filter, Event.organizer_id == params.organizer_id)
+
     if params.latitude and params.longitude and params.distance:
         point = 'POINT({} {})'.format(params.longitude, params.latitude)
         event_filter = and_(event_filter, func.ST_DistanceSphere(Location.coordinate, point) <= params.distance)
 
+    return event_filter
+
+def get_event_dates_query(params):
+    event_filter = Event.verified
+    date_filter = (EventDate.start >= today)
+
+    event_filter = fill_event_filter(event_filter, params)
+
+    if params.admin_unit_id:
+        event_filter = and_(event_filter, or_(Event.admin_unit_id == params.admin_unit_id, Event.references.any(EventReference.admin_unit_id == params.admin_unit_id)))
+
+    if params.date_from:
+        date_filter = (EventDate.start >= params.date_from)
+
+    if params.date_to:
+        date_filter = and_(date_filter, EventDate.start < params.date_to)
+
     return EventDate.query.join(Event).join(EventPlace, isouter=True).join(Location, isouter=True).filter(date_filter).filter(event_filter).order_by(EventDate.start)
+
+def get_events_query(params):
+    event_filter = Event.review_status != EventReviewStatus.inbox
+    date_filter = (EventDate.start >= today)
+
+    event_filter = fill_event_filter(event_filter, params)
+
+    if params.admin_unit_id:
+        event_filter = and_(event_filter, Event.admin_unit_id == params.admin_unit_id)
+
+    if params.date_from:
+        date_filter = (EventDate.start >= params.date_from)
+
+    if params.date_to:
+        date_filter = and_(date_filter, EventDate.start < params.date_to)
+
+    event_filter = and_(event_filter, Event.dates.any(date_filter))
+    return Event.query.join(EventPlace, isouter=True).join(Location, isouter=True).filter(event_filter).order_by(Event.start)
 
 def update_event_dates_with_recurrence_rule(event, start, end):
     event.start = start

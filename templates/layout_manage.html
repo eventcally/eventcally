@@ -23,7 +23,7 @@
             {{ render_submenu_item('reviews', _('Reviews'), url_for('manage_admin_unit_event_reviews', id=admin_unit.id), active_id) }}
             <li class="nav-item dropdown">
               <a class="nav-link pl-0 dropdown-toggle{% if active_id.startswith('reference') %} active{% endif %}" href="#" id="navbarDropdownReferences" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ 'References' }}
+                {{ _('References') }}
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdownReferences">
                 <a class="dropdown-item" href="{{ url_for('manage_admin_unit_references_incoming', id=admin_unit.id) }}">{{ _('Incoming references') }}</a>
