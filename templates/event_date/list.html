@@ -5,9 +5,11 @@
 {% endblock %}
 {% block content %}
 
-    <h1>{{ _('Event Dates') }}</h1>
+    <h1>{{ _('Event Dates') }} <button type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-filter"></i></button></h1>
 
-    {{ render_event_dates_filter_form(form) }}
+    <div class="{% if form.is_submitted() %}{% else %}collapse{% endif %}" id="search_form">
+        {{ render_event_dates_filter_form(form) }}
+    </div>
 
     {% for date in dates %}
     <div class="card mb-3" style="max-width: 768px;">

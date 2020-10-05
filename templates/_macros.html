@@ -567,49 +567,63 @@ $( function() {
 {% endmacro %}
 
 {% macro render_event_dates_filter_form(form) %}
-<form action="" class="form-inline mb-4" method="GET" autocomplete="off">
+<form action="" class="form" method="GET" autocomplete="off">
   {{ form.hidden_tag() }}
 
-  <div class="input-group mb-2 mr-sm-2">
-      <div class="input-group-prepend">
-          <span class="input-group-text">{{ form.date_from.label.text }}</span>
-      </div>
-      {{ form.date_from(class="form-control datepicker")|safe }}
-  </div>
-
-  <div class="input-group mb-2 mr-sm-2">
-    <div class="input-group-prepend">
-        <span class="input-group-text">{{ form.date_to.label.text }}</span>
-    </div>
-    {{ form.date_to(class="form-control datepicker")|safe }}
-  </div>
-
-  {% if form.category_id %}
-  <div class="input-group mb-2 mr-sm-2">
-      <div class="input-group-prepend">
-          <span class="input-group-text">{{ form.category_id.label.text }}</span>
-      </div>
-      {{ form.category_id(class="form-control")|safe }}
-  </div>
-  {% endif %}
+  {{ render_field_with_errors(form.keyword) }}
 
   {% if form.organizer_id %}
-  <div class="input-group mb-2 mr-sm-2">
-      <div class="input-group-prepend">
-          <span class="input-group-text">{{ form.organizer_id.label.text }}</span>
+    {{ render_field_with_errors(form.organizer_id) }}
+  {% endif %}
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">{{ _('Date') }}</label>
+    <div class="col-sm-5 mb-1">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">{{ form.date_from.label.text }}</span>
+        </div>
+        {{ form.date_from(class="form-control datepicker")|safe }}
       </div>
-      {{ form.organizer_id(class="form-control")|safe }}
+    </div>
+    <div class="col-sm-5">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">{{ form.date_to.label.text }}</span>
+        </div>
+        {{ form.date_to(class="form-control datepicker")|safe }}
+      </div>
+    </div>
+  </div>
+
+  {% if form.location %}
+  <div class="form-group row">
+    <label for="location" class="col-sm-2 col-form-label">{{ _('Radius') }}</label>
+    <div class="col-sm-7 mb-1">
+      <div class="input-group">
+        {{ form.location(class="form-control", disabled="disabled", placeholder=form.location.label.text, autocomplete="off")|safe }}
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" id="clear_location_btn">
+            <i class="fa fa-times"></i>
+          </button>
+          <button class="btn btn-outline-primary" type="button" id="geolocation_btn">
+            <i class="fa fa-location-arrow"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="input-group">
+        {{ form.distance(class="form-control")|safe }}
+        <div class="input-group-append">
+          <span class="input-group-text">m</span>
+        </div>
+      </div>
+    </div>
   </div>
   {% endif %}
 
-  <div class="input-group mb-2 mr-sm-2">
-      <div class="input-group-prepend">
-          <span class="input-group-text">{{ form.keyword.label.text }}</span>
-      </div>
-      {{ form.keyword(class="form-control")|safe }}
-  </div>
-
-  <button type="submit" class="btn btn-primary mb-2">{{ _('Find') }}</button>
+  {{ render_field(form.submit) }}
 </form>
 {% endmacro %}
 

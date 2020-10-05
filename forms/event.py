@@ -1,3 +1,4 @@
+from flask import request
 from flask_babelex import lazy_gettext, gettext
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
@@ -151,3 +152,6 @@ class FindEventForm(FlaskForm):
     organizer_id = SelectField(lazy_gettext('Organizer'), validators=[Optional()], coerce=int)
 
     submit = SubmitField(lazy_gettext("Find events"))
+
+    def is_submitted(self):
+        return 'submit' in request.args

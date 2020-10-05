@@ -166,4 +166,45 @@ $( function() {
     $('.datepicker').each(function (index, element){
         start_datepicker($(element));
     });
+
+    $("#clear_location_btn").click(function () {
+        $("#coordinate").val("");
+        $("#location").val("");
+        $("#distance").val("");
+    });
+
+    $("#geolocation_btn").click(function () {
+        if ("geolocation" in navigator){
+            navigator.geolocation.getCurrentPosition(function(position){
+                    $("#coordinate").val(position.coords.latitude+","+position.coords.longitude);
+                    $("#location").val("Aktuelle Position");
+                    $("#postcode").val("");
+                    $("#location").removeClass("is-invalid");
+
+                    if ($("#distance").val() == "") {
+                        $("#distance").val("500");
+                    }
+            }, handleError);
+
+            function handleError(error){
+                //Handle Errors
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        alert("User denied the request for Geolocation.");
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert("Location information is unavailable.");
+                        break;
+                    case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                        break;
+                    case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                        break;
+                }
+            }
+        }else{
+            alert("Browser doesn't support geolocation!");
+        }
+    });
 });

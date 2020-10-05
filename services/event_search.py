@@ -9,6 +9,7 @@ class EventSearchParams(object):
         self._date_to = None
         self._date_from_str = None
         self._date_to_str = None
+        self._coordinate = None
         self.admin_unit_id = None
         self.keyword = None
         self.latitude = None
@@ -53,6 +54,19 @@ class EventSearchParams(object):
         self._date_to_str = value
         self._date_to = form_input_to_date(value)
 
+    @property
+    def coordinate(self):
+        return self._coordinate
+
+    @coordinate.setter
+    def coordinate(self, value):
+        self._coordinate = value
+        if value is not None and len(value) > 0:
+            (self.latitude, self.longitude) = value.split(",")
+        else:
+            self.latitude = None
+            self.longitude = None
+
     def set_default_date_range(self):
         self.date_from = today
         self.date_to = date_set_end_of_day(today + relativedelta(months=12))
@@ -68,9 +82,7 @@ class EventSearchParams(object):
             self.keyword = request.args['keyword']
 
         if "coordinate" in request.args:
-            coordinate = request.args['coordinate']
-            if coordinate is not None and len(coordinate) > 0:
-                (self.latitude, self.longitude) = coordinate.split(",")
+            self.coordinate = request.args['coordinate']
 
         if "distance" in request.args:
             self.distance = request.args['distance']
