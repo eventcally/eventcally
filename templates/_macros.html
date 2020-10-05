@@ -572,14 +572,14 @@ $( function() {
 
   <div class="input-group mb-2 mr-sm-2">
       <div class="input-group-prepend">
-          <span class="input-group-text">{{ form.date_from.label() }}</span>
+          <span class="input-group-text">{{ form.date_from.label.text }}</span>
       </div>
       {{ form.date_from(class="form-control datepicker")|safe }}
   </div>
 
   <div class="input-group mb-2 mr-sm-2">
     <div class="input-group-prepend">
-        <span class="input-group-text">{{ form.date_to.label() }}</span>
+        <span class="input-group-text">{{ form.date_to.label.text }}</span>
     </div>
     {{ form.date_to(class="form-control datepicker")|safe }}
   </div>
@@ -587,7 +587,7 @@ $( function() {
   {% if form.category_id %}
   <div class="input-group mb-2 mr-sm-2">
       <div class="input-group-prepend">
-          <span class="input-group-text">{{ form.category_id.label() }}</span>
+          <span class="input-group-text">{{ form.category_id.label.text }}</span>
       </div>
       {{ form.category_id(class="form-control")|safe }}
   </div>
@@ -596,7 +596,7 @@ $( function() {
   {% if form.organizer_id %}
   <div class="input-group mb-2 mr-sm-2">
       <div class="input-group-prepend">
-          <span class="input-group-text">{{ form.organizer_id.label() }}</span>
+          <span class="input-group-text">{{ form.organizer_id.label.text }}</span>
       </div>
       {{ form.organizer_id(class="form-control")|safe }}
   </div>
@@ -604,7 +604,7 @@ $( function() {
 
   <div class="input-group mb-2 mr-sm-2">
       <div class="input-group-prepend">
-          <span class="input-group-text">{{ form.keyword.label() }}</span>
+          <span class="input-group-text">{{ form.keyword.label.text }}</span>
       </div>
       {{ form.keyword(class="form-control")|safe }}
   </div>
