@@ -5,7 +5,8 @@ from wtforms import StringField, SubmitField, DecimalField, TextAreaField, FormF
 from wtforms.fields.html5 import EmailField, TelField
 from wtforms.validators import DataRequired, Optional, Regexp
 import decimal
-from models import Location
+from models import Location, Image
+from .common import BaseImageForm
 
 class AdminUnitLocationForm(FlaskForm):
     street = StringField(lazy_gettext('Street'), validators=[Optional()])
@@ -22,13 +23,15 @@ class BaseAdminUnitForm(FlaskForm):
     email = EmailField(lazy_gettext('Email'), validators=[Optional()])
     phone = TelField(lazy_gettext('Phone'), validators=[Optional()])
     fax = TelField(lazy_gettext('Fax'), validators=[Optional()])
-    logo_file = FileField(lazy_gettext('Logo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
+    logo = FormField(BaseImageForm, lazy_gettext('Logo'), default=lambda: Image())
     location = FormField(AdminUnitLocationForm, default=lambda: Location())
 
     def populate_obj(self, obj):
         for name, field in self._fields.items():
             if name == 'location' and not obj.location:
                 obj.location = Location()
+            elif name == 'logo' and not obj.logo:
+                obj.logo = Image()
             field.populate_obj(obj, name)
 
 class CreateAdminUnitForm(BaseAdminUnitForm):

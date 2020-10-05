@@ -6,7 +6,8 @@ from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 import decimal
-from models import Location
+from models import Location, Image
+from .common import BaseImageForm
 
 class EventPlaceLocationForm(FlaskForm):
     street = StringField(lazy_gettext('Street'), validators=[Optional()])
@@ -19,7 +20,7 @@ class EventPlaceLocationForm(FlaskForm):
 class BaseEventPlaceForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
     url = StringField(lazy_gettext('Link URL'), validators=[Optional()])
-    photo_file = FileField(lazy_gettext('Photo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
+    photo = FormField(BaseImageForm, lazy_gettext('Photo'), default=lambda: Image())
     description = TextAreaField(lazy_gettext('Description'), validators=[Optional()])
     location = FormField(EventPlaceLocationForm)
 
@@ -27,6 +28,8 @@ class BaseEventPlaceForm(FlaskForm):
         for name, field in self._fields.items():
             if name == 'location' and not obj.location:
                 obj.location = Location()
+            elif name == 'photo' and not obj.photo:
+                obj.photo = Image()
             field.populate_obj(obj, name)
 
 class CreateEventPlaceForm(BaseEventPlaceForm):

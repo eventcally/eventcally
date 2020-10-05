@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_base_image_form, render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
 
 {% block header %}
 {{ render_google_place_autocomplete_header() }}
@@ -39,13 +39,14 @@
     </div>
   </div>
 
+  {{ render_base_image_form(form.photo) }}
+
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Additional information') }}
     </div>
     <div class="card-body">
     {{ render_field_with_errors(form.url) }}
-    {{ render_field_with_errors(form.photo_file) }}
     {{ render_field_with_errors(form.description) }}
     {{ render_field_with_errors(form.public, style="width: fit-content; flex: initial;") }}
     </div>

@@ -85,7 +85,3 @@ def organizer_delete(id):
 
 def update_organizer_with_form(organizer, form):
     form.populate_obj(organizer)
-
-    if form.logo_file.data:
-        fs = form.logo_file.data
-        organizer.logo = upsert_image_with_data(organizer.logo, fs.read(), fs.content_type)

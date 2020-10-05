@@ -248,16 +248,28 @@
 {% endif %}
 {% endmacro %}
 
-{% macro render_image(image_id) %}
-{% if image_id %}
-<img src="{{ url_for('image', id=image_id) }}" class="img-fluid rounded" style="max-width:100%;" />
+{% macro render_img_src(image) %}
+<img src="{{ url_for('image', id=image.id) }}" class="{{ kwargs['class'] or 'img-fluid' }}" style="{{ kwargs['style'] or 'max-width:100%;' }}" />
+{% endmacro %}
+
+{% macro render_image(image) %}
+{% if image %}
+  {% set img_class = kwargs['class'] if 'class' in kwargs else '' %}
+  {% set img_style = kwargs['style'] if 'style' in kwargs else '' %}
+  {% if image.copyright_text %}
+    <figure class="figure">
+      {% set img_class = img_class + ' figure-img' %}
+      {{ render_img_src(image, class=img_class, style=img_style) }}
+      <figcaption class="figure-caption">&copy; {{ image.copyright_text }}</figcaption>
+    </figure>
+  {% else %}
+    {{ render_img_src(image, class=img_class, style=img_style) }}
+  {% endif %}
 {% endif %}
 {% endmacro %}
 
-{% macro render_logo(image_id) %}
-{% if image_id %}
-<img src="{{ url_for('image', id=image_id) }}" class="img-fluid rounded" style="max-width:200px;" />
-{% endif %}
+{% macro render_logo(image) %}
+{{ render_image(image, style="max-width:200px;") }}
 {% endmacro %}
 
 {% macro render_event_review_status(event) %}
@@ -307,7 +319,7 @@
       {% endif %}
 
       {% if event.photo_id %}
-        <div class="my-4">{{ render_image(event.photo_id) }}</div>
+        <div class="my-4">{{ render_image(event.photo) }}</div>
       {% endif %}
 
       <div class="my-4">{{ event.description }}</div>
@@ -337,7 +349,7 @@
         <h5 class="card-title">{{ event.event_place.name }}</h5>
 
         {% if event.event_place.photo_id %}
-          <div class="my-4">{{ render_image(event.event_place.photo_id) }}</div>
+          <div class="my-4">{{ render_image(event.event_place.photo) }}</div>
         {% endif %}
 
         {% if event.event_place.description %}
@@ -382,7 +394,7 @@
         <h5 class="card-title">{{ event.admin_unit.name }}</h5>
 
         {% if event.admin_unit.logo_id %}
-          <div class="my-4">{{ render_logo(event.admin_unit.logo_id) }}</div>
+          <div class="my-4">{{ render_logo(event.admin_unit.logo) }}</div>
         {% endif %}
 
         <div class="my-4">
@@ -586,4 +598,23 @@ $( function() {
 
   <button type="submit" class="btn btn-primary mb-2">{{ _('Find') }}</button>
 </form>
+{% endmacro %}
+
+{% macro render_base_image_form(form_field) %}
+<div class="card mb-4">
+  <div class="card-header">
+    {{ form_field.label() }}
+  </div>
+  <div class="card-body">
+    {{ form_field.hidden_tag() }}
+    {% if form_field.object_data and form_field.object_data.id %}
+      <div>
+        <img src="{{ url_for('image', id=form_field.object_data.id) }}" class="img-fluid" style="max-width:5rem;" />
+      </div>
+      {{ render_field_with_errors(form_field.delete_flag, style="width: fit-content; flex: initial;") }}
+    {% endif %}
+    {{ render_field_with_errors(form_field.image_file) }}
+    {{ render_field_with_errors(form_field.copyright_text) }}
+  </div>
+</div>
 {% endmacro %}
