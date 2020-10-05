@@ -5,8 +5,8 @@ from wtforms import FieldList, RadioField, DateTimeField, StringField, SubmitFie
 from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
-from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus
-from .common import event_rating_choices
+from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus, Image
+from .common import event_rating_choices, BaseImageForm
 from .widgets import CustomDateTimeField
 
 class EventPlaceLocationForm(FlaskForm):
@@ -66,7 +66,7 @@ class BaseEventForm(FlaskForm):
         (int(EventAttendanceMode.online), lazy_gettext('EventAttendanceMode.online')),
         (int(EventAttendanceMode.mixed), lazy_gettext('EventAttendanceMode.mixed'))])
 
-    photo_file = FileField(lazy_gettext('Photo'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
+    photo = FormField(BaseImageForm, lazy_gettext('Photo'), default=lambda: Image())
     rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=event_rating_choices)
 
 class CreateEventForm(BaseEventForm):
@@ -86,6 +86,8 @@ class CreateEventForm(BaseEventForm):
                 if not obj.event_place:
                     obj.event_place = EventPlace()
                 field.populate_obj(obj, 'event_place')
+            elif name == 'photo' and not obj.photo:
+                obj.photo = Image()
             field.populate_obj(obj, name)
 
         if isinstance(obj.contact, list):
@@ -112,6 +114,12 @@ class UpdateEventForm(BaseEventForm):
         (int(EventStatus.rescheduled), lazy_gettext('EventStatus.rescheduled'))])
 
     submit = SubmitField(lazy_gettext("Update event"))
+
+    def populate_obj(self, obj):
+        for name, field in self._fields.items():
+            if name == 'photo' and not obj.photo:
+                obj.photo = Image()
+            field.populate_obj(obj, name)
 
 class DeleteEventForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Delete event"))

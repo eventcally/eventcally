@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_radio_buttons, render_event_organizer_places_header, render_datepicker_js, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_base_image_form, render_radio_buttons, render_event_organizer_places_header, render_datepicker_js, render_field_with_errors, render_field %}
 {% block header %}
 <script>
 $( function() {
@@ -118,12 +118,13 @@ $( function() {
     </div>
   </div>
 
+  {{ render_base_image_form(form.photo) }}
+
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Additional information') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.photo_file) }}
       {{ render_field_with_errors(form.category_id, class="autocomplete w-100") }}
       {{ render_field_with_errors(form.external_link) }}
       {{ render_field_with_errors(form.ticket_link) }}

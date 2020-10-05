@@ -6,17 +6,13 @@ from models import AdminUnitMemberInvitation
 from sqlalchemy.exc import SQLAlchemyError
 from access import get_admin_unit_for_manage_or_404, access_or_401, has_access
 from forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
-from .utils import upsert_image_with_data, handleSqlError, permission_missing
+from .utils import upsert_image_with_data, handleSqlError, permission_missing, flash_errors
 from models import AdminUnit, Location, EventOrganizer
 from services.admin_unit import add_user_to_admin_unit_with_roles
 from services.location import assign_location_values
 
 def update_admin_unit_with_form(admin_unit, form):
     form.populate_obj(admin_unit)
-
-    if form.logo_file.data:
-        fs = form.logo_file.data
-        admin_unit.logo = upsert_image_with_data(admin_unit.logo, fs.read(), fs.content_type)
 
 @app.route("/admin_unit/create", methods=('GET', 'POST'))
 @auth_required()
@@ -55,6 +51,9 @@ def admin_unit_create():
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
+
     return render_template('admin_unit/create.html', form=form)
 
 @app.route('/admin_unit/<int:id>/update', methods=('GET', 'POST'))
@@ -73,9 +72,12 @@ def admin_unit_update(id):
         try:
             db.session.commit()
             flash(gettext('AdminUnit successfully updated'), 'success')
+            return redirect(url_for('admin_unit_update', id=admin_unit.id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
 
     return render_template('admin_unit/update.html',
         form=form,

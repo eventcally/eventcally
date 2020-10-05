@@ -88,7 +88,3 @@ def event_place_delete(id):
 def update_event_place_with_form(place, form):
     form.populate_obj(place)
 
-    if form.photo_file.data:
-        fs = form.photo_file.data
-        place.photo = upsert_image_with_data(place.photo, fs.read(), fs.content_type)
-

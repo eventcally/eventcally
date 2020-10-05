@@ -179,10 +179,6 @@ def update_event_with_form(event, form):
 
     update_event_dates_with_recurrence_rule(event, form.start.data, form.end.data)
 
-    if form.photo_file.data:
-        fs = form.photo_file.data
-        event.photo = upsert_image_with_data(event.photo, fs.read(), fs.content_type)
-
 def send_event_inbox_mails(admin_unit, event):
     members = AdminUnitMember.query.join(User).filter(AdminUnitMember.admin_unit_id == admin_unit.id).all()
 

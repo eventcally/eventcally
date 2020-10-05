@@ -1,7 +1,7 @@
 from app import db
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, deferred
 from sqlalchemy.schema import CheckConstraint
 from sqlalchemy.types import TypeDecorator
 from sqlalchemy.event import listens_for
@@ -32,8 +32,12 @@ class TrackableMixin(object):
 class Image(db.Model, TrackableMixin):
     __tablename__ = 'image'
     id = Column(Integer(), primary_key=True)
-    data = db.Column(db.LargeBinary)
+    data = deferred(db.Column(db.LargeBinary))
     encoding_format = Column(String(80))
+    copyright_text = Column(Unicode(255))
+
+    def is_empty(self):
+        return not self.data
 
 ### User
 
@@ -127,6 +131,12 @@ class AdminUnit(db.Model, TrackableMixin):
     phone = Column(Unicode(255))
     fax = Column(Unicode(255))
 
+@listens_for(AdminUnit, 'before_insert')
+@listens_for(AdminUnit, 'before_update')
+def purge_admin_unit(mapper, connect, self):
+    if self.logo and self.logo.is_empty():
+        self.logo_id = None
+
 # Universal Types
 
 class Location(db.Model, TrackableMixin):
@@ -195,6 +205,8 @@ class EventPlace(db.Model, TrackableMixin):
 def purge_event_place(mapper, connect, self):
     if self.location and self.location.is_empty():
         self.location_id = None
+    if self.photo and self.photo.is_empty():
+        self.photo_id = None
 
 class EventCategory(db.Model):
     __tablename__ = 'eventcategory'
@@ -257,6 +269,12 @@ class EventOrganizer(db.Model, TrackableMixin):
 
     def is_empty(self):
         return not self.name
+
+@listens_for(EventOrganizer, 'before_insert')
+@listens_for(EventOrganizer, 'before_update')
+def purge_event_organizer(mapper, connect, self):
+    if self.logo and self.logo.is_empty():
+        self.logo_id = None
 
 class EventContact(db.Model, TrackableMixin):
     __tablename__ = 'eventcontact'
@@ -345,6 +363,8 @@ def purge_event(mapper, connect, self):
         self.event_place_id = None
     if self.contact and self.contact.is_empty():
         self.contact_id = None
+    if self.photo and self.photo.is_empty():
+        self.photo_id = None
 
 class EventDate(db.Model):
     __tablename__ = 'eventdate'
