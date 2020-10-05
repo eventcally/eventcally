@@ -84,7 +84,7 @@ def event_delete(event_id):
                 db.session.delete(event)
                 db.session.commit()
                 flash(gettext('Event successfully deleted'), 'success')
-                return redirect(url_for('manage_organizer_events', organizer_id=event.organizer_id))
+                return redirect(url_for('manage_admin_unit_events', id=admin_unit, organizer_id=event.organizer_id))
             except SQLAlchemyError as e:
                 db.session.rollback()
                 flash(handleSqlError(e), 'danger')

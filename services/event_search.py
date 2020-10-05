@@ -15,6 +15,7 @@ class EventSearchParams(object):
         self.longitude = None
         self.distance = None
         self.category_id = None
+        self.organizer_id = None
 
     @property
     def date_from(self):
@@ -76,3 +77,6 @@ class EventSearchParams(object):
 
         if "category_id" in request.args:
             self.category_id = request.args.getlist('category_id')
+
+        if "organizer_id" in request.args:
+            self.organizer_id = request.args['organizer_id']

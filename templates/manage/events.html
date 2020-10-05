@@ -1,6 +1,6 @@
 {% extends "layout_manage.html" %}
 {% set active_id = "events" %}
-{% from "_macros.html" import render_event_review_status_pill, render_event_status_pill, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
+{% from "_macros.html" import render_event_dates_filter_form, render_event_review_status_pill, render_event_status_pill, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
 {% block title %}
 {{ _('Events') }}
 {% endblock %}
@@ -9,30 +9,11 @@
 <h1>{{ _('Events') }}</h1>
 
 <div class="my-4">
-    <form action="" class="form-inline" method="GET">
-        {{ form.hidden_tag() }}
-
-        <div class="input-group mb-2 mr-sm-2">
-            <div class="input-group-prepend">
-                <span class="input-group-text">{{ _('Organizer') }}</span>
-            </div>
-            {{ form.organizer_id(class="form-control", onchange="javascript:this.form.submit()")|safe }}
-        </div>
-
-        <div class="input-group mb-2 mr-sm-2">
-            <div class="input-group-prepend">
-                <span class="input-group-text">{{ _('Keyword') }}</span>
-            </div>
-            {{ form.keyword(class="form-control")|safe }}
-        </div>
-
-        <button type="submit" class="btn btn-secondary mb-2">{{ _('Find') }}</button>
-
-    </form>
+    {{ render_event_dates_filter_form(form) }}
 </div>
 
 <div class="my-4">
-    <a class="btn btn-outline-secondary my-1" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id, organizer_id=organizer.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
+    <a class="btn btn-outline-secondary my-1" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
 </div>
 
 <ul class="list-group">
@@ -49,6 +30,7 @@
         </div>
         {{ render_event_status_pill(event) }}
         {{ render_event_review_status_pill(event) }}
+        <small>{{ event.organizer.name }}</small>
     </li>
 {% endfor %}
 </ul>
