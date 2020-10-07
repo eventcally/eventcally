@@ -178,7 +178,6 @@ $( function() {
             navigator.geolocation.getCurrentPosition(function(position){
                     $("#coordinate").val(position.coords.latitude+","+position.coords.longitude);
                     $("#location").val("Aktuelle Position");
-                    $("#postcode").val("");
                     $("#location").removeClass("is-invalid");
 
                     if ($("#distance").val() == "") {
