@@ -476,6 +476,25 @@
   </div>
 {% endmacro %}
 
+{% macro render_google_filter_autocomplete_header() %}
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ "dev" | env_override('GOOGLE_MAPS_API_KEY') }}&libraries=places"></script>
+<script>
+    function initialize() {
+      var input = document.getElementById('location');
+      var autocomplete = new google.maps.places.Autocomplete(input);
+      google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var place = autocomplete.getPlace();
+            $('#coordinate').val('' + place.geometry.location.lat() + ',' + place.geometry.location.lng());
+
+            if ($("#distance").val() == "") {
+                $("#distance").val("500");
+            }
+        });
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+{% endmacro %}
+
 {% macro render_event_date(event) %}
   {{ event.start | datetimeformat('short') }}
   {% if event.recurrence_rule %}
@@ -605,7 +624,7 @@ $( function() {
     <label for="location" class="col-sm-2 col-form-label">{{ _('Radius') }}</label>
     <div class="col-sm-7 mb-1">
       <div class="input-group">
-        {{ form.location(class="form-control", disabled="disabled", placeholder=form.location.label.text, autocomplete="off")|safe }}
+        {{ form.location(class="form-control", placeholder=form.location.label.text, autocomplete="off")|safe }}
         <div class="input-group-append">
           <button class="btn btn-outline-secondary" type="button" id="clear_location_btn">
             <i class="fa fa-times"></i>
