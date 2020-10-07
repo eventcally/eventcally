@@ -148,7 +148,7 @@ class FindEventForm(FlaskForm):
     date_from = CustomDateField(lazy_gettext('From'), validators=[Optional()])
     date_to = CustomDateField(lazy_gettext('to'), validators=[Optional()])
     keyword = StringField(lazy_gettext('Keyword'), validators=[Optional()])
-
+    category_id = SelectField(lazy_gettext('Category'), validators=[Optional()], coerce=int)
     organizer_id = SelectField(lazy_gettext('Organizer'), validators=[Optional()], coerce=int)
 
     submit = SubmitField(lazy_gettext("Find events"))

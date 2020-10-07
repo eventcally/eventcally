@@ -11,6 +11,7 @@ from forms.event_place import FindEventPlaceForm
 from forms.event import FindEventForm
 from services.event_search import EventSearchParams
 from services.event import get_events_query
+from views.event import get_event_category_choices
 
 @app.route("/manage")
 @auth_required()
@@ -72,6 +73,8 @@ def manage_admin_unit_events(id):
     params.set_default_date_range()
 
     form = FindEventForm(formdata=request.args, obj=params)
+    form.category_id.choices = get_event_category_choices()
+    form.category_id.choices.insert(0, (0, ''))
 
     organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).all()
     form.organizer_id.choices = [(o.id, o.name) for o in organizers]

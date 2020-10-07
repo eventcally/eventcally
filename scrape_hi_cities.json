@@ -1,0 +1,206 @@
+{
+    "10": {
+        "district": null,
+        "id": 10,
+        "short_name": "",
+        "title": "Blankenburg"
+    },
+    "105": {
+        "district": null,
+        "id": 105,
+        "short_name": "Tilleda",
+        "title": "Kelbra OT Tilleda"
+    },
+    "111": {
+        "district": null,
+        "id": 111,
+        "short_name": "",
+        "title": "Lutherstadt Eisleben"
+    },
+    "12": {
+        "district": null,
+        "id": 12,
+        "short_name": "",
+        "title": "Braunlage"
+    },
+    "14": {
+        "district": null,
+        "id": 14,
+        "short_name": "",
+        "title": "Clausthal-Zellerfeld"
+    },
+    "148": {
+        "district": null,
+        "id": 148,
+        "short_name": "",
+        "title": "Leinefelde-Worbis"
+    },
+    "150": {
+        "district": null,
+        "id": 150,
+        "short_name": "",
+        "title": "Abbenrode"
+    },
+    "17": {
+        "district": null,
+        "id": 17,
+        "short_name": "",
+        "title": "Duderstadt"
+    },
+    "18": {
+        "district": null,
+        "id": 18,
+        "short_name": "",
+        "title": "Goslar"
+    },
+    "2": {
+        "district": null,
+        "id": 2,
+        "short_name": "Torfhaus",
+        "title": "Altenau OT Torfhaus"
+    },
+    "20": {
+        "district": null,
+        "id": 20,
+        "short_name": "Vienenburg",
+        "title": "Goslar OT Vienenburg"
+    },
+    "21": {
+        "district": null,
+        "id": 21,
+        "short_name": "",
+        "title": "Goslar- Hahnenklee"
+    },
+    "22": {
+        "district": null,
+        "id": 22,
+        "short_name": "",
+        "title": "Halberstadt"
+    },
+    "23": {
+        "district": null,
+        "id": 23,
+        "short_name": "",
+        "title": "Harzgerode"
+    },
+    "27": {
+        "district": null,
+        "id": 27,
+        "short_name": "",
+        "title": "Herzberg am Harz"
+    },
+    "28": {
+        "district": null,
+        "id": 28,
+        "short_name": "",
+        "title": "Ilsenburg"
+    },
+    "29": {
+        "district": null,
+        "id": 29,
+        "short_name": "Drübeck",
+        "title": "Ilsenburg OT Drübeck"
+    },
+    "35": {
+        "district": null,
+        "id": 35,
+        "short_name": "Wolfshagen",
+        "title": "Langelsheim OT Wolfshagen"
+    },
+    "37": {
+        "district": null,
+        "id": 37,
+        "short_name": "",
+        "title": "Nordhausen"
+    },
+    "4": {
+        "district": null,
+        "id": 4,
+        "short_name": "",
+        "title": "Aschersleben"
+    },
+    "42": {
+        "district": null,
+        "id": 42,
+        "short_name": "Höhlenort Rübeland",
+        "title": "Oberharz am Brocken OT Höhlenort Rübeland"
+    },
+    "44": {
+        "district": null,
+        "id": 44,
+        "short_name": "Stiege",
+        "title": "Oberharz am Brocken OT Stiege"
+    },
+    "47": {
+        "district": null,
+        "id": 47,
+        "short_name": "",
+        "title": "Osterode am Harz"
+    },
+    "5": {
+        "district": null,
+        "id": 5,
+        "short_name": "Bad Gandersheim",
+        "title": "Bad Gandersheim"
+    },
+    "50": {
+        "district": null,
+        "id": 50,
+        "short_name": "",
+        "title": "Quedlinburg"
+    },
+    "6": {
+        "district": null,
+        "id": 6,
+        "short_name": "",
+        "title": "Bad Grund (Harz)"
+    },
+    "60": {
+        "district": null,
+        "id": 60,
+        "short_name": "",
+        "title": "Thale"
+    },
+    "63": {
+        "district": null,
+        "id": 63,
+        "short_name": "",
+        "title": "Walkenried"
+    },
+    "65": {
+        "district": null,
+        "id": 65,
+        "short_name": "",
+        "title": "Wernigerode"
+    },
+    "67": {
+        "district": null,
+        "id": 67,
+        "short_name": "Schierke",
+        "title": "Wernigerode OT Schierke"
+    },
+    "7": {
+        "district": null,
+        "id": 7,
+        "short_name": "Bad Harzburg",
+        "title": "Bad Harzburg"
+    },
+    "8": {
+        "district": null,
+        "id": 8,
+        "short_name": "",
+        "title": "Bad Lauterberg im Harz"
+    },
+    "82": {
+        "district": null,
+        "id": 82,
+        "short_name": "",
+        "title": "Ballenstedt"
+    },
+    "9": {
+        "district": null,
+        "id": 9,
+        "short_name": "",
+        "title": "Bad Sachsa"
+    }
+}
