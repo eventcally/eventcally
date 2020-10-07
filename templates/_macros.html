@@ -572,6 +572,10 @@ $( function() {
 
   {{ render_field_with_errors(form.keyword) }}
 
+  {% if form.category_id %}
+    {{ render_field_with_errors(form.category_id) }}
+  {% endif %}
+
   {% if form.organizer_id %}
     {{ render_field_with_errors(form.organizer_id) }}
   {% endif %}
