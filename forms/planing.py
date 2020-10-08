@@ -10,17 +10,17 @@ from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttend
 from .common import event_rating_choices, weekday_choices
 from .widgets import CustomDateField, MultiCheckboxField
 
-class FindEventDateForm(FlaskForm):
+class PlaningForm(FlaskForm):
     class Meta:
         csrf = False
 
     date_from = CustomDateField(lazy_gettext('From'), validators=[Optional()])
     date_to = CustomDateField(lazy_gettext('to'), validators=[Optional()])
-    keyword = StringField(lazy_gettext('Keyword'), validators=[Optional()])
     category_id = SelectField(lazy_gettext('Category'), validators=[Optional()], coerce=int)
     coordinate = HiddenField(validators=[Optional()])
     location = StringField(lazy_gettext('Location'), validators=[Optional()])
     distance = IntegerField(lazy_gettext('Distance'), validators=[Optional()])
+    weekday = MultiCheckboxField(lazy_gettext('Weekdays'), validators=[Optional()], coerce=int, choices=weekday_choices)
 
     submit = SubmitField(lazy_gettext("Find"))
 

@@ -94,6 +94,7 @@ from views import (
     image,
     manage,
     organizer,
+    planing,
     reference,
     reference_request,
     reference_request_review,

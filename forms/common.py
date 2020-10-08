@@ -32,3 +32,13 @@ event_rating_choices = [
             (90,'9'),
             (100,lazy_gettext('10 (Highlight)'))
         ]
+
+weekday_choices = [
+            (1,lazy_gettext('Monday')),
+            (2,lazy_gettext('Tueday')),
+            (3,lazy_gettext('Wednesday')),
+            (4,lazy_gettext('Thursday')),
+            (5,lazy_gettext('Friday')),
+            (6,lazy_gettext('Saturday')),
+            (0,lazy_gettext('Sunday'))
+        ]

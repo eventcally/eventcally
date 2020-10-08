@@ -27,6 +27,8 @@ def event_dates():
 
     if form.validate():
         form.populate_obj(params)
+    else:
+        flash_errors(form)
 
     dates = get_event_dates_query(params).paginate()
 

@@ -17,6 +17,7 @@ class EventSearchParams(object):
         self.distance = None
         self.category_id = None
         self.organizer_id = None
+        self.weekday = None
 
     @property
     def date_from(self):
@@ -71,6 +72,10 @@ class EventSearchParams(object):
         self.date_from = today
         self.date_to = date_set_end_of_day(today + relativedelta(months=12))
 
+    def set_planing_date_range(self):
+        self.date_from = today
+        self.date_to = date_set_end_of_day(today + relativedelta(months=3))
+
     def load_from_request(self):
         if 'date_from' in request.args:
             self.date_from_str = request.args['date_from']
@@ -88,7 +93,14 @@ class EventSearchParams(object):
             self.distance = request.args['distance']
 
         if "category_id" in request.args:
-            self.category_id = request.args.getlist('category_id')
+            category_ids = request.args.getlist('category_id')
+            if '0' in category_ids:
+                category_ids.remove('0')
+            if len(category_ids) > 0:
+                self.category_id = category_ids
+
+        if "weekday" in request.args:
+            self.weekday = request.args.getlist('weekday')
 
         if "organizer_id" in request.args:
             self.organizer_id = request.args['organizer_id']

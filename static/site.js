@@ -158,7 +158,23 @@ function start_datepicker(input) {
     return picker;
 }
 
+function handle_request_start(result_id = '#result_container', spinner_id = '#spinner', error_id = '#error_alert') {
+    $(result_id).hide();
+    $(spinner_id).show();
+    $(error_id).hide();
+}
 
+function handle_request_error(xhr, status, error, result_id = '#result_container', spinner_id = '#spinner', error_id = '#error_alert') {
+    $(error_id).text(status);
+    $(error_id).show();
+    $(spinner_id).hide();
+}
+
+function handle_request_success(result_id = '#result_container', spinner_id = '#spinner', error_id = '#error_alert') {
+    $(result_id).show();
+    $(spinner_id).hide();
+    $(error_id).hide();
+}
 
 $( function() {
     $('[data-toggle="tooltip"]').tooltip();
