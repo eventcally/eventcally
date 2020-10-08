@@ -18,6 +18,15 @@
               </div>
           {% endfor %}
         </fieldset>
+      {% elif 'ri' in kwargs and kwargs['ri'] == 'multicheckbox-inline' %}
+        <fieldset class="form-group my-auto">
+          {% for choice in field %}
+              <div class="form-check form-check-inline">
+                  {{ choice(class="form-check-input") }}
+                  {{ choice.label(class="form-check-label") }}
+              </div>
+          {% endfor %}
+        </fieldset>
       {% else %}
         {{ field(class=field_class, **kwargs)|safe }}
       {% endif %}
@@ -585,46 +594,35 @@ $( function() {
 {% endfor %}
 {% endmacro %}
 
-{% macro render_event_dates_filter_form(form) %}
-<form action="" class="form" method="GET" autocomplete="off">
-  {{ form.hidden_tag() }}
-
-  {{ render_field_with_errors(form.keyword) }}
-
-  {% if form.category_id %}
-    {{ render_field_with_errors(form.category_id) }}
-  {% endif %}
-
-  {% if form.organizer_id %}
-    {{ render_field_with_errors(form.organizer_id) }}
-  {% endif %}
-
-  <div class="form-group row">
-    <label class="col-sm-2 col-form-label">{{ _('Date') }}</label>
-    <div class="col-sm-5 mb-1">
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text">{{ form.date_from.label.text }}</span>
-        </div>
-        {{ form.date_from(class="form-control datepicker")|safe }}
+{% macro render_event_dates_date_field(from_field, to_field) %}
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label">{{ _('Date') }}</label>
+  <div class="col-sm-5 mb-1">
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">{{ from_field.label.text }}</span>
       </div>
-    </div>
-    <div class="col-sm-5">
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text">{{ form.date_to.label.text }}</span>
-        </div>
-        {{ form.date_to(class="form-control datepicker")|safe }}
-      </div>
+      {{ from_field(class="form-control datepicker")|safe }}
     </div>
   </div>
+  <div class="col-sm-5">
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">{{ to_field.label.text }}</span>
+      </div>
+      {{ to_field(class="form-control datepicker")|safe }}
+    </div>
+  </div>
+</div>
+{% endmacro %}
 
-  {% if form.location %}
+{% macro render_event_dates_location_field(location_field, distance_field) %}
+{% if location_field %}
   <div class="form-group row">
     <label for="location" class="col-sm-2 col-form-label">{{ _('Radius') }}</label>
     <div class="col-sm-7 mb-1">
       <div class="input-group">
-        {{ form.location(class="form-control", placeholder=form.location.label.text, autocomplete="off")|safe }}
+        {{ location_field(class="form-control", placeholder='Ort', autocomplete="off")|safe }}
         <div class="input-group-append">
           <button class="btn btn-outline-secondary" type="button" id="clear_location_btn">
             <i class="fa fa-times"></i>
@@ -637,7 +635,7 @@ $( function() {
     </div>
     <div class="col-sm-3">
       <div class="input-group">
-        {{ form.distance(class="form-control")|safe }}
+        {{ distance_field(class="form-control", placeholder='Distanz in Metern')|safe }}
         <div class="input-group-append">
           <span class="input-group-text">m</span>
         </div>
@@ -645,6 +643,31 @@ $( function() {
     </div>
   </div>
   {% endif %}
+{% endmacro %}
+
+{% macro render_event_dates_filter_form(form) %}
+<form action="" id="filter_form" class="form" method="GET" autocomplete="off">
+  {{ form.hidden_tag() }}
+
+  {% if form.keyword %}
+    {{ render_field_with_errors(form.keyword) }}
+  {% endif %}
+
+  {% if form.category_id %}
+    {{ render_field_with_errors(form.category_id) }}
+  {% endif %}
+
+  {% if form.organizer_id %}
+    {{ render_field_with_errors(form.organizer_id) }}
+  {% endif %}
+
+  {{ render_event_dates_date_field(form.date_from, form.date_to) }}
+
+  {% if form.weekday and form.weekday.choices|length > 0 %}
+    {{ render_field_with_errors(form.weekday, ri="multicheckbox") }}
+  {% endif %}
+
+  {{ render_event_dates_location_field(form.location, form.distance) }}
 
   {{ render_field(form.submit) }}
 </form>

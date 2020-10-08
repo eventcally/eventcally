@@ -1,6 +1,7 @@
 from models import EventReviewStatus, EventCategory, Event, EventDate, EventReference, EventPlace, Location
 from dateutils import dates_from_recurrence_rule, today, date_add_time, date_set_end_of_day
 from sqlalchemy import and_, or_, not_, func
+from sqlalchemy.sql import extract
 
 def upsert_event_category(category_name):
     result = EventCategory.query.filter_by(name = category_name).first()
@@ -45,6 +46,14 @@ def get_event_dates_query(params):
 
     if params.date_to:
         date_filter = and_(date_filter, EventDate.start < params.date_to)
+
+    # PostgreSQL specific https://stackoverflow.com/a/25597632
+    if params.weekday:
+        if type(params.weekday) is list:
+            weekdays = params.weekday
+        else:
+            weekdays = [params.weekday]
+        date_filter = and_(date_filter, extract('dow', EventDate.start).in_(weekdays))
 
     return EventDate.query.join(Event).join(EventPlace, isouter=True).join(Location, isouter=True).filter(date_filter).filter(event_filter).order_by(EventDate.start)
 
