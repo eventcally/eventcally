@@ -494,10 +494,6 @@
       google.maps.event.addListener(autocomplete, 'place_changed', function () {
             var place = autocomplete.getPlace();
             $('#coordinate').val('' + place.geometry.location.lat() + ',' + place.geometry.location.lng());
-
-            if ($("#distance").val() == "") {
-                $("#distance").val("500");
-            }
         });
     }
     google.maps.event.addDomListener(window, 'load', initialize);
@@ -635,10 +631,10 @@ $( function() {
     </div>
     <div class="col-sm-3">
       <div class="input-group">
-        {{ distance_field(class="form-control", placeholder='Distanz in Metern')|safe }}
-        <div class="input-group-append">
-          <span class="input-group-text">m</span>
+        <div class="input-group-prepend">
+          <span class="input-group-text">{{ distance_field.label.text }}</span>
         </div>
+        {{ distance_field(class="form-control")|safe }}
       </div>
     </div>
   </div>

@@ -7,7 +7,7 @@ from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus
-from .common import event_rating_choices, weekday_choices
+from .common import event_rating_choices, weekday_choices, distance_choices
 from .widgets import CustomDateField, MultiCheckboxField
 
 class PlaningForm(FlaskForm):
@@ -19,7 +19,7 @@ class PlaningForm(FlaskForm):
     category_id = SelectField(lazy_gettext('Category'), validators=[Optional()], coerce=int)
     coordinate = HiddenField(validators=[Optional()])
     location = StringField(lazy_gettext('Location'), validators=[Optional()])
-    distance = IntegerField(lazy_gettext('Distance'), validators=[Optional()])
+    distance = SelectField(lazy_gettext('Distance'), validators=[Optional()], coerce=int, choices=distance_choices)
     weekday = MultiCheckboxField(lazy_gettext('Weekdays'), validators=[Optional()], coerce=int, choices=weekday_choices)
 
     submit = SubmitField(lazy_gettext("Find"))

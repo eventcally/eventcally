@@ -186,7 +186,6 @@ $( function() {
     $("#clear_location_btn").click(function () {
         $("#coordinate").val("");
         $("#location").val("");
-        $("#distance").val("");
     });
 
     $("#geolocation_btn").click(function () {
@@ -195,10 +194,6 @@ $( function() {
                     $("#coordinate").val(position.coords.latitude+","+position.coords.longitude);
                     $("#location").val("Aktuelle Position");
                     $("#location").removeClass("is-invalid");
-
-                    if ($("#distance").val() == "") {
-                        $("#distance").val("500");
-                    }
             }, handleError);
 
             function handleError(error){
