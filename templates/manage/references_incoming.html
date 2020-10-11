@@ -6,7 +6,8 @@
 {% endblock %}
 {% block content %}
 
-<h1>{{ _('Incoming references') }}</h1>
+<h1 class="mb-1">{{ _('Incoming references') }}</h1>
+<p class="text-muted">Hier findest du Veranstaltungen anderer Verwaltungseinheiten, die du empfiehlst. Um eine Veranstaltungen zu empfehlen, wähle &quot;{{ _('Reference event') }}&quot; auf einer Veranstaltungsseite, die du über die <a href="{{ url_for('event_dates') }}">Suche</a> finden kannst.</p>
 
 <ul class="list-group mt-4">
 {% for reference in references %}

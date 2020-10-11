@@ -17,10 +17,9 @@ from sqlalchemy.exc import SQLAlchemyError
 @app.route('/event/<int:event_id>')
 def event(event_id):
     event = Event.query.get_or_404(event_id)
-    user_can_verify_event = has_access(event.admin_unit, 'event:verify')
-    user_can_update_event = has_access(event.admin_unit, 'event:update')
+    user_rights = get_user_rights(event)
 
-    if not event.verified and not user_can_verify_event and not user_can_update_event:
+    if not event.verified and not user_rights["can_verify_event"] and not user_rights["can_update_event"]:
         abort(401)
 
     dates = EventDate.query.with_parent(event).filter(EventDate.start >= today).order_by(EventDate.start).all()
@@ -28,10 +27,7 @@ def event(event_id):
     return render_template('event/read.html',
         event=event,
         dates=dates,
-        user_can_verify_event=user_can_verify_event,
-        can_update_event=user_can_update_event,
-        user_can_reference_event=can_reference_event(event),
-        user_can_create_reference_request=has_access(event.admin_unit, 'reference_request:create'))
+        user_rights=user_rights)
 
 @app.route("/<string:au_short_name>/events/create", methods=('GET', 'POST'))
 def event_create_for_admin_unit(au_short_name):
@@ -188,3 +184,11 @@ def send_event_inbox_mails(admin_unit, event):
                 gettext('New event review'),
                 'review_notice',
                 event=event)
+
+def get_user_rights(event):
+    return {
+        "can_verify_event": has_access(event.admin_unit, 'event:verify'),
+        "can_update_event": has_access(event.admin_unit, 'event:update'),
+        "can_reference_event": can_reference_event(event),
+        "can_create_reference_request": has_access(event.admin_unit, 'reference_request:create')
+    }

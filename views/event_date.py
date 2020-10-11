@@ -11,7 +11,7 @@ from jsonld import get_sd_for_event_date, DateTimeEncoder
 from services.event_search import EventSearchParams
 from services.event import get_event_dates_query
 from forms.event_date import FindEventDateForm
-from .event import get_event_category_choices
+from .event import get_event_category_choices, get_user_rights
 
 def prepare_event_date_form(form):
     form.category_id.choices = get_event_category_choices()
@@ -45,4 +45,5 @@ def event_date(id):
     structured_data = json.dumps(get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder)
     return render_template('event_date/read.html',
         event_date=event_date,
-        structured_data=structured_data)
+        structured_data=structured_data,
+        user_rights = get_user_rights(event_date.event))
