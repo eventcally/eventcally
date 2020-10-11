@@ -10,7 +10,7 @@ from .utils import get_pagination_urls, permission_missing
 from forms.event_place import FindEventPlaceForm
 from forms.event import FindEventForm
 from services.event_search import EventSearchParams
-from services.event import get_events_query
+from services.event import get_events_query, get_event_reviews_query
 from views.event import get_event_category_choices
 
 @app.route("/manage")
@@ -56,7 +56,7 @@ def manage_admin_unit_event_reviews(id):
         events = list()
         events_paginate = None
     else:
-        events_paginate = Event.query.filter(and_(Event.admin_unit_id == admin_unit.id, Event.review_status == EventReviewStatus.inbox)).order_by(Event.start).paginate()
+        events_paginate = get_event_reviews_query(admin_unit).order_by(Event.start).paginate()
         events = events_paginate.items
 
     return render_template('manage/reviews.html',

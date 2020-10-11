@@ -75,6 +75,9 @@ def get_events_query(params):
     event_filter = and_(event_filter, Event.dates.any(date_filter))
     return Event.query.join(EventPlace, isouter=True).join(Location, isouter=True).filter(event_filter).order_by(Event.start)
 
+def get_event_reviews_query(admin_unit):
+    return Event.query.filter(and_(Event.admin_unit_id == admin_unit.id, Event.review_status == EventReviewStatus.inbox))
+
 def update_event_dates_with_recurrence_rule(event, start, end):
     event.start = start
     event.end = end

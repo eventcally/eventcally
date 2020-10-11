@@ -7,7 +7,7 @@
 {% block content %}
 
 <h1 class="mb-1">{{ _('Reviews') }}</h1>
-<p class="text-muted">Hier findest du zu prüfende Veranstaltungen, die von anonymen Nutzern vorgeschlagen wurden. Den Link, mit dem anonymer Nutzer Veranstaltungen vorschlagen können, findest du unter <a href="{{ url_for('manage_admin_unit_widgets', id=admin_unit.id) }}">{{ _('Widgets') }}.</p>
+<p class="text-muted">Hier findest du zu prüfende Veranstaltungen, die von anonymen Nutzern vorgeschlagen wurden. Den Link, mit dem anonymer Nutzer Veranstaltungen vorschlagen können, findest du unter <a href="{{ url_for('manage_admin_unit_widgets', id=admin_unit.id) }}">{{ _('Widgets') }}</a>.</p>
 
 <ul class="list-group my-4">
 {% for event in events %}

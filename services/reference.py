@@ -1,5 +1,5 @@
 from app import db
-from models import EventReference, EventReferenceRequest
+from models import EventReference, EventReferenceRequest, EventReferenceRequestReviewStatus
 from sqlalchemy import and_, or_, not_
 
 def create_event_reference_for_request(request):
@@ -12,3 +12,9 @@ def create_event_reference_for_request(request):
         db.session.add(result)
 
     return result
+
+def get_reference_requests_incoming_query(admin_unit):
+    return EventReferenceRequest.query.filter(and_(EventReferenceRequest.review_status != EventReferenceRequestReviewStatus.verified, EventReferenceRequest.admin_unit_id == admin_unit.id))
+
+def get_reference_requests_incoming_badge_query(admin_unit):
+    return EventReferenceRequest.query.filter(and_(EventReferenceRequest.review_status == EventReferenceRequestReviewStatus.inbox, EventReferenceRequest.admin_unit_id == admin_unit.id))
