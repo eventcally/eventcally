@@ -30,13 +30,9 @@ def event_dates():
     else:
         flash_errors(form)
 
-    dates = get_event_dates_query(params).paginate()
-
     return render_template('event_date/list.html',
         form=form,
-        params=params,
-        dates=dates.items,
-        pagination=get_pagination_urls(dates))
+        params=params)
 
 @app.route('/eventdate/<int:id>')
 def event_date(id):

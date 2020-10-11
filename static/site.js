@@ -218,3 +218,16 @@ $( function() {
         }
     });
 });
+
+String.prototype.truncate = String.prototype.truncate ||
+function ( n, useWordBoundary ){
+  if (this.length <= n) { return this; }
+  const subString = this.substr(0, n-1); // the original check
+  return (useWordBoundary
+    ? subString.substr(0, subString.lastIndexOf(" "))
+    : subString) + "&hellip;";
+};
+
+function scroll_to_element(element, complete) {
+    $('html, body').animate({ scrollTop: element.offset().top }, { duration: 'slow', complete: complete });
+}
