@@ -1,27 +1,11 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_event_props, render_image_with_link, render_place, render_link_prop %}
+{% from "_macros.html" import render_event_menu, render_event_props, render_image_with_link, render_place, render_link_prop %}
 {% block title %}
 {{ event.name }}
 {% endblock %}
 {% block content %}
 
-    {% if can_update_event or user_can_verify_event %}
-    <div class="my-4">
-        {% if user_can_verify_event %}
-            <a class="btn btn-primary my-1" href="{{ url_for('event_review', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Review event') }}</a>
-        {% endif %}
-        {% if can_update_event %}
-            <a class="btn btn-primary my-1" href="{{ url_for('event_update', event_id=event.id) }}" role="button"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
-            <a class="btn btn-danger my-1" href="{{ url_for('event_delete', event_id=event.id) }}" role="button"><i class="fa fa-trash"></i> {{ _('Delete event') }}...</a>
-        {% endif %}
-        {% if user_can_reference_event %}
-            <a class="btn btn-outline-primary my-1" href="{{ url_for('event_reference', event_id=event.id) }}" role="button"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
-        {% endif %}
-        {% if user_can_create_reference_request %}
-            <a class="btn btn-outline-primary my-1" href="{{ url_for('event_reference_request_create', event_id=event.id) }}" role="button"><i class="fa fa-link"></i> {{ _('Empfehlung anfragen') }}</a>
-        {% endif %}
-    </div>
-    {% endif %}
+    {{ render_event_menu(user_rights, event) }}
 
     <div style="max-width: 768px;">
 
