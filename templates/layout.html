@@ -18,6 +18,10 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.recurrenceinput.css')}}" />
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.68.0/dist/L.Control.Locate.min.css" />
     {%- block styles %}
     {%- endblock styles %}
 
@@ -27,8 +31,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js" integrity="sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/1.0.6/jsrender.js" integrity="sha512-DtWD/uCp2x1mspIw6vhZGPuJP85aKEL0HFI0jFVxcEiWw1OHJn36LqtkX9G9chzKVYLtTT0G8uJ2miDEL7ucTQ==" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+		<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.68.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
     <script src="{{ url_for('static', filename='jquery.recurrenceinput.js')}}"></script>
     <script src="{{ url_for('static', filename='site.js')}}"></script>
+    <script src="{{ url_for('static', filename='svg-icon.js')}}"></script>
+
+    <script>
+      function render_event_status_pill(event) {
+        if (event.eventStatus != null) {
+            if (event.eventStatus == "EventCancelled") {
+                return '<span class="badge badge-pill badge-warning">{{ _('EventStatus.cancelled') }}</span>';
+            }
+            if (event.eventStatus == "EventMovedOnline") {
+                return '<span class="badge badge-pill badge-warning">{{ _('EventStatus.movedOnline') }}</span>';
+            }
+            if (event.eventStatus == "EventPostponed") {
+                return '<span class="badge badge-pill badge-warning">{{ _('EventStatus.postponed') }}</span>';
+            }
+            if (event.eventStatus == "EventRescheduled") {
+                return '<span class="badge badge-pill badge-warning">{{ _('EventStatus.rescheduled') }}</span>';
+            }
+        }
+
+        return '';
+    }
+    </script>
 
     <title>{% block title %}{{ title|default }}{% endblock title %}</title>
 

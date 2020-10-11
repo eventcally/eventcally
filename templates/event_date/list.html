@@ -5,31 +5,278 @@
 {% endblock %}
 {% block header %}
 {{ render_google_filter_autocomplete_header() }}
+<script>
+
+    var page = 1;
+    var per_page = 20;
+
+    var leaflet_map = null;
+    var map_cluster_group = null;
+    var events = null;
+    var arrayOfMarkers = [];
+
+    function init_leaflet_map() {
+        if (leaflet_map != null) {
+            return;
+        }
+
+        leaflet_map  = L.map('map').fitWorld();
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(leaflet_map);
+
+        L.control.locate({
+            keepCurrentZoomLevel: true,
+            icon: 'fa fa-location-arrow'
+        }).addTo(leaflet_map);
+    }
+
+    function clear_events_from_map() {
+        if (leaflet_map == null) {
+            return;
+        }
+
+        if (map_cluster_group != null) {
+            map_cluster_group.clearLayers();
+        }
+
+        arrayOfMarkers = [];
+    }
+
+    function show_event_in_list(event_id) {
+        var card = $('#event_card_' + event_id);
+        scroll_to_element(
+            card,
+            function () {
+                card.effect("highlight", {}, 500);
+            });
+    }
+
+    function fly_to_event(latitude, longitude) {
+        $('#map').show();
+
+        if (arrayOfMarkers.length == 0) {
+            add_events_to_map();
+        }
+
+        scroll_to_element(
+            $('#map'),
+            function () {
+                leaflet_map.flyTo([latitude, longitude], 16);
+            });
+    }
+
+    function add_events_to_map() {
+        init_leaflet_map();
+        clear_events_from_map();
+
+        $.each(events, function(index, event) {
+            if (event.location != null && event.location.geo != null) {
+                var start = moment(event.startDate);
+                var title = start.format("dd. DD.MM.YYYY LT") + ' ' + '<a href="#" onclick="show_event_in_list(\'' + event.identifier + '\'); return false;">' + event.name + '</a>';
+
+                var icon = new L.DivIcon.SVGIcon({
+                    color: "#000",
+                    fillColor: 'blue',
+                    fillOpacity: 1.0,
+                    iconSize: [28,41],
+                    circleRatio: 0.35
+                });
+
+                var geo = event.location.geo;
+                var marker = L.marker([geo.latitude, geo.longitude], { icon: icon }).bindPopup(title);
+                arrayOfMarkers.push(marker);
+            }
+        });
+
+        if (arrayOfMarkers.length == 0) {
+            return;
+        }
+
+        var group_was_created = false;
+
+        if (map_cluster_group == null) {
+            map_cluster_group = L.markerClusterGroup({ disableClusteringAtZoom: 16});
+            group_was_created = true;
+        }
+
+        map_cluster_group.addLayers(arrayOfMarkers);
+
+        if (group_was_created) {
+            leaflet_map.addLayer(map_cluster_group);
+        }
+
+        leaflet_map.fitBounds(map_cluster_group.getBounds());
+    }
+
+    function toggle_map() {
+        if ($('#map').is(":visible")) {
+            $('#map').hide();
+        } else {
+            $('#map').show();
+            add_events_to_map();
+        }
+    }
+
+    function start_request() {
+        handle_request_start();
+
+        var result_list = $("#result_list");
+        result_list.empty();
+
+        var req_data = $("#filter_form").serialize();
+        req_data += '&page=' + page;
+
+        $.ajax({
+            url: "{{ url_for('api_event_dates') }}",
+            type: "get",
+            dataType: "json",
+            data: req_data,
+            error: function(xhr, status, error) {
+                handle_request_error(xhr, status, error);
+            },
+            success: function (data) {
+
+                var content = '';
+                events = data.event;
+                var event_count = events.length;
+                var cols = 3;
+
+                $.each(events, function(index, event) {
+                    var is_card_deck = (index % cols == 0);
+
+                    if (is_card_deck) {
+                        if (content != '') {
+                            content += '</div>';
+                        }
+                        content += '<div class="card-deck">';
+                    }
+
+                    var start = moment(event.startDate);
+                    var img_tag = '';
+
+                    if (event.image != null) {
+                        img_tag = '<img src="' + event.image + '" class="card-img-top" style="object-fit: cover; height: 12vh; border-radius: 0;" />';
+                    }
+
+                    var map_link_start = '';
+                    var map_link_end = '';
+
+                    if (event.location != null && event.location.geo != null) {
+                        var geo = event.location.geo;
+                        map_link_start = '<a href="#" onclick="fly_to_event(' + geo.latitude + ', ' + geo.longitude + '); return false;">';
+                        map_link_end = '</a>';
+                    }
+
+                    content += '<div class="card mb-3" id="event_card_' + event.identifier + '">' +
+                                        '<div class="card-header">' + start.format("dd. DD.MM.YYYY LT") + '</div>' +
+                                        img_tag +
+                                        '<div class="card-body" style="padding:1rem">' +
+                                            '<h5 class="card-title"><a href="' + event.url[0] + '">' + event.name + render_event_status_pill(event) + '</a></h5>' +
+                                            '<p class="card-text">' + event.description.truncate(100) + '</p>' +
+                                        '</div>' +
+                                        '<div class="card-footer text-muted small">' +
+                                            '<div class="text-muted mr-2"><i class="fa fa-database"></i> ' + event.organizer[0].name + '</div>' +
+                                            '<div class="text-muted">' + map_link_start + '<i class="fa fa-map-marker"></i>  ' + event.location.name + map_link_end + '</div>' +
+                                        '</div>' +
+                                '</div>';
+                });
+
+                if (content != '') {
+                    var remaining_cols = cols - (event_count % cols);
+
+                    for (i = 0; i < remaining_cols; i++) {
+                        content += '<div class="card mb-3"></div>';
+                    }
+
+                    content += '</div>';
+                }
+
+                result_list.append(content);
+
+                if (page == 1) {
+                    $('#prev_item').addClass('disabled');
+                } else {
+                    $('#prev_item').removeClass('disabled');
+                }
+
+                if (event_count < per_page) {
+                    $('#next_item').addClass('disabled');
+                } else {
+                    $('#next_item').removeClass('disabled');
+                }
+
+                handle_request_success();
+
+                if (leaflet_map != null) {
+                    add_events_to_map();
+                }
+            }
+        });
+    }
+
+    $( function() {
+        $("#filter_form").submit(function(e) {
+            e.stopPropagation();
+            page = 1;
+            start_request();
+            return false;
+        });
+
+        $("#prev_link").click(function(){
+            if (page > 1) {
+                page--;
+                start_request();
+            }
+            return false;
+        });
+
+        $("#next_link").click(function(){
+            page++;
+            start_request();
+            return false;
+        });
+
+        $('#map').hide();
+        $("#filter_form").submit();
+    });
+    </script>
 {% endblock %}
 {% block content %}
 
-    <h1>{{ _('Event Dates') }} <button type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-filter"></i></button></h1>
+    <h1>
+        {{ _('Event Dates') }}
+        <button type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-filter"></i></button>
+        <button type="button" class="btn btn-outline-secondary" onclick="toggle_map()"><i class="fa fa-map"></i></button>
+    </h1>
 
     <div class="{% if form.is_submitted() %}{% else %}collapse{% endif %}" id="search_form">
         {{ render_event_dates_filter_form(form) }}
     </div>
 
-    {% for date in dates %}
-    <div class="card mb-3" style="max-width: 768px;">
-        {% if date.event.photo_id %}
-            <img src="{{ url_for('image', id=date.event.photo_id) }}" class="card-img-top" style="object-fit: cover; height: 20vh;" />
-        {% endif %}
-        <div class="card-body" style="padding:1rem">
-            <h5 class="card-title">{{ date.event.name }}{{ render_event_status_pill(date.event) }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted"><i class="fa fa-calendar"></i> {{ date.start | datetimeformat('short') }}</h6>
-            <p class="card-text">{{ date.event.description | truncate(100) }}</p>
-            <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ date.event.admin_unit.name }}</small>
-            <small class="text-muted"><i class="fa fa-map-marker"></i> {{ date.event.event_place.name }}</small>
-            <a href="{{ url_for('event_date', id=date.id) }}" class="stretched-link"></a>
+    <div class="row">
+        <div class="col-md mx-3 mb-3" id="map" style="height: 400px;">
+        </div>
+        <div class="col-md">
+            <div id="result_container">
+                <div class="m-1 small text-center text-secondary" id="result_info"></div>
+                <div style="min-height: 300px;">
+                    <div id="result_list">
+                    </div>
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                          <li class="page-item disabled" id="prev_item"><a class="page-link" id="prev_link" href="#">{{ _('Previous') }}</a></li>
+                          <li class="page-item disabled" id="next_item"><a class="page-link" id="next_link" href="#">{{ _('Next') }}</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="spinner-border m-3" role="status" id="spinner" style="display: none;">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="alert alert-danger m-3" role="alert" id="error_alert" style="display: none;"></div>
         </div>
     </div>
-    {% endfor %}
-
-    {{ render_pagination(pagination) }}
 
 {% endblock %}
