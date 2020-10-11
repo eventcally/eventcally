@@ -9,12 +9,13 @@ from access import access_or_401, get_admin_unit_for_manage_or_404, has_admin_un
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import and_, or_, not_
 from sqlalchemy.sql import desc
+from services.reference import get_reference_requests_incoming_query
 
 @app.route('/manage/admin_unit/<int:id>/reference_requests/incoming')
 @auth_required()
 def manage_admin_unit_reference_requests_incoming(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    requests = EventReferenceRequest.query.filter(and_(EventReferenceRequest.review_status != EventReferenceRequestReviewStatus.verified, EventReferenceRequest.admin_unit_id == admin_unit.id)).order_by(desc(EventReferenceRequest.created_at)).paginate()
+    requests = get_reference_requests_incoming_query(admin_unit).order_by(desc(EventReferenceRequest.created_at)).paginate()
 
     return render_template('manage/reference_requests_incoming.html',
         admin_unit=admin_unit,

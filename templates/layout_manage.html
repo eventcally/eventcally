@@ -1,8 +1,11 @@
 {% extends "layout.html" %}
 
-{% macro render_submenu_item(id, title, link, active_id=None) %}
-  <li class="nav-item">
+{% macro render_submenu_item(id, title, link, active_id=None, badge_count=0) %}
+  <li class="nav-item d-flex justify-content-between align-items-center">
     <a class="nav-link pl-0{% if active_id == id %} active{% endif %}" href="{{ link }}">{{ title }}</a>
+    {% if badge_count > 0 %}
+      <span class="badge badge-secondary badge-pill">{{ badge_count }}</span>
+    {% endif %}
   </li>
 {% endmacro %}
 
@@ -16,19 +19,27 @@
           <span class="navbar-toggler-icon"></span>
         </a>
         <div class="collapse navbar-collapse sidebar">
+          {% set menu_options = get_manage_menu_options(admin_unit) %}
           <ul class="flex-column navbar-nav w-100 justify-content-between">
             {{ render_submenu_item('events', _('Events'), url_for('manage_admin_unit_events', id=admin_unit.id), active_id) }}
             {{ render_submenu_item('organizers', _('Organizers'), url_for('manage_admin_unit_organizers', id=admin_unit.id), active_id) }}
             {{ render_submenu_item('places', _('Places'), url_for('manage_admin_unit_event_places', id=admin_unit.id), active_id) }}
-            {{ render_submenu_item('reviews', _('Reviews'), url_for('manage_admin_unit_event_reviews', id=admin_unit.id), active_id) }}
+            {{ render_submenu_item('reviews', _('Reviews'), url_for('manage_admin_unit_event_reviews', id=admin_unit.id), active_id, menu_options['reviews_badge']) }}
             <li class="nav-item dropdown">
               <a class="nav-link pl-0 dropdown-toggle{% if active_id.startswith('reference') %} active{% endif %}" href="#" id="navbarDropdownReferences" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{ _('References') }}
+                {% if menu_options['reference_requests_incoming_badge'] > 0 %}
+                  <span class="badge badge-secondary badge-pill">{{ menu_options['reference_requests_incoming_badge'] }}</span>
+                {% endif %}
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdownReferences">
                 <a class="dropdown-item" href="{{ url_for('manage_admin_unit_references_incoming', id=admin_unit.id) }}">{{ _('Incoming references') }}</a>
                 <a class="dropdown-item" href="{{ url_for('manage_admin_unit_references_outgoing', id=admin_unit.id) }}">{{ _('Outgoing references') }}</a>
-                <a class="dropdown-item" href="{{ url_for('manage_admin_unit_reference_requests_incoming', id=admin_unit.id) }}">{{ _('Incoming reference requests') }}</a>
+                <a class="dropdown-item" href="{{ url_for('manage_admin_unit_reference_requests_incoming', id=admin_unit.id) }}">{{ _('Incoming reference requests') }}
+                  {% if menu_options['reference_requests_incoming_badge'] > 0 %}
+                    <span class="badge badge-secondary badge-pill">{{ menu_options['reference_requests_incoming_badge'] }}</span>
+                  {% endif %}
+                </a>
                 <a class="dropdown-item" href="{{ url_for('manage_admin_unit_reference_requests_outgoing', id=admin_unit.id) }}">{{ _('Outgoing reference requests') }}</a>
               </div>
             </li>
