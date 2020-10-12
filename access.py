@@ -88,9 +88,11 @@ def get_admin_units_for_event_reference(event):
 
 def admin_units_the_current_user_is_member_of():
     result = list()
-    admin_unit_members = AdminUnitMember.query.filter_by(user_id=current_user.id).all()
-    for admin_unit_member in admin_unit_members:
-        result.append(admin_unit_member.adminunit)
+
+    if current_user.is_authenticated:
+        admin_unit_members = AdminUnitMember.query.filter_by(user_id=current_user.id).all()
+        for admin_unit_member in admin_unit_members:
+            result.append(admin_unit_member.adminunit)
 
     return result
 
