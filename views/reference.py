@@ -2,7 +2,7 @@ from app import app, db
 from .utils import get_pagination_urls, flash_errors, handleSqlError
 from access import get_admin_unit_for_manage_or_404, get_admin_units_for_event_reference
 from forms.reference import CreateEventReferenceForm, UpdateEventReferenceForm, DeleteReferenceForm
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, abort
 from flask_babelex import gettext
 from flask_security import auth_required
 from models import EventReference, Event

@@ -2,6 +2,7 @@ from models import EventReviewStatus, EventCategory, Event, EventDate, EventRefe
 from dateutils import dates_from_recurrence_rule, today, date_add_time, date_set_end_of_day
 from sqlalchemy import and_, or_, not_, func
 from sqlalchemy.sql import extract
+from dateutil.relativedelta import relativedelta
 
 def upsert_event_category(category_name):
     result = EventCategory.query.filter_by(name = category_name).first()

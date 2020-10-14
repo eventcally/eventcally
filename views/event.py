@@ -1,6 +1,6 @@
 from app import app, db
 from models import User, Event, EventDate, EventReviewStatus, AdminUnit, AdminUnitMember, EventOrganizer, EventCategory
-from flask import render_template, flash, url_for, redirect, request, jsonify
+from flask import render_template, flash, url_for, redirect, request, jsonify, abort
 from flask_babelex import gettext
 from flask_security import auth_required
 from access import has_access, access_or_401, can_reference_event, has_admin_unit_member_permission
@@ -77,10 +77,11 @@ def event_delete(event_id):
             flash(gettext('Entered name does not match event name'), 'danger')
         else:
             try:
+                admin_unit_id = event.admin_unit.id
                 db.session.delete(event)
                 db.session.commit()
                 flash(gettext('Event successfully deleted'), 'success')
-                return redirect(url_for('manage_admin_unit_events', id=admin_unit, organizer_id=event.organizer_id))
+                return redirect(url_for('manage_admin_unit_events', id=admin_unit_id))
             except SQLAlchemyError as e:
                 db.session.rollback()
                 flash(handleSqlError(e), 'danger')
