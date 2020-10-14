@@ -1,3 +1,4 @@
+from flask import abort
 from flask_security import current_user
 from flask_security.utils import FsPermNeed
 from flask_principal import Permission
