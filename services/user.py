@@ -17,3 +17,6 @@ def upsert_user_role(role_name, role_title, permissions):
     role.remove_permissions(role.get_permissions())
     role.add_permissions(permissions)
     return role
+
+def find_user_by_email(email):
+    return user_datastore.find_user(email=email)

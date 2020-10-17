@@ -7,12 +7,19 @@ from forms.admin_unit_member import NegotiateAdminUnitMemberInvitationForm, Invi
 from .utils import permission_missing, send_mail, handleSqlError, flash_errors
 from access import get_admin_unit_for_manage_or_404, has_access
 from services.admin_unit import add_user_to_admin_unit_with_roles
+from services.user import find_user_by_email
 from sqlalchemy.exc import SQLAlchemyError
 
 @app.route('/invitations/<int:id>', methods=('GET', 'POST'))
-@auth_required()
 def admin_unit_member_invitation(id):
     invitation = AdminUnitMemberInvitation.query.get_or_404(id)
+
+    # Wenn Email nicht als Nutzer vorhanden, dann direkt zu Registrierung
+    if not find_user_by_email(invitation.email):
+        return redirect(url_for('security.register'))
+
+    if not current_user.is_authenticated:
+        return app.login_manager.unauthorized()
 
     if invitation.email != current_user.email:
         return permission_missing(url_for('profile'))

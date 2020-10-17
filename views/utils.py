@@ -1,7 +1,7 @@
 from models import Image, Analytics
 from app import db, mail
 from flask_babelex import gettext
-from flask import request, url_for, render_template, flash
+from flask import request, url_for, render_template, flash, redirect
 from flask_mail import Message
 
 def track_analytics(key, value1, value2):
