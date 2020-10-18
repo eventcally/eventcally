@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_base_image_form, render_radio_buttons, render_event_organizer_places_header, render_datepicker_js, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_base_image_form, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
 {% block header %}
 <script>
 $( function() {
@@ -24,7 +24,6 @@ $( function() {
   update_place_container($('input[type=radio][name=event_place_choice]:checked').val());
 });
 </script>
-{{ render_event_organizer_places_header() }}
 {% endblock %}
 {% block content %}
 
@@ -101,7 +100,6 @@ $( function() {
         {{ render_field_with_errors(form.new_event_place.form.location.street) }}
         {{ render_field_with_errors(form.new_event_place.form.location.postalCode) }}
         {{ render_field_with_errors(form.new_event_place.form.location.city) }}
-        {{ render_field_with_errors(form.new_event_place.form.public, style="width: fit-content; flex: initial;") }}
       </div>
 
     </div>

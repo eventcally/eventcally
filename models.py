@@ -184,7 +184,6 @@ def update_location_coordinate(mapper, connect, self):
 # Events
 class EventPlace(db.Model, TrackableMixin):
     __tablename__ = 'eventplace'
-    __table_args__ = (UniqueConstraint('name', 'organizer_id', 'admin_unit_id'),)
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
@@ -193,9 +192,7 @@ class EventPlace(db.Model, TrackableMixin):
     photo = db.relationship('Image', uselist=False)
     url = Column(String(255))
     description = Column(UnicodeText())
-    public = Column(Boolean())
     admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=True)
-    organizer_id = db.Column(db.Integer, db.ForeignKey('eventorganizer.id'), nullable=True)
 
     def is_empty(self):
         return (not self.name)
@@ -265,7 +262,6 @@ class EventOrganizer(db.Model, TrackableMixin):
     logo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
     logo = db.relationship('Image', uselist=False)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=True)
-    event_places = relationship('EventPlace', backref=backref('organizer', lazy=True))
 
     def is_empty(self):
         return not self.name

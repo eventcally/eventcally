@@ -13,4 +13,4 @@ def upsert_event_organizer(admin_unit_id, name):
 
 def get_event_places(organizer_id):
     organizer = EventOrganizer.query.get(organizer_id)
-    return EventPlace.query.filter(or_(EventPlace.organizer_id == organizer_id, and_(EventPlace.public, EventPlace.admin_unit_id==organizer.admin_unit_id))).order_by(func.lower(EventPlace.name)).all()
+    return EventPlace.query.filter(EventPlace.admin_unit_id==organizer.admin_unit_id).order_by(func.lower(EventPlace.name)).all()

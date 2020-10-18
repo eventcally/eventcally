@@ -18,7 +18,6 @@ class EventPlaceLocationForm(FlaskForm):
 class EventPlaceForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[Optional()])
     location = FormField(EventPlaceLocationForm, default=lambda: Location())
-    public = BooleanField(lazy_gettext('Other organizers can use this location'), default="checked", render_kw ={'checked':''}, validators=[Optional()])
 
     def populate_obj(self, obj):
         for name, field in self._fields.items():

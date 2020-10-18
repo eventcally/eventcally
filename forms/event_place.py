@@ -33,11 +33,9 @@ class BaseEventPlaceForm(FlaskForm):
             field.populate_obj(obj, name)
 
 class CreateEventPlaceForm(BaseEventPlaceForm):
-    public = BooleanField(lazy_gettext('Other organizers can use this location'), default="checked", render_kw ={'checked':''}, validators=[Optional()])
     submit = SubmitField(lazy_gettext("Create place"))
 
 class UpdateEventPlaceForm(BaseEventPlaceForm):
-    public = BooleanField(lazy_gettext('Other organizers can use this location'), validators=[Optional()])
     submit = SubmitField(lazy_gettext("Update place"))
 
 class DeleteEventPlaceForm(FlaskForm):
@@ -48,4 +46,3 @@ class FindEventPlaceForm(FlaskForm):
     class Meta:
         csrf = False
     submit = SubmitField(lazy_gettext("Find places"))
-    organizer_id = SelectField(lazy_gettext('Organizer'), validators=[DataRequired()], coerce=int)
