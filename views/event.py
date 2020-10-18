@@ -10,7 +10,7 @@ from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm
 from .utils import flash_errors, upsert_image_with_data, send_mail, handleSqlError
 from utils import get_event_category_name
 from services.event import upsert_event_category, update_event_dates_with_recurrence_rule
-from services.organizer import get_event_places
+from services.place import get_event_places
 from sqlalchemy.sql import asc, func
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -129,7 +129,6 @@ def event_create_base(admin_unit, organizer_id=0):
         event.admin_unit_id = admin_unit.id
 
         if form.event_place_choice.data == 2:
-            event.event_place.organizer_id = event.organizer_id
             event.event_place.admin_unit_id = event.admin_unit_id
 
         if current_user_can_verify_event:
@@ -162,11 +161,8 @@ def prepare_event_form(form, admin_unit):
     form.organizer_id.choices = [(o.id, o.name) for o in EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name))]
     form.category_id.choices = get_event_category_choices()
 
-    if form.organizer_id.data:
-        places = get_event_places(form.organizer_id.data)
-        form.event_place_id.choices = [(p.id, p.name) for p in places]
-    else:
-        form.event_place_id.choices = list()
+    places = get_event_places(admin_unit.id)
+    form.event_place_id.choices = [(p.id, p.name) for p in places]
 
     form.organizer_id.choices.insert(0, (0, ''))
     form.event_place_id.choices.insert(0, (0, ''))

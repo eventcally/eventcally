@@ -9,18 +9,17 @@ from .utils import flash_errors, upsert_image_with_data, send_mail, handleSqlErr
 from sqlalchemy.sql import asc, func
 from sqlalchemy.exc import SQLAlchemyError
 
-@app.route('/manage/organizer/<int:id>/places/create', methods=('GET', 'POST'))
+@app.route('/manage/admin_unit/<int:id>/places/create', methods=('GET', 'POST'))
 @auth_required()
-def manage_organizer_places_create(id):
-    organizer = EventOrganizer.query.get_or_404(id)
-    access_or_401(organizer.adminunit, 'place:create')
+def manage_admin_unit_places_create(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    access_or_401(admin_unit, 'place:create')
 
     form = CreateEventPlaceForm()
 
     if form.validate_on_submit():
         place = EventPlace()
-        place.organizer_id = organizer.id
-        place.admin_unit_id = organizer.admin_unit_id
+        place.admin_unit_id = admin_unit.id
         place.location = Location()
         update_event_place_with_form(place, form)
 
@@ -28,7 +27,7 @@ def manage_organizer_places_create(id):
             db.session.add(place)
             db.session.commit()
             flash(gettext('Place successfully created'), 'success')
-            return redirect(url_for('manage_organizer_event_places', organizer_id=organizer.id))
+            return redirect(url_for('manage_admin_unit_event_places', id=admin_unit.id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), 'danger')
@@ -48,7 +47,7 @@ def event_place_update(id):
         try:
             db.session.commit()
             flash(gettext('Place successfully updated'), 'success')
-            return redirect(url_for('manage_organizer_event_places', organizer_id=place.organizer.id))
+            return redirect(url_for('manage_admin_unit_event_places', id=place.admin_unit_id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), 'danger')
@@ -70,11 +69,11 @@ def event_place_delete(id):
             flash(gettext('Entered name does not match place name'), 'danger')
         else:
             try:
-                organizer_id=place.organizer.id
+                admin_unit_id=place.admin_unit_id
                 db.session.delete(place)
                 db.session.commit()
                 flash(gettext('Place successfully deleted'), 'success')
-                return redirect(url_for('manage_organizer_event_places', organizer_id=organizer_id))
+                return redirect(url_for('manage_admin_unit_event_places', id=admin_unit_id))
             except SQLAlchemyError as e:
                 db.session.rollback()
                 flash(handleSqlError(e), 'danger')

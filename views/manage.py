@@ -106,31 +106,15 @@ def manage_admin_unit_organizers(id):
 @auth_required()
 def manage_admin_unit_event_places(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    organizer = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).first()
-
-    if organizer:
-        return redirect(url_for('manage_organizer_event_places', organizer_id=organizer.id))
-
-    flash('Please create an organizer before you create a place', 'danger')
-    return redirect(url_for('manage_admin_unit_organizers', id=id))
-
-@app.route('/manage/event_places')
-@auth_required()
-def manage_organizer_event_places():
-    organizer = EventOrganizer.query.get_or_404(request.args.get('organizer_id'))
-    admin_unit = get_admin_unit_for_manage_or_404(organizer.admin_unit_id)
-    organizers = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name)).all()
 
     form = FindEventPlaceForm(**request.args)
-    form.organizer_id.choices = [(o.id, o.name) for o in organizers]
 
-    places = EventPlace.query.filter(EventPlace.organizer_id == organizer.id).order_by(func.lower(EventPlace.name)).paginate()
+    places = EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit.id).order_by(func.lower(EventPlace.name)).paginate()
     return render_template('manage/places.html',
         admin_unit=admin_unit,
-        organizer=organizer,
         form=form,
         places=places.items,
-        pagination=get_pagination_urls(places))
+        pagination=get_pagination_urls(places, id=id))
 
 @app.route('/manage/admin_unit/<int:id>/members')
 @auth_required()

@@ -11,18 +11,11 @@
 <div class="my-4">
     <form action="" class="form-inline" method="GET">
         {{ form.hidden_tag() }}
-
-        <div class="input-group mb-2 mr-sm-2">
-            <div class="input-group-prepend">
-                <span class="input-group-text">{{ _('Organizer') }}</span>
-            </div>
-            {{ form.organizer_id(class="form-control", onchange="javascript:this.form.submit()")|safe }}
-        </div>
     </form>
 </div>
 
 <div class="my-4">
-    <a class="btn btn-outline-secondary my-1" href="{{ url_for('manage_organizer_places_create', id=organizer.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create place') }}</a>
+    <a class="btn btn-outline-secondary my-1" href="{{ url_for('manage_admin_unit_places_create', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create place') }}</a>
 </div>
 
 <ul class="list-group">
