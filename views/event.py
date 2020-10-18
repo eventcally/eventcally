@@ -7,7 +7,7 @@ from access import has_access, access_or_401, can_reference_event, has_admin_uni
 from dateutils import today
 from datetime import datetime
 from forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm
-from .utils import flash_errors, upsert_image_with_data, send_mail, handleSqlError
+from .utils import flash_errors, upsert_image_with_data, send_mail, handleSqlError, flash_message
 from utils import get_event_category_name
 from services.event import upsert_event_category, update_event_dates_with_recurrence_rule
 from services.place import get_event_places
@@ -53,8 +53,8 @@ def event_update(event_id):
 
         try:
             db.session.commit()
-            flash(gettext('Event successfully updated'), 'success')
-            return redirect(url_for('event', event_id=event.id))
+            flash_message(gettext('Event successfully updated'), url_for('event', event_id=event.id))
+            return redirect(url_for('manage_admin_unit_events', id=event.admin_unit_id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), 'danger')
@@ -141,8 +141,8 @@ def event_create_base(admin_unit, organizer_id=0):
             db.session.commit()
 
             if current_user_can_verify_event:
-                flash(gettext('Event successfully created'), 'success')
-                return redirect(url_for('event', event_id=event.id))
+                flash_message(gettext('Event successfully created'), url_for('event', event_id=event.id))
+                return redirect(url_for('manage_admin_unit_events', id=event.admin_unit_id))
             else:
                 send_event_inbox_mails(admin_unit, event)
                 flash(gettext('Thank you so much! The event is being verified.'), 'success')
