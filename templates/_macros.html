@@ -161,6 +161,15 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_int_prop(prop, icon = None, label_key = None) %}
+{% if prop %}
+<div>
+  {% if icon %}<i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>{% endif %}
+  {{ prop }}
+</div>
+{% endif %}
+{% endmacro %}
+
 {% macro render_bool_prop(prop, icon, label_key) %}
 {% if prop %}
 <div>
@@ -334,6 +343,7 @@
       <div class="my-4">{{ event.description }}</div>
 
       <div class="mt-4">
+        {{ render_string_prop(event.price_info, 'fa-euro-sign', 'Price info') }}
         {{ render_link_prop(event.external_link) }}
         {{ render_link_prop(event.ticket_link) }}
         {% if event.category_id %}
@@ -345,6 +355,9 @@
         {{ render_range_prop(event.age_from, event.age_to, 'fa-people-arrows', 'Typical Age range') }}
         {{ render_enum_prop(event.target_group_origin, 'fa-users', 'Target group origin') }}
         {{ render_enum_prop(event.attendance_mode, 'fa-mouse-pointer', 'Attendance mode') }}
+        {{ render_bool_prop(event.registration_required, 'fa-list', 'Registration required') }}
+        {{ render_bool_prop(event.booked_up, 'fa-square-full', 'Booked up') }}
+        {{ render_int_prop(event.expected_participants, 'fa-users', 'Expected number of participants') }}
       </div>
     </div>
   </div>

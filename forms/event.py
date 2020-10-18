@@ -56,6 +56,10 @@ class BaseEventForm(FlaskForm):
     accessible_for_free = BooleanField(lazy_gettext('Accessible for free'), validators=[Optional()])
     age_from = IntegerField(lazy_gettext('Typical Age from'), validators=[Optional()])
     age_to = IntegerField(lazy_gettext('Typical Age to'), validators=[Optional()])
+    registration_required = BooleanField(lazy_gettext('Registration required'), validators=[Optional()])
+    booked_up = BooleanField(lazy_gettext('Booked up'), validators=[Optional()])
+    expected_participants = IntegerField(lazy_gettext('Expected number of participants'), validators=[Optional()])
+    price_info = TextAreaField(lazy_gettext('Price info'), validators=[Optional()])
 
     target_group_origin = SelectField(lazy_gettext('Target group origin'), coerce=int, choices=[
         (int(EventTargetGroupOrigin.both), lazy_gettext('EventTargetGroupOrigin.both')),
