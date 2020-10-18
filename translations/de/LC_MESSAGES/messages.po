@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-11 16:41+0200\n"
+"POT-Creation-Date: 2020-10-18 12:32+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -142,7 +142,7 @@ msgid "Longitude"
 msgstr "Längengrad"
 
 #: forms/admin_unit.py:20 forms/event.py:19 forms/event.py:37 forms/event.py:42
-#: forms/event.py:127 forms/event_place.py:21 forms/event_place.py:45
+#: forms/event.py:131 forms/event_place.py:21 forms/event_place.py:45
 #: forms/organizer.py:20 forms/organizer.py:44 forms/reference.py:18
 #: forms/reference_request.py:14 templates/_macros.html:106
 #: templates/admin/admin_units.html:18 templates/event_place/list.html:19
@@ -173,17 +173,17 @@ msgstr "Link URL"
 #: forms/admin_unit.py:23 forms/admin_unit_member.py:12
 #: forms/admin_unit_member.py:22 forms/admin_unit_member.py:26
 #: forms/event.py:32 forms/event.py:38 forms/organizer.py:22
-#: templates/_macros.html:212
+#: templates/_macros.html:221
 msgid "Email"
 msgstr "Email"
 
 #: forms/admin_unit.py:24 forms/event.py:33 forms/event.py:39
-#: forms/organizer.py:23 templates/_macros.html:239
+#: forms/organizer.py:23 templates/_macros.html:248
 msgid "Phone"
 msgstr "Telefon"
 
 #: forms/admin_unit.py:25 forms/event.py:34 forms/organizer.py:24
-#: templates/_macros.html:247
+#: templates/_macros.html:256
 msgid "Fax"
 msgstr "Fax"
 
@@ -333,24 +333,24 @@ msgstr "Beginn"
 msgid "End"
 msgstr "Ende"
 
-#: forms/event.py:49 templates/_macros.html:318
+#: forms/event.py:49 templates/_macros.html:327
 msgid "Previous start date"
 msgstr "Vorheriges Startdatum"
 
-#: forms/event.py:50 templates/_macros.html:194
+#: forms/event.py:50 templates/_macros.html:203
 msgid "Tags"
 msgstr "Stichworte"
 
-#: forms/event.py:52 forms/event.py:152 forms/event_place.py:51
-#: templates/_macros.html:384 templates/event/create.html:59
-#: templates/event/update.html:46 templates/manage/places.html:17
+#: forms/event.py:52 forms/event.py:156 forms/event_place.py:51
+#: templates/_macros.html:397 templates/event/create.html:60
+#: templates/event/update.html:47 templates/manage/places.html:17
 #: templates/organizer/create.html:16 templates/organizer/delete.html:13
 #: templates/organizer/update.html:16
 msgid "Organizer"
 msgstr "Veranstalter"
 
-#: forms/event.py:53 forms/event.py:151 forms/event_date.py:20
-#: forms/planing.py:19 templates/_macros.html:340
+#: forms/event.py:53 forms/event.py:155 forms/event_date.py:20
+#: forms/planing.py:19 templates/_macros.html:350
 msgid "Category"
 msgstr "Kategorie"
 
@@ -370,161 +370,177 @@ msgstr "Typisches Alter von"
 msgid "Typical Age to"
 msgstr "Typisches Alter bis"
 
+#: forms/event.py:59
+msgid "Registration required"
+msgstr "Anmeldung erforderlich"
+
 #: forms/event.py:60
+msgid "Booked up"
+msgstr "Ausgebucht"
+
+#: forms/event.py:61
+msgid "Expected number of participants"
+msgstr "Erwartete Teilnehmerzahl"
+
+#: forms/event.py:62
+msgid "Price info"
+msgstr "Preisinformation"
+
+#: forms/event.py:64
 msgid "Target group origin"
 msgstr "Für Touristen/Einwohner geeignet"
 
-#: forms/event.py:61
+#: forms/event.py:65
 msgid "EventTargetGroupOrigin.both"
 msgstr "Für Touristen und Einwohner"
 
-#: forms/event.py:62
+#: forms/event.py:66
 msgid "EventTargetGroupOrigin.tourist"
 msgstr "Hauptsächlich für Touristen"
 
-#: forms/event.py:63
+#: forms/event.py:67
 msgid "EventTargetGroupOrigin.resident"
 msgstr "Hauptsächlich für Einwohner"
 
-#: forms/event.py:65
+#: forms/event.py:69
 msgid "Attendance mode"
 msgstr "Teilnahme"
 
-#: forms/event.py:66
+#: forms/event.py:70
 msgid "EventAttendanceMode.offline"
 msgstr "Offline"
 
-#: forms/event.py:67
+#: forms/event.py:71
 msgid "EventAttendanceMode.online"
 msgstr "Online"
 
-#: forms/event.py:68
+#: forms/event.py:72
 msgid "EventAttendanceMode.mixed"
 msgstr "Online und offline"
 
-#: forms/event.py:70 forms/event_place.py:23
+#: forms/event.py:74 forms/event_place.py:23
 msgid "Photo"
 msgstr "Foto"
 
-#: forms/event.py:71 forms/event.py:141 forms/reference.py:9
+#: forms/event.py:75 forms/event.py:145 forms/reference.py:9
 #: forms/reference.py:13 forms/reference_request.py:29
-#: templates/event/create.html:140 templates/event/update.html:93
+#: templates/event/create.html:144 templates/event/update.html:97
 msgid "Rating"
 msgstr "Bewertung"
 
-#: forms/event.py:74 forms/event.py:75 forms/event.py:108
-#: templates/_macros.html:354 templates/event/create.html:84
-#: templates/event/update.html:55 templates/event_place/create.html:20
+#: forms/event.py:78 forms/event.py:79 forms/event.py:112
+#: templates/_macros.html:367 templates/event/create.html:85
+#: templates/event/update.html:56 templates/event_place/create.html:20
 #: templates/event_place/delete.html:13 templates/event_place/update.html:20
 msgid "Place"
 msgstr "Ort"
 
-#: forms/event.py:74
+#: forms/event.py:78
 msgid "Select existing place"
 msgstr "Vorhandenen Ort auswählen"
 
-#: forms/event.py:74
+#: forms/event.py:78
 msgid "Enter new place"
 msgstr "Neuen Ort eingeben"
 
-#: forms/event.py:80 templates/event/create.html:31 templates/example.html:10
+#: forms/event.py:84 templates/event/create.html:31 templates/example.html:10
 #: templates/manage/events.html:12 templates/manage/organizers.html:21
 #: templates/manage/widgets.html:19 templates/manage/widgets.html:22
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
-#: forms/event.py:101
+#: forms/event.py:105
 msgid "Select existing place or enter new place"
 msgstr "Existierenden Ort wählen oder neuen Ort eingeben"
 
-#: forms/event.py:110 templates/event/update.html:36
+#: forms/event.py:114 templates/event/update.html:37
 msgid "Status"
 msgstr "Status"
 
-#: forms/event.py:111
+#: forms/event.py:115
 msgid "EventStatus.scheduled"
 msgstr "Geplant"
 
-#: forms/event.py:112 templates/layout.html:45
+#: forms/event.py:116 templates/layout.html:45
 msgid "EventStatus.cancelled"
 msgstr "Abgesagt"
 
-#: forms/event.py:113 templates/layout.html:48
+#: forms/event.py:117 templates/layout.html:48
 msgid "EventStatus.movedOnline"
 msgstr "Online verschoben"
 
-#: forms/event.py:114 templates/layout.html:51
+#: forms/event.py:118 templates/layout.html:51
 msgid "EventStatus.postponed"
 msgstr "Verschoben"
 
-#: forms/event.py:115 templates/layout.html:54
+#: forms/event.py:119 templates/layout.html:54
 msgid "EventStatus.rescheduled"
 msgstr "Neu angesetzt"
 
-#: forms/event.py:117 templates/event/update.html:8
+#: forms/event.py:121 templates/event/update.html:8
 msgid "Update event"
 msgstr "Veranstaltung aktualisieren"
 
-#: forms/event.py:126 templates/_macros.html:703 templates/event/delete.html:6
+#: forms/event.py:130 templates/_macros.html:716 templates/event/delete.html:6
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
-#: forms/event.py:130 forms/reference_request.py:17
+#: forms/event.py:134 forms/reference_request.py:17
 #: templates/event/review_status.html:16
 #: templates/reference_request/review_status.html:12
 msgid "Review status"
 msgstr "Prüfungsstatus"
 
-#: forms/event.py:131
+#: forms/event.py:135
 msgid "EventReviewStatus.inbox"
 msgstr "Ungeprüft"
 
-#: forms/event.py:132
+#: forms/event.py:136
 msgid "EventReviewStatus.verified"
 msgstr "Verifiziert"
 
-#: forms/event.py:133
+#: forms/event.py:137
 msgid "EventReviewStatus.rejected"
 msgstr "Abgelehnt"
 
-#: forms/event.py:135 forms/reference_request.py:22
+#: forms/event.py:139 forms/reference_request.py:22
 msgid "Rejection reason"
 msgstr "Ablehnungsgrund"
 
-#: forms/event.py:137
+#: forms/event.py:141
 msgid "EventRejectionReason.duplicate"
 msgstr "Duplikat"
 
-#: forms/event.py:138
+#: forms/event.py:142
 msgid "EventRejectionReason.untrustworthy"
 msgstr "Unseriös"
 
-#: forms/event.py:139
+#: forms/event.py:143
 msgid "EventRejectionReason.illegal"
 msgstr "Unzulässig"
 
-#: forms/event.py:143 forms/reference_request.py:30
+#: forms/event.py:147 forms/reference_request.py:30
 msgid "Save review"
 msgstr "Prüfung speichern"
 
-#: forms/event.py:148 forms/event_date.py:17 forms/planing.py:17
+#: forms/event.py:152 forms/event_date.py:17 forms/planing.py:17
 msgid "From"
 msgstr "Von"
 
-#: forms/event.py:149 forms/event_date.py:18 forms/planing.py:18
+#: forms/event.py:153 forms/event_date.py:18 forms/planing.py:18
 msgid "to"
 msgstr "bis"
 
-#: forms/event.py:150 forms/event_date.py:19
+#: forms/event.py:154 forms/event_date.py:19
 msgid "Keyword"
 msgstr "Stichwort"
 
-#: forms/event.py:154
+#: forms/event.py:158
 msgid "Find events"
 msgstr "Veranstaltungen finden"
 
 #: forms/event_date.py:22 forms/planing.py:21 templates/_macros.html:108
-#: templates/_macros.html:254 templates/admin_unit/create.html:26
+#: templates/_macros.html:263 templates/admin_unit/create.html:26
 #: templates/admin_unit/update.html:27 templates/event_place/create.html:29
 #: templates/event_place/update.html:29 templates/organizer/create.html:25
 #: templates/organizer/update.html:25
@@ -575,7 +591,7 @@ msgstr "Veranstalter löschen"
 msgid "Weekdays"
 msgstr "Wochentage"
 
-#: forms/reference.py:8 forms/reference_request.py:9 templates/_macros.html:399
+#: forms/reference.py:8 forms/reference_request.py:9 templates/_macros.html:412
 #: templates/admin_unit/create.html:16 templates/admin_unit/update.html:17
 msgid "Admin unit"
 msgstr "Verwaltungseinheit"
@@ -628,8 +644,8 @@ msgstr "Nicht relevant"
 msgid "EventReferenceRequestRejectionReason.illegal"
 msgstr "Unzulässig"
 
-#: templates/_macros.html:105 templates/_macros.html:304
-#: templates/_macros.html:311 templates/_macros.html:595
+#: templates/_macros.html:105 templates/_macros.html:313
+#: templates/_macros.html:320 templates/_macros.html:608
 msgid "Date"
 msgstr "Datum"
 
@@ -637,7 +653,7 @@ msgstr "Datum"
 msgid "Host"
 msgstr "Veranstalter"
 
-#: templates/_macros.html:119 templates/_macros.html:321
+#: templates/_macros.html:119 templates/_macros.html:330
 msgid "Verified"
 msgstr "Verifiziert"
 
@@ -649,65 +665,65 @@ msgstr "Alle Veranstaltungen anzeigen"
 msgid "Show on Google Maps"
 msgstr "Auf Google Maps anzeigen"
 
-#: templates/_macros.html:203
+#: templates/_macros.html:212
 msgid "Link"
 msgstr "Link"
 
-#: templates/_macros.html:297 templates/event/create.html:38
+#: templates/_macros.html:306 templates/event/create.html:38
 #: templates/event/delete.html:13 templates/event/update.html:15
 #: templates/reference/delete.html:13
 msgid "Event"
 msgstr "Veranstaltung"
 
-#: templates/_macros.html:307
+#: templates/_macros.html:316
 #, python-format
 msgid "%(count)d event dates"
 msgstr "%(count)d Termine"
 
-#: templates/_macros.html:374
+#: templates/_macros.html:387
 msgid "Show directions"
 msgstr "Anreise planen"
 
-#: templates/_macros.html:423
+#: templates/_macros.html:436
 msgid "Sign in with Google"
 msgstr "Mit Google anmelden"
 
-#: templates/_macros.html:483
+#: templates/_macros.html:496
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
-#: templates/_macros.html:546 templates/_macros.html:548
+#: templates/_macros.html:559 templates/_macros.html:561
 #: templates/event_date/list.html:270
 msgid "Previous"
 msgstr "Zurück"
 
-#: templates/_macros.html:551 templates/_macros.html:553
+#: templates/_macros.html:564 templates/_macros.html:566
 #: templates/event_date/list.html:271
 msgid "Next"
 msgstr "Weiter"
 
-#: templates/_macros.html:618
+#: templates/_macros.html:631
 msgid "Radius"
 msgstr "Umkreis"
 
-#: templates/_macros.html:695
+#: templates/_macros.html:708
 msgid "Actions"
 msgstr "Aktionen"
 
-#: templates/_macros.html:699 templates/event/review.html:8
+#: templates/_macros.html:712 templates/event/review.html:8
 #: templates/manage/reviews.html:19
 msgid "Review event"
 msgstr "Veranstaltung prüfen"
 
-#: templates/_macros.html:702 templates/event/review.html:22
+#: templates/_macros.html:715 templates/event/review.html:22
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: templates/_macros.html:706 templates/manage/references_incoming.html:10
+#: templates/_macros.html:719 templates/manage/references_incoming.html:10
 msgid "Reference event"
 msgstr "Veranstaltung empfehlen"
 
-#: templates/_macros.html:709
+#: templates/_macros.html:722
 #: templates/manage/reference_requests_outgoing.html:10
 #: templates/manage/references_outgoing.html:10
 msgid "Empfehlung anfragen"
@@ -727,7 +743,7 @@ msgid "Manage"
 msgstr "Verwaltung"
 
 #: templates/event_place/read.html:22 templates/layout.html:84
-#: templates/layout_manage.html:20 templates/manage/events.html:5
+#: templates/layout_manage.html:24 templates/manage/events.html:5
 #: templates/manage/events.html:9
 msgid "Events"
 msgstr "Veranstaltungen"
@@ -757,56 +773,56 @@ msgstr "Administration"
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: templates/layout_manage.html:21 templates/manage/organizers.html:5
+#: templates/layout_manage.html:25 templates/manage/organizers.html:5
 #: templates/manage/organizers.html:9
 msgid "Organizers"
 msgstr "Veranstalter"
 
 #: templates/event_place/list.html:3 templates/event_place/list.html:7
-#: templates/layout_manage.html:22 templates/manage/places.html:5
+#: templates/layout_manage.html:26 templates/manage/places.html:5
 #: templates/manage/places.html:9
 msgid "Places"
 msgstr "Orte"
 
-#: templates/layout_manage.html:23 templates/manage/reviews.html:5
+#: templates/layout_manage.html:27 templates/manage/reviews.html:5
 #: templates/manage/reviews.html:9
 msgid "Reviews"
 msgstr "Prüfungen"
 
-#: templates/layout_manage.html:26 templates/manage/references_incoming.html:5
+#: templates/layout_manage.html:30 templates/manage/references_incoming.html:5
 #: templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr "Empfehlungen"
 
-#: templates/layout_manage.html:29 templates/manage/references_incoming.html:9
+#: templates/layout_manage.html:36 templates/manage/references_incoming.html:9
 msgid "Incoming references"
 msgstr "Eingehende Empfehlungen"
 
-#: templates/layout_manage.html:30 templates/manage/references_outgoing.html:9
+#: templates/layout_manage.html:37 templates/manage/references_outgoing.html:9
 msgid "Outgoing references"
 msgstr "Ausgehende Empfehlungen"
 
-#: templates/layout_manage.html:31
+#: templates/layout_manage.html:38
 #: templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
 msgstr "Eingehende Empfehlungsanfragen"
 
-#: templates/layout_manage.html:32
+#: templates/layout_manage.html:43
 #: templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
 msgstr "Ausgehende Empfehlungsanfragen"
 
-#: templates/layout_manage.html:35 templates/manage/members.html:5
+#: templates/layout_manage.html:46 templates/manage/members.html:5
 #: templates/manage/members.html:28
 msgid "Members"
 msgstr "Mitglieder"
 
-#: templates/layout_manage.html:36 templates/manage/reviews.html:10
+#: templates/layout_manage.html:47 templates/manage/reviews.html:10
 #: templates/manage/widgets.html:5 templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr "Widgets"
 
-#: templates/admin_unit/update.html:11 templates/layout_manage.html:37
+#: templates/admin_unit/update.html:11 templates/layout_manage.html:48
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -822,7 +838,7 @@ msgid "Admin Units"
 msgstr "Verwaltungseinheiten"
 
 #: templates/admin_unit/create.html:46 templates/admin_unit/update.html:47
-#: templates/event/create.html:125 templates/event/update.html:78
+#: templates/event/create.html:127 templates/event/update.html:80
 #: templates/event_place/create.html:46 templates/event_place/update.html:46
 #: templates/organizer/create.html:45 templates/organizer/update.html:45
 msgid "Additional information"
@@ -878,15 +894,15 @@ msgstr "Klicker hier, um die Veranstaltung zu prüfen."
 msgid "The review status of your event has been updated."
 msgstr "Der Prüfungsstatus deiner Veranstaltung wurde aktualisiert"
 
-#: templates/event/create.html:48 templates/event/update.html:25
+#: templates/event/create.html:49 templates/event/update.html:26
 msgid "Event date"
 msgstr "Termin"
 
-#: templates/event/create.html:69 templates/event/review.html:29
+#: templates/event/create.html:70 templates/event/review.html:29
 msgid "Contact"
 msgstr "Kontakt"
 
-#: templates/event/create.html:111 templates/event/update.html:64
+#: templates/event/create.html:112 templates/event/update.html:65
 msgid "Target group"
 msgstr "Zielgruppe"
 
@@ -1020,27 +1036,27 @@ msgstr "Die eingegebene Email passt nicht zur Email des Mitglieds"
 msgid "Member successfully deleted"
 msgstr "Mitglied erfolgreich gelöscht"
 
-#: views/admin_unit_member_invitation.py:25
+#: views/admin_unit_member_invitation.py:32
 msgid "Invitation successfully accepted"
 msgstr "Einladung erfolgreich akzeptiert"
 
-#: views/admin_unit_member_invitation.py:29
+#: views/admin_unit_member_invitation.py:36
 msgid "Invitation successfully declined"
 msgstr "Einladung erfolgreich abgelehnt"
 
-#: views/admin_unit_member_invitation.py:65
+#: views/admin_unit_member_invitation.py:72
 msgid "You have received an invitation"
 msgstr "Du hast eine Einladung erhalten"
 
-#: views/admin_unit_member_invitation.py:69
+#: views/admin_unit_member_invitation.py:76
 msgid "Invitation successfully sent"
 msgstr "Einladung erfolgreich gesendet"
 
-#: views/admin_unit_member_invitation.py:91
+#: views/admin_unit_member_invitation.py:98
 msgid "Entered email does not match invitation email"
 msgstr "Die eingegebene Email passt nicht zur Email der Einladung"
 
-#: views/admin_unit_member_invitation.py:96
+#: views/admin_unit_member_invitation.py:103
 msgid "Invitation successfully deleted"
 msgstr "Einladung erfolgreich gelöscht"
 
@@ -1052,19 +1068,19 @@ msgstr "Veranstaltung erfolgreich aktualisiert"
 msgid "Entered name does not match event name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
 
-#: views/event.py:82
+#: views/event.py:83
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
 
-#: views/event.py:144
+#: views/event.py:145
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: views/event.py:148
+#: views/event.py:149
 msgid "Thank you so much! The event is being verified."
 msgstr "Vielen Dank! Die Veranstaltung wird geprüft."
 
-#: views/event.py:184
+#: views/event.py:185
 msgid "New event review"
 msgstr "Neue Veranstaltung zu prüfen"
 
@@ -1116,11 +1132,11 @@ msgstr "Empfehlung erfolgreich empfohlen"
 msgid "Reference successfully deleted"
 msgstr "Empfehlung erfolgreich gelöscht"
 
-#: views/reference_request.py:53
+#: views/reference_request.py:54
 msgid "Request successfully created"
 msgstr "Empfehlungsanfrage erfolgreich erstellt"
 
-#: views/reference_request.py:72
+#: views/reference_request.py:73
 msgid "New reference request"
 msgstr "Neue Empfehlungsanfrage"
 
