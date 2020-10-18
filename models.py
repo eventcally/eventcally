@@ -338,6 +338,11 @@ class Event(db.Model, TrackableMixin):
     rejection_resaon = Column(IntegerEnum(EventRejectionReason))
     rating = Column(Integer())
 
+    registration_required = Column(Boolean())
+    booked_up = Column(Boolean())
+    expected_participants = Column(Integer())
+    price_info = Column(UnicodeText())
+
     @hybrid_property
     def verified(self):
         return self.review_status == EventReviewStatus.verified

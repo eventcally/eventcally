@@ -17,6 +17,7 @@
     <div class="card-body">
       {{ render_field_with_errors(form.name) }}
       {{ render_field_with_errors(form.description) }}
+      {{ render_field_with_errors(form.price_info) }}
     </div>
   </div>
 
@@ -68,6 +69,7 @@
       {{ render_field_with_errors(form.kid_friendly, style="width: fit-content; flex: initial;") }}
       {{ render_field_with_errors(form.age_from) }}
       {{ render_field_with_errors(form.age_to) }}
+      {{ render_field_with_errors(form.expected_participants) }}
     </div>
   </div>
 
@@ -84,6 +86,8 @@
       {{ render_field_with_errors(form.tags) }}
       {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
       {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.registration_required, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.booked_up, style="width: fit-content; flex: initial;") }}
     </div>
   </div>
 
