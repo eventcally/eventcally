@@ -1,7 +1,7 @@
 from models import Image, Analytics
 from app import db, mail
 from flask_babelex import gettext
-from flask import request, url_for, render_template, flash, redirect
+from flask import request, url_for, render_template, flash, redirect, Markup
 from flask_mail import Message
 
 def track_analytics(key, value1, value2):
@@ -54,6 +54,12 @@ def flash_errors(form):
                 getattr(form, field).label.text,
                 error
             ), 'danger')
+
+def flash_message(msg, url):
+    link_text = gettext('Show')
+    link = ' &ndash; <a href="%s">%s</a>' % (url, link_text)
+    message = Markup(msg + link)
+    flash(message, 'success')
 
 def permission_missing(redirect_location):
     flash('You do not have permission for this action', 'danger')
