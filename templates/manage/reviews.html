@@ -1,6 +1,6 @@
 {% extends "layout_manage.html" %}
 {% set active_id = "reviews" %}
-{% from "_macros.html" import render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
+{% from "_macros.html" import render_event_review_status_pill, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
 {% block title %}
 {{ _('Reviews') }}
 {% endblock %}
@@ -10,16 +10,16 @@
 <p class="text-muted">Hier findest du zu prüfende Veranstaltungen, die von anonymen Nutzern vorgeschlagen wurden. Den Link, mit dem anonymer Nutzer Veranstaltungen vorschlagen können, findest du unter <a href="{{ url_for('manage_admin_unit_widgets', id=admin_unit.id) }}">{{ _('Widgets') }}</a>.</p>
 
 <ul class="list-group my-4">
-{% for event in events %}
+{% for event_suggestion in event_suggestions %}
     <li class="list-group-item">
-        {{ render_event_date(event) }}
+        {{ render_event_date(event_suggestion) }}
         <div class="dropdown d-inline-block">
-            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ event.name }}</button>
+            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ event_suggestion.name }}</button>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="{{ url_for('event_review', event_id=event.id) }}">{{ _('Review event') }}...</a>
+                <a class="dropdown-item" href="{{ url_for('event_suggestion_review', event_suggestion_id=event_suggestion.id) }}">{{ _('Review event suggestion') }}...</a>
             </div>
         </div>
-        <small>{{ event.organizer.name }}</small>
+        {{ render_event_review_status_pill(event_suggestion) }}
     </li>
 {% endfor %}
 </ul>

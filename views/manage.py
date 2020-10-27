@@ -1,16 +1,17 @@
 from app import app, db
-from models import AdminUnit, AdminUnitMember, AdminUnitMemberInvitation, Event, EventPlace, EventReviewStatus, EventOrganizer, User
+from models import AdminUnit, AdminUnitMember, AdminUnitMemberInvitation, Event, EventPlace, EventReviewStatus, EventOrganizer, User, EventSuggestion
 from flask import render_template, flash, url_for, redirect, request, jsonify, make_response
 from flask_babelex import gettext
 from flask_security import auth_required, roles_required, current_user
 from access import has_access, access_or_401, get_admin_unit_for_manage, get_admin_units_for_manage, get_admin_unit_for_manage_or_404
-from sqlalchemy.sql import asc, func
+from sqlalchemy.sql import asc, desc, func
 from sqlalchemy import and_, or_, not_
 from .utils import get_pagination_urls, permission_missing
 from forms.event_place import FindEventPlaceForm
 from forms.event import FindEventForm
 from services.event_search import EventSearchParams
-from services.event import get_events_query, get_event_reviews_query
+from services.event import get_events_query
+from services.event_suggestion import get_event_reviews_query
 from views.event import get_event_category_choices
 
 @app.route("/manage")
@@ -52,17 +53,13 @@ def manage_admin_unit(id):
 def manage_admin_unit_event_reviews(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
-    if not has_access(admin_unit, 'event:verify'):
-        events = list()
-        events_paginate = None
-    else:
-        events_paginate = get_event_reviews_query(admin_unit).order_by(Event.start).paginate()
-        events = events_paginate.items
+    event_suggestions_paginate = get_event_reviews_query(admin_unit).order_by(desc(EventSuggestion.created_at)).paginate()
+    event_suggestions = event_suggestions_paginate.items
 
     return render_template('manage/reviews.html',
         admin_unit=admin_unit,
-        events=events,
-        pagination = get_pagination_urls(events_paginate, id=id))
+        event_suggestions=event_suggestions,
+        pagination = get_pagination_urls(event_suggestions_paginate, id=id))
 
 @app.route('/manage/admin_unit/<int:id>/events')
 @auth_required()

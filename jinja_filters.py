@@ -16,14 +16,14 @@ def get_manage_menu_options_context_processor():
 
   def get_manage_menu_options(admin_unit):
     from access import has_access
-    from services.event import get_event_reviews_query
+    from services.event_suggestion import get_event_reviews_badge_query
     from services.reference import get_reference_requests_incoming_badge_query
 
     reviews_badge = 0
     reference_requests_incoming_badge = get_reference_requests_incoming_badge_query(admin_unit).count()
 
     if has_access(admin_unit, 'event:verify'):
-      reviews_badge = get_event_reviews_query(admin_unit).count()
+      reviews_badge = get_event_reviews_badge_query(admin_unit).count()
 
     return {
       'reviews_badge': reviews_badge,

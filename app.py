@@ -90,7 +90,7 @@ from views import (
     event,
     event_date,
     event_place,
-    event_review,
+    event_suggestion,
     image,
     manage,
     organizer,

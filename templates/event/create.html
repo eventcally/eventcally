@@ -22,6 +22,27 @@ $( function() {
   });
 
   update_place_container($('input[type=radio][name=event_place_choice]:checked').val());
+
+
+
+  function update_organizer_container(value) {
+    switch (value) {
+      case '1':
+        $('#existing_organizer_container').show();
+        $('#new_organizer_container').hide();
+        break;
+      case '2':
+        $('#existing_organizer_container').hide();
+        $('#new_organizer_container').show();
+        break;
+    }
+  }
+
+  $('input[type=radio][name=organizer_choice]').on('change', function() {
+    update_organizer_container($(this).val());
+  });
+
+  update_organizer_container($('input[type=radio][name=organizer_choice]:checked').val());
 });
 </script>
 {% endblock %}
@@ -59,25 +80,25 @@ $( function() {
       {{ _('Organizer') }} *
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.organizer_id, class="autocomplete w-100") }}
-    </div>
-  </div>
 
-  {% if form.contact.min_entries > 0 %}
-  <div class="card mb-4">
-    <div class="card-header">
-      {{ _('Contact') }}
-    </div>
-    <div class="card-body">
-      {% for contact_form in form.contact %}
-          {{ contact_form.hidden_tag() }}
-          {{ render_field_with_errors(contact_form.form.name) }}
-          {{ render_field_with_errors(contact_form.form.email) }}
-          {{ render_field_with_errors(contact_form.form.phone) }}
-      {% endfor %}
+      <div>
+        {{ render_radio_buttons(form.organizer_choice) }}
+      </div>
+
+      <div class="my-4" id="existing_organizer_container">
+        {{ render_field_with_errors(form.organizer_id, class="autocomplete w-100") }}
+      </div>
+
+      <div class="my-4" id="new_organizer_container">
+        {{ form.new_organizer.hidden_tag() }}
+        {{ render_field_with_errors(form.new_organizer.form.name) }}
+        {{ form.new_organizer.form.location.hidden_tag() }}
+        {{ render_field_with_errors(form.new_organizer.form.location.street) }}
+        {{ render_field_with_errors(form.new_organizer.form.location.postalCode) }}
+        {{ render_field_with_errors(form.new_organizer.form.location.city) }}
+      </div>
     </div>
   </div>
-  {% endif %}
 
   <div class="card mb-4">
     <div class="card-header">

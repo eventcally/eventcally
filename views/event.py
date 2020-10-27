@@ -1,5 +1,5 @@
 from app import app, db
-from models import User, Event, EventDate, EventReviewStatus, AdminUnit, AdminUnitMember, EventOrganizer, EventCategory
+from models import User, Event, EventDate, EventReviewStatus, AdminUnit, AdminUnitMember, EventOrganizer, EventCategory, EventSuggestion
 from flask import render_template, flash, url_for, redirect, request, jsonify, abort
 from flask_babelex import gettext
 from flask_security import auth_required
@@ -18,10 +18,6 @@ from sqlalchemy.exc import SQLAlchemyError
 def event(event_id):
     event = Event.query.get_or_404(event_id)
     user_rights = get_user_rights(event)
-
-    if not event.verified and not user_rights["can_verify_event"] and not user_rights["can_update_event"]:
-        abort(401)
-
     dates = EventDate.query.with_parent(event).filter(EventDate.start >= today).order_by(EventDate.start).all()
 
     return render_template('event/read.html',
@@ -29,16 +25,47 @@ def event(event_id):
         dates=dates,
         user_rights=user_rights)
 
-@app.route("/<string:au_short_name>/events/create", methods=('GET', 'POST'))
-def event_create_for_admin_unit(au_short_name):
-    admin_unit = AdminUnit.query.filter(AdminUnit.short_name == au_short_name).first_or_404()
-    return event_create_base(admin_unit)
-
 @app.route("/admin_unit/<int:id>/events/create", methods=('GET', 'POST'))
 def event_create_for_admin_unit_id(id):
     admin_unit = AdminUnit.query.get_or_404(id)
-    organizer_id = request.args.get('organizer_id') if 'organizer_id' in request.args else 0
-    return event_create_base(admin_unit, organizer_id)
+    access_or_401(admin_unit, 'event:create')
+
+    form = CreateEventForm(admin_unit_id=admin_unit.id, category_id=upsert_event_category('Other').id)
+    prepare_event_form(form, admin_unit)
+
+    event_suggestion_id = int(request.args.get('event_suggestion_id')) if 'event_suggestion_id' in request.args else 0
+    event_suggestion = None
+
+    if event_suggestion_id > 0:
+        event_suggestion = EventSuggestion.query.get_or_404(event_suggestion_id)
+        access_or_401(event_suggestion.admin_unit, 'event:verify')
+        prepare_event_form_for_suggestion(form, event_suggestion)
+        if form.is_submitted():
+            form.process(request.form)
+
+    if form.validate_on_submit():
+        event = Event()
+        update_event_with_form(event, form, event_suggestion)
+        event.admin_unit_id = admin_unit.id
+
+        if form.event_place_choice.data == 2:
+            event.event_place.admin_unit_id = event.admin_unit_id
+
+        if form.organizer_choice.data == 2:
+            event.organizer.admin_unit_id = event.admin_unit_id
+
+        try:
+            db.session.add(event)
+            db.session.commit()
+
+            flash_message(gettext('Event successfully created'), url_for('event', event_id=event.id))
+            return redirect(url_for('manage_admin_unit_events', id=event.admin_unit_id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
+    return render_template('event/create.html', form=form, event_suggestion=event_suggestion)
 
 @app.route('/event/<int:event_id>/update', methods=('GET', 'POST'))
 def event_update(event_id):
@@ -107,53 +134,6 @@ def event_rrule():
     result = calculate_occurrences(start_date, '"%d.%m.%Y"', rrule_str, start, batch_size)
     return jsonify(result)
 
-def event_create_base(admin_unit, organizer_id=0):
-    form = CreateEventForm(admin_unit_id=admin_unit.id, organizer_id=organizer_id, category_id=upsert_event_category('Other').id)
-    prepare_event_form(form, admin_unit)
-
-    current_user_can_create_event = has_access(admin_unit, 'event:create')
-    current_user_can_verify_event = has_access(admin_unit, 'event:verify')
-
-    if not current_user_can_create_event:
-        form.contact.min_entries = 1
-        if len(form.contact.entries) == 0:
-            form.contact.append_entry()
-
-    if not current_user_can_verify_event:
-        form.rating.choices = [(0, '0')]
-        form.rating.data = 0
-
-    if form.validate_on_submit():
-        event = Event()
-        update_event_with_form(event, form)
-        event.admin_unit_id = admin_unit.id
-
-        if form.event_place_choice.data == 2:
-            event.event_place.admin_unit_id = event.admin_unit_id
-
-        if current_user_can_verify_event:
-            event.review_status = EventReviewStatus.verified
-        else:
-            event.review_status = EventReviewStatus.inbox
-
-        try:
-            db.session.add(event)
-            db.session.commit()
-
-            if current_user_can_verify_event:
-                flash_message(gettext('Event successfully created'), url_for('event', event_id=event.id))
-                return redirect(url_for('manage_admin_unit_events', id=event.admin_unit_id))
-            else:
-                send_event_inbox_mails(admin_unit, event)
-                flash(gettext('Thank you so much! The event is being verified.'), 'success')
-                return redirect(url_for('event_review_status', event_id=event.id))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), 'danger')
-    else:
-        flash_errors(form)
-    return render_template('event/create.html', form=form)
-
 def get_event_category_choices():
     return sorted([(c.id, get_event_category_name(c)) for c in EventCategory.query.all()], key=lambda category: category[1])
 
@@ -167,20 +147,36 @@ def prepare_event_form(form, admin_unit):
     form.organizer_id.choices.insert(0, (0, ''))
     form.event_place_id.choices.insert(0, (0, ''))
 
-def update_event_with_form(event, form):
+def prepare_event_form_for_suggestion(form, event_suggestion):
+    form.name.data = event_suggestion.name
+    form.start.data = event_suggestion.start
+    form.description.data = event_suggestion.description
+    form.external_link.data = event_suggestion.external_link
+
+    if event_suggestion.photo:
+        form.photo.form.copyright_text.data = event_suggestion.photo.copyright_text
+        form.photo.object_data = event_suggestion.photo
+
+    if event_suggestion.event_place:
+        form.event_place_id.data = event_suggestion.event_place.id
+    else:
+        form.event_place_choice.data = 2
+        form.new_event_place.form.name.data = event_suggestion.event_place_text
+
+    if event_suggestion.organizer:
+        form.organizer_id.data = event_suggestion.organizer.id
+    else:
+        form.organizer_choice.data = 2
+        form.new_organizer.form.name.data = event_suggestion.organizer_text
+
+def update_event_with_form(event, form, event_suggestion = None):
     form.populate_obj(event)
 
+    if event_suggestion and event_suggestion.photo and event.photo and event.photo.data is None and not form.photo.delete_flag.data:
+        event.photo.data = event_suggestion.photo.data
+        event.photo.encoding_format = event_suggestion.photo.encoding_format
+
     update_event_dates_with_recurrence_rule(event, form.start.data, form.end.data)
-
-def send_event_inbox_mails(admin_unit, event):
-    members = AdminUnitMember.query.join(User).filter(AdminUnitMember.admin_unit_id == admin_unit.id).all()
-
-    for member in members:
-        if has_admin_unit_member_permission(member, 'event:verify'):
-            send_mail(member.user.email,
-                gettext('New event review'),
-                'review_notice',
-                event=event)
 
 def get_user_rights(event):
     return {

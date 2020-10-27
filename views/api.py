@@ -9,7 +9,7 @@ from services.organizer import get_event_places
 
 @app.route("/api/events")
 def api_events():
-    dates = EventDate.query.join(Event).filter(EventDate.start >= today).filter(Event.verified).order_by(EventDate.start).all()
+    dates = EventDate.query.join(Event).filter(EventDate.start >= today).order_by(EventDate.start).all()
     return json_from_event_dates(dates)
 
 @app.route("/api/event_dates")
