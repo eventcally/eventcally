@@ -6,7 +6,7 @@ from wtforms import HiddenField, SelectMultipleField, FieldList, RadioField, Dat
 from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
-from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus
+from models import EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus
 from .common import event_rating_choices, weekday_choices, distance_choices
 from .widgets import CustomDateField, MultiCheckboxField
 

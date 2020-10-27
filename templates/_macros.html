@@ -1,7 +1,10 @@
 {% macro render_field_with_errors(field) %}
     {% set label_text = field.label.text + ' *' if field.flags.required else field.label.text %}
     <div class="form-group row {% if field.errors %} has-error{% endif -%}">
-    {{ field.label(text=label_text, class="col-sm-2 col-form-label") }}
+      {% if 'ri' in kwargs and kwargs['ri'] == 'checkbox' %}
+      {% else %}
+        {{ field.label(text=label_text, class="col-sm-2 col-form-label") }}
+      {% endif %}
     <div class="input-group col-sm-10">
       {% set field_class = kwargs['class'] if 'class' in kwargs else '' %}
       {% set field_class = field_class + ' form-control' %}
@@ -27,6 +30,11 @@
               </div>
           {% endfor %}
         </fieldset>
+      {% elif 'ri' in kwargs and kwargs['ri'] == 'checkbox' %}
+        <div class="form-check">
+            {{ field(class="form-check-input") }}
+            {{ field.label(class="form-check-label") }}
+        </div>
       {% else %}
         {{ field(class=field_class, **kwargs)|safe }}
       {% endif %}
@@ -115,9 +123,6 @@
                   <td>
                       <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
                       {{ render_event_status_pill(event) }}
-                      {% if event.verified %}
-                        <i class="fa fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i>
-                      {% endif %}
                   </td>
                   <td>{{ render_event_organizer(event.organizer) }}</td>
                   <td>{{ render_place(event.event_place) }}</td>
@@ -300,7 +305,11 @@
   {{ render_enum_prop(reference_request.rejection_reason, 'fa-search-minus', 'Rejection reason') }}
 {% endmacro %}
 
-{% macro render_event_props(event, start, end, dates = None, show_rating = False) %}
+{% macro render_event_props(event, start, end, dates = None, show_rating = False, show_admin_unit = True) %}
+
+{% endmacro %}
+
+{% macro render_event_props(event, start, end, dates = None, show_rating = False, show_admin_unit = True) %}
   <div class="card mb-3">
     <div class="card-header">
       {{ _('Event') }}
@@ -325,11 +334,6 @@
       {{ render_enum_prop(event.status, 'fa-info-circle', 'Status') }}
       {% if event.previous_start_date %}
       <div><i class="fa fa-fw fa-calendar-times" data-toggle="tooltip" title="{{ _('Previous start date') }}"></i> {{ event.previous_start_date | datetimeformat('short') }}</div>
-      {% endif %}
-      {% if event.verified %}
-      <div><i class="fa fa-fw fa-check-circle text-success" data-toggle="tooltip" title="{{ _('Verified') }}"></i> {{ _('Verified') }}</div>
-      {% else %}
-      {{ render_event_review_status(event) }}
       {% endif %}
 
       {% if show_rating and event.rating %}
@@ -407,6 +411,7 @@
 
   {% endif %}
 
+  {% if show_admin_unit %}
   <div class="card mb-3">
     <div class="card-header">
       {{ _('Admin unit') }}
@@ -429,6 +434,7 @@
 
     </div>
   </div>
+  {% endif %}
 
 {% endmacro %}
 
@@ -691,12 +697,17 @@ $( function() {
     {{ form_field.hidden_tag() }}
     {% if form_field.object_data and form_field.object_data.id %}
       <div>
-        <img src="{{ url_for('image', id=form_field.object_data.id) }}" class="img-fluid" style="max-width:5rem;" />
+        <a href="{{ url_for('image', id=form_field.object_data.id) }}" target="_blank"><img src="{{ url_for('image', id=form_field.object_data.id) }}" class="img-fluid" style="max-width:5rem;" /></a>
       </div>
       {{ render_field_with_errors(form_field.delete_flag, style="width: fit-content; flex: initial;") }}
     {% endif %}
     {{ render_field_with_errors(form_field.image_file) }}
     {{ render_field_with_errors(form_field.copyright_text) }}
+    {% if form_field.description %}
+      <small class="form-text text-muted w-100">
+        {{ form_field.description }}
+      </small>
+    {% endif %}
   </div>
 </div>
 {% endmacro %}
@@ -708,9 +719,6 @@ $( function() {
           {{ _('Actions') }}
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            {% if user_rights['can_verify_event'] %}
-                <a class="dropdown-item" href="{{ url_for('event_review', event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Review event') }}</a>
-            {% endif %}
             {% if user_rights['can_update_event'] %}
                 <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
                 <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}...</a>

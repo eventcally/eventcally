@@ -1,4 +1,4 @@
-from wtforms import DateTimeField, SelectMultipleField
+from wtforms import DateTimeField, SelectMultipleField, SelectField
 from wtforms.widgets import html_params, HTMLString, ListWidget, CheckboxInput
 import pytz
 from datetime import datetime
@@ -76,3 +76,20 @@ class CustomDateField(DateTimeField):
                 self.data = berlin_tz.localize(date)
             except:
                 raise ValueError('Not a valid date value. Looking for YYYY-MM-DD.')
+
+def try_to_int(value):
+    if isinstance(value, int):
+        return value
+
+    if isinstance(value, str) and value.isdigit():
+        try:
+            return int(value)
+        except ValueError:
+            return value
+
+    return value
+
+class TagSelectField(SelectField):
+
+    def __init__(self, label=None, validators=None, coerce=try_to_int, choices=None, validate_choice=False, **kwargs):
+        super(TagSelectField, self).__init__(label, validators, coerce, choices, validate_choice, **kwargs)

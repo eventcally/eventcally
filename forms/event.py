@@ -6,7 +6,7 @@ from wtforms import FieldList, RadioField, DateTimeField, StringField, SubmitFie
 from wtforms.fields.html5 import DateTimeLocalField, EmailField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
-from models import EventContact, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus, Image
+from models import EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus, Image
 from .common import event_rating_choices, BaseImageForm
 from .widgets import CustomDateTimeField, CustomDateField
 
@@ -25,17 +25,15 @@ class EventPlaceForm(FlaskForm):
                 obj.location = Location()
             field.populate_obj(obj, name)
 
+class OrganizerForm(EventPlaceForm):
+    pass
+
 class EventOrganizerForm(FlaskForm):
     name = StringField(lazy_gettext('Organizator'), validators=[Optional()])
     url = StringField(lazy_gettext('Link URL'), validators=[Optional()])
     email = EmailField(lazy_gettext('Email'), validators=[Optional()])
     phone = StringField(lazy_gettext('Phone'), validators=[Optional()])
     fax = StringField(lazy_gettext('Fax'), validators=[Optional()])
-
-class EventContactForm(FlaskForm):
-    name = StringField(lazy_gettext('Name'), validators=[Optional()])
-    email = EmailField(lazy_gettext('Email'), validators=[Optional()])
-    phone = StringField(lazy_gettext('Phone'), validators=[Optional()])
 
 class BaseEventForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
@@ -48,7 +46,6 @@ class BaseEventForm(FlaskForm):
     previous_start_date = CustomDateTimeField(lazy_gettext('Previous start date'), validators=[Optional()])
     tags = StringField(lazy_gettext('Tags'), validators=[Optional()])
 
-    organizer_id = SelectField(lazy_gettext('Organizer'), validators=[DataRequired()], coerce=int)
     category_id = SelectField(lazy_gettext('Category'), validators=[DataRequired()], coerce=int)
 
     kid_friendly = BooleanField(lazy_gettext('Kid friendly'), validators=[Optional()])
@@ -78,7 +75,9 @@ class CreateEventForm(BaseEventForm):
     event_place_id = SelectField(lazy_gettext('Place'), validators=[Optional()], coerce=int)
     new_event_place = FormField(EventPlaceForm, default=lambda: EventPlace())
 
-    contact = FieldList(FormField(EventContactForm, default=lambda: EventContact()), max_entries=1)
+    organizer_choice = RadioField(lazy_gettext('Organizer'), choices=[(1,lazy_gettext('Select existing organizer')), (2,lazy_gettext('Enter new organizer'))], default=1, coerce=int)
+    organizer_id = SelectField(lazy_gettext('Organizer'), validators=[Optional()], coerce=int)
+    new_organizer = FormField(OrganizerForm, default=lambda: EventOrganizer())
 
     submit = SubmitField(lazy_gettext("Create event"))
 
@@ -90,12 +89,15 @@ class CreateEventForm(BaseEventForm):
                 if not obj.event_place:
                     obj.event_place = EventPlace()
                 field.populate_obj(obj, 'event_place')
+            elif name == 'new_organizer':
+                if self.organizer_choice.data != 2:
+                    continue
+                if not obj.organizer:
+                    obj.organizer = EventOrganizer()
+                field.populate_obj(obj, 'organizer')
             elif name == 'photo' and not obj.photo:
                 obj.photo = Image()
             field.populate_obj(obj, name)
-
-        if isinstance(obj.contact, list):
-            obj.contact = obj.contact[0] if len(obj.contact) > 0 else None
 
     def validate(self):
         if not super(BaseEventForm, self).validate():
@@ -105,10 +107,16 @@ class CreateEventForm(BaseEventForm):
             self.event_place_id.errors.append(msg)
             self.new_event_place.form.name.errors.append(msg)
             return False
+        if self.organizer_id.data == 0 and not self.new_organizer.form.name.data:
+            msg = gettext('Select existing organizer or enter new organizer')
+            self.organizer_id.errors.append(msg)
+            self.new_organizer.form.name.errors.append(msg)
+            return False
         return True
 
 class UpdateEventForm(BaseEventForm):
     event_place_id = SelectField(lazy_gettext('Place'), validators=[DataRequired()], coerce=int)
+    organizer_id = SelectField(lazy_gettext('Organizer'), validators=[DataRequired()], coerce=int)
 
     status = SelectField(lazy_gettext('Status'), coerce=int, choices=[
         (int(EventStatus.scheduled), lazy_gettext('EventStatus.scheduled')),
@@ -128,22 +136,6 @@ class UpdateEventForm(BaseEventForm):
 class DeleteEventForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Delete event"))
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
-
-class ReviewEventForm(FlaskForm):
-    review_status = SelectField(lazy_gettext('Review status'), coerce=int, choices=[
-        (int(EventReviewStatus.inbox), lazy_gettext('EventReviewStatus.inbox')),
-        (int(EventReviewStatus.verified), lazy_gettext('EventReviewStatus.verified')),
-        (int(EventReviewStatus.rejected), lazy_gettext('EventReviewStatus.rejected'))])
-
-    rejection_resaon = SelectField(lazy_gettext('Rejection reason'), coerce=int, choices=[
-        (0, ''),
-        (int(EventRejectionReason.duplicate), lazy_gettext('EventRejectionReason.duplicate')),
-        (int(EventRejectionReason.untrustworthy), lazy_gettext('EventRejectionReason.untrustworthy')),
-        (int(EventRejectionReason.illegal), lazy_gettext('EventRejectionReason.illegal'))])
-
-    rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=event_rating_choices)
-
-    submit = SubmitField(lazy_gettext("Save review"))
 
 class FindEventForm(FlaskForm):
     class Meta:

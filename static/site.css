@@ -90,3 +90,7 @@ tr.table-line-through td {
         word-break: break-all;
     }
 }
+
+.text-highlight {
+    color: #dc3545!important;
+}

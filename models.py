@@ -272,16 +272,6 @@ def purge_event_organizer(mapper, connect, self):
     if self.logo and self.logo.is_empty():
         self.logo_id = None
 
-class EventContact(db.Model, TrackableMixin):
-    __tablename__ = 'eventcontact'
-    id = Column(Integer(), primary_key=True)
-    name = Column(Unicode(255), nullable=False)
-    email = Column(Unicode(255))
-    phone = Column(Unicode(255))
-
-    def is_empty(self):
-        return not self.name
-
 class EventReference(db.Model, TrackableMixin):
     __tablename__ = 'eventreference'
     id = Column(Integer(), primary_key=True)
@@ -302,6 +292,54 @@ class EventReferenceRequest(db.Model, TrackableMixin):
     @hybrid_property
     def verified(self):
         return self.review_status == EventReferenceRequestReviewStatus.verified
+
+class EventSuggestion(db.Model, TrackableMixin):
+    __tablename__ = 'eventsuggestion'
+    id = Column(Integer(), primary_key=True)
+
+    name = Column(Unicode(255), nullable=False)
+    start = db.Column(db.DateTime(timezone=True), nullable=False)
+    description = Column(UnicodeText(), nullable=True)
+    external_link = Column(String(255))
+    review_status = Column(IntegerEnum(EventReviewStatus))
+    rejection_resaon = Column(IntegerEnum(EventRejectionReason))
+
+    contact_name = Column(Unicode(255), nullable=False)
+    contact_email = Column(Unicode(255))
+    contact_phone = Column(Unicode(255))
+    contact_email_notice = Column(Boolean())
+
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey('adminunit.id'), nullable=False)
+    admin_unit = db.relationship('AdminUnit', backref=db.backref('eventsuggestions', lazy=True))
+
+    event_place_id = db.Column(db.Integer, db.ForeignKey('eventplace.id'), nullable=True)
+    event_place = db.relationship('EventPlace', uselist=False)
+    event_place_text = Column(Unicode(255), nullable=True)
+
+    organizer_id = db.Column(db.Integer, db.ForeignKey('eventorganizer.id'), nullable=True)
+    organizer = db.relationship('EventOrganizer', uselist=False)
+    organizer_text = Column(Unicode(255), nullable=True)
+
+    photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
+    photo = db.relationship('Image', uselist=False)
+
+    @hybrid_property
+    def verified(self):
+        return self.review_status == EventReviewStatus.verified
+
+@listens_for(EventSuggestion, 'before_insert')
+@listens_for(EventSuggestion, 'before_update')
+def purge_event_suggestion(mapper, connect, self):
+    if self.organizer and self.organizer.is_empty():
+        self.organizer_id = None
+    if self.organizer_id is not None:
+        self.organizer_text = None
+    if self.event_place and self.event_place.is_empty():
+        self.event_place_id = None
+    if self.event_place_id is not None:
+        self.event_place_text = None
+    if self.photo and self.photo.is_empty():
+        self.photo_id = None
 
 class Event(db.Model, TrackableMixin):
     __tablename__ = 'event'
@@ -330,22 +368,12 @@ class Event(db.Model, TrackableMixin):
     attendance_mode = Column(IntegerEnum(EventAttendanceMode))
     status = Column(IntegerEnum(EventStatus))
     previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
-    review_status = Column(IntegerEnum(EventReviewStatus))
-    rejection_resaon = Column(IntegerEnum(EventRejectionReason))
     rating = Column(Integer())
 
     registration_required = Column(Boolean())
     booked_up = Column(Boolean())
     expected_participants = Column(Integer())
     price_info = Column(UnicodeText())
-
-    @hybrid_property
-    def verified(self):
-        return self.review_status == EventReviewStatus.verified
-
-    # suggestion
-    contact_id = db.Column(db.Integer, db.ForeignKey('eventcontact.id'), nullable=True)
-    contact = db.relationship('EventContact', uselist=False)
 
     recurrence_rule = Column(UnicodeText())
     start = db.Column(db.DateTime(timezone=True), nullable=True)
@@ -362,8 +390,6 @@ def purge_event(mapper, connect, self):
         self.organizer_id = None
     if self.event_place and self.event_place.is_empty():
         self.event_place_id = None
-    if self.contact and self.contact.is_empty():
-        self.contact_id = None
     if self.photo and self.photo.is_empty():
         self.photo_id = None
 

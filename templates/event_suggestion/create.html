@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_base_image_form, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
+{% block content %}
+
+<h1>{{ _('Create event suggestion') }}</h1>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <p class="card-text">
+      Hier kannst du als Gast eine Veranstaltung vorschlagen, die anschließend durch <strong>{{ admin_unit.name }}</strong> geprüft wird.
+      Für mehr Optionen und einen eigenen Veranstaltungskalender, kannst du dich <a href="{{ url_for('security.register') }}">kostenlos registrieren</a>.
+    </p>
+  </div>
+</div>
+
+<form action="" method="POST" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+
+  <div class="card mb-4">
+    <div class="card-header">
+      Nutzungsbedingungen
+    </div>
+    <div class="card-body">
+      <p class="card-text">
+        Die offene Veranstaltungsdatenbank stellt allen Nutzern Daten sowohl für private als auch kommerzielle Zwecke frei nutzbar zur Verfügung.
+      </p>
+      {{ render_field_with_errors(form.accept_tos, ri="checkbox") }}
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Contact') }}
+    </div>
+    <div class="card-body">
+      <p class="card-text">
+        <i class="fa fa-lock"></i> Deine Kontaktdaten werden für etwaige Rückfragen bei der Prüfung durch <em>{{ admin_unit.name }}</em> verwendet.
+        Die Daten sind nur für die Prüfer:innen sichtbar und werden nicht öffentlich angezeigt.
+      </p>
+
+      {{ render_field_with_errors(form.contact_name) }}
+      {{ render_field_with_errors(form.contact_email) }}
+      {{ render_field_with_errors(form.contact_phone) }}
+      {{ render_field_with_errors(form.contact_email_notice, ri="checkbox") }}
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Event') }}
+    </div>
+    <div class="card-body">
+      {{ render_field_with_errors(form.name) }}
+      {{ render_field_with_errors(form.start) }}
+      {{ render_field_with_errors(form.event_place_id, class="autocomplete-tags w-100") }}
+      {{ render_field_with_errors(form.organizer_id, class="autocomplete-tags w-100") }}
+    </div>
+  </div>
+
+  {{ render_base_image_form(form.photo) }}
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Optionale Details') }}
+    </div>
+    <div class="card-body">
+      {{ render_field_with_errors(form.description) }}
+      {{ render_field_with_errors(form.external_link) }}
+    </div>
+  </div>
+
+  {{ render_field(form.submit) }}
+
+</form>
+
+{% endblock %}
