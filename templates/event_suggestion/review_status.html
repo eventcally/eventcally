@@ -7,9 +7,11 @@
 
     <h1>{{ event_suggestion.name }}</h1>
 
+    {% if not event_suggestion.verified or not event_suggestion.event_id %}
     <div class="alert alert-info" role="alert">
         {{ _('You can visit this page again to check the status.') }}
     </div>
+    {% endif %}
 
     <div class="card mb-3">
         <div class="card-header">
@@ -17,8 +19,10 @@
         </div>
         <div class="card-body">
             {{ render_event_review_status(event_suggestion) }}
-            {% if event_suggestion.verified %}
-                <a href="{{ url_for('event', event_id=event_suggestion.event_id) }}">{{ _('View') }}</a>
+            {% if event_suggestion.verified and event_suggestion.event_id %}
+            <div class="mt-4">
+                <a class="btn btn-success" href="{{ url_for('event', event_id=event_suggestion.event_id) }}" role="button"><i class="fa fa-arrow-right"></i> {{ _('View event') }}</a>
+            </div>
             {% endif %}
         </div>
     </div>

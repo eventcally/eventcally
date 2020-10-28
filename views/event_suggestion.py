@@ -24,8 +24,8 @@ def event_suggestion_create_for_admin_unit(au_short_name):
     places = get_event_places(admin_unit.id)
     form.event_place_id.choices = [(p.id, p.name) for p in places]
 
-    form.organizer_id.choices.insert(0, (0, ''))
-    form.event_place_id.choices.insert(0, (0, ''))
+    form.organizer_id.choices.insert(0, ('', ''))
+    form.event_place_id.choices.insert(0, ('', ''))
 
     if form.validate_on_submit():
         event_suggestion = EventSuggestion()

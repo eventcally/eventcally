@@ -1,8 +1,9 @@
 from wtforms import DateTimeField, SelectMultipleField, SelectField
 from wtforms.widgets import html_params, HTMLString, ListWidget, CheckboxInput
+from wtforms.validators import StopValidation
 import pytz
 from datetime import datetime
-from flask_babelex import to_user_timezone
+from flask_babelex import to_user_timezone, gettext
 from dateutils import berlin_tz
 
 class MultiCheckboxField(SelectMultipleField):
@@ -91,5 +92,15 @@ def try_to_int(value):
 
 class TagSelectField(SelectField):
 
-    def __init__(self, label=None, validators=None, coerce=try_to_int, choices=None, validate_choice=False, **kwargs):
+    def __init__(self, label=None, validators=None, coerce=try_to_int, choices=None, validate_choice=True, **kwargs):
         super(TagSelectField, self).__init__(label, validators, coerce, choices, validate_choice, **kwargs)
+
+    def pre_validate(self, form):
+        if self.is_free_text():
+            if not self.data or not self.data.strip():
+                raise StopValidation(gettext('This field is required'))
+        else:
+            super(TagSelectField, self).pre_validate(form)
+
+    def is_free_text(self):
+        return isinstance(self.data, str)

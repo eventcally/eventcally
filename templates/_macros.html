@@ -236,8 +236,8 @@
 {% endmacro %}
 
 {% macro render_event_review_status_pill(event) %}
-{% if event.review_status and event.review_status != 2 %}
- <span class="badge badge-pill {% if event.review_status == 1 %}badge-info{% else %}badge-danger{% endif %}">{{ event.review_status | loc_enum }}</span>
+{% if event.review_status %}
+ <span class="badge badge-pill {% if event.review_status == 2 %}badge-success{% elif event.review_status == 1 %}badge-info{% else %}badge-danger{% endif %}">{{ event.review_status | loc_enum }}</span>
 {% endif %}
 {% endmacro %}
 

@@ -13,6 +13,7 @@ from services.event import upsert_event_category, update_event_dates_with_recurr
 from services.place import get_event_places
 from sqlalchemy.sql import asc, func
 from sqlalchemy.exc import SQLAlchemyError
+from .event_suggestion import send_event_suggestion_review_status_mail
 
 @app.route('/event/<int:event_id>')
 def event(event_id):
@@ -39,6 +40,10 @@ def event_create_for_admin_unit_id(id):
     if event_suggestion_id > 0:
         event_suggestion = EventSuggestion.query.get_or_404(event_suggestion_id)
         access_or_401(event_suggestion.admin_unit, 'event:verify')
+
+        if event_suggestion.verified and event_suggestion.event_id:
+            return redirect(url_for('event_suggestion_review_status', event_suggestion_id=event_suggestion.id))
+
         prepare_event_form_for_suggestion(form, event_suggestion)
         if form.is_submitted():
             form.process(request.form)
@@ -55,8 +60,16 @@ def event_create_for_admin_unit_id(id):
             event.organizer.admin_unit_id = event.admin_unit_id
 
         try:
+            if event_suggestion:
+                event_suggestion.event = event
+                event_suggestion.review_status = EventReviewStatus.verified
+                event_suggestion.rejection_resaon = None
+
             db.session.add(event)
             db.session.commit()
+
+            if event_suggestion:
+                send_event_suggestion_review_status_mail(event_suggestion)
 
             flash_message(gettext('Event successfully created'), url_for('event', event_id=event.id))
             return redirect(url_for('manage_admin_unit_events', id=event.admin_unit_id))
