@@ -295,6 +295,10 @@ class EventReferenceRequest(db.Model, TrackableMixin):
 
 class EventSuggestion(db.Model, TrackableMixin):
     __tablename__ = 'eventsuggestion'
+    __table_args__ = (
+            CheckConstraint('NOT(event_place_id IS NULL AND event_place_text IS NULL)'),
+            CheckConstraint('NOT(organizer_id IS NULL AND organizer_text IS NULL)'),
+            )
     id = Column(Integer(), primary_key=True)
 
     name = Column(Unicode(255), nullable=False)
@@ -322,6 +326,9 @@ class EventSuggestion(db.Model, TrackableMixin):
 
     photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
     photo = db.relationship('Image', uselist=False)
+
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id', ondelete='SET NULL'), nullable=True)
+    event = db.relationship('Event', uselist=False)
 
     @hybrid_property
     def verified(self):

@@ -40,20 +40,26 @@
     </div>
 </div>
 
-<div class="my-4">
-    <a class="btn btn-success" href="{{ url_for('event_create_for_admin_unit_id', id=event_suggestion.admin_unit_id, event_suggestion_id=event_suggestion.id) }}" role="button"><i class="fa fa-arrow-right"></i> {{ _('Create event from suggestion') }}</a>
-</div>
+{% if event_suggestion.verified and event_suggestion.event_id %}
+    <div class="my-4">
+        <a class="btn btn-success" href="{{ url_for('event', event_id=event_suggestion.event_id) }}" role="button"><i class="fa fa-arrow-right"></i> {{ _('View event') }}</a>
+    </div>
+{% else %}
+    <div class="my-4">
+        <a class="btn btn-success" href="{{ url_for('event_create_for_admin_unit_id', id=event_suggestion.admin_unit_id, event_suggestion_id=event_suggestion.id) }}" role="button"><i class="fa fa-arrow-right"></i> {{ _('Create event from suggestion') }}</a>
+    </div>
 
-<div class="font-italic font-weight-bold my-4 text-uppercase">
-    oder
-</div>
+    <div class="font-italic font-weight-bold my-4 text-uppercase">
+        oder
+    </div>
 
-<div class="my-4">
-    <form action="" method="POST">
-        {{ form.hidden_tag() }}
-        {{ render_field_with_errors(form.rejection_resaon) }}
-        <p>{{ form.submit(class="btn btn-danger")|safe }}</p>
-    </form>
-</div>
+    <div class="my-4">
+        <form action="" method="POST">
+            {{ form.hidden_tag() }}
+            {{ render_field_with_errors(form.rejection_resaon) }}
+            <p>{{ form.submit(class="btn btn-danger")|safe }}</p>
+        </form>
+    </div>
+{% endif %}
 
 {% endblock %}

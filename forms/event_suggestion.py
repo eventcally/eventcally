@@ -33,10 +33,10 @@ class CreateEventSuggestionForm(FlaskForm):
         for name, field in self._fields.items():
             if name == 'photo' and not obj.photo:
                 obj.photo = Image()
-            if name == 'event_place_id' and isinstance(self.event_place_id.data, str):
+            if name == 'event_place_id' and self.event_place_id.is_free_text():
                 obj.event_place_text = self.event_place_id.data
                 obj.event_place_id = None
-            elif name == 'organizer_id' and isinstance(self.organizer_id.data, str):
+            elif name == 'organizer_id' and self.organizer_id.is_free_text():
                 obj.organizer_text = self.organizer_id.data
                 obj.organizer_id = None
             else:
