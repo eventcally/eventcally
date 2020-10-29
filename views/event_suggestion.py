@@ -2,7 +2,7 @@ from app import app, db
 from models import EventSuggestion, User, Event, EventDate, EventReviewStatus, AdminUnit, AdminUnitMember, EventOrganizer, EventCategory
 from flask import render_template, flash, url_for, redirect, request, jsonify, abort
 from flask_babelex import gettext
-from flask_security import auth_required
+from flask_security import auth_required, current_user
 from access import has_access, access_or_401, can_reference_event, has_admin_unit_member_permission
 from dateutils import today
 from datetime import datetime
@@ -39,6 +39,10 @@ def event_suggestion_create_for_admin_unit(au_short_name):
 
             send_event_inbox_mails(admin_unit, event_suggestion)
             flash(gettext('Thank you so much! The event is being verified.'), 'success')
+
+            if not current_user.is_authenticated:
+                flash_message(gettext('For more options and your own calendar of events, you can register for free.'), url_for('security.register'), gettext('Register for free'), 'info')
+
             return redirect(url_for('event_suggestion_review_status', event_suggestion_id=event_suggestion.id))
         except SQLAlchemyError as e:
             db.session.rollback()

@@ -55,11 +55,12 @@ def flash_errors(form):
                 error
             ), 'danger')
 
-def flash_message(msg, url):
-    link_text = gettext('Show')
+def flash_message(msg, url, link_text = None, category = 'success'):
+    if not link_text:
+        link_text = gettext('Show')
     link = ' &ndash; <a href="%s">%s</a>' % (url, link_text)
     message = Markup(msg + link)
-    flash(message, 'success')
+    flash(message, category)
 
 def permission_missing(redirect_location):
     flash('You do not have permission for this action', 'danger')
