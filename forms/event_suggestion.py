@@ -12,20 +12,20 @@ from .widgets import CustomDateTimeField, CustomDateField, TagSelectField
 from .common import event_rating_choices
 
 class CreateEventSuggestionForm(FlaskForm):
-    name = StringField(lazy_gettext('Name'), validators=[DataRequired()], description=lazy_gettext('Gib einen kurzen, aussagekräftigen Namen für die Veranstaltung ein.'))
-    start = CustomDateTimeField(lazy_gettext('Start'), validators=[DataRequired()], description=lazy_gettext('Gib an, wann die Veranstaltung stattfindet.'))
-    description = TextAreaField(lazy_gettext('Description'), validators=[Optional()], description=lazy_gettext('Füge der Veranstaltung eine optionale Beschreibung hinzu.'))
-    external_link = StringField(lazy_gettext('Link URL'), validators=[Optional()], description=lazy_gettext('Füge einen optionalen Link hinzu. Das kann die Prüfung erleichtern.'))
+    name = StringField(lazy_gettext('Name'), validators=[DataRequired()], description=lazy_gettext('Enter a short, meaningful name for the event.'))
+    start = CustomDateTimeField(lazy_gettext('Start'), validators=[DataRequired()], description=lazy_gettext('Indicate when the event will take place.'))
+    description = TextAreaField(lazy_gettext('Description'), validators=[Optional()], description=lazy_gettext('Add an optional description of the event.'))
+    external_link = StringField(lazy_gettext('Link URL'), validators=[Optional()], description=lazy_gettext('Add an optional link. That can make the review easier.'))
 
-    contact_name = StringField(lazy_gettext('Name'), validators=[DataRequired()], description=lazy_gettext('Bitte gib deinen Namen für etwaige Rückfragen an.'))
-    contact_phone = TelField(lazy_gettext('Phone'), validators=[Optional()], description=lazy_gettext('Bitte gib deine Telefonnummer oder deine Email-Adresse für etwaige Rückfragen an.'))
-    contact_email = EmailField(lazy_gettext('Email'), validators=[Optional()], description=lazy_gettext('Bitte gib deine Email-Adresse oder deine Telefonnummer für etwaige Rückfragen an.'))
-    contact_email_notice = BooleanField(lazy_gettext('Ich möchte per Email benachrichtigt werden nach der Prüfung'), validators=[Optional()])
+    contact_name = StringField(lazy_gettext('Name'), validators=[DataRequired()], description=lazy_gettext('Please enter your name for the review.'))
+    contact_phone = TelField(lazy_gettext('Phone'), validators=[Optional()], description=lazy_gettext('Please enter your phone number or email address for the review.'))
+    contact_email = EmailField(lazy_gettext('Email'), validators=[Optional()], description=lazy_gettext('Please enter your email address or phone number for the review.'))
+    contact_email_notice = BooleanField(lazy_gettext('I would like to be notified by email after the review'), validators=[Optional()])
 
-    event_place_id = TagSelectField(lazy_gettext('Place') + ' *', validators=[Optional()], description=lazy_gettext('Wähle aus, wo die Veranstaltung stattfindet. Ist der Veranstaltungsort noch nicht in der Liste, trage ihn einfach ein.'))
-    organizer_id = TagSelectField(lazy_gettext('Organizer') + ' *', validators=[Optional()], description=lazy_gettext('Wähle den Veranstalter aus. Ist der Veranstaltungsort noch nicht in der Liste, trage ihn einfach ein.'))
-    photo = FormField(BaseImageForm, lazy_gettext('Photo'), default=lambda: Image(), description=lazy_gettext('Wir empfehlen dir, ein Foto für die Veranstaltung hochzuladen. Es macht schon deutlich mehr her, aber es geht natürlich auch ohne.'))
-    accept_tos = BooleanField(lazy_gettext('Ich bestätige dass ich alle Informationen (Text, Bild, etc.), die ich in das System hochlade, hinsichtlich ihrer Nutzungsrechte abgeklärt habe und erkläre, dass diese weitergegeben werden dürfen.'), validators=[DataRequired()])
+    event_place_id = TagSelectField(lazy_gettext('Place') + ' *', validators=[Optional()], description=lazy_gettext('Choose where the event takes place. If the venue is not yet in the list, just enter it.'))
+    organizer_id = TagSelectField(lazy_gettext('Organizer') + ' *', validators=[Optional()], description=lazy_gettext('Select the organizer. If the organizer is not yet on the list, just enter it.'))
+    photo = FormField(BaseImageForm, lazy_gettext('Photo'), default=lambda: Image(), description=lazy_gettext('We recommend uploading a photo for the event. It looks a lot more, but of course it works without it.'))
+    accept_tos = BooleanField(lazy_gettext('I confirm that I have clarified all information (text, images, etc.) that I upload into the system with regard to their rights of use and declare that they may be passed on.'), validators=[DataRequired()])
 
     submit = SubmitField(lazy_gettext("Create event suggestion"))
 
