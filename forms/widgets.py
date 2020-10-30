@@ -28,10 +28,11 @@ class CustomDateTimeWidget:
             hour = date_value.hour
             minute = date_value.minute
 
-        date_params = html_params(name=field.name, id=id, value=date, **kwargs)
+        date_params = html_params(name=field.name, id=id, value=date, required=field.flags.required, **kwargs)
         time_hour_params = html_params(name=field.name, id=id + '-hour', **kwargs)
         time_minute_params = html_params(name=field.name, id=id + '-minute', **kwargs)
         clear_button_id = id + '-clear-button'
+
         return HTMLString('<div class="input-group-prepend mt-1"><input type="text" class="datepicker" {}/><button class="btn btn-outline-secondary" type="button" id="{}"><i class="fa fa-times"></i></button></div><div class="mx-2"></div><div class="input-group-append mt-1"><select {}>{}</select><span class="input-group-text">:</span><select {}>{}</select></div>'.format(date_params, clear_button_id, time_hour_params, create_option_string(24, hour), time_minute_params, create_option_string(60, minute)))
 
 class CustomDateTimeField(DateTimeField):

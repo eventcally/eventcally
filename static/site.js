@@ -178,8 +178,8 @@ function handle_request_success(result_id = '#result_container', spinner_id = '#
 
 $( function() {
     $('[data-toggle="tooltip"]').tooltip();
-    $('.autocomplete').select2();
-    $('.autocomplete-tags').select2({tags: true});
+    $('.autocomplete').select2({width: '100%'});
+    $('.autocomplete-tags').select2({width: '100%', tags: true});
     $('.datepicker').each(function (index, element){
         start_datepicker($(element));
     });

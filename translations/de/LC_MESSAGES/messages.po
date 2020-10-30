@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-29 16:07+0100\n"
+"POT-Creation-Date: 2020-10-30 15:04+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -102,6 +102,18 @@ msgstr "Administrator:in"
 msgid "Event expert"
 msgstr "Veranstaltungsexpert:in"
 
+#: i10n.py:30
+msgid "EventReviewStatus.inbox"
+msgstr "Ungeprüft"
+
+#: i10n.py:31
+msgid "EventReviewStatus.verified"
+msgstr "Verifiziert"
+
+#: i10n.py:32
+msgid "EventReviewStatus.rejected"
+msgstr "Abgelehnt"
+
 #: oauth.py:41 oauth.py:54
 msgid "Successfully signed in."
 msgstr "Erfolgreich eingeloggt."
@@ -145,7 +157,7 @@ msgstr "Längengrad"
 #: forms/event.py:138 forms/event_place.py:21 forms/event_place.py:43
 #: forms/event_suggestion.py:15 forms/event_suggestion.py:20
 #: forms/organizer.py:20 forms/organizer.py:44 forms/reference.py:18
-#: forms/reference_request.py:14 templates/_macros.html:114
+#: forms/reference_request.py:14 templates/_macros.html:117
 #: templates/admin/admin_units.html:18 templates/event_place/list.html:19
 #: templates/profile.html:16 templates/profile.html:36
 msgid "Name"
@@ -174,17 +186,17 @@ msgstr "Link URL"
 #: forms/admin_unit.py:23 forms/admin_unit_member.py:12
 #: forms/admin_unit_member.py:22 forms/admin_unit_member.py:26
 #: forms/event.py:34 forms/event_suggestion.py:22 forms/organizer.py:22
-#: templates/_macros.html:226
+#: templates/_macros.html:229
 msgid "Email"
 msgstr "Email"
 
 #: forms/admin_unit.py:24 forms/event.py:35 forms/event_suggestion.py:21
-#: forms/organizer.py:23 templates/_macros.html:253
+#: forms/organizer.py:23 templates/_macros.html:256
 msgid "Phone"
 msgstr "Telefon"
 
 #: forms/admin_unit.py:25 forms/event.py:36 forms/organizer.py:24
-#: templates/_macros.html:261
+#: templates/_macros.html:264
 msgid "Fax"
 msgstr "Fax"
 
@@ -330,16 +342,16 @@ msgstr "Beginn"
 msgid "End"
 msgstr "Ende"
 
-#: forms/event.py:46 templates/_macros.html:336
+#: forms/event.py:46 templates/_macros.html:339
 msgid "Previous start date"
 msgstr "Vorheriges Startdatum"
 
-#: forms/event.py:47 templates/_macros.html:208
+#: forms/event.py:47 templates/_macros.html:211
 msgid "Tags"
 msgstr "Stichworte"
 
 #: forms/event.py:49 forms/event.py:146 forms/event_date.py:20
-#: forms/planing.py:19 templates/_macros.html:354
+#: forms/planing.py:19 templates/_macros.html:357
 msgid "Category"
 msgstr "Kategorie"
 
@@ -408,6 +420,7 @@ msgid "EventAttendanceMode.mixed"
 msgstr "Online und offline"
 
 #: forms/event.py:70 forms/event_place.py:23 forms/event_suggestion.py:27
+#: templates/event_suggestion/create.html:159
 msgid "Photo"
 msgstr "Foto"
 
@@ -418,7 +431,7 @@ msgid "Rating"
 msgstr "Bewertung"
 
 #: forms/event.py:74 forms/event.py:75 forms/event.py:118
-#: forms/event_suggestion.py:25 templates/_macros.html:371
+#: forms/event_suggestion.py:25 templates/_macros.html:374
 #: templates/event/create.html:105 templates/event/update.html:53
 #: templates/event_place/create.html:20 templates/event_place/delete.html:13
 #: templates/event_place/update.html:20
@@ -434,7 +447,7 @@ msgid "Enter new place"
 msgstr "Neuen Ort eingeben"
 
 #: forms/event.py:78 forms/event.py:79 forms/event.py:119 forms/event.py:147
-#: forms/event_suggestion.py:26 templates/_macros.html:401
+#: forms/event_suggestion.py:26 templates/_macros.html:404
 #: templates/event/create.html:80 templates/event/update.html:44
 #: templates/organizer/create.html:16 templates/organizer/delete.html:13
 #: templates/organizer/update.html:16
@@ -470,19 +483,19 @@ msgstr "Status"
 msgid "EventStatus.scheduled"
 msgstr "Geplant"
 
-#: forms/event.py:123 templates/layout.html:45
+#: forms/event.py:123 templates/layout.html:47
 msgid "EventStatus.cancelled"
 msgstr "Abgesagt"
 
-#: forms/event.py:124 templates/layout.html:48
+#: forms/event.py:124 templates/layout.html:50
 msgid "EventStatus.movedOnline"
 msgstr "Online verschoben"
 
-#: forms/event.py:125 templates/layout.html:51
+#: forms/event.py:125 templates/layout.html:53
 msgid "EventStatus.postponed"
 msgstr "Verschoben"
 
-#: forms/event.py:126 templates/layout.html:54
+#: forms/event.py:126 templates/layout.html:56
 msgid "EventStatus.rescheduled"
 msgstr "Neu angesetzt"
 
@@ -490,7 +503,7 @@ msgstr "Neu angesetzt"
 msgid "Update event"
 msgstr "Veranstaltung aktualisieren"
 
-#: forms/event.py:137 templates/_macros.html:724 templates/event/delete.html:6
+#: forms/event.py:137 templates/_macros.html:731 templates/event/delete.html:6
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
@@ -510,8 +523,8 @@ msgstr "Stichwort"
 msgid "Find events"
 msgstr "Veranstaltungen finden"
 
-#: forms/event_date.py:22 forms/planing.py:21 templates/_macros.html:116
-#: templates/_macros.html:268 templates/admin_unit/create.html:26
+#: forms/event_date.py:22 forms/planing.py:21 templates/_macros.html:119
+#: templates/_macros.html:271 templates/admin_unit/create.html:26
 #: templates/admin_unit/update.html:27 templates/event_place/create.html:29
 #: templates/event_place/update.html:29 templates/organizer/create.html:25
 #: templates/organizer/update.html:25
@@ -611,8 +624,8 @@ msgstr ""
 "das System hochlade, hinsichtlich ihrer Nutzungsrechte abgeklärt habe und"
 " erkläre, dass diese weitergegeben werden dürfen."
 
-#: forms/event_suggestion.py:30 templates/event_suggestion/create.html:5
-#: templates/example.html:10
+#: forms/event_suggestion.py:30 templates/event_suggestion/create.html:4
+#: templates/event_suggestion/create.html:70 templates/example.html:10
 msgid "Create event suggestion"
 msgstr "Veranstaltung vorschlagen"
 
@@ -653,7 +666,7 @@ msgstr "Veranstalter löschen"
 msgid "Weekdays"
 msgstr "Wochentage"
 
-#: forms/reference.py:8 forms/reference_request.py:9 templates/_macros.html:417
+#: forms/reference.py:8 forms/reference_request.py:9 templates/_macros.html:420
 #: templates/admin_unit/create.html:16 templates/admin_unit/update.html:17
 msgid "Admin unit"
 msgstr "Verwaltungseinheit"
@@ -716,81 +729,93 @@ msgstr "Unzulässig"
 msgid "Save review"
 msgstr "Prüfung speichern"
 
-#: forms/widgets.py:101
+#: forms/widgets.py:102
 msgid "This field is required"
 msgstr "Dieses Feld ist erforderlich"
 
-#: templates/_macros.html:113 templates/_macros.html:322
-#: templates/_macros.html:329 templates/_macros.html:614
+#: templates/_macros.html:116 templates/_macros.html:325
+#: templates/_macros.html:332 templates/_macros.html:617
 msgid "Date"
 msgstr "Datum"
 
-#: templates/_macros.html:115
+#: templates/_macros.html:118
 msgid "Host"
 msgstr "Veranstalter"
 
-#: templates/_macros.html:137
+#: templates/_macros.html:140
 msgid "Show all events"
 msgstr "Alle Veranstaltungen anzeigen"
 
-#: templates/_macros.html:153
+#: templates/_macros.html:156
 msgid "Show on Google Maps"
 msgstr "Auf Google Maps anzeigen"
 
-#: templates/_macros.html:217
+#: templates/_macros.html:220
 msgid "Link"
 msgstr "Link"
 
-#: templates/_macros.html:315 templates/event/create.html:58
+#: templates/_macros.html:318 templates/event/create.html:58
 #: templates/event/delete.html:13 templates/event/update.html:12
-#: templates/event_suggestion/create.html:50 templates/reference/delete.html:13
+#: templates/event_suggestion/create.html:139
+#: templates/reference/delete.html:13
 msgid "Event"
 msgstr "Veranstaltung"
 
-#: templates/_macros.html:325
+#: templates/_macros.html:328
 #, python-format
 msgid "%(count)d event dates"
 msgstr "%(count)d Termine"
 
-#: templates/_macros.html:391
+#: templates/_macros.html:394
 msgid "Show directions"
 msgstr "Anreise planen"
 
-#: templates/_macros.html:442
+#: templates/_macros.html:445
 msgid "Sign in with Google"
 msgstr "Mit Google anmelden"
 
-#: templates/_macros.html:502
+#: templates/_macros.html:505
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
-#: templates/_macros.html:565 templates/_macros.html:567
+#: templates/_macros.html:568 templates/_macros.html:570
 #: templates/event_date/list.html:270
+#: templates/event_suggestion/create.html:103
+#: templates/event_suggestion/create.html:128
+#: templates/event_suggestion/create.html:148
+#: templates/event_suggestion/create.html:165
+#: templates/event_suggestion/create.html:183
+#: templates/event_suggestion/create.html:193
 msgid "Previous"
 msgstr "Zurück"
 
-#: templates/_macros.html:570 templates/_macros.html:572
+#: templates/_macros.html:573 templates/_macros.html:575
 #: templates/event_date/list.html:271
+#: templates/event_suggestion/create.html:104
+#: templates/event_suggestion/create.html:129
+#: templates/event_suggestion/create.html:149
+#: templates/event_suggestion/create.html:166
+#: templates/event_suggestion/create.html:184
 msgid "Next"
 msgstr "Weiter"
 
-#: templates/_macros.html:637
+#: templates/_macros.html:640
 msgid "Radius"
 msgstr "Umkreis"
 
-#: templates/_macros.html:719
+#: templates/_macros.html:726
 msgid "Actions"
 msgstr "Aktionen"
 
-#: templates/_macros.html:723
+#: templates/_macros.html:730
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: templates/_macros.html:727 templates/manage/references_incoming.html:10
+#: templates/_macros.html:734 templates/manage/references_incoming.html:10
 msgid "Reference event"
 msgstr "Veranstaltung empfehlen"
 
-#: templates/_macros.html:730
+#: templates/_macros.html:737
 #: templates/manage/reference_requests_outgoing.html:10
 #: templates/manage/references_outgoing.html:10
 msgid "Empfehlung anfragen"
@@ -805,38 +830,38 @@ msgstr "Widget als iFrame einbetten"
 msgid "Register for free"
 msgstr "Kostenlos registrieren"
 
-#: templates/layout.html:81
+#: templates/layout.html:83
 msgid "Manage"
 msgstr "Verwaltung"
 
-#: templates/event_place/read.html:22 templates/layout.html:84
+#: templates/event_place/read.html:22 templates/layout.html:86
 #: templates/layout_manage.html:24 templates/manage/events.html:5
 #: templates/manage/events.html:9
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: templates/layout.html:85
+#: templates/layout.html:87
 msgid "Planing"
 msgstr "Planung"
 
-#: templates/layout.html:86
+#: templates/layout.html:88
 msgid "Example"
 msgstr "Beispiel"
 
-#: templates/developer/read.html:4 templates/layout.html:87
+#: templates/developer/read.html:4 templates/layout.html:89
 msgid "Developer"
 msgstr "Entwickler"
 
-#: templates/layout.html:96 templates/profile.html:4
+#: templates/layout.html:98 templates/profile.html:4
 msgid "Profile"
 msgstr "Profil"
 
 #: templates/admin/admin.html:3 templates/admin/admin.html:9
-#: templates/admin/admin_units.html:9 templates/layout.html:99
+#: templates/admin/admin_units.html:9 templates/layout.html:101
 msgid "Admin"
 msgstr "Administration"
 
-#: templates/layout.html:103
+#: templates/layout.html:105
 msgid "Logout"
 msgstr "Ausloggen"
 
@@ -989,12 +1014,16 @@ msgstr "Empfehlung anfragen für Veranstaltung \"%(name)s\""
 msgid "Info"
 msgstr "Info"
 
-#: templates/event_suggestion/create.html:33
+#: templates/event_suggestion/create.html:85
+msgid "Continue as guest"
+msgstr "Weiter als Gast"
+
+#: templates/event_suggestion/create.html:114
 #: templates/event_suggestion/review.html:34
 msgid "Contact"
 msgstr "Kontakt"
 
-#: templates/event_suggestion/create.html:64
+#: templates/event_suggestion/create.html:176
 msgid "Optional details"
 msgstr "Optionale Details"
 

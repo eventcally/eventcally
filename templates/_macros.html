@@ -36,6 +36,9 @@
             {{ field.label(class="form-check-label") }}
         </div>
       {% else %}
+        {% if 'class' in kwargs %}
+          {% set _dummy=kwargs.pop('class') %}
+        {% endif %}
         {{ field(class=field_class, **kwargs)|safe }}
       {% endif %}
 
@@ -689,25 +692,29 @@ $( function() {
 {% endmacro %}
 
 {% macro render_base_image_form(form_field) %}
+  {{ form_field.hidden_tag() }}
+  {% if form_field.object_data and form_field.object_data.id %}
+    <div>
+      <a href="{{ url_for('image', id=form_field.object_data.id) }}" target="_blank"><img src="{{ url_for('image', id=form_field.object_data.id) }}" class="img-fluid" style="max-width:5rem;" /></a>
+    </div>
+    {{ render_field_with_errors(form_field.delete_flag, style="width: fit-content; flex: initial;") }}
+  {% endif %}
+  {{ render_field_with_errors(form_field.image_file) }}
+  {{ render_field_with_errors(form_field.copyright_text) }}
+  {% if form_field.description %}
+    <small class="form-text text-muted w-100">
+      {{ form_field.description }}
+    </small>
+  {% endif %}
+{% endmacro %}
+
+{% macro render_base_image_form_section(form_field) %}
 <div class="card mb-4">
   <div class="card-header">
     {{ form_field.label() }}
   </div>
   <div class="card-body">
-    {{ form_field.hidden_tag() }}
-    {% if form_field.object_data and form_field.object_data.id %}
-      <div>
-        <a href="{{ url_for('image', id=form_field.object_data.id) }}" target="_blank"><img src="{{ url_for('image', id=form_field.object_data.id) }}" class="img-fluid" style="max-width:5rem;" /></a>
-      </div>
-      {{ render_field_with_errors(form_field.delete_flag, style="width: fit-content; flex: initial;") }}
-    {% endif %}
-    {{ render_field_with_errors(form_field.image_file) }}
-    {{ render_field_with_errors(form_field.copyright_text) }}
-    {% if form_field.description %}
-      <small class="form-text text-muted w-100">
-        {{ form_field.description }}
-      </small>
-    {% endif %}
+    {{ render_base_image_form(form_field) }}
   </div>
 </div>
 {% endmacro %}

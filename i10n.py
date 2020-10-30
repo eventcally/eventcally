@@ -27,3 +27,6 @@ def print_dynamic_texts():
     gettext('Typical Age range')
     gettext('Administrator')
     gettext('Event expert')
+    gettext('EventReviewStatus.inbox')
+    gettext('EventReviewStatus.verified')
+    gettext('EventReviewStatus.rejected')
