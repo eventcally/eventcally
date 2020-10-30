@@ -1,33 +1,114 @@
 {% extends "layout.html" %}
 {% from "_macros.html" import render_base_image_form, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
+{% block title %}
+{{ _('Create event suggestion') }}
+{% endblock %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery-steps.css')}}" />
+{% endblock %}
+{% block header_before_site_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-steps/1.1.0/jquery.steps.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" integrity="sha512-UdIMMlVx0HEynClOIFSyOrPggomfhBKJE28LKl8yR3ghkgugPnG6iLfRfHwushZl1MOPSY6TsuBDGPK2X4zYKg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js" integrity="sha512-6Uv+497AWTmj/6V14BsQioPrm3kgwmK9HYIyWP+vClykX52b0zrDGP7lajZoIY1nNlX4oQuh7zsGjmF7D0VZYA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/localization/messages_de.min.js" integrity="sha512-CZoLR7uTljYchtaY9SbWetTDxZ7bW3h6YALF4orf6k+WTvZhr4zu+a9XqhHkK+zsKbQL5HNXTNrd21TE3M6eUg==" crossorigin="anonymous"></script>
+<script>
+  $( function() {
+    var form = $("#wizard-form");
+    var wizard = $("#wizard");
+
+    form.validate({
+        errorElement: 'div',
+        errorClass: 'invalid-feedback',
+        errorPlacement: function (error, element) {
+            element.closest('.input-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        rules: {
+          contact_email: {
+            require_from_group: [1, ".contact_method_group"]
+          },
+          contact_phone: {
+            require_from_group: [1, ".contact_method_group"]
+          }
+        }
+    });
+
+    wizard.steps({
+      headerTag: "h4",
+      bodyTag: "section",
+      transitionEffect: "fade",
+      enablePagination: false,
+      onStepChanging: function (event, currentIndex, newIndex) {
+          // Allways allow previous action even if the current form is not valid!
+          if (currentIndex > newIndex) {
+              return true;
+          }
+
+          //form.validate().settings.ignore = ":disabled,:hidden:not(.datepicker)";
+          form.validate().settings.ignore = ":disabled,:hidden";
+          return form.valid();
+      }
+    });
+
+    $('.wizard-next').click(function(){
+      wizard.steps('next');
+    })
+    $('.wizard-prev').click(function(){
+      wizard.steps('previous');
+    })
+
+  });
+</script>
+{% endblock %}
 {% block content %}
 
 <h1>{{ _('Create event suggestion') }}</h1>
 
-<div class="card mb-4">
-  <div class="card-body">
-    <p class="card-text">
-      Hier kannst du als Gast eine Veranstaltung vorschlagen, die anschließend durch <strong>{{ admin_unit.name }}</strong> geprüft wird.
-      Für mehr Optionen und einen eigenen Veranstaltungskalender, kannst du dich <a href="{{ url_for('security.register') }}">kostenlos registrieren</a>.
-    </p>
-  </div>
-</div>
-
-<form action="" method="POST" enctype="multipart/form-data">
+<form id="wizard-form" action="" method="POST" enctype="multipart/form-data">
+  <div id="wizard">
   {{ form.hidden_tag() }}
 
-  <div class="card mb-4">
-    <div class="card-header">
-      Nutzungsbedingungen
+  <h4></h4>
+  <section>
+    <div class="card mb-4">
+      <div class="card-body">
+        <p class="card-text">
+          Hier kannst du als Gast eine Veranstaltung vorschlagen, die anschließend durch <strong>{{ admin_unit.name }}</strong> geprüft wird.
+          Für mehr Optionen und einen eigenen Veranstaltungskalender, kannst du dich <a href="{{ url_for('security.register') }}">kostenlos registrieren</a>.
+        </p>
+        <div class="text-center">
+          <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Continue as guest') }}</a>
+        </div>
+      </div>
     </div>
-    <div class="card-body">
-      <p class="card-text">
-        Die offene Veranstaltungsdatenbank stellt allen Nutzern Daten sowohl für private als auch kommerzielle Zwecke frei nutzbar zur Verfügung.
-      </p>
-      {{ render_field_with_errors(form.accept_tos, ri="checkbox") }}
-    </div>
-  </div>
+  </section>
 
+  <h4></h4>
+  <section>
+    <div class="card mb-4">
+      <div class="card-header">
+        Nutzungsbedingungen
+      </div>
+      <div class="card-body">
+        <p class="card-text">
+          Die offene Veranstaltungsdatenbank stellt allen Nutzern Daten sowohl für private als auch kommerzielle Zwecke frei nutzbar zur Verfügung.
+        </p>
+        {{ render_field_with_errors(form.accept_tos, ri="checkbox") }}
+        <div class="d-flex justify-content-between">
+          <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+          <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <h4></h4>
+  <section>
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Contact') }}
@@ -39,12 +120,20 @@
       </p>
 
       {{ render_field_with_errors(form.contact_name) }}
-      {{ render_field_with_errors(form.contact_email) }}
-      {{ render_field_with_errors(form.contact_phone) }}
+      {{ render_field_with_errors(form.contact_email, class="contact_method_group") }}
+      {{ render_field_with_errors(form.contact_phone, class="contact_method_group") }}
       {{ render_field_with_errors(form.contact_email_notice, ri="checkbox") }}
+
+      <div class="d-flex justify-content-between">
+        <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+        <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+      </div>
     </div>
   </div>
+</section>
 
+<h4></h4>
+<section>
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Event') }}
@@ -54,11 +143,34 @@
       {{ render_field_with_errors(form.start) }}
       {{ render_field_with_errors(form.event_place_id, class="autocomplete-tags w-100") }}
       {{ render_field_with_errors(form.organizer_id, class="autocomplete-tags w-100") }}
+
+      <div class="d-flex justify-content-between">
+        <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+        <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+      </div>
     </div>
   </div>
+</section>
 
-  {{ render_base_image_form(form.photo) }}
+<h4></h4>
+<section>
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Photo') }}
+    </div>
+    <div class="card-body">
+      {{ render_base_image_form(form.photo) }}
 
+      <div class="d-flex justify-content-between mt-3">
+        <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+        <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<h4></h4>
+<section>
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Optional details') }}
@@ -66,11 +178,24 @@
     <div class="card-body">
       {{ render_field_with_errors(form.description) }}
       {{ render_field_with_errors(form.external_link) }}
+
+      <div class="d-flex justify-content-between">
+        <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+        <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+      </div>
     </div>
   </div>
+</section>
 
-  {{ render_field(form.submit) }}
+<h4></h4>
+<section>
+  <div class="d-flex flex-wrap justify-content-between align-items-baseline mt-3">
+    <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+    {{ render_field(form.submit) }}
+  </div>
+</section>
 
+  </div>
 </form>
 
 {% endblock %}
