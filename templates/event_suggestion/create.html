@@ -12,6 +12,41 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js" integrity="sha512-6Uv+497AWTmj/6V14BsQioPrm3kgwmK9HYIyWP+vClykX52b0zrDGP7lajZoIY1nNlX4oQuh7zsGjmF7D0VZYA==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/localization/messages_de.min.js" integrity="sha512-CZoLR7uTljYchtaY9SbWetTDxZ7bW3h6YALF4orf6k+WTvZhr4zu+a9XqhHkK+zsKbQL5HNXTNrd21TE3M6eUg==" crossorigin="anonymous"></script>
 <script>
+
+  function update_preview(form) {
+    var name = form.find('input[name=name]').val();
+    var place = form.find('select[name=event_place_id] > option:selected').text();
+    var organizer = form.find('select[name=organizer_id] > option:selected').text();
+    var external_link = form.find('input[name=external_link]').val();
+    var description = form.find('textarea[name=description]').val();
+
+    var start = '';
+    var date_str = form.find('#start').val();
+    var hour_str = form.find('#start-hour').val();
+    var minute_str = form.find('#start-minute').val();
+
+    if (date_str) {
+      start = moment(date_str).set({"hour": hour_str, "minute": minute_str});
+    }
+
+    var content = '<div class="text-highlight text-uppercase font-weight-bold">' + start.format("dddd, LL [um] LT") + '</div>' +
+    '<div class="font-weight-bold" style="font-size: 1.8rem;">' + name + '</div>' +
+    '<div class="text-muted">' + place + '</div>' +
+    '<div class="mt-3"><i class="fa fa-fw fa-sitemap"></i> ' + organizer + '</div>';
+
+    if (external_link) {
+      content += '<div><i class="fa fa-fw fa-link"></i> <a href="' + external_link + '" target="_blank">' + external_link + '</a></div>';
+    }
+
+    if (description) {
+      content += '<div class="my-2">' + description.truncate(100) + '</div>';
+    }
+
+    var container = $("#preview_container");
+    container.empty();
+    container.append(content);
+  }
+
   $( function() {
     var form = $("#wizard-form");
     var wizard = $("#wizard");
@@ -38,6 +73,10 @@
         }
     });
 
+    form.find("input").change(function(){
+      update_preview(form);
+    });
+
     wizard.steps({
       headerTag: "h4",
       bodyTag: "section",
@@ -51,16 +90,23 @@
 
           //form.validate().settings.ignore = ":disabled,:hidden:not(.datepicker)";
           form.validate().settings.ignore = ":disabled,:hidden";
-          return form.valid();
+          var is_valid = form.valid();
+
+          if (is_valid && (newIndex == 6)) {
+            update_preview(form);
+          }
+
+          return is_valid;
       }
     });
 
     $('.wizard-next').click(function(){
       wizard.steps('next');
-    })
+    });
+
     $('.wizard-prev').click(function(){
       wizard.steps('previous');
-    })
+    });
 
   });
 </script>
@@ -189,9 +235,17 @@
 
 <h4></h4>
 <section>
-  <div class="d-flex flex-wrap justify-content-between align-items-baseline mt-3">
-    <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
-    {{ render_field(form.submit) }}
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Preview') }}
+    </div>
+    <div class="card-body">
+      <div id="preview_container" class="card card-body mb-4 shadow"></div>
+      <div class="d-flex flex-wrap justify-content-between align-items-baseline mt-3">
+        <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+        {{ render_field(form.submit) }}
+      </div>
+    </div>
   </div>
 </section>
 
