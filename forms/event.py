@@ -3,7 +3,7 @@ from flask_babelex import lazy_gettext, gettext
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import FieldList, RadioField, DateTimeField, StringField, SubmitField, TextAreaField, SelectField, BooleanField, IntegerField, FormField
-from wtforms.fields.html5 import DateTimeLocalField, EmailField
+from wtforms.fields.html5 import DateTimeLocalField, EmailField, URLField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 from models import EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus, Image
@@ -30,14 +30,14 @@ class OrganizerForm(EventPlaceForm):
 
 class EventOrganizerForm(FlaskForm):
     name = StringField(lazy_gettext('Organizator'), validators=[Optional()])
-    url = StringField(lazy_gettext('Link URL'), validators=[Optional()])
+    url = URLField(lazy_gettext('Link URL'), validators=[Optional()])
     email = EmailField(lazy_gettext('Email'), validators=[Optional()])
     phone = StringField(lazy_gettext('Phone'), validators=[Optional()])
     fax = StringField(lazy_gettext('Fax'), validators=[Optional()])
 
 class BaseEventForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
-    external_link = StringField(lazy_gettext('Link URL'), validators=[Optional()])
+    external_link = URLField(lazy_gettext('Link URL'), validators=[Optional()])
     ticket_link = StringField(lazy_gettext('Ticket Link URL'), validators=[Optional()])
     description = TextAreaField(lazy_gettext('Description'), validators=[DataRequired()])
     recurrence_rule = TextAreaField(lazy_gettext('Recurrence rule'), validators=[Optional()])
