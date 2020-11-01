@@ -2,7 +2,7 @@ from flask_babelex import lazy_gettext, gettext
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import DecimalField, RadioField, DateTimeField, StringField, SubmitField, TextAreaField, SelectField, BooleanField, IntegerField, FormField
-from wtforms.fields.html5 import DateTimeLocalField, EmailField
+from wtforms.fields.html5 import DateTimeLocalField, EmailField, URLField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 import decimal
@@ -19,7 +19,7 @@ class EventPlaceLocationForm(FlaskForm):
 
 class BaseEventPlaceForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
-    url = StringField(lazy_gettext('Link URL'), validators=[Optional()])
+    url = URLField(lazy_gettext('Link URL'), validators=[Optional()])
     photo = FormField(BaseImageForm, lazy_gettext('Photo'), default=lambda: Image())
     description = TextAreaField(lazy_gettext('Description'), validators=[Optional()])
     location = FormField(EventPlaceLocationForm)

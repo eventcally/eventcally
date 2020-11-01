@@ -2,7 +2,7 @@ from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField, DecimalField, TextAreaField, FormField, SelectField
-from wtforms.fields.html5 import EmailField, TelField
+from wtforms.fields.html5 import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional, Regexp
 import decimal
 from models import Location, Image
@@ -19,7 +19,7 @@ class AdminUnitLocationForm(FlaskForm):
 class BaseAdminUnitForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
     short_name = StringField(lazy_gettext('Short name'), description=lazy_gettext('The short name is used to create a unique identifier for your events'), validators=[DataRequired(), Regexp('^\w+$', message=lazy_gettext("Short name must contain only letters numbers or underscore"))])
-    url = StringField(lazy_gettext('Link URL'), validators=[Optional()])
+    url = URLField(lazy_gettext('Link URL'), validators=[Optional()])
     email = EmailField(lazy_gettext('Email'), validators=[Optional()])
     phone = TelField(lazy_gettext('Phone'), validators=[Optional()])
     fax = TelField(lazy_gettext('Fax'), validators=[Optional()])

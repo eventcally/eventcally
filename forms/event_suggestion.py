@@ -3,7 +3,7 @@ from flask_babelex import lazy_gettext, gettext
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import FieldList, RadioField, DateTimeField, StringField, SubmitField, TextAreaField, SelectField, BooleanField, IntegerField, FormField
-from wtforms.fields.html5 import DateTimeLocalField, EmailField, TelField
+from wtforms.fields.html5 import DateTimeLocalField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 from models import EventSuggestion, EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus, Image
@@ -15,7 +15,7 @@ class CreateEventSuggestionForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()], description=lazy_gettext('Enter a short, meaningful name for the event.'))
     start = CustomDateTimeField(lazy_gettext('Start'), validators=[DataRequired()], description=lazy_gettext('Indicate when the event will take place.'))
     description = TextAreaField(lazy_gettext('Description'), validators=[Optional()], description=lazy_gettext('Add an optional description of the event.'))
-    external_link = StringField(lazy_gettext('Link URL'), validators=[Optional()], description=lazy_gettext('Add an optional link. That can make the review easier.'))
+    external_link = URLField(lazy_gettext('Link URL'), validators=[Optional()], description=lazy_gettext('Add an optional link. That can make the review easier.'))
 
     contact_name = StringField(lazy_gettext('Name'), validators=[DataRequired()], description=lazy_gettext('Please enter your name for the review.'))
     contact_phone = TelField(lazy_gettext('Phone'), validators=[Optional()], description=lazy_gettext('Please enter your phone number or email address for the review.'))
