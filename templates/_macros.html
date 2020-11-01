@@ -701,11 +701,6 @@ $( function() {
   {% endif %}
   {{ render_field_with_errors(form_field.image_file) }}
   {{ render_field_with_errors(form_field.copyright_text) }}
-  {% if form_field.description %}
-    <small class="form-text text-muted w-100">
-      {{ form_field.description }}
-    </small>
-  {% endif %}
 {% endmacro %}
 
 {% macro render_base_image_form_section(form_field) %}
