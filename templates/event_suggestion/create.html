@@ -161,7 +161,7 @@
     </div>
     <div class="card-body">
       <p class="card-text">
-        <i class="fa fa-lock"></i> Deine Kontaktdaten werden für etwaige Rückfragen bei der Prüfung durch <em>{{ admin_unit.name }}</em> verwendet.
+        <i class="fa fa-lock"></i> Deine Kontaktdaten werden für etwaige Rückfragen bei der Prüfung durch <strong>{{ admin_unit.name }}</strong> verwendet.
         Die Daten sind nur für die Prüfer:innen sichtbar und werden nicht öffentlich angezeigt.
       </p>
 
@@ -205,6 +205,12 @@
       {{ _('Photo') }}
     </div>
     <div class="card-body">
+      {% if form.photo.description %}
+      <p class="card-text">
+        {{ form.photo.description }}
+      </p>
+      {% endif %}
+
       {{ render_base_image_form(form.photo) }}
 
       <div class="d-flex justify-content-between mt-3">
@@ -240,6 +246,9 @@
       {{ _('Preview') }}
     </div>
     <div class="card-body">
+      <p class="card-text">
+        Bitte prüfe deine Eingaben in der Vorschau. Wenn alles passt, klicke auf den Button <span class="d-inline-block">&quot;{{ form.submit.label() }}&quot;.
+      </p>
       <div id="preview_container" class="card card-body mb-4 shadow"></div>
       <div class="d-flex flex-wrap justify-content-between align-items-baseline mt-3">
         <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
