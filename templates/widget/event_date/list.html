@@ -62,7 +62,7 @@
                                 <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ date.event.admin_unit.name }}</small>
                             {% endif %}
                             <small class="text-muted"><i class="fa fa-map-marker"></i> {{ date.event.event_place.name }}</small>
-                            <a href="{{ url_for('widget_event_date', id=date.id) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('widget_event_date', id=date.id) }}" target="_blank" class="stretched-link"></a>
                         </div>
                         <div class="col-sm-4 text-right">
                             {% if date.event.photo_id %}
@@ -94,7 +94,7 @@
                                 <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ date.event.admin_unit.name }}</small>
                             {% endif %}
                             <small class="text-muted"><i class="fa fa-map-marker"></i> {{ date.event.event_place.name }}</small>
-                            <a href="{{ url_for('widget_event_date', id=date.id) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('widget_event_date', id=date.id) }}" target="_blank" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
