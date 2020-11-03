@@ -1,10 +1,13 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_cropper_code, render_crop_image_form, render_jquery_steps_header, render_cropper_header, render_base_image_form, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_logo, render_cropper_code, render_crop_image_form, render_jquery_steps_header, render_cropper_header, render_base_image_form, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
 {% block title %}
 {{ _('Create event suggestion') }}
 {% endblock %}
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery-steps.css')}}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='widget.css')}}" />
+{% endblock %}
+{% block navbar %}
 {% endblock %}
 {% block header_before_site_js %}
 {{ render_jquery_steps_header() }}
@@ -115,39 +118,68 @@
 </script>
 {% endblock %}
 {% block content %}
+<div style="max-width: 1024px;">
 
-<h1>{{ _('Create event suggestion') }}</h1>
+  <h1>{{ _('Create event suggestion') }}</h1>
 
-<form id="wizard-form" action="" method="POST" enctype="multipart/form-data">
-  <div id="wizard">
-  {{ form.hidden_tag() }}
+  <form id="wizard-form" action="" method="POST" enctype="multipart/form-data">
+    <div id="wizard">
+    {{ form.hidden_tag() }}
 
-  <h4></h4>
-  <section>
-    <div class="card mb-4">
-      <div class="card-body">
-        <p class="card-text">
-          Hier kannst du als Gast eine Veranstaltung vorschlagen, die anschließend durch <strong>{{ admin_unit.name }}</strong> geprüft wird.
-          Für mehr Optionen und einen eigenen Veranstaltungskalender, kannst du dich <a href="{{ url_for('security.register') }}">kostenlos registrieren</a>.
-        </p>
-        <div class="text-center">
-          <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Continue as guest') }}</a>
+    <h4></h4>
+    <section>
+      <div class="card mb-4">
+        <div class="card-body">
+          {% if admin_unit.logo_id %}
+            <div class="mb-4 text-center"><img src="{{ url_for('image', id=admin_unit.logo_id) }}" class="img-fluid" style="max-height:10vmin;" /></div>
+          {% endif %}
+          <p class="card-text">
+            Hier kannst du als Gast eine Veranstaltung vorschlagen, die anschließend durch <strong>{{ admin_unit.name }}</strong> geprüft wird.
+            Für mehr Optionen und einen eigenen Veranstaltungskalender, kannst du dich <a href="{{ url_for('security.register') }}">kostenlos registrieren</a>.
+          </p>
+          <div class="text-center">
+            <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Continue as guest') }}</a>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <h4></h4>
-  <section>
+    <h4></h4>
+    <section>
+      <div class="card mb-4">
+        <div class="card-header">
+          Nutzungsbedingungen
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            Die offene Veranstaltungsdatenbank stellt allen Nutzern Daten sowohl für private als auch kommerzielle Zwecke frei nutzbar zur Verfügung.
+          </p>
+          {{ render_field_with_errors(form.accept_tos, ri="checkbox") }}
+          <div class="d-flex justify-content-between">
+            <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+            <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <h4></h4>
+    <section>
     <div class="card mb-4">
       <div class="card-header">
-        Nutzungsbedingungen
+        {{ _('Contact') }}
       </div>
       <div class="card-body">
         <p class="card-text">
-          Die offene Veranstaltungsdatenbank stellt allen Nutzern Daten sowohl für private als auch kommerzielle Zwecke frei nutzbar zur Verfügung.
+          <i class="fa fa-lock"></i> Deine Kontaktdaten werden für etwaige Rückfragen bei der Prüfung durch <strong>{{ admin_unit.name }}</strong> verwendet.
+          Die Daten sind nur für die Prüfer:innen sichtbar und werden nicht öffentlich angezeigt.
         </p>
-        {{ render_field_with_errors(form.accept_tos, ri="checkbox") }}
+
+        {{ render_field_with_errors(form.contact_name) }}
+        {{ render_field_with_errors(form.contact_email, class="contact_method_group") }}
+        {{ render_field_with_errors(form.contact_phone, class="contact_method_group") }}
+        {{ render_field_with_errors(form.contact_email_notice, ri="checkbox") }}
+
         <div class="d-flex justify-content-between">
           <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
           <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
@@ -158,112 +190,88 @@
 
   <h4></h4>
   <section>
-  <div class="card mb-4">
-    <div class="card-header">
-      {{ _('Contact') }}
-    </div>
-    <div class="card-body">
-      <p class="card-text">
-        <i class="fa fa-lock"></i> Deine Kontaktdaten werden für etwaige Rückfragen bei der Prüfung durch <strong>{{ admin_unit.name }}</strong> verwendet.
-        Die Daten sind nur für die Prüfer:innen sichtbar und werden nicht öffentlich angezeigt.
-      </p>
+    <div class="card mb-4">
+      <div class="card-header">
+        {{ _('Event') }}
+      </div>
+      <div class="card-body">
+        {{ render_field_with_errors(form.name) }}
+        {{ render_field_with_errors(form.start) }}
+        {{ render_field_with_errors(form.event_place_id, class="autocomplete-tags w-100") }}
+        {{ render_field_with_errors(form.organizer_id, class="autocomplete-tags w-100") }}
 
-      {{ render_field_with_errors(form.contact_name) }}
-      {{ render_field_with_errors(form.contact_email, class="contact_method_group") }}
-      {{ render_field_with_errors(form.contact_phone, class="contact_method_group") }}
-      {{ render_field_with_errors(form.contact_email_notice, ri="checkbox") }}
-
-      <div class="d-flex justify-content-between">
-        <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
-        <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+        <div class="d-flex justify-content-between">
+          <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+          <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<h4></h4>
-<section>
-  <div class="card mb-4">
-    <div class="card-header">
-      {{ _('Event') }}
-    </div>
-    <div class="card-body">
-      {{ render_field_with_errors(form.name) }}
-      {{ render_field_with_errors(form.start) }}
-      {{ render_field_with_errors(form.event_place_id, class="autocomplete-tags w-100") }}
-      {{ render_field_with_errors(form.organizer_id, class="autocomplete-tags w-100") }}
+  <h4></h4>
+  <section>
+    <div class="card mb-4">
+      <div class="card-header">
+        {{ _('Photo') }}
+      </div>
+      <div class="card-body">
+        {% if form.photo.description %}
+        <p class="card-text">
+          {{ form.photo.description }}
+        </p>
+        {% endif %}
 
-      <div class="d-flex justify-content-between">
-        <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
-        <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+        {{ render_crop_image_form(form.photo) }}
+
+        <div class="d-flex justify-content-between mt-3">
+          <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+          <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<h4></h4>
-<section>
-  <div class="card mb-4">
-    <div class="card-header">
-      {{ _('Photo') }}
-    </div>
-    <div class="card-body">
-      {% if form.photo.description %}
-      <p class="card-text">
-        {{ form.photo.description }}
-      </p>
-      {% endif %}
+  <h4></h4>
+  <section>
+    <div class="card mb-4">
+      <div class="card-header">
+        {{ _('Optional details') }}
+      </div>
+      <div class="card-body">
+        {{ render_field_with_errors(form.description) }}
+        {{ render_field_with_errors(form.external_link) }}
 
-      {{ render_crop_image_form(form.photo) }}
-
-      <div class="d-flex justify-content-between mt-3">
-        <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
-        <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+        <div class="d-flex justify-content-between">
+          <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+          <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<h4></h4>
-<section>
-  <div class="card mb-4">
-    <div class="card-header">
-      {{ _('Optional details') }}
-    </div>
-    <div class="card-body">
-      {{ render_field_with_errors(form.description) }}
-      {{ render_field_with_errors(form.external_link) }}
-
-      <div class="d-flex justify-content-between">
-        <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
-        <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
+  <h4></h4>
+  <section>
+    <div class="card mb-4">
+      <div class="card-header">
+        {{ _('Preview') }}
+      </div>
+      <div class="card-body">
+        <p class="card-text">
+          Bitte prüfe deine Eingaben in der Vorschau. Wenn alles passt, klicke auf den Button <span class="d-inline-block">&quot;{{ form.submit.label() }}&quot;.
+        </p>
+        <div class="card mb-4 shadow">
+          <div id="preview_container" class="card-body"></div>
+        </div>
+        <div class="d-flex flex-wrap justify-content-between align-items-baseline mt-3">
+          <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
+          {{ render_field(form.submit) }}
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<h4></h4>
-<section>
-  <div class="card mb-4">
-    <div class="card-header">
-      {{ _('Preview') }}
     </div>
-    <div class="card-body">
-      <p class="card-text">
-        Bitte prüfe deine Eingaben in der Vorschau. Wenn alles passt, klicke auf den Button <span class="d-inline-block">&quot;{{ form.submit.label() }}&quot;.
-      </p>
-      <div class="card mb-4 shadow">
-        <div id="preview_container" class="card-body"></div>
-      </div>
-      <div class="d-flex flex-wrap justify-content-between align-items-baseline mt-3">
-        <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
-        {{ render_field(form.submit) }}
-      </div>
-    </div>
-  </div>
-</section>
+  </form>
 
-  </div>
-</form>
-
+</div>
 {% endblock %}
