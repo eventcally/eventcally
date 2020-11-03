@@ -13,7 +13,7 @@ from flask_cors import CORS
 import pytz
 import json
 from flask_qrcode import QRcode
-from flask_mail import Mail, Message
+from flask_mail import Mail, Message, email_dispatched
 
 # Create app
 app = Flask(__name__)
@@ -23,6 +23,9 @@ app.config['SECURITY_CONFIRMABLE'] = False
 app.config['SECURITY_TRACKABLE'] = True
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+app.config['SECURITY_RECOVERABLE'] = True
+app.config['SECURITY_CHANGEABLE'] = True
+app.config['SECURITY_EMAIL_SENDER'] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config['LANGUAGES'] = ['en', 'de']
 app.config['GOOGLE_OAUTH_CLIENT_ID'] = os.getenv('GOOGLE_OAUTH_CLIENT_ID')
 app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET')
@@ -46,6 +49,7 @@ mail_server = os.getenv("MAIL_SERVER")
 
 if mail_server is None:
     app.config['MAIL_SUPPRESS_SEND'] = True
+    app.config['MAIL_DEFAULT_SENDER'] = 'test@oveda.de'
 else:
     app.config['MAIL_SUPPRESS_SEND'] = False
     app.config['MAIL_SERVER'] = mail_server
@@ -57,6 +61,12 @@ else:
     app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_DEFAULT_SENDER")
 
 mail = Mail(app)
+
+if app.config['MAIL_SUPPRESS_SEND']:
+    def log_message(message, app):
+        print(message.subject)
+        print(message.body)
+    email_dispatched.connect(log_message)
 
 # create db
 db = SQLAlchemy(app)
