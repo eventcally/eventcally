@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_base_image_form, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_cropper_code, render_crop_image_form, render_jquery_steps_header, render_cropper_header, render_base_image_form, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
 {% block title %}
 {{ _('Create event suggestion') }}
 {% endblock %}
@@ -7,10 +7,8 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery-steps.css')}}" />
 {% endblock %}
 {% block header_before_site_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-steps/1.1.0/jquery.steps.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" integrity="sha512-UdIMMlVx0HEynClOIFSyOrPggomfhBKJE28LKl8yR3ghkgugPnG6iLfRfHwushZl1MOPSY6TsuBDGPK2X4zYKg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js" integrity="sha512-6Uv+497AWTmj/6V14BsQioPrm3kgwmK9HYIyWP+vClykX52b0zrDGP7lajZoIY1nNlX4oQuh7zsGjmF7D0VZYA==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/localization/messages_de.min.js" integrity="sha512-CZoLR7uTljYchtaY9SbWetTDxZ7bW3h6YALF4orf6k+WTvZhr4zu+a9XqhHkK+zsKbQL5HNXTNrd21TE3M6eUg==" crossorigin="anonymous"></script>
+{{ render_jquery_steps_header() }}
+{{ render_cropper_header() }}
 <script>
 
   function update_preview(form) {
@@ -19,6 +17,7 @@
     var organizer = form.find('select[name=organizer_id] > option:selected').text();
     var external_link = form.find('input[name=external_link]').val();
     var description = form.find('textarea[name=description]').val();
+    var image_data_url = $('#photo_preview').attr("src");
 
     var start = '';
     var date_str = form.find('#start').val();
@@ -29,7 +28,13 @@
       start = moment(date_str).set({"hour": hour_str, "minute": minute_str});
     }
 
-    var content = '<div class="text-highlight text-uppercase font-weight-bold">' + start.format("dddd, LL [um] LT") + '</div>' +
+    var image_tag = '';
+
+    if (image_data_url) {
+      image_tag = '<img src="' + image_data_url + '" class="mb-2 rounded" style="object-fit: cover; height: 20vh;" />';
+    }
+
+    var content = image_tag + '<div class="text-highlight text-uppercase font-weight-bold">' + start.format("dddd, LL [um] LT") + '</div>' +
     '<div class="font-weight-bold" style="font-size: 1.8rem;">' + name + '</div>' +
     '<div class="text-muted">' + place + '</div>' +
     '<div class="mt-3"><i class="fa fa-fw fa-sitemap"></i> ' + organizer + '</div>';
@@ -73,10 +78,6 @@
         }
     });
 
-    form.find("input").change(function(){
-      update_preview(form);
-    });
-
     wizard.steps({
       headerTag: "h4",
       bodyTag: "section",
@@ -107,6 +108,8 @@
     $('.wizard-prev').click(function(){
       wizard.steps('previous');
     });
+
+    {{ render_cropper_code() }}
 
   });
 </script>
@@ -211,7 +214,7 @@
       </p>
       {% endif %}
 
-      {{ render_base_image_form(form.photo) }}
+      {{ render_crop_image_form(form.photo) }}
 
       <div class="d-flex justify-content-between mt-3">
         <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
@@ -249,7 +252,9 @@
       <p class="card-text">
         Bitte prüfe deine Eingaben in der Vorschau. Wenn alles passt, klicke auf den Button <span class="d-inline-block">&quot;{{ form.submit.label() }}&quot;.
       </p>
-      <div id="preview_container" class="card card-body mb-4 shadow"></div>
+      <div class="card mb-4 shadow">
+        <div id="preview_container" class="card-body"></div>
+      </div>
       <div class="d-flex flex-wrap justify-content-between align-items-baseline mt-3">
         <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
         {{ render_field(form.submit) }}

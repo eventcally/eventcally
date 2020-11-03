@@ -7,7 +7,7 @@ from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 import decimal
 from models import Location, Image
-from .common import BaseImageForm
+from .common import FileImageForm
 
 class EventPlaceLocationForm(FlaskForm):
     street = StringField(lazy_gettext('Street'), validators=[Optional()])
@@ -20,7 +20,7 @@ class EventPlaceLocationForm(FlaskForm):
 class BaseEventPlaceForm(FlaskForm):
     name = StringField(lazy_gettext('Name'), validators=[DataRequired()])
     url = URLField(lazy_gettext('Link URL'), validators=[Optional()])
-    photo = FormField(BaseImageForm, lazy_gettext('Photo'), default=lambda: Image())
+    photo = FormField(FileImageForm, lazy_gettext('Photo'), default=lambda: Image())
     description = TextAreaField(lazy_gettext('Description'), validators=[Optional()])
     location = FormField(EventPlaceLocationForm)
 

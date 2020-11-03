@@ -6,7 +6,7 @@ from wtforms.fields.html5 import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional, Regexp
 import decimal
 from models import Location, Image
-from .common import BaseImageForm
+from .common import FileImageForm
 
 class OrganizerLocationForm(FlaskForm):
     street = StringField(lazy_gettext('Street'), validators=[Optional()])
@@ -22,7 +22,7 @@ class BaseOrganizerForm(FlaskForm):
     email = EmailField(lazy_gettext('Email'), validators=[Optional()])
     phone = TelField(lazy_gettext('Phone'), validators=[Optional()])
     fax = TelField(lazy_gettext('Fax'), validators=[Optional()])
-    logo = FormField(BaseImageForm, lazy_gettext('Logo'), default=lambda: Image())
+    logo = FormField(FileImageForm, lazy_gettext('Logo'), default=lambda: Image())
     location = FormField(OrganizerLocationForm)
 
     def populate_obj(self, obj):

@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_base_image_form, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_cropper_header, render_cropper_script, render_crop_image_form_section, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
+{% block header %}
+  {{ render_cropper_header() }}
+  {{ render_cropper_script() }}
+{% endblock %}
 {% block content %}
 
 <h1>{{ _('Update event') }}</h1>
@@ -70,7 +74,7 @@
     </div>
   </div>
 
-  {{ render_base_image_form_section(form.photo) }}
+  {{ render_crop_image_form_section(form.photo) }}
 
   <div class="card mb-4">
     <div class="card-header">

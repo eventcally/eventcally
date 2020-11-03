@@ -1,16 +1,20 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, BooleanField
+from wtforms import StringField, BooleanField, HiddenField
 from wtforms.validators import DataRequired, Optional
+import re
+import base64
 
 class BaseImageForm(FlaskForm):
-    image_file = FileField(lazy_gettext('File'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
     copyright_text = StringField(lazy_gettext('Copyright text'), validators=[Optional()])
+
+class FileImageForm(BaseImageForm):
+    image_file = FileField(lazy_gettext('File'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
     delete_flag = BooleanField(lazy_gettext('Delete image'), default=False, validators=[Optional()])
 
     def populate_obj(self, obj):
-        super(FlaskForm, self).populate_obj(obj)
+        super(BaseImageForm, self).populate_obj(obj)
 
         if self.image_file.data:
             fs = self.image_file.data
@@ -18,6 +22,32 @@ class BaseImageForm(FlaskForm):
             obj.encoding_format = fs.content_type
         elif self.delete_flag.data:
             obj.data = None
+            obj.encoding_format = None
+
+class Base64ImageForm(BaseImageForm):
+    image_base64 = HiddenField()
+
+    def process(self, formdata=None, obj=None, data=None, **kwargs):
+        super(BaseImageForm, self).process(formdata, obj, data, **kwargs)
+
+        if self.image_base64.data is None and obj and obj.data:
+            base64_str = base64.b64encode(obj.data).decode('utf-8')
+            self.image_base64.data = 'data:{};base64,{}'.format(obj.encoding_format, base64_str)
+
+    def populate_obj(self, obj):
+        super(BaseImageForm, self).populate_obj(obj)
+
+        match = None
+        if self.image_base64.data:
+            match = re.match(r"^data:(image/.+);base64,(.*)$", self.image_base64.data)
+
+        if match:
+            obj.encoding_format = match.group(1)
+            base64_str = match.group(2)
+            obj.data = base64.b64decode(base64_str)
+        else:
+            obj.data = None
+            obj.encoding_format = None
 
 event_rating_choices = [
             (0,lazy_gettext('0 (Little relevant)')),

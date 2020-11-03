@@ -7,7 +7,7 @@ from wtforms.fields.html5 import DateTimeLocalField, EmailField, URLField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
 from models import EventPlace, EventTargetGroupOrigin, EventAttendanceMode, EventStatus, Location, EventOrganizer, EventRejectionReason, EventReviewStatus, Image
-from .common import event_rating_choices, BaseImageForm
+from .common import event_rating_choices, Base64ImageForm
 from .widgets import CustomDateTimeField, CustomDateField
 
 class EventPlaceLocationForm(FlaskForm):
@@ -67,7 +67,7 @@ class BaseEventForm(FlaskForm):
         (int(EventAttendanceMode.online), lazy_gettext('EventAttendanceMode.online')),
         (int(EventAttendanceMode.mixed), lazy_gettext('EventAttendanceMode.mixed'))])
 
-    photo = FormField(BaseImageForm, lazy_gettext('Photo'), default=lambda: Image())
+    photo = FormField(Base64ImageForm, lazy_gettext('Photo'), default=lambda: Image())
     rating = SelectField(lazy_gettext('Rating'), default=50, coerce=int, choices=event_rating_choices)
 
 class CreateEventForm(BaseEventForm):
