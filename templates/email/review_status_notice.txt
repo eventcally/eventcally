@@ -1,3 +1,3 @@
 {{ _('The review status of your event has been updated.') }}
 {{ _('Click the link below to view the status') }}
-{{ url_for('event_suggestion_review_status', event_suggestion_id=event.id, _external=True) }}
+{{ url_for('event_suggestion_review_status', event_suggestion_id=event_suggestion.id, _external=True) }}
