@@ -167,8 +167,7 @@ def prepare_event_form_for_suggestion(form, event_suggestion):
     form.external_link.data = event_suggestion.external_link
 
     if event_suggestion.photo:
-        form.photo.form.copyright_text.data = event_suggestion.photo.copyright_text
-        form.photo.object_data = event_suggestion.photo
+        form.photo.form.process(obj=event_suggestion.photo)
 
     if event_suggestion.event_place:
         form.event_place_id.data = event_suggestion.event_place.id
@@ -184,11 +183,6 @@ def prepare_event_form_for_suggestion(form, event_suggestion):
 
 def update_event_with_form(event, form, event_suggestion = None):
     form.populate_obj(event)
-
-    if event_suggestion and event_suggestion.photo and event.photo and event.photo.data is None and not form.photo.delete_flag.data:
-        event.photo.data = event_suggestion.photo.data
-        event.photo.encoding_format = event_suggestion.photo.encoding_format
-
     update_event_dates_with_recurrence_rule(event, form.start.data, form.end.data)
 
 def get_user_rights(event):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-30 15:04+0100\n"
+"POT-Creation-Date: 2020-11-03 09:46+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -242,79 +242,79 @@ msgstr "Mitglied löschen"
 msgid "Update member"
 msgstr "Mitglied aktualisieren"
 
-#: forms/common.py:8
-msgid "File"
-msgstr "Datei"
-
-#: forms/common.py:8
-msgid "Images only!"
-msgstr "Nur Bilder!"
-
-#: forms/common.py:9
+#: forms/common.py:10
 msgid "Copyright text"
 msgstr "Copyright Text"
 
-#: forms/common.py:10
+#: forms/common.py:13
+msgid "File"
+msgstr "Datei"
+
+#: forms/common.py:13
+msgid "Images only!"
+msgstr "Nur Bilder!"
+
+#: forms/common.py:14
 msgid "Delete image"
 msgstr "Bild löschen"
 
-#: forms/common.py:23
+#: forms/common.py:53
 msgid "0 (Little relevant)"
 msgstr "0 (Wenig relevant)"
 
-#: forms/common.py:33
+#: forms/common.py:63
 msgid "10 (Highlight)"
 msgstr "10 (Highlight)"
 
-#: forms/common.py:37
+#: forms/common.py:67
 msgid "Monday"
 msgstr "Montag"
 
-#: forms/common.py:38
+#: forms/common.py:68
 msgid "Tueday"
 msgstr "Dienstag"
 
-#: forms/common.py:39
+#: forms/common.py:69
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: forms/common.py:40
+#: forms/common.py:70
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: forms/common.py:41
+#: forms/common.py:71
 msgid "Friday"
 msgstr "Freitag"
 
-#: forms/common.py:42
+#: forms/common.py:72
 msgid "Saturday"
 msgstr "Samstag"
 
-#: forms/common.py:43
+#: forms/common.py:73
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: forms/common.py:47
+#: forms/common.py:77
 msgid "500 m"
 msgstr "500 m"
 
-#: forms/common.py:48
+#: forms/common.py:78
 msgid "5 km"
 msgstr "5 km"
 
-#: forms/common.py:49
+#: forms/common.py:79
 msgid "10 km"
 msgstr "10 km"
 
-#: forms/common.py:50
+#: forms/common.py:80
 msgid "20 km"
 msgstr "20 km"
 
-#: forms/common.py:51
+#: forms/common.py:81
 msgid "50 km"
 msgstr "50 km"
 
-#: forms/common.py:52
+#: forms/common.py:82
 msgid "100 km"
 msgstr "100 km"
 
@@ -420,19 +420,19 @@ msgid "EventAttendanceMode.mixed"
 msgstr "Online und offline"
 
 #: forms/event.py:70 forms/event_place.py:23 forms/event_suggestion.py:27
-#: templates/event_suggestion/create.html:159
+#: templates/event_suggestion/create.html:208
 msgid "Photo"
 msgstr "Foto"
 
 #: forms/event.py:71 forms/reference.py:9 forms/reference.py:13
-#: forms/reference_request.py:29 templates/event/create.html:163
-#: templates/event/update.html:94
+#: forms/reference_request.py:29 templates/event/create.html:164
+#: templates/event/update.html:98
 msgid "Rating"
 msgstr "Bewertung"
 
 #: forms/event.py:74 forms/event.py:75 forms/event.py:118
 #: forms/event_suggestion.py:25 templates/_macros.html:374
-#: templates/event/create.html:105 templates/event/update.html:53
+#: templates/event/create.html:106 templates/event/update.html:57
 #: templates/event_place/create.html:20 templates/event_place/delete.html:13
 #: templates/event_place/update.html:20
 msgid "Place"
@@ -448,7 +448,7 @@ msgstr "Neuen Ort eingeben"
 
 #: forms/event.py:78 forms/event.py:79 forms/event.py:119 forms/event.py:147
 #: forms/event_suggestion.py:26 templates/_macros.html:404
-#: templates/event/create.html:80 templates/event/update.html:44
+#: templates/event/create.html:81 templates/event/update.html:48
 #: templates/organizer/create.html:16 templates/organizer/delete.html:13
 #: templates/organizer/update.html:16
 msgid "Organizer"
@@ -462,7 +462,7 @@ msgstr "Vorhandenen Veranstalter auswählem"
 msgid "Enter new organizer"
 msgstr "Neuen Veranstalter eingeben"
 
-#: forms/event.py:82 templates/event/create.html:51
+#: forms/event.py:82 templates/event/create.html:52
 #: templates/manage/events.html:12 templates/manage/organizers.html:21
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
@@ -475,7 +475,7 @@ msgstr "Existierenden Ort wählen oder neuen Ort eingeben"
 msgid "Select existing organizer or enter new organizer"
 msgstr "Wähle einen vorhandenen Veranstalter oder gib einen neuen Veranstalter ein"
 
-#: forms/event.py:121 templates/event/update.html:34
+#: forms/event.py:121 templates/event/update.html:38
 msgid "Status"
 msgstr "Status"
 
@@ -483,27 +483,27 @@ msgstr "Status"
 msgid "EventStatus.scheduled"
 msgstr "Geplant"
 
-#: forms/event.py:123 templates/layout.html:47
+#: forms/event.py:123 templates/layout.html:48
 msgid "EventStatus.cancelled"
 msgstr "Abgesagt"
 
-#: forms/event.py:124 templates/layout.html:50
+#: forms/event.py:124 templates/layout.html:51
 msgid "EventStatus.movedOnline"
 msgstr "Online verschoben"
 
-#: forms/event.py:125 templates/layout.html:53
+#: forms/event.py:125 templates/layout.html:54
 msgid "EventStatus.postponed"
 msgstr "Verschoben"
 
-#: forms/event.py:126 templates/layout.html:56
+#: forms/event.py:126 templates/layout.html:57
 msgid "EventStatus.rescheduled"
 msgstr "Neu angesetzt"
 
-#: forms/event.py:128 templates/event/update.html:5
+#: forms/event.py:128 templates/event/update.html:9
 msgid "Update event"
 msgstr "Veranstaltung aktualisieren"
 
-#: forms/event.py:137 templates/_macros.html:731 templates/event/delete.html:6
+#: forms/event.py:137 templates/_macros.html:921 templates/event/delete.html:6
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
@@ -625,7 +625,7 @@ msgstr ""
 " erkläre, dass diese weitergegeben werden dürfen."
 
 #: forms/event_suggestion.py:30 templates/event_suggestion/create.html:4
-#: templates/event_suggestion/create.html:70 templates/example.html:10
+#: templates/event_suggestion/create.html:119 templates/example.html:10
 msgid "Create event suggestion"
 msgstr "Veranstaltung vorschlagen"
 
@@ -754,9 +754,9 @@ msgstr "Auf Google Maps anzeigen"
 msgid "Link"
 msgstr "Link"
 
-#: templates/_macros.html:318 templates/event/create.html:58
-#: templates/event/delete.html:13 templates/event/update.html:12
-#: templates/event_suggestion/create.html:139
+#: templates/_macros.html:318 templates/event/create.html:59
+#: templates/event/delete.html:13 templates/event/update.html:16
+#: templates/event_suggestion/create.html:188
 #: templates/reference/delete.html:13
 msgid "Event"
 msgstr "Veranstaltung"
@@ -780,22 +780,22 @@ msgstr "Ort bei Google suchen"
 
 #: templates/_macros.html:568 templates/_macros.html:570
 #: templates/event_date/list.html:270
-#: templates/event_suggestion/create.html:103
-#: templates/event_suggestion/create.html:128
-#: templates/event_suggestion/create.html:148
-#: templates/event_suggestion/create.html:165
-#: templates/event_suggestion/create.html:183
-#: templates/event_suggestion/create.html:193
+#: templates/event_suggestion/create.html:152
+#: templates/event_suggestion/create.html:177
+#: templates/event_suggestion/create.html:197
+#: templates/event_suggestion/create.html:220
+#: templates/event_suggestion/create.html:238
+#: templates/event_suggestion/create.html:259
 msgid "Previous"
 msgstr "Zurück"
 
 #: templates/_macros.html:573 templates/_macros.html:575
 #: templates/event_date/list.html:271
-#: templates/event_suggestion/create.html:104
-#: templates/event_suggestion/create.html:129
-#: templates/event_suggestion/create.html:149
-#: templates/event_suggestion/create.html:166
-#: templates/event_suggestion/create.html:184
+#: templates/event_suggestion/create.html:153
+#: templates/event_suggestion/create.html:178
+#: templates/event_suggestion/create.html:198
+#: templates/event_suggestion/create.html:221
+#: templates/event_suggestion/create.html:239
 msgid "Next"
 msgstr "Weiter"
 
@@ -803,19 +803,35 @@ msgstr "Weiter"
 msgid "Radius"
 msgstr "Umkreis"
 
-#: templates/_macros.html:726
+#: templates/_macros.html:835
+msgid "Edit image"
+msgstr "Bild bearbeiten"
+
+#: templates/_macros.html:856
+msgid "Close"
+msgstr "Schließen"
+
+#: templates/_macros.html:857
+msgid "Okay"
+msgstr "OK"
+
+#: templates/_macros.html:866 templates/_macros.html:868
+msgid "Choose image file"
+msgstr "Bild-Datei auswählen"
+
+#: templates/_macros.html:916
 msgid "Actions"
 msgstr "Aktionen"
 
-#: templates/_macros.html:730
+#: templates/_macros.html:920
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: templates/_macros.html:734 templates/manage/references_incoming.html:10
+#: templates/_macros.html:924 templates/manage/references_incoming.html:10
 msgid "Reference event"
 msgstr "Veranstaltung empfehlen"
 
-#: templates/_macros.html:737
+#: templates/_macros.html:927
 #: templates/manage/reference_requests_outgoing.html:10
 #: templates/manage/references_outgoing.html:10
 msgid "Empfehlung anfragen"
@@ -830,38 +846,38 @@ msgstr "Widget als iFrame einbetten"
 msgid "Register for free"
 msgstr "Kostenlos registrieren"
 
-#: templates/layout.html:83
+#: templates/layout.html:84
 msgid "Manage"
 msgstr "Verwaltung"
 
-#: templates/event_place/read.html:22 templates/layout.html:86
+#: templates/event_place/read.html:22 templates/layout.html:87
 #: templates/layout_manage.html:24 templates/manage/events.html:5
 #: templates/manage/events.html:9
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: templates/layout.html:87
+#: templates/layout.html:88
 msgid "Planing"
 msgstr "Planung"
 
-#: templates/layout.html:88
+#: templates/layout.html:89
 msgid "Example"
 msgstr "Beispiel"
 
-#: templates/developer/read.html:4 templates/layout.html:89
+#: templates/developer/read.html:4 templates/layout.html:90
 msgid "Developer"
 msgstr "Entwickler"
 
-#: templates/layout.html:98 templates/profile.html:4
+#: templates/layout.html:99 templates/profile.html:4
 msgid "Profile"
 msgstr "Profil"
 
 #: templates/admin/admin.html:3 templates/admin/admin.html:9
-#: templates/admin/admin_units.html:9 templates/layout.html:101
+#: templates/admin/admin_units.html:9 templates/layout.html:102
 msgid "Admin"
 msgstr "Administration"
 
-#: templates/layout.html:105
+#: templates/layout.html:106
 msgid "Logout"
 msgstr "Ausloggen"
 
@@ -930,7 +946,7 @@ msgid "Admin Units"
 msgstr "Verwaltungseinheiten"
 
 #: templates/admin_unit/create.html:46 templates/admin_unit/update.html:47
-#: templates/event/create.html:146 templates/event/update.html:77
+#: templates/event/create.html:147 templates/event/update.html:81
 #: templates/event_place/create.html:46 templates/event_place/update.html:46
 #: templates/organizer/create.html:45 templates/organizer/update.html:45
 msgid "Additional information"
@@ -986,11 +1002,11 @@ msgstr "Klicke hier, um den Vorschlag zu prüfen"
 msgid "The review status of your event has been updated."
 msgstr "Der Prüfungsstatus deiner Veranstaltung wurde aktualisiert"
 
-#: templates/event/create.html:69 templates/event/update.html:23
+#: templates/event/create.html:70 templates/event/update.html:27
 msgid "Event date"
 msgstr "Termin"
 
-#: templates/event/create.html:131 templates/event/update.html:62
+#: templates/event/create.html:132 templates/event/update.html:66
 msgid "Target group"
 msgstr "Zielgruppe"
 
@@ -1014,18 +1030,22 @@ msgstr "Empfehlung anfragen für Veranstaltung \"%(name)s\""
 msgid "Info"
 msgstr "Info"
 
-#: templates/event_suggestion/create.html:85
+#: templates/event_suggestion/create.html:134
 msgid "Continue as guest"
 msgstr "Weiter als Gast"
 
-#: templates/event_suggestion/create.html:114
+#: templates/event_suggestion/create.html:163
 #: templates/event_suggestion/review.html:34
 msgid "Contact"
 msgstr "Kontakt"
 
-#: templates/event_suggestion/create.html:176
+#: templates/event_suggestion/create.html:231
 msgid "Optional details"
 msgstr "Optionale Details"
+
+#: templates/event_suggestion/create.html:249
+msgid "Preview"
+msgstr "Vorschau"
 
 #: templates/event_suggestion/review.html:8 templates/manage/reviews.html:19
 msgid "Review event suggestion"

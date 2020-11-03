@@ -289,6 +289,7 @@
       <figcaption class="figure-caption">&copy; {{ image.copyright_text }}</figcaption>
     </figure>
   {% else %}
+    {% set img_class = img_class + ' mb-2' %}
     {{ render_img_src(image, class=img_class, style=img_style) }}
   {% endif %}
 {% endif %}
@@ -691,6 +692,201 @@ $( function() {
 </form>
 {% endmacro %}
 
+{% macro render_cropper_code() %}
+var inputImage = document.getElementById('photo-image_file');
+var Cropper = window.Cropper;
+var URL = window.URL || window.webkitURL;
+var image = document.getElementById('photo-image');
+var cropper = null;
+var crop_data = null;
+var minCroppedWidth = 320;
+var minCroppedHeight = 160;
+var uploadedImageURL;
+var photo_modal = $('#photo_modal');
+
+if (URL) {
+  inputImage.onchange = function () {
+    var files = this.files;
+    var file;
+
+    if (files && files.length) {
+      file = files[0];
+
+      if (/^image\/\w+/.test(file.type)) {
+        if (uploadedImageURL) {
+          URL.revokeObjectURL(uploadedImageURL);
+        }
+
+        image.src = uploadedImageURL = URL.createObjectURL(file);
+        inputImage.value = null;
+        crop_data = null;
+        photo_modal.modal();
+      } else {
+        window.alert('Please choose an image file.');
+      }
+    }
+  };
+
+  photo_modal.on('shown.bs.modal', function () {
+    cropper = new Cropper(image, {
+      viewMode: 1,
+      autoCropArea: 1.0,
+      data: crop_data,
+      ready() {
+        var image_data = cropper.getImageData();
+        if (image_data.naturalWidth < minCroppedWidth || image_data.naturalHeight < minCroppedHeight) {
+          window.alert('Die Auflösung ist zu gering. Mindestens ' + minCroppedWidth + 'x' + minCroppedHeight + 'px.');
+          photo_modal.modal('hide');
+        }
+      },
+      crop: function (event) {
+        var width = event.detail.width;
+        var height = event.detail.height;
+
+        if (width < minCroppedWidth || height < minCroppedHeight) {
+          cropper.setData({
+            width: Math.max(minCroppedWidth, width),
+            height: Math.max(minCroppedHeight, height),
+          });
+        }
+      }
+    });
+  }).on('hidden.bs.modal', function () {
+    cropper.destroy();
+    cropper = null;
+  });
+
+  if ($('#photo_preview').attr("src")) {
+    image.src = uploadedImageURL = $('#photo_preview').attr("src");
+  } else {
+    $('.show-if-photo-exists').hide();
+  }
+  $('#photo-edit-btn').click(function(e){
+    e.preventDefault();
+    photo_modal.modal();
+  });
+  $('#photo-delete-btn').click(function(e){
+    e.preventDefault();
+    $('#photo-image_base64').val('');
+    $('#photo_preview').attr("src", '');
+    $('.show-if-photo-exists').hide();
+  });
+
+  $('#photo-zoom-in').click(function(e){
+    e.preventDefault();
+    cropper.zoom(0.1);
+  });
+
+  $('#photo-zoom-out').click(function(e){
+    e.preventDefault();
+    cropper.zoom(-0.1);
+  });
+
+  $('#photo-rotate-left').click(function(e){
+    e.preventDefault();
+    cropper.rotate(-90);
+  });
+
+  $('#photo-rotate-right').click(function(e){
+    e.preventDefault();
+    cropper.rotate(90);
+  });
+
+  $('#photo-save-btn').click(function(e){
+    e.preventDefault();
+    photo_modal.modal('hide');
+
+    if (cropper) {
+      var canvas = cropper.getCroppedCanvas({
+        maxWidth: 1200,
+        maxHeight: 1200,
+        fillColor: '#eee'
+      });
+      var data_url = canvas.toDataURL();
+      crop_data = cropper.getData();
+
+      $('#photo-image_base64').val(data_url);
+      $('#photo_preview').attr("src", data_url);
+      $('.show-if-photo-exists').show();
+    }
+  });
+
+} else {
+  inputImage.disabled = true;
+  inputImage.parentNode.className += ' disabled';
+}
+{% endmacro %}
+
+{% macro render_cropper_script() %}
+<script>
+  $( function() {
+    {{ render_cropper_code() }}
+  });
+</script>
+{% endmacro %}
+
+{% macro render_crop_image_form(form_field) %}
+  {{ form_field.hidden_tag() }}
+
+  <div class="card card-body mb-3 p-3">
+    <div id="photo_modal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">{{ _('Edit image') }}</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                <div style="height: 40vh;">
+                  <img class="w-100" id="photo-image" />
+                </div>
+                <div class="my-3">
+                  <div class="btn-group">
+                    <button id="photo-zoom-in" type="button" class="btn btn-outline-secondary"><i class="fa fa-search-plus"></i></button>
+                    <button id="photo-zoom-out" type="button" class="btn btn-outline-secondary"><i class="fa fa-search-minus"></i></button>
+                  </div>
+                  <div class="btn-group">
+                    <button id="photo-rotate-left" type="button" class="btn btn-outline-secondary"><i class="fa fa-undo-alt"></i></button>
+                    <button id="photo-rotate-right" type="button" class="btn btn-outline-secondary"><i class="fa fa-redo-alt"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
+                  <button type="button" class="btn btn-primary" id="photo-save-btn">{{ _('Okay') }}</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="mb-1 show-if-photo-exists"><img id="photo_preview" style="max-height: 20vh;" {% if form_field.image_base64.data %}src="{{ form_field.image_base64.data }}"{% endif %} /></div>
+
+    <div class="py-1">
+      <label class="btn btn-secondary mb-0" for="photo-image_file" title="{{ _('Choose image file') }}">
+        <input type="file" class="sr-only" id="photo-image_file" name="photo" accept="image/*" />
+        <span>{{ _('Choose image file') }}...</span>
+      </label>
+      <button id="photo-edit-btn" class="btn btn-outline-secondary show-if-photo-exists"><i class="fa fa-edit"></i></button>
+      <button id="photo-delete-btn" class="btn btn-outline-secondary show-if-photo-exists"><i class="fa fa-trash"></i></button>
+    </div>
+  </div>
+
+  {{ render_field_with_errors(form_field.copyright_text) }}
+{% endmacro %}
+
+{% macro render_crop_image_form_section(form_field) %}
+<div class="card mb-4">
+  <div class="card-header">
+    {{ form_field.label() }}
+  </div>
+  <div class="card-body">
+    {{ render_crop_image_form(form_field) }}
+  </div>
+</div>
+{% endmacro %}
+
 {% macro render_base_image_form(form_field) %}
   {{ form_field.hidden_tag() }}
   {% if form_field.object_data and form_field.object_data.id %}
@@ -734,4 +930,17 @@ $( function() {
         </div>
     </div>
   {% endif %}
+{% endmacro %}
+
+{% macro render_jquery_steps_header() %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-steps/1.1.0/jquery.steps.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" integrity="sha512-UdIMMlVx0HEynClOIFSyOrPggomfhBKJE28LKl8yR3ghkgugPnG6iLfRfHwushZl1MOPSY6TsuBDGPK2X4zYKg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js" integrity="sha512-6Uv+497AWTmj/6V14BsQioPrm3kgwmK9HYIyWP+vClykX52b0zrDGP7lajZoIY1nNlX4oQuh7zsGjmF7D0VZYA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/localization/messages_de.min.js" integrity="sha512-CZoLR7uTljYchtaY9SbWetTDxZ7bW3h6YALF4orf6k+WTvZhr4zu+a9XqhHkK+zsKbQL5HNXTNrd21TE3M6eUg==" crossorigin="anonymous"></script>
+{% endmacro %}
+
+{% macro render_cropper_header() %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.js" integrity="sha512-oqBsjjSHWqkDx4UKoU+5IUZN2nW2qDp2GFSKw9+mcFm+ZywqfBKp79nfWmGPco2wzTWuE46XpjtCjZ9tFmI12g==" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.css" integrity="sha512-949FvIQOibfhLTgmNws4F3DVlYz3FmCRRhJznR22hx76SKkcpZiVV5Kwo0iwK9L6BFuY+6mpdqB2+vDIGVuyHg==" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cropper/1.0.1/jquery-cropper.js" integrity="sha512-7H4tikIFoyAdYD31w/uNYvvAUL6gyunWXLwTQ7ZXkyjD+brw+PfJpLxFkANnbkKnSJzU89YpnF3fJKbpvV+QYg==" crossorigin="anonymous"></script>
 {% endmacro %}
