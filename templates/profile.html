@@ -7,6 +7,9 @@
 
 <h1>{{ current_user.email }}</h1>
 
+<h2>{{ _('Profile') }}</h2>
+<p><a href="{{ url_for_security('change_password') }}">{{ _fsdomain('Change password') }}</a></p>
+
 {% if invitations %}
 <h2>{{ _('Invitations') }}</h2>
 <div class="table-responsive">
