@@ -51,10 +51,22 @@ def event_suggestion_create_for_admin_unit(au_short_name):
         flash_errors(form)
     return render_template('event_suggestion/create.html', form=form, admin_unit=admin_unit)
 
-@app.route('/event_suggestion/<int:event_suggestion_id>/review', methods=('GET', 'POST'))
+@app.route('/event_suggestion/<int:event_suggestion_id>/review')
 def event_suggestion_review(event_suggestion_id):
     event_suggestion = EventSuggestion.query.get_or_404(event_suggestion_id)
     access_or_401(event_suggestion.admin_unit, 'event:verify')
+
+    return render_template('event_suggestion/review.html',
+        admin_unit=event_suggestion.admin_unit,
+        event_suggestion=event_suggestion)
+
+@app.route('/event_suggestion/<int:event_suggestion_id>/reject', methods=('GET', 'POST'))
+def event_suggestion_reject(event_suggestion_id):
+    event_suggestion = EventSuggestion.query.get_or_404(event_suggestion_id)
+    access_or_401(event_suggestion.admin_unit, 'event:verify')
+
+    if event_suggestion.verified:
+        return redirect(url_for('event_suggestion_review', event_suggestion_id=event_suggestion.id))
 
     form = RejectEventSuggestionForm(obj=event_suggestion)
 
@@ -76,8 +88,9 @@ def event_suggestion_review(event_suggestion_id):
     else:
         flash_errors(form)
 
-    return render_template('event_suggestion/review.html',
+    return render_template('event_suggestion/reject.html',
         form=form,
+        admin_unit=event_suggestion.admin_unit,
         event_suggestion=event_suggestion)
 
 @app.route('/event_suggestion/<int:event_suggestion_id>/review_status')

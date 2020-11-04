@@ -866,7 +866,7 @@ if (URL) {
     <div class="py-1">
       <label class="btn btn-secondary mb-0" for="photo-image_file" title="{{ _('Choose image file') }}">
         <input type="file" class="sr-only" id="photo-image_file" name="photo" accept="image/*" />
-        <span>{{ _('Choose image file') }}...</span>
+        <span>{{ _('Choose image file') }}&hellip;</span>
       </label>
       <button id="photo-edit-btn" class="btn btn-outline-secondary show-if-photo-exists"><i class="fa fa-edit"></i></button>
       <button id="photo-delete-btn" class="btn btn-outline-secondary show-if-photo-exists"><i class="fa fa-trash"></i></button>
@@ -919,7 +919,7 @@ if (URL) {
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             {% if user_rights['can_update_event'] %}
                 <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
-                <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}...</a>
+                <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}&hellip;</a>
             {% endif %}
             {% if user_rights['can_reference_event'] %}
                 <a class="dropdown-item" href="{{ url_for('event_reference', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
@@ -944,3 +944,48 @@ if (URL) {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.css" integrity="sha512-949FvIQOibfhLTgmNws4F3DVlYz3FmCRRhJznR22hx76SKkcpZiVV5Kwo0iwK9L6BFuY+6mpdqB2+vDIGVuyHg==" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cropper/1.0.1/jquery-cropper.js" integrity="sha512-7H4tikIFoyAdYD31w/uNYvvAUL6gyunWXLwTQ7ZXkyjD+brw+PfJpLxFkANnbkKnSJzU89YpnF3fJKbpvV+QYg==" crossorigin="anonymous"></script>
 {% endmacro %}
+
+{% macro render_event_suggestion(event_suggestion) %}
+<div class="card mb-3">
+  <div class="card-header">
+      {{ _('Event suggestion') }}
+  </div>
+  <div class="card-body">
+
+      {% if event_suggestion.photo_id %}
+          <div class="">
+              {{ render_image(event_suggestion.photo, class='rounded', style='object-fit: cover; height: 20vh;') }}
+          </div>
+      {% endif %}
+
+      <div class="text-highlight text-uppercase font-weight-bold">{{ event_suggestion.start | dateformat('full') }} um {{ event_suggestion.start | timeformat('short') }}</div>
+      <div class="font-weight-bold" style="font-size: 1.8rem;">{{ event_suggestion.name }}</div>
+      <div class="text-muted">{{ event_suggestion.event_place.name or event_suggestion.event_place_text }}</div>
+
+      <div class="mt-3"><i class="fa fa-fw fa-sitemap"></i> {{ event_suggestion.organizer.name or event_suggestion.organizer_text }}</div>
+      {{ render_link_prop(event_suggestion.external_link) }}
+      <div class="my-2">{{ event_suggestion.description }}</div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">
+  {{ _('Contact') }}
+  </div>
+  <div class="card-body">
+      {{ render_string_prop(event_suggestion.contact_name, 'fa-user') }}
+      {{ render_email_prop(event_suggestion.contact_email) }}
+      {{ render_phone_prop(event_suggestion.contact_phone) }}
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">
+    {{ _('Review status') }}
+  </div>
+  <div class="card-body">
+      {{ render_event_review_status(event_suggestion) }}
+  </div>
+</div>
+{% endmacro %}
+
