@@ -94,3 +94,7 @@ tr.table-line-through td {
 .text-highlight {
     color: #dc3545!important;
 }
+
+.w-normal {
+    max-width: 1024px;
+}

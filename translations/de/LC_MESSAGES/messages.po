@@ -647,7 +647,7 @@ msgstr "Unzulässig"
 
 #: forms/event_suggestion.py:52
 msgid "Reject event suggestion"
-msgstr "Vorgeschlagene Veranstaltung ablehen"
+msgstr "Vorgeschlagene Veranstaltung ablehnen"
 
 #: forms/organizer.py:37 templates/manage/organizers.html:12
 #: templates/organizer/create.html:10

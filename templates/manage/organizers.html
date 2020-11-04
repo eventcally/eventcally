@@ -20,7 +20,7 @@
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id, organizer_id=organizer.id) }}">{{ _('Create event') }}</a>
                 <a class="dropdown-item" href="{{ url_for('organizer_update', id=organizer.id) }}">{{ _('Edit') }}</a>
-                <a class="dropdown-item" href="{{ url_for('organizer_delete', id=organizer.id) }}">{{ _('Delete') }}...</a>
+                <a class="dropdown-item" href="{{ url_for('organizer_delete', id=organizer.id) }}">{{ _('Delete') }}&hellip;</a>
                 <!--<a class="dropdown-item" href="#">{{ _('Assistents') }}</a>-->
             </div>
         </div>

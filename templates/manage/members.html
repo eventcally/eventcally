@@ -18,7 +18,7 @@
         <div class="dropdown d-inline-block">
             <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ invitation.email }}</button>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="{{ url_for('manage_admin_unit_invitation_delete', id=invitation.id) }}">{{ _('Delete') }}...</a>
+                <a class="dropdown-item" href="{{ url_for('manage_admin_unit_invitation_delete', id=invitation.id) }}">{{ _('Delete') }}&hellip;</a>
             </div>
         </div>
     </li>
@@ -33,7 +33,7 @@
             <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ member.user.email }}</button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ url_for('manage_admin_unit_member_update', id=member.id) }}">{{ _('Edit') }}</a>
-                <a class="dropdown-item" href="{{ url_for('manage_admin_unit_member_delete', id=member.id) }}">{{ _('Delete') }}...</a>
+                <a class="dropdown-item" href="{{ url_for('manage_admin_unit_member_delete', id=member.id) }}">{{ _('Delete') }}&hellip;</a>
             </div>
         </div>
         <small>{{ render_roles(member.roles)}}</small>
