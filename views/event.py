@@ -34,19 +34,29 @@ def event_create_for_admin_unit_id(id):
     form = CreateEventForm(admin_unit_id=admin_unit.id, category_id=upsert_event_category('Other').id)
     prepare_event_form(form, admin_unit)
 
-    event_suggestion_id = int(request.args.get('event_suggestion_id')) if 'event_suggestion_id' in request.args else 0
+    # Vorlagen
     event_suggestion = None
+    event_template = None
 
-    if event_suggestion_id > 0:
-        event_suggestion = EventSuggestion.query.get_or_404(event_suggestion_id)
-        access_or_401(event_suggestion.admin_unit, 'event:verify')
+    event_template_id = int(request.args.get('template_id')) if 'template_id' in request.args else 0
+    if event_template_id > 0:
+        event_template = Event.query.get_or_404(event_template_id)
+        if not form.is_submitted():
+            form.process(obj=event_template)
 
-        if event_suggestion.verified and event_suggestion.event_id:
-            return redirect(url_for('event_suggestion_review_status', event_suggestion_id=event_suggestion.id))
+    if not event_template:
+        event_suggestion_id = int(request.args.get('event_suggestion_id')) if 'event_suggestion_id' in request.args else 0
 
-        prepare_event_form_for_suggestion(form, event_suggestion)
-        if form.is_submitted():
-            form.process(request.form)
+        if event_suggestion_id > 0:
+            event_suggestion = EventSuggestion.query.get_or_404(event_suggestion_id)
+            access_or_401(event_suggestion.admin_unit, 'event:verify')
+
+            if event_suggestion.verified and event_suggestion.event_id:
+                return redirect(url_for('event_suggestion_review_status', event_suggestion_id=event_suggestion.id))
+
+            prepare_event_form_for_suggestion(form, event_suggestion)
+            if form.is_submitted():
+                form.process(request.form)
 
     if form.validate_on_submit():
         event = Event()
@@ -187,6 +197,7 @@ def update_event_with_form(event, form, event_suggestion = None):
 
 def get_user_rights(event):
     return {
+        "can_duplicate_event": has_access(event.admin_unit, 'event:create'),
         "can_verify_event": has_access(event.admin_unit, 'event:verify'),
         "can_update_event": has_access(event.admin_unit, 'event:update'),
         "can_reference_event": can_reference_event(event),
