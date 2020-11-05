@@ -35,6 +35,9 @@ def manage_admin_units():
     admin_units = get_admin_units_for_manage()
     invitations = AdminUnitMemberInvitation.query.filter(AdminUnitMemberInvitation.email == current_user.email).all()
 
+    admin_units.sort(key=lambda x: x.name)
+    invitations.sort(key=lambda x: x.adminunit.name)
+
     return render_template('manage/admin_units.html',
         invitations=invitations,
         admin_units=admin_units)
