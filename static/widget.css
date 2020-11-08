@@ -1,34 +1,12 @@
-body {
-	background-color:#eceef0;
-    font-family: Verdana;
-    color: #3c444b;
-}
-
-.btn-primary {
-    background-color: #B09641;
-    color: black;
-    border-color: #B09641;
-}
-
-.btn-primary:hover {
-    background-color: #B09641;
-    color: black;
-    border-color: #B09641;
-}
-
 .card {
     background-color: transparent;
-}
-
-.card-title, .page-link, .page-link:hover, a, a:hover {
-    color: #7B2424;
 }
 
 .wizard > .steps .disabled a,
 .wizard > .steps .disabled a:hover,
 .wizard > .steps .disabled a:active
 {
-    background: #aaa;
+    background-color: #aaa;
     color: #aaa;
     cursor: default;
 }
@@ -37,7 +15,7 @@ body {
 .wizard > .steps .current a:hover,
 .wizard > .steps .current a:active
 {
-    background: #B09641;
+    background-color: #17a2b8;
     color: #fff;
     cursor: default;
 }
@@ -46,7 +24,7 @@ body {
 .wizard > .steps .done a:hover,
 .wizard > .steps .done a:active
 {
-    background: #B09641;
+    background-color: #17a2b8;
     color: #fff;
 }
 
@@ -54,7 +32,7 @@ body {
 .wizard > .actions a:hover,
 .wizard > .actions a:active
 {
-    background: #B09641;
+    background-color: #17a2b8;
     color: #fff;
     display: block;
     padding: 0.5em 1em;

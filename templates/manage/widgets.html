@@ -1,18 +1,32 @@
 {% extends "layout_manage.html" %}
 {% set active_id = "widgets" %}
-{% from "_macros.html" import render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
+{% from "_macros.html" import render_pagination, render_event_date, render_field, render_field_with_errors, render_event_organizer %}
 {% block title %}
 {{ _('Widgets') }}
 {% endblock %}
 {% block content %}
 
-<h1>{{ _('Widgets') }}</h1>
+<h1>{{ _('Widgets') }} <a class="btn btn-light" role="button" data-toggle="collapse" href="#settingsContainer" aria-expanded="false" aria-controls="settingsContainer"><i class="fa fa-cog"></i></a></h1>
+
+<div class="collapse" id="settingsContainer">
+    <h2>{{ _('Settings') }}</h2>
+    <form action="" method="POST">
+        {{ form.hidden_tag() }}
+
+        {{ render_field_with_errors(form.widget_font) }}
+        {{ render_field_with_errors(form.widget_background_color) }}
+        {{ render_field_with_errors(form.widget_primary_color) }}
+        {{ render_field_with_errors(form.widget_link_color) }}
+
+        {{ render_field(form.submit) }}
+    </form>
+</div>
 
 <h2>{{ _('Veranstaltungen als iFrame einbetten') }}</h2>
-<textarea class="form-control"><iframe src="{{ url_for('widget_event_dates', au_short_name=admin_unit.short_name, _external=True) }}"></iframe></textarea>
+<textarea class="form-control"><iframe src="{{ url_for('widget_event_dates', au_short_name=admin_unit.short_name, _external=True) }}" allowtransparency="true"></iframe></textarea>
 <p><a class="btn btn-outline-info my-2" data-toggle="collapse" href="#iFrameContainer" aria-expanded="false" aria-controls="iFrameContainer">Vorschau</a></p>
 <div class="collapse" id="iFrameContainer">
-    <iframe src="{{ url_for('widget_event_dates', au_short_name=admin_unit.short_name) }}" style="display: block; width: 90vw; height: 40vh; max-width: 100%;"></iframe>
+    <iframe src="{{ url_for('widget_event_dates', au_short_name=admin_unit.short_name) }}" allowtransparency="true" style="display: block; width: 90vw; height: 40vh; max-width: 100%;"></iframe>
 </div>
 
 <h2>{{ _('Link, um Veranstaltungen vorzuschlagen') }}</h2>

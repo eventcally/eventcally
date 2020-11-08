@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-11-05 09:07+0100\n"
+"POT-Creation-Date: 2020-11-08 17:10+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -126,34 +126,34 @@ msgstr "Event_"
 msgid "."
 msgstr "."
 
-#: forms/admin_unit.py:12 forms/event.py:14 forms/event_place.py:13
+#: forms/admin_unit.py:13 forms/event.py:14 forms/event_place.py:13
 #: forms/organizer.py:12
 msgid "Street"
 msgstr "Straße"
 
-#: forms/admin_unit.py:13 forms/event.py:15 forms/event_place.py:14
+#: forms/admin_unit.py:14 forms/event.py:15 forms/event_place.py:14
 #: forms/organizer.py:13
 msgid "Postal code"
 msgstr "Postleitzahl"
 
-#: forms/admin_unit.py:14 forms/event.py:16 forms/event_place.py:15
+#: forms/admin_unit.py:15 forms/event.py:16 forms/event_place.py:15
 #: forms/organizer.py:14
 msgid "City"
 msgstr "Stadt/Ort"
 
-#: forms/admin_unit.py:15 forms/event_place.py:16 forms/organizer.py:15
+#: forms/admin_unit.py:16 forms/event_place.py:16 forms/organizer.py:15
 msgid "State"
 msgstr "Bundesland"
 
-#: forms/admin_unit.py:16 forms/event_place.py:17 forms/organizer.py:16
+#: forms/admin_unit.py:17 forms/event_place.py:17 forms/organizer.py:16
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: forms/admin_unit.py:17 forms/event_place.py:18 forms/organizer.py:17
+#: forms/admin_unit.py:18 forms/event_place.py:18 forms/organizer.py:17
 msgid "Longitude"
 msgstr "Längengrad"
 
-#: forms/admin_unit.py:20 forms/event.py:19 forms/event.py:39
+#: forms/admin_unit.py:21 forms/event.py:19 forms/event.py:39
 #: forms/event.py:138 forms/event_place.py:21 forms/event_place.py:43
 #: forms/event_suggestion.py:15 forms/event_suggestion.py:20
 #: forms/organizer.py:20 forms/organizer.py:44 forms/reference.py:18
@@ -163,55 +163,71 @@ msgstr "Längengrad"
 msgid "Name"
 msgstr "Name"
 
-#: forms/admin_unit.py:21
+#: forms/admin_unit.py:22
 msgid "Short name"
 msgstr "Kurzname"
 
-#: forms/admin_unit.py:21
+#: forms/admin_unit.py:22
 msgid "The short name is used to create a unique identifier for your events"
 msgstr ""
 "Der Kurzname wird verwendet, um Ihre Veranstaltungen eindeutig zu "
 "identifizieren. Der Kurzname darf nur Buchstaben, Nummern und "
 "Unterstriche enthalten."
 
-#: forms/admin_unit.py:21
+#: forms/admin_unit.py:22
 msgid "Short name must contain only letters numbers or underscore"
 msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
 
-#: forms/admin_unit.py:22 forms/event.py:33 forms/event.py:40
+#: forms/admin_unit.py:23 forms/event.py:33 forms/event.py:40
 #: forms/event_place.py:22 forms/event_suggestion.py:18 forms/organizer.py:21
 msgid "Link URL"
 msgstr "Link URL"
 
-#: forms/admin_unit.py:23 forms/admin_unit_member.py:12
+#: forms/admin_unit.py:24 forms/admin_unit_member.py:12
 #: forms/admin_unit_member.py:22 forms/admin_unit_member.py:26
 #: forms/event.py:34 forms/event_suggestion.py:22 forms/organizer.py:22
 #: templates/_macros.html:229
 msgid "Email"
 msgstr "Email"
 
-#: forms/admin_unit.py:24 forms/event.py:35 forms/event_suggestion.py:21
+#: forms/admin_unit.py:25 forms/event.py:35 forms/event_suggestion.py:21
 #: forms/organizer.py:23 templates/_macros.html:256
 msgid "Phone"
 msgstr "Telefon"
 
-#: forms/admin_unit.py:25 forms/event.py:36 forms/organizer.py:24
+#: forms/admin_unit.py:26 forms/event.py:36 forms/organizer.py:24
 #: templates/_macros.html:264
 msgid "Fax"
 msgstr "Fax"
 
-#: forms/admin_unit.py:26 forms/organizer.py:25
+#: forms/admin_unit.py:27 forms/organizer.py:25
 msgid "Logo"
 msgstr "Logo"
 
-#: forms/admin_unit.py:38 templates/admin_unit/create.html:10
+#: forms/admin_unit.py:39 templates/admin_unit/create.html:10
 #: templates/manage/admin_units.html:18
 msgid "Create admin unit"
 msgstr "Verwaltungseinheit erstellen"
 
-#: forms/admin_unit.py:41
+#: forms/admin_unit.py:42 forms/admin_unit.py:49
 msgid "Update settings"
 msgstr "Einstellungen speichern"
+
+#: forms/admin_unit.py:45
+msgid "Font"
+msgstr "Schriftart"
+
+#: forms/admin_unit.py:46
+msgid "Background Color"
+msgstr "Hintergrundfarbe"
+
+#: forms/admin_unit.py:47
+msgid "Primary Color"
+msgstr "Hauptfarbe"
+
+#: forms/admin_unit.py:48
+msgid "Link Color"
+msgstr "Linkfarbe"
 
 #: forms/admin_unit_member.py:13 forms/admin_unit_member.py:29
 #: templates/profile.html:40
@@ -420,7 +436,7 @@ msgid "EventAttendanceMode.mixed"
 msgstr "Online und offline"
 
 #: forms/event.py:70 forms/event_place.py:23 forms/event_suggestion.py:27
-#: templates/event_suggestion/create.html:215
+#: templates/widget/event_suggestion/create.html:216
 msgid "Photo"
 msgstr "Foto"
 
@@ -536,7 +552,7 @@ msgid "Distance"
 msgstr "Distanz"
 
 #: forms/event_date.py:25 forms/planing.py:25
-#: templates/widget/event_date/list.html:46
+#: templates/widget/event_date/list.html:47
 msgid "Find"
 msgstr "Finden"
 
@@ -624,8 +640,9 @@ msgstr ""
 "das System hochlade, hinsichtlich ihrer Nutzungsrechte abgeklärt habe und"
 " erkläre, dass diese weitergegeben werden dürfen."
 
-#: forms/event_suggestion.py:30 templates/event_suggestion/create.html:4
-#: templates/event_suggestion/create.html:123 templates/example.html:10
+#: forms/event_suggestion.py:30 templates/example.html:10
+#: templates/widget/event_suggestion/create.html:4
+#: templates/widget/event_suggestion/create.html:124
 msgid "Create event suggestion"
 msgstr "Veranstaltung vorschlagen"
 
@@ -757,8 +774,8 @@ msgstr "Link"
 
 #: templates/_macros.html:319 templates/event/create.html:59
 #: templates/event/delete.html:13 templates/event/update.html:16
-#: templates/event_suggestion/create.html:195
 #: templates/reference/delete.html:13
+#: templates/widget/event_suggestion/create.html:196
 msgid "Event"
 msgstr "Veranstaltung"
 
@@ -781,22 +798,22 @@ msgstr "Ort bei Google suchen"
 
 #: templates/_macros.html:569 templates/_macros.html:571
 #: templates/event_date/list.html:270
-#: templates/event_suggestion/create.html:159
-#: templates/event_suggestion/create.html:184
-#: templates/event_suggestion/create.html:204
-#: templates/event_suggestion/create.html:227
-#: templates/event_suggestion/create.html:245
-#: templates/event_suggestion/create.html:266
+#: templates/widget/event_suggestion/create.html:160
+#: templates/widget/event_suggestion/create.html:185
+#: templates/widget/event_suggestion/create.html:205
+#: templates/widget/event_suggestion/create.html:228
+#: templates/widget/event_suggestion/create.html:246
+#: templates/widget/event_suggestion/create.html:267
 msgid "Previous"
 msgstr "Zurück"
 
 #: templates/_macros.html:574 templates/_macros.html:576
 #: templates/event_date/list.html:271
-#: templates/event_suggestion/create.html:160
-#: templates/event_suggestion/create.html:185
-#: templates/event_suggestion/create.html:205
-#: templates/event_suggestion/create.html:228
-#: templates/event_suggestion/create.html:246
+#: templates/widget/event_suggestion/create.html:161
+#: templates/widget/event_suggestion/create.html:186
+#: templates/widget/event_suggestion/create.html:206
+#: templates/widget/event_suggestion/create.html:229
+#: templates/widget/event_suggestion/create.html:247
 msgid "Next"
 msgstr "Weiter"
 
@@ -846,7 +863,7 @@ msgstr "Empfehlung anfragen"
 msgid "Event suggestion"
 msgstr "Veranstaltungsvorschlag"
 
-#: templates/_macros.html:976 templates/event_suggestion/create.html:170
+#: templates/_macros.html:976 templates/widget/event_suggestion/create.html:171
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -855,7 +872,7 @@ msgid "Widget als iFrame einbetten"
 msgstr "Widget als iFrame einbetten"
 
 #: templates/home.html:26 templates/home.html:142
-#: templates/security/login_user.html:25 views/event_suggestion.py:44
+#: templates/security/login_user.html:25 views/widget.py:99
 msgid "Register for free"
 msgstr "Kostenlos registrieren"
 
@@ -944,6 +961,7 @@ msgid "Widgets"
 msgstr "Widgets"
 
 #: templates/admin_unit/update.html:11 templates/layout_manage.html:48
+#: templates/manage/widgets.html:12
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -1043,18 +1061,6 @@ msgstr "Empfehlung anfragen für Veranstaltung \"%(name)s\""
 msgid "Info"
 msgstr "Info"
 
-#: templates/event_suggestion/create.html:141
-msgid "Continue as guest"
-msgstr "Weiter als Gast"
-
-#: templates/event_suggestion/create.html:238
-msgid "Optional details"
-msgstr "Optionale Details"
-
-#: templates/event_suggestion/create.html:256
-msgid "Preview"
-msgstr "Vorschau"
-
 #: templates/event_suggestion/review.html:9 templates/manage/reviews.html:19
 msgid "Review event suggestion"
 msgstr "Veranstaltungsvorschlag prüfen"
@@ -1125,15 +1131,15 @@ msgstr "Anfrage prüfen"
 msgid "Show review status"
 msgstr "Prüfungsstatus anzeigen"
 
-#: templates/manage/widgets.html:11
+#: templates/manage/widgets.html:25
 msgid "Veranstaltungen als iFrame einbetten"
 msgstr "Veranstaltungen als iFrame einbetten"
 
-#: templates/manage/widgets.html:18
+#: templates/manage/widgets.html:32
 msgid "Link, um Veranstaltungen vorzuschlagen"
 msgstr "Link, um Veranstaltungen vorzuschlagen"
 
-#: templates/manage/widgets.html:22
+#: templates/manage/widgets.html:36
 msgid "URL für Infoscreen"
 msgstr "URL für Infoscreen"
 
@@ -1157,6 +1163,18 @@ msgstr "Du hast noch keinen Account? Kein Problem!"
 #: templates/widget/event_date/list.html:4
 msgid "Widget"
 msgstr "Widget"
+
+#: templates/widget/event_suggestion/create.html:142
+msgid "Continue as guest"
+msgstr "Weiter als Gast"
+
+#: templates/widget/event_suggestion/create.html:239
+msgid "Optional details"
+msgstr "Optionale Details"
+
+#: templates/widget/event_suggestion/create.html:257
+msgid "Preview"
+msgstr "Vorschau"
 
 #: views/admin_unit.py:49
 msgid "Admin unit successfully created"
@@ -1234,29 +1252,17 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 msgid "Place successfully deleted"
 msgstr "Ort erfolgreich gelöscht"
 
-#: views/event_suggestion.py:41
-msgid "Thank you so much! The event is being verified."
-msgstr "Vielen Dank! Die Veranstaltung wird geprüft."
-
-#: views/event_suggestion.py:44
-msgid ""
-"For more options and your own calendar of events, you can register for "
-"free."
-msgstr ""
-"Für mehr Optionen und einen eigenen Veranstaltungskalender, kannst du "
-"dich kostenlos registrieren."
-
-#: views/event_suggestion.py:83
+#: views/event_suggestion.py:45
 msgid "Event suggestion successfully rejected"
 msgstr "Veranstaltungsvorschlag erfolgreich abgelehnt"
 
-#: views/event_suggestion.py:109
-msgid "New event review"
-msgstr "Neue Veranstaltung zu prüfen"
-
-#: views/event_suggestion.py:116 views/reference_request_review.py:76
+#: views/event_suggestion.py:68 views/reference_request_review.py:76
 msgid "Event review status updated"
 msgstr "Prüfungsstatus aktualisiert"
+
+#: views/manage.py:173
+msgid "Settings successfully updated"
+msgstr "Einstellungen erfolgreich aktualisiert"
 
 #: views/organizer.py:29
 msgid "Organizer successfully created"
@@ -1314,6 +1320,22 @@ msgstr "Fehler im Feld %s: %s"
 #: views/utils.py:60
 msgid "Show"
 msgstr "Anzeigen"
+
+#: views/widget.py:96
+msgid "Thank you so much! The event is being verified."
+msgstr "Vielen Dank! Die Veranstaltung wird geprüft."
+
+#: views/widget.py:99
+msgid ""
+"For more options and your own calendar of events, you can register for "
+"free."
+msgstr ""
+"Für mehr Optionen und einen eigenen Veranstaltungskalender, kannst du "
+"dich kostenlos registrieren."
+
+#: views/widget.py:135
+msgid "New event review"
+msgstr "Neue Veranstaltung zu prüfen"
 
 #~ msgid "You"
 #~ msgstr "Du"
