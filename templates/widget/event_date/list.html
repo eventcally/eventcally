@@ -1,16 +1,17 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_pagination, render_event_status_pill, render_event_status_pill, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_widget_styles, render_pagination, render_event_status_pill, render_event_status_pill, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Widget') }}
 {% endblock %}
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='widget.css')}}" />
+{{ render_widget_styles(styles) }}
 {% endblock %}
 {% block navbar %}
 {% endblock %}
 {% block content %}
 
-    <form action="" class="form-inline mb-4" method="GET" autocomplete="off">
+    <form action="{{ request.url }}" class="form-inline mb-4" method="GET" autocomplete="off">
         {{ form.hidden_tag() }}
 
         <div class="input-group mb-2 mr-sm-2">
@@ -51,7 +52,7 @@
     <!-- Desktop -->
     <div class="row mb-3 d-none d-sm-block">
         <div class="col-sm">
-            <div class="card shadow">
+            <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-8">
@@ -62,7 +63,7 @@
                                 <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ date.event.admin_unit.name }}</small>
                             {% endif %}
                             <small class="text-muted"><i class="fa fa-map-marker"></i> {{ date.event.event_place.name }}</small>
-                            <a href="{{ url_for('widget_event_date', id=date.id) }}" target="_blank" class="stretched-link"></a>
+                            <a href="{{ url_for('widget_event_date', au_short_name=admin_unit.short_name, id=date.id) }}" target="_blank" class="stretched-link"></a>
                         </div>
                         <div class="col-sm-4 text-right">
                             {% if date.event.photo_id %}
@@ -78,7 +79,7 @@
     <!-- Mobile -->
     <div class="row mb-3 d-sm-none">
         <div class="col-sm">
-            <div class="card shadow">
+            <div class="card">
                 <div>
                     {% if date.event.photo_id %}
                         <img src="{{ url_for('image', id=date.event.photo_id) }}" class="card-img-top" style="object-fit: cover; height: 20vh;" />
@@ -94,7 +95,7 @@
                                 <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ date.event.admin_unit.name }}</small>
                             {% endif %}
                             <small class="text-muted"><i class="fa fa-map-marker"></i> {{ date.event.event_place.name }}</small>
-                            <a href="{{ url_for('widget_event_date', id=date.id) }}" target="_blank" class="stretched-link"></a>
+                            <a href="{{ url_for('widget_event_date', au_short_name=admin_unit.short_name, id=date.id) }}" target="_blank" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -106,4 +107,6 @@
 
     {{ render_pagination(pagination) }}
 
+{% endblock %}
+{% block footer %}
 {% endblock %}

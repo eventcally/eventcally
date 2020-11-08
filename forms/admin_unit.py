@@ -4,6 +4,7 @@ from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField, DecimalField, TextAreaField, FormField, SelectField
 from wtforms.fields.html5 import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional, Regexp
+from wtforms.widgets.html5 import ColorInput
 import decimal
 from models import Location, Image
 from .common import FileImageForm
@@ -38,4 +39,11 @@ class CreateAdminUnitForm(BaseAdminUnitForm):
     submit = SubmitField(lazy_gettext("Create admin unit"))
 
 class UpdateAdminUnitForm(BaseAdminUnitForm):
+    submit = SubmitField(lazy_gettext("Update settings"))
+
+class UpdateAdminUnitWidgetForm(FlaskForm):
+    widget_font = StringField(lazy_gettext('Font'), validators=[Optional()])
+    widget_background_color = StringField(lazy_gettext('Background Color'), default='#ffffff', widget=ColorInput(), validators=[Optional()])
+    widget_primary_color = StringField(lazy_gettext('Primary Color'), default='#007bff', widget=ColorInput(), validators=[Optional()])
+    widget_link_color = StringField(lazy_gettext('Link Color'), default='#007bff', widget=ColorInput(), validators=[Optional()])
     submit = SubmitField(lazy_gettext("Update settings"))

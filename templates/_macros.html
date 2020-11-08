@@ -992,3 +992,51 @@ if (URL) {
 </div>
 {% endmacro %}
 
+{% macro render_widget_styles(styles) %}
+<style>
+  body {
+      {% if 'background' in styles %}
+          background-color: {{ styles['background'] }};
+      {% endif %}
+      {% if 'font' in styles %}
+          font-family: {{ styles['font'] }};
+      {% endif %}
+  }
+
+  {% if 'primary' in styles %}
+  .btn-primary,
+  .btn-primary:hover,
+  .btn-primary:active,
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .btn-primary:focus {
+      background-color: {{ styles['primary'] }};
+      border-color: {{ styles['primary'] }};
+  }
+  {% endif %}
+
+  {% if 'link' in styles %}
+  .card-title, .page-link, .page-link:hover, a, a:hover {
+      color: {{ styles['link'] }};
+  }
+  {% endif %}
+
+  {% if 'primary' in styles %}
+  .wizard > .steps .current a,
+  .wizard > .steps .current a:hover,
+  .wizard > .steps .current a:active,
+  .wizard > .steps .current a,
+  .wizard > .steps .current a:hover,
+  .wizard > .steps .current a:active,
+  .wizard > .steps .done a,
+  .wizard > .steps .done a:hover,
+  .wizard > .steps .done a:active,
+  .wizard > .actions a,
+  .wizard > .actions a:hover,
+  .wizard > .actions a:active
+  {
+      background-color: {{ styles['primary'] }};
+  }
+  {% endif %}
+
+</style>
+{% endmacro %}

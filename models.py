@@ -6,6 +6,7 @@ from sqlalchemy.schema import CheckConstraint
 from sqlalchemy.types import TypeDecorator
 from sqlalchemy.event import listens_for
 from sqlalchemy import UniqueConstraint, Boolean, DateTime, Column, Integer, String, ForeignKey, Unicode, UnicodeText, Numeric, LargeBinary
+from sqlalchemy_utils import ColorType
 from flask_security import UserMixin, RoleMixin
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from enum import IntEnum
@@ -130,6 +131,10 @@ class AdminUnit(db.Model, TrackableMixin):
     email = Column(Unicode(255))
     phone = Column(Unicode(255))
     fax = Column(Unicode(255))
+    widget_font = Column(Unicode(255))
+    widget_background_color = Column(ColorType)
+    widget_primary_color = Column(ColorType)
+    widget_link_color = Column(ColorType)
 
 @listens_for(AdminUnit, 'before_insert')
 @listens_for(AdminUnit, 'before_update')

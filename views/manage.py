@@ -6,9 +6,10 @@ from flask_security import auth_required, roles_required, current_user
 from access import has_access, access_or_401, get_admin_unit_for_manage, get_admin_units_for_manage, get_admin_unit_for_manage_or_404
 from sqlalchemy.sql import asc, desc, func
 from sqlalchemy import and_, or_, not_
-from .utils import get_pagination_urls, permission_missing
+from .utils import get_pagination_urls, permission_missing, handleSqlError, flash_errors
 from forms.event_place import FindEventPlaceForm
 from forms.event import FindEventForm
+from forms.admin_unit import UpdateAdminUnitWidgetForm
 from services.event_search import EventSearchParams
 from services.event import get_events_query
 from services.event_suggestion import get_event_reviews_query
@@ -134,8 +135,49 @@ def manage_admin_unit_members(id):
         invitations=invitations,
         pagination=get_pagination_urls(members, id=id))
 
-@app.route('/manage/admin_unit/<int:id>/widgets')
+@app.route('/manage/admin_unit/<int:id>/widgets', methods=('GET', 'POST'))
 @auth_required()
 def manage_admin_unit_widgets(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    return render_template('manage/widgets.html', admin_unit=admin_unit)
+    default_background_color = '#ffffff'
+    default_primary_color = '#007bff'
+
+    form = UpdateAdminUnitWidgetForm(obj=admin_unit)
+
+    if not form.widget_background_color.data:
+        form.widget_background_color.data = default_background_color
+
+    if not form.widget_primary_color.data:
+        form.widget_primary_color.data = default_primary_color
+
+    if not form.widget_link_color.data:
+        form.widget_link_color.data = default_primary_color
+
+    if form.validate_on_submit():
+        if not has_access(admin_unit, 'admin_unit:update'):
+            return permission_missing(url_for('manage_admin_unit', id=admin_unit.id))
+
+        form.populate_obj(admin_unit)
+
+        if form.widget_background_color.data == default_background_color:
+            admin_unit.widget_background_color = None
+
+        if form.widget_primary_color.data == default_primary_color:
+            admin_unit.widget_primary_color = None
+
+        if form.widget_link_color.data == default_primary_color:
+            admin_unit.widget_link_color = None
+
+        try:
+            db.session.commit()
+            flash(gettext('Settings successfully updated'), 'success')
+            return redirect(url_for('manage_admin_unit_widgets', id=admin_unit.id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), 'danger')
+    else:
+        flash_errors(form)
+
+    return render_template('manage/widgets.html',
+        form=form,
+        admin_unit=admin_unit)
