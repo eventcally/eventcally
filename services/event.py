@@ -22,7 +22,7 @@ def fill_event_filter(event_filter, params):
             category_ids = params.category_id
         else:
             category_ids = [params.category_id]
-        event_filter = and_(event_filter, Event.category_id.in_(category_ids))
+        event_filter = and_(event_filter, Event.categories.any(EventCategory.id.in_(category_ids)))
 
     if params.organizer_id:
         event_filter = and_(event_filter, Event.organizer_id == params.organizer_id)
