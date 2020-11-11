@@ -31,7 +31,7 @@ def event_create_for_admin_unit_id(id):
     admin_unit = AdminUnit.query.get_or_404(id)
     access_or_401(admin_unit, 'event:create')
 
-    form = CreateEventForm(admin_unit_id=admin_unit.id, category_id=upsert_event_category('Other').id)
+    form = CreateEventForm(admin_unit_id=admin_unit.id, category_ids=[upsert_event_category('Other').id])
     prepare_event_form(form, admin_unit)
 
     # Vorlagen
@@ -98,6 +98,9 @@ def event_update(event_id):
     form = UpdateEventForm(obj=event,start=event.start,end=event.end)
     prepare_event_form(form, event.admin_unit)
 
+    if not form.is_submitted():
+        form.category_ids.data = [c.id for c in event.categories]
+
     if form.validate_on_submit():
         update_event_with_form(event, form)
 
@@ -162,7 +165,7 @@ def get_event_category_choices():
 
 def prepare_event_form(form, admin_unit):
     form.organizer_id.choices = [(o.id, o.name) for o in EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id).order_by(func.lower(EventOrganizer.name))]
-    form.category_id.choices = get_event_category_choices()
+    form.category_ids.choices = get_event_category_choices()
 
     places = get_event_places(admin_unit.id)
     form.event_place_id.choices = [(p.id, p.name) for p in places]
@@ -193,6 +196,7 @@ def prepare_event_form_for_suggestion(form, event_suggestion):
 
 def update_event_with_form(event, form, event_suggestion = None):
     form.populate_obj(event)
+    event.categories = EventCategory.query.filter(EventCategory.id.in_(form.category_ids.data)).all()
     update_event_dates_with_recurrence_rule(event, form.start.data, form.end.data)
 
 def get_user_rights(event):

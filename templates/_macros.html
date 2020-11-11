@@ -310,10 +310,6 @@
 {% endmacro %}
 
 {% macro render_event_props(event, start, end, dates = None, show_rating = False, show_admin_unit = True) %}
-
-{% endmacro %}
-
-{% macro render_event_props(event, start, end, dates = None, show_rating = False, show_admin_unit = True) %}
   <div class="card mb-3">
     <div class="card-header">
       {{ _('Event') }}
@@ -354,8 +350,8 @@
         {{ render_string_prop(event.price_info, 'fa-euro-sign', 'Price info') }}
         {{ render_link_prop(event.external_link) }}
         {{ render_link_prop(event.ticket_link) }}
-        {% if event.category_id %}
-          <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {{ event.category | event_category_name }}</div>
+        {% if event.category %}
+          <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {% for category in event.categories %}{{ category | event_category_name }}{%if not loop.last %}, {% endif %}{% endfor %}</div>
         {% endif %}
         {{ render_tag_prop(event.tags) }}
         {{ render_bool_prop(event.kid_friendly, 'fa-child', 'Kid friendly') }}

@@ -2,7 +2,7 @@ from flask import request
 from flask_babelex import lazy_gettext, gettext
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import FieldList, RadioField, DateTimeField, StringField, SubmitField, TextAreaField, SelectField, BooleanField, IntegerField, FormField
+from wtforms import SelectMultipleField, FieldList, RadioField, DateTimeField, StringField, SubmitField, TextAreaField, SelectField, BooleanField, IntegerField, FormField
 from wtforms.fields.html5 import DateTimeLocalField, EmailField, URLField
 from wtforms.validators import DataRequired, Optional
 from wtforms.widgets import html_params, HTMLString
@@ -45,8 +45,7 @@ class BaseEventForm(FlaskForm):
     end = CustomDateTimeField(lazy_gettext('End'), validators=[Optional()])
     previous_start_date = CustomDateTimeField(lazy_gettext('Previous start date'), validators=[Optional()])
     tags = StringField(lazy_gettext('Tags'), validators=[Optional()])
-
-    category_id = SelectField(lazy_gettext('Category'), validators=[DataRequired()], coerce=int)
+    category_ids = SelectMultipleField(lazy_gettext('Categories'), validators=[DataRequired()], coerce=int)
 
     kid_friendly = BooleanField(lazy_gettext('Kid friendly'), validators=[Optional()])
     accessible_for_free = BooleanField(lazy_gettext('Accessible for free'), validators=[Optional()])

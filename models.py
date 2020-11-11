@@ -369,8 +369,7 @@ class Event(db.Model, TrackableMixin):
 
     photo_id = db.Column(db.Integer, db.ForeignKey('image.id'))
     photo = db.relationship('Image', uselist=False)
-    category_id = db.Column(db.Integer, db.ForeignKey('eventcategory.id'), nullable=False)
-    category = relationship('EventCategory', uselist=False)
+    categories = relationship('EventCategory', secondary='event_eventcategories')
     tags = Column(UnicodeText())
     kid_friendly = Column(Boolean())
     accessible_for_free = Column(Boolean())
@@ -395,6 +394,13 @@ class Event(db.Model, TrackableMixin):
     references = relationship('EventReference', backref=backref('event', lazy=False), cascade="all, delete-orphan")
     reference_requests = relationship('EventReferenceRequest', backref=backref('event', lazy=False), cascade="all, delete-orphan")
 
+    @hybrid_property
+    def category(self):
+        if self.categories:
+            return self.categories[0]
+        else:
+            return None
+
 @listens_for(Event, 'before_insert')
 @listens_for(Event, 'before_update')
 def purge_event(mapper, connect, self):
@@ -411,6 +417,12 @@ class EventDate(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     start = db.Column(db.DateTime(timezone=True), nullable=False)
     end = db.Column(db.DateTime(timezone=True), nullable=True)
+
+class EventEventCategories(db.Model):
+    __tablename__ = 'event_eventcategories'
+    id = Column(Integer(), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('eventcategory.id'), nullable=False)
 
 class Analytics(db.Model):
     __tablename__ = 'analytics'
