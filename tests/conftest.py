@@ -1,10 +1,12 @@
 import pytest
 import os
-from project import app, db
+
+def pytest_generate_tests(metafunc):
+    os.environ["DATABASE_URL"] = "postgresql://postgres@localhost/gsevpt_tests"
 
 @pytest.fixture
 def client():
-    os.environ["DATABASE_URL"] = "postgresql://postgres@localhost/gsevpt_tests"
+    from project import app, db
     app.config["TESTING"] = True
     app.testing = True
 
