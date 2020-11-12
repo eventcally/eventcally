@@ -8,9 +8,9 @@ Create Date: 2020-09-29 16:53:02.520125
 from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-import db
+import project.dbtypes
 from sqlalchemy.dialects import postgresql
-from models import EventReferenceRequestRejectionReason, EventReferenceRequestReviewStatus
+from project.models import EventReferenceRequestRejectionReason, EventReferenceRequestReviewStatus
 
 # revision identifiers, used by Alembic.
 revision = 'a75bd9c8ad3a'
@@ -38,8 +38,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('event_id', sa.Integer(), nullable=False),
     sa.Column('admin_unit_id', sa.Integer(), nullable=False),
-    sa.Column('review_status', db.IntegerEnum(EventReferenceRequestReviewStatus), nullable=True),
-    sa.Column('rejection_reason', db.IntegerEnum(EventReferenceRequestRejectionReason), nullable=True),
+    sa.Column('review_status', dbtypes.IntegerEnum(EventReferenceRequestReviewStatus), nullable=True),
+    sa.Column('rejection_reason', dbtypes.IntegerEnum(EventReferenceRequestRejectionReason), nullable=True),
     sa.Column('created_by_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['admin_unit_id'], ['adminunit.id'], ),
     sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),

@@ -8,8 +8,8 @@ Create Date: 2020-09-28 10:38:46.424791
 from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-import db
-from models import FeaturedEventRejectionReason, FeaturedEventReviewStatus
+import project.dbtypes
+from project.models import FeaturedEventRejectionReason, FeaturedEventReviewStatus
 
 
 # revision identifiers, used by Alembic.
@@ -25,8 +25,8 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('event_id', sa.Integer(), nullable=False),
-    sa.Column('review_status', db.IntegerEnum(FeaturedEventReviewStatus), nullable=True),
-    sa.Column('rejection_resaon', db.IntegerEnum(FeaturedEventRejectionReason), nullable=True),
+    sa.Column('review_status', dbtypes.IntegerEnum(FeaturedEventReviewStatus), nullable=True),
+    sa.Column('rejection_resaon', dbtypes.IntegerEnum(FeaturedEventRejectionReason), nullable=True),
     sa.Column('rating', sa.Integer(), nullable=True),
     sa.Column('created_by_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),

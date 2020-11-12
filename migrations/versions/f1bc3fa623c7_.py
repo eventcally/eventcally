@@ -8,8 +8,8 @@ Create Date: 2020-07-07 15:49:58.653888
 from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-import db
-from models import EventTargetGroupOrigin, EventAttendanceMode, EventStatus
+import project.dbtypes
+from project.models import EventTargetGroupOrigin, EventAttendanceMode, EventStatus
 
 # revision identifiers, used by Alembic.
 revision = 'f1bc3fa623c7'
@@ -23,11 +23,11 @@ def upgrade():
     op.add_column('event', sa.Column('accessible_for_free', sa.Boolean(), nullable=True))
     op.add_column('event', sa.Column('age_from', sa.Integer(), nullable=True))
     op.add_column('event', sa.Column('age_to', sa.Integer(), nullable=True))
-    op.add_column('event', sa.Column('attendance_mode', db.IntegerEnum(EventAttendanceMode), nullable=True))
+    op.add_column('event', sa.Column('attendance_mode', dbtypes.IntegerEnum(EventAttendanceMode), nullable=True))
     op.add_column('event', sa.Column('kid_friendly', sa.Boolean(), nullable=True))
-    op.add_column('event', sa.Column('status', db.IntegerEnum(EventStatus), nullable=True))
+    op.add_column('event', sa.Column('status', dbtypes.IntegerEnum(EventStatus), nullable=True))
     op.add_column('event', sa.Column('tags', sa.UnicodeText(), nullable=True))
-    op.add_column('event', sa.Column('target_group_origin', db.IntegerEnum(EventTargetGroupOrigin), nullable=True))
+    op.add_column('event', sa.Column('target_group_origin', dbtypes.IntegerEnum(EventTargetGroupOrigin), nullable=True))
     # ### end Alembic commands ###
 
 
