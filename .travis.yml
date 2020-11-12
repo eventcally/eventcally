@@ -2,12 +2,16 @@ language: python
 python:
   - "3.7"
 addons:
-  postgresql: "9.5"
+  postgresql: 9.6
+  apt:
+    packages:
+    - postgresql-9.6-postgis-2.3
 services:
   - postgresql
 install:
   - pip install -r requirements.txt
 before_script:
-  - psql -c 'create database gsevpt_tests;' -U postgres && psql -c 'create extension postgis;' -d gsevpt_tests -U postgres
+  - psql -c 'create database gsevpt_tests;' -U postgres
+  - psql -c 'create extension postgis;' -U postgres
 script:
   - pytest
