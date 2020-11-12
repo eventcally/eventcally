@@ -29,7 +29,7 @@ flask run --host 0.0.0.0
 ### Create test database
 
 ```
-psql -c 'create database gsevpt_tests;' -U postgres && psql -c 'create extension postgis;' -d gsevpt_tests  -U postgres
+psql -c 'create database gsevpt_tests;' -U postgres && psql -c 'create extension postgis;' -d gsevpt_tests -U postgres
 ```
 
 ### Run tests
