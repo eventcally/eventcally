@@ -4,8 +4,9 @@ from flask_babelex import gettext
 from flask import request, url_for, render_template, flash, redirect, Markup
 from flask_mail import Message
 
+
 def track_analytics(key, value1, value2):
-    result = Analytics(key = key, value1 = value1)
+    result = Analytics(key=key, value1=value1)
 
     if value2 is not None:
         result.value2 = value2
@@ -15,12 +16,14 @@ def track_analytics(key, value1, value2):
 
     return result
 
+
 def handleSqlError(e):
-    message = str(e.__dict__['orig'])
+    message = str(e.__dict__["orig"])
     print(message)
     return message
 
-def upsert_image_with_data(image, data, encoding_format = "image/jpeg"):
+
+def upsert_image_with_data(image, data, encoding_format="image/jpeg"):
     if image is None:
         image = Image()
 
@@ -28,6 +31,7 @@ def upsert_image_with_data(image, data, encoding_format = "image/jpeg"):
     image.encoding_format = encoding_format
 
     return image
+
 
 def get_pagination_urls(pagination, **kwargs):
     result = {}
@@ -47,27 +51,33 @@ def get_pagination_urls(pagination, **kwargs):
 
     return result
 
+
 def flash_errors(form):
     for field, errors in form.errors.items():
         for error in errors:
-            flash(gettext("Error in the %s field - %s") % (
-                getattr(form, field).label.text,
-                error
-            ), 'danger')
+            flash(
+                gettext("Error in the %s field - %s")
+                % (getattr(form, field).label.text, error),
+                "danger",
+            )
 
-def flash_message(msg, url, link_text = None, category = 'success'):
+
+def flash_message(msg, url, link_text=None, category="success"):
     if not link_text:
-        link_text = gettext('Show')
+        link_text = gettext("Show")
     link = ' &ndash; <a href="%s">%s</a>' % (url, link_text)
     message = Markup(msg + link)
     flash(message, category)
 
+
 def permission_missing(redirect_location):
-    flash('You do not have permission for this action', 'danger')
+    flash("You do not have permission for this action", "danger")
     return redirect(redirect_location)
+
 
 def send_mail(recipient, subject, template, **context):
     send_mails([recipient], subject, template, **context)
+
 
 def send_mails(recipients, subject, template, **context):
     msg = Message(subject)

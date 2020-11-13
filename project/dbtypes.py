@@ -1,8 +1,10 @@
 from sqlalchemy.types import TypeDecorator
 from sqlalchemy import Integer
 
+
 class IntegerEnum(TypeDecorator):
     impl = Integer
+
     def __init__(self, enumtype, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._enumtype = enumtype

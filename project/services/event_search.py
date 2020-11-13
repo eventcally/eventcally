@@ -1,9 +1,14 @@
-from project.dateutils import today, date_add_time, date_set_end_of_day, form_input_from_date, form_input_to_date
+from project.dateutils import (
+    today,
+    date_set_end_of_day,
+    form_input_from_date,
+    form_input_to_date,
+)
 from dateutil.relativedelta import relativedelta
 from flask import request
 
-class EventSearchParams(object):
 
+class EventSearchParams(object):
     def __init__(self):
         self._date_from = None
         self._date_to = None
@@ -77,30 +82,30 @@ class EventSearchParams(object):
         self.date_to = date_set_end_of_day(today + relativedelta(months=3))
 
     def load_from_request(self):
-        if 'date_from' in request.args:
-            self.date_from_str = request.args['date_from']
+        if "date_from" in request.args:
+            self.date_from_str = request.args["date_from"]
 
-        if 'date_to' in request.args:
-            self.date_to_str = request.args['date_to']
+        if "date_to" in request.args:
+            self.date_to_str = request.args["date_to"]
 
-        if 'keyword' in request.args:
-            self.keyword = request.args['keyword']
+        if "keyword" in request.args:
+            self.keyword = request.args["keyword"]
 
         if "coordinate" in request.args:
-            self.coordinate = request.args['coordinate']
+            self.coordinate = request.args["coordinate"]
 
         if "distance" in request.args:
-            self.distance = request.args['distance']
+            self.distance = request.args["distance"]
 
         if "category_id" in request.args:
-            category_ids = request.args.getlist('category_id')
-            if '0' in category_ids:
-                category_ids.remove('0')
+            category_ids = request.args.getlist("category_id")
+            if "0" in category_ids:
+                category_ids.remove("0")
             if len(category_ids) > 0:
                 self.category_id = category_ids
 
         if "weekday" in request.args:
-            self.weekday = request.args.getlist('weekday')
+            self.weekday = request.args.getlist("weekday")
 
         if "organizer_id" in request.args:
-            self.organizer_id = request.args['organizer_id']
+            self.organizer_id = request.args["organizer_id"]

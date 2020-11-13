@@ -15,6 +15,12 @@ psql -c 'create extension postgis;' -d gsevpt_tests -U postgres
 pytest
 ```
 
+With coverage:
+
+```sh
+pytest --cov-report=html --cov=project
+```
+
 ## Database
 
 ### Create new revision

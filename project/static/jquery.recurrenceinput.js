@@ -164,7 +164,7 @@
         rangeByEndDateHuman: 'ends on',
 
         including: ', and also',
-        except: ', except for',
+        except Exception: ', except for',
 
         cancel: 'Cancel',
         save: 'Save',
