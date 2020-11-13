@@ -46,7 +46,7 @@ Create `.env` file in the root directory or pass as environment variables.
 
 | Variable | Function |
 | --- | --- |
-| MAIL_DEFAULT_SENDER | Send notifications via Mail, see <https://pythonhosted.org/Flask-Mail/> |
+| MAIL_DEFAULT_SENDER | see <https://pythonhosted.org/Flask-Mail/> |
 | MAIL_PASSWORD | " |
 | MAIL_PORT | " |
 | MAIL_SERVER | " |
