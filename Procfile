@@ -1,2 +1,2 @@
 release: python manage.py db upgrade
-web: gunicorn app:app --log-file=-
+web: gunicorn project:app --log-file=-

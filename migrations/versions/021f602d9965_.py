@@ -8,8 +8,8 @@ Create Date: 2020-10-22 17:59:27.823624
 from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-import db
-from models import EventRejectionReason, EventReviewStatus
+from project import dbtypes
+from project.models import EventRejectionReason, EventReviewStatus
 
 # revision identifiers, used by Alembic.
 revision = '021f602d9965'
@@ -27,8 +27,8 @@ def upgrade():
     sa.Column('start', sa.DateTime(timezone=True), nullable=False),
     sa.Column('description', sa.UnicodeText(), nullable=True),
     sa.Column('external_link', sa.String(length=255), nullable=True),
-    sa.Column('review_status', db.IntegerEnum(EventReviewStatus), nullable=True),
-    sa.Column('rejection_resaon', db.IntegerEnum(EventRejectionReason), nullable=True),
+    sa.Column('review_status', dbtypes.IntegerEnum(EventReviewStatus), nullable=True),
+    sa.Column('rejection_resaon', dbtypes.IntegerEnum(EventRejectionReason), nullable=True),
     sa.Column('contact_name', sa.Unicode(length=255), nullable=False),
     sa.Column('contact_email', sa.Unicode(length=255), nullable=True),
     sa.Column('contact_phone', sa.Unicode(length=255), nullable=True),
