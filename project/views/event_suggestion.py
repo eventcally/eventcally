@@ -1,34 +1,13 @@
 from project import app, db
 from project.models import (
     EventSuggestion,
-    User,
-    Event,
-    EventDate,
     EventReviewStatus,
-    AdminUnit,
-    AdminUnitMember,
-    EventOrganizer,
-    EventCategory,
 )
-from flask import render_template, flash, url_for, redirect, request, jsonify, abort
+from flask import render_template, flash, url_for, redirect
 from flask_babelex import gettext
-from flask_security import current_user
-from project.access import (
-    has_access,
-    access_or_401,
-    can_reference_event,
-    has_admin_unit_member_permission,
-)
-from project.dateutils import today
-from datetime import datetime
+from project.access import access_or_401
 from project.forms.event_suggestion import RejectEventSuggestionForm
-from project.views.utils import flash_errors, send_mail, handleSqlError, flash_message
-from project.utils import get_event_category_name
-from project.services.event import (
-    upsert_event_category,
-    update_event_dates_with_recurrence_rule,
-)
-from sqlalchemy.sql import asc, func
+from project.views.utils import flash_errors, send_mail, handleSqlError
 from sqlalchemy.exc import SQLAlchemyError
 
 

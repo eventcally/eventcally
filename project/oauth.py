@@ -3,8 +3,7 @@ from flask_security import current_user, login_user
 from flask_dance.contrib.google import make_google_blueprint
 from flask_dance.consumer import oauth_authorized, oauth_error
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
-from sqlalchemy.orm.exc import NoResultFound
-from project.models import User, OAuth
+from project.models import OAuth
 from project import db, user_datastore
 from flask_babelex import gettext
 

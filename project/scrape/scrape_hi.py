@@ -1,31 +1,19 @@
-from project import app, db
+from project import db
 from pprint import pprint
 import datetime
-from dateutil import parser, tz
-import pytz
-from urllib import request, parse
-from urllib.request import urlopen, URLError
-from bs4 import BeautifulSoup
-import requests
+from urllib import request
 from os import path
 import json
-from flask import jsonify
-import re
-import unicodedata
 import decimal
 from project.models import (
     EventReviewStatus,
-    EventTargetGroupOrigin,
     Location,
     Event,
     EventStatus,
-    EventCategory,
     EventPlace,
     EventOrganizer,
-    AdminUnit,
 )
-from sqlalchemy import and_, or_, not_
-from project.dateutils import berlin_tz
+from sqlalchemy import and_, not_
 from project.services.admin_unit import get_admin_unit
 from project.services.event import (
     upsert_event_category,
@@ -211,7 +199,7 @@ def scrape(debug, city):
                 db.session.add(event)
 
             db.session.commit()
-        except:
+        except Exception:
             print("Exception")
             pprint(item)
 

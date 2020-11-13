@@ -1,20 +1,18 @@
+from project import db
 from project.models import (
-    EventReviewStatus,
     EventCategory,
     Event,
     EventDate,
     EventReference,
     EventPlace,
     Location,
-    EventSuggestion,
 )
 from project.dateutils import (
     dates_from_recurrence_rule,
     today,
     date_add_time,
-    date_set_end_of_day,
 )
-from sqlalchemy import and_, or_, not_, func
+from sqlalchemy import and_, or_, func
 from sqlalchemy.sql import extract
 from dateutil.relativedelta import relativedelta
 

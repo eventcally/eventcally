@@ -1,11 +1,8 @@
 from project import app, db
 from project.models import (
-    AdminUnit,
     AdminUnitMember,
     AdminUnitMemberInvitation,
-    Event,
     EventPlace,
-    EventReviewStatus,
     EventOrganizer,
     User,
     EventSuggestion,
@@ -16,20 +13,18 @@ from flask import (
     url_for,
     redirect,
     request,
-    jsonify,
     make_response,
 )
 from flask_babelex import gettext
-from flask_security import auth_required, roles_required, current_user
+from flask_security import auth_required, current_user
 from project.access import (
     has_access,
-    access_or_401,
     get_admin_unit_for_manage,
     get_admin_units_for_manage,
     get_admin_unit_for_manage_or_404,
 )
-from sqlalchemy.sql import asc, desc, func
-from sqlalchemy import and_, or_, not_
+from sqlalchemy.sql import desc, func
+from sqlalchemy.exc import SQLAlchemyError
 from project.views.utils import (
     get_pagination_urls,
     permission_missing,
@@ -55,7 +50,7 @@ def manage():
 
             if admin_unit:
                 return redirect(url_for("manage_admin_unit", id=admin_unit.id))
-    except:
+    except Exception:
         pass
 
     return redirect(url_for("manage_admin_units"))

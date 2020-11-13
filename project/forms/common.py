@@ -2,7 +2,7 @@ from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, BooleanField, HiddenField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import Optional
 import re
 import base64
 

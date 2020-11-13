@@ -9,7 +9,6 @@ def upsert_admin_unit(unit_name, short_name=None):
         db.session.add(admin_unit)
 
     admin_unit.short_name = short_name
-    upsert_org_or_admin_unit_for_admin_unit(admin_unit)
     return admin_unit
 
 

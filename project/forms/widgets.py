@@ -1,7 +1,6 @@
 from wtforms import DateTimeField, SelectMultipleField, SelectField
 from wtforms.widgets import html_params, HTMLString, ListWidget, CheckboxInput
 from wtforms.validators import StopValidation
-import pytz
 from datetime import datetime
 from flask_babelex import to_user_timezone, gettext
 from project.dateutils import berlin_tz
@@ -66,7 +65,7 @@ class CustomDateTimeField(DateTimeField):
                     date.year, date.month, date.day, int(hour_str), int(minute_str)
                 )
                 self.data = berlin_tz.localize(date_time)
-            except:
+            except Exception:
                 raise ValueError(
                     "Not a valid datetime value. Looking for YYYY-MM-DD HH:mm."
                 )
@@ -97,7 +96,7 @@ class CustomDateField(DateTimeField):
 
                 date = datetime.strptime(date_str, "%Y-%m-%d")
                 self.data = berlin_tz.localize(date)
-            except:
+            except Exception:
                 raise ValueError("Not a valid date value. Looking for YYYY-MM-DD.")
 
 

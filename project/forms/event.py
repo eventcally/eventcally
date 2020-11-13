@@ -1,12 +1,9 @@
 from flask import request
 from flask_babelex import lazy_gettext, gettext
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
 from wtforms import (
     SelectMultipleField,
-    FieldList,
     RadioField,
-    DateTimeField,
     StringField,
     SubmitField,
     TextAreaField,
@@ -15,9 +12,8 @@ from wtforms import (
     IntegerField,
     FormField,
 )
-from wtforms.fields.html5 import DateTimeLocalField, EmailField, URLField
+from wtforms.fields.html5 import EmailField, URLField
 from wtforms.validators import DataRequired, Optional
-from wtforms.widgets import html_params, HTMLString
 from project.models import (
     EventPlace,
     EventTargetGroupOrigin,
@@ -25,8 +21,6 @@ from project.models import (
     EventStatus,
     Location,
     EventOrganizer,
-    EventRejectionReason,
-    EventReviewStatus,
     Image,
 )
 from project.forms.common import event_rating_choices, Base64ImageForm

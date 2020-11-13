@@ -2,25 +2,16 @@ from project import app, db
 from project.models import (
     User,
     EventDate,
-    Event,
     AdminUnit,
     EventOrganizer,
     EventSuggestion,
     EventReviewStatus,
     AdminUnitMember,
 )
-from project.dateutils import (
-    today,
-    date_set_end_of_day,
-    form_input_from_date,
-    form_input_to_date,
-)
-from dateutil.relativedelta import relativedelta
 from flask import render_template, request, flash, redirect, url_for
 from flask_babelex import gettext
-from flask_security import auth_required, current_user
-from sqlalchemy import and_, or_, not_
-from sqlalchemy.sql import asc, func
+from flask_security import current_user
+from sqlalchemy.sql import func
 from sqlalchemy.exc import SQLAlchemyError
 from project.services.event import get_event_dates_query
 from project.services.event_search import EventSearchParams

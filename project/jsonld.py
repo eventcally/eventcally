@@ -7,7 +7,7 @@ import pytz
 
 berlin_tz = pytz.timezone("Europe/Berlin")
 
-# subclass JSONEncoder
+
 class DateTimeEncoder(JSONEncoder):
     # Override the default method
     def default(self, obj):

@@ -8,8 +8,6 @@ Create Date: 2020-10-02 09:29:12.932229
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.sql import text
-import sqlalchemy_utils
-from project import dbtypes
 from geoalchemy2.types import Geometry
 
 

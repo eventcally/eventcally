@@ -1,18 +1,8 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
-from wtforms import (
-    StringField,
-    SubmitField,
-    DecimalField,
-    TextAreaField,
-    FormField,
-    SelectField,
-)
-from wtforms.fields.html5 import EmailField, TelField
-from wtforms.validators import DataRequired, Optional, Regexp
-import decimal
-from project.models import Location
+from wtforms import SubmitField
+from wtforms.fields.html5 import EmailField
+from wtforms.validators import DataRequired
 from project.forms.widgets import MultiCheckboxField
 
 

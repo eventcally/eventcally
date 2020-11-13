@@ -1,6 +1,5 @@
 import pytz
-from dateutil import rrule
-from dateutil.rrule import rrulestr, rruleset, rrule
+from dateutil.rrule import rrulestr
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 

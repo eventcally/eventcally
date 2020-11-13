@@ -1,22 +1,14 @@
-from flask_babelex import lazy_gettext, gettext
+from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
 from wtforms import (
     DecimalField,
-    RadioField,
-    DateTimeField,
     StringField,
     SubmitField,
     TextAreaField,
-    SelectField,
-    BooleanField,
-    IntegerField,
     FormField,
 )
-from wtforms.fields.html5 import DateTimeLocalField, EmailField, URLField
+from wtforms.fields.html5 import URLField
 from wtforms.validators import DataRequired, Optional
-from wtforms.widgets import html_params, HTMLString
-import decimal
 from project.models import Location, Image
 from project.forms.common import FileImageForm
 

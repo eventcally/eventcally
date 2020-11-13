@@ -1,31 +1,25 @@
 from project import app, db
 from project.models import (
-    User,
     Event,
     EventDate,
     EventReviewStatus,
     AdminUnit,
-    AdminUnitMember,
     EventOrganizer,
     EventCategory,
     EventSuggestion,
 )
-from flask import render_template, flash, url_for, redirect, request, jsonify, abort
+from flask import render_template, flash, url_for, redirect, request, jsonify
 from flask_babelex import gettext
-from flask_security import auth_required
 from project.access import (
     has_access,
     access_or_401,
     can_reference_event,
-    has_admin_unit_member_permission,
 )
 from project.dateutils import today
 from datetime import datetime
 from project.forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm
 from project.views.utils import (
     flash_errors,
-    upsert_image_with_data,
-    send_mail,
     handleSqlError,
     flash_message,
 )
@@ -35,7 +29,7 @@ from project.services.event import (
     update_event_dates_with_recurrence_rule,
 )
 from project.services.place import get_event_places
-from sqlalchemy.sql import asc, func
+from sqlalchemy.sql import func
 from sqlalchemy.exc import SQLAlchemyError
 from project.views.event_suggestion import send_event_suggestion_review_status_mail
 
@@ -201,7 +195,6 @@ def event_rrule():
     month = request.json["month"]
     day = request.json["day"]
     rrule_str = request.json["rrule"]
-    output_format = request.json["format"]
     start = int(request.json["start"])
     batch_size = 10
     start_date = datetime(year, month, day)

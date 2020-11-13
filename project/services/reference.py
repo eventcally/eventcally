@@ -4,7 +4,7 @@ from project.models import (
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
 )
-from sqlalchemy import and_, or_, not_
+from sqlalchemy import and_
 
 
 def create_event_reference_for_request(request):

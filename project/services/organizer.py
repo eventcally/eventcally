@@ -1,6 +1,7 @@
-from project.models import EventOrganizer, EventPlace
-from sqlalchemy import and_, or_, not_
-from sqlalchemy.sql import asc, func
+from project import db
+from project.models import EventOrganizer, EventPlace, Location
+from sqlalchemy import and_
+from sqlalchemy.sql import func
 
 
 def upsert_event_organizer(admin_unit_id, name):

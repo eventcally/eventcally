@@ -1,5 +1,5 @@
 from project import app, db
-from flask import url_for, render_template, request, redirect, flash
+from flask import url_for, render_template, redirect, flash
 from flask_babelex import gettext
 from flask_security import auth_required, current_user
 from project.models import AdminUnitMemberInvitation, AdminUnitMemberRole

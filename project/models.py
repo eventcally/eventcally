@@ -3,7 +3,6 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref, deferred
 from sqlalchemy.schema import CheckConstraint
-from sqlalchemy.types import TypeDecorator
 from sqlalchemy.event import listens_for
 from sqlalchemy import (
     UniqueConstraint,
@@ -16,7 +15,6 @@ from sqlalchemy import (
     Unicode,
     UnicodeText,
     Numeric,
-    LargeBinary,
 )
 from sqlalchemy_utils import ColorType
 from flask_security import UserMixin, RoleMixin
@@ -27,7 +25,7 @@ from project.dbtypes import IntegerEnum
 from geoalchemy2 import Geometry
 from sqlalchemy import and_
 
-### Base
+# Base
 
 
 class TrackableMixin(object):
@@ -42,7 +40,7 @@ class TrackableMixin(object):
         return relationship("User")
 
 
-### Multi purpose
+# Multi purpose
 
 
 class Image(db.Model, TrackableMixin):
@@ -56,7 +54,7 @@ class Image(db.Model, TrackableMixin):
         return not self.data
 
 
-### User
+# User
 
 
 class RolesUsers(db.Model):
@@ -100,7 +98,7 @@ class OAuth(OAuthConsumerMixin, db.Model):
     user = db.relationship("User")
 
 
-### Admin Unit
+# Admin Unit
 
 
 class AdminUnitMemberRolesMembers(db.Model):
@@ -213,9 +211,9 @@ class Location(db.Model, TrackableMixin):
     def update_coordinates(cls):
         locations = Location.query.filter(
             and_(
-                Location.latitude != None,
+                Location.latitude is not None,
                 Location.latitude != 0,
-                Location.coordinate == None,
+                Location.coordinate is None,
             )
         ).all()
 

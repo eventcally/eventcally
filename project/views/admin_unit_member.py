@@ -1,7 +1,7 @@
 from project import app, db
-from flask import url_for, render_template, request, redirect, flash
+from flask import url_for, render_template, redirect, flash
 from flask_babelex import gettext
-from flask_security import auth_required, current_user
+from flask_security import auth_required
 from project.models import AdminUnitMember, AdminUnitMemberRole
 from project.forms.admin_unit_member import (
     DeleteAdminUnitMemberForm,
@@ -9,11 +9,10 @@ from project.forms.admin_unit_member import (
 )
 from project.views.utils import (
     permission_missing,
-    send_mail,
     handleSqlError,
     flash_errors,
 )
-from project.access import get_admin_unit_for_manage_or_404, has_access
+from project.access import has_access
 from project.services.admin_unit import add_roles_to_admin_unit_member
 from sqlalchemy.exc import SQLAlchemyError
 

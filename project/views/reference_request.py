@@ -5,10 +5,7 @@ from project.views.utils import (
     handleSqlError,
     send_mail,
 )
-from project.forms.reference_request import (
-    CreateEventReferenceRequestForm,
-    DeleteReferenceRequestForm,
-)
+from project.forms.reference_request import CreateEventReferenceRequestForm
 from flask import render_template, flash, redirect, url_for
 from flask_babelex import gettext
 from flask_security import auth_required
@@ -26,7 +23,6 @@ from project.access import (
     has_admin_unit_member_permission,
 )
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import and_, or_, not_
 from sqlalchemy.sql import desc
 from project.services.reference import get_reference_requests_incoming_query
 

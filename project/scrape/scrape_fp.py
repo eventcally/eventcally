@@ -1,5 +1,4 @@
 from project import (
-    app,
     db,
     get_admin_unit,
     update_event_dates_with_recurrence_rule,
@@ -7,15 +6,12 @@ from project import (
 )
 from pprint import pprint
 import datetime
-from dateutil import parser, tz
 import pytz
-from urllib.request import urlopen, URLError
+from urllib.request import urlopen
 from bs4 import BeautifulSoup
-import requests
 from os import path
 import json
 import re
-import unicodedata
 import decimal
 from project.models import (
     EventReviewStatus,
@@ -23,12 +19,10 @@ from project.models import (
     Location,
     Event,
     EventStatus,
-    EventCategory,
     EventPlace,
     EventOrganizer,
-    AdminUnit,
 )
-from sqlalchemy import and_, or_, not_
+from sqlalchemy import and_
 
 berlin_tz = pytz.timezone("Europe/Berlin")
 
@@ -62,7 +56,7 @@ def scrape(debug):
             for match in matches:
                 key = match[0]
 
-                if not key in ["events"]:
+                if key not in ["events"]:
                     continue
 
                 json_str = match[1]
@@ -80,7 +74,7 @@ def scrape(debug):
     category = upsert_event_category("Other")
 
     for js_event in js_assigns["events"]:
-        if not "event_id" in js_event:
+        if "event_id" not in js_event:
             continue
 
         event_id = js_event["event_id"]
@@ -226,7 +220,7 @@ def scrape(debug):
                 db.session.add(event)
 
             db.session.commit()
-        except:
+        except Exception:
             print("Exception")
             pprint(js_event)
 

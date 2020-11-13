@@ -1,6 +1,5 @@
 from project import app, db
 from project.models import (
-    Event,
     EventDate,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
@@ -9,11 +8,9 @@ from project.models import (
 )
 from flask import render_template, flash, url_for, redirect, abort
 from flask_babelex import gettext
-from flask_security import auth_required
 from project.access import (
     has_access,
     access_or_401,
-    can_reference_event,
     has_admin_unit_member_permission,
 )
 from project.dateutils import today

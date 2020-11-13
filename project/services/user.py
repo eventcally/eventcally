@@ -1,11 +1,5 @@
 from project import user_datastore
-from flask_security import (
-    Security,
-    current_user,
-    auth_required,
-    roles_required,
-    hash_password,
-)
+from flask_security import hash_password
 
 
 def upsert_user(email, password="password"):

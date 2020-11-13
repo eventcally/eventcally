@@ -1,41 +1,14 @@
 import os
-from base64 import b64decode
-from flask import (
-    jsonify,
-    Flask,
-    render_template,
-    request,
-    url_for,
-    redirect,
-    abort,
-    flash,
-    current_app,
-)
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import joinedload
-from sqlalchemy.sql import asc, func
-from sqlalchemy import and_, or_, not_, event
 from flask_security import (
     Security,
-    current_user,
-    auth_required,
-    roles_required,
     SQLAlchemySessionUserDatastore,
 )
-from flask_security.utils import FsPermNeed
-from flask_babelex import (
-    Babel,
-    gettext,
-    lazy_gettext,
-    format_datetime,
-    to_user_timezone,
-)
-from flask_principal import Permission
+from flask_babelex import Babel
 from flask_cors import CORS
-import pytz
-import json
 from flask_qrcode import QRcode
-from flask_mail import Mail, Message, email_dispatched
+from flask_mail import Mail, email_dispatched
 
 # Create app
 app = Flask(__name__)
@@ -120,9 +93,9 @@ from project.oauth import blueprint
 
 app.register_blueprint(blueprint, url_prefix="/login")
 
-from project.i10n import *
-from project.jinja_filters import *
-from project.init_data import *
+from project import i10n
+from project import jinja_filters
+from project import init_data
 
 # Routes
 from project.views import (

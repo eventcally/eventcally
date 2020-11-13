@@ -7,7 +7,6 @@ Create Date: 2020-09-28 10:38:46.424791
 """
 from alembic import op
 import sqlalchemy as sa
-import sqlalchemy_utils
 from project import dbtypes
 from project.models import FeaturedEventRejectionReason, FeaturedEventReviewStatus
 

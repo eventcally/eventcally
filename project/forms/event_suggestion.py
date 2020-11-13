@@ -1,37 +1,21 @@
-from flask import request
-from flask_babelex import lazy_gettext, gettext
+from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
 from wtforms import (
-    FieldList,
-    RadioField,
-    DateTimeField,
     StringField,
     SubmitField,
     TextAreaField,
     SelectField,
     BooleanField,
-    IntegerField,
     FormField,
 )
-from wtforms.fields.html5 import DateTimeLocalField, EmailField, TelField, URLField
+from wtforms.fields.html5 import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional
-from wtforms.widgets import html_params, HTMLString
 from project.models import (
-    EventSuggestion,
-    EventPlace,
-    EventTargetGroupOrigin,
-    EventAttendanceMode,
-    EventStatus,
-    Location,
-    EventOrganizer,
     EventRejectionReason,
-    EventReviewStatus,
     Image,
 )
-from project.forms.common import event_rating_choices, Base64ImageForm
-from project.forms.widgets import CustomDateTimeField, CustomDateField, TagSelectField
-from project.forms.common import event_rating_choices
+from project.forms.common import Base64ImageForm
+from project.forms.widgets import CustomDateTimeField, TagSelectField
 
 
 class CreateEventSuggestionForm(FlaskForm):

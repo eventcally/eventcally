@@ -1,4 +1,5 @@
 from project import app, babel
+from flask_babelex import gettext
 from flask import request
 
 

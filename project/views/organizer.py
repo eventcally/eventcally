@@ -1,9 +1,9 @@
 from project import app, db
 from project.models import EventOrganizer, Location
-from flask import render_template, flash, url_for, redirect, request, jsonify
+from flask import render_template, flash, url_for, redirect
 from flask_babelex import gettext
 from flask_security import auth_required
-from project.access import has_access, access_or_401, get_admin_unit_for_manage_or_404
+from project.access import access_or_401, get_admin_unit_for_manage_or_404
 from project.forms.organizer import (
     CreateOrganizerForm,
     UpdateOrganizerForm,
@@ -11,11 +11,8 @@ from project.forms.organizer import (
 )
 from project.views.utils import (
     flash_errors,
-    upsert_image_with_data,
-    send_mail,
     handleSqlError,
 )
-from sqlalchemy.sql import asc, func
 from sqlalchemy.exc import SQLAlchemyError
 
 
