@@ -8,7 +8,7 @@ Create Date: 2020-07-07 15:49:58.653888
 from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-import project.dbtypes
+from project import dbtypes
 from project.models import EventTargetGroupOrigin, EventAttendanceMode, EventStatus
 
 # revision identifiers, used by Alembic.

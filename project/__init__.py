@@ -29,6 +29,8 @@ app.config['SECURITY_EMAIL_SENDER'] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config['LANGUAGES'] = ['en', 'de']
 app.config['GOOGLE_OAUTH_CLIENT_ID'] = os.getenv('GOOGLE_OAUTH_CLIENT_ID')
 app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET')
+app.config['OAUTHLIB_INSECURE_TRANSPORT'] = True
+app.config['OAUTHLIB_RELAX_TOKEN_SCOPE'] = True
 
 # Generate a nice key using secrets.token_urlsafe()
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", 'pf9Wkove4IKEAXvy-cQkeDPhv9Cb3Ag-wyJILbq_dFw')

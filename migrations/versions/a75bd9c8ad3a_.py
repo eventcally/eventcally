@@ -8,7 +8,7 @@ Create Date: 2020-09-29 16:53:02.520125
 from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-import project.dbtypes
+from project import dbtypes
 from sqlalchemy.dialects import postgresql
 from project.models import EventReferenceRequestRejectionReason, EventReferenceRequestReviewStatus
 

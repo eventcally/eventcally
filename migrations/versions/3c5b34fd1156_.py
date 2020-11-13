@@ -9,7 +9,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import orm
 import sqlalchemy_utils
-import project.dbtypes
+from project import dbtypes
 from sqlalchemy.ext.declarative import declarative_base
 
 # revision identifiers, used by Alembic.

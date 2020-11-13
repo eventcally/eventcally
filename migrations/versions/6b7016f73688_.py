@@ -8,7 +8,7 @@ Create Date: 2020-10-01 11:09:16.765736
 from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-import project.dbtypes
+from project import dbtypes
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
