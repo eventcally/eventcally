@@ -80,7 +80,7 @@ SQLAlchemy-Utils==0.36.6
 toml==0.10.2
 typed-ast==1.4.1
 typing-extensions==3.7.4.3
-urllib3==1.25.9
+urllib3==1.26.2
 URLObject==2.4.3
 virtualenv==20.1.0
 visitor==0.1.3
