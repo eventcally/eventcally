@@ -1,19 +1,26 @@
 from project import app, db
 from project.models import EventOrganizer, Location
-from flask import render_template, flash, url_for, redirect, request, jsonify
+from flask import render_template, flash, url_for, redirect
 from flask_babelex import gettext
 from flask_security import auth_required
-from project.access import has_access, access_or_401, get_admin_unit_for_manage_or_404
-from project.forms.organizer import CreateOrganizerForm, UpdateOrganizerForm, DeleteOrganizerForm
-from project.views.utils import flash_errors, upsert_image_with_data, send_mail, handleSqlError
-from sqlalchemy.sql import asc, func
+from project.access import access_or_401, get_admin_unit_for_manage_or_404
+from project.forms.organizer import (
+    CreateOrganizerForm,
+    UpdateOrganizerForm,
+    DeleteOrganizerForm,
+)
+from project.views.utils import (
+    flash_errors,
+    handleSqlError,
+)
 from sqlalchemy.exc import SQLAlchemyError
 
-@app.route('/manage/admin_unit/<int:id>/organizers/create', methods=('GET', 'POST'))
+
+@app.route("/manage/admin_unit/<int:id>/organizers/create", methods=("GET", "POST"))
 @auth_required()
 def manage_admin_unit_organizer_create(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    access_or_401(admin_unit, 'organizer:create')
+    access_or_401(admin_unit, "organizer:create")
 
     form = CreateOrganizerForm()
 
@@ -26,18 +33,21 @@ def manage_admin_unit_organizer_create(id):
         try:
             db.session.add(organizer)
             db.session.commit()
-            flash(gettext('Organizer successfully created'), 'success')
-            return redirect(url_for('manage_admin_unit_organizers', id=organizer.admin_unit_id))
+            flash(gettext("Organizer successfully created"), "success")
+            return redirect(
+                url_for("manage_admin_unit_organizers", id=organizer.admin_unit_id)
+            )
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash(handleSqlError(e), 'danger')
-    return render_template('organizer/create.html', form=form)
+            flash(handleSqlError(e), "danger")
+    return render_template("organizer/create.html", form=form)
 
-@app.route('/organizer/<int:id>/update', methods=('GET', 'POST'))
+
+@app.route("/organizer/<int:id>/update", methods=("GET", "POST"))
 @auth_required()
 def organizer_update(id):
     organizer = EventOrganizer.query.get_or_404(id)
-    access_or_401(organizer.adminunit, 'organizer:update')
+    access_or_401(organizer.adminunit, "organizer:update")
 
     form = UpdateOrganizerForm(obj=organizer)
 
@@ -46,42 +56,44 @@ def organizer_update(id):
 
         try:
             db.session.commit()
-            flash(gettext('Organizer successfully updated'), 'success')
-            return redirect(url_for('manage_admin_unit_organizers', id=organizer.admin_unit_id))
+            flash(gettext("Organizer successfully updated"), "success")
+            return redirect(
+                url_for("manage_admin_unit_organizers", id=organizer.admin_unit_id)
+            )
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash(handleSqlError(e), 'danger')
+            flash(handleSqlError(e), "danger")
 
-    return render_template('organizer/update.html',
-        form=form,
-        organizer=organizer)
+    return render_template("organizer/update.html", form=form, organizer=organizer)
 
-@app.route('/organizer/<int:id>/delete', methods=('GET', 'POST'))
+
+@app.route("/organizer/<int:id>/delete", methods=("GET", "POST"))
 @auth_required()
 def organizer_delete(id):
     organizer = EventOrganizer.query.get_or_404(id)
-    access_or_401(organizer.adminunit, 'organizer:delete')
+    access_or_401(organizer.adminunit, "organizer:delete")
 
     form = DeleteOrganizerForm()
 
     if form.validate_on_submit():
         if form.name.data != organizer.name:
-            flash(gettext('Entered name does not match organizer name'), 'danger')
+            flash(gettext("Entered name does not match organizer name"), "danger")
         else:
             try:
                 db.session.delete(organizer)
                 db.session.commit()
-                flash(gettext('Organizer successfully deleted'), 'success')
-                return redirect(url_for('manage_admin_unit_organizers', id=organizer.admin_unit_id))
+                flash(gettext("Organizer successfully deleted"), "success")
+                return redirect(
+                    url_for("manage_admin_unit_organizers", id=organizer.admin_unit_id)
+                )
             except SQLAlchemyError as e:
                 db.session.rollback()
-                flash(handleSqlError(e), 'danger')
+                flash(handleSqlError(e), "danger")
     else:
         flash_errors(form)
 
-    return render_template('organizer/delete.html',
-        form=form,
-        organizer=organizer)
+    return render_template("organizer/delete.html", form=form, organizer=organizer)
+
 
 def update_organizer_with_form(organizer, form):
     form.populate_obj(organizer)

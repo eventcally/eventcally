@@ -5,16 +5,17 @@ from flask import url_for
 from project.models import EventAttendanceMode, EventStatus
 import pytz
 
-berlin_tz = pytz.timezone('Europe/Berlin')
+berlin_tz = pytz.timezone("Europe/Berlin")
 
-# subclass JSONEncoder
+
 class DateTimeEncoder(JSONEncoder):
-        #Override the default method
-        def default(self, obj):
-            if isinstance(obj, (datetime.date, datetime.datetime)):
-                return (obj.astimezone(berlin_tz)).isoformat()
-            if isinstance(obj, decimal.Decimal):
-                return float(obj)
+    # Override the default method
+    def default(self, obj):
+        if isinstance(obj, (datetime.date, datetime.datetime)):
+            return (obj.astimezone(berlin_tz)).isoformat()
+        if isinstance(obj, decimal.Decimal):
+            return float(obj)
+
 
 def get_sd_for_admin_unit(admin_unit):
     result = {}
@@ -26,6 +27,7 @@ def get_sd_for_admin_unit(admin_unit):
         result["url"] = admin_unit.url
 
     return result
+
 
 def get_sd_for_organizer_organization(organizer):
     result = {}
@@ -46,8 +48,10 @@ def get_sd_for_organizer_organization(organizer):
 
     return result
 
+
 def get_sd_for_organizer(organizer):
     return get_sd_for_organizer_organization(organizer)
+
 
 def get_sd_for_location(location):
     result = {}
@@ -63,12 +67,14 @@ def get_sd_for_location(location):
 
     return result
 
+
 def get_sd_for_geo(location):
     result = {}
     result["@type"] = "GeoCoordinates"
     result["latitude"] = location.latitude
     result["longitude"] = location.longitude
     return result
+
 
 def get_sd_for_place(place, use_ref=True):
     result = {}
@@ -82,12 +88,13 @@ def get_sd_for_place(place, use_ref=True):
             result["geo"] = get_sd_for_geo(place.location)
 
     if place.photo_id:
-        result["photo"] = url_for('image', id=place.photo_id)
+        result["photo"] = url_for("image", id=place.photo_id)
 
     if place.url:
         result["url"] = place.url
 
     return result
+
 
 def get_sd_for_event_date(event_date):
     event = event_date.event
@@ -101,7 +108,7 @@ def get_sd_for_event_date(event_date):
     result["startDate"] = event_date.start
 
     url_list = list()
-    url_list.append(url_for('event_date', id=event_date.id))
+    url_list.append(url_for("event_date", id=event_date.id))
 
     if event.external_link:
         url_list.append(event.external_link)
@@ -157,6 +164,6 @@ def get_sd_for_event_date(event_date):
             result["eventStatus"] = "EventRescheduled"
 
     if event.photo_id:
-        result["image"] = url_for('image', id=event.photo_id)
+        result["image"] = url_for("image", id=event.photo_id)
 
     return result
