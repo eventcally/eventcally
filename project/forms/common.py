@@ -6,12 +6,21 @@ from wtforms.validators import DataRequired, Optional
 import re
 import base64
 
+
 class BaseImageForm(FlaskForm):
-    copyright_text = StringField(lazy_gettext('Copyright text'), validators=[Optional()])
+    copyright_text = StringField(
+        lazy_gettext("Copyright text"), validators=[Optional()]
+    )
+
 
 class FileImageForm(BaseImageForm):
-    image_file = FileField(lazy_gettext('File'), validators=[FileAllowed(['jpg', 'jpeg', 'png'], lazy_gettext('Images only!'))])
-    delete_flag = BooleanField(lazy_gettext('Delete image'), default=False, validators=[Optional()])
+    image_file = FileField(
+        lazy_gettext("File"),
+        validators=[FileAllowed(["jpg", "jpeg", "png"], lazy_gettext("Images only!"))],
+    )
+    delete_flag = BooleanField(
+        lazy_gettext("Delete image"), default=False, validators=[Optional()]
+    )
 
     def populate_obj(self, obj):
         super(BaseImageForm, self).populate_obj(obj)
@@ -24,6 +33,7 @@ class FileImageForm(BaseImageForm):
             obj.data = None
             obj.encoding_format = None
 
+
 class Base64ImageForm(BaseImageForm):
     image_base64 = HiddenField()
 
@@ -31,8 +41,10 @@ class Base64ImageForm(BaseImageForm):
         super(BaseImageForm, self).process(formdata, obj, data, **kwargs)
 
         if self.image_base64.data is None and obj and obj.data:
-            base64_str = base64.b64encode(obj.data).decode('utf-8')
-            self.image_base64.data = 'data:{};base64,{}'.format(obj.encoding_format, base64_str)
+            base64_str = base64.b64encode(obj.data).decode("utf-8")
+            self.image_base64.data = "data:{};base64,{}".format(
+                obj.encoding_format, base64_str
+            )
 
     def populate_obj(self, obj):
         super(BaseImageForm, self).populate_obj(obj)
@@ -49,35 +61,36 @@ class Base64ImageForm(BaseImageForm):
             obj.data = None
             obj.encoding_format = None
 
+
 event_rating_choices = [
-            (0,lazy_gettext('0 (Little relevant)')),
-            (10,'1'),
-            (20,'2'),
-            (30,'3'),
-            (40,'4'),
-            (50,'5'),
-            (60,'6'),
-            (70,'7'),
-            (80,'8'),
-            (90,'9'),
-            (100,lazy_gettext('10 (Highlight)'))
-        ]
+    (0, lazy_gettext("0 (Little relevant)")),
+    (10, "1"),
+    (20, "2"),
+    (30, "3"),
+    (40, "4"),
+    (50, "5"),
+    (60, "6"),
+    (70, "7"),
+    (80, "8"),
+    (90, "9"),
+    (100, lazy_gettext("10 (Highlight)")),
+]
 
 weekday_choices = [
-            (1,lazy_gettext('Monday')),
-            (2,lazy_gettext('Tueday')),
-            (3,lazy_gettext('Wednesday')),
-            (4,lazy_gettext('Thursday')),
-            (5,lazy_gettext('Friday')),
-            (6,lazy_gettext('Saturday')),
-            (0,lazy_gettext('Sunday'))
-        ]
+    (1, lazy_gettext("Monday")),
+    (2, lazy_gettext("Tueday")),
+    (3, lazy_gettext("Wednesday")),
+    (4, lazy_gettext("Thursday")),
+    (5, lazy_gettext("Friday")),
+    (6, lazy_gettext("Saturday")),
+    (0, lazy_gettext("Sunday")),
+]
 
 distance_choices = [
-            (500,lazy_gettext('500 m')),
-            (5000,lazy_gettext('5 km')),
-            (10000,lazy_gettext('10 km')),
-            (25000,lazy_gettext('20 km')),
-            (50000,lazy_gettext('50 km')),
-            (100000,lazy_gettext('100 km'))
-        ]
+    (500, lazy_gettext("500 m")),
+    (5000, lazy_gettext("5 km")),
+    (10000, lazy_gettext("10 km")),
+    (25000, lazy_gettext("20 km")),
+    (50000, lazy_gettext("50 km")),
+    (100000, lazy_gettext("100 km")),
+]

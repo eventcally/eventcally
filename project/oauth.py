@@ -31,14 +31,16 @@ def google_logged_in(blueprint, token):
     user_id = info["id"]
 
     # Find this OAuth token in the database, or create it
-    oauth = OAuth.query.filter_by(provider=blueprint.name, provider_user_id=user_id).first()
+    oauth = OAuth.query.filter_by(
+        provider=blueprint.name, provider_user_id=user_id
+    ).first()
     if oauth is None:
         oauth = OAuth(provider=blueprint.name, provider_user_id=user_id, token=token)
 
     if oauth.user:
         login_user(oauth.user, authn_via=["google"])
         user_datastore.commit()
-        flash(gettext("Successfully signed in."), 'success')
+        flash(gettext("Successfully signed in."), "success")
 
     else:
         # Create a new local user account for this user
@@ -51,7 +53,7 @@ def google_logged_in(blueprint, token):
         # Log in the new local user account
         login_user(user, authn_via=["google"])
         user_datastore.commit()
-        flash(gettext("Successfully signed in."), 'success')
+        flash(gettext("Successfully signed in."), "success")
 
     # Disable Flask-Dance's default behavior for saving the OAuth token
     return False
