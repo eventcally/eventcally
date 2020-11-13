@@ -8,8 +8,8 @@ Create Date: 2020-10-18 13:06:47.639083
 from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-import db
-from models import EventRejectionReason, EventReviewStatus
+from project import dbtypes
+from project.models import EventRejectionReason, EventReviewStatus
 
 
 # revision identifiers, used by Alembic.
