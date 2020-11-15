@@ -1,6 +1,3 @@
-from project.services.admin_unit import get_admin_unit
-
-
 def test_admin_unit_create(client, app, utils):
     utils.register()
     response = client.get("/admin_unit/create")
@@ -22,5 +19,7 @@ def test_admin_unit_create(client, app, utils):
     assert response.status_code == 302
 
     with app.app_context():
+        from project.services.admin_unit import get_admin_unit
+
         admin_unit = get_admin_unit("Meine Crew")
         assert admin_unit is not None
