@@ -1,5 +1,6 @@
 import pytest
 import os
+from .utils import UtilActions
 
 
 def pytest_generate_tests(metafunc):
@@ -7,14 +8,31 @@ def pytest_generate_tests(metafunc):
 
 
 @pytest.fixture
-def client():
-    from project import app, db
+def app():
+    from project import app
 
     app.config["TESTING"] = True
     app.testing = True
 
-    client = app.test_client()
+    return app
+
+
+@pytest.fixture
+def db(app):
+    from project import db
+
     with app.app_context():
         db.drop_all()
         db.create_all()
-    yield client
+
+    return db
+
+
+@pytest.fixture
+def client(app, db):
+    return app.test_client()
+
+
+@pytest.fixture
+def utils(client):
+    return UtilActions(client)
