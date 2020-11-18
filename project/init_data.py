@@ -1,5 +1,5 @@
 from project import app, db
-from project.services.user import upsert_user_role, add_roles_to_user
+from project.services.user import upsert_user_role, add_admin_roles_to_user
 from project.services.admin_unit import upsert_admin_unit_member_role
 from project.models import Location
 
@@ -41,7 +41,7 @@ def create_initial_data():
 
     upsert_user_role("admin", "Administrator", admin_permissions)
     upsert_user_role("event_verifier", "Event expert", event_permissions)
-    add_roles_to_user("grams.daniel@gmail.com", ["admin", "event_verifier"])
+    add_admin_roles_to_user("grams.daniel@gmail.com")
 
     Location.update_coordinates()
 

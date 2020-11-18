@@ -3,6 +3,7 @@ from project import db, mail
 from flask_babelex import gettext
 from flask import request, url_for, render_template, flash, redirect, Markup
 from flask_mail import Message
+from sqlalchemy.exc import SQLAlchemyError
 
 
 def track_analytics(key, value1, value2):
@@ -17,8 +18,11 @@ def track_analytics(key, value1, value2):
     return result
 
 
-def handleSqlError(e):
-    message = str(e.__dict__["orig"])
+def handleSqlError(e: SQLAlchemyError) -> str:
+    if e.orig:
+        message = str(e.orig)
+    else:
+        message = str(e)
     print(message)
     return message
 

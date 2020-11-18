@@ -1,10 +1,12 @@
 import re
 from flask import g
+from sqlalchemy.exc import IntegrityError
 
 
 class UtilActions(object):
-    def __init__(self, client):
+    def __init__(self, client, app):
         self._client = client
+        self._app = app
 
     def register(self, email="test@test.de", password="MeinPasswortIstDasBeste"):
         response = self._client.get("/register")
@@ -26,6 +28,8 @@ class UtilActions(object):
             assert g.identity.user.email == email
 
     def login(self, email="test@test.de", password="MeinPasswortIstDasBeste"):
+        from project.services.user import find_user_by_email
+
         response = self._client.get("/login")
         assert response.status_code == 200
 
@@ -43,6 +47,12 @@ class UtilActions(object):
             assert response.status_code == 200
             assert g.identity.user.email == email
 
+        with self._app.app_context():
+            user = find_user_by_email(email)
+            user_id = user.id
+
+        return user_id
+
     def logout(self):
         return self._client.get("/logout")
 
@@ -56,4 +66,10 @@ class UtilActions(object):
         )
         return (
             re.search(pattern.encode("utf-8"), response.data).group(1).decode("utf-8")
+        )
+
+    def mock_db_commit(self, mocker):
+        mocked_commit = mocker.patch("project.db.session.commit")
+        mocked_commit.side_effect = IntegrityError(
+            "MockException", "MockException", None
         )

@@ -1,4 +1,4 @@
-from project.services.user import find_user_by_email, upsert_user
+from project.services.user import find_user_by_email
 
 
 def test_register(client, app, utils):
@@ -9,9 +9,7 @@ def test_register(client, app, utils):
         assert user is not None
 
 
-def test_login(client, app, db, utils):
-    with app.app_context():
-        upsert_user("test@test.de", "MeinPasswortIstDasBeste")
-        db.session.commit()
-
-    utils.login("test@test.de", "MeinPasswortIstDasBeste")
+def test_login(client, app, db, utils, seeder):
+    seeder.create_user("test@test.de", "MeinPasswortIstDasBeste")
+    user_id = utils.login("test@test.de", "MeinPasswortIstDasBeste")
+    assert user_id is not None

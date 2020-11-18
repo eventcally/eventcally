@@ -3,11 +3,19 @@ from flask_security import current_user
 from flask_security.utils import FsPermNeed
 from flask_principal import Permission
 from project.models import AdminUnitMember, AdminUnit
+from project.services.admin_unit import get_member_for_admin_unit_by_user_id
 
 
 def has_current_user_permission(permission):
     user_perm = Permission(FsPermNeed(permission))
     return user_perm.can()
+
+
+def has_admin_unit_member_role(admin_unit_member, role_name):
+    for role in admin_unit_member.roles:
+        if role.name == role_name:
+            return True
+    return False
 
 
 def has_admin_unit_member_permission(admin_unit_member, permission):
@@ -17,12 +25,22 @@ def has_admin_unit_member_permission(admin_unit_member, permission):
     return False
 
 
+def get_current_user_member_for_admin_unit(admin_unit_id):
+    return get_member_for_admin_unit_by_user_id(admin_unit_id, current_user.id)
+
+
 def has_current_user_member_permission_for_admin_unit(admin_unit_id, permission):
-    admin_unit_member = AdminUnitMember.query.filter_by(
-        admin_unit_id=admin_unit_id, user_id=current_user.id
-    ).first()
+    admin_unit_member = get_current_user_member_for_admin_unit(admin_unit_id)
     if admin_unit_member is not None:
         if has_admin_unit_member_permission(admin_unit_member, permission):
+            return True
+    return False
+
+
+def has_current_user_member_role_for_admin_unit(admin_unit_id, role_name):
+    admin_unit_member = get_current_user_member_for_admin_unit(admin_unit_id)
+    if admin_unit_member is not None:
+        if has_admin_unit_member_role(admin_unit_member, role_name):
             return True
     return False
 
@@ -35,6 +53,19 @@ def has_current_user_permission_for_admin_unit(admin_unit, permission):
         return True
 
     if has_current_user_member_permission_for_admin_unit(admin_unit.id, permission):
+        return True
+
+    return False
+
+
+def has_current_user_role_for_admin_unit(admin_unit, role_name):
+    if not current_user.is_authenticated:
+        return False
+
+    if current_user.has_role(role_name):
+        return True
+
+    if has_current_user_member_role_for_admin_unit(admin_unit.id, role_name):
         return True
 
     return False

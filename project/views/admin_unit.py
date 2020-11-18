@@ -6,14 +6,12 @@ from sqlalchemy.exc import SQLAlchemyError
 from project.access import get_admin_unit_for_manage_or_404, has_access
 from project.forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
 from project.views.utils import (
-    upsert_image_with_data,
     handleSqlError,
     permission_missing,
     flash_errors,
 )
-from project.models import AdminUnit, Location, EventOrganizer
-from project.services.admin_unit import add_user_to_admin_unit_with_roles
-from project.services.location import assign_location_values
+from project.models import AdminUnit, Location
+from project.services.admin_unit import insert_admin_unit_for_user
 
 
 def update_admin_unit_with_form(admin_unit, form):
@@ -31,33 +29,7 @@ def admin_unit_create():
         update_admin_unit_with_form(admin_unit, form)
 
         try:
-            db.session.add(admin_unit)
-
-            # Aktuellen Nutzer als Admin hinzufügen
-            add_user_to_admin_unit_with_roles(
-                current_user, admin_unit, ["admin", "event_verifier"]
-            )
-            db.session.commit()
-
-            # Organizer anlegen
-            organizer = EventOrganizer()
-            organizer.admin_unit_id = admin_unit.id
-            organizer.name = admin_unit.name
-            organizer.url = admin_unit.url
-            organizer.email = admin_unit.email
-            organizer.phone = admin_unit.phone
-            organizer.fax = admin_unit.fax
-            organizer.location = Location()
-            assign_location_values(organizer.location, admin_unit.location)
-            if admin_unit.logo:
-                organizer.logo = upsert_image_with_data(
-                    organizer.logo,
-                    admin_unit.logo.data,
-                    admin_unit.logo.encoding_format,
-                )
-            db.session.add(organizer)
-            db.session.commit()
-
+            insert_admin_unit_for_user(admin_unit, current_user)
             flash(gettext("Admin unit successfully created"), "success")
             return redirect(url_for("manage_admin_unit", id=admin_unit.id))
         except SQLAlchemyError as e:
