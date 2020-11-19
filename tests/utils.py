@@ -73,3 +73,11 @@ class UtilActions(object):
         mocked_commit.side_effect = IntegrityError(
             "MockException", "MockException", None
         )
+
+    def mock_send_mails(self, mocker):
+        return mocker.patch("project.views.utils.send_mails")
+
+    def assert_send_mail_called(self, mock, recipient):
+        mock.assert_called_once()
+        args, kwargs = mock.call_args
+        assert args[0] == [recipient]

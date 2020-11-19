@@ -3,11 +3,13 @@ from project.models import (
     AdminUnit,
     AdminUnitMember,
     AdminUnitMemberRole,
+    AdminUnitMemberInvitation,
     EventOrganizer,
     Location,
 )
 from project.services.location import assign_location_values
 from project.views.utils import upsert_image_with_data
+from sqlalchemy import and_
 
 
 def insert_admin_unit_for_user(admin_unit, user):
@@ -47,6 +49,25 @@ def get_admin_unit_by_name(unit_name):
 
 def get_admin_unit_member_role(role_name):
     return AdminUnitMemberRole.query.filter_by(name=role_name).first()
+
+
+def find_admin_unit_member_invitation(email, admin_unit_id):
+    return AdminUnitMemberInvitation.query.filter(
+        and_(
+            AdminUnitMemberInvitation.admin_unit_id == admin_unit_id,
+            AdminUnitMemberInvitation.email == email,
+        )
+    ).first()
+
+
+def insert_admin_unit_member_invitation(admin_unit_id, email, role_names):
+    invitation = AdminUnitMemberInvitation()
+    invitation.admin_unit_id = admin_unit_id
+    invitation.email = email
+    invitation.roles = ",".join(role_names)
+    db.session.add(invitation)
+    db.session.commit()
+    return invitation
 
 
 def upsert_admin_unit_member_role(role_name, role_title, permissions):
