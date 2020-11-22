@@ -26,7 +26,8 @@ from project.views.utils import (
 from project.utils import get_event_category_name
 from project.services.event import (
     upsert_event_category,
-    update_event_dates_with_recurrence_rule,
+    insert_event,
+    update_event,
 )
 from project.services.place import get_event_places
 from sqlalchemy.sql import func
@@ -112,7 +113,7 @@ def event_create_for_admin_unit_id(id):
                 event_suggestion.review_status = EventReviewStatus.verified
                 event_suggestion.rejection_resaon = None
 
-            db.session.add(event)
+            insert_event(event)
             db.session.commit()
 
             if event_suggestion:
@@ -148,6 +149,7 @@ def event_update(event_id):
         update_event_with_form(event, form)
 
         try:
+            update_event(event)
             db.session.commit()
             flash_message(
                 gettext("Event successfully updated"),
@@ -257,7 +259,6 @@ def update_event_with_form(event, form, event_suggestion=None):
     event.categories = EventCategory.query.filter(
         EventCategory.id.in_(form.category_ids.data)
     ).all()
-    update_event_dates_with_recurrence_rule(event, form.start.data, form.end.data)
 
 
 def get_user_rights(event):

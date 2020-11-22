@@ -125,9 +125,9 @@ def get_events_query(params):
     )
 
 
-def update_event_dates_with_recurrence_rule(event, start, end):
-    event.start = start
-    event.end = end
+def update_event_dates_with_recurrence_rule(event):
+    start = event.start
+    end = event.end
 
     if end:
         time_difference = relativedelta(end, start)
@@ -168,3 +168,12 @@ def update_event_dates_with_recurrence_rule(event, start, end):
 
     event.dates = [date for date in event.dates if date not in dates_to_remove]
     event.dates.extend(dates_to_add)
+
+
+def insert_event(event):
+    update_event_dates_with_recurrence_rule(event)
+    db.session.add(event)
+
+
+def update_event(event):
+    update_event_dates_with_recurrence_rule(event)

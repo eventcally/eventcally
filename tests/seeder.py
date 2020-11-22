@@ -51,5 +51,33 @@ class Seeder(object):
 
         return member_id
 
+    def create_invitation(self, admin_unit_id, email, role_names=["admin"]):
+        from project.services.admin_unit import insert_admin_unit_member_invitation
+
+        with self._app.app_context():
+            invitation = insert_admin_unit_member_invitation(
+                admin_unit_id, email, role_names
+            )
+            invitation_id = invitation.id
+
+        return invitation_id
+
     def create_admin_unit_member_event_verifier(self, admin_unit_id):
         return self.create_admin_unit_member(admin_unit_id, ["event_verifier"])
+
+    def create_event(self, admin_unit_id):
+        from project.models import Event
+        from project.services.event import insert_event, upsert_event_category
+        from project.dateutils import now
+
+        with self._app.app_context():
+            event = Event()
+            event.admin_unit_id = admin_unit_id
+            event.categories = [upsert_event_category("Other")]
+            event.name = "Name"
+            event.description = "Beschreibung"
+            event.start = now
+            insert_event(event)
+            self._db.session.commit()
+            event_id = event.id
+        return event_id

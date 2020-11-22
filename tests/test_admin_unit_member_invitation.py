@@ -65,24 +65,159 @@ def test_create_permission_missing(client, app, db, utils, seeder):
     assert response.status_code == 302
 
 
+def test_read_accept(client, app, db, utils, seeder):
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+
+    email = "new@member.de"
+    new_member_user_id = seeder.create_user(email)
+    utils.login(email)
+
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
+
+    url = "/invitations/%d" % invitation_id
+    response = client.get(url)
+    assert response.status_code == 200
+
+    with client:
+        response = client.post(
+            url,
+            data={
+                "csrf_token": utils.get_csrf(response),
+                "accept": "Akzeptieren",
+            },
+        )
+        assert response.status_code == 302
+        assert response.headers["Location"] == "http://localhost/manage"
+
+        with app.app_context():
+            from project.services.admin_unit import (
+                find_admin_unit_member_invitation,
+                get_member_for_admin_unit_by_user_id,
+            )
+
+            invitation = find_admin_unit_member_invitation(email, admin_unit_id)
+            assert invitation is None
+
+            member = get_member_for_admin_unit_by_user_id(
+                admin_unit_id, new_member_user_id
+            )
+            assert len(member.roles) == 1
+            assert any(r.name == "admin" for r in member.roles)
+
+
+def test_read_decline(client, app, db, utils, seeder):
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+
+    email = "new@member.de"
+    new_member_user_id = seeder.create_user(email)
+    utils.login(email)
+
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
+
+    url = "/invitations/%d" % invitation_id
+    response = client.get(url)
+    assert response.status_code == 200
+
+    with client:
+        response = client.post(
+            url,
+            data={
+                "csrf_token": utils.get_csrf(response),
+                "decline": "Ablehnen",
+            },
+        )
+        assert response.status_code == 302
+        assert response.headers["Location"] == "http://localhost/manage"
+
+        with app.app_context():
+            from project.services.admin_unit import (
+                find_admin_unit_member_invitation,
+                get_member_for_admin_unit_by_user_id,
+            )
+
+            invitation = find_admin_unit_member_invitation(email, admin_unit_id)
+            assert invitation is None
+
+            member = get_member_for_admin_unit_by_user_id(
+                admin_unit_id, new_member_user_id
+            )
+            assert member is None
+
+
+def test_read_db_error(client, app, utils, seeder, mocker):
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+
+    email = "new@member.de"
+    seeder.create_user(email)
+    utils.login(email)
+
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
+
+    url = "/invitations/%d" % invitation_id
+    response = client.get(url)
+    assert response.status_code == 200
+
+    with client:
+        utils.mock_db_commit(mocker)
+
+        response = client.post(
+            url,
+            data={
+                "csrf_token": utils.get_csrf(response),
+                "accept": "Akzeptieren",
+            },
+        )
+
+        assert response.status_code == 200
+        assert b"MockException" in response.data
+
+
 def test_read_new_member_not_registered(client, app, utils, seeder):
     seeder.create_user()
     user_id = utils.login()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
     email = "new@member.de"
 
-    with app.app_context():
-        from project.services.admin_unit import insert_admin_unit_member_invitation
-
-        invitation = insert_admin_unit_member_invitation(
-            admin_unit_id, email, ["admin"]
-        )
-        invitation_id = invitation.id
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
 
     url = "/invitations/%d" % invitation_id
     response = client.get(url)
     assert response.status_code == 302
     assert response.headers["Location"] == "http://localhost/register"
+
+
+def test_read_new_member_not_authenticated(client, app, utils, seeder):
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+
+    email = "new@member.de"
+    seeder.create_user(email)
+
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
+
+    url = "/invitations/%d" % invitation_id
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.headers["Location"].startswith("http://localhost/login")
+
+
+def test_read_currentUserDoesNotMatchInvitationEmail(client, app, db, utils, seeder):
+    user_id = seeder.create_user()
+    utils.login()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+
+    email = "new@member.de"
+    seeder.create_user(email)
+
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
+
+    url = "/invitations/%d" % invitation_id
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.headers["Location"] == "http://localhost/profile"
 
 
 def test_delete(client, app, utils, seeder):
@@ -91,13 +226,7 @@ def test_delete(client, app, utils, seeder):
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
     email = "new@member.de"
 
-    with app.app_context():
-        from project.services.admin_unit import insert_admin_unit_member_invitation
-
-        invitation = insert_admin_unit_member_invitation(
-            admin_unit_id, email, ["admin"]
-        )
-        invitation_id = invitation.id
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
 
     url = "/manage/invitation/%d/delete" % invitation_id
     response = client.get(url)
@@ -127,13 +256,7 @@ def test_delete_db_error(client, app, utils, seeder, mocker):
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
     email = "new@member.de"
 
-    with app.app_context():
-        from project.services.admin_unit import insert_admin_unit_member_invitation
-
-        invitation = insert_admin_unit_member_invitation(
-            admin_unit_id, email, ["admin"]
-        )
-        invitation_id = invitation.id
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
 
     url = "/manage/invitation/%d/delete" % invitation_id
     response = client.get(url)
@@ -161,13 +284,7 @@ def test_delete_email_does_not_match(client, app, utils, seeder):
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
     email = "new@member.de"
 
-    with app.app_context():
-        from project.services.admin_unit import insert_admin_unit_member_invitation
-
-        invitation = insert_admin_unit_member_invitation(
-            admin_unit_id, email, ["admin"]
-        )
-        invitation_id = invitation.id
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
 
     url = "/manage/invitation/%d/delete" % invitation_id
     response = client.get(url)
@@ -193,13 +310,7 @@ def test_delete_permission_missing(client, app, db, utils, seeder):
     seeder.create_admin_unit_member_event_verifier(admin_unit_id)
     utils.login()
 
-    with app.app_context():
-        from project.services.admin_unit import insert_admin_unit_member_invitation
-
-        invitation = insert_admin_unit_member_invitation(
-            admin_unit_id, email, ["admin"]
-        )
-        invitation_id = invitation.id
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
 
     url = "/manage/invitation/%d/delete" % invitation_id
 
