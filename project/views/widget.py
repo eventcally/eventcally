@@ -13,6 +13,7 @@ from flask_babelex import gettext
 from flask_security import current_user
 from sqlalchemy.sql import func
 from sqlalchemy.exc import SQLAlchemyError
+from project.services.event_suggestion import insert_event_suggestion
 from project.services.event import get_event_dates_query
 from project.services.event_search import EventSearchParams
 from project.services.place import get_event_places
@@ -127,7 +128,7 @@ def event_suggestion_create_for_admin_unit(au_short_name):
         event_suggestion.review_status = EventReviewStatus.inbox
 
         try:
-            db.session.add(event_suggestion)
+            insert_event_suggestion(event_suggestion)
             db.session.commit()
 
             send_event_inbox_mails(admin_unit, event_suggestion)

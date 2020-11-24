@@ -128,3 +128,23 @@ class Seeder(object):
             self._db.session.commit()
             event_id = event.id
         return event_id
+
+    def create_event_suggestion(self, admin_unit_id):
+        from project.models import EventSuggestion
+        from project.services.event_suggestion import insert_event_suggestion
+        from project.dateutils import now
+
+        with self._app.app_context():
+            suggestion = EventSuggestion()
+            suggestion.admin_unit_id = admin_unit_id
+            suggestion.contact_name = "Vorname Nachname"
+            suggestion.contact_email = "vorname@nachname.de"
+            suggestion.name = "Vorschlag"
+            suggestion.description = "Beschreibung"
+            suggestion.start = now
+            suggestion.event_place_id = self.upsert_default_event_place(admin_unit_id)
+            suggestion.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
+            insert_event_suggestion(suggestion)
+            self._db.session.commit()
+            suggestion_id = suggestion.id
+        return suggestion_id

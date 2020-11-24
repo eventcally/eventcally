@@ -109,3 +109,7 @@ class UtilActions(object):
 
         redirect_url = "http://localhost" + self.get_url(endpoint, **values)
         assert response.headers["Location"] == redirect_url
+
+    def assert_response_db_error(self, response):
+        assert response.status_code == 200
+        assert b"MockException" in response.data
