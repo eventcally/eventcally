@@ -1,7 +1,14 @@
 class Seeder(object):
-    def __init__(self, app, db):
+    def __init__(self, app, db, utils):
         self._app = app
         self._db = db
+        self._utils = utils
+
+    def setup_base(self):
+        user_id = self.create_user()
+        self._utils.login()
+        admin_unit_id = self.create_admin_unit(user_id, "Meine Crew")
+        return (user_id, admin_unit_id)
 
     def create_user(
         self, email="test@test.de", password="MeinPasswortIstDasBeste", admin=False
@@ -65,6 +72,44 @@ class Seeder(object):
     def create_admin_unit_member_event_verifier(self, admin_unit_id):
         return self.create_admin_unit_member(admin_unit_id, ["event_verifier"])
 
+    def upsert_event_place(self, admin_unit_id, name):
+        from project.services.place import upsert_event_place
+
+        with self._app.app_context():
+            place = upsert_event_place(admin_unit_id, name)
+            self._db.session.commit()
+            place_id = place.id
+
+        return place_id
+
+    def upsert_default_event_place(self, admin_unit_id):
+        from project.services.admin_unit import get_admin_unit_by_id
+
+        with self._app.app_context():
+            admin_unit = get_admin_unit_by_id(admin_unit_id)
+            place_id = self.upsert_event_place(admin_unit_id, admin_unit.name)
+
+        return place_id
+
+    def upsert_event_organizer(self, admin_unit_id, name):
+        from project.services.organizer import upsert_event_organizer
+
+        with self._app.app_context():
+            organizer = upsert_event_organizer(admin_unit_id, name)
+            self._db.session.commit()
+            organizer_id = organizer.id
+
+        return organizer_id
+
+    def upsert_default_event_organizer(self, admin_unit_id):
+        from project.services.admin_unit import get_admin_unit_by_id
+
+        with self._app.app_context():
+            admin_unit = get_admin_unit_by_id(admin_unit_id)
+            organizer_id = self.upsert_event_organizer(admin_unit_id, admin_unit.name)
+
+        return organizer_id
+
     def create_event(self, admin_unit_id):
         from project.models import Event
         from project.services.event import insert_event, upsert_event_category
@@ -77,6 +122,8 @@ class Seeder(object):
             event.name = "Name"
             event.description = "Beschreibung"
             event.start = now
+            event.event_place_id = self.upsert_default_event_place(admin_unit_id)
+            event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
             insert_event(event)
             self._db.session.commit()
             event_id = event.id

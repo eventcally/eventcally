@@ -1,6 +1,7 @@
 import re
-from flask import g
+from flask import g, url_for
 from sqlalchemy.exc import IntegrityError
+from bs4 import BeautifulSoup
 
 
 class UtilActions(object):
@@ -68,6 +69,17 @@ class UtilActions(object):
             re.search(pattern.encode("utf-8"), response.data).group(1).decode("utf-8")
         )
 
+    def create_form_data(self, response, values: dict) -> dict:
+        from project.scrape.form import Form
+
+        soup = BeautifulSoup(response.data, "html.parser")
+        form = Form(soup.find("form"))
+        return form.fill(values)
+
+    def post_form(self, url, response, values: dict):
+        data = self.create_form_data(response, values)
+        return self._client.post(url, data=data)
+
     def mock_db_commit(self, mocker):
         mocked_commit = mocker.patch("project.db.session.commit")
         mocked_commit.side_effect = IntegrityError(
@@ -81,3 +93,19 @@ class UtilActions(object):
         mock.assert_called_once()
         args, kwargs = mock.call_args
         assert args[0] == [recipient]
+
+    def get_url(self, endpoint, **values):
+        with self._app.test_request_context():
+            url = url_for(endpoint, **values, _external=False)
+        return url
+
+    def get_ok(self, url):
+        response = self._client.get(url)
+        assert response.status_code == 200
+        return response
+
+    def assert_response_redirect(self, response, endpoint, **values):
+        assert response.status_code == 302
+
+        redirect_url = "http://localhost" + self.get_url(endpoint, **values)
+        assert response.headers["Location"] == redirect_url

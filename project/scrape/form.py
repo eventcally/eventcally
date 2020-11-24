@@ -36,6 +36,8 @@ class Form:
                     field_value = selected_values
                 elif len(selected_values) > 0:
                     field_value = selected_values[0]
+            elif field.name == "textarea":
+                field_value = field.text.strip()
 
             self.fields.add(name, (field, field_value))
 

@@ -42,5 +42,5 @@ def utils(client, app):
 
 
 @pytest.fixture
-def seeder(app, db):
-    return Seeder(app, db)
+def seeder(app, db, utils):
+    return Seeder(app, db, utils)

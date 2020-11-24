@@ -1,55 +1,67 @@
-def test_read(client, seeder):
-    user_id = seeder.create_user()
-    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+def test_read(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
 
-    url = "/event/%d" % event_id
-    response = client.get(url)
-    assert response.status_code == 200
+    url = utils.get_url("event", event_id=event_id)
+    utils.get_ok(url)
+
+
+def create_data(place_id: int, organizer_id: int) -> dict:
+    return {
+        "name": "Name",
+        "description": "Beschreibung",
+        "start": ["2030-12-31", "23", "59"],
+        "event_place_id": place_id,
+        "organizer_id": organizer_id,
+    }
 
 
 def test_create(client, app, utils, seeder, mocker):
-    user_id = seeder.create_user()
-    utils.login()
-    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = "/admin_unit/%d/events/create" % admin_unit_id
-    response = client.get(url)
-    assert response.status_code == 200
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get_ok(url)
 
-    with client:
-        from project.scrape.form import Form
-        from bs4 import BeautifulSoup
+    response = utils.post_form(url, response, create_data(place_id, organizer_id))
+    utils.assert_response_redirect(
+        response, "manage_admin_unit_events", id=admin_unit_id
+    )
 
-        soup = BeautifulSoup(response.data, "html.parser")
-        form = Form(soup.find("form"))
-        data = form.fill(
-            {
-                "name": "Name",
-                "description": "Beschreibung",
-                "start": ["2030-12-31", "23", "59"],
-                "event_place_choice": "2",
-                "new_event_place-name": "Platz",
-                "organizer_id": "1",
-            }
+    with app.app_context():
+        from project.models import Event
+
+        event = (
+            Event.query.filter(Event.admin_unit_id == admin_unit_id)
+            .filter(Event.name == "Name")
+            .first()
         )
+        assert event is not None
 
-        response = client.post(
-            url,
-            data=data,
+
+def test_duplicate(client, app, utils, seeder, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+    template_event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url(
+        "event_create_for_admin_unit_id",
+        id=admin_unit_id,
+        template_id=template_event_id,
+    )
+    response = utils.get_ok(url)
+
+    response = utils.post_form(url, response, {})
+    utils.assert_response_redirect(
+        response, "manage_admin_unit_events", id=admin_unit_id
+    )
+
+    with app.app_context():
+        from project.models import Event
+
+        events = (
+            Event.query.filter(Event.admin_unit_id == admin_unit_id)
+            .filter(Event.name == "Name")
+            .all()
         )
-        assert response.status_code == 302
-        assert (
-            response.headers["Location"]
-            == "http://localhost/manage/admin_unit/%d/events" % admin_unit_id
-        )
-
-        with app.app_context():
-            from project.models import Event
-
-            event = (
-                Event.query.filter(Event.admin_unit_id == admin_unit_id)
-                .filter(Event.name == "Name")
-                .first()
-            )
-            assert event is not None
+        assert len(events) == 2
