@@ -80,6 +80,11 @@ class UtilActions(object):
         data = self.create_form_data(response, values)
         return self._client.post(url, data=data)
 
+    def post_json(self, url, data: dict):
+        response = self._client.post(url, json=data)
+        assert response.content_type == "application/json"
+        return response.json
+
     def mock_db_commit(self, mocker):
         mocked_commit = mocker.patch("project.db.session.commit")
         mocked_commit.side_effect = IntegrityError(
@@ -113,3 +118,7 @@ class UtilActions(object):
     def assert_response_db_error(self, response):
         assert response.status_code == 200
         assert b"MockException" in response.data
+
+    def assert_response_error_message(self, response, error_message):
+        assert response.status_code == 200
+        assert error_message in response.data

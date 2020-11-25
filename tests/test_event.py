@@ -1,3 +1,6 @@
+import pytest
+
+
 def test_read(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
@@ -176,3 +179,119 @@ def test_create_verifiedSuggestionRedirectsToReviewStatus(
     utils.assert_response_redirect(
         response, "event_suggestion_review_status", event_suggestion_id=suggestion_id
     )
+
+
+@pytest.mark.parametrize("db_error", [True, False])
+def test_update(client, seeder, utils, app, mocker, db_error):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("event_update", event_id=event_id)
+    response = utils.get_ok(url)
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Neuer Name",
+        },
+    )
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
+    utils.assert_response_redirect(
+        response, "manage_admin_unit_events", id=admin_unit_id
+    )
+
+    with app.app_context():
+        from project.models import Event
+
+        event = (
+            Event.query.filter(Event.admin_unit_id == admin_unit_id)
+            .filter(Event.name == "Neuer Name")
+            .first()
+        )
+        assert event is not None
+
+
+@pytest.mark.parametrize("db_error", [True, False])
+def test_delete(client, seeder, utils, app, mocker, db_error):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("event_delete", event_id=event_id)
+    response = utils.get_ok(url)
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+        },
+    )
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
+    utils.assert_response_redirect(
+        response, "manage_admin_unit_events", id=admin_unit_id
+    )
+
+    with app.app_context():
+        from project.models import Event
+
+        event = (
+            Event.query.filter(Event.admin_unit_id == admin_unit_id)
+            .filter(Event.name == "Name")
+            .first()
+        )
+        assert event is None
+
+
+def test_delete_nameDoesNotMatch(client, seeder, utils, app, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("event_delete", event_id=event_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Falscher Name",
+        },
+    )
+
+    utils.assert_response_error_message(
+        response, b"Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
+    )
+
+
+def test_rrule(client, seeder, utils, app):
+    url = utils.get_url("event_rrule")
+    json = utils.post_json(
+        url,
+        {
+            "year": 2020,
+            "month": 11,
+            "day": 25,
+            "rrule": "RRULE:FREQ=DAILY;COUNT=7",
+            "start": 0,
+        },
+    )
+
+    assert json["batch"]["batch_size"] == 10
+
+    occurence = json["occurrences"][0]
+    assert occurence["date"] == "20201125T000000"
+    assert occurence["formattedDate"] == '"25.11.2020"'
