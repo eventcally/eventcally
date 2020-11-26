@@ -1,4 +1,4 @@
-from project.models import Image, Analytics
+from project.models import Analytics
 from project import db, mail
 from flask_babelex import gettext
 from flask import request, url_for, render_template, flash, redirect, Markup
@@ -25,16 +25,6 @@ def handleSqlError(e: SQLAlchemyError) -> str:
         message = str(e)
     print(message)
     return message
-
-
-def upsert_image_with_data(image, data, encoding_format="image/jpeg"):
-    if image is None:
-        image = Image()
-
-    image.data = data
-    image.encoding_format = encoding_format
-
-    return image
 
 
 def get_pagination_urls(pagination, **kwargs):

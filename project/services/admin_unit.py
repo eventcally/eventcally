@@ -8,7 +8,7 @@ from project.models import (
     Location,
 )
 from project.services.location import assign_location_values
-from project.views.utils import upsert_image_with_data
+from project.services.image import upsert_image_with_data
 from sqlalchemy import and_
 
 

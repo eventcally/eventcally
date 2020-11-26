@@ -125,9 +125,10 @@ def test_duplicate(client, app, utils, seeder, mocker):
         assert len(events) == 2
 
 
-def test_create_fromSuggestion(client, app, utils, seeder, mocker):
+@pytest.mark.parametrize("free_text", [True, False])
+def test_create_fromSuggestion(client, app, utils, seeder, mocker, free_text):
     user_id, admin_unit_id = seeder.setup_base()
-    suggestion_id = seeder.create_event_suggestion(admin_unit_id)
+    suggestion_id = seeder.create_event_suggestion(admin_unit_id, free_text)
 
     url = utils.get_url(
         "event_create_for_admin_unit_id",
