@@ -151,6 +151,7 @@ class Seeder(object):
             suggestion.admin_unit_id = admin_unit_id
             suggestion.contact_name = "Vorname Nachname"
             suggestion.contact_email = "vorname@nachname.de"
+            suggestion.contact_email_notice = True
             suggestion.name = "Vorschlag"
             suggestion.description = "Beschreibung"
             suggestion.start = now

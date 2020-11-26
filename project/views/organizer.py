@@ -40,6 +40,8 @@ def manage_admin_unit_organizer_create(id):
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
     return render_template("organizer/create.html", form=form)
 
 
@@ -63,6 +65,8 @@ def organizer_update(id):
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
 
     return render_template("organizer/update.html", form=form, organizer=organizer)
 
