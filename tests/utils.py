@@ -106,8 +106,17 @@ class UtilActions(object):
 
     def get_ok(self, url):
         response = self._client.get(url)
-        assert response.status_code == 200
+        self.assert_response_ok(response)
         return response
+
+    def assert_response_ok(self, response):
+        assert response.status_code == 200
+
+    def get_endpoint(self, endpoint, **values):
+        return self._client.get(self.get_url(endpoint, **values))
+
+    def get_endpoint_ok(self, endpoint, **values):
+        return self.get_ok(self.get_url(endpoint, **values))
 
     def assert_response_redirect(self, response, endpoint, **values):
         assert response.status_code == 302
@@ -122,3 +131,6 @@ class UtilActions(object):
     def assert_response_error_message(self, response, error_message):
         assert response.status_code == 200
         assert error_message in response.data
+
+    def assert_response_permission_missing(self, response, endpoint, **values):
+        self.assert_response_redirect(response, endpoint, **values)

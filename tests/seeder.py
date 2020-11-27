@@ -10,6 +10,13 @@ class Seeder(object):
         admin_unit_id = self.create_admin_unit(user_id, "Meine Crew")
         return (user_id, admin_unit_id)
 
+    def setup_base_event_verifier(self):
+        owner_id = self.create_user("owner@owner")
+        admin_unit_id = self.create_admin_unit(owner_id, "Other crew")
+        member_id = self.create_admin_unit_member_event_verifier(admin_unit_id)
+        self._utils.login()
+        return (owner_id, admin_unit_id, member_id)
+
     def create_user(
         self, email="test@test.de", password="MeinPasswortIstDasBeste", admin=False
     ):
@@ -35,6 +42,7 @@ class Seeder(object):
             user = get_user(user_id)
             admin_unit = AdminUnit()
             admin_unit.name = name
+            admin_unit.short_name = name.lower().replace(" ", "")
             insert_admin_unit_for_user(admin_unit, user)
             self._db.session.commit()
             admin_unit_id = admin_unit.id
