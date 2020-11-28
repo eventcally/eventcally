@@ -179,3 +179,45 @@ class Seeder(object):
             self._db.session.commit()
             suggestion_id = suggestion.id
         return suggestion_id
+
+    def create_reference(self, event_id, admin_unit_id):
+        from project.models import EventReference
+
+        with self._app.app_context():
+            reference = EventReference()
+            reference.event_id = event_id
+            reference.admin_unit_id = admin_unit_id
+            self._db.session.add(reference)
+            self._db.session.commit()
+            reference_id = reference.id
+        return reference_id
+
+    def create_any_reference(self, admin_unit_id):
+        other_user_id = self.create_user("other@test.de")
+        other_admin_unit_id = self.create_admin_unit(other_user_id, "Other Crew")
+        event_id = self.create_event(other_admin_unit_id)
+        reference_id = self.create_reference(event_id, admin_unit_id)
+        return (other_user_id, other_admin_unit_id, event_id, reference_id)
+
+    def create_reference_request(self, event_id, admin_unit_id):
+        from project.models import (
+            EventReferenceRequest,
+            EventReferenceRequestReviewStatus,
+        )
+
+        with self._app.app_context():
+            reference_request = EventReferenceRequest()
+            reference_request.event_id = event_id
+            reference_request.admin_unit_id = admin_unit_id
+            reference_request.review_status = EventReferenceRequestReviewStatus.inbox
+            self._db.session.add(reference_request)
+            self._db.session.commit()
+            reference_request_id = reference_request.id
+        return reference_request_id
+
+    def create_incoming_reference_request(self, admin_unit_id):
+        other_user_id = self.create_user("other@test.de")
+        other_admin_unit_id = self.create_admin_unit(other_user_id, "Other Crew")
+        event_id = self.create_event(other_admin_unit_id)
+        reference_request_id = self.create_reference_request(event_id, admin_unit_id)
+        return (other_user_id, other_admin_unit_id, event_id, reference_request_id)
