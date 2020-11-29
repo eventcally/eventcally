@@ -80,6 +80,7 @@ def send_mails(recipients, subject, template, **context):
     msg.html = render_template("email/%s.html" % template, **context)
 
     if not mail.default_sender:
+        print(",".join(msg.recipients))
         print(msg.subject)
         print(msg.body)
         return
