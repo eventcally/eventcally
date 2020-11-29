@@ -109,7 +109,8 @@ class Form:
 
         # Override any form values with our input
         for key, value in values.items():
-            filled.pop(key)
+            if key in filled:
+                filled.pop(key)
             if type(value) is list:
                 filled.setlist(key, value)
             else:
