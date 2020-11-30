@@ -16,6 +16,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         response,
         {
             "name": "Neuer Organisator",
+            "logo-image_file": seeder.get_default_image_upload(),
         },
     )
 
@@ -54,6 +55,7 @@ def test_update(client, seeder, utils, app, mocker, db_error):
         response,
         {
             "name": "Neuer Name",
+            "logo-delete_flag": "y",
         },
     )
 

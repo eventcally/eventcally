@@ -10,6 +10,7 @@ class Form:
         self.form = form
         self._action = form.get("action", "")
         self._method = form.get("method", "GET")
+        self._enctype = form.get("enctype", "")
 
         self.fields = MultiDict()
         self.buttons = {}
@@ -106,6 +107,9 @@ class Form:
                 filled.setlist(form_name, default_value)
             else:
                 filled.add(form_name, default_value)
+
+        if self._enctype:
+            filled.add("content_type", self._enctype)
 
         # Override any form values with our input
         for key, value in values.items():

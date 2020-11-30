@@ -9,17 +9,8 @@ def test_read(client, seeder, utils):
     utils.get_ok(url)
 
 
-def create_data(place_id: int, organizer_id: int) -> dict:
-    return {
-        "name": "Name",
-        "description": "Beschreibung",
-        "start": ["2030-12-31", "23", "59"],
-        "event_place_id": place_id,
-        "organizer_id": organizer_id,
-    }
-
-
-def test_create(client, app, utils, seeder, mocker):
+@pytest.mark.parametrize("db_error", [True, False])
+def test_create(client, app, utils, seeder, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
@@ -27,11 +18,26 @@ def test_create(client, app, utils, seeder, mocker):
     url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
     response = utils.get_ok(url)
 
+    if db_error:
+        utils.mock_db_commit(mocker)
+
     response = utils.post_form(
         url,
         response,
-        create_data(place_id, organizer_id),
+        {
+            "name": "Name",
+            "description": "Beschreibung",
+            "start": ["2030-12-31", "23", "59"],
+            "event_place_id": place_id,
+            "organizer_id": organizer_id,
+            "photo-image_base64": seeder.get_default_image_upload_base64(),
+        },
     )
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
     utils.assert_response_redirect(
         response, "manage_admin_unit_events", id=admin_unit_id
     )
@@ -45,23 +51,6 @@ def test_create(client, app, utils, seeder, mocker):
             .first()
         )
         assert event is not None
-
-
-def test_create_dbError(client, app, utils, seeder, mocker):
-    user_id, admin_unit_id = seeder.setup_base()
-    place_id = seeder.upsert_default_event_place(admin_unit_id)
-    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
-
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
-    response = utils.get_ok(url)
-
-    utils.mock_db_commit(mocker)
-    response = utils.post_form(
-        url,
-        response,
-        create_data(place_id, organizer_id),
-    )
-    utils.assert_response_db_error(response)
 
 
 def test_create_newPlaceAndOrganizer(client, app, utils, seeder, mocker):
@@ -96,6 +85,84 @@ def test_create_newPlaceAndOrganizer(client, app, utils, seeder, mocker):
             .first()
         )
         assert event is not None
+
+
+def test_create_missingName(client, app, utils, seeder, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {},
+    )
+
+    utils.assert_response_error_message(response)
+
+
+def test_create_missingPlace(client, app, utils, seeder, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "description": "Beschreibung",
+            "start": ["2030-12-31", "23", "59"],
+        },
+    )
+
+    utils.assert_response_error_message(response)
+
+
+def test_create_missingOrganizer(client, app, utils, seeder, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "description": "Beschreibung",
+            "start": ["31.12.2030", "23", "59"],
+            "event_place_id": place_id,
+            "organizer_id": organizer_id,
+        },
+    )
+
+    utils.assert_response_error_message(response)
+
+
+def test_create_invalidDateFormat(client, app, utils, seeder, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "description": "Beschreibung",
+            "start": ["2030-12-31", "23", "59"],
+            "event_place_id": place_id,
+        },
+    )
+
+    utils.assert_response_error_message(response)
 
 
 def test_duplicate(client, app, utils, seeder, mocker):

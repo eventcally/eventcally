@@ -42,7 +42,26 @@ def test_admin_unit_event_reviews(client, seeder, utils):
 def test_admin_unit_events(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
 
-    utils.get_endpoint_ok("manage_admin_unit_events", id=admin_unit_id)
+    utils.get_endpoint_ok(
+        "manage_admin_unit_events",
+        id=admin_unit_id,
+        date_from="2020-10-03",
+        date_to="2021-10-03",
+    )
+
+
+def test_admin_unit_events_invalidDateFormat(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    utils.get_endpoint_ok(
+        "manage_admin_unit_events",
+        id=admin_unit_id,
+        date_from="03.10.2020",
+        date_to="2021-10-03",
+    )
+    utils.get_endpoint_ok(
+        "manage_admin_unit_events", id=admin_unit_id, date_from="", date_to=""
+    )
 
 
 def test_admin_unit_organizers(client, seeder, utils):

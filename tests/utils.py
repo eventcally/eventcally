@@ -128,7 +128,7 @@ class UtilActions(object):
         assert response.status_code == 200
         assert b"MockException" in response.data
 
-    def assert_response_error_message(self, response, error_message):
+    def assert_response_error_message(self, response, error_message=b"alert-danger"):
         assert response.status_code == 200
         assert error_message in response.data
 
