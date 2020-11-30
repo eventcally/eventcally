@@ -120,5 +120,5 @@ from project.views import (
     widget,
 )
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     app.run()

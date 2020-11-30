@@ -104,7 +104,7 @@ def add_roles_to_admin_unit_member(member, role_names):
     for role_name in role_names:
         role = get_admin_unit_member_role(role_name)
         if not role:
-            raise ValueError("Role %s does not exist" % role_name)
+            continue
         add_role_to_admin_unit_member(member, role)
 
 

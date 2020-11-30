@@ -106,6 +106,31 @@ def test_read_accept(client, app, db, utils, seeder):
             assert any(r.name == "admin" for r in member.roles)
 
 
+def test_read_accept_WrongRole(client, app, db, utils, seeder):
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+
+    email = "new@member.de"
+    seeder.create_user(email)
+    utils.login(email)
+
+    invitation_id = seeder.create_invitation(admin_unit_id, email, ["wrongrole"])
+
+    url = "/invitations/%d" % invitation_id
+    response = client.get(url)
+    assert response.status_code == 200
+
+    with client:
+        response = client.post(
+            url,
+            data={
+                "csrf_token": utils.get_csrf(response),
+                "accept": "Akzeptieren",
+            },
+        )
+        utils.assert_response_redirect(response, "manage")
+
+
 def test_read_decline(client, app, db, utils, seeder):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")

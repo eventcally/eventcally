@@ -11,15 +11,18 @@ def create_form_data(response, utils):
     }
 
 
-def test_create(client, app, utils):
+def test_create(client, app, utils, seeder):
     utils.register()
     response = client.get("/admin_unit/create")
     assert response.status_code == 200
 
+    data = create_form_data(response, utils)
+    data["logo-image_file"] = seeder.get_default_image_upload()
+
     with client:
         response = client.post(
             "/admin_unit/create",
-            data=create_form_data(response, utils),
+            data=data,
         )
         assert response.status_code == 302
 
