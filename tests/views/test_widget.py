@@ -9,10 +9,30 @@ def test_event_dates(client, seeder, utils):
     url = utils.get_url("widget_event_dates", au_short_name=au_short_name)
     utils.get_ok(url)
 
-    url = utils.get_url("event_dates", au_short_name=au_short_name, keyword="name")
+    url = utils.get_url(
+        "widget_event_dates", au_short_name=au_short_name, keyword="name"
+    )
     utils.get_ok(url)
 
-    url = utils.get_url("event_dates", au_short_name=au_short_name, category_id=2000)
+    url = utils.get_url(
+        "widget_event_dates", au_short_name=au_short_name, category_id=1
+    )
+    utils.get_ok(url)
+
+    url = utils.get_url(
+        "widget_event_dates",
+        au_short_name=au_short_name,
+        coordinate="51.9077888,10.4333312",
+        distance=500,
+    )
+    utils.get_ok(url)
+
+    url = utils.get_url(
+        "widget_event_dates",
+        au_short_name=au_short_name,
+        date_from="2020-10-03",
+        date_to="2021-10-03",
+    )
     utils.get_ok(url)
 
 
@@ -42,6 +62,12 @@ def test_infoscreen(client, seeder, utils):
     au_short_name = "meinecrew"
 
     url = utils.get_url("widget_infoscreen", au_short_name=au_short_name)
+    utils.get_ok(url)
+
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+    url = utils.get_url(
+        "widget_infoscreen", au_short_name=au_short_name, organizer_id=organizer_id
+    )
     utils.get_ok(url)
 
 

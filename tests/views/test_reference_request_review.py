@@ -62,10 +62,7 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
         )
 
         reference_request = EventReferenceRequest.query.get(reference_request_id)
-        assert (
-            reference_request.review_status
-            == EventReferenceRequestReviewStatus.verified
-        )
+        assert reference_request.verified
 
         reference = EventReference.query.get(reference_request_id)
         assert reference.event_id == event_id

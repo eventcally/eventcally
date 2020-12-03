@@ -84,11 +84,8 @@ def get_event_dates_query(params):
         date_filter = and_(date_filter, EventDate.start < params.date_to)
 
     # PostgreSQL specific https://stackoverflow.com/a/25597632
-    if params.weekday:
-        if type(params.weekday) is list:
-            weekdays = params.weekday
-        else:
-            weekdays = [params.weekday]
+    if params.weekday and type(params.weekday) is list:
+        weekdays = params.weekday
         date_filter = and_(date_filter, extract("dow", EventDate.start).in_(weekdays))
 
     return (

@@ -53,7 +53,7 @@ class Form:
         if self.buttons:
             return next(iter(self.buttons.keys()))
 
-    def get_action(self, button=None, relative_to=""):
+    def get_action(self, button=None, relative_to=""):  # pragma: no cover
         # Get default submit button if none specified
         if button is None:
             button = self._get_default_button()
@@ -63,7 +63,7 @@ class Form:
         action = action or self._action
         return urllib.parse.urljoin(relative_to, action)
 
-    def get_method(self, button=None):
+    def get_method(self, button=None):  # pragma: no cover
         if button is None:
             button = self._get_default_button()
 
@@ -75,7 +75,7 @@ class Form:
 
         for form_name, (field, default_value) in self.fields.items(multi=True):
             # Skip disabled fields
-            if field.has_attr("disabled"):
+            if field.has_attr("disabled"):  # pragma: no cover
                 continue
 
             # Skip buttons that are not the submit button
@@ -83,7 +83,7 @@ class Form:
                 field.name == "input"
                 and field.get("type") in ("submit", "image", "reset", "button")
             )
-            if is_button and form_name != button:
+            if is_button and form_name != button:  # pragma: no cover
                 continue
 
             # Skip radio buttons and checkboxes that are not checked
@@ -95,7 +95,7 @@ class Form:
                 continue
 
             # Add the default value
-            if default_value is None:
+            if default_value is None:  # pragma: no cover
                 if is_button:
                     default_value = "Submit"
                 elif is_radio_or_checkbox:
@@ -121,7 +121,7 @@ class Form:
                 filled.add(key, value)
         return filled
 
-    def fill(self, *args):
+    def fill(self, *args):  # pragma: no cover
         if len(args) == 0:
             return self._fill_impl(self._get_default_button(), {})
         elif len(args) == 1:
