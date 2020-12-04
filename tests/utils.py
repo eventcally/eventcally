@@ -120,6 +120,9 @@ class UtilActions(object):
     def assert_response_unauthorized(self, response):
         assert response.status_code == 401
 
+    def assert_response_notFound(self, response):
+        assert response.status_code == 404
+
     def get_endpoint(self, endpoint, **values):
         return self._client.get(self.get_url(endpoint, **values))
 

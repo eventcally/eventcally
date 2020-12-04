@@ -67,42 +67,8 @@ def access_or_401(admin_unit, permission):
         abort(401)
 
 
-def can_list_admin_unit_members(admin_unit):
-    return has_current_user_permission_for_admin_unit(
-        admin_unit, "admin_unit.members:read"
-    )
-
-
-def can_create_event(admin_unit):
-    return has_current_user_permission_for_admin_unit(admin_unit, "event:create")
-
-
-def can_update_event(event):
-    return has_current_user_permission_for_admin_unit(event.admin_unit, "event:update")
-
-
-def can_delete_event(event):
-    return has_current_user_permission_for_admin_unit(event.admin_unit, "event:delete")
-
-
 def can_reference_event(event):
     return len(get_admin_units_for_event_reference(event)) > 0
-
-
-def can_update_organizer(organizer):
-    return get_admin_unit_for_manage(organizer.admin_unit_id) is not None
-
-
-def can_create_admin_unit():
-    return current_user.is_authenticated
-
-
-def can_verify_event_for_admin_unit(admin_unit):
-    return has_current_user_permission_for_admin_unit(admin_unit, "event:verify")
-
-
-def can_verify_event(event):
-    return can_verify_event_for_admin_unit(event.admin_unit)
 
 
 def get_admin_units_with_current_user_permission(permission):

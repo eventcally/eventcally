@@ -1,3 +1,6 @@
+import pytest
+
+
 def test_get_sd_for_admin_unit(client, app, db, seeder):
     user_id, admin_unit_id = seeder.setup_base()
 
@@ -130,3 +133,98 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         assert result["url"][1] == "www.goslar.de"
         assert result["url"][2] == "www.tickets.de"
         assert result["image"] == utils.get_url("image", id=photo.id)
+
+
+@pytest.mark.parametrize(
+    "age_from, age_to, typicalAgeRange",
+    [(18, None, "18-"), (None, 14, "-14"), (9, 99, "9-99")],
+)
+def test_get_sd_for_event_date_ageRange(
+    client, app, db, seeder, utils, age_from, age_to, typicalAgeRange
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.jsonld import get_sd_for_event_date
+        from project.models import Event
+        from project.services.event import update_event
+
+        event = Event.query.get(event_id)
+        event.age_from = age_from
+        event.age_to = age_to
+
+        update_event(event)
+        db.session.commit()
+        event_date = event.dates[0]
+
+        with app.test_request_context():
+            result = get_sd_for_event_date(event_date)
+
+        assert result["typicalAgeRange"] == typicalAgeRange
+
+
+@pytest.mark.parametrize(
+    "attendance_mode, eventAttendanceMode",
+    [
+        (1, "OfflineEventAttendanceMode"),
+        (2, "OnlineEventAttendanceMode"),
+        (3, "MixedEventAttendanceMode"),
+    ],
+)
+def test_get_sd_for_event_date_eventAttendanceMode(
+    client, app, db, seeder, utils, attendance_mode, eventAttendanceMode
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.jsonld import get_sd_for_event_date
+        from project.models import Event, EventAttendanceMode
+        from project.services.event import update_event
+
+        event = Event.query.get(event_id)
+        event.attendance_mode = EventAttendanceMode(attendance_mode)
+
+        update_event(event)
+        db.session.commit()
+        event_date = event.dates[0]
+
+        with app.test_request_context():
+            result = get_sd_for_event_date(event_date)
+
+        assert result["eventAttendanceMode"] == eventAttendanceMode
+
+
+@pytest.mark.parametrize(
+    "status, eventStatus",
+    [
+        (1, "EventScheduled"),
+        (2, "EventCancelled"),
+        (3, "EventMovedOnline"),
+        (4, "EventPostponed"),
+        (5, "EventRescheduled"),
+    ],
+)
+def test_get_sd_for_event_date_eventStatus(
+    client, app, db, seeder, utils, status, eventStatus
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.jsonld import get_sd_for_event_date
+        from project.models import Event, EventStatus
+        from project.services.event import update_event
+
+        event = Event.query.get(event_id)
+        event.status = EventStatus(status)
+
+        update_event(event)
+        db.session.commit()
+        event_date = event.dates[0]
+
+        with app.test_request_context():
+            result = get_sd_for_event_date(event_date)
+
+        assert result["eventStatus"] == eventStatus

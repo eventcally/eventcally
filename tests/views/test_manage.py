@@ -33,6 +33,16 @@ def test_admin_unit(client, seeder, utils):
     )
 
 
+def test_admin_unit_404(client, seeder, utils):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    seeder.create_user()
+    utils.login()
+
+    response = utils.get_endpoint("manage_admin_unit", id=admin_unit_id)
+    utils.assert_response_notFound(response)
+
+
 def test_admin_unit_event_reviews(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
 
