@@ -51,7 +51,7 @@ mail_server = os.getenv("MAIL_SERVER")
 if mail_server is None:
     app.config["MAIL_SUPPRESS_SEND"] = True
     app.config["MAIL_DEFAULT_SENDER"] = "test@oveda.de"
-else:
+else:  # pragma: no cover
     app.config["MAIL_SUPPRESS_SEND"] = False
     app.config["MAIL_SERVER"] = mail_server
     app.config["MAIL_PORT"] = os.getenv("MAIL_PORT")
@@ -120,5 +120,5 @@ from project.views import (
     widget,
 )
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     app.run()

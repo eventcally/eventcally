@@ -38,6 +38,9 @@ def manage_admin_unit_places_create(id):
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
     return render_template("event_place/create.html", form=form)
 
 
@@ -61,6 +64,8 @@ def event_place_update(id):
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
 
     return render_template("event_place/update.html", form=form, place=place)
 

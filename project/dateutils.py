@@ -35,7 +35,7 @@ def form_input_to_date(date_str, hour=0, minute=0, second=0):
 
 
 def form_input_from_date(date):
-    return date.strftime("%Y-%m-%d")
+    return date.strftime("%Y-%m-%d") if date else ""
 
 
 def dates_from_recurrence_rule(start, recurrence_rule):

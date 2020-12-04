@@ -14,13 +14,13 @@ from project.models import (
     EventOrganizer,
 )
 from sqlalchemy import and_, not_
-from project.services.admin_unit import get_admin_unit
+from project.services.admin_unit import get_admin_unit_by_name
 from project.services.event import (
     upsert_event_category,
     update_event_dates_with_recurrence_rule,
 )
 
-admin_unit = get_admin_unit("Harzinfo")
+admin_unit = get_admin_unit_by_name("Harzinfo")
 category = upsert_event_category("Other")
 base_url = "https://www.harzinfo.de"
 url = base_url + "/?ndssearch=fullsearch&no_cache=1&L=0"
