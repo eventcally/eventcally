@@ -29,15 +29,17 @@ def test_create(client, app, utils, seeder):
         with app.app_context():
             from project.services.admin_unit import get_admin_unit_by_name
             from project.services.organizer import get_event_organizer
-            from project.access import has_current_user_role_for_admin_unit
+            from project.access import has_current_user_member_role_for_admin_unit
 
             admin_unit = get_admin_unit_by_name("Meine Crew")
             assert admin_unit is not None
             assert admin_unit.name == "Meine Crew"
             assert admin_unit.location.city == "Goslar"
             assert admin_unit.location.postalCode == "38640"
-            assert has_current_user_role_for_admin_unit(admin_unit, "admin")
-            assert has_current_user_role_for_admin_unit(admin_unit, "event_verifier")
+            assert has_current_user_member_role_for_admin_unit(admin_unit.id, "admin")
+            assert has_current_user_member_role_for_admin_unit(
+                admin_unit.id, "event_verifier"
+            )
 
             organizer = get_event_organizer(admin_unit.id, "Meine Crew")
             assert organizer.name == "Meine Crew"

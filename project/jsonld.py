@@ -1,5 +1,4 @@
 import datetime
-import decimal
 from json import JSONEncoder
 from flask import url_for
 from project.models import EventAttendanceMode, EventStatus
@@ -13,8 +12,6 @@ class DateTimeEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return (obj.astimezone(berlin_tz)).isoformat()
-        if isinstance(obj, decimal.Decimal):
-            return float(obj)
 
 
 def get_sd_for_admin_unit(admin_unit):
@@ -29,7 +26,7 @@ def get_sd_for_admin_unit(admin_unit):
     return result
 
 
-def get_sd_for_organizer_organization(organizer):
+def get_sd_for_organizer(organizer):
     result = {}
     result["@type"] = "Organization"
     result["name"] = organizer.name
@@ -47,10 +44,6 @@ def get_sd_for_organizer_organization(organizer):
         result["url"] = organizer.url
 
     return result
-
-
-def get_sd_for_organizer(organizer):
-    return get_sd_for_organizer_organization(organizer)
 
 
 def get_sd_for_location(location):
@@ -84,7 +77,7 @@ def get_sd_for_place(place, use_ref=True):
     if place.location:
         result["address"] = get_sd_for_location(place.location)
 
-        if place.location.latitude != 0:
+        if place.location.coordinate:
             result["geo"] = get_sd_for_geo(place.location)
 
     if place.photo_id:
@@ -134,7 +127,7 @@ def get_sd_for_event_date(event_date):
         result["previousStartDate"] = event.previous_start_date
 
     if event.accessible_for_free:
-        result["accessible_for_free"] = event.accessible_for_free
+        result["isAccessibleForFree"] = event.accessible_for_free
 
     if event.age_from and event.age_to:
         result["typicalAgeRange"] = "%d-%d" % (event.age_from, event.age_to)

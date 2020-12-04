@@ -123,9 +123,28 @@ def test_review_status(client, seeder, utils):
     utils.get_ok(url)
 
 
-def test_review_status_401(client, seeder, utils):
+def test_review_status_401_third(client, seeder, utils):
     seeder.create_user()
     seeder._utils.login()
+
+    third_user_id = seeder.create_user("third@third.de")
+    third_admin_unit_id = seeder.create_admin_unit(third_user_id, "Third Crew")
+    (
+        other_user_id,
+        other_admin_unit_id,
+        event_id,
+        reference_request_id,
+    ) = seeder.create_incoming_reference_request(third_admin_unit_id)
+
+    url = utils.get_url(
+        "event_reference_request_review_status", id=reference_request_id
+    )
+    response = client.get(url)
+    assert response.status_code == 401
+
+
+def test_review_status_401_unauthorized(client, seeder, utils):
+    seeder.create_user()
 
     third_user_id = seeder.create_user("third@third.de")
     third_admin_unit_id = seeder.create_admin_unit(third_user_id, "Third Crew")

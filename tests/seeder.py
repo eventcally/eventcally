@@ -4,10 +4,10 @@ class Seeder(object):
         self._db = db
         self._utils = utils
 
-    def setup_base(self):
-        user_id = self.create_user()
+    def setup_base(self, admin=False):
+        user_id = self.create_user(admin=admin)
         self._utils.login()
-        admin_unit_id = self.create_admin_unit(user_id, "Meine Crew")
+        admin_unit_id = self.create_admin_unit(user_id)
         return (user_id, admin_unit_id)
 
     def setup_base_event_verifier(self):
@@ -33,7 +33,7 @@ class Seeder(object):
 
         return user_id
 
-    def create_admin_unit(self, user_id, name):
+    def create_admin_unit(self, user_id, name="Meine Crew"):
         from project.models import AdminUnit
         from project.services.user import get_user
         from project.services.admin_unit import insert_admin_unit_for_user

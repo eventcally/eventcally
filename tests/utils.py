@@ -112,6 +112,14 @@ class UtilActions(object):
     def assert_response_ok(self, response):
         assert response.status_code == 200
 
+    def get_unauthorized(self, url):
+        response = self._client.get(url)
+        self.assert_response_unauthorized(response)
+        return response
+
+    def assert_response_unauthorized(self, response):
+        assert response.status_code == 401
+
     def get_endpoint(self, endpoint, **values):
         return self._client.get(self.get_url(endpoint, **values))
 

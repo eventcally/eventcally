@@ -116,3 +116,20 @@ def test_delete(client, seeder, utils, app, mocker, db_error, non_match):
 
         place = EventPlace.query.get(place_id)
         assert place is None
+
+
+def test_create_Unauthorized(client, app, utils, seeder):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+
+    url = utils.get_url("manage_admin_unit_places_create", id=admin_unit_id)
+    utils.get_unauthorized(url)
+
+
+def test_create_admin(client, app, utils, seeder):
+    user_id, admin_unit_id = seeder.setup_base(admin=True)
+
+    url = utils.get_url("manage_admin_unit_places_create", id=admin_unit_id)
+    utils.get_ok(url)

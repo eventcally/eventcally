@@ -58,19 +58,6 @@ def has_current_user_permission_for_admin_unit(admin_unit, permission):
     return False
 
 
-def has_current_user_role_for_admin_unit(admin_unit, role_name):
-    if not current_user.is_authenticated:
-        return False
-
-    if current_user.has_role(role_name):
-        return True
-
-    if has_current_user_member_role_for_admin_unit(admin_unit.id, role_name):
-        return True
-
-    return False
-
-
 def has_access(admin_unit, permission):
     return has_current_user_permission_for_admin_unit(admin_unit, permission)
 
