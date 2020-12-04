@@ -1,5 +1,6 @@
 from wtforms import DateTimeField, SelectMultipleField, SelectField
-from wtforms.widgets import html_params, HTMLString, ListWidget, CheckboxInput
+from wtforms.widgets import html_params, ListWidget, CheckboxInput
+from markupsafe import Markup
 from wtforms.validators import StopValidation
 from datetime import datetime
 from flask_babelex import to_user_timezone, gettext
@@ -37,7 +38,7 @@ class CustomDateTimeWidget:
         time_minute_params = html_params(name=field.name, id=id + "-minute", **kwargs)
         clear_button_id = id + "-clear-button"
 
-        return HTMLString(
+        return Markup(
             '<div class="input-group-prepend mt-1"><input type="text" class="datepicker" {}/><button class="btn btn-outline-secondary" type="button" id="{}"><i class="fa fa-times"></i></button></div><div class="mx-2"></div><div class="input-group-append mt-1"><select {}>{}</select><span class="input-group-text">:</span><select {}>{}</select></div>'.format(
                 date_params,
                 clear_button_id,
@@ -80,7 +81,7 @@ class CustomDateWidget:
             date = date_value.strftime("%Y-%m-%d")
 
         date_params = html_params(name=field.name, id=id, value=date, **kwargs)
-        return HTMLString('<input type="text" {}/>'.format(date_params))
+        return Markup('<input type="text" {}/>'.format(date_params))
 
 
 class CustomDateField(DateTimeField):

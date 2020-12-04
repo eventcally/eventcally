@@ -84,11 +84,8 @@ def get_event_dates_query(params):
         date_filter = and_(date_filter, EventDate.start < params.date_to)
 
     # PostgreSQL specific https://stackoverflow.com/a/25597632
-    if params.weekday:
-        if type(params.weekday) is list:
-            weekdays = params.weekday
-        else:
-            weekdays = [params.weekday]
+    if params.weekday and type(params.weekday) is list:
+        weekdays = params.weekday
         date_filter = and_(date_filter, extract("dow", EventDate.start).in_(weekdays))
 
     return (
@@ -125,9 +122,9 @@ def get_events_query(params):
     )
 
 
-def update_event_dates_with_recurrence_rule(event, start, end):
-    event.start = start
-    event.end = end
+def update_event_dates_with_recurrence_rule(event):
+    start = event.start
+    end = event.end
 
     if end:
         time_difference = relativedelta(end, start)
@@ -168,3 +165,12 @@ def update_event_dates_with_recurrence_rule(event, start, end):
 
     event.dates = [date for date in event.dates if date not in dates_to_remove]
     event.dates.extend(dates_to_add)
+
+
+def insert_event(event):
+    update_event_dates_with_recurrence_rule(event)
+    db.session.add(event)
+
+
+def update_event(event):
+    update_event_dates_with_recurrence_rule(event)

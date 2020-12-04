@@ -1,6 +1,7 @@
 from project import app, db
-from project.services.user import upsert_user_role, add_roles_to_user
+from project.services.user import upsert_user_role, add_admin_roles_to_user
 from project.services.admin_unit import upsert_admin_unit_member_role
+from project.services.event import upsert_event_category
 from project.models import Location
 
 
@@ -41,8 +42,27 @@ def create_initial_data():
 
     upsert_user_role("admin", "Administrator", admin_permissions)
     upsert_user_role("event_verifier", "Event expert", event_permissions)
-    add_roles_to_user("grams.daniel@gmail.com", ["admin", "event_verifier"])
+    add_admin_roles_to_user("grams.daniel@gmail.com")
 
     Location.update_coordinates()
+
+    upsert_event_category("Art")
+    upsert_event_category("Book")
+    upsert_event_category("Movie")
+    upsert_event_category("Family")
+    upsert_event_category("Festival")
+    upsert_event_category("Religious")
+    upsert_event_category("Shopping")
+    upsert_event_category("Comedy")
+    upsert_event_category("Music")
+    upsert_event_category("Dance")
+    upsert_event_category("Nightlife")
+    upsert_event_category("Theater")
+    upsert_event_category("Dining")
+    upsert_event_category("Conference")
+    upsert_event_category("Meetup")
+    upsert_event_category("Fitness")
+    upsert_event_category("Sports")
+    upsert_event_category("Other")
 
     db.session.commit()

@@ -1,8 +1,9 @@
-from project.models import Image, Analytics
+from project.models import Analytics
 from project import db, mail
 from flask_babelex import gettext
 from flask import request, url_for, render_template, flash, redirect, Markup
 from flask_mail import Message
+from sqlalchemy.exc import SQLAlchemyError
 
 
 def track_analytics(key, value1, value2):
@@ -17,20 +18,13 @@ def track_analytics(key, value1, value2):
     return result
 
 
-def handleSqlError(e):
-    message = str(e.__dict__["orig"])
+def handleSqlError(e: SQLAlchemyError) -> str:
+    if e.orig:
+        message = str(e.orig)
+    else:
+        message = str(e)
     print(message)
     return message
-
-
-def upsert_image_with_data(image, data, encoding_format="image/jpeg"):
-    if image is None:
-        image = Image()
-
-    image.data = data
-    image.encoding_format = encoding_format
-
-    return image
 
 
 def get_pagination_urls(pagination, **kwargs):
@@ -86,6 +80,7 @@ def send_mails(recipients, subject, template, **context):
     msg.html = render_template("email/%s.html" % template, **context)
 
     if not mail.default_sender:
+        print(",".join(msg.recipients))
         print(msg.subject)
         print(msg.body)
         return

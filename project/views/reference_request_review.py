@@ -49,9 +49,9 @@ def event_reference_request_review(id):
             if request.review_status == EventReferenceRequestReviewStatus.verified:
                 reference = create_event_reference_for_request(request)
                 reference.rating = form.rating.data
-                msg = gettext("Request successfully updated")
-            else:
                 msg = gettext("Reference successfully created")
+            else:
+                msg = gettext("Request successfully updated")
 
             db.session.commit()
             send_reference_request_review_status_mails(request)

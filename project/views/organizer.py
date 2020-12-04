@@ -1,5 +1,5 @@
 from project import app, db
-from project.models import EventOrganizer, Location
+from project.models import EventOrganizer
 from flask import render_template, flash, url_for, redirect
 from flask_babelex import gettext
 from flask_security import auth_required
@@ -27,7 +27,6 @@ def manage_admin_unit_organizer_create(id):
     if form.validate_on_submit():
         organizer = EventOrganizer()
         organizer.admin_unit_id = admin_unit.id
-        organizer.location = Location()
         update_organizer_with_form(organizer, form)
 
         try:
@@ -40,6 +39,8 @@ def manage_admin_unit_organizer_create(id):
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
     return render_template("organizer/create.html", form=form)
 
 
@@ -63,6 +64,8 @@ def organizer_update(id):
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
 
     return render_template("organizer/update.html", form=form, organizer=organizer)
 

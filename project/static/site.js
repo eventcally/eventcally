@@ -51,7 +51,7 @@ jQuery.tools.recurrenceinput.localize('de', {
     rangeByEndDate: 'Bis ',
     rangeByEndDateHuman: 'endet am ',
     including: ', und auch ',
-    except Exception: ', ausser für',
+    except: ', ausser für',
     cancel: 'Abbrechen',
     save: 'Speichern',
     recurrenceStart: 'Beginn der Wiederholung',

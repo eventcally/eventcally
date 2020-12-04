@@ -217,7 +217,7 @@ class Location(db.Model, TrackableMixin):
             )
         ).all()
 
-        for location in locations:
+        for location in locations:  # pragma: no cover
             location.update_coordinate()
 
         db.session.commit()
@@ -241,9 +241,6 @@ class EventPlace(db.Model, TrackableMixin):
     url = Column(String(255))
     description = Column(UnicodeText())
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=True)
-
-    def is_empty(self):
-        return not self.name
 
 
 @listens_for(EventPlace, "before_insert")
@@ -320,9 +317,6 @@ class EventOrganizer(db.Model, TrackableMixin):
     logo_id = db.Column(db.Integer, db.ForeignKey("image.id"))
     logo = db.relationship("Image", uselist=False)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=True)
-
-    def is_empty(self):
-        return not self.name
 
 
 @listens_for(EventOrganizer, "before_insert")
@@ -412,12 +406,8 @@ class EventSuggestion(db.Model, TrackableMixin):
 @listens_for(EventSuggestion, "before_insert")
 @listens_for(EventSuggestion, "before_update")
 def purge_event_suggestion(mapper, connect, self):
-    if self.organizer and self.organizer.is_empty():
-        self.organizer_id = None
     if self.organizer_id is not None:
         self.organizer_text = None
-    if self.event_place and self.event_place.is_empty():
-        self.event_place_id = None
     if self.event_place_id is not None:
         self.event_place_text = None
     if self.photo and self.photo.is_empty():
@@ -490,10 +480,6 @@ class Event(db.Model, TrackableMixin):
 @listens_for(Event, "before_insert")
 @listens_for(Event, "before_update")
 def purge_event(mapper, connect, self):
-    if self.organizer and self.organizer.is_empty():
-        self.organizer_id = None
-    if self.event_place and self.event_place.is_empty():
-        self.event_place_id = None
     if self.photo and self.photo.is_empty():
         self.photo_id = None
 

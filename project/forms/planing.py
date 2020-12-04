@@ -1,4 +1,3 @@
-from flask import request
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import HiddenField, StringField, SubmitField, SelectField
@@ -32,6 +31,3 @@ class PlaningForm(FlaskForm):
     )
 
     submit = SubmitField(lazy_gettext("Find"))
-
-    def is_submitted(self):
-        return "submit" in request.args

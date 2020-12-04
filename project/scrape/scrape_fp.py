@@ -1,6 +1,6 @@
 from project import (
     db,
-    get_admin_unit,
+    get_admin_unit_by_name,
     update_event_dates_with_recurrence_rule,
     upsert_event_category,
 )
@@ -70,7 +70,7 @@ def scrape(debug):
                 js_assigns[key] = value
             break
 
-    admin_unit = get_admin_unit("Ferienpass Goslar")
+    admin_unit = get_admin_unit_by_name("Ferienpass Goslar")
     category = upsert_event_category("Other")
 
     for js_event in js_assigns["events"]:
