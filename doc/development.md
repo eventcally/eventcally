@@ -26,13 +26,13 @@ pytest --cov-report=html --cov=project
 ### Create new revision
 
 ```sh
-python manage.py db migrate
+flask db migrate
 ```
 
 ### Upgrade database
 
 ```sh
-python manage.py db upgrade
+flask db upgrade
 ```
 
 ## i18n
