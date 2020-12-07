@@ -9,6 +9,7 @@ from flask_babelex import Babel
 from flask_cors import CORS
 from flask_qrcode import QRcode
 from flask_mail import Mail, email_dispatched
+from flask_migrate import Migrate
 
 # Create app
 app = Flask(__name__)
@@ -73,6 +74,7 @@ if app.config["MAIL_SUPPRESS_SEND"]:
 
 # Create db
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # qr code
 QRcode(app)

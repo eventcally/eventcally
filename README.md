@@ -27,7 +27,7 @@ psql -c 'create database gsevpt;' -U postgres
 ```sh
 export DATABASE_URL="postgresql://postgres@localhost/gsevpt"
 pip install -r requirements.txt
-python manage.py db upgrade
+flask db upgrade
 flask run --host 0.0.0.0
 ```
 
