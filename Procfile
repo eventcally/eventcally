@@ -1,2 +1,2 @@
-release: python manage.py db upgrade
+release: flask db upgrade
 web: gunicorn project:app --log-file=-
