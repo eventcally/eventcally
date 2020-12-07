@@ -8,3 +8,15 @@ def test_mail_server():
 
     app.config["TESTING"] = True
     app.testing = True
+
+
+def test_migrations(app):
+    from flask_migrate import upgrade
+    from project import db
+    from project.init_data import create_initial_data
+
+    with app.app_context():
+        db.drop_all()
+        db.engine.execute("DROP TABLE IF EXISTS alembic_version;")
+        upgrade()
+        create_initial_data()
