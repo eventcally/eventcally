@@ -20,10 +20,17 @@ class Seeder(object):
     def create_user(
         self, email="test@test.de", password="MeinPasswortIstDasBeste", admin=False
     ):
-        from project.services.user import upsert_user, add_admin_roles_to_user
+        from project.services.user import (
+            find_user_by_email,
+            create_user,
+            add_admin_roles_to_user,
+        )
 
         with self._app.app_context():
-            user = upsert_user(email, password)
+            user = find_user_by_email(email)
+
+            if user is None:
+                user = create_user(email, password)
 
             if admin:
                 add_admin_roles_to_user(email)
