@@ -125,7 +125,7 @@ class Seeder(object):
 
         return organizer_id
 
-    def create_event(self, admin_unit_id):
+    def create_event(self, admin_unit_id, recurrence_rule=None):
         from project.models import Event
         from project.services.event import insert_event, upsert_event_category
         from project.dateutils import now
@@ -139,6 +139,7 @@ class Seeder(object):
             event.start = now
             event.event_place_id = self.upsert_default_event_place(admin_unit_id)
             event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
+            event.recurrence_rule = recurrence_rule
             insert_event(event)
             self._db.session.commit()
             event_id = event.id
