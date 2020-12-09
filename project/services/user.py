@@ -3,14 +3,7 @@ from flask_security import hash_password
 
 
 def create_user(email, password):
-    result = user_datastore.find_user(email=email)
-
-    if result:
-        raise ValueError("User with given email does already exist.")
-
-    result = user_datastore.create_user(email=email, password=hash_password(password))
-
-    return result
+    return user_datastore.create_user(email=email, password=hash_password(password))
 
 
 def add_roles_to_user(email, role_names):
