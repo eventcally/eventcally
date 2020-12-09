@@ -122,6 +122,10 @@ def get_events_query(params):
     )
 
 
+def get_recurring_events():
+    return Event.query.filter(Event.recurrence_rule is not None).all()
+
+
 def update_event_dates_with_recurrence_rule(event):
     start = event.start
     end = event.end
