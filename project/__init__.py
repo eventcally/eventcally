@@ -122,5 +122,8 @@ from project.views import (
     widget,
 )
 
+# Command line
+import project.cli.user
+
 if __name__ == "__main__":  # pragma: no cover
     app.run()
