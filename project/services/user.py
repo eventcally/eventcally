@@ -2,23 +2,22 @@ from project import user_datastore
 from flask_security import hash_password
 
 
-def upsert_user(email, password="password"):
-    result = user_datastore.find_user(email=email)
-    if result is None:
-        result = user_datastore.create_user(
-            email=email, password=hash_password(password)
-        )
-    return result
+def create_user(email, password):
+    return user_datastore.create_user(email=email, password=hash_password(password))
 
 
-def add_roles_to_user(user_name, role_names):
-    user = upsert_user(user_name)
+def add_roles_to_user(email, role_names):
+    user = find_user_by_email(email)
+
+    if user is None:
+        raise ValueError("User with given email does not exist.")
+
     for role_name in role_names:
         user_datastore.add_role_to_user(user, role_name)
 
 
-def add_admin_roles_to_user(user_name):
-    add_roles_to_user(user_name, ["admin", "event_verifier"])
+def add_admin_roles_to_user(email):
+    add_roles_to_user(email, ["admin", "event_verifier"])
 
 
 def upsert_user_role(role_name, role_title, permissions):

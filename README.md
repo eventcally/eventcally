@@ -31,6 +31,12 @@ flask db upgrade
 flask run --host 0.0.0.0
 ```
 
+## Administration
+
+```sh
+flask user add-admin-roles super@hero.com
+```
+
 ## Configuration
 
 Create `.env` file in the root directory or pass as environment variables.
