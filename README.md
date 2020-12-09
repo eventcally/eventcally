@@ -31,6 +31,16 @@ flask db upgrade
 flask run --host 0.0.0.0
 ```
 
+## Scheduled/Cron jobs
+
+Jobs that should run on a regular basis.
+
+### Daily
+
+```sh
+flask event update-recurring-dates
+```
+
 ## Administration
 
 ```sh

@@ -123,6 +123,7 @@ from project.views import (
 )
 
 # Command line
+import project.cli.event
 import project.cli.user
 
 if __name__ == "__main__":  # pragma: no cover
