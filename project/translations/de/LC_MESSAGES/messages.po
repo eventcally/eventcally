@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-11-12 10:45+0100\n"
+"POT-Creation-Date: 2020-12-12 13:52+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -16,618 +16,654 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.0\n"
 
-#: app/i10n.py:9
+#: project/i10n.py:12
 msgid "Event_Art"
 msgstr "Kunst"
 
-#: app/i10n.py:10
+#: project/i10n.py:13
 msgid "Event_Book"
 msgstr "Literatur"
 
-#: app/i10n.py:11
+#: project/i10n.py:14
 msgid "Event_Movie"
 msgstr "Film"
 
-#: app/i10n.py:12
+#: project/i10n.py:15
 msgid "Event_Family"
 msgstr "Familie"
 
-#: app/i10n.py:13
+#: project/i10n.py:16
 msgid "Event_Festival"
 msgstr "Festival"
 
-#: app/i10n.py:14
+#: project/i10n.py:17
 msgid "Event_Religious"
 msgstr "Religion"
 
-#: app/i10n.py:15
+#: project/i10n.py:18
 msgid "Event_Shopping"
 msgstr "Shopping"
 
-#: app/i10n.py:16
+#: project/i10n.py:19
 msgid "Event_Comedy"
 msgstr "Comedy"
 
-#: app/i10n.py:17
+#: project/i10n.py:20
 msgid "Event_Music"
 msgstr "Musik"
 
-#: app/i10n.py:18
+#: project/i10n.py:21
 msgid "Event_Dance"
 msgstr "Tanz"
 
-#: app/i10n.py:19
+#: project/i10n.py:22
 msgid "Event_Nightlife"
 msgstr "Party"
 
-#: app/i10n.py:20
+#: project/i10n.py:23
 msgid "Event_Theater"
 msgstr "Theater"
 
-#: app/i10n.py:21
+#: project/i10n.py:24
 msgid "Event_Dining"
 msgstr "Essen"
 
-#: app/i10n.py:22
+#: project/i10n.py:25
 msgid "Event_Conference"
 msgstr "Konferenz"
 
-#: app/i10n.py:23
+#: project/i10n.py:26
 msgid "Event_Meetup"
 msgstr "Networking"
 
-#: app/i10n.py:24
+#: project/i10n.py:27
 msgid "Event_Fitness"
 msgstr "Fitness"
 
-#: app/i10n.py:25
+#: project/i10n.py:28
 msgid "Event_Sports"
 msgstr "Sport"
 
-#: app/i10n.py:26
+#: project/i10n.py:29
 msgid "Event_Other"
 msgstr "Sonstiges"
 
-#: app/i10n.py:27
+#: project/i10n.py:30
 msgid "Typical Age range"
 msgstr "Typische Altersspanne"
 
-#: app/i10n.py:28
+#: project/i10n.py:31
 msgid "Administrator"
 msgstr "Administrator:in"
 
-#: app/i10n.py:29
+#: project/i10n.py:32
 msgid "Event expert"
 msgstr "Veranstaltungsexpert:in"
 
-#: app/i10n.py:30
+#: project/i10n.py:33
 msgid "EventReviewStatus.inbox"
 msgstr "Ungeprüft"
 
-#: app/i10n.py:31
+#: project/i10n.py:34
 msgid "EventReviewStatus.verified"
 msgstr "Verifiziert"
 
-#: app/i10n.py:32
+#: project/i10n.py:35
 msgid "EventReviewStatus.rejected"
 msgstr "Abgelehnt"
 
-#: app/oauth.py:41 app/oauth.py:54
+#: project/oauth.py:42 project/oauth.py:55
 msgid "Successfully signed in."
 msgstr "Erfolgreich eingeloggt."
 
-#: app/utils.py:4
+#: project/utils.py:5
 msgid "Event_"
 msgstr "Event_"
 
-#: app/utils.py:7
+#: project/utils.py:9
 msgid "."
 msgstr "."
 
-#: app/forms/admin_unit.py:13 app/forms/event.py:14 app/forms/event_place.py:13
-#: app/forms/organizer.py:12
+#: project/forms/admin.py:8 project/templates/layout.html:139
+#: project/views/root.py:24
+msgid "Terms of service"
+msgstr "Nutzungsbedingungen"
+
+#: project/forms/admin.py:9 project/templates/layout.html:143
+#: project/views/root.py:31
+msgid "Legal notice"
+msgstr "Impressum"
+
+#: project/forms/admin.py:10 project/templates/_macros.html:972
+#: project/templates/layout.html:147
+#: project/templates/widget/event_suggestion/create.html:171
+#: project/views/root.py:38
+msgid "Contact"
+msgstr "Kontakt"
+
+#: project/forms/admin.py:11 project/templates/layout.html:151
+#: project/views/root.py:45
+msgid "Privacy"
+msgstr "Datenschutz"
+
+#: project/forms/admin.py:13
+msgid "Save"
+msgstr "Speichern"
+
+#: project/forms/admin_unit.py:17 project/forms/event.py:31
+#: project/forms/event_place.py:17 project/forms/organizer.py:16
 msgid "Street"
 msgstr "Straße"
 
-#: app/forms/admin_unit.py:14 app/forms/event.py:15 app/forms/event_place.py:14
-#: app/forms/organizer.py:13
+#: project/forms/admin_unit.py:18 project/forms/event.py:32
+#: project/forms/event_place.py:18 project/forms/organizer.py:17
 msgid "Postal code"
 msgstr "Postleitzahl"
 
-#: app/forms/admin_unit.py:15 app/forms/event.py:16 app/forms/event_place.py:15
-#: app/forms/organizer.py:14
+#: project/forms/admin_unit.py:19 project/forms/event.py:33
+#: project/forms/event_place.py:19 project/forms/organizer.py:18
 msgid "City"
 msgstr "Stadt/Ort"
 
-#: app/forms/admin_unit.py:16 app/forms/event_place.py:16
-#: app/forms/organizer.py:15
+#: project/forms/admin_unit.py:20 project/forms/event_place.py:20
+#: project/forms/organizer.py:19
 msgid "State"
 msgstr "Bundesland"
 
-#: app/forms/admin_unit.py:17 app/forms/event_place.py:17
-#: app/forms/organizer.py:16
+#: project/forms/admin_unit.py:22 project/forms/event_place.py:22
+#: project/forms/organizer.py:21
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: app/forms/admin_unit.py:18 app/forms/event_place.py:18
-#: app/forms/organizer.py:17
+#: project/forms/admin_unit.py:25 project/forms/event_place.py:25
+#: project/forms/organizer.py:24
 msgid "Longitude"
 msgstr "Längengrad"
 
-#: app/forms/admin_unit.py:21 app/forms/event.py:19 app/forms/event.py:39
-#: app/forms/event.py:137 app/forms/event_place.py:21
-#: app/forms/event_place.py:43 app/forms/event_suggestion.py:15
-#: app/forms/event_suggestion.py:20 app/forms/organizer.py:20
-#: app/forms/organizer.py:44 app/forms/reference.py:18
-#: app/forms/reference_request.py:14 app/templates/_macros.html:117
-#: app/templates/admin/admin_units.html:18
-#: app/templates/event_place/list.html:19 app/templates/profile.html:19
-#: app/templates/profile.html:39
+#: project/forms/admin_unit.py:30 project/forms/event.py:37
+#: project/forms/event.py:60 project/forms/event.py:231
+#: project/forms/event_place.py:30 project/forms/event_place.py:55
+#: project/forms/event_suggestion.py:23 project/forms/event_suggestion.py:46
+#: project/forms/organizer.py:29 project/forms/organizer.py:56
+#: project/forms/reference.py:27 project/forms/reference_request.py:21
+#: project/templates/_macros.html:117
+#: project/templates/admin/admin_units.html:18
+#: project/templates/event_place/list.html:19 project/templates/profile.html:19
+#: project/templates/profile.html:39
 msgid "Name"
 msgstr "Name"
 
-#: app/forms/admin_unit.py:22
+#: project/forms/admin_unit.py:32
 msgid "Short name"
 msgstr "Kurzname"
 
-#: app/forms/admin_unit.py:22
+#: project/forms/admin_unit.py:33
 msgid "The short name is used to create a unique identifier for your events"
 msgstr ""
 "Der Kurzname wird verwendet, um Ihre Veranstaltungen eindeutig zu "
 "identifizieren. Der Kurzname darf nur Buchstaben, Nummern und "
 "Unterstriche enthalten."
 
-#: app/forms/admin_unit.py:22
+#: project/forms/admin_unit.py:40
 msgid "Short name must contain only letters numbers or underscore"
 msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
 
-#: app/forms/admin_unit.py:23 app/forms/event.py:33 app/forms/event.py:40
-#: app/forms/event_place.py:22 app/forms/event_suggestion.py:18
-#: app/forms/organizer.py:21
+#: project/forms/admin_unit.py:46 project/forms/event.py:53
+#: project/forms/event.py:61 project/forms/event_place.py:31
+#: project/forms/event_suggestion.py:38 project/forms/organizer.py:30
 msgid "Link URL"
 msgstr "Link URL"
 
-#: app/forms/admin_unit.py:24 app/forms/admin_unit_member.py:12
-#: app/forms/admin_unit_member.py:22 app/forms/admin_unit_member.py:26
-#: app/forms/event.py:34 app/forms/event_suggestion.py:22
-#: app/forms/organizer.py:22 app/templates/_macros.html:229
+#: project/forms/admin_unit.py:47 project/forms/admin_unit_member.py:10
+#: project/forms/admin_unit_member.py:22 project/forms/admin_unit_member.py:27
+#: project/forms/event.py:54 project/forms/event_suggestion.py:58
+#: project/forms/organizer.py:31 project/templates/_macros.html:229
 msgid "Email"
 msgstr "Email"
 
-#: app/forms/admin_unit.py:25 app/forms/event.py:35
-#: app/forms/event_suggestion.py:21 app/forms/organizer.py:23
-#: app/templates/_macros.html:256
+#: project/forms/admin_unit.py:48 project/forms/event.py:55
+#: project/forms/event_suggestion.py:51 project/forms/organizer.py:32
+#: project/templates/_macros.html:256
 msgid "Phone"
 msgstr "Telefon"
 
-#: app/forms/admin_unit.py:26 app/forms/event.py:36 app/forms/organizer.py:24
-#: app/templates/_macros.html:264
+#: project/forms/admin_unit.py:49 project/forms/event.py:56
+#: project/forms/organizer.py:33 project/templates/_macros.html:264
 msgid "Fax"
 msgstr "Fax"
 
-#: app/forms/admin_unit.py:27 app/forms/organizer.py:25
+#: project/forms/admin_unit.py:50 project/forms/organizer.py:34
 msgid "Logo"
 msgstr "Logo"
 
-#: app/forms/admin_unit.py:39 app/templates/admin_unit/create.html:10
-#: app/templates/manage/admin_units.html:18
+#: project/forms/admin_unit.py:63 project/templates/admin_unit/create.html:10
+#: project/templates/manage/admin_units.html:18
 msgid "Create admin unit"
 msgstr "Verwaltungseinheit erstellen"
 
-#: app/forms/admin_unit.py:42 app/forms/admin_unit.py:49
+#: project/forms/admin_unit.py:67 project/forms/admin_unit.py:90
 msgid "Update settings"
 msgstr "Einstellungen speichern"
 
-#: app/forms/admin_unit.py:45
+#: project/forms/admin_unit.py:71
 msgid "Font"
 msgstr "Schriftart"
 
-#: app/forms/admin_unit.py:46
+#: project/forms/admin_unit.py:73
 msgid "Background Color"
 msgstr "Hintergrundfarbe"
 
-#: app/forms/admin_unit.py:47
+#: project/forms/admin_unit.py:79
 msgid "Primary Color"
 msgstr "Hauptfarbe"
 
-#: app/forms/admin_unit.py:48
+#: project/forms/admin_unit.py:85
 msgid "Link Color"
 msgstr "Linkfarbe"
 
-#: app/forms/admin_unit_member.py:13 app/forms/admin_unit_member.py:29
-#: app/templates/profile.html:40
+#: project/forms/admin_unit_member.py:11 project/forms/admin_unit_member.py:31
+#: project/templates/profile.html:40
 msgid "Roles"
 msgstr "Rollen"
 
-#: app/forms/admin_unit_member.py:14
+#: project/forms/admin_unit_member.py:12
 msgid "Invite"
 msgstr "Einladen"
 
-#: app/forms/admin_unit_member.py:17
+#: project/forms/admin_unit_member.py:16
 msgid "Accept"
 msgstr "Akzeptieren"
 
-#: app/forms/admin_unit_member.py:18
+#: project/forms/admin_unit_member.py:17
 msgid "Decline"
 msgstr "Ablehnen"
 
-#: app/forms/admin_unit_member.py:21
-#: app/templates/manage/delete_invitation.html:6
+#: project/forms/admin_unit_member.py:21
+#: project/templates/manage/delete_invitation.html:6
 msgid "Delete invitation"
 msgstr "Einladung löschen"
 
-#: app/forms/admin_unit_member.py:25 app/templates/manage/delete_member.html:6
+#: project/forms/admin_unit_member.py:26
+#: project/templates/manage/delete_member.html:6
 msgid "Delete member"
 msgstr "Mitglied löschen"
 
-#: app/forms/admin_unit_member.py:30
-#: app/templates/admin_unit/update_member.html:6
+#: project/forms/admin_unit_member.py:32
+#: project/templates/admin_unit/update_member.html:6
 msgid "Update member"
 msgstr "Mitglied aktualisieren"
 
-#: app/forms/common.py:10
+#: project/forms/common.py:12
 msgid "Copyright text"
 msgstr "Copyright Text"
 
-#: app/forms/common.py:13
+#: project/forms/common.py:18
 msgid "File"
 msgstr "Datei"
 
-#: app/forms/common.py:13
+#: project/forms/common.py:19
 msgid "Images only!"
 msgstr "Nur Bilder!"
 
-#: app/forms/common.py:14
+#: project/forms/common.py:22
 msgid "Delete image"
 msgstr "Bild löschen"
 
-#: app/forms/common.py:53
+#: project/forms/common.py:66
 msgid "0 (Little relevant)"
 msgstr "0 (Wenig relevant)"
 
-#: app/forms/common.py:63
+#: project/forms/common.py:76
 msgid "10 (Highlight)"
 msgstr "10 (Highlight)"
 
-#: app/forms/common.py:67
+#: project/forms/common.py:80
 msgid "Monday"
 msgstr "Montag"
 
-#: app/forms/common.py:68
+#: project/forms/common.py:81
 msgid "Tueday"
 msgstr "Dienstag"
 
-#: app/forms/common.py:69
+#: project/forms/common.py:82
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: app/forms/common.py:70
+#: project/forms/common.py:83
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: app/forms/common.py:71
+#: project/forms/common.py:84
 msgid "Friday"
 msgstr "Freitag"
 
-#: app/forms/common.py:72
+#: project/forms/common.py:85
 msgid "Saturday"
 msgstr "Samstag"
 
-#: app/forms/common.py:73
+#: project/forms/common.py:86
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: app/forms/common.py:77
+#: project/forms/common.py:90
 msgid "500 m"
 msgstr "500 m"
 
-#: app/forms/common.py:78
+#: project/forms/common.py:91
 msgid "5 km"
 msgstr "5 km"
 
-#: app/forms/common.py:79
+#: project/forms/common.py:92
 msgid "10 km"
 msgstr "10 km"
 
-#: app/forms/common.py:80
+#: project/forms/common.py:93
 msgid "20 km"
 msgstr "20 km"
 
-#: app/forms/common.py:81
+#: project/forms/common.py:94
 msgid "50 km"
 msgstr "50 km"
 
-#: app/forms/common.py:82
+#: project/forms/common.py:95
 msgid "100 km"
 msgstr "100 km"
 
-#: app/forms/event.py:32
+#: project/forms/event.py:52
 msgid "Organizator"
 msgstr "Veranstalter"
 
-#: app/forms/event.py:41
+#: project/forms/event.py:62
 msgid "Ticket Link URL"
 msgstr "Ticket Link"
 
-#: app/forms/event.py:42 app/forms/event_place.py:24
-#: app/forms/event_suggestion.py:17
+#: project/forms/event.py:64 project/forms/event_place.py:33
+#: project/forms/event_suggestion.py:33
 msgid "Description"
 msgstr "Beschreibung"
 
-#: app/forms/event.py:43
+#: project/forms/event.py:67
 msgid "Recurrence rule"
 msgstr "Wiederholungsregel"
 
-#: app/forms/event.py:44 app/forms/event_suggestion.py:16
+#: project/forms/event.py:69 project/forms/event_suggestion.py:28
 msgid "Start"
 msgstr "Beginn"
 
-#: app/forms/event.py:45
+#: project/forms/event.py:70
 msgid "End"
 msgstr "Ende"
 
-#: app/forms/event.py:46 app/templates/_macros.html:336
+#: project/forms/event.py:72 project/templates/_macros.html:336
 msgid "Previous start date"
 msgstr "Vorheriges Startdatum"
 
-#: app/forms/event.py:47 app/templates/_macros.html:211
+#: project/forms/event.py:74 project/templates/_macros.html:211
 msgid "Tags"
 msgstr "Stichworte"
 
-#: app/forms/event.py:48
+#: project/forms/event.py:76
 msgid "Categories"
 msgstr "Kategorien"
 
-#: app/forms/event.py:50
+#: project/forms/event.py:79
 msgid "Kid friendly"
 msgstr "Für Kinder geeignet"
 
-#: app/forms/event.py:51
+#: project/forms/event.py:81
 msgid "Accessible for free"
 msgstr "Kostenlos zugänglich"
 
-#: app/forms/event.py:52
+#: project/forms/event.py:83
 msgid "Typical Age from"
 msgstr "Typisches Alter von"
 
-#: app/forms/event.py:53
+#: project/forms/event.py:84
 msgid "Typical Age to"
 msgstr "Typisches Alter bis"
 
-#: app/forms/event.py:54
+#: project/forms/event.py:86
 msgid "Registration required"
 msgstr "Anmeldung erforderlich"
 
-#: app/forms/event.py:55
+#: project/forms/event.py:88
 msgid "Booked up"
 msgstr "Ausgebucht"
 
-#: app/forms/event.py:56
+#: project/forms/event.py:90
 msgid "Expected number of participants"
 msgstr "Erwartete Teilnehmerzahl"
 
-#: app/forms/event.py:57
+#: project/forms/event.py:92
 msgid "Price info"
 msgstr "Preisinformation"
 
-#: app/forms/event.py:59
+#: project/forms/event.py:95
 msgid "Target group origin"
 msgstr "Für Touristen/Einwohner geeignet"
 
-#: app/forms/event.py:60
+#: project/forms/event.py:100
 msgid "EventTargetGroupOrigin.both"
 msgstr "Für Touristen und Einwohner"
 
-#: app/forms/event.py:61
+#: project/forms/event.py:104
 msgid "EventTargetGroupOrigin.tourist"
 msgstr "Hauptsächlich für Touristen"
 
-#: app/forms/event.py:62
+#: project/forms/event.py:108
 msgid "EventTargetGroupOrigin.resident"
 msgstr "Hauptsächlich für Einwohner"
 
-#: app/forms/event.py:64
+#: project/forms/event.py:114
 msgid "Attendance mode"
 msgstr "Teilnahme"
 
-#: app/forms/event.py:65
+#: project/forms/event.py:119
 msgid "EventAttendanceMode.offline"
 msgstr "Offline"
 
-#: app/forms/event.py:66
+#: project/forms/event.py:123
 msgid "EventAttendanceMode.online"
 msgstr "Online"
 
-#: app/forms/event.py:67
+#: project/forms/event.py:125
 msgid "EventAttendanceMode.mixed"
 msgstr "Online und offline"
 
-#: app/forms/event.py:69 app/forms/event_place.py:23
-#: app/forms/event_suggestion.py:27
-#: app/templates/widget/event_suggestion/create.html:216
+#: project/forms/event.py:129 project/forms/event_place.py:32
+#: project/forms/event_suggestion.py:85
+#: project/templates/widget/event_suggestion/create.html:216
 msgid "Photo"
 msgstr "Foto"
 
-#: app/forms/event.py:70 app/forms/reference.py:9 app/forms/reference.py:13
-#: app/forms/reference_request.py:29 app/templates/event/create.html:164
-#: app/templates/event/update.html:98
+#: project/forms/event.py:131 project/forms/reference.py:13
+#: project/forms/reference.py:20 project/forms/reference_request.py:69
+#: project/templates/event/create.html:164
+#: project/templates/event/update.html:98
 msgid "Rating"
 msgstr "Bewertung"
 
-#: app/forms/event.py:73 app/forms/event.py:74 app/forms/event.py:117
-#: app/forms/event_suggestion.py:25 app/templates/_macros.html:371
-#: app/templates/event/create.html:106 app/templates/event/update.html:57
-#: app/templates/event_place/create.html:20
-#: app/templates/event_place/delete.html:13
-#: app/templates/event_place/update.html:20
+#: project/forms/event.py:137 project/forms/event.py:146
+#: project/forms/event.py:202 project/forms/event_suggestion.py:70
+#: project/templates/_macros.html:371 project/templates/event/create.html:106
+#: project/templates/event/update.html:57
+#: project/templates/event_place/create.html:20
+#: project/templates/event_place/delete.html:13
+#: project/templates/event_place/update.html:20
 msgid "Place"
 msgstr "Ort"
 
-#: app/forms/event.py:73
+#: project/forms/event.py:139
 msgid "Select existing place"
 msgstr "Vorhandenen Ort auswählen"
 
-#: app/forms/event.py:73
+#: project/forms/event.py:140
 msgid "Enter new place"
 msgstr "Neuen Ort eingeben"
 
-#: app/forms/event.py:77 app/forms/event.py:78 app/forms/event.py:118
-#: app/forms/event.py:146 app/forms/event_suggestion.py:26
-#: app/templates/_macros.html:401 app/templates/event/create.html:81
-#: app/templates/event/update.html:48 app/templates/organizer/create.html:16
-#: app/templates/organizer/delete.html:13
-#: app/templates/organizer/update.html:16
+#: project/forms/event.py:151 project/forms/event.py:160
+#: project/forms/event.py:205 project/forms/event.py:245
+#: project/forms/event_suggestion.py:77 project/templates/_macros.html:401
+#: project/templates/event/create.html:81
+#: project/templates/event/update.html:48
+#: project/templates/organizer/create.html:16
+#: project/templates/organizer/delete.html:13
+#: project/templates/organizer/update.html:16
 msgid "Organizer"
 msgstr "Veranstalter"
 
-#: app/forms/event.py:77
+#: project/forms/event.py:153
 msgid "Select existing organizer"
 msgstr "Vorhandenen Veranstalter auswählem"
 
-#: app/forms/event.py:77
+#: project/forms/event.py:154
 msgid "Enter new organizer"
 msgstr "Neuen Veranstalter eingeben"
 
-#: app/forms/event.py:81 app/templates/event/create.html:52
-#: app/templates/manage/events.html:12 app/templates/manage/organizers.html:21
+#: project/forms/event.py:164 project/templates/event/create.html:52
+#: project/templates/manage/events.html:12
+#: project/templates/manage/organizers.html:21
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
-#: app/forms/event.py:105
+#: project/forms/event.py:188
 msgid "Select existing place or enter new place"
 msgstr "Existierenden Ort wählen oder neuen Ort eingeben"
 
-#: app/forms/event.py:110
+#: project/forms/event.py:193
 msgid "Select existing organizer or enter new organizer"
 msgstr "Wähle einen vorhandenen Veranstalter oder gib einen neuen Veranstalter ein"
 
-#: app/forms/event.py:120 app/templates/event/update.html:38
+#: project/forms/event.py:209 project/templates/event/update.html:38
 msgid "Status"
 msgstr "Status"
 
-#: app/forms/event.py:121
+#: project/forms/event.py:212
 msgid "EventStatus.scheduled"
 msgstr "Geplant"
 
-#: app/forms/event.py:122 app/templates/layout.html:48
+#: project/forms/event.py:213 project/templates/layout.html:48
 msgid "EventStatus.cancelled"
 msgstr "Abgesagt"
 
-#: app/forms/event.py:123 app/templates/layout.html:51
+#: project/forms/event.py:214 project/templates/layout.html:51
 msgid "EventStatus.movedOnline"
 msgstr "Online verschoben"
 
-#: app/forms/event.py:124 app/templates/layout.html:54
+#: project/forms/event.py:215 project/templates/layout.html:54
 msgid "EventStatus.postponed"
 msgstr "Verschoben"
 
-#: app/forms/event.py:125 app/templates/layout.html:57
+#: project/forms/event.py:216 project/templates/layout.html:57
 msgid "EventStatus.rescheduled"
 msgstr "Neu angesetzt"
 
-#: app/forms/event.py:127 app/templates/event/update.html:9
+#: project/forms/event.py:220 project/templates/event/update.html:9
 msgid "Update event"
 msgstr "Veranstaltung aktualisieren"
 
-#: app/forms/event.py:136 app/templates/_macros.html:918
-#: app/templates/event/delete.html:6
+#: project/forms/event.py:230 project/templates/_macros.html:918
+#: project/templates/event/delete.html:6
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
 
-#: app/forms/event.py:142 app/forms/event_date.py:17 app/forms/planing.py:17
+#: project/forms/event.py:238 project/forms/event_date.py:19
+#: project/forms/planing.py:13
 msgid "From"
 msgstr "Von"
 
-#: app/forms/event.py:143 app/forms/event_date.py:18 app/forms/planing.py:18
+#: project/forms/event.py:239 project/forms/event_date.py:20
+#: project/forms/planing.py:14
 msgid "to"
 msgstr "bis"
 
-#: app/forms/event.py:144 app/forms/event_date.py:19
+#: project/forms/event.py:240 project/forms/event_date.py:21
 msgid "Keyword"
 msgstr "Stichwort"
 
-#: app/forms/event.py:145 app/forms/event_date.py:20 app/forms/planing.py:19
-#: app/templates/_macros.html:354
+#: project/forms/event.py:242 project/forms/event_date.py:23
+#: project/forms/planing.py:16 project/templates/_macros.html:354
 msgid "Category"
 msgstr "Kategorie"
 
-#: app/forms/event.py:148
+#: project/forms/event.py:248
 msgid "Find events"
 msgstr "Veranstaltungen finden"
 
-#: app/forms/event_date.py:22 app/forms/planing.py:21
-#: app/templates/_macros.html:119 app/templates/_macros.html:271
-#: app/templates/admin_unit/create.html:26
-#: app/templates/admin_unit/update.html:27
-#: app/templates/event_place/create.html:29
-#: app/templates/event_place/update.html:29
-#: app/templates/organizer/create.html:25
-#: app/templates/organizer/update.html:25
+#: project/forms/event_date.py:26 project/forms/planing.py:19
+#: project/templates/_macros.html:119 project/templates/_macros.html:271
+#: project/templates/admin_unit/create.html:26
+#: project/templates/admin_unit/update.html:27
+#: project/templates/event_place/create.html:29
+#: project/templates/event_place/update.html:29
+#: project/templates/organizer/create.html:25
+#: project/templates/organizer/update.html:25
 msgid "Location"
 msgstr "Standort"
 
-#: app/forms/event_date.py:23 app/forms/planing.py:22
+#: project/forms/event_date.py:28 project/forms/planing.py:21
 msgid "Distance"
 msgstr "Distanz"
 
-#: app/forms/event_date.py:25 app/forms/planing.py:25
-#: app/templates/widget/event_date/list.html:47
+#: project/forms/event_date.py:34 project/forms/planing.py:33
+#: project/templates/widget/event_date/list.html:47
 msgid "Find"
 msgstr "Finden"
 
-#: app/forms/event_place.py:36 app/templates/event_place/create.html:10
-#: app/templates/event_place/list.html:11 app/templates/manage/places.html:18
+#: project/forms/event_place.py:46 project/templates/event_place/create.html:10
+#: project/templates/event_place/list.html:11
+#: project/templates/manage/places.html:18
 msgid "Create place"
 msgstr "Ort hinzufügen"
 
-#: app/forms/event_place.py:39 app/templates/event_place/read.html:12
-#: app/templates/event_place/update.html:10
+#: project/forms/event_place.py:50 project/templates/event_place/read.html:12
+#: project/templates/event_place/update.html:10
 msgid "Update place"
 msgstr "Ort aktualisieren"
 
-#: app/forms/event_place.py:42 app/templates/event_place/delete.html:6
+#: project/forms/event_place.py:54 project/templates/event_place/delete.html:6
 msgid "Delete place"
 msgstr "Ort löschen"
 
-#: app/forms/event_place.py:48
+#: project/forms/event_place.py:62
 msgid "Find places"
 msgstr "Orte finden"
 
-#: app/forms/event_suggestion.py:15
+#: project/forms/event_suggestion.py:25
 msgid "Enter a short, meaningful name for the event."
 msgstr "Gib einen kurzen, aussagekräftigen Namen für die Veranstaltung ein."
 
-#: app/forms/event_suggestion.py:16
+#: project/forms/event_suggestion.py:30
 msgid "Indicate when the event will take place."
 msgstr "Gib an, wann die Veranstaltung stattfindet."
 
-#: app/forms/event_suggestion.py:17
+#: project/forms/event_suggestion.py:35
 msgid "Add an optional description of the event."
 msgstr "Füge der Veranstaltung eine optionale Beschreibung hinzu."
 
-#: app/forms/event_suggestion.py:18
+#: project/forms/event_suggestion.py:40
 msgid "Add an optional link. That can make the review easier."
 msgstr "Füge einen optionalen Link hinzu. Das kann die Prüfung erleichtern."
 
-#: app/forms/event_suggestion.py:20
+#: project/forms/event_suggestion.py:48
 msgid "Please enter your name for the review."
 msgstr "Bitte gib deinen Namen für die Prüfung an."
 
-#: app/forms/event_suggestion.py:21
+#: project/forms/event_suggestion.py:53
 msgid "Please enter your phone number or email address for the review."
 msgstr "Bitte gib deine Telefonnummer oder deine Email-Adresse für die Prüfung an."
 
-#: app/forms/event_suggestion.py:22
+#: project/forms/event_suggestion.py:60
 msgid "Please enter your email address or phone number for the review."
 msgstr "Bitte gib deine Email-Adresse oder deine Telefonnummer für die Prüfung an."
 
-#: app/forms/event_suggestion.py:23
+#: project/forms/event_suggestion.py:65
 msgid "I would like to be notified by email after the review"
 msgstr "Ich möchte per Email benachrichtigt werden nach der Prüfung"
 
-#: app/forms/event_suggestion.py:25
+#: project/forms/event_suggestion.py:72
 msgid ""
 "Choose where the event takes place. If the venue is not yet in the list, "
 "just enter it."
@@ -635,7 +671,7 @@ msgstr ""
 "Wähle aus, wo die Veranstaltung stattfindet. Ist der Veranstaltungsort "
 "noch nicht in der Liste, trage ihn einfach ein."
 
-#: app/forms/event_suggestion.py:26
+#: project/forms/event_suggestion.py:79
 msgid ""
 "Select the organizer. If the organizer is not yet on the list, just enter"
 " it."
@@ -643,7 +679,7 @@ msgstr ""
 "Wähle den Veranstalter aus. Ist der Veranstalter noch nicht in der Liste,"
 " trage ihn einfach ein."
 
-#: app/forms/event_suggestion.py:27
+#: project/forms/event_suggestion.py:87
 msgid ""
 "We recommend uploading a photo for the event. It looks a lot more, but of"
 " course it works without it."
@@ -651,7 +687,7 @@ msgstr ""
 "Wir empfehlen dir, ein Foto für die Veranstaltung hochzuladen. Es macht "
 "schon deutlich mehr her, aber es geht natürlich auch ohne."
 
-#: app/forms/event_suggestion.py:28
+#: project/forms/event_suggestion.py:92
 msgid ""
 "I confirm that I have clarified all information (text, images, etc.) that"
 " I upload into the system with regard to their rights of use and declare "
@@ -661,707 +697,730 @@ msgstr ""
 "das System hochlade, hinsichtlich ihrer Nutzungsrechte abgeklärt habe und"
 " erkläre, dass diese weitergegeben werden dürfen."
 
-#: app/forms/event_suggestion.py:30 app/templates/example.html:10
-#: app/templates/widget/event_suggestion/create.html:4
-#: app/templates/widget/event_suggestion/create.html:124
+#: project/forms/event_suggestion.py:98 project/templates/example.html:10
+#: project/templates/widget/event_suggestion/create.html:4
+#: project/templates/widget/event_suggestion/create.html:124
 msgid "Create event suggestion"
 msgstr "Veranstaltung vorschlagen"
 
-#: app/forms/event_suggestion.py:46 app/forms/reference_request.py:22
+#: project/forms/event_suggestion.py:116 project/forms/reference_request.py:45
 msgid "Rejection reason"
 msgstr "Ablehnungsgrund"
 
-#: app/forms/event_suggestion.py:48
+#: project/forms/event_suggestion.py:122
 msgid "EventRejectionReason.duplicate"
 msgstr "Duplikat"
 
-#: app/forms/event_suggestion.py:49
+#: project/forms/event_suggestion.py:126
 msgid "EventRejectionReason.untrustworthy"
 msgstr "Unseriös"
 
-#: app/forms/event_suggestion.py:50
+#: project/forms/event_suggestion.py:130
 msgid "EventRejectionReason.illegal"
 msgstr "Unzulässig"
 
-#: app/forms/event_suggestion.py:52
-#: app/templates/event_suggestion/reject.html:9
-#: app/templates/event_suggestion/review.html:22
+#: project/forms/event_suggestion.py:135
+#: project/templates/event_suggestion/reject.html:9
+#: project/templates/event_suggestion/review.html:22
 msgid "Reject event suggestion"
 msgstr "Vorgeschlagene Veranstaltung ablehnen"
 
-#: app/forms/organizer.py:37 app/templates/manage/organizers.html:12
-#: app/templates/organizer/create.html:10
+#: project/forms/organizer.py:47 project/templates/manage/organizers.html:12
+#: project/templates/organizer/create.html:10
 msgid "Create organizer"
 msgstr "Veranstalter hinzufügen"
 
-#: app/forms/organizer.py:40 app/templates/organizer/update.html:10
+#: project/forms/organizer.py:51 project/templates/organizer/update.html:10
 msgid "Update organizer"
 msgstr "Veranstalter aktualisieren"
 
-#: app/forms/organizer.py:43 app/templates/organizer/delete.html:6
+#: project/forms/organizer.py:55 project/templates/organizer/delete.html:6
 msgid "Delete organizer"
 msgstr "Veranstalter löschen"
 
-#: app/forms/planing.py:23
+#: project/forms/planing.py:27
 msgid "Weekdays"
 msgstr "Wochentage"
 
-#: app/forms/reference.py:8 app/forms/reference_request.py:9
-#: app/templates/_macros.html:417 app/templates/admin_unit/create.html:16
-#: app/templates/admin_unit/update.html:17
+#: project/forms/reference.py:10 project/forms/reference_request.py:14
+#: project/templates/_macros.html:417
+#: project/templates/admin_unit/create.html:16
+#: project/templates/admin_unit/update.html:17
 msgid "Admin unit"
 msgstr "Verwaltungseinheit"
 
-#: app/forms/reference.py:10
+#: project/forms/reference.py:15
 msgid "Save reference"
 msgstr "Empfehlung speichern"
 
-#: app/forms/reference.py:14
+#: project/forms/reference.py:22
 msgid "Update reference"
 msgstr "Empfehlung aktualisieren"
 
-#: app/forms/reference.py:17 app/templates/reference/delete.html:6
+#: project/forms/reference.py:26 project/templates/reference/delete.html:6
 msgid "Delete reference"
 msgstr "Empfehlung löschen"
 
-#: app/forms/reference_request.py:10
+#: project/forms/reference_request.py:16
 msgid "Save request"
 msgstr "Anfrage speichern"
 
-#: app/forms/reference_request.py:13
+#: project/forms/reference_request.py:20
 msgid "Delete request"
 msgstr "Anfrage löschen"
 
-#: app/forms/reference_request.py:17 app/templates/_macros.html:983
-#: app/templates/event_suggestion/review_status.html:18
-#: app/templates/reference_request/review_status.html:12
+#: project/forms/reference_request.py:26 project/templates/_macros.html:983
+#: project/templates/event_suggestion/review_status.html:18
+#: project/templates/reference_request/review_status.html:12
 msgid "Review status"
 msgstr "Prüfungsstatus"
 
-#: app/forms/reference_request.py:18
+#: project/forms/reference_request.py:31
 msgid "EventReferenceRequestReviewStatus.inbox"
 msgstr "Ungeprüft"
 
-#: app/forms/reference_request.py:19
+#: project/forms/reference_request.py:35
 msgid "EventReferenceRequestReviewStatus.verified"
 msgstr "Verifiziert"
 
-#: app/forms/reference_request.py:20
+#: project/forms/reference_request.py:39
 msgid "EventReferenceRequestReviewStatus.rejected"
 msgstr "Abgelehnt"
 
-#: app/forms/reference_request.py:24
+#: project/forms/reference_request.py:51
 msgid "EventReferenceRequestRejectionReason.duplicate"
 msgstr "Duplikat"
 
-#: app/forms/reference_request.py:25
+#: project/forms/reference_request.py:55
 msgid "EventReferenceRequestRejectionReason.untrustworthy"
 msgstr "Unseriös"
 
-#: app/forms/reference_request.py:26
+#: project/forms/reference_request.py:59
 msgid "EventReferenceRequestRejectionReason.irrelevant"
 msgstr "Nicht relevant"
 
-#: app/forms/reference_request.py:27
+#: project/forms/reference_request.py:63
 msgid "EventReferenceRequestRejectionReason.illegal"
 msgstr "Unzulässig"
 
-#: app/forms/reference_request.py:30
+#: project/forms/reference_request.py:71
 msgid "Save review"
 msgstr "Prüfung speichern"
 
-#: app/forms/widgets.py:102
+#: project/forms/widgets.py:134
 msgid "This field is required"
 msgstr "Dieses Feld ist erforderlich"
 
-#: app/templates/_macros.html:116 app/templates/_macros.html:322
-#: app/templates/_macros.html:329 app/templates/_macros.html:614
+#: project/templates/_macros.html:116 project/templates/_macros.html:322
+#: project/templates/_macros.html:329 project/templates/_macros.html:614
 msgid "Date"
 msgstr "Datum"
 
-#: app/templates/_macros.html:118
+#: project/templates/_macros.html:118
 msgid "Host"
 msgstr "Veranstalter"
 
-#: app/templates/_macros.html:140
+#: project/templates/_macros.html:140
 msgid "Show all events"
 msgstr "Alle Veranstaltungen anzeigen"
 
-#: app/templates/_macros.html:156
+#: project/templates/_macros.html:156
 msgid "Show on Google Maps"
 msgstr "Auf Google Maps anzeigen"
 
-#: app/templates/_macros.html:220
+#: project/templates/_macros.html:220
 msgid "Link"
 msgstr "Link"
 
-#: app/templates/_macros.html:315 app/templates/event/create.html:59
-#: app/templates/event/delete.html:13 app/templates/event/update.html:16
-#: app/templates/reference/delete.html:13
-#: app/templates/widget/event_suggestion/create.html:196
+#: project/templates/_macros.html:315 project/templates/event/create.html:59
+#: project/templates/event/delete.html:13
+#: project/templates/event/update.html:16
+#: project/templates/reference/delete.html:13
+#: project/templates/widget/event_suggestion/create.html:196
 msgid "Event"
 msgstr "Veranstaltung"
 
-#: app/templates/_macros.html:325
+#: project/templates/_macros.html:325
 #, python-format
 msgid "%(count)d event dates"
 msgstr "%(count)d Termine"
 
-#: app/templates/_macros.html:391
+#: project/templates/_macros.html:391
 msgid "Show directions"
 msgstr "Anreise planen"
 
-#: app/templates/_macros.html:442
+#: project/templates/_macros.html:442
 msgid "Sign in with Google"
 msgstr "Mit Google anmelden"
 
-#: app/templates/_macros.html:502
+#: project/templates/_macros.html:502
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
-#: app/templates/_macros.html:565 app/templates/_macros.html:567
-#: app/templates/event_date/list.html:270
-#: app/templates/widget/event_suggestion/create.html:160
-#: app/templates/widget/event_suggestion/create.html:185
-#: app/templates/widget/event_suggestion/create.html:205
-#: app/templates/widget/event_suggestion/create.html:228
-#: app/templates/widget/event_suggestion/create.html:246
-#: app/templates/widget/event_suggestion/create.html:267
+#: project/templates/_macros.html:565 project/templates/_macros.html:567
+#: project/templates/event_date/list.html:270
+#: project/templates/widget/event_suggestion/create.html:160
+#: project/templates/widget/event_suggestion/create.html:185
+#: project/templates/widget/event_suggestion/create.html:205
+#: project/templates/widget/event_suggestion/create.html:228
+#: project/templates/widget/event_suggestion/create.html:246
+#: project/templates/widget/event_suggestion/create.html:267
 msgid "Previous"
 msgstr "Zurück"
 
-#: app/templates/_macros.html:570 app/templates/_macros.html:572
-#: app/templates/event_date/list.html:271
-#: app/templates/widget/event_suggestion/create.html:161
-#: app/templates/widget/event_suggestion/create.html:186
-#: app/templates/widget/event_suggestion/create.html:206
-#: app/templates/widget/event_suggestion/create.html:229
-#: app/templates/widget/event_suggestion/create.html:247
+#: project/templates/_macros.html:570 project/templates/_macros.html:572
+#: project/templates/event_date/list.html:271
+#: project/templates/widget/event_suggestion/create.html:161
+#: project/templates/widget/event_suggestion/create.html:186
+#: project/templates/widget/event_suggestion/create.html:206
+#: project/templates/widget/event_suggestion/create.html:229
+#: project/templates/widget/event_suggestion/create.html:247
 msgid "Next"
 msgstr "Weiter"
 
-#: app/templates/_macros.html:637
+#: project/templates/_macros.html:637
 msgid "Radius"
 msgstr "Umkreis"
 
-#: app/templates/_macros.html:832
+#: project/templates/_macros.html:832
 msgid "Edit image"
 msgstr "Bild bearbeiten"
 
-#: app/templates/_macros.html:853
+#: project/templates/_macros.html:853
 msgid "Close"
 msgstr "Schließen"
 
-#: app/templates/_macros.html:854
+#: project/templates/_macros.html:854
 msgid "Okay"
 msgstr "OK"
 
-#: app/templates/_macros.html:863 app/templates/_macros.html:865
+#: project/templates/_macros.html:863 project/templates/_macros.html:865
 msgid "Choose image file"
 msgstr "Bild-Datei auswählen"
 
-#: app/templates/_macros.html:913
+#: project/templates/_macros.html:913
 msgid "Actions"
 msgstr "Aktionen"
 
-#: app/templates/_macros.html:917
+#: project/templates/_macros.html:917
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: app/templates/_macros.html:921
+#: project/templates/_macros.html:921
 msgid "Duplicate event"
 msgstr "Veranstaltung duplizieren"
 
-#: app/templates/_macros.html:924
-#: app/templates/manage/references_incoming.html:10
+#: project/templates/_macros.html:924
+#: project/templates/manage/references_incoming.html:10
 msgid "Reference event"
 msgstr "Veranstaltung empfehlen"
 
-#: app/templates/_macros.html:927
-#: app/templates/manage/reference_requests_outgoing.html:10
-#: app/templates/manage/references_outgoing.html:10
+#: project/templates/_macros.html:927
+#: project/templates/manage/reference_requests_outgoing.html:10
+#: project/templates/manage/references_outgoing.html:10
 msgid "Empfehlung anfragen"
 msgstr "Empfehlung anfragen"
 
-#: app/templates/_macros.html:950
+#: project/templates/_macros.html:950
 msgid "Event suggestion"
 msgstr "Veranstaltungsvorschlag"
 
-#: app/templates/_macros.html:972
-#: app/templates/widget/event_suggestion/create.html:171
-msgid "Contact"
-msgstr "Kontakt"
-
-#: app/templates/example.html:15
+#: project/templates/example.html:15
 msgid "Widget als iFrame einbetten"
 msgstr "Widget als iFrame einbetten"
 
-#: app/templates/home.html:26 app/templates/home.html:142
-#: app/templates/security/login_user.html:25 app/views/widget.py:99
+#: project/templates/home.html:26 project/templates/home.html:142
+#: project/templates/security/login_user.html:25 project/views/widget.py:143
 msgid "Register for free"
 msgstr "Kostenlos registrieren"
 
-#: app/templates/layout.html:84
+#: project/templates/layout.html:84
 msgid "Manage"
 msgstr "Verwaltung"
 
-#: app/templates/event_place/read.html:22 app/templates/layout.html:87
-#: app/templates/layout_manage.html:24 app/templates/manage/events.html:5
-#: app/templates/manage/events.html:9
+#: project/templates/event_place/read.html:22 project/templates/layout.html:87
+#: project/templates/layout_manage.html:24
+#: project/templates/manage/events.html:5
+#: project/templates/manage/events.html:9
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: app/templates/layout.html:88
+#: project/templates/layout.html:88
 msgid "Planing"
 msgstr "Planung"
 
-#: app/templates/layout.html:89
+#: project/templates/layout.html:89
 msgid "Example"
 msgstr "Beispiel"
 
-#: app/templates/developer/read.html:4 app/templates/layout.html:90
+#: project/templates/developer/read.html:4 project/templates/layout.html:90
 msgid "Developer"
 msgstr "Entwickler"
 
-#: app/templates/layout.html:99 app/templates/profile.html:4
-#: app/templates/profile.html:10
+#: project/templates/layout.html:99 project/templates/profile.html:4
+#: project/templates/profile.html:10
 msgid "Profile"
 msgstr "Profil"
 
-#: app/templates/admin/admin.html:3 app/templates/admin/admin.html:9
-#: app/templates/admin/admin_units.html:9 app/templates/layout.html:102
+#: project/templates/admin/admin.html:3 project/templates/admin/admin.html:9
+#: project/templates/admin/admin_units.html:9 project/templates/layout.html:102
 msgid "Admin"
 msgstr "Administration"
 
-#: app/templates/layout.html:106
+#: project/templates/layout.html:106
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: app/templates/layout_manage.html:25 app/templates/manage/organizers.html:5
-#: app/templates/manage/organizers.html:9
+#: project/templates/layout_manage.html:25
+#: project/templates/manage/organizers.html:5
+#: project/templates/manage/organizers.html:9
 msgid "Organizers"
 msgstr "Veranstalter"
 
-#: app/templates/event_place/list.html:3 app/templates/event_place/list.html:7
-#: app/templates/layout_manage.html:26 app/templates/manage/places.html:5
-#: app/templates/manage/places.html:9
+#: project/templates/event_place/list.html:3
+#: project/templates/event_place/list.html:7
+#: project/templates/layout_manage.html:26
+#: project/templates/manage/places.html:5
+#: project/templates/manage/places.html:9
 msgid "Places"
 msgstr "Orte"
 
-#: app/templates/layout_manage.html:27 app/templates/manage/reviews.html:5
-#: app/templates/manage/reviews.html:9
+#: project/templates/layout_manage.html:27
+#: project/templates/manage/reviews.html:5
+#: project/templates/manage/reviews.html:9
 msgid "Reviews"
 msgstr "Prüfungen"
 
-#: app/templates/layout_manage.html:30
-#: app/templates/manage/references_incoming.html:5
-#: app/templates/manage/references_outgoing.html:5
+#: project/templates/layout_manage.html:30
+#: project/templates/manage/references_incoming.html:5
+#: project/templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr "Empfehlungen"
 
-#: app/templates/layout_manage.html:36
-#: app/templates/manage/references_incoming.html:9
+#: project/templates/layout_manage.html:36
+#: project/templates/manage/references_incoming.html:9
 msgid "Incoming references"
 msgstr "Eingehende Empfehlungen"
 
-#: app/templates/layout_manage.html:37
-#: app/templates/manage/references_outgoing.html:9
+#: project/templates/layout_manage.html:37
+#: project/templates/manage/references_outgoing.html:9
 msgid "Outgoing references"
 msgstr "Ausgehende Empfehlungen"
 
-#: app/templates/layout_manage.html:38
-#: app/templates/manage/reference_requests_incoming.html:9
+#: project/templates/layout_manage.html:38
+#: project/templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
 msgstr "Eingehende Empfehlungsanfragen"
 
-#: app/templates/layout_manage.html:43
-#: app/templates/manage/reference_requests_outgoing.html:9
+#: project/templates/layout_manage.html:43
+#: project/templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
 msgstr "Ausgehende Empfehlungsanfragen"
 
-#: app/templates/layout_manage.html:46 app/templates/manage/members.html:5
-#: app/templates/manage/members.html:28
+#: project/templates/layout_manage.html:46
+#: project/templates/manage/members.html:5
+#: project/templates/manage/members.html:28
 msgid "Members"
 msgstr "Mitglieder"
 
-#: app/templates/layout_manage.html:47 app/templates/manage/reviews.html:10
-#: app/templates/manage/widgets.html:5 app/templates/manage/widgets.html:9
+#: project/templates/layout_manage.html:47
+#: project/templates/manage/reviews.html:10
+#: project/templates/manage/widgets.html:5
+#: project/templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr "Widgets"
 
-#: app/templates/admin_unit/update.html:11 app/templates/layout_manage.html:48
-#: app/templates/manage/widgets.html:12
+#: project/templates/admin/admin.html:15
+#: project/templates/admin/settings.html:4
+#: project/templates/admin/settings.html:8
+#: project/templates/admin_unit/update.html:11
+#: project/templates/layout_manage.html:48
+#: project/templates/manage/widgets.html:12
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: app/templates/manage/admin_units.html:8 app/templates/manage/members.html:9
-#: app/templates/profile.html:14
+#: project/templates/manage/admin_units.html:8
+#: project/templates/manage/members.html:9 project/templates/profile.html:14
 msgid "Invitations"
 msgstr "Einladungen"
 
-#: app/templates/admin/admin.html:15 app/templates/admin/admin_units.html:3
-#: app/templates/admin/admin_units.html:10
-#: app/templates/manage/admin_units.html:3
-#: app/templates/manage/admin_units.html:16 app/templates/profile.html:34
+#: project/templates/admin/admin.html:19
+#: project/templates/admin/admin_units.html:3
+#: project/templates/admin/admin_units.html:10
+#: project/templates/manage/admin_units.html:3
+#: project/templates/manage/admin_units.html:16
+#: project/templates/profile.html:34
 msgid "Admin Units"
 msgstr "Verwaltungseinheiten"
 
-#: app/templates/admin_unit/create.html:46
-#: app/templates/admin_unit/update.html:47 app/templates/event/create.html:147
-#: app/templates/event/update.html:81 app/templates/event_place/create.html:46
-#: app/templates/event_place/update.html:46
-#: app/templates/organizer/create.html:45
-#: app/templates/organizer/update.html:45
+#: project/templates/admin_unit/create.html:46
+#: project/templates/admin_unit/update.html:47
+#: project/templates/event/create.html:147
+#: project/templates/event/update.html:81
+#: project/templates/event_place/create.html:46
+#: project/templates/event_place/update.html:46
+#: project/templates/organizer/create.html:45
+#: project/templates/organizer/update.html:45
 msgid "Additional information"
 msgstr "Zusätzliche Informationen"
 
-#: app/templates/admin_unit/invite_member.html:6
-#: app/templates/manage/members.html:12
+#: project/templates/admin_unit/invite_member.html:6
+#: project/templates/manage/members.html:12
 msgid "Invite user"
 msgstr "Nutzer:in einladen"
 
-#: app/templates/email/invitation_notice.html:4
+#: project/templates/email/invitation_notice.html:4
 #, python-format
 msgid "You have been invited to join %(admin_unit_name)s."
 msgstr "Du wurdest eingeladen, %(admin_unit_name)s beizutreten."
 
-#: app/templates/email/invitation_notice.html:5
+#: project/templates/email/invitation_notice.html:5
 msgid "Click here to view the invitation"
 msgstr "Klicke hier, um die Einladung anzunehmen."
 
-#: app/templates/email/layout.html:350
+#: project/templates/email/layout.html:350
 msgid "Hi there"
 msgstr "Moin"
 
-#: app/templates/email/layout.html:351
+#: project/templates/email/layout.html:351
 msgid "this is a message from Oveda - Die offene Veranstaltungsdatenbank."
 msgstr "das ist eine Nachricht von Oveda - Die offene Veranstaltungsdatenbank."
 
-#: app/templates/email/reference_request_notice.html:4
+#: project/templates/email/reference_request_notice.html:4
 msgid "There is a new event reference request that needs to be reviewed."
 msgstr "Es gibt eine neue Empfehlungsanfrage, die geprüft werden muss."
 
-#: app/templates/email/reference_request_notice.html:5
+#: project/templates/email/reference_request_notice.html:5
 msgid "Click here to review the request"
 msgstr "Klicke hier, um die Anfrage anzuzeigen"
 
-#: app/templates/email/reference_request_review_status_notice.html:4
+#: project/templates/email/reference_request_review_status_notice.html:4
 msgid "The review status of your event reference request has been updated."
 msgstr "Der Prüfungsstatus deiner Empfehlungsanfrage wurde aktualisiert"
 
-#: app/templates/email/reference_request_review_status_notice.html:5
-#: app/templates/email/review_status_notice.html:5
+#: project/templates/email/reference_request_review_status_notice.html:5
+#: project/templates/email/review_status_notice.html:5
 msgid "Click here to view the status"
 msgstr "Klicke hier, um den Status anzuzeigen"
 
-#: app/templates/email/review_notice.html:4
+#: project/templates/email/review_notice.html:4
 msgid "There is a new event that needs to be reviewed."
 msgstr "Es wurde eine neue Veranstaltung eingetragen, die geprüft werden muss."
 
-#: app/templates/email/review_notice.html:5
+#: project/templates/email/review_notice.html:5
 msgid "Click here to review the event suggestion"
 msgstr "Klicke hier, um den Vorschlag zu prüfen"
 
-#: app/templates/email/review_status_notice.html:4
+#: project/templates/email/review_status_notice.html:4
 msgid "The review status of your event has been updated."
 msgstr "Der Prüfungsstatus deiner Veranstaltung wurde aktualisiert"
 
-#: app/templates/event/create.html:70 app/templates/event/update.html:27
+#: project/templates/event/create.html:70
+#: project/templates/event/update.html:27
 msgid "Event date"
 msgstr "Termin"
 
-#: app/templates/event/create.html:132 app/templates/event/update.html:66
+#: project/templates/event/create.html:132
+#: project/templates/event/update.html:66
 msgid "Target group"
 msgstr "Zielgruppe"
 
-#: app/templates/event/read.html:17 app/templates/event_date/list.html:4
-#: app/templates/event_date/list.html:249
-#: app/templates/reference_request/review.html:30
+#: project/templates/event/read.html:17
+#: project/templates/event_date/list.html:4
+#: project/templates/event_date/list.html:249
+#: project/templates/reference_request/review.html:30
 msgid "Event Dates"
 msgstr "Termine"
 
-#: app/templates/event/reference.html:8
+#: project/templates/event/reference.html:8
 #, python-format
 msgid "Reference event \"%(name)s\""
 msgstr "Veranstaltung \"%(name)s\" empfehlen"
 
-#: app/templates/event/reference_request.html:8
+#: project/templates/event/reference_request.html:8
 #, python-format
 msgid "Request reference for event \"%(name)s\""
 msgstr "Empfehlung anfragen für Veranstaltung \"%(name)s\""
 
-#: app/templates/event_place/read.html:19
+#: project/templates/event_place/read.html:19
 msgid "Info"
 msgstr "Info"
 
-#: app/templates/event_suggestion/review.html:9
-#: app/templates/manage/reviews.html:19
+#: project/templates/event_suggestion/review.html:9
+#: project/templates/manage/reviews.html:19
 msgid "Review event suggestion"
 msgstr "Veranstaltungsvorschlag prüfen"
 
-#: app/templates/event_suggestion/review.html:17
-#: app/templates/event_suggestion/review_status.html:24
-#: app/templates/reference_request/review_status.html:17
+#: project/templates/event_suggestion/review.html:17
+#: project/templates/event_suggestion/review_status.html:24
+#: project/templates/reference_request/review_status.html:17
 msgid "View event"
 msgstr "Veranstaltung anzeigen"
 
-#: app/templates/event_suggestion/review.html:21
+#: project/templates/event_suggestion/review.html:21
 msgid "Create event from suggestion"
 msgstr "Erstelle eine Veranstaltung aus dem Vorschlag"
 
-#: app/templates/event_suggestion/review_status.html:12
+#: project/templates/event_suggestion/review_status.html:12
 msgid "You can visit this page again to check the status."
 msgstr "Sie können diese Seite erneut besuchen, um den Status zu prüfen."
 
-#: app/templates/invitation/read.html:4 app/templates/invitation/read.html:8
-#: app/templates/manage/delete_invitation.html:13
+#: project/templates/invitation/read.html:4
+#: project/templates/invitation/read.html:8
+#: project/templates/manage/delete_invitation.html:13
 msgid "Invitation"
 msgstr "Einladung"
 
-#: app/templates/invitation/read.html:10
+#: project/templates/invitation/read.html:10
 #, python-format
 msgid "Would you like to accept the invitation from %(name)s?"
 msgstr "Möchtest du die Einladung von %(name)s akzeptieren?"
 
-#: app/templates/manage/delete_member.html:13
+#: project/templates/manage/delete_member.html:13
 msgid "Member"
 msgstr "Mitglied"
 
-#: app/templates/manage/events.html:26
-#: app/templates/manage/references_incoming.html:19
-#: app/templates/manage/references_outgoing.html:19
+#: project/templates/manage/events.html:26
+#: project/templates/manage/references_incoming.html:19
+#: project/templates/manage/references_outgoing.html:19
 msgid "View"
 msgstr "Anzeigen"
 
-#: app/templates/manage/events.html:27 app/templates/manage/members.html:35
-#: app/templates/manage/organizers.html:22 app/templates/manage/places.html:27
-#: app/templates/manage/references_incoming.html:20
+#: project/templates/manage/events.html:27
+#: project/templates/manage/members.html:35
+#: project/templates/manage/organizers.html:22
+#: project/templates/manage/places.html:27
+#: project/templates/manage/references_incoming.html:20
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: app/templates/manage/events.html:28 app/templates/manage/members.html:21
-#: app/templates/manage/members.html:36 app/templates/manage/organizers.html:23
-#: app/templates/manage/places.html:28
-#: app/templates/manage/references_incoming.html:21
+#: project/templates/manage/events.html:28
+#: project/templates/manage/members.html:21
+#: project/templates/manage/members.html:36
+#: project/templates/manage/organizers.html:23
+#: project/templates/manage/places.html:28
+#: project/templates/manage/references_incoming.html:21
 msgid "Delete"
 msgstr "Löschen"
 
-#: app/templates/manage/events.html:29
+#: project/templates/manage/events.html:29
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: app/templates/manage/organizers.html:24
+#: project/templates/manage/organizers.html:24
 msgid "Assistents"
 msgstr "Assistenten"
 
-#: app/templates/manage/reference_requests_incoming.html:5
-#: app/templates/manage/reference_requests_outgoing.html:5
+#: project/templates/manage/reference_requests_incoming.html:5
+#: project/templates/manage/reference_requests_outgoing.html:5
 msgid "Reference requests"
 msgstr "Empfehlungsanfragen"
 
-#: app/templates/manage/reference_requests_incoming.html:19
+#: project/templates/manage/reference_requests_incoming.html:19
 msgid "Review request"
 msgstr "Anfrage prüfen"
 
-#: app/templates/manage/reference_requests_outgoing.html:19
+#: project/templates/manage/reference_requests_outgoing.html:19
 msgid "Show review status"
 msgstr "Prüfungsstatus anzeigen"
 
-#: app/templates/manage/widgets.html:25
+#: project/templates/manage/widgets.html:25
 msgid "Veranstaltungen als iFrame einbetten"
 msgstr "Veranstaltungen als iFrame einbetten"
 
-#: app/templates/manage/widgets.html:32
+#: project/templates/manage/widgets.html:32
 msgid "Link, um Veranstaltungen vorzuschlagen"
 msgstr "Link, um Veranstaltungen vorzuschlagen"
 
-#: app/templates/manage/widgets.html:36
+#: project/templates/manage/widgets.html:36
 msgid "URL für Infoscreen"
 msgstr "URL für Infoscreen"
 
-#: app/templates/planing/list.html:4 app/templates/planing/list.html:92
+#: project/templates/planing/list.html:4 project/templates/planing/list.html:92
 msgid "Event Planing"
 msgstr "Planungsassistent"
 
-#: app/templates/reference/update.html:4 app/templates/reference/update.html:8
+#: project/templates/reference/update.html:4
+#: project/templates/reference/update.html:8
 #, python-format
 msgid "Update reference to event \"%(name)s\""
 msgstr "Empfehlung aktualisieren für Veranstaltung \"%(name)s\""
 
-#: app/templates/reference_request/review.html:8
+#: project/templates/reference_request/review.html:8
 msgid "Review event reference request"
 msgstr "Empfehlungsanfrage prüfen"
 
-#: app/templates/security/login_user.html:23
+#: project/templates/security/login_user.html:23
 msgid "You do not have an account yet? Not a problem!"
 msgstr "Du hast noch keinen Account? Kein Problem!"
 
-#: app/templates/widget/event_date/list.html:4
+#: project/templates/widget/event_date/list.html:4
 msgid "Widget"
 msgstr "Widget"
 
-#: app/templates/widget/event_suggestion/create.html:142
+#: project/templates/widget/event_suggestion/create.html:142
 msgid "Continue as guest"
 msgstr "Weiter als Gast"
 
-#: app/templates/widget/event_suggestion/create.html:239
+#: project/templates/widget/event_suggestion/create.html:239
 msgid "Optional details"
 msgstr "Optionale Details"
 
-#: app/templates/widget/event_suggestion/create.html:257
+#: project/templates/widget/event_suggestion/create.html:257
 msgid "Preview"
 msgstr "Vorschau"
 
-#: app/views/admin_unit.py:49
-msgid "Admin unit successfully created"
-msgstr "Verwaltungseinheit erfolgreich erstellt"
-
-#: app/views/admin_unit.py:74
-msgid "AdminUnit successfully updated"
-msgstr "Verwaltungseinheit erfolgreich aktualisiert"
-
-#: app/views/admin_unit_member.py:30
-msgid "Member successfully updated"
-msgstr "Mitglied erfolgreich aktualisiert"
-
-#: app/views/admin_unit_member.py:56
-msgid "Entered email does not match member email"
-msgstr "Die eingegebene Email passt nicht zur Email des Mitglieds"
-
-#: app/views/admin_unit_member.py:61
-msgid "Member successfully deleted"
-msgstr "Mitglied erfolgreich gelöscht"
-
-#: app/views/admin_unit_member_invitation.py:32
-msgid "Invitation successfully accepted"
-msgstr "Einladung erfolgreich akzeptiert"
-
-#: app/views/admin_unit_member_invitation.py:36
-msgid "Invitation successfully declined"
-msgstr "Einladung erfolgreich abgelehnt"
-
-#: app/views/admin_unit_member_invitation.py:72
-msgid "You have received an invitation"
-msgstr "Du hast eine Einladung erhalten"
-
-#: app/views/admin_unit_member_invitation.py:76
-msgid "Invitation successfully sent"
-msgstr "Einladung erfolgreich gesendet"
-
-#: app/views/admin_unit_member_invitation.py:98
-msgid "Entered email does not match invitation email"
-msgstr "Die eingegebene Email passt nicht zur Email der Einladung"
-
-#: app/views/admin_unit_member_invitation.py:103
-msgid "Invitation successfully deleted"
-msgstr "Einladung erfolgreich gelöscht"
-
-#: app/views/event.py:84
-msgid "Event successfully created"
-msgstr "Veranstaltung erfolgreich erstellt"
-
-#: app/views/event.py:109
-msgid "Event successfully updated"
-msgstr "Veranstaltung erfolgreich aktualisiert"
-
-#: app/views/event.py:130 app/views/reference.py:99
-msgid "Entered name does not match event name"
-msgstr "Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
-
-#: app/views/event.py:136
-msgid "Event successfully deleted"
-msgstr "Veranstaltung erfolgreich gelöscht"
-
-#: app/views/event_place.py:29
-msgid "Place successfully created"
-msgstr "Ort erfolgreich erstellt"
-
-#: app/views/event_place.py:49
-msgid "Place successfully updated"
-msgstr "Ort erfolgreich aktualisiert"
-
-#: app/views/event_place.py:69
-msgid "Entered name does not match place name"
-msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
-
-#: app/views/event_place.py:75
-msgid "Place successfully deleted"
-msgstr "Ort erfolgreich gelöscht"
-
-#: app/views/event_suggestion.py:45
-msgid "Event suggestion successfully rejected"
-msgstr "Veranstaltungsvorschlag erfolgreich abgelehnt"
-
-#: app/views/event_suggestion.py:68 app/views/reference_request_review.py:76
-msgid "Event review status updated"
-msgstr "Prüfungsstatus aktualisiert"
-
-#: app/views/manage.py:173
+#: project/views/admin.py:38 project/views/manage.py:247
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
-#: app/views/organizer.py:29
+#: project/views/admin_unit.py:33
+msgid "Admin unit successfully created"
+msgstr "Verwaltungseinheit erfolgreich erstellt"
+
+#: project/views/admin_unit.py:59
+msgid "AdminUnit successfully updated"
+msgstr "Verwaltungseinheit erfolgreich aktualisiert"
+
+#: project/views/admin_unit_member.py:41
+msgid "Member successfully updated"
+msgstr "Mitglied erfolgreich aktualisiert"
+
+#: project/views/admin_unit_member.py:67
+msgid "Entered email does not match member email"
+msgstr "Die eingegebene Email passt nicht zur Email des Mitglieds"
+
+#: project/views/admin_unit_member.py:72
+msgid "Member successfully deleted"
+msgstr "Mitglied erfolgreich gelöscht"
+
+#: project/views/admin_unit_member_invitation.py:42
+msgid "Invitation successfully accepted"
+msgstr "Einladung erfolgreich akzeptiert"
+
+#: project/views/admin_unit_member_invitation.py:48
+msgid "Invitation successfully declined"
+msgstr "Einladung erfolgreich abgelehnt"
+
+#: project/views/admin_unit_member_invitation.py:87
+msgid "You have received an invitation"
+msgstr "Du hast eine Einladung erhalten"
+
+#: project/views/admin_unit_member_invitation.py:92
+msgid "Invitation successfully sent"
+msgstr "Einladung erfolgreich gesendet"
+
+#: project/views/admin_unit_member_invitation.py:115
+msgid "Entered email does not match invitation email"
+msgstr "Die eingegebene Email passt nicht zur Email der Einladung"
+
+#: project/views/admin_unit_member_invitation.py:120
+msgid "Invitation successfully deleted"
+msgstr "Einladung erfolgreich gelöscht"
+
+#: project/views/event.py:123
+msgid "Event successfully created"
+msgstr "Veranstaltung erfolgreich erstellt"
+
+#: project/views/event.py:155
+msgid "Event successfully updated"
+msgstr "Veranstaltung erfolgreich aktualisiert"
+
+#: project/views/event.py:177 project/views/reference.py:130
+msgid "Entered name does not match event name"
+msgstr "Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
+
+#: project/views/event.py:183
+msgid "Event successfully deleted"
+msgstr "Veranstaltung erfolgreich gelöscht"
+
+#: project/views/event_place.py:36
+msgid "Place successfully created"
+msgstr "Ort erfolgreich erstellt"
+
+#: project/views/event_place.py:60
+msgid "Place successfully updated"
+msgstr "Ort erfolgreich aktualisiert"
+
+#: project/views/event_place.py:83
+msgid "Entered name does not match place name"
+msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
+
+#: project/views/event_place.py:89
+msgid "Place successfully deleted"
+msgstr "Ort erfolgreich gelöscht"
+
+#: project/views/event_suggestion.py:50
+msgid "Event suggestion successfully rejected"
+msgstr "Veranstaltungsvorschlag erfolgreich abgelehnt"
+
+#: project/views/event_suggestion.py:83
+#: project/views/reference_request_review.py:114
+msgid "Event review status updated"
+msgstr "Prüfungsstatus aktualisiert"
+
+#: project/views/organizer.py:35
 msgid "Organizer successfully created"
 msgstr "Veranstalter erfolgreich erstellt"
 
-#: app/views/organizer.py:49
+#: project/views/organizer.py:60
 msgid "Organizer successfully updated"
 msgstr "Veranstalter erfolgreich aktualisiert"
 
-#: app/views/organizer.py:69
+#: project/views/organizer.py:83
 msgid "Entered name does not match organizer name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen des Veranstalters"
 
-#: app/views/organizer.py:74
+#: project/views/organizer.py:88
 msgid "Organizer successfully deleted"
 msgstr "Veranstalter erfolgreich gelöscht"
 
-#: app/views/reference.py:32
+#: project/views/reference.py:46
 msgid "Event successfully referenced"
 msgstr "Veranstaltung erfolgreich empfohlen"
 
-#: app/views/reference.py:56
+#: project/views/reference.py:69
 msgid "Reference successfully updated"
 msgstr "Empfehlung erfolgreich empfohlen"
 
-#: app/views/reference.py:104
+#: project/views/reference.py:135
 msgid "Reference successfully deleted"
 msgstr "Empfehlung erfolgreich gelöscht"
 
-#: app/views/reference_request.py:54
+#: project/views/reference_request.py:88
 msgid "Request successfully created"
 msgstr "Empfehlungsanfrage erfolgreich erstellt"
 
-#: app/views/reference_request.py:73
+#: project/views/reference_request.py:111
 msgid "New reference request"
 msgstr "Neue Empfehlungsanfrage"
 
-#: app/views/reference_request_review.py:19
+#: project/views/reference_request_review.py:29
 msgid "Request already verified"
 msgstr "Empfehlungsanfrage ist bereits verifiziert"
 
-#: app/views/reference_request_review.py:37
-msgid "Request successfully updated"
-msgstr "Empfehlungsanfrage erfolgreich aktualisiert"
-
-#: app/views/reference_request_review.py:39
+#: project/views/reference_request_review.py:52
 msgid "Reference successfully created"
 msgstr "Empfehlung erfolgreich erstellt"
 
-#: app/views/utils.py:53
+#: project/views/reference_request_review.py:54
+msgid "Request successfully updated"
+msgstr "Empfehlungsanfrage erfolgreich aktualisiert"
+
+#: project/views/utils.py:53
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: app/views/utils.py:60
+#: project/views/utils.py:61
 msgid "Show"
 msgstr "Anzeigen"
 
-#: app/views/widget.py:96
+#: project/views/widget.py:135
 msgid "Thank you so much! The event is being verified."
 msgstr "Vielen Dank! Die Veranstaltung wird geprüft."
 
-#: app/views/widget.py:99
+#: project/views/widget.py:139
 msgid ""
 "For more options and your own calendar of events, you can register for "
 "free."
@@ -1369,7 +1428,7 @@ msgstr ""
 "Für mehr Optionen und einen eigenen Veranstaltungskalender, kannst du "
 "dich kostenlos registrieren."
 
-#: app/views/widget.py:135
+#: project/views/widget.py:195
 msgid "New event review"
 msgstr "Neue Veranstaltung zu prüfen"
 
