@@ -11,6 +11,10 @@
 </nav>
 
 <div class="list-group">
+    <a href="{{ url_for('admin_settings') }}" class="list-group-item">
+        {{ _('Settings') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
     <a href="{{ url_for('admin_admin_units') }}" class="list-group-item">
         {{ _('Admin Units') }}
         <i class="fa fa-caret-right"></i>
