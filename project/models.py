@@ -40,6 +40,18 @@ class TrackableMixin(object):
         return relationship("User")
 
 
+# Global
+
+
+class Settings(db.Model, TrackableMixin):
+    __tablename__ = "settings"
+    id = Column(Integer(), primary_key=True)
+    tos = Column(UnicodeText())
+    legal_notice = Column(UnicodeText())
+    contact = Column(UnicodeText())
+    privacy = Column(UnicodeText())
+
+
 # Multi purpose
 
 

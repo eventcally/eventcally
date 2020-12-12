@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field, render_field_with_errors %}
+{% block title %}
+{{ _('Settings') }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ _('Settings') }}</h1>
+
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ render_field_with_errors(form.tos) }}
+    {{ render_field_with_errors(form.legal_notice) }}
+    {{ render_field_with_errors(form.contact) }}
+    {{ render_field_with_errors(form.privacy) }}
+
+    {{ render_field(form.submit) }}
+</form>
+
+{% endblock %}

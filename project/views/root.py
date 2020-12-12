@@ -1,6 +1,9 @@
 from project import app
+from project.services.admin import upsert_settings
 from project.views.utils import track_analytics
 from flask import url_for, render_template, request, redirect
+from flask_babelex import gettext
+from markupsafe import Markup
 
 
 @app.route("/")
@@ -17,14 +20,36 @@ def example():
     return render_template("example.html")
 
 
-@app.route("/impressum")
-def impressum():
-    return render_template("impressum.html")
+@app.route("/tos")
+def tos():
+    title = gettext("Terms of service")
+    settings = upsert_settings()
+    content = Markup(settings.tos)
+    return render_template("legal.html", title=title, content=content)
 
 
-@app.route("/datenschutz")
-def datenschutz():
-    return render_template("datenschutz.html")
+@app.route("/legal_notice")
+def legal_notice():
+    title = gettext("Legal notice")
+    settings = upsert_settings()
+    content = Markup(settings.legal_notice)
+    return render_template("legal.html", title=title, content=content)
+
+
+@app.route("/contact")
+def contact():
+    title = gettext("Contact")
+    settings = upsert_settings()
+    content = Markup(settings.contact)
+    return render_template("legal.html", title=title, content=content)
+
+
+@app.route("/privacy")
+def privacy():
+    title = gettext("Privacy")
+    settings = upsert_settings()
+    content = Markup(settings.privacy)
+    return render_template("legal.html", title=title, content=content)
 
 
 @app.route("/developer")
