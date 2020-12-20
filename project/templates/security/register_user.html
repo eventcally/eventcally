@@ -11,6 +11,12 @@
   {% if register_user_form.password_confirm %}
     {{ render_field_with_errors(register_user_form.password_confirm) }}
   {% endif %}
+
+  <div class="form-group form-check">
+    {{ register_user_form.accept_tos(class="form-check-input")|safe }}
+    {{ register_user_form.accept_tos.label(class="form-check-label") }}
+  </div>
+
   {{ render_field(register_user_form.submit) }}
 </form>
 
