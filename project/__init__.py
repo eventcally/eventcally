@@ -82,9 +82,10 @@ app.json_encoder = DateTimeEncoder
 
 # Setup Flask-Security
 from project.models import User, Role
+from project.forms.security import ExtendedRegisterForm
 
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
-security = Security(app, user_datastore)
+security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
 
 from project import i10n
 from project import jinja_filters

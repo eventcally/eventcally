@@ -20,6 +20,7 @@ class UtilActions(object):
                     "email": email,
                     "password": password,
                     "password_confirm": password,
+                    "accept_tos": "y",
                     "csrf_token": self.get_csrf(response),
                     "submit": "Register",
                 },
