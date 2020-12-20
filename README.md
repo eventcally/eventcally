@@ -68,13 +68,6 @@ Create `.env` file in the root directory or pass as environment variables.
 | MAIL_SERVER | " |
 | MAIL_USERNAME | " |
 
-### Login with Google via OAuth
-
-| Variable | Function |
-| --- | --- |
-| GOOGLE_OAUTH_CLIENT_ID | Client Id |
-| GOOGLE_OAUTH_CLIENT_SECRET | Secret |
-
 ### Resolve addresses with Google Maps
 
 | Variable | Function |

@@ -438,10 +438,6 @@
 
 {% endmacro %}
 
-{% macro render_google_sign_in_button() %}
-<a href="{{ url_for('google.login') }}" class="btn btn-google" role="button"><i class="fab fa-google mr-2"></i> {{ _('Sign in with Google') }}</a>
-{% endmacro %}
-
 {% macro render_google_place_autocomplete_header(location_only = False) %}
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ "dev" | env_override('GOOGLE_MAPS_API_KEY') }}&libraries=places"></script>
 <script>
