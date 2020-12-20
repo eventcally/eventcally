@@ -14,7 +14,7 @@ from project.models import (
     EventRejectionReason,
     Image,
 )
-from project.forms.common import Base64ImageForm
+from project.forms.common import Base64ImageForm, get_accept_tos_markup
 from project.forms.widgets import CustomDateTimeField, TagSelectField
 
 
@@ -88,14 +88,13 @@ class CreateEventSuggestionForm(FlaskForm):
             "We recommend uploading a photo for the event. It looks a lot more, but of course it works without it."
         ),
     )
-    accept_tos = BooleanField(
-        lazy_gettext(
-            "I confirm that I have clarified all information (text, images, etc.) that I upload into the system with regard to their rights of use and declare that they may be passed on."
-        ),
-        validators=[DataRequired()],
-    )
+    accept_tos = BooleanField(validators=[DataRequired()])
 
     submit = SubmitField(lazy_gettext("Create event suggestion"))
+
+    def __init__(self, **kwargs):
+        super(CreateEventSuggestionForm, self).__init__(**kwargs)
+        self._fields["accept_tos"].label.text = get_accept_tos_markup()
 
     def populate_obj(self, obj):
         for name, field in self._fields.items():
