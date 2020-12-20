@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field_with_errors, render_field %}
+{% block title %}
+{{ _('Update user') }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ _('Update user') }}</h1>
+
+<form action="" method="POST">
+  {{ form.hidden_tag() }}
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ user.email }}
+    </div>
+    <div class="card-body">
+      {{ render_field_with_errors(form.roles, ri="multicheckbox") }}
+    </div>
+  </div>
+
+  {{ render_field(form.submit) }}
+</form>
+
+{% endblock %}
