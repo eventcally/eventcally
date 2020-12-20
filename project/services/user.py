@@ -6,18 +6,35 @@ def create_user(email, password):
     return user_datastore.create_user(email=email, password=hash_password(password))
 
 
-def add_roles_to_user(email, role_names):
+def add_roles_to_user(email, roles):
     user = find_user_by_email(email)
 
     if user is None:
         raise ValueError("User with given email does not exist.")
 
-    for role_name in role_names:
-        user_datastore.add_role_to_user(user, role_name)
+    for role in roles:
+        user_datastore.add_role_to_user(user, role)
 
 
 def add_admin_roles_to_user(email):
     add_roles_to_user(email, ["admin", "event_verifier"])
+
+
+def remove_roles_from_user(email, roles):
+    user = find_user_by_email(email)
+
+    for role in roles:
+        user_datastore.remove_role_from_user(user, role)
+
+
+def remove_all_roles_from_user(email):
+    user = find_user_by_email(email)
+    remove_roles_from_user(email, user.roles)
+
+
+def set_roles_for_user(email, roles):
+    remove_all_roles_from_user(email)
+    add_roles_to_user(email, roles)
 
 
 def upsert_user_role(role_name, role_title, permissions):
