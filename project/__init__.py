@@ -23,10 +23,6 @@ app.config["SECURITY_RECOVERABLE"] = True
 app.config["SECURITY_CHANGEABLE"] = True
 app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config["LANGUAGES"] = ["en", "de"]
-app.config["GOOGLE_OAUTH_CLIENT_ID"] = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
-app.config["GOOGLE_OAUTH_CLIENT_SECRET"] = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET")
-app.config["OAUTHLIB_INSECURE_TRANSPORT"] = True
-app.config["OAUTHLIB_RELAX_TOKEN_SCOPE"] = True
 
 # Generate a nice key using secrets.token_urlsafe()
 app.config["SECRET_KEY"] = os.environ.get(
@@ -89,11 +85,6 @@ from project.models import User, Role
 
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore)
-
-# OAuth
-from project.oauth import blueprint
-
-app.register_blueprint(blueprint, url_prefix="/login")
 
 from project import i10n
 from project import jinja_filters

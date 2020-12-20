@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-12-12 13:52+0100\n"
+"POT-Creation-Date: 2020-12-20 13:32+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -114,10 +114,6 @@ msgstr "Verifiziert"
 msgid "EventReviewStatus.rejected"
 msgstr "Abgelehnt"
 
-#: project/oauth.py:42 project/oauth.py:55
-msgid "Successfully signed in."
-msgstr "Erfolgreich eingeloggt."
-
 #: project/utils.py:5
 msgid "Event_"
 msgstr "Event_"
@@ -127,24 +123,24 @@ msgid "."
 msgstr "."
 
 #: project/forms/admin.py:8 project/templates/layout.html:139
-#: project/views/root.py:24
+#: project/views/root.py:25
 msgid "Terms of service"
 msgstr "Nutzungsbedingungen"
 
 #: project/forms/admin.py:9 project/templates/layout.html:143
-#: project/views/root.py:31
+#: project/views/root.py:33
 msgid "Legal notice"
 msgstr "Impressum"
 
 #: project/forms/admin.py:10 project/templates/_macros.html:972
 #: project/templates/layout.html:147
 #: project/templates/widget/event_suggestion/create.html:171
-#: project/views/root.py:38
+#: project/views/root.py:41
 msgid "Contact"
 msgstr "Kontakt"
 
 #: project/forms/admin.py:11 project/templates/layout.html:151
-#: project/views/root.py:45
+#: project/views/root.py:49
 msgid "Privacy"
 msgstr "Datenschutz"
 
@@ -1554,4 +1550,7 @@ msgstr "Neue Veranstaltung zu prüfen"
 
 #~ msgid "Register"
 #~ msgstr ""
+
+#~ msgid "Successfully signed in."
+#~ msgstr "Erfolgreich eingeloggt."
 
