@@ -69,9 +69,17 @@ def test_admin_users(client, seeder, utils, app):
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_admin_user_update(client, seeder, utils, app, mocker, db_error):
+def test_admin_user_update(client, seeder, utils, app, mocker, db, db_error):
     user_id, admin_unit_id = seeder.setup_base(True)
     other_user_id = seeder.create_user("other@test.de")
+
+    with app.app_context():
+        from project.models import User
+        from project.services.user import set_roles_for_user
+
+        user = User.query.get_or_404(other_user_id)
+        set_roles_for_user(user.email, ["event_verifier"])
+        db.session.commit()
 
     url = utils.get_url("admin_user_update", id=other_user_id)
     response = utils.get_ok(url)
