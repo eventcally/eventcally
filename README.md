@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/DanielGrams/gsevpt.svg?branch=master)](https://travis-ci.com/DanielGrams/gsevpt) [![Coverage Status](https://coveralls.io/repos/github/DanielGrams/gsevpt/badge.svg?branch=master)](https://coveralls.io/github/DanielGrams/gsevpt?branch=master) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) [![Updates](https://pyup.io/repos/github/DanielGrams/gsevpt/shield.svg)](https://pyup.io/repos/github/DanielGrams/gsevpt/)
 
-Website prototype using Python, Flask and Postgres running on Heroku.
+Website prototype using Python, Flask and Postgres.
 
 ## Automatic Deployment
 
@@ -28,7 +28,7 @@ psql -c 'create database gsevpt;' -U postgres
 export DATABASE_URL="postgresql://postgres@localhost/gsevpt"
 pip install -r requirements.txt
 flask db upgrade
-flask run --host 0.0.0.0
+gunicorn --bind 0.0.0.0:5000 project:app
 ```
 
 ## Scheduled/Cron jobs

@@ -56,3 +56,23 @@ pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -
 ```sh
 pybabel compile -d project/translations
 ```
+
+## Docker
+
+### Build image
+
+```sh
+docker build -t gsevpt:latest .
+```
+
+### Run container with existing postgres server
+
+```sh
+docker run -p 5000:5000 -e "FLASK_APP=main.py" -e "DATABASE_URL=postgresql://postgres@localhost/gsevpt" "gsevpt:latest"
+```
+
+### Compose (including Postgres server)
+
+```sh
+docker-compose build && docker-compose up
+```
