@@ -6,4 +6,5 @@ do
     sleep 2
 done
 
-gunicorn --bind 0.0.0.0:5000 project:app
+BIND_PORT=${PORT:-5000}
+gunicorn --bind 0.0.0.0:$BIND_PORT project:app

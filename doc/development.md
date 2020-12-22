@@ -68,7 +68,7 @@ docker build -t gsevpt:latest .
 ### Run container with existing postgres server
 
 ```sh
-docker run -p 5000:5000 -e "FLASK_APP=main.py" -e "DATABASE_URL=postgresql://postgres@localhost/gsevpt" "gsevpt:latest"
+docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/gsevpt" "gsevpt:latest"
 ```
 
 ### Compose (including Postgres server)
