@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+
+  db:
+    image: mdillon/postgis
+    environment:
+      - POSTGRES_DB=gsevpt
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+
+  web:
+    build: .
+    environment:
+      FLASK_APP: main.py
+      DATABASE_URL: postgresql://user:pass@db/gsevpt
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: main.py
+      DATABASE_URL: postgresql://user:pass@db/gsevpt
+    depends_on:
+      - db
