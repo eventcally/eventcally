@@ -1,12 +1,18 @@
 # Goslar Event Prototype
 
-[![Build Status](https://travis-ci.com/DanielGrams/gsevpt.svg?branch=master)](https://travis-ci.com/DanielGrams/gsevpt) [![Coverage Status](https://coveralls.io/repos/github/DanielGrams/gsevpt/badge.svg?branch=master)](https://coveralls.io/github/DanielGrams/gsevpt?branch=master) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) [![Updates](https://pyup.io/repos/github/DanielGrams/gsevpt/shield.svg)](https://pyup.io/repos/github/DanielGrams/gsevpt/)
+[![Build Status](https://travis-ci.com/DanielGrams/gsevpt.svg?branch=master)](https://travis-ci.com/DanielGrams/gsevpt) [![Coverage Status](https://coveralls.io/repos/github/DanielGrams/gsevpt/badge.svg?branch=master)](https://coveralls.io/github/DanielGrams/gsevpt?branch=master) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![Docker Pulls](https://img.shields.io/docker/pulls/danielgrams/gsevpt)
 
 Website prototype using Python, Flask and Postgres.
 
 ## Automatic Deployment
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+## Docker
+
+```sh
+docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/gsevpt" danielgrams/gsevpt:latest
+```
 
 ## Manual Installation
 
