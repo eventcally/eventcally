@@ -1,2 +1,2 @@
 release: flask db upgrade
-web: gunicorn project:app --log-file=-
+web: gunicorn -c gunicorn.conf.py project:app

@@ -31,10 +31,12 @@ psql -c 'create database gsevpt;' -U postgres
 ### Install and run
 
 ```sh
-export DATABASE_URL="postgresql://postgres@localhost/gsevpt"
-pip install -r requirements.txt
-flask db upgrade
-gunicorn --bind 0.0.0.0:5000 project:app
+python3 -m venv venv
+source venv/bin/activate
+(venv) pip install -r requirements.txt
+(venv) export DATABASE_URL='postgresql://postgres@localhost/gsevpt'
+(venv) flask db upgrade
+(venv) gunicorn -c gunicorn.conf.py --bind 0.0.0.0:5000 project:app
 ```
 
 ## Scheduled/Cron jobs
@@ -61,8 +63,8 @@ Create `.env` file in the root directory or pass as environment variables.
 
 | Variable | Function |
 | --- | --- |
-| SECRET_KEY | A secret key for verifying the integrity of signed cookies. Generate a nice key using secrets.token_urlsafe(). |
-| SECURITY_PASSWORD_HASH | Bcrypt is set as default SECURITY_PASSWORD_HASH, which requires a salt. Generate a good salt using: secrets.SystemRandom().getrandbits(128). |
+| SECRET_KEY | A secret key for verifying the integrity of signed cookies. Generate a nice key using `python3 -c "import secrets; print(secrets.token_urlsafe())"`. |
+| SECURITY_PASSWORD_HASH | Bcrypt is set as default SECURITY_PASSWORD_HASH, which requires a salt. Generate a good salt using: `python3 -c "import secrets; print(secrets.SystemRandom().getrandbits(128))"`. |
 
 ### Send notifications via Mail
 
