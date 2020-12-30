@@ -11,9 +11,6 @@ services:
 
   web:
     build: .
-    environment:
-      FLASK_APP: main.py
-      DATABASE_URL: postgresql://user:pass@db/gsevpt
     ports:
       - "5000:5000"
     environment:
