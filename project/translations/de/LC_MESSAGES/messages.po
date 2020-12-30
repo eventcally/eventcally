@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-12-20 15:15+0100\n"
+"POT-Creation-Date: 2020-12-30 16:04+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -122,31 +122,42 @@ msgstr "Event_"
 msgid "."
 msgstr "."
 
-#: project/forms/admin.py:8 project/templates/layout.html:139
+#: project/forms/admin.py:9 project/templates/layout.html:139
 #: project/views/root.py:25
 msgid "Terms of service"
 msgstr "Nutzungsbedingungen"
 
-#: project/forms/admin.py:9 project/templates/layout.html:143
+#: project/forms/admin.py:10 project/templates/layout.html:143
 #: project/views/root.py:33
 msgid "Legal notice"
 msgstr "Impressum"
 
-#: project/forms/admin.py:10 project/templates/_macros.html:968
+#: project/forms/admin.py:11 project/templates/_macros.html:968
 #: project/templates/layout.html:147
 #: project/templates/widget/event_suggestion/create.html:171
 #: project/views/root.py:41
 msgid "Contact"
 msgstr "Kontakt"
 
-#: project/forms/admin.py:11 project/templates/layout.html:151
+#: project/forms/admin.py:12 project/templates/layout.html:151
 #: project/views/root.py:49
 msgid "Privacy"
 msgstr "Datenschutz"
 
-#: project/forms/admin.py:13
+#: project/forms/admin.py:14
 msgid "Save"
 msgstr "Speichern"
+
+#: project/forms/admin.py:18 project/forms/admin_unit_member.py:11
+#: project/forms/admin_unit_member.py:31 project/templates/profile.html:40
+msgid "Roles"
+msgstr "Rollen"
+
+#: project/forms/admin.py:19 project/templates/admin/update_user.html:4
+#: project/templates/admin/update_user.html:8
+#, fuzzy
+msgid "Update user"
+msgstr "Mitglied aktualisieren"
 
 #: project/forms/admin_unit.py:17 project/forms/event.py:31
 #: project/forms/event_place.py:17 project/forms/organizer.py:16
@@ -216,6 +227,7 @@ msgstr "Link URL"
 #: project/forms/admin_unit_member.py:22 project/forms/admin_unit_member.py:27
 #: project/forms/event.py:54 project/forms/event_suggestion.py:58
 #: project/forms/organizer.py:31 project/templates/_macros.html:229
+#: project/templates/admin/users.html:19
 msgid "Email"
 msgstr "Email"
 
@@ -237,7 +249,7 @@ msgstr "Logo"
 #: project/forms/admin_unit.py:63 project/templates/admin_unit/create.html:10
 #: project/templates/manage/admin_units.html:18
 msgid "Create admin unit"
-msgstr "Verwaltungseinheit erstellen"
+msgstr "Organisation erstellen"
 
 #: project/forms/admin_unit.py:67 project/forms/admin_unit.py:90
 msgid "Update settings"
@@ -258,11 +270,6 @@ msgstr "Hauptfarbe"
 #: project/forms/admin_unit.py:85
 msgid "Link Color"
 msgstr "Linkfarbe"
-
-#: project/forms/admin_unit_member.py:11 project/forms/admin_unit_member.py:31
-#: project/templates/profile.html:40
-msgid "Roles"
-msgstr "Rollen"
 
 #: project/forms/admin_unit_member.py:12
 msgid "Invite"
@@ -317,63 +324,63 @@ msgstr ""
 "%(privacy_open)sDatenschutzerklärung%(privacy_close)s gelesen und "
 "akzeptiere diese."
 
-#: project/forms/common.py:83
+#: project/forms/common.py:86
 msgid "0 (Little relevant)"
 msgstr "0 (Wenig relevant)"
 
-#: project/forms/common.py:93
+#: project/forms/common.py:96
 msgid "10 (Highlight)"
 msgstr "10 (Highlight)"
 
-#: project/forms/common.py:97
+#: project/forms/common.py:100
 msgid "Monday"
 msgstr "Montag"
 
-#: project/forms/common.py:98
+#: project/forms/common.py:101
 msgid "Tueday"
 msgstr "Dienstag"
 
-#: project/forms/common.py:99
+#: project/forms/common.py:102
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: project/forms/common.py:100
+#: project/forms/common.py:103
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: project/forms/common.py:101
+#: project/forms/common.py:104
 msgid "Friday"
 msgstr "Freitag"
 
-#: project/forms/common.py:102
+#: project/forms/common.py:105
 msgid "Saturday"
 msgstr "Samstag"
 
-#: project/forms/common.py:103
+#: project/forms/common.py:106
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: project/forms/common.py:107
+#: project/forms/common.py:110
 msgid "500 m"
 msgstr "500 m"
 
-#: project/forms/common.py:108
+#: project/forms/common.py:111
 msgid "5 km"
 msgstr "5 km"
 
-#: project/forms/common.py:109
+#: project/forms/common.py:112
 msgid "10 km"
 msgstr "10 km"
 
-#: project/forms/common.py:110
+#: project/forms/common.py:113
 msgid "20 km"
 msgstr "20 km"
 
-#: project/forms/common.py:111
+#: project/forms/common.py:114
 msgid "50 km"
 msgstr "50 km"
 
-#: project/forms/common.py:112
+#: project/forms/common.py:115
 msgid "100 km"
 msgstr "100 km"
 
@@ -743,7 +750,7 @@ msgstr "Wochentage"
 #: project/templates/admin_unit/create.html:16
 #: project/templates/admin_unit/update.html:17
 msgid "Admin unit"
-msgstr "Verwaltungseinheit"
+msgstr "Organisation"
 
 #: project/forms/reference.py:15
 msgid "Save reference"
@@ -955,7 +962,8 @@ msgid "Profile"
 msgstr "Profil"
 
 #: project/templates/admin/admin.html:3 project/templates/admin/admin.html:9
-#: project/templates/admin/admin_units.html:9 project/templates/layout.html:102
+#: project/templates/admin/admin_units.html:9
+#: project/templates/admin/users.html:10 project/templates/layout.html:102
 msgid "Admin"
 msgstr "Administration"
 
@@ -1043,7 +1051,21 @@ msgstr "Einladungen"
 #: project/templates/manage/admin_units.html:16
 #: project/templates/profile.html:34
 msgid "Admin Units"
-msgstr "Verwaltungseinheiten"
+msgstr "Organisationen"
+
+#: project/templates/admin/admin.html:23 project/templates/admin/users.html:4
+#: project/templates/admin/users.html:11
+msgid "Users"
+msgstr "Benutzer"
+
+#: project/templates/admin/users.html:27
+#: project/templates/manage/events.html:27
+#: project/templates/manage/members.html:35
+#: project/templates/manage/organizers.html:22
+#: project/templates/manage/places.html:27
+#: project/templates/manage/references_incoming.html:20
+msgid "Edit"
+msgstr "Bearbeiten"
 
 #: project/templates/admin_unit/create.html:46
 #: project/templates/admin_unit/update.html:47
@@ -1178,14 +1200,6 @@ msgstr "Mitglied"
 msgid "View"
 msgstr "Anzeigen"
 
-#: project/templates/manage/events.html:27
-#: project/templates/manage/members.html:35
-#: project/templates/manage/organizers.html:22
-#: project/templates/manage/places.html:27
-#: project/templates/manage/references_incoming.html:20
-msgid "Edit"
-msgstr "Bearbeiten"
-
 #: project/templates/manage/events.html:28
 #: project/templates/manage/members.html:21
 #: project/templates/manage/members.html:36
@@ -1262,17 +1276,22 @@ msgstr "Optionale Details"
 msgid "Preview"
 msgstr "Vorschau"
 
-#: project/views/admin.py:38 project/views/manage.py:247
+#: project/views/admin.py:41 project/views/manage.py:247
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
+#: project/views/admin.py:76
+#, fuzzy
+msgid "User successfully updated"
+msgstr "Mitglied erfolgreich aktualisiert"
+
 #: project/views/admin_unit.py:33
 msgid "Admin unit successfully created"
-msgstr "Verwaltungseinheit erfolgreich erstellt"
+msgstr "Organisation erfolgreich erstellt"
 
 #: project/views/admin_unit.py:59
 msgid "AdminUnit successfully updated"
-msgstr "Verwaltungseinheit erfolgreich aktualisiert"
+msgstr "Organisation erfolgreich aktualisiert"
 
 #: project/views/admin_unit_member.py:41
 msgid "Member successfully updated"
@@ -1437,7 +1456,7 @@ msgstr "Neue Veranstaltung zu prüfen"
 #~ msgstr "Moin!"
 
 #~ msgid "Your Admin Units"
-#~ msgstr "Deine Verwaltungseinheiten"
+#~ msgstr "Deine Organisationen"
 
 #~ msgid "Your Organizations"
 #~ msgstr "Deine Organisationen"
@@ -1485,7 +1504,7 @@ msgstr "Neue Veranstaltung zu prüfen"
 #~ msgstr "Diese Veranstaltung als verifiziert markieren"
 
 #~ msgid "Admin unit successfully updated"
-#~ msgstr "Verwaltungseinheit erfolgreich aktualisiert"
+#~ msgstr "Organisation erfolgreich aktualisiert"
 
 #~ msgid "You are a member of this organization."
 #~ msgstr "Du bist Mitglied dieser Organisation"
@@ -1512,13 +1531,13 @@ msgstr "Neue Veranstaltung zu prüfen"
 #~ msgstr "Organisationen"
 
 #~ msgid "You are a member of this admin unit."
-#~ msgstr "Du bist Mitglied dieser Verwaltungseinheit"
+#~ msgstr "Du bist Mitglied dieser Organisation"
 
 #~ msgid "Organization"
 #~ msgstr "Organisation"
 
 #~ msgid "Update admin unit"
-#~ msgstr "Verwaltungseinheit aktualisieren"
+#~ msgstr "Organisation aktualisieren"
 
 #~ msgid "Other organizers can use this location"
 #~ msgstr "Andere Veranstalter können diesen Ort verwenden"
