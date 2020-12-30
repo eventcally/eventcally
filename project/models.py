@@ -17,7 +17,7 @@ from sqlalchemy import (
     Numeric,
 )
 from sqlalchemy_utils import ColorType
-from flask_security import UserMixin, RoleMixin
+from flask_security import UserMixin, RoleMixin, current_user
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from enum import IntEnum
 import datetime
@@ -28,16 +28,49 @@ from sqlalchemy import and_
 # Base
 
 
+def _current_user_id_or_none():
+    if current_user.is_authenticated:
+        return current_user.id
+
+    return None
+
+
 class TrackableMixin(object):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(
+        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
     @declared_attr
     def created_by_id(cls):
-        return Column("created_by_id", ForeignKey("user.id"))
+        return Column(
+            "created_by_id", ForeignKey("user.id"), default=_current_user_id_or_none
+        )
 
     @declared_attr
     def created_by(cls):
-        return relationship("User")
+        return relationship(
+            "User",
+            primaryjoin="User.id == %s.created_by_id" % cls.__name__,
+            remote_side="User.id",
+        )
+
+    @declared_attr
+    def updated_by_id(cls):
+        return Column(
+            "updated_by_id",
+            ForeignKey("user.id"),
+            default=_current_user_id_or_none,
+            onupdate=_current_user_id_or_none,
+        )
+
+    @declared_attr
+    def updated_by(cls):
+        return relationship(
+            "User",
+            primaryjoin="User.id == %s.updated_by_id" % cls.__name__,
+            remote_side="User.id",
+        )
 
 
 # Global
