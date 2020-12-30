@@ -500,8 +500,8 @@ class EventDate(db.Model):
     __tablename__ = "eventdate"
     id = Column(Integer(), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
-    start = db.Column(db.DateTime(timezone=True), nullable=False)
-    end = db.Column(db.DateTime(timezone=True), nullable=True)
+    start = db.Column(db.DateTime(timezone=True), nullable=False, index=True)
+    end = db.Column(db.DateTime(timezone=True), nullable=True, index=True)
 
 
 class EventEventCategories(db.Model):
