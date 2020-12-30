@@ -440,7 +440,7 @@ class Event(db.Model, TrackableMixin):
     )
     event_place = db.relationship("EventPlace", uselist=False)
     name = Column(Unicode(255), nullable=False)
-    description = Column(UnicodeText(), nullable=False)
+    description = Column(UnicodeText())
     external_link = Column(String(255))
     ticket_link = Column(String(255))
 
@@ -464,7 +464,7 @@ class Event(db.Model, TrackableMixin):
     price_info = Column(UnicodeText())
 
     recurrence_rule = Column(UnicodeText())
-    start = db.Column(db.DateTime(timezone=True), nullable=True)
+    start = db.Column(db.DateTime(timezone=True), nullable=False)
     end = db.Column(db.DateTime(timezone=True), nullable=True)
     dates = relationship(
         "EventDate", backref=backref("event", lazy=False), cascade="all, delete-orphan"
