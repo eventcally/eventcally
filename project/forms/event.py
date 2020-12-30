@@ -60,9 +60,7 @@ class BaseEventForm(FlaskForm):
     name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
     external_link = URLField(lazy_gettext("Link URL"), validators=[Optional()])
     ticket_link = StringField(lazy_gettext("Ticket Link URL"), validators=[Optional()])
-    description = TextAreaField(
-        lazy_gettext("Description"), validators=[DataRequired()]
-    )
+    description = TextAreaField(lazy_gettext("Description"), validators=[Optional()])
     recurrence_rule = TextAreaField(
         lazy_gettext("Recurrence rule"), validators=[Optional()]
     )
