@@ -10,6 +10,11 @@ from flask_cors import CORS
 from flask_qrcode import QRcode
 from flask_mail import Mail, email_dispatched
 from flask_migrate import Migrate
+from flask_marshmallow import Marshmallow
+from flask_restful import Api
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
+from flask_apispec.extension import FlaskApiSpec
 
 # Create app
 app = Flask(__name__)
@@ -41,6 +46,21 @@ babel = Babel(app)
 
 # cors
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+# API
+rest_api = Api(app, "/api/v1")
+marshmallow = Marshmallow(app)
+app.config.update(
+    {
+        "APISPEC_SPEC": APISpec(
+            title="Oveda API",
+            version="1.0.0",
+            plugins=[MarshmallowPlugin()],
+            openapi_version="2.0",
+        ),
+    }
+)
+api_docs = FlaskApiSpec(app)
 
 # Mail
 mail_server = os.getenv("MAIL_SERVER")
@@ -113,6 +133,9 @@ from project.views import (
     user,
     widget,
 )
+
+# API Resources
+import project.api
 
 # Command line
 import project.cli.event
