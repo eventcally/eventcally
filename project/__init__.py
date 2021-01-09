@@ -50,12 +50,13 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 # API
 rest_api = Api(app, "/api/v1")
 marshmallow = Marshmallow(app)
+marshmallow_plugin = MarshmallowPlugin()
 app.config.update(
     {
         "APISPEC_SPEC": APISpec(
             title="Oveda API",
             version="1.0.0",
-            plugins=[MarshmallowPlugin()],
+            plugins=[marshmallow_plugin],
             openapi_version="2.0",
         ),
     }

@@ -1,6 +1,12 @@
 from project import marshmallow
 from marshmallow import fields
-from project.models import Event
+from marshmallow_enum import EnumField
+from project.models import Event, EventStatus
+from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.api.organization.schemas import OrganizationRefSchema
+from project.api.organizer.schemas import OrganizerRefSchema
+from project.api.image.schemas import ImageRefSchema
+from project.api.place.schemas import PlaceRefSchema
 
 
 class EventSchema(marshmallow.SQLAlchemySchema):
@@ -8,7 +14,11 @@ class EventSchema(marshmallow.SQLAlchemySchema):
         model = Event
 
     id = marshmallow.auto_field()
+    href = marshmallow.URLFor("eventresource", values=dict(id="<id>"))
     name = marshmallow.auto_field()
+    start = marshmallow.auto_field()
+    end = marshmallow.auto_field()
+    recurrence_rule = marshmallow.auto_field()
     description = marshmallow.auto_field()
     external_link = marshmallow.auto_field()
     ticket_link = marshmallow.auto_field()
@@ -17,14 +27,28 @@ class EventSchema(marshmallow.SQLAlchemySchema):
     accessible_for_free = marshmallow.auto_field()
     age_from = marshmallow.auto_field()
     age_to = marshmallow.auto_field()
+    status = EnumField(EventStatus)
 
-    organization = marshmallow.HyperlinkRelated(
-        "organizationresource", attribute="admin_unit"
-    )
-    organizer = marshmallow.URLFor(
-        "organizerresource",
-        values=dict(organization_id="<admin_unit_id>", organizer_id="<organizer_id>"),
-    )
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
+    organizer = fields.Nested(OrganizerRefSchema)
+    photo = fields.Nested(ImageRefSchema)
+    place = fields.Nested(PlaceRefSchema, attribute="event_place")
+
+
+class EventRefSchema(marshmallow.SQLAlchemySchema):
+    class Meta:
+        model = Event
+
+    id = marshmallow.auto_field()
+    href = marshmallow.URLFor("eventresource", values=dict(id="<id>"))
+    name = marshmallow.auto_field()
+    description = marshmallow.auto_field()
+    status = EnumField(EventStatus)
+
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
+    organizer = fields.Nested(OrganizerRefSchema)
+    photo = fields.Nested(ImageRefSchema)
+    place = fields.Nested(PlaceRefSchema, attribute="event_place")
 
 
 class EventListItemSchema(marshmallow.SQLAlchemySchema):
@@ -39,41 +63,11 @@ class EventListItemSchema(marshmallow.SQLAlchemySchema):
     recurrence_rule = marshmallow.auto_field()
 
 
-class EventListRequestSchema(marshmallow.Schema):
-    page = fields.Integer(
-        required=False,
-        default=1,
-        metadata={"description": "The page number (1 indexed)."},
-    )
-    per_page = fields.Integer(
-        required=False, default=20, metadata={"description": "Items per page"}
-    )
+class EventListRequestSchema(PaginationRequestSchema):
+    pass
 
 
-class EventListResponseSchema(marshmallow.Schema):
-    has_next = fields.Boolean(
-        required=True, metadata={"description": "True if a next page exists."}
-    )
-    has_prev = fields.Boolean(
-        required=True, metadata={"description": "True if a previous page exists."}
-    )
-    next_num = fields.Integer(
-        required=False, metadata={"description": "Number of the next page."}
-    )
-    prev_num = fields.Integer(
-        required=False, metadata={"description": "Number of the previous page."}
-    )
-    page = fields.Integer(
-        required=True, metadata={"description": "The current page number (1 indexed)."}
-    )
-    pages = fields.Integer(
-        required=True, metadata={"description": "The total number of pages."}
-    )
-    per_page = fields.Integer(required=True, metadata={"description": "Items per page"})
-    total = fields.Integer(
-        required=True,
-        metadata={"description": "The total number of items matching the query"},
-    )
+class EventListResponseSchema(PaginationResponseSchema):
     items = fields.List(
         fields.Nested(EventListItemSchema), metadata={"description": "Events"}
     )

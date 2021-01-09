@@ -8,12 +8,12 @@ from project.models import EventOrganizer
 class OrganizerResource(MethodResource):
     @doc(tags=["Organizers"])
     @marshal_with(OrganizerSchema)
-    def get(self, organization_id, organizer_id):
-        return EventOrganizer.query.get_or_404(organizer_id)
+    def get(self, id):
+        return EventOrganizer.query.get_or_404(id)
 
 
 rest_api.add_resource(
     OrganizerResource,
-    "/organizations/<int:organization_id>/organizers/<int:organizer_id>",
+    "/organizers/<int:id>",
 )
 api_docs.register(OrganizerResource)
