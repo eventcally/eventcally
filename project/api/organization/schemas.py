@@ -12,3 +12,12 @@ class OrganizationSchema(marshmallow.SQLAlchemySchema):
     email = marshmallow.auto_field()
     phone = marshmallow.auto_field()
     fax = marshmallow.auto_field()
+
+
+class OrganizationRefSchema(marshmallow.SQLAlchemySchema):
+    class Meta:
+        model = AdminUnit
+
+    id = marshmallow.auto_field()
+    name = marshmallow.auto_field()
+    href = marshmallow.URLFor("organizationresource", values=dict(id="<id>"))
