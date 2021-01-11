@@ -22,8 +22,6 @@ class LocationRefSchema(marshmallow.SQLAlchemySchema):
         model = Location
 
     id = marshmallow.auto_field()
-    longitude = fields.Str()
-    latitude = fields.Str()
     href = marshmallow.URLFor(
         "locationresource",
         values=dict(id="<id>"),

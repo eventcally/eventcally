@@ -7,8 +7,8 @@ class ImageSchema(marshmallow.SQLAlchemySchema):
         model = Image
 
     id = marshmallow.auto_field()
-    copyright_text = marshmallow.auto_field()
     image_url = marshmallow.URLFor("image", values=dict(id="<id>"))
+    copyright_text = marshmallow.auto_field()
 
 
 class ImageRefSchema(marshmallow.SQLAlchemySchema):
@@ -16,7 +16,6 @@ class ImageRefSchema(marshmallow.SQLAlchemySchema):
         model = Image
 
     id = marshmallow.auto_field()
-    copyright_text = marshmallow.auto_field()
     image_url = marshmallow.URLFor("image", values=dict(id="<id>"))
     href = marshmallow.URLFor(
         "imageresource",
