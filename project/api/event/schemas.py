@@ -1,5 +1,5 @@
 from project import marshmallow
-from marshmallow import fields
+from marshmallow import fields, validate
 from marshmallow_enum import EnumField
 from project.models import (
     Event,
@@ -11,7 +11,7 @@ from project.api.schemas import PaginationRequestSchema, PaginationResponseSchem
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.organizer.schemas import OrganizerRefSchema
 from project.api.image.schemas import ImageRefSchema
-from project.api.place.schemas import PlaceRefSchema
+from project.api.place.schemas import PlaceRefSchema, PlaceSearchItemSchema
 from project.api.event_category.schemas import EventCategoryRefSchema
 
 
@@ -20,6 +20,8 @@ class EventSchema(marshmallow.SQLAlchemySchema):
         model = Event
 
     id = marshmallow.auto_field()
+    created_at = marshmallow.auto_field()
+    updated_at = marshmallow.auto_field()
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
     organizer = fields.Nested(OrganizerRefSchema)
     place = fields.Nested(PlaceRefSchema, attribute="event_place")
@@ -49,12 +51,6 @@ class EventSchema(marshmallow.SQLAlchemySchema):
     start = marshmallow.auto_field()
     end = marshmallow.auto_field()
 
-    _links = marshmallow.Hyperlinks(
-        {
-            "dates": marshmallow.URLFor("eventdatesresource", values=dict(id="<id>")),
-        }
-    )
-
 
 class EventRefSchema(marshmallow.SQLAlchemySchema):
     class Meta:
@@ -65,16 +61,19 @@ class EventRefSchema(marshmallow.SQLAlchemySchema):
     name = marshmallow.auto_field()
 
 
-class EventListItemSchema(marshmallow.SQLAlchemySchema):
+class EventSearchItemSchema(EventRefSchema):
     class Meta:
         model = Event
 
-    id = marshmallow.auto_field()
-    href = marshmallow.URLFor("eventresource", values=dict(id="<id>"))
-    name = marshmallow.auto_field()
+    description = marshmallow.auto_field()
     start = marshmallow.auto_field()
     end = marshmallow.auto_field()
     recurrence_rule = marshmallow.auto_field()
+    photo = fields.Nested(ImageRefSchema)
+    place = fields.Nested(PlaceSearchItemSchema, attribute="event_place")
+    status = EnumField(EventStatus)
+    organizer = fields.Nested(OrganizerRefSchema)
+    categories = fields.List(fields.Nested(EventCategoryRefSchema))
 
 
 class EventListRequestSchema(PaginationRequestSchema):
@@ -84,4 +83,47 @@ class EventListRequestSchema(PaginationRequestSchema):
 class EventListResponseSchema(PaginationResponseSchema):
     items = fields.List(
         fields.Nested(EventRefSchema), metadata={"description": "Events"}
+    )
+
+
+class EventSearchRequestSchema(PaginationRequestSchema):
+    keyword = fields.Str(
+        metadata={"description": "Looks for keyword in name, description and tags."},
+    )
+    date_from = fields.Date(
+        metadata={
+            "description": "Looks for events at or after this date, e.g. 2020-12-31."
+        },
+    )
+    date_to = fields.Date(
+        metadata={
+            "description": "Looks for events at or before this date, e.g. 2020-12-31."
+        },
+    )
+    coordinate = fields.Str(
+        metadata={
+            "description": 'Looks for events around this coordinate. Expects comma separated latitude and longitude, e.g. "51.9077888,10.4333312". See distance.'
+        },
+    )
+    distance = fields.Int(
+        validate=validate.Range(min=1, max=100000),
+        metadata={
+            "description": "Looks for events around a coordinate within this distance. Expects distance in meters. See coordinate."
+        },
+    )
+    category_id = fields.List(
+        fields.Int(),
+        metadata={"description": "Looks for events with this category ids."},
+    )
+    weekday = fields.List(
+        fields.Int(validate=validate.Range(min=0, max=6)),
+        metadata={
+            "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..)."
+        },
+    )
+
+
+class EventSearchResponseSchema(PaginationResponseSchema):
+    items = fields.List(
+        fields.Nested(EventSearchItemSchema), metadata={"description": "Events"}
     )

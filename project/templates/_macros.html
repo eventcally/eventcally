@@ -545,37 +545,6 @@
   {% endif %}
 {% endmacro %}
 
-{% macro render_event_organizer_places_header() %}
-<script>
-$( function() {
-
-  $("#organizer_id").change(function(){
-      var organizer_id = $(this).val();
-
-      $.ajax({
-          url: '/api/organizer/' + organizer_id + '/event_places',
-          type: 'get',
-          dataType: 'json',
-          success:function(response){
-
-              var len = response.length;
-
-              $("#event_place_id").empty();
-              $("#event_place_id").append("<option value='"+0+"'></option>");
-              for( var i = 0; i<len; i++){
-                  var id = response[i]['id'];
-                  var name = response[i]['name'];
-
-                  $("#event_place_id").append("<option value='"+id+"'>"+name+"</option>");
-
-              }
-          }
-      });
-  });
-});
-</script>
-{% endmacro %}
-
 {% macro render_pagination(pagination) %}
 {% if 'prev_url' in pagination or 'next_url' in pagination %}
 <nav aria-label="Page navigation">

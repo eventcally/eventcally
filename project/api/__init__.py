@@ -14,6 +14,7 @@ from project import marshmallow_plugin
 marshmallow_plugin.converter.add_attribute_function(enum_to_properties)
 
 import project.api.event.resources
+import project.api.event_category.resources
 import project.api.event_date.resources
 import project.api.image.resources
 import project.api.location.resources
