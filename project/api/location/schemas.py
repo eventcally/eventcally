@@ -8,6 +8,8 @@ class LocationSchema(marshmallow.SQLAlchemySchema):
         model = Location
 
     id = marshmallow.auto_field()
+    created_at = marshmallow.auto_field()
+    updated_at = marshmallow.auto_field()
     street = marshmallow.auto_field()
     postalCode = marshmallow.auto_field()
     city = marshmallow.auto_field()
@@ -26,3 +28,11 @@ class LocationRefSchema(marshmallow.SQLAlchemySchema):
         "locationresource",
         values=dict(id="<id>"),
     )
+
+
+class LocationSearchItemSchema(LocationRefSchema):
+    class Meta:
+        model = Location
+
+    longitude = fields.Str()
+    latitude = fields.Str()

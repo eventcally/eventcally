@@ -9,6 +9,8 @@ from project.api.event_date.schemas import (
     EventDateSearchResponseSchema,
 )
 from project.models import EventDate
+from project.services.event import get_event_dates_query
+from project.services.event_search import EventSearchParams
 
 
 class EventDateListResource(MethodResource):
@@ -29,10 +31,12 @@ class EventDateResource(MethodResource):
 
 class EventDateSearchResource(MethodResource):
     @doc(tags=["Event Dates"])
-    @use_kwargs(EventDateSearchRequestSchema)
+    @use_kwargs(EventDateSearchRequestSchema, location=("query"))
     @marshal_with(EventDateSearchResponseSchema)
-    def post(self, **kwargs):
-        pagination = EventDate.query.paginate()
+    def get(self, **kwargs):
+        params = EventSearchParams()
+        params.load_from_request()
+        pagination = get_event_dates_query(params).paginate()
         return pagination
 
 

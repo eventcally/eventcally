@@ -19,4 +19,4 @@ def test_search(client, seeder, utils):
     seeder.create_event(admin_unit_id)
 
     url = utils.get_url("eventdatesearchresource")
-    utils.post_json(url, {})
+    utils.get_ok(url)
