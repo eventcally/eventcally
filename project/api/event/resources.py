@@ -6,7 +6,11 @@ from project.api.event.schemas import (
     EventListRequestSchema,
     EventListResponseSchema,
 )
-from project.models import Event
+from project.api.event_date.schemas import (
+    EventDateListRequestSchema,
+    EventDateListResponseSchema,
+)
+from project.models import Event, EventDate
 
 
 class EventListResource(MethodResource):
@@ -25,8 +29,20 @@ class EventResource(MethodResource):
         return Event.query.get_or_404(id)
 
 
+class EventDatesResource(MethodResource):
+    @doc(tags=["Events"])
+    @use_kwargs(EventDateListRequestSchema, location=("query"))
+    @marshal_with(EventDateListResponseSchema)
+    def get(self, id):
+        event = Event.query.get_or_404(id)
+        return EventDate.query.with_parent(event).paginate()
+
+
 rest_api.add_resource(EventListResource, "/events")
 api_docs.register(EventListResource)
 
 rest_api.add_resource(EventResource, "/events/<int:id>")
 api_docs.register(EventResource)
+
+rest_api.add_resource(EventDatesResource, "/events/<int:id>/dates")
+api_docs.register(EventDatesResource)

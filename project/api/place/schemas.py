@@ -3,6 +3,7 @@ from project import marshmallow
 from project.models import EventPlace
 from project.api.image.schemas import ImageRefSchema
 from project.api.location.schemas import LocationRefSchema
+from project.api.organization.schemas import OrganizationRefSchema
 
 
 class PlaceSchema(marshmallow.SQLAlchemySchema):
@@ -11,10 +12,11 @@ class PlaceSchema(marshmallow.SQLAlchemySchema):
 
     id = marshmallow.auto_field()
     name = marshmallow.auto_field()
+    location = fields.Nested(LocationRefSchema)
+    photo = fields.Nested(ImageRefSchema)
     url = marshmallow.auto_field()
     description = marshmallow.auto_field()
-    photo = fields.Nested(ImageRefSchema)
-    location = fields.Nested(LocationRefSchema)
+    organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
 
 
 class PlaceRefSchema(marshmallow.SQLAlchemySchema):
@@ -27,4 +29,3 @@ class PlaceRefSchema(marshmallow.SQLAlchemySchema):
         "placeresource",
         values=dict(id="<id>"),
     )
-    location = fields.Nested(LocationRefSchema)

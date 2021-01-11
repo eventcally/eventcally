@@ -5,6 +5,8 @@ from project.api.event_date.schemas import (
     EventDateSchema,
     EventDateListRequestSchema,
     EventDateListResponseSchema,
+    EventDateSearchRequestSchema,
+    EventDateSearchResponseSchema,
 )
 from project.models import EventDate
 
@@ -25,8 +27,20 @@ class EventDateResource(MethodResource):
         return EventDate.query.get_or_404(id)
 
 
+class EventDateSearchResource(MethodResource):
+    @doc(tags=["Event Dates"])
+    @use_kwargs(EventDateSearchRequestSchema)
+    @marshal_with(EventDateSearchResponseSchema)
+    def post(self, **kwargs):
+        pagination = EventDate.query.paginate()
+        return pagination
+
+
 rest_api.add_resource(EventDateListResource, "/event_dates")
 api_docs.register(EventDateListResource)
 
 rest_api.add_resource(EventDateResource, "/event_dates/<int:id>")
 api_docs.register(EventDateResource)
+
+rest_api.add_resource(EventDateSearchResource, "/event_dates/search")
+api_docs.register(EventDateSearchResource)
