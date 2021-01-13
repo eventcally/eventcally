@@ -1,7 +1,6 @@
 from project import db
-from project.models import EventOrganizer, EventPlace, Location
+from project.models import EventOrganizer, Location
 from sqlalchemy import and_
-from sqlalchemy.sql import func
 
 
 def get_event_organizer(admin_unit_id, name):
@@ -18,12 +17,3 @@ def upsert_event_organizer(admin_unit_id, name):
         db.session.add(result)
 
     return result
-
-
-def get_event_places(organizer_id):
-    organizer = EventOrganizer.query.get(organizer_id)
-    return (
-        EventPlace.query.filter(EventPlace.admin_unit_id == organizer.admin_unit_id)
-        .order_by(func.lower(EventPlace.name))
-        .all()
-    )
