@@ -5,11 +5,12 @@ from project.models import (
     AdminUnitMemberRole,
     AdminUnitMemberInvitation,
     EventOrganizer,
+    EventPlace,
     Location,
 )
 from project.services.location import assign_location_values
 from project.services.image import upsert_image_with_data
-from sqlalchemy import and_
+from sqlalchemy import func, and_, or_
 
 
 def insert_admin_unit_for_user(admin_unit, user):
@@ -126,3 +127,37 @@ def get_member_for_admin_unit_by_user_id(admin_unit_id, user_id):
 
 def get_admin_unit_member(id):
     return AdminUnitMember.query.filter_by(id=id).first()
+
+
+def get_admin_unit_query(keyword=None):
+    query = AdminUnit.query
+
+    if keyword:
+        like_keyword = "%" + keyword + "%"
+        keyword_filter = or_(
+            AdminUnit.name.ilike(like_keyword),
+            AdminUnit.short_name.ilike(like_keyword),
+        )
+        query = query.filter(keyword_filter)
+
+    return query.order_by(func.lower(AdminUnit.name))
+
+
+def get_organizer_query(admin_unit_id, name=None):
+    query = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit_id)
+
+    if name:
+        like_name = "%" + name + "%"
+        query = query.filter(EventOrganizer.name.ilike(like_name))
+
+    return query.order_by(func.lower(EventOrganizer.name))
+
+
+def get_place_query(admin_unit_id, name=None):
+    query = EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
+
+    if name:
+        like_name = "%" + name + "%"
+        query = query.filter(EventPlace.name.ilike(like_name))
+
+    return query.order_by(func.lower(EventPlace.name))

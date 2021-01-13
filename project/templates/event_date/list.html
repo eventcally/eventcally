@@ -8,11 +8,11 @@
 <script>
 
     var page = 1;
-    var per_page = 20;
+    var per_page = 18; // 3*6
 
     var leaflet_map = null;
     var map_cluster_group = null;
-    var events = null;
+    var event_dates = null;
     var arrayOfMarkers = [];
 
     function init_leaflet_map() {
@@ -71,10 +71,12 @@
         init_leaflet_map();
         clear_events_from_map();
 
-        $.each(events, function(index, event) {
-            if (event.location != null && event.location.geo != null) {
-                var start = moment(event.startDate);
-                var title = start.format("dd. DD.MM.YYYY LT") + ' ' + '<a href="#" onclick="show_event_in_list(\'' + event.identifier + '\'); return false;">' + event.name + '</a>';
+        $.each(event_dates, function(index, event_date) {
+            event = event_date.event;
+            if (event.place != null && event.place.location != null && event.place.location.latitude != null) {
+                var location = event.place.location;
+                var start = moment(event_date.start);
+                var title = start.format("dd. DD.MM.YYYY LT") + ' ' + '<a href="#" onclick="show_event_in_list(\'' + event_date.id + '\'); return false;">' + event.name + '</a>';
 
                 var icon = new L.DivIcon.SVGIcon({
                     color: "#000",
@@ -84,8 +86,7 @@
                     circleRatio: 0.35
                 });
 
-                var geo = event.location.geo;
-                var marker = L.marker([geo.latitude, geo.longitude], { icon: icon }).bindPopup(title);
+                var marker = L.marker([location.latitude, location.longitude], { icon: icon }).bindPopup(title);
                 arrayOfMarkers.push(marker);
             }
         });
@@ -126,10 +127,10 @@
         result_list.empty();
 
         var req_data = $("#filter_form").serialize();
-        req_data += '&page=' + page;
+        req_data += '&page=' + page + '&per_page=' + per_page;
 
         $.ajax({
-            url: "{{ url_for('api_event_dates') }}",
+            url: "{{ url_for('eventdatesearchresource') }}",
             type: "get",
             dataType: "json",
             data: req_data,
@@ -139,11 +140,12 @@
             success: function (data) {
 
                 var content = '';
-                events = data.event;
-                var event_count = events.length;
+                event_dates = data.items;
+                var event_date_count = event_dates.length;
                 var cols = 3;
 
-                $.each(events, function(index, event) {
+                $.each(event_dates, function(index, event_date) {
+                    event = event_date.event;
                     var is_card_deck = (index % cols == 0);
 
                     if (is_card_deck) {
@@ -153,38 +155,38 @@
                         content += '<div class="card-deck">';
                     }
 
-                    var start = moment(event.startDate);
+                    var start = moment(event_date.start);
                     var img_tag = '';
 
-                    if (event.image != null) {
-                        img_tag = '<img src="' + event.image + '" class="card-img-top" style="object-fit: cover; height: 12vh; border-radius: 0;" />';
+                    if (event.photo != null) {
+                        img_tag = '<img src="' + event.photo.image_url + '" class="card-img-top" style="object-fit: cover; height: 12vh; border-radius: 0;" />';
                     }
 
                     var map_link_start = '';
                     var map_link_end = '';
 
-                    if (event.location != null && event.location.geo != null) {
-                        var geo = event.location.geo;
-                        map_link_start = '<a href="#" onclick="fly_to_event(' + geo.latitude + ', ' + geo.longitude + '); return false;">';
+                    if (event.place != null && event.place.location != null && event.place.location.latitude != null) {
+                        var location = event.place.location;
+                        map_link_start = '<a href="#" onclick="fly_to_event(' + location.latitude + ', ' + location.longitude + '); return false;">';
                         map_link_end = '</a>';
                     }
 
-                    content += '<div class="card mb-3" id="event_card_' + event.identifier + '">' +
+                    content += '<div class="card mb-3" id="event_card_' + event_date.id + '">' +
                                         '<div class="card-header">' + start.format("dd. DD.MM.YYYY LT") + '</div>' +
                                         img_tag +
                                         '<div class="card-body" style="padding:1rem">' +
-                                            '<h5 class="card-title"><a href="' + event.url[0] + '">' + event.name + render_event_status_pill(event) + '</a></h5>' +
+                                            '<h5 class="card-title"><a href="eventdate/' + event_date.id + '">' + event.name + '</a> <span class="small" style="vertical-align: middle;">' + render_event_status_pill(event) + '</span></h5>' +
                                             '<p class="card-text">' + event.description.truncate(100) + '</p>' +
                                         '</div>' +
                                         '<div class="card-footer text-muted small">' +
-                                            '<div class="text-muted mr-2"><i class="fa fa-database"></i> ' + event.organizer[0].name + '</div>' +
-                                            '<div class="text-muted">' + map_link_start + '<i class="fa fa-map-marker"></i>  ' + event.location.name + map_link_end + '</div>' +
+                                            '<div class="text-muted mr-2"><i class="fa fa-database"></i> ' + event.organizer.name + '</div>' +
+                                            '<div class="text-muted">' + map_link_start + '<i class="fa fa-map-marker"></i>  ' + event.place.name + map_link_end + '</div>' +
                                         '</div>' +
                                 '</div>';
                 });
 
                 if (content != '') {
-                    var remaining_cols = cols - (event_count % cols);
+                    var remaining_cols = (cols - (event_date_count % cols)) % cols;
 
                     for (i = 0; i < remaining_cols; i++) {
                         content += '<div class="card mb-3"></div>';
@@ -195,16 +197,16 @@
 
                 result_list.append(content);
 
-                if (page == 1) {
-                    $('#prev_item').addClass('disabled');
-                } else {
+                if (data.has_prev) {
                     $('#prev_item').removeClass('disabled');
+                } else {
+                    $('#prev_item').addClass('disabled');
                 }
 
-                if (event_count < per_page) {
-                    $('#next_item').addClass('disabled');
-                } else {
+                if (data.has_next) {
                     $('#next_item').removeClass('disabled');
+                } else {
+                    $('#next_item').addClass('disabled');
                 }
 
                 handle_request_success();

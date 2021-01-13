@@ -1,4 +1,7 @@
 alembic==1.4.3
+aniso8601==8.1.0
+apispec==4.0.0
+apispec-webframeworks==0.5.2
 appdirs==1.4.4
 attrs==20.3.0
 Babel==2.9.0
@@ -22,15 +25,18 @@ email-validator==1.1.2
 filelock==3.0.12
 flake8==3.8.4
 Flask==1.1.2
+flask-apispec==0.11.0
 Flask-BabelEx==0.9.4
 Flask-Bootstrap==3.3.7.1
 Flask-Cors==3.0.9
 Flask-Dance==3.2.0
 Flask-Login==0.5.0
 Flask-Mail==0.9.1
+flask-marshmallow==0.14.0
 Flask-Migrate==2.5.3
 Flask-Principal==0.4.0
 Flask-QRcode==3.0.0
+Flask-RESTful==0.3.8
 Flask-Security-Too==3.4.4
 Flask-SQLAlchemy==2.4.4
 Flask-WTF==0.14.3
@@ -42,9 +48,14 @@ importlib-metadata==3.1.1
 iniconfig==1.1.1
 itsdangerous==1.1.0
 Jinja2==2.11.2
+jsonschema==3.2.0
 Mako==1.1.3
 MarkupSafe==1.1.1
+marshmallow==3.10.0
+marshmallow-enum==1.5.1
+marshmallow-sqlalchemy==0.24.1
 mccabe==0.6.1
+mistune==0.8.4
 mypy-extensions==0.4.3
 nodeenv==1.5.0
 oauthlib==3.1.0
@@ -60,6 +71,7 @@ pycodestyle==2.6.0
 pycparser==2.20
 pyflakes==2.2.0
 pyparsing==2.4.7
+pyrsistent==0.17.3
 pytest==6.1.2
 pytest-cov==2.10.1
 pytest-mock==3.3.1
@@ -78,6 +90,7 @@ soupsieve==2.1
 speaklater==1.3
 SQLAlchemy==1.3.20
 SQLAlchemy-Utils==0.36.8
+swagger-spec-validator==2.7.3
 toml==0.10.2
 typed-ast==1.4.1
 typing-extensions==3.7.4.3
@@ -85,6 +98,7 @@ urllib3==1.26.2
 URLObject==2.4.3
 virtualenv==20.2.2
 visitor==0.1.3
+webargs==7.0.1
 Werkzeug==1.0.1
 WTForms==2.3.3
 WTForms-SQLAlchemy==0.2
