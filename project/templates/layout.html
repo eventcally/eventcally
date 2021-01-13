@@ -58,6 +58,21 @@
             }
         }
 
+        if (event.status != null) {
+            if (event.status == "cancelled") {
+                return '<span class="badge badge-pill badge-warning">{{ _('EventStatus.cancelled') }}</span>';
+            }
+            if (event.status == "movedOnline") {
+                return '<span class="badge badge-pill badge-warning">{{ _('EventStatus.movedOnline') }}</span>';
+            }
+            if (event.eventStatus == "postponed") {
+                return '<span class="badge badge-pill badge-warning">{{ _('EventStatus.postponed') }}</span>';
+            }
+            if (event.eventStatus == "rescheduled") {
+                return '<span class="badge badge-pill badge-warning">{{ _('EventStatus.rescheduled') }}</span>';
+            }
+        }
+
         return '';
     }
     </script>

@@ -6,7 +6,7 @@
 {% block content_container_attribs %}{% endblock %}
 {% block header %}
 {{ render_google_filter_autocomplete_header() }}
-{% set max_events = 500 %}
+{% set max_events = 50 %}
 <script>
 
 $( function() {
@@ -19,7 +19,7 @@ $( function() {
         tbody.empty();
 
         $.ajax({
-            url: "{{ url_for('api_event_dates', per_page=max_events) }}",
+            url: "{{ url_for('eventdatesearchresource', per_page=max_events) }}",
             type: "get",
             dataType: "json",
             data: $(this).serialize(),
@@ -32,11 +32,11 @@ $( function() {
                 var date_to = moment($('#date_to').val());
                 var current_day = date_from;
 
-                var events = data.event;
-                var event_count = events.length;
-                var event_index = 0;
+                var event_dates = data.items;
+                var event_date_count = event_dates.length;
+                var event_date_index = 0;
 
-                if (event_count == {{ max_events }}) {
+                if (event_date_count == {{ max_events }}) {
                     tbody.append('<tr class="table-warning"><td colspan="5">Es wurde die maximale Anzahl von {{ max_events }} Veranstaltungen geladen. Verfeinere die Suche für bessere Ergebnisse.</td></tr>');
                 }
 
@@ -51,20 +51,21 @@ $( function() {
 
                         var no_events = true;
                         var same_day = true;
-                        while (same_day && (event_index < event_count)) {
-                            var event = events[event_index];
-                            var start = moment(event.startDate);
+                        while (same_day && (event_date_index < event_date_count)) {
+                            var event_date = event_dates[event_date_index];
+                            var event = event_date.event;
+                            var start = moment(event_date.start);
 
                             if (!start.isSame(current_day, 'day')) {
                                 same_day = false;
                             } else {
                                 tbody.append('<tr>' +
                                         '<td class="fit">' + start.format("LT") + '</td>' +
-                                        '<td colspan="3"><a href="' + event.url[0] + '">' + event.name + '</a></td>' +
-                                        '<td class="small text-muted">' + event.organizer[0].name + '</td>' +
+                                        '<td colspan="3"><a href="eventdate/' + event_date.id + '">' + event.name + '</a> ' + render_event_status_pill(event) + '</td>' +
+                                        '<td class="small text-muted">' + event.organizer.name + '</td>' +
                                     '</tr>');
                                 no_events = false;
-                                event_index++;
+                                event_date_index++;
                             }
                         }
 
