@@ -12,26 +12,25 @@ from project.api.organization.schemas import OrganizationRefSchema
 from project.api.organizer.schemas import OrganizerRefSchema
 from project.api.image.schemas import ImageRefSchema
 from project.api.place.schemas import PlaceRefSchema, PlaceSearchItemSchema
-from project.api.event_category.schemas import EventCategoryRefSchema
+from project.api.event_category.schemas import (
+    EventCategoryRefSchema,
+    EventCategoryIdSchema,
+)
 
 
-class EventSchema(marshmallow.SQLAlchemySchema):
+class EventBaseSchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = Event
 
     id = marshmallow.auto_field()
     created_at = marshmallow.auto_field()
     updated_at = marshmallow.auto_field()
-    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
-    organizer = fields.Nested(OrganizerRefSchema)
-    place = fields.Nested(PlaceRefSchema, attribute="event_place")
+
     name = marshmallow.auto_field()
     description = marshmallow.auto_field()
     external_link = marshmallow.auto_field()
     ticket_link = marshmallow.auto_field()
 
-    photo = fields.Nested(ImageRefSchema)
-    categories = fields.List(fields.Nested(EventCategoryRefSchema))
     tags = marshmallow.auto_field()
     kid_friendly = marshmallow.auto_field()
     accessible_for_free = marshmallow.auto_field()
@@ -52,12 +51,29 @@ class EventSchema(marshmallow.SQLAlchemySchema):
     end = marshmallow.auto_field()
 
 
+class EventSchema(EventBaseSchema):
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
+    organizer = fields.Nested(OrganizerRefSchema)
+    place = fields.Nested(PlaceRefSchema, attribute="event_place")
+    photo = fields.Nested(ImageRefSchema)
+    categories = fields.List(fields.Nested(EventCategoryRefSchema))
+
+
+class EventDumpSchema(EventBaseSchema):
+    organization_id = fields.Int(attribute="admin_unit_id")
+    organizer_id = fields.Int()
+    place_id = fields.Int(attribute="event_place_id")
+    photo_id = fields.Int()
+    category_ids = fields.Pluck(
+        EventCategoryIdSchema, "id", many=True, attribute="categories"
+    )
+
+
 class EventRefSchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = Event
 
     id = marshmallow.auto_field()
-    href = marshmallow.URLFor("eventresource", values=dict(id="<id>"))
     name = marshmallow.auto_field()
 
 
@@ -73,6 +89,7 @@ class EventSearchItemSchema(EventRefSchema):
     place = fields.Nested(PlaceSearchItemSchema, attribute="event_place")
     status = EnumField(EventStatus)
     organizer = fields.Nested(OrganizerRefSchema)
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
 
 

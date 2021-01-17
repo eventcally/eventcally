@@ -7,11 +7,14 @@ from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
 
 
-class OrganizerSchema(marshmallow.SQLAlchemySchema):
+class OrganizerIdSchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = EventOrganizer
 
     id = marshmallow.auto_field()
+
+
+class OrganizerBaseSchema(OrganizerIdSchema):
     created_at = marshmallow.auto_field()
     updated_at = marshmallow.auto_field()
     name = marshmallow.auto_field()
@@ -19,21 +22,22 @@ class OrganizerSchema(marshmallow.SQLAlchemySchema):
     email = marshmallow.auto_field()
     phone = marshmallow.auto_field()
     fax = marshmallow.auto_field()
+
+
+class OrganizerSchema(OrganizerBaseSchema):
     location = fields.Nested(LocationRefSchema)
     logo = fields.Nested(ImageRefSchema)
     organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
 
 
-class OrganizerRefSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = EventOrganizer
+class OrganizerDumpSchema(OrganizerBaseSchema):
+    location_id = fields.Int()
+    logo_id = fields.Int()
+    organization_id = fields.Int(attribute="admin_unit_id")
 
-    id = marshmallow.auto_field()
+
+class OrganizerRefSchema(OrganizerIdSchema):
     name = marshmallow.auto_field()
-    href = marshmallow.URLFor(
-        "organizerresource",
-        values=dict(id="<id>"),
-    )
 
 
 class OrganizerListRequestSchema(PaginationRequestSchema):

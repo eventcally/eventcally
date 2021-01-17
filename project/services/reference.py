@@ -1,5 +1,6 @@
 from project import db
 from project.models import (
+    Event,
     EventReference,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
@@ -22,6 +23,14 @@ def create_event_reference_for_request(request):
         db.session.add(result)
 
     return result
+
+
+def get_reference_incoming_query(admin_unit):
+    return EventReference.query.filter(EventReference.admin_unit_id == admin_unit.id)
+
+
+def get_reference_outgoing_query(admin_unit):
+    return EventReference.query.join(Event).filter(Event.admin_unit_id == admin_unit.id)
 
 
 def get_reference_requests_incoming_query(admin_unit):

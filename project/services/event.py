@@ -1,10 +1,13 @@
 from project import db
 from project.models import (
+    AdminUnit,
     EventCategory,
     Event,
     EventDate,
+    EventOrganizer,
     EventReference,
     EventPlace,
+    Image,
     Location,
 )
 from project.dateutils import (
@@ -14,6 +17,7 @@ from project.dateutils import (
 )
 from sqlalchemy import and_, or_, func
 from sqlalchemy.sql import extract
+from sqlalchemy.orm import joinedload, contains_eager
 from dateutil.relativedelta import relativedelta
 
 
@@ -89,9 +93,24 @@ def get_event_dates_query(params):
         date_filter = and_(date_filter, extract("dow", EventDate.start).in_(weekdays))
 
     return (
-        EventDate.query.join(Event)
-        .join(EventPlace, isouter=True)
-        .join(Location, isouter=True)
+        EventDate.query.join(EventDate.event)
+        .join(Event.event_place, isouter=True)
+        .join(EventPlace.location, isouter=True)
+        .options(
+            contains_eager(EventDate.event)
+            .contains_eager(Event.event_place)
+            .contains_eager(EventPlace.location),
+            joinedload(EventDate.event)
+            .joinedload(Event.categories)
+            .load_only(EventCategory.id, EventCategory.name),
+            joinedload(EventDate.event)
+            .joinedload(Event.organizer)
+            .load_only(EventOrganizer.id, EventOrganizer.name),
+            joinedload(EventDate.event).joinedload(Event.photo).load_only(Image.id),
+            joinedload(EventDate.event)
+            .joinedload(Event.admin_unit)
+            .load_only(AdminUnit.id, AdminUnit.name),
+        )
         .filter(date_filter)
         .filter(event_filter)
         .order_by(EventDate.start)
@@ -117,6 +136,13 @@ def get_events_query(params):
     return (
         Event.query.join(EventPlace, isouter=True)
         .join(Location, isouter=True)
+        .options(
+            contains_eager(Event.event_place).contains_eager(EventPlace.location),
+            joinedload(Event.categories),
+            joinedload(Event.organizer),
+            joinedload(Event.photo),
+            joinedload(Event.admin_unit),
+        )
         .filter(event_filter)
         .order_by(Event.start)
     )

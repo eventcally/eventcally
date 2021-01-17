@@ -15,6 +15,11 @@ from flask_restful import Api
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask_apispec.extension import FlaskApiSpec
+import pathlib
+import logging
+
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
 # Create app
 app = Flask(__name__)
@@ -39,6 +44,11 @@ app.config["SECURITY_PASSWORD_SALT"] = os.environ.get(
     "SECURITY_PASSWORD_SALT", "146585145368132386173505678016728509634"
 )
 
+# Temporary pathes
+temp_path = os.path.join(app.root_path, "tmp")
+dump_path = os.path.join(temp_path, "dump")
+pathlib.Path(dump_path).mkdir(parents=True, exist_ok=True)
+
 # i18n
 app.config["BABEL_DEFAULT_LOCALE"] = "de"
 app.config["BABEL_DEFAULT_TIMEZONE"] = "Europe/Berlin"
@@ -55,9 +65,12 @@ app.config.update(
     {
         "APISPEC_SPEC": APISpec(
             title="Oveda API",
-            version="1.0.0",
+            version="0.1.0",
             plugins=[marshmallow_plugin],
             openapi_version="2.0",
+            info=dict(
+                description="This API provides endpoints to interact with the Oveda data. At the moment, there is no authorization neeeded."
+            ),
         ),
     }
 )
@@ -123,6 +136,7 @@ from project.views import (
     event_date,
     event_place,
     event_suggestion,
+    dump,
     image,
     manage,
     organizer,
@@ -140,6 +154,7 @@ import project.api
 
 # Command line
 import project.cli.event
+import project.cli.dump
 import project.cli.user
 
 if __name__ == "__main__":  # pragma: no cover
