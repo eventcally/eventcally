@@ -1,4 +1,4 @@
-from project import rest_api, api_docs
+from project.api import add_api_resource
 from flask_apispec import marshal_with, doc, use_kwargs
 from flask_apispec.views import MethodResource
 from project.api.event_date.schemas import (
@@ -14,7 +14,7 @@ from project.services.event_search import EventSearchParams
 
 
 class EventDateListResource(MethodResource):
-    @doc(tags=["Event Dates"])
+    @doc(summary="List event dates", tags=["Event Dates"])
     @use_kwargs(EventDateListRequestSchema, location=("query"))
     @marshal_with(EventDateListResponseSchema)
     def get(self, **kwargs):
@@ -23,14 +23,14 @@ class EventDateListResource(MethodResource):
 
 
 class EventDateResource(MethodResource):
-    @doc(tags=["Event Dates"])
+    @doc(summary="Get event date", tags=["Event Dates"])
     @marshal_with(EventDateSchema)
     def get(self, id):
         return EventDate.query.get_or_404(id)
 
 
 class EventDateSearchResource(MethodResource):
-    @doc(tags=["Event Dates"])
+    @doc(summary="Search for event dates", tags=["Event Dates"])
     @use_kwargs(EventDateSearchRequestSchema, location=("query"))
     @marshal_with(EventDateSearchResponseSchema)
     def get(self, **kwargs):
@@ -40,11 +40,8 @@ class EventDateSearchResource(MethodResource):
         return pagination
 
 
-rest_api.add_resource(EventDateListResource, "/event_dates")
-api_docs.register(EventDateListResource)
-
-rest_api.add_resource(EventDateResource, "/event_dates/<int:id>")
-api_docs.register(EventDateResource)
-
-rest_api.add_resource(EventDateSearchResource, "/event_dates/search")
-api_docs.register(EventDateSearchResource)
+add_api_resource(EventDateListResource, "/event-dates", "api_v1_event_date_list")
+add_api_resource(EventDateResource, "/event-dates/<int:id>", "api_v1_event_date")
+add_api_resource(
+    EventDateSearchResource, "/event-dates/search", "api_v1_event_date_search"
+)

@@ -41,3 +41,7 @@ class PaginationResponseSchema(marshmallow.Schema):
         required=True,
         metadata={"description": "The total number of items matching the query"},
     )
+
+
+class NoneSchema(marshmallow.Schema):
+    pass

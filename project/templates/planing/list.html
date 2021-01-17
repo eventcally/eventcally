@@ -19,7 +19,7 @@ $( function() {
         tbody.empty();
 
         $.ajax({
-            url: "{{ url_for('eventdatesearchresource', per_page=max_events) }}",
+            url: "{{ url_for('api_v1_event_date_search', per_page=max_events) }}",
             type: "get",
             dataType: "json",
             data: $(this).serialize(),
