@@ -6,4 +6,5 @@ def test_all(client, seeder, app, utils):
     result = runner.invoke(args=["dump", "all"])
     assert "Zipped all up" in result.output
 
+    utils.get_endpoint_ok("developer")
     utils.get_endpoint_ok("dump_files", path="all.zip")
