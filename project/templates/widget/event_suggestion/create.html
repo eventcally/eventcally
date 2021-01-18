@@ -15,12 +15,16 @@
 {{ render_cropper_header() }}
 <script>
 
+  function stripHTML(dirty) {
+    return $("<div/>").html(dirty).text();
+  }
+
   function update_preview(form) {
-    var name = form.find('input[name=name]').val();
-    var place = form.find('select[name=event_place_id] > option:selected').text();
-    var organizer = form.find('select[name=organizer_id] > option:selected').text();
-    var external_link = form.find('input[name=external_link]').val();
-    var description = form.find('textarea[name=description]').val();
+    var name = stripHTML(form.find('input[name=name]').val());
+    var place = stripHTML(form.find('select[name=event_place_id] > option:selected').text());
+    var organizer = stripHTML(form.find('select[name=organizer_id] > option:selected').text());
+    var external_link = stripHTML(form.find('input[name=external_link]').val());
+    var description = stripHTML(form.find('textarea[name=description]').val());
     var image_data_url = $('#photo_preview').attr("src");
 
     var start = '';

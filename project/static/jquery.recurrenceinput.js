@@ -1262,13 +1262,19 @@
         }
 
         function getField(field) {
-            // See if it is a field already
-            var realField = $(field);
-            if (!realField.length) {
+            var realField = null;
+
+            if (field instanceof Element) {
+                // See if it is a field already
+                realField = $(field);
+            }
+
+            if (realField == null || !realField.length) {
                 // Otherwise, we assume it's an id:
                 realField = $('#' + field);
             }
-            if (!realField.length) {
+
+            if (realField == null || !realField.length) {
                 // Still not? Then it's a name.
                 realField = $("input[name='" + field + "']");
             }
