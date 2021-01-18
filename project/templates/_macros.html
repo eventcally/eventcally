@@ -218,7 +218,7 @@
 {% if link %}
 <div>
   <i class="fa fa-fw fa-link" data-toggle="tooltip" title="{{ _('Link') }}"></i>
-  <a href="{{ link }}" target="_blank">{{ link }}</a>
+  <a href="{{ link }}" target="_blank" rel="noopener noreferrer">{{ link }}</a>
 </div>
 {% endif %}
 {% endmacro %}
@@ -411,7 +411,7 @@
         </div>
 
         <p>
-            <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-secondary" target="_blank">{{ _('Show directions') }}</a>
+            <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">{{ _('Show directions') }}</a>
         </p>
       {% endif %}
     </div>
@@ -578,7 +578,7 @@
               <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                   <tbody>
                       <tr>
-                          <td> <a href="{{ url }}" target="_blank">{{ title }}</a> </td>
+                          <td> <a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ title }}</a> </td>
                       </tr>
                   </tbody>
               </table>
@@ -875,7 +875,7 @@ if (URL) {
   {{ form_field.hidden_tag() }}
   {% if form_field.object_data and form_field.object_data.id %}
     <div>
-      <a href="{{ url_for('image', id=form_field.object_data.id) }}" target="_blank"><img src="{{ url_for('image', id=form_field.object_data.id) }}" class="img-fluid" style="max-width:5rem;" /></a>
+      <a href="{{ url_for('image', id=form_field.object_data.id) }}" target="_blank" rel="noopener noreferrer"><img src="{{ url_for('image', id=form_field.object_data.id) }}" class="img-fluid" style="max-width:5rem;" /></a>
     </div>
     {{ render_field_with_errors(form_field.delete_flag, style="width: fit-content; flex: initial;") }}
   {% endif %}
