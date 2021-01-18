@@ -1,4 +1,4 @@
-from project import rest_api, api_docs
+from project.api import add_api_resource
 from flask_apispec import marshal_with, doc, use_kwargs
 from flask_apispec.views import MethodResource
 from project.api.organization.schemas import (
@@ -19,6 +19,14 @@ from project.api.organizer.schemas import (
     OrganizerListRequestSchema,
     OrganizerListResponseSchema,
 )
+from project.api.event_reference.schemas import (
+    EventReferenceListRequestSchema,
+    EventReferenceListResponseSchema,
+)
+from project.services.reference import (
+    get_reference_incoming_query,
+    get_reference_outgoing_query,
+)
 from project.api.place.schemas import PlaceListRequestSchema, PlaceListResponseSchema
 from project.services.event import get_event_dates_query, get_events_query
 from project.services.event_search import EventSearchParams
@@ -30,21 +38,18 @@ from project.services.admin_unit import (
 
 
 class OrganizationResource(MethodResource):
-    @doc(tags=["Organizations"])
+    @doc(summary="Get organization", tags=["Organizations"])
     @marshal_with(OrganizationSchema)
     def get(self, id):
         return AdminUnit.query.get_or_404(id)
 
 
-class OrganizationByShortNameResource(MethodResource):
-    @doc(tags=["Organizations"])
-    @marshal_with(OrganizationSchema)
-    def get(self, short_name):
-        return AdminUnit.query.filter(AdminUnit.short_name == short_name).first_or_404()
-
-
 class OrganizationEventDateSearchResource(MethodResource):
-    @doc(tags=["Organizations", "Event Dates"])
+    @doc(
+        summary="Search for event dates of organization",
+        description="Includes events that organization is referencing.",
+        tags=["Organizations", "Event Dates"],
+    )
     @use_kwargs(EventDateSearchRequestSchema, location=("query"))
     @marshal_with(EventDateSearchResponseSchema)
     def get(self, id, **kwargs):
@@ -59,7 +64,7 @@ class OrganizationEventDateSearchResource(MethodResource):
 
 
 class OrganizationEventSearchResource(MethodResource):
-    @doc(tags=["Organizations", "Events"])
+    @doc(summary="Search for events of organization", tags=["Organizations", "Events"])
     @use_kwargs(EventSearchRequestSchema, location=("query"))
     @marshal_with(EventSearchResponseSchema)
     def get(self, id, **kwargs):
@@ -74,7 +79,7 @@ class OrganizationEventSearchResource(MethodResource):
 
 
 class OrganizationListResource(MethodResource):
-    @doc(tags=["Organizations"])
+    @doc(summary="List organizations", tags=["Organizations"])
     @use_kwargs(OrganizationListRequestSchema, location=("query"))
     @marshal_with(OrganizationListResponseSchema)
     def get(self, **kwargs):
@@ -84,7 +89,9 @@ class OrganizationListResource(MethodResource):
 
 
 class OrganizationOrganizerListResource(MethodResource):
-    @doc(tags=["Organizations", "Organizers"])
+    @doc(
+        summary="List organizers of organization", tags=["Organizations", "Organizers"]
+    )
     @use_kwargs(OrganizerListRequestSchema, location=("query"))
     @marshal_with(OrganizerListResponseSchema)
     def get(self, id, **kwargs):
@@ -96,7 +103,7 @@ class OrganizationOrganizerListResource(MethodResource):
 
 
 class OrganizationPlaceListResource(MethodResource):
-    @doc(tags=["Organizations", "Places"])
+    @doc(summary="List places of organization", tags=["Organizations", "Places"])
     @use_kwargs(PlaceListRequestSchema, location=("query"))
     @marshal_with(PlaceListResponseSchema)
     def get(self, id, **kwargs):
@@ -107,35 +114,63 @@ class OrganizationPlaceListResource(MethodResource):
         return pagination
 
 
-rest_api.add_resource(OrganizationResource, "/organizations/<int:id>")
-api_docs.register(OrganizationResource)
+class OrganizationIncomingEventReferenceListResource(MethodResource):
+    @doc(
+        summary="List incoming event references of organization",
+        tags=["Organizations", "Event References"],
+    )
+    @use_kwargs(EventReferenceListRequestSchema, location=("query"))
+    @marshal_with(EventReferenceListResponseSchema)
+    def get(self, id, **kwargs):
+        admin_unit = AdminUnit.query.get_or_404(id)
 
-rest_api.add_resource(
-    OrganizationByShortNameResource, "/organizations/<string:short_name>"
-)
-api_docs.register(OrganizationByShortNameResource)
+        pagination = get_reference_incoming_query(admin_unit).paginate()
+        return pagination
 
-rest_api.add_resource(
+
+class OrganizationOutgoingEventReferenceListResource(MethodResource):
+    @doc(
+        summary="List outgoing event references of organization",
+        tags=["Organizations", "Event References"],
+    )
+    @use_kwargs(EventReferenceListRequestSchema, location=("query"))
+    @marshal_with(EventReferenceListResponseSchema)
+    def get(self, id, **kwargs):
+        admin_unit = AdminUnit.query.get_or_404(id)
+
+        pagination = get_reference_outgoing_query(admin_unit).paginate()
+        return pagination
+
+
+add_api_resource(OrganizationResource, "/organizations/<int:id>", "api_v1_organization")
+add_api_resource(
     OrganizationEventDateSearchResource,
-    "/organizations/<int:id>/event_dates/search",
+    "/organizations/<int:id>/event-dates/search",
+    "api_v1_organization_event_date_search",
 )
-api_docs.register(OrganizationEventDateSearchResource)
-
-rest_api.add_resource(
-    OrganizationEventSearchResource, "/organizations/<int:id>/events/search"
+add_api_resource(
+    OrganizationEventSearchResource,
+    "/organizations/<int:id>/events/search",
+    "api_v1_organization_event_search",
 )
-api_docs.register(OrganizationEventSearchResource)
-
-rest_api.add_resource(OrganizationListResource, "/organizations")
-api_docs.register(OrganizationListResource)
-
-rest_api.add_resource(
-    OrganizationOrganizerListResource, "/organizations/<int:id>/organizers"
+add_api_resource(OrganizationListResource, "/organizations", "api_v1_organization_list")
+add_api_resource(
+    OrganizationOrganizerListResource,
+    "/organizations/<int:id>/organizers",
+    "api_v1_organization_organizer_list",
 )
-api_docs.register(OrganizationOrganizerListResource)
-
-rest_api.add_resource(
+add_api_resource(
     OrganizationPlaceListResource,
     "/organizations/<int:id>/places",
+    "api_v1_organization_place_list",
 )
-api_docs.register(OrganizationPlaceListResource)
+add_api_resource(
+    OrganizationIncomingEventReferenceListResource,
+    "/organizations/<int:id>/event-references/incoming",
+    "api_v1_organization_incoming_event_reference_list",
+)
+add_api_resource(
+    OrganizationOutgoingEventReferenceListResource,
+    "/organizations/<int:id>/event-references/outgoing",
+    "api_v1_organization_outgoing_event_reference_list",
+)

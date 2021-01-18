@@ -24,7 +24,6 @@ class EventDateRefSchema(marshmallow.SQLAlchemySchema):
         model = EventDate
 
     id = marshmallow.auto_field()
-    href = marshmallow.URLFor("eventdateresource", values=dict(id="<id>"))
     start = marshmallow.auto_field()
 
 

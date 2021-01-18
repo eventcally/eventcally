@@ -3,11 +3,14 @@ from project import marshmallow
 from project.models import Location
 
 
-class LocationSchema(marshmallow.SQLAlchemySchema):
+class LocationIdSchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = Location
 
     id = marshmallow.auto_field()
+
+
+class LocationSchema(LocationIdSchema):
     created_at = marshmallow.auto_field()
     updated_at = marshmallow.auto_field()
     street = marshmallow.auto_field()
@@ -19,15 +22,12 @@ class LocationSchema(marshmallow.SQLAlchemySchema):
     latitude = fields.Str()
 
 
-class LocationRefSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = Location
+class LocationDumpSchema(LocationSchema):
+    pass
 
-    id = marshmallow.auto_field()
-    href = marshmallow.URLFor(
-        "locationresource",
-        values=dict(id="<id>"),
-    )
+
+class LocationRefSchema(LocationIdSchema):
+    pass
 
 
 class LocationSearchItemSchema(LocationRefSchema):

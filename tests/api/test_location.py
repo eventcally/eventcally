@@ -15,6 +15,6 @@ def test_read(client, app, db, seeder, utils):
         db.session.commit()
         location_id = location.id
 
-    url = utils.get_url("locationresource", id=location_id)
+    url = utils.get_url("api_v1_location", id=location_id)
     response = utils.get_ok(url)
     assert response.json["latitude"] == "51.9077888000000000"

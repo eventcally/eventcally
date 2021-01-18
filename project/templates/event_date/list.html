@@ -130,7 +130,7 @@
         req_data += '&page=' + page + '&per_page=' + per_page;
 
         $.ajax({
-            url: "{{ url_for('eventdatesearchresource') }}",
+            url: "{{ url_for('api_v1_event_date_search') }}",
             type: "get",
             dataType: "json",
             data: req_data,
