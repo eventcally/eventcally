@@ -1,6 +1,6 @@
 {% extends "layout_manage.html" %}
 {% set active_id = "events" %}
-{% from "_macros.html" import render_event_dates_filter_form, render_event_status_pill, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
+{% from "_macros.html" import render_event_dates_filter_form, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
 {% block title %}
 {{ _('Events') }}
 {% endblock %}
@@ -29,7 +29,7 @@
                 <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}">{{ _('Duplicate') }}&hellip;</a>
             </div>
         </div>
-        {{ render_event_status_pill(event) }}
+        {{ render_event_warning_pills(event) }}
         <small>{{ event.organizer.name }}</small>
     </li>
 {% endfor %}

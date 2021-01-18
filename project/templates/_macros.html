@@ -125,7 +125,7 @@
                   <td>{{ render_event_date(event) }}</td>
                   <td>
                       <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
-                      {{ render_event_status_pill(event) }}
+                      {{ render_event_warning_pills(event) }}
                   </td>
                   <td>{{ render_event_organizer(event.organizer) }}</td>
                   <td>{{ render_place(event.event_place) }}</td>
@@ -238,6 +238,16 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_booked_up_pill(event) %}
+{% if event.booked_up %}
+ <span class="badge badge-pill badge-warning">{{ _('Booked up') }}</span>
+{% endif %}
+{% endmacro %}
+
+{% macro render_event_warning_pills(event) %}
+{{ render_event_status_pill(event) }} {{ render_booked_up_pill(event) }}
+{% endmacro %}
+
 {% macro render_event_review_status_pill(event) %}
 {% if event.review_status %}
  <span class="badge badge-pill {% if event.review_status == 2 %}badge-success{% elif event.review_status == 1 %}badge-info{% else %}badge-danger{% endif %}">{{ event.review_status | loc_enum }}</span>
@@ -339,7 +349,7 @@
     </div>
 
     <div class="card-body">
-      <h5 class="card-title">{{ event.name }}{{ render_event_status_pill(event) }}</h5>
+      <h5 class="card-title">{{ event.name }}{{ render_event_warning_pills(event) }}</h5>
       {% if dates and dates|length > 1 %}
       <div>
         <i class="fa fa-fw fas fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i>
