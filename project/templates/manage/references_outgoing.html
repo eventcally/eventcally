@@ -1,6 +1,6 @@
 {% extends "layout_manage.html" %}
 {% set active_id = "references_outgoing" %}
-{% from "_macros.html" import render_event_status_pill, render_event_date, render_pagination, render_event_organizer %}
+{% from "_macros.html" import render_event_warning_pills, render_event_date, render_pagination, render_event_organizer %}
 {% block title %}
 {{ _('References') }}
 {% endblock %}
@@ -19,7 +19,7 @@
                 <a class="dropdown-item" href="{{ url_for('event', event_id=reference.event.id) }}">{{ _('View') }}</a>
             </div>
         </div>
-        {{ render_event_status_pill(reference.event) }}
+        {{ render_event_warning_pills(reference.event) }}
         <small>{{ reference.admin_unit.name }}</small>
     </li>
 {% endfor %}
