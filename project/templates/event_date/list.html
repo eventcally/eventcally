@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_google_filter_autocomplete_header, render_event_dates_filter_form, render_pagination, render_event_status_pill, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_google_filter_autocomplete_header, render_event_dates_filter_form, render_pagination, render_place, render_events_sub_menu %}
 {% block title %}
 {{ _('Event Dates') }}
 {% endblock %}
@@ -175,7 +175,7 @@
                                         '<div class="card-header">' + start.format("dd. DD.MM.YYYY LT") + '</div>' +
                                         img_tag +
                                         '<div class="card-body" style="padding:1rem">' +
-                                            '<h5 class="card-title"><a href="eventdate/' + event_date.id + '">' + event.name + '</a> <span class="small" style="vertical-align: middle;">' + render_event_status_pill(event) + '</span></h5>' +
+                                            '<h5 class="card-title"><a href="eventdate/' + event_date.id + '">' + event.name + '</a> <span class="small" style="vertical-align: middle;">' + render_event_warning_pills(event) + '</span></h5>' +
                                             '<p class="card-text">' + event.description.truncate(100) + '</p>' +
                                         '</div>' +
                                         '<div class="card-footer text-muted small">' +

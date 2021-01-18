@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_widget_styles, render_location, render_location_prop, render_logo, render_pagination, render_event_status_pill, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_widget_styles, render_location, render_location_prop, render_logo, render_pagination, render_event_warning_pills, render_place, render_events_sub_menu %}
 {% block title %}
 {{ admin_unit.name }} Infoscreen
 {% endblock %}
@@ -53,7 +53,7 @@
                             </div>
                             {% endif %}
                             <div class="col" style="padding:1rem">
-                                <h3>{{ date.event.name }}{{ render_event_status_pill(date.event) }}</h3>
+                                <h3>{{ date.event.name }}{{ render_event_warning_pills(date.event) }}</h3>
                                 <p>{{ date.event.description | truncate(300) }}</p>
                             </div>
                         </div>

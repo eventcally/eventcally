@@ -88,6 +88,7 @@ class EventSearchItemSchema(EventRefSchema):
     photo = fields.Nested(ImageRefSchema)
     place = fields.Nested(PlaceSearchItemSchema, attribute="event_place")
     status = EnumField(EventStatus)
+    booked_up = marshmallow.auto_field()
     organizer = fields.Nested(OrganizerRefSchema)
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
