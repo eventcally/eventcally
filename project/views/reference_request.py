@@ -71,7 +71,12 @@ def event_reference_request_create(event_id):
 
     form = CreateEventReferenceRequestForm()
     form.admin_unit_id.choices = sorted(
-        [(admin_unit.id, admin_unit.name) for admin_unit in AdminUnit.query.all()],
+        [
+            (admin_unit.id, admin_unit.name)
+            for admin_unit in AdminUnit.query.filter(
+                AdminUnit.id != event.admin_unit_id
+            ).all()
+        ],
         key=lambda admin_unit: admin_unit[1],
     )
 
