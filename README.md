@@ -47,6 +47,7 @@ Jobs that should run on a regular basis.
 
 ```sh
 flask event update-recurring-dates
+flask dump all
 ```
 
 ## Administration

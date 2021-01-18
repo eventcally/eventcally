@@ -9,6 +9,10 @@ from project.forms.reference import (
     UpdateEventReferenceForm,
     DeleteReferenceForm,
 )
+from project.services.reference import (
+    get_reference_incoming_query,
+    get_reference_outgoing_query,
+)
 from flask import render_template, flash, redirect, url_for, abort
 from flask_babelex import gettext
 from flask_security import auth_required
@@ -86,7 +90,7 @@ def event_reference_update(id):
 def manage_admin_unit_references_incoming(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
     references = (
-        EventReference.query.filter(EventReference.admin_unit_id == admin_unit.id)
+        get_reference_incoming_query(admin_unit)
         .order_by(desc(EventReference.created_at))
         .paginate()
     )
@@ -104,8 +108,7 @@ def manage_admin_unit_references_incoming(id):
 def manage_admin_unit_references_outgoing(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
     references = (
-        EventReference.query.join(Event)
-        .filter(Event.admin_unit_id == admin_unit.id)
+        get_reference_outgoing_query(admin_unit)
         .order_by(desc(EventReference.created_at))
         .paginate()
     )

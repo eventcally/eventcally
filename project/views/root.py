@@ -1,9 +1,10 @@
-from project import app
+from project import app, dump_path
 from project.services.admin import upsert_settings
 from project.views.utils import track_analytics
 from flask import url_for, render_template, request, redirect
 from flask_babelex import gettext
 from markupsafe import Markup
+import os.path
 
 
 @app.route("/")
@@ -54,4 +55,15 @@ def privacy():
 
 @app.route("/developer")
 def developer():
-    return render_template("developer/read.html")
+    file_name = "all.zip"
+    all_path = os.path.join(dump_path, file_name)
+    dump_file = None
+
+    if os.path.exists(all_path):
+        dump_file = {
+            "url": url_for("dump_files", path=file_name),
+            "size": os.path.getsize(all_path),
+            "ctime": os.path.getctime(all_path),
+        }
+
+    return render_template("developer/read.html", dump_file=dump_file)
