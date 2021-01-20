@@ -235,8 +235,26 @@ def prepare_event_form(form, admin_unit):
 def prepare_event_form_for_suggestion(form, event_suggestion):
     form.name.data = event_suggestion.name
     form.start.data = event_suggestion.start
-    form.description.data = event_suggestion.description
+    form.end.data = event_suggestion.end
+    form.recurrence_rule.data = event_suggestion.recurrence_rule
     form.external_link.data = event_suggestion.external_link
+    form.description.data = event_suggestion.description
+
+    form.ticket_link.data = event_suggestion.ticket_link
+    form.tags.data = event_suggestion.tags
+    form.kid_friendly.data = event_suggestion.kid_friendly
+    form.accessible_for_free.data = event_suggestion.accessible_for_free
+    form.age_from.data = event_suggestion.age_from
+    form.age_to.data = event_suggestion.age_to
+    form.target_group_origin.data = event_suggestion.target_group_origin
+    form.attendance_mode.data = event_suggestion.attendance_mode
+    form.registration_required.data = event_suggestion.registration_required
+    form.booked_up.data = event_suggestion.booked_up
+    form.expected_participants.data = event_suggestion.expected_participants
+    form.price_info.data = event_suggestion.price_info
+
+    if event_suggestion.categories:
+        form.category_ids.data = [c.id for c in event_suggestion.categories]
 
     if event_suggestion.photo:
         form.photo.form.process(obj=event_suggestion.photo)

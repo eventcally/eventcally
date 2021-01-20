@@ -176,6 +176,7 @@ class Seeder(object):
 
     def create_event_suggestion(self, admin_unit_id, free_text=False):
         from project.models import EventSuggestion
+        from project.services.event import upsert_event_category
         from project.services.event_suggestion import insert_event_suggestion
         from project.dateutils import now
 
@@ -189,6 +190,7 @@ class Seeder(object):
             suggestion.description = "Beschreibung"
             suggestion.start = now
             suggestion.photo_id = self.upsert_default_image()
+            suggestion.categories = [upsert_event_category("Other")]
 
             if free_text:
                 suggestion.event_place_text = "Freitext Ort"

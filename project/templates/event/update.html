@@ -1,5 +1,8 @@
 {% extends "layout.html" %}
 {% from "_macros.html" import render_cropper_header, render_cropper_script, render_crop_image_form_section, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
+{% block title %}
+{{ _('Update event') }}
+{% endblock %}
 {% block header %}
   {{ render_cropper_header() }}
   {{ render_cropper_script() }}
@@ -18,7 +21,6 @@
     <div class="card-body">
       {{ render_field_with_errors(form.name) }}
       {{ render_field_with_errors(form.description) }}
-      {{ render_field_with_errors(form.price_info) }}
     </div>
   </div>
 
@@ -61,6 +63,22 @@
     </div>
   </div>
 
+  {{ render_crop_image_form_section(form.photo) }}
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Access') }}
+    </div>
+    <div class="card-body">
+      {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.registration_required, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.price_info) }}
+      {{ render_field_with_errors(form.ticket_link) }}
+      {{ render_field_with_errors(form.booked_up, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
+    </div>
+  </div>
+
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Target group') }}
@@ -74,21 +92,14 @@
     </div>
   </div>
 
-  {{ render_crop_image_form_section(form.photo) }}
-
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Additional information') }}
     </div>
     <div class="card-body">
       {{ render_field_with_errors(form.category_ids, class="autocomplete w-100") }}
-      {{ render_field_with_errors(form.external_link) }}
-      {{ render_field_with_errors(form.ticket_link) }}
       {{ render_field_with_errors(form.tags) }}
-      {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
-      {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
-      {{ render_field_with_errors(form.registration_required, style="width: fit-content; flex: initial;") }}
-      {{ render_field_with_errors(form.booked_up, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.external_link) }}
     </div>
   </div>
 

@@ -86,8 +86,9 @@ def get_create_data():
 
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("free_text", [True, False])
+@pytest.mark.parametrize("missing_preview_field", [True, False])
 def test_event_suggestion_create_for_admin_unit(
-    client, app, seeder, utils, mocker, db_error, free_text
+    client, app, seeder, utils, mocker, db_error, free_text, missing_preview_field
 ):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
@@ -108,6 +109,23 @@ def test_event_suggestion_create_for_admin_unit(
 
     mail_mock = utils.mock_send_mails(mocker)
 
+    if missing_preview_field:
+        del data["accept_tos"]
+
+    # preview post
+    preview_response = utils.post_form(
+        url + "?preview=True",
+        response,
+        data,
+    )
+
+    if missing_preview_field:
+        assert preview_response.status_code == 406
+        return
+
+    utils.assert_response_ok(preview_response)
+
+    # real post
     response = utils.post_form(
         url,
         response,

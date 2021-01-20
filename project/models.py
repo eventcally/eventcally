@@ -398,7 +398,37 @@ class EventReferenceRequest(db.Model, TrackableMixin):
         return self.review_status == EventReferenceRequestReviewStatus.verified
 
 
-class EventSuggestion(db.Model, TrackableMixin):
+class EventMixin(object):
+    name = Column(Unicode(255), nullable=False)
+    start = db.Column(db.DateTime(timezone=True), nullable=False)
+    end = db.Column(db.DateTime(timezone=True), nullable=True)
+    recurrence_rule = Column(UnicodeText())
+    external_link = Column(String(255))
+    description = Column(UnicodeText(), nullable=True)
+
+    ticket_link = Column(String(255))
+    tags = Column(UnicodeText())
+    kid_friendly = Column(Boolean())
+    accessible_for_free = Column(Boolean())
+    age_from = Column(Integer())
+    age_to = Column(Integer())
+    target_group_origin = Column(IntegerEnum(EventTargetGroupOrigin))
+    attendance_mode = Column(IntegerEnum(EventAttendanceMode))
+    registration_required = Column(Boolean())
+    booked_up = Column(Boolean())
+    expected_participants = Column(Integer())
+    price_info = Column(UnicodeText())
+
+    @declared_attr
+    def photo_id(cls):
+        return Column("photo_id", ForeignKey("image.id"))
+
+    @declared_attr
+    def photo(cls):
+        return relationship("Image", uselist=False)
+
+
+class EventSuggestion(db.Model, TrackableMixin, EventMixin):
     __tablename__ = "eventsuggestion"
     __table_args__ = (
         CheckConstraint("NOT(event_place_id IS NULL AND event_place_text IS NULL)"),
@@ -406,10 +436,6 @@ class EventSuggestion(db.Model, TrackableMixin):
     )
     id = Column(Integer(), primary_key=True)
 
-    name = Column(Unicode(255), nullable=False)
-    start = db.Column(db.DateTime(timezone=True), nullable=False)
-    description = Column(UnicodeText(), nullable=True)
-    external_link = Column(String(255))
     review_status = Column(IntegerEnum(EventReviewStatus))
     rejection_resaon = Column(IntegerEnum(EventRejectionReason))
 
@@ -435,8 +461,9 @@ class EventSuggestion(db.Model, TrackableMixin):
     organizer = db.relationship("EventOrganizer", uselist=False)
     organizer_text = Column(Unicode(255), nullable=True)
 
-    photo_id = db.Column(db.Integer, db.ForeignKey("image.id"))
-    photo = db.relationship("Image", uselist=False)
+    categories = relationship(
+        "EventCategory", secondary="eventsuggestion_eventcategories"
+    )
 
     event_id = db.Column(
         db.Integer, db.ForeignKey("event.id", ondelete="SET NULL"), nullable=True
@@ -459,7 +486,7 @@ def purge_event_suggestion(mapper, connect, self):
         self.photo_id = None
 
 
-class Event(db.Model, TrackableMixin):
+class Event(db.Model, TrackableMixin, EventMixin):
     __tablename__ = "event"
     id = Column(Integer(), primary_key=True)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
@@ -472,33 +499,13 @@ class Event(db.Model, TrackableMixin):
         db.Integer, db.ForeignKey("eventplace.id"), nullable=True
     )
     event_place = db.relationship("EventPlace", uselist=False)
-    name = Column(Unicode(255), nullable=False)
-    description = Column(UnicodeText())
-    external_link = Column(String(255))
-    ticket_link = Column(String(255))
 
-    photo_id = db.Column(db.Integer, db.ForeignKey("image.id"))
-    photo = db.relationship("Image", uselist=False)
     categories = relationship("EventCategory", secondary="event_eventcategories")
-    tags = Column(UnicodeText())
-    kid_friendly = Column(Boolean())
-    accessible_for_free = Column(Boolean())
-    age_from = Column(Integer())
-    age_to = Column(Integer())
-    target_group_origin = Column(IntegerEnum(EventTargetGroupOrigin))
-    attendance_mode = Column(IntegerEnum(EventAttendanceMode))
+
     status = Column(IntegerEnum(EventStatus))
     previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
     rating = Column(Integer())
 
-    registration_required = Column(Boolean())
-    booked_up = Column(Boolean())
-    expected_participants = Column(Integer())
-    price_info = Column(UnicodeText())
-
-    recurrence_rule = Column(UnicodeText())
-    start = db.Column(db.DateTime(timezone=True), nullable=False)
-    end = db.Column(db.DateTime(timezone=True), nullable=True)
     dates = relationship(
         "EventDate", backref=backref("event", lazy=False), cascade="all, delete-orphan"
     )
@@ -541,6 +548,17 @@ class EventEventCategories(db.Model):
     __tablename__ = "event_eventcategories"
     id = Column(Integer(), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
+    category_id = db.Column(
+        db.Integer, db.ForeignKey("eventcategory.id"), nullable=False
+    )
+
+
+class EventSuggestionEventCategories(db.Model):
+    __tablename__ = "eventsuggestion_eventcategories"
+    id = Column(Integer(), primary_key=True)
+    event_suggestion_id = db.Column(
+        db.Integer, db.ForeignKey("eventsuggestion.id"), nullable=False
+    )
     category_id = db.Column(
         db.Integer, db.ForeignKey("eventcategory.id"), nullable=False
     )

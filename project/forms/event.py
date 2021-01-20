@@ -56,39 +56,95 @@ class EventOrganizerForm(FlaskForm):
     fax = StringField(lazy_gettext("Fax"), validators=[Optional()])
 
 
-class BaseEventForm(FlaskForm):
-    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
-    external_link = URLField(lazy_gettext("Link URL"), validators=[Optional()])
-    ticket_link = StringField(lazy_gettext("Ticket Link URL"), validators=[Optional()])
-    description = TextAreaField(lazy_gettext("Description"), validators=[Optional()])
+class SharedEventForm(FlaskForm):
+    name = StringField(
+        lazy_gettext("Name"),
+        validators=[DataRequired()],
+        description=lazy_gettext("Enter a short, meaningful name for the event."),
+    )
+    start = CustomDateTimeField(
+        lazy_gettext("Start"),
+        validators=[DataRequired()],
+        description=lazy_gettext("Indicate when the event will take place."),
+    )
+    end = CustomDateTimeField(
+        lazy_gettext("End"),
+        validators=[Optional()],
+        description=lazy_gettext("Indicate when the event will end."),
+    )
     recurrence_rule = TextAreaField(
-        lazy_gettext("Recurrence rule"), validators=[Optional()]
+        lazy_gettext("Recurrence rule"),
+        validators=[Optional()],
+        description=lazy_gettext("Enter if the event takes place regularly."),
     )
-    start = CustomDateTimeField(lazy_gettext("Start"), validators=[DataRequired()])
-    end = CustomDateTimeField(lazy_gettext("End"), validators=[Optional()])
-    previous_start_date = CustomDateTimeField(
-        lazy_gettext("Previous start date"), validators=[Optional()]
+    description = TextAreaField(
+        lazy_gettext("Description"),
+        validators=[Optional()],
+        description=lazy_gettext("Add an description of the event."),
     )
-    tags = StringField(lazy_gettext("Tags"), validators=[Optional()])
-    category_ids = SelectMultipleField(
-        lazy_gettext("Categories"), validators=[DataRequired()], coerce=int
+    external_link = URLField(
+        lazy_gettext("Link URL"),
+        validators=[Optional()],
+        description=lazy_gettext(
+            "Enter a link to an external website containing more information about the event."
+        ),
     )
-
-    kid_friendly = BooleanField(lazy_gettext("Kid friendly"), validators=[Optional()])
+    ticket_link = StringField(
+        lazy_gettext("Ticket Link URL"),
+        validators=[Optional()],
+        description=lazy_gettext("Enter a link where tickets can be purchased."),
+    )
+    tags = StringField(
+        lazy_gettext("Tags"),
+        validators=[Optional()],
+        description=lazy_gettext(
+            "Enter keywords with which the event should be found. Words do not need to be entered if they are already in the name or description."
+        ),
+    )
+    kid_friendly = BooleanField(
+        lazy_gettext("Kid friendly"),
+        validators=[Optional()],
+        description=lazy_gettext("If the event is particularly suitable for children."),
+    )
     accessible_for_free = BooleanField(
-        lazy_gettext("Accessible for free"), validators=[Optional()]
+        lazy_gettext("Accessible for free"),
+        validators=[Optional()],
+        description=lazy_gettext("If the event is accessible for free."),
     )
-    age_from = IntegerField(lazy_gettext("Typical Age from"), validators=[Optional()])
-    age_to = IntegerField(lazy_gettext("Typical Age to"), validators=[Optional()])
+    age_from = IntegerField(
+        lazy_gettext("Typical Age from"),
+        validators=[Optional()],
+        description=lazy_gettext("The minimum age that participants should be."),
+    )
+    age_to = IntegerField(
+        lazy_gettext("Typical Age to"),
+        validators=[Optional()],
+        description=lazy_gettext("The maximum age that participants should be."),
+    )
     registration_required = BooleanField(
-        lazy_gettext("Registration required"), validators=[Optional()]
+        lazy_gettext("Registration required"),
+        validators=[Optional()],
+        description=lazy_gettext(
+            "If the participants needs to register for the event."
+        ),
     )
-    booked_up = BooleanField(lazy_gettext("Booked up"), validators=[Optional()])
+    booked_up = BooleanField(
+        lazy_gettext("Booked up"),
+        validators=[Optional()],
+        description=lazy_gettext("If the event is booked up or sold out."),
+    )
     expected_participants = IntegerField(
-        lazy_gettext("Expected number of participants"), validators=[Optional()]
+        lazy_gettext("Expected number of participants"),
+        validators=[Optional()],
+        description=lazy_gettext("The estimated expected attendance."),
     )
-    price_info = TextAreaField(lazy_gettext("Price info"), validators=[Optional()])
-
+    price_info = TextAreaField(
+        lazy_gettext("Price info"),
+        validators=[Optional()],
+        description=lazy_gettext(
+            "Enter price information in textual form. E.g., different prices for adults and children."
+        ),
+    )
     target_group_origin = SelectField(
         lazy_gettext("Target group origin"),
         coerce=int,
@@ -106,8 +162,10 @@ class BaseEventForm(FlaskForm):
                 lazy_gettext("EventTargetGroupOrigin.resident"),
             ),
         ],
+        description=lazy_gettext(
+            "Choose whether the event is particularly suitable for tourists or residents."
+        ),
     )
-
     attendance_mode = SelectField(
         lazy_gettext("Attendance mode"),
         coerce=int,
@@ -122,11 +180,40 @@ class BaseEventForm(FlaskForm):
             ),
             (int(EventAttendanceMode.mixed), lazy_gettext("EventAttendanceMode.mixed")),
         ],
+        description=lazy_gettext("Choose how people can attend the event."),
+    )
+    photo = FormField(
+        Base64ImageForm,
+        lazy_gettext("Photo"),
+        default=lambda: Image(),
+        description=lazy_gettext(
+            "We recommend uploading a photo for the event. It looks a lot more, but of course it works without it."
+        ),
     )
 
-    photo = FormField(Base64ImageForm, lazy_gettext("Photo"), default=lambda: Image())
+
+class BaseEventForm(SharedEventForm):
+    previous_start_date = CustomDateTimeField(
+        lazy_gettext("Previous start date"),
+        validators=[Optional()],
+        description=lazy_gettext(
+            "Enter when the event should have taken place before it was postponed."
+        ),
+    )
+    category_ids = SelectMultipleField(
+        lazy_gettext("Categories"),
+        validators=[DataRequired()],
+        coerce=int,
+        description=lazy_gettext("Choose categories that fit the event."),
+    )
     rating = SelectField(
-        lazy_gettext("Rating"), default=50, coerce=int, choices=event_rating_choices
+        lazy_gettext("Rating"),
+        default=50,
+        coerce=int,
+        choices=event_rating_choices,
+        description=lazy_gettext(
+            "Choose how relevant the event is to your organization."
+        ),
     )
 
 
@@ -197,10 +284,20 @@ class CreateEventForm(BaseEventForm):
 
 class UpdateEventForm(BaseEventForm):
     event_place_id = SelectField(
-        lazy_gettext("Place"), validators=[DataRequired()], coerce=int
+        lazy_gettext("Place"),
+        validators=[DataRequired()],
+        coerce=int,
+        description=lazy_gettext(
+            "Choose where the event takes place. You can add and modify places at Manage > Places."
+        ),
     )
     organizer_id = SelectField(
-        lazy_gettext("Organizer"), validators=[DataRequired()], coerce=int
+        lazy_gettext("Organizer"),
+        validators=[DataRequired()],
+        coerce=int,
+        description=lazy_gettext(
+            "Select the organizer. You can add and modify organizers at Manage > Organizers."
+        ),
     )
 
     status = SelectField(
@@ -213,6 +310,7 @@ class UpdateEventForm(BaseEventForm):
             (int(EventStatus.postponed), lazy_gettext("EventStatus.postponed")),
             (int(EventStatus.rescheduled), lazy_gettext("EventStatus.rescheduled")),
         ],
+        description=lazy_gettext("Select the status of the event."),
     )
 
     submit = SubmitField(lazy_gettext("Update event"))
