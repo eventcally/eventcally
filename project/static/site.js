@@ -189,6 +189,11 @@ $( function() {
         $("#location").val("");
     });
 
+    $(".btn-print").click(function () {
+        window.print();
+        return false;
+    });
+
     $("#geolocation_btn").click(function () {
         if ("geolocation" in navigator){
             navigator.geolocation.getCurrentPosition(function(position){
