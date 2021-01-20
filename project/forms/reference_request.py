@@ -66,6 +66,12 @@ class ReferenceRequestReviewForm(FlaskForm):
     )
 
     rating = SelectField(
-        lazy_gettext("Rating"), default=50, coerce=int, choices=event_rating_choices
+        lazy_gettext("Rating"),
+        default=50,
+        coerce=int,
+        choices=event_rating_choices,
+        description=lazy_gettext(
+            "Choose how relevant the event is to your organization."
+        ),
     )
     submit = SubmitField(lazy_gettext("Save review"))

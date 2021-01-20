@@ -20,44 +20,24 @@
   }
 
   function update_preview(form) {
-    var name = stripHTML(form.find('input[name=name]').val());
-    var place = stripHTML(form.find('select[name=event_place_id] > option:selected').text());
-    var organizer = stripHTML(form.find('select[name=organizer_id] > option:selected').text());
-    var external_link = stripHTML(form.find('input[name=external_link]').val());
-    var description = stripHTML(form.find('textarea[name=description]').val());
-    var image_data_url = $('#photo_preview').attr("src");
-
-    var start = '';
-    var date_str = form.find('#start').val();
-    var hour_str = form.find('#start-hour').val();
-    var minute_str = form.find('#start-minute').val();
-
-    if (date_str) {
-      start = moment(date_str).set({"hour": hour_str, "minute": minute_str});
-    }
-
-    var image_tag = '';
-
-    if (image_data_url) {
-      image_tag = '<img src="' + image_data_url + '" class="mb-2 rounded" style="object-fit: cover; height: 20vh;" />';
-    }
-
-    var content = image_tag + '<div class="text-highlight text-uppercase font-weight-bold">' + start.format("dddd, LL [um] LT") + '</div>' +
-    '<div class="font-weight-bold" style="font-size: 1.8rem;">' + name + '</div>' +
-    '<div class="text-muted">' + place + '</div>' +
-    '<div class="mt-3"><i class="fa fa-fw fa-sitemap"></i> ' + organizer + '</div>';
-
-    if (external_link) {
-      content += '<div><i class="fa fa-fw fa-link"></i> <a href="' + external_link + '" target="_blank">' + external_link + '</a></div>';
-    }
-
-    if (description) {
-      content += '<div class="my-2">' + description.truncate(100) + '</div>';
-    }
+    handle_request_start();
 
     var container = $("#preview_container");
     container.empty();
-    container.append(content);
+
+    var req_data = form.serialize();
+    $.ajax({
+            url: "{{ url_for('event_suggestion_create_for_admin_unit', au_short_name=admin_unit.short_name) }}?preview=true",
+            type: "post",
+            data: req_data,
+            error: function(xhr, status, error) {
+                handle_request_error(xhr, status, error);
+            },
+            success: function (content) {
+                container.append(content);
+                handle_request_success();
+            }
+    });
   }
 
   $( function() {
@@ -201,9 +181,11 @@
       </div>
       <div class="card-body">
         {{ render_field_with_errors(form.name) }}
-        {{ render_field_with_errors(form.start) }}
         {{ render_field_with_errors(form.event_place_id, class="autocomplete-tags w-100") }}
         {{ render_field_with_errors(form.organizer_id, class="autocomplete-tags w-100") }}
+        {{ render_field_with_errors(form.start) }}
+        {{ render_field_with_errors(form.end) }}
+        {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
 
         <div class="d-flex justify-content-between">
           <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
@@ -244,8 +226,23 @@
       </div>
       <div class="card-body">
         {{ render_field_with_errors(form.description) }}
+        <hr />
+        {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
+        {{ render_field_with_errors(form.registration_required, style="width: fit-content; flex: initial;") }}
+        {{ render_field_with_errors(form.price_info) }}
+        {{ render_field_with_errors(form.ticket_link) }}
+        {{ render_field_with_errors(form.booked_up, style="width: fit-content; flex: initial;") }}
+        {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
+        <hr />
+        {{ render_field_with_errors(form.target_group_origin, class="autocomplete w-100") }}
+        {{ render_field_with_errors(form.kid_friendly, style="width: fit-content; flex: initial;") }}
+        {{ render_field_with_errors(form.age_from) }}
+        {{ render_field_with_errors(form.age_to) }}
+        {{ render_field_with_errors(form.expected_participants) }}
+        <hr />
+        {{ render_field_with_errors(form.category_ids, class="autocomplete w-100") }}
+        {{ render_field_with_errors(form.tags) }}
         {{ render_field_with_errors(form.external_link) }}
-
         <div class="d-flex justify-content-between">
           <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
           <a class="btn btn-primary my-1 wizard-next" href="#" role="button">{{ _('Next') }}</a>
@@ -265,7 +262,15 @@
           Bitte prüfe deine Eingaben in der Vorschau. Wenn alles passt, klicke auf den Button <span class="d-inline-block">&quot;{{ form.submit.label() }}&quot;.
         </p>
         <div class="card mb-4 shadow">
-          <div id="preview_container" class="card-body"></div>
+          <div class="card-body">
+            <div id="result_container">
+              <div id="preview_container"></div>
+            </div>
+            <div class="spinner-border m-3" role="status" id="spinner" style="display: none;">
+              <span class="sr-only">Loading&hellip;</span>
+            </div>
+            <div class="alert alert-danger m-3" role="alert" id="error_alert" style="display: none;"></div>
+          </div>
         </div>
         <div class="d-flex flex-wrap justify-content-between align-items-baseline mt-3">
           <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>
