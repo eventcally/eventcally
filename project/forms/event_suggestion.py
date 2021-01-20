@@ -1,47 +1,26 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import (
+    SelectMultipleField,
     StringField,
     SubmitField,
-    TextAreaField,
     SelectField,
     BooleanField,
-    FormField,
 )
-from wtforms.fields.html5 import EmailField, TelField, URLField
+from wtforms.fields.html5 import EmailField, TelField
 from wtforms.validators import DataRequired, Optional
 from project.models import (
     EventRejectionReason,
     Image,
+    EventTargetGroupOrigin,
+    EventAttendanceMode,
 )
-from project.forms.common import Base64ImageForm, get_accept_tos_markup
-from project.forms.widgets import CustomDateTimeField, TagSelectField
+from project.forms.common import get_accept_tos_markup
+from project.forms.widgets import TagSelectField
+from project.forms.event import SharedEventForm
 
 
-class CreateEventSuggestionForm(FlaskForm):
-    name = StringField(
-        lazy_gettext("Name"),
-        validators=[DataRequired()],
-        description=lazy_gettext("Enter a short, meaningful name for the event."),
-    )
-    start = CustomDateTimeField(
-        lazy_gettext("Start"),
-        validators=[DataRequired()],
-        description=lazy_gettext("Indicate when the event will take place."),
-    )
-    description = TextAreaField(
-        lazy_gettext("Description"),
-        validators=[Optional()],
-        description=lazy_gettext("Add an optional description of the event."),
-    )
-    external_link = URLField(
-        lazy_gettext("Link URL"),
-        validators=[Optional()],
-        description=lazy_gettext(
-            "Add an optional link. That can make the review easier."
-        ),
-    )
-
+class CreateEventSuggestionForm(SharedEventForm):
     contact_name = StringField(
         lazy_gettext("Name"),
         validators=[DataRequired()],
@@ -80,13 +59,12 @@ class CreateEventSuggestionForm(FlaskForm):
             "Select the organizer. If the organizer is not yet on the list, just enter it."
         ),
     )
-    photo = FormField(
-        Base64ImageForm,
-        lazy_gettext("Photo"),
-        default=lambda: Image(),
-        description=lazy_gettext(
-            "We recommend uploading a photo for the event. It looks a lot more, but of course it works without it."
-        ),
+
+    category_ids = SelectMultipleField(
+        lazy_gettext("Categories"),
+        validators=[Optional()],
+        coerce=int,
+        description=lazy_gettext("Choose categories that fit the event."),
     )
     accept_tos = BooleanField(validators=[DataRequired()])
 
@@ -106,6 +84,12 @@ class CreateEventSuggestionForm(FlaskForm):
             elif name == "organizer_id" and self.organizer_id.is_free_text():
                 obj.organizer_text = self.organizer_id.data
                 obj.organizer_id = None
+            elif name == "target_group_origin":
+                obj.target_group_origin = EventTargetGroupOrigin(
+                    self.target_group_origin.data
+                )
+            elif name == "attendance_mode":
+                obj.attendance_mode = EventAttendanceMode(self.attendance_mode.data)
             else:
                 field.populate_obj(obj, name)
 

@@ -52,11 +52,9 @@
         {% endif %}
       {% endif %}
 
-      {% if field.description %}
       <small class="form-text text-muted w-100">
-        {{ field.description }}
+        {{ field.description }} {% if field.flags.required %}{{ _('This field is required.') }}{% else %}{{ _('This field is optional.') }}{% endif %}
       </small>
-      {% endif %}
 
       {% if field.errors %}
       <div class="invalid-feedback">
@@ -342,6 +340,24 @@
 <div class="my-4 small">{{ render_audit(tracking_mixing, show_user) }}</div>
 {% endmacro %}
 
+{% macro render_event_add_props(event) %}
+{{ render_string_prop(event.price_info, 'fa-euro-sign', 'Price info') }}
+{{ render_link_prop(event.external_link) }}
+{{ render_link_prop(event.ticket_link) }}
+{% if event.category %}
+  <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {% for category in event.categories %}{{ category | event_category_name }}{%if not loop.last %}, {% endif %}{% endfor %}</div>
+{% endif %}
+{{ render_tag_prop(event.tags) }}
+{{ render_bool_prop(event.kid_friendly, 'fa-child', 'Kid friendly') }}
+{{ render_bool_prop(event.accessible_for_free, 'fa-door-open', 'Accessible for free') }}
+{{ render_range_prop(event.age_from, event.age_to, 'fa-people-arrows', 'Typical Age range') }}
+{{ render_enum_prop(event.target_group_origin, 'fa-users', 'Target group origin') }}
+{{ render_enum_prop(event.attendance_mode, 'fa-mouse-pointer', 'Attendance mode') }}
+{{ render_bool_prop(event.registration_required, 'fa-list', 'Registration required') }}
+{{ render_bool_prop(event.booked_up, 'fa-square-full', 'Booked up') }}
+{{ render_int_prop(event.expected_participants, 'fa-users', 'Expected number of participants') }}
+{% endmacro %}
+
 {% macro render_event_props(event, start, end, dates = None, show_rating = False, show_admin_unit = True) %}
   <div class="card mb-3">
     <div class="card-header">
@@ -380,21 +396,7 @@
       <div class="my-4">{{ event.description }}</div>
 
       <div class="mt-4">
-        {{ render_string_prop(event.price_info, 'fa-euro-sign', 'Price info') }}
-        {{ render_link_prop(event.external_link) }}
-        {{ render_link_prop(event.ticket_link) }}
-        {% if event.category %}
-          <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {% for category in event.categories %}{{ category | event_category_name }}{%if not loop.last %}, {% endif %}{% endfor %}</div>
-        {% endif %}
-        {{ render_tag_prop(event.tags) }}
-        {{ render_bool_prop(event.kid_friendly, 'fa-child', 'Kid friendly') }}
-        {{ render_bool_prop(event.accessible_for_free, 'fa-door-open', 'Accessible for free') }}
-        {{ render_range_prop(event.age_from, event.age_to, 'fa-people-arrows', 'Typical Age range') }}
-        {{ render_enum_prop(event.target_group_origin, 'fa-users', 'Target group origin') }}
-        {{ render_enum_prop(event.attendance_mode, 'fa-mouse-pointer', 'Attendance mode') }}
-        {{ render_bool_prop(event.registration_required, 'fa-list', 'Registration required') }}
-        {{ render_bool_prop(event.booked_up, 'fa-square-full', 'Booked up') }}
-        {{ render_int_prop(event.expected_participants, 'fa-users', 'Expected number of participants') }}
+        {{ render_event_add_props(event) }}
       </div>
     </div>
   </div>
@@ -877,6 +879,11 @@ if (URL) {
   </div>
   <div class="card-body">
     {{ render_crop_image_form(form_field) }}
+    {% if form_field.description %}
+      <small class="form-text text-muted w-100">
+          {{ form_field.description }}
+      </small>
+    {% endif %}
   </div>
 </div>
 {% endmacro %}
@@ -942,7 +949,7 @@ if (URL) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cropper/1.0.1/jquery-cropper.js" integrity="sha512-7H4tikIFoyAdYD31w/uNYvvAUL6gyunWXLwTQ7ZXkyjD+brw+PfJpLxFkANnbkKnSJzU89YpnF3fJKbpvV+QYg==" crossorigin="anonymous"></script>
 {% endmacro %}
 
-{% macro render_event_suggestion(event_suggestion) %}
+{% macro render_event_suggestion(event_suggestion, hide_review_status=False) %}
 <div class="card mb-3">
   <div class="card-header">
       {{ _('Event suggestion') }}
@@ -953,6 +960,8 @@ if (URL) {
           <div class="">
               {{ render_image(event_suggestion.photo, class='rounded', style='object-fit: cover; height: 20vh;') }}
           </div>
+      {% elif event_suggestion.photo and event_suggestion.photo.image_base64 %}
+          <div class="mb-1"><img class="rounded" style="object-fit: cover; height: 20vh;" src="{{ event_suggestion.photo.image_base64 }}" /></div>
       {% endif %}
 
       <div class="text-highlight text-uppercase font-weight-bold">{{ event_suggestion.start | dateformat('full') }} um {{ event_suggestion.start | timeformat('short') }}</div>
@@ -962,6 +971,10 @@ if (URL) {
       <div class="mt-3"><i class="fa fa-fw fa-sitemap"></i> {{ event_suggestion.organizer.name or event_suggestion.organizer_text }}</div>
       {{ render_link_prop(event_suggestion.external_link) }}
       <div class="my-2">{{ event_suggestion.description }}</div>
+
+      <div class="mt-4">
+        {{ render_event_add_props(event_suggestion) }}
+      </div>
   </div>
 </div>
 
@@ -976,6 +989,7 @@ if (URL) {
   </div>
 </div>
 
+{% if not hide_review_status %}
 <div class="card mb-3">
   <div class="card-header">
     {{ _('Review status') }}
@@ -984,6 +998,7 @@ if (URL) {
       {{ render_event_review_status(event_suggestion) }}
   </div>
 </div>
+{% endif %}
 {% endmacro %}
 
 {% macro render_widget_styles(styles) %}

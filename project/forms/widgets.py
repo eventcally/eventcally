@@ -131,7 +131,7 @@ class TagSelectField(SelectField):
     def pre_validate(self, form):
         if self.is_free_text():
             if not self.data or not self.data.strip():
-                raise StopValidation(gettext("This field is required"))
+                raise StopValidation(gettext("This field is required."))
         else:
             super(TagSelectField, self).pre_validate(form)
 
