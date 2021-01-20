@@ -1419,10 +1419,10 @@
             var label = display.find('label[class=ridisplay]');
             label.text(conf.i18n.displayActivate + ' ' + RFC5545.description);
             textarea.val(RFC5545.result).change();
-            var startdate = findStartDate();
-            if (startdate !== null) {
-                loadOccurrences(startdate, widgetSaveToRfc5545(form, conf, false).result, 0, true);
-            }
+            // var startdate = findStartDate();
+            // if (startdate !== null) {
+            //     loadOccurrences(startdate, widgetSaveToRfc5545(form, conf, false).result, 0, true);
+            // }
             display.find('button[name="riedit"]').text(conf.i18n.edit_rules);
             display.find('button[name="ridelete"]').show();
         }
