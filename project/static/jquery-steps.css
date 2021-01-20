@@ -168,7 +168,7 @@
     padding: 0;
 }
 
-.wizard > .content > .body ul
+/* .wizard > .content > .body ul
 {
     list-style: disc !important;
 }
@@ -176,7 +176,7 @@
 .wizard > .content > .body ul > li
 {
     display: list-item;
-}
+} */
 
 .wizard > .content > .body > iframe
 {
@@ -185,11 +185,11 @@
     height: 100%;
 }
 
-.wizard > .content > .body input
+/* .wizard > .content > .body input
 {
     display: block;
     border: 1px solid #ccc;
-}
+} */
 
 .wizard > .content > .body input[type="checkbox"]
 {

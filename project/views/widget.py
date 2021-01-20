@@ -8,7 +8,7 @@ from project.models import (
     EventReviewStatus,
     AdminUnitMember,
 )
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, abort
 from flask_babelex import gettext
 from flask_security import current_user
 from sqlalchemy.sql import func
@@ -29,6 +29,7 @@ from project.jsonld import DateTimeEncoder, get_sd_for_event_date
 from project.forms.event_date import FindEventDateForm
 from project.forms.event_suggestion import CreateEventSuggestionForm
 from project.views.event_date import prepare_event_date_form
+from project.views.event import get_event_category_choices
 from project.access import has_admin_unit_member_permission
 
 
@@ -121,11 +122,20 @@ def event_suggestion_create_for_admin_unit(au_short_name):
     form.organizer_id.choices.insert(0, ("", ""))
     form.event_place_id.choices.insert(0, ("", ""))
 
+    form.category_ids.choices = get_event_category_choices()
+
     if form.validate_on_submit():
         event_suggestion = EventSuggestion()
         form.populate_obj(event_suggestion)
         event_suggestion.admin_unit_id = admin_unit.id
         event_suggestion.review_status = EventReviewStatus.inbox
+
+        if "preview" in request.args:
+            return render_template(
+                "widget/event_suggestion/create_preview.html",
+                admin_unit=admin_unit,
+                event_suggestion=event_suggestion,
+            )
 
         try:
             insert_event_suggestion(event_suggestion)
@@ -154,7 +164,10 @@ def event_suggestion_create_for_admin_unit(au_short_name):
             db.session.rollback()
             flash(handleSqlError(e), "danger")
     else:
+        if "preview" in request.args:
+            abort(406)
         flash_errors(form)
+
     return render_template(
         "widget/event_suggestion/create.html",
         form=form,

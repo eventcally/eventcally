@@ -1,5 +1,8 @@
 {% extends "layout.html" %}
 {% from "_macros.html" import render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
+{% block title %}
+{{ _('Create event') }}
+{% endblock %}
 {% block header %}
 {{ render_cropper_header() }}
 <script>
@@ -61,7 +64,6 @@ $( function() {
     <div class="card-body">
       {{ render_field_with_errors(form.name) }}
       {{ render_field_with_errors(form.description) }}
-      {{ render_field_with_errors(form.price_info) }}
     </div>
   </div>
 
@@ -81,9 +83,9 @@ $( function() {
       {{ _('Organizer') }} *
     </div>
     <div class="card-body">
-
       <div>
         {{ render_radio_buttons(form.organizer_choice) }}
+        <small class="form-text text-muted w-100">{{ _("Select the organizer. If the organizer is not yet on the list, just enter it.") }}</small>
       </div>
 
       <div class="my-4" id="existing_organizer_container">
@@ -109,6 +111,7 @@ $( function() {
 
       <div>
         {{ render_radio_buttons(form.event_place_choice) }}
+        <small class="form-text text-muted w-100">{{ _("Choose where the event takes place. If the venue is not yet in the list, just enter it.") }}</small>
       </div>
 
       <div class="my-4" id="existing_place_container">
@@ -127,6 +130,22 @@ $( function() {
     </div>
   </div>
 
+  {{ render_crop_image_form_section(form.photo) }}
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Access') }}
+    </div>
+    <div class="card-body">
+      {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.registration_required, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.price_info) }}
+      {{ render_field_with_errors(form.ticket_link) }}
+      {{ render_field_with_errors(form.booked_up, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
+    </div>
+  </div>
+
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Target group') }}
@@ -140,21 +159,14 @@ $( function() {
     </div>
   </div>
 
-  {{ render_crop_image_form_section(form.photo) }}
-
   <div class="card mb-4">
     <div class="card-header">
       {{ _('Additional information') }}
     </div>
     <div class="card-body">
       {{ render_field_with_errors(form.category_ids, class="autocomplete w-100") }}
-      {{ render_field_with_errors(form.external_link) }}
-      {{ render_field_with_errors(form.ticket_link) }}
       {{ render_field_with_errors(form.tags) }}
-      {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
-      {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
-      {{ render_field_with_errors(form.registration_required, style="width: fit-content; flex: initial;") }}
-      {{ render_field_with_errors(form.booked_up, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.external_link) }}
     </div>
   </div>
 
