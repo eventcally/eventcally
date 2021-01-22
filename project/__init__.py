@@ -51,7 +51,7 @@ app.config["BABEL_DEFAULT_TIMEZONE"] = "Europe/Berlin"
 babel = Babel(app)
 
 # cors
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/api/*", "/swagger/"})
 
 # API
 rest_api = Api(app, "/api/v1")
