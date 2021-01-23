@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-01-21 07:53+0100\n"
+"POT-Creation-Date: 2021-01-23 14:43+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -132,7 +132,7 @@ msgstr "Nutzungsbedingungen"
 msgid "Legal notice"
 msgstr "Impressum"
 
-#: project/forms/admin.py:11 project/templates/_macros.html:983
+#: project/forms/admin.py:11 project/templates/_macros.html:986
 #: project/templates/layout.html:175
 #: project/templates/widget/event_suggestion/create.html:155
 #: project/views/root.py:42
@@ -613,7 +613,7 @@ msgstr "Wähle aus, wie relevant die Veranstaltung für deine Organisation ist."
 
 #: project/forms/event.py:222 project/forms/event.py:231
 #: project/forms/event.py:287 project/forms/event_suggestion.py:49
-#: project/templates/_macros.html:406 project/templates/event/create.html:108
+#: project/templates/_macros.html:409 project/templates/event/create.html:108
 #: project/templates/event/update.html:59
 #: project/templates/event_place/create.html:20
 #: project/templates/event_place/delete.html:13
@@ -631,7 +631,7 @@ msgstr "Neuen Ort eingeben"
 
 #: project/forms/event.py:236 project/forms/event.py:245
 #: project/forms/event.py:295 project/forms/event.py:341
-#: project/forms/event_suggestion.py:56 project/templates/_macros.html:436
+#: project/forms/event_suggestion.py:56 project/templates/_macros.html:439
 #: project/templates/event/create.html:83
 #: project/templates/event/update.html:50
 #: project/templates/organizer/create.html:16
@@ -716,7 +716,7 @@ msgstr "Wähle den Status der Veranstaltung."
 msgid "Update event"
 msgstr "Veranstaltung aktualisieren"
 
-#: project/forms/event.py:326 project/templates/_macros.html:923
+#: project/forms/event.py:326 project/templates/_macros.html:926
 #: project/templates/event/delete.html:6
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
@@ -861,7 +861,7 @@ msgid "Weekdays"
 msgstr "Wochentage"
 
 #: project/forms/reference.py:10 project/forms/reference_request.py:14
-#: project/templates/_macros.html:452
+#: project/templates/_macros.html:455
 #: project/templates/admin_unit/create.html:16
 #: project/templates/admin_unit/update.html:17
 msgid "Admin unit"
@@ -876,6 +876,7 @@ msgid "Update reference"
 msgstr "Empfehlung aktualisieren"
 
 #: project/forms/reference.py:38 project/templates/reference/delete.html:6
+#: project/templates/reference/read.html:20
 msgid "Delete reference"
 msgstr "Empfehlung löschen"
 
@@ -887,7 +888,7 @@ msgstr "Anfrage speichern"
 msgid "Delete request"
 msgstr "Anfrage löschen"
 
-#: project/forms/reference_request.py:26 project/templates/_macros.html:995
+#: project/forms/reference_request.py:26 project/templates/_macros.html:998
 #: project/templates/event_suggestion/review_status.html:18
 #: project/templates/reference_request/review_status.html:12
 msgid "Review status"
@@ -934,7 +935,7 @@ msgid "This field is optional."
 msgstr "Dieses Feld ist optional."
 
 #: project/templates/_macros.html:114 project/templates/_macros.html:371
-#: project/templates/_macros.html:378 project/templates/_macros.html:614
+#: project/templates/_macros.html:378 project/templates/_macros.html:617
 msgid "Date"
 msgstr "Datum"
 
@@ -987,15 +988,15 @@ msgstr "Veranstaltung"
 msgid "%(count)d event dates"
 msgstr "%(count)d Termine"
 
-#: project/templates/_macros.html:426
+#: project/templates/_macros.html:429
 msgid "Show directions"
 msgstr "Anreise planen"
 
-#: project/templates/_macros.html:533
+#: project/templates/_macros.html:536
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
-#: project/templates/_macros.html:565 project/templates/_macros.html:567
+#: project/templates/_macros.html:568 project/templates/_macros.html:570
 #: project/templates/event_date/list.html:272
 #: project/templates/widget/event_suggestion/create.html:144
 #: project/templates/widget/event_suggestion/create.html:169
@@ -1006,7 +1007,7 @@ msgstr "Ort bei Google suchen"
 msgid "Previous"
 msgstr "Zurück"
 
-#: project/templates/_macros.html:570 project/templates/_macros.html:572
+#: project/templates/_macros.html:573 project/templates/_macros.html:575
 #: project/templates/event_date/list.html:273
 #: project/templates/widget/event_suggestion/create.html:145
 #: project/templates/widget/event_suggestion/create.html:170
@@ -1016,50 +1017,50 @@ msgstr "Zurück"
 msgid "Next"
 msgstr "Weiter"
 
-#: project/templates/_macros.html:637
+#: project/templates/_macros.html:640
 msgid "Radius"
 msgstr "Umkreis"
 
-#: project/templates/_macros.html:832
+#: project/templates/_macros.html:835
 msgid "Edit image"
 msgstr "Bild bearbeiten"
 
-#: project/templates/_macros.html:853
+#: project/templates/_macros.html:856
 msgid "Close"
 msgstr "Schließen"
 
-#: project/templates/_macros.html:854
+#: project/templates/_macros.html:857
 msgid "Okay"
 msgstr "OK"
 
-#: project/templates/_macros.html:863 project/templates/_macros.html:865
+#: project/templates/_macros.html:866 project/templates/_macros.html:868
 msgid "Choose image file"
 msgstr "Bild-Datei auswählen"
 
-#: project/templates/_macros.html:918
+#: project/templates/_macros.html:921 project/templates/reference/read.html:13
 msgid "Actions"
 msgstr "Aktionen"
 
-#: project/templates/_macros.html:922
+#: project/templates/_macros.html:925
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: project/templates/_macros.html:926
+#: project/templates/_macros.html:929
 msgid "Duplicate event"
 msgstr "Veranstaltung duplizieren"
 
-#: project/templates/_macros.html:929
+#: project/templates/_macros.html:932
 #: project/templates/manage/references_incoming.html:10
 msgid "Reference event"
 msgstr "Veranstaltung empfehlen"
 
-#: project/templates/_macros.html:932
+#: project/templates/_macros.html:935
 #: project/templates/manage/reference_requests_outgoing.html:10
 #: project/templates/manage/references_outgoing.html:10
 msgid "Empfehlung anfragen"
 msgstr "Empfehlung anfragen"
 
-#: project/templates/_macros.html:955
+#: project/templates/_macros.html:958
 msgid "Event suggestion"
 msgstr "Veranstaltungsvorschlag"
 
@@ -1256,6 +1257,14 @@ msgstr "Der Prüfungsstatus deiner Empfehlungsanfrage wurde aktualisiert"
 msgid "Click here to view the status"
 msgstr "Klicke hier, um den Status anzuzeigen"
 
+#: project/templates/email/referenced_event_changed_notice.html:4
+msgid "A referenced event was changed."
+msgstr "Eine empfohlene Veranstaltung wurde geändert."
+
+#: project/templates/email/referenced_event_changed_notice.html:5
+msgid "Click here to view the reference"
+msgstr "Klicke hier, um die Empfehlung anzuzeigen"
+
 #: project/templates/email/review_notice.html:4
 msgid "There is a new event that needs to be reviewed."
 msgstr "Es wurde eine neue Veranstaltung eingetragen, die geprüft werden muss."
@@ -1390,6 +1399,16 @@ msgstr "URL für Infoscreen"
 msgid "Event Planing"
 msgstr "Planungsassistent"
 
+#: project/templates/reference/read.html:4
+#: project/templates/reference/read.html:8
+#: project/templates/reference/read.html:29
+msgid "Event reference"
+msgstr "Empfehlung"
+
+#: project/templates/reference/read.html:17
+msgid "Edit reference"
+msgstr "Empfehlung bearbeiten"
+
 #: project/templates/reference/update.html:4
 #: project/templates/reference/update.html:8
 #, python-format
@@ -1476,21 +1495,25 @@ msgstr "Die eingegebene Email passt nicht zur Email der Einladung"
 msgid "Invitation successfully deleted"
 msgstr "Einladung erfolgreich gelöscht"
 
-#: project/views/event.py:123
+#: project/views/event.py:128
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: project/views/event.py:155
+#: project/views/event.py:161
 msgid "Event successfully updated"
 msgstr "Veranstaltung erfolgreich aktualisiert"
 
-#: project/views/event.py:177 project/views/reference.py:133
+#: project/views/event.py:183 project/views/reference.py:149
 msgid "Entered name does not match event name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
 
-#: project/views/event.py:183
+#: project/views/event.py:189
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
+
+#: project/views/event.py:316
+msgid "Referenced event changed"
+msgstr "Empfohlene Veranstaltung wurde geändert"
 
 #: project/views/event_place.py:36
 msgid "Place successfully created"
@@ -1533,15 +1556,15 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Veranstalters"
 msgid "Organizer successfully deleted"
 msgstr "Veranstalter erfolgreich gelöscht"
 
-#: project/views/reference.py:50
+#: project/views/reference.py:66
 msgid "Event successfully referenced"
 msgstr "Veranstaltung erfolgreich empfohlen"
 
-#: project/views/reference.py:73
+#: project/views/reference.py:89
 msgid "Reference successfully updated"
 msgstr "Empfehlung erfolgreich empfohlen"
 
-#: project/views/reference.py:138
+#: project/views/reference.py:154
 msgid "Reference successfully deleted"
 msgstr "Empfehlung erfolgreich gelöscht"
 

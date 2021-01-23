@@ -7,6 +7,9 @@ from project.models import (
     EventOrganizer,
     EventCategory,
     EventSuggestion,
+    EventReference,
+    AdminUnitMember,
+    User,
 )
 from flask import render_template, flash, url_for, redirect, request, jsonify
 from flask_babelex import gettext
@@ -14,6 +17,7 @@ from project.access import (
     has_access,
     access_or_401,
     can_reference_event,
+    has_admin_unit_member_permission,
 )
 from project.dateutils import today
 from datetime import datetime
@@ -22,6 +26,7 @@ from project.views.utils import (
     flash_errors,
     handleSqlError,
     flash_message,
+    send_mail,
 )
 from project.utils import get_event_category_name
 from project.services.event import (
@@ -151,6 +156,7 @@ def event_update(event_id):
         try:
             update_event(event)
             db.session.commit()
+            send_referenced_event_changed_mails(event)
             flash_message(
                 gettext("Event successfully updated"),
                 url_for("event", event_id=event.id),
@@ -289,3 +295,26 @@ def get_user_rights(event):
             event.admin_unit, "reference_request:create"
         ),
     }
+
+
+def send_referenced_event_changed_mails(event):
+    # Alle Referenzen
+    references = EventReference.query.filter(EventReference.event_id == event.id).all()
+    for reference in references:
+
+        # Alle Mitglieder der AdminUnit, die das Recht haben, Requests zu verifizieren
+        members = (
+            AdminUnitMember.query.join(User)
+            .filter(AdminUnitMember.admin_unit_id == reference.admin_unit_id)
+            .all()
+        )
+
+        for member in members:
+            if has_admin_unit_member_permission(member, "reference_request:verify"):
+                send_mail(
+                    member.user.email,
+                    gettext("Referenced event changed"),
+                    "referenced_event_changed_notice",
+                    event=event,
+                    reference=reference,
+                )

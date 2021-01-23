@@ -1,0 +1,3 @@
+{{ _('A referenced event was changed.') }}
+{{ _('Click the link below to view the reference') }}
+{{ url_for('event_reference', id=reference.id, _external=True) }}
