@@ -27,6 +27,7 @@ from project.views.utils import (
     handleSqlError,
     flash_message,
     send_mail,
+    non_match_for_deletion,
 )
 from project.utils import get_event_category_name
 from project.services.event import (
@@ -179,7 +180,7 @@ def event_delete(event_id):
     form = DeleteEventForm()
 
     if form.validate_on_submit():
-        if form.name.data != event.name:
+        if non_match_for_deletion(form.name.data, event.name):
             flash(gettext("Entered name does not match event name"), "danger")
         else:
             try:
