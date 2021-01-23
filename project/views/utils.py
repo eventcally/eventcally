@@ -86,3 +86,7 @@ def send_mails(recipients, subject, template, **context):
         return
 
     mail.send(msg)
+
+
+def non_match_for_deletion(str1: str, str2: str) -> bool:
+    return str1 != str2 and str1.casefold() != str2.casefold()

@@ -65,7 +65,7 @@ app.config.update(
             plugins=[marshmallow_plugin],
             openapi_version="2.0",
             info=dict(
-                description="This API provides endpoints to interact with the Oveda data. At the moment, there is no authorization neeeded."
+                description="This API provides endpoints to interact with the Oveda data. At the moment, there is no authorization needed."
             ),
         ),
     }

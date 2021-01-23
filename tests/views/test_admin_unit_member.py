@@ -78,7 +78,7 @@ def test_delete(client, app, utils, seeder):
             url,
             data={
                 "csrf_token": utils.get_csrf(response),
-                "email": "test@test.de",
+                "email": "Test@test.de",
                 "submit": "Submit",
             },
         )

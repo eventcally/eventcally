@@ -13,6 +13,7 @@ from project.views.utils import (
     send_mail,
     handleSqlError,
     flash_errors,
+    non_match_for_deletion,
 )
 from project.access import get_admin_unit_for_manage_or_404, has_access
 from project.services.admin_unit import add_user_to_admin_unit_with_roles
@@ -111,7 +112,7 @@ def manage_admin_unit_invitation_delete(id):
     form = DeleteAdminUnitInvitationForm()
 
     if form.validate_on_submit():
-        if form.email.data != invitation.email:
+        if non_match_for_deletion(form.email.data, invitation.email):
             flash(gettext("Entered email does not match invitation email"), "danger")
         else:
             try:
