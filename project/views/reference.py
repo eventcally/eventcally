@@ -1,5 +1,10 @@
 from project import app, db
-from project.views.utils import get_pagination_urls, flash_errors, handleSqlError
+from project.views.utils import (
+    get_pagination_urls,
+    flash_errors,
+    handleSqlError,
+    non_match_for_deletion,
+)
 from project.access import (
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_event_reference,
@@ -148,7 +153,7 @@ def reference_delete(id):
     form = DeleteReferenceForm()
 
     if form.validate_on_submit():
-        if form.name.data != reference.event.name:
+        if non_match_for_deletion(form.name.data, reference.event.name):
             flash(gettext("Entered name does not match event name"), "danger")
         else:
             try:
