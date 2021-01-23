@@ -28,6 +28,7 @@ def create_initial_data():
         "place:create",
         "place:update",
         "place:delete",
+        "reference:read",
         "reference:update",
         "reference:delete",
         "reference_request:create",
