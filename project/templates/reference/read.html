@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_audit, render_string_prop, render_audit_container, render_event_props %}
+{% block title %}
+{{ _('Event reference') }}
+{% endblock %}
+{% block content %}
+
+    <h1>{{ _('Event reference') }}</h1>
+
+    {% if user_rights['can_update_reference'] or user_rights['can_delete_reference'] %}
+    <div class="dropdown my-4">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{ _('Actions') }}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {% if user_rights['can_update_reference'] %}
+                <a class="dropdown-item" href="{{ url_for('event_reference_update', id=reference.id) }}"><i class="fa fa-edit"></i> {{ _('Edit reference') }}</a>
+            {% endif %}
+            {% if user_rights['can_delete_reference'] %}
+                <a class="dropdown-item" href="{{ url_for('reference_delete', id=reference.id) }}"><i class="fa fa-trash"></i> {{ _('Delete reference') }}&hellip;</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="w-normal">
+        <div class="card mb-3">
+            <div class="card-header">
+              {{ _('Event reference') }}
+            </div>
+            <div class="card-body">
+                {% if event.rating %}
+                    {{ render_string_prop("%d/10" % (event.rating/10), 'fa-adjust', 'Rating') }}
+                {% endif %}
+            </div>
+            <div class="card-footer small">
+                {{ render_audit(reference, True) }}
+            </div>
+        </div>
+
+        {{ render_event_props(event, event.start, event.end) }}
+    </div>
+
+{% endblock %}

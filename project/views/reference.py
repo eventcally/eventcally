@@ -3,6 +3,7 @@ from project.views.utils import get_pagination_urls, flash_errors, handleSqlErro
 from project.access import (
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_event_reference,
+    has_access,
 )
 from project.forms.reference import (
     CreateEventReferenceForm,
@@ -22,8 +23,26 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import desc
 
 
+@app.route("/reference/<int:id>")
+def event_reference(id):
+    reference = EventReference.query.get_or_404(id)
+    access_or_401(reference.admin_unit, "reference:read")
+
+    user_rights = {
+        "can_update_reference": has_access(reference.admin_unit, "reference:update"),
+        "can_delete_reference": has_access(reference.admin_unit, "reference:delete"),
+    }
+
+    return render_template(
+        "reference/read.html",
+        user_rights=user_rights,
+        reference=reference,
+        event=reference.event,
+    )
+
+
 @app.route("/event/<int:event_id>/reference", methods=("GET", "POST"))
-def event_reference(event_id):
+def event_reference_create(event_id):
     event = Event.query.get_or_404(event_id)
     user_can_reference_event = can_reference_event(event)
 
