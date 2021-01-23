@@ -12,6 +12,7 @@ from project.forms.event_place import (
 from project.views.utils import (
     flash_errors,
     handleSqlError,
+    non_match_for_deletion,
 )
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -79,7 +80,7 @@ def event_place_delete(id):
     form = DeleteEventPlaceForm()
 
     if form.validate_on_submit():
-        if form.name.data != place.name:
+        if non_match_for_deletion(form.name.data, place.name):
             flash(gettext("Entered name does not match place name"), "danger")
         else:
             try:

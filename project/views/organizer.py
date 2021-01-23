@@ -12,6 +12,7 @@ from project.forms.organizer import (
 from project.views.utils import (
     flash_errors,
     handleSqlError,
+    non_match_for_deletion,
 )
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -79,7 +80,7 @@ def organizer_delete(id):
     form = DeleteOrganizerForm()
 
     if form.validate_on_submit():
-        if form.name.data != organizer.name:
+        if non_match_for_deletion(form.name.data, organizer.name):
             flash(gettext("Entered name does not match organizer name"), "danger")
         else:
             try:

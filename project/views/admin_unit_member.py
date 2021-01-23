@@ -11,6 +11,7 @@ from project.views.utils import (
     permission_missing,
     handleSqlError,
     flash_errors,
+    non_match_for_deletion,
 )
 from project.access import has_access
 from project.services.admin_unit import add_roles_to_admin_unit_member
@@ -63,7 +64,7 @@ def manage_admin_unit_member_delete(id):
     form = DeleteAdminUnitMemberForm()
 
     if form.validate_on_submit():
-        if form.email.data != member.user.email:
+        if non_match_for_deletion(form.email.data, member.user.email):
             flash(gettext("Entered email does not match member email"), "danger")
         else:
             try:
