@@ -25,6 +25,7 @@ from project.models import (
 )
 from project.forms.common import event_rating_choices, Base64ImageForm
 from project.forms.widgets import CustomDateTimeField, CustomDateField
+from dateutil.relativedelta import relativedelta
 
 
 class EventPlaceLocationForm(FlaskForm):
@@ -65,12 +66,16 @@ class SharedEventForm(FlaskForm):
     start = CustomDateTimeField(
         lazy_gettext("Start"),
         validators=[DataRequired()],
-        description=lazy_gettext("Indicate when the event will take place."),
+        description=lazy_gettext(
+            "Indicate when the event will take place.  If the event takes place regularly, enter when the first date will begin."
+        ),
     )
     end = CustomDateTimeField(
         lazy_gettext("End"),
         validators=[Optional()],
-        description=lazy_gettext("Indicate when the event will end."),
+        description=lazy_gettext(
+            "Indicate when the event will end. An event can last a maximum of 24 hours. If the event takes place regularly, enter when the first date will end."
+        ),
     )
     recurrence_rule = TextAreaField(
         lazy_gettext("Recurrence rule"),
@@ -190,6 +195,22 @@ class SharedEventForm(FlaskForm):
             "We recommend uploading a photo for the event. It looks a lot more, but of course it works without it."
         ),
     )
+
+    def validate(self):
+        if not super().validate():
+            return False
+        if self.start.data and self.end.data:
+            if self.start.data > self.end.data:
+                msg = gettext("The start must be before the end.")
+                self.start.errors.append(msg)
+                return False
+
+            max_end = self.start.data + relativedelta(days=1)
+            if self.end.data > max_end:
+                msg = gettext("An event can last a maximum of 24 hours.")
+                self.end.errors.append(msg)
+                return False
+        return True
 
 
 class BaseEventForm(SharedEventForm):

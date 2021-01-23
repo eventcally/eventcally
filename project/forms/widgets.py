@@ -31,15 +31,27 @@ class CustomDateTimeWidget:
             hour = date_value.hour
             minute = date_value.minute
 
+        kwargs_class = kwargs.pop("class", "")
+
+        date_class = kwargs_class + " datepicker"
         date_params = html_params(
-            name=field.name, id=id, value=date, required=field.flags.required, **kwargs
+            name=field.name,
+            id=id,
+            value=date,
+            required=field.flags.required,
+            class_=date_class,
+            **kwargs
         )
-        time_hour_params = html_params(name=field.name, id=id + "-hour", **kwargs)
-        time_minute_params = html_params(name=field.name, id=id + "-minute", **kwargs)
+        time_hour_params = html_params(
+            name=field.name, id=id + "-hour", class_=kwargs_class, **kwargs
+        )
+        time_minute_params = html_params(
+            name=field.name, id=id + "-minute", class_=kwargs_class, **kwargs
+        )
         clear_button_id = id + "-clear-button"
 
         return Markup(
-            '<div class="input-group-prepend mt-1"><input type="text" class="datepicker" {}/><button class="btn btn-outline-secondary" type="button" id="{}"><i class="fa fa-times"></i></button></div><div class="mx-2"></div><div class="input-group-append mt-1"><select {}>{}</select><span class="input-group-text">:</span><select {}>{}</select></div>'.format(
+            '<div class="input-group-prepend mt-1"><input type="text" {}/><button class="btn btn-outline-secondary" type="button" id="{}"><i class="fa fa-times"></i></button></div><div class="mx-2"></div><div class="input-group-append mt-1"><select {}>{}</select><span class="input-group-text">:</span><select {}>{}</select></div>'.format(
                 date_params,
                 clear_button_id,
                 time_hour_params,

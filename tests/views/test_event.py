@@ -165,6 +165,54 @@ def test_create_invalidDateFormat(client, app, utils, seeder, mocker):
     utils.assert_response_error_message(response)
 
 
+def test_create_startAfterEnd(client, app, utils, seeder, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "start": ["2030-12-31", "23", "59"],
+            "end": ["2030-12-31", "23", "58"],
+            "event_place_id": place_id,
+        },
+    )
+
+    utils.assert_response_error_message(
+        response,
+        b"Der Start muss vor dem Ende sein",
+    )
+
+
+def test_create_DurationMoreThan24Hours(client, app, utils, seeder, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "start": ["2030-12-30", "12", "00"],
+            "end": ["2030-12-31", "12", "01"],
+            "event_place_id": place_id,
+        },
+    )
+
+    utils.assert_response_error_message(
+        response,
+        b"Eine Veranstaltung darf maximal 24 Stunden dauern",
+    )
+
+
 def test_duplicate(client, app, utils, seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
     template_event_id = seeder.create_event(admin_unit_id)
