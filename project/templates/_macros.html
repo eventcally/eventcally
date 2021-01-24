@@ -930,28 +930,18 @@ if (URL) {
 {% endmacro %}
 
 {% macro render_event_menu(user_rights, event) %}
-  {% if user_rights['can_update_event'] or user_rights['can_verify_event'] %}
-    <div class="dropdown my-4">
-        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{ _('Actions') }}
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            {% if user_rights['can_update_event'] %}
-                <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
-                <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}&hellip;</a>
-            {% endif %}
-            {% if user_rights['can_duplicate_event'] %}
-                <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}"><i class="fa fa-copy"></i> {{ _('Duplicate event') }}&hellip;</a>
-            {% endif %}
-            {% if user_rights['can_reference_event'] %}
-                <a class="dropdown-item" href="{{ url_for('event_reference_create', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
-            {% endif %}
-            {% if user_rights['can_create_reference_request'] %}
-                <a class="dropdown-item" href="{{ url_for('event_reference_request_create', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Empfehlung anfragen') }}</a>
-            {% endif %}
-        </div>
-    </div>
-  {% endif %}
+  <div class="dropdown my-4">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{ _('Actions') }}
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          {% if user_rights['can_update_event'] %}
+              <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
+              <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}&hellip;</a>
+          {% endif %}
+          <a class="dropdown-item" href="{{ url_for('event_actions', event_id=event.id) }}">{{ _('More') }}&hellip;</a>
+      </div>
+  </div>
 {% endmacro %}
 
 {% macro render_jquery_steps_header() %}
