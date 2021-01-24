@@ -439,7 +439,12 @@
       {{ _('Organizer') }}
     </div>
     <div class="card-body">
-          {{ render_string_prop(event.organizer.name) }}
+          <h5 class="card-title">{{ render_string_prop(event.organizer.name) }}</h5>
+
+          {% if event.organizer.logo_id %}
+            <div class="my-4">{{ render_logo(event.organizer.logo) }}</div>
+          {% endif %}
+
           {{ render_link_prop(event.organizer.url) }}
           {{ render_email_prop(event.organizer.email) }}
           {{ render_phone_prop(event.organizer.phone) }}
@@ -691,15 +696,16 @@
 </form>
 {% endmacro %}
 
-{% macro render_cropper_code() %}
+{% macro render_cropper_code(field_id = "photo", min_width=320, min_height=160) %}
+var field_id = "#{{ field_id }}-image_base64";
 var inputImage = document.getElementById('photo-image_file');
 var Cropper = window.Cropper;
 var URL = window.URL || window.webkitURL;
 var image = document.getElementById('photo-image');
 var cropper = null;
 var crop_data = null;
-var minCroppedWidth = 320;
-var minCroppedHeight = 160;
+var minCroppedWidth = {{ min_width }};
+var minCroppedHeight = {{ min_height }};
 var uploadedImageURL;
 var photo_modal = $('#photo_modal');
 
@@ -766,7 +772,7 @@ if (URL) {
   });
   $('#photo-delete-btn').click(function(e){
     e.preventDefault();
-    $('#photo-image_base64').val('');
+    $(field_id).val('');
     $('#photo_preview').attr("src", '');
     $('.show-if-photo-exists').hide();
   });
@@ -804,7 +810,7 @@ if (URL) {
       var data_url = canvas.toDataURL();
       crop_data = cropper.getData();
 
-      $('#photo-image_base64').val(data_url);
+      $(field_id).val(data_url);
       $('#photo_preview').attr("src", data_url);
       $('.show-if-photo-exists').show();
     }
@@ -816,12 +822,21 @@ if (URL) {
 }
 {% endmacro %}
 
-{% macro render_cropper_script() %}
+{% macro render_cropper_script(field_id = "photo", min_width=320, min_height=160) %}
 <script>
   $( function() {
-    {{ render_cropper_code() }}
+    {{ render_cropper_code(field_id, min_width, min_height) }}
   });
 </script>
+{% endmacro %}
+
+{% macro render_cropper_block(field_id = "photo", min_width=320, min_height=160) %}
+{{ render_cropper_header() }}
+{{ render_cropper_script(field_id, min_width, min_height) }}
+{% endmacro %}
+
+{% macro render_cropper_logo_block() %}
+{{ render_cropper_block("logo", 100, 100) }}
 {% endmacro %}
 
 {% macro render_crop_image_form(form_field) %}

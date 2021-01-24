@@ -17,7 +17,7 @@ def test_create(client, app, utils, seeder):
     assert response.status_code == 200
 
     data = create_form_data(response, utils)
-    data["logo-image_file"] = seeder.get_default_image_upload()
+    data["logo-image_base64"] = seeder.get_default_image_upload_base64()
 
     with client:
         response = client.post(
