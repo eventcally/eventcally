@@ -6,6 +6,7 @@
 {% block content %}
 
 <h1>{{ _('Reference event "%(name)s"', name=event.name) }}</h1>
+<p>{{ _('Reference this event on your organization\'s calendar.') }}</p>
 
 <form action="" method="POST">
     {{ form.hidden_tag() }}

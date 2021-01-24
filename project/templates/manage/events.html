@@ -27,6 +27,7 @@
                 <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}">{{ _('Edit') }}</a>
                 <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}">{{ _('Delete') }}&hellip;</a>
                 <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}">{{ _('Duplicate') }}&hellip;</a>
+                <a class="dropdown-item" href="{{ url_for('event_actions', event_id=event.id) }}">{{ _('More') }}&hellip;</a>
             </div>
         </div>
         {{ render_event_warning_pills(event) }}
