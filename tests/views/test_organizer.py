@@ -16,7 +16,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         response,
         {
             "name": "Neuer Organisator",
-            "logo-image_file": seeder.get_default_image_upload(),
+            "logo-image_base64": seeder.get_default_image_upload_base64(),
         },
     )
 

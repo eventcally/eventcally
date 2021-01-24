@@ -10,7 +10,7 @@ from wtforms import (
 from wtforms.fields.html5 import URLField
 from wtforms.validators import DataRequired, Optional
 from project.models import Location, Image
-from project.forms.common import FileImageForm
+from project.forms.common import Base64ImageForm
 
 
 class EventPlaceLocationForm(FlaskForm):
@@ -29,7 +29,7 @@ class EventPlaceLocationForm(FlaskForm):
 class BaseEventPlaceForm(FlaskForm):
     name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
     url = URLField(lazy_gettext("Link URL"), validators=[Optional()])
-    photo = FormField(FileImageForm, lazy_gettext("Photo"), default=lambda: Image())
+    photo = FormField(Base64ImageForm, lazy_gettext("Photo"), default=lambda: Image())
     description = TextAreaField(lazy_gettext("Description"), validators=[Optional()])
     location = FormField(EventPlaceLocationForm)
 
