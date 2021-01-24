@@ -90,8 +90,18 @@ def event_reference_request_create(event_id):
             db.session.add(request)
             db.session.commit()
             send_reference_request_inbox_mails(request)
-            flash(gettext("Request successfully created"), "success")
-            return redirect(url_for("event", event_id=event.id))
+            flash(
+                gettext(
+                    "Request successfully created. You will be notified after the other organization reviews the event."
+                ),
+                "success",
+            )
+            return redirect(
+                url_for(
+                    "manage_admin_unit_reference_requests_outgoing",
+                    id=event.admin_unit_id,
+                )
+            )
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")

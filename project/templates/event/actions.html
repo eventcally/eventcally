@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_event_props %}
+{% block title %}
+{{ _('Actions for event') }}
+{% endblock %}
+{% block content %}
+
+    <div class="w-normal">
+        <h5 class="card-title">{{ _('Actions for event') }}</h5>
+
+        <div>
+            <i class="fa fa-fw fa-link" data-toggle="tooltip" title="{{ _('Event') }}"></i>
+            <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
+        </div>
+
+        <div class="list-group mt-4">
+            {% if user_rights['can_create_reference_request'] %}
+                <a class="list-group-item list-group-item-action" href="{{ url_for('event_reference_request_create', event_id=event.id) }}">
+                    <p class="mb-1"><i class="fa fa-link"></i> {{ _('Request reference') }}</p>
+                    <small>{{ _('Ask another organization to reference your event on their calendar.') }}</small>
+                </a>
+            {% endif %}
+            {% if user_rights['can_reference_event'] %}
+                <a class="list-group-item list-group-item-action" href="{{ url_for('event_reference_create', event_id=event.id) }}">
+                    <p class="mb-1"><i class="fa fa-link"></i> {{ _('Reference event') }}</p>
+                    <small>{{ _('Reference this event on your organization\'s calendar.') }}</small>
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="list-group mt-4">
+            {% if user_rights['can_duplicate_event'] %}
+                <a class="list-group-item list-group-item-action" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}"><i class="fa fa-copy"></i> {{ _('Duplicate event') }}</a>
+            {% endif %}
+            {% if user_rights['can_create_event'] %}
+                <a class="list-group-item list-group-item-action" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id) }}"><i class="fa fa-plus"></i> {{ _('Create another event for %(admin_unit_name)s', admin_unit_name=event.admin_unit.name) }}</a>
+                <a class="list-group-item list-group-item-action" href="{{ url_for('manage_admin_unit_events', id=event.admin_unit_id) }}"><i class="fa fa-list"></i> {{ _('List all events of %(admin_unit_name)s', admin_unit_name=event.admin_unit.name) }}</a>
+            {% endif %}
+            {% if user_rights['can_update_event'] %}
+              <a class="list-group-item list-group-item-action" href="{{ url_for('event_update', event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
+              <a class="list-group-item list-group-item-action" href="{{ url_for('event_delete', event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}</a>
+            {% endif %}
+        </div>
+
+
+    </div>
+
+{% endblock %}

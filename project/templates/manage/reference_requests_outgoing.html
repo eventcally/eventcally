@@ -7,7 +7,7 @@
 {% block content %}
 
 <h1 class="mb-1">{{ _('Outgoing reference requests') }}</h1>
-<p class="text-muted">Hier findest du deine Empfehlungsanfragen an andere Verwaltungseinheiten. Um eine andere Verwaltungseinheit um eine Empfehlung zu bitten, wähle &quot;{{ _('Empfehlung anfragen') }}&quot; auf einer deiner Veranstaltungsseiten, die du über die <a href="{{ url_for('manage_admin_unit_events', id=admin_unit.id) }}">Suche</a> finden kannst.</p>
+<p class="text-muted">Hier findest du deine Empfehlungsanfragen an andere Organisationen. Um eine andere Organisation um eine Empfehlung zu bitten, wähle &quot;{{ _('Empfehlung anfragen') }}&quot; auf einer deiner Veranstaltungsseiten, die du über die <a href="{{ url_for('manage_admin_unit_events', id=admin_unit.id) }}">Suche</a> finden kannst.</p>
 
 <ul class="list-group mt-4">
 {% for request in requests %}

@@ -38,9 +38,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(
-        response, "manage_admin_unit_events", id=admin_unit_id
-    )
+    utils.assert_response_redirect(response, "event_actions", event_id=1)
 
     with app.app_context():
         from project.models import Event
@@ -72,9 +70,7 @@ def test_create_newPlaceAndOrganizer(client, app, utils, seeder, mocker):
             "new_event_place-name": "Neuer Ort",
         },
     )
-    utils.assert_response_redirect(
-        response, "manage_admin_unit_events", id=admin_unit_id
-    )
+    utils.assert_response_redirect(response, "event_actions", event_id=1)
 
     with app.app_context():
         from project.models import Event
@@ -225,9 +221,7 @@ def test_duplicate(client, app, utils, seeder, mocker):
     response = utils.get_ok(url)
 
     response = utils.post_form(url, response, {})
-    utils.assert_response_redirect(
-        response, "manage_admin_unit_events", id=admin_unit_id
-    )
+    utils.assert_response_redirect(response, "event_actions", event_id=2)
 
     with app.app_context():
         from project.models import Event
@@ -253,9 +247,7 @@ def test_create_fromSuggestion(client, app, utils, seeder, mocker, free_text):
     response = utils.get_ok(url)
 
     response = utils.post_form(url, response, {})
-    utils.assert_response_redirect(
-        response, "manage_admin_unit_events", id=admin_unit_id
-    )
+    utils.assert_response_redirect(response, "event_actions", event_id=1)
 
     with app.app_context():
         from project.models import Event, EventSuggestion
@@ -287,14 +279,20 @@ def test_create_verifiedSuggestionRedirectsToReviewStatus(
     response = utils.get_ok(url)
 
     response = utils.post_form(url, response, {})
-    utils.assert_response_redirect(
-        response, "manage_admin_unit_events", id=admin_unit_id
-    )
+    utils.assert_response_redirect(response, "event_actions", event_id=1)
 
     response = client.get(url)
     utils.assert_response_redirect(
         response, "event_suggestion_review_status", event_suggestion_id=suggestion_id
     )
+
+
+def test_actions(seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("event_actions", event_id=event_id)
+    utils.get_ok(url)
 
 
 @pytest.mark.parametrize("db_error", [True, False])
