@@ -9,7 +9,7 @@ from wtforms import (
 from wtforms.fields.html5 import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional
 from project.models import Location, Image
-from project.forms.common import FileImageForm
+from project.forms.common import Base64ImageForm
 
 
 class OrganizerLocationForm(FlaskForm):
@@ -31,7 +31,7 @@ class BaseOrganizerForm(FlaskForm):
     email = EmailField(lazy_gettext("Email"), validators=[Optional()])
     phone = TelField(lazy_gettext("Phone"), validators=[Optional()])
     fax = TelField(lazy_gettext("Fax"), validators=[Optional()])
-    logo = FormField(FileImageForm, lazy_gettext("Logo"), default=lambda: Image())
+    logo = FormField(Base64ImageForm, lazy_gettext("Logo"), default=lambda: Image())
     location = FormField(OrganizerLocationForm)
 
     def populate_obj(self, obj):

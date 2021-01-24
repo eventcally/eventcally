@@ -1,8 +1,7 @@
 from flask import url_for
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, BooleanField, HiddenField
+from wtforms import StringField, HiddenField
 from wtforms.validators import Optional
 from markupsafe import Markup
 import re
@@ -13,27 +12,6 @@ class BaseImageForm(FlaskForm):
     copyright_text = StringField(
         lazy_gettext("Copyright text"), validators=[Optional()]
     )
-
-
-class FileImageForm(BaseImageForm):
-    image_file = FileField(
-        lazy_gettext("File"),
-        validators=[FileAllowed(["jpg", "jpeg", "png"], lazy_gettext("Images only!"))],
-    )
-    delete_flag = BooleanField(
-        lazy_gettext("Delete image"), default=False, validators=[Optional()]
-    )
-
-    def populate_obj(self, obj):
-        super(BaseImageForm, self).populate_obj(obj)
-
-        if self.image_file.data:
-            fs = self.image_file.data
-            obj.data = fs.read()
-            obj.encoding_format = fs.content_type
-        elif self.delete_flag.data:
-            obj.data = None
-            obj.encoding_format = None
 
 
 class Base64ImageForm(BaseImageForm):
