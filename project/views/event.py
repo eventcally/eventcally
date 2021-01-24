@@ -57,6 +57,14 @@ def event(event_id):
     )
 
 
+@app.route("/event/<int:event_id>/actions")
+def event_actions(event_id):
+    event = Event.query.get_or_404(event_id)
+    user_rights = get_user_rights(event)
+
+    return render_template("event/actions.html", event=event, user_rights=user_rights)
+
+
 @app.route("/admin_unit/<int:id>/events/create", methods=("GET", "POST"))
 def event_create_for_admin_unit_id(id):
     admin_unit = AdminUnit.query.get_or_404(id)
@@ -129,7 +137,7 @@ def event_create_for_admin_unit_id(id):
                 gettext("Event successfully created"),
                 url_for("event", event_id=event.id),
             )
-            return redirect(url_for("manage_admin_unit_events", id=event.admin_unit_id))
+            return redirect(url_for("event_actions", event_id=event.id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
@@ -295,6 +303,7 @@ def get_user_rights(event):
         "can_create_reference_request": has_access(
             event.admin_unit, "reference_request:create"
         ),
+        "can_create_event": has_access(event.admin_unit, "event:create"),
     }
 
 
