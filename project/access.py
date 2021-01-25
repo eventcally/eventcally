@@ -4,6 +4,7 @@ from flask_security.utils import FsPermNeed
 from flask_principal import Permission
 from project.models import AdminUnitMember, AdminUnit
 from project.services.admin_unit import get_member_for_admin_unit_by_user_id
+from sqlalchemy import and_
 
 
 def has_current_user_permission(permission):
@@ -101,7 +102,12 @@ def can_request_event_reference(event):
 
 
 def get_admin_units_for_event_reference_request(event):
-    return AdminUnit.query.filter(AdminUnit.id != event.admin_unit_id).all()
+    return AdminUnit.query.filter(
+        and_(
+            AdminUnit.id != event.admin_unit_id,
+            AdminUnit.incoming_reference_requests_allowed,
+        )
+    ).all()
 
 
 def admin_units_the_current_user_is_member_of():

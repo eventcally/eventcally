@@ -210,6 +210,7 @@ class AdminUnit(db.Model, TrackableMixin):
     widget_background_color = Column(ColorType)
     widget_primary_color = Column(ColorType)
     widget_link_color = Column(ColorType)
+    incoming_reference_requests_allowed = Column(Boolean())
 
 
 @listens_for(AdminUnit, "before_insert")

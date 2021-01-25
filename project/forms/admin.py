@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_babelex import lazy_gettext
-from wtforms import TextAreaField, SubmitField
+from wtforms import TextAreaField, SubmitField, BooleanField
 from wtforms.validators import Optional
 from project.forms.widgets import MultiCheckboxField
 
@@ -17,3 +17,14 @@ class AdminSettingsForm(FlaskForm):
 class UpdateUserForm(FlaskForm):
     roles = MultiCheckboxField(lazy_gettext("Roles"))
     submit = SubmitField(lazy_gettext("Update user"))
+
+
+class UpdateAdminUnitForm(FlaskForm):
+    incoming_reference_requests_allowed = BooleanField(
+        lazy_gettext("Incoming reference requests allowed"),
+        description=lazy_gettext(
+            "If set, other admin units can ask this admin unit to reference their event."
+        ),
+        validators=[Optional()],
+    )
+    submit = SubmitField(lazy_gettext("Update admin unit"))
