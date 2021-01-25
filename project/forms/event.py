@@ -35,7 +35,10 @@ class EventPlaceLocationForm(FlaskForm):
 
 
 class EventPlaceForm(FlaskForm):
-    name = StringField(lazy_gettext("Name"), validators=[Optional()])
+    name = StringField(
+        lazy_gettext("Name"),
+        validators=[Optional()],
+    )
     location = FormField(EventPlaceLocationForm, default=lambda: Location())
 
     def populate_obj(self, obj):
@@ -50,7 +53,10 @@ class OrganizerForm(EventPlaceForm):
 
 
 class EventOrganizerForm(FlaskForm):
-    name = StringField(lazy_gettext("Organizator"), validators=[Optional()])
+    name = StringField(
+        lazy_gettext("Organizator"),
+        validators=[Optional()],
+    )
     url = URLField(lazy_gettext("Link URL"), validators=[Optional()])
     email = EmailField(lazy_gettext("Email"), validators=[Optional()])
     phone = StringField(lazy_gettext("Phone"), validators=[Optional()])
@@ -249,7 +255,9 @@ class CreateEventForm(BaseEventForm):
         coerce=int,
     )
     event_place_id = SelectField(
-        lazy_gettext("Place"), validators=[Optional()], coerce=int
+        lazy_gettext("Place"),
+        validators=[Optional()],
+        coerce=int,
     )
     new_event_place = FormField(EventPlaceForm, default=lambda: EventPlace())
 
@@ -263,7 +271,9 @@ class CreateEventForm(BaseEventForm):
         coerce=int,
     )
     organizer_id = SelectField(
-        lazy_gettext("Organizer"), validators=[Optional()], coerce=int
+        lazy_gettext("Organizer"),
+        validators=[Optional()],
+        coerce=int,
     )
     new_organizer = FormField(OrganizerForm, default=lambda: EventOrganizer())
 

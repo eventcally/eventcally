@@ -663,7 +663,7 @@ msgstr "Veranstalter"
 
 #: project/forms/event.py:259
 msgid "Select existing organizer"
-msgstr "Vorhandenen Veranstalter auswählem"
+msgstr "Vorhandenen Veranstalter auswählen"
 
 #: project/forms/event.py:260
 msgid "Enter new organizer"
