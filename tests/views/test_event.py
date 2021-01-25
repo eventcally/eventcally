@@ -292,7 +292,43 @@ def test_actions(seeder, utils):
     event_id = seeder.create_event(admin_unit_id)
 
     url = utils.get_url("event_actions", event_id=event_id)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+
+    # Nutzer ist alleine auf der Welt. Deshalb darf es keine Referenz-Links geben
+    assert b"Empfehlung anfragen" not in response.data
+    assert b"Veranstaltung empfehlen" not in response.data
+
+
+def test_actions_withReferenceRequestLink(seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+    other_user_id = seeder.create_user("other@test.de")
+    seeder.create_admin_unit(other_user_id, "Other Crew")
+
+    url = utils.get_url("event_actions", event_id=event_id)
+    response = utils.get_ok(url)
+
+    # 'Empfehlung anfragen' erlaubt: Referenz-Anfrage an andere AdminUnit
+    assert b"Empfehlung anfragen" in response.data
+
+    # Es gibt keine andere AdminUnit, bei der der aktuelle Nutzer Mitglied ist. Deshalb kann er die Veranstaltung nicht empfehlen.
+    assert b"Veranstaltung empfehlen" not in response.data
+
+
+def test_actions_withReferenceLink(seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    event_id = seeder.create_event(other_admin_unit_id)
+
+    url = utils.get_url("event_actions", event_id=event_id)
+    response = utils.get_ok(url)
+
+    # 'Empfehlung anfragen' nicht erlaubt: Der aktuelle Nutzer ist nicht Mitglied der anderen AdminUnit.
+    assert b"Empfehlung anfragen" not in response.data
+
+    # Referenz auf Veranstaltung der anderen AdminUnit erlaubt
+    assert b"Veranstaltung empfehlen" in response.data
 
 
 @pytest.mark.parametrize("db_error", [True, False])

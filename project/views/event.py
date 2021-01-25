@@ -17,6 +17,7 @@ from project.access import (
     has_access,
     access_or_401,
     can_reference_event,
+    can_request_event_reference,
     has_admin_unit_member_permission,
 )
 from project.dateutils import today
@@ -300,9 +301,7 @@ def get_user_rights(event):
         "can_verify_event": has_access(event.admin_unit, "event:verify"),
         "can_update_event": has_access(event.admin_unit, "event:update"),
         "can_reference_event": can_reference_event(event),
-        "can_create_reference_request": has_access(
-            event.admin_unit, "reference_request:create"
-        ),
+        "can_create_reference_request": can_request_event_reference(event),
         "can_create_event": has_access(event.admin_unit, "event:create"),
     }
 
