@@ -107,3 +107,41 @@ def test_admin_user_update(client, seeder, utils, app, mocker, db, db_error):
         user = User.query.get_or_404(other_user_id)
         assert len(user.roles) == 1
         assert any(r.name == "admin" for r in user.roles)
+
+
+@pytest.mark.parametrize("db_error", [True, False])
+def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_error):
+    user_id, admin_unit_id = seeder.setup_base(True)
+
+    with app.app_context():
+        from project.models import AdminUnit
+
+        admin_unit = AdminUnit.query.get_or_404(admin_unit_id)
+        admin_unit.incoming_reference_requests_allowed = False
+        db.session.commit()
+
+    url = utils.get_url("admin_admin_unit_update", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "incoming_reference_requests_allowed": "y",
+        },
+    )
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
+    utils.assert_response_redirect(response, "admin_admin_units")
+
+    with app.app_context():
+        from project.models import AdminUnit
+
+        admin_unit = AdminUnit.query.get_or_404(admin_unit_id)
+        assert admin_unit.incoming_reference_requests_allowed
