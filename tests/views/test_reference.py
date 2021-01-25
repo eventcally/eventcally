@@ -49,6 +49,27 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         assert reference is not None
 
 
+def test_create_duplicateNotAllowed(client, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_base()
+    (
+        other_user_id,
+        other_admin_unit_id,
+        event_id,
+        reference_id,
+    ) = seeder.create_any_reference(admin_unit_id)
+
+    url = utils.get_url("event_reference_create", event_id=event_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {"admin_unit_id": admin_unit_id},
+    )
+    utils.assert_response_ok(response)
+    assert b"duplicate key" in response.data
+
+
 def test_create_401(client, app, utils, seeder, mocker):
     seeder.create_user()
     seeder._utils.login()

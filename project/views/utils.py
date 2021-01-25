@@ -4,6 +4,7 @@ from flask_babelex import gettext
 from flask import request, url_for, render_template, flash, redirect, Markup
 from flask_mail import Message
 from sqlalchemy.exc import SQLAlchemyError
+from psycopg2.errorcodes import UNIQUE_VIOLATION
 
 
 def track_analytics(key, value1, value2):
@@ -19,12 +20,21 @@ def track_analytics(key, value1, value2):
 
 
 def handleSqlError(e: SQLAlchemyError) -> str:
-    if e.orig:
-        message = str(e.orig)
-    else:
-        message = str(e)
-    print(message)
-    return message
+    if not e.orig:
+        return str(e)
+
+    prefix = None
+    message = str(e.orig)
+
+    if e.orig.pgcode == UNIQUE_VIOLATION:
+        prefix = gettext(
+            "An entry with the entered values ​​already exists. Duplicate entries are not allowed."
+        )
+
+    if not prefix:
+        return message
+
+    return "%s (%s)" % (prefix, message)
 
 
 def get_pagination_urls(pagination, **kwargs):

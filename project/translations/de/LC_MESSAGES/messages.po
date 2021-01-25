@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-01-25 09:17+0100\n"
+"POT-Creation-Date: 2021-01-25 10:17+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1634,12 +1634,18 @@ msgstr "Empfehlung erfolgreich erstellt"
 msgid "Request successfully updated"
 msgstr "Empfehlungsanfrage erfolgreich aktualisiert"
 
-#: project/views/utils.py:53
+#: project/views/utils.py:30
+msgid ""
+"An entry with the entered values ​​already exists. Duplicate entries are "
+"not allowed."
+msgstr "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte Einträge sind nicht erlaubt."
+
+#: project/views/utils.py:61
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: project/views/utils.py:61
+#: project/views/utils.py:69
 msgid "Show"
 msgstr "Anzeigen"
 

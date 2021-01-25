@@ -50,6 +50,36 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         )
 
 
+def test_create_duplicateNotAllowed(client, app, utils, seeder):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+
+    # First
+    url = utils.get_url("event_reference_request_create", event_id=event_id)
+    response = utils.get_ok(url)
+    response = utils.post_form(
+        url,
+        response,
+        {"admin_unit_id": other_admin_unit_id},
+    )
+    utils.assert_response_redirect(
+        response, "manage_admin_unit_reference_requests_outgoing", id=admin_unit_id
+    )
+
+    # Second
+    url = utils.get_url("event_reference_request_create", event_id=event_id)
+    response = utils.get_ok(url)
+    response = utils.post_form(
+        url,
+        response,
+        {"admin_unit_id": other_admin_unit_id},
+    )
+    utils.assert_response_ok(response)
+    assert b"duplicate key" in response.data
+
+
 def test_admin_unit_reference_requests_incoming(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.create_incoming_reference_request(admin_unit_id)
