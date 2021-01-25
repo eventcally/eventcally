@@ -12,7 +12,6 @@ from flask_security import auth_required
 from project.models import (
     EventReferenceRequest,
     Event,
-    AdminUnit,
     AdminUnitMember,
     User,
     EventReferenceRequestReviewStatus,
@@ -21,6 +20,7 @@ from project.access import (
     access_or_401,
     get_admin_unit_for_manage_or_404,
     has_admin_unit_member_permission,
+    get_admin_units_for_event_reference_request,
 )
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import desc
@@ -73,9 +73,7 @@ def event_reference_request_create(event_id):
     form.admin_unit_id.choices = sorted(
         [
             (admin_unit.id, admin_unit.name)
-            for admin_unit in AdminUnit.query.filter(
-                AdminUnit.id != event.admin_unit_id
-            ).all()
+            for admin_unit in get_admin_units_for_event_reference_request(event)
         ],
         key=lambda admin_unit: admin_unit[1],
     )
