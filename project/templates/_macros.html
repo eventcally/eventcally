@@ -1,5 +1,6 @@
 {% macro render_field_with_errors(field) %}
-    {% set label_text = field.label.text + ' *' if field.flags.required else field.label.text %}
+    {% set is_required = kwargs['is_required'] if 'is_required' in kwargs else field.flags.required %}
+    {% set label_text = field.label.text + ' *' if is_required else field.label.text %}
     <div class="form-group row {% if field.errors %} has-error{% endif -%}">
       {% if 'ri' in kwargs and kwargs['ri'] == 'checkbox' %}
       {% else %}
@@ -52,8 +53,9 @@
         {% endif %}
       {% endif %}
 
+
       <small class="form-text text-muted w-100">
-        {{ field.description }} {% if field.flags.required %}{{ _('This field is required.') }}{% else %}{{ _('This field is optional.') }}{% endif %}
+        {{ field.description }} {% if is_required %}{{ _('This field is required.') }}{% else %}{{ _('This field is optional.') }}{% endif %}
       </small>
 
       {% if field.errors %}
