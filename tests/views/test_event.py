@@ -1,4 +1,5 @@
 import pytest
+from psycopg2.errors import UniqueViolation
 
 
 def test_read(client, seeder, utils):
@@ -19,7 +20,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
     response = utils.get_ok(url)
 
     if db_error:
-        utils.mock_db_commit(mocker)
+        utils.mock_db_commit(mocker, UniqueViolation("MockException", "MockException"))
 
     response = utils.post_form(
         url,
