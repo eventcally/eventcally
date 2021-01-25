@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field_with_errors, render_field %}
+{% block title %}
+{{ _('Update admin unit') }}
+{% endblock %}
+{% block content %}
+
+<h1>{{ _('Update admin unit') }}</h1>
+
+<form action="" method="POST">
+  {{ form.hidden_tag() }}
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ admin_unit.name }}
+    </div>
+    <div class="card-body">
+      {{ render_field_with_errors(form.incoming_reference_requests_allowed, style="width: fit-content; flex: initial;") }}
+    </div>
+  </div>
+
+  {{ render_field(form.submit) }}
+</form>
+
+{% endblock %}
