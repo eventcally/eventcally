@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from "_macros.html" import render_pagination %}
 {% block title %}
 {{ _('Admin Units') }}
 {% endblock %}
@@ -16,16 +17,20 @@
         <thead>
             <tr>
                 <th>{{ _('Name') }}</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for admin_unit in admin_units %}
                 <tr>
                     <td>{{ admin_unit.name }}</td>
+                    <td><a href="{{ url_for('admin_admin_unit_update', id=admin_unit.id) }}">{{ _('Edit') }}</a></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<div class="my-4">{{ render_pagination(pagination) }}</div>
 
 {% endblock %}
