@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-01-24 19:08+0100\n"
+"POT-Creation-Date: 2021-01-25 09:17+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1286,7 +1286,9 @@ msgstr "Empfehlung anfragen"
 #: project/templates/event/actions.html:20
 #: project/templates/event/reference_request.html:10
 msgid "Ask another organization to reference your event on their calendar."
-msgstr "Bitte eine andere Organisation, deine Veranstaltung in ihrem Kalender zu empfehlen."
+msgstr ""
+"Bitte eine andere Organisation, deine Veranstaltung in ihrem Kalender zu "
+"empfehlen."
 
 #: project/templates/event/actions.html:25
 #: project/templates/manage/references_incoming.html:10
@@ -1535,23 +1537,23 @@ msgstr "Die eingegebene Email passt nicht zur Email der Einladung"
 msgid "Invitation successfully deleted"
 msgstr "Einladung erfolgreich gelöscht"
 
-#: project/views/event.py:139
+#: project/views/event.py:138
 msgid "Event successfully created"
 msgstr "Veranstaltung erfolgreich erstellt"
 
-#: project/views/event.py:172
+#: project/views/event.py:171
 msgid "Event successfully updated"
 msgstr "Veranstaltung erfolgreich aktualisiert"
 
-#: project/views/event.py:194 project/views/reference.py:157
+#: project/views/event.py:193 project/views/reference.py:157
 msgid "Entered name does not match event name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
 
-#: project/views/event.py:200
+#: project/views/event.py:199
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
 
-#: project/views/event.py:329
+#: project/views/event.py:325
 msgid "Referenced event changed"
 msgstr "Empfohlene Veranstaltung wurde geändert"
 
@@ -1608,7 +1610,7 @@ msgstr "Empfehlung erfolgreich empfohlen"
 msgid "Reference successfully deleted"
 msgstr "Empfehlung erfolgreich gelöscht"
 
-#: project/views/reference_request.py:93
+#: project/views/reference_request.py:92
 msgid ""
 "Request successfully created. You will be notified after the other "
 "organization reviews the event."
@@ -1616,7 +1618,7 @@ msgstr ""
 "Empfehlungsanfrage erfolgreich erstellt. Du wirst benachrichtigt, nachdem"
 " die andere Organisation die Veranstaltung geprüft hat."
 
-#: project/views/reference_request.py:116
+#: project/views/reference_request.py:124
 msgid "New reference request"
 msgstr "Neue Empfehlungsanfrage"
 

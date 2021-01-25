@@ -67,10 +67,6 @@ def access_or_401(admin_unit, permission):
         abort(401)
 
 
-def can_reference_event(event):
-    return len(get_admin_units_for_event_reference(event)) > 0
-
-
 def get_admin_units_with_current_user_permission(permission):
     result = list()
 
@@ -82,6 +78,10 @@ def get_admin_units_with_current_user_permission(permission):
     return result
 
 
+def can_reference_event(event):
+    return len(get_admin_units_for_event_reference(event)) > 0
+
+
 def get_admin_units_for_event_reference(event):
     result = list()
 
@@ -91,6 +91,17 @@ def get_admin_units_for_event_reference(event):
             result.append(admin_unit)
 
     return result
+
+
+def can_request_event_reference(event):
+    if not has_access(event.admin_unit, "reference_request:create"):
+        return False
+
+    return len(get_admin_units_for_event_reference_request(event)) > 0
+
+
+def get_admin_units_for_event_reference_request(event):
+    return AdminUnit.query.filter(AdminUnit.id != event.admin_unit_id).all()
 
 
 def admin_units_the_current_user_is_member_of():
