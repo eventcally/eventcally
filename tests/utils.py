@@ -86,10 +86,10 @@ class UtilActions(object):
         assert response.content_type == "application/json"
         return response.json
 
-    def mock_db_commit(self, mocker):
+    def mock_db_commit(self, mocker, orig=None):
         mocked_commit = mocker.patch("project.db.session.commit")
         mocked_commit.side_effect = IntegrityError(
-            "MockException", "MockException", None
+            "MockException", "MockException", orig
         )
 
     def mock_send_mails(self, mocker):

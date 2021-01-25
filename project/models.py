@@ -373,6 +373,11 @@ def purge_event_organizer(mapper, connect, self):
 
 class EventReference(db.Model, TrackableMixin):
     __tablename__ = "eventreference"
+    __table_args__ = (
+        UniqueConstraint(
+            "event_id", "admin_unit_id", name="eventreference_event_id_admin_unit_id"
+        ),
+    )
     id = Column(Integer(), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
@@ -384,6 +389,13 @@ class EventReference(db.Model, TrackableMixin):
 
 class EventReferenceRequest(db.Model, TrackableMixin):
     __tablename__ = "eventreferencerequest"
+    __table_args__ = (
+        UniqueConstraint(
+            "event_id",
+            "admin_unit_id",
+            name="eventreferencerequest_event_id_admin_unit_id",
+        ),
+    )
     id = Column(Integer(), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
@@ -431,7 +443,9 @@ class EventMixin(object):
 class EventSuggestion(db.Model, TrackableMixin, EventMixin):
     __tablename__ = "eventsuggestion"
     __table_args__ = (
-        CheckConstraint("NOT(event_place_id IS NULL AND event_place_text IS NULL)"),
+        CheckConstraint(
+            "NOT(event_place_id IS NULL AND event_place_text IS NULL)",
+        ),
         CheckConstraint("NOT(organizer_id IS NULL AND organizer_text IS NULL)"),
     )
     id = Column(Integer(), primary_key=True)
