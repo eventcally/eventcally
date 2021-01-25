@@ -89,12 +89,12 @@ $( function() {
       </div>
 
       <div class="my-4" id="existing_organizer_container">
-        {{ render_field_with_errors(form.organizer_id, class="autocomplete w-100") }}
+        {{ render_field_with_errors(form.organizer_id, class="autocomplete w-100", is_required=True) }}
       </div>
 
       <div class="my-4" id="new_organizer_container">
         {{ form.new_organizer.hidden_tag() }}
-        {{ render_field_with_errors(form.new_organizer.form.name) }}
+        {{ render_field_with_errors(form.new_organizer.form.name, is_required=True) }}
         {{ form.new_organizer.form.location.hidden_tag() }}
         {{ render_field_with_errors(form.new_organizer.form.location.street) }}
         {{ render_field_with_errors(form.new_organizer.form.location.postalCode) }}
@@ -115,12 +115,12 @@ $( function() {
       </div>
 
       <div class="my-4" id="existing_place_container">
-        {{ render_field_with_errors(form.event_place_id, class="autocomplete w-100") }}
+        {{ render_field_with_errors(form.event_place_id, class="autocomplete w-100", is_required=True) }}
       </div>
 
       <div class="my-4" id="new_place_container">
         {{ form.new_event_place.hidden_tag() }}
-        {{ render_field_with_errors(form.new_event_place.form.name) }}
+        {{ render_field_with_errors(form.new_event_place.form.name, is_required=True) }}
         {{ form.new_event_place.form.location.hidden_tag() }}
         {{ render_field_with_errors(form.new_event_place.form.location.street) }}
         {{ render_field_with_errors(form.new_event_place.form.location.postalCode) }}
