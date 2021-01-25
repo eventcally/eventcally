@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-01-25 10:17+0100\n"
+"POT-Creation-Date: 2021-01-25 11:56+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -158,6 +158,21 @@ msgstr "Rollen"
 msgid "Update user"
 msgstr "Nutzer aktualisieren"
 
+#: project/forms/admin.py:24
+msgid "Incoming reference requests allowed"
+msgstr "Eingehende Empfehlungsanfragen erlauben"
+
+#: project/forms/admin.py:25
+msgid ""
+"If set, other admin units can ask this admin unit to reference their "
+"event."
+msgstr "Wenn gesetzt, können andere Organisationen diese Organisation bitten, deren Veranstaltungen zu empfehlen."
+
+#: project/forms/admin.py:30 project/templates/admin/update_admin_unit.html:4
+#: project/templates/admin/update_admin_unit.html:8
+msgid "Update admin unit"
+msgstr "Organisation aktualisieren"
+
 #: project/forms/admin_unit.py:17 project/forms/event.py:32
 #: project/forms/event_place.py:17 project/forms/organizer.py:16
 msgid "Street"
@@ -194,7 +209,7 @@ msgstr "Längengrad"
 #: project/forms/event_suggestion.py:25 project/forms/organizer.py:29
 #: project/forms/organizer.py:56 project/forms/reference.py:39
 #: project/forms/reference_request.py:21 project/templates/_macros.html:115
-#: project/templates/admin/admin_units.html:18
+#: project/templates/admin/admin_units.html:19
 #: project/templates/event_place/list.html:19 project/templates/profile.html:19
 #: project/templates/profile.html:39
 msgid "Name"
@@ -1099,7 +1114,7 @@ msgid "Profile"
 msgstr "Profil"
 
 #: project/templates/admin/admin.html:3 project/templates/admin/admin.html:9
-#: project/templates/admin/admin_units.html:9
+#: project/templates/admin/admin_units.html:10
 #: project/templates/admin/users.html:10 project/templates/layout.html:130
 msgid "Admin"
 msgstr "Administration"
@@ -1182,8 +1197,8 @@ msgid "Invitations"
 msgstr "Einladungen"
 
 #: project/templates/admin/admin.html:19
-#: project/templates/admin/admin_units.html:3
-#: project/templates/admin/admin_units.html:10
+#: project/templates/admin/admin_units.html:4
+#: project/templates/admin/admin_units.html:11
 #: project/templates/manage/admin_units.html:3
 #: project/templates/manage/admin_units.html:16
 #: project/templates/profile.html:34
@@ -1195,6 +1210,7 @@ msgstr "Organisationen"
 msgid "Users"
 msgstr "Benutzer"
 
+#: project/templates/admin/admin_units.html:27
 #: project/templates/admin/users.html:27
 #: project/templates/manage/events.html:27
 #: project/templates/manage/members.html:35
@@ -1485,11 +1501,16 @@ msgstr "Optionale Details"
 msgid "Preview"
 msgstr "Vorschau"
 
-#: project/views/admin.py:41 project/views/manage.py:247
+#: project/views/admin.py:45
+#, fuzzy
+msgid "Admin unit successfully updated"
+msgstr "Organisation erfolgreich aktualisiert"
+
+#: project/views/admin.py:68 project/views/manage.py:247
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
-#: project/views/admin.py:76
+#: project/views/admin.py:103
 msgid "User successfully updated"
 msgstr "Nutzer erfolgreich aktualisiert"
 
@@ -1638,14 +1659,16 @@ msgstr "Empfehlungsanfrage erfolgreich aktualisiert"
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
 "not allowed."
-msgstr "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte Einträge sind nicht erlaubt."
+msgstr ""
+"Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte "
+"Einträge sind nicht erlaubt."
 
-#: project/views/utils.py:61
+#: project/views/utils.py:63
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: project/views/utils.py:69
+#: project/views/utils.py:71
 msgid "Show"
 msgstr "Anzeigen"
 

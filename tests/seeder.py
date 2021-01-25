@@ -50,6 +50,7 @@ class Seeder(object):
             admin_unit = AdminUnit()
             admin_unit.name = name
             admin_unit.short_name = name.lower().replace(" ", "")
+            admin_unit.incoming_reference_requests_allowed = True
             insert_admin_unit_for_user(admin_unit, user)
             self._db.session.commit()
             admin_unit_id = admin_unit.id

@@ -3,7 +3,7 @@ from project.models import AdminUnit, User, Role
 from flask import render_template, flash, url_for, redirect
 from flask_babelex import gettext
 from flask_security import roles_required
-from project.forms.admin import AdminSettingsForm, UpdateUserForm
+from project.forms.admin import AdminSettingsForm, UpdateUserForm, UpdateAdminUnitForm
 from project.services.admin import upsert_settings
 from project.services.user import set_roles_for_user
 from project.views.utils import (
@@ -24,7 +24,37 @@ def admin():
 @app.route("/admin/admin_units")
 @roles_required("admin")
 def admin_admin_units():
-    return render_template("admin/admin_units.html", admin_units=AdminUnit.query.all())
+    admin_units = AdminUnit.query.order_by(func.lower(AdminUnit.name)).paginate()
+    return render_template(
+        "admin/admin_units.html",
+        admin_units=admin_units.items,
+        pagination=get_pagination_urls(admin_units),
+    )
+
+
+@app.route("/admin/admin_unit/<int:id>/update", methods=("GET", "POST"))
+@roles_required("admin")
+def admin_admin_unit_update(id):
+    admin_unit = AdminUnit.query.get_or_404(id)
+
+    form = UpdateAdminUnitForm(obj=admin_unit)
+
+    if form.validate_on_submit():
+        form.populate_obj(admin_unit)
+
+        try:
+            db.session.commit()
+            flash(gettext("Admin unit successfully updated"), "success")
+            return redirect(url_for("admin_admin_units"))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
+    return render_template(
+        "admin/update_admin_unit.html", admin_unit=admin_unit, form=form
+    )
 
 
 @app.route("/admin/settings", methods=("GET", "POST"))
