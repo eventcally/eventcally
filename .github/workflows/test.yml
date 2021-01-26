@@ -3,7 +3,7 @@
 name: Tests
 
 # Controls when the action will run.
-on: [pull_request, workflow_dispatch]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   # Label of the container job
@@ -43,6 +43,8 @@ jobs:
         env:
           TEST_DATABASE_URL: postgresql://postgres:postgres@postgres/gsevpt_tests
 
-      - name: Coveralls
+      - name: Codecov
         if: ${{ success() }}
-        uses: AndreMiras/coveralls-python-action@develop
+        uses: codecov/codecov-action@v1
+        with:
+          verbose: true
