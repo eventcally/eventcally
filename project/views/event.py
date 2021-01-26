@@ -35,20 +35,22 @@ from project.services.event import (
     upsert_event_category,
     insert_event,
     update_event,
+    get_event_with_details_or_404,
 )
 from project.services.place import get_event_places
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, and_
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import lazyload
 from project.views.event_suggestion import send_event_suggestion_review_status_mail
 
 
 @app.route("/event/<int:event_id>")
 def event(event_id):
-    event = Event.query.get_or_404(event_id)
-    user_rights = get_user_rights(event)
+    event = get_event_with_details_or_404(event_id)
+    user_rights = get_menu_user_rights(event)
     dates = (
-        EventDate.query.with_parent(event)
-        .filter(EventDate.start >= today)
+        EventDate.query.options(lazyload(EventDate.event))
+        .filter(and_(EventDate.event_id == event.id, EventDate.start >= today))
         .order_by(EventDate.start)
         .all()
     )
@@ -303,6 +305,12 @@ def get_user_rights(event):
         "can_reference_event": can_reference_event(event),
         "can_create_reference_request": can_request_event_reference(event),
         "can_create_event": has_access(event.admin_unit, "event:create"),
+    }
+
+
+def get_menu_user_rights(event):
+    return {
+        "can_update_event": has_access(event.admin_unit, "event:update"),
     }
 
 
