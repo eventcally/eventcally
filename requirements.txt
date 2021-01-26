@@ -3,6 +3,7 @@ aniso8601==8.1.0
 apispec==4.0.0
 apispec-webframeworks==0.5.2
 appdirs==1.4.4
+argh==0.26.2
 attrs==20.3.0
 Babel==2.9.0
 bcrypt==3.2.0
@@ -62,6 +63,7 @@ oauthlib==3.1.0
 packaging==20.8
 passlib==1.7.4
 pathspec==0.8.1
+pilkit==2.0
 Pillow==8.0.1
 pluggy==0.13.1
 pre-commit==2.9.3

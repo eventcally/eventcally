@@ -116,7 +116,7 @@
       <div class="card mb-4">
         <div class="card-body">
           {% if admin_unit.logo_id %}
-            <div class="mb-4 text-center"><img src="{{ url_for('image', id=admin_unit.logo_id) }}" class="img-fluid" style="max-height:10vmin;" /></div>
+            <div class="mb-4 text-center"><img src="{{ url_for('image', id=admin_unit.logo_id, s=100) }}" class="img-fluid" style="max-height:10vmin;" /></div>
           {% endif %}
           <p class="card-text">
             Hier kannst du als Gast eine Veranstaltung vorschlagen, die anschließend durch <strong>{{ admin_unit.name }}</strong> geprüft wird.
