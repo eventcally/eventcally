@@ -45,6 +45,4 @@ jobs:
 
       - name: Coveralls
         if: ${{ success() }}
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        uses: AndreMiras/coveralls-python-action@develop
