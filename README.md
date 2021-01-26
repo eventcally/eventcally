@@ -1,6 +1,6 @@
 # Goslar Event Prototype
 
-[![Build Status](https://travis-ci.com/DanielGrams/gsevpt.svg?branch=master)](https://travis-ci.com/DanielGrams/gsevpt) [![Coverage Status](https://coveralls.io/repos/github/DanielGrams/gsevpt/badge.svg?branch=master)](https://coveralls.io/github/DanielGrams/gsevpt?branch=master) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![Docker Pulls](https://img.shields.io/docker/pulls/danielgrams/gsevpt)
+ ![Tests](https://github.com/DanielGrams/gsevpt/workflows/Tests/badge.svg) [![codecov](https://codecov.io/gh/DanielGrams/gsevpt/branch/master/graph/badge.svg?token=66CLLWWV7Y)](https://codecov.io/gh/DanielGrams/gsevpt) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![Docker Pulls](https://img.shields.io/docker/pulls/danielgrams/gsevpt)
 
 Website prototype using Python, Flask and Postgres.
 
