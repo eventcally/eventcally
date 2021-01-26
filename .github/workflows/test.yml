@@ -18,7 +18,7 @@ jobs:
       # Label used to access the service container
       postgres:
         # Docker Hub image
-        image: postgres
+        image: mdillon/postgis
         # Provide the password for postgres
         env:
           POSTGRES_USER: postgres
@@ -37,14 +37,6 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
-
-      - name: Install psql
-        run: apt install postgresql-client
-
-      - name: Install postgis
-        run: psql -c 'create extension postgis;' -h postgres -U postgres -d gsevpt_tests
-        env:
-          PGPASSWORD: postgres
 
       - name: Run tests
         run: pytest --cov-report=html --cov=project tests/test___init__.py
