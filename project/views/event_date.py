@@ -1,12 +1,12 @@
 from project import app
-from project.models import EventDate
 from flask import render_template, url_for, redirect, request
 from project.views.utils import flash_errors, track_analytics
 import json
 from project.jsonld import get_sd_for_event_date, DateTimeEncoder
+from project.services.event import get_event_date_with_details_or_404
 from project.services.event_search import EventSearchParams
 from project.forms.event_date import FindEventDateForm
-from project.views.event import get_event_category_choices, get_user_rights
+from project.views.event import get_event_category_choices, get_menu_user_rights
 
 
 def prepare_event_date_form(form):
@@ -32,7 +32,7 @@ def event_dates():
 
 @app.route("/eventdate/<int:id>")
 def event_date(id):
-    event_date = EventDate.query.get_or_404(id)
+    event_date = get_event_date_with_details_or_404(id)
 
     if "src" in request.args:
         track_analytics("event_date", str(id), request.args["src"])
@@ -45,5 +45,5 @@ def event_date(id):
         "event_date/read.html",
         event_date=event_date,
         structured_data=structured_data,
-        user_rights=get_user_rights(event_date.event),
+        user_rights=get_menu_user_rights(event_date.event),
     )

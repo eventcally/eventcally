@@ -1,6 +1,7 @@
 from project import db
 from project.models import EventReviewStatus, EventSuggestion
 from sqlalchemy import and_
+from sqlalchemy.orm import load_only
 
 
 def insert_event_suggestion(event_suggestion):
@@ -9,7 +10,7 @@ def insert_event_suggestion(event_suggestion):
 
 
 def get_event_reviews_badge_query(admin_unit):
-    return EventSuggestion.query.filter(
+    return EventSuggestion.query.options(load_only(EventSuggestion.id)).filter(
         and_(
             EventSuggestion.admin_unit_id == admin_unit.id,
             EventSuggestion.review_status == EventReviewStatus.inbox,

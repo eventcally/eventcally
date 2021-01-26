@@ -36,15 +36,32 @@ def _current_user_id_or_none():
 
 
 class TrackableMixin(object):
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
-    )
+    @declared_attr
+    def created_at(cls):
+        return deferred(
+            Column(DateTime, default=datetime.datetime.utcnow), group="trackable"
+        )
+
+    @declared_attr
+    def updated_at(cls):
+        return deferred(
+            Column(
+                DateTime,
+                default=datetime.datetime.utcnow,
+                onupdate=datetime.datetime.utcnow,
+            ),
+            group="trackable",
+        )
 
     @declared_attr
     def created_by_id(cls):
-        return Column(
-            "created_by_id", ForeignKey("user.id"), default=_current_user_id_or_none
+        return deferred(
+            Column(
+                "created_by_id",
+                ForeignKey("user.id"),
+                default=_current_user_id_or_none,
+            ),
+            group="trackable",
         )
 
     @declared_attr
@@ -57,11 +74,14 @@ class TrackableMixin(object):
 
     @declared_attr
     def updated_by_id(cls):
-        return Column(
-            "updated_by_id",
-            ForeignKey("user.id"),
-            default=_current_user_id_or_none,
-            onupdate=_current_user_id_or_none,
+        return deferred(
+            Column(
+                "updated_by_id",
+                ForeignKey("user.id"),
+                default=_current_user_id_or_none,
+                onupdate=_current_user_id_or_none,
+            ),
+            group="trackable",
         )
 
     @declared_attr
@@ -198,19 +218,19 @@ class AdminUnit(db.Model, TrackableMixin):
         "EventOrganizer", backref=backref("adminunit", lazy=True)
     )
     event_places = relationship("EventPlace", backref=backref("adminunit", lazy=True))
-    location_id = db.Column(db.Integer, db.ForeignKey("location.id"))
+    location_id = deferred(db.Column(db.Integer, db.ForeignKey("location.id")))
     location = db.relationship("Location")
-    logo_id = db.Column(db.Integer, db.ForeignKey("image.id"))
+    logo_id = deferred(db.Column(db.Integer, db.ForeignKey("image.id")))
     logo = db.relationship("Image", uselist=False)
-    url = Column(String(255))
-    email = Column(Unicode(255))
-    phone = Column(Unicode(255))
-    fax = Column(Unicode(255))
-    widget_font = Column(Unicode(255))
-    widget_background_color = Column(ColorType)
-    widget_primary_color = Column(ColorType)
-    widget_link_color = Column(ColorType)
-    incoming_reference_requests_allowed = Column(Boolean())
+    url = deferred(Column(String(255)), group="detail")
+    email = deferred(Column(Unicode(255)), group="detail")
+    phone = deferred(Column(Unicode(255)), group="detail")
+    fax = deferred(Column(Unicode(255)), group="detail")
+    widget_font = deferred(Column(Unicode(255)), group="widget")
+    widget_background_color = deferred(Column(ColorType), group="widget")
+    widget_primary_color = deferred(Column(ColorType), group="widget")
+    widget_link_color = deferred(Column(ColorType), group="widget")
+    incoming_reference_requests_allowed = deferred(Column(Boolean()))
 
 
 @listens_for(AdminUnit, "before_insert")
@@ -354,13 +374,13 @@ class EventOrganizer(db.Model, TrackableMixin):
     __table_args__ = (UniqueConstraint("name", "admin_unit_id"),)
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), nullable=False)
-    url = Column(String(255))
-    email = Column(Unicode(255))
-    phone = Column(Unicode(255))
-    fax = Column(Unicode(255))
-    location_id = db.Column(db.Integer, db.ForeignKey("location.id"))
+    url = deferred(Column(String(255)), group="detail")
+    email = deferred(Column(Unicode(255)), group="detail")
+    phone = deferred(Column(Unicode(255)), group="detail")
+    fax = deferred(Column(Unicode(255)), group="detail")
+    location_id = deferred(db.Column(db.Integer, db.ForeignKey("location.id")))
     location = db.relationship("Location")
-    logo_id = db.Column(db.Integer, db.ForeignKey("image.id"))
+    logo_id = deferred(db.Column(db.Integer, db.ForeignKey("image.id")))
     logo = db.relationship("Image", uselist=False)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=True)
 
