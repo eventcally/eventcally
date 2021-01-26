@@ -16,7 +16,13 @@ class ImageBaseSchema(ImageIdSchema):
 
 
 class ImageSchema(ImageBaseSchema):
-    image_url = marshmallow.URLFor("image", values=dict(id="<id>"))
+    image_url = marshmallow.URLFor(
+        "image",
+        values=dict(id="<id>", s=500),
+        metadata={
+            "description": "Append query arguments w for width, h for height or s for size(width and height)."
+        },
+    )
 
 
 class ImageDumpSchema(ImageBaseSchema):
@@ -24,4 +30,10 @@ class ImageDumpSchema(ImageBaseSchema):
 
 
 class ImageRefSchema(ImageIdSchema):
-    image_url = marshmallow.URLFor("image", values=dict(id="<id>"))
+    image_url = marshmallow.URLFor(
+        "image",
+        values=dict(id="<id>", s=500),
+        metadata={
+            "description": "Append query arguments w for width, h for height or s for size(width and height)."
+        },
+    )
