@@ -67,7 +67,7 @@
                         </div>
                         <div class="col-sm-4 text-right">
                             {% if date.event.photo_id %}
-                                <img src="{{ url_for('image', id=date.event.photo_id) }}" style="object-fit: cover; width: 200px;" />
+                                <img src="{{ url_for('image', id=date.event.photo_id, s=200) }}" style="object-fit: cover; width: 200px;" />
                             {% endif %}
                         </div>
                     </div>
@@ -82,7 +82,7 @@
             <div class="card">
                 <div>
                     {% if date.event.photo_id %}
-                        <img src="{{ url_for('image', id=date.event.photo_id) }}" class="card-img-top" style="object-fit: cover; height: 20vh;" />
+                        <img src="{{ url_for('image', id=date.event.photo_id, s=500) }}" class="card-img-top" style="object-fit: cover; height: 20vh;" />
                     {% endif %}
                 </div>
                 <div class="card-body">

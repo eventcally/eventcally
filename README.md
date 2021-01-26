@@ -77,11 +77,12 @@ Create `.env` file in the root directory or pass as environment variables.
 | MAIL_SERVER | " |
 | MAIL_USERNAME | " |
 
-### Resolve addresses with Google Maps
+### Misc
 
 | Variable | Function |
 | --- | --- |
-| GOOGLE_MAPS_API_KEY | API Key with Places API enabled |
+| CACHE_PATH | Absolute or relative path to root directory for dump and image caching. Default: tmp |
+| GOOGLE_MAPS_API_KEY | Resolve addresses with Google Maps: API Key with Places API enabled |
 
 ## Development
 

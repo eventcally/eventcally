@@ -23,7 +23,7 @@ from project.api.organization.schemas import OrganizationDumpSchema
 from project.api.event_reference.schemas import EventReferenceDumpSchema
 import os
 import shutil
-import pathlib
+from project.utils import make_dir
 
 dump_cli = AppGroup("dump")
 
@@ -42,12 +42,7 @@ def dump_items(items, schema, file_base_name, dump_path):
 def dump_all():
     # Setup temp dir
     tmp_path = os.path.join(dump_path, "tmp")
-
-    try:
-        original_umask = os.umask(0)
-        pathlib.Path(tmp_path).mkdir(parents=True, exist_ok=True)
-    finally:
-        os.umask(original_umask)
+    make_dir(tmp_path)
 
     # Events
     events = Event.query.options(joinedload(Event.categories)).all()
