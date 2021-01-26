@@ -6,6 +6,7 @@ from project.models import (
     EventReferenceRequestReviewStatus,
 )
 from sqlalchemy import and_
+from sqlalchemy.orm import load_only
 
 
 def create_event_reference_for_request(request):
@@ -44,7 +45,9 @@ def get_reference_requests_incoming_query(admin_unit):
 
 
 def get_reference_requests_incoming_badge_query(admin_unit):
-    return EventReferenceRequest.query.filter(
+    return EventReferenceRequest.query.options(
+        load_only(EventReferenceRequest.id)
+    ).filter(
         and_(
             EventReferenceRequest.review_status
             == EventReferenceRequestReviewStatus.inbox,

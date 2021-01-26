@@ -1,7 +1,6 @@
 from project import app, db
 from project.models import (
     User,
-    EventDate,
     AdminUnit,
     EventOrganizer,
     EventSuggestion,
@@ -14,7 +13,10 @@ from flask_security import current_user
 from sqlalchemy.sql import func
 from sqlalchemy.exc import SQLAlchemyError
 from project.services.event_suggestion import insert_event_suggestion
-from project.services.event import get_event_dates_query
+from project.services.event import (
+    get_event_dates_query,
+    get_event_date_with_details_or_404,
+)
 from project.services.event_search import EventSearchParams
 from project.services.place import get_event_places
 from project.views.utils import (
@@ -67,7 +69,7 @@ def widget_event_date(au_short_name, id):
     admin_unit = AdminUnit.query.filter(
         AdminUnit.short_name == au_short_name
     ).first_or_404()
-    event_date = EventDate.query.get_or_404(id)
+    event_date = get_event_date_with_details_or_404(id)
     structured_data = json.dumps(
         get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder
     )

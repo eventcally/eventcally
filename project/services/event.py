@@ -17,7 +17,7 @@ from project.dateutils import (
 )
 from sqlalchemy import and_, or_, func
 from sqlalchemy.sql import extract
-from sqlalchemy.orm import joinedload, contains_eager
+from sqlalchemy.orm import joinedload, contains_eager, defaultload
 from dateutil.relativedelta import relativedelta
 
 
@@ -114,6 +114,83 @@ def get_event_dates_query(params):
         .filter(date_filter)
         .filter(event_filter)
         .order_by(EventDate.start)
+    )
+
+
+def get_event_date_with_details_or_404(event_id):
+    return (
+        EventDate.query.join(EventDate.event)
+        .join(Event.event_place, isouter=True)
+        .join(EventPlace.location, isouter=True)
+        .options(
+            contains_eager(EventDate.event)
+            .contains_eager(Event.event_place)
+            .contains_eager(EventPlace.location),
+            joinedload(EventDate.event).undefer_group("trackable"),
+            # Place
+            defaultload(EventDate.event)
+            .defaultload(Event.event_place)
+            .joinedload(EventPlace.photo),
+            # Category
+            joinedload(EventDate.event)
+            .joinedload(Event.categories)
+            .load_only(EventCategory.id, EventCategory.name),
+            # Organizer
+            joinedload(EventDate.event)
+            .joinedload(Event.organizer)
+            .undefer_group("detail")
+            .undefer("logo_id")
+            .joinedload(EventOrganizer.logo),
+            # Photo
+            joinedload(EventDate.event).joinedload(Event.photo),
+            # Admin unit
+            joinedload(EventDate.event)
+            .joinedload(Event.admin_unit)
+            .undefer("logo_id")
+            .undefer_group("detail")
+            .undefer_group("widget")
+            .joinedload(AdminUnit.location),
+            # Admin unit logo
+            defaultload(EventDate.event)
+            .defaultload(Event.admin_unit)
+            .joinedload(AdminUnit.logo),
+        )
+        .filter(EventDate.id == event_id)
+        .first_or_404()
+    )
+
+
+def get_event_with_details_or_404(event_id):
+    return (
+        Event.query.join(EventPlace, isouter=True)
+        .join(Location, isouter=True)
+        .options(
+            contains_eager(Event.event_place).contains_eager(EventPlace.location),
+            defaultload(Event).undefer_group("trackable"),
+            # Place
+            joinedload(Event.event_place).joinedload(EventPlace.photo),
+            # Category
+            joinedload(Event.categories).load_only(
+                EventCategory.id, EventCategory.name
+            ),
+            # Organizer
+            joinedload(Event.organizer)
+            .undefer_group("detail")
+            .undefer("logo_id")
+            .joinedload(EventOrganizer.logo),
+            # Photo
+            joinedload(Event.photo),
+            # Admin unit with location
+            joinedload(Event.admin_unit)
+            .undefer("logo_id")
+            .undefer_group("detail")
+            .undefer_group("widget")
+            .joinedload(AdminUnit.location),
+            # Admin unit logo
+            defaultload(Event.admin_unit).joinedload(AdminUnit.logo),
+        )
+        .filter(Event.id == event_id)
+        .first_or_404()
     )
 
 
