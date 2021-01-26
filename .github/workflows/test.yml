@@ -21,7 +21,9 @@ jobs:
         image: postgres
         # Provide the password for postgres
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gsevpt_tests 
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -37,7 +39,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run tests
-        run: pytest --cov=project
+        run: pytest --cov-report=html --cov=project tests/test___init__.py
         env:
           POSTGRES_HOST: postgres
           POSTGRES_PORT: 5432
