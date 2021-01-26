@@ -15,7 +15,6 @@ from flask_restful import Api
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask_apispec.extension import FlaskApiSpec
-import pathlib
 
 # Create app
 app = Flask(__name__)
@@ -40,10 +39,13 @@ app.config["SECURITY_PASSWORD_SALT"] = os.environ.get(
     "SECURITY_PASSWORD_SALT", "146585145368132386173505678016728509634"
 )
 
-# Temporary pathes
-temp_path = os.path.join(app.root_path, "tmp")
-dump_path = os.path.join(temp_path, "dump")
-pathlib.Path(dump_path).mkdir(parents=True, exist_ok=True)
+# Cache pathes
+cache_env = os.environ.get("CACHE_PATH", "tmp")
+cache_path = (
+    cache_env if os.path.isabs(cache_env) else os.path.join(app.root_path, cache_env)
+)
+dump_path = os.path.join(cache_path, "dump")
+img_path = os.path.join(cache_path, "img")
 
 # i18n
 app.config["BABEL_DEFAULT_LOCALE"] = "de"
