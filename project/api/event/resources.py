@@ -13,8 +13,9 @@ from project.api.event_date.schemas import (
     EventDateListResponseSchema,
 )
 from project.models import Event, EventDate
-from project.services.event import get_events_query
+from project.services.event import get_events_query, get_event_with_details_or_404
 from project.services.event_search import EventSearchParams
+from sqlalchemy.orm import lazyload, load_only
 
 
 class EventListResource(MethodResource):
@@ -30,7 +31,7 @@ class EventResource(MethodResource):
     @doc(summary="Get event", tags=["Events"])
     @marshal_with(EventSchema)
     def get(self, id):
-        return Event.query.get_or_404(id)
+        return get_event_with_details_or_404(id)
 
 
 class EventDatesResource(MethodResource):
@@ -38,8 +39,13 @@ class EventDatesResource(MethodResource):
     @use_kwargs(EventDateListRequestSchema, location=("query"))
     @marshal_with(EventDateListResponseSchema)
     def get(self, id):
-        event = Event.query.get_or_404(id)
-        return EventDate.query.with_parent(event).paginate()
+        event = Event.query.options(load_only(Event.id)).get_or_404(id)
+        return (
+            EventDate.query.options(lazyload(EventDate.event))
+            .filter(EventDate.event_id == event.id)
+            .order_by(EventDate.start)
+            .paginate()
+        )
 
 
 class EventSearchResource(MethodResource):

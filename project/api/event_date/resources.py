@@ -8,9 +8,10 @@ from project.api.event_date.schemas import (
     EventDateSearchRequestSchema,
     EventDateSearchResponseSchema,
 )
-from project.models import EventDate
+from project.models import EventDate, Event
 from project.services.event import get_event_dates_query
 from project.services.event_search import EventSearchParams
+from sqlalchemy.orm import defaultload, lazyload
 
 
 class EventDateListResource(MethodResource):
@@ -18,7 +19,7 @@ class EventDateListResource(MethodResource):
     @use_kwargs(EventDateListRequestSchema, location=("query"))
     @marshal_with(EventDateListResponseSchema)
     def get(self, **kwargs):
-        pagination = EventDate.query.paginate()
+        pagination = EventDate.query.options(lazyload(EventDate.event)).paginate()
         return pagination
 
 
@@ -26,7 +27,9 @@ class EventDateResource(MethodResource):
     @doc(summary="Get event date", tags=["Event Dates"])
     @marshal_with(EventDateSchema)
     def get(self, id):
-        return EventDate.query.get_or_404(id)
+        return EventDate.query.options(
+            defaultload(EventDate.event).load_only(Event.id, Event.name)
+        ).get_or_404(id)
 
 
 class EventDateSearchResource(MethodResource):
