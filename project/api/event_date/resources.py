@@ -1,6 +1,6 @@
 from project.api import add_api_resource
 from flask_apispec import marshal_with, doc, use_kwargs
-from flask_apispec.views import MethodResource
+from project.api.resources import BaseResource
 from project.api.event_date.schemas import (
     EventDateSchema,
     EventDateListRequestSchema,
@@ -14,7 +14,7 @@ from project.services.event_search import EventSearchParams
 from sqlalchemy.orm import defaultload, lazyload
 
 
-class EventDateListResource(MethodResource):
+class EventDateListResource(BaseResource):
     @doc(summary="List event dates", tags=["Event Dates"])
     @use_kwargs(EventDateListRequestSchema, location=("query"))
     @marshal_with(EventDateListResponseSchema)
@@ -23,7 +23,7 @@ class EventDateListResource(MethodResource):
         return pagination
 
 
-class EventDateResource(MethodResource):
+class EventDateResource(BaseResource):
     @doc(summary="Get event date", tags=["Event Dates"])
     @marshal_with(EventDateSchema)
     def get(self, id):
@@ -32,7 +32,7 @@ class EventDateResource(MethodResource):
         ).get_or_404(id)
 
 
-class EventDateSearchResource(MethodResource):
+class EventDateSearchResource(BaseResource):
     @doc(summary="Search for event dates", tags=["Event Dates"])
     @use_kwargs(EventDateSearchRequestSchema, location=("query"))
     @marshal_with(EventDateSearchResponseSchema)

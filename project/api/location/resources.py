@@ -1,11 +1,11 @@
 from project.api import add_api_resource
 from flask_apispec import marshal_with, doc
-from flask_apispec.views import MethodResource
+from project.api.resources import BaseResource
 from project.api.location.schemas import LocationSchema
 from project.models import Location
 
 
-class LocationResource(MethodResource):
+class LocationResource(BaseResource):
     @doc(summary="Get location", tags=["Locations"])
     @marshal_with(LocationSchema)
     def get(self, id):

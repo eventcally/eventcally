@@ -1,11 +1,11 @@
 from project.api import add_api_resource
 from flask_apispec import marshal_with, doc
-from flask_apispec.views import MethodResource
+from project.api.resources import BaseResource
 from project.api.event_reference.schemas import EventReferenceSchema
 from project.models import EventReference
 
 
-class EventReferenceResource(MethodResource):
+class EventReferenceResource(BaseResource):
     @doc(summary="Get event reference", tags=["Event References"])
     @marshal_with(EventReferenceSchema)
     def get(self, id):
