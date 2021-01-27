@@ -1,6 +1,6 @@
 from project.api import add_api_resource
 from flask_apispec import marshal_with, doc, use_kwargs
-from flask_apispec.views import MethodResource
+from project.api.resources import BaseResource
 from project.api.organization.schemas import (
     OrganizationSchema,
     OrganizationListRequestSchema,
@@ -37,14 +37,14 @@ from project.services.admin_unit import (
 )
 
 
-class OrganizationResource(MethodResource):
+class OrganizationResource(BaseResource):
     @doc(summary="Get organization", tags=["Organizations"])
     @marshal_with(OrganizationSchema)
     def get(self, id):
         return AdminUnit.query.get_or_404(id)
 
 
-class OrganizationEventDateSearchResource(MethodResource):
+class OrganizationEventDateSearchResource(BaseResource):
     @doc(
         summary="Search for event dates of organization",
         description="Includes events that organization is referencing.",
@@ -63,7 +63,7 @@ class OrganizationEventDateSearchResource(MethodResource):
         return pagination
 
 
-class OrganizationEventSearchResource(MethodResource):
+class OrganizationEventSearchResource(BaseResource):
     @doc(summary="Search for events of organization", tags=["Organizations", "Events"])
     @use_kwargs(EventSearchRequestSchema, location=("query"))
     @marshal_with(EventSearchResponseSchema)
@@ -78,7 +78,7 @@ class OrganizationEventSearchResource(MethodResource):
         return pagination
 
 
-class OrganizationListResource(MethodResource):
+class OrganizationListResource(BaseResource):
     @doc(summary="List organizations", tags=["Organizations"])
     @use_kwargs(OrganizationListRequestSchema, location=("query"))
     @marshal_with(OrganizationListResponseSchema)
@@ -88,7 +88,7 @@ class OrganizationListResource(MethodResource):
         return pagination
 
 
-class OrganizationOrganizerListResource(MethodResource):
+class OrganizationOrganizerListResource(BaseResource):
     @doc(
         summary="List organizers of organization", tags=["Organizations", "Organizers"]
     )
@@ -102,7 +102,7 @@ class OrganizationOrganizerListResource(MethodResource):
         return pagination
 
 
-class OrganizationPlaceListResource(MethodResource):
+class OrganizationPlaceListResource(BaseResource):
     @doc(summary="List places of organization", tags=["Organizations", "Places"])
     @use_kwargs(PlaceListRequestSchema, location=("query"))
     @marshal_with(PlaceListResponseSchema)
@@ -114,7 +114,7 @@ class OrganizationPlaceListResource(MethodResource):
         return pagination
 
 
-class OrganizationIncomingEventReferenceListResource(MethodResource):
+class OrganizationIncomingEventReferenceListResource(BaseResource):
     @doc(
         summary="List incoming event references of organization",
         tags=["Organizations", "Event References"],
@@ -128,7 +128,7 @@ class OrganizationIncomingEventReferenceListResource(MethodResource):
         return pagination
 
 
-class OrganizationOutgoingEventReferenceListResource(MethodResource):
+class OrganizationOutgoingEventReferenceListResource(BaseResource):
     @doc(
         summary="List outgoing event references of organization",
         tags=["Organizations", "Event References"],

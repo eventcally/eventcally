@@ -1,6 +1,6 @@
 from project.api import add_api_resource
 from flask_apispec import marshal_with, doc, use_kwargs
-from flask_apispec.views import MethodResource
+from project.api.resources import BaseResource
 from project.api.event_category.schemas import (
     EventCategoryListRequestSchema,
     EventCategoryListResponseSchema,
@@ -8,7 +8,7 @@ from project.api.event_category.schemas import (
 from project.models import EventCategory
 
 
-class EventCategoryListResource(MethodResource):
+class EventCategoryListResource(BaseResource):
     @doc(summary="List event categories", tags=["Event Categories"])
     @use_kwargs(EventCategoryListRequestSchema, location=("query"))
     @marshal_with(EventCategoryListResponseSchema)
