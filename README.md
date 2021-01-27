@@ -81,7 +81,7 @@ Create `.env` file in the root directory or pass as environment variables.
 
 | Variable | Function |
 | --- | --- |
-| CACHE_PATH | Absolute or relative path to root directory for dump and image caching. Default: tmp |
+| CACHE_PATH | Absolute or relative path to root directory for dump and image caching. Default: project/tmp |
 | GOOGLE_MAPS_API_KEY | Resolve addresses with Google Maps: API Key with Places API enabled |
 
 ## Development
