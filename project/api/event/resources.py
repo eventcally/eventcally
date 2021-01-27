@@ -1,6 +1,6 @@
 from project.api import add_api_resource
 from flask_apispec import marshal_with, doc, use_kwargs
-from flask_apispec.views import MethodResource
+from project.api.resources import BaseResource
 from project.api.event.schemas import (
     EventSchema,
     EventListRequestSchema,
@@ -18,7 +18,7 @@ from project.services.event_search import EventSearchParams
 from sqlalchemy.orm import lazyload, load_only
 
 
-class EventListResource(MethodResource):
+class EventListResource(BaseResource):
     @doc(summary="List events", tags=["Events"])
     @use_kwargs(EventListRequestSchema, location=("query"))
     @marshal_with(EventListResponseSchema)
@@ -27,14 +27,14 @@ class EventListResource(MethodResource):
         return pagination
 
 
-class EventResource(MethodResource):
+class EventResource(BaseResource):
     @doc(summary="Get event", tags=["Events"])
     @marshal_with(EventSchema)
     def get(self, id):
         return get_event_with_details_or_404(id)
 
 
-class EventDatesResource(MethodResource):
+class EventDatesResource(BaseResource):
     @doc(summary="List dates for event", tags=["Events", "Event Dates"])
     @use_kwargs(EventDateListRequestSchema, location=("query"))
     @marshal_with(EventDateListResponseSchema)
@@ -48,7 +48,7 @@ class EventDatesResource(MethodResource):
         )
 
 
-class EventSearchResource(MethodResource):
+class EventSearchResource(BaseResource):
     @doc(summary="Search for events", tags=["Events"])
     @use_kwargs(EventSearchRequestSchema, location=("query"))
     @marshal_with(EventSearchResponseSchema)

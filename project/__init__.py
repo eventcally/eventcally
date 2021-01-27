@@ -15,6 +15,7 @@ from flask_restful import Api
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask_apispec.extension import FlaskApiSpec
+from flask_gzip import Gzip
 
 # Create app
 app = Flask(__name__)
@@ -38,6 +39,9 @@ app.config["SECRET_KEY"] = os.environ.get(
 app.config["SECURITY_PASSWORD_SALT"] = os.environ.get(
     "SECURITY_PASSWORD_SALT", "146585145368132386173505678016728509634"
 )
+
+# Gzip
+gzip = Gzip(app)
 
 # Cache pathes
 cache_env = os.environ.get("CACHE_PATH", "tmp")
