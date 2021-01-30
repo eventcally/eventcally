@@ -64,5 +64,11 @@ def create_initial_data():
     upsert_event_category("Fitness")
     upsert_event_category("Sports")
     upsert_event_category("Other")
+    upsert_event_category("Exhibition")
+    upsert_event_category("Culture")
+    upsert_event_category("Tour")
+    upsert_event_category("OpenAir")
+    upsert_event_category("Stage")
+    upsert_event_category("Lecture")
 
     db.session.commit()
