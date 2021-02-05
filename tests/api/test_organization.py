@@ -38,6 +38,27 @@ def test_organizers(client, seeder, utils):
     utils.get_ok(url)
 
 
+def test_organizers_post(client, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+
+    url = utils.get_url(
+        "api_v1_organization_organizer_list", id=admin_unit_id, name="crew"
+    )
+    response = utils.post_json(url, {"name": "Neuer Organisator"})
+    utils.assert_response_created(response)
+    assert "id" in response.json
+
+    with app.app_context():
+        from project.models import EventOrganizer
+
+        organizer = (
+            EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit_id)
+            .filter(EventOrganizer.name == "Neuer Organisator")
+            .first()
+        )
+        assert organizer is not None
+
+
 def test_places(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.upsert_default_event_place(admin_unit_id)
