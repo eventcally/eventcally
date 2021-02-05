@@ -1,8 +1,8 @@
 from marshmallow import fields
-from project import marshmallow
+from project.api import marshmallow
 from project.models import EventOrganizer
-from project.api.location.schemas import LocationRefSchema
-from project.api.image.schemas import ImageRefSchema
+from project.api.location.schemas import LocationSchema
+from project.api.image.schemas import ImageSchema
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
 
@@ -25,8 +25,8 @@ class OrganizerBaseSchema(OrganizerIdSchema):
 
 
 class OrganizerSchema(OrganizerBaseSchema):
-    location = fields.Nested(LocationRefSchema)
-    logo = fields.Nested(ImageRefSchema)
+    location = fields.Nested(LocationSchema)
+    logo = fields.Nested(ImageSchema)
     organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
 
 

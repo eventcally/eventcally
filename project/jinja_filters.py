@@ -1,5 +1,9 @@
 from project import app
-from project.utils import get_event_category_name, get_localized_enum_name
+from project.utils import (
+    get_event_category_name,
+    get_localized_enum_name,
+    get_localized_scope,
+)
 from urllib.parse import quote_plus
 import os
 
@@ -8,10 +12,16 @@ def env_override(value, key):
     return os.getenv(key, value)
 
 
+def is_list(value):
+    return isinstance(value, list)
+
+
 app.jinja_env.filters["event_category_name"] = lambda u: get_event_category_name(u)
 app.jinja_env.filters["loc_enum"] = lambda u: get_localized_enum_name(u)
+app.jinja_env.filters["loc_scope"] = lambda s: get_localized_scope(s)
 app.jinja_env.filters["env_override"] = env_override
 app.jinja_env.filters["quote_plus"] = lambda u: quote_plus(u)
+app.jinja_env.filters["is_list"] = is_list
 
 
 @app.context_processor

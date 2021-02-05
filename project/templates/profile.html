@@ -8,7 +8,23 @@
 <h1>{{ current_user.email }}</h1>
 
 <h2>{{ _('Profile') }}</h2>
-<p><a href="{{ url_for_security('change_password') }}">{{ _fsdomain('Change password') }}</a></p>
+
+<div class="list-group">
+    <a href="{{ url_for('security.change_password') }}" class="list-group-item">
+        {{ _fsdomain('Change password') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
+    {% if current_user.has_permission('oauth2_client:read') %}
+    <a href="{{ url_for('oauth2_clients') }}" class="list-group-item">
+        {{ _('OAuth2 clients') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
+    {% endif %}
+    <a href="{{ url_for('oauth2_tokens') }}" class="list-group-item">
+        {{ _('OAuth2 tokens') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
+</div>
 
 {% if invitations %}
 <h2>{{ _('Invitations') }}</h2>

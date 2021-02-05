@@ -1,7 +1,9 @@
 from flask_security.forms import RegisterForm, EqualTo, get_form_field_label
-from wtforms import BooleanField, PasswordField
+from wtforms import BooleanField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
 from project.forms.common import get_accept_tos_markup
+from flask_wtf import FlaskForm
+from flask_babelex import lazy_gettext
 
 
 class ExtendedRegisterForm(RegisterForm):
@@ -20,3 +22,8 @@ class ExtendedRegisterForm(RegisterForm):
     def __init__(self, *args, **kwargs):
         super(ExtendedRegisterForm, self).__init__(*args, **kwargs)
         self._fields["accept_tos"].label.text = get_accept_tos_markup()
+
+
+class AuthorizeForm(FlaskForm):
+    allow = SubmitField(lazy_gettext("Allow"))
+    deny = SubmitField(lazy_gettext("Deny"))

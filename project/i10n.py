@@ -39,3 +39,8 @@ def print_dynamic_texts():
     gettext("EventReviewStatus.inbox")
     gettext("EventReviewStatus.verified")
     gettext("EventReviewStatus.rejected")
+    gettext("read")
+    gettext("write")
+    gettext("Event")
+    gettext("Organizer")
+    gettext("Place")

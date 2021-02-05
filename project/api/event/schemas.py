@@ -1,4 +1,4 @@
-from project import marshmallow
+from project.api import marshmallow
 from marshmallow import fields, validate
 from marshmallow_enum import EnumField
 from project.models import (
@@ -10,7 +10,7 @@ from project.models import (
 from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.organizer.schemas import OrganizerRefSchema
-from project.api.image.schemas import ImageRefSchema
+from project.api.image.schemas import ImageSchema
 from project.api.place.schemas import PlaceRefSchema, PlaceSearchItemSchema
 from project.api.event_category.schemas import (
     EventCategoryRefSchema,
@@ -55,7 +55,7 @@ class EventSchema(EventBaseSchema):
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
     organizer = fields.Nested(OrganizerRefSchema)
     place = fields.Nested(PlaceRefSchema, attribute="event_place")
-    photo = fields.Nested(ImageRefSchema)
+    photo = fields.Nested(ImageSchema)
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
 
 
@@ -85,7 +85,7 @@ class EventSearchItemSchema(EventRefSchema):
     start = marshmallow.auto_field()
     end = marshmallow.auto_field()
     recurrence_rule = marshmallow.auto_field()
-    photo = fields.Nested(ImageRefSchema)
+    photo = fields.Nested(ImageSchema)
     place = fields.Nested(PlaceSearchItemSchema, attribute="event_place")
     status = EnumField(EventStatus)
     booked_up = marshmallow.auto_field()
