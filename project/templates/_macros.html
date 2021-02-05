@@ -160,6 +160,21 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_kv_begin() %}
+<dl class="row">
+{% endmacro %}
+
+{% macro render_kv_end() %}
+</dl>
+{% endmacro %}
+
+{% macro render_kv_prop(prop, label_key = None) %}
+{% if prop %}
+  <dt class="col-sm-3">{{ _(label_key) }}</dt>
+  <dd class="col-sm-9">{% if prop|is_list %}{{ prop|join(', ') }}{% else %}{{ prop }}{% endif %}</dd>
+{% endif %}
+{% endmacro %}
+
 {% macro render_string_prop(prop, icon = None, label_key = None) %}
 {% if prop %}
 <div>

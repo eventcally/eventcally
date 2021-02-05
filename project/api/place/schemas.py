@@ -1,8 +1,15 @@
-from marshmallow import fields
-from project import marshmallow
+from marshmallow import fields, validate
+from project.api import marshmallow
 from project.models import EventPlace
-from project.api.image.schemas import ImageRefSchema
-from project.api.location.schemas import LocationRefSchema, LocationSearchItemSchema
+from project.api.image.schemas import ImageSchema
+from project.api.location.schemas import (
+    LocationSchema,
+    LocationSearchItemSchema,
+    LocationPostRequestSchema,
+    LocationPostRequestLoadSchema,
+    LocationPatchRequestSchema,
+    LocationPatchRequestLoadSchema,
+)
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
 
@@ -23,8 +30,8 @@ class PlaceBaseSchema(PlaceIdSchema):
 
 
 class PlaceSchema(PlaceBaseSchema):
-    location = fields.Nested(LocationRefSchema)
-    photo = fields.Nested(ImageRefSchema)
+    location = fields.Nested(LocationSchema)
+    photo = fields.Nested(ImageSchema)
     organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
 
 
@@ -55,3 +62,41 @@ class PlaceListResponseSchema(PaginationResponseSchema):
     items = fields.List(
         fields.Nested(PlaceRefSchema), metadata={"description": "Places"}
     )
+
+
+class PlacePostRequestSchema(marshmallow.SQLAlchemySchema):
+    class Meta:
+        model = EventPlace
+
+    name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
+    url = fields.Str(validate=[validate.URL(), validate.Length(max=255)], missing=None)
+    description = fields.Str(missing=None)
+    location = fields.Nested(LocationPostRequestSchema, missing=None)
+
+
+class PlacePostRequestLoadSchema(PlacePostRequestSchema):
+    class Meta:
+        model = EventPlace
+        load_instance = True
+
+    location = fields.Nested(LocationPostRequestLoadSchema, missing=None)
+
+
+class PlacePatchRequestSchema(marshmallow.SQLAlchemySchema):
+    class Meta:
+        model = EventPlace
+
+    name = fields.Str(validate=validate.Length(min=3, max=255), allow_none=True)
+    url = fields.Str(
+        validate=[validate.URL(), validate.Length(max=255)], allow_none=True
+    )
+    description = fields.Str(allow_none=True)
+    location = fields.Nested(LocationPatchRequestSchema, allow_none=True)
+
+
+class PlacePatchRequestLoadSchema(PlacePatchRequestSchema):
+    class Meta:
+        model = EventPlace
+        load_instance = True
+
+    location = fields.Nested(LocationPatchRequestLoadSchema, allow_none=True)

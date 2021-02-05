@@ -1,4 +1,4 @@
-from project import marshmallow
+from project.api import marshmallow
 from marshmallow import fields
 from project.api.event.schemas import EventDumpSchema
 from project.api.place.schemas import PlaceDumpSchema

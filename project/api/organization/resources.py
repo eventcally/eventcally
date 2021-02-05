@@ -27,13 +27,27 @@ from project.services.reference import (
     get_reference_incoming_query,
     get_reference_outgoing_query,
 )
-from project.api.place.schemas import PlaceListRequestSchema, PlaceListResponseSchema
+from project.api.place.schemas import (
+    PlaceListRequestSchema,
+    PlaceListResponseSchema,
+    PlaceIdSchema,
+    PlacePostRequestSchema,
+    PlacePostRequestLoadSchema,
+)
 from project.services.event import get_event_dates_query, get_events_query
 from project.services.event_search import EventSearchParams
 from project.services.admin_unit import (
     get_admin_unit_query,
     get_organizer_query,
     get_place_query,
+)
+from project.oauth2 import require_oauth
+from authlib.integrations.flask_oauth2 import current_token
+from project import db
+from project.access import (
+    access_or_401,
+    get_admin_unit_for_manage_or_404,
+    login_api_user_or_401,
 )
 
 
@@ -112,6 +126,26 @@ class OrganizationPlaceListResource(BaseResource):
 
         pagination = get_place_query(admin_unit.id, name).paginate()
         return pagination
+
+    @doc(
+        summary="Add new place",
+        tags=["Organizations", "Places"],
+        security=[{"oauth2": ["place:write"]}],
+    )
+    @use_kwargs(PlacePostRequestSchema, location="json")
+    @marshal_with(PlaceIdSchema, 201)
+    @require_oauth("place:write")
+    def post(self, id, **kwargs):
+        login_api_user_or_401(current_token.user)
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+        access_or_401(admin_unit, "place:create")
+
+        place = PlacePostRequestLoadSchema().load(kwargs, session=db.session)
+        place.admin_unit_id = admin_unit.id
+        db.session.add(place)
+        db.session.commit()
+
+        return place, 201
 
 
 class OrganizationIncomingEventReferenceListResource(BaseResource):

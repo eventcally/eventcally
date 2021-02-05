@@ -1,5 +1,19 @@
-from project import marshmallow
+from project.api import marshmallow
 from marshmallow import fields, validate
+
+
+class ErrorResponseSchema(marshmallow.Schema):
+    name = fields.Str()
+    message = fields.Str()
+
+
+class UnprocessableEntityErrorSchema(marshmallow.Schema):
+    field = fields.Str()
+    message = fields.Str()
+
+
+class UnprocessableEntityResponseSchema(ErrorResponseSchema):
+    errors = fields.List(fields.Nested(UnprocessableEntityErrorSchema))
 
 
 class PaginationRequestSchema(marshmallow.Schema):

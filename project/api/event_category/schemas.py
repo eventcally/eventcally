@@ -1,5 +1,5 @@
 from marshmallow import fields
-from project import marshmallow
+from project.api import marshmallow
 from project.models import EventCategory
 from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
 

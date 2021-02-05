@@ -46,6 +46,25 @@ def test_places(client, seeder, utils):
     utils.get_ok(url)
 
 
+def test_places_post(client, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+
+    url = utils.get_url("api_v1_organization_place_list", id=admin_unit_id, name="crew")
+    response = utils.post_json(url, {"name": "Neuer Ort"})
+    utils.assert_response_created(response)
+    assert "id" in response.json
+
+    with app.app_context():
+        from project.models import EventPlace
+
+        place = (
+            EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
+            .filter(EventPlace.name == "Neuer Ort")
+            .first()
+        )
+        assert place is not None
+
+
 def test_references_incoming(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     (

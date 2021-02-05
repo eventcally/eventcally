@@ -430,7 +430,7 @@ def test_delete_nameDoesNotMatch(client, seeder, utils, app, mocker):
 
 def test_rrule(client, seeder, utils, app):
     url = utils.get_url("event_rrule")
-    json = utils.post_json(
+    response = utils.post_json(
         url,
         {
             "year": 2020,
@@ -440,6 +440,7 @@ def test_rrule(client, seeder, utils, app):
             "start": 0,
         },
     )
+    json = response.json
 
     assert json["batch"]["batch_size"] == 10
 
