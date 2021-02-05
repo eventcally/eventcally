@@ -1,8 +1,19 @@
 from project.api import add_api_resource
-from flask_apispec import marshal_with, doc
+from flask import make_response
+from flask_apispec import marshal_with, doc, use_kwargs
 from project.api.resources import BaseResource
-from project.api.organizer.schemas import OrganizerSchema
+from project.api.organizer.schemas import (
+    OrganizerSchema,
+    OrganizerPostRequestSchema,
+    OrganizerPostRequestLoadSchema,
+    OrganizerPatchRequestSchema,
+    OrganizerPatchRequestLoadSchema,
+)
 from project.models import EventOrganizer
+from project.oauth2 import require_oauth
+from authlib.integrations.flask_oauth2 import current_token
+from project import db
+from project.access import access_or_401, login_api_user_or_401
 
 
 class OrganizerResource(BaseResource):
@@ -10,6 +21,63 @@ class OrganizerResource(BaseResource):
     @marshal_with(OrganizerSchema)
     def get(self, id):
         return EventOrganizer.query.get_or_404(id)
+
+    @doc(
+        summary="Update organizer",
+        tags=["Organizers"],
+        security=[{"oauth2": ["organizer:write"]}],
+    )
+    @use_kwargs(OrganizerPostRequestSchema, location="json")
+    @marshal_with(None, 204)
+    @require_oauth("organizer:write")
+    def put(self, id, **kwargs):
+        login_api_user_or_401(current_token.user)
+        organizer = EventOrganizer.query.get_or_404(id)
+        access_or_401(organizer.adminunit, "organizer:update")
+
+        organizer = OrganizerPostRequestLoadSchema().load(
+            kwargs, session=db.session, instance=organizer
+        )
+        db.session.commit()
+
+        return make_response("", 204)
+
+    @doc(
+        summary="Patch organizer",
+        tags=["Organizers"],
+        security=[{"oauth2": ["organizer:write"]}],
+    )
+    @use_kwargs(OrganizerPatchRequestSchema, location="json")
+    @marshal_with(None, 204)
+    @require_oauth("organizer:write")
+    def patch(self, id, **kwargs):
+        login_api_user_or_401(current_token.user)
+        organizer = EventOrganizer.query.get_or_404(id)
+        access_or_401(organizer.adminunit, "organizer:update")
+
+        organizer = OrganizerPatchRequestLoadSchema().load(
+            kwargs, session=db.session, instance=organizer
+        )
+        db.session.commit()
+
+        return make_response("", 204)
+
+    @doc(
+        summary="Delete organizer",
+        tags=["Organizers"],
+        security=[{"oauth2": ["organizer:write"]}],
+    )
+    @marshal_with(None, 204)
+    @require_oauth("organizer:write")
+    def delete(self, id):
+        login_api_user_or_401(current_token.user)
+        organizer = EventOrganizer.query.get_or_404(id)
+        access_or_401(organizer.adminunit, "organizer:delete")
+
+        db.session.delete(organizer)
+        db.session.commit()
+
+        return make_response("", 204)
 
 
 add_api_resource(

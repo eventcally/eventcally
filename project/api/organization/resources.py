@@ -18,6 +18,9 @@ from project.api.event.schemas import (
 from project.api.organizer.schemas import (
     OrganizerListRequestSchema,
     OrganizerListResponseSchema,
+    OrganizerIdSchema,
+    OrganizerPostRequestSchema,
+    OrganizerPostRequestLoadSchema,
 )
 from project.api.event_reference.schemas import (
     EventReferenceListRequestSchema,
@@ -114,6 +117,26 @@ class OrganizationOrganizerListResource(BaseResource):
 
         pagination = get_organizer_query(admin_unit.id, name).paginate()
         return pagination
+
+    @doc(
+        summary="Add new organizer",
+        tags=["Organizations", "Organizers"],
+        security=[{"oauth2": ["organizer:write"]}],
+    )
+    @use_kwargs(OrganizerPostRequestSchema, location="json")
+    @marshal_with(OrganizerIdSchema, 201)
+    @require_oauth("organizer:write")
+    def post(self, id, **kwargs):
+        login_api_user_or_401(current_token.user)
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+        access_or_401(admin_unit, "organizer:create")
+
+        organizer = OrganizerPostRequestLoadSchema().load(kwargs, session=db.session)
+        organizer.admin_unit_id = admin_unit.id
+        db.session.add(organizer)
+        db.session.commit()
+
+        return organizer, 201
 
 
 class OrganizationPlaceListResource(BaseResource):
