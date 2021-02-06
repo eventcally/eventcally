@@ -1,5 +1,37 @@
 from project.api import marshmallow
-from marshmallow import fields, validate
+from marshmallow import fields, validate, missing
+
+
+class SQLAlchemyBaseSchema(marshmallow.SQLAlchemySchema):
+    def __init__(self, *args, **kwargs):
+        load_instance = kwargs.pop("load_instance", False)
+        super().__init__(*args, **kwargs)
+        self.opts.load_instance = load_instance
+
+
+class PostSchema(object):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self._declared_fields.items():
+            if not field.required:
+                field.missing = None
+
+
+class PatchSchema(object):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self._declared_fields.items():
+            field.required = False
+            field.allow_none = True
+
+
+class IdSchemaMixin(object):
+    id = marshmallow.auto_field(dump_only=True, default=missing)
+
+
+class TrackableSchemaMixin(object):
+    created_at = marshmallow.auto_field(dump_only=True)
+    updated_at = marshmallow.auto_field(dump_only=True)
 
 
 class ErrorResponseSchema(marshmallow.Schema):

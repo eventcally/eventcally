@@ -1,22 +1,50 @@
-from marshmallow import fields, validate
+from marshmallow import validate, validates_schema, ValidationError
 from project.api import marshmallow
 from project.models import Location
 from project.api.fields import NumericStr
+from project.api.schemas import (
+    SQLAlchemyBaseSchema,
+    PostSchema,
+    PatchSchema,
+)
 
 
-class LocationIdSchema(marshmallow.SQLAlchemySchema):
+class LocationModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = Location
 
 
-class LocationSchema(LocationIdSchema):
+class LocationBaseSchemaMixin(object):
     street = marshmallow.auto_field()
-    postalCode = marshmallow.auto_field()
+    postalCode = marshmallow.auto_field(validate=validate.Length(max=10))
     city = marshmallow.auto_field()
     state = marshmallow.auto_field()
     country = marshmallow.auto_field()
-    longitude = NumericStr()
-    latitude = NumericStr()
+    latitude = NumericStr(
+        validate=validate.Range(-90, 90, min_inclusive=False, max_inclusive=False),
+        metadata={"description": "Latitude between (-90, 90)"},
+        allow_none=True,
+    )
+    longitude = NumericStr(
+        validate=validate.Range(-180, 180, min_inclusive=False, max_inclusive=False),
+        metadata={"description": "Longitude between (-180, 180)"},
+        allow_none=True,
+    )
+
+    @validates_schema
+    def validate_location(self, data, **kwargs):
+        lat_set = "latitude" in data and data["latitude"] is not None
+        lon_set = "longitude" in data and data["longitude"] is not None
+
+        if lat_set and not lon_set:
+            raise ValidationError("If latitude is given, longitude is required.")
+
+        if lon_set and not lat_set:
+            raise ValidationError("If longitude is given, latitude is required.")
+
+
+class LocationSchema(LocationModelSchema, LocationBaseSchemaMixin):
+    pass
 
 
 class LocationDumpSchema(LocationSchema):
@@ -27,39 +55,13 @@ class LocationSearchItemSchema(LocationSchema):
     pass
 
 
-class LocationPostRequestSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = Location
-
-    street = fields.Str(validate=validate.Length(max=255), missing=None)
-    postalCode = fields.Str(validate=validate.Length(max=10), missing=None)
-    city = fields.Str(validate=validate.Length(max=255), missing=None)
-    state = fields.Str(validate=validate.Length(max=255), missing=None)
-    country = fields.Str(validate=validate.Length(max=255), missing=None)
-    longitude = NumericStr(validate=validate.Range(-180, 180), missing=None)
-    latitude = NumericStr(validate=validate.Range(-90, 90), missing=None)
+class LocationPostRequestSchema(
+    PostSchema, LocationModelSchema, LocationBaseSchemaMixin
+):
+    pass
 
 
-class LocationPostRequestLoadSchema(LocationPostRequestSchema):
-    class Meta:
-        model = Location
-        load_instance = True
-
-
-class LocationPatchRequestSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = Location
-
-    street = fields.Str(validate=validate.Length(max=255), allow_none=True)
-    postalCode = fields.Str(validate=validate.Length(max=10), allow_none=True)
-    city = fields.Str(validate=validate.Length(max=255), allow_none=True)
-    state = fields.Str(validate=validate.Length(max=255), allow_none=True)
-    country = fields.Str(validate=validate.Length(max=255), allow_none=True)
-    longitude = NumericStr(validate=validate.Range(-180, 180), allow_none=True)
-    latitude = NumericStr(validate=validate.Range(-90, 90), allow_none=True)
-
-
-class LocationPatchRequestLoadSchema(LocationPatchRequestSchema):
-    class Meta:
-        model = Location
-        load_instance = True
+class LocationPatchRequestSchema(
+    PatchSchema, LocationModelSchema, LocationBaseSchemaMixin
+):
+    pass

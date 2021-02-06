@@ -4,39 +4,49 @@ from project.models import EventOrganizer
 from project.api.location.schemas import (
     LocationSchema,
     LocationPostRequestSchema,
-    LocationPostRequestLoadSchema,
     LocationPatchRequestSchema,
-    LocationPatchRequestLoadSchema,
 )
 from project.api.image.schemas import ImageSchema
 from project.api.organization.schemas import OrganizationRefSchema
-from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.api.schemas import (
+    SQLAlchemyBaseSchema,
+    IdSchemaMixin,
+    TrackableSchemaMixin,
+    PostSchema,
+    PatchSchema,
+    PaginationRequestSchema,
+    PaginationResponseSchema,
+)
 
 
-class OrganizerIdSchema(marshmallow.SQLAlchemySchema):
+class OrganizerModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = EventOrganizer
 
-    id = marshmallow.auto_field()
+
+class OrganizerIdSchema(OrganizerModelSchema, IdSchemaMixin):
+    pass
 
 
-class OrganizerBaseSchema(OrganizerIdSchema):
-    created_at = marshmallow.auto_field()
-    updated_at = marshmallow.auto_field()
-    name = marshmallow.auto_field()
-    url = marshmallow.auto_field()
-    email = marshmallow.auto_field()
+class OrganizerBaseSchemaMixin(TrackableSchemaMixin):
+    name = marshmallow.auto_field(
+        required=True, validate=validate.Length(min=3, max=255)
+    )
+    url = marshmallow.auto_field(validate=[validate.URL(), validate.Length(max=255)])
+    email = marshmallow.auto_field(
+        validate=[validate.Email(), validate.Length(max=255)]
+    )
     phone = marshmallow.auto_field()
     fax = marshmallow.auto_field()
 
 
-class OrganizerSchema(OrganizerBaseSchema):
+class OrganizerSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):
     location = fields.Nested(LocationSchema)
     logo = fields.Nested(ImageSchema)
     organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
 
 
-class OrganizerDumpSchema(OrganizerBaseSchema):
+class OrganizerDumpSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):
     location_id = fields.Int()
     logo_id = fields.Int()
     organization_id = fields.Int(attribute="admin_unit_id")
@@ -58,48 +68,13 @@ class OrganizerListResponseSchema(PaginationResponseSchema):
     )
 
 
-class OrganizerPostRequestSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = EventOrganizer
-
-    name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
-    url = fields.Str(validate=[validate.URL(), validate.Length(max=255)], missing=None)
-    email = fields.Str(
-        validate=[validate.Email(), validate.Length(max=255)], missing=None
-    )
-    phone = fields.Str(validate=validate.Length(max=255), missing=None)
-    fax = fields.Str(validate=validate.Length(max=255), missing=None)
-
+class OrganizerPostRequestSchema(
+    PostSchema, OrganizerModelSchema, OrganizerBaseSchemaMixin
+):
     location = fields.Nested(LocationPostRequestSchema, missing=None)
 
 
-class OrganizerPostRequestLoadSchema(OrganizerPostRequestSchema):
-    class Meta:
-        model = EventOrganizer
-        load_instance = True
-
-    location = fields.Nested(LocationPostRequestLoadSchema, missing=None)
-
-
-class OrganizerPatchRequestSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = EventOrganizer
-
-    name = fields.Str(validate=validate.Length(min=3, max=255), allow_none=True)
-    url = fields.Str(
-        validate=[validate.URL(), validate.Length(max=255)], allow_none=True
-    )
-    email = fields.Str(
-        validate=[validate.Email(), validate.Length(max=255)], allow_none=True
-    )
-    phone = fields.Str(validate=validate.Length(max=255), allow_none=True)
-    fax = fields.Str(validate=validate.Length(max=255), allow_none=True)
+class OrganizerPatchRequestSchema(
+    PatchSchema, OrganizerModelSchema, OrganizerBaseSchemaMixin
+):
     location = fields.Nested(LocationPatchRequestSchema, allow_none=True)
-
-
-class OrganizerPatchRequestLoadSchema(OrganizerPatchRequestSchema):
-    class Meta:
-        model = EventOrganizer
-        load_instance = True
-
-    location = fields.Nested(LocationPatchRequestLoadSchema, allow_none=True)
