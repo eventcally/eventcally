@@ -6,36 +6,44 @@ from project.api.location.schemas import (
     LocationSchema,
     LocationSearchItemSchema,
     LocationPostRequestSchema,
-    LocationPostRequestLoadSchema,
     LocationPatchRequestSchema,
-    LocationPatchRequestLoadSchema,
 )
 from project.api.organization.schemas import OrganizationRefSchema
-from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.api.schemas import (
+    SQLAlchemyBaseSchema,
+    IdSchemaMixin,
+    TrackableSchemaMixin,
+    PostSchema,
+    PatchSchema,
+    PaginationRequestSchema,
+    PaginationResponseSchema,
+)
 
 
-class PlaceIdSchema(marshmallow.SQLAlchemySchema):
+class PlaceModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = EventPlace
 
-    id = marshmallow.auto_field()
+
+class PlaceIdSchema(PlaceModelSchema, IdSchemaMixin):
+    pass
 
 
-class PlaceBaseSchema(PlaceIdSchema):
-    created_at = marshmallow.auto_field()
-    updated_at = marshmallow.auto_field()
-    name = marshmallow.auto_field()
-    url = marshmallow.auto_field()
+class PlaceBaseSchemaMixin(TrackableSchemaMixin):
+    name = marshmallow.auto_field(
+        required=True, validate=validate.Length(min=3, max=255)
+    )
+    url = marshmallow.auto_field(validate=[validate.URL(), validate.Length(max=255)])
     description = marshmallow.auto_field()
 
 
-class PlaceSchema(PlaceBaseSchema):
+class PlaceSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
     location = fields.Nested(LocationSchema)
     photo = fields.Nested(ImageSchema)
     organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
 
 
-class PlaceDumpSchema(PlaceBaseSchema):
+class PlaceDumpSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
     location_id = fields.Int()
     photo_id = fields.Int()
     organization_id = fields.Int(attribute="admin_unit_id")
@@ -64,39 +72,9 @@ class PlaceListResponseSchema(PaginationResponseSchema):
     )
 
 
-class PlacePostRequestSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = EventPlace
-
-    name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
-    url = fields.Str(validate=[validate.URL(), validate.Length(max=255)], missing=None)
-    description = fields.Str(missing=None)
+class PlacePostRequestSchema(PostSchema, PlaceModelSchema, PlaceBaseSchemaMixin):
     location = fields.Nested(LocationPostRequestSchema, missing=None)
 
 
-class PlacePostRequestLoadSchema(PlacePostRequestSchema):
-    class Meta:
-        model = EventPlace
-        load_instance = True
-
-    location = fields.Nested(LocationPostRequestLoadSchema, missing=None)
-
-
-class PlacePatchRequestSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = EventPlace
-
-    name = fields.Str(validate=validate.Length(min=3, max=255), allow_none=True)
-    url = fields.Str(
-        validate=[validate.URL(), validate.Length(max=255)], allow_none=True
-    )
-    description = fields.Str(allow_none=True)
+class PlacePatchRequestSchema(PatchSchema, PlaceModelSchema, PlaceBaseSchemaMixin):
     location = fields.Nested(LocationPatchRequestSchema, allow_none=True)
-
-
-class PlacePatchRequestLoadSchema(PlacePatchRequestSchema):
-    class Meta:
-        model = EventPlace
-        load_instance = True
-
-    location = fields.Nested(LocationPatchRequestLoadSchema, allow_none=True)

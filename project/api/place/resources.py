@@ -5,9 +5,7 @@ from project.api.resources import BaseResource
 from project.api.place.schemas import (
     PlaceSchema,
     PlacePostRequestSchema,
-    PlacePostRequestLoadSchema,
     PlacePatchRequestSchema,
-    PlacePatchRequestLoadSchema,
 )
 from project.models import EventPlace
 from project.oauth2 import require_oauth
@@ -33,7 +31,7 @@ class PlaceResource(BaseResource):
         place = EventPlace.query.get_or_404(id)
         access_or_401(place.adminunit, "place:update")
 
-        place = PlacePostRequestLoadSchema().load(
+        place = PlacePostRequestSchema(load_instance=True).load(
             kwargs, session=db.session, instance=place
         )
         db.session.commit()
@@ -49,7 +47,7 @@ class PlaceResource(BaseResource):
         place = EventPlace.query.get_or_404(id)
         access_or_401(place.adminunit, "place:update")
 
-        place = PlacePatchRequestLoadSchema().load(
+        place = PlacePatchRequestSchema(load_instance=True).load(
             kwargs, session=db.session, instance=place
         )
         db.session.commit()

@@ -20,7 +20,6 @@ from project.api.organizer.schemas import (
     OrganizerListResponseSchema,
     OrganizerIdSchema,
     OrganizerPostRequestSchema,
-    OrganizerPostRequestLoadSchema,
 )
 from project.api.event_reference.schemas import (
     EventReferenceListRequestSchema,
@@ -35,7 +34,6 @@ from project.api.place.schemas import (
     PlaceListResponseSchema,
     PlaceIdSchema,
     PlacePostRequestSchema,
-    PlacePostRequestLoadSchema,
 )
 from project.services.event import get_event_dates_query, get_events_query
 from project.services.event_search import EventSearchParams
@@ -131,7 +129,9 @@ class OrganizationOrganizerListResource(BaseResource):
         admin_unit = get_admin_unit_for_manage_or_404(id)
         access_or_401(admin_unit, "organizer:create")
 
-        organizer = OrganizerPostRequestLoadSchema().load(kwargs, session=db.session)
+        organizer = OrganizerPostRequestSchema(load_instance=True).load(
+            kwargs, session=db.session
+        )
         organizer.admin_unit_id = admin_unit.id
         db.session.add(organizer)
         db.session.commit()
@@ -163,7 +163,9 @@ class OrganizationPlaceListResource(BaseResource):
         admin_unit = get_admin_unit_for_manage_or_404(id)
         access_or_401(admin_unit, "place:create")
 
-        place = PlacePostRequestLoadSchema().load(kwargs, session=db.session)
+        place = PlacePostRequestSchema(load_instance=True).load(
+            kwargs, session=db.session
+        )
         place.admin_unit_id = admin_unit.id
         db.session.add(place)
         db.session.commit()

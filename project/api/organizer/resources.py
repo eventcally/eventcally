@@ -5,9 +5,7 @@ from project.api.resources import BaseResource
 from project.api.organizer.schemas import (
     OrganizerSchema,
     OrganizerPostRequestSchema,
-    OrganizerPostRequestLoadSchema,
     OrganizerPatchRequestSchema,
-    OrganizerPatchRequestLoadSchema,
 )
 from project.models import EventOrganizer
 from project.oauth2 import require_oauth
@@ -35,7 +33,7 @@ class OrganizerResource(BaseResource):
         organizer = EventOrganizer.query.get_or_404(id)
         access_or_401(organizer.adminunit, "organizer:update")
 
-        organizer = OrganizerPostRequestLoadSchema().load(
+        organizer = OrganizerPostRequestSchema(load_instance=True).load(
             kwargs, session=db.session, instance=organizer
         )
         db.session.commit()
@@ -55,7 +53,7 @@ class OrganizerResource(BaseResource):
         organizer = EventOrganizer.query.get_or_404(id)
         access_or_401(organizer.adminunit, "organizer:update")
 
-        organizer = OrganizerPatchRequestLoadSchema().load(
+        organizer = OrganizerPatchRequestSchema(load_instance=True).load(
             kwargs, session=db.session, instance=organizer
         )
         db.session.commit()

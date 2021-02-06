@@ -1,3 +1,6 @@
+import pytest
+
+
 def test_numeric_str_serialize(client, seeder, utils):
     from project.api.location.schemas import LocationSchema
     from project.models import Location
@@ -16,32 +19,35 @@ def test_numeric_str_serialize(client, seeder, utils):
     assert data["longitude"] == "10.4333312"
 
 
-def test_numeric_str_deserialize(client, seeder, utils):
-    from project.api.location.schemas import LocationPostRequestLoadSchema
-
-    data = {
-        "latitude": "51.9077888",
-        "longitude": "10.4333312",
-    }
-
-    schema = LocationPostRequestLoadSchema()
-    location = schema.load(data)
-
-    assert location.latitude == 51.9077888
-    assert location.longitude == 10.4333312
-
-
-def test_numeric_str_deserialize_invalid(client, seeder, utils):
-    from project.api.location.schemas import LocationPostRequestLoadSchema
-    import pytest
+@pytest.mark.parametrize(
+    "latitude, longitude, valid",
+    [
+        ("51.9077888", "10.4333312", True),
+        ("-89.9", "0", True),
+        ("-90", "0", False),
+        ("0", "179.9", True),
+        ("0", "180", False),
+        ("0", None, False),
+        (None, "0", False),
+        ("Quatsch", "Quatsch", False),
+    ],
+)
+def test_numeric_str_deserialize(latitude, longitude, valid):
+    from project.api.location.schemas import LocationPostRequestSchema
     from marshmallow import ValidationError
 
     data = {
-        "latitude": "Quatsch",
-        "longitude": "Quatsch",
+        "latitude": latitude,
+        "longitude": longitude,
     }
 
-    schema = LocationPostRequestLoadSchema()
+    schema = LocationPostRequestSchema(load_instance=True)
+
+    if valid:
+        location = schema.load(data)
+        assert location.latitude == float(latitude)
+        assert location.longitude == float(longitude)
+        return
 
     with pytest.raises(ValidationError):
         schema.load(data)
