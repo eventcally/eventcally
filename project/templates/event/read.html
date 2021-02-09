@@ -9,7 +9,7 @@
 
     <div class="w-normal">
 
-        {{ render_event_props(event, event.start, event.end, dates, user_rights['can_verify_event']) }}
+        {{ render_event_props(event, event.start, event.end, dates, user_rights['can_update_event']) }}
 
         {% if dates|length > 0 %}
             <div class="card mt-4">

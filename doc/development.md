@@ -48,7 +48,7 @@ pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -
 ### Extract new msgid's and merge into *.po files
 
 ```sh
-pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot . && pybabel update -i messages.pot -d project/translations
+pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot . && pybabel update -N -i messages.pot -d project/translations
 ```
 
 #### Compile after translation is done

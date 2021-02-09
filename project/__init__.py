@@ -12,6 +12,7 @@ from flask_mail import Mail, email_dispatched
 from flask_migrate import Migrate
 from flask_gzip import Gzip
 from webargs import flaskparser
+from project.custom_session_interface import CustomSessionInterface
 
 # Create app
 app = Flask(__name__)
@@ -102,6 +103,7 @@ from project.forms.security import ExtendedRegisterForm
 
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
+app.session_interface = CustomSessionInterface()
 
 # OAuth2
 from project.oauth2 import config_oauth
