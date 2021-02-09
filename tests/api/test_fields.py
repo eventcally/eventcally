@@ -41,7 +41,7 @@ def test_numeric_str_deserialize(latitude, longitude, valid):
         "longitude": longitude,
     }
 
-    schema = LocationPostRequestSchema(load_instance=True)
+    schema = LocationPostRequestSchema()
 
     if valid:
         location = schema.load(data)

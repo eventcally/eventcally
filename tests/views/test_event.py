@@ -186,7 +186,7 @@ def test_create_startAfterEnd(client, app, utils, seeder, mocker):
     )
 
 
-def test_create_DurationMoreThan24Hours(client, app, utils, seeder, mocker):
+def test_create_durationMoreThan24Hours(client, app, utils, seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 

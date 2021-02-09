@@ -9,6 +9,7 @@ from project.api.organization.schemas import OrganizationRefSchema
 class EventReferenceIdSchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = EventReference
+        load_instance = True
 
     id = marshmallow.auto_field()
 

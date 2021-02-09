@@ -25,17 +25,15 @@ class OrganizerResource(BaseResource):
         tags=["Organizers"],
         security=[{"oauth2": ["organizer:write"]}],
     )
-    @use_kwargs(OrganizerPostRequestSchema, location="json")
+    @use_kwargs(OrganizerPostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_oauth("organizer:write")
-    def put(self, id, **kwargs):
+    def put(self, id):
         login_api_user_or_401(current_token.user)
         organizer = EventOrganizer.query.get_or_404(id)
         access_or_401(organizer.adminunit, "organizer:update")
 
-        organizer = OrganizerPostRequestSchema(load_instance=True).load(
-            kwargs, session=db.session, instance=organizer
-        )
+        organizer = self.update_instance(OrganizerPostRequestSchema, instance=organizer)
         db.session.commit()
 
         return make_response("", 204)
@@ -45,16 +43,16 @@ class OrganizerResource(BaseResource):
         tags=["Organizers"],
         security=[{"oauth2": ["organizer:write"]}],
     )
-    @use_kwargs(OrganizerPatchRequestSchema, location="json")
+    @use_kwargs(OrganizerPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_oauth("organizer:write")
-    def patch(self, id, **kwargs):
+    def patch(self, id):
         login_api_user_or_401(current_token.user)
         organizer = EventOrganizer.query.get_or_404(id)
         access_or_401(organizer.adminunit, "organizer:update")
 
-        organizer = OrganizerPatchRequestSchema(load_instance=True).load(
-            kwargs, session=db.session, instance=organizer
+        organizer = self.update_instance(
+            OrganizerPatchRequestSchema, instance=organizer
         )
         db.session.commit()
 

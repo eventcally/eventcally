@@ -2,22 +2,37 @@ import pytest
 from project.api import RestApi
 
 
-class Psycog2Error(object):
-    def __init__(self, pgcode):
-        self.pgcode = pgcode
-
-
 def test_handle_error_unique(app):
-    from sqlalchemy.exc import IntegrityError
-    from psycopg2.errorcodes import UNIQUE_VIOLATION
+    from project.utils import make_unique_violation
 
-    orig = Psycog2Error(UNIQUE_VIOLATION)
-    error = IntegrityError("Select", list(), orig)
+    error = make_unique_violation()
 
     api = RestApi(app)
     (data, code) = api.handle_error(error)
     assert code == 400
     assert data["name"] == "Unique Violation"
+
+
+def test_handle_error_checkViolation(app):
+    from project.utils import make_check_violation
+
+    error = make_check_violation()
+
+    api = RestApi(app)
+    (data, code) = api.handle_error(error)
+    assert code == 400
+    assert data["name"] == "Check Violation"
+
+
+def test_handle_error_integrity(app):
+    from project.utils import make_integrity_error
+
+    error = make_integrity_error("custom")
+
+    api = RestApi(app)
+    (data, code) = api.handle_error(error)
+    assert code == 400
+    assert data["name"] == "Integrity Error"
 
 
 def test_handle_error_httpException(app):
@@ -42,6 +57,19 @@ def test_handle_error_unprocessableEntity(app):
 
     api = RestApi(app)
     (data, code) = api.handle_error(error)
+    assert code == 422
+    assert data["errors"][0]["field"] == "name"
+    assert data["errors"][0]["message"] == "Required"
+
+
+def test_handle_error_validationError(app):
+    from marshmallow import ValidationError
+
+    args = {"name": ["Required"]}
+    validation_error = ValidationError(args)
+
+    api = RestApi(app)
+    (data, code) = api.handle_error(validation_error)
     assert code == 422
     assert data["errors"][0]["field"] == "name"
     assert data["errors"][0]["message"] == "Required"

@@ -1,5 +1,5 @@
 from project.api import marshmallow
-from marshmallow import fields, validate
+from marshmallow import fields, validate, ValidationError
 from marshmallow_enum import EnumField
 from project.models import (
     Event,
@@ -7,51 +7,145 @@ from project.models import (
     EventTargetGroupOrigin,
     EventAttendanceMode,
 )
-from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.api.schemas import (
+    SQLAlchemyBaseSchema,
+    IdSchemaMixin,
+    TrackableSchemaMixin,
+    PaginationRequestSchema,
+    PaginationResponseSchema,
+)
 from project.api.organization.schemas import OrganizationRefSchema
-from project.api.organizer.schemas import OrganizerRefSchema
+from project.api.organizer.schemas import OrganizerRefSchema, OrganizerWriteIdSchema
 from project.api.image.schemas import ImageSchema
-from project.api.place.schemas import PlaceRefSchema, PlaceSearchItemSchema
+from project.api.place.schemas import (
+    PlaceRefSchema,
+    PlaceSearchItemSchema,
+    PlaceWriteIdSchema,
+)
 from project.api.event_category.schemas import (
     EventCategoryRefSchema,
     EventCategoryIdSchema,
+    EventCategoryWriteIdSchema,
 )
+from project.api.fields import CustomDateTimeField
+from dateutil.rrule import rrulestr
 
 
-class EventBaseSchema(marshmallow.SQLAlchemySchema):
+class EventModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = Event
-
-    id = marshmallow.auto_field()
-    created_at = marshmallow.auto_field()
-    updated_at = marshmallow.auto_field()
-
-    name = marshmallow.auto_field()
-    description = marshmallow.auto_field()
-    external_link = marshmallow.auto_field()
-    ticket_link = marshmallow.auto_field()
-
-    tags = marshmallow.auto_field()
-    kid_friendly = marshmallow.auto_field()
-    accessible_for_free = marshmallow.auto_field()
-    age_from = marshmallow.auto_field()
-    age_to = marshmallow.auto_field()
-    target_group_origin = EnumField(EventTargetGroupOrigin)
-    attendance_mode = EnumField(EventAttendanceMode)
-    status = EnumField(EventStatus)
-    previous_start_date = marshmallow.auto_field()
-
-    registration_required = marshmallow.auto_field()
-    booked_up = marshmallow.auto_field()
-    expected_participants = marshmallow.auto_field()
-    price_info = marshmallow.auto_field()
-
-    recurrence_rule = marshmallow.auto_field()
-    start = marshmallow.auto_field()
-    end = marshmallow.auto_field()
+        load_instance = True
 
 
-class EventSchema(EventBaseSchema):
+class EventIdSchema(EventModelSchema, IdSchemaMixin):
+    pass
+
+
+def validate_recurrence_rule(recurrence_rule):
+    try:
+        rrulestr(recurrence_rule, forceset=True)
+    except Exception as e:
+        raise ValidationError(str(e))
+
+
+class EventBaseSchemaMixin(TrackableSchemaMixin):
+    name = marshmallow.auto_field(
+        required=True,
+        validate=validate.Length(min=3, max=255),
+        metadata={"description": "A short, meaningful name for the event."},
+    )
+    description = marshmallow.auto_field(
+        metadata={"description": "Description of the event"},
+    )
+    external_link = marshmallow.auto_field(
+        validate=[validate.URL(), validate.Length(max=255)],
+        metadata={
+            "description": "A link to an external website containing more information about the event."
+        },
+    )
+    ticket_link = marshmallow.auto_field(
+        validate=[validate.URL(), validate.Length(max=255)],
+        metadata={"description": "A link where tickets can be purchased."},
+    )
+    tags = marshmallow.auto_field(
+        metadata={
+            "description": "Comma separated keywords with which the event should be found. Words do not need to be entered if they are already in the name or description."
+        }
+    )
+    kid_friendly = marshmallow.auto_field(
+        missing=False,
+        metadata={"description": "If the event is particularly suitable for children."},
+    )
+    accessible_for_free = marshmallow.auto_field(
+        missing=False,
+        metadata={"description": "If the event is accessible for free."},
+    )
+    age_from = marshmallow.auto_field(
+        metadata={"description": "The minimum age that participants should be."},
+    )
+    age_to = marshmallow.auto_field(
+        metadata={"description": "The maximum age that participants should be."},
+    )
+    target_group_origin = EnumField(
+        EventTargetGroupOrigin,
+        missing=EventTargetGroupOrigin.both,
+        metadata={
+            "description": "Whether the event is particularly suitable for tourists or residents."
+        },
+    )
+    attendance_mode = EnumField(
+        EventAttendanceMode,
+        missing=EventAttendanceMode.offline,
+        metadata={"description": "Choose how people can attend the event."},
+    )
+    status = EnumField(
+        EventStatus,
+        missing=EventStatus.scheduled,
+        metadata={"description": "Select the status of the event."},
+    )
+    previous_start_date = CustomDateTimeField(
+        metadata={
+            "description": "When the event should have taken place before it was postponed."
+        },
+    )
+    registration_required = marshmallow.auto_field(
+        missing=False,
+        metadata={
+            "description": "If the participants needs to register for the event."
+        },
+    )
+    booked_up = marshmallow.auto_field(
+        missing=False,
+        metadata={"description": "If the event is booked up or sold out."},
+    )
+    expected_participants = marshmallow.auto_field(
+        metadata={"description": "The estimated expected attendance."},
+    )
+    price_info = marshmallow.auto_field(
+        metadata={
+            "description": "Price information in textual form. E.g., different prices for adults and children."
+        },
+    )
+    recurrence_rule = marshmallow.auto_field(
+        validate=validate_recurrence_rule,
+        metadata={
+            "description": "If the event takes place regularly. Format: RFC 5545."
+        },
+    )
+    start = CustomDateTimeField(
+        required=True,
+        metadata={
+            "description": "When the event will take place.  If the event takes place regularly, enter when the first date will begin."
+        },
+    )
+    end = CustomDateTimeField(
+        metadata={
+            "description": "When the event will end. An event can last a maximum of 24 hours. If the event takes place regularly, enter when the first date will end."
+        },
+    )
+
+
+class EventSchema(EventIdSchema, EventBaseSchemaMixin):
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
     organizer = fields.Nested(OrganizerRefSchema)
     place = fields.Nested(PlaceRefSchema, attribute="event_place")
@@ -59,7 +153,7 @@ class EventSchema(EventBaseSchema):
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
 
 
-class EventDumpSchema(EventBaseSchema):
+class EventDumpSchema(EventIdSchema, EventBaseSchemaMixin):
     organization_id = fields.Int(attribute="admin_unit_id")
     organizer_id = fields.Int()
     place_id = fields.Int(attribute="event_place_id")
@@ -69,18 +163,11 @@ class EventDumpSchema(EventBaseSchema):
     )
 
 
-class EventRefSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = Event
-
-    id = marshmallow.auto_field()
+class EventRefSchema(EventIdSchema):
     name = marshmallow.auto_field()
 
 
 class EventSearchItemSchema(EventRefSchema):
-    class Meta:
-        model = Event
-
     description = marshmallow.auto_field()
     start = marshmallow.auto_field()
     end = marshmallow.auto_field()
@@ -145,3 +232,45 @@ class EventSearchResponseSchema(PaginationResponseSchema):
     items = fields.List(
         fields.Nested(EventSearchItemSchema), metadata={"description": "Events"}
     )
+
+
+class EventWriteSchemaMixin(object):
+    organizer = fields.Nested(
+        OrganizerWriteIdSchema,
+        required=True,
+        metadata={"description": "Who is organizing the event."},
+    )
+    place = fields.Nested(
+        PlaceWriteIdSchema,
+        required=True,
+        attribute="event_place",
+        metadata={"description": "Where the event takes place."},
+    )
+    categories = fields.List(
+        fields.Nested(EventCategoryWriteIdSchema),
+        metadata={"description": "Categories that fit the event."},
+    )
+    rating = marshmallow.auto_field(
+        missing=50,
+        default=50,
+        validate=validate.OneOf([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]),
+        metadata={
+            "description": "How relevant the event is to your organization. 0 (Little relevant), 5 (Default), 10 (Highlight)."
+        },
+    )
+
+
+class EventPostRequestSchema(
+    EventModelSchema, EventBaseSchemaMixin, EventWriteSchemaMixin
+):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_post_schema()
+
+
+class EventPatchRequestSchema(
+    EventModelSchema, EventBaseSchemaMixin, EventWriteSchemaMixin
+):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_patch_schema()

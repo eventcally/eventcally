@@ -6,7 +6,7 @@ from project.api.organization.schemas import (
     OrganizationListRequestSchema,
     OrganizationListResponseSchema,
 )
-from project.models import AdminUnit
+from project.models import AdminUnit, Event
 from project.api.event_date.schemas import (
     EventDateSearchRequestSchema,
     EventDateSearchResponseSchema,
@@ -14,6 +14,10 @@ from project.api.event_date.schemas import (
 from project.api.event.schemas import (
     EventSearchRequestSchema,
     EventSearchResponseSchema,
+    EventListRequestSchema,
+    EventListResponseSchema,
+    EventPostRequestSchema,
+    EventIdSchema,
 )
 from project.api.organizer.schemas import (
     OrganizerListRequestSchema,
@@ -35,7 +39,7 @@ from project.api.place.schemas import (
     PlaceIdSchema,
     PlacePostRequestSchema,
 )
-from project.services.event import get_event_dates_query, get_events_query
+from project.services.event import get_event_dates_query, get_events_query, insert_event
 from project.services.event_search import EventSearchParams
 from project.services.admin_unit import (
     get_admin_unit_query,
@@ -93,6 +97,37 @@ class OrganizationEventSearchResource(BaseResource):
         return pagination
 
 
+class OrganizationEventListResource(BaseResource):
+    @doc(summary="List events of organization", tags=["Organizations", "Events"])
+    @use_kwargs(EventListRequestSchema, location=("query"))
+    @marshal_with(EventListResponseSchema)
+    def get(self, id, **kwargs):
+        admin_unit = AdminUnit.query.get_or_404(id)
+        pagination = Event.query.filter(Event.admin_unit_id == admin_unit.id).paginate()
+        return pagination
+
+    @doc(
+        summary="Add new event",
+        tags=["Organizations", "Events"],
+        security=[{"oauth2": ["event:write"]}],
+    )
+    @use_kwargs(EventPostRequestSchema, location="json", apply=False)
+    @marshal_with(EventIdSchema, 201)
+    @require_oauth("event:write")
+    def post(self, id):
+        login_api_user_or_401(current_token.user)
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+        access_or_401(admin_unit, "event:create")
+
+        event = self.create_instance(
+            EventPostRequestSchema, admin_unit_id=admin_unit.id
+        )
+        insert_event(event)
+        db.session.commit()
+
+        return event, 201
+
+
 class OrganizationListResource(BaseResource):
     @doc(summary="List organizations", tags=["Organizations"])
     @use_kwargs(OrganizationListRequestSchema, location=("query"))
@@ -121,18 +156,17 @@ class OrganizationOrganizerListResource(BaseResource):
         tags=["Organizations", "Organizers"],
         security=[{"oauth2": ["organizer:write"]}],
     )
-    @use_kwargs(OrganizerPostRequestSchema, location="json")
+    @use_kwargs(OrganizerPostRequestSchema, location="json", apply=False)
     @marshal_with(OrganizerIdSchema, 201)
     @require_oauth("organizer:write")
-    def post(self, id, **kwargs):
+    def post(self, id):
         login_api_user_or_401(current_token.user)
         admin_unit = get_admin_unit_for_manage_or_404(id)
         access_or_401(admin_unit, "organizer:create")
 
-        organizer = OrganizerPostRequestSchema(load_instance=True).load(
-            kwargs, session=db.session
+        organizer = self.create_instance(
+            OrganizerPostRequestSchema, admin_unit_id=admin_unit.id
         )
-        organizer.admin_unit_id = admin_unit.id
         db.session.add(organizer)
         db.session.commit()
 
@@ -155,18 +189,17 @@ class OrganizationPlaceListResource(BaseResource):
         tags=["Organizations", "Places"],
         security=[{"oauth2": ["place:write"]}],
     )
-    @use_kwargs(PlacePostRequestSchema, location="json")
+    @use_kwargs(PlacePostRequestSchema, location="json", apply=False)
     @marshal_with(PlaceIdSchema, 201)
     @require_oauth("place:write")
-    def post(self, id, **kwargs):
+    def post(self, id):
         login_api_user_or_401(current_token.user)
         admin_unit = get_admin_unit_for_manage_or_404(id)
         access_or_401(admin_unit, "place:create")
 
-        place = PlacePostRequestSchema(load_instance=True).load(
-            kwargs, session=db.session
+        place = self.create_instance(
+            PlacePostRequestSchema, admin_unit_id=admin_unit.id
         )
-        place.admin_unit_id = admin_unit.id
         db.session.add(place)
         db.session.commit()
 
@@ -211,6 +244,11 @@ add_api_resource(
     OrganizationEventSearchResource,
     "/organizations/<int:id>/events/search",
     "api_v1_organization_event_search",
+)
+add_api_resource(
+    OrganizationEventListResource,
+    "/organizations/<int:id>/events",
+    "api_v1_organization_event_list",
 )
 add_api_resource(OrganizationListResource, "/organizations", "api_v1_organization_list")
 add_api_resource(

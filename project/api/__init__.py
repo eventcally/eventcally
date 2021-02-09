@@ -1,6 +1,6 @@
 from flask_restful import Api
 from sqlalchemy.exc import IntegrityError
-from psycopg2.errorcodes import UNIQUE_VIOLATION
+from psycopg2.errorcodes import UNIQUE_VIOLATION, CHECK_VIOLATION
 from werkzeug.exceptions import HTTPException, UnprocessableEntity
 from marshmallow import ValidationError
 from project.utils import get_localized_scope
@@ -22,15 +22,23 @@ class RestApi(Api):
         data = {}
         code = 500
 
-        if (
-            isinstance(err, IntegrityError)
-            and err.orig
-            and err.orig.pgcode == UNIQUE_VIOLATION
-        ):
-            data["name"] = "Unique Violation"
-            data[
-                "message"
-            ] = "An entry with the entered values ​​already exists. Duplicate entries are not allowed."
+        if isinstance(err, IntegrityError) and err.orig:
+            if err.orig.pgcode == UNIQUE_VIOLATION:
+                data["name"] = "Unique Violation"
+                data[
+                    "message"
+                ] = "An entry with the entered values ​​already exists. Duplicate entries are not allowed."
+            elif err.orig.pgcode == CHECK_VIOLATION:
+                data["name"] = "Check Violation"
+
+                if hasattr(err.orig, "message") and getattr(err.orig, "message", None):
+                    data["message"] = err.orig.message
+                else:
+                    data["message"] = "Action violates database constraint."
+
+            else:
+                data["name"] = "Integrity Error"
+                data["message"] = "Action violates database integrity."
             code = 400
             schema = ErrorResponseSchema()
         elif isinstance(err, HTTPException):
@@ -47,25 +55,18 @@ class RestApi(Api):
                 data["message"] = err.description
                 code = err.code
                 schema = UnprocessableEntityResponseSchema()
+                self.fill_validation_data(err.exc, data)
 
-                if (
-                    getattr(err.exc, "args", None)
-                    and isinstance(err.exc.args, tuple)
-                    and len(err.exc.args) > 0
-                ):
-                    arg = err.exc.args[0]
-                    if isinstance(arg, dict):
-                        errors = []
-                        for field, messages in arg.items():
-                            if isinstance(messages, list):
-                                for message in messages:
-                                    error = {"field": field, "message": message}
-                                    errors.append(error)
-
-                        if len(errors) > 0:
-                            data["errors"] = errors
             else:
                 schema = ErrorResponseSchema()
+        elif isinstance(err, ValidationError):
+            data["name"] = "Unprocessable Entity"
+            data[
+                "message"
+            ] = "The request was well-formed but was unable to be followed due to semantic errors."
+            code = 422
+            schema = UnprocessableEntityResponseSchema()
+            self.fill_validation_data(err, data)
 
         # Call default error handler that propagates error further
         try:
@@ -75,6 +76,24 @@ class RestApi(Api):
                 raise
 
         return schema.dump(data), code
+
+    def fill_validation_data(self, err: ValidationError, data: dict):
+        if (
+            getattr(err, "args", None)
+            and isinstance(err.args, tuple)
+            and len(err.args) > 0
+        ):
+            arg = err.args[0]
+            if isinstance(arg, dict):
+                errors = []
+                for field, messages in arg.items():
+                    if isinstance(messages, list):
+                        for message in messages:
+                            error = {"field": field, "message": message}
+                            errors.append(error)
+
+                if len(errors) > 0:
+                    data["errors"] = errors
 
 
 scope_list = [

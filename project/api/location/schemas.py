@@ -2,16 +2,13 @@ from marshmallow import validate, validates_schema, ValidationError
 from project.api import marshmallow
 from project.models import Location
 from project.api.fields import NumericStr
-from project.api.schemas import (
-    SQLAlchemyBaseSchema,
-    PostSchema,
-    PatchSchema,
-)
+from project.api.schemas import SQLAlchemyBaseSchema
 
 
 class LocationModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = Location
+        load_instance = True
 
 
 class LocationBaseSchemaMixin(object):
@@ -55,13 +52,13 @@ class LocationSearchItemSchema(LocationSchema):
     pass
 
 
-class LocationPostRequestSchema(
-    PostSchema, LocationModelSchema, LocationBaseSchemaMixin
-):
-    pass
+class LocationPostRequestSchema(LocationModelSchema, LocationBaseSchemaMixin):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_post_schema()
 
 
-class LocationPatchRequestSchema(
-    PatchSchema, LocationModelSchema, LocationBaseSchemaMixin
-):
-    pass
+class LocationPatchRequestSchema(LocationModelSchema, LocationBaseSchemaMixin):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_patch_schema()

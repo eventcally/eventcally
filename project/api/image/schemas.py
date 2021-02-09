@@ -5,6 +5,7 @@ from project.models import Image
 class ImageIdSchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = Image
+        load_instance = True
 
     id = marshmallow.auto_field()
 

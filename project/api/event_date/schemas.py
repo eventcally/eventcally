@@ -12,6 +12,7 @@ from project.api.schemas import PaginationRequestSchema, PaginationResponseSchem
 class EventDateSchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = EventDate
+        load_instance = True
 
     id = marshmallow.auto_field()
     start = marshmallow.auto_field()
@@ -22,6 +23,7 @@ class EventDateSchema(marshmallow.SQLAlchemySchema):
 class EventDateRefSchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = EventDate
+        load_instance = True
 
     id = marshmallow.auto_field()
     start = marshmallow.auto_field()
@@ -44,6 +46,7 @@ class EventDateSearchRequestSchema(EventSearchRequestSchema):
 class EventDateSearchItemSchema(EventDateRefSchema):
     class Meta:
         model = EventDate
+        load_instance = True
 
     end = marshmallow.auto_field()
     event = fields.Nested(EventSearchItemSchema)

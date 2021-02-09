@@ -11,9 +11,8 @@ from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
     SQLAlchemyBaseSchema,
     IdSchemaMixin,
+    WriteIdSchemaMixin,
     TrackableSchemaMixin,
-    PostSchema,
-    PatchSchema,
     PaginationRequestSchema,
     PaginationResponseSchema,
 )
@@ -22,9 +21,14 @@ from project.api.schemas import (
 class OrganizerModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = EventOrganizer
+        load_instance = True
 
 
 class OrganizerIdSchema(OrganizerModelSchema, IdSchemaMixin):
+    pass
+
+
+class OrganizerWriteIdSchema(OrganizerModelSchema, WriteIdSchemaMixin):
     pass
 
 
@@ -68,13 +72,17 @@ class OrganizerListResponseSchema(PaginationResponseSchema):
     )
 
 
-class OrganizerPostRequestSchema(
-    PostSchema, OrganizerModelSchema, OrganizerBaseSchemaMixin
-):
-    location = fields.Nested(LocationPostRequestSchema, missing=None)
+class OrganizerPostRequestSchema(OrganizerModelSchema, OrganizerBaseSchemaMixin):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_post_schema()
+
+    location = fields.Nested(LocationPostRequestSchema)
 
 
-class OrganizerPatchRequestSchema(
-    PatchSchema, OrganizerModelSchema, OrganizerBaseSchemaMixin
-):
-    location = fields.Nested(LocationPatchRequestSchema, allow_none=True)
+class OrganizerPatchRequestSchema(OrganizerModelSchema, OrganizerBaseSchemaMixin):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_patch_schema()
+
+    location = fields.Nested(LocationPatchRequestSchema)
