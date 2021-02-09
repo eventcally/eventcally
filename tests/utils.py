@@ -169,6 +169,15 @@ class UtilActions(object):
     def assert_response_no_content(self, response):
         assert response.status_code == 204
 
+    def assert_response_unprocessable_entity(self, response):
+        assert response.status_code == 422
+
+    def assert_response_bad_request(self, response):
+        assert response.status_code == 400
+
+    def assert_response_api_error(self, response, message):
+        assert response.json["name"] == message
+
     def get_unauthorized(self, url):
         response = self._client.get(url)
         self.assert_response_unauthorized(response)

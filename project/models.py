@@ -1,4 +1,5 @@
 from project import db
+from project.utils import make_check_violation
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref, deferred, object_session
@@ -30,6 +31,7 @@ from authlib.integrations.sqla_oauth2 import (
     OAuth2TokenMixin,
 )
 import time
+from dateutil.relativedelta import relativedelta
 
 # Base
 
@@ -585,11 +587,11 @@ class Event(db.Model, TrackableMixin, EventMixin):
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
     admin_unit = db.relationship("AdminUnit", backref=db.backref("events", lazy=True))
     organizer_id = db.Column(
-        db.Integer, db.ForeignKey("eventorganizer.id"), nullable=True
+        db.Integer, db.ForeignKey("eventorganizer.id"), nullable=False
     )
     organizer = db.relationship("EventOrganizer", uselist=False)
     event_place_id = db.Column(
-        db.Integer, db.ForeignKey("eventplace.id"), nullable=True
+        db.Integer, db.ForeignKey("eventplace.id"), nullable=False
     )
     event_place = db.relationship("EventPlace", uselist=False)
 
@@ -620,6 +622,21 @@ class Event(db.Model, TrackableMixin, EventMixin):
             return self.categories[0]
         else:
             return None
+
+    def validate(self):
+        if self.organizer and self.organizer.admin_unit_id != self.admin_unit_id:
+            raise make_check_violation("Invalid organizer")
+
+        if self.event_place and self.event_place.admin_unit_id != self.admin_unit_id:
+            raise make_check_violation("Invalid place")
+
+        if self.start and self.end:
+            if self.start > self.end:
+                raise make_check_violation("The start must be before the end.")
+
+            max_end = self.start + relativedelta(days=1)
+            if self.end > max_end:
+                raise make_check_violation("An event can last a maximum of 24 hours.")
 
 
 @listens_for(Event, "before_insert")

@@ -166,6 +166,12 @@ class Seeder(object):
         self._utils.authorize(client_id, client_secret, scope)
         return (user_id, admin_unit_id)
 
+    def get_event_category_id(self, category_name):
+        from project.services.event import get_event_category
+
+        category = get_event_category(category_name)
+        return category.id
+
     def create_event(self, admin_unit_id, recurrence_rule=None):
         from project.models import Event
         from project.services.event import insert_event, upsert_event_category

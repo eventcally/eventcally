@@ -2,9 +2,7 @@ import datetime
 from json import JSONEncoder
 from flask import url_for
 from project.models import EventAttendanceMode, EventStatus
-import pytz
-
-berlin_tz = pytz.timezone("Europe/Berlin")
+from project.dateutils import berlin_tz
 
 
 class DateTimeEncoder(JSONEncoder):

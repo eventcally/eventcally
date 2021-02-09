@@ -23,33 +23,29 @@ class PlaceResource(BaseResource):
     @doc(
         summary="Update place", tags=["Places"], security=[{"oauth2": ["place:write"]}]
     )
-    @use_kwargs(PlacePostRequestSchema, location="json")
+    @use_kwargs(PlacePostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_oauth("place:write")
-    def put(self, id, **kwargs):
+    def put(self, id):
         login_api_user_or_401(current_token.user)
         place = EventPlace.query.get_or_404(id)
         access_or_401(place.adminunit, "place:update")
 
-        place = PlacePostRequestSchema(load_instance=True).load(
-            kwargs, session=db.session, instance=place
-        )
+        place = self.update_instance(PlacePostRequestSchema, instance=place)
         db.session.commit()
 
         return make_response("", 204)
 
     @doc(summary="Patch place", tags=["Places"], security=[{"oauth2": ["place:write"]}])
-    @use_kwargs(PlacePatchRequestSchema, location="json")
+    @use_kwargs(PlacePatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_oauth("place:write")
-    def patch(self, id, **kwargs):
+    def patch(self, id):
         login_api_user_or_401(current_token.user)
         place = EventPlace.query.get_or_404(id)
         access_or_401(place.adminunit, "place:update")
 
-        place = PlacePatchRequestSchema(load_instance=True).load(
-            kwargs, session=db.session, instance=place
-        )
+        place = self.update_instance(PlacePatchRequestSchema, instance=place)
         db.session.commit()
 
         return make_response("", 204)

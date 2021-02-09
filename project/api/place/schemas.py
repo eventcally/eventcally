@@ -12,9 +12,8 @@ from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
     SQLAlchemyBaseSchema,
     IdSchemaMixin,
+    WriteIdSchemaMixin,
     TrackableSchemaMixin,
-    PostSchema,
-    PatchSchema,
     PaginationRequestSchema,
     PaginationResponseSchema,
 )
@@ -23,9 +22,14 @@ from project.api.schemas import (
 class PlaceModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = EventPlace
+        load_instance = True
 
 
 class PlaceIdSchema(PlaceModelSchema, IdSchemaMixin):
+    pass
+
+
+class PlaceWriteIdSchema(PlaceModelSchema, WriteIdSchemaMixin):
     pass
 
 
@@ -54,9 +58,6 @@ class PlaceRefSchema(PlaceIdSchema):
 
 
 class PlaceSearchItemSchema(PlaceRefSchema):
-    class Meta:
-        model = EventPlace
-
     location = fields.Nested(LocationSearchItemSchema)
 
 
@@ -72,9 +73,17 @@ class PlaceListResponseSchema(PaginationResponseSchema):
     )
 
 
-class PlacePostRequestSchema(PostSchema, PlaceModelSchema, PlaceBaseSchemaMixin):
-    location = fields.Nested(LocationPostRequestSchema, missing=None)
+class PlacePostRequestSchema(PlaceModelSchema, PlaceBaseSchemaMixin):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_post_schema()
+
+    location = fields.Nested(LocationPostRequestSchema)
 
 
-class PlacePatchRequestSchema(PatchSchema, PlaceModelSchema, PlaceBaseSchemaMixin):
-    location = fields.Nested(LocationPatchRequestSchema, allow_none=True)
+class PlacePatchRequestSchema(PlaceModelSchema, PlaceBaseSchemaMixin):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_patch_schema()
+
+    location = fields.Nested(LocationPatchRequestSchema)

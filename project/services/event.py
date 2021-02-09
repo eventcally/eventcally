@@ -21,8 +21,12 @@ from sqlalchemy.orm import joinedload, contains_eager, defaultload
 from dateutil.relativedelta import relativedelta
 
 
+def get_event_category(category_name):
+    return EventCategory.query.filter_by(name=category_name).first()
+
+
 def upsert_event_category(category_name):
-    result = EventCategory.query.filter_by(name=category_name).first()
+    result = get_event_category(category_name)
     if result is None:
         result = EventCategory(name=category_name)
         db.session.add(result)

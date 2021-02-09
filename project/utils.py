@@ -1,6 +1,8 @@
 from flask_babelex import lazy_gettext
 import pathlib
 import os
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errorcodes import UNIQUE_VIOLATION, CHECK_VIOLATION
 
 
 def get_event_category_name(category):
@@ -28,3 +30,23 @@ def make_dir(path):
 
 def split_by_crlf(s):
     return [v for v in s.splitlines() if v]
+
+
+def make_integrity_error(
+    pgcode: str, message: str = "", statement: str = None
+) -> IntegrityError:
+    class Psycog2Error(object):
+        def __init__(self, pgcode, message):
+            self.pgcode = pgcode
+            self.message = message
+
+    orig = Psycog2Error(pgcode, message)
+    return IntegrityError(statement, list(), orig)
+
+
+def make_check_violation(message: str = None, statement: str = "") -> IntegrityError:
+    return make_integrity_error(CHECK_VIOLATION, message, statement)
+
+
+def make_unique_violation(message: str = None, statement: str = "") -> IntegrityError:
+    return make_integrity_error(UNIQUE_VIOLATION, message, statement)

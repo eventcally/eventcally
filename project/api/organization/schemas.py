@@ -9,6 +9,7 @@ from project.api.schemas import PaginationRequestSchema, PaginationResponseSchem
 class OrganizationIdSchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = AdminUnit
+        load_instance = True
 
     id = marshmallow.auto_field()
 
