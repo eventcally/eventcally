@@ -54,7 +54,7 @@ class EventResource(BaseResource):
     def put(self, id):
         login_api_user_or_401(current_token.user)
         event = Event.query.get_or_404(id)
-        access_or_401(event.admin_unit_id, "event:update")
+        access_or_401(event.admin_unit, "event:update")
 
         event = self.update_instance(EventPostRequestSchema, instance=event)
         update_event(event)
@@ -70,7 +70,7 @@ class EventResource(BaseResource):
     def patch(self, id):
         login_api_user_or_401(current_token.user)
         event = Event.query.get_or_404(id)
-        access_or_401(event.admin_unit_id, "event:update")
+        access_or_401(event.admin_unit, "event:update")
 
         event = self.update_instance(EventPatchRequestSchema, instance=event)
         update_event(event)
@@ -87,7 +87,7 @@ class EventResource(BaseResource):
     def delete(self, id):
         login_api_user_or_401(current_token.user)
         event = Event.query.get_or_404(id)
-        access_or_401(event.admin_unit_id, "event:delete")
+        access_or_401(event.admin_unit, "event:delete")
 
         db.session.delete(event)
         db.session.commit()

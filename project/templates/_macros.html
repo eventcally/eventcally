@@ -410,7 +410,9 @@
         <div class="my-4">{{ render_image(event.photo, 700) }}</div>
       {% endif %}
 
-      <div class="my-4">{{ event.description }}</div>
+      {% if event.description %}
+        <div class="my-4">{{ event.description }}</div>
+      {% endif %}
 
       <div class="mt-4">
         {{ render_event_add_props(event) }}
