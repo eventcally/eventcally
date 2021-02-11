@@ -8,6 +8,7 @@ def pytest_generate_tests(metafunc):
     os.environ["DATABASE_URL"] = os.environ.get(
         "TEST_DATABASE_URL", "postgresql://postgres@localhost/gsevpt_tests"
     )
+    os.environ["AUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 
 @pytest.fixture

@@ -1,7 +1,8 @@
 from project import db
+from project.utils import make_check_violation
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship, backref, deferred
+from sqlalchemy.orm import relationship, backref, deferred, object_session
 from sqlalchemy.schema import CheckConstraint
 from sqlalchemy.event import listens_for
 from sqlalchemy import (
@@ -24,6 +25,13 @@ import datetime
 from project.dbtypes import IntegerEnum
 from geoalchemy2 import Geometry
 from sqlalchemy import and_
+from authlib.integrations.sqla_oauth2 import (
+    OAuth2ClientMixin,
+    OAuth2AuthorizationCodeMixin,
+    OAuth2TokenMixin,
+)
+import time
+from dateutil.relativedelta import relativedelta
 
 # Base
 
@@ -156,11 +164,62 @@ class User(db.Model, UserMixin):
         "Role", secondary="roles_users", backref=backref("users", lazy="dynamic")
     )
 
+    def get_user_id(self):
+        return self.id
+
+
+# OAuth Consumer: Wenn wir OAuth consumen und sich ein Nutzer per Google oder Facebook anmelden möchte
+
 
 class OAuth(OAuthConsumerMixin, db.Model):
     provider_user_id = Column(String(256), unique=True, nullable=False)
     user_id = Column(Integer(), ForeignKey("user.id"), nullable=False)
     user = db.relationship("User")
+
+
+# OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
+
+
+class OAuth2Client(db.Model, OAuth2ClientMixin):
+    __tablename__ = "oauth2_client"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
+    user = db.relationship("User")
+
+    def check_redirect_uri(self, redirect_uri):
+        return True
+
+
+class OAuth2AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
+    __tablename__ = "oauth2_code"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
+    user = db.relationship("User")
+
+
+class OAuth2Token(db.Model, OAuth2TokenMixin):
+    __tablename__ = "oauth2_token"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
+    user = db.relationship("User")
+
+    @property
+    def client(self):
+        return (
+            object_session(self)
+            .query(OAuth2Client)
+            .filter(OAuth2Client.client_id == self.client_id)
+            .first()
+        )
+
+    def is_refresh_token_active(self):
+        if self.revoked:
+            return False
+        expires_at = self.issued_at + self.expires_in * 2
+        return expires_at >= time.time()
 
 
 # Admin Unit
@@ -298,6 +357,7 @@ def update_location_coordinate(mapper, connect, self):
 # Events
 class EventPlace(db.Model, TrackableMixin):
     __tablename__ = "eventplace"
+    __table_args__ = (UniqueConstraint("name", "admin_unit_id"),)
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"))
@@ -527,11 +587,11 @@ class Event(db.Model, TrackableMixin, EventMixin):
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
     admin_unit = db.relationship("AdminUnit", backref=db.backref("events", lazy=True))
     organizer_id = db.Column(
-        db.Integer, db.ForeignKey("eventorganizer.id"), nullable=True
+        db.Integer, db.ForeignKey("eventorganizer.id"), nullable=False
     )
     organizer = db.relationship("EventOrganizer", uselist=False)
     event_place_id = db.Column(
-        db.Integer, db.ForeignKey("eventplace.id"), nullable=True
+        db.Integer, db.ForeignKey("eventplace.id"), nullable=False
     )
     event_place = db.relationship("EventPlace", uselist=False)
 
@@ -562,6 +622,21 @@ class Event(db.Model, TrackableMixin, EventMixin):
             return self.categories[0]
         else:
             return None
+
+    def validate(self):
+        if self.organizer and self.organizer.admin_unit_id != self.admin_unit_id:
+            raise make_check_violation("Invalid organizer")
+
+        if self.event_place and self.event_place.admin_unit_id != self.admin_unit_id:
+            raise make_check_violation("Invalid place")
+
+        if self.start and self.end:
+            if self.start > self.end:
+                raise make_check_violation("The start must be before the end.")
+
+            max_end = self.start + relativedelta(days=1)
+            if self.end > max_end:
+                raise make_check_violation("An event can last a maximum of 24 hours.")
 
 
 @listens_for(Event, "before_insert")

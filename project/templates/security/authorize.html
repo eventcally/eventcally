@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field %}
+
+{% block content %}
+
+<div class="w-normal d-flex flex-column">
+
+  <div class="card mx-auto">
+    <div class="card-body">
+      <h5>{{ _('"%(client_name)s" wants to access your account', client_name=grant.client.client_name) }}</h5>
+
+      <p class="text-center"><strong>{{ user.email }}</strong></p>
+
+      <p class="mb-1">{{ _('This will allow "%(client_name)s" to:', client_name=grant.client.client_name) }}</p>
+
+      <ul>
+      {% for key, value in scopes.items() %}
+          <li>{{ value }}</li>
+      {% endfor %}
+      </ul>
+
+      <form action="" method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="d-flex flex-column mt-5">
+          <div class="mx-auto">
+            {{ render_field(form.allow, class="btn btn-success mx-auto") }}
+          </div>
+          <div class="mx-auto">
+            {{ render_field(form.deny, class="btn btn-light mx-auto") }}
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

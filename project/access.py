@@ -1,4 +1,5 @@
 from flask import abort
+from flask_login import login_user
 from flask_security import current_user
 from flask_security.utils import FsPermNeed
 from flask_principal import Permission
@@ -10,6 +11,20 @@ from sqlalchemy import and_
 def has_current_user_permission(permission):
     user_perm = Permission(FsPermNeed(permission))
     return user_perm.can()
+
+
+def has_owner_access(user_id):
+    return user_id == current_user.id
+
+
+def owner_access_or_401(user_id):
+    if not has_owner_access(user_id):
+        abort(401)
+
+
+def login_api_user_or_401(user):
+    if not login_user(user):
+        abort(401)
 
 
 def has_admin_unit_member_role(admin_unit_member, role_name):

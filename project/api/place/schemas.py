@@ -1,34 +1,53 @@
-from marshmallow import fields
-from project import marshmallow
+from marshmallow import fields, validate
+from project.api import marshmallow
 from project.models import EventPlace
-from project.api.image.schemas import ImageRefSchema
-from project.api.location.schemas import LocationRefSchema, LocationSearchItemSchema
+from project.api.image.schemas import ImageSchema
+from project.api.location.schemas import (
+    LocationSchema,
+    LocationSearchItemSchema,
+    LocationPostRequestSchema,
+    LocationPatchRequestSchema,
+)
 from project.api.organization.schemas import OrganizationRefSchema
-from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.api.schemas import (
+    SQLAlchemyBaseSchema,
+    IdSchemaMixin,
+    WriteIdSchemaMixin,
+    TrackableSchemaMixin,
+    PaginationRequestSchema,
+    PaginationResponseSchema,
+)
 
 
-class PlaceIdSchema(marshmallow.SQLAlchemySchema):
+class PlaceModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = EventPlace
+        load_instance = True
 
-    id = marshmallow.auto_field()
+
+class PlaceIdSchema(PlaceModelSchema, IdSchemaMixin):
+    pass
 
 
-class PlaceBaseSchema(PlaceIdSchema):
-    created_at = marshmallow.auto_field()
-    updated_at = marshmallow.auto_field()
-    name = marshmallow.auto_field()
-    url = marshmallow.auto_field()
+class PlaceWriteIdSchema(PlaceModelSchema, WriteIdSchemaMixin):
+    pass
+
+
+class PlaceBaseSchemaMixin(TrackableSchemaMixin):
+    name = marshmallow.auto_field(
+        required=True, validate=validate.Length(min=3, max=255)
+    )
+    url = marshmallow.auto_field(validate=[validate.URL(), validate.Length(max=255)])
     description = marshmallow.auto_field()
 
 
-class PlaceSchema(PlaceBaseSchema):
-    location = fields.Nested(LocationRefSchema)
-    photo = fields.Nested(ImageRefSchema)
+class PlaceSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
+    location = fields.Nested(LocationSchema)
+    photo = fields.Nested(ImageSchema)
     organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
 
 
-class PlaceDumpSchema(PlaceBaseSchema):
+class PlaceDumpSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
     location_id = fields.Int()
     photo_id = fields.Int()
     organization_id = fields.Int(attribute="admin_unit_id")
@@ -39,9 +58,6 @@ class PlaceRefSchema(PlaceIdSchema):
 
 
 class PlaceSearchItemSchema(PlaceRefSchema):
-    class Meta:
-        model = EventPlace
-
     location = fields.Nested(LocationSearchItemSchema)
 
 
@@ -55,3 +71,19 @@ class PlaceListResponseSchema(PaginationResponseSchema):
     items = fields.List(
         fields.Nested(PlaceRefSchema), metadata={"description": "Places"}
     )
+
+
+class PlacePostRequestSchema(PlaceModelSchema, PlaceBaseSchemaMixin):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_post_schema()
+
+    location = fields.Nested(LocationPostRequestSchema)
+
+
+class PlacePatchRequestSchema(PlaceModelSchema, PlaceBaseSchemaMixin):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_patch_schema()
+
+    location = fields.Nested(LocationPatchRequestSchema)

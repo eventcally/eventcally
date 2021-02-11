@@ -1,8 +1,27 @@
 from project import app, db
+from project.api import api_docs, scopes
 from project.services.user import upsert_user_role
 from project.services.admin_unit import upsert_admin_unit_member_role
 from project.services.event import upsert_event_category
 from project.models import Location
+from flask import url_for
+from apispec.exceptions import DuplicateComponentNameError
+
+
+@app.before_first_request
+def add_oauth2_scheme():
+    oauth2_scheme = {
+        "type": "oauth2",
+        "authorizationUrl": url_for("authorize", _external=True),
+        "tokenUrl": url_for("issue_token", _external=True),
+        "flow": "accessCode",
+        "scopes": scopes,
+    }
+
+    try:
+        api_docs.spec.components.security_scheme("oauth2", oauth2_scheme)
+    except DuplicateComponentNameError:  # pragma: no cover
+        pass
 
 
 @app.before_first_request
@@ -37,12 +56,23 @@ def create_initial_data():
         "reference_request:delete",
         "reference_request:verify",
     ]
+    early_adopter_permissions = [
+        "oauth2_client:create",
+        "oauth2_client:read",
+        "oauth2_client:update",
+        "oauth2_client:delete",
+        "oauth2_token:create",
+        "oauth2_token:read",
+        "oauth2_token:update",
+        "oauth2_token:delete",
+    ]
 
     upsert_admin_unit_member_role("admin", "Administrator", admin_permissions)
     upsert_admin_unit_member_role("event_verifier", "Event expert", event_permissions)
 
     upsert_user_role("admin", "Administrator", admin_permissions)
     upsert_user_role("event_verifier", "Event expert", event_permissions)
+    upsert_user_role("early_adopter", "Early Adopter", early_adopter_permissions)
 
     Location.update_coordinates()
 

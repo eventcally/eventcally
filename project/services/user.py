@@ -17,7 +17,7 @@ def add_roles_to_user(email, roles):
 
 
 def add_admin_roles_to_user(email):
-    add_roles_to_user(email, ["admin", "event_verifier"])
+    add_roles_to_user(email, ["admin", "event_verifier", "early_adopter"])
 
 
 def remove_roles_from_user(email, roles):

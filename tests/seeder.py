@@ -4,9 +4,10 @@ class Seeder(object):
         self._db = db
         self._utils = utils
 
-    def setup_base(self, admin=False):
+    def setup_base(self, admin=False, log_in=True):
         user_id = self.create_user(admin=admin)
-        self._utils.login()
+        if log_in:
+            self._utils.login()
         admin_unit_id = self.create_admin_unit(user_id)
         return (user_id, admin_unit_id)
 
@@ -125,6 +126,51 @@ class Seeder(object):
             organizer_id = self.upsert_event_organizer(admin_unit_id, admin_unit.name)
 
         return organizer_id
+
+    def insert_default_oauth2_client(self, user_id):
+        from project.api import scope_list
+        from project.models import OAuth2Client
+        from project.services.oauth2_client import complete_oauth2_client
+
+        with self._app.app_context():
+            client = OAuth2Client()
+            client.user_id = user_id
+            complete_oauth2_client(client)
+
+            metadata = dict()
+            metadata["client_name"] = "Mein Client"
+            metadata["scope"] = " ".join(scope_list)
+            metadata["grant_types"] = ["authorization_code", "refresh_token"]
+            metadata["response_types"] = ["code"]
+            metadata["token_endpoint_auth_method"] = "client_secret_post"
+            client.set_client_metadata(metadata)
+
+            self._db.session.add(client)
+            self._db.session.commit()
+            client_id = client.id
+
+        return client_id
+
+    def setup_api_access(self):
+        user_id, admin_unit_id = self.setup_base(admin=True)
+        oauth2_client_id = self.insert_default_oauth2_client(user_id)
+
+        with self._app.app_context():
+            from project.models import OAuth2Client
+
+            oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+            client_id = oauth2_client.client_id
+            client_secret = oauth2_client.client_secret
+            scope = oauth2_client.scope
+
+        self._utils.authorize(client_id, client_secret, scope)
+        return (user_id, admin_unit_id)
+
+    def get_event_category_id(self, category_name):
+        from project.services.event import get_event_category
+
+        category = get_event_category(category_name)
+        return category.id
 
     def create_event(self, admin_unit_id, recurrence_rule=None):
         from project.models import Event

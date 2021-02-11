@@ -1,14 +1,15 @@
 from marshmallow import fields
-from project import marshmallow
+from project.api import marshmallow
 from project.models import AdminUnit
-from project.api.location.schemas import LocationRefSchema
-from project.api.image.schemas import ImageRefSchema
+from project.api.location.schemas import LocationSchema
+from project.api.image.schemas import ImageSchema
 from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
 
 
 class OrganizationIdSchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = AdminUnit
+        load_instance = True
 
     id = marshmallow.auto_field()
 
@@ -25,8 +26,8 @@ class OrganizationBaseSchema(OrganizationIdSchema):
 
 
 class OrganizationSchema(OrganizationBaseSchema):
-    location = fields.Nested(LocationRefSchema)
-    logo = fields.Nested(ImageRefSchema)
+    location = fields.Nested(LocationSchema)
+    logo = fields.Nested(ImageSchema)
 
 
 class OrganizationDumpSchema(OrganizationBaseSchema):

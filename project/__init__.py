@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, url_for, redirect, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import (
     Security,
@@ -10,12 +10,9 @@ from flask_cors import CORS
 from flask_qrcode import QRcode
 from flask_mail import Mail, email_dispatched
 from flask_migrate import Migrate
-from flask_marshmallow import Marshmallow
-from flask_restful import Api
-from apispec import APISpec
-from apispec.ext.marshmallow import MarshmallowPlugin
-from flask_apispec.extension import FlaskApiSpec
 from flask_gzip import Gzip
+from webargs import flaskparser
+from project.custom_session_interface import CustomSessionInterface
 
 # Create app
 app = Flask(__name__)
@@ -59,25 +56,6 @@ babel = Babel(app)
 # cors
 cors = CORS(app, resources={r"/api/*", "/swagger/"})
 
-# API
-rest_api = Api(app, "/api/v1")
-marshmallow = Marshmallow(app)
-marshmallow_plugin = MarshmallowPlugin()
-app.config.update(
-    {
-        "APISPEC_SPEC": APISpec(
-            title="Oveda API",
-            version="0.1.0",
-            plugins=[marshmallow_plugin],
-            openapi_version="2.0",
-            info=dict(
-                description="This API provides endpoints to interact with the Oveda data. At the moment, there is no authorization needed."
-            ),
-        ),
-    }
-)
-api_docs = FlaskApiSpec(app)
-
 # Mail
 mail_server = os.getenv("MAIL_SERVER")
 
@@ -108,6 +86,9 @@ if app.config["MAIL_SUPPRESS_SEND"]:
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+# API
+from project.api import RestApi
+
 # qr code
 QRcode(app)
 
@@ -122,6 +103,14 @@ from project.forms.security import ExtendedRegisterForm
 
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
+app.session_interface = CustomSessionInterface()
+
+# OAuth2
+from project.oauth2 import config_oauth
+
+config_oauth(app)
+
+# Init misc modules
 
 from project import i10n
 from project import jinja_filters
@@ -142,6 +131,9 @@ from project.views import (
     image,
     manage,
     organizer,
+    oauth,
+    oauth2_client,
+    oauth2_token,
     planing,
     reference,
     reference_request,
