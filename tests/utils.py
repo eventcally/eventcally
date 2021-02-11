@@ -76,7 +76,7 @@ class UtilActions(object):
         )
 
     def create_form_data(self, response, values: dict) -> dict:
-        from project.scrape.form import Form
+        from tests.form import Form
 
         soup = BeautifulSoup(response.data, "html.parser")
         form = Form(soup.find("form"))
