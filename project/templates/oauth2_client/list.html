@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_pagination %}
+{% block title %}
+{{ _('OAuth2 clients') }}
+{% endblock %}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('profile') }}">{{ _('Profile') }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ _('OAuth2 clients') }}</li>
+    </ol>
+</nav>
+
+{% if current_user.has_permission('oauth2_client:create') %}
+<div class="my-4">
+    <a class="btn btn-outline-secondary my-1" href="{{ url_for('oauth2_client_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create OAuth2 client') }}</a>
+</div>
+{% endif %}
+
+<div class="table-responsive">
+    <table class="table table-sm table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>{{ _('Name') }}</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for oauth2_client in oauth2_clients %}
+                <tr>
+                    <td><a href="{{ url_for('oauth2_client', id=oauth2_client.id) }}">{{ oauth2_client.client_name }}</a></td>
+                    <td><a href="{{ url_for('oauth2_client_update', id=oauth2_client.id) }}">{{ _('Edit') }}</a></td>
+                    <td><a href="{{ url_for('oauth2_client_delete', id=oauth2_client.id) }}">{{ _('Delete') }}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="my-4">{{ render_pagination(pagination) }}</div>
+
+{% endblock %}

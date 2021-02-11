@@ -1,4 +1,5 @@
 from project.api import add_api_resource
+from flask import make_response
 from flask_apispec import marshal_with, doc, use_kwargs
 from project.api.resources import BaseResource
 from project.api.event.schemas import (
@@ -7,15 +8,26 @@ from project.api.event.schemas import (
     EventListResponseSchema,
     EventSearchRequestSchema,
     EventSearchResponseSchema,
+    EventPostRequestSchema,
+    EventPatchRequestSchema,
 )
 from project.api.event_date.schemas import (
     EventDateListRequestSchema,
     EventDateListResponseSchema,
 )
 from project.models import Event, EventDate
-from project.services.event import get_events_query, get_event_with_details_or_404
+from project.services.event import (
+    get_events_query,
+    get_event_with_details_or_404,
+    update_event,
+)
 from project.services.event_search import EventSearchParams
 from sqlalchemy.orm import lazyload, load_only
+from project.oauth2 import require_oauth
+from authlib.integrations.flask_oauth2 import current_token
+from project import db
+from project.access import access_or_401, login_api_user_or_401
+from project.views.event import send_referenced_event_changed_mails
 
 
 class EventListResource(BaseResource):
@@ -32,6 +44,55 @@ class EventResource(BaseResource):
     @marshal_with(EventSchema)
     def get(self, id):
         return get_event_with_details_or_404(id)
+
+    @doc(
+        summary="Update event", tags=["Events"], security=[{"oauth2": ["event:write"]}]
+    )
+    @use_kwargs(EventPostRequestSchema, location="json", apply=False)
+    @marshal_with(None, 204)
+    @require_oauth("event:write")
+    def put(self, id):
+        login_api_user_or_401(current_token.user)
+        event = Event.query.get_or_404(id)
+        access_or_401(event.admin_unit, "event:update")
+
+        event = self.update_instance(EventPostRequestSchema, instance=event)
+        update_event(event)
+        db.session.commit()
+        send_referenced_event_changed_mails(event)
+
+        return make_response("", 204)
+
+    @doc(summary="Patch event", tags=["Events"], security=[{"oauth2": ["event:write"]}])
+    @use_kwargs(EventPatchRequestSchema, location="json", apply=False)
+    @marshal_with(None, 204)
+    @require_oauth("event:write")
+    def patch(self, id):
+        login_api_user_or_401(current_token.user)
+        event = Event.query.get_or_404(id)
+        access_or_401(event.admin_unit, "event:update")
+
+        event = self.update_instance(EventPatchRequestSchema, instance=event)
+        update_event(event)
+        db.session.commit()
+        send_referenced_event_changed_mails(event)
+
+        return make_response("", 204)
+
+    @doc(
+        summary="Delete event", tags=["Events"], security=[{"oauth2": ["event:write"]}]
+    )
+    @marshal_with(None, 204)
+    @require_oauth("event:write")
+    def delete(self, id):
+        login_api_user_or_401(current_token.user)
+        event = Event.query.get_or_404(id)
+        access_or_401(event.admin_unit, "event:delete")
+
+        db.session.delete(event)
+        db.session.commit()
+
+        return make_response("", 204)
 
 
 class EventDatesResource(BaseResource):

@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_pagination %}
+{% block title %}
+{{ _('OAuth2 tokens') }}
+{% endblock %}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('profile') }}">{{ _('Profile') }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ _('OAuth2 tokens') }}</li>
+    </ol>
+</nav>
+
+<div class="table-responsive">
+    <table class="table table-sm table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>{{ _('Client') }}</th>
+                <th>{{ _('Scopes') }}</th>
+                <th>{{ _('Status') }}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for oauth2_token in oauth2_tokens %}
+                <tr>
+                    <td>{{ oauth2_token.client.client_name }}</td>
+                    <td>{{ oauth2_token.client.scope }}</td>
+                    <td>{% if oauth2_token.revoked %}{{ _('Revoked') }}{% else %}{{ _('Active') }}{% endif %}</td>
+                    <td>{% if not oauth2_token.revoked %}<a href="{{ url_for('oauth2_token_revoke', id=oauth2_token.id) }}">{{ _('Revoke') }}</a>{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="my-4">{{ render_pagination(pagination) }}</div>
+
+{% endblock %}

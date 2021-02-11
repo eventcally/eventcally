@@ -21,3 +21,16 @@ def test_event_category(client, app, db, seeder):
         db.session.commit()
 
         assert event.category is None
+
+
+def test_oauth2_token(client, app):
+    from project.models import OAuth2Token
+
+    token = OAuth2Token()
+    token.revoked = True
+    assert not token.is_refresh_token_active()
+
+    token.revoked = False
+    token.issued_at = 0
+    token.expires_in = 0
+    assert not token.is_refresh_token_active()

@@ -1,6 +1,8 @@
 from flask_babelex import lazy_gettext
 import pathlib
 import os
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errorcodes import UNIQUE_VIOLATION, CHECK_VIOLATION
 
 
 def get_event_category_name(category):
@@ -11,9 +13,40 @@ def get_localized_enum_name(enum):
     return lazy_gettext(enum.__class__.__name__ + "." + enum.name)
 
 
+def get_localized_scope(scope: str) -> str:
+    type_name, action = scope.split(":")
+    loc_lazy_gettext = lazy_gettext(type_name.capitalize())
+    loc_action = lazy_gettext(action)
+    return f"{loc_lazy_gettext} ({loc_action})"
+
+
 def make_dir(path):
     try:
         original_umask = os.umask(0)
         pathlib.Path(path).mkdir(parents=True, exist_ok=True)
     finally:
         os.umask(original_umask)
+
+
+def split_by_crlf(s):
+    return [v for v in s.splitlines() if v]
+
+
+def make_integrity_error(
+    pgcode: str, message: str = "", statement: str = None
+) -> IntegrityError:
+    class Psycog2Error(object):
+        def __init__(self, pgcode, message):
+            self.pgcode = pgcode
+            self.message = message
+
+    orig = Psycog2Error(pgcode, message)
+    return IntegrityError(statement, list(), orig)
+
+
+def make_check_violation(message: str = None, statement: str = "") -> IntegrityError:
+    return make_integrity_error(CHECK_VIOLATION, message, statement)
+
+
+def make_unique_violation(message: str = None, statement: str = "") -> IntegrityError:
+    return make_integrity_error(UNIQUE_VIOLATION, message, statement)

@@ -186,7 +186,7 @@ def test_create_startAfterEnd(client, app, utils, seeder, mocker):
     )
 
 
-def test_create_DurationMoreThan24Hours(client, app, utils, seeder, mocker):
+def test_create_durationMoreThan24Hours(client, app, utils, seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
@@ -430,7 +430,7 @@ def test_delete_nameDoesNotMatch(client, seeder, utils, app, mocker):
 
 def test_rrule(client, seeder, utils, app):
     url = utils.get_url("event_rrule")
-    json = utils.post_json(
+    response = utils.post_json(
         url,
         {
             "year": 2020,
@@ -440,6 +440,7 @@ def test_rrule(client, seeder, utils, app):
             "start": 0,
         },
     )
+    json = response.json
 
     assert json["batch"]["batch_size"] == 10
 
