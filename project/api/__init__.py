@@ -9,6 +9,8 @@ from flask_marshmallow import Marshmallow
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask_apispec.extension import FlaskApiSpec
+from flask import url_for
+from apispec.exceptions import DuplicateComponentNameError
 
 
 class RestApi(Api):
@@ -137,6 +139,28 @@ def enum_to_properties(self, field, **kwargs):
 def add_api_resource(resource, url, endpoint):
     rest_api.add_resource(resource, url, endpoint=endpoint)
     api_docs.register(resource, endpoint=endpoint)
+
+
+def add_oauth2_scheme_with_transport(insecure: bool):
+    if insecure:
+        authorizationUrl = url_for("authorize", _external=True)
+        tokenUrl = url_for("issue_token", _external=True)
+    else:
+        authorizationUrl = url_for("authorize", _external=True, _scheme="https")
+        tokenUrl = url_for("issue_token", _external=True, _scheme="https")
+
+    oauth2_scheme = {
+        "type": "oauth2",
+        "authorizationUrl": authorizationUrl,
+        "tokenUrl": tokenUrl,
+        "flow": "accessCode",
+        "scopes": scopes,
+    }
+
+    try:
+        api_docs.spec.components.security_scheme("oauth2", oauth2_scheme)
+    except DuplicateComponentNameError:  # pragma: no cover
+        pass
 
 
 marshmallow_plugin.converter.add_attribute_function(enum_to_properties)
