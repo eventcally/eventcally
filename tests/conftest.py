@@ -15,6 +15,7 @@ def pytest_generate_tests(metafunc):
 def app():
     from project import app
 
+    app.config["SERVER_NAME"] = None
     app.config["TESTING"] = True
     app.testing = True
 
