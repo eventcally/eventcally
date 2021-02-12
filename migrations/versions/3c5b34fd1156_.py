@@ -5,12 +5,13 @@ Revises: 27da3ceea723
 Create Date: 2020-11-08 19:11:32.132404
 
 """
-from alembic import op
 import sqlalchemy as sa
-from sqlalchemy import orm
 import sqlalchemy_utils
-from project import dbtypes
+from alembic import op
+from sqlalchemy import orm
 from sqlalchemy.ext.declarative import declarative_base
+
+from project import dbtypes
 
 # revision identifiers, used by Alembic.
 revision = "3c5b34fd1156"

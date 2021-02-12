@@ -1,16 +1,17 @@
+from sqlalchemy import and_, func, or_
+
 from project import db
 from project.models import (
     AdminUnit,
     AdminUnitMember,
-    AdminUnitMemberRole,
     AdminUnitMemberInvitation,
+    AdminUnitMemberRole,
     EventOrganizer,
     EventPlace,
     Location,
 )
-from project.services.location import assign_location_values
 from project.services.image import upsert_image_with_data
-from sqlalchemy import func, and_, or_
+from project.services.location import assign_location_values
 
 
 def insert_admin_unit_for_user(admin_unit, user):

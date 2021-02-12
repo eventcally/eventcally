@@ -1,11 +1,12 @@
+from dateutil.relativedelta import relativedelta
+from flask import request
+
 from project.dateutils import (
-    today,
     date_set_end_of_day,
     form_input_from_date,
     form_input_to_date,
+    today,
 )
-from dateutil.relativedelta import relativedelta
-from flask import request
 
 
 class EventSearchParams(object):

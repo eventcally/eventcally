@@ -1,8 +1,9 @@
-from marshmallow import validate, validates_schema, ValidationError
+from marshmallow import ValidationError, validate, validates_schema
+
 from project.api import marshmallow
-from project.models import Location
 from project.api.fields import NumericStr
 from project.api.schemas import SQLAlchemyBaseSchema
+from project.models import Location
 
 
 class LocationModelSchema(SQLAlchemyBaseSchema):

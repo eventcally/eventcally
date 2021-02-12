@@ -1,6 +1,7 @@
+from sqlalchemy import and_
+
 from project import db
 from project.models import EventOrganizer, Location
-from sqlalchemy import and_
 
 
 def get_event_organizer(admin_unit_id, name):

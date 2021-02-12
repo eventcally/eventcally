@@ -1,10 +1,12 @@
+import os
+from io import BytesIO
+
+import PIL
+from flask import request, send_file
+from sqlalchemy.orm import load_only
+
 from project import app, img_path
 from project.models import Image
-from sqlalchemy.orm import load_only
-import PIL
-from io import BytesIO
-import os
-from flask import send_file, request
 from project.utils import make_dir
 
 

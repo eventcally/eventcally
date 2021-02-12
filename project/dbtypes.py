@@ -1,5 +1,5 @@
-from sqlalchemy.types import TypeDecorator
 from sqlalchemy import Integer
+from sqlalchemy.types import TypeDecorator
 
 
 class IntegerEnum(TypeDecorator):

@@ -1,7 +1,8 @@
+from flask_apispec import doc, marshal_with
+
 from project.api import add_api_resource
-from flask_apispec import marshal_with, doc
-from project.api.resources import BaseResource
 from project.api.event_reference.schemas import EventReferenceSchema
+from project.api.resources import BaseResource
 from project.models import EventReference
 
 

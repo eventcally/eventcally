@@ -1,8 +1,9 @@
-from flask_babelex import lazy_gettext
-import pathlib
 import os
+import pathlib
+
+from flask_babelex import lazy_gettext
+from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
 from sqlalchemy.exc import IntegrityError
-from psycopg2.errorcodes import UNIQUE_VIOLATION, CHECK_VIOLATION
 
 
 def get_event_category_name(category):

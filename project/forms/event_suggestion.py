@@ -1,23 +1,24 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import (
+    BooleanField,
+    SelectField,
     SelectMultipleField,
     StringField,
     SubmitField,
-    SelectField,
-    BooleanField,
 )
 from wtforms.fields.html5 import EmailField, TelField
 from wtforms.validators import DataRequired, Optional
-from project.models import (
-    EventRejectionReason,
-    Image,
-    EventTargetGroupOrigin,
-    EventAttendanceMode,
-)
+
 from project.forms.common import get_accept_tos_markup
-from project.forms.widgets import TagSelectField
 from project.forms.event import SharedEventForm
+from project.forms.widgets import TagSelectField
+from project.models import (
+    EventAttendanceMode,
+    EventRejectionReason,
+    EventTargetGroupOrigin,
+    Image,
+)
 
 
 class CreateEventSuggestionForm(SharedEventForm):

@@ -1,38 +1,40 @@
-from project import app, db
-from project.models import (
-    User,
-    AdminUnit,
-    EventOrganizer,
-    EventSuggestion,
-    EventReviewStatus,
-    AdminUnitMember,
-)
-from flask import render_template, request, flash, redirect, url_for, abort
+import json
+
+from flask import abort, flash, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from flask_security import current_user
-from sqlalchemy.sql import func
 from sqlalchemy.exc import SQLAlchemyError
-from project.services.event_suggestion import insert_event_suggestion
-from project.services.event import (
-    get_event_dates_query,
-    get_event_date_with_details_or_404,
-)
-from project.services.event_search import EventSearchParams
-from project.services.place import get_event_places
-from project.views.utils import (
-    get_pagination_urls,
-    flash_errors,
-    flash_message,
-    send_mail,
-    handleSqlError,
-)
-import json
-from project.jsonld import DateTimeEncoder, get_sd_for_event_date
+from sqlalchemy.sql import func
+
+from project import app, db
+from project.access import has_admin_unit_member_permission
 from project.forms.event_date import FindEventDateForm
 from project.forms.event_suggestion import CreateEventSuggestionForm
-from project.views.event_date import prepare_event_date_form
+from project.jsonld import DateTimeEncoder, get_sd_for_event_date
+from project.models import (
+    AdminUnit,
+    AdminUnitMember,
+    EventOrganizer,
+    EventReviewStatus,
+    EventSuggestion,
+    User,
+)
+from project.services.event import (
+    get_event_date_with_details_or_404,
+    get_event_dates_query,
+)
+from project.services.event_search import EventSearchParams
+from project.services.event_suggestion import insert_event_suggestion
+from project.services.place import get_event_places
 from project.views.event import get_event_category_choices
-from project.access import has_admin_unit_member_permission
+from project.views.event_date import prepare_event_date_form
+from project.views.utils import (
+    flash_errors,
+    flash_message,
+    get_pagination_urls,
+    handleSqlError,
+    send_mail,
+)
 
 
 @app.route("/<string:au_short_name>/widget/eventdates")

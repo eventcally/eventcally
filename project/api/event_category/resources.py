@@ -1,10 +1,11 @@
+from flask_apispec import doc, marshal_with, use_kwargs
+
 from project.api import add_api_resource
-from flask_apispec import marshal_with, doc, use_kwargs
-from project.api.resources import BaseResource
 from project.api.event_category.schemas import (
     EventCategoryListRequestSchema,
     EventCategoryListResponseSchema,
 )
+from project.api.resources import BaseResource
 from project.models import EventCategory
 
 

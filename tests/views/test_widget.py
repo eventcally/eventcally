@@ -42,8 +42,9 @@ def test_event_date(client, seeder, utils, app, db):
     au_short_name = "meinecrew"
 
     with app.app_context():
-        from project.models import AdminUnit
         from colour import Color
+
+        from project.models import AdminUnit
 
         admin_unit = AdminUnit.query.get(admin_unit_id)
         admin_unit.widget_font = "Arial"
@@ -137,10 +138,7 @@ def test_event_suggestion_create_for_admin_unit(
         return
 
     with app.app_context():
-        from project.models import (
-            EventSuggestion,
-            EventReviewStatus,
-        )
+        from project.models import EventReviewStatus, EventSuggestion
 
         suggestion = (
             EventSuggestion.query.filter(EventSuggestion.admin_unit_id == admin_unit_id)

@@ -1,24 +1,25 @@
-from project import app, db
-from flask import url_for, render_template, redirect, flash
+from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
 from flask_security import auth_required, current_user
-from project.models import AdminUnitMemberInvitation, AdminUnitMemberRole
-from project.forms.admin_unit_member import (
-    NegotiateAdminUnitMemberInvitationForm,
-    InviteAdminUnitMemberForm,
-    DeleteAdminUnitInvitationForm,
-)
-from project.views.utils import (
-    permission_missing,
-    send_mail,
-    handleSqlError,
-    flash_errors,
-    non_match_for_deletion,
-)
+from sqlalchemy.exc import SQLAlchemyError
+
+from project import app, db
 from project.access import get_admin_unit_for_manage_or_404, has_access
+from project.forms.admin_unit_member import (
+    DeleteAdminUnitInvitationForm,
+    InviteAdminUnitMemberForm,
+    NegotiateAdminUnitMemberInvitationForm,
+)
+from project.models import AdminUnitMemberInvitation, AdminUnitMemberRole
 from project.services.admin_unit import add_user_to_admin_unit_with_roles
 from project.services.user import find_user_by_email
-from sqlalchemy.exc import SQLAlchemyError
+from project.views.utils import (
+    flash_errors,
+    handleSqlError,
+    non_match_for_deletion,
+    permission_missing,
+    send_mail,
+)
 
 
 @app.route("/invitations/<int:id>", methods=("GET", "POST"))

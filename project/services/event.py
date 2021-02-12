@@ -1,24 +1,21 @@
+from dateutil.relativedelta import relativedelta
+from sqlalchemy import and_, func, or_
+from sqlalchemy.orm import contains_eager, defaultload, joinedload
+from sqlalchemy.sql import extract
+
 from project import db
+from project.dateutils import date_add_time, dates_from_recurrence_rule, today
 from project.models import (
     AdminUnit,
-    EventCategory,
     Event,
+    EventCategory,
     EventDate,
     EventOrganizer,
-    EventReference,
     EventPlace,
+    EventReference,
     Image,
     Location,
 )
-from project.dateutils import (
-    dates_from_recurrence_rule,
-    today,
-    date_add_time,
-)
-from sqlalchemy import and_, or_, func
-from sqlalchemy.sql import extract
-from sqlalchemy.orm import joinedload, contains_eager, defaultload
-from dateutil.relativedelta import relativedelta
 
 
 def get_event_category(category_name):

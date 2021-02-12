@@ -3,8 +3,8 @@ def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app):
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
-        from project.models import Event
         from project.dateutils import create_berlin_date
+        from project.models import Event
         from project.services.event import update_event_dates_with_recurrence_rule
 
         event = Event.query.get(event_id)

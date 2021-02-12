@@ -1,5 +1,6 @@
-from project import user_datastore
 from flask_security import hash_password
+
+from project import user_datastore
 
 
 def create_user(email, password):

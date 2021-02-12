@@ -5,10 +5,11 @@ Revises: 75c07cb9cfe3
 Create Date: 2020-07-07 15:49:58.653888
 
 """
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
+
 from project import dbtypes
-from project.models import EventTargetGroupOrigin, EventAttendanceMode, EventStatus
+from project.models import EventAttendanceMode, EventStatus, EventTargetGroupOrigin
 
 # revision identifiers, used by Alembic.
 revision = "f1bc3fa623c7"

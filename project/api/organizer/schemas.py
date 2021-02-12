@@ -1,21 +1,22 @@
 from marshmallow import fields, validate
+
 from project.api import marshmallow
-from project.models import EventOrganizer
-from project.api.location.schemas import (
-    LocationSchema,
-    LocationPostRequestSchema,
-    LocationPatchRequestSchema,
-)
 from project.api.image.schemas import ImageSchema
+from project.api.location.schemas import (
+    LocationPatchRequestSchema,
+    LocationPostRequestSchema,
+    LocationSchema,
+)
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
-    SQLAlchemyBaseSchema,
     IdSchemaMixin,
-    WriteIdSchemaMixin,
-    TrackableSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
+    SQLAlchemyBaseSchema,
+    TrackableSchemaMixin,
+    WriteIdSchemaMixin,
 )
+from project.models import EventOrganizer
 
 
 class OrganizerModelSchema(SQLAlchemyBaseSchema):

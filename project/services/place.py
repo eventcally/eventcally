@@ -1,6 +1,7 @@
+from sqlalchemy.sql import and_, func
+
 from project import db
 from project.models import EventPlace, Location
-from sqlalchemy.sql import and_, func
 
 
 def upsert_event_place(admin_unit_id, name):

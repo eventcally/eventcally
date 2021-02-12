@@ -1,23 +1,20 @@
+from flask import abort, flash, redirect, render_template, url_for
+from flask_babelex import gettext
+from sqlalchemy.exc import SQLAlchemyError
+
 from project import app, db
+from project.access import access_or_401, has_access, has_admin_unit_member_permission
+from project.dateutils import today
+from project.forms.reference_request import ReferenceRequestReviewForm
 from project.models import (
+    AdminUnitMember,
     EventDate,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
-    AdminUnitMember,
     User,
 )
-from flask import render_template, flash, url_for, redirect, abort
-from flask_babelex import gettext
-from project.access import (
-    has_access,
-    access_or_401,
-    has_admin_unit_member_permission,
-)
-from project.dateutils import today
-from project.forms.reference_request import ReferenceRequestReviewForm
-from project.views.utils import flash_errors, send_mail, handleSqlError
 from project.services.reference import create_event_reference_for_request
-from sqlalchemy.exc import SQLAlchemyError
+from project.views.utils import flash_errors, handleSqlError, send_mail
 
 
 @app.route("/reference_request/<int:id>/review", methods=("GET", "POST"))

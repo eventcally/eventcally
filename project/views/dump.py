@@ -1,5 +1,6 @@
-from project import app, dump_path
 from flask import send_from_directory
+
+from project import app, dump_path
 
 
 @app.route("/dump/<path:path>")

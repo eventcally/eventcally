@@ -1,5 +1,7 @@
-import pytest
 import shutil
+
+import pytest
+
 from project import img_path
 
 

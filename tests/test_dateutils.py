@@ -55,6 +55,7 @@ def test_calculate_occurrences_count():
 
 def get_calculate_occurrences(rrule_str, start=0):
     from datetime import datetime
+
     from project.dateutils import calculate_occurrences
 
     start_date = datetime(2030, 1, 1)

@@ -5,12 +5,12 @@ Revises: e33f225323f3
 Create Date: 2021-01-18 15:02:58.354511
 
 """
-from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-from project import dbtypes
-from project.models import EventTargetGroupOrigin, EventAttendanceMode
+from alembic import op
 
+from project import dbtypes
+from project.models import EventAttendanceMode, EventTargetGroupOrigin
 
 # revision identifiers, used by Alembic.
 revision = "a0a248667cd8"

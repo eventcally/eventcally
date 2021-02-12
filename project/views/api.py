@@ -1,8 +1,9 @@
-from project import app
-from project.models import EventDate, Event
-from project.dateutils import today
 from flask import jsonify
+
+from project import app
+from project.dateutils import today
 from project.jsonld import get_sd_for_event_date
+from project.models import Event, EventDate
 from project.services.event import get_event_dates_query
 from project.services.event_search import EventSearchParams
 

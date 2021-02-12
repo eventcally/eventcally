@@ -1,3 +1,6 @@
+from sqlalchemy import and_
+from sqlalchemy.orm import load_only
+
 from project import db
 from project.models import (
     Event,
@@ -5,8 +8,6 @@ from project.models import (
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
 )
-from sqlalchemy import and_
-from sqlalchemy.orm import load_only
 
 
 def create_event_reference_for_request(request):
