@@ -1,17 +1,15 @@
-from authlib.integrations.flask_oauth2 import (
-    AuthorizationServer,
-    ResourceProtector,
-)
+from authlib.integrations.flask_oauth2 import AuthorizationServer, ResourceProtector
 from authlib.integrations.sqla_oauth2 import (
-    create_query_client_func,
-    create_save_token_func,
     create_bearer_token_validator,
+    create_query_client_func,
     create_query_token_func,
+    create_save_token_func,
 )
 from authlib.oauth2.rfc6749 import grants
 from authlib.oauth2.rfc7636 import CodeChallenge
+
 from project import db
-from project.models import User, OAuth2Client, OAuth2AuthorizationCode, OAuth2Token
+from project.models import OAuth2AuthorizationCode, OAuth2Client, OAuth2Token, User
 
 
 class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):

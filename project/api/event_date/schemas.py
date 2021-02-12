@@ -1,12 +1,13 @@
-from project.api import marshmallow
 from marshmallow import fields
-from project.models import EventDate
+
+from project.api import marshmallow
 from project.api.event.schemas import (
     EventRefSchema,
     EventSearchItemSchema,
     EventSearchRequestSchema,
 )
 from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.models import EventDate
 
 
 class EventDateSchema(marshmallow.SQLAlchemySchema):

@@ -41,9 +41,10 @@ def test_get_sd_for_place(client, app, db, utils, seeder):
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
     with app.app_context():
-        from project.jsonld import get_sd_for_place
-        from project.models import EventPlace, Location, Image
         from math import isclose
+
+        from project.jsonld import get_sd_for_place
+        from project.models import EventPlace, Image, Location
 
         place = EventPlace.query.get(place_id)
         place.url = "http://www.goslar.de"
@@ -101,10 +102,10 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
+        from project.dateutils import create_berlin_date
         from project.jsonld import get_sd_for_event_date
         from project.models import Event, Image
         from project.services.event import update_event
-        from project.dateutils import create_berlin_date
 
         event = Event.query.get(event_id)
         event.start = create_berlin_date(2030, 12, 31, 14, 30)

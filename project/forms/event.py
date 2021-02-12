@@ -1,31 +1,32 @@
+from dateutil.relativedelta import relativedelta
 from flask import request
-from flask_babelex import lazy_gettext, gettext
+from flask_babelex import gettext, lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import (
-    SelectMultipleField,
+    BooleanField,
+    FormField,
+    IntegerField,
     RadioField,
+    SelectField,
+    SelectMultipleField,
     StringField,
     SubmitField,
     TextAreaField,
-    SelectField,
-    BooleanField,
-    IntegerField,
-    FormField,
 )
 from wtforms.fields.html5 import EmailField, URLField
 from wtforms.validators import DataRequired, Optional
+
+from project.forms.common import Base64ImageForm, event_rating_choices
+from project.forms.widgets import CustomDateField, CustomDateTimeField
 from project.models import (
-    EventPlace,
-    EventTargetGroupOrigin,
     EventAttendanceMode,
-    EventStatus,
-    Location,
     EventOrganizer,
+    EventPlace,
+    EventStatus,
+    EventTargetGroupOrigin,
     Image,
+    Location,
 )
-from project.forms.common import event_rating_choices, Base64ImageForm
-from project.forms.widgets import CustomDateTimeField, CustomDateField
-from dateutil.relativedelta import relativedelta
 
 
 class EventPlaceLocationForm(FlaskForm):

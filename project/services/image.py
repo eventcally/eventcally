@@ -1,5 +1,6 @@
-from project.models import Image
 import base64
+
+from project.models import Image
 
 
 def upsert_image_with_data(image, data, encoding_format="image/jpeg"):

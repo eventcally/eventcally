@@ -1,7 +1,8 @@
-from project import db
-from project.models import EventReviewStatus, EventSuggestion
 from sqlalchemy import and_
 from sqlalchemy.orm import load_only
+
+from project import db
+from project.models import EventReviewStatus, EventSuggestion
 
 
 def insert_event_suggestion(event_suggestion):

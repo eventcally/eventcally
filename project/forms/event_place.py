@@ -1,16 +1,11 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import (
-    DecimalField,
-    StringField,
-    SubmitField,
-    TextAreaField,
-    FormField,
-)
+from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaField
 from wtforms.fields.html5 import URLField
 from wtforms.validators import DataRequired, Optional
-from project.models import Location, Image
+
 from project.forms.common import Base64ImageForm
+from project.models import Image, Location
 
 
 class EventPlaceLocationForm(FlaskForm):

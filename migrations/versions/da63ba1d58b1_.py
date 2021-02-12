@@ -5,11 +5,11 @@ Revises: 091deace5f08
 Create Date: 2020-10-04 17:06:54.502012
 
 """
-from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-from project import dbtypes
+from alembic import op
 
+from project import dbtypes
 
 # revision identifiers, used by Alembic.
 revision = "da63ba1d58b1"

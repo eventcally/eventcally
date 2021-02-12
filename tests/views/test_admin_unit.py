@@ -27,9 +27,9 @@ def test_create(client, app, utils, seeder):
         assert response.status_code == 302
 
         with app.app_context():
+            from project.access import has_current_user_member_role_for_admin_unit
             from project.services.admin_unit import get_admin_unit_by_name
             from project.services.organizer import get_event_organizer
-            from project.access import has_current_user_member_role_for_admin_unit
 
             admin_unit = get_admin_unit_by_name("Meine Crew")
             assert admin_unit is not None

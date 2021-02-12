@@ -1,16 +1,17 @@
-from flask_restful import Api
-from sqlalchemy.exc import IntegrityError
-from psycopg2.errorcodes import UNIQUE_VIOLATION, CHECK_VIOLATION
-from werkzeug.exceptions import HTTPException, UnprocessableEntity
-from marshmallow import ValidationError
-from project.utils import get_localized_scope
-from project import app
-from flask_marshmallow import Marshmallow
 from apispec import APISpec
-from apispec.ext.marshmallow import MarshmallowPlugin
-from flask_apispec.extension import FlaskApiSpec
-from flask import url_for
 from apispec.exceptions import DuplicateComponentNameError
+from apispec.ext.marshmallow import MarshmallowPlugin
+from flask import url_for
+from flask_apispec.extension import FlaskApiSpec
+from flask_marshmallow import Marshmallow
+from flask_restful import Api
+from marshmallow import ValidationError
+from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
+from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import HTTPException, UnprocessableEntity
+
+from project import app
+from project.utils import get_localized_scope
 
 
 class RestApi(Api):
@@ -165,11 +166,11 @@ def add_oauth2_scheme_with_transport(insecure: bool):
 
 marshmallow_plugin.converter.add_attribute_function(enum_to_properties)
 
+import project.api.dump.resources
 import project.api.event.resources
 import project.api.event_category.resources
 import project.api.event_date.resources
 import project.api.event_reference.resources
-import project.api.dump.resources
 import project.api.organization.resources
 import project.api.organizer.resources
 import project.api.place.resources

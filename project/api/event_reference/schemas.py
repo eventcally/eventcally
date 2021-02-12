@@ -1,9 +1,10 @@
 from marshmallow import fields
+
 from project.api import marshmallow
-from project.models import EventReference
-from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
 from project.api.event.schemas import EventRefSchema
 from project.api.organization.schemas import OrganizationRefSchema
+from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.models import EventReference
 
 
 class EventReferenceIdSchema(marshmallow.SQLAlchemySchema):

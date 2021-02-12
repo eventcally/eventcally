@@ -1,10 +1,11 @@
+import os
+
 from project import app, db
 from project.api import add_oauth2_scheme_with_transport
-from project.services.user import upsert_user_role
+from project.models import Location
 from project.services.admin_unit import upsert_admin_unit_member_role
 from project.services.event import upsert_event_category
-from project.models import Location
-import os
+from project.services.user import upsert_user_role
 
 
 @app.before_first_request

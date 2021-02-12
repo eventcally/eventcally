@@ -1,47 +1,49 @@
-from project import app, db
-from project.models import (
-    Event,
-    EventDate,
-    EventReviewStatus,
-    AdminUnit,
-    EventOrganizer,
-    EventCategory,
-    EventSuggestion,
-    EventReference,
-    AdminUnitMember,
-    User,
-)
-from flask import render_template, flash, url_for, redirect, request, jsonify
+from datetime import datetime
+
+from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_babelex import gettext
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import lazyload
+from sqlalchemy.sql import and_, func
+
+from project import app, db
 from project.access import (
-    has_access,
     access_or_401,
     can_reference_event,
     can_request_event_reference,
+    has_access,
     has_admin_unit_member_permission,
 )
 from project.dateutils import today
-from datetime import datetime
-from project.forms.event import CreateEventForm, UpdateEventForm, DeleteEventForm
-from project.views.utils import (
-    flash_errors,
-    handleSqlError,
-    flash_message,
-    send_mail,
-    non_match_for_deletion,
+from project.forms.event import CreateEventForm, DeleteEventForm, UpdateEventForm
+from project.models import (
+    AdminUnit,
+    AdminUnitMember,
+    Event,
+    EventCategory,
+    EventDate,
+    EventOrganizer,
+    EventReference,
+    EventReviewStatus,
+    EventSuggestion,
+    User,
 )
-from project.utils import get_event_category_name
 from project.services.event import (
-    upsert_event_category,
+    get_event_with_details_or_404,
     insert_event,
     update_event,
-    get_event_with_details_or_404,
+    upsert_event_category,
 )
 from project.services.place import get_event_places
-from sqlalchemy.sql import func, and_
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import lazyload
+from project.utils import get_event_category_name
 from project.views.event_suggestion import send_event_suggestion_review_status_mail
+from project.views.utils import (
+    flash_errors,
+    flash_message,
+    handleSqlError,
+    non_match_for_deletion,
+    send_mail,
+)
 
 
 @app.route("/event/<int:event_id>")

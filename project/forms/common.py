@@ -1,11 +1,12 @@
+import base64
+import re
+
 from flask import url_for
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField
-from wtforms.validators import Optional
 from markupsafe import Markup
-import re
-import base64
+from wtforms import HiddenField, StringField
+from wtforms.validators import Optional
 
 
 class BaseImageForm(FlaskForm):

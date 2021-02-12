@@ -1,34 +1,35 @@
-from project.api import marshmallow
-from marshmallow import fields, validate, ValidationError
+from dateutil.rrule import rrulestr
+from marshmallow import ValidationError, fields, validate
 from marshmallow_enum import EnumField
-from project.models import (
-    Event,
-    EventStatus,
-    EventTargetGroupOrigin,
-    EventAttendanceMode,
+
+from project.api import marshmallow
+from project.api.event_category.schemas import (
+    EventCategoryIdSchema,
+    EventCategoryRefSchema,
+    EventCategoryWriteIdSchema,
 )
-from project.api.schemas import (
-    SQLAlchemyBaseSchema,
-    IdSchemaMixin,
-    TrackableSchemaMixin,
-    PaginationRequestSchema,
-    PaginationResponseSchema,
-)
+from project.api.fields import CustomDateTimeField
+from project.api.image.schemas import ImageSchema
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.organizer.schemas import OrganizerRefSchema, OrganizerWriteIdSchema
-from project.api.image.schemas import ImageSchema
 from project.api.place.schemas import (
     PlaceRefSchema,
     PlaceSearchItemSchema,
     PlaceWriteIdSchema,
 )
-from project.api.event_category.schemas import (
-    EventCategoryRefSchema,
-    EventCategoryIdSchema,
-    EventCategoryWriteIdSchema,
+from project.api.schemas import (
+    IdSchemaMixin,
+    PaginationRequestSchema,
+    PaginationResponseSchema,
+    SQLAlchemyBaseSchema,
+    TrackableSchemaMixin,
 )
-from project.api.fields import CustomDateTimeField
-from dateutil.rrule import rrulestr
+from project.models import (
+    Event,
+    EventAttendanceMode,
+    EventStatus,
+    EventTargetGroupOrigin,
+)
 
 
 class EventModelSchema(SQLAlchemyBaseSchema):

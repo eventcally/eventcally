@@ -1,10 +1,12 @@
+import os.path
+
+from flask import redirect, render_template, request, url_for
+from flask_babelex import gettext
+from markupsafe import Markup
+
 from project import app, dump_path
 from project.services.admin import upsert_settings
 from project.views.utils import track_analytics
-from flask import url_for, render_template, request, redirect
-from flask_babelex import gettext
-from markupsafe import Markup
-import os.path
 
 
 @app.route("/")

@@ -1,11 +1,12 @@
 from flask import abort
 from flask_login import login_user
+from flask_principal import Permission
 from flask_security import current_user
 from flask_security.utils import FsPermNeed
-from flask_principal import Permission
-from project.models import AdminUnitMember, AdminUnit
-from project.services.admin_unit import get_member_for_admin_unit_by_user_id
 from sqlalchemy import and_
+
+from project.models import AdminUnit, AdminUnitMember
+from project.services.admin_unit import get_member_for_admin_unit_by_user_id
 
 
 def has_current_user_permission(permission):

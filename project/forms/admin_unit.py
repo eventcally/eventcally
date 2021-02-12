@@ -1,16 +1,12 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import (
-    StringField,
-    SubmitField,
-    DecimalField,
-    FormField,
-)
+from wtforms import DecimalField, FormField, StringField, SubmitField
 from wtforms.fields.html5 import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Optional, Regexp
 from wtforms.widgets.html5 import ColorInput
-from project.models import Location, Image
+
 from project.forms.common import Base64ImageForm
+from project.models import Image, Location
 
 
 class AdminUnitLocationForm(FlaskForm):

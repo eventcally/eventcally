@@ -1,43 +1,37 @@
+from flask import flash, make_response, redirect, render_template, request, url_for
+from flask_babelex import gettext
+from flask_security import auth_required, current_user
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.sql import desc, func
+
 from project import app, db
+from project.access import (
+    get_admin_unit_for_manage,
+    get_admin_unit_for_manage_or_404,
+    get_admin_units_for_manage,
+    has_access,
+)
+from project.forms.admin_unit import UpdateAdminUnitWidgetForm
+from project.forms.event import FindEventForm
+from project.forms.event_place import FindEventPlaceForm
 from project.models import (
     AdminUnitMember,
     AdminUnitMemberInvitation,
-    EventPlace,
     EventOrganizer,
-    User,
+    EventPlace,
     EventSuggestion,
+    User,
 )
-from flask import (
-    render_template,
-    flash,
-    url_for,
-    redirect,
-    request,
-    make_response,
-)
-from flask_babelex import gettext
-from flask_security import auth_required, current_user
-from project.access import (
-    has_access,
-    get_admin_unit_for_manage,
-    get_admin_units_for_manage,
-    get_admin_unit_for_manage_or_404,
-)
-from sqlalchemy.sql import desc, func
-from sqlalchemy.exc import SQLAlchemyError
-from project.views.utils import (
-    get_pagination_urls,
-    permission_missing,
-    handleSqlError,
-    flash_errors,
-)
-from project.forms.event_place import FindEventPlaceForm
-from project.forms.event import FindEventForm
-from project.forms.admin_unit import UpdateAdminUnitWidgetForm
-from project.services.event_search import EventSearchParams
 from project.services.event import get_events_query
+from project.services.event_search import EventSearchParams
 from project.services.event_suggestion import get_event_reviews_query
 from project.views.event import get_event_category_choices
+from project.views.utils import (
+    flash_errors,
+    get_pagination_urls,
+    handleSqlError,
+    permission_missing,
+)
 
 
 @app.route("/manage")

@@ -1,14 +1,12 @@
-from project import app, db
-from project.models import (
-    EventSuggestion,
-    EventReviewStatus,
-)
-from flask import render_template, flash, url_for, redirect
+from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
+from sqlalchemy.exc import SQLAlchemyError
+
+from project import app, db
 from project.access import access_or_401
 from project.forms.event_suggestion import RejectEventSuggestionForm
-from project.views.utils import flash_errors, send_mail, handleSqlError
-from sqlalchemy.exc import SQLAlchemyError
+from project.models import EventReviewStatus, EventSuggestion
+from project.views.utils import flash_errors, handleSqlError, send_mail
 
 
 @app.route("/event_suggestion/<int:event_suggestion_id>/review")

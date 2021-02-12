@@ -1,4 +1,5 @@
 import pytest
+
 from project.api import RestApi
 
 
@@ -46,8 +47,8 @@ def test_handle_error_httpException(app):
 
 
 def test_handle_error_unprocessableEntity(app):
-    from werkzeug.exceptions import UnprocessableEntity
     from marshmallow import ValidationError
+    from werkzeug.exceptions import UnprocessableEntity
 
     args = {"name": ["Required"]}
     validation_error = ValidationError(args)

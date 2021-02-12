@@ -1,7 +1,8 @@
-import pytz
-from dateutil.rrule import rrulestr
 from datetime import datetime
+
+import pytz
 from dateutil.relativedelta import relativedelta
+from dateutil.rrule import rrulestr
 
 berlin_tz = pytz.timezone("Europe/Berlin")
 now = datetime.now(tz=berlin_tz)

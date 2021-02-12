@@ -1,30 +1,31 @@
-from project import app, db
-from project.views.utils import (
-    get_pagination_urls,
-    flash_errors,
-    handleSqlError,
-    send_mail,
-)
-from project.forms.reference_request import CreateEventReferenceRequestForm
-from flask import render_template, flash, redirect, url_for
+from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
 from flask_security import auth_required
-from project.models import (
-    EventReferenceRequest,
-    Event,
-    AdminUnitMember,
-    User,
-    EventReferenceRequestReviewStatus,
-)
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.sql import desc
+
+from project import app, db
 from project.access import (
     access_or_401,
     get_admin_unit_for_manage_or_404,
-    has_admin_unit_member_permission,
     get_admin_units_for_event_reference_request,
+    has_admin_unit_member_permission,
 )
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.sql import desc
+from project.forms.reference_request import CreateEventReferenceRequestForm
+from project.models import (
+    AdminUnitMember,
+    Event,
+    EventReferenceRequest,
+    EventReferenceRequestReviewStatus,
+    User,
+)
 from project.services.reference import get_reference_requests_incoming_query
+from project.views.utils import (
+    flash_errors,
+    get_pagination_urls,
+    handleSqlError,
+    send_mail,
+)
 
 
 @app.route("/manage/admin_unit/<int:id>/reference_requests/incoming")

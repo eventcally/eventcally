@@ -10,7 +10,8 @@ def test_mail_server():
 
 
 def test_migrations(app, seeder):
-    from flask_migrate import upgrade, downgrade
+    from flask_migrate import downgrade, upgrade
+
     from project import db
     from project.init_data import create_initial_data
 

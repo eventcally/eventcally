@@ -1,31 +1,33 @@
+from flask import abort, flash, redirect, render_template, url_for
+from flask_babelex import gettext
+from flask_security import auth_required
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.sql import desc
+
 from project import app, db
-from project.views.utils import (
-    get_pagination_urls,
-    flash_errors,
-    handleSqlError,
-    non_match_for_deletion,
-)
 from project.access import (
+    access_or_401,
+    can_reference_event,
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_event_reference,
     has_access,
 )
 from project.forms.reference import (
     CreateEventReferenceForm,
-    UpdateEventReferenceForm,
     DeleteReferenceForm,
+    UpdateEventReferenceForm,
 )
+from project.models import Event, EventReference
 from project.services.reference import (
     get_reference_incoming_query,
     get_reference_outgoing_query,
 )
-from flask import render_template, flash, redirect, url_for, abort
-from flask_babelex import gettext
-from flask_security import auth_required
-from project.models import EventReference, Event
-from project.access import access_or_401, can_reference_event
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.sql import desc
+from project.views.utils import (
+    flash_errors,
+    get_pagination_urls,
+    handleSqlError,
+    non_match_for_deletion,
+)
 
 
 @app.route("/reference/<int:id>")
