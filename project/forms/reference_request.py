@@ -2,6 +2,7 @@ from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired
+
 from project.forms.common import event_rating_choices
 from project.models import (
     EventReferenceRequestRejectionReason,

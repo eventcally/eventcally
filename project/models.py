@@ -1,37 +1,39 @@
-from project import db
-from project.utils import make_check_violation
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship, backref, deferred, object_session
-from sqlalchemy.schema import CheckConstraint
-from sqlalchemy.event import listens_for
-from sqlalchemy import (
-    UniqueConstraint,
-    Boolean,
-    DateTime,
-    Column,
-    Integer,
-    String,
-    ForeignKey,
-    Unicode,
-    UnicodeText,
-    Numeric,
-)
-from sqlalchemy_utils import ColorType
-from flask_security import UserMixin, RoleMixin, current_user
-from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
-from enum import IntEnum
 import datetime
-from project.dbtypes import IntegerEnum
-from geoalchemy2 import Geometry
-from sqlalchemy import and_
+import time
+from enum import IntEnum
+
 from authlib.integrations.sqla_oauth2 import (
-    OAuth2ClientMixin,
     OAuth2AuthorizationCodeMixin,
+    OAuth2ClientMixin,
     OAuth2TokenMixin,
 )
-import time
 from dateutil.relativedelta import relativedelta
+from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
+from flask_security import RoleMixin, UserMixin, current_user
+from geoalchemy2 import Geometry
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Unicode,
+    UnicodeText,
+    UniqueConstraint,
+    and_,
+)
+from sqlalchemy.event import listens_for
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import backref, deferred, object_session, relationship
+from sqlalchemy.schema import CheckConstraint
+from sqlalchemy_utils import ColorType
+
+from project import db
+from project.dbtypes import IntegerEnum
+from project.utils import make_check_violation
 
 # Base
 

@@ -1,17 +1,16 @@
 import os
-from flask import Flask, url_for, redirect, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_security import (
-    Security,
-    SQLAlchemySessionUserDatastore,
-)
+
+from flask import Flask, jsonify, redirect, request, url_for
 from flask_babelex import Babel
 from flask_cors import CORS
-from flask_qrcode import QRcode
+from flask_gzip import Gzip
 from flask_mail import Mail, email_dispatched
 from flask_migrate import Migrate
-from flask_gzip import Gzip
+from flask_qrcode import QRcode
+from flask_security import Security, SQLAlchemySessionUserDatastore
+from flask_sqlalchemy import SQLAlchemy
 from webargs import flaskparser
+
 from project.custom_session_interface import CustomSessionInterface
 
 # Create app
@@ -97,9 +96,10 @@ from project.jsonld import DateTimeEncoder
 
 app.json_encoder = DateTimeEncoder
 
-# Setup Flask-Security
-from project.models import User, Role
 from project.forms.security import ExtendedRegisterForm
+
+# Setup Flask-Security
+from project.models import Role, User
 
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
 security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
@@ -112,9 +112,14 @@ config_oauth(app)
 
 # Init misc modules
 
-from project import i10n
-from project import jinja_filters
-from project import init_data
+# API Resources
+import project.api
+import project.cli.dump
+
+# Command line
+import project.cli.event
+import project.cli.user
+from project import i10n, init_data, jinja_filters
 
 # Routes
 from project.views import (
@@ -123,17 +128,17 @@ from project.views import (
     admin_unit_member,
     admin_unit_member_invitation,
     api,
+    dump,
     event,
     event_date,
     event_place,
     event_suggestion,
-    dump,
     image,
     manage,
-    organizer,
     oauth,
     oauth2_client,
     oauth2_token,
+    organizer,
     planing,
     reference,
     reference_request,
@@ -142,14 +147,6 @@ from project.views import (
     user,
     widget,
 )
-
-# API Resources
-import project.api
-
-# Command line
-import project.cli.event
-import project.cli.dump
-import project.cli.user
 
 if __name__ == "__main__":  # pragma: no cover
     app.run()

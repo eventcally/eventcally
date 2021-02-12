@@ -1,16 +1,13 @@
-from project import app, db
-from flask import render_template, redirect, flash, url_for
+from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
 from flask_security import current_user
-from project.models import OAuth2Token
-from project.views.utils import (
-    get_pagination_urls,
-    handleSqlError,
-    flash_errors,
-)
-from project.forms.oauth2_token import RevokeOAuth2TokenForm
 from sqlalchemy.exc import SQLAlchemyError
+
+from project import app, db
 from project.access import owner_access_or_401
+from project.forms.oauth2_token import RevokeOAuth2TokenForm
+from project.models import OAuth2Token
+from project.views.utils import flash_errors, get_pagination_urls, handleSqlError
 
 
 @app.route("/oauth2_token/<int:id>/revoke", methods=("GET", "POST"))

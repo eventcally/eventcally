@@ -1,32 +1,33 @@
-from project.api import add_api_resource
+from authlib.integrations.flask_oauth2 import current_token
 from flask import make_response
-from flask_apispec import marshal_with, doc, use_kwargs
-from project.api.resources import BaseResource
+from flask_apispec import doc, marshal_with, use_kwargs
+from sqlalchemy.orm import lazyload, load_only
+
+from project import db
+from project.access import access_or_401, login_api_user_or_401
+from project.api import add_api_resource
 from project.api.event.schemas import (
-    EventSchema,
     EventListRequestSchema,
     EventListResponseSchema,
+    EventPatchRequestSchema,
+    EventPostRequestSchema,
+    EventSchema,
     EventSearchRequestSchema,
     EventSearchResponseSchema,
-    EventPostRequestSchema,
-    EventPatchRequestSchema,
 )
 from project.api.event_date.schemas import (
     EventDateListRequestSchema,
     EventDateListResponseSchema,
 )
+from project.api.resources import BaseResource
 from project.models import Event, EventDate
+from project.oauth2 import require_oauth
 from project.services.event import (
-    get_events_query,
     get_event_with_details_or_404,
+    get_events_query,
     update_event,
 )
 from project.services.event_search import EventSearchParams
-from sqlalchemy.orm import lazyload, load_only
-from project.oauth2 import require_oauth
-from authlib.integrations.flask_oauth2 import current_token
-from project import db
-from project.access import access_or_401, login_api_user_or_401
 from project.views.event import send_referenced_event_changed_mails
 
 

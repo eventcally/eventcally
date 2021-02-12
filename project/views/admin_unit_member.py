@@ -1,21 +1,22 @@
-from project import app, db
-from flask import url_for, render_template, redirect, flash
+from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
 from flask_security import auth_required
-from project.models import AdminUnitMember, AdminUnitMemberRole
+from sqlalchemy.exc import SQLAlchemyError
+
+from project import app, db
+from project.access import has_access
 from project.forms.admin_unit_member import (
     DeleteAdminUnitMemberForm,
     UpdateAdminUnitMemberForm,
 )
-from project.views.utils import (
-    permission_missing,
-    handleSqlError,
-    flash_errors,
-    non_match_for_deletion,
-)
-from project.access import has_access
+from project.models import AdminUnitMember, AdminUnitMemberRole
 from project.services.admin_unit import add_roles_to_admin_unit_member
-from sqlalchemy.exc import SQLAlchemyError
+from project.views.utils import (
+    flash_errors,
+    handleSqlError,
+    non_match_for_deletion,
+    permission_missing,
+)
 
 
 @app.route("/manage/member/<int:id>/update", methods=("GET", "POST"))

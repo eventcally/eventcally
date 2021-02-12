@@ -1,18 +1,15 @@
-from project import app, db
-from project.models import AdminUnit, User, Role
-from flask import render_template, flash, url_for, redirect
+from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
 from flask_security import roles_required
-from project.forms.admin import AdminSettingsForm, UpdateUserForm, UpdateAdminUnitForm
-from project.services.admin import upsert_settings
-from project.services.user import set_roles_for_user
-from project.views.utils import (
-    flash_errors,
-    handleSqlError,
-    get_pagination_urls,
-)
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
+
+from project import app, db
+from project.forms.admin import AdminSettingsForm, UpdateAdminUnitForm, UpdateUserForm
+from project.models import AdminUnit, Role, User
+from project.services.admin import upsert_settings
+from project.services.user import set_roles_for_user
+from project.views.utils import flash_errors, get_pagination_urls, handleSqlError
 
 
 @app.route("/admin")

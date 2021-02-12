@@ -22,9 +22,9 @@ class Seeder(object):
         self, email="test@test.de", password="MeinPasswortIstDasBeste", admin=False
     ):
         from project.services.user import (
-            find_user_by_email,
-            create_user,
             add_admin_roles_to_user,
+            create_user,
+            find_user_by_email,
         )
 
         with self._app.app_context():
@@ -43,8 +43,8 @@ class Seeder(object):
 
     def create_admin_unit(self, user_id, name="Meine Crew"):
         from project.models import AdminUnit
-        from project.services.user import get_user
         from project.services.admin_unit import insert_admin_unit_for_user
+        from project.services.user import get_user
 
         with self._app.app_context():
             user = get_user(user_id)
@@ -59,11 +59,11 @@ class Seeder(object):
         return admin_unit_id
 
     def create_admin_unit_member(self, admin_unit_id, role_names):
-        from project.services.user import get_user
         from project.services.admin_unit import (
-            get_admin_unit_by_id,
             add_user_to_admin_unit_with_roles,
+            get_admin_unit_by_id,
         )
+        from project.services.user import get_user
 
         with self._app.app_context():
             user_id = self.create_user()
@@ -173,9 +173,9 @@ class Seeder(object):
         return category.id
 
     def create_event(self, admin_unit_id, recurrence_rule=None):
+        from project.dateutils import now
         from project.models import Event
         from project.services.event import insert_event, upsert_event_category
-        from project.dateutils import now
 
         with self._app.app_context():
             event = Event()
@@ -212,10 +212,10 @@ class Seeder(object):
         return image_id
 
     def create_event_suggestion(self, admin_unit_id, free_text=False):
+        from project.dateutils import now
         from project.models import EventSuggestion
         from project.services.event import upsert_event_category
         from project.services.event_suggestion import insert_event_suggestion
-        from project.dateutils import now
 
         with self._app.app_context():
             suggestion = EventSuggestion()

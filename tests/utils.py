@@ -1,8 +1,9 @@
 import re
+from urllib.parse import parse_qs, urlsplit
+
+from bs4 import BeautifulSoup
 from flask import g, url_for
 from sqlalchemy.exc import IntegrityError
-from bs4 import BeautifulSoup
-from urllib.parse import urlsplit, parse_qs
 
 
 class UtilActions(object):

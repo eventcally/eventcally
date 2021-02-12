@@ -1,22 +1,23 @@
-from project import app, db
-from flask import render_template, redirect, flash, url_for
+from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
-from flask_security import permissions_required, current_user
-from project.models import OAuth2Client
-from project.views.utils import (
-    get_pagination_urls,
-    handleSqlError,
-    flash_errors,
-    non_match_for_deletion,
-)
+from flask_security import current_user, permissions_required
+from sqlalchemy.exc import SQLAlchemyError
+
+from project import app, db
+from project.access import owner_access_or_401
 from project.forms.oauth2_client import (
     CreateOAuth2ClientForm,
-    UpdateOAuth2ClientForm,
     DeleteOAuth2ClientForm,
+    UpdateOAuth2ClientForm,
 )
+from project.models import OAuth2Client
 from project.services.oauth2_client import complete_oauth2_client
-from sqlalchemy.exc import SQLAlchemyError
-from project.access import owner_access_or_401
+from project.views.utils import (
+    flash_errors,
+    get_pagination_urls,
+    handleSqlError,
+    non_match_for_deletion,
+)
 
 
 @app.route("/oauth2_client/create", methods=("GET", "POST"))

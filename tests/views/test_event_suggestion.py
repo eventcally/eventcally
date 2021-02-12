@@ -33,7 +33,7 @@ def test_reject(client, app, utils, seeder, mocker, db, db_error, is_verified):
 
     if is_verified:
         with app.app_context():
-            from project.models import EventSuggestion, EventReviewStatus
+            from project.models import EventReviewStatus, EventSuggestion
 
             suggestion = EventSuggestion.query.get(event_suggestion_id)
             suggestion.review_status = EventReviewStatus.verified
@@ -69,7 +69,7 @@ def test_reject(client, app, utils, seeder, mocker, db, db_error, is_verified):
     utils.assert_send_mail_called(mail_mock, "vorname@nachname.de")
 
     with app.app_context():
-        from project.models import EventSuggestion, EventReviewStatus
+        from project.models import EventReviewStatus, EventSuggestion
 
         suggestion = EventSuggestion.query.get(event_suggestion_id)
         assert suggestion.review_status == EventReviewStatus.rejected

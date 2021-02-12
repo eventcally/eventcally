@@ -5,11 +5,10 @@ Revises: 6b7016f73688
 Create Date: 2020-10-02 09:29:12.932229
 
 """
-from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.sql import text
+from alembic import op
 from geoalchemy2.types import Geometry
-
+from sqlalchemy.sql import text
 
 # revision identifiers, used by Alembic.
 revision = "091deace5f08"

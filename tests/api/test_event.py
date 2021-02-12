@@ -83,13 +83,13 @@ def test_put(client, seeder, utils, app):
     utils.assert_response_no_content(response)
 
     with app.app_context():
+        from project.dateutils import create_berlin_date
         from project.models import (
             Event,
+            EventAttendanceMode,
             EventStatus,
             EventTargetGroupOrigin,
-            EventAttendanceMode,
         )
-        from project.dateutils import create_berlin_date
 
         event = Event.query.get(event_id)
         assert event.name == "Neuer Name"

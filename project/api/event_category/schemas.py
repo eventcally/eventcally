@@ -1,13 +1,14 @@
 from marshmallow import fields
+
 from project.api import marshmallow
-from project.models import EventCategory
 from project.api.schemas import (
-    SQLAlchemyBaseSchema,
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
+    SQLAlchemyBaseSchema,
     WriteIdSchemaMixin,
 )
+from project.models import EventCategory
 
 
 class EventCategoryModelSchema(SQLAlchemyBaseSchema):

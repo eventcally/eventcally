@@ -1,5 +1,6 @@
 import click
 from flask.cli import AppGroup
+
 from project import app, db
 from project.services.event import (
     get_recurring_events,

@@ -1,6 +1,8 @@
-from project.models import OAuth2Client
 import time
+
 from werkzeug.security import gen_salt
+
+from project.models import OAuth2Client
 
 
 def complete_oauth2_client(oauth2_client: OAuth2Client) -> None:

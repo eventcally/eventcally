@@ -1,13 +1,23 @@
 {
-    "python.pythonPath": "/Users/daniel/Projects/gsevpt/env/bin/python3",
+    "editor.formatOnSave": true,
+    "python.pythonPath": "./env/bin/python3",
     "python.formatting.provider": "black",
+    "python.sortImports.args": [
+        "-sp .isort.cfg"
+    ],
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
     "python.testing.pytestArgs": [
-        "tests", "--capture=sys"
+        "tests",
+        "--capture=sys"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    }
 }

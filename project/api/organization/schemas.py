@@ -1,9 +1,10 @@
 from marshmallow import fields
+
 from project.api import marshmallow
-from project.models import AdminUnit
-from project.api.location.schemas import LocationSchema
 from project.api.image.schemas import ImageSchema
+from project.api.location.schemas import LocationSchema
 from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.models import AdminUnit
 
 
 class OrganizationIdSchema(marshmallow.SQLAlchemySchema):

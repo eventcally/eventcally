@@ -1,17 +1,14 @@
-from project import app, db
-from flask import url_for, render_template, redirect, flash
+from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
 from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
+
+from project import app, db
 from project.access import get_admin_unit_for_manage_or_404, has_access
 from project.forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
-from project.views.utils import (
-    handleSqlError,
-    permission_missing,
-    flash_errors,
-)
 from project.models import AdminUnit, Location
 from project.services.admin_unit import insert_admin_unit_for_user
+from project.views.utils import flash_errors, handleSqlError, permission_missing
 
 
 def update_admin_unit_with_form(admin_unit, form):

@@ -1,7 +1,9 @@
+from functools import wraps
+
 from flask import request
 from flask_apispec import marshal_with
 from flask_apispec.views import MethodResource
-from functools import wraps
+
 from project import db
 from project.api.schemas import ErrorResponseSchema, UnprocessableEntityResponseSchema
 

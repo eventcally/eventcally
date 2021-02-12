@@ -1,7 +1,9 @@
-import pytest
 import os
-from .utils import UtilActions
+
+import pytest
+
 from .seeder import Seeder
+from .utils import UtilActions
 
 
 def pytest_generate_tests(metafunc):

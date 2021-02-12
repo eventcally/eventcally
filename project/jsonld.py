@@ -1,8 +1,10 @@
 import datetime
 from json import JSONEncoder
+
 from flask import url_for
-from project.models import EventAttendanceMode, EventStatus
+
 from project.dateutils import berlin_tz
+from project.models import EventAttendanceMode, EventStatus
 
 
 class DateTimeEncoder(JSONEncoder):
