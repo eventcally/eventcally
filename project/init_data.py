@@ -6,14 +6,23 @@ from project.services.event import upsert_event_category
 from project.models import Location
 from flask import url_for
 from apispec.exceptions import DuplicateComponentNameError
+import os
 
 
 @app.before_first_request
 def add_oauth2_scheme():
+    # At some sites the https scheme is not set yet
+    if os.getenv("AUTHLIB_INSECURE_TRANSPORT", "False").lower() in ["true", "1"]:
+        authorizationUrl = url_for("authorize", _external=True)
+        tokenUrl = url_for("issue_token", _external=True)
+    else:
+        authorizationUrl = url_for("authorize", _external=True, _scheme="https")
+        tokenUrl = url_for("issue_token", _external=True, _scheme="https")
+
     oauth2_scheme = {
         "type": "oauth2",
-        "authorizationUrl": url_for("authorize", _external=True),
-        "tokenUrl": url_for("issue_token", _external=True),
+        "authorizationUrl": authorizationUrl,
+        "tokenUrl": tokenUrl,
         "flow": "accessCode",
         "scopes": scopes,
     }
