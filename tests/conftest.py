@@ -13,8 +13,6 @@ def pytest_generate_tests(metafunc):
 
 @pytest.fixture
 def app():
-    os.environ["AUTHLIB_INSECURE_TRANSPORT"] = "1"
-
     from project import app
 
     app.config["TESTING"] = True

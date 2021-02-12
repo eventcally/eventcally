@@ -1,36 +1,17 @@
 from project import app, db
-from project.api import api_docs, scopes
+from project.api import add_oauth2_scheme_with_transport
 from project.services.user import upsert_user_role
 from project.services.admin_unit import upsert_admin_unit_member_role
 from project.services.event import upsert_event_category
 from project.models import Location
-from flask import url_for
-from apispec.exceptions import DuplicateComponentNameError
 import os
 
 
 @app.before_first_request
 def add_oauth2_scheme():
     # At some sites the https scheme is not set yet
-    if os.getenv("AUTHLIB_INSECURE_TRANSPORT", "False").lower() in ["true", "1"]:
-        authorizationUrl = url_for("authorize", _external=True)
-        tokenUrl = url_for("issue_token", _external=True)
-    else:
-        authorizationUrl = url_for("authorize", _external=True, _scheme="https")
-        tokenUrl = url_for("issue_token", _external=True, _scheme="https")
-
-    oauth2_scheme = {
-        "type": "oauth2",
-        "authorizationUrl": authorizationUrl,
-        "tokenUrl": tokenUrl,
-        "flow": "accessCode",
-        "scopes": scopes,
-    }
-
-    try:
-        api_docs.spec.components.security_scheme("oauth2", oauth2_scheme)
-    except DuplicateComponentNameError:  # pragma: no cover
-        pass
+    insecure = os.getenv("AUTHLIB_INSECURE_TRANSPORT", "False").lower() in ["true", "1"]
+    add_oauth2_scheme_with_transport(insecure)
 
 
 @app.before_first_request
