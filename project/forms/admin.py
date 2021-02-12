@@ -1,7 +1,8 @@
-from flask_wtf import FlaskForm
 from flask_babelex import lazy_gettext
-from wtforms import TextAreaField, SubmitField, BooleanField
+from flask_wtf import FlaskForm
+from wtforms import BooleanField, SubmitField, TextAreaField
 from wtforms.validators import Optional
+
 from project.forms.widgets import MultiCheckboxField
 
 

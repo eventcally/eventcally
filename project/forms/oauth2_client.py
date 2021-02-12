@@ -1,11 +1,13 @@
-from flask_wtf import FlaskForm
-from flask_babelex import lazy_gettext
-from wtforms import StringField, TextAreaField, SubmitField, SelectField
-from wtforms.validators import Optional, DataRequired
-from project.forms.widgets import MultiCheckboxField
-from project.api import scopes
-from project.utils import split_by_crlf
 import os
+
+from flask_babelex import lazy_gettext
+from flask_wtf import FlaskForm
+from wtforms import SelectField, StringField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, Optional
+
+from project.api import scopes
+from project.forms.widgets import MultiCheckboxField
+from project.utils import split_by_crlf
 
 
 class BaseOAuth2ClientForm(FlaskForm):

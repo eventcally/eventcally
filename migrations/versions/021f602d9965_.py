@@ -5,9 +5,10 @@ Revises: 92f37474ad62
 Create Date: 2020-10-22 17:59:27.823624
 
 """
-from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
+from alembic import op
+
 from project import dbtypes
 from project.models import EventRejectionReason, EventReviewStatus
 

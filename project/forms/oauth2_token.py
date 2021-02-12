@@ -1,5 +1,5 @@
-from flask_wtf import FlaskForm
 from flask_babelex import lazy_gettext
+from flask_wtf import FlaskForm
 from wtforms import SubmitField
 
 

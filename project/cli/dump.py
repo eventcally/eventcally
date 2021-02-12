@@ -1,28 +1,30 @@
-import click
-from flask.cli import AppGroup
-from project import app, dump_path
-from project.models import (
-    Event,
-    EventPlace,
-    EventReference,
-    Location,
-    EventCategory,
-    EventOrganizer,
-    Image,
-    AdminUnit,
-)
-from sqlalchemy.orm import joinedload
 import json
-from project.api.event.schemas import EventDumpSchema
-from project.api.place.schemas import PlaceDumpSchema
-from project.api.location.schemas import LocationDumpSchema
-from project.api.event_category.schemas import EventCategoryDumpSchema
-from project.api.organizer.schemas import OrganizerDumpSchema
-from project.api.image.schemas import ImageDumpSchema
-from project.api.organization.schemas import OrganizationDumpSchema
-from project.api.event_reference.schemas import EventReferenceDumpSchema
 import os
 import shutil
+
+import click
+from flask.cli import AppGroup
+from sqlalchemy.orm import joinedload
+
+from project import app, dump_path
+from project.api.event.schemas import EventDumpSchema
+from project.api.event_category.schemas import EventCategoryDumpSchema
+from project.api.event_reference.schemas import EventReferenceDumpSchema
+from project.api.image.schemas import ImageDumpSchema
+from project.api.location.schemas import LocationDumpSchema
+from project.api.organization.schemas import OrganizationDumpSchema
+from project.api.organizer.schemas import OrganizerDumpSchema
+from project.api.place.schemas import PlaceDumpSchema
+from project.models import (
+    AdminUnit,
+    Event,
+    EventCategory,
+    EventOrganizer,
+    EventPlace,
+    EventReference,
+    Image,
+    Location,
+)
 from project.utils import make_dir
 
 dump_cli = AppGroup("dump")

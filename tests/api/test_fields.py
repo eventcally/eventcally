@@ -33,8 +33,9 @@ def test_numeric_str_serialize(client, seeder, utils):
     ],
 )
 def test_numeric_str_deserialize(latitude, longitude, valid):
-    from project.api.location.schemas import LocationPostRequestSchema
     from marshmallow import ValidationError
+
+    from project.api.location.schemas import LocationPostRequestSchema
 
     data = {
         "latitude": latitude,

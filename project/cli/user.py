@@ -1,5 +1,6 @@
 import click
 from flask.cli import AppGroup
+
 from project import app, db
 from project.services.user import add_admin_roles_to_user
 

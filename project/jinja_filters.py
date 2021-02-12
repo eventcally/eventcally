@@ -1,11 +1,12 @@
+import os
+from urllib.parse import quote_plus
+
 from project import app
 from project.utils import (
     get_event_category_name,
     get_localized_enum_name,
     get_localized_scope,
 )
-from urllib.parse import quote_plus
-import os
 
 
 def env_override(value, key):

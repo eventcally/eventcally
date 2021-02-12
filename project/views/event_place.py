@@ -1,20 +1,17 @@
-from project import app, db
-from project.models import EventPlace, Location
-from flask import render_template, flash, url_for, redirect
+from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
 from flask_security import auth_required
+from sqlalchemy.exc import SQLAlchemyError
+
+from project import app, db
 from project.access import access_or_401, get_admin_unit_for_manage_or_404
 from project.forms.event_place import (
-    UpdateEventPlaceForm,
     CreateEventPlaceForm,
     DeleteEventPlaceForm,
+    UpdateEventPlaceForm,
 )
-from project.views.utils import (
-    flash_errors,
-    handleSqlError,
-    non_match_for_deletion,
-)
-from sqlalchemy.exc import SQLAlchemyError
+from project.models import EventPlace, Location
+from project.views.utils import flash_errors, handleSqlError, non_match_for_deletion
 
 
 @app.route("/manage/admin_unit/<int:id>/places/create", methods=("GET", "POST"))

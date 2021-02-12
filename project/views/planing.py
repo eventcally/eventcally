@@ -1,7 +1,8 @@
-from project import app
 from flask import render_template, request
-from project.services.event_search import EventSearchParams
+
+from project import app
 from project.forms.planing import PlaningForm
+from project.services.event_search import EventSearchParams
 from project.views.event import get_event_category_choices
 
 

@@ -1,8 +1,9 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import HiddenField, StringField, SubmitField, SelectField
+from wtforms import HiddenField, SelectField, StringField, SubmitField
 from wtforms.validators import Optional
-from project.forms.common import weekday_choices, distance_choices
+
+from project.forms.common import distance_choices, weekday_choices
 from project.forms.widgets import CustomDateField, MultiCheckboxField
 
 

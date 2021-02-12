@@ -56,9 +56,9 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
 
     with app.app_context():
         from project.models import (
+            EventReference,
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
-            EventReference,
         )
 
         reference_request = EventReferenceRequest.query.get(reference_request_id)

@@ -1,7 +1,8 @@
-from project import app
-from project.models import AdminUnitMember, AdminUnitMemberInvitation
 from flask import render_template
 from flask_security import auth_required, current_user
+
+from project import app
+from project.models import AdminUnitMember, AdminUnitMemberInvitation
 
 
 @app.route("/profile")

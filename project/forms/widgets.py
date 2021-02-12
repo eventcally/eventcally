@@ -1,9 +1,11 @@
-from wtforms import DateTimeField, SelectMultipleField, SelectField
-from wtforms.widgets import html_params, ListWidget, CheckboxInput
-from markupsafe import Markup
-from wtforms.validators import StopValidation
 from datetime import datetime
-from flask_babelex import to_user_timezone, gettext
+
+from flask_babelex import gettext, to_user_timezone
+from markupsafe import Markup
+from wtforms import DateTimeField, SelectField, SelectMultipleField
+from wtforms.validators import StopValidation
+from wtforms.widgets import CheckboxInput, ListWidget, html_params
+
 from project.dateutils import berlin_tz
 
 

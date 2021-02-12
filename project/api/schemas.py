@@ -1,5 +1,6 @@
+from marshmallow import fields, missing, validate
+
 from project.api import marshmallow
-from marshmallow import fields, validate, missing
 
 
 class SQLAlchemyBaseSchema(marshmallow.SQLAlchemySchema):

@@ -1,8 +1,9 @@
 from authlib.oauth2 import OAuth2Error
+from flask import redirect, render_template, request, url_for
+from flask_security import current_user
+
 from project import app
 from project.api import scopes
-from flask_security import current_user
-from flask import redirect, request, url_for, render_template
 from project.forms.security import AuthorizeForm
 from project.oauth2 import authorization
 

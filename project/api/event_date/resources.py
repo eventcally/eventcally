@@ -1,17 +1,18 @@
+from flask_apispec import doc, marshal_with, use_kwargs
+from sqlalchemy.orm import defaultload, lazyload
+
 from project.api import add_api_resource
-from flask_apispec import marshal_with, doc, use_kwargs
-from project.api.resources import BaseResource
 from project.api.event_date.schemas import (
-    EventDateSchema,
     EventDateListRequestSchema,
     EventDateListResponseSchema,
+    EventDateSchema,
     EventDateSearchRequestSchema,
     EventDateSearchResponseSchema,
 )
-from project.models import EventDate, Event
+from project.api.resources import BaseResource
+from project.models import Event, EventDate
 from project.services.event import get_event_dates_query
 from project.services.event_search import EventSearchParams
-from sqlalchemy.orm import defaultload, lazyload
 
 
 class EventDateListResource(BaseResource):

@@ -5,10 +5,9 @@ Revises: bbad7e33a780
 Create Date: 2020-06-30 21:09:35.692876
 
 """
-from alembic import op
 import sqlalchemy as sa
 import sqlalchemy_utils
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "abf0f671ba27"

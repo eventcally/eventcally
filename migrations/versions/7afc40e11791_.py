@@ -5,11 +5,11 @@ Revises: a8c662c46047
 Create Date: 2020-09-28 10:38:46.424791
 
 """
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
+
 from project import dbtypes
 from project.models import FeaturedEventRejectionReason, FeaturedEventReviewStatus
-
 
 # revision identifiers, used by Alembic.
 revision = "7afc40e11791"

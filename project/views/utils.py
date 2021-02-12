@@ -1,10 +1,11 @@
-from project.models import Analytics
-from project import db, mail
+from flask import Markup, flash, redirect, render_template, request, url_for
 from flask_babelex import gettext
-from flask import request, url_for, render_template, flash, redirect, Markup
 from flask_mail import Message
-from sqlalchemy.exc import SQLAlchemyError
 from psycopg2.errorcodes import UNIQUE_VIOLATION
+from sqlalchemy.exc import SQLAlchemyError
+
+from project import db, mail
+from project.models import Analytics
 
 
 def track_analytics(key, value1, value2):

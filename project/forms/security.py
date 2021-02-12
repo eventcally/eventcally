@@ -1,9 +1,10 @@
-from flask_security.forms import RegisterForm, EqualTo, get_form_field_label
+from flask_babelex import lazy_gettext
+from flask_security.forms import EqualTo, RegisterForm, get_form_field_label
+from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
+
 from project.forms.common import get_accept_tos_markup
-from flask_wtf import FlaskForm
-from flask_babelex import lazy_gettext
 
 
 class ExtendedRegisterForm(RegisterForm):

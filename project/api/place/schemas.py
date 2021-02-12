@@ -1,22 +1,23 @@
 from marshmallow import fields, validate
+
 from project.api import marshmallow
-from project.models import EventPlace
 from project.api.image.schemas import ImageSchema
 from project.api.location.schemas import (
+    LocationPatchRequestSchema,
+    LocationPostRequestSchema,
     LocationSchema,
     LocationSearchItemSchema,
-    LocationPostRequestSchema,
-    LocationPatchRequestSchema,
 )
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
-    SQLAlchemyBaseSchema,
     IdSchemaMixin,
-    WriteIdSchemaMixin,
-    TrackableSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
+    SQLAlchemyBaseSchema,
+    TrackableSchemaMixin,
+    WriteIdSchemaMixin,
 )
+from project.models import EventPlace
 
 
 class PlaceModelSchema(SQLAlchemyBaseSchema):

@@ -1,58 +1,59 @@
-from project.api import add_api_resource
-from flask_apispec import marshal_with, doc, use_kwargs
-from project.api.resources import BaseResource
-from project.api.organization.schemas import (
-    OrganizationSchema,
-    OrganizationListRequestSchema,
-    OrganizationListResponseSchema,
-)
-from project.models import AdminUnit, Event
-from project.api.event_date.schemas import (
-    EventDateSearchRequestSchema,
-    EventDateSearchResponseSchema,
-)
-from project.api.event.schemas import (
-    EventSearchRequestSchema,
-    EventSearchResponseSchema,
-    EventListRequestSchema,
-    EventListResponseSchema,
-    EventPostRequestSchema,
-    EventIdSchema,
-)
-from project.api.organizer.schemas import (
-    OrganizerListRequestSchema,
-    OrganizerListResponseSchema,
-    OrganizerIdSchema,
-    OrganizerPostRequestSchema,
-)
-from project.api.event_reference.schemas import (
-    EventReferenceListRequestSchema,
-    EventReferenceListResponseSchema,
-)
-from project.services.reference import (
-    get_reference_incoming_query,
-    get_reference_outgoing_query,
-)
-from project.api.place.schemas import (
-    PlaceListRequestSchema,
-    PlaceListResponseSchema,
-    PlaceIdSchema,
-    PlacePostRequestSchema,
-)
-from project.services.event import get_event_dates_query, get_events_query, insert_event
-from project.services.event_search import EventSearchParams
-from project.services.admin_unit import (
-    get_admin_unit_query,
-    get_organizer_query,
-    get_place_query,
-)
-from project.oauth2 import require_oauth
 from authlib.integrations.flask_oauth2 import current_token
+from flask_apispec import doc, marshal_with, use_kwargs
+
 from project import db
 from project.access import (
     access_or_401,
     get_admin_unit_for_manage_or_404,
     login_api_user_or_401,
+)
+from project.api import add_api_resource
+from project.api.event.schemas import (
+    EventIdSchema,
+    EventListRequestSchema,
+    EventListResponseSchema,
+    EventPostRequestSchema,
+    EventSearchRequestSchema,
+    EventSearchResponseSchema,
+)
+from project.api.event_date.schemas import (
+    EventDateSearchRequestSchema,
+    EventDateSearchResponseSchema,
+)
+from project.api.event_reference.schemas import (
+    EventReferenceListRequestSchema,
+    EventReferenceListResponseSchema,
+)
+from project.api.organization.schemas import (
+    OrganizationListRequestSchema,
+    OrganizationListResponseSchema,
+    OrganizationSchema,
+)
+from project.api.organizer.schemas import (
+    OrganizerIdSchema,
+    OrganizerListRequestSchema,
+    OrganizerListResponseSchema,
+    OrganizerPostRequestSchema,
+)
+from project.api.place.schemas import (
+    PlaceIdSchema,
+    PlaceListRequestSchema,
+    PlaceListResponseSchema,
+    PlacePostRequestSchema,
+)
+from project.api.resources import BaseResource
+from project.models import AdminUnit, Event
+from project.oauth2 import require_oauth
+from project.services.admin_unit import (
+    get_admin_unit_query,
+    get_organizer_query,
+    get_place_query,
+)
+from project.services.event import get_event_dates_query, get_events_query, insert_event
+from project.services.event_search import EventSearchParams
+from project.services.reference import (
+    get_reference_incoming_query,
+    get_reference_outgoing_query,
 )
 
 
