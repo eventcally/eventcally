@@ -104,7 +104,6 @@ def manage_admin_unit_events(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
     params = EventSearchParams()
-    params.set_default_date_range()
 
     form = FindEventForm(formdata=request.args, obj=params)
     form.category_id.choices = get_event_category_choices()

@@ -1,10 +1,12 @@
+from datetime import datetime
+
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import contains_eager, defaultload, joinedload
 from sqlalchemy.sql import extract
 
 from project import db
-from project.dateutils import date_add_time, dates_from_recurrence_rule, today
+from project.dateutils import date_add_time, dates_from_recurrence_rule
 from project.models import (
     AdminUnit,
     Event,
@@ -67,7 +69,7 @@ def fill_event_filter(event_filter, params):
 
 def get_event_dates_query(params):
     event_filter = 1 == 1
-    date_filter = EventDate.start >= today
+    date_filter = EventDate.start >= datetime.min
 
     event_filter = fill_event_filter(event_filter, params)
 
@@ -197,7 +199,7 @@ def get_event_with_details_or_404(event_id):
 
 def get_events_query(params):
     event_filter = 1 == 1
-    date_filter = EventDate.start >= today
+    date_filter = EventDate.start >= datetime.min
 
     event_filter = fill_event_filter(event_filter, params)
 
