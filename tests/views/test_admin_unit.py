@@ -12,7 +12,8 @@ def create_form_data(response, utils):
 
 
 def test_create(client, app, utils, seeder):
-    utils.register()
+    seeder.create_user()
+    utils.login()
     response = client.get("/admin_unit/create")
     assert response.status_code == 200
 

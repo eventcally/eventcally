@@ -18,10 +18,10 @@ from project.custom_session_interface import CustomSessionInterface
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SECURITY_CONFIRMABLE"] = False
+app.config["SECURITY_CONFIRMABLE"] = True
 app.config["SECURITY_TRACKABLE"] = True
 app.config["SECURITY_REGISTERABLE"] = True
-app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
+app.config["SECURITY_SEND_REGISTER_EMAIL"] = True
 app.config["SECURITY_RECOVERABLE"] = True
 app.config["SECURITY_CHANGEABLE"] = True
 app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
@@ -104,13 +104,15 @@ from project.jsonld import DateTimeEncoder
 
 app.json_encoder = DateTimeEncoder
 
-from project.forms.security import ExtendedRegisterForm
+from project.forms.security import ExtendedConfirmRegisterForm
 
 # Setup Flask-Security
 from project.models import Role, User
 
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
-security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
+security = Security(
+    app, user_datastore, confirm_register_form=ExtendedConfirmRegisterForm
+)
 app.session_interface = CustomSessionInterface()
 
 # OAuth2
