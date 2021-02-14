@@ -33,7 +33,7 @@ class UtilActions(object):
                 follow_redirects=True,
             )
             assert response.status_code == 200
-            assert g.identity.user.email == email
+            self.assert_response_success_message(response)
 
     def login(self, email="test@test.de", password="MeinPasswortIstDasBeste"):
         from project.services.user import find_user_by_email
@@ -207,6 +207,10 @@ class UtilActions(object):
         assert b"MockException" in response.data
 
     def assert_response_error_message(self, response, error_message=b"alert-danger"):
+        assert response.status_code == 200
+        assert error_message in response.data
+
+    def assert_response_success_message(self, response, error_message=b"alert-success"):
         assert response.status_code == 200
         assert error_message in response.data
 
