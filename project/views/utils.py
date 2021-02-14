@@ -4,7 +4,7 @@ from flask_mail import Message
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
 
-from project import db, mail
+from project import app, db, mail
 from project.models import Analytics
 
 
@@ -91,9 +91,9 @@ def send_mails(recipients, subject, template, **context):
     msg.html = render_template("email/%s.html" % template, **context)
 
     if not mail.default_sender:
-        print(",".join(msg.recipients))
-        print(msg.subject)
-        print(msg.body)
+        app.logger.info(",".join(msg.recipients))
+        app.logger.info(msg.subject)
+        app.logger.info(msg.body)
         return
 
     mail.send(msg)

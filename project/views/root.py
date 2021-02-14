@@ -68,6 +68,6 @@ def developer():
             "ctime": os.path.getctime(all_path),
         }
     else:
-        print("No file at %s" % all_path)
+        app.logger.info("No file at %s" % all_path)
 
     return render_template("developer/read.html", dump_file=dump_file)

@@ -1,3 +1,4 @@
+import logging
 import os
 
 from flask import Flask, jsonify, redirect, request, url_for
@@ -35,6 +36,13 @@ app.config["SECRET_KEY"] = os.environ.get(
 app.config["SECURITY_PASSWORD_SALT"] = os.environ.get(
     "SECURITY_PASSWORD_SALT", "146585145368132386173505678016728509634"
 )
+
+# Gunicorn logging
+if __name__ != "__main__":
+    gunicorn_logger = logging.getLogger("gunicorn.error")
+    if gunicorn_logger.hasHandlers():
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
 
 # Gzip
 gzip = Gzip(app)
@@ -76,8 +84,8 @@ mail = Mail(app)
 if app.config["MAIL_SUPPRESS_SEND"]:
 
     def log_message(message, app):
-        print(message.subject)
-        print(message.body)
+        app.logger.info(message.subject)
+        app.logger.info(message.body)
 
     email_dispatched.connect(log_message)
 

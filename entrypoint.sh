@@ -6,5 +6,4 @@ do
     sleep 2
 done
 
-BIND_PORT=${PORT:-5000}
-gunicorn -c gunicorn.conf.py --bind 0.0.0.0:$BIND_PORT project:app
+gunicorn -c gunicorn.conf.py project:app
