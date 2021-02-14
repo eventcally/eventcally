@@ -42,6 +42,10 @@ def get_pagination_urls(pagination, **kwargs):
     result = {}
 
     if pagination:
+        result["page"] = pagination.page
+        result["pages"] = pagination.pages
+        result["total"] = pagination.total
+
         if pagination.has_prev:
             args = request.args.copy()
             args.update(kwargs)

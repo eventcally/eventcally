@@ -209,6 +209,13 @@
                     $('#next_item').addClass('disabled');
                 }
 
+                if (data.has_prev || data.has_next) {
+                    $('#page_info_text').text("Seite " + data.page + " von " + data.pages + " (" + data.total + " insgesamt)")
+                    $('#page_info').show();
+                } else {
+                    $('#page_info').hide();
+                }
+
                 handle_request_success();
 
                 if (leaflet_map != null) {
@@ -270,6 +277,7 @@
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                           <li class="page-item disabled" id="prev_item"><a class="page-link" id="prev_link" href="#">{{ _('Previous') }}</a></li>
+                          <li class="page-item disabled" id="page_info d-none"><span class="page-link" id="page_info_text"></span></li>
                           <li class="page-item disabled" id="next_item"><a class="page-link" id="next_link" href="#">{{ _('Next') }}</a></li>
                     </ul>
                 </nav>
