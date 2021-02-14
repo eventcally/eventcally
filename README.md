@@ -36,7 +36,7 @@ source venv/bin/activate
 (venv) pip install -r requirements.txt
 (venv) export DATABASE_URL='postgresql://postgres@localhost/gsevpt'
 (venv) flask db upgrade
-(venv) gunicorn -c gunicorn.conf.py --bind 0.0.0.0:5000 project:app
+(venv) gunicorn -c gunicorn.conf.py project:app
 ```
 
 ## Scheduled/Cron jobs
@@ -62,27 +62,27 @@ Create `.env` file in the root directory or pass as environment variables.
 
 ### Security
 
-| Variable | Function |
-| --- | --- |
-| SECRET_KEY | A secret key for verifying the integrity of signed cookies. Generate a nice key using `python3 -c "import secrets; print(secrets.token_urlsafe())"`. |
+| Variable               | Function                                                                                                                                                                           |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SECRET_KEY             | A secret key for verifying the integrity of signed cookies. Generate a nice key using `python3 -c "import secrets; print(secrets.token_urlsafe())"`.                               |
 | SECURITY_PASSWORD_HASH | Bcrypt is set as default SECURITY_PASSWORD_HASH, which requires a salt. Generate a good salt using: `python3 -c "import secrets; print(secrets.SystemRandom().getrandbits(128))"`. |
 
 ### Send notifications via Mail
 
-| Variable | Function |
-| --- | --- |
+| Variable            | Function                                   |
+| ------------------- | ------------------------------------------ |
 | MAIL_DEFAULT_SENDER | see <https://pythonhosted.org/Flask-Mail/> |
-| MAIL_PASSWORD | " |
-| MAIL_PORT | " |
-| MAIL_SERVER | " |
-| MAIL_USERNAME | " |
+| MAIL_PASSWORD       | "                                          |
+| MAIL_PORT           | "                                          |
+| MAIL_SERVER         | "                                          |
+| MAIL_USERNAME       | "                                          |
 
 ### Misc
 
-| Variable | Function |
-| --- | --- |
-| CACHE_PATH | Absolute or relative path to root directory for dump and image caching. Default: project/tmp |
-| GOOGLE_MAPS_API_KEY | Resolve addresses with Google Maps: API Key with Places API enabled |
+| Variable            | Function                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| CACHE_PATH          | Absolute or relative path to root directory for dump and image caching. Default: project/tmp |
+| GOOGLE_MAPS_API_KEY | Resolve addresses with Google Maps: API Key with Places API enabled                          |
 
 ## Development
 
