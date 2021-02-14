@@ -18,10 +18,10 @@ from project.custom_session_interface import CustomSessionInterface
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SECURITY_CONFIRMABLE"] = False
+app.config["SECURITY_CONFIRMABLE"] = True
 app.config["SECURITY_TRACKABLE"] = True
 app.config["SECURITY_REGISTERABLE"] = True
-app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
+app.config["SECURITY_SEND_REGISTER_EMAIL"] = True
 app.config["SECURITY_RECOVERABLE"] = True
 app.config["SECURITY_CHANGEABLE"] = True
 app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
