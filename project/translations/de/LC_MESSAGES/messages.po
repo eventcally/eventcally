@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-14 10:49+0100\n"
+"POT-Creation-Date: 2021-02-14 13:55+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -196,7 +196,7 @@ msgstr "Nutzungsbedingungen"
 msgid "Legal notice"
 msgstr "Impressum"
 
-#: project/forms/admin.py:12 project/templates/_macros.html:1012
+#: project/forms/admin.py:12 project/templates/_macros.html:1011
 #: project/templates/layout.html:175
 #: project/templates/widget/event_suggestion/create.html:155
 #: project/views/root.py:44
@@ -213,7 +213,7 @@ msgid "Save"
 msgstr "Speichern"
 
 #: project/forms/admin.py:19 project/forms/admin_unit_member.py:12
-#: project/forms/admin_unit_member.py:32 project/templates/profile.html:56
+#: project/forms/admin_unit_member.py:32 project/templates/profile.html:66
 msgid "Roles"
 msgstr "Rollen"
 
@@ -279,7 +279,7 @@ msgstr "Längengrad"
 #: project/templates/admin/admin_units.html:19
 #: project/templates/event_place/list.html:19
 #: project/templates/oauth2_client/list.html:25
-#: project/templates/profile.html:35 project/templates/profile.html:55
+#: project/templates/profile.html:45 project/templates/profile.html:65
 msgid "Name"
 msgstr "Name"
 
@@ -785,7 +785,7 @@ msgstr "Wähle den Status der Veranstaltung."
 msgid "Update event"
 msgstr "Veranstaltung aktualisieren"
 
-#: project/forms/event.py:358 project/templates/_macros.html:961
+#: project/forms/event.py:358 project/templates/_macros.html:960
 #: project/templates/event/actions.html:41
 #: project/templates/event/delete.html:6
 msgid "Delete event"
@@ -1008,7 +1008,7 @@ msgstr "Anfrage speichern"
 msgid "Delete request"
 msgstr "Anfrage löschen"
 
-#: project/forms/reference_request.py:27 project/templates/_macros.html:1024
+#: project/forms/reference_request.py:27 project/templates/_macros.html:1023
 #: project/templates/event_suggestion/review_status.html:18
 #: project/templates/reference_request/review_status.html:12
 msgid "Review status"
@@ -1063,7 +1063,7 @@ msgid "This field is optional."
 msgstr "Dieses Feld ist optional."
 
 #: project/templates/_macros.html:116 project/templates/_macros.html:388
-#: project/templates/_macros.html:395 project/templates/_macros.html:643
+#: project/templates/_macros.html:395 project/templates/_macros.html:642
 msgid "Date"
 msgstr "Datum"
 
@@ -1117,7 +1117,7 @@ msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
 #: project/templates/_macros.html:592 project/templates/_macros.html:594
-#: project/templates/event_date/list.html:272
+#: project/templates/event_date/list.html:279
 #: project/templates/widget/event_suggestion/create.html:144
 #: project/templates/widget/event_suggestion/create.html:169
 #: project/templates/widget/event_suggestion/create.html:191
@@ -1132,8 +1132,8 @@ msgstr "Zurück"
 msgid "Page %(page)d of %(pages)d (%(total)d total)"
 msgstr "Seite %(page)d von %(pages)d (%(total)d insgesamt)"
 
-#: project/templates/_macros.html:599 project/templates/_macros.html:601
-#: project/templates/event_date/list.html:273
+#: project/templates/_macros.html:598 project/templates/_macros.html:600
+#: project/templates/event_date/list.html:281
 #: project/templates/widget/event_suggestion/create.html:145
 #: project/templates/widget/event_suggestion/create.html:170
 #: project/templates/widget/event_suggestion/create.html:192
@@ -1142,39 +1142,39 @@ msgstr "Seite %(page)d von %(pages)d (%(total)d insgesamt)"
 msgid "Next"
 msgstr "Weiter"
 
-#: project/templates/_macros.html:666
+#: project/templates/_macros.html:665
 msgid "Radius"
 msgstr "Umkreis"
 
-#: project/templates/_macros.html:871
+#: project/templates/_macros.html:870
 msgid "Edit image"
 msgstr "Bild bearbeiten"
 
-#: project/templates/_macros.html:892
+#: project/templates/_macros.html:891
 msgid "Close"
 msgstr "Schließen"
 
-#: project/templates/_macros.html:893
+#: project/templates/_macros.html:892
 msgid "Okay"
 msgstr "OK"
 
-#: project/templates/_macros.html:902 project/templates/_macros.html:904
+#: project/templates/_macros.html:901 project/templates/_macros.html:903
 msgid "Choose image file"
 msgstr "Bild-Datei auswählen"
 
-#: project/templates/_macros.html:956 project/templates/reference/read.html:13
+#: project/templates/_macros.html:955 project/templates/reference/read.html:13
 msgid "Actions"
 msgstr "Aktionen"
 
-#: project/templates/_macros.html:960 project/templates/event/actions.html:40
+#: project/templates/_macros.html:959 project/templates/event/actions.html:40
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: project/templates/_macros.html:963 project/templates/manage/events.html:30
+#: project/templates/_macros.html:962 project/templates/manage/events.html:30
 msgid "More"
 msgstr "Mehr"
 
-#: project/templates/_macros.html:984
+#: project/templates/_macros.html:983
 msgid "Event suggestion"
 msgstr "Veranstaltungsvorschlag"
 
@@ -1207,6 +1207,7 @@ msgid "Example"
 msgstr "Beispiel"
 
 #: project/templates/developer/read.html:4 project/templates/layout.html:118
+#: project/templates/profile.html:29
 msgid "Developer"
 msgstr "Entwickler"
 
@@ -1292,25 +1293,23 @@ msgstr "Widgets"
 #: project/templates/admin/settings.html:8
 #: project/templates/admin_unit/update.html:12
 #: project/templates/layout_manage.html:48
-#: project/templates/manage/widgets.html:12
+#: project/templates/manage/widgets.html:12 project/templates/profile.html:19
 msgid "Settings"
 msgstr "Einstellungen"
+
+#: project/templates/profile.html:23
+msgid "Applications"
+msgstr "Apps"
 
 #: project/templates/oauth2_client/list.html:4
 #: project/templates/oauth2_client/list.html:11
 #: project/templates/oauth2_client/read.html:16
-#: project/templates/profile.html:19
+#: project/templates/profile.html:33
 msgid "OAuth2 clients"
 msgstr "OAuth2 Clients"
 
-#: project/templates/oauth2_token/list.html:4
-#: project/templates/oauth2_token/list.html:11
-#: project/templates/profile.html:24
-msgid "OAuth2 tokens"
-msgstr "OAuth2 Token"
-
 #: project/templates/manage/admin_units.html:8
-#: project/templates/manage/members.html:9 project/templates/profile.html:30
+#: project/templates/manage/members.html:9 project/templates/profile.html:40
 msgid "Invitations"
 msgstr "Einladungen"
 
@@ -1319,7 +1318,7 @@ msgstr "Einladungen"
 #: project/templates/admin/admin_units.html:11
 #: project/templates/manage/admin_units.html:3
 #: project/templates/manage/admin_units.html:16
-#: project/templates/profile.html:50
+#: project/templates/profile.html:60
 msgid "Admin Units"
 msgstr "Organisationen"
 
@@ -1466,7 +1465,7 @@ msgstr "Zielgruppe"
 
 #: project/templates/event/read.html:17
 #: project/templates/event_date/list.html:4
-#: project/templates/event_date/list.html:251
+#: project/templates/event_date/list.html:258
 #: project/templates/reference_request/review.html:30
 msgid "Event Dates"
 msgstr "Termine"
@@ -1588,9 +1587,14 @@ msgstr "OAuth2 Client"
 msgid "Update OAuth2 client"
 msgstr "OAuth2 Client aktualisieren"
 
+#: project/templates/oauth2_token/list.html:4
+#: project/templates/oauth2_token/list.html:11
+msgid "OAuth2 tokens"
+msgstr "OAuth2 Token"
+
 #: project/templates/oauth2_token/list.html:19
-msgid "Client"
-msgstr "Client"
+msgid "Application"
+msgstr "App"
 
 #: project/templates/oauth2_token/list.html:30
 msgid "Revoked"
@@ -1666,7 +1670,7 @@ msgstr "Vorschau"
 msgid "Admin unit successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin.py:68 project/views/manage.py:241
+#: project/views/admin.py:68 project/views/manage.py:240
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
@@ -2029,4 +2033,7 @@ msgstr "Neue Veranstaltung zu prüfen"
 
 #~ msgid "Delete image"
 #~ msgstr "Bild löschen"
+
+#~ msgid "Client"
+#~ msgstr "Client"
 
