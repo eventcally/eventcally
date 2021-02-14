@@ -104,13 +104,15 @@ from project.jsonld import DateTimeEncoder
 
 app.json_encoder = DateTimeEncoder
 
-from project.forms.security import ExtendedRegisterForm
+from project.forms.security import ExtendedConfirmRegisterForm
 
 # Setup Flask-Security
 from project.models import Role, User
 
 user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
-security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
+security = Security(
+    app, user_datastore, confirm_register_form=ExtendedConfirmRegisterForm
+)
 app.session_interface = CustomSessionInterface()
 
 # OAuth2
