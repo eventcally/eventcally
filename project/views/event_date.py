@@ -5,7 +5,10 @@ from flask import redirect, render_template, request, url_for
 from project import app
 from project.forms.event_date import FindEventDateForm
 from project.jsonld import DateTimeEncoder, get_sd_for_event_date
-from project.services.event import get_event_date_with_details_or_404
+from project.services.event import (
+    get_event_date_with_details_or_404,
+    get_upcoming_event_dates,
+)
 from project.services.event_search import EventSearchParams
 from project.views.event import get_event_category_choices, get_menu_user_rights
 from project.views.utils import flash_errors, track_analytics, truncate
@@ -50,4 +53,5 @@ def event_date(id):
         meta_description=truncate(event_date.event.description, 300),
         canonical_url=url_for("event_date", id=id, _external=True),
         user_rights=get_menu_user_rights(event_date.event),
+        dates=get_upcoming_event_dates(event_date.event_id),
     )

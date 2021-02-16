@@ -6,7 +6,7 @@
 {% endblock %}
 {% block content %}
 
-<h1>{{ _('Events') }} <button type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-filter"></i></button></h1>
+<h1>{{ _('Events') }} <button type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-search"></i></button></h1>
 
 <div class="my-4">
     <a class="btn btn-outline-secondary my-1" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
