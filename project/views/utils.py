@@ -108,7 +108,7 @@ def non_match_for_deletion(str1: str, str2: str) -> bool:
 
 
 def truncate(data: str, length: int) -> str:
-    if not str:
-        return str
+    if not data:
+        return data
 
     return (data[: length - 2] + "..") if len(data) > length else data
