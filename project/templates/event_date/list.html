@@ -159,7 +159,9 @@
                     var img_tag = '';
 
                     if (event.photo != null) {
-                        img_tag = '<img src="' + event.photo.image_url + '" class="card-img-top" style="object-fit: cover; height: 12vh; border-radius: 0;" />';
+                        img_tag = '<img src="' + event.photo.image_url + '" class="card-img-top" style="object-fit: cover; height: 12vh;" alt="Event image" />';
+                    } else {
+                        img_tag = '<div class="bg-light d-flex align-items-center justify-content-center" style="height: 12vh;"><i class="fa-calendar far h1 text-muted"></i></div>';
                     }
 
                     var map_link_start = '';
@@ -172,15 +174,11 @@
                     }
 
                     content += '<div class="card mb-3" id="event_card_' + event_date.id + '">' +
-                                        '<div class="card-header">' + start.format("dd. DD.MM.YYYY LT") + '</div>' +
                                         img_tag +
-                                        '<div class="card-body" style="padding:1rem">' +
-                                            '<h5 class="card-title"><a href="eventdate/' + event_date.id + '">' + event.name + '</a> <span class="small" style="vertical-align: middle;">' + render_event_warning_pills(event) + '</span></h5>' +
-                                            '<p class="card-text">' + ((event.description != null) ? event.description.truncate(100) : '') + '</p>' +
-                                        '</div>' +
-                                        '<div class="card-footer text-muted small">' +
-                                            '<div class="text-muted mr-2"><i class="fa fa-database"></i> ' + event.organizer.name + '</div>' +
-                                            '<div class="text-muted">' + map_link_start + '<i class="fa fa-map-marker"></i>  ' + event.place.name + map_link_end + '</div>' +
+                                        '<div class="card-body" style="padding:0.5rem">' +
+                                            '<div class="small text-uppercase" style="font-weight: 600;">' + start.format("dd. DD.MM.YYYY LT") + '</div>' +
+                                            '<h2 class="card-title m-0"><a href="eventdate/' + event_date.id + '" class="stretched-link text-body">' + event.name + '</a> <span class="small" style="vertical-align: middle;">' + render_event_warning_pills(event) + '</span></h2>' +
+                                            '<div class="text-muted" style="font-weight: 500;">' + map_link_start + event.place.name + map_link_end + '</div>' +
                                         '</div>' +
                                 '</div>';
                 });
@@ -256,7 +254,7 @@
 
     <h1>
         {{ _('Event Dates') }}
-        <button type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-filter"></i></button>
+        <button type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-search"></i></button>
         <button type="button" class="btn btn-outline-secondary" onclick="toggle_map()"><i class="fa fa-map"></i></button>
     </h1>
 
@@ -277,7 +275,7 @@
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                           <li class="page-item disabled" id="prev_item"><a class="page-link" id="prev_link" href="#">{{ _('Previous') }}</a></li>
-                          <li class="page-item disabled" id="page_info d-none"><span class="page-link" id="page_info_text"></span></li>
+                          <li class="page-item disabled d-none" id="page_info"><span class="page-link" id="page_info_text"></span></li>
                           <li class="page-item disabled" id="next_item"><a class="page-link" id="next_link" href="#">{{ _('Next') }}</a></li>
                     </ul>
                 </nav>
