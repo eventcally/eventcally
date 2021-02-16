@@ -19,6 +19,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECURITY_CONFIRMABLE"] = True
+app.config["SECURITY_POST_LOGIN_VIEW"] = "manage"
 app.config["SECURITY_TRACKABLE"] = True
 app.config["SECURITY_REGISTERABLE"] = True
 app.config["SECURITY_SEND_REGISTER_EMAIL"] = True

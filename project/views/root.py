@@ -1,6 +1,7 @@
+import json
 import os.path
 
-from flask import redirect, render_template, request, url_for
+from flask import redirect, render_template, request, send_from_directory, url_for
 from flask_babelex import gettext
 from markupsafe import Markup
 
@@ -15,7 +16,16 @@ def home():
         track_analytics("home", "", request.args["src"])
         return redirect(url_for("home"))
 
-    return render_template("home.html")
+    structured_data = json.dumps(
+        {
+            "@context": "http://schema.org",
+            "@type": "WebSite",
+            "name": "Oveda",
+            "url": url_for("home", _external=True),
+        }
+    )
+
+    return render_template("home.html", structured_data=structured_data)
 
 
 @app.route("/example")
@@ -71,3 +81,9 @@ def developer():
         app.logger.info("No file at %s" % all_path)
 
     return render_template("developer/read.html", dump_file=dump_file)
+
+
+@app.route("/robots.txt")
+@app.route("/favicon.ico")
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
