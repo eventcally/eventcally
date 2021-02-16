@@ -29,3 +29,9 @@ def test_get_pagination_urls(client, seeder, app, utils):
     utils.get_endpoint_ok(
         "manage_admin_unit_organizers", id=admin_unit_id, page=2, per_page=10
     )
+
+
+def test_truncate():
+    from project.views.utils import truncate
+
+    assert truncate(None, 3) is None

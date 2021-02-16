@@ -8,7 +8,7 @@ from project.jsonld import DateTimeEncoder, get_sd_for_event_date
 from project.services.event import get_event_date_with_details_or_404
 from project.services.event_search import EventSearchParams
 from project.views.event import get_event_category_choices, get_menu_user_rights
-from project.views.utils import flash_errors, track_analytics
+from project.views.utils import flash_errors, track_analytics, truncate
 
 
 def prepare_event_date_form(form):
@@ -47,5 +47,7 @@ def event_date(id):
         "event_date/read.html",
         event_date=event_date,
         structured_data=structured_data,
+        meta_description=truncate(event_date.event.description, 300),
+        canonical_url=url_for("event_date", id=id, _external=True),
         user_rights=get_menu_user_rights(event_date.event),
     )
