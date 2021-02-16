@@ -3,8 +3,7 @@ from datetime import datetime
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import lazyload
-from sqlalchemy.sql import and_, func
+from sqlalchemy.sql import func
 
 from project import app, db
 from project.access import (
@@ -14,14 +13,12 @@ from project.access import (
     has_access,
     has_admin_unit_member_permission,
 )
-from project.dateutils import today
 from project.forms.event import CreateEventForm, DeleteEventForm, UpdateEventForm
 from project.models import (
     AdminUnit,
     AdminUnitMember,
     Event,
     EventCategory,
-    EventDate,
     EventOrganizer,
     EventReference,
     EventReviewStatus,
@@ -30,6 +27,7 @@ from project.models import (
 )
 from project.services.event import (
     get_event_with_details_or_404,
+    get_upcoming_event_dates,
     insert_event,
     update_event,
     upsert_event_category,
@@ -50,15 +48,14 @@ from project.views.utils import (
 def event(event_id):
     event = get_event_with_details_or_404(event_id)
     user_rights = get_menu_user_rights(event)
-    dates = (
-        EventDate.query.options(lazyload(EventDate.event))
-        .filter(and_(EventDate.event_id == event.id, EventDate.start >= today))
-        .order_by(EventDate.start)
-        .all()
-    )
+    dates = get_upcoming_event_dates(event.id)
 
     return render_template(
-        "event/read.html", event=event, dates=dates, user_rights=user_rights
+        "event/read.html",
+        event=event,
+        dates=dates,
+        user_rights=user_rights,
+        canonical_url=url_for("event", event_id=event_id, _external=True),
     )
 
 

@@ -2,11 +2,11 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import and_, func, or_
-from sqlalchemy.orm import contains_eager, defaultload, joinedload
+from sqlalchemy.orm import contains_eager, defaultload, joinedload, lazyload
 from sqlalchemy.sql import extract
 
 from project import db
-from project.dateutils import date_add_time, dates_from_recurrence_rule
+from project.dateutils import date_add_time, dates_from_recurrence_rule, today
 from project.models import (
     AdminUnit,
     Event,
@@ -284,3 +284,12 @@ def insert_event(event):
 
 def update_event(event):
     update_event_dates_with_recurrence_rule(event)
+
+
+def get_upcoming_event_dates(event_id):
+    return (
+        EventDate.query.options(lazyload(EventDate.event))
+        .filter(and_(EventDate.event_id == event_id, EventDate.start >= today))
+        .order_by(EventDate.start)
+        .all()
+    )
