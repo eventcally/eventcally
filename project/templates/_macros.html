@@ -300,28 +300,28 @@
 {% endmacro %}
 
 {% macro render_img_src(image, size=500) %}
-<img src="{{ url_for('image', id=image.id, s=size) }}" class="{{ kwargs['class'] or 'img-fluid' }}" style="{{ kwargs['style'] or 'max-width:100%;' }}" />
+<img src="{{ url_for('image', id=image.id, s=size) }}" class="{{ kwargs['class'] or 'img-fluid' }}" style="{{ kwargs['style'] or 'max-width:100%;' }}" alt="{{ kwargs['alt'] or 'image' }}" />
 {% endmacro %}
 
 {% macro render_image(image, size=500) %}
 {% if image %}
   {% set img_class = kwargs['class'] if 'class' in kwargs else '' %}
   {% set img_style = kwargs['style'] if 'style' in kwargs else '' %}
+  {% set img_class = img_class + ' img-fluid' %}
   {% if image.copyright_text %}
-    <figure class="figure">
+    <figure class="figure mx-auto">
       {% set img_class = img_class + ' figure-img' %}
-      {{ render_img_src(image, size, class=img_class, style=img_style) }}
+      {{ render_img_src(image, size, class=img_class, style=img_style, **kwargs) }}
       <figcaption class="figure-caption">&copy; {{ image.copyright_text }}</figcaption>
     </figure>
   {% else %}
-    {% set img_class = img_class + ' mb-2' %}
-    {{ render_img_src(image, size, class=img_class, style=img_style) }}
+    {{ render_img_src(image, size, class=img_class, style=img_style, **kwargs) }}
   {% endif %}
 {% endif %}
 {% endmacro %}
 
 {% macro render_logo(image) %}
-{{ render_image(image, 120, style="max-width:120px;") }}
+{{ render_image(image, 120, style="max-width:120px;", alt="Logo") }}
 {% endmacro %}
 
 {% macro render_event_review_status(event) %}
@@ -497,6 +497,147 @@
     </div>
   </div>
   {% endif %}
+
+{% endmacro %}
+
+{% macro render_event_props_seo(event, start, end, dates = None, show_rating = False, show_admin_unit = True, user_rights=None) %}
+<div class="w-normal mx-auto">
+
+  {% if event.photo_id %}
+  <div class="d-flex">{{ render_image(event.photo, 700, class="mx-auto") }}</div>
+  {% endif %}
+
+  <div class="p-3 clearfix">
+
+    {% if user_rights %}
+    <div class="float-sm-right">
+      {{ render_event_menu(user_rights, event) }}
+    </div>
+    {% endif %}
+
+    <div class="font-weight-bold text-uppercase">
+      {{ start | dateformat('full') }} {{ start | timeformat('short') }}
+      {% if end %}- {{ end | dateformat('full') }} {{ end | timeformat('short') }}{% endif %}
+      {% if dates and dates|length > 1 %}
+        | <a href="#event-dates">{{ _('%(count)d event dates', count=dates|length) }}</a>
+      {% endif %}
+    </div>
+
+    <h1 class="font-weight-bold my-1">{{ event.name }}{{ render_event_warning_pills(event) }}</h1>
+    <div class="text-muted">{{ event.event_place.name }}</div>
+  </div>
+
+</div>
+
+  <div class="d-flex bg-light p-3"><div class="mx-auto" style="width:40rem;">
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="mt-0">{{ _('Event') }}</h2>
+
+      {{ render_enum_prop(event.status, 'fa-info-circle', 'Status') }}
+      {% if event.previous_start_date %}
+      <div><i class="fa fa-fw fa-calendar-times" data-toggle="tooltip" title="{{ _('Previous start date') }}"></i> {{ event.previous_start_date | datetimeformat('short') }}</div>
+      {% endif %}
+
+      {% if show_rating and event.rating %}
+          {{ render_string_prop("%d/10" % (event.rating/10), 'fa-adjust', 'Rating') }}
+      {% endif %}
+
+      <div>
+        {{ render_event_add_props(event) }}
+      </div>
+
+      {% if event.description %}
+        <div class="my-4">{{ event.description }}</div>
+      {% endif %}
+
+      <div class="small">
+        {{ render_audit(event, show_rating) }}
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="mt-0">{{ _('Place') }}</h2>
+
+      {% if event.event_place.photo_id %}
+        <div class="mr-4 float-sm-left">{{ render_image(event.event_place.photo, 240, class="img-thumbnail") }}</div>
+      {% endif %}
+
+      <div class="font-weight-bold">{{ event.event_place.name }}</div>
+
+      {% if event.event_place.description %}
+      <div class="my-4">{{ event.event_place.description }}</div>
+      {% endif %}
+
+      {{ render_link_prop(event.event_place.url) }}
+      {{ render_location_prop(event.event_place.location) }}
+
+      <div class="mt-2">
+          <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">{{ _('Show directions') }}</a>
+      </div>
+    </div>
+  </div>
+
+  {% if event.organizer %}
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="mt-0">{{ _('Organizer') }}</h2>
+
+      {% if event.organizer.logo_id %}
+      <div class="mr-4 float-sm-left">{{ render_logo(event.organizer.logo) }}</div>
+      {% endif %}
+
+      <div class="font-weight-bold">
+        {{ render_string_prop(event.organizer.name) }}
+      </div>
+
+      {{ render_link_prop(event.organizer.url) }}
+      {{ render_email_prop(event.organizer.email) }}
+      {{ render_phone_prop(event.organizer.phone) }}
+      {{ render_fax_prop(event.organizer.fax) }}
+    </div>
+  </div>
+
+  {% endif %}
+
+  {% if show_admin_unit %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="mt-0">{{ _('Admin unit') }}</h2>
+
+      {% if event.admin_unit.logo_id %}
+        <div class="mr-4 float-sm-left">{{ render_logo(event.admin_unit.logo) }}</div>
+      {% endif %}
+
+      <div class="font-weight-bold">{{ event.admin_unit.name }}</div>
+
+      {{ render_link_prop(event.admin_unit.url) }}
+      {{ render_email_prop(event.admin_unit.email) }}
+      {{ render_phone_prop(event.admin_unit.phone) }}
+      {{ render_fax_prop(event.admin_unit.fax) }}
+      {{ render_location_prop(event.admin_unit.location) }}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if dates and dates|length > 0 %}
+      <div class="card mb-3">
+          <div class="card-body pb-0">
+            <h2 class="mt-0"><a name="event-dates">{{ _('Event Dates') }}</a></div>
+          <div class="list-group list-group-flush">
+          {% for date in dates %}
+              <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item">{{ date.start | dateformat('full') }}</a>
+          {% endfor %}
+          </div>
+      </div>
+  {% endif %}
+
+    </div>
+  </div>
 
 {% endmacro %}
 
@@ -954,7 +1095,7 @@ if (URL) {
       <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{ _('Actions') }}
       </button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
           {% if user_rights['can_update_event'] %}
               <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
               <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}&hellip;</a>

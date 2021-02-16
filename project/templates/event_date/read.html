@@ -1,22 +1,12 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_audit_container, render_event_menu, render_event_props, render_image_with_link, render_place, render_link_prop %}
+{% from "_macros.html" import render_event_props_seo %}
 {% set event = event_date.event %}
 {% block title %}
-{{ event.name }}
+{{ event_date.start | dateformat() }} {{ event.name }}
 {% endblock %}
+{% block content_container_attribs %}{% endblock %}
 {% block content %}
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ event_date.start | datetimeformat('short') }}</li>
-    </ol>
-</nav>
-
-{{ render_event_menu(user_rights, event_date.event) }}
-
-<div class="w-normal">
-    {{ render_event_props(event, event_date.start, event_date.end) }}
-</div>
+{{ render_event_props_seo(event, event_date.start, event_date.end, dates, user_rights=user_rights) }}
 
 {% endblock %}
