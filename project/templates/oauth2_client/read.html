@@ -3,11 +3,6 @@
 {% block title %}
 {{ oauth2_client.client_name }}
 {% endblock %}
-{% block header %}
-<script type="application/ld+json">
-{{ structured_data | safe }}
-</script>
-{% endblock %}
 {% block content %}
 
 <nav aria-label="breadcrumb">

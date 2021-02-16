@@ -78,3 +78,7 @@ def test_developer(client, seeder, utils):
 
     url = utils.get_url("developer")
     utils.get_ok(url)
+
+
+def test_robots(client, seeder, utils):
+    utils.get_ok("robots.txt")
