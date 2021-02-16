@@ -8,11 +8,6 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='widget.css')}}" />
 {{ render_widget_styles(styles) }}
 {% endblock %}
-{% block header %}
-<script type="application/ld+json">
-{{ structured_data | safe }}
-</script>
-{% endblock %}
 {% block navbar %}
 {% endblock %}
 {% block content %}

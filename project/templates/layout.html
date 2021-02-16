@@ -7,6 +7,10 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="{% if meta_description %}{{ meta_description }}{% else %}Mit der offenen Veranstaltungsdatenbank Events einfach bekannt machen!{% endif %}">
+    {% if canonical_url %}
+    <link rel="canonical" href="{{ canonical_url }}" />
+    {% endif %}
     {%- block metas %}
     {%- endblock metas %}
 
@@ -91,6 +95,12 @@
     </script>
 
     <title>{% block title %}{{ title|default('oveda') }}{% endblock title %}</title>
+
+    {% if structured_data %}
+    <script type="application/ld+json">
+      {{ structured_data | safe }}
+    </script>
+    {% endif %}
 
     {% block header %}
     {% endblock %}
