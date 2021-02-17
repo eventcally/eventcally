@@ -17,12 +17,17 @@ def is_list(value):
     return isinstance(value, list)
 
 
+def any_dict_value_true(data: dict):
+    return any(data.values())
+
+
 app.jinja_env.filters["event_category_name"] = lambda u: get_event_category_name(u)
 app.jinja_env.filters["loc_enum"] = lambda u: get_localized_enum_name(u)
 app.jinja_env.filters["loc_scope"] = lambda s: get_localized_scope(s)
 app.jinja_env.filters["env_override"] = env_override
 app.jinja_env.filters["quote_plus"] = lambda u: quote_plus(u)
 app.jinja_env.filters["is_list"] = is_list
+app.jinja_env.filters["any_dict_value_true"] = any_dict_value_true
 
 
 @app.context_processor

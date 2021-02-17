@@ -209,9 +209,9 @@
 
                 if (data.has_prev || data.has_next) {
                     $('#page_info_text').text("Seite " + data.page + " von " + data.pages + " (" + data.total + " insgesamt)")
-                    $('#page_info').show();
+                    $('#page_info').removeClass("d-none");
                 } else {
-                    $('#page_info').hide();
+                    $('#page_info').addClass("d-none");
                 }
 
                 handle_request_success();
