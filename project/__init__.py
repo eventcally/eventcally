@@ -27,6 +27,7 @@ app.config["SECURITY_RECOVERABLE"] = True
 app.config["SECURITY_CHANGEABLE"] = True
 app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config["LANGUAGES"] = ["en", "de"]
+app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
 
 # Generate a nice key using secrets.token_urlsafe()
 app.config["SECRET_KEY"] = os.environ.get(
@@ -55,6 +56,8 @@ cache_path = (
 )
 dump_path = os.path.join(cache_path, "dump")
 img_path = os.path.join(cache_path, "img")
+sitemap_path = os.path.join(cache_path, "sitemap.xml")
+robots_txt_path = os.path.join(cache_path, "robots.txt")
 
 # i18n
 app.config["BABEL_DEFAULT_LOCALE"] = "de"
@@ -125,10 +128,11 @@ config_oauth(app)
 
 # API Resources
 import project.api
-import project.cli.dump
 
 # Command line
+import project.cli.dump
 import project.cli.event
+import project.cli.seo
 import project.cli.user
 from project import i10n, init_data, jinja_filters
 

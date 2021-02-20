@@ -80,5 +80,25 @@ def test_developer(client, seeder, utils):
     utils.get_ok(url)
 
 
-def test_robots(client, seeder, utils):
-    utils.get_ok("robots.txt")
+def test_favicon(app, utils):
+    utils.get_ok("favicon.ico")
+
+
+def test_robots_txt(app, utils):
+    app.config["SERVER_NAME"] = "localhost"
+    runner = app.test_cli_runner()
+    runner.invoke(args=["seo", "generate-sitemap"])
+    result = runner.invoke(args=["seo", "generate-robots-txt"])
+    assert "Generated robots.txt" in result.output
+    utils.get_endpoint_ok("robots_txt")
+
+
+def test_sitemap_xml(seeder, app, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.create_event(admin_unit_id)
+
+    app.config["SERVER_NAME"] = "localhost"
+    runner = app.test_cli_runner()
+    result = runner.invoke(args=["seo", "generate-sitemap"])
+    assert "Generated sitemap" in result.output
+    utils.get_endpoint_ok("sitemap_xml")
