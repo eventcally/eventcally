@@ -1,11 +1,18 @@
 import json
 import os.path
 
-from flask import redirect, render_template, request, send_from_directory, url_for
+from flask import (
+    redirect,
+    render_template,
+    request,
+    send_file,
+    send_from_directory,
+    url_for,
+)
 from flask_babelex import gettext
 from markupsafe import Markup
 
-from project import app, dump_path
+from project import app, dump_path, robots_txt_path, sitemap_path
 from project.services.admin import upsert_settings
 from project.views.utils import track_analytics
 
@@ -83,7 +90,16 @@ def developer():
     return render_template("developer/read.html", dump_file=dump_file)
 
 
-@app.route("/robots.txt")
 @app.route("/favicon.ico")
 def static_from_root():
     return send_from_directory(app.static_folder, request.path[1:])
+
+
+@app.route("/robots.txt")
+def robots_txt():
+    return send_file(robots_txt_path)
+
+
+@app.route("/sitemap.xml")
+def sitemap_xml():
+    return send_file(sitemap_path)
