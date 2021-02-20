@@ -87,6 +87,7 @@ def test_favicon(app, utils):
 def test_robots_txt(app, utils):
     app.config["SERVER_NAME"] = "localhost"
     runner = app.test_cli_runner()
+    runner.invoke(args=["seo", "generate-sitemap"])
     result = runner.invoke(args=["seo", "generate-robots-txt"])
     assert "Generated robots.txt" in result.output
     utils.get_endpoint_ok("robots_txt")
