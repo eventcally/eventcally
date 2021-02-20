@@ -102,6 +102,14 @@
     </script>
     {% endif %}
 
+    {% if structured_datas %}
+      {% for structured_data in structured_datas %}
+      <script type="application/ld+json">
+        {{ structured_data | safe }}
+      </script>
+      {% endfor %}
+    {% endif %}
+
     {% block header %}
     {% endblock %}
     {%- endblock head %}

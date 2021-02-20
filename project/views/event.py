@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 from flask import flash, jsonify, redirect, render_template, request, url_for
@@ -14,6 +15,7 @@ from project.access import (
     has_admin_unit_member_permission,
 )
 from project.forms.event import CreateEventForm, DeleteEventForm, UpdateEventForm
+from project.jsonld import DateTimeEncoder, get_sd_for_event_date
 from project.models import (
     AdminUnit,
     AdminUnitMember,
@@ -50,10 +52,18 @@ def event(event_id):
     user_rights = get_menu_user_rights(event)
     dates = get_upcoming_event_dates(event.id)
 
+    structured_datas = list()
+    for event_date in dates:
+        structured_data = json.dumps(
+            get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder
+        )
+        structured_datas.append(structured_data)
+
     return render_template(
         "event/read.html",
         event=event,
         dates=dates,
+        structured_datas=structured_datas,
         user_rights=user_rights,
         canonical_url=url_for("event", event_id=event_id, _external=True),
     )
