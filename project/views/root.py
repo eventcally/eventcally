@@ -1,18 +1,11 @@
 import json
 import os.path
 
-from flask import (
-    redirect,
-    render_template,
-    request,
-    send_file,
-    send_from_directory,
-    url_for,
-)
+from flask import redirect, render_template, request, send_from_directory, url_for
 from flask_babelex import gettext
 from markupsafe import Markup
 
-from project import app, dump_path, robots_txt_path, sitemap_path
+from project import app, cache_path, dump_path, robots_txt_file, sitemap_file
 from project.services.admin import upsert_settings
 from project.views.utils import track_analytics
 
@@ -97,9 +90,9 @@ def static_from_root():
 
 @app.route("/robots.txt")
 def robots_txt():
-    return send_file(robots_txt_path)
+    return send_from_directory(cache_path, robots_txt_file)
 
 
 @app.route("/sitemap.xml")
 def sitemap_xml():
-    return send_file(sitemap_path)
+    return send_from_directory(cache_path, sitemap_file)
