@@ -233,7 +233,7 @@
 {% if link %}
 <div>
   <i class="fa fa-fw fa-link" data-toggle="tooltip" title="{{ _('Link') }}"></i>
-  <a href="{{ link }}" target="_blank" rel="noopener noreferrer">{{ link }}</a>
+  <a href="{{ link }}" target="_blank" rel="noopener noreferrer" style="word-break: break-all;">{{ link }}</a>
 </div>
 {% endif %}
 {% endmacro %}

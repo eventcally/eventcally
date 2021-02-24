@@ -56,8 +56,10 @@ cache_path = (
 )
 dump_path = os.path.join(cache_path, "dump")
 img_path = os.path.join(cache_path, "img")
-sitemap_path = os.path.join(cache_path, "sitemap.xml")
-robots_txt_path = os.path.join(cache_path, "robots.txt")
+sitemap_file = "sitemap.xml"
+robots_txt_file = "robots.txt"
+sitemap_path = os.path.join(cache_path, sitemap_file)
+robots_txt_path = os.path.join(cache_path, robots_txt_file)
 
 # i18n
 app.config["BABEL_DEFAULT_LOCALE"] = "de"
