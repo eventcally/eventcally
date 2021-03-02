@@ -29,6 +29,14 @@ app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config["LANGUAGES"] = ["en", "de"]
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
 
+# Proxy handling
+if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover
+    app.config["PREFERRED_URL_SCHEME"] = os.getenv("PREFERRED_URL_SCHEME")
+
+from project.reverse_proxied import ReverseProxied
+
+app.wsgi_app = ReverseProxied(app.wsgi_app)
+
 # Generate a nice key using secrets.token_urlsafe()
 app.config["SECRET_KEY"] = os.environ.get(
     "SECRET_KEY", "pf9Wkove4IKEAXvy-cQkeDPhv9Cb3Ag-wyJILbq_dFw"
