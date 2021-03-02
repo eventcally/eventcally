@@ -10,7 +10,7 @@ from sqlalchemy.orm import load_only
 
 from project import app, cache_path, robots_txt_path, sitemap_path
 from project.dateutils import today
-from project.models import Event
+from project.models import Event, EventDate
 from project.utils import make_dir
 
 seo_cli = AppGroup("seo")
@@ -29,7 +29,7 @@ def generate_sitemap(pinggoogle):
 
     events = (
         Event.query.options(load_only(Event.id, Event.updated_at))
-        .filter(Event.start >= today)
+        .filter(Event.dates.any(EventDate.start >= today))
         .all()
     )
     click.echo(f"Found {len(events)} events")
