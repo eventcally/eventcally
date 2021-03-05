@@ -51,4 +51,4 @@ def find_user_by_email(email):
 
 
 def get_user(id):
-    return user_datastore.get_user(id)
+    return user_datastore.find_user(id=id)
