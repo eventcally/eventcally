@@ -62,7 +62,7 @@ def generate_sitemap(pinggoogle):
 
         if response.status_code != 200:
             app.logger.error(
-                f"Google Pink returned unexpected status code {response.status_code}."
+                f"Google ping returned unexpected status code {response.status_code}."
             )
 
 
