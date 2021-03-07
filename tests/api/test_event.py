@@ -52,11 +52,13 @@ def create_put(
     }
 
 
-def test_put(client, seeder, utils, app):
+def test_put(client, seeder, utils, app, mocker):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    utils.mock_now(mocker, 2020, 1, 1)
 
     put = create_put(place_id, organizer_id)
     put["rating"] = 10
