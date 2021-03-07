@@ -176,7 +176,7 @@ class Seeder(object):
         return category.id
 
     def create_event(self, admin_unit_id, recurrence_rule=None):
-        from project.dateutils import now
+        from project.dateutils import get_now
         from project.models import Event
         from project.services.event import insert_event, upsert_event_category
 
@@ -186,7 +186,7 @@ class Seeder(object):
             event.categories = [upsert_event_category("Other")]
             event.name = "Name"
             event.description = "Beschreibung"
-            event.start = now
+            event.start = get_now()
             event.event_place_id = self.upsert_default_event_place(admin_unit_id)
             event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
             event.recurrence_rule = recurrence_rule
@@ -215,7 +215,7 @@ class Seeder(object):
         return image_id
 
     def create_event_suggestion(self, admin_unit_id, free_text=False):
-        from project.dateutils import now
+        from project.dateutils import get_now
         from project.models import EventSuggestion
         from project.services.event import upsert_event_category
         from project.services.event_suggestion import insert_event_suggestion
@@ -228,7 +228,7 @@ class Seeder(object):
             suggestion.contact_email_notice = True
             suggestion.name = "Vorschlag"
             suggestion.description = "Beschreibung"
-            suggestion.start = now
+            suggestion.start = get_now()
             suggestion.photo_id = self.upsert_default_image()
             suggestion.categories = [upsert_event_category("Other")]
 

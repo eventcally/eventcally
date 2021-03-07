@@ -5,8 +5,15 @@ from dateutil.relativedelta import relativedelta
 from dateutil.rrule import rrulestr
 
 berlin_tz = pytz.timezone("Europe/Berlin")
-now = datetime.now(tz=berlin_tz)
-today = datetime(now.year, now.month, now.day, tzinfo=now.tzinfo)
+
+
+def get_now():
+    return datetime.now(tz=berlin_tz)
+
+
+def get_today():
+    now = get_now()
+    return datetime(now.year, now.month, now.day, tzinfo=now.tzinfo)
 
 
 def create_berlin_date(year, month, day, hour, minute=0):

@@ -1,7 +1,7 @@
 from flask import jsonify
 
 from project import app
-from project.dateutils import today
+from project.dateutils import get_today
 from project.jsonld import get_sd_for_event_date
 from project.models import Event, EventDate
 from project.services.event import get_event_dates_query
@@ -10,6 +10,7 @@ from project.services.event_search import EventSearchParams
 
 @app.route("/api/events")
 def api_events():
+    today = today = get_today()
     dates = (
         EventDate.query.join(Event)
         .filter(EventDate.start >= today)
