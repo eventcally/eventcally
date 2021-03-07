@@ -5,7 +5,7 @@ from project.dateutils import (
     date_set_end_of_day,
     form_input_from_date,
     form_input_to_date,
-    today,
+    get_today,
 )
 
 
@@ -75,10 +75,12 @@ class EventSearchParams(object):
             self.longitude = None
 
     def set_default_date_range(self):
+        today = get_today()
         self.date_from = today
         self.date_to = date_set_end_of_day(today + relativedelta(months=12))
 
     def set_planing_date_range(self):
+        today = get_today()
         self.date_from = today
         self.date_to = date_set_end_of_day(today + relativedelta(months=3))
 
