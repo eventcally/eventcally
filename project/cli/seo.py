@@ -9,7 +9,7 @@ from flask.cli import AppGroup, with_appcontext
 from sqlalchemy.orm import load_only
 
 from project import app, cache_path, robots_txt_path, sitemap_path
-from project.dateutils import today
+from project.dateutils import get_today
 from project.models import Event, EventDate
 from project.utils import make_dir
 
@@ -27,6 +27,7 @@ def generate_sitemap(pinggoogle):
     buf.write('<?xml version="1.0" encoding="UTF-8"?>')
     buf.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
 
+    today = get_today()
     events = (
         Event.query.options(load_only(Event.id, Event.updated_at))
         .filter(Event.dates.any(EventDate.start >= today))

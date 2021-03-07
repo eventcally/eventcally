@@ -6,7 +6,7 @@ from sqlalchemy.orm import contains_eager, defaultload, joinedload, lazyload
 from sqlalchemy.sql import extract
 
 from project import db
-from project.dateutils import date_add_time, dates_from_recurrence_rule, today
+from project.dateutils import date_add_time, dates_from_recurrence_rule, get_today
 from project.models import (
     AdminUnit,
     Event,
@@ -287,6 +287,7 @@ def update_event(event):
 
 
 def get_upcoming_event_dates(event_id):
+    today = get_today()
     return (
         EventDate.query.options(lazyload(EventDate.event))
         .filter(and_(EventDate.event_id == event_id, EventDate.start >= today))
