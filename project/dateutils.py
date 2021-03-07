@@ -16,7 +16,7 @@ def get_today():
     return datetime(now.year, now.month, now.day, tzinfo=now.tzinfo)
 
 
-def create_berlin_date(year, month, day, hour, minute=0):
+def create_berlin_date(year, month, day, hour=0, minute=0):
     return berlin_tz.localize(datetime(year, month, day, hour=hour, minute=minute))
 
 
@@ -54,6 +54,12 @@ def dates_from_recurrence_rule(start, recurrence_rule):
     rule_set = rrulestr(adv_recurrence_rule, forceset=True, dtstart=start_wo_tz)
 
     start_date = start_wo_tz
+
+    # Keine Daten in der Vergangenheit laden
+    today = get_today()
+    if today > start:
+        start_date = today.replace(tzinfo=None)
+
     end_date = start_date + relativedelta(years=1)
     start_date_begin_of_day = datetime(
         start_date.year, start_date.month, start_date.day
