@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
 from project.access import access_or_401, has_access, has_admin_unit_member_permission
-from project.dateutils import today
+from project.dateutils import get_today
 from project.forms.reference_request import ReferenceRequestReviewForm
 from project.models import (
     AdminUnitMember,
@@ -65,6 +65,7 @@ def event_reference_request_review(id):
     else:
         flash_errors(form)
 
+    today = get_today()
     dates = (
         EventDate.query.with_parent(request.event)
         .filter(EventDate.start >= today)
