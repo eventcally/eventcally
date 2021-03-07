@@ -148,6 +148,12 @@ class UtilActions(object):
         args, kwargs = mock.call_args
         assert args[0] == [recipient]
 
+    def mock_now(self, mocker, year, month, day):
+        from project.dateutils import create_berlin_date
+
+        now = create_berlin_date(year, month, day)
+        mocker.patch("project.dateutils.get_now", return_value=now)
+
     def get_url(self, endpoint, **values):
         with self._app.test_request_context():
             url = url_for(endpoint, **values, _external=False)
