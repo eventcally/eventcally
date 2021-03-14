@@ -1,76 +1,77 @@
-
 h1 {
-    font-size: 1.6rem;
-    margin: 1rem 0 2rem;
+  font-size: 1.6rem;
+  margin: 1rem 0 2rem;
 }
 
 h2 {
-    font-size: 1.2rem;
-    margin: 2rem 0 1rem;
+  font-size: 1.2rem;
+  margin: 2rem 0 1rem;
 }
 
 h3 {
-    font-size: 1.1rem;
-    margin: 2rem 0 1rem;
+  font-size: 1.1rem;
+  margin: 2rem 0 1rem;
 }
 
 footer {
-    padding: 10px;
+  padding: 10px;
 }
 
 figure {
-    margin: 0;
+  margin: 0;
 }
 
 tr.collapse.in {
-    display:table-row;
+  display: table-row;
 }
 
 tr.table-borderless td {
-    border:0;
-    padding:0;
+  border: 0;
+  padding: 0;
 }
 
 tr.table-line-through td {
-    text-decoration: line-through;
+  text-decoration: line-through;
 }
 
-.text-toogle[aria-expanded=false] .text-expanded {
-    display: none;
+.text-toogle[aria-expanded="false"] .text-expanded {
+  display: none;
 }
-.text-toogle[aria-expanded=true] .text-collapsed {
-    display: none;
+.text-toogle[aria-expanded="true"] .text-collapsed {
+  display: none;
 }
 
 .table td.fit,
 .table th.fit {
-    white-space: nowrap;
-    width: 1%;
+  white-space: nowrap;
+  width: 1%;
 }
 
-.ui-autocomplete, .ui-datepicker {
-    z-index: 1051 !important;
+.ui-autocomplete,
+.ui-datepicker {
+  z-index: 1051 !important;
 }
 
 .btn-google {
-    color: white;
-    background-color: #ea4335;
+  color: white;
+  background-color: #ea4335;
 }
 
 .input-group {
-    align-items: start;
+  align-items: start;
 }
 
 @media (max-width: 320px) {
-    td, th {
-        word-break: break-all;
-    }
+  td,
+  th {
+    word-break: break-all;
+  }
 }
 
 .text-highlight {
-    color: #dc3545!important;
+  color: #dc3545 !important;
 }
 
 .w-normal {
-    max-width: 1024px;
+  max-width: 1024px;
 }
