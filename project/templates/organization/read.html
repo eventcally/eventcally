@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %}
+{{ organization.name }}
+{% endblock %}
+{% block styles %}
+<link href="https://unpkg.com/@angular/material@2.0.0-beta.8/prebuilt-themes/indigo-pink.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+
+<organization-landing-page organizationId="{{ organization.id }}"></organization-landing-page>
+<script type="text/javascript" src="{{ url_for('static', filename='organization-landing-page.js')}}"></script>
+
+{% endblock %}
