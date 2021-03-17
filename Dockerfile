@@ -1,5 +1,9 @@
 FROM python:3.7-slim-buster
 
+# Add rsync
+RUN apt update -qq && apt upgrade -y && apt autoremove -y
+RUN apt install -y rsync && apt autoremove -y
+
 EXPOSE 5000
 
 # Turns off buffering for easier container logging
