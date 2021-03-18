@@ -140,6 +140,7 @@ config_oauth(app)
 import project.api
 
 # Command line
+import project.cli.cache
 import project.cli.dump
 import project.cli.event
 import project.cli.seo

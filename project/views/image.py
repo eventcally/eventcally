@@ -23,10 +23,6 @@ def image(id):
     if "s" in request.args:
         width = int(request.args["s"])
         height = width
-    elif "w" in request.args:
-        width = int(request.args["w"])
-    elif "h" in request.args:
-        height = int(request.args["h"])
 
     # Generate file name
     extension = image.encoding_format.split("/")[-1] if image.encoding_format else "png"
