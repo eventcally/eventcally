@@ -29,6 +29,13 @@ def make_dir(path):
         os.umask(original_umask)
 
 
+def clear_files_in_dir(path):
+    with os.scandir(path) as entries:
+        for entry in entries:
+            if entry.is_file() or entry.is_symlink():
+                os.remove(entry.path)
+
+
 def split_by_crlf(s):
     return [v for v in s.splitlines() if v]
 
