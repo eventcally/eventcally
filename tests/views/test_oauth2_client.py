@@ -78,6 +78,7 @@ def test_update(client, seeder, utils, app, mocker, db_error):
         response,
         {
             "client_name": "Neuer Name",
+            "redirect_uris": "localhost:1337\nlocalhost:1338",
         },
     )
 
@@ -92,6 +93,7 @@ def test_update(client, seeder, utils, app, mocker, db_error):
 
         oauth2_client = OAuth2Client.query.get(oauth2_client_id)
         assert oauth2_client.client_name == "Neuer Name"
+        assert oauth2_client.redirect_uris == ["localhost:1337", "localhost:1338"]
 
 
 @pytest.mark.parametrize("db_error", [True, False])
