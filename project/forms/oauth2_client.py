@@ -77,8 +77,9 @@ class BaseOAuth2ClientForm(FlaskForm):
         if not obj:
             return
 
-        self.redirect_uris.data = os.linesep.join(obj.redirect_uris)
-        self.scope.data = obj.scope.split(" ")
+        formdata = self.meta.wrap_formdata(self, formdata)
+        self.redirect_uris.process(formdata, os.linesep.join(obj.redirect_uris))
+        self.scope.process(formdata, obj.scope.split(" "))
 
 
 class CreateOAuth2ClientForm(BaseOAuth2ClientForm):
