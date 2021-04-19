@@ -15,10 +15,8 @@ def get_localized_enum_name(enum):
 
 
 def get_localized_scope(scope: str) -> str:
-    type_name, action = scope.split(":")
-    loc_lazy_gettext = lazy_gettext(type_name.capitalize())
-    loc_action = lazy_gettext(action)
-    return f"{loc_lazy_gettext} ({loc_action})"
+    loc_key = "Scope_" + scope
+    return lazy_gettext(loc_key)
 
 
 def make_dir(path):

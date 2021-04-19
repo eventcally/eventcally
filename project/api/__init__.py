@@ -100,6 +100,8 @@ class RestApi(Api):
 
 
 scope_list = [
+    "openid",
+    "profile",
     "organizer:write",
     "place:write",
     "event:write",
@@ -155,7 +157,7 @@ def add_oauth2_scheme_with_transport(insecure: bool):
         "authorizationUrl": authorizationUrl,
         "tokenUrl": tokenUrl,
         "flow": "accessCode",
-        "scopes": scopes,
+        "scopes": {k: k for _, k in enumerate(scope_list)},
     }
 
     try:

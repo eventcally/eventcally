@@ -146,6 +146,7 @@ class Seeder(object):
             metadata["grant_types"] = ["authorization_code", "refresh_token"]
             metadata["response_types"] = ["code"]
             metadata["token_endpoint_auth_method"] = "client_secret_post"
+            metadata["redirect_uris"] = [self._utils.get_url("swagger_oauth2_redirect")]
             client.set_client_metadata(metadata)
 
             self._db.session.add(client)

@@ -115,9 +115,11 @@ def oauth2_client(id):
 @app.route("/oauth2_clients")
 @permissions_required("oauth2_client:read")
 def oauth2_clients():
-    oauth2_clients = OAuth2Client.query.filter(
-        OAuth2Client.user_id == current_user.id
-    ).paginate()
+    oauth2_clients = (
+        OAuth2Client.query.filter(OAuth2Client.user_id == current_user.id)
+        .order_by(OAuth2Client.id)
+        .paginate()
+    )
 
     return render_template(
         "oauth2_client/list.html",

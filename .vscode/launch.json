@@ -18,6 +18,27 @@
                 "run",
                 "--no-debugger"
             ],
+            "justMyCode": false,
+            "jinja": true
+        },{
+            "name": "Python: Flask HTTPS",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "project",
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [
+                "run",
+                "--port=443",
+                "--no-debugger",
+                "--cert=127.0.0.1.crt",
+                "--key=127.0.0.1.key"
+            ],
+            "sudo": true,
+            "justMyCode": false,
             "jinja": true
         },
         {
