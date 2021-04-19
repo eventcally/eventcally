@@ -100,6 +100,8 @@ class RestApi(Api):
 
 
 scope_list = [
+    "openid",
+    "profile",
     "organizer:write",
     "place:write",
     "event:write",
