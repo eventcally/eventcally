@@ -13,10 +13,7 @@
   <div class="card mb-4">
     <div class="card-body">
       {{ render_field_with_errors(form.client_name) }}
-      {{ render_field_with_errors(form.grant_types, ri="multicheckbox") }}
-      {{ render_field_with_errors(form.response_types, ri="multicheckbox") }}
       {{ render_field_with_errors(form.scope, ri="multicheckbox") }}
-      {{ render_field_with_errors(form.token_endpoint_auth_method) }}
       {{ render_field_with_errors(form.redirect_uris) }}
     </div>
   </div>

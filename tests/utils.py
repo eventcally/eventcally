@@ -15,6 +15,12 @@ class UtilActions(object):
         self._client_id = None
         self._client_secret = None
 
+    def get_access_token(self):
+        return self._access_token
+
+    def get_refresh_token(self):
+        return self._refresh_token
+
     def register(self, email="test@test.de", password="MeinPasswortIstDasBeste"):
         response = self._client.get("/register")
         assert response.status_code == 200
@@ -84,7 +90,7 @@ class UtilActions(object):
         return form.fill(values)
 
     def post_form_data(self, url, data: dict):
-        return self._client.post(url, data=data)
+        return self._client.post(url, data=data, headers=self.get_headers())
 
     def post_form(self, url, response, values: dict):
         data = self.create_form_data(response, values)
@@ -109,6 +115,12 @@ class UtilActions(object):
         print(response.status_code)
         print(response.data)
         print(response.json)
+
+    def get_json(self, url):
+        self.log_request(url)
+        response = self._client.get(url, headers=self.get_headers())
+        self.log_response(response)
+        return response
 
     def post_json(self, url, data: dict):
         self.log_json_request(url, data)
@@ -233,6 +245,7 @@ class UtilActions(object):
         redirect_uri = self.get_url("swagger_oauth2_redirect")
         url = self.get_url(
             "authorize",
+            nonce=4711,
             response_type="code",
             client_id=client_id,
             scope=scope,
@@ -315,3 +328,21 @@ class UtilActions(object):
         )
 
         self.assert_response_ok(response)
+
+    def introspect(self, token, token_type_hint):
+        url = self.get_url("introspect")
+        response = self.post_form_data(
+            url,
+            data={
+                "token": token,
+                "token_type_hint": token_type_hint,
+                "client_id": self._client_id,
+                "client_secret": self._client_secret,
+            },
+        )
+
+        self.assert_response_ok(response)
+
+    def get_oauth_userinfo(self):
+        url = self.get_url("oauth_userinfo")
+        return self.get_json(url)

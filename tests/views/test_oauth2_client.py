@@ -43,6 +43,7 @@ def test_create_authorization_code(client, app, utils, seeder, mocker, db_error)
         {
             "client_name": "Mein Client",
             "scope": scope_list,
+            "redirect_uris": utils.get_url("swagger_oauth2_redirect"),
         },
     )
 

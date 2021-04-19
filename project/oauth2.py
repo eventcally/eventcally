@@ -7,9 +7,28 @@ from authlib.integrations.sqla_oauth2 import (
 )
 from authlib.oauth2.rfc6749 import grants
 from authlib.oauth2.rfc7636 import CodeChallenge
+from authlib.oauth2.rfc7662 import IntrospectionEndpoint
+from authlib.oidc.core import UserInfo
+from authlib.oidc.core.grants import OpenIDCode as _OpenIDCode
+from flask import url_for
 
-from project import db
+from project import app, db
 from project.models import OAuth2AuthorizationCode, OAuth2Client, OAuth2Token, User
+
+
+def get_issuer():
+    return url_for("home", _external=True).rstrip("/")
+
+
+def generate_user_info(user, scope):
+    return UserInfo(sub=str(user.id), email=user.email)
+
+
+def exists_nonce(nonce, request):
+    exists = OAuth2AuthorizationCode.query.filter_by(
+        client_id=request.client_id, nonce=nonce
+    ).first()
+    return bool(exists)
 
 
 class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
@@ -22,6 +41,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
     def save_authorization_code(self, code, request):
         code_challenge = request.data.get("code_challenge")
         code_challenge_method = request.data.get("code_challenge_method")
+        nonce = request.data.get("nonce")
         auth_code = OAuth2AuthorizationCode(
             code=code,
             client_id=request.client.client_id,
@@ -30,6 +50,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
             user_id=request.user.id,
             code_challenge=code_challenge,
             code_challenge_method=code_challenge_method,
+            nonce=nonce,
         )
         db.session.add(auth_code)
         db.session.commit()
@@ -50,6 +71,22 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
         return User.query.get(authorization_code.user_id)
 
 
+class OpenIDCode(_OpenIDCode):
+    def exists_nonce(self, nonce, request):
+        return exists_nonce(nonce, request)
+
+    def get_jwt_config(self, grant):
+        return {
+            "key": app.config["JWT_PRIVATE_KEY"],
+            "alg": "RS256",
+            "iss": get_issuer(),
+            "exp": 3600,
+        }
+
+    def generate_user_info(self, user, scope):
+        return generate_user_info(user, scope)
+
+
 class RefreshTokenGrant(grants.RefreshTokenGrant):
     TOKEN_ENDPOINT_AUTH_METHODS = ["client_secret_basic", "client_secret_post"]
     INCLUDE_NEW_REFRESH_TOKEN = True
@@ -66,6 +103,38 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
         credential.revoked = True
         db.session.add(credential)
         db.session.commit()
+
+
+class MyIntrospectionEndpoint(IntrospectionEndpoint):
+    CLIENT_AUTH_METHODS = ["client_secret_basic", "client_secret_post"]
+
+    def query_token(self, token, token_type_hint, client):
+        if token_type_hint == "access_token":
+            tok = OAuth2Token.query.filter_by(access_token=token).first()
+        elif token_type_hint == "refresh_token":
+            tok = OAuth2Token.query.filter_by(refresh_token=token).first()
+        else:
+            # without token_type_hint
+            tok = OAuth2Token.query.filter_by(access_token=token).first()
+            if not tok:
+                tok = OAuth2Token.query.filter_by(refresh_token=token).first()
+        if tok:
+            if tok.client_id == client.client_id:
+                return tok
+
+    def introspect_token(self, token):
+        return {
+            "active": True,
+            "client_id": token.client_id,
+            "token_type": token.token_type,
+            "username": token.user.email,
+            "scope": token.get_scope(),
+            "sub": str(token.user.id),
+            "aud": token.client_id,
+            "iss": get_issuer(),
+            "exp": token.get_expires_at(),
+            "iat": token.issued_at,
+        }
 
 
 query_client = create_query_client_func(db.session, OAuth2Client)
@@ -101,12 +170,18 @@ def config_oauth(app):
     authorization.init_app(app)
 
     # support grants
-    authorization.register_grant(AuthorizationCodeGrant, [CodeChallenge(required=True)])
+    authorization.register_grant(
+        AuthorizationCodeGrant,
+        [CodeChallenge(required=True), OpenIDCode()],
+    )
     authorization.register_grant(RefreshTokenGrant)
 
     # support revocation
     revocation_cls = create_revocation_endpoint(db.session, OAuth2Token)
     authorization.register_endpoint(revocation_cls)
+
+    # support introspect
+    authorization.register_endpoint(MyIntrospectionEndpoint)
 
     # protect resource
     bearer_cls = create_bearer_token_validator(db.session, OAuth2Token)

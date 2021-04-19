@@ -8,6 +8,7 @@ from authlib.integrations.sqla_oauth2 import (
     OAuth2TokenMixin,
 )
 from dateutil.relativedelta import relativedelta
+from flask import request
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from flask_security import RoleMixin, UserMixin, current_user
 from geoalchemy2 import Geometry
@@ -189,8 +190,26 @@ class OAuth2Client(db.Model, OAuth2ClientMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
     user = db.relationship("User")
 
+    @OAuth2ClientMixin.grant_types.getter
+    def grant_types(self):
+        return ["authorization_code", "refresh_token"]
+
+    @OAuth2ClientMixin.response_types.getter
+    def response_types(self):
+        return ["code"]
+
+    @OAuth2ClientMixin.token_endpoint_auth_method.getter
+    def token_endpoint_auth_method(self):
+        return ["client_secret_basic", "client_secret_post", "none"]
+
     def check_redirect_uri(self, redirect_uri):
-        return True
+        if redirect_uri.startswith(request.host_url):  # pragma: no cover
+            return True
+
+        return super().check_redirect_uri(redirect_uri)
+
+    def check_token_endpoint_auth_method(self, method):
+        return method in self.token_endpoint_auth_method
 
 
 class OAuth2AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):

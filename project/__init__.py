@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 
 from flask import Flask, jsonify, redirect, request, url_for
 from flask_babelex import Babel
@@ -47,6 +48,11 @@ app.config["SECURITY_PASSWORD_SALT"] = os.environ.get(
     "SECURITY_PASSWORD_SALT", "146585145368132386173505678016728509634"
 )
 
+app.config["JWT_PUBLIC_JWKS"] = os.environ.get("JWT_PUBLIC_JWKS", "")
+app.config["JWT_PRIVATE_KEY"] = os.environ.get("JWT_PRIVATE_KEY", "").replace(
+    r"\n", "\n"
+)
+
 # Gunicorn logging
 if __name__ != "__main__":
     gunicorn_logger = logging.getLogger("gunicorn.error")
@@ -75,7 +81,7 @@ app.config["BABEL_DEFAULT_TIMEZONE"] = "Europe/Berlin"
 babel = Babel(app)
 
 # cors
-cors = CORS(app, resources={r"/api/*", "/swagger/"})
+cors = CORS(app, resources={r"/.well-known/*", r"/api/*", r"/oauth/*", "/swagger/"})
 
 # Mail
 mail_server = os.getenv("MAIL_SERVER")

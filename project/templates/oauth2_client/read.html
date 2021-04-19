@@ -13,6 +13,10 @@
     </ol>
 </nav>
 
+<div class="my-3">
+    <a class="btn btn-outline-secondary" href="{{ url_for('oauth2_client_update', id=oauth2_client.id) }}">{{ _('Edit') }}</a>
+</div>
+
 <div class="w-normal">
     {{ render_kv_begin() }}
     {{ render_kv_prop(oauth2_client.client_id, 'Client ID') }}
