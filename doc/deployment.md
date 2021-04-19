@@ -1,8 +1,4 @@
-# Goslar Event Prototype
-
- ![Tests](https://github.com/DanielGrams/gsevpt/workflows/Tests/badge.svg) [![codecov](https://codecov.io/gh/DanielGrams/gsevpt/branch/master/graph/badge.svg?token=66CLLWWV7Y)](https://codecov.io/gh/DanielGrams/gsevpt) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![Docker Pulls](https://img.shields.io/docker/pulls/danielgrams/gsevpt)
-
-Website prototype using Python, Flask and Postgres.
+# Deployment
 
 ## Automatic Deployment
 
@@ -66,6 +62,8 @@ Create `.env` file in the root directory or pass as environment variables.
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | SECRET_KEY             | A secret key for verifying the integrity of signed cookies. Generate a nice key using `python3 -c "import secrets; print(secrets.token_urlsafe())"`.                               |
 | SECURITY_PASSWORD_HASH | Bcrypt is set as default SECURITY_PASSWORD_HASH, which requires a salt. Generate a good salt using: `python3 -c "import secrets; print(secrets.SystemRandom().getrandbits(128))"`. |
+| JWT_PRIVATE_KEY        | Private key for JWT (see "Generate JWT Keys for OIDC/OAuth")                                                                                                                       |
+| SECURITY_PASSWORD_HASH | JWT_PUBLIC_JWKS (see "Generate JWT Keys for OIDC/OAuth")                                                                                                                           |
 
 ### Send notifications via Mail
 
@@ -84,10 +82,24 @@ Create `.env` file in the root directory or pass as environment variables.
 | CACHE_PATH          | Absolute or relative path to root directory for dump and image caching. Default: project/tmp |
 | GOOGLE_MAPS_API_KEY | Resolve addresses with Google Maps: API Key with Places API enabled                          |
 
-## Deployment
+## Generate JWT Keys for OIDC/OAuth
 
-[Deployment](doc/deployment.md)
+```sh
+openssl genrsa -out jwt-private.pem 2048
+openssl rsa -in jwt-private.pem -pubout -out jwt-public.pem
+npm install -g pem-jwk
+pem-jwk jwt-public.pem | jq '{kid: "default", kty: .kty , use: "sig", alg: "RS256", n: .n , e: .e }' > jwt-public.jwk
+cat jwt-public.jwk | jq '{keys: [.]}' > jwt-public.jwks
+```
 
-## Development
+Print environment variable JWT_PRIVATE_KEY:
 
-[Development](doc/development.md)
+```sh
+awk '{printf "%s\\n", $0}' jwt-private.pem
+```
+
+Print environment variable JWT_PUBLIC_JWKS:
+
+```sh
+cat jwt-public.jwks | jq -r "(.|tojson)"
+```
