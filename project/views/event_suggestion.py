@@ -1,5 +1,6 @@
 from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
+from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
@@ -10,6 +11,7 @@ from project.views.utils import flash_errors, handleSqlError, send_mail
 
 
 @app.route("/event_suggestion/<int:event_suggestion_id>/review")
+@auth_required()
 def event_suggestion_review(event_suggestion_id):
     event_suggestion = EventSuggestion.query.get_or_404(event_suggestion_id)
     access_or_401(event_suggestion.admin_unit, "event:verify")

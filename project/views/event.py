@@ -3,6 +3,7 @@ from datetime import datetime
 
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_babelex import gettext
+from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
@@ -78,6 +79,7 @@ def event_actions(event_id):
 
 
 @app.route("/admin_unit/<int:id>/events/create", methods=("GET", "POST"))
+@auth_required()
 def event_create_for_admin_unit_id(id):
     admin_unit = AdminUnit.query.get_or_404(id)
     access_or_401(admin_unit, "event:create")
@@ -161,6 +163,7 @@ def event_create_for_admin_unit_id(id):
 
 
 @app.route("/event/<int:event_id>/update", methods=("GET", "POST"))
+@auth_required()
 def event_update(event_id):
     event = Event.query.get_or_404(event_id)
     access_or_401(event.admin_unit, "event:update")
@@ -193,6 +196,7 @@ def event_update(event_id):
 
 
 @app.route("/event/<int:event_id>/delete", methods=("GET", "POST"))
+@auth_required()
 def event_delete(event_id):
     event = Event.query.get_or_404(event_id)
     access_or_401(event.admin_unit, "event:delete")
