@@ -66,6 +66,7 @@ def manage_admin_unit_reference_requests_outgoing(id):
 
 
 @app.route("/event/<int:event_id>/reference_request/create", methods=("GET", "POST"))
+@auth_required()
 def event_reference_request_create(event_id):
     event = Event.query.get_or_404(event_id)
     access_or_401(event.admin_unit, "reference_request:create")
