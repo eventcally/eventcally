@@ -31,6 +31,7 @@ from project.views.utils import (
 
 
 @app.route("/reference/<int:id>")
+@auth_required()
 def event_reference(id):
     reference = EventReference.query.get_or_404(id)
     access_or_401(reference.admin_unit, "reference:read")
@@ -85,6 +86,7 @@ def event_reference_create(event_id):
 
 
 @app.route("/reference/<int:id>/update", methods=("GET", "POST"))
+@auth_required()
 def event_reference_update(id):
     reference = EventReference.query.get_or_404(id)
     access_or_401(reference.admin_unit, "reference:update")
@@ -148,6 +150,7 @@ def manage_admin_unit_references_outgoing(id):
 
 
 @app.route("/reference/<int:id>/delete", methods=("GET", "POST"))
+@auth_required()
 def reference_delete(id):
     reference = EventReference.query.get_or_404(id)
     access_or_401(reference.admin_unit, "reference:delete")
