@@ -1,6 +1,6 @@
 from flask import flash, redirect, render_template, url_for
 from flask_babelex import gettext
-from flask_security import current_user
+from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
@@ -11,6 +11,7 @@ from project.views.utils import flash_errors, get_pagination_urls, handleSqlErro
 
 
 @app.route("/oauth2_token/<int:id>/revoke", methods=("GET", "POST"))
+@auth_required()
 def oauth2_token_revoke(id):
     oauth2_token = OAuth2Token.query.get_or_404(id)
     owner_access_or_401(oauth2_token.user_id)

@@ -1,5 +1,6 @@
 from flask import abort, flash, redirect, render_template, url_for
 from flask_babelex import gettext
+from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
@@ -18,6 +19,7 @@ from project.views.utils import flash_errors, handleSqlError, send_mail
 
 
 @app.route("/reference_request/<int:id>/review", methods=("GET", "POST"))
+@auth_required()
 def event_reference_request_review(id):
     request = EventReferenceRequest.query.get_or_404(id)
     access_or_401(request.admin_unit, "reference_request:verify")
