@@ -202,8 +202,8 @@
 {% endif %}
 {% endmacro %}
 
-{% macro render_enum_prop(prop, icon, label_key) %}
-{% if prop and prop.value > 0 %}
+{% macro render_enum_prop(prop, icon, label_key, ignore=0) %}
+{% if prop and prop.value > 0 and prop.value != ignore %}
 <div>
   <i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>
   {{ prop | loc_enum }}
@@ -233,7 +233,7 @@
 {% if link %}
 <div>
   <i class="fa fa-fw fa-link" data-toggle="tooltip" title="{{ _('Link') }}"></i>
-  <a href="{{ link }}" target="_blank" rel="noopener noreferrer" style="word-break: break-all;">{{ link }}</a>
+  <a href="{{ link | ensure_link_scheme }}" target="_blank" rel="noopener noreferrer" style="word-break: break-all;">{{ link }}</a>
 </div>
 {% endif %}
 {% endmacro %}
@@ -365,8 +365,8 @@
 {{ render_bool_prop(event.kid_friendly, 'fa-child', 'Kid friendly') }}
 {{ render_bool_prop(event.accessible_for_free, 'fa-door-open', 'Accessible for free') }}
 {{ render_range_prop(event.age_from, event.age_to, 'fa-people-arrows', 'Typical Age range') }}
-{{ render_enum_prop(event.target_group_origin, 'fa-users', 'Target group origin') }}
-{{ render_enum_prop(event.attendance_mode, 'fa-mouse-pointer', 'Attendance mode') }}
+{{ render_enum_prop(event.target_group_origin, 'fa-users', 'Target group origin', 1) }}
+{{ render_enum_prop(event.attendance_mode, 'fa-mouse-pointer', 'Attendance mode', 1) }}
 {{ render_bool_prop(event.registration_required, 'fa-list', 'Registration required') }}
 {{ render_bool_prop(event.booked_up, 'fa-square-full', 'Booked up') }}
 {{ render_int_prop(event.expected_participants, 'fa-users', 'Expected number of participants') }}
@@ -394,12 +394,12 @@
         {% if end %}- {{ end | datetimeformat('short') }}{% endif %}
       </div>
       {% endif %}
-      {{ render_enum_prop(event.status, 'fa-info-circle', 'Status') }}
+      {{ render_enum_prop(event.status, 'fa-info-circle', 'Status', 1) }}
       {% if event.previous_start_date %}
       <div><i class="fa fa-fw fa-calendar-times" data-toggle="tooltip" title="{{ _('Previous start date') }}"></i> {{ event.previous_start_date | datetimeformat('short') }}</div>
       {% endif %}
 
-      {% if show_rating and event.rating %}
+      {% if show_rating and event.rating and event.rating != 50 %}
           {{ render_string_prop("%d/10" % (event.rating/10), 'fa-adjust', 'Rating') }}
       {% endif %}
 
@@ -441,9 +441,17 @@
           {{ render_location_prop(event.event_place.location) }}
         </div>
 
+        {% if event.attendance_mode and event.attendance_mode.value != 1 %}
         <p>
             <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">{{ _('Show directions') }}</a>
         </p>
+        {% endif %}
+
+        {% if event.attendance_mode and event.attendance_mode.value == 2 %}
+          <p>{{ _('The event takes place online.') }}</p>
+        {% elif event.attendance_mode and event.attendance_mode.value == 3 %}
+          <p>{{ _('The event takes place both offline and online.') }}</p>
+        {% endif %}
       {% endif %}
     </div>
   </div>
@@ -532,12 +540,12 @@
     <div class="card-body">
       <h2 class="mt-0">{{ _('Event') }}</h2>
 
-      {{ render_enum_prop(event.status, 'fa-info-circle', 'Status') }}
+      {{ render_enum_prop(event.status, 'fa-info-circle', 'Status', 1) }}
       {% if event.previous_start_date %}
       <div><i class="fa fa-fw fa-calendar-times" data-toggle="tooltip" title="{{ _('Previous start date') }}"></i> {{ event.previous_start_date | datetimeformat('short') }}</div>
       {% endif %}
 
-      {% if show_rating and event.rating %}
+      {% if show_rating and event.rating and event.rating != 50 %}
           {{ render_string_prop("%d/10" % (event.rating/10), 'fa-adjust', 'Rating') }}
       {% endif %}
 
@@ -546,10 +554,10 @@
       </div>
 
       {% if event.description %}
-        <div class="my-4" style="white-space:pre-wrap;">{{ event.description }}</div>
+        <div class="mt-4" style="white-space:pre-wrap;">{{ event.description }}</div>
       {% endif %}
 
-      <div class="small">
+      <div class="small mt-4">
         {{ render_audit(event, show_rating) }}
       </div>
     </div>
@@ -572,9 +580,17 @@
       {{ render_link_prop(event.event_place.url) }}
       {{ render_location_prop(event.event_place.location) }}
 
-      <div class="mt-2">
-          <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">{{ _('Show directions') }}</a>
-      </div>
+      {% if event.attendance_mode and event.attendance_mode.value != 2 %}
+        <div class="mt-2">
+            <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">{{ _('Show directions') }}</a>
+        </div>
+      {% endif %}
+
+      {% if event.attendance_mode and event.attendance_mode.value == 2 %}
+        <div class="mt-2">{{ _('The event takes place online.') }}</div>
+      {% elif event.attendance_mode and event.attendance_mode.value == 3 %}
+        <div class="mt-2">{{ _('The event takes place both offline and online.') }}</div>
+      {% endif %}
     </div>
   </div>
 

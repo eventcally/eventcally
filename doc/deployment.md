@@ -63,7 +63,7 @@ Create `.env` file in the root directory or pass as environment variables.
 | SECRET_KEY             | A secret key for verifying the integrity of signed cookies. Generate a nice key using `python3 -c "import secrets; print(secrets.token_urlsafe())"`.                               |
 | SECURITY_PASSWORD_HASH | Bcrypt is set as default SECURITY_PASSWORD_HASH, which requires a salt. Generate a good salt using: `python3 -c "import secrets; print(secrets.SystemRandom().getrandbits(128))"`. |
 | JWT_PRIVATE_KEY        | Private key for JWT (see "Generate JWT Keys for OIDC/OAuth")                                                                                                                       |
-| SECURITY_PASSWORD_HASH | JWT_PUBLIC_JWKS (see "Generate JWT Keys for OIDC/OAuth")                                                                                                                           |
+| JWT_PUBLIC_JWKS        | Public JWKS (see "Generate JWT Keys for OIDC/OAuth")                                                                                                                               |
 
 ### Send notifications via Mail
 

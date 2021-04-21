@@ -2,9 +2,12 @@ import pytest
 from psycopg2.errors import UniqueViolation
 
 
-def test_read(client, seeder, utils):
+@pytest.mark.parametrize(
+    "external_link", [None, "https://example.com", "www.example.com"]
+)
+def test_read(client, seeder, utils, external_link):
     user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
+    event_id = seeder.create_event(admin_unit_id, external_link=external_link)
 
     url = utils.get_url("event", event_id=event_id)
     utils.get_ok(url)
