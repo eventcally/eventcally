@@ -37,12 +37,13 @@ class BaseResource(MethodResource):
         return instance
 
     def update_instance(self, schema_cls, instance):
-        instance = schema_cls().load(
-            request.json, session=db.session, instance=instance
-        )
+        with db.session.no_autoflush:
+            instance = schema_cls().load(
+                request.json, session=db.session, instance=instance
+            )
 
-        validate = getattr(instance, "validate", None)
-        if callable(validate):
-            validate()
+            validate = getattr(instance, "validate", None)
+            if callable(validate):
+                validate()
 
         return instance

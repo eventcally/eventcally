@@ -30,6 +30,7 @@ from project.models import (
 )
 from project.services.event import (
     get_event_with_details_or_404,
+    get_significant_event_changes,
     get_upcoming_event_dates,
     insert_event,
     update_event,
@@ -179,8 +180,11 @@ def event_update(event_id):
 
         try:
             update_event(event)
+            changes = get_significant_event_changes(event)
             db.session.commit()
-            send_referenced_event_changed_mails(event)
+
+            if changes:
+                send_referenced_event_changed_mails(event)
             flash_message(
                 gettext("Event successfully updated"),
                 url_for("event", event_id=event.id),
@@ -304,10 +308,11 @@ def prepare_event_form_for_suggestion(form, event_suggestion):
 
 
 def update_event_with_form(event, form, event_suggestion=None):
-    form.populate_obj(event)
-    event.categories = EventCategory.query.filter(
-        EventCategory.id.in_(form.category_ids.data)
-    ).all()
+    with db.session.no_autoflush:
+        form.populate_obj(event)
+        event.categories = EventCategory.query.filter(
+            EventCategory.id.in_(form.category_ids.data)
+        ).all()
 
 
 def get_user_rights(event):
