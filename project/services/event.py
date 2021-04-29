@@ -15,9 +15,11 @@ from project.models import (
     EventOrganizer,
     EventPlace,
     EventReference,
+    EventStatus,
     Image,
     Location,
 )
+from project.utils import get_pending_changes
 
 
 def get_event_category(category_name):
@@ -278,12 +280,15 @@ def update_event_dates_with_recurrence_rule(event):
 
 
 def insert_event(event):
+    if not event.status:
+        event.status = EventStatus.scheduled
     update_event_dates_with_recurrence_rule(event)
     db.session.add(event)
 
 
 def update_event(event):
-    update_event_dates_with_recurrence_rule(event)
+    with db.session.no_autoflush:
+        update_event_dates_with_recurrence_rule(event)
 
 
 def get_upcoming_event_dates(event_id):
@@ -294,3 +299,17 @@ def get_upcoming_event_dates(event_id):
         .order_by(EventDate.start)
         .all()
     )
+
+
+def get_significant_event_changes(event) -> dict:
+    keys = [
+        "name",
+        "start",
+        "recurrence_rule",
+        "status",
+        "attendance_mode",
+        "booked_up",
+        "event_place_id",
+        "organizer_id",
+    ]
+    return get_pending_changes(event, include_collections=False, include_keys=keys)

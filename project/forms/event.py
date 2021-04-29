@@ -353,6 +353,10 @@ class UpdateEventForm(BaseEventForm):
                 obj.photo = Image()
             field.populate_obj(obj, name)
 
+        if obj.photo and obj.photo.is_empty():
+            obj.photo = None
+            obj.photo_id = None
+
 
 class DeleteEventForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Delete event"))

@@ -199,15 +199,16 @@ def test_admin_unit_references_outgoing(client, seeder, utils):
 
 def test_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
     user_id, admin_unit_id = seeder.setup_base()
-    (
-        other_user_id,
-        other_admin_unit_id,
-        event_id,
-        reference_id,
-    ) = seeder.create_any_reference(admin_unit_id)
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
 
     utils.logout()
     utils.login("other@test.de")
+
+    # Event per Form anlegen, um dieselben Default-Werte wie im Update zu haben
+    event_id = seeder.create_event_via_form(other_admin_unit_id)
+    seeder.create_reference(event_id, admin_unit_id)
+
     url = utils.get_url("event_update", event_id=event_id)
     response = utils.get_ok(url)
 
@@ -221,3 +222,30 @@ def test_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
     )
 
     utils.assert_send_mail_called(mail_mock, "test@test.de")
+
+
+def test_referencedEventNonDirtyUpdate_doesNotSendMail(
+    client, seeder, utils, app, mocker
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+
+    utils.logout()
+    utils.login("other@test.de")
+
+    # Event per Form anlegen, um dieselben Default-Werte wie im Update zu haben
+    event_id = seeder.create_event_via_form(other_admin_unit_id)
+    seeder.create_reference(event_id, admin_unit_id)
+
+    url = utils.get_url("event_update", event_id=event_id)
+    response = utils.get_ok(url)
+
+    mail_mock = utils.mock_send_mails(mocker)
+    response = utils.post_form(
+        url,
+        response,
+        {},
+    )
+
+    mail_mock.assert_not_called()
