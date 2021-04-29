@@ -25,6 +25,7 @@ from project.oauth2 import require_oauth
 from project.services.event import (
     get_event_with_details_or_404,
     get_events_query,
+    get_significant_event_changes,
     update_event,
 )
 from project.services.event_search import EventSearchParams
@@ -59,8 +60,11 @@ class EventResource(BaseResource):
 
         event = self.update_instance(EventPostRequestSchema, instance=event)
         update_event(event)
+        changes = get_significant_event_changes(event)
         db.session.commit()
-        send_referenced_event_changed_mails(event)
+
+        if changes:
+            send_referenced_event_changed_mails(event)
 
         return make_response("", 204)
 
@@ -75,8 +79,11 @@ class EventResource(BaseResource):
 
         event = self.update_instance(EventPatchRequestSchema, instance=event)
         update_event(event)
+        changes = get_significant_event_changes(event)
         db.session.commit()
-        send_referenced_event_changed_mails(event)
+
+        if changes:
+            send_referenced_event_changed_mails(event)
 
         return make_response("", 204)
 

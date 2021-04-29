@@ -314,6 +314,48 @@ def test_put_dateWithoutTimezone(client, seeder, utils, app):
         assert event.start == expected
 
 
+def test_put_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event_via_api(admin_unit_id)
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    seeder.create_reference(event_id, other_admin_unit_id)
+
+    mail_mock = utils.mock_send_mails(mocker)
+    url = utils.get_url("api_v1_event", id=event_id)
+    put = create_put(place_id, organizer_id)
+    put["name"] = "Changed name"
+    response = utils.put_json(url, put)
+
+    utils.assert_response_no_content(response)
+    utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+
+def test_put_referencedEventNonDirtyUpdate_doesNotSendMail(
+    client, seeder, utils, app, mocker
+):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event_via_api(admin_unit_id)
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    seeder.create_reference(event_id, other_admin_unit_id)
+
+    mail_mock = utils.mock_send_mails(mocker)
+    url = utils.get_url("api_v1_event", id=event_id)
+    put = create_put(place_id, organizer_id)
+    put["name"] = "Name"
+    response = utils.put_json(url, put)
+
+    utils.assert_response_no_content(response)
+    mail_mock.assert_not_called()
+
+
 def test_patch(client, seeder, utils, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
@@ -340,6 +382,22 @@ def test_patch_startAfterEnd(client, seeder, utils, app):
 
     response = utils.patch_json(url, {"end": "2021-02-07T10:59:00.000Z"})
     utils.assert_response_bad_request(response)
+
+
+def test_patch_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event_via_api(admin_unit_id)
+
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    seeder.create_reference(event_id, other_admin_unit_id)
+
+    mail_mock = utils.mock_send_mails(mocker)
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.patch_json(url, {"name": "Changed name"})
+
+    utils.assert_response_no_content(response)
+    utils.assert_send_mail_called(mail_mock, "other@test.de")
 
 
 def test_delete(client, seeder, utils, app):

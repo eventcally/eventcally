@@ -4,6 +4,7 @@ import pathlib
 from flask_babelex import lazy_gettext
 from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.base import NO_CHANGE, object_state
 
 
 def get_event_category_name(category):
@@ -56,3 +57,35 @@ def make_check_violation(message: str = None, statement: str = "") -> IntegrityE
 
 def make_unique_violation(message: str = None, statement: str = "") -> IntegrityError:
     return make_integrity_error(UNIQUE_VIOLATION, message, statement)
+
+
+def get_pending_changes(
+    instance, include_collections=True, passive=None, include_keys=None
+) -> dict:
+    result = {}
+
+    state = object_state(instance)
+
+    if not state.modified:  # pragma: no cover
+        return result
+
+    dict_ = state.dict
+
+    for attr in state.manager.attributes:
+        if (
+            (include_keys and attr.key not in include_keys)
+            or (not include_collections and hasattr(attr.impl, "get_collection"))
+            or not hasattr(attr.impl, "get_history")
+        ):  # pragma: no cover
+            continue
+
+        (added, unchanged, deleted) = attr.impl.get_history(
+            state, dict_, passive=NO_CHANGE
+        )
+
+        if added or deleted:
+            old_value = deleted[0] if deleted else None
+            new_value = added[0] if added else None
+            result[attr.key] = [new_value, old_value]
+
+    return result
