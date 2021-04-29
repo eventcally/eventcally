@@ -3,7 +3,7 @@ from datetime import datetime
 
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_babelex import gettext
-from flask_security import auth_required
+from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
@@ -328,6 +328,7 @@ def get_user_rights(event):
 
 def get_menu_user_rights(event):
     return {
+        "can_view_actions": current_user.is_authenticated,
         "can_update_event": has_access(event.admin_unit, "event:update"),
     }
 
