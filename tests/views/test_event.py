@@ -13,6 +13,19 @@ def test_read(client, seeder, utils, external_link):
     utils.get_ok(url)
 
 
+def test_read_containsActionLink(seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    event_id = seeder.create_event(other_admin_unit_id)
+
+    url = utils.get_url("event", event_id=event_id)
+    response = utils.get_ok(url)
+
+    action_url = utils.get_url("event_actions", event_id=event_id)
+    assert action_url in str(response.data)
+
+
 @pytest.mark.parametrize("db_error", [True, False])
 def test_create(client, app, utils, seeder, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
