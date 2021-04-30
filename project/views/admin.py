@@ -41,7 +41,7 @@ def admin_admin_unit_update(id):
 
         try:
             db.session.commit()
-            flash(gettext("Admin unit successfully updated"), "success")
+            flash(gettext("Organization successfully updated"), "success")
             return redirect(url_for("admin_admin_units"))
         except SQLAlchemyError as e:
             db.session.rollback()
