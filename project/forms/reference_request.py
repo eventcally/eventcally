@@ -12,7 +12,7 @@ from project.models import (
 
 class CreateEventReferenceRequestForm(FlaskForm):
     admin_unit_id = SelectField(
-        lazy_gettext("Admin unit"), validators=[DataRequired()], coerce=int
+        lazy_gettext("Organization"), validators=[DataRequired()], coerce=int
     )
     submit = SubmitField(lazy_gettext("Save request"))
 

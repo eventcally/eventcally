@@ -8,7 +8,7 @@ from project.forms.common import event_rating_choices
 
 class CreateEventReferenceForm(FlaskForm):
     admin_unit_id = SelectField(
-        lazy_gettext("Admin unit"), validators=[DataRequired()], coerce=int
+        lazy_gettext("Organization"), validators=[DataRequired()], coerce=int
     )
     rating = SelectField(
         lazy_gettext("Rating"),

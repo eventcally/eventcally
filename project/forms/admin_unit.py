@@ -56,7 +56,7 @@ class BaseAdminUnitForm(FlaskForm):
 
 
 class CreateAdminUnitForm(BaseAdminUnitForm):
-    submit = SubmitField(lazy_gettext("Create admin unit"))
+    submit = SubmitField(lazy_gettext("Create organization"))
 
 
 class UpdateAdminUnitForm(BaseAdminUnitForm):

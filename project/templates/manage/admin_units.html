@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block title %}
-{{ _('Admin Units') }}
+{{ _('Organizations') }}
 {% endblock %}
 {% block content %}
 
@@ -13,9 +13,9 @@
 </div>
 {% endif %}
 
-<h1>{{ _('Admin Units') }}</h1>
+<h1>{{ _('Organizations') }}</h1>
 <div class="my-4">
-    <a class="btn btn-outline-secondary my-1" href="{{ url_for('admin_unit_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create admin unit') }}</a>
+    <a class="btn btn-outline-secondary my-1" href="{{ url_for('admin_unit_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create organization') }}</a>
 </div>
 
 <div class="list-group">
