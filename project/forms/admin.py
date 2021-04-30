@@ -24,8 +24,8 @@ class UpdateAdminUnitForm(FlaskForm):
     incoming_reference_requests_allowed = BooleanField(
         lazy_gettext("Incoming reference requests allowed"),
         description=lazy_gettext(
-            "If set, other admin units can ask this admin unit to reference their event."
+            "If set, other organizations can ask this organization to reference their event."
         ),
         validators=[Optional()],
     )
-    submit = SubmitField(lazy_gettext("Update admin unit"))
+    submit = SubmitField(lazy_gettext("Update organization"))

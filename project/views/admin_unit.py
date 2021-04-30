@@ -27,7 +27,7 @@ def admin_unit_create():
 
         try:
             insert_admin_unit_for_user(admin_unit, current_user)
-            flash(gettext("Admin unit successfully created"), "success")
+            flash(gettext("Organization successfully created"), "success")
             return redirect(url_for("manage_admin_unit", id=admin_unit.id))
         except SQLAlchemyError as e:
             db.session.rollback()
