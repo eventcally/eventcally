@@ -8,13 +8,13 @@
 
 {% block content %}
 
-<h1>{{ _('Create admin unit') }}</h1>
+<h1>{{ _('Create organization') }}</h1>
 <form action="{{ url_for('admin_unit_create') }}" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
   <div class="card mb-4">
     <div class="card-header">
-      {{ _('Admin unit') }}
+      {{ _('Organization') }}
     </div>
     <div class="card-body">
       {{ render_field_with_errors(form.name) }}

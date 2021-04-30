@@ -45,7 +45,13 @@ flask db upgrade
 pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot . && pybabel init -i messages.pot -d project/translations -l de
 ```
 
-### Extract new msgid's and merge into *.po files
+### Add locale
+
+```sh
+pybabel init -i messages.pot -d project/translations -l en
+```
+
+### Extract new msgid's and merge into \*.po files
 
 ```sh
 pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot . && pybabel update -N -i messages.pot -d project/translations
