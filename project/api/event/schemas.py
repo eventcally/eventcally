@@ -180,6 +180,7 @@ class EventSearchItemSchema(EventRefSchema):
     organizer = fields.Nested(OrganizerRefSchema)
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
+    attendance_mode = EnumField(EventAttendanceMode)
 
 
 class EventListRequestSchema(PaginationRequestSchema):
