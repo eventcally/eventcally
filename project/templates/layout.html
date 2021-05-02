@@ -80,6 +80,19 @@
         return '';
     }
 
+    function render_attendance_mode_pill(event) {
+        if (event.attendance_mode != null) {
+            if (event.attendance_mode == "online") {
+                return '<span class="badge badge-pill badge-info">{{ _('EventAttendanceMode.online') }}</span>';
+            }
+            if (event.attendance_mode == "mixed") {
+                return '<span class="badge badge-pill badge-info">{{ _('EventAttendanceMode.mixed') }}</span>';
+            }
+        }
+
+        return '';
+    }
+
     function render_booked_up_pill(event) {
       if (event.booked_up) {
         return '<span class="badge badge-pill badge-warning">{{ _('Booked up') }}</span>';
@@ -89,7 +102,7 @@
     }
 
     function render_event_warning_pills(event) {
-      return render_event_status_pill(event) + ' ' + render_booked_up_pill(event);
+      return render_event_status_pill(event) + ' ' + render_booked_up_pill(event) + ' ' + render_attendance_mode_pill(event);
     }
 
     </script>
