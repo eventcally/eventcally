@@ -259,8 +259,14 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_attendance_mode_pill(event) %}
+{% if event.attendance_mode and event.attendance_mode.value != 1 %}
+ <span class="badge badge-pill badge-info">{{ event.attendance_mode | loc_enum }}</span>
+{% endif %}
+{% endmacro %}
+
 {% macro render_event_warning_pills(event) %}
-{{ render_event_status_pill(event) }} {{ render_booked_up_pill(event) }}
+{{ render_event_status_pill(event) }} {{ render_booked_up_pill(event) }} {{ render_attendance_mode_pill(event) }}
 {% endmacro %}
 
 {% macro render_event_review_status_pill(event) %}
