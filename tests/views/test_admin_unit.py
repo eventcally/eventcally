@@ -31,6 +31,7 @@ def test_create(client, app, utils, seeder):
             from project.access import has_current_user_member_role_for_admin_unit
             from project.services.admin_unit import get_admin_unit_by_name
             from project.services.organizer import get_event_organizer
+            from project.services.place import get_event_place
 
             admin_unit = get_admin_unit_by_name("Meine Crew")
             assert admin_unit is not None
@@ -46,7 +47,11 @@ def test_create(client, app, utils, seeder):
             assert organizer.name == "Meine Crew"
             assert organizer.location.city == "Goslar"
             assert organizer.location.postalCode == "38640"
-            assert organizer is not None
+
+            place = get_event_place(admin_unit.id, "Goslar")
+            assert place.name == "Goslar"
+            assert place.location.city == "Goslar"
+            assert place.location.postalCode == "38640"
 
 
 def test_create_duplicate(client, app, utils, seeder):
