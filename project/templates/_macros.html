@@ -408,7 +408,7 @@
       {% endif %}
 
       {% if event.description %}
-        <div class="my-4" style="white-space:pre-wrap;">{{ event.description }}</div>
+        <div class="my-4" style="white-space:pre-wrap;">{{ event.description|urlize(nofollow=True, target='_blank', rel="nofollow") }}</div>
       {% endif %}
 
       <div class="mt-4">
@@ -554,7 +554,7 @@
       </div>
 
       {% if event.description %}
-        <div class="mt-4" style="white-space:pre-wrap;">{{ event.description }}</div>
+        <div class="mt-4" style="white-space:pre-wrap;">{{ event.description|urlize(nofollow=True, target='_blank', rel="nofollow") }}</div>
       {% endif %}
 
       <div class="small mt-4">
@@ -885,6 +885,8 @@ var photo_modal = $('#photo_modal');
 
 if (URL) {
   inputImage.onchange = function () {
+    $('.dropzone-wrapper').removeClass('dragover');
+
     var files = this.files;
     var file;
 
@@ -937,6 +939,7 @@ if (URL) {
 
   if ($('#photo_preview').attr("src")) {
     image.src = uploadedImageURL = $('#photo_preview').attr("src");
+    $('.hide-if-photo-exists').hide();
   } else {
     $('.show-if-photo-exists').hide();
   }
@@ -949,6 +952,7 @@ if (URL) {
     $(field_id).val('');
     $('#photo_preview').attr("src", '');
     $('.show-if-photo-exists').hide();
+    $('.hide-if-photo-exists').show();
   });
 
   $('#photo-zoom-in').click(function(e){
@@ -987,6 +991,7 @@ if (URL) {
       $(field_id).val(data_url);
       $('#photo_preview').attr("src", data_url);
       $('.show-if-photo-exists').show();
+      $('.hide-if-photo-exists').hide();
     }
   });
 
@@ -1016,7 +1021,7 @@ if (URL) {
 {% macro render_crop_image_form(form_field) %}
   {{ form_field.hidden_tag() }}
 
-  <div class="card card-body mb-3 p-3">
+  <div class="mb-3">
     <div id="photo_modal" class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -1049,13 +1054,16 @@ if (URL) {
       </div>
     </div>
 
-    <div class="mb-1 show-if-photo-exists"><img id="photo_preview" style="max-height: 20vh;" {% if form_field.image_base64.data %}src="{{ form_field.image_base64.data }}"{% endif %} /></div>
+    <div class="mb-1 show-if-photo-exists"><img id="photo_preview" style="max-height: 20vh; max-width:100%;" {% if form_field.image_base64.data %}src="{{ form_field.image_base64.data }}"{% endif %} /></div>
 
     <div class="py-1">
-      <label class="btn btn-secondary mb-0" for="photo-image_file" title="{{ _('Choose image file') }}">
-        <input type="file" class="sr-only" id="photo-image_file" name="photo" accept="image/*" />
-        <span>{{ _('Choose image file') }}&hellip;</span>
-      </label>
+      <div class="dropzone-wrapper mb-2 hide-if-photo-exists">
+        <div class="dropzone-desc">
+          <i class="fa fa-upload"></i>
+          <p>{{ _('Choose image file') }}&hellip;</p>
+        </div>
+        <input type="file" id="photo-image_file" name="photo" accept="image/*" class="dropzone" />
+      </div>
       <button id="photo-edit-btn" class="btn btn-outline-secondary show-if-photo-exists"><i class="fa fa-edit"></i></button>
       <button id="photo-delete-btn" class="btn btn-outline-secondary show-if-photo-exists"><i class="fa fa-trash"></i></button>
     </div>
