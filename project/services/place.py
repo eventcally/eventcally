@@ -4,13 +4,17 @@ from project import db
 from project.models import EventPlace, Location
 
 
-def upsert_event_place(admin_unit_id, name):
-    result = EventPlace.query.filter(
+def get_event_place(admin_unit_id, name):
+    return EventPlace.query.filter(
         and_(
             EventPlace.name == name,
             EventPlace.admin_unit_id == admin_unit_id,
         )
     ).first()
+
+
+def upsert_event_place(admin_unit_id, name):
+    result = get_event_place(admin_unit_id, name)
     if result is None:
         result = EventPlace(name=name, admin_unit_id=admin_unit_id)
         result.location = Location()

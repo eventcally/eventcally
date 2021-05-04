@@ -38,6 +38,16 @@ def insert_admin_unit_for_user(admin_unit, user):
             admin_unit.logo.encoding_format,
         )
     db.session.add(organizer)
+
+    # Place anlegen
+    if admin_unit.location:
+        place = EventPlace()
+        place.admin_unit_id = admin_unit.id
+        place.name = admin_unit.location.city
+        place.location = Location()
+        assign_location_values(place.location, admin_unit.location)
+        db.session.add(place)
+
     db.session.commit()
 
 

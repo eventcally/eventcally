@@ -1,10 +1,11 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_google_place_autocomplete_field, render_google_place_autocomplete_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
 {% block title %}
 {{ _('Create event') }}
 {% endblock %}
 {% block header %}
 {{ render_cropper_header() }}
+{{ render_google_place_autocomplete_header(False, 'new_event_place-') }}
 <script>
 $( function() {
 
@@ -119,6 +120,7 @@ $( function() {
       </div>
 
       <div class="my-4" id="new_place_container">
+        {{ render_google_place_autocomplete_field() }}
         {{ form.new_event_place.hidden_tag() }}
         {{ render_field_with_errors(form.new_event_place.form.name, is_required=True) }}
         {{ form.new_event_place.form.location.hidden_tag() }}
