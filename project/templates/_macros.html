@@ -660,7 +660,7 @@
 
 {% endmacro %}
 
-{% macro render_google_place_autocomplete_header(location_only = False) %}
+{% macro render_google_place_autocomplete_header(location_only = False, prefix = '') %}
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ "dev" | env_override('GOOGLE_MAPS_API_KEY') }}&libraries=places"></script>
 <script>
     function initialize() {
@@ -685,24 +685,24 @@
               } else if (addressType == 'locality') {
                 city = val;
               } else if (addressType == 'administrative_area_level_1') {
-                $('#location-state').val(val);
+                $('#{{ prefix }}location-state').val(val);
               } else if (addressType == 'postal_code') {
-                $('#location-postalCode').val(val);
+                $('#{{ prefix }}location-postalCode').val(val);
               }
             }
 
             {% if not location_only %}
-              $('#name').val(place.name);
+              $('#{{ prefix }}name').val(place.name);
 
               if (place.website) {
-                $('#url').val(place.website);
+                $('#{{ prefix }}url').val(place.website);
               }
             {% endif %}
 
-            $('#location-street').val([route, street_number].join(' '));
-            $('#location-city').val(city);
-            $('#location-latitude').val(place.geometry.location.lat());
-            $('#location-longitude').val(place.geometry.location.lng());
+            $('#{{ prefix }}location-street').val([route, street_number].join(' '));
+            $('#{{ prefix }}location-city').val(city);
+            $('#{{ prefix }}location-latitude').val(place.geometry.location.lat());
+            $('#{{ prefix }}location-longitude').val(place.geometry.location.lng());
 
             $('#location_search').val('');
         });
@@ -713,11 +713,13 @@
 
 {% macro render_google_place_autocomplete_field() %}
   <div class="form-group row">
-    <div class="input-group col-sm-12">
-      <div class="input-group-prepend">
-        <span class="input-group-text"><i class="fab fa-google"></i></span>
+    <div class="col-sm-12">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><span><i class="fab fa-google"></i></span></span>
+        </div>
+        <input id="location_search" type="text" class="form-control" placeholder="{{ _('Search location on Google') }}" runat="server" />
       </div>
-      <input id="location_search" type="text" class="form-control" placeholder="{{ _('Search location on Google') }}" autocomplete="on" runat="server" />
     </div>
   </div>
 {% endmacro %}
