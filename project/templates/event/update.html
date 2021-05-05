@@ -5,6 +5,37 @@
 {% endblock %}
 {% block header %}
   {{ render_cropper_block() }}
+  <script>
+    $( function() {
+      // Organizer
+      var select =$('#organizer_id');
+      var input_group = select.parent();
+      input_group.append('<button id="organizer-edit-btn" class="btn btn-outline-secondary my-1"><i class="fa fa-edit"></i></button>');
+      input_group.append('<button id="organizer-add-btn" class="btn btn-outline-secondary m-1"><i class="fa fa-plus"></i></button>');
+      $('#organizer-edit-btn').click(function () {
+        window.open('/organizer/' + select.val() + '/update');
+        return false;
+      });
+      $('#organizer-add-btn').click(function () {
+        window.open('{{ url_for("manage_admin_unit_organizer_create", id=event.admin_unit_id) }}');
+        return false;
+      });
+
+      // Place
+      var select =$('#event_place_id');
+      var input_group = select.parent();
+      input_group.append('<button id="place-edit-btn" class="btn btn-outline-secondary my-1"><i class="fa fa-edit"></i></button>');
+      input_group.append('<button id="place-add-btn" class="btn btn-outline-secondary m-1"><i class="fa fa-plus"></i></button>');
+      $('#place-edit-btn').click(function () {
+        window.open('/event_place/' + select.val() + '/update');
+        return false;
+      });
+      $('#place-add-btn').click(function () {
+        window.open('{{ url_for("manage_admin_unit_places_create", id=event.admin_unit_id) }}');
+        return false;
+      });
+    });
+  </script>
 {% endblock %}
 {% block content %}
 
@@ -48,7 +79,7 @@
     <div class="card-header">
       {{ _('Organizer') }}
     </div>
-    <div class="card-body">
+    <div class="card-body pb-0">
       {{ render_field_with_errors(form.organizer_id, class="autocomplete w-100") }}
     </div>
   </div>
@@ -57,7 +88,7 @@
     <div class="card-header">
       {{ _('Place') }}
     </div>
-    <div class="card-body">
+    <div class="card-body pb-0">
       {{ render_field_with_errors(form.event_place_id, class="autocomplete w-100") }}
     </div>
   </div>
