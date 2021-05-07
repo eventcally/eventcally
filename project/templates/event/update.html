@@ -8,12 +8,12 @@
   <script>
     $( function() {
       // Organizer
-      var select =$('#organizer_id');
-      var input_group = select.parent();
+      var organizer_select =$('#organizer_id');
+      var input_group = organizer_select.parent();
       input_group.append('<button id="organizer-edit-btn" class="btn btn-outline-secondary my-1"><i class="fa fa-edit"></i></button>');
       input_group.append('<button id="organizer-add-btn" class="btn btn-outline-secondary m-1"><i class="fa fa-plus"></i></button>');
       $('#organizer-edit-btn').click(function () {
-        window.open('/organizer/' + select.val() + '/update');
+        window.open('/organizer/' + organizer_select.val() + '/update');
         return false;
       });
       $('#organizer-add-btn').click(function () {
@@ -22,12 +22,12 @@
       });
 
       // Place
-      var select =$('#event_place_id');
-      var input_group = select.parent();
+      var place_select =$('#event_place_id');
+      var input_group = place_select.parent();
       input_group.append('<button id="place-edit-btn" class="btn btn-outline-secondary my-1"><i class="fa fa-edit"></i></button>');
       input_group.append('<button id="place-add-btn" class="btn btn-outline-secondary m-1"><i class="fa fa-plus"></i></button>');
       $('#place-edit-btn').click(function () {
-        window.open('/event_place/' + select.val() + '/update');
+        window.open('/event_place/' + place_select.val() + '/update');
         return false;
       });
       $('#place-add-btn').click(function () {
