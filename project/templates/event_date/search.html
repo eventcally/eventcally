@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}
+{{ _('Event Dates') }}
+{% endblock %}
+{% block content %}
+
+<event-date-search basepath="{{ url_for('home', _external=True) }}"></event-date-search>
+<script type="text/javascript" src="{{ url_for('static', filename='angular-elements.js')}}"></script>
+
+{% endblock %}

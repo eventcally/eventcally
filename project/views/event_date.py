@@ -35,6 +35,11 @@ def event_dates():
     return render_template("event_date/list.html", form=form, params=params)
 
 
+@app.route("/eventdatesearch")
+def event_date_search():
+    return render_template("event_date/search.html")
+
+
 @app.route("/eventdate/<int:id>")
 def event_date(id):
     event_date = get_event_date_with_details_or_404(id)

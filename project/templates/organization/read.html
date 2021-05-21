@@ -2,13 +2,10 @@
 {% block title %}
 {{ organization.name }}
 {% endblock %}
-{% block styles %}
-<link href="https://unpkg.com/@angular/material@2.0.0-beta.8/prebuilt-themes/indigo-pink.css" rel="stylesheet">
-{% endblock %}
 {% block content_container_attribs %}{% endblock %}
 {% block content %}
 
 <organization-landing-page basepath="{{ url_for('home', _external=True) }}" organizationId="{{ organization.id }}"></organization-landing-page>
-<script type="text/javascript" src="{{ url_for('static', filename='organization-landing-page.js')}}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='angular-elements.js')}}"></script>
 
 {% endblock %}
