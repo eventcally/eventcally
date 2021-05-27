@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
+from flask import url_for
+from flask_babelex import format_date, format_time
 from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import contains_eager, defaultload, joinedload, lazyload
 from sqlalchemy.sql import extract
@@ -10,6 +12,7 @@ from project.dateutils import date_add_time, dates_from_recurrence_rule, get_tod
 from project.models import (
     AdminUnit,
     Event,
+    EventAttendanceMode,
     EventCategory,
     EventDate,
     EventOrganizer,
@@ -20,6 +23,7 @@ from project.models import (
     Location,
 )
 from project.utils import get_pending_changes
+from project.views.utils import truncate
 
 
 def get_event_category(category_name):
@@ -313,3 +317,36 @@ def get_significant_event_changes(event) -> dict:
         "organizer_id",
     ]
     return get_pending_changes(event, include_collections=False, include_keys=keys)
+
+
+def get_meta_data(event: Event, event_date: EventDate = None) -> dict:
+    meta = dict()
+    meta["title"] = event.name
+
+    if (
+        event.attendance_mode
+        and event.attendance_mode != EventAttendanceMode.online
+        and event.event_place
+    ):
+        meta["title"] = f"{meta['title']} @ {event.event_place.name}"
+
+        if event.event_place.location and event.event_place.location.city:
+            meta["title"] = f"{meta['title']}, {event.event_place.location.city}"
+
+    if event_date:
+        date_str = format_date(event_date.start, "full")
+        time_str = format_time(event_date.start, "short")
+        meta["description"] = f"{date_str} {time_str}"
+
+    if event.description:
+        desc_short = truncate(event.description, 300)
+
+        if "description" in meta:
+            meta["description"] = f"{meta['description']}: {desc_short}"
+        else:
+            meta["description"] = desc_short
+
+    if event.photo_id:
+        meta["image"] = url_for("image", id=event.photo_id, _external=True)
+
+    return meta

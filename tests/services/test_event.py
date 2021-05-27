@@ -103,3 +103,25 @@ def test_update_event_dates_with_recurrence_rule_past_forever(
         event_date = event.dates[366]
         assert event_date.start == create_berlin_date(2021, 1, 3, 14, 30)
         assert event_date.end == create_berlin_date(2021, 1, 3, 16, 30)
+
+
+def test_get_meta_data(seeder, app):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.models import Event, EventAttendanceMode, Location
+        from project.services.event import get_meta_data
+
+        event = Event.query.get(event_id)
+        event.attendance_mode = EventAttendanceMode.offline
+
+        location = Location()
+        location.city = "Stadt"
+        event.event_place.location = location
+
+        event.photo_id = 1
+
+        with app.test_request_context():
+            meta = get_meta_data(event)
+            assert meta is not None
