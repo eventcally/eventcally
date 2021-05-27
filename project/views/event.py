@@ -30,6 +30,7 @@ from project.models import (
 )
 from project.services.event import (
     get_event_with_details_or_404,
+    get_meta_data,
     get_significant_event_changes,
     get_upcoming_event_dates,
     insert_event,
@@ -66,6 +67,7 @@ def event(event_id):
         event=event,
         dates=dates,
         structured_datas=structured_datas,
+        meta=get_meta_data(event),
         user_rights=user_rights,
         canonical_url=url_for("event", event_id=event_id, _external=True),
     )

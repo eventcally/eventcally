@@ -4,14 +4,36 @@
   {%- block html %}
   <head>
     {%- block head %}
-    <!-- Required meta tags -->
+    <title>{%- block title -%}{{ title|default('oveda') }}{% endblock title %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="{% if meta_description %}{{ meta_description }}{% else %}Mit der offenen Veranstaltungsdatenbank Events einfach bekannt machen!{% endif %}">
+
     {% if canonical_url %}
     <link rel="canonical" href="{{ canonical_url }}" />
     {% endif %}
     {%- block metas %}
+      <meta property="og:type" content="website">
+      <meta property="og:title" content="{{ self.title() }}">
+
+      {% if meta %}
+        <meta name="description" content="{{ meta['description'] }}">
+        <meta property="og:description" content="{{ meta['description'] }}">
+
+        {% if 'image' in meta %}
+          <meta property="og:image" content="{{ meta['image'] }}">
+          <meta name="twitter:card" content="summary_large_image">
+        {% else %}
+        <meta name="twitter:card" content="summary">
+        {% endif %}
+
+      {% else %}
+        <meta name="description" content="Mit der offenen Veranstaltungsdatenbank Events einfach bekannt machen!">
+        <meta property="og:description" content="Mit der offenen Veranstaltungsdatenbank Events einfach bekannt machen!">
+      {% endif %}
+
+      {% if canonical_url %}
+        <link rel="og:url" href="{{ canonical_url }}" />
+      {% endif %}
     {%- endblock metas %}
 
     <!-- Bootstrap CSS -->
@@ -41,7 +63,7 @@
     <script src="{{ url_for('static', filename='jquery.recurrenceinput.js')}}"></script>
 
     {% block header_before_site_js %}
-    {% endblock %}
+    {%- endblock -%}
     <script src="{{ url_for('static', filename='site.js')}}"></script>
     <script src="{{ url_for('static', filename='svg-icon.js')}}"></script>
 
@@ -106,8 +128,6 @@
     }
 
     </script>
-
-    <title>{% block title %}{{ title|default('oveda') }}{% endblock title %}</title>
 
     {% if structured_data %}
     <script type="application/ld+json">
