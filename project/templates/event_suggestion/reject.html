@@ -1,9 +1,9 @@
 {% extends "layout_manage.html" %}
 {% set active_id = "reviews" %}
 {% from "_macros.html" import render_event_suggestion, render_image, render_radio_buttons, render_phone_prop, render_email_prop, render_string_prop, render_field_with_errors, render_field, render_event_props, render_image_with_link, render_place, render_link_prop %}
-{% block title %}
+{%- block title -%}
 {{ event_suggestion.name }}
-{% endblock %}
+{%- endblock -%}
 {% block content %}
 
 <h1>{{ _('Reject event suggestion') }}</h1>

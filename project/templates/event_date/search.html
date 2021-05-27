@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
-{% block title %}
+{%- block title -%}
 {{ _('Event Dates') }}
-{% endblock %}
+{%- endblock -%}
 {% block content %}
 
 <event-date-search basepath="{{ url_for('home', _external=True) }}"></event-date-search>

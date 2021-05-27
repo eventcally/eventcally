@@ -1,9 +1,9 @@
 {% extends "layout_manage.html" %}
 {% set active_id = "reference_requests_outgoing" %}
 {% from "_macros.html" import render_reference_request_review_status_pill, render_event_date, render_pagination, render_event_organizer %}
-{% block title %}
+{%- block title -%}
 {{ _('Reference requests') }}
-{% endblock %}
+{%- endblock -%}
 {% block content %}
 
 <h1 class="mb-1">{{ _('Outgoing reference requests') }}</h1>

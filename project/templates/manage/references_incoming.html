@@ -1,9 +1,9 @@
 {% extends "layout_manage.html" %}
 {% set active_id = "references_incoming" %}
 {% from "_macros.html" import render_event_warning_pills, render_event_date, render_pagination, render_event_organizer %}
-{% block title %}
+{%- block title -%}
 {{ _('References') }}
-{% endblock %}
+{%- endblock -%}
 {% block content %}
 
 <h1 class="mb-1">{{ _('Incoming references') }}</h1>
