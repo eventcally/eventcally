@@ -15,24 +15,26 @@
       <meta property="og:type" content="website">
       <meta property="og:title" content="{{ self.title() }}">
 
+      {% if canonical_url %}
+        <meta property="og:url" content="{{ canonical_url }}" />
+      {% endif %}
+
       {% if meta %}
         <meta name="description" content="{{ meta['description'] }}">
         <meta property="og:description" content="{{ meta['description'] }}">
 
+        <meta name="twitter:title" content="{{ self.title() }}">
         {% if 'image' in meta %}
           <meta property="og:image" content="{{ meta['image'] }}">
+          <meta name="twitter:image" content="{{ meta['image'] }}">
           <meta name="twitter:card" content="summary_large_image">
         {% else %}
-        <meta name="twitter:card" content="summary">
+          <meta name="twitter:card" content="summary">
         {% endif %}
 
       {% else %}
         <meta name="description" content="Mit der offenen Veranstaltungsdatenbank Events einfach bekannt machen!">
         <meta property="og:description" content="Mit der offenen Veranstaltungsdatenbank Events einfach bekannt machen!">
-      {% endif %}
-
-      {% if canonical_url %}
-        <link rel="og:url" href="{{ canonical_url }}" />
       {% endif %}
     {%- endblock metas %}
 
