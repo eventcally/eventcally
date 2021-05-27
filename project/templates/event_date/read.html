@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% from "_macros.html" import render_event_props_seo %}
 {% set event = event_date.event %}
-{% block title %}
-{{ event_date.start | dateformat() }} {{ event.name }}
-{% endblock %}
+{%- block title -%}
+{{ meta['title'] }}
+{%- endblock -%}
 {% block content_container_attribs %}{% endblock %}
 {% block content %}
 

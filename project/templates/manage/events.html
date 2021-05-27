@@ -1,9 +1,9 @@
 {% extends "layout_manage.html" %}
 {% set active_id = "events" %}
 {% from "_macros.html" import render_event_dates_filter_form, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
-{% block title %}
+{%- block title -%}
 {{ _('Events') }}
-{% endblock %}
+{%- endblock -%}
 {% block content %}
 
 <h1>{{ _('Events') }} <button type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-search"></i></button></h1>
