@@ -1,10 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
+import icalendar
 import pytz
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import rrulestr
 
 berlin_tz = pytz.timezone("Europe/Berlin")
+gmt_tz = pytz.timezone("GMT")
 
 
 def get_now():
@@ -195,3 +197,34 @@ def calculate_occurrences(start_date, date_format, rrule_str, start, batch_size)
     }
 
     return {"occurrences": occurrences, "batch": batch_data}
+
+
+def create_icalendar() -> icalendar.Calendar:
+    cal = icalendar.Calendar()
+    cal.add("prodid", "-//Oveda//oveda.de//")
+    cal.add("version", "2.0")
+    cal.add("x-wr-timezone", berlin_tz.zone)
+
+    tzc = icalendar.Timezone()
+    tzc.add("tzid", berlin_tz.zone)
+    tzc.add("x-lic-location", berlin_tz.zone)
+
+    tzs = icalendar.TimezoneStandard()
+    tzs.add("tzname", "CET")
+    tzs.add("dtstart", datetime(1970, 10, 25, 3, 0, 0))
+    tzs.add("rrule", {"freq": "yearly", "bymonth": 10, "byday": "-1su"})
+    tzs.add("TZOFFSETFROM", timedelta(hours=2))
+    tzs.add("TZOFFSETTO", timedelta(hours=1))
+
+    tzd = icalendar.TimezoneDaylight()
+    tzd.add("tzname", "CEST")
+    tzd.add("dtstart", datetime(1970, 3, 29, 2, 0, 0))
+    tzd.add("rrule", {"freq": "yearly", "bymonth": 3, "byday": "-1su"})
+    tzd.add("TZOFFSETFROM", timedelta(hours=1))
+    tzd.add("TZOFFSETTO", timedelta(hours=2))
+
+    tzc.add_component(tzs)
+    tzc.add_component(tzd)
+    cal.add_component(tzc)
+
+    return cal

@@ -176,8 +176,10 @@ class Seeder(object):
         category = get_event_category(category_name)
         return category.id
 
-    def create_event(self, admin_unit_id, recurrence_rule="", external_link=""):
-        from project.models import Event
+    def create_event(
+        self, admin_unit_id, recurrence_rule="", external_link="", end=None
+    ):
+        from project.models import Event, EventAttendanceMode
         from project.services.event import insert_event, upsert_event_category
 
         with self._app.app_context():
@@ -187,6 +189,7 @@ class Seeder(object):
             event.name = "Name"
             event.description = "Beschreibung"
             event.start = self.get_now_by_minute()
+            event.end = end
             event.event_place_id = self.upsert_default_event_place(admin_unit_id)
             event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
             event.recurrence_rule = recurrence_rule
@@ -194,6 +197,7 @@ class Seeder(object):
             event.ticket_link = ""
             event.tags = ""
             event.price_info = ""
+            event.attendance_mode = EventAttendanceMode.offline
             insert_event(event)
             self._db.session.commit()
             event_id = event.id
