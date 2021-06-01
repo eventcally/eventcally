@@ -194,6 +194,16 @@ $( function() {
         return false;
     });
 
+    $("#copy_input_button").click(function () {
+        $("#copy_input").select();
+        document.execCommand("copy");
+        $(this).tooltip('show');
+    });
+
+    $('#copy_input_button').mouseleave(function () {
+        $(this).tooltip('hide');
+    });
+
     $("#geolocation_btn").click(function () {
         if ("geolocation" in navigator){
             navigator.geolocation.getCurrentPosition(function(position){

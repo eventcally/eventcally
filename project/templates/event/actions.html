@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_event_props %}
+{% from "_macros.html" import render_share_modal %}
 {%- block title -%}
 {{ _('Actions for event') }}
 {%- endblock -%}
@@ -29,6 +29,12 @@
         </div>
 
         <div class="list-group mt-4">
+            <button type="button" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#shareModal"><i class="fa fa-share-alt"></i> {{ _('Share event') }}</button>
+        </div>
+
+        {{ render_share_modal(share_links) }}
+
+        <div class="list-group mt-4">
             {% if user_rights['can_duplicate_event'] %}
                 <a class="list-group-item list-group-item-action" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}"><i class="fa fa-copy"></i> {{ _('Duplicate event') }}</a>
             {% endif %}
@@ -41,7 +47,6 @@
               <a class="list-group-item list-group-item-action" href="{{ url_for('event_delete', event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}</a>
             {% endif %}
         </div>
-
 
     </div>
 
