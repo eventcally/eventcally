@@ -20,6 +20,29 @@ def get_localized_scope(scope: str) -> str:
     return lazy_gettext(loc_key)
 
 
+def get_location_str(location) -> str:
+    if not location:
+        return ""
+
+    if location.street and not location.street.isspace():
+        return f"{location.street}, {location.postalCode} {location.city}"
+
+    if location.postalCode or location.city:
+        return f"{location.postalCode} {location.city}".strip()
+
+    return ""
+
+
+def get_place_str(place) -> str:
+    if not place:
+        return ""
+
+    if place.location:
+        return f"{place.name}, {get_location_str(place.location)}"
+
+    return place.name
+
+
 def make_dir(path):
     try:
         original_umask = os.umask(0)

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import icalendar
 from dateutil.relativedelta import relativedelta
 from flask import url_for
 from flask_babelex import format_date, format_time
@@ -8,7 +9,12 @@ from sqlalchemy.orm import contains_eager, defaultload, joinedload, lazyload
 from sqlalchemy.sql import extract
 
 from project import db
-from project.dateutils import date_add_time, dates_from_recurrence_rule, get_today
+from project.dateutils import (
+    berlin_tz,
+    date_add_time,
+    dates_from_recurrence_rule,
+    get_today,
+)
 from project.models import (
     AdminUnit,
     Event,
@@ -22,7 +28,7 @@ from project.models import (
     Image,
     Location,
 )
-from project.utils import get_pending_changes
+from project.utils import get_pending_changes, get_place_str
 from project.views.utils import truncate
 
 
@@ -350,3 +356,31 @@ def get_meta_data(event: Event, event_date: EventDate = None) -> dict:
         meta["image"] = url_for("image", id=event.photo_id, _external=True)
 
     return meta
+
+
+def create_ical_event_for_date(event_date: EventDate) -> icalendar.Event:
+    url = url_for("event_date", id=event_date.id, _external=True)
+
+    event = icalendar.Event()
+    event.add("summary", event_date.event.name)
+    event.add("url", url)
+    event.add("description", url)
+    event.add("uid", url)
+    event.add("dtstart", event_date.start.astimezone(berlin_tz))
+
+    if event_date.end:
+        event.add("dtend", event_date.end.astimezone(berlin_tz))
+
+    if event_date.event.created_at:
+        event.add("dtstamp", event_date.event.created_at)
+
+    if event_date.event.updated_at:
+        event.add("last-modified", event_date.event.updated_at)
+
+    if (
+        event_date.event.attendance_mode
+        and event_date.event.attendance_mode != EventAttendanceMode.online
+    ):
+        event.add("location", get_place_str(event_date.event.event_place))
+
+    return event

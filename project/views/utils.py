@@ -1,3 +1,5 @@
+from urllib.parse import quote_plus
+
 from flask import Markup, flash, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from flask_mail import Message
@@ -5,7 +7,9 @@ from psycopg2.errorcodes import UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db, mail
-from project.models import Analytics
+from project.dateutils import gmt_tz
+from project.models import Analytics, EventAttendanceMode, EventDate
+from project.utils import get_place_str
 
 
 def track_analytics(key, value1, value2):
@@ -112,3 +116,52 @@ def truncate(data: str, length: int) -> str:
         return data
 
     return (data[: length - 2] + "..") if len(data) > length else data
+
+
+def get_share_links(url: str, title: str) -> dict:
+    share_links = dict()
+    encoded_url = quote_plus(url)
+    encoded_title = quote_plus(title)
+
+    share_links[
+        "facebook"
+    ] = f"https://www.facebook.com/sharer/sharer.php?u={encoded_url}"
+    share_links[
+        "twitter"
+    ] = f"https://twitter.com/intent/tweet?url={encoded_url}&text={encoded_title}"
+    share_links["email"] = f"mailto:?subject={encoded_title}&body={encoded_url}"
+    share_links["whatsapp"] = f"whatsapp://send?text={encoded_url}"
+    share_links["telegram"] = f"https://t.me/share/url?url={encoded_url}"
+    share_links["url"] = url
+
+    return share_links
+
+
+def get_calendar_links(event_date: EventDate) -> dict:
+    calendar_links = dict()
+
+    url = url_for("event_date", id=event_date.id, _external=True)
+    encoded_url = quote_plus(url)
+    encoded_title = quote_plus(event_date.event.name)
+    start = event_date.start.astimezone(gmt_tz).strftime("%Y%m%dT%H%M%SZ")
+    if event_date.end:
+        end = event_date.end.astimezone(gmt_tz).strftime("%Y%m%dT%H%M%SZ")
+    else:
+        end = start
+
+    if (
+        event_date.event.attendance_mode
+        and event_date.event.attendance_mode != EventAttendanceMode.online
+    ):
+        location = get_place_str(event_date.event.event_place)
+        locationParam = f"&location={quote_plus(location)}"
+    else:
+        locationParam = ""
+
+    calendar_links[
+        "google"
+    ] = f"http://www.google.com/calendar/event?action=TEMPLATE&text={encoded_title}&dates={start}/{end}&details={encoded_url}{locationParam}"
+
+    calendar_links["ics"] = url_for("event_date_ical", id=event_date.id, _external=True)
+
+    return calendar_links

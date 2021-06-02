@@ -43,6 +43,7 @@ from project.views.event_suggestion import send_event_suggestion_review_status_m
 from project.views.utils import (
     flash_errors,
     flash_message,
+    get_share_links,
     handleSqlError,
     non_match_for_deletion,
     send_mail,
@@ -54,6 +55,8 @@ def event(event_id):
     event = get_event_with_details_or_404(event_id)
     user_rights = get_menu_user_rights(event)
     dates = get_upcoming_event_dates(event.id)
+    url = url_for("event", event_id=event_id, _external=True)
+    share_links = get_share_links(url, event.name)
 
     structured_datas = list()
     for event_date in dates:
@@ -70,6 +73,7 @@ def event(event_id):
         meta=get_meta_data(event),
         user_rights=user_rights,
         canonical_url=url_for("event", event_id=event_id, _external=True),
+        share_links=share_links,
     )
 
 
@@ -77,8 +81,15 @@ def event(event_id):
 def event_actions(event_id):
     event = Event.query.get_or_404(event_id)
     user_rights = get_user_rights(event)
+    url = url_for("event", event_id=event_id, _external=True)
+    share_links = get_share_links(url, event.name)
 
-    return render_template("event/actions.html", event=event, user_rights=user_rights)
+    return render_template(
+        "event/actions.html",
+        event=event,
+        user_rights=user_rights,
+        share_links=share_links,
+    )
 
 
 @app.route("/admin_unit/<int:id>/events/create", methods=("GET", "POST"))
