@@ -105,6 +105,33 @@ def test_update_event_dates_with_recurrence_rule_past_forever(
         assert event_date.end == create_berlin_date(2021, 1, 3, 16, 30)
 
 
+def test_update_event_dates_with_recurrence_rule_exdate(
+    client, seeder, utils, app, mocker
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.dateutils import create_berlin_date
+        from project.models import Event
+        from project.services.event import update_event_dates_with_recurrence_rule
+
+        utils.mock_now(mocker, 2021, 6, 1)
+
+        event = Event.query.get(event_id)
+        event.start = create_berlin_date(2021, 4, 21, 17, 0)
+        event.end = create_berlin_date(2021, 4, 21, 18, 0)
+
+        # Wiederholt sich jeden Mittwoch
+        event.recurrence_rule = "RRULE:FREQ=WEEKLY;BYDAY=WE;UNTIL=20211231T000000\nEXDATE:20210216T000000,20210223T000000,20210602T000000"
+        update_event_dates_with_recurrence_rule(event)
+
+        # Das erste Date soll nicht der 02.06. sein (excluded), sondern der 09.06.
+        event_date = event.dates[0]
+        assert event_date.start == create_berlin_date(2021, 6, 9, 17, 0)
+        assert event_date.end == create_berlin_date(2021, 6, 9, 18, 0)
+
+
 def test_get_meta_data(seeder, app):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
