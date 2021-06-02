@@ -32,6 +32,10 @@ def date_add_time(date, hour=0, minute=0, second=0, tzinfo=None):
     )
 
 
+def date_set_begin_of_day(date):
+    return date_add_time(date)
+
+
 def date_set_end_of_day(date):
     return date_add_time(date, hour=23, minute=59, second=59)
 
@@ -49,26 +53,21 @@ def form_input_from_date(date):
 def dates_from_recurrence_rule(start, recurrence_rule):
     result = list()
 
-    adv_recurrence_rule = recurrence_rule.replace("T000000", "T235959")
-    start_wo_tz = start.replace(tzinfo=None)
-    rule_set = rrulestr(adv_recurrence_rule, forceset=True, dtstart=start_wo_tz)
+    start_begin_of_day = date_set_begin_of_day(start)
+    rule_set = rrulestr(recurrence_rule, forceset=True, dtstart=start_begin_of_day)
 
-    start_date = start_wo_tz
-
-    # Keine Daten in der Vergangenheit laden
+    # Keine Daten in der Vergangenheit erstellen
     today = get_today()
-    if today > start:
-        start_date = today.replace(tzinfo=None)
+    start_date = today if today > start else start
+    start_date_begin_of_day = date_set_begin_of_day(start_date)
 
-    end_date = start_date + relativedelta(years=1)
-    start_date_begin_of_day = datetime(
-        start_date.year, start_date.month, start_date.day
-    )
-    end_date_end_of_day = datetime(
-        end_date.year, end_date.month, end_date.day, hour=23, minute=59, second=59
-    )
+    # Max. 1 Jahr in die Zukunft
+    end_date = start_date_begin_of_day + relativedelta(years=1)
+    end_date_end_of_day = date_set_end_of_day(end_date)
 
-    for rule_date in rule_set.between(start_date_begin_of_day, end_date_end_of_day):
+    for rule_date in rule_set.between(
+        start_date_begin_of_day, end_date_end_of_day, inc=True
+    ):
         rule_data_w_tz = berlin_tz.localize(rule_date)
         result.append(rule_data_w_tz)
 
