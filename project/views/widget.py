@@ -31,7 +31,9 @@ from project.views.event_date import prepare_event_date_form
 from project.views.utils import (
     flash_errors,
     flash_message,
+    get_calendar_links,
     get_pagination_urls,
+    get_share_links,
     handleSqlError,
     send_mail,
 )
@@ -75,11 +77,18 @@ def widget_event_date(au_short_name, id):
     structured_data = json.dumps(
         get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder
     )
+
+    url = url_for("event_date", id=id, _external=True)
+    share_links = get_share_links(url, event_date.event.name)
+    calendar_links = get_calendar_links(event_date)
+
     return render_template(
         "widget/event_date/read.html",
         event_date=event_date,
         styles=get_styles(admin_unit),
         structured_data=structured_data,
+        share_links=share_links,
+        calendar_links=calendar_links,
     )
 
 
