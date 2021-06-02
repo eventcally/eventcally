@@ -365,7 +365,7 @@
 {{ render_int_prop(event.expected_participants, 'fa-users', 'Expected number of participants') }}
 {% endmacro %}
 
-{% macro render_event_props(event, start, end, dates = None, show_rating = False, show_admin_unit = True) %}
+{% macro render_event_props(event, start, end, dates = None, show_rating = False, show_admin_unit = True, share_links=None, calendar_links=None) %}
   <div class="card mb-3">
     <div class="card-header">
       {{ _('Event') }}
@@ -407,6 +407,19 @@
       <div class="mt-4">
         {{ render_event_add_props(event) }}
       </div>
+
+      {% if share_links or calendar_links %}
+      <div class="mt-4">
+        {% if share_links %}
+          <button type="button" class="btn btn-outline-secondary mr-1 mb-1" data-toggle="modal" data-target="#shareModal"><i class="fa fa-share-alt"></i> {{ _('Share') }}</button>
+          {{ render_share_modal(share_links) }}
+        {% endif %}
+        {% if calendar_links %}
+          <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#calendarExportModal"><i class="fa fa-calendar"></i> {{ _('Add to calendar') }}</button>
+          {{ render_calendar_export_modal(calendar_links) }}
+        {% endif %}
+      </div>
+      {% endif %}
     </div>
     <div class="card-footer small">
       {{ render_audit(event, show_rating) }}
