@@ -6,6 +6,8 @@ from project.utils import (
     get_event_category_name,
     get_localized_enum_name,
     get_localized_scope,
+    get_location_str,
+    get_place_str,
 )
 
 
@@ -36,6 +38,8 @@ app.jinja_env.filters["quote_plus"] = lambda u: quote_plus(u)
 app.jinja_env.filters["is_list"] = is_list
 app.jinja_env.filters["any_dict_value_true"] = any_dict_value_true
 app.jinja_env.filters["ensure_link_scheme"] = lambda s: ensure_link_scheme(s)
+app.jinja_env.filters["place_str"] = lambda p: get_place_str(p)
+app.jinja_env.filters["location_str"] = lambda l: get_location_str(l)
 
 
 @app.context_processor

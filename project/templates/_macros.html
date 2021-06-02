@@ -89,21 +89,8 @@
     {{ organizer.name }}
 {% endmacro %}
 
-{% macro render_location(location) %}
-{%- if location.street -%}
-  {{ location.street }}, {{ location.postalCode }} {{ location.city }}
-{%- elif location.postalCode or location.city -%}
-  {{ location.postalCode }} {{ location.city }}
-{%- endif -%}
-{% endmacro %}
-
-{% macro render_place(place) %}
-{%- if place.location -%}
-  {{ place.name }}, {{render_location(place.location)}}
-{%- else -%}
-  {{ place.name }}
-{%- endif -%}
-{% endmacro %}
+{% macro render_location(location) %}{{ location | location_str }}{% endmacro %}
+{% macro render_place(place) %}{{ place | place_str }}{% endmacro %}
 
 {% macro render_events_sub_menu() %}
 {% endmacro %}
@@ -511,7 +498,7 @@
 
 {% endmacro %}
 
-{% macro render_event_props_seo(event, start, end, dates = None, show_rating = False, show_admin_unit = True, user_rights=None) %}
+{% macro render_event_props_seo(event, start, end, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None) %}
 <div class="w-normal mx-auto">
 
   {% if event.photo_id %}
@@ -563,7 +550,20 @@
         <div class="mt-4" style="white-space:pre-wrap;">{{ event.description|urlize(nofollow=True, target='_blank', rel="nofollow") }}</div>
       {% endif %}
 
-      <div class="small mt-4">
+      {% if share_links or calendar_links %}
+      <div class="mt-4">
+        {% if share_links %}
+          <button type="button" class="btn btn-outline-secondary mr-1 mb-1" data-toggle="modal" data-target="#shareModal"><i class="fa fa-share-alt"></i> {{ _('Share') }}</button>
+          {{ render_share_modal(share_links) }}
+        {% endif %}
+        {% if calendar_links %}
+          <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#calendarExportModal"><i class="fa fa-calendar"></i> {{ _('Add to calendar') }}</button>
+          {{ render_calendar_export_modal(calendar_links) }}
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <div class="small mt-2">
         {{ render_audit(event, show_rating) }}
       </div>
     </div>
@@ -588,7 +588,7 @@
 
       {% if event.attendance_mode and event.attendance_mode.value != 2 %}
         <div class="mt-2">
-            <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">{{ _('Show directions') }}</a>
+            <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-outline-secondary" target="_blank" rel="noopener noreferrer"><i class="fa fa-directions"></i> {{ _('Show directions') }}</a>
         </div>
       {% endif %}
 
@@ -1248,4 +1248,58 @@ if (URL) {
   {% endif %}
 
 </style>
+{% endmacro %}
+
+{% macro render_share_modal(share_links) %}
+<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">{{ _('Share') }}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="input-group mb-3">
+                <input id="copy_input" type="text" class="form-control" value="{{ share_links["url"] }}" />
+                <div class="input-group-append">
+                  <button id="copy_input_button" class="btn btn-outline-secondary" type="button" data-toggle="tooltip" data-trigger="manual" data-title="{{ _('Link copied') }}">{{ _('Copy link') }}</button>
+                </div>
+              </div>
+              <div class="list-group">
+                  <a class="list-group-item list-group-item-action" href="{{ share_links["facebook"] }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i> Facebook</a>
+                  <a class="list-group-item list-group-item-action" href="{{ share_links["twitter"] }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i> Twitter</a>
+                  <a class="list-group-item list-group-item-action" href="{{ share_links["email"] }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-envelope"></i> {{ _('Email') }}</a>
+                  <a class="list-group-item list-group-item-action" href="{{ share_links["whatsapp"] }}" target="_blank" rel="noopener noreferrer" data-action="share/whatsapp/share"><i class="fab fa-whatsapp"></i> Whatsapp</a>
+                  <a class="list-group-item list-group-item-action" href="{{ share_links["telegram"] }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram"></i> Telegram</a>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro render_calendar_export_modal(calendar_links) %}
+<div class="modal fade" id="calendarExportModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">{{ _('Add to calendar') }}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="list-group">
+                  <a class="list-group-item list-group-item-action" href="{{ calendar_links["ics"] }}"><i class="fab fa-microsoft"></i> Outlook</a>
+                  <a class="list-group-item list-group-item-action" href="{{ calendar_links["google"] }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-google"></i> {{ _('Google calendar') }}</a>
+                  <a class="list-group-item list-group-item-action" href="{{ calendar_links["ics"] }}"><i class="fab fa-apple"></i> {{ _('Apple calendar') }}</a>
+                  <a class="list-group-item list-group-item-action" href="{{ calendar_links["ics"] }}"><i class="fab fa-yahoo"></i> {{ _('Yahoo calendar') }}</a>
+                  <a class="list-group-item list-group-item-action" href="{{ calendar_links["ics"] }}"><i class="fa fa-calendar"></i> {{ _('Other calendar') }}</a>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
 {% endmacro %}

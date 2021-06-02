@@ -35,3 +35,24 @@ def test_truncate():
     from project.views.utils import truncate
 
     assert truncate(None, 3) is None
+
+
+def test_get_calendar_links(client, seeder, utils, app, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.test_request_context():
+        with app.app_context():
+            from project.models import Event, EventAttendanceMode
+            from project.views.utils import get_calendar_links
+
+            utils.mock_now(mocker, 2020, 1, 3)
+
+            event = Event.query.get(event_id)
+            event.end = None
+            event.attendance_mode = EventAttendanceMode.online
+
+            event_date = event.dates[0]
+            links = get_calendar_links(event_date)
+
+            assert "&location" not in links["google"]

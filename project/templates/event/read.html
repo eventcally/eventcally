@@ -6,6 +6,6 @@
 {% block content_container_attribs %}{% endblock %}
 {% block content %}
 
-    {{ render_event_props_seo(event, event.start, event.end, dates, user_rights['can_update_event'], user_rights=user_rights) }}
+    {{ render_event_props_seo(event, event.start, event.end, dates, user_rights['can_update_event'], user_rights=user_rights, share_links=share_links) }}
 
 {% endblock %}
