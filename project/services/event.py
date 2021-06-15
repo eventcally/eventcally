@@ -4,8 +4,8 @@ import icalendar
 from dateutil.relativedelta import relativedelta
 from flask import url_for
 from flask_babelex import format_date, format_time
-from sqlalchemy import and_, func, or_
-from sqlalchemy.orm import contains_eager, defaultload, joinedload, lazyload
+from sqlalchemy import and_, case, func, or_
+from sqlalchemy.orm import aliased, contains_eager, defaultload, joinedload, lazyload
 from sqlalchemy.sql import extract
 
 from project import db
@@ -85,14 +85,18 @@ def get_event_dates_query(params):
 
     event_filter = fill_event_filter(event_filter, params)
 
+    admin_unit_reference = None
     if params.admin_unit_id:
+        admin_unit_refs_subquery = EventReference.query.filter(
+            EventReference.admin_unit_id == params.admin_unit_id
+        ).subquery()
+        admin_unit_reference = aliased(EventReference, admin_unit_refs_subquery)
+
         event_filter = and_(
             event_filter,
             or_(
                 Event.admin_unit_id == params.admin_unit_id,
-                Event.references.any(
-                    EventReference.admin_unit_id == params.admin_unit_id
-                ),
+                admin_unit_reference.id.isnot(None),
             ),
         )
 
@@ -107,11 +111,21 @@ def get_event_dates_query(params):
         weekdays = params.weekday
         date_filter = and_(date_filter, extract("dow", EventDate.start).in_(weekdays))
 
-    return (
+    result = (
         EventDate.query.join(EventDate.event)
         .join(Event.event_place, isouter=True)
         .join(EventPlace.location, isouter=True)
-        .options(
+    )
+
+    if admin_unit_reference:
+        result = result.join(
+            admin_unit_reference,
+            Event.id == admin_unit_reference.event_id,
+            isouter=True,
+        )
+
+    result = (
+        result.options(
             contains_eager(EventDate.event)
             .contains_eager(Event.event_place)
             .contains_eager(EventPlace.location),
@@ -128,8 +142,26 @@ def get_event_dates_query(params):
         )
         .filter(date_filter)
         .filter(event_filter)
-        .order_by(EventDate.start)
     )
+
+    if params.sort == "-rating":
+        if admin_unit_reference:
+            result = result.order_by(
+                case(
+                    [
+                        (
+                            admin_unit_reference.rating.isnot(None),
+                            admin_unit_reference.rating,
+                        ),
+                    ],
+                    else_=Event.rating,
+                ).desc()
+            )
+        else:
+            result = result.order_by(Event.rating.desc())
+
+    result = result.order_by(EventDate.start)
+    return result
 
 
 def get_event_date_with_details_or_404(event_id):
