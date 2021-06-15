@@ -1,8 +1,7 @@
 import logging
 import os
-import sys
 
-from flask import Flask, jsonify, redirect, request, url_for
+from flask import Flask
 from flask_babelex import Babel
 from flask_cors import CORS
 from flask_gzip import Gzip
@@ -11,7 +10,6 @@ from flask_migrate import Migrate
 from flask_qrcode import QRcode
 from flask_security import Security, SQLAlchemySessionUserDatastore
 from flask_sqlalchemy import SQLAlchemy
-from webargs import flaskparser
 
 from project.custom_session_interface import CustomSessionInterface
 

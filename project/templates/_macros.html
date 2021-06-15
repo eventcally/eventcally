@@ -645,7 +645,7 @@
         <div class="mr-4 float-sm-left">{{ render_logo(event.admin_unit.logo) }}</div>
       {% endif %}
 
-      <div class="font-weight-bold"><a href="{{ url_for('organization', id=event.admin_unit.id) }}">{{ event.admin_unit.name }}</a></div>
+      <div class="font-weight-bold"><a href="{{ url_for('organization_by_name', au_short_name=event.admin_unit.short_name) }}">{{ event.admin_unit.name }}</a></div>
 
       {{ render_link_prop(event.admin_unit.url) }}
       {{ render_email_prop(event.admin_unit.email) }}
