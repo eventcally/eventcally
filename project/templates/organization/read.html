@@ -5,7 +5,7 @@
 {% block content_container_attribs %}{% endblock %}
 {% block content %}
 
-<organization-landing-page basepath="{{ url_for('home', _external=True) }}" organizationId="{{ organization.id }}"></organization-landing-page>
+<organization-landing-page basepath="{{ url_for('home', _external=True) }}" organizationId="{{ organization.id }}" {% if "r" in request.args %}datefilterpreset="{{ request.args.get("r") }}{% endif %}"></organization-landing-page>
 <script type="text/javascript" src="{{ url_for('static', filename='angular-elements.js')}}"></script>
 
 {% endblock %}

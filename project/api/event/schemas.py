@@ -228,6 +228,9 @@ class EventSearchRequestSchema(PaginationRequestSchema):
             "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..)."
         },
     )
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+    )
 
 
 class EventSearchResponseSchema(PaginationResponseSchema):
