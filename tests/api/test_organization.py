@@ -16,7 +16,9 @@ def test_event_date_search(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.create_event(admin_unit_id)
 
-    url = utils.get_url("api_v1_organization_event_date_search", id=admin_unit_id)
+    url = utils.get_url(
+        "api_v1_organization_event_date_search", id=admin_unit_id, sort="-rating"
+    )
     utils.get_ok(url)
 
 

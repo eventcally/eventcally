@@ -24,6 +24,7 @@ class EventSearchParams(object):
         self.category_id = None
         self.organizer_id = None
         self.weekday = None
+        self.sort = None
 
     @property
     def date_from(self):
@@ -112,3 +113,6 @@ class EventSearchParams(object):
 
         if "organizer_id" in request.args:
             self.organizer_id = request.args["organizer_id"]
+
+        if "sort" in request.args:
+            self.sort = request.args["sort"]
