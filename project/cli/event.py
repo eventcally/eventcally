@@ -1,5 +1,5 @@
 import click
-from flask.cli import AppGroup
+from flask.cli import AppGroup, with_appcontext
 
 from project import app, db
 from project.services.event import (
@@ -11,6 +11,7 @@ event_cli = AppGroup("event")
 
 
 @event_cli.command("update-recurring-dates")
+@with_appcontext
 def update_recurring_dates():
     events = get_recurring_events()
 
