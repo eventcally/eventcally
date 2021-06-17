@@ -73,6 +73,9 @@ def dates_from_recurrence_rule(start, recurrence_rule):
         start_date_begin_of_day, end_date_end_of_day, inc=True
     ):
         rule_data_w_tz = berlin_tz.localize(rule_date)
+        print(
+            f"rule_date: {rule_date} {rule_date.tzinfo} - rule_data_w_tz: {rule_data_w_tz} {rule_data_w_tz.tzinfo}"
+        )
         result.append(rule_data_w_tz)
 
     return result

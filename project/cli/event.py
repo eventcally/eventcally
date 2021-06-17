@@ -16,10 +16,11 @@ def update_recurring_dates():
     events = get_recurring_events()
 
     for event in events:
-        update_event_dates_with_recurrence_rule(event)
-        db.session.commit()
+        if event.recurrence_rule:
+            update_event_dates_with_recurrence_rule(event)
+            db.session.commit()
 
-    click.echo(f"{len(events)} event(s) where updated.")
+    click.echo(f"{len(events)} event(s) were updated.")
 
 
 app.cli.add_command(event_cli)
