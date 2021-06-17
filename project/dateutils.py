@@ -56,9 +56,7 @@ def dates_from_recurrence_rule(start, recurrence_rule):
     result = list()
 
     start_begin_of_day = date_set_begin_of_day(start)
-    rule_set = rrulestr(
-        recurrence_rule, forceset=True, ignoretz=True, dtstart=start_begin_of_day
-    )
+    rule_set = rrulestr(recurrence_rule, forceset=True, dtstart=start_begin_of_day)
 
     # Keine Daten in der Vergangenheit erstellen
     today = get_today()
@@ -73,9 +71,6 @@ def dates_from_recurrence_rule(start, recurrence_rule):
         start_date_begin_of_day, end_date_end_of_day, inc=True
     ):
         rule_data_w_tz = berlin_tz.localize(rule_date)
-        print(
-            f"rule_date: {rule_date} {rule_date.tzinfo} - rule_data_w_tz: {rule_data_w_tz} {rule_data_w_tz.tzinfo}"
-        )
         result.append(rule_data_w_tz)
 
     return result

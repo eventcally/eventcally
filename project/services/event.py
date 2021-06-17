@@ -279,7 +279,6 @@ def get_recurring_events():
 def update_event_dates_with_recurrence_rule(event):
     start = event.start
     end = event.end
-    print(f"event {event.id} start: {start} {start.tzinfo}")
 
     if end:
         time_difference = relativedelta(end, start)
@@ -296,7 +295,6 @@ def update_event_dates_with_recurrence_rule(event):
         rr_date_start = date_add_time(
             rr_date, start.hour, start.minute, start.second, rr_date.tzinfo
         )
-        print(f"rr_date_start: {rr_date_start} {rr_date_start.tzinfo}")
 
         if end:
             rr_date_end = rr_date_start + time_difference

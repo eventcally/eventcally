@@ -1,5 +1,5 @@
 import click
-from flask.cli import AppGroup, with_appcontext
+from flask.cli import AppGroup
 
 from project import app, db
 from project.dateutils import berlin_tz
@@ -12,15 +12,15 @@ event_cli = AppGroup("event")
 
 
 @event_cli.command("update-recurring-dates")
-@with_appcontext
 def update_recurring_dates():
+    # Setting the timezone is neccessary for cli command
     db.session.execute("SET timezone TO :val;", {"val": berlin_tz.zone})
+
     events = get_recurring_events()
 
     for event in events:
-        if event.recurrence_rule:
-            update_event_dates_with_recurrence_rule(event)
-            db.session.commit()
+        update_event_dates_with_recurrence_rule(event)
+        db.session.commit()
 
     click.echo(f"{len(events)} event(s) were updated.")
 
