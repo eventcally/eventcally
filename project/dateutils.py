@@ -56,7 +56,9 @@ def dates_from_recurrence_rule(start, recurrence_rule):
     result = list()
 
     start_begin_of_day = date_set_begin_of_day(start)
-    rule_set = rrulestr(recurrence_rule, forceset=True, dtstart=start_begin_of_day)
+    rule_set = rrulestr(
+        recurrence_rule, forceset=True, ignoretz=True, dtstart=start_begin_of_day
+    )
 
     # Keine Daten in der Vergangenheit erstellen
     today = get_today()
