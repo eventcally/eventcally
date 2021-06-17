@@ -4,4 +4,4 @@ def test_update_recurring_dates(client, seeder, app):
 
     runner = app.test_cli_runner()
     result = runner.invoke(args=["event", "update-recurring-dates"])
-    assert "1 event(s) where updated." in result.output
+    assert "1 event(s) were updated." in result.output
