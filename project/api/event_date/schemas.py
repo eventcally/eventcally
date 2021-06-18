@@ -6,6 +6,7 @@ from project.api.event.schemas import (
     EventSearchItemSchema,
     EventSearchRequestSchema,
 )
+from project.api.fields import CustomDateTimeField
 from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
 from project.models import EventDate
 
@@ -16,8 +17,8 @@ class EventDateSchema(marshmallow.SQLAlchemySchema):
         load_instance = True
 
     id = marshmallow.auto_field()
-    start = marshmallow.auto_field()
-    end = marshmallow.auto_field()
+    start = CustomDateTimeField()
+    end = CustomDateTimeField()
     event = fields.Nested(EventRefSchema)
 
 
@@ -27,7 +28,7 @@ class EventDateRefSchema(marshmallow.SQLAlchemySchema):
         load_instance = True
 
     id = marshmallow.auto_field()
-    start = marshmallow.auto_field()
+    start = CustomDateTimeField()
 
 
 class EventDateListRequestSchema(PaginationRequestSchema):
@@ -49,7 +50,7 @@ class EventDateSearchItemSchema(EventDateRefSchema):
         model = EventDate
         load_instance = True
 
-    end = marshmallow.auto_field()
+    end = CustomDateTimeField()
     event = fields.Nested(EventSearchItemSchema)
 
 
