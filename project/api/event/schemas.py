@@ -170,8 +170,8 @@ class EventRefSchema(EventIdSchema):
 
 class EventSearchItemSchema(EventRefSchema):
     description = marshmallow.auto_field()
-    start = marshmallow.auto_field()
-    end = marshmallow.auto_field()
+    start = CustomDateTimeField()
+    end = CustomDateTimeField()
     recurrence_rule = marshmallow.auto_field()
     photo = fields.Nested(ImageSchema)
     place = fields.Nested(PlaceSearchItemSchema, attribute="event_place")
