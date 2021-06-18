@@ -19,4 +19,5 @@ def test_search(client, seeder, utils):
     seeder.create_event(admin_unit_id)
 
     url = utils.get_url("api_v1_event_date_search", sort="-rating")
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+    assert response.json["items"][0]["start"].endswith("+02:00")

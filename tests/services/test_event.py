@@ -152,3 +152,20 @@ def test_get_meta_data(seeder, app):
         with app.test_request_context():
             meta = get_meta_data(event)
             assert meta is not None
+
+
+def test_get_recurring_events(client, seeder, app):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(
+        admin_unit_id, recurrence_rule="RRULE:FREQ=DAILY;COUNT=7"
+    )
+    seeder.create_event(admin_unit_id, recurrence_rule=None)
+    seeder.create_event(admin_unit_id, recurrence_rule="")
+
+    with app.app_context():
+        from project.services.event import get_recurring_events
+
+        recurring_events = get_recurring_events()
+
+        assert len(recurring_events) == 1
+        assert recurring_events[0].id == event_id

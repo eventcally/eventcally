@@ -18,6 +18,12 @@ class NumericStr(fields.String):
 
 
 class CustomDateTimeField(fields.DateTime):
+    def _serialize(self, value, attr, obj, **kwargs):
+        if value:
+            value = value.astimezone(berlin_tz)
+
+        return super()._serialize(value, attr, obj, **kwargs)
+
     def deserialize(self, value, attr, data, **kwargs):
         result = super().deserialize(value, attr, data, **kwargs)
 
