@@ -59,11 +59,17 @@
 
     {% set gtm_id = None | env_override('GTM_ID') %}
     {% if gtm_id %}
+    <script>
+      window.dataLayer = window.dataLayer || [];
+    </script>
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
       j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
       })(window,document,'script','dataLayer','{{ gtm_id }}');</script>
+
+      <script defer type="application/javascript"src="{{ url_for('static', filename='klaro-config.js')}}"></script>
+      <script defer type="application/javascript" src="https://cdn.kiprotect.com/klaro/v0.7/klaro.js"></script>
     {% endif %}
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -247,6 +253,12 @@
                     <li class="list-inline-item">
                       <a href="{{ url_for('privacy') }}" class="text-muted">{{ _('Privacy') }}</a>
                     </li>
+                    {% if None | env_override('GTM_ID') %}
+                    <li class="list-inline-item">&sdot;</li>
+                    <li class="list-inline-item">
+                      <a href="#" onclick="return klaro.show();" class="text-muted">Cookies</a>
+                    </li>
+                    {% endif %}
                   </ul>
                   <p class="text-muted small mb-4 mb-lg-0">Mit <i class="fa fa-heart"></i> in Goslar entwickelt.</p>
                 </div>
