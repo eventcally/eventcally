@@ -69,7 +69,8 @@
       })(window,document,'script','dataLayer','{{ gtm_id }}');</script>
 
       <script defer type="application/javascript"src="{{ url_for('static', filename='klaro-config.js')}}"></script>
-      <script defer type="application/javascript" src="https://cdn.kiprotect.com/klaro/v0.7/klaro.js"></script>
+      <script defer type="application/javascript" src="https://cdn.kiprotect.com/klaro/v0.7/klaro-no-css.js"></script>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='klaro.css')}}" />
     {% endif %}
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>

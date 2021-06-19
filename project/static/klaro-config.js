@@ -3,6 +3,7 @@ var klaroConfig = {
     styling: {
         theme: ['top', 'wide'],
     },
+    noticeAsModal: true,
     acceptAll: true,
     hideDeclineAll: true,
     services: [
@@ -47,6 +48,10 @@ var klaroConfig = {
     translations: {
       de: {
         privacyPolicyUrl: '/privacy',
+        consentNotice: {
+            description: 'Hallo! Könnten wir bitte einige zusätzliche Dienste für die Verbesserung der Benutzererfahrung aktivieren? Sie können Ihre Zustimmung später jederzeit ändern oder zurückziehen.',
+            learnMore: 'Einstellen',
+        },
         purposes: {
           analytics: 'Verbesserung der Benutzererfahrung',
         },
