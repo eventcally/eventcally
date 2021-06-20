@@ -38,13 +38,11 @@
       {% endif %}
     {%- endblock metas %}
 
-    <!-- Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png')}}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png')}}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='apple-touch-icon.png')}}">
     <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest')}}">
 
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
@@ -58,6 +56,22 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.68.0/dist/L.Control.Locate.min.css" />
     {%- block styles %}
     {%- endblock styles %}
+
+    {% set gtm_id = None | env_override('GTM_ID') %}
+    {% if gtm_id %}
+    <script>
+      window.dataLayer = window.dataLayer || [];
+    </script>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','{{ gtm_id }}');</script>
+
+      <script defer type="application/javascript"src="{{ url_for('static', filename='klaro-config.js')}}"></script>
+      <script defer type="application/javascript" src="https://cdn.kiprotect.com/klaro/v0.7/klaro-no-css.js"></script>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='klaro.css')}}" />
+    {% endif %}
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -157,6 +171,9 @@
   </head>
   <body{% block body_attribs %}{% endblock body_attribs %}>
     {% block body -%}
+      {% if gtm_id %}
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_id }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      {% endif %}
       {% block navbar %}
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="navbar-brand" href="{{ url_for('home') }}">
@@ -237,6 +254,12 @@
                     <li class="list-inline-item">
                       <a href="{{ url_for('privacy') }}" class="text-muted">{{ _('Privacy') }}</a>
                     </li>
+                    {% if None | env_override('GTM_ID') %}
+                    <li class="list-inline-item">&sdot;</li>
+                    <li class="list-inline-item">
+                      <a href="#" onclick="return klaro.show();" class="text-muted">Cookies</a>
+                    </li>
+                    {% endif %}
                   </ul>
                   <p class="text-muted small mb-4 mb-lg-0">Mit <i class="fa fa-heart"></i> in Goslar entwickelt.</p>
                 </div>
@@ -247,9 +270,6 @@
 
       </div>
 
-      <!-- Optional JavaScript -->
-      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-      <!--<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>-->
       <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
       {% block scripts %}
