@@ -299,9 +299,13 @@ class AdminUnit(db.Model, TrackableMixin):
     )
     event_places = relationship("EventPlace", backref=backref("adminunit", lazy=True))
     location_id = deferred(db.Column(db.Integer, db.ForeignKey("location.id")))
-    location = db.relationship("Location")
+    location = db.relationship(
+        "Location", uselist=False, single_parent=True, cascade="all, delete-orphan"
+    )
     logo_id = deferred(db.Column(db.Integer, db.ForeignKey("image.id")))
-    logo = db.relationship("Image", uselist=False)
+    logo = db.relationship(
+        "Image", uselist=False, single_parent=True, cascade="all, delete-orphan"
+    )
     url = deferred(Column(String(255)), group="detail")
     email = deferred(Column(Unicode(255)), group="detail")
     phone = deferred(Column(Unicode(255)), group="detail")
@@ -334,6 +338,9 @@ class Location(db.Model, TrackableMixin):
     latitude = Column(Numeric(18, 16))
     longitude = Column(Numeric(19, 16))
     coordinate = Column(Geometry(geometry_type="POINT"))
+
+    def __init__(self, **kwargs):
+        super(Location, self).__init__(**kwargs)
 
     def is_empty(self):
         return (
@@ -382,9 +389,13 @@ class EventPlace(db.Model, TrackableMixin):
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"))
-    location = db.relationship("Location", uselist=False)
+    location = db.relationship(
+        "Location", uselist=False, single_parent=True, cascade="all, delete-orphan"
+    )
     photo_id = db.Column(db.Integer, db.ForeignKey("image.id"))
-    photo = db.relationship("Image", uselist=False)
+    photo = db.relationship(
+        "Image", uselist=False, single_parent=True, cascade="all, delete-orphan"
+    )
     url = Column(String(255))
     description = Column(UnicodeText())
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=True)
@@ -460,9 +471,13 @@ class EventOrganizer(db.Model, TrackableMixin):
     phone = deferred(Column(Unicode(255)), group="detail")
     fax = deferred(Column(Unicode(255)), group="detail")
     location_id = deferred(db.Column(db.Integer, db.ForeignKey("location.id")))
-    location = db.relationship("Location")
+    location = db.relationship(
+        "Location", uselist=False, single_parent=True, cascade="all, delete-orphan"
+    )
     logo_id = deferred(db.Column(db.Integer, db.ForeignKey("image.id")))
-    logo = db.relationship("Image", uselist=False)
+    logo = db.relationship(
+        "Image", uselist=False, single_parent=True, cascade="all, delete-orphan"
+    )
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=True)
 
 
@@ -539,7 +554,9 @@ class EventMixin(object):
 
     @declared_attr
     def photo(cls):
-        return relationship("Image", uselist=False)
+        return relationship(
+            "Image", uselist=False, single_parent=True, cascade="all, delete-orphan"
+        )
 
 
 class EventSuggestion(db.Model, TrackableMixin, EventMixin):
