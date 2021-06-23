@@ -80,6 +80,7 @@ def test_events_post(client, seeder, utils, app):
             "start": "2021-02-07T11:00:00.000Z",
             "place": {"id": place_id},
             "organizer": {"id": organizer_id},
+            "photo": {"image_base64": seeder.get_default_image_upload_base64()},
         },
     )
     utils.assert_response_created(response)
@@ -96,6 +97,8 @@ def test_events_post(client, seeder, utils, app):
         assert event is not None
         assert event.event_place_id == place_id
         assert event.organizer_id == organizer_id
+        assert event.photo is not None
+        assert event.photo.encoding_format == "image/png"
 
 
 def test_places(client, seeder, utils):

@@ -53,6 +53,38 @@ def test_patch(client, seeder, utils, app):
         assert place.description == "Klasse"
 
 
+def test_patch_location(db, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+
+    with app.app_context():
+        from project.models import EventPlace, Location
+
+        location = Location()
+        location.postalCode = "12345"
+        location.city = "City"
+
+        event = EventPlace.query.get(place_id)
+        event.location = location
+        db.session.commit()
+
+        location_id = location.id
+
+    url = utils.get_url("api_v1_place", id=place_id)
+    response = utils.patch_json(
+        url,
+        {"location": {"postalCode": "54321"}},
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import EventPlace
+
+        place = EventPlace.query.get(place_id)
+        assert place.location.id == location_id
+        assert place.location.postalCode == "54321"
+
+
 def test_delete(client, seeder, utils, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
