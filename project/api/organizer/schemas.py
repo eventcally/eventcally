@@ -1,6 +1,7 @@
 from marshmallow import fields, validate
 
 from project.api import marshmallow
+from project.api.fields import Owned
 from project.api.image.schemas import ImageSchema
 from project.api.location.schemas import (
     LocationPatchRequestSchema,
@@ -78,7 +79,7 @@ class OrganizerPostRequestSchema(OrganizerModelSchema, OrganizerBaseSchemaMixin)
         super().__init__(*args, **kwargs)
         self.make_post_schema()
 
-    location = fields.Nested(LocationPostRequestSchema)
+    location = Owned(LocationPostRequestSchema)
 
 
 class OrganizerPatchRequestSchema(OrganizerModelSchema, OrganizerBaseSchemaMixin):
@@ -86,4 +87,4 @@ class OrganizerPatchRequestSchema(OrganizerModelSchema, OrganizerBaseSchemaMixin
         super().__init__(*args, **kwargs)
         self.make_patch_schema()
 
-    location = fields.Nested(LocationPatchRequestSchema)
+    location = Owned(LocationPatchRequestSchema)

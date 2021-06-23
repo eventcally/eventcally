@@ -1,12 +1,18 @@
-import base64
-import re
-
 from flask import url_for
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from markupsafe import Markup
 from wtforms import HiddenField, StringField
 from wtforms.validators import Optional
+
+from project.imageutils import (
+    get_bytes_from_image,
+    get_data_uri_from_bytes,
+    get_image_from_base64_str,
+    get_mime_type_from_image,
+    resize_image_to_max,
+    validate_image,
+)
 
 
 class BaseImageForm(FlaskForm):
@@ -22,22 +28,19 @@ class Base64ImageForm(BaseImageForm):
         super(BaseImageForm, self).process(formdata, obj, data, **kwargs)
 
         if self.image_base64.data is None and obj and obj.data:
-            base64_str = base64.b64encode(obj.data).decode("utf-8")
-            self.image_base64.data = "data:{};base64,{}".format(
-                obj.encoding_format, base64_str
+            self.image_base64.data = get_data_uri_from_bytes(
+                obj.data, obj.encoding_format
             )
 
     def populate_obj(self, obj):
         super(BaseImageForm, self).populate_obj(obj)
 
-        match = None
         if self.image_base64.data:
-            match = re.match(r"^data:(image/.+);base64,(.*)$", self.image_base64.data)
-
-        if match:
-            obj.encoding_format = match.group(1)
-            base64_str = match.group(2)
-            obj.data = base64.b64decode(base64_str)
+            image = get_image_from_base64_str(self.image_base64.data)
+            validate_image(image)
+            resize_image_to_max(image)
+            obj.encoding_format = get_mime_type_from_image(image)
+            obj.data = get_bytes_from_image(image)
         else:
             obj.data = None
             obj.encoding_format = None

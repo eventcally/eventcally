@@ -8,8 +8,12 @@ from project.api.event_category.schemas import (
     EventCategoryRefSchema,
     EventCategoryWriteIdSchema,
 )
-from project.api.fields import CustomDateTimeField
-from project.api.image.schemas import ImageSchema
+from project.api.fields import CustomDateTimeField, Owned
+from project.api.image.schemas import (
+    ImagePatchRequestSchema,
+    ImagePostRequestSchema,
+    ImageSchema,
+)
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.organizer.schemas import OrganizerRefSchema, OrganizerWriteIdSchema
 from project.api.place.schemas import (
@@ -260,7 +264,7 @@ class EventWriteSchemaMixin(object):
         default=50,
         validate=validate.OneOf([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]),
         metadata={
-            "description": "How relevant the event is to your organization. 0 (Little relevant), 5 (Default), 10 (Highlight)."
+            "description": "How relevant the event is to your organization. 0 (Little relevant), 50 (Default), 100 (Highlight)."
         },
     )
 
@@ -272,6 +276,8 @@ class EventPostRequestSchema(
         super().__init__(*args, **kwargs)
         self.make_post_schema()
 
+    photo = Owned(ImagePostRequestSchema)
+
 
 class EventPatchRequestSchema(
     EventModelSchema, EventBaseSchemaMixin, EventWriteSchemaMixin
@@ -279,3 +285,5 @@ class EventPatchRequestSchema(
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.make_patch_schema()
+
+    photo = Owned(ImagePatchRequestSchema)

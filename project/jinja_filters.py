@@ -1,6 +1,8 @@
 import os
 from urllib.parse import quote_plus
 
+from flask import url_for
+
 from project import app
 from project.utils import (
     get_event_category_name,
@@ -43,7 +45,7 @@ app.jinja_env.filters["location_str"] = lambda l: get_location_str(l)
 
 
 @app.context_processor
-def get_manage_menu_options_context_processor():
+def get_context_processors():
     def get_manage_menu_options(admin_unit):
         from project.access import has_access
         from project.services.event_suggestion import get_event_reviews_badge_query
@@ -64,4 +66,9 @@ def get_manage_menu_options_context_processor():
             "reference_requests_incoming_badge": reference_requests_incoming_badge,
         }
 
-    return dict(get_manage_menu_options=get_manage_menu_options)
+    def get_base_url():
+        return url_for("home", _external=True).rstrip("/")
+
+    return dict(
+        get_manage_menu_options=get_manage_menu_options, get_base_url=get_base_url
+    )

@@ -1,3 +1,6 @@
+import base64
+
+
 def test_read(client, app, db, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
@@ -398,6 +401,86 @@ def test_patch_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocke
 
     utils.assert_response_no_content(response)
     utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+
+def test_patch_photo(client, seeder, utils, app, requests_mock):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+
+    requests_mock.get(
+        "https://image.com", content=base64.b64decode(seeder.get_default_image_base64())
+    )
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.patch_json(
+        url,
+        {"photo": {"image_url": "https://image.com"}},
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import Event
+
+        event = Event.query.get(event_id)
+        assert event.photo is not None
+        assert event.photo.encoding_format == "image/png"
+
+
+def test_patch_photo_copyright(client, db, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+    image_id = seeder.upsert_default_image()
+
+    with app.app_context():
+        from project.models import Event
+
+        event = Event.query.get(event_id)
+        event.photo_id = image_id
+        db.session.commit()
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.patch_json(
+        url,
+        {"photo": {"copyright_text": "Heiner"}},
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import Event
+
+        event = Event.query.get(event_id)
+        assert event.photo.id == image_id
+        assert event.photo.data is not None
+        assert event.photo.copyright_text == "Heiner"
+
+
+def test_patch_photo_delete(client, db, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+    image_id = seeder.upsert_default_image()
+
+    with app.app_context():
+        from project.models import Event
+
+        event = Event.query.get(event_id)
+        event.photo_id = image_id
+        db.session.commit()
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.patch_json(
+        url,
+        {"photo": None},
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import Event, Image
+
+        event = Event.query.get(event_id)
+        assert event.photo_id is None
+
+        image = Image.query.get(image_id)
+        assert image is None
 
 
 def test_delete(client, seeder, utils, app):
