@@ -171,6 +171,21 @@ class UtilActions(object):
             url = url_for(endpoint, **values, _external=False)
         return url
 
+    def get_image_url(self, image, **values):
+        from project.jinja_filters import url_for_image
+
+        with self._app.test_request_context():
+            url = url_for_image(image, **values, _external=False)
+        return url
+
+    def get_image_url_for_id(self, image_id, **values):
+        from project.models import Image
+
+        with self._app.app_context():
+            image = Image.query.get(image_id)
+            url = self.get_image_url(image, **values)
+        return url
+
     def get(self, url):
         return self._client.get(url)
 

@@ -12,6 +12,6 @@ def test_read(app, seeder, utils, size):
 
     shutil.rmtree(img_path, ignore_errors=True)
 
-    url = utils.get_url("image", id=image_id, s=size)
+    url = utils.get_image_url_for_id(image_id, s=size)
     utils.get_ok(url)
     utils.get_ok(url)  # cache

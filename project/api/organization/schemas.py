@@ -1,8 +1,8 @@
 from marshmallow import fields
 
 from project.api import marshmallow
-from project.api.image.schemas import ImageSchema
-from project.api.location.schemas import LocationSchema
+from project.api.image.schemas import ImageDumpSchema, ImageSchema
+from project.api.location.schemas import LocationDumpSchema, LocationSchema
 from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
 from project.models import AdminUnit
 
@@ -32,8 +32,8 @@ class OrganizationSchema(OrganizationBaseSchema):
 
 
 class OrganizationDumpSchema(OrganizationBaseSchema):
-    location_id = fields.Int()
-    logo_id = fields.Int()
+    location = fields.Nested(LocationDumpSchema)
+    logo = fields.Nested(ImageDumpSchema)
 
 
 class OrganizationRefSchema(OrganizationIdSchema):

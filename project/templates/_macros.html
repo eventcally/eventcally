@@ -293,7 +293,7 @@
 {% endmacro %}
 
 {% macro render_img_src(image, size=500) %}
-<img src="{{ url_for('image', id=image.id, s=size) }}" class="{{ kwargs['class'] or 'img-fluid' }}" style="{{ kwargs['style'] or 'max-width:100%;' }}" alt="{{ kwargs['alt'] or 'image' }}" />
+<img src="{{ url_for_image(image, s=size) }}" class="{{ kwargs['class'] or 'img-fluid' }}" style="{{ kwargs['style'] or 'max-width:100%;' }}" alt="{{ kwargs['alt'] or 'image' }}" />
 {% endmacro %}
 
 {% macro render_image(image, size=500) %}
@@ -535,7 +535,7 @@
     </div>
 
     <h1 class="font-weight-bold my-1">{{ event.name }}{{ render_event_warning_pills(event) }}</h1>
-    <div class="text-muted">{{ event.event_place.name }}</div>
+    <div class="text-muted">{{ event.event_place.name }}{% if event.event_place.location and event.event_place.location.city %}, {{ event.event_place.location.city }}{% endif %}</div>
   </div>
 
 </div>
@@ -1105,29 +1105,6 @@ if (URL) {
           {{ form_field.description }}
       </small>
     {% endif %}
-  </div>
-</div>
-{% endmacro %}
-
-{% macro render_base_image_form(form_field) %}
-  {{ form_field.hidden_tag() }}
-  {% if form_field.object_data and form_field.object_data.id %}
-    <div>
-      <a href="{{ url_for('image', id=form_field.object_data.id) }}" target="_blank" rel="noopener noreferrer"><img src="{{ url_for('image', id=form_field.object_data.id) }}" class="img-fluid" style="max-width:5rem;" /></a>
-    </div>
-    {{ render_field_with_errors(form_field.delete_flag, style="width: fit-content; flex: initial;") }}
-  {% endif %}
-  {{ render_field_with_errors(form_field.image_file) }}
-  {{ render_field_with_errors(form_field.copyright_text) }}
-{% endmacro %}
-
-{% macro render_base_image_form_section(form_field) %}
-<div class="card mb-4">
-  <div class="card-header">
-    {{ form_field.label() }}
-  </div>
-  <div class="card-body">
-    {{ render_base_image_form(form_field) }}
   </div>
 </div>
 {% endmacro %}

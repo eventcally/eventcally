@@ -66,7 +66,7 @@ def test_get_sd_for_place(client, app, db, utils, seeder):
         with app.test_request_context():
             result = get_sd_for_place(place)
 
-        assert result["photo"] == utils.get_url("image", id=photo.id)
+        assert result["photo"] == utils.get_image_url(photo)
         assert result["url"] == "http://www.goslar.de"
         assert result["address"]["streetAddress"] == "Markt 7"
         assert result["address"]["postalCode"] == "38640"
@@ -133,7 +133,7 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         assert result["url"][0] == utils.get_url("event_date", id=event_date.id)
         assert result["url"][1] == "www.goslar.de"
         assert result["url"][2] == "www.tickets.de"
-        assert result["image"] == utils.get_url("image", id=photo.id)
+        assert result["image"] == utils.get_image_url(photo)
 
 
 @pytest.mark.parametrize(

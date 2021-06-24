@@ -15,6 +15,7 @@ from project.dateutils import (
     dates_from_recurrence_rule,
     get_today,
 )
+from project.jinja_filters import url_for_image
 from project.models import (
     AdminUnit,
     Event,
@@ -385,7 +386,7 @@ def get_meta_data(event: Event, event_date: EventDate = None) -> dict:
             meta["description"] = desc_short
 
     if event.photo_id:
-        meta["image"] = url_for("image", id=event.photo_id, _external=True)
+        meta["image"] = url_for_image(event.photo, _external=True)
 
     return meta
 

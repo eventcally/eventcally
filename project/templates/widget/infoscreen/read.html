@@ -22,7 +22,7 @@
         <div class="row h-100">
             <div class="col-auto h-100">
                 {% if admin_unit.logo_id %}
-                <img src="{{ url_for('image', id=admin_unit.logo_id) }}" class="img-fluid"
+                <img src="{{ url_for_image(admin_unit.logo) }}" class="img-fluid"
                     style="max-height:10vmin;" />
                 {% endif %}
             </div>
@@ -49,7 +49,7 @@
                         <div class="row">
                             {% if date.event.photo_id %}
                             <div class="col-auto h-100" style="padding:1rem">
-                                <img src="{{ url_for('image', id=date.event.photo_id) }}" class="img-fluid" style="object-fit: cover; max-width:20vmin;" />
+                                <img src="{{ url_for_image(date.event.photo) }}" class="img-fluid" style="object-fit: cover; max-width:20vmin;" />
                             </div>
                             {% endif %}
                             <div class="col" style="padding:1rem">

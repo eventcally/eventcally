@@ -11,10 +11,11 @@ from project.utils import make_dir
 
 
 @app.route("/image/<int:id>")
-def image(id):
-    image = Image.query.options(load_only(Image.id, Image.encoding_format)).get_or_404(
-        id
-    )
+@app.route("/image/<int:id>/<hash>")
+def image(id, hash=None):
+    image = Image.query.options(
+        load_only(Image.id, Image.encoding_format, Image.updated_at)
+    ).get_or_404(id)
 
     # Dimensions
     width = 500
@@ -26,7 +27,8 @@ def image(id):
 
     # Generate file name
     extension = image.encoding_format.split("/")[-1] if image.encoding_format else "png"
-    file_path = os.path.join(img_path, f"{id}-{width}-{height}.{extension}")
+    hash = image.get_hash()
+    file_path = os.path.join(img_path, f"{id}-{hash}-{width}-{height}.{extension}")
 
     # Load from disk if exists
     if os.path.exists(file_path):
