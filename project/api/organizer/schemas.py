@@ -2,8 +2,9 @@ from marshmallow import fields, validate
 
 from project.api import marshmallow
 from project.api.fields import Owned
-from project.api.image.schemas import ImageSchema
+from project.api.image.schemas import ImageDumpSchema, ImageSchema
 from project.api.location.schemas import (
+    LocationDumpSchema,
     LocationPatchRequestSchema,
     LocationPostRequestSchema,
     LocationSchema,
@@ -53,8 +54,8 @@ class OrganizerSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):
 
 
 class OrganizerDumpSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):
-    location_id = fields.Int()
-    logo_id = fields.Int()
+    location = fields.Nested(LocationDumpSchema)
+    logo = fields.Nested(ImageDumpSchema)
     organization_id = fields.Int(attribute="admin_unit_id")
 
 

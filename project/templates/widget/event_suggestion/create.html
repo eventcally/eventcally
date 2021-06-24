@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_widget_styles, render_logo, render_cropper_code, render_crop_image_form, render_jquery_steps_header, render_cropper_header, render_base_image_form, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_widget_styles, render_logo, render_cropper_code, render_crop_image_form, render_jquery_steps_header, render_cropper_header, render_radio_buttons, render_datepicker_js, render_field_with_errors, render_field %}
 {%- block title -%}
 {{ _('Create event suggestion') }}
 {%- endblock -%}
@@ -116,7 +116,7 @@
       <div class="card mb-4">
         <div class="card-body">
           {% if admin_unit.logo_id %}
-            <div class="mb-4 text-center"><img src="{{ url_for('image', id=admin_unit.logo_id, s=100) }}" class="img-fluid" style="max-height:10vmin;" /></div>
+            <div class="mb-4 text-center"><img src="{{ url_for_image(admin_unit.logo, s=100) }}" class="img-fluid" style="max-height:10vmin;" /></div>
           {% endif %}
           <p class="card-text">
             Hier kannst du als Gast eine Veranstaltung vorschlagen, die anschließend durch <strong>{{ admin_unit.name }}</strong> geprüft wird.

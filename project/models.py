@@ -33,6 +33,7 @@ from sqlalchemy.schema import CheckConstraint
 from sqlalchemy_utils import ColorType
 
 from project import db
+from project.dateutils import gmt_tz
 from project.dbtypes import IntegerEnum
 from project.utils import make_check_violation
 
@@ -128,6 +129,13 @@ class Image(db.Model, TrackableMixin):
 
     def is_empty(self):
         return not self.data
+
+    def get_hash(self):
+        return (
+            int(self.updated_at.replace(tzinfo=gmt_tz).timestamp() * 1000)
+            if self.updated_at
+            else 0
+        )
 
 
 # User

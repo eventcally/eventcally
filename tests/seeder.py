@@ -268,6 +268,14 @@ class Seeder(object):
 
         return image_id
 
+    def assign_image_to_event(self, event_id, image_id):
+        with self._app.app_context():
+            from project.models import Event
+
+            event = Event.query.get(event_id)
+            event.photo_id = image_id
+            self._db.session.commit()
+
     def create_event_suggestion(self, admin_unit_id, free_text=False):
         from project.models import EventSuggestion
         from project.services.event import upsert_event_category

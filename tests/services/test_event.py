@@ -132,9 +132,10 @@ def test_update_event_dates_with_recurrence_rule_exdate(
         assert event_date.end == create_berlin_date(2021, 6, 9, 18, 0)
 
 
-def test_get_meta_data(seeder, app):
+def test_get_meta_data(seeder, app, db):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
+    photo_id = seeder.upsert_default_image()
 
     with app.app_context():
         from project.models import Event, EventAttendanceMode, Location
@@ -147,7 +148,8 @@ def test_get_meta_data(seeder, app):
         location.city = "Stadt"
         event.event_place.location = location
 
-        event.photo_id = 1
+        event.photo_id = photo_id
+        db.session.commit()
 
         with app.test_request_context():
             meta = get_meta_data(event)

@@ -10,6 +10,7 @@ from project.api.event_category.schemas import (
 )
 from project.api.fields import CustomDateTimeField, Owned
 from project.api.image.schemas import (
+    ImageDumpSchema,
     ImagePatchRequestSchema,
     ImagePostRequestSchema,
     ImageSchema,
@@ -162,7 +163,7 @@ class EventDumpSchema(EventIdSchema, EventBaseSchemaMixin):
     organization_id = fields.Int(attribute="admin_unit_id")
     organizer_id = fields.Int()
     place_id = fields.Int(attribute="event_place_id")
-    photo_id = fields.Int()
+    photo = fields.Nested(ImageDumpSchema)
     category_ids = fields.Pluck(
         EventCategoryIdSchema, "id", many=True, attribute="categories"
     )
