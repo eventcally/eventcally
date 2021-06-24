@@ -10,8 +10,6 @@ from project import app, dump_path
 from project.api.event.schemas import EventDumpSchema
 from project.api.event_category.schemas import EventCategoryDumpSchema
 from project.api.event_reference.schemas import EventReferenceDumpSchema
-from project.api.image.schemas import ImageDumpSchema
-from project.api.location.schemas import LocationDumpSchema
 from project.api.organization.schemas import OrganizationDumpSchema
 from project.api.organizer.schemas import OrganizerDumpSchema
 from project.api.place.schemas import PlaceDumpSchema
@@ -22,8 +20,6 @@ from project.models import (
     EventOrganizer,
     EventPlace,
     EventReference,
-    Image,
-    Location,
 )
 from project.utils import make_dir
 
@@ -54,10 +50,6 @@ def dump_all():
     places = EventPlace.query.all()
     dump_items(places, PlaceDumpSchema(many=True), "places", tmp_path)
 
-    # Locations
-    locations = Location.query.all()
-    dump_items(locations, LocationDumpSchema(many=True), "locations", tmp_path)
-
     # Event categories
     event_categories = EventCategory.query.all()
     dump_items(
@@ -70,10 +62,6 @@ def dump_all():
     # Organizers
     organizers = EventOrganizer.query.all()
     dump_items(organizers, OrganizerDumpSchema(many=True), "organizers", tmp_path)
-
-    # Images
-    images = Image.query.all()
-    dump_items(images, ImageDumpSchema(many=True), "images", tmp_path)
 
     # Organizations
     organizations = AdminUnit.query.all()

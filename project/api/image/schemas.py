@@ -1,7 +1,7 @@
 from marshmallow import ValidationError, fields, post_load, validates_schema
 
 from project.api import marshmallow
-from project.api.schemas import IdSchemaMixin, SQLAlchemyBaseSchema
+from project.api.schemas import SQLAlchemyBaseSchema
 from project.imageutils import (
     get_bytes_from_image,
     get_image_from_base64_str,
@@ -10,6 +10,7 @@ from project.imageutils import (
     resize_image_to_max,
     validate_image,
 )
+from project.jinja_filters import url_for_image
 from project.models import Image
 
 
@@ -19,22 +20,18 @@ class ImageModelSchema(SQLAlchemyBaseSchema):
         load_instance = True
 
 
-class ImageIdSchema(ImageModelSchema, IdSchemaMixin):
-    pass
-
-
 class ImageBaseSchemaMixin(object):
     copyright_text = marshmallow.auto_field()
 
 
-class ImageSchema(ImageIdSchema, ImageBaseSchemaMixin):
-    image_url = marshmallow.URLFor(
-        "image",
-        values=dict(id="<id>", s=500),
-        metadata={
-            "description": "Append query arguments w for width, h for height or s for size(width and height)."
-        },
+class ImageSchema(ImageModelSchema, ImageBaseSchemaMixin):
+    image_url = fields.Method(
+        "get_image_url",
+        metadata={"description": "Image URL. Append query argument s for size."},
     )
+
+    def get_image_url(self, image):
+        return url_for_image(image)
 
 
 class ImageDumpSchema(ImageModelSchema, ImageBaseSchemaMixin):

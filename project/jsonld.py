@@ -4,6 +4,7 @@ from json import JSONEncoder
 from flask import url_for
 
 from project.dateutils import berlin_tz
+from project.jinja_filters import url_for_image
 from project.models import EventAttendanceMode, EventStatus
 
 
@@ -81,7 +82,7 @@ def get_sd_for_place(place, use_ref=True):
             result["geo"] = get_sd_for_geo(place.location)
 
     if place.photo_id:
-        result["photo"] = url_for("image", id=place.photo_id)
+        result["photo"] = url_for_image(place.photo)
 
     if place.url:
         result["url"] = place.url
@@ -157,6 +158,6 @@ def get_sd_for_event_date(event_date):
             result["eventStatus"] = "EventRescheduled"
 
     if event.photo_id:
-        result["image"] = url_for("image", id=event.photo_id)
+        result["image"] = url_for_image(event.photo)
 
     return result

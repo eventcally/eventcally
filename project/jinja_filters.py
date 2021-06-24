@@ -44,6 +44,20 @@ app.jinja_env.filters["place_str"] = lambda p: get_place_str(p)
 app.jinja_env.filters["location_str"] = lambda l: get_location_str(l)
 
 
+def get_base_url():
+    return url_for("home", _external=True).rstrip("/")
+
+
+def url_for_image(image, **values):
+    return url_for("image", id=image.id, hash=image.get_hash(), **values)
+
+
+app.jinja_env.globals.update(
+    get_base_url=get_base_url,
+    url_for_image=url_for_image,
+)
+
+
 @app.context_processor
 def get_context_processors():
     def get_manage_menu_options(admin_unit):
@@ -66,9 +80,6 @@ def get_context_processors():
             "reference_requests_incoming_badge": reference_requests_incoming_badge,
         }
 
-    def get_base_url():
-        return url_for("home", _external=True).rstrip("/")
-
     return dict(
-        get_manage_menu_options=get_manage_menu_options, get_base_url=get_base_url
+        get_manage_menu_options=get_manage_menu_options,
     )
