@@ -1,4 +1,4 @@
-from marshmallow import ValidationError, fields, post_load, validates_schema
+from marshmallow import ValidationError, fields, post_load, validate, validates_schema
 
 from project.api import marshmallow
 from project.api.schemas import SQLAlchemyBaseSchema
@@ -43,6 +43,7 @@ class ImageWriteSchemaMixin(object):
         required=False,
         load_only=True,
         allow_none=True,
+        validate=[validate.URL()],
         metadata={
             "description": "URL to image. Either image_url or image_base64 has to be defined."
         },
@@ -76,20 +77,24 @@ class ImageWriteSchemaMixin(object):
         return item
 
     def load_image_data(self, image_base64, image_url):
-        image = None
+        try:
+            image = None
 
-        if image_base64:
-            image = get_image_from_base64_str(image_base64)
-        elif image_url:
-            image = get_image_from_url(image_url)
+            if image_base64:
+                image = get_image_from_base64_str(image_base64)
+            elif image_url:
+                image = get_image_from_url(image_url)
 
-        if not image:
-            return None, None
+            if not image:
+                return None, None
 
-        validate_image(image)
-        resize_image_to_max(image)
-        encoding_format = get_mime_type_from_image(image)
-        data = get_bytes_from_image(image)
+            validate_image(image)
+            resize_image_to_max(image)
+            encoding_format = get_mime_type_from_image(image)
+            data = get_bytes_from_image(image)
+        except Exception as e:
+            raise ValidationError(e.args)
+
         return encoding_format, data
 
 
