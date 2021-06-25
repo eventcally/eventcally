@@ -89,11 +89,21 @@ class RestApi(Api):
             arg = err.args[0]
             if isinstance(arg, dict):
                 errors = []
-                for field, messages in arg.items():
-                    if isinstance(messages, list):
-                        for message in messages:
-                            error = {"field": field, "message": message}
-                            errors.append(error)
+                for field, item in arg.items():
+                    messages = list()
+
+                    if isinstance(item, list):
+                        messages = item
+                    elif isinstance(item, dict):
+                        for item_value in item.values():
+                            if isinstance(item_value, list) or isinstance(
+                                item_value, tuple
+                            ):
+                                messages.extend(item_value)
+
+                    for message in messages:
+                        error = {"field": field, "message": message}
+                        errors.append(error)
 
                 if len(errors) > 0:
                     data["errors"] = errors

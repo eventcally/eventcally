@@ -67,22 +67,27 @@ def test_events(client, seeder, utils):
     utils.get_ok(url)
 
 
-def test_events_post(client, seeder, utils, app):
+def prepare_events_post_data(seeder, utils):
     user_id, admin_unit_id = seeder.setup_api_access()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
     url = utils.get_url("api_v1_organization_event_list", id=admin_unit_id)
-    response = utils.post_json(
-        url,
-        {
-            "name": "Fest",
-            "start": "2021-02-07T11:00:00.000Z",
-            "place": {"id": place_id},
-            "organizer": {"id": organizer_id},
-            "photo": {"image_base64": seeder.get_default_image_upload_base64()},
-        },
+    data = {
+        "name": "Fest",
+        "start": "2021-02-07T11:00:00.000Z",
+        "place": {"id": place_id},
+        "organizer": {"id": organizer_id},
+        "photo": {"image_base64": seeder.get_default_image_base64()},
+    }
+    return url, data, admin_unit_id, place_id, organizer_id
+
+
+def test_events_post(client, seeder, utils, app):
+    url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
+        seeder, utils
     )
+    response = utils.post_json(url, data)
     utils.assert_response_created(response)
     assert "id" in response.json
 
@@ -99,6 +104,34 @@ def test_events_post(client, seeder, utils, app):
         assert event.organizer_id == organizer_id
         assert event.photo is not None
         assert event.photo.encoding_format == "image/png"
+
+
+def test_events_post_photo_no_data(client, seeder, utils, app):
+    url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
+        seeder, utils
+    )
+    data["photo"] = dict()
+    response = utils.post_json(url, data)
+    utils.assert_response_unprocessable_entity(response)
+
+    error = response.json["errors"][0]
+    assert error["field"] == "photo"
+    assert error["message"] == "Either image_url or image_base64 has to be defined."
+
+
+def test_events_post_photo_too_small(client, seeder, utils, app):
+    url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
+        seeder, utils
+    )
+    data["photo"][
+        "image_base64"
+    ] = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+    response = utils.post_json(url, data)
+    utils.assert_response_unprocessable_entity(response)
+
+    error = response.json["errors"][0]
+    assert error["field"] == "photo"
+    assert error["message"] == "Image is too small (1x1px). At least 320x320px."
 
 
 def test_places(client, seeder, utils):
