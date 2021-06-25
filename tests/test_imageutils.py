@@ -26,12 +26,16 @@ def test_validate_image_too_small():
     assert "too small" in str(e.value)
 
 
-def test_validate_image_unsupported_format():
+def test_get_bytes_from_image():
     from io import BytesIO
 
     import PIL
 
-    from project.imageutils import get_image_from_bytes, min_image_size, validate_image
+    from project.imageutils import (
+        get_bytes_from_image,
+        get_image_from_bytes,
+        min_image_size,
+    )
 
     image = PIL.Image.new("RGB", (min_image_size, min_image_size))
     imgByteArr = BytesIO()
@@ -39,7 +43,7 @@ def test_validate_image_unsupported_format():
 
     tif_image = get_image_from_bytes(imgByteArr.getvalue())
 
-    with pytest.raises(ValueError) as e:
-        validate_image(tif_image)
+    new_bytes = get_bytes_from_image(tif_image)
+    new_image = get_image_from_bytes(new_bytes)
 
-    assert "not supported" in str(e.value)
+    assert new_image.format.lower() == "png"
