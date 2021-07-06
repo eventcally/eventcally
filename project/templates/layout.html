@@ -57,6 +57,7 @@
     {%- block styles %}
     {%- endblock styles %}
 
+    {%- block gtm_header %}
     {% set gtm_id = None | env_override('GTM_ID') %}
     {% if gtm_id %}
     <script>
@@ -72,6 +73,7 @@
       <script defer type="application/javascript" src="https://cdn.kiprotect.com/klaro/v0.7/klaro-no-css.js"></script>
       <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='klaro.css')}}" />
     {% endif %}
+    {%- endblock gtm_header %}
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -171,9 +173,11 @@
   </head>
   <body{% block body_attribs %}{% endblock body_attribs %}>
     {% block body -%}
-      {% if gtm_id %}
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_id }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-      {% endif %}
+      {%- block gtm_body %}
+        {% if gtm_id %}
+          <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_id }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        {% endif %}
+      {%- endblock gtm_body %}
       {% block navbar %}
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="navbar-brand" href="{{ url_for('home') }}">
