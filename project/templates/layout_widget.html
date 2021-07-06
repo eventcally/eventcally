@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_widget_styles %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='widget.css')}}" />
+{{ render_widget_styles(styles) }}
+{% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+{%- block gtm_header %}
+{%- endblock gtm_header %}
+
+{%- block gtm_body %}
+{%- endblock gtm_body %}
+
+{% block footer %}
+{% endblock %}
