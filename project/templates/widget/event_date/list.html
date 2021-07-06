@@ -1,14 +1,9 @@
-{% extends "layout.html" %}
-{% from "_macros.html" import render_widget_styles, render_pagination, render_event_warning_pills, render_event_warning_pills, render_place, render_events_sub_menu %}
+{% extends "layout_widget.html" %}
+{% from "_macros.html" import render_pagination, render_event_warning_pills, render_event_warning_pills, render_place %}
 {%- block title -%}
 {{ _('Widget') }}
 {%- endblock -%}
-{% block styles %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='widget.css')}}" />
-{{ render_widget_styles(styles) }}
-{% endblock %}
-{% block navbar %}
-{% endblock %}
+
 {% block content %}
 
     <form action="{{ request.url }}" class="form-inline mb-4" method="GET" autocomplete="off">
@@ -109,6 +104,4 @@
 
     <button class="btn btn-outline-secondary d-print-none btn-print"><i class="fa fa-print"></i> {{ _('Print') }}</button>
 
-{% endblock %}
-{% block footer %}
 {% endblock %}
