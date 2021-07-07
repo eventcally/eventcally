@@ -98,6 +98,24 @@ jQuery.tools.recurrenceinput.localize('de', {
         }
 });
 
+function set_min_date(picker, data_range_to_attr) {
+    if (data_range_to_attr) {
+        $(data_range_to_attr + '-user').datepicker("option", "minDate", picker.datepicker("getDate"));
+    }
+}
+
+function set_picker_date(picker, date, data_range_to_attr, timeout = -1) {
+    picker.datepicker("setDate", date);
+
+    if (timeout < 0) {
+        set_min_date(picker, data_range_to_attr);
+    } else {
+        window.setTimeout(function() {
+            set_min_date(picker, data_range_to_attr);
+        }, timeout);
+    }
+}
+
 function start_datepicker(input) {
     var hidden_field = input;
     var hidden_field_id = hidden_field.attr('id');
@@ -120,15 +138,17 @@ function start_datepicker(input) {
     hidden_field.data('picker', picker);
     hidden_field.hide();
 
+    var data_range_to_attr = hidden_field.attr('data-range-to');
+
     var hidden_value = hidden_field.val();
     if (hidden_value) {
-        picker.datepicker("setDate", moment(hidden_value).toDate());
+        set_picker_date(picker, moment(hidden_value).toDate(), data_range_to_attr, 100)
     }
 
     hidden_field.after(user_field);
 
     $("#" + hidden_field_id + "-clear-button").click(function() {
-        picker.datepicker("setDate", null);
+        set_picker_date(picker, null, data_range_to_attr)
         $("#" + hidden_field_id + "-hour").val("00");
         $("#" + hidden_field_id + "-minute").val("00");
       });
@@ -143,15 +163,16 @@ function start_datepicker(input) {
             if (!hidden_moment.isSame(existing_moment)) {
                 picker.datepicker("setDate", hidden_moment.toDate());
             }
+            set_min_date(picker, data_range_to_attr);
         } else if (existing_date != null) {
-            picker.datepicker("setDate", null);
+            set_picker_date(picker, null, data_range_to_attr)
         }
     });
 
     user_field.change(function() {
         var user_value = user_field.val();
         if (!user_value) {
-            picker.datepicker("setDate", null);
+            set_picker_date(picker, null, data_range_to_attr)
         }
     });
 
