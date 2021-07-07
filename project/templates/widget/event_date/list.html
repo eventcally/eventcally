@@ -13,7 +13,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">{{ form.date_from.label.text }}</span>
             </div>
-            {{ form.date_from(class="form-control datepicker")|safe }}
+            {{ form.date_from(**{"class":"form-control datepicker", "data-range-to":"#date_to"})|safe }}
         </div>
 
         <div class="input-group mb-2 mr-sm-2">

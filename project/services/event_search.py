@@ -78,7 +78,7 @@ class EventSearchParams(object):
     def set_default_date_range(self):
         today = get_today()
         self.date_from = today
-        self.date_to = date_set_end_of_day(today + relativedelta(months=12))
+        self.date_to = None
 
     def set_planing_date_range(self):
         today = get_today()
