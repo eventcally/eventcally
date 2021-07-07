@@ -820,7 +820,7 @@
       <div class="input-group-prepend">
         <span class="input-group-text">{{ from_field.label.text }}</span>
       </div>
-      {{ from_field(class="form-control datepicker")|safe }}
+      {{ from_field(**{"class":"form-control datepicker", "data-range-to":"#date_to"})|safe }}
     </div>
   </div>
   <div class="col-sm-5">
