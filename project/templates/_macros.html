@@ -1034,7 +1034,7 @@ if (URL) {
 }
 {% endmacro %}
 
-{% macro render_cropper_script(field_id = "photo", min_width=320, min_height=160) %}
+{% macro render_cropper_script(field_id = "photo", min_width=320, min_height=320) %}
 <script>
   $( function() {
     {{ render_cropper_code(field_id, min_width, min_height) }}
@@ -1042,13 +1042,13 @@ if (URL) {
 </script>
 {% endmacro %}
 
-{% macro render_cropper_block(field_id = "photo", min_width=320, min_height=160) %}
+{% macro render_cropper_block(field_id = "photo", min_width=320, min_height=320) %}
 {{ render_cropper_header() }}
 {{ render_cropper_script(field_id, min_width, min_height) }}
 {% endmacro %}
 
 {% macro render_cropper_logo_block() %}
-{{ render_cropper_block("logo", 100, 100) }}
+{{ render_cropper_block("logo") }}
 {% endmacro %}
 
 {% macro render_crop_image_form(form_field) %}
