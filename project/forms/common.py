@@ -22,7 +22,7 @@ class BaseImageForm(FlaskForm):
 
 
 class Base64ImageForm(BaseImageForm):
-    image_base64 = HiddenField()
+    image_base64 = HiddenField(lazy_gettext("Image"))
 
     def process(self, formdata=None, obj=None, data=None, **kwargs):
         super(BaseImageForm, self).process(formdata, obj, data, **kwargs)
@@ -31,6 +31,19 @@ class Base64ImageForm(BaseImageForm):
             self.image_base64.data = get_data_uri_from_bytes(
                 obj.data, obj.encoding_format
             )
+
+    def validate(self):
+        if not super().validate():
+            return False
+
+        if self.image_base64.data:
+            image = get_image_from_base64_str(self.image_base64.data)
+            try:
+                validate_image(image)
+            except ValueError as e:
+                msg = str(e)
+                self.image_base64.errors.append(msg)
+                return False
 
     def populate_obj(self, obj):
         super(BaseImageForm, self).populate_obj(obj)
