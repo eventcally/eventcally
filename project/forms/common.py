@@ -45,6 +45,8 @@ class Base64ImageForm(BaseImageForm):
                 self.image_base64.errors.append(msg)
                 return False
 
+        return True
+
     def populate_obj(self, obj):
         super(BaseImageForm, self).populate_obj(obj)
 
