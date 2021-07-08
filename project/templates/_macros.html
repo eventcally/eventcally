@@ -586,30 +586,34 @@
     <div class="card-body">
       <h2 class="mt-0">{{ _('Place') }}</h2>
 
-      {% if event.event_place.photo_id %}
-        <div class="mr-4 float-sm-left">{{ render_image(event.event_place.photo, 240, class="img-thumbnail") }}</div>
-      {% endif %}
+      <div class="row">
+        {% if event.event_place.photo_id %}
+          <div class="col-12 col-sm-auto order-sm-last">{{ render_image(event.event_place.photo, 240, class="img-thumbnail") }}</div>
+        {% endif %}
 
-      <div class="font-weight-bold">{{ event.event_place.name }}</div>
+        <div class="col-12 col-sm">
+          <div class="font-weight-bold">{{ event.event_place.name }}</div>
 
-      {% if event.event_place.description %}
-      <div class="my-4">{{ event.event_place.description }}</div>
-      {% endif %}
+          {% if event.event_place.description %}
+          <div class="my-4">{{ event.event_place.description }}</div>
+          {% endif %}
 
-      {{ render_link_prop(event.event_place.url) }}
-      {{ render_location_prop(event.event_place.location) }}
+          {{ render_link_prop(event.event_place.url) }}
+          {{ render_location_prop(event.event_place.location) }}
 
-      {% if event.attendance_mode and event.attendance_mode.value != 2 %}
-        <div class="mt-2">
-            <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-outline-secondary" target="_blank" rel="noopener noreferrer"><i class="fa fa-directions"></i> {{ _('Show directions') }}</a>
+          {% if event.attendance_mode and event.attendance_mode.value != 2 %}
+            <div class="mt-2">
+                <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-outline-secondary" target="_blank" rel="noopener noreferrer"><i class="fa fa-directions"></i> {{ _('Show directions') }}</a>
+            </div>
+          {% endif %}
+
+          {% if event.attendance_mode and event.attendance_mode.value == 2 %}
+            <div class="mt-2">{{ _('The event takes place online.') }}</div>
+          {% elif event.attendance_mode and event.attendance_mode.value == 3 %}
+            <div class="mt-2">{{ _('The event takes place both offline and online.') }}</div>
+          {% endif %}
         </div>
-      {% endif %}
-
-      {% if event.attendance_mode and event.attendance_mode.value == 2 %}
-        <div class="mt-2">{{ _('The event takes place online.') }}</div>
-      {% elif event.attendance_mode and event.attendance_mode.value == 3 %}
-        <div class="mt-2">{{ _('The event takes place both offline and online.') }}</div>
-      {% endif %}
+      </div>
     </div>
   </div>
 
@@ -619,18 +623,22 @@
     <div class="card-body">
       <h2 class="mt-0">{{ _('Organizer') }}</h2>
 
-      {% if event.organizer.logo_id %}
-      <div class="mr-4 float-sm-left">{{ render_logo(event.organizer.logo) }}</div>
-      {% endif %}
+      <div class="row">
+        {% if event.organizer.logo_id %}
+        <div class="col-12 col-sm-auto order-sm-last">{{ render_logo(event.organizer.logo) }}</div>
+        {% endif %}
 
-      <div class="font-weight-bold">
-        {{ render_string_prop(event.organizer.name) }}
+        <div class="col-12 col-sm">
+          <div class="font-weight-bold">
+            {{ render_string_prop(event.organizer.name) }}
+          </div>
+
+          {{ render_link_prop(event.organizer.url) }}
+          {{ render_email_prop(event.organizer.email) }}
+          {{ render_phone_prop(event.organizer.phone) }}
+          {{ render_fax_prop(event.organizer.fax) }}
+        </div>
       </div>
-
-      {{ render_link_prop(event.organizer.url) }}
-      {{ render_email_prop(event.organizer.email) }}
-      {{ render_phone_prop(event.organizer.phone) }}
-      {{ render_fax_prop(event.organizer.fax) }}
     </div>
   </div>
 
@@ -641,17 +649,21 @@
     <div class="card-body">
       <h2 class="mt-0">{{ _('Organization') }}</h2>
 
-      {% if event.admin_unit.logo_id %}
-        <div class="mr-4 float-sm-left">{{ render_logo(event.admin_unit.logo) }}</div>
-      {% endif %}
+      <div class="row">
+        {% if event.admin_unit.logo_id %}
+          <div class="col-12 col-sm-auto order-sm-last">{{ render_logo(event.admin_unit.logo) }}</div>
+        {% endif %}
 
-      <div class="font-weight-bold"><a href="{{ url_for('organization_by_name', au_short_name=event.admin_unit.short_name) }}">{{ event.admin_unit.name }}</a></div>
+        <div class="col-12 col-sm">
+          <div class="font-weight-bold"><a href="{{ url_for('organization_by_name', au_short_name=event.admin_unit.short_name) }}">{{ event.admin_unit.name }}</a></div>
 
-      {{ render_link_prop(event.admin_unit.url) }}
-      {{ render_email_prop(event.admin_unit.email) }}
-      {{ render_phone_prop(event.admin_unit.phone) }}
-      {{ render_fax_prop(event.admin_unit.fax) }}
-      {{ render_location_prop(event.admin_unit.location) }}
+          {{ render_link_prop(event.admin_unit.url) }}
+          {{ render_email_prop(event.admin_unit.email) }}
+          {{ render_phone_prop(event.admin_unit.phone) }}
+          {{ render_fax_prop(event.admin_unit.fax) }}
+          {{ render_location_prop(event.admin_unit.location) }}
+        </div>
+      </div>
     </div>
   </div>
   {% endif %}
@@ -660,7 +672,7 @@
       <div class="card mb-3">
           <div class="card-body pb-0">
             <h2 class="mt-0"><a name="event-dates">{{ _('Event Dates') }}</a></div>
-          <div class="list-group list-group-flush">
+          <div class="list-group list-group-flush mb-4" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
           {% for date in dates %}
               <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item">{{ date.start | dateformat('full') }}</a>
           {% endfor %}
