@@ -33,7 +33,7 @@ class Base64ImageForm(BaseImageForm):
             )
 
     def validate(self):
-        if not super().validate():
+        if not super().validate():  # pragma: no cover
             return False
 
         if self.image_base64.data:
