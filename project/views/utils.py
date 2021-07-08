@@ -5,6 +5,7 @@ from flask_babelex import gettext
 from flask_mail import Message
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
+from wtforms import FormField
 
 from project import app, db, mail
 from project.dateutils import gmt_tz
@@ -65,12 +66,21 @@ def get_pagination_urls(pagination, **kwargs):
     return result
 
 
-def flash_errors(form):
-    for field, errors in form.errors.items():
+def flash_errors(form, prefix=None):
+    for field_name, errors in form.errors.items():
+        field = getattr(form, field_name)
+        field_label = field.label.text
+
+        if isinstance(field, FormField):
+            flash_errors(field.form, field_label)
+            continue
+
+        if prefix:
+            field_label = f"{prefix} {field_label}"
+
         for error in errors:
             flash(
-                gettext("Error in the %s field - %s")
-                % (getattr(form, field).label.text, error),
+                gettext("Error in the %s field - %s") % (field_label, error),
                 "danger",
             )
 

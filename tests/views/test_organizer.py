@@ -39,6 +39,24 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         assert organizer is not None
 
 
+def test_create_logo_too_small(client, app, utils, seeder, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("manage_admin_unit_organizer_create", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Neuer Organisator",
+            "logo-image_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+        },
+    )
+
+    utils.assert_response_error_message(response)
+
+
 @pytest.mark.parametrize("db_error", [True, False])
 def test_update(client, seeder, utils, app, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
