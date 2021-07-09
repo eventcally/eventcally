@@ -1,6 +1,6 @@
 import json
 
-from flask import abort, flash, redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from flask_security import current_user
 from sqlalchemy.exc import SQLAlchemyError
@@ -122,12 +122,11 @@ def event_suggestion_create_for_admin_unit(au_short_name):
     ).first_or_404()
 
     form = CreateEventSuggestionForm()
-    form.organizer_id.choices = [
-        (o.id, o.name)
-        for o in EventOrganizer.query.filter(
-            EventOrganizer.admin_unit_id == admin_unit.id
-        ).order_by(func.lower(EventOrganizer.name))
-    ]
+
+    organizers = EventOrganizer.query.filter(
+        EventOrganizer.admin_unit_id == admin_unit.id
+    ).order_by(func.lower(EventOrganizer.name))
+    form.organizer_id.choices = [(o.id, o.name) for o in organizers]
 
     places = get_event_places(admin_unit.id)
     form.event_place_id.choices = [(p.id, p.name) for p in places]
@@ -144,6 +143,13 @@ def event_suggestion_create_for_admin_unit(au_short_name):
         event_suggestion.review_status = EventReviewStatus.inbox
 
         if "preview" in request.args:
+            event_suggestion.admin_unit = admin_unit
+            event_suggestion.organizer = next(
+                (o for o in organizers if o.id == event_suggestion.organizer_id), None
+            )
+            event_suggestion.event_place = next(
+                (p for p in places if p.id == event_suggestion.event_place_id), None
+            )
             return render_template(
                 "widget/event_suggestion/create_preview.html",
                 admin_unit=admin_unit,
@@ -177,9 +183,13 @@ def event_suggestion_create_for_admin_unit(au_short_name):
             db.session.rollback()
             flash(handleSqlError(e), "danger")
     else:
-        if "preview" in request.args:
-            abort(406)
         flash_errors(form)
+
+    if "preview" in request.args:
+        return render_template(
+            "widget/event_suggestion/create_preview.html",
+            admin_unit=admin_unit,
+        )
 
     return render_template(
         "widget/event_suggestion/create.html",

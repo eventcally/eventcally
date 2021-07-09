@@ -98,20 +98,30 @@ jQuery.tools.recurrenceinput.localize('de', {
         }
 });
 
-function set_min_date(picker, data_range_to_attr) {
+function set_date_bounds(picker) {
+    var data_range_to_attr = picker.attr('data-range-to');
+
     if (data_range_to_attr) {
-        $(data_range_to_attr + '-user').datepicker("option", "minDate", picker.datepicker("getDate"));
+        from_date = picker.datepicker("getDate");
+        from_moment = moment(from_date);
+        $(data_range_to_attr + '-user').datepicker("option", "minDate", from_date);
+
+        var data_range_max_attr = picker.attr('data-range-max-days');
+        if (data_range_max_attr) {
+            from_moment.add(data_range_max_attr, 'days');
+            $(data_range_to_attr + '-user').datepicker("option", "maxDate", from_moment.toDate());
+        }
     }
 }
 
-function set_picker_date(picker, date, data_range_to_attr, timeout = -1) {
+function set_picker_date(picker, date, timeout = -1) {
     picker.datepicker("setDate", date);
 
     if (timeout < 0) {
-        set_min_date(picker, data_range_to_attr);
+        set_date_bounds(picker);
     } else {
         window.setTimeout(function() {
-            set_min_date(picker, data_range_to_attr);
+            set_date_bounds(picker);
         }, timeout);
     }
 }
@@ -138,17 +148,15 @@ function start_datepicker(input) {
     hidden_field.data('picker', picker);
     hidden_field.hide();
 
-    var data_range_to_attr = hidden_field.attr('data-range-to');
-
     var hidden_value = hidden_field.val();
     if (hidden_value) {
-        set_picker_date(picker, moment(hidden_value).toDate(), data_range_to_attr, 100)
+        set_picker_date(picker, moment(hidden_value).toDate(), 100)
     }
 
     hidden_field.after(user_field);
 
     $("#" + hidden_field_id + "-clear-button").click(function() {
-        set_picker_date(picker, null, data_range_to_attr)
+        set_picker_date(picker, null)
         $("#" + hidden_field_id + "-hour").val("00");
         $("#" + hidden_field_id + "-minute").val("00");
       });
@@ -163,16 +171,16 @@ function start_datepicker(input) {
             if (!hidden_moment.isSame(existing_moment)) {
                 picker.datepicker("setDate", hidden_moment.toDate());
             }
-            set_min_date(picker, data_range_to_attr);
+            set_date_bounds(picker);
         } else if (existing_date != null) {
-            set_picker_date(picker, null, data_range_to_attr)
+            set_picker_date(picker, null)
         }
     });
 
     user_field.change(function() {
         var user_value = user_field.val();
         if (!user_value) {
-            set_picker_date(picker, null, data_range_to_attr)
+            set_picker_date(picker, null)
         }
     });
 
@@ -200,7 +208,7 @@ function handle_request_success(result_id = '#result_container', spinner_id = '#
 $( function() {
     $('[data-toggle="tooltip"]').tooltip();
     $('.autocomplete').select2({width: '100%'});
-    $('.autocomplete-tags').select2({width: '100%', tags: true});
+
     $('.datepicker').each(function (index, element){
         start_datepicker($(element));
     });

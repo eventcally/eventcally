@@ -87,9 +87,18 @@ def get_create_data():
 
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("free_text", [True, False])
+@pytest.mark.parametrize("free_text_suffix", [True, False])
 @pytest.mark.parametrize("missing_preview_field", [True, False])
 def test_event_suggestion_create_for_admin_unit(
-    client, app, seeder, utils, mocker, db_error, free_text, missing_preview_field
+    client,
+    app,
+    seeder,
+    utils,
+    mocker,
+    db_error,
+    free_text,
+    free_text_suffix,
+    missing_preview_field,
 ):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
@@ -104,6 +113,10 @@ def test_event_suggestion_create_for_admin_unit(
     if not free_text:
         data["event_place_id"] = seeder.upsert_default_event_place(admin_unit_id)
         data["organizer_id"] = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    elif free_text_suffix:
+        data["event_place_id_suffix"] = "Place address"
+        data["organizer_id_suffix"] = "Organizer address"
 
     if db_error:
         utils.mock_db_commit(mocker)
@@ -121,7 +134,7 @@ def test_event_suggestion_create_for_admin_unit(
     )
 
     if missing_preview_field:
-        assert preview_response.status_code == 406
+        utils.assert_response_error_message(preview_response)
         return
 
     utils.assert_response_ok(preview_response)

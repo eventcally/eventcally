@@ -59,7 +59,7 @@
       {{ _('Event date') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.start, **{"data-range-to":"#end"}) }}
+      {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "1"}) }}
       {{ render_field_with_errors(form.end) }}
       {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
     </div>
