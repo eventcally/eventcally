@@ -59,6 +59,12 @@
           },
           contact_phone: {
             require_from_group: [1, ".contact_method_group"]
+          },
+          start: {
+            dateRange: ["#start", "#end"]
+          },
+          end: {
+            dateRangeDay: ["#start", "#end"]
           }
         }
     });
@@ -74,7 +80,6 @@
               return true;
           }
 
-          //form.validate().settings.ignore = ":disabled,:hidden:not(.datepicker)";
           form.validate().settings.ignore = ":disabled,:hidden";
           var is_valid = form.valid();
 
@@ -95,6 +100,34 @@
     });
 
     {{ render_cropper_code() }}
+
+    $('#event_place_id').select2({width: '100%', tags: true, selectOnClose: true})
+      .on('select2:select', function (e) {
+        var item = $('#event_place_id').select2('data')[0];
+        var needs_suffix = item.id != '' && item.id == item.text;
+
+        if (needs_suffix) {
+          var input = $($.parseHTML('<input type="text" id="event_place_id_suffix" name="event_place_id_suffix" class="form-control mt-2" placeholder="Adresse" />'));
+          $('#event_place_id').siblings('.select2').after(input);
+          $('#event_place_id_suffix').focus();
+        } else {
+          $('#event_place_id_suffix').remove();
+        }
+      });
+
+    $('#organizer_id').select2({width: '100%', tags: true, selectOnClose: true})
+      .on('select2:select', function (e) {
+        var item = $('#organizer_id').select2('data')[0];
+        var needs_suffix = item.id != '' && item.id == item.text;
+
+        if (needs_suffix) {
+          var input = $($.parseHTML('<input type="text" id="organizer_id_suffix" name="organizer_id_suffix" class="form-control mt-2" placeholder="Adresse" />'));
+          $('#organizer_id').siblings('.select2').after(input);
+          $('#organizer_id_suffix').focus();
+        } else {
+          $('#organizer_id_suffix').remove();
+        }
+      });
 
   });
 </script>
@@ -178,9 +211,9 @@
       </div>
       <div class="card-body">
         {{ render_field_with_errors(form.name) }}
-        {{ render_field_with_errors(form.event_place_id, class="autocomplete-tags w-100") }}
-        {{ render_field_with_errors(form.organizer_id, class="autocomplete-tags w-100") }}
-        {{ render_field_with_errors(form.start, **{"data-range-to":"#end"}) }}
+        {{ render_field_with_errors(form.event_place_id, class="w-100") }}
+        {{ render_field_with_errors(form.organizer_id, class="w-100") }}
+        {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "1"}) }}
         {{ render_field_with_errors(form.end) }}
         {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
 

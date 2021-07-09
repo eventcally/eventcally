@@ -53,12 +53,18 @@ class CreateEventSuggestionForm(SharedEventForm):
             "Choose where the event takes place. If the venue is not yet in the list, just enter it."
         ),
     )
+    event_place_id_suffix = StringField(
+        validators=[Optional()],
+    )
     organizer_id = TagSelectField(
         lazy_gettext("Organizer"),
         validators=[DataRequired()],
         description=lazy_gettext(
             "Select the organizer. If the organizer is not yet on the list, just enter it."
         ),
+    )
+    organizer_id_suffix = StringField(
+        validators=[Optional()],
     )
 
     category_ids = SelectMultipleField(
@@ -82,9 +88,19 @@ class CreateEventSuggestionForm(SharedEventForm):
             if name == "event_place_id" and self.event_place_id.is_free_text():
                 obj.event_place_text = self.event_place_id.data
                 obj.event_place_id = None
+
+                if self.event_place_id_suffix.data:
+                    obj.event_place_text = (
+                        obj.event_place_text + ", " + self.event_place_id_suffix.data
+                    )
             elif name == "organizer_id" and self.organizer_id.is_free_text():
                 obj.organizer_text = self.organizer_id.data
                 obj.organizer_id = None
+
+                if self.organizer_id_suffix.data:
+                    obj.organizer_text = (
+                        obj.organizer_text + ", " + self.organizer_id_suffix.data
+                    )
             elif name == "target_group_origin":
                 obj.target_group_origin = EventTargetGroupOrigin(
                     self.target_group_origin.data
