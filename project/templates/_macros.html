@@ -1143,6 +1143,45 @@ if (URL) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" integrity="sha512-UdIMMlVx0HEynClOIFSyOrPggomfhBKJE28LKl8yR3ghkgugPnG6iLfRfHwushZl1MOPSY6TsuBDGPK2X4zYKg==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js" integrity="sha512-6Uv+497AWTmj/6V14BsQioPrm3kgwmK9HYIyWP+vClykX52b0zrDGP7lajZoIY1nNlX4oQuh7zsGjmF7D0VZYA==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/localization/messages_de.min.js" integrity="sha512-CZoLR7uTljYchtaY9SbWetTDxZ7bW3h6YALF4orf6k+WTvZhr4zu+a9XqhHkK+zsKbQL5HNXTNrd21TE3M6eUg==" crossorigin="anonymous"></script>
+<script>
+  function get_moment_with_time(field_id) {
+    return moment($(field_id).val()).add($(field_id + "-hour").val(), "hour").add($(field_id + "-minute").val(), "minute");
+  }
+
+  jQuery.validator.addMethod("dateRange", function(value, element, params) {
+    var start_id = params[0];
+    var end_id = params[1];
+
+    var start_val = $(start_id).val();
+    var end_val = $(end_id).val();
+
+    if (start_val == '' || end_val == '') {
+      return true;
+    }
+
+    var start = get_moment_with_time(start_id);
+    var end = get_moment_with_time(end_id);
+    return end >= start;
+  }, jQuery.validator.format("{{ _('The start must be before the end.') }}"));
+
+  jQuery.validator.addMethod("dateRangeDay", function(value, element, params) {
+    var start_id = params[0];
+    var end_id = params[1];
+
+    var start_val = $(start_id).val();
+    var end_val = $(end_id).val();
+
+    if (start_val == '' || end_val == '') {
+      return true;
+    }
+
+    var start = get_moment_with_time(start_id);
+    var end = get_moment_with_time(end_id);
+    var max = start.add(1, 'day');
+    return end <= max;
+  }, jQuery.validator.format("{{ _('An event can last a maximum of 24 hours.') }}"));
+
+</script>
 {% endmacro %}
 
 {% macro render_cropper_header() %}
