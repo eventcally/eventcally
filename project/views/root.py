@@ -25,7 +25,11 @@ def home():
         }
     )
 
-    return render_template("home.html", structured_data=structured_data)
+    return render_template(
+        "home.html",
+        structured_data=structured_data,
+        admin_unit_create_requires_admin=app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"],
+    )
 
 
 @app.route("/example")

@@ -4,11 +4,20 @@ from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
-from project.access import get_admin_unit_for_manage_or_404, has_access
+from project.access import (
+    can_create_admin_unit,
+    get_admin_unit_for_manage_or_404,
+    has_access,
+)
 from project.forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
 from project.models import AdminUnit, Location
 from project.services.admin_unit import insert_admin_unit_for_user
-from project.views.utils import flash_errors, handleSqlError, permission_missing
+from project.views.utils import (
+    flash_errors,
+    flash_message,
+    handleSqlError,
+    permission_missing,
+)
 
 
 def update_admin_unit_with_form(admin_unit, form):
@@ -18,6 +27,17 @@ def update_admin_unit_with_form(admin_unit, form):
 @app.route("/admin_unit/create", methods=("GET", "POST"))
 @auth_required()
 def admin_unit_create():
+    if not can_create_admin_unit():
+        flash_message(
+            gettext(
+                "Organizations cannot currently be created. The project is in a closed test phase. If you are interested, you can contact us."
+            ),
+            url_for("contact"),
+            gettext("Contact"),
+            "danger",
+        )
+        return redirect(url_for("manage_admin_units"))
+
     form = CreateAdminUnitForm()
 
     if form.validate_on_submit():

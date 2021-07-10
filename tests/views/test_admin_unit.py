@@ -71,6 +71,17 @@ def test_create_duplicate(client, app, utils, seeder):
         assert b"duplicate" in response.data
 
 
+def test_create_requiresadmin_nonadmin(client, app, utils, seeder):
+    app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = True
+
+    seeder.create_user()
+    user_id = utils.login()
+    seeder.create_admin_unit(user_id, "Meine Crew")
+
+    response = client.get("/admin_unit/create")
+    utils.assert_response_redirect(response, "manage_admin_units")
+
+
 def test_update(client, app, utils, seeder):
     seeder.create_user()
     user_id = utils.login()
