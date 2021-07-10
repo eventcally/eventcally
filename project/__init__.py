@@ -27,6 +27,9 @@ app.config["SECURITY_CHANGEABLE"] = True
 app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config["LANGUAGES"] = ["en", "de"]
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
+app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = os.getenv(
+    "ADMIN_UNIT_CREATE_REQUIRES_ADMIN", False
+)
 
 # Proxy handling
 if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover

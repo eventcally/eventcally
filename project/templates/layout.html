@@ -195,7 +195,6 @@
                 <a class="nav-item nav-link" href="{{ url_for('event_dates') }}">{{ _('Events') }}</a>
                 <a class="nav-item nav-link" href="{{ url_for('planing') }}">{{ _('Planing') }}</a>
                 <a class="nav-item nav-link" href="{{ url_for('example') }}">{{ _('Example') }}</a>
-                <a class="nav-item nav-link" href="{{ url_for('developer') }}">{{ _('Developer') }}</a>
               </div>
               <div class="navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
@@ -264,6 +263,10 @@
                       <a href="#" onclick="return klaro.show();" class="text-muted">Cookies</a>
                     </li>
                     {% endif %}
+                    <li class="list-inline-item">&sdot;</li>
+                    <li class="list-inline-item">
+                      <a href="{{ url_for('developer') }}" class="text-muted">{{ _('Developer') }}</a>
+                    </li>
                   </ul>
                   <p class="text-muted small mb-4 mb-lg-0">Mit <i class="fa fa-heart"></i> in Goslar entwickelt.</p>
                 </div>
