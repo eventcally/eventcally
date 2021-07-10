@@ -94,7 +94,7 @@ def flash_message(msg, url, link_text=None, category="success"):
 
 
 def permission_missing(redirect_location):
-    flash("You do not have permission for this action", "danger")
+    flash(gettext("You do not have permission for this action"), "danger")
     return redirect(redirect_location)
 
 

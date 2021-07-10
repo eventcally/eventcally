@@ -1,16 +1,22 @@
 from flask import abort
 from flask_login import login_user
-from flask_principal import Permission
+from flask_principal import Permission, RoleNeed
 from flask_security import current_user
 from flask_security.utils import FsPermNeed
 from sqlalchemy import and_
 
+from project import app
 from project.models import AdminUnit, AdminUnitMember
 from project.services.admin_unit import get_member_for_admin_unit_by_user_id
 
 
 def has_current_user_permission(permission):
     user_perm = Permission(FsPermNeed(permission))
+    return user_perm.can()
+
+
+def has_current_user_role(role):
+    user_perm = Permission(RoleNeed(role))
     return user_perm.can()
 
 
@@ -159,3 +165,13 @@ def get_admin_unit_for_manage_or_404(admin_unit_id):
         abort(404)
 
     return admin_unit
+
+
+def can_create_admin_unit():
+    if not current_user.is_authenticated:  # pragma: no cover
+        return False
+
+    if not app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"]:
+        return True
+
+    return has_current_user_role("admin")
