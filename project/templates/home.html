@@ -23,7 +23,11 @@ oveda - Offene Veranstaltungsdatenbank
           <form>
             <div class="form-row">
               <div class="col-12">
-                <a class="btn btn-primary btn-lg" href="{{ url_for('security.register') }}" role="button">{{ _('Register for free') }}</a>
+                {% if current_user.is_authenticated %}
+                  <a class="btn btn-primary btn-lg" href="{{ url_for('manage') }}">{{ _('Manage') }}</a>
+                {% elif not admin_unit_create_requires_admin %}
+                  <a class="btn btn-primary btn-lg" href="{{ url_for('security.register') }}" role="button">{{ _('Register for free') }}</a>
+                {% endif %}
               </div>
             </div>
           </form>
@@ -32,122 +36,15 @@ oveda - Offene Veranstaltungsdatenbank
     </div>
   </header>
 
-  <!-- Icons Grid -->
-  <section class="features-icons bg-light text-center">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-4">
-          <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
-            <div class="features-icons-icon d-flex">
-              <i class="fa fa-euro-sign m-auto text-primary"></i>
-            </div>
-            <h3>Kostenlos</h3>
-            <p class="lead mb-0">Die Verwaltung von Veranstaltungen ist und wird immer kostenlos sein.</p>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
-            <div class="features-icons-icon d-flex">
-              <i class="fa fa-share-alt m-auto text-primary"></i>
-            </div>
-            <h3>Reichweite</h3>
-            <p class="lead mb-0">Mehr Reichweite für eigene Veranstaltungen durch Anzeige in Kalendern überregionaler Anbieter.</p>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="features-icons-item mx-auto mb-0 mb-lg-3">
-            <div class="features-icons-icon d-flex">
-              <i class="fa fa-check-circle m-auto text-primary"></i>
-            </div>
-            <h3>Verifizierung</h3>
-            <p class="lead mb-0">Eingestellte Veranstaltungen können inhaltlich geprüft und freigeschaltet werden, bevor sie in Ihren Kalender angezeigt werden.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Image Showcases -->
-  <section class="showcase">
-    <div class="container-fluid p-0">
-      <div class="row no-gutters">
-
-        <div class="col-lg-6 order-lg-2 text-white showcase-img" style="background-image: url('static/img/landing-page/bg-showcase-3.jpg');"></div>
-        <div class="col-lg-6 order-lg-1 my-auto showcase-text">
-          <h2>Integration</h2>
-          <p class="lead mb-0">Veranstaltungen können ohne Programmierkenntnisse in Ihre Webseite integriert werden.</p>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-lg-6 text-white showcase-img" style="background-image: url('static/img/landing-page/bg-showcase-1.jpg');"></div>
-        <div class="col-lg-6 my-auto showcase-text">
-          <h2>Sichtbarkeit</h2>
-          <p class="lead mb-0">Veranstaltungsdaten werden aufbereitet, sodass sie Suchmaschinen wie Google optimal einlesen können.</p>
-        </div>
-      </div>
-      <div class="row no-gutters">
-        <div class="col-lg-6 order-lg-2 text-white showcase-img" style="background-image: url('static/img/landing-page/bg-showcase-2.jpg');"></div>
-        <div class="col-lg-6 order-lg-1 my-auto showcase-text">
-          <h2>Offen</h2>
-          <p class="lead mb-0">
-            Veranstaltungsdaten können maschinell ausgelesen werden, sodass sie mit anderen Anbietern (wie z.B. Facebook) abgeglichen werden können.
-            <a href="{{ url_for('developer') }}">Details</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials -->
   <section class="testimonials text-center bg-light">
     <div class="container">
       <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg">
             <div class="testimonial-item mx-auto mb-5 mb-lg-0">
                 <img class="img-fluid rounded-circle mb-3" style="width:120px; height:120px;" src="https://machmit.goslar.de/wp-content/uploads/2018/12/GoslarLogoSplash@2x.png" alt="Logo machmit!">
                 <h5>MachMit! Goslar</h5>
                 <p class="font-weight-light">Die offene Veranstaltungsdatenbank ist eine Idee der <a href="https://machmit.goslar.de/">MachMit!-Initiative der Stadt Goslar</a>.</p>
             </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="testimonial-item mx-auto mb-5 mb-lg-0">
-                <img class="img-fluid rounded-circle mb-3" style="width:120px; height:120px;" src="static/img/landing-page/bg-showcase-2.jpg" alt="Grafik Entwicklung">
-                <h5>Entwicklungsphase</h5>
-                <p class="font-weight-light">Wir haben aktuell einen gut funktionierenden Stand, der gerne getestet werden darf.</p>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="testimonial-item mx-auto mb-5 mb-lg-0">
-                <img class="img-fluid rounded-circle mb-3" style="width:120px; height:120px;" src="static/img/landing-page/machmit.jpg" alt="Grafik Feedback">
-                <h5>Feedback</h5>
-                <p class="font-weight-light">Wir freuen uns über Anregungen, Feature-Wünsche und Kritik über die Kanäle der <a href="https://machmit.goslar.de/">MachMit!-Initiative der Stadt Goslar</a>.</p>
-            </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Call to Action -->
-  <section class="call-to-action text-white text-center">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-9 mx-auto">
-          <h2 class="mb-4">Bereit zu starten? Jetzt registrieren!</h2>
-        </div>
-        <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-          <form>
-            <div class="form-row mb-4">
-              <div class="col-12">
-                <a class="btn btn-primary btn-lg" href="{{ url_for('security.register') }}" role="button">{{ _('Register for free') }}</a>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="col-12">
-                <a class="btn btn-secondary" href="{{ url_for('example') }}" role="button">Beispiel ansehen</a>
-              </div>
-            </div>
-          </form>
         </div>
       </div>
     </div>
