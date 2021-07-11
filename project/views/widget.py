@@ -143,13 +143,16 @@ def event_suggestion_create_for_admin_unit(au_short_name):
         event_suggestion.review_status = EventReviewStatus.inbox
 
         if "preview" in request.args:
-            event_suggestion.admin_unit = admin_unit
-            event_suggestion.organizer = next(
-                (o for o in organizers if o.id == event_suggestion.organizer_id), None
-            )
-            event_suggestion.event_place = next(
-                (p for p in places if p.id == event_suggestion.event_place_id), None
-            )
+            with db.session.no_autoflush:
+                event_suggestion.admin_unit = admin_unit
+                event_suggestion.organizer = next(
+                    (o for o in organizers if o.id == event_suggestion.organizer_id),
+                    None,
+                )
+                event_suggestion.event_place = next(
+                    (p for p in places if p.id == event_suggestion.event_place_id), None
+                )
+
             return render_template(
                 "widget/event_suggestion/create_preview.html",
                 admin_unit=admin_unit,
