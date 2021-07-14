@@ -10,8 +10,8 @@
       // Organizer
       var organizer_select =$('#organizer_id');
       var input_group = organizer_select.parent();
-      input_group.append('<button id="organizer-edit-btn" class="btn btn-outline-secondary my-1"><i class="fa fa-edit"></i></button>');
-      input_group.append('<button id="organizer-add-btn" class="btn btn-outline-secondary m-1"><i class="fa fa-plus"></i></button>');
+      input_group.append('<button type="button" id="organizer-edit-btn" class="btn btn-outline-secondary my-1"><i class="fa fa-edit"></i></button>');
+      input_group.append('<button type="button" id="organizer-add-btn" class="btn btn-outline-secondary m-1"><i class="fa fa-plus"></i></button>');
       $('#organizer-edit-btn').click(function () {
         window.open('/organizer/' + organizer_select.val() + '/update');
         return false;
@@ -24,8 +24,8 @@
       // Place
       var place_select =$('#event_place_id');
       var input_group = place_select.parent();
-      input_group.append('<button id="place-edit-btn" class="btn btn-outline-secondary my-1"><i class="fa fa-edit"></i></button>');
-      input_group.append('<button id="place-add-btn" class="btn btn-outline-secondary m-1"><i class="fa fa-plus"></i></button>');
+      input_group.append('<button type="button" id="place-edit-btn" class="btn btn-outline-secondary my-1"><i class="fa fa-edit"></i></button>');
+      input_group.append('<button type="button" id="place-add-btn" class="btn btn-outline-secondary m-1"><i class="fa fa-plus"></i></button>');
       $('#place-edit-btn').click(function () {
         window.open('/event_place/' + place_select.val() + '/update');
         return false;
