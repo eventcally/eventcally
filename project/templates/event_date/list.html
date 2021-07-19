@@ -126,7 +126,9 @@
         var result_list = $("#result_list");
         result_list.empty();
 
-        var req_data = $("#filter_form :input[value!='']").serialize();
+        var req_data = $("#filter_form :input").filter(function () {
+            return this.value.length > 0
+        }).serialize()
         req_data += '&page=' + page + '&per_page=' + per_page;
 
         $.ajax({
