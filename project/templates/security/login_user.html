@@ -9,6 +9,9 @@
   {{ login_user_form.hidden_tag() }}
   {{ render_field_with_errors(login_user_form.email) }}
   {{ render_field_with_errors(login_user_form.password) }}
+
+  <input id="{{ login_user_form.remember.id }}" name="{{ login_user_form.remember.name }}" type="hidden" value="{{ login_user_form.remember.default }}" />
+
   {{ render_field_errors(login_user_form.csrf_token) }}
   {{ render_field(login_user_form.submit) }}
 </form>
