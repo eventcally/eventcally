@@ -67,9 +67,15 @@ def find_admin_unit_member_invitation(email, admin_unit_id):
     return AdminUnitMemberInvitation.query.filter(
         and_(
             AdminUnitMemberInvitation.admin_unit_id == admin_unit_id,
-            AdminUnitMemberInvitation.email == email,
+            func.lower(AdminUnitMemberInvitation.email) == func.lower(email),
         )
     ).first()
+
+
+def get_admin_unit_member_invitations(email):
+    return AdminUnitMemberInvitation.query.filter(
+        func.lower(AdminUnitMemberInvitation.email) == func.lower(email)
+    ).all()
 
 
 def insert_admin_unit_member_invitation(admin_unit_id, email, role_names):
