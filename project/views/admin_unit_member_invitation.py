@@ -46,13 +46,15 @@ def admin_unit_member_invitation(id):
                 add_user_to_admin_unit_with_roles(
                     current_user, invitation.adminunit, roles
                 )
+                url = url_for("manage_admin_unit", id=invitation.admin_unit_id)
             else:
                 message = gettext("Invitation successfully declined")
+                url = url_for("manage")
 
             db.session.delete(invitation)
             db.session.commit()
             flash(message, "success")
-            return redirect(url_for("manage"))
+            return redirect(url)
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
