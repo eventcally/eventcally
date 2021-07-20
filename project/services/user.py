@@ -47,7 +47,7 @@ def upsert_user_role(role_name, role_title, permissions):
 
 
 def find_user_by_email(email):
-    return user_datastore.find_user(email=email)
+    return user_datastore.find_user(email=email, case_insensitive=True)
 
 
 def get_user(id):

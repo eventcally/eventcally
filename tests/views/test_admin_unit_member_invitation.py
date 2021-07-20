@@ -87,8 +87,7 @@ def test_read_accept(client, app, db, utils, seeder):
                 "accept": "Akzeptieren",
             },
         )
-        assert response.status_code == 302
-        assert response.headers["Location"] == "http://localhost/manage"
+        utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
 
         with app.app_context():
             from project.services.admin_unit import (
@@ -128,7 +127,7 @@ def test_read_accept_WrongRole(client, app, db, utils, seeder):
                 "accept": "Akzeptieren",
             },
         )
-        utils.assert_response_redirect(response, "manage")
+        utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
 
 
 def test_read_decline(client, app, db, utils, seeder):
