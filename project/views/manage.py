@@ -22,6 +22,7 @@ from project.models import (
     EventSuggestion,
     User,
 )
+from project.services.admin_unit import get_admin_unit_member_invitations
 from project.services.event import get_events_query
 from project.services.event_search import EventSearchParams
 from project.services.event_suggestion import get_event_reviews_query
@@ -32,6 +33,12 @@ from project.views.utils import (
     handleSqlError,
     permission_missing,
 )
+
+
+@app.route("/manage_after_login")
+@auth_required()
+def manage_after_login():
+    return redirect(url_for("manage", from_login=1))
 
 
 @app.route("/manage")
@@ -47,6 +54,18 @@ def manage():
     except Exception:
         pass
 
+    if "from_login" in request.args:
+        admin_units = get_admin_units_for_manage()
+        invitations = get_admin_unit_member_invitations(current_user.email)
+
+        if len(admin_units) == 1 and len(invitations) == 0:
+            return redirect(url_for("manage_admin_unit", id=admin_units[0].id))
+
+        if len(admin_units) == 0 and len(invitations) == 1:
+            return redirect(
+                url_for("admin_unit_member_invitation", id=invitations[0].id)
+            )
+
     return redirect(url_for("manage_admin_units"))
 
 
@@ -54,9 +73,7 @@ def manage():
 @auth_required()
 def manage_admin_units():
     admin_units = get_admin_units_for_manage()
-    invitations = AdminUnitMemberInvitation.query.filter(
-        AdminUnitMemberInvitation.email == current_user.email
-    ).all()
+    invitations = get_admin_unit_member_invitations(current_user.email)
 
     admin_units.sort(key=lambda x: x.name)
     invitations.sort(key=lambda x: x.adminunit.name)

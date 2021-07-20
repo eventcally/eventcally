@@ -24,6 +24,25 @@ def test_index_withInvalidCookie(client, seeder, utils):
     utils.assert_response_redirect(response, "manage_admin_units")
 
 
+def test_index_after_login(client, app, db, utils, seeder):
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+
+    email = "new@member.de"
+    invitation_id = seeder.create_invitation(admin_unit_id, email)
+
+    seeder.create_user(email)
+    utils.login(email)
+
+    response = utils.get_endpoint("manage_after_login")
+    utils.assert_response_redirect(response, "manage", from_login=1)
+
+    response = utils.get_endpoint("manage", from_login=1)
+    utils.assert_response_redirect(
+        response, "admin_unit_member_invitation", id=invitation_id
+    )
+
+
 def test_admin_unit(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
 
