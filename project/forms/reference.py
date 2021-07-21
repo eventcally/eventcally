@@ -16,7 +16,7 @@ class CreateEventReferenceForm(FlaskForm):
         coerce=int,
         choices=event_rating_choices,
         description=lazy_gettext(
-            "Choose how relevant the event is to your organization."
+            "Choose how relevant the event is to your organization. The value is not visible and is used for sorting."
         ),
     )
     submit = SubmitField(lazy_gettext("Save reference"))
@@ -29,7 +29,7 @@ class UpdateEventReferenceForm(FlaskForm):
         coerce=int,
         choices=event_rating_choices,
         description=lazy_gettext(
-            "Choose how relevant the event is to your organization."
+            "Choose how relevant the event is to your organization. The value is not visible and is used for sorting."
         ),
     )
     submit = SubmitField(lazy_gettext("Update reference"))
