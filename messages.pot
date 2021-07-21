@@ -655,7 +655,7 @@ msgstr ""
 
 #: project/forms/event.py:242 project/forms/reference.py:18
 #: project/forms/reference.py:31 project/forms/reference_request.py:74
-msgid "Choose how relevant the event is to your organization."
+msgid "Choose how relevant the event is to your organization. The value is not visible and is used for sorting."
 msgstr ""
 
 #: project/forms/event.py:250 project/forms/event.py:259
