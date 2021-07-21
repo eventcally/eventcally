@@ -682,8 +682,8 @@ msgstr "Bewertung"
 
 #: project/forms/event.py:242 project/forms/reference.py:18
 #: project/forms/reference.py:31 project/forms/reference_request.py:74
-msgid "Choose how relevant the event is to your organization."
-msgstr "Wähle aus, wie relevant die Veranstaltung für deine Organisation ist."
+msgid "Choose how relevant the event is to your organization. The value is not visible and is used for sorting."
+msgstr "Wähle aus, wie relevant die Veranstaltung für deine Organisation ist. Der Wert ist nicht sichtbar und dient der Sortierung."
 
 #: project/forms/event.py:250 project/forms/event.py:259
 #: project/forms/event.py:319 project/forms/event_suggestion.py:50
