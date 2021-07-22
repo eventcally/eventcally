@@ -470,6 +470,9 @@ msgid ""
 "Indicate when the event will end. An event can last a maximum of 14 days."
 " If the event takes place regularly, enter when the first date will end."
 msgstr ""
+"Gib an, wann die Veranstaltung endet. Eine Veranstaltung darf maximal 14 "
+"Tage dauern. Wenn die Veranstaltung regelmäßig stattfindet, gib an, wann der"
+" erste Termin endet."
 
 #: project/forms/event.py:88
 msgid "Recurrence rule"
