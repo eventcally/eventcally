@@ -1,62 +1,70 @@
 {% macro render_field_with_errors(field) %}
     {% set is_required = kwargs['is_required'] if 'is_required' in kwargs else field.flags.required %}
     {% set label_text = field.label.text + ' *' if is_required else field.label.text %}
-    <div class="form-group row {% if field.errors %} has-error{% endif -%}">
+    <div class="form-group {% if field.errors %} has-error{% endif -%}">
       {% if 'ri' in kwargs and kwargs['ri'] == 'checkbox' %}
       {% else %}
-        {{ field.label(text=label_text, class="col-sm-2 col-form-label") }}
-      {% endif %}
-    <div class="input-group col-sm-10">
-      {% set field_class = kwargs['class'] if 'class' in kwargs else '' %}
-      {% set field_class = field_class + ' form-control' %}
-      {% if field.errors %}
-        {% set field_class = field_class + ' is-invalid' %}
+      {{ field.label(text=label_text, class="mb-0") }}
       {% endif %}
 
-      {% if 'ri' in kwargs and kwargs['ri'] == 'multicheckbox' %}
-        <fieldset class="form-group">
-          {% for choice in field %}
-              <div class="form-check">
-                  {{ choice(class="form-check-input") }}
-                  {{ choice.label(class="form-check-label") }}
-              </div>
-          {% endfor %}
-        </fieldset>
-      {% elif 'ri' in kwargs and kwargs['ri'] == 'multicheckbox-inline' %}
-        <fieldset class="form-group my-auto">
-          {% for choice in field %}
-              <div class="form-check form-check-inline">
-                  {{ choice(class="form-check-input") }}
-                  {{ choice.label(class="form-check-label") }}
-              </div>
-          {% endfor %}
-        </fieldset>
-      {% elif 'ri' in kwargs and kwargs['ri'] == 'checkbox' %}
-        <div class="form-check">
-            {{ field(class="form-check-input") }}
-            {{ field.label(class="form-check-label") }}
+      {% if field.description %}
+        <div class="form-text mt-0 text-muted w-100">
+          {{ field.description }}
         </div>
-      {% else %}
-        {% if 'class' in kwargs %}
-          {% set _dummy=kwargs.pop('class') %}
-        {% endif %}
-        {{ field(class=field_class, **kwargs)|safe }}
       {% endif %}
 
-      {% if 'ri' in kwargs %}
-        {% if kwargs['ri'] == 'rrule' %}
-          <script type="text/javascript">
-            $( function() {
-              $("textarea[name=recurrence_rule]").recurrenceinput({lang:'de', startField: "start",  ajaxURL: "{{ url_for('event_rrule') }}", firstDay: 1});
-            });
-          </script>
+      <div class="input-group">
+        {% set field_class = kwargs['class'] if 'class' in kwargs else '' %}
+        {% set field_class = field_class + ' form-control' %}
+        {% if field.errors %}
+          {% set field_class = field_class + ' is-invalid' %}
         {% endif %}
-      {% endif %}
 
+        {% if 'ri' in kwargs and kwargs['ri'] == 'multicheckbox' %}
+          <fieldset class="form-group">
+            {% for choice in field %}
+                <div class="form-check">
+                    {{ choice(class="form-check-input") }}
+                    {{ choice.label(class="form-check-label") }}
+                </div>
+            {% endfor %}
+          </fieldset>
+        {% elif 'ri' in kwargs and kwargs['ri'] == 'multicheckbox-inline' %}
+          <fieldset class="form-group my-auto">
+            {% for choice in field %}
+                <div class="form-check form-check-inline">
+                    {{ choice(class="form-check-input") }}
+                    {{ choice.label(class="form-check-label") }}
+                </div>
+            {% endfor %}
+          </fieldset>
+        {% elif 'ri' in kwargs and kwargs['ri'] == 'checkbox' %}
+          <div class="form-check">
+              {{ field(class="form-check-input") }}
+              {{ field.label(class="form-check-label") }}
+          </div>
+        {% elif 'ri' in kwargs and kwargs['ri'] == 'switch' %}
+          <div class="custom-control custom-switch">
+            {{ field(class="custom-control-input") }}
+            <label class="custom-control-label" for="{{ field.id }}"></label>
+          </div>
+        {% else %}
+          {% if 'class' in kwargs %}
+            {% set _dummy=kwargs.pop('class') %}
+          {% endif %}
+          {{ field(class=field_class, **kwargs)|safe }}
+        {% endif %}
 
-      <small class="form-text text-muted w-100">
-        {{ field.description }} {% if is_required %}{{ _('This field is required.') }}{% else %}{{ _('This field is optional.') }}{% endif %}
-      </small>
+        {% if 'ri' in kwargs %}
+          {% if kwargs['ri'] == 'rrule' %}
+            <script type="text/javascript">
+              $( function() {
+                $("textarea[name=recurrence_rule]").recurrenceinput({lang:'de', startField: "start",  ajaxURL: "{{ url_for('event_rrule') }}", firstDay: 1});
+              });
+            </script>
+          {% endif %}
+        {% endif %}
+      </div>
 
       {% if field.errors %}
       <div class="invalid-feedback d-block">
@@ -65,7 +73,6 @@
           {% endfor %}
       </div>
       {% endif %}
-    </div>
     </div>
 {% endmacro %}
 
@@ -1111,12 +1118,12 @@ if (URL) {
     {{ form_field.label() }}
   </div>
   <div class="card-body">
-    {{ render_crop_image_form(form_field) }}
     {% if form_field.description %}
-      <small class="form-text text-muted w-100">
+      <div class="form-text mt-0 mb-2 text-muted w-100">
           {{ form_field.description }}
-      </small>
+      </div>
     {% endif %}
+    {{ render_crop_image_form(form_field) }}
   </div>
 </div>
 {% endmacro %}
@@ -1180,6 +1187,20 @@ if (URL) {
     var max = start.add(1, 'day');
     return end <= max;
   }, jQuery.validator.format("{{ _('An event can last a maximum of 24 hours.') }}"));
+
+  jQuery.validator.setDefaults({
+    errorElement: 'div',
+    errorClass: 'invalid-feedback',
+    errorPlacement: function (error, element) {
+        element.closest('.input-group').after(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-valid').addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid').addClass('is-valid');;
+    }
+  });
 
 </script>
 {% endmacro %}

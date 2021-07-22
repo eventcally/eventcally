@@ -12,10 +12,6 @@
 {{ render_cropper_header() }}
 <script>
 
-  function stripHTML(dirty) {
-    return $("<div/>").html(dirty).text();
-  }
-
   function update_preview(form) {
     handle_request_start();
 
@@ -42,17 +38,6 @@
     var wizard = $("#wizard");
 
     form.validate({
-        errorElement: 'div',
-        errorClass: 'invalid-feedback',
-        errorPlacement: function (error, element) {
-            element.closest('.input-group').append(error);
-        },
-        highlight: function (element, errorClass, validClass) {
-            $(element).addClass('is-invalid');
-        },
-        unhighlight: function (element, errorClass, validClass) {
-            $(element).removeClass('is-invalid');
-        },
         rules: {
           contact_email: {
             require_from_group: [1, ".contact_method_group"]
@@ -257,15 +242,15 @@
       <div class="card-body">
         {{ render_field_with_errors(form.description) }}
         <hr />
-        {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
-        {{ render_field_with_errors(form.registration_required, style="width: fit-content; flex: initial;") }}
+        {{ render_field_with_errors(form.accessible_for_free, ri="switch") }}
+        {{ render_field_with_errors(form.registration_required, ri="switch") }}
         {{ render_field_with_errors(form.price_info) }}
         {{ render_field_with_errors(form.ticket_link) }}
-        {{ render_field_with_errors(form.booked_up, style="width: fit-content; flex: initial;") }}
+        {{ render_field_with_errors(form.booked_up, ri="switch") }}
         {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
         <hr />
         {{ render_field_with_errors(form.target_group_origin, class="autocomplete w-100") }}
-        {{ render_field_with_errors(form.kid_friendly, style="width: fit-content; flex: initial;") }}
+        {{ render_field_with_errors(form.kid_friendly, ri="switch") }}
         {{ render_field_with_errors(form.age_from) }}
         {{ render_field_with_errors(form.age_to) }}
         {{ render_field_with_errors(form.expected_participants) }}

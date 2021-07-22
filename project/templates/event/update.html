@@ -1,12 +1,28 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_cropper_block, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_jquery_steps_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
 {%- block title -%}
 {{ _('Update event') }}
 {%- endblock -%}
-{% block header %}
-  {{ render_cropper_block() }}
+{% block header_before_site_js %}
+{{ render_jquery_steps_header() }}
+
   <script>
     $( function() {
+
+      {{ render_cropper_code() }}
+
+      var form = $("#main-form");
+      form.validate({
+            rules: {
+              start: {
+                dateRange: ["#start", "#end"]
+              },
+              end: {
+                dateRangeDay: ["#start", "#end"]
+              }
+            }
+        });
+
       // Organizer
       var organizer_select =$('#organizer_id');
       var input_group = organizer_select.parent();
@@ -41,7 +57,7 @@
 
 <h1>{{ _('Update event') }}</h1>
 
-<form action="{{ url_for('event_update', event_id=event.id) }}" method="POST" enctype="multipart/form-data">
+<form id="main-form" action="{{ url_for('event_update', event_id=event.id) }}" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
   <div class="card mb-4">
@@ -100,11 +116,11 @@
       {{ _('Access') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
-      {{ render_field_with_errors(form.registration_required, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.accessible_for_free, ri="switch") }}
+      {{ render_field_with_errors(form.registration_required, ri="switch") }}
       {{ render_field_with_errors(form.price_info) }}
       {{ render_field_with_errors(form.ticket_link) }}
-      {{ render_field_with_errors(form.booked_up, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.booked_up, ri="switch") }}
       {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
     </div>
   </div>
@@ -115,7 +131,7 @@
     </div>
     <div class="card-body">
       {{ render_field_with_errors(form.target_group_origin, class="autocomplete w-100") }}
-      {{ render_field_with_errors(form.kid_friendly, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.kid_friendly, ri="switch") }}
       {{ render_field_with_errors(form.age_from) }}
       {{ render_field_with_errors(form.age_to) }}
       {{ render_field_with_errors(form.expected_participants) }}
