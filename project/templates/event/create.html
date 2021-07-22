@@ -1,15 +1,27 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_google_place_autocomplete_field, render_google_place_autocomplete_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_jquery_steps_header, render_google_place_autocomplete_field, render_google_place_autocomplete_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
 {%- block title -%}
 {{ _('Create event') }}
 {%- endblock -%}
-{% block header %}
-{{ render_cropper_header() }}
+{% block header_before_site_js %}
+{{ render_jquery_steps_header() }}
 {{ render_google_place_autocomplete_header(False, 'new_event_place-') }}
 <script>
 $( function() {
 
   {{ render_cropper_code() }}
+
+  var form = $("#main-form");
+  form.validate({
+        rules: {
+          start: {
+            dateRange: ["#start", "#end"]
+          },
+          end: {
+            dateRangeDay: ["#start", "#end"]
+          }
+        }
+    });
 
   function update_place_container(value) {
     switch (value) {
@@ -55,7 +67,7 @@ $( function() {
 
 <h1>{{ _('Create event') }}</h1>
 
-<form action="" method="POST" enctype="multipart/form-data">
+<form id="main-form" action="" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
   <div class="card mb-4">
@@ -85,15 +97,15 @@ $( function() {
     </div>
     <div class="card-body">
       <div>
+        <div class="form-text mt-0 text-muted w-100">{{ _("Select the organizer. If the organizer is not yet on the list, just enter it.") }}</div>
         {{ render_radio_buttons(form.organizer_choice) }}
-        <small class="form-text text-muted w-100">{{ _("Select the organizer. If the organizer is not yet on the list, just enter it.") }}</small>
       </div>
 
-      <div class="my-4" id="existing_organizer_container">
+      <div class="my-2" id="existing_organizer_container">
         {{ render_field_with_errors(form.organizer_id, class="autocomplete w-100", is_required=True) }}
       </div>
 
-      <div class="my-4" id="new_organizer_container">
+      <div class="my-2" id="new_organizer_container">
         {{ form.new_organizer.hidden_tag() }}
         {{ render_field_with_errors(form.new_organizer.form.name, is_required=True) }}
         {{ form.new_organizer.form.location.hidden_tag() }}
@@ -111,15 +123,15 @@ $( function() {
     <div class="card-body">
 
       <div>
+        <div class="form-text mt-0 text-muted w-100">{{ _("Choose where the event takes place. If the venue is not yet in the list, just enter it.") }}</div>
         {{ render_radio_buttons(form.event_place_choice) }}
-        <small class="form-text text-muted w-100">{{ _("Choose where the event takes place. If the venue is not yet in the list, just enter it.") }}</small>
       </div>
 
-      <div class="my-4" id="existing_place_container">
+      <div class="my-2" id="existing_place_container">
         {{ render_field_with_errors(form.event_place_id, class="autocomplete w-100", is_required=True) }}
       </div>
 
-      <div class="my-4" id="new_place_container">
+      <div class="my-2" id="new_place_container">
         {{ render_google_place_autocomplete_field() }}
         {{ form.new_event_place.hidden_tag() }}
         {{ render_field_with_errors(form.new_event_place.form.name, is_required=True) }}
@@ -139,11 +151,11 @@ $( function() {
       {{ _('Access') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.accessible_for_free, style="width: fit-content; flex: initial;") }}
-      {{ render_field_with_errors(form.registration_required, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.accessible_for_free, ri="switch") }}
+      {{ render_field_with_errors(form.registration_required, ri="switch") }}
       {{ render_field_with_errors(form.price_info) }}
       {{ render_field_with_errors(form.ticket_link) }}
-      {{ render_field_with_errors(form.booked_up, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.booked_up, ri="switch") }}
       {{ render_field_with_errors(form.attendance_mode, class="autocomplete w-100") }}
     </div>
   </div>
@@ -154,7 +166,7 @@ $( function() {
     </div>
     <div class="card-body">
       {{ render_field_with_errors(form.target_group_origin, class="autocomplete w-100") }}
-      {{ render_field_with_errors(form.kid_friendly, style="width: fit-content; flex: initial;") }}
+      {{ render_field_with_errors(form.kid_friendly, ri="switch") }}
       {{ render_field_with_errors(form.age_from) }}
       {{ render_field_with_errors(form.age_to) }}
       {{ render_field_with_errors(form.expected_participants) }}
