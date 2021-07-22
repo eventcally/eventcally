@@ -680,9 +680,9 @@ class Event(db.Model, TrackableMixin, EventMixin):
             if self.start > self.end:
                 raise make_check_violation("The start must be before the end.")
 
-            max_end = self.start + relativedelta(days=1)
+            max_end = self.start + relativedelta(days=14)
             if self.end > max_end:
-                raise make_check_violation("An event can last a maximum of 24 hours.")
+                raise make_check_violation("An event can last a maximum of 14 days.")
 
 
 @listens_for(Event, "before_insert")

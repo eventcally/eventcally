@@ -1184,9 +1184,9 @@ if (URL) {
 
     var start = get_moment_with_time(start_id);
     var end = get_moment_with_time(end_id);
-    var max = start.add(1, 'day');
+    var max = start.add(14, 'day');
     return end <= max;
-  }, jQuery.validator.format("{{ _('An event can last a maximum of 24 hours.') }}"));
+  }, jQuery.validator.format("{{ _('An event can last a maximum of 14 days.') }}"));
 
   jQuery.validator.setDefaults({
     errorElement: 'div',

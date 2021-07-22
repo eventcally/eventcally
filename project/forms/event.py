@@ -81,7 +81,7 @@ class SharedEventForm(FlaskForm):
         lazy_gettext("End"),
         validators=[Optional()],
         description=lazy_gettext(
-            "Indicate when the event will end. An event can last a maximum of 24 hours. If the event takes place regularly, enter when the first date will end."
+            "Indicate when the event will end. An event can last a maximum of 14 days. If the event takes place regularly, enter when the first date will end."
         ),
     )
     recurrence_rule = TextAreaField(
@@ -212,9 +212,9 @@ class SharedEventForm(FlaskForm):
                 self.start.errors.append(msg)
                 return False
 
-            max_end = self.start.data + relativedelta(days=1)
+            max_end = self.start.data + relativedelta(days=14)
             if self.end.data > max_end:
-                msg = gettext("An event can last a maximum of 24 hours.")
+                msg = gettext("An event can last a maximum of 14 days.")
                 self.end.errors.append(msg)
                 return False
         return True
