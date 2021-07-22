@@ -146,7 +146,7 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
     )
     end = CustomDateTimeField(
         metadata={
-            "description": "When the event will end. An event can last a maximum of 24 hours. If the event takes place regularly, enter when the first date will end."
+            "description": "When the event will end. An event can last a maximum of 14 days. If the event takes place regularly, enter when the first date will end."
         },
     )
 

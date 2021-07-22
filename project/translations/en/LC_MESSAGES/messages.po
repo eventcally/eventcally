@@ -627,7 +627,7 @@ msgid "The start must be before the end."
 msgstr ""
 
 #: project/forms/event.py:217 project/templates/_macros.html:1182
-msgid "An event can last a maximum of 24 hours."
+msgid "An event can last a maximum of 14 days."
 msgstr ""
 
 #: project/forms/event.py:225 project/templates/_macros.html:392
