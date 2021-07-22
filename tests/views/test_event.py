@@ -222,7 +222,7 @@ def test_create_durationMoreThan24Hours(client, app, utils, seeder, mocker):
 
     utils.assert_response_error_message(
         response,
-        b"Eine Veranstaltung darf maximal 24 Stunden dauern",
+        b"Eine Veranstaltung darf maximal 14 Tage dauern",
     )
 
 
