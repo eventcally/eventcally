@@ -14,10 +14,10 @@ from wtforms import (
     TextAreaField,
 )
 from wtforms.fields.html5 import EmailField, URLField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Length, Optional
 
 from project.forms.common import Base64ImageForm, event_rating_choices
-from project.forms.widgets import CustomDateField, CustomDateTimeField
+from project.forms.widgets import CustomDateField, CustomDateTimeField, HTML5StringField
 from project.models import (
     EventAttendanceMode,
     EventOrganizer,
@@ -65,9 +65,9 @@ class EventOrganizerForm(FlaskForm):
 
 
 class SharedEventForm(FlaskForm):
-    name = StringField(
+    name = HTML5StringField(
         lazy_gettext("Name"),
-        validators=[DataRequired()],
+        validators=[DataRequired(), Length(min=3, max=255)],
         description=lazy_gettext("Enter a short, meaningful name for the event."),
     )
     start = CustomDateTimeField(
@@ -101,7 +101,7 @@ class SharedEventForm(FlaskForm):
             "Enter a link to an external website containing more information about the event."
         ),
     )
-    ticket_link = StringField(
+    ticket_link = URLField(
         lazy_gettext("Ticket Link URL"),
         validators=[Optional()],
         description=lazy_gettext("Enter a link where tickets can be purchased."),

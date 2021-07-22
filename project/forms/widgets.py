@@ -3,7 +3,8 @@ from datetime import datetime
 from flask_babelex import gettext, to_user_timezone
 from markupsafe import Markup
 from wtforms import DateTimeField, SelectField, SelectMultipleField
-from wtforms.validators import StopValidation
+from wtforms.fields.core import StringField
+from wtforms.validators import Length, StopValidation
 from wtforms.widgets import CheckboxInput, ListWidget, html_params
 
 from project.dateutils import berlin_tz
@@ -151,3 +152,46 @@ class TagSelectField(SelectField):
 
     def is_free_text(self):
         return isinstance(self.data, str)
+
+
+class HTML5StringField(StringField):
+    def __init__(
+        self,
+        label=None,
+        validators=None,
+        filters=tuple(),
+        description="",
+        id=None,
+        default=None,
+        widget=None,
+        render_kw=None,
+        _form=None,
+        _name=None,
+        _prefix="",
+        _translations=None,
+        _meta=None,
+    ):
+        for validator in validators:
+            if isinstance(validator, Length):
+                if not render_kw:
+                    render_kw = {}
+                if validator.max > 0:
+                    render_kw["maxlength"] = validator.max
+                if validator.min > 0:
+                    render_kw["minlength"] = validator.min
+
+        super().__init__(
+            label,
+            validators,
+            filters,
+            description,
+            id,
+            default,
+            widget,
+            render_kw,
+            _form,
+            _name,
+            _prefix,
+            _translations,
+            _meta,
+        )
