@@ -237,7 +237,7 @@ def test_put_startAfterEnd(client, seeder, utils, app):
     utils.assert_response_bad_request(response)
 
 
-def test_put_durationMoreThan24Hours(client, seeder, utils, app):
+def test_put_durationMoreThanMaxAllowedDuration(client, seeder, utils, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -245,7 +245,7 @@ def test_put_durationMoreThan24Hours(client, seeder, utils, app):
 
     put = create_put(place_id, organizer_id)
     put["start"] = "2021-02-07T11:00:00.000Z"
-    put["end"] = "2021-02-08T11:01:00.000Z"
+    put["end"] = "2021-02-21T11:01:00.000Z"
 
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.put_json(url, put)
