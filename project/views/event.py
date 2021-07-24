@@ -15,6 +15,7 @@ from project.access import (
     has_access,
     has_admin_unit_member_permission,
 )
+from project.dateutils import get_next_full_hour
 from project.forms.event import CreateEventForm, DeleteEventForm, UpdateEventForm
 from project.jsonld import DateTimeEncoder, get_sd_for_event_date
 from project.models import (
@@ -278,6 +279,9 @@ def prepare_event_form(form, admin_unit):
 
     form.organizer_id.choices.insert(0, (0, ""))
     form.event_place_id.choices.insert(0, (0, ""))
+
+    if not form.start.data:
+        form.start.data = get_next_full_hour()
 
 
 def prepare_event_form_for_suggestion(form, event_suggestion):

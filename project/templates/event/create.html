@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_jquery_steps_header, render_google_place_autocomplete_field, render_google_place_autocomplete_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_end_container_handling, render_jquery_steps_header, render_google_place_autocomplete_field, render_google_place_autocomplete_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
 {%- block title -%}
 {{ _('Create event') }}
 {%- endblock -%}
@@ -60,6 +60,8 @@ $( function() {
   });
 
   update_organizer_container($('input[type=radio][name=organizer_choice]:checked').val());
+
+  {{ render_end_container_handling() }}
 });
 </script>
 {% endblock %}
@@ -85,8 +87,8 @@ $( function() {
       {{ _('Event date') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "1"}) }}
-      {{ render_field_with_errors(form.end) }}
+      {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "14"}) }}
+      {{ render_field_with_errors(form.end, is_collapsible=1) }}
       {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
     </div>
   </div>
