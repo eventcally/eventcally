@@ -42,6 +42,16 @@ def date_set_end_of_day(date):
     return date_add_time(date, hour=23, minute=59, second=59)
 
 
+def round_to_next_full_hour(date):
+    new_date = date + timedelta(hours=1)
+    return date_add_time(date, new_date.hour, tzinfo=date.tzinfo)
+
+
+def get_next_full_hour():
+    now = get_now()
+    return round_to_next_full_hour(now)
+
+
 def form_input_to_date(date_str, hour=0, minute=0, second=0):
     date = datetime.strptime(date_str, "%Y-%m-%d")
     date_time = date_add_time(date, hour=hour, minute=minute, second=second)

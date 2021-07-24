@@ -8,6 +8,7 @@ from sqlalchemy.sql import func
 
 from project import app, db
 from project.access import has_admin_unit_member_permission
+from project.dateutils import get_next_full_hour
 from project.forms.event_date import FindEventDateForm
 from project.forms.event_suggestion import CreateEventSuggestionForm
 from project.jsonld import DateTimeEncoder, get_sd_for_event_date
@@ -135,6 +136,9 @@ def event_suggestion_create_for_admin_unit(au_short_name):
     form.event_place_id.choices.insert(0, ("", ""))
 
     form.category_ids.choices = get_event_category_choices()
+
+    if not form.start.data:
+        form.start.data = get_next_full_hour()
 
     if form.validate_on_submit():
         event_suggestion = EventSuggestion()
