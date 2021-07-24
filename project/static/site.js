@@ -98,13 +98,24 @@ jQuery.tools.recurrenceinput.localize('de', {
         }
 });
 
+function get_moment_with_time(field_id) {
+    return moment($(field_id).val()).add($(field_id + "-hour").val(), "hour").add($(field_id + "-minute").val(), "minute");
+}
+
 function set_date_bounds(picker) {
     var data_range_to_attr = picker.attr('data-range-to');
-
     if (data_range_to_attr) {
-        from_date = picker.datepicker("getDate");
-        from_moment = moment(from_date);
-        $(data_range_to_attr + '-user').datepicker("option", "minDate", from_date);
+        var hidden_field_id = picker.attr('id').replace('-user', '');
+        var from_moment = get_moment_with_time('#'+hidden_field_id);
+        $(data_range_to_attr + '-user').datepicker("option", "minDate", from_moment.toDate());
+
+        var end_val = $(data_range_to_attr).val();
+        if (end_val != '') {
+            var end_moment = get_moment_with_time(data_range_to_attr);
+            if (end_moment < from_moment) {
+                set_picker_date($(data_range_to_attr), from_moment.toDate());
+            }
+        }
 
         var data_range_max_attr = picker.attr('data-range-max-days');
         if (data_range_max_attr) {
@@ -112,10 +123,30 @@ function set_date_bounds(picker) {
             $(data_range_to_attr + '-user').datepicker("option", "maxDate", from_moment.toDate());
         }
     }
+
+    var data_range_from_attr = picker.attr('data-range-from');
+    if (data_range_from_attr) {
+        var hidden_field_id = picker.attr('id').replace('-user', '');
+        var to_moment = get_moment_with_time('#'+hidden_field_id);
+
+        var start_val = $(data_range_from_attr).val();
+        if (start_val != '') {
+            var start_moment = get_moment_with_time(data_range_from_attr);
+            if (start_moment > to_moment) {
+                set_picker_date($(data_range_from_attr), to_moment.toDate());
+            }
+        }
+    }
 }
 
 function set_picker_date(picker, date, timeout = -1) {
     picker.datepicker("setDate", date);
+
+    var hidden_field_id = picker.attr('id').replace('-user', '');
+    var hour = date == null ? 0 : date.getHours();
+    var minute = date == null ? 0 : date.getMinutes();
+    $("#" + hidden_field_id + "-hour").val(hour.toString());
+    $("#" + hidden_field_id + "-minute").val(minute.toString());
 
     if (timeout < 0) {
         set_date_bounds(picker);
@@ -150,16 +181,15 @@ function start_datepicker(input) {
 
     var hidden_value = hidden_field.val();
     if (hidden_value) {
-        set_picker_date(picker, moment(hidden_value).toDate(), 100)
+        set_picker_date(picker, get_moment_with_time('#'+hidden_field_id).toDate(), 100)
     }
 
     hidden_field.after(user_field);
 
-    $("#" + hidden_field_id + "-clear-button").click(function() {
-        set_picker_date(picker, null)
-        $("#" + hidden_field_id + "-hour").val("00");
-        $("#" + hidden_field_id + "-minute").val("00");
-      });
+    var data_range_to_attr = picker.attr('data-range-to');
+    if (data_range_to_attr) {
+        $(data_range_to_attr).attr('data-range-from', '#'+hidden_field_id);
+    }
 
     hidden_field.change(function() {
         var hidden_value = hidden_field.val();
@@ -182,6 +212,14 @@ function start_datepicker(input) {
         if (!user_value) {
             set_picker_date(picker, null)
         }
+    });
+
+    $("#" + hidden_field_id + "-hour").change(function() {
+        set_date_bounds(picker);
+    });
+
+    $("#" + hidden_field_id + "-minute").change(function() {
+        set_date_bounds(picker);
     });
 
     return picker;
@@ -273,6 +311,22 @@ $( function() {
         e.preventDefault();
         e.stopPropagation();
         $(this).removeClass('dragover');
+    });
+
+    $('.show-link').click(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        $('#'+$(this).attr('data-show-container')).hide();
+        $('#'+$(this).attr('data-container')).show();
+        $('#'+$(this).attr('data-container')).trigger('shown');
+    });
+
+    $('.hide-link').click(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        $('#'+$(this).attr('data-show-container')).show();
+        $('#'+$(this).attr('data-container')).hide();
+        $('#'+$(this).attr('data-container')).trigger('hidden');
     });
 });
 

@@ -1,79 +1,94 @@
 {% macro render_field_with_errors(field) %}
-    {% set is_required = kwargs['is_required'] if 'is_required' in kwargs else field.flags.required %}
-    {% set label_text = field.label.text + ' *' if is_required else field.label.text %}
-    <div class="form-group {% if field.errors %} has-error{% endif -%}">
-      {% if 'ri' in kwargs and kwargs['ri'] == 'checkbox' %}
-      {% else %}
-      {{ field.label(text=label_text, class="mb-0") }}
-      {% endif %}
-
-      {% if field.description %}
-        <div class="form-text mt-0 text-muted w-100">
-          {{ field.description }}
-        </div>
-      {% endif %}
-
-      <div class="input-group">
-        {% set field_class = kwargs['class'] if 'class' in kwargs else '' %}
-        {% set field_class = field_class + ' form-control' %}
-        {% if field.errors %}
-          {% set field_class = field_class + ' is-invalid' %}
-        {% endif %}
-
-        {% if 'ri' in kwargs and kwargs['ri'] == 'multicheckbox' %}
-          <fieldset class="form-group">
-            {% for choice in field %}
-                <div class="form-check">
-                    {{ choice(class="form-check-input") }}
-                    {{ choice.label(class="form-check-label") }}
-                </div>
-            {% endfor %}
-          </fieldset>
-        {% elif 'ri' in kwargs and kwargs['ri'] == 'multicheckbox-inline' %}
-          <fieldset class="form-group my-auto">
-            {% for choice in field %}
-                <div class="form-check form-check-inline">
-                    {{ choice(class="form-check-input") }}
-                    {{ choice.label(class="form-check-label") }}
-                </div>
-            {% endfor %}
-          </fieldset>
-        {% elif 'ri' in kwargs and kwargs['ri'] == 'checkbox' %}
-          <div class="form-check">
-              {{ field(class="form-check-input") }}
-              {{ field.label(class="form-check-label") }}
-          </div>
-        {% elif 'ri' in kwargs and kwargs['ri'] == 'switch' %}
-          <div class="custom-control custom-switch">
-            {{ field(class="custom-control-input") }}
-            <label class="custom-control-label" for="{{ field.id }}"></label>
-          </div>
-        {% else %}
-          {% if 'class' in kwargs %}
-            {% set _dummy=kwargs.pop('class') %}
-          {% endif %}
-          {{ field(class=field_class, **kwargs)|safe }}
-        {% endif %}
-
-        {% if 'ri' in kwargs %}
-          {% if kwargs['ri'] == 'rrule' %}
-            <script type="text/javascript">
-              $( function() {
-                $("textarea[name=recurrence_rule]").recurrenceinput({lang:'de', startField: "start",  ajaxURL: "{{ url_for('event_rrule') }}", firstDay: 1});
-              });
-            </script>
-          {% endif %}
-        {% endif %}
-      </div>
-
-      {% if field.errors %}
-      <div class="invalid-feedback d-block">
-          {% for error in field.errors %}
-          <div>{{ error }}</div>
-          {% endfor %}
-      </div>
-      {% endif %}
+    {% set is_collapsible = kwargs['is_collapsible'] if 'is_collapsible' in kwargs else False %}
+    {% if is_collapsible %}
+    <div class="mb-4" id="{{ field.id }}-show-container"{% if field.data %} style="display: none;"{% endif %}>
+      <a href="#" class="show-link" data-container="{{ field.id }}-container" data-show-container="{{ field.id }}-show-container"><i class="fa fa-plus"></i> {{ field.label.text }}</a>
     </div>
+    <div id="{{ field.id }}-container"{% if not field.data %} style="display: none;"{% endif %}>
+    {% endif %}
+
+      {% set is_required = kwargs['is_required'] if 'is_required' in kwargs else field.flags.required %}
+      {% set label_text = field.label.text + ' *' if is_required else field.label.text %}
+      <div class="form-group {% if field.errors %} has-error{% endif -%}">
+        {% if 'ri' in kwargs and kwargs['ri'] == 'checkbox' %}
+        {% else %}
+        {{ field.label(text=label_text, class="mb-0") }}
+        {% endif %}
+
+        {% if field.description %}
+          <div class="form-text mt-0 text-muted w-100">
+            {{ field.description }}
+          </div>
+        {% endif %}
+
+        <div class="input-group">
+          {% set field_class = kwargs['class'] if 'class' in kwargs else '' %}
+          {% set field_class = field_class + ' form-control' %}
+          {% if field.errors %}
+            {% set field_class = field_class + ' is-invalid' %}
+          {% endif %}
+
+          {% if 'ri' in kwargs and kwargs['ri'] == 'multicheckbox' %}
+            <fieldset class="form-group">
+              {% for choice in field %}
+                  <div class="form-check">
+                      {{ choice(class="form-check-input") }}
+                      {{ choice.label(class="form-check-label") }}
+                  </div>
+              {% endfor %}
+            </fieldset>
+          {% elif 'ri' in kwargs and kwargs['ri'] == 'multicheckbox-inline' %}
+            <fieldset class="form-group my-auto">
+              {% for choice in field %}
+                  <div class="form-check form-check-inline">
+                      {{ choice(class="form-check-input") }}
+                      {{ choice.label(class="form-check-label") }}
+                  </div>
+              {% endfor %}
+            </fieldset>
+          {% elif 'ri' in kwargs and kwargs['ri'] == 'checkbox' %}
+            <div class="form-check">
+                {{ field(class="form-check-input") }}
+                {{ field.label(class="form-check-label") }}
+            </div>
+          {% elif 'ri' in kwargs and kwargs['ri'] == 'switch' %}
+            <div class="custom-control custom-switch">
+              {{ field(class="custom-control-input") }}
+              <label class="custom-control-label" for="{{ field.id }}"></label>
+            </div>
+          {% else %}
+            {% if 'class' in kwargs %}
+              {% set _dummy=kwargs.pop('class') %}
+            {% endif %}
+            {{ field(class=field_class, **kwargs)|safe }}
+          {% endif %}
+
+          {% if 'ri' in kwargs %}
+            {% if kwargs['ri'] == 'rrule' %}
+              <script type="text/javascript">
+                $( function() {
+                  $("textarea[name=recurrence_rule]").recurrenceinput({lang:'de', startField: "start",  ajaxURL: "{{ url_for('event_rrule') }}", firstDay: 1});
+                });
+              </script>
+            {% endif %}
+          {% endif %}
+        </div>
+
+        {% if field.errors %}
+        <div class="invalid-feedback d-block">
+            {% for error in field.errors %}
+            <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+    {% if is_collapsible %}
+      <div class="mb-4" id="{{ field.id }}-hide-container">
+        <a href="#" class="hide-link" data-container="{{ field.id }}-container" data-show-container="{{ field.id }}-show-container"><i class="fa fa-minus"></i> {{ field.label.text }}</a>
+      </div>
+    </div>
+    {% endif %}
 {% endmacro %}
 
 {% macro render_field(field) %}
@@ -1151,10 +1166,6 @@ if (URL) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js" integrity="sha512-6Uv+497AWTmj/6V14BsQioPrm3kgwmK9HYIyWP+vClykX52b0zrDGP7lajZoIY1nNlX4oQuh7zsGjmF7D0VZYA==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/localization/messages_de.min.js" integrity="sha512-CZoLR7uTljYchtaY9SbWetTDxZ7bW3h6YALF4orf6k+WTvZhr4zu+a9XqhHkK+zsKbQL5HNXTNrd21TE3M6eUg==" crossorigin="anonymous"></script>
 <script>
-  function get_moment_with_time(field_id) {
-    return moment($(field_id).val()).add($(field_id + "-hour").val(), "hour").add($(field_id + "-minute").val(), "minute");
-  }
-
   jQuery.validator.addMethod("dateRange", function(value, element, params) {
     var start_id = params[0];
     var end_id = params[1];
@@ -1195,14 +1206,28 @@ if (URL) {
         element.closest('.input-group').after(error);
     },
     highlight: function (element, errorClass, validClass) {
-        $(element).removeClass('is-valid').addClass('is-invalid');
+        $(element).closest('.input-group').find(':input').removeClass('is-valid').addClass('is-invalid');
     },
     unhighlight: function (element, errorClass, validClass) {
-        $(element).removeClass('is-invalid').addClass('is-valid');;
+        $(element).closest('.input-group').find(':input').removeClass('is-invalid').addClass('is-valid');
+    },
+    onclick: function (element, event) {
+      return true;
     }
   });
 
 </script>
+{% endmacro %}
+
+{% macro render_end_container_handling() %}
+$('#end-container').on('shown', function() {
+  var end_moment = get_moment_with_time('#start').add(3, 'hours');
+  set_picker_date($('#end-user'), end_moment.toDate());
+});
+
+$('#end-container').on('hidden', function() {
+  set_picker_date($('#end-user'), null);
+});
 {% endmacro %}
 
 {% macro render_cropper_header() %}

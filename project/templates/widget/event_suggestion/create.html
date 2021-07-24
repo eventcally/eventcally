@@ -1,5 +1,5 @@
 {% extends "layout_widget.html" %}
-{% from "_macros.html" import render_logo, render_cropper_code, render_crop_image_form, render_jquery_steps_header, render_cropper_header, render_radio_buttons, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_end_container_handling, render_logo, render_cropper_code, render_crop_image_form, render_jquery_steps_header, render_cropper_header, render_radio_buttons, render_field_with_errors, render_field %}
 {%- block title -%}
 {{ _('Create event suggestion') }}
 {%- endblock -%}
@@ -114,6 +114,8 @@
         }
       });
 
+      {{ render_end_container_handling() }}
+
   });
 </script>
 {% endblock %}
@@ -198,8 +200,8 @@
         {{ render_field_with_errors(form.name) }}
         {{ render_field_with_errors(form.event_place_id, class="w-100") }}
         {{ render_field_with_errors(form.organizer_id, class="w-100") }}
-        {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "1"}) }}
-        {{ render_field_with_errors(form.end) }}
+        {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "14"}) }}
+        {{ render_field_with_errors(form.end, is_collapsible=1) }}
         {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
 
         <div class="d-flex justify-content-between">
