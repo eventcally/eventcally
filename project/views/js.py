@@ -5,6 +5,7 @@ from flask_babelex import gettext
 
 from project import app, csrf
 from project.models import AdminUnit
+from project.services.user import find_user_by_email
 
 
 @app.route("/js/check/organization/short_name", methods=["POST"])
@@ -21,4 +22,18 @@ def js_check_org_short_name():
         return json.dumps(True)
 
     error = gettext("Short name is already taken")
+    return json.dumps(error)
+
+
+@app.route("/js/check/register/email", methods=["POST"])
+def js_check_register_email():
+    csrf.protect()
+
+    email = request.form["email"]
+    user = find_user_by_email(email)
+
+    if not user:
+        return json.dumps(True)
+
+    error = gettext("An account already exists with this email.")
     return json.dumps(error)
