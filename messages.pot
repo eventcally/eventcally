@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-07-25 22:35+0200\n"
+"POT-Creation-Date: 2021-07-25 23:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -268,7 +268,7 @@ msgstr ""
 msgid "The short name is used to create a unique identifier for your events"
 msgstr ""
 
-#: project/forms/admin_unit.py:40 project/templates/admin_unit/create.html:13
+#: project/forms/admin_unit.py:40 project/templates/_macros.html:1401
 msgid "Short name must contain only letters numbers or underscore"
 msgstr ""
 
@@ -301,7 +301,7 @@ msgstr ""
 msgid "Logo"
 msgstr ""
 
-#: project/forms/admin_unit.py:63 project/templates/admin_unit/create.html:52
+#: project/forms/admin_unit.py:63 project/templates/admin_unit/create.html:13
 #: project/templates/manage/admin_units.html:18
 msgid "Create organization"
 msgstr ""
@@ -793,8 +793,8 @@ msgstr ""
 
 #: project/forms/event_date.py:22 project/forms/planing.py:20
 #: project/templates/_macros.html:128 project/templates/_macros.html:311
-#: project/templates/admin_unit/create.html:68
-#: project/templates/admin_unit/update.html:28
+#: project/templates/admin_unit/create.html:29
+#: project/templates/admin_unit/update.html:30
 #: project/templates/event_place/create.html:30
 #: project/templates/event_place/update.html:30
 #: project/templates/organizer/create.html:26
@@ -927,8 +927,8 @@ msgstr ""
 
 #: project/forms/reference.py:11 project/forms/reference_request.py:15
 #: project/templates/_macros.html:512 project/templates/_macros.html:672
-#: project/templates/admin_unit/create.html:58
-#: project/templates/admin_unit/update.html:18
+#: project/templates/admin_unit/create.html:19
+#: project/templates/admin_unit/update.html:20
 msgid "Organization"
 msgstr ""
 
@@ -1283,7 +1283,7 @@ msgstr ""
 #: project/templates/admin/admin.html:15
 #: project/templates/admin/settings.html:4
 #: project/templates/admin/settings.html:8
-#: project/templates/admin_unit/update.html:12
+#: project/templates/admin_unit/update.html:14
 #: project/templates/layout_manage.html:48
 #: project/templates/manage/widgets.html:12 project/templates/profile.html:19
 msgid "Settings"
@@ -1331,8 +1331,8 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: project/templates/admin_unit/create.html:88
-#: project/templates/admin_unit/update.html:48
+#: project/templates/admin_unit/create.html:49
+#: project/templates/admin_unit/update.html:50
 #: project/templates/event/create.html:181
 #: project/templates/event/update.html:146
 #: project/templates/event_place/create.html:47
@@ -1761,8 +1761,12 @@ msgstr ""
 msgid "Event review status updated"
 msgstr ""
 
-#: project/views/js.py:20
+#: project/views/js.py:24
 msgid "Short name is already taken"
+msgstr ""
+
+#: project/views/js.py:38
+msgid "An account already exists with this email."
 msgstr ""
 
 #: project/views/oauth2_client.py:37
