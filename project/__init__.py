@@ -10,6 +10,7 @@ from flask_migrate import Migrate
 from flask_qrcode import QRcode
 from flask_security import Security, SQLAlchemySessionUserDatastore
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 
 from project.custom_session_interface import CustomSessionInterface
 
@@ -84,6 +85,10 @@ babel = Babel(app)
 
 # cors
 cors = CORS(app, resources={r"/.well-known/*", r"/api/*", r"/oauth/*", "/swagger/"})
+
+# CRSF protection
+csrf = CSRFProtect(app)
+app.config["WTF_CSRF_CHECK_DEFAULT"] = False
 
 # Mail
 mail_server = os.getenv("MAIL_SERVER")
@@ -168,6 +173,7 @@ from project.views import (
     event_place,
     event_suggestion,
     image,
+    js,
     manage,
     oauth,
     oauth2_client,

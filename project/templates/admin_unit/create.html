@@ -1,15 +1,17 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_cropper_logo_block, render_crop_image_form_section, render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_admin_unit_form_script, render_jquery_steps_header, render_cropper_logo_block, render_crop_image_form_section, render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
 
 {% block header %}
+{{ render_jquery_steps_header() }}
 {{ render_google_place_autocomplete_header(True) }}
 {{ render_cropper_logo_block() }}
+{{ render_admin_unit_form_script() }}
 {% endblock %}
 
 {% block content %}
 
 <h1>{{ _('Create organization') }}</h1>
-<form action="{{ url_for('admin_unit_create') }}" method="POST" enctype="multipart/form-data">
+<form id="main-form" action="{{ url_for('admin_unit_create') }}" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
   <div class="card mb-4">

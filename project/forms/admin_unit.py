@@ -2,10 +2,11 @@ from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, FormField, StringField, SubmitField
 from wtforms.fields.html5 import EmailField, TelField, URLField
-from wtforms.validators import DataRequired, Optional, Regexp
+from wtforms.validators import DataRequired, Length, Optional, Regexp
 from wtforms.widgets.html5 import ColorInput
 
 from project.forms.common import Base64ImageForm
+from project.forms.widgets import HTML5StringField
 from project.models import Image, Location
 
 
@@ -23,14 +24,17 @@ class AdminUnitLocationForm(FlaskForm):
 
 
 class BaseAdminUnitForm(FlaskForm):
-    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
-    short_name = StringField(
+    name = HTML5StringField(
+        lazy_gettext("Name"), validators=[DataRequired(), Length(min=5, max=255)]
+    )
+    short_name = HTML5StringField(
         lazy_gettext("Short name"),
         description=lazy_gettext(
             "The short name is used to create a unique identifier for your events"
         ),
         validators=[
             DataRequired(),
+            Length(min=5, max=100),
             Regexp(
                 r"^\w+$",
                 message=lazy_gettext(
