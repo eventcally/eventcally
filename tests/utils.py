@@ -14,6 +14,7 @@ class UtilActions(object):
         self._refresh_token = None
         self._client_id = None
         self._client_secret = None
+        self._ajax_csrf = None
 
     def get_access_token(self):
         return self._access_token
@@ -82,6 +83,15 @@ class UtilActions(object):
             re.search(pattern.encode("utf-8"), response.data).group(1).decode("utf-8")
         )
 
+    def get_ajax_csrf(self, response):
+        pattern = 'var csrf_token = "(.*)";'
+        match = re.search(pattern.encode("utf-8"), response.data)
+
+        if not match:
+            return None
+
+        return match.group(1).decode("utf-8")
+
     def create_form_data(self, response, values: dict) -> dict:
         from tests.form import Form
 
@@ -101,6 +111,9 @@ class UtilActions(object):
 
         if self._access_token:
             headers["Authorization"] = f"Bearer {self._access_token}"
+
+        if self._ajax_csrf:
+            headers["X-CSRFToken"] = self._ajax_csrf
 
         return headers
 
@@ -187,7 +200,12 @@ class UtilActions(object):
         return url
 
     def get(self, url):
-        return self._client.get(url)
+        response = self._client.get(url)
+
+        if response.status_code == 200:
+            self._ajax_csrf = self.get_ajax_csrf(response)
+
+        return response
 
     def get_ok(self, url):
         response = self.get(url)

@@ -752,6 +752,7 @@
             $('#{{ prefix }}location-longitude').val(place.geometry.location.lng());
 
             $('#location_search').val('');
+            $('#location_search').trigger('place_changed');
         });
     }
     google.maps.event.addDomListener(window, 'load', initialize);
@@ -765,7 +766,7 @@
         <div class="input-group-prepend">
           <span class="input-group-text"><span><i class="fab fa-google"></i></span></span>
         </div>
-        <input id="location_search" type="text" class="form-control" placeholder="{{ _('Search location on Google') }}" runat="server" />
+        <input id="location_search" type="search" class="form-control" placeholder="{{ _('Search location on Google') }}" runat="server" />
       </div>
     </div>
   </div>
@@ -1389,4 +1390,54 @@ $('#end-container').on('hidden', function() {
       </div>
   </div>
 </div>
+{% endmacro %}
+
+{% macro render_admin_unit_form_script(admin_unit_id=None) %}
+<script>
+
+  $( function() {
+    jQuery.validator.addMethod("shortName", function(value, element) {
+      return this.optional(element) || /^\w+$/i.test(value);
+    }, jQuery.validator.format("{{ _('Short name must contain only letters numbers or underscore') }}"));
+
+    var form = $("#main-form");
+    form.validate({
+          rules: {
+          }
+      });
+
+    $("#short_name").rules("add", "shortName");
+    $("#short_name").rules("add", {
+      remote: {
+        url: "{{ url_for('js_check_org_short_name') }}",
+        type: "post"
+        {% if admin_unit_id %}
+        ,data: {
+          admin_unit_id: function() {
+            return "{{ admin_unit_id }}";
+          }
+        }
+        {% endif %}
+      }
+    });
+
+    $("#name").blur(function() {
+      if ($("#short_name").val().length == 0) {
+
+        var name = $("#name").val().toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
+        var re = /\w/g;
+        var suggestion = (name.match(re) || []).join('');
+
+        $("#short_name").val(suggestion);
+        $("#short_name").valid();
+      }
+    });
+
+    $('#location_search').on('place_changed', function() {
+      $('#location_search').closest('.card-body').find(':input').valid();
+      $('#location_search').removeClass('is-valid');
+    });
+
+  });
+</script>
 {% endmacro %}
