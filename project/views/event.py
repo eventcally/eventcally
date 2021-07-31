@@ -24,6 +24,7 @@ from project.models import (
     Event,
     EventCategory,
     EventOrganizer,
+    EventPlace,
     EventReference,
     EventReviewStatus,
     EventSuggestion,
@@ -38,8 +39,7 @@ from project.services.event import (
     update_event,
     upsert_event_category,
 )
-from project.services.place import get_event_places
-from project.utils import get_event_category_name
+from project.utils import get_event_category_name, get_place_str
 from project.views.event_suggestion import send_event_suggestion_review_status_mail
 from project.views.utils import (
     flash_errors,
@@ -103,6 +103,7 @@ def event_create_for_admin_unit_id(id):
         admin_unit_id=admin_unit.id, category_ids=[upsert_event_category("Other").id]
     )
     prepare_event_form(form, admin_unit)
+    form.organizer_id.choices.insert(0, (0, ""))
 
     # Vorlagen
     event_suggestion = None
@@ -115,6 +116,7 @@ def event_create_for_admin_unit_id(id):
         event_template = Event.query.get_or_404(event_template_id)
         if not form.is_submitted():
             form.process(obj=event_template)
+            prepare_event_place(form)
 
     if not event_template:
         event_suggestion_id = (
@@ -173,7 +175,10 @@ def event_create_for_admin_unit_id(id):
     else:
         flash_errors(form)
     return render_template(
-        "event/create.html", form=form, event_suggestion=event_suggestion
+        "event/create.html",
+        admin_unit=admin_unit,
+        form=form,
+        event_suggestion=event_suggestion,
     )
 
 
@@ -265,6 +270,14 @@ def get_event_category_choices():
     )
 
 
+def prepare_event_place(form):
+    if form.event_place_id.data and form.event_place_id.data > 0:
+        place = EventPlace.query.get(form.event_place_id.data)
+
+        if place:
+            form.event_place_id.choices = [(place.id, get_place_str(place))]
+
+
 def prepare_event_form(form, admin_unit):
     form.organizer_id.choices = [
         (o.id, o.name)
@@ -274,11 +287,7 @@ def prepare_event_form(form, admin_unit):
     ]
     form.category_ids.choices = get_event_category_choices()
 
-    places = get_event_places(admin_unit.id)
-    form.event_place_id.choices = [(p.id, p.name) for p in places]
-
-    form.organizer_id.choices.insert(0, (0, ""))
-    form.event_place_id.choices.insert(0, (0, ""))
+    prepare_event_place(form)
 
     if not form.start.data:
         form.start.data = get_next_full_hour()
@@ -322,6 +331,8 @@ def prepare_event_form_for_suggestion(form, event_suggestion):
     else:
         form.organizer_choice.data = 2
         form.new_organizer.form.name.data = event_suggestion.organizer_text
+
+    prepare_event_place(form)
 
 
 def update_event_with_form(event, form, event_suggestion=None):

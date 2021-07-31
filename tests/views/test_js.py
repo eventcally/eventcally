@@ -1,3 +1,7 @@
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
+
 def test_js_check_org_short_name(client, seeder, utils):
     seeder.create_user(admin=True)
     utils.login()
@@ -14,7 +18,7 @@ def test_js_check_org_short_name(client, seeder, utils):
             },
         )
         utils.assert_response_ok(response)
-        assert response.data == b"true"
+        assert response.json
 
 
 def test_js_check_org_short_name_exists(client, seeder, utils):
@@ -34,7 +38,7 @@ def test_js_check_org_short_name_exists(client, seeder, utils):
             },
         )
         utils.assert_response_ok(response)
-        assert response.data == b'"Der Kurzname ist bereits vergeben"'
+        assert response.json == "Der Kurzname ist bereits vergeben"
 
 
 def test_js_js_check_register_email(client, seeder, utils):
@@ -50,7 +54,7 @@ def test_js_js_check_register_email(client, seeder, utils):
             },
         )
         utils.assert_response_ok(response)
-        assert response.data == b"true"
+        assert response.json
 
 
 def test_js_js_check_register_email_exists(client, seeder, utils):
@@ -70,4 +74,74 @@ def test_js_js_check_register_email_exists(client, seeder, utils):
             },
         )
         utils.assert_response_ok(response)
-        assert response.data == b'"Mit dieser E-Mail existiert bereits ein Account."'
+        assert response.json == "Mit dieser E-Mail existiert bereits ein Account."
+
+
+def test_js_autocomplete_place(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get(url)
+
+    utils.gmaps_places_autocomplete_query.return_value = [
+        {
+            "place_id": "123",
+            "description": "Beschreibung",
+            "structured_formatting": {"main_text": "Haupttext"},
+        }
+    ]
+
+    with client:
+        url = utils.get_url(
+            "js_autocomplete_place", admin_unit_id=admin_unit_id, keyword="crew"
+        )
+        response = utils.get(url)
+
+        utils.assert_response_ok(response)
+        assert response.json["results"][0]["children"][0]["text"] == "Meine Crew"
+        assert response.json["results"][1]["children"][0]["text"] == "Beschreibung"
+
+
+def test_js_autocomplete_place_exclude_gmaps(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get(url)
+
+    with client:
+        url = utils.get_url(
+            "js_autocomplete_place",
+            admin_unit_id=admin_unit_id,
+            keyword="crew",
+            exclude_gmaps=1,
+        )
+        response = utils.get(url)
+
+        utils.assert_response_ok(response)
+        assert response.json["results"][0]["text"] == "Meine Crew"
+
+
+def test_js_autocomplete_gmaps_place(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get(url)
+
+    utils.gmaps_place.return_value = {
+        "status": "OK",
+        "result": {
+            "place_id": "123",
+        },
+    }
+
+    with client:
+        url = utils.get_url("js_autocomplete_gmaps_place", gmaps_id="123")
+        response = utils.get(url)
+
+        utils.assert_response_ok(response)
+        assert response.json["place_id"] == "123"

@@ -20,7 +20,9 @@
               },
               end: {
                 dateRangeDay: ["#start", "#end"]
-              }
+              },
+              event_place_id: "required",
+              organizer_id: "required"
             }
         });
 
@@ -50,6 +52,29 @@
       $('#place-add-btn').click(function () {
         window.open('{{ url_for("manage_admin_unit_places_create", id=event.admin_unit_id) }}');
         return false;
+      });
+
+      $('#event_place_id').select2({
+        width: '100%',
+        theme: 'bootstrap4',
+        ajax: {
+          url: "{{ url_for('js_autocomplete_place') }}",
+          dataType: 'json',
+          delay: 250,
+          cache: true,
+          data: function (params) {
+            return {
+              keyword: params.term,
+              admin_unit_id: '{{ event.admin_unit_id }}',
+              exclude_gmaps: 1,
+            };
+          }
+        },
+        placeholder: "{{ _('Enter place or address') }}"
+      });
+
+      $('#organizer_id,#event_place_id').on('select2:select', function (e) {
+          $(this).valid();
       });
 
       {{ render_end_container_handling() }}
@@ -108,7 +133,7 @@
       {{ _('Place') }}
     </div>
     <div class="card-body pb-0">
-      {{ render_field_with_errors(form.event_place_id, class="autocomplete w-100") }}
+      {{ render_field_with_errors(form.event_place_id, class="w-100") }}
     </div>
   </div>
 
@@ -146,7 +171,7 @@
       {{ _('Additional information') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.category_ids, class="autocomplete w-100") }}
+      {{ render_field_with_errors(form.category_ids, class="autocomplete-multi w-100") }}
       {{ render_field_with_errors(form.tags) }}
       {{ render_field_with_errors(form.external_link) }}
     </div>

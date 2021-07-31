@@ -1,20 +1,29 @@
 import re
 from urllib.parse import parse_qs, urlsplit
 
+import googlemaps
 from bs4 import BeautifulSoup
 from flask import g, url_for
 from sqlalchemy.exc import IntegrityError
 
 
 class UtilActions(object):
-    def __init__(self, client, app):
+    def __init__(self, client, app, mocker):
         self._client = client
         self._app = app
+        self._mocker = mocker
         self._access_token = None
         self._refresh_token = None
         self._client_id = None
         self._client_secret = None
         self._ajax_csrf = None
+
+        self.gmaps_places_autocomplete_query = self._mocker.patch.object(
+            googlemaps.Client, "places_autocomplete_query", return_value=list()
+        )
+        self.gmaps_place = self._mocker.patch.object(
+            googlemaps.Client, "place", return_value=dict()
+        )
 
     def get_access_token(self):
         return self._access_token
