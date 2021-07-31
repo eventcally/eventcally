@@ -86,7 +86,7 @@
 
     {{ render_cropper_code() }}
 
-    $('#event_place_id').select2({width: '100%', tags: true, selectOnClose: true})
+    $('#event_place_id').select2({width: '100%', language: 'de', tags: true, theme: 'bootstrap4'})
       .on('select2:select', function (e) {
         var item = $('#event_place_id').select2('data')[0];
         var needs_suffix = item.id != '' && item.id == item.text;
@@ -100,7 +100,7 @@
         }
       });
 
-    $('#organizer_id').select2({width: '100%', tags: true, selectOnClose: true})
+    $('#organizer_id').select2({width: '100%', language: 'de', tags: true, theme: 'bootstrap4'})
       .on('select2:select', function (e) {
         var item = $('#organizer_id').select2('data')[0];
         var needs_suffix = item.id != '' && item.id == item.text;
@@ -257,7 +257,7 @@
         {{ render_field_with_errors(form.age_to) }}
         {{ render_field_with_errors(form.expected_participants) }}
         <hr />
-        {{ render_field_with_errors(form.category_ids, class="autocomplete w-100") }}
+        {{ render_field_with_errors(form.category_ids, class="autocomplete-multi w-100") }}
         {{ render_field_with_errors(form.tags) }}
         {{ render_field_with_errors(form.external_link) }}
         <div class="d-flex justify-content-between">

@@ -17,6 +17,7 @@ def pytest_generate_tests(metafunc):
     os.environ[
         "JWT_PUBLIC_JWKS"
     ] = '{"keys":[{"kid":"default","kty":"RSA","use":"sig","alg":"RS256","n":"vy41pD9VTDVmGVxkeSPUDGuzULf0rfVFypnVnBO12l0V_fXU0Rdqf9qlSCklwSWFT7XcGRS9gDw_HGkbQ2qycmQ0-S2FbU65D3VKR1amqtMgonDFwNinoCEBfh6H52RpvduKmdMZ3PfhqTZP5rStxs7uHuAa-BBzqCl4fTBcwB-sDM-lE5tPuGkoXCZAEllw7G5lHKETZJt2dsvf0aBlPSb-pITQkLLSC1OjbAHmo3h7PP1yQU0qnHsCJv7BhGIFTy3cfvbsa1QdNxI3VHg7ZP2vs-JFm4cDxdk-nft8dDnP8z42kha0iqiLAWDLOyyk-kP7EHvn0jgpZM6N6tzJxw","e":"AQAB"}]}'
+    os.environ["GOOGLE_MAPS_API_KEY"] = "AIzaDummy"
 
 
 @pytest.fixture
@@ -49,8 +50,8 @@ def client(app, db):
 
 
 @pytest.fixture
-def utils(client, app):
-    return UtilActions(client, app)
+def utils(client, app, mocker):
+    return UtilActions(client, app, mocker)
 
 
 @pytest.fixture

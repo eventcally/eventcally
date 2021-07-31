@@ -17,6 +17,7 @@ from wtforms.fields.html5 import EmailField, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
 from project.forms.common import Base64ImageForm, event_rating_choices
+from project.forms.event_place import EventPlaceLocationForm
 from project.forms.widgets import CustomDateField, CustomDateTimeField, HTML5StringField
 from project.models import (
     EventAttendanceMode,
@@ -27,12 +28,6 @@ from project.models import (
     Image,
     Location,
 )
-
-
-class EventPlaceLocationForm(FlaskForm):
-    street = StringField(lazy_gettext("Street"), validators=[Optional()])
-    postalCode = StringField(lazy_gettext("Postal code"), validators=[Optional()])
-    city = StringField(lazy_gettext("City"), validators=[Optional()])
 
 
 class EventPlaceForm(FlaskForm):
@@ -301,12 +296,16 @@ class CreateEventForm(BaseEventForm):
     def validate(self):
         if not super(BaseEventForm, self).validate():
             return False
-        if self.event_place_id.data == 0 and not self.new_event_place.form.name.data:
+        if (
+            not self.event_place_id.data or self.event_place_id.data == 0
+        ) and not self.new_event_place.form.name.data:
             msg = gettext("Select existing place or enter new place")
             self.event_place_id.errors.append(msg)
             self.new_event_place.form.name.errors.append(msg)
             return False
-        if self.organizer_id.data == 0 and not self.new_organizer.form.name.data:
+        if (
+            not self.organizer_id.data or self.organizer_id.data == 0
+        ) and not self.new_organizer.form.name.data:
             msg = gettext("Select existing organizer or enter new organizer")
             self.organizer_id.errors.append(msg)
             self.new_organizer.form.name.errors.append(msg)
