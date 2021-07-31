@@ -23,9 +23,16 @@ def upsert_event_place(admin_unit_id, name):
     return result
 
 
-def get_event_places(admin_unit_id):
-    return (
-        EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
-        .order_by(func.lower(EventPlace.name))
-        .all()
-    )
+def get_event_places(admin_unit_id, keyword=None, limit=None):
+    query = EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
+
+    if keyword:
+        like_keyword = "%" + keyword + "%"
+        query = query.filter(EventPlace.name.ilike(like_keyword))
+
+    query = query.order_by(func.lower(EventPlace.name))
+
+    if limit:
+        query = query.limit(5)
+
+    return query.all()

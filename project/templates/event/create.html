@@ -6,7 +6,6 @@
 {% block header_before_site_js %}
 {{ render_jquery_steps_header() }}
 {{ render_cropper_header() }}
-{{ render_google_place_autocomplete_header(False, 'new_event_place-') }}
 <script>
 $( function() {
 
@@ -20,6 +19,38 @@ $( function() {
           },
           end: {
             dateRangeDay: ["#start", "#end"]
+          },
+          event_place_id: {
+            required: {
+              param: true,
+              depends: function(element) {
+                return $('input[type=radio][name=event_place_choice]:checked').val() == "1";
+              }
+            }
+          },
+          "new_event_place-name": {
+            required: {
+              param: true,
+              depends: function(element) {
+                return $('input[type=radio][name=event_place_choice]:checked').val() == "2";
+              }
+            }
+          },
+          organizer_id: {
+            min: {
+              param: 1,
+              depends: function(element) {
+                return $('input[type=radio][name=organizer_choice]:checked').val() == "1";
+              }
+            }
+          },
+          "new_organizer-name": {
+            required: {
+              param: true,
+              depends: function(element) {
+                return $('input[type=radio][name=organizer_choice]:checked').val() == "2";
+              }
+            }
           }
         }
     });
@@ -37,8 +68,97 @@ $( function() {
     }
   }
 
+  $('#event_place_id').select2({
+    width: '100%',
+    theme: 'bootstrap4',
+    tags: true,
+    ajax: {
+      url: "{{ url_for('js_autocomplete_place') }}",
+      dataType: 'json',
+      delay: 250,
+      cache: true,
+      data: function (params) {
+        return {
+          keyword: params.term,
+          admin_unit_id: '{{ admin_unit.id }}'
+        };
+      }
+    },
+    placeholder: "{{ _('Enter place or address') }}",
+    createTag: function (params) {
+      var term = $.trim(params.term);
+
+      if (term === '') {
+        return null;
+      }
+
+      return {
+        id: term,
+        text: "{{ _('Just use %(term)s', term='%(term)s') }}".replace("%(term)s", term),
+        term: term,
+        is_new_tag: true
+      }
+    },
+    insertTag: function (data, tag) {
+      data.push(tag);
+    },
+    templateResult: function (state) {
+      if ("is_new_tag" in state) {
+        return $("<strong>" + state.text + "</strong>");
+      }
+      return state.text;
+    }
+  });
+
+  function get_gmaps_place_details(place_id) {
+    $.ajax({
+        url: "{{ url_for('js_autocomplete_gmaps_place') }}",
+        type: "get",
+        dataType: "json",
+        data: "gmaps_id=" + place_id,
+        success: function (data) {
+          fill_place_form_with_gmaps_place(data, 'new_event_place-');
+          $('#new_place_container').find(':input').valid();
+        }
+    });
+  }
+
+  $('#event_place_id').on('select2:close', function (e) {
+    var dataArray = $(e.target).select2('data');
+    var data = {};
+
+    if (dataArray.length > 0) {
+      data = dataArray[0];
+    }
+
+    if ("is_new_tag" in data || "gmaps_id" in data) {
+      $(this).val(null).trigger('change');
+      $('input[type=radio][name=event_place_choice][value=2]').click();
+      reset_place_form('new_event_place-');
+
+      if ("is_new_tag" in data) {
+        $('#new_event_place-name').val(data.term);
+      } else {
+        $('#new_event_place-name').val(data.main_text);
+        get_gmaps_place_details(data.gmaps_id);
+      }
+
+      $('#new_place_container').find(':input').valid();
+      $(this).removeClass('is-valid');
+    } else {
+      $(this).valid();
+    }
+  });
+
   $('input[type=radio][name=event_place_choice]').on('change', function() {
     update_place_container($(this).val());
+  });
+
+  $('#new_place_container_search_link').click(function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      reset_place_form('new_event_place-');
+      $('input[type=radio][name=event_place_choice][value=1]').click();
   });
 
   update_place_container($('input[type=radio][name=event_place_choice]:checked').val());
@@ -58,6 +178,10 @@ $( function() {
 
   $('input[type=radio][name=organizer_choice]').on('change', function() {
     update_organizer_container($(this).val());
+  });
+
+  $('#organizer_id').on('select2:select', function (e) {
+      $(this).valid();
   });
 
   update_organizer_container($('input[type=radio][name=organizer_choice]:checked').val());
@@ -127,21 +251,27 @@ $( function() {
 
       <div>
         <div class="form-text mt-0 text-muted w-100">{{ _("Choose where the event takes place. If the venue is not yet in the list, just enter it.") }}</div>
-        {{ render_radio_buttons(form.event_place_choice) }}
+        <div style="display: none;">{{ render_radio_buttons(form.event_place_choice) }}</div>
       </div>
 
       <div class="my-2" id="existing_place_container">
-        {{ render_field_with_errors(form.event_place_id, class="autocomplete w-100", is_required=True) }}
+        {{ render_field_with_errors(form.event_place_id, class="w-100", is_required=True) }}
       </div>
 
       <div class="my-2" id="new_place_container">
-        {{ render_google_place_autocomplete_field() }}
         {{ form.new_event_place.hidden_tag() }}
         {{ render_field_with_errors(form.new_event_place.form.name, is_required=True) }}
         {{ form.new_event_place.form.location.hidden_tag() }}
         {{ render_field_with_errors(form.new_event_place.form.location.street) }}
         {{ render_field_with_errors(form.new_event_place.form.location.postalCode) }}
         {{ render_field_with_errors(form.new_event_place.form.location.city) }}
+        {{ render_field_with_errors(form.new_event_place.form.location.state) }}
+        {{ render_field_with_errors(form.new_event_place.form.location.latitude) }}
+        {{ render_field_with_errors(form.new_event_place.form.location.longitude) }}
+
+        <div class="my-4">
+          <a href="#" id="new_place_container_search_link"><i class="fa fa-search"></i> {{ _('Switch to place search') }}</a>
+        </div>
       </div>
 
     </div>
@@ -181,7 +311,7 @@ $( function() {
       {{ _('Additional information') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.category_ids, class="autocomplete w-100") }}
+      {{ render_field_with_errors(form.category_ids, class="autocomplete-multi w-100") }}
       {{ render_field_with_errors(form.tags) }}
       {{ render_field_with_errors(form.external_link) }}
     </div>

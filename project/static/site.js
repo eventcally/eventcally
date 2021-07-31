@@ -243,9 +243,65 @@ function handle_request_success(result_id = '#result_container', spinner_id = '#
     $(error_id).hide();
 }
 
+function reset_place_form(prefix = '') {
+    $('#' + prefix + 'name').val('');
+    $('#' + prefix + 'url').val('');
+    $('#' + prefix + 'location-street').val('');
+    $('#' + prefix + 'location-postalCode').val('');
+    $('#' + prefix + 'location-city').val('');
+    $('#' + prefix + 'location-state').val('');
+    $('#' + prefix + 'location-latitude').val('');
+    $('#' + prefix + 'location-longitude').val('');
+}
+
+function fill_place_form_with_gmaps_place(place, prefix = '', location_only = false) {
+    var street_number = "";
+    var route = "";
+    var city = "";
+
+    for (var i = 0; i < place.address_components.length; i++) {
+        var component = place.address_components[i]
+        var addressType = component.types[0];
+        var val = component.long_name
+
+        if (addressType == 'street_number') {
+        street_number = val;
+        } else if (addressType == 'route') {
+        route = val;
+        } else if (addressType == 'locality') {
+        city = val;
+        } else if (addressType == 'administrative_area_level_1') {
+        $('#' + prefix + 'location-state').val(val);
+        } else if (addressType == 'postal_code') {
+        $('#' + prefix + 'location-postalCode').val(val);
+        }
+    }
+
+    if (!location_only) {
+        $('#' + prefix + 'name').val(place.name);
+
+        if (place.website) {
+            $('#' + prefix + 'url').val(place.website);
+        }
+    }
+
+    $('#' + prefix + 'location-street').val([route, street_number].join(' '));
+    $('#' + prefix + 'location-city').val(city);
+    $('#' + prefix + 'location-latitude').val(place.geometry.location.lat);
+    $('#' + prefix + 'location-longitude').val(place.geometry.location.lng);
+}
+
 $( function() {
     $('[data-toggle="tooltip"]').tooltip();
-    $('.autocomplete').select2({width: '100%'});
+
+    $.fn.select2.defaults.set("language", "de");
+    $('.autocomplete').select2({
+        width: '100%',
+        theme: 'bootstrap4'
+    });
+    $('.autocomplete-multi').select2({
+        width: '100%'
+    });
 
     $('.datepicker').each(function (index, element){
         start_datepicker($(element));
