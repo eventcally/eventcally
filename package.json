@@ -1,0 +1,27 @@
+{
+  "name": "oveda",
+  "version": "1.0.0",
+  "description": "![Tests](https://github.com/DanielGrams/gsevpt/workflows/Tests/badge.svg) [![codecov](https://codecov.io/gh/DanielGrams/gsevpt/branch/main/graph/badge.svg?token=66CLLWWV7Y)](https://codecov.io/gh/DanielGrams/gsevpt) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![Docker Pulls](https://img.shields.io/docker/pulls/danielgrams/gsevpt)",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cy:run": "cypress run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielGrams/gsevpt.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DanielGrams/gsevpt/issues"
+  },
+  "homepage": "https://github.com/DanielGrams/gsevpt#readme",
+  "devDependencies": {
+    "cypress": "^8.1.0"
+  }
+}
