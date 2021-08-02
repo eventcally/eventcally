@@ -54,8 +54,8 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
-        env:
-          CYPRESS_DATABASE_URL: postgresql://postgres:postgres@localhost/gsevpt_tests
         with:
           wait-on: "http://127.0.0.1:5001"
           config: baseUrl=http://127.0.0.1:5001
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost/gsevpt_tests
