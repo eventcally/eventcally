@@ -23,3 +23,13 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add('logexec', (command) => {
+    cy.exec(command, { failOnNonZeroExit: false }).then(result => {
+        if (result.code) {
+          throw new Error(`Execution of "${command}" failed
+          Exit code: ${result.code}
+          Stdout:\n${result.stdout}
+          Stderr:\n${result.stderr}`);
+        }
+      })
+})
