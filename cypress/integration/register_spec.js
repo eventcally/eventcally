@@ -1,8 +1,7 @@
 describe('Register', () => {
     beforeEach(() => {
-        cy.exec('flask database reset --seed')
+        cy.logexec('flask database reset --seed')
     })
-
 
     it('registers user', () => {
         cy.visit('/register')
