@@ -3,6 +3,9 @@ name: Cypress
 # Controls when the action will run.
 on: [push, pull_request, workflow_dispatch]
 
+env:
+  LANG: "de_DE.UTF-8"
+
 jobs:
   # Label of the container job
   runner-job:
