@@ -9,6 +9,11 @@ env:
 jobs:
   # Label of the container job
   runner-job:
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ["desktop", "mobile"]
+
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
 
@@ -60,6 +65,7 @@ jobs:
         with:
           record: true
           wait-on: "http://127.0.0.1:5001"
+          config-file: cypress/config/${{ matrix.config }}.json
           config: baseUrl=http://127.0.0.1:5001
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost/gsevpt_tests

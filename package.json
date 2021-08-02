@@ -8,8 +8,8 @@
     "test": "tests"
   },
   "scripts": {
-    "cypress:open": "cypress open",
-    "cy:run": "cypress run"
+    "cypress:open": "cypress open --config-file cypress/config/desktop.json",
+    "cypress:open:mobile": "cypress open --config-file cypress/config/mobile.json"
   },
   "repository": {
     "type": "git",
