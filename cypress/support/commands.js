@@ -1,28 +1,3 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 Cypress.Commands.add('logexec', (command) => {
     cy.exec(command, { failOnNonZeroExit: false }).then(result => {
         if (result.code) {
@@ -32,4 +7,33 @@ Cypress.Commands.add('logexec', (command) => {
           Stderr:\n${result.stderr}`);
         }
       })
+})
+
+Cypress.Commands.add('setup', () => {
+  cy.logexec('flask database reset --seed')
+  cy.logexec('flask user create test@test.de password --confirm')
+})
+
+Cypress.Commands.add('assertValid', (fieldId) => {
+  cy.get('#' + fieldId).should('have.class', 'is-valid')
+  cy.get('#' + fieldId + '-error').should('be.empty')
+})
+
+
+Cypress.Commands.add('assertInvalid', (fieldId, msg) => {
+  cy.get('#' + fieldId).should('have.class', 'is-invalid')
+  cy.get('#' + fieldId + '-error').should('contain', msg)
+})
+
+Cypress.Commands.add('assertRequired', (fieldId) => {
+  cy.assertInvalid(fieldId, 'Pflichtfeld')
+})
+
+Cypress.Commands.add('login', (email = "test@test.de", password = "password") => {
+  cy.visit('/login')
+  cy.get('#email').type(email)
+  cy.get('#password').type(password)
+  cy.get('#submit').click()
+  cy.url().should('include', '/manage')
+  cy.getCookie('session').should('exist')
 })

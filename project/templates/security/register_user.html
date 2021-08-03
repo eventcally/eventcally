@@ -26,7 +26,8 @@
             required: true,
             minlength: 8,
             equalTo: "#password"
-          }
+          },
+          accept_tos: "required",
         }
     });
 });
@@ -45,8 +46,10 @@
   {% endif %}
 
   <div class="form-group form-check">
-    {{ register_user_form.accept_tos(class="form-check-input")|safe }}
-    {{ register_user_form.accept_tos.label(class="form-check-label") }}
+    <div class="input-group">
+      {{ register_user_form.accept_tos(class="form-check-input")|safe }}
+      {{ register_user_form.accept_tos.label(class="form-check-label") }}
+    </div>
   </div>
 
   {{ render_field(register_user_form.submit) }}
