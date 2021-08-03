@@ -1,4 +1,3 @@
-# pragma: no cover
 import click
 from flask.cli import AppGroup
 from sqlalchemy import MetaData
