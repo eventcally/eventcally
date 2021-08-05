@@ -5,9 +5,14 @@ __pycache__/
 
 .env
 runlocal.sh
+runcypress.sh
+runpytest.sh
 tmp/
 app.yaml
 deployment.yaml
+node_modules
+cypress/videos
+cypress/screenshots
 
 # C extensions
 *.so
