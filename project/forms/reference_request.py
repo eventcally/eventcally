@@ -40,13 +40,17 @@ class ReferenceRequestReviewForm(FlaskForm):
                 lazy_gettext("EventReferenceRequestReviewStatus.rejected"),
             ),
         ],
+        description=lazy_gettext("Choose the result of your review."),
     )
 
     rejection_reason = SelectField(
         lazy_gettext("Rejection reason"),
         coerce=int,
         choices=[
-            (0, ""),
+            (
+                0,
+                lazy_gettext("EventReferenceRequestRejectionReason.noreason"),
+            ),
             (
                 int(EventReferenceRequestRejectionReason.duplicate),
                 lazy_gettext("EventReferenceRequestRejectionReason.duplicate"),
@@ -64,6 +68,7 @@ class ReferenceRequestReviewForm(FlaskForm):
                 lazy_gettext("EventReferenceRequestRejectionReason.illegal"),
             ),
         ],
+        description=lazy_gettext("Choose why you rejected the request."),
     )
 
     rating = SelectField(
