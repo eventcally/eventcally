@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-08-06 08:22+0200\n"
+"POT-Creation-Date: 2021-08-06 13:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -165,24 +165,24 @@ msgstr ""
 msgid "."
 msgstr ""
 
-#: project/forms/admin.py:10 project/templates/layout.html:259
+#: project/forms/admin.py:10 project/templates/layout.html:329
 #: project/views/root.py:42
 msgid "Terms of service"
 msgstr ""
 
-#: project/forms/admin.py:11 project/templates/layout.html:263
+#: project/forms/admin.py:11 project/templates/layout.html:333
 #: project/views/root.py:50
 msgid "Legal notice"
 msgstr ""
 
 #: project/forms/admin.py:12 project/templates/_macros.html:1280
-#: project/templates/layout.html:267
+#: project/templates/layout.html:337
 #: project/templates/widget/event_suggestion/create.html:172
 #: project/views/admin_unit.py:36 project/views/root.py:58
 msgid "Contact"
 msgstr ""
 
-#: project/forms/admin.py:13 project/templates/layout.html:271
+#: project/forms/admin.py:13 project/templates/layout.html:341
 #: project/views/root.py:66
 msgid "Privacy"
 msgstr ""
@@ -698,7 +698,7 @@ msgid "Enter new organizer"
 msgstr ""
 
 #: project/forms/event.py:276 project/templates/event/create.html:4
-#: project/templates/event/create.html:195
+#: project/templates/event/create.html:195 project/templates/layout.html:254
 #: project/templates/manage/events.html:12
 #: project/templates/manage/organizers.html:21
 msgid "Create event"
@@ -929,6 +929,7 @@ msgstr ""
 #: project/templates/_macros.html:521 project/templates/_macros.html:681
 #: project/templates/admin_unit/create.html:19
 #: project/templates/admin_unit/update.html:20
+#: project/templates/layout.html:284
 msgid "Organization"
 msgstr ""
 
@@ -1186,7 +1187,7 @@ msgstr ""
 msgid "Other calendar"
 msgstr ""
 
-#: project/templates/home.html:27 project/templates/layout.html:205
+#: project/templates/home.html:27
 msgid "Manage"
 msgstr ""
 
@@ -1195,22 +1196,31 @@ msgstr ""
 msgid "Register for free"
 msgstr ""
 
-#: project/templates/event_place/read.html:22 project/templates/layout.html:208
-#: project/templates/layout_manage.html:24
-#: project/templates/manage/events.html:5
+#: project/templates/event_place/read.html:22 project/templates/layout.html:204
+#: project/templates/layout.html:247 project/templates/manage/events.html:5
 #: project/templates/manage/events.html:9
 msgid "Events"
 msgstr ""
 
-#: project/templates/layout.html:209
+#: project/templates/layout.html:205
 msgid "Planing"
 msgstr ""
 
-#: project/templates/layout.html:210
+#: project/templates/layout.html:206
 msgid "Example"
 msgstr ""
 
-#: project/templates/layout.html:219
+#: project/templates/admin/admin.html:19
+#: project/templates/admin/admin_units.html:4
+#: project/templates/admin/admin_units.html:11
+#: project/templates/layout.html:215
+#: project/templates/manage/admin_units.html:3
+#: project/templates/manage/admin_units.html:16
+#: project/templates/profile.html:60
+msgid "Organizations"
+msgstr ""
+
+#: project/templates/layout.html:216
 #: project/templates/oauth2_client/list.html:10
 #: project/templates/oauth2_client/read.html:10
 #: project/templates/oauth2_token/list.html:10 project/templates/profile.html:4
@@ -1220,85 +1230,87 @@ msgstr ""
 
 #: project/templates/admin/admin.html:3 project/templates/admin/admin.html:9
 #: project/templates/admin/admin_units.html:10
-#: project/templates/admin/users.html:10 project/templates/layout.html:222
+#: project/templates/admin/users.html:10 project/templates/layout.html:219
 msgid "Admin"
 msgstr ""
 
-#: project/templates/layout.html:226
+#: project/templates/layout.html:223
 msgid "Logout"
 msgstr ""
 
-#: project/templates/developer/read.html:4 project/templates/layout.html:281
-#: project/templates/profile.html:29
-msgid "Developer"
+#: project/templates/layout.html:253
+msgid "Show events"
 msgstr ""
 
-#: project/templates/layout_manage.html:25
-#: project/templates/manage/organizers.html:5
-#: project/templates/manage/organizers.html:9
-msgid "Organizers"
+#: project/templates/layout.html:256
+msgid "Review suggestions"
 msgstr ""
 
-#: project/templates/event_place/list.html:3
-#: project/templates/event_place/list.html:7
-#: project/templates/layout_manage.html:26
-#: project/templates/manage/places.html:5
-#: project/templates/manage/places.html:9
-msgid "Places"
-msgstr ""
-
-#: project/templates/layout_manage.html:27
-#: project/templates/manage/reviews.html:5
-#: project/templates/manage/reviews.html:9
-msgid "Reviews"
-msgstr ""
-
-#: project/templates/layout_manage.html:30
+#: project/templates/layout.html:265
 #: project/templates/manage/references_incoming.html:5
 #: project/templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr ""
 
-#: project/templates/layout_manage.html:36
+#: project/templates/layout.html:271
 #: project/templates/manage/references_incoming.html:9
 msgid "Incoming references"
 msgstr ""
 
-#: project/templates/layout_manage.html:37
+#: project/templates/layout.html:272
 #: project/templates/manage/references_outgoing.html:9
 msgid "Outgoing references"
 msgstr ""
 
-#: project/templates/layout_manage.html:38
+#: project/templates/layout.html:274
 #: project/templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
 msgstr ""
 
-#: project/templates/layout_manage.html:43
+#: project/templates/layout.html:279
 #: project/templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
 msgstr ""
 
-#: project/templates/layout_manage.html:46
-#: project/templates/manage/members.html:5
-#: project/templates/manage/members.html:28
-msgid "Members"
+#: project/templates/layout.html:287 project/templates/manage/organizers.html:5
+#: project/templates/manage/organizers.html:9
+msgid "Organizers"
 msgstr ""
 
-#: project/templates/layout_manage.html:47
-#: project/templates/manage/reviews.html:10
-#: project/templates/manage/widgets.html:5
-#: project/templates/manage/widgets.html:9
-msgid "Widgets"
+#: project/templates/event_place/list.html:3
+#: project/templates/event_place/list.html:7 project/templates/layout.html:288
+#: project/templates/manage/places.html:5
+#: project/templates/manage/places.html:9
+msgid "Places"
+msgstr ""
+
+#: project/templates/layout.html:290 project/templates/manage/members.html:5
+#: project/templates/manage/members.html:28
+msgid "Members"
 msgstr ""
 
 #: project/templates/admin/admin.html:15
 #: project/templates/admin/settings.html:4
 #: project/templates/admin/settings.html:8
 #: project/templates/admin_unit/update.html:14
-#: project/templates/layout_manage.html:48
-#: project/templates/manage/widgets.html:12 project/templates/profile.html:19
+#: project/templates/layout.html:291 project/templates/manage/widgets.html:12
+#: project/templates/profile.html:19
 msgid "Settings"
+msgstr ""
+
+#: project/templates/layout.html:292 project/templates/manage/reviews.html:10
+#: project/templates/manage/widgets.html:5
+#: project/templates/manage/widgets.html:9
+msgid "Widgets"
+msgstr ""
+
+#: project/templates/layout.html:302
+msgid "Switch organization"
+msgstr ""
+
+#: project/templates/developer/read.html:4 project/templates/layout.html:351
+#: project/templates/profile.html:29
+msgid "Developer"
 msgstr ""
 
 #: project/templates/profile.html:23
@@ -1315,15 +1327,6 @@ msgstr ""
 #: project/templates/manage/admin_units.html:8
 #: project/templates/manage/members.html:9 project/templates/profile.html:40
 msgid "Invitations"
-msgstr ""
-
-#: project/templates/admin/admin.html:19
-#: project/templates/admin/admin_units.html:4
-#: project/templates/admin/admin_units.html:11
-#: project/templates/manage/admin_units.html:3
-#: project/templates/manage/admin_units.html:16
-#: project/templates/profile.html:60
-msgid "Organizations"
 msgstr ""
 
 #: project/templates/admin/admin.html:23 project/templates/admin/users.html:4
@@ -1568,6 +1571,11 @@ msgstr ""
 
 #: project/templates/manage/reference_requests_outgoing.html:19
 msgid "Show review status"
+msgstr ""
+
+#: project/templates/manage/reviews.html:5
+#: project/templates/manage/reviews.html:9
+msgid "Reviews"
 msgstr ""
 
 #: project/templates/manage/widgets.html:25
