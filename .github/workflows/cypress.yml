@@ -59,7 +59,7 @@ jobs:
           gunicorn -b 127.0.0.1:5001 -w 1 project:app --daemon
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost/gsevpt_tests
-          TEST: 1
+          TESTING: 1
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
@@ -70,7 +70,7 @@ jobs:
           config: baseUrl=http://127.0.0.1:5001
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost/gsevpt_tests
-          TEST: 1
+          TESTING: 1
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
