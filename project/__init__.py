@@ -154,10 +154,13 @@ import project.api
 
 # Command line
 import project.cli.cache
-import project.cli.database
 import project.cli.dump
 import project.cli.event
 import project.cli.seo
+
+if os.getenv("TESTING", False):  # pragma: no cover
+    import project.cli.test
+
 import project.cli.user
 from project import i10n, init_data, jinja_filters
 
