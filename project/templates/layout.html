@@ -192,7 +192,7 @@
         {% endif %}
       {%- endblock gtm_body %}
       {% block navbar %}
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
           <a class="navbar-brand" href="{{ url_for('home') }}">
             <img src="{{ url_for('static', filename='calendar_icon_90.png')}}" width="30" height="30" class="d-inline-block align-top rounded" alt="Logo"> Oveda
           </a>
@@ -201,10 +201,6 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div class="navbar-nav mr-auto">
-                {% if current_user.is_authenticated %}
-                <a class="nav-item nav-link" href="{{ url_for('manage') }}">{{ _('Manage') }}</a>
-                {% endif %}
-
                 <a class="nav-item nav-link" href="{{ url_for('event_dates') }}">{{ _('Events') }}</a>
                 <a class="nav-item nav-link" href="{{ url_for('planing') }}">{{ _('Planing') }}</a>
                 <a class="nav-item nav-link" href="{{ url_for('example') }}">{{ _('Example') }}</a>
@@ -212,10 +208,11 @@
               <div class="navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
                   <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       {{ current_user.email }}
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
+                      <a class="dropdown-item" href="{{ url_for('manage_admin_units') }}">{{ _('Organizations') }}</a>
                       <a class="dropdown-item" href="{{ url_for('profile') }}">{{ _('Profile') }}</a>
 
                       {% if current_user.has_role('admin') %}
@@ -236,6 +233,79 @@
           </div>
       </nav>
       {%- endblock navbar %}
+      {% if current_admin_unit %}
+      {% set menu_options = get_manage_menu_options(current_admin_unit) %}
+      <nav class="navbar navbar-expand-md navbar-light bg-light">
+          <span></span>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAdminUnitMarkup" aria-controls="navbarNavAdminUnitMarkup" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAdminUnitMarkup">
+              <div class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-truncate" href="#" id="navbarAdminUnitEventsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ _('Events') }}
+                    {% if menu_options['reviews_badge'] > 0 %}
+                      <span class="badge badge-secondary badge-pill">{{ menu_options['reviews_badge'] }}</span>
+                    {% endif %}
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarAdminUnitEventsDropdown">
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_events', id=current_admin_unit.id) }}">{{ _('Show events') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=current_admin_unit.id) }}">{{ _('Create event') }}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_event_reviews', id=current_admin_unit.id) }}">{{ _('Review suggestions') }}
+                      {% if menu_options['reviews_badge'] > 0 %}
+                        <span class="badge badge-secondary badge-pill">{{ menu_options['reviews_badge'] }}</span>
+                      {% endif %}
+                    </a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-truncate" href="#" id="navbarAdminUnitReferencesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ _('References') }}
+                    {% if menu_options['reference_requests_incoming_badge'] > 0 %}
+                      <span class="badge badge-secondary badge-pill">{{ menu_options['reference_requests_incoming_badge'] }}</span>
+                    {% endif %}
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarAdminUnitReferencesDropdown">
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_references_incoming', id=current_admin_unit.id) }}">{{ _('Incoming references') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_references_outgoing', id=current_admin_unit.id) }}">{{ _('Outgoing references') }}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_reference_requests_incoming', id=current_admin_unit.id) }}">{{ _('Incoming reference requests') }}
+                      {% if menu_options['reference_requests_incoming_badge'] > 0 %}
+                        <span class="badge badge-secondary badge-pill">{{ menu_options['reference_requests_incoming_badge'] }}</span>
+                      {% endif %}
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_reference_requests_outgoing', id=current_admin_unit.id) }}">{{ _('Outgoing reference requests') }}</a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-truncate" href="#" id="navbarAdminUnitOrganizationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ _('Organization') }}
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarAdminUnitOrganizationDropdown">
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_organizers', id=current_admin_unit.id) }}">{{ _('Organizers') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_event_places', id=current_admin_unit.id) }}">{{ _('Places') }}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_members', id=current_admin_unit.id) }}">{{ _('Members') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('admin_unit_update', id=current_admin_unit.id) }}">{{ _('Settings') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_widgets', id=current_admin_unit.id) }}">{{ _('Widgets') }}</a>
+                  </div>
+                </li>
+              </div>
+              <div class="navbar-nav navbar-right">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarAdminUnitSwitchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ current_admin_unit.name }}
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarAdminUnitSwitchDropdown">
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_units') }}">{{ _('Switch organization') }}</a>
+                  </div>
+                </li>
+              </div>
+          </div>
+      </nav>
+      {% endif %}
 
       <div class="body-content"{% block body_content__attribs %}{% endblock body_content__attribs %}>
 

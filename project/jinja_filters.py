@@ -1,7 +1,7 @@
 import os
 from urllib.parse import quote_plus
 
-from flask import url_for
+from flask import request, url_for
 
 from project import app
 from project.utils import (
@@ -80,6 +80,27 @@ def get_context_processors():
             "reference_requests_incoming_badge": reference_requests_incoming_badge,
         }
 
+    def get_current_admin_unit():
+        from flask_security import current_user
+
+        from project.access import get_admin_unit_for_manage, get_admin_units_for_manage
+
+        admin_unit = None
+
+        if current_user.is_authenticated:
+            if "manage_admin_unit_id" in request.cookies:
+                manage_admin_unit_id = int(request.cookies.get("manage_admin_unit_id"))
+                admin_unit = get_admin_unit_for_manage(manage_admin_unit_id)
+
+            if not admin_unit:
+                admin_units = get_admin_units_for_manage()
+
+                if len(admin_units) > 0:
+                    admin_unit = admin_units[0]
+
+        return admin_unit
+
     return dict(
+        current_admin_unit=get_current_admin_unit(),
         get_manage_menu_options=get_manage_menu_options,
     )
