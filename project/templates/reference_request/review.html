@@ -1,24 +1,49 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_radio_buttons, render_phone_prop, render_email_prop, render_string_prop, render_field_with_errors, render_field, render_event_props, render_image_with_link, render_place, render_link_prop %}
+{% from "_macros.html" import render_jquery_steps_header, render_phone_prop, render_email_prop, render_string_prop, render_field_with_errors, render_field, render_event_props, render_image_with_link, render_place, render_link_prop %}
 {%- block title -%}
 {{ event.name }}
 {%- endblock -%}
+{% block header_before_site_js %}
+{{ render_jquery_steps_header() }}
+<script>
+$( function() {
+
+    function update_input_visibility(value) {
+        switch (value) {
+            case '0':
+                $('#review_status_container').hide();
+                $('#rating_container').hide();
+                break;
+            case '1':
+                $('#review_status_container').hide();
+                $('#rating_container').show();
+                break;
+            case '2':
+                $('#review_status_container').show();
+                $('#rating_container').hide();
+                break;
+        }
+    }
+
+    $('input[name=review_status]').on('change', function() {
+        update_input_visibility($(this).val());
+    });
+
+    update_input_visibility($('input[name=review_status]:checked').val());
+
+    $('#acceptFormModal .btn-success').click(function() {
+        $('#acceptFormModal form').submit();
+    });
+
+    $('#rejectFormModal .btn-danger').click(function() {
+        $('#rejectFormModal form').submit();
+    });
+});
+</script>
+{% endblock %}
 {% block content %}
 
 <h1>{{ _('Review event reference request') }}</h1>
-
-<form action="" method="POST">
-    {{ form.hidden_tag() }}
-
-    {{ render_field_with_errors(form.review_status) }}
-    {{ render_field_with_errors(form.rejection_reason) }}
-
-    {% if form.rating.choices|length > 1 %}
-        {{ render_field_with_errors(form.rating) }}
-    {% endif %}
-
-    {{ render_field(form.submit) }}
-</form>
 
 <div class="mt-3 w-normal">
 
@@ -29,13 +54,73 @@
             <div class="card-header">
                 <a name="event-dates">{{ _('Event Dates') }}</a>
             </div>
-            <div class="list-group list-group-flush">
+            <div class="list-group list-group-flush" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
             {% for date in dates %}
-                <a href="#" class="list-group-item">{{ date.start | datetimeformat('short') }}</a>
+                <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item">{{ date.start | datetimeformat('short') }}</a>
             {% endfor %}
             </div>
         </div>
     {% endif %}
+
+    <div class="d-flex justify-content-between my-4 decision-container">
+        <button type="button" class="btn btn-success m-1" data-toggle="modal" data-target="#acceptFormModal"><i class="fa fa-check"></i> {{ _('Accept reference request') }}&hellip;</button>
+        <button type="button" class="btn btn-danger m-1" data-toggle="modal" data-target="#rejectFormModal"><i class="fa fa-ban"></i> {{ _('Reject reference request') }}&hellip;</button>
+    </div>
+
+    <div class="modal fade" id="acceptFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ _('Accept reference request') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="POST">
+                        {{ form.hidden_tag() }}
+                        <input type="hidden" name="{{ form.review_status.name }}" value="2" />
+                        <input type="hidden" name="{{ form.rejection_reason.name }}" value="0" />
+
+                        {% if form.rating.choices|length > 1 %}
+                            {{ render_field_with_errors(form.rating) }}
+                        {% endif %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Cancel') }}</button>
+                    <button type="button" class="btn btn-success">{{ _('Accept reference request') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="rejectFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ _('Reject reference request') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="POST">
+                        {{ form.hidden_tag() }}
+                        <input type="hidden" name="{{ form.review_status.name }}" value="3" />
+
+                        {% if form.rating.choices|length > 1 %}
+                            {{ render_field_with_errors(form.rejection_reason) }}
+                        {% endif %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Cancel') }}</button>
+                    <button type="button" class="btn btn-danger">{{ _('Reject reference request') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 

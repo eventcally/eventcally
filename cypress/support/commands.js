@@ -1,17 +1,40 @@
 Cypress.Commands.add('logexec', (command) => {
-    cy.exec(command, { failOnNonZeroExit: false }).then(result => {
+    return cy.exec(command, { failOnNonZeroExit: false }).then(function(result) {
         if (result.code) {
           throw new Error(`Execution of "${command}" failed
           Exit code: ${result.code}
           Stdout:\n${result.stdout}
-          Stderr:\n${result.stderr}`);
+          Stderr:\n${result.stderr}`)
         }
+
+        return result;
       })
 })
 
 Cypress.Commands.add('setup', () => {
-  cy.logexec('flask database reset --seed')
+  cy.logexec('flask test reset --seed')
   cy.logexec('flask user create test@test.de password --confirm')
+})
+
+Cypress.Commands.add('createAdminUnit', (userEmail = 'test@test.de', name = 'Meine Crew') => {
+  return cy.logexec('flask test admin-unit-create ' + userEmail + ' "' + name + '"').then(function(result) {
+    let json = JSON.parse(result.stdout)
+    return json.admin_unit_id
+  })
+})
+
+Cypress.Commands.add('createEvent', (adminUnitId) => {
+  return cy.logexec('flask test event-create ' + adminUnitId).then(function(result) {
+    let json = JSON.parse(result.stdout)
+    return json.event_id
+  })
+})
+
+Cypress.Commands.add('createIncomingReferenceRequest', (adminUnitId) => {
+  return cy.logexec('flask test reference-request-create-incoming ' + adminUnitId).then(function(result) {
+    let json = JSON.parse(result.stdout)
+    return json.reference_request_id
+  })
 })
 
 Cypress.Commands.add('assertValid', (fieldId) => {

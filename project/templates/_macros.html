@@ -56,6 +56,15 @@
               {{ field(class="custom-control-input") }}
               <label class="custom-control-label" for="{{ field.id }}"></label>
             </div>
+          {% elif 'ri' in kwargs and kwargs['ri'] == 'radio-buttons' %}
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% for choice in field %}
+                  {% set color = kwargs['colors'][loop.index0] if 'colors' in kwargs else 'secondary' %}
+                  <label class="btn btn-outline-{{ color }}">
+                    <input type="radio" id="{{ choice.id }}" name="{{ field.id }}" value="{{ choice.id[-1] }}" {% if choice.checked %}checked {% endif %}> {{ choice.label.text }}
+                  </label>
+              {% endfor %}
+            </div>
           {% else %}
             {% if 'class' in kwargs %}
               {% set _dummy=kwargs.pop('class') %}
