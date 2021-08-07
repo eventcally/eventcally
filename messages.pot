@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-08-06 13:48+0200\n"
+"POT-Creation-Date: 2021-08-07 11:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -647,8 +647,8 @@ msgstr ""
 
 #: project/forms/event.py:233 project/forms/reference.py:14
 #: project/forms/reference.py:27 project/forms/reference_request.py:75
-#: project/templates/event/create.html:323
-#: project/templates/event/update.html:183
+#: project/templates/event/create.html:403
+#: project/templates/event/update.html:206
 msgid "Rating"
 msgstr ""
 
@@ -662,8 +662,8 @@ msgstr ""
 #: project/forms/event.py:245 project/forms/event.py:254
 #: project/forms/event.py:318 project/forms/event_suggestion.py:50
 #: project/templates/_macros.html:462 project/templates/_macros.html:618
-#: project/templates/event/create.html:248
-#: project/templates/event/update.html:133
+#: project/templates/event/create.html:328
+#: project/templates/event/update.html:156
 #: project/templates/event_place/create.html:21
 #: project/templates/event_place/delete.html:13
 #: project/templates/event_place/update.html:21
@@ -681,8 +681,8 @@ msgstr ""
 #: project/forms/event.py:261 project/forms/event.py:270
 #: project/forms/event.py:326 project/forms/event.py:376
 #: project/forms/event_suggestion.py:60 project/templates/_macros.html:500
-#: project/templates/_macros.html:655 project/templates/event/create.html:223
-#: project/templates/event/update.html:124
+#: project/templates/_macros.html:655 project/templates/event/create.html:299
+#: project/templates/event/update.html:147
 #: project/templates/organizer/create.html:17
 #: project/templates/organizer/delete.html:13
 #: project/templates/organizer/update.html:17
@@ -698,7 +698,7 @@ msgid "Enter new organizer"
 msgstr ""
 
 #: project/forms/event.py:276 project/templates/event/create.html:4
-#: project/templates/event/create.html:195 project/templates/layout.html:254
+#: project/templates/event/create.html:271 project/templates/layout.html:254
 #: project/templates/manage/events.html:12
 #: project/templates/manage/organizers.html:21
 msgid "Create event"
@@ -724,7 +724,7 @@ msgid ""
 "Organizers."
 msgstr ""
 
-#: project/forms/event.py:335 project/templates/event/update.html:114
+#: project/forms/event.py:335 project/templates/event/update.html:137
 #: project/templates/oauth2_token/list.html:21
 msgid "Status"
 msgstr ""
@@ -758,7 +758,7 @@ msgid "Select the status of the event."
 msgstr ""
 
 #: project/forms/event.py:347 project/templates/event/update.html:4
-#: project/templates/event/update.html:86
+#: project/templates/event/update.html:109
 msgid "Update event"
 msgstr ""
 
@@ -846,13 +846,13 @@ msgstr ""
 msgid "I would like to be notified by email after the review"
 msgstr ""
 
-#: project/forms/event_suggestion.py:52 project/templates/event/create.html:253
+#: project/forms/event_suggestion.py:52 project/templates/event/create.html:333
 msgid ""
 "Choose where the event takes place. If the venue is not yet in the list, "
 "just enter it."
 msgstr ""
 
-#: project/forms/event_suggestion.py:62 project/templates/event/create.html:227
+#: project/forms/event_suggestion.py:62 project/templates/event/create.html:303
 msgid ""
 "Select the organizer. If the organizer is not yet on the list, just enter"
 " it."
@@ -1059,9 +1059,9 @@ msgstr ""
 
 #: project/templates/_macros.html:402 project/templates/_macros.html:578
 #: project/templates/event/actions.html:12
-#: project/templates/event/create.html:202
+#: project/templates/event/create.html:278
 #: project/templates/event/delete.html:13
-#: project/templates/event/update.html:93
+#: project/templates/event/update.html:116
 #: project/templates/reference/delete.html:13
 #: project/templates/widget/event_suggestion/create.html:197
 msgid "Event"
@@ -1348,8 +1348,8 @@ msgstr ""
 
 #: project/templates/admin_unit/create.html:49
 #: project/templates/admin_unit/update.html:50
-#: project/templates/event/create.html:311
-#: project/templates/event/update.html:171
+#: project/templates/event/create.html:391
+#: project/templates/event/update.html:194
 #: project/templates/event_place/create.html:47
 #: project/templates/event_place/update.html:47
 #: project/templates/organizer/create.html:46
@@ -1460,26 +1460,36 @@ msgid "Enter place or address"
 msgstr ""
 
 #: project/templates/event/create.html:97
+#: project/templates/event/create.html:210
 #, python-format
 msgid "Just use %(term)s"
 msgstr ""
 
-#: project/templates/event/create.html:212
-#: project/templates/event/update.html:103
+#: project/templates/event/create.html:200
+#: project/templates/event/update.html:96
+msgid "Enter organizer"
+msgstr ""
+
+#: project/templates/event/create.html:288
+#: project/templates/event/update.html:126
 msgid "Event date"
 msgstr ""
 
-#: project/templates/event/create.html:273
+#: project/templates/event/create.html:320
+msgid "Switch to organizer search"
+msgstr ""
+
+#: project/templates/event/create.html:353
 msgid "Switch to place search"
 msgstr ""
 
-#: project/templates/event/create.html:284
-#: project/templates/event/update.html:144
+#: project/templates/event/create.html:364
+#: project/templates/event/update.html:167
 msgid "Access"
 msgstr ""
 
-#: project/templates/event/create.html:298
-#: project/templates/event/update.html:158
+#: project/templates/event/create.html:378
+#: project/templates/event/update.html:181
 msgid "Target group"
 msgstr ""
 
@@ -1783,7 +1793,7 @@ msgstr ""
 msgid "Event successfully deleted"
 msgstr ""
 
-#: project/views/event.py:380
+#: project/views/event.py:384
 msgid "Referenced event changed"
 msgstr ""
 

@@ -73,6 +73,29 @@
         placeholder: "{{ _('Enter place or address') }}"
       });
 
+      $('#organizer_id').select2({
+        width: '100%',
+        theme: 'bootstrap4',
+        ajax: {
+          url: "{{ url_for('api_v1_organization_organizer_list', id=event.admin_unit.id) }}",
+          dataType: 'json',
+          delay: 250,
+          cache: true,
+          data: function (params) {
+            return {
+              name: params.term,
+              per_page: 5
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data.items.map(p => ({"id": p.id, "text": p.name}))
+            };
+          }
+        },
+        placeholder: "{{ _('Enter organizer') }}"
+      });
+
       $('#organizer_id,#event_place_id').on('select2:select', function (e) {
           $(this).valid();
       });
@@ -124,7 +147,7 @@
       {{ _('Organizer') }}
     </div>
     <div class="card-body pb-0">
-      {{ render_field_with_errors(form.organizer_id, class="autocomplete w-100") }}
+      {{ render_field_with_errors(form.organizer_id, class="w-100", label_hidden=True) }}
     </div>
   </div>
 
@@ -133,7 +156,7 @@
       {{ _('Place') }}
     </div>
     <div class="card-body pb-0">
-      {{ render_field_with_errors(form.event_place_id, class="w-100") }}
+      {{ render_field_with_errors(form.event_place_id, class="w-100", label_hidden=True) }}
     </div>
   </div>
 
