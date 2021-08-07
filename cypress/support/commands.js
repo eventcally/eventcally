@@ -60,3 +60,19 @@ Cypress.Commands.add('login', (email = "test@test.de", password = "password") =>
   cy.url().should('include', '/manage')
   cy.getCookie('session').should('exist')
 })
+
+Cypress.Commands.add('select2', (selectId, textToEnter, expectedText = null, expectedValue = null) => {
+  cy.get('#select2-' + selectId + '-container').click()
+  cy.get('input[aria-controls="select2-' + selectId + '-results"]')
+    .type(textToEnter + '{enter}', {
+        delay: 500,
+    })
+
+  if (expectedText) {
+    cy.get('#select2-' + selectId + '-container').should('have.text', expectedText)
+  }
+
+  if (expectedValue) {
+    cy.get('#' + selectId).should('have.value', expectedValue)
+  }
+})
