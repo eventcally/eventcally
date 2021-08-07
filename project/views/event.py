@@ -5,7 +5,6 @@ from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.sql import func
 
 from project import app, db
 from project.access import (
@@ -102,8 +101,7 @@ def event_create_for_admin_unit_id(id):
     form = CreateEventForm(
         admin_unit_id=admin_unit.id, category_ids=[upsert_event_category("Other").id]
     )
-    prepare_event_form(form, admin_unit)
-    form.organizer_id.choices.insert(0, (0, ""))
+    prepare_event_form(form)
 
     # Vorlagen
     event_suggestion = None
@@ -116,6 +114,7 @@ def event_create_for_admin_unit_id(id):
         event_template = Event.query.get_or_404(event_template_id)
         if not form.is_submitted():
             form.process(obj=event_template)
+            prepare_organizer(form)
             prepare_event_place(form)
 
     if not event_template:
@@ -189,7 +188,7 @@ def event_update(event_id):
     access_or_401(event.admin_unit, "event:update")
 
     form = UpdateEventForm(obj=event, start=event.start, end=event.end)
-    prepare_event_form(form, event.admin_unit)
+    prepare_event_form(form)
 
     if not form.is_submitted():
         form.category_ids.data = [c.id for c in event.categories]
@@ -278,15 +277,18 @@ def prepare_event_place(form):
             form.event_place_id.choices = [(place.id, get_place_str(place))]
 
 
-def prepare_event_form(form, admin_unit):
-    form.organizer_id.choices = [
-        (o.id, o.name)
-        for o in EventOrganizer.query.filter(
-            EventOrganizer.admin_unit_id == admin_unit.id
-        ).order_by(func.lower(EventOrganizer.name))
-    ]
+def prepare_organizer(form):
+    if form.organizer_id.data and form.organizer_id.data > 0:
+        organizer = EventOrganizer.query.get(form.organizer_id.data)
+
+        if organizer:
+            form.organizer_id.choices = [(organizer.id, organizer.name)]
+
+
+def prepare_event_form(form):
     form.category_ids.choices = get_event_category_choices()
 
+    prepare_organizer(form)
     prepare_event_place(form)
 
     if not form.start.data:
@@ -332,6 +334,7 @@ def prepare_event_form_for_suggestion(form, event_suggestion):
         form.organizer_choice.data = 2
         form.new_organizer.form.name.data = event_suggestion.organizer_text
 
+    prepare_organizer(form)
     prepare_event_place(form)
 
 

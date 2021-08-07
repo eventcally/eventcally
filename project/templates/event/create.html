@@ -37,8 +37,8 @@ $( function() {
             }
           },
           organizer_id: {
-            min: {
-              param: 1,
+            required: {
+              param: true,
               depends: function(element) {
                 return $('input[type=radio][name=organizer_choice]:checked').val() == "1";
               }
@@ -176,12 +176,88 @@ $( function() {
     }
   }
 
+  $('#organizer_id').select2({
+    width: '100%',
+    theme: 'bootstrap4',
+    tags: true,
+    ajax: {
+      url: "{{ url_for('api_v1_organization_organizer_list', id=admin_unit.id) }}",
+      dataType: 'json',
+      delay: 250,
+      cache: true,
+      data: function (params) {
+        return {
+          name: params.term,
+          per_page: 5
+        };
+      },
+      processResults: function (data) {
+        return {
+          results: data.items.map(p => ({"id": p.id, "text": p.name}))
+        };
+      }
+    },
+    placeholder: "{{ _('Enter organizer') }}",
+    createTag: function (params) {
+      var term = $.trim(params.term);
+
+      if (term === '') {
+        return null;
+      }
+
+      return {
+        id: term,
+        text: "{{ _('Just use %(term)s', term='%(term)s') }}".replace("%(term)s", term),
+        term: term,
+        is_new_tag: true
+      }
+    },
+    insertTag: function (data, tag) {
+      data.push(tag);
+    },
+    templateResult: function (state) {
+      if ("is_new_tag" in state) {
+        return $("<strong>" + state.text + "</strong>");
+      }
+      return state.text;
+    }
+  });
+
+  $('#organizer_id').on('select2:close', function (e) {
+    var dataArray = $(e.target).select2('data');
+    var data = {};
+
+    if (dataArray.length > 0) {
+      data = dataArray[0];
+    }
+
+    if ("is_new_tag" in data) {
+      $(this).val(null).trigger('change');
+      $('input[type=radio][name=organizer_choice][value=2]').click();
+      reset_organizer_form('new_organizer-');
+
+      $('#new_organizer-name').val(data.term);
+
+      $('#new_organizer_container').find(':input').valid();
+      $(this).removeClass('is-valid');
+    } else {
+      $(this).valid();
+    }
+  });
+
   $('input[type=radio][name=organizer_choice]').on('change', function() {
     update_organizer_container($(this).val());
   });
 
   $('#organizer_id').on('select2:select', function (e) {
       $(this).valid();
+  });
+
+  $('#new_organizer_container_search_link').click(function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      reset_organizer_form('new_organizer-');
+      $('input[type=radio][name=organizer_choice][value=1]').click();
   });
 
   update_organizer_container($('input[type=radio][name=organizer_choice]:checked').val());
@@ -225,11 +301,11 @@ $( function() {
     <div class="card-body">
       <div>
         <div class="form-text mt-0 text-muted w-100">{{ _("Select the organizer. If the organizer is not yet on the list, just enter it.") }}</div>
-        {{ render_radio_buttons(form.organizer_choice) }}
+        <div style="display: none;">{{ render_radio_buttons(form.organizer_choice) }}</div>
       </div>
 
       <div class="my-2" id="existing_organizer_container">
-        {{ render_field_with_errors(form.organizer_id, class="autocomplete w-100", is_required=True) }}
+        {{ render_field_with_errors(form.organizer_id, class="w-100", label_hidden=True) }}
       </div>
 
       <div class="my-2" id="new_organizer_container">
@@ -239,6 +315,10 @@ $( function() {
         {{ render_field_with_errors(form.new_organizer.form.location.street) }}
         {{ render_field_with_errors(form.new_organizer.form.location.postalCode) }}
         {{ render_field_with_errors(form.new_organizer.form.location.city) }}
+
+        <div class="my-4">
+          <a href="#" id="new_organizer_container_search_link"><i class="fa fa-search"></i> {{ _('Switch to organizer search') }}</a>
+        </div>
       </div>
     </div>
   </div>
@@ -255,7 +335,7 @@ $( function() {
       </div>
 
       <div class="my-2" id="existing_place_container">
-        {{ render_field_with_errors(form.event_place_id, class="w-100", is_required=True) }}
+        {{ render_field_with_errors(form.event_place_id, class="w-100", label_hidden=True) }}
       </div>
 
       <div class="my-2" id="new_place_container">
