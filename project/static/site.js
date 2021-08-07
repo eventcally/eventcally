@@ -254,6 +254,13 @@ function reset_place_form(prefix = '') {
     $('#' + prefix + 'location-longitude').val('');
 }
 
+function reset_organizer_form(prefix = '') {
+    $('#' + prefix + 'name').val('');
+    $('#' + prefix + 'location-street').val('');
+    $('#' + prefix + 'location-postalCode').val('');
+    $('#' + prefix + 'location-city').val('');
+}
+
 function fill_place_form_with_gmaps_place(place, prefix = '', location_only = false) {
     var street_number = "";
     var route = "";
