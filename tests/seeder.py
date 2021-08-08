@@ -214,7 +214,7 @@ class Seeder(object):
             {
                 "name": "Name",
                 "description": "Beschreibung",
-                "start": ["2030-12-31", "23", "59"],
+                "start": ["2030-12-31", "23:59"],
                 "event_place_id": place_id,
                 "organizer_id": organizer_id,
                 "photo-image_base64": self.get_default_image_upload_base64(),

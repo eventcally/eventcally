@@ -26,6 +26,9 @@
             }
         });
 
+      $("#start-time").rules("add", "time");
+      $("#end-time").rules("add", "time");
+
       // Organizer
       var organizer_select =$('#organizer_id');
       var input_group = organizer_select.parent();

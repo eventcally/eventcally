@@ -76,7 +76,7 @@ def get_create_data():
     return {
         "accept_tos": "y",
         "name": "Vorschlag",
-        "start": ["2030-12-31", "23", "59"],
+        "start": ["2030-12-31", "23:59"],
         "contact_name": "Vorname Nachname",
         "contact_email": "vorname@nachname.de",
         "contact_email_notice": "y",

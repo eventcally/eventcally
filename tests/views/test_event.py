@@ -44,7 +44,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "23", "59"],
+            "start": ["2030-12-31", "23:59"],
             "event_place_id": place_id,
             "organizer_id": organizer_id,
             "photo-image_base64": seeder.get_default_image_upload_base64(),
@@ -80,7 +80,7 @@ def test_create_newPlaceAndOrganizer(client, app, utils, seeder, mocker):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "23", "59"],
+            "start": ["2030-12-31", "23:59"],
             "organizer_choice": 2,
             "new_organizer-name": "Neuer Veranstalter",
             "event_place_choice": 2,
@@ -127,7 +127,7 @@ def test_create_missingPlace(client, app, utils, seeder, mocker):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "23", "59"],
+            "start": ["2030-12-31", "23:59"],
         },
     )
 
@@ -148,7 +148,7 @@ def test_create_missingOrganizer(client, app, utils, seeder, mocker):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["31.12.2030", "23", "59"],
+            "start": ["31.12.2030", "23:59"],
             "event_place_id": place_id,
             "organizer_id": organizer_id,
         },
@@ -170,7 +170,7 @@ def test_create_invalidDateFormat(client, app, utils, seeder, mocker):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "23", "59"],
+            "start": ["2030-12-31", "23:59"],
             "event_place_id": place_id,
         },
     )
@@ -190,8 +190,8 @@ def test_create_startAfterEnd(client, app, utils, seeder, mocker):
         response,
         {
             "name": "Name",
-            "start": ["2030-12-31", "23", "59"],
-            "end": ["2030-12-31", "23", "58"],
+            "start": ["2030-12-31", "23:59"],
+            "end": ["2030-12-31", "23:58"],
             "event_place_id": place_id,
         },
     )
@@ -214,8 +214,8 @@ def test_create_durationMoreThanMaxAllowedDuration(client, app, utils, seeder, m
         response,
         {
             "name": "Name",
-            "start": ["2030-12-30", "12", "00"],
-            "end": ["2031-01-13", "12", "01"],
+            "start": ["2030-12-30", "12:00"],
+            "end": ["2031-01-13", "12:01"],
             "event_place_id": place_id,
         },
     )
