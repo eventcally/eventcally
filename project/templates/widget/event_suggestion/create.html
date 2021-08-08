@@ -54,6 +54,9 @@
         }
     });
 
+    $("#start-time").rules("add", "time");
+    $("#end-time").rules("add", "time");
+
     wizard.steps({
       headerTag: "h4",
       bodyTag: "section",

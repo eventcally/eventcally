@@ -99,7 +99,8 @@ jQuery.tools.recurrenceinput.localize('de', {
 });
 
 function get_moment_with_time(field_id) {
-    return moment($(field_id).val()).add($(field_id + "-hour").val(), "hour").add($(field_id + "-minute").val(), "minute");
+    date_time_string = $(field_id).val() + ' ' + $(field_id + "-time").val();
+    return moment(date_time_string);
 }
 
 function set_date_bounds(picker) {
@@ -143,10 +144,7 @@ function set_picker_date(picker, date, timeout = -1) {
     picker.datepicker("setDate", date);
 
     var hidden_field_id = picker.attr('id').replace('-user', '');
-    var hour = date == null ? 0 : date.getHours();
-    var minute = date == null ? 0 : date.getMinutes();
-    $("#" + hidden_field_id + "-hour").val(hour.toString());
-    $("#" + hidden_field_id + "-minute").val(minute.toString());
+    $("#" + hidden_field_id + "-time").timepicker('setTime', date);
 
     if (timeout < 0) {
         set_date_bounds(picker);
@@ -214,11 +212,7 @@ function start_datepicker(input) {
         }
     });
 
-    $("#" + hidden_field_id + "-hour").change(function() {
-        set_date_bounds(picker);
-    });
-
-    $("#" + hidden_field_id + "-minute").change(function() {
+    $("#" + hidden_field_id + "-time").change(function() {
         set_date_bounds(picker);
     });
 
@@ -312,6 +306,10 @@ $( function() {
 
     $('.datepicker').each(function (index, element){
         start_datepicker($(element));
+    });
+
+    $('.timepicker').timepicker({
+        timeFormat: 'H:i'
     });
 
     $("#clear_location_btn").click(function () {
