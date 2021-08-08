@@ -15,24 +15,15 @@ class MultiCheckboxField(SelectMultipleField):
     option_widget = CheckboxInput()
 
 
-def create_option_string(count, value):
-    result = ""
-    for i in range(count):
-        selected = " selected" if i == value else ""
-        result = result + '<option value="%d"%s>%02d</option>' % (i, selected, i)
-    return result
-
-
 class CustomDateTimeWidget:
     def __call__(self, field, **kwargs):
         id = kwargs.pop("id", field.id)
         date = ""
-        hour = minute = 0
+        time = ""
         if field.data:
             date_value = to_user_timezone(field.data)
             date = date_value.strftime("%Y-%m-%d")
-            hour = date_value.hour
-            minute = date_value.minute
+            time = date_value.strftime("%H:%M")
 
         kwargs_class = kwargs.pop("class", "")
 
@@ -45,20 +36,21 @@ class CustomDateTimeWidget:
             class_=date_class,
             **kwargs
         )
-        time_hour_params = html_params(
-            name=field.name, id=id + "-hour", class_=kwargs_class, **kwargs
-        )
-        time_minute_params = html_params(
-            name=field.name, id=id + "-minute", class_=kwargs_class, **kwargs
+
+        time_class = kwargs_class + " timepicker"
+        time_params = html_params(
+            name=field.name,
+            id=id + "-time",
+            value=time,
+            required=field.flags.required,
+            class_=time_class,
+            **kwargs
         )
 
         return Markup(
-            '<div class="input-group-prepend mt-1"><input type="text" {}/></div><div class="mx-2"></div><div class="input-group-append mt-1"><select {}>{}</select><span class="input-group-text">:</span><select {}>{}</select></div>'.format(
+            '<div class="input-group-prepend mt-1"><input type="text" {}/></div><div class="mx-2"></div><div class="input-group-append mt-1"><input {} /></div>'.format(
                 date_params,
-                time_hour_params,
-                create_option_string(24, hour),
-                time_minute_params,
-                create_option_string(60, minute),
+                time_params,
             )
         )
 
@@ -69,15 +61,13 @@ class CustomDateTimeField(DateTimeField):
     def process_formdata(self, valuelist):
         if valuelist:
             try:
-                date_str, hour_str, minute_str = valuelist
+                date_str, time_str = valuelist
                 if not date_str:
                     self.data = None
                     return
 
-                date = datetime.strptime(date_str, "%Y-%m-%d")
-                date_time = datetime(
-                    date.year, date.month, date.day, int(hour_str), int(minute_str)
-                )
+                date_time_str = date_str + " " + time_str
+                date_time = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M")
                 self.data = berlin_tz.localize(date_time)
             except Exception:
                 raise ValueError(
