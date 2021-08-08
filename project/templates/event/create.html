@@ -55,6 +55,9 @@ $( function() {
         }
     });
 
+  $("#start-time").rules("add", "time");
+  $("#end-time").rules("add", "time");
+
   function update_place_container(value) {
     switch (value) {
       case '1':
