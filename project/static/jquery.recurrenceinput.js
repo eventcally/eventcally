@@ -48,18 +48,6 @@
                         'rirangeoptions'
                     ]
                 },
-                mondayfriday: {
-                    rrule: 'FREQ=WEEKLY;BYDAY=MO,FR',
-                    fields: [
-                        'rirangeoptions'
-                    ]
-                },
-                weekdays: {
-                    rrule: 'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR',
-                    fields: [
-                        'rirangeoptions'
-                    ]
-                },
                 weekly: {
                     rrule: 'FREQ=WEEKLY',
                     fields: [
@@ -212,13 +200,17 @@
             weekly: 'Weekly',
             monthly: 'Monthly',
             yearly: 'Yearly'
-        }
+        },
+
+        reccStart: 'Start date',
+        reccStartTime: 'Begin',
+        reccFoEndTime: 'End'
     });
 
 
-    var OCCURRENCETMPL = ['<div class="rioccurrences">',
+    var OCCURRENCETMPL = ['<div class="rioccurrences list-group list-group-flush">',
         '{{for occurrences}}',
-            '<div class="occurrence {{:type}}">',
+            '<div class="occurrence {{:type}} list-group-item d-flex justify-content-between align-items-center p-1">',
                 '<span>',
                     '{{:formattedDate}}',
                     '{{if type === "start"}}',
@@ -232,20 +224,20 @@
                     '<span class="action">',
                         '{{if type === "rrule"}}',
                             '<a date="{{:date}}" href="#"',
-                               'class="{{:type}}" title="{{:~root.i18n.exclude}}">',
-                                '{{:~root.i18n.exclude}}',
+                               'class="{{:type}} btn btn-outline-secondary btn-sm" title="{{:~root.i18n.exclude}}">',
+                                '<i class="fa fa-trash"></i>',
                             '</a>',
                         '{{/if}}',
                         '{{if type === "rdate"}}',
                             '<a date="{{:date}}" href="#"',
-                               'class="{{:type}}" title="{{:~root.i18n.remove}}" >',
-                                '{{:~root.i18n.remove}}',
+                               'class="{{:type}} btn btn-outline-secondary btn-sm" title="{{:~root.i18n.remove}}" >',
+                                '<i class="fa fa-trash"></i>',
                             '</a>',
                         '{{/if}}',
                         '{{if type === "exdate"}}',
                             '<a date="{{:date}}" href="#"',
-                               'class="{{:type}}" title="{{:~root.i18n.include}}">',
-                                '{{:~root.i18n.include}}',
+                               'class="{{:type}} btn btn-outline-secondary btn-sm" title="{{:~root.i18n.include}}">',
+                                '<i class="fa fa-trash-restore"></i>',
                             '</a>',
                         '{{/if}}',
                     '</span>',
@@ -263,12 +255,16 @@
     $.templates('occurrenceTmpl', OCCURRENCETMPL);
 
     var DISPLAYTMPL = ['<div class="ridisplay">',
-        '<div class="rimain">',
+        '<div class="rimain bg-light mt-3 p-3 rounded border">',
+            '<div class="mb-2">',
+                '<div class="ridisplay-start"></div>',
+                '<div class="ridisplay-times"></div>',
+                '<div class="ridisplay">{{:i18n.displayUnactivate}}</div>',
+            '</div>',
             '{{if !readOnly}}',
                 '<button type="button" name="riedit" class="btn btn-outline-secondary">{{:i18n.add_rules}}</button>',
                 '<button type="button" name="ridelete" class="btn btn-outline-secondary" style="display:none">{{:i18n.delete_rules}}</button>',
             '{{/if}}',
-            '<label class="ridisplay">{{:i18n.displayUnactivate}}</label>',
         '</div>',
         '<div class="rioccurrences" style="display:none" /></div>'].join('\n');
 
@@ -276,7 +272,7 @@
 
     var FORMTMPL = ['<div class="modal fade" tabindex="-1" role="dialog">',
                         '<div class="modal-dialog" role="document">',
-                            '<div class="modal-content">',
+                            '<div class="modal-content modal-recurrence">',
                                 '<div class="modal-header">',
                                     '<h5 class="modal-title">{{:i18n.title}}</h5>',
                                     '<button type="button" class="close" data-dismiss="modal" aria-label="Close">',
@@ -288,241 +284,329 @@
                                         '<form>',
                                             '<div id="messagearea" style="display: none;">',
                                             '</div>',
-                                            '<div id="rirtemplate">',
-                                                '<label for="{{:name}}rtemplate" class="label">',
-                                                    '{{:i18n.recurrenceType}}',
-                                                '</label>',
-                                                '<select id="rirtemplate" name="rirtemplate" class="field">',
-                                                    '{{props rtemplate}}',
-                                                        '<option value="{{>key}}">{{:~root.i18n.rtemplate[key]}}</value>',
-                                                    '{{/props}}',
-                                                '</select>',
-                                            '<div>',
-                                            '<div id="riformfields">',
-                                                '<div id="ridailyinterval" class="rifield">',
-                                                    '<label for="{{:name}}dailyinterval" class="label">',
-                                                        '{{:i18n.dailyInterval1}}',
-                                                    '</label>',
-                                                    '<div class="field">',
-                                                        '<input type="text" size="2"',
-                                                            'value="1"',
-                                                            'name="ridailyinterval"',
-                                                            'id="{{:name}}dailyinterval" />',
-                                                        '{{:i18n.dailyInterval2}}',
-                                                    '</div>',
+
+                                            '<div class="form-row">',
+                                                '<div class="form-group col-md">',
+                                                    '<label class="mb-0" for="recc-start">{{:i18n.reccStart}}</label>',
+                                                    '<input type="text" class="form-control datepicker" data-range-to="#recc-end" id="recc-start" name="recc-start" required="" />',
                                                 '</div>',
-                                                '<div id="riweeklyinterval" class="rifield">',
-                                                    '<label for="{{:name}}weeklyinterval" class="label">',
-                                                        '{{:i18n.weeklyInterval1}}',
-                                                    '</label>',
-                                                    '<div class="field">',
-                                                        '<input type="text" size="2"',
-                                                            'value="1"',
-                                                            'name="riweeklyinterval"',
-                                                            'id="{{:name}}weeklyinterval"/>',
-                                                        '{{:i18n.weeklyInterval2}}',
-                                                    '</div>',
+
+                                                '<div class="form-group col-md">',
+                                                    '<label class="mb-0" for="recc-start-time">{{:i18n.reccStartTime}}</label>',
+                                                    '<input type="text" class="form-control timepicker" id="recc-start-time" name="recc-start-time" required="" />',
                                                 '</div>',
-                                                '<div id="riweeklyweekdays" class="rifield">',
-                                                    '<label for="{{:name}}weeklyinterval" class="label">{{:i18n.weeklyWeekdays}}</label>',
-                                                    '<div class="field">',
-                                                        '{{for orderedWeekdays itemVar=\'~value\'}}',
-                                                            '<div class="riweeklyweekday">',
-                                                                '<input type="checkbox"',
-                                                                    'name="riweeklyweekdays{{:~root.weekdays[~value]}}"',
-                                                                    'id="{{:name}}weeklyWeekdays{{:~root.weekdays[~value]}}"',
-                                                                    'value="{{:~root.weekdays[~value]}}" />',
-                                                                '<label for="{{:name}}weeklyWeekdays{{:~root.weekdays[~value]}}">{{:~root.i18n.shortWeekdays[~value]}}</label>',
+
+                                                '<div class="form-group col-md">',
+                                                    '<label class="mb-0" for="recc-fo-end-time">{{:i18n.reccFoEndTime}}</label>',
+                                                    '<input type="text" class="form-control timepicker" id="recc-fo-end-time" name="recc-fo-end-time" />',
+                                                '</div>',
+                                            '</div>',
+
+                                            '<div class="form-row">',
+                                                '<div id="rirangeoptions" class="form-group col-md">',
+                                                    '<label class="mb-0">{{:i18n.range}}</label>',
+                                                        '<div class="input-group mb-1">',
+                                                            '<div class="input-group-prepend">',
+                                                                '<div class="input-group-text">',
+                                                                    '<input',
+                                                                        'type="radio"',
+                                                                        'checked="checked"',
+                                                                        'value="BYENDDATE"',
+                                                                        'name="rirangetype"',
+                                                                        'class="form-check-inline"',
+                                                                        'id="{{:name}}rangetype:BYENDDATE"/>',
+                                                                    '{{:i18n.rangeByEndDate}}',
+                                                                '</div>',
                                                             '</div>',
-                                                        '{{/for}}',
-                                                    '</div>',
-                                                '</div>',
-                                                '<div id="rimonthlyinterval" class="rifield">',
-                                                    '<label for="rimonthlyinterval" class="label">{{:i18n.monthlyInterval1}}</label>',
-                                                    '<div class="field">',
-                                                        '<input type="text" size="2"',
-                                                            'value="1" ',
-                                                            'name="rimonthlyinterval"/>',
-                                                        '{{:i18n.monthlyInterval2}}',
-                                                    '</div>',
-                                                '</div>',
-                                                '<div id="rimonthlyoptions" class="rifield">',
-                                                    '<label for="rimonthlytype" class="label">{{:i18n.monthlyRepeatOn}}</label>',
-                                                    '<div class="field">',
-                                                        '<div>',
                                                             '<input',
-                                                                'type="radio"',
-                                                                'value="DAYOFMONTH"',
-                                                                'name="rimonthlytype"',
-                                                                'id="{{:name}}monthlytype:DAYOFMONTH" />',
-                                                            '<label for="{{:name}}monthlytype:DAYOFMONTH">',
-                                                                '{{:i18n.monthlyDayOfMonth1}}',
-                                                            '</label>',
-                                                            '<select name="rimonthlydayofmonthday"',
-                                                                'id="{{:name}}monthlydayofmonthday">',
-                                                            '{{for start=1 end=32}}',
-                                                                '<option value="{{:}}">{{:}}</option>',
-                                                            '{{/for}}',
-                                                            '</select>',
-                                                            '{{:i18n.monthlyDayOfMonth2}}',
+                                                                'type="text"',
+                                                                'class="form-control"',
+                                                                'name="rirangebyenddatecalendar" id="recc-end" />',
                                                         '</div>',
-                                                        '<div>',
-                                                            '<input',
-                                                                'type="radio"',
-                                                                'value="WEEKDAYOFMONTH"',
-                                                                'name="rimonthlytype"',
-                                                                'id="{{:name}}monthlytype:WEEKDAYOFMONTH" />',
-                                                            '<label for="{{:name}}monthlytype:WEEKDAYOFMONTH">',
-                                                                '{{:i18n.monthlyWeekdayOfMonth1}}',
-                                                            '</label>',
-                                                            '<select name="rimonthlyweekdayofmonthindex">',
-                                                                '{{for i18n.orderIndexes}}',
-                                                                    '<option value="{{:~root.orderIndexes[$index]}}">{{:}}</option>',
-                                                                '{{/for}}',
-                                                            '</select>',
-                                                            '{{:i18n.monthlyWeekdayOfMonth2}}',
-                                                            '<select name="rimonthlyweekdayofmonth">',
-                                                                '{{for orderedWeekdays itemVar=\'~value\'}}',
-                                                                    '<option value="{{:~root.weekdays[~value]}}">{{:~root.i18n.weekdays[~value]}}</option>',
-                                                                '{{/for}}',
-                                                            '</select>',
-                                                            '{{:i18n.monthlyWeekdayOfMonth3}}',
-                                                        '</div>',
-                                                    '</div>',
-                                                '</div>',
-                                                '<div id="riyearlyinterval" class="rifield">',
-                                                    '<label for="riyearlyinterval" class="label">{{:i18n.yearlyInterval1}}</label>',
-                                                    '<div class="field">',
-                                                        '<input type="text" size="2"',
-                                                            'value="1" ',
-                                                            'name="riyearlyinterval"/>',
-                                                        '{{:i18n.yearlyInterval2}}',
-                                                    '</div>',
-                                                '</div>',
-                                                '<div id="riyearlyoptions" class="rifield">',
-                                                    '<label for="riyearlyType" class="label">{{:i18n.yearlyRepeatOn}}</label>',
-                                                    '<div class="field">',
-                                                        '<div>',
-                                                            '<input',
-                                                                'type="radio"',
-                                                                'value="DAYOFMONTH"',
-                                                                'name="riyearlyType"',
-                                                                'id="{{:name}}yearlytype:DAYOFMONTH" />',
-                                                            '<label for="{{:name}}yearlytype:DAYOFMONTH">',
-                                                                '{{:i18n.yearlyDayOfMonth1}}',
-                                                            '</label>',
-                                                            '<select name="riyearlydayofmonthmonth">',
-                                                            '{{for i18n.months}}',
-                                                                '<option value="{{:#getIndex()+1}}">{{:}}</option>',
-                                                            '{{/for}}',
-                                                            '</select>',
-                                                            '{{:i18n.yearlyDayOfMonth2}}',
-                                                            '<select name="riyearlydayofmonthday">',
-                                                            '{{for start=1 end=32}}',
-                                                                '<option value="{{:}}">{{:}}</option>',
-                                                            '{{/for}}',
-                                                            '</select>',
-                                                            '{{:i18n.yearlyDayOfMonth3}}',
-                                                        '</div>',
-                                                        '<div>',
-                                                            '<input',
-                                                                'type="radio"',
-                                                                'value="WEEKDAYOFMONTH"',
-                                                                'name="riyearlyType"',
-                                                                'id="{{:name}}yearlytype:WEEKDAYOFMONTH"/>',
-                                                            '<label for="{{:name}}yearlytype:WEEKDAYOFMONTH">',
-                                                                '{{:i18n.yearlyWeekdayOfMonth1}}',
-                                                            '</label>',
-                                                            '<select name="riyearlyweekdayofmonthindex">',
-                                                            '{{for i18n.orderIndexes}}',
-                                                                '<option value="{{:~root.orderIndexes[#getIndex()]}}">{{:}}</option>',
-                                                            '{{/for}}',
-                                                            '</select>',
-                                                            '<label for="{{:name}}yearlytype:WEEKDAYOFMONTH">',
-                                                                '{{:i18n.yearlyWeekdayOfMonth2}}',
-                                                            '</label>',
-                                                            '<select name="riyearlyweekdayofmonthday">',
-                                                            '{{for orderedWeekdays itemVar=\'~value\'}}',
-                                                                '<option value="{{:~root.weekdays[~value]}}">{{:~root.i18n.weekdays[~value]}}</option>',
-                                                            '{{/for}}',
-                                                            '</select>',
-                                                            '{{:i18n.yearlyWeekdayOfMonth3}}',
-                                                            '<select name="riyearlyweekdayofmonthmonth">',
-                                                            '{{for i18n.months}}',
-                                                                '<option value="{{:#getIndex()+1}}">{{:}}</option>',
-                                                            '{{/for}}',
-                                                            '</select>',
-                                                            '{{:i18n.yearlyWeekdayOfMonth4}}',
-                                                        '</div>',
-                                                    '</div>',
-                                                '</div>',
-                                                '<div id="rirangeoptions" class="rifield">',
-                                                    '<label class="label">{{:i18n.range}}</label>',
-                                                    '<div class="field">',
-                                                    '{{if hasRepeatForeverButton}}',
-                                                        '<div>',
-                                                            '<input',
-                                                                'type="radio"',
-                                                                'value="NOENDDATE"',
-                                                                'name="rirangetype"',
-                                                                'id="{{:name}}rangetype:NOENDDATE"/>',
-                                                            '<label for="{{:name}}rangetype:NOENDDATE">',
-                                                                '{{:i18n.rangeNoEnd}}',
-                                                            '</label>',
-                                                        '</div>',
-                                                    '{{/if}}',
-                                                        '<div>',
-                                                            '<input',
-                                                                'type="radio"',
-                                                                'checked="checked"',
-                                                                'value="BYOCCURRENCES"',
-                                                                'name="rirangetype"',
-                                                                'id="{{:name}}rangetype:BYOCCURRENCES"/>',
-                                                            '<label for="{{:name}}rangetype:BYOCCURRENCES">',
-                                                                '{{:i18n.rangeByOccurrences1}}',
-                                                            '</label>',
+                                                        '<div class="input-group mb-1">',
+                                                            '<div class="input-group-prepend">',
+                                                                '<div class="input-group-text">',
+                                                                    '<input',
+                                                                        'type="radio"',
+                                                                        'value="BYOCCURRENCES"',
+                                                                        'name="rirangetype"',
+                                                                        'class="form-check-inline"',
+                                                                        'id="{{:name}}rangetype:BYOCCURRENCES"/>',
+                                                                    '{{:i18n.rangeByOccurrences1}}',
+                                                                '</div>',
+                                                            '</div>',
                                                             '<input',
                                                                 'type="text" size="3"',
                                                                 'value="7"',
+                                                                'class="form-control"',
                                                                 'name="rirangebyoccurrencesvalue" />',
-                                                            '{{:i18n.rangeByOccurrences2}}',
+                                                            '<div class="input-group-append">',
+                                                                '<span class="input-group-text">',
+                                                                    '{{:i18n.rangeByOccurrences2}}',
+                                                                '</span>',
+                                                            '</div>',
                                                         '</div>',
-                                                        '<div>',
-                                                            '<input',
-                                                                'type="radio"',
-                                                                'value="BYENDDATE"',
-                                                                'name="rirangetype"',
-                                                                'id="{{:name}}rangetype:BYENDDATE"/>',
-                                                            '<label for="{{:name}}rangetype:BYENDDATE">',
-                                                                '{{:i18n.rangeByEndDate}}',
-                                                            '</label>',
-                                                            '<input',
-                                                                'type="text"',
-                                                                'name="rirangebyenddatecalendar" />',
+                                                    '{{if hasRepeatForeverButton}}',
+                                                        '<div class="input-group mb-1">',
+                                                            '<div class="input-group-text w-100">',
+                                                                '<input',
+                                                                    'type="radio"',
+                                                                    'value="NOENDDATE"',
+                                                                    'name="rirangetype"',
+                                                                    'class="form-check-inline"',
+                                                                    'id="{{:name}}rangetype:NOENDDATE"/>',
+                                                                '{{:i18n.rangeNoEnd}}',
+                                                            '</div>',
+                                                        '</div>',
+                                                    '{{/if}}',
+                                                '</div>',
+                                            '</div>',
+
+                                            '<div class="form-row">',
+                                                '<div class="form-group col-md">',
+                                                    '<label for="{{:name}}rtemplate" class="mb-0">',
+                                                        '{{:i18n.recurrenceType}}',
+                                                    '</label>',
+                                                    '<select id="rirtemplate" name="rirtemplate" class="form-control">',
+                                                        '{{props rtemplate}}',
+                                                            '<option value="{{>key}}">{{:~root.i18n.rtemplate[key]}}</value>',
+                                                        '{{/props}}',
+                                                    '</select>',
+                                                '</div>',
+
+                                                '<div class="col-md">',
+                                                    '<div id="ridailyinterval" class="form-group rifield">',
+                                                        '<label for="{{:name}}dailyinterval" class="mb-0">',
+                                                            '{{:i18n.dailyInterval1}}',
+                                                        '</label>',
+                                                        '<div class="input-group">',
+                                                            '<input type="text" size="2"',
+                                                                'value="1"',
+                                                                'name="ridailyinterval"',
+                                                                'class="form-control"',
+                                                                'id="{{:name}}dailyinterval" />',
+                                                            '<div class="input-group-append">',
+                                                                '<span class="input-group-text">',
+                                                                    '{{:i18n.dailyInterval2}}',
+                                                                '</span>',
+                                                            '</div>',
+                                                        '</div>',
+                                                    '</div>',
+                                                    '<div id="riweeklyinterval" class="form-group rifield">',
+                                                        '<label for="{{:name}}weeklyinterval" class="mb-0">',
+                                                            '{{:i18n.weeklyInterval1}}',
+                                                        '</label>',
+                                                        '<div class="input-group">',
+                                                            '<input type="text" size="2"',
+                                                                'value="1"',
+                                                                'name="riweeklyinterval"',
+                                                                'class="form-control"',
+                                                                'id="{{:name}}riweeklyinterval" />',
+                                                            '<div class="input-group-append">',
+                                                                '<span class="input-group-text">',
+                                                                    '{{:i18n.weeklyInterval2}}',
+                                                                '</span>',
+                                                            '</div>',
+                                                        '</div>',
+                                                    '</div>',
+                                                    '<div id="rimonthlyinterval" class="form-group rifield">',
+                                                        '<label for="rimonthlyinterval" class="mb-0">{{:i18n.monthlyInterval1}}</label>',
+                                                        '<div class="input-group">',
+                                                            '<input type="text" size="2"',
+                                                                'value="1"',
+                                                                'name="rimonthlyinterval"',
+                                                                'class="form-control" />',
+                                                            '<div class="input-group-append">',
+                                                                '<span class="input-group-text">',
+                                                                    '{{:i18n.monthlyInterval2}}',
+                                                                '</span>',
+                                                            '</div>',
+                                                        '</div>',
+                                                    '</div>',
+                                                    '<div id="riyearlyinterval" class="form-group rifield">',
+                                                        '<label for="riyearlyinterval" class="mb-0">{{:i18n.yearlyInterval1}}</label>',
+                                                        '<div class="input-group">',
+                                                            '<input type="text" size="2"',
+                                                                'value="1" ',
+                                                                'class="form-control"',
+                                                                'name="riyearlyinterval"/>',
+                                                            '<div class="input-group-append">',
+                                                                '<span class="input-group-text">',
+                                                                    '{{:i18n.yearlyInterval2}}',
+                                                                '</span>',
+                                                            '</div>',
                                                         '</div>',
                                                     '</div>',
                                                 '</div>',
                                             '</div>',
-                                            '<div class="rioccurrencesactions">',
-                                                '<div class="rioccurancesheader">',
-                                                    '<h2>{{:i18n.preview}}</h2>',
-                                                    '<span class="refreshbutton action">',
-                                                        '<a class="rirefreshbutton" href="#" title="{{:i18n.refresh}}">',
-                                                            '{{:i18n.refresh}}',
-                                                        '</a>',
-                                                    '</span>',
+
+                                            '<div id="riweeklyweekdays" class="form-group rifield">',
+                                                '<label for="{{:name}}weeklyinterval" class="mb-0">{{:i18n.weeklyWeekdays}}</label>',
+                                                '<div>',
+                                                    '{{for orderedWeekdays itemVar=\'~value\'}}',
+                                                        '<div class="form-check form-check-inline">',
+                                                            '<input type="checkbox"',
+                                                                'name="riweeklyweekdays{{:~root.weekdays[~value]}}"',
+                                                                'id="{{:name}}weeklyWeekdays{{:~root.weekdays[~value]}}"',
+                                                                'class="form-check-input"',
+                                                                'value="{{:~root.weekdays[~value]}}" />',
+                                                            '<label for="{{:name}}weeklyWeekdays{{:~root.weekdays[~value]}}" class="form-check-label">{{:~root.i18n.shortWeekdays[~value]}}</label>',
+                                                        '</div>',
+                                                    '{{/for}}',
                                                 '</div>',
                                             '</div>',
-                                            '<div class="rioccurrences">',
-                                            '</div>',
-                                            '<div class="rioccurrencesactions">',
-                                                '<div class="rioccurancesheader">',
-                                                    '<h2>{{:i18n.addDate}}</h2>',
+                                            '<div id="rimonthlyoptions" class="form-group rifield">',
+                                                '<label for="rimonthlytype" class="mb-0">{{:i18n.monthlyRepeatOn}}</label>',
+                                                '<div>',
+                                                    '<div class="input-group mb-1">',
+                                                        '<div class="input-group-prepend">',
+                                                            '<div class="input-group-text">',
+                                                                '<input',
+                                                                    'type="radio"',
+                                                                    'value="DAYOFMONTH"',
+                                                                    'name="rimonthlytype"',
+                                                                    'class="form-check-inline"',
+                                                                    'id="{{:name}}monthlytype:DAYOFMONTH" />',
+                                                                '{{:i18n.monthlyDayOfMonth1}}',
+                                                            '</div>',
+                                                        '</div>',
+                                                        '<select name="rimonthlydayofmonthday" class="form-control"',
+                                                            'id="{{:name}}monthlydayofmonthday">',
+                                                        '{{for start=1 end=32}}',
+                                                            '<option value="{{:}}">{{:}}</option>',
+                                                        '{{/for}}',
+                                                        '</select>',
+                                                        '<div class="input-group-append">',
+                                                            '<div class="input-group-text">',
+                                                                '{{:i18n.monthlyDayOfMonth2}}',
+                                                            '</div>',
+                                                        '</div>',
+                                                    '</div>',
+                                                    '<div class="input-group">',
+                                                        '<div class="input-group-prepend">',
+                                                            '<div class="input-group-text">',
+                                                                '<input',
+                                                                    'type="radio"',
+                                                                    'value="WEEKDAYOFMONTH"',
+                                                                    'name="rimonthlytype"',
+                                                                    'class="form-check-inline"',
+                                                                    'id="{{:name}}monthlytype:WEEKDAYOFMONTH" />',
+                                                                '{{:i18n.monthlyWeekdayOfMonth1}}',
+                                                            '</div>',
+                                                        '</div>',
+                                                        '<select name="rimonthlyweekdayofmonthindex" class="form-control">',
+                                                            '{{for i18n.orderIndexes}}',
+                                                                '<option value="{{:~root.orderIndexes[$index]}}">{{:}}</option>',
+                                                            '{{/for}}',
+                                                        '</select>',
+                                                        '<select name="rimonthlyweekdayofmonth" class="form-control">',
+                                                            '{{for orderedWeekdays itemVar=\'~value\'}}',
+                                                                '<option value="{{:~root.weekdays[~value]}}">{{:~root.i18n.weekdays[~value]}}</option>',
+                                                            '{{/for}}',
+                                                        '</select>',
+                                                        '<div class="input-group-append">',
+                                                            '<div class="input-group-text">',
+                                                                '{{:i18n.monthlyWeekdayOfMonth3}}',
+                                                            '</div>',
+                                                        '</div>',
+                                                    '</div>',
                                                 '</div>',
-                                                '<div class="riaddoccurrence">',
-                                                    '<div class="errorarea"></div>',
-                                                    '<input type="text" name="adddate" id="adddate" />',
-                                                    '<input type="button" name="addaction" id="addaction" value="{{:i18n.add}}">',
+                                            '</div>',
+                                            '<div id="riyearlyoptions" class="form-group rifield">',
+                                                '<label for="riyearlyType" class="mb-0">{{:i18n.yearlyRepeatOn}}</label>',
+                                                '<div>',
+                                                    '<div class="input-group mb-1">',
+                                                        '<div class="input-group-prepend">',
+                                                            '<div class="input-group-text">',
+                                                                '<input',
+                                                                    'type="radio"',
+                                                                    'value="DAYOFMONTH"',
+                                                                    'name="riyearlyType"',
+                                                                    'class="form-check-inline"',
+                                                                    'id="{{:name}}yearlytype:DAYOFMONTH" />',
+                                                                '{{:i18n.yearlyDayOfMonth1}}',
+                                                            '</div>',
+                                                        '</div>',
+                                                        '<select name="riyearlydayofmonthday" class="form-control">',
+                                                        '{{for start=1 end=32}}',
+                                                            '<option value="{{:}}">{{:}}</option>',
+                                                        '{{/for}}',
+                                                        '</select>',
+                                                        '<select name="riyearlydayofmonthmonth" class="form-control">',
+                                                        '{{for i18n.months}}',
+                                                            '<option value="{{:#getIndex()+1}}">{{:}}</option>',
+                                                        '{{/for}}',
+                                                        '</select>',
+                                                    '</div>',
+                                                    '<div class="input-group">',
+                                                        '<div class="input-group-prepend">',
+                                                            '<div class="input-group-text">',
+                                                                '<input',
+                                                                    'type="radio"',
+                                                                    'value="WEEKDAYOFMONTH"',
+                                                                    'name="riyearlyType"',
+                                                                    'class="form-check-inline"',
+                                                                    'id="{{:name}}yearlytype:WEEKDAYOFMONTH"/>',
+                                                            '{{:i18n.yearlyWeekdayOfMonth1}}',
+                                                            '</div>',
+                                                        '</div>',
+                                                        '<select name="riyearlyweekdayofmonthindex" class="form-control">',
+                                                        '{{for i18n.orderIndexes}}',
+                                                            '<option value="{{:~root.orderIndexes[#getIndex()]}}">{{:}}</option>',
+                                                        '{{/for}}',
+                                                        '</select>',
+                                                        '<select name="riyearlyweekdayofmonthday" class="form-control">',
+                                                        '{{for orderedWeekdays itemVar=\'~value\'}}',
+                                                            '<option value="{{:~root.weekdays[~value]}}">{{:~root.i18n.weekdays[~value]}}</option>',
+                                                        '{{/for}}',
+                                                        '</select>',
+                                                        '<div class="input-group-append">',
+                                                            '<div class="input-group-text">',
+                                                                '{{:i18n.yearlyWeekdayOfMonth3}}',
+                                                            '</div>',
+                                                        '</div>',
+                                                        '<select name="riyearlyweekdayofmonthmonth" class="form-control">',
+                                                        '{{for i18n.months}}',
+                                                            '<option value="{{:#getIndex()+1}}">{{:}}</option>',
+                                                        '{{/for}}',
+                                                        '</select>',
+                                                    '</div>',
+                                                '</div>',
+                                            '</div>',
+
+                                            '<div id="occurences-show-container">',
+                                                '<a href="#" class="show-link" data-container="occurences-container" data-show-container="occurences-show-container"><i class="fa fa-chevron-down"></i> {{:i18n.preview}}</a>',
+                                            '</div>',
+                                            '<div id="occurences-container" style="display: none;">',
+                                                '<div class="rioccurrencesactions">',
+                                                    '<div class="rioccurancesheader">',
+                                                        '<h2 class="my-2">{{:i18n.preview}}',
+                                                            '<span class="refreshbutton action">',
+                                                                '<a class="btn btn-sm btn-outline-secondary rirefreshbutton" href="#" title="{{:i18n.refresh}}">',
+                                                                    '<i class="fa fa-sync-alt"></i>',
+                                                                '</a>',
+                                                            '</span>',
+                                                        '</h2>',
+                                                    '</div>',
+                                                '</div>',
+                                                '<div class="rioccurrences">',
+                                                '</div>',
+                                                '<div class="rioccurrencesactions">',
+                                                    '<div class="riaddoccurrence mt-3">',
+                                                        '<div class="errorarea"></div>',
+                                                        '<div class="input-group">',
+                                                            '<div class="input-group-prepend">',
+                                                                '<span class="input-group-text">{{:i18n.addDate}}</span>',
+                                                            '</div>',
+                                                            '<input type="text" class="form-control" name="adddate" id="adddate" />',
+                                                            '<div class="input-group-append">',
+                                                                '<input type="button" class="btn btn-outline-secondary" name="addoccurencebtn" id="addoccurencebtn" value="{{:i18n.add}}" />',
+                                                            '</div>',
+                                                        '</div>',
+                                                    '</div>',
+                                                '</div>',
+                                                '<div class="mt-3" id="occurences-hide-container">',
+                                                    '<a href="#" class="hide-link" data-container="occurences-container" data-show-container="occurences-show-container"><i class="fa fa-chevron-up"></i> {{:i18n.preview}}</a>',
                                                 '</div>',
                                             '</div>',
                                         '</form>',
@@ -1116,8 +1200,9 @@
             }
             form.ical.EXDATE.push(this.attributes.date.value);
             var $this = $(this);
-            $this.attr('class', 'exdate');
+            $this.removeClass('rrule').addClass('exdate');
             $this.parent().parent().addClass('exdate');
+            $(this).find('i').removeClass('fa-trash').addClass('fa-trash-restore');
             $this.unbind(event);
             $this.click(occurrenceInclude); // Jslint warns here, but that's OK.
         }
@@ -1126,8 +1211,9 @@
             event.preventDefault();
             form.ical.EXDATE.splice($.inArray(this.attributes.date.value, form.ical.EXDATE), 1);
             var $this = $(this);
-            $this.attr('class', 'rrule');
+            $this.removeClass('exdate').addClass('rrule');
             $this.parent().parent().removeClass('exdate');
+            $(this).find('i').removeClass('fa-trash-restore').addClass('fa-trash');
             $this.unbind(event);
             $this.click(occurrenceExclude);
         }
@@ -1155,14 +1241,14 @@
             // Add date only if it is not already in RDATE
             if ($.inArray(datevalue, form.ical.RDATE) === -1) {
                 form.ical.RDATE.push(datevalue);
-                var html = ['<div class="occurrence rdate" style="display: none;">',
+                var html = ['<div class="occurrence rdate list-group-item d-flex justify-content-between align-items-center p-1" style="display: none;">',
                         '<span class="rdate">',
                             $.datepicker.formatDate("D, dd.mm.yy", dateinput.data('picker').datepicker("getDate")),
                             '<span class="rlabel">' + conf.i18n.additionalDate + '</span>',
                         '</span>',
                         '<span class="action">',
-                            '<a date="' + datevalue + '" href="#" class="rdate" >',
-                                'Include',
+                            '<a date="' + datevalue + '" href="#" class="rdate btn btn-outline-secondary btn-sm" >',
+                                '<i class="fa fa-trash"></i>',
                             '</a>',
                         '</span>',
                         '</div>'].join('\n');
@@ -1284,9 +1370,11 @@
             var startdate = null;
             var startField, startFieldYear, startFieldMonth, startFieldDay;
 
+            var startField = 'recc-start'; // conf.startField;
+
             // Find the default byday and bymonthday from the start date, if any:
-            if (conf.startField) {
-                startField = getField(conf.startField);
+            if (startField) {
+                startField = getField(startField);
                 if (!startField.length) {
                     // Field not found
                     return null;
@@ -1414,9 +1502,22 @@
             displayFields(selector);
         }
 
+        function displayOn() {
+            display.find('div[class=ridisplay-start]').text($('#start-user').val());
+            var times = $('#start-time').val();
+            var end_time = $('#end-time').val();
+            if (end_time) {
+                times += ' - ' + end_time
+            }
+            display.find('div[class=ridisplay-times]').text(times);
+
+            $('#single-event-container').hide();
+            $('#recc-event-container').show();
+        }
+
         function recurrenceOn() {
             var RFC5545 = widgetSaveToRfc5545(form, conf, false);
-            var label = display.find('label[class=ridisplay]');
+            var label = display.find('div[class=ridisplay]');
             label.text(conf.i18n.displayActivate + ' ' + RFC5545.description);
             textarea.val(RFC5545.result).change();
             // var startdate = findStartDate();
@@ -1425,15 +1526,25 @@
             // }
             display.find('button[name="riedit"]').text(conf.i18n.edit_rules);
             display.find('button[name="ridelete"]').show();
+
+            displayOn();
+        }
+
+        function displayOff() {
+            $('#single-event-container').show();
+            $('#recc-event-container').hide();
         }
 
         function recurrenceOff() {
-            var label = display.find('label[class=ridisplay]');
+            var label = display.find('div[class=ridisplay]');
             label.text(conf.i18n.displayUnactivate);
             textarea.val('').change();  // Clear the textarea.
             display.find('.rioccurrences').hide();
             display.find('button[name="riedit"]').text(conf.i18n.add_rules);
             display.find('button[name="ridelete"]').hide();
+
+            set_picker_date($('#end-user'), null);
+            displayOff();
         }
 
         function checkFields(form) {
@@ -1532,10 +1643,29 @@
             event.preventDefault();
             // if no field errors, process the request
             if (checkFields(form)) {
+
+                var start_moment = get_moment_with_time('#recc-start');
+                set_picker_date($('#start-user'), start_moment.toDate());
+
+                var end_time = $('#recc-fo-end-time').timepicker("getTime");
+                var end_datetime = null;
+                if (end_time != null) {
+                    var end_moment = moment(start_moment).set({hour: end_time.getHours(), minute: end_time.getMinutes()});
+
+                    if (end_moment < start_moment) {
+                        end_moment = end_moment.add(1, 'days');
+                    }
+
+                    end_datetime = end_moment.toDate()
+                }
+
+                set_picker_date($('#end-user'), end_datetime);
+
+                recurrenceOn();
+
                 // close overlay
                 dialog.modal('hide');
                 //form.overlay().close();
-                recurrenceOn();
             }
         }
 
@@ -1579,17 +1709,25 @@
         // });
 
         // Make the date input into a calendar dateinput()
+        start_datepicker(form.find('input[name=recc-start]'));
+
         var rirangebyenddatecalendar_input = form.find('input[name=rirangebyenddatecalendar]');
         start_datepicker(rirangebyenddatecalendar_input).datepicker("setDate", moment().toDate());
+
+        start_timepicker(form.find('input[name=recc-start-time]'));
+        start_timepicker(form.find('input[name=recc-fo-end-time]'));
 
         if (textarea.val()) {
             var result = widgetLoadFromRfc5545(form, conf, textarea.val(), false);
             if (result === -1) {
-                var label = display.find('label[class=ridisplay]');
+                var label = display.find('div[class=ridisplay]');
                 label.text(conf.i18n.noRule);
+                displayOff();
             } else {
                 recurrenceOn();
             }
+        } else {
+            displayOff();
         }
 
         /*
@@ -1607,16 +1745,39 @@
             function (e) {
                 // Load the form to set up the right fields to show, etc.
                 loadData(textarea.val());
+
                 e.preventDefault();
                 dialog.modal();
                 //form.overlay().load();
             }
         );
 
+        dialog.on('shown.bs.modal', function (e) {
+            $("#recc-start-time").change(function() {
+                $('#recc-fo-end-time').timepicker('option', 'minTime', $(this).timepicker("getTime"));
+            });
+
+            $('#recc-start-user').datepicker("setDate", $('#start-user').datepicker("getDate"));
+            $('#recc-start-time').timepicker('setTime', $('#start-time').timepicker("getTime"));
+            $('#recc-start-time').change();
+            $('#recc-fo-end-time').timepicker('setTime', $('#end-time').timepicker("getTime"));
+
+            $('#occurences-show-container .show-link').click(function(e){
+                showLink(e, this);
+            });
+
+            $('#occurences-hide-container .hide-link').click(function(e){
+                hideLink(e, this);
+            });
+
+            // Load the form to set up the right fields to show, etc.
+            loadData(textarea.val());
+        });
+
         // Pop up the little add form when clicking "Add"
         var riaddoccurrence_input = form.find('div.riaddoccurrence input#adddate');
         start_datepicker(riaddoccurrence_input).datepicker("setDate", moment().toDate());
-        form.find('input#addaction').click(occurrenceAdd);
+        form.find('input#addoccurencebtn').click(occurrenceAdd);
 
         // When the reload button is clicked, reload
         form.find('a.rirefreshbutton').click(
@@ -1652,7 +1813,7 @@
             }
         });
         // Update the selected dates section
-        form.find('input:radio, .riweeklyweekday > input, input[name=ridailyinterval], input[name=riweeklyinterval], input[name=rimonthlyinterval], input[name=riyearlyinterval]').change(
+        form.find('input:radio, .riweeklyweekday > input, input[name=ridailyinterval], input[name=riweeklyinterval], input[name=rimonthlyinterval], input[name=riyearlyinterval], input[name=recc-start]').change(
             function (e) {
                 // Update only if the occurances are shown
                 if (form.find('.rioccurrencesactions:visible').length !== 0) {
@@ -1666,6 +1827,10 @@
         */
         form.find('.ricancelbutton').click(cancel);
         form.find('.risavebutton').click(save);
+
+        $('#recc-button').click(function() {
+            $('button[name=riedit]').click();
+        });
 
         /*
          * Public API of RecurrenceInput
