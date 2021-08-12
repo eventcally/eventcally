@@ -8,29 +8,6 @@
 <script>
 $( function() {
 
-    function update_input_visibility(value) {
-        switch (value) {
-            case '0':
-                $('#review_status_container').hide();
-                $('#rating_container').hide();
-                break;
-            case '1':
-                $('#review_status_container').hide();
-                $('#rating_container').show();
-                break;
-            case '2':
-                $('#review_status_container').show();
-                $('#rating_container').hide();
-                break;
-        }
-    }
-
-    $('input[name=review_status]').on('change', function() {
-        update_input_visibility($(this).val());
-    });
-
-    update_input_visibility($('input[name=review_status]:checked').val());
-
     $('#acceptFormModal .btn-success').click(function() {
         $('#acceptFormModal form').submit();
     });
@@ -109,9 +86,7 @@ $( function() {
                         {{ form.hidden_tag() }}
                         <input type="hidden" name="{{ form.review_status.name }}" value="3" />
 
-                        {% if form.rating.choices|length > 1 %}
-                            {{ render_field_with_errors(form.rejection_reason) }}
-                        {% endif %}
+                        {{ render_field_with_errors(form.rejection_reason) }}
                     </form>
                 </div>
                 <div class="modal-footer">

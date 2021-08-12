@@ -13,10 +13,12 @@ from project.models import (
     EventAttendanceMode,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
+    EventSuggestion,
     Location,
 )
 from project.services.admin_unit import get_admin_unit_by_id, insert_admin_unit_for_user
 from project.services.event import insert_event, upsert_event_category
+from project.services.event_suggestion import insert_event_suggestion
 from project.services.organizer import get_event_organizer
 from project.services.place import get_event_places
 from project.services.user import create_user, find_user_by_email, get_user
@@ -33,6 +35,15 @@ def _get_now_by_minute():
     return datetime(
         now.year, now.month, now.day, now.hour, now.minute, tzinfo=now.tzinfo
     )
+
+
+def _get_default_event_place_id(admin_unit_id):
+    return get_event_places(admin_unit_id, limit=1)[0].id
+
+
+def _get_default_organizer_id(admin_unit_id):
+    admin_unit = get_admin_unit_by_id(admin_unit_id)
+    return get_event_organizer(admin_unit_id, admin_unit.name).id
 
 
 def _create_user(
@@ -112,16 +123,14 @@ def create_admin_unit(user_email, name):
 
 
 def _create_event(admin_unit_id):
-    admin_unit = get_admin_unit_by_id(admin_unit_id)
-
     event = Event()
     event.admin_unit_id = admin_unit_id
     event.categories = [upsert_event_category("Other")]
     event.name = "Name"
     event.description = "Beschreibung"
     event.start = _get_now_by_minute()
-    event.event_place_id = get_event_places(admin_unit_id, limit=1)[0].id
-    event.organizer_id = get_event_organizer(admin_unit_id, admin_unit.name).id
+    event.event_place_id = _get_default_event_place_id(admin_unit_id)
+    event.organizer_id = _get_default_organizer_id(admin_unit_id)
     event.ticket_link = ""
     event.tags = ""
     event.price_info = ""
@@ -181,6 +190,40 @@ def create_incoming_reference_request(admin_unit_id):
         "other_admin_unit_id": other_admin_unit_id,
         "event_id": event_id,
         "reference_request_id": reference_request_id,
+    }
+    click.echo(json.dumps(result))
+
+
+def _create_event_suggestion(admin_unit_id, free_text=False):
+    suggestion = EventSuggestion()
+    suggestion.admin_unit_id = admin_unit_id
+    suggestion.contact_name = "Vorname Nachname"
+    suggestion.contact_email = "vorname@nachname.de"
+    suggestion.contact_email_notice = False
+    suggestion.name = "Vorschlag"
+    suggestion.description = "Beschreibung"
+    suggestion.start = _get_now_by_minute()
+    suggestion.categories = [upsert_event_category("Other")]
+
+    if free_text:
+        suggestion.event_place_text = "Freitext Ort"
+        suggestion.organizer_text = "Freitext Organisator"
+    else:
+        suggestion.event_place_id = _get_default_event_place_id(admin_unit_id)
+        suggestion.organizer_id = _get_default_organizer_id(admin_unit_id)
+
+    insert_event_suggestion(suggestion)
+    db.session.commit()
+    return suggestion.id
+
+
+@test_cli.command("suggestion-create")
+@click.argument("admin_unit_id")
+@click.option("--freetext/--no-freetext", default=False)
+def create_event_suggestion(admin_unit_id, freetext):
+    event_suggestion_id = _create_event_suggestion(admin_unit_id, freetext)
+    result = {
+        "event_suggestion_id": event_suggestion_id,
     }
     click.echo(json.dumps(result))
 

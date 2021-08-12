@@ -116,7 +116,10 @@ class RejectEventSuggestionForm(FlaskForm):
         lazy_gettext("Rejection reason"),
         coerce=int,
         choices=[
-            (0, ""),
+            (
+                0,
+                lazy_gettext("EventRejectionReason.noreason"),
+            ),
             (
                 int(EventRejectionReason.duplicate),
                 lazy_gettext("EventRejectionReason.duplicate"),
