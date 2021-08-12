@@ -1,7 +1,7 @@
 {% macro render_field_with_errors(field) %}
     {% set is_collapsible = kwargs['is_collapsible'] if 'is_collapsible' in kwargs else False %}
     {% if is_collapsible %}
-    <div class="mb-4" id="{{ field.id }}-show-container"{% if field.data %} style="display: none;"{% endif %}>
+    <div class="mb-3" id="{{ field.id }}-show-container"{% if field.data %} style="display: none;"{% endif %}>
       <a href="#" class="show-link" data-container="{{ field.id }}-container" data-show-container="{{ field.id }}-show-container"><i class="fa fa-plus"></i> {{ field.label.text }}</a>
     </div>
     <div id="{{ field.id }}-container"{% if not field.data %} style="display: none;"{% endif %}>
@@ -93,7 +93,7 @@
       </div>
 
     {% if is_collapsible %}
-      <div class="mb-4" id="{{ field.id }}-hide-container">
+      <div class="mb-3" id="{{ field.id }}-hide-container">
         <a href="#" class="hide-link" data-container="{{ field.id }}-container" data-show-container="{{ field.id }}-show-container"><i class="fa fa-minus"></i> {{ field.label.text }}</a>
       </div>
     </div>
@@ -1229,6 +1229,44 @@ if (URL) {
       return true;
     }
   });
+
+  function createSelect2Tag(params) {
+    var term = $.trim(params.term);
+
+      if (term === '') {
+        return null;
+      }
+
+      return {
+        id: term,
+        tag_text: "{{ _('Just use %(term)s', term='%(term)s') }}".replace("%(term)s", '"' + term + '"'),
+        term: term,
+        text: term,
+        is_new_tag: true
+      }
+  }
+
+  function insertSelect2Tag(data, tag) {
+    data.push(tag);
+  }
+
+  function select2TemplateResult(state) {
+    if ("is_new_tag" in state) {
+        return $("<strong>" + state.tag_text + "</strong>");
+      }
+      return state.text;
+  }
+
+  function select2GetData(e) {
+    var dataArray = $(e.target).select2('data');
+    var data = {};
+
+    if (dataArray.length > 0) {
+      data = dataArray[0];
+    }
+
+    return data;
+  }
 
 </script>
 {% endmacro %}
