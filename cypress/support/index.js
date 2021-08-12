@@ -1,5 +1,5 @@
-import './commands'
+import "./commands";
 
 beforeEach(() => {
-    cy.setup()
-})
+  cy.setup();
+});

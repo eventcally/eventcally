@@ -88,51 +88,11 @@ $( function() {
       }
     },
     placeholder: "{{ _('Enter place or address') }}",
-    createTag: function (params) {
-      var term = $.trim(params.term);
-
-      if (term === '') {
-        return null;
-      }
-
-      return {
-        id: term,
-        text: "{{ _('Just use %(term)s', term='%(term)s') }}".replace("%(term)s", term),
-        term: term,
-        is_new_tag: true
-      }
-    },
-    insertTag: function (data, tag) {
-      data.push(tag);
-    },
-    templateResult: function (state) {
-      if ("is_new_tag" in state) {
-        return $("<strong>" + state.text + "</strong>");
-      }
-      return state.text;
-    }
-  });
-
-  function get_gmaps_place_details(place_id) {
-    $.ajax({
-        url: "{{ url_for('js_autocomplete_gmaps_place') }}",
-        type: "get",
-        dataType: "json",
-        data: "gmaps_id=" + place_id,
-        success: function (data) {
-          fill_place_form_with_gmaps_place(data, 'new_event_place-');
-          $('#new_place_container').find(':input').valid();
-        }
-    });
-  }
-
-  $('#event_place_id').on('select2:close', function (e) {
-    var dataArray = $(e.target).select2('data');
-    var data = {};
-
-    if (dataArray.length > 0) {
-      data = dataArray[0];
-    }
+    createTag: createSelect2Tag,
+    insertTag: insertSelect2Tag,
+    templateResult: select2TemplateResult
+  }).on('select2:close', function (e) {
+    var data = select2GetData(e);
 
     if ("is_new_tag" in data || "gmaps_id" in data) {
       $(this).val(null).trigger('change');
@@ -152,6 +112,19 @@ $( function() {
       $(this).valid();
     }
   });
+
+  function get_gmaps_place_details(place_id) {
+    $.ajax({
+        url: "{{ url_for('js_autocomplete_gmaps_place') }}",
+        type: "get",
+        dataType: "json",
+        data: "gmaps_id=" + place_id,
+        success: function (data) {
+          fill_place_form_with_gmaps_place(data, 'new_event_place-');
+          $('#new_place_container').find(':input').valid();
+        }
+    });
+  }
 
   $('input[type=radio][name=event_place_choice]').on('change', function() {
     update_place_container($(this).val());
@@ -201,38 +174,11 @@ $( function() {
       }
     },
     placeholder: "{{ _('Enter organizer') }}",
-    createTag: function (params) {
-      var term = $.trim(params.term);
-
-      if (term === '') {
-        return null;
-      }
-
-      return {
-        id: term,
-        text: "{{ _('Just use %(term)s', term='%(term)s') }}".replace("%(term)s", term),
-        term: term,
-        is_new_tag: true
-      }
-    },
-    insertTag: function (data, tag) {
-      data.push(tag);
-    },
-    templateResult: function (state) {
-      if ("is_new_tag" in state) {
-        return $("<strong>" + state.text + "</strong>");
-      }
-      return state.text;
-    }
-  });
-
-  $('#organizer_id').on('select2:close', function (e) {
-    var dataArray = $(e.target).select2('data');
-    var data = {};
-
-    if (dataArray.length > 0) {
-      data = dataArray[0];
-    }
+    createTag: createSelect2Tag,
+    insertTag: insertSelect2Tag,
+    templateResult: select2TemplateResult
+  }).on('select2:close', function (e) {
+    var data = select2GetData(e);
 
     if ("is_new_tag" in data) {
       $(this).val(null).trigger('change');
@@ -266,6 +212,7 @@ $( function() {
   update_organizer_container($('input[type=radio][name=organizer_choice]:checked').val());
 
   {{ render_end_container_handling() }}
+
 });
 </script>
 {% endblock %}
@@ -291,9 +238,14 @@ $( function() {
       {{ _('Event date') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "14"}) }}
-      {{ render_field_with_errors(form.end, is_collapsible=1) }}
-      {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
+      <div id="single-event-container">
+        {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "14"}) }}
+        {{ render_field_with_errors(form.end, is_collapsible=1) }}
+        <button type="button" id="recc-button" class="btn btn-outline-secondary"><i class="fas fa-history"></i> {{ _('Recurring event') }}</button>
+      </div>
+      <div id="recc-event-container">
+        {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
+      </div>
     </div>
   </div>
 
