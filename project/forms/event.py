@@ -68,21 +68,18 @@ class SharedEventForm(FlaskForm):
     start = CustomDateTimeField(
         lazy_gettext("Start"),
         validators=[DataRequired()],
-        description=lazy_gettext(
-            "Indicate when the event will take place.  If the event takes place regularly, enter when the first date will begin."
-        ),
+        description=lazy_gettext("Indicate when the event will take place."),
     )
     end = CustomDateTimeField(
         lazy_gettext("End"),
         validators=[Optional()],
         description=lazy_gettext(
-            "Indicate when the event will end. An event can last a maximum of 14 days. If the event takes place regularly, enter when the first date will end."
+            "Indicate when the event will end. An event can last a maximum of 14 days."
         ),
     )
     recurrence_rule = TextAreaField(
-        lazy_gettext("Recurrence rule"),
+        lazy_gettext("Recurring event"),
         validators=[Optional()],
-        description=lazy_gettext("Enter if the event takes place regularly."),
     )
     description = TextAreaField(
         lazy_gettext("Description"),

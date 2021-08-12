@@ -79,45 +79,69 @@
       }
     });
 
-    $('.wizard-next').click(function(){
+    $('.wizard-next').click(function(e){
+      e.preventDefault();
       wizard.steps('next');
     });
 
-    $('.wizard-prev').click(function(){
+    $('.wizard-prev').click(function(e){
+      e.preventDefault();
       wizard.steps('previous');
     });
 
     {{ render_cropper_code() }}
 
-    $('#event_place_id').select2({width: '100%', language: 'de', tags: true, theme: 'bootstrap4'})
-      .on('select2:select', function (e) {
-        var item = $('#event_place_id').select2('data')[0];
-        var needs_suffix = item.id != '' && item.id == item.text;
+    $('#event_place_id').select2({
+      width: '100%',
+      language: 'de',
+      tags: true,
+      theme: 'bootstrap4',
+      placeholder: "{{ _('Enter place or address') }}",
+      createTag: createSelect2Tag,
+      insertTag: insertSelect2Tag,
+      templateResult: select2TemplateResult
+    }).on('select2:close', function (e) {
+        var data = select2GetData(e);
 
-        if (needs_suffix) {
-          var input = $($.parseHTML('<input type="text" id="event_place_id_suffix" name="event_place_id_suffix" class="form-control mt-2" placeholder="Adresse" />'));
-          $('#event_place_id').siblings('.select2').after(input);
+        if ("is_new_tag" in data) {
+          if ($('#event_place_id_suffix').length) {
+            $('#event_place_id_suffix').val('');
+          } else {
+            var input = $($.parseHTML('<input type="text" id="event_place_id_suffix" name="event_place_id_suffix" class="form-control mt-2" placeholder="Adresse" />'));
+            $('#event_place_id').siblings('.select2').after(input);
+          }
           $('#event_place_id_suffix').focus();
         } else {
           $('#event_place_id_suffix').remove();
         }
       });
 
-    $('#organizer_id').select2({width: '100%', language: 'de', tags: true, theme: 'bootstrap4'})
-      .on('select2:select', function (e) {
-        var item = $('#organizer_id').select2('data')[0];
-        var needs_suffix = item.id != '' && item.id == item.text;
+    $('#organizer_id').select2({
+      width: '100%',
+      language: 'de',
+      tags: true,
+      theme: 'bootstrap4',
+      placeholder: "{{ _('Enter organizer') }}",
+      createTag: createSelect2Tag,
+      insertTag: insertSelect2Tag,
+      templateResult: select2TemplateResult
+    }).on('select2:select', function (e) {
+        var data = select2GetData(e);
 
-        if (needs_suffix) {
-          var input = $($.parseHTML('<input type="text" id="organizer_id_suffix" name="organizer_id_suffix" class="form-control mt-2" placeholder="Adresse" />'));
-          $('#organizer_id').siblings('.select2').after(input);
+        if ("is_new_tag" in data) {
+          if ($('#organizer_id_suffix').length) {
+            $('#organizer_id_suffix').val('');
+          } else {
+            var input = $($.parseHTML('<input type="text" id="organizer_id_suffix" name="organizer_id_suffix" class="form-control mt-2" placeholder="Adresse" />'));
+            $('#organizer_id').siblings('.select2').after(input);
+          }
           $('#organizer_id_suffix').focus();
         } else {
           $('#organizer_id_suffix').remove();
         }
       });
 
-      {{ render_end_container_handling() }}
+    {{ render_end_container_handling() }}
 
   });
 </script>
@@ -203,9 +227,15 @@
         {{ render_field_with_errors(form.name) }}
         {{ render_field_with_errors(form.event_place_id, class="w-100") }}
         {{ render_field_with_errors(form.organizer_id, class="w-100") }}
-        {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "14"}) }}
-        {{ render_field_with_errors(form.end, is_collapsible=1) }}
-        {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
+
+        <div id="single-event-container" class="mb-3">
+          {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "14"}) }}
+          {{ render_field_with_errors(form.end, is_collapsible=1) }}
+          <button type="button" id="recc-button" class="btn btn-outline-secondary"><i class="fas fa-history"></i> {{ _('Recurring event') }}</button>
+        </div>
+        <div id="recc-event-container">
+          {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
+        </div>
 
         <div class="d-flex justify-content-between">
           <a class="btn btn-secondary my-1 wizard-prev" href="#" role="button">{{ _('Previous') }}</a>

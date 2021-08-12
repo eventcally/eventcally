@@ -129,9 +129,14 @@
       {{ _('Event date') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "14"}) }}
-      {{ render_field_with_errors(form.end, is_collapsible=1) }}
-      {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
+      <div id="single-event-container">
+        {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "14"}) }}
+        {{ render_field_with_errors(form.end, is_collapsible=1) }}
+        <button type="button" id="recc-button" class="btn btn-outline-secondary"><i class="fas fa-history"></i> {{ _('Recurring event') }}</button>
+      </div>
+      <div id="recc-event-container">
+        {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
+      </div>
     </div>
   </div>
 
