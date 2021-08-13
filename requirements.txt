@@ -1,5 +1,5 @@
 alembic==1.4.3
-aniso8601==8.1.0
+aniso8601==9.0.1
 apispec==4.0.0
 apispec-webframeworks==0.5.2
 appdirs==1.4.4
