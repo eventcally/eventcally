@@ -6,7 +6,7 @@ appdirs==1.4.4
 argh==0.26.2
 arrow==0.14.7
 attrs==20.3.0
-Authlib==0.15.3
+Authlib==0.15.4
 Babel==2.9.0
 bcrypt==3.2.0
 beautifulsoup4==4.9.3
