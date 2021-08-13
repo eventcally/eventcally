@@ -46,6 +46,15 @@ Cypress.Commands.add("createIncomingReferenceRequest", (adminUnitId) => {
     });
 });
 
+Cypress.Commands.add("createSuggestion", (adminUnitId) => {
+  return cy
+    .logexec("flask test suggestion-create " + adminUnitId)
+    .then(function (result) {
+      let json = JSON.parse(result.stdout);
+      return json.event_suggestion_id;
+    });
+});
+
 Cypress.Commands.add("assertValid", (fieldId) => {
   cy.get("#" + fieldId).should("have.class", "is-valid");
   cy.get("#" + fieldId + "-error").should("be.empty");

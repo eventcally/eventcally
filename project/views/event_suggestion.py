@@ -16,10 +16,13 @@ def event_suggestion_review(event_suggestion_id):
     event_suggestion = EventSuggestion.query.get_or_404(event_suggestion_id)
     access_or_401(event_suggestion.admin_unit, "event:verify")
 
+    form = RejectEventSuggestionForm(obj=event_suggestion)
+
     return render_template(
         "event_suggestion/review.html",
         admin_unit=event_suggestion.admin_unit,
         event_suggestion=event_suggestion,
+        form=form,
     )
 
 
