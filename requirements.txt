@@ -4,7 +4,7 @@ apispec==4.0.0
 apispec-webframeworks==0.5.2
 appdirs==1.4.4
 argh==0.26.2
-arrow==0.14.7
+arrow==1.1.1
 attrs==20.3.0
 Authlib==0.15.3
 Babel==2.9.0
