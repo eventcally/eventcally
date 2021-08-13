@@ -1,9 +1,20 @@
 {% extends "layout.html" %}
 {% set active_id = "reviews" %}
-{% from "_macros.html" import render_event_suggestion, render_image, render_radio_buttons, render_phone_prop, render_email_prop, render_string_prop, render_field_with_errors, render_field, render_event_props, render_image_with_link, render_place, render_link_prop %}
+{% from "_macros.html" import render_jquery_steps_header, render_event_suggestion, render_image, render_radio_buttons, render_phone_prop, render_email_prop, render_string_prop, render_field_with_errors, render_field, render_event_props, render_image_with_link, render_place, render_link_prop %}
 {%- block title -%}
 {{ event_suggestion.name }}
 {%- endblock -%}
+{% block header_before_site_js %}
+{{ render_jquery_steps_header() }}
+<script>
+$( function() {
+
+    $('#rejectFormModal .btn-danger').click(function() {
+        $('#rejectFormModal form').submit();
+    });
+});
+</script>
+{% endblock %}
 {% block content %}
 
 <h1>{{ _('Review event suggestion') }}</h1>
@@ -17,9 +28,33 @@
             <a class="btn btn-success" href="{{ url_for('event', event_id=event_suggestion.event_id) }}" role="button"><i class="fa fa-arrow-right"></i> {{ _('View event') }}</a>
         </div>
     {% else %}
-        <div class="d-flex justify-content-between my-4">
+        <div class="d-flex justify-content-between my-4 decision-container">
             <a class="btn btn-success m-1" href="{{ url_for('event_create_for_admin_unit_id', id=event_suggestion.admin_unit_id, event_suggestion_id=event_suggestion.id) }}" role="button"><i class="fa fa-arrow-right"></i> {{ _('Create event from suggestion') }}&hellip;</a>
-            <a class="btn btn-danger m-1" href="{{ url_for('event_suggestion_reject', event_suggestion_id=event_suggestion.id) }}" role="button"><i class="fa fa-ban"></i> {{ _('Reject event suggestion') }}&hellip;</a>
+            <button type="button" class="btn btn-danger m-1" data-toggle="modal" data-target="#rejectFormModal"><i class="fa fa-ban"></i> {{ _('Reject event suggestion') }}&hellip;</button>
+        </div>
+
+        <div class="modal fade" id="rejectFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ _('Reject event suggestion') }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ url_for('event_suggestion_reject', event_suggestion_id=event_suggestion.id) }}" method="POST">
+                            {{ form.hidden_tag() }}
+
+                            {{ render_field_with_errors(form.rejection_resaon) }}
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Cancel') }}</button>
+                        <button type="button" class="btn btn-danger">{{ _('Reject event suggestion') }}</button>
+                    </div>
+                </div>
+            </div>
         </div>
     {% endif %}
 </div>
