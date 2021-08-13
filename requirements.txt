@@ -1,4 +1,4 @@
-alembic==1.4.3
+alembic==1.6.5
 aniso8601==8.1.0
 apispec==4.0.0
 apispec-webframeworks==0.5.2
