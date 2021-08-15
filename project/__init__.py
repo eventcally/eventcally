@@ -170,7 +170,6 @@ from project.views import (
     admin_unit,
     admin_unit_member,
     admin_unit_member_invitation,
-    api,
     dump,
     event,
     event_date,

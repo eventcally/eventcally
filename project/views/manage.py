@@ -140,6 +140,7 @@ def manage_admin_unit_events(id):
         form.populate_obj(params)
 
     params.admin_unit_id = admin_unit.id
+    params.can_read_private_events = True
     events = get_events_query(params).paginate()
     return render_template(
         "manage/events.html",

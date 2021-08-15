@@ -4,6 +4,7 @@ from flask import redirect, render_template, request, url_for
 from flask.wrappers import Response
 
 from project import app
+from project.access import can_read_event_or_401
 from project.dateutils import create_icalendar
 from project.forms.event_date import FindEventDateForm
 from project.jsonld import DateTimeEncoder, get_sd_for_event_date
@@ -52,6 +53,7 @@ def event_date_search():
 @app.route("/eventdate/<int:id>")
 def event_date(id):
     event_date = get_event_date_with_details_or_404(id)
+    can_read_event_or_401(event_date.event)
 
     if "src" in request.args:
         track_analytics("event_date", str(id), request.args["src"])
@@ -81,6 +83,7 @@ def event_date(id):
 @app.route("/eventdate/<int:id>/ical")
 def event_date_ical(id):
     event_date = get_event_date_with_details_or_404(id)
+    can_read_event_or_401(event_date.event)
     event = create_ical_event_for_date(event_date)
 
     cal = create_icalendar()

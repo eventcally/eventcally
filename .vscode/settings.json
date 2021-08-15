@@ -28,5 +28,8 @@
     },
     "[yaml]": {
         "editor.formatOnSave": false
+    },
+    "[sql]": {
+        "editor.formatOnSave": false
     }
 }

@@ -34,6 +34,7 @@ from project.models import (
     EventAttendanceMode,
     EventStatus,
     EventTargetGroupOrigin,
+    PublicStatus,
 )
 
 
@@ -149,6 +150,11 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
             "description": "When the event will end. An event can last a maximum of 14 days. If the event takes place regularly, enter when the first date will end."
         },
     )
+    public_status = EnumField(
+        PublicStatus,
+        missing=PublicStatus.published,
+        metadata={"description": "Public status of the event."},
+    )
 
 
 class EventSchema(EventIdSchema, EventBaseSchemaMixin):
@@ -186,6 +192,7 @@ class EventSearchItemSchema(EventRefSchema):
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
     attendance_mode = EnumField(EventAttendanceMode)
+    public_status = EnumField(PublicStatus)
 
 
 class EventListRequestSchema(PaginationRequestSchema):

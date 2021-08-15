@@ -13,21 +13,39 @@ def test_list(client, seeder, utils):
 
 
 def test_event_date_search(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
-    seeder.create_event(admin_unit_id)
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+    seeder.create_event(admin_unit_id, draft=True)
 
     url = utils.get_url(
         "api_v1_organization_event_date_search", id=admin_unit_id, sort="-rating"
     )
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["event"]["id"] == event_id
+
+    seeder.authorize_api_access(user_id, admin_unit_id)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+    assert len(response.json["items"]) == 2
+    assert response.json["items"][1]["event"]["public_status"] == "draft"
 
 
 def test_event_search(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
-    seeder.create_event(admin_unit_id)
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+    seeder.create_event(admin_unit_id, draft=True)
 
     url = utils.get_url("api_v1_organization_event_search", id=admin_unit_id)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == event_id
+
+    seeder.authorize_api_access(user_id, admin_unit_id)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+    assert len(response.json["items"]) == 2
+    assert response.json["items"][1]["public_status"] == "draft"
 
 
 def test_organizers(client, seeder, utils):
@@ -60,11 +78,19 @@ def test_organizers_post(client, seeder, utils, app):
 
 
 def test_events(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
-    seeder.create_event(admin_unit_id)
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+    seeder.create_event(admin_unit_id, draft=True)
 
     url = utils.get_url("api_v1_organization_event_list", id=admin_unit_id)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == event_id
+
+    seeder.authorize_api_access(user_id, admin_unit_id)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+    assert len(response.json["items"]) == 2
 
 
 def prepare_events_post_data(seeder, utils):
@@ -92,7 +118,7 @@ def test_events_post(client, seeder, utils, app):
     assert "id" in response.json
 
     with app.app_context():
-        from project.models import Event
+        from project.models import Event, PublicStatus
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -104,6 +130,7 @@ def test_events_post(client, seeder, utils, app):
         assert event.organizer_id == organizer_id
         assert event.photo is not None
         assert event.photo.encoding_format == "image/png"
+        assert event.public_status == PublicStatus.published
 
 
 def test_events_post_photo_no_data(client, seeder, utils, app):

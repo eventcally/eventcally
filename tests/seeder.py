@@ -156,7 +156,10 @@ class Seeder(object):
         return client_id
 
     def setup_api_access(self):
-        user_id, admin_unit_id = self.setup_base(admin=True)
+        user_id, admin_unit_id = self.setup_base(admin=True, log_in=False)
+        return self.authorize_api_access(user_id, admin_unit_id)
+
+    def authorize_api_access(self, user_id, admin_unit_id):
         oauth2_client_id = self.insert_default_oauth2_client(user_id)
 
         with self._app.app_context():
@@ -167,7 +170,9 @@ class Seeder(object):
             client_secret = oauth2_client.client_secret
             scope = oauth2_client.scope
 
+        self._utils.login()
         self._utils.authorize(client_id, client_secret, scope)
+        self._utils.logout()
         return (user_id, admin_unit_id)
 
     def get_event_category_id(self, category_name):
@@ -177,16 +182,22 @@ class Seeder(object):
         return category.id
 
     def create_event(
-        self, admin_unit_id, recurrence_rule="", external_link="", end=None
+        self,
+        admin_unit_id,
+        recurrence_rule="",
+        external_link="",
+        end=None,
+        draft=False,
+        name="Name",
     ):
-        from project.models import Event, EventAttendanceMode
+        from project.models import Event, EventAttendanceMode, PublicStatus
         from project.services.event import insert_event, upsert_event_category
 
         with self._app.app_context():
             event = Event()
             event.admin_unit_id = admin_unit_id
             event.categories = [upsert_event_category("Other")]
-            event.name = "Name"
+            event.name = name
             event.description = "Beschreibung"
             event.start = self.get_now_by_minute()
             event.end = end
@@ -198,6 +209,10 @@ class Seeder(object):
             event.tags = ""
             event.price_info = ""
             event.attendance_mode = EventAttendanceMode.offline
+
+            if draft:
+                event.public_status = PublicStatus.draft
+
             insert_event(event)
             self._db.session.commit()
             event_id = event.id

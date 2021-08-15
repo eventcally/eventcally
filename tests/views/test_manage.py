@@ -78,6 +78,12 @@ def test_admin_unit_events(client, seeder, utils):
         date_to="2021-10-03",
     )
 
+    event_id = seeder.create_event(admin_unit_id, draft=True)
+    response = utils.get_endpoint_ok("manage_admin_unit_events", id=admin_unit_id)
+
+    event_url = utils.get_url("event", event_id=event_id)
+    utils.assert_response_contains(response, event_url)
+
 
 def test_admin_unit_events_invalidDateFormat(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()

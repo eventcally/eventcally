@@ -363,7 +363,10 @@ $( function() {
   </div>
   {% endif %}
 
-  {{ render_field(form.submit) }}
+  <div class="d-flex flex-column flex-sm-row">
+    {{ form.submit(class="btn btn-primary m-1")|safe }}
+    {{ form.submit_draft(class="btn btn-secondary m-1")|safe }}
+  </div>
 
 </form>
 
