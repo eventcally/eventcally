@@ -28,7 +28,7 @@ class PlaceResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("place:write")
     def put(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         place = EventPlace.query.get_or_404(id)
         access_or_401(place.adminunit, "place:update")
 
@@ -42,7 +42,7 @@ class PlaceResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("place:write")
     def patch(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         place = EventPlace.query.get_or_404(id)
         access_or_401(place.adminunit, "place:update")
 
@@ -57,7 +57,7 @@ class PlaceResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("place:write")
     def delete(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         place = EventPlace.query.get_or_404(id)
         access_or_401(place.adminunit, "place:delete")
 

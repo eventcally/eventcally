@@ -4,7 +4,13 @@ from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy.orm import lazyload, load_only
 
 from project import db
-from project.access import access_or_401, login_api_user_or_401
+from project.access import (
+    access_or_401,
+    can_read_event_or_401,
+    can_read_private_events,
+    login_api_user,
+    login_api_user_or_401,
+)
 from project.api import add_api_resource
 from project.api.event.schemas import (
     EventListRequestSchema,
@@ -20,7 +26,7 @@ from project.api.event_date.schemas import (
     EventDateListResponseSchema,
 )
 from project.api.resources import BaseResource
-from project.models import Event, EventDate
+from project.models import AdminUnit, Event, EventDate, PublicStatus
 from project.oauth2 import require_oauth
 from project.services.event import (
     get_event_with_details_or_404,
@@ -32,20 +38,36 @@ from project.services.event_search import EventSearchParams
 from project.views.event import send_referenced_event_changed_mails
 
 
+def api_can_read_event_or_401(event: Event):
+    if event.public_status != PublicStatus.published:
+        login_api_user(current_token)
+        can_read_event_or_401(event)
+
+
+def api_can_read_private_events(admin_unit: AdminUnit):
+    login_api_user(current_token)
+    return can_read_private_events(admin_unit)
+
+
 class EventListResource(BaseResource):
     @doc(summary="List events", tags=["Events"])
     @use_kwargs(EventListRequestSchema, location=("query"))
     @marshal_with(EventListResponseSchema)
     def get(self, **kwargs):
-        pagination = Event.query.paginate()
+        pagination = Event.query.filter(
+            Event.public_status == PublicStatus.published
+        ).paginate()
         return pagination
 
 
 class EventResource(BaseResource):
     @doc(summary="Get event", tags=["Events"])
     @marshal_with(EventSchema)
+    @require_oauth(optional=True)
     def get(self, id):
-        return get_event_with_details_or_404(id)
+        event = get_event_with_details_or_404(id)
+        api_can_read_event_or_401(event)
+        return event
 
     @doc(
         summary="Update event", tags=["Events"], security=[{"oauth2": ["event:write"]}]
@@ -54,7 +76,7 @@ class EventResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("event:write")
     def put(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         event = Event.query.get_or_404(id)
         access_or_401(event.admin_unit, "event:update")
 
@@ -73,7 +95,7 @@ class EventResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("event:write")
     def patch(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         event = Event.query.get_or_404(id)
         access_or_401(event.admin_unit, "event:update")
 
@@ -93,7 +115,7 @@ class EventResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("event:write")
     def delete(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         event = Event.query.get_or_404(id)
         access_or_401(event.admin_unit, "event:delete")
 
@@ -107,8 +129,13 @@ class EventDatesResource(BaseResource):
     @doc(summary="List dates for event", tags=["Events", "Event Dates"])
     @use_kwargs(EventDateListRequestSchema, location=("query"))
     @marshal_with(EventDateListResponseSchema)
+    @require_oauth(optional=True)
     def get(self, id):
-        event = Event.query.options(load_only(Event.id)).get_or_404(id)
+        event = Event.query.options(
+            load_only(Event.id, Event.public_status)
+        ).get_or_404(id)
+        api_can_read_event_or_401(event)
+
         return (
             EventDate.query.options(lazyload(EventDate.event))
             .filter(EventDate.event_id == event.id)

@@ -6,10 +6,18 @@ from psycopg2.errors import UniqueViolation
     "external_link", [None, "https://example.com", "www.example.com"]
 )
 def test_read(client, seeder, utils, external_link):
-    user_id, admin_unit_id = seeder.setup_base()
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id, external_link=external_link)
 
     url = utils.get_url("event", event_id=event_id)
+    utils.get_ok(url)
+
+    event_id = seeder.create_event(admin_unit_id, draft=True)
+    url = utils.get_url("event", event_id=event_id)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
+    utils.login()
     utils.get_ok(url)
 
 
@@ -305,7 +313,7 @@ def test_create_verifiedSuggestionRedirectsToReviewStatus(
 
 
 def test_actions(seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)
 
     url = utils.get_url("event_actions", event_id=event_id)
@@ -314,6 +322,14 @@ def test_actions(seeder, utils):
     # Nutzer ist alleine auf der Welt. Deshalb darf es keine Referenz-Links geben
     assert b"Empfehlung anfragen" not in response.data
     assert b"Veranstaltung empfehlen" not in response.data
+
+    event_id = seeder.create_event(admin_unit_id, draft=True)
+    url = utils.get_url("event_actions", event_id=event_id)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
+    utils.login()
+    utils.get_ok(url)
 
 
 def test_actions_withReferenceRequestLink(seeder, utils):

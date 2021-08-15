@@ -6,7 +6,7 @@ from flask_security.utils import FsPermNeed
 from sqlalchemy import and_
 
 from project import app
-from project.models import AdminUnit, AdminUnitMember
+from project.models import AdminUnit, AdminUnitMember, Event, PublicStatus
 from project.services.admin_unit import get_member_for_admin_unit_by_user_id
 
 
@@ -29,8 +29,12 @@ def owner_access_or_401(user_id):
         abort(401)
 
 
-def login_api_user_or_401(user):
-    if not login_user(user):
+def login_api_user(token) -> bool:
+    return token and login_user(token.user)
+
+
+def login_api_user_or_401(token) -> bool:
+    if not login_api_user(token):
         abort(401)
 
 
@@ -175,3 +179,19 @@ def can_create_admin_unit():
         return True
 
     return has_current_user_role("admin")
+
+
+def can_read_event(event: Event) -> bool:
+    if event.public_status == PublicStatus.published:
+        return True
+
+    return has_access(event.admin_unit, "event:read")
+
+
+def can_read_event_or_401(event: Event):
+    if not can_read_event(event):
+        abort(401)
+
+
+def can_read_private_events(admin_unit: AdminUnit) -> bool:
+    return has_access(admin_unit, "event:read")

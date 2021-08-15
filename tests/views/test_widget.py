@@ -4,10 +4,17 @@ import pytest
 def test_event_dates(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.create_event(admin_unit_id)
+    seeder.create_event(admin_unit_id, draft=True)
     au_short_name = "meinecrew"
 
     url = utils.get_url("widget_event_dates", au_short_name=au_short_name)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+
+    event_url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=1)
+    utils.assert_response_contains(response, event_url)
+
+    draft_url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=2)
+    utils.assert_response_contains_not(response, draft_url)
 
     url = utils.get_url(
         "widget_event_dates", au_short_name=au_short_name, keyword="name"
@@ -37,8 +44,8 @@ def test_event_dates(client, seeder, utils):
 
 
 def test_event_date(client, seeder, utils, app, db):
-    user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    seeder.create_event(admin_unit_id)
     au_short_name = "meinecrew"
 
     with app.app_context():
@@ -53,8 +60,13 @@ def test_event_date(client, seeder, utils, app, db):
         admin_unit.widget_link_color = Color("#FF0000")
         db.session.commit()
 
-    url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=event_id)
+    url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=1)
     utils.get_ok(url)
+
+    seeder.create_event(admin_unit_id, draft=True)
+    url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=2)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
 
 
 def test_infoscreen(client, seeder, utils):

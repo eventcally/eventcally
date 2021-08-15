@@ -1,5 +1,5 @@
 def test_read(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
     seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
 
     url = utils.get_url("event_date", id=1)
@@ -9,12 +9,28 @@ def test_read(client, seeder, utils):
     response = client.get(url)
     utils.assert_response_redirect(response, "event_date", id=1)
 
+    seeder.create_event(admin_unit_id, draft=True)
+    url = utils.get_url("event_date", id=2)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
+    utils.login()
+    utils.get_ok(url)
+
 
 def test_ical(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
     seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
 
     url = utils.get_url("event_date_ical", id=1)
+    utils.get_ok(url)
+
+    seeder.create_event(admin_unit_id, draft=True)
+    url = utils.get_url("event_date_ical", id=2)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
+    utils.login()
     utils.get_ok(url)
 
 
