@@ -39,6 +39,9 @@ def test_search(client, seeder, utils):
     url = utils.get_url("api_v1_event_date_search", keyword="name")
     response = utils.get_ok(url)
 
+    url = utils.get_url("api_v1_event_date_search", category_id=0)
+    response = utils.get_ok(url)
+
     url = utils.get_url("api_v1_event_date_search", category_id=2000)
     response = utils.get_ok(url)
 
