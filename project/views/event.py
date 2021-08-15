@@ -9,6 +9,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from project import app, db
 from project.access import (
     access_or_401,
+    can_read_event_or_401,
     can_reference_event,
     can_request_event_reference,
     has_access,
@@ -27,6 +28,7 @@ from project.models import (
     EventReference,
     EventReviewStatus,
     EventSuggestion,
+    PublicStatus,
     User,
 )
 from project.services.event import (
@@ -53,6 +55,7 @@ from project.views.utils import (
 @app.route("/event/<int:event_id>")
 def event(event_id):
     event = get_event_with_details_or_404(event_id)
+    can_read_event_or_401(event)
     user_rights = get_menu_user_rights(event)
     dates = get_upcoming_event_dates(event.id)
     url = url_for("event", event_id=event_id, _external=True)
@@ -80,6 +83,7 @@ def event(event_id):
 @app.route("/event/<int:event_id>/actions")
 def event_actions(event_id):
     event = Event.query.get_or_404(event_id)
+    can_read_event_or_401(event)
     user_rights = get_user_rights(event)
     url = url_for("event", event_id=event_id, _external=True)
     share_links = get_share_links(url, event.name)
@@ -163,8 +167,13 @@ def event_create_for_admin_unit_id(id):
             if event_suggestion:
                 send_event_suggestion_review_status_mail(event_suggestion)
 
+            success_msg = (
+                gettext("Event successfully published")
+                if event.public_status == PublicStatus.published
+                else gettext("Draft successfully saved")
+            )
             flash_message(
-                gettext("Event successfully created"),
+                success_msg,
                 url_for("event", event_id=event.id),
             )
             return redirect(url_for("event_actions", event_id=event.id))

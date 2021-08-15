@@ -27,6 +27,7 @@ from project.models import (
     EventTargetGroupOrigin,
     Image,
     Location,
+    PublicStatus,
 )
 
 
@@ -270,7 +271,8 @@ class CreateEventForm(BaseEventForm):
     )
     new_organizer = FormField(OrganizerForm, default=lambda: EventOrganizer())
 
-    submit = SubmitField(lazy_gettext("Create event"))
+    submit_draft = SubmitField(lazy_gettext("Save as draft"))
+    submit = SubmitField(lazy_gettext("Publish event"))
 
     def populate_obj(self, obj):
         for name, field in self._fields.items():
@@ -289,6 +291,10 @@ class CreateEventForm(BaseEventForm):
             elif name == "photo" and not obj.photo:
                 obj.photo = Image()
             field.populate_obj(obj, name)
+
+        obj.public_status = (
+            PublicStatus.published if self.submit.data else PublicStatus.draft
+        )
 
     def validate(self):
         if not super(BaseEventForm, self).validate():
@@ -339,6 +345,16 @@ class UpdateEventForm(BaseEventForm):
             (int(EventStatus.rescheduled), lazy_gettext("EventStatus.rescheduled")),
         ],
         description=lazy_gettext("Select the status of the event."),
+    )
+
+    public_status = SelectField(
+        lazy_gettext("Public status"),
+        coerce=int,
+        choices=[
+            (int(PublicStatus.published), lazy_gettext("PublicStatus.published")),
+            (int(PublicStatus.draft), lazy_gettext("PublicStatus.draft")),
+        ],
+        description=lazy_gettext("Select the public status of the event."),
     )
 
     submit = SubmitField(lazy_gettext("Update event"))

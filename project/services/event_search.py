@@ -17,6 +17,7 @@ class EventSearchParams(object):
         self._date_to_str = None
         self._coordinate = None
         self.admin_unit_id = None
+        self.can_read_private_events = None
         self.keyword = None
         self.latitude = None
         self.longitude = None

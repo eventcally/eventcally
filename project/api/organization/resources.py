@@ -1,3 +1,5 @@
+from operator import and_
+
 from authlib.integrations.flask_oauth2 import current_token
 from flask_apispec import doc, marshal_with, use_kwargs
 
@@ -8,6 +10,7 @@ from project.access import (
     login_api_user_or_401,
 )
 from project.api import add_api_resource
+from project.api.event.resources import api_can_read_private_events
 from project.api.event.schemas import (
     EventIdSchema,
     EventListRequestSchema,
@@ -42,7 +45,7 @@ from project.api.place.schemas import (
     PlacePostRequestSchema,
 )
 from project.api.resources import BaseResource
-from project.models import AdminUnit, Event
+from project.models import AdminUnit, Event, PublicStatus
 from project.oauth2 import require_oauth
 from project.services.admin_unit import (
     get_admin_unit_query,
@@ -72,12 +75,14 @@ class OrganizationEventDateSearchResource(BaseResource):
     )
     @use_kwargs(EventDateSearchRequestSchema, location=("query"))
     @marshal_with(EventDateSearchResponseSchema)
+    @require_oauth(optional=True)
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
 
         params = EventSearchParams()
         params.load_from_request()
         params.admin_unit_id = admin_unit.id
+        params.can_read_private_events = api_can_read_private_events(admin_unit)
 
         pagination = get_event_dates_query(params).paginate()
         return pagination
@@ -87,12 +92,14 @@ class OrganizationEventSearchResource(BaseResource):
     @doc(summary="Search for events of organization", tags=["Organizations", "Events"])
     @use_kwargs(EventSearchRequestSchema, location=("query"))
     @marshal_with(EventSearchResponseSchema)
+    @require_oauth(optional=True)
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
 
         params = EventSearchParams()
         params.load_from_request()
         params.admin_unit_id = admin_unit.id
+        params.can_read_private_events = api_can_read_private_events(admin_unit)
 
         pagination = get_events_query(params).paginate()
         return pagination
@@ -102,9 +109,18 @@ class OrganizationEventListResource(BaseResource):
     @doc(summary="List events of organization", tags=["Organizations", "Events"])
     @use_kwargs(EventListRequestSchema, location=("query"))
     @marshal_with(EventListResponseSchema)
+    @require_oauth(optional=True)
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
-        pagination = Event.query.filter(Event.admin_unit_id == admin_unit.id).paginate()
+
+        event_filter = Event.admin_unit_id == admin_unit.id
+
+        if not api_can_read_private_events(admin_unit):
+            event_filter = and_(
+                event_filter, Event.public_status == PublicStatus.published
+            )
+
+        pagination = Event.query.filter(event_filter).paginate()
         return pagination
 
     @doc(
@@ -116,7 +132,7 @@ class OrganizationEventListResource(BaseResource):
     @marshal_with(EventIdSchema, 201)
     @require_oauth("event:write")
     def post(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         admin_unit = get_admin_unit_for_manage_or_404(id)
         access_or_401(admin_unit, "event:create")
 
@@ -161,7 +177,7 @@ class OrganizationOrganizerListResource(BaseResource):
     @marshal_with(OrganizerIdSchema, 201)
     @require_oauth("organizer:write")
     def post(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         admin_unit = get_admin_unit_for_manage_or_404(id)
         access_or_401(admin_unit, "organizer:create")
 
@@ -194,7 +210,7 @@ class OrganizationPlaceListResource(BaseResource):
     @marshal_with(PlaceIdSchema, 201)
     @require_oauth("place:write")
     def post(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         admin_unit = get_admin_unit_for_manage_or_404(id)
         access_or_401(admin_unit, "place:create")
 

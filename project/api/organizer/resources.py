@@ -30,7 +30,7 @@ class OrganizerResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("organizer:write")
     def put(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         organizer = EventOrganizer.query.get_or_404(id)
         access_or_401(organizer.adminunit, "organizer:update")
 
@@ -48,7 +48,7 @@ class OrganizerResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("organizer:write")
     def patch(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         organizer = EventOrganizer.query.get_or_404(id)
         access_or_401(organizer.adminunit, "organizer:update")
 
@@ -67,7 +67,7 @@ class OrganizerResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("organizer:write")
     def delete(self, id):
-        login_api_user_or_401(current_token.user)
+        login_api_user_or_401(current_token)
         organizer = EventOrganizer.query.get_or_404(id)
         access_or_401(organizer.adminunit, "organizer:delete")
 

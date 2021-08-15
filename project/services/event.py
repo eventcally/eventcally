@@ -28,6 +28,7 @@ from project.models import (
     EventStatus,
     Image,
     Location,
+    PublicStatus,
 )
 from project.utils import get_pending_changes, get_place_str
 from project.views.utils import truncate
@@ -100,6 +101,13 @@ def get_event_dates_query(params):
                 admin_unit_reference.id.isnot(None),
             ),
         )
+
+        if not params.can_read_private_events:
+            event_filter = and_(
+                event_filter, Event.public_status == PublicStatus.published
+            )
+    else:
+        event_filter = and_(event_filter, Event.public_status == PublicStatus.published)
 
     if params.date_from:
         date_filter = EventDate.start >= params.date_from
@@ -251,6 +259,13 @@ def get_events_query(params):
     if params.admin_unit_id:
         event_filter = and_(event_filter, Event.admin_unit_id == params.admin_unit_id)
 
+        if not params.can_read_private_events:
+            event_filter = and_(
+                event_filter, Event.public_status == PublicStatus.published
+            )
+    else:
+        event_filter = and_(event_filter, Event.public_status == PublicStatus.published)
+
     if params.date_from:
         date_filter = EventDate.start >= params.date_from
 
@@ -325,6 +340,10 @@ def update_event_dates_with_recurrence_rule(event):
 def insert_event(event):
     if not event.status:
         event.status = EventStatus.scheduled
+
+    if not event.public_status:
+        event.public_status = PublicStatus.published
+
     update_event_dates_with_recurrence_rule(event)
     db.session.add(event)
 

@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
 from project import app, db
-from project.access import has_admin_unit_member_permission
+from project.access import can_read_event_or_401, has_admin_unit_member_permission
 from project.dateutils import get_next_full_hour
 from project.forms.event_date import FindEventDateForm
 from project.forms.event_suggestion import CreateEventSuggestionForm
@@ -75,6 +75,7 @@ def widget_event_date(au_short_name, id):
         AdminUnit.short_name == au_short_name
     ).first_or_404()
     event_date = get_event_date_with_details_or_404(id)
+    can_read_event_or_401(event_date.event)
     structured_data = json.dumps(
         get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder
     )
