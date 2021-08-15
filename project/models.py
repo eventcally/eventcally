@@ -469,6 +469,11 @@ class EventReferenceRequestRejectionReason(IntEnum):
     irrelevant = 4
 
 
+class PublicStatus(IntEnum):
+    draft = 1
+    published = 2
+
+
 class EventOrganizer(db.Model, TrackableMixin):
     __tablename__ = "eventorganizer"
     __table_args__ = (UniqueConstraint("name", "admin_unit_id"),)
@@ -643,6 +648,12 @@ class Event(db.Model, TrackableMixin, EventMixin):
 
     categories = relationship("EventCategory", secondary="event_eventcategories")
 
+    public_status = Column(
+        IntegerEnum(PublicStatus),
+        nullable=False,
+        default=PublicStatus.published.value,
+        server_default=str(PublicStatus.published.value),
+    )
     status = Column(IntegerEnum(EventStatus))
     previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
     rating = Column(Integer())

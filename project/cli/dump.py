@@ -20,6 +20,7 @@ from project.models import (
     EventOrganizer,
     EventPlace,
     EventReference,
+    PublicStatus,
 )
 from project.utils import make_dir
 
@@ -43,7 +44,11 @@ def dump_all():
     make_dir(tmp_path)
 
     # Events
-    events = Event.query.options(joinedload(Event.categories)).all()
+    events = (
+        Event.query.options(joinedload(Event.categories))
+        .filter(Event.public_status == PublicStatus.published)
+        .all()
+    )
     dump_items(events, EventDumpSchema(many=True), "events", tmp_path)
 
     # Places

@@ -246,6 +246,10 @@ class UtilActions(object):
 
     def assert_response_unauthorized(self, response):
         assert response.status_code == 401
+        return response
+
+    def assert_response_forbidden(self, response):
+        assert response.status_code == 403
 
     def assert_response_notFound(self, response):
         assert response.status_code == 404
@@ -276,6 +280,12 @@ class UtilActions(object):
 
     def assert_response_permission_missing(self, response, endpoint, **values):
         self.assert_response_redirect(response, endpoint, **values)
+
+    def assert_response_contains(self, response, needle):
+        assert needle.encode("UTF-8") in response.data
+
+    def assert_response_contains_not(self, response, needle):
+        assert needle.encode("UTF-8") not in response.data
 
     def parse_query_parameters(self, url):
         query = urlsplit(url).query
