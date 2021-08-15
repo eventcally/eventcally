@@ -35,3 +35,22 @@ def test_search(client, seeder, utils):
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["event"]["id"] == event_id
     assert response.json["items"][0]["start"].endswith("+02:00")
+
+    url = utils.get_url("api_v1_event_date_search", keyword="name")
+    response = utils.get_ok(url)
+
+    url = utils.get_url("api_v1_event_date_search", category_id=2000)
+    response = utils.get_ok(url)
+
+    url = utils.get_url("api_v1_event_date_search", weekday=1)
+    response = utils.get_ok(url)
+
+    url = utils.get_url(
+        "api_v1_event_date_search", date_from="2020-10-03", date_to="2021-10-03"
+    )
+    response = utils.get_ok(url)
+
+    url = utils.get_url(
+        "api_v1_event_date_search", coordinate="51.9077888,10.4333312", distance=500
+    )
+    response = utils.get_ok(url)
