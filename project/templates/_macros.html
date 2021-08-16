@@ -279,7 +279,7 @@
 
 {% macro render_public_status_pill(event) %}
 {% if event.public_status and event.public_status == 1 %}
- <span class="badge badge-pill badge-info">{{ _('PublicStatus.draft') }}</span>
+ <span class="badge badge-pill badge-dark">{{ _('PublicStatus.draft') }}</span>
 {% endif %}
 {% endmacro %}
 
