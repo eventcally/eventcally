@@ -719,7 +719,7 @@ msgstr "Neuen Veranstalter eingeben"
 
 #: project/forms/event.py:274
 msgid "Save as draft"
-msgstr "Als Entwurf speicher"
+msgstr "Als Entwurf speichern"
 
 #: project/forms/event.py:275
 msgid "Publish event"
