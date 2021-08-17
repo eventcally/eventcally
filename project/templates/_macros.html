@@ -818,7 +818,7 @@
     {% else %}
     <li class="page-item disabled"><a class="page-link" href="#">{{ _('Previous') }}</a></li>
     {% endif %}
-    <li class="page-item disabled"><span class="page-link">{{ _('Page %(page)d of %(pages)d (%(total)d total)', page=pagination["page"], pages=pagination["pages"], total=pagination["total"]) }}</span></li>
+    <li class="page-item disabled d-none d-sm-inline"><span class="page-link">{{ _('Page %(page)d of %(pages)d (%(total)d total)', page=pagination["page"], pages=pagination["pages"], total=pagination["total"]) }}</span></li>
     {% if pagination['next_url'] %}
     <li class="page-item"> <a class="page-link" href="{{ pagination['next_url'] }}">{{ _('Next') }}</a></li>
     {% else %}
