@@ -1357,6 +1357,12 @@ $('#end-container').on('hidden', function() {
       {% endif %}
   }
 
+  {% if 'background' in styles %}
+  .page-link, .page-item.disabled .page-link {
+        background-color: {{ styles['background'] }};
+  }
+  {% endif %}
+
   {% if 'primary' in styles %}
   .btn-primary,
   .btn-primary:hover,
