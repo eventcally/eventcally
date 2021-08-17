@@ -3,9 +3,16 @@
 oveda - Terminkalender für Goslar und Hahnenklee
 {%- endblock -%}
 {% block content %}
+{% block header_before_site_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js" integrity="sha512-dnvR4Aebv5bAtJxDunq3eE8puKAJrY9GBJYl9GC6lTOEC76s1dbDfJFcL9GyzpaDW4vlI/UjR8sKbc1j6Ynx6w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $(function () {
+        iFrameResize({ minHeight: 300 }, '#oveda-widget');
+    });
+</script>
+{%- endblock -%}
 
 <h1>Terminkalender für Goslar und Hahnenklee</h1>
-
-<iframe src="{{ url_for('widget_event_dates', au_short_name='goslar') }}" style="display: block; width: 100vw; height: 70vh; max-width: 100%;"></iframe>
+<iframe id="oveda-widget" src="{{ url_for('widget_event_dates', au_short_name='goslar') }}" style="width: 1px; min-width: 100%; max-width:100%;"></iframe>
 
 {% endblock %}

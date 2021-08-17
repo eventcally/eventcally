@@ -235,6 +235,7 @@
           </div>
       </nav>
       {%- endblock navbar %}
+      {% block managebar -%}
       {% if current_admin_unit %}
       {% set menu_options = get_manage_menu_options(current_admin_unit) %}
       <nav class="navbar navbar-expand-md navbar-light bg-light">
@@ -308,6 +309,7 @@
           </div>
       </nav>
       {% endif %}
+      {%- endblock managebar %}
 
       <div class="body-content"{% block body_content__attribs %}{% endblock body_content__attribs %}>
 
