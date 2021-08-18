@@ -1,7 +1,8 @@
-import logging
 import os
 
 import googlemaps
+
+from project import app
 
 google_maps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
 gmaps = googlemaps.Client(key=google_maps_api_key) if google_maps_api_key else None
@@ -18,7 +19,7 @@ def find_gmaps_places(query: str) -> list:
             result = list(filter(lambda p: "place_id" in p, places))
 
         except Exception as e:  # pragma: no cover
-            logging.exception(e)
+            app.logger.exception(e)
 
     return result
 
@@ -37,6 +38,6 @@ def get_gmaps_place(gmaps_id) -> dict:
             if place["status"] == "OK":
                 result = place["result"]
         except Exception as e:  # pragma: no cover
-            logging.exception(e)
+            app.logger.exception(e)
 
     return result
