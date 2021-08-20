@@ -7,7 +7,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
 from project import app, db
-from project.access import can_read_event_or_401, has_admin_unit_member_permission
+from project.access import (
+    admin_unit_suggestions_enabled_or_404,
+    can_read_event_or_401,
+    has_admin_unit_member_permission,
+)
 from project.dateutils import get_next_full_hour
 from project.forms.event_date import FindEventDateForm
 from project.forms.event_suggestion import CreateEventSuggestionForm
@@ -74,6 +78,7 @@ def widget_event_date(au_short_name, id):
     admin_unit = AdminUnit.query.filter(
         AdminUnit.short_name == au_short_name
     ).first_or_404()
+
     event_date = get_event_date_with_details_or_404(id)
     can_read_event_or_401(event_date.event)
     structured_data = json.dumps(
@@ -94,27 +99,6 @@ def widget_event_date(au_short_name, id):
     )
 
 
-@app.route("/<string:au_short_name>/widget/infoscreen")
-def widget_infoscreen(au_short_name):
-    admin_unit = AdminUnit.query.filter(
-        AdminUnit.short_name == au_short_name
-    ).first_or_404()
-
-    params = EventSearchParams()
-    params.load_from_request()
-    params.admin_unit_id = admin_unit.id
-
-    dates = get_event_dates_query(params).paginate(max_per_page=5)
-
-    return render_template(
-        "widget/infoscreen/read.html",
-        admin_unit=admin_unit,
-        params=params,
-        styles=get_styles(admin_unit),
-        dates=dates.items,
-    )
-
-
 @app.route(
     "/<string:au_short_name>/widget/event_suggestions/create", methods=("GET", "POST")
 )
@@ -122,6 +106,7 @@ def event_suggestion_create_for_admin_unit(au_short_name):
     admin_unit = AdminUnit.query.filter(
         AdminUnit.short_name == au_short_name
     ).first_or_404()
+    admin_unit_suggestions_enabled_or_404(admin_unit)
 
     form = CreateEventSuggestionForm()
 
