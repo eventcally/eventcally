@@ -722,83 +722,111 @@
 
 {% endmacro %}
 
-{% macro render_google_place_autocomplete_header(location_only = False, prefix = '') %}
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ "dev" | env_override('GOOGLE_MAPS_API_KEY') }}&libraries=places"></script>
+{% macro render_google_place_autocomplete_header() %}
 <script>
-    function initialize() {
-      var input = document.getElementById('location_search');
-      var autocomplete = new google.maps.places.Autocomplete(input);
-      google.maps.event.addListener(autocomplete, 'place_changed', function () {
-            var place = autocomplete.getPlace();
+  $( function() {
 
-            var street_number = "";
-            var route = "";
-            var city = "";
+    $('#location_search').select2({
+      theme: 'bootstrap4',
+      ajax: {
+        url: "{{ url_for('js_autocomplete_place') }}",
+        dataType: 'json',
+        delay: 250,
+        cache: true,
+        data: function (params) {
+          return {
+            keyword: params.term
+          };
+        }
+      },
+      placeholder: $('#location_search').attr("placeholder"),
+      minimumInputLength: 1,
+      templateResult: select2TemplateResult
+    }).on('select2:close', function (e) {
+      var data = select2GetData(e);
 
-            for (var i = 0; i < place.address_components.length; i++) {
-              var component = place.address_components[i]
-              var addressType = component.types[0];
-              var val = component.long_name
+      if ("gmaps_id" in data) {
+        $(this).val(null).trigger('change');
+        var location_only = $(this).attr("data-location-only");
+        if (location_only) {
+          reset_location_form();
+        } else {
+          reset_place_form();
+          $('#place-name').val(data.main_text);
+        }
 
-              if (addressType == 'street_number') {
-                street_number = val;
-              } else if (addressType == 'route') {
-                route = val;
-              } else if (addressType == 'locality') {
-                city = val;
-              } else if (addressType == 'administrative_area_level_1') {
-                $('#{{ prefix }}location-state').val(val);
-              } else if (addressType == 'postal_code') {
-                $('#{{ prefix }}location-postalCode').val(val);
-              }
-            }
+        get_gmaps_place_details(data.gmaps_id, location_only);
+      }
+    });
 
-            {% if not location_only %}
-              $('#{{ prefix }}name').val(place.name);
-
-              if (place.website) {
-                $('#{{ prefix }}url').val(place.website);
-              }
-            {% endif %}
-
-            $('#{{ prefix }}location-street').val([route, street_number].join(' '));
-            $('#{{ prefix }}location-city').val(city);
-            $('#{{ prefix }}location-latitude').val(place.geometry.location.lat());
-            $('#{{ prefix }}location-longitude').val(place.geometry.location.lng());
-
-            $('#location_search').val('');
-            $('#location_search').trigger('place_changed');
-        });
+    function get_gmaps_place_details(place_id, location_only) {
+      $.ajax({
+          url: "{{ url_for('js_autocomplete_gmaps_place') }}",
+          type: "get",
+          dataType: "json",
+          data: "gmaps_id=" + place_id,
+          success: function (data) {
+            fill_place_form_with_gmaps_place(data, "", location_only);
+          }
+      });
     }
-    google.maps.event.addDomListener(window, 'load', initialize);
+  });
 </script>
 {% endmacro %}
 
-{% macro render_google_place_autocomplete_field() %}
+{% macro render_google_place_autocomplete_field(location_only = False) %}
   <div class="form-group row">
     <div class="col-sm-12">
       <div class="input-group">
         <div class="input-group-prepend">
           <span class="input-group-text"><span><i class="fab fa-google"></i></span></span>
         </div>
-        <input id="location_search" type="search" class="form-control" placeholder="{{ _('Search location on Google') }}" runat="server" />
+        <select id="location_search" class="form-control" placeholder="{{ _('Search location on Google') }}" {% if location_only %}data-location-only="1"{% endif %}></select>
       </div>
     </div>
   </div>
 {% endmacro %}
 
 {% macro render_google_filter_autocomplete_header() %}
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ "dev" | env_override('GOOGLE_MAPS_API_KEY') }}&libraries=places"></script>
 <script>
-    function initialize() {
-      var input = document.getElementById('location');
-      var autocomplete = new google.maps.places.Autocomplete(input);
-      google.maps.event.addListener(autocomplete, 'place_changed', function () {
-            var place = autocomplete.getPlace();
-            $('#coordinate').val('' + place.geometry.location.lat() + ',' + place.geometry.location.lng());
-        });
+  $( function() {
+
+    $('#location').select2({
+      theme: 'bootstrap4',
+      ajax: {
+        url: "{{ url_for('js_autocomplete_place') }}",
+        dataType: 'json',
+        delay: 250,
+        cache: true,
+        data: function (params) {
+          return {
+            keyword: params.term
+          };
+        }
+      },
+      placeholder: $('#location').attr("placeholder"),
+      minimumInputLength: 1,
+      templateResult: select2TemplateResult
+    }).on('select2:close', function (e) {
+      var data = select2GetData(e);
+
+      if ("gmaps_id" in data) {
+        get_gmaps_place_details(data.gmaps_id);
+      }
+    });
+
+    function get_gmaps_place_details(place_id) {
+      $.ajax({
+          url: "{{ url_for('js_autocomplete_gmaps_place') }}",
+          type: "get",
+          dataType: "json",
+          data: "gmaps_id=" + place_id,
+          success: function (data) {
+            $('#coordinate').val('' + data.geometry.location.lat + ',' + data.geometry.location.lng);
+          }
+      });
     }
-    google.maps.event.addDomListener(window, 'load', initialize);
+  });
 </script>
 {% endmacro %}
 
