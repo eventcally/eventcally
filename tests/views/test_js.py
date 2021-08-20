@@ -103,6 +103,29 @@ def test_js_autocomplete_place(client, seeder: Seeder, utils: UtilActions):
         assert response.json["results"][1]["children"][0]["text"] == "Beschreibung"
 
 
+def test_js_autocomplete_place_gmaps_only(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("event_dates")
+    response = utils.get(url)
+
+    utils.gmaps_places_autocomplete_query.return_value = [
+        {
+            "place_id": "123",
+            "description": "Beschreibung",
+            "structured_formatting": {"main_text": "Haupttext"},
+        }
+    ]
+
+    with client:
+        url = utils.get_url("js_autocomplete_place", keyword="crew")
+        response = utils.get(url)
+
+        utils.assert_response_ok(response)
+        assert response.json["results"][0]["text"] == "Beschreibung"
+
+
 def test_js_autocomplete_place_exclude_gmaps(
     client, seeder: Seeder, utils: UtilActions
 ):
