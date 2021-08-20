@@ -307,9 +307,7 @@ function handle_request_success(
   $(error_id).hide();
 }
 
-function reset_place_form(prefix = "") {
-  $("#" + prefix + "name").val("");
-  $("#" + prefix + "url").val("");
+function reset_location_form(prefix = "") {
   $("#" + prefix + "location-street").val("");
   $("#" + prefix + "location-postalCode").val("");
   $("#" + prefix + "location-city").val("");
@@ -318,11 +316,15 @@ function reset_place_form(prefix = "") {
   $("#" + prefix + "location-longitude").val("");
 }
 
+function reset_place_form(prefix = "") {
+  $("#" + prefix + "name").val("");
+  $("#" + prefix + "url").val("");
+  reset_location_form(prefix);
+}
+
 function reset_organizer_form(prefix = "") {
   $("#" + prefix + "name").val("");
-  $("#" + prefix + "location-street").val("");
-  $("#" + prefix + "location-postalCode").val("");
-  $("#" + prefix + "location-city").val("");
+  reset_location_form(prefix);
 }
 
 function fill_place_form_with_gmaps_place(
@@ -425,7 +427,7 @@ $(function () {
 
   $("#clear_location_btn").click(function () {
     $("#coordinate").val("");
-    $("#location").val("");
+    $("#location").val("").trigger('change');
   });
 
   $(".btn-print").click(function () {

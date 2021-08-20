@@ -19,7 +19,7 @@ class FindEventDateForm(FlaskForm):
         lazy_gettext("Category"), validators=[Optional()], coerce=int
     )
     coordinate = HiddenField(validators=[Optional()])
-    location = StringField(lazy_gettext("Location"), validators=[Optional()])
+    location = SelectField(lazy_gettext("Location"), validators=[Optional()])
     distance = SelectField(
         lazy_gettext("Distance"),
         validators=[Optional()],
