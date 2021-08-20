@@ -6,6 +6,7 @@ from sqlalchemy.sql import desc, func
 
 from project import app, db
 from project.access import (
+    admin_unit_suggestions_enabled_or_404,
     get_admin_unit_for_manage,
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_manage,
@@ -101,6 +102,7 @@ def manage_admin_unit(id):
 @auth_required()
 def manage_admin_unit_event_reviews(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
+    admin_unit_suggestions_enabled_or_404(admin_unit)
 
     event_suggestions_paginate = (
         get_event_reviews_query(admin_unit)

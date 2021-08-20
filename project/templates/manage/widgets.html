@@ -29,13 +29,11 @@
     <iframe src="{{ url_for('widget_event_dates', au_short_name=admin_unit.short_name) }}" allowtransparency="true" style="display: block; width: 90vw; height: 40vh; max-width: 100%;"></iframe>
 </div>
 
+{% if admin_unit.suggestions_enabled %}
 <h2>{{ _('Link, um Veranstaltungen vorzuschlagen') }}</h2>
 <input class="form-control" value="{{ url_for('event_suggestion_create_for_admin_unit', au_short_name=admin_unit.short_name, _external=True) }}" />
 <p><a class="btn btn-outline-info my-2" href="{{ url_for('event_suggestion_create_for_admin_unit', au_short_name=admin_unit.short_name, _external=True) }}" target="_blank" rel="noopener noreferrer">Vorschau <i class="fa fa-external-link-alt"></i></a></p>
-
-<h2>{{ _('URL für Infoscreen') }}</h2>
-<input class="form-control" value="{{ url_for('widget_infoscreen', au_short_name=admin_unit.short_name, _external=True) }}" />
-<p><a class="btn btn-outline-info my-2" href="{{ url_for('widget_infoscreen', au_short_name=admin_unit.short_name, _external=True) }}" target="_blank" rel="noopener noreferrer">Vorschau <i class="fa fa-external-link-alt"></i></a></p>
+{% endif %}
 
 
 {% endblock %}

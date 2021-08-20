@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-08-15 14:50+0200\n"
+"POT-Creation-Date: 2021-08-20 08:42+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -166,24 +166,24 @@ msgstr "Event_"
 msgid "."
 msgstr "."
 
-#: project/forms/admin.py:10 project/templates/layout.html:331
+#: project/forms/admin.py:10 project/templates/layout.html:335
 #: project/views/root.py:42
 msgid "Terms of service"
 msgstr "Nutzungsbedingungen"
 
-#: project/forms/admin.py:11 project/templates/layout.html:335
+#: project/forms/admin.py:11 project/templates/layout.html:339
 #: project/views/root.py:50
 msgid "Legal notice"
 msgstr "Impressum"
 
 #: project/forms/admin.py:12 project/templates/_macros.html:1328
-#: project/templates/layout.html:339
+#: project/templates/layout.html:343
 #: project/templates/widget/event_suggestion/create.html:199
 #: project/views/admin_unit.py:36 project/views/root.py:58
 msgid "Contact"
 msgstr "Kontakt"
 
-#: project/forms/admin.py:13 project/templates/layout.html:343
+#: project/forms/admin.py:13 project/templates/layout.html:347
 #: project/views/root.py:66
 msgid "Privacy"
 msgstr "Datenschutz"
@@ -214,7 +214,15 @@ msgstr ""
 "Wenn gesetzt, können andere Organisationen diese Organisation bitten, "
 "deren Veranstaltungen zu empfehlen."
 
-#: project/forms/admin.py:31 project/templates/admin/update_admin_unit.html:4
+#: project/forms/admin.py:32
+msgid "Suggestions enabled"
+msgstr "Vorschläge aktiv"
+
+#: project/forms/admin.py:33
+msgid "If set, the organization can work with suggestions."
+msgstr "Wenn gesetzt, kann die Organisation mit Vorschlägen arbeiten."
+
+#: project/forms/admin.py:36 project/templates/admin/update_admin_unit.html:4
 #: project/templates/admin/update_admin_unit.html:8
 msgid "Update organization"
 msgstr "Organisation aktualisieren"
@@ -274,7 +282,7 @@ msgstr ""
 "eindeutig zu identifizieren. Der Kurzname darf nur Buchstaben, Nummern "
 "und Unterstriche enthalten."
 
-#: project/forms/admin_unit.py:40 project/templates/_macros.html:1458
+#: project/forms/admin_unit.py:40 project/templates/_macros.html:1464
 msgid "Short name must contain only letters numbers or underscore"
 msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
 
@@ -288,7 +296,7 @@ msgstr "Link URL"
 #: project/forms/admin_unit_member.py:23 project/forms/admin_unit_member.py:28
 #: project/forms/event.py:58 project/forms/event_suggestion.py:38
 #: project/forms/organizer.py:27 project/templates/_macros.html:262
-#: project/templates/_macros.html:1418 project/templates/admin/users.html:19
+#: project/templates/_macros.html:1424 project/templates/admin/users.html:19
 msgid "Email"
 msgstr "Email"
 
@@ -666,7 +674,7 @@ msgstr "Wähle Kategorien, die zur Veranstaltung passen."
 #: project/forms/event.py:231 project/forms/reference.py:14
 #: project/forms/reference.py:27 project/forms/reference_request.py:75
 #: project/templates/event/create.html:358
-#: project/templates/event/update.html:214
+#: project/templates/event/update.html:215
 msgid "Rating"
 msgstr "Bewertung"
 
@@ -683,7 +691,7 @@ msgstr ""
 #: project/forms/event.py:321 project/forms/event_suggestion.py:50
 #: project/templates/_macros.html:468 project/templates/_macros.html:624
 #: project/templates/event/create.html:283
-#: project/templates/event/update.html:164
+#: project/templates/event/update.html:165
 #: project/templates/event_place/create.html:21
 #: project/templates/event_place/delete.html:13
 #: project/templates/event_place/update.html:21
@@ -702,7 +710,7 @@ msgstr "Neuen Ort eingeben"
 #: project/forms/event.py:329 project/forms/event.py:389
 #: project/forms/event_suggestion.py:60 project/templates/_macros.html:506
 #: project/templates/_macros.html:661 project/templates/event/create.html:254
-#: project/templates/event/update.html:155
+#: project/templates/event/update.html:156
 #: project/templates/organizer/create.html:17
 #: project/templates/organizer/delete.html:13
 #: project/templates/organizer/update.html:17
@@ -848,7 +856,7 @@ msgid "Distance"
 msgstr "Distanz"
 
 #: project/forms/event_date.py:30 project/forms/planing.py:34
-#: project/templates/widget/event_date/list.html:42
+#: project/templates/widget/event_date/list.html:53
 msgid "Find"
 msgstr "Finden"
 
@@ -980,7 +988,7 @@ msgstr "Wochentage"
 #: project/templates/_macros.html:527 project/templates/_macros.html:687
 #: project/templates/admin_unit/create.html:19
 #: project/templates/admin_unit/update.html:20
-#: project/templates/layout.html:286
+#: project/templates/layout.html:289
 msgid "Organization"
 msgstr "Organisation"
 
@@ -1124,12 +1132,12 @@ msgid "%(count)d event dates"
 msgstr "%(count)d Termine"
 
 #: project/templates/_macros.html:451 project/templates/_macros.html:606
-#: project/templates/_macros.html:1403 project/templates/event/actions.html:32
+#: project/templates/_macros.html:1409 project/templates/event/actions.html:32
 msgid "Share"
 msgstr "Teilen"
 
 #: project/templates/_macros.html:455 project/templates/_macros.html:610
-#: project/templates/_macros.html:1433
+#: project/templates/_macros.html:1439
 msgid "Add to calendar"
 msgstr "Zum Kalender"
 
@@ -1225,27 +1233,27 @@ msgstr "Verwende einfach %(term)s"
 msgid "Event suggestion"
 msgstr "Veranstaltungsvorschlag"
 
-#: project/templates/_macros.html:1412
+#: project/templates/_macros.html:1418
 msgid "Link copied"
 msgstr "Link kopiert"
 
-#: project/templates/_macros.html:1412
+#: project/templates/_macros.html:1418
 msgid "Copy link"
 msgstr "Link kopieren"
 
-#: project/templates/_macros.html:1441
+#: project/templates/_macros.html:1447
 msgid "Google calendar"
 msgstr "Google Kalender"
 
-#: project/templates/_macros.html:1442
+#: project/templates/_macros.html:1448
 msgid "Apple calendar"
 msgstr "Apple Kalender"
 
-#: project/templates/_macros.html:1443
+#: project/templates/_macros.html:1449
 msgid "Yahoo calendar"
 msgstr "Yahoo Kalender"
 
-#: project/templates/_macros.html:1444
+#: project/templates/_macros.html:1450
 msgid "Other calendar"
 msgstr "Anderer Kalender"
 
@@ -1254,12 +1262,12 @@ msgid "Manage"
 msgstr "Verwaltung"
 
 #: project/templates/home.html:29 project/templates/security/login_user.html:35
-#: project/views/widget.py:180
+#: project/views/widget.py:165
 msgid "Register for free"
 msgstr "Kostenlos registrieren"
 
 #: project/templates/event_place/read.html:22 project/templates/layout.html:206
-#: project/templates/layout.html:249 project/templates/manage/events.html:5
+#: project/templates/layout.html:250 project/templates/manage/events.html:5
 #: project/templates/manage/events.html:9
 msgid "Events"
 msgstr "Veranstaltungen"
@@ -1300,60 +1308,60 @@ msgstr "Administration"
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: project/templates/layout.html:255
+#: project/templates/layout.html:256
 msgid "Show events"
 msgstr "Veranstaltungen anzeigen"
 
 #: project/templates/event/create.html:4
-#: project/templates/event/create.html:221 project/templates/layout.html:256
+#: project/templates/event/create.html:221 project/templates/layout.html:257
 #: project/templates/manage/events.html:12
 #: project/templates/manage/organizers.html:21
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
-#: project/templates/layout.html:258
+#: project/templates/layout.html:260
 msgid "Review suggestions"
 msgstr "Vorschläge prüfen"
 
-#: project/templates/layout.html:267
+#: project/templates/layout.html:270
 #: project/templates/manage/references_incoming.html:5
 #: project/templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr "Empfehlungen"
 
-#: project/templates/layout.html:273
+#: project/templates/layout.html:276
 #: project/templates/manage/references_incoming.html:9
 msgid "Incoming references"
 msgstr "Eingehende Empfehlungen"
 
-#: project/templates/layout.html:274
+#: project/templates/layout.html:277
 #: project/templates/manage/references_outgoing.html:9
 msgid "Outgoing references"
 msgstr "Ausgehende Empfehlungen"
 
-#: project/templates/layout.html:276
+#: project/templates/layout.html:279
 #: project/templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
 msgstr "Eingehende Empfehlungsanfragen"
 
-#: project/templates/layout.html:281
+#: project/templates/layout.html:284
 #: project/templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
 msgstr "Ausgehende Empfehlungsanfragen"
 
-#: project/templates/layout.html:289 project/templates/manage/organizers.html:5
+#: project/templates/layout.html:292 project/templates/manage/organizers.html:5
 #: project/templates/manage/organizers.html:9
 msgid "Organizers"
 msgstr "Veranstalter"
 
 #: project/templates/event_place/list.html:3
-#: project/templates/event_place/list.html:7 project/templates/layout.html:290
+#: project/templates/event_place/list.html:7 project/templates/layout.html:293
 #: project/templates/manage/places.html:5
 #: project/templates/manage/places.html:9
 msgid "Places"
 msgstr "Orte"
 
-#: project/templates/layout.html:292 project/templates/manage/members.html:5
+#: project/templates/layout.html:295 project/templates/manage/members.html:5
 #: project/templates/manage/members.html:28
 msgid "Members"
 msgstr "Mitglieder"
@@ -1362,22 +1370,22 @@ msgstr "Mitglieder"
 #: project/templates/admin/settings.html:4
 #: project/templates/admin/settings.html:8
 #: project/templates/admin_unit/update.html:14
-#: project/templates/layout.html:293 project/templates/manage/widgets.html:12
+#: project/templates/layout.html:296 project/templates/manage/widgets.html:12
 #: project/templates/profile.html:19
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: project/templates/layout.html:294 project/templates/manage/reviews.html:10
+#: project/templates/layout.html:297 project/templates/manage/reviews.html:10
 #: project/templates/manage/widgets.html:5
 #: project/templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr "Widgets"
 
-#: project/templates/layout.html:304
+#: project/templates/layout.html:307
 msgid "Switch organization"
 msgstr "Organisation wechseln"
 
-#: project/templates/developer/read.html:4 project/templates/layout.html:353
+#: project/templates/developer/read.html:4 project/templates/layout.html:357
 #: project/templates/profile.html:29
 msgid "Developer"
 msgstr "Entwickler"
@@ -1418,7 +1426,7 @@ msgstr "Bearbeiten"
 #: project/templates/admin_unit/create.html:49
 #: project/templates/admin_unit/update.html:50
 #: project/templates/event/create.html:346
-#: project/templates/event/update.html:202
+#: project/templates/event/update.html:203
 #: project/templates/event_place/create.html:47
 #: project/templates/event_place/update.html:47
 #: project/templates/organizer/create.html:46
@@ -1551,12 +1559,12 @@ msgid "Switch to place search"
 msgstr "Zur Ortssuche wechseln"
 
 #: project/templates/event/create.html:319
-#: project/templates/event/update.html:175
+#: project/templates/event/update.html:176
 msgid "Access"
 msgstr "Zugang"
 
 #: project/templates/event/create.html:333
-#: project/templates/event/update.html:189
+#: project/templates/event/update.html:190
 msgid "Target group"
 msgstr "Zielgruppe"
 
@@ -1665,13 +1673,9 @@ msgstr "Prüfungen"
 msgid "Veranstaltungen als iFrame einbetten"
 msgstr "Veranstaltungen als iFrame einbetten"
 
-#: project/templates/manage/widgets.html:32
+#: project/templates/manage/widgets.html:33
 msgid "Link, um Veranstaltungen vorzuschlagen"
 msgstr "Link, um Veranstaltungen vorzuschlagen"
-
-#: project/templates/manage/widgets.html:36
-msgid "URL für Infoscreen"
-msgstr "URL für Infoscreen"
 
 #: project/templates/oauth2_client/create.html:4
 #: project/templates/oauth2_client/create.html:8
@@ -1767,7 +1771,7 @@ msgstr "Du hast noch keinen Account? Kein Problem!"
 msgid "Widget"
 msgstr "Widget"
 
-#: project/templates/widget/event_date/list.html:105
+#: project/templates/widget/event_date/list.html:116
 msgid "Print"
 msgstr "Drucken"
 
@@ -1787,7 +1791,7 @@ msgstr "Vorschau"
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin.py:68 project/views/manage.py:260
+#: project/views/admin.py:68 project/views/manage.py:270
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
@@ -2006,11 +2010,11 @@ msgstr "Anzeigen"
 msgid "You do not have permission for this action"
 msgstr "Du hast keine Berechtigung für diese Aktion"
 
-#: project/views/widget.py:172
+#: project/views/widget.py:157
 msgid "Thank you so much! The event is being verified."
 msgstr "Vielen Dank! Die Veranstaltung wird geprüft."
 
-#: project/views/widget.py:176
+#: project/views/widget.py:161
 msgid ""
 "For more options and your own calendar of events, you can register for "
 "free."
@@ -2018,7 +2022,7 @@ msgstr ""
 "Für mehr Optionen und einen eigenen Veranstaltungskalender, kannst du "
 "dich kostenlos registrieren."
 
-#: project/views/widget.py:239
+#: project/views/widget.py:224
 msgid "New event review"
 msgstr "Neue Veranstaltung zu prüfen"
 
@@ -2052,4 +2056,7 @@ msgstr "Neue Veranstaltung zu prüfen"
 
 #~ msgid "Draft"
 #~ msgstr "Entwurf"
+
+#~ msgid "URL für Infoscreen"
+#~ msgstr "URL für Infoscreen"
 
