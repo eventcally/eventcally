@@ -3,7 +3,7 @@
 
 {% block header %}
 {{ render_jquery_steps_header() }}
-{{ render_google_place_autocomplete_header(True) }}
+{{ render_google_place_autocomplete_header() }}
 {{ render_cropper_logo_block() }}
 {{ render_admin_unit_form_script() }}
 {% endblock %}
@@ -30,7 +30,7 @@
     </div>
     <div class="card-body">
 
-      {{ render_google_place_autocomplete_field() }}
+      {{ render_google_place_autocomplete_field(True) }}
 
       {{ form.location.hidden_tag() }}
       {{ render_field_with_errors(form.location.street) }}

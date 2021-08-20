@@ -45,18 +45,33 @@ def js_check_register_email():
 def js_autocomplete_place():
     csrf.protect()
 
-    admin_unit_id = int(request.args["admin_unit_id"])
+    admin_unit_id = int(request.args.get("admin_unit_id", "0"))
     keyword = request.args.get("keyword")
     exclude_gmaps = request.args.get("exclude_gmaps")
+    places_result = list()
+    google_places_result = list()
 
-    places = get_event_places(admin_unit_id, keyword, 5)
-    places_result = [{"id": p.id, "text": get_place_str(p)} for p in places]
+    if admin_unit_id > 0:
+        places = get_event_places(admin_unit_id, keyword, 5)
+        places_result = [{"id": p.id, "text": get_place_str(p)} for p in places]
+
+    if not exclude_gmaps:
+        google_places = find_gmaps_places(keyword) if keyword else list()
+        google_places_result = [
+            {
+                "id": p["place_id"],
+                "gmaps_id": p["place_id"],
+                "text": p["description"],
+                "main_text": p["structured_formatting"]["main_text"],
+            }
+            for p in google_places
+        ]
 
     if exclude_gmaps:
         results = places_result
+    elif admin_unit_id <= 0:
+        results = google_places_result
     else:
-        google_places = find_gmaps_places(keyword) if keyword else list()
-
         results = list()
 
         if len(places) > 0:
@@ -71,15 +86,7 @@ def js_autocomplete_place():
             results.append(
                 {
                     "text": gettext("Places of Google Maps"),
-                    "children": [
-                        {
-                            "id": p["place_id"],
-                            "gmaps_id": p["place_id"],
-                            "text": p["description"],
-                            "main_text": p["structured_formatting"]["main_text"],
-                        }
-                        for p in google_places
-                    ],
+                    "children": google_places_result,
                 }
             )
 

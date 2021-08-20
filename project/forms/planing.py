@@ -1,6 +1,6 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import HiddenField, SelectField, StringField, SubmitField
+from wtforms import HiddenField, SelectField, SubmitField
 from wtforms.validators import Optional
 
 from project.forms.common import distance_choices, weekday_choices
@@ -17,7 +17,7 @@ class PlaningForm(FlaskForm):
         lazy_gettext("Category"), validators=[Optional()], coerce=int
     )
     coordinate = HiddenField(validators=[Optional()])
-    location = StringField(lazy_gettext("Location"), validators=[Optional()])
+    location = SelectField(lazy_gettext("Location"), validators=[Optional()])
     distance = SelectField(
         lazy_gettext("Distance"),
         validators=[Optional()],
