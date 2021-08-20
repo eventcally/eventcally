@@ -28,4 +28,9 @@ class UpdateAdminUnitForm(FlaskForm):
         ),
         validators=[Optional()],
     )
+    suggestions_enabled = BooleanField(
+        lazy_gettext("Suggestions enabled"),
+        description=lazy_gettext("If set, the organization can work with suggestions."),
+        validators=[Optional()],
+    )
     submit = SubmitField(lazy_gettext("Update organization"))
