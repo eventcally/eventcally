@@ -57,3 +57,7 @@ def test_search(client, seeder, utils):
         "api_v1_event_date_search", coordinate="51.9077888,10.4333312", distance=500
     )
     response = utils.get_ok(url)
+
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+    url = utils.get_url("api_v1_event_date_search", organizer_id=organizer_id)
+    response = utils.get_ok(url)

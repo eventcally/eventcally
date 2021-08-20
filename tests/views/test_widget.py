@@ -69,21 +69,6 @@ def test_event_date(client, seeder, utils, app, db):
     utils.assert_response_unauthorized(response)
 
 
-def test_infoscreen(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
-    seeder.create_event(admin_unit_id)
-    au_short_name = "meinecrew"
-
-    url = utils.get_url("widget_infoscreen", au_short_name=au_short_name)
-    utils.get_ok(url)
-
-    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
-    url = utils.get_url(
-        "widget_infoscreen", au_short_name=au_short_name, organizer_id=organizer_id
-    )
-    utils.get_ok(url)
-
-
 def get_create_data():
     return {
         "accept_tos": "y",
@@ -225,3 +210,15 @@ def test_event_suggestion_create_for_admin_unit_invalidEventPlaceId(
         data,
     )
     assert response.status_code == 302
+
+
+def test_event_suggestion_create_for_admin_unit_notEnabled(client, app, seeder, utils):
+    user_id = seeder.create_user()
+    seeder.create_admin_unit(user_id, "Meine Crew", suggestions_enabled=False)
+    au_short_name = "meinecrew"
+
+    url = utils.get_url(
+        "event_suggestion_create_for_admin_unit", au_short_name=au_short_name
+    )
+    response = utils.get(url)
+    utils.assert_response_notFound(response)
