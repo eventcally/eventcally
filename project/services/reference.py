@@ -3,6 +3,7 @@ from sqlalchemy.orm import load_only
 
 from project import db
 from project.models import (
+    AdminUnitRelation,
     Event,
     EventReference,
     EventReferenceRequest,
@@ -22,6 +23,7 @@ def create_event_reference_for_request(request):
         result = EventReference(
             event_id=request.event_id, admin_unit_id=request.admin_unit_id
         )
+        result.rating = 50
         db.session.add(result)
 
     return result
@@ -54,4 +56,10 @@ def get_reference_requests_incoming_badge_query(admin_unit):
             == EventReferenceRequestReviewStatus.inbox,
             EventReferenceRequest.admin_unit_id == admin_unit.id,
         )
+    )
+
+
+def get_relation_outgoing_query(admin_unit):
+    return AdminUnitRelation.query.filter(
+        AdminUnitRelation.source_admin_unit_id == admin_unit.id
     )

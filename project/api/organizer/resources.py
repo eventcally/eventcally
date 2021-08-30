@@ -1,4 +1,3 @@
-from authlib.integrations.flask_oauth2 import current_token
 from flask import make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 
@@ -30,7 +29,7 @@ class OrganizerResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("organizer:write")
     def put(self, id):
-        login_api_user_or_401(current_token)
+        login_api_user_or_401()
         organizer = EventOrganizer.query.get_or_404(id)
         access_or_401(organizer.adminunit, "organizer:update")
 
@@ -48,7 +47,7 @@ class OrganizerResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("organizer:write")
     def patch(self, id):
-        login_api_user_or_401(current_token)
+        login_api_user_or_401()
         organizer = EventOrganizer.query.get_or_404(id)
         access_or_401(organizer.adminunit, "organizer:update")
 
@@ -67,7 +66,7 @@ class OrganizerResource(BaseResource):
     @marshal_with(None, 204)
     @require_oauth("organizer:write")
     def delete(self, id):
-        login_api_user_or_401(current_token)
+        login_api_user_or_401()
         organizer = EventOrganizer.query.get_or_404(id)
         access_or_401(organizer.adminunit, "organizer:delete")
 

@@ -29,6 +29,7 @@ from sqlalchemy.event import listens_for
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref, deferred, object_session, relationship
+from sqlalchemy.orm.relationships import remote
 from sqlalchemy.schema import CheckConstraint
 from sqlalchemy_utils import ColorType
 
@@ -293,19 +294,86 @@ class AdminUnitMemberInvitation(db.Model):
     roles = Column(UnicodeText())
 
 
+class AdminUnitRelation(db.Model, TrackableMixin):
+    __tablename__ = "adminunitrelation"
+    __table_args__ = (
+        UniqueConstraint("source_admin_unit_id", "target_admin_unit_id"),
+        CheckConstraint("source_admin_unit_id != target_admin_unit_id"),
+    )
+    id = Column(Integer(), primary_key=True)
+    source_admin_unit_id = db.Column(
+        db.Integer, db.ForeignKey("adminunit.id", ondelete="CASCADE"), nullable=False
+    )
+    target_admin_unit_id = db.Column(
+        db.Integer, db.ForeignKey("adminunit.id", ondelete="CASCADE"), nullable=False
+    )
+    auto_verify_event_reference_requests = deferred(
+        Column(
+            Boolean(),
+            nullable=False,
+            default=False,
+            server_default="0",
+        )
+    )
+
+    def validate(self):
+        source_id = (
+            self.source_admin_unit.id
+            if self.source_admin_unit
+            else self.source_admin_unit_id
+        )
+        target_id = (
+            self.target_admin_unit.id
+            if self.target_admin_unit
+            else self.target_admin_unit_id
+        )
+        if source_id == target_id:
+            raise make_check_violation("There must be no self-reference.")
+
+
 class AdminUnit(db.Model, TrackableMixin):
     __tablename__ = "adminunit"
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), unique=True)
     short_name = Column(Unicode(100), unique=True)
-    members = relationship("AdminUnitMember", backref=backref("adminunit", lazy=True))
+    members = relationship(
+        "AdminUnitMember",
+        cascade="all, delete-orphan",
+        backref=backref("adminunit", lazy=True),
+    )
     invitations = relationship(
-        "AdminUnitMemberInvitation", backref=backref("adminunit", lazy=True)
+        "AdminUnitMemberInvitation",
+        cascade="all, delete-orphan",
+        backref=backref("adminunit", lazy=True),
+    )
+    events = relationship(
+        "Event", cascade="all, delete-orphan", backref=backref("admin_unit", lazy=True)
+    )
+    eventsuggestions = relationship(
+        "EventSuggestion",
+        cascade="all, delete-orphan",
+        backref=backref("admin_unit", lazy=True),
+    )
+    references = relationship(
+        "EventReference",
+        cascade="all, delete-orphan",
+        backref=backref("admin_unit", lazy=True),
+    )
+    reference_requests = relationship(
+        "EventReferenceRequest",
+        cascade="all, delete-orphan",
+        backref=backref("admin_unit", lazy=True),
     )
     event_organizers = relationship(
-        "EventOrganizer", backref=backref("adminunit", lazy=True)
+        "EventOrganizer",
+        cascade="all, delete-orphan",
+        backref=backref("adminunit", lazy=True),
     )
-    event_places = relationship("EventPlace", backref=backref("adminunit", lazy=True))
+    event_places = relationship(
+        "EventPlace",
+        cascade="all, delete-orphan",
+        backref=backref("adminunit", lazy=True),
+    )
     location_id = deferred(db.Column(db.Integer, db.ForeignKey("location.id")))
     location = db.relationship(
         "Location", uselist=False, single_parent=True, cascade="all, delete-orphan"
@@ -330,6 +398,27 @@ class AdminUnit(db.Model, TrackableMixin):
             default=False,
             server_default="0",
         )
+    )
+    outgoing_relations = relationship(
+        "AdminUnitRelation",
+        primaryjoin=remote(AdminUnitRelation.source_admin_unit_id) == id,
+        single_parent=True,
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        backref=backref(
+            "source_admin_unit",
+            lazy=True,
+        ),
+    )
+    incoming_relations = relationship(
+        "AdminUnitRelation",
+        primaryjoin=remote(AdminUnitRelation.target_admin_unit_id) == id,
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        backref=backref(
+            "target_admin_unit",
+            lazy=True,
+        ),
     )
 
 
@@ -519,10 +608,7 @@ class EventReference(db.Model, TrackableMixin):
     id = Column(Integer(), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
-    admin_unit = db.relationship(
-        "AdminUnit", backref=db.backref("references", lazy=True)
-    )
-    rating = Column(Integer())
+    rating = Column(Integer(), default=50)
 
 
 class EventReferenceRequest(db.Model, TrackableMixin):
@@ -537,9 +623,6 @@ class EventReferenceRequest(db.Model, TrackableMixin):
     id = Column(Integer(), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
-    admin_unit = db.relationship(
-        "AdminUnit", backref=db.backref("reference_requests", lazy=True)
-    )
     review_status = Column(IntegerEnum(EventReferenceRequestReviewStatus))
     rejection_reason = Column(IntegerEnum(EventReferenceRequestRejectionReason))
 
@@ -599,9 +682,6 @@ class EventSuggestion(db.Model, TrackableMixin, EventMixin):
     contact_email_notice = Column(Boolean())
 
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
-    admin_unit = db.relationship(
-        "AdminUnit", backref=db.backref("eventsuggestions", lazy=True)
-    )
 
     event_place_id = db.Column(
         db.Integer, db.ForeignKey("eventplace.id"), nullable=True
@@ -644,7 +724,6 @@ class Event(db.Model, TrackableMixin, EventMixin):
     __tablename__ = "event"
     id = Column(Integer(), primary_key=True)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
-    admin_unit = db.relationship("AdminUnit", backref=db.backref("events", lazy=True))
     organizer_id = db.Column(
         db.Integer, db.ForeignKey("eventorganizer.id"), nullable=False
     )
@@ -664,7 +743,7 @@ class Event(db.Model, TrackableMixin, EventMixin):
     )
     status = Column(IntegerEnum(EventStatus))
     previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
-    rating = Column(Integer())
+    rating = Column(Integer(), default=50)
 
     dates = relationship(
         "EventDate", backref=backref("event", lazy=False), cascade="all, delete-orphan"
