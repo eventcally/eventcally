@@ -1,7 +1,8 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import SelectField, StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.fields.core import BooleanField
+from wtforms.validators import DataRequired, Optional
 
 from project.forms.common import event_rating_choices
 from project.models import (
@@ -80,4 +81,10 @@ class ReferenceRequestReviewForm(FlaskForm):
             "Choose how relevant the event is to your organization. The value is not visible and is used for sorting."
         ),
     )
+
+    auto_verify = BooleanField(
+        lazy_gettext("Verify reference requests automatically"),
+        validators=[Optional()],
+    )
+
     submit = SubmitField(lazy_gettext("Save review"))

@@ -3,16 +3,28 @@ from marshmallow import fields
 from project.api import marshmallow
 from project.api.image.schemas import ImageDumpSchema, ImageSchema
 from project.api.location.schemas import LocationDumpSchema, LocationSchema
-from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.api.schemas import (
+    IdSchemaMixin,
+    PaginationRequestSchema,
+    PaginationResponseSchema,
+    SQLAlchemyBaseSchema,
+    WriteIdSchemaMixin,
+)
 from project.models import AdminUnit
 
 
-class OrganizationIdSchema(marshmallow.SQLAlchemySchema):
+class OrganizationModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = AdminUnit
         load_instance = True
 
-    id = marshmallow.auto_field()
+
+class OrganizationIdSchema(OrganizationModelSchema, IdSchemaMixin):
+    pass
+
+
+class OrganizationWriteIdSchema(OrganizationModelSchema, WriteIdSchemaMixin):
+    pass
 
 
 class OrganizationBaseSchema(OrganizationIdSchema):

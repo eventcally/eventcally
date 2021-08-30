@@ -3,6 +3,7 @@ from apispec.exceptions import DuplicateComponentNameError
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import url_for
 from flask_apispec.extension import FlaskApiSpec
+from flask_babelex import gettext
 from flask_marshmallow import Marshmallow
 from flask_restful import Api
 from marshmallow import ValidationError
@@ -78,6 +79,9 @@ class RestApi(Api):
             if not schema:
                 raise
 
+        if data and "message" in data:
+            data["message"] = gettext(data["message"])
+
         return schema.dump(data), code
 
     def fill_validation_data(self, err: ValidationError, data: dict):
@@ -115,6 +119,8 @@ scope_list = [
     "organizer:write",
     "place:write",
     "event:write",
+    "organization:read",
+    "organization:write",
 ]
 scopes = {k: get_localized_scope(k) for v, k in enumerate(scope_list)}
 
@@ -184,5 +190,6 @@ import project.api.event_category.resources
 import project.api.event_date.resources
 import project.api.event_reference.resources
 import project.api.organization.resources
+import project.api.organization_relation.resources
 import project.api.organizer.resources
 import project.api.place.resources

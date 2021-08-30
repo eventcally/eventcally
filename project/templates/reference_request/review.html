@@ -62,6 +62,10 @@ $( function() {
                         {% if form.rating.choices|length > 1 %}
                             {{ render_field_with_errors(form.rating) }}
                         {% endif %}
+
+                        {% if not auto_verify %}
+                            {{ render_field_with_errors(form.auto_verify, ri="switch") }}
+                        {% endif %}
                     </form>
                 </div>
                 <div class="modal-footer">

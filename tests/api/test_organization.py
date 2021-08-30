@@ -1,3 +1,6 @@
+import pytest
+
+
 def test_read(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
 
@@ -229,3 +232,102 @@ def test_references_outgoing(client, seeder, utils):
         name="crew",
     )
     utils.get_ok(url)
+
+
+@pytest.mark.parametrize("session_based", [True, False])
+def test_outgoing_relation_list(client, seeder, utils, session_based):
+    user_id, admin_unit_id = (
+        seeder.setup_base() if session_based else seeder.setup_api_access()
+    )
+    (
+        other_user_id,
+        other_admin_unit_id,
+        relation_id,
+    ) = seeder.create_any_admin_unit_relation(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_relation_list",
+        id=admin_unit_id,
+    )
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == relation_id
+    assert response.json["items"][0]["source_organization"]["id"] == admin_unit_id
+    assert response.json["items"][0]["target_organization"]["id"] == other_admin_unit_id
+
+
+def test_outgoing_relation_list_notAuthenticated(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    (
+        other_user_id,
+        other_admin_unit_id,
+        relation_id,
+    ) = seeder.create_any_admin_unit_relation(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_relation_list",
+        id=admin_unit_id,
+    )
+    response = utils.get_json(url)
+    utils.assert_response_unauthorized(response)
+
+
+def test_outgoing_relation_post(client, app, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_relation_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "target_organization": {"id": other_admin_unit_id},
+        "auto_verify_event_reference_requests": True,
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_created(response)
+    assert "id" in response.json
+
+    with app.app_context():
+        from project.models import AdminUnitRelation
+
+        relation = AdminUnitRelation.query.get(int(response.json["id"]))
+        assert relation is not None
+        assert relation.source_admin_unit_id == admin_unit_id
+        assert relation.target_admin_unit_id == other_admin_unit_id
+        assert relation.auto_verify_event_reference_requests
+
+
+def test_outgoing_relation_post_unknownTarget(client, app, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_relation_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "target_organization": {"id": 1234},
+        "auto_verify_event_reference_requests": True,
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_unprocessable_entity(response)
+
+
+def test_outgoing_relation_post_selfReference(client, app, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_relation_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "target_organization": {"id": admin_unit_id},
+        "auto_verify_event_reference_requests": True,
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_bad_request(response)
