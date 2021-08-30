@@ -224,6 +224,18 @@ def manage_admin_unit_members(id):
     )
 
 
+@app.route("/manage/admin_unit/<int:id>/relations")
+@app.route("/manage/admin_unit/<int:id>/relations/<path:path>")
+@auth_required()
+def manage_admin_unit_relations(id, path=None):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+
+    return render_template(
+        "manage/relations.html",
+        admin_unit=admin_unit,
+    )
+
+
 @app.route("/manage/admin_unit/<int:id>/widgets", methods=("GET", "POST"))
 @auth_required()
 def manage_admin_unit_widgets(id):

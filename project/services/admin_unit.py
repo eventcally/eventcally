@@ -6,6 +6,7 @@ from project.models import (
     AdminUnitMember,
     AdminUnitMemberInvitation,
     AdminUnitMemberRole,
+    AdminUnitRelation,
     EventOrganizer,
     EventPlace,
     Location,
@@ -178,3 +179,28 @@ def get_place_query(admin_unit_id, name=None):
         query = query.filter(EventPlace.name.ilike(like_name))
 
     return query.order_by(func.lower(EventPlace.name))
+
+
+def insert_admin_unit_relation(source_admin_unit_id: int, target_admin_unit_id: int):
+    result = AdminUnitRelation(
+        source_admin_unit_id=source_admin_unit_id,
+        target_admin_unit_id=target_admin_unit_id,
+    )
+    db.session.add(result)
+    return result
+
+
+def get_admin_unit_relation(source_admin_unit_id: int, target_admin_unit_id: int):
+    return AdminUnitRelation.query.filter_by(
+        source_admin_unit_id=source_admin_unit_id,
+        target_admin_unit_id=target_admin_unit_id,
+    ).first()
+
+
+def upsert_admin_unit_relation(source_admin_unit_id: int, target_admin_unit_id: int):
+    result = get_admin_unit_relation(source_admin_unit_id, target_admin_unit_id)
+
+    if result is None:
+        result = insert_admin_unit_relation(source_admin_unit_id, target_admin_unit_id)
+
+    return result

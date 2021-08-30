@@ -1,3 +1,4 @@
+from authlib.integrations.flask_oauth2 import current_token
 from flask import abort
 from flask_login import login_user
 from flask_principal import Permission, RoleNeed
@@ -29,12 +30,17 @@ def owner_access_or_401(user_id):
         abort(401)
 
 
-def login_api_user(token) -> bool:
-    return token and login_user(token.user)
+def login_api_user() -> bool:
+    return (
+        current_token
+        and login_user(current_token.user)
+        or current_user
+        and current_user.is_authenticated
+    )
 
 
-def login_api_user_or_401(token) -> bool:
-    if not login_api_user(token):
+def login_api_user_or_401() -> bool:
+    if not login_api_user():
         abort(401)
 
 

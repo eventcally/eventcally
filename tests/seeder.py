@@ -156,8 +156,8 @@ class Seeder(object):
 
         return client_id
 
-    def setup_api_access(self):
-        user_id, admin_unit_id = self.setup_base(admin=True, log_in=False)
+    def setup_api_access(self, admin=True):
+        user_id, admin_unit_id = self.setup_base(admin=admin, log_in=False)
         return self.authorize_api_access(user_id, admin_unit_id)
 
     def authorize_api_access(self, user_id, admin_unit_id):
@@ -342,6 +342,32 @@ class Seeder(object):
         event_id = self.create_event(other_admin_unit_id)
         reference_id = self.create_reference(event_id, admin_unit_id)
         return (other_user_id, other_admin_unit_id, event_id, reference_id)
+
+    def create_admin_unit_relation(
+        self,
+        admin_unit_id,
+        target_admin_unit_id,
+        auto_verify_event_reference_requests=False,
+    ):
+        from project.services.admin_unit import upsert_admin_unit_relation
+
+        with self._app.app_context():
+            relation = upsert_admin_unit_relation(admin_unit_id, target_admin_unit_id)
+            relation.auto_verify_event_reference_requests = (
+                auto_verify_event_reference_requests
+            )
+            self._db.session.commit()
+            relation_id = relation.id
+
+        return relation_id
+
+    def create_any_admin_unit_relation(self, admin_unit_id):
+        other_user_id = self.create_user("other@test.de")
+        other_admin_unit_id = self.create_admin_unit(other_user_id, "Other Crew")
+        relation_id = self.create_admin_unit_relation(
+            admin_unit_id, other_admin_unit_id
+        )
+        return (other_user_id, other_admin_unit_id, relation_id)
 
     def create_reference_request(self, event_id, admin_unit_id):
         from project.models import (

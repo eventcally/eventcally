@@ -1,6 +1,5 @@
 from operator import and_
 
-from authlib.integrations.flask_oauth2 import current_token
 from flask_apispec import doc, marshal_with, use_kwargs
 
 from project import db
@@ -32,6 +31,12 @@ from project.api.organization.schemas import (
     OrganizationListResponseSchema,
     OrganizationSchema,
 )
+from project.api.organization_relation.schemas import (
+    OrganizationRelationCreateRequestSchema,
+    OrganizationRelationIdSchema,
+    OrganizationRelationListRequestSchema,
+    OrganizationRelationListResponseSchema,
+)
 from project.api.organizer.schemas import (
     OrganizerIdSchema,
     OrganizerListRequestSchema,
@@ -44,7 +49,7 @@ from project.api.place.schemas import (
     PlaceListResponseSchema,
     PlacePostRequestSchema,
 )
-from project.api.resources import BaseResource
+from project.api.resources import BaseResource, require_api_access
 from project.models import AdminUnit, Event, PublicStatus
 from project.oauth2 import require_oauth
 from project.services.admin_unit import (
@@ -57,6 +62,7 @@ from project.services.event_search import EventSearchParams
 from project.services.reference import (
     get_reference_incoming_query,
     get_reference_outgoing_query,
+    get_relation_outgoing_query,
 )
 
 
@@ -132,7 +138,7 @@ class OrganizationEventListResource(BaseResource):
     @marshal_with(EventIdSchema, 201)
     @require_oauth("event:write")
     def post(self, id):
-        login_api_user_or_401(current_token)
+        login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
         access_or_401(admin_unit, "event:create")
 
@@ -177,7 +183,7 @@ class OrganizationOrganizerListResource(BaseResource):
     @marshal_with(OrganizerIdSchema, 201)
     @require_oauth("organizer:write")
     def post(self, id):
-        login_api_user_or_401(current_token)
+        login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
         access_or_401(admin_unit, "organizer:create")
 
@@ -210,7 +216,7 @@ class OrganizationPlaceListResource(BaseResource):
     @marshal_with(PlaceIdSchema, 201)
     @require_oauth("place:write")
     def post(self, id):
-        login_api_user_or_401(current_token)
+        login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
         access_or_401(admin_unit, "place:create")
 
@@ -251,6 +257,45 @@ class OrganizationOutgoingEventReferenceListResource(BaseResource):
         return pagination
 
 
+class OrganizationOutgoingRelationListResource(BaseResource):
+    @doc(
+        summary="List outgoing relations of organization",
+        tags=["Organizations", "Organization Relations"],
+        security=[{"oauth2": ["organization:read"]}],
+    )
+    @use_kwargs(OrganizationRelationListRequestSchema, location=("query"))
+    @marshal_with(OrganizationRelationListResponseSchema)
+    @require_api_access("organization:read")
+    def get(self, id, **kwargs):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+        access_or_401(admin_unit, "admin_unit:update")
+
+        pagination = get_relation_outgoing_query(admin_unit).paginate()
+        return pagination
+
+    @doc(
+        summary="Add new outgoing relation",
+        tags=["Organizations", "Organization Relations"],
+        security=[{"oauth2": ["organization:write"]}],
+    )
+    @use_kwargs(OrganizationRelationCreateRequestSchema, location="json", apply=False)
+    @marshal_with(OrganizationRelationIdSchema, 201)
+    @require_api_access("organization:write")
+    def post(self, id):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+        access_or_401(admin_unit, "admin_unit:update")
+
+        relation = self.create_instance(
+            OrganizationRelationCreateRequestSchema, source_admin_unit_id=admin_unit.id
+        )
+        db.session.add(relation)
+        db.session.commit()
+
+        return relation, 201
+
+
 add_api_resource(OrganizationResource, "/organizations/<int:id>", "api_v1_organization")
 add_api_resource(
     OrganizationEventDateSearchResource,
@@ -287,4 +332,9 @@ add_api_resource(
     OrganizationOutgoingEventReferenceListResource,
     "/organizations/<int:id>/event-references/outgoing",
     "api_v1_organization_outgoing_event_reference_list",
+)
+add_api_resource(
+    OrganizationOutgoingRelationListResource,
+    "/organizations/<int:id>/relations/outgoing",
+    "api_v1_organization_outgoing_relation_list",
 )
