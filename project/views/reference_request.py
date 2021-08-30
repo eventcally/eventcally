@@ -19,7 +19,11 @@ from project.models import (
     EventReferenceRequestReviewStatus,
     User,
 )
-from project.services.reference import get_reference_requests_incoming_query
+from project.services.admin_unit import get_admin_unit_relation
+from project.services.reference import (
+    create_event_reference_for_request,
+    get_reference_requests_incoming_query,
+)
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
@@ -82,20 +86,31 @@ def event_reference_request_create(event_id):
 
     if form.validate_on_submit():
         request = EventReferenceRequest()
-        request.review_status = EventReferenceRequestReviewStatus.inbox
         form.populate_obj(request)
         request.event = event
 
         try:
             db.session.add(request)
-            db.session.commit()
-            send_reference_request_inbox_mails(request)
-            flash(
-                gettext(
-                    "Request successfully created. You will be notified after the other organization reviews the event."
-                ),
-                "success",
+
+            relation = get_admin_unit_relation(
+                request.admin_unit_id, event.admin_unit_id
             )
+            auto_verify = relation and relation.auto_verify_event_reference_requests
+
+            if auto_verify:
+                request.review_status = EventReferenceRequestReviewStatus.verified
+                reference = create_event_reference_for_request(request)
+                send_auto_reference_inbox_mails(reference)
+                msg = gettext("Reference successfully created")
+            else:
+                request.review_status = EventReferenceRequestReviewStatus.inbox
+                send_reference_request_inbox_mails(request)
+                msg = gettext(
+                    "Request successfully created. You will be notified after the other organization reviews the event."
+                )
+
+            db.session.commit()
+            flash(msg, "success")
             return redirect(
                 url_for(
                     "manage_admin_unit_reference_requests_outgoing",
@@ -111,19 +126,34 @@ def event_reference_request_create(event_id):
     return render_template("event/reference_request.html", form=form, event=event)
 
 
-def send_reference_request_inbox_mails(request):
-    # Benachrichtige alle Mitglieder der AdminUnit, die diesen Request verifizieren können
+def send_member_reference_request_verify_mails(
+    admin_unit_id, subject, template, **context
+):
+    # Benachrichtige alle Mitglieder der AdminUnit, die Requests verifizieren können
     members = (
         AdminUnitMember.query.join(User)
-        .filter(AdminUnitMember.admin_unit_id == request.admin_unit_id)
+        .filter(AdminUnitMember.admin_unit_id == admin_unit_id)
         .all()
     )
 
     for member in members:
         if has_admin_unit_member_permission(member, "reference_request:verify"):
-            send_mail(
-                member.user.email,
-                gettext("New reference request"),
-                "reference_request_notice",
-                request=request,
-            )
+            send_mail(member.user.email, subject, template, **context)
+
+
+def send_reference_request_inbox_mails(request):
+    send_member_reference_request_verify_mails(
+        request.admin_unit_id,
+        gettext("New reference request"),
+        "reference_request_notice",
+        request=request,
+    )
+
+
+def send_auto_reference_inbox_mails(reference):
+    send_member_reference_request_verify_mails(
+        reference.admin_unit_id,
+        gettext("New reference automatically verified"),
+        "reference_auto_verified_notice",
+        reference=reference,
+    )

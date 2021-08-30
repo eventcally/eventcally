@@ -14,6 +14,10 @@ from project.models import (
     EventReferenceRequestReviewStatus,
     User,
 )
+from project.services.admin_unit import (
+    get_admin_unit_relation,
+    upsert_admin_unit_relation,
+)
 from project.services.reference import create_event_reference_for_request
 from project.views.utils import flash_errors, handleSqlError, send_mail
 
@@ -49,6 +53,12 @@ def event_reference_request_review(id):
                 reference = create_event_reference_for_request(request)
                 reference.rating = form.rating.data
                 msg = gettext("Reference successfully created")
+
+                if form.auto_verify.data:
+                    relation = upsert_admin_unit_relation(
+                        request.admin_unit_id, request.event.admin_unit_id
+                    )
+                    relation.auto_verify_event_reference_requests = True
             else:
                 msg = gettext("Request successfully updated")
 
@@ -67,6 +77,17 @@ def event_reference_request_review(id):
     else:
         flash_errors(form)
 
+    relation = get_admin_unit_relation(
+        request.admin_unit_id, request.event.admin_unit_id
+    )
+    auto_verify = relation and relation.auto_verify_event_reference_requests
+
+    if not auto_verify:
+        form.auto_verify.description = gettext(
+            "If all upcoming reference requests of %(admin_unit_name)s should be verified automatically.",
+            admin_unit_name=request.admin_unit.name,
+        )
+
     today = get_today()
     dates = (
         EventDate.query.with_parent(request.event)
@@ -77,6 +98,7 @@ def event_reference_request_review(id):
     return render_template(
         "reference_request/review.html",
         form=form,
+        auto_verify=auto_verify,
         dates=dates,
         request=request,
         event=request.event,

@@ -84,7 +84,10 @@ app.config["BABEL_DEFAULT_TIMEZONE"] = "Europe/Berlin"
 babel = Babel(app)
 
 # cors
-cors = CORS(app, resources={r"/.well-known/*", r"/api/*", r"/oauth/*", "/swagger/"})
+cors = CORS(
+    app,
+    resources={r"/.well-known/*", r"/api/*", r"/oauth/*", "/swagger/"},
+)
 
 # CRSF protection
 csrf = CSRFProtect(app)

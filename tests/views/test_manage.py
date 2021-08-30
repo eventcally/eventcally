@@ -157,3 +157,10 @@ def test_admin_unit_widgets_permission_missing(client, seeder, utils, mocker):
     utils.assert_response_permission_missing(
         response, "manage_admin_unit", id=admin_unit_id
     )
+
+
+def test_admin_unit_relations(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("manage_admin_unit_relations", id=admin_unit_id)
+    utils.get_ok(url)

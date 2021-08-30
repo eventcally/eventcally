@@ -1,4 +1,5 @@
-from marshmallow import fields, missing, validate
+from marshmallow import ValidationError, fields, missing, validate
+from marshmallow.decorators import pre_load
 
 from project.api import marshmallow
 
@@ -29,6 +30,12 @@ class IdSchemaMixin(object):
 
 class WriteIdSchemaMixin(object):
     id = marshmallow.auto_field(required=True)
+
+    @pre_load()
+    def validate_exists(self, data, **kwargs):
+        if not self.get_instance(data):
+            raise ValidationError("Referenced object does not exist")
+        return data
 
 
 class TrackableSchemaMixin(object):
