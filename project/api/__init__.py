@@ -2,8 +2,6 @@ from apispec import APISpec
 from apispec.exceptions import DuplicateComponentNameError
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import url_for
-from flask.globals import current_app
-from flask.signals import got_request_exception
 from flask_apispec.extension import FlaskApiSpec
 from flask_babelex import gettext
 from flask_marshmallow import Marshmallow
