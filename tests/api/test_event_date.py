@@ -61,3 +61,21 @@ def test_search(client, seeder, utils):
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
     url = utils.get_url("api_v1_event_date_search", organizer_id=organizer_id)
     response = utils.get_ok(url)
+
+
+def test_search_oneDay(client, seeder, utils):
+    from project.dateutils import create_berlin_date
+
+    user_id, admin_unit_id = seeder.setup_base()
+
+    start = create_berlin_date(2020, 10, 3, 10)
+    end = create_berlin_date(2020, 10, 3, 11)
+    name = "Spezialveranstaltung"
+    event_id = seeder.create_event(admin_unit_id, name=name, start=start, end=end)
+
+    url = utils.get_url(
+        "api_v1_event_date_search", date_from="2020-10-03", date_to="2020-10-03"
+    )
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["event"]["id"] == event_id
