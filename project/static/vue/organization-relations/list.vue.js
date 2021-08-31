@@ -25,9 +25,10 @@ const OrganizationRelationList = {
           responsive
           show-empty
           :empty-text="$t('shared.emptyData')"
+          style="min-height:100px"
         >
           <template #cell(target_organization.name)="data">
-            <b-dropdown boundary="window" :id="'item-dropdown-' + data.item.id" :text="data.value" variant="link" toggle-class="m-0 p-0">
+            <b-dropdown :id="'item-dropdown-' + data.item.id" :text="data.value" variant="link" toggle-class="m-0 p-0">
               <b-dropdown-item @click.prevent="editItem(data.item.id)">{{ $t("shared.edit") }}&hellip;</b-dropdown-item>
               <b-dropdown-item @click.prevent="deleteItem(data.item.id)">{{ $t("shared.delete") }}&hellip;</b-dropdown-item>
             </b-dropdown>
