@@ -165,7 +165,7 @@ if os.getenv("TESTING", False):  # pragma: no cover
     import project.cli.test
 
 import project.cli.user
-from project import i10n, init_data, jinja_filters
+from project import i10n, init_data, jinja_filters, requests
 
 # Routes
 from project.views import (

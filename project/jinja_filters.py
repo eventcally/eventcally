@@ -83,14 +83,13 @@ def get_context_processors():
     def get_current_admin_unit():
         from flask_security import current_user
 
-        from project.access import get_admin_unit_for_manage, get_admin_units_for_manage
+        from project.access import get_admin_units_for_manage
+        from project.views.utils import get_manage_admin_unit_from_request
 
         admin_unit = None
 
         if current_user.is_authenticated:
-            if "manage_admin_unit_id" in request.cookies:
-                manage_admin_unit_id = int(request.cookies.get("manage_admin_unit_id"))
-                admin_unit = get_admin_unit_for_manage(manage_admin_unit_id)
+            admin_unit = get_manage_admin_unit_from_request(request)
 
             if not admin_unit:
                 admin_units = get_admin_units_for_manage()
