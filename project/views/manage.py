@@ -1,4 +1,4 @@
-from flask import flash, make_response, redirect, render_template, request, url_for
+from flask import flash, g, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,7 +7,6 @@ from sqlalchemy.sql import desc, func
 from project import app, db
 from project.access import (
     admin_unit_suggestions_enabled_or_404,
-    get_admin_unit_for_manage,
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_manage,
     has_access,
@@ -30,6 +29,7 @@ from project.services.event_suggestion import get_event_reviews_query
 from project.views.event import get_event_category_choices
 from project.views.utils import (
     flash_errors,
+    get_manage_admin_unit_from_request,
     get_pagination_urls,
     handleSqlError,
     permission_missing,
@@ -45,15 +45,10 @@ def manage_after_login():
 @app.route("/manage")
 @auth_required()
 def manage():
-    try:
-        if "manage_admin_unit_id" in request.cookies:
-            manage_admin_unit_id = int(request.cookies.get("manage_admin_unit_id"))
-            admin_unit = get_admin_unit_for_manage(manage_admin_unit_id)
+    admin_unit = get_manage_admin_unit_from_request(request)
 
-            if admin_unit:
-                return redirect(url_for("manage_admin_unit", id=admin_unit.id))
-    except Exception:
-        pass
+    if admin_unit:
+        return redirect(url_for("manage_admin_unit", id=admin_unit.id))
 
     if "from_login" in request.args:
         admin_units = get_admin_units_for_manage()
@@ -90,18 +85,15 @@ def manage_admin_units():
 @auth_required()
 def manage_admin_unit(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-
-    response = make_response(
-        redirect(url_for("manage_admin_unit_events", id=admin_unit.id))
-    )
-    response.set_cookie("manage_admin_unit_id", str(admin_unit.id))
-    return response
+    g.manage_admin_unit_id = id
+    return redirect(url_for("manage_admin_unit_events", id=admin_unit.id))
 
 
 @app.route("/manage/admin_unit/<int:id>/reviews")
 @auth_required()
 def manage_admin_unit_event_reviews(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
+    g.manage_admin_unit_id = id
     admin_unit_suggestions_enabled_or_404(admin_unit)
 
     event_suggestions_paginate = (
@@ -123,6 +115,7 @@ def manage_admin_unit_event_reviews(id):
 @auth_required()
 def manage_admin_unit_events(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
+    g.manage_admin_unit_id = id
 
     params = EventSearchParams()
 
@@ -157,6 +150,8 @@ def manage_admin_unit_events(id):
 @auth_required()
 def manage_admin_unit_organizers(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
+    g.manage_admin_unit_id = id
+
     organizers = (
         EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id)
         .order_by(func.lower(EventOrganizer.name))
@@ -175,6 +170,7 @@ def manage_admin_unit_organizers(id):
 @auth_required()
 def manage_admin_unit_event_places(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
+    g.manage_admin_unit_id = id
 
     form = FindEventPlaceForm(**request.args)
 
@@ -196,6 +192,7 @@ def manage_admin_unit_event_places(id):
 @auth_required()
 def manage_admin_unit_members(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
+    g.manage_admin_unit_id = id
 
     if not has_access(admin_unit, "admin_unit.members:read"):
         return permission_missing(url_for("manage_admin_unit", id=id))
@@ -229,6 +226,7 @@ def manage_admin_unit_members(id):
 @auth_required()
 def manage_admin_unit_relations(id, path=None):
     admin_unit = get_admin_unit_for_manage_or_404(id)
+    g.manage_admin_unit_id = id
 
     return render_template(
         "manage/relations.html",
@@ -240,6 +238,8 @@ def manage_admin_unit_relations(id, path=None):
 @auth_required()
 def manage_admin_unit_widgets(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
+    g.manage_admin_unit_id = id
+
     default_background_color = "#ffffff"
     default_primary_color = "#007bff"
 
