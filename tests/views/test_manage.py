@@ -8,9 +8,14 @@ def test_index_noCookie(client, seeder, utils):
     utils.assert_response_redirect(response, "manage_admin_units")
 
 
-def test_index_withValidCookie(client, seeder, utils):
+def test_index_withValidCookie(client, seeder, app, utils):
+    from flask_login.utils import encode_cookie
+
     user_id, admin_unit_id = seeder.setup_base()
-    client.set_cookie("localhost", "manage_admin_unit_id", str(admin_unit_id))
+
+    with app.app_context():
+        encoded = encode_cookie(str(admin_unit_id))
+        client.set_cookie("localhost", "manage_admin_unit_id", encoded)
 
     response = utils.get_endpoint("manage")
     utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
