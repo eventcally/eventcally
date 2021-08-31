@@ -118,6 +118,7 @@ def event_create_for_admin_unit_id(id):
         event_template = Event.query.get_or_404(event_template_id)
         if not form.is_submitted():
             form.process(obj=event_template)
+            form.category_ids.data = [c.id for c in event_template.categories]
             prepare_organizer(form)
             prepare_event_place(form)
 
