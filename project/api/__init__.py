@@ -2,6 +2,8 @@ from apispec import APISpec
 from apispec.exceptions import DuplicateComponentNameError
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import url_for
+from flask.globals import current_app
+from flask.signals import got_request_exception
 from flask_apispec.extension import FlaskApiSpec
 from flask_babelex import gettext
 from flask_marshmallow import Marshmallow
@@ -73,11 +75,12 @@ class RestApi(Api):
             self.fill_validation_data(err, data)
 
         # Call default error handler that propagates error further
-        try:
-            super().handle_error(err)
-        except Exception:
-            if not schema:
-                raise
+        if code >= 500:
+            try:
+                super().handle_error(err)
+            except Exception:
+                if not schema:
+                    raise
 
         if data and "message" in data:
             data["message"] = gettext(data["message"])
