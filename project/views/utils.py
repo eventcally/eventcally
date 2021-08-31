@@ -1,16 +1,34 @@
 from urllib.parse import quote_plus
 
-from flask import Markup, flash, redirect, render_template, request, url_for
+from flask import Markup, flash, g, redirect, render_template, request, url_for
 from flask_babelex import gettext
+from flask_login.utils import decode_cookie
 from flask_mail import Message
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
 from wtforms import FormField
 
 from project import app, db, mail
+from project.access import get_admin_unit_for_manage
 from project.dateutils import gmt_tz
 from project.models import Analytics, EventAttendanceMode, EventDate
 from project.utils import get_place_str
+
+
+def get_manage_admin_unit_from_request(request):
+    manage_admin_unit_id = getattr(g, "manage_admin_unit_id", 0)
+    if manage_admin_unit_id > 0:
+        return get_admin_unit_for_manage(manage_admin_unit_id)
+
+    try:
+        if "manage_admin_unit_id" in request.cookies:
+            encoded = request.cookies.get("manage_admin_unit_id")
+            manage_admin_unit_id = int(decode_cookie(encoded))
+            return get_admin_unit_for_manage(manage_admin_unit_id)
+    except Exception:
+        pass
+
+    return None
 
 
 def track_analytics(key, value1, value2):
