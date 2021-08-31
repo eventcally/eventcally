@@ -190,6 +190,7 @@ class Seeder(object):
         end=None,
         draft=False,
         name="Name",
+        start=None,
     ):
         from project.models import Event, EventAttendanceMode, PublicStatus
         from project.services.event import insert_event, upsert_event_category
@@ -199,8 +200,8 @@ class Seeder(object):
             event.admin_unit_id = admin_unit_id
             event.categories = [upsert_event_category("Other")]
             event.name = name
-            event.description = "Beschreibung"
-            event.start = self.get_now_by_minute()
+            event.description = ("Beschreibung",)
+            event.start = start if start else self.get_now_by_minute()
             event.end = end
             event.event_place_id = self.upsert_default_event_place(admin_unit_id)
             event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)

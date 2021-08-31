@@ -43,6 +43,27 @@ def test_event_dates(client, seeder, utils):
     utils.get_ok(url)
 
 
+def test_event_dates_oneDay(client, seeder, utils):
+    from project.dateutils import create_berlin_date
+
+    user_id, admin_unit_id = seeder.setup_base()
+    au_short_name = "meinecrew"
+
+    start = create_berlin_date(2020, 10, 3, 10)
+    end = create_berlin_date(2020, 10, 3, 11)
+    name = "Spezialveranstaltung"
+    seeder.create_event(admin_unit_id, name=name, start=start, end=end)
+
+    url = utils.get_url(
+        "widget_event_dates",
+        au_short_name=au_short_name,
+        date_from="2020-10-03",
+        date_to="2020-10-03",
+    )
+    response = utils.get_ok(url)
+    utils.assert_response_contains(response, name)
+
+
 def test_event_date(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     seeder.create_event(admin_unit_id)

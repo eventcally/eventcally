@@ -13,7 +13,9 @@ class FindEventDateForm(FlaskForm):
         csrf = False
 
     date_from = CustomDateField(lazy_gettext("From"), validators=[Optional()])
-    date_to = CustomDateField(lazy_gettext("to"), validators=[Optional()])
+    date_to = CustomDateField(
+        lazy_gettext("to"), set_end_of_day=True, validators=[Optional()]
+    )
     keyword = StringField(lazy_gettext("Keyword"), validators=[Optional()])
     category_id = SelectField(
         lazy_gettext("Category"), validators=[Optional()], coerce=int
