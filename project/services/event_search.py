@@ -61,7 +61,7 @@ class EventSearchParams(object):
     @date_to_str.setter
     def date_to_str(self, value):
         self._date_to_str = value
-        self._date_to = form_input_to_date(value)
+        self._date_to = form_input_to_date(value, 23, 59, 59)
 
     @property
     def coordinate(self):
