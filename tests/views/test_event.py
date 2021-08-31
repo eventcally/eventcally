@@ -258,6 +258,8 @@ def test_duplicate(client, app, utils, seeder, mocker):
         )
         assert len(events) == 2
 
+        assert events[1].category.name == events[0].category.name
+
 
 @pytest.mark.parametrize("free_text", [True, False])
 def test_create_fromSuggestion(client, app, utils, seeder, mocker, free_text):
