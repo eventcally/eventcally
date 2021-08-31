@@ -7,7 +7,7 @@ from wtforms.fields.core import StringField
 from wtforms.validators import Length, StopValidation
 from wtforms.widgets import CheckboxInput, ListWidget, html_params
 
-from project.dateutils import berlin_tz
+from project.dateutils import berlin_tz, date_set_end_of_day
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -88,7 +88,19 @@ class CustomDateWidget:
 
 
 class CustomDateField(DateTimeField):
+    set_end_of_day = False
     widget = CustomDateWidget()
+
+    def __init__(
+        self,
+        label=None,
+        validators=None,
+        format="%Y-%m-%d %H:%M:%S",
+        set_end_of_day=False,
+        **kwargs
+    ):
+        super(CustomDateField, self).__init__(label, validators, format, **kwargs)
+        self.set_end_of_day = set_end_of_day
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -99,7 +111,12 @@ class CustomDateField(DateTimeField):
                     return
 
                 date = datetime.strptime(date_str, "%Y-%m-%d")
-                self.data = berlin_tz.localize(date)
+                localized_date = berlin_tz.localize(date)
+
+                if self.set_end_of_day:
+                    localized_date = date_set_end_of_day(localized_date)
+
+                self.data = localized_date
             except Exception:
                 raise ValueError("Not a valid date value. Looking for YYYY-MM-DD.")
 
