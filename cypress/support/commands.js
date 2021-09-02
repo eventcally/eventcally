@@ -17,6 +17,20 @@ Cypress.Commands.add("setup", () => {
 });
 
 Cypress.Commands.add(
+  "createUser",
+  (email = "test@test.de", password = "password", admin = false) => {
+    let cmd = 'flask user create "' + email + '" "' + password + '" --confirm';
+    if (admin) {
+      cmd += " --admin";
+    }
+    return cy.logexec(cmd).then(function (result) {
+      let json = JSON.parse(result.stdout);
+      return json.user_id;
+    });
+  }
+);
+
+Cypress.Commands.add(
   "createAdminUnit",
   (userEmail = "test@test.de", name = "Meine Crew") => {
     return cy
@@ -24,6 +38,37 @@ Cypress.Commands.add(
       .then(function (result) {
         let json = JSON.parse(result.stdout);
         return json.admin_unit_id;
+      });
+  }
+);
+
+Cypress.Commands.add(
+  "createAdminUnitMemberInvitation",
+  (adminUnitId, userEmail = "new@test.de") => {
+    return cy
+      .logexec(
+        "flask test admin-unit-member-invitation-create " +
+          adminUnitId +
+          " " +
+          userEmail
+      )
+      .then(function (result) {
+        let json = JSON.parse(result.stdout);
+        return json.invitation_id;
+      });
+  }
+);
+
+Cypress.Commands.add(
+  "createAdminUnitMember",
+  (adminUnitId, userEmail = "new@test.de") => {
+    return cy
+      .logexec(
+        "flask test admin-unit-member-create " + adminUnitId + " " + userEmail
+      )
+      .then(function (result) {
+        let json = JSON.parse(result.stdout);
+        return json.member_id;
       });
   }
 );
@@ -37,12 +82,62 @@ Cypress.Commands.add("createEvent", (adminUnitId) => {
     });
 });
 
+Cypress.Commands.add("createEventPlace", (adminUnitId, name = "Mein Platz") => {
+  return cy
+    .logexec("flask test event-place-create " + adminUnitId + ' "' + name + '"')
+    .then(function (result) {
+      let json = JSON.parse(result.stdout);
+      return json.event_place_id;
+    });
+});
+
+Cypress.Commands.add(
+  "createEventOrganizer",
+  (adminUnitId, name = "Mein Veranstalter") => {
+    return cy
+      .logexec(
+        "flask test event-organizer-create " + adminUnitId + ' "' + name + '"'
+      )
+      .then(function (result) {
+        let json = JSON.parse(result.stdout);
+        return json.event_organizer_id;
+      });
+  }
+);
+
+Cypress.Commands.add("createOauth2Client", (userId) => {
+  return cy
+    .logexec("flask test oauth2-client-create " + userId)
+    .then(function (result) {
+      let json = JSON.parse(result.stdout);
+      return json;
+    });
+});
+
 Cypress.Commands.add("createIncomingReferenceRequest", (adminUnitId) => {
   return cy
     .logexec("flask test reference-request-create-incoming " + adminUnitId)
     .then(function (result) {
       let json = JSON.parse(result.stdout);
       return json.reference_request_id;
+    });
+});
+
+Cypress.Commands.add("createIncomingReference", (adminUnitId) => {
+  return cy
+    .logexec("flask test reference-create-incoming " + adminUnitId)
+    .then(function (result) {
+      let json = JSON.parse(result.stdout);
+      return json.reference_id;
+    });
+});
+
+Cypress.Commands.add("createAdminUnitRelation", (adminUnitId) => {
+  return cy
+    .logexec("flask test admin-unit-relation-create " + adminUnitId)
+    .then(function (result) {
+      let json = JSON.parse(result.stdout);
+      return json.relation_id;
     });
 });
 
@@ -107,10 +202,10 @@ Cypress.Commands.add(
 
 Cypress.Commands.add("inputsShouldHaveSameValue", (input1, input2) => {
   cy.get(input1)
-  .invoke("val")
-  .then((value) => {
-    cy.get(input2).should("have.value", value);
-  });
+    .invoke("val")
+    .then((value) => {
+      cy.get(input2).should("have.value", value);
+    });
 });
 
 Cypress.Commands.add(
@@ -165,3 +260,54 @@ Cypress.Commands.add(
     }
   }
 );
+
+Cypress.Commands.add(
+  "screenshotDatepicker",
+  (elementId, screenshotName = "datepicker") => {
+    cy.get(elementId).click();
+    cy.get("#ui-datepicker-div").should("be.visible");
+    cy.get(".ui-datepicker-next > .ui-icon").click();
+    cy.screenshot(screenshotName);
+  }
+);
+
+Cypress.Commands.add("authorize", (screenshot = false) => {
+  return cy.createUser("new@test.de", "password", true).then(function (userId) {
+    cy.createOauth2Client(userId).then(function (result) {
+      cy.login("new@test.de");
+      cy.visit(
+        "/oauth/authorize?nonce=4711&response_type=code&client_id=" +
+          result.oauth2_client_client_id +
+          "&scope=" +
+          result.oauth2_client_scope +
+          "&redirect_uri=/"
+      );
+
+      if (screenshot) {
+        cy.screenshot("authorize");
+      }
+
+      cy.get("#allow").click();
+
+      cy.url().should("not.include", "authorize");
+      cy.location().then((location) => {
+        const urlParams = new URLSearchParams(location.search);
+        const code = urlParams.get("code");
+
+        cy.request({
+          method: "POST",
+          url: "/oauth/token",
+          form: true,
+          body: {
+            client_id: result.oauth2_client_client_id,
+            client_secret: result.oauth2_client_secret,
+            grant_type: "authorization_code",
+            scope: result.oauth2_client_scope,
+            code: code,
+            redirect_uri: "/",
+          },
+        });
+      });
+    });
+  });
+});

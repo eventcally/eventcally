@@ -1,9 +1,27 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_jquery_steps_header, render_google_filter_autocomplete_header, render_event_dates_filter_form, render_pagination, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_form_styles, render_form_scripts, render_jquery_steps_header, render_google_filter_autocomplete_header, render_event_dates_filter_form, render_pagination, render_place, render_events_sub_menu %}
+
 {%- block title -%}
 {{ _('Event Dates') }}
 {%- endblock -%}
+
+{% block styles %}
+{{ render_form_styles() }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.68.0/dist/L.Control.Locate.min.css" />
+{% endblock %}
+
+{% block header_before_site_js %}
+{{ render_form_scripts() }}
+<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.68.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+{%- endblock -%}
+
 {% block header %}
+<script src="{{ url_for('static', filename='svg-icon.js')}}"></script>
 {{ render_jquery_steps_header() }}
 {{ render_google_filter_autocomplete_header() }}
 <script>
@@ -253,12 +271,13 @@
     });
     </script>
 {% endblock %}
+
 {% block content %}
 
     <h1>
         {{ _('Event Dates') }}
-        <button type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-search"></i></button>
-        <button type="button" class="btn btn-outline-secondary" onclick="toggle_map()"><i class="fa fa-map"></i></button>
+        <button type="button" id="toggle-search-btn" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-search"></i></button>
+        <button type="button" id="toggle-map-btn" class="btn btn-outline-secondary" onclick="toggle_map()"><i class="fa fa-map"></i></button>
     </h1>
 
     <div class="{% if form.is_submitted() %}{% else %}collapse{% endif %}" id="search_form">

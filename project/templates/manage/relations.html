@@ -1,25 +1,33 @@
-{% extends "layout.html" %} {% set active_id = "organizers" %} {% from
-"_macros.html" import render_event_organizer %} {%- block title -%} {{
-_('Relations') }} {%- endblock -%} {% block header_before_site_js %}
+{% extends "layout.html" %}
+
+{%- block title -%}
+{{ _('Relations') }}
+{%- endblock -%}
+
+{% block header_before_site_js %}
 <link
   type="text/css"
   rel="stylesheet"
-  href="https://unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.css"
+  href="https://unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.min.css"
 />
 
-<script src="https://unpkg.com/vue"></script>
-<script src="https://unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.js"></script>
-<script src="https://unpkg.com/vue-router@2.0.0"></script>
-<script src="https://unpkg.com/vue-i18n@8"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script src="https://unpkg.com/lodash@latest/lodash.min.js"></script>
-<script src="http://unpkg.com/portal-vue"></script>
+{% if False | env_override('FLASK_DEBUG') %}
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+{% else %}
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+{% endif %}
+<script src="https://unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.min.js"></script>
+<script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.min.js"></script>
+<script src="https://unpkg.com/vue-i18n@8.25.0/dist/vue-i18n.min.js"></script>
+<script src="https://unpkg.com/axios@0.21.1/dist/axios.min.js"></script>
+<script src="https://unpkg.com/lodash@4.17.21/lodash.min.js"></script>
+<script src="https://unpkg.com/portal-vue@2.1.7/dist/portal-vue.umd.min.js"></script>
 <link
-  href="https://unpkg.com/vue-typeahead-bootstrap/dist/VueTypeaheadBootstrap.css"
+  href="https://unpkg.com/vue-typeahead-bootstrap@2.12.0/dist/VueTypeaheadBootstrap.css"
   rel="stylesheet"
 />
 <script src="https://unpkg.com/vue-typeahead-bootstrap@2.12.0/dist/VueTypeaheadBootstrap.umd.min.js"></script>
-<script src="https://unpkg.com/vee-validate@3.4.11/dist/vee-validate.full.js"></script>
+<script src="https://unpkg.com/vee-validate@3.4.11/dist/vee-validate.full.min.js"></script>
 <script src="{{ url_for('static', filename='vue/organization-relations/list.vue.js')}}"></script>
 <script src="{{ url_for('static', filename='vue/organization-relations/create.vue.js')}}"></script>
 <script src="{{ url_for('static', filename='vue/organization-relations/update.vue.js')}}"></script>
