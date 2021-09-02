@@ -69,9 +69,39 @@ describe("Event", () => {
         "contain",
         "Veranstaltung erfolgreich aktualisiert"
       );
+      cy.screenshot("list");
 
       cy.visit("/manage/admin_unit/" + adminUnitId + "/events");
       cy.get('main .badge-pill').should('contain', 'Entwurf')
+    });
+  });
+
+  it("read and actions", () => {
+    cy.login();
+    cy.createAdminUnit().then(function (adminUnitId) {
+      cy.createEvent(adminUnitId).then(function (eventId) {
+        cy.visit("/event/" + eventId);
+        cy.screenshot("read");
+
+        cy.visit("/event/" + eventId + "/actions");
+        cy.screenshot("actions");
+      });
+    });
+  });
+
+  it("deletes", () => {
+    cy.login();
+    cy.createAdminUnit().then(function (adminUnitId) {
+      cy.createEvent(adminUnitId).then(function (eventId) {
+        cy.visit("/event/" + eventId + "/delete");
+        cy.get("#name").type("Name");
+        cy.screenshot("delete");
+        cy.get("#submit").click();
+        cy.url().should(
+          "include",
+          "/manage/admin_unit/" + adminUnitId + "/events"
+        );
+      });
     });
   });
 

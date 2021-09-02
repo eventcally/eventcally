@@ -1,3 +1,5 @@
+import json
+
 import click
 from flask.cli import AppGroup
 from flask_security.confirmable import confirm_user
@@ -24,14 +26,19 @@ def add_admin_roles(email):
 @click.argument("email")
 @click.argument("password")
 @click.option("--confirm/--no-confirm", default=False)
-def create(email, password, confirm):
+@click.option("--admin/--no-admin", default=False)
+def create(email, password, confirm, admin):
     user = create_user(email, password)
 
     if confirm:
         confirm_user(user)
 
+    if admin:
+        add_admin_roles_to_user(email)
+
     db.session.commit()
-    click.echo(f"Created user {email}.")
+    result = {"user_id": user.id}
+    click.echo(json.dumps(result))
 
 
 @user_cli.command("confirm")

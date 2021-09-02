@@ -6,21 +6,31 @@ from flask_security.confirmable import confirm_user
 from sqlalchemy import MetaData
 
 from project import app, db
+from project.api import scope_list
 from project.init_data import create_initial_data
 from project.models import (
     AdminUnit,
     Event,
     EventAttendanceMode,
+    EventReference,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
     EventSuggestion,
     Location,
+    OAuth2Client,
 )
-from project.services.admin_unit import get_admin_unit_by_id, insert_admin_unit_for_user
+from project.services.admin_unit import (
+    add_user_to_admin_unit_with_roles,
+    get_admin_unit_by_id,
+    insert_admin_unit_for_user,
+    insert_admin_unit_member_invitation,
+    upsert_admin_unit_relation,
+)
 from project.services.event import insert_event, upsert_event_category
 from project.services.event_suggestion import insert_event_suggestion
-from project.services.organizer import get_event_organizer
-from project.services.place import get_event_places
+from project.services.oauth2_client import complete_oauth2_client
+from project.services.organizer import get_event_organizer, upsert_event_organizer
+from project.services.place import get_event_places, upsert_event_place
 from project.services.user import create_user, find_user_by_email, get_user
 
 test_cli = AppGroup("test")
@@ -124,6 +134,27 @@ def create_admin_unit(user_email, name):
     click.echo(json.dumps(result))
 
 
+@test_cli.command("admin-unit-member-invitation-create")
+@click.argument("admin_unit_id")
+@click.argument("email")
+def create_admin_unit_member_invitation(admin_unit_id, email):
+    invitation = insert_admin_unit_member_invitation(admin_unit_id, email, [])
+    result = {"invitation_id": invitation.id}
+    click.echo(json.dumps(result))
+
+
+@test_cli.command("admin-unit-member-create")
+@click.argument("admin_unit_id")
+@click.argument("user_email")
+def create_admin_unit_member(admin_unit_id, user_email):
+    user = find_user_by_email(user_email)
+    admin_unit = get_admin_unit_by_id(admin_unit_id)
+    member = add_user_to_admin_unit_with_roles(user, admin_unit, [])
+    db.session.commit()
+    result = {"member_id": member.id}
+    click.echo(json.dumps(result))
+
+
 def _create_event(admin_unit_id):
     event = Event()
     event.admin_unit_id = admin_unit_id
@@ -148,6 +179,59 @@ def _create_event(admin_unit_id):
 def create_event(admin_unit_id):
     event_id = _create_event(admin_unit_id)
     result = {"event_id": event_id}
+    click.echo(json.dumps(result))
+
+
+@test_cli.command("event-place-create")
+@click.argument("admin_unit_id")
+@click.argument("name")
+def create_event_place(admin_unit_id, name):
+    event_place = upsert_event_place(admin_unit_id, name)
+    db.session.commit()
+    result = {"event_place_id": event_place.id}
+    click.echo(json.dumps(result))
+
+
+@test_cli.command("event-organizer-create")
+@click.argument("admin_unit_id")
+@click.argument("name")
+def create_event_organizer(admin_unit_id, name):
+    event_organizer = upsert_event_organizer(admin_unit_id, name)
+    db.session.commit()
+    result = {"event_organizer_id": event_organizer.id}
+    click.echo(json.dumps(result))
+
+
+def _insert_default_oauth2_client(user_id):
+    client = OAuth2Client()
+    client.user_id = user_id
+    complete_oauth2_client(client)
+
+    metadata = dict()
+    metadata["client_name"] = "Mein Client"
+    metadata["scope"] = " ".join(scope_list)
+    metadata["grant_types"] = ["authorization_code", "refresh_token"]
+    metadata["response_types"] = ["code"]
+    metadata["token_endpoint_auth_method"] = "client_secret_post"
+    metadata["redirect_uris"] = ["/"]
+    client.set_client_metadata(metadata)
+
+    db.session.add(client)
+    db.session.commit()
+
+    return client
+
+
+@test_cli.command("oauth2-client-create")
+@click.argument("user_id")
+def create_oauth2_client(user_id):
+    oauth2_client = _insert_default_oauth2_client(user_id)
+    result = {
+        "oauth2_client_id": oauth2_client.id,
+        "oauth2_client_client_id": oauth2_client.client_id,
+        "oauth2_client_secret": oauth2_client.client_secret,
+        "oauth2_client_scope": oauth2_client.scope,
+    }
     click.echo(json.dumps(result))
 
 
@@ -192,6 +276,75 @@ def create_incoming_reference_request(admin_unit_id):
         "other_admin_unit_id": other_admin_unit_id,
         "event_id": event_id,
         "reference_request_id": reference_request_id,
+    }
+    click.echo(json.dumps(result))
+
+
+def _create_reference(event_id, admin_unit_id):
+    reference = EventReference()
+    reference.event_id = event_id
+    reference.admin_unit_id = admin_unit_id
+    db.session.add(reference)
+    db.session.commit()
+    return reference.id
+
+
+def _create_incoming_reference(admin_unit_id):
+    other_user_id = _create_user("other@test.de")
+    other_admin_unit_id = _create_admin_unit(other_user_id, "Other Crew")
+    event_id = _create_event(other_admin_unit_id)
+    reference_id = _create_reference(event_id, admin_unit_id)
+    return (other_user_id, other_admin_unit_id, event_id, reference_id)
+
+
+@test_cli.command("reference-create-incoming")
+@click.argument("admin_unit_id")
+def create_incoming_request(admin_unit_id):
+    (
+        other_user_id,
+        other_admin_unit_id,
+        event_id,
+        reference_id,
+    ) = _create_incoming_reference(admin_unit_id)
+    result = {
+        "other_user_id": other_user_id,
+        "other_admin_unit_id": other_admin_unit_id,
+        "event_id": event_id,
+        "reference_id": reference_id,
+    }
+    click.echo(json.dumps(result))
+
+
+def _create_admin_unit_relation(
+    admin_unit_id,
+    target_admin_unit_id,
+    auto_verify_event_reference_requests=False,
+):
+    relation = upsert_admin_unit_relation(admin_unit_id, target_admin_unit_id)
+    relation.auto_verify_event_reference_requests = auto_verify_event_reference_requests
+    db.session.commit()
+    return relation.id
+
+
+def _create_any_admin_unit_relation(admin_unit_id):
+    other_user_id = _create_user("other@test.de")
+    other_admin_unit_id = _create_admin_unit(other_user_id, "Other Crew")
+    relation_id = _create_admin_unit_relation(admin_unit_id, other_admin_unit_id)
+    return (other_user_id, other_admin_unit_id, relation_id)
+
+
+@test_cli.command("admin-unit-relation-create")
+@click.argument("admin_unit_id")
+def create_admin_unit_relation(admin_unit_id):
+    (
+        other_user_id,
+        other_admin_unit_id,
+        relation_id,
+    ) = _create_any_admin_unit_relation(admin_unit_id)
+    result = {
+        "other_user_id": other_user_id,
+        "other_admin_unit_id": other_admin_unit_id,
+        "relation_id": relation_id,
     }
     click.echo(json.dumps(result))
 
