@@ -1,13 +1,18 @@
 {% extends "layout_widget.html" %}
-{% from "_macros.html" import render_end_container_handling, render_logo, render_cropper_code, render_crop_image_form, render_jquery_steps_header, render_cropper_header, render_radio_buttons, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_manage_form_styles, render_manage_form_scripts, render_end_container_handling, render_logo, render_cropper_code, render_crop_image_form, render_jquery_steps_header, render_cropper_header, render_radio_buttons, render_field_with_errors, render_field %}
+
 {%- block title -%}
 {{ _('Create event suggestion') }}
 {%- endblock -%}
+
 {% block styles %}
+{{ render_manage_form_styles() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery-steps.css')}}" />
 {{ super() }}
 {% endblock %}
+
 {% block header_before_site_js %}
+{{ render_manage_form_scripts() }}
 {{ render_jquery_steps_header() }}
 {{ render_cropper_header() }}
 <script>

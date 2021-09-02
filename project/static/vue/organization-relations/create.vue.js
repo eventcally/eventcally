@@ -5,6 +5,7 @@ const OrganizationRelationCreate = {
       <ValidationObserver v-slot="{ handleSubmit }">
         <b-form @submit.stop.prevent="handleSubmit(submitForm)">
           <custom-typeahead
+            id="targetOrganization"
             v-model="form.targetOrganization"
             fetchURL="/api/v1/organizations?keyword={query}"
             labelKey="shared.models.adminUnitRelation.targetOrganization"

@@ -39,7 +39,7 @@ def test_create(client, seeder, app):
     result = runner.invoke(
         args=["user", "create", "test@test.de", "password", "--confirm"]
     )
-    assert "Created user test@test.de." in result.output
+    assert "user_id" in result.output
 
     with app.app_context():
         from project.services.user import find_user_by_email

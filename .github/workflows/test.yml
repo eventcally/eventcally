@@ -7,7 +7,7 @@ on: [pull_request, workflow_dispatch]
 
 jobs:
   # Label of the container job
-  runner-job:
+  integration-tests:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
 

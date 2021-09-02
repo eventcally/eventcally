@@ -1,4 +1,21 @@
-describe("Suggestion", () => {
+describe("Widget", () => {
+  it("event dates", () => {
+    cy.createAdminUnit().then(function (adminUnitId) {
+      cy.createEvent(adminUnitId).then(function (eventId) {
+        cy.visit("/meinecrew/widget/eventdates");
+        cy.screenshotDatepicker("#date_from-user");
+        cy.screenshot("eventdates");
+
+        cy.get(".stretched-link")
+          .invoke("attr", "href")
+          .then((href) => {
+            cy.visit(href);
+            cy.screenshot("event-date");
+          });
+      });
+    });
+  });
+
   [
     {
       recurrence: false,
@@ -71,22 +88,4 @@ describe("Suggestion", () => {
       }
     );
   });
-
-  it('reject', () => {
-    cy.login()
-    cy.createAdminUnit().then(function(adminUnitId) {
-        cy.createSuggestion(adminUnitId).then(function(suggestionId) {
-
-          cy.visit('/event_suggestion/' + suggestionId + '/review')
-          cy.get('.decision-container .btn-danger').click()
-          cy.get('#rejectFormModal select[name=rejection_resaon]').select('Duplikat').should('have.value', '1')
-          cy.screenshot()
-          cy.get('#rejectFormModal .btn-danger').click()
-          cy.url().should('include', '/reviews')
-          cy.get('div.alert').should('contain', 'Veranstaltungsvorschlag erfolgreich abgelehnt')
-          cy.get('main .badge-pill').should('contain', 'Abgelehnt')
-        })
-    })
-  })
-
 });

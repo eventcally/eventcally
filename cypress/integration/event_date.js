@@ -1,19 +1,18 @@
-describe("Manage", () => {
-  it("manage", () => {
+describe("Event Date", () => {
+  it("list, search and read", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEvent(adminUnitId).then(function (eventId) {
-        cy.visit("/manage/admin_unit/" + adminUnitId);
-        cy.url().should(
-          "include",
-          "/manage/admin_unit/" + adminUnitId + "/events"
-        );
-        cy.screenshot("events")
+        cy.visit("/eventdatesearch");
 
+        cy.visit("/eventdates");
         cy.get("#toggle-search-btn").click();
         cy.screenshot("search-form");
         cy.screenshotDatepicker("#date_from-user");
         cy.get("#toggle-search-btn").click();
+
+        cy.get(".stretched-link").click();
+        cy.screenshot("event-date");
       });
     });
   });
