@@ -37,7 +37,7 @@ def test_create(client, seeder, app):
 
     runner = app.test_cli_runner()
     result = runner.invoke(
-        args=["user", "create", "test@test.de", "password", "--confirm"]
+        args=["user", "create", "test@test.de", "password", "--confirm", "--admin"]
     )
     assert "user_id" in result.output
 
