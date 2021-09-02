@@ -1317,9 +1317,9 @@ $('#end-container').on('hidden', function() {
 {% endmacro %}
 
 {% macro render_cropper_header() %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.js" integrity="sha512-oqBsjjSHWqkDx4UKoU+5IUZN2nW2qDp2GFSKw9+mcFm+ZywqfBKp79nfWmGPco2wzTWuE46XpjtCjZ9tFmI12g==" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.css" integrity="sha512-949FvIQOibfhLTgmNws4F3DVlYz3FmCRRhJznR22hx76SKkcpZiVV5Kwo0iwK9L6BFuY+6mpdqB2+vDIGVuyHg==" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cropper/1.0.1/jquery-cropper.js" integrity="sha512-7H4tikIFoyAdYD31w/uNYvvAUL6gyunWXLwTQ7ZXkyjD+brw+PfJpLxFkANnbkKnSJzU89YpnF3fJKbpvV+QYg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.js" integrity="sha512-9pGiHYK23sqK5Zm0oF45sNBAX/JqbZEP7bSDHyt+nT3GddF+VFIcYNqREt0GDpmFVZI3LZ17Zu9nMMc9iktkCw==" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.css" integrity="sha512-w+u2vZqMNUVngx+0GVZYM21Qm093kAexjueWOv9e9nIeYJb1iEfiHC7Y+VvmP/tviQyA5IR32mwN/5hTEJx6Ng==" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cropper/1.0.1/jquery-cropper.min.js" integrity="sha512-V8cSoC5qfk40d43a+VhrTEPf8G9dfWlEJgvLSiq2T2BmgGRmZzB8dGe7XAABQrWj3sEfrR5xjYICTY4eJr76QQ==" crossorigin="anonymous"></script>
 {% endmacro %}
 
 {% macro render_event_suggestion(event_suggestion, hide_review_status=False) %}
@@ -1483,7 +1483,7 @@ $('#end-container').on('hidden', function() {
 </div>
 {% endmacro %}
 
-{% macro render_admin_unit_form_script(admin_unit_id=None) %}
+{% macro render_admin_unit_form_script(admin_unit=None) %}
 <script>
 
   $( function() {
@@ -1492,7 +1492,7 @@ $('#end-container').on('hidden', function() {
     }, jQuery.validator.format("{{ _('Short name must contain only letters numbers or underscore') }}"));
 
     var form = $("#main-form");
-    form.validate({
+    var validator = form.validate({
           rules: {
           }
       });
@@ -1502,12 +1502,17 @@ $('#end-container').on('hidden', function() {
       remote: {
         url: "{{ url_for('js_check_org_short_name') }}",
         type: "post"
-        {% if admin_unit_id %}
+        {% if admin_unit %}
         ,data: {
           admin_unit_id: function() {
-            return "{{ admin_unit_id }}";
+            return "{{ admin_unit.id }}";
           }
         }
+        {% if admin_unit.short_name %}
+        ,depends: function() {
+            return $('#short_name').val() != '{{ admin_unit.short_name }}';
+        }
+        {% endif %}
         {% endif %}
       }
     });
@@ -1528,7 +1533,58 @@ $('#end-container').on('hidden', function() {
       $('#location_search').closest('.card-body').find(':input').valid();
       $('#location_search').removeClass('is-valid');
     });
-
   });
 </script>
 {% endmacro %}
+
+{% macro render_form_scripts() %}
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/i18n/jquery-ui-i18n.min.js" integrity="sha256-pIEbIH2QxTg2nHVPn1HLn1asQIDxqtbZn12/kAkAZkY=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/i18n/de.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/timepicker@1.13.18/jquery.timepicker.min.js"></script>
+<script type="text/javascript">
+  var csrf_token = "{{ csrf_token() }}";
+
+  $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrf_token);
+          }
+      }
+  });
+
+  $.datepicker.setDefaults($.datepicker.regional["de"]);
+  $.fn.select2.defaults.set("language", "de");
+
+  $(function () {
+    $(".autocomplete").select2({
+      width: "100%",
+      theme: "bootstrap4",
+    });
+    $(".autocomplete-multi").select2({
+      width: "100%",
+    });
+  });
+</script>
+{% endmacro %}
+
+{% macro render_manage_form_scripts() %}
+{{ render_form_scripts() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/1.0.6/jsrender.min.js" integrity="sha512-Bh8Z8kuMiQKW0jO+zvR2I2lbRhN0eGOn3u8hxOOIU44IZZjwvNfLyzdXxQ9PtoTK68j5hQIqc9sycQnbwRlVCQ==" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='jquery.recurrenceinput.js')}}"></script>
+{% endmacro %}
+
+{% macro render_form_styles() %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" >
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.13.18/jquery.timepicker.min.css" />
+{% endmacro %}
+
+{% macro render_manage_form_styles() %}
+{{ render_form_styles() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.recurrenceinput.css')}}" />
+{% endmacro %}
+
+

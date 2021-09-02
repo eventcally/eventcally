@@ -1,9 +1,20 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_jquery_steps_header, render_field, render_field_with_errors, render_event_dates_date_field, render_event_dates_location_field, render_google_filter_autocomplete_header, render_pagination, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_form_styles, render_form_scripts, render_jquery_steps_header, render_field, render_field_with_errors, render_event_dates_date_field, render_event_dates_location_field, render_google_filter_autocomplete_header, render_pagination, render_place, render_events_sub_menu %}
+
 {%- block title -%}
 {{ _('Event Planing') }}
 {%- endblock -%}
+
 {% block content_container_attribs %}{% endblock %}
+
+{% block styles %}
+{{ render_form_styles() }}
+{% endblock %}
+
+{% block header_before_site_js %}
+{{ render_form_scripts() }}
+{%- endblock -%}
+
 {% block header %}
 {{ render_jquery_steps_header() }}
 {{ render_google_filter_autocomplete_header() }}

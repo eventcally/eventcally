@@ -1,9 +1,16 @@
 {% extends "layout_widget.html" %}
-{% from "_macros.html" import render_pagination, render_event_warning_pills, render_event_warning_pills, render_place %}
+{% from "_macros.html" import render_form_styles, render_form_scripts, render_pagination, render_event_warning_pills, render_event_warning_pills, render_place %}
+
 {%- block title -%}
 {{ _('Widget') }}
 {%- endblock -%}
+
+{% block styles %}
+{{ render_form_styles() }}
+{% endblock %}
+
 {% block header_before_site_js %}
+{{ render_form_scripts() }}
 <script>
     window.iFrameResizer = {
         onReady: function() {
