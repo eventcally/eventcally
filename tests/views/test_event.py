@@ -481,3 +481,11 @@ def test_rrule(client, seeder, utils, app):
     occurence = json["occurrences"][0]
     assert occurence["date"] == "20201125T000000"
     assert occurence["formattedDate"] == '"25.11.2020"'
+
+
+def test_report(seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("event_report", event_id=event_id)
+    utils.get_ok(url)

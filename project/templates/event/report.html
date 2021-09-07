@@ -1,0 +1,22 @@
+{% extends "layout_vue.html" %}
+
+{%- block title -%}
+{{ _('Report event') }}
+{%- endblock -%}
+
+{% block component_scripts %}
+<script src="{{ url_for('static', filename='vue/event-report/create.vue.js')}}"></script>
+{% endblock %}
+
+{% block component_definitions %}
+Vue.component("EventReportCreate", EventReportCreate);
+{% endblock %}
+
+{% block vue_routes %}
+const routes = [
+  {
+    path: "/event/:event_id/report",
+    component: EventReportCreate,
+  },
+];
+{% endblock %}

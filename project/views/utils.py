@@ -121,11 +121,17 @@ def send_mail(recipient, subject, template, **context):
 
 
 def send_mails(recipients, subject, template, **context):
+    if len(recipients) == 0:  # pragma: no cover
+        return
+
     msg = Message(subject)
     msg.recipients = recipients
     msg.body = render_template("email/%s.txt" % template, **context)
     msg.html = render_template("email/%s.html" % template, **context)
+    send_mail_message(msg)
 
+
+def send_mail_message(msg):
     if not mail.default_sender:
         app.logger.info(",".join(msg.recipients))
         app.logger.info(msg.subject)

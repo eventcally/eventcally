@@ -1,0 +1,6 @@
+{{ _('There is a new event report.') }}
+{{ _('Click the link below to view the event') }}
+{{ report['contact_name'] }}
+{{ report['contact_email'] }}
+{{ report['message'] }}
+{{ url_for('event', event_id=event.id, _external=True) }}

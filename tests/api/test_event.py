@@ -528,3 +528,31 @@ def test_delete(client, seeder, utils, app):
 
         event = Event.query.get(event_id)
         assert event is None
+
+
+def test_report_mail(client, seeder, utils, app, mocker):
+    user_id, admin_unit_id = seeder.setup_base(admin=False, log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+    seeder.create_user(email="admin@test.de", admin=True)
+
+    mail_mock = utils.mock_send_mails(mocker)
+    url = utils.get_url("api_v1_event_reports", id=event_id)
+    response = utils.post_json(
+        url,
+        {
+            "contact_name": "Firstname Lastname",
+            "contact_email": "firstname.lastname@test.de",
+            "message": "Diese Veranstaltung wird nicht stattfinden.",
+        },
+    )
+
+    utils.assert_response_no_content(response)
+    utils.assert_send_mail_called(
+        mail_mock,
+        ["test@test.de", "admin@test.de"],
+        [
+            "Firstname Lastname",
+            "firstname.lastname@test.de",
+            "Diese Veranstaltung wird nicht stattfinden.",
+        ],
+    )

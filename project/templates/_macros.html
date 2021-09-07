@@ -460,6 +460,7 @@
     </div>
     <div class="card-footer small">
       {{ render_audit(event, show_rating) }}
+      <a href="{{ url_for('event_report', event_id=event.id) }}" class="text-dark" target="_blank" rel="noopener noreferrer">{{ _('Report event') }}</a>
     </div>
   </div>
 
@@ -615,6 +616,7 @@
 
       <div class="small mt-2">
         {{ render_audit(event, show_rating) }}
+        <a href="{{ url_for('event_report', event_id=event.id) }}" class="text-dark">{{ _('Report event') }}</a>
       </div>
     </div>
   </div>
