@@ -56,6 +56,8 @@ const OrganizationRelationUpdate = {
     },
   },
   mounted() {
+    this.isLoading = false;
+    this.relation = null;
     this.form = {
       auto_verify_event_reference_requests: false,
     };

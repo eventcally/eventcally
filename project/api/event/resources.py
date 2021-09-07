@@ -1,4 +1,4 @@
-from flask import make_response
+from flask import make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy.orm import lazyload, load_only
 
@@ -10,12 +10,13 @@ from project.access import (
     login_api_user,
     login_api_user_or_401,
 )
-from project.api import add_api_resource
+from project.api import add_api_resource, rest_api
 from project.api.event.schemas import (
     EventListRequestSchema,
     EventListResponseSchema,
     EventPatchRequestSchema,
     EventPostRequestSchema,
+    EventReportPostSchema,
     EventSchema,
     EventSearchRequestSchema,
     EventSearchResponseSchema,
@@ -25,6 +26,7 @@ from project.api.event_date.schemas import (
     EventDateListResponseSchema,
 )
 from project.api.resources import BaseResource
+from project.api.schemas import NoneSchema
 from project.models import AdminUnit, Event, EventDate, PublicStatus
 from project.oauth2 import require_oauth
 from project.services.event import (
@@ -34,7 +36,10 @@ from project.services.event import (
     update_event,
 )
 from project.services.event_search import EventSearchParams
-from project.views.event import send_referenced_event_changed_mails
+from project.views.event import (
+    send_event_report_mails,
+    send_referenced_event_changed_mails,
+)
 
 
 def api_can_read_event_or_401(event: Event):
@@ -154,7 +159,23 @@ class EventSearchResource(BaseResource):
         return pagination
 
 
+class EventReportsResource(BaseResource):
+    @doc(summary="Add event report", tags=["Events"])
+    @use_kwargs(EventReportPostSchema, location="json", apply=False)
+    @marshal_with(NoneSchema, 204)
+    def post(self, id):
+        event = Event.query.options(
+            load_only(Event.id, Event.public_status)
+        ).get_or_404(id)
+        api_can_read_event_or_401(event)
+        send_event_report_mails(event, request.json)
+        return make_response("", 204)
+
+
 add_api_resource(EventListResource, "/events", "api_v1_event_list")
 add_api_resource(EventResource, "/events/<int:id>", "api_v1_event")
 add_api_resource(EventDatesResource, "/events/<int:id>/dates", "api_v1_event_dates")
 add_api_resource(EventSearchResource, "/events/search", "api_v1_event_search")
+rest_api.add_resource(
+    EventReportsResource, "/events/<int:id>/reports", endpoint="api_v1_event_reports"
+)

@@ -7,7 +7,7 @@ from flask_security.utils import FsPermNeed
 from sqlalchemy import and_
 
 from project import app
-from project.models import AdminUnit, AdminUnitMember, Event, PublicStatus
+from project.models import AdminUnit, AdminUnitMember, Event, PublicStatus, User
 from project.services.admin_unit import get_member_for_admin_unit_by_user_id
 
 
@@ -206,3 +206,17 @@ def can_read_event_or_401(event: Event):
 
 def can_read_private_events(admin_unit: AdminUnit) -> bool:
     return has_access(admin_unit, "event:read")
+
+
+def get_admin_unit_members_with_permission(admin_unit_id: int, permission: str) -> list:
+    members = (
+        AdminUnitMember.query.join(User)
+        .filter(AdminUnitMember.admin_unit_id == admin_unit_id)
+        .all()
+    )
+
+    return list(
+        filter(
+            lambda member: has_admin_unit_member_permission(member, permission), members
+        )
+    )

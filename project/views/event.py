@@ -12,15 +12,14 @@ from project.access import (
     can_read_event_or_401,
     can_reference_event,
     can_request_event_reference,
+    get_admin_unit_members_with_permission,
     has_access,
-    has_admin_unit_member_permission,
 )
 from project.dateutils import get_next_full_hour
 from project.forms.event import CreateEventForm, DeleteEventForm, UpdateEventForm
 from project.jsonld import DateTimeEncoder, get_sd_for_event_date
 from project.models import (
     AdminUnit,
-    AdminUnitMember,
     Event,
     EventCategory,
     EventOrganizer,
@@ -29,7 +28,6 @@ from project.models import (
     EventReviewStatus,
     EventSuggestion,
     PublicStatus,
-    User,
 )
 from project.services.event import (
     get_event_with_details_or_404,
@@ -48,7 +46,7 @@ from project.views.utils import (
     get_share_links,
     handleSqlError,
     non_match_for_deletion,
-    send_mail,
+    send_mails,
 )
 
 
@@ -94,6 +92,14 @@ def event_actions(event_id):
         user_rights=user_rights,
         share_links=share_links,
     )
+
+
+@app.route("/event/<int:event_id>/report")
+def event_report(event_id):
+    event = Event.query.get_or_404(event_id)
+    can_read_event_or_401(event)
+
+    return render_template("event/report.html")
 
 
 @app.route("/admin_unit/<int:id>/events/create", methods=("GET", "POST"))
@@ -380,18 +386,38 @@ def send_referenced_event_changed_mails(event):
     for reference in references:
 
         # Alle Mitglieder der AdminUnit, die das Recht haben, Requests zu verifizieren
-        members = (
-            AdminUnitMember.query.join(User)
-            .filter(AdminUnitMember.admin_unit_id == reference.admin_unit_id)
-            .all()
+        members = get_admin_unit_members_with_permission(
+            reference.admin_unit_id, "reference_request:verify"
+        )
+        emails = list(map(lambda member: member.user.email, members))
+
+        send_mails(
+            emails,
+            gettext("Referenced event changed"),
+            "referenced_event_changed_notice",
+            event=event,
+            reference=reference,
         )
 
-        for member in members:
-            if has_admin_unit_member_permission(member, "reference_request:verify"):
-                send_mail(
-                    member.user.email,
-                    gettext("Referenced event changed"),
-                    "referenced_event_changed_notice",
-                    event=event,
-                    reference=reference,
-                )
+
+def send_event_report_mails(event: Event, report: dict):
+    from project.services.user import find_all_users_with_role
+
+    # Alle Mitglieder der AdminUnit, die das Recht haben, Events zu bearbeiten
+    members = get_admin_unit_members_with_permission(
+        event.admin_unit_id, "event:update"
+    )
+    emails = list(map(lambda member: member.user.email, members))
+
+    # Alle globalen Admins
+    admins = find_all_users_with_role("admin")
+    admin_emails = list(map(lambda admin: admin.email, admins))
+    emails.extend(x for x in admin_emails if x not in emails)
+
+    send_mails(
+        emails,
+        gettext("New event report"),
+        "event_report_notice",
+        event=event,
+        report=report,
+    )
