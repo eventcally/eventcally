@@ -8,16 +8,14 @@ from project import app, db
 from project.access import (
     access_or_401,
     get_admin_unit_for_manage_or_404,
+    get_admin_unit_members_with_permission,
     get_admin_units_for_event_reference_request,
-    has_admin_unit_member_permission,
 )
 from project.forms.reference_request import CreateEventReferenceRequestForm
 from project.models import (
-    AdminUnitMember,
     Event,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
-    User,
 )
 from project.services.admin_unit import get_admin_unit_relation
 from project.services.reference import (
@@ -28,7 +26,7 @@ from project.views.utils import (
     flash_errors,
     get_pagination_urls,
     handleSqlError,
-    send_mail,
+    send_mails,
 )
 
 
@@ -130,15 +128,12 @@ def send_member_reference_request_verify_mails(
     admin_unit_id, subject, template, **context
 ):
     # Benachrichtige alle Mitglieder der AdminUnit, die Requests verifizieren können
-    members = (
-        AdminUnitMember.query.join(User)
-        .filter(AdminUnitMember.admin_unit_id == admin_unit_id)
-        .all()
+    members = get_admin_unit_members_with_permission(
+        admin_unit_id, "reference_request:verify"
     )
+    emails = list(map(lambda member: member.user.email, members))
 
-    for member in members:
-        if has_admin_unit_member_permission(member, "reference_request:verify"):
-            send_mail(member.user.email, subject, template, **context)
+    send_mails(emails, subject, template, **context)
 
 
 def send_reference_request_inbox_mails(request):

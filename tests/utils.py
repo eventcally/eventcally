@@ -175,12 +175,28 @@ class UtilActions(object):
         )
 
     def mock_send_mails(self, mocker):
-        return mocker.patch("project.views.utils.send_mails")
+        return mocker.patch("project.views.utils.send_mail_message")
 
-    def assert_send_mail_called(self, mock, recipient):
+    def assert_send_mail_called(self, mock, recipients, contents=None):
         mock.assert_called_once()
         args, kwargs = mock.call_args
-        assert args[0] == [recipient]
+        message = args[0]
+
+        if not isinstance(recipients, list):
+            recipients = [recipients]
+
+            for recipient in recipients:
+                assert recipient in message.recipients, f"{recipient} not in recipients"
+
+        if contents:
+            if not isinstance(contents, list):
+                contents = [contents]
+
+            for content in contents:
+                assert content in message.body, f"{content} not in body"
+                assert content in message.html, f"{content} not in html"
+
+        return message
 
     def mock_now(self, mocker, year, month, day):
         from project.dateutils import create_berlin_date
