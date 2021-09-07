@@ -98,7 +98,9 @@ const EventReportCreate = {
     },
     submitForm() {
       const data = {
-        name: this.form.name,
+        contact_name: this.form.contactName,
+        contact_email: this.form.contactEmail,
+        message: this.form.message,
       };
       axios
         .post(`/api/v1/events/${this.eventId}/reports`, data, {
