@@ -168,7 +168,9 @@ class EventReportsResource(BaseResource):
             load_only(Event.id, Event.public_status)
         ).get_or_404(id)
         api_can_read_event_or_401(event)
-        send_event_report_mails(event, request.json)
+
+        report = EventReportPostSchema().load(request.json)
+        send_event_report_mails(event, report)
         return make_response("", 204)
 
 
