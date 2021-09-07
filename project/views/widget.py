@@ -10,20 +10,13 @@ from project import app, db
 from project.access import (
     admin_unit_suggestions_enabled_or_404,
     can_read_event_or_401,
-    has_admin_unit_member_permission,
+    get_admin_unit_members_with_permission,
 )
 from project.dateutils import get_next_full_hour
 from project.forms.event_date import FindEventDateForm
 from project.forms.event_suggestion import CreateEventSuggestionForm
 from project.jsonld import DateTimeEncoder, get_sd_for_event_date
-from project.models import (
-    AdminUnit,
-    AdminUnitMember,
-    EventOrganizer,
-    EventReviewStatus,
-    EventSuggestion,
-    User,
-)
+from project.models import AdminUnit, EventOrganizer, EventReviewStatus, EventSuggestion
 from project.services.event import (
     get_event_date_with_details_or_404,
     get_event_dates_query,
@@ -40,7 +33,7 @@ from project.views.utils import (
     get_pagination_urls,
     get_share_links,
     handleSqlError,
-    send_mail,
+    send_mails,
 )
 
 
@@ -211,17 +204,12 @@ def get_styles(admin_unit):
 
 
 def send_event_inbox_mails(admin_unit, event_suggestion):
-    members = (
-        AdminUnitMember.query.join(User)
-        .filter(AdminUnitMember.admin_unit_id == admin_unit.id)
-        .all()
-    )
+    members = get_admin_unit_members_with_permission(admin_unit.id, "event:verify")
+    emails = list(map(lambda member: member.user.email, members))
 
-    for member in members:
-        if has_admin_unit_member_permission(member, "event:verify"):
-            send_mail(
-                member.user.email,
-                gettext("New event review"),
-                "review_notice",
-                event_suggestion=event_suggestion,
-            )
+    send_mails(
+        emails,
+        gettext("New event review"),
+        "review_notice",
+        event_suggestion=event_suggestion,
+    )

@@ -4,22 +4,24 @@ from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
-from project.access import access_or_401, has_access, has_admin_unit_member_permission
+from project.access import (
+    access_or_401,
+    get_admin_unit_members_with_permission,
+    has_access,
+)
 from project.dateutils import get_today
 from project.forms.reference_request import ReferenceRequestReviewForm
 from project.models import (
-    AdminUnitMember,
     EventDate,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
-    User,
 )
 from project.services.admin_unit import (
     get_admin_unit_relation,
     upsert_admin_unit_relation,
 )
 from project.services.reference import create_event_reference_for_request
-from project.views.utils import flash_errors, handleSqlError, send_mail
+from project.views.utils import flash_errors, handleSqlError, send_mails
 
 
 @app.route("/reference_request/<int:id>/review", methods=("GET", "POST"))
@@ -123,17 +125,14 @@ def event_reference_request_review_status(id):
 
 def send_reference_request_review_status_mails(request):
     # Benachrichtige alle Mitglieder der AdminUnit, die diesen Request erstellt hatte
-    members = (
-        AdminUnitMember.query.join(User)
-        .filter(AdminUnitMember.admin_unit_id == request.event.admin_unit_id)
-        .all()
+    members = get_admin_unit_members_with_permission(
+        request.event.admin_unit_id, "reference_request:create"
     )
+    emails = list(map(lambda member: member.user.email, members))
 
-    for member in members:
-        if has_admin_unit_member_permission(member, "reference_request:create"):
-            send_mail(
-                member.user.email,
-                gettext("Event review status updated"),
-                "reference_request_review_status_notice",
-                request=request,
-            )
+    send_mails(
+        emails,
+        gettext("Event review status updated"),
+        "reference_request_review_status_notice",
+        request=request,
+    )

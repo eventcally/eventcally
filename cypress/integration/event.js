@@ -77,7 +77,6 @@ describe("Event", () => {
   });
 
   it("read and actions", () => {
-    cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEvent(adminUnitId).then(function (eventId) {
         cy.visit("/event/" + eventId);
@@ -85,6 +84,23 @@ describe("Event", () => {
 
         cy.visit("/event/" + eventId + "/actions");
         cy.screenshot("actions");
+      });
+    });
+  });
+
+  it("report", () => {
+    cy.createAdminUnit().then(function (adminUnitId) {
+      cy.createEvent(adminUnitId).then(function (eventId) {
+        cy.visit("/event/" + eventId + "/report");
+
+        cy.get("input[name=contactName]").type("Firstname Lastname");
+        cy.get("input[name=contactEmail]").type("firstname.lastname@test.de");
+        cy.get("textarea[name=message]").type("Die Veranstaltung kann leider nicht stattfinden.");
+        cy.screenshot("report");
+        cy.get("button[type=submit]").click();
+
+        cy.get('button[type=submit]').should('not.exist');
+        cy.screenshot("report-submitted");
       });
     });
   });
