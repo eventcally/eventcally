@@ -49,7 +49,6 @@ describe("Reference", () => {
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createIncomingReference(adminUnitId).then(function (referenceId) {
         cy.visit("/reference/" + referenceId + "/delete");
-        cy.get("#name").type("Name");
         cy.screenshot("delete");
         cy.get("#submit").click();
         cy.url().should(

@@ -22,12 +22,7 @@ from project.services.reference import (
     get_reference_incoming_query,
     get_reference_outgoing_query,
 )
-from project.views.utils import (
-    flash_errors,
-    get_pagination_urls,
-    handleSqlError,
-    non_match_for_deletion,
-)
+from project.views.utils import flash_errors, get_pagination_urls, handleSqlError
 
 
 @app.route("/reference/<int:id>")
@@ -158,22 +153,19 @@ def reference_delete(id):
     form = DeleteReferenceForm()
 
     if form.validate_on_submit():
-        if non_match_for_deletion(form.name.data, reference.event.name):
-            flash(gettext("Entered name does not match event name"), "danger")
-        else:
-            try:
-                db.session.delete(reference)
-                db.session.commit()
-                flash(gettext("Reference successfully deleted"), "success")
-                return redirect(
-                    url_for(
-                        "manage_admin_unit_references_incoming",
-                        id=reference.admin_unit_id,
-                    )
+        try:
+            db.session.delete(reference)
+            db.session.commit()
+            flash(gettext("Reference successfully deleted"), "success")
+            return redirect(
+                url_for(
+                    "manage_admin_unit_references_incoming",
+                    id=reference.admin_unit_id,
                 )
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                flash(handleSqlError(e), "danger")
+            )
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), "danger")
     else:
         flash_errors(form)
 
