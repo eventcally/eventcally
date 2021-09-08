@@ -44,7 +44,13 @@ class Seeder(object):
 
         return user_id
 
-    def create_admin_unit(self, user_id, name="Meine Crew", suggestions_enabled=True):
+    def create_admin_unit(
+        self,
+        user_id,
+        name="Meine Crew",
+        suggestions_enabled=True,
+        can_create_other=False,
+    ):
         from project.models import AdminUnit
         from project.services.admin_unit import insert_admin_unit_for_user
         from project.services.user import get_user
@@ -56,6 +62,7 @@ class Seeder(object):
             admin_unit.short_name = name.lower().replace(" ", "")
             admin_unit.incoming_reference_requests_allowed = True
             admin_unit.suggestions_enabled = suggestions_enabled
+            admin_unit.can_create_other = can_create_other
             insert_admin_unit_for_user(admin_unit, user)
             self._db.session.commit()
             admin_unit_id = admin_unit.id

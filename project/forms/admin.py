@@ -33,4 +33,11 @@ class UpdateAdminUnitForm(FlaskForm):
         description=lazy_gettext("If set, the organization can work with suggestions."),
         validators=[Optional()],
     )
+    can_create_other = BooleanField(
+        lazy_gettext("Create other organizations"),
+        description=lazy_gettext(
+            "If set, members of the organization can create other organizations."
+        ),
+        validators=[Optional()],
+    )
     submit = SubmitField(lazy_gettext("Update organization"))

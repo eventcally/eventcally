@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-09-07 22:54+0200\n"
+"POT-Creation-Date: 2021-09-08 14:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -235,7 +235,15 @@ msgstr ""
 msgid "If set, the organization can work with suggestions."
 msgstr ""
 
-#: project/forms/admin.py:36 project/templates/admin/update_admin_unit.html:4
+#: project/forms/admin.py:37
+msgid "Create other organizations"
+msgstr ""
+
+#: project/forms/admin.py:38
+msgid "If set, members of the organization can create other organizations."
+msgstr ""
+
+#: project/forms/admin.py:43 project/templates/admin/update_admin_unit.html:4
 #: project/templates/admin/update_admin_unit.html:8
 msgid "Update organization"
 msgstr ""
