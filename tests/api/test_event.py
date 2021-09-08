@@ -534,6 +534,7 @@ def test_report_mail(client, seeder, utils, app, mocker):
     user_id, admin_unit_id = seeder.setup_base(admin=False, log_in=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_user(email="admin@test.de", admin=True)
+    seeder.create_user(email="normal@test.de", admin=False)
 
     mail_mock = utils.mock_send_mails(mocker)
     url = utils.get_url("api_v1_event_reports", id=event_id)
