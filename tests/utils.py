@@ -175,28 +175,32 @@ class UtilActions(object):
         )
 
     def mock_send_mails(self, mocker):
-        return mocker.patch("project.views.utils.send_mail_message")
+        return mocker.patch("project.views.utils.send_mails_with_body")
 
-    def assert_send_mail_called(self, mock, recipients, contents=None):
+    def assert_send_mail_called(
+        self, mock, expected_recipients, expected_contents=None
+    ):
         mock.assert_called_once()
         args, kwargs = mock.call_args
-        message = args[0]
+        send_recipients, subject, body, html = args
 
-        if not isinstance(recipients, list):
-            recipients = [recipients]
+        if not isinstance(expected_recipients, list):
+            expected_recipients = [expected_recipients]
 
-            for recipient in recipients:
-                assert recipient in message.recipients, f"{recipient} not in recipients"
+        assert len(send_recipients) == len(expected_recipients)
 
-        if contents:
-            if not isinstance(contents, list):
-                contents = [contents]
+        for expected_recipient in expected_recipients[:]:
+            assert (
+                expected_recipient in send_recipients
+            ), f"{expected_recipient} not in recipients"
 
-            for content in contents:
-                assert content in message.body, f"{content} not in body"
-                assert content in message.html, f"{content} not in html"
+        if expected_contents:
+            if not isinstance(expected_contents, list):
+                expected_contents = [expected_contents]
 
-        return message
+            for content in expected_contents:
+                assert content in body, f"{content} not in body"
+                assert content in html, f"{content} not in html"
 
     def mock_now(self, mocker, year, month, day):
         from project.dateutils import create_berlin_date

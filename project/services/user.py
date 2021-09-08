@@ -1,5 +1,4 @@
 from flask_security import hash_password
-from sqlalchemy.orm import joinedload
 
 from project import user_datastore
 from project.models import Role, User
@@ -57,6 +56,4 @@ def get_user(id):
 
 
 def find_all_users_with_role(role_name: str) -> list:
-    return (
-        User.query.options(joinedload(User.roles)).filter(Role.name == role_name).all()
-    )
+    return User.query.filter(User.roles.any(Role.name == role_name)).all()

@@ -124,11 +124,19 @@ def send_mails(recipients, subject, template, **context):
     if len(recipients) == 0:  # pragma: no cover
         return
 
-    msg = Message(subject)
-    msg.recipients = recipients
-    msg.body = render_template("email/%s.txt" % template, **context)
-    msg.html = render_template("email/%s.html" % template, **context)
-    send_mail_message(msg)
+    body = render_template("email/%s.txt" % template, **context)
+    html = render_template("email/%s.html" % template, **context)
+    send_mails_with_body(recipients, subject, body, html)
+
+
+def send_mails_with_body(recipients, subject, body, html):
+    # Send single mails, otherwise recipients will see each other
+    for recipient in recipients:
+        msg = Message(subject)
+        msg.recipients = [recipient]
+        msg.body = body
+        msg.html = html
+        send_mail_message(msg)
 
 
 def send_mail_message(msg):
