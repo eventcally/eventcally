@@ -843,16 +843,26 @@
 {% if pagination['prev_url'] or pagination['next_url'] %}
 <nav aria-label="Page navigation">
   <ul class="pagination">
-    {% if pagination['prev_url'] %}
-    <li class="page-item"> <a class="page-link" href="{{ pagination['prev_url'] }}">{{ _('Previous') }}</a></li>
+    {% if pagination['first_url'] %}
+    <li class="page-item"> <a class="page-link" href="{{ pagination['first_url'] }}" title="{{ _('First') }}"><i class="fa fa-angle-double-left"></i></a></li>
     {% else %}
-    <li class="page-item disabled"><a class="page-link" href="#">{{ _('Previous') }}</a></li>
+    <li class="page-item disabled"><a class="page-link" href="#" title="{{ _('First') }}"><i class="fa fa-angle-double-left"></i></a></li>
+    {% endif %}
+    {% if pagination['prev_url'] %}
+    <li class="page-item"> <a class="page-link" href="{{ pagination['prev_url'] }}" title="{{ _('Previous') }}"><i class="fa fa-angle-left"></i></a></li>
+    {% else %}
+    <li class="page-item disabled"><a class="page-link" href="#" title="{{ _('Previous') }}"><i class="fa fa-angle-left"></i></a></li>
     {% endif %}
     <li class="page-item disabled d-none d-sm-inline"><span class="page-link">{{ _('Page %(page)d of %(pages)d (%(total)d total)', page=pagination["page"], pages=pagination["pages"], total=pagination["total"]) }}</span></li>
     {% if pagination['next_url'] %}
-    <li class="page-item"> <a class="page-link" href="{{ pagination['next_url'] }}">{{ _('Next') }}</a></li>
+    <li class="page-item"> <a class="page-link" href="{{ pagination['next_url'] }}" title="{{ _('Next') }}"><i class="fa fa-angle-right"></i></a></li>
     {% else %}
-    <li class="page-item disabled"><a class="page-link" href="#">{{ _('Next') }}</a></li>
+    <li class="page-item disabled"><a class="page-link" href="#" title="{{ _('Next') }}"><i class="fa fa-angle-right"></i></a></li>
+    {% endif %}
+    {% if pagination['last_url'] %}
+    <li class="page-item"> <a class="page-link" href="{{ pagination['last_url'] }}" title="{{ _('Last') }}"><i class="fa fa-angle-double-right"></i></a></li>
+    {% else %}
+    <li class="page-item disabled"><a class="page-link" href="#" title="{{ _('Last') }}"><i class="fa fa-angle-double-right"></i></a></li>
     {% endif %}
   </ul>
 </nav>

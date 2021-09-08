@@ -74,12 +74,16 @@ def get_pagination_urls(pagination, **kwargs):
             args.update(kwargs)
             args["page"] = pagination.prev_num
             result["prev_url"] = url_for(request.endpoint, **args)
+            args["page"] = 1
+            result["first_url"] = url_for(request.endpoint, **args)
 
         if pagination.has_next:
             args = request.args.copy()
             args.update(kwargs)
             args["page"] = pagination.next_num
             result["next_url"] = url_for(request.endpoint, **args)
+            args["page"] = pagination.pages
+            result["last_url"] = url_for(request.endpoint, **args)
 
     return result
 
