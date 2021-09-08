@@ -32,6 +32,7 @@
     var leaflet_map = null;
     var map_cluster_group = null;
     var event_dates = null;
+    var current_data = null;
     var arrayOfMarkers = [];
 
     function init_leaflet_map() {
@@ -161,6 +162,7 @@
             success: function (data) {
 
                 var content = '';
+                current_data = data;
                 event_dates = data.items;
                 var event_date_count = event_dates.length;
                 var cols = 3;
@@ -217,15 +219,15 @@
                 result_list.append(content);
 
                 if (data.has_prev) {
-                    $('#prev_item').removeClass('disabled');
+                    $('#first_item,#prev_item').removeClass('disabled');
                 } else {
-                    $('#prev_item').addClass('disabled');
+                    $('#first_item,#prev_item').addClass('disabled');
                 }
 
                 if (data.has_next) {
-                    $('#next_item').removeClass('disabled');
+                    $('#last_item,#next_item').removeClass('disabled');
                 } else {
-                    $('#next_item').addClass('disabled');
+                    $('#last_item,#next_item').addClass('disabled');
                 }
 
                 if (data.has_prev || data.has_next) {
@@ -252,6 +254,12 @@
             return false;
         });
 
+        $("#first_link").click(function(){
+            page = 1;
+            start_request();
+            return false;
+        });
+
         $("#prev_link").click(function(){
             if (page > 1) {
                 page--;
@@ -262,6 +270,12 @@
 
         $("#next_link").click(function(){
             page++;
+            start_request();
+            return false;
+        });
+
+        $("#last_link").click(function(){
+            page = current_data.pages;
             start_request();
             return false;
         });
@@ -296,9 +310,11 @@
                 </div>
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
-                          <li class="page-item disabled" id="prev_item"><a class="page-link" id="prev_link" href="#">{{ _('Previous') }}</a></li>
+                          <li class="page-item disabled" id="first_item"><a class="page-link" id="first_link" href="#" title="{{ _('First') }}"><i class="fa fa-angle-double-left"></i></a></li>
+                          <li class="page-item disabled" id="prev_item"><a class="page-link" id="prev_link" href="#" title="{{ _('Previous') }}"><i class="fa fa-angle-left"></i></a></li>
                           <li class="page-item disabled d-none" id="page_info"><span class="page-link" id="page_info_text"></span></li>
-                          <li class="page-item disabled" id="next_item"><a class="page-link" id="next_link" href="#">{{ _('Next') }}</a></li>
+                          <li class="page-item disabled" id="next_item"><a class="page-link" id="next_link" href="#" title="{{ _('Next') }}"><i class="fa fa-angle-right"></i></a></li>
+                          <li class="page-item disabled" id="last_item"><a class="page-link" id="last_link" href="#" title="{{ _('Last') }}"><i class="fa fa-angle-double-right"></i></a></li>
                     </ul>
                 </nav>
             </div>
