@@ -1,6 +1,6 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import SelectField, StringField, SubmitField
+from wtforms import SelectField, SubmitField
 from wtforms.validators import DataRequired
 
 from project.forms.common import event_rating_choices
@@ -37,4 +37,3 @@ class UpdateEventReferenceForm(FlaskForm):
 
 class DeleteReferenceForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Delete reference"))
-    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])

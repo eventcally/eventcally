@@ -123,8 +123,7 @@ def test_update(client, seeder, utils, app, mocker, db_error):
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-@pytest.mark.parametrize("non_match", [True, False])
-def test_delete(client, seeder, utils, app, mocker, db_error, non_match):
+def test_delete(client, seeder, utils, app, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     (
         other_user_id,
@@ -139,25 +138,11 @@ def test_delete(client, seeder, utils, app, mocker, db_error, non_match):
     if db_error:
         utils.mock_db_commit(mocker)
 
-    form_name = "Name"
-
-    if non_match:
-        form_name = "Falscher Name"
-
     response = utils.post_form(
         url,
         response,
-        {
-            "name": form_name,
-        },
+        {},
     )
-
-    if non_match:
-        utils.assert_response_error_message(
-            response,
-            b"Der eingegebene Name entspricht nicht dem Namen der Veranstaltung",
-        )
-        return
 
     if db_error:
         utils.assert_response_db_error(response)
