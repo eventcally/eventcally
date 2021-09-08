@@ -189,7 +189,11 @@ def can_create_admin_unit():
     if not app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"]:
         return True
 
-    return has_current_user_role("admin")
+    if has_current_user_role("admin"):
+        return True
+
+    admin_units = get_admin_units_for_manage()
+    return any(admin_unit.can_create_other for admin_unit in admin_units)
 
 
 def can_read_event(event: Event) -> bool:

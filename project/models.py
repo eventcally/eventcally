@@ -399,6 +399,14 @@ class AdminUnit(db.Model, TrackableMixin):
             server_default="0",
         )
     )
+    can_create_other = deferred(
+        Column(
+            Boolean(),
+            nullable=False,
+            default=False,
+            server_default="0",
+        )
+    )
     outgoing_relations = relationship(
         "AdminUnitRelation",
         primaryjoin=remote(AdminUnitRelation.source_admin_unit_id) == id,
