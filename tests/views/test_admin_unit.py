@@ -71,15 +71,67 @@ def test_create_duplicate(client, app, utils, seeder):
         assert b"duplicate" in response.data
 
 
-def test_create_requiresadmin_nonadmin(client, app, utils, seeder):
+def test_create_requiresAdmin_nonAdmin(client, app, utils, seeder):
     app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = True
 
     seeder.create_user()
-    user_id = utils.login()
-    seeder.create_admin_unit(user_id, "Meine Crew")
+    utils.login()
 
-    response = client.get("/admin_unit/create")
+    url = utils.get_url("admin_unit_create")
+    response = utils.get(url)
     utils.assert_response_redirect(response, "manage_admin_units")
+
+
+def test_create_requiresAdmin_globalAdmin(client, app, utils, seeder):
+    app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = True
+    seeder.create_user(admin=True)
+    utils.login()
+
+    url = utils.get_url("admin_unit_create")
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Meine Crew",
+            "short_name": "meine_crew",
+            "location-postalCode": "38640",
+            "location-city": "Goslar",
+        },
+    )
+    assert response.status_code == 302
+
+
+def test_create_requiresAdmin_memberOfOrgWithoutFlag(client, app, utils, seeder):
+    app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = True
+    seeder.setup_base()
+
+    url = utils.get_url("admin_unit_create")
+    response = utils.get(url)
+    utils.assert_response_redirect(response, "manage_admin_units")
+
+
+def test_create_requiresAdmin_memberOfOrgWithFlag(client, app, utils, seeder):
+    app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = True
+    user_id = seeder.create_user(admin=False)
+    utils.login()
+    seeder.create_admin_unit(user_id, can_create_other=True)
+
+    url = utils.get_url("admin_unit_create")
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Other Crew",
+            "short_name": "other_crew",
+            "location-postalCode": "38640",
+            "location-city": "Goslar",
+        },
+    )
+    assert response.status_code == 302
 
 
 def test_update(client, app, utils, seeder):
