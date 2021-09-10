@@ -204,7 +204,8 @@
 
         reccStart: 'Start date',
         reccStartTime: 'Begin',
-        reccFoEndTime: 'End'
+        reccFoEndTime: 'End',
+        reccAllDay: 'All day',
     });
 
 
@@ -286,19 +287,28 @@
                                             '</div>',
 
                                             '<div class="form-row">',
-                                                '<div class="form-group col-md">',
+                                                '<div class="form-group col-md-4">',
                                                     '<label class="mb-0" for="recc-start">{{:i18n.reccStart}}</label>',
-                                                    '<input type="text" class="form-control datepicker" data-range-to="#recc-end" id="recc-start" name="recc-start" required="" />',
+                                                    '<input type="text" class="form-control datepicker" data-range-to="#recc-end" data-allday="#recc-allday" id="recc-start" name="recc-start" required="" />',
                                                 '</div>',
 
-                                                '<div class="form-group col-md">',
+                                                '<div class="form-group col-md-4" id="recc-start-time-group">',
                                                     '<label class="mb-0" for="recc-start-time">{{:i18n.reccStartTime}}</label>',
                                                     '<input type="text" class="form-control timepicker" id="recc-start-time" name="recc-start-time" required="" />',
                                                 '</div>',
 
-                                                '<div class="form-group col-md">',
+                                                '<div class="form-group col-md-4" id="recc-fo-end-time-group">',
                                                     '<label class="mb-0" for="recc-fo-end-time">{{:i18n.reccFoEndTime}}</label>',
                                                     '<input type="text" class="form-control timepicker" id="recc-fo-end-time" name="recc-fo-end-time" />',
+                                                '</div>',
+                                            '</div>',
+
+                                            '<div class="form-row">',
+                                                '<div class="form-group col-md">',
+                                                    '<div class="form-check">',
+                                                        '<input class="form-check-input" id="recc-allday" name="recc-allday" type="checkbox" value="y">',
+                                                        '<label class="form-check-label" for="recc-allday">{{:i18n.reccAllDay}}</label>',
+                                                    '</div>',
                                                 '</div>',
                                             '</div>',
 
@@ -1504,12 +1514,17 @@
 
         function displayOn() {
             display.find('div[class=ridisplay-start]').text($('#start-user').val());
-            var times = $('#start-time').val();
-            var end_time = $('#end-time').val();
-            if (end_time) {
-                times += ' - ' + end_time
+
+            if ($('#allday').is(':checked')) {
+                display.find('div[class=ridisplay-times]').text(conf.i18n.reccAllDay);
+            } else {
+                var times = $('#start-time').val();
+                var end_time = $('#end-time').val();
+                if (end_time) {
+                    times += ' - ' + end_time
+                }
+                display.find('div[class=ridisplay-times]').text(times);
             }
-            display.find('div[class=ridisplay-times]').text(times);
 
             $('#single-event-container').hide();
             $('#recc-event-container').show();
@@ -1544,6 +1559,8 @@
             display.find('button[name="ridelete"]').hide();
 
             set_picker_date($('#end-user'), null);
+            hideLink(null, $("#end-hide-container a.hide-link"));
+
             displayOff();
         }
 
@@ -1661,6 +1678,8 @@
 
                 set_picker_date($('#end-user'), end_datetime);
 
+                $('#allday').prop('checked', $('#recc-allday').is(':checked'));
+
                 recurrenceOn();
 
                 // close overlay
@@ -1753,14 +1772,40 @@
         );
 
         dialog.on('shown.bs.modal', function (e) {
-            $("#recc-start-time").change(function() {
-                $('#recc-fo-end-time').timepicker('option', 'minTime', $(this).timepicker("getTime"));
+            var recc_start_time = $("#recc-start-time");
+            var recc_fo_end_time = $('#recc-fo-end-time');
+
+            recc_start_time.change(function() {
+                recc_fo_end_time.timepicker('option', 'minTime', $(this).timepicker("getTime"));
             });
 
             $('#recc-start-user').datepicker("setDate", $('#start-user').datepicker("getDate"));
-            $('#recc-start-time').timepicker('setTime', $('#start-time').timepicker("getTime"));
-            $('#recc-start-time').change();
-            $('#recc-fo-end-time').timepicker('setTime', $('#end-time').timepicker("getTime"));
+            recc_start_time.timepicker('setTime', $('#start-time').timepicker("getTime"));
+            recc_start_time.change();
+            recc_fo_end_time.timepicker('setTime', $('#end-time').timepicker("getTime"));
+
+            var recc_allday = $('#recc-allday');
+            recc_allday.prop('checked', $('#allday').is(':checked'));
+            var allday_checked = recc_allday.is(':checked');
+            var recc_start_time_group = $("#recc-start-time-group");
+            var recc_fo_end_time_group = $('#recc-fo-end-time-group');
+            recc_start_time_group.toggle(!allday_checked);
+            recc_fo_end_time_group.toggle(!allday_checked);
+
+            recc_allday.on('change', function() {
+                recc_start_time_group.toggle(!this.checked);
+                recc_fo_end_time_group.toggle(!this.checked);
+
+                onAlldayChecked(this, "recc-start");
+
+                var end_moment = get_moment_with_time("#recc-start");
+                if (this.checked) {
+                    end_moment = end_moment.endOf('day');
+                } else {
+                    end_moment = end_moment.add(3, 'hours');
+                }
+                recc_fo_end_time.timepicker('setTime', end_moment.toDate());
+            });
 
             $('#occurences-show-container .show-link').click(function(e){
                 showLink(e, this);
@@ -2002,4 +2047,5 @@ jQuery.tools.recurrenceinput.localize("de", {
     reccStart: "Startdatum",
     reccStartTime: "Beginn",
     reccFoEndTime: "Ende",
+    reccAllDay: "Ganztägig",
   });

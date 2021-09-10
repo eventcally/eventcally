@@ -150,6 +150,10 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
             "description": "When the event will end. An event can last a maximum of 14 days. If the event takes place regularly, enter when the first date will end."
         },
     )
+    allday = marshmallow.auto_field(
+        missing=False,
+        metadata={"description": "If the event is an all-day event."},
+    )
     public_status = EnumField(
         PublicStatus,
         missing=PublicStatus.published,
@@ -183,6 +187,7 @@ class EventSearchItemSchema(EventRefSchema):
     description = marshmallow.auto_field()
     start = CustomDateTimeField()
     end = CustomDateTimeField()
+    allday = marshmallow.auto_field()
     recurrence_rule = marshmallow.auto_field()
     photo = fields.Nested(ImageSchema)
     place = fields.Nested(PlaceSearchItemSchema, attribute="event_place")

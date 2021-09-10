@@ -12,8 +12,10 @@ from project import db
 from project.dateutils import (
     berlin_tz,
     date_add_time,
+    date_parts_are_equal,
     dates_from_recurrence_rule,
     get_today,
+    round_to_next_day,
 )
 from project.jinja_filters import url_for_image
 from project.models import (
@@ -29,6 +31,7 @@ from project.models import (
     Image,
     Location,
     PublicStatus,
+    sanitize_allday_instance,
 )
 from project.utils import get_pending_changes, get_place_str
 from project.views.utils import truncate
@@ -293,6 +296,7 @@ def get_recurring_events():
 
 
 def update_event_dates_with_recurrence_rule(event):
+    sanitize_allday_instance(event)
     start = event.start
     end = event.end
 
@@ -321,7 +325,9 @@ def update_event_dates_with_recurrence_rule(event):
             (
                 date
                 for date in event.dates
-                if date.start == rr_date_start and date.end == rr_date_end
+                if date.start == rr_date_start
+                and date.end == rr_date_end
+                and date.allday == event.allday
             ),
             None,
         )
@@ -329,7 +335,10 @@ def update_event_dates_with_recurrence_rule(event):
             dates_to_remove.remove(existing_date)
         else:
             new_date = EventDate(
-                event_id=event.id, start=rr_date_start, end=rr_date_end
+                event_id=event.id,
+                start=rr_date_start,
+                end=rr_date_end,
+                allday=event.allday,
             )
             dates_to_add.append(new_date)
 
@@ -418,10 +427,23 @@ def create_ical_event_for_date(event_date: EventDate) -> icalendar.Event:
     event.add("url", url)
     event.add("description", url)
     event.add("uid", url)
-    event.add("dtstart", event_date.start.astimezone(berlin_tz))
 
-    if event_date.end:
-        event.add("dtend", event_date.end.astimezone(berlin_tz))
+    start = event_date.start.astimezone(berlin_tz)
+
+    if event_date.allday:
+        event.add("dtstart", icalendar.vDate(start))
+    else:
+        event.add("dtstart", start)
+
+    if event_date.end and event_date.end > event_date.start:
+        end = event_date.end.astimezone(berlin_tz)
+
+        if event_date.allday:
+            if not date_parts_are_equal(start, end):
+                next_day = round_to_next_day(end)
+                event.add("dtend", icalendar.vDate(next_day))
+        else:
+            event.add("dtend", end)
 
     if event_date.event.created_at:
         event.add("dtstamp", event_date.event.created_at)

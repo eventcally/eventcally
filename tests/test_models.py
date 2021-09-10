@@ -23,6 +23,46 @@ def test_event_category(client, app, db, seeder):
         assert event.category is None
 
 
+def test_event_allday(client, app, db, seeder):
+    from project.dateutils import create_berlin_date
+
+    user_id, admin_unit_id = seeder.setup_base()
+    event_with_start_id = seeder.create_event(
+        admin_unit_id, allday=True, start=create_berlin_date(2030, 12, 31, 14, 30)
+    )
+    event_with_start_and_end_id = seeder.create_event(
+        admin_unit_id,
+        allday=True,
+        start=create_berlin_date(2030, 12, 31, 14, 30),
+        end=create_berlin_date(2031, 1, 1, 0, 0),
+    )
+
+    with app.app_context():
+        from project.models import Event
+
+        # With Start
+        event = Event.query.get(event_with_start_id)
+        assert event.allday
+        assert event.start == create_berlin_date(2030, 12, 31, 0, 0)
+        assert event.end == create_berlin_date(2030, 12, 31, 23, 59, 59)
+
+        event_date = event.dates[0]
+        assert event_date.allday
+        assert event_date.start == create_berlin_date(2030, 12, 31, 0, 0)
+        assert event_date.end == create_berlin_date(2030, 12, 31, 23, 59, 59)
+
+        # With Start and End
+        event = Event.query.get(event_with_start_and_end_id)
+        assert event.allday
+        assert event.start == create_berlin_date(2030, 12, 31, 0, 0)
+        assert event.end == create_berlin_date(2031, 1, 1, 23, 59, 59)
+
+        event_date = event.dates[0]
+        assert event_date.allday
+        assert event_date.start == create_berlin_date(2030, 12, 31, 0, 0)
+        assert event_date.end == create_berlin_date(2031, 1, 1, 23, 59, 59)
+
+
 def test_oauth2_token(client, app):
     from project.models import OAuth2Token
 

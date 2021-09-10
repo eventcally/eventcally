@@ -316,6 +316,7 @@ def prepare_event_form_for_suggestion(form, event_suggestion):
     form.start.data = event_suggestion.start
     form.end.data = event_suggestion.end
     form.recurrence_rule.data = event_suggestion.recurrence_rule
+    form.allday.data = event_suggestion.allday
     form.external_link.data = event_suggestion.external_link
     form.description.data = event_suggestion.description
 

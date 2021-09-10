@@ -78,6 +78,10 @@ class SharedEventForm(FlaskForm):
             "Indicate when the event will end. An event can last a maximum of 14 days."
         ),
     )
+    allday = BooleanField(
+        lazy_gettext("All-day"),
+        validators=[Optional()],
+    )
     recurrence_rule = TextAreaField(
         lazy_gettext("Recurring event"),
         validators=[Optional()],

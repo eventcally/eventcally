@@ -11,8 +11,10 @@ from project.models import EventAttendanceMode, EventStatus
 class DateTimeEncoder(JSONEncoder):
     # Override the default method
     def default(self, obj):
-        if isinstance(obj, (datetime.date, datetime.datetime)):
+        if isinstance(obj, datetime.datetime):
             return (obj.astimezone(berlin_tz)).isoformat()
+        elif isinstance(obj, datetime.date):
+            return obj.isoformat()
 
 
 def get_sd_for_admin_unit(admin_unit):
@@ -90,6 +92,10 @@ def get_sd_for_place(place, use_ref=True):
     return result
 
 
+def get_date_from_datetime(value: datetime.datetime) -> datetime.date:
+    return value.astimezone(berlin_tz).date()
+
+
 def get_sd_for_event_date(event_date):
     event = event_date.event
 
@@ -100,6 +106,18 @@ def get_sd_for_event_date(event_date):
     result["name"] = event.name
     result["description"] = event.description
     result["startDate"] = event_date.start
+
+    if event_date.end:
+        result["endDate"] = event_date.end
+
+    if event.previous_start_date:
+        result["previousStartDate"] = event.previous_start_date
+
+    if event.allday:
+        result["startDate"] = get_date_from_datetime(result["startDate"])
+
+        if event_date.end:
+            result["endDate"] = get_date_from_datetime(result["endDate"])
 
     url_list = list()
     url_list.append(url_for("event_date", id=event_date.id))
@@ -120,12 +138,6 @@ def get_sd_for_event_date(event_date):
     if event.admin_unit:
         organizer_list.append(get_sd_for_admin_unit(event.admin_unit))
     result["organizer"] = organizer_list
-
-    if event_date.end:
-        result["endDate"] = event_date.end
-
-    if event.previous_start_date:
-        result["previousStartDate"] = event.previous_start_date
 
     if event.accessible_for_free:
         result["isAccessibleForFree"] = event.accessible_for_free

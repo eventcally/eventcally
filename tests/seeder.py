@@ -198,6 +198,7 @@ class Seeder(object):
         draft=False,
         name="Name",
         start=None,
+        allday=False,
     ):
         from project.models import Event, EventAttendanceMode, PublicStatus
         from project.services.event import insert_event, upsert_event_category
@@ -210,6 +211,7 @@ class Seeder(object):
             event.description = ("Beschreibung",)
             event.start = start if start else self.get_now_by_minute()
             event.end = end
+            event.allday = allday
             event.event_place_id = self.upsert_default_event_place(admin_unit_id)
             event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
             event.recurrence_rule = recurrence_rule
@@ -300,7 +302,7 @@ class Seeder(object):
             event.photo_id = image_id
             self._db.session.commit()
 
-    def create_event_suggestion(self, admin_unit_id, free_text=False):
+    def create_event_suggestion(self, admin_unit_id, free_text=False, allday=False):
         from project.models import EventSuggestion
         from project.services.event import upsert_event_category
         from project.services.event_suggestion import insert_event_suggestion
@@ -314,6 +316,7 @@ class Seeder(object):
             suggestion.name = "Vorschlag"
             suggestion.description = "Beschreibung"
             suggestion.start = self.get_now_by_minute()
+            suggestion.allday = allday
             suggestion.photo_id = self.upsert_default_image()
             suggestion.categories = [upsert_event_category("Other")]
 

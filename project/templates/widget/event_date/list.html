@@ -1,5 +1,5 @@
 {% extends "layout_widget.html" %}
-{% from "_macros.html" import render_form_styles, render_form_scripts, render_pagination, render_event_warning_pills, render_event_warning_pills, render_place %}
+{% from "_macros.html" import render_event_date_instance, render_form_styles, render_form_scripts, render_pagination, render_event_warning_pills, render_event_warning_pills, render_place %}
 
 {%- block title -%}
 {{ _('Widget') }}
@@ -70,7 +70,7 @@
                     <div class="row">
                         <div class="col-sm-8">
                             <h5 class="card-title">{{ date.event.name }}{{ render_event_warning_pills(date.event) }}</h5>
-                            <h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> {{ date.start | dateformat('medium') }} {{ date.start | timeformat('short') }}</h6>
+                            <h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> {{ render_event_date_instance(date.start, date.allday, 'medium') }}</h6>
                             <p class="card-text">{{ date.event.description | truncate(200) }}</p>
                             {% if date.event.admin_unit_id != params.admin_unit_id %}
                                 <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ date.event.admin_unit.name }}</small>
@@ -102,7 +102,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <h5 class="card-title">{{ date.event.name }}{{ render_event_warning_pills(date.event) }}</h5>
-                            <h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> {{ date.start | dateformat('medium') }} {{ date.start | timeformat('short') }}</h6>
+                            <h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> {{ render_event_date_instance(date.start, date.allday, 'medium') }}</h6>
                             <p class="card-text">{{ date.event.description | truncate(100) }}</p>
                             {% if date.event.admin_unit_id != params.admin_unit_id %}
                                 <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ date.event.admin_unit.name }}</small>
