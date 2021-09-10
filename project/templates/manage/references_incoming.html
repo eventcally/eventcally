@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% set active_id = "references_incoming" %}
-{% from "_macros.html" import render_event_warning_pills, render_event_date, render_pagination, render_event_organizer %}
+{% from "_macros.html" import render_event_date_in_list, render_event_warning_pills, render_event_date, render_pagination, render_event_organizer %}
 {%- block title -%}
 {{ _('References') }}
 {%- endblock -%}
@@ -12,7 +12,7 @@
 <ul class="list-group mt-4">
 {% for reference in references %}
     <li class="list-group-item">
-        {{ render_event_date(reference.event) }}
+        {{ render_event_date_in_list(reference.event) }}
         <div class="dropdown d-inline-block">
             <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ reference.event.name }}</button>
             <div class="dropdown-menu">

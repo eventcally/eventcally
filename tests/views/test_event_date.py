@@ -19,19 +19,49 @@ def test_read(client, seeder, utils):
 
 
 def test_ical(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base(log_in=False)
-    seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
+    from project.dateutils import create_berlin_date
 
-    url = utils.get_url("event_date_ical", id=1)
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+
+    # Default
+    event_id = seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
+    url = utils.get_url("event_date_ical", id=event_id)
     utils.get_ok(url)
 
-    seeder.create_event(admin_unit_id, draft=True)
-    url = utils.get_url("event_date_ical", id=2)
+    # Draft
+    draft_id = seeder.create_event(
+        admin_unit_id,
+        draft=True,
+        start=create_berlin_date(2020, 1, 2, 14, 30),
+        end=create_berlin_date(2020, 1, 3, 14, 30),
+    )
+    url = utils.get_url("event_date_ical", id=draft_id)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
     utils.login()
     utils.get_ok(url)
+
+    # All-day single day
+    allday_id = seeder.create_event(
+        admin_unit_id, allday=True, start=create_berlin_date(2020, 1, 2, 14, 30)
+    )
+    url = utils.get_url("event_date_ical", id=allday_id)
+    response = utils.get_ok(url)
+    utils.assert_response_contains(response, "DTSTART;VALUE=DATE:20200102")
+    utils.assert_response_contains_not(response, "DTEND;VALUE=DATE:")
+
+    # All-day multiple days
+    allday_id = seeder.create_event(
+        admin_unit_id,
+        allday=True,
+        start=create_berlin_date(2020, 1, 2, 14, 30),
+        end=create_berlin_date(2020, 1, 3, 14, 30),
+    )
+    url = utils.get_url("event_date_ical", id=allday_id)
+    response = utils.get_ok(url)
+    utils.assert_response_contains(response, "DTSTART;VALUE=DATE:20200102")
+    utils.assert_response_contains(response, "DTEND;VALUE=DATE:20200104")
 
 
 def test_list(client, seeder, utils):

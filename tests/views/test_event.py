@@ -76,6 +76,43 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         assert event is not None
 
 
+def test_create_allday(client, app, utils, seeder):
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "description": "Beschreibung",
+            "start": ["2030-12-31", "00:00"],
+            "end": ["2030-12-31", "23:59"],
+            "allday": "y",
+            "event_place_id": place_id,
+            "organizer_id": organizer_id,
+            "photo-image_base64": seeder.get_default_image_upload_base64(),
+        },
+    )
+
+    utils.assert_response_redirect(response, "event_actions", event_id=1)
+
+    with app.app_context():
+        from project.models import Event
+
+        event = (
+            Event.query.filter(Event.admin_unit_id == admin_unit_id)
+            .filter(Event.name == "Name")
+            .first()
+        )
+        assert event is not None
+        assert event.allday
+
+
 def test_create_newPlaceAndOrganizer(client, app, utils, seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
 
@@ -234,9 +271,10 @@ def test_create_durationMoreThanMaxAllowedDuration(client, app, utils, seeder, m
     )
 
 
-def test_duplicate(client, app, utils, seeder, mocker):
+@pytest.mark.parametrize("allday", [True, False])
+def test_duplicate(client, app, utils, seeder, mocker, allday):
     user_id, admin_unit_id = seeder.setup_base()
-    template_event_id = seeder.create_event(admin_unit_id)
+    template_event_id = seeder.create_event(admin_unit_id, allday=allday)
 
     url = utils.get_url(
         "event_create_for_admin_unit_id",
@@ -259,12 +297,14 @@ def test_duplicate(client, app, utils, seeder, mocker):
         assert len(events) == 2
 
         assert events[1].category.name == events[0].category.name
+        assert events[1].allday == events[0].allday
 
 
 @pytest.mark.parametrize("free_text", [True, False])
-def test_create_fromSuggestion(client, app, utils, seeder, mocker, free_text):
+@pytest.mark.parametrize("allday", [True, False])
+def test_create_fromSuggestion(client, app, utils, seeder, mocker, free_text, allday):
     user_id, admin_unit_id = seeder.setup_base()
-    suggestion_id = seeder.create_event_suggestion(admin_unit_id, free_text)
+    suggestion_id = seeder.create_event_suggestion(admin_unit_id, free_text, allday)
 
     url = utils.get_url(
         "event_create_for_admin_unit_id",
@@ -285,6 +325,7 @@ def test_create_fromSuggestion(client, app, utils, seeder, mocker, free_text):
             .first()
         )
         assert event is not None
+        assert event.allday == allday
 
         suggestion = EventSuggestion.query.get(suggestion_id)
         assert suggestion is not None

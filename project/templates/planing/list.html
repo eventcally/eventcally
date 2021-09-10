@@ -72,7 +72,7 @@ $( function() {
                                 same_day = false;
                             } else {
                                 tbody.append('<tr>' +
-                                        '<td class="fit">' + start.format("LT") + '</td>' +
+                                        '<td class="fit">' + (event_date.allday ? '{{ _('All-day') }}' : start.format("LT")) + '</td>' +
                                         '<td colspan="3"><a href="eventdate/' + event_date.id + '">' + event.name + '</a> ' + render_event_warning_pills(event) + '</td>' +
                                         '<td class="small text-muted">' + event.organizer.name + '</td>' +
                                     '</tr>');

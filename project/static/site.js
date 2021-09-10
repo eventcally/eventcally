@@ -13,6 +13,8 @@ function get_moment_with_time(field_id) {
 
 function set_date_bounds(picker) {
   var data_range_to_attr = picker.attr("data-range-to");
+  var data_allday_attr = picker.attr("data-allday");
+
   if (data_range_to_attr) {
     var hidden_field_id = picker.attr("id").replace("-user", "");
     var from_moment = get_moment_with_time("#" + hidden_field_id);
@@ -25,7 +27,11 @@ function set_date_bounds(picker) {
     var end_val = $(data_range_to_attr).val();
     if (end_val != "") {
       var end_moment = get_moment_with_time(data_range_to_attr);
-      if (end_moment < from_moment) {
+
+      if (data_allday_attr && $(data_allday_attr).is(':checked')) {
+        end_moment = end_moment.endOf('day');
+        set_picker_date($(data_range_to_attr), end_moment.toDate());
+      } else if (end_moment < from_moment) {
         set_picker_date($(data_range_to_attr), from_moment.toDate());
       }
     }
@@ -71,6 +77,26 @@ function set_picker_date(picker, date, timeout = -1) {
   }
 }
 
+function onAlldayChecked(checkbox, hidden_field_id) {
+  var picker = $("#" + hidden_field_id + "-user");
+  var data_range_to_attr = picker.attr("data-range-to");
+  var start_moment = get_moment_with_time("#" + hidden_field_id).startOf('day');
+
+  if (checkbox.checked) {
+    set_picker_date(picker, start_moment.toDate());
+  } else {
+    var next_hour = moment().add(1, 'hour').startOf('hour');
+    start_moment = start_moment.set({"hour": next_hour.hour(), "minute": next_hour.minute()});
+    set_picker_date(picker, start_moment.toDate());
+
+    if (data_range_to_attr) {
+      var end_moment = get_moment_with_time(data_range_to_attr);
+      end_moment = end_moment.startOf('day').set({"hour": next_hour.hour(), "minute": next_hour.minute()});
+      set_picker_date($(data_range_to_attr), end_moment.add(3, 'hours').toDate());
+    }
+  }
+}
+
 function start_datepicker(input) {
   var hidden_field = input;
   var hidden_field_id = hidden_field.attr("id");
@@ -107,6 +133,40 @@ function start_datepicker(input) {
   var data_range_to_attr = picker.attr("data-range-to");
   if (data_range_to_attr) {
     $(data_range_to_attr).attr("data-range-from", "#" + hidden_field_id);
+  }
+
+  var data_allday_attr = picker.attr("data-allday");
+  if (data_allday_attr) {
+    var checked = $(data_allday_attr).is(':checked')
+    $("#" + hidden_field_id + "-time").toggle(!checked);
+    if (data_range_to_attr) {
+      $(data_range_to_attr + "-time").toggle(!checked);
+    }
+
+    $(data_allday_attr).on('change', function() {
+      $("#" + hidden_field_id + "-time").toggle(!this.checked);
+      if (data_range_to_attr) {
+        $(data_range_to_attr + "-time").toggle(!this.checked);
+      }
+
+      onAlldayChecked(this, hidden_field_id)
+
+      // var start_moment = get_moment_with_time("#" + hidden_field_id).startOf('day');
+
+      // if (this.checked) {
+      //   set_picker_date(picker, start_moment.toDate());
+      // } else {
+      //   var next_hour = moment().add(1, 'hour').startOf('hour');
+      //   start_moment = start_moment.set({"hour": next_hour.hour(), "minute": next_hour.minute()});
+      //   set_picker_date(picker, start_moment.toDate());
+
+      //   if (data_range_to_attr) {
+      //     var end_moment = get_moment_with_time(data_range_to_attr);
+      //     end_moment = end_moment.startOf('day').set({"hour": next_hour.hour(), "minute": next_hour.minute()});
+      //     set_picker_date($(data_range_to_attr), end_moment.add(3, 'hours').toDate());
+      //   }
+      // }
+    });
   }
 
   hidden_field.change(function () {
@@ -240,16 +300,22 @@ function fill_place_form_with_gmaps_place(
 }
 
 function showLink(e, element) {
-  e.preventDefault();
-  e.stopPropagation();
+  if (e != null) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
   $("#" + $(element).attr("data-show-container")).hide();
   $("#" + $(element).attr("data-container")).show();
   $("#" + $(element).attr("data-container")).trigger("shown");
 }
 
 function hideLink(e, element) {
-  e.preventDefault();
-  e.stopPropagation();
+  if (e != null) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
   $("#" + $(element).attr("data-show-container")).show();
   $("#" + $(element).attr("data-container")).hide();
   $("#" + $(element).attr("data-container")).trigger("hidden");
