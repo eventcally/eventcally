@@ -186,6 +186,46 @@ def test_event_suggestion_create_for_admin_unit(
     utils.assert_send_mail_called(mail_mock, "test@test.de")
 
 
+def test_event_suggestion_create_for_admin_unit_allday(
+    client,
+    app,
+    seeder,
+    utils,
+):
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+    au_short_name = "meinecrew"
+
+    url = utils.get_url(
+        "event_suggestion_create_for_admin_unit", au_short_name=au_short_name
+    )
+    response = utils.get_ok(url)
+
+    data = get_create_data()
+    data["allday"] = "y"
+    response = utils.post_form(
+        url,
+        response,
+        data,
+    )
+
+    with app.app_context():
+        from project.models import EventSuggestion
+
+        suggestion = (
+            EventSuggestion.query.filter(EventSuggestion.admin_unit_id == admin_unit_id)
+            .filter(EventSuggestion.name == "Vorschlag")
+            .first()
+        )
+        assert suggestion is not None
+        assert suggestion.allday
+        suggestion_id = suggestion.id
+
+    utils.assert_response_redirect(
+        response, "event_suggestion_review_status", event_suggestion_id=suggestion_id
+    )
+
+
 def test_event_suggestion_create_for_admin_unit_emptyFreeText(
     client, app, seeder, utils, mocker
 ):

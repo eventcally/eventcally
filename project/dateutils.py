@@ -18,8 +18,18 @@ def get_today():
     return datetime(now.year, now.month, now.day, tzinfo=now.tzinfo)
 
 
-def create_berlin_date(year, month, day, hour=0, minute=0):
-    return berlin_tz.localize(datetime(year, month, day, hour=hour, minute=minute))
+def create_berlin_date(year, month, day, hour=0, minute=0, second=0):
+    return berlin_tz.localize(
+        datetime(year, month, day, hour=hour, minute=minute, second=second)
+    )
+
+
+def date_parts_are_equal(date1: datetime, date2: datetime) -> bool:
+    return (
+        date1.year == date2.year
+        and date1.month == date2.month
+        and date1.day == date2.day
+    )
 
 
 def date_add_time(date, hour=0, minute=0, second=0, tzinfo=None):
@@ -34,12 +44,19 @@ def date_add_time(date, hour=0, minute=0, second=0, tzinfo=None):
     )
 
 
-def date_set_begin_of_day(date):
-    return date_add_time(date)
+def date_set_begin_of_day(date, remove_tz=False):
+    tzinfo = None if remove_tz else date.tzinfo
+    return date_add_time(date, tzinfo=tzinfo)
 
 
-def date_set_end_of_day(date):
-    return date_add_time(date, hour=23, minute=59, second=59)
+def date_set_end_of_day(date, remove_tz=False):
+    tzinfo = None if remove_tz else date.tzinfo
+    return date_add_time(date, hour=23, minute=59, second=59, tzinfo=tzinfo)
+
+
+def round_to_next_day(date):
+    new_date = date + timedelta(days=1)
+    return date_set_begin_of_day(new_date)
 
 
 def round_to_next_full_hour(date):
@@ -65,17 +82,17 @@ def form_input_from_date(date):
 def dates_from_recurrence_rule(start, recurrence_rule):
     result = list()
 
-    start_begin_of_day = date_set_begin_of_day(start)
+    start_begin_of_day = date_set_begin_of_day(start, remove_tz=True)
     rule_set = rrulestr(recurrence_rule, forceset=True, dtstart=start_begin_of_day)
 
     # Keine Daten in der Vergangenheit erstellen
     today = get_today()
     start_date = today if today > start else start
-    start_date_begin_of_day = date_set_begin_of_day(start_date)
+    start_date_begin_of_day = date_set_begin_of_day(start_date, remove_tz=True)
 
     # Max. 1 Jahr in die Zukunft
     end_date = start_date_begin_of_day + relativedelta(years=1)
-    end_date_end_of_day = date_set_end_of_day(end_date)
+    end_date_end_of_day = date_set_end_of_day(end_date, remove_tz=True)
 
     for rule_date in rule_set.between(
         start_date_begin_of_day, end_date_end_of_day, inc=True

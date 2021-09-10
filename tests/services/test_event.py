@@ -29,6 +29,18 @@ def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app):
         assert event_date.start == event.start
         assert event_date.end == event.end
 
+        # All-day
+        event.allday = True
+        update_event_dates_with_recurrence_rule(event)
+
+        len_dates = len(event.dates)
+        assert len_dates == 1
+
+        event_date = event.dates[0]
+        assert event_date.start == event.start
+        assert event_date.end == event.end
+        assert event_date.allday
+
         # Wiederholt sich alle 1 Tage, endet nach 7 Ereigniss(en)
         event.recurrence_rule = "RRULE:FREQ=DAILY;COUNT=7"
 

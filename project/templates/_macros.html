@@ -140,7 +140,7 @@
       <tbody>
           {% for event in events %}
               <tr>
-                  <td>{{ render_event_date(event) }}</td>
+                  <td>{{ render_event_date_in_list(event) }}</td>
                   <td>
                       <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
                       {{ render_event_warning_pills(event) }}
@@ -402,7 +402,7 @@
 {{ render_int_prop(event.expected_participants, 'fa-users', 'Expected number of participants') }}
 {% endmacro %}
 
-{% macro render_event_props(event, start, end, dates = None, show_rating = False, show_admin_unit = True, share_links=None, calendar_links=None) %}
+{% macro render_event_props(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, share_links=None, calendar_links=None) %}
   <div class="card mb-3">
     <div class="card-header">
       {{ _('Event') }}
@@ -410,20 +410,10 @@
 
     <div class="card-body">
       <h5 class="card-title">{{ event.name }}{{ render_event_warning_pills(event) }}</h5>
-      {% if dates and dates|length > 1 %}
-      <div>
-        <i class="fa fa-fw fas fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i>
-        {{ start | timeformat('short') }}
-        {% if end %}- {{ end | timeformat('short') }}{% endif %}
-        | <a href="#event-dates">{{ _('%(count)d event dates', count=dates|length) }}</a>
-      </div>
-      {% else %}
       <div>
         <i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Date') }}"></i>
-        {{ start | datetimeformat('short') }}
-        {% if end %}- {{ end | datetimeformat('short') }}{% endif %}
+        {{ render_event_date_with_dates_link(start, end, allday) }}
       </div>
-      {% endif %}
       {{ render_enum_prop(event.status, 'fa-info-circle', 'Status', 1) }}
       {% if event.previous_start_date %}
       <div><i class="fa fa-fw fa-calendar-times" data-toggle="tooltip" title="{{ _('Previous start date') }}"></i> {{ event.previous_start_date | datetimeformat('short') }}</div>
@@ -549,7 +539,7 @@
 
 {% endmacro %}
 
-{% macro render_event_props_seo(event, start, end, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None) %}
+{% macro render_event_props_seo(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None) %}
 <div class="w-normal mx-auto">
 
   {% if event.photo_id %}
@@ -565,11 +555,7 @@
     {% endif %}
 
     <div class="font-weight-bold text-uppercase">
-      {{ start | dateformat('full') }} {{ start | timeformat('short') }}
-      {% if end %}- {{ end | dateformat('full') }} {{ end | timeformat('short') }}{% endif %}
-      {% if dates and dates|length > 1 %}
-        | <a href="#event-dates">{{ _('%(count)d event dates', count=dates|length) }}</a>
-      {% endif %}
+      {{ render_event_date_with_dates_link(start, end, allday) }}
     </div>
 
     <h1 class="font-weight-bold my-1">{{ event.name }}{{ render_event_warning_pills(event) }}</h1>
@@ -832,8 +818,29 @@
 </script>
 {% endmacro %}
 
-{% macro render_event_date(event) %}
-  {{ event.start | datetimeformat('short') }}
+{% macro render_event_date_instance(instance, allday, dateModifier = 'short', timeModifier = 'short') %}
+  {{ instance | dateformat(dateModifier) }}{% if not allday %} {{ instance | timeformat(timeModifier) }}{% endif %}
+{% endmacro %}
+
+{% macro render_event_date(start, end, allday) %}
+  {% set start_date_str = start|dateformat('full') %}
+  {{ start_date_str }}{% if not allday %} {{ start | timeformat('short') }}{% endif %}
+  {% if end %}
+    {% set end_date_str = end|dateformat('full') %}
+    {% if end_date_str != start_date_str or not allday %} - {% endif %}
+    {% if end_date_str != start_date_str %}{{ end_date_str }}{% endif %}{% if not allday %} {{ end | timeformat('short') }}{% endif %}
+  {% endif %}
+{% endmacro %}
+
+{% macro render_event_date_with_dates_link(start, end, allday) %}
+  {{ render_event_date(start, end, allday) }}
+  {% if dates and dates|length > 1 %}
+    | <a href="#event-dates">{{ _('%(count)d event dates', count=dates|length) }}</a>
+  {% endif %}
+{% endmacro %}
+
+{% macro render_event_date_in_list(event) %}
+  {{ render_event_date_instance(event.start, event.allday) }}
   {% if event.recurrence_rule %}
   <i class="fas fa-history"></i>
   {% endif %}
@@ -1319,12 +1326,26 @@ if (URL) {
 
 {% macro render_end_container_handling() %}
 $('#end-container').on('shown', function() {
-  var end_moment = get_moment_with_time('#start').add(3, 'hours');
+  var end_moment = get_moment_with_time('#start');
+
+  if ($('#allday').is(':checked')) {
+    end_moment = end_moment.endOf('day');
+  } else {
+    end_moment = end_moment.add(3, 'hours');
+  }
+
   set_picker_date($('#end-user'), end_moment.toDate());
 });
 
 $('#end-container').on('hidden', function() {
   set_picker_date($('#end-user'), null);
+  $('#allday').prop('checked', false).trigger("change");
+});
+
+$('#allday').on('change', function() {
+  if (this.checked && !$("#end-container").is(":visible")) {
+    showLink(null, $("#end-show-container a.show-link"));
+  }
 });
 {% endmacro %}
 
@@ -1349,7 +1370,7 @@ $('#end-container').on('hidden', function() {
           <div class="mb-1"><img class="rounded" style="object-fit: cover; height: 20vh;" src="{{ event_suggestion.photo.image_base64 }}" /></div>
       {% endif %}
 
-      <div class="text-highlight text-uppercase font-weight-bold">{{ event_suggestion.start | dateformat('full') }} um {{ event_suggestion.start | timeformat('short') }}</div>
+      <div class="text-highlight text-uppercase font-weight-bold">{{ render_event_date(event_suggestion.start, event_suggestion.end, event_suggestion.allday) }}</div>
       <div class="font-weight-bold" style="font-size: 1.8rem;">{{ event_suggestion.name }}</div>
       <div class="text-muted">{{ event_suggestion.event_place.name or event_suggestion.event_place_text }}</div>
 

@@ -10,7 +10,7 @@ from wtforms import FormField
 
 from project import app, db, mail
 from project.access import get_admin_unit_for_manage
-from project.dateutils import gmt_tz
+from project.dateutils import berlin_tz, round_to_next_day
 from project.models import Analytics, EventAttendanceMode, EventDate
 from project.utils import get_place_str
 
@@ -189,11 +189,18 @@ def get_calendar_links(event_date: EventDate) -> dict:
     url = url_for("event_date", id=event_date.id, _external=True)
     encoded_url = quote_plus(url)
     encoded_title = quote_plus(event_date.event.name)
-    start = event_date.start.astimezone(gmt_tz).strftime("%Y%m%dT%H%M%SZ")
-    if event_date.end:
-        end = event_date.end.astimezone(gmt_tz).strftime("%Y%m%dT%H%M%SZ")
-    else:
-        end = start
+    encoded_timezone = quote_plus(berlin_tz.zone)
+
+    start_date = event_date.start
+    end_date = event_date.end if event_date.end else start_date
+    date_format = "%Y%m%dT%H%M%S"
+
+    if event_date.event.allday:
+        date_format = "%Y%m%d"
+        end_date = round_to_next_day(end_date)
+
+    start = start_date.astimezone(berlin_tz).strftime(date_format)
+    end = end_date.astimezone(berlin_tz).strftime(date_format)
 
     if (
         event_date.event.attendance_mode
@@ -206,7 +213,7 @@ def get_calendar_links(event_date: EventDate) -> dict:
 
     calendar_links[
         "google"
-    ] = f"http://www.google.com/calendar/event?action=TEMPLATE&text={encoded_title}&dates={start}/{end}&details={encoded_url}{locationParam}"
+    ] = f"http://www.google.com/calendar/event?action=TEMPLATE&text={encoded_title}&dates={start}/{end}&ctz={encoded_timezone}&details={encoded_url}{locationParam}"
 
     calendar_links["ics"] = url_for("event_date_ical", id=event_date.id, _external=True)
 

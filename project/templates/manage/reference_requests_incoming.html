@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% set active_id = "reference_requests_incoming" %}
-{% from "_macros.html" import render_reference_request_review_status_pill, render_event_date, render_pagination, render_event_organizer %}
+{% from "_macros.html" import render_event_date_in_list, render_reference_request_review_status_pill, render_event_date, render_pagination, render_event_organizer %}
 {%- block title -%}
 {{ _('Reference requests') }}
 {%- endblock -%}
@@ -12,7 +12,7 @@
 <ul class="list-group mt-4">
 {% for request in requests %}
     <li class="list-group-item">
-        {{ render_event_date(request.event) }}
+        {{ render_event_date_in_list(request.event) }}
         <div class="dropdown d-inline-block">
             <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ request.event.name }}</button>
             <div class="dropdown-menu">

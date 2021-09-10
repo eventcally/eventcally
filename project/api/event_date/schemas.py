@@ -19,6 +19,7 @@ class EventDateSchema(marshmallow.SQLAlchemySchema):
     id = marshmallow.auto_field()
     start = CustomDateTimeField()
     end = CustomDateTimeField()
+    allday = marshmallow.auto_field()
     event = fields.Nested(EventRefSchema)
 
 
@@ -51,6 +52,7 @@ class EventDateSearchItemSchema(EventDateRefSchema):
         load_instance = True
 
     end = CustomDateTimeField()
+    allday = marshmallow.auto_field()
     event = fields.Nested(EventSearchItemSchema)
 
 
