@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% set active_id = "reviews" %}
-{% from "_macros.html" import render_event_review_status_pill, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
+{% from "_macros.html" import render_event_date_in_list, render_event_review_status_pill, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
 {%- block title -%}
 {{ _('Reviews') }}
 {%- endblock -%}
@@ -12,7 +12,7 @@
 <ul class="list-group my-4">
 {% for event_suggestion in event_suggestions %}
     <li class="list-group-item">
-        {{ render_event_date(event_suggestion) }}
+        {{ render_event_date_in_list(event_suggestion) }}
         <div class="dropdown d-inline-block">
             <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ event_suggestion.name }}</button>
             <div class="dropdown-menu">

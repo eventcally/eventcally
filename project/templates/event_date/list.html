@@ -87,6 +87,14 @@
             });
     }
 
+    function format_event_date_instance(instance, allday) {
+        if (allday) {
+            return instance.format("dd. DD.MM.YYYY");
+        }
+
+        return instance.format("dd. DD.MM.YYYY LT")
+    }
+
     function add_events_to_map() {
         init_leaflet_map();
         clear_events_from_map();
@@ -96,7 +104,7 @@
             if (event.place != null && event.place.location != null && event.place.location.latitude != null) {
                 var location = event.place.location;
                 var start = moment(event_date.start);
-                var title = start.format("dd. DD.MM.YYYY LT") + ' ' + '<a href="#" onclick="show_event_in_list(\'' + event_date.id + '\'); return false;">' + event.name + '</a>';
+                var title = format_event_date_instance(start, event_date.allday) + ' ' + '<a href="#" onclick="show_event_in_list(\'' + event_date.id + '\'); return false;">' + event.name + '</a>';
 
                 var icon = new L.DivIcon.SVGIcon({
                     color: "#000",
@@ -199,7 +207,7 @@
                     content += '<div class="card mb-3" id="event_card_' + event_date.id + '">' +
                                         img_tag +
                                         '<div class="card-body" style="padding:0.5rem">' +
-                                            '<div class="small text-uppercase" style="font-weight: 600;">' + start.format("dd. DD.MM.YYYY LT") + '</div>' +
+                                            '<div class="small text-uppercase" style="font-weight: 600;">' + format_event_date_instance(start, event_date.allday) + '</div>' +
                                             '<h2 class="card-title m-0"><a href="eventdate/' + event_date.id + '" class="stretched-link text-body">' + event.name + '</a> <span class="small" style="vertical-align: middle;">' + render_event_warning_pills(event) + '</span></h2>' +
                                             '<div class="text-muted" style="font-weight: 500;">' + map_link_start + event.place.name + map_link_end + '</div>' +
                                         '</div>' +

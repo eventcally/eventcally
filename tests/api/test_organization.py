@@ -112,10 +112,15 @@ def prepare_events_post_data(seeder, utils):
     return url, data, admin_unit_id, place_id, organizer_id
 
 
-def test_events_post(client, seeder, utils, app):
+@pytest.mark.parametrize("allday", [True, False])
+def test_events_post(client, seeder, utils, app, allday):
     url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
         seeder, utils
     )
+
+    if allday:
+        data["allday"] = "1"
+
     response = utils.post_json(url, data)
     utils.assert_response_created(response)
     assert "id" in response.json
@@ -134,6 +139,7 @@ def test_events_post(client, seeder, utils, app):
         assert event.photo is not None
         assert event.photo.encoding_format == "image/png"
         assert event.public_status == PublicStatus.published
+        assert event.allday == allday
 
 
 def test_events_post_photo_no_data(client, seeder, utils, app):

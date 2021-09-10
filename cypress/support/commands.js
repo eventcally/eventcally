@@ -216,6 +216,8 @@ Cypress.Commands.add(
       cy.get("#recc-event-container").should("be.visible");
       cy.get('[name="riedit"]').click();
     } else {
+      cy.checkEventAllday();
+
       cy.get("#start-user").click();
       cy.get("#ui-datepicker-div").should("be.visible");
       cy.get("#ui-datepicker-div a.ui-state-default:first").click(); // select first date
@@ -258,6 +260,43 @@ Cypress.Commands.add(
       cy.get("#recc-event-container").should("not.be.visible");
       cy.get("#end-container").should("not.be.visible");
     }
+  }
+);
+
+Cypress.Commands.add(
+  "checkEventAllday",
+  () => {
+    // Turn on
+    cy.get('#allday').click();
+    cy.get("#end-container").should("be.visible");
+    cy.get('#start-time').should("not.be.visible");
+    cy.get('#end-time').should("not.be.visible");
+
+    // Recurrence
+    cy.get("#recc-button").click();
+    cy.get(".modal-recurrence").should("be.visible");
+    cy.get('#recc-allday').should("be.checked");
+    cy.get('#recc-start-time').should("not.be.visible");
+    cy.get('#recc-fo-end-time').should("not.be.visible");
+
+    cy.get('#recc-allday').click();
+    cy.get('#recc-start-time').should("be.visible");
+    cy.get('#recc-fo-end-time').should("be.visible");
+    cy.get(".modal-recurrence .modal-footer .btn-secondary").click();
+
+    // Turn off
+    cy.get("#allday").click();
+    cy.get('#start-time').should("be.visible");
+    cy.get('#end-time').should("be.visible");
+
+    // Turn again
+    cy.get('#allday').click();
+    cy.get("#end-container").should("be.visible");
+
+    // Removing end turns off allday
+    cy.get("#end-hide-container .hide-link").click();
+    cy.get('#allday').should("not.be.checked");
+    cy.get('#start-time').should("be.visible");
   }
 );
 

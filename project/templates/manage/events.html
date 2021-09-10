@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% set active_id = "events" %}
-{% from "_macros.html" import render_manage_form_styles, render_manage_form_scripts, render_event_dates_filter_form, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
+{% from "_macros.html" import render_event_date_in_list, render_manage_form_styles, render_manage_form_scripts, render_event_dates_filter_form, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
 
 {%- block title -%}
 {{ _('Events') }}
@@ -29,7 +29,7 @@
 <ul class="list-group">
 {% for event in events %}
     <li class="list-group-item">
-        {{ render_event_date(event) }}
+        {{ render_event_date_in_list(event) }}
         <div class="dropdown d-inline-block">
             <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ event.name }}</button>
             <div class="dropdown-menu">

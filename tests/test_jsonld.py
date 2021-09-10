@@ -136,6 +136,36 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         assert result["image"] == utils.get_image_url(photo)
 
 
+def test_get_sd_for_event_date_allday(client, app, db, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        import json
+
+        from project.dateutils import create_berlin_date
+        from project.jsonld import DateTimeEncoder, get_sd_for_event_date
+        from project.models import Event
+        from project.services.event import update_event
+
+        event = Event.query.get(event_id)
+        event.start = create_berlin_date(2030, 12, 31, 14, 30)
+        event.end = create_berlin_date(2030, 12, 31, 16, 30)
+        event.allday = True
+
+        update_event(event)
+        db.session.commit()
+        event_date = event.dates[0]
+
+        with app.test_request_context():
+            structured_data = json.dumps(
+                get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder
+            )
+
+        assert '"startDate": "2030-12-31"' in structured_data
+        assert '"endDate": "2030-12-31"' in structured_data
+
+
 @pytest.mark.parametrize(
     "age_from, age_to, typicalAgeRange",
     [(18, None, "18-"), (None, 14, "-14"), (9, 99, "9-99")],

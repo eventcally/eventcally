@@ -619,6 +619,18 @@ class EventReference(db.Model, TrackableMixin):
     rating = Column(Integer(), default=50)
 
 
+def sanitize_allday_instance(instance):
+    if instance.allday:
+        from project.dateutils import date_set_begin_of_day, date_set_end_of_day
+
+        instance.start = date_set_begin_of_day(instance.start)
+
+        if instance.end:
+            instance.end = date_set_end_of_day(instance.end)
+        else:
+            instance.end = date_set_end_of_day(instance.start)
+
+
 class EventReferenceRequest(db.Model, TrackableMixin):
     __tablename__ = "eventreferencerequest"
     __table_args__ = (
@@ -643,6 +655,12 @@ class EventMixin(object):
     name = Column(Unicode(255), nullable=False)
     start = db.Column(db.DateTime(timezone=True), nullable=False)
     end = db.Column(db.DateTime(timezone=True), nullable=True)
+    allday = db.Column(
+        Boolean(),
+        nullable=False,
+        default=False,
+        server_default="0",
+    )
     recurrence_rule = Column(UnicodeText())
     external_link = Column(String(255))
     description = Column(UnicodeText(), nullable=True)
@@ -669,6 +687,12 @@ class EventMixin(object):
         return relationship(
             "Image", uselist=False, single_parent=True, cascade="all, delete-orphan"
         )
+
+    def purge_event_mixin(self):
+        if self.photo and self.photo.is_empty():
+            self.photo_id = None
+
+        sanitize_allday_instance(self)
 
 
 class EventSuggestion(db.Model, TrackableMixin, EventMixin):
@@ -724,8 +748,7 @@ def purge_event_suggestion(mapper, connect, self):
         self.organizer_text = None
     if self.event_place_id is not None:
         self.event_place_text = None
-    if self.photo and self.photo.is_empty():
-        self.photo_id = None
+    self.purge_event_mixin()
 
 
 class Event(db.Model, TrackableMixin, EventMixin):
@@ -794,8 +817,7 @@ class Event(db.Model, TrackableMixin, EventMixin):
 @listens_for(Event, "before_insert")
 @listens_for(Event, "before_update")
 def purge_event(mapper, connect, self):
-    if self.photo and self.photo.is_empty():
-        self.photo_id = None
+    self.purge_event_mixin()
 
 
 class EventDate(db.Model):
@@ -804,6 +826,18 @@ class EventDate(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
     start = db.Column(db.DateTime(timezone=True), nullable=False, index=True)
     end = db.Column(db.DateTime(timezone=True), nullable=True, index=True)
+    allday = db.Column(
+        Boolean(),
+        nullable=False,
+        default=False,
+        server_default="0",
+    )
+
+
+@listens_for(EventDate, "before_insert")
+@listens_for(EventDate, "before_update")
+def purge_event_date(mapper, connect, self):
+    sanitize_allday_instance(self)
 
 
 class EventEventCategories(db.Model):
