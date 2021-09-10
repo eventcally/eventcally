@@ -92,6 +92,10 @@ def get_sd_for_place(place, use_ref=True):
     return result
 
 
+def get_date_from_datetime(value: datetime.datetime) -> datetime.date:
+    return value.astimezone(berlin_tz).date()
+
+
 def get_sd_for_event_date(event_date):
     event = event_date.event
 
@@ -110,10 +114,10 @@ def get_sd_for_event_date(event_date):
         result["previousStartDate"] = event.previous_start_date
 
     if event.allday:
-        result["startDate"] = result["startDate"].date()
+        result["startDate"] = get_date_from_datetime(result["startDate"])
 
         if event_date.end:
-            result["endDate"] = result["endDate"].date()
+            result["endDate"] = get_date_from_datetime(result["endDate"])
 
     url_list = list()
     url_list.append(url_for("event_date", id=event_date.id))
