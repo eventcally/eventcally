@@ -2,6 +2,7 @@ import json
 
 import click
 from flask.cli import AppGroup
+from flask_migrate import stamp
 from flask_security.confirmable import confirm_user
 from sqlalchemy import MetaData
 
@@ -97,6 +98,7 @@ def drop_all():
 
 @test_cli.command("create-all")
 def create_all():
+    stamp()
     db.create_all()
     click.echo("Create all done.")
 

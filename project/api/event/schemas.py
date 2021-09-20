@@ -16,7 +16,11 @@ from project.api.image.schemas import (
     ImageSchema,
 )
 from project.api.organization.schemas import OrganizationRefSchema
-from project.api.organizer.schemas import OrganizerRefSchema, OrganizerWriteIdSchema
+from project.api.organizer.schemas import (
+    OrganizerDumpIdSchema,
+    OrganizerRefSchema,
+    OrganizerWriteIdSchema,
+)
 from project.api.place.schemas import (
     PlaceRefSchema,
     PlaceSearchItemSchema,
@@ -167,6 +171,7 @@ class EventSchema(EventIdSchema, EventBaseSchemaMixin):
     place = fields.Nested(PlaceRefSchema, attribute="event_place")
     photo = fields.Nested(ImageSchema)
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
+    co_organizers = fields.List(fields.Nested(OrganizerRefSchema))
 
 
 class EventDumpSchema(EventIdSchema, EventBaseSchemaMixin):
@@ -176,6 +181,9 @@ class EventDumpSchema(EventIdSchema, EventBaseSchemaMixin):
     photo = fields.Nested(ImageDumpSchema)
     category_ids = fields.Pluck(
         EventCategoryIdSchema, "id", many=True, attribute="categories"
+    )
+    co_organizer_ids = fields.Pluck(
+        OrganizerDumpIdSchema, "id", many=True, attribute="co_organizers"
     )
 
 
@@ -261,6 +269,10 @@ class EventWriteSchemaMixin(object):
         OrganizerWriteIdSchema,
         required=True,
         metadata={"description": "Who is organizing the event."},
+    )
+    co_organizers = fields.List(
+        fields.Nested(OrganizerWriteIdSchema),
+        metadata={"description": "Optional co-organizers."},
     )
     place = fields.Nested(
         PlaceWriteIdSchema,

@@ -240,6 +240,25 @@ class BaseEventForm(SharedEventForm):
             "Choose how relevant the event is to your organization. The value is not visible and is used for sorting."
         ),
     )
+    co_organizer_ids = SelectMultipleField(
+        lazy_gettext("Co-organizers"),
+        validators=[Optional()],
+        coerce=int,
+        description=lazy_gettext(
+            "Select optional co-organizers. You can add and modify organizers at Organization > Organizers."
+        ),
+    )
+
+    def validate(self):
+        result = super().validate()
+
+        if self.co_organizer_ids.data and self.organizer_id.data:
+            if self.organizer_id.data in self.co_organizer_ids.data:
+                msg = gettext("Invalid co-organizer.")
+                self.co_organizer_ids.errors.append(msg)
+                result = False
+
+        return result
 
 
 class CreateEventForm(BaseEventForm):
@@ -301,7 +320,7 @@ class CreateEventForm(BaseEventForm):
         )
 
     def validate(self):
-        if not super(BaseEventForm, self).validate():
+        if not super().validate():
             return False
         if (
             not self.event_place_id.data or self.event_place_id.data == 0
@@ -326,7 +345,7 @@ class UpdateEventForm(BaseEventForm):
         validators=[DataRequired()],
         coerce=int,
         description=lazy_gettext(
-            "Choose where the event takes place. You can add and modify places at Manage > Places."
+            "Choose where the event takes place. You can add and modify places at Organization > Places."
         ),
     )
     organizer_id = SelectField(
@@ -334,7 +353,7 @@ class UpdateEventForm(BaseEventForm):
         validators=[DataRequired()],
         coerce=int,
         description=lazy_gettext(
-            "Select the organizer. You can add and modify organizers at Manage > Organizers."
+            "Select the organizer. You can add and modify organizers at Organization > Organizers."
         ),
     )
 

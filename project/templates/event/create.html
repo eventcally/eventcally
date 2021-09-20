@@ -218,6 +218,28 @@ $( function() {
 
   update_organizer_container($('input[type=radio][name=organizer_choice]:checked').val());
 
+  $('#co_organizer_ids').select2({
+      width: '100%',
+      ajax: {
+        url: "{{ url_for('api_v1_organization_organizer_list', id=admin_unit.id) }}",
+        dataType: 'json',
+        delay: 250,
+        cache: true,
+        data: function (params) {
+          return {
+            name: params.term,
+            per_page: 5
+          };
+        },
+        processResults: function (data) {
+          return {
+            results: data.items.map(p => ({"id": p.id, "text": p.name}))
+          };
+        }
+      },
+      placeholder: "{{ _('Enter organizer') }}"
+    });
+
   {{ render_end_container_handling() }}
 
 });
@@ -283,6 +305,8 @@ $( function() {
           <a href="#" id="new_organizer_container_search_link"><i class="fa fa-search"></i> {{ _('Switch to organizer search') }}</a>
         </div>
       </div>
+
+      {{ render_field_with_errors(form.co_organizer_ids, class="w-100") }}
     </div>
   </div>
 

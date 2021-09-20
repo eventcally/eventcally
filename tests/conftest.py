@@ -33,12 +33,15 @@ def app():
 
 @pytest.fixture
 def db(app):
+    from flask_migrate import stamp
+
     from project import db
     from project.init_data import create_initial_data
 
     with app.app_context():
         db.drop_all()
         db.create_all()
+        stamp()
         create_initial_data()
 
     return db

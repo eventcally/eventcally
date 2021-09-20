@@ -491,25 +491,19 @@
   </div>
 
   {% if event.organizer %}
-
   <div class="card mb-3">
     <div class="card-header">
       {{ _('Organizer') }}
     </div>
     <div class="card-body">
-          <h5 class="card-title">{{ render_string_prop(event.organizer.name) }}</h5>
-
-          {% if event.organizer.logo_id %}
-            <div class="my-4">{{ render_logo(event.organizer.logo) }}</div>
-          {% endif %}
-
-          {{ render_link_prop(event.organizer.url) }}
-          {{ render_email_prop(event.organizer.email) }}
-          {{ render_phone_prop(event.organizer.phone) }}
-          {{ render_fax_prop(event.organizer.fax) }}
+        {{ render_event_props_organizer(event.organizer) }}
+        {% for co_organizer in event.co_organizers %}
+          <div{% if loop.index > 0 %} class="mt-4"{% endif %}>
+            {{ render_event_props_organizer(co_organizer) }}
+          </div>
+        {% endfor %}
     </div>
   </div>
-
   {% endif %}
 
   {% if show_admin_unit %}
@@ -537,6 +531,19 @@
   </div>
   {% endif %}
 
+{% endmacro %}
+
+{% macro render_event_props_organizer(organizer) %}
+<h5 class="card-title">{{ render_string_prop(organizer.name) }}</h5>
+
+{% if organizer.logo_id %}
+  <div class="my-4">{{ render_logo(organizer.logo) }}</div>
+{% endif %}
+
+{{ render_link_prop(organizer.url) }}
+{{ render_email_prop(organizer.email) }}
+{{ render_phone_prop(organizer.phone) }}
+{{ render_fax_prop(organizer.fax) }}
 {% endmacro %}
 
 {% macro render_event_props_seo(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None) %}
@@ -648,22 +655,12 @@
     <div class="card-body">
       <h2 class="mt-0">{{ _('Organizer') }}</h2>
 
-      <div class="row">
-        {% if event.organizer.logo_id %}
-        <div class="col-12 col-sm-auto order-sm-last">{{ render_logo(event.organizer.logo) }}</div>
-        {% endif %}
-
-        <div class="col-12 col-sm">
-          <div class="font-weight-bold">
-            {{ render_string_prop(event.organizer.name) }}
-          </div>
-
-          {{ render_link_prop(event.organizer.url) }}
-          {{ render_email_prop(event.organizer.email) }}
-          {{ render_phone_prop(event.organizer.phone) }}
-          {{ render_fax_prop(event.organizer.fax) }}
+      {{ render_event_props_seo_organizer(event.organizer) }}
+      {% for co_organizer in event.co_organizers %}
+        <div{% if loop.index > 0 %} class="mt-4"{% endif %}>
+          {{ render_event_props_seo_organizer(co_organizer) }}
         </div>
-      </div>
+      {% endfor %}
     </div>
   </div>
 
@@ -708,6 +705,25 @@
     </div>
   </div>
 
+{% endmacro %}
+
+{% macro render_event_props_seo_organizer(organizer) %}
+<div class="row">
+  {% if organizer.logo_id %}
+  <div class="col-12 col-sm-auto order-sm-last">{{ render_logo(organizer.logo) }}</div>
+  {% endif %}
+
+  <div class="col-12 col-sm">
+    <div class="font-weight-bold">
+      {{ render_string_prop(organizer.name) }}
+    </div>
+
+    {{ render_link_prop(organizer.url) }}
+    {{ render_email_prop(organizer.email) }}
+    {{ render_phone_prop(organizer.phone) }}
+    {{ render_fax_prop(organizer.fax) }}
+  </div>
+</div>
 {% endmacro %}
 
 {% macro render_google_place_autocomplete_header() %}

@@ -41,6 +41,19 @@ def test_read_myDraft(client, app, db, seeder, utils):
     assert response.json["public_status"] == "draft"
 
 
+def test_read_co_organizers(client, app, db, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
+        admin_unit_id
+    )
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+    assert response.json["co_organizers"][0]["id"] == organizer_a_id
+    assert response.json["co_organizers"][1]["id"] == organizer_b_id
+
+
 def test_list(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
@@ -247,6 +260,53 @@ def test_put_organizerFromAnotherAdminUnit(client, seeder, utils, app):
 
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.put_json(url, create_put(place_id, organizer_id))
+    utils.assert_response_bad_request(response)
+    utils.assert_response_api_error(response, "Check Violation")
+
+
+def test_put_co_organizers(client, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+    organizer_a_id = seeder.upsert_event_organizer(admin_unit_id, "Organizer A")
+    organizer_b_id = seeder.upsert_event_organizer(admin_unit_id, "Organizer B")
+
+    put = create_put(place_id, organizer_id)
+    put["co_organizers"] = [
+        {"id": organizer_a_id},
+        {"id": organizer_b_id},
+    ]
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.put_json(url, put)
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import Event
+
+        event = Event.query.get(event_id)
+        assert len(event.co_organizers) == 2
+        assert event.co_organizers[0].id == organizer_a_id
+        assert event.co_organizers[1].id == organizer_b_id
+
+
+def test_put_co_organizerFromAnotherAdminUnit(client, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    other_admin_unit_id = seeder.create_admin_unit(user_id, "Other Crew")
+    organizer_a_id = seeder.upsert_event_organizer(other_admin_unit_id, "Organizer A")
+
+    put = create_put(place_id, organizer_id)
+    put["co_organizers"] = [
+        {"id": organizer_a_id},
+    ]
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.put_json(url, put)
     utils.assert_response_bad_request(response)
     utils.assert_response_api_error(response, "Check Violation")
 

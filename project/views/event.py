@@ -300,9 +300,16 @@ def prepare_organizer(form):
         if organizer:
             form.organizer_id.choices = [(organizer.id, organizer.name)]
 
+    if form.co_organizer_ids.data and len(form.co_organizer_ids.data) > 0:
+        co_organizers = EventOrganizer.query.filter(
+            EventOrganizer.id.in_(form.co_organizer_ids.data)
+        ).all()
+        form.co_organizer_ids.choices = [(o.id, o.name) for o in co_organizers]
+
 
 def prepare_event_form(form):
     form.category_ids.choices = get_event_category_choices()
+    form.co_organizer_ids.choices = list()
 
     prepare_organizer(form)
     prepare_event_place(form)

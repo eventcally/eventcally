@@ -48,7 +48,10 @@ def test_event_search(client, seeder, utils):
     response = utils.get_json(url)
     utils.assert_response_ok(response)
     assert len(response.json["items"]) == 2
-    assert response.json["items"][1]["public_status"] == "draft"
+    assert (
+        response.json["items"][0]["public_status"] == "draft"
+        or response.json["items"][1]["public_status"] == "draft"
+    )
 
 
 def test_organizers(client, seeder, utils):
@@ -140,6 +143,30 @@ def test_events_post(client, seeder, utils, app, allday):
         assert event.photo.encoding_format == "image/png"
         assert event.public_status == PublicStatus.published
         assert event.allday == allday
+
+
+def test_events_post_co_organizers(client, seeder, utils, app):
+    url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
+        seeder, utils
+    )
+    organizer_a_id = seeder.upsert_event_organizer(admin_unit_id, "Organizer A")
+    organizer_b_id = seeder.upsert_event_organizer(admin_unit_id, "Organizer B")
+
+    data["co_organizers"] = [
+        {"id": organizer_a_id},
+        {"id": organizer_b_id},
+    ]
+    response = utils.post_json(url, data)
+    utils.assert_response_created(response)
+    event_id = int(response.json["id"])
+
+    with app.app_context():
+        from project.models import Event
+
+        event = Event.query.get(event_id)
+        assert len(event.co_organizers) == 2
+        assert event.co_organizers[0].id == organizer_a_id
+        assert event.co_organizers[1].id == organizer_b_id
 
 
 def test_events_post_photo_no_data(client, seeder, utils, app):
