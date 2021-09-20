@@ -48,7 +48,7 @@ def handleSqlError(e: SQLAlchemyError) -> str:
         return str(e)
 
     prefix = None
-    message = str(e.orig)
+    message = gettext(e.orig.message) if hasattr(e.orig, "message") else str(e.orig)
 
     if e.orig.pgcode == UNIQUE_VIOLATION:
         prefix = gettext(
