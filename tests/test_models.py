@@ -158,3 +158,28 @@ def test_admin_unit_deletion(client, app, db, seeder):
 
         assert AdminUnit.query.get(other_admin_unit_id) is not None
         assert Event.query.get(other_event_id) is not None
+
+
+def test_event_co_organizers_deletion(client, app, db, seeder):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
+        admin_unit_id
+    )
+
+    with app.app_context():
+        from project.models import Event, EventOrganizer
+
+        event = Event.query.get(event_id)
+        assert len(event.co_organizers) == 2
+        assert event.co_organizers[0].id == organizer_a_id
+        assert event.co_organizers[1].id == organizer_b_id
+
+        organizer_a = EventOrganizer.query.get(organizer_a_id)
+        db.session.delete(organizer_a)
+        db.session.commit()
+        assert len(event.co_organizers) == 1
+        assert event.co_organizers[0].id == organizer_b_id
+
+        db.session.delete(event)
+        db.session.commit()
+        assert EventOrganizer.query.get(organizer_b_id).id is not None

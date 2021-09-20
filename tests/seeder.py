@@ -199,8 +199,14 @@ class Seeder(object):
         name="Name",
         start=None,
         allday=False,
+        co_organizer_ids=None,
     ):
-        from project.models import Event, EventAttendanceMode, PublicStatus
+        from project.models import (
+            Event,
+            EventAttendanceMode,
+            EventOrganizer,
+            PublicStatus,
+        )
         from project.services.event import insert_event, upsert_event_category
 
         with self._app.app_context():
@@ -224,10 +230,24 @@ class Seeder(object):
             if draft:
                 event.public_status = PublicStatus.draft
 
+            if co_organizer_ids:
+                co_organizers = EventOrganizer.query.filter(
+                    EventOrganizer.id.in_(co_organizer_ids)
+                ).all()
+                event.co_organizers = co_organizers
+
             insert_event(event)
             self._db.session.commit()
             event_id = event.id
         return event_id
+
+    def create_event_with_co_organizers(self, admin_unit_id):
+        organizer_a_id = self.upsert_event_organizer(admin_unit_id, "Organizer A")
+        organizer_b_id = self.upsert_event_organizer(admin_unit_id, "Organizer B")
+        event_id = self.create_event(
+            admin_unit_id, co_organizer_ids=[organizer_a_id, organizer_b_id]
+        )
+        return (event_id, organizer_a_id, organizer_b_id)
 
     def create_event_via_form(self, admin_unit_id: int) -> str:
         place_id = self.upsert_default_event_place(admin_unit_id)

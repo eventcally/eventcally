@@ -31,6 +31,10 @@ class OrganizerIdSchema(OrganizerModelSchema, IdSchemaMixin):
     pass
 
 
+class OrganizerDumpIdSchema(OrganizerModelSchema, IdSchemaMixin):
+    pass
+
+
 class OrganizerWriteIdSchema(OrganizerModelSchema, WriteIdSchemaMixin):
     pass
 
