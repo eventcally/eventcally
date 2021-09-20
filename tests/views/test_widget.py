@@ -90,6 +90,20 @@ def test_event_date(client, seeder, utils, app, db):
     utils.assert_response_unauthorized(response)
 
 
+def test_event_date_co_organizers(client, seeder, utils, app, db):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
+        admin_unit_id
+    )
+    au_short_name = "meinecrew"
+
+    url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=event_id)
+    response = utils.get(url)
+    response = utils.get_ok(url)
+    utils.assert_response_contains(response, "Organizer A")
+    utils.assert_response_contains(response, "Organizer B")
+
+
 def get_create_data():
     return {
         "accept_tos": "y",

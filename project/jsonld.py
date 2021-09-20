@@ -133,8 +133,13 @@ def get_sd_for_event_date(event_date):
     result["location"] = get_sd_for_place(event.event_place)
 
     organizer_list = list()
+
     if event.organizer:
         organizer_list.append(get_sd_for_organizer(event.organizer))
+
+    for co_organizer in event.co_organizers:
+        organizer_list.append(get_sd_for_organizer(co_organizer))
+
     if event.admin_unit:
         organizer_list.append(get_sd_for_admin_unit(event.admin_unit))
     result["organizer"] = organizer_list

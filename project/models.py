@@ -331,6 +331,12 @@ class AdminUnitRelation(db.Model, TrackableMixin):
             raise make_check_violation("There must be no self-reference.")
 
 
+@listens_for(AdminUnitRelation, "before_insert")
+@listens_for(AdminUnitRelation, "before_update")
+def before_saving_admin_unit_relation(mapper, connect, self):
+    self.validate()
+
+
 class AdminUnit(db.Model, TrackableMixin):
     __tablename__ = "adminunit"
     id = Column(Integer(), primary_key=True)
@@ -765,6 +771,11 @@ class Event(db.Model, TrackableMixin, EventMixin):
     event_place = db.relationship("EventPlace", uselist=False)
 
     categories = relationship("EventCategory", secondary="event_eventcategories")
+    co_organizers = relationship(
+        "EventOrganizer",
+        secondary="event_coorganizers",
+        backref=backref("co_organized_events", lazy=True),
+    )
 
     public_status = Column(
         IntegerEnum(PublicStatus),
@@ -798,12 +809,30 @@ class Event(db.Model, TrackableMixin, EventMixin):
         else:
             return None
 
+    @property
+    def co_organizer_ids(self):
+        return [c.id for c in self.co_organizers]
+
+    @co_organizer_ids.setter
+    def co_organizer_ids(self, value):
+        self.co_organizers = EventOrganizer.query.filter(
+            EventOrganizer.id.in_(value)
+        ).all()
+
     def validate(self):
         if self.organizer and self.organizer.admin_unit_id != self.admin_unit_id:
-            raise make_check_violation("Invalid organizer")
+            raise make_check_violation("Invalid organizer.")
+
+        if self.co_organizers:
+            for co_organizer in self.co_organizers:
+                if (
+                    co_organizer.admin_unit_id != self.admin_unit_id
+                    or co_organizer.id == self.organizer_id
+                ):
+                    raise make_check_violation("Invalid co-organizer.")
 
         if self.event_place and self.event_place.admin_unit_id != self.admin_unit_id:
-            raise make_check_violation("Invalid place")
+            raise make_check_violation("Invalid place.")
 
         if self.start and self.end:
             if self.start > self.end:
@@ -816,7 +845,8 @@ class Event(db.Model, TrackableMixin, EventMixin):
 
 @listens_for(Event, "before_insert")
 @listens_for(Event, "before_update")
-def purge_event(mapper, connect, self):
+def before_saving_event(mapper, connect, self):
+    self.validate()
     self.purge_event_mixin()
 
 
@@ -842,6 +872,7 @@ def purge_event_date(mapper, connect, self):
 
 class EventEventCategories(db.Model):
     __tablename__ = "event_eventcategories"
+    __table_args__ = (UniqueConstraint("event_id", "category_id"),)
     id = Column(Integer(), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
     category_id = db.Column(
@@ -851,12 +882,23 @@ class EventEventCategories(db.Model):
 
 class EventSuggestionEventCategories(db.Model):
     __tablename__ = "eventsuggestion_eventcategories"
+    __table_args__ = (UniqueConstraint("event_suggestion_id", "category_id"),)
     id = Column(Integer(), primary_key=True)
     event_suggestion_id = db.Column(
         db.Integer, db.ForeignKey("eventsuggestion.id"), nullable=False
     )
     category_id = db.Column(
         db.Integer, db.ForeignKey("eventcategory.id"), nullable=False
+    )
+
+
+class EventCoOrganizers(db.Model):
+    __tablename__ = "event_coorganizers"
+    __table_args__ = (UniqueConstraint("event_id", "organizer_id"),)
+    id = Column(Integer(), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
+    organizer_id = db.Column(
+        db.Integer, db.ForeignKey("eventorganizer.id"), nullable=False
     )
 
 
