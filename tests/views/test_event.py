@@ -20,11 +20,18 @@ def test_read(client, seeder, utils, external_link):
     utils.login()
     utils.get_ok(url)
 
+    _, _, event_id = seeder.create_event_unverified()
+    url = utils.get_url("event", event_id=event_id)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
 
 def test_read_containsActionLink(seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     other_user_id = seeder.create_user("other@test.de")
-    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    other_admin_unit_id = seeder.create_admin_unit(
+        other_user_id, "Other Crew", verified=True
+    )
     event_id = seeder.create_event(other_admin_unit_id)
 
     url = utils.get_url("event", event_id=event_id)
@@ -430,6 +437,11 @@ def test_actions(seeder, utils):
     utils.login()
     utils.get_ok(url)
 
+    _, _, event_id = seeder.create_event_unverified()
+    url = utils.get_url("event_actions", event_id=event_id)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
 
 def test_actions_withReferenceRequestLink(seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
@@ -447,10 +459,25 @@ def test_actions_withReferenceRequestLink(seeder, utils):
     assert b"Veranstaltung empfehlen" not in response.data
 
 
+def test_actions_unverifiedWithoutReferenceRequestLink(seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
+    event_id = seeder.create_event(admin_unit_id)
+    other_user_id = seeder.create_user("other@test.de")
+    seeder.create_admin_unit(other_user_id, "Other Crew")
+
+    url = utils.get_url("event_actions", event_id=event_id)
+    response = utils.get_ok(url)
+
+    # 'Empfehlung anfragen' nicht erlaubt
+    assert b"Empfehlung anfragen" not in response.data
+
+
 def test_actions_withReferenceLink(seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     other_user_id = seeder.create_user("other@test.de")
-    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    other_admin_unit_id = seeder.create_admin_unit(
+        other_user_id, "Other Crew", verified=True
+    )
     event_id = seeder.create_event(other_admin_unit_id)
 
     url = utils.get_url("event_actions", event_id=event_id)

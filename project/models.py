@@ -24,11 +24,13 @@ from sqlalchemy import (
     UnicodeText,
     UniqueConstraint,
     and_,
+    func,
+    select,
 )
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import backref, deferred, object_session, relationship
+from sqlalchemy.orm import aliased, backref, deferred, object_session, relationship
 from sqlalchemy.orm.relationships import remote
 from sqlalchemy.schema import CheckConstraint
 from sqlalchemy_utils import ColorType
@@ -315,6 +317,14 @@ class AdminUnitRelation(db.Model, TrackableMixin):
             server_default="0",
         )
     )
+    verify = deferred(
+        Column(
+            Boolean(),
+            nullable=False,
+            default=False,
+            server_default="0",
+        )
+    )
 
     def validate(self):
         source_id = (
@@ -413,6 +423,14 @@ class AdminUnit(db.Model, TrackableMixin):
             server_default="0",
         )
     )
+    can_verify_other = deferred(
+        Column(
+            Boolean(),
+            nullable=False,
+            default=False,
+            server_default="0",
+        )
+    )
     outgoing_relations = relationship(
         "AdminUnitRelation",
         primaryjoin=remote(AdminUnitRelation.source_admin_unit_id) == id,
@@ -435,12 +453,47 @@ class AdminUnit(db.Model, TrackableMixin):
         ),
     )
 
+    @hybrid_property
+    def is_verified(self):
+        if not self.incoming_relations:
+            return False
+
+        return any(
+            r.verify and r.source_admin_unit.can_verify_other
+            for r in self.incoming_relations
+        )
+
+    @is_verified.expression
+    def is_verified(cls):
+        SourceAdminUnit = aliased(AdminUnit)
+
+        j = AdminUnitRelation.__table__.join(
+            SourceAdminUnit,
+            AdminUnitRelation.source_admin_unit_id == SourceAdminUnit.id,
+        )
+        return (
+            select([func.count()])
+            .select_from(j)
+            .where(
+                and_(
+                    AdminUnitRelation.verify,
+                    AdminUnitRelation.target_admin_unit_id == cls.id,
+                    SourceAdminUnit.can_verify_other,
+                )
+            )
+            .as_scalar()
+            > 0
+        )
+
+    def purge(self):
+        if self.logo and self.logo.is_empty():
+            self.logo_id = None
+
 
 @listens_for(AdminUnit, "before_insert")
 @listens_for(AdminUnit, "before_update")
-def purge_admin_unit(mapper, connect, self):
-    if self.logo and self.logo.is_empty():
-        self.logo_id = None
+def before_saving_admin_unit(mapper, connect, self):
+    self.purge()
 
 
 # Universal Types

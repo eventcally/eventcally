@@ -118,6 +118,7 @@ def _create_admin_unit(user_id, name):
     admin_unit.incoming_reference_requests_allowed = True
     admin_unit.suggestions_enabled = True
     admin_unit.can_create_other = True
+    admin_unit.can_verify_other = True
     admin_unit.location = Location()
     admin_unit.location.postalCode = "38640"
     admin_unit.location.city = "Goslar"

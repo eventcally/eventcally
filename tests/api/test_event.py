@@ -41,6 +41,24 @@ def test_read_myDraft(client, app, db, seeder, utils):
     assert response.json["public_status"] == "draft"
 
 
+def test_read_otherUnverified(client, app, db, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False, admin_unit_verified=False)
+    event_id = seeder.create_event(admin_unit_id, draft=True)
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
+
+def test_read_myUnverified(client, app, db, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access(admin_unit_verified=False)
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+
+
 def test_read_co_organizers(client, app, db, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
@@ -58,6 +76,7 @@ def test_list(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
+    seeder.create_event_unverified()
 
     url = utils.get_url("api_v1_event_list")
     response = utils.get_ok(url)
@@ -71,6 +90,7 @@ def test_search(client, seeder, utils):
     image_id = seeder.upsert_default_image()
     seeder.assign_image_to_event(event_id, image_id)
     seeder.create_event(admin_unit_id, draft=True)
+    seeder.create_event_unverified()
 
     url = utils.get_url("api_v1_event_search")
     response = utils.get_ok(url)
@@ -89,10 +109,24 @@ def test_dates(client, seeder, utils):
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
+    _, _, event_id = seeder.create_event_unverified()
+    url = utils.get_url("api_v1_event_dates", id=event_id)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
 
 def test_dates_myDraft(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id, draft=True)
+
+    url = utils.get_url("api_v1_event_dates", id=event_id)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+
+
+def test_dates_myUnverified(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access(admin_unit_verified=False)
+    event_id = seeder.create_event(admin_unit_id)
 
     url = utils.get_url("api_v1_event_dates", id=event_id)
     response = utils.get_json(url)
