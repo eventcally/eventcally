@@ -4,6 +4,7 @@ import shutil
 
 import click
 from flask.cli import AppGroup
+from sqlalchemy import and_
 from sqlalchemy.orm import joinedload
 
 from project import app, dump_path
@@ -45,8 +46,14 @@ def dump_all():
 
     # Events
     events = (
-        Event.query.options(joinedload(Event.categories))
-        .filter(Event.public_status == PublicStatus.published)
+        Event.query.join(Event.admin_unit)
+        .options(joinedload(Event.categories))
+        .filter(
+            and_(
+                Event.public_status == PublicStatus.published,
+                AdminUnit.is_verified,
+            )
+        )
         .all()
     )
     dump_items(events, EventDumpSchema(many=True), "events", tmp_path)

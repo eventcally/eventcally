@@ -120,6 +120,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
         admin_unit.incoming_reference_requests_allowed = False
         admin_unit.suggestions_enabled = False
         admin_unit.can_create_other = False
+        admin_unit.can_verify_other = False
         db.session.commit()
 
     url = utils.get_url("admin_admin_unit_update", id=admin_unit_id)
@@ -135,6 +136,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
             "incoming_reference_requests_allowed": "y",
             "suggestions_enabled": "y",
             "can_create_other": "y",
+            "can_verify_other": "y",
         },
     )
 
@@ -151,3 +153,4 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
         assert admin_unit.incoming_reference_requests_allowed
         assert admin_unit.suggestions_enabled
         assert admin_unit.can_create_other
+        assert admin_unit.can_verify_other

@@ -1,3 +1,6 @@
+from project.models import AdminUnitRelation
+
+
 def test_location_update_coordinate(client, app, db):
     from project.models import Location
 
@@ -183,3 +186,44 @@ def test_event_co_organizers_deletion(client, app, db, seeder):
         db.session.delete(event)
         db.session.commit()
         assert EventOrganizer.query.get(organizer_b_id).id is not None
+
+
+def test_admin_unit_verification(client, app, db, seeder):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False, admin_unit_verified=False)
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+
+    with app.app_context():
+        from project.models import AdminUnit
+
+        new_admin_unit = AdminUnit()
+        assert not new_admin_unit.is_verified
+
+        admin_unit = AdminUnit.query.get(admin_unit_id)
+        admin_unit.can_verify_other = True
+        db.session.commit()
+
+        relation_id = seeder.create_admin_unit_relation(
+            admin_unit_id, other_admin_unit_id
+        )
+
+        all_verified = AdminUnit.query.filter(AdminUnit.is_verified).all()
+        assert len(all_verified) == 0
+
+        relation = AdminUnitRelation.query.get(relation_id)
+        relation.verify = True
+        db.session.commit()
+
+        other_admin_unit = AdminUnit.query.get(other_admin_unit_id)
+        assert other_admin_unit.is_verified
+
+        all_verified = AdminUnit.query.filter(AdminUnit.is_verified).all()
+        assert len(all_verified) == 1
+        assert all_verified[0].id == other_admin_unit_id
+
+        admin_unit = AdminUnit.query.get(admin_unit_id)
+        admin_unit.can_verify_other = False
+        db.session.commit()
+
+        all_verified = AdminUnit.query.filter(AdminUnit.is_verified).all()
+        assert len(all_verified) == 0

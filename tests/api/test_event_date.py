@@ -5,11 +5,25 @@ def test_read(client, seeder, utils):
     utils.get_ok(url)
 
     seeder.create_event(admin_unit_id, draft=True)
-    url = utils.get_url("api_v1_event_date", id=2)
-    response = utils.get(url)
+    draft_url = utils.get_url("api_v1_event_date", id=2)
+    response = utils.get(draft_url)
+    utils.assert_response_unauthorized(response)
+
+    seeder.create_event_unverified()
+    unverified_url = utils.get_url("api_v1_event_date", id=3)
+    response = utils.get(unverified_url)
     utils.assert_response_unauthorized(response)
 
     seeder.authorize_api_access(user_id, admin_unit_id)
+    response = utils.get_json(draft_url)
+    utils.assert_response_ok(response)
+
+
+def test_read_myUnverified(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_api_access(admin_unit_verified=False)
+    seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("api_v1_event_date", id=1)
     response = utils.get_json(url)
     utils.assert_response_ok(response)
 
@@ -18,6 +32,7 @@ def test_list(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
+    seeder.create_event_unverified()
 
     url = utils.get_url("api_v1_event_date_list")
     response = utils.get_ok(url)
@@ -29,6 +44,7 @@ def test_search(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
+    seeder.create_event_unverified()
 
     url = utils.get_url("api_v1_event_date_search", sort="-rating")
     response = utils.get_ok(url)

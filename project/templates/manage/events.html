@@ -15,6 +15,11 @@
 {%- endblock -%}
 
 {% block content %}
+{% if not admin_unit.is_verified %}
+    <div class="alert alert-warning" role="alert">
+      {{ _('The organization is not verified. Events are therefore not publicly visible.') }}
+    </div>
+{% endif %}
 
 <h1>{{ _('Events') }} <button id="toggle-search-btn" type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-search"></i></button></h1>
 

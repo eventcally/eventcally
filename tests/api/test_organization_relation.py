@@ -36,7 +36,7 @@ def test_read_unauthorized(client, seeder, utils):
     utils.assert_response_unauthorized(response)
 
 
-def test_put(client, app, seeder, utils):
+def test_put(client, app, seeder, utils, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     (
         other_user_id,
@@ -44,8 +44,16 @@ def test_put(client, app, seeder, utils):
         relation_id,
     ) = seeder.create_any_admin_unit_relation(admin_unit_id)
 
+    with app.app_context():
+        from project.models import AdminUnit
+
+        admin_unit = AdminUnit.query.get(admin_unit_id)
+        admin_unit.can_verify_other = True
+        db.session.commit()
+
     data = {
         "auto_verify_event_reference_requests": True,
+        "verify": True,
     }
 
     url = utils.get_url(
@@ -63,6 +71,7 @@ def test_put(client, app, seeder, utils):
         assert relation.source_admin_unit_id == admin_unit_id
         assert relation.target_admin_unit_id == other_admin_unit_id
         assert relation.auto_verify_event_reference_requests
+        assert relation.verify
 
 
 def test_patch(client, app, seeder, utils):

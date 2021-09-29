@@ -1,5 +1,6 @@
 from flask import make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
+from sqlalchemy import and_
 from sqlalchemy.orm import lazyload, load_only
 
 from project import db
@@ -43,7 +44,10 @@ from project.views.event import (
 
 
 def api_can_read_event_or_401(event: Event):
-    if event.public_status != PublicStatus.published:
+    if (
+        event.public_status != PublicStatus.published
+        or not event.admin_unit.is_verified
+    ):
         login_api_user()
         can_read_event_or_401(event)
 
@@ -58,9 +62,16 @@ class EventListResource(BaseResource):
     @use_kwargs(EventListRequestSchema, location=("query"))
     @marshal_with(EventListResponseSchema)
     def get(self, **kwargs):
-        pagination = Event.query.filter(
-            Event.public_status == PublicStatus.published
-        ).paginate()
+        pagination = (
+            Event.query.join(Event.admin_unit)
+            .filter(
+                and_(
+                    Event.public_status == PublicStatus.published,
+                    AdminUnit.is_verified,
+                )
+            )
+            .paginate()
+        )
         return pagination
 
 

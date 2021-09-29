@@ -1,5 +1,6 @@
-from marshmallow import fields
+from marshmallow import fields, post_dump
 
+from project.access import has_access, login_api_user
 from project.api import marshmallow
 from project.api.image.schemas import ImageDumpSchema, ImageSchema
 from project.api.location.schemas import LocationDumpSchema, LocationSchema
@@ -41,6 +42,15 @@ class OrganizationBaseSchema(OrganizationIdSchema):
 class OrganizationSchema(OrganizationBaseSchema):
     location = fields.Nested(LocationSchema)
     logo = fields.Nested(ImageSchema)
+    can_verify_other = marshmallow.auto_field()
+
+    @post_dump(pass_original=True)
+    def remove_private_fields(self, data, original_data, **kwargs):
+        login_api_user()
+        if not has_access(original_data, "admin_unit:update"):
+            data.pop("can_verify_other", None)
+
+        return data
 
 
 class OrganizationDumpSchema(OrganizationBaseSchema):
