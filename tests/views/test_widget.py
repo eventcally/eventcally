@@ -9,6 +9,7 @@ def test_event_dates(client, seeder, utils):
 
     url = utils.get_url("widget_event_dates", au_short_name=au_short_name)
     response = utils.get_ok(url)
+    utils.assert_response_contains(response, "widget.css")
 
     event_url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=1)
     utils.assert_response_contains(response, event_url)
@@ -82,7 +83,8 @@ def test_event_date(client, seeder, utils, app, db):
         db.session.commit()
 
     url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=1)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+    utils.assert_response_contains(response, "widget.css")
 
     seeder.create_event(admin_unit_id, draft=True)
     url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=2)
@@ -140,6 +142,7 @@ def test_event_suggestion_create_for_admin_unit(
         "event_suggestion_create_for_admin_unit", au_short_name=au_short_name
     )
     response = utils.get_ok(url)
+    utils.assert_response_contains(response, "widget.css")
 
     data = get_create_data()
     if not free_text:
