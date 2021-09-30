@@ -109,7 +109,25 @@ def seed():
     click.echo("Seed done.")
 
 
-def _create_admin_unit(user_id, name):
+def _verify_admin_unit(admin_unit_id):
+    from project.services.admin_unit import get_admin_unit_by_name
+
+    other_admin_unit = get_admin_unit_by_name("Oveda")
+
+    if other_admin_unit:
+        other_admin_unit_id = other_admin_unit.id
+    else:
+        other_user_id = _create_user("unverified@test.de")
+        other_admin_unit_id = _create_admin_unit(other_user_id, "Oveda")
+
+    _create_admin_unit_relation(
+        other_admin_unit_id,
+        admin_unit_id,
+        verify=True,
+    )
+
+
+def _create_admin_unit(user_id, name, verified=False):
     user = get_user(user_id)
 
     admin_unit = AdminUnit()
@@ -125,6 +143,9 @@ def _create_admin_unit(user_id, name):
     insert_admin_unit_for_user(admin_unit, user)
     db.session.commit()
 
+    if verified:
+        _verify_admin_unit(admin_unit.id)
+
     return admin_unit.id
 
 
@@ -133,7 +154,7 @@ def _create_admin_unit(user_id, name):
 @click.argument("name", default="Meine Crew")
 def create_admin_unit(user_email, name):
     user = find_user_by_email(user_email)
-    admin_unit_id = _create_admin_unit(user.id, name)
+    admin_unit_id = _create_admin_unit(user.id, name, verified=True)
     result = {"admin_unit_id": admin_unit_id}
     click.echo(json.dumps(result))
 
@@ -323,9 +344,11 @@ def _create_admin_unit_relation(
     admin_unit_id,
     target_admin_unit_id,
     auto_verify_event_reference_requests=False,
+    verify=False,
 ):
     relation = upsert_admin_unit_relation(admin_unit_id, target_admin_unit_id)
     relation.auto_verify_event_reference_requests = auto_verify_event_reference_requests
+    relation.verify = verify
     db.session.commit()
     return relation.id
 

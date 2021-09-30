@@ -88,6 +88,7 @@ class Seeder(object):
                 other_admin_unit_id = self.create_admin_unit(
                     other_user_id, "Oveda", can_verify_other=True
                 )
+
             self.create_admin_unit_relation(
                 other_admin_unit_id,
                 admin_unit_id,
