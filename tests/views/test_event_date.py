@@ -17,6 +17,10 @@ def test_read(client, seeder, utils):
     utils.login()
     utils.get_ok(url)
 
+    seeder.create_event_unverified()
+    url = utils.get_url("event_date", id=3)
+    response = utils.get(url)
+
 
 def test_ical(client, seeder, utils):
     from project.dateutils import create_berlin_date
@@ -41,6 +45,12 @@ def test_ical(client, seeder, utils):
 
     utils.login()
     utils.get_ok(url)
+
+    # Unverified
+    _, _, unverified_id = seeder.create_event_unverified()
+    url = utils.get_url("event_date_ical", id=unverified_id)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
 
     # All-day single day
     allday_id = seeder.create_event(
@@ -75,12 +85,4 @@ def test_list(client, seeder, utils):
     utils.get_ok(url)
 
     url = utils.get_url("event_dates", category_id=2000)
-    utils.get_ok(url)
-
-
-def test_search(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
-    seeder.create_event(admin_unit_id)
-
-    url = utils.get_url("event_date_search")
     utils.get_ok(url)

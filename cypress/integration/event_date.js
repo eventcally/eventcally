@@ -3,8 +3,6 @@ describe("Event Date", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEvent(adminUnitId).then(function (eventId) {
-        cy.visit("/eventdatesearch");
-
         cy.visit("/eventdates");
         cy.get("#toggle-search-btn").click();
         cy.screenshot("search-form");

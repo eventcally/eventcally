@@ -6,11 +6,12 @@ import click
 import requests
 from flask import url_for
 from flask.cli import AppGroup, with_appcontext
+from sqlalchemy import and_
 from sqlalchemy.orm import load_only
 
 from project import app, cache_path, robots_txt_path, sitemap_path
 from project.dateutils import get_today
-from project.models import Event, EventDate, PublicStatus
+from project.models import AdminUnit, Event, EventDate, PublicStatus
 from project.utils import make_dir
 
 seo_cli = AppGroup("seo")
@@ -29,9 +30,15 @@ def generate_sitemap(pinggoogle):
 
     today = get_today()
     events = (
-        Event.query.options(load_only(Event.id, Event.updated_at))
+        Event.query.join(Event.admin_unit)
+        .options(load_only(Event.id, Event.updated_at))
         .filter(Event.dates.any(EventDate.start >= today))
-        .filter(Event.public_status == PublicStatus.published)
+        .filter(
+            and_(
+                Event.public_status == PublicStatus.published,
+                AdminUnit.is_verified,
+            )
+        )
         .all()
     )
     click.echo(f"Found {len(events)} events")

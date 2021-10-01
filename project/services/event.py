@@ -107,10 +107,16 @@ def get_event_dates_query(params):
 
         if not params.can_read_private_events:
             event_filter = and_(
-                event_filter, Event.public_status == PublicStatus.published
+                event_filter,
+                Event.public_status == PublicStatus.published,
+                AdminUnit.is_verified,
             )
     else:
-        event_filter = and_(event_filter, Event.public_status == PublicStatus.published)
+        event_filter = and_(
+            event_filter,
+            Event.public_status == PublicStatus.published,
+            AdminUnit.is_verified,
+        )
 
     if params.date_from:
         date_filter = EventDate.start >= params.date_from
@@ -125,6 +131,7 @@ def get_event_dates_query(params):
 
     result = (
         EventDate.query.join(EventDate.event)
+        .join(Event.admin_unit)
         .join(Event.event_place, isouter=True)
         .join(EventPlace.location, isouter=True)
     )
@@ -264,10 +271,16 @@ def get_events_query(params):
 
         if not params.can_read_private_events:
             event_filter = and_(
-                event_filter, Event.public_status == PublicStatus.published
+                event_filter,
+                Event.public_status == PublicStatus.published,
+                AdminUnit.is_verified,
             )
     else:
-        event_filter = and_(event_filter, Event.public_status == PublicStatus.published)
+        event_filter = and_(
+            event_filter,
+            Event.public_status == PublicStatus.published,
+            AdminUnit.is_verified,
+        )
 
     if params.date_from:
         date_filter = EventDate.start >= params.date_from
@@ -277,7 +290,8 @@ def get_events_query(params):
 
     event_filter = and_(event_filter, Event.dates.any(date_filter))
     return (
-        Event.query.join(EventPlace, isouter=True)
+        Event.query.join(Event.admin_unit)
+        .join(EventPlace, isouter=True)
         .join(Location, isouter=True)
         .options(
             contains_eager(Event.event_place).contains_eager(EventPlace.location),
