@@ -1,4 +1,5 @@
 from flask_apispec import doc, marshal_with, use_kwargs
+from sqlalchemy import and_
 from sqlalchemy.orm import defaultload, lazyload
 
 from project.api import add_api_resource
@@ -11,7 +12,7 @@ from project.api.event_date.schemas import (
     EventDateSearchResponseSchema,
 )
 from project.api.resources import BaseResource
-from project.models import Event, EventDate, PublicStatus
+from project.models import AdminUnit, Event, EventDate, PublicStatus
 from project.oauth2 import require_oauth
 from project.services.event import get_event_dates_query
 from project.services.event_search import EventSearchParams
@@ -24,8 +25,14 @@ class EventDateListResource(BaseResource):
     def get(self, **kwargs):
         pagination = (
             EventDate.query.join(EventDate.event)
+            .join(Event.admin_unit)
             .options(lazyload(EventDate.event))
-            .filter(Event.public_status == PublicStatus.published)
+            .filter(
+                and_(
+                    Event.public_status == PublicStatus.published,
+                    AdminUnit.is_verified,
+                )
+            )
             .paginate()
         )
         return pagination

@@ -4,11 +4,11 @@ class Seeder(object):
         self._db = db
         self._utils = utils
 
-    def setup_base(self, admin=False, log_in=True):
+    def setup_base(self, admin=False, log_in=True, admin_unit_verified=True):
         user_id = self.create_user(admin=admin)
         if log_in:
             self._utils.login()
-        admin_unit_id = self.create_admin_unit(user_id)
+        admin_unit_id = self.create_admin_unit(user_id, verified=admin_unit_verified)
         return (user_id, admin_unit_id)
 
     def setup_base_event_verifier(self):
@@ -50,6 +50,8 @@ class Seeder(object):
         name="Meine Crew",
         suggestions_enabled=True,
         can_create_other=False,
+        can_verify_other=False,
+        verified=False,
     ):
         from project.models import AdminUnit
         from project.services.admin_unit import insert_admin_unit_for_user
@@ -63,11 +65,35 @@ class Seeder(object):
             admin_unit.incoming_reference_requests_allowed = True
             admin_unit.suggestions_enabled = suggestions_enabled
             admin_unit.can_create_other = can_create_other
+            admin_unit.can_verify_other = can_verify_other
             insert_admin_unit_for_user(admin_unit, user)
             self._db.session.commit()
             admin_unit_id = admin_unit.id
 
+        if verified:
+            self.verify_admin_unit(admin_unit_id)
+
         return admin_unit_id
+
+    def verify_admin_unit(self, admin_unit_id):
+        from project.services.admin_unit import get_admin_unit_by_name
+
+        with self._app.app_context():
+            other_admin_unit = get_admin_unit_by_name("Oveda")
+
+            if other_admin_unit:
+                other_admin_unit_id = other_admin_unit.id
+            else:
+                other_user_id = self.create_user("other@test.de")
+                other_admin_unit_id = self.create_admin_unit(
+                    other_user_id, "Oveda", can_verify_other=True
+                )
+
+            self.create_admin_unit_relation(
+                other_admin_unit_id,
+                admin_unit_id,
+                verify=True,
+            )
 
     def create_admin_unit_member(self, admin_unit_id, role_names):
         from project.services.admin_unit import (
@@ -163,8 +189,10 @@ class Seeder(object):
 
         return client_id
 
-    def setup_api_access(self, admin=True):
-        user_id, admin_unit_id = self.setup_base(admin=admin, log_in=False)
+    def setup_api_access(self, admin=True, admin_unit_verified=True):
+        user_id, admin_unit_id = self.setup_base(
+            admin=admin, log_in=False, admin_unit_verified=admin_unit_verified
+        )
         return self.authorize_api_access(user_id, admin_unit_id)
 
     def authorize_api_access(self, user_id, admin_unit_id):
@@ -188,6 +216,12 @@ class Seeder(object):
 
         category = get_event_category(category_name)
         return category.id
+
+    def get_event_date_id(self, event_id):
+        from project.models import Event
+
+        event = Event.query.get(event_id)
+        return event.dates[0].id
 
     def create_event(
         self,
@@ -240,6 +274,12 @@ class Seeder(object):
             self._db.session.commit()
             event_id = event.id
         return event_id
+
+    def create_event_unverified(self):
+        user_id = self.create_user("unverified@test.de")
+        admin_unit_id = self.create_admin_unit(user_id, "Unverified Crew")
+        event_id = self.create_event(admin_unit_id)
+        return (user_id, admin_unit_id, event_id)
 
     def create_event_with_co_organizers(self, admin_unit_id):
         organizer_a_id = self.upsert_event_organizer(admin_unit_id, "Organizer A")
@@ -379,6 +419,7 @@ class Seeder(object):
         admin_unit_id,
         target_admin_unit_id,
         auto_verify_event_reference_requests=False,
+        verify=False,
     ):
         from project.services.admin_unit import upsert_admin_unit_relation
 
@@ -387,16 +428,26 @@ class Seeder(object):
             relation.auto_verify_event_reference_requests = (
                 auto_verify_event_reference_requests
             )
+            relation.verify = verify
             self._db.session.commit()
             relation_id = relation.id
 
         return relation_id
 
-    def create_any_admin_unit_relation(self, admin_unit_id):
+    def create_any_admin_unit_relation(
+        self,
+        admin_unit_id,
+        admin_unit_name="Other Crew",
+        auto_verify_event_reference_requests=False,
+        verify=False,
+    ):
         other_user_id = self.create_user("other@test.de")
-        other_admin_unit_id = self.create_admin_unit(other_user_id, "Other Crew")
+        other_admin_unit_id = self.create_admin_unit(other_user_id, admin_unit_name)
         relation_id = self.create_admin_unit_relation(
-            admin_unit_id, other_admin_unit_id
+            admin_unit_id,
+            other_admin_unit_id,
+            auto_verify_event_reference_requests,
+            verify,
         )
         return (other_user_id, other_admin_unit_id, relation_id)
 

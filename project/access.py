@@ -130,6 +130,9 @@ def can_request_event_reference(event):
     if not has_access(event.admin_unit, "reference_request:create"):
         return False
 
+    if not event.admin_unit.is_verified:
+        return False
+
     return len(get_admin_units_for_event_reference_request(event)) > 0
 
 
@@ -197,7 +200,7 @@ def can_create_admin_unit():
 
 
 def can_read_event(event: Event) -> bool:
-    if event.public_status == PublicStatus.published:
+    if event.public_status == PublicStatus.published and event.admin_unit.is_verified:
         return True
 
     return has_access(event.admin_unit, "event:read")

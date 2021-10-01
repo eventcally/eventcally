@@ -1,6 +1,5 @@
-from operator import and_
-
 from flask_apispec import doc, marshal_with, use_kwargs
+from sqlalchemy import and_
 
 from project import db
 from project.access import (
@@ -69,6 +68,7 @@ from project.services.reference import (
 class OrganizationResource(BaseResource):
     @doc(summary="Get organization", tags=["Organizations"])
     @marshal_with(OrganizationSchema)
+    @require_oauth(optional=True)
     def get(self, id):
         return AdminUnit.query.get_or_404(id)
 
@@ -123,10 +123,12 @@ class OrganizationEventListResource(BaseResource):
 
         if not api_can_read_private_events(admin_unit):
             event_filter = and_(
-                event_filter, Event.public_status == PublicStatus.published
+                event_filter,
+                Event.public_status == PublicStatus.published,
+                AdminUnit.is_verified,
             )
 
-        pagination = Event.query.filter(event_filter).paginate()
+        pagination = Event.query.join(Event.admin_unit).filter(event_filter).paginate()
         return pagination
 
     @doc(

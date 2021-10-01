@@ -43,6 +43,18 @@ def test_event_dates(client, seeder, utils):
     )
     utils.get_ok(url)
 
+    # Unverified
+    au_short_name = "unverifiedcrew"
+    _, _, unverified_id = seeder.create_event_unverified()
+    url = utils.get_url("widget_event_dates", au_short_name=au_short_name)
+    response = utils.get_ok(url)
+
+    unverified_date_id = seeder.get_event_date_id(unverified_id)
+    unverified_url = utils.get_url(
+        "widget_event_date", au_short_name=au_short_name, id=unverified_date_id
+    )
+    utils.assert_response_contains_not(response, unverified_url)
+
 
 def test_event_dates_oneDay(client, seeder, utils):
     from project.dateutils import create_berlin_date
@@ -89,6 +101,15 @@ def test_event_date(client, seeder, utils, app, db):
     seeder.create_event(admin_unit_id, draft=True)
     url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=2)
     response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
+    # Unverified
+    au_short_name = "unverifiedcrew"
+    _, _, unverified_id = seeder.create_event_unverified()
+    unverified_date_id = seeder.get_event_date_id(unverified_id)
+    url = utils.get_url(
+        "widget_event_date", au_short_name=au_short_name, id=unverified_date_id
+    )
     utils.assert_response_unauthorized(response)
 
 

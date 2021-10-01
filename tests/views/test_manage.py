@@ -74,7 +74,7 @@ def test_admin_unit_event_reviews(client, seeder, utils):
 
 
 def test_admin_unit_events(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+    user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
 
     utils.get_endpoint_ok(
         "manage_admin_unit_events",

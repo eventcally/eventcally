@@ -27,6 +27,7 @@ class OrganizationRelationIdSchema(OrganizationRelationModelSchema, IdSchemaMixi
 
 class OrganizationRelationBaseSchemaMixin(TrackableSchemaMixin):
     auto_verify_event_reference_requests = marshmallow.auto_field()
+    verify = marshmallow.auto_field()
 
 
 class OrganizationRelationSchema(

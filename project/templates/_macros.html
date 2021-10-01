@@ -305,6 +305,10 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_admin_unit_badges(admin_unit) %}
+{% if admin_unit.is_verified %}<i class="fa fa-check-circle text-primary" data-toggle="tooltip" title="{{ _('Verified') }}"></i>{% endif %}
+{% endmacro %}
+
 {% macro render_phone_prop(phone) %}
 {% if phone %}
 <div>
@@ -513,7 +517,7 @@
     </div>
     <div class="card-body">
 
-        <h5 class="card-title">{{ event.admin_unit.name }}</h5>
+        <h5 class="card-title">{{ event.admin_unit.name }}{{ render_admin_unit_badges(event.admin_unit) }}</h5>
 
         {% if event.admin_unit.logo_id %}
           <div class="my-4">{{ render_logo(event.admin_unit.logo) }}</div>
@@ -677,7 +681,7 @@
         {% endif %}
 
         <div class="col-12 col-sm">
-          <div class="font-weight-bold"><a href="{{ url_for('organization_by_name', au_short_name=event.admin_unit.short_name) }}">{{ event.admin_unit.name }}</a></div>
+          <div class="font-weight-bold">{{ event.admin_unit.name }}{{ render_admin_unit_badges(event.admin_unit) }}</div>
 
           {{ render_link_prop(event.admin_unit.url) }}
           {{ render_email_prop(event.admin_unit.email) }}

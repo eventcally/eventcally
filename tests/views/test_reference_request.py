@@ -80,6 +80,17 @@ def test_create_duplicateNotAllowed(client, app, utils, seeder):
     assert b"duplicate key" in response.data
 
 
+def test_create_unverifiedAdminUnitNotAllowed(client, app, utils, seeder):
+    _, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
+    event_id = seeder.create_event(admin_unit_id)
+    other_user_id = seeder.create_user("other@test.de")
+    seeder.create_admin_unit(other_user_id, "Other Crew")
+
+    url = utils.get_url("event_reference_request_create", event_id=event_id)
+    response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
+
 def test_create_autoVerify(client, app, utils, seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)

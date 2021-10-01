@@ -2,10 +2,16 @@ import pytest
 
 
 def test_read(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+    user_id, admin_unit_id = seeder.setup_base(admin=True, log_in=False)
 
     url = utils.get_url("api_v1_organization", id=admin_unit_id)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+    assert "can_verify_other" not in response.json
+
+    seeder.authorize_api_access(user_id, admin_unit_id)
+
+    response = utils.get_json(url)
+    assert "can_verify_other" in response.json
 
 
 def test_list(client, seeder, utils):
@@ -19,6 +25,7 @@ def test_event_date_search(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
+    seeder.create_event_unverified()
 
     url = utils.get_url(
         "api_v1_organization_event_date_search", id=admin_unit_id, sort="-rating"
@@ -38,6 +45,7 @@ def test_event_search(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
+    seeder.create_event_unverified()
 
     url = utils.get_url("api_v1_organization_event_search", id=admin_unit_id)
     response = utils.get_ok(url)
