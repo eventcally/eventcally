@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-10-14 10:41+0200\n"
+"POT-Creation-Date: 2021-10-14 14:32+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -148,11 +148,11 @@ msgstr "Profile information"
 
 #: project/i10n.py:45
 msgid "Scope_user:read"
-msgstr ""
+msgstr "Read user settings"
 
 #: project/i10n.py:46
 msgid "Scope_user:write"
-msgstr ""
+msgstr "Create, update and delete user settings"
 
 #: project/i10n.py:47
 msgid "Scope_organizer:write"
@@ -2018,15 +2018,19 @@ msgstr ""
 msgid "Short name is already taken"
 msgstr ""
 
-#: project/views/js.py:40
+#: project/views/js.py:43
+msgid "Name is already taken"
+msgstr ""
+
+#: project/views/js.py:57
 msgid "An account already exists with this email."
 msgstr ""
 
-#: project/views/js.py:80
+#: project/views/js.py:97
 msgid "Places of organization"
 msgstr ""
 
-#: project/views/js.py:88
+#: project/views/js.py:105
 msgid "Places of Google Maps"
 msgstr ""
 
