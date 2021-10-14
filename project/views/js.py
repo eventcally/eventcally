@@ -27,6 +27,23 @@ def js_check_org_short_name():
     return jsonify(error)
 
 
+@app.route("/js/check/organization/name", methods=["POST"])
+def js_check_org_name():
+    csrf.protect()
+
+    name = request.form["name"]
+    admin_unit_id = (
+        int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
+    )
+    organization = AdminUnit.query.filter(AdminUnit.name == name).first()
+
+    if not organization or organization.id == admin_unit_id:
+        return jsonify(True)
+
+    error = gettext("Name is already taken")
+    return jsonify(error)
+
+
 @app.route("/js/check/register/email", methods=["POST"])
 def js_check_register_email():
     csrf.protect()
