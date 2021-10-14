@@ -42,6 +42,8 @@ def print_dynamic_texts():
     gettext("EventReviewStatus.rejected")
     gettext("Scope_openid")
     gettext("Scope_profile")
+    gettext("Scope_user:read")
+    gettext("Scope_user:write")
     gettext("Scope_organizer:write")
     gettext("Scope_place:write")
     gettext("Scope_event:write")

@@ -296,6 +296,26 @@ class AdminUnitMemberInvitation(db.Model):
     roles = Column(UnicodeText())
 
 
+class AdminUnitInvitation(db.Model, TrackableMixin):
+    __tablename__ = "adminunitinvitation"
+    id = Column(Integer(), primary_key=True)
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
+    email = Column(String(255), nullable=False)
+    admin_unit_name = Column(String(255))
+    relation_auto_verify_event_reference_requests = Column(
+        Boolean(),
+        nullable=False,
+        default=False,
+        server_default="0",
+    )
+    relation_verify = Column(
+        Boolean(),
+        nullable=False,
+        default=False,
+        server_default="0",
+    )
+
+
 class AdminUnitRelation(db.Model, TrackableMixin):
     __tablename__ = "adminunitrelation"
     __table_args__ = (
@@ -318,6 +338,14 @@ class AdminUnitRelation(db.Model, TrackableMixin):
         )
     )
     verify = deferred(
+        Column(
+            Boolean(),
+            nullable=False,
+            default=False,
+            server_default="0",
+        )
+    )
+    invited = deferred(
         Column(
             Boolean(),
             nullable=False,
@@ -359,6 +387,11 @@ class AdminUnit(db.Model, TrackableMixin):
     )
     invitations = relationship(
         "AdminUnitMemberInvitation",
+        cascade="all, delete-orphan",
+        backref=backref("adminunit", lazy=True),
+    )
+    admin_unit_invitations = relationship(
+        "AdminUnitInvitation",
         cascade="all, delete-orphan",
         backref=backref("adminunit", lazy=True),
     )
@@ -431,6 +464,14 @@ class AdminUnit(db.Model, TrackableMixin):
             server_default="0",
         )
     )
+    can_invite_other = deferred(
+        Column(
+            Boolean(),
+            nullable=False,
+            default=False,
+            server_default="0",
+        )
+    )
     outgoing_relations = relationship(
         "AdminUnitRelation",
         primaryjoin=remote(AdminUnitRelation.source_admin_unit_id) == id,
@@ -494,6 +535,16 @@ class AdminUnit(db.Model, TrackableMixin):
 @listens_for(AdminUnit, "before_update")
 def before_saving_admin_unit(mapper, connect, self):
     self.purge()
+
+
+@listens_for(AdminUnit.can_invite_other, "set")
+def set_admin_unit_can_invite_other(target, value, oldvalue, initiator):
+    if (
+        not value
+        and target.admin_unit_invitations
+        and len(target.admin_unit_invitations) > 0
+    ):
+        target.admin_unit_invitations = []
 
 
 # Universal Types

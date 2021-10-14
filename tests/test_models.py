@@ -1,4 +1,4 @@
-from project.models import AdminUnitRelation
+from project.models import AdminUnitInvitation, AdminUnitRelation
 
 
 def test_location_update_coordinate(client, app, db):
@@ -227,3 +227,21 @@ def test_admin_unit_verification(client, app, db, seeder):
 
         all_verified = AdminUnit.query.filter(AdminUnit.is_verified).all()
         assert len(all_verified) == 0
+
+
+def test_admin_unit_invitations(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
+
+    with app.app_context():
+        from project.services.admin_unit import get_admin_unit_by_id
+
+        admin_unit = get_admin_unit_by_id(admin_unit_id)
+        assert len(admin_unit.admin_unit_invitations) == 1
+
+        admin_unit.can_invite_other = False
+        db.session.commit()
+
+        assert len(admin_unit.admin_unit_invitations) == 0
+        invitation = AdminUnitInvitation.query.get(invitation_id)
+        assert invitation is None

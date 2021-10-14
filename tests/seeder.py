@@ -52,6 +52,7 @@ class Seeder(object):
         can_create_other=False,
         can_verify_other=False,
         verified=False,
+        can_invite_other=True,
     ):
         from project.models import AdminUnit
         from project.services.admin_unit import insert_admin_unit_for_user
@@ -66,6 +67,7 @@ class Seeder(object):
             admin_unit.suggestions_enabled = suggestions_enabled
             admin_unit.can_create_other = can_create_other
             admin_unit.can_verify_other = can_verify_other
+            admin_unit.can_invite_other = can_invite_other
             insert_admin_unit_for_user(admin_unit, user)
             self._db.session.commit()
             admin_unit_id = admin_unit.id
@@ -119,6 +121,31 @@ class Seeder(object):
             invitation = insert_admin_unit_member_invitation(
                 admin_unit_id, email, role_names
             )
+            invitation_id = invitation.id
+
+        return invitation_id
+
+    def create_admin_unit_invitation(
+        self,
+        admin_unit_id,
+        email="invited@test.de",
+        admin_unit_name="Invited Organization",
+        relation_auto_verify_event_reference_requests=False,
+        relation_verify=False,
+    ):
+        from project.models import AdminUnitInvitation
+
+        with self._app.app_context():
+            invitation = AdminUnitInvitation()
+            invitation.admin_unit_id = admin_unit_id
+            invitation.email = email
+            invitation.admin_unit_name = admin_unit_name
+            invitation.relation_auto_verify_event_reference_requests = (
+                relation_auto_verify_event_reference_requests
+            )
+            invitation.relation_verify = relation_verify
+            self._db.session.add(invitation)
+            self._db.session.commit()
             invitation_id = invitation.id
 
         return invitation_id

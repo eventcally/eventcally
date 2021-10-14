@@ -1,5 +1,25 @@
 describe("Manage", () => {
-  it("manage", () => {
+  it("Organizations", () => {
+    cy.login();
+    cy.createAdminUnit().then(function (adminUnitId) {
+      cy.createAdminUnitOrganizationInvitation(
+        adminUnitId,
+        "test@test.de"
+      ).then(function (organizationInvitationId) {
+        cy.createAdminUnitMemberInvitation(adminUnitId, "test@test.de").then(function (
+          memberInvitationId
+        ) {
+          cy.visit("/manage/admin_units");
+          cy.get("h1:contains('Einladungen')");
+          cy.get("h1:contains('Organisationseinladungen')");
+          cy.get("h1:contains('Organisationen')");
+          cy.screenshot("organizations");
+        });
+      });
+    });
+  });
+
+  it.skip("Events", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEvent(adminUnitId).then(function (eventId) {
@@ -8,7 +28,7 @@ describe("Manage", () => {
           "include",
           "/manage/admin_unit/" + adminUnitId + "/events"
         );
-        cy.screenshot("events")
+        cy.screenshot("events");
 
         cy.get("#toggle-search-btn").click();
         cy.screenshot("search-form");

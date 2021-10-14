@@ -1,0 +1,7 @@
+{% extends "email/layout.html" %}
+{% from "_macros.html" import render_email_button %}
+{% block content %}
+<p>{{ _('%(email)s accepted your invitation to create the organisation %(admin_unit_name)s.', email=invitation.email, admin_unit_name=admin_unit.name) }}</p>
+{% set path = relation.id ~ '/update' %}
+{{ render_email_button(url_for('manage_admin_unit_relations', id=invitation.admin_unit_id, path=path, _external=True), _('Click here to view the relation')) }}
+{% endblock %}
