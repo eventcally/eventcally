@@ -263,6 +263,9 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_members', id=current_admin_unit.id) }}">{{ _('Members') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_relations', id=current_admin_unit.id) }}">{{ _('Relations') }}</a>
+                    {% if current_admin_unit.can_invite_other %}
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_organization_invitations', id=current_admin_unit.id) }}">{{ _('Organization invitations') }}</a>
+                    {% endif %}
                     <a class="dropdown-item" href="{{ url_for('admin_unit_update', id=current_admin_unit.id) }}">{{ _('Settings') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_widgets', id=current_admin_unit.id) }}">{{ _('Widgets') }}</a>
                   </div>

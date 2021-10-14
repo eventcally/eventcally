@@ -372,3 +372,57 @@ def test_outgoing_relation_post_selfReference(client, app, seeder, utils):
 
     response = utils.post_json(url, data)
     utils.assert_response_bad_request(response)
+
+
+def test_organization_invitation_list(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_organization_invitation_list",
+        id=admin_unit_id,
+    )
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == invitation_id
+    assert response.json["items"][0]["email"] == "invited@test.de"
+    assert response.json["items"][0]["organization_name"] == "Invited Organization"
+
+
+def test_organization_invitation_list_post(client, app, seeder, utils, mocker):
+    mail_mock = utils.mock_send_mails(mocker)
+    _, admin_unit_id = seeder.setup_api_access()
+
+    url = utils.get_url(
+        "api_v1_organization_organization_invitation_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "email": "invited@test.de",
+        "organization_name": "Invited Organization",
+        "relation_auto_verify_event_reference_requests": True,
+        "relation_verify": True,
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_created(response)
+    assert "id" in response.json
+    invitation_id = int(response.json["id"])
+
+    with app.app_context():
+        from project.models import AdminUnitInvitation
+
+        invitation = AdminUnitInvitation.query.get(invitation_id)
+        assert invitation is not None
+        assert invitation.admin_unit_id == admin_unit_id
+        assert invitation.email == "invited@test.de"
+        assert invitation.admin_unit_name == "Invited Organization"
+        assert invitation.relation_auto_verify_event_reference_requests
+        assert invitation.relation_verify
+
+    invitation_url = utils.get_url(
+        "user_organization_invitation",
+        id=invitation_id,
+    )
+    utils.assert_send_mail_called(mail_mock, "invited@test.de", invitation_url)

@@ -36,46 +36,4 @@
 </div>
 {% endif %}
 
-{% if invitations %}
-<h2>{{ _('Invitations') }}</h2>
-<div class="table-responsive">
-    <table class="table table-sm table-bordered table-hover table-striped">
-        <thead>
-            <tr>
-                <th>{{ _('Name') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for invitation in invitations %}
-                <tr>
-                    <td><a href="{{ url_for('admin_unit_member_invitation', id=invitation.id) }}">{{ invitation.adminunit.name }}</a></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endif %}
-
-{% if admin_unit_members %}
-<h2>{{ _('Organizations') }}</h2>
-<div class="table-responsive">
-    <table class="table table-sm table-bordered table-hover table-striped">
-        <thead>
-            <tr>
-                <th>{{ _('Name') }}</th>
-                <th>{{ _('Roles') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for member in admin_unit_members %}
-                <tr>
-                    <td><a href="{{ url_for('manage_admin_unit', id=member.adminunit.id) }}">{{ member.adminunit.name }}</a></td>
-                    <td>{{ render_roles(member.roles)}}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endif %}
-
 {% endblock %}

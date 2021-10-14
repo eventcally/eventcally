@@ -1,0 +1,6 @@
+{% extends "email/layout.html" %}
+{% from "_macros.html" import render_email_button %}
+{% block content %}
+<p>{{ _('%(admin_unit_name)s invited you to create an organization.', admin_unit_name=invitation.adminunit.name) }}</p>
+{{ render_email_button(url_for('user_organization_invitation', id=invitation.id, _external=True), _('Click here to view the invitation')) }}
+{% endblock %}
