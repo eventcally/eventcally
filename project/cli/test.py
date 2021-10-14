@@ -11,6 +11,7 @@ from project.api import scope_list
 from project.init_data import create_initial_data
 from project.models import (
     AdminUnit,
+    AdminUnitInvitation,
     Event,
     EventAttendanceMode,
     EventReference,
@@ -137,6 +138,7 @@ def _create_admin_unit(user_id, name, verified=False):
     admin_unit.suggestions_enabled = True
     admin_unit.can_create_other = True
     admin_unit.can_verify_other = True
+    admin_unit.can_invite_other = True
     admin_unit.location = Location()
     admin_unit.location.postalCode = "38640"
     admin_unit.location.city = "Goslar"
@@ -372,6 +374,31 @@ def create_admin_unit_relation(admin_unit_id):
         "other_user_id": other_user_id,
         "other_admin_unit_id": other_admin_unit_id,
         "relation_id": relation_id,
+    }
+    click.echo(json.dumps(result))
+
+
+def _create_admin_unit_invitation(
+    admin_unit_id,
+    email="invited@test.de",
+    admin_unit_name="Invited Organization",
+):
+    invitation = AdminUnitInvitation()
+    invitation.admin_unit_id = admin_unit_id
+    invitation.email = email
+    invitation.admin_unit_name = admin_unit_name
+    db.session.add(invitation)
+    db.session.commit()
+    return invitation.id
+
+
+@test_cli.command("admin-unit-organization-invitation-create")
+@click.argument("admin_unit_id")
+@click.argument("email")
+def create_admin_unit_organization_invitation(admin_unit_id, email):
+    invitation_id = _create_admin_unit_invitation(admin_unit_id, email)
+    result = {
+        "invitation_id": invitation_id,
     }
     click.echo(json.dumps(result))
 

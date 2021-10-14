@@ -26,6 +26,7 @@
 <script src="https://unpkg.com/vee-validate@3.4.11/dist/vee-validate.full.min.js"></script>
 <script src="{{ url_for('static', filename='vue/common/typeahead.vue.js')}}"></script>
 <script src="{{ url_for('static', filename='vue/common/validated-input.vue.js')}}"></script>
+<script src="{{ url_for('static', filename='vue/common/validated-switch.vue.js')}}"></script>
 <script src="{{ url_for('static', filename='vue/common/validated-textarea.vue.js')}}"></script>
 
 {% block component_scripts %}
@@ -41,6 +42,7 @@
 
   Vue.component("custom-typeahead", CustomTypeahead);
   Vue.component("validated-input", ValidatedInput);
+  Vue.component("validated-switch", ValidatedSwitch);
   Vue.component("validated-textarea", ValidatedTextarea);
 
   {% block component_definitions %}
@@ -53,7 +55,18 @@
           adminUnitRelation: {
             targetOrganization: "Other organization",
             autoVerifyEventReferenceRequests: "Verify reference requests automatically",
+            autoVerifyEventReferenceRequestsDescription: "If set, all upcoming reference requests of the other organization are verified automatically.",
             verify: "Verify other organization",
+            verifyDescription: "If set, events of the other organization are publicly visible.",
+          },
+          adminUnitInvitation: {
+            email: "Email",
+            emailDescription: "The invitation will be sent to this email address.",
+            organizationName: "New organization's name",
+            relationAutoVerifyEventReferenceRequests: "Verify reference requests automatically",
+            relationAutoVerifyEventReferenceRequestsDescription: "If set, all upcoming reference requests of the new organization are verified automatically.",
+            relationVerify: "Verify new organization",
+            relationVerifyDescription: "If set, events of the new organization are publicly visible.",
           },
           eventReport: {
             contactName: "Name",
@@ -64,6 +77,7 @@
           },
         },
         cancel: "Cancel",
+        decline: "Decline",
         submit: "Submit",
         edit: "Edit",
         delete: "Delete",
@@ -121,7 +135,18 @@
             targetOrganization: "Andere Organisation",
             autoVerifyEventReferenceRequests:
               "Empfehlungsanfragen automatisch verifizieren",
+            autoVerifyEventReferenceRequestsDescription: "Wenn gesetzt, werden alle zukünftigen Empfehlungsanfragen der anderen Organisation automatisch verifiziert.",
             verify: "Andere Organisation verifizieren",
+            verifyDescription: "Wenn gesetzt, sind Veranstaltungen der anderen Organisation öffentlich sichtbar.",
+          },
+          adminUnitInvitation: {
+            email: "Email",
+            emailDescription: "An diese Email-Adresse wird die Einladung gesendet.",
+            organizationName: "Name der neuen Organisation",
+            relationAutoVerifyEventReferenceRequests: "Empfehlungsanfragen automatisch verifizieren",
+            relationAutoVerifyEventReferenceRequestsDescription: "Wenn gesetzt, werden alle zukünftigen Empfehlungsanfragen der neuen Organisation automatisch verifiziert.",
+            relationVerify: "Neue Organisation verifizieren",
+            relationVerifyDescription: "Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich sichtbar.",
           },
           eventReport: {
             contactName: "Name",
@@ -132,6 +157,7 @@
           },
         },
         cancel: "Abbrechen",
+        decline: "Ablehnen",
         submit: "Senden",
         edit: "Bearbeiten",
         delete: "Löschen",

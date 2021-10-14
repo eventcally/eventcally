@@ -43,12 +43,14 @@ class OrganizationSchema(OrganizationBaseSchema):
     location = fields.Nested(LocationSchema)
     logo = fields.Nested(ImageSchema)
     can_verify_other = marshmallow.auto_field()
+    incoming_reference_requests_allowed = marshmallow.auto_field()
 
     @post_dump(pass_original=True)
     def remove_private_fields(self, data, original_data, **kwargs):
         login_api_user()
         if not has_access(original_data, "admin_unit:update"):
             data.pop("can_verify_other", None)
+            data.pop("incoming_reference_requests_allowed", None)
 
         return data
 

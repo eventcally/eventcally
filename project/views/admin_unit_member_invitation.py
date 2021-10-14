@@ -13,6 +13,7 @@ from project.forms.admin_unit_member import (
 from project.models import AdminUnitMemberInvitation, AdminUnitMemberRole
 from project.services.admin_unit import add_user_to_admin_unit_with_roles
 from project.services.user import find_user_by_email
+from project.utils import strings_are_equal_ignoring_case
 from project.views.utils import (
     flash_errors,
     handleSqlError,
@@ -33,7 +34,7 @@ def admin_unit_member_invitation(id):
     if not current_user.is_authenticated:
         return app.login_manager.unauthorized()
 
-    if invitation.email != current_user.email:
+    if not strings_are_equal_ignoring_case(invitation.email, current_user.email):
         return permission_missing(url_for("profile"))
 
     form = NegotiateAdminUnitMemberInvitationForm()

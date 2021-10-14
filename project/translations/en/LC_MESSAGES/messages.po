@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-09-29 23:02+0200\n"
+"POT-Creation-Date: 2021-10-14 10:41+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -147,34 +147,42 @@ msgid "Scope_profile"
 msgstr "Profile information"
 
 #: project/i10n.py:45
+msgid "Scope_user:read"
+msgstr ""
+
+#: project/i10n.py:46
+msgid "Scope_user:write"
+msgstr ""
+
+#: project/i10n.py:47
 msgid "Scope_organizer:write"
 msgstr "Create, update and delete organizers"
 
-#: project/i10n.py:46
+#: project/i10n.py:48
 msgid "Scope_place:write"
 msgstr "Create, update and delete places"
 
-#: project/i10n.py:47
+#: project/i10n.py:49
 msgid "Scope_event:write"
 msgstr "Create, update and delete events"
 
-#: project/i10n.py:48
+#: project/i10n.py:50
 msgid "Scope_organization:read"
 msgstr "Read organizations"
 
-#: project/i10n.py:49
+#: project/i10n.py:51
 msgid "Scope_organization:write"
 msgstr "Create, update and delete organizations"
 
-#: project/i10n.py:50
+#: project/i10n.py:52
 msgid "There must be no self-reference."
 msgstr ""
 
-#: project/utils.py:11
+#: project/utils.py:15
 msgid "Event_"
 msgstr ""
 
-#: project/utils.py:15
+#: project/utils.py:19
 msgid "."
 msgstr ""
 
@@ -182,24 +190,29 @@ msgstr ""
 msgid "message"
 msgstr ""
 
-#: project/forms/admin.py:10 project/templates/layout.html:305
+#: project/api/organization/resources.py:348
+#: project/views/admin_unit_member_invitation.py:92
+msgid "You have received an invitation"
+msgstr ""
+
+#: project/forms/admin.py:10 project/templates/layout.html:308
 #: project/views/root.py:42
 msgid "Terms of service"
 msgstr ""
 
-#: project/forms/admin.py:11 project/templates/layout.html:309
+#: project/forms/admin.py:11 project/templates/layout.html:312
 #: project/views/root.py:50
 msgid "Legal notice"
 msgstr ""
 
 #: project/forms/admin.py:12 project/templates/_macros.html:1409
-#: project/templates/layout.html:313
+#: project/templates/layout.html:316
 #: project/templates/widget/event_suggestion/create.html:204
-#: project/views/admin_unit.py:36 project/views/root.py:58
+#: project/views/admin_unit.py:50 project/views/root.py:58
 msgid "Contact"
 msgstr ""
 
-#: project/forms/admin.py:13 project/templates/layout.html:317
+#: project/forms/admin.py:13 project/templates/layout.html:320
 #: project/views/root.py:66
 msgid "Privacy"
 msgstr ""
@@ -209,7 +222,7 @@ msgid "Save"
 msgstr ""
 
 #: project/forms/admin.py:19 project/forms/admin_unit_member.py:12
-#: project/forms/admin_unit_member.py:32 project/templates/profile.html:66
+#: project/forms/admin_unit_member.py:32
 msgid "Roles"
 msgstr ""
 
@@ -245,14 +258,22 @@ msgid "If set, members of the organization can create other organizations."
 msgstr ""
 
 #: project/forms/admin.py:44
-msgid "Verify other organizations"
+msgid "Invite other organizations"
 msgstr ""
 
 #: project/forms/admin.py:45
+msgid "If set, members of the organization can invite other organizations."
+msgstr ""
+
+#: project/forms/admin.py:51
+msgid "Verify other organizations"
+msgstr ""
+
+#: project/forms/admin.py:52
 msgid "If set, members of the organization can verify other organizations."
 msgstr ""
 
-#: project/forms/admin.py:50 project/templates/admin/update_admin_unit.html:4
+#: project/forms/admin.py:57 project/templates/admin/update_admin_unit.html:4
 #: project/templates/admin/update_admin_unit.html:8
 msgid "Update organization"
 msgstr ""
@@ -296,7 +317,6 @@ msgstr ""
 #: project/templates/admin/admin_units.html:19
 #: project/templates/event_place/list.html:19
 #: project/templates/oauth2_client/list.html:25
-#: project/templates/profile.html:45 project/templates/profile.html:65
 msgid "Name"
 msgstr ""
 
@@ -343,7 +363,7 @@ msgstr ""
 
 #: project/forms/admin_unit.py:63 project/templates/admin_unit/create.html:5
 #: project/templates/admin_unit/create.html:22
-#: project/templates/manage/admin_units.html:18
+#: project/templates/manage/admin_units.html:27
 msgid "Create organization"
 msgstr ""
 
@@ -877,7 +897,7 @@ msgid "Distance"
 msgstr ""
 
 #: project/forms/event_date.py:32 project/forms/planing.py:36
-#: project/templates/widget/event_date/list.html:60
+#: project/templates/widget/event_date/list.html:61
 msgid "Find"
 msgstr ""
 
@@ -1325,8 +1345,7 @@ msgstr ""
 #: project/templates/admin/admin_units.html:11
 #: project/templates/layout.html:186
 #: project/templates/manage/admin_units.html:3
-#: project/templates/manage/admin_units.html:16
-#: project/templates/profile.html:60
+#: project/templates/manage/admin_units.html:25
 msgid "Organizations"
 msgstr ""
 
@@ -1410,27 +1429,34 @@ msgstr ""
 msgid "Relations"
 msgstr ""
 
+#: project/templates/layout.html:267
+#: project/templates/manage/admin_units.html:17
+#: project/templates/manage/organization_invitations.html:4
+#: project/templates/user/organization_invitations.html:4
+msgid "Organization invitations"
+msgstr ""
+
 #: project/templates/admin/admin.html:15
 #: project/templates/admin/settings.html:4
 #: project/templates/admin/settings.html:8
 #: project/templates/admin_unit/update.html:6
 #: project/templates/admin_unit/update.html:23
-#: project/templates/layout.html:266 project/templates/manage/widgets.html:12
+#: project/templates/layout.html:269 project/templates/manage/widgets.html:12
 #: project/templates/profile.html:19
 msgid "Settings"
 msgstr ""
 
-#: project/templates/layout.html:267 project/templates/manage/reviews.html:10
+#: project/templates/layout.html:270 project/templates/manage/reviews.html:10
 #: project/templates/manage/widgets.html:5
 #: project/templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr ""
 
-#: project/templates/layout.html:277
+#: project/templates/layout.html:280
 msgid "Switch organization"
 msgstr ""
 
-#: project/templates/developer/read.html:4 project/templates/layout.html:327
+#: project/templates/developer/read.html:4 project/templates/layout.html:330
 #: project/templates/profile.html:29
 msgid "Developer"
 msgstr ""
@@ -1444,11 +1470,6 @@ msgstr ""
 #: project/templates/oauth2_client/read.html:11
 #: project/templates/profile.html:33
 msgid "OAuth2 clients"
-msgstr ""
-
-#: project/templates/manage/admin_units.html:8
-#: project/templates/manage/members.html:9 project/templates/profile.html:40
-msgid "Invitations"
 msgstr ""
 
 #: project/templates/admin/admin.html:23 project/templates/admin/users.html:4
@@ -1498,6 +1519,7 @@ msgid "You have been invited to join %(admin_unit_name)s."
 msgstr ""
 
 #: project/templates/email/invitation_notice.html:5
+#: project/templates/email/organization_invitation_notice.html:5
 msgid "Click here to view the invitation"
 msgstr ""
 
@@ -1507,6 +1529,22 @@ msgstr ""
 
 #: project/templates/email/layout.html:351
 msgid "this is a message from Oveda - Die offene Veranstaltungsdatenbank."
+msgstr ""
+
+#: project/templates/email/organization_invitation_accepted_notice.html:4
+#, python-format
+msgid ""
+"%(email)s accepted your invitation to create the organisation "
+"%(admin_unit_name)s."
+msgstr ""
+
+#: project/templates/email/organization_invitation_accepted_notice.html:6
+msgid "Click here to view the relation"
+msgstr ""
+
+#: project/templates/email/organization_invitation_notice.html:4
+#, python-format
+msgid "%(admin_unit_name)s invited you to create an organization."
 msgstr ""
 
 #: project/templates/email/reference_auto_verified_notice.html:4
@@ -1676,6 +1714,15 @@ msgstr ""
 msgid "Would you like to accept the invitation from %(name)s?"
 msgstr ""
 
+#: project/templates/manage/admin_units.html:8
+#: project/templates/manage/members.html:9
+msgid "Invitations"
+msgstr ""
+
+#: project/templates/manage/admin_units.html:29
+msgid "Invite organization"
+msgstr ""
+
 #: project/templates/manage/delete_member.html:13
 msgid "Member"
 msgstr ""
@@ -1836,7 +1883,7 @@ msgstr ""
 msgid "Widget"
 msgstr ""
 
-#: project/templates/widget/event_date/list.html:123
+#: project/templates/widget/event_date/list.html:124
 msgid "Print"
 msgstr ""
 
@@ -1856,7 +1903,7 @@ msgstr ""
 msgid "Organization successfully updated"
 msgstr ""
 
-#: project/views/admin.py:68 project/views/manage.py:274
+#: project/views/admin.py:68 project/views/manage.py:317
 msgid "Settings successfully updated"
 msgstr ""
 
@@ -1864,18 +1911,22 @@ msgstr ""
 msgid "User successfully updated"
 msgstr ""
 
-#: project/views/admin_unit.py:32
+#: project/views/admin_unit.py:46
 msgid ""
 "Organizations cannot currently be created. The project is in a closed "
 "test phase. If you are interested, you can contact us."
 msgstr ""
 
-#: project/views/admin_unit.py:50
+#: project/views/admin_unit.py:79
 msgid "Organization successfully created"
 msgstr ""
 
-#: project/views/admin_unit.py:76
+#: project/views/admin_unit.py:105
 msgid "AdminUnit successfully updated"
+msgstr ""
+
+#: project/views/admin_unit.py:127
+msgid "Organization invitation accepted"
 msgstr ""
 
 #: project/views/admin_unit_member.py:43
@@ -1890,27 +1941,23 @@ msgstr ""
 msgid "Member successfully deleted"
 msgstr ""
 
-#: project/views/admin_unit_member_invitation.py:44
+#: project/views/admin_unit_member_invitation.py:45
 msgid "Invitation successfully accepted"
 msgstr ""
 
-#: project/views/admin_unit_member_invitation.py:51
+#: project/views/admin_unit_member_invitation.py:52
 msgid "Invitation successfully declined"
 msgstr ""
 
-#: project/views/admin_unit_member_invitation.py:91
-msgid "You have received an invitation"
-msgstr ""
-
-#: project/views/admin_unit_member_invitation.py:96
+#: project/views/admin_unit_member_invitation.py:97
 msgid "Invitation successfully sent"
 msgstr ""
 
-#: project/views/admin_unit_member_invitation.py:119
+#: project/views/admin_unit_member_invitation.py:120
 msgid "Entered email does not match invitation email"
 msgstr ""
 
-#: project/views/admin_unit_member_invitation.py:124
+#: project/views/admin_unit_member_invitation.py:125
 msgid "Invitation successfully deleted"
 msgstr ""
 

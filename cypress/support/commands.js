@@ -141,6 +141,15 @@ Cypress.Commands.add("createAdminUnitRelation", (adminUnitId) => {
     });
 });
 
+Cypress.Commands.add("createAdminUnitOrganizationInvitation", (adminUnitId, email="invited@test.de") => {
+  return cy
+    .logexec("flask test admin-unit-organization-invitation-create " + adminUnitId + ' "' + email + '"')
+    .then(function (result) {
+      let json = JSON.parse(result.stdout);
+      return json.invitation_id;
+    });
+});
+
 Cypress.Commands.add("createSuggestion", (adminUnitId) => {
   return cy
     .logexec("flask test suggestion-create " + adminUnitId)
@@ -166,12 +175,12 @@ Cypress.Commands.add("assertRequired", (fieldId) => {
 
 Cypress.Commands.add(
   "login",
-  (email = "test@test.de", password = "password") => {
+  (email = "test@test.de", password = "password", redirectUrl = "/manage") => {
     cy.visit("/login");
     cy.get("#email").type(email);
     cy.get("#password").type(password);
     cy.get("#submit").click();
-    cy.url().should("include", "/manage");
+    cy.url().should("include", redirectUrl);
     cy.getCookie("session").should("exist");
   }
 );
