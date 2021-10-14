@@ -125,6 +125,7 @@
           required: "The {_field_} field is required",
           size: "The {_field_} field size must be less than {size}KB",
           double: "The {_field_} field must be a valid decimal",
+          uniqueOrganizationName: "Name is already taken",
         },
       },
     },
@@ -203,6 +204,7 @@
           required_if: "{_field_} ist ein Pflichtfeld",
           size: "{_field_} muss kleiner als {size}KB sein",
           double: "Das Feld {_field_} muss eine gültige Dezimalzahl sein",
+          uniqueOrganizationName: "Der Name ist bereits vergeben",
         },
       },
     },
@@ -221,6 +223,23 @@
 
   Object.keys(VeeValidate.Rules).forEach((rule) => {
     VeeValidate.extend(rule, VeeValidate.Rules[rule]);
+  });
+
+  VeeValidate.extend('uniqueOrganizationName', {
+    validate: async value => {
+      try {
+        const response = await axios.get(
+          `/api/v1/organizations?keyword=${value}`, {
+            withCredentials: true,
+          }
+        );
+        return !response.data.items.some(o => o.name == value);
+      } catch (err) {
+        return true;
+      }
+    }
+  }, {
+    immediate: false
   });
 
   {% block vue_routes %}

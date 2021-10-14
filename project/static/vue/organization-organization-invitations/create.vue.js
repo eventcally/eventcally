@@ -16,7 +16,8 @@ const OrganizationOrganizationInvitationCreate = {
                 :label="$t('shared.models.adminUnitInvitation.organizationName')"
                 name="organizationName"
                 v-model="form.organization_name"
-                rules="required" />
+                rules="required|uniqueOrganizationName"
+                :debounce="1000" />
               <validated-switch
                 v-if="adminUnit.can_verify_other"
                 :label="$t('shared.models.adminUnitInvitation.relationVerify')"
