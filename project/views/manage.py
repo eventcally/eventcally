@@ -22,7 +22,10 @@ from project.models import (
     EventSuggestion,
     User,
 )
-from project.services.admin_unit import get_admin_unit_member_invitations
+from project.services.admin_unit import (
+    get_admin_unit_member_invitations,
+    get_admin_unit_organization_invitations,
+)
 from project.services.event import get_events_query
 from project.services.event_search import EventSearchParams
 from project.services.event_suggestion import get_event_reviews_query
@@ -53,13 +56,35 @@ def manage():
     if "from_login" in request.args:
         admin_units = get_admin_units_for_manage()
         invitations = get_admin_unit_member_invitations(current_user.email)
+        organization_invitations = get_admin_unit_organization_invitations(
+            current_user.email
+        )
 
-        if len(admin_units) == 1 and len(invitations) == 0:
+        if (
+            len(admin_units) == 1
+            and len(invitations) == 0
+            and len(organization_invitations) == 0
+        ):
             return redirect(url_for("manage_admin_unit", id=admin_units[0].id))
 
-        if len(admin_units) == 0 and len(invitations) == 1:
+        if (
+            len(admin_units) == 0
+            and len(invitations) == 1
+            and len(organization_invitations) == 0
+        ):
             return redirect(
                 url_for("admin_unit_member_invitation", id=invitations[0].id)
+            )
+
+        if (
+            len(admin_units) == 0
+            and len(invitations) == 0
+            and len(organization_invitations) == 1
+        ):
+            return redirect(
+                url_for(
+                    "user_organization_invitation", id=organization_invitations[0].id
+                )
             )
 
     return redirect(url_for("manage_admin_units"))
@@ -70,13 +95,18 @@ def manage():
 def manage_admin_units():
     admin_units = get_admin_units_for_manage()
     invitations = get_admin_unit_member_invitations(current_user.email)
+    organization_invitations = get_admin_unit_organization_invitations(
+        current_user.email
+    )
 
     admin_units.sort(key=lambda x: x.name)
     invitations.sort(key=lambda x: x.adminunit.name)
+    organization_invitations.sort(key=lambda x: x.adminunit.name)
 
     return render_template(
         "manage/admin_units.html",
         invitations=invitations,
+        organization_invitations=organization_invitations,
         admin_units=admin_units,
     )
 
@@ -230,6 +260,19 @@ def manage_admin_unit_relations(id, path=None):
 
     return render_template(
         "manage/relations.html",
+        admin_unit=admin_unit,
+    )
+
+
+@app.route("/manage/admin_unit/<int:id>/organization-invitations")
+@app.route("/manage/admin_unit/<int:id>/organization-invitations/<path:path>")
+@auth_required()
+def manage_admin_unit_organization_invitations(id, path=None):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    g.manage_admin_unit_id = id
+
+    return render_template(
+        "manage/organization_invitations.html",
         admin_unit=admin_unit,
     )
 

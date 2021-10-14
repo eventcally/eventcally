@@ -1,0 +1,4 @@
+{{ _('%(email)s accepted your invitation to create the organisation %(admin_unit_name)s.', email=invitation.email, admin_unit_name=admin_unit.name) }}
+{{ _('Click the link below to view the relation') }}
+{% set path = relation.id ~ '/update' %}
+{{ url_for('manage_admin_unit_relations', id=invitation.admin_unit_id, path=path, _external=True) }}

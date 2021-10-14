@@ -6,16 +6,28 @@
 
 {% if invitations %}
 <h1>{{ _('Invitations') }}</h1>
-<div class="list-group">
+<div class="list-group mb-4">
     {% for invitation in invitations %}
         <a href="{{ url_for('admin_unit_member_invitation', id=invitation.id) }}" class="list-group-item">{{ invitation.adminunit.name }}</a>
     {% endfor %}
 </div>
 {% endif %}
 
+{% if organization_invitations %}
+<h1>{{ _('Organization invitations') }}</h1>
+<div class="list-group mb-4">
+    {% for invitation in organization_invitations %}
+        <a href="{{ url_for('user_organization_invitation', id=invitation.id) }}" class="list-group-item">{{ invitation.admin_unit_name }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+
 <h1>{{ _('Organizations') }}</h1>
 <div class="my-4">
-    <a class="btn btn-outline-secondary my-1" href="{{ url_for('admin_unit_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create organization') }}</a>
+    <a class="btn btn-outline-secondary m-1" href="{{ url_for('admin_unit_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create organization') }}</a>
+    {% if current_admin_unit and current_admin_unit.can_invite_other %}
+    <a class="btn btn-outline-secondary m-1" href="{{ url_for('manage_admin_unit_organization_invitations', id=current_admin_unit.id, path='create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Invite organization') }}</a>
+    {% endif %}
 </div>
 
 <div class="list-group">

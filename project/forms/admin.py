@@ -40,6 +40,13 @@ class UpdateAdminUnitForm(FlaskForm):
         ),
         validators=[Optional()],
     )
+    can_invite_other = BooleanField(
+        lazy_gettext("Invite other organizations"),
+        description=lazy_gettext(
+            "If set, members of the organization can invite other organizations."
+        ),
+        validators=[Optional()],
+    )
     can_verify_other = BooleanField(
         lazy_gettext("Verify other organizations"),
         description=lazy_gettext(

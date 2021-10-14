@@ -3,6 +3,7 @@ from sqlalchemy import and_, func, or_
 from project import db
 from project.models import (
     AdminUnit,
+    AdminUnitInvitation,
     AdminUnitMember,
     AdminUnitMemberInvitation,
     AdminUnitMemberRole,
@@ -13,9 +14,10 @@ from project.models import (
 )
 from project.services.image import upsert_image_with_data
 from project.services.location import assign_location_values
+from project.utils import strings_are_equal_ignoring_case
 
 
-def insert_admin_unit_for_user(admin_unit, user):
+def insert_admin_unit_for_user(admin_unit, user, invitation=None):
     db.session.add(admin_unit)
 
     # Nutzer als Admin hinzufügen
@@ -41,6 +43,7 @@ def insert_admin_unit_for_user(admin_unit, user):
     db.session.add(organizer)
 
     # Place anlegen
+    place = None
     if admin_unit.location:
         place = EventPlace()
         place.admin_unit_id = admin_unit.id
@@ -49,7 +52,30 @@ def insert_admin_unit_for_user(admin_unit, user):
         assign_location_values(place.location, admin_unit.location)
         db.session.add(place)
 
+    # Beziehung anlegen
+    relation = None
+    if invitation:
+        inviting_admin_unit = get_admin_unit_by_id(invitation.admin_unit_id)
+        relation = upsert_admin_unit_relation(invitation.admin_unit_id, admin_unit.id)
+        relation.invited = True
+
+        name_equals_suggested_name = strings_are_equal_ignoring_case(
+            admin_unit.name, invitation.admin_unit_name
+        )
+        relation.auto_verify_event_reference_requests = (
+            inviting_admin_unit.incoming_reference_requests_allowed
+            and invitation.relation_auto_verify_event_reference_requests
+            and name_equals_suggested_name
+        )
+        relation.verify = (
+            inviting_admin_unit.can_verify_other
+            and invitation.relation_verify
+            and name_equals_suggested_name
+        )
+
     db.session.commit()
+
+    return (organizer, place, relation)
 
 
 def get_admin_unit_by_id(id):
@@ -204,3 +230,19 @@ def upsert_admin_unit_relation(source_admin_unit_id: int, target_admin_unit_id: 
         result = insert_admin_unit_relation(source_admin_unit_id, target_admin_unit_id)
 
     return result
+
+
+def get_admin_unit_invitation_query(admin_unit):
+    return AdminUnitInvitation.query.filter(
+        AdminUnitInvitation.admin_unit_id == admin_unit.id
+    )
+
+
+def get_admin_unit_organization_invitations_query(email):
+    return AdminUnitInvitation.query.filter(
+        func.lower(AdminUnitInvitation.email) == func.lower(email)
+    )
+
+
+def get_admin_unit_organization_invitations(email):
+    return get_admin_unit_organization_invitations_query(email).all()

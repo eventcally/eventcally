@@ -134,6 +134,77 @@ def test_create_requiresAdmin_memberOfOrgWithFlag(client, app, utils, seeder):
     assert response.status_code == 302
 
 
+def test_create_from_invitation(client, app, utils, seeder, mocker):
+    mail_mock = utils.mock_send_mails(mocker)
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(
+        user_id, can_invite_other=True, can_verify_other=True
+    )
+    invitation_id = seeder.create_admin_unit_invitation(
+        admin_unit_id,
+        relation_auto_verify_event_reference_requests=True,
+        relation_verify=True,
+    )
+
+    seeder.create_user("invited@test.de")
+    utils.login("invited@test.de")
+    url = utils.get_url("admin_unit_create", invitation_id=invitation_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "short_name": "invitedorganization",
+            "location-postalCode": "38640",
+            "location-city": "Goslar",
+        },
+    )
+    assert response.status_code == 302
+
+    with app.app_context():
+        from project.models import AdminUnitInvitation
+        from project.services.admin_unit import get_admin_unit_by_name
+
+        admin_unit = get_admin_unit_by_name("Invited Organization")
+        assert admin_unit is not None
+
+        relation = admin_unit.incoming_relations[0]
+        assert relation.source_admin_unit_id == admin_unit_id
+        assert relation.auto_verify_event_reference_requests
+        assert relation.verify
+        assert relation.invited
+        relation_id = relation.id
+
+        invitation = AdminUnitInvitation.query.get(invitation_id)
+        assert invitation is None
+
+    invitation_url = utils.get_url(
+        "manage_admin_unit_relations", id=admin_unit_id, path=f"{relation_id}/update"
+    )
+    utils.assert_send_mail_called(mail_mock, "test@test.de", invitation_url)
+
+
+def test_create_from_invitation_currentUserDoesNotMatchInvitationEmail(
+    client, app, utils, seeder
+):
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(
+        user_id, can_invite_other=True, can_verify_other=True
+    )
+    invitation_id = seeder.create_admin_unit_invitation(
+        admin_unit_id,
+        relation_auto_verify_event_reference_requests=True,
+        relation_verify=True,
+    )
+
+    seeder.create_user("other@test.de")
+    utils.login("other@test.de")
+    url = utils.get_url("admin_unit_create", invitation_id=invitation_id)
+    response = utils.get(url)
+    utils.assert_response_redirect(response, "manage_admin_units")
+
+
 def test_update(client, app, utils, seeder):
     seeder.create_user()
     user_id = utils.login()

@@ -7,6 +7,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.base import NO_CHANGE, object_state
 
 
+def strings_are_equal_ignoring_case(string1: str, string2: str):
+    return string1 and string2 and string1.casefold() == string2.casefold()
+
+
 def get_event_category_name(category):
     return lazy_gettext("Event_" + category.name)
 

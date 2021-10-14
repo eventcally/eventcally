@@ -1,4 +1,4 @@
-const OrganizationRelationCreate = {
+const OrganizationOrganizationInvitationCreate = {
   template: `
     <div>
       <h1>{{ $t("comp.title") }}</h1>
@@ -6,25 +6,29 @@ const OrganizationRelationCreate = {
         <div v-if="adminUnit">
           <ValidationObserver v-slot="{ handleSubmit }">
             <b-form @submit.stop.prevent="handleSubmit(submitForm)">
-              <custom-typeahead
-                id="targetOrganization"
-                v-model="form.targetOrganization"
-                fetchURL="/api/v1/organizations?keyword={query}"
-                labelKey="shared.models.adminUnitRelation.targetOrganization"
-                :serializer="i => i.name"
-              />
+              <validated-input
+                :label="$t('shared.models.adminUnitInvitation.email')"
+                :description="$t('shared.models.adminUnitInvitation.emailDescription')"
+                name="email"
+                v-model="form.email"
+                rules="required|email" />
+              <validated-input
+                :label="$t('shared.models.adminUnitInvitation.organizationName')"
+                name="organizationName"
+                v-model="form.organization_name"
+                rules="required" />
               <validated-switch
                 v-if="adminUnit.can_verify_other"
-                :label="$t('shared.models.adminUnitRelation.verify')"
-                :description="$t('shared.models.adminUnitRelation.verifyDescription')"
-                name="verify"
-                v-model="form.verify" />
+                :label="$t('shared.models.adminUnitInvitation.relationVerify')"
+                :description="$t('shared.models.adminUnitInvitation.relationVerifyDescription')"
+                name="relationVerify"
+                v-model="form.relation_verify" />
               <validated-switch
                 v-if="adminUnit.incoming_reference_requests_allowed"
-                :label="$t('shared.models.adminUnitRelation.autoVerifyEventReferenceRequests')"
-                :description="$t('shared.models.adminUnitRelation.autoVerifyEventReferenceRequestsDescription')"
-                name="auto_verify_event_reference_requests"
-                v-model="form.auto_verify_event_reference_requests" />
+                :label="$t('shared.models.adminUnitInvitation.relationAutoVerifyEventReferenceRequests')"
+                :description="$t('shared.models.adminUnitInvitation.relationAutoVerifyEventReferenceRequestsDescription')"
+                name="relationAutoVerifyEventReferenceRequests"
+                v-model="form.relation_auto_verify_event_reference_requests" />
               <b-button variant="secondary" @click="goBack" v-bind:disabled="isSubmitting">{{ $t("shared.cancel") }}</b-button>
               <b-button variant="primary" type="submit" v-bind:disabled="isSubmitting">
                   <b-spinner small v-if="isSubmitting"></b-spinner>
@@ -40,14 +44,14 @@ const OrganizationRelationCreate = {
     messages: {
       en: {
         comp: {
-          title: "Add relation",
-          successMessage: "Relation successfully created",
+          title: "Add invitation",
+          successMessage: "Invitation successfully created",
         },
       },
       de: {
         comp: {
-          title: "Beziehung hinzufügen",
-          successMessage: "Beziehung erfolgreich erstellt",
+          title: "Einladung hinzufügen",
+          successMessage: "Einladung erfolgreich erstellt",
         },
       },
     },
@@ -57,9 +61,10 @@ const OrganizationRelationCreate = {
     isSubmitting: false,
     adminUnit: null,
     form: {
-        targetOrganization: null,
-        auto_verify_event_reference_requests: false,
-        verify: false,
+        email: null,
+        organization_name: null,
+        relation_auto_verify_event_reference_requests: false,
+        relation_verify: true,
     },
   }),
   computed: {
@@ -71,9 +76,10 @@ const OrganizationRelationCreate = {
     this.isLoadingAdminUnit = false;
     this.adminUnit = null;
     this.form = {
-        targetOrganization: null,
-        auto_verify_event_reference_requests: false,
-        verify: false,
+        email: null,
+        organization_name: null,
+        relation_auto_verify_event_reference_requests: false,
+        relation_verify: true,
     }
     this.loadAdminUnit();
   },
@@ -93,15 +99,14 @@ const OrganizationRelationCreate = {
       },
       submitForm() {
         let data = {
-            'auto_verify_event_reference_requests': this.form.auto_verify_event_reference_requests,
-            'verify': this.form.verify,
-            'target_organization': {
-                'id': this.form.targetOrganization.id
-            }
-        }
+            'email': this.form.email,
+            'organization_name': this.form.organization_name,
+            'relation_auto_verify_event_reference_requests': this.form.relation_auto_verify_event_reference_requests,
+            'relation_verify': this.form.relation_verify,
+        };
 
         axios
-          .post(`/api/v1/organizations/${this.adminUnitId}/relations/outgoing`,
+          .post(`/api/v1/organizations/${this.adminUnitId}/organization-invitations`,
             data,
             {
               withCredentials: true,
@@ -116,7 +121,7 @@ const OrganizationRelationCreate = {
         this.isSubmitting = isLoading;
     },
     goBack() {
-      this.$root.goBack(`/manage/admin_unit/${this.adminUnitId}/relations`)
+      this.$root.goBack(`/manage/admin_unit/${this.adminUnitId}/organization-invitations`)
     },
   }
 };

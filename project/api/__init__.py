@@ -117,6 +117,8 @@ class RestApi(Api):
 scope_list = [
     "openid",
     "profile",
+    "user:read",
+    "user:write",
     "organizer:write",
     "place:write",
     "event:write",
@@ -191,6 +193,8 @@ import project.api.event_category.resources
 import project.api.event_date.resources
 import project.api.event_reference.resources
 import project.api.organization.resources
+import project.api.organization_invitation.resources
 import project.api.organization_relation.resources
 import project.api.organizer.resources
 import project.api.place.resources
+import project.api.user.resources
