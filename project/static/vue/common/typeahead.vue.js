@@ -67,7 +67,7 @@ const CustomTypeahead = {
               vm.suggestions = response.data.items
           })
     },
-    fetchDataDebounced: _.debounce(function(query) { this.fetchData(query) }, 200),
+    fetchDataDebounced: _.debounce(function(query) { this.fetchData(query) }, 1000),
     onInput() {
       this.selected = null;
       this.fetchDataDebounced(this.query)
