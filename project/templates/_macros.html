@@ -1550,6 +1550,25 @@ $('#allday').on('change', function() {
           }
       });
 
+    $("#name").rules("add", {
+      remote: {
+        url: "{{ url_for('js_check_org_name') }}",
+        type: "post"
+        {% if admin_unit %}
+        ,data: {
+          admin_unit_id: function() {
+            return "{{ admin_unit.id }}";
+          }
+        }
+        {% if admin_unit.name %}
+        ,depends: function() {
+            return $('#name').val() != '{{ admin_unit.name }}';
+        }
+        {% endif %}
+        {% endif %}
+      }
+    });
+
     $("#short_name").rules("add", "shortName");
     $("#short_name").rules("add", {
       remote: {
@@ -1586,6 +1605,7 @@ $('#allday').on('change', function() {
     });
 
     if ($("#name").val().length > 0) {
+      $("#name").valid();
       suggest_short_name();
     }
 
