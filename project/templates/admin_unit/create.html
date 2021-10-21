@@ -65,6 +65,22 @@
     </div>
   </div>
 
+  {% if embedded_relation_enabled %}
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('Relation to %(admin_unit_name)s', admin_unit_name=current_admin_unit.name) }}
+    </div>
+    <div class="card-body">
+      {% if current_admin_unit.can_verify_other %}
+        {{ render_field_with_errors(form.embedded_relation.verify, ri="switch") }}
+      {% endif %}
+      {% if current_admin_unit.incoming_reference_requests_allowed %}
+        {{ render_field_with_errors(form.embedded_relation.auto_verify_event_reference_requests, ri="switch") }}
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
   {{ render_field(form.submit) }}
 </form>
 

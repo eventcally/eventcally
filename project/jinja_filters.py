@@ -1,7 +1,7 @@
 import os
 from urllib.parse import quote_plus
 
-from flask import request, url_for
+from flask import url_for
 
 from project import app
 from project.utils import (
@@ -60,6 +60,8 @@ app.jinja_env.globals.update(
 
 @app.context_processor
 def get_context_processors():
+    from project.views.utils import get_current_admin_unit
+
     def get_manage_menu_options(admin_unit):
         from project.access import has_access
         from project.services.event_suggestion import get_event_reviews_badge_query
@@ -79,25 +81,6 @@ def get_context_processors():
             "reviews_badge": reviews_badge,
             "reference_requests_incoming_badge": reference_requests_incoming_badge,
         }
-
-    def get_current_admin_unit():
-        from flask_security import current_user
-
-        from project.access import get_admin_units_for_manage
-        from project.views.utils import get_manage_admin_unit_from_request
-
-        admin_unit = None
-
-        if current_user.is_authenticated:
-            admin_unit = get_manage_admin_unit_from_request(request)
-
-            if not admin_unit:
-                admin_units = get_admin_units_for_manage()
-
-                if len(admin_units) > 0:
-                    admin_unit = admin_units[0]
-
-        return admin_unit
 
     return dict(
         current_admin_unit=get_current_admin_unit(),

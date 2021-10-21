@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-10-14 14:32+0200\n"
+"POT-Creation-Date: 2021-10-20 23:30+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -208,7 +208,7 @@ msgstr "Impressum"
 #: project/forms/admin.py:12 project/templates/_macros.html:1409
 #: project/templates/layout.html:316
 #: project/templates/widget/event_suggestion/create.html:204
-#: project/views/admin_unit.py:50 project/views/root.py:58
+#: project/views/admin_unit.py:73 project/views/root.py:58
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -286,37 +286,37 @@ msgstr ""
 msgid "Update organization"
 msgstr "Organisation aktualisieren"
 
-#: project/forms/admin_unit.py:14 project/forms/event_place.py:12
+#: project/forms/admin_unit.py:15 project/forms/event_place.py:12
 #: project/forms/organizer.py:12
 msgid "Street"
 msgstr "Straße"
 
-#: project/forms/admin_unit.py:15 project/forms/event_place.py:13
+#: project/forms/admin_unit.py:16 project/forms/event_place.py:13
 #: project/forms/organizer.py:13
 msgid "Postal code"
 msgstr "Postleitzahl"
 
-#: project/forms/admin_unit.py:16 project/forms/event_place.py:14
+#: project/forms/admin_unit.py:17 project/forms/event_place.py:14
 #: project/forms/organizer.py:14
 msgid "City"
 msgstr "Stadt/Ort"
 
-#: project/forms/admin_unit.py:17 project/forms/event_place.py:15
+#: project/forms/admin_unit.py:18 project/forms/event_place.py:15
 #: project/forms/organizer.py:15
 msgid "State"
 msgstr "Bundesland"
 
-#: project/forms/admin_unit.py:19 project/forms/event_place.py:17
+#: project/forms/admin_unit.py:20 project/forms/event_place.py:17
 #: project/forms/organizer.py:17
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: project/forms/admin_unit.py:22 project/forms/event_place.py:20
+#: project/forms/admin_unit.py:23 project/forms/event_place.py:20
 #: project/forms/organizer.py:20
 msgid "Longitude"
 msgstr "Längengrad"
 
-#: project/forms/admin_unit.py:28 project/forms/event.py:36
+#: project/forms/admin_unit.py:29 project/forms/event.py:36
 #: project/forms/event.py:65 project/forms/event.py:398
 #: project/forms/event_place.py:25 project/forms/event_place.py:50
 #: project/forms/event_suggestion.py:26 project/forms/oauth2_client.py:66
@@ -328,28 +328,28 @@ msgstr "Längengrad"
 msgid "Name"
 msgstr "Name"
 
-#: project/forms/admin_unit.py:31
+#: project/forms/admin_unit.py:32
 msgid "Short name"
 msgstr "Kurzname"
 
-#: project/forms/admin_unit.py:32
+#: project/forms/admin_unit.py:33
 msgid "The short name is used to create a unique identifier for your events"
 msgstr ""
 "Der Kurzname wird verwendet, um die Veranstaltungen der Organisation "
 "eindeutig zu identifizieren. Der Kurzname darf nur Buchstaben, Nummern "
 "und Unterstriche enthalten."
 
-#: project/forms/admin_unit.py:40 project/templates/_macros.html:1545
+#: project/forms/admin_unit.py:41 project/templates/_macros.html:1545
 msgid "Short name must contain only letters numbers or underscore"
 msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
 
-#: project/forms/admin_unit.py:46 project/forms/event.py:57
+#: project/forms/admin_unit.py:47 project/forms/event.py:57
 #: project/forms/event.py:95 project/forms/event_place.py:26
 #: project/forms/organizer.py:26
 msgid "Link URL"
 msgstr "Link URL"
 
-#: project/forms/admin_unit.py:47 project/forms/admin_unit_member.py:11
+#: project/forms/admin_unit.py:48 project/forms/admin_unit_member.py:11
 #: project/forms/admin_unit_member.py:23 project/forms/admin_unit_member.py:28
 #: project/forms/event.py:58 project/forms/event_suggestion.py:38
 #: project/forms/organizer.py:27 project/templates/_macros.html:262
@@ -357,44 +357,62 @@ msgstr "Link URL"
 msgid "Email"
 msgstr "Email"
 
-#: project/forms/admin_unit.py:48 project/forms/event.py:59
+#: project/forms/admin_unit.py:49 project/forms/event.py:59
 #: project/forms/event_suggestion.py:31 project/forms/organizer.py:28
 #: project/templates/_macros.html:315
 msgid "Phone"
 msgstr "Telefon"
 
-#: project/forms/admin_unit.py:49 project/forms/event.py:60
+#: project/forms/admin_unit.py:50 project/forms/event.py:60
 #: project/forms/organizer.py:29 project/templates/_macros.html:323
 msgid "Fax"
 msgstr "Fax"
 
-#: project/forms/admin_unit.py:50 project/forms/organizer.py:30
+#: project/forms/admin_unit.py:51 project/forms/organizer.py:30
 msgid "Logo"
 msgstr "Logo"
 
-#: project/forms/admin_unit.py:63 project/templates/admin_unit/create.html:5
+#: project/forms/admin_unit.py:65
+msgid "Verify new organization"
+msgstr "Neue Organisation verifizieren"
+
+#: project/forms/admin_unit.py:66
+msgid "If set, events of the new organization are publicly visible."
+msgstr "Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich sichtbar."
+
+#: project/forms/admin_unit.py:72 project/forms/reference_request.py:86
+msgid "Verify reference requests automatically"
+msgstr "Empfehlungsanfragen automatisch verifizieren"
+
+#: project/forms/admin_unit.py:73
+msgid ""
+"If set, all upcoming reference requests of the new organization are "
+"verified automatically."
+msgstr "Wenn gesetzt, werden alle zukünftigen Empfehlungsanfragen der neuen Organisation automatisch verifiziert."
+
+#: project/forms/admin_unit.py:84 project/templates/admin_unit/create.html:5
 #: project/templates/admin_unit/create.html:22
 #: project/templates/manage/admin_units.html:27
 msgid "Create organization"
 msgstr "Organisation erstellen"
 
-#: project/forms/admin_unit.py:67 project/forms/admin_unit.py:90
+#: project/forms/admin_unit.py:92 project/forms/admin_unit.py:115
 msgid "Update settings"
 msgstr "Einstellungen speichern"
 
-#: project/forms/admin_unit.py:71
+#: project/forms/admin_unit.py:96
 msgid "Font"
 msgstr "Schriftart"
 
-#: project/forms/admin_unit.py:73
+#: project/forms/admin_unit.py:98
 msgid "Background Color"
 msgstr "Hintergrundfarbe"
 
-#: project/forms/admin_unit.py:79
+#: project/forms/admin_unit.py:104
 msgid "Primary Color"
 msgstr "Hauptfarbe"
 
-#: project/forms/admin_unit.py:85
+#: project/forms/admin_unit.py:110
 msgid "Link Color"
 msgstr "Linkfarbe"
 
@@ -1141,10 +1159,6 @@ msgstr "Unzulässig"
 msgid "Choose why you rejected the request."
 msgstr "Wähle aus, warum du die Anfrage abgelehnt hast."
 
-#: project/forms/reference_request.py:86
-msgid "Verify reference requests automatically"
-msgstr "Empfehlungsanfragen automatisch verifizieren"
-
 #: project/forms/reference_request.py:90
 msgid "Save review"
 msgstr "Prüfung speichern"
@@ -1542,6 +1556,11 @@ msgstr "Bearbeiten"
 #: project/templates/organizer/update.html:56
 msgid "Additional information"
 msgstr "Zusätzliche Informationen"
+
+#: project/templates/admin_unit/create.html:71
+#, python-format
+msgid "Relation to %(admin_unit_name)s"
+msgstr "Beziehung zu %(admin_unit_name)s"
 
 #: project/templates/admin_unit/invite_member.html:6
 #: project/templates/manage/members.html:12
@@ -1960,7 +1979,7 @@ msgstr "Einstellungen erfolgreich aktualisiert"
 msgid "User successfully updated"
 msgstr "Nutzer erfolgreich aktualisiert"
 
-#: project/views/admin_unit.py:46
+#: project/views/admin_unit.py:69
 msgid ""
 "Organizations cannot currently be created. The project is in a closed "
 "test phase. If you are interested, you can contact us."
@@ -1969,15 +1988,15 @@ msgstr ""
 " sich in einer geschlossenen Test-Phase. Bei Interesse kannst du uns "
 "kontaktieren."
 
-#: project/views/admin_unit.py:79
+#: project/views/admin_unit.py:115
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: project/views/admin_unit.py:105
+#: project/views/admin_unit.py:145
 msgid "AdminUnit successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin_unit.py:127
+#: project/views/admin_unit.py:167
 msgid "Organization invitation accepted"
 msgstr "Organisationseinladung akzeptiert"
 
@@ -2172,7 +2191,7 @@ msgstr ""
 "Ob alle zukünftigen Empfehlungsanfragen von %(admin_unit_name)s "
 "automatisch verifiziert werden sollen."
 
-#: project/views/utils.py:54
+#: project/views/utils.py:76
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
 "not allowed."
@@ -2180,16 +2199,16 @@ msgstr ""
 "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte "
 "Einträge sind nicht erlaubt."
 
-#: project/views/utils.py:105
+#: project/views/utils.py:127
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: project/views/utils.py:112
+#: project/views/utils.py:134
 msgid "Show"
 msgstr "Anzeigen"
 
-#: project/views/utils.py:119
+#: project/views/utils.py:141
 msgid "You do not have permission for this action"
 msgstr "Du hast keine Berechtigung für diese Aktion"
 
