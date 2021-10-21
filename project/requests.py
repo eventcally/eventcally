@@ -8,9 +8,10 @@ from project import app
 
 @app.after_request
 def set_manage_admin_unit_cookie(response):
-    manage_admin_unit_id = getattr(g, "manage_admin_unit_id", 0)
-    if manage_admin_unit_id > 0:
-        encoded = encode_cookie(str(manage_admin_unit_id))
+    admin_unit = getattr(g, "manage_admin_unit", None)
+
+    if admin_unit:
+        encoded = encode_cookie(str(admin_unit.id))
         response.set_cookie(
             "manage_admin_unit_id",
             value=encoded,

@@ -4,22 +4,45 @@ from flask import Markup, flash, g, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from flask_login.utils import decode_cookie
 from flask_mail import Message
+from flask_security import current_user
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
 from wtforms import FormField
 
 from project import app, db, mail
-from project.access import get_admin_unit_for_manage
+from project.access import get_admin_unit_for_manage, get_admin_units_for_manage
 from project.dateutils import berlin_tz, round_to_next_day
 from project.models import Analytics, EventAttendanceMode, EventDate
 from project.utils import get_place_str
 
 
-def get_manage_admin_unit_from_request(request):
-    manage_admin_unit_id = getattr(g, "manage_admin_unit_id", 0)
-    if manage_admin_unit_id > 0:
-        return get_admin_unit_for_manage(manage_admin_unit_id)
+def set_current_admin_unit(admin_unit):
+    if admin_unit:
+        setattr(g, "manage_admin_unit", admin_unit)
 
+
+def get_current_admin_unit(fallback=True):
+    admin_unit = getattr(g, "manage_admin_unit", None)
+
+    if admin_unit:
+        return admin_unit
+
+    if current_user.is_authenticated:
+        admin_unit = get_current_admin_unit_from_cookies()
+
+        if not admin_unit and fallback:
+            admin_units = get_admin_units_for_manage()
+
+            if len(admin_units) > 0:
+                admin_unit = admin_units[0]
+
+    if admin_unit:
+        set_current_admin_unit(admin_unit)
+
+    return admin_unit
+
+
+def get_current_admin_unit_from_cookies():
     try:
         if "manage_admin_unit_id" in request.cookies:
             encoded = request.cookies.get("manage_admin_unit_id")

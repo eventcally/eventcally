@@ -205,6 +205,38 @@ def test_create_from_invitation_currentUserDoesNotMatchInvitationEmail(
     utils.assert_response_redirect(response, "manage_admin_units")
 
 
+def test_create_with_relation(client, app, utils, seeder):
+    user_id = seeder.create_user(admin=False)
+    utils.login()
+    admin_unit_id = seeder.create_admin_unit(user_id, can_verify_other=True)
+
+    url = utils.get_url("admin_unit_create")
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Other Crew",
+            "short_name": "other_crew",
+            "location-postalCode": "38640",
+            "location-city": "Goslar",
+        },
+    )
+    assert response.status_code == 302
+
+    with app.app_context():
+        from project.services.admin_unit import get_admin_unit_by_name
+
+        admin_unit = get_admin_unit_by_name("Other Crew")
+        assert admin_unit is not None
+
+        relation = admin_unit.incoming_relations[0]
+        assert relation.source_admin_unit_id == admin_unit_id
+        assert relation.auto_verify_event_reference_requests is False
+        assert relation.verify
+
+
 def test_update(client, app, utils, seeder):
     seeder.create_user()
     user_id = utils.login()

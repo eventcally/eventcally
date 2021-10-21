@@ -1,4 +1,4 @@
-from flask import flash, g, redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
@@ -32,10 +32,11 @@ from project.services.event_suggestion import get_event_reviews_query
 from project.views.event import get_event_category_choices
 from project.views.utils import (
     flash_errors,
-    get_manage_admin_unit_from_request,
+    get_current_admin_unit,
     get_pagination_urls,
     handleSqlError,
     permission_missing,
+    set_current_admin_unit,
 )
 
 
@@ -48,7 +49,7 @@ def manage_after_login():
 @app.route("/manage")
 @auth_required()
 def manage():
-    admin_unit = get_manage_admin_unit_from_request(request)
+    admin_unit = get_current_admin_unit(False)
 
     if admin_unit:
         return redirect(url_for("manage_admin_unit", id=admin_unit.id))
@@ -115,7 +116,7 @@ def manage_admin_units():
 @auth_required()
 def manage_admin_unit(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    g.manage_admin_unit_id = id
+    set_current_admin_unit(admin_unit)
     return redirect(url_for("manage_admin_unit_events", id=admin_unit.id))
 
 
@@ -123,7 +124,7 @@ def manage_admin_unit(id):
 @auth_required()
 def manage_admin_unit_event_reviews(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    g.manage_admin_unit_id = id
+    set_current_admin_unit(admin_unit)
     admin_unit_suggestions_enabled_or_404(admin_unit)
 
     event_suggestions_paginate = (
@@ -145,7 +146,7 @@ def manage_admin_unit_event_reviews(id):
 @auth_required()
 def manage_admin_unit_events(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    g.manage_admin_unit_id = id
+    set_current_admin_unit(admin_unit)
 
     params = EventSearchParams()
 
@@ -180,7 +181,7 @@ def manage_admin_unit_events(id):
 @auth_required()
 def manage_admin_unit_organizers(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    g.manage_admin_unit_id = id
+    set_current_admin_unit(admin_unit)
 
     organizers = (
         EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id)
@@ -200,7 +201,7 @@ def manage_admin_unit_organizers(id):
 @auth_required()
 def manage_admin_unit_event_places(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    g.manage_admin_unit_id = id
+    set_current_admin_unit(admin_unit)
 
     form = FindEventPlaceForm(**request.args)
 
@@ -222,7 +223,7 @@ def manage_admin_unit_event_places(id):
 @auth_required()
 def manage_admin_unit_members(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    g.manage_admin_unit_id = id
+    set_current_admin_unit(admin_unit)
 
     if not has_access(admin_unit, "admin_unit.members:read"):
         return permission_missing(url_for("manage_admin_unit", id=id))
@@ -256,7 +257,7 @@ def manage_admin_unit_members(id):
 @auth_required()
 def manage_admin_unit_relations(id, path=None):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    g.manage_admin_unit_id = id
+    set_current_admin_unit(admin_unit)
 
     return render_template(
         "manage/relations.html",
@@ -269,7 +270,7 @@ def manage_admin_unit_relations(id, path=None):
 @auth_required()
 def manage_admin_unit_organization_invitations(id, path=None):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    g.manage_admin_unit_id = id
+    set_current_admin_unit(admin_unit)
 
     return render_template(
         "manage/organization_invitations.html",
@@ -281,7 +282,7 @@ def manage_admin_unit_organization_invitations(id, path=None):
 @auth_required()
 def manage_admin_unit_widgets(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    g.manage_admin_unit_id = id
+    set_current_admin_unit(admin_unit)
 
     default_background_color = "#ffffff"
     default_primary_color = "#007bff"

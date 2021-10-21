@@ -1,13 +1,14 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, FormField, StringField, SubmitField
+from wtforms.fields.core import BooleanField
 from wtforms.fields.html5 import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp
 from wtforms.widgets.html5 import ColorInput
 
 from project.forms.common import Base64ImageForm
 from project.forms.widgets import HTML5StringField
-from project.models import Image, Location
+from project.models import AdminUnitRelation, Image, Location
 
 
 class AdminUnitLocationForm(FlaskForm):
@@ -59,8 +60,32 @@ class BaseAdminUnitForm(FlaskForm):
             field.populate_obj(obj, name)
 
 
+class AdminUnitRelationForm(FlaskForm):
+    verify = BooleanField(
+        lazy_gettext("Verify new organization"),
+        description=lazy_gettext(
+            "If set, events of the new organization are publicly visible."
+        ),
+        validators=[Optional()],
+    )
+    auto_verify_event_reference_requests = BooleanField(
+        lazy_gettext("Verify reference requests automatically"),
+        description=lazy_gettext(
+            "If set, all upcoming reference requests of the new organization are verified automatically."
+        ),
+        validators=[Optional()],
+    )
+
+
 class CreateAdminUnitForm(BaseAdminUnitForm):
+    embedded_relation = FormField(
+        AdminUnitRelationForm, default=lambda: AdminUnitRelation()
+    )
     submit = SubmitField(lazy_gettext("Create organization"))
+
+    def populate_obj(self, obj):
+        super().populate_obj(obj)
+        delattr(obj, "embedded_relation")
 
 
 class UpdateAdminUnitForm(BaseAdminUnitForm):
