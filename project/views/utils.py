@@ -19,8 +19,6 @@ from project.utils import get_place_str
 def set_current_admin_unit(admin_unit):
     if admin_unit:
         setattr(g, "manage_admin_unit", admin_unit)
-    else:
-        delattr(g, "manage_admin_unit")
 
 
 def get_current_admin_unit(fallback=True):
