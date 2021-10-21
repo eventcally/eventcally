@@ -12,19 +12,42 @@ from project.access import (
 )
 from project.forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
 from project.models import AdminUnit, AdminUnitInvitation, AdminUnitRelation, Location
-from project.services.admin_unit import insert_admin_unit_for_user
+from project.services.admin_unit import (
+    insert_admin_unit_for_user,
+    upsert_admin_unit_relation,
+)
 from project.utils import strings_are_equal_ignoring_case
 from project.views.utils import (
     flash_errors,
     flash_message,
+    get_current_admin_unit,
     handleSqlError,
     permission_missing,
     send_mails,
 )
 
 
-def update_admin_unit_with_form(admin_unit, form):
+def update_admin_unit_with_form(admin_unit, form, embedded_relation_enabled=False):
     form.populate_obj(admin_unit)
+
+
+def add_relation(admin_unit, form, current_admin_unit):
+    embedded_relation = form.embedded_relation.object_data
+
+    verify = embedded_relation.verify and current_admin_unit.can_verify_other
+    auto_verify_event_reference_requests = (
+        embedded_relation.auto_verify_event_reference_requests
+        and current_admin_unit.incoming_reference_requests_allowed
+    )
+
+    if not verify and not auto_verify_event_reference_requests:
+        return
+
+    relation = upsert_admin_unit_relation(current_admin_unit.id, admin_unit.id)
+    relation.verify = verify
+    relation.auto_verify_event_reference_requests = auto_verify_event_reference_requests
+
+    db.session.commit()
 
 
 @app.route("/admin_unit/create", methods=("GET", "POST"))
@@ -57,6 +80,20 @@ def admin_unit_create():
     if invitation and not form.is_submitted():
         form.name.data = invitation.admin_unit_name
 
+    current_admin_unit = get_current_admin_unit()
+    embedded_relation_enabled = (
+        not invitation
+        and current_admin_unit
+        and has_access(current_admin_unit, "admin_unit:update")
+        and (
+            current_admin_unit.can_verify_other
+            or current_admin_unit.incoming_reference_requests_allowed
+        )
+    )
+
+    if embedded_relation_enabled and not form.is_submitted():
+        form.embedded_relation.verify.data = True
+
     if form.validate_on_submit():
         admin_unit = AdminUnit()
         admin_unit.location = Location()
@@ -67,7 +104,10 @@ def admin_unit_create():
                 admin_unit, current_user, invitation
             )
 
-            if relation:
+            if embedded_relation_enabled:
+                add_relation(admin_unit, form, current_admin_unit)
+
+            if invitation and relation:
                 send_admin_unit_invitation_accepted_mails(
                     invitation, relation, admin_unit
                 )
@@ -84,7 +124,11 @@ def admin_unit_create():
     else:
         flash_errors(form)
 
-    return render_template("admin_unit/create.html", form=form)
+    return render_template(
+        "admin_unit/create.html",
+        form=form,
+        embedded_relation_enabled=embedded_relation_enabled,
+    )
 
 
 @app.route("/admin_unit/<int:id>/update", methods=("GET", "POST"))

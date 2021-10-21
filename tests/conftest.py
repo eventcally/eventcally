@@ -26,6 +26,7 @@ def app():
 
     app.config["SERVER_NAME"] = None
     app.config["TESTING"] = True
+    app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = False
     app.testing = True
 
     return app
