@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-10-20 23:30+0200\n"
+"POT-Creation-Date: 2021-10-26 23:29+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -378,7 +378,9 @@ msgstr "Neue Organisation verifizieren"
 
 #: project/forms/admin_unit.py:66
 msgid "If set, events of the new organization are publicly visible."
-msgstr "Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich sichtbar."
+msgstr ""
+"Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich "
+"sichtbar."
 
 #: project/forms/admin_unit.py:72 project/forms/reference_request.py:86
 msgid "Verify reference requests automatically"
@@ -388,7 +390,9 @@ msgstr "Empfehlungsanfragen automatisch verifizieren"
 msgid ""
 "If set, all upcoming reference requests of the new organization are "
 "verified automatically."
-msgstr "Wenn gesetzt, werden alle zukünftigen Empfehlungsanfragen der neuen Organisation automatisch verifiziert."
+msgstr ""
+"Wenn gesetzt, werden alle zukünftigen Empfehlungsanfragen der neuen "
+"Organisation automatisch verifiziert."
 
 #: project/forms/admin_unit.py:84 project/templates/admin_unit/create.html:5
 #: project/templates/admin_unit/create.html:22
@@ -1378,7 +1382,7 @@ msgstr "Anderer Kalender"
 msgid "Manage"
 msgstr "Verwaltung"
 
-#: project/templates/home.html:30 project/templates/security/login_user.html:35
+#: project/templates/home.html:30 project/templates/security/login_user.html:38
 #: project/views/widget.py:158
 msgid "Register for free"
 msgstr "Kostenlos registrieren"
@@ -1943,7 +1947,11 @@ msgstr "\"%(client_name)s\" möchte auf deinen Account zugreifen"
 msgid "This will allow \"%(client_name)s\" to:"
 msgstr "Dies ermöglicht \"%(client_name)s\":"
 
-#: project/templates/security/login_user.html:33
+#: project/templates/security/login_user.html:27
+msgid "Remember me"
+msgstr "Angemeldet bleiben"
+
+#: project/templates/security/login_user.html:36
 msgid "You do not have an account yet? Not a problem!"
 msgstr "Du hast noch keinen Account? Kein Problem!"
 
@@ -1971,7 +1979,7 @@ msgstr "Vorschau"
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin.py:68 project/views/manage.py:317
+#: project/views/admin.py:68 project/views/manage.py:318
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
@@ -1988,15 +1996,15 @@ msgstr ""
 " sich in einer geschlossenen Test-Phase. Bei Interesse kannst du uns "
 "kontaktieren."
 
-#: project/views/admin_unit.py:115
+#: project/views/admin_unit.py:119
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: project/views/admin_unit.py:145
+#: project/views/admin_unit.py:149
 msgid "AdminUnit successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin_unit.py:167
+#: project/views/admin_unit.py:171
 msgid "Organization invitation accepted"
 msgstr "Organisationseinladung akzeptiert"
 
@@ -2191,7 +2199,7 @@ msgstr ""
 "Ob alle zukünftigen Empfehlungsanfragen von %(admin_unit_name)s "
 "automatisch verifiziert werden sollen."
 
-#: project/views/utils.py:76
+#: project/views/utils.py:77
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
 "not allowed."
@@ -2199,16 +2207,16 @@ msgstr ""
 "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte "
 "Einträge sind nicht erlaubt."
 
-#: project/views/utils.py:127
+#: project/views/utils.py:128
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: project/views/utils.py:134
+#: project/views/utils.py:135
 msgid "Show"
 msgstr "Anzeigen"
 
-#: project/views/utils.py:141
+#: project/views/utils.py:142
 msgid "You do not have permission for this action"
 msgstr "Du hast keine Berechtigung für diese Aktion"
 

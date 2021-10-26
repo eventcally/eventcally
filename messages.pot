@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-10-20 23:30+0200\n"
+"POT-Creation-Date: 2021-10-26 23:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1334,7 +1334,7 @@ msgstr ""
 msgid "Manage"
 msgstr ""
 
-#: project/templates/home.html:30 project/templates/security/login_user.html:35
+#: project/templates/home.html:30 project/templates/security/login_user.html:38
 #: project/views/widget.py:158
 msgid "Register for free"
 msgstr ""
@@ -1893,7 +1893,11 @@ msgstr ""
 msgid "This will allow \"%(client_name)s\" to:"
 msgstr ""
 
-#: project/templates/security/login_user.html:33
+#: project/templates/security/login_user.html:27
+msgid "Remember me"
+msgstr ""
+
+#: project/templates/security/login_user.html:36
 msgid "You do not have an account yet? Not a problem!"
 msgstr ""
 
@@ -1921,7 +1925,7 @@ msgstr ""
 msgid "Organization successfully updated"
 msgstr ""
 
-#: project/views/admin.py:68 project/views/manage.py:317
+#: project/views/admin.py:68 project/views/manage.py:318
 msgid "Settings successfully updated"
 msgstr ""
 
@@ -1935,15 +1939,15 @@ msgid ""
 "test phase. If you are interested, you can contact us."
 msgstr ""
 
-#: project/views/admin_unit.py:115
+#: project/views/admin_unit.py:119
 msgid "Organization successfully created"
 msgstr ""
 
-#: project/views/admin_unit.py:145
+#: project/views/admin_unit.py:149
 msgid "AdminUnit successfully updated"
 msgstr ""
 
-#: project/views/admin_unit.py:167
+#: project/views/admin_unit.py:171
 msgid "Organization invitation accepted"
 msgstr ""
 
@@ -2134,22 +2138,22 @@ msgid ""
 "verified automatically."
 msgstr ""
 
-#: project/views/utils.py:76
+#: project/views/utils.py:77
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
 "not allowed."
 msgstr ""
 
-#: project/views/utils.py:127
+#: project/views/utils.py:128
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr ""
 
-#: project/views/utils.py:134
+#: project/views/utils.py:135
 msgid "Show"
 msgstr ""
 
-#: project/views/utils.py:141
+#: project/views/utils.py:142
 msgid "You do not have permission for this action"
 msgstr ""
 
