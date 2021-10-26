@@ -291,8 +291,8 @@ def get_events_query(params):
     event_filter = and_(event_filter, Event.dates.any(date_filter))
     return (
         Event.query.join(Event.admin_unit)
-        .join(EventPlace, isouter=True)
-        .join(Location, isouter=True)
+        .join(Event.event_place, isouter=True)
+        .join(EventPlace.location, isouter=True)
         .options(
             contains_eager(Event.event_place).contains_eager(EventPlace.location),
             joinedload(Event.categories),
