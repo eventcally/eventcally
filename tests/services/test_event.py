@@ -185,19 +185,20 @@ def test_get_recurring_events(client, seeder, app):
         assert recurring_events[0].id == event_id
 
 
-def test_get_events_query(client, seeder, utils):
-    from project.services.event import get_events_query
-    from project.services.event_search import EventSearchParams
-
+def test_get_events_query(client, seeder, app):
     _, admin_unit_id = seeder.setup_base()
     seeder.create_event(admin_unit_id)
     seeder.upsert_event_place(admin_unit_id, "Other Place")
 
-    params = EventSearchParams()
-    params.admin_unit_id = admin_unit_id
-    params.can_read_private_events = True
+    with app.app_context():
+        from project.services.event import get_events_query
+        from project.services.event_search import EventSearchParams
 
-    events = get_events_query(params)
-    pagination = events.paginate()
+        params = EventSearchParams()
+        params.admin_unit_id = admin_unit_id
+        params.can_read_private_events = True
 
-    assert pagination.total == 1
+        events = get_events_query(params)
+        pagination = events.paginate()
+
+        assert pagination.total == 1
