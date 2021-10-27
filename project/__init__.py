@@ -26,7 +26,6 @@ app.config["SECURITY_SEND_REGISTER_EMAIL"] = True
 app.config["SECURITY_RECOVERABLE"] = True
 app.config["SECURITY_CHANGEABLE"] = True
 app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
-app.config["SECURITY_DEFAULT_REMEMBER_ME"] = True
 app.config["LANGUAGES"] = ["en", "de"]
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
 app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = os.getenv(
