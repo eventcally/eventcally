@@ -1,12 +1,16 @@
 import os
+import warnings
 
 import pytest
+from sqlalchemy.exc import SAWarning
 
 from .seeder import Seeder
 from .utils import UtilActions
 
 
 def pytest_generate_tests(metafunc):
+    warnings.filterwarnings("error", category=SAWarning)
+
     os.environ["DATABASE_URL"] = os.environ.get(
         "TEST_DATABASE_URL", "postgresql://postgres@localhost/gsevpt_tests"
     )
