@@ -15,7 +15,7 @@ class Seeder(object):
         owner_id = self.create_user("owner@owner")
         admin_unit_id = self.create_admin_unit(owner_id, "Other crew")
         member_id = self.create_admin_unit_member_event_verifier(admin_unit_id)
-        self._utils.login()
+        self._utils.login(follow_redirects=False)
         return (owner_id, admin_unit_id, member_id)
 
     def create_user(
