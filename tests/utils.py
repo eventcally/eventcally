@@ -51,7 +51,12 @@ class UtilActions(object):
             assert response.status_code == 200
             self.assert_response_success_message(response)
 
-    def login(self, email="test@test.de", password="MeinPasswortIstDasBeste"):
+    def login(
+        self,
+        email="test@test.de",
+        password="MeinPasswortIstDasBeste",
+        follow_redirects=True,
+    ):
         from project.services.user import find_user_by_email
 
         response = self._client.get("/login")
@@ -66,9 +71,14 @@ class UtilActions(object):
                     "csrf_token": self.get_csrf(response),
                     "submit": "Anmelden",
                 },
-                follow_redirects=True,
+                follow_redirects=follow_redirects,
             )
-            assert response.status_code == 200
+
+            if follow_redirects:
+                assert response.status_code == 200
+            else:
+                assert response.status_code == 302
+
             assert g.identity.user.email == email
 
         with self._app.app_context():
