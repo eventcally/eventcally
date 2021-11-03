@@ -41,8 +41,11 @@ def test_list(client, seeder, utils):
 
 
 def test_search(client, seeder, utils):
+    from project.dateutils import create_berlin_date
+
     user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
+    start = create_berlin_date(2020, 10, 3, 10)
+    event_id = seeder.create_event(admin_unit_id, start=start)
     seeder.create_event(admin_unit_id, draft=True)
     seeder.create_event_unverified()
 
@@ -50,7 +53,7 @@ def test_search(client, seeder, utils):
     response = utils.get_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["event"]["id"] == event_id
-    assert response.json["items"][0]["start"].endswith("+02:00")
+    assert response.json["items"][0]["start"] == "2020-10-03T10:00:00+02:00"
 
     url = utils.get_url("api_v1_event_date_search", keyword="name")
     response = utils.get_ok(url)

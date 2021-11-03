@@ -22,8 +22,8 @@ describe("Root", () => {
   it("example", () => {
     cy.createAdminUnit("test@test.de", "Goslar").then(function (adminUnitId) {
       cy.createEvent(adminUnitId).then(function (eventId) {
-        cy.visit("/example");
-        cy.screenshot("example");
+        cy.visit("/organizations");
+        cy.screenshot("organizations");
       });
     });
   });

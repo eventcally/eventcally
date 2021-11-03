@@ -4,11 +4,20 @@ class Seeder(object):
         self._db = db
         self._utils = utils
 
-    def setup_base(self, admin=False, log_in=True, admin_unit_verified=True):
-        user_id = self.create_user(admin=admin)
+    def setup_base(
+        self,
+        admin=False,
+        log_in=True,
+        admin_unit_verified=True,
+        email="test@test.de",
+        name="Meine Crew",
+    ):
+        user_id = self.create_user(email=email, admin=admin)
         if log_in:
             self._utils.login()
-        admin_unit_id = self.create_admin_unit(user_id, verified=admin_unit_verified)
+        admin_unit_id = self.create_admin_unit(
+            user_id, name=name, verified=admin_unit_verified
+        )
         return (user_id, admin_unit_id)
 
     def setup_base_event_verifier(self):
@@ -86,7 +95,7 @@ class Seeder(object):
             if other_admin_unit:
                 other_admin_unit_id = other_admin_unit.id
             else:
-                other_user_id = self.create_user("other@test.de")
+                other_user_id = self.create_user("admin@oveda.de")
                 other_admin_unit_id = self.create_admin_unit(
                     other_user_id, "Oveda", can_verify_other=True
                 )

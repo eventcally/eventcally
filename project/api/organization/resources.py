@@ -5,7 +5,9 @@ from sqlalchemy import and_
 from project import db
 from project.access import (
     access_or_401,
+    can_verify_admin_unit,
     get_admin_unit_for_manage_or_404,
+    login_api_user,
     login_api_user_or_401,
 )
 from project.api import add_api_resource
@@ -166,9 +168,14 @@ class OrganizationListResource(BaseResource):
     @doc(summary="List organizations", tags=["Organizations"])
     @use_kwargs(OrganizationListRequestSchema, location=("query"))
     @marshal_with(OrganizationListResponseSchema)
+    @require_oauth(optional=True)
     def get(self, **kwargs):
         keyword = kwargs["keyword"] if "keyword" in kwargs else None
-        pagination = get_admin_unit_query(keyword).paginate()
+
+        login_api_user()
+        include_unverified = can_verify_admin_unit()
+
+        pagination = get_admin_unit_query(keyword, include_unverified).paginate()
         return pagination
 
 
