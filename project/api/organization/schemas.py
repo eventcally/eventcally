@@ -37,6 +37,7 @@ class OrganizationBaseSchema(OrganizationIdSchema):
     email = marshmallow.auto_field()
     phone = marshmallow.auto_field()
     fax = marshmallow.auto_field()
+    is_verified = fields.Boolean()
 
 
 class OrganizationSchema(OrganizationBaseSchema):

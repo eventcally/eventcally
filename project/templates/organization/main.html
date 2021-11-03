@@ -1,0 +1,34 @@
+{% extends "layout_vue.html" %}
+
+{%- block title -%}
+{{ _('Organizations') }}
+{%- endblock -%}
+
+{% block header_before_site_js %}
+{{ super() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js" integrity="sha512-dnvR4Aebv5bAtJxDunq3eE8puKAJrY9GBJYl9GC6lTOEC76s1dbDfJFcL9GyzpaDW4vlI/UjR8sKbc1j6Ynx6w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{%- endblock -%}
+
+{% block component_scripts %}
+<script src="{{ url_for('static', filename='vue/organization/list.vue.js')}}"></script>
+<script src="{{ url_for('static', filename='vue/organization/read.vue.js')}}"></script>
+{% endblock %}
+
+{% block component_definitions %}
+Vue.component("OrganizationList", OrganizationList);
+Vue.component("OrganizationRead", OrganizationRead);
+{% endblock %}
+
+{% block vue_routes %}
+const routes = [
+  {
+    path: "/organizations",
+    component: OrganizationList,
+  },
+  {
+    path: "/organizations/:organization_id",
+    component: OrganizationRead,
+    name: "OrganizationById",
+  },
+];
+{% endblock %}

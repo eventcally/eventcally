@@ -681,7 +681,10 @@
         {% endif %}
 
         <div class="col-12 col-sm">
-          <div class="font-weight-bold">{{ event.admin_unit.name }}{{ render_admin_unit_badges(event.admin_unit) }}</div>
+          <div class="font-weight-bold">
+            <a href="{{ url_for('organizations', path=event.admin_unit.id) }}">{{ event.admin_unit.name }}</a>
+            {{ render_admin_unit_badges(event.admin_unit) }}
+          </div>
 
           {{ render_link_prop(event.admin_unit.url) }}
           {{ render_email_prop(event.admin_unit.email) }}
@@ -1552,19 +1555,21 @@ $('#allday').on('change', function() {
 
     $("#name").rules("add", {
       remote: {
-        url: "{{ url_for('js_check_org_name') }}",
-        type: "post"
-        {% if admin_unit %}
-        ,data: {
-          admin_unit_id: function() {
-            return "{{ admin_unit.id }}";
+        param: {
+          url: "{{ url_for('js_check_org_name') }}",
+          type: "post"
+          {% if admin_unit %}
+          ,data: {
+            admin_unit_id: function() {
+              return "{{ admin_unit.id }}";
+            }
           }
+          {% endif %}
         }
-        {% if admin_unit.name %}
-        ,depends: function() {
-            return $('#name').val() != '{{ admin_unit.name }}';
+        {% if admin_unit and admin_unit.name %}
+        ,depends: function(element) {
+            return $('#name').val() !== '{{ admin_unit.name }}';
         }
-        {% endif %}
         {% endif %}
       }
     });
@@ -1572,19 +1577,21 @@ $('#allday').on('change', function() {
     $("#short_name").rules("add", "shortName");
     $("#short_name").rules("add", {
       remote: {
-        url: "{{ url_for('js_check_org_short_name') }}",
-        type: "post"
-        {% if admin_unit %}
-        ,data: {
-          admin_unit_id: function() {
-            return "{{ admin_unit.id }}";
+        param: {
+          url: "{{ url_for('js_check_org_short_name') }}",
+          type: "post"
+          {% if admin_unit %}
+          ,data: {
+            admin_unit_id: function() {
+              return "{{ admin_unit.id }}";
+            }
           }
+          {% endif %}
         }
         {% if admin_unit.short_name %}
-        ,depends: function() {
-            return $('#short_name').val() != '{{ admin_unit.short_name }}';
+        ,depends: function(element) {
+            return $('#short_name').val() !== '{{ admin_unit.short_name }}';
         }
-        {% endif %}
         {% endif %}
       }
     });

@@ -32,11 +32,6 @@ def home():
     )
 
 
-@app.route("/example")
-def example():
-    return render_template("example.html")
-
-
 @app.route("/tos")
 def tos():
     title = gettext("Terms of service")

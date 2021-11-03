@@ -12,8 +12,8 @@ def test_home(client, seeder, utils):
     utils.assert_response_redirect(response, "home")
 
 
-def test_example(client, seeder, utils):
-    url = utils.get_url("example")
+def test_organizations(client, seeder, utils):
+    url = utils.get_url("organizations")
     utils.get_ok(url)
 
 

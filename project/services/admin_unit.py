@@ -14,7 +14,6 @@ from project.models import (
 )
 from project.services.image import upsert_image_with_data
 from project.services.location import assign_location_values
-from project.utils import strings_are_equal_ignoring_case
 
 
 def insert_admin_unit_for_user(admin_unit, user, invitation=None):
@@ -59,18 +58,12 @@ def insert_admin_unit_for_user(admin_unit, user, invitation=None):
         relation = upsert_admin_unit_relation(invitation.admin_unit_id, admin_unit.id)
         relation.invited = True
 
-        name_equals_suggested_name = strings_are_equal_ignoring_case(
-            admin_unit.name, invitation.admin_unit_name
-        )
         relation.auto_verify_event_reference_requests = (
             inviting_admin_unit.incoming_reference_requests_allowed
             and invitation.relation_auto_verify_event_reference_requests
-            and name_equals_suggested_name
         )
         relation.verify = (
-            inviting_admin_unit.can_verify_other
-            and invitation.relation_verify
-            and name_equals_suggested_name
+            inviting_admin_unit.can_verify_other and invitation.relation_verify
         )
 
     db.session.commit()
@@ -173,8 +166,11 @@ def get_admin_unit_member(id):
     return AdminUnitMember.query.filter_by(id=id).first()
 
 
-def get_admin_unit_query(keyword=None):
+def get_admin_unit_query(keyword=None, include_unverified=False):
     query = AdminUnit.query
+
+    if not include_unverified:
+        query = query.filter(AdminUnit.is_verified)
 
     if keyword:
         like_keyword = "%" + keyword + "%"

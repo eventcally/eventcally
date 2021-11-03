@@ -62,12 +62,12 @@ const CustomTypeahead = {
     fetchData(query) {
       const vm = this
       axios
-          .get(this.fetchURL.replace('{query}', escape(query)))
+          .get(this.fetchURL.replace('{query}', query))
           .then(response => {
               vm.suggestions = response.data.items
           })
     },
-    fetchDataDebounced: _.debounce(function(query) { this.fetchData(query) }, 1000),
+    fetchDataDebounced: _.debounce(function(query) { this.fetchData(query) }, 500),
     onInput() {
       this.selected = null;
       this.fetchDataDebounced(this.query)
