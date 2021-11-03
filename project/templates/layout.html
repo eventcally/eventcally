@@ -173,8 +173,8 @@
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div class="navbar-nav mr-auto">
                 <a class="nav-item nav-link" href="{{ url_for('event_dates') }}">{{ _('Events') }}</a>
+                <a class="nav-item nav-link" href="{{ url_for('organizations') }}">{{ _('Organizations') }}</a>
                 <a class="nav-item nav-link" href="{{ url_for('planing') }}">{{ _('Planing') }}</a>
-                <a class="nav-item nav-link" href="{{ url_for('example') }}">{{ _('Example') }}</a>
               </div>
               <div class="navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
@@ -268,6 +268,7 @@
                     {% endif %}
                     <a class="dropdown-item" href="{{ url_for('admin_unit_update', id=current_admin_unit.id) }}">{{ _('Settings') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_widgets', id=current_admin_unit.id) }}">{{ _('Widgets') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('organizations', path=current_admin_unit.id) }}">{{ _('Profile') }}</a>
                   </div>
                 </li>
               </div>

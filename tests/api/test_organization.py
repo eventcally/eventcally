@@ -15,10 +15,59 @@ def test_read(client, seeder, utils):
 
 
 def test_list(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
-
+    seeder.setup_base()
     url = utils.get_url("api_v1_organization_list", keyword="crew")
     utils.get_ok(url)
+
+
+def test_list_unverified(client, app, seeder, utils):
+    _, verified_admin_unit_id = seeder.setup_base(
+        email="verified@test.de",
+        log_in=False,
+        name="Verified",
+        admin_unit_verified=True,
+    )
+    _, unverified_admin_unit_id = seeder.setup_base(
+        email="unverified@test.de",
+        log_in=False,
+        name="Unverified",
+        admin_unit_verified=False,
+    )
+
+    # Unauthorisierte Nutzer sehen nur verifizierte Organisationen
+    url = utils.get_url("api_v1_organization_list")
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == verified_admin_unit_id
+
+    # user_id1 sieht verified_admin_unit_id, weil sie verifiziert ist,
+    # aber nicht unverified_admin_unit_id, weil sie nicht verifiziert ist.
+    utils.login("verified@test.de")
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == verified_admin_unit_id
+
+    # Authorisierte Nutzer, die Organisationen verifizieren dürfen, sehen alle Organisationen.
+    # "admin@oveda.de" ist Mitglied der Organisation "Oveda", die andere Organisationen verifizieren darf.
+    with app.app_context():
+        from project.services.admin_unit import get_admin_unit_by_name
+
+        oveda_id = get_admin_unit_by_name("Oveda").id
+
+    utils.logout()
+    utils.login("admin@oveda.de")
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 3
+    assert response.json["items"][0]["id"] == oveda_id
+    assert response.json["items"][1]["id"] == unverified_admin_unit_id
+    assert response.json["items"][2]["id"] == verified_admin_unit_id
+
+    # Globale Admins dürfen alle Organisationen sehen
+    seeder.create_user("admin@test.de", admin=True)
+    utils.logout()
+    utils.login("admin@test.de")
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 3
 
 
 def test_event_date_search(client, seeder, utils):
