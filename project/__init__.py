@@ -183,6 +183,7 @@ from project.views import (
     oauth,
     oauth2_client,
     oauth2_token,
+    organization,
     organizer,
     planing,
     reference,
