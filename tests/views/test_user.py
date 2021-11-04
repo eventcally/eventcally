@@ -26,6 +26,19 @@ def test_organization_invitation_not_authenticated(client, app, utils, seeder):
     assert response.headers["Location"].startswith("http://localhost/login")
 
 
+def test_organization_invitation_currentUserDoesNotMatchInvitationEmail(
+    client, app, db, utils, seeder
+):
+    _, admin_unit_id = seeder.setup_base()
+    invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
+
+    seeder.create_user("invited@test.de")
+    url = utils.get_url("user_organization_invitation", id=invitation_id)
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.headers["Location"] == "http://localhost/profile"
+
+
 def test_organization_invitation_list(client, seeder, utils):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     _ = seeder.create_admin_unit_invitation(admin_unit_id)
