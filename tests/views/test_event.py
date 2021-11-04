@@ -564,9 +564,7 @@ def test_delete(client, seeder, utils, app, mocker, db_error):
     response = utils.post_form(
         url,
         response,
-        {
-            "name": "Name",
-        },
+        {},
     )
 
     if db_error:
@@ -586,26 +584,6 @@ def test_delete(client, seeder, utils, app, mocker, db_error):
             .first()
         )
         assert event is None
-
-
-def test_delete_nameDoesNotMatch(client, seeder, utils, app, mocker):
-    user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
-
-    url = utils.get_url("event_delete", event_id=event_id)
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Falscher Name",
-        },
-    )
-
-    utils.assert_response_error_message(
-        response, b"Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
-    )
 
 
 def test_rrule(client, seeder, utils, app):

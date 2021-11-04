@@ -395,7 +395,6 @@ class UpdateEventForm(BaseEventForm):
 
 class DeleteEventForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Delete event"))
-    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
 
 
 class FindEventForm(FlaskForm):
