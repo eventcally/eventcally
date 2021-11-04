@@ -45,7 +45,6 @@ from project.views.utils import (
     flash_message,
     get_share_links,
     handleSqlError,
-    non_match_for_deletion,
     send_mails,
 )
 
@@ -242,18 +241,15 @@ def event_delete(event_id):
     form = DeleteEventForm()
 
     if form.validate_on_submit():
-        if non_match_for_deletion(form.name.data, event.name):
-            flash(gettext("Entered name does not match event name"), "danger")
-        else:
-            try:
-                admin_unit_id = event.admin_unit.id
-                db.session.delete(event)
-                db.session.commit()
-                flash(gettext("Event successfully deleted"), "success")
-                return redirect(url_for("manage_admin_unit_events", id=admin_unit_id))
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                flash(handleSqlError(e), "danger")
+        try:
+            admin_unit_id = event.admin_unit.id
+            db.session.delete(event)
+            db.session.commit()
+            flash(gettext("Event successfully deleted"), "success")
+            return redirect(url_for("manage_admin_unit_events", id=admin_unit_id))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), "danger")
     else:
         flash_errors(form)
 
