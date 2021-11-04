@@ -13,7 +13,7 @@ from project import app, db, mail
 from project.access import get_admin_unit_for_manage, get_admin_units_for_manage
 from project.dateutils import berlin_tz, round_to_next_day
 from project.models import Analytics, EventAttendanceMode, EventDate
-from project.utils import get_place_str
+from project.utils import get_place_str, strings_are_equal_ignoring_case
 
 
 def set_current_admin_unit(admin_unit):
@@ -138,8 +138,11 @@ def flash_message(msg, url, link_text=None, category="success"):
     flash(message, category)
 
 
-def permission_missing(redirect_location):
-    flash(gettext("You do not have permission for this action"), "danger")
+def permission_missing(redirect_location, message=None):
+    if not message:
+        message = gettext("You do not have permission for this action")
+
+    flash(message, "danger")
     return redirect(redirect_location)
 
 
@@ -241,3 +244,26 @@ def get_calendar_links(event_date: EventDate) -> dict:
     calendar_links["ics"] = url_for("event_date_ical", id=event_date.id, _external=True)
 
     return calendar_links
+
+
+def get_invitation_access_result(email: str):
+    from project.services.user import find_user_by_email
+
+    # Wenn Email nicht als Nutzer vorhanden, dann direkt zu Registrierung
+    if not find_user_by_email(email):
+        return redirect(url_for("security.register"))
+
+    # Wenn nicht angemeldet, dann zum Login
+    if not current_user.is_authenticated:
+        return app.login_manager.unauthorized()
+
+    # Wenn der aktuelle Nutzer nicht der Empfänger der Einladung ist, Meldung ausgeben
+    if not strings_are_equal_ignoring_case(email, current_user.email):
+        return permission_missing(
+            url_for("profile"),
+            gettext(
+                "The invitation was issued to another user. Sign in with the email address the invitation was sent to."
+            ),
+        )
+
+    return None
