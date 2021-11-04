@@ -1,9 +1,9 @@
-from flask import redirect, render_template, url_for
-from flask_security import auth_required, current_user
+from flask import render_template
+from flask_security import auth_required
 
 from project import app
 from project.models import AdminUnitInvitation
-from project.services.user import find_user_by_email
+from project.views.utils import get_invitation_access_result
 
 
 @app.route("/profile")
@@ -15,13 +15,10 @@ def profile():
 @app.route("/user/organization-invitations/<int:id>")
 def user_organization_invitation(id):
     invitation = AdminUnitInvitation.query.get_or_404(id)
+    result = get_invitation_access_result(invitation.email)
 
-    # Wenn Email nicht als Nutzer vorhanden, dann direkt zu Registrierung
-    if not find_user_by_email(invitation.email):
-        return redirect(url_for("security.register"))
-
-    if not current_user.is_authenticated:
-        return app.login_manager.unauthorized()
+    if result:
+        return result
 
     return render_template("user/organization_invitations.html")
 
