@@ -110,7 +110,6 @@ describe("Event", () => {
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEvent(adminUnitId).then(function (eventId) {
         cy.visit("/event/" + eventId + "/delete");
-        cy.get("#name").type("Name");
         cy.screenshot("delete");
         cy.get("#submit").click();
         cy.url().should(
