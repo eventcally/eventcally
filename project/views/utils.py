@@ -249,6 +249,17 @@ def get_calendar_links(event_date: EventDate) -> dict:
 def get_invitation_access_result(email: str):
     from project.services.user import find_user_by_email
 
+    # Wenn der aktuelle Nutzer nicht der Empfänger der Einladung ist, Meldung ausgeben
+    if current_user.is_authenticated and not strings_are_equal_ignoring_case(
+        email, current_user.email
+    ):
+        return permission_missing(
+            url_for("profile"),
+            gettext(
+                "The invitation was issued to another user. Sign in with the email address the invitation was sent to."
+            ),
+        )
+
     # Wenn Email nicht als Nutzer vorhanden, dann direkt zu Registrierung
     if not find_user_by_email(email):
         return redirect(url_for("security.register"))
@@ -256,14 +267,5 @@ def get_invitation_access_result(email: str):
     # Wenn nicht angemeldet, dann zum Login
     if not current_user.is_authenticated:
         return app.login_manager.unauthorized()
-
-    # Wenn der aktuelle Nutzer nicht der Empfänger der Einladung ist, Meldung ausgeben
-    if not strings_are_equal_ignoring_case(email, current_user.email):
-        return permission_missing(
-            url_for("profile"),
-            gettext(
-                "The invitation was issued to another user. Sign in with the email address the invitation was sent to."
-            ),
-        )
 
     return None
