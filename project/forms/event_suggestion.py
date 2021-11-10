@@ -11,7 +11,7 @@ from wtforms.fields.html5 import EmailField, TelField
 from wtforms.validators import DataRequired, Optional
 
 from project.forms.common import get_accept_tos_markup
-from project.forms.event import SharedEventForm
+from project.forms.event import EventDateDefinitionFormMixin, SharedEventForm
 from project.forms.widgets import TagSelectField
 from project.models import (
     EventAttendanceMode,
@@ -21,7 +21,7 @@ from project.models import (
 )
 
 
-class CreateEventSuggestionForm(SharedEventForm):
+class CreateEventSuggestionForm(SharedEventForm, EventDateDefinitionFormMixin):
     contact_name = StringField(
         lazy_gettext("Name"),
         validators=[DataRequired()],
@@ -109,6 +109,14 @@ class CreateEventSuggestionForm(SharedEventForm):
                 obj.attendance_mode = EventAttendanceMode(self.attendance_mode.data)
             else:
                 field.populate_obj(obj, name)
+
+    def validate(self):
+        result = super().validate()
+
+        if not self.validate_date_definition():
+            result = False
+
+        return result
 
 
 class RejectEventSuggestionForm(FlaskForm):

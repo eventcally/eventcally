@@ -1,14 +1,20 @@
 moment.locale("de");
 
-function get_moment_with_time(field_id) {
-  var date_time_string = $(field_id).val();
-  var time_string = $(field_id + "-time").val();
+function get_moment_with_time_from_fields(date_field, time_field) {
+  var date_time_string = $(date_field).val();
+  var time_string = $(time_field).val();
 
   if (time_string != undefined && time_string != "") {
     date_time_string += " " + time_string;
   }
 
   return moment(date_time_string);
+}
+
+function get_moment_with_time(field_id) {
+  var date_field = $(field_id);
+  var time_field = $(field_id + "-time");
+  return get_moment_with_time_from_fields(date_field, time_field)
 }
 
 function set_date_bounds(picker) {
@@ -98,6 +104,10 @@ function onAlldayChecked(checkbox, hidden_field_id) {
 }
 
 function start_datepicker(input) {
+  if (input.data('picker') !== undefined) {
+    return;
+  }
+
   var hidden_field = input;
   var hidden_field_id = hidden_field.attr("id");
 
@@ -341,6 +351,84 @@ function scroll_to_element(element, complete) {
     { duration: "slow", complete: complete }
   );
 }
+
+(function($) {
+  function OvedaDateDefinition(element, options) {
+    var self = this;
+    var container = $(element);
+    var prefix = container.attr('data-prefix');
+
+    var startInput = container.find("input[id$='-start']");
+    var endInput = container.find("input[id$='-end']");
+
+    var startTimeInput = container.find("input[id$='-start-time']");
+    var endTimeInput = container.find("input[id$='-end-time']");
+
+    var endShowContainer = container.find("div[id$='-end-show-container']");
+    var endContainer = container.find("div[id$='-end-container']");
+    var alldayInput = container.find("input[id$='-allday']");
+    var recurrenceRuleTextarea = container.find("textarea[id$='-recurrence_rule']");
+
+    start_datepicker(startInput);
+    start_datepicker(endInput);
+
+    start_timepicker(startTimeInput);
+    start_timepicker(endTimeInput);
+
+    recurrenceRuleTextarea.recurrenceinput({prefix: prefix, ajaxURL: "/events/rrule"});
+
+    var startUserInput = container.find("input[id$='-start-user']");
+    var endUserInput = container.find("input[id$='-end-user']");
+
+    startInput.rules("add", { dateRange: ["#start", "#end"] });
+    endInput.rules("add", { dateRangeDay: ["#start", "#end"] });
+
+    startTimeInput.rules("add", "time");
+    endTimeInput.rules("add", "time");
+
+    endContainer.on('shown', function() {
+      var end_moment = get_moment_with_time('#' + startInput.attr('id'));
+
+      if (alldayInput.is(':checked')) {
+        end_moment = end_moment.endOf('day');
+      } else {
+        end_moment = end_moment.add(3, 'hours');
+      }
+
+      set_picker_date(endUserInput, end_moment.toDate());
+    });
+
+    endContainer.on('hidden', function() {
+      set_picker_date(endUserInput, null);
+      alldayInput.prop('checked', false).trigger("change");
+    });
+
+    alldayInput.on('change', function() {
+      if (this.checked && !endContainer.is(":visible")) {
+        showLink(null, endShowContainer.find("a.show-link"));
+      }
+    });
+
+  }
+
+  $.fn.ovedaDateDefinition = function(options) {
+      var defaults = {};
+      var settings = $.extend({}, defaults, options);
+
+      if (this.length > 1) {
+          this.each(function() { $(this).ovedaDateDefinition(options) });
+          return this;
+      }
+
+      if (this.data('ovedaDateDefinition')) {
+          return this.data('ovedaDateDefinition');
+      }
+
+      var ovedaDateDefinition = new OvedaDateDefinition(this, settings);
+      this.data('ovedaDateDefinition', ovedaDateDefinition);
+      return ovedaDateDefinition;
+  }
+})(jQuery);
 
 $(function () {
   $('[data-toggle="tooltip"]').tooltip();

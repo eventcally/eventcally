@@ -301,60 +301,63 @@ def get_events_query(params):
             joinedload(Event.admin_unit),
         )
         .filter(event_filter)
-        .order_by(Event.start)
+        .order_by(Event.min_start)
     )
 
 
 def get_recurring_events():
-    return Event.query.filter(func.coalesce(Event.recurrence_rule, "") != "").all()
+    return Event.query.filter(Event.is_recurring).all()
 
 
 def update_event_dates_with_recurrence_rule(event):
-    sanitize_allday_instance(event)
-    start = event.start
-    end = event.end
-
-    if end:
-        time_difference = relativedelta(end, start)
-
     dates_to_add = list()
     dates_to_remove = list(event.dates)
 
-    if event.recurrence_rule:
-        rr_dates = dates_from_recurrence_rule(start, event.recurrence_rule)
-    else:
-        rr_dates = [start]
-
-    for rr_date in rr_dates:
-        rr_date_start = date_add_time(
-            rr_date, start.hour, start.minute, start.second, rr_date.tzinfo
-        )
+    for date_definition in event.date_definitions:
+        sanitize_allday_instance(date_definition)
+        start = date_definition.start
+        end = date_definition.end
 
         if end:
-            rr_date_end = rr_date_start + time_difference
-        else:
-            rr_date_end = None
+            time_difference = relativedelta(end, start)
 
-        existing_date = next(
-            (
-                date
-                for date in event.dates
-                if date.start == rr_date_start
-                and date.end == rr_date_end
-                and date.allday == event.allday
-            ),
-            None,
-        )
-        if existing_date:
-            dates_to_remove.remove(existing_date)
-        else:
-            new_date = EventDate(
-                event_id=event.id,
-                start=rr_date_start,
-                end=rr_date_end,
-                allday=event.allday,
+        if date_definition.recurrence_rule:
+            rr_dates = dates_from_recurrence_rule(
+                start, date_definition.recurrence_rule
             )
-            dates_to_add.append(new_date)
+        else:
+            rr_dates = [start]
+
+        for rr_date in rr_dates:
+            rr_date_start = date_add_time(
+                rr_date, start.hour, start.minute, start.second, rr_date.tzinfo
+            )
+
+            if end:
+                rr_date_end = rr_date_start + time_difference
+            else:
+                rr_date_end = None
+
+            existing_date = next(
+                (
+                    date
+                    for date in event.dates
+                    if date.start == rr_date_start
+                    and date.end == rr_date_end
+                    and date.allday == date_definition.allday
+                ),
+                None,
+            )
+            if existing_date:
+                dates_to_remove.remove(existing_date)
+            else:
+                new_date = EventDate(
+                    event_id=event.id,
+                    start=rr_date_start,
+                    end=rr_date_end,
+                    allday=date_definition.allday,
+                )
+                dates_to_add.append(new_date)
 
     event.dates = [date for date in event.dates if date not in dates_to_remove]
     event.dates.extend(dates_to_add)

@@ -242,7 +242,7 @@ class Seeder(object):
             client_secret = oauth2_client.client_secret
             scope = oauth2_client.scope
 
-        self._utils.login()
+        self._utils.login(follow_redirects=False)
         self._utils.authorize(client_id, client_secret, scope)
         self._utils.logout()
         return (user_id, admin_unit_id)
@@ -285,17 +285,18 @@ class Seeder(object):
             event.categories = [upsert_event_category("Other")]
             event.name = name
             event.description = ("Beschreibung",)
-            event.start = start if start else self.get_now_by_minute()
-            event.end = end
-            event.allday = allday
             event.event_place_id = self.upsert_default_event_place(admin_unit_id)
             event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
-            event.recurrence_rule = recurrence_rule
             event.external_link = external_link
             event.ticket_link = ""
             event.tags = ""
             event.price_info = ""
             event.attendance_mode = EventAttendanceMode.offline
+
+            date_definition = self.create_event_date_definition(
+                start, end, allday, recurrence_rule
+            )
+            event.date_definitions = [date_definition]
 
             if draft:
                 event.public_status = PublicStatus.draft
@@ -310,6 +311,20 @@ class Seeder(object):
             self._db.session.commit()
             event_id = event.id
         return event_id
+
+    def create_event_date_definition(
+        self, start=None, end=None, allday=False, recurrence_rule=""
+    ):
+        from project.models import EventDateDefinition
+
+        with self._app.app_context():
+            date_definition = EventDateDefinition()
+            date_definition.start = start if start else self.get_now_by_minute()
+            date_definition.end = end
+            date_definition.allday = allday
+            date_definition.recurrence_rule = recurrence_rule
+
+            return date_definition
 
     def create_event_unverified(self):
         user_id = self.create_user("unverified@test.de")
@@ -336,7 +351,7 @@ class Seeder(object):
             {
                 "name": "Name",
                 "description": "Beschreibung",
-                "start": ["2030-12-31", "23:59"],
+                "date_definitions-0-start": ["2030-12-31", "23:59"],
                 "event_place_id": place_id,
                 "organizer_id": organizer_id,
                 "photo-image_base64": self.get_default_image_upload_base64(),

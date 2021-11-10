@@ -1,5 +1,5 @@
 describe("Admin Unit", () => {
-  it.skip("creates", () => {
+  it("creates", () => {
     cy.login();
     cy.visit("/admin_unit/create");
     cy.get("#name").type("Second Crew");
@@ -33,7 +33,7 @@ describe("Admin Unit", () => {
     });
   });
 
-  it.skip("updates", () => {
+  it("updates", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.visit("/admin_unit/" + adminUnitId + "/update");
@@ -47,7 +47,7 @@ describe("Admin Unit", () => {
     });
   });
 
-  it.skip("widgets", () => {
+  it("widgets", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.visit("/manage/admin_unit/" + adminUnitId + "/widgets");

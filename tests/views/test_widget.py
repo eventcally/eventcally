@@ -264,6 +264,32 @@ def test_event_suggestion_create_for_admin_unit_allday(
     )
 
 
+def test_event_suggestion_create_for_admin_unit_startAfterEnd(
+    client, app, seeder, utils, mocker
+):
+    user_id = seeder.create_user()
+    seeder.create_admin_unit(user_id, "Meine Crew")
+    au_short_name = "meinecrew"
+
+    url = utils.get_url(
+        "event_suggestion_create_for_admin_unit", au_short_name=au_short_name
+    )
+    response = utils.get_ok(url)
+
+    data = get_create_data()
+    data["end"] = ["2030-12-31", "23:58"]
+
+    response = utils.post_form(
+        url,
+        response,
+        data,
+    )
+    utils.assert_response_error_message(
+        response,
+        "Der Start muss vor dem Ende sein",
+    )
+
+
 def test_event_suggestion_create_for_admin_unit_emptyFreeText(
     client, app, seeder, utils, mocker
 ):

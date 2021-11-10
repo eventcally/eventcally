@@ -6,7 +6,7 @@ describe("Event", () => {
         cy.visit("/admin_unit/" + adminUnitId + "/events/create");
 
         cy.get("#name").type("Stadtfest");
-        cy.checkEventStartEnd(false, test.recurrence);
+        cy.checkEventStartEnd(false, test.recurrence, "date_definitions-0-");
 
         cy.select2("event_place_id", "Neu");
         cy.get("#new_event_place-location-city").type("Goslar");
@@ -27,7 +27,7 @@ describe("Event", () => {
 
         cy.contains("a", "Veranstaltung bearbeiten").click();
         cy.url().should("include", "/update");
-        cy.checkEventStartEnd(true, test.recurrence);
+        cy.checkEventStartEnd(true, test.recurrence, "date_definitions-0-");
         cy.get("#submit").click();
         cy.url().should(
           "include",

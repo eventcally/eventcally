@@ -221,7 +221,7 @@ def get_calendar_links(event_date: EventDate) -> dict:
     end_date = event_date.end if event_date.end else start_date
     date_format = "%Y%m%dT%H%M%S"
 
-    if event_date.event.allday:
+    if event_date.allday:
         date_format = "%Y%m%d"
         end_date = round_to_next_day(end_date)
 
