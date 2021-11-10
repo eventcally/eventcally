@@ -111,10 +111,13 @@ class UtilActions(object):
 
         return match.group(1).decode("utf-8")
 
+    def get_soup(self, response) -> BeautifulSoup:
+        return BeautifulSoup(response.data, "html.parser")
+
     def create_form_data(self, response, values: dict) -> dict:
         from tests.form import Form
 
-        soup = BeautifulSoup(response.data, "html.parser")
+        soup = self.get_soup(response)
         form = Form(soup.find("form"))
         return form.fill(values)
 
@@ -296,17 +299,30 @@ class UtilActions(object):
         redirect_url = "http://localhost" + self.get_url(endpoint, **values)
         assert response.headers["Location"] == redirect_url
 
+    def assert_response_contains_alert(self, response, category, message=None):
+        assert response.status_code == 200
+
+        soup = self.get_soup(response)
+        alerts = soup.find_all("div", class_="alert-" + category)
+        assert len(alerts) > 0
+
+        if not message:
+            return
+
+        for alert in alerts:
+            if message in alert.text:
+                return
+
+        assert False, "Alert not found"
+
+    def assert_response_error_message(self, response, message=None):
+        self.assert_response_contains_alert(response, "danger", message)
+
     def assert_response_db_error(self, response):
-        assert response.status_code == 200
-        assert b"MockException" in response.data
+        self.assert_response_error_message(response, "MockException")
 
-    def assert_response_error_message(self, response, error_message=b"alert-danger"):
-        assert response.status_code == 200
-        assert error_message in response.data
-
-    def assert_response_success_message(self, response, error_message=b"alert-success"):
-        assert response.status_code == 200
-        assert error_message in response.data
+    def assert_response_success_message(self, response, message=None):
+        self.assert_response_contains_alert(response, "success", message)
 
     def assert_response_permission_missing(self, response, endpoint, **values):
         self.assert_response_redirect(response, endpoint, **values)

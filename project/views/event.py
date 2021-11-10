@@ -202,7 +202,7 @@ def event_update(event_id):
     event = Event.query.get_or_404(event_id)
     access_or_401(event.admin_unit, "event:update")
 
-    form = UpdateEventForm(obj=event, start=event.start, end=event.end)
+    form = UpdateEventForm(obj=event)
     prepare_event_form(form)
 
     if not form.is_submitted():
@@ -310,16 +310,16 @@ def prepare_event_form(form):
     prepare_organizer(form)
     prepare_event_place(form)
 
-    if not form.start.data:
-        form.start.data = get_next_full_hour()
+    if not form.date_definitions[0].start.data:
+        form.date_definitions[0].start.data = get_next_full_hour()
 
 
 def prepare_event_form_for_suggestion(form, event_suggestion):
     form.name.data = event_suggestion.name
-    form.start.data = event_suggestion.start
-    form.end.data = event_suggestion.end
-    form.recurrence_rule.data = event_suggestion.recurrence_rule
-    form.allday.data = event_suggestion.allday
+    form.date_definitions[0].start.data = event_suggestion.start
+    form.date_definitions[0].end.data = event_suggestion.end
+    form.date_definitions[0].recurrence_rule.data = event_suggestion.recurrence_rule
+    form.date_definitions[0].allday.data = event_suggestion.allday
     form.external_link.data = event_suggestion.external_link
     form.description.data = event_suggestion.description
 

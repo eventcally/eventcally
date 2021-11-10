@@ -33,8 +33,7 @@ class Base64ImageForm(BaseImageForm):
             )
 
     def validate(self):
-        if not super().validate():  # pragma: no cover
-            return False
+        result = super().validate()
 
         if self.image_base64.data:
             image = get_image_from_base64_str(self.image_base64.data)
@@ -43,9 +42,9 @@ class Base64ImageForm(BaseImageForm):
             except ValueError as e:
                 msg = str(e)
                 self.image_base64.errors.append(msg)
-                return False
+                result = False
 
-        return True
+        return result
 
     def populate_obj(self, obj):
         super(BaseImageForm, self).populate_obj(obj)

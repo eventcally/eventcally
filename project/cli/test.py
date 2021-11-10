@@ -14,6 +14,7 @@ from project.models import (
     AdminUnitInvitation,
     Event,
     EventAttendanceMode,
+    EventDateDefinition,
     EventReference,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
@@ -188,13 +189,17 @@ def _create_event(admin_unit_id):
     event.categories = [upsert_event_category("Other")]
     event.name = "Name"
     event.description = "Beschreibung"
-    event.start = _get_now_by_minute()
     event.event_place_id = _get_default_event_place_id(admin_unit_id)
     event.organizer_id = _get_default_organizer_id(admin_unit_id)
     event.ticket_link = ""
     event.tags = ""
     event.price_info = ""
     event.attendance_mode = EventAttendanceMode.offline
+
+    date_definition = EventDateDefinition()
+    date_definition.start = _get_now_by_minute()
+    event.date_definitions = [date_definition]
+
     insert_event(event)
     db.session.commit()
 

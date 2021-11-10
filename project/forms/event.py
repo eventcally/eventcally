@@ -13,6 +13,7 @@ from wtforms import (
     SubmitField,
     TextAreaField,
 )
+from wtforms.fields.core import FieldList
 from wtforms.fields.html5 import EmailField, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
@@ -21,6 +22,7 @@ from project.forms.event_place import EventPlaceLocationForm
 from project.forms.widgets import CustomDateField, CustomDateTimeField, HTML5StringField
 from project.models import (
     EventAttendanceMode,
+    EventDateDefinition,
     EventOrganizer,
     EventPlace,
     EventStatus,
@@ -29,6 +31,53 @@ from project.models import (
     Location,
     PublicStatus,
 )
+
+
+class EventDateDefinitionFormMixin:
+    start = CustomDateTimeField(
+        lazy_gettext("Start"),
+        validators=[DataRequired()],
+        description=lazy_gettext("Indicate when the event will take place."),
+    )
+    end = CustomDateTimeField(
+        lazy_gettext("End"),
+        validators=[Optional()],
+        description=lazy_gettext(
+            "Indicate when the event will end. An event can last a maximum of 14 days."
+        ),
+    )
+    allday = BooleanField(
+        lazy_gettext("All-day"),
+        validators=[Optional()],
+    )
+    recurrence_rule = TextAreaField(
+        lazy_gettext("Recurring event"),
+        validators=[Optional()],
+    )
+
+    def validate_date_definition(self):
+        if self.start.data and self.end.data:
+            if self.start.data > self.end.data:
+                msg = gettext("The start must be before the end.")
+                self.start.errors.append(msg)
+                return False
+
+            max_end = self.start.data + relativedelta(days=14)
+            if self.end.data > max_end:
+                msg = gettext("An event can last a maximum of 14 days.")
+                self.end.errors.append(msg)
+                return False
+        return True
+
+
+class EventDateDefinitionForm(FlaskForm, EventDateDefinitionFormMixin):
+    def validate(self):
+        result = super().validate()
+
+        if not self.validate_date_definition():
+            result = False
+
+        return result
 
 
 class EventPlaceForm(FlaskForm):
@@ -65,26 +114,6 @@ class SharedEventForm(FlaskForm):
         lazy_gettext("Name"),
         validators=[DataRequired(), Length(min=3, max=255)],
         description=lazy_gettext("Enter a short, meaningful name for the event."),
-    )
-    start = CustomDateTimeField(
-        lazy_gettext("Start"),
-        validators=[DataRequired()],
-        description=lazy_gettext("Indicate when the event will take place."),
-    )
-    end = CustomDateTimeField(
-        lazy_gettext("End"),
-        validators=[Optional()],
-        description=lazy_gettext(
-            "Indicate when the event will end. An event can last a maximum of 14 days."
-        ),
-    )
-    allday = BooleanField(
-        lazy_gettext("All-day"),
-        validators=[Optional()],
-    )
-    recurrence_rule = TextAreaField(
-        lazy_gettext("Recurring event"),
-        validators=[Optional()],
     )
     description = TextAreaField(
         lazy_gettext("Description"),
@@ -200,24 +229,12 @@ class SharedEventForm(FlaskForm):
         ),
     )
 
-    def validate(self):
-        if not super().validate():
-            return False
-        if self.start.data and self.end.data:
-            if self.start.data > self.end.data:
-                msg = gettext("The start must be before the end.")
-                self.start.errors.append(msg)
-                return False
-
-            max_end = self.start.data + relativedelta(days=14)
-            if self.end.data > max_end:
-                msg = gettext("An event can last a maximum of 14 days.")
-                self.end.errors.append(msg)
-                return False
-        return True
-
 
 class BaseEventForm(SharedEventForm):
+    date_definitions = FieldList(
+        FormField(EventDateDefinitionForm, default=lambda: EventDateDefinition()),
+        min_entries=1,
+    )
     previous_start_date = CustomDateTimeField(
         lazy_gettext("Previous start date"),
         validators=[Optional()],
@@ -320,23 +337,25 @@ class CreateEventForm(BaseEventForm):
         )
 
     def validate(self):
-        if not super().validate():
-            return False
+        result = super().validate()
+
         if (
             not self.event_place_id.data or self.event_place_id.data == 0
         ) and not self.new_event_place.form.name.data:
             msg = gettext("Select existing place or enter new place")
             self.event_place_id.errors.append(msg)
             self.new_event_place.form.name.errors.append(msg)
-            return False
+            result = False
+
         if (
             not self.organizer_id.data or self.organizer_id.data == 0
         ) and not self.new_organizer.form.name.data:
             msg = gettext("Select existing organizer or enter new organizer")
             self.organizer_id.errors.append(msg)
             self.new_organizer.form.name.errors.append(msg)
-            return False
-        return True
+            result = False
+
+        return result
 
 
 class UpdateEventForm(BaseEventForm):
