@@ -763,15 +763,6 @@ class EventReferenceRequest(db.Model, TrackableMixin):
 
 class EventMixin(object):
     name = Column(Unicode(255), nullable=False)
-    start = db.Column(db.DateTime(timezone=True), nullable=False)
-    end = db.Column(db.DateTime(timezone=True), nullable=True)
-    allday = db.Column(
-        Boolean(),
-        nullable=False,
-        default=False,
-        server_default="0",
-    )
-    recurrence_rule = Column(UnicodeText())
     external_link = Column(String(255))
     description = Column(UnicodeText(), nullable=True)
 
@@ -802,8 +793,6 @@ class EventMixin(object):
         if self.photo and self.photo.is_empty():
             self.photo_id = None
 
-        sanitize_allday_instance(self)
-
 
 class EventSuggestion(db.Model, TrackableMixin, EventMixin):
     __tablename__ = "eventsuggestion"
@@ -814,6 +803,16 @@ class EventSuggestion(db.Model, TrackableMixin, EventMixin):
         CheckConstraint("NOT(organizer_id IS NULL AND organizer_text IS NULL)"),
     )
     id = Column(Integer(), primary_key=True)
+
+    start = db.Column(db.DateTime(timezone=True), nullable=False)
+    end = db.Column(db.DateTime(timezone=True), nullable=True)
+    allday = db.Column(
+        Boolean(),
+        nullable=False,
+        default=False,
+        server_default="0",
+    )
+    recurrence_rule = Column(UnicodeText())
 
     review_status = Column(IntegerEnum(EventReviewStatus))
     rejection_resaon = Column(IntegerEnum(EventRejectionReason))
@@ -859,11 +858,13 @@ def purge_event_suggestion(mapper, connect, self):
     if self.event_place_id is not None:
         self.event_place_text = None
     self.purge_event_mixin()
+    sanitize_allday_instance(self)
 
 
 class Event(db.Model, TrackableMixin, EventMixin):
     __tablename__ = "event"
     id = Column(Integer(), primary_key=True)
+
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
     organizer_id = db.Column(
         db.Integer, db.ForeignKey("eventorganizer.id"), nullable=False
@@ -890,6 +891,56 @@ class Event(db.Model, TrackableMixin, EventMixin):
     status = Column(IntegerEnum(EventStatus))
     previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
     rating = Column(Integer(), default=50)
+
+    @property
+    def min_start_definition(self):
+        if self.date_definitions:
+            return min(self.date_definitions, key=lambda d: d.start)
+        else:
+            return None
+
+    @hybrid_property
+    def min_start(self):
+        if self.date_definitions:
+            return min(d.start for d in self.date_definitions)
+        else:
+            return None
+
+    @min_start.expression
+    def min_start(cls):
+        return (
+            select([EventDateDefinition.end])
+            .where(EventDateDefinition.event_id == cls.id)
+            .order_by(EventDateDefinition.start)
+            .as_scalar()
+        )
+
+    @hybrid_property
+    def is_recurring(self):
+        if self.date_definitions:
+            return any(d.recurrence_rule for d in self.date_definitions)
+        else:
+            return False
+
+    @is_recurring.expression
+    def is_recurring(cls):
+        return (
+            select([func.count()])
+            .select_from(EventDateDefinition.__table__)
+            .where(
+                and_(
+                    EventDateDefinition.event_id == cls.id,
+                    func.coalesce(EventDateDefinition.recurrence_rule, "") != "",
+                )
+            )
+            .as_scalar()
+        ) > 0
+
+    date_definitions = relationship(
+        "EventDateDefinition",
+        backref=backref("event", lazy=False),
+        cascade="all, delete-orphan",
+    )
 
     dates = relationship(
         "EventDate", backref=backref("event", lazy=False), cascade="all, delete-orphan"
@@ -938,13 +989,8 @@ class Event(db.Model, TrackableMixin, EventMixin):
         if self.event_place and self.event_place.admin_unit_id != self.admin_unit_id:
             raise make_check_violation("Invalid place.")
 
-        if self.start and self.end:
-            if self.start > self.end:
-                raise make_check_violation("The start must be before the end.")
-
-            max_end = self.start + relativedelta(days=14)
-            if self.end > max_end:
-                raise make_check_violation("An event can last a maximum of 14 days.")
+        if not self.date_definitions or len(self.date_definitions) == 0:
+            raise make_check_violation("At least one date defintion is required.")
 
 
 @listens_for(Event, "before_insert")
@@ -971,6 +1017,37 @@ class EventDate(db.Model):
 @listens_for(EventDate, "before_insert")
 @listens_for(EventDate, "before_update")
 def purge_event_date(mapper, connect, self):
+    sanitize_allday_instance(self)
+
+
+class EventDateDefinition(db.Model):
+    __tablename__ = "eventdatedefinition"
+    id = Column(Integer(), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
+    start = db.Column(db.DateTime(timezone=True), nullable=False)
+    end = db.Column(db.DateTime(timezone=True), nullable=True)
+    allday = db.Column(
+        Boolean(),
+        nullable=False,
+        default=False,
+        server_default="0",
+    )
+    recurrence_rule = Column(UnicodeText())
+
+    def validate(self):
+        if self.start and self.end:
+            if self.start > self.end:
+                raise make_check_violation("The start must be before the end.")
+
+            max_end = self.start + relativedelta(days=14)
+            if self.end > max_end:
+                raise make_check_violation("An event can last a maximum of 14 days.")
+
+
+@listens_for(EventDateDefinition, "before_insert")
+@listens_for(EventDateDefinition, "before_update")
+def before_saving_event_date_definition(mapper, connect, self):
+    self.validate()
     sanitize_allday_instance(self)
 
 

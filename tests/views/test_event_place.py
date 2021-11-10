@@ -99,7 +99,7 @@ def test_delete(client, seeder, utils, app, mocker, db_error, non_match):
 
     if non_match:
         utils.assert_response_error_message(
-            response, b"Der eingegebene Name entspricht nicht dem Namen des Ortes"
+            response, "Der eingegebene Name entspricht nicht dem Namen des Ortes"
         )
         return
 

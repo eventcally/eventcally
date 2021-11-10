@@ -108,8 +108,9 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         from project.services.event import update_event
 
         event = Event.query.get(event_id)
-        event.start = create_berlin_date(2030, 12, 31, 14, 30)
-        event.end = create_berlin_date(2030, 12, 31, 16, 30)
+        date_definition = event.date_definitions[0]
+        date_definition.start = create_berlin_date(2030, 12, 31, 14, 30)
+        date_definition.end = create_berlin_date(2030, 12, 31, 16, 30)
         event.previous_start_date = create_berlin_date(2030, 12, 30, 14, 30)
         event.external_link = "www.goslar.de"
         event.ticket_link = "www.tickets.de"
@@ -126,8 +127,8 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         with app.test_request_context():
             result = get_sd_for_event_date(event_date)
 
-        assert result["startDate"] == event.start
-        assert result["endDate"] == event.end
+        assert result["startDate"] == date_definition.start
+        assert result["endDate"] == date_definition.end
         assert result["previousStartDate"] == event.previous_start_date
         assert result["isAccessibleForFree"]
         assert result["url"][0] == utils.get_url("event_date", id=event_date.id)
@@ -149,9 +150,10 @@ def test_get_sd_for_event_date_allday(client, app, db, seeder, utils):
         from project.services.event import update_event
 
         event = Event.query.get(event_id)
-        event.start = create_berlin_date(2030, 12, 31, 14, 30)
-        event.end = create_berlin_date(2030, 12, 31, 16, 30)
-        event.allday = True
+        date_definition = event.date_definitions[0]
+        date_definition.start = create_berlin_date(2030, 12, 31, 14, 30)
+        date_definition.end = create_berlin_date(2030, 12, 31, 16, 30)
+        date_definition.allday = True
 
         update_event(event)
         db.session.commit()

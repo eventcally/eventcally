@@ -8,16 +8,17 @@ def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app):
         from project.services.event import update_event_dates_with_recurrence_rule
 
         event = Event.query.get(event_id)
-        event.start = create_berlin_date(2030, 12, 31, 14, 30)
-        event.end = create_berlin_date(2030, 12, 31, 16, 30)
+        date_definition = event.date_definitions[0]
+        date_definition.start = create_berlin_date(2030, 12, 31, 14, 30)
+        date_definition.end = create_berlin_date(2030, 12, 31, 16, 30)
         update_event_dates_with_recurrence_rule(event)
 
         len_dates = len(event.dates)
         assert len_dates == 1
 
         event_date = event.dates[0]
-        assert event_date.start == event.start
-        assert event_date.end == event.end
+        assert event_date.start == date_definition.start
+        assert event_date.end == date_definition.end
 
         # Update again
         update_event_dates_with_recurrence_rule(event)
@@ -26,23 +27,23 @@ def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app):
         assert len_dates == 1
 
         event_date = event.dates[0]
-        assert event_date.start == event.start
-        assert event_date.end == event.end
+        assert event_date.start == date_definition.start
+        assert event_date.end == date_definition.end
 
         # All-day
-        event.allday = True
+        date_definition.allday = True
         update_event_dates_with_recurrence_rule(event)
 
         len_dates = len(event.dates)
         assert len_dates == 1
 
         event_date = event.dates[0]
-        assert event_date.start == event.start
-        assert event_date.end == event.end
+        assert event_date.start == date_definition.start
+        assert event_date.end == date_definition.end
         assert event_date.allday
 
         # Wiederholt sich alle 1 Tage, endet nach 7 Ereigniss(en)
-        event.recurrence_rule = "RRULE:FREQ=DAILY;COUNT=7"
+        date_definition.recurrence_rule = "RRULE:FREQ=DAILY;COUNT=7"
 
         update_event_dates_with_recurrence_rule(event)
 
@@ -64,11 +65,12 @@ def test_update_event_dates_with_recurrence_rule_past(
         utils.mock_now(mocker, 2020, 1, 3)
 
         event = Event.query.get(event_id)
-        event.start = create_berlin_date(2020, 1, 2, 14, 30)
-        event.end = create_berlin_date(2020, 1, 2, 16, 30)
+        date_definition = event.date_definitions[0]
+        date_definition.start = create_berlin_date(2020, 1, 2, 14, 30)
+        date_definition.end = create_berlin_date(2020, 1, 2, 16, 30)
 
         # Wiederholt sich alle 1 Tage, endet nach 7 Ereigniss(en)
-        event.recurrence_rule = "RRULE:FREQ=DAILY;COUNT=7"
+        date_definition.recurrence_rule = "RRULE:FREQ=DAILY;COUNT=7"
         update_event_dates_with_recurrence_rule(event)
 
         # Es sollen nur 6 Daten vorhanden sein (das erste Date war gestern)
@@ -95,11 +97,12 @@ def test_update_event_dates_with_recurrence_rule_past_forever(
         utils.mock_now(mocker, 2020, 1, 3)
 
         event = Event.query.get(event_id)
-        event.start = create_berlin_date(2019, 1, 1, 14, 30)
-        event.end = create_berlin_date(2019, 1, 1, 16, 30)
+        date_definition = event.date_definitions[0]
+        date_definition.start = create_berlin_date(2019, 1, 1, 14, 30)
+        date_definition.end = create_berlin_date(2019, 1, 1, 16, 30)
 
         # Wiederholt sich alle 1 Tage (unendlich)
-        event.recurrence_rule = "RRULE:FREQ=DAILY"
+        date_definition.recurrence_rule = "RRULE:FREQ=DAILY"
         update_event_dates_with_recurrence_rule(event)
 
         # Es sollen 367 Daten vorhanden sein (Schaltjahr +1)
@@ -131,11 +134,12 @@ def test_update_event_dates_with_recurrence_rule_exdate(
         utils.mock_now(mocker, 2021, 6, 1)
 
         event = Event.query.get(event_id)
-        event.start = create_berlin_date(2021, 4, 21, 17, 0)
-        event.end = create_berlin_date(2021, 4, 21, 18, 0)
+        date_definition = event.date_definitions[0]
+        date_definition.start = create_berlin_date(2021, 4, 21, 17, 0)
+        date_definition.end = create_berlin_date(2021, 4, 21, 18, 0)
 
         # Wiederholt sich jeden Mittwoch
-        event.recurrence_rule = "RRULE:FREQ=WEEKLY;BYDAY=WE;UNTIL=20211231T000000\nEXDATE:20210216T000000,20210223T000000,20210602T000000"
+        date_definition.recurrence_rule = "RRULE:FREQ=WEEKLY;BYDAY=WE;UNTIL=20211231T000000\nEXDATE:20210216T000000,20210223T000000,20210602T000000"
         update_event_dates_with_recurrence_rule(event)
 
         # Das erste Date soll nicht der 02.06. sein (excluded), sondern der 09.06.

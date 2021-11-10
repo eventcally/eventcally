@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        {{ render_event_props(event, event.start, event.end, event.allday) }}
+        {{ render_event_props(event, event.min_start_definition.start, event.min_start_definition.end, event.min_start_definition.allday) }}
     </div>
 
 {% endblock %}

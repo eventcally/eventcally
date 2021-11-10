@@ -71,7 +71,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "23:59"],
+            "date_definitions-0-start": ["2030-12-31", "23:59"],
             "event_place_id": place_id,
             "organizer_id": organizer_id,
             "photo-image_base64": seeder.get_default_image_upload_base64(),
@@ -109,9 +109,9 @@ def test_create_allday(client, app, utils, seeder):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "00:00"],
-            "end": ["2030-12-31", "23:59"],
-            "allday": "y",
+            "date_definitions-0-start": ["2030-12-31", "00:00"],
+            "date_definitions-0-end": ["2030-12-31", "23:59"],
+            "date_definitions-0-allday": "y",
             "event_place_id": place_id,
             "organizer_id": organizer_id,
             "photo-image_base64": seeder.get_default_image_upload_base64(),
@@ -129,7 +129,7 @@ def test_create_allday(client, app, utils, seeder):
             .first()
         )
         assert event is not None
-        assert event.allday
+        assert event.date_definitions[0].allday
 
 
 def test_create_newPlaceAndOrganizer(client, app, utils, seeder, mocker):
@@ -144,7 +144,7 @@ def test_create_newPlaceAndOrganizer(client, app, utils, seeder, mocker):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "23:59"],
+            "date_definitions-0-start": ["2030-12-31", "23:59"],
             "organizer_choice": 2,
             "new_organizer-name": "Neuer Veranstalter",
             "event_place_choice": 2,
@@ -191,7 +191,7 @@ def test_create_missingPlace(client, app, utils, seeder, mocker):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "23:59"],
+            "date_definitions-0-start": ["2030-12-31", "23:59"],
         },
     )
 
@@ -211,7 +211,7 @@ def test_create_missingOrganizer(client, app, utils, seeder, mocker):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "23:59"],
+            "date_definitions-0-start": ["2030-12-31", "23:59"],
             "event_place_id": place_id,
         },
     )
@@ -233,7 +233,7 @@ def test_create_invalidOrganizer(client, app, utils, seeder, mocker):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "23:59"],
+            "date_definitions-0-start": ["2030-12-31", "23:59"],
             "event_place_id": place_id,
             "organizer_id": organizer_id,
             "co_organizer_ids": [organizer_id],
@@ -257,7 +257,7 @@ def test_create_invalidDateFormat(client, app, utils, seeder, mocker):
         {
             "name": "Name",
             "description": "Beschreibung",
-            "start": ["2030-12-31", "23:59"],
+            "date_definitions-0-start": ["2030-12-31", "23:59"],
             "event_place_id": place_id,
         },
     )
@@ -277,8 +277,8 @@ def test_create_startInvalid(client, app, utils, seeder, mocker):
         response,
         {
             "name": "Name",
-            "start": ["31.12.2030", "23:59"],
-            "end": ["2030-12-31", "23:58"],
+            "date_definitions-0-start": ["31.12.2030", "23:59"],
+            "date_definitions-0-end": ["2030-12-31", "23:58"],
             "event_place_id": place_id,
         },
     )
@@ -289,6 +289,7 @@ def test_create_startInvalid(client, app, utils, seeder, mocker):
 def test_create_startAfterEnd(client, app, utils, seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
     url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
     response = utils.get_ok(url)
@@ -298,15 +299,16 @@ def test_create_startAfterEnd(client, app, utils, seeder, mocker):
         response,
         {
             "name": "Name",
-            "start": ["2030-12-31", "23:59"],
-            "end": ["2030-12-31", "23:58"],
+            "date_definitions-0-start": ["2030-12-31", "23:59"],
+            "date_definitions-0-end": ["2030-12-31", "23:58"],
             "event_place_id": place_id,
+            "organizer_id": organizer_id,
         },
     )
 
     utils.assert_response_error_message(
         response,
-        b"Der Start muss vor dem Ende sein",
+        "Der Start muss vor dem Ende sein",
     )
 
 
@@ -322,15 +324,15 @@ def test_create_durationMoreThanMaxAllowedDuration(client, app, utils, seeder, m
         response,
         {
             "name": "Name",
-            "start": ["2030-12-30", "12:00"],
-            "end": ["2031-01-13", "12:01"],
+            "date_definitions-0-start": ["2030-12-30", "12:00"],
+            "date_definitions-0-end": ["2031-01-13", "12:01"],
             "event_place_id": place_id,
         },
     )
 
     utils.assert_response_error_message(
         response,
-        b"Eine Veranstaltung darf maximal 14 Tage dauern",
+        "Eine Veranstaltung darf maximal 14 Tage dauern",
     )
 
 
@@ -360,7 +362,9 @@ def test_duplicate(client, app, utils, seeder, mocker, allday):
         assert len(events) == 2
 
         assert events[1].category.name == events[0].category.name
-        assert events[1].allday == events[0].allday
+        assert (
+            events[1].date_definitions[0].allday == events[0].date_definitions[0].allday
+        )
 
 
 @pytest.mark.parametrize("free_text", [True, False])
@@ -388,7 +392,7 @@ def test_create_fromSuggestion(client, app, utils, seeder, mocker, free_text, al
             .first()
         )
         assert event is not None
-        assert event.allday == allday
+        assert event.date_definitions[0].allday == allday
 
         suggestion = EventSuggestion.query.get(suggestion_id)
         assert suggestion is not None

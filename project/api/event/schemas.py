@@ -1,5 +1,5 @@
-from dateutil.rrule import rrulestr
-from marshmallow import ValidationError, fields, validate
+from marshmallow import fields, validate
+from marshmallow.decorators import pre_load
 from marshmallow_enum import EnumField
 
 from project.api import marshmallow
@@ -7,6 +7,11 @@ from project.api.event_category.schemas import (
     EventCategoryIdSchema,
     EventCategoryRefSchema,
     EventCategoryWriteIdSchema,
+)
+from project.api.event_date_definition.schemas import (
+    EventDateDefinitionPatchRequestSchema,
+    EventDateDefinitionPostRequestSchema,
+    EventDateDefinitionSchema,
 )
 from project.api.fields import CustomDateTimeField, Owned
 from project.api.image.schemas import (
@@ -50,13 +55,6 @@ class EventModelSchema(SQLAlchemyBaseSchema):
 
 class EventIdSchema(EventModelSchema, IdSchemaMixin):
     pass
-
-
-def validate_recurrence_rule(recurrence_rule):
-    try:
-        rrulestr(recurrence_rule, forceset=True)
-    except Exception as e:
-        raise ValidationError(str(e))
 
 
 class EventBaseSchemaMixin(TrackableSchemaMixin):
@@ -137,27 +135,6 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
             "description": "Price information in textual form. E.g., different prices for adults and children."
         },
     )
-    recurrence_rule = marshmallow.auto_field(
-        validate=validate_recurrence_rule,
-        metadata={
-            "description": "If the event takes place regularly. Format: RFC 5545."
-        },
-    )
-    start = CustomDateTimeField(
-        required=True,
-        metadata={
-            "description": "When the event will take place.  If the event takes place regularly, enter when the first date will begin."
-        },
-    )
-    end = CustomDateTimeField(
-        metadata={
-            "description": "When the event will end. An event can last a maximum of 14 days. If the event takes place regularly, enter when the first date will end."
-        },
-    )
-    allday = marshmallow.auto_field(
-        missing=False,
-        metadata={"description": "If the event is an all-day event."},
-    )
     public_status = EnumField(
         PublicStatus,
         missing=PublicStatus.published,
@@ -172,6 +149,7 @@ class EventSchema(EventIdSchema, EventBaseSchemaMixin):
     photo = fields.Nested(ImageSchema)
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
     co_organizers = fields.List(fields.Nested(OrganizerRefSchema))
+    date_definitions = fields.List(fields.Nested(EventDateDefinitionSchema))
 
 
 class EventDumpSchema(EventIdSchema, EventBaseSchemaMixin):
@@ -185,6 +163,7 @@ class EventDumpSchema(EventIdSchema, EventBaseSchemaMixin):
     co_organizer_ids = fields.Pluck(
         OrganizerDumpIdSchema, "id", many=True, attribute="co_organizers"
     )
+    date_definitions = fields.List(fields.Nested(EventDateDefinitionSchema))
 
 
 class EventRefSchema(EventIdSchema):
@@ -193,10 +172,7 @@ class EventRefSchema(EventIdSchema):
 
 class EventSearchItemSchema(EventRefSchema):
     description = marshmallow.auto_field()
-    start = CustomDateTimeField()
-    end = CustomDateTimeField()
-    allday = marshmallow.auto_field()
-    recurrence_rule = marshmallow.auto_field()
+    date_definitions = fields.List(fields.Nested(EventDateDefinitionSchema))
     photo = fields.Nested(ImageSchema)
     place = fields.Nested(PlaceSearchItemSchema, attribute="event_place")
     status = EnumField(EventStatus)
@@ -293,6 +269,14 @@ class EventWriteSchemaMixin(object):
         },
     )
 
+    @pre_load()
+    def handle_deprecated_fields(self, data, **kwargs):
+        if "start" in data:
+            if "date_definitions" not in data:
+                data["date_definitions"] = [{"start": data["start"]}]
+            data.pop("start")
+        return data
+
 
 class EventPostRequestSchema(
     EventModelSchema, EventBaseSchemaMixin, EventWriteSchemaMixin
@@ -301,6 +285,13 @@ class EventPostRequestSchema(
         super().__init__(*args, **kwargs)
         self.make_post_schema()
 
+    date_definitions = fields.List(
+        fields.Nested(EventDateDefinitionPostRequestSchema),
+        default=None,
+        required=True,
+        validate=[validate.Length(min=1)],
+        metadata={"description": "At least one date definition."},
+    )
     photo = Owned(ImagePostRequestSchema)
 
 
@@ -311,6 +302,13 @@ class EventPatchRequestSchema(
         super().__init__(*args, **kwargs)
         self.make_patch_schema()
 
+    date_definitions = fields.List(
+        fields.Nested(EventDateDefinitionPatchRequestSchema),
+        default=None,
+        required=True,
+        validate=[validate.Length(min=1)],
+        metadata={"description": "At least one date definition."},
+    )
     photo = Owned(ImagePatchRequestSchema)
 
 

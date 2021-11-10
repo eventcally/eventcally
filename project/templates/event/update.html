@@ -22,19 +22,12 @@
       var form = $("#main-form");
       form.validate({
             rules: {
-              start: {
-                dateRange: ["#start", "#end"]
-              },
-              end: {
-                dateRangeDay: ["#start", "#end"]
-              },
               event_place_id: "required",
               organizer_id: "required"
             }
         });
 
-      $("#start-time").rules("add", "time");
-      $("#end-time").rules("add", "time");
+      $('.date-definition-container').ovedaDateDefinition();
 
       // Organizer
       var organizer_select =$('#organizer_id');
@@ -131,8 +124,6 @@
         },
         placeholder: "{{ _('Enter organizer') }}"
       });
-
-      {{ render_end_container_handling() }}
     });
   </script>
 {% endblock %}
@@ -158,15 +149,19 @@
       {{ _('Event date') }}
     </div>
     <div class="card-body">
-      <div id="single-event-container">
-        {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "14", "data-allday": "#allday"}) }}
-        {{ render_field_with_errors(form.allday, ri="checkbox") }}
-        {{ render_field_with_errors(form.end, is_collapsible=1) }}
-        <button type="button" id="recc-button" class="btn btn-outline-secondary"><i class="fas fa-history"></i> {{ _('Recurring event') }}</button>
-      </div>
-      <div id="recc-event-container">
-        {{ render_field_with_errors(form.recurrence_rule, ri="rrule") }}
-      </div>
+      {% for date_definition in form.date_definitions %}
+        <div class="date-definition-container" data-prefix="{{ date_definition.id }}-">
+          <div id="{{ date_definition.id }}-single-event-container">
+            {{ render_field_with_errors(date_definition.form.start, **{"data-range-to":"#"+date_definition.form.end.id, "data-range-max-days": "14", "data-allday": "#"+date_definition.form.allday.id}) }}
+            {{ render_field_with_errors(date_definition.form.allday, ri="checkbox") }}
+            {{ render_field_with_errors(date_definition.form.end, is_collapsible=1) }}
+            <button type="button" id="{{ date_definition.id }}-recc-button" class="btn btn-outline-secondary"><i class="fas fa-history"></i> {{ _('Recurring event') }}</button>
+          </div>
+          <div id="{{ date_definition.id }}-recc-event-container">
+            {{ render_field_with_errors(date_definition.form.recurrence_rule) }}
+          </div>
+        </div>
+      {% endfor %}
     </div>
   </div>
 

@@ -219,70 +219,70 @@ Cypress.Commands.add("inputsShouldHaveSameValue", (input1, input2) => {
 
 Cypress.Commands.add(
   "checkEventStartEnd",
-  (update = false, recurrence = false) => {
+  (update = false, recurrence = false, prefix = "") => {
     if (update && recurrence) {
-      cy.get("#single-event-container").should("not.be.visible");
-      cy.get("#recc-event-container").should("be.visible");
+      cy.get('#' + prefix + 'single-event-container').should("not.be.visible");
+      cy.get('#' + prefix + 'recc-event-container').should("be.visible");
       cy.get('[name="riedit"]').click();
     } else {
-      cy.checkEventAllday();
+      cy.checkEventAllday(prefix);
 
-      cy.get("#start-user").click();
+      cy.get('#' + prefix + 'start-user').click();
       cy.get("#ui-datepicker-div").should("be.visible");
       cy.get("#ui-datepicker-div a.ui-state-default:first").click(); // select first date
       cy.get("#ui-datepicker-div").should("not.be.visible");
 
-      cy.get("#start-time").click();
+      cy.get('#' + prefix + 'start-time').click();
       cy.get(".ui-timepicker-wrapper").should("be.visible");
       cy.get(".ui-timepicker-wrapper .ui-timepicker-am[data-time=0]").click(); // select 00:00
       cy.get("#ui-datepicker-div").should("not.be.visible");
 
-      cy.get("#end-container").should("not.be.visible");
-      cy.get("#end-show-container .show-link").click();
-      cy.get("#end-show-container").should("not.be.visible");
-      cy.get("#end-container").should("be.visible");
-      cy.inputsShouldHaveSameValue("#start-user", "#end-user");
-      cy.get("#end-time").should("have.value", "03:00");
-      cy.get("#end-hide-container .hide-link").click();
-      cy.get("#end-show-container").should("be.visible");
-      cy.get("#end-container").should("not.be.visible");
-      cy.get("#end-user").should("have.value", "");
-      cy.get("#end-time").should("have.value", "");
+      cy.get('#' + prefix + 'end-container').should("not.be.visible");
+      cy.get('#' + prefix + 'end-show-container .show-link').click();
+      cy.get('#' + prefix + 'end-show-container').should("not.be.visible");
+      cy.get('#' + prefix + 'end-container').should("be.visible");
+      cy.inputsShouldHaveSameValue('#' + prefix + 'start-user', '#' + prefix + 'end-user');
+      cy.get('#' + prefix + 'end-time').should("have.value", "03:00");
+      cy.get('#' + prefix + 'end-hide-container .hide-link').click();
+      cy.get('#' + prefix + 'end-show-container').should("be.visible");
+      cy.get('#' + prefix + 'end-container').should("not.be.visible");
+      cy.get('#' + prefix + 'end-user').should("have.value", "");
+      cy.get('#' + prefix + 'end-time').should("have.value", "");
 
-      cy.get("#recc-event-container").should("not.be.visible");
-      cy.get("#recc-button").click();
+      cy.get('#' + prefix + 'recc-event-container').should("not.be.visible");
+      cy.get('#' + prefix + 'recc-button').click();
     }
 
     cy.get(".modal-recurrence").should("be.visible");
-    cy.inputsShouldHaveSameValue("#start-user", "#recc-start-user");
-    cy.inputsShouldHaveSameValue("#start-time", "#recc-start-time");
+    cy.inputsShouldHaveSameValue('#' + prefix + 'start-user', "#recc-start-user");
+    cy.inputsShouldHaveSameValue('#' + prefix + 'start-time', "#recc-start-time");
     cy.get("#rirtemplate option").should("have.length", 4);
     cy.get(".modal-recurrence input[value=BYENDDATE]").should("be.checked");
     cy.get(".modal-recurrence .modal-footer .btn-primary").click();
 
-    cy.get("#single-event-container").should("not.be.visible");
-    cy.get("#recc-event-container").should("be.visible");
+    cy.get('#' + prefix + 'single-event-container').should("not.be.visible");
+    cy.get('#' + prefix + 'recc-event-container').should("be.visible");
 
     if (recurrence == false) {
       cy.get('[name="ridelete"]').click();
-      cy.get("#single-event-container").should("be.visible");
-      cy.get("#recc-event-container").should("not.be.visible");
-      cy.get("#end-container").should("not.be.visible");
+      cy.get('#' + prefix + 'single-event-container').should("be.visible");
+      cy.get('#' + prefix + 'recc-event-container').should("not.be.visible");
+      cy.get('#' + prefix + 'end-container').should("not.be.visible");
     }
   }
 );
 
 Cypress.Commands.add(
   "checkEventAllday",
-  () => {
+  (prefix = "") => {
     // Turn on
-    cy.get('#allday').click();
-    cy.get("#end-container").should("be.visible");
-    cy.get('#start-time').should("not.be.visible");
-    cy.get('#end-time').should("not.be.visible");
+    cy.get('#' + prefix + 'allday').click();
+    cy.get('#' + prefix + 'end-container').should("be.visible");
+    cy.get('#' + prefix + 'start-time').should("not.be.visible");
+    cy.get('#' + prefix + 'end-time').should("not.be.visible");
 
     // Recurrence
-    cy.get("#recc-button").click();
+    cy.get('#' + prefix + 'recc-button').click();
     cy.get(".modal-recurrence").should("be.visible");
     cy.get('#recc-allday').should("be.checked");
     cy.get('#recc-start-time').should("not.be.visible");
@@ -294,18 +294,18 @@ Cypress.Commands.add(
     cy.get(".modal-recurrence .modal-footer .btn-secondary").click();
 
     // Turn off
-    cy.get("#allday").click();
-    cy.get('#start-time').should("be.visible");
-    cy.get('#end-time').should("be.visible");
+    cy.get('#' + prefix + 'allday').click();
+    cy.get('#' + prefix + 'start-time').should("be.visible");
+    cy.get('#' + prefix + 'end-time').should("be.visible");
 
     // Turn again
-    cy.get('#allday').click();
-    cy.get("#end-container").should("be.visible");
+    cy.get('#' + prefix + 'allday').click();
+    cy.get('#' + prefix + 'end-container').should("be.visible");
 
     // Removing end turns off allday
-    cy.get("#end-hide-container .hide-link").click();
-    cy.get('#allday').should("not.be.checked");
-    cy.get('#start-time').should("be.visible");
+    cy.get('#' + prefix + 'end-hide-container .hide-link').click();
+    cy.get('#' + prefix + 'allday').should("not.be.checked");
+    cy.get('#' + prefix + 'start-time').should("be.visible");
   }
 );
 

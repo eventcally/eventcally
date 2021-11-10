@@ -156,7 +156,7 @@ def test_events(client, seeder, utils):
     assert len(response.json["items"]) == 2
 
 
-def prepare_events_post_data(seeder, utils):
+def prepare_events_post_data(seeder, utils, legacy=False):
     user_id, admin_unit_id = seeder.setup_api_access()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
@@ -164,22 +164,28 @@ def prepare_events_post_data(seeder, utils):
     url = utils.get_url("api_v1_organization_event_list", id=admin_unit_id)
     data = {
         "name": "Fest",
-        "start": "2021-02-07T11:00:00.000Z",
         "place": {"id": place_id},
         "organizer": {"id": organizer_id},
         "photo": {"image_base64": seeder.get_default_image_base64()},
     }
+
+    if legacy:
+        data["start"] = "2021-02-07T11:00:00.000Z"
+    else:
+        data["date_definitions"] = [{"start": "2021-02-07T11:00:00.000Z"}]
+
     return url, data, admin_unit_id, place_id, organizer_id
 
 
 @pytest.mark.parametrize("allday", [True, False])
-def test_events_post(client, seeder, utils, app, allday):
+@pytest.mark.parametrize("legacy", [True, False])
+def test_events_post(client, seeder, utils, app, allday, legacy):
     url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
-        seeder, utils
+        seeder, utils, legacy
     )
 
-    if allday:
-        data["allday"] = "1"
+    if allday and not legacy:
+        data["date_definitions"][0]["allday"] = "1"
 
     response = utils.post_json(url, data)
     utils.assert_response_created(response)
@@ -199,7 +205,7 @@ def test_events_post(client, seeder, utils, app, allday):
         assert event.photo is not None
         assert event.photo.encoding_format == "image/png"
         assert event.public_status == PublicStatus.published
-        assert event.allday == allday
+        assert event.date_definitions[0].allday == (allday and not legacy)
 
 
 def test_events_post_co_organizers(client, seeder, utils, app):
