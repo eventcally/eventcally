@@ -1,4 +1,6 @@
-from project.models import AdminUnitInvitation, AdminUnitRelation
+import pytest
+
+from project.models import EventDateDefinition
 
 
 def test_location_update_coordinate(client, app, db):
@@ -26,6 +28,29 @@ def test_event_category(client, app, db, seeder):
         assert event.category is None
 
 
+def test_event_properties(client, app, db, seeder):
+    with app.app_context():
+        from sqlalchemy.exc import IntegrityError
+
+        from project.dateutils import create_berlin_date
+        from project.models import Event, EventDateDefinition
+
+        event = Event()
+        assert event.min_start_definition is None
+        assert event.min_start is None
+        assert event.is_recurring is False
+
+        with pytest.raises(IntegrityError) as e:
+            event.validate()
+        assert e.value.orig.message == "At least one date defintion is required."
+
+        start = create_berlin_date(2030, 12, 31, 14, 30)
+        date_definition = EventDateDefinition()
+        date_definition.start = start
+        event.date_definitions = [date_definition]
+        assert event.min_start == start
+
+
 def test_event_allday(client, app, db, seeder):
     from project.dateutils import create_berlin_date
 
@@ -45,9 +70,10 @@ def test_event_allday(client, app, db, seeder):
 
         # With Start
         event = Event.query.get(event_with_start_id)
-        assert event.allday
-        assert event.start == create_berlin_date(2030, 12, 31, 0, 0)
-        assert event.end == create_berlin_date(2030, 12, 31, 23, 59, 59)
+        date_definition = event.date_definitions[0]
+        assert date_definition.allday
+        assert date_definition.start == create_berlin_date(2030, 12, 31, 0, 0)
+        assert date_definition.end == create_berlin_date(2030, 12, 31, 23, 59, 59)
 
         event_date = event.dates[0]
         assert event_date.allday
@@ -56,9 +82,10 @@ def test_event_allday(client, app, db, seeder):
 
         # With Start and End
         event = Event.query.get(event_with_start_and_end_id)
-        assert event.allday
-        assert event.start == create_berlin_date(2030, 12, 31, 0, 0)
-        assert event.end == create_berlin_date(2031, 1, 1, 23, 59, 59)
+        date_definition = event.date_definitions[0]
+        assert date_definition.allday
+        assert date_definition.start == create_berlin_date(2030, 12, 31, 0, 0)
+        assert date_definition.end == create_berlin_date(2031, 1, 1, 23, 59, 59)
 
         event_date = event.dates[0]
         assert event_date.allday
@@ -100,6 +127,41 @@ def test_admin_unit_relations(client, app, db, seeder):
         assert len(admin_unit.outgoing_relations) == 0
 
 
+def test_event_date_defintion_deletion(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.models import Event
+
+        # Initial eine Definition
+        event = Event.query.get(event_id)
+        assert len(event.date_definitions) == 1
+        date_definition1 = event.date_definitions[0]
+
+        # Zweite Definition hinzufügen
+        date_definition2 = seeder.create_event_date_definition()
+        db.session.add(date_definition2)
+        event.date_definitions = [date_definition1, date_definition2]
+        db.session.commit()
+
+        event = Event.query.get(event_id)
+        assert len(event.date_definitions) == 2
+        assert len(EventDateDefinition.query.all()) == 2
+
+        # Erste Definition löschen
+        date_definition1, date_definition2 = event.date_definitions
+        date_definition2_id = date_definition2.id
+
+        db.session.delete(date_definition1)
+        db.session.commit()
+
+        event = Event.query.get(event_id)
+        assert len(event.date_definitions) == 1
+        assert len(EventDateDefinition.query.all()) == 1
+        assert event.date_definitions[0].id == date_definition2_id
+
+
 def test_admin_unit_deletion(client, app, db, seeder):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     my_event_id = seeder.create_event(admin_unit_id)
@@ -132,6 +194,8 @@ def test_admin_unit_deletion(client, app, db, seeder):
             AdminUnitMemberInvitation,
             AdminUnitRelation,
             Event,
+            EventDate,
+            EventDateDefinition,
             EventOrganizer,
             EventPlace,
             EventReference,
@@ -142,12 +206,17 @@ def test_admin_unit_deletion(client, app, db, seeder):
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         other_admin_unit = get_admin_unit_by_id(other_admin_unit_id)
+        my_event = Event.query.get(my_event_id)
+        date_id = my_event.dates[0].id
+        date_definition_id = my_event.date_definitions[0].id
 
         db.session.delete(admin_unit)
         db.session.commit()
         assert len(other_admin_unit.outgoing_relations) == 0
 
         assert Event.query.get(my_event_id) is None
+        assert EventDate.query.get(date_id) is None
+        assert EventDateDefinition.query.get(date_definition_id) is None
         assert AdminUnitRelation.query.get(incoming_relation_id) is None
         assert AdminUnitRelation.query.get(outgoing_relation_id) is None
         assert EventReference.query.get(incoming_reference_id) is None
@@ -194,7 +263,7 @@ def test_admin_unit_verification(client, app, db, seeder):
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.models import AdminUnit, AdminUnitRelation
 
         new_admin_unit = AdminUnit()
         assert not new_admin_unit.is_verified
@@ -234,6 +303,7 @@ def test_admin_unit_invitations(client, app, db, seeder):
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     with app.app_context():
+        from project.models import AdminUnitInvitation
         from project.services.admin_unit import get_admin_unit_by_id
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)

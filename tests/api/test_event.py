@@ -1,5 +1,7 @@
 import base64
 
+import pytest
+
 from project.models import PublicStatus
 
 
@@ -134,17 +136,29 @@ def test_dates_myUnverified(client, seeder, utils):
 
 
 def create_put(
-    place_id, organizer_id, name="Neuer Name", start="2021-02-07T11:00:00.000Z"
+    place_id,
+    organizer_id,
+    name="Neuer Name",
+    start="2021-02-07T11:00:00.000Z",
+    legacy=False,
 ):
-    return {
+    data = {
         "name": name,
         "start": start,
         "place": {"id": place_id},
         "organizer": {"id": organizer_id},
     }
 
+    if legacy:
+        data["start"] = start
+    else:
+        data["date_definitions"] = [{"start": start}]
 
-def test_put(client, seeder, utils, app, mocker):
+    return data
+
+
+@pytest.mark.parametrize("legacy", [True, False])
+def test_put(client, seeder, utils, app, mocker, legacy):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -170,8 +184,10 @@ def test_put(client, seeder, utils, app, mocker):
     put["booked_up"] = True
     put["expected_participants"] = 500
     put["price_info"] = "Erwachsene 5€, Kinder 2€."
-    put["recurrence_rule"] = "RRULE:FREQ=DAILY;COUNT=7"
     put["public_status"] = "draft"
+
+    if not legacy:
+        put["date_definitions"][0]["recurrence_rule"] = "RRULE:FREQ=DAILY;COUNT=7"
 
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.put_json(url, put)
@@ -207,11 +223,18 @@ def test_put(client, seeder, utils, app, mocker):
         assert event.booked_up == put["booked_up"]
         assert event.expected_participants == put["expected_participants"]
         assert event.price_info == put["price_info"]
-        assert event.recurrence_rule == put["recurrence_rule"]
         assert event.public_status == PublicStatus.draft
 
         len_dates = len(event.dates)
-        assert len_dates == 7
+
+        if legacy:
+            assert len_dates == 1
+        else:
+            assert (
+                event.date_definitions[0].recurrence_rule
+                == put["date_definitions"][0]["recurrence_rule"]
+            )
+            assert len_dates == 7
 
 
 def test_put_invalidRecurrenceRule(client, seeder, utils, app):
@@ -221,7 +244,7 @@ def test_put_invalidRecurrenceRule(client, seeder, utils, app):
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
     put = create_put(place_id, organizer_id)
-    put["recurrence_rule"] = "RRULE:FREQ=SCHMAILY;COUNT=7"
+    put["date_definitions"][0]["recurrence_rule"] = "RRULE:FREQ=SCHMAILY;COUNT=7"
 
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.put_json(url, put)
@@ -365,8 +388,8 @@ def test_put_startAfterEnd(client, seeder, utils, app):
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
     put = create_put(place_id, organizer_id)
-    put["start"] = "2021-02-07T11:00:00.000Z"
-    put["end"] = "2021-02-07T10:59:00.000Z"
+    put["date_definitions"][0]["start"] = "2021-02-07T11:00:00.000Z"
+    put["date_definitions"][0]["end"] = "2021-02-07T10:59:00.000Z"
 
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.put_json(url, put)
@@ -380,8 +403,8 @@ def test_put_durationMoreThanMaxAllowedDuration(client, seeder, utils, app):
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
     put = create_put(place_id, organizer_id)
-    put["start"] = "2021-02-07T11:00:00.000Z"
-    put["end"] = "2021-02-21T11:01:00.000Z"
+    put["date_definitions"][0]["start"] = "2021-02-07T11:00:00.000Z"
+    put["date_definitions"][0]["end"] = "2021-02-21T11:01:00.000Z"
 
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.put_json(url, put)
@@ -429,7 +452,7 @@ def test_put_dateWithTimezone(client, seeder, utils, app):
         expected = create_berlin_date(2030, 12, 31, 14, 30)
 
         event = Event.query.get(event_id)
-        assert event.start == expected
+        assert event.date_definitions[0].start == expected
 
 
 def test_put_dateWithoutTimezone(client, seeder, utils, app):
@@ -452,7 +475,7 @@ def test_put_dateWithoutTimezone(client, seeder, utils, app):
         expected = create_berlin_date(2030, 12, 31, 14, 30)
 
         event = Event.query.get(event_id)
-        assert event.start == expected
+        assert event.date_definitions[0].start == expected
 
 
 def test_put_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
@@ -518,10 +541,15 @@ def test_patch_startAfterEnd(client, seeder, utils, app):
     event_id = seeder.create_event(admin_unit_id)
 
     url = utils.get_url("api_v1_event", id=event_id)
-    response = utils.patch_json(url, {"start": "2021-02-07T11:00:00.000Z"})
-    utils.assert_response_no_content(response)
+    response = utils.patch_json(
+        url,
+        {
+            "date_definitions": [
+                {"start": "2021-02-07T11:00:00.000Z", "end": "2021-02-07T10:59:00.000Z"}
+            ]
+        },
+    )
 
-    response = utils.patch_json(url, {"end": "2021-02-07T10:59:00.000Z"})
     utils.assert_response_bad_request(response)
 
 

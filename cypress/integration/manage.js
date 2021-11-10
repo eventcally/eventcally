@@ -19,7 +19,7 @@ describe("Manage", () => {
     });
   });
 
-  it.skip("Events", () => {
+  it("Events", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEvent(adminUnitId).then(function (eventId) {

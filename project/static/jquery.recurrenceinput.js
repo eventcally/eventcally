@@ -11,9 +11,10 @@
 
     tool = $.tools.recurrenceinput = {
         conf: {
-            lang: 'en',
+            lang: 'de',
             readOnly: false,
-            firstDay: 0,
+            firstDay: 1,
+            prefix: '',
 
             // "REMOTE" FIELD
             startField: null,
@@ -1169,6 +1170,7 @@
 
         var self = this;
         var form, display, dialog;
+        var prefix = conf.prefix;
 
         // Extend conf with non-configurable data used by templates.
         var orderedWeekdays = [];
@@ -1513,21 +1515,21 @@
         }
 
         function displayOn() {
-            display.find('div[class=ridisplay-start]').text($('#start-user').val());
+            display.find('div[class=ridisplay-start]').text($('#' + conf.prefix + 'start-user').val());
 
-            if ($('#allday').is(':checked')) {
+            if ($('#' + conf.prefix + 'allday').is(':checked')) {
                 display.find('div[class=ridisplay-times]').text(conf.i18n.reccAllDay);
             } else {
-                var times = $('#start-time').val();
-                var end_time = $('#end-time').val();
+                var times = $('#' + conf.prefix + 'start-time').val();
+                var end_time = $('#' + conf.prefix + 'end-time').val();
                 if (end_time) {
                     times += ' - ' + end_time
                 }
                 display.find('div[class=ridisplay-times]').text(times);
             }
 
-            $('#single-event-container').hide();
-            $('#recc-event-container').show();
+            $('#' + conf.prefix + 'single-event-container').hide();
+            $('#' + conf.prefix + 'recc-event-container').show();
         }
 
         function recurrenceOn() {
@@ -1546,8 +1548,8 @@
         }
 
         function displayOff() {
-            $('#single-event-container').show();
-            $('#recc-event-container').hide();
+            $('#' + conf.prefix + 'single-event-container').show();
+            $('#' + conf.prefix + 'recc-event-container').hide();
         }
 
         function recurrenceOff() {
@@ -1558,8 +1560,8 @@
             display.find('button[name="riedit"]').text(conf.i18n.add_rules);
             display.find('button[name="ridelete"]').hide();
 
-            set_picker_date($('#end-user'), null);
-            hideLink(null, $("#end-hide-container a.hide-link"));
+            set_picker_date($('#' + conf.prefix + 'end-user'), null);
+            hideLink(null, $("#" + conf.prefix + "end-hide-container a.hide-link"));
 
             displayOff();
         }
@@ -1661,10 +1663,10 @@
             // if no field errors, process the request
             if (checkFields(form)) {
 
-                var start_moment = get_moment_with_time('#recc-start');
-                set_picker_date($('#start-user'), start_moment.toDate());
+                var start_moment = get_moment_with_time_from_fields(form.find('input[name=recc-start]'), form.find('input[name=recc-start-time]'));
+                set_picker_date($('#' + conf.prefix + 'start-user'), start_moment.toDate());
 
-                var end_time = $('#recc-fo-end-time').timepicker("getTime");
+                var end_time = form.find('input[name=recc-fo-end-time]').timepicker("getTime");
                 var end_datetime = null;
                 if (end_time != null) {
                     var end_moment = moment(start_moment).set({hour: end_time.getHours(), minute: end_time.getMinutes()});
@@ -1676,9 +1678,9 @@
                     end_datetime = end_moment.toDate()
                 }
 
-                set_picker_date($('#end-user'), end_datetime);
+                set_picker_date($('#' + conf.prefix + 'end-user'), end_datetime);
 
-                $('#allday').prop('checked', $('#recc-allday').is(':checked'));
+                $('#' + conf.prefix + 'allday').prop('checked', form.find('input[name=recc-allday]').is(':checked'));
 
                 recurrenceOn();
 
@@ -1772,23 +1774,23 @@
         );
 
         dialog.on('shown.bs.modal', function (e) {
-            var recc_start_time = $("#recc-start-time");
-            var recc_fo_end_time = $('#recc-fo-end-time');
+            var recc_start_time = form.find('input[name=recc-start-time]');
+            var recc_fo_end_time = form.find('input[name=recc-fo-end-time]');
 
             recc_start_time.change(function() {
                 recc_fo_end_time.timepicker('option', 'minTime', $(this).timepicker("getTime"));
             });
 
-            $('#recc-start-user').datepicker("setDate", $('#start-user').datepicker("getDate"));
-            recc_start_time.timepicker('setTime', $('#start-time').timepicker("getTime"));
+            form.find('input[id=recc-start-user]').datepicker("setDate", $('#' + conf.prefix + 'start-user').datepicker("getDate"));
+            recc_start_time.timepicker('setTime', $('#' + conf.prefix + 'start-time').timepicker("getTime"));
             recc_start_time.change();
-            recc_fo_end_time.timepicker('setTime', $('#end-time').timepicker("getTime"));
+            recc_fo_end_time.timepicker('setTime', $('#' + conf.prefix + 'end-time').timepicker("getTime"));
 
-            var recc_allday = $('#recc-allday');
-            recc_allday.prop('checked', $('#allday').is(':checked'));
+            var recc_allday = form.find('input[name=recc-allday]');
+            recc_allday.prop('checked', $('#' + conf.prefix + 'allday').is(':checked'));
             var allday_checked = recc_allday.is(':checked');
-            var recc_start_time_group = $("#recc-start-time-group");
-            var recc_fo_end_time_group = $('#recc-fo-end-time-group');
+            var recc_start_time_group = form.find("#recc-start-time-group");
+            var recc_fo_end_time_group = form.find('#recc-fo-end-time-group');
             recc_start_time_group.toggle(!allday_checked);
             recc_fo_end_time_group.toggle(!allday_checked);
 
@@ -1798,7 +1800,7 @@
 
                 onAlldayChecked(this, "recc-start");
 
-                var end_moment = get_moment_with_time("#recc-start");
+                var end_moment = get_moment_with_time_from_fields(form.find('input[name=recc-start]'), form.find('input[name=recc-start-time]'));
                 if (this.checked) {
                     end_moment = end_moment.endOf('day');
                 } else {
@@ -1807,11 +1809,11 @@
                 recc_fo_end_time.timepicker('setTime', end_moment.toDate());
             });
 
-            $('#occurences-show-container .show-link').click(function(e){
+            form.find('#occurences-show-container .show-link').click(function(e){
                 showLink(e, this);
             });
 
-            $('#occurences-hide-container .hide-link').click(function(e){
+            form.find('#occurences-hide-container .hide-link').click(function(e){
                 hideLink(e, this);
             });
 
@@ -1873,7 +1875,7 @@
         form.find('.ricancelbutton').click(cancel);
         form.find('.risavebutton').click(save);
 
-        $('#recc-button').click(function() {
+        $('#' + conf.prefix + 'recc-button').click(function() {
             $('button[name=riedit]').click();
         });
 
