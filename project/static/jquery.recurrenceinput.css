@@ -108,3 +108,7 @@ div.errorarea {
   font-weight: bold;
   padding: 2px 10px;
 }
+
+.recc-event-container .form-group {
+  margin-bottom: 0;
+}

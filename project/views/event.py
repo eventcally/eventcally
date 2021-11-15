@@ -149,6 +149,7 @@ def event_create_for_admin_unit_id(id):
             prepare_event_form_for_suggestion(form, event_suggestion)
             if form.is_submitted():
                 form.process(request.form)
+                prepare_date_definition(form)
 
     if form.validate_on_submit():
         event = Event()
@@ -310,8 +311,15 @@ def prepare_event_form(form):
     prepare_organizer(form)
     prepare_event_place(form)
 
+    prepare_date_definition(form)
+
+
+def prepare_date_definition(form):
+    next_full_hour = get_next_full_hour()
+    form.date_definition_template.start.data = next_full_hour
+
     if not form.date_definitions[0].start.data:
-        form.date_definitions[0].start.data = get_next_full_hour()
+        form.date_definitions[0].start.data = next_full_hour
 
 
 def prepare_event_form_for_suggestion(form, event_suggestion):
