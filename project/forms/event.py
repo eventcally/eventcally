@@ -37,13 +37,13 @@ class EventDateDefinitionFormMixin:
     start = CustomDateTimeField(
         lazy_gettext("Start"),
         validators=[DataRequired()],
-        description=lazy_gettext("Indicate when the event will take place."),
+        description=lazy_gettext("Indicate when the event date will start."),
     )
     end = CustomDateTimeField(
         lazy_gettext("End"),
         validators=[Optional()],
         description=lazy_gettext(
-            "Indicate when the event will end. An event can last a maximum of 14 days."
+            "Indicate when the event date will end. An event can last a maximum of 14 days."
         ),
     )
     allday = BooleanField(
@@ -235,6 +235,9 @@ class BaseEventForm(SharedEventForm):
         FormField(EventDateDefinitionForm, default=lambda: EventDateDefinition()),
         min_entries=1,
     )
+    date_definition_template = FormField(
+        EventDateDefinitionForm, default=lambda: EventDateDefinition()
+    )
     previous_start_date = CustomDateTimeField(
         lazy_gettext("Previous start date"),
         validators=[Optional()],
@@ -330,6 +333,8 @@ class CreateEventForm(BaseEventForm):
                 field.populate_obj(obj, "organizer")
             elif name == "photo" and not obj.photo:
                 obj.photo = Image()
+            elif name == "date_definition_template":
+                continue
             field.populate_obj(obj, name)
 
         obj.public_status = (
@@ -405,6 +410,8 @@ class UpdateEventForm(BaseEventForm):
         for name, field in self._fields.items():
             if name == "photo" and not obj.photo:
                 obj.photo = Image()
+            elif name == "date_definition_template":
+                continue
             field.populate_obj(obj, name)
 
         if obj.photo and obj.photo.is_empty():

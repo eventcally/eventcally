@@ -223,7 +223,7 @@ Cypress.Commands.add(
     if (update && recurrence) {
       cy.get('#' + prefix + 'single-event-container').should("not.be.visible");
       cy.get('#' + prefix + 'recc-event-container').should("be.visible");
-      cy.get('[name="riedit"]').click();
+      cy.get('div[data-prefix=' + prefix + '] [name="riedit"]').click();
     } else {
       cy.checkEventAllday(prefix);
 
@@ -233,8 +233,8 @@ Cypress.Commands.add(
       cy.get("#ui-datepicker-div").should("not.be.visible");
 
       cy.get('#' + prefix + 'start-time').click();
-      cy.get(".ui-timepicker-wrapper").should("be.visible");
-      cy.get(".ui-timepicker-wrapper .ui-timepicker-am[data-time=0]").click(); // select 00:00
+      cy.get(".ui-timepicker-wrapper:visible").should("be.visible");
+      cy.get(".ui-timepicker-wrapper:visible .ui-timepicker-am[data-time=0]").click(); // select 00:00
       cy.get("#ui-datepicker-div").should("not.be.visible");
 
       cy.get('#' + prefix + 'end-container').should("not.be.visible");
@@ -254,17 +254,17 @@ Cypress.Commands.add(
     }
 
     cy.get(".modal-recurrence").should("be.visible");
-    cy.inputsShouldHaveSameValue('#' + prefix + 'start-user', "#recc-start-user");
-    cy.inputsShouldHaveSameValue('#' + prefix + 'start-time', "#recc-start-time");
-    cy.get("#rirtemplate option").should("have.length", 4);
-    cy.get(".modal-recurrence input[value=BYENDDATE]").should("be.checked");
-    cy.get(".modal-recurrence .modal-footer .btn-primary").click();
+    cy.inputsShouldHaveSameValue('#' + prefix + 'start-user', '#' + prefix + 'recc-start-user');
+    cy.inputsShouldHaveSameValue('#' + prefix + 'start-time', '#' + prefix + 'recc-start-time');
+    cy.get('#' + prefix + 'rirtemplate option').should("have.length", 4);
+    cy.get(".modal-recurrence:visible input[value=BYENDDATE]").should("be.checked");
+    cy.get(".modal-recurrence:visible .modal-footer .btn-primary").click();
 
     cy.get('#' + prefix + 'single-event-container').should("not.be.visible");
     cy.get('#' + prefix + 'recc-event-container').should("be.visible");
 
     if (recurrence == false) {
-      cy.get('[name="ridelete"]').click();
+      cy.get('[name="ridelete"]:visible').click();
       cy.get('#' + prefix + 'single-event-container').should("be.visible");
       cy.get('#' + prefix + 'recc-event-container').should("not.be.visible");
       cy.get('#' + prefix + 'end-container').should("not.be.visible");
@@ -284,14 +284,14 @@ Cypress.Commands.add(
     // Recurrence
     cy.get('#' + prefix + 'recc-button').click();
     cy.get(".modal-recurrence").should("be.visible");
-    cy.get('#recc-allday').should("be.checked");
-    cy.get('#recc-start-time').should("not.be.visible");
-    cy.get('#recc-fo-end-time').should("not.be.visible");
+    cy.get('#' + prefix + 'recc-allday').should("be.checked");
+    cy.get('#' + prefix + 'recc-start-time').should("not.be.visible");
+    cy.get('#' + prefix + 'recc-fo-end-time').should("not.be.visible");
 
-    cy.get('#recc-allday').click();
-    cy.get('#recc-start-time').should("be.visible");
-    cy.get('#recc-fo-end-time').should("be.visible");
-    cy.get(".modal-recurrence .modal-footer .btn-secondary").click();
+    cy.get('#' + prefix + 'recc-allday').click();
+    cy.get('#' + prefix + 'recc-start-time').should("be.visible");
+    cy.get('#' + prefix + 'recc-fo-end-time').should("be.visible");
+    cy.get(".modal-recurrence:visible .modal-footer .btn-secondary").click();
 
     // Turn off
     cy.get('#' + prefix + 'allday').click();

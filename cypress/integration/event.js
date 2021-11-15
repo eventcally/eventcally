@@ -8,6 +8,9 @@ describe("Event", () => {
         cy.get("#name").type("Stadtfest");
         cy.checkEventStartEnd(false, test.recurrence, "date_definitions-0-");
 
+        cy.get("#add-date-defintion-btn").click();
+        cy.checkEventStartEnd(false, test.recurrence, "date_definitions-1-");
+
         cy.select2("event_place_id", "Neu");
         cy.get("#new_event_place-location-city").type("Goslar");
         cy.get("#new_place_container_search_link").click();
@@ -28,6 +31,9 @@ describe("Event", () => {
         cy.contains("a", "Veranstaltung bearbeiten").click();
         cy.url().should("include", "/update");
         cy.checkEventStartEnd(true, test.recurrence, "date_definitions-0-");
+
+        cy.get('div[data-prefix=date_definitions-1-] .remove-date-defintion-btn:visible').click()
+
         cy.get("#submit").click();
         cy.url().should(
           "include",

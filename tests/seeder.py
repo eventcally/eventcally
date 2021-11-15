@@ -326,6 +326,31 @@ class Seeder(object):
 
             return date_definition
 
+    def add_event_date_definition(
+        self, event_id, start=None, end=None, allday=False, recurrence_rule=""
+    ):
+        from project.models import Event
+        from project.services.event import update_event
+
+        with self._app.app_context():
+            event = Event.query.get(event_id)
+
+            date_definition = self.create_event_date_definition(
+                start, end, allday, recurrence_rule
+            )
+            date_definition.event = event
+            self._db.session.add(date_definition)
+
+            date_definitions = event.date_definitions
+            date_definitions.append(date_definition)
+            event.date_definitions = date_definitions
+            update_event(event)
+            self._db.session.commit()
+
+            date_definition_id = date_definition.id
+
+        return date_definition_id
+
     def create_event_unverified(self):
         user_id = self.create_user("unverified@test.de")
         admin_unit_id = self.create_admin_unit(user_id, "Unverified Crew")
