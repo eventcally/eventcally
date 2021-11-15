@@ -157,8 +157,10 @@ def create_put(
     return data
 
 
-@pytest.mark.parametrize("legacy", [True, False])
-def test_put(client, seeder, utils, app, mocker, legacy):
+@pytest.mark.parametrize(
+    "variant", ["normal", "legacy", "recurrence", "two_date_definitions"]
+)
+def test_put(client, seeder, utils, app, mocker, variant):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -166,7 +168,7 @@ def test_put(client, seeder, utils, app, mocker, legacy):
 
     utils.mock_now(mocker, 2020, 1, 1)
 
-    put = create_put(place_id, organizer_id)
+    put = create_put(place_id, organizer_id, legacy=(variant == "legacy"))
     put["rating"] = 10
     put["description"] = "Neue Beschreibung"
     put["external_link"] = "http://www.google.de"
@@ -186,8 +188,11 @@ def test_put(client, seeder, utils, app, mocker, legacy):
     put["price_info"] = "Erwachsene 5€, Kinder 2€."
     put["public_status"] = "draft"
 
-    if not legacy:
+    if variant == "recurrence":
         put["date_definitions"][0]["recurrence_rule"] = "RRULE:FREQ=DAILY;COUNT=7"
+
+    if variant == "two_date_definitions":
+        put["date_definitions"].append({"start": "2021-02-07T12:00:00.000Z"})
 
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.put_json(url, put)
@@ -225,16 +230,23 @@ def test_put(client, seeder, utils, app, mocker, legacy):
         assert event.price_info == put["price_info"]
         assert event.public_status == PublicStatus.draft
 
+        if variant == "two_date_definitions":
+            assert len(event.date_definitions) == 2
+        else:
+            assert len(event.date_definitions) == 1
+
         len_dates = len(event.dates)
 
-        if legacy:
-            assert len_dates == 1
-        else:
+        if variant == "recurrence":
             assert (
                 event.date_definitions[0].recurrence_rule
                 == put["date_definitions"][0]["recurrence_rule"]
             )
             assert len_dates == 7
+        elif variant == "two_date_definitions":
+            assert len_dates == 2
+        else:
+            assert len_dates == 1
 
 
 def test_put_invalidRecurrenceRule(client, seeder, utils, app):

@@ -369,14 +369,15 @@ function scroll_to_element(element, complete) {
     var alldayInput = container.find("input[id$='-allday']");
     var recurrenceRuleTextarea = container.find("textarea[id$='-recurrence_rule']");
 
-    start_datepicker(startInput);
-    start_datepicker(endInput);
-
     start_timepicker(startTimeInput);
     start_timepicker(endTimeInput);
 
+    start_datepicker(startInput);
+    start_datepicker(endInput);
+
     recurrenceRuleTextarea.recurrenceinput({prefix: prefix, ajaxURL: "/events/rrule"});
 
+    var removeButton = container.find("button.remove-date-defintion-btn");
     var startUserInput = container.find("input[id$='-start-user']");
     var endUserInput = container.find("input[id$='-end-user']");
 
@@ -409,6 +410,28 @@ function scroll_to_element(element, complete) {
       }
     });
 
+    removeButton.click(function () {
+      var count = $.find(".date-definition-container").length;
+      if (count > 1) {
+          var container = $(this).closest(".date-definition-container");
+          container.remove();
+          count--;
+
+          if (count == 1) {
+            $('.date-definition-container button.remove-date-defintion-btn').addClass("d-none");
+          }
+      }
+
+      return false;
+    });
+
+    container.find(".show-link").click(function (e) {
+      showLink(e, this);
+    });
+
+    container.find(".hide-link").click(function (e) {
+      hideLink(e, this);
+    });
   }
 
   $.fn.ovedaDateDefinition = function(options) {
@@ -433,11 +456,11 @@ function scroll_to_element(element, complete) {
 $(function () {
   $('[data-toggle="tooltip"]').tooltip();
 
-  $(".datepicker").each(function (index, element) {
+  $("form .datepicker").each(function (index, element) {
     start_datepicker($(element));
   });
 
-  $(".timepicker").each(function (index, element) {
+  $("form .timepicker").each(function (index, element) {
     start_timepicker($(element));
   });
 

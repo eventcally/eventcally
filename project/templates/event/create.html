@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_manage_form_styles, render_manage_form_scripts, render_cropper_header, render_end_container_handling, render_jquery_steps_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_event_date_defintion_code, render_date_definition_container, render_manage_form_styles, render_manage_form_scripts, render_cropper_header, render_end_container_handling, render_jquery_steps_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
 
 {%- block title -%}
 {{ _('Create event') }}
@@ -56,7 +56,7 @@ $( function() {
         }
     });
 
-    $('.date-definition-container').ovedaDateDefinition();
+    {{ render_event_date_defintion_code() }}
 
   function update_place_container(value) {
     switch (value) {
@@ -240,6 +240,8 @@ $( function() {
 
 <h1>{{ _('Create event') }}</h1>
 
+{{ render_date_definition_container(form.date_definition_template, "date-definition-template d-none") }}
+
 <form id="main-form" action="" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
@@ -255,22 +257,14 @@ $( function() {
 
   <div class="card mb-4">
     <div class="card-header">
-      {{ _('Event date') }}
+      {{ _('Event dates') }}
     </div>
-    <div class="card-body">
+    <div class="card-body pb-3">
       {% for date_definition in form.date_definitions %}
-        <div class="date-definition-container" data-prefix="{{ date_definition.id }}-">
-          <div id="{{ date_definition.id }}-single-event-container">
-            {{ render_field_with_errors(date_definition.form.start, **{"data-range-to":"#"+date_definition.form.end.id, "data-range-max-days": "14", "data-allday": "#"+date_definition.form.allday.id}) }}
-            {{ render_field_with_errors(date_definition.form.allday, ri="checkbox") }}
-            {{ render_field_with_errors(date_definition.form.end, is_collapsible=1) }}
-            <button type="button" id="{{ date_definition.id }}-recc-button" class="btn btn-outline-secondary"><i class="fas fa-history"></i> {{ _('Recurring event') }}</button>
-          </div>
-          <div id="{{ date_definition.id }}-recc-event-container">
-            {{ render_field_with_errors(date_definition.form.recurrence_rule) }}
-          </div>
-        </div>
+        {{ render_date_definition_container(date_definition) }}
       {% endfor %}
+
+      <button type="button" class="btn btn-outline-secondary btn-small" id="add-date-defintion-btn"><i class="fa fa-calendar-plus"></i> {{ _('Add event date') }}</button>
     </div>
   </div>
 

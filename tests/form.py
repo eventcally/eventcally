@@ -116,7 +116,9 @@ class Form:
         for key, value in values.items():
             if key in filled:
                 del filled[key]
-            if type(value) is list:
+            if value is None:
+                continue
+            elif type(value) is list:
                 filled.setlist(key, value)
             else:
                 filled.add(key, value)

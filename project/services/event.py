@@ -349,7 +349,8 @@ def update_event_dates_with_recurrence_rule(event):
                 None,
             )
             if existing_date:
-                dates_to_remove.remove(existing_date)
+                if existing_date in dates_to_remove:
+                    dates_to_remove.remove(existing_date)
             else:
                 new_date = EventDate(
                     event_id=event.id,

@@ -177,15 +177,17 @@ def prepare_events_post_data(seeder, utils, legacy=False):
     return url, data, admin_unit_id, place_id, organizer_id
 
 
-@pytest.mark.parametrize("allday", [True, False])
-@pytest.mark.parametrize("legacy", [True, False])
-def test_events_post(client, seeder, utils, app, allday, legacy):
+@pytest.mark.parametrize("variant", ["allday", "legacy", "two_date_definitions"])
+def test_events_post(client, seeder, utils, app, variant):
     url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
-        seeder, utils, legacy
+        seeder, utils, variant == "legacy"
     )
 
-    if allday and not legacy:
+    if variant == "allday":
         data["date_definitions"][0]["allday"] = "1"
+
+    if variant == "two_date_definitions":
+        data["date_definitions"].append({"start": "2021-02-07T12:00:00.000Z"})
 
     response = utils.post_json(url, data)
     utils.assert_response_created(response)
@@ -205,7 +207,12 @@ def test_events_post(client, seeder, utils, app, allday, legacy):
         assert event.photo is not None
         assert event.photo.encoding_format == "image/png"
         assert event.public_status == PublicStatus.published
-        assert event.date_definitions[0].allday == (allday and not legacy)
+        assert event.date_definitions[0].allday == (variant == "allday")
+
+        if variant == "two_date_definitions":
+            assert len(event.date_definitions) == 2
+        else:
+            assert len(event.date_definitions) == 1
 
 
 def test_events_post_co_organizers(client, seeder, utils, app):

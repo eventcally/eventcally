@@ -909,9 +909,10 @@ class Event(db.Model, TrackableMixin, EventMixin):
     @min_start.expression
     def min_start(cls):
         return (
-            select([EventDateDefinition.end])
+            select([EventDateDefinition.start])
             .where(EventDateDefinition.event_id == cls.id)
             .order_by(EventDateDefinition.start)
+            .limit(1)
             .as_scalar()
         )
 
@@ -938,6 +939,7 @@ class Event(db.Model, TrackableMixin, EventMixin):
 
     date_definitions = relationship(
         "EventDateDefinition",
+        order_by="EventDateDefinition.start",
         backref=backref("event", lazy=False),
         cascade="all, delete-orphan",
     )

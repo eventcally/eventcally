@@ -53,8 +53,8 @@ def test_read_co_organizers(seeder, utils):
     utils.assert_response_contains(response, "Organizer B")
 
 
-@pytest.mark.parametrize("db_error", [True, False])
-def test_create(client, app, utils, seeder, mocker, db_error):
+@pytest.mark.parametrize("variant", ["normal", "db_error", "two_date_definitions"])
+def test_create(client, app, utils, seeder, mocker, variant):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
@@ -62,23 +62,28 @@ def test_create(client, app, utils, seeder, mocker, db_error):
     url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
     response = utils.get_ok(url)
 
-    if db_error:
+    if variant == "db_error":
         utils.mock_db_commit(mocker, UniqueViolation("MockException", "MockException"))
+
+    data = {
+        "name": "Name",
+        "description": "Beschreibung",
+        "date_definitions-0-start": ["2030-12-31", "23:59"],
+        "event_place_id": place_id,
+        "organizer_id": organizer_id,
+        "photo-image_base64": seeder.get_default_image_upload_base64(),
+    }
+
+    if variant == "two_date_definitions":
+        data["date_definitions-1-start"] = ["2030-12-31", "14:00"]
 
     response = utils.post_form(
         url,
         response,
-        {
-            "name": "Name",
-            "description": "Beschreibung",
-            "date_definitions-0-start": ["2030-12-31", "23:59"],
-            "event_place_id": place_id,
-            "organizer_id": organizer_id,
-            "photo-image_base64": seeder.get_default_image_upload_base64(),
-        },
+        data,
     )
 
-    if db_error:
+    if variant == "db_error":
         utils.assert_response_db_error(response)
         return
 
@@ -93,6 +98,11 @@ def test_create(client, app, utils, seeder, mocker, db_error):
             .first()
         )
         assert event is not None
+
+        if variant == "two_date_definitions":
+            assert len(event.date_definitions) == 2
+        else:
+            assert len(event.date_definitions) == 1
 
 
 def test_create_allday(client, app, utils, seeder):
@@ -494,26 +504,43 @@ def test_actions_withReferenceLink(seeder, utils):
     assert b"Veranstaltung empfehlen" in response.data
 
 
-@pytest.mark.parametrize("db_error", [True, False])
-def test_update(client, seeder, utils, app, mocker, db_error):
+@pytest.mark.parametrize(
+    "variant", ["normal", "db_error", "add_date_definition", "remove_date_definition"]
+)
+def test_update(client, seeder, utils, app, mocker, variant):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
+
+    if variant == "remove_date_definition":
+        seeder.add_event_date_definition(event_id)
 
     url = utils.get_url("event_update", event_id=event_id)
     response = utils.get_ok(url)
 
-    if db_error:
+    if variant == "db_error":
         utils.mock_db_commit(mocker)
+
+    data = {
+        "name": "Neuer Name",
+    }
+
+    if variant == "add_date_definition":
+        data["date_definitions-1-start"] = ["2030-12-31", "14:00"]
+
+    if variant == "remove_date_definition":
+        data["date_definitions-1-csrf_token"] = None
+        data["date_definitions-1-start"] = None
+        data["date_definitions-1-end"] = None
+        data["date_definitions-1-allday"] = None
+        data["date_definitions-1-recurrence_rule"] = None
 
     response = utils.post_form(
         url,
         response,
-        {
-            "name": "Neuer Name",
-        },
+        data,
     )
 
-    if db_error:
+    if variant == "db_error":
         utils.assert_response_db_error(response)
         return
 
@@ -530,6 +557,11 @@ def test_update(client, seeder, utils, app, mocker, db_error):
             .first()
         )
         assert event is not None
+
+        if variant == "add_date_definition":
+            assert len(event.date_definitions) == 2
+        else:
+            assert len(event.date_definitions) == 1
 
 
 def test_update_co_organizers(client, seeder, utils, app):
