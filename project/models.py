@@ -33,6 +33,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import aliased, backref, deferred, object_session, relationship
 from sqlalchemy.orm.relationships import remote
 from sqlalchemy.schema import CheckConstraint
+from sqlalchemy.sql.operators import op
 from sqlalchemy_utils import ColorType
 
 from project import db
@@ -41,6 +42,20 @@ from project.dbtypes import IntegerEnum
 from project.utils import make_check_violation
 
 # Base
+
+
+def create_tsvector(*args):
+    field, weight = args[0]
+    exp = func.setweight(func.to_tsvector("german", func.coalesce(field, "")), weight)
+    for field, weight in args[1:]:
+        exp = op(
+            exp,
+            "||",
+            func.setweight(
+                func.to_tsvector("german", func.coalesce(field, "")), weight
+            ),
+        )
+    return exp
 
 
 def _current_user_id_or_none():
@@ -778,6 +793,10 @@ class EventMixin(object):
     booked_up = Column(Boolean())
     expected_participants = Column(Integer())
     price_info = Column(UnicodeText())
+
+    @declared_attr
+    def __ts_vector__(cls):
+        return create_tsvector((cls.name, "A"), (cls.tags, "B"), (cls.description, "C"))
 
     @declared_attr
     def photo_id(cls):

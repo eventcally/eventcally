@@ -296,11 +296,11 @@
 
 {% block content %}
 
-    <h1>
-        {{ _('Event Dates') }}
-        <button type="button" id="toggle-search-btn" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-search"></i></button>
-        <button type="button" id="toggle-map-btn" class="btn btn-outline-secondary" onclick="toggle_map()"><i class="fa fa-map"></i></button>
-    </h1>
+    <h1 class="mb-3">{{ _('Event Dates') }}</h1>
+    <div class="btn-group mb-3">
+        <button type="button" id="toggle-search-btn" class="btn btn-outline-secondary btn-sm" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-search"></i> {{ _('Search') }}</button>
+        <button type="button" id="toggle-map-btn" class="btn btn-outline-secondary btn-sm" onclick="toggle_map()"><i class="fa fa-map"></i> {{ _('Map view') }}</button>
+    </div>
 
     <div class="{% if form.is_submitted() %}{% else %}collapse{% endif %}" id="search_form">
         {{ render_event_dates_filter_form(form) }}
