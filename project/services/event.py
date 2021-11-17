@@ -52,14 +52,10 @@ def upsert_event_category(category_name):
 
 def fill_event_filter(event_filter, params):
     if params.keyword:
-        like_keyword = "%" + params.keyword + "%"
+        tq = func.websearch_to_tsquery("german", params.keyword)
         event_filter = and_(
             event_filter,
-            or_(
-                Event.name.ilike(like_keyword),
-                Event.description.ilike(like_keyword),
-                Event.tags.ilike(like_keyword),
-            ),
+            Event.__ts_vector__.op("@@")(tq),
         )
 
     if params.category_id:
