@@ -9,10 +9,15 @@
 
       {% set is_required = kwargs['is_required'] if 'is_required' in kwargs else field.flags.required %}
       {% set label_text = field.label.text + ' *' if is_required else field.label.text %}
-      <div class="form-group {% if field.errors %} has-error{% endif -%}">
+      <div class="form-group {% if field.errors %} has-error{% endif -%} {% if 'formrow' in kwargs %} row{% endif -%}">
         {% if 'label_hidden' in kwargs or ('ri' in kwargs and kwargs['ri'] == 'checkbox') %}
         {% else %}
-        {{ field.label(text=label_text, class="mb-0") }}
+          {% set label_class = "col-sm-2 col-form-label" if 'formrow' in kwargs else "mb-0" %}
+          {{ field.label(text=label_text, class=label_class) }}
+        {% endif %}
+
+        {% if 'formrow' in kwargs %}
+        <div class="col-sm-10">
         {% endif %}
 
         {% if field.description %}
@@ -89,6 +94,10 @@
             <div>{{ error }}</div>
             {% endfor %}
         </div>
+        {% endif %}
+
+        {% if 'formrow' in kwargs %}
+      </div>
         {% endif %}
       </div>
 
@@ -959,21 +968,21 @@
   {{ form.hidden_tag() }}
 
   {% if form.keyword %}
-    {{ render_field_with_errors(form.keyword) }}
+    {{ render_field_with_errors(form.keyword, formrow="1") }}
   {% endif %}
 
   {% if form.category_id %}
-    {{ render_field_with_errors(form.category_id) }}
+    {{ render_field_with_errors(form.category_id, formrow="1") }}
   {% endif %}
 
   {% if form.organizer_id %}
-    {{ render_field_with_errors(form.organizer_id) }}
+    {{ render_field_with_errors(form.organizer_id, formrow="1") }}
   {% endif %}
 
   {{ render_event_dates_date_field(form.date_from, form.date_to) }}
 
   {% if form.weekday and form.weekday.choices|length > 0 %}
-    {{ render_field_with_errors(form.weekday, ri="multicheckbox") }}
+    {{ render_field_with_errors(form.weekday, ri="multicheckbox", formrow="1") }}
   {% endif %}
 
   {{ render_event_dates_location_field(form.location, form.distance) }}

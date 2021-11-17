@@ -1,3 +1,6 @@
+import pytest
+
+
 def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
@@ -206,3 +209,63 @@ def test_get_events_query(client, seeder, app):
         pagination = events.paginate()
 
         assert pagination.total == 1
+
+
+@pytest.mark.parametrize(
+    "index, event_descs, keyword, results, order",
+    [
+        (0, ("Führung durch Goslar", "Other"), "Goslar", 1, None),
+        (1, ("Führung durch Goslar", "Other"), "Führung", 1, None),
+        (2, ("Führung durch Goslar", "Other"), "Fuehrung", 0, None),
+        (3, ("Führung durch Goslar", "Other"), "Goslar Führung", 1, None),
+        (
+            4,
+            ("Führung durch Goslar", "Führung durch Soest"),
+            "Goslar Führung",
+            1,
+            None,
+        ),
+        (
+            5,
+            (
+                "Führung durch Goslar",
+                "Führung durch Soest",
+                "Führung durch Berlin",
+            ),
+            "Führung (Goslar OR Soest)",
+            2,
+            None,
+        ),
+    ],
+)
+def test_get_events_fulltext(
+    client, seeder, app, index, event_descs, keyword, results, order
+):
+    _, admin_unit_id = seeder.setup_base()
+
+    if type(event_descs) is not tuple:
+        event_descs = [event_descs]
+
+    event_ids = list()
+    for event_desc in event_descs:
+        event_id = seeder.create_event(admin_unit_id, name=event_desc)
+        event_ids.append(event_id)
+
+    with app.app_context():
+        from project.services.event import get_events_query
+        from project.services.event_search import EventSearchParams
+
+        params = EventSearchParams()
+        params.keyword = keyword
+        events = get_events_query(params)
+        pagination = events.paginate()
+
+        assert pagination.total == results
+
+        if not order:
+            order = range(0, len(event_descs) - 1)
+
+        i = 0
+        for item in pagination.items:
+            assert item.id == event_ids[order[i]]
+            i = i + 1
