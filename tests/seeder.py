@@ -270,6 +270,8 @@ class Seeder(object):
         start=None,
         allday=False,
         co_organizer_ids=None,
+        description="Beschreibung",
+        tags="",
     ):
         from project.models import (
             Event,
@@ -284,12 +286,12 @@ class Seeder(object):
             event.admin_unit_id = admin_unit_id
             event.categories = [upsert_event_category("Other")]
             event.name = name
-            event.description = ("Beschreibung",)
+            event.description = description
             event.event_place_id = self.upsert_default_event_place(admin_unit_id)
             event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
             event.external_link = external_link
             event.ticket_link = ""
-            event.tags = ""
+            event.tags = tags
             event.price_info = ""
             event.attendance_mode = EventAttendanceMode.offline
 
