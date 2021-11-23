@@ -72,7 +72,7 @@ const OrganizationRead = {
         .then((response) => {
           this.organization = response.data;
           Vue.nextTick(function () {
-            iFrameResize({ minHeight: 300 }, '#oveda-widget');
+            iFrameResize({ minHeight: 300, onMessage: function(m) {} }, '#oveda-widget');
           });
         });
     },

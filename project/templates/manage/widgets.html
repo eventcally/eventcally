@@ -6,10 +6,13 @@
 {%- endblock -%}
 {% block content %}
 
-<h1>{{ _('Widgets') }} <a id="toggle-settings-btn" class="btn btn-light" role="button" data-toggle="collapse" href="#settingsContainer" aria-expanded="false" aria-controls="settingsContainer"><i class="fa fa-cog"></i></a></h1>
+<h1 class="mb-3">{{ _('Widgets') }}</h1>
+<div class="btn-group mb-3">
+    <button type="button" id="toggle-settings-btn" class="btn btn-outline-secondary btn-sm" data-toggle="collapse" data-target="#settingsContainer" aria-expanded="false" aria-controls="settingsContainer"><i class="fa fa-cog"></i> {{ _('Settings') }}</button>
+</div>
 
-<div class="collapse" id="settingsContainer">
-    <h2>{{ _('Settings') }}</h2>
+<div class="collapse pb-4" id="settingsContainer">
+    <h2 class="mt-0">{{ _('Settings') }}</h2>
     <form action="" method="POST">
         {{ form.hidden_tag() }}
 
@@ -22,17 +25,68 @@
     </form>
 </div>
 
-<h2>{{ _('Veranstaltungen als iFrame einbetten') }}</h2>
-<textarea class="form-control"><iframe src="{{ url_for('widget_event_dates', au_short_name=admin_unit.short_name, _external=True) }}" allowtransparency="true"></iframe></textarea>
-<p><a class="btn btn-outline-info my-2" data-toggle="collapse" href="#iFrameContainer" aria-expanded="false" aria-controls="iFrameContainer">Vorschau</a></p>
-<div class="collapse" id="iFrameContainer">
-    <iframe src="{{ url_for('widget_event_dates', au_short_name=admin_unit.short_name) }}" allowtransparency="true" style="display: block; width: 90vw; height: 40vh; max-width: 100%;"></iframe>
+<h2>Veranstaltungen als Widget einbinden</h2>
+<p>Auf deiner Webseite kannst du per Widget ganz einfach die Veranstaltungen deiner Organisation einbinden.</p>
+
+<div class="modal fade" id="embedWidgetModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Installation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <nav>
+                    <div class="nav nav-tabs" id="embedWidgetModalTab" role="tablist">
+                      <a class="nav-item nav-link active" id="embedWidgetModalScriptTabLink" data-toggle="tab" href="#embedWidgetModalScriptTab" role="tab" aria-controls="embedWidgetModalScriptTab" aria-selected="true">Standard</a>
+                      <a class="nav-item nav-link" id="embedWidgetModalIframeTabLink" data-toggle="tab" href="#embedWidgetModalIframeTab" role="tab" aria-controls="embedWidgetModalIframeTab" aria-selected="false">Alternative iFrame</a>
+                    </div>
+                  </nav>
+                  <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active py-3" id="embedWidgetModalScriptTab" role="tabpanel" aria-labelledby="embedWidgetModalScriptTabLink">
+                        <p>Kopiere den unten stehenden Code und füge ihn auf deiner Website ein.</p>
+                        <p>Füge den folgenden Code im <code>&lt;head&gt;</code> der Seite ein.</p>
+                        <textarea class="form-control text-monospace" style="font-size: 0.7rem;" disabled rows="6"><!-- Oveda Widget -->
+<script>(function(w,d,s,o,f,js,fjs){w['OvedaWidget']=o;w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};js=d.createElement(s),fjs=d.getElementsByTagName(s)[0];js.id=o;js.src=f;js.async=1;fjs.parentNode.insertBefore(js,fjs);}(window,document,'script','oveda','{{ url_for('static', filename='widget-loader.js', _external=True) }}'));</script>
+<!-- End Oveda Widget --></textarea>
+                        <p class="mt-3">Füge den folgenden Code an der Stelle im <code>&lt;body&gt;</code> der Seite ein, wo das Widget dargestellt werden soll.</p>
+                        <textarea class="form-control text-monospace" style="font-size: 0.7rem;" disabled rows="3"><div class="oveda-widget" data-widget-short-name="{{ admin_unit.short_name }}" data-widget-width="100%" data-widget-height="400px" data-widget-resize="true" data-widget-google-tag-manager="false"></div></textarea>
+                        <p class="mt-3">Mit den folgenden Attributen kann das Widget konfiguriert werden:</p>
+                        <ul>
+                            <li><var>data-widget-short-name</var>: Kurzname der Organisation</li>
+                            <li><var>data-widget-width</var>: iFrame Breite (CSS)</li>
+                            <li><var>data-widget-height</var>: iFrame Höhe (CSS)</li>
+                            <li><var>data-widget-resize</var>: iFrame Größe automatisch anpassen</li>
+                            <li><var>data-widget-google-tag-manager</var>: Events in window.dataLayer für Google Tag Manager schreiben.
+                                <ul>
+                                    <li>Event <var>ovedaWidget.pageView</var> mit Parameter <var>url</var></li>
+                                    <li>Event <var>ovedaWidget.linkClick</var> mit Parameter <var>url</var></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade py-3" id="embedWidgetModalIframeTab" role="tabpanel" aria-labelledby="embedWidgetModalIframeTabLink">
+                        <p>Alternativ zur Einbindung per Script kann das Widget direkt per iFrame eingebunden werden.</p>
+                        <p>Kopiere den unten stehenden Code und füge ihn auf deiner Website ein. Füge den folgenden Code an der Stelle im <code>&lt;body&gt;</code> der Seite ein, wo das Widget dargestellt werden soll.</p>
+                        <textarea class="form-control text-monospace" style="font-size: 0.7rem;" disabled><iframe src="{{ url_for('widget_event_dates', au_short_name=admin_unit.short_name, _external=True) }}"></iframe></textarea>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="btn-group mb-3">
+    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#embedWidgetModal"><i class="fa fa-wrench"></i> Installation</button>
+    <a class="btn btn-outline-info" href="{{ url_for('organizations', path=admin_unit.id) }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-external-link-alt"></i> Vorschau</a>
 </div>
 
 {% if admin_unit.suggestions_enabled %}
 <h2>{{ _('Link, um Veranstaltungen vorzuschlagen') }}</h2>
-<input class="form-control" value="{{ url_for('event_suggestion_create_for_admin_unit', au_short_name=admin_unit.short_name, _external=True) }}" />
-<p><a class="btn btn-outline-info my-2" href="{{ url_for('event_suggestion_create_for_admin_unit', au_short_name=admin_unit.short_name, _external=True) }}" target="_blank" rel="noopener noreferrer">Vorschau <i class="fa fa-external-link-alt"></i></a></p>
+<input class="form-control text-monospace" style="font-size: 0.7rem;" disabled value="{{ url_for('event_suggestion_create_for_admin_unit', au_short_name=admin_unit.short_name, _external=True) }}" />
+<p><a class="btn btn-outline-info my-2" href="{{ url_for('event_suggestion_create_for_admin_unit', au_short_name=admin_unit.short_name, _external=True) }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-external-link-alt"></i> Vorschau</a></p>
 {% endif %}
 
 
