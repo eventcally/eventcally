@@ -5,7 +5,6 @@
 
     var iFrameElements = [];
     var needsResizer = false;
-    var iFrameResizerScriptLoaded = false;
 
     w.onload = function() {
       initWidgets()
@@ -35,7 +34,6 @@
       }
 
       var iFrame = d.createElement("iframe");
-      iFrame.onload = function() { onIframeLoad(element) };
       iFrame.class = "oveda-widget-iframe";
       iFrame.src = baseUrl + "/" + shortName + "/widget/eventdates";
       iFrame.style = style;
@@ -50,16 +48,8 @@
       iFrameElements.push(element);
     }
 
-    function onIframeLoad(element) {
-      startIframeResizer(element);
-    }
-
-    function getWidgetDataAttributeName(name) {
-      return 'data-widget-' + name;
-    }
-
     function getWidgetData(element, name, defaultValue = null) {
-      var attribute = getWidgetDataAttributeName(name);
+      var attribute = 'data-widget-' + name;
 
       if (!element.hasAttribute(attribute)) {
         return defaultValue;
@@ -72,62 +62,37 @@
       return getWidgetData(element, name, defaultValue) !== "false";
     }
 
-    function setWidgetData(element, name, value) {
-      var attribute = getWidgetDataAttributeName(name);
-      return element.setAttribute(attribute, value);
-    }
-
-    function setWidgetBoolData(element, name, value) {
-      setWidgetData(element, name, value ? "true" : "false");
-    }
-
     function addIframeResizerScript() {
-      addScript("https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js", onIframeResizerScriptLoad);
+      addScript("https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js", startIframeResizer);
     }
 
-    function onIframeResizerScriptLoad() {
-      iFrameResizerScriptLoaded = true;
-
+    function startIframeResizer() {
       for (var i = 0; i < iFrameElements.length; i++) {
         var element = iFrameElements[i];
-        startIframeResizer(element);
-      }
-    }
+        var iFrame = element.getElementsByTagName("iframe")[0];
+        var height = getWidgetData(element, 'height', '400px');
+        var resize = getWidgetBoolData(element, 'resize', false);
+        var googleTagManager = getWidgetBoolData(element, 'google-tag-manager', false);
 
-    function startIframeResizer(element) {
-      if (!iFrameResizerScriptLoaded) {
-        return;
-      }
+        if (resize || googleTagManager) {
+          var config = { autoResize: resize };
 
-      var initialized = getWidgetBoolData(element, "initialized", false);
-      if (initialized) {
-        return;
-      }
-      setWidgetBoolData(element, "initialized", true);
+          if (resize) {
+            config.minHeight = height;
+          } else {
+            config.scrolling = "omit";
+            config.sizeHeight = false;
+            config.sizeWidth = false;
+          }
 
-      var iFrame = element.getElementsByTagName("iframe")[0];
-      var height = getWidgetData(element, 'height', '400px');
-      var resize = getWidgetBoolData(element, 'resize', false);
-      var googleTagManager = getWidgetBoolData(element, 'google-tag-manager', false);
+          config.onMessage = function(messageData) {
+              onIframeMessage(messageData, googleTagManager);
+          }
 
-      if (resize || googleTagManager) {
-        var config = { autoResize: resize };
-
-        if (resize) {
-          config.minHeight = height;
-        } else {
-          config.scrolling = "omit";
-          config.sizeHeight = false;
-          config.sizeWidth = false;
+          iFrameResize(config, iFrame);
         }
-
-        config.onMessage = function(messageData) {
-            onIframeMessage(messageData, googleTagManager);
-        }
-
-        iFrameResize(config, iFrame);
       }
-    }
+    };
 
     function onIframeMessage(messageData, googleTagManager) {
       var message = messageData.message;
