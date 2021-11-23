@@ -5,6 +5,7 @@
 
     var iFrameElements = [];
     var needsResizer = false;
+    var iFrameResizerScriptLoaded = false;
 
     w.onload = function() {
       initWidgets()
@@ -34,6 +35,7 @@
       }
 
       var iFrame = d.createElement("iframe");
+      iFrame.onload = function() { onIframeLoad(element) };
       iFrame.class = "oveda-widget-iframe";
       iFrame.src = baseUrl + "/" + shortName + "/widget/eventdates";
       iFrame.style = style;
@@ -48,8 +50,16 @@
       iFrameElements.push(element);
     }
 
+    function onIframeLoad(element) {
+      startIframeResizer(element);
+    }
+
+    function getWidgetDataAttributeName(name) {
+      return 'data-widget-' + name;
+    }
+
     function getWidgetData(element, name, defaultValue = null) {
-      var attribute = 'data-widget-' + name;
+      var attribute = getWidgetDataAttributeName(name);
 
       if (!element.hasAttribute(attribute)) {
         return defaultValue;
@@ -62,39 +72,62 @@
       return getWidgetData(element, name, defaultValue) !== "false";
     }
 
-    function addIframeResizerScript() {
-      addScript("https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js", startIframeResizer);
+    function setWidgetData(element, name, value) {
+      var attribute = getWidgetDataAttributeName(name);
+      return element.setAttribute(attribute, value);
     }
 
-    function startIframeResizer() {
+    function setWidgetBoolData(element, name, value) {
+      setWidgetData(element, name, value ? "true" : "false");
+    }
+
+    function addIframeResizerScript() {
+      addScript("https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js", onIframeResizerScriptLoad);
+    }
+
+    function onIframeResizerScriptLoad() {
+      iFrameResizerScriptLoaded = true;
+
       for (var i = 0; i < iFrameElements.length; i++) {
         var element = iFrameElements[i];
-        var iFrame = element.getElementsByTagName("iframe")[0];
-        var height = getWidgetData(element, 'height', '400px');
-        var resize = getWidgetBoolData(element, 'resize', false);
-        var googleTagManager = getWidgetBoolData(element, 'google-tag-manager', false);
-
-        if (resize || googleTagManager) {
-          var config = { autoResize: resize };
-
-          if (resize) {
-            config.minHeight = height;
-          } else {
-            config.scrolling = "omit";
-            config.sizeHeight = false;
-            config.sizeWidth = false;
-          }
-
-          if (googleTagManager) {
-            config.onMessage = function(messageData) {
-                onIframeMessage(messageData, googleTagManager);
-            }
-          }
-
-          iFrameResize(config, iFrame);
-        }
+        startIframeResizer(element);
       }
-    };
+    }
+
+    function startIframeResizer(element) {
+      if (!iFrameResizerScriptLoaded) {
+        return;
+      }
+
+      var initialized = getWidgetBoolData(element, "initialized", false);
+      if (initialized) {
+        return;
+      }
+      setWidgetBoolData(element, "initialized", true);
+
+      var iFrame = element.getElementsByTagName("iframe")[0];
+      var height = getWidgetData(element, 'height', '400px');
+      var resize = getWidgetBoolData(element, 'resize', false);
+      var googleTagManager = getWidgetBoolData(element, 'google-tag-manager', false);
+
+      if (resize || googleTagManager) {
+        var config = { autoResize: resize };
+
+        if (resize) {
+          config.minHeight = height;
+        } else {
+          config.scrolling = "omit";
+          config.sizeHeight = false;
+          config.sizeWidth = false;
+        }
+
+        config.onMessage = function(messageData) {
+            onIframeMessage(messageData, googleTagManager);
+        }
+
+        iFrameResize(config, iFrame);
+      }
+    }
 
     function onIframeMessage(messageData, googleTagManager) {
       var message = messageData.message;
