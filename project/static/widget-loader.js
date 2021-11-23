@@ -85,10 +85,8 @@
             config.sizeWidth = false;
           }
 
-          if (googleTagManager) {
-            config.onMessage = function(messageData) {
-                onIframeMessage(messageData, googleTagManager);
-            }
+          config.onMessage = function(messageData) {
+              onIframeMessage(messageData, googleTagManager);
           }
 
           iFrameResize(config, iFrame);
