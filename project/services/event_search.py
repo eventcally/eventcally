@@ -24,6 +24,7 @@ class EventSearchParams(object):
         self.distance = None
         self.category_id = None
         self.organizer_id = None
+        self.event_list_id = None
         self.weekday = None
         self.sort = None
 
@@ -86,6 +87,16 @@ class EventSearchParams(object):
         self.date_from = today
         self.date_to = date_set_end_of_day(today + relativedelta(months=3))
 
+    def load_list_param(self, param: str):
+        item_ids = request.args.getlist(param)
+
+        if "0" in item_ids:
+            item_ids.remove("0")
+
+        if len(item_ids) > 0:
+            return item_ids
+        return None
+
     def load_from_request(self):
         if "date_from" in request.args:
             self.date_from_str = request.args["date_from"]
@@ -103,17 +114,16 @@ class EventSearchParams(object):
             self.distance = request.args["distance"]
 
         if "category_id" in request.args:
-            category_ids = request.args.getlist("category_id")
-            if "0" in category_ids:
-                category_ids.remove("0")
-            if len(category_ids) > 0:
-                self.category_id = category_ids
+            self.category_id = self.load_list_param("category_id")
 
         if "weekday" in request.args:
             self.weekday = request.args.getlist("weekday")
 
         if "organizer_id" in request.args:
             self.organizer_id = request.args["organizer_id"]
+
+        if "event_list_id" in request.args:
+            self.event_list_id = self.load_list_param("event_list_id")
 
         if "sort" in request.args:
             self.sort = request.args["sort"]

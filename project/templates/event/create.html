@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_event_date_defintion_code, render_date_definition_container, render_manage_form_styles, render_manage_form_scripts, render_cropper_header, render_end_container_handling, render_jquery_steps_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_co_organizer_select2, render_event_date_defintion_code, render_date_definition_container, render_manage_form_styles, render_manage_form_scripts, render_cropper_header, render_end_container_handling, render_jquery_steps_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
 
 {%- block title -%}
 {{ _('Create event') }}
@@ -211,27 +211,7 @@ $( function() {
 
   update_organizer_container($('input[type=radio][name=organizer_choice]:checked').val());
 
-  $('#co_organizer_ids').select2({
-      width: '100%',
-      ajax: {
-        url: "{{ url_for('api_v1_organization_organizer_list', id=admin_unit.id) }}",
-        dataType: 'json',
-        delay: 250,
-        cache: true,
-        data: function (params) {
-          return {
-            name: params.term,
-            per_page: 5
-          };
-        },
-        processResults: function (data) {
-          return {
-            results: data.items.map(p => ({"id": p.id, "text": p.name}))
-          };
-        }
-      },
-      placeholder: "{{ _('Enter organizer') }}"
-    });
+  {{ render_co_organizer_select2(admin_unit.id) }}
 
 });
 </script>

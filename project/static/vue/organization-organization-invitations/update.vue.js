@@ -41,7 +41,7 @@ const OrganizationOrganizationInvitationUpdate = {
       en: {
         comp: {
           title: "Update invitation",
-          successMessage: "Relation successfully updated",
+          successMessage: "Invitation successfully updated",
         },
       },
       de: {

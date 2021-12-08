@@ -24,6 +24,7 @@ from project.models import (
     EventAttendanceMode,
     EventCategory,
     EventDate,
+    EventList,
     EventOrganizer,
     EventPlace,
     EventReference,
@@ -65,6 +66,15 @@ def fill_event_filter(event_filter, params):
             category_ids = [params.category_id]
         event_filter = and_(
             event_filter, Event.categories.any(EventCategory.id.in_(category_ids))
+        )
+
+    if params.event_list_id:
+        if type(params.event_list_id) is list:
+            event_list_ids = params.event_list_id
+        else:
+            event_list_ids = [params.event_list_id]
+        event_filter = and_(
+            event_filter, Event.event_lists.any(EventList.id.in_(event_list_ids))
         )
 
     if params.organizer_id:

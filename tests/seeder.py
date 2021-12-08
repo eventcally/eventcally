@@ -473,6 +473,34 @@ class Seeder(object):
             suggestion_id = suggestion.id
         return suggestion_id
 
+    def add_event_to_list(self, event_list_id, event_id):
+        from project.models import Event, EventList
+
+        with self._app.app_context():
+            event = Event.query.get(event_id)
+            event_list = EventList.query.get(event_list_id)
+            event_list.events.append(event)
+            self._db.session.commit()
+
+    def create_event_list(self, admin_unit_id, event_ids=list(), name="My list"):
+        from project.models import EventList
+
+        with self._app.app_context():
+            event_list = EventList()
+            event_list.name = name
+            event_list.admin_unit_id = admin_unit_id
+            self._db.session.add(event_list)
+            self._db.session.commit()
+            event_list_id = event_list.id
+
+        if type(event_ids) is not list:
+            event_ids = [event_ids]
+
+        for event_id in event_ids:
+            self.add_event_to_list(event_list_id, event_id)
+
+        return event_list_id
+
     def create_reference(self, event_id, admin_unit_id):
         from project.models import EventReference
 
