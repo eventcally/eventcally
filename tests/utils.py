@@ -142,9 +142,11 @@ class UtilActions(object):
     def log_request(self, url):
         print(url)
 
-    def log_json_request(self, url, data: dict):
+    def log_json_request(self, url, data: dict = None):
         self.log_request(url)
-        print(data)
+
+        if data:
+            print(data)
 
     def log_response(self, response):
         print(response.status_code)
@@ -163,7 +165,7 @@ class UtilActions(object):
         self.log_response(response)
         return response
 
-    def put_json(self, url, data: dict):
+    def put_json(self, url, data: dict = None):
         self.log_json_request(url, data)
         response = self._client.put(url, json=data, headers=self.get_headers())
         self.log_response(response)

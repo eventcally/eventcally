@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout_vue.html" %}
 {% set active_id = "events" %}
 {% from "_macros.html" import render_event_in_list, render_manage_form_styles, render_manage_form_scripts, render_event_dates_filter_form, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
 
@@ -11,10 +11,27 @@
 {% endblock %}
 
 {% block header_before_site_js %}
+{{ super() }}
 {{ render_manage_form_scripts() }}
 {%- endblock -%}
 
+{% block component_scripts %}
+<script src="{{ url_for('static', filename='vue/event-lists/add-event.vue.js')}}"></script>
+{% endblock %}
+
+{% block component_definitions %}
+Vue.component("EventListAddEvent", EventListAddEvent);
+{% endblock %}
+
+{% block vue_container %}
+{% endblock %}
+
+{% block vue_app_data %}
+var vue_app_data = { eventId: 0 };
+{% endblock %}
+
 {% block content %}
+{% set can_add_to_list = current_admin_unit and has_access(current_admin_unit, "admin_unit:update")%}
 {% if not admin_unit.is_verified %}
     <div class="alert alert-warning" role="alert">
       {{ _('The organization is not verified. Events are therefore not publicly visible.') }}
@@ -42,6 +59,9 @@
                 <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}">{{ _('Edit') }}</a>
                 <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}">{{ _('Delete') }}&hellip;</a>
                 <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}">{{ _('Duplicate') }}&hellip;</a>
+                {% if can_add_to_list %}
+                <a class="dropdown-item" onclick="vue_app_data.eventId = '{{ event.id }}'; app.$bvModal.show('add-event-to-list-modal'); return false;" href="#">{{ _('Add to list') }}&hellip;</a>
+                {% endif %}
                 <a class="dropdown-item" href="{{ url_for('event_actions', event_id=event.id) }}">{{ _('More') }}&hellip;</a>
             </div>
         </div>
@@ -52,5 +72,14 @@
 </ul>
 
 <div class="my-4">{{ render_pagination(pagination) }}</div>
+
+<div id="vue-container">
+    {% if can_add_to_list %}
+    <b-modal id="add-event-to-list-modal" title="{{ _('Add event to list') }}" ok-only>
+        <event-list-add-event :event-id="eventId" organization-id="{{ current_admin_unit.id }}" />
+    </b-modal>
+    {% endif %}
+</div>
+{{ super() }}
 
 {% endblock %}

@@ -195,3 +195,10 @@ def test_admin_unit_organization_invitations(client, seeder, utils):
 
     url = utils.get_url("manage_admin_unit_organization_invitations", id=admin_unit_id)
     utils.get_ok(url)
+
+
+def test_admin_unit_event_lists(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("manage_admin_unit_event_lists", id=admin_unit_id)
+    utils.get_ok(url)

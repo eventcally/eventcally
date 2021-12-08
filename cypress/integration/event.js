@@ -83,13 +83,24 @@ describe("Event", () => {
   });
 
   it("read and actions", () => {
+    cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEvent(adminUnitId).then(function (eventId) {
-        cy.visit("/event/" + eventId);
-        cy.screenshot("read");
+        cy.createEventList(adminUnitId).then(function (eventListId) {
+          cy.visit("/event/" + eventId);
+          cy.screenshot("read");
 
-        cy.visit("/event/" + eventId + "/actions");
-        cy.screenshot("actions");
+          cy.visit("/event/" + eventId + "/actions");
+          cy.screenshot("actions");
+
+          cy.wait(1000); // Wait for Vue to load
+          cy.get("a:contains(Zu Liste)").click();
+          cy.get(".btn:contains(OK)").should("be.visible");
+          cy.screenshot("lists");
+
+          cy.get(".btn:contains(OK)").click();
+          cy.get(".btn:contains(OK)").should("not.exist");
+        });
       });
     });
   });

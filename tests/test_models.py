@@ -169,6 +169,7 @@ def test_admin_unit_deletion(client, app, db, seeder):
     event_place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
     invitation_id = seeder.create_invitation(admin_unit_id, "newbie@domain.com")
+    event_list_id = seeder.create_event_list(admin_unit_id, my_event_id)
 
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
@@ -196,6 +197,7 @@ def test_admin_unit_deletion(client, app, db, seeder):
             Event,
             EventDate,
             EventDateDefinition,
+            EventList,
             EventOrganizer,
             EventPlace,
             EventReference,
@@ -227,6 +229,7 @@ def test_admin_unit_deletion(client, app, db, seeder):
         assert EventPlace.query.get(event_place_id) is None
         assert EventOrganizer.query.get(organizer_id) is None
         assert AdminUnitMemberInvitation.query.get(invitation_id) is None
+        assert EventList.query.get(event_list_id) is None
 
         assert AdminUnit.query.get(other_admin_unit_id) is not None
         assert Event.query.get(other_event_id) is not None
@@ -315,3 +318,42 @@ def test_admin_unit_invitations(client, app, db, seeder):
         assert len(admin_unit.admin_unit_invitations) == 0
         invitation = AdminUnitInvitation.query.get(invitation_id)
         assert invitation is None
+
+
+def test_event_list_deletion(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+    event_list_a_id = seeder.create_event_list(admin_unit_id, event_id, "List A")
+    event_list_b_id = seeder.create_event_list(admin_unit_id, event_id, "List B")
+
+    with app.app_context():
+        from project.models import Event, EventList
+
+        event_list_a = EventList.query.get(event_list_a_id)
+        assert len(event_list_a.events) == 1
+        assert event_list_a.events[0].id == event_id
+
+        event_list_b = EventList.query.get(event_list_b_id)
+        assert len(event_list_b.events) == 1
+        assert event_list_b.events[0].id == event_id
+
+        event = Event.query.get(event_id)
+        assert len(event.event_lists) == 2
+        assert event.event_lists[0].id == event_list_a_id
+        assert event.event_lists[1].id == event_list_b_id
+
+        event_list_a = EventList.query.get(event_list_a_id)
+        db.session.delete(event_list_a)
+        db.session.commit()
+        assert len(event.event_lists) == 1
+        assert event.event_lists[0].id == event_list_b_id
+
+        event_list_b = EventList.query.get(event_list_b_id)
+        assert len(event_list_b.events) == 1
+        assert event_list_b.events[0].id == event_id
+
+        db.session.delete(event)
+        db.session.commit()
+
+        event_list_b = EventList.query.get(event_list_b_id)
+        assert len(event_list_b.events) == 0

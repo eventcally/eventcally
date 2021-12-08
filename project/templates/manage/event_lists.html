@@ -1,0 +1,42 @@
+{% extends "layout_vue.html" %}
+
+{%- block title -%}
+{{ _('Event lists') }}
+{%- endblock -%}
+
+{% block component_scripts %}
+<script src="{{ url_for('static', filename='vue/event-lists/list.vue.js')}}"></script>
+<script src="{{ url_for('static', filename='vue/event-lists/create.vue.js')}}"></script>
+<script src="{{ url_for('static', filename='vue/event-lists/update.vue.js')}}"></script>
+<script src="{{ url_for('static', filename='vue/event-lists/read.vue.js')}}"></script>
+<script src="{{ url_for('static', filename='vue/event-lists/event-list.vue.js')}}"></script>
+{% endblock %}
+
+{% block component_definitions %}
+Vue.component("EventListList", EventListList);
+Vue.component("EventListCreate", EventListCreate);
+Vue.component("EventListUpdate", EventListUpdate);
+Vue.component("EventListRead", EventListRead);
+Vue.component("EventListEventList", EventListEventList);
+{% endblock %}
+
+{% block vue_routes %}
+const routes = [
+  {
+    path: "/manage/admin_unit/:admin_unit_id/event-lists",
+    component: EventListList,
+  },
+  {
+    path: "/manage/admin_unit/:admin_unit_id/event-lists/create",
+    component: EventListCreate,
+  },
+  {
+    path: "/manage/admin_unit/:admin_unit_id/event-lists/:event_list_id/update",
+    component: EventListUpdate,
+  },
+  {
+    path: "/manage/admin_unit/:admin_unit_id/event-lists/:event_list_id",
+    component: EventListRead,
+  },
+];
+{% endblock %}

@@ -15,6 +15,7 @@ from project.models import (
     Event,
     EventAttendanceMode,
     EventDateDefinition,
+    EventList,
     EventReference,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
@@ -438,6 +439,40 @@ def create_event_suggestion(admin_unit_id, freetext):
     event_suggestion_id = _create_event_suggestion(admin_unit_id, freetext)
     result = {
         "event_suggestion_id": event_suggestion_id,
+    }
+    click.echo(json.dumps(result))
+
+
+def _add_event_to_list(event_list_id, event_id):
+    event = Event.query.get(event_id)
+    event_list = EventList.query.get(event_list_id)
+    event_list.events.append(event)
+    db.session.commit()
+
+
+def _create_event_list(admin_unit_id, event_ids=list(), name="My list"):
+    event_list = EventList()
+    event_list.name = name
+    event_list.admin_unit_id = admin_unit_id
+    db.session.add(event_list)
+    db.session.commit()
+    event_list_id = event_list.id
+
+    if type(event_ids) is not list:
+        event_ids = [event_ids]
+
+    for event_id in event_ids:
+        _add_event_to_list(event_list_id, event_id)
+
+    return event_list_id
+
+
+@test_cli.command("event-list-create")
+@click.argument("admin_unit_id")
+def create_event_list(admin_unit_id):
+    event_list_id = _create_event_list(admin_unit_id)
+    result = {
+        "event_list_id": event_list_id,
     }
     click.echo(json.dumps(result))
 

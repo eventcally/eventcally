@@ -1,10 +1,23 @@
-{% extends "layout.html" %}
+{% extends "layout_vue.html" %}
 {% from "_macros.html" import render_share_modal %}
+
 {%- block title -%}
 {{ _('Actions for event') }}
 {%- endblock -%}
-{% block content %}
 
+{% block component_scripts %}
+<script src="{{ url_for('static', filename='vue/event-lists/add-event.vue.js')}}"></script>
+{% endblock %}
+
+{% block component_definitions %}
+Vue.component("EventListAddEvent", EventListAddEvent);
+{% endblock %}
+
+{% block vue_container %}
+{% endblock %}
+
+{% block content %}
+    {% set can_add_to_list = current_admin_unit and has_access(current_admin_unit, "admin_unit:update")%}
     <div class="w-normal">
         <h5 class="card-title">{{ _('Actions for event') }}</h5>
 
@@ -24,6 +37,12 @@
                 <a class="list-group-item list-group-item-action" href="{{ url_for('event_reference_create', event_id=event.id) }}">
                     <p class="mb-1"><i class="fa fa-link"></i> {{ _('Reference event') }}</p>
                     <small>{{ _('Reference this event on your organization\'s calendar.') }}</small>
+                </a>
+            {% endif %}
+            {% if can_add_to_list %}
+                <a class="list-group-item list-group-item-action" onclick="app.$bvModal.show('add-event-to-list-modal'); return false;" href="#">
+                    <p class="mb-1"><i class="fa fa-plus-circle"></i> {{ _('Add to list') }}</p>
+                    <small>{{ _('Add this event to a list of your organization.') }}</small>
                 </a>
             {% endif %}
         </div>
@@ -49,5 +68,14 @@
         </div>
 
     </div>
+
+    <div id="vue-container">
+        {% if can_add_to_list %}
+        <b-modal id="add-event-to-list-modal" title="{{ _('Add event to list') }}" ok-only>
+            <event-list-add-event event-id="{{ event.id }}" organization-id="{{ current_admin_unit.id }}" />
+        </b-modal>
+        {% endif %}
+    </div>
+    {{ super() }}
 
 {% endblock %}
