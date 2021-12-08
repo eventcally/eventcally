@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-11-17 01:07+0100\n"
+"POT-Creation-Date: 2021-12-08 13:32+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -167,14 +167,18 @@ msgid "Scope_event:write"
 msgstr "Veranstaltungen anlegen, ändern und löschen"
 
 #: project/i10n.py:50
+msgid "Scope_eventlist:write"
+msgstr "Veranstaltungslisten anlegen, ändern und löschen"
+
+#: project/i10n.py:51
 msgid "Scope_organization:read"
 msgstr "Organisationen lesen"
 
-#: project/i10n.py:51
+#: project/i10n.py:52
 msgid "Scope_organization:write"
 msgstr "Organisationen anlegen, ändern und löschen"
 
-#: project/i10n.py:52
+#: project/i10n.py:53
 msgid "There must be no self-reference."
 msgstr "Es darf keine Selbstreferenz geben."
 
@@ -190,29 +194,29 @@ msgstr "."
 msgid "message"
 msgstr "message"
 
-#: project/api/organization/resources.py:355
+#: project/api/organization/resources.py:364
 #: project/views/admin_unit_member_invitation.py:85
 msgid "You have received an invitation"
 msgstr "Du hast eine Einladung erhalten"
 
-#: project/forms/admin.py:10 project/templates/layout.html:309
+#: project/forms/admin.py:10 project/templates/layout.html:311
 #: project/views/root.py:37
 msgid "Terms of service"
 msgstr "Nutzungsbedingungen"
 
-#: project/forms/admin.py:11 project/templates/layout.html:313
+#: project/forms/admin.py:11 project/templates/layout.html:315
 #: project/views/root.py:45
 msgid "Legal notice"
 msgstr "Impressum"
 
 #: project/forms/admin.py:12 project/templates/_macros.html:1392
-#: project/templates/layout.html:317
+#: project/templates/layout.html:319
 #: project/templates/widget/event_suggestion/create.html:204
 #: project/views/admin_unit.py:73 project/views/root.py:53
 msgid "Contact"
 msgstr "Kontakt"
 
-#: project/forms/admin.py:13 project/templates/layout.html:321
+#: project/forms/admin.py:13 project/templates/layout.html:323
 #: project/views/root.py:61
 msgid "Privacy"
 msgstr "Datenschutz"
@@ -755,8 +759,8 @@ msgstr "Wähle Kategorien, die zur Veranstaltung passen."
 
 #: project/forms/event.py:255 project/forms/reference.py:14
 #: project/forms/reference.py:27 project/forms/reference_request.py:76
-#: project/templates/event/create.html:379
-#: project/templates/event/update.html:235
+#: project/templates/event/create.html:359
+#: project/templates/event/update.html:216
 msgid "Rating"
 msgstr "Bewertung"
 
@@ -788,8 +792,8 @@ msgstr "Ungültiger Mitveranstalter."
 #: project/forms/event.py:286 project/forms/event.py:295
 #: project/forms/event.py:368 project/forms/event_suggestion.py:50
 #: project/templates/_macros.html:436 project/templates/_macros.html:596
-#: project/templates/event/create.html:304
-#: project/templates/event/update.html:185
+#: project/templates/event/create.html:284
+#: project/templates/event/update.html:166
 #: project/templates/event_place/create.html:31
 #: project/templates/event_place/delete.html:13
 #: project/templates/event_place/update.html:31
@@ -807,8 +811,8 @@ msgstr "Neuen Ort eingeben"
 #: project/forms/event.py:302 project/forms/event.py:311
 #: project/forms/event.py:376 project/forms/event.py:439
 #: project/forms/event_suggestion.py:60 project/templates/_macros.html:473
-#: project/templates/_macros.html:633 project/templates/event/create.html:273
-#: project/templates/event/update.html:175
+#: project/templates/_macros.html:633 project/templates/event/create.html:253
+#: project/templates/event/update.html:156
 #: project/templates/organizer/create.html:27
 #: project/templates/organizer/delete.html:13
 #: project/templates/organizer/update.html:27
@@ -855,7 +859,7 @@ msgstr ""
 "Wähle den Veranstalter. Du kannst Veranstalter unter Organisation > "
 "Veranstalter hinzufügen und ändern."
 
-#: project/forms/event.py:385 project/templates/event/update.html:164
+#: project/forms/event.py:385 project/templates/event/update.html:145
 #: project/templates/oauth2_token/list.html:21
 msgid "Status"
 msgstr "Status"
@@ -905,12 +909,12 @@ msgid "Select the public status of the event."
 msgstr "Wähle den öffentlichen Status der Veranstaltung."
 
 #: project/forms/event.py:407 project/templates/event/update.html:5
-#: project/templates/event/update.html:132
+#: project/templates/event/update.html:113
 msgid "Update event"
 msgstr "Veranstaltung aktualisieren"
 
 #: project/forms/event.py:423 project/templates/_macros.html:1221
-#: project/templates/event/actions.html:47
+#: project/templates/event/actions.html:66
 #: project/templates/event/delete.html:6
 msgid "Delete event"
 msgstr "Veranstaltung löschen"
@@ -953,8 +957,8 @@ msgstr "Standort"
 msgid "Distance"
 msgstr "Distanz"
 
-#: project/forms/event_date.py:32 project/forms/planing.py:36
-#: project/templates/widget/event_date/list.html:61
+#: project/forms/event_date.py:33 project/forms/planing.py:36
+#: project/templates/widget/event_date/list.html:82
 msgid "Find"
 msgstr "Finden"
 
@@ -994,7 +998,7 @@ msgstr "Bitte gib deine Email-Adresse oder deine Telefonnummer für die Prüfung
 msgid "I would like to be notified by email after the review"
 msgstr "Ich möchte per Email benachrichtigt werden nach der Prüfung"
 
-#: project/forms/event_suggestion.py:52 project/templates/event/create.html:309
+#: project/forms/event_suggestion.py:52 project/templates/event/create.html:289
 msgid ""
 "Choose where the event takes place. If the venue is not yet in the list, "
 "just enter it."
@@ -1002,7 +1006,7 @@ msgstr ""
 "Wähle aus, wo die Veranstaltung stattfindet. Ist der Veranstaltungsort "
 "noch nicht in der Liste, trage ihn einfach ein."
 
-#: project/forms/event_suggestion.py:62 project/templates/event/create.html:277
+#: project/forms/event_suggestion.py:62 project/templates/event/create.html:257
 msgid ""
 "Select the organizer. If the organizer is not yet on the list, just enter"
 " it."
@@ -1089,7 +1093,7 @@ msgstr "Wochentage"
 #: project/templates/_macros.html:489 project/templates/_macros.html:649
 #: project/templates/admin_unit/create.html:28
 #: project/templates/admin_unit/update.html:29
-#: project/templates/layout.html:258
+#: project/templates/layout.html:260
 msgid "Organization"
 msgstr "Organisation"
 
@@ -1209,9 +1213,9 @@ msgid "Last updated at %(updated_at)s."
 msgstr "Zuletzt aktualisiert am %(updated_at)s."
 
 #: project/templates/_macros.html:385 project/templates/_macros.html:555
-#: project/templates/event/actions.html:12
-#: project/templates/event/create.html:250
-#: project/templates/event/update.html:141
+#: project/templates/event/actions.html:25
+#: project/templates/event/create.html:230
+#: project/templates/event/update.html:122
 #: project/templates/widget/event_suggestion/create.html:229
 msgid "Event"
 msgstr "Veranstaltung"
@@ -1221,7 +1225,7 @@ msgid "Date"
 msgstr "Datum"
 
 #: project/templates/_macros.html:418 project/templates/_macros.html:577
-#: project/templates/_macros.html:1473 project/templates/event/actions.html:32
+#: project/templates/_macros.html:1473 project/templates/event/actions.html:51
 msgid "Share"
 msgstr "Teilen"
 
@@ -1320,11 +1324,11 @@ msgstr "OK"
 msgid "Choose image file"
 msgstr "Bild-Datei auswählen"
 
-#: project/templates/_macros.html:1220 project/templates/event/actions.html:46
+#: project/templates/_macros.html:1220 project/templates/event/actions.html:65
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: project/templates/_macros.html:1223 project/templates/manage/events.html:45
+#: project/templates/_macros.html:1223 project/templates/manage/events.html:65
 msgid "More"
 msgstr "Mehr"
 
@@ -1369,6 +1373,16 @@ msgstr "Anderer Kalender"
 msgid "Remove event date"
 msgstr "Termin entfernen"
 
+#: project/templates/_macros.html:1738 project/templates/event/create.html:176
+#: project/templates/event/update.html:99
+#: project/templates/widget/event_suggestion/create.html:129
+msgid "Enter organizer"
+msgstr "Veranstalter eingeben"
+
+#: project/templates/_macros.html:1762
+msgid "Enter list name"
+msgstr "Listenname eingeben"
+
 #: project/templates/home.html:28
 msgid "Manage"
 msgstr "Verwaltung"
@@ -1380,7 +1394,7 @@ msgstr "Kostenlos registrieren"
 
 #: project/templates/layout.html:175 project/templates/layout.html:219
 #: project/templates/manage/events.html:6
-#: project/templates/manage/events.html:24
+#: project/templates/manage/events.html:41
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -1398,7 +1412,7 @@ msgstr "Organisationen"
 msgid "Planing"
 msgstr "Planung"
 
-#: project/templates/layout.html:187 project/templates/layout.html:271
+#: project/templates/layout.html:187 project/templates/layout.html:273
 #: project/templates/oauth2_client/list.html:10
 #: project/templates/oauth2_client/read.html:10
 #: project/templates/oauth2_token/list.html:10 project/templates/profile.html:4
@@ -1421,64 +1435,69 @@ msgid "Show events"
 msgstr "Veranstaltungen anzeigen"
 
 #: project/templates/event/create.html:5
-#: project/templates/event/create.html:241 project/templates/layout.html:226
-#: project/templates/manage/events.html:27
+#: project/templates/event/create.html:221 project/templates/layout.html:226
+#: project/templates/manage/events.html:44
 #: project/templates/manage/organizers.html:21
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
-#: project/templates/layout.html:229
+#: project/templates/layout.html:228
+#: project/templates/manage/event_lists.html:4
+msgid "Event lists"
+msgstr "Veranstaltungslisten"
+
+#: project/templates/layout.html:231
 msgid "Review suggestions"
 msgstr "Vorschläge prüfen"
 
-#: project/templates/layout.html:239
+#: project/templates/layout.html:241
 #: project/templates/manage/references_incoming.html:5
 #: project/templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr "Empfehlungen"
 
-#: project/templates/layout.html:245
+#: project/templates/layout.html:247
 #: project/templates/manage/references_incoming.html:9
 msgid "Incoming references"
 msgstr "Eingehende Empfehlungen"
 
-#: project/templates/layout.html:246
+#: project/templates/layout.html:248
 #: project/templates/manage/references_outgoing.html:9
 msgid "Outgoing references"
 msgstr "Ausgehende Empfehlungen"
 
-#: project/templates/layout.html:248
+#: project/templates/layout.html:250
 #: project/templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
 msgstr "Eingehende Empfehlungsanfragen"
 
-#: project/templates/layout.html:253
+#: project/templates/layout.html:255
 #: project/templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
 msgstr "Ausgehende Empfehlungsanfragen"
 
-#: project/templates/layout.html:261 project/templates/manage/organizers.html:5
+#: project/templates/layout.html:263 project/templates/manage/organizers.html:5
 #: project/templates/manage/organizers.html:9
 msgid "Organizers"
 msgstr "Veranstalter"
 
 #: project/templates/event_place/list.html:3
-#: project/templates/event_place/list.html:7 project/templates/layout.html:262
+#: project/templates/event_place/list.html:7 project/templates/layout.html:264
 #: project/templates/manage/places.html:5
 #: project/templates/manage/places.html:9
 msgid "Places"
 msgstr "Orte"
 
-#: project/templates/layout.html:264 project/templates/manage/members.html:5
+#: project/templates/layout.html:266 project/templates/manage/members.html:5
 #: project/templates/manage/members.html:28
 msgid "Members"
 msgstr "Mitglieder"
 
-#: project/templates/layout.html:265 project/templates/manage/relations.html:4
+#: project/templates/layout.html:267 project/templates/manage/relations.html:4
 msgid "Relations"
 msgstr "Beziehungen"
 
-#: project/templates/layout.html:267
+#: project/templates/layout.html:269
 #: project/templates/manage/admin_units.html:17
 #: project/templates/manage/organization_invitations.html:4
 #: project/templates/user/organization_invitations.html:4
@@ -1490,22 +1509,22 @@ msgstr "Organisationseinladungen"
 #: project/templates/admin/settings.html:8
 #: project/templates/admin_unit/update.html:6
 #: project/templates/admin_unit/update.html:23
-#: project/templates/layout.html:269 project/templates/manage/widgets.html:12
-#: project/templates/profile.html:19
+#: project/templates/layout.html:271 project/templates/manage/widgets.html:11
+#: project/templates/manage/widgets.html:15 project/templates/profile.html:19
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: project/templates/layout.html:270 project/templates/manage/reviews.html:10
+#: project/templates/layout.html:272 project/templates/manage/reviews.html:10
 #: project/templates/manage/widgets.html:5
 #: project/templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr "Widgets"
 
-#: project/templates/layout.html:281
+#: project/templates/layout.html:283
 msgid "Switch organization"
 msgstr "Organisation wechseln"
 
-#: project/templates/developer/read.html:4 project/templates/layout.html:331
+#: project/templates/developer/read.html:4 project/templates/layout.html:333
 #: project/templates/profile.html:29
 msgid "Developer"
 msgstr "Entwickler"
@@ -1528,7 +1547,7 @@ msgstr "Benutzer"
 
 #: project/templates/admin/admin_units.html:27
 #: project/templates/admin/users.html:27
-#: project/templates/manage/events.html:42
+#: project/templates/manage/events.html:59
 #: project/templates/manage/members.html:35
 #: project/templates/manage/organizers.html:22
 #: project/templates/manage/places.html:27
@@ -1540,8 +1559,8 @@ msgstr "Bearbeiten"
 
 #: project/templates/admin_unit/create.html:58
 #: project/templates/admin_unit/update.html:59
-#: project/templates/event/create.html:367
-#: project/templates/event/update.html:223
+#: project/templates/event/create.html:347
+#: project/templates/event/update.html:204
 #: project/templates/event_place/create.html:57
 #: project/templates/event_place/update.html:57
 #: project/templates/organizer/create.html:56
@@ -1645,45 +1664,59 @@ msgstr "Klicke hier, um den Vorschlag zu prüfen"
 msgid "The review status of your event has been updated."
 msgstr "Der Prüfungsstatus deiner Veranstaltung wurde aktualisiert"
 
-#: project/templates/event/actions.html:4
-#: project/templates/event/actions.html:9
+#: project/templates/event/actions.html:5
+#: project/templates/event/actions.html:22
 msgid "Actions for event"
 msgstr "Aktionen für die Veranstaltung"
 
-#: project/templates/event/actions.html:19
+#: project/templates/event/actions.html:32
 msgid "Request reference"
 msgstr "Empfehlung anfragen"
 
-#: project/templates/event/actions.html:20
+#: project/templates/event/actions.html:33
 #: project/templates/event/reference_request.html:10
 msgid "Ask another organization to reference your event on their calendar."
 msgstr ""
 "Bitte eine andere Organisation, deine Veranstaltung in ihrem Kalender zu "
 "empfehlen."
 
-#: project/templates/event/actions.html:25
+#: project/templates/event/actions.html:38
 #: project/templates/manage/references_incoming.html:10
 msgid "Reference event"
 msgstr "Veranstaltung empfehlen"
 
-#: project/templates/event/actions.html:26
+#: project/templates/event/actions.html:39
 #: project/templates/event/reference.html:9
 msgid "Reference this event on your organization's calendar."
 msgstr "Empfehle diese Veranstaltung im Kalender deiner Organisation."
 
-#: project/templates/event/actions.html:39
+#: project/templates/event/actions.html:44
+#: project/templates/manage/events.html:63
+msgid "Add to list"
+msgstr "Zu Liste hinzufügen"
+
+#: project/templates/event/actions.html:45
+msgid "Add this event to a list of your organization."
+msgstr "Füge diese Veranstaltung zu einer Liste deiner Organisation hinzu."
+
+#: project/templates/event/actions.html:58
 msgid "Duplicate event"
 msgstr "Veranstaltung duplizieren"
 
-#: project/templates/event/actions.html:42
+#: project/templates/event/actions.html:61
 #, python-format
 msgid "Create another event for %(admin_unit_name)s"
 msgstr "Erstelle eine weitere Veranstaltung für %(admin_unit_name)s"
 
-#: project/templates/event/actions.html:43
+#: project/templates/event/actions.html:62
 #, python-format
 msgid "List all events of %(admin_unit_name)s"
 msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
+
+#: project/templates/event/actions.html:74
+#: project/templates/manage/events.html:78
+msgid "Add event to list"
+msgstr "Veranstaltung zu Liste hinzufügen"
 
 #: project/templates/event/create.html:90
 #: project/templates/event/update.html:76
@@ -1691,39 +1724,31 @@ msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
 msgid "Enter place or address"
 msgstr "Orte oder Adresse eingeben"
 
-#: project/templates/event/create.html:176
-#: project/templates/event/create.html:233
-#: project/templates/event/update.html:99
-#: project/templates/event/update.html:125
-#: project/templates/widget/event_suggestion/create.html:129
-msgid "Enter organizer"
-msgstr "Veranstalter eingeben"
-
-#: project/templates/event/create.html:260
-#: project/templates/event/update.html:151
+#: project/templates/event/create.html:240
+#: project/templates/event/update.html:132
 msgid "Event dates"
 msgstr "Termine"
 
-#: project/templates/event/create.html:267
-#: project/templates/event/update.html:158
+#: project/templates/event/create.html:247
+#: project/templates/event/update.html:139
 msgid "Add event date"
 msgstr "Termin hinzufügen"
 
-#: project/templates/event/create.html:294
+#: project/templates/event/create.html:274
 msgid "Switch to organizer search"
 msgstr "Zur Veranstaltersuche wechseln"
 
-#: project/templates/event/create.html:329
+#: project/templates/event/create.html:309
 msgid "Switch to place search"
 msgstr "Zur Ortssuche wechseln"
 
-#: project/templates/event/create.html:340
-#: project/templates/event/update.html:196
+#: project/templates/event/create.html:320
+#: project/templates/event/update.html:177
 msgid "Access"
 msgstr "Zugang"
 
-#: project/templates/event/create.html:354
-#: project/templates/event/update.html:210
+#: project/templates/event/create.html:334
+#: project/templates/event/update.html:191
 msgid "Target group"
 msgstr "Zielgruppe"
 
@@ -1794,7 +1819,7 @@ msgstr "Organisation einladen"
 msgid "Member"
 msgstr "Mitglied"
 
-#: project/templates/manage/events.html:20
+#: project/templates/manage/events.html:37
 msgid ""
 "The organization is not verified. Events are therefore not publicly "
 "visible."
@@ -1802,13 +1827,13 @@ msgstr ""
 "Die Organisation ist nicht verifiziert. Veranstaltungen sind daher nicht "
 "öffentlich sichtbar."
 
-#: project/templates/manage/events.html:41
+#: project/templates/manage/events.html:58
 #: project/templates/manage/references_incoming.html:19
 #: project/templates/manage/references_outgoing.html:19
 msgid "View"
 msgstr "Anzeigen"
 
-#: project/templates/manage/events.html:43
+#: project/templates/manage/events.html:60
 #: project/templates/manage/members.html:21
 #: project/templates/manage/members.html:36
 #: project/templates/manage/organizers.html:23
@@ -1818,7 +1843,7 @@ msgstr "Anzeigen"
 msgid "Delete"
 msgstr "Löschen"
 
-#: project/templates/manage/events.html:44
+#: project/templates/manage/events.html:61
 msgid "Duplicate"
 msgstr "Duplizieren"
 
@@ -1849,11 +1874,7 @@ msgstr "Prüfungsstatus anzeigen"
 msgid "Reviews"
 msgstr "Prüfungen"
 
-#: project/templates/manage/widgets.html:25
-msgid "Veranstaltungen als iFrame einbetten"
-msgstr "Veranstaltungen als iFrame einbetten"
-
-#: project/templates/manage/widgets.html:33
+#: project/templates/manage/widgets.html:87
 msgid "Link, um Veranstaltungen vorzuschlagen"
 msgstr "Link, um Veranstaltungen vorzuschlagen"
 
@@ -1956,7 +1977,7 @@ msgstr "Du hast noch keinen Account? Kein Problem!"
 msgid "Widget"
 msgstr "Widget"
 
-#: project/templates/widget/event_date/list.html:128
+#: project/templates/widget/event_date/list.html:149
 msgid "Print"
 msgstr "Drucken"
 
@@ -1976,7 +1997,7 @@ msgstr "Vorschau"
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin.py:68 project/views/manage.py:318
+#: project/views/admin.py:68 project/views/manage.py:331
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
@@ -2037,27 +2058,27 @@ msgstr "Die eingegebene Email passt nicht zur Email der Einladung"
 msgid "Invitation successfully deleted"
 msgstr "Einladung erfolgreich gelöscht"
 
-#: project/views/event.py:178
+#: project/views/event.py:179
 msgid "Event successfully published"
 msgstr "Veranstaltung erfolgreich veröffentlicht"
 
-#: project/views/event.py:180
+#: project/views/event.py:181
 msgid "Draft successfully saved"
 msgstr "Entwurf erfolgreich gespeichert"
 
-#: project/views/event.py:223
+#: project/views/event.py:224
 msgid "Event successfully updated"
 msgstr "Veranstaltung erfolgreich aktualisiert"
 
-#: project/views/event.py:249
+#: project/views/event.py:250
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
 
-#: project/views/event.py:408
+#: project/views/event.py:409
 msgid "Referenced event changed"
 msgstr "Empfohlene Veranstaltung wurde geändert"
 
-#: project/views/event.py:431
+#: project/views/event.py:432
 msgid "New event report"
 msgstr "Neue Meldung zu einer Veranstaltung"
 
@@ -2300,4 +2321,7 @@ msgstr "Neue Veranstaltung zu prüfen"
 
 #~ msgid "Entered name does not match event name"
 #~ msgstr "Der eingegebene Name entspricht nicht dem Namen der Veranstaltung"
+
+#~ msgid "Veranstaltungen als iFrame einbetten"
+#~ msgstr "Veranstaltungen als iFrame einbetten"
 

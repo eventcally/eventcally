@@ -24,6 +24,13 @@ from project.api.event_date.schemas import (
     EventDateSearchRequestSchema,
     EventDateSearchResponseSchema,
 )
+from project.api.event_list.schemas import (
+    EventListCreateRequestSchema,
+    EventListIdSchema,
+    EventListListRequestSchema,
+    EventListListResponseSchema,
+    EventListStatusListResponseSchema,
+)
 from project.api.event_reference.schemas import (
     EventReferenceListRequestSchema,
     EventReferenceListResponseSchema,
@@ -63,6 +70,8 @@ from project.oauth2 import require_oauth
 from project.services.admin_unit import (
     get_admin_unit_invitation_query,
     get_admin_unit_query,
+    get_event_list_query,
+    get_event_list_status_query,
     get_organizer_query,
     get_place_query,
 )
@@ -360,6 +369,59 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
         return invitation, 201
 
 
+class OrganizationEventListListResource(BaseResource):
+    @doc(
+        summary="List event lists of organization",
+        tags=["Organizations", "Event Lists"],
+    )
+    @use_kwargs(EventListListRequestSchema, location=("query"))
+    @marshal_with(EventListListResponseSchema)
+    def get(self, id, **kwargs):
+        admin_unit = AdminUnit.query.get_or_404(id)
+        name = kwargs["name"] if "name" in kwargs else None
+
+        pagination = get_event_list_query(admin_unit.id, name).paginate()
+        return pagination
+
+    @doc(
+        summary="Add new event list",
+        tags=["Organizations", "Event Lists"],
+        security=[{"oauth2": ["eventlist:write"]}],
+    )
+    @use_kwargs(EventListCreateRequestSchema, location="json", apply=False)
+    @marshal_with(EventListIdSchema, 201)
+    @require_api_access("eventlist:write")
+    def post(self, id):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+        access_or_401(admin_unit, "admin_unit:update")
+
+        event_list = self.create_instance(
+            EventListCreateRequestSchema, admin_unit_id=admin_unit.id
+        )
+        db.session.add(event_list)
+        db.session.commit()
+
+        return event_list, 201
+
+
+class OrganizationEventListStatusListResource(BaseResource):
+    @doc(
+        summary="List event lists of organization with status",
+        tags=["Organizations", "Event Lists"],
+    )
+    @use_kwargs(EventListListRequestSchema, location=("query"))
+    @marshal_with(EventListStatusListResponseSchema)
+    def get(self, id, event_id, **kwargs):
+        admin_unit = AdminUnit.query.get_or_404(id)
+        name = kwargs["name"] if "name" in kwargs else None
+
+        pagination = get_event_list_status_query(
+            admin_unit.id, event_id, name
+        ).paginate()
+        return pagination
+
+
 add_api_resource(OrganizationResource, "/organizations/<int:id>", "api_v1_organization")
 add_api_resource(
     OrganizationEventDateSearchResource,
@@ -375,6 +437,16 @@ add_api_resource(
     OrganizationEventListResource,
     "/organizations/<int:id>/events",
     "api_v1_organization_event_list",
+)
+add_api_resource(
+    OrganizationEventListListResource,
+    "/organizations/<int:id>/event-lists",
+    "api_v1_organization_event_list_list",
+)
+add_api_resource(
+    OrganizationEventListStatusListResource,
+    "/organizations/<int:id>/event-lists/status/<int:event_id>",
+    "api_v1_organization_event_list_status_list",
 )
 add_api_resource(OrganizationListResource, "/organizations", "api_v1_organization_list")
 add_api_resource(

@@ -278,7 +278,7 @@ def test_places(client, seeder, utils):
 def test_places_post(client, seeder, utils, app):
     user_id, admin_unit_id = seeder.setup_api_access()
 
-    url = utils.get_url("api_v1_organization_place_list", id=admin_unit_id, name="crew")
+    url = utils.get_url("api_v1_organization_place_list", id=admin_unit_id)
     response = utils.post_json(
         url,
         {
@@ -302,6 +302,62 @@ def test_places_post(client, seeder, utils, app):
         assert place.location.street == "Straße 1"
         assert place.location.postalCode == "38640"
         assert place.location.city == "Goslar"
+
+
+def test_event_lists(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    event_list_id = seeder.create_event_list(admin_unit_id, name="Meine Liste")
+
+    url = utils.get_url(
+        "api_v1_organization_event_list_list", id=admin_unit_id, name="meine"
+    )
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == event_list_id
+
+
+def test_event_lists_post(client, seeder, utils, app):
+    _, admin_unit_id = seeder.setup_api_access()
+
+    url = utils.get_url("api_v1_organization_event_list_list", id=admin_unit_id)
+    response = utils.post_json(
+        url,
+        {
+            "name": "Neue Liste",
+        },
+    )
+    utils.assert_response_created(response)
+    assert "id" in response.json
+
+    with app.app_context():
+        from project.models import EventList
+
+        event_list = (
+            EventList.query.filter(EventList.admin_unit_id == admin_unit_id)
+            .filter(EventList.name == "Neue Liste")
+            .first()
+        )
+        assert event_list is not None
+        assert event_list.name == "Neue Liste"
+
+
+def test_event_lists_status(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+    event_list_id = seeder.create_event_list(
+        admin_unit_id, event_id, name="Meine Liste"
+    )
+
+    url = utils.get_url(
+        "api_v1_organization_event_list_status_list",
+        id=admin_unit_id,
+        event_id=event_id,
+        name="meine",
+    )
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["event_list"]["id"] == event_list_id
+    assert response.json["items"][0]["contains_event"]
 
 
 def test_references_incoming(client, seeder, utils):

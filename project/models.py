@@ -438,6 +438,11 @@ class AdminUnit(db.Model, TrackableMixin):
         cascade="all, delete-orphan",
         backref=backref("adminunit", lazy=True),
     )
+    event_lists = relationship(
+        "EventList",
+        cascade="all, delete-orphan",
+        backref=backref("adminunit", lazy=True),
+    )
     location_id = deferred(db.Column(db.Integer, db.ForeignKey("location.id")))
     location = db.relationship(
         "Location", uselist=False, single_parent=True, cascade="all, delete-orphan"
@@ -900,6 +905,11 @@ class Event(db.Model, TrackableMixin, EventMixin):
         secondary="event_coorganizers",
         backref=backref("co_organized_events", lazy=True),
     )
+    event_lists = relationship(
+        "EventList",
+        secondary="event_eventlists",
+        backref=backref("events", lazy=True),
+    )
 
     public_status = Column(
         IntegerEnum(PublicStatus),
@@ -1102,6 +1112,26 @@ class EventCoOrganizers(db.Model):
     organizer_id = db.Column(
         db.Integer, db.ForeignKey("eventorganizer.id"), nullable=False
     )
+
+
+class EventList(db.Model, TrackableMixin):
+    __tablename__ = "eventlist"
+    __table_args__ = (
+        UniqueConstraint(
+            "name", "admin_unit_id", name="eventreference_name_admin_unit_id"
+        ),
+    )
+    id = Column(Integer(), primary_key=True)
+    name = Column(Unicode(255))
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
+
+
+class EventEventLists(db.Model):
+    __tablename__ = "event_eventlists"
+    __table_args__ = (UniqueConstraint("event_id", "list_id"),)
+    id = Column(Integer(), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
+    list_id = db.Column(db.Integer, db.ForeignKey("eventlist.id"), nullable=False)
 
 
 class Analytics(db.Model):
