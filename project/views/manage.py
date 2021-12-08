@@ -278,6 +278,19 @@ def manage_admin_unit_organization_invitations(id, path=None):
     )
 
 
+@app.route("/manage/admin_unit/<int:id>/event-lists")
+@app.route("/manage/admin_unit/<int:id>/event-lists/<path:path>")
+@auth_required()
+def manage_admin_unit_event_lists(id, path=None):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    set_current_admin_unit(admin_unit)
+
+    return render_template(
+        "manage/event_lists.html",
+        admin_unit=admin_unit,
+    )
+
+
 @app.route("/manage/admin_unit/<int:id>/widgets", methods=("GET", "POST"))
 @auth_required()
 def manage_admin_unit_widgets(id):

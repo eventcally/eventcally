@@ -124,6 +124,7 @@ scope_list = [
     "event:write",
     "organization:read",
     "organization:write",
+    "eventlist:write",
 ]
 scopes = {k: get_localized_scope(k) for v, k in enumerate(scope_list)}
 
@@ -191,6 +192,7 @@ import project.api.dump.resources
 import project.api.event.resources
 import project.api.event_category.resources
 import project.api.event_date.resources
+import project.api.event_list.resources
 import project.api.event_reference.resources
 import project.api.organization.resources
 import project.api.organization_invitation.resources

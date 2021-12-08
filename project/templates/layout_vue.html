@@ -34,7 +34,9 @@
 {% endblock %}
 
 {% block content %}
+{% block vue_container %}
 <div id="vue-container"><router-view></router-view></div>
+{% endblock %}
 <script>
   Vue.component("vue-typeahead-bootstrap", VueTypeaheadBootstrap);
   Vue.component("ValidationObserver", VeeValidate.ValidationObserver);
@@ -74,6 +76,16 @@
             relationVerify: "Verify new organization",
             relationVerifyDescription: "If set, events of the new organization are publicly visible.",
           },
+          event: {
+            className: "Event",
+            listName: "Events",
+            name: "Name",
+          },
+          eventList: {
+            className: "Event list",
+            listName: "Event lists",
+            name: "Name",
+          },
           eventReport: {
             contactName: "Name",
             contactEmail: "Email",
@@ -85,8 +97,10 @@
         cancel: "Cancel",
         decline: "Decline",
         submit: "Submit",
+        view: "View",
         edit: "Edit",
         delete: "Delete",
+        remove: "Remove",
         emptyData: "No data available",
         errors: {
           uniqueViolation:
@@ -161,6 +175,16 @@
             relationVerify: "Neue Organisation verifizieren",
             relationVerifyDescription: "Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich sichtbar.",
           },
+          event: {
+            className: "Veranstaltung",
+            listName: "Veranstaltungen",
+            name: "Name",
+          },
+          eventList: {
+            className: "Veranstaltungsliste",
+            listName: "Veranstaltungslisten",
+            name: "Name",
+          },
           eventReport: {
             contactName: "Name",
             contactNameDescription: "Vor- und Nachname",
@@ -172,8 +196,10 @@
         cancel: "Abbrechen",
         decline: "Ablehnen",
         submit: "Senden",
+        view: "Anzeigen",
         edit: "Bearbeiten",
         delete: "Löschen",
+        remove: "Entfernen",
         emptyData: "Keine Daten vorhanden",
         errors: {
           uniqueViolation:
@@ -255,6 +281,7 @@
   });
 
   {% block vue_routes %}
+  const routes = [];
   {% endblock %}
 
   const router = new VueRouter({
@@ -289,13 +316,15 @@
     }
   );
 
+  {% block vue_app_data %}
+  var vue_app_data = {};
+  {% endblock %}
+
   var app = new Vue({
     el: "#vue-container",
     i18n,
     router: router,
-    data() {
-      return {};
-    },
+    data: vue_app_data,
     methods: {
       handleAxiosStart(config) {
         if (

@@ -150,6 +150,15 @@ Cypress.Commands.add("createAdminUnitOrganizationInvitation", (adminUnitId, emai
     });
 });
 
+Cypress.Commands.add("createEventList", (adminUnitId) => {
+  return cy
+    .logexec("flask test event-list-create " + adminUnitId)
+    .then(function (result) {
+      let json = JSON.parse(result.stdout);
+      return json.event_list_id;
+    });
+});
+
 Cypress.Commands.add("createSuggestion", (adminUnitId) => {
   return cy
     .logexec("flask test suggestion-create " + adminUnitId)

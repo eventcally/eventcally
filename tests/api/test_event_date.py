@@ -81,6 +81,13 @@ def test_search(client, seeder, utils):
     url = utils.get_url("api_v1_event_date_search", organizer_id=organizer_id)
     response = utils.get_ok(url)
 
+    listed_event_id = seeder.create_event(admin_unit_id)
+    event_list_id = seeder.create_event_list(admin_unit_id, listed_event_id)
+    url = utils.get_url("api_v1_event_date_search", event_list_id=event_list_id)
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["event"]["id"] == listed_event_id
+
 
 def test_search_oneDay(client, seeder, utils):
     from project.dateutils import create_berlin_date

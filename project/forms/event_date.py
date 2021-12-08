@@ -28,6 +28,7 @@ class FindEventDateForm(FlaskForm):
         coerce=int,
         choices=distance_choices,
     )
+    event_list_id = HiddenField(validators=[Optional()])
 
     submit = SubmitField(lazy_gettext("Find"))
 

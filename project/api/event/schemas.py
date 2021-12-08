@@ -37,6 +37,7 @@ from project.api.schemas import (
     PaginationResponseSchema,
     SQLAlchemyBaseSchema,
     TrackableSchemaMixin,
+    WriteIdSchemaMixin,
 )
 from project.models import (
     Event,
@@ -54,6 +55,10 @@ class EventModelSchema(SQLAlchemyBaseSchema):
 
 
 class EventIdSchema(EventModelSchema, IdSchemaMixin):
+    pass
+
+
+class EventWriteIdSchema(EventModelSchema, WriteIdSchemaMixin):
     pass
 
 

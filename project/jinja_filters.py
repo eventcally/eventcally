@@ -60,6 +60,7 @@ app.jinja_env.globals.update(
 
 @app.context_processor
 def get_context_processors():
+    from project.access import has_access
     from project.views.utils import get_current_admin_unit
 
     def get_manage_menu_options(admin_unit):
@@ -85,4 +86,5 @@ def get_context_processors():
     return dict(
         current_admin_unit=get_current_admin_unit(),
         get_manage_menu_options=get_manage_menu_options,
+        has_access=has_access,
     )
