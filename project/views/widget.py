@@ -52,7 +52,8 @@ def widget_event_dates(au_short_name):
     if form.validate():
         form.populate_obj(params)
 
-    params.admin_unit_id = admin_unit.id
+    if not params.event_list_id:
+        params.admin_unit_id = admin_unit.id
     dates = get_event_dates_query(params).paginate()
 
     return render_template(
@@ -188,16 +189,24 @@ def event_suggestion_create_for_admin_unit(au_short_name):
 def get_styles(admin_unit):
     styles = dict()
 
-    if admin_unit.widget_font:
+    if request.args.get("s_ft", None):
+        styles["font"] = request.args["s_ft"]
+    elif admin_unit.widget_font:
         styles["font"] = admin_unit.widget_font
 
-    if admin_unit.widget_background_color:
+    if request.args.get("s_bg", None):
+        styles["background"] = request.args["s_bg"]
+    elif admin_unit.widget_background_color:
         styles["background"] = admin_unit.widget_background_color.hex
 
-    if admin_unit.widget_primary_color:
+    if request.args.get("s_pr", None):
+        styles["primary"] = request.args["s_pr"]
+    elif admin_unit.widget_primary_color:
         styles["primary"] = admin_unit.widget_primary_color.hex
 
-    if admin_unit.widget_link_color:
+    if request.args.get("s_li", None):
+        styles["link"] = request.args["s_li"]
+    elif admin_unit.widget_link_color:
         styles["link"] = admin_unit.widget_link_color.hex
 
     return styles
