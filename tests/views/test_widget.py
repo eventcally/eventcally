@@ -43,6 +43,16 @@ def test_event_dates(client, seeder, utils):
     )
     utils.get_ok(url)
 
+    url = utils.get_url(
+        "widget_event_dates",
+        au_short_name=au_short_name,
+        s_ft="Verdana",
+        s_bg="#eceef0",
+        s_pr="#b09641",
+        s_li="#7b2424",
+    )
+    utils.get_ok(url)
+
     # Unverified
     au_short_name = "unverifiedcrew"
     _, _, unverified_id = seeder.create_event_unverified()
@@ -88,10 +98,10 @@ def test_event_date(client, seeder, utils, app, db):
         from project.models import AdminUnit
 
         admin_unit = AdminUnit.query.get(admin_unit_id)
-        admin_unit.widget_font = "Arial"
-        admin_unit.widget_background_color = Color("#F5F5F5")
-        admin_unit.widget_primary_color = Color("#000000")
-        admin_unit.widget_link_color = Color("#FF0000")
+        admin_unit.widget_font = "Verdana"
+        admin_unit.widget_background_color = Color("#eceef0")
+        admin_unit.widget_primary_color = Color("#b09641")
+        admin_unit.widget_link_color = Color("#7b2424")
         db.session.commit()
 
     url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=1)
