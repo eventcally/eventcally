@@ -33,9 +33,16 @@
         style += "min-width:100%;max-width:100%;";
       }
 
+      var src = baseUrl + "/" + shortName + "/widget/eventdates?";
+      src = addParamToQuery(element, src, 'event-list', 'event_list_id');
+      src = addParamToQuery(element, src, 'font', 's_ft');
+      src = addParamToQuery(element, src, 'background', 's_bg');
+      src = addParamToQuery(element, src, 'primary', 's_pr');
+      src = addParamToQuery(element, src, 'link', 's_li');
+
       var iFrame = d.createElement("iframe");
       iFrame.class = "oveda-widget-iframe";
-      iFrame.src = baseUrl + "/" + shortName + "/widget/eventdates";
+      iFrame.src = src;
       iFrame.style = style;
       iFrame.frameborder = "0";
       iFrame.allowtransparency = "true";
@@ -46,6 +53,17 @@
       }
 
       iFrameElements.push(element);
+    }
+
+    function addParamToQuery(element, url, attr, param)
+    {
+      var value = getWidgetData(element, attr);
+
+      if (value != null) {
+        url += param + "=" + encodeURIComponent(value) + "&";
+      }
+
+      return url;
     }
 
     function getWidgetData(element, name, defaultValue = null) {
