@@ -544,3 +544,41 @@ def test_organization_invitation_list_post(client, app, seeder, utils, mocker):
         id=invitation_id,
     )
     utils.assert_send_mail_called(mail_mock, "invited@test.de", invitation_url)
+
+
+def test_custom_widgets(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    seeder.insert_event_custom_widget(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_custom_widget_list", id=admin_unit_id, name="mein"
+    )
+    utils.get_ok(url)
+
+
+def test_custom_widgets_post(client, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+
+    url = utils.get_url("api_v1_organization_custom_widget_list", id=admin_unit_id)
+    response = utils.post_json(
+        url,
+        {
+            "widget_type": "search",
+            "name": "Neues Widget",
+            "settings": {"color": "black"},
+        },
+    )
+    utils.assert_response_created(response)
+    assert "id" in response.json
+
+    with app.app_context():
+        from project.models import CustomWidget
+
+        custom_widget = (
+            CustomWidget.query.filter(CustomWidget.admin_unit_id == admin_unit_id)
+            .filter(CustomWidget.name == "Neues Widget")
+            .first()
+        )
+        assert custom_widget is not None
+        assert custom_widget.widget_type == "search"
+        assert custom_widget.settings["color"] == "black"

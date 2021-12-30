@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Oveda Widget</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <style>
+        [v-cloak] {
+           display: none;
+        }
+    </style>
+
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-i18n@8.25.0/dist/vue-i18n.min.js"></script>
+    <script src="https://unpkg.com/axios@0.21.1/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js" integrity="sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.min.js"></script>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+        <template v-if="widget">
+            <component :is="`style`">
+                body {
+                    background-color: {{ widget.settings.background }};
+                    color: {{ widget.settings.textColor }};
+                    font-family: {{ widget.settings.fontFamily }};
+                    padding: {{ widget.settings.padding }};
+                }
+
+                .page-link {
+                    background-color: {{ widget.settings.background }};
+                    border-color: {{ widget.settings.pagingBorderColor }};
+                    color: {{ widget.settings.pagingColor }};
+                }
+
+                .page-link:hover {
+                    background-color: {{ widget.settings.pagingColor }};
+                    border-color: {{ widget.settings.pagingColor }};
+                    color: {{ widget.settings.pagingActiveTextColor }};
+                }
+
+                .page-item.active .page-link {
+                    background-color: {{ widget.settings.pagingColor }};
+                    border-color: {{ widget.settings.pagingColor }};
+                    color: {{ widget.settings.pagingActiveTextColor }};
+                }
+
+                .page-item.disabled .page-link {
+                    background-color: {{ widget.settings.background }};
+                    border-color: {{ widget.settings.pagingBorderColor }};
+                    color: {{ widget.settings.pagingDisabledTextColor }};
+                }
+
+                .btn-primary,
+                .btn-primary:disabled,
+                .btn-primary:active,
+                .btn-primary:not(:disabled):not(.disabled):active,
+                .btn-primary:focus {
+                    background-color: {{ widget.settings.buttonBackgroundColor }};
+                    border-color: {{ widget.settings.buttonBorderColor }};
+                    color: {{ widget.settings.buttonTextColor }};
+                }
+
+                .btn-secondary,
+                .btn-secondary:disabled,
+                .btn-secondary:hover,
+                .btn-secondary:active,
+                .btn-secondary:not(:disabled):not(.disabled):active,
+                .btn-secondary:focus {
+                    background-color: {{ widget.settings.printButtonBackgroundColor }};
+                    border-color: {{ widget.settings.printButtonBorderColor }};
+                    color: {{ widget.settings.printButtonTextColor }};
+                }
+
+                .input-group-text {
+                    background-color: {{ widget.settings.filterLabelBackgroundColor }};
+                    border-color: {{ widget.settings.filterLabelBorderColor }};
+                    color: {{ widget.settings.filterLabelTextColor }};
+                }
+
+                .form-control,
+                .form-control.focus,
+                .form-control:focus,
+                .custom-select,
+                .custom-select:focus {
+                    background-color: {{ widget.settings.filterInputBackgroundColor }};
+                    border-color: {{ widget.settings.filterInputBorderColor }};
+                    color: {{ widget.settings.filterInputTextColor }};
+                }
+
+                .card {
+                    background-color: {{ widget.settings.eventBackgroundColor }};
+                    border-color: {{ widget.settings.eventBorderColor }};
+                }
+
+                .card-title {
+                    color: {{ widget.settings.eventNameTextColor }};
+                }
+
+                .card-subtitle.text-body {
+                    color: {{ widget.settings.eventDateTextColor }}!important;
+                }
+
+                .card .text-muted {
+                    color: {{ widget.settings.eventInfoTextColor }}!important;
+                }
+
+                .badge-warning {
+                    background-color: {{ widget.settings.eventBadgeWarningBackgroundColor }};
+                    color: {{ widget.settings.eventBadgeWarningTextColor }};
+                }
+
+                .badge-info {
+                    background-color: {{ widget.settings.eventBadgeInfoBackgroundColor }};
+                    color: {{ widget.settings.eventBadgeInfoTextColor }};
+                }
+
+                a, a:hover {
+                    color: {{ widget.settings.linkColor }};
+                }
+
+                a.underlined {
+                    text-decoration: underline;
+                }
+            </component>
+            <div v-if="widget.settings.showFilter">
+                <b-form @submit.stop.prevent="loadData" inline class="mb-4" autocomplete="off">
+                    <b-input-group prepend="Von" class="mb-2 mr-sm-2">
+                        <b-form-datepicker v-model="form.dateFrom" locale="de" start-weekday="1" hide-header :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' }"></b-form-datepicker>
+                    </b-input-group>
+                    <b-input-group prepend="bis" class="mb-2 mr-sm-2">
+                        <b-form-datepicker v-model="form.dateTo" locale="de" placeholder="Kein Datum gewählt" :min="form.dateFrom" start-weekday="1" hide-header :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' }"></b-form-datepicker>
+                    </b-input-group>
+                    <b-input-group prepend="Kategorie" class="mb-2 mr-sm-2">
+                        <b-form-select v-model="form.category_id" :options="categories"></b-form-select>
+                    </b-input-group>
+                    <b-input-group prepend="Stichwort" class="mb-2 mr-sm-2">
+                        <b-form-input v-model="form.keyword"></b-form-input>
+                    </b-input-group>
+                    <b-button variant="primary" class="mb-2" type="submit" :disabled="isLoading">
+                        <b-spinner small v-if="isLoading"></b-spinner>
+                        Finden
+                    </b-button>
+                  </b-form-group>
+                </b-form>
+            </div>
+            <b-overlay :show="isLoading" variant="transparent">
+                <div v-if="error" class="mb-4">
+                    <b-alert show variant="danger">{{ error }}</b-alert>
+                    <button type="button" class="btn btn-outline-secondary" @click="loadData()"><i class="fa fa-sync-alt"></i></button>
+                </div>
+                <template v-if="widget.settings.layout == 'card'">
+                    <div v-for="date in dates">
+                        <!-- Desktop -->
+                        <div class="row mb-3 d-none d-sm-block">
+                            <div class="col-sm">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <h5 class="card-title">{{ date.event.name }} <event-warning-pills :event="date.event"></event-warning-pills></h5>
+                                                <h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> {{ render_event_date_instance(date.start, date.allday) }}</h6>
+                                                <p class="card-text" v-if="date.event.description" v-html="date.event.description.truncate(200, true)"></p>
+                                                <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ date.event.organization.name }}</small>
+                                                <small v-if="date.event.organizer.name != date.event.organization.name" class="text-muted mr-2"><i class="fa fa-server"></i> {{ date.event.organizer.name }}</small>
+                                                <small class="text-muted"><i class="fa fa-map-marker"></i> {{ date.event.place.name }}</small>
+                                                <a href="#" @click.stop.prevent="openEventDate(date)" class="stretched-link"></a>
+                                            </div>
+                                            <div class="col-sm-4 text-right">
+                                                <img v-if="date.event.photo" :src="url_for_image(date.event.photo, 200)" style="object-fit: cover; width: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile -->
+                        <div class="row mb-3 d-sm-none">
+                            <div class="col-sm">
+                                <div class="card">
+                                    <div>
+                                        <img v-if="date.event.photo" :src="url_for_image(date.event.photo, 500)" class="card-img-top" style="object-fit: cover; height: 40vw;" />
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <h5 class="card-title">{{ date.event.name }} <event-warning-pills :event="date.event"></event-warning-pills></h5>
+                                                <h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> {{ render_event_date_instance(date.start, date.allday) }}</h6>
+                                                <p class="card-text" v-if="date.event.description" v-html="date.event.description.truncate(100, true)"></p>
+                                                <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ date.event.organization.name }}</small>
+                                                <small v-if="date.event.organizer.name != date.event.organization.name" class="text-muted mr-2"><i class="fa fa-server"></i> {{ date.event.organizer.name }}</small>
+                                                <small class="text-muted"><i class="fa fa-map-marker"></i> {{ date.event.place.name }}</small>
+                                                <a href="#" @click.stop.prevent="openEventDate(date)" class="stretched-link"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template v-else-if="widget.settings.layout == 'text'">
+                    <div class="mb-3">
+                        <div v-for="date in dates">
+                            {{ render_event_date_instance(date.start, date.allday, 'L', 'L') }} <a href="#" @click.stop.prevent="openEventDate(date)">{{ date.event.name }}</a> <event-warning-pills :event="date.event"></event-warning-pills>
+                        </div>
+                    </div>
+                </template>
+
+                <b-pagination v-if="widget.settings.showPagination && totalRows > perPage"
+                    v-model="currentPage"
+                    :total-rows="totalRows"
+                    :per-page="perPage"
+                ></b-pagination>
+
+                <div class="d-print-none">
+                    <div v-if="widget.settings.showOvedaLink" class="mb-2">
+                        <a href="#" @click.stop.prevent="openSearch()" class="underlined">Veranstaltungen auf oveda.de anzeigen</a>
+                    </div>
+
+                    <div v-if="widget.settings.showPrintButton">
+                        <button @click="printPage()" v-if="totalRows > 0" type="button" class="btn btn-secondary btn-print"><i class="fa fa-print"></i> Drucken</button>
+                    </div>
+                </div>
+
+
+            </b-overlay>
+        </template>
+    </div>
+    <script>
+axios.defaults.baseURL = window.location.origin;
+moment.locale("de");
+
+const localizedMessages = {
+    de: {
+        categories: {
+            Art: "Kunst",
+            Book: "Literatur",
+            Movie: "Film",
+            Family: "Familie",
+            Festival: "Festival",
+            Religious: "Religion",
+            Shopping: "Shopping",
+            Comedy: "Comedy",
+            Music: "Musik",
+            Dance: "Tanz",
+            Nightlife: "Party",
+            Theater: "Theater",
+            Dining: "Dining",
+            Conference: "Konferenz",
+            Meetup: "Networking",
+            Fitness: "Fitness",
+            Sports: "Sport",
+            Other: "Sonstiges",
+            Exhibition: "Ausstellung",
+            Culture: "Kultur",
+            Tour: "Führung",
+            OpenAir: "Open Air",
+            Stage: "Bühne",
+            Lecture: "Vortrag",
+        },
+    }
+};
+
+const i18n = new VueI18n({
+    locale: "de",
+    messages: localizedMessages,
+    silentFallbackWarn: true,
+});
+
+String.prototype.truncate =
+  String.prototype.truncate ||
+  function (n, useWordBoundary) {
+    if (this.length <= n) {
+      return this;
+    }
+    const subString = this.substr(0, n - 1); // the original check
+    return (
+      (useWordBoundary
+        ? subString.substr(0, subString.lastIndexOf(" "))
+        : subString) + "&hellip;"
+    );
+  };
+
+Vue.component('event-warning-pills', {
+    props: ['event'],
+    template: `
+        <span>
+            <span v-if="event.status" class="badge badge-pill badge-warning">
+                <template v-if="event.status == 'cancelled'">Abgesagt</template>
+                <template v-else-if="event.status == 'movedOnline'">Online verschoben</template>
+                <template v-else-if="event.status == 'postponed'">Verschoben</template>
+                <template v-else-if="event.status == 'rescheduled'">Neu angesetzt</template>
+            </span>
+            <span v-if="event.booked_up" class="badge badge-pill badge-warning">Ausgebucht</span>
+            <span v-if="event.attendance_mode" class="badge badge-pill badge-info">
+                <template v-if="event.attendance_mode == 'online'">Online</template>
+                <template v-else-if="event.attendance_mode == 'mixed'">Präsenzveranstaltung und online</template>
+            </span>
+        </span>
+    `
+});
+
+var vue_app_data = {
+    widget: null,
+    totalRows: 0,
+    currentPage: 1,
+    dates: [],
+    isLoading: false,
+    isLoadingCategories: false,
+    initialLoaded: false,
+    initialLoadedCategories: false,
+    error: null,
+    form: {
+        dateFrom: moment().toDate(),
+        dateTo: null,
+        keyword: null,
+        category_id: null,
+    },
+    categories: null,
+};
+
+var app = new Vue({
+    el: '#app',
+    i18n,
+    data: vue_app_data,
+    mounted() {
+        this.isLoading = false;
+        this.error = null;
+        this.dates = [];
+        this.loadData();
+        this.loadCategories();
+    },
+    computed: {
+        perPage() {
+            return this.widget != null ? Math.min(50, this.widget.settings.eventsPerPage) : 10;
+        }
+    },
+    watch: {
+        currentPage: function (val) {
+            this.loadData();
+        },
+        widget: function (val) {
+            this.loadData();
+            this.loadCategories();
+        },
+        'widget.settings.organizationId': function(val) {
+            this.parameterChanged();
+        },
+        'widget.settings.eventListId': function(val) {
+            this.parameterChanged();
+        },
+        'widget.settings.eventsPerPage': function(val) {
+            this.currentPage = 1;
+            this.parameterChanged();
+        },
+        'widget.settings.showFilter': function(val) {
+            if (!this.initialLoadedCategories) {
+                return;
+            }
+
+            this.loadCategories();
+        },
+    },
+    methods: {
+        parameterChanged() {
+            if (!this.initialLoaded) {
+                return;
+            }
+
+            this.loadData();
+        },
+        getSearchParams() {
+            let params = {
+                page: this.currentPage,
+                per_page: this.perPage,
+                date_from: moment(this.form.dateFrom).format("YYYY-MM-DD"),
+            };
+
+            if (this.widget.settings.eventListId) {
+                params.event_list_id = this.widget.settings.eventListId;
+            }
+            else if (this.widget.settings.organizationId) {
+                params.organization_id = this.widget.settings.organizationId;
+            }
+
+            if (this.form.dateTo) {
+                params.date_to = moment(this.form.dateTo).format("YYYY-MM-DD");
+            }
+
+            if (this.form.keyword) {
+                params.keyword = this.form.keyword;
+            }
+
+            if (this.form.category_id && this.form.category_id > 0) {
+                params.category_id = this.form.category_id;
+            }
+
+            return params;
+        },
+        loadData() {
+            if (this.widget == null) {
+                return;
+            }
+
+            this.isLoading = true;
+
+            const params = this.getSearchParams();
+            axios
+                .get(`/api/v1/event-dates/search`, { params: params })
+                .then((response) => {
+                    this.error = null;
+                    this.dates = response.data.items;
+                    this.totalRows = response.data.total;
+                    this.isLoading = false;
+                    this.initialLoaded = true;
+                    this.scrollToTop();
+                })
+                .catch(error => {
+                    this.isLoading = false;
+                    this.dates = [];
+                    this.totalRows = 0;
+                    this.error = error.message;
+                    this.scrollToTop();
+                });
+        },
+        loadCategories() {
+            if (this.widget == null ||
+                !this.widget.settings.showFilter ||
+                this.categories != null) {
+                return;
+            }
+
+            this.isLoadingCategories = true;
+
+            axios
+                .get(`/api/v1/event-categories`)
+                .then((response) => {
+                    let categories = response.data.items.map(function(c) {
+                        return { value: c.id, text: i18n.t(`categories.${c.name}`) };
+                    });
+                    categories.sort(function (a, b) {
+                        return a.text > b.text ? 1 : -1;
+                    })
+                    categories.unshift({ value: 0, text: "" });
+                    this.categories = categories;
+                    this.isLoadingCategories = false;
+                    this.initialLoadedCategories = true;
+                })
+                .catch(error => {
+                    this.isLoadingCategories = false;
+                });
+        },
+        render_event_date_instance(value, allday, format = "dd. DD.MM.YYYY LT", alldayFormat = "dd. DD.MM.YYYY") {
+            const instance = moment(value);
+
+            if (allday) {
+                return instance.format(alldayFormat);
+            }
+
+            return instance.format(format);
+        },
+        url_for_image(image, size) {
+            return `${axios.defaults.baseURL}${image.image_url}?s=${size}`
+        },
+        scrollToTop() {
+            window.scrollTo(0,0);
+
+            if ('parentIFrame' in window) {
+                parentIFrame.scrollToOffset(0,0);
+            }
+        },
+        printPage() {
+            window.print();
+        },
+        openEventDate(date) {
+            const url = `${axios.defaults.baseURL}/eventdate/${date.id}`;
+            this.trackAnalyticsEvent({'event':'linkClick', 'url':url});
+            window.open(url);
+        },
+        openSearch() {
+            const params = this.getSearchParams();
+            const url = `${axios.defaults.baseURL}/eventdates`;
+            const searchUrl = axios.getUri({ method: "get", url: url, params: params });
+            window.open(searchUrl);
+        },
+        trackAnalyticsEvent(data) {
+            if ('parentIFrame' in window) {
+                parentIFrame.sendMessage({'type': 'OVEDA_ANALYTICS_EVENT', 'data': data});
+            }
+        },
+        updateSettings(settings) {
+            if (this.widget == null) {
+                this.widget = { settings: settings };
+            }
+
+            for (var key in settings) {
+                this.widget.settings[key] = settings[key];
+            }
+        }
+    }
+});
+
+window.iFrameResizer = {
+    onReady: function() {
+        app.trackAnalyticsEvent({'event':'pageView', 'url':document.location.href});
+    },
+    onMessage: function(message) {
+        if (message.type != 'OVEDA_WIDGET_SETTINGS_UPDATE_EVENT') {
+            return;
+        }
+
+        app.updateSettings(message.data);
+    }
+}
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.contentWindow.min.js" integrity="sha512-14SY6teTzhrLWeL55Q4uCyxr6GQOxF3pEoMxo2mBxXwPRikdMtzKMYWy2B5Lqjr6PHHoGOxZgPaxUYKQrSmu0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  </body>
+</html>

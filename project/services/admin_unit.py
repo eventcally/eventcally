@@ -8,6 +8,7 @@ from project.models import (
     AdminUnitMemberInvitation,
     AdminUnitMemberRole,
     AdminUnitRelation,
+    CustomWidget,
     EventEventLists,
     EventList,
     EventOrganizer,
@@ -193,6 +194,16 @@ def get_organizer_query(admin_unit_id, name=None):
         query = query.filter(EventOrganizer.name.ilike(like_name))
 
     return query.order_by(func.lower(EventOrganizer.name))
+
+
+def get_custom_widget_query(admin_unit_id, name=None):
+    query = CustomWidget.query.filter(CustomWidget.admin_unit_id == admin_unit_id)
+
+    if name:
+        like_name = "%" + name + "%"
+        query = query.filter(CustomWidget.name.ilike(like_name))
+
+    return query.order_by(func.lower(CustomWidget.name))
 
 
 def get_place_query(admin_unit_id, name=None):
