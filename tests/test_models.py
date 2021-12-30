@@ -93,6 +93,23 @@ def test_event_allday(client, app, db, seeder):
         assert event_date.end == create_berlin_date(2031, 1, 1, 23, 59, 59)
 
 
+def test_event_has_multiple_dates(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base()
+    event_with_recc_id = seeder.create_event(
+        admin_unit_id, recurrence_rule="RRULE:FREQ=DAILY;COUNT=7"
+    )
+    event_without_recc_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.models import Event
+
+        event_with_recc = Event.query.get(event_with_recc_id)
+        assert event_with_recc.has_multiple_dates() is True
+
+        event_without_recc = Event.query.get(event_without_recc_id)
+        assert event_without_recc.has_multiple_dates() is False
+
+
 def test_oauth2_token(client, app):
     from project.models import OAuth2Token
 
