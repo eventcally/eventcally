@@ -237,6 +237,10 @@ class EventSearchRequestSchema(PaginationRequestSchema):
     sort = fields.Str(
         metadata={"description": "Sort result items."},
     )
+    status = fields.List(
+        EnumField(EventStatus),
+        metadata={"description": "Looks for events with this stati."},
+    )
 
 
 class EventSearchResponseSchema(PaginationResponseSchema):
