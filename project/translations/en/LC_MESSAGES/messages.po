@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-12-30 14:51+0100\n"
+"POT-Creation-Date: 2021-12-30 15:28+0100\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -1280,6 +1280,7 @@ msgid "Choose image file"
 msgstr ""
 
 #: project/templates/_macros.html:1220 project/templates/event/actions.html:65
+#: project/templates/event/delete.html:12
 msgid "Edit event"
 msgstr ""
 
@@ -1706,6 +1707,12 @@ msgstr ""
 #: project/templates/event/create.html:334
 #: project/templates/event/update.html:191
 msgid "Target group"
+msgstr ""
+
+#: project/templates/event/delete.html:10
+msgid ""
+"You are about to delete an event with multiple dates. If you want to "
+"delete a single date instead, you have to edit the event to do so."
 msgstr ""
 
 #: project/templates/event/reference.html:8

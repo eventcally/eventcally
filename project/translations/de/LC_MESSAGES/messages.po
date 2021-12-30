@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-12-30 14:51+0100\n"
+"POT-Creation-Date: 2021-12-30 15:28+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1325,6 +1325,7 @@ msgid "Choose image file"
 msgstr "Bild-Datei auswählen"
 
 #: project/templates/_macros.html:1220 project/templates/event/actions.html:65
+#: project/templates/event/delete.html:12
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
@@ -1756,6 +1757,12 @@ msgstr "Zugang"
 #: project/templates/event/update.html:191
 msgid "Target group"
 msgstr "Zielgruppe"
+
+#: project/templates/event/delete.html:10
+msgid ""
+"You are about to delete an event with multiple dates. If you want to "
+"delete a single date instead, you have to edit the event to do so."
+msgstr "Du bist im Begriff, eine Veranstaltung mit mehreren Terminen zu löschen. Wenn du stattdessen einen einzelnen Termin löschen möchtest, musst du dazu die Veranstaltung bearbeiten."
 
 #: project/templates/event/reference.html:8
 #, python-format
