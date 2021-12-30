@@ -35,7 +35,7 @@
 
 {% block content %}
 {% block vue_container %}
-<div id="vue-container"><router-view></router-view></div>
+<div id="vue-container"{% block vue_container_attribs %}{% endblock vue_container_attribs %}><router-view></router-view></div>
 {% endblock %}
 <script>
   Vue.component("vue-typeahead-bootstrap", VueTypeaheadBootstrap);
@@ -76,6 +76,14 @@
             relationVerify: "Verify new organization",
             relationVerifyDescription: "If set, events of the new organization are publicly visible.",
           },
+          customWidget: {
+            className: "Custom widget",
+            listName: "Custom widgets",
+            widgetType: "Type",
+            widgetTypeSearch: "Search",
+            widgetTypeCalendar: "Calendar",
+            name: "Name",
+          },
           event: {
             className: "Event",
             listName: "Events",
@@ -96,6 +104,7 @@
         },
         cancel: "Cancel",
         decline: "Decline",
+        save: "Save",
         submit: "Submit",
         view: "View",
         edit: "Edit",
@@ -175,6 +184,14 @@
             relationVerify: "Neue Organisation verifizieren",
             relationVerifyDescription: "Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich sichtbar.",
           },
+          customWidget: {
+            className: "Custom widget",
+            listName: "Custom widgets",
+            widgetTypeSearch: "Suche",
+            widgetTypeCalendar: "Kalender",
+            widgetType: "Typ",
+            name: "Name",
+          },
           event: {
             className: "Veranstaltung",
             listName: "Veranstaltungen",
@@ -195,6 +212,7 @@
         },
         cancel: "Abbrechen",
         decline: "Ablehnen",
+        save: "Speichern",
         submit: "Senden",
         view: "Anzeigen",
         edit: "Bearbeiten",

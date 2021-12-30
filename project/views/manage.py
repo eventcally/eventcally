@@ -291,6 +291,21 @@ def manage_admin_unit_event_lists(id, path=None):
     )
 
 
+@app.route("/manage/admin_unit/<int:id>/custom-widgets")
+@app.route("/manage/admin_unit/<int:id>/custom-widgets/<path:path>")
+@auth_required()
+def manage_admin_unit_custom_widgets(id, path=None):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    set_current_admin_unit(admin_unit)
+    full_height = path is not None and (path == "create" or path.endswith("/update"))
+
+    return render_template(
+        "manage/custom_widgets.html",
+        admin_unit=admin_unit,
+        full_height=full_height,
+    )
+
+
 @app.route("/manage/admin_unit/<int:id>/widgets", methods=("GET", "POST"))
 @auth_required()
 def manage_admin_unit_widgets(id):

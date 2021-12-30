@@ -29,6 +29,7 @@ class FindEventDateForm(FlaskForm):
         choices=distance_choices,
     )
     event_list_id = HiddenField(validators=[Optional()])
+    organization_id = HiddenField(validators=[Optional()])
     s_ft = HiddenField(validators=[Optional()])
     s_bg = HiddenField(validators=[Optional()])
     s_pr = HiddenField(validators=[Optional()])

@@ -200,6 +200,28 @@ class Seeder(object):
 
         return organizer_id
 
+    def insert_event_custom_widget(
+        self,
+        admin_unit_id,
+        widget_type="search",
+        name="Mein Widget",
+        settings={"color": "black"},
+    ):
+        from project.models import CustomWidget
+
+        with self._app.app_context():
+            custom_widget = CustomWidget()
+            custom_widget.admin_unit_id = admin_unit_id
+            custom_widget.widget_type = widget_type
+            custom_widget.name = name
+            custom_widget.settings = settings
+
+            self._db.session.add(custom_widget)
+            self._db.session.commit()
+            custom_widget_id = custom_widget.id
+
+        return custom_widget_id
+
     def insert_default_oauth2_client(self, user_id):
         from project.api import scope_list
         from project.models import OAuth2Client
