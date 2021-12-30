@@ -40,7 +40,7 @@ def test_list(client, seeder, utils):
     assert response.json["items"][0]["id"] == 1
 
 
-def test_search(client, seeder, utils):
+def test_search(client, seeder, utils, app, db):
     from project.dateutils import create_berlin_date
 
     user_id, admin_unit_id = seeder.setup_base()
@@ -90,6 +90,25 @@ def test_search(client, seeder, utils):
     response = utils.get_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["event"]["id"] == listed_event_id
+
+    url = utils.get_url("api_v1_event_date_search", status="scheduled")
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 2
+
+    with app.app_context():
+        from project.models import Event, EventStatus
+
+        event = Event.query.get(event_id)
+        event.status = EventStatus.cancelled
+        db.session.commit()
+
+    url = utils.get_url("api_v1_event_date_search", status="scheduled")
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+
+    url = utils.get_url("api_v1_event_date_search", status=["scheduled", "cancelled"])
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 2
 
 
 def test_search_oneDay(client, seeder, utils):

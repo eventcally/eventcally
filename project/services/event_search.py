@@ -27,6 +27,7 @@ class EventSearchParams(object):
         self.event_list_id = None
         self.weekday = None
         self.sort = None
+        self.status = None
 
     @property
     def date_from(self):
@@ -95,7 +96,24 @@ class EventSearchParams(object):
 
         if len(item_ids) > 0:
             return item_ids
+
         return None
+
+    def load_status_list_param(self):
+        stati = self.load_list_param("status")
+
+        if stati is None:  # pragma: no cover
+            return None
+
+        from project.models import EventStatus
+
+        result = list()
+
+        for status in stati:
+            if status in EventStatus.__members__:
+                result.append(EventStatus.__members__[status])
+
+        return result
 
     def load_from_request(self):
         if "date_from" in request.args:
@@ -130,3 +148,6 @@ class EventSearchParams(object):
 
         if "organization_id" in request.args:
             self.admin_unit_id = request.args["organization_id"]
+
+        if "status" in request.args:
+            self.status = self.load_status_list_param()
