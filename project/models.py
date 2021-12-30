@@ -1011,6 +1011,9 @@ class Event(db.Model, TrackableMixin, EventMixin):
             EventOrganizer.id.in_(value)
         ).all()
 
+    def has_multiple_dates(self) -> bool:
+        return self.is_recurring or len(self.date_definitions) > 1
+
     def validate(self):
         if self.organizer and self.organizer.admin_unit_id != self.admin_unit_id:
             raise make_check_violation("Invalid organizer.")
