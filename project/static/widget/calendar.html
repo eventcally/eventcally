@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.6.2/dist/vuetify.min.css" rel="stylesheet">
+  <style>
+    [v-cloak] {
+       display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <template v-if="widget">
+        <v-app :styles="{'max-height': widget.settings.iFrameHeight}">
+            <v-row class="fill-height" style="margin:0;">
+                <v-col>
+                  <v-sheet height="64">
+                            <v-toolbar flat>
+                                <v-btn fab text small color="grey darken-2" @click="$refs.calendar.prev()">
+                                    <v-icon small>
+                                        mdi-chevron-left
+                                    </v-icon>
+                                </v-btn>
+                                <v-btn fab text small color="grey darken-2" @click="$refs.calendar.next()">
+                                    <v-icon small>
+                                        mdi-chevron-right
+                                    </v-icon>
+                                </v-btn>
+                                <v-toolbar-title>
+                                    {{ title }}
+                                </v-toolbar-title>
+                                <v-spacer></v-spacer>
+                            </v-toolbar>
+                    </v-sheet>
+                    <v-sheet :height="calendarHeight">
+                            <v-calendar
+                                ref="calendar"
+                                v-model="focus"
+                                locale="de"
+                                :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+                                :type="widget.settings.calendarType"
+                                :events="events"
+                                :event-color="widget.settings.eventBackgroundColor"
+                                @click:event="showEvent"
+                                @change="calendarChanged"></v-calendar>
+                            <v-menu
+                                v-model="selectedOpen"
+                                :close-on-content-click="false"
+                                :activator="selectedElement"
+                                offset-x
+                              >
+                                <v-card flat v-if="selectedEvent">
+                                  <v-card-title>{{ selectedEvent.name }}</v-card-title>
+                                  <v-card-subtitle>
+                                      <v-icon small>mdi-calendar</v-icon> {{ render_event_date_instance(selectedEvent.date.start, selectedEvent.date.allday) }}
+                                      <event-warning-pills :event="selectedEvent.date.event"></event-warning-pills>
+                                  </v-card-subtitle>
+                                  <v-card-text>
+                                    <div><v-icon small>mdi-database</v-icon> {{ selectedEvent.date.event.organization.name }}</div>
+                                    <div v-if="selectedEvent.date.event.organizer.name != selectedEvent.date.event.organization.name"><v-icon small>mdi-server</v-icon> {{ selectedEvent.date.event.organizer.name }}</div>
+                                    <div><v-icon small>mdi-map-marker</v-icon> {{ selectedEvent.date.event.place.name }}</div>
+                                  </v-card-text>
+
+                                  <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn
+                                      text
+                                      color="secondary"
+                                      @click="selectedOpen = false"
+                                    >
+                                      Schließen
+                                    </v-btn>
+                                    <v-btn
+                                      text
+                                      color="primary"
+                                      @click="openEventDate(selectedEvent.date)"
+                                    >
+                                      Details
+                                    </v-btn>
+                                  </v-card-actions>
+                                </v-card>
+                              </v-menu>
+                        </v-sheet>
+                    </v-col>
+                </v-row>
+        </v-app>
+    </template>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.6.2/dist/vuetify.js"></script>
+  <script src="https://unpkg.com/axios@0.21.1/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js" integrity="sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo=" crossorigin="anonymous"></script>
+  <script>
+      axios.defaults.baseURL = window.location.origin;
+      moment.locale("de");
+
+Vue.component('event-warning-pills', {
+    props: ['event'],
+    template: `
+        <span>
+            <v-chip v-if="event.status && event.status != 'scheduled'" small color="yellow">
+                <template v-if="event.status == 'cancelled'">Abgesagt</template>
+                <template v-else-if="event.status == 'movedOnline'">Online verschoben</template>
+                <template v-else-if="event.status == 'postponed'">Verschoben</template>
+                <template v-else-if="event.status == 'rescheduled'">Neu angesetzt</template>
+            </v-chip>
+            <v-chip v-if="event.booked_up" small color="yellow">Ausgebucht</v-chip>
+            <v-chip v-if="event.attendance_mode && event.attendance_mode != 'offline'" small color="blue">
+                <template v-if="event.attendance_mode == 'online'">Online</template>
+                <template v-else-if="event.attendance_mode == 'mixed'">Präsenzveranstaltung und online</template>
+            </v-chip>
+        </span>
+    `
+});
+
+    var vue_app_data = {
+        widget: null,
+        title: "",
+        focus: '',
+        events: [],
+        selectedEvent: null,
+        selectedElement: null,
+        selectedOpen: false,
+    };
+
+    var app = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: vue_app_data,
+      computed: {
+          calendarHeight() {
+              if (!this.widget) {
+                  return 0;
+              }
+
+            return parseInt(this.widget.settings.iFrameHeight) - 88;
+          }
+      },
+      watch: {
+          'widget.settings.organizationId': function(val) {
+            this.parameterChanged();
+          },
+          'widget.settings.eventListId': function(val) {
+            this.parameterChanged();
+          }
+      },
+      methods: {
+          parameterChanged() {
+            if (this.$refs.calendar) {
+                this.loadEvents(this.$refs.calendar.start, this.$refs.calendar.end);
+            }
+          },
+          calendarChanged({ start, end }) {
+              this.loadEvents(start.date, end.date);
+          },
+          loadEvents(start, end) {
+            if (this.widget == null) {
+                return;
+            }
+
+            this.title = this.$refs.calendar.title;
+
+            let params = {
+                date_from: start,
+                date_to: end,
+                per_page: 50,
+            };
+
+            if (this.widget.settings.eventListId) {
+                params.event_list_id = this.widget.settings.eventListId;
+            }
+            else if (this.widget.settings.organizationId) {
+                params.organization_id = this.widget.settings.organizationId;
+            }
+
+            axios
+                .get(`/api/v1/event-dates/search`, { params: params })
+                .then((response) => {
+                    this.events = response.data.items.map(function(date) {
+                        return {
+                            name: date.event.name,
+                            start: moment(date.start).toDate(),
+                            end: date.end != null ? moment(date.end).toDate() : null,
+                            timed: !date.allday,
+                            date: date,
+                        };
+                    });
+                    this.scrollToMinTime();
+                });
+        },
+        scrollToMinTime() {
+            if (!this.$refs.calendar) {
+                return;
+            }
+
+            if (this.$refs.calendar.type != 'week') {
+                return;
+            }
+
+            if (this.events.length < 1) {
+                return;
+            }
+
+            const min_event = this.events.reduce(function(prev, curr) {
+                return prev.start.getHours() < curr.start.getHours() ? prev : curr;
+            });
+            this.$refs.calendar.scrollToTime({ hour: min_event.start.getHours(), minute: 0 });
+        },
+        showEvent ({ nativeEvent, event }) {
+            const open = () => {
+                this.selectedEvent = event
+                this.selectedElement = nativeEvent.target
+                requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
+            }
+
+            if (this.selectedOpen) {
+                this.selectedOpen = false
+                requestAnimationFrame(() => requestAnimationFrame(() => open()))
+            } else {
+                open()
+            }
+
+            nativeEvent.stopPropagation()
+        },
+        openEventDate(date) {
+            const url = `${axios.defaults.baseURL}/eventdate/${date.id}`;
+            this.trackAnalyticsEvent({'event':'linkClick', 'url':url});
+            window.open(url);
+        },
+        render_event_date_instance(value, allday, format = "dd. DD.MM.YYYY LT", alldayFormat = "dd. DD.MM.YYYY") {
+            const instance = moment(value);
+
+            if (allday) {
+                return instance.format(alldayFormat);
+            }
+
+            return instance.format(format);
+        },
+        trackAnalyticsEvent(data) {
+            if ('parentIFrame' in window) {
+                parentIFrame.sendMessage({'type': 'OVEDA_ANALYTICS_EVENT', 'data': data});
+            }
+        }
+    }
+    });
+
+    window.iFrameResizer = {
+        onReady: function() {
+            app.trackAnalyticsEvent({'event':'pageView', 'url':document.location.href});
+        },
+        onMessage: function(message) {
+            if (message.type != 'OVEDA_WIDGET_SETTINGS_UPDATE_EVENT') {
+                return;
+            }
+
+            if (vue_app_data.widget == null) {
+                vue_app_data.widget = { settings: message.data };
+                return;
+            }
+
+            for (var key in message.data) {
+                vue_app_data.widget.settings[key] = message.data[key];
+            }
+        }
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.contentWindow.min.js" integrity="sha512-14SY6teTzhrLWeL55Q4uCyxr6GQOxF3pEoMxo2mBxXwPRikdMtzKMYWy2B5Lqjr6PHHoGOxZgPaxUYKQrSmu0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>

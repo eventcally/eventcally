@@ -81,6 +81,9 @@ def test_search(client, seeder, utils):
     url = utils.get_url("api_v1_event_date_search", organizer_id=organizer_id)
     response = utils.get_ok(url)
 
+    url = utils.get_url("api_v1_event_date_search", organization_id=admin_unit_id)
+    response = utils.get_ok(url)
+
     listed_event_id = seeder.create_event(admin_unit_id)
     event_list_id = seeder.create_event_list(admin_unit_id, listed_event_id)
     url = utils.get_url("api_v1_event_date_search", event_list_id=event_list_id)

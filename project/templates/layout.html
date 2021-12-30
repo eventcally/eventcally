@@ -269,6 +269,7 @@
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_organization_invitations', id=current_admin_unit.id) }}">{{ _('Organization invitations') }}</a>
                     {% endif %}
                     <a class="dropdown-item" href="{{ url_for('admin_unit_update', id=current_admin_unit.id) }}">{{ _('Settings') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_custom_widgets', id=current_admin_unit.id) }}">{{ _('Custom widgets') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_widgets', id=current_admin_unit.id) }}">{{ _('Widgets') }}</a>
                     <a class="dropdown-item" href="{{ url_for('organizations', path=current_admin_unit.id) }}">{{ _('Profile') }}</a>
                   </div>

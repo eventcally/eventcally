@@ -27,6 +27,7 @@ from sqlalchemy import (
     func,
     select,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -440,6 +441,11 @@ class AdminUnit(db.Model, TrackableMixin):
     )
     event_lists = relationship(
         "EventList",
+        cascade="all, delete-orphan",
+        backref=backref("adminunit", lazy=True),
+    )
+    custom_widgets = relationship(
+        "CustomWidget",
         cascade="all, delete-orphan",
         backref=backref("adminunit", lazy=True),
     )
@@ -1141,6 +1147,15 @@ class Analytics(db.Model):
     value1 = Column(Unicode(255))
     value2 = Column(Unicode(255))
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+
+class CustomWidget(db.Model, TrackableMixin):
+    __tablename__ = "customwidget"
+    id = Column(Integer(), primary_key=True)
+    widget_type = Column(Unicode(255), nullable=False)
+    name = Column(Unicode(255), nullable=False)
+    admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
+    settings = Column(JSONB)
 
 
 # Deprecated begin
