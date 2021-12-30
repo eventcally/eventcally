@@ -125,6 +125,7 @@ scope_list = [
     "organization:read",
     "organization:write",
     "eventlist:write",
+    "customwidget:write",
 ]
 scopes = {k: get_localized_scope(k) for v, k in enumerate(scope_list)}
 
@@ -188,6 +189,7 @@ def add_oauth2_scheme_with_transport(insecure: bool):
 
 marshmallow_plugin.converter.add_attribute_function(enum_to_properties)
 
+import project.api.custom_widget.resources
 import project.api.dump.resources
 import project.api.event.resources
 import project.api.event_category.resources

@@ -1,0 +1,46 @@
+{% extends "layout_vue.html" %}
+
+{% block html_attribs %}{% if full_height %} class="h-100"{% else %}{{ super() }}{% endif %}{% endblock html_attribs %}
+{% block body_attribs %}{% if full_height %} class="h-100"{% else %}{{ super() }}{% endif %}{% endblock body_attribs %}
+{% block body_content__attribs %}{% if full_height %} style="height:100%;"{% else %}{{ super() }}{% endif %}{% endblock %}
+{% block content_container_attribs %}{% if full_height %} class="h-100"{% else %}{{ super() }}{% endif %}{% endblock content_container_attribs %}
+{% block vue_container_attribs %}{% if full_height %} class="h-100"{% else %}{{ super() }}{% endif %}{% endblock vue_container_attribs %}
+{% block navbar %}{% if full_height %} {% else %}{{ super() }}{% endif %}{% endblock navbar %}
+{% block managebar %}{% if full_height %} {% else %}{{ super() }}{% endif %}{% endblock managebar %}
+{% block footer %}{% if full_height %} {% else %}{{ super() }}{% endif %}{% endblock footer %}
+
+{%- block title -%}
+{{ _('Custom widgets') }}
+{%- endblock -%}
+
+{% block header_before_site_js %}
+{{ super() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js" integrity="sha512-dnvR4Aebv5bAtJxDunq3eE8puKAJrY9GBJYl9GC6lTOEC76s1dbDfJFcL9GyzpaDW4vlI/UjR8sKbc1j6Ynx6w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{%- endblock -%}
+
+{% block component_scripts %}
+<script src="{{ url_for('static', filename='vue/widget-configurator/list.vue.js')}}"></script>
+<script src="{{ url_for('static', filename='vue/widget-configurator/configurator.vue.js')}}"></script>
+{% endblock %}
+
+{% block component_definitions %}
+Vue.component("WidgetConfiguratorList", WidgetConfiguratorList);
+Vue.component("WidgetConfigurator", WidgetConfigurator);
+{% endblock %}
+
+{% block vue_routes %}
+const routes = [
+  {
+    path: "/manage/admin_unit/:organization_id/custom-widgets",
+    component: WidgetConfiguratorList,
+  },
+  {
+    path: "/manage/admin_unit/:organization_id/custom-widgets/create",
+    component: WidgetConfigurator,
+  },
+  {
+    path: "/manage/admin_unit/:organization_id/custom-widgets/:custom_widget_id/update",
+    component: WidgetConfigurator,
+  },
+];
+{% endblock %}

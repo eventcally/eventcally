@@ -11,6 +11,12 @@ from project.access import (
     login_api_user_or_401,
 )
 from project.api import add_api_resource
+from project.api.custom_widget.schemas import (
+    CustomWidgetIdSchema,
+    CustomWidgetListRequestSchema,
+    CustomWidgetListResponseSchema,
+    CustomWidgetPostRequestSchema,
+)
 from project.api.event.resources import api_can_read_private_events
 from project.api.event.schemas import (
     EventIdSchema,
@@ -70,6 +76,7 @@ from project.oauth2 import require_oauth
 from project.services.admin_unit import (
     get_admin_unit_invitation_query,
     get_admin_unit_query,
+    get_custom_widget_query,
     get_event_list_query,
     get_event_list_status_query,
     get_organizer_query,
@@ -422,6 +429,42 @@ class OrganizationEventListStatusListResource(BaseResource):
         return pagination
 
 
+class OrganizationCustomWidgetListResource(BaseResource):
+    @doc(
+        summary="List custom widgets of organization",
+        tags=["Organizations", "Custom Widgets"],
+    )
+    @use_kwargs(CustomWidgetListRequestSchema, location=("query"))
+    @marshal_with(CustomWidgetListResponseSchema)
+    def get(self, id, **kwargs):
+        admin_unit = AdminUnit.query.get_or_404(id)
+        name = kwargs["name"] if "name" in kwargs else None
+
+        pagination = get_custom_widget_query(admin_unit.id, name).paginate()
+        return pagination
+
+    @doc(
+        summary="Add new custom widget",
+        tags=["Organizations", "CustomWidgets"],
+        security=[{"oauth2": ["customwidget:write"]}],
+    )
+    @use_kwargs(CustomWidgetPostRequestSchema, location="json", apply=False)
+    @marshal_with(CustomWidgetIdSchema, 201)
+    @require_api_access("customwidget:write")
+    def post(self, id):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+        access_or_401(admin_unit, "admin_unit:update")
+
+        custom_widget = self.create_instance(
+            CustomWidgetPostRequestSchema, admin_unit_id=admin_unit.id
+        )
+        db.session.add(custom_widget)
+        db.session.commit()
+
+        return custom_widget, 201
+
+
 add_api_resource(OrganizationResource, "/organizations/<int:id>", "api_v1_organization")
 add_api_resource(
     OrganizationEventDateSearchResource,
@@ -478,4 +521,9 @@ add_api_resource(
     OrganizationOrganizationInvitationListResource,
     "/organizations/<int:id>/organization-invitations",
     "api_v1_organization_organization_invitation_list",
+)
+add_api_resource(
+    OrganizationCustomWidgetListResource,
+    "/organizations/<int:id>/custom-widgets",
+    "api_v1_organization_custom_widget_list",
 )

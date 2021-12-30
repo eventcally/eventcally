@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-12-08 13:32+0100\n"
+"POT-Creation-Date: 2021-12-30 14:51+0100\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -194,29 +194,29 @@ msgstr ""
 msgid "message"
 msgstr ""
 
-#: project/api/organization/resources.py:364
+#: project/api/organization/resources.py:371
 #: project/views/admin_unit_member_invitation.py:85
 msgid "You have received an invitation"
 msgstr ""
 
-#: project/forms/admin.py:10 project/templates/layout.html:311
+#: project/forms/admin.py:10 project/templates/layout.html:312
 #: project/views/root.py:37
 msgid "Terms of service"
 msgstr ""
 
-#: project/forms/admin.py:11 project/templates/layout.html:315
+#: project/forms/admin.py:11 project/templates/layout.html:316
 #: project/views/root.py:45
 msgid "Legal notice"
 msgstr ""
 
 #: project/forms/admin.py:12 project/templates/_macros.html:1392
-#: project/templates/layout.html:319
+#: project/templates/layout.html:320
 #: project/templates/widget/event_suggestion/create.html:204
 #: project/views/admin_unit.py:73 project/views/root.py:53
 msgid "Contact"
 msgstr ""
 
-#: project/forms/admin.py:13 project/templates/layout.html:323
+#: project/forms/admin.py:13 project/templates/layout.html:324
 #: project/views/root.py:61
 msgid "Privacy"
 msgstr ""
@@ -918,7 +918,7 @@ msgstr ""
 msgid "Distance"
 msgstr ""
 
-#: project/forms/event_date.py:33 project/forms/planing.py:36
+#: project/forms/event_date.py:38 project/forms/planing.py:36
 #: project/templates/widget/event_date/list.html:82
 msgid "Find"
 msgstr ""
@@ -1343,7 +1343,7 @@ msgid "Manage"
 msgstr ""
 
 #: project/templates/home.html:30 project/templates/security/login_user.html:38
-#: project/views/widget.py:158
+#: project/views/widget.py:159
 msgid "Register for free"
 msgstr ""
 
@@ -1367,7 +1367,7 @@ msgstr ""
 msgid "Planing"
 msgstr ""
 
-#: project/templates/layout.html:187 project/templates/layout.html:273
+#: project/templates/layout.html:187 project/templates/layout.html:274
 #: project/templates/oauth2_client/list.html:10
 #: project/templates/oauth2_client/read.html:10
 #: project/templates/oauth2_token/list.html:10 project/templates/profile.html:4
@@ -1469,17 +1469,22 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: project/templates/layout.html:272 project/templates/manage/reviews.html:10
+#: project/templates/layout.html:272
+#: project/templates/manage/custom_widgets.html:13
+msgid "Custom widgets"
+msgstr ""
+
+#: project/templates/layout.html:273 project/templates/manage/reviews.html:10
 #: project/templates/manage/widgets.html:5
 #: project/templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr ""
 
-#: project/templates/layout.html:283
+#: project/templates/layout.html:284
 msgid "Switch organization"
 msgstr ""
 
-#: project/templates/developer/read.html:4 project/templates/layout.html:333
+#: project/templates/developer/read.html:4 project/templates/layout.html:334
 #: project/templates/profile.html:29
 msgid "Developer"
 msgstr ""
@@ -1946,7 +1951,7 @@ msgstr ""
 msgid "Organization successfully updated"
 msgstr ""
 
-#: project/views/admin.py:68 project/views/manage.py:331
+#: project/views/admin.py:68 project/views/manage.py:346
 msgid "Settings successfully updated"
 msgstr ""
 
@@ -2004,27 +2009,27 @@ msgstr ""
 msgid "Invitation successfully deleted"
 msgstr ""
 
-#: project/views/event.py:179
+#: project/views/event.py:178
 msgid "Event successfully published"
 msgstr ""
 
-#: project/views/event.py:181
+#: project/views/event.py:180
 msgid "Draft successfully saved"
 msgstr ""
 
-#: project/views/event.py:224
+#: project/views/event.py:223
 msgid "Event successfully updated"
 msgstr ""
 
-#: project/views/event.py:250
+#: project/views/event.py:249
 msgid "Event successfully deleted"
 msgstr ""
 
-#: project/views/event.py:409
+#: project/views/event.py:408
 msgid "Referenced event changed"
 msgstr ""
 
-#: project/views/event.py:432
+#: project/views/event.py:431
 msgid "New event report"
 msgstr ""
 
@@ -2180,17 +2185,17 @@ msgid ""
 " the invitation was sent to."
 msgstr ""
 
-#: project/views/widget.py:150
+#: project/views/widget.py:151
 msgid "Thank you so much! The event is being verified."
 msgstr ""
 
-#: project/views/widget.py:154
+#: project/views/widget.py:155
 msgid ""
 "For more options and your own calendar of events, you can register for "
 "free."
 msgstr ""
 
-#: project/views/widget.py:212
+#: project/views/widget.py:221
 msgid "New event review"
 msgstr ""
 

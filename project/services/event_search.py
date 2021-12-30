@@ -127,3 +127,6 @@ class EventSearchParams(object):
 
         if "sort" in request.args:
             self.sort = request.args["sort"]
+
+        if "organization_id" in request.args:
+            self.admin_unit_id = request.args["organization_id"]

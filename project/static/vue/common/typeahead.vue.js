@@ -5,16 +5,17 @@ const CustomTypeahead = {
             :name="label"
             :detectInput="false"
             ref="validationProvider"
-            rules="required"
+            :rules="rules"
             v-slot="validationContext">
           <b-form-group :label="label">
             <vue-typeahead-bootstrap
+              ref="typeahead"
               v-model="query"
               :data="suggestions"
               :minMatchingChars="1"
               :disableSort="true"
               :showAllResults="true"
-              :placeholder="$t('shared.autocomplete.instruction')"
+              :placeholder="$attrs.placeholder != null ? $attrs.placeholder : $t('shared.autocomplete.instruction')"
               :inputClass="getInputClass(validationContext)"
               @hit="selected = $event"
               @input="onInput"
@@ -31,11 +32,26 @@ const CustomTypeahead = {
     value: {
       type: null
     },
+    rules: {
+      type: [Object, String],
+      default: "required"
+    },
     fetchURL: {
       type: String
     },
     labelKey: {
       type: String
+    },
+    labelValue: {
+      type: String
+    },
+    validClass: {
+      type: String,
+      default: "is-valid"
+    },
+    invalidClass: {
+      type: String,
+      default: "is-invalid"
     },
   },
   data: () => ({
@@ -45,7 +61,7 @@ const CustomTypeahead = {
   }),
   computed: {
     label() {
-      return this.$t(this.labelKey)
+      return this.labelValue != null ? this.labelValue : this.$t(this.labelKey);
     },
   },
   methods: {
@@ -57,7 +73,7 @@ const CustomTypeahead = {
         return "";
       }
 
-      return valid ? "is-valid" : "is-invalid";
+      return valid ? this.validClass : this.invalidClass;
     },
     fetchData(query) {
       const vm = this
@@ -74,7 +90,16 @@ const CustomTypeahead = {
     },
   },
   mounted() {
-    this.$refs.validationProvider.syncValue(this.selected)
+    this.$refs.validationProvider.syncValue(this.selected);
+
+    this.$watch(
+      "$refs.typeahead.isFocused",
+      (new_value, old_value) => {
+         if (new_value && this.$refs.typeahead.showOnFocus && this.query == "") {
+            this.fetchData(this.query);
+         }
+      }
+    );
   },
   watch: {
     selected(newVal) {
