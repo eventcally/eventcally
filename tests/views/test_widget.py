@@ -87,6 +87,15 @@ def test_event_dates_oneDay(client, seeder, utils):
     utils.assert_response_contains(response, name)
 
 
+def test_event_dates_noneDescription(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    au_short_name = "meinecrew"
+    seeder.create_event(admin_unit_id, description=None)
+
+    url = utils.get_url("widget_event_dates", au_short_name=au_short_name)
+    utils.get_ok(url)
+
+
 def test_event_date(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     seeder.create_event(admin_unit_id)
