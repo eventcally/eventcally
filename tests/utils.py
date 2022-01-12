@@ -1,3 +1,4 @@
+import pathlib
 import re
 from urllib.parse import parse_qs, urlsplit
 
@@ -8,10 +9,11 @@ from sqlalchemy.exc import IntegrityError
 
 
 class UtilActions(object):
-    def __init__(self, client, app, mocker):
+    def __init__(self, client, app, mocker, requests_mock):
         self._client = client
         self._app = app
         self._mocker = mocker
+        self._requests_mock = requests_mock
         self._access_token = None
         self._refresh_token = None
         self._client_id = None
@@ -446,3 +448,17 @@ class UtilActions(object):
     def get_oauth_userinfo(self):
         url = self.get_url("oauth_userinfo")
         return self.get_json(url)
+
+    def mock_get_request_with_text(self, url: str, text: str):
+        self._requests_mock.get(url, text=text)
+
+    def mock_get_request_with_content(self, url: str, content):
+        self._requests_mock.get(url, content=content)
+
+    def mock_get_request_with_file(self, url: str, path: pathlib.Path, filename: str):
+        text = (path / filename).read_text()
+        self.mock_get_request_with_text(url, text)
+
+    def mock_image_request_with_file(self, url: str, path: pathlib.Path, filename: str):
+        content = (path / filename).read_bytes()
+        self.mock_get_request_with_content(url, content)

@@ -46,6 +46,7 @@ from project.views.utils import (
     get_share_links,
     handleSqlError,
     send_mails,
+    set_current_admin_unit,
 )
 
 
@@ -106,6 +107,7 @@ def event_report(event_id):
 def event_create_for_admin_unit_id(id):
     admin_unit = AdminUnit.query.get_or_404(id)
     access_or_401(admin_unit, "event:create")
+    set_current_admin_unit(admin_unit)
 
     form = CreateEventForm(
         admin_unit_id=admin_unit.id, category_ids=[upsert_event_category("Other").id]

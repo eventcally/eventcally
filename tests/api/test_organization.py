@@ -267,6 +267,33 @@ def test_events_post_photo_too_small(client, seeder, utils, app):
     assert error["message"] == "Image is too small (1x1px). At least 320x320px."
 
 
+def test_events_import(client, seeder, utils, app, shared_datadir):
+    external_url = "https://www.harzinfo.de/event/xy"
+    utils.mock_get_request_with_file(
+        external_url, shared_datadir, "harzinfo_biathlon.html"
+    )
+
+    _, admin_unit_id = seeder.setup_base()
+    url = utils.get_url("api_v1_organization_event_import", id=admin_unit_id)
+    response = utils.post_json(url, {"url": external_url})
+
+    utils.assert_response_created(response)
+    assert "id" in response.json
+    event_id = int(response.json["id"])
+
+    with app.app_context():
+        from project.models import Event
+
+        event = Event.query.get(event_id)
+        assert "lädt" in event.description
+
+    # 422
+    external_url = "https://www.harzinfo.de/event/abc"
+    utils.mock_get_request_with_text(external_url, "")
+    response = utils.post_json(url, {"url": external_url})
+    utils.assert_response_unprocessable_entity(response)
+
+
 def test_places(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.upsert_default_event_place(admin_unit_id)

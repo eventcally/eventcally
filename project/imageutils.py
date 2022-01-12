@@ -1,4 +1,5 @@
 import base64
+import math
 import re
 from io import BytesIO
 
@@ -43,6 +44,19 @@ def get_bytes_from_image(image: PIL.Image) -> bytes:
     imgByteArr = BytesIO()
     image.save(imgByteArr, format=format)
     return imgByteArr.getvalue()
+
+
+def resize_image_to_min(image: PIL.Image) -> PIL.Image:
+    if image.width >= min_image_size or image.height >= min_image_size:
+        return image
+
+    ratio = max(min_image_size / image.width, min_image_size / image.height)
+    width = int(math.ceil(image.width * ratio))
+    height = int(math.ceil(image.height * ratio))
+    format = image.format
+    result = image.resize((width, height), PIL.Image.LANCZOS)
+    result.format = format
+    return result
 
 
 def resize_image_to_max(image: PIL.Image):

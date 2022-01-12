@@ -6,6 +6,7 @@ from sqlalchemy.sql import desc, func
 
 from project import app, db
 from project.access import (
+    access_or_401,
     admin_unit_suggestions_enabled_or_404,
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_manage,
@@ -303,6 +304,19 @@ def manage_admin_unit_custom_widgets(id, path=None):
         "manage/custom_widgets.html",
         admin_unit=admin_unit,
         full_height=full_height,
+    )
+
+
+@app.route("/manage/admin_unit/<int:id>/events/import")
+@auth_required()
+def manage_admin_unit_events_import(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    access_or_401(admin_unit, "event:create")
+    set_current_admin_unit(admin_unit)
+
+    return render_template(
+        "manage/events_vue.html",
+        admin_unit=admin_unit,
     )
 
 

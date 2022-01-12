@@ -114,6 +114,8 @@
         errors: {
           uniqueViolation:
             "An entry with the entered values ​​already exists. Duplicate entries are not allowed.",
+          unprocessableEntity:
+            "The request was well-formed but was unable to be followed due to semantic errors.",
         },
         toast: {
           errorTitle: "Error",
@@ -155,6 +157,7 @@
           size: "The {_field_} field size must be less than {size}KB",
           double: "The {_field_} field must be a valid decimal",
           uniqueOrganizationName: "Name is already taken",
+          url: "The {_field_} field must be a valid URL",
         },
       },
     },
@@ -222,6 +225,8 @@
         errors: {
           uniqueViolation:
             "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte Einträge sind nicht erlaubt.",
+          unprocessableEntity:
+            "Die Anfrage konnte aufgrund von semantischen Fehlern nicht beantwortet werden.",
         },
         toast: {
           errorTitle: "Fehler",
@@ -261,6 +266,7 @@
           size: "{_field_} muss kleiner als {size}KB sein",
           double: "Das Feld {_field_} muss eine gültige Dezimalzahl sein",
           uniqueOrganizationName: "Der Name ist bereits vergeben",
+          url: "Das Feld {_field_} muss eine gültige URL sein",
         },
       },
     },
@@ -296,6 +302,16 @@
     }
   }, {
     immediate: false
+  });
+
+  VeeValidate.extend('url', {
+    validate: value => {
+      if (value) {
+        return /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(value);
+      }
+
+      return false;
+    }
   });
 
   {% block vue_routes %}
@@ -384,7 +400,7 @@
         const status = error && error.response && error.response.status;
         let message = error.message || error;
 
-        if (status == 400) {
+        if (status == 400 || status == 422) {
           message =
             (error &&
               error.response &&
@@ -399,6 +415,9 @@
 
           if (errorName == "Unique Violation") {
             message = this.$t("shared.errors.uniqueViolation");
+          }
+          else if (errorName == "Unprocessable Entity") {
+            message = this.$t("shared.errors.unprocessableEntity");
           }
         }
 

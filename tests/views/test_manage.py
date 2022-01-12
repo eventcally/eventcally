@@ -209,3 +209,10 @@ def test_admin_unit_custom_widgets(client, seeder, utils):
 
     url = utils.get_url("manage_admin_unit_custom_widgets", id=admin_unit_id)
     utils.get_ok(url)
+
+
+def test_admin_unit_events_import(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("manage_admin_unit_events_import", id=admin_unit_id)
+    utils.get_ok(url)

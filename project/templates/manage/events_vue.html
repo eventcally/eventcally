@@ -1,0 +1,22 @@
+{% extends "layout_vue.html" %}
+
+{%- block title -%}
+{{ _('Events') }}
+{%- endblock -%}
+
+{% block component_scripts %}
+<script src="{{ url_for('static', filename='vue/events/import.vue.js')}}"></script>
+{% endblock %}
+
+{% block component_definitions %}
+Vue.component("EventImport", EventImport);
+{% endblock %}
+
+{% block vue_routes %}
+const routes = [
+  {
+    path: "/manage/admin_unit/:admin_unit_id/events/import",
+    component: EventImport,
+  },
+];
+{% endblock %}

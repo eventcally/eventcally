@@ -1,3 +1,4 @@
+from flask import abort, request
 from flask_apispec import doc, marshal_with, use_kwargs
 from flask_babelex import gettext
 from sqlalchemy import and_
@@ -20,6 +21,7 @@ from project.api.custom_widget.schemas import (
 from project.api.event.resources import api_can_read_private_events
 from project.api.event.schemas import (
     EventIdSchema,
+    EventImportRequestSchema,
     EventListRequestSchema,
     EventListResponseSchema,
     EventPostRequestSchema,
@@ -84,6 +86,7 @@ from project.services.admin_unit import (
 )
 from project.services.event import get_event_dates_query, get_events_query, insert_event
 from project.services.event_search import EventSearchParams
+from project.services.importer.event_importer import EventImporter
 from project.services.reference import (
     get_reference_incoming_query,
     get_reference_outgoing_query,
@@ -174,6 +177,30 @@ class OrganizationEventListResource(BaseResource):
         event = self.create_instance(
             EventPostRequestSchema, admin_unit_id=admin_unit.id
         )
+        insert_event(event)
+        db.session.commit()
+
+        return event, 201
+
+
+class OrganizationEventImportResource(BaseResource):
+    @doc(summary="Import event for organization", tags=["Organizations", "Events"])
+    @use_kwargs(EventImportRequestSchema, location="json", apply=False)
+    @marshal_with(EventIdSchema, 201)
+    @require_api_access("event:write")
+    def post(self, id, **kwargs):
+        admin_unit = AdminUnit.query.get_or_404(id)
+        access_or_401(admin_unit, "event:create")
+
+        import_request = EventImportRequestSchema().load(request.json)
+
+        try:
+            importer = EventImporter(admin_unit.id)
+            event = importer.load_event_from_url(import_request["url"])
+        except Exception:
+            abort(422)
+
+        event.public_status = import_request["public_status"]
         insert_event(event)
         db.session.commit()
 
@@ -480,6 +507,11 @@ add_api_resource(
     OrganizationEventListResource,
     "/organizations/<int:id>/events",
     "api_v1_organization_event_list",
+)
+add_api_resource(
+    OrganizationEventImportResource,
+    "/organizations/<int:id>/events/import",
+    "api_v1_organization_event_import",
 )
 add_api_resource(
     OrganizationEventListListResource,

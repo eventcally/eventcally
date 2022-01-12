@@ -58,8 +58,8 @@ def client(app, db):
 
 
 @pytest.fixture
-def utils(client, app, mocker):
-    return UtilActions(client, app, mocker)
+def utils(client, app, mocker, requests_mock):
+    return UtilActions(client, app, mocker, requests_mock)
 
 
 @pytest.fixture

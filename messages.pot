@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2021 ORGANIZATION
+# Copyright (C) 2022 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-12-30 15:28+0100\n"
+"POT-Creation-Date: 2022-01-11 23:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -189,33 +189,33 @@ msgstr ""
 msgid "."
 msgstr ""
 
-#: project/api/__init__.py:84
+#: project/api/__init__.py:85
 msgid "message"
 msgstr ""
 
-#: project/api/organization/resources.py:371
+#: project/api/organization/resources.py:399
 #: project/views/admin_unit_member_invitation.py:85
 msgid "You have received an invitation"
 msgstr ""
 
-#: project/forms/admin.py:10 project/templates/layout.html:312
+#: project/forms/admin.py:10 project/templates/layout.html:313
 #: project/views/root.py:37
 msgid "Terms of service"
 msgstr ""
 
-#: project/forms/admin.py:11 project/templates/layout.html:316
+#: project/forms/admin.py:11 project/templates/layout.html:317
 #: project/views/root.py:45
 msgid "Legal notice"
 msgstr ""
 
 #: project/forms/admin.py:12 project/templates/_macros.html:1392
-#: project/templates/layout.html:320
+#: project/templates/layout.html:321
 #: project/templates/widget/event_suggestion/create.html:204
 #: project/views/admin_unit.py:73 project/views/root.py:53
 msgid "Contact"
 msgstr ""
 
-#: project/forms/admin.py:13 project/templates/layout.html:324
+#: project/forms/admin.py:13 project/templates/layout.html:325
 #: project/views/root.py:61
 msgid "Privacy"
 msgstr ""
@@ -1049,7 +1049,7 @@ msgstr ""
 #: project/templates/_macros.html:489 project/templates/_macros.html:649
 #: project/templates/admin_unit/create.html:28
 #: project/templates/admin_unit/update.html:29
-#: project/templates/layout.html:260
+#: project/templates/layout.html:261
 msgid "Organization"
 msgstr ""
 
@@ -1350,6 +1350,7 @@ msgstr ""
 #: project/templates/layout.html:175 project/templates/layout.html:219
 #: project/templates/manage/events.html:6
 #: project/templates/manage/events.html:41
+#: project/templates/manage/events_vue.html:4
 msgid "Events"
 msgstr ""
 
@@ -1367,7 +1368,7 @@ msgstr ""
 msgid "Planing"
 msgstr ""
 
-#: project/templates/layout.html:187 project/templates/layout.html:274
+#: project/templates/layout.html:187 project/templates/layout.html:275
 #: project/templates/oauth2_client/list.html:10
 #: project/templates/oauth2_client/read.html:10
 #: project/templates/oauth2_token/list.html:10 project/templates/profile.html:4
@@ -1396,63 +1397,67 @@ msgstr ""
 msgid "Create event"
 msgstr ""
 
-#: project/templates/layout.html:228
+#: project/templates/layout.html:227
+msgid "Import event"
+msgstr ""
+
+#: project/templates/layout.html:229
 #: project/templates/manage/event_lists.html:4
 msgid "Event lists"
 msgstr ""
 
-#: project/templates/layout.html:231
+#: project/templates/layout.html:232
 msgid "Review suggestions"
 msgstr ""
 
-#: project/templates/layout.html:241
+#: project/templates/layout.html:242
 #: project/templates/manage/references_incoming.html:5
 #: project/templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr ""
 
-#: project/templates/layout.html:247
+#: project/templates/layout.html:248
 #: project/templates/manage/references_incoming.html:9
 msgid "Incoming references"
 msgstr ""
 
-#: project/templates/layout.html:248
+#: project/templates/layout.html:249
 #: project/templates/manage/references_outgoing.html:9
 msgid "Outgoing references"
 msgstr ""
 
-#: project/templates/layout.html:250
+#: project/templates/layout.html:251
 #: project/templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
 msgstr ""
 
-#: project/templates/layout.html:255
+#: project/templates/layout.html:256
 #: project/templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
 msgstr ""
 
-#: project/templates/layout.html:263 project/templates/manage/organizers.html:5
+#: project/templates/layout.html:264 project/templates/manage/organizers.html:5
 #: project/templates/manage/organizers.html:9
 msgid "Organizers"
 msgstr ""
 
 #: project/templates/event_place/list.html:3
-#: project/templates/event_place/list.html:7 project/templates/layout.html:264
+#: project/templates/event_place/list.html:7 project/templates/layout.html:265
 #: project/templates/manage/places.html:5
 #: project/templates/manage/places.html:9
 msgid "Places"
 msgstr ""
 
-#: project/templates/layout.html:266 project/templates/manage/members.html:5
+#: project/templates/layout.html:267 project/templates/manage/members.html:5
 #: project/templates/manage/members.html:28
 msgid "Members"
 msgstr ""
 
-#: project/templates/layout.html:267 project/templates/manage/relations.html:4
+#: project/templates/layout.html:268 project/templates/manage/relations.html:4
 msgid "Relations"
 msgstr ""
 
-#: project/templates/layout.html:269
+#: project/templates/layout.html:270
 #: project/templates/manage/admin_units.html:17
 #: project/templates/manage/organization_invitations.html:4
 #: project/templates/user/organization_invitations.html:4
@@ -1464,27 +1469,27 @@ msgstr ""
 #: project/templates/admin/settings.html:8
 #: project/templates/admin_unit/update.html:6
 #: project/templates/admin_unit/update.html:23
-#: project/templates/layout.html:271 project/templates/manage/widgets.html:11
+#: project/templates/layout.html:272 project/templates/manage/widgets.html:11
 #: project/templates/manage/widgets.html:15 project/templates/profile.html:19
 msgid "Settings"
 msgstr ""
 
-#: project/templates/layout.html:272
+#: project/templates/layout.html:273
 #: project/templates/manage/custom_widgets.html:13
 msgid "Custom widgets"
 msgstr ""
 
-#: project/templates/layout.html:273 project/templates/manage/reviews.html:10
+#: project/templates/layout.html:274 project/templates/manage/reviews.html:10
 #: project/templates/manage/widgets.html:5
 #: project/templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr ""
 
-#: project/templates/layout.html:284
+#: project/templates/layout.html:285
 msgid "Switch organization"
 msgstr ""
 
-#: project/templates/developer/read.html:4 project/templates/layout.html:334
+#: project/templates/developer/read.html:4 project/templates/layout.html:335
 #: project/templates/profile.html:29
 msgid "Developer"
 msgstr ""
@@ -1957,7 +1962,7 @@ msgstr ""
 msgid "Organization successfully updated"
 msgstr ""
 
-#: project/views/admin.py:68 project/views/manage.py:346
+#: project/views/admin.py:68 project/views/manage.py:360
 msgid "Settings successfully updated"
 msgstr ""
 
@@ -2015,27 +2020,27 @@ msgstr ""
 msgid "Invitation successfully deleted"
 msgstr ""
 
-#: project/views/event.py:178
+#: project/views/event.py:180
 msgid "Event successfully published"
 msgstr ""
 
-#: project/views/event.py:180
+#: project/views/event.py:182
 msgid "Draft successfully saved"
 msgstr ""
 
-#: project/views/event.py:223
+#: project/views/event.py:225
 msgid "Event successfully updated"
 msgstr ""
 
-#: project/views/event.py:249
+#: project/views/event.py:251
 msgid "Event successfully deleted"
 msgstr ""
 
-#: project/views/event.py:408
+#: project/views/event.py:410
 msgid "Referenced event changed"
 msgstr ""
 
-#: project/views/event.py:431
+#: project/views/event.py:433
 msgid "New event report"
 msgstr ""
 
