@@ -1445,7 +1445,7 @@ msgstr "Veranstaltung erstellen"
 
 #: project/templates/layout.html:227
 msgid "Import event"
-msgstr "Veranstaltung imporieren"
+msgstr "Veranstaltung imporierten"
 
 #: project/templates/layout.html:229
 #: project/templates/manage/event_lists.html:4

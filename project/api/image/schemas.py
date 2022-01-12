@@ -27,7 +27,9 @@ class ImageBaseSchemaMixin(object):
 class ImageSchema(ImageModelSchema, ImageBaseSchemaMixin):
     image_url = fields.Method(
         "get_image_url",
-        metadata={"description": "Image URL. Append query argument s for size."},
+        metadata={
+            "description": "Image URL. Append query argument s for size (Smaller side in pixels)."
+        },
     )
 
     def get_image_url(self, image):
