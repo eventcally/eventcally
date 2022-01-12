@@ -50,17 +50,18 @@ class RestApi(Api):
             data["message"] = err.description
             code = err.code
 
-            if (
-                isinstance(err, UnprocessableEntity)
-                and err.exc
-                and isinstance(err.exc, ValidationError)
-            ):
+            if isinstance(err, UnprocessableEntity):
                 data["name"] = err.name
                 data["message"] = err.description
                 code = err.code
                 schema = UnprocessableEntityResponseSchema()
-                self.fill_validation_data(err.exc, data)
 
+                if (
+                    hasattr(err, "exc")
+                    and err.exc
+                    and isinstance(err.exc, ValidationError)
+                ):
+                    self.fill_validation_data(err.exc, data)
             else:
                 schema = ErrorResponseSchema()
         elif isinstance(err, ValidationError):

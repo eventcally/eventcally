@@ -333,3 +333,17 @@ class EventReportPostSchema(marshmallow.Schema):
         required=True,
         validate=validate.Length(min=20, max=1000),
     )
+
+
+class EventImportRequestSchema(marshmallow.Schema):
+    url = fields.URL(
+        required=True,
+        metadata={
+            "description": "A link to an external website containing more information about the event."
+        },
+    )
+    public_status = EnumField(
+        PublicStatus,
+        missing=PublicStatus.published,
+        metadata={"description": "Public status of the event."},
+    )

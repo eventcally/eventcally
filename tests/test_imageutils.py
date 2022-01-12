@@ -13,6 +13,18 @@ def test_resize_image_to_max():
     assert image.height == max_image_size
 
 
+def test_resize_image_to_min():
+    import PIL
+
+    from project.imageutils import min_image_size, resize_image_to_min
+
+    image = PIL.Image.new("RGB", (min_image_size - 1, min_image_size - 1))
+    image = resize_image_to_min(image)
+
+    assert image.width == min_image_size
+    assert image.height == min_image_size
+
+
 def test_validate_image_too_small():
     import PIL
 
