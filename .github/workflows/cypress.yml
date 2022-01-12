@@ -68,6 +68,8 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           record: true
+          parallel: true
+          group: "Mobile"
           wait-on: "http://127.0.0.1:5001"
           config-file: cypress/config/mobile.json
           config: baseUrl=http://127.0.0.1:5001
@@ -138,6 +140,8 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           record: true
+          parallel: true
+          group: "Desktop"
           wait-on: "http://127.0.0.1:5001"
           config-file: cypress/config/desktop.json
           config: baseUrl=http://127.0.0.1:5001
