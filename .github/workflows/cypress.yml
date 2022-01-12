@@ -8,11 +8,11 @@ env:
 
 jobs:
   # Label of the container job
-  cypress:
+  cypress-mobile:
     strategy:
       fail-fast: false
       matrix:
-        config: ["desktop", "mobile"]
+        config: [1, 2, 3, 4]
 
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
@@ -68,8 +68,83 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           record: true
+          parallel: true
+          group: "Mobile"
           wait-on: "http://127.0.0.1:5001"
-          config-file: cypress/config/${{ matrix.config }}.json
+          config-file: cypress/config/mobile.json
+          config: baseUrl=http://127.0.0.1:5001
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost/gsevpt_tests
+          TESTING: 1
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # TODO: Optimize because this is just a copy of the first job
+  cypress-desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [1, 2, 3, 4]
+
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-latest
+
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: mdillon/postgis
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gsevpt_tests
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Start server
+        run: |
+          flask test create-all
+          flask test seed
+          gunicorn -b 127.0.0.1:5001 -w 1 project:app --daemon
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost/gsevpt_tests
+          TESTING: 1
+          AUTHLIB_INSECURE_TRANSPORT: 1
+          JWT_PRIVATE_KEY: '-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAxMl+DFiwhnoWRiVPcEIstAW66VY39JNo1TG1U10OfaFMuWI8\njcq5VfSRPBdXLRqAJwZi4CZCwOglEvURArf1QTxVBdLpDW75tD6fNOHaHKvX5WPR\nMGC/7Rfo9K/OgEWnQplc/0Me9D8MzTpIA56Uo/H/DE82kGWOMcWdqIA40pHaCZ7i\nWIoD7pS6DcRDt/8o0+IQqhMC4SrjL2HelzXHpg4glgY+GLbvTPOfV/OlFCAWDK3o\nN3wMBYS+TFP2Q/5pXfPCajIrSfF7dHyZU2d/K26A8naKcSUYuJzA8GBXkPx8YObt\nOS5SYYeD5GeGsX3IsVVyk3WqMVN7NXvRqmNjqQIDAQABAoIBABYoJbQYLFAH4Qgm\n3UnjeYsPdhsdpRE5o70VargnKyGEDtJ0uCKy56lA7zVX323ppPI/6tQYGr4DpWD8\nDN1Efy3IMD6Gn8zuaNkdj+lxYJCH3LgsQ/pxekqkvYsHXHXe4dVC1VC8avjPPI7C\n+CbILS5EahYluRwLAzahbH3zafJzXK6qxVCaPBn1QAG/b5FhGCoSSmar+6gxypX1\nIt977gMaZ9sbaRCfQ2BYEeRyWcBvPPWnM1q87Q/s4dFcHplE6ADLtTOAtFzwKne+\n0jP8AvcnQ6/vG7lM7epUfZLyPRt+79PIAj1ndtff10vGwVwoVuhGuwumIp7vMxQq\nF8VC5o0CgYEA/escZHgN25mrUlKhaGWmtxIfqreaLKjCc/mc1pMEfnMAVgrcVUu4\nMiAx6/k6o9CUrPtNUuKktAuAZMAN505it2k9wjwmu+snfgwj2oMKHGsss9yJ19Fc\nlKdoHE4QeHMQWnIqqN/lRza/tfUPlMDLY04gxMZR1R7Y7L2Hf2aLxQMCgYEAxmZ7\najpJResNEiSxFldImwBLjuLhqvOzPYDsqBpwB0gQOJtbKuPPzKB6J8guXVi+DHDz\neTKOAm3BQymb2xRuyvrclFi4a1LWFWsTz+PAMXss2h+TjGm1dkAYt/FiSqyuyLY5\n48igJjdH64G2M4w8eN0YUtKvQRqaZ37jFMbR5uMCgYEAkONbrCilH62sCKmF2KBI\nZSY+U5e4rcsOSkcgq3/wjIbqpi5EU5eFX3Tnh5MLVvZqH9q14JnbCbGWbeb5CAe+\nZJH036SbJZelTVN4EfO8DUNKmsc5EKEyhtCPo7cXxuNBbZq/pOU9W0luU1Gmtmbc\np6mpIR9ZCpcziMMNUjEdiCkCgYB8aoP2Z7rPd8lomU3cHrxPR24amri9xbmfVhwS\nhxG93zkc5n/Tc606O2CfVe+NZjs3/hUQ6d0YNM+/WHZ+el/INmzhMonj87yBDfcM\npVw/K2lDGA4lPZ0oHKXjpCHphkTNZUkESSn1DTGyxFMIHGdHvA6m0axJfW9ae73X\np5611QKBgQC/wOD9Wv6IQLR7f5GQSXrlmiCGmUugd3BG7UXrevYzbm48ePyIIa+e\nPaSvTkZR5Ji5XvajSDhYK1/2qmozk6B1pH1M4jqKD80zZOq8mc9q8lZ9fEIxi5wz\nPVHRdVKT+wEsbeQhxqX/RfaqIi1UcBmwhnZKXutXPon/ZIg7iVoo5g==\n-----END RSA PRIVATE KEY-----\n'
+          JWT_PUBLIC_JWKS: '{"keys":[{"kid":"default","kty":"RSA","use":"sig","alg":"RS256","n":"xMl-DFiwhnoWRiVPcEIstAW66VY39JNo1TG1U10OfaFMuWI8jcq5VfSRPBdXLRqAJwZi4CZCwOglEvURArf1QTxVBdLpDW75tD6fNOHaHKvX5WPRMGC_7Rfo9K_OgEWnQplc_0Me9D8MzTpIA56Uo_H_DE82kGWOMcWdqIA40pHaCZ7iWIoD7pS6DcRDt_8o0-IQqhMC4SrjL2HelzXHpg4glgY-GLbvTPOfV_OlFCAWDK3oN3wMBYS-TFP2Q_5pXfPCajIrSfF7dHyZU2d_K26A8naKcSUYuJzA8GBXkPx8YObtOS5SYYeD5GeGsX3IsVVyk3WqMVN7NXvRqmNjqQ","e":"AQAB"}]}'
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          record: true
+          parallel: true
+          group: "Desktop"
+          wait-on: "http://127.0.0.1:5001"
+          config-file: cypress/config/desktop.json
           config: baseUrl=http://127.0.0.1:5001
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost/gsevpt_tests
