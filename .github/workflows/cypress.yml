@@ -69,6 +69,7 @@ jobs:
         with:
           browser: chrome
           record: true
+          video: false
           parallel: true
           group: "Mobile"
           wait-on: "http://127.0.0.1:5001"
@@ -143,6 +144,7 @@ jobs:
         with:
           browser: chrome
           record: true
+          video: false
           parallel: true
           group: "Desktop"
           wait-on: "http://127.0.0.1:5001"
