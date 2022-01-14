@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [1, 2, 3, 4]
+        config: [1, 2, 3]
 
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
@@ -67,6 +67,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          browser: chrome
           record: true
           parallel: true
           group: "Mobile"
@@ -85,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [1, 2, 3, 4]
+        config: [1, 2, 3]
 
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
@@ -140,6 +141,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          browser: chrome
           record: true
           parallel: true
           group: "Desktop"
