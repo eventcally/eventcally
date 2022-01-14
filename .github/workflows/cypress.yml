@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [1, 2, 3, 4]
+        config: [1, 2, 3]
 
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
@@ -69,7 +69,6 @@ jobs:
         with:
           browser: chrome
           record: true
-          video: false
           parallel: true
           group: "Mobile"
           wait-on: "http://127.0.0.1:5001"
@@ -87,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: [1, 2, 3, 4]
+        config: [1, 2, 3]
 
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
@@ -144,7 +143,6 @@ jobs:
         with:
           browser: chrome
           record: true
-          video: false
           parallel: true
           group: "Desktop"
           wait-on: "http://127.0.0.1:5001"
