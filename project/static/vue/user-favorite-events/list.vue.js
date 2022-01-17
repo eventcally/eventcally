@@ -9,22 +9,24 @@ const UserFavoriteEventList = {
               <button type="button" class="btn btn-outline-secondary" @click="loadData()"><i class="fa fa-sync-alt"></i></button>
           </div>
 
-          <div v-for="event in items">
-            <div class="card mb-3">
-                <div>
-                    <img v-if="event.photo" :src="url_for_image(event.photo, 500)" class="card-img-top" style="object-fit: cover; height: 40vw;" />
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title"><a href="#" @click.stop.prevent="viewItem(event.id)">{{ event.name }}</a> <event-warning-pills :event="event"></event-warning-pills></h5>
-                  <h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> {{ $root.render_event_date_instance(event.date_definitions[0].start, event.date_definitions[0].allday) }}</h6>
-                  <p class="card-text" v-if="event.description" v-html="event.description.truncate(100, true)"></p>
-                  <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ event.organization.name }}</small>
-                  <small v-if="event.organizer.name != event.organization.name" class="text-muted mr-2"><i class="fa fa-server"></i> {{ event.organizer.name }}</small>
-                  <small class="text-muted"><i class="fa fa-map-marker"></i> {{ event.place.name }}</small>
-                </div>
-                <div class="card-footer">
-                  <a href="#" @click.stop.prevent="removeItem(event.id)" class="card-link">{{ $t("shared.delete") }}&hellip;</a>
-                </div>
+          <div style="max-width: 400px;">
+            <div v-for="event in items">
+              <div class="card mb-3">
+                  <div>
+                      <img v-if="event.photo" :src="$root.url_for_image(event.photo, 500)" class="card-img-top" style="object-fit: cover; height: 12vw;" />
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title"><a href="#" @click.stop.prevent="viewItem(event.id)">{{ event.name }}</a> <event-warning-pills :event="event"></event-warning-pills></h5>
+                    <h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> {{ $root.render_event_date_instance(event.date_definitions[0].start, event.date_definitions[0].allday) }}</h6>
+                    <p class="card-text" v-if="event.description" v-html="event.description.truncate(100, true)"></p>
+                    <small class="text-muted mr-2"><i class="fa fa-database"></i> {{ event.organization.name }}</small>
+                    <small v-if="event.organizer.name != event.organization.name" class="text-muted mr-2"><i class="fa fa-server"></i> {{ event.organizer.name }}</small>
+                    <small class="text-muted"><i class="fa fa-map-marker"></i> {{ event.place.name }}</small>
+                  </div>
+                  <div class="card-footer">
+                    <a href="#" @click.stop.prevent="removeItem(event.id)" class="card-link">{{ $t("shared.delete") }}&hellip;</a>
+                  </div>
+              </div>
             </div>
           </div>
 
