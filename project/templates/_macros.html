@@ -523,7 +523,7 @@
 {{ render_fax_prop(organizer.fax) }}
 {% endmacro %}
 
-{% macro render_event_props_seo(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None) %}
+{% macro render_event_props_seo(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None, current_user=None) %}
 <div class="w-normal mx-auto">
 
   {% if event.photo_id %}
@@ -571,7 +571,7 @@
         <div class="mt-4" style="white-space:pre-wrap;">{{ event.description|urlize(nofollow=True, target='_blank', rel="nofollow") }}</div>
       {% endif %}
 
-      {% if share_links or calendar_links %}
+      {% if share_links or calendar_links or (current_user and current_user.is_authenticated) %}
       <div class="mt-4">
         {% if share_links %}
           <button type="button" class="btn btn-outline-secondary mr-1 mb-1" data-toggle="modal" data-target="#shareModal"><i class="fa fa-share-alt"></i> {{ _('Share') }}</button>
@@ -580,6 +580,9 @@
         {% if calendar_links %}
           <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#calendarExportModal"><i class="fa fa-calendar"></i> {{ _('Add to calendar') }}</button>
           {{ render_calendar_export_modal(calendar_links) }}
+        {% endif %}
+        {% if current_user and current_user.is_authenticated %}
+          <button type="button" class="btn btn-outline-secondary mb-1 toggle-user-event-favorite" data-event-id="{{ event.id }}"><i class="{%if event.is_favored_by_current_user() %}fa{% else %}far{% endif %} fa-bookmark"></i> {{ _('Favorite events') }}</button>
         {% endif %}
       </div>
       {% endif %}

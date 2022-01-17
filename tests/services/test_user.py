@@ -13,3 +13,30 @@ def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app):
         admin = admins[0]
         assert admin.id == admin_id
         assert admin.email == "admin@test.de"
+
+
+def test_add_favorite_event(client, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.services.user import add_favorite_event, get_favorite_event
+
+        assert add_favorite_event(user_id, event_id)
+        assert add_favorite_event(user_id, event_id) is False
+
+        favorite = get_favorite_event(user_id, event_id)
+        assert favorite is not None
+
+
+def test_remove_favorite_event(client, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+    seeder.add_favorite_event(user_id, event_id)
+
+    with app.app_context():
+        from project.services.user import has_favorite_event, remove_favorite_event
+
+        assert remove_favorite_event(user_id, event_id)
+        assert remove_favorite_event(user_id, event_id) is False
+        assert has_favorite_event(user_id, event_id) is False

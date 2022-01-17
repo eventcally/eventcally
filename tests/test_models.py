@@ -374,3 +374,14 @@ def test_event_list_deletion(client, app, db, seeder):
 
         event_list_b = EventList.query.get(event_list_b_id)
         assert len(event_list_b.events) == 0
+
+
+def test_event_is_favored_by_current_user(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.models import Event
+
+        event = Event.query.get(event_id)
+        assert event.is_favored_by_current_user() is False

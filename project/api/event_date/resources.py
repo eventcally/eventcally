@@ -2,6 +2,7 @@ from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy import and_
 from sqlalchemy.orm import defaultload, lazyload
 
+from project.access import login_api_user
 from project.api import add_api_resource
 from project.api.event.resources import api_can_read_event_or_401
 from project.api.event_date.schemas import (
@@ -56,7 +57,9 @@ class EventDateSearchResource(BaseResource):
     @doc(summary="Search for event dates", tags=["Event Dates"])
     @use_kwargs(EventDateSearchRequestSchema, location=("query"))
     @marshal_with(EventDateSearchResponseSchema)
+    @require_oauth(optional=True)
     def get(self, **kwargs):
+        login_api_user()
         params = EventSearchParams()
         params.load_from_request()
         pagination = get_event_dates_query(params).paginate()

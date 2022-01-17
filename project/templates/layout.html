@@ -185,6 +185,7 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
                       <a class="dropdown-item" href="{{ url_for('manage_admin_units') }}">{{ _('Organizations') }}</a>
                       <a class="dropdown-item" href="{{ url_for('profile') }}">{{ _('Profile') }}</a>
+                      <a class="dropdown-item" href="{{ url_for('user_favorite_events') }}">{{ _('Favorite events') }}</a>
 
                       {% if current_user.has_role('admin') %}
                       <a class="dropdown-item" href="{{ url_for('admin') }}">{{ _('Admin') }}</a>

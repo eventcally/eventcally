@@ -127,3 +127,15 @@ def test_search_oneDay(client, seeder, utils):
     response = utils.get_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["event"]["id"] == event_id
+
+
+def test_search_is_favored(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+    seeder.add_favorite_event(user_id, event_id)
+
+    url = utils.get_url("api_v1_event_date_search")
+    response = utils.get_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["event"]["id"] == event_id
+    assert response.json["items"][0]["event"]["is_favored"]

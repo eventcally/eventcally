@@ -1,0 +1,22 @@
+{% extends "layout_vue.html" %}
+
+{%- block title -%}
+{{ _('Favorite events') }}
+{%- endblock -%}
+
+{% block component_scripts %}
+<script src="{{ url_for('static', filename='vue/user-favorite-events/list.vue.js')}}"></script>
+{% endblock %}
+
+{% block component_definitions %}
+Vue.component("UserFavoriteEventList", UserFavoriteEventList);
+{% endblock %}
+
+{% block vue_routes %}
+const routes = [
+  {
+    path: "/user/favorite-events",
+    component: UserFavoriteEventList,
+  },
+];
+{% endblock %}

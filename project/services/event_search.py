@@ -28,6 +28,7 @@ class EventSearchParams(object):
         self.weekday = None
         self.sort = None
         self.status = None
+        self.favored_by_user_id = None
 
     @property
     def date_from(self):

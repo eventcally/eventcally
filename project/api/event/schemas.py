@@ -1,3 +1,4 @@
+from flask_security import current_user
 from marshmallow import fields, validate
 from marshmallow.decorators import pre_load
 from marshmallow_enum import EnumField
@@ -147,7 +148,22 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
     )
 
 
-class EventSchema(EventIdSchema, EventBaseSchemaMixin):
+class EventCurrentUserMixin(object):
+    is_favored = fields.Method(
+        "get_is_favored",
+        metadata={"description": "True, if event is favored by current user"},
+    )
+
+    def get_is_favored(self, event):
+        if not current_user or not current_user.is_authenticated:
+            return False
+
+        from project.services.user import has_favorite_event
+
+        return has_favorite_event(current_user.id, event.id)
+
+
+class EventSchema(EventIdSchema, EventBaseSchemaMixin, EventCurrentUserMixin):
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
     organizer = fields.Nested(OrganizerRefSchema)
     place = fields.Nested(PlaceRefSchema, attribute="event_place")
@@ -175,7 +191,7 @@ class EventRefSchema(EventIdSchema):
     name = marshmallow.auto_field()
 
 
-class EventSearchItemSchema(EventRefSchema):
+class EventSearchItemSchema(EventRefSchema, EventCurrentUserMixin):
     description = marshmallow.auto_field()
     date_definitions = fields.List(fields.Nested(EventDateDefinitionSchema))
     photo = fields.Nested(ImageSchema)
@@ -194,6 +210,16 @@ class EventListRequestSchema(PaginationRequestSchema):
 
 
 class EventListResponseSchema(PaginationResponseSchema):
+    items = fields.List(
+        fields.Nested(EventRefSchema), metadata={"description": "Events"}
+    )
+
+
+class UserFavoriteEventListRequestSchema(PaginationRequestSchema):
+    pass
+
+
+class UserFavoriteEventListResponseSchema(PaginationResponseSchema):
     items = fields.List(
         fields.Nested(EventRefSchema), metadata={"description": "Events"}
     )
