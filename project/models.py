@@ -193,6 +193,11 @@ class User(db.Model, UserMixin):
     roles = relationship(
         "Role", secondary="roles_users", backref=backref("users", lazy="dynamic")
     )
+    favorite_events = relationship(
+        "Event",
+        secondary="user_favoriteevents",
+        backref=backref("favored_by_users", lazy=True),
+    )
 
     def get_user_id(self):
         return self.id
@@ -1014,6 +1019,14 @@ class Event(db.Model, TrackableMixin, EventMixin):
     def has_multiple_dates(self) -> bool:
         return self.is_recurring or len(self.date_definitions) > 1
 
+    def is_favored_by_current_user(self) -> bool:
+        if not current_user or not current_user.is_authenticated:
+            return False
+
+        from project.services.user import has_favorite_event
+
+        return has_favorite_event(current_user.id, self.id)
+
     def validate(self):
         if self.organizer and self.organizer.admin_unit_id != self.admin_unit_id:
             raise make_check_violation("Invalid organizer.")
@@ -1141,6 +1154,14 @@ class EventEventLists(db.Model):
     id = Column(Integer(), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
     list_id = db.Column(db.Integer, db.ForeignKey("eventlist.id"), nullable=False)
+
+
+class UserFavoriteEvents(db.Model):
+    __tablename__ = "user_favoriteevents"
+    __table_args__ = (UniqueConstraint("user_id", "event_id"),)
+    id = Column(Integer(), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
 
 
 class Analytics(db.Model):

@@ -32,6 +32,7 @@ from project.models import (
     Image,
     Location,
     PublicStatus,
+    UserFavoriteEvents,
     sanitize_allday_instance,
 )
 from project.utils import get_pending_changes, get_place_str
@@ -92,6 +93,16 @@ def fill_event_filter(event_filter, params):
         event_filter = and_(
             event_filter,
             func.ST_DistanceSphere(Location.coordinate, point) <= params.distance,
+        )
+
+    if params.favored_by_user_id:
+        user_favorite_exists = UserFavoriteEvents.query.filter(
+            UserFavoriteEvents.event_id == Event.id,
+            UserFavoriteEvents.user_id == params.favored_by_user_id,
+        ).exists()
+        event_filter = and_(
+            event_filter,
+            user_favorite_exists,
         )
 
     return event_filter

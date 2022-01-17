@@ -28,6 +28,7 @@
 <script src="{{ url_for('static', filename='vue/common/validated-input.vue.js')}}"></script>
 <script src="{{ url_for('static', filename='vue/common/validated-switch.vue.js')}}"></script>
 <script src="{{ url_for('static', filename='vue/common/validated-textarea.vue.js')}}"></script>
+<script src="{{ url_for('static', filename='vue/common/event-warning-pills.vue.js')}}"></script>
 
 {% block component_scripts %}
 {% endblock %}
@@ -46,6 +47,7 @@
   Vue.component("validated-input", ValidatedInput);
   Vue.component("validated-switch", ValidatedSwitch);
   Vue.component("validated-textarea", ValidatedTextarea);
+  Vue.component("event-warning-pills", EventWarningPills);
 
   {% block component_definitions %}
   {% endblock %}
@@ -452,6 +454,18 @@
       },
       goBack(fallbackPath) {
         window.history.length > 1 ? this.$router.go(-1) : this.$router.push({ path: fallbackPath })
+      },
+      render_event_date_instance(value, allday, format = "dd. DD.MM.YYYY LT", alldayFormat = "dd. DD.MM.YYYY") {
+          const instance = moment(value);
+
+          if (allday) {
+              return instance.format(alldayFormat);
+          }
+
+          return instance.format(format);
+      },
+      url_for_image(image, size) {
+          return `${axios.defaults.baseURL}${image.image_url}?s=${size}`
       },
     },
   });

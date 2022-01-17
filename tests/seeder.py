@@ -159,6 +159,20 @@ class Seeder(object):
 
         return invitation_id
 
+    def add_favorite_event(self, user_id, event_id):
+        from project.services.user import add_favorite_event
+
+        with self._app.app_context():
+            if add_favorite_event(user_id, event_id):
+                self._db.session.commit()
+
+    def remove_favorite_event(self, user_id, event_id):
+        from project.services.user import remove_favorite_event
+
+        with self._app.app_context():
+            if remove_favorite_event(user_id, event_id):
+                self._db.session.commit()
+
     def create_admin_unit_member_event_verifier(self, admin_unit_id):
         return self.create_admin_unit_member(admin_unit_id, ["event_verifier"])
 

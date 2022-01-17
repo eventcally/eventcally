@@ -28,3 +28,9 @@ def user_organization_invitation(id):
 @auth_required()
 def user_organization_invitations(path=None):
     return render_template("user/organization_invitations.html")
+
+
+@app.route("/user/favorite-events")
+@auth_required()
+def user_favorite_events():
+    return render_template("user/favorite_events.html")

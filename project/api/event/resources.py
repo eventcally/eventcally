@@ -80,6 +80,7 @@ class EventResource(BaseResource):
     @marshal_with(EventSchema)
     @require_oauth(optional=True)
     def get(self, id):
+        login_api_user()
         event = get_event_with_details_or_404(id)
         api_can_read_event_or_401(event)
         return event
@@ -163,7 +164,9 @@ class EventSearchResource(BaseResource):
     @doc(summary="Search for events", tags=["Events"])
     @use_kwargs(EventSearchRequestSchema, location=("query"))
     @marshal_with(EventSearchResponseSchema)
+    @require_oauth(optional=True)
     def get(self, **kwargs):
+        login_api_user()
         params = EventSearchParams()
         params.load_from_request()
         pagination = get_events_query(params).paginate()

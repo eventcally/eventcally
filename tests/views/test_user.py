@@ -58,3 +58,10 @@ def test_organization_invitation_list(client, seeder, utils):
 
     url = utils.get_url("user_organization_invitations")
     utils.get_ok(url)
+
+
+def test_user_favorite_events(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("user_favorite_events")
+    utils.get_ok(url)
