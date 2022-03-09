@@ -460,13 +460,15 @@ class LdJsonImporter:
         if isinstance(value, dict):
             result = dict()
             for k, v in value.items():
-                result[k] = self._strip_ld_json(v)
+                if v:
+                    result[k] = self._strip_ld_json(v)
             return result
 
         if isinstance(value, list):
             result = list()
             for elem in value:
-                result.append(self._strip_ld_json(elem))
+                if elem:
+                    result.append(self._strip_ld_json(elem))
             return result
 
         return value
