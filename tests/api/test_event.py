@@ -128,6 +128,14 @@ def test_dates(client, seeder, utils):
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
+    event_id = seeder.create_event(
+        admin_unit_id, recurrence_rule="RRULE:FREQ=DAILY;COUNT=51"
+    )
+    url = utils.get_url("api_v1_event_dates", id=event_id)
+    utils.get_ok(url)
+    url = utils.get_url("api_v1_event_dates", id=event_id, page=2)
+    utils.get_ok(url)
+
 
 def test_dates_myDraft(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_api_access()

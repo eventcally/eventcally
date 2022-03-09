@@ -2,7 +2,7 @@ import pytest
 
 
 # Load more urls:
-# curl -o tests/services/importer/test_event_importer/<filename>.html <URL>
+# curl -o tests/services/importer/data/<filename>.html <URL>
 def test_import(client, seeder, utils, app, shared_datadir, requests_mock):
     _, admin_unit_id = seeder.setup_base()
     seeder.upsert_event_place(admin_unit_id, "MINER'S ROCK")

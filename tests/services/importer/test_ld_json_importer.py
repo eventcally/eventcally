@@ -42,6 +42,14 @@ class TestLdJsonImporter(SubTests):
         event = self._load_event_from_ld_json(manipulate)
         assert event is not None
 
+    def _test_null_organizer_but_author(self):
+        def manipulate(ld_json):
+            ld_json["author"] = ld_json["organizer"]
+            ld_json["organizer"] = [None]
+
+        event = self._load_event_from_ld_json(manipulate)
+        assert event is not None
+
     def _test_no_organizer(self):
         import pytest
 
@@ -90,7 +98,7 @@ class TestLdJsonImporter(SubTests):
             manipulate_json(ld_json)
 
         importer = LdJsonImporter("", "")
-        importer.ld_json = ld_json
+        importer.ld_json = importer._strip_ld_json(ld_json)
         event = importer.load_event_from_ld_json()
 
         return event

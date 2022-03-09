@@ -146,7 +146,7 @@ class EventDatesResource(BaseResource):
     @use_kwargs(EventDateListRequestSchema, location=("query"))
     @marshal_with(EventDateListResponseSchema)
     @require_oauth(optional=True)
-    def get(self, id):
+    def get(self, id, **kwargs):
         event = Event.query.options(
             load_only(Event.id, Event.public_status)
         ).get_or_404(id)
