@@ -337,7 +337,7 @@ class LdJsonImporter:
 
         image = item["image"]
 
-        if isinstance(image, list) and len(image) == 0:
+        if isinstance(image, list) and len(image) == 0:  # pragma: no cover
             return
 
         image_items = image if isinstance(image, list) else [image]
@@ -347,7 +347,7 @@ class LdJsonImporter:
             if isinstance(image_item, str):
                 image_item = {"url": image_item}
 
-            if "url" not in image_item:
+            if "url" not in image_item:  # pragma: no cover
                 continue
 
             try:
