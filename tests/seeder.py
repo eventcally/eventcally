@@ -625,3 +625,39 @@ class Seeder(object):
         return datetime(
             now.year, now.month, now.day, now.hour, now.minute, tzinfo=now.tzinfo
         )
+
+    def create_common_scenario(self):
+        with self._app.app_context():
+            # Admin with Oveda organisation
+            admin_id = self.create_user(
+                "admin@test.de", "MeinPasswortIstDasBeste", admin=True
+            )
+            oveda_admin_unit_id = self.create_admin_unit(
+                admin_id,
+                "Oveda",
+                suggestions_enabled=True,
+                can_create_other=True,
+                can_verify_other=True,
+                verified=False,
+                can_invite_other=True,
+            )
+
+            # User with verified Stadtmarketing organisation
+            user_id = self.create_user("test@test.de", "MeinPasswortIstDasBeste")
+            marketing_admin_unit_id = self.create_admin_unit(
+                user_id,
+                "Stadtmarketing",
+            )
+            self.create_admin_unit_relation(
+                oveda_admin_unit_id,
+                marketing_admin_unit_id,
+                verify=True,
+            )
+            self.create_event(marketing_admin_unit_id)
+
+            # Unverified Verein organisation
+            verein_admin_unit_id = self.create_admin_unit(
+                user_id,
+                "Verein",
+            )
+            self.create_event(verein_admin_unit_id)
