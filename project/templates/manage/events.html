@@ -35,6 +35,7 @@ var vue_app_data = { eventId: 0 };
 {% if not admin_unit.is_verified %}
     <div class="alert alert-warning" role="alert">
       {{ _('The organization is not verified. Events are therefore not publicly visible.') }}
+      <a class="alert-link" href="{{ url_for('manage_admin_unit_verification_requests_outgoing', id=admin_unit.id) }}" role="button">{{ _('Verify organization') }}</a>
     </div>
 {% endif %}
 

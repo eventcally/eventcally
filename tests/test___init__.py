@@ -92,3 +92,7 @@ def test_migration_event_definitions(app, seeder):
 
         for event in events:
             assert len(event.date_definitions) == 1
+
+
+def test_common_scenario(app, seeder):
+    seeder.create_common_scenario()

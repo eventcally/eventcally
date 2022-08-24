@@ -11,10 +11,11 @@ class Seeder(object):
         admin_unit_verified=True,
         email="test@test.de",
         name="Meine Crew",
+        password="MeinPasswortIstDasBeste",
     ):
         user_id = self.create_user(email=email, admin=admin)
         if log_in:
-            self._utils.login()
+            self._utils.login(email, password)
         admin_unit_id = self.create_admin_unit(
             user_id, name=name, verified=admin_unit_verified
         )
@@ -62,8 +63,9 @@ class Seeder(object):
         can_verify_other=False,
         verified=False,
         can_invite_other=True,
+        **kwargs
     ):
-        from project.models import AdminUnit
+        from project.models import AdminUnit, Location
         from project.services.admin_unit import insert_admin_unit_for_user
         from project.services.user import get_user
 
@@ -77,6 +79,13 @@ class Seeder(object):
             admin_unit.can_create_other = can_create_other
             admin_unit.can_verify_other = can_verify_other
             admin_unit.can_invite_other = can_invite_other
+
+            location = Location()
+            location.postalCode = "12345"
+            location.city = "City"
+            admin_unit.location = location
+
+            admin_unit.__dict__.update(kwargs)
             insert_admin_unit_for_user(admin_unit, user)
             self._db.session.commit()
             admin_unit_id = admin_unit.id
@@ -625,3 +634,42 @@ class Seeder(object):
         return datetime(
             now.year, now.month, now.day, now.hour, now.minute, tzinfo=now.tzinfo
         )
+
+    def create_common_scenario(self):
+        with self._app.app_context():
+            # Admin with Oveda organisation
+            admin_id = self.create_user(
+                "admin@test.de", "MeinPasswortIstDasBeste", admin=True
+            )
+            oveda_admin_unit_id = self.create_admin_unit(
+                admin_id,
+                "Oveda",
+                suggestions_enabled=True,
+                can_create_other=True,
+                can_verify_other=True,
+                verified=False,
+                can_invite_other=True,
+            )
+
+            # User with verified Stadtmarketing organisation
+            user_id = self.create_user("test@test.de", "MeinPasswortIstDasBeste")
+            marketing_admin_unit_id = self.create_admin_unit(
+                user_id,
+                "Stadtmarketing",
+                can_verify_other=True,
+                incoming_verification_requests_allowed=True,
+                incoming_verification_requests_text="Please give us a call",
+            )
+            self.create_admin_unit_relation(
+                oveda_admin_unit_id,
+                marketing_admin_unit_id,
+                verify=True,
+            )
+            self.create_event(marketing_admin_unit_id)
+
+            # Unverified Verein organisation
+            verein_admin_unit_id = self.create_admin_unit(
+                user_id,
+                "Verein",
+            )
+            self.create_event(verein_admin_unit_id)

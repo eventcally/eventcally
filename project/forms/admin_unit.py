@@ -1,6 +1,6 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import DecimalField, FormField, StringField, SubmitField
+from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaField
 from wtforms.fields.core import BooleanField
 from wtforms.fields.html5 import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp
@@ -51,9 +51,24 @@ class BaseAdminUnitForm(FlaskForm):
     logo = FormField(Base64ImageForm, lazy_gettext("Logo"), default=lambda: Image())
     location = FormField(AdminUnitLocationForm, default=lambda: Location())
 
+    incoming_verification_requests_allowed = BooleanField(
+        lazy_gettext("Allow verification requests"),
+        description=lazy_gettext(
+            "If set, unverified organizations may ask you for verification."
+        ),
+        validators=[Optional()],
+    )
+    incoming_verification_requests_text = TextAreaField(
+        lazy_gettext("Verification requests information"),
+        validators=[Optional()],
+        description=lazy_gettext(
+            "This text is shown to unverified organizations to help them decide whether they ask you for verification."
+        ),
+    )
+
     def populate_obj(self, obj):
         for name, field in self._fields.items():
-            if name == "location" and not obj.location:
+            if name == "location" and not obj.location:  # pragma: no cover
                 obj.location = Location()
             elif name == "logo" and not obj.logo:
                 obj.logo = Image()

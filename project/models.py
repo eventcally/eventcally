@@ -495,6 +495,15 @@ class AdminUnit(db.Model, TrackableMixin):
             server_default="0",
         )
     )
+    incoming_verification_requests_allowed = deferred(
+        Column(
+            Boolean(),
+            nullable=False,
+            default=False,
+            server_default="0",
+        )
+    )
+    incoming_verification_requests_text = Column(UnicodeText())
     can_invite_other = deferred(
         Column(
             Boolean(),

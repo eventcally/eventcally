@@ -169,11 +169,21 @@ def get_admin_unit_member(id):
     return AdminUnitMember.query.filter_by(id=id).first()
 
 
-def get_admin_unit_query(keyword=None, include_unverified=False):
+def get_admin_unit_query(
+    keyword=None,
+    include_unverified=False,
+    only_verifier=False,
+):
     query = AdminUnit.query
 
     if not include_unverified:
         query = query.filter(AdminUnit.is_verified)
+
+    if only_verifier:
+        only_verifier_filter = and_(
+            AdminUnit.can_verify_other, AdminUnit.incoming_verification_requests_allowed
+        )
+        query = query.filter(only_verifier_filter)
 
     if keyword:
         like_keyword = "%" + keyword + "%"

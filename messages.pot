@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-01-17 09:16+0100\n"
+"POT-Creation-Date: 2022-08-24 14:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -363,47 +363,65 @@ msgstr ""
 msgid "Logo"
 msgstr ""
 
-#: project/forms/admin_unit.py:65
+#: project/forms/admin_unit.py:55
+msgid "Allow verification requests"
+msgstr ""
+
+#: project/forms/admin_unit.py:56
+msgid "If set, unverified organizations may ask you for verification."
+msgstr ""
+
+#: project/forms/admin_unit.py:62
+msgid "Verification requests information"
+msgstr ""
+
+#: project/forms/admin_unit.py:64
+msgid ""
+"This text is shown to unverified organizations to help them decide "
+"whether they ask you for verification."
+msgstr ""
+
+#: project/forms/admin_unit.py:80
 msgid "Verify new organization"
 msgstr ""
 
-#: project/forms/admin_unit.py:66
+#: project/forms/admin_unit.py:81
 msgid "If set, events of the new organization are publicly visible."
 msgstr ""
 
-#: project/forms/admin_unit.py:72 project/forms/reference_request.py:86
+#: project/forms/admin_unit.py:87 project/forms/reference_request.py:86
 msgid "Verify reference requests automatically"
 msgstr ""
 
-#: project/forms/admin_unit.py:73
+#: project/forms/admin_unit.py:88
 msgid ""
 "If set, all upcoming reference requests of the new organization are "
 "verified automatically."
 msgstr ""
 
-#: project/forms/admin_unit.py:84 project/templates/admin_unit/create.html:5
+#: project/forms/admin_unit.py:99 project/templates/admin_unit/create.html:5
 #: project/templates/admin_unit/create.html:22
 #: project/templates/manage/admin_units.html:27
 msgid "Create organization"
 msgstr ""
 
-#: project/forms/admin_unit.py:92 project/forms/admin_unit.py:115
+#: project/forms/admin_unit.py:107 project/forms/admin_unit.py:130
 msgid "Update settings"
 msgstr ""
 
-#: project/forms/admin_unit.py:96
+#: project/forms/admin_unit.py:111
 msgid "Font"
 msgstr ""
 
-#: project/forms/admin_unit.py:98
+#: project/forms/admin_unit.py:113
 msgid "Background Color"
 msgstr ""
 
-#: project/forms/admin_unit.py:104
+#: project/forms/admin_unit.py:119
 msgid "Primary Color"
 msgstr ""
 
-#: project/forms/admin_unit.py:110
+#: project/forms/admin_unit.py:125
 msgid "Link Color"
 msgstr ""
 
@@ -1288,7 +1306,7 @@ msgstr ""
 msgid "Edit event"
 msgstr ""
 
-#: project/templates/_macros.html:1226 project/templates/manage/events.html:65
+#: project/templates/_macros.html:1226 project/templates/manage/events.html:66
 msgid "More"
 msgstr ""
 
@@ -1354,7 +1372,7 @@ msgstr ""
 
 #: project/templates/layout.html:175 project/templates/layout.html:220
 #: project/templates/manage/events.html:6
-#: project/templates/manage/events.html:41
+#: project/templates/manage/events.html:42
 #: project/templates/manage/events_vue.html:4
 msgid "Events"
 msgstr ""
@@ -1397,7 +1415,7 @@ msgstr ""
 
 #: project/templates/event/create.html:5
 #: project/templates/event/create.html:221 project/templates/layout.html:227
-#: project/templates/manage/events.html:44
+#: project/templates/manage/events.html:45
 #: project/templates/manage/organizers.html:21
 msgid "Create event"
 msgstr ""
@@ -1517,7 +1535,7 @@ msgstr ""
 
 #: project/templates/admin/admin_units.html:27
 #: project/templates/admin/users.html:27
-#: project/templates/manage/events.html:59
+#: project/templates/manage/events.html:60
 #: project/templates/manage/members.html:35
 #: project/templates/manage/organizers.html:22
 #: project/templates/manage/places.html:27
@@ -1546,6 +1564,12 @@ msgstr ""
 #: project/templates/admin_unit/invite_member.html:6
 #: project/templates/manage/members.html:12
 msgid "Invite user"
+msgstr ""
+
+#: project/templates/admin_unit/update.html:72
+#: project/templates/manage/verification_requests_outgoing.html:6
+#: project/templates/manage/verification_requests_outgoing.html:10
+msgid "Verification requests"
 msgstr ""
 
 #: project/templates/email/event_report_notice.html:4
@@ -1657,7 +1681,7 @@ msgid "Reference this event on your organization's calendar."
 msgstr ""
 
 #: project/templates/event/actions.html:44
-#: project/templates/manage/events.html:63
+#: project/templates/manage/events.html:64
 msgid "Add to list"
 msgstr ""
 
@@ -1680,7 +1704,7 @@ msgid "List all events of %(admin_unit_name)s"
 msgstr ""
 
 #: project/templates/event/actions.html:74
-#: project/templates/manage/events.html:78
+#: project/templates/manage/events.html:79
 msgid "Add event to list"
 msgstr ""
 
@@ -1797,13 +1821,17 @@ msgid ""
 "visible."
 msgstr ""
 
-#: project/templates/manage/events.html:58
+#: project/templates/manage/events.html:38
+msgid "Verify organization"
+msgstr ""
+
+#: project/templates/manage/events.html:59
 #: project/templates/manage/references_incoming.html:19
 #: project/templates/manage/references_outgoing.html:19
 msgid "View"
 msgstr ""
 
-#: project/templates/manage/events.html:60
+#: project/templates/manage/events.html:61
 #: project/templates/manage/members.html:21
 #: project/templates/manage/members.html:36
 #: project/templates/manage/organizers.html:23
@@ -1813,7 +1841,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: project/templates/manage/events.html:61
+#: project/templates/manage/events.html:62
 msgid "Duplicate"
 msgstr ""
 
@@ -1842,6 +1870,10 @@ msgstr ""
 #: project/templates/manage/reviews.html:5
 #: project/templates/manage/reviews.html:9
 msgid "Reviews"
+msgstr ""
+
+#: project/templates/manage/verification_requests_outgoing.html:11
+msgid "Here you can find organizations that can verify other organizations."
 msgstr ""
 
 #: project/templates/manage/widgets.html:87
@@ -1967,7 +1999,7 @@ msgstr ""
 msgid "Organization successfully updated"
 msgstr ""
 
-#: project/views/admin.py:68 project/views/manage.py:360
+#: project/views/admin.py:68 project/views/manage.py:361
 msgid "Settings successfully updated"
 msgstr ""
 
