@@ -85,7 +85,6 @@
       iFrame.style = style;
       iFrame.frameborder = "0";
       iFrame.allowtransparency = "true";
-      element.appendChild(iFrame);
 
       if (resize || googleTagManager || customWidgetData != null) {
         needsResizer = true;
@@ -98,9 +97,18 @@
         maxHeight: maxHeight,
         resize: resize,
         googleTagManager: googleTagManager,
-        customWidgetData: customWidgetData
+        customWidgetData: customWidgetData,
+        resizer: null,
+        iFrameLoaded: false
       };
       containers.push(container);
+
+      iFrame.onload = function() {
+        container.iFrameLoaded = true;
+        startIframeResizer(container, index);
+      }
+
+      element.appendChild(iFrame);
     }
 
     function addParamToQuery(element, url, attr, param)
@@ -129,45 +137,48 @@
     }
 
     function addIframeResizerScript() {
-      addScript("https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js", startIframeResizer);
+      addScript("https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js", onIframeResizerScriptLoaded);
     }
 
-    function startIframeResizer() {
+    function onIframeResizerScriptLoaded() {
       for (var i = 0; i < containers.length; i++) {
         var container = containers[i];
+        startIframeResizer(container, i);
+      }
+    };
 
-        if (container.resize || container.googleTagManager || container.customWidgetData != null) {
-          var config = { };
-          config.autoResize = container.resize;
-          config.scrolling = "omit";
-          config.id = "iFrameResizer" + i;
+    function startIframeResizer(container, index) {
+      if (container.resizer == null && container.iFrameLoaded && (container.resize || container.googleTagManager || container.customWidgetData != null)) {
+        var config = { };
+        config.autoResize = container.resize;
+        config.scrolling = "omit";
+        config.id = "iFrameResizer" + index;
 
-          config.onMessage = function(messageData) {
-            onIframeMessage(messageData, container.googleTagManager);
-          }
+        config.onMessage = function(messageData) {
+          onIframeMessage(messageData, container.googleTagManager);
+        }
 
-          if (container.customWidgetData == null) {
-            if (container.resize) {
-              config.minHeight = container.minHeight;
-              config.maxHeight = container.maxHeight;
-            } else {
-              config.sizeHeight = false;
-              config.sizeWidth = false;
-            }
-          } else {
+        if (container.customWidgetData == null) {
+          if (container.resize) {
             config.minHeight = container.minHeight;
             config.maxHeight = container.maxHeight;
-
-            (function(data) {
-              config.onInit = function (iFrame) {
-                iFrame.iFrameResizer.sendMessage({'type': 'OVEDA_WIDGET_SETTINGS_UPDATE_EVENT', 'data': data});
-              }
-            })(container.customWidgetData.settings);
+          } else {
+            config.sizeHeight = false;
+            config.sizeWidth = false;
           }
+        } else {
+          config.minHeight = container.minHeight;
+          config.maxHeight = container.maxHeight;
 
-          var resizers = iFrameResize(config, container.iFrame);
-          container.resizer = resizers[0];
+          (function(data) {
+            config.onInit = function (iFrame) {
+              iFrame.iFrameResizer.sendMessage({'type': 'OVEDA_WIDGET_SETTINGS_UPDATE_EVENT', 'data': data});
+            }
+          })(container.customWidgetData.settings);
         }
+
+        var resizers = iFrameResize(config, container.iFrame);
+        container.resizer = resizers[0];
       }
     };
 
