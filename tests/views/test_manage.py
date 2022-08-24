@@ -216,3 +216,25 @@ def test_admin_unit_events_import(client, seeder, utils):
 
     url = utils.get_url("manage_admin_unit_events_import", id=admin_unit_id)
     utils.get_ok(url)
+
+
+def test_verification_requests_outgoing(client, seeder, utils):
+    user_id = seeder.create_user()
+    seeder.create_admin_unit(
+        user_id,
+        "Stadtmarketing",
+        verified=True,
+        can_verify_other=True,
+        incoming_verification_requests_allowed=True,
+        incoming_verification_requests_text="Please give us a call",
+    )
+
+    _, other_admin_unit_id = seeder.setup_base(
+        admin_unit_verified=False, email="mitglied@verein.de", name="Verein"
+    )
+
+    response = utils.get_endpoint_ok(
+        "manage_admin_unit_verification_requests_outgoing", id=other_admin_unit_id
+    )
+    utils.assert_response_contains(response, "Stadtmarketing")
+    utils.assert_response_contains(response, "Please give us a call")

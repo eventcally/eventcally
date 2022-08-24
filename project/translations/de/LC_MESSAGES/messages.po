@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-01-17 09:16+0100\n"
+"POT-Creation-Date: 2022-08-24 14:28+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -375,21 +375,39 @@ msgstr "Fax"
 msgid "Logo"
 msgstr "Logo"
 
-#: project/forms/admin_unit.py:65
+#: project/forms/admin_unit.py:55
+msgid "Allow verification requests"
+msgstr "Verifizierungsanfragen erlauben"
+
+#: project/forms/admin_unit.py:56
+msgid "If set, unverified organizations may ask you for verification."
+msgstr "Wenn gesetzt, können nicht verifizierte Organisationen um eine Verifizierung bitten."
+
+#: project/forms/admin_unit.py:62
+msgid "Verification requests information"
+msgstr "Text für Verifizierungsanfragen"
+
+#: project/forms/admin_unit.py:64
+msgid ""
+"This text is shown to unverified organizations to help them decide "
+"whether they ask you for verification."
+msgstr "Dieser Text wird nicht verifizierten Organisationen angezeigt, um ihnen bei der Entscheidung zu helfen, ob sie um eine Verifizierung bitten."
+
+#: project/forms/admin_unit.py:80
 msgid "Verify new organization"
 msgstr "Neue Organisation verifizieren"
 
-#: project/forms/admin_unit.py:66
+#: project/forms/admin_unit.py:81
 msgid "If set, events of the new organization are publicly visible."
 msgstr ""
 "Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich "
 "sichtbar."
 
-#: project/forms/admin_unit.py:72 project/forms/reference_request.py:86
+#: project/forms/admin_unit.py:87 project/forms/reference_request.py:86
 msgid "Verify reference requests automatically"
 msgstr "Empfehlungsanfragen automatisch verifizieren"
 
-#: project/forms/admin_unit.py:73
+#: project/forms/admin_unit.py:88
 msgid ""
 "If set, all upcoming reference requests of the new organization are "
 "verified automatically."
@@ -397,29 +415,29 @@ msgstr ""
 "Wenn gesetzt, werden alle zukünftigen Empfehlungsanfragen der neuen "
 "Organisation automatisch verifiziert."
 
-#: project/forms/admin_unit.py:84 project/templates/admin_unit/create.html:5
+#: project/forms/admin_unit.py:99 project/templates/admin_unit/create.html:5
 #: project/templates/admin_unit/create.html:22
 #: project/templates/manage/admin_units.html:27
 msgid "Create organization"
 msgstr "Organisation erstellen"
 
-#: project/forms/admin_unit.py:92 project/forms/admin_unit.py:115
+#: project/forms/admin_unit.py:107 project/forms/admin_unit.py:130
 msgid "Update settings"
 msgstr "Einstellungen speichern"
 
-#: project/forms/admin_unit.py:96
+#: project/forms/admin_unit.py:111
 msgid "Font"
 msgstr "Schriftart"
 
-#: project/forms/admin_unit.py:98
+#: project/forms/admin_unit.py:113
 msgid "Background Color"
 msgstr "Hintergrundfarbe"
 
-#: project/forms/admin_unit.py:104
+#: project/forms/admin_unit.py:119
 msgid "Primary Color"
 msgstr "Hauptfarbe"
 
-#: project/forms/admin_unit.py:110
+#: project/forms/admin_unit.py:125
 msgid "Link Color"
 msgstr "Linkfarbe"
 
@@ -1334,7 +1352,7 @@ msgstr "Bild-Datei auswählen"
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: project/templates/_macros.html:1226 project/templates/manage/events.html:65
+#: project/templates/_macros.html:1226 project/templates/manage/events.html:66
 msgid "More"
 msgstr "Mehr"
 
@@ -1400,7 +1418,7 @@ msgstr "Kostenlos registrieren"
 
 #: project/templates/layout.html:175 project/templates/layout.html:220
 #: project/templates/manage/events.html:6
-#: project/templates/manage/events.html:41
+#: project/templates/manage/events.html:42
 #: project/templates/manage/events_vue.html:4
 msgid "Events"
 msgstr "Veranstaltungen"
@@ -1443,7 +1461,7 @@ msgstr "Veranstaltungen anzeigen"
 
 #: project/templates/event/create.html:5
 #: project/templates/event/create.html:221 project/templates/layout.html:227
-#: project/templates/manage/events.html:44
+#: project/templates/manage/events.html:45
 #: project/templates/manage/organizers.html:21
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
@@ -1563,7 +1581,7 @@ msgstr "Benutzer"
 
 #: project/templates/admin/admin_units.html:27
 #: project/templates/admin/users.html:27
-#: project/templates/manage/events.html:59
+#: project/templates/manage/events.html:60
 #: project/templates/manage/members.html:35
 #: project/templates/manage/organizers.html:22
 #: project/templates/manage/places.html:27
@@ -1593,6 +1611,12 @@ msgstr "Beziehung zu %(admin_unit_name)s"
 #: project/templates/manage/members.html:12
 msgid "Invite user"
 msgstr "Nutzer:in einladen"
+
+#: project/templates/admin_unit/update.html:72
+#: project/templates/manage/verification_requests_outgoing.html:6
+#: project/templates/manage/verification_requests_outgoing.html:10
+msgid "Verification requests"
+msgstr "Verifizierungsanfragen"
 
 #: project/templates/email/event_report_notice.html:4
 msgid "There is a new event report."
@@ -1707,7 +1731,7 @@ msgid "Reference this event on your organization's calendar."
 msgstr "Empfehle diese Veranstaltung im Kalender deiner Organisation."
 
 #: project/templates/event/actions.html:44
-#: project/templates/manage/events.html:63
+#: project/templates/manage/events.html:64
 msgid "Add to list"
 msgstr "Zu Liste hinzufügen"
 
@@ -1730,7 +1754,7 @@ msgid "List all events of %(admin_unit_name)s"
 msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
 
 #: project/templates/event/actions.html:74
-#: project/templates/manage/events.html:78
+#: project/templates/manage/events.html:79
 msgid "Add event to list"
 msgstr "Veranstaltung zu Liste hinzufügen"
 
@@ -1852,13 +1876,17 @@ msgstr ""
 "Die Organisation ist nicht verifiziert. Veranstaltungen sind daher nicht "
 "öffentlich sichtbar."
 
-#: project/templates/manage/events.html:58
+#: project/templates/manage/events.html:38
+msgid "Verify organization"
+msgstr "Organisation verifizieren"
+
+#: project/templates/manage/events.html:59
 #: project/templates/manage/references_incoming.html:19
 #: project/templates/manage/references_outgoing.html:19
 msgid "View"
 msgstr "Anzeigen"
 
-#: project/templates/manage/events.html:60
+#: project/templates/manage/events.html:61
 #: project/templates/manage/members.html:21
 #: project/templates/manage/members.html:36
 #: project/templates/manage/organizers.html:23
@@ -1868,7 +1896,7 @@ msgstr "Anzeigen"
 msgid "Delete"
 msgstr "Löschen"
 
-#: project/templates/manage/events.html:61
+#: project/templates/manage/events.html:62
 msgid "Duplicate"
 msgstr "Duplizieren"
 
@@ -1898,6 +1926,10 @@ msgstr "Prüfungsstatus anzeigen"
 #: project/templates/manage/reviews.html:9
 msgid "Reviews"
 msgstr "Prüfungen"
+
+#: project/templates/manage/verification_requests_outgoing.html:11
+msgid "Here you can find organizations that can verify other organizations."
+msgstr "Hier findest du Organisationen, die deine Organisationen verifizieren können."
 
 #: project/templates/manage/widgets.html:87
 msgid "Link, um Veranstaltungen vorzuschlagen"
@@ -2022,7 +2054,7 @@ msgstr "Vorschau"
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin.py:68 project/views/manage.py:360
+#: project/views/admin.py:68 project/views/manage.py:361
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
