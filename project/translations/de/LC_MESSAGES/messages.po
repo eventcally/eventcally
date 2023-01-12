@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-08-24 14:28+0200\n"
+"POT-Creation-Date: 2023-01-12 22:37+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -199,24 +199,24 @@ msgstr "message"
 msgid "You have received an invitation"
 msgstr "Du hast eine Einladung erhalten"
 
-#: project/forms/admin.py:10 project/templates/layout.html:314
+#: project/forms/admin.py:10 project/templates/layout.html:315
 #: project/views/root.py:37
 msgid "Terms of service"
 msgstr "Nutzungsbedingungen"
 
-#: project/forms/admin.py:11 project/templates/layout.html:318
+#: project/forms/admin.py:11 project/templates/layout.html:319
 #: project/views/root.py:45
 msgid "Legal notice"
 msgstr "Impressum"
 
 #: project/forms/admin.py:12 project/templates/_macros.html:1395
-#: project/templates/layout.html:322
+#: project/templates/layout.html:323
 #: project/templates/widget/event_suggestion/create.html:204
 #: project/views/admin_unit.py:73 project/views/root.py:53
 msgid "Contact"
 msgstr "Kontakt"
 
-#: project/forms/admin.py:13 project/templates/layout.html:326
+#: project/forms/admin.py:13 project/templates/layout.html:327
 #: project/views/root.py:61
 msgid "Privacy"
 msgstr "Datenschutz"
@@ -381,7 +381,9 @@ msgstr "Verifizierungsanfragen erlauben"
 
 #: project/forms/admin_unit.py:56
 msgid "If set, unverified organizations may ask you for verification."
-msgstr "Wenn gesetzt, können nicht verifizierte Organisationen um eine Verifizierung bitten."
+msgstr ""
+"Wenn gesetzt, können nicht verifizierte Organisationen um eine "
+"Verifizierung bitten."
 
 #: project/forms/admin_unit.py:62
 msgid "Verification requests information"
@@ -391,7 +393,9 @@ msgstr "Text für Verifizierungsanfragen"
 msgid ""
 "This text is shown to unverified organizations to help them decide "
 "whether they ask you for verification."
-msgstr "Dieser Text wird nicht verifizierten Organisationen angezeigt, um ihnen bei der Entscheidung zu helfen, ob sie um eine Verifizierung bitten."
+msgstr ""
+"Dieser Text wird nicht verifizierten Organisationen angezeigt, um ihnen "
+"bei der Entscheidung zu helfen, ob sie um eine Verifizierung bitten."
 
 #: project/forms/admin_unit.py:80
 msgid "Verify new organization"
@@ -1111,7 +1115,7 @@ msgstr "Wochentage"
 #: project/templates/_macros.html:489 project/templates/_macros.html:652
 #: project/templates/admin_unit/create.html:28
 #: project/templates/admin_unit/update.html:29
-#: project/templates/layout.html:262
+#: project/templates/layout.html:263
 msgid "Organization"
 msgstr "Organisation"
 
@@ -1271,7 +1275,7 @@ msgstr ""
 "Die Veranstaltung findet sowohl als Präsenzveranstaltung als auch online "
 "statt."
 
-#: project/templates/_macros.html:585 project/templates/layout.html:188
+#: project/templates/_macros.html:585 project/templates/layout.html:189
 #: project/templates/user/favorite_events.html:4
 msgid "Favorite events"
 msgstr "Merkzettel"
@@ -1407,16 +1411,16 @@ msgstr "Veranstalter eingeben"
 msgid "Enter list name"
 msgstr "Listenname eingeben"
 
-#: project/templates/home.html:28
+#: project/templates/home.html:27
 msgid "Manage"
 msgstr "Verwaltung"
 
-#: project/templates/home.html:30 project/templates/security/login_user.html:38
+#: project/templates/home.html:29 project/templates/security/login_user.html:38
 #: project/views/widget.py:159
 msgid "Register for free"
 msgstr "Kostenlos registrieren"
 
-#: project/templates/layout.html:175 project/templates/layout.html:220
+#: project/templates/layout.html:175 project/templates/layout.html:221
 #: project/templates/manage/events.html:6
 #: project/templates/manage/events.html:42
 #: project/templates/manage/events_vue.html:4
@@ -1426,7 +1430,7 @@ msgstr "Veranstaltungen"
 #: project/templates/admin/admin.html:19
 #: project/templates/admin/admin_units.html:4
 #: project/templates/admin/admin_units.html:11
-#: project/templates/layout.html:176 project/templates/layout.html:186
+#: project/templates/layout.html:176 project/templates/layout.html:187
 #: project/templates/manage/admin_units.html:3
 #: project/templates/manage/admin_units.html:25
 #: project/templates/organization/main.html:4
@@ -1437,7 +1441,11 @@ msgstr "Organisationen"
 msgid "Planing"
 msgstr "Planung"
 
-#: project/templates/layout.html:187 project/templates/layout.html:276
+#: project/templates/layout.html:178
+msgid "Docs"
+msgstr "Doku"
+
+#: project/templates/layout.html:188 project/templates/layout.html:277
 #: project/templates/oauth2_client/list.html:10
 #: project/templates/oauth2_client/read.html:10
 #: project/templates/oauth2_token/list.html:10 project/templates/profile.html:4
@@ -1447,86 +1455,86 @@ msgstr "Profil"
 
 #: project/templates/admin/admin.html:3 project/templates/admin/admin.html:9
 #: project/templates/admin/admin_units.html:10
-#: project/templates/admin/users.html:10 project/templates/layout.html:191
+#: project/templates/admin/users.html:10 project/templates/layout.html:192
 msgid "Admin"
 msgstr "Administration"
 
-#: project/templates/layout.html:195
+#: project/templates/layout.html:196
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: project/templates/layout.html:226
+#: project/templates/layout.html:227
 msgid "Show events"
 msgstr "Veranstaltungen anzeigen"
 
 #: project/templates/event/create.html:5
-#: project/templates/event/create.html:221 project/templates/layout.html:227
+#: project/templates/event/create.html:221 project/templates/layout.html:228
 #: project/templates/manage/events.html:45
 #: project/templates/manage/organizers.html:21
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
-#: project/templates/layout.html:228
+#: project/templates/layout.html:229
 msgid "Import event"
 msgstr "Veranstaltung imporierten"
 
-#: project/templates/layout.html:230
+#: project/templates/layout.html:231
 #: project/templates/manage/event_lists.html:4
 msgid "Event lists"
 msgstr "Veranstaltungslisten"
 
-#: project/templates/layout.html:233
+#: project/templates/layout.html:234
 msgid "Review suggestions"
 msgstr "Vorschläge prüfen"
 
-#: project/templates/layout.html:243
+#: project/templates/layout.html:244
 #: project/templates/manage/references_incoming.html:5
 #: project/templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr "Empfehlungen"
 
-#: project/templates/layout.html:249
+#: project/templates/layout.html:250
 #: project/templates/manage/references_incoming.html:9
 msgid "Incoming references"
 msgstr "Eingehende Empfehlungen"
 
-#: project/templates/layout.html:250
+#: project/templates/layout.html:251
 #: project/templates/manage/references_outgoing.html:9
 msgid "Outgoing references"
 msgstr "Ausgehende Empfehlungen"
 
-#: project/templates/layout.html:252
+#: project/templates/layout.html:253
 #: project/templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
 msgstr "Eingehende Empfehlungsanfragen"
 
-#: project/templates/layout.html:257
+#: project/templates/layout.html:258
 #: project/templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
 msgstr "Ausgehende Empfehlungsanfragen"
 
-#: project/templates/layout.html:265 project/templates/manage/organizers.html:5
+#: project/templates/layout.html:266 project/templates/manage/organizers.html:5
 #: project/templates/manage/organizers.html:9
 msgid "Organizers"
 msgstr "Veranstalter"
 
 #: project/templates/event_place/list.html:3
-#: project/templates/event_place/list.html:7 project/templates/layout.html:266
+#: project/templates/event_place/list.html:7 project/templates/layout.html:267
 #: project/templates/manage/places.html:5
 #: project/templates/manage/places.html:9
 msgid "Places"
 msgstr "Orte"
 
-#: project/templates/layout.html:268 project/templates/manage/members.html:5
+#: project/templates/layout.html:269 project/templates/manage/members.html:5
 #: project/templates/manage/members.html:28
 msgid "Members"
 msgstr "Mitglieder"
 
-#: project/templates/layout.html:269 project/templates/manage/relations.html:4
+#: project/templates/layout.html:270 project/templates/manage/relations.html:4
 msgid "Relations"
 msgstr "Beziehungen"
 
-#: project/templates/layout.html:271
+#: project/templates/layout.html:272
 #: project/templates/manage/admin_units.html:17
 #: project/templates/manage/organization_invitations.html:4
 #: project/templates/user/organization_invitations.html:4
@@ -1538,27 +1546,27 @@ msgstr "Organisationseinladungen"
 #: project/templates/admin/settings.html:8
 #: project/templates/admin_unit/update.html:6
 #: project/templates/admin_unit/update.html:23
-#: project/templates/layout.html:273 project/templates/manage/widgets.html:11
+#: project/templates/layout.html:274 project/templates/manage/widgets.html:11
 #: project/templates/manage/widgets.html:15 project/templates/profile.html:19
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: project/templates/layout.html:274
+#: project/templates/layout.html:275
 #: project/templates/manage/custom_widgets.html:13
 msgid "Custom widgets"
 msgstr "Custom widgets"
 
-#: project/templates/layout.html:275 project/templates/manage/reviews.html:10
+#: project/templates/layout.html:276 project/templates/manage/reviews.html:10
 #: project/templates/manage/widgets.html:5
 #: project/templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr "Widgets"
 
-#: project/templates/layout.html:286
+#: project/templates/layout.html:287
 msgid "Switch organization"
 msgstr "Organisation wechseln"
 
-#: project/templates/developer/read.html:4 project/templates/layout.html:336
+#: project/templates/developer/read.html:4 project/templates/layout.html:337
 #: project/templates/profile.html:29
 msgid "Developer"
 msgstr "Entwickler"
@@ -1929,7 +1937,9 @@ msgstr "Prüfungen"
 
 #: project/templates/manage/verification_requests_outgoing.html:11
 msgid "Here you can find organizations that can verify other organizations."
-msgstr "Hier findest du Organisationen, die deine Organisationen verifizieren können."
+msgstr ""
+"Hier findest du Organisationen, die deine Organisationen verifizieren "
+"können."
 
 #: project/templates/manage/widgets.html:87
 msgid "Link, um Veranstaltungen vorzuschlagen"
