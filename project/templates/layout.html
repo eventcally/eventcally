@@ -175,9 +175,11 @@
                 <a class="nav-item nav-link" href="{{ url_for('event_dates') }}">{{ _('Events') }}</a>
                 <a class="nav-item nav-link" href="{{ url_for('organizations') }}">{{ _('Organizations') }}</a>
                 <a class="nav-item nav-link" href="{{ url_for('planing') }}">{{ _('Planing') }}</a>
-                <a class="nav-item nav-link" href="https://docs.oveda.de/" target="_blank" rel="noopener noreferrer">{{ _('Docs') }}</a>
               </div>
               <div class="navbar-nav navbar-right">
+                {% if False %}
+                  <a class="nav-item nav-link" href="https://docs.oveda.de/" target="_blank" rel="noopener noreferrer">{{ _('Docs') }}</a>
+                {% endif %}
                 {% if current_user.is_authenticated %}
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
