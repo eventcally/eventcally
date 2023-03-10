@@ -18,6 +18,8 @@ docker compose up --force-recreate --detach
 
 ## Update app
 
+Adjust `WEB_TAG` in .env if necessary.
+
 ```sh
 ./update.sh
 ```
