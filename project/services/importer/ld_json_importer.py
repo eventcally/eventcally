@@ -343,7 +343,6 @@ class LdJsonImporter:
         image_items = image if isinstance(image, list) else [image]
 
         for image_item in image_items:
-
             if isinstance(image_item, str):
                 image_item = {"url": image_item}
 

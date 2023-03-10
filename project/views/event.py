@@ -398,7 +398,6 @@ def send_referenced_event_changed_mails(event):
     # Alle Referenzen
     references = EventReference.query.filter(EventReference.event_id == event.id).all()
     for reference in references:
-
         # Alle Mitglieder der AdminUnit, die das Recht haben, Requests zu verifizieren
         members = get_admin_unit_members_with_permission(
             reference.admin_unit_id, "reference_request:verify"
