@@ -5,7 +5,7 @@ from flask import redirect, render_template, request, send_from_directory, url_f
 from flask_babelex import gettext
 from markupsafe import Markup
 
-from project import app, cache_path, dump_path, robots_txt_file, sitemap_file
+from project import app, cache_path, db, dump_path, robots_txt_file, sitemap_file
 from project.services.admin import upsert_settings
 from project.views.utils import track_analytics
 
@@ -30,6 +30,12 @@ def home():
         structured_data=structured_data,
         admin_unit_create_requires_admin=app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"],
     )
+
+
+@app.route("/up")
+def up():
+    db.engine.execute("SELECT 1")
+    return "OK"
 
 
 @app.route("/tos")

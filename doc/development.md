@@ -68,7 +68,7 @@ pybabel compile -d project/translations
 ### Build image
 
 ```sh
-docker build -t gsevpt:latest .
+docker build -t danielgrams/gsevpt:latest .
 ```
 
 ### Run container with existing postgres server
