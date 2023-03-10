@@ -18,7 +18,6 @@ depends_on = None
 
 
 def upgrade():
-
     bind = op.get_bind()
     bind.execute(text("create extension if not exists postgis;"))
 

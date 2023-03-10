@@ -11,7 +11,6 @@ def test_import(client, seeder, utils, app, shared_datadir, requests_mock):
     params = (utils, admin_unit_id, shared_datadir)
 
     with app.app_context():
-
         _assert_import_event(
             params,
             "facebook.html",

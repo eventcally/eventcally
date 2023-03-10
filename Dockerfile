@@ -1,8 +1,8 @@
-FROM python:3.7-slim-buster
+FROM python:3.7
 
 # Add rsync
 RUN apt update -qq && apt upgrade -y && apt autoremove -y
-RUN apt install -y rsync && apt autoremove -y
+RUN apt install -y rsync curl && apt autoremove -y
 
 EXPOSE 5000
 
@@ -24,6 +24,7 @@ ENV STATIC_FILES_MIRROR=""
 
 # Install pip requirements
 COPY requirements.txt .
+RUN python -m pip install --upgrade pip
 RUN python -m pip install -r requirements.txt
 
 WORKDIR /app

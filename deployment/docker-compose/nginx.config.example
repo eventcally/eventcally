@@ -1,0 +1,42 @@
+location ^~ /image/ {
+	root "/var/www/vhosts/oveda.de/cache/img";
+	expires 1h;
+
+	location ~ ^/image/(?<id>[0-9]+)/(?<hash>[0-9]+) {
+		if ($arg_s = '') {
+			rewrite (.*) $1?s=500 last;
+		}
+		try_files /${id}-${hash}-${arg_s}-${arg_s}.png /${id}-${hash}-${arg_s}-${arg_s}.jpg @docker;
+	}
+
+	location ~ ^/image/(?<id>[0-9]+) {
+		if ($arg_s = '') {
+			rewrite (.*) $1?s=500 last;
+		}
+		try_files /${id}-${arg_s}-${arg_s}.png /${id}-${arg_s}-${arg_s}.jpg @docker;
+	}
+}
+location ^~ /static/ {
+	alias "/var/www/vhosts/oveda.de/static/";
+	expires 1h;
+}
+location ^~ /dump/ {
+	alias "/var/www/vhosts/oveda.de/cache/dump/";
+}
+location ^~ /sitemap.xml {
+	alias "/var/www/vhosts/oveda.de/cache/sitemap.xml";
+}
+location ^~ /robots.txt {
+	alias "/var/www/vhosts/oveda.de/cache/robots.txt";
+}
+location ^~ /favicon.ico {
+	alias "/var/www/vhosts/oveda.de/static/favicon.ico";
+	expires 12h;
+}
+location @docker {
+	proxy_pass http://0.0.0.0:5000;
+	proxy_set_header Host              $host;
+	proxy_set_header X-Real-IP         $remote_addr;
+	proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto $scheme;
+}

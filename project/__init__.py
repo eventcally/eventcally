@@ -14,6 +14,11 @@ from flask_wtf.csrf import CSRFProtect
 
 from project.custom_session_interface import CustomSessionInterface
 
+
+def getenv_bool(name: str, default: str = "False"):  # pragma: no cover
+    return os.getenv(name, default).lower() in ("true", "1", "t")
+
+
 # Create app
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
@@ -95,15 +100,15 @@ app.config["WTF_CSRF_CHECK_DEFAULT"] = False
 # Mail
 mail_server = os.getenv("MAIL_SERVER")
 
-if mail_server is None:
+if not mail_server:
     app.config["MAIL_SUPPRESS_SEND"] = True
     app.config["MAIL_DEFAULT_SENDER"] = "test@oveda.de"
 else:  # pragma: no cover
     app.config["MAIL_SUPPRESS_SEND"] = False
     app.config["MAIL_SERVER"] = mail_server
     app.config["MAIL_PORT"] = os.getenv("MAIL_PORT")
-    app.config["MAIL_USE_TLS"] = os.getenv("MAIL_USE_TLS", True)
-    app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL", False)
+    app.config["MAIL_USE_TLS"] = getenv_bool("MAIL_USE_TLS", "True")
+    app.config["MAIL_USE_SSL"] = getenv_bool("MAIL_USE_SSL", "False")
     app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
     app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
     app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")

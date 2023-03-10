@@ -1,0 +1,82 @@
+version: "3.9"
+name: "oveda"
+
+services:
+  db:
+    image: postgis/postgis:12-3.1
+    restart: always
+    healthcheck:
+      test: "pg_isready --username=${POSTGRES_USER} && psql --username=${POSTGRES_USER} --list"
+      start_period: "5s"
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
+
+  db-backup:
+    image: prodrigestivill/postgres-backup-local:12
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: db
+      POSTGRES_EXTRA_OPTS: "-Z6 -c"
+      SCHEDULE: "0 0 22 * * *"
+    volumes:
+      - ${POSTGRES_BACKUP_PATH}:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: danielgrams/gsevpt:${WEB_TAG}
+    restart: always
+    healthcheck:
+      test: "curl -f ${SERVER_NAME}/up"
+      interval: "60s"
+      timeout: "5s"
+      start_period: "5s"
+    ports:
+      - "5000:5000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      FLASK_APP: main.py
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY}
+      SECURITY_PASSWORD_HASH: ${SECURITY_PASSWORD_HASH}
+      MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_SERVER: ${MAIL_SERVER}
+      MAIL_USE_TLS: ${MAIL_USE_TLS}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
+      SERVER_NAME: ${SERVER_NAME}
+      PREFERRED_URL_SCHEME: ${PREFERRED_URL_SCHEME}
+      GUNICORN_ACCESS_LOG: "-"
+      STATIC_FILES_MIRROR: /static
+      CACHE_PATH: tmp
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      JWT_PUBLIC_JWKS: ${JWT_PUBLIC_JWKS}
+    volumes:
+      - ${CACHE_PATH}:/app/project/tmp
+      - ${STATIC_PATH}:/static
+    depends_on:
+      db:
+        condition: service_healthy
+
+  fluentd:
+    image: danielgrams/fluentd
+    restart: always
+    environment:
+      FLUENTD_CONF: fluentd-custom.config
+    volumes:
+      - ${FLUENTD_LOG_PATH}:/fluentd/log
+      - ${FLUENTD_CUSTOM_CONFIG_PATH}/fluentd-custom.config:/fluentd/etc/fluentd-custom.config
+      - ${FLUENTD_DOCKER_CONTAINERS_PATH}:/fluentd/containers

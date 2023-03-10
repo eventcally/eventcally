@@ -44,6 +44,8 @@ Jobs that should run on a regular basis.
 ```sh
 flask event update-recurring-dates
 flask dump all
+flask seo generate-sitemap --pinggoogle
+flask seo generate-robots-txt
 ```
 
 ## Administration
