@@ -21,3 +21,9 @@ docker compose up --force-recreate --detach
 ```sh
 ./update.sh
 ```
+
+## Execute commands in web container
+
+```sh
+docker compose exec -it web /bin/sh
+```
