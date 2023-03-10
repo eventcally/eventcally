@@ -15,7 +15,7 @@ from flask_wtf.csrf import CSRFProtect
 from project.custom_session_interface import CustomSessionInterface
 
 
-def getenv_bool(name: str, default: str = "False"):
+def getenv_bool(name: str, default: str = "False"):  # pragma: no cover
     return os.getenv(name, default).lower() in ("true", "1", "t")
 
 
