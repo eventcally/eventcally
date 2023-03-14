@@ -1,20 +1,83 @@
 version: "3.9"
+name: "oveda-dev"
+
+x-web-env:
+  &default-web-env
+  FLASK_APP: main.py
+  DATABASE_URL: postgresql://user:pass@db/gsevpt
+  REDIS_URL: redis://default:pass@redis
+  MAIL_DEFAULT_SENDER: noresponse@gsevpt.de
+  MAIL_SERVER: mailhog
+  MAIL_PORT: 1025
+  MAIL_USE_TLS: False
+  GUNICORN_ACCESS_LOG: "-"
+  GUNICORN_LOG_LEVEL: debug
+  FLASK_DEBUG: 1
+  SERVER_NAME: "127.0.0.1:5000"
+
+x-web:
+  &default-web
+  build: .
+  environment:
+    <<: *default-web-env
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    mailhog:
+      condition: service_started
 
 services:
-
   db:
-    image: mdillon/postgis
+    image: postgis/postgis:12-3.1
+    healthcheck:
+      test: "pg_isready --username=user && psql --username=user --list"
+      start_period: "5s"
     environment:
       - POSTGRES_DB=gsevpt
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
 
+  redis:
+    image: bitnami/redis:6.2
+    healthcheck:
+      test: "redis-cli -a 'pass' ping | grep PONG"
+      start_period: "5s"
+    environment:
+      REDIS_PASSWORD: pass
+
+  mailhog:
+    image: mailhog/mailhog
+    healthcheck:
+      test: "curl -f localhost:8025"
+      interval: "60s"
+      timeout: "5s"
+      start_period: "5s"
+    ports:
+     - "8026:8025"
+
   web:
-    build: .
+    <<: *default-web
     ports:
       - "5000:5000"
+
+  worker:
+    <<: *default-web
+    command: celery -A project.celery worker --loglevel=error
+    entrypoint: []
+
+  scheduler:
+    <<: *default-web
+    command: celery -A project.celery beat --loglevel=error
+    entrypoint: []
+
+  flower:
+    image: mher/flower:1.2
+    ports:
+      - "5555:5555"
     environment:
-      FLASK_APP: main.py
-      DATABASE_URL: postgresql://user:pass@db/gsevpt
+      CELERY_BROKER_URL: redis://default:pass@redis
     depends_on:
-      - db
+      redis:
+        condition: service_healthy

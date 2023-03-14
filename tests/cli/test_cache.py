@@ -1,4 +1,4 @@
-def test_clear_images(client, seeder, app, utils):
+def test_clear_images(client, seeder, app, utils, caplog):
     user_id, admin_unit_id = seeder.setup_base()
     image_id = seeder.upsert_default_image()
 
@@ -7,4 +7,4 @@ def test_clear_images(client, seeder, app, utils):
 
     runner = app.test_cli_runner()
     result = runner.invoke(args=["cache", "clear-images"])
-    assert "Done." in result.output
+    assert result.exit_code == 0

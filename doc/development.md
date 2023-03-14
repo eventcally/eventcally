@@ -82,3 +82,9 @@ docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/gsevpt"
 ```sh
 docker-compose build && docker-compose up
 ```
+
+## Celery
+
+```sh
+dotenv run celery -A project.celery purge
+```

@@ -8,7 +8,7 @@ from sqlalchemy import and_, case, func, or_
 from sqlalchemy.orm import aliased, contains_eager, defaultload, joinedload, lazyload
 from sqlalchemy.sql import extract
 
-from project import db
+from project import app, db
 from project.dateutils import (
     berlin_tz,
     date_add_time,
@@ -500,3 +500,16 @@ def create_ical_event_for_date(event_date: EventDate) -> icalendar.Event:
         event.add("location", get_place_str(event_date.event.event_place))
 
     return event
+
+
+def update_recurring_dates():
+    # Setting the timezone is neccessary for cli command
+    db.session.execute("SET timezone TO :val;", {"val": berlin_tz.zone})
+
+    events = get_recurring_events()
+
+    for event in events:
+        update_event_dates_with_recurrence_rule(event)
+        db.session.commit()
+
+    app.logger.info(f"{len(events)} event(s) were updated.")

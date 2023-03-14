@@ -13,6 +13,7 @@ deployment.yaml
 node_modules
 cypress/videos
 cypress/screenshots
+celerybeat-schedule
 
 # C extensions
 *.so
