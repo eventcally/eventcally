@@ -42,6 +42,7 @@ Jobs that should run on a regular basis.
 ### Daily
 
 ```sh
+flask cache clear-images
 flask event update-recurring-dates
 flask dump all
 flask seo generate-sitemap --pinggoogle
@@ -50,8 +51,16 @@ flask seo generate-robots-txt
 
 ## Administration
 
+### Users
+
 ```sh
 flask user add-admin-roles super@hero.com
+```
+
+### Worker active tasks
+
+```sh
+celery -A project.celery inspect active
 ```
 
 ## Configuration

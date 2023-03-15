@@ -5,7 +5,15 @@ from flask import redirect, render_template, request, send_from_directory, url_f
 from flask_babelex import gettext
 from markupsafe import Markup
 
-from project import app, cache_path, db, dump_path, robots_txt_file, sitemap_file
+from project import (
+    app,
+    cache_path,
+    celery,
+    db,
+    dump_path,
+    robots_txt_file,
+    sitemap_file,
+)
 from project.services.admin import upsert_settings
 from project.views.utils import track_analytics
 
@@ -35,6 +43,10 @@ def home():
 @app.route("/up")
 def up():
     db.engine.execute("SELECT 1")
+
+    if "REDIS_URL" in app.config and app.config["REDIS_URL"]:  # pragma: no cover
+        celery.control.ping()
+
     return "OK"
 
 

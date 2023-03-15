@@ -1,6 +1,46 @@
 version: "3.9"
 name: "oveda"
 
+x-web-env:
+  &default-web-env
+  FLASK_APP: main.py
+  DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
+  REDIS_URL: redis://default:${REDIS_PASSWORD}@redis
+  SECRET_KEY: ${SECRET_KEY}
+  SECURITY_PASSWORD_HASH: ${SECURITY_PASSWORD_HASH}
+  MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER}
+  MAIL_PASSWORD: ${MAIL_PASSWORD}
+  MAIL_PORT: ${MAIL_PORT}
+  MAIL_SERVER: ${MAIL_SERVER}
+  MAIL_USE_TLS: ${MAIL_USE_TLS}
+  MAIL_USERNAME: ${MAIL_USERNAME}
+  GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
+  SEO_SITEMAP_PING_GOOGLE: ${SEO_SITEMAP_PING_GOOGLE}
+  SERVER_NAME: ${SERVER_NAME}
+  PREFERRED_URL_SCHEME: ${PREFERRED_URL_SCHEME}
+  GUNICORN_ACCESS_LOG: "-"
+  STATIC_FILES_MIRROR: /static
+  CACHE_PATH: tmp
+  JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+  JWT_PUBLIC_JWKS: ${JWT_PUBLIC_JWKS}
+
+x-web:
+  &default-web
+  image: danielgrams/gsevpt:${WEB_TAG}
+  restart: always
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+  environment:
+    <<: *default-web-env
+  volumes:
+      - ${CACHE_PATH}:/app/project/tmp
+      - ${STATIC_PATH}:/static
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
 services:
   db:
     image: postgis/postgis:12-3.1
@@ -33,9 +73,19 @@ services:
       db:
         condition: service_healthy
 
-  web:
-    image: danielgrams/gsevpt:${WEB_TAG}
+  redis:
+    image: bitnami/redis:6.2
     restart: always
+    healthcheck:
+      test: "redis-cli -a '${REDIS_PASSWORD}' ping | grep PONG"
+      start_period: "5s"
+    volumes:
+      - ${REDIS_DATA_PATH}:/bitnami/redis/data
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+  web:
+    <<: *default-web
     healthcheck:
       test: "curl -f ${SERVER_NAME}/up"
       interval: "60s"
@@ -45,31 +95,16 @@ services:
       - "5000:5000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    environment:
-      FLASK_APP: main.py
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
-      SECRET_KEY: ${SECRET_KEY}
-      SECURITY_PASSWORD_HASH: ${SECURITY_PASSWORD_HASH}
-      MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_PORT: ${MAIL_PORT}
-      MAIL_SERVER: ${MAIL_SERVER}
-      MAIL_USE_TLS: ${MAIL_USE_TLS}
-      MAIL_USERNAME: ${MAIL_USERNAME}
-      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
-      SERVER_NAME: ${SERVER_NAME}
-      PREFERRED_URL_SCHEME: ${PREFERRED_URL_SCHEME}
-      GUNICORN_ACCESS_LOG: "-"
-      STATIC_FILES_MIRROR: /static
-      CACHE_PATH: tmp
-      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
-      JWT_PUBLIC_JWKS: ${JWT_PUBLIC_JWKS}
-    volumes:
-      - ${CACHE_PATH}:/app/project/tmp
-      - ${STATIC_PATH}:/static
-    depends_on:
-      db:
-        condition: service_healthy
+
+  worker:
+    <<: *default-web
+    command: celery -A project.celery worker --loglevel=error
+    entrypoint: []
+
+  scheduler:
+    <<: *default-web
+    command: celery -A project.celery beat --loglevel=error
+    entrypoint: []
 
   fluentd:
     image: danielgrams/fluentd

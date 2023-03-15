@@ -2,7 +2,7 @@ FROM python:3.7
 
 # Add rsync
 RUN apt update -qq && apt upgrade -y && apt autoremove -y
-RUN apt install -y rsync curl && apt autoremove -y
+RUN apt install -y rsync redis-tools curl && apt autoremove -y
 
 EXPOSE 5000
 
@@ -21,6 +21,7 @@ ENV SECRET_KEY=""
 ENV SECURITY_PASSWORD_HASH=""
 ENV SERVER_NAME=""
 ENV STATIC_FILES_MIRROR=""
+ENV REDIS_URL=""
 
 # Install pip requirements
 COPY requirements.txt .

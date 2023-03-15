@@ -1,58 +1,114 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Python: Flask",
-            "type": "python",
-            "request": "launch",
-            "module": "flask",
-            "env": {
-                "FLASK_APP": "project",
-                "FLASK_ENV": "development",
-                "FLASK_DEBUG": "1"
-            },
-            "args": [
-                "run",
-                "--no-debugger"
-            ],
-            "justMyCode": false,
-            "jinja": true
-        },{
-            "name": "Python: Flask HTTPS",
-            "type": "python",
-            "request": "launch",
-            "module": "flask",
-            "env": {
-                "FLASK_APP": "project",
-                "FLASK_ENV": "development",
-                "FLASK_DEBUG": "1"
-            },
-            "args": [
-                "run",
-                "--port=443",
-                "--no-debugger",
-                "--cert=127.0.0.1.crt",
-                "--key=127.0.0.1.key"
-            ],
-            "sudo": true,
-            "justMyCode": false,
-            "jinja": true
-        },
-        {
-            "name": "Python: Aktuelle Datei",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "Debug Unit Test",
-            "type": "python",
-            "request": "test",
-            "justMyCode": false,
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flask",
+      "type": "python",
+      "request": "launch",
+      "module": "flask",
+      "env": {
+        "FLASK_APP": "project",
+        "FLASK_ENV": "development",
+        "FLASK_DEBUG": "1"
+      },
+      "args": ["run", "--no-debugger"],
+      "justMyCode": false,
+      "jinja": true
+    },
+    {
+      "name": "Flask HTTPS",
+      "type": "python",
+      "request": "launch",
+      "module": "flask",
+      "env": {
+        "FLASK_APP": "project",
+        "FLASK_ENV": "development",
+        "FLASK_DEBUG": "1"
+      },
+      "args": [
+        "run",
+        "--port=443",
+        "--no-debugger",
+        "--cert=127.0.0.1.crt",
+        "--key=127.0.0.1.key"
+      ],
+      "sudo": true,
+      "justMyCode": false,
+      "jinja": true
+    },
+    {
+      "name": "Flask CLI",
+      "type": "python",
+      "request": "launch",
+      "module": "flask",
+      "env": {
+        "FLASK_APP": "project",
+        "FLASK_ENV": "development",
+        "FLASK_DEBUG": "1"
+      },
+      "args": ["cache", "clear-images"],
+      "justMyCode": false
+    },
+    {
+      "name": "Python: Aktuelle Datei",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug Unit Test",
+      "type": "python",
+      "request": "test",
+      "justMyCode": false
+    },
+    {
+      "name": "Celery worker",
+      "type": "python",
+      "request": "launch",
+      "module": "celery",
+      "args": [
+        "-A",
+        "project.celery",
+        "worker",
+        "--loglevel=debug",
+        "--concurrency=1"
+      ],
+      "justMyCode": false,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Celery beat",
+      "type": "python",
+      "request": "launch",
+      "module": "celery",
+      "args": ["-A", "project.celery", "beat", "--loglevel=debug"],
+      "justMyCode": false,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Gunicorn",
+      "type": "python",
+      "request": "launch",
+      "module": "gunicorn",
+      "args": ["-c", "gunicorn.conf.py", "-w", "1", "project:app"],
+      "justMyCode": false,
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Flask/Celery",
+      "configurations": ["Flask", "Celery worker"],
+      "stopAll": true
+    },
+    {
+      "name": "Flask/Celery/Beat",
+      "configurations": ["Flask", "Celery worker", "Celery beat"],
+      "stopAll": true
+    }
+  ]
 }

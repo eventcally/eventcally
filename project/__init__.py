@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import timedelta
 
 from flask import Flask
 from flask_babelex import Babel
@@ -22,6 +23,7 @@ def getenv_bool(name: str, default: str = "False"):  # pragma: no cover
 # Create app
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+app.config["REDIS_URL"] = os.getenv("REDIS_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECURITY_CONFIRMABLE"] = True
 app.config["SECURITY_POST_LOGIN_VIEW"] = "manage_after_login"
@@ -36,6 +38,7 @@ app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
 app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = os.getenv(
     "ADMIN_UNIT_CREATE_REQUIRES_ADMIN", False
 )
+app.config["SEO_SITEMAP_PING_GOOGLE"] = getenv_bool("SEO_SITEMAP_PING_GOOGLE", "False")
 
 # Proxy handling
 if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover
@@ -44,6 +47,33 @@ if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover
 from project.reverse_proxied import ReverseProxied
 
 app.wsgi_app = ReverseProxied(app.wsgi_app)
+
+# Celery
+task_always_eager = "REDIS_URL" not in app.config or not app.config["REDIS_URL"]
+app.config.update(
+    CELERY_CONFIG={
+        "broker_url": app.config["REDIS_URL"],
+        "result_backend": app.config["REDIS_URL"],
+        "result_expires": timedelta(hours=1),
+        "broker_pool_limit": None,
+        "redis_max_connections": 2,
+        "timezone": "Europe/Berlin",
+        "broker_transport_options": {
+            "max_connections": 2,
+            "queue_order_strategy": "priority",
+            "priority_steps": list(range(3)),
+            "sep": ":",
+            "queue_order_strategy": "priority",
+        },
+        "task_default_priority": 1,  # 0=high, 1=normal, 2=low priority
+        "task_always_eager": task_always_eager,
+    }
+)
+
+
+from project.celery import create_celery
+
+celery = create_celery(app)
 
 # Generate a nice key using secrets.token_urlsafe()
 app.config["SECRET_KEY"] = os.environ.get(
@@ -66,6 +96,12 @@ if __name__ != "__main__":
     if gunicorn_logger.hasHandlers():
         app.logger.handlers = gunicorn_logger.handlers
         app.logger.setLevel(gunicorn_logger.level)
+
+# One line logging
+from project.one_line_formatter import init_logger_with_one_line_formatter
+
+init_logger_with_one_line_formatter(logging.getLogger())
+init_logger_with_one_line_formatter(app.logger)
 
 # Gzip
 gzip = Gzip(app)
@@ -126,6 +162,9 @@ if app.config["MAIL_SUPPRESS_SEND"]:
 # Create db
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+# Celery tasks
+from project import celery_tasks
 
 # API
 from project.api import RestApi

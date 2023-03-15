@@ -93,7 +93,7 @@ def test_robots_txt(app, utils):
     runner = app.test_cli_runner()
     runner.invoke(args=["seo", "generate-sitemap"])
     result = runner.invoke(args=["seo", "generate-robots-txt"])
-    assert "Generated robots.txt" in result.output
+    assert result.exit_code == 0
     utils.get_endpoint_ok("robots_txt")
 
 
@@ -104,5 +104,5 @@ def test_sitemap_xml(seeder, app, utils):
     app.config["SERVER_NAME"] = "localhost"
     runner = app.test_cli_runner()
     result = runner.invoke(args=["seo", "generate-sitemap"])
-    assert "Generated sitemap" in result.output
+    assert result.exit_code == 0
     utils.get_endpoint_ok("sitemap_xml")
