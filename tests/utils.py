@@ -61,6 +61,10 @@ class UtilActions(object):
     ):
         from project.services.user import find_user_by_email
 
+        with self._app.app_context():
+            user = find_user_by_email(email)
+            assert user
+
         response = self._client.get("/login")
         assert response.status_code == 200
 

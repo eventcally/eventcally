@@ -1658,7 +1658,7 @@ $('#allday').on('change', function() {
 {% endmacro %}
 
 {% macro render_event_date_defintion_code() %}
-      $('.date-definition-container').ovedaDateDefinition();
+      $('.date-definition-container').gsevptDateDefinition();
       var min_date_definition_index = $(".date-definition-container").length;
       if (min_date_definition_index > 1) {
         $('.date-definition-container button.remove-date-defintion-btn').removeClass("d-none");
@@ -1690,7 +1690,7 @@ $('#allday').on('change', function() {
         });
 
         last_container.after(new_container);
-        new_container.ovedaDateDefinition();
+        new_container.gsevptDateDefinition();
 
         if ($.find(".date-definition-container").length > 1) {
           $('.date-definition-container button.remove-date-defintion-btn').removeClass("d-none");

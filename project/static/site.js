@@ -353,7 +353,7 @@ function scroll_to_element(element, complete) {
 }
 
 (function($) {
-  function OvedaDateDefinition(element, options) {
+  function GsevptDateDefinition(element, options) {
     var self = this;
     var container = $(element);
     var prefix = container.attr('data-prefix');
@@ -434,22 +434,22 @@ function scroll_to_element(element, complete) {
     });
   }
 
-  $.fn.ovedaDateDefinition = function(options) {
+  $.fn.gsevptDateDefinition = function(options) {
       var defaults = {};
       var settings = $.extend({}, defaults, options);
 
       if (this.length > 1) {
-          this.each(function() { $(this).ovedaDateDefinition(options) });
+          this.each(function() { $(this).gsevptDateDefinition(options) });
           return this;
       }
 
-      if (this.data('ovedaDateDefinition')) {
-          return this.data('ovedaDateDefinition');
+      if (this.data('gsevptDateDefinition')) {
+          return this.data('gsevptDateDefinition');
       }
 
-      var ovedaDateDefinition = new OvedaDateDefinition(this, settings);
-      this.data('ovedaDateDefinition', ovedaDateDefinition);
-      return ovedaDateDefinition;
+      var gsevptDateDefinition = new GsevptDateDefinition(this, settings);
+      this.data('gsevptDateDefinition', gsevptDateDefinition);
+      return gsevptDateDefinition;
   }
 })(jQuery);
 

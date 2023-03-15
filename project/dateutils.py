@@ -232,7 +232,7 @@ def calculate_occurrences(start_date, date_format, rrule_str, start, batch_size)
 
 def create_icalendar() -> icalendar.Calendar:
     cal = icalendar.Calendar()
-    cal.add("prodid", "-//Oveda//oveda.de//")
+    cal.add("prodid", "-//gsevpt//github.com/DanielGrams/gsevpt//")
     cal.add("version", "2.0")
     cal.add("x-wr-timezone", berlin_tz.zone)
 

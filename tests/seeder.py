@@ -99,14 +99,14 @@ class Seeder(object):
         from project.services.admin_unit import get_admin_unit_by_name
 
         with self._app.app_context():
-            other_admin_unit = get_admin_unit_by_name("Oveda")
+            other_admin_unit = get_admin_unit_by_name("gsevpt")
 
             if other_admin_unit:
                 other_admin_unit_id = other_admin_unit.id
             else:
-                other_user_id = self.create_user("admin@oveda.de")
+                other_user_id = self.create_user("admin@gsevpt.de")
                 other_admin_unit_id = self.create_admin_unit(
-                    other_user_id, "Oveda", can_verify_other=True
+                    other_user_id, "gsevpt", can_verify_other=True
                 )
 
             self.create_admin_unit_relation(
@@ -637,13 +637,13 @@ class Seeder(object):
 
     def create_common_scenario(self):
         with self._app.app_context():
-            # Admin with Oveda organisation
+            # Admin with gsevpt organisation
             admin_id = self.create_user(
                 "admin@test.de", "MeinPasswortIstDasBeste", admin=True
             )
-            oveda_admin_unit_id = self.create_admin_unit(
+            gsevpt_admin_unit_id = self.create_admin_unit(
                 admin_id,
-                "Oveda",
+                "gsevpt",
                 suggestions_enabled=True,
                 can_create_other=True,
                 can_verify_other=True,
@@ -661,7 +661,7 @@ class Seeder(object):
                 incoming_verification_requests_text="Please give us a call",
             )
             self.create_admin_unit_relation(
-                oveda_admin_unit_id,
+                gsevpt_admin_unit_id,
                 marketing_admin_unit_id,
                 verify=True,
             )

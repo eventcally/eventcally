@@ -1,5 +1,5 @@
 location ^~ /image/ {
-	root "/var/www/vhosts/oveda.de/cache/img";
+	root "/var/www/vhosts/gsevpt.de/cache/img";
 	expires 1h;
 
 	location ~ ^/image/(?<id>[0-9]+)/(?<hash>[0-9]+) {
@@ -17,20 +17,20 @@ location ^~ /image/ {
 	}
 }
 location ^~ /static/ {
-	alias "/var/www/vhosts/oveda.de/static/";
+	alias "/var/www/vhosts/gsevpt.de/static/";
 	expires 1h;
 }
 location ^~ /dump/ {
-	alias "/var/www/vhosts/oveda.de/cache/dump/";
+	alias "/var/www/vhosts/gsevpt.de/cache/dump/";
 }
 location ^~ /sitemap.xml {
-	alias "/var/www/vhosts/oveda.de/cache/sitemap.xml";
+	alias "/var/www/vhosts/gsevpt.de/cache/sitemap.xml";
 }
 location ^~ /robots.txt {
-	alias "/var/www/vhosts/oveda.de/cache/robots.txt";
+	alias "/var/www/vhosts/gsevpt.de/cache/robots.txt";
 }
 location ^~ /favicon.ico {
-	alias "/var/www/vhosts/oveda.de/static/favicon.ico";
+	alias "/var/www/vhosts/gsevpt.de/static/favicon.ico";
 	expires 12h;
 }
 location @docker {

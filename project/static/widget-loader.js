@@ -15,7 +15,7 @@
     };
 
     function initWidgets() {
-      var elements = d.getElementsByClassName("oveda-widget");
+      var elements = d.getElementsByClassName("gsevpt-widget");
       for (var i = 0; i < elements.length; i++) {
          initIframeWidget(elements.item(i), i);
       }
@@ -79,8 +79,8 @@
       }
 
       var iFrame = d.createElement("iframe");
-      iFrame.id = "oveda-widget-iframe-" + index;
-      iFrame.class = "oveda-widget-iframe";
+      iFrame.id = "gsevpt-widget-iframe-" + index;
+      iFrame.class = "gsevpt-widget-iframe";
       iFrame.src = src;
       iFrame.style = style;
       iFrame.frameborder = "0";
@@ -172,7 +172,7 @@
 
           (function(data) {
             config.onInit = function (iFrame) {
-              iFrame.iFrameResizer.sendMessage({'type': 'OVEDA_WIDGET_SETTINGS_UPDATE_EVENT', 'data': data});
+              iFrame.iFrameResizer.sendMessage({'type': 'gsevpt_WIDGET_SETTINGS_UPDATE_EVENT', 'data': data});
             }
           })(container.customWidgetData.settings);
         }
@@ -185,14 +185,14 @@
     function onIframeMessage(messageData, googleTagManager) {
       var message = messageData.message;
 
-      if (message.type == "OVEDA_ANALYTICS_EVENT") {
+      if (message.type == "gsevpt_ANALYTICS_EVENT") {
         trackAnalyticsEvent(message.data, googleTagManager);
       }
     }
 
     function trackAnalyticsEvent(data, googleTagManager) {
       if (googleTagManager) {
-        data.event = "ovedaWidget." + data.event;
+        data.event = "gsevptWidget." + data.event;
 
         if (window.dataLayer !== null && window.dataLayer !== undefined) {
           window.dataLayer.push(data);
