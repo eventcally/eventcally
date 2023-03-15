@@ -5,16 +5,14 @@ if [[ ! -z "${STATIC_FILES_MIRROR}" ]]; then
     rsync -a --delete project/static/ "${STATIC_FILES_MIRROR}"
 fi
 
-echo "Using redis ${REDIS_URL}"
-
-PONG=`redis-cli -u ${REDIS_URL} ping | grep PONG`
-while [ -z "$PONG" ]; do
-    sleep 2
-    echo "Waiting for redis server ${REDIS_URL} to become available..."
+if [[ ! -z "${REDIS_URL}" ]]; then
     PONG=`redis-cli -u ${REDIS_URL} ping | grep PONG`
-done
-
-echo "Using database server ${DATABASE_URL}"
+    while [ -z "$PONG" ]; do
+        sleep 2
+        echo "Waiting for redis server to become available..."
+        PONG=`redis-cli -u ${REDIS_URL} ping | grep PONG`
+    done
+fi
 
 until flask db upgrade
 do

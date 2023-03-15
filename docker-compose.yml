@@ -4,7 +4,7 @@ name: "oveda-dev"
 x-web-env:
   &default-web-env
   FLASK_APP: main.py
-  DATABASE_URL: postgresql://user:pass@db/gsevpt
+  DATABASE_URL: postgresql://gsevpt:pass@db/gsevpt
   REDIS_URL: redis://default:pass@redis
   MAIL_DEFAULT_SENDER: noresponse@gsevpt.de
   MAIL_SERVER: mailhog
@@ -32,11 +32,11 @@ services:
   db:
     image: postgis/postgis:12-3.1
     healthcheck:
-      test: "pg_isready --username=user && psql --username=user --list"
+      test: "pg_isready --username=gsevpt && psql --username=gsevpt --list"
       start_period: "5s"
     environment:
       - POSTGRES_DB=gsevpt
-      - POSTGRES_USER=user
+      - POSTGRES_USER=gsevpt
       - POSTGRES_PASSWORD=pass
 
   redis:

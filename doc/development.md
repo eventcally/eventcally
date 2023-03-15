@@ -74,13 +74,13 @@ docker build -t danielgrams/gsevpt:latest .
 ### Run container with existing postgres server
 
 ```sh
-docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/gsevpt" "gsevpt:latest"
+docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@host.docker.internal/gsevpt" danielgrams/gsevpt:latest
 ```
 
-### Compose (including Postgres server)
+### Compose (including dependencies)
 
 ```sh
-docker-compose build && docker-compose up
+docker-compose up --build
 ```
 
 ## Celery
