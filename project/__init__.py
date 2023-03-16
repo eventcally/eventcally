@@ -205,7 +205,7 @@ import project.cli.dump
 import project.cli.event
 import project.cli.seo
 
-if os.getenv("TESTING", False):  # pragma: no cover
+if getenv_bool("TESTING"):  # pragma: no cover
     import project.cli.test
 
     app.config["SECURITY_EMAIL_VALIDATOR_ARGS"] = {"check_deliverability": False}
