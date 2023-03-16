@@ -42,7 +42,7 @@ const OrganizationRead = {
           </b-row>
 
           <div>
-            <iframe id="oveda-widget" :src="'/' + organization.short_name + '/widget/eventdates'" style="width: 1px; min-width: 100%; max-width:100%;"></iframe>
+            <iframe id="gsevpt-widget" :src="'/' + organization.short_name + '/widget/eventdates'" style="width: 1px; min-width: 100%; max-width:100%;"></iframe>
           </div>
         </div>
       </b-overlay>
@@ -72,7 +72,7 @@ const OrganizationRead = {
         .then((response) => {
           this.organization = response.data;
           Vue.nextTick(function () {
-            iFrameResize({ minHeight: 300, onMessage: function(m) {} }, '#oveda-widget');
+            iFrameResize({ minHeight: 300, onMessage: function(m) {} }, '#gsevpt-widget');
           });
         });
     },

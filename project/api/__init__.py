@@ -136,12 +136,12 @@ marshmallow_plugin = MarshmallowPlugin()
 app.config.update(
     {
         "APISPEC_SPEC": APISpec(
-            title="Oveda API",
+            title="Event calendar API",
             version="0.1.0",
             plugins=[marshmallow_plugin],
             openapi_version="2.0",
             info=dict(
-                description="This API provides endpoints to interact with the Oveda data."
+                description="This API provides endpoints to interact with the event calendar data."
             ),
         ),
     }

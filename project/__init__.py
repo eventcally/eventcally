@@ -34,6 +34,7 @@ app.config["SECURITY_RECOVERABLE"] = True
 app.config["SECURITY_CHANGEABLE"] = True
 app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config["LANGUAGES"] = ["en", "de"]
+app.config["SITE_NAME"] = os.getenv("SITE_NAME", "gsevpt")
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
 app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = os.getenv(
     "ADMIN_UNIT_CREATE_REQUIRES_ADMIN", False
@@ -138,7 +139,7 @@ mail_server = os.getenv("MAIL_SERVER")
 
 if not mail_server:
     app.config["MAIL_SUPPRESS_SEND"] = True
-    app.config["MAIL_DEFAULT_SENDER"] = "test@oveda.de"
+    app.config["MAIL_DEFAULT_SENDER"] = "test@gsevpt.de"
 else:  # pragma: no cover
     app.config["MAIL_SUPPRESS_SEND"] = False
     app.config["MAIL_SERVER"] = mail_server
@@ -204,8 +205,10 @@ import project.cli.dump
 import project.cli.event
 import project.cli.seo
 
-if os.getenv("TESTING", False):  # pragma: no cover
+if getenv_bool("TESTING"):  # pragma: no cover
     import project.cli.test
+
+    app.config["SECURITY_EMAIL_VALIDATOR_ARGS"] = {"check_deliverability": False}
 
 import project.cli.user
 from project import i10n, init_data, jinja_filters, requests

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% from "_macros.html" import render_place, render_events_sub_menu %}
 {%- block title -%}
-oveda - Offene Veranstaltungsdatenbank
+{{ config["SITE_NAME"] }}
 {%- endblock -%}
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='landing-page.css')}}" />

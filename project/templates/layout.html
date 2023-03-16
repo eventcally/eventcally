@@ -4,7 +4,7 @@
   {%- block html %}
   <head>
     {%- block head %}
-    <title>{%- block title -%}{{ title|default('oveda') }}{% endblock title %}</title>
+    <title>{%- block title -%}{{ title|default('gsevpt') }}{% endblock title %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -165,7 +165,7 @@
       {% block navbar %}
       <nav class="navbar navbar-expand-md navbar-dark bg-dark">
           <a class="navbar-brand" href="{{ url_for('home') }}">
-            <img src="{{ url_for('static', filename='calendar_icon_90.png')}}" width="30" height="30" class="d-inline-block align-top rounded" alt="Logo"> Oveda
+            <img src="{{ url_for('static', filename='calendar_icon_90.png')}}" width="30" height="30" class="d-inline-block align-top rounded" alt="Logo"> {{ config["SITE_NAME"] }}
           </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -178,7 +178,7 @@
               </div>
               <div class="navbar-nav navbar-right">
                 {% if False %}
-                  <a class="nav-item nav-link" href="https://docs.oveda.de/" target="_blank" rel="noopener noreferrer">{{ _('Docs') }}</a>
+                  <a class="nav-item nav-link" href="https://docs.gsevpt.de/" target="_blank" rel="noopener noreferrer">{{ _('Docs') }}</a>
                 {% endif %}
                 {% if current_user.is_authenticated %}
                   <li class="nav-item dropdown">

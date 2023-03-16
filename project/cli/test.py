@@ -115,13 +115,13 @@ def seed():
 def _verify_admin_unit(admin_unit_id):
     from project.services.admin_unit import get_admin_unit_by_name
 
-    other_admin_unit = get_admin_unit_by_name("Oveda")
+    other_admin_unit = get_admin_unit_by_name("gsevpt")
 
     if other_admin_unit:
         other_admin_unit_id = other_admin_unit.id
     else:
         other_user_id = _create_user("unverified@test.de")
-        other_admin_unit_id = _create_admin_unit(other_user_id, "Oveda")
+        other_admin_unit_id = _create_admin_unit(other_user_id, "gsevpt")
 
     _create_admin_unit_relation(
         other_admin_unit_id,

@@ -348,7 +348,7 @@
                     <tr>
                       <td>
                         <p>{{ _('Hi there') }},</p>
-                        <p>{{ _('this is a message from Oveda - Die offene Veranstaltungsdatenbank.') }}</p>
+                        <p>{{ _('this is a message from %(site_name)s.', site_name=config["SITE_NAME"]) }}</p>
                         {% block content -%}
                         {%- endblock content %}
                       </td>
@@ -366,7 +366,7 @@
               <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td class="content-block">
-                    <span class="apple-link">Oveda - Die offene Veranstaltungsdatenbank</span>.
+                    <span class="apple-link">{{ config["SITE_NAME"] }}</span>.
                   </td>
                 </tr>
               </table>

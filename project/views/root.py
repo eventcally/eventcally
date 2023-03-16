@@ -28,7 +28,7 @@ def home():
         {
             "@context": "http://schema.org",
             "@type": "WebSite",
-            "name": "Oveda",
+            "name": app.config["SITE_NAME"],
             "url": url_for("home", _external=True),
         }
     )

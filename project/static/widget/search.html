@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Oveda Widget</title>
+    <title>Event calendar widget</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.min.css" />
@@ -219,8 +219,8 @@
                 ></b-pagination>
 
                 <div class="d-print-none">
-                    <div v-if="widget.settings.showOvedaLink" class="mb-2">
-                        <a href="#" @click.stop.prevent="openSearch()" class="underlined">Veranstaltungen auf oveda.de anzeigen</a>
+                    <div v-if="widget.settings.showGsevptLink" class="mb-2">
+                        <a href="#" @click.stop.prevent="openSearch()" class="underlined">Suche &ouml;ffnen</a>
                     </div>
 
                     <div v-if="widget.settings.showPrintButton">
@@ -491,7 +491,7 @@ var app = new Vue({
         },
         trackAnalyticsEvent(data) {
             if ('parentIFrame' in window) {
-                parentIFrame.sendMessage({'type': 'OVEDA_ANALYTICS_EVENT', 'data': data});
+                parentIFrame.sendMessage({'type': 'GSEVPT_ANALYTICS_EVENT', 'data': data});
             }
         },
         updateSettings(settings) {
@@ -511,7 +511,7 @@ window.iFrameResizer = {
         app.trackAnalyticsEvent({'event':'pageView', 'url':document.location.href});
     },
     onMessage: function(message) {
-        if (message.type != 'OVEDA_WIDGET_SETTINGS_UPDATE_EVENT') {
+        if (message.type != 'GSEVPT_WIDGET_SETTINGS_UPDATE_EVENT') {
             return;
         }
 
