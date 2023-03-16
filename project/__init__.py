@@ -208,6 +208,8 @@ import project.cli.seo
 if os.getenv("TESTING", False):  # pragma: no cover
     import project.cli.test
 
+    app.config["SECURITY_EMAIL_VALIDATOR_ARGS"] = {"check_deliverability": False}
+
 import project.cli.user
 from project import i10n, init_data, jinja_filters, requests
 
