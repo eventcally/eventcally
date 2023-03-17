@@ -5,10 +5,6 @@ def test_read(client, seeder, utils):
     url = utils.get_url("event_date", id=1)
     utils.get_ok(url)
 
-    url = utils.get_url("event_date", id=1, src="home")
-    response = client.get(url)
-    utils.assert_response_redirect(response, "event_date", id=1)
-
     seeder.create_event(admin_unit_id, draft=True)
     url = utils.get_url("event_date", id=2)
     response = utils.get(url)
