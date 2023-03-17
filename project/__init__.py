@@ -36,10 +36,12 @@ app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config["LANGUAGES"] = ["en", "de"]
 app.config["SITE_NAME"] = os.getenv("SITE_NAME", "gsevpt")
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
+app.config["DOCS_URL"] = os.getenv("DOCS_URL")
 app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = os.getenv(
     "ADMIN_UNIT_CREATE_REQUIRES_ADMIN", False
 )
 app.config["SEO_SITEMAP_PING_GOOGLE"] = getenv_bool("SEO_SITEMAP_PING_GOOGLE", "False")
+app.config["GOOGLE_MAPS_API_KEY"] = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # Proxy handling
 if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover

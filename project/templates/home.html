@@ -1,5 +1,4 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_place, render_events_sub_menu %}
 {%- block title -%}
 {{ config["SITE_NAME"] }}
 {%- endblock -%}
@@ -9,45 +8,33 @@
 {% block body_content__attribs %} style="padding:0;"{% endblock %}
 {% block content_container_attribs %}{% endblock %}
 {% block content %}
+{% if content %}
+{{ content }}
+{% else %}
 
-<!-- Masthead -->
-<header class="masthead text-white text-center">
-    <div class="overlay"></div>
+<header class="text-center">
     <div class="container">
       <div class="row">
         <div class="col-xl-9 mx-auto">
-          <h1><span class="text-dark">O</span>ffene <span class="text-dark">Ve</span>ranstaltungs-<span class="text-dark">Da</span>tenbank</h1>
-          <p class="mb-5">Events einfach bekannt machen!</p>
+          <h1>{{ config["SITE_NAME"] }}</h1>
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-          <form>
-            <div class="form-row">
-              <div class="col-12">
-                {% if current_user.is_authenticated %}
-                  <a class="btn btn-primary btn-lg" href="{{ url_for('manage') }}">{{ _('Manage') }}</a>
-                {% elif not admin_unit_create_requires_admin %}
-                  <a class="btn btn-primary btn-lg" href="{{ url_for('security.register') }}" role="button">{{ _('Register for free') }}</a>
-                {% endif %}
-              </div>
+            {% if current_user.is_authenticated %}
+            <div>
+              <a class="btn btn-primary btn" href="{{ url_for('manage') }}">{{ _('Manage') }}</a>
             </div>
-          </form>
+            {% elif not config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] %}
+            <div class="mb-2">
+              <a class="btn btn-primary" href="{{ url_for('security.register') }}" role="button">{{ _fsdomain('Register') }}</a>
+            </div>
+            <div>
+              <a class="btn btn-outline-secondary" href="{{ url_for('security.login') }}" role="button">{{ _fsdomain('Login') }}</a>
+            </div>
+            {% endif %}
         </div>
       </div>
     </div>
   </header>
 
-  <section class="testimonials text-center bg-light">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg">
-            <div class="testimonial-item mx-auto mb-5 mb-lg-0">
-                <img class="img-fluid rounded-circle mb-3" style="width:120px; height:120px;" src="{{ url_for('static', filename='img/landing-page/machmit.png')}}" alt="Logo machmit!">
-                <h5>MachMit! Goslar</h5>
-                <p class="font-weight-light">Die offene Veranstaltungsdatenbank ist eine Idee der <a href="https://machmit.goslar.de/">MachMit!-Initiative der Stadt Goslar</a>.</p>
-            </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
+{% endif %}
 {% endblock %}

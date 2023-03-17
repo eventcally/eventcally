@@ -1,10 +1,8 @@
-import os
-
 import googlemaps
 
 from project import app
 
-google_maps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+google_maps_api_key = app.config["GOOGLE_MAPS_API_KEY"]
 gmaps = googlemaps.Client(key=google_maps_api_key) if google_maps_api_key else None
 
 

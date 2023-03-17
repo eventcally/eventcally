@@ -9,10 +9,10 @@ from psycopg2.errorcodes import UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
 from wtforms import FormField
 
-from project import app, db, mail
+from project import app, mail
 from project.access import get_admin_unit_for_manage, get_admin_units_for_manage
 from project.dateutils import berlin_tz, round_to_next_day
-from project.models import Analytics, EventAttendanceMode, EventDate
+from project.models import EventAttendanceMode, EventDate
 from project.utils import get_place_str, strings_are_equal_ignoring_case
 
 
@@ -52,18 +52,6 @@ def get_current_admin_unit_from_cookies():
         pass
 
     return None
-
-
-def track_analytics(key, value1, value2):
-    result = Analytics(key=key, value1=value1)
-
-    if value2 is not None:
-        result.value2 = value2
-
-    db.session.add(result)
-    db.session.commit()
-
-    return result
 
 
 def handleSqlError(e: SQLAlchemyError) -> str:

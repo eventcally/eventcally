@@ -23,6 +23,7 @@ x-web-env:
   CACHE_PATH: tmp
   JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
   JWT_PUBLIC_JWKS: ${JWT_PUBLIC_JWKS}
+  DOCS_URL: ${DOCS_URL}
 
 x-web:
   &default-web

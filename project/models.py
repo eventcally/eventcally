@@ -134,6 +134,7 @@ class Settings(db.Model, TrackableMixin):
     legal_notice = Column(UnicodeText())
     contact = Column(UnicodeText())
     privacy = Column(UnicodeText())
+    start_page = Column(UnicodeText())
 
 
 # Multi purpose
@@ -1171,15 +1172,6 @@ class UserFavoriteEvents(db.Model):
     id = Column(Integer(), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
-
-
-class Analytics(db.Model):
-    __tablename__ = "analytics"
-    id = Column(Integer(), primary_key=True)
-    key = Column(Unicode(255))
-    value1 = Column(Unicode(255))
-    value2 = Column(Unicode(255))
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
 
 class CustomWidget(db.Model, TrackableMixin):
