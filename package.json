@@ -24,7 +24,6 @@
   "devDependencies": {
     "cd": "^0.3.3",
     "cypress": "^12.8.1",
-    "cypress-fail-on-console-error": "^4.0.2",
-    "cypress-fail-on-network-request": "^1.0.2"
+    "cypress-fail-on-console-error": "^4.0.2"
   }
 }
