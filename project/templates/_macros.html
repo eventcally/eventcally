@@ -1230,10 +1230,10 @@ if (URL) {
 {% endmacro %}
 
 {% macro render_jquery_steps_header() %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-steps/1.1.0/jquery.steps.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" integrity="sha512-UdIMMlVx0HEynClOIFSyOrPggomfhBKJE28LKl8yR3ghkgugPnG6iLfRfHwushZl1MOPSY6TsuBDGPK2X4zYKg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js" integrity="sha512-6Uv+497AWTmj/6V14BsQioPrm3kgwmK9HYIyWP+vClykX52b0zrDGP7lajZoIY1nNlX4oQuh7zsGjmF7D0VZYA==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/localization/messages_de.min.js" integrity="sha512-CZoLR7uTljYchtaY9SbWetTDxZ7bW3h6YALF4orf6k+WTvZhr4zu+a9XqhHkK+zsKbQL5HNXTNrd21TE3M6eUg==" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='ext/jquery.steps.1.1.0.min.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/jquery.validate.1.19.2.min.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/jquery-validate.1.19.2.additional-methods.min.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/jquery-validate.1.19.2.messages_de.min.js')}}"></script>
 <script>
   jQuery.validator.addMethod("dateRange", function(value, element, params) {
     var start_id = params[0];
@@ -1356,9 +1356,9 @@ $('#allday').on('change', function() {
 {% endmacro %}
 
 {% macro render_cropper_header() %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.js" integrity="sha512-9pGiHYK23sqK5Zm0oF45sNBAX/JqbZEP7bSDHyt+nT3GddF+VFIcYNqREt0GDpmFVZI3LZ17Zu9nMMc9iktkCw==" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.css" integrity="sha512-w+u2vZqMNUVngx+0GVZYM21Qm093kAexjueWOv9e9nIeYJb1iEfiHC7Y+VvmP/tviQyA5IR32mwN/5hTEJx6Ng==" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cropper/1.0.1/jquery-cropper.min.js" integrity="sha512-V8cSoC5qfk40d43a+VhrTEPf8G9dfWlEJgvLSiq2T2BmgGRmZzB8dGe7XAABQrWj3sEfrR5xjYICTY4eJr76QQ==" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='ext/cropper.1.5.9.min.js')}}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='ext/cropper.1.5.9.min.css')}}" />
+<script src="{{ url_for('static', filename='ext/jquery-cropper.1.0.1.min.js')}}"></script>
 {% endmacro %}
 
 {% macro render_event_suggestion(event_suggestion, hide_review_status=False) %}
@@ -1608,11 +1608,11 @@ $('#allday').on('change', function() {
 {% endmacro %}
 
 {% macro render_form_scripts() %}
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/i18n/jquery-ui-i18n.min.js" integrity="sha256-pIEbIH2QxTg2nHVPn1HLn1asQIDxqtbZn12/kAkAZkY=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/i18n/de.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/timepicker@1.13.18/jquery.timepicker.min.js"></script>
+<script src="{{ url_for('static', filename='ext/jquery-ui.1.12.1/jquery-ui.min.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/jquery-ui-i18n.1.11.4.min.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/select2.4.1.0-beta.1.min.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/select2.i18n.de.4.1.0-beta.1.min.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/jquery.timepicker.1.13.18.min.js')}}"></script>
 <script type="text/javascript">
   var csrf_token = "{{ csrf_token() }}";
 
@@ -1641,15 +1641,15 @@ $('#allday').on('change', function() {
 
 {% macro render_manage_form_scripts() %}
 {{ render_form_scripts() }}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/1.0.6/jsrender.min.js" integrity="sha512-Bh8Z8kuMiQKW0jO+zvR2I2lbRhN0eGOn3u8hxOOIU44IZZjwvNfLyzdXxQ9PtoTK68j5hQIqc9sycQnbwRlVCQ==" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='ext/jsrender.1.0.6.min.js')}}"></script>
 <script src="{{ url_for('static', filename='jquery.recurrenceinput.js')}}"></script>
 {% endmacro %}
 
 {% macro render_form_styles() %}
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" >
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.13.18/jquery.timepicker.min.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='ext/jquery-ui.1.12.1/jquery-ui.min.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='ext/select2.4.1.0-beta.1.min.css')}}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='ext/select2-bootstrap4.1.5.2.min.css')}}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='ext/jquery.timepicker.1.13.18.min.css')}}" />
 {% endmacro %}
 
 {% macro render_manage_form_styles() %}

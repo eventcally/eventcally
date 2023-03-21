@@ -7,17 +7,17 @@
 
 {% block styles %}
 {{ render_form_styles() }}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.68.0/dist/L.Control.Locate.min.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='ext/leaflet.1.5.1.css')}}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='ext/MarkerCluster@1.4.1.Default.css')}}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='ext/MarkerCluster.1.4.1.css')}}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='ext/L.Control.Locate.0.68.0.min.css')}}" />
 {% endblock %}
 
 {% block header_before_site_js %}
 {{ render_form_scripts() }}
-<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.68.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+<script src="{{ url_for('static', filename='ext/leaflet.1.5.1.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/leaflet.markercluster.1.4.1.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/L.Control.Locate.0.68.0.min.js')}}" charset="utf-8"></script>
 {%- endblock -%}
 
 {% block header %}

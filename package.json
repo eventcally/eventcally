@@ -8,8 +8,8 @@
     "test": "tests"
   },
   "scripts": {
-    "cypress:open": "cypress open --config-file cypress/config/desktop.json",
-    "cypress:open:mobile": "cypress open --config-file cypress/config/mobile.json"
+    "cypress:open": "cypress open --config-file cypress/config/desktop.config.js",
+    "cypress:open:mobile": "cypress open --config-file cypress/config/mobile.config.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/DanielGrams/gsevpt#readme",
   "devDependencies": {
-    "cypress": "^9.1.1",
-    "cypress-fail-on-console-error": "^2.1.2"
+    "cd": "^0.3.3",
+    "cypress": "^12.8.1",
+    "cypress-fail-on-console-error": "^4.0.2",
+    "cypress-fail-on-network-request": "^1.0.2"
   }
 }
