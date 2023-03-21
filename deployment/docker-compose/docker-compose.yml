@@ -1,5 +1,5 @@
 version: "3.9"
-name: "gsevpt"
+name: "eventcally"
 
 x-web-env:
   &default-web-env
@@ -27,7 +27,7 @@ x-web-env:
 
 x-web:
   &default-web
-  image: danielgrams/gsevpt:${WEB_TAG}
+  image: eventcally/eventcally:${WEB_TAG}
   restart: always
   extra_hosts:
     - "host.docker.internal:host-gateway"

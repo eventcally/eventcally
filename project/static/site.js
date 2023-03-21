@@ -353,7 +353,7 @@ function scroll_to_element(element, complete) {
 }
 
 (function($) {
-  function GsevptDateDefinition(element, options) {
+  function EventCallyDateDefinition(element, options) {
     var self = this;
     var container = $(element);
     var prefix = container.attr('data-prefix');
@@ -434,22 +434,22 @@ function scroll_to_element(element, complete) {
     });
   }
 
-  $.fn.gsevptDateDefinition = function(options) {
+  $.fn.eventcallyDateDefinition = function(options) {
       var defaults = {};
       var settings = $.extend({}, defaults, options);
 
       if (this.length > 1) {
-          this.each(function() { $(this).gsevptDateDefinition(options) });
+          this.each(function() { $(this).eventcallyDateDefinition(options) });
           return this;
       }
 
-      if (this.data('gsevptDateDefinition')) {
-          return this.data('gsevptDateDefinition');
+      if (this.data('eventcallyDateDefinition')) {
+          return this.data('eventcallyDateDefinition');
       }
 
-      var gsevptDateDefinition = new GsevptDateDefinition(this, settings);
-      this.data('gsevptDateDefinition', gsevptDateDefinition);
-      return gsevptDateDefinition;
+      var eventcallyDateDefinition = new EventCallyDateDefinition(this, settings);
+      this.data('eventcallyDateDefinition', eventcallyDateDefinition);
+      return eventcallyDateDefinition;
   }
 })(jQuery);
 

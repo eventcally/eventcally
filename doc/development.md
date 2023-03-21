@@ -5,8 +5,8 @@
 ### Create test database
 
 ```sh
-psql -c 'create database gsevpt_tests;' -U postgres
-psql -c 'create extension postgis;' -d gsevpt_tests -U postgres
+psql -c 'create database eventcally_tests;' -U postgres
+psql -c 'create extension postgis;' -d eventcally_tests -U postgres
 ```
 
 ### Run tests
@@ -68,13 +68,13 @@ pybabel compile -d project/translations
 ### Build image
 
 ```sh
-docker build -t danielgrams/gsevpt:latest .
+docker build -t eventcally/eventcally:latest .
 ```
 
 ### Run container with existing postgres server
 
 ```sh
-docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@host.docker.internal/gsevpt" danielgrams/gsevpt:latest
+docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@host.docker.internal/eventcally" eventcally/eventcally:latest
 ```
 
 ### Compose (including dependencies)

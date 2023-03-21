@@ -1,3 +1,3 @@
 def test_index(client):
     response = client.get("/")
-    assert b"gsevpt" in response.data
+    assert b"eventcally" in response.data

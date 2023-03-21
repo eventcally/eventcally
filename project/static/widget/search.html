@@ -219,7 +219,7 @@
                 ></b-pagination>
 
                 <div class="d-print-none">
-                    <div v-if="widget.settings.showGsevptLink" class="mb-2">
+                    <div v-if="widget.settings.showEventCallyLink" class="mb-2">
                         <a href="#" @click.stop.prevent="openSearch()" class="underlined">Suche &ouml;ffnen</a>
                     </div>
 
@@ -491,7 +491,7 @@ var app = new Vue({
         },
         trackAnalyticsEvent(data) {
             if ('parentIFrame' in window) {
-                parentIFrame.sendMessage({'type': 'GSEVPT_ANALYTICS_EVENT', 'data': data});
+                parentIFrame.sendMessage({'type': 'EVENTCALLY_ANALYTICS_EVENT', 'data': data});
             }
         },
         updateSettings(settings) {
@@ -511,7 +511,7 @@ window.iFrameResizer = {
         app.trackAnalyticsEvent({'event':'pageView', 'url':document.location.href});
     },
     onMessage: function(message) {
-        if (message.type != 'GSEVPT_WIDGET_SETTINGS_UPDATE_EVENT') {
+        if (message.type != 'EVENTCALLY_WIDGET_SETTINGS_UPDATE_EVENT') {
             return;
         }
 

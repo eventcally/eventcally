@@ -7,7 +7,7 @@
 ## Docker
 
 ```sh
-docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/gsevpt" danielgrams/gsevpt:latest
+docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/eventcally" eventcally/eventcally:latest
 ```
 
 ## Manual Installation
@@ -21,7 +21,7 @@ docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/gsevpt"
 ### Create database
 
 ```sh
-psql -c 'create database gsevpt;' -U postgres
+psql -c 'create database eventcally;' -U postgres
 ```
 
 ### Install and run
@@ -30,7 +30,7 @@ psql -c 'create database gsevpt;' -U postgres
 python3 -m venv venv
 source venv/bin/activate
 (venv) pip install -r requirements.txt
-(venv) export DATABASE_URL='postgresql://postgres@localhost/gsevpt'
+(venv) export DATABASE_URL='postgresql://postgres@localhost/eventcally'
 (venv) flask db upgrade
 (venv) gunicorn -c gunicorn.conf.py project:app
 ```
