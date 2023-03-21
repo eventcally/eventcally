@@ -72,7 +72,7 @@ jobs:
           parallel: true
           group: "Mobile"
           wait-on: "http://127.0.0.1:5001"
-          config-file: cypress/config/mobile.json
+          config-file: cypress/config/mobile.config.js
           config: baseUrl=http://127.0.0.1:5001
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost/gsevpt_tests
@@ -146,7 +146,7 @@ jobs:
           parallel: true
           group: "Desktop"
           wait-on: "http://127.0.0.1:5001"
-          config-file: cypress/config/desktop.json
+          config-file: cypress/config/desktop.config.js
           config: baseUrl=http://127.0.0.1:5001
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost/gsevpt_tests

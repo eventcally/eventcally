@@ -263,6 +263,8 @@ Cypress.Commands.add(
     }
 
     cy.get(".modal-recurrence").should("be.visible");
+    cy.wait(1000);
+
     cy.inputsShouldHaveSameValue('#' + prefix + 'start-user', '#' + prefix + 'recc-start-user');
     cy.inputsShouldHaveSameValue('#' + prefix + 'start-time', '#' + prefix + 'recc-start-time');
     cy.get('#' + prefix + 'rirtemplate option').should("have.length", 4);

@@ -7,10 +7,6 @@ def test_home(client, seeder, utils):
     url = utils.get_url("home")
     utils.get_ok(url)
 
-    url = utils.get_url("home", src="infoscreen")
-    response = client.get(url)
-    utils.assert_response_redirect(response, "home")
-
 
 def test_up(app, utils):
     utils.get_ok("up")

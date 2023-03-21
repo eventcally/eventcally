@@ -1,41 +1,54 @@
 /* lato-300 - latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: "Lato";
   font-style: normal;
   font-weight: 300;
-  src: url('/static/fonts/lato-v23-latin-300.eot'); /* IE9 Compat Modes */
-  src: local(''),
-       url('/static/fonts/lato-v23-latin-300.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('/static/fonts/lato-v23-latin-300.woff2') format('woff2'), /* Super Modern Browsers */
-       url('/static/fonts/lato-v23-latin-300.woff') format('woff'), /* Modern Browsers */
-       url('/static/fonts/lato-v23-latin-300.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('/static/fonts/lato-v23-latin-300.svg#Lato') format('svg'); /* Legacy iOS */
+  src: url("/static/fonts/lato-v23-latin-300.eot"); /* IE9 Compat Modes */
+  src: local(""),
+    url("/static/fonts/lato-v23-latin-300.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("/static/fonts/lato-v23-latin-300.woff2") format("woff2"),
+    /* Super Modern Browsers */ url("/static/fonts/lato-v23-latin-300.woff")
+      format("woff"),
+    /* Modern Browsers */ url("/static/fonts/lato-v23-latin-300.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */ url("/static/fonts/lato-v23-latin-300.svg#Lato")
+      format("svg"); /* Legacy iOS */
 }
 /* lato-regular - latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: "Lato";
   font-style: normal;
   font-weight: 400;
-  src: url('/static/fonts/lato-v23-latin-regular.eot'); /* IE9 Compat Modes */
-  src: local(''),
-       url('/static/fonts/lato-v23-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('/static/fonts/lato-v23-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
-       url('/static/fonts/lato-v23-latin-regular.woff') format('woff'), /* Modern Browsers */
-       url('/static/fonts/lato-v23-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('/static/fonts/lato-v23-latin-regular.svg#Lato') format('svg'); /* Legacy iOS */
+  src: url("/static/fonts/lato-v23-latin-regular.eot"); /* IE9 Compat Modes */
+  src: local(""),
+    url("/static/fonts/lato-v23-latin-regular.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("/static/fonts/lato-v23-latin-regular.woff2")
+      format("woff2"),
+    /* Super Modern Browsers */ url("/static/fonts/lato-v23-latin-regular.woff")
+      format("woff"),
+    /* Modern Browsers */ url("/static/fonts/lato-v23-latin-regular.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */
+      url("/static/fonts/lato-v23-latin-regular.svg#Lato") format("svg"); /* Legacy iOS */
 }
 /* lato-700 - latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: "Lato";
   font-style: normal;
   font-weight: 700;
-  src: url('/static/fonts/lato-v23-latin-700.eot'); /* IE9 Compat Modes */
-  src: local(''),
-       url('/static/fonts/lato-v23-latin-700.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('/static/fonts/lato-v23-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
-       url('/static/fonts/lato-v23-latin-700.woff') format('woff'), /* Modern Browsers */
-       url('/static/fonts/lato-v23-latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('/static/fonts/lato-v23-latin-700.svg#Lato') format('svg'); /* Legacy iOS */
+  src: url("/static/fonts/lato-v23-latin-700.eot"); /* IE9 Compat Modes */
+  src: local(""),
+    url("/static/fonts/lato-v23-latin-700.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("/static/fonts/lato-v23-latin-700.woff2") format("woff2"),
+    /* Super Modern Browsers */ url("/static/fonts/lato-v23-latin-700.woff")
+      format("woff"),
+    /* Modern Browsers */ url("/static/fonts/lato-v23-latin-700.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */ url("/static/fonts/lato-v23-latin-700.svg#Lato")
+      format("svg"); /* Legacy iOS */
 }
 
 /*!
@@ -140,29 +153,4 @@ header.masthead h1 {
 .testimonials .testimonial-item img {
   max-width: 12rem;
   box-shadow: 0px 5px 5px 0px #adb5bd;
-}
-
-.call-to-action {
-  position: relative;
-  background-color: #343a40;
-  background: url("../static/img/landing-page//bg-masthead.jpg") no-repeat
-    center center;
-  background-size: cover;
-  padding-top: 7rem;
-  padding-bottom: 7rem;
-}
-
-.call-to-action .overlay {
-  position: absolute;
-  background-color: #212529;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  opacity: 0.3;
-}
-
-footer.footer {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }

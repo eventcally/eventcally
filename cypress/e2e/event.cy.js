@@ -30,6 +30,7 @@ describe("Event", () => {
 
         cy.contains("a", "Veranstaltung bearbeiten").click();
         cy.url().should("include", "/update");
+
         cy.checkEventStartEnd(true, test.recurrence, "date_definitions-0-");
 
         cy.get('div[data-prefix=date_definitions-1-] .remove-date-defintion-btn:visible').click()

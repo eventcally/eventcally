@@ -11,6 +11,7 @@ class AdminSettingsForm(FlaskForm):
     legal_notice = TextAreaField(lazy_gettext("Legal notice"), validators=[Optional()])
     contact = TextAreaField(lazy_gettext("Contact"), validators=[Optional()])
     privacy = TextAreaField(lazy_gettext("Privacy"), validators=[Optional()])
+    start_page = TextAreaField(lazy_gettext("Start page"), validators=[Optional()])
 
     submit = SubmitField(lazy_gettext("Save"))
 

@@ -15,6 +15,7 @@ def test_mail_server():
 def drop_db(db):
     db.drop_all()
     db.engine.execute("DROP TABLE IF EXISTS alembic_version;")
+    db.engine.execute("DROP TABLE IF EXISTS analytics;")
 
 
 def populate_db(db):

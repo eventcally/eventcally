@@ -1,6 +1,6 @@
 import json
 
-from flask import redirect, render_template, request, url_for
+from flask import render_template, request, url_for
 from flask.wrappers import Response
 
 from project import app
@@ -16,12 +16,7 @@ from project.services.event import (
 )
 from project.services.event_search import EventSearchParams
 from project.views.event import get_event_category_choices, get_menu_user_rights
-from project.views.utils import (
-    flash_errors,
-    get_calendar_links,
-    get_share_links,
-    track_analytics,
-)
+from project.views.utils import flash_errors, get_calendar_links, get_share_links
 
 
 def prepare_event_date_form(form):
@@ -49,10 +44,6 @@ def event_dates():
 def event_date(id):
     event_date = get_event_date_with_details_or_404(id)
     can_read_event_or_401(event_date.event)
-
-    if "src" in request.args:
-        track_analytics("event_date", str(id), request.args["src"])
-        return redirect(url_for("event_date", id=id))
 
     structured_data = json.dumps(
         get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder

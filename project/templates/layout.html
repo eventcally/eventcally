@@ -43,33 +43,15 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='apple-touch-icon.png')}}">
     <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest')}}">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='ext/bootstrap.4.4.1.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='ext/font-awesome.5.13.1/css/all.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}" />
 
     {%- block styles %}
     {%- endblock styles %}
 
-    {%- block gtm_header %}
-    {% set gtm_id = None | env_override('GTM_ID') %}
-    {% if gtm_id %}
-    <script>
-      window.dataLayer = window.dataLayer || [];
-    </script>
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','{{ gtm_id }}');</script>
-
-      <script defer type="application/javascript"src="{{ url_for('static', filename='klaro-config.js')}}"></script>
-      <script defer type="application/javascript" src="https://cdn.kiprotect.com/klaro/v0.7/klaro-no-css.js"></script>
-      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='klaro.css')}}" />
-    {% endif %}
-    {%- endblock gtm_header %}
-
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js" integrity="sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo=" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='ext/jquery-1.12.4.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='ext/moment.2.24.0.with-locales.min.js')}}"></script>
 
     {% block header_before_site_js %}
     {%- endblock -%}
@@ -157,15 +139,10 @@
   </head>
   <body{% block body_attribs %}{% endblock body_attribs %}>
     {% block body -%}
-      {%- block gtm_body %}
-        {% if gtm_id %}
-          <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_id }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-        {% endif %}
-      {%- endblock gtm_body %}
       {% block navbar %}
       <nav class="navbar navbar-expand-md navbar-dark bg-dark">
           <a class="navbar-brand" href="{{ url_for('home') }}">
-            <img src="{{ url_for('static', filename='calendar_icon_90.png')}}" width="30" height="30" class="d-inline-block align-top rounded" alt="Logo"> {{ config["SITE_NAME"] }}
+            <img src="{{ url_for('static', filename='calendar_icon_90.png')}}" width="30" height="30" class="d-inline-block align-top rounded" alt="Logo">
           </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -177,8 +154,8 @@
                 <a class="nav-item nav-link" href="{{ url_for('planing') }}">{{ _('Planing') }}</a>
               </div>
               <div class="navbar-nav navbar-right">
-                {% if False %}
-                  <a class="nav-item nav-link" href="https://docs.gsevpt.de/" target="_blank" rel="noopener noreferrer">{{ _('Docs') }}</a>
+                {% if config["DOCS_URL"] %}
+                  <a class="nav-item nav-link" href="{{ config["DOCS_URL"] }}" target="_blank" rel="noopener noreferrer">{{ _('Docs') }}</a>
                 {% endif %}
                 {% if current_user.is_authenticated %}
                   <li class="nav-item dropdown">
@@ -328,18 +305,11 @@
                     <li class="list-inline-item">
                       <a href="{{ url_for('privacy') }}" class="text-muted">{{ _('Privacy') }}</a>
                     </li>
-                    {% if None | env_override('GTM_ID') %}
-                    <li class="list-inline-item">&sdot;</li>
-                    <li class="list-inline-item">
-                      <a href="#" onclick="return klaro.show();" class="text-muted">Cookies</a>
-                    </li>
-                    {% endif %}
                     <li class="list-inline-item">&sdot;</li>
                     <li class="list-inline-item">
                       <a href="{{ url_for('developer') }}" class="text-muted">{{ _('Developer') }}</a>
                     </li>
                   </ul>
-                  <p class="text-muted small mb-4 mb-lg-0">Mit <i class="fa fa-heart"></i> in Goslar entwickelt.</p>
                 </div>
               </div>
             </div>
@@ -348,8 +318,8 @@
 
       </div>
 
-      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+      <script src="{{ url_for('static', filename='ext/popper.1.16.0.min.js')}}"></script>
+      <script src="{{ url_for('static', filename='ext/bootstrap.4.4.1.min.js')}}"></script>
       {% block scripts %}
       {%- endblock scripts %}
     {%- endblock body %}

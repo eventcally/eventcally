@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-03-15 19:10+0100\n"
+"POT-Creation-Date: 2023-03-16 19:11+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -199,47 +199,51 @@ msgstr "message"
 msgid "You have received an invitation"
 msgstr "Du hast eine Einladung erhalten"
 
-#: project/forms/admin.py:10 project/templates/layout.html:317
-#: project/views/root.py:55
+#: project/forms/admin.py:10 project/templates/layout.html:294
+#: project/views/root.py:57
 msgid "Terms of service"
 msgstr "Nutzungsbedingungen"
 
-#: project/forms/admin.py:11 project/templates/layout.html:321
-#: project/views/root.py:63
+#: project/forms/admin.py:11 project/templates/layout.html:298
+#: project/views/root.py:65
 msgid "Legal notice"
 msgstr "Impressum"
 
 #: project/forms/admin.py:12 project/templates/_macros.html:1395
-#: project/templates/layout.html:325
+#: project/templates/layout.html:302
 #: project/templates/widget/event_suggestion/create.html:204
-#: project/views/admin_unit.py:73 project/views/root.py:71
+#: project/views/admin_unit.py:73 project/views/root.py:73
 msgid "Contact"
 msgstr "Kontakt"
 
-#: project/forms/admin.py:13 project/templates/layout.html:329
-#: project/views/root.py:79
+#: project/forms/admin.py:13 project/templates/layout.html:306
+#: project/views/root.py:81
 msgid "Privacy"
 msgstr "Datenschutz"
 
-#: project/forms/admin.py:15 project/forms/oauth2_client.py:24
+#: project/forms/admin.py:14
+msgid "Start page"
+msgstr "Startseite"
+
+#: project/forms/admin.py:16 project/forms/oauth2_client.py:24
 msgid "Save"
 msgstr "Speichern"
 
-#: project/forms/admin.py:19 project/forms/admin_unit_member.py:12
+#: project/forms/admin.py:20 project/forms/admin_unit_member.py:12
 #: project/forms/admin_unit_member.py:32
 msgid "Roles"
 msgstr "Rollen"
 
-#: project/forms/admin.py:20 project/templates/admin/update_user.html:4
+#: project/forms/admin.py:21 project/templates/admin/update_user.html:4
 #: project/templates/admin/update_user.html:8
 msgid "Update user"
 msgstr "Nutzer aktualisieren"
 
-#: project/forms/admin.py:25
+#: project/forms/admin.py:26
 msgid "Incoming reference requests allowed"
 msgstr "Eingehende Empfehlungsanfragen erlauben"
 
-#: project/forms/admin.py:26
+#: project/forms/admin.py:27
 msgid ""
 "If set, other organizations can ask this organization to reference their "
 "event."
@@ -247,45 +251,45 @@ msgstr ""
 "Wenn gesetzt, können andere Organisationen diese Organisation bitten, "
 "deren Veranstaltungen zu empfehlen."
 
-#: project/forms/admin.py:32
+#: project/forms/admin.py:33
 msgid "Suggestions enabled"
 msgstr "Vorschläge aktiv"
 
-#: project/forms/admin.py:33
+#: project/forms/admin.py:34
 msgid "If set, the organization can work with suggestions."
 msgstr "Wenn gesetzt, kann die Organisation mit Vorschlägen arbeiten."
 
-#: project/forms/admin.py:37
+#: project/forms/admin.py:38
 msgid "Create other organizations"
 msgstr "Andere Organisationen erstellen"
 
-#: project/forms/admin.py:38
+#: project/forms/admin.py:39
 msgid "If set, members of the organization can create other organizations."
 msgstr ""
 "Wenn gesetzt, können Mitglieder der Organisation andere Organisationen "
 "erstellen."
 
-#: project/forms/admin.py:44
+#: project/forms/admin.py:45
 msgid "Invite other organizations"
 msgstr "Andere Organisationen einladen"
 
-#: project/forms/admin.py:45
+#: project/forms/admin.py:46
 msgid "If set, members of the organization can invite other organizations."
 msgstr ""
 "Wenn gesetzt, können Mitglieder der Organisation andere Organisationen "
 "einladen."
 
-#: project/forms/admin.py:51
+#: project/forms/admin.py:52
 msgid "Verify other organizations"
 msgstr "Andere Organisationen verifizieren"
 
-#: project/forms/admin.py:52
+#: project/forms/admin.py:53
 msgid "If set, members of the organization can verify other organizations."
 msgstr ""
 "Wenn gesetzt, können Mitglieder der Organisation andere Organisationen "
 "verifizieren."
 
-#: project/forms/admin.py:57 project/templates/admin/update_admin_unit.html:4
+#: project/forms/admin.py:58 project/templates/admin/update_admin_unit.html:4
 #: project/templates/admin/update_admin_unit.html:8
 msgid "Update organization"
 msgstr "Organisation aktualisieren"
@@ -675,7 +679,7 @@ msgid "If the participants needs to register for the event."
 msgstr "Wenn sich die Teilnehmer für die Veranstaltung anmelden müssen."
 
 #: project/forms/event.py:170 project/templates/_macros.html:249
-#: project/templates/layout.html:128
+#: project/templates/layout.html:110
 msgid "Booked up"
 msgstr "Ausgebucht"
 
@@ -735,11 +739,11 @@ msgstr "Teilnahme"
 msgid "EventAttendanceMode.offline"
 msgstr "Präsenzveranstaltung"
 
-#: project/forms/event.py:217 project/templates/layout.html:116
+#: project/forms/event.py:217 project/templates/layout.html:98
 msgid "EventAttendanceMode.online"
 msgstr "Online"
 
-#: project/forms/event.py:219 project/templates/layout.html:119
+#: project/forms/event.py:219 project/templates/layout.html:101
 msgid "EventAttendanceMode.mixed"
 msgstr "Präsenzveranstaltung und online"
 
@@ -890,23 +894,23 @@ msgstr "Status"
 msgid "EventStatus.scheduled"
 msgstr "Geplant"
 
-#: project/forms/event.py:389 project/templates/layout.html:82
-#: project/templates/layout.html:97
+#: project/forms/event.py:389 project/templates/layout.html:64
+#: project/templates/layout.html:79
 msgid "EventStatus.cancelled"
 msgstr "Abgesagt"
 
-#: project/forms/event.py:390 project/templates/layout.html:85
-#: project/templates/layout.html:100
+#: project/forms/event.py:390 project/templates/layout.html:67
+#: project/templates/layout.html:82
 msgid "EventStatus.movedOnline"
 msgstr "Online verschoben"
 
-#: project/forms/event.py:391 project/templates/layout.html:88
-#: project/templates/layout.html:103
+#: project/forms/event.py:391 project/templates/layout.html:70
+#: project/templates/layout.html:85
 msgid "EventStatus.postponed"
 msgstr "Verschoben"
 
-#: project/forms/event.py:392 project/templates/layout.html:91
-#: project/templates/layout.html:106
+#: project/forms/event.py:392 project/templates/layout.html:73
+#: project/templates/layout.html:88
 msgid "EventStatus.rescheduled"
 msgstr "Neu angesetzt"
 
@@ -1115,7 +1119,7 @@ msgstr "Wochentage"
 #: project/templates/_macros.html:489 project/templates/_macros.html:652
 #: project/templates/admin_unit/create.html:28
 #: project/templates/admin_unit/update.html:29
-#: project/templates/layout.html:265
+#: project/templates/layout.html:242
 msgid "Organization"
 msgstr "Organisation"
 
@@ -1275,7 +1279,7 @@ msgstr ""
 "Die Veranstaltung findet sowohl als Präsenzveranstaltung als auch online "
 "statt."
 
-#: project/templates/_macros.html:585 project/templates/layout.html:191
+#: project/templates/_macros.html:585 project/templates/layout.html:168
 #: project/templates/user/favorite_events.html:4
 msgid "Favorite events"
 msgstr "Merkzettel"
@@ -1420,7 +1424,7 @@ msgstr "Verwaltung"
 msgid "Register for free"
 msgstr "Kostenlos registrieren"
 
-#: project/templates/layout.html:175 project/templates/layout.html:223
+#: project/templates/layout.html:152 project/templates/layout.html:200
 #: project/templates/manage/events.html:6
 #: project/templates/manage/events.html:42
 #: project/templates/manage/events_vue.html:4
@@ -1430,22 +1434,22 @@ msgstr "Veranstaltungen"
 #: project/templates/admin/admin.html:19
 #: project/templates/admin/admin_units.html:4
 #: project/templates/admin/admin_units.html:11
-#: project/templates/layout.html:176 project/templates/layout.html:189
+#: project/templates/layout.html:153 project/templates/layout.html:166
 #: project/templates/manage/admin_units.html:3
 #: project/templates/manage/admin_units.html:25
 #: project/templates/organization/main.html:4
 msgid "Organizations"
 msgstr "Organisationen"
 
-#: project/templates/layout.html:177
+#: project/templates/layout.html:154
 msgid "Planing"
 msgstr "Planung"
 
-#: project/templates/layout.html:181
+#: project/templates/layout.html:158
 msgid "Docs"
 msgstr "Doku"
 
-#: project/templates/layout.html:190 project/templates/layout.html:279
+#: project/templates/layout.html:167 project/templates/layout.html:256
 #: project/templates/oauth2_client/list.html:10
 #: project/templates/oauth2_client/read.html:10
 #: project/templates/oauth2_token/list.html:10 project/templates/profile.html:4
@@ -1455,86 +1459,86 @@ msgstr "Profil"
 
 #: project/templates/admin/admin.html:3 project/templates/admin/admin.html:9
 #: project/templates/admin/admin_units.html:10
-#: project/templates/admin/users.html:10 project/templates/layout.html:194
+#: project/templates/admin/users.html:10 project/templates/layout.html:171
 msgid "Admin"
 msgstr "Administration"
 
-#: project/templates/layout.html:198
+#: project/templates/layout.html:175
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: project/templates/layout.html:229
+#: project/templates/layout.html:206
 msgid "Show events"
 msgstr "Veranstaltungen anzeigen"
 
 #: project/templates/event/create.html:5
-#: project/templates/event/create.html:221 project/templates/layout.html:230
+#: project/templates/event/create.html:221 project/templates/layout.html:207
 #: project/templates/manage/events.html:45
 #: project/templates/manage/organizers.html:21
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
-#: project/templates/layout.html:231
+#: project/templates/layout.html:208
 msgid "Import event"
 msgstr "Veranstaltung imporierten"
 
-#: project/templates/layout.html:233
+#: project/templates/layout.html:210
 #: project/templates/manage/event_lists.html:4
 msgid "Event lists"
 msgstr "Veranstaltungslisten"
 
-#: project/templates/layout.html:236
+#: project/templates/layout.html:213
 msgid "Review suggestions"
 msgstr "Vorschläge prüfen"
 
-#: project/templates/layout.html:246
+#: project/templates/layout.html:223
 #: project/templates/manage/references_incoming.html:5
 #: project/templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr "Empfehlungen"
 
-#: project/templates/layout.html:252
+#: project/templates/layout.html:229
 #: project/templates/manage/references_incoming.html:9
 msgid "Incoming references"
 msgstr "Eingehende Empfehlungen"
 
-#: project/templates/layout.html:253
+#: project/templates/layout.html:230
 #: project/templates/manage/references_outgoing.html:9
 msgid "Outgoing references"
 msgstr "Ausgehende Empfehlungen"
 
-#: project/templates/layout.html:255
+#: project/templates/layout.html:232
 #: project/templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
 msgstr "Eingehende Empfehlungsanfragen"
 
-#: project/templates/layout.html:260
+#: project/templates/layout.html:237
 #: project/templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
 msgstr "Ausgehende Empfehlungsanfragen"
 
-#: project/templates/layout.html:268 project/templates/manage/organizers.html:5
+#: project/templates/layout.html:245 project/templates/manage/organizers.html:5
 #: project/templates/manage/organizers.html:9
 msgid "Organizers"
 msgstr "Veranstalter"
 
 #: project/templates/event_place/list.html:3
-#: project/templates/event_place/list.html:7 project/templates/layout.html:269
+#: project/templates/event_place/list.html:7 project/templates/layout.html:246
 #: project/templates/manage/places.html:5
 #: project/templates/manage/places.html:9
 msgid "Places"
 msgstr "Orte"
 
-#: project/templates/layout.html:271 project/templates/manage/members.html:5
+#: project/templates/layout.html:248 project/templates/manage/members.html:5
 #: project/templates/manage/members.html:28
 msgid "Members"
 msgstr "Mitglieder"
 
-#: project/templates/layout.html:272 project/templates/manage/relations.html:4
+#: project/templates/layout.html:249 project/templates/manage/relations.html:4
 msgid "Relations"
 msgstr "Beziehungen"
 
-#: project/templates/layout.html:274
+#: project/templates/layout.html:251
 #: project/templates/manage/admin_units.html:17
 #: project/templates/manage/organization_invitations.html:4
 #: project/templates/user/organization_invitations.html:4
@@ -1546,27 +1550,27 @@ msgstr "Organisationseinladungen"
 #: project/templates/admin/settings.html:8
 #: project/templates/admin_unit/update.html:6
 #: project/templates/admin_unit/update.html:23
-#: project/templates/layout.html:276 project/templates/manage/widgets.html:11
+#: project/templates/layout.html:253 project/templates/manage/widgets.html:11
 #: project/templates/manage/widgets.html:15 project/templates/profile.html:19
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: project/templates/layout.html:277
+#: project/templates/layout.html:254
 #: project/templates/manage/custom_widgets.html:13
 msgid "Custom widgets"
 msgstr "Custom widgets"
 
-#: project/templates/layout.html:278 project/templates/manage/reviews.html:10
+#: project/templates/layout.html:255 project/templates/manage/reviews.html:10
 #: project/templates/manage/widgets.html:5
 #: project/templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr "Widgets"
 
-#: project/templates/layout.html:289
+#: project/templates/layout.html:266
 msgid "Switch organization"
 msgstr "Organisation wechseln"
 
-#: project/templates/developer/read.html:4 project/templates/layout.html:339
+#: project/templates/developer/read.html:4 project/templates/layout.html:310
 #: project/templates/profile.html:29
 msgid "Developer"
 msgstr "Entwickler"
@@ -2281,7 +2285,7 @@ msgstr ""
 "Ob alle zukünftigen Empfehlungsanfragen von %(admin_unit_name)s "
 "automatisch verifiziert werden sollen."
 
-#: project/views/utils.py:77
+#: project/views/utils.py:65
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
 "not allowed."
@@ -2289,20 +2293,20 @@ msgstr ""
 "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte "
 "Einträge sind nicht erlaubt."
 
-#: project/views/utils.py:128
+#: project/views/utils.py:116
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: project/views/utils.py:135
+#: project/views/utils.py:123
 msgid "Show"
 msgstr "Anzeigen"
 
-#: project/views/utils.py:143
+#: project/views/utils.py:131
 msgid "You do not have permission for this action"
 msgstr "Du hast keine Berechtigung für diese Aktion"
 
-#: project/views/utils.py:258
+#: project/views/utils.py:246
 msgid ""
 "The invitation was issued to another user. Sign in with the email address"
 " the invitation was sent to."
@@ -2392,3 +2396,4 @@ msgstr "Neue Veranstaltung zu prüfen"
 
 #~ msgid "Veranstaltungen als iFrame einbetten"
 #~ msgstr "Veranstaltungen als iFrame einbetten"
+

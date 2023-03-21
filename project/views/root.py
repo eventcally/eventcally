@@ -1,7 +1,7 @@
 import json
 import os.path
 
-from flask import redirect, render_template, request, send_from_directory, url_for
+from flask import render_template, request, send_from_directory, url_for
 from flask_babelex import gettext
 from markupsafe import Markup
 
@@ -15,15 +15,10 @@ from project import (
     sitemap_file,
 )
 from project.services.admin import upsert_settings
-from project.views.utils import track_analytics
 
 
 @app.route("/")
 def home():
-    if "src" in request.args:
-        track_analytics("home", "", request.args["src"])
-        return redirect(url_for("home"))
-
     structured_data = json.dumps(
         {
             "@context": "http://schema.org",
@@ -33,10 +28,13 @@ def home():
         }
     )
 
+    settings = upsert_settings()
+    content = Markup(settings.start_page) if settings.start_page else None
+
     return render_template(
         "home.html",
         structured_data=structured_data,
-        admin_unit_create_requires_admin=app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"],
+        content=content,
     )
 
 
