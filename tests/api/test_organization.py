@@ -48,14 +48,14 @@ def test_list_unverified(client, app, seeder, utils):
     assert response.json["items"][0]["id"] == verified_admin_unit_id
 
     # Authorisierte Nutzer, die Organisationen verifizieren dürfen, sehen alle Organisationen.
-    # "admin@eventcally.de" ist Mitglied der Organisation "eventcally", die andere Organisationen verifizieren darf.
+    # "admin@eventcally.com" ist Mitglied der Organisation "eventcally", die andere Organisationen verifizieren darf.
     with app.app_context():
         from project.services.admin_unit import get_admin_unit_by_name
 
         eventcally_id = get_admin_unit_by_name("eventcally").id
 
     utils.logout()
-    utils.login("admin@eventcally.de")
+    utils.login("admin@eventcally.com")
     response = utils.get_ok(url)
     assert len(response.json["items"]) == 3
     assert response.json["items"][0]["id"] == eventcally_id

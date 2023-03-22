@@ -104,7 +104,7 @@ class Seeder(object):
             if other_admin_unit:
                 other_admin_unit_id = other_admin_unit.id
             else:
-                other_user_id = self.create_user("admin@eventcally.de")
+                other_user_id = self.create_user("admin@eventcally.com")
                 other_admin_unit_id = self.create_admin_unit(
                     other_user_id, "eventcally", can_verify_other=True
                 )
