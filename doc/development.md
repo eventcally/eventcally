@@ -1,5 +1,25 @@
 # Development
 
+## Docker
+
+### Compose (including dependencies)
+
+```sh
+docker-compose up --build
+```
+
+### Build image
+
+```sh
+docker build -t eventcally/eventcally:latest .
+```
+
+### Run container with existing postgres server
+
+```sh
+docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@host.docker.internal/eventcally" eventcally/eventcally:latest
+```
+
 ## Tests
 
 ### Create test database
@@ -61,26 +81,6 @@ pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -
 
 ```sh
 pybabel compile -d project/translations
-```
-
-## Docker
-
-### Build image
-
-```sh
-docker build -t eventcally/eventcally:latest .
-```
-
-### Run container with existing postgres server
-
-```sh
-docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@host.docker.internal/eventcally" eventcally/eventcally:latest
-```
-
-### Compose (including dependencies)
-
-```sh
-docker-compose up --build
 ```
 
 ## Celery

@@ -6,7 +6,7 @@ x-web-env:
   FLASK_APP: main.py
   DATABASE_URL: postgresql://eventcally:pass@db/eventcally
   REDIS_URL: redis://default:pass@redis
-  MAIL_DEFAULT_SENDER: noresponse@eventcally.de
+  MAIL_DEFAULT_SENDER: noresponse@eventcally.com
   MAIL_SERVER: mailhog
   MAIL_PORT: 1025
   MAIL_USE_TLS: False

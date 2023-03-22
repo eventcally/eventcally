@@ -141,7 +141,7 @@ mail_server = os.getenv("MAIL_SERVER")
 
 if not mail_server:
     app.config["MAIL_SUPPRESS_SEND"] = True
-    app.config["MAIL_DEFAULT_SENDER"] = "test@eventcally.de"
+    app.config["MAIL_DEFAULT_SENDER"] = "test@eventcally.com"
 else:  # pragma: no cover
     app.config["MAIL_SUPPRESS_SEND"] = False
     app.config["MAIL_SERVER"] = mail_server
