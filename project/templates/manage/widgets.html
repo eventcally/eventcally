@@ -49,10 +49,10 @@
                         <p>Kopiere den unten stehenden Code und füge ihn auf deiner Website ein.</p>
                         <p>Füge den folgenden Code im <code>&lt;head&gt;</code> der Seite ein.</p>
                         <textarea class="form-control text-monospace" style="font-size: 0.7rem;" disabled rows="6"><!-- Event calendar widget -->
-<script>(function(w,d,s,o,f,js,fjs){w['GsevptWidget']=o;w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};js=d.createElement(s),fjs=d.getElementsByTagName(s)[0];js.id=o;js.src=f;js.async=1;fjs.parentNode.insertBefore(js,fjs);}(window,document,'script','gsevpt','{{ url_for('static', filename='widget-loader.js', _external=True) }}'));</script>
+<script>(function(w,d,s,o,f,js,fjs){w['EventCallyWidget']=o;w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};js=d.createElement(s),fjs=d.getElementsByTagName(s)[0];js.id=o;js.src=f;js.async=1;fjs.parentNode.insertBefore(js,fjs);}(window,document,'script','eventcally','{{ url_for('static', filename='widget-loader.js', _external=True) }}'));</script>
 <!-- End event calendar widget --></textarea>
                         <p class="mt-3">Füge den folgenden Code an der Stelle im <code>&lt;body&gt;</code> der Seite ein, wo das Widget dargestellt werden soll.</p>
-                        <textarea class="form-control text-monospace" style="font-size: 0.7rem;" disabled rows="3"><div class="gsevpt-widget" data-widget-short-name="{{ admin_unit.short_name }}" data-widget-width="100%" data-widget-height="400px" data-widget-resize="true" data-widget-google-tag-manager="false"></div></textarea>
+                        <textarea class="form-control text-monospace" style="font-size: 0.7rem;" disabled rows="3"><div class="eventcally-widget" data-widget-short-name="{{ admin_unit.short_name }}" data-widget-width="100%" data-widget-height="400px" data-widget-resize="true" data-widget-google-tag-manager="false"></div></textarea>
                         <p class="mt-3">Mit den folgenden Attributen kann das Widget konfiguriert werden:</p>
                         <ul>
                             <li><var>data-widget-short-name</var>: Kurzname der Organisation</li>
@@ -61,8 +61,8 @@
                             <li><var>data-widget-resize</var>: iFrame Größe automatisch anpassen</li>
                             <li><var>data-widget-google-tag-manager</var>: Events in window.dataLayer für Google Tag Manager schreiben.
                                 <ul>
-                                    <li>Event <var>gsevptWidget.pageView</var> mit Parameter <var>url</var></li>
-                                    <li>Event <var>gsevptWidget.linkClick</var> mit Parameter <var>url</var></li>
+                                    <li>Event <var>eventcallyWidget.pageView</var> mit Parameter <var>url</var></li>
+                                    <li>Event <var>eventcallyWidget.linkClick</var> mit Parameter <var>url</var></li>
                                 </ul>
                             </li>
                         </ul>

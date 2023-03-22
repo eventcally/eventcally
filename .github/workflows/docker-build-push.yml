@@ -17,7 +17,7 @@ jobs:
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: danielgrams/gsevpt
+          images: eventcally/eventcally
           tag-semver: |
             {{version}}
             {{major}}.{{minor}}

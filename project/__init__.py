@@ -34,7 +34,7 @@ app.config["SECURITY_RECOVERABLE"] = True
 app.config["SECURITY_CHANGEABLE"] = True
 app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config["LANGUAGES"] = ["en", "de"]
-app.config["SITE_NAME"] = os.getenv("SITE_NAME", "gsevpt")
+app.config["SITE_NAME"] = os.getenv("SITE_NAME", "eventcally")
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
 app.config["DOCS_URL"] = os.getenv("DOCS_URL")
 app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = os.getenv(
@@ -141,7 +141,7 @@ mail_server = os.getenv("MAIL_SERVER")
 
 if not mail_server:
     app.config["MAIL_SUPPRESS_SEND"] = True
-    app.config["MAIL_DEFAULT_SENDER"] = "test@gsevpt.de"
+    app.config["MAIL_DEFAULT_SENDER"] = "test@eventcally.de"
 else:  # pragma: no cover
     app.config["MAIL_SUPPRESS_SEND"] = False
     app.config["MAIL_SERVER"] = mail_server

@@ -1,12 +1,12 @@
 version: "3.9"
-name: "gsevpt-dev"
+name: "eventcally-dev"
 
 x-web-env:
   &default-web-env
   FLASK_APP: main.py
-  DATABASE_URL: postgresql://gsevpt:pass@db/gsevpt
+  DATABASE_URL: postgresql://eventcally:pass@db/eventcally
   REDIS_URL: redis://default:pass@redis
-  MAIL_DEFAULT_SENDER: noresponse@gsevpt.de
+  MAIL_DEFAULT_SENDER: noresponse@eventcally.de
   MAIL_SERVER: mailhog
   MAIL_PORT: 1025
   MAIL_USE_TLS: False
@@ -32,11 +32,11 @@ services:
   db:
     image: postgis/postgis:12-3.1
     healthcheck:
-      test: "pg_isready --username=gsevpt && psql --username=gsevpt --list"
+      test: "pg_isready --username=eventcally && psql --username=eventcally --list"
       start_period: "5s"
     environment:
-      - POSTGRES_DB=gsevpt
-      - POSTGRES_USER=gsevpt
+      - POSTGRES_DB=eventcally
+      - POSTGRES_USER=eventcally
       - POSTGRES_PASSWORD=pass
 
   redis:

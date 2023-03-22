@@ -242,7 +242,7 @@ Vue.component('event-warning-pills', {
         },
         trackAnalyticsEvent(data) {
             if ('parentIFrame' in window) {
-                parentIFrame.sendMessage({'type': 'GSEVPT_ANALYTICS_EVENT', 'data': data});
+                parentIFrame.sendMessage({'type': 'EVENTCALLY_ANALYTICS_EVENT', 'data': data});
             }
         }
     }
@@ -253,7 +253,7 @@ Vue.component('event-warning-pills', {
             app.trackAnalyticsEvent({'event':'pageView', 'url':document.location.href});
         },
         onMessage: function(message) {
-            if (message.type != 'GSEVPT_WIDGET_SETTINGS_UPDATE_EVENT') {
+            if (message.type != 'EVENTCALLY_WIDGET_SETTINGS_UPDATE_EVENT') {
                 return;
             }
 

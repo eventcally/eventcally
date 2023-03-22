@@ -3,11 +3,11 @@ http {
 	server {
 		listen 80 default_server;
 		listen [::]:80 default_server;
-		root /var/www/vhosts/gsevpt.de;
+		root /var/www/vhosts/eventcally.de;
 		server_name _;
 
 		location ^~ /image/ {
-			root "/var/www/vhosts/gsevpt.de/cache/img";
+			root "/var/www/vhosts/eventcally.de/cache/img";
 			expires 1h;
 
 			location ~ ^/image/(?<id>[0-9]+)/(?<hash>[0-9]+) {
@@ -25,23 +25,23 @@ http {
 			}
 		}
 		location ^~ /static/ {
-			root "/var/www/vhosts/gsevpt.de/";
+			root "/var/www/vhosts/eventcally.de/";
 
 			location ~ ^/static/(.*)$ {
 				try_files /static-custom/$1 /static/$1 @docker;
 			}
 		}
 		location ^~ /dump/ {
-			alias "/var/www/vhosts/gsevpt.de/cache/dump/";
+			alias "/var/www/vhosts/eventcally.de/cache/dump/";
 		}
 		location ^~ /sitemap.xml {
-			alias "/var/www/vhosts/gsevpt.de/cache/sitemap.xml";
+			alias "/var/www/vhosts/eventcally.de/cache/sitemap.xml";
 		}
 		location ^~ /robots.txt {
-			alias "/var/www/vhosts/gsevpt.de/cache/robots.txt";
+			alias "/var/www/vhosts/eventcally.de/cache/robots.txt";
 		}
 		location ^~ /favicon.ico {
-			alias "/var/www/vhosts/gsevpt.de/static/favicon.ico";
+			alias "/var/www/vhosts/eventcally.de/static/favicon.ico";
 			expires 12h;
 		}
 		location @docker {

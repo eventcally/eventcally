@@ -53,8 +53,8 @@ const WidgetConfigurator = {
                     <b-form-checkbox v-model="form.search.showPagination">
                       {{ $t("comp.search.pagination") }}
                     </b-form-checkbox>
-                    <b-form-checkbox v-model="form.search.showGsevptLink">
-                      {{ $t("comp.search.showGsevptLink") }}
+                    <b-form-checkbox v-model="form.search.showEventCallyLink">
+                      {{ $t("comp.search.showEventCallyLink") }}
                     </b-form-checkbox>
                     <b-form-checkbox v-model="form.search.showPrintButton">
                       {{ $t("comp.search.printButton") }}
@@ -264,7 +264,7 @@ const WidgetConfigurator = {
             eventListId: "Event list",
             view: "Display",
             showFilter: "Filter",
-            showGsevptLink: "Link",
+            showEventCallyLink: "Link",
             layout: "Layout",
             eventsPerPage: "Events per page",
             event: "Event",
@@ -310,7 +310,7 @@ const WidgetConfigurator = {
             eventListId: "Veranstaltungsliste",
             view: "Anzeige",
             showFilter: "Filter",
-            showGsevptLink: "Link",
+            showEventCallyLink: "Link",
             layout: "Layout",
             eventsPerPage: "Events pro Seite",
             event: "Event",
@@ -354,7 +354,7 @@ const WidgetConfigurator = {
         showFilter: true,
         showPagination: true,
         showPrintButton: false,
-        showGsevptLink: true,
+        showEventCallyLink: true,
         fontFamily: "",
         background: "#ffffff",
         textColor: "#212529",
@@ -498,7 +498,7 @@ const WidgetConfigurator = {
         return;
       }
 
-      resizer.sendMessage({'type': 'GSEVPT_WIDGET_SETTINGS_UPDATE_EVENT', 'data': this.settings});
+      resizer.sendMessage({'type': 'EVENTCALLY_WIDGET_SETTINGS_UPDATE_EVENT', 'data': this.settings});
     },
     resizePreview() {
       const resizer = this.$refs.previewIframe.iFrameResizer;

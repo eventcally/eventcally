@@ -21,7 +21,7 @@
 
     function trackAnalyticsEvent(data) {
         if ('parentIFrame' in window) {
-            parentIFrame.sendMessage({'type': 'GSEVPT_ANALYTICS_EVENT', 'data': data});
+            parentIFrame.sendMessage({'type': 'EVENTCALLY_ANALYTICS_EVENT', 'data': data});
         }
     }
 

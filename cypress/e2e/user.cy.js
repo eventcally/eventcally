@@ -30,7 +30,7 @@ describe("User", () => {
     cy.get("#password").type("short");
     cy.assertInvalid("password", "Geben Sie bitte mindestens 8 Zeichen ein.");
 
-    cy.get("#password").clear().type("ilovegsevpt");
+    cy.get("#password").clear().type("iloveeventcally");
     cy.assertValid("password");
 
     // Confirm password
@@ -40,7 +40,7 @@ describe("User", () => {
       "Wiederholen Sie bitte denselben Wert."
     );
 
-    cy.get("#password_confirm").clear().type("ilovegsevpt");
+    cy.get("#password_confirm").clear().type("iloveeventcally");
     cy.assertValid("password_confirm");
 
     // Submit

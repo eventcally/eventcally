@@ -104,10 +104,10 @@ const WidgetConfiguratorList = {
       return this.$route.params.organization_id;
     },
     installationHeader() {
-      return "<!-- Event calendar widget -->\n<script>(function(w,d,s,o,f,js,fjs){w['GsevptWidget']=o;w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};js=d.createElement(s),fjs=d.getElementsByTagName(s)[0];js.id=o;js.src=f;js.async=1;fjs.parentNode.insertBefore(js,fjs);}(window,document,'script','gsevpt','" + window.location.origin  + "/static/widget-loader.js'));</script>\n<!-- End event calendar widget -->";
+      return "<!-- Event calendar widget -->\n<script>(function(w,d,s,o,f,js,fjs){w['EventCallyWidget']=o;w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};js=d.createElement(s),fjs=d.getElementsByTagName(s)[0];js.id=o;js.src=f;js.async=1;fjs.parentNode.insertBefore(js,fjs);}(window,document,'script','eventcally','" + window.location.origin  + "/static/widget-loader.js'));</script>\n<!-- End event calendar widget -->";
     },
     installationBody() {
-      return '<div class="gsevpt-widget" data-widget-id="' + this.installationWidgetId + '"></div>';
+      return '<div class="eventcally-widget" data-widget-id="' + this.installationWidgetId + '"></div>';
     }
   },
   mounted() {
