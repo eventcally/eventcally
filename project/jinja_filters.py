@@ -26,6 +26,9 @@ def any_dict_value_true(data: dict):
 
 
 def ensure_link_scheme(link: str):
+    if not link:  # pragma: no cover
+        return link
+
     if link.startswith("http://") or link.startswith("https://"):
         return link
 

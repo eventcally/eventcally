@@ -2,13 +2,8 @@ from smtplib import SMTPException
 from urllib.error import URLError
 
 from celery import Celery
-from celery.signals import (
-    after_setup_logger,
-    after_setup_task_logger,
-    task_postrun,
-    worker_ready,
-)
-from celery_singleton import Singleton, clear_locks
+from celery import Task as BaseTask
+from celery.signals import after_setup_logger, after_setup_task_logger, task_postrun
 from requests.exceptions import RequestException
 
 
@@ -19,7 +14,7 @@ class HttpTaskException(Exception):
 def create_celery(app):
     celery = Celery(app.import_name)
     celery.conf.update(app.config["CELERY_CONFIG"])
-    TaskBase = Singleton
+    TaskBase = BaseTask
 
     class ContextTask(TaskBase):
         abstract = True
@@ -69,13 +64,6 @@ def setup_task_logger(logger, *args, **kwargs):
     from project.one_line_formatter import init_logger_with_one_line_formatter
 
     init_logger_with_one_line_formatter(logger)
-
-
-@worker_ready.connect
-def unlock_all(**kwargs):
-    from project import celery
-
-    clear_locks(celery)
 
 
 @task_postrun.connect

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-03-16 19:11+0100\n"
+"POT-Creation-Date: 2023-03-24 21:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -198,91 +198,99 @@ msgstr ""
 msgid "You have received an invitation"
 msgstr ""
 
-#: project/forms/admin.py:10 project/templates/layout.html:294
-#: project/views/root.py:57
+#: project/forms/admin.py:11 project/templates/layout.html:294
+#: project/views/root.py:53
 msgid "Terms of service"
 msgstr ""
 
-#: project/forms/admin.py:11 project/templates/layout.html:298
-#: project/views/root.py:65
+#: project/forms/admin.py:12 project/templates/layout.html:298
+#: project/views/root.py:61
 msgid "Legal notice"
 msgstr ""
 
-#: project/forms/admin.py:12 project/templates/_macros.html:1395
+#: project/forms/admin.py:13 project/templates/_macros.html:1395
 #: project/templates/layout.html:302
 #: project/templates/widget/event_suggestion/create.html:204
-#: project/views/admin_unit.py:73 project/views/root.py:73
+#: project/views/admin_unit.py:73 project/views/root.py:69
 msgid "Contact"
 msgstr ""
 
-#: project/forms/admin.py:13 project/templates/layout.html:306
-#: project/views/root.py:81
+#: project/forms/admin.py:14 project/templates/layout.html:306
+#: project/views/root.py:77
 msgid "Privacy"
 msgstr ""
 
-#: project/forms/admin.py:14
+#: project/forms/admin.py:15
 msgid "Start page"
 msgstr ""
 
-#: project/forms/admin.py:16 project/forms/oauth2_client.py:24
+#: project/forms/admin.py:17 project/forms/oauth2_client.py:24
 msgid "Save"
 msgstr ""
 
-#: project/forms/admin.py:20 project/forms/admin_unit_member.py:12
+#: project/forms/admin.py:21 project/forms/admin_unit_member.py:12
 #: project/forms/admin_unit_member.py:32
 msgid "Roles"
 msgstr ""
 
-#: project/forms/admin.py:21 project/templates/admin/update_user.html:4
+#: project/forms/admin.py:22 project/templates/admin/update_user.html:4
 #: project/templates/admin/update_user.html:8
 msgid "Update user"
 msgstr ""
 
-#: project/forms/admin.py:26
+#: project/forms/admin.py:27
 msgid "Incoming reference requests allowed"
 msgstr ""
 
-#: project/forms/admin.py:27
+#: project/forms/admin.py:28
 msgid ""
 "If set, other organizations can ask this organization to reference their "
 "event."
 msgstr ""
 
-#: project/forms/admin.py:33
+#: project/forms/admin.py:34
 msgid "Suggestions enabled"
 msgstr ""
 
-#: project/forms/admin.py:34
+#: project/forms/admin.py:35
 msgid "If set, the organization can work with suggestions."
 msgstr ""
 
-#: project/forms/admin.py:38
+#: project/forms/admin.py:39
 msgid "Create other organizations"
 msgstr ""
 
-#: project/forms/admin.py:39
+#: project/forms/admin.py:40
 msgid "If set, members of the organization can create other organizations."
 msgstr ""
 
-#: project/forms/admin.py:45
+#: project/forms/admin.py:46
 msgid "Invite other organizations"
 msgstr ""
 
-#: project/forms/admin.py:46
+#: project/forms/admin.py:47
 msgid "If set, members of the organization can invite other organizations."
 msgstr ""
 
-#: project/forms/admin.py:52
+#: project/forms/admin.py:53
 msgid "Verify other organizations"
 msgstr ""
 
-#: project/forms/admin.py:53
+#: project/forms/admin.py:54
 msgid "If set, members of the organization can verify other organizations."
 msgstr ""
 
-#: project/forms/admin.py:58 project/templates/admin/update_admin_unit.html:4
+#: project/forms/admin.py:59 project/templates/admin/update_admin_unit.html:4
 #: project/templates/admin/update_admin_unit.html:8
 msgid "Update organization"
+msgstr ""
+
+#: project/forms/admin.py:63
+msgid "Recipient"
+msgstr ""
+
+#: project/forms/admin.py:65
+msgid "Send test mail synchronously"
 msgstr ""
 
 #: project/forms/admin_unit.py:15 project/forms/event_place.py:12
@@ -348,7 +356,8 @@ msgstr ""
 #: project/forms/admin_unit_member.py:23 project/forms/admin_unit_member.py:28
 #: project/forms/event.py:107 project/forms/event_suggestion.py:38
 #: project/forms/organizer.py:27 project/templates/_macros.html:235
-#: project/templates/_macros.html:1491 project/templates/admin/users.html:19
+#: project/templates/_macros.html:1491 project/templates/admin/admin.html:27
+#: project/templates/admin/users.html:19
 msgid "Email"
 msgstr ""
 
@@ -1365,13 +1374,8 @@ msgstr ""
 msgid "Enter list name"
 msgstr ""
 
-#: project/templates/home.html:27
+#: project/templates/home.html:24
 msgid "Manage"
-msgstr ""
-
-#: project/templates/home.html:29 project/templates/security/login_user.html:38
-#: project/views/widget.py:159
-msgid "Register for free"
 msgstr ""
 
 #: project/templates/layout.html:152 project/templates/layout.html:200
@@ -1409,6 +1413,8 @@ msgstr ""
 
 #: project/templates/admin/admin.html:3 project/templates/admin/admin.html:9
 #: project/templates/admin/admin_units.html:10
+#: project/templates/admin/email.html:65
+#: project/templates/admin/settings.html:10
 #: project/templates/admin/users.html:10 project/templates/layout.html:171
 msgid "Admin"
 msgstr ""
@@ -1495,9 +1501,10 @@ msgstr ""
 msgid "Organization invitations"
 msgstr ""
 
-#: project/templates/admin/admin.html:15
+#: project/templates/admin/admin.html:15 project/templates/admin/email.html:4
+#: project/templates/admin/email.html:66
 #: project/templates/admin/settings.html:4
-#: project/templates/admin/settings.html:8
+#: project/templates/admin/settings.html:11
 #: project/templates/admin_unit/update.html:6
 #: project/templates/admin_unit/update.html:23
 #: project/templates/layout.html:253 project/templates/manage/widgets.html:11
@@ -1551,6 +1558,18 @@ msgstr ""
 #: project/templates/oauth2_client/list.html:34
 #: project/templates/oauth2_client/read.html:17
 msgid "Edit"
+msgstr ""
+
+#: project/templates/admin/email.html:47 project/views/admin.py:119
+msgid "Mail sent successfully"
+msgstr ""
+
+#: project/templates/admin/email.html:103
+msgid "Test mail"
+msgstr ""
+
+#: project/templates/admin/email.html:111
+msgid "Send test mail asynchronously"
 msgstr ""
 
 #: project/templates/admin_unit/create.html:58
@@ -1663,6 +1682,14 @@ msgstr ""
 
 #: project/templates/email/review_status_notice.html:4
 msgid "The review status of your event has been updated."
+msgstr ""
+
+#: project/templates/email/test_email.html:4
+msgid "This is a test mail"
+msgstr ""
+
+#: project/templates/email/test_email.html:5
+msgid "Click here to open the site"
 msgstr ""
 
 #: project/templates/event/actions.html:5
@@ -1984,6 +2011,10 @@ msgstr ""
 msgid "You do not have an account yet? Not a problem!"
 msgstr ""
 
+#: project/templates/security/login_user.html:38 project/views/widget.py:159
+msgid "Register for free"
+msgstr ""
+
 #: project/templates/widget/event_date/list.html:5
 msgid "Widget"
 msgstr ""
@@ -2004,15 +2035,20 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: project/views/admin.py:44
+#: project/views/admin.py:55
 msgid "Organization successfully updated"
 msgstr ""
 
-#: project/views/admin.py:68 project/views/manage.py:361
+#: project/views/admin.py:79 project/views/manage.py:361
 msgid "Settings successfully updated"
 msgstr ""
 
-#: project/views/admin.py:103
+#: project/views/admin.py:108
+#, python-format
+msgid "Test mail from %(site_name)s"
+msgstr ""
+
+#: project/views/admin.py:152
 msgid "User successfully updated"
 msgstr ""
 

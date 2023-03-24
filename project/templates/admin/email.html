@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field, render_field_with_errors %}
+{%- block title -%}
+{{ _('Settings') }}
+{%- endblock -%}
+{% block header %}
+<script>
+    function submit_async() {
+        handle_request_start();
+        $.ajax({
+            url: "{{ url_for('admin_email', async=1) }}",
+            type: "post",
+            dataType: "json",
+            data: $("#test_mail_form").serialize(),
+            error: function(xhr, status, error) {
+                handle_request_error(xhr, status, error);
+            },
+            success: function (data) {
+                poll(data["result_id"]);
+            }
+        });
+    }
+
+    function poll(result_id) {
+        $.ajax({
+            url: "{{ url_for('admin_email') }}",
+            type: "get",
+            dataType: "json",
+            data: "poll=" + result_id,
+            error: function(xhr, status, error) {
+                handle_request_error(xhr, status, error);
+            },
+            success: function (data) {
+                if (!data["ready"]) {
+                    setTimeout(function() {
+                        poll(result_id);
+                    }, 500);
+                    return;
+                }
+
+                if (!data["successful"]) {
+                  console.error(data);
+                  handle_request_error(null, JSON.stringify(data), data);
+                  return;
+                }
+
+                $("#result_container").text("{{ _('Mail sent successfully') }}");
+                handle_request_success();
+            }
+        });
+    }
+
+    $( function() {
+        $("#submit_async").click(function(){
+            submit_async();
+            return false;
+        });
+    });
+</script>
+{% endblock %}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin') }}">{{ _('Admin') }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ _('Settings') }}</li>
+    </ol>
+</nav>
+
+<table class="table table-striped table-bordered my-4">
+    <tbody>
+        <tr>
+            <td>MAIL_SUPPRESS_SEND</td>
+            <td>{{ config["MAIL_SUPPRESS_SEND"] }}</td>
+        </tr>
+        <tr>
+            <td>MAIL_SERVER</td>
+            <td>{{ config["MAIL_SERVER"] }}</td>
+        </tr>
+        <tr>
+            <td>MAIL_PORT</td>
+            <td>{{ config["MAIL_PORT"] }}</td>
+        </tr>
+        <tr>
+            <td>MAIL_USE_TLS</td>
+            <td>{{ config["MAIL_USE_TLS"] }}</td>
+        </tr>
+        <tr>
+            <td>MAIL_USE_SSL</td>
+            <td>{{ config["MAIL_USE_SSL"] }}</td>
+        </tr>
+        <tr>
+            <td>MAIL_USERNAME</td>
+            <td>{{ config["MAIL_USERNAME"] }}</td>
+        </tr>
+        <tr>
+            <td>MAIL_PASSWORD</td>
+            <td>{{ config["MAIL_PASSWORD"] }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>{{ _('Test mail')}} </h4>
+<form id="test_mail_form" action="" method="POST">
+    {{ form.hidden_tag() }}
+    {{ render_field_with_errors(form.recipient) }}
+    {{ render_field(form.submit) }}
+</form>
+
+<p>
+    <button id="submit_async" type="button" class="btn btn-outline-primary">{{ _('Send test mail asynchronously') }}</button>
+    <div class="col-md">
+        <div id="result_container">
+        </div>
+        <div class="spinner-border m-3" role="status" id="spinner" style="display: none;">
+            <span class="sr-only">Loading&hellip;</span>
+        </div>
+        <div class="alert alert-danger m-3" role="alert" id="error_alert" style="display: none;"></div>
+    </div>
+</p>
+
+
+
+{% endblock %}
