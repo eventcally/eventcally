@@ -27,7 +27,7 @@ def get_current_admin_unit(fallback=True):
     if admin_unit:
         return admin_unit
 
-    if current_user.is_authenticated:
+    if current_user and current_user.is_authenticated:
         admin_unit = get_current_admin_unit_from_cookies()
 
         if not admin_unit and fallback:
@@ -44,7 +44,7 @@ def get_current_admin_unit(fallback=True):
 
 def get_current_admin_unit_from_cookies():
     try:
-        if "manage_admin_unit_id" in request.cookies:
+        if request and request.cookies and "manage_admin_unit_id" in request.cookies:
             encoded = request.cookies.get("manage_admin_unit_id")
             manage_admin_unit_id = int(decode_cookie(encoded))
             return get_admin_unit_for_manage(manage_admin_unit_id)

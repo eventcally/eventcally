@@ -16,8 +16,16 @@ from flask_wtf.csrf import CSRFProtect
 from project.custom_session_interface import CustomSessionInterface
 
 
-def getenv_bool(name: str, default: str = "False"):  # pragma: no cover
+def getenv_bool(name: str, default: str = "False"):
     return os.getenv(name, default).lower() in ("true", "1", "t")
+
+
+def set_env_to_app(app: Flask, key: str, default: str = None):
+    if key in os.environ and os.environ[key]:  # pragma: no cover
+        app.config[key] = os.environ[key]
+
+    if default:
+        app.config[key] = default
 
 
 # Create app
@@ -34,7 +42,6 @@ app.config["SECURITY_RECOVERABLE"] = True
 app.config["SECURITY_CHANGEABLE"] = True
 app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config["LANGUAGES"] = ["en", "de"]
-app.config["SITE_NAME"] = os.getenv("SITE_NAME", "eventcally")
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
 app.config["DOCS_URL"] = os.getenv("DOCS_URL")
 app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = os.getenv(
@@ -42,6 +49,7 @@ app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = os.getenv(
 )
 app.config["SEO_SITEMAP_PING_GOOGLE"] = getenv_bool("SEO_SITEMAP_PING_GOOGLE", "False")
 app.config["GOOGLE_MAPS_API_KEY"] = os.getenv("GOOGLE_MAPS_API_KEY")
+set_env_to_app(app, "SITE_NAME", "EventCally")
 
 # Proxy handling
 if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover
@@ -58,11 +66,8 @@ app.config.update(
         "broker_url": app.config["REDIS_URL"],
         "result_backend": app.config["REDIS_URL"],
         "result_expires": timedelta(hours=1),
-        "broker_pool_limit": None,
-        "redis_max_connections": 2,
         "timezone": "Europe/Berlin",
         "broker_transport_options": {
-            "max_connections": 2,
             "queue_order_strategy": "priority",
             "priority_steps": list(range(3)),
             "sep": ":",

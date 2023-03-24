@@ -17,7 +17,6 @@ black==23.1.0
 blinker==1.4
 cached-property==1.5.2
 celery==5.2.7
-celery-singleton==0.3.1
 certifi==2020.12.5
 cffi==1.14.4
 cfgv==3.2.0
@@ -121,7 +120,7 @@ TatSu==4.4.0
 toml==0.10.2
 tomli==2.0.1
 typed-ast==1.5.4
-typing_extensions==4.5.0
+typing-extensions==4.5.0
 urllib3==1.26.5
 URLObject==2.4.3
 validators==0.18.2

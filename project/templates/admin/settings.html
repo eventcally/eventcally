@@ -5,7 +5,12 @@
 {%- endblock -%}
 {% block content %}
 
-<h1>{{ _('Settings') }}</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin') }}">{{ _('Admin') }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ _('Settings') }}</li>
+    </ol>
+</nav>
 
 <form action="" method="POST">
     {{ form.hidden_tag() }}

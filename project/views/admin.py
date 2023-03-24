@@ -1,15 +1,26 @@
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from flask_security import roles_required
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
-from project import app, db
-from project.forms.admin import AdminSettingsForm, UpdateAdminUnitForm, UpdateUserForm
+from project import app, celery, db
+from project.base_tasks import send_mail_task
+from project.forms.admin import (
+    AdminSettingsForm,
+    AdminTestEmailForm,
+    UpdateAdminUnitForm,
+    UpdateUserForm,
+)
 from project.models import AdminUnit, Role, User
 from project.services.admin import upsert_settings
 from project.services.user import set_roles_for_user
-from project.views.utils import flash_errors, get_pagination_urls, handleSqlError
+from project.views.utils import (
+    flash_errors,
+    get_pagination_urls,
+    handleSqlError,
+    send_mail,
+)
 
 
 @app.route("/admin")
@@ -74,6 +85,44 @@ def admin_settings():
         flash_errors(form)
 
     return render_template("admin/settings.html", form=form)
+
+
+@app.route("/admin/email", methods=["GET", "POST"])
+@roles_required("admin")
+def admin_email():
+    form = AdminTestEmailForm()
+
+    if "poll" in request.args:  # pragma: no cover
+        try:
+            result = celery.AsyncResult(request.args["poll"])
+            ready = result.ready()
+            return {
+                "ready": ready,
+                "successful": result.successful() if ready else None,
+                "value": result.get() if ready else result.result,
+            }
+        except Exception as e:
+            return {"ready": True, "successful": False, "error": str(e)}
+
+    if form.validate_on_submit():
+        subject = gettext(
+            "Test mail from %(site_name)s",
+            site_name=app.config["SITE_NAME"],
+        )
+
+        if "async" in request.args:  # pragma: no cover
+            result = send_mail_task.delay(form.recipient.data, subject, "test_email")
+            return {"result_id": result.id}
+
+        try:
+            send_mail(form.recipient.data, subject, "test_email")
+            flash(gettext("Mail sent successfully"), "success")
+        except Exception as e:  # pragma: no cover
+            flash(str(e), "danger")
+    else:  # pragma: no cover
+        flash_errors(form)
+
+    return render_template("admin/email.html", form=form)
 
 
 @app.route("/admin/users")

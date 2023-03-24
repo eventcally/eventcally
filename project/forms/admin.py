@@ -1,7 +1,8 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, SubmitField, TextAreaField
-from wtforms.validators import Optional
+from wtforms.fields.html5 import EmailField
+from wtforms.validators import DataRequired, Optional
 
 from project.forms.widgets import MultiCheckboxField
 
@@ -56,3 +57,9 @@ class UpdateAdminUnitForm(FlaskForm):
         validators=[Optional()],
     )
     submit = SubmitField(lazy_gettext("Update organization"))
+
+
+class AdminTestEmailForm(FlaskForm):
+    recipient = EmailField(lazy_gettext("Recipient"), validators=[DataRequired()])
+
+    submit = SubmitField(lazy_gettext("Send test mail synchronously"))
