@@ -19,6 +19,12 @@
       for (var i = 0; i < elements.length; i++) {
          initIframeWidget(elements.item(i), i);
       }
+
+      // Legacy
+      elements = d.getElementsByClassName("oveda-widget");
+      for (var i = 0; i < elements.length; i++) {
+         initIframeWidget(elements.item(i), i);
+      }
     }
 
     function initIframeWidget(element, index) {

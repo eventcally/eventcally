@@ -1,4 +1,5 @@
 from project import app, celery
+from project.celery import force_locale
 from project.views.utils import send_mail
 
 
@@ -7,4 +8,5 @@ from project.views.utils import send_mail
     priority=0,
 )
 def send_mail_task(recipient, subject, template):
-    send_mail(recipient, subject, template)
+    with force_locale():
+        send_mail(recipient, subject, template)
