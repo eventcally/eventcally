@@ -2107,7 +2107,7 @@ msgstr "Einstellungen erfolgreich aktualisiert"
 #: project/views/admin.py:108
 #, python-format
 msgid "Test mail from %(site_name)s"
-msgstr "Test-Mail from %(site_name)s"
+msgstr "Test-Mail von %(site_name)s"
 
 #: project/views/admin.py:152
 msgid "User successfully updated"

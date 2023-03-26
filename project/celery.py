@@ -1,6 +1,8 @@
+from contextlib import contextmanager
 from smtplib import SMTPException
 from urllib.error import URLError
 
+from babel import Locale
 from celery import Celery
 from celery import Task as BaseTask
 from celery.signals import after_setup_logger, after_setup_task_logger, task_postrun
@@ -77,3 +79,15 @@ def close_session(*args, **kwargs):
     # won't propagate across tasks)
     with app.app_context():
         sqlalchemydb.session.remove()
+
+
+@contextmanager
+def force_locale(locale=None):
+    from project import app
+
+    if not locale:
+        locale = Locale.parse("de")
+
+    with app.test_request_context() as ctx:
+        ctx.babel_locale = locale
+        yield
