@@ -70,6 +70,8 @@
                   </label>
               {% endfor %}
             </div>
+          {% elif 'ri' in kwargs and kwargs['ri'] == 'radio' %}
+            {{ render_radio_buttons(field) }}
           {% else %}
             {% if 'class' in kwargs %}
               {% set _dummy=kwargs.pop('class') %}

@@ -14,6 +14,7 @@ def pytest_generate_tests(metafunc):
     os.environ["DATABASE_URL"] = os.environ.get(
         "TEST_DATABASE_URL", "postgresql://postgres@localhost/eventcally_tests"
     )
+    os.environ["REDIS_URL"] = os.environ.get("TEST_REDIS_URL", "redis://")
     os.environ["AUTHLIB_INSECURE_TRANSPORT"] = "1"
     os.environ[
         "JWT_PRIVATE_KEY"

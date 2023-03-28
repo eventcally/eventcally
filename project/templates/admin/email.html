@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% from "_macros.html" import render_field, render_field_with_errors %}
 {%- block title -%}
-{{ _('Settings') }}
+{{ _('Email') }}
 {%- endblock -%}
 {% block header %}
 <script>
@@ -63,7 +63,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ url_for('admin') }}">{{ _('Admin') }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ _('Settings') }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ _('Email') }}</li>
     </ol>
 </nav>
 

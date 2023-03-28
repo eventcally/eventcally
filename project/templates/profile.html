@@ -19,6 +19,10 @@
 <h2>{{ _('Settings') }}</h2>
 
 <div class="list-group">
+    <a href="{{ url_for('user_notifications') }}" class="list-group-item">
+        {{ _('Notifications') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
     <a href="{{ url_for('oauth2_tokens') }}" class="list-group-item">
         {{ _('Applications') }}
         <i class="fa fa-caret-right"></i>

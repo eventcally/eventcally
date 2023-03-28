@@ -79,6 +79,28 @@ def test_admin_email(client, seeder, utils, app, mocker):
     utils.assert_send_mail_called(mail_mock, "test@test.de")
 
 
+def test_newsletter(app, utils, seeder):
+    user_id, admin_unit_id = seeder.setup_base(True)
+
+    for i in range(10):
+        seeder.create_user(f"test{i}@test.de")
+
+    url = utils.get_url("admin_newsletter")
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "recipient_choice": 2,
+            "message": "Message",
+        },
+    )
+
+    utils.assert_response_ok(response)
+    assert "result_id" in response.json
+
+
 def test_admin_users(client, seeder, utils, app):
     seeder.create_user(admin=True)
     user = utils.login()
