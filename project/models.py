@@ -199,6 +199,14 @@ class User(db.Model, UserMixin):
         secondary="user_favoriteevents",
         backref=backref("favored_by_users", lazy=True),
     )
+    newsletter_enabled = deferred(
+        Column(
+            Boolean(),
+            nullable=True,
+            default=True,
+            server_default="1",
+        )
+    )
 
     def get_user_id(self):
         return self.id

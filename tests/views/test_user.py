@@ -65,3 +65,26 @@ def test_user_favorite_events(client, seeder, utils):
 
     url = utils.get_url("user_favorite_events")
     utils.get_ok(url)
+
+
+def test_user_notifications(client, seeder, utils, app):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("user_notifications")
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "newsletter_enabled": None,
+        },
+    )
+
+    utils.assert_response_redirect(response, "profile")
+
+    with app.app_context():
+        from project.models import User
+
+        place = User.query.get(user_id)
+        assert not place.newsletter_enabled

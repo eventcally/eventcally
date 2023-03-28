@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field, render_field_with_errors, render_radio_buttons %}
+{%- block title -%}
+{{ _('Newsletter') }}
+{%- endblock -%}
+{% block header %}
+<script>
+    function update_progress_bar(completed, count, progressbar_id='#progressbar') {
+        var progress = count > 0 ? Math.round((completed/count)*100) : 0;
+        console.log('' + progress + '%');
+        var progressbar = $(progressbar_id);
+        progressbar.css('width', '' + progress + '%');
+        progressbar.attr("ariaValueNow", progress);
+        progressbar.html("" + progress + '%');
+    }
+
+    function submit_async() {
+        update_progress_bar(0, 0);
+        handle_request_start();
+        $.ajax({
+            url: "{{ url_for('admin_newsletter', async=1) }}",
+            type: "post",
+            dataType: "json",
+            data: $("#newsletter_form").serialize(),
+            error: function(xhr, status, error) {
+                handle_request_error(xhr, status, error);
+            },
+            success: function (data) {
+                poll(data["result_id"]);
+            }
+        });
+    }
+
+    function poll(result_id) {
+        $.ajax({
+            url: "{{ url_for('admin_newsletter') }}",
+            type: "get",
+            dataType: "json",
+            data: "poll=" + result_id,
+            error: function(xhr, status, error) {
+                handle_request_error(xhr, status, error);
+            },
+            success: function (data) {
+                update_progress_bar(data["completed"], data["count"]);
+
+                if (!data["ready"]) {
+                    setTimeout(function() {
+                        poll(result_id);
+                    }, 500);
+                    return;
+                }
+
+                if (!data["successful"]) {
+                  console.error(data);
+                  handle_request_error(null, JSON.stringify(data), data);
+                  return;
+                }
+
+                $("#success_message").text("{{ _('Mails sent successfully') }} (" + data["completed"] + ")");
+                handle_request_success();
+            }
+        });
+    }
+
+    $( function() {
+        $("#newsletter_form").submit(function(e){
+            e.stopPropagation();
+            submit_async();
+            return false;
+        });
+
+        $('label[for=test_recipient]').append(' *');
+        $('input[name=recipient_choice]').on('change', function() {
+            switch ($(this).val()) {
+                case '1':
+                    $('#test_recipient').attr("required", true);
+                    $('#test_recipient_container').show();
+                    break;
+                case '2':
+                    $('#test_recipient').attr("required", false);
+                    $('#test_recipient_container').hide();
+                    break;
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin') }}">{{ _('Admin') }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ _('Newsletter') }}</li>
+    </ol>
+</nav>
+
+<form id="newsletter_form" action="" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="my-4">
+        {{ render_field_with_errors(form.recipient_choice, ri='radio') }}
+    </div>
+    <div id="test_recipient_container">
+        {{ render_field_with_errors(form.test_recipient) }}
+    </div>
+    {{ render_field_with_errors(form.message) }}
+    {{ render_field(form.submit) }}
+</form>
+
+<p>
+    <div id="result_container" style="display: none;">
+        <div id="success_message" class="alert alert-success"></div>
+    </div>
+    <div id="spinner" style="display: none;">
+        <div class="progress">
+            <div id="progressbar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+    <div class="alert alert-danger m-3" role="alert" id="error_alert" style="display: none;"></div>
+</p>
+
+
+
+{% endblock %}

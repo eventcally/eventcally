@@ -7,6 +7,6 @@ from project.views.utils import send_mail
     base=getattr(app, "celery_http_task_cls"),
     priority=0,
 )
-def send_mail_task(recipient, subject, template):
+def send_mail_task(recipient, subject, template, **context):
     with force_locale():
-        send_mail(recipient, subject, template)
+        send_mail(recipient, subject, template, **context)

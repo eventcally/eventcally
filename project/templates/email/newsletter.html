@@ -1,0 +1,9 @@
+{% extends "email/layout.html" %}
+{% block content %}
+<p>
+    {{ message|safe }}
+</p>
+<p>
+    <a href="{{ url_for('user_notifications', _external=True) }}" target="_blank" rel="noopener noreferrer">{{ _('Notification settings') }}</a>
+</p>
+{% endblock %}

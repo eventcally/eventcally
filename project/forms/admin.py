@@ -1,6 +1,6 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, SubmitField, TextAreaField
+from wtforms import BooleanField, RadioField, SubmitField, TextAreaField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Optional
 
@@ -63,3 +63,18 @@ class AdminTestEmailForm(FlaskForm):
     recipient = EmailField(lazy_gettext("Recipient"), validators=[DataRequired()])
 
     submit = SubmitField(lazy_gettext("Send test mail synchronously"))
+
+
+class AdminNewsletterForm(FlaskForm):
+    recipient_choice = RadioField(
+        lazy_gettext("Recipient"),
+        choices=[
+            (1, lazy_gettext("Test recipient")),
+            (2, lazy_gettext("All users with enabled newsletter setting")),
+        ],
+        default=1,
+        coerce=int,
+    )
+    test_recipient = EmailField(lazy_gettext("Test recipient"), validators=[Optional()])
+    message = TextAreaField(lazy_gettext("Message"), validators=[DataRequired()])
+    submit = SubmitField(lazy_gettext("Send newsletter"))

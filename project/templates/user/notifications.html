@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field_with_errors, render_field %}
+{%- block title -%}
+{{ _('Notifications') }}
+{%- endblock -%}
+{% block content %}
+
+<h1>{{ _('Notifications') }}</h1>
+
+<form action="" method="POST">
+  {{ form.hidden_tag() }}
+  {{ render_field_with_errors(form.newsletter_enabled, ri="switch") }}
+  {{ render_field(form.submit) }}
+</form>
+
+{% endblock %}

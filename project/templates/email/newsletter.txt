@@ -1,0 +1,3 @@
+{{ message|safe }}
+
+{{ _('Notification settings') }}: {{ url_for('user_notifications', _external=True) }}

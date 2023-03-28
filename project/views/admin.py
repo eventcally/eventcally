@@ -1,3 +1,4 @@
+from celery import group
 from flask import flash, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from flask_security import roles_required
@@ -7,6 +8,7 @@ from sqlalchemy.sql import func
 from project import app, celery, db
 from project.base_tasks import send_mail_task
 from project.forms.admin import (
+    AdminNewsletterForm,
     AdminSettingsForm,
     AdminTestEmailForm,
     UpdateAdminUnitForm,
@@ -123,6 +125,51 @@ def admin_email():
         flash_errors(form)
 
     return render_template("admin/email.html", form=form)
+
+
+@app.route("/admin/newsletter", methods=["GET", "POST"])
+@roles_required("admin")
+def admin_newsletter():
+    form = AdminNewsletterForm()
+
+    if "poll" in request.args:  # pragma: no cover
+        try:
+            result = celery.GroupResult.restore(request.args["poll"])
+            ready = result.ready()
+            return {
+                "ready": ready,
+                "count": len(result.children),
+                "completed": result.completed_count(),
+                "successful": result.successful() if ready else None,
+            }
+        except Exception as e:
+            return {"ready": True, "successful": False, "error": str(e)}
+
+    if form.validate_on_submit():
+        subject = gettext(
+            "Newsletter from %(site_name)s",
+            site_name=app.config["SITE_NAME"],
+        )
+
+        if form.recipient_choice.data == 1:  # pragma: no cover
+            recipients = [form.test_recipient.data]
+        else:
+            users = (
+                User.query.filter(User.email != None)
+                .filter(User.confirmed_at != None)
+                .filter(User.newsletter_enabled)
+                .all()
+            )
+            recipients = [u.email for u in users]
+
+        result = group(
+            send_mail_task.s(r, subject, "newsletter", message=form.message.data)
+            for r in recipients
+        ).delay()
+        result.save()
+        return {"result_id": result.id}
+
+    return render_template("admin/newsletter.html", form=form)
 
 
 @app.route("/admin/users")
