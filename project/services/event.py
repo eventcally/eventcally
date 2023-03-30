@@ -24,6 +24,7 @@ from project.models import (
     EventAttendanceMode,
     EventCategory,
     EventDate,
+    EventDateDefinition,
     EventList,
     EventOrganizer,
     EventPlace,
@@ -461,45 +462,109 @@ def get_meta_data(event: Event, event_date: EventDate = None) -> dict:
     return meta
 
 
-def create_ical_event_for_date(event_date: EventDate) -> icalendar.Event:
-    url = url_for("event_date", id=event_date.id, _external=True)
+def populate_ical_event_with_event(ical_event: icalendar.Event, model_event: Event):
+    ical_event.add("summary", model_event.name)
 
-    event = icalendar.Event()
-    event.add("summary", event_date.event.name)
-    event.add("url", url)
-    event.add("description", url)
-    event.add("uid", url)
+    if model_event.description:
+        desc_short = truncate(model_event.description, 300)
+        ical_event.add("description", desc_short)
 
-    start = event_date.start.astimezone(berlin_tz)
+    if model_event.created_at:
+        ical_event.add("dtstamp", model_event.created_at)
 
-    if event_date.allday:
-        event.add("dtstart", icalendar.vDate(start))
-    else:
-        event.add("dtstart", start)
+    if model_event.updated_at:
+        ical_event.add("last-modified", model_event.updated_at)
 
-    if event_date.end and event_date.end > event_date.start:
-        end = event_date.end.astimezone(berlin_tz)
-
-        if event_date.allday:
-            if not date_parts_are_equal(start, end):
-                next_day = round_to_next_day(end)
-                event.add("dtend", icalendar.vDate(next_day))
-        else:
-            event.add("dtend", end)
-
-    if event_date.event.created_at:
-        event.add("dtstamp", event_date.event.created_at)
-
-    if event_date.event.updated_at:
-        event.add("last-modified", event_date.event.updated_at)
+    if model_event.status and model_event.status == EventStatus.cancelled:
+        ical_event.add("status", "CANCELLED")
 
     if (
-        event_date.event.attendance_mode
-        and event_date.event.attendance_mode != EventAttendanceMode.online
+        model_event.attendance_mode
+        and model_event.attendance_mode != EventAttendanceMode.online
+        and model_event.event_place
     ):
-        event.add("location", get_place_str(event_date.event.event_place))
+        place = model_event.event_place
+        place_str = get_place_str(place)
+        ical_event.add("location", place_str)
 
-    return event
+        location = place.location
+        if location and location.coordinate:
+            ical_event.add("geo", (location.latitude, location.longitude))
+            ical_event.add(
+                "X-APPLE-STRUCTURED-LOCATION",
+                f"geo:{location.latitude},{location.longitude}",
+                parameters={
+                    "VALUE": "URI",
+                    "X-ADDRESS": place_str,  # must be same as "location"
+                    "X-APPLE-RADIUS": "100",
+                    "X-TITLE": place_str,  # must be same as "location"
+                },
+            )
+
+
+def populate_ical_event_with_datish(
+    ical_event: icalendar.Event, datish, recurrence_rule: str = None
+):
+    # datish: EventDate|EventDateDefinition
+    start = datish.start.astimezone(berlin_tz)
+
+    if datish.allday:
+        ical_event.add("dtstart", icalendar.vDate(start))
+    else:
+        ical_event.add("dtstart", start)
+
+    if recurrence_rule:
+        ical_event.add(
+            "rrule", icalendar.vRecur.from_ical(recurrence_rule.replace("RRULE:", ""))
+        )
+
+    if datish.end and datish.end > datish.start:
+        end = datish.end.astimezone(berlin_tz)
+
+        if datish.allday:
+            if not date_parts_are_equal(start, end):
+                next_day = round_to_next_day(end)
+                ical_event.add("dtend", icalendar.vDate(next_day))
+        else:
+            ical_event.add("dtend", end)
+
+
+def create_ical_event_for_date(event_date: EventDate) -> icalendar.Event:
+    ical_event = icalendar.Event()
+    populate_ical_event_with_event(ical_event, event_date.event)
+    populate_ical_event_with_datish(ical_event, event_date)
+
+    url = url_for("event_date", id=event_date.id, _external=True)
+    ical_event.add("url", url)
+    ical_event.add("uid", url)
+
+    return ical_event
+
+
+def create_ical_event_for_date_definition(
+    date_definition: EventDateDefinition,
+) -> icalendar.Event:
+    ical_event = icalendar.Event()
+    populate_ical_event_with_event(ical_event, date_definition.event)
+    populate_ical_event_with_datish(
+        ical_event, date_definition, date_definition.recurrence_rule
+    )
+
+    url = url_for("event", event_id=date_definition.event.id, _external=True)
+    ical_event.add("url", url)
+    ical_event.add("uid", f"{url}#{date_definition.id}")
+
+    return ical_event
+
+
+def create_ical_events_for_event(event: Event) -> list:  # list[icalendar.Event]
+    result = list()
+
+    for date_definition in event.date_definitions:
+        ical_event = create_ical_event_for_date_definition(date_definition)
+        result.append(ical_event)
+
+    return result
 
 
 def update_recurring_dates():

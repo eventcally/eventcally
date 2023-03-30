@@ -12,7 +12,7 @@ from wtforms import FormField
 from project import app, mail
 from project.access import get_admin_unit_for_manage, get_admin_units_for_manage
 from project.dateutils import berlin_tz, round_to_next_day
-from project.models import EventAttendanceMode, EventDate
+from project.models import Event, EventAttendanceMode, EventDate
 from project.utils import get_place_str, strings_are_equal_ignoring_case
 
 
@@ -197,7 +197,7 @@ def get_share_links(url: str, title: str) -> dict:
     return share_links
 
 
-def get_calendar_links(event_date: EventDate) -> dict:
+def get_calendar_links_for_event_date(event_date: EventDate) -> dict:
     calendar_links = dict()
 
     url = url_for("event_date", id=event_date.id, _external=True)
@@ -231,6 +231,12 @@ def get_calendar_links(event_date: EventDate) -> dict:
 
     calendar_links["ics"] = url_for("event_date_ical", id=event_date.id, _external=True)
 
+    return calendar_links
+
+
+def get_calendar_links_for_event(event: Event) -> dict:
+    calendar_links = dict()
+    calendar_links["ics"] = url_for("event_ical", id=event.id, _external=True)
     return calendar_links
 
 

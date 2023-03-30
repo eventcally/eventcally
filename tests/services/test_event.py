@@ -269,3 +269,42 @@ def test_get_events_fulltext(
         for item in pagination.items:
             assert item.id == event_ids[order[i]]
             i = i + 1
+
+
+def test_create_ical_events_for_event(client, app, db, utils, seeder):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.models import Event, EventStatus, Location
+        from project.services.event import create_ical_events_for_event
+
+        event = Event.query.get(event_id)
+        event.description = "This is a fantastic event. Watch out!"
+        event.status = EventStatus.cancelled
+
+        place = event.event_place
+        place.name = "MachMitHaus Goslar"
+
+        location = Location()
+        location.street = "Markt 7"
+        location.postalCode = "38640"
+        location.city = "Goslar"
+        location.latitude = 51.9077888
+        location.longitude = 10.4333312
+        place.location = location
+
+        db.session.commit()
+
+        with app.test_request_context():
+            ical_events = create_ical_events_for_event(event)
+
+        assert len(ical_events) == 1
+
+        ical_event = ical_events[0]
+        assert "DESCRIPTION" in ical_event
+        assert "GEO" in ical_event
+        assert "X-APPLE-STRUCTURED-LOCATION" in ical_event
+
+        ical = ical_event.to_ical()
+        assert ical

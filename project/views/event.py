@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from flask import flash, jsonify, redirect, render_template, request, url_for
+from flask import Response, flash, jsonify, redirect, render_template, request, url_for
 from flask_babelex import gettext
 from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
@@ -15,7 +15,7 @@ from project.access import (
     get_admin_unit_members_with_permission,
     has_access,
 )
-from project.dateutils import get_next_full_hour
+from project.dateutils import create_icalendar, get_next_full_hour
 from project.forms.event import CreateEventForm, DeleteEventForm, UpdateEventForm
 from project.jsonld import DateTimeEncoder, get_sd_for_event_date
 from project.models import (
@@ -30,6 +30,7 @@ from project.models import (
     PublicStatus,
 )
 from project.services.event import (
+    create_ical_events_for_event,
     get_event_with_details_or_404,
     get_meta_data,
     get_significant_event_changes,
@@ -43,6 +44,7 @@ from project.views.event_suggestion import send_event_suggestion_review_status_m
 from project.views.utils import (
     flash_errors,
     flash_message,
+    get_calendar_links_for_event,
     get_share_links,
     handleSqlError,
     send_mails,
@@ -58,6 +60,7 @@ def event(event_id):
     dates = get_upcoming_event_dates(event.id)
     url = url_for("event", event_id=event_id, _external=True)
     share_links = get_share_links(url, event.name)
+    calendar_links = get_calendar_links_for_event(event)
 
     structured_datas = list()
     for event_date in dates:
@@ -75,6 +78,7 @@ def event(event_id):
         user_rights=user_rights,
         canonical_url=url_for("event", event_id=event_id, _external=True),
         share_links=share_links,
+        calendar_links=calendar_links,
     )
 
 
@@ -433,4 +437,22 @@ def send_event_report_mails(event: Event, report: dict):
         "event_report_notice",
         event=event,
         report=report,
+    )
+
+
+@app.route("/event/<int:id>/ical")
+def event_ical(id):
+    event = get_event_with_details_or_404(id)
+    can_read_event_or_401(event)
+
+    ical_events = create_ical_events_for_event(event)
+
+    cal = create_icalendar()
+    for ical_event in ical_events:
+        cal.add_component(ical_event)
+
+    return Response(
+        cal.to_ical(),
+        mimetype="text/calendar",
+        headers={"Content-disposition": f"attachment; filename=event_{id}.ics"},
     )
