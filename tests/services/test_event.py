@@ -276,11 +276,12 @@ def test_create_ical_events_for_event(client, app, db, utils, seeder):
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
-        from project.models import Event, Location
+        from project.models import Event, EventStatus, Location
         from project.services.event import create_ical_events_for_event
 
         event = Event.query.get(event_id)
         event.description = "This is a fantastic event. Watch out!"
+        event.status = EventStatus.cancelled
 
         place = event.event_place
         place.name = "MachMitHaus Goslar"
