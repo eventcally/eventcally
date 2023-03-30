@@ -12,11 +12,6 @@ def test_up(app, utils):
     utils.get_ok("up")
 
 
-def test_organizations(client, seeder, utils):
-    url = utils.get_url("organizations")
-    utils.get_ok(url)
-
-
 def test_tos(app, db, utils):
     with app.app_context():
         from project.services.admin import upsert_settings

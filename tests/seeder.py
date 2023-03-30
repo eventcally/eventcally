@@ -185,11 +185,15 @@ class Seeder(object):
     def create_admin_unit_member_event_verifier(self, admin_unit_id):
         return self.create_admin_unit_member(admin_unit_id, ["event_verifier"])
 
-    def upsert_event_place(self, admin_unit_id, name):
+    def upsert_event_place(self, admin_unit_id, name, location=None):
         from project.services.place import upsert_event_place
 
         with self._app.app_context():
             place = upsert_event_place(admin_unit_id, name)
+
+            if location:
+                place.location = location
+
             self._db.session.commit()
             place_id = place.id
 
@@ -317,6 +321,7 @@ class Seeder(object):
         co_organizer_ids=None,
         description="Beschreibung",
         tags="",
+        place_id=None,
     ):
         from project.models import (
             Event,
@@ -332,13 +337,17 @@ class Seeder(object):
             event.categories = [upsert_event_category("Other")]
             event.name = name
             event.description = description
-            event.event_place_id = self.upsert_default_event_place(admin_unit_id)
             event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
             event.external_link = external_link
             event.ticket_link = ""
             event.tags = tags
             event.price_info = ""
             event.attendance_mode = EventAttendanceMode.offline
+
+            if place_id:
+                event.event_place_id = place_id
+            else:
+                event.event_place_id = self.upsert_default_event_place(admin_unit_id)
 
             date_definition = self.create_event_date_definition(
                 start, end, allday, recurrence_rule
@@ -636,7 +645,13 @@ class Seeder(object):
         )
 
     def create_common_scenario(self):
+        from dateutil.relativedelta import relativedelta
+
+        from project.models import Location
+
         with self._app.app_context():
+            now = self.get_now_by_minute()
+
             # Admin with eventcally organisation
             admin_id = self.create_user(
                 "admin@test.de", "MeinPasswortIstDasBeste", admin=True
@@ -666,6 +681,24 @@ class Seeder(object):
                 verify=True,
             )
             self.create_event(marketing_admin_unit_id)
+            self.create_event(
+                marketing_admin_unit_id,
+                recurrence_rule="RRULE:FREQ=DAILY;COUNT=7",
+                name="Recurring",
+                start=now,
+                end=now + relativedelta(hours=1),
+                place_id=self.upsert_event_place(
+                    marketing_admin_unit_id,
+                    "MachmitHaus",
+                    Location(
+                        street="Markt 7",
+                        postalCode="38640",
+                        city="Goslar",
+                        latitude=51.9077888,
+                        longitude=10.4333312,
+                    ),
+                ),
+            )
 
             # Unverified Verein organisation
             verein_admin_unit_id = self.create_admin_unit(

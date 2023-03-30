@@ -46,7 +46,7 @@ def test_get_calendar_links(client, seeder, utils, app, db, mocker):
             from project.dateutils import create_berlin_date
             from project.models import Event, EventAttendanceMode
             from project.services.event import update_event_dates_with_recurrence_rule
-            from project.views.utils import get_calendar_links
+            from project.views.utils import get_calendar_links_for_event_date
 
             utils.mock_now(mocker, 2020, 1, 3)
 
@@ -56,7 +56,7 @@ def test_get_calendar_links(client, seeder, utils, app, db, mocker):
             date_definition.end = None
             event.attendance_mode = EventAttendanceMode.online
             event_date = event.dates[0]
-            links = get_calendar_links(event_date)
+            links = get_calendar_links_for_event_date(event_date)
             assert "&location" not in links["google"]
 
             # All-day single day
@@ -66,7 +66,7 @@ def test_get_calendar_links(client, seeder, utils, app, db, mocker):
             update_event_dates_with_recurrence_rule(event)
             db.session.commit()
             event_date = event.dates[0]
-            links = get_calendar_links(event_date)
+            links = get_calendar_links_for_event_date(event_date)
             assert "&dates=20200102/20200103&" in links["google"]
 
             # All-day multiple days
@@ -76,5 +76,5 @@ def test_get_calendar_links(client, seeder, utils, app, db, mocker):
             update_event_dates_with_recurrence_rule(event)
             db.session.commit()
             event_date = event.dates[0]
-            links = get_calendar_links(event_date)
+            links = get_calendar_links_for_event_date(event_date)
             assert "&dates=20200102/20200104&" in links["google"]

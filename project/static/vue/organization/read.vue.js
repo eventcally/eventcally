@@ -38,6 +38,24 @@ const OrganizationRead = {
                 <template v-if="organization.location.street">{{ organization.location.street }}, </template>
                 {{ organization.location.postalCode }} {{ organization.location.city }}
               </div>
+
+              <b-button v-b-modal.modal-ical variant="outline-secondary" class="mt-4">
+                <i class="fa fa-fw fa-calendar"></i>
+                {{ $t("comp.icalExport") }}
+              </b-button>
+
+              <b-modal id="modal-ical" :title="$t('comp.icalExport')" size="lg" ok-only>
+                <template #default="{ hide }">
+                  <b-input-group class="mb-3">
+                    <b-form-input :value="icalUrl" ref="icalInput"></b-form-input>
+                  </b-input-group>
+                </template>
+                <template #modal-footer="{ ok, cancel, hide }">
+                  <b-button variant="primary" @click.prevent="copyIcal()">{{ $t('comp.copy') }}</b-button>
+                  <b-button variant="secondary" :href="icalUrl">{{ $t('comp.download') }}</b-button>
+                  <b-button variant="outline-secondary" @click="hide()">{{ $t("shared.close") }}</b-button>
+                </template>
+              </b-modal>
             </b-col>
           </b-row>
 
@@ -48,6 +66,26 @@ const OrganizationRead = {
       </b-overlay>
     </div>
     `,
+  i18n: {
+    messages: {
+      en: {
+        comp: {
+          copy: "Copy link",
+          download: "Download",
+          icalCopied: "Link copied",
+          icalExport: "iCal calendar",
+        },
+      },
+      de: {
+        comp: {
+          copy: "Link kopieren",
+          download: "Runterladen",
+          icalCopied: "Link kopiert",
+          icalExport: "iCal Kalender",
+        },
+      },
+    },
+  },
   data: () => ({
     isLoading: false,
     organization: null,
@@ -55,6 +93,9 @@ const OrganizationRead = {
   computed: {
     organizationId() {
       return this.$route.params.organization_id;
+    },
+    icalUrl() {
+      return `${window.location.origin}/organizations/${this.organizationId}/ical`;
     },
   },
   mounted() {
@@ -79,5 +120,10 @@ const OrganizationRead = {
     handleLoading(isLoading) {
       this.isLoading = isLoading;
     },
+    copyIcal() {
+      this.$refs.icalInput.select();
+      document.execCommand("copy");
+      this.$root.makeSuccessToast(this.$t("comp.icalCopied"))
+    }
   },
 };

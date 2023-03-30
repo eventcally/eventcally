@@ -1513,7 +1513,9 @@ $('#allday').on('change', function() {
           <div class="modal-body">
               <div class="list-group">
                   <a class="list-group-item list-group-item-action" href="{{ calendar_links["ics"] }}"><i class="fab fa-microsoft"></i> Outlook</a>
+                  {% if "google" in calendar_links %}
                   <a class="list-group-item list-group-item-action" href="{{ calendar_links["google"] }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-google"></i> {{ _('Google calendar') }}</a>
+                  {% endif %}
                   <a class="list-group-item list-group-item-action" href="{{ calendar_links["ics"] }}"><i class="fab fa-apple"></i> {{ _('Apple calendar') }}</a>
                   <a class="list-group-item list-group-item-action" href="{{ calendar_links["ics"] }}"><i class="fab fa-yahoo"></i> {{ _('Yahoo calendar') }}</a>
                   <a class="list-group-item list-group-item-action" href="{{ calendar_links["ics"] }}"><i class="fa fa-calendar"></i> {{ _('Other calendar') }}</a>

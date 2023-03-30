@@ -16,7 +16,11 @@ from project.services.event import (
 )
 from project.services.event_search import EventSearchParams
 from project.views.event import get_event_category_choices, get_menu_user_rights
-from project.views.utils import flash_errors, get_calendar_links, get_share_links
+from project.views.utils import (
+    flash_errors,
+    get_calendar_links_for_event_date,
+    get_share_links,
+)
 
 
 def prepare_event_date_form(form):
@@ -51,7 +55,7 @@ def event_date(id):
 
     url = url_for("event_date", id=id, _external=True)
     share_links = get_share_links(url, event_date.event.name)
-    calendar_links = get_calendar_links(event_date)
+    calendar_links = get_calendar_links_for_event_date(event_date)
 
     return render_template(
         "event_date/read.html",
