@@ -411,6 +411,7 @@ var app = new Vue({
             this.isLoading = true;
 
             const params = this.getSearchParams();
+            const needsScrollToTop = this.dates.length > 0;
             axios
                 .get(`/api/v1/event-dates/search`, { params: params })
                 .then((response) => {
@@ -419,14 +420,20 @@ var app = new Vue({
                     this.totalRows = response.data.total;
                     this.isLoading = false;
                     this.initialLoaded = true;
-                    this.scrollToTop();
+
+                    if (needsScrollToTop) {
+                        this.scrollToTop();
+                    }
                 })
                 .catch(error => {
                     this.isLoading = false;
                     this.dates = [];
                     this.totalRows = 0;
                     this.error = error.message;
-                    this.scrollToTop();
+
+                    if (needsScrollToTop) {
+                        this.scrollToTop();
+                    }
                 });
         },
         loadCategories() {

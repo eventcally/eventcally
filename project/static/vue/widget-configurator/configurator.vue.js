@@ -523,6 +523,8 @@ const WidgetConfigurator = {
           for (var key in this.customWidget.settings) {
               this.settings[key] = this.customWidget.settings[key];
           }
+
+          this.initResizer();
         });
     },
     handleLoading(isLoading) {
