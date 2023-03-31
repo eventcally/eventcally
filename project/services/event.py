@@ -1,9 +1,10 @@
+import os
 from datetime import datetime
 
 import icalendar
 from dateutil.relativedelta import relativedelta
 from flask import url_for
-from flask_babelex import format_date, format_time
+from flask_babelex import format_date, format_time, gettext
 from sqlalchemy import and_, case, func, or_
 from sqlalchemy.orm import aliased, contains_eager, defaultload, joinedload, lazyload
 from sqlalchemy.sql import extract
@@ -462,12 +463,11 @@ def get_meta_data(event: Event, event_date: EventDate = None) -> dict:
     return meta
 
 
-def populate_ical_event_with_event(ical_event: icalendar.Event, model_event: Event):
+def populate_ical_event_with_event(
+    ical_event: icalendar.Event, model_event: Event, url: str
+):
+    ical_event.add("url", url)
     ical_event.add("summary", model_event.name)
-
-    if model_event.description:
-        desc_short = truncate(model_event.description, 300)
-        ical_event.add("description", desc_short)
 
     if model_event.created_at:
         ical_event.add("dtstamp", model_event.created_at)
@@ -477,6 +477,18 @@ def populate_ical_event_with_event(ical_event: icalendar.Event, model_event: Eve
 
     if model_event.status and model_event.status == EventStatus.cancelled:
         ical_event.add("status", "CANCELLED")
+
+    desc_items = list()
+    desc_items.append(url)
+
+    if model_event.organizer:
+        desc_items.append(f"{gettext('Organizer')}: {model_event.organizer.name}")
+
+    if model_event.description:
+        desc_short = truncate(model_event.description, 300)
+        desc_items.append(f"{os.linesep}{desc_short}")
+
+    ical_event.add("description", os.linesep.join(desc_items))
 
     if (
         model_event.attendance_mode
@@ -530,12 +542,11 @@ def populate_ical_event_with_datish(
 
 
 def create_ical_event_for_date(event_date: EventDate) -> icalendar.Event:
-    ical_event = icalendar.Event()
-    populate_ical_event_with_event(ical_event, event_date.event)
-    populate_ical_event_with_datish(ical_event, event_date)
-
     url = url_for("event_date", id=event_date.id, _external=True)
-    ical_event.add("url", url)
+
+    ical_event = icalendar.Event()
+    populate_ical_event_with_event(ical_event, event_date.event, url)
+    populate_ical_event_with_datish(ical_event, event_date)
     ical_event.add("uid", url)
 
     return ical_event
@@ -544,14 +555,14 @@ def create_ical_event_for_date(event_date: EventDate) -> icalendar.Event:
 def create_ical_event_for_date_definition(
     date_definition: EventDateDefinition,
 ) -> icalendar.Event:
+    url = url_for("event", event_id=date_definition.event.id, _external=True)
+
     ical_event = icalendar.Event()
-    populate_ical_event_with_event(ical_event, date_definition.event)
+    populate_ical_event_with_event(ical_event, date_definition.event, url)
     populate_ical_event_with_datish(
         ical_event, date_definition, date_definition.recurrence_rule
     )
 
-    url = url_for("event", event_id=date_definition.event.id, _external=True)
-    ical_event.add("url", url)
     ical_event.add("uid", f"{url}#{date_definition.id}")
 
     return ical_event
