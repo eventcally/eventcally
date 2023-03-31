@@ -39,10 +39,16 @@ const OrganizationRead = {
                 {{ organization.location.postalCode }} {{ organization.location.city }}
               </div>
 
-              <b-button v-b-modal.modal-ical variant="outline-secondary" class="mt-4">
+              <b-list-group class="mt-4">
+              <b-list-group-item :href="'/eventdates?organization_id=' + organization.id">
+                <i class="fa fa-fw fa-list"></i>
+                {{ $t("shared.models.event.listName") }}
+              </b-list-group-item>
+              <b-list-group-item button v-b-modal.modal-ical>
                 <i class="fa fa-fw fa-calendar"></i>
                 {{ $t("comp.icalExport") }}
-              </b-button>
+              </b-list-group-item>
+            </b-list-group>
 
               <b-modal id="modal-ical" :title="$t('comp.icalExport')" size="lg" ok-only>
                 <template #default="{ hide }">

@@ -37,6 +37,7 @@ from project.models import (
     UserFavoriteEvents,
     sanitize_allday_instance,
 )
+from project.services.event_search import EventSearchParams
 from project.utils import get_pending_changes, get_place_str
 from project.views.utils import truncate
 
@@ -484,6 +485,9 @@ def populate_ical_event_with_event(
     if model_event.organizer:
         desc_items.append(f"{gettext('Organizer')}: {model_event.organizer.name}")
 
+    if model_event.admin_unit:
+        desc_items.append(f"{gettext('Organization')}: {model_event.admin_unit.name}")
+
     if model_event.description:
         desc_short = truncate(model_event.description, 300)
         desc_items.append(f"{os.linesep}{desc_short}")
@@ -574,6 +578,21 @@ def create_ical_events_for_event(event: Event) -> list:  # list[icalendar.Event]
     for date_definition in event.date_definitions:
         ical_event = create_ical_event_for_date_definition(date_definition)
         result.append(ical_event)
+
+    return result
+
+
+def create_ical_events_for_search(
+    params: EventSearchParams,
+) -> list:  # list[icalendar.Event]
+    from project.services.event import create_ical_events_for_event, get_events_query
+
+    result = list()
+    events = get_events_query(params).all()
+
+    for event in events:
+        ical_events = create_ical_events_for_event(event)
+        result.extend(ical_events)
 
     return result
 

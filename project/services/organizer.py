@@ -18,3 +18,20 @@ def upsert_event_organizer(admin_unit_id, name):
         db.session.add(result)
 
     return result
+
+
+def create_ical_events_for_organizer(
+    organizer: EventOrganizer,
+) -> list:  # list[icalendar.Event]
+    from dateutil.relativedelta import relativedelta
+
+    from project.dateutils import get_today
+    from project.services.event import create_ical_events_for_search
+    from project.services.event_search import EventSearchParams
+
+    params = EventSearchParams()
+    params.date_from = get_today() - relativedelta(months=1)
+    params.organizer_id = organizer.id
+    params.can_read_private_events = False
+
+    return create_ical_events_for_search(params)

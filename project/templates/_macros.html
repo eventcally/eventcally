@@ -700,7 +700,7 @@
 
   <div class="col-12 col-sm">
     <div class="font-weight-bold">
-      {{ render_string_prop(organizer.name) }}
+      <a href="{{ url_for('organizers', path=organizer.id) }}">{{ organizer.name }}</a>
     </div>
 
     {{ render_link_prop(organizer.url) }}
