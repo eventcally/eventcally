@@ -1,16 +1,18 @@
-from flask import flash, redirect, render_template, url_for
+from flask import Response, flash, redirect, render_template, url_for
 from flask_babelex import gettext
 from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
 from project.access import access_or_401, get_admin_unit_for_manage_or_404
+from project.dateutils import create_icalendar
 from project.forms.organizer import (
     CreateOrganizerForm,
     DeleteOrganizerForm,
     UpdateOrganizerForm,
 )
 from project.models import EventOrganizer
+from project.services.organizer import create_ical_events_for_organizer
 from project.views.utils import flash_errors, handleSqlError, non_match_for_deletion
 
 
@@ -98,3 +100,27 @@ def organizer_delete(id):
 
 def update_organizer_with_form(organizer, form):
     form.populate_obj(organizer)
+
+
+@app.route("/organizers")
+@app.route("/organizers/<path:path>")
+def organizers(path=None):
+    return render_template("organizer/main.html")
+
+
+@app.route("/organizers/<int:id>/ical")
+def organizer_ical(id):
+    organizer = EventOrganizer.query.get_or_404(id)
+
+    cal = create_icalendar()
+    cal.add("x-wr-calname", organizer.name)
+    ical_events = create_ical_events_for_organizer(organizer)
+
+    for ical_event in ical_events:
+        cal.add_component(ical_event)
+
+    return Response(
+        cal.to_ical(),
+        mimetype="text/calendar",
+        headers={"Content-disposition": f"attachment; filename=organizer_{id}.ics"},
+    )
