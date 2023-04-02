@@ -23,6 +23,7 @@ def getenv_bool(name: str, default: str = "False"):
 def set_env_to_app(app: Flask, key: str, default: str = None):
     if key in os.environ and os.environ[key]:  # pragma: no cover
         app.config[key] = os.environ[key]
+        return
 
     if default:
         app.config[key] = default
