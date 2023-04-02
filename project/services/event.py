@@ -5,6 +5,7 @@ import icalendar
 from dateutil.relativedelta import relativedelta
 from flask import url_for
 from flask_babelex import format_date, format_time, gettext
+from icalendar.prop import vDDDLists
 from sqlalchemy import and_, case, func, or_
 from sqlalchemy.orm import aliased, contains_eager, defaultload, joinedload, lazyload
 from sqlalchemy.sql import extract
@@ -530,9 +531,23 @@ def populate_ical_event_with_datish(
         ical_event.add("dtstart", start)
 
     if recurrence_rule:
-        ical_event.add(
-            "rrule", icalendar.vRecur.from_ical(recurrence_rule.replace("RRULE:", ""))
-        )
+        recc_lines = recurrence_rule.splitlines()
+
+        for recc_line in recc_lines:
+            recc_line_parts = recc_line.split(":", 1)
+
+            if len(recc_line_parts) != 2:
+                continue
+
+            recc_key, recc_value = recc_line_parts
+            recc_key_lower = recc_key.lower()
+
+            if recc_key_lower == "rrule":
+                ical_event.add("rrule", icalendar.vRecur.from_ical(recc_value))
+            elif recc_key_lower == "exdate":
+                ical_event.add("exdate", vDDDLists.from_ical(recc_value))
+            elif recc_key_lower == "rdate":
+                ical_event.add("rdate", vDDDLists.from_ical(recc_value))
 
     if datish.end and datish.end > datish.start:
         end = datish.end.astimezone(berlin_tz)
@@ -576,8 +591,11 @@ def create_ical_events_for_event(event: Event) -> list:  # list[icalendar.Event]
     result = list()
 
     for date_definition in event.date_definitions:
-        ical_event = create_ical_event_for_date_definition(date_definition)
-        result.append(ical_event)
+        try:
+            ical_event = create_ical_event_for_date_definition(date_definition)
+            result.append(ical_event)
+        except Exception as e:  # pragma: no cover
+            app.logger.exception(e)
 
     return result
 

@@ -43,7 +43,7 @@ const OrganizerRead = {
               </div>
 
               <b-list-group class="mt-4">
-                <b-list-group-item :href="'/eventdates?organizer_id=' + organizer.organization.id">
+                <b-list-group-item :href="'/eventdates?organizer_id=' + organizer.id">
                   <i class="fa fa-fw fa-list"></i>
                   {{ $t("shared.models.event.listName") }}
                 </b-list-group-item>
