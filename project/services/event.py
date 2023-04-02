@@ -536,7 +536,7 @@ def populate_ical_event_with_datish(
         for recc_line in recc_lines:
             recc_line_parts = recc_line.split(":", 1)
 
-            if len(recc_line_parts) != 2:
+            if len(recc_line_parts) != 2:  # pragma: no cover
                 continue
 
             recc_key, recc_value = recc_line_parts
