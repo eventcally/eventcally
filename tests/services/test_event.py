@@ -273,7 +273,10 @@ def test_get_events_fulltext(
 
 def test_create_ical_events_for_event(client, app, db, utils, seeder):
     user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
+    event_id = seeder.create_event(
+        admin_unit_id,
+        recurrence_rule="RRULE:FREQ=DAILY;COUNT=10\nEXDATE:20300102T000000,20300104T000000\nRDATE:20300103T000000,20300105T000000",
+    )
 
     with app.app_context():
         from project.models import Event, EventStatus, Location
