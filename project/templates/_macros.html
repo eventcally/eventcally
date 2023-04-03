@@ -980,7 +980,7 @@
     {{ render_field_with_errors(form.category_id, formrow="1") }}
   {% endif %}
 
-  {% if form.organizer_id %}
+  {% if form.organizer_id and form.organizer_id.type != "HiddenField" %}
     {{ render_field_with_errors(form.organizer_id, formrow="1") }}
   {% endif %}
 
