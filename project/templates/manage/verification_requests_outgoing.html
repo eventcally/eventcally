@@ -7,7 +7,12 @@ render_link_prop, render_admin_unit_badges, render_pagination %}
 {%- endblock -%}
 {% block content %}
 
-<h1 class="mb-1">{{ _('Verification requests') }}</h1>
+<h1 class="mb-1">
+    {{ _('Verification requests') }}
+    {% if config["DOCS_URL"] %}
+        <a class="btn btn-outline-info btn-sm m-1 my-auto float-right" href="{{ config["DOCS_URL"] }}/goto/organization-verify" target="_blank" rel="noopener noreferrer" role="button"><i class="fa fa-fw fa-info-circle"></i> {{ _('Docs') }}</a>
+    {% endif %}
+</h1>
 <p class="text-muted">{{ _('Here you can find organizations that can verify other organizations.') }}</p>
 
 {% for other_admin_unit in admin_units %}

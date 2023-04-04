@@ -88,3 +88,27 @@ def test_user_notifications(client, seeder, utils, app):
 
         place = User.query.get(user_id)
         assert not place.newsletter_enabled
+
+
+def test_login_flash(client, seeder, utils):
+    email = "test@test.de"
+    password = "MeinPasswortIstDasBeste"
+    seeder.create_user(email, password, confirm=False)
+
+    response = client.get("/login")
+    assert response.status_code == 200
+
+    with client:
+        response = client.post(
+            "/login",
+            data={
+                "email": email,
+                "password": password,
+                "csrf_token": utils.get_csrf(response),
+                "submit": "Anmelden",
+            },
+        )
+
+    utils.assert_response_error_message(
+        response, "Beachte, dass du deine E-Mail-Adresse bestätigen muss."
+    )

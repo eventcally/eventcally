@@ -19,18 +19,28 @@
           <h1>{{ config["SITE_NAME"] }}</h1>
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            {% if current_user.is_authenticated %}
-            <div>
-              <a class="btn btn-primary btn" href="{{ url_for('manage') }}">{{ _('Manage') }}</a>
-            </div>
-            {% elif not config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] %}
-            <div class="mb-2">
-              <a class="btn btn-primary" href="{{ url_for('security.register') }}" role="button">{{ _fsdomain('Register') }}</a>
-            </div>
-            <div>
-              <a class="btn btn-outline-secondary" href="{{ url_for('security.login') }}" role="button">{{ _fsdomain('Login') }}</a>
-            </div>
-            {% endif %}
+            <div class="mx-auto" style="max-width: 320px;">
+              {% if current_user.is_authenticated %}
+              <div>
+                <a class="btn btn-primary btn-block" href="{{ url_for('manage') }}" role="button">{{ _('Manage') }}</a>
+              </div>
+              {% elif not config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] %}
+              <div>
+                <a class="btn btn-primary btn-block" href="{{ url_for('security.register') }}" role="button"><i class="fa fa-fw fa-user-plus"></i> {{ _fsdomain('Register') }}</a>
+              </div>
+              <div class="mt-2">
+                <a class="btn btn-secondary btn-block" href="{{ url_for('security.login') }}" role="button"><i class="fa fa-fw fa-key"></i> {{ _fsdomain('Login') }}</a>
+              </div>
+              {% endif %}
+              {% if config["DOCS_URL"] %}
+                <div class="mt-2">
+                  <a class="btn btn-outline-info btn-block" href="{{ config["DOCS_URL"] }}" target="_blank" rel="noopener noreferrer" role="button"><i class="fa fa-fw fa-info-circle"></i> {{ _('Docs') }}</a>
+                </div>
+                <div class="mt-2">
+                  <a class="btn btn-outline-info btn-block" href="{{ config["DOCS_URL"] }}/features" target="_blank" rel="noopener noreferrer" role="button"><i class="fa fa-fw fa-info-circle"></i> {{ _('Features') }}</a>
+                </div>
+              {% endif %}
+          </div>
         </div>
       </div>
     </div>

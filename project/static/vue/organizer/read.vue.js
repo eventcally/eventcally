@@ -60,6 +60,7 @@ const OrganizerRead = {
                   </b-input-group>
                 </template>
                 <template #modal-footer="{ ok, cancel, hide }">
+                  <b-button variant="outline-info" :href="icalDocsUrl" target="_blank" rel="noopener noreferrer" v-if="icalDocsUrl">{{ $t('shared.docs') }}</b-button>
                   <b-button variant="primary" @click.prevent="copyIcal()">{{ $t('comp.copy') }}</b-button>
                   <b-button variant="secondary" :href="icalUrl">{{ $t('comp.download') }}</b-button>
                   <b-button variant="outline-secondary" @click="hide()">{{ $t("shared.close") }}</b-button>
@@ -101,6 +102,9 @@ const OrganizerRead = {
     },
     icalUrl() {
       return `${window.location.origin}/organizers/${this.organizerId}/ical`;
+    },
+    icalDocsUrl() {
+      return this.$root.docsUrl ? `${this.$root.docsUrl}/goto/ical-calendar` : null;
     },
   },
   mounted() {

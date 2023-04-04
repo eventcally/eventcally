@@ -107,6 +107,7 @@
         cancel: "Cancel",
         close: "Close",
         decline: "Decline",
+        docs: "Docs",
         save: "Save",
         submit: "Submit",
         view: "View",
@@ -219,6 +220,7 @@
         cancel: "Abbrechen",
         close: "Schließen",
         decline: "Ablehnen",
+        docs: "Doku",
         save: "Speichern",
         submit: "Senden",
         view: "Anzeigen",
@@ -357,6 +359,10 @@
   {% block vue_app_data %}
   var vue_app_data = {};
   {% endblock %}
+
+  {% if config["DOCS_URL"] %}
+  vue_app_data["docsUrl"] = "{{ config["DOCS_URL"] }}";
+  {% endif %}
 
   var app = new Vue({
     el: "#vue-container",

@@ -37,7 +37,13 @@
 
 {% block content %}
 
-<h1>{{ _fsdomain('Register') }}</h1>
+<h1>
+  {{ _fsdomain('Register') }}
+  {% if config["DOCS_URL"] %}
+    <a class="btn btn-outline-info btn-sm m-1 my-auto float-right" href="{{ config["DOCS_URL"] }}/goto/user-registration" target="_blank" rel="noopener noreferrer" role="button"><i class="fa fa-fw fa-info-circle"></i> {{ _('Docs') }}</a>
+  {% endif %}
+</h1>
+
 <form id="main-form" action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
   {{ register_user_form.hidden_tag() }}
   {{ render_field_with_errors(register_user_form.email) }}

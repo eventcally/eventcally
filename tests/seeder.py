@@ -29,7 +29,11 @@ class Seeder(object):
         return (owner_id, admin_unit_id, member_id)
 
     def create_user(
-        self, email="test@test.de", password="MeinPasswortIstDasBeste", admin=False
+        self,
+        email="test@test.de",
+        password="MeinPasswortIstDasBeste",
+        admin=False,
+        confirm=True,
     ):
         from flask_security.confirmable import confirm_user
 
@@ -44,7 +48,9 @@ class Seeder(object):
 
             if user is None:
                 user = create_user(email, password)
-                confirm_user(user)
+
+                if confirm:
+                    confirm_user(user)
 
             if admin:
                 add_admin_roles_to_user(email)
