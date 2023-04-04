@@ -1,6 +1,8 @@
 from flask import request
 from flask.json import jsonify
 from flask_babelex import gettext
+from flask_security import url_for_security
+from flask_security.utils import localize_callback
 
 from project import app, csrf
 from project.maputils import find_gmaps_places, get_gmaps_place
@@ -54,7 +56,11 @@ def js_check_register_email():
     if not user:
         return jsonify(True)
 
-    error = gettext("An account already exists with this email.")
+    msg = gettext("An account already exists with this email.")
+    url = url_for_security("forgot_password")
+    link_text = localize_callback("Forgot password")
+    link = ' &ndash; <a href="%s">%s</a>' % (url, link_text)
+    error = msg + link
     return jsonify(error)
 
 

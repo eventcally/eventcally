@@ -15,7 +15,13 @@
 
 {% block content %}
 
-<h1>{{ _fsdomain('Login') }}</h1>
+<h1>
+  {{ _fsdomain('Login') }}
+  {% if config["DOCS_URL"] %}
+    <a class="btn btn-outline-info btn-sm m-1 my-auto float-right" href="{{ config["DOCS_URL"] }}/goto/user-login" target="_blank" rel="noopener noreferrer" role="button"><i class="fa fa-fw fa-info-circle"></i> {{ _('Docs') }}</a>
+  {% endif %}
+</h1>
+
 {% set next = request.args['next'] if 'next' in request.args and 'authorize' in request.args['next'] else 'manage_after_login' %}
 <form id="main-form" action="{{ url_for_security('login', next=next) }}" method="POST" name="login_user_form">
   {{ login_user_form.hidden_tag() }}

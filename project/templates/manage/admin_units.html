@@ -22,11 +22,16 @@
 </div>
 {% endif %}
 
-<h1>{{ _('Organizations') }}</h1>
+<h1>
+    {{ _('Organizations') }}
+    {% if config["DOCS_URL"] %}
+        <a class="btn btn-outline-info btn-sm m-1 my-auto float-right" href="{{ config["DOCS_URL"] }}/goto/organization-create" target="_blank" rel="noopener noreferrer" role="button"><i class="fa fa-fw fa-info-circle"></i> {{ _('Docs') }}</a>
+    {% endif %}
+</h1>
 <div class="my-4">
-    <a class="btn btn-outline-secondary m-1" href="{{ url_for('admin_unit_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create organization') }}</a>
+    <a class="btn btn-outline-secondary m-1" href="{{ url_for('admin_unit_create') }}" role="button"><i class="fa fa-fw fa-plus"></i> {{ _('Create organization') }}</a>
     {% if current_admin_unit and current_admin_unit.can_invite_other %}
-    <a class="btn btn-outline-secondary m-1" href="{{ url_for('manage_admin_unit_organization_invitations', id=current_admin_unit.id, path='create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Invite organization') }}</a>
+    <a class="btn btn-outline-secondary m-1" href="{{ url_for('manage_admin_unit_organization_invitations', id=current_admin_unit.id, path='create') }}" role="button"><i class="fa fa-fw fa-plus"></i> {{ _('Invite organization') }}</a>
     {% endif %}
 </div>
 

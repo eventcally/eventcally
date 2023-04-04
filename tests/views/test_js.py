@@ -113,7 +113,10 @@ def test_js_js_check_register_email_exists(client, seeder, utils):
             },
         )
         utils.assert_response_ok(response)
-        assert response.json == "Mit dieser E-Mail existiert bereits ein Account."
+        assert (
+            response.json
+            == 'Mit dieser E-Mail existiert bereits ein Account. &ndash; <a href="/reset">Passwort vergessen</a>'
+        )
 
 
 def test_js_autocomplete_place(client, seeder: Seeder, utils: UtilActions):

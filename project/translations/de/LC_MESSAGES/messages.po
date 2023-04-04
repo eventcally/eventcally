@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-03-28 17:04+0200\n"
+"POT-Creation-Date: 2023-04-03 23:59+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -371,7 +371,7 @@ msgstr ""
 "eindeutig zu identifizieren. Der Kurzname darf nur Buchstaben, Nummern "
 "und Unterstriche enthalten."
 
-#: project/forms/admin_unit.py:41 project/templates/_macros.html:1533
+#: project/forms/admin_unit.py:41 project/templates/_macros.html:1535
 msgid "Short name must contain only letters numbers or underscore"
 msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
 
@@ -452,7 +452,7 @@ msgstr ""
 
 #: project/forms/admin_unit.py:99 project/templates/admin_unit/create.html:5
 #: project/templates/admin_unit/create.html:22
-#: project/templates/manage/admin_units.html:27
+#: project/templates/manage/admin_units.html:32
 msgid "Create organization"
 msgstr "Organisation erstellen"
 
@@ -607,7 +607,7 @@ msgstr "Gib an, wann der Termin endet. Ein Termin darf maximal 14 Tage dauern."
 msgid "All-day"
 msgstr "Ganztägig"
 
-#: project/forms/event.py:54 project/templates/_macros.html:1713
+#: project/forms/event.py:54 project/templates/_macros.html:1715
 #: project/templates/widget/event_suggestion/create.html:240
 msgid "Recurring event"
 msgstr "Serientermin"
@@ -1010,7 +1010,7 @@ msgstr "Standort"
 msgid "Distance"
 msgstr "Distanz"
 
-#: project/forms/event_date.py:38 project/forms/planing.py:36
+#: project/forms/event_date.py:39 project/forms/planing.py:36
 #: project/templates/widget/event_date/list.html:82
 msgid "Find"
 msgstr "Finden"
@@ -1221,11 +1221,22 @@ msgstr "Wähle aus, warum du die Anfrage abgelehnt hast."
 msgid "Save review"
 msgstr "Prüfung speichern"
 
-#: project/forms/security.py:29
+#: project/forms/security.py:33
+msgid "register_email_desc"
+msgstr ""
+"Stelle sicher, dass du Zugriff auf das E-Mail-Postfach hast. Denn nach "
+"der Eingabe wird dir eine Mail geschickt, damit du bestätigen kannst, "
+"dass die E-Mail-Adresse dir gehört."
+
+#: project/forms/security.py:43
+msgid "login_confirmation_required"
+msgstr "Beachte, dass du deine E-Mail-Adresse bestätigen muss. Dazu wird dir nach der Registrierung eine Bestätigungsanleitung an deine E-Mail-Adresse geschickt. Bitte beachte, dass es einige Minuten dauern kann, bis die Mail bei dir eintrifft. Schaue zur Sicherheit auch im Spam-Ordner nach."
+
+#: project/forms/security.py:53
 msgid "Allow"
 msgstr "Erlauben"
 
-#: project/forms/security.py:30
+#: project/forms/security.py:54
 msgid "Deny"
 msgstr "Ablehnen"
 
@@ -1422,39 +1433,51 @@ msgstr "Link kopiert"
 msgid "Copy link"
 msgstr "Link kopieren"
 
-#: project/templates/_macros.html:1516
+#: project/templates/_macros.html:1517
 msgid "Google calendar"
 msgstr "Google Kalender"
 
-#: project/templates/_macros.html:1517
+#: project/templates/_macros.html:1519
 msgid "Apple calendar"
 msgstr "Apple Kalender"
 
-#: project/templates/_macros.html:1518
+#: project/templates/_macros.html:1520
 msgid "Yahoo calendar"
 msgstr "Yahoo Kalender"
 
-#: project/templates/_macros.html:1519
+#: project/templates/_macros.html:1521
 msgid "Other calendar"
 msgstr "Anderer Kalender"
 
-#: project/templates/_macros.html:1714
+#: project/templates/_macros.html:1716
 msgid "Remove event date"
 msgstr "Termin entfernen"
 
-#: project/templates/_macros.html:1743 project/templates/event/create.html:176
+#: project/templates/_macros.html:1745 project/templates/event/create.html:176
 #: project/templates/event/update.html:99
 #: project/templates/widget/event_suggestion/create.html:129
 msgid "Enter organizer"
 msgstr "Veranstalter eingeben"
 
-#: project/templates/_macros.html:1767
+#: project/templates/_macros.html:1769
 msgid "Enter list name"
 msgstr "Listenname eingeben"
 
-#: project/templates/home.html:24
+#: project/templates/home.html:25
 msgid "Manage"
 msgstr "Verwaltung"
+
+#: project/templates/home.html:37 project/templates/layout.html:158
+#: project/templates/manage/admin_units.html:28
+#: project/templates/manage/verification_requests_outgoing.html:13
+#: project/templates/security/login_user.html:21
+#: project/templates/security/register_user.html:43
+msgid "Docs"
+msgstr "Doku"
+
+#: project/templates/home.html:40
+msgid "Features"
+msgstr "Features"
 
 #: project/templates/layout.html:152 project/templates/layout.html:200
 #: project/templates/manage/events.html:6
@@ -1468,7 +1491,7 @@ msgstr "Veranstaltungen"
 #: project/templates/admin/admin_units.html:11
 #: project/templates/layout.html:153 project/templates/layout.html:166
 #: project/templates/manage/admin_units.html:3
-#: project/templates/manage/admin_units.html:25
+#: project/templates/manage/admin_units.html:26
 #: project/templates/organization/main.html:4
 msgid "Organizations"
 msgstr "Organisationen"
@@ -1476,10 +1499,6 @@ msgstr "Organisationen"
 #: project/templates/layout.html:154
 msgid "Planing"
 msgstr "Planung"
-
-#: project/templates/layout.html:158
-msgid "Docs"
-msgstr "Doku"
 
 #: project/templates/layout.html:167 project/templates/layout.html:256
 #: project/templates/oauth2_client/list.html:10
@@ -1509,7 +1528,7 @@ msgstr "Veranstaltungen anzeigen"
 #: project/templates/event/create.html:5
 #: project/templates/event/create.html:221 project/templates/layout.html:207
 #: project/templates/manage/events.html:45
-#: project/templates/manage/organizers.html:21
+#: project/templates/manage/organizers.html:22
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
@@ -1554,6 +1573,7 @@ msgstr "Ausgehende Empfehlungsanfragen"
 
 #: project/templates/layout.html:245 project/templates/manage/organizers.html:5
 #: project/templates/manage/organizers.html:9
+#: project/templates/organizer/main.html:4
 msgid "Organizers"
 msgstr "Veranstalter"
 
@@ -1636,7 +1656,7 @@ msgstr "Benutzer"
 #: project/templates/admin/users.html:27
 #: project/templates/manage/events.html:60
 #: project/templates/manage/members.html:35
-#: project/templates/manage/organizers.html:22
+#: project/templates/manage/organizers.html:23
 #: project/templates/manage/places.html:27
 #: project/templates/manage/references_incoming.html:20
 #: project/templates/oauth2_client/list.html:34
@@ -1644,7 +1664,7 @@ msgstr "Benutzer"
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: project/templates/admin/email.html:47 project/views/admin.py:122
+#: project/templates/admin/email.html:47 project/views/admin.py:121
 msgid "Mail sent successfully"
 msgstr "Mail erfolgreich gesendet"
 
@@ -1683,7 +1703,7 @@ msgstr "Nutzer:in einladen"
 
 #: project/templates/admin_unit/update.html:72
 #: project/templates/manage/verification_requests_outgoing.html:6
-#: project/templates/manage/verification_requests_outgoing.html:10
+#: project/templates/manage/verification_requests_outgoing.html:11
 msgid "Verification requests"
 msgstr "Verifizierungsanfragen"
 
@@ -1942,7 +1962,7 @@ msgstr "Möchtest du die Einladung von %(name)s akzeptieren?"
 msgid "Invitations"
 msgstr "Einladungen"
 
-#: project/templates/manage/admin_units.html:29
+#: project/templates/manage/admin_units.html:34
 msgid "Invite organization"
 msgstr "Organisation einladen"
 
@@ -1963,6 +1983,7 @@ msgid "Verify organization"
 msgstr "Organisation verifizieren"
 
 #: project/templates/manage/events.html:59
+#: project/templates/manage/organizers.html:21
 #: project/templates/manage/references_incoming.html:19
 #: project/templates/manage/references_outgoing.html:19
 msgid "View"
@@ -1971,7 +1992,7 @@ msgstr "Anzeigen"
 #: project/templates/manage/events.html:61
 #: project/templates/manage/members.html:21
 #: project/templates/manage/members.html:36
-#: project/templates/manage/organizers.html:23
+#: project/templates/manage/organizers.html:24
 #: project/templates/manage/places.html:28
 #: project/templates/manage/references_incoming.html:21
 #: project/templates/oauth2_client/list.html:35
@@ -1982,7 +2003,7 @@ msgstr "Löschen"
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: project/templates/manage/organizers.html:24
+#: project/templates/manage/organizers.html:25
 msgid "Assistents"
 msgstr "Assistenten"
 
@@ -2009,7 +2030,7 @@ msgstr "Prüfungsstatus anzeigen"
 msgid "Reviews"
 msgstr "Prüfungen"
 
-#: project/templates/manage/verification_requests_outgoing.html:11
+#: project/templates/manage/verification_requests_outgoing.html:16
 msgid "Here you can find organizations that can verify other organizations."
 msgstr ""
 "Hier findest du Organisationen, die deine Organisationen verifizieren "
@@ -2106,15 +2127,15 @@ msgstr "\"%(client_name)s\" möchte auf deinen Account zugreifen"
 msgid "This will allow \"%(client_name)s\" to:"
 msgstr "Dies ermöglicht \"%(client_name)s\":"
 
-#: project/templates/security/login_user.html:27
+#: project/templates/security/login_user.html:33
 msgid "Remember me"
 msgstr "Angemeldet bleiben"
 
-#: project/templates/security/login_user.html:36
+#: project/templates/security/login_user.html:42
 msgid "You do not have an account yet? Not a problem!"
 msgstr "Du hast noch keinen Account? Kein Problem!"
 
-#: project/templates/security/login_user.html:38 project/views/widget.py:159
+#: project/templates/security/login_user.html:44 project/views/widget.py:159
 msgid "Register for free"
 msgstr "Kostenlos registrieren"
 
@@ -2138,26 +2159,26 @@ msgstr "Optionale Details"
 msgid "Preview"
 msgstr "Vorschau"
 
-#: project/views/admin.py:58
+#: project/views/admin.py:57
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin.py:82 project/views/manage.py:361
-#: project/views/user.py:27
+#: project/views/admin.py:81 project/views/manage.py:361
+#: project/views/user.py:28
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
-#: project/views/admin.py:111
+#: project/views/admin.py:110
 #, python-format
 msgid "Test mail from %(site_name)s"
 msgstr "Test-Mail von %(site_name)s"
 
-#: project/views/admin.py:150
+#: project/views/admin.py:149
 #, python-format
 msgid "Newsletter from %(site_name)s"
 msgstr "Newsletter von %(site_name)s"
 
-#: project/views/admin.py:200
+#: project/views/admin.py:199
 msgid "User successfully updated"
 msgstr "Nutzer erfolgreich aktualisiert"
 
@@ -2214,27 +2235,27 @@ msgstr "Die eingegebene Email passt nicht zur Email der Einladung"
 msgid "Invitation successfully deleted"
 msgstr "Einladung erfolgreich gelöscht"
 
-#: project/views/event.py:180
+#: project/views/event.py:184
 msgid "Event successfully published"
 msgstr "Veranstaltung erfolgreich veröffentlicht"
 
-#: project/views/event.py:182
+#: project/views/event.py:186
 msgid "Draft successfully saved"
 msgstr "Entwurf erfolgreich gespeichert"
 
-#: project/views/event.py:225
+#: project/views/event.py:229
 msgid "Event successfully updated"
 msgstr "Veranstaltung erfolgreich aktualisiert"
 
-#: project/views/event.py:251
+#: project/views/event.py:255
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
 
-#: project/views/event.py:409
+#: project/views/event.py:413
 msgid "Referenced event changed"
 msgstr "Empfohlene Veranstaltung wurde geändert"
 
-#: project/views/event.py:432
+#: project/views/event.py:436
 msgid "New event report"
 msgstr "Neue Meldung zu einer Veranstaltung"
 
@@ -2263,23 +2284,23 @@ msgstr "Veranstaltungsvorschlag erfolgreich abgelehnt"
 msgid "Event review status updated"
 msgstr "Prüfungsstatus aktualisiert"
 
-#: project/views/js.py:26
+#: project/views/js.py:28
 msgid "Short name is already taken"
 msgstr "Der Kurzname ist bereits vergeben"
 
-#: project/views/js.py:43
+#: project/views/js.py:45
 msgid "Name is already taken"
 msgstr "Der Name ist bereits vergeben"
 
-#: project/views/js.py:57
+#: project/views/js.py:59
 msgid "An account already exists with this email."
 msgstr "Mit dieser E-Mail existiert bereits ein Account."
 
-#: project/views/js.py:97
+#: project/views/js.py:103
 msgid "Places of organization"
 msgstr "Orte der Organisation"
 
-#: project/views/js.py:105
+#: project/views/js.py:111
 msgid "Places of Google Maps"
 msgstr "Orte von Google Maps"
 
@@ -2303,19 +2324,19 @@ msgstr "OAuth2 Client erfolgreich gelöscht\""
 msgid "OAuth2 token successfully revoked"
 msgstr "OAuth2 token erfolgreich widerrufen"
 
-#: project/views/organizer.py:33
+#: project/views/organizer.py:35
 msgid "Organizer successfully created"
 msgstr "Veranstalter erfolgreich erstellt"
 
-#: project/views/organizer.py:58
+#: project/views/organizer.py:60
 msgid "Organizer successfully updated"
 msgstr "Veranstalter erfolgreich aktualisiert"
 
-#: project/views/organizer.py:81
+#: project/views/organizer.py:83
 msgid "Entered name does not match organizer name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen des Veranstalters"
 
-#: project/views/organizer.py:86
+#: project/views/organizer.py:88
 msgid "Organizer successfully deleted"
 msgstr "Veranstalter erfolgreich gelöscht"
 
@@ -2390,7 +2411,7 @@ msgstr "Anzeigen"
 msgid "You do not have permission for this action"
 msgstr "Du hast keine Berechtigung für diese Aktion"
 
-#: project/views/utils.py:246
+#: project/views/utils.py:252
 msgid ""
 "The invitation was issued to another user. Sign in with the email address"
 " the invitation was sent to."
