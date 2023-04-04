@@ -1,0 +1,14 @@
+from enum import IntEnum
+
+
+class FeaturedEventReviewStatus(IntEnum):
+    inbox = 1
+    verified = 2
+    rejected = 3
+
+
+class FeaturedEventRejectionReason(IntEnum):
+    duplicate = 1
+    untrustworthy = 2
+    illegal = 3
+    irrelevant = 4
