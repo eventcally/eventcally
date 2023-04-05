@@ -1,3 +1,5 @@
+import datetime
+
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from flask_security import RoleMixin, UserMixin
 from sqlalchemy import (
@@ -62,6 +64,7 @@ class User(db.Model, UserMixin):
             server_default="1",
         )
     )
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     def get_user_id(self):
         return self.id

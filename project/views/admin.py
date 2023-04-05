@@ -5,12 +5,13 @@ from flask_security import roles_required
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
-from project import app, celery, db
+from project import app, celery, db, user_datastore
 from project.base_tasks import send_mail_task
 from project.forms.admin import (
     AdminNewsletterForm,
     AdminSettingsForm,
     AdminTestEmailForm,
+    DeleteUserForm,
     UpdateAdminUnitForm,
     UpdateUserForm,
 )
@@ -21,6 +22,7 @@ from project.views.utils import (
     flash_errors,
     get_pagination_urls,
     handleSqlError,
+    non_match_for_deletion,
     send_mail,
 )
 
@@ -205,3 +207,28 @@ def admin_user_update(id):
         form.roles.data = [c.name for c in user.roles]
 
     return render_template("admin/update_user.html", user=user, form=form)
+
+
+@app.route("/admin/user/<int:id>/delete", methods=("GET", "POST"))
+@roles_required("admin")
+def admin_user_delete(id):
+    user = User.query.get_or_404(id)
+
+    form = DeleteUserForm()
+
+    if form.validate_on_submit():
+        if non_match_for_deletion(form.email.data, user.email):
+            flash(gettext("Entered email does not match user email"), "danger")
+        else:
+            try:
+                user_datastore.delete_user(user)
+                db.session.commit()
+                flash(gettext("User successfully deleted"), "success")
+                return redirect(url_for("admin_users"))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
+    return render_template("admin/delete_user.html", form=form, user=user)
