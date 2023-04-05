@@ -438,6 +438,9 @@ class FindEventForm(FlaskForm):
     organizer_id = SelectField(
         lazy_gettext("Organizer"), validators=[Optional()], coerce=int
     )
+    event_place_id = SelectField(
+        lazy_gettext("Place"), validators=[Optional()], coerce=int
+    )
 
     submit = SubmitField(lazy_gettext("Find events"))
 

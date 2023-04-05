@@ -92,6 +92,9 @@ def fill_event_filter(event_filter, params):
     if params.organizer_id:
         event_filter = and_(event_filter, Event.organizer_id == params.organizer_id)
 
+    if params.event_place_id:
+        event_filter = and_(event_filter, Event.event_place_id == params.event_place_id)
+
     if params.latitude and params.longitude and params.distance:
         point = "POINT({} {})".format(params.longitude, params.latitude)
         event_filter = and_(

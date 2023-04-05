@@ -123,6 +123,16 @@ def test_admin_unit_events_invalidDateFormat(client, seeder, utils):
     )
 
 
+def test_admin_unit_events_place(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
+    seeder.create_event(admin_unit_id, draft=True)
+    event_place_id = seeder.upsert_default_event_place(admin_unit_id)
+
+    utils.get_endpoint_ok(
+        "manage_admin_unit_events", id=admin_unit_id, event_place_id=event_place_id
+    )
+
+
 def test_admin_unit_organizers(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
 

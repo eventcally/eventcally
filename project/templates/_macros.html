@@ -984,6 +984,10 @@
     {{ render_field_with_errors(form.organizer_id, formrow="1") }}
   {% endif %}
 
+  {% if form.event_place_id and form.event_place_id.type != "HiddenField" %}
+    {{ render_field_with_errors(form.event_place_id, formrow="1") }}
+  {% endif %}
+
   {{ render_event_dates_date_field(form.date_from, form.date_to) }}
 
   {% if form.weekday and form.weekday.choices|length > 0 %}
