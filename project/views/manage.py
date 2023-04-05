@@ -31,6 +31,7 @@ from project.services.admin_unit import (
 from project.services.event import get_events_query
 from project.services.event_search import EventSearchParams
 from project.services.event_suggestion import get_event_reviews_query
+from project.utils import get_place_str
 from project.views.event import get_event_category_choices
 from project.views.utils import (
     flash_errors,
@@ -151,6 +152,7 @@ def manage_admin_unit_events(id):
     set_current_admin_unit(admin_unit)
 
     params = EventSearchParams()
+    params.set_default_date_range()
 
     form = FindEventForm(formdata=request.args, obj=params)
     form.category_id.choices = get_event_category_choices()
@@ -163,6 +165,14 @@ def manage_admin_unit_events(id):
     )
     form.organizer_id.choices = [(o.id, o.name) for o in organizers]
     form.organizer_id.choices.insert(0, (0, ""))
+
+    event_places = (
+        EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit.id)
+        .order_by(func.lower(EventPlace.name))
+        .all()
+    )
+    form.event_place_id.choices = [(p.id, get_place_str(p)) for p in event_places]
+    form.event_place_id.choices.insert(0, (0, ""))
 
     if form.validate():
         form.populate_obj(params)

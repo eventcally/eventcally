@@ -51,6 +51,12 @@ app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = os.getenv(
 app.config["SEO_SITEMAP_PING_GOOGLE"] = getenv_bool("SEO_SITEMAP_PING_GOOGLE", "False")
 app.config["GOOGLE_MAPS_API_KEY"] = os.getenv("GOOGLE_MAPS_API_KEY")
 set_env_to_app(app, "SITE_NAME", "EventCally")
+app.config["FLASK_DEBUG"] = getenv_bool("FLASK_DEBUG", "False")
+
+# if app.config["FLASK_DEBUG"]:
+#     logging.basicConfig(level=logging.DEBUG)
+#     logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+#     logging.getLogger("authlib").setLevel(logging.DEBUG)
 
 # Proxy handling
 if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover

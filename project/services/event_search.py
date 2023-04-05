@@ -24,6 +24,7 @@ class EventSearchParams(object):
         self.distance = None
         self.category_id = None
         self.organizer_id = None
+        self.event_place_id = None
         self.event_list_id = None
         self.weekday = None
         self.sort = None
@@ -140,6 +141,9 @@ class EventSearchParams(object):
 
         if "organizer_id" in request.args:
             self.organizer_id = request.args["organizer_id"]
+
+        if "event_place_id" in request.args:
+            self.event_place_id = request.args["event_place_id"]
 
         if "event_list_id" in request.args:
             self.event_list_id = self.load_list_param("event_list_id")
