@@ -525,7 +525,7 @@
 {{ render_fax_prop(organizer.fax) }}
 {% endmacro %}
 
-{% macro render_event_props_seo(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None, current_user=None) %}
+{% macro render_event_props_seo(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None, current_user=None, can_add_to_list=False) %}
 <div class="w-normal mx-auto">
 
   {% if event.photo_id %}
@@ -536,7 +536,7 @@
 
     {% if user_rights %}
     <div class="float-sm-right">
-      {{ render_event_menu(user_rights, event) }}
+      {{ render_event_menu(user_rights, event, can_add_to_list) }}
     </div>
     {% endif %}
 
@@ -586,6 +586,9 @@
         {% if current_user and current_user.is_authenticated %}
           <button type="button" class="btn btn-outline-secondary mb-1 toggle-user-event-favorite" data-event-id="{{ event.id }}"><i class="{%if event.is_favored_by_current_user() %}fa{% else %}far{% endif %} fa-bookmark"></i> {{ _('Favorite events') }}</button>
         {% endif %}
+        {% if user_rights['can_update_event'] %}
+          <a href="{{ url_for('event_update', event_id=event.id) }}" class="btn btn-outline-secondary mb-1"><i class="fa fa-edit"></i> {{ _('Edit') }}</a>
+        {% endif %}
       </div>
       {% endif %}
 
@@ -615,17 +618,23 @@
           {{ render_link_prop(event.event_place.url) }}
           {{ render_location_prop(event.event_place.location) }}
 
-          {% if event.attendance_mode and event.attendance_mode.value != 2 %}
-            <div class="mt-2">
-                <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-outline-secondary" target="_blank" rel="noopener noreferrer"><i class="fa fa-directions"></i> {{ _('Show directions') }}</a>
-            </div>
-          {% endif %}
-
           {% if event.attendance_mode and event.attendance_mode.value == 2 %}
             <div class="mt-2">{{ _('The event takes place online.') }}</div>
           {% elif event.attendance_mode and event.attendance_mode.value == 3 %}
             <div class="mt-2">{{ _('The event takes place both offline and online.') }}</div>
           {% endif %}
+
+          {% if (event.attendance_mode and event.attendance_mode.value != 2) or user_rights['can_update_event'] %}
+            <div class="mt-2">
+              {% if event.attendance_mode and event.attendance_mode.value != 2 %}
+                <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-outline-secondary mr-1" target="_blank" rel="noopener noreferrer"><i class="fa fa-directions"></i> {{ _('Show directions') }}</a>
+              {% endif %}
+              {% if user_rights['can_update_event'] %}
+                <a href="{{ url_for('event_place_update', id=event.event_place.id) }}" class="btn btn-outline-secondary"><i class="fa fa-edit"></i> {{ _('Edit') }}</a>
+              {% endif %}
+            </div>
+          {% endif %}
+
         </div>
       </div>
     </div>
@@ -637,12 +646,13 @@
     <div class="card-body">
       <h2 class="mt-0">{{ _('Organizer') }}</h2>
 
-      {{ render_event_props_seo_organizer(event.organizer) }}
+      {{ render_event_props_seo_organizer(event.organizer, user_rights) }}
       {% for co_organizer in event.co_organizers %}
         <div{% if loop.index > 0 %} class="mt-4"{% endif %}>
-          {{ render_event_props_seo_organizer(co_organizer) }}
+          {{ render_event_props_seo_organizer(co_organizer, user_rights) }}
         </div>
       {% endfor %}
+
     </div>
   </div>
 
@@ -675,16 +685,57 @@
   </div>
   {% endif %}
 
-  {% if dates and dates|length > 0 %}
-      <div class="card mb-3">
-          <div class="card-body pb-0">
-            <h2 class="mt-0"><a name="event-dates">{{ _('Event Dates') }}</a></div>
-          <div class="list-group list-group-flush mb-4" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
-          {% for date in dates %}
-              <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item">{{ render_event_date(date.start, date.end, date.allday) }}</a>
-          {% endfor %}
-          </div>
+  {% if user_rights['can_reference_event'] or (event.references and event.references|length > 0) %}
+  <div class="card mb-3">
+    <div class="card-body pb-0">
+      <h2 class="mt-0"><a name="event-dates">{{ _('Referenced by') }}</a>
+    </div>
+    <div class="list-group list-group-flush mb-4" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
+      {% for event_reference in event.references %}
+        <span class="list-group-item">
+          <a href="{{ url_for('organizations', path=event_reference.admin_unit.id) }}">{{ event_reference.admin_unit.name }}</a>
+          {{ render_admin_unit_badges(event_reference.admin_unit) }}
+        </span>
+      {% endfor %}
+    </div>
+    {% if user_rights['can_reference_event'] %}
+      <div class="ml-3 mb-3">
+          <a href="{{ url_for('event_reference_create', event_id=event.id) }}" class="btn btn-outline-secondary"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
       </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% if user_rights['can_create_reference_request'] %}
+  <div class="card mb-3">
+    <div class="card-body pb-0">
+      <h2 class="mt-0"><a name="event-dates">{{ _('Reference requests') }}</a>
+    </div>
+    <div class="list-group list-group-flush mb-4" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
+      {% for reference_request in event.reference_requests %}
+        <span class="list-group-item">
+          <a href="{{ url_for('event_reference_request_review_status', id=reference_request.id) }}">{{ reference_request.admin_unit.name }}</a>
+          {{ render_reference_request_review_status_pill(reference_request) }}
+        </span>
+      {% endfor %}
+    </div>
+    <div class="ml-3 mb-3">
+      <a href="{{ url_for('event_reference_request_create', event_id=event.id) }}" class="btn btn-outline-secondary"><i class="fa fa-link"></i> {{ _('Request reference') }}</a>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if dates and dates|length > 0 %}
+    <div class="card mb-3">
+        <div class="card-body pb-0">
+          <h2 class="mt-0"><a name="event-dates">{{ _('Event Dates') }}</a>
+        </div>
+        <div class="list-group list-group-flush mb-4" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
+        {% for date in dates %}
+            <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item">{{ render_event_date(date.start, date.end, date.allday) }}</a>
+        {% endfor %}
+        </div>
+    </div>
   {% endif %}
 
     </div>
@@ -692,7 +743,7 @@
 
 {% endmacro %}
 
-{% macro render_event_props_seo_organizer(organizer) %}
+{% macro render_event_props_seo_organizer(organizer, user_rights) %}
 <div class="row">
   {% if organizer.logo_id %}
   <div class="col-12 col-sm-auto order-sm-last">{{ render_logo(organizer.logo) }}</div>
@@ -709,6 +760,11 @@
     {{ render_fax_prop(organizer.fax) }}
   </div>
 </div>
+{% if user_rights['can_update_event'] %}
+<div class="mt-2">
+  <a href="{{ url_for('organizer_update', id=organizer.id) }}" class="btn btn-outline-secondary"><i class="fa fa-edit"></i> {{ _('Edit') }}</a>
+</div>
+{% endif %}
 {% endmacro %}
 
 {% macro render_google_place_autocomplete_header() %}
@@ -1218,7 +1274,7 @@ if (URL) {
 </div>
 {% endmacro %}
 
-{% macro render_event_menu(user_rights, event) %}
+{% macro render_event_menu(user_rights, event, can_add_to_list) %}
 {% if user_rights|any_dict_value_true %}
   <div class="dropdown my-1">
       <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -1229,6 +1285,21 @@ if (URL) {
               <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
               <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}&hellip;</a>
           {% endif %}
+          {% if user_rights['can_duplicate_event'] %}
+              <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}"><i class="fa fa-copy"></i> {{ _('Duplicate event') }}</a>
+          {% endif %}
+          <div class="dropdown-divider"></div>
+          {% if user_rights['can_create_reference_request'] %}
+            <a class="dropdown-item" href="{{ url_for('event_reference_request_create', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Request reference') }}</a>
+          {% endif %}
+          {% if user_rights['can_reference_event'] %}
+            <a class="dropdown-item" href="{{ url_for('event_reference_create', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
+          {% endif %}
+          {% if can_add_to_list %}
+          <div class="dropdown-divider"></div>
+            <a class="dropdown-item" onclick="app.$bvModal.show('add-event-to-list-modal'); return false;" href="#"><i class="fa fa-plus-circle"></i> {{ _('Add to list') }}</a>
+          {% endif %}
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{{ url_for('event_actions', event_id=event.id) }}">{{ _('More') }}&hellip;</a>
       </div>
   </div>

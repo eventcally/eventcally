@@ -15,7 +15,7 @@ from project.services.event import (
     get_upcoming_event_dates,
 )
 from project.services.event_search import EventSearchParams
-from project.views.event import get_event_category_choices, get_menu_user_rights
+from project.views.event import get_event_category_choices, get_user_rights
 from project.views.utils import (
     flash_errors,
     get_calendar_links_for_event_date,
@@ -63,7 +63,7 @@ def event_date(id):
         structured_data=structured_data,
         meta=get_meta_data(event_date.event, event_date),
         canonical_url=url_for("event_date", id=id, _external=True),
-        user_rights=get_menu_user_rights(event_date.event),
+        user_rights=get_user_rights(event_date.event),
         dates=get_upcoming_event_dates(event_date.event_id),
         share_links=share_links,
         calendar_links=calendar_links,

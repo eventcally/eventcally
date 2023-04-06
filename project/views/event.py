@@ -56,7 +56,7 @@ from project.views.utils import (
 def event(event_id):
     event = get_event_with_details_or_404(event_id)
     can_read_event_or_401(event)
-    user_rights = get_menu_user_rights(event)
+    user_rights = get_user_rights(event)
     dates = get_upcoming_event_dates(event.id)
     url = url_for("event", event_id=event_id, _external=True)
     share_links = get_share_links(url, event.name)
@@ -384,15 +384,9 @@ def get_user_rights(event):
     return {
         "can_duplicate_event": has_access(event.admin_unit, "event:create"),
         "can_verify_event": has_access(event.admin_unit, "event:verify"),
-        "can_update_event": has_access(event.admin_unit, "event:update"),
         "can_reference_event": can_reference_event(event),
         "can_create_reference_request": can_request_event_reference(event),
         "can_create_event": has_access(event.admin_unit, "event:create"),
-    }
-
-
-def get_menu_user_rights(event):
-    return {
         "can_view_actions": current_user.is_authenticated,
         "can_update_event": has_access(event.admin_unit, "event:update"),
     }
