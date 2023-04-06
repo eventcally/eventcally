@@ -444,5 +444,5 @@ class FindEventForm(FlaskForm):
 
     submit = SubmitField(lazy_gettext("Find events"))
 
-    def is_submitted(self):
+    def is_submitted(self):  # pragma: no cover
         return "submit" in request.args
