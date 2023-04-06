@@ -179,7 +179,7 @@ def manage_admin_unit_events(id):
 
     params.admin_unit_id = admin_unit.id
     params.can_read_private_events = True
-    events = get_events_query(params).paginate()
+    events = get_events_query(params).paginate(per_page=50)
     return render_template(
         "manage/events.html",
         admin_unit=admin_unit,

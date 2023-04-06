@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-06 14:02+0200\n"
+"POT-Creation-Date: 2023-04-06 20:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -571,7 +571,7 @@ msgstr ""
 msgid "100 km"
 msgstr ""
 
-#: project/forms/event.py:38
+#: project/forms/event.py:38 project/templates/manage/events.html:85
 msgid "Start"
 msgstr ""
 
@@ -819,6 +819,7 @@ msgstr ""
 #: project/templates/event_place/create.html:31
 #: project/templates/event_place/delete.html:13
 #: project/templates/event_place/update.html:31
+#: project/templates/manage/events.html:88
 msgid "Place"
 msgstr ""
 
@@ -835,6 +836,7 @@ msgstr ""
 #: project/forms/event_suggestion.py:60 project/templates/_macros.html:475
 #: project/templates/_macros.html:638 project/templates/event/create.html:253
 #: project/templates/event/update.html:156
+#: project/templates/manage/events.html:87
 #: project/templates/organizer/create.html:27
 #: project/templates/organizer/delete.html:13
 #: project/templates/organizer/update.html:27
@@ -1249,6 +1251,7 @@ msgstr ""
 #: project/templates/event/actions.html:25
 #: project/templates/event/create.html:230
 #: project/templates/event/update.html:122
+#: project/templates/manage/events.html:86
 #: project/templates/widget/event_suggestion/create.html:229
 msgid "Event"
 msgstr ""
@@ -1365,7 +1368,7 @@ msgstr ""
 msgid "Edit event"
 msgstr ""
 
-#: project/templates/_macros.html:1232 project/templates/manage/events.html:66
+#: project/templates/_macros.html:1232 project/templates/manage/events.html:114
 msgid "More"
 msgstr ""
 
@@ -1438,7 +1441,7 @@ msgstr ""
 
 #: project/templates/layout.html:152 project/templates/layout.html:200
 #: project/templates/manage/events.html:6
-#: project/templates/manage/events.html:42
+#: project/templates/manage/events.html:43
 #: project/templates/manage/events_vue.html:4
 msgid "Events"
 msgstr ""
@@ -1484,7 +1487,7 @@ msgstr ""
 
 #: project/templates/event/create.html:5
 #: project/templates/event/create.html:221 project/templates/layout.html:207
-#: project/templates/manage/events.html:45
+#: project/templates/manage/events.html:44
 #: project/templates/manage/organizers.html:22
 msgid "Create event"
 msgstr ""
@@ -1610,7 +1613,7 @@ msgid "Users"
 msgstr ""
 
 #: project/templates/admin/admin_units.html:33
-#: project/templates/manage/events.html:59
+#: project/templates/manage/events.html:99
 #: project/templates/manage/organizers.html:21
 #: project/templates/manage/references_incoming.html:19
 #: project/templates/manage/references_outgoing.html:19
@@ -1619,7 +1622,7 @@ msgstr ""
 
 #: project/templates/admin/admin_units.html:34
 #: project/templates/admin/users.html:34
-#: project/templates/manage/events.html:60
+#: project/templates/manage/events.html:100
 #: project/templates/manage/members.html:35
 #: project/templates/manage/organizers.html:23
 #: project/templates/manage/places.html:27
@@ -1631,7 +1634,7 @@ msgstr ""
 
 #: project/templates/admin/admin_units.html:35
 #: project/templates/admin/users.html:35
-#: project/templates/manage/events.html:61
+#: project/templates/manage/events.html:101
 #: project/templates/manage/members.html:21
 #: project/templates/manage/members.html:36
 #: project/templates/manage/organizers.html:24
@@ -1791,6 +1794,7 @@ msgid "Actions for event"
 msgstr ""
 
 #: project/templates/event/actions.html:32
+#: project/templates/manage/events.html:105
 msgid "Request reference"
 msgstr ""
 
@@ -1800,6 +1804,7 @@ msgid "Ask another organization to reference your event on their calendar."
 msgstr ""
 
 #: project/templates/event/actions.html:38
+#: project/templates/manage/events.html:107
 #: project/templates/manage/references_incoming.html:10
 msgid "Reference event"
 msgstr ""
@@ -1810,7 +1815,7 @@ msgid "Reference this event on your organization's calendar."
 msgstr ""
 
 #: project/templates/event/actions.html:44
-#: project/templates/manage/events.html:64
+#: project/templates/manage/events.html:111
 msgid "Add to list"
 msgstr ""
 
@@ -1833,7 +1838,7 @@ msgid "List all events of %(admin_unit_name)s"
 msgstr ""
 
 #: project/templates/event/actions.html:74
-#: project/templates/manage/events.html:79
+#: project/templates/manage/events.html:131
 msgid "Add event to list"
 msgstr ""
 
@@ -1954,7 +1959,19 @@ msgstr ""
 msgid "Verify organization"
 msgstr ""
 
-#: project/templates/manage/events.html:62
+#: project/templates/manage/events.html:76
+msgid "More filters"
+msgstr ""
+
+#: project/templates/manage/events.html:89
+msgid "Number of references"
+msgstr ""
+
+#: project/templates/manage/events.html:89
+msgid "Number of reference requests."
+msgstr ""
+
+#: project/templates/manage/events.html:102
 msgid "Duplicate"
 msgstr ""
 
