@@ -11,6 +11,7 @@ from project.forms.admin import (
     AdminNewsletterForm,
     AdminSettingsForm,
     AdminTestEmailForm,
+    DeleteAdminUnitForm,
     DeleteUserForm,
     UpdateAdminUnitForm,
     UpdateUserForm,
@@ -66,6 +67,33 @@ def admin_admin_unit_update(id):
 
     return render_template(
         "admin/update_admin_unit.html", admin_unit=admin_unit, form=form
+    )
+
+
+@app.route("/admin/admin_unit/<int:id>/delete", methods=("GET", "POST"))
+@roles_required("admin")
+def admin_admin_unit_delete(id):
+    admin_unit = AdminUnit.query.get_or_404(id)
+
+    form = DeleteAdminUnitForm()
+
+    if form.validate_on_submit():
+        if non_match_for_deletion(form.name.data, admin_unit.name):
+            flash(gettext("Entered name does not match organization name"), "danger")
+        else:
+            try:
+                db.session.delete(admin_unit)
+                db.session.commit()
+                flash(gettext("Organization successfully deleted"), "success")
+                return redirect(url_for("admin_admin_units"))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
+    return render_template(
+        "admin/delete_admin_unit.html", form=form, admin_unit=admin_unit
     )
 
 

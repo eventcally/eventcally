@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_pagination %}
+{% from "_macros.html" import render_admin_unit_badges, render_pagination %}
 {%- block title -%}
 {{ _('Organizations') }}
 {%- endblock -%}
@@ -18,13 +18,22 @@
             <tr>
                 <th>{{ _('Name') }}</th>
                 <th></th>
+                <th>created_at</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for admin_unit in admin_units %}
                 <tr>
                     <td>{{ admin_unit.name }}</td>
-                    <td><a href="{{ url_for('admin_admin_unit_update', id=admin_unit.id) }}">{{ _('Edit') }}</a></td>
+                    <td>{{ render_admin_unit_badges(admin_unit) }}</td>
+                    <td>{% if admin_unit.created_at %}{{ admin_unit.created_at | dateformat }}{% endif %}</td>
+                    <td>
+                        <a href="{{ url_for('manage_admin_unit', id=admin_unit.id) }}">{{ _('Manage') }}</a>
+                        <a href="{{ url_for('organizations', path=admin_unit.id) }}">{{ _('View') }}</a>
+                        <a href="{{ url_for('admin_admin_unit_update', id=admin_unit.id) }}">{{ _('Edit') }}</a>
+                        <a href="{{ url_for('admin_admin_unit_delete', id=admin_unit.id) }}">{{ _('Delete') }}</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
