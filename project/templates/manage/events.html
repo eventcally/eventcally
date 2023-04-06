@@ -115,8 +115,8 @@ var vue_app_data = { eventId: 0 };
                         </div>
                         {{ render_event_warning_pills(event) }}
                     </td>
-                    <td>{{ event.organizer.name }}</td>
-                    <td>{{ event.event_place.name }}</td>
+                    <td><a href="{{ url_for('organizer_update', id=event.organizer.id) }}" class="text-body">{{ event.organizer.name }}</a></td>
+                    <td><a href="{{ url_for('event_place_update', id=event.event_place.id) }}" class="text-body">{{ event.event_place.name }}</a></td>
                     <td class="fit">{{ event.references|length }}/{{ event.reference_requests|length }}</td>
                 </tr>
             {% endfor %}

@@ -1,14 +1,38 @@
-{% extends "layout.html" %}
+{% extends "layout_vue.html" %}
 {% from "_macros.html" import render_event_props_seo %}
+
 {%- block title -%}
 {{ event.name }}
 {%- endblock -%}
+
+{% block component_scripts %}
+<script src="{{ url_for('static', filename='vue/event-lists/add-event.vue.js')}}"></script>
+{% endblock %}
+
+{% block component_definitions %}
+Vue.component("EventListAddEvent", EventListAddEvent);
+{% endblock %}
+
+{% block vue_container %}
+{% endblock %}
+
 {% block header_before_site_js %}
 <script src="{{ url_for('static', filename='user.js')}}"></script>
+{{ super() }}
 {%- endblock -%}
+
 {% block content_container_attribs %}{% endblock %}
+
 {% block content %}
+    {% set can_add_to_list = current_admin_unit and has_access(current_admin_unit, "admin_unit:update")%}
+    {{ render_event_props_seo(event, event.min_start_definition.start, event.min_start_definition.end, event.min_start_definition.allday, dates, user_rights['can_update_event'], user_rights=user_rights, share_links=share_links, calendar_links=calendar_links, current_user=current_user, can_add_to_list=can_add_to_list) }}
 
-    {{ render_event_props_seo(event, event.min_start_definition.start, event.min_start_definition.end, event.min_start_definition.allday, dates, user_rights['can_update_event'], user_rights=user_rights, share_links=share_links, calendar_links=calendar_links, current_user=current_user) }}
-
+    <div id="vue-container">
+        {% if can_add_to_list %}
+        <b-modal id="add-event-to-list-modal" title="{{ _('Add event to list') }}" ok-only>
+            <event-list-add-event event-id="{{ event.id }}" organization-id="{{ current_admin_unit.id }}" />
+        </b-modal>
+        {% endif %}
+    </div>
+    {{ super() }}
 {% endblock %}
