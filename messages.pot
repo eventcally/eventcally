@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-05 18:46+0200\n"
+"POT-Creation-Date: 2023-04-06 14:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -300,27 +300,43 @@ msgstr ""
 msgid "Update organization"
 msgstr ""
 
-#: project/forms/admin.py:68 project/forms/admin.py:75
+#: project/forms/admin.py:68 project/templates/admin/delete_admin_unit.html:6
+msgid "Delete organization"
+msgstr ""
+
+#: project/forms/admin.py:69 project/forms/admin_unit.py:29
+#: project/forms/event.py:85 project/forms/event.py:114
+#: project/forms/event_place.py:25 project/forms/event_place.py:50
+#: project/forms/event_suggestion.py:26 project/forms/oauth2_client.py:66
+#: project/forms/organizer.py:25 project/forms/organizer.py:52
+#: project/forms/reference_request.py:23
+#: project/templates/admin/admin_units.html:19
+#: project/templates/event_place/list.html:19
+#: project/templates/oauth2_client/list.html:25
+msgid "Name"
+msgstr ""
+
+#: project/forms/admin.py:73 project/forms/admin.py:80
 msgid "Recipient"
 msgstr ""
 
-#: project/forms/admin.py:70
+#: project/forms/admin.py:75
 msgid "Send test mail synchronously"
 msgstr ""
 
-#: project/forms/admin.py:77 project/forms/admin.py:83
+#: project/forms/admin.py:82 project/forms/admin.py:88
 msgid "Test recipient"
 msgstr ""
 
-#: project/forms/admin.py:78
+#: project/forms/admin.py:83
 msgid "All users with enabled newsletter setting"
 msgstr ""
 
-#: project/forms/admin.py:84
+#: project/forms/admin.py:89
 msgid "Message"
 msgstr ""
 
-#: project/forms/admin.py:85
+#: project/forms/admin.py:90
 msgid "Send newsletter"
 msgstr ""
 
@@ -352,17 +368,6 @@ msgstr ""
 #: project/forms/admin_unit.py:23 project/forms/event_place.py:20
 #: project/forms/organizer.py:20
 msgid "Longitude"
-msgstr ""
-
-#: project/forms/admin_unit.py:29 project/forms/event.py:85
-#: project/forms/event.py:114 project/forms/event_place.py:25
-#: project/forms/event_place.py:50 project/forms/event_suggestion.py:26
-#: project/forms/oauth2_client.py:66 project/forms/organizer.py:25
-#: project/forms/organizer.py:52 project/forms/reference_request.py:23
-#: project/templates/admin/admin_units.html:19
-#: project/templates/event_place/list.html:19
-#: project/templates/oauth2_client/list.html:25
-msgid "Name"
 msgstr ""
 
 #: project/forms/admin_unit.py:32
@@ -1100,6 +1105,7 @@ msgstr ""
 
 #: project/forms/reference.py:11 project/forms/reference_request.py:16
 #: project/templates/_macros.html:491 project/templates/_macros.html:654
+#: project/templates/admin/delete_admin_unit.html:13
 #: project/templates/admin_unit/create.html:28
 #: project/templates/admin_unit/update.html:29
 #: project/templates/layout.html:242
@@ -1414,7 +1420,7 @@ msgstr ""
 msgid "Enter list name"
 msgstr ""
 
-#: project/templates/home.html:25
+#: project/templates/admin/admin_units.html:32 project/templates/home.html:25
 msgid "Manage"
 msgstr ""
 
@@ -1603,7 +1609,15 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: project/templates/admin/admin_units.html:27
+#: project/templates/admin/admin_units.html:33
+#: project/templates/manage/events.html:59
+#: project/templates/manage/organizers.html:21
+#: project/templates/manage/references_incoming.html:19
+#: project/templates/manage/references_outgoing.html:19
+msgid "View"
+msgstr ""
+
+#: project/templates/admin/admin_units.html:34
 #: project/templates/admin/users.html:34
 #: project/templates/manage/events.html:60
 #: project/templates/manage/members.html:35
@@ -1615,11 +1629,23 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+#: project/templates/admin/admin_units.html:35
+#: project/templates/admin/users.html:35
+#: project/templates/manage/events.html:61
+#: project/templates/manage/members.html:21
+#: project/templates/manage/members.html:36
+#: project/templates/manage/organizers.html:24
+#: project/templates/manage/places.html:28
+#: project/templates/manage/references_incoming.html:21
+#: project/templates/oauth2_client/list.html:35
+msgid "Delete"
+msgstr ""
+
 #: project/templates/admin/delete_user.html:13
 msgid "User"
 msgstr ""
 
-#: project/templates/admin/email.html:47 project/views/admin.py:123
+#: project/templates/admin/email.html:47 project/views/admin.py:151
 msgid "Mail sent successfully"
 msgstr ""
 
@@ -1633,17 +1659,6 @@ msgstr ""
 
 #: project/templates/admin/newsletter.html:59
 msgid "Mails sent successfully"
-msgstr ""
-
-#: project/templates/admin/users.html:35
-#: project/templates/manage/events.html:61
-#: project/templates/manage/members.html:21
-#: project/templates/manage/members.html:36
-#: project/templates/manage/organizers.html:24
-#: project/templates/manage/places.html:28
-#: project/templates/manage/references_incoming.html:21
-#: project/templates/oauth2_client/list.html:35
-msgid "Delete"
 msgstr ""
 
 #: project/templates/admin_unit/create.html:58
@@ -1939,13 +1954,6 @@ msgstr ""
 msgid "Verify organization"
 msgstr ""
 
-#: project/templates/manage/events.html:59
-#: project/templates/manage/organizers.html:21
-#: project/templates/manage/references_incoming.html:19
-#: project/templates/manage/references_outgoing.html:19
-msgid "View"
-msgstr ""
-
 #: project/templates/manage/events.html:62
 msgid "Duplicate"
 msgstr ""
@@ -2104,34 +2112,42 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: project/views/admin.py:59
+#: project/views/admin.py:60
 msgid "Organization successfully updated"
 msgstr ""
 
-#: project/views/admin.py:83 project/views/manage.py:371
+#: project/views/admin.py:82
+msgid "Entered name does not match organization name"
+msgstr ""
+
+#: project/views/admin.py:87
+msgid "Organization successfully deleted"
+msgstr ""
+
+#: project/views/admin.py:111 project/views/manage.py:371
 #: project/views/user.py:28
 msgid "Settings successfully updated"
 msgstr ""
 
-#: project/views/admin.py:112
+#: project/views/admin.py:140
 #, python-format
 msgid "Test mail from %(site_name)s"
 msgstr ""
 
-#: project/views/admin.py:151
+#: project/views/admin.py:179
 #, python-format
 msgid "Newsletter from %(site_name)s"
 msgstr ""
 
-#: project/views/admin.py:201
+#: project/views/admin.py:229
 msgid "User successfully updated"
 msgstr ""
 
-#: project/views/admin.py:221
+#: project/views/admin.py:249
 msgid "Entered email does not match user email"
 msgstr ""
 
-#: project/views/admin.py:226
+#: project/views/admin.py:254
 msgid "User successfully deleted"
 msgstr ""
 

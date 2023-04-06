@@ -1,6 +1,6 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, RadioField, SubmitField, TextAreaField
+from wtforms import BooleanField, RadioField, StringField, SubmitField, TextAreaField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Optional
 
@@ -62,6 +62,11 @@ class UpdateAdminUnitForm(FlaskForm):
         validators=[Optional()],
     )
     submit = SubmitField(lazy_gettext("Update organization"))
+
+
+class DeleteAdminUnitForm(FlaskForm):
+    submit = SubmitField(lazy_gettext("Delete organization"))
+    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
 
 
 class AdminTestEmailForm(FlaskForm):
