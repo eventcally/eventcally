@@ -17,6 +17,9 @@
         <thead>
             <tr>
                 <th>{{ _('Email') }}</th>
+                <th>created_at</th>
+                <th>confirmed_at</th>
+                <th>current_login_at</th>
                 <th></th>
             </tr>
         </thead>
@@ -24,7 +27,13 @@
             {% for user in users %}
                 <tr>
                     <td>{{ user.email }}</td>
-                    <td><a href="{{ url_for('admin_user_update', id=user.id) }}">{{ _('Edit') }}</a></td>
+                    <td>{% if user.created_at %}{{ user.created_at | dateformat }}{% endif %}</td>
+                    <td>{% if user.confirmed_at %}{{ user.confirmed_at | dateformat }}{% endif %}</td>
+                    <td>{% if user.current_login_at %}{{ user.current_login_at | dateformat }}{% endif %}</td>
+                    <td>
+                        <a href="{{ url_for('admin_user_update', id=user.id) }}">{{ _('Edit') }}</a>
+                        <a href="{{ url_for('admin_user_delete', id=user.id) }}">{{ _('Delete') }}</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

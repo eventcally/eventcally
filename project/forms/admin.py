@@ -22,6 +22,11 @@ class UpdateUserForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Update user"))
 
 
+class DeleteUserForm(FlaskForm):
+    submit = SubmitField(lazy_gettext("Delete user"))
+    email = EmailField(lazy_gettext("Email"), validators=[DataRequired()])
+
+
 class UpdateAdminUnitForm(FlaskForm):
     incoming_reference_requests_allowed = BooleanField(
         lazy_gettext("Incoming reference requests allowed"),

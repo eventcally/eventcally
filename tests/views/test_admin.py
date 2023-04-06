@@ -151,6 +151,50 @@ def test_admin_user_update(client, seeder, utils, app, mocker, db, db_error):
 
 
 @pytest.mark.parametrize("db_error", [True, False])
+@pytest.mark.parametrize("non_match", [True, False])
+def test_user_delete(client, seeder, utils, app, mocker, db_error, non_match):
+    user_id, admin_unit_id = seeder.setup_base(True)
+    other_user_id = seeder.create_user("other@test.de")
+
+    url = utils.get_url("admin_user_delete", id=other_user_id)
+    response = utils.get_ok(url)
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
+    form_email = "other@test.de"
+
+    if non_match:
+        form_email = "wrong@test.de"
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "email": form_email,
+        },
+    )
+
+    if non_match:
+        utils.assert_response_error_message(
+            response, "Die eingegebene Email passt nicht zur Email des Nutzers"
+        )
+        return
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
+    utils.assert_response_redirect(response, "admin_users")
+
+    with app.app_context():
+        from project.models import User
+
+        user = User.query.get(other_user_id)
+        assert user is None
+
+
+@pytest.mark.parametrize("db_error", [True, False])
 def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_error):
     user_id, admin_unit_id = seeder.setup_base(True)
 
