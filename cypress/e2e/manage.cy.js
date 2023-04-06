@@ -37,7 +37,7 @@ describe("Manage", () => {
           cy.get("#toggle-search-btn").click();
 
           cy.get('.dropdown-toggle.btn-link').click();
-          cy.get('a:contains(Zu Liste)').click();
+          cy.get('a:contains(Zu Liste)').click({force: true});
           cy.get(".btn:contains(OK)").should("be.visible");
           cy.screenshot("lists");
 

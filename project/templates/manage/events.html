@@ -1,6 +1,6 @@
 {% extends "layout_vue.html" %}
 {% set active_id = "events" %}
-{% from "_macros.html" import render_event_in_list, render_manage_form_styles, render_manage_form_scripts, render_event_dates_filter_form, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
+{% from "_macros.html" import render_field, render_event_dates_date_field, render_event_in_list, render_manage_form_styles, render_manage_form_scripts, render_event_dates_filter_form, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
 
 {%- block title -%}
 {{ _('Events') }}
@@ -39,38 +39,90 @@ var vue_app_data = { eventId: 0 };
     </div>
 {% endif %}
 
-<h1>{{ _('Events') }} <button id="toggle-search-btn" type="button" class="btn btn-outline-secondary mx-2" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-search"></i></button></h1>
+<h1 class="mb-0">
+    {{ _('Events') }}
+    <a class="btn btn-outline-secondary btn-sm m-1" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
+</h1>
 
 <div class="my-4">
-    <a class="btn btn-outline-secondary my-1" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
-</div>
+    <form action="" id="filter_form" class="form" method="GET" autocomplete="off">
+        {{ form.hidden_tag() }}
 
-<div class="my-4 {% if form.is_submitted() %}{% else %}collapse{% endif %}" id="search_form">
-    {{ render_event_dates_filter_form(form) }}
-</div>
+        {{ render_event_dates_date_field(form.date_from, form.date_to) }}
 
-<ul class="list-group">
-{% for event in events %}
-    <li class="list-group-item">
-        {{ render_event_in_list(event) }}
-        <div class="dropdown d-inline-block">
-            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ event.name }}</button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="{{ url_for('event', event_id=event.id) }}">{{ _('View') }}</a>
-                <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}">{{ _('Edit') }}</a>
-                <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}">{{ _('Delete') }}&hellip;</a>
-                <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}">{{ _('Duplicate') }}&hellip;</a>
-                {% if can_add_to_list %}
-                <a class="dropdown-item" onclick="vue_app_data.eventId = '{{ event.id }}'; app.$bvModal.show('add-event-to-list-modal'); return false;" href="#">{{ _('Add to list') }}&hellip;</a>
-                {% endif %}
-                <a class="dropdown-item" href="{{ url_for('event_actions', event_id=event.id) }}">{{ _('More') }}&hellip;</a>
-            </div>
+        {% if form.keyword %}
+            {{ render_field_with_errors(form.keyword, formrow="1") }}
+        {% endif %}
+
+        {% set form_collapsed = not form.category_id.data and not form.organizer_id.data and not form.event_place_id.data %}
+        <div id="extended_search_form" class="{% if form_collapsed %}collapse{% else %}show{% endif %}">
+
+        {% if form.category_id %}
+            {{ render_field_with_errors(form.category_id, formrow="1") }}
+        {% endif %}
+
+        {% if form.organizer_id and form.organizer_id.type != "HiddenField" %}
+            {{ render_field_with_errors(form.organizer_id, formrow="1") }}
+        {% endif %}
+
+        {% if form.event_place_id and form.event_place_id.type != "HiddenField" %}
+            {{ render_field_with_errors(form.event_place_id, formrow="1") }}
+        {% endif %}
+
         </div>
-        {{ render_event_warning_pills(event) }}
-        <small>{{ event.organizer.name }}</small>
-    </li>
-{% endfor %}
-</ul>
+
+        <p>
+            {{ form.submit(class="btn btn-primary")|safe }}
+            <button id="toggle-search-btn" type="button" class="btn btn-secondary mx-2" data-toggle="collapse" data-target="#extended_search_form" aria-expanded="{% if form_collapsed %}false{% else %}true{% endif %}">{{ _('More filters') }}</button>
+        </p>
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-sm table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>{{ _('Start') }}</th>
+                <th>{{ _('Event') }}</th>
+                <th>{{ _('Organizer') }}</th>
+                <th>{{ _('Place') }}</th>
+                <th><i class="fa fa-info" data-toggle="tooltip" title="{{ _('Number of references') }} / {{ _('Number of reference requests.') }}"></i></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+                <tr>
+                    <td class="fit">{{ render_event_in_list(event) }}</td>
+                    <td>
+                        <button class="btn btn-link dropdown-toggle p-0 text-wrap text-left" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ event.name }}</button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{{ url_for('event', event_id=event.id) }}">{{ _('View') }}</a>
+                            <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}">{{ _('Edit') }}</a>
+                            <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}">{{ _('Delete') }}&hellip;</a>
+                            <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}">{{ _('Duplicate') }}&hellip;</a>
+                            <div class="dropdown-divider"></div>
+                            {% if event.admin_unit_id == current_admin_unit.id %}
+                            <a class="dropdown-item" href="{{ url_for('event_reference_request_create', event_id=event.id) }}">{{ _('Request reference') }}&hellip;</a>
+                            {% else %}
+                            <a class="dropdown-item" href="{{ url_for('event_reference_create', event_id=event.id) }}">{{ _('Reference event') }}&hellip;</a>
+                            {% endif %}
+                            {% if can_add_to_list %}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" onclick="vue_app_data.eventId = '{{ event.id }}'; app.$bvModal.show('add-event-to-list-modal'); return false;" href="#">{{ _('Add to list') }}&hellip;</a>
+                            {% endif %}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url_for('event_actions', event_id=event.id) }}">{{ _('More') }}&hellip;</a>
+                        </div>
+                        {{ render_event_warning_pills(event) }}
+                    </td>
+                    <td>{{ event.organizer.name }}</td>
+                    <td>{{ event.event_place.name }}</td>
+                    <td class="fit">{{ event.references|length }}/{{ event.reference_requests|length }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 <div class="my-4">{{ render_pagination(pagination) }}</div>
 
