@@ -23,7 +23,7 @@ def test_send_mails(client, seeder, app, utils):
 def test_get_pagination_urls(client, seeder, app, utils):
     user_id, admin_unit_id = seeder.setup_base()
 
-    for i in range(31):
+    for i in range(51):
         seeder.upsert_event_organizer(admin_unit_id, "Organizer %d" % i)
 
     utils.get_endpoint_ok(
