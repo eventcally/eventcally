@@ -198,7 +198,7 @@ def manage_admin_unit_organizers(id):
     organizers = (
         EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id)
         .order_by(func.lower(EventOrganizer.name))
-        .paginate()
+        .paginate(per_page=50)
     )
 
     return render_template(
@@ -220,7 +220,7 @@ def manage_admin_unit_event_places(id):
     places = (
         EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit.id)
         .order_by(func.lower(EventPlace.name))
-        .paginate()
+        .paginate(per_page=50)
     )
     return render_template(
         "manage/places.html",
