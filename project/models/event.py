@@ -36,11 +36,21 @@ class Event(db.Model, TrackableMixin, EventMixin):
     organizer_id = db.Column(
         db.Integer, db.ForeignKey("eventorganizer.id"), nullable=False
     )
-    organizer = db.relationship("EventOrganizer", uselist=False)
-    event_place_id = db.Column(
-        db.Integer, db.ForeignKey("eventplace.id"), nullable=False
+    organizer = db.relationship(
+        "EventOrganizer",
+        uselist=False,
+        backref=backref("events", lazy=True),
     )
-    event_place = db.relationship("EventPlace", uselist=False)
+    event_place_id = db.Column(
+        db.Integer,
+        db.ForeignKey("eventplace.id"),
+        nullable=False,
+    )
+    event_place = db.relationship(
+        "EventPlace",
+        uselist=False,
+        backref=backref("events", lazy=True),
+    )
 
     categories = relationship("EventCategory", secondary="event_eventcategories")
     co_organizers = relationship(

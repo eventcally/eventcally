@@ -196,7 +196,9 @@ class OrganizationEventImportResource(BaseResource):
 
         try:
             importer = EventImporter(admin_unit.id)
-            event = importer.load_event_from_url(import_request["url"])
+
+            with db.session.no_autoflush:
+                event = importer.load_event_from_url(import_request["url"])
         except Exception:
             abort(422)
 

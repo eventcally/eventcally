@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-06 22:42+0200\n"
+"POT-Creation-Date: 2023-04-08 13:20+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -251,6 +251,7 @@ msgstr "Nutzer löschen"
 #: project/templates/_macros.html:237 project/templates/_macros.html:1568
 #: project/templates/admin/admin.html:27 project/templates/admin/email.html:4
 #: project/templates/admin/email.html:66 project/templates/admin/users.html:19
+#: project/templates/manage/organizers.html:21
 msgid "Email"
 msgstr "Email"
 
@@ -321,6 +322,8 @@ msgstr "Organisation löschen"
 #: project/forms/reference_request.py:23
 #: project/templates/admin/admin_units.html:19
 #: project/templates/event_place/list.html:19
+#: project/templates/manage/organizers.html:18
+#: project/templates/manage/places.html:18
 #: project/templates/oauth2_client/list.html:25
 msgid "Name"
 msgstr "Name"
@@ -396,13 +399,14 @@ msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
 
 #: project/forms/admin_unit.py:47 project/forms/event.py:106
 #: project/forms/event.py:124 project/forms/event_place.py:26
-#: project/forms/organizer.py:26
+#: project/forms/organizer.py:26 project/templates/manage/organizers.html:21
 msgid "Link URL"
 msgstr "Link URL"
 
 #: project/forms/admin_unit.py:49 project/forms/event.py:108
 #: project/forms/event_suggestion.py:31 project/forms/organizer.py:28
 #: project/templates/_macros.html:290
+#: project/templates/manage/organizers.html:20
 msgid "Phone"
 msgstr "Telefon"
 
@@ -412,6 +416,7 @@ msgid "Fax"
 msgstr "Fax"
 
 #: project/forms/admin_unit.py:51 project/forms/organizer.py:30
+#: project/templates/manage/organizers.html:22
 msgid "Logo"
 msgstr "Logo"
 
@@ -788,6 +793,7 @@ msgid "Choose how people can attend the event."
 msgstr "Wähle aus, wie Personen an der Veranstaltung teilnehmen können."
 
 #: project/forms/event.py:225 project/forms/event_place.py:27
+#: project/templates/manage/places.html:21
 #: project/templates/widget/event_suggestion/create.html:258
 msgid "Photo"
 msgstr "Foto"
@@ -1012,6 +1018,8 @@ msgstr "Veranstaltungen finden"
 #: project/templates/admin_unit/update.html:39
 #: project/templates/event_place/create.html:40
 #: project/templates/event_place/update.html:40
+#: project/templates/manage/organizers.html:19
+#: project/templates/manage/places.html:19
 #: project/templates/organizer/create.html:36
 #: project/templates/organizer/update.html:36
 msgid "Location"
@@ -1029,7 +1037,7 @@ msgstr "Finden"
 #: project/forms/event_place.py:41 project/templates/event_place/create.html:5
 #: project/templates/event_place/create.html:21
 #: project/templates/event_place/list.html:11
-#: project/templates/manage/places.html:18
+#: project/templates/manage/places.html:11
 msgid "Create place"
 msgstr "Ort hinzufügen"
 
@@ -1134,7 +1142,7 @@ msgstr "OAuth2 Client löschen"
 msgid "Revoke OAuth2 token"
 msgstr "OAuth2 Token widerrufen"
 
-#: project/forms/organizer.py:43 project/templates/manage/organizers.html:12
+#: project/forms/organizer.py:43 project/templates/manage/organizers.html:11
 #: project/templates/organizer/create.html:5
 #: project/templates/organizer/create.html:21
 msgid "Create organizer"
@@ -1355,8 +1363,8 @@ msgstr "Merkzettel"
 #: project/templates/admin/users.html:34
 #: project/templates/manage/events.html:100
 #: project/templates/manage/members.html:35
-#: project/templates/manage/organizers.html:23
-#: project/templates/manage/places.html:27
+#: project/templates/manage/organizers.html:33
+#: project/templates/manage/places.html:31
 #: project/templates/manage/references_incoming.html:20
 #: project/templates/oauth2_client/list.html:34
 #: project/templates/oauth2_client/read.html:17
@@ -1591,7 +1599,7 @@ msgstr "Veranstaltungen anzeigen"
 #: project/templates/event/create.html:5
 #: project/templates/event/create.html:221 project/templates/layout.html:207
 #: project/templates/manage/events.html:44
-#: project/templates/manage/organizers.html:22
+#: project/templates/manage/organizers.html:38
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
@@ -1635,7 +1643,7 @@ msgid "Outgoing reference requests"
 msgstr "Ausgehende Empfehlungsanfragen"
 
 #: project/templates/layout.html:245 project/templates/manage/organizers.html:5
-#: project/templates/manage/organizers.html:9
+#: project/templates/manage/organizers.html:10
 #: project/templates/organizer/main.html:4
 msgid "Organizers"
 msgstr "Veranstalter"
@@ -1643,7 +1651,7 @@ msgstr "Veranstalter"
 #: project/templates/event_place/list.html:3
 #: project/templates/event_place/list.html:7 project/templates/layout.html:246
 #: project/templates/manage/places.html:5
-#: project/templates/manage/places.html:9
+#: project/templates/manage/places.html:10
 msgid "Places"
 msgstr "Orte"
 
@@ -1717,7 +1725,7 @@ msgstr "Nutzer"
 
 #: project/templates/admin/admin_units.html:33
 #: project/templates/manage/events.html:99
-#: project/templates/manage/organizers.html:21
+#: project/templates/manage/organizers.html:32
 #: project/templates/manage/references_incoming.html:19
 #: project/templates/manage/references_outgoing.html:19
 msgid "View"
@@ -1728,8 +1736,8 @@ msgstr "Anzeigen"
 #: project/templates/manage/events.html:101
 #: project/templates/manage/members.html:21
 #: project/templates/manage/members.html:36
-#: project/templates/manage/organizers.html:24
-#: project/templates/manage/places.html:28
+#: project/templates/manage/organizers.html:34
+#: project/templates/manage/places.html:32
 #: project/templates/manage/references_incoming.html:21
 #: project/templates/oauth2_client/list.html:35
 msgid "Delete"
@@ -2056,9 +2064,19 @@ msgstr "Anzahl an Empfehlungsanfragen"
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: project/templates/manage/organizers.html:25
-msgid "Assistents"
-msgstr "Assistenten"
+#: project/templates/manage/organizers.html:23
+#: project/templates/manage/places.html:22
+msgid "Number of events"
+msgstr "Anzahl an Veranstaltungen"
+
+#: project/templates/manage/organizers.html:36
+#: project/templates/manage/places.html:34
+msgid "View events"
+msgstr "Veranstaltungen anzeigen"
+
+#: project/templates/manage/places.html:20
+msgid "Coordinates"
+msgstr "Koordinaten"
 
 #: project/templates/manage/reference_requests_incoming.html:19
 msgid "Review request"
@@ -2315,11 +2333,11 @@ msgstr "Veranstaltung erfolgreich aktualisiert"
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
 
-#: project/views/event.py:408
+#: project/views/event.py:407
 msgid "Referenced event changed"
 msgstr "Empfohlene Veranstaltung wurde geändert"
 
-#: project/views/event.py:431
+#: project/views/event.py:430
 msgid "New event report"
 msgstr "Neue Meldung zu einer Veranstaltung"
 
@@ -2565,4 +2583,7 @@ msgstr "Neue Veranstaltung zu prüfen"
 
 #~ msgid "Veranstaltungen als iFrame einbetten"
 #~ msgstr "Veranstaltungen als iFrame einbetten"
+
+#~ msgid "Assistents"
+#~ msgstr "Assistenten"
 

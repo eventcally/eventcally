@@ -1,33 +1,56 @@
 {% extends "layout.html" %}
 {% set active_id = "organizers" %}
-{% from "_macros.html" import render_pagination, render_event_organizer %}
+{% from "_macros.html" import render_pagination, render_location %}
 {%- block title -%}
 {{ _('Organizers') }}
 {%- endblock -%}
 {% block content %}
 
-<h1>{{ _('Organizers') }}</h1>
+<h1>
+    {{ _('Organizers') }}
+    <a class="btn btn-outline-secondary btn-sm m-1" href="{{ url_for('manage_admin_unit_organizer_create', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create organizer') }}</a>
+</h1>
 
-<div class="my-4">
-    <a class="btn btn-outline-secondary my-1" href="{{ url_for('manage_admin_unit_organizer_create', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create organizer') }}</a>
+<div class="table-responsive">
+    <table class="table table-sm table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Location') }}</th>
+                <th>{{ _('Phone') }}</th>
+                <th>{{ _('Email') }} / {{ _('Link URL') }}</th>
+                <th>{{ _('Logo') }}</th>
+                <th><i class="fa fa-info" data-toggle="tooltip" title="{{ _('Number of events') }}"></i></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for organizer in organizers %}
+                <tr>
+                    <td>
+                        <button class="btn btn-link dropdown-toggle p-0 text-wrap text-left" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ organizer.name }}</button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{{ url_for('organizers', path=organizer.id) }}">{{ _('View') }}</a>
+                            <a class="dropdown-item" href="{{ url_for('organizer_update', id=organizer.id) }}">{{ _('Edit') }}</a>
+                            <a class="dropdown-item" href="{{ url_for('organizer_delete', id=organizer.id) }}">{{ _('Delete') }}&hellip;</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url_for('manage_admin_unit_events', id=admin_unit.id, organizer_id=organizer.id) }}">{{ _('View events') }}</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id, organizer_id=organizer.id) }}">{{ _('Create event') }}</a>
+                        </div>
+                    </td>
+                    <td>{{ render_location(organizer.location) }}</td>
+                    <td>{{ organizer.phone or '' }}</td>
+                    <td>
+                        <div>{{ organizer.email or '' }}</div>
+                        <div>{{ organizer.url or '' }}</div>
+                    </td>
+                    <td>{% if organizer.logo %}<i class="fa fa-fw fa-check-circle text-success"></i>{% endif %}</td>
+                    <td><a class="text-body" href="{{ url_for('manage_admin_unit_events', id=admin_unit.id, organizer_id=organizer.id) }}">{{ organizer.events|length }}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-
-<ul class="list-group">
-{% for organizer in organizers %}
-    <li class="list-group-item">
-        <div class="dropdown d-inline-block">
-            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ render_event_organizer(organizer) }}</button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="{{ url_for('organizers', path=organizer.id) }}">{{ _('View') }}</a>
-                <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id, organizer_id=organizer.id) }}">{{ _('Create event') }}</a>
-                <a class="dropdown-item" href="{{ url_for('organizer_update', id=organizer.id) }}">{{ _('Edit') }}</a>
-                <a class="dropdown-item" href="{{ url_for('organizer_delete', id=organizer.id) }}">{{ _('Delete') }}&hellip;</a>
-                <!--<a class="dropdown-item" href="#">{{ _('Assistents') }}</a>-->
-            </div>
-        </div>
-    </li>
-{% endfor %}
-</ul>
 
 <div class="my-4">{{ render_pagination(pagination) }}</div>
 
