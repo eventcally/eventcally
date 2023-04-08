@@ -3,12 +3,12 @@ import pytest
 
 # Load more urls:
 # curl -o tests/services/importer/data/<filename>.html <URL>
-def test_import(client, seeder, utils, app, shared_datadir, requests_mock):
+def test_import(client, seeder, utils, app, db, shared_datadir, requests_mock):
     _, admin_unit_id = seeder.setup_base()
     seeder.upsert_event_place(admin_unit_id, "MINER'S ROCK")
     seeder.upsert_event_organizer(admin_unit_id, "MINER'S ROCK")
 
-    params = (utils, admin_unit_id, shared_datadir)
+    params = (utils, admin_unit_id, shared_datadir, db)
 
     with app.app_context():
         _assert_import_event(
@@ -76,12 +76,14 @@ def test_import(client, seeder, utils, app, shared_datadir, requests_mock):
 def _assert_import_event(params, filename, url, sanitized_url=None):
     from project.services.importer.event_importer import EventImporter
 
-    utils, admin_unit_id, datadir = params
+    utils, admin_unit_id, datadir, db = params
     mock_url = sanitized_url if sanitized_url else url
     utils.mock_get_request_with_file(mock_url, datadir, filename)
 
     importer = EventImporter(admin_unit_id)
-    event = importer.load_event_from_url(url)
+
+    with db.session.no_autoflush:
+        event = importer.load_event_from_url(url)
 
     assert event is not None
     return event
