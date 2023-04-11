@@ -1354,7 +1354,7 @@
                     element.find('.rioccurrences').show();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    alert(textStatus);
+                    alert(textStatus + " " + jqXHR.statusText + " " + jqXHR.responseText);
                 }
             };
 

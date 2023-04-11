@@ -643,6 +643,21 @@ def test_rrule(client, seeder, utils, app):
     assert occurence["formattedDate"] == '"25.11.2020"'
 
 
+def test_rrule_bad_request(client, seeder, utils, app):
+    url = utils.get_url("event_rrule")
+    response = utils.post_json(
+        url,
+        {
+            "year": 2020,
+            "month": 11,
+            "day": 25,
+            "rrule": "RRULE:FREQ=DAILY;COUNT=7bad",
+            "start": 0,
+        },
+    )
+    utils.assert_response_bad_request(response)
+
+
 def test_report(seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
