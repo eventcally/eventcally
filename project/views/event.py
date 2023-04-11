@@ -275,10 +275,14 @@ def event_rrule():
 
     from project.dateutils import calculate_occurrences
 
-    result = calculate_occurrences(
-        start_date, '"%d.%m.%Y"', rrule_str, start, batch_size
-    )
-    return jsonify(result)
+    try:
+        result = calculate_occurrences(
+            start_date, '"%d.%m.%Y"', rrule_str, start, batch_size
+        )
+        return jsonify(result)
+    except Exception as e:
+        app.logger.exception(request.json)
+        return str(e), 400
 
 
 def get_event_category_choices():
