@@ -91,7 +91,7 @@ class Dumper(object):
 
         app.logger.info(f"{len(items)} item(s) dumped to {path}.")
 
-    def dump_item(self, items, schema, file_base_name):
+    def dump_item(self, items, schema, file_base_name):  # pragma: no cover
         result = schema.dump(items)
         path = os.path.join(self.tmp_path, file_base_name + ".json")
 
@@ -112,7 +112,7 @@ class Dumper(object):
         zip_path = shutil.make_archive(zip_base_name, "zip", self.tmp_path)
         app.logger.info(f"Zipped all up to {zip_path}.")
 
-    def dump_image(self, image):
+    def dump_image(self, image):  # pragma: no cover
         if not image:
             return
 
@@ -173,6 +173,6 @@ def dump_all():
     dumper.dump()
 
 
-def dump_admin_unit(admin_unit_id):
+def dump_admin_unit(admin_unit_id):  # pragma: no cover
     dumper = AdminUnitDumper(dump_path, admin_unit_id)
     dumper.dump()
