@@ -22,3 +22,6 @@ class Image(db.Model, TrackableMixin):
             if self.updated_at
             else 0
         )
+
+    def get_file_extension(self):
+        return self.encoding_format.split("/")[-1] if self.encoding_format else "png"

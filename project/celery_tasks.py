@@ -46,6 +46,16 @@ def dump_all_task():
     acks_late=True,
     reject_on_worker_lost=True,
 )
+def dump_admin_unit_task(admin_unit_id):
+    from project.services.dump import dump_admin_unit
+
+    dump_admin_unit(admin_unit_id)
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
 def seo_generate_sitemap_task():
     from project import app
     from project.services.seo import generate_sitemap
