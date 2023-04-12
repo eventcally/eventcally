@@ -1,6 +1,6 @@
 {% extends "layout_vue.html" %}
 {% set active_id = "events" %}
-{% from "_macros.html" import render_field, render_event_dates_date_field, render_event_in_list, render_manage_form_styles, render_manage_form_scripts, render_event_dates_filter_form, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
+{% from "_macros.html" import render_jquery_steps_header, render_google_filter_autocomplete_header, render_event_dates_location_field, render_field, render_event_dates_date_field, render_event_in_list, render_manage_form_styles, render_manage_form_scripts, render_event_dates_filter_form, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
 
 {%- block title -%}
 {{ _('Events') }}
@@ -14,6 +14,11 @@
 {{ super() }}
 {{ render_manage_form_scripts() }}
 {%- endblock -%}
+
+{% block header %}
+{{ render_jquery_steps_header() }}
+{{ render_google_filter_autocomplete_header() }}
+{% endblock %}
 
 {% block component_scripts %}
 <script src="{{ url_for('static', filename='vue/event-lists/add-event.vue.js')}}"></script>
@@ -54,7 +59,7 @@ var vue_app_data = { eventId: 0 };
             {{ render_field_with_errors(form.keyword, formrow="1") }}
         {% endif %}
 
-        {% set form_collapsed = not form.category_id.data and not form.organizer_id.data and not form.event_place_id.data %}
+        {% set form_collapsed = not form.category_id.data and not form.organizer_id.data and not form.event_place_id.data and not form.coordinate.data  %}
         <div id="extended_search_form" class="{% if form_collapsed %}collapse{% else %}show{% endif %}">
 
         {% if form.category_id %}
@@ -68,6 +73,8 @@ var vue_app_data = { eventId: 0 };
         {% if form.event_place_id and form.event_place_id.type != "HiddenField" %}
             {{ render_field_with_errors(form.event_place_id, formrow="1") }}
         {% endif %}
+
+        {{ render_event_dates_location_field(form.location, form.distance) }}
 
         </div>
 

@@ -71,6 +71,8 @@ def get_next_full_hour():
 
 
 def form_input_to_date(date_str, hour=0, minute=0, second=0):
+    if not date_str:  # pragma: no cover
+        return None
     date = datetime.strptime(date_str, "%Y-%m-%d")
     date_time = date_add_time(date, hour=hour, minute=minute, second=second)
     return berlin_tz.localize(date_time)

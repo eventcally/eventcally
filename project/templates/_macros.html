@@ -856,11 +856,11 @@
       var data = select2GetData(e);
 
       if ("gmaps_id" in data) {
-        get_gmaps_place_details(data.gmaps_id);
+        get_gmaps_place_details(data.gmaps_id, data.text);
       }
     });
 
-    function get_gmaps_place_details(place_id) {
+    function get_gmaps_place_details(place_id, place_name) {
       $.ajax({
           url: "{{ url_for('js_autocomplete_gmaps_place') }}",
           type: "get",
@@ -868,6 +868,7 @@
           data: "gmaps_id=" + place_id,
           success: function (data) {
             $('#coordinate').val('' + data.geometry.location.lat + ',' + data.geometry.location.lng);
+            $('#location_name').val(place_name);
           }
       });
     }
