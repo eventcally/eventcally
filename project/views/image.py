@@ -1,11 +1,11 @@
 import os
-from io import BytesIO
 
 import PIL
 from flask import request, send_file
 from sqlalchemy.orm import load_only
 
 from project import app, img_path
+from project.imageutils import get_image_from_bytes
 from project.models import Image
 from project.utils import make_dir
 
@@ -26,7 +26,7 @@ def image(id, hash=None):
         height = width
 
     # Generate file name
-    extension = image.encoding_format.split("/")[-1] if image.encoding_format else "png"
+    extension = image.get_file_extension()
     hash = image.get_hash()
     file_path = os.path.join(img_path, f"{id}-{hash}-{width}-{height}.{extension}")
 
@@ -36,7 +36,7 @@ def image(id, hash=None):
 
     # Save from database to disk
     make_dir(img_path)
-    img = PIL.Image.open(BytesIO(image.data))
+    img = get_image_from_bytes(image.data)
     img.thumbnail((width, height), PIL.Image.ANTIALIAS)
     img.save(file_path)
 

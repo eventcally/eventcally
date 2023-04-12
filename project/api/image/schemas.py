@@ -1,7 +1,7 @@
 from marshmallow import ValidationError, fields, post_load, validate, validates_schema
 
 from project.api import marshmallow
-from project.api.schemas import SQLAlchemyBaseSchema
+from project.api.schemas import IdSchemaMixin, SQLAlchemyBaseSchema
 from project.imageutils import (
     get_bytes_from_image,
     get_image_from_base64_str,
@@ -36,7 +36,7 @@ class ImageSchema(ImageModelSchema, ImageBaseSchemaMixin):
         return url_for_image(image)
 
 
-class ImageDumpSchema(ImageModelSchema, ImageBaseSchemaMixin):
+class ImageDumpSchema(ImageModelSchema, IdSchemaMixin, ImageBaseSchemaMixin):
     pass
 
 
