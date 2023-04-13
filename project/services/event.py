@@ -39,6 +39,7 @@ from project.models import (
     sanitize_allday_instance,
 )
 from project.services.event_search import EventSearchParams
+from project.services.reference import upsert_event_reference
 from project.utils import get_pending_changes, get_place_str
 from project.views.utils import truncate
 
@@ -101,6 +102,23 @@ def fill_event_filter(event_filter, params):
             event_filter,
             func.ST_DistanceSphere(Location.coordinate, point) <= params.distance,
         )
+
+    if params.postal_code:
+        if type(params.postal_code) is list:
+            postalCodes = params.postal_code
+        else:
+            postalCodes = [params.postal_code]
+
+        postalCodeFilters = None
+        for postalCode in postalCodes:
+            postalCodeFilter = Location.postalCode.ilike(postalCode + "%")
+            if postalCodeFilters is not None:
+                postalCodeFilters = or_(postalCodeFilters, postalCodeFilter)
+            else:
+                postalCodeFilters = postalCodeFilter
+
+        if postalCodeFilters is not None:
+            event_filter = and_(event_filter, postalCodeFilters)
 
     if params.favored_by_user_id:
         user_favorite_exists = UserFavoriteEvents.query.filter(
@@ -606,8 +624,6 @@ def create_ical_events_for_event(event: Event) -> list:  # list[icalendar.Event]
 def create_ical_events_for_search(
     params: EventSearchParams,
 ) -> list:  # list[icalendar.Event]
-    from project.services.event import create_ical_events_for_event, get_events_query
-
     result = list()
     events = get_events_query(params).all()
 
@@ -629,3 +645,21 @@ def update_recurring_dates():
         db.session.commit()
 
     app.logger.info(f"{len(events)} event(s) were updated.")
+
+
+def create_bulk_event_references(admin_unit_id: int, postalCodes: list):
+    params = EventSearchParams()
+    params.set_default_date_range()
+    params.postal_code = postalCodes
+
+    query = get_events_query(params)
+    query = query.filter(Event.admin_unit_id != admin_unit_id)
+
+    count = 0
+    events = query.all()
+    for event in events:
+        if upsert_event_reference(event.id, admin_unit_id):
+            count = count + 1
+
+    db.session.commit()
+    app.logger.info(f"{count} reference(s) created.")

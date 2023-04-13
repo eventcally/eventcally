@@ -30,6 +30,7 @@ class EventSearchParams(object):
         self.sort = None
         self.status = None
         self.favored_by_user_id = None
+        self.postal_code = None
 
     @property
     def date_from(self):
@@ -147,6 +148,9 @@ class EventSearchParams(object):
 
         if "event_list_id" in request.args:
             self.event_list_id = self.load_list_param("event_list_id")
+
+        if "postal_code" in request.args:
+            self.postal_code = self.load_list_param("postal_code")
 
         if "sort" in request.args:
             self.sort = request.args["sort"]
