@@ -65,7 +65,7 @@ jobs:
           JWT_PUBLIC_JWKS: '{"keys":[{"kid":"default","kty":"RSA","use":"sig","alg":"RS256","n":"xMl-DFiwhnoWRiVPcEIstAW66VY39JNo1TG1U10OfaFMuWI8jcq5VfSRPBdXLRqAJwZi4CZCwOglEvURArf1QTxVBdLpDW75tD6fNOHaHKvX5WPRMGC_7Rfo9K_OgEWnQplc_0Me9D8MzTpIA56Uo_H_DE82kGWOMcWdqIA40pHaCZ7iWIoD7pS6DcRDt_8o0-IQqhMC4SrjL2HelzXHpg4glgY-GLbvTPOfV_OlFCAWDK3oN3wMBYS-TFP2Q_5pXfPCajIrSfF7dHyZU2d_K26A8naKcSUYuJzA8GBXkPx8YObtOS5SYYeD5GeGsX3IsVVyk3WqMVN7NXvRqmNjqQ","e":"AQAB"}]}'
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v5
         with:
           browser: chrome
           record: true
@@ -139,7 +139,7 @@ jobs:
           JWT_PUBLIC_JWKS: '{"keys":[{"kid":"default","kty":"RSA","use":"sig","alg":"RS256","n":"xMl-DFiwhnoWRiVPcEIstAW66VY39JNo1TG1U10OfaFMuWI8jcq5VfSRPBdXLRqAJwZi4CZCwOglEvURArf1QTxVBdLpDW75tD6fNOHaHKvX5WPRMGC_7Rfo9K_OgEWnQplc_0Me9D8MzTpIA56Uo_H_DE82kGWOMcWdqIA40pHaCZ7iWIoD7pS6DcRDt_8o0-IQqhMC4SrjL2HelzXHpg4glgY-GLbvTPOfV_OlFCAWDK3oN3wMBYS-TFP2Q_5pXfPCajIrSfF7dHyZU2d_K26A8naKcSUYuJzA8GBXkPx8YObtOS5SYYeD5GeGsX3IsVVyk3WqMVN7NXvRqmNjqQ","e":"AQAB"}]}'
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v5
         with:
           browser: chrome
           record: true
