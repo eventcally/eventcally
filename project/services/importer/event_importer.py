@@ -70,7 +70,7 @@ class EventImporter:
         try:
             p = urlparse(absolute_url)
 
-            if p.hostname.endswith("reservix.de"):
+            if p.hostname.endswith(".reservix.de"):
                 result = p._replace(
                     netloc=p.netloc.replace(p.hostname, "www.reservix.de")
                 ).geturl()

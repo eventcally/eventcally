@@ -196,7 +196,7 @@ class LdJsonImporter:
                         if organizer:
                             return organizer
 
-            if p.hostname.endswith("eventim.de"):
+            if p.hostname.endswith(".eventim.de"):
                 div = self.soup.find(
                     "div", attrs={"data-qa": "additional-info-promoter-content"}
                 )
@@ -216,7 +216,7 @@ class LdJsonImporter:
                             if organizer:
                                 return organizer
 
-            if p.hostname.endswith("regiondo.de"):
+            if p.hostname.endswith(".regiondo.de"):
                 span = self.soup.find(
                     "span", attrs={"itemtype": "http://schema.org/Organization"}
                 )
@@ -228,7 +228,7 @@ class LdJsonImporter:
                     if organizer:
                         return organizer
 
-            if p.hostname.endswith("facebook.com"):
+            if p.hostname.endswith(".facebook.com"):
                 anchor = self.soup.find("a", attrs={"class": "cc"})
 
                 if anchor:

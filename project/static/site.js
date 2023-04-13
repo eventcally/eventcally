@@ -411,7 +411,7 @@ function scroll_to_element(element, complete) {
     });
 
     removeButton.click(function () {
-      var count = $.find(".date-definition-container").length;
+      var count = $(".date-definition-container").length;
       if (count > 1) {
           var container = $(this).closest(".date-definition-container");
           container.remove();
