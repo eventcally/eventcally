@@ -15,7 +15,9 @@ jobs:
         config: [1, 2, 3]
 
     # Containers must run in Linux based operating systems
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    container:
+      image: cypress/browsers:node18.12.0-chrome107
 
     # Service containers to run with `container-job`
     services:
@@ -89,7 +91,9 @@ jobs:
         config: [1, 2, 3]
 
     # Containers must run in Linux based operating systems
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    container:
+      image: cypress/browsers:node18.12.0-chrome107
 
     # Service containers to run with `container-job`
     services:
