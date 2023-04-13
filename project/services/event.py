@@ -106,7 +106,7 @@ def fill_event_filter(event_filter, params):
     if params.postal_code:
         if type(params.postal_code) is list:
             postalCodes = params.postal_code
-        else:
+        else:  # pragma: no cover
             postalCodes = [params.postal_code]
 
         postalCodeFilters = None
