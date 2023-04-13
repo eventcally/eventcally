@@ -282,7 +282,7 @@ def event_rrule():
         return jsonify(result)
     except Exception as e:
         app.logger.exception(request.json)
-        return str(e), 400
+        return getattr(e, "message", "Unknown error"), 400
 
 
 def get_event_category_choices():

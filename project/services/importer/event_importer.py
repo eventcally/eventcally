@@ -67,20 +67,19 @@ class EventImporter:
     def _sanitize_url(self, absolute_url: str) -> str:
         result = absolute_url
 
-        if "reservix.de" in absolute_url or "facebook.com" in absolute_url:
-            try:
-                p = urlparse(absolute_url)
+        try:
+            p = urlparse(absolute_url)
 
-                if p.hostname.endswith("reservix.de"):
-                    result = p._replace(
-                        netloc=p.netloc.replace(p.hostname, "www.reservix.de")
-                    ).geturl()
+            if p.hostname.endswith("reservix.de"):
+                result = p._replace(
+                    netloc=p.netloc.replace(p.hostname, "www.reservix.de")
+                ).geturl()
 
-                if p.hostname == "www.facebook.com":
-                    result = p._replace(
-                        netloc=p.netloc.replace("www.facebook.com", "m.facebook.com")
-                    ).geturl()
-            except Exception:  # pragma: no cover
-                pass
+            if p.hostname == "www.facebook.com":
+                result = p._replace(
+                    netloc=p.netloc.replace("www.facebook.com", "m.facebook.com")
+                ).geturl()
+        except Exception:  # pragma: no cover
+            pass
 
         return result

@@ -1,4 +1,5 @@
 import json
+from urllib.parse import urlparse
 
 import validators
 from bs4 import BeautifulSoup
@@ -178,61 +179,66 @@ class LdJsonImporter:
         return organizer
 
     def _load_organizer_from_html(self) -> EventOrganizer:
-        if "reservix.de" in self.origin_url:
-            div = self.soup.find("div", attrs={"class": "c-organizer-info"})
+        try:
+            p = urlparse(self.origin_url)
 
-            if div:
-                prefix = "Veranstalter:"
-                text = div.text.strip()
+            if p.hostname.endswith("reservix.de"):
+                div = self.soup.find("div", attrs={"class": "c-organizer-info"})
 
-                if text.startswith(prefix):
-                    organizer_text = text[len(prefix) :].strip()
-                    organizer = self._load_organizer_from_text(organizer_text)
+                if div:
+                    prefix = "Veranstalter:"
+                    text = div.text.strip()
 
-                    if organizer:
-                        return organizer
-
-        if "eventim.de" in self.origin_url:
-            div = self.soup.find(
-                "div", attrs={"data-qa": "additional-info-promoter-content"}
-            )
-
-            if div:
-                header_div = div.find(
-                    lambda tag: tag.name == "div" and "Veranstalter:" in tag.text
-                )
-
-                if header_div:
-                    organizer_paragraph = header_div.findNext("p")
-
-                    if organizer_paragraph:
-                        organizer_text = organizer_paragraph.text.strip()
+                    if text.startswith(prefix):
+                        organizer_text = text[len(prefix) :].strip()
                         organizer = self._load_organizer_from_text(organizer_text)
 
                         if organizer:
                             return organizer
 
-        if "regiondo.de" in self.origin_url:
-            span = self.soup.find(
-                "span", attrs={"itemtype": "http://schema.org/Organization"}
-            )
+            if p.hostname.endswith("eventim.de"):
+                div = self.soup.find(
+                    "div", attrs={"data-qa": "additional-info-promoter-content"}
+                )
 
-            if span:
-                organizer_text = span.text.strip()
-                organizer = self._load_organizer_from_text(organizer_text)
+                if div:
+                    header_div = div.find(
+                        lambda tag: tag.name == "div" and "Veranstalter:" in tag.text
+                    )
 
-                if organizer:
-                    return organizer
+                    if header_div:
+                        organizer_paragraph = header_div.findNext("p")
 
-        if "facebook.com" in self.origin_url:
-            anchor = self.soup.find("a", attrs={"class": "cc"})
+                        if organizer_paragraph:
+                            organizer_text = organizer_paragraph.text.strip()
+                            organizer = self._load_organizer_from_text(organizer_text)
 
-            if anchor:
-                organizer_text = anchor.text.strip()
-                organizer = self._load_organizer_from_text(organizer_text)
+                            if organizer:
+                                return organizer
 
-                if organizer:
-                    return organizer
+            if p.hostname.endswith("regiondo.de"):
+                span = self.soup.find(
+                    "span", attrs={"itemtype": "http://schema.org/Organization"}
+                )
+
+                if span:
+                    organizer_text = span.text.strip()
+                    organizer = self._load_organizer_from_text(organizer_text)
+
+                    if organizer:
+                        return organizer
+
+            if p.hostname.endswith("facebook.com"):
+                anchor = self.soup.find("a", attrs={"class": "cc"})
+
+                if anchor:
+                    organizer_text = anchor.text.strip()
+                    organizer = self._load_organizer_from_text(organizer_text)
+
+                    if organizer:
+                        return organizer
+        except Exception:  # pragma: no cover
+            pass
 
         return None
 
