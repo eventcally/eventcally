@@ -5,6 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import (
     BooleanField,
     FormField,
+    HiddenField,
     IntegerField,
     RadioField,
     SelectField,
@@ -17,7 +18,7 @@ from wtforms.fields.core import FieldList
 from wtforms.fields.html5 import EmailField, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
-from project.forms.common import Base64ImageForm, event_rating_choices
+from project.forms.common import Base64ImageForm, distance_choices, event_rating_choices
 from project.forms.event_place import EventPlaceLocationForm
 from project.forms.widgets import CustomDateField, CustomDateTimeField, HTML5StringField
 from project.models import (
@@ -440,6 +441,15 @@ class FindEventForm(FlaskForm):
     )
     event_place_id = SelectField(
         lazy_gettext("Place"), validators=[Optional()], coerce=int
+    )
+    coordinate = HiddenField(validators=[Optional()])
+    location_name = HiddenField(validators=[Optional()])
+    location = SelectField(lazy_gettext("Location"), validators=[Optional()])
+    distance = SelectField(
+        lazy_gettext("Distance"),
+        validators=[Optional()],
+        coerce=int,
+        choices=distance_choices,
     )
 
     submit = SubmitField(lazy_gettext("Find events"))

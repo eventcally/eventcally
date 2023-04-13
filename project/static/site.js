@@ -466,6 +466,7 @@ $(function () {
 
   $("#clear_location_btn").click(function () {
     $("#coordinate").val("");
+    $("#location_name").val("");
     $("#location").val("").trigger('change');
   });
 
