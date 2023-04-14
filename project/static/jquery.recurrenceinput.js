@@ -1216,7 +1216,7 @@
             var $this = $(this);
             $this.removeClass('rrule').addClass('exdate');
             $this.parent().parent().addClass('exdate');
-            $(document).find('i').removeClass('fa-trash').addClass('fa-trash-restore');
+            $(this).find('i').removeClass('fa-trash').addClass('fa-trash-restore');
             $this.unbind(event);
             $this.click(occurrenceInclude); // Jslint warns here, but that's OK.
         }
@@ -1227,7 +1227,7 @@
             var $this = $(this);
             $this.removeClass('exdate').addClass('rrule');
             $this.parent().parent().removeClass('exdate');
-            $(document).find('i').removeClass('fa-trash-restore').addClass('fa-trash');
+            $(this).find('i').removeClass('fa-trash-restore').addClass('fa-trash');
             $this.unbind(event);
             $this.click(occurrenceExclude);
         }
