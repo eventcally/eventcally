@@ -12,8 +12,8 @@ function get_moment_with_time_from_fields(date_field, time_field) {
 }
 
 function get_moment_with_time(field_id) {
-  var date_field = $(this).find(field_id);
-  var time_field = $(this).find(field_id + "-time");
+  var date_field = $(document).find(field_id);
+  var time_field = $(document).find(field_id + "-time");
   return get_moment_with_time_from_fields(date_field, time_field)
 }
 
@@ -24,28 +24,28 @@ function set_date_bounds(picker) {
   if (data_range_to_attr) {
     var hidden_field_id = picker.attr("id").replace("-user", "");
     var from_moment = get_moment_with_time("#" + hidden_field_id);
-    $(this).find(data_range_to_attr + "-user").datepicker(
+    $(document).find(data_range_to_attr + "-user").datepicker(
       "option",
       "minDate",
       from_moment.toDate()
     );
 
-    var end_val = $(this).find(data_range_to_attr).val();
+    var end_val = $(document).find(data_range_to_attr).val();
     if (end_val != "") {
       var end_moment = get_moment_with_time(data_range_to_attr);
 
-      if (data_allday_attr && $(this).find(data_allday_attr).is(':checked')) {
+      if (data_allday_attr && $(document).find(data_allday_attr).is(':checked')) {
         end_moment = end_moment.endOf('day');
-        set_picker_date($(this).find(data_range_to_attr), end_moment.toDate());
+        set_picker_date($(document).find(data_range_to_attr), end_moment.toDate());
       } else if (end_moment < from_moment) {
-        set_picker_date($(this).find(data_range_to_attr), from_moment.toDate());
+        set_picker_date($(document).find(data_range_to_attr), from_moment.toDate());
       }
     }
 
     var data_range_max_attr = picker.attr("data-range-max-days");
     if (data_range_max_attr) {
       from_moment.add(data_range_max_attr, "days");
-      $(this).find(data_range_to_attr + "-user").datepicker(
+      $(document).find(data_range_to_attr + "-user").datepicker(
         "option",
         "maxDate",
         from_moment.toDate()
@@ -58,11 +58,11 @@ function set_date_bounds(picker) {
     var hidden_field_id = picker.attr("id").replace("-user", "");
     var to_moment = get_moment_with_time("#" + hidden_field_id);
 
-    var start_val = $(this).find(data_range_from_attr).val();
+    var start_val = $(document).find(data_range_from_attr).val();
     if (start_val != "") {
       var start_moment = get_moment_with_time(data_range_from_attr);
       if (start_moment > to_moment) {
-        set_picker_date($(this).find(data_range_from_attr), to_moment.toDate());
+        set_picker_date($(document).find(data_range_from_attr), to_moment.toDate());
       }
     }
   }
@@ -98,7 +98,7 @@ function onAlldayChecked(checkbox, hidden_field_id) {
     if (data_range_to_attr) {
       var end_moment = get_moment_with_time(data_range_to_attr);
       end_moment = end_moment.startOf('day').set({"hour": next_hour.hour(), "minute": next_hour.minute()});
-      set_picker_date($(this).find(data_range_to_attr), end_moment.add(3, 'hours').toDate());
+      set_picker_date($(document).find(data_range_to_attr), end_moment.add(3, 'hours').toDate());
     }
   }
 }
@@ -142,18 +142,18 @@ function start_datepicker(input) {
 
   var data_range_to_attr = picker.attr("data-range-to");
   if (data_range_to_attr) {
-    $(this).find(data_range_to_attr).attr("data-range-from", "#" + hidden_field_id);
+    $(document).find(data_range_to_attr).attr("data-range-from", "#" + hidden_field_id);
   }
 
   var data_allday_attr = picker.attr("data-allday");
   if (data_allday_attr) {
-    var checked = $(this).find(data_allday_attr).is(':checked')
+    var checked = $(document).find(data_allday_attr).is(':checked')
     $("#" + hidden_field_id + "-time").toggle(!checked);
     if (data_range_to_attr) {
-      $(this).find(data_range_to_attr + "-time").toggle(!checked);
+      $(document).find(data_range_to_attr + "-time").toggle(!checked);
     }
 
-    $(this).find(data_allday_attr).on('change', function() {
+    $(document).find(data_allday_attr).on('change', function() {
       $("#" + hidden_field_id + "-time").toggle(!this.checked);
       if (data_range_to_attr) {
         $(data_range_to_attr + "-time").toggle(!this.checked);
