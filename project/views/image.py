@@ -32,7 +32,7 @@ def image(id, hash=None):
         os.path.join(img_path, f"{id}-{hash}-{width}-{height}.{extension}")
     )
 
-    if not file_path.startswith(img_path):
+    if not file_path.startswith(img_path):  # pragma: no cover
         return None, 404
 
     # Load from disk if exists
