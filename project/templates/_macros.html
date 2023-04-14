@@ -1772,7 +1772,7 @@ $('#allday').on('change', function() {
         last_container.after(new_container);
         new_container.eventcallyDateDefinition();
 
-        if ($.find(".date-definition-container").length > 1) {
+        if ($(".date-definition-container").length > 1) {
           $('.date-definition-container button.remove-date-defintion-btn').removeClass("d-none");
         }
         return false;

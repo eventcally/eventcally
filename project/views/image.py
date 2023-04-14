@@ -28,7 +28,12 @@ def image(id, hash=None):
     # Generate file name
     extension = image.get_file_extension()
     hash = image.get_hash()
-    file_path = os.path.join(img_path, f"{id}-{hash}-{width}-{height}.{extension}")
+    file_path = os.path.normpath(
+        os.path.join(img_path, f"{id}-{hash}-{width}-{height}.{extension}")
+    )
+
+    if not file_path.startswith(img_path):  # pragma: no cover
+        return None, 404
 
     # Load from disk if exists
     if os.path.exists(file_path):

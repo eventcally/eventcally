@@ -134,7 +134,11 @@ def admin_email():
                 "value": result.get() if ready else result.result,
             }
         except Exception as e:
-            return {"ready": True, "successful": False, "error": str(e)}
+            return {
+                "ready": True,
+                "successful": False,
+                "error": getattr(e, "message", "Unknown error"),
+            }
 
     if form.validate_on_submit():
         subject = gettext(
@@ -173,7 +177,11 @@ def admin_newsletter():
                 "successful": result.successful() if ready else None,
             }
         except Exception as e:
-            return {"ready": True, "successful": False, "error": str(e)}
+            return {
+                "ready": True,
+                "successful": False,
+                "error": getattr(e, "message", "Unknown error"),
+            }
 
     if form.validate_on_submit():
         subject = gettext(
