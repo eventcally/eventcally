@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.9
 
 # Add rsync
 RUN apt update -qq && apt upgrade -y && apt autoremove -y

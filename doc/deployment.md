@@ -14,7 +14,7 @@ docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/eventca
 
 ### Requirements
 
-- Python 3.7
+- Python 3.9
 - pip
 - Postgres with postgis
 

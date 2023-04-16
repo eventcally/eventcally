@@ -12,7 +12,7 @@ def pytest_generate_tests(metafunc):
     warnings.filterwarnings("error", category=SAWarning)
 
     os.environ["DATABASE_URL"] = os.environ.get(
-        "TEST_DATABASE_URL", "postgresql://postgres@localhost/eventcally_tests"
+        "TEST_DATABASE_URL", "postgresql://user:pass@myserver/ec_tests"
     )
     os.environ["REDIS_URL"] = os.environ.get("TEST_REDIS_URL", "redis://")
     os.environ["AUTHLIB_INSECURE_TRANSPORT"] = "1"
