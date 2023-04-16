@@ -1,10 +1,9 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaField
-from wtforms.fields.core import BooleanField
-from wtforms.fields.html5 import EmailField, TelField, URLField
+from wtforms.fields import BooleanField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp
-from wtforms.widgets.html5 import ColorInput
+from wtforms.widgets import ColorInput
 
 from project.forms.common import Base64ImageForm
 from project.forms.widgets import HTML5StringField

@@ -35,8 +35,8 @@ class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
 
 
 class ExtendedLoginForm(LoginForm):
-    def validate(self):
-        result = super().validate()
+    def validate(self, **kwargs):
+        result = super().validate(**kwargs)
 
         if not result and self.requires_confirmation:
             flash_message(

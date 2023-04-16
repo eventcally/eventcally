@@ -14,8 +14,7 @@ from wtforms import (
     SubmitField,
     TextAreaField,
 )
-from wtforms.fields.core import FieldList
-from wtforms.fields.html5 import EmailField, URLField
+from wtforms.fields import EmailField, FieldList, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
 from project.forms.common import Base64ImageForm, distance_choices, event_rating_choices
@@ -72,8 +71,8 @@ class EventDateDefinitionFormMixin:
 
 
 class EventDateDefinitionForm(FlaskForm, EventDateDefinitionFormMixin):
-    def validate(self):
-        result = super().validate()
+    def validate(self, extra_validators=None):
+        result = super().validate(extra_validators)
 
         if not self.validate_date_definition():
             result = False
@@ -270,8 +269,8 @@ class BaseEventForm(SharedEventForm):
         ),
     )
 
-    def validate(self):
-        result = super().validate()
+    def validate(self, extra_validators=None):
+        result = super().validate(extra_validators)
 
         if self.co_organizer_ids.data and self.organizer_id.data:
             if self.organizer_id.data in self.co_organizer_ids.data:
@@ -342,8 +341,8 @@ class CreateEventForm(BaseEventForm):
             PublicStatus.published if self.submit.data else PublicStatus.draft
         )
 
-    def validate(self):
-        result = super().validate()
+    def validate(self, extra_validators=None):
+        result = super().validate(extra_validators)
 
         if (
             not self.event_place_id.data or self.event_place_id.data == 0

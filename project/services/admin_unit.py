@@ -118,8 +118,7 @@ def upsert_admin_unit_member_role(role_name, role_title, permissions):
         db.session.add(result)
 
     result.title = role_title
-    result.remove_permissions(result.get_permissions())
-    result.add_permissions(permissions)
+    result.permissions = permissions
     return result
 
 

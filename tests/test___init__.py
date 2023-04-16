@@ -13,9 +13,11 @@ def test_mail_server():
 
 
 def drop_db(db):
-    db.drop_all()
-    db.engine.execute("DROP TABLE IF EXISTS alembic_version;")
-    db.engine.execute("DROP TABLE IF EXISTS analytics;")
+    with db.engine.connect() as conn:
+        with conn.begin():
+            db.drop_all()
+            conn.execute(sqlalchemy.text("DROP TABLE IF EXISTS alembic_version;"))
+            conn.execute(sqlalchemy.text("DROP TABLE IF EXISTS analytics;"))
 
 
 def populate_db(db):
@@ -33,7 +35,9 @@ BEGIN
     INSERT INTO event (name, admin_unit_id, event_place_id, organizer_id, start) VALUES ('Event', admin_unit_id, event_place_id, organizer_id, current_timestamp) RETURNING id INTO event_id;
 END $$;
         """
-    db.engine.execute(sqlalchemy.text(sql).execution_options(autocommit=True))
+    with db.engine.connect() as conn:
+        with conn.begin():
+            conn.execute(sqlalchemy.text(sql).execution_options(autocommit=True))
 
 
 def test_migrations(app, seeder):
@@ -54,6 +58,7 @@ def test_migrations(app, seeder):
         seeder.create_event_suggestion(admin_unit_id)
         seeder.create_any_reference(admin_unit_id)
         seeder.create_reference_request(event_id, admin_unit_id)
+        db.session.commit()
         downgrade()
 
 

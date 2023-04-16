@@ -155,8 +155,7 @@ def test_read_decline(client, app, db, utils, seeder):
                 "decline": "Ablehnen",
             },
         )
-        assert response.status_code == 302
-        assert response.headers["Location"] == "http://localhost/manage"
+        utils.assert_response_redirect(response, "manage")
 
         with app.app_context():
             from project.services.admin_unit import (
@@ -211,8 +210,7 @@ def test_read_new_member_not_registered(client, app, utils, seeder):
 
     url = "/invitations/%d" % invitation_id
     response = client.get(url)
-    assert response.status_code == 302
-    assert response.headers["Location"] == "http://localhost/register"
+    utils.assert_response_redirect(response, "security.register")
 
 
 def test_read_new_member_not_authenticated(client, app, utils, seeder):
@@ -226,8 +224,7 @@ def test_read_new_member_not_authenticated(client, app, utils, seeder):
 
     url = "/invitations/%d" % invitation_id
     response = client.get(url)
-    assert response.status_code == 302
-    assert response.headers["Location"].startswith("http://localhost/login")
+    utils.assert_response_redirect(response, "security.login", next=url)
 
 
 @pytest.mark.parametrize("user_exists", [True, False])
@@ -245,9 +242,8 @@ def test_read_currentUserDoesNotMatchInvitationEmail(
         seeder.create_user(email)
 
     url = "/invitations/%d" % invitation_id
-    environ, response = client.get(url, follow_redirects=True, as_tuple=True)
+    response = client.get(url, follow_redirects=True)
 
-    assert environ["REQUEST_URI"] == "/profile"
     utils.assert_response_ok(response)
     utils.assert_response_contains(
         response, "Die Einladung wurde für einen anderen Nutzer ausgestellt."

@@ -42,8 +42,7 @@ def set_roles_for_user(email, roles):
 def upsert_user_role(role_name, role_title, permissions):
     role = user_datastore.find_or_create_role(role_name)
     role.title = role_title
-    role.remove_permissions(role.get_permissions())
-    role.add_permissions(permissions)
+    role.permissions = permissions
     return role
 
 

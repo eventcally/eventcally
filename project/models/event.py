@@ -91,11 +91,11 @@ class Event(db.Model, TrackableMixin, EventMixin):
     @min_start.expression
     def min_start(cls):
         return (
-            select([EventDateDefinition.start])
+            select(EventDateDefinition.start)
             .where(EventDateDefinition.event_id == cls.id)
             .order_by(EventDateDefinition.start)
             .limit(1)
-            .as_scalar()
+            .scalar_subquery()
         )
 
     @hybrid_property
@@ -108,7 +108,7 @@ class Event(db.Model, TrackableMixin, EventMixin):
     @is_recurring.expression
     def is_recurring(cls):
         return (
-            select([func.count()])
+            select(func.count())
             .select_from(EventDateDefinition.__table__)
             .where(
                 and_(
@@ -116,7 +116,7 @@ class Event(db.Model, TrackableMixin, EventMixin):
                     func.coalesce(EventDateDefinition.recurrence_rule, "") != "",
                 )
             )
-            .as_scalar()
+            .scalar_subquery()
         ) > 0
 
     date_definitions = relationship(

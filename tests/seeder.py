@@ -305,14 +305,19 @@ class Seeder(object):
     def get_event_category_id(self, category_name):
         from project.services.event import get_event_category
 
-        category = get_event_category(category_name)
+        with self._app.app_context():
+            category = get_event_category(category_name)
+
         return category.id
 
     def get_event_date_id(self, event_id):
         from project.models import Event
 
-        event = Event.query.get(event_id)
-        return event.dates[0].id
+        with self._app.app_context():
+            event = Event.query.get(event_id)
+            event_date_id = event.dates[0].id
+
+        return event_date_id
 
     def create_event(
         self,

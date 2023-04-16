@@ -25,8 +25,7 @@ def test_organization_invitation_not_authenticated(client, app, utils, seeder):
     seeder.create_user("invited@test.de")
     url = utils.get_url("user_organization_invitation", id=invitation_id)
     response = client.get(url)
-    assert response.status_code == 302
-    assert response.headers["Location"].startswith("http://localhost/login")
+    utils.assert_response_redirect(response, "security.login", next=url)
 
 
 @pytest.mark.parametrize("user_exists", [True, False])
@@ -40,9 +39,8 @@ def test_organization_invitation_currentUserDoesNotMatchInvitationEmail(
         seeder.create_user("invited@test.de")
 
     url = utils.get_url("user_organization_invitation", id=invitation_id)
-    environ, response = client.get(url, follow_redirects=True, as_tuple=True)
+    response = client.get(url, follow_redirects=True)
 
-    assert environ["REQUEST_URI"] == "/profile"
     utils.assert_response_ok(response)
     utils.assert_response_contains(
         response, "Die Einladung wurde für einen anderen Nutzer ausgestellt."

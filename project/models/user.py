@@ -1,7 +1,7 @@
 import datetime
 
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
-from flask_security import RoleMixin, UserMixin
+from flask_security import AsaList, RoleMixin, UserMixin
 from sqlalchemy import (
     Boolean,
     Column,
@@ -10,9 +10,9 @@ from sqlalchemy import (
     Integer,
     String,
     Unicode,
-    UnicodeText,
     UniqueConstraint,
 )
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import backref, deferred, relationship
 
 from project import db
@@ -31,7 +31,7 @@ class Role(db.Model, RoleMixin):
     name = Column(String(80), unique=True)
     title = Column(Unicode(255))
     description = Column(String(255))
-    permissions = Column(UnicodeText())
+    permissions = Column(MutableList.as_mutable(AsaList()), nullable=True)
 
 
 class User(db.Model, UserMixin):

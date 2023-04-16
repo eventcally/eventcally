@@ -3,7 +3,7 @@ from datetime import datetime
 from flask_babelex import gettext, to_user_timezone
 from markupsafe import Markup
 from wtforms import DateTimeField, SelectField, SelectMultipleField
-from wtforms.fields.core import StringField
+from wtforms.fields import StringField
 from wtforms.validators import Length, StopValidation
 from wtforms.widgets import CheckboxInput, ListWidget, html_params
 
@@ -164,14 +164,14 @@ class HTML5StringField(StringField):
         self,
         label=None,
         validators=None,
-        filters=tuple(),
+        filters=(),
         description="",
         id=None,
         default=None,
         widget=None,
         render_kw=None,
+        name=None,
         _form=None,
-        _name=None,
         _prefix="",
         _translations=None,
         _meta=None,
@@ -194,8 +194,8 @@ class HTML5StringField(StringField):
             default,
             widget,
             render_kw,
+            name,
             _form,
-            _name,
             _prefix,
             _translations,
             _meta,

@@ -4,6 +4,7 @@ import os.path
 from flask import render_template, request, send_from_directory, url_for
 from flask_babelex import gettext
 from markupsafe import Markup
+from sqlalchemy import text
 
 from project import (
     app,
@@ -40,7 +41,8 @@ def home():
 
 @app.route("/up")
 def up():
-    db.engine.execute("SELECT 1")
+    with db.engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
 
     if "REDIS_URL" in app.config and app.config["REDIS_URL"]:  # pragma: no cover
         celery.control.ping()

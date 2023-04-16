@@ -1,7 +1,7 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import SelectField, StringField, SubmitField
-from wtforms.fields.core import BooleanField
+from wtforms.fields import BooleanField
 from wtforms.validators import DataRequired, Optional
 
 from project.forms.common import event_rating_choices

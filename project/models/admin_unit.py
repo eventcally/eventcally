@@ -1,4 +1,4 @@
-from flask_security import RoleMixin
+from flask_security import AsaList, RoleMixin
 from sqlalchemy import (
     Boolean,
     Column,
@@ -14,6 +14,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import aliased, backref, deferred, relationship
 from sqlalchemy.orm.relationships import remote
 from sqlalchemy.schema import CheckConstraint
@@ -37,7 +38,7 @@ class AdminUnitMemberRole(db.Model, RoleMixin):
     name = Column(String(80), unique=True)
     title = Column(Unicode(255))
     description = Column(String(255))
-    permissions = Column(UnicodeText())
+    permissions = Column(MutableList.as_mutable(AsaList()), nullable=True)
 
 
 class AdminUnitMember(db.Model):
@@ -299,7 +300,7 @@ class AdminUnit(db.Model, TrackableMixin):
             AdminUnitRelation.source_admin_unit_id == SourceAdminUnit.id,
         )
         return (
-            select([func.count()])
+            select(func.count())
             .select_from(j)
             .where(
                 and_(
@@ -308,7 +309,7 @@ class AdminUnit(db.Model, TrackableMixin):
                     SourceAdminUnit.can_verify_other,
                 )
             )
-            .as_scalar()
+            .scalar_subquery()
             > 0
         )
 

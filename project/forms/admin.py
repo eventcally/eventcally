@@ -1,7 +1,7 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, RadioField, StringField, SubmitField, TextAreaField
-from wtforms.fields.html5 import EmailField
+from wtforms.fields import EmailField
 from wtforms.validators import DataRequired, Optional
 
 from project.forms.widgets import MultiCheckboxField

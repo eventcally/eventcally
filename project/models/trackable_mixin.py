@@ -1,8 +1,7 @@
 import datetime
 
 from sqlalchemy import Column, DateTime, ForeignKey
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import deferred, relationship
+from sqlalchemy.orm import declared_attr, deferred, relationship
 
 from project.models.functions import _current_user_id_or_none
 

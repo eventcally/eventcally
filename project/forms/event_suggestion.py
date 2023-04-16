@@ -7,7 +7,7 @@ from wtforms import (
     StringField,
     SubmitField,
 )
-from wtforms.fields.html5 import EmailField, TelField
+from wtforms.fields import EmailField, TelField
 from wtforms.validators import DataRequired, Optional
 
 from project.forms.common import get_accept_tos_markup
@@ -110,8 +110,8 @@ class CreateEventSuggestionForm(SharedEventForm, EventDateDefinitionFormMixin):
             else:
                 field.populate_obj(obj, name)
 
-    def validate(self):
-        result = super().validate()
+    def validate(self, extra_validators=None):
+        result = super().validate(extra_validators)
 
         if not self.validate_date_definition():
             result = False

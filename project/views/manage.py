@@ -176,6 +176,8 @@ def manage_admin_unit_events(id):
 
     if form.location.data:  # pragma: no cover
         form.location.choices = [(form.location.data, form.location_name.data)]
+    else:
+        form.location.choices = []
 
     if form.validate():
         form.populate_obj(params)
