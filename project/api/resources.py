@@ -22,12 +22,12 @@ def etag_cache(func):
     return wrapper
 
 
-def require_api_access(scope=None, operator="AND", optional=False):
+def require_api_access(scopes=None, optional=False):
     def inner_decorator(func):
         def wrapped(*args, **kwargs):  # see authlib ResourceProtector#__call__
             try:  # pragma: no cover
                 try:
-                    require_oauth.acquire_token(scope, operator)
+                    require_oauth.acquire_token(scopes)
                 except MissingAuthorizationError as error:
                     if optional:
                         return func(*args, **kwargs)

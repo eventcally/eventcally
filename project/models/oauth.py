@@ -41,6 +41,12 @@ class OAuth2Client(db.Model, OAuth2ClientMixin):
     def check_token_endpoint_auth_method(self, method):
         return method in self.token_endpoint_auth_method
 
+    def check_endpoint_auth_method(self, method, endpoint):
+        if endpoint == "token":
+            return self.check_token_endpoint_auth_method(method)
+
+        return True
+
 
 class OAuth2AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
     __tablename__ = "oauth2_code"
@@ -66,8 +72,15 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
             .first()
         )
 
+    @property
+    def expires_at(self):
+        return self.issued_at + self.expires_in
+
     def is_refresh_token_active(self):
-        if self.revoked:
+        if self.is_revoked():
             return False
-        expires_at = self.issued_at + self.expires_in * 2
-        return expires_at >= time.time()
+
+        return self.expires_at >= time.time()
+
+    def revoke_token(self):
+        self.access_token_revoked_at = int(time.time())

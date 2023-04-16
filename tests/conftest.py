@@ -1,4 +1,3 @@
-import logging
 import os
 import warnings
 
@@ -26,10 +25,6 @@ def pytest_generate_tests(metafunc):
     os.environ["GOOGLE_MAPS_API_KEY"] = "AIzaDummy"
     os.environ["TESTING"] = "1"
 
-    logging.getLogger().info("pytest_generate_tests")
-    logging.getLogger().info(os.environ["DATABASE_URL"])
-    logging.getLogger().info(os.environ["TEST_DATABASE_URL"])
-
 
 @pytest.fixture
 def app():
@@ -53,9 +48,6 @@ def db(app):
     with app.app_context():
         db.drop_all()
         db.create_all()
-        logging.getLogger().info("fixture-db")
-        logging.getLogger().info(os.environ["DATABASE_URL"])
-        logging.getLogger().info(os.environ["TEST_DATABASE_URL"])
         stamp()
         create_initial_data()
 

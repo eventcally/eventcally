@@ -23,7 +23,7 @@ def authorize():
         return authorization.create_authorization_response(grant_user=grant_user)
     else:
         try:
-            grant = authorization.validate_consent_request(end_user=user)
+            grant = authorization.get_consent_grant(end_user=user)
         except OAuth2Error as error:
             return error.description, error.status_code
 
