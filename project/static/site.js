@@ -156,7 +156,7 @@ function start_datepicker(input) {
     $(document).find(data_allday_attr).on('change', function() {
       $("#" + hidden_field_id + "-time").toggle(!this.checked);
       if (data_range_to_attr) {
-        $(data_range_to_attr + "-time").toggle(!this.checked);
+        $(document).find(data_range_to_attr + "-time").toggle(!this.checked);
       }
 
       onAlldayChecked(this, hidden_field_id)

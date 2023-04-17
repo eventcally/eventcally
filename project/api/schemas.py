@@ -11,11 +11,11 @@ class SQLAlchemyBaseSchema(marshmallow.SQLAlchemySchema):
     def make_post_schema(self):
         for name, field in self.fields.items():
             if not field.required:
-                if field.missing is missing:
+                if field.load_default is missing:
                     if isinstance(field, fields.List):
-                        field.missing = list()
+                        field.load_default = list()
                     else:
-                        field.missing = None
+                        field.load_default = None
                 field.allow_none = True
 
     def make_patch_schema(self):
