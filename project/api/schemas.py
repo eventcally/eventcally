@@ -25,7 +25,7 @@ class SQLAlchemyBaseSchema(marshmallow.SQLAlchemySchema):
 
 
 class IdSchemaMixin(object):
-    id = marshmallow.auto_field(dump_only=True, default=missing)
+    id = marshmallow.auto_field(dump_only=True, dump_default=missing)
 
 
 class WriteIdSchemaMixin(object):
@@ -60,13 +60,13 @@ class UnprocessableEntityResponseSchema(ErrorResponseSchema):
 class PaginationRequestSchema(marshmallow.Schema):
     page = fields.Integer(
         required=False,
-        default=1,
+        dump_default=1,
         validate=validate.Range(min=1),
         metadata={"description": "The page number (1 indexed)."},
     )
     per_page = fields.Integer(
         required=False,
-        default=20,
+        dump_default=20,
         validate=validate.Range(min=1, max=50),
         metadata={"description": "Items per page"},
     )

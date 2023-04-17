@@ -26,13 +26,14 @@ class CustomDateTimeWidget:
             time = date_value.strftime("%H:%M")
 
         kwargs_class = kwargs.pop("class", "")
+        required = True if field.flags.required else False
 
         date_class = kwargs_class + " datepicker"
         date_params = html_params(
             name=field.name,
             id=id,
             value=date,
-            required=field.flags.required,
+            required=required,
             class_=date_class,
             **kwargs
         )
@@ -42,7 +43,7 @@ class CustomDateTimeWidget:
             name=field.name,
             id=id + "-time",
             value=time,
-            required=field.flags.required,
+            required=required,
             class_=time_class,
             **kwargs
         )

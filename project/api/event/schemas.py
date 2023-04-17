@@ -88,11 +88,11 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
         }
     )
     kid_friendly = marshmallow.auto_field(
-        missing=False,
+        load_default=False,
         metadata={"description": "If the event is particularly suitable for children."},
     )
     accessible_for_free = marshmallow.auto_field(
-        missing=False,
+        load_default=False,
         metadata={"description": "If the event is accessible for free."},
     )
     age_from = marshmallow.auto_field(
@@ -103,19 +103,19 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
     )
     target_group_origin = EnumField(
         EventTargetGroupOrigin,
-        missing=EventTargetGroupOrigin.both,
+        load_default=EventTargetGroupOrigin.both,
         metadata={
             "description": "Whether the event is particularly suitable for tourists or residents."
         },
     )
     attendance_mode = EnumField(
         EventAttendanceMode,
-        missing=EventAttendanceMode.offline,
+        load_default=EventAttendanceMode.offline,
         metadata={"description": "Choose how people can attend the event."},
     )
     status = EnumField(
         EventStatus,
-        missing=EventStatus.scheduled,
+        load_default=EventStatus.scheduled,
         metadata={"description": "Select the status of the event."},
     )
     previous_start_date = CustomDateTimeField(
@@ -124,13 +124,13 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
         },
     )
     registration_required = marshmallow.auto_field(
-        missing=False,
+        load_default=False,
         metadata={
             "description": "If the participants needs to register for the event."
         },
     )
     booked_up = marshmallow.auto_field(
-        missing=False,
+        load_default=False,
         metadata={"description": "If the event is booked up or sold out."},
     )
     expected_participants = marshmallow.auto_field(
@@ -143,7 +143,7 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
     )
     public_status = EnumField(
         PublicStatus,
-        missing=PublicStatus.published,
+        load_default=PublicStatus.published,
         metadata={"description": "Public status of the event."},
     )
 
@@ -296,8 +296,8 @@ class EventWriteSchemaMixin(object):
         metadata={"description": "Categories that fit the event."},
     )
     rating = marshmallow.auto_field(
-        missing=50,
-        default=50,
+        load_default=50,
+        dump_default=50,
         validate=validate.OneOf([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]),
         metadata={
             "description": "How relevant the event is to your organization. 0 (Little relevant), 50 (Default), 100 (Highlight)."
@@ -322,7 +322,7 @@ class EventPostRequestSchema(
 
     date_definitions = fields.List(
         fields.Nested(EventDateDefinitionPostRequestSchema),
-        default=None,
+        dump_default=None,
         required=True,
         validate=[validate.Length(min=1)],
         metadata={"description": "At least one date definition."},
@@ -339,7 +339,7 @@ class EventPatchRequestSchema(
 
     date_definitions = fields.List(
         fields.Nested(EventDateDefinitionPatchRequestSchema),
-        default=None,
+        dump_default=None,
         required=True,
         validate=[validate.Length(min=1)],
         metadata={"description": "At least one date definition."},
@@ -370,6 +370,6 @@ class EventImportRequestSchema(marshmallow.Schema):
     )
     public_status = EnumField(
         PublicStatus,
-        missing=PublicStatus.published,
+        load_default=PublicStatus.published,
         metadata={"description": "Public status of the event."},
     )

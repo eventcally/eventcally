@@ -63,7 +63,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run tests
-        run: pytest --log-cli-level=DEBUG --cov=project --splits 4 --group ${{ matrix.group }}
+        run: pytest --cov=project --splits 4 --group ${{ matrix.group }}
         env:
           TEST_DATABASE_URL: postgresql://postgres:postgres@localhost/eventcally_tests
           TEST_REDIS_URL: redis://localhost:6379

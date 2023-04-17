@@ -4,7 +4,7 @@ import click
 from flask.cli import AppGroup
 from flask_migrate import stamp
 from flask_security.confirmable import confirm_user
-from sqlalchemy import MetaData
+from sqlalchemy import MetaData, text
 
 from project import app, db
 from project.api import scope_list
@@ -75,14 +75,15 @@ def _create_user(
 @test_cli.command("reset")
 @click.option("--seed/--no-seed", default=False)
 def reset(seed):
-    meta = MetaData(bind=db.engine, reflect=True)
+    meta = MetaData()
+    meta.reflect(db.engine)
     con = db.engine.connect()
     trans = con.begin()
 
     for table in meta.sorted_tables:
-        con.execute(f'ALTER TABLE "{table.name}" DISABLE TRIGGER ALL;')
+        con.execute(text(f'ALTER TABLE "{table.name}" DISABLE TRIGGER ALL;'))
         con.execute(table.delete())
-        con.execute(f'ALTER TABLE "{table.name}" ENABLE TRIGGER ALL;')
+        con.execute(text(f'ALTER TABLE "{table.name}" ENABLE TRIGGER ALL;'))
 
     trans.commit()
 
