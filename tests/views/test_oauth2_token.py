@@ -42,7 +42,7 @@ def test_revoke(client, seeder, utils, app, mocker, db_error):
         from project.models import OAuth2Token
 
         oauth2_token = OAuth2Token.query.get(oauth2_token_id)
-        assert oauth2_token.revoked
+        assert oauth2_token.is_revoked() > 0
 
     # Kann nicht zweimal revoked werden
     response = utils.get(url)

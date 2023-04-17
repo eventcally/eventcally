@@ -3,7 +3,7 @@ from datetime import datetime
 from flask_babelex import gettext, to_user_timezone
 from markupsafe import Markup
 from wtforms import DateTimeField, SelectField, SelectMultipleField
-from wtforms.fields.core import StringField
+from wtforms.fields import StringField
 from wtforms.validators import Length, StopValidation
 from wtforms.widgets import CheckboxInput, ListWidget, html_params
 
@@ -26,13 +26,14 @@ class CustomDateTimeWidget:
             time = date_value.strftime("%H:%M")
 
         kwargs_class = kwargs.pop("class", "")
+        required = True if field.flags.required else False
 
         date_class = kwargs_class + " datepicker"
         date_params = html_params(
             name=field.name,
             id=id,
             value=date,
-            required=field.flags.required,
+            required=required,
             class_=date_class,
             **kwargs
         )
@@ -42,7 +43,7 @@ class CustomDateTimeWidget:
             name=field.name,
             id=id + "-time",
             value=time,
-            required=field.flags.required,
+            required=required,
             class_=time_class,
             **kwargs
         )
@@ -164,14 +165,14 @@ class HTML5StringField(StringField):
         self,
         label=None,
         validators=None,
-        filters=tuple(),
+        filters=(),
         description="",
         id=None,
         default=None,
         widget=None,
         render_kw=None,
+        name=None,
         _form=None,
-        _name=None,
         _prefix="",
         _translations=None,
         _meta=None,
@@ -194,8 +195,8 @@ class HTML5StringField(StringField):
             default,
             widget,
             render_kw,
+            name,
             _form,
-            _name,
             _prefix,
             _translations,
             _meta,

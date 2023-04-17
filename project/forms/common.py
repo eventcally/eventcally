@@ -32,8 +32,8 @@ class Base64ImageForm(BaseImageForm):
                 obj.data, obj.encoding_format
             )
 
-    def validate(self):
-        result = super().validate()
+    def validate(self, extra_validators=None):
+        result = super().validate(extra_validators)
 
         if self.image_base64.data:
             image = get_image_from_base64_str(self.image_base64.data)

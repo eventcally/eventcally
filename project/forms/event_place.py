@@ -1,7 +1,7 @@
 from flask_babelex import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaField
-from wtforms.fields.html5 import URLField
+from wtforms.fields import URLField
 from wtforms.validators import DataRequired, Optional
 
 from project.forms.common import Base64ImageForm

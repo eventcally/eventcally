@@ -36,7 +36,7 @@ class EventDateDefinitionBaseSchemaMixin(object):
         },
     )
     allday = fields.Bool(
-        missing=False,
+        load_default=False,
         metadata={"description": "If the event is an all-day event."},
     )
     recurrence_rule = fields.Str(

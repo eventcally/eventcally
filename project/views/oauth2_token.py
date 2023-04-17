@@ -16,14 +16,14 @@ def oauth2_token_revoke(id):
     oauth2_token = OAuth2Token.query.get_or_404(id)
     owner_access_or_401(oauth2_token.user_id)
 
-    if oauth2_token.revoked:
+    if oauth2_token.is_revoked() > 0:
         return redirect(url_for("oauth2_tokens"))
 
     form = RevokeOAuth2TokenForm()
 
     if form.validate_on_submit():
         try:
-            oauth2_token.revoked = True
+            oauth2_token.revoke_token()
             db.session.commit()
             flash(gettext("OAuth2 token successfully revoked"), "success")
             return redirect(url_for("oauth2_tokens"))

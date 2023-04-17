@@ -299,6 +299,9 @@ def prepare_event_place(form):
         if place:
             form.event_place_id.choices = [(place.id, get_place_str(place))]
 
+    if not form.event_place_id.choices:
+        form.event_place_id.choices = []
+
 
 def prepare_organizer(form):
     if form.organizer_id.data and form.organizer_id.data > 0:
@@ -312,6 +315,12 @@ def prepare_organizer(form):
             EventOrganizer.id.in_(form.co_organizer_ids.data)
         ).all()
         form.co_organizer_ids.choices = [(o.id, o.name) for o in co_organizers]
+
+    if not form.organizer_id.choices:
+        form.organizer_id.choices = []
+
+    if not form.co_organizer_ids.choices:
+        form.co_organizer_ids.choices = []
 
 
 def prepare_event_form(form):

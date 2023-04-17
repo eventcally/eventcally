@@ -110,14 +110,15 @@ def test_event_has_multiple_dates(client, app, db, seeder):
         assert event_without_recc.has_multiple_dates() is False
 
 
-def test_oauth2_token(client, app):
+def test_oauth2_token(client, app, seeder):
+    import time
+
     from project.models import OAuth2Token
 
     token = OAuth2Token()
-    token.revoked = True
+    token.access_token_revoked_at = int(time.time())
     assert not token.is_refresh_token_active()
 
-    token.revoked = False
     token.issued_at = 0
     token.expires_in = 0
     assert not token.is_refresh_token_active()

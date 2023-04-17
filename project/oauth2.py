@@ -108,19 +108,21 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
 class MyIntrospectionEndpoint(IntrospectionEndpoint):
     CLIENT_AUTH_METHODS = ["client_secret_basic", "client_secret_post"]
 
-    def query_token(self, token, token_type_hint, client):
+    def query_token(self, token_string, token_type_hint):
         if token_type_hint == "access_token":
-            tok = OAuth2Token.query.filter_by(access_token=token).first()
+            tok = OAuth2Token.query.filter_by(access_token=token_string).first()
         elif token_type_hint == "refresh_token":
-            tok = OAuth2Token.query.filter_by(refresh_token=token).first()
+            tok = OAuth2Token.query.filter_by(refresh_token=token_string).first()
         else:
             # without token_type_hint
-            tok = OAuth2Token.query.filter_by(access_token=token).first()
+            tok = OAuth2Token.query.filter_by(access_token=token_string).first()
             if not tok:
-                tok = OAuth2Token.query.filter_by(refresh_token=token).first()
-        if tok:
-            if tok.client_id == client.client_id:
-                return tok
+                tok = OAuth2Token.query.filter_by(refresh_token=token_string).first()
+
+        return tok
+
+    def check_permission(self, token, client, request):
+        return token.client_id == client.client_id
 
     def introspect_token(self, token):
         return {
@@ -132,7 +134,7 @@ class MyIntrospectionEndpoint(IntrospectionEndpoint):
             "sub": str(token.user.id),
             "aud": token.client_id,
             "iss": get_issuer(),
-            "exp": token.get_expires_at(),
+            "exp": token.expires_at,
             "iat": token.issued_at,
         }
 
@@ -154,11 +156,11 @@ def create_revocation_endpoint(session, token_model):
     class _RevocationEndpoint(RevocationEndpoint):
         CLIENT_AUTH_METHODS = ["client_secret_basic", "client_secret_post"]
 
-        def query_token(self, token, token_type_hint, client):
-            return query_token(token, token_type_hint, client)
+        def query_token(self, token_string, token_type_hint):
+            return query_token(token_string, token_type_hint)
 
-        def revoke_token(self, token):
-            token.revoked = True
+        def revoke_token(self, token, request):
+            token.revoke_token()
             session.add(token)
             session.commit()
 

@@ -26,6 +26,7 @@ from project.views.utils import (
 def prepare_event_date_form(form):
     form.category_id.choices = get_event_category_choices()
     form.category_id.choices.insert(0, (0, ""))
+    form.location.choices = []
 
 
 @app.route("/eventdates")

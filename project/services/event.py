@@ -7,7 +7,14 @@ from flask import url_for
 from flask_babelex import format_date, format_time, gettext
 from icalendar.prop import vDDDLists
 from sqlalchemy import and_, case, func, or_
-from sqlalchemy.orm import aliased, contains_eager, defaultload, joinedload, lazyload
+from sqlalchemy.orm import (
+    aliased,
+    contains_eager,
+    defaultload,
+    joinedload,
+    lazyload,
+    undefer_group,
+)
 from sqlalchemy.sql import extract
 
 from project import app, db
@@ -194,7 +201,7 @@ def get_event_dates_query(params):
 
     result = (
         result.options(
-            contains_eager(EventDate.event)
+            joinedload(EventDate.event)
             .contains_eager(Event.event_place)
             .contains_eager(EventPlace.location),
             joinedload(EventDate.event)
@@ -216,12 +223,10 @@ def get_event_dates_query(params):
         if admin_unit_reference:
             result = result.order_by(
                 case(
-                    [
-                        (
-                            admin_unit_reference.rating.isnot(None),
-                            admin_unit_reference.rating,
-                        ),
-                    ],
+                    (
+                        admin_unit_reference.rating.isnot(None),
+                        admin_unit_reference.rating,
+                    ),
                     else_=Event.rating,
                 ).desc()
             )
@@ -238,12 +243,12 @@ def get_event_date_with_details_or_404(event_id):
         .join(Event.event_place, isouter=True)
         .join(EventPlace.location, isouter=True)
         .options(
-            contains_eager(EventDate.event)
+            joinedload(EventDate.event)
             .contains_eager(Event.event_place)
             .contains_eager(EventPlace.location),
             joinedload(EventDate.event).undefer_group("trackable"),
             # Place
-            defaultload(EventDate.event)
+            joinedload(EventDate.event)
             .defaultload(Event.event_place)
             .joinedload(EventPlace.photo),
             # Category
@@ -254,19 +259,19 @@ def get_event_date_with_details_or_404(event_id):
             joinedload(EventDate.event)
             .joinedload(Event.organizer)
             .undefer_group("detail")
-            .undefer("logo_id")
+            .undefer(EventOrganizer.logo_id)
             .joinedload(EventOrganizer.logo),
             # Photo
             joinedload(EventDate.event).joinedload(Event.photo),
             # Admin unit
             joinedload(EventDate.event)
             .joinedload(Event.admin_unit)
-            .undefer("logo_id")
+            .undefer(AdminUnit.logo_id)
             .undefer_group("detail")
             .undefer_group("widget")
             .joinedload(AdminUnit.location),
             # Admin unit logo
-            defaultload(EventDate.event)
+            joinedload(EventDate.event)
             .defaultload(Event.admin_unit)
             .joinedload(AdminUnit.logo),
         )
@@ -277,12 +282,12 @@ def get_event_date_with_details_or_404(event_id):
 
 def get_event_with_details_or_404(event_id):
     return (
-        Event.query.join(EventPlace, isouter=True)
+        Event.query.join(Event.event_place, isouter=True)
         .join(Location, isouter=True)
         .options(
-            contains_eager(Event.event_place).contains_eager(EventPlace.location),
-            defaultload(Event).undefer_group("trackable"),
+            undefer_group("trackable"),
             # Place
+            joinedload(Event.event_place).contains_eager(EventPlace.location),
             joinedload(Event.event_place).joinedload(EventPlace.photo),
             # Category
             joinedload(Event.categories).load_only(
@@ -291,13 +296,13 @@ def get_event_with_details_or_404(event_id):
             # Organizer
             joinedload(Event.organizer)
             .undefer_group("detail")
-            .undefer("logo_id")
+            .undefer(EventOrganizer.logo_id)
             .joinedload(EventOrganizer.logo),
             # Photo
             joinedload(Event.photo),
             # Admin unit with location
             joinedload(Event.admin_unit)
-            .undefer("logo_id")
+            .undefer(AdminUnit.logo_id)
             .undefer_group("detail")
             .undefer_group("widget")
             .joinedload(AdminUnit.location),
@@ -635,8 +640,10 @@ def create_ical_events_for_search(
 
 
 def update_recurring_dates():
+    from sqlalchemy import text
+
     # Setting the timezone is neccessary for cli command
-    db.session.execute("SET timezone TO :val;", {"val": berlin_tz.zone})
+    db.session.execute(text("SET timezone TO :val;"), {"val": berlin_tz.zone})
 
     events = get_recurring_events()
 

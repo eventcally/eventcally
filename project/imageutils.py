@@ -54,14 +54,14 @@ def resize_image_to_min(image: PIL.Image) -> PIL.Image:
     width = int(math.ceil(image.width * ratio))
     height = int(math.ceil(image.height * ratio))
     format = image.format
-    result = image.resize((width, height), PIL.Image.LANCZOS)
+    result = image.resize((width, height), PIL.Image.Resampling.LANCZOS)
     result.format = format
     return result
 
 
 def resize_image_to_max(image: PIL.Image):
     if image.width > max_image_size or image.height > max_image_size:
-        image.thumbnail((max_image_size, max_image_size), PIL.Image.ANTIALIAS)
+        image.thumbnail((max_image_size, max_image_size), PIL.Image.Resampling.LANCZOS)
 
 
 def validate_image(image: PIL.Image):

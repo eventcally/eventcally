@@ -64,28 +64,28 @@ class UtilActions(object):
         response = self._client.get("/login")
         assert response.status_code == 200
 
-        with self._client:
-            response = self._client.post(
-                "/login",
-                data={
-                    "email": email,
-                    "password": password,
-                    "csrf_token": self.get_csrf(response),
-                    "submit": "Anmelden",
-                },
-                follow_redirects=follow_redirects,
-            )
-
-            if follow_redirects:
-                assert response.status_code == 200
-            else:
-                assert response.status_code == 302
-
-            assert g.identity.user.email == email
-
         with self._app.app_context():
-            user = find_user_by_email(email)
-            user_id = user.id
+            with self._client:
+                response = self._client.post(
+                    "/login",
+                    data={
+                        "email": email,
+                        "password": password,
+                        "csrf_token": self.get_csrf(response),
+                        "submit": "Anmelden",
+                    },
+                    follow_redirects=follow_redirects,
+                )
+
+                if follow_redirects:
+                    assert response.status_code == 200
+                else:
+                    assert response.status_code == 302
+
+                assert g.identity.user.email == email
+
+                user = find_user_by_email(email)
+                user_id = user.id
 
         return user_id
 
@@ -300,8 +300,10 @@ class UtilActions(object):
     def assert_response_redirect(self, response, endpoint, **values):
         assert response.status_code == 302
 
-        redirect_url = "http://localhost" + self.get_url(endpoint, **values)
-        assert response.headers["Location"] == redirect_url
+        response_location = response.headers["Location"]
+        redirect_url = self.get_url(endpoint, **values)
+        absolute_url = "http://localhost" + redirect_url
+        assert response_location == redirect_url or response_location == absolute_url
 
     def assert_response_contains_alert(self, response, category, message=None):
         assert response.status_code == 200

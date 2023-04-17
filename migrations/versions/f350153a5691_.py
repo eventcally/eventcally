@@ -10,7 +10,7 @@ import sqlalchemy_utils
 from alembic import op
 from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 from project import dbtypes
 
