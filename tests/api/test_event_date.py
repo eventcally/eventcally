@@ -102,7 +102,7 @@ def test_search(client, seeder, utils, app, db):
     with app.app_context():
         from project.models import Event, EventStatus
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         event.status = EventStatus.cancelled
         db.session.commit()
 

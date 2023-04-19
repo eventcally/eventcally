@@ -21,7 +21,7 @@ def test_event_category(client, app, db, seeder):
     with app.app_context():
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         event.categories = []
         db.session.commit()
 
@@ -69,7 +69,7 @@ def test_event_allday(client, app, db, seeder):
         from project.models import Event
 
         # With Start
-        event = Event.query.get(event_with_start_id)
+        event = db.session.get(Event, event_with_start_id)
         date_definition = event.date_definitions[0]
         assert date_definition.allday
         assert date_definition.start == create_berlin_date(2030, 12, 31, 0, 0)
@@ -81,7 +81,7 @@ def test_event_allday(client, app, db, seeder):
         assert event_date.end == create_berlin_date(2030, 12, 31, 23, 59, 59)
 
         # With Start and End
-        event = Event.query.get(event_with_start_and_end_id)
+        event = db.session.get(Event, event_with_start_and_end_id)
         date_definition = event.date_definitions[0]
         assert date_definition.allday
         assert date_definition.start == create_berlin_date(2030, 12, 31, 0, 0)
@@ -103,10 +103,10 @@ def test_event_has_multiple_dates(client, app, db, seeder):
     with app.app_context():
         from project.models import Event
 
-        event_with_recc = Event.query.get(event_with_recc_id)
+        event_with_recc = db.session.get(Event, event_with_recc_id)
         assert event_with_recc.has_multiple_dates() is True
 
-        event_without_recc = Event.query.get(event_without_recc_id)
+        event_without_recc = db.session.get(Event, event_without_recc_id)
         assert event_without_recc.has_multiple_dates() is False
 
 
@@ -153,7 +153,7 @@ def test_event_date_defintion_deletion(client, app, db, seeder):
         from project.models import Event
 
         # Initial eine Definition
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert len(event.date_definitions) == 1
         date_definition1 = event.date_definitions[0]
 
@@ -163,7 +163,7 @@ def test_event_date_defintion_deletion(client, app, db, seeder):
         event.date_definitions = [date_definition1, date_definition2]
         db.session.commit()
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert len(event.date_definitions) == 2
         assert len(EventDateDefinition.query.all()) == 2
 
@@ -174,7 +174,7 @@ def test_event_date_defintion_deletion(client, app, db, seeder):
         db.session.delete(date_definition1)
         db.session.commit()
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert len(event.date_definitions) == 1
         assert len(EventDateDefinition.query.all()) == 1
         assert event.date_definitions[0].id == date_definition2_id
@@ -226,7 +226,7 @@ def test_admin_unit_deletion(client, app, db, seeder):
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         other_admin_unit = get_admin_unit_by_id(other_admin_unit_id)
-        my_event = Event.query.get(my_event_id)
+        my_event = db.session.get(Event, my_event_id)
         date_id = my_event.dates[0].id
         date_definition_id = my_event.date_definitions[0].id
 
@@ -234,23 +234,27 @@ def test_admin_unit_deletion(client, app, db, seeder):
         db.session.commit()
         assert len(other_admin_unit.outgoing_relations) == 0
 
-        assert Event.query.get(my_event_id) is None
-        assert EventDate.query.get(date_id) is None
-        assert EventDateDefinition.query.get(date_definition_id) is None
-        assert AdminUnitRelation.query.get(incoming_relation_id) is None
-        assert AdminUnitRelation.query.get(outgoing_relation_id) is None
-        assert EventReference.query.get(incoming_reference_id) is None
-        assert EventReference.query.get(outgoing_reference_id) is None
-        assert EventReferenceRequest.query.get(incoming_reference_request_id) is None
-        assert EventReferenceRequest.query.get(outgoing_reference_request_id) is None
-        assert EventSuggestion.query.get(suggestion_id) is None
-        assert EventPlace.query.get(event_place_id) is None
-        assert EventOrganizer.query.get(organizer_id) is None
-        assert AdminUnitMemberInvitation.query.get(invitation_id) is None
-        assert EventList.query.get(event_list_id) is None
+        assert db.session.get(Event, my_event_id) is None
+        assert db.session.get(EventDate, date_id) is None
+        assert db.session.get(EventDateDefinition, date_definition_id) is None
+        assert db.session.get(AdminUnitRelation, incoming_relation_id) is None
+        assert db.session.get(AdminUnitRelation, outgoing_relation_id) is None
+        assert db.session.get(EventReference, incoming_reference_id) is None
+        assert db.session.get(EventReference, outgoing_reference_id) is None
+        assert (
+            db.session.get(EventReferenceRequest, incoming_reference_request_id) is None
+        )
+        assert (
+            db.session.get(EventReferenceRequest, outgoing_reference_request_id) is None
+        )
+        assert db.session.get(EventSuggestion, suggestion_id) is None
+        assert db.session.get(EventPlace, event_place_id) is None
+        assert db.session.get(EventOrganizer, organizer_id) is None
+        assert db.session.get(AdminUnitMemberInvitation, invitation_id) is None
+        assert db.session.get(EventList, event_list_id) is None
 
-        assert AdminUnit.query.get(other_admin_unit_id) is not None
-        assert Event.query.get(other_event_id) is not None
+        assert db.session.get(AdminUnit, other_admin_unit_id) is not None
+        assert db.session.get(Event, other_event_id) is not None
 
 
 def test_event_co_organizers_deletion(client, app, db, seeder):
@@ -262,12 +266,12 @@ def test_event_co_organizers_deletion(client, app, db, seeder):
     with app.app_context():
         from project.models import Event, EventOrganizer
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert len(event.co_organizers) == 2
         assert event.co_organizers[0].id == organizer_a_id
         assert event.co_organizers[1].id == organizer_b_id
 
-        organizer_a = EventOrganizer.query.get(organizer_a_id)
+        organizer_a = db.session.get(EventOrganizer, organizer_a_id)
         db.session.delete(organizer_a)
         db.session.commit()
         assert len(event.co_organizers) == 1
@@ -275,7 +279,7 @@ def test_event_co_organizers_deletion(client, app, db, seeder):
 
         db.session.delete(event)
         db.session.commit()
-        assert EventOrganizer.query.get(organizer_b_id).id is not None
+        assert db.session.get(EventOrganizer, organizer_b_id).id is not None
 
 
 def test_admin_unit_verification(client, app, db, seeder):
@@ -289,7 +293,7 @@ def test_admin_unit_verification(client, app, db, seeder):
         new_admin_unit = AdminUnit()
         assert not new_admin_unit.is_verified
 
-        admin_unit = AdminUnit.query.get(admin_unit_id)
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.can_verify_other = True
         db.session.commit()
 
@@ -300,18 +304,18 @@ def test_admin_unit_verification(client, app, db, seeder):
         all_verified = AdminUnit.query.filter(AdminUnit.is_verified).all()
         assert len(all_verified) == 0
 
-        relation = AdminUnitRelation.query.get(relation_id)
+        relation = db.session.get(AdminUnitRelation, relation_id)
         relation.verify = True
         db.session.commit()
 
-        other_admin_unit = AdminUnit.query.get(other_admin_unit_id)
+        other_admin_unit = db.session.get(AdminUnit, other_admin_unit_id)
         assert other_admin_unit.is_verified
 
         all_verified = AdminUnit.query.filter(AdminUnit.is_verified).all()
         assert len(all_verified) == 1
         assert all_verified[0].id == other_admin_unit_id
 
-        admin_unit = AdminUnit.query.get(admin_unit_id)
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.can_verify_other = False
         db.session.commit()
 
@@ -334,7 +338,7 @@ def test_admin_unit_invitations(client, app, db, seeder):
         db.session.commit()
 
         assert len(admin_unit.admin_unit_invitations) == 0
-        invitation = AdminUnitInvitation.query.get(invitation_id)
+        invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is None
 
 
@@ -347,33 +351,33 @@ def test_event_list_deletion(client, app, db, seeder):
     with app.app_context():
         from project.models import Event, EventList
 
-        event_list_a = EventList.query.get(event_list_a_id)
+        event_list_a = db.session.get(EventList, event_list_a_id)
         assert len(event_list_a.events) == 1
         assert event_list_a.events[0].id == event_id
 
-        event_list_b = EventList.query.get(event_list_b_id)
+        event_list_b = db.session.get(EventList, event_list_b_id)
         assert len(event_list_b.events) == 1
         assert event_list_b.events[0].id == event_id
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert len(event.event_lists) == 2
         assert event.event_lists[0].id == event_list_a_id
         assert event.event_lists[1].id == event_list_b_id
 
-        event_list_a = EventList.query.get(event_list_a_id)
+        event_list_a = db.session.get(EventList, event_list_a_id)
         db.session.delete(event_list_a)
         db.session.commit()
         assert len(event.event_lists) == 1
         assert event.event_lists[0].id == event_list_b_id
 
-        event_list_b = EventList.query.get(event_list_b_id)
+        event_list_b = db.session.get(EventList, event_list_b_id)
         assert len(event_list_b.events) == 1
         assert event_list_b.events[0].id == event_id
 
         db.session.delete(event)
         db.session.commit()
 
-        event_list_b = EventList.query.get(event_list_b_id)
+        event_list_b = db.session.get(EventList, event_list_b_id)
         assert len(event_list_b.events) == 0
 
 
@@ -384,5 +388,5 @@ def test_event_is_favored_by_current_user(client, app, db, seeder):
     with app.app_context():
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert event.is_favored_by_current_user() is False

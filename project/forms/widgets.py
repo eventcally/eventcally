@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask_babelex import gettext, to_user_timezone
+from flask_babel import gettext, to_user_timezone
 from markupsafe import Markup
 from wtforms import DateTimeField, SelectField, SelectMultipleField
 from wtforms.fields import StringField

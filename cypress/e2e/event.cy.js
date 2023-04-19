@@ -1,6 +1,6 @@
 describe("Event", () => {
   [{ recurrence: false }, { recurrence: true }].forEach(function (test) {
-    it.only("creates event with recurrence=" + test.recurrence, () => {
+    it("creates event with recurrence=" + test.recurrence, () => {
       cy.login();
       cy.createAdminUnit().then(function (adminUnitId) {
         cy.visit("/admin_unit/" + adminUnitId + "/events/create");
@@ -48,7 +48,7 @@ describe("Event", () => {
     });
   });
 
-  it.only("saves draft", () => {
+  it("saves draft", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.visit("/admin_unit/" + adminUnitId + "/events/create");

@@ -16,7 +16,7 @@ def test_read(client, seeder, utils):
     assert response.json["relation_verify"] is False
 
 
-def test_put(client, app, seeder, utils):
+def test_put(client, app, seeder, utils, db):
     _, admin_unit_id = seeder.setup_api_access()
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
@@ -36,7 +36,7 @@ def test_put(client, app, seeder, utils):
     with app.app_context():
         from project.models import AdminUnitInvitation
 
-        invitation = AdminUnitInvitation.query.get(invitation_id)
+        invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is not None
         assert invitation.admin_unit_id == admin_unit_id
         assert invitation.email == "invited@test.de"
@@ -45,7 +45,7 @@ def test_put(client, app, seeder, utils):
         assert invitation.relation_verify
 
 
-def test_patch(client, app, seeder, utils):
+def test_patch(client, app, seeder, utils, db):
     _, admin_unit_id = seeder.setup_api_access()
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
@@ -63,13 +63,13 @@ def test_patch(client, app, seeder, utils):
     with app.app_context():
         from project.models import AdminUnitInvitation
 
-        invitation = AdminUnitInvitation.query.get(invitation_id)
+        invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is not None
         assert invitation.admin_unit_id == admin_unit_id
         assert invitation.relation_auto_verify_event_reference_requests
 
 
-def test_delete(client, app, seeder, utils):
+def test_delete(client, app, seeder, utils, db):
     _, admin_unit_id = seeder.setup_api_access()
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
@@ -83,5 +83,5 @@ def test_delete(client, app, seeder, utils):
     with app.app_context():
         from project.models import AdminUnitInvitation
 
-        invitation = AdminUnitInvitation.query.get(invitation_id)
+        invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is None

@@ -1035,7 +1035,7 @@
                     for (d = 0; d < conf.weekdays.length; d++) {
                         day = conf.weekdays[d];
                         input = field.find('input[name=riweeklyweekdays' + day + ']');
-                        input.attr('checked', $.inArray(day, byday) !== -1);
+                        input.prop('checked', $.inArray(day, byday) !== -1);
                     }
                     break;
 
@@ -1077,7 +1077,7 @@
                     selectors = field.find('input[name=rimonthlytype]');
                     for (index = 0; index < selectors.length; index++) {
                         radiobutton = selectors[index];
-                        $(radiobutton).attr('checked', radiobutton.value === monthlyType);
+                        $(radiobutton).prop('checked', radiobutton.value === monthlyType);
                     }
                     break;
 
@@ -1120,7 +1120,7 @@
                     selectors = field.find('input[name=riyearlyType]');
                     for (index = 0; index < selectors.length; index++) {
                         radiobutton = selectors[index];
-                        $(radiobutton).attr('checked', radiobutton.value === yearlyType);
+                        $(radiobutton).prop('checked', radiobutton.value === yearlyType);
                     }
                     break;
 
@@ -1145,7 +1145,7 @@
                     selectors = field.find('input[name=rirangetype]');
                     for (index = 0; index <  selectors.length; index++) {
                         radiobutton = selectors[index];
-                        $(radiobutton).attr('checked', radiobutton.value === rangeType);
+                        $(radiobutton).prop('checked', radiobutton.value === rangeType);
                     }
                     break;
                 }

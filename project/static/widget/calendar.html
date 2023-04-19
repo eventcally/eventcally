@@ -3,8 +3,8 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   <link rel="stylesheet" type="text/css" href="/static/widget/calendar.css">
-  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.6.2/dist/vuetify.min.css" rel="stylesheet">
+  <link href="/static/ext/materialdesignicons.6.5.95.min.css" rel="stylesheet">
+  <link href="/static/ext/vuetify.2.6.2.min.css" rel="stylesheet">
   <style>
     [v-cloak] {
        display: none;
@@ -90,10 +90,10 @@
     </template>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.6.2/dist/vuetify.js"></script>
-  <script src="https://unpkg.com/axios@0.21.1/dist/axios.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js" integrity="sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo=" crossorigin="anonymous"></script>
+  <script src="/static/ext/vue.2.6.14.js"></script>
+  <script src="/static/ext/vuetify.2.6.2.js"></script>
+  <script src="/static/ext/axios.0.21.1.min.js"></script>
+  <script src="/static/ext/moment.2.24.0.with-locales.min.js"></script>
   <script>
       axios.defaults.baseURL = window.location.origin;
       moment.locale("de");
@@ -268,6 +268,6 @@ Vue.component('event-warning-pills', {
         }
     }
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.contentWindow.min.js" integrity="sha512-14SY6teTzhrLWeL55Q4uCyxr6GQOxF3pEoMxo2mBxXwPRikdMtzKMYWy2B5Lqjr6PHHoGOxZgPaxUYKQrSmu0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/static/ext/iframeResizer.4.3.2.contentWindow.min.js"></script>
 </body>
 </html>

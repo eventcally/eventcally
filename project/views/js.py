@@ -1,6 +1,6 @@
 from flask import request
 from flask.json import jsonify
-from flask_babelex import gettext
+from flask_babel import gettext
 from flask_security import url_for_security
 from flask_security.utils import localize_callback
 

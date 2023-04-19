@@ -84,7 +84,7 @@ def test_create_401(client, app, utils, seeder, mocker):
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_update(client, seeder, utils, app, mocker, db_error):
+def test_update(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     (
         other_user_id,
@@ -118,12 +118,12 @@ def test_update(client, seeder, utils, app, mocker, db_error):
     with app.app_context():
         from project.models import EventReference
 
-        reference = EventReference.query.get(reference_id)
+        reference = db.session.get(EventReference, reference_id)
         assert reference.rating == 70
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_delete(client, seeder, utils, app, mocker, db_error):
+def test_delete(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     (
         other_user_id,
@@ -155,7 +155,7 @@ def test_delete(client, seeder, utils, app, mocker, db_error):
     with app.app_context():
         from project.models import EventReference
 
-        reference = EventReference.query.get(reference_id)
+        reference = db.session.get(EventReference, reference_id)
         assert reference is None
 
 

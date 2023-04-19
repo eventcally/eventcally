@@ -35,7 +35,7 @@ def test_reject(client, app, utils, seeder, mocker, db, db_error, is_verified):
         with app.app_context():
             from project.models import EventReviewStatus, EventSuggestion
 
-            suggestion = EventSuggestion.query.get(event_suggestion_id)
+            suggestion = db.session.get(EventSuggestion, event_suggestion_id)
             suggestion.review_status = EventReviewStatus.verified
             db.session.commit()
 
@@ -71,6 +71,6 @@ def test_reject(client, app, utils, seeder, mocker, db, db_error, is_verified):
     with app.app_context():
         from project.models import EventReviewStatus, EventSuggestion
 
-        suggestion = EventSuggestion.query.get(event_suggestion_id)
+        suggestion = db.session.get(EventSuggestion, event_suggestion_id)
         assert suggestion.review_status == EventReviewStatus.rejected
         assert suggestion.rejection_resaon is None

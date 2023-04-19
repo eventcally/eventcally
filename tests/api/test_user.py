@@ -44,7 +44,7 @@ def test_organization_invitation_read_wrongEmail(client, seeder, utils):
     utils.assert_response_unauthorized(response)
 
 
-def test_organization_invitation_delete(client, app, seeder, utils):
+def test_organization_invitation_delete(client, app, seeder, utils, db):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
@@ -61,7 +61,7 @@ def test_organization_invitation_delete(client, app, seeder, utils):
     with app.app_context():
         from project.models import AdminUnitInvitation
 
-        invitation = AdminUnitInvitation.query.get(invitation_id)
+        invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is None
 
 

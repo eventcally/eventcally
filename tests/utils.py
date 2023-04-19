@@ -238,10 +238,11 @@ class UtilActions(object):
         return url
 
     def get_image_url_for_id(self, image_id, **values):
+        from project import db
         from project.models import Image
 
         with self._app.app_context():
-            image = Image.query.get(image_id)
+            image = db.session.get(Image, image_id)
             url = self.get_image_url(image, **values)
         return url
 

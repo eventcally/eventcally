@@ -1,4 +1,4 @@
-from flask_babelex import gettext, lazy_gettext
+from flask_babel import gettext, lazy_gettext
 from flask_security import url_for_security
 from flask_security.forms import (
     ConfirmRegisterForm,

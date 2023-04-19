@@ -3,7 +3,7 @@ import os
 from datetime import timedelta
 
 from flask import Flask
-from flask_babelex import Babel
+from flask_babel import Babel
 from flask_cors import CORS
 from flask_gzip import Gzip
 from flask_mail import Mail, email_dispatched
@@ -36,7 +36,6 @@ app.config["REDIS_URL"] = os.getenv("REDIS_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECURITY_CONFIRMABLE"] = True
 app.config["SECURITY_POST_LOGIN_VIEW"] = "manage_after_login"
-app.config["SECURITY_TRACKABLE"] = True
 app.config["SECURITY_REGISTERABLE"] = True
 app.config["SECURITY_SEND_REGISTER_EMAIL"] = True
 app.config["SECURITY_RECOVERABLE"] = True
@@ -61,6 +60,9 @@ app.config["FLASK_DEBUG"] = getenv_bool("FLASK_DEBUG", "False")
 # Proxy handling
 if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover
     app.config["PREFERRED_URL_SCHEME"] = os.getenv("PREFERRED_URL_SCHEME")
+
+    if app.config["PREFERRED_URL_SCHEME"] == "https":
+        app.config["SESSION_COOKIE_SECURE"] = True
 
 from project.reverse_proxied import ReverseProxied
 
@@ -134,9 +136,11 @@ sitemap_path = os.path.join(cache_path, sitemap_file)
 robots_txt_path = os.path.join(cache_path, robots_txt_file)
 
 # i18n
+from project.i10n import get_locale
+
 app.config["BABEL_DEFAULT_LOCALE"] = "de"
 app.config["BABEL_DEFAULT_TIMEZONE"] = "Europe/Berlin"
-babel = Babel(app)
+babel = Babel(app, locale_selector=get_locale)
 
 # cors
 cors = CORS(
@@ -188,9 +192,9 @@ from project.api import RestApi
 QRcode(app)
 
 # JSON
-from project.jsonld import DateTimeEncoder
+from project.jsonld import CustomJsonProvider
 
-app.json_encoder = DateTimeEncoder
+app.json_provider_class = CustomJsonProvider
 
 from project.forms.security import ExtendedConfirmRegisterForm, ExtendedLoginForm
 
@@ -228,7 +232,7 @@ if getenv_bool("TESTING"):  # pragma: no cover
     app.config["SECURITY_EMAIL_VALIDATOR_ARGS"] = {"check_deliverability": False}
 
 import project.cli.user
-from project import i10n, init_data, jinja_filters, requests
+from project import init_data, jinja_filters, requests
 
 # Routes
 from project.views import (

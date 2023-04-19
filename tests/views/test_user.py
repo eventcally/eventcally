@@ -65,7 +65,7 @@ def test_user_favorite_events(client, seeder, utils):
     utils.get_ok(url)
 
 
-def test_user_notifications(client, seeder, utils, app):
+def test_user_notifications(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("user_notifications")
@@ -84,7 +84,7 @@ def test_user_notifications(client, seeder, utils, app):
     with app.app_context():
         from project.models import User
 
-        place = User.query.get(user_id)
+        place = db.session.get(User, user_id)
         assert not place.newsletter_enabled
 
 

@@ -1,7 +1,7 @@
 from urllib.parse import quote_plus
 
 from flask import Markup, flash, g, redirect, render_template, request, url_for
-from flask_babelex import gettext
+from flask_babel import gettext
 from flask_login.utils import decode_cookie
 from flask_mail import Message
 from flask_security import current_user

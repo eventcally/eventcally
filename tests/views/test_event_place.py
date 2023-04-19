@@ -39,7 +39,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_update(client, seeder, utils, app, mocker, db_error):
+def test_update(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
@@ -68,13 +68,13 @@ def test_update(client, seeder, utils, app, mocker, db_error):
     with app.app_context():
         from project.models import EventPlace
 
-        place = EventPlace.query.get(place_id)
+        place = db.session.get(EventPlace, place_id)
         assert place.name == "Neuer Name"
 
 
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("non_match", [True, False])
-def test_delete(client, seeder, utils, app, mocker, db_error, non_match):
+def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
 
@@ -114,7 +114,7 @@ def test_delete(client, seeder, utils, app, mocker, db_error, non_match):
     with app.app_context():
         from project.models import EventPlace
 
-        place = EventPlace.query.get(place_id)
+        place = db.session.get(EventPlace, place_id)
         assert place is None
 
 

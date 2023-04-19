@@ -8,7 +8,7 @@ def test_get_sd_for_admin_unit(client, app, db, seeder):
         from project.jsonld import get_sd_for_admin_unit
         from project.models import AdminUnit
 
-        admin_unit = AdminUnit.query.get(admin_unit_id)
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.url = "http://www.goslar.de"
 
         result = get_sd_for_admin_unit(admin_unit)
@@ -23,7 +23,7 @@ def test_get_sd_for_organizer(client, app, db, seeder):
         from project.jsonld import get_sd_for_organizer
         from project.models import EventOrganizer
 
-        organizer = EventOrganizer.query.get(organizer_id)
+        organizer = db.session.get(EventOrganizer, organizer_id)
         organizer.email = "info@goslar.de"
         organizer.phone = "12345"
         organizer.fax = "67890"
@@ -46,7 +46,7 @@ def test_get_sd_for_place(client, app, db, utils, seeder):
         from project.jsonld import get_sd_for_place
         from project.models import EventPlace, Image, Location
 
-        place = EventPlace.query.get(place_id)
+        place = db.session.get(EventPlace, place_id)
         place.url = "http://www.goslar.de"
 
         photo = Image()
@@ -83,7 +83,7 @@ def test_get_sd_for_place_noCoordinates(client, app, db, utils, seeder):
         from project.jsonld import get_sd_for_place
         from project.models import EventPlace, Location
 
-        place = EventPlace.query.get(place_id)
+        place = db.session.get(EventPlace, place_id)
 
         location = Location()
         location.street = "Markt 7"
@@ -107,7 +107,7 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         from project.models import Event, Image
         from project.services.event import update_event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         date_definition = event.date_definitions[0]
         date_definition.start = create_berlin_date(2030, 12, 31, 14, 30)
         date_definition.end = create_berlin_date(2030, 12, 31, 16, 30)
@@ -142,14 +142,12 @@ def test_get_sd_for_event_date_allday(client, app, db, seeder, utils):
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
-        import json
-
         from project.dateutils import create_berlin_date
-        from project.jsonld import DateTimeEncoder, get_sd_for_event_date
+        from project.jsonld import get_sd_for_event_date
         from project.models import Event
         from project.services.event import update_event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         date_definition = event.date_definitions[0]
         date_definition.start = create_berlin_date(2030, 12, 31, 14, 30)
         date_definition.end = create_berlin_date(2030, 12, 31, 16, 30)
@@ -160,8 +158,8 @@ def test_get_sd_for_event_date_allday(client, app, db, seeder, utils):
         event_date = event.dates[0]
 
         with app.test_request_context():
-            structured_data = json.dumps(
-                get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder
+            structured_data = app.json.dumps(
+                get_sd_for_event_date(event_date), indent=2
             )
 
         assert '"startDate": "2030-12-31"' in structured_data
@@ -178,7 +176,7 @@ def test_get_sd_for_event_date_with_co_organizer(client, app, db, seeder, utils)
         from project.jsonld import get_sd_for_event_date
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         event_date = event.dates[0]
 
         with app.test_request_context():
@@ -202,7 +200,7 @@ def test_get_sd_for_event_date_ageRange(
         from project.models import Event
         from project.services.event import update_event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         event.age_from = age_from
         event.age_to = age_to
 
@@ -235,7 +233,7 @@ def test_get_sd_for_event_date_eventAttendanceMode(
         from project.models import Event, EventAttendanceMode
         from project.services.event import update_event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         event.attendance_mode = EventAttendanceMode(attendance_mode)
 
         update_event(event)
@@ -269,7 +267,7 @@ def test_get_sd_for_event_date_eventStatus(
         from project.models import Event, EventStatus
         from project.services.event import update_event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         event.status = EventStatus(status)
 
         update_event(event)

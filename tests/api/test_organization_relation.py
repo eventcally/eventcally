@@ -47,7 +47,7 @@ def test_put(client, app, seeder, utils, db):
     with app.app_context():
         from project.models import AdminUnit
 
-        admin_unit = AdminUnit.query.get(admin_unit_id)
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.can_verify_other = True
         db.session.commit()
 
@@ -66,7 +66,7 @@ def test_put(client, app, seeder, utils, db):
     with app.app_context():
         from project.models import AdminUnitRelation
 
-        relation = AdminUnitRelation.query.get(relation_id)
+        relation = db.session.get(AdminUnitRelation, relation_id)
         assert relation is not None
         assert relation.source_admin_unit_id == admin_unit_id
         assert relation.target_admin_unit_id == other_admin_unit_id
@@ -74,7 +74,7 @@ def test_put(client, app, seeder, utils, db):
         assert relation.verify
 
 
-def test_patch(client, app, seeder, utils):
+def test_patch(client, app, seeder, utils, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     (
         other_user_id,
@@ -96,14 +96,14 @@ def test_patch(client, app, seeder, utils):
     with app.app_context():
         from project.models import AdminUnitRelation
 
-        relation = AdminUnitRelation.query.get(relation_id)
+        relation = db.session.get(AdminUnitRelation, relation_id)
         assert relation is not None
         assert relation.source_admin_unit_id == admin_unit_id
         assert relation.target_admin_unit_id == other_admin_unit_id
         assert relation.auto_verify_event_reference_requests
 
 
-def test_delete(client, app, seeder, utils):
+def test_delete(client, app, seeder, utils, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     (
         other_user_id,
@@ -121,5 +121,5 @@ def test_delete(client, app, seeder, utils):
     with app.app_context():
         from project.models import AdminUnitRelation
 
-        relation = AdminUnitRelation.query.get(relation_id)
+        relation = db.session.get(AdminUnitRelation, relation_id)
         assert relation is None

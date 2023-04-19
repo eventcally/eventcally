@@ -445,8 +445,8 @@ def create_event_suggestion(admin_unit_id, freetext):
 
 
 def _add_event_to_list(event_list_id, event_id):
-    event = Event.query.get(event_id)
-    event_list = EventList.query.get(event_list_id)
+    event = db.session.get(Event, event_id)
+    event_list = db.session.get(EventList, event_list_id)
     event_list.events.append(event)
     db.session.commit()
 

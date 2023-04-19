@@ -21,7 +21,9 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
                 EventReferenceRequestReviewStatus,
             )
 
-            reference_request = EventReferenceRequest.query.get(reference_request_id)
+            reference_request = db.session.get(
+                EventReferenceRequest, reference_request_id
+            )
             reference_request.review_status = EventReferenceRequestReviewStatus.verified
             db.session.commit()
 
@@ -63,10 +65,10 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
         )
         from project.services.admin_unit import get_admin_unit_relation
 
-        reference_request = EventReferenceRequest.query.get(reference_request_id)
+        reference_request = db.session.get(EventReferenceRequest, reference_request_id)
         assert reference_request.verified
 
-        reference = EventReference.query.get(reference_request_id)
+        reference = db.session.get(EventReference, reference_request_id)
         assert reference.event_id == event_id
         assert reference.admin_unit_id == admin_unit_id
 
@@ -77,7 +79,7 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
         assert relation.auto_verify_event_reference_requests
 
 
-def test_review_reject(client, seeder, utils, app, mocker):
+def test_review_reject(client, seeder, utils, app, db, mocker):
     user_id, admin_unit_id = seeder.setup_base()
     (
         other_user_id,
@@ -108,7 +110,7 @@ def test_review_reject(client, seeder, utils, app, mocker):
             EventReferenceRequestReviewStatus,
         )
 
-        reference_request = EventReferenceRequest.query.get(reference_request_id)
+        reference_request = db.session.get(EventReferenceRequest, reference_request_id)
         assert (
             reference_request.review_status
             == EventReferenceRequestReviewStatus.rejected

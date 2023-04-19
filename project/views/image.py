@@ -42,7 +42,7 @@ def image(id, hash=None):
     # Save from database to disk
     make_dir(img_path)
     img = get_image_from_bytes(image.data)
-    img.thumbnail((width, height), PIL.Image.ANTIALIAS)
+    img.thumbnail((width, height), PIL.Image.Resampling.LANCZOS)
     img.save(file_path)
 
     # Load from disk

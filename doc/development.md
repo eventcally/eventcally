@@ -57,7 +57,7 @@ flask db upgrade
 
 ## i18n
 
-<https://pythonhosted.org/Flask-BabelEx/>
+<https://python-babel.github.io/flask-babel/>
 
 ### Init
 

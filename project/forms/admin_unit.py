@@ -1,4 +1,4 @@
-from flask_babelex import lazy_gettext
+from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaField
 from wtforms.fields import BooleanField, EmailField, TelField, URLField

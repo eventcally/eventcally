@@ -2,7 +2,7 @@ import json
 import os.path
 
 from flask import render_template, request, send_from_directory, url_for
-from flask_babelex import gettext
+from flask_babel import gettext
 from markupsafe import Markup
 from sqlalchemy import text
 

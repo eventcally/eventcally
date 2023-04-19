@@ -379,7 +379,9 @@ def test_duplicate(client, app, utils, seeder, mocker, allday):
 
 @pytest.mark.parametrize("free_text", [True, False])
 @pytest.mark.parametrize("allday", [True, False])
-def test_create_fromSuggestion(client, app, utils, seeder, mocker, free_text, allday):
+def test_create_fromSuggestion(
+    client, app, db, utils, seeder, mocker, free_text, allday
+):
     user_id, admin_unit_id = seeder.setup_base()
     suggestion_id = seeder.create_event_suggestion(admin_unit_id, free_text, allday)
 
@@ -404,7 +406,7 @@ def test_create_fromSuggestion(client, app, utils, seeder, mocker, free_text, al
         assert event is not None
         assert event.date_definitions[0].allday == allday
 
-        suggestion = EventSuggestion.query.get(suggestion_id)
+        suggestion = db.session.get(EventSuggestion, suggestion_id)
         assert suggestion is not None
         assert suggestion.verified
         assert suggestion.event_id == event.id
