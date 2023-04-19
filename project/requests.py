@@ -33,5 +33,5 @@ def set_response_headers(response):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers[
         "Content-Security-Policy"
-    ] = "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' blob: data: *.openstreetmap.org;"
+    ] = "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' blob: data: *.openstreetmap.org; connect-src blob: data:;"
     return response
