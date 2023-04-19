@@ -17,6 +17,7 @@ def set_manage_admin_unit_cookie(response):
             value=encoded,
             expires=datetime.utcnow() + timedelta(days=365),
             secure=app.config["SESSION_COOKIE_SECURE"],
+            samesite=app.config["SESSION_COOKIE_SAMESITE"],
         )
 
     return response
@@ -29,7 +30,7 @@ def set_response_headers(response):
             response.headers["X-Frame-Options"] = "SAMEORIGIN"
 
     response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers[
         "Content-Security-Policy"
     ] = "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' data: *.openstreetmap.org;"

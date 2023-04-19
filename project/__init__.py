@@ -63,6 +63,9 @@ if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover
 
     if app.config["PREFERRED_URL_SCHEME"] == "https":
         app.config["SESSION_COOKIE_SECURE"] = True
+        app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+        app.config["REMEMBER_COOKIE_SECURE"] = True
+        app.config["REMEMBER_COOKIE_SAMESITE"] = "Lax"
 
 from project.reverse_proxied import ReverseProxied
 
