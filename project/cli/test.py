@@ -95,8 +95,11 @@ def reset(seed):
 
 @test_cli.command("drop-all")
 def drop_all():
-    db.drop_all()
-    db.engine.execute("DROP TABLE IF EXISTS alembic_version;")
+    with db.engine.connect() as conn:
+        with conn.begin():
+            db.drop_all()
+            conn.execute(text("DROP TABLE IF EXISTS alembic_version;"))
+
     click.echo("Drop all done.")
 
 

@@ -35,6 +35,7 @@ describe("Widget", () => {
         cy.createAdminUnit().then(function (adminUnitId) {
           // Start
           cy.visit("/meinecrew/widget/event_suggestions/create");
+          cy.wait(1000); // Wait for jQuery to load
           cy.get(".wizard-next:visible").click();
 
           // Tos
