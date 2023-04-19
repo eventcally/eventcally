@@ -59,7 +59,7 @@ var vue_app_data = { eventId: 0 };
             {{ render_field_with_errors(form.keyword, formrow="1") }}
         {% endif %}
 
-        {% set form_collapsed = not form.category_id.data and not form.organizer_id.data and not form.event_place_id.data and not form.coordinate.data  %}
+        {% set form_collapsed = not form.category_id.data and not form.organizer_id.data and not form.event_place_id.data and not form.postal_code.data and not form.coordinate.data  %}
         <div id="extended_search_form" class="{% if form_collapsed %}collapse{% else %}show{% endif %}">
 
         {% if form.category_id %}
@@ -73,6 +73,8 @@ var vue_app_data = { eventId: 0 };
         {% if form.event_place_id and form.event_place_id.type != "HiddenField" %}
             {{ render_field_with_errors(form.event_place_id, formrow="1") }}
         {% endif %}
+
+        {{ render_field_with_errors(form.postal_code, formrow="1") }}
 
         {{ render_event_dates_location_field(form.location, form.distance) }}
 
@@ -93,7 +95,8 @@ var vue_app_data = { eventId: 0 };
                 <th>{{ _('Event') }}</th>
                 <th>{{ _('Organizer') }}</th>
                 <th>{{ _('Place') }}</th>
-                <th><i class="fa fa-info" data-toggle="tooltip" title="{{ _('Number of references') }} / {{ _('Number of reference requests.') }}"></i></th>
+                <th><i class="fa fa-fw fa-image" data-toggle="tooltip" title="{{ _('Photo') }}"></i></th>
+                <th><i class="fa fa-fw fa-link" data-toggle="tooltip" title="{{ _('Number of references') }} / {{ _('Number of reference requests.') }}"></i></th>
             </tr>
         </thead>
         <tbody>
@@ -123,8 +126,12 @@ var vue_app_data = { eventId: 0 };
                         {{ render_event_warning_pills(event) }}
                     </td>
                     <td><a href="{{ url_for('organizer_update', id=event.organizer.id) }}" class="text-body">{{ event.organizer.name }}</a></td>
-                    <td><a href="{{ url_for('event_place_update', id=event.event_place.id) }}" class="text-body">{{ event.event_place.name }}</a></td>
-                    <td class="fit">{{ event.references|length }}/{{ event.reference_requests|length }}</td>
+                    <td>
+                        <div><a href="{{ url_for('event_place_update', id=event.event_place.id) }}" class="text-body">{{ event.event_place.name }}</a></div>
+                        <div>{% if event.event_place.location %}{{ event.event_place.location.postalCode }} {{ event.event_place.location.city }}{% endif %}</div>
+                    </td>
+                    <td><i class="fa fa-fw fa-image {% if event.photo %}text-success{% else %}text-muted{% endif %}" data-toggle="tooltip" title="{{ _('Photo') }}"></i></td>
+                    <td class="fit"><span data-toggle="tooltip" title="{{ _('Number of references') }} / {{ _('Number of reference requests.') }}">{{ event.references|length }}/{{ event.reference_requests|length }}</span></td>
                 </tr>
             {% endfor %}
         </tbody>

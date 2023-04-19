@@ -450,6 +450,7 @@ class FindEventForm(FlaskForm):
         coerce=int,
         choices=distance_choices,
     )
+    postal_code = StringField(lazy_gettext("Postal code"), validators=[Optional()])
 
     submit = SubmitField(lazy_gettext("Find events"))
 
