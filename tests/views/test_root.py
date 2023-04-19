@@ -8,7 +8,7 @@ def test_home(client, seeder, utils):
     response = utils.get_ok(url)
     assert response.headers["X-Frame-Options"] == "SAMEORIGIN"
     assert response.headers["X-Content-Type-Options"] == "nosniff"
-    assert response.headers["Referrer-Policy"] == "no-referrer"
+    assert response.headers["Referrer-Policy"] == "strict-origin-when-cross-origin"
     assert "Content-Security-Policy" in response.headers
 
 
