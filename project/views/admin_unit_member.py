@@ -1,5 +1,5 @@
 from flask import flash, redirect, render_template, url_for
-from flask_babelex import gettext
+from flask_babel import gettext
 from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 

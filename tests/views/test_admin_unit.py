@@ -134,7 +134,7 @@ def test_create_requiresAdmin_memberOfOrgWithFlag(client, app, utils, seeder):
     assert response.status_code == 302
 
 
-def test_create_from_invitation(client, app, utils, seeder, mocker):
+def test_create_from_invitation(client, app, db, utils, seeder, mocker):
     mail_mock = utils.mock_send_mails(mocker)
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(
@@ -176,7 +176,7 @@ def test_create_from_invitation(client, app, utils, seeder, mocker):
         assert relation.invited
         relation_id = relation.id
 
-        invitation = AdminUnitInvitation.query.get(invitation_id)
+        invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is None
 
     invitation_url = utils.get_url(

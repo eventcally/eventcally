@@ -64,7 +64,7 @@ def test_create_authorization_code(client, app, utils, seeder, mocker, db_error)
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_update(client, seeder, utils, app, mocker, db_error):
+def test_update(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base(True)
     oauth2_client_id = seeder.insert_default_oauth2_client(user_id)
 
@@ -92,14 +92,14 @@ def test_update(client, seeder, utils, app, mocker, db_error):
     with app.app_context():
         from project.models import OAuth2Client
 
-        oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+        oauth2_client = db.session.get(OAuth2Client, oauth2_client_id)
         assert oauth2_client.client_name == "Neuer Name"
         assert oauth2_client.redirect_uris == ["localhost:1337", "localhost:1338"]
 
 
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("non_match", [True, False])
-def test_delete(client, seeder, utils, app, mocker, db_error, non_match):
+def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     user_id, admin_unit_id = seeder.setup_base(True)
     oauth2_client_id = seeder.insert_default_oauth2_client(user_id)
 
@@ -135,5 +135,5 @@ def test_delete(client, seeder, utils, app, mocker, db_error, non_match):
     with app.app_context():
         from project.models import OAuth2Client
 
-        oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+        oauth2_client = db.session.get(OAuth2Client, oauth2_client_id)
         assert oauth2_client is None

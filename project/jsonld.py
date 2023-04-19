@@ -1,20 +1,23 @@
 import datetime
-from json import JSONEncoder
 
 from flask import url_for
+from flask.json.provider import DefaultJSONProvider
 
 from project.dateutils import berlin_tz
 from project.jinja_filters import url_for_image
 from project.models import EventAttendanceMode, EventStatus
 
 
-class DateTimeEncoder(JSONEncoder):
-    # Override the default method
-    def default(self, obj):
+class CustomJsonProvider(DefaultJSONProvider):
+    @staticmethod
+    def default(obj):
         if isinstance(obj, datetime.datetime):
             return (obj.astimezone(berlin_tz)).isoformat()
         elif isinstance(obj, datetime.date):
             return obj.isoformat()
+
+        # pragma: no cover
+        return super(CustomJsonProvider, CustomJsonProvider).default(obj)
 
 
 def get_sd_for_admin_unit(admin_unit):

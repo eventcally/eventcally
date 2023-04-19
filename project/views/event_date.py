@@ -1,5 +1,3 @@
-import json
-
 from flask import render_template, request, url_for
 from flask.wrappers import Response
 
@@ -7,7 +5,7 @@ from project import app
 from project.access import can_read_event_or_401
 from project.dateutils import create_icalendar
 from project.forms.event_date import FindEventDateForm
-from project.jsonld import DateTimeEncoder, get_sd_for_event_date
+from project.jsonld import get_sd_for_event_date
 from project.services.event import (
     create_ical_event_for_date,
     get_event_date_with_details_or_404,
@@ -50,9 +48,7 @@ def event_date(id):
     event_date = get_event_date_with_details_or_404(id)
     can_read_event_or_401(event_date.event)
 
-    structured_data = json.dumps(
-        get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder
-    )
+    structured_data = app.json.dumps(get_sd_for_event_date(event_date), indent=2)
 
     url = url_for("event_date", id=id, _external=True)
     share_links = get_share_links(url, event_date.event.name)

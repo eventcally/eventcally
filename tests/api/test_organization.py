@@ -215,7 +215,7 @@ def test_events_post(client, seeder, utils, app, variant):
             assert len(event.date_definitions) == 1
 
 
-def test_events_post_co_organizers(client, seeder, utils, app):
+def test_events_post_co_organizers(client, seeder, utils, app, db):
     url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
         seeder, utils
     )
@@ -233,7 +233,7 @@ def test_events_post_co_organizers(client, seeder, utils, app):
     with app.app_context():
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert len(event.co_organizers) == 2
         assert event.co_organizers[0].id == organizer_a_id
         assert event.co_organizers[1].id == organizer_b_id
@@ -267,7 +267,7 @@ def test_events_post_photo_too_small(client, seeder, utils, app):
     assert error["message"] == "Image is too small (1x1px). At least 320x320px."
 
 
-def test_events_import(client, seeder, utils, app, shared_datadir):
+def test_events_import(client, seeder, utils, app, db, shared_datadir):
     external_url = "https://www.harzinfo.de/event/xy"
     utils.mock_get_request_with_file(
         external_url, shared_datadir, "harzinfo_biathlon.html"
@@ -284,7 +284,7 @@ def test_events_import(client, seeder, utils, app, shared_datadir):
     with app.app_context():
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert "lädt" in event.description
 
     # 422
@@ -459,7 +459,7 @@ def test_outgoing_relation_list_notAuthenticated(client, seeder, utils):
     utils.assert_response_unauthorized(response)
 
 
-def test_outgoing_relation_post(client, app, seeder, utils):
+def test_outgoing_relation_post(client, app, seeder, utils, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
@@ -480,7 +480,7 @@ def test_outgoing_relation_post(client, app, seeder, utils):
     with app.app_context():
         from project.models import AdminUnitRelation
 
-        relation = AdminUnitRelation.query.get(int(response.json["id"]))
+        relation = db.session.get(AdminUnitRelation, int(response.json["id"]))
         assert relation is not None
         assert relation.source_admin_unit_id == admin_unit_id
         assert relation.target_admin_unit_id == other_admin_unit_id
@@ -535,7 +535,7 @@ def test_organization_invitation_list(client, seeder, utils):
     assert response.json["items"][0]["organization_name"] == "Invited Organization"
 
 
-def test_organization_invitation_list_post(client, app, seeder, utils, mocker):
+def test_organization_invitation_list_post(client, app, seeder, db, utils, mocker):
     mail_mock = utils.mock_send_mails(mocker)
     _, admin_unit_id = seeder.setup_api_access()
 
@@ -558,7 +558,7 @@ def test_organization_invitation_list_post(client, app, seeder, utils, mocker):
     with app.app_context():
         from project.models import AdminUnitInvitation
 
-        invitation = AdminUnitInvitation.query.get(invitation_id)
+        invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is not None
         assert invitation.admin_unit_id == admin_unit_id
         assert invitation.email == "invited@test.de"

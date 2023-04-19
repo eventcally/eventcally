@@ -13,7 +13,7 @@ def test_read(client, app, db, seeder, utils):
         from project.models import Event, EventStatus
         from project.services.event import update_event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         event.status = EventStatus.scheduled
 
         update_event(event)
@@ -180,7 +180,7 @@ def create_put(
 @pytest.mark.parametrize(
     "variant", ["normal", "legacy", "recurrence", "two_date_definitions"]
 )
-def test_put(client, seeder, utils, app, mocker, variant):
+def test_put(client, seeder, utils, app, db, mocker, variant):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -227,7 +227,7 @@ def test_put(client, seeder, utils, app, mocker, variant):
             EventTargetGroupOrigin,
         )
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert event.name == "Neuer Name"
         assert event.event_place_id == place_id
         assert event.organizer_id == organizer_id
@@ -353,7 +353,7 @@ def test_put_organizerFromAnotherAdminUnit(client, seeder, utils, app):
     utils.assert_response_api_error(response, "Check Violation")
 
 
-def test_put_co_organizers(client, seeder, utils, app):
+def test_put_co_organizers(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -374,7 +374,7 @@ def test_put_co_organizers(client, seeder, utils, app):
     with app.app_context():
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert len(event.co_organizers) == 2
         assert event.co_organizers[0].id == organizer_a_id
         assert event.co_organizers[1].id == organizer_b_id
@@ -443,7 +443,7 @@ def test_put_durationMoreThanMaxAllowedDuration(client, seeder, utils, app):
     utils.assert_response_bad_request(response)
 
 
-def test_put_categories(client, seeder, utils, app):
+def test_put_categories(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -460,11 +460,11 @@ def test_put_categories(client, seeder, utils, app):
     with app.app_context():
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert event.category.name == "Art"
 
 
-def test_put_dateWithTimezone(client, seeder, utils, app):
+def test_put_dateWithTimezone(client, seeder, utils, app, db):
     from project.dateutils import create_berlin_date
 
     user_id, admin_unit_id = seeder.setup_api_access()
@@ -483,11 +483,11 @@ def test_put_dateWithTimezone(client, seeder, utils, app):
 
         expected = create_berlin_date(2030, 12, 31, 14, 30)
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert event.date_definitions[0].start == expected
 
 
-def test_put_dateWithoutTimezone(client, seeder, utils, app):
+def test_put_dateWithoutTimezone(client, seeder, utils, app, db):
     from project.dateutils import create_berlin_date
 
     user_id, admin_unit_id = seeder.setup_api_access()
@@ -506,7 +506,7 @@ def test_put_dateWithoutTimezone(client, seeder, utils, app):
 
         expected = create_berlin_date(2030, 12, 31, 14, 30)
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert event.date_definitions[0].start == expected
 
 
@@ -552,7 +552,7 @@ def test_put_referencedEventNonDirtyUpdate_doesNotSendMail(
     mail_mock.assert_not_called()
 
 
-def test_patch(client, seeder, utils, app):
+def test_patch(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -563,12 +563,12 @@ def test_patch(client, seeder, utils, app):
     with app.app_context():
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert event.name == "Name"
         assert event.description == "Neu"
 
 
-def test_patch_startAfterEnd(client, seeder, utils, app):
+def test_patch_startAfterEnd(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -601,7 +601,7 @@ def test_patch_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocke
     utils.assert_send_mail_called(mail_mock, "other@test.de")
 
 
-def test_patch_photo(client, seeder, utils, app, requests_mock):
+def test_patch_photo(client, seeder, utils, app, db, requests_mock):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -619,7 +619,7 @@ def test_patch_photo(client, seeder, utils, app, requests_mock):
     with app.app_context():
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert event.photo is not None
         assert event.photo.encoding_format == "image/png"
 
@@ -640,7 +640,7 @@ def test_patch_photo_copyright(client, db, seeder, utils, app):
     with app.app_context():
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert event.photo.id == image_id
         assert event.photo.data is not None
         assert event.photo.copyright_text == "Heiner"
@@ -662,14 +662,14 @@ def test_patch_photo_delete(client, db, seeder, utils, app):
     with app.app_context():
         from project.models import Event, Image
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert event.photo_id is None
 
-        image = Image.query.get(image_id)
+        image = db.session.get(Image, image_id)
         assert image is None
 
 
-def test_delete(client, seeder, utils, app):
+def test_delete(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -680,7 +680,7 @@ def test_delete(client, seeder, utils, app):
     with app.app_context():
         from project.models import Event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         assert event is None
 
 

@@ -1,6 +1,6 @@
 from flask import abort, request
 from flask_apispec import doc, marshal_with, use_kwargs
-from flask_babelex import gettext
+from flask_babel import gettext
 from sqlalchemy import and_
 
 from project import db
@@ -198,6 +198,7 @@ class OrganizationEventImportResource(BaseResource):
             importer = EventImporter(admin_unit.id)
 
             with db.session.no_autoflush:
+                # deepcode ignore Ssrf: url sanitized in importer
                 event = importer.load_event_from_url(import_request["url"])
         except Exception:
             abort(422)

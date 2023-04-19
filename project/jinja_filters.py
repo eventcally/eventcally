@@ -44,7 +44,7 @@ app.jinja_env.filters["is_list"] = is_list
 app.jinja_env.filters["any_dict_value_true"] = any_dict_value_true
 app.jinja_env.filters["ensure_link_scheme"] = lambda s: ensure_link_scheme(s)
 app.jinja_env.filters["place_str"] = lambda p: get_place_str(p)
-app.jinja_env.filters["location_str"] = lambda l: get_location_str(l)
+app.jinja_env.filters["location_str"] = lambda location: get_location_str(location)
 
 
 def get_base_url():

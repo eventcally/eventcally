@@ -43,14 +43,19 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='apple-touch-icon.png')}}">
     <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest')}}">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='ext/bootstrap.4.4.1.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='ext/bootstrap.4.6.2.min.css')}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='ext/font-awesome.5.13.1/css/all.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}" />
 
     {%- block styles %}
     {%- endblock styles %}
 
-    <script src="{{ url_for('static', filename='ext/jquery-1.12.4.min.js')}}"></script>
+    {% if False | env_override('FLASK_DEBUG') %}
+    <script src="{{ url_for('static', filename='ext/jquery-3.6.4.js')}}"></script>
+    {% else %}
+    <script src="{{ url_for('static', filename='ext/jquery-3.6.4.min.js')}}"></script>
+    {% endif %}
+
     <script src="{{ url_for('static', filename='ext/moment.2.24.0.with-locales.min.js')}}"></script>
 
     {% block header_before_site_js %}
@@ -319,7 +324,7 @@
       </div>
 
       <script src="{{ url_for('static', filename='ext/popper.1.16.0.min.js')}}"></script>
-      <script src="{{ url_for('static', filename='ext/bootstrap.4.4.1.min.js')}}"></script>
+      <script src="{{ url_for('static', filename='ext/bootstrap.4.6.2.min.js')}}"></script>
       {% block scripts %}
       {%- endblock scripts %}
     {%- endblock body %}

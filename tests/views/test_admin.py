@@ -152,7 +152,7 @@ def test_admin_user_update(client, seeder, utils, app, mocker, db, db_error):
 
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("non_match", [True, False])
-def test_user_delete(client, seeder, utils, app, mocker, db_error, non_match):
+def test_user_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     user_id, admin_unit_id = seeder.setup_base(True)
     other_user_id = seeder.create_user("other@test.de")
 
@@ -190,7 +190,7 @@ def test_user_delete(client, seeder, utils, app, mocker, db_error, non_match):
     with app.app_context():
         from project.models import User
 
-        user = User.query.get(other_user_id)
+        user = db.session.get(User, other_user_id)
         assert user is None
 
 
@@ -246,7 +246,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
 
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("non_match", [True, False])
-def test_admin_unit_delete(client, seeder, utils, app, mocker, db_error, non_match):
+def test_admin_unit_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     user_id, admin_unit_id = seeder.setup_base(True)
 
     url = utils.get_url("admin_admin_unit_delete", id=admin_unit_id)
@@ -283,5 +283,5 @@ def test_admin_unit_delete(client, seeder, utils, app, mocker, db_error, non_mat
     with app.app_context():
         from project.models import AdminUnit
 
-        admin_unit = AdminUnit.query.get(admin_unit_id)
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
         assert admin_unit is None

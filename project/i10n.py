@@ -1,11 +1,13 @@
 from flask import request
-from flask_babelex import gettext
+from flask_babel import gettext
 
-from project import app, babel
+from project import app
 
 
-@babel.localeselector
 def get_locale():
+    if not request:
+        return app.config["LANGUAGES"][0]
+
     return request.accept_languages.best_match(app.config["LANGUAGES"])
 
 

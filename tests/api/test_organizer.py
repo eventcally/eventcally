@@ -6,7 +6,7 @@ def test_read(client, seeder, utils):
     utils.get_ok(url)
 
 
-def test_put(client, seeder, utils, app):
+def test_put(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
@@ -17,11 +17,11 @@ def test_put(client, seeder, utils, app):
     with app.app_context():
         from project.models import EventOrganizer
 
-        organizer = EventOrganizer.query.get(organizer_id)
+        organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer.name == "Neuer Name"
 
 
-def test_patch(client, seeder, utils, app):
+def test_patch(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
@@ -32,12 +32,12 @@ def test_patch(client, seeder, utils, app):
     with app.app_context():
         from project.models import EventOrganizer
 
-        organizer = EventOrganizer.query.get(organizer_id)
+        organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer.name == "Meine Crew"
         assert organizer.phone == "55555"
 
 
-def test_delete(client, seeder, utils, app):
+def test_delete(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
@@ -48,5 +48,5 @@ def test_delete(client, seeder, utils, app):
     with app.app_context():
         from project.models import EventOrganizer
 
-        organizer = EventOrganizer.query.get(organizer_id)
+        organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer is None

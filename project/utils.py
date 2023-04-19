@@ -1,7 +1,7 @@
 import os
 import pathlib
 
-from flask_babelex import lazy_gettext
+from flask_babel import lazy_gettext
 from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.base import NO_CHANGE, object_state

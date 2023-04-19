@@ -5,7 +5,7 @@ import shutil
 from sqlalchemy import and_
 from sqlalchemy.orm import joinedload
 
-from project import app, dump_path
+from project import app, db, dump_path
 from project.api.event.schemas import EventDumpSchema
 from project.api.event_category.schemas import EventCategoryDumpSchema
 from project.api.event_reference.schemas import EventReferenceDumpSchema
@@ -163,7 +163,7 @@ class AdminUnitDumper(Dumper):  # pragma: no cover
             self.dump_image(organizer.logo)
 
         # Organizations
-        organization = AdminUnit.query.get(self.admin_unit_id)
+        organization = db.session.get(AdminUnit, self.admin_unit_id)
         self.dump_item(organization, OrganizationDumpSchema(), "organization")
         self.dump_image(organization.logo)
 

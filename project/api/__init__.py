@@ -3,7 +3,7 @@ from apispec.exceptions import DuplicateComponentNameError
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import url_for
 from flask_apispec.extension import FlaskApiSpec
-from flask_babelex import gettext
+from flask_babel import gettext
 from flask_marshmallow import Marshmallow
 from flask_restful import Api
 from marshmallow import ValidationError

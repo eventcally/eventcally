@@ -58,7 +58,7 @@ def test_create_logo_too_small(client, app, utils, seeder, mocker):
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_update(client, seeder, utils, app, mocker, db_error):
+def test_update(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
@@ -88,13 +88,13 @@ def test_update(client, seeder, utils, app, mocker, db_error):
     with app.app_context():
         from project.models import EventOrganizer
 
-        organizer = EventOrganizer.query.get(organizer_id)
+        organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer.name == "Neuer Name"
 
 
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("non_match", [True, False])
-def test_delete(client, seeder, utils, app, mocker, db_error, non_match):
+def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     user_id, admin_unit_id = seeder.setup_base()
     organizer_id = seeder.upsert_event_organizer(admin_unit_id, "Mein Organisator")
 
@@ -135,7 +135,7 @@ def test_delete(client, seeder, utils, app, mocker, db_error, non_match):
     with app.app_context():
         from project.models import EventOrganizer
 
-        organizer = EventOrganizer.query.get(organizer_id)
+        organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer is None
 
 

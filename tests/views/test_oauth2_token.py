@@ -10,7 +10,7 @@ def test_list(client, seeder, utils):
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_revoke(client, seeder, utils, app, mocker, db_error):
+def test_revoke(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_api_access()
     utils.login()
 
@@ -41,7 +41,7 @@ def test_revoke(client, seeder, utils, app, mocker, db_error):
     with app.app_context():
         from project.models import OAuth2Token
 
-        oauth2_token = OAuth2Token.query.get(oauth2_token_id)
+        oauth2_token = db.session.get(OAuth2Token, oauth2_token_id)
         assert oauth2_token.is_revoked() > 0
 
     # Kann nicht zweimal revoked werden

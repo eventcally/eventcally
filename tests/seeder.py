@@ -292,7 +292,7 @@ class Seeder(object):
         with self._app.app_context():
             from project.models import OAuth2Client
 
-            oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+            oauth2_client = self._db.session.get(OAuth2Client, oauth2_client_id)
             client_id = oauth2_client.client_id
             client_secret = oauth2_client.client_secret
             scope = oauth2_client.scope
@@ -314,7 +314,7 @@ class Seeder(object):
         from project.models import Event
 
         with self._app.app_context():
-            event = Event.query.get(event_id)
+            event = self._db.session.get(Event, event_id)
             event_date_id = event.dates[0].id
 
         return event_date_id
@@ -400,7 +400,7 @@ class Seeder(object):
         from project.services.event import update_event
 
         with self._app.app_context():
-            event = Event.query.get(event_id)
+            event = self._db.session.get(Event, event_id)
 
             date_definition = self.create_event_date_definition(
                 start, end, allday, recurrence_rule
@@ -501,7 +501,7 @@ class Seeder(object):
         with self._app.app_context():
             from project.models import Event
 
-            event = Event.query.get(event_id)
+            event = self._db.session.get(Event, event_id)
             event.photo_id = image_id
             self._db.session.commit()
 
@@ -542,8 +542,8 @@ class Seeder(object):
         from project.models import Event, EventList
 
         with self._app.app_context():
-            event = Event.query.get(event_id)
-            event_list = EventList.query.get(event_list_id)
+            event = self._db.session.get(Event, event_id)
+            event_list = self._db.session.get(EventList, event_list_id)
             event_list.events.append(event)
             self._db.session.commit()
 

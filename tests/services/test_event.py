@@ -1,7 +1,7 @@
 import pytest
 
 
-def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app):
+def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -10,7 +10,7 @@ def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app):
         from project.models import Event
         from project.services.event import update_event_dates_with_recurrence_rule
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         date_definition = event.date_definitions[0]
         date_definition.start = create_berlin_date(2030, 12, 31, 14, 30)
         date_definition.end = create_berlin_date(2030, 12, 31, 16, 30)
@@ -55,7 +55,7 @@ def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app):
 
 
 def test_update_event_dates_with_recurrence_rule_past(
-    client, seeder, utils, app, mocker
+    client, seeder, utils, app, db, mocker
 ):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
@@ -67,7 +67,7 @@ def test_update_event_dates_with_recurrence_rule_past(
 
         utils.mock_now(mocker, 2020, 1, 3)
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         date_definition = event.date_definitions[0]
         date_definition.start = create_berlin_date(2020, 1, 2, 14, 30)
         date_definition.end = create_berlin_date(2020, 1, 2, 16, 30)
@@ -87,7 +87,7 @@ def test_update_event_dates_with_recurrence_rule_past(
 
 
 def test_update_event_dates_with_recurrence_rule_past_forever(
-    client, seeder, utils, app, mocker
+    client, seeder, utils, app, db, mocker
 ):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
@@ -99,7 +99,7 @@ def test_update_event_dates_with_recurrence_rule_past_forever(
 
         utils.mock_now(mocker, 2020, 1, 3)
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         date_definition = event.date_definitions[0]
         date_definition.start = create_berlin_date(2019, 1, 1, 14, 30)
         date_definition.end = create_berlin_date(2019, 1, 1, 16, 30)
@@ -124,7 +124,7 @@ def test_update_event_dates_with_recurrence_rule_past_forever(
 
 
 def test_update_event_dates_with_recurrence_rule_exdate(
-    client, seeder, utils, app, mocker
+    client, seeder, utils, app, db, mocker
 ):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
@@ -136,7 +136,7 @@ def test_update_event_dates_with_recurrence_rule_exdate(
 
         utils.mock_now(mocker, 2021, 6, 1)
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         date_definition = event.date_definitions[0]
         date_definition.start = create_berlin_date(2021, 4, 21, 17, 0)
         date_definition.end = create_berlin_date(2021, 4, 21, 18, 0)
@@ -160,7 +160,7 @@ def test_get_meta_data(seeder, app, db):
         from project.models import Event, EventAttendanceMode, Location
         from project.services.event import get_meta_data
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         event.attendance_mode = EventAttendanceMode.offline
 
         location = Location()
@@ -282,7 +282,7 @@ def test_create_ical_events_for_event(client, app, db, utils, seeder):
         from project.models import Event, EventStatus, Location
         from project.services.event import create_ical_events_for_event
 
-        event = Event.query.get(event_id)
+        event = db.session.get(Event, event_id)
         event.description = "This is a fantastic event. Watch out!"
         event.status = EventStatus.cancelled
 

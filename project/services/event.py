@@ -4,7 +4,7 @@ from datetime import datetime
 import icalendar
 from dateutil.relativedelta import relativedelta
 from flask import url_for
-from flask_babelex import format_date, format_time, gettext
+from flask_babel import format_date, format_time, gettext
 from icalendar.prop import vDDDLists
 from sqlalchemy import and_, case, func, or_
 from sqlalchemy.orm import (

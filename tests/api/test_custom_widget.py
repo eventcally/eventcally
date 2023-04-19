@@ -8,7 +8,7 @@ def test_read(client, seeder, utils):
     assert response.json["settings"]["color"] == "black"
 
 
-def test_put(client, seeder, utils, app):
+def test_put(client, seeder, utils, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     custom_widget_id = seeder.insert_event_custom_widget(admin_unit_id)
 
@@ -19,12 +19,12 @@ def test_put(client, seeder, utils, app):
     with app.app_context():
         from project.models import CustomWidget
 
-        custom_widget = CustomWidget.query.get(custom_widget_id)
+        custom_widget = db.session.get(CustomWidget, custom_widget_id)
         assert custom_widget.name == "Neuer Name"
         assert custom_widget.widget_type == "search"
 
 
-def test_patch(client, seeder, utils, app):
+def test_patch(client, seeder, utils, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     custom_widget_id = seeder.insert_event_custom_widget(admin_unit_id)
 
@@ -35,12 +35,12 @@ def test_patch(client, seeder, utils, app):
     with app.app_context():
         from project.models import CustomWidget
 
-        custom_widget = CustomWidget.query.get(custom_widget_id)
+        custom_widget = db.session.get(CustomWidget, custom_widget_id)
         assert custom_widget.name == "Neuer Name"
         assert custom_widget.widget_type == "search"
 
 
-def test_delete(client, seeder, utils, app):
+def test_delete(client, seeder, utils, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     custom_widget_id = seeder.insert_event_custom_widget(admin_unit_id)
 
@@ -51,5 +51,5 @@ def test_delete(client, seeder, utils, app):
     with app.app_context():
         from project.models import CustomWidget
 
-        custom_widget = CustomWidget.query.get(custom_widget_id)
+        custom_widget = db.session.get(CustomWidget, custom_widget_id)
         assert custom_widget is None

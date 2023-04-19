@@ -1,8 +1,7 @@
-import json
 from datetime import datetime
 
 from flask import Response, flash, jsonify, redirect, render_template, request, url_for
-from flask_babelex import gettext
+from flask_babel import gettext
 from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -17,7 +16,7 @@ from project.access import (
 )
 from project.dateutils import create_icalendar, get_next_full_hour
 from project.forms.event import CreateEventForm, DeleteEventForm, UpdateEventForm
-from project.jsonld import DateTimeEncoder, get_sd_for_event_date
+from project.jsonld import get_sd_for_event_date
 from project.models import (
     AdminUnit,
     Event,
@@ -64,9 +63,7 @@ def event(event_id):
 
     structured_datas = list()
     for event_date in dates:
-        structured_data = json.dumps(
-            get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder
-        )
+        structured_data = app.json.dumps(get_sd_for_event_date(event_date), indent=2)
         structured_datas.append(structured_data)
 
     return render_template(
@@ -294,7 +291,7 @@ def get_event_category_choices():
 
 def prepare_event_place(form):
     if form.event_place_id.data and form.event_place_id.data > 0:
-        place = EventPlace.query.get(form.event_place_id.data)
+        place = db.session.get(EventPlace, form.event_place_id.data)
 
         if place:
             form.event_place_id.choices = [(place.id, get_place_str(place))]
@@ -305,7 +302,7 @@ def prepare_event_place(form):
 
 def prepare_organizer(form):
     if form.organizer_id.data and form.organizer_id.data > 0:
-        organizer = EventOrganizer.query.get(form.organizer_id.data)
+        organizer = db.session.get(EventOrganizer, form.organizer_id.data)
 
         if organizer:
             form.organizer_id.choices = [(organizer.id, organizer.name)]

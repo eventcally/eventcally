@@ -1,6 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from flask import request
-from flask_babelex import gettext, lazy_gettext
+from flask_babel import gettext, lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import (
     BooleanField,

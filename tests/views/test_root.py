@@ -5,7 +5,11 @@ from project import dump_path
 
 def test_home(client, seeder, utils):
     url = utils.get_url("home")
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+    assert response.headers["X-Frame-Options"] == "SAMEORIGIN"
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["Referrer-Policy"] == "no-referrer"
+    assert "Content-Security-Policy" in response.headers
 
 
 def test_up(app, utils):

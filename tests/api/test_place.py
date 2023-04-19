@@ -6,7 +6,7 @@ def test_read(client, app, db, seeder, utils):
     utils.get_ok(url)
 
 
-def test_put(client, seeder, utils, app):
+def test_put(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
@@ -17,7 +17,7 @@ def test_put(client, seeder, utils, app):
     with app.app_context():
         from project.models import EventPlace
 
-        place = EventPlace.query.get(place_id)
+        place = db.session.get(EventPlace, place_id)
         assert place.name == "Neuer Name"
 
 
@@ -28,7 +28,7 @@ def test_put_nonActiveReturnsUnauthorized(client, seeder, db, utils, app):
     with app.app_context():
         from project.models import User
 
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         user.active = False
         db.session.commit()
 
@@ -37,7 +37,7 @@ def test_put_nonActiveReturnsUnauthorized(client, seeder, db, utils, app):
     utils.assert_response_unauthorized(response)
 
 
-def test_patch(client, seeder, utils, app):
+def test_patch(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
@@ -48,7 +48,7 @@ def test_patch(client, seeder, utils, app):
     with app.app_context():
         from project.models import EventPlace
 
-        place = EventPlace.query.get(place_id)
+        place = db.session.get(EventPlace, place_id)
         assert place.name == "Meine Crew"
         assert place.description == "Klasse"
 
@@ -64,7 +64,7 @@ def test_patch_location(db, seeder, utils, app):
         location.postalCode = "12345"
         location.city = "City"
 
-        event = EventPlace.query.get(place_id)
+        event = db.session.get(EventPlace, place_id)
         event.location = location
         db.session.commit()
 
@@ -80,12 +80,12 @@ def test_patch_location(db, seeder, utils, app):
     with app.app_context():
         from project.models import EventPlace
 
-        place = EventPlace.query.get(place_id)
+        place = db.session.get(EventPlace, place_id)
         assert place.location.id == location_id
         assert place.location.postalCode == "54321"
 
 
-def test_delete(client, seeder, utils, app):
+def test_delete(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
@@ -96,5 +96,5 @@ def test_delete(client, seeder, utils, app):
     with app.app_context():
         from project.models import EventPlace
 
-        place = EventPlace.query.get(place_id)
+        place = db.session.get(EventPlace, place_id)
         assert place is None

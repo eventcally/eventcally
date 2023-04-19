@@ -95,8 +95,11 @@ def reset(seed):
 
 @test_cli.command("drop-all")
 def drop_all():
-    db.drop_all()
-    db.engine.execute("DROP TABLE IF EXISTS alembic_version;")
+    with db.engine.connect() as conn:
+        with conn.begin():
+            db.drop_all()
+            conn.execute(text("DROP TABLE IF EXISTS alembic_version;"))
+
     click.echo("Drop all done.")
 
 
@@ -445,8 +448,8 @@ def create_event_suggestion(admin_unit_id, freetext):
 
 
 def _add_event_to_list(event_list_id, event_id):
-    event = Event.query.get(event_id)
-    event_list = EventList.query.get(event_list_id)
+    event = db.session.get(Event, event_id)
+    event_list = db.session.get(EventList, event_list_id)
     event_list.events.append(event)
     db.session.commit()
 

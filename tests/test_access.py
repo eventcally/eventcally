@@ -5,7 +5,7 @@ def test_has_admin_unit_member_role(client, app, db, seeder):
         from project.access import has_admin_unit_member_role
         from project.models import AdminUnitMember
 
-        member = AdminUnitMember.query.get(member_id)
+        member = db.session.get(AdminUnitMember, member_id)
         assert has_admin_unit_member_role(member, "admin") is False
 
 
@@ -19,7 +19,7 @@ def test_has_current_user_member_role_for_admin_unit(client, app, db, seeder):
             from project.access import has_current_user_member_role_for_admin_unit
             from project.models import AdminUnitMember
 
-            member = AdminUnitMember.query.get(member_id)
+            member = db.session.get(AdminUnitMember, member_id)
             login_user(member.user)
 
             assert (

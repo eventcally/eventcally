@@ -1,7 +1,5 @@
-import json
-
 from flask import flash, redirect, render_template, request, url_for
-from flask_babelex import gettext
+from flask_babel import gettext
 from flask_security import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
@@ -15,7 +13,7 @@ from project.access import (
 from project.dateutils import get_next_full_hour
 from project.forms.event_date import FindEventDateForm
 from project.forms.event_suggestion import CreateEventSuggestionForm
-from project.jsonld import DateTimeEncoder, get_sd_for_event_date
+from project.jsonld import get_sd_for_event_date
 from project.models import AdminUnit, EventOrganizer, EventReviewStatus, EventSuggestion
 from project.services.event import (
     get_event_date_with_details_or_404,
@@ -75,9 +73,7 @@ def widget_event_date(au_short_name, id):
 
     event_date = get_event_date_with_details_or_404(id)
     can_read_event_or_401(event_date.event)
-    structured_data = json.dumps(
-        get_sd_for_event_date(event_date), indent=2, cls=DateTimeEncoder
-    )
+    structured_data = app.json.dumps(get_sd_for_event_date(event_date), indent=2)
 
     url = url_for("event_date", id=id, _external=True)
     share_links = get_share_links(url, event_date.event.name)

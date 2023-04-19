@@ -10,6 +10,7 @@ def test_event_dates(client, seeder, utils):
     url = utils.get_url("widget_event_dates", au_short_name=au_short_name)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "widget.css")
+    assert "X-Frame-Options" not in response.headers
 
     event_url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=1)
     utils.assert_response_contains(response, event_url)
@@ -106,7 +107,7 @@ def test_event_date(client, seeder, utils, app, db):
 
         from project.models import AdminUnit
 
-        admin_unit = AdminUnit.query.get(admin_unit_id)
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.widget_font = "Verdana"
         admin_unit.widget_background_color = Color("#eceef0")
         admin_unit.widget_primary_color = Color("#b09641")

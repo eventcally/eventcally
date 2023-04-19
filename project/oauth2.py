@@ -68,7 +68,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
         db.session.commit()
 
     def authenticate_user(self, authorization_code):
-        return User.query.get(authorization_code.user_id)
+        return db.session.get(User, authorization_code.user_id)
 
 
 class OpenIDCode(_OpenIDCode):
@@ -97,7 +97,7 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
             return token
 
     def authenticate_user(self, credential):
-        return User.query.get(credential.user_id)
+        return db.session.get(User, credential.user_id)
 
     def revoke_old_credential(self, credential):
         credential.revoked = True
