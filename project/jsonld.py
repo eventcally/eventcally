@@ -16,8 +16,9 @@ class CustomJsonProvider(DefaultJSONProvider):
         elif isinstance(obj, datetime.date):
             return obj.isoformat()
 
-        # pragma: no cover
-        return super(CustomJsonProvider, CustomJsonProvider).default(obj)
+        return super(CustomJsonProvider, CustomJsonProvider).default(
+            obj
+        )  # pragma: no cover
 
 
 def get_sd_for_admin_unit(admin_unit):
