@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_ajax_csrf_script %}
+{%- block title -%}
+{{ _('Export') }}
+{%- endblock -%}
+{% block header %}
+{{ render_ajax_csrf_script() }}
+<script>
+    function submit_async() {
+        $("#submit_async"). prop("disabled", true);
+        handle_request_start();
+        $.ajax({
+            url: "{{ url_for('manage_admin_unit_export', id=admin_unit.id) }}",
+            type: "post",
+            dataType: "json",
+            error: function(xhr, status, error) {
+                $("#submit_async"). prop("disabled", false);
+                handle_request_error(xhr, status, error);
+            },
+            success: function (data) {
+                poll(data["result_id"]);
+            }
+        });
+    }
+
+    function poll(result_id) {
+        $.ajax({
+            url: "{{ url_for('manage_admin_unit_export', id=admin_unit.id) }}",
+            type: "get",
+            dataType: "json",
+            data: "poll=" + result_id,
+            error: function(xhr, status, error) {
+                $("#submit_async"). prop("disabled", false);
+                handle_request_error(xhr, status, error);
+            },
+            success: function (data) {
+                if (!data["ready"]) {
+                    setTimeout(function() {
+                        poll(result_id);
+                    }, 2000);
+                    return;
+                }
+
+                if (!data["successful"]) {
+                  console.error(data);
+                  handle_request_error(null, JSON.stringify(data), data);
+                  return;
+                }
+
+                window.location.reload();
+            }
+        });
+    }
+
+    $( function() {
+        $("#submit_async").click(function(){
+            submit_async();
+            return false;
+        });
+    });
+</script>
+{% endblock %}
+{% block content %}
+
+<h1>{{ _('Export') }}</h1>
+
+<h2>{{ _('Download') }}</h2>
+<ul>
+    <li>
+    {% if dump_file %}
+        <a href="{{ dump_file.url }}">{{ _('All data') }}</a> <span class="badge badge-pill badge-light">{{ dump_file.ctime | datetimeformat }}</span> <span class="badge badge-pill badge-light">{{ dump_file.size | human_file_size }}</span>
+    {% else %}
+        {{ _('No files available') }}
+    {% endif %}
+    </li>
+</ul>
+
+<p>
+    <button id="submit_async" type="button" class="btn btn-primary">{{ _('Create export files') }}</button>
+    <div class="col-md">
+        <div id="result_container">
+        </div>
+        <div class="spinner-border m-3" role="status" id="spinner" style="display: none;">
+            <span class="sr-only">Loading&hellip;</span>
+        </div>
+        <div class="alert alert-danger m-3" role="alert" id="error_alert" style="display: none;"></div>
+    </div>
+</p>
+
+{% endblock %}

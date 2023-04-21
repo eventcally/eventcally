@@ -132,6 +132,7 @@ cache_path = (
     cache_env if os.path.isabs(cache_env) else os.path.join(app.root_path, cache_env)
 )
 dump_path = os.path.join(cache_path, "dump")
+dump_org_path = os.path.join(cache_path, "dump_org")
 img_path = os.path.join(cache_path, "img")
 sitemap_file = "sitemap.xml"
 robots_txt_file = "robots.txt"

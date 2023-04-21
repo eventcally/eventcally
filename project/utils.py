@@ -56,6 +56,9 @@ def make_dir(path):
 
 
 def clear_files_in_dir(path):
+    if not os.path.exists(path):  # pragma: no cover
+        return
+
     with os.scandir(path) as entries:
         for entry in entries:
             if entry.is_file() or entry.is_symlink():

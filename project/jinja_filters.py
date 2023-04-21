@@ -35,6 +35,16 @@ def ensure_link_scheme(link: str):
     return f"https://{link}"
 
 
+def human_file_size(bytes, units=[" bytes", "KB", "MB", "GB", "TB", "PB", "EB"]):
+    return (
+        str(bytes) + units[0]
+        if bytes < 1024
+        else human_file_size(bytes >> 10, units[1:])
+        if units[1:]
+        else f"{bytes>>10}ZB"
+    )
+
+
 app.jinja_env.filters["event_category_name"] = lambda u: get_event_category_name(u)
 app.jinja_env.filters["loc_enum"] = lambda u: get_localized_enum_name(u)
 app.jinja_env.filters["loc_scope"] = lambda s: get_localized_scope(s)
@@ -45,6 +55,7 @@ app.jinja_env.filters["any_dict_value_true"] = any_dict_value_true
 app.jinja_env.filters["ensure_link_scheme"] = lambda s: ensure_link_scheme(s)
 app.jinja_env.filters["place_str"] = lambda p: get_place_str(p)
 app.jinja_env.filters["location_str"] = lambda location: get_location_str(location)
+app.jinja_env.filters["human_file_size"] = lambda size: human_file_size(size)
 
 
 def get_base_url():
