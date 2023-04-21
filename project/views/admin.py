@@ -5,7 +5,7 @@ from flask_security import roles_required
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
-from project import app, celery, db, user_datastore
+from project import app, db, user_datastore
 from project.base_tasks import send_mail_task
 from project.forms.admin import (
     AdminNewsletterForm,
@@ -21,6 +21,8 @@ from project.services.admin import upsert_settings
 from project.services.user import set_roles_for_user
 from project.views.utils import (
     flash_errors,
+    get_celery_poll_group_result,
+    get_celery_poll_result,
     get_pagination_urls,
     handleSqlError,
     non_match_for_deletion,
@@ -125,20 +127,7 @@ def admin_email():
     form = AdminTestEmailForm()
 
     if "poll" in request.args:  # pragma: no cover
-        try:
-            result = celery.AsyncResult(request.args["poll"])
-            ready = result.ready()
-            return {
-                "ready": ready,
-                "successful": result.successful() if ready else None,
-                "value": result.get() if ready else result.result,
-            }
-        except Exception as e:
-            return {
-                "ready": True,
-                "successful": False,
-                "error": getattr(e, "message", "Unknown error"),
-            }
+        return get_celery_poll_result()
 
     if form.validate_on_submit():
         subject = gettext(
@@ -167,21 +156,7 @@ def admin_newsletter():
     form = AdminNewsletterForm()
 
     if "poll" in request.args:  # pragma: no cover
-        try:
-            result = celery.GroupResult.restore(request.args["poll"])
-            ready = result.ready()
-            return {
-                "ready": ready,
-                "count": len(result.children),
-                "completed": result.completed_count(),
-                "successful": result.successful() if ready else None,
-            }
-        except Exception as e:
-            return {
-                "ready": True,
-                "successful": False,
-                "error": getattr(e, "message", "Unknown error"),
-            }
+        return get_celery_poll_group_result()
 
     if form.validate_on_submit():
         subject = gettext(

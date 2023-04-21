@@ -5,7 +5,7 @@ import shutil
 from sqlalchemy import and_
 from sqlalchemy.orm import joinedload
 
-from project import app, db, dump_path
+from project import app, db, dump_org_path, dump_path
 from project.api.event.schemas import EventDumpSchema
 from project.api.event_category.schemas import EventCategoryDumpSchema
 from project.api.event_reference.schemas import EventReferenceDumpSchema
@@ -22,12 +22,12 @@ from project.models import (
     EventReference,
     PublicStatus,
 )
-from project.utils import make_dir
+from project.utils import clear_files_in_dir, make_dir
 
 
 class Dumper(object):
-    def __init__(self, dump_path, file_base_name):
-        self.dump_path = dump_path
+    def __init__(self, dump_base_path, file_base_name):
+        self.dump_base_path = dump_base_path
         self.file_base_name = file_base_name
         self.tmp_path = None
 
@@ -91,7 +91,7 @@ class Dumper(object):
 
         app.logger.info(f"{len(items)} item(s) dumped to {path}.")
 
-    def dump_item(self, items, schema, file_base_name):  # pragma: no cover
+    def dump_item(self, items, schema, file_base_name):
         result = schema.dump(items)
         path = os.path.join(self.tmp_path, file_base_name + ".json")
 
@@ -101,18 +101,18 @@ class Dumper(object):
         app.logger.info(f"Item dumped to {path}.")
 
     def setup_tmp_dir(self):
-        self.tmp_path = os.path.join(self.dump_path, f"tmp-{self.file_base_name}")
+        self.tmp_path = os.path.join(self.dump_base_path, f"tmp-{self.file_base_name}")
         make_dir(self.tmp_path)
 
     def clean_up_tmp_dir(self):
         shutil.rmtree(self.tmp_path, ignore_errors=True)
 
     def zip_tmp_dir(self):
-        zip_base_name = os.path.join(dump_path, self.file_base_name)
+        zip_base_name = os.path.join(self.dump_base_path, self.file_base_name)
         zip_path = shutil.make_archive(zip_base_name, "zip", self.tmp_path)
         app.logger.info(f"Zipped all up to {zip_path}.")
 
-    def dump_image(self, image):  # pragma: no cover
+    def dump_image(self, image):
         if not image:
             return
 
@@ -121,9 +121,9 @@ class Dumper(object):
         get_image_from_bytes(image.data).save(file_path)
 
 
-class AdminUnitDumper(Dumper):  # pragma: no cover
-    def __init__(self, dump_path, admin_unit_id):
-        super().__init__(dump_path, f"org-{admin_unit_id}")
+class AdminUnitDumper(Dumper):
+    def __init__(self, dump_base_path, admin_unit_id):
+        super().__init__(dump_base_path, f"org-{admin_unit_id}")
         self.admin_unit_id = admin_unit_id
 
     def dump_data(self):
@@ -173,6 +173,12 @@ def dump_all():
     dumper.dump()
 
 
-def dump_admin_unit(admin_unit_id):  # pragma: no cover
-    dumper = AdminUnitDumper(dump_path, admin_unit_id)
+def dump_admin_unit(admin_unit_id):
+    dumper = AdminUnitDumper(dump_org_path, admin_unit_id)
     dumper.dump()
+
+
+def clear_admin_unit_dumps():
+    app.logger.info("Clearing admin unit dumps..")
+    clear_files_in_dir(dump_org_path)
+    app.logger.info("Done.")

@@ -255,9 +255,13 @@
                     {% if current_admin_unit.can_invite_other %}
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_organization_invitations', id=current_admin_unit.id) }}">{{ _('Organization invitations') }}</a>
                     {% endif %}
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('admin_unit_update', id=current_admin_unit.id) }}">{{ _('Settings') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_export', id=current_admin_unit.id) }}">{{ _('Export') }}</a>
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_custom_widgets', id=current_admin_unit.id) }}">{{ _('Custom widgets') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_widgets', id=current_admin_unit.id) }}">{{ _('Widgets') }}</a>
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('organizations', path=current_admin_unit.id) }}">{{ _('Profile') }}</a>
                   </div>
                 </li>

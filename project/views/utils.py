@@ -9,7 +9,7 @@ from psycopg2.errorcodes import UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
 from wtforms import FormField
 
-from project import app, mail
+from project import app, celery, mail
 from project.access import get_admin_unit_for_manage, get_admin_units_for_manage
 from project.dateutils import berlin_tz, round_to_next_day
 from project.models import Event, EventAttendanceMode, EventDate
@@ -263,3 +263,38 @@ def get_invitation_access_result(email: str):
         return app.login_manager.unauthorized()
 
     return None
+
+
+def get_celery_poll_result():  # pragma: no cover
+    try:
+        result = celery.AsyncResult(request.args["poll"])
+        ready = result.ready()
+        return {
+            "ready": ready,
+            "successful": result.successful() if ready else None,
+            "value": result.get() if ready else result.result,
+        }
+    except Exception as e:
+        return {
+            "ready": True,
+            "successful": False,
+            "error": getattr(e, "message", "Unknown error"),
+        }
+
+
+def get_celery_poll_group_result():  # pragma: no cover
+    try:
+        result = celery.GroupResult.restore(request.args["poll"])
+        ready = result.ready()
+        return {
+            "ready": ready,
+            "count": len(result.children),
+            "completed": result.completed_count(),
+            "successful": result.successful() if ready else None,
+        }
+    except Exception as e:
+        return {
+            "ready": True,
+            "successful": False,
+            "error": getattr(e, "message", "Unknown error"),
+        }

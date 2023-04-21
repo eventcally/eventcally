@@ -1,10 +1,19 @@
-from flask import flash, redirect, render_template, request, url_for
+import os
+
+from flask import (
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
 from flask_babel import gettext
 from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import desc, func
 
-from project import app, db
+from project import app, db, dump_org_path
 from project.access import (
     access_or_401,
     admin_unit_suggestions_enabled_or_404,
@@ -12,6 +21,7 @@ from project.access import (
     get_admin_units_for_manage,
     has_access,
 )
+from project.celery_tasks import dump_admin_unit_task
 from project.forms.admin_unit import UpdateAdminUnitWidgetForm
 from project.forms.event import FindEventForm
 from project.forms.event_place import FindEventPlaceForm
@@ -35,6 +45,7 @@ from project.utils import get_place_str
 from project.views.event import get_event_category_choices
 from project.views.utils import (
     flash_errors,
+    get_celery_poll_result,
     get_current_admin_unit,
     get_pagination_urls,
     handleSqlError,
@@ -334,6 +345,51 @@ def manage_admin_unit_events_import(id):
         "manage/events_vue.html",
         admin_unit=admin_unit,
     )
+
+
+@app.route("/manage/admin_unit/<int:id>/export", methods=["GET", "POST"])
+@auth_required()
+def manage_admin_unit_export(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+
+    if not has_access(admin_unit, "admin_unit:update"):  # pragma: no cover
+        return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))
+
+    if "poll" in request.args:  # pragma: no cover
+        return get_celery_poll_result()
+
+    if request.method == "POST":  # pragma: no cover
+        result = dump_admin_unit_task.delay(admin_unit.id)
+        return {"result_id": result.id}
+
+    set_current_admin_unit(admin_unit)
+
+    file_name = f"org-{admin_unit.id}.zip"
+    file_path = os.path.join(dump_org_path, file_name)
+    dump_file = None
+
+    if os.path.exists(file_path):
+        dump_file = {
+            "url": url_for(
+                "manage_admin_unit_export_dump_files", id=admin_unit.id, path=file_name
+            ),
+            "size": os.path.getsize(file_path),
+            "ctime": os.path.getctime(file_path),
+        }
+
+    return render_template(
+        "manage/export.html",
+        admin_unit=admin_unit,
+        dump_file=dump_file,
+    )
+
+
+@app.route("/manage/admin_unit/<int:id>/export/dump/<path:path>")
+def manage_admin_unit_export_dump_files(id, path):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    access_or_401(admin_unit, "admin_unit:update")
+
+    return send_from_directory(dump_org_path, path)
 
 
 @app.route("/manage/admin_unit/<int:id>/widgets", methods=("GET", "POST"))

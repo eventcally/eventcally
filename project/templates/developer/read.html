@@ -5,7 +5,7 @@
 {%- endblock -%}
 {% block content %}
 
-<h1>Developer</h1>
+<h1>{{ _('Developer') }}</h1>
 
 <h2>API</h2>
 <ul>
@@ -13,13 +13,13 @@
     <li>Code generation: <a href="https://editor.swagger.io/?url={{ url_for('home', _external=True) }}swagger/" target="_blank" rel="noopener noreferrer">Swagger Editor</a></li>
 </ul>
 
-<h2>Data download</h2>
+<h2>{{ _('Download') }}</h2>
 <ul>
     <li>
     {% if dump_file %}
-        <a href="{{ dump_file.url }}">Dump of all data</a> <span class="badge badge-pill badge-light">{{ dump_file.ctime | datetimeformat }}</span> <span class="badge badge-pill badge-light">{{ dump_file.size }} Bytes</span>
+        <a href="{{ dump_file.url }}">{{ _('All data') }}</a> <span class="badge badge-pill badge-light">{{ dump_file.ctime | datetimeformat }}</span> <span class="badge badge-pill badge-light">{{ dump_file.size | human_file_size }}</span>
     {% else %}
-        No files available
+        {{ _('No files available') }}
     {% endif %}
     </li>
     <li>The data file format is part of the <a href="/swagger-ui" target="_blank" rel="noopener noreferrer">API spec</a>. Watch for the <code>*Dump</code> models.</li>
