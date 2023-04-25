@@ -192,4 +192,3 @@ class Event(db.Model, TrackableMixin, EventMixin):
 @listens_for(Event, "before_update")
 def before_saving_event(mapper, connect, self):
     self.validate()
-    self.purge_event_mixin()

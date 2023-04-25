@@ -88,5 +88,4 @@ def purge_event_suggestion(mapper, connect, self):
         self.organizer_text = None
     if self.event_place_id is not None:
         self.event_place_text = None
-    self.purge_event_mixin()
     sanitize_allday_instance(self)

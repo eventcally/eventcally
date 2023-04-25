@@ -56,9 +56,10 @@ class EventMixin(object):
     @declared_attr
     def photo(cls):
         return relationship(
-            "Image", uselist=False, single_parent=True, cascade="all, delete-orphan"
+            "Image",
+            uselist=False,
+            single_parent=True,
+            cascade="all, delete-orphan",
+            foreign_keys=[cls.photo_id],
+            back_populates=cls.__tablename__,
         )
-
-    def purge_event_mixin(self):
-        if self.photo and self.photo.is_empty():
-            self.photo_id = None

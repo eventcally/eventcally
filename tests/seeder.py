@@ -717,3 +717,27 @@ class Seeder(object):
                 "Verein",
             )
             self.create_event(verein_admin_unit_id)
+
+    def create_location(
+        self,
+        street=None,
+        postalCode=None,
+        city=None,
+        latitude=None,
+        longitude=None,
+    ):
+        from project.models import Location
+
+        with self._app.app_context():
+            location = Location(
+                street=street,
+                postalCode=postalCode,
+                city=city,
+                latitude=latitude,
+                longitude=longitude,
+            )
+            self._db.session.add(location)
+            self._db.session.commit()
+            location_id = location.id
+
+        return location_id

@@ -203,11 +203,19 @@ class AdminUnit(db.Model, TrackableMixin):
     )
     location_id = deferred(db.Column(db.Integer, db.ForeignKey("location.id")))
     location = db.relationship(
-        "Location", uselist=False, single_parent=True, cascade="all, delete-orphan"
+        "Location",
+        uselist=False,
+        single_parent=True,
+        cascade="all, delete-orphan",
+        back_populates="adminunit",
     )
     logo_id = deferred(db.Column(db.Integer, db.ForeignKey("image.id")))
     logo = db.relationship(
-        "Image", uselist=False, single_parent=True, cascade="all, delete-orphan"
+        "Image",
+        uselist=False,
+        single_parent=True,
+        cascade="all, delete-orphan",
+        back_populates="adminunit",
     )
     url = deferred(Column(String(255)), group="detail")
     email = deferred(Column(Unicode(255)), group="detail")
@@ -312,16 +320,6 @@ class AdminUnit(db.Model, TrackableMixin):
             .scalar_subquery()
             > 0
         )
-
-    def purge(self):
-        if self.logo and self.logo.is_empty():
-            self.logo_id = None
-
-
-@listens_for(AdminUnit, "before_insert")
-@listens_for(AdminUnit, "before_update")
-def before_saving_admin_unit(mapper, connect, self):
-    self.purge()
 
 
 @listens_for(AdminUnit.can_invite_other, "set")
