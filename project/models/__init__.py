@@ -31,11 +31,13 @@ from project.models.event_suggestion import (
 )
 from project.models.functions import sanitize_allday_instance
 from project.models.image import Image
+from project.models.iowned import IOwned
 from project.models.legacy import (
     FeaturedEventRejectionReason,
     FeaturedEventReviewStatus,
 )
 from project.models.location import Location
 from project.models.oauth import OAuth2AuthorizationCode, OAuth2Client, OAuth2Token
+from project.models.session_events import before_flush
 from project.models.settings import Settings
 from project.models.user import OAuth, Role, User, UserFavoriteEvents

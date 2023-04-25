@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, Unicode, UniqueConstraint
-from sqlalchemy.event import listens_for
 from sqlalchemy.orm import deferred
 
 from project import db
@@ -17,20 +16,21 @@ class EventOrganizer(db.Model, TrackableMixin):
     fax = deferred(Column(Unicode(255)), group="detail")
     location_id = deferred(db.Column(db.Integer, db.ForeignKey("location.id")))
     location = db.relationship(
-        "Location", uselist=False, single_parent=True, cascade="all, delete-orphan"
+        "Location",
+        uselist=False,
+        single_parent=True,
+        cascade="all, delete-orphan",
+        back_populates="eventorganizer",
     )
     logo_id = deferred(db.Column(db.Integer, db.ForeignKey("image.id")))
     logo = db.relationship(
-        "Image", uselist=False, single_parent=True, cascade="all, delete-orphan"
+        "Image",
+        uselist=False,
+        single_parent=True,
+        cascade="all, delete-orphan",
+        back_populates="eventorganizer",
     )
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=True)
-
-
-@listens_for(EventOrganizer, "before_insert")
-@listens_for(EventOrganizer, "before_update")
-def purge_event_organizer(mapper, connect, self):
-    if self.logo and self.logo.is_empty():
-        self.logo_id = None
 
 
 class EventCoOrganizers(db.Model):

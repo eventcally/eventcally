@@ -390,3 +390,150 @@ def test_event_is_favored_by_current_user(client, app, db, seeder):
 
         event = db.session.get(Event, event_id)
         assert event.is_favored_by_current_user() is False
+
+
+def test_purge_event_photo(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+    first_image_id = seeder.upsert_default_image()
+    seeder.assign_image_to_event(event_id, first_image_id)
+
+    with app.app_context():
+        from project.models import Event, Image
+
+        event = db.session.get(Event, event_id)
+        assert event.photo is not None
+
+        event.photo.data = None
+        db.session.commit()
+
+        event = db.session.get(Event, event_id)
+        assert event.photo is None
+
+        image = db.session.get(Image, first_image_id)
+        assert image is None
+
+
+def test_purge_event_place_photo(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    first_image_id = seeder.upsert_default_image()
+    second_image_id = seeder.upsert_default_image()
+
+    with app.app_context():
+        from project.models import EventPlace, Image
+
+        place = db.session.get(EventPlace, place_id)
+        place.photo = db.session.get(Image, first_image_id)
+        db.session.commit()
+
+        assert place.photo is not None
+
+        place.photo = db.session.get(Image, second_image_id)
+        db.session.commit()
+
+        place = db.session.get(EventPlace, place_id)
+        assert place.photo is not None
+
+        image = db.session.get(Image, first_image_id)
+        assert image is None
+
+        image = db.session.get(Image, second_image_id)
+        assert image is not None
+
+        place.photo.data = None
+        db.session.commit()
+
+        place = db.session.get(EventPlace, place_id)
+        assert place.photo is None
+
+        image = db.session.get(Image, second_image_id)
+        assert image is None
+
+
+def test_purge_eventsuggestion_photo(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    suggestion_id = seeder.create_event_suggestion(admin_unit_id)
+    image_id = seeder.upsert_default_image()
+
+    with app.app_context():
+        from project.models import EventSuggestion, Image
+
+        suggestion = db.session.get(EventSuggestion, suggestion_id)
+        suggestion.photo = db.session.get(Image, image_id)
+        db.session.commit()
+
+        assert suggestion.photo is not None
+
+        suggestion.photo.data = None
+        db.session.commit()
+
+        suggestion = db.session.get(EventSuggestion, suggestion_id)
+        assert suggestion.photo is None
+
+        image = db.session.get(Image, image_id)
+        assert image is None
+
+
+def test_purge_adminunit(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    instance_id = admin_unit_id
+    image_id = seeder.upsert_default_image()
+    location_id = seeder.create_location(street="Street")
+
+    with app.app_context():
+        from project.models import AdminUnit, Image, Location
+
+        instance = db.session.get(AdminUnit, instance_id)
+        instance.logo = db.session.get(Image, image_id)
+        instance.location = db.session.get(Location, location_id)
+        db.session.commit()
+
+        assert instance.logo is not None
+        assert instance.location is not None
+
+        instance.logo.data = None
+        instance.location.street = None
+        db.session.commit()
+
+        instance = db.session.get(AdminUnit, instance_id)
+        assert instance.logo is None
+        assert instance.location is None
+
+        image = db.session.get(Image, image_id)
+        assert image is None
+
+        location = db.session.get(Location, location_id)
+        assert location is None
+
+
+def test_purge_eventorganizer(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    instance_id = seeder.upsert_default_event_organizer(admin_unit_id)
+    image_id = seeder.upsert_default_image()
+    location_id = seeder.create_location(street="Street")
+
+    with app.app_context():
+        from project.models import EventOrganizer, Image, Location
+
+        instance = db.session.get(EventOrganizer, instance_id)
+        instance.logo = db.session.get(Image, image_id)
+        instance.location = db.session.get(Location, location_id)
+        db.session.commit()
+
+        assert instance.logo is not None
+        assert instance.location is not None
+
+        instance.logo.data = None
+        instance.location.street = None
+        db.session.commit()
+
+        instance = db.session.get(EventOrganizer, instance_id)
+        assert instance.logo is None
+        assert instance.location is None
+
+        image = db.session.get(Image, image_id)
+        assert image is None
+
+        location = db.session.get(Location, location_id)
+        assert location is None
