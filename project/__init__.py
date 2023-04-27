@@ -12,6 +12,7 @@ from flask_qrcode import QRcode
 from flask_security import Security, SQLAlchemySessionUserDatastore
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+from sqlalchemy import MetaData
 
 from project.custom_session_interface import CustomSessionInterface
 
@@ -183,7 +184,15 @@ if app.config["MAIL_SUPPRESS_SEND"]:
     email_dispatched.connect(log_message)
 
 # Create db
-db = SQLAlchemy(app)
+convention = {
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
+}
+metadata = MetaData(naming_convention=convention)
+db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db)
 
 # Celery tasks

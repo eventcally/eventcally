@@ -40,7 +40,7 @@ def upgrade():
     op.alter_column("event", "host_id", existing_type=sa.INTEGER(), nullable=True)
     op.alter_column("event", "place_id", existing_type=sa.INTEGER(), nullable=True)
     op.create_foreign_key(None, "event", "eventorganizer", ["organizer_id"], ["id"])
-    op.drop_constraint("place_name_key", "place", type_="unique")
+    op.execute("ALTER TABLE place DROP CONSTRAINT IF EXISTS place_name_key;")
     # ### end Alembic commands ###
 
 

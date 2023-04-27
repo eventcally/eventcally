@@ -1,3 +1,6 @@
+import pytest
+
+
 def create_form_data(response, utils):
     return {
         "csrf_token": utils.get_csrf(response),
@@ -297,3 +300,111 @@ def test_list(client, app, utils, seeder):
     seeder.create_admin_unit(user_id, "Meine Crew")
     response = client.get("/manage/admin_units")
     assert b"Meine Crew" in response.data
+
+
+@pytest.mark.parametrize("db_error", [True, False])
+@pytest.mark.parametrize("non_match", [True, False])
+def test_admin_unit_request_deletion(
+    client, seeder, utils, app, db, mocker, db_error, non_match
+):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("admin_unit_request_deletion", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
+    form_name = "Meine Crew"
+
+    if non_match:
+        form_name = "wrong"
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": form_name,
+        },
+    )
+
+    if non_match:
+        utils.assert_response_error_message(
+            response, "Der eingegebene Name entspricht nicht dem Namen der Organisation"
+        )
+        return
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
+    utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
+
+    with app.app_context():
+        from project.models import AdminUnit
+
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        assert admin_unit.deletion_requested_at is not None
+
+
+@pytest.mark.parametrize("db_error", [True, False])
+@pytest.mark.parametrize("non_match", [True, False])
+def test_admin_unit_cancel_deletion(
+    client, seeder, utils, app, db, mocker, db_error, non_match
+):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    with app.app_context():
+        import datetime
+
+        from project.models import AdminUnit
+
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        admin_unit.deletion_requested_at = datetime.datetime.utcnow()
+        db.session.commit()
+
+    url = utils.get_url("admin_unit_cancel_deletion", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
+    form_name = "Meine Crew"
+
+    if non_match:
+        form_name = "wrong"
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": form_name,
+        },
+    )
+
+    if non_match:
+        utils.assert_response_error_message(
+            response, "Der eingegebene Name entspricht nicht dem Namen der Organisation"
+        )
+        return
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
+    utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
+
+    with app.app_context():
+        from project.models import AdminUnit
+
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        assert admin_unit.deletion_requested_at is None
+
+
+def test_admin_unit_cancel_deletion_permission_missing(client, seeder, utils, mocker):
+    owner_id, admin_unit_id, member_id = seeder.setup_base_event_verifier()
+
+    response = utils.get_endpoint("admin_unit_cancel_deletion", id=admin_unit_id)
+    utils.assert_response_permission_missing(
+        response, "manage_admin_unit", id=admin_unit_id
+    )

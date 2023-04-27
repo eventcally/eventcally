@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-21 12:29+0200\n"
+"POT-Creation-Date: 2023-04-27 15:10+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -212,7 +212,7 @@ msgstr "Impressum"
 #: project/forms/admin.py:13 project/templates/_macros.html:1473
 #: project/templates/layout.html:311
 #: project/templates/widget/event_suggestion/create.html:204
-#: project/views/admin_unit.py:73 project/views/root.py:71
+#: project/views/admin_unit.py:82 project/views/root.py:71
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -311,10 +311,13 @@ msgid "Update organization"
 msgstr "Organisation aktualisieren"
 
 #: project/forms/admin.py:68 project/templates/admin/delete_admin_unit.html:6
+#: project/templates/admin_unit/request_deletion.html:6
+#: project/templates/admin_unit/update.html:93
 msgid "Delete organization"
 msgstr "Organisation löschen"
 
 #: project/forms/admin.py:69 project/forms/admin_unit.py:28
+#: project/forms/admin_unit.py:134 project/forms/admin_unit.py:139
 #: project/forms/event.py:85 project/forms/event.py:114
 #: project/forms/event_place.py:25 project/forms/event_place.py:50
 #: project/forms/event_suggestion.py:26 project/forms/oauth2_client.py:66
@@ -491,6 +494,17 @@ msgstr "Hauptfarbe"
 msgid "Link Color"
 msgstr "Linkfarbe"
 
+#: project/forms/admin_unit.py:133
+msgid "Request deletion"
+msgstr "Löschung beantragen"
+
+#: project/forms/admin_unit.py:138
+#: project/templates/admin_unit/cancel_deletion.html:6
+#: project/templates/admin_unit/update.html:26
+#: project/templates/manage/events.html:49
+msgid "Cancel deletion"
+msgstr "Löschen abbrechen"
+
 #: project/forms/admin_unit_member.py:13
 msgid "Invite"
 msgstr "Einladen"
@@ -600,7 +614,7 @@ msgstr "50 km"
 msgid "100 km"
 msgstr "100 km"
 
-#: project/forms/event.py:38 project/templates/manage/events.html:94
+#: project/forms/event.py:38 project/templates/manage/events.html:100
 msgid "Start"
 msgstr "Beginn"
 
@@ -794,8 +808,8 @@ msgid "Choose how people can attend the event."
 msgstr "Wähle aus, wie Personen an der Veranstaltung teilnehmen können."
 
 #: project/forms/event.py:225 project/forms/event_place.py:27
-#: project/templates/manage/events.html:98
-#: project/templates/manage/events.html:133
+#: project/templates/manage/events.html:104
+#: project/templates/manage/events.html:139
 #: project/templates/manage/places.html:21
 #: project/templates/manage/places.html:39
 #: project/templates/widget/event_suggestion/create.html:258
@@ -869,7 +883,7 @@ msgstr "Ungültiger Mitveranstalter."
 #: project/templates/event_place/create.html:31
 #: project/templates/event_place/delete.html:13
 #: project/templates/event_place/update.html:31
-#: project/templates/manage/events.html:97
+#: project/templates/manage/events.html:103
 msgid "Place"
 msgstr "Ort"
 
@@ -886,7 +900,7 @@ msgstr "Neuen Ort eingeben"
 #: project/forms/event_suggestion.py:60 project/templates/_macros.html:475
 #: project/templates/_macros.html:647 project/templates/event/create.html:253
 #: project/templates/event/update.html:156
-#: project/templates/manage/events.html:96
+#: project/templates/manage/events.html:102
 #: project/templates/organizer/create.html:27
 #: project/templates/organizer/delete.html:13
 #: project/templates/organizer/update.html:27
@@ -1015,7 +1029,7 @@ msgstr "Kategorie"
 #: project/forms/event.py:446 project/forms/event_date.py:24
 #: project/forms/planing.py:22 project/templates/_macros.html:305
 #: project/templates/admin_unit/create.html:38
-#: project/templates/admin_unit/update.html:39
+#: project/templates/admin_unit/update.html:46
 #: project/templates/event_place/create.html:40
 #: project/templates/event_place/update.html:40
 #: project/templates/manage/organizers.html:19
@@ -1169,8 +1183,10 @@ msgstr "Wochentage"
 #: project/forms/reference.py:11 project/forms/reference_request.py:16
 #: project/templates/_macros.html:491 project/templates/_macros.html:664
 #: project/templates/admin/delete_admin_unit.html:13
+#: project/templates/admin_unit/cancel_deletion.html:13
 #: project/templates/admin_unit/create.html:28
-#: project/templates/admin_unit/update.html:29
+#: project/templates/admin_unit/request_deletion.html:15
+#: project/templates/admin_unit/update.html:36
 #: project/templates/layout.html:247
 msgid "Organization"
 msgstr "Organisation"
@@ -1319,7 +1335,7 @@ msgstr "Zuletzt aktualisiert am %(updated_at)s."
 #: project/templates/event/actions.html:25
 #: project/templates/event/create.html:230
 #: project/templates/event/update.html:122
-#: project/templates/manage/events.html:95
+#: project/templates/manage/events.html:101
 #: project/templates/widget/event_suggestion/create.html:229
 msgid "Event"
 msgstr "Veranstaltung"
@@ -1364,9 +1380,9 @@ msgstr "Merkzettel"
 
 #: project/templates/_macros.html:590 project/templates/_macros.html:633
 #: project/templates/_macros.html:765
-#: project/templates/admin/admin_units.html:34
+#: project/templates/admin/admin_units.html:36
 #: project/templates/admin/users.html:32
-#: project/templates/manage/events.html:110
+#: project/templates/manage/events.html:116
 #: project/templates/manage/members.html:35
 #: project/templates/manage/organizers.html:33
 #: project/templates/manage/places.html:31
@@ -1382,7 +1398,7 @@ msgstr "Empfohlen von"
 
 #: project/templates/_macros.html:703 project/templates/_macros.html:1297
 #: project/templates/event/actions.html:38
-#: project/templates/manage/events.html:117
+#: project/templates/manage/events.html:123
 #: project/templates/manage/references_incoming.html:10
 msgid "Reference event"
 msgstr "Veranstaltung empfehlen"
@@ -1395,7 +1411,7 @@ msgstr "Empfehlungsanfragen"
 
 #: project/templates/_macros.html:723 project/templates/_macros.html:1294
 #: project/templates/event/actions.html:32
-#: project/templates/manage/events.html:115
+#: project/templates/manage/events.html:121
 msgid "Request reference"
 msgstr "Empfehlung anfragen"
 
@@ -1480,11 +1496,11 @@ msgid "Duplicate event"
 msgstr "Veranstaltung duplizieren"
 
 #: project/templates/_macros.html:1301 project/templates/event/actions.html:44
-#: project/templates/manage/events.html:121
+#: project/templates/manage/events.html:127
 msgid "Add to list"
 msgstr "Zu Liste hinzufügen"
 
-#: project/templates/_macros.html:1304 project/templates/manage/events.html:124
+#: project/templates/_macros.html:1304 project/templates/manage/events.html:130
 msgid "More"
 msgstr "Mehr"
 
@@ -1539,7 +1555,7 @@ msgstr "Veranstalter eingeben"
 msgid "Enter list name"
 msgstr "Listenname eingeben"
 
-#: project/templates/admin/admin_units.html:32 project/templates/home.html:25
+#: project/templates/admin/admin_units.html:34 project/templates/home.html:25
 msgid "Manage"
 msgstr "Verwaltung"
 
@@ -1557,7 +1573,7 @@ msgstr "Features"
 
 #: project/templates/layout.html:157 project/templates/layout.html:205
 #: project/templates/manage/events.html:6
-#: project/templates/manage/events.html:48
+#: project/templates/manage/events.html:54
 #: project/templates/manage/events_vue.html:4
 msgid "Events"
 msgstr "Veranstaltungen"
@@ -1603,7 +1619,7 @@ msgstr "Veranstaltungen anzeigen"
 
 #: project/templates/event/create.html:5
 #: project/templates/event/create.html:221 project/templates/layout.html:212
-#: project/templates/manage/events.html:49
+#: project/templates/manage/events.html:55
 #: project/templates/manage/organizers.html:38
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
@@ -1680,7 +1696,7 @@ msgstr "Organisationseinladungen"
 #: project/templates/admin/settings.html:4
 #: project/templates/admin/settings.html:11
 #: project/templates/admin_unit/update.html:6
-#: project/templates/admin_unit/update.html:23
+#: project/templates/admin_unit/update.html:30
 #: project/templates/layout.html:259 project/templates/manage/widgets.html:11
 #: project/templates/manage/widgets.html:15 project/templates/profile.html:19
 msgid "Settings"
@@ -1734,17 +1750,17 @@ msgstr "OAuth2 Clients"
 msgid "Users"
 msgstr "Nutzer"
 
-#: project/templates/admin/admin_units.html:33
-#: project/templates/manage/events.html:109
+#: project/templates/admin/admin_units.html:35
+#: project/templates/manage/events.html:115
 #: project/templates/manage/organizers.html:32
 #: project/templates/manage/references_incoming.html:19
 #: project/templates/manage/references_outgoing.html:19
 msgid "View"
 msgstr "Anzeigen"
 
-#: project/templates/admin/admin_units.html:35
+#: project/templates/admin/admin_units.html:37
 #: project/templates/admin/users.html:33
-#: project/templates/manage/events.html:111
+#: project/templates/manage/events.html:117
 #: project/templates/manage/members.html:21
 #: project/templates/manage/members.html:36
 #: project/templates/manage/organizers.html:34
@@ -1758,7 +1774,7 @@ msgstr "Löschen"
 msgid "User"
 msgstr "Nutzer"
 
-#: project/templates/admin/email.html:47 project/views/admin.py:155
+#: project/templates/admin/email.html:47 project/views/admin.py:144
 msgid "Mail sent successfully"
 msgstr "Mail erfolgreich gesendet"
 
@@ -1775,7 +1791,7 @@ msgid "Mails sent successfully"
 msgstr "Mails erfolgreich gesendet"
 
 #: project/templates/admin_unit/create.html:58
-#: project/templates/admin_unit/update.html:59
+#: project/templates/admin_unit/update.html:66
 #: project/templates/event/create.html:347
 #: project/templates/event/update.html:204
 #: project/templates/event_place/create.html:57
@@ -1795,7 +1811,18 @@ msgstr "Beziehung zu %(admin_unit_name)s"
 msgid "Invite user"
 msgstr "Nutzer:in einladen"
 
-#: project/templates/admin_unit/update.html:72
+#: project/templates/admin_unit/request_deletion.html:8
+msgid ""
+"The organization is not deleted immediately. After a period of time, the "
+"organization will be deleted. Until then, the deletion can be canceled."
+msgstr "Die Organisation wird nicht sofort gelöscht. Nach einer Frist wird die Organisation gelöscht. Bis dahin kann die Löschung abgebrochen werden."
+
+#: project/templates/admin_unit/update.html:25
+#: project/templates/manage/events.html:48
+msgid "The organization is scheduled for deletion."
+msgstr "Die Organisation ist zur Löschung vorgesehen."
+
+#: project/templates/admin_unit/update.html:79
 #: project/templates/manage/verification_requests_outgoing.html:6
 #: project/templates/manage/verification_requests_outgoing.html:11
 msgid "Verification requests"
@@ -1830,6 +1857,7 @@ msgid "You have been invited to join %(admin_unit_name)s."
 msgstr "Du wurdest eingeladen, %(admin_unit_name)s beizutreten."
 
 #: project/templates/email/invitation_notice.html:5
+#: project/templates/email/organization_deletion_requested_notice.html:5
 #: project/templates/email/organization_invitation_notice.html:5
 msgid "Click here to view the invitation"
 msgstr "Klicke hier, um die Einladung anzunehmen."
@@ -1846,6 +1874,11 @@ msgstr "das ist eine Nachricht von %(site_name)s."
 #: project/templates/email/newsletter.html:7
 msgid "Notification settings"
 msgstr "Benachrichtigungseinstellungen"
+
+#: project/templates/email/organization_deletion_requested_notice.html:4
+#, python-format
+msgid "%(admin_unit_name)s is scheduled for deletion."
+msgstr "%(admin_unit_name)s ist zur Löschung vorgesehen."
 
 #: project/templates/email/organization_invitation_accepted_notice.html:4
 #, python-format
@@ -1948,7 +1981,7 @@ msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
 
 #: project/templates/event/actions.html:74 project/templates/event/read.html:32
 #: project/templates/event_date/read.html:34
-#: project/templates/manage/events.html:145
+#: project/templates/manage/events.html:151
 msgid "Add event to list"
 msgstr "Veranstaltung zu Liste hinzufügen"
 
@@ -2074,21 +2107,21 @@ msgstr ""
 msgid "Verify organization"
 msgstr "Organisation verifizieren"
 
-#: project/templates/manage/events.html:85
+#: project/templates/manage/events.html:91
 msgid "More filters"
 msgstr "Mehr Filter"
 
-#: project/templates/manage/events.html:99
-#: project/templates/manage/events.html:134
+#: project/templates/manage/events.html:105
+#: project/templates/manage/events.html:140
 msgid "Number of references"
 msgstr "Anzahl an Empfehlungen"
 
-#: project/templates/manage/events.html:99
-#: project/templates/manage/events.html:134
+#: project/templates/manage/events.html:105
+#: project/templates/manage/events.html:140
 msgid "Number of reference requests."
 msgstr "Anzahl an Empfehlungsanfragen"
 
-#: project/templates/manage/events.html:112
+#: project/templates/manage/events.html:118
 msgid "Duplicate"
 msgstr "Duplizieren"
 
@@ -2260,46 +2293,47 @@ msgstr "Optionale Details"
 msgid "Preview"
 msgstr "Vorschau"
 
-#: project/views/admin.py:60
+#: project/views/admin.py:63
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin.py:82
+#: project/views/admin.py:85 project/views/admin_unit.py:182
+#: project/views/admin_unit.py:215
 msgid "Entered name does not match organization name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Organisation"
 
-#: project/views/admin.py:87
+#: project/views/admin.py:89
 msgid "Organization successfully deleted"
 msgstr "Organisation erfolgreich gelöscht"
 
-#: project/views/admin.py:111 project/views/manage.py:443
+#: project/views/admin.py:113 project/views/manage.py:432
 #: project/views/user.py:28
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
-#: project/views/admin.py:144
+#: project/views/admin.py:133
 #, python-format
 msgid "Test mail from %(site_name)s"
 msgstr "Test-Mail von %(site_name)s"
 
-#: project/views/admin.py:187
+#: project/views/admin.py:162
 #, python-format
 msgid "Newsletter from %(site_name)s"
 msgstr "Newsletter von %(site_name)s"
 
-#: project/views/admin.py:237
+#: project/views/admin.py:212
 msgid "User successfully updated"
 msgstr "Nutzer erfolgreich aktualisiert"
 
-#: project/views/admin.py:257
+#: project/views/admin.py:232
 msgid "Entered email does not match user email"
 msgstr "Die eingegebene Email passt nicht zur Email des Nutzers"
 
-#: project/views/admin.py:262
+#: project/views/admin.py:237
 msgid "User successfully deleted"
 msgstr "Nutzer erfolgreich gelöscht"
 
-#: project/views/admin_unit.py:69
+#: project/views/admin_unit.py:78
 msgid ""
 "Organizations cannot currently be created. The project is in a closed "
 "test phase. If you are interested, you can contact us."
@@ -2308,17 +2342,21 @@ msgstr ""
 " sich in einer geschlossenen Test-Phase. Bei Interesse kannst du uns "
 "kontaktieren."
 
-#: project/views/admin_unit.py:119
+#: project/views/admin_unit.py:128
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: project/views/admin_unit.py:149
+#: project/views/admin_unit.py:158
 msgid "AdminUnit successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin_unit.py:171
+#: project/views/admin_unit.py:245
 msgid "Organization invitation accepted"
 msgstr "Organisationseinladung akzeptiert"
+
+#: project/views/admin_unit.py:259
+msgid "Organization deletion requested"
+msgstr "Löschung der Organisation beantragt"
 
 #: project/views/admin_unit_member.py:43
 msgid "Member successfully updated"
@@ -2507,7 +2545,7 @@ msgstr ""
 "Ob alle zukünftigen Empfehlungsanfragen von %(admin_unit_name)s "
 "automatisch verifiziert werden sollen."
 
-#: project/views/utils.py:65
+#: project/views/utils.py:71
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
 "not allowed."
@@ -2515,20 +2553,20 @@ msgstr ""
 "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte "
 "Einträge sind nicht erlaubt."
 
-#: project/views/utils.py:116
+#: project/views/utils.py:122
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
-#: project/views/utils.py:123
+#: project/views/utils.py:129
 msgid "Show"
 msgstr "Anzeigen"
 
-#: project/views/utils.py:131
+#: project/views/utils.py:137
 msgid "You do not have permission for this action"
 msgstr "Du hast keine Berechtigung für diese Aktion"
 
-#: project/views/utils.py:252
+#: project/views/utils.py:258
 msgid ""
 "The invitation was issued to another user. Sign in with the email address"
 " the invitation was sent to."

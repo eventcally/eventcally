@@ -1,3 +1,4 @@
+from functools import wraps
 from urllib.parse import quote_plus
 
 from flask import Markup, flash, g, redirect, render_template, request, url_for
@@ -10,7 +11,12 @@ from sqlalchemy.exc import SQLAlchemyError
 from wtforms import FormField
 
 from project import app, celery, mail
-from project.access import get_admin_unit_for_manage, get_admin_units_for_manage
+from project.access import (
+    get_admin_unit_for_manage,
+    get_admin_unit_for_manage_or_404,
+    get_admin_units_for_manage,
+    has_access,
+)
 from project.dateutils import berlin_tz, round_to_next_day
 from project.models import Event, EventAttendanceMode, EventDate
 from project.utils import get_place_str, strings_are_equal_ignoring_case
@@ -298,3 +304,23 @@ def get_celery_poll_group_result():  # pragma: no cover
             "successful": False,
             "error": getattr(e, "message", "Unknown error"),
         }
+
+
+def manage_required(permission=None):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(id, *args, **kwargs):
+            admin_unit = get_admin_unit_for_manage_or_404(id)
+
+            if permission and not has_access(admin_unit, permission):
+                return permission_missing(
+                    url_for("manage_admin_unit", id=admin_unit.id)
+                )
+
+            g.admin_unit = admin_unit
+
+            return f(id, *args, **kwargs)
+
+        return decorated_function
+
+    return decorator

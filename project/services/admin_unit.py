@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import and_, func, or_
 
 from project import db
@@ -312,3 +314,13 @@ def create_ical_events_for_admin_unit(
     params.can_read_private_events = False
 
     return create_ical_events_for_search(params)
+
+
+def get_admin_units_with_due_delete_request():
+    due = datetime.datetime.utcnow() - datetime.timedelta(days=3)
+    return AdminUnit.query.filter(AdminUnit.deletion_requested_at < due).all()
+
+
+def delete_admin_unit(admin_unit: AdminUnit):
+    db.session.delete(admin_unit)
+    db.session.commit()

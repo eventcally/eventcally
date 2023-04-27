@@ -294,7 +294,10 @@ def upgrade():
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("organization_id", sa.Integer(), nullable=True),
         sa.Column("admin_unit_id", sa.Integer(), nullable=True),
-        sa.CheckConstraint("NOT(organization_id IS NULL AND admin_unit_id IS NULL)"),
+        sa.CheckConstraint(
+            "NOT(organization_id IS NULL AND admin_unit_id IS NULL)",
+            name="org_or_adminunit_check",
+        ),
         sa.ForeignKeyConstraint(
             ["admin_unit_id"],
             ["adminunit.id"],

@@ -1,3 +1,4 @@
+from celery import group
 from celery.schedules import crontab
 
 from project import celery
@@ -7,6 +8,9 @@ from project import celery
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(crontab(hour=0, minute=0), clear_images_task)
     sender.add_periodic_task(crontab(hour=0, minute=5), clear_admin_unit_dumps_task)
+    sender.add_periodic_task(
+        crontab(hour=0, minute=30), delete_admin_units_with_due_request_task
+    )
     sender.add_periodic_task(crontab(hour=1, minute=0), update_recurring_dates_task)
     sender.add_periodic_task(crontab(hour=2, minute=0), dump_all_task)
     sender.add_periodic_task(crontab(hour=3, minute=0), seo_generate_sitemap_task)
@@ -61,6 +65,36 @@ def clear_admin_unit_dumps_task():
     from project.services.dump import clear_admin_unit_dumps
 
     clear_admin_unit_dumps()
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
+def delete_admin_units_with_due_request_task():
+    from project.services.admin_unit import get_admin_units_with_due_delete_request
+
+    admin_units = get_admin_units_with_due_delete_request()
+
+    if not admin_units:
+        return
+
+    group(delete_admin_unit_task.s(admin_unit.id) for admin_unit in admin_units).delay()
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
+def delete_admin_unit_task(admin_unit_id):
+    from project.services.admin_unit import delete_admin_unit, get_admin_unit_by_id
+
+    admin_unit = get_admin_unit_by_id(admin_unit_id)
+
+    if not admin_unit:
+        return
+
+    delete_admin_unit(admin_unit)
 
 
 @celery.task(

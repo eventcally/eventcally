@@ -68,7 +68,9 @@ def upgrade():
         sa.PrimaryKeyConstraint("id"),
     )
     # op.drop_table('spatial_ref_sys')
-    op.drop_constraint("event_contact_id_fkey", "event", type_="foreignkey")
+    op.execute("ALTER TABLE event DROP CONSTRAINT IF EXISTS event_contact_id_fkey;")
+    op.execute("ALTER TABLE event DROP CONSTRAINT IF EXISTS fk_event_event_contact_id;")
+    # op.drop_constraint("event_contact_id_fkey", "event", type_="foreignkey")
     op.drop_column("event", "review_status")
     op.drop_column("event", "rejection_resaon")
     op.drop_column("event", "contact_id")

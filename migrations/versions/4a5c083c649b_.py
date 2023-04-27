@@ -33,7 +33,9 @@ def upgrade():
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.Column("created_by_id", sa.Integer(), nullable=True),
         sa.Column("updated_by_id", sa.Integer(), nullable=True),
-        sa.CheckConstraint("source_admin_unit_id != target_admin_unit_id"),
+        sa.CheckConstraint(
+            "source_admin_unit_id != target_admin_unit_id", name="source_neq_target"
+        ),
         sa.ForeignKeyConstraint(
             ["created_by_id"],
             ["user.id"],
