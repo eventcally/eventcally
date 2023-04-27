@@ -537,3 +537,34 @@ def test_purge_eventorganizer(client, app, db, seeder):
 
         location = db.session.get(Location, location_id)
         assert location is None
+
+
+def test_delete_admin_unit(client, app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    instance_id = seeder.upsert_default_event_organizer(admin_unit_id)
+    image_id = seeder.upsert_default_image()
+    location_id = seeder.create_location(street="Street")
+
+    with app.app_context():
+        from project.models import AdminUnit, EventOrganizer, Image, Location
+        from project.services.admin_unit import delete_admin_unit
+
+        instance = db.session.get(EventOrganizer, instance_id)
+        instance.logo = db.session.get(Image, image_id)
+        instance.location = db.session.get(Location, location_id)
+        db.session.commit()
+
+        assert instance.logo is not None
+        assert instance.location is not None
+
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        delete_admin_unit(admin_unit)
+
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        assert admin_unit is None
+
+        image = db.session.get(Image, image_id)
+        assert image is None
+
+        location = db.session.get(Location, location_id)
+        assert admin_unit is location

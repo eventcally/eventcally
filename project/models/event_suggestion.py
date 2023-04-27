@@ -30,8 +30,12 @@ class EventSuggestion(db.Model, TrackableMixin, EventMixin):
     __table_args__ = (
         CheckConstraint(
             "NOT(event_place_id IS NULL AND event_place_text IS NULL)",
+            name="place_not_null",
         ),
-        CheckConstraint("NOT(organizer_id IS NULL AND organizer_text IS NULL)"),
+        CheckConstraint(
+            "NOT(organizer_id IS NULL AND organizer_text IS NULL)",
+            name="organizer_not_null",
+        ),
     )
     id = Column(Integer(), primary_key=True)
 

@@ -18,6 +18,7 @@ from project.forms.admin import (
 )
 from project.models import AdminUnit, Role, User
 from project.services.admin import upsert_settings
+from project.services.admin_unit import delete_admin_unit
 from project.services.user import set_roles_for_user
 from project.views.utils import (
     flash_errors,
@@ -84,8 +85,7 @@ def admin_admin_unit_delete(id):
             flash(gettext("Entered name does not match organization name"), "danger")
         else:
             try:
-                db.session.delete(admin_unit)
-                db.session.commit()
+                delete_admin_unit(admin_unit)
                 flash(gettext("Organization successfully deleted"), "success")
                 return redirect(url_for("admin_admin_units"))
             except SQLAlchemyError as e:

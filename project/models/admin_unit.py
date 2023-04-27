@@ -2,6 +2,7 @@ from flask_security import AsaList, RoleMixin
 from sqlalchemy import (
     Boolean,
     Column,
+    DateTime,
     ForeignKey,
     Integer,
     String,
@@ -88,7 +89,9 @@ class AdminUnitRelation(db.Model, TrackableMixin):
     __tablename__ = "adminunitrelation"
     __table_args__ = (
         UniqueConstraint("source_admin_unit_id", "target_admin_unit_id"),
-        CheckConstraint("source_admin_unit_id != target_admin_unit_id"),
+        CheckConstraint(
+            "source_admin_unit_id != target_admin_unit_id", name="source_neq_target"
+        ),
     )
     id = Column(Integer(), primary_key=True)
     source_admin_unit_id = db.Column(
@@ -148,6 +151,15 @@ class AdminUnit(db.Model, TrackableMixin):
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), unique=True)
     short_name = Column(Unicode(100), unique=True)
+    deletion_requested_at = deferred(Column(DateTime, nullable=True), group="deletion")
+    deletion_requested_by_id = deferred(
+        Column(ForeignKey("user.id"), nullable=True), group="deletion"
+    )
+    deletion_requested_by = relationship(
+        "User",
+        primaryjoin="User.id == AdminUnit.deletion_requested_by_id",
+        remote_side="User.id",
+    )
     members = relationship(
         "AdminUnitMember",
         cascade="all, delete-orphan",

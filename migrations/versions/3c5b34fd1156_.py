@@ -67,8 +67,12 @@ def upgrade():
 
     upgrade_category_to_categories()
 
+    op.execute("ALTER TABLE event DROP CONSTRAINT IF EXISTS event_category_id_fkey;")
+    op.execute(
+        "ALTER TABLE event DROP CONSTRAINT IF EXISTS fk_event_event_category_id;"
+    )
     # op.drop_table('spatial_ref_sys')
-    op.drop_constraint("event_category_id_fkey", "event", type_="foreignkey")
+    # op.drop_constraint("event_category_id_fkey", "event", type_="foreignkey")
     op.drop_column("event", "category_id")
     # ### end Alembic commands ###
 

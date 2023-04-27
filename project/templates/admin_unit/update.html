@@ -20,6 +20,13 @@
 
 {% block content %}
 
+{% if admin_unit.deletion_requested_at %}
+    <div class="alert alert-danger" role="alert">
+      {{ _('The organization is scheduled for deletion.') }}
+      <a class="alert-link" href="{{ url_for('admin_unit_cancel_deletion', id=admin_unit.id) }}" role="button">{{ _('Cancel deletion') }}</a>
+    </div>
+{% endif %}
+
 <h1>{{ _('Settings') }}</h1>
 <form id="main-form" action="" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
@@ -80,5 +87,11 @@
 
   {{ render_field(form.submit) }}
 </form>
+
+{% if not admin_unit.deletion_requested_at %}
+<div class="my-4">
+  <a class="btn btn-danger" href="{{ url_for('admin_unit_request_deletion', id=admin_unit.id) }}" role="button">{{ _('Delete organization') }}&hellip;</a>
+</div>
+{% endif %}
 
 {% endblock %}

@@ -1,0 +1,3 @@
+{{ _('%(admin_unit_name)s is scheduled for deletion.', admin_unit_name=admin_unit.name) }}
+{{ _('Click the link below to cancel the deletion') }}
+{{ url_for('admin_unit_cancel_deletion', id=admin_unit.id, _external=True) }}

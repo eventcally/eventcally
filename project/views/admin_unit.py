@@ -1,4 +1,6 @@
-from flask import flash, redirect, render_template, request, url_for
+import datetime
+
+from flask import flash, g, redirect, render_template, request, url_for
 from flask_babel import gettext
 from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
@@ -10,7 +12,12 @@ from project.access import (
     get_admin_unit_members_with_permission,
     has_access,
 )
-from project.forms.admin_unit import CreateAdminUnitForm, UpdateAdminUnitForm
+from project.forms.admin_unit import (
+    CancelAdminUnitDeletionForm,
+    CreateAdminUnitForm,
+    RequestAdminUnitDeletionForm,
+    UpdateAdminUnitForm,
+)
 from project.models import AdminUnit, AdminUnitInvitation, AdminUnitRelation, Location
 from project.services.admin_unit import (
     insert_admin_unit_for_user,
@@ -22,6 +29,8 @@ from project.views.utils import (
     flash_message,
     get_current_admin_unit,
     handleSqlError,
+    manage_required,
+    non_match_for_deletion,
     permission_missing,
     send_mails,
 )
@@ -157,6 +166,71 @@ def admin_unit_update(id):
     return render_template("admin_unit/update.html", form=form, admin_unit=admin_unit)
 
 
+@app.route("/admin_unit/<int:id>/request-deletion", methods=("GET", "POST"))
+@auth_required()
+@manage_required("admin_unit:update")
+def admin_unit_request_deletion(id):
+    admin_unit = g.admin_unit
+
+    if admin_unit.deletion_requested_at:  # pragma: no cover
+        return redirect(url_for("admin_unit_cancel_deletion", id=admin_unit.id))
+
+    form = RequestAdminUnitDeletionForm()
+
+    if form.validate_on_submit():
+        if non_match_for_deletion(form.name.data, admin_unit.name):
+            flash(gettext("Entered name does not match organization name"), "danger")
+        else:
+            admin_unit.deletion_requested_at = datetime.datetime.utcnow()
+            admin_unit.deletion_requested_by_id = current_user.id
+
+            try:
+                db.session.commit()
+                send_admin_unit_deletion_requested_mails(admin_unit)
+                return redirect(url_for("manage_admin_unit", id=admin_unit.id))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
+    return render_template(
+        "admin_unit/request_deletion.html", form=form, admin_unit=admin_unit
+    )
+
+
+@app.route("/admin_unit/<int:id>/cancel-deletion", methods=("GET", "POST"))
+@auth_required()
+@manage_required("admin_unit:update")
+def admin_unit_cancel_deletion(id):
+    admin_unit = g.admin_unit
+
+    if not admin_unit.deletion_requested_at:  # pragma: no cover
+        return redirect(url_for("admin_unit_request_deletion", id=admin_unit.id))
+
+    form = CancelAdminUnitDeletionForm()
+
+    if form.validate_on_submit():
+        if non_match_for_deletion(form.name.data, admin_unit.name):
+            flash(gettext("Entered name does not match organization name"), "danger")
+        else:
+            admin_unit.deletion_requested_at = None
+            admin_unit.deletion_requested_by_id = None
+
+            try:
+                db.session.commit()
+                return redirect(url_for("manage_admin_unit", id=admin_unit.id))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
+    return render_template(
+        "admin_unit/cancel_deletion.html", form=form, admin_unit=admin_unit
+    )
+
+
 def send_admin_unit_invitation_accepted_mails(
     invitation: AdminUnitInvitation, relation: AdminUnitRelation, admin_unit: AdminUnit
 ):
@@ -172,5 +246,17 @@ def send_admin_unit_invitation_accepted_mails(
         "organization_invitation_accepted_notice",
         invitation=invitation,
         relation=relation,
+        admin_unit=admin_unit,
+    )
+
+
+def send_admin_unit_deletion_requested_mails(admin_unit: AdminUnit):
+    members = get_admin_unit_members_with_permission(admin_unit.id, "admin_unit:update")
+    emails = list(map(lambda member: member.user.email, members))
+
+    send_mails(
+        emails,
+        gettext("Organization deletion requested"),
+        "organization_deletion_requested_notice",
         admin_unit=admin_unit,
     )

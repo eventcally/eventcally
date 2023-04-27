@@ -127,3 +127,13 @@ class UpdateAdminUnitWidgetForm(FlaskForm):
         validators=[Optional()],
     )
     submit = SubmitField(lazy_gettext("Update settings"))
+
+
+class RequestAdminUnitDeletionForm(FlaskForm):
+    submit = SubmitField(lazy_gettext("Request deletion"))
+    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
+
+
+class CancelAdminUnitDeletionForm(FlaskForm):
+    submit = SubmitField(lazy_gettext("Cancel deletion"))
+    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
