@@ -40,3 +40,22 @@ def test_remove_favorite_event(client, seeder, utils, app):
         assert remove_favorite_event(user_id, event_id)
         assert remove_favorite_event(user_id, event_id) is False
         assert has_favorite_event(user_id, event_id) is False
+
+
+def test_get_users_with_due_delete_request(client, seeder, db, utils, app):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    with app.app_context():
+        import datetime
+
+        from project.models import User
+        from project.services.user import get_users_with_due_delete_request
+
+        user = db.session.get(User, user_id)
+        user.deletion_requested_at = datetime.datetime.utcnow() - datetime.timedelta(
+            days=4
+        )
+        db.session.commit()
+
+        due_users = get_users_with_due_delete_request()
+        assert len(due_users) == 1

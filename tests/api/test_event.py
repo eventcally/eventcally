@@ -2,8 +2,6 @@ import base64
 
 import pytest
 
-from project.models import PublicStatus
-
 
 def test_read(client, app, db, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
@@ -225,6 +223,7 @@ def test_put(client, seeder, utils, app, db, mocker, variant):
             EventAttendanceMode,
             EventStatus,
             EventTargetGroupOrigin,
+            PublicStatus,
         )
 
         event = db.session.get(Event, event_id)

@@ -5,7 +5,7 @@ from flask_security import roles_required
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
-from project import app, db, user_datastore
+from project import app, db
 from project.base_tasks import send_mail_task
 from project.forms.admin import (
     AdminNewsletterForm,
@@ -19,7 +19,7 @@ from project.forms.admin import (
 from project.models import AdminUnit, Role, User
 from project.services.admin import upsert_settings
 from project.services.admin_unit import delete_admin_unit
-from project.services.user import set_roles_for_user
+from project.services.user import delete_user, set_roles_for_user
 from project.views.utils import (
     flash_errors,
     get_celery_poll_group_result,
@@ -232,8 +232,7 @@ def admin_user_delete(id):
             flash(gettext("Entered email does not match user email"), "danger")
         else:
             try:
-                user_datastore.delete_user(user)
-                db.session.commit()
+                delete_user(user)
                 flash(gettext("User successfully deleted"), "success")
                 return redirect(url_for("admin_users"))
             except SQLAlchemyError as e:

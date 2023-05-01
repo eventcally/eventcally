@@ -40,6 +40,25 @@ END $$;
             conn.execute(sqlalchemy.text(sql).execution_options(autocommit=True))
 
 
+def migrate_with_result(app):
+    from alembic import command
+
+    config = app.extensions["migrate"].migrate.get_config(
+        None, opts=["autogenerate"], x_arg=None
+    )
+    return command.revision(
+        config,
+        None,
+        autogenerate=True,
+        sql=False,
+        head="head",
+        splice=False,
+        branch_label=None,
+        version_path=None,
+        rev_id=None,
+    )
+
+
 def test_migrations(app, seeder):
     from flask_migrate import downgrade, upgrade
 
@@ -49,6 +68,8 @@ def test_migrations(app, seeder):
     with app.app_context():
         drop_db(db)
         upgrade()
+        migrate_result = migrate_with_result(app)
+        assert not migrate_result
         create_initial_data()
         user_id, admin_unit_id = seeder.setup_base()
         seeder.upsert_default_event_place(admin_unit_id)

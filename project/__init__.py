@@ -193,7 +193,7 @@ convention = {
 }
 metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy(app, metadata=metadata)
-migrate = Migrate(app, db)
+migrate = Migrate(app, db, render_as_batch=False)
 
 # Celery tasks
 from project import celery_tasks

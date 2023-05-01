@@ -1,7 +1,7 @@
 import datetime
 
 from sqlalchemy import Column, DateTime, ForeignKey
-from sqlalchemy.orm import declared_attr, deferred, relationship
+from sqlalchemy.orm import backref, declared_attr, deferred, relationship
 
 from project.models.functions import _current_user_id_or_none
 
@@ -29,7 +29,7 @@ class TrackableMixin(object):
         return deferred(
             Column(
                 "created_by_id",
-                ForeignKey("user.id"),
+                ForeignKey("user.id", ondelete="SET NULL"),
                 default=_current_user_id_or_none,
             ),
             group="trackable",
@@ -41,6 +41,7 @@ class TrackableMixin(object):
             "User",
             primaryjoin="User.id == %s.created_by_id" % cls.__name__,
             remote_side="User.id",
+            backref=backref("created_%s" % cls.__tablename__, lazy=True),
         )
 
     @declared_attr
@@ -48,7 +49,7 @@ class TrackableMixin(object):
         return deferred(
             Column(
                 "updated_by_id",
-                ForeignKey("user.id"),
+                ForeignKey("user.id", ondelete="SET NULL"),
                 default=_current_user_id_or_none,
                 onupdate=_current_user_id_or_none,
             ),
@@ -61,4 +62,5 @@ class TrackableMixin(object):
             "User",
             primaryjoin="User.id == %s.updated_by_id" % cls.__name__,
             remote_side="User.id",
+            backref=backref("updated_%s" % cls.__tablename__, lazy=True),
         )

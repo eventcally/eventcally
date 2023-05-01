@@ -35,6 +35,10 @@ def admin_unit_member_invitation(id):
     if form.validate_on_submit():
         try:
             if form.accept.data:
+                if current_user.deletion_requested_at:  # pragma: no cover
+                    flash(gettext("Your account is scheduled for deletion."), "danger")
+                    return redirect(url_for("profile"))
+
                 message = gettext("Invitation successfully accepted")
                 roles = invitation.roles.split(",")
                 add_user_to_admin_unit_with_roles(

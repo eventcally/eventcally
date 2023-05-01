@@ -1,7 +1,6 @@
-from project.services.user import find_user_by_email
-
-
 def test_register(client, app, utils):
+    from project.services.user import find_user_by_email
+
     utils.register("test@test.de", "MeinPasswortIstDasBeste")
 
     with app.app_context():

@@ -73,16 +73,21 @@ def admin_unit_create():
         if not strings_are_equal_ignoring_case(invitation.email, current_user.email):
             return permission_missing(url_for("manage_admin_units"))
 
-    if not invitation and not can_create_admin_unit():
-        flash_message(
-            gettext(
-                "Organizations cannot currently be created. The project is in a closed test phase. If you are interested, you can contact us."
-            ),
-            url_for("contact"),
-            gettext("Contact"),
-            "danger",
-        )
-        return redirect(url_for("manage_admin_units"))
+    if not invitation:
+        if not can_create_admin_unit():
+            flash_message(
+                gettext(
+                    "Organizations cannot currently be created. The project is in a closed test phase. If you are interested, you can contact us."
+                ),
+                url_for("contact"),
+                gettext("Contact"),
+                "danger",
+            )
+            return redirect(url_for("manage_admin_units"))
+
+        if current_user.deletion_requested_at:  # pragma: no cover
+            flash(gettext("Your account is scheduled for deletion."), "danger")
+            return redirect(url_for("profile"))
 
     form = CreateAdminUnitForm()
 

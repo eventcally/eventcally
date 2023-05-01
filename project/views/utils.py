@@ -170,7 +170,7 @@ def send_mail_message(msg):
         app.logger.info(msg.body)
         return
 
-    mail.send(msg)
+    mail.send(msg)  # pragma: no cover
 
 
 def non_match_for_deletion(str1: str, str2: str) -> bool:

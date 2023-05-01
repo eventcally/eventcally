@@ -2,11 +2,11 @@ import shutil
 
 import pytest
 
-from project import img_path
-
 
 @pytest.mark.parametrize("size", [None, 100])
 def test_read(app, seeder, utils, size):
+    from project import img_path
+
     user_id, admin_unit_id = seeder.setup_base()
     image_id = seeder.upsert_default_image()
 

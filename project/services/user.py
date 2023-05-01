@@ -1,6 +1,8 @@
+import datetime
+
 from flask_security import hash_password
 
-from project import user_datastore
+from project import db, user_datastore
 from project.models import Event, Role, User, UserFavoriteEvents
 
 
@@ -99,3 +101,13 @@ def remove_favorite_event(user_id: int, event_id: int):
 
     db.session.delete(favorite)
     return True
+
+
+def get_users_with_due_delete_request():
+    due = datetime.datetime.utcnow() - datetime.timedelta(days=3)
+    return User.query.filter(User.deletion_requested_at < due).all()
+
+
+def delete_user(user):
+    user_datastore.delete_user(user)
+    db.session.commit()
