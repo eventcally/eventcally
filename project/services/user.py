@@ -4,6 +4,7 @@ from flask_security import hash_password
 
 from project import db, user_datastore
 from project.models import Event, Role, User, UserFavoriteEvents
+from project.models.admin_unit import AdminUnitMember, AdminUnitMemberRole
 
 
 def create_user(email, password):
@@ -111,3 +112,13 @@ def get_users_with_due_delete_request():
 def delete_user(user):
     user_datastore.delete_user(user)
     db.session.commit()
+
+
+def is_user_admin_member(user: User) -> bool:
+    return (
+        AdminUnitMember.query.filter(
+            AdminUnitMember.user_id == user.id,
+            AdminUnitMember.roles.any(AdminUnitMemberRole.name == "admin"),
+        ).first()
+        is not None
+    )

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-05-01 18:11+0200\n"
+"POT-Creation-Date: 2023-05-02 23:21+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -2279,7 +2279,7 @@ msgid "Organization successfully deleted"
 msgstr ""
 
 #: project/views/admin.py:113 project/views/manage.py:432
-#: project/views/user.py:40
+#: project/views/user.py:41
 msgid "Settings successfully updated"
 msgstr ""
 
@@ -2510,11 +2510,17 @@ msgid ""
 "verified automatically."
 msgstr ""
 
-#: project/views/user.py:84 project/views/user.py:111
+#: project/views/user.py:85
+msgid ""
+"You are administrator of at least one organization. Cancel your "
+"membership to delete your account."
+msgstr ""
+
+#: project/views/user.py:92 project/views/user.py:119
 msgid "Entered email does not match your email"
 msgstr ""
 
-#: project/views/user.py:130
+#: project/views/user.py:138
 msgid "User deletion requested"
 msgstr ""
 

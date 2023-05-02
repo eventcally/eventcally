@@ -12,6 +12,7 @@ from project.forms.user import (
     RequestUserDeletionForm,
 )
 from project.models import AdminUnitInvitation, User
+from project.services.user import is_user_admin_member
 from project.views.utils import (
     flash_errors,
     get_invitation_access_result,
@@ -79,7 +80,14 @@ def user_request_deletion():
     form = None
     form = RequestUserDeletionForm()
 
-    if form.validate_on_submit():
+    if is_user_admin_member(current_user):
+        flash(
+            gettext(
+                "You are administrator of at least one organization. Cancel your membership to delete your account."
+            ),
+            "danger",
+        )
+    elif form.validate_on_submit():
         if non_match_for_deletion(form.email.data, current_user.email):
             flash(gettext("Entered email does not match your email"), "danger")
         else:
