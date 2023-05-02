@@ -56,6 +56,18 @@ exclude_tables = exclude_items_from_config(config_exclude_section, "tables")
 exclude_indexes = exclude_items_from_config(config_exclude_section, "indexes")
 
 
+def include_name(name, type_, parent_names):
+    if type_ == "schema":
+        return not name
+
+    if type_ == "table":
+        metadata = get_metadata()
+        if metadata:
+            return name in metadata.tables
+
+    return True
+
+
 def include_object(object, name, type_, reflected, compare_to):
     if type_ == "table" and name in exclude_tables:
         return False
@@ -83,6 +95,8 @@ def run_migrations_offline():
         target_metadata=get_metadata(),
         literal_binds=True,
         include_object=include_object,
+        include_name=include_name,
+        include_schemas=True,
     )
 
     with context.begin_transaction():
@@ -115,6 +129,8 @@ def run_migrations_online():
             target_metadata=get_metadata(),
             process_revision_directives=process_revision_directives,
             include_object=include_object,
+            include_name=include_name,
+            include_schemas=True,
             **current_app.extensions["migrate"].configure_args
         )
 
