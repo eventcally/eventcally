@@ -1,7 +1,5 @@
 import os
 
-from project import dump_path
-
 
 def test_home(client, seeder, utils):
     url = utils.get_url("home")
@@ -69,6 +67,8 @@ def test_privacy(app, db, utils):
 
 
 def test_developer(client, seeder, utils):
+    from project import dump_path
+
     file_name = "all.zip"
     all_path = os.path.join(dump_path, file_name)
 

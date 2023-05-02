@@ -1,12 +1,25 @@
+import datetime
+
 from flask import flash, redirect, render_template, url_for
 from flask_babel import gettext
 from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
-from project.forms.user import NotificationForm
+from project.forms.user import (
+    CancelUserDeletionForm,
+    NotificationForm,
+    RequestUserDeletionForm,
+)
 from project.models import AdminUnitInvitation, User
-from project.views.utils import get_invitation_access_result, handleSqlError
+from project.services.user import is_user_admin_member
+from project.views.utils import (
+    flash_errors,
+    get_invitation_access_result,
+    handleSqlError,
+    non_match_for_deletion,
+    send_mail,
+)
 
 
 @app.route("/profile")
@@ -56,3 +69,73 @@ def user_organization_invitations(path=None):
 @auth_required()
 def user_favorite_events():
     return render_template("user/favorite_events.html")
+
+
+@app.route("/user/request-deletion", methods=("GET", "POST"))
+@auth_required()
+def user_request_deletion():
+    if current_user.deletion_requested_at:  # pragma: no cover
+        return redirect(url_for("user_cancel_deletion"))
+
+    form = None
+    form = RequestUserDeletionForm()
+
+    if is_user_admin_member(current_user):
+        flash(
+            gettext(
+                "You are administrator of at least one organization. Cancel your membership to delete your account."
+            ),
+            "danger",
+        )
+    elif form.validate_on_submit():
+        if non_match_for_deletion(form.email.data, current_user.email):
+            flash(gettext("Entered email does not match your email"), "danger")
+        else:
+            current_user.deletion_requested_at = datetime.datetime.utcnow()
+
+            try:
+                db.session.commit()
+                send_user_deletion_requested_mail(current_user)
+                return redirect(url_for("profile"))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
+    return render_template("user/request_deletion.html", form=form)
+
+
+@app.route("/user/cancel-deletion", methods=("GET", "POST"))
+@auth_required()
+def user_cancel_deletion():
+    if not current_user.deletion_requested_at:  # pragma: no cover
+        return redirect(url_for("user_request_deletion"))
+
+    form = CancelUserDeletionForm()
+
+    if form.validate_on_submit():
+        if non_match_for_deletion(form.email.data, current_user.email):
+            flash(gettext("Entered email does not match your email"), "danger")
+        else:
+            current_user.deletion_requested_at = None
+
+            try:
+                db.session.commit()
+                return redirect(url_for("profile"))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
+    return render_template("user/cancel_deletion.html", form=form)
+
+
+def send_user_deletion_requested_mail(user):
+    send_mail(
+        user.email,
+        gettext("User deletion requested"),
+        "user_deletion_requested_notice",
+        user=user,
+    )

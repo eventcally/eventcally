@@ -1,6 +1,6 @@
 import pytest
 
-from project.models import EventDateDefinition
+from tests.seeder import Seeder
 
 
 def test_location_update_coordinate(client, app, db):
@@ -150,7 +150,7 @@ def test_event_date_defintion_deletion(client, app, db, seeder):
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
-        from project.models import Event
+        from project.models import Event, EventDateDefinition
 
         # Initial eine Definition
         event = db.session.get(Event, event_id)
@@ -568,3 +568,26 @@ def test_delete_admin_unit(client, app, db, seeder):
 
         location = db.session.get(Location, location_id)
         assert admin_unit is location
+
+
+def test_delete_user(client, app, db, seeder: Seeder):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id, created_by_id=user_id)
+
+    with app.app_context():
+        from project.models import AdminUnit, AdminUnitMember, Event, User
+        from project.services.user import delete_user
+
+        user = db.session.get(User, user_id)
+        member_id = user.adminunitmembers[0].id
+        delete_user(user)
+
+        # User and membership should be gone
+        assert db.session.get(User, user_id) is None
+        assert db.session.get(AdminUnitMember, member_id) is None
+
+        # Admin unit and event should still be there
+        assert db.session.get(AdminUnit, admin_unit_id) is not None
+        event = db.session.get(Event, event_id)
+        event is not None
+        event.created_by_id is None

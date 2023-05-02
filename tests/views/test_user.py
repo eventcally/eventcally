@@ -1,5 +1,7 @@
 import pytest
 
+from tests.seeder import Seeder
+
 
 def test_profile(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
@@ -110,3 +112,113 @@ def test_login_flash(client, seeder, utils):
     utils.assert_response_error_message(
         response, "Beachte, dass du deine E-Mail-Adresse bestätigen muss."
     )
+
+
+@pytest.mark.parametrize("db_error", [True, False])
+@pytest.mark.parametrize("non_match", [True, False])
+def test_user_request_deletion(
+    client, seeder: Seeder, utils, app, db, mocker, db_error, non_match
+):
+    owner_id, admin_unit_id, member_id = seeder.setup_base_event_verifier()
+
+    url = utils.get_url("user_request_deletion")
+    response = utils.get_ok(url)
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
+    form_email = "test@test.de"
+
+    if non_match:
+        form_email = "wrong"
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "email": form_email,
+        },
+    )
+
+    if non_match:
+        utils.assert_response_error_message(
+            response, "Die eingegebene Email entspricht nicht deiner Email"
+        )
+        return
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
+    utils.assert_response_redirect(response, "profile")
+
+    with app.app_context():
+        from project.models import User
+
+        user = db.session.get(User, member_id)
+        assert user.deletion_requested_at is not None
+
+
+def test_user_request_deletion_admin_member(client, seeder: Seeder, utils, app, db):
+    seeder.setup_base()
+
+    url = utils.get_url("user_request_deletion")
+    response = utils.get_ok(url)
+    utils.assert_response_error_message(
+        response,
+        "Du bist Administrator von mindestens einer Organisation. Beende deine Mitgliedschaft, um deinen Account zu löschen.",
+    )
+
+
+@pytest.mark.parametrize("db_error", [True, False])
+@pytest.mark.parametrize("non_match", [True, False])
+def test_user_cancel_deletion(
+    client, seeder, utils, app, db, mocker, db_error, non_match
+):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    with app.app_context():
+        import datetime
+
+        from project.models import User
+
+        user = db.session.get(User, user_id)
+        user.deletion_requested_at = datetime.datetime.utcnow()
+        db.session.commit()
+
+    url = utils.get_url("user_cancel_deletion")
+    response = utils.get_ok(url)
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
+    form_email = "test@test.de"
+
+    if non_match:
+        form_email = "wrong"
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "email": form_email,
+        },
+    )
+
+    if non_match:
+        utils.assert_response_error_message(
+            response, "Die eingegebene Email entspricht nicht deiner Email"
+        )
+        return
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
+    utils.assert_response_redirect(response, "profile")
+
+    with app.app_context():
+        from project.models import User
+
+        user = db.session.get(User, user_id)
+        assert user.deletion_requested_at is None

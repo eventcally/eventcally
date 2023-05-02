@@ -60,6 +60,8 @@ class User(db.Model, UserMixin):
         )
     )
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = deferred(Column(DateTime, default=datetime.datetime.utcnow))
+    deletion_requested_at = deferred(Column(DateTime, nullable=True))
 
     def get_user_id(self):
         return self.id

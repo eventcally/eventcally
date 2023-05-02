@@ -44,18 +44,34 @@ def get_metadata():
     return target_db.metadata
 
 
-def exclude_tables_from_config(config_):
-    tables_ = config_.get("tables", None)
-    if tables_ is not None:
-        tables = tables_.split(",")
-    return tables
+def exclude_items_from_config(section, key):
+    items_ = section.get(key, None)
+    if items_ is not None:
+        items = items_.split(",")
+    return items
 
 
-exclude_tables = exclude_tables_from_config(config.get_section("alembic:exclude"))
+config_exclude_section = config.get_section("alembic:exclude")
+exclude_tables = exclude_items_from_config(config_exclude_section, "tables")
+exclude_indexes = exclude_items_from_config(config_exclude_section, "indexes")
+
+
+def include_name(name, type_, parent_names):
+    if type_ == "schema":
+        return not name
+
+    if type_ == "table":
+        metadata = get_metadata()
+        if metadata:
+            return name in metadata.tables
+
+    return True
 
 
 def include_object(object, name, type_, reflected, compare_to):
     if type_ == "table" and name in exclude_tables:
+        return False
+    elif type_ == "index" and name in exclude_indexes:
         return False
     else:
         return True
@@ -79,6 +95,8 @@ def run_migrations_offline():
         target_metadata=get_metadata(),
         literal_binds=True,
         include_object=include_object,
+        include_name=include_name,
+        include_schemas=True,
     )
 
     with context.begin_transaction():
@@ -111,6 +129,8 @@ def run_migrations_online():
             target_metadata=get_metadata(),
             process_revision_directives=process_revision_directives,
             include_object=include_object,
+            include_name=include_name,
+            include_schemas=True,
             **current_app.extensions["migrate"].configure_args
         )
 

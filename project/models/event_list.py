@@ -6,11 +6,7 @@ from project.models.trackable_mixin import TrackableMixin
 
 class EventList(db.Model, TrackableMixin):
     __tablename__ = "eventlist"
-    __table_args__ = (
-        UniqueConstraint(
-            "name", "admin_unit_id", name="eventreference_name_admin_unit_id"
-        ),
-    )
+    __table_args__ = (UniqueConstraint("name", "admin_unit_id"),)
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255))
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)

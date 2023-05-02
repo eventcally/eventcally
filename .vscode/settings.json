@@ -1,35 +1,30 @@
 {
-    "editor.formatOnSave": true,
-    "python.pythonPath": "./env/bin/python3",
-    "python.formatting.provider": "black",
-    "python.sortImports.args": [
-        "-sp .isort.cfg"
-    ],
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
-    "python.testing.pytestArgs": [
-        "tests",
-        "--capture=sys"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.nosetestsEnabled": false,
-    "python.testing.pytestEnabled": true,
-    "[python]": {
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": true
-        }
-    },
-    "[html]": {
-        "editor.formatOnSave": false
-    },
-    "[javascript]": {
-        "editor.formatOnSave": false
-    },
-    "[yaml]": {
-        "editor.formatOnSave": false
-    },
-    "[sql]": {
-        "editor.formatOnSave": false
+  "editor.formatOnSave": true,
+  "python.pythonPath": "./env/bin/python3",
+  "python.formatting.provider": "black",
+  "isort.args": ["-sp", ".isort.cfg"],
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.testing.pytestArgs": ["tests", "--capture=sys"],
+  "python.testing.unittestEnabled": false,
+  "python.testing.nosetestsEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
     }
+  },
+  "[html]": {
+    "editor.formatOnSave": false
+  },
+  "[javascript]": {
+    "editor.formatOnSave": false
+  },
+  "[yaml]": {
+    "editor.formatOnSave": false
+  },
+  "[sql]": {
+    "editor.formatOnSave": false
+  }
 }

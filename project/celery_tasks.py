@@ -11,6 +11,9 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
         crontab(hour=0, minute=30), delete_admin_units_with_due_request_task
     )
+    sender.add_periodic_task(
+        crontab(hour=0, minute=40), delete_user_with_due_request_task
+    )
     sender.add_periodic_task(crontab(hour=1, minute=0), update_recurring_dates_task)
     sender.add_periodic_task(crontab(hour=2, minute=0), dump_all_task)
     sender.add_periodic_task(crontab(hour=3, minute=0), seo_generate_sitemap_task)
@@ -95,6 +98,36 @@ def delete_admin_unit_task(admin_unit_id):
         return
 
     delete_admin_unit(admin_unit)
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
+def delete_user_with_due_request_task():
+    from project.services.user import get_users_with_due_delete_request
+
+    users = get_users_with_due_delete_request()
+
+    if not users:
+        return
+
+    group(delete_user_task.s(user.id) for user in users).delay()
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
+def delete_user_task(user_id):
+    from project.services.user import delete_user, get_user
+
+    user = get_user(user_id)
+
+    if not user:
+        return
+
+    delete_user(user)
 
 
 @celery.task(

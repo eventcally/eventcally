@@ -333,6 +333,7 @@ class Seeder(object):
         description="Beschreibung",
         tags="",
         place_id=None,
+        **kwargs
     ):
         from project.models import (
             Event,
@@ -344,6 +345,7 @@ class Seeder(object):
 
         with self._app.app_context():
             event = Event()
+            event.__dict__.update(kwargs)
             event.admin_unit_id = admin_unit_id
             event.categories = [upsert_event_category("Other")]
             event.name = name

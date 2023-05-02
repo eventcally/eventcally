@@ -1,9 +1,8 @@
 import pytest
 
-from project.api import RestApi
-
 
 def test_handle_error_unique(app):
+    from project.api import RestApi
     from project.utils import make_unique_violation
 
     error = make_unique_violation()
@@ -17,6 +16,7 @@ def test_handle_error_unique(app):
 
 
 def test_handle_error_checkViolation(app):
+    from project.api import RestApi
     from project.utils import make_check_violation
 
     error = make_check_violation()
@@ -30,6 +30,7 @@ def test_handle_error_checkViolation(app):
 
 
 def test_handle_error_integrity(app):
+    from project.api import RestApi
     from project.utils import make_integrity_error
 
     error = make_integrity_error("custom")
@@ -45,6 +46,8 @@ def test_handle_error_integrity(app):
 def test_handle_error_httpException(app):
     from werkzeug.exceptions import InternalServerError
 
+    from project.api import RestApi
+
     error = InternalServerError()
 
     with app.app_context():
@@ -57,6 +60,8 @@ def test_handle_error_httpException(app):
 def test_handle_error_unprocessableEntity(app):
     from marshmallow import ValidationError
     from werkzeug.exceptions import UnprocessableEntity
+
+    from project.api import RestApi
 
     args = {"name": ["Required"]}
     validation_error = ValidationError(args)
@@ -76,6 +81,8 @@ def test_handle_error_unprocessableEntity(app):
 def test_handle_error_validationError(app):
     from marshmallow import ValidationError
 
+    from project.api import RestApi
+
     args = {"name": ["Required"]}
     validation_error = ValidationError(args)
 
@@ -90,6 +97,7 @@ def test_handle_error_validationError(app):
 
 def test_handle_error_unspecificRaises(app):
     error = Exception()
+    from project.api import RestApi
 
     with app.app_context():
         app.config["PROPAGATE_EXCEPTIONS"] = False

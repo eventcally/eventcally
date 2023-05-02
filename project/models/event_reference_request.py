@@ -27,7 +27,6 @@ class EventReferenceRequest(db.Model, TrackableMixin):
         UniqueConstraint(
             "event_id",
             "admin_unit_id",
-            name="eventreferencerequest_event_id_admin_unit_id",
         ),
     )
     id = Column(Integer(), primary_key=True)

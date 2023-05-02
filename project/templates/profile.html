@@ -7,6 +7,13 @@
 
 <h1>{{ current_user.email }}</h1>
 
+{% if current_user.deletion_requested_at %}
+    <div class="alert alert-danger" role="alert">
+      {{ _('Your account is scheduled for deletion.') }}
+      <a class="alert-link" href="{{ url_for('user_cancel_deletion') }}" role="button">{{ _('Cancel deletion') }}</a>
+    </div>
+{% endif %}
+
 <h2>{{ _('Profile') }}</h2>
 
 <div class="list-group">
@@ -14,6 +21,12 @@
         {{ _fsdomain('Change password') }}
         <i class="fa fa-caret-right"></i>
     </a>
+    {% if not current_user.deletion_requested_at %}
+    <a href="{{ url_for('user_request_deletion') }}" class="list-group-item text-danger">
+        {{ _('Delete account') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
+    {% endif %}
 </div>
 
 <h2>{{ _('Settings') }}</h2>

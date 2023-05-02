@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field_with_errors, render_field %}
+
+{% block content %}
+
+<h1>{{ _('Cancel deletion') }} &quot;{{ current_user.email }}&quot;</h1>
+
+<form action="" method="POST">
+  {{ form.hidden_tag() }}
+
+  <div class="card mb-4">
+    <div class="card-header">
+      {{ _('User') }}
+    </div>
+    <div class="card-body">
+      {{ render_field_with_errors(form.email) }}
+    </div>
+  </div>
+
+  {{ render_field(form.submit) }}
+
+</form>
+
+{% endblock %}
