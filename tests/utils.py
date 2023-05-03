@@ -246,8 +246,8 @@ class UtilActions(object):
             url = self.get_image_url(image, **values)
         return url
 
-    def get(self, url):
-        response = self._client.get(url)
+    def get(self, url, **kwargs):
+        response = self._client.get(url, **kwargs)
 
         if response.status_code == 200:
             self._ajax_csrf = self.get_ajax_csrf(response)

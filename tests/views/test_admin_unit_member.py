@@ -1,3 +1,9 @@
+import pytest
+
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
+
 def test_update(client, app, utils, seeder):
     seeder.create_user()
     user_id = utils.login()
@@ -63,14 +69,25 @@ def test_update_permission_missing(client, app, db, utils, seeder):
     assert response.status_code == 302
 
 
-def test_delete(client, app, utils, seeder):
+@pytest.mark.parametrize("scenario", ["default", "current_user"])
+def test_delete(client, app, db, utils: UtilActions, seeder: Seeder, scenario: str):
     seeder.create_user()
     user_id = utils.login()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
-    member_id = seeder.create_admin_unit_member_event_verifier(admin_unit_id)
+    member_email = "test@test.de" if scenario == "current_user" else "member@test.de"
+    member_id = seeder.create_admin_unit_member_event_verifier(
+        admin_unit_id, email=member_email
+    )
 
     url = "/manage/member/%d/delete" % member_id
     response = client.get(url)
+
+    if scenario == "current_user":
+        utils.assert_response_redirect(
+            response, "manage_admin_unit_delete_membership", id=admin_unit_id
+        )
+        return
+
     assert response.status_code == 200
 
     with client:
@@ -78,7 +95,7 @@ def test_delete(client, app, utils, seeder):
             url,
             data={
                 "csrf_token": utils.get_csrf(response),
-                "email": "Test@test.de",
+                "email": "member@test.de",
                 "submit": "Submit",
             },
         )
@@ -95,7 +112,9 @@ def test_delete_db_error(client, app, utils, seeder, mocker):
     seeder.create_user()
     user_id = utils.login()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
-    member_id = seeder.create_admin_unit_member_event_verifier(admin_unit_id)
+    member_id = seeder.create_admin_unit_member_event_verifier(
+        admin_unit_id, email="member@test.de"
+    )
 
     url = "/manage/member/%d/delete" % member_id
     response = client.get(url)
@@ -108,7 +127,7 @@ def test_delete_db_error(client, app, utils, seeder, mocker):
             url,
             data={
                 "csrf_token": utils.get_csrf(response),
-                "email": "test@test.de",
+                "email": "member@test.de",
                 "submit": "Submit",
             },
         )
@@ -121,7 +140,9 @@ def test_delete_email_does_not_match(client, app, utils, seeder):
     seeder.create_user()
     user_id = utils.login()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
-    member_id = seeder.create_admin_unit_member_event_verifier(admin_unit_id)
+    member_id = seeder.create_admin_unit_member_event_verifier(
+        admin_unit_id, email="member@test.de"
+    )
 
     url = "/manage/member/%d/delete" % member_id
     response = client.get(url)
@@ -138,14 +159,3 @@ def test_delete_email_does_not_match(client, app, utils, seeder):
         )
         assert response.status_code == 200
         assert b"Die eingegebene Email passt nicht zur Email" in response.data
-
-
-def test_delete_permission_missing(client, app, db, utils, seeder):
-    owner_id = seeder.create_user("owner@owner")
-    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
-    member_id = seeder.create_admin_unit_member_event_verifier(admin_unit_id)
-    utils.login()
-
-    url = "/manage/member/%d/delete" % member_id
-    response = client.get(url)
-    assert response.status_code == 302

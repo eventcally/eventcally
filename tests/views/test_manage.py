@@ -1,5 +1,8 @@
 import pytest
 
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
 
 def test_index_noCookie(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
@@ -248,3 +251,85 @@ def test_verification_requests_outgoing(client, seeder, utils):
     )
     utils.assert_response_contains(response, "Stadtmarketing")
     utils.assert_response_contains(response, "Please give us a call")
+
+
+@pytest.mark.parametrize("scenario", ["db_error", "default", "last_admin", "non_match"])
+def test_manage_admin_unit_delete_membership(
+    client, utils: UtilActions, seeder: Seeder, app, db, mocker, scenario: str
+):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    with app.app_context():
+        from project.services.admin_unit import get_member_for_admin_unit_by_user_id
+
+        member = get_member_for_admin_unit_by_user_id(
+            admin_unit_id,
+            user_id,
+        )
+        member_id = member.id
+
+    if not scenario == "last_admin":
+        seeder.create_admin_unit_member(
+            admin_unit_id, ["admin"], "admin.member@test.de"
+        )
+
+    url = utils.get_url("manage_admin_unit_delete_membership", id=admin_unit_id)
+
+    if scenario == "last_admin":
+        response = utils.get(url, follow_redirects=True)
+        utils.assert_response_error_message(
+            response,
+            "Der letzte verbleibende Administrator kann die Organisation nicht verlassen.",
+        )
+        return
+
+    response = utils.get_ok(url)
+
+    if scenario == "db_error":
+        utils.mock_db_commit(mocker)
+
+    form_name = "Meine Crew"
+
+    if scenario == "non_match":
+        form_name = "wrong"
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": form_name,
+        },
+    )
+
+    if scenario == "non_match":
+        utils.assert_response_error_message(
+            response, "Der eingegebene Name entspricht nicht dem Namen der Organisation"
+        )
+        return
+
+    if scenario == "db_error":
+        utils.assert_response_db_error(response)
+        return
+
+    utils.assert_response_redirect(response, "manage_admin_units")
+
+    with app.app_context():
+        from project.models import AdminUnitMember
+
+        assert db.session.get(AdminUnitMember, member_id) is None
+
+
+def test_manage_admin_unit_delete_membership_no_member(
+    client, utils: UtilActions, seeder: Seeder, app, db
+):
+    user_id, admin_unit_id = seeder.setup_base(admin=True)
+    other_user_id, other_admin_unit_id = seeder.setup_base(
+        log_in=False, email="other@test.de", name="Other Crew"
+    )
+
+    url = utils.get_url("manage_admin_unit_delete_membership", id=other_admin_unit_id)
+    response = utils.get(url, follow_redirects=True)
+    utils.assert_response_error_message(
+        response,
+        "Du bist kein Mitglied dieser Organisation",
+    )

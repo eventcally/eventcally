@@ -137,3 +137,8 @@ class RequestAdminUnitDeletionForm(FlaskForm):
 class CancelAdminUnitDeletionForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Cancel deletion"))
     name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
+
+
+class AdminUnitDeleteMembershipForm(FlaskForm):
+    submit = SubmitField(lazy_gettext("Leave organization"))
+    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
