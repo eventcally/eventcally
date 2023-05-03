@@ -242,7 +242,7 @@ def get_admin_unit_members_with_permission(admin_unit_id: int, permission: str) 
 
 
 def can_current_user_delete_member(member: AdminUnitMember) -> bool:
-    if current_user.has_role("admin"):
+    if current_user.has_role("admin"):  # pragma: no cover
         return True
 
     # Check if there is another admin

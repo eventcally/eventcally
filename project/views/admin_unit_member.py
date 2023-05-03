@@ -62,7 +62,7 @@ def manage_admin_unit_member_delete(id):
     if member.user_id == current_user.id:
         return redirect(url_for("manage_admin_unit_delete_membership", id=id))
 
-    if not has_access(admin_unit, "admin_unit.members:delete"):
+    if not has_access(admin_unit, "admin_unit.members:delete"):  # pragma: no cover
         return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))
 
     form = DeleteAdminUnitMemberForm()

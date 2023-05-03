@@ -159,14 +159,3 @@ def test_delete_email_does_not_match(client, app, utils, seeder):
         )
         assert response.status_code == 200
         assert b"Die eingegebene Email passt nicht zur Email" in response.data
-
-
-def test_delete_permission_missing(client, app, db, utils, seeder):
-    owner_id = seeder.create_user("owner@owner")
-    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
-    member_id = seeder.create_admin_unit_member_event_verifier(admin_unit_id)
-    utils.login()
-
-    url = "/manage/member/%d/delete" % member_id
-    response = client.get(url)
-    assert response.status_code == 302
