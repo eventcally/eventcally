@@ -121,7 +121,12 @@ class Seeder(object):
                 verify=True,
             )
 
-    def create_admin_unit_member(self, admin_unit_id, role_names):
+    def create_admin_unit_member(
+        self,
+        admin_unit_id,
+        role_names,
+        email="test@test.de",
+    ):
         from project.services.admin_unit import (
             add_user_to_admin_unit_with_roles,
             get_admin_unit_by_id,
@@ -129,7 +134,7 @@ class Seeder(object):
         from project.services.user import get_user
 
         with self._app.app_context():
-            user_id = self.create_user()
+            user_id = self.create_user(email=email)
             user = get_user(user_id)
             admin_unit = get_admin_unit_by_id(admin_unit_id)
             member = add_user_to_admin_unit_with_roles(user, admin_unit, role_names)
@@ -188,8 +193,12 @@ class Seeder(object):
             if remove_favorite_event(user_id, event_id):
                 self._db.session.commit()
 
-    def create_admin_unit_member_event_verifier(self, admin_unit_id):
-        return self.create_admin_unit_member(admin_unit_id, ["event_verifier"])
+    def create_admin_unit_member_event_verifier(
+        self,
+        admin_unit_id,
+        email="test@test.de",
+    ):
+        return self.create_admin_unit_member(admin_unit_id, ["event_verifier"], email)
 
     def upsert_event_place(self, admin_unit_id, name, location=None):
         from project.services.place import upsert_event_place

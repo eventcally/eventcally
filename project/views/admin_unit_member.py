@@ -1,6 +1,6 @@
 from flask import flash, redirect, render_template, url_for
 from flask_babel import gettext
-from flask_security import auth_required
+from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
@@ -58,6 +58,9 @@ def manage_admin_unit_member_update(id):
 def manage_admin_unit_member_delete(id):
     member = AdminUnitMember.query.get_or_404(id)
     admin_unit = member.adminunit
+
+    if member.user_id == current_user.id:
+        return redirect(url_for("manage_admin_unit_delete_membership", id=id))
 
     if not has_access(admin_unit, "admin_unit.members:delete"):
         return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))

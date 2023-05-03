@@ -17,12 +17,16 @@ from project import app, db, dump_org_path
 from project.access import (
     access_or_401,
     admin_unit_suggestions_enabled_or_404,
+    can_current_user_delete_member,
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_manage,
     has_access,
 )
 from project.celery_tasks import dump_admin_unit_task
-from project.forms.admin_unit import UpdateAdminUnitWidgetForm
+from project.forms.admin_unit import (
+    AdminUnitDeleteMembershipForm,
+    UpdateAdminUnitWidgetForm,
+)
 from project.forms.event import FindEventForm
 from project.forms.event_place import FindEventPlaceForm
 from project.models import (
@@ -37,6 +41,7 @@ from project.services.admin_unit import (
     get_admin_unit_member_invitations,
     get_admin_unit_organization_invitations,
     get_admin_unit_query,
+    get_member_for_admin_unit_by_user_id,
 )
 from project.services.event import get_events_query
 from project.services.event_search import EventSearchParams
@@ -49,6 +54,7 @@ from project.views.utils import (
     get_current_admin_unit,
     get_pagination_urls,
     handleSqlError,
+    non_match_for_deletion,
     permission_missing,
     set_current_admin_unit,
 )
@@ -277,6 +283,54 @@ def manage_admin_unit_members(id):
         members=members.items,
         invitations=invitations,
         pagination=get_pagination_urls(members, id=id),
+    )
+
+
+@app.route("/manage/admin_unit/<int:id>/membership/delete", methods=("GET", "POST"))
+@auth_required()
+def manage_admin_unit_delete_membership(id):
+    admin_unit = get_admin_unit_for_manage_or_404(id)
+    set_current_admin_unit(admin_unit)
+
+    member = get_member_for_admin_unit_by_user_id(
+        admin_unit.id,
+        current_user.id,
+    )
+
+    if not member:
+        # E.g. global admin
+        flash(gettext("You are not a member of this organization"), "danger")
+        return redirect(url_for("manage_admin_unit_members", id=id))
+
+    if not can_current_user_delete_member(member):
+        flash(
+            gettext("Last remaining administrator can not leave the organization."),
+            "danger",
+        )
+        return redirect(url_for("manage_admin_unit_members", id=id))
+
+    form = AdminUnitDeleteMembershipForm()
+
+    if form.validate_on_submit():
+        if non_match_for_deletion(form.name.data, admin_unit.name):
+            flash(gettext("Entered name does not match organization name"), "danger")
+        else:
+            try:
+                db.session.delete(member)
+                db.session.commit()
+                flash(gettext("Organization successfully left"), "success")
+                return redirect(url_for("manage_admin_units"))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
+    return render_template(
+        "manage/delete_membership.html",
+        admin_unit=admin_unit,
+        member=member,
+        form=form,
     )
 
 

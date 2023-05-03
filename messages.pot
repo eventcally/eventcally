@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-05-02 23:21+0200\n"
+"POT-Creation-Date: 2023-05-03 20:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -198,24 +198,24 @@ msgstr ""
 msgid "You have received an invitation"
 msgstr ""
 
-#: project/forms/admin.py:11 project/templates/layout.html:303
+#: project/forms/admin.py:11 project/templates/layout.html:304
 #: project/views/root.py:55
 msgid "Terms of service"
 msgstr ""
 
-#: project/forms/admin.py:12 project/templates/layout.html:307
+#: project/forms/admin.py:12 project/templates/layout.html:308
 #: project/views/root.py:63
 msgid "Legal notice"
 msgstr ""
 
 #: project/forms/admin.py:13 project/templates/_macros.html:1473
-#: project/templates/layout.html:311
+#: project/templates/layout.html:312
 #: project/templates/widget/event_suggestion/create.html:204
 #: project/views/admin_unit.py:83 project/views/root.py:71
 msgid "Contact"
 msgstr ""
 
-#: project/forms/admin.py:14 project/templates/layout.html:315
+#: project/forms/admin.py:14 project/templates/layout.html:316
 #: project/views/root.py:79
 msgid "Privacy"
 msgstr ""
@@ -310,11 +310,11 @@ msgstr ""
 
 #: project/forms/admin.py:69 project/forms/admin_unit.py:28
 #: project/forms/admin_unit.py:134 project/forms/admin_unit.py:139
-#: project/forms/event.py:85 project/forms/event.py:114
-#: project/forms/event_place.py:25 project/forms/event_place.py:50
-#: project/forms/event_suggestion.py:26 project/forms/oauth2_client.py:66
-#: project/forms/organizer.py:25 project/forms/organizer.py:52
-#: project/forms/reference_request.py:23
+#: project/forms/admin_unit.py:144 project/forms/event.py:85
+#: project/forms/event.py:114 project/forms/event_place.py:25
+#: project/forms/event_place.py:50 project/forms/event_suggestion.py:26
+#: project/forms/oauth2_client.py:66 project/forms/organizer.py:25
+#: project/forms/organizer.py:52 project/forms/reference_request.py:23
 #: project/templates/admin/admin_units.html:19
 #: project/templates/event_place/list.html:19
 #: project/templates/manage/organizers.html:18
@@ -485,6 +485,11 @@ msgstr ""
 #: project/templates/manage/events.html:49 project/templates/profile.html:13
 #: project/templates/user/cancel_deletion.html:6
 msgid "Cancel deletion"
+msgstr ""
+
+#: project/forms/admin_unit.py:143 project/templates/layout.html:276
+#: project/templates/manage/delete_membership.html:6
+msgid "Leave organization"
 msgstr ""
 
 #: project/forms/admin_unit_member.py:13
@@ -1142,6 +1147,7 @@ msgstr ""
 #: project/templates/admin_unit/request_deletion.html:15
 #: project/templates/admin_unit/update.html:36
 #: project/templates/layout.html:247
+#: project/templates/manage/delete_membership.html:13
 msgid "Organization"
 msgstr ""
 
@@ -1668,7 +1674,7 @@ msgid "Switch organization"
 msgstr ""
 
 #: project/templates/developer/read.html:4
-#: project/templates/developer/read.html:8 project/templates/layout.html:319
+#: project/templates/developer/read.html:8 project/templates/layout.html:320
 #: project/templates/profile.html:46
 msgid "Developer"
 msgstr ""
@@ -2262,7 +2268,7 @@ msgid "Organization successfully updated"
 msgstr ""
 
 #: project/views/admin.py:85 project/views/admin_unit.py:187
-#: project/views/admin_unit.py:220
+#: project/views/admin_unit.py:220 project/views/manage.py:316
 msgid "Entered name does not match organization name"
 msgstr ""
 
@@ -2270,7 +2276,7 @@ msgstr ""
 msgid "Organization successfully deleted"
 msgstr ""
 
-#: project/views/admin.py:113 project/views/manage.py:432
+#: project/views/admin.py:113 project/views/manage.py:486
 #: project/views/user.py:41
 msgid "Settings successfully updated"
 msgstr ""
@@ -2323,11 +2329,15 @@ msgstr ""
 msgid "Member successfully updated"
 msgstr ""
 
-#: project/views/admin_unit_member.py:69
+#: project/views/admin_unit_member.py:70 project/views/manage.py:307
+msgid "Last remaining administrator can not leave the organization."
+msgstr ""
+
+#: project/views/admin_unit_member.py:79
 msgid "Entered email does not match member email"
 msgstr ""
 
-#: project/views/admin_unit_member.py:74
+#: project/views/admin_unit_member.py:84
 msgid "Member successfully deleted"
 msgstr ""
 
@@ -2418,6 +2428,14 @@ msgstr ""
 
 #: project/views/js.py:111
 msgid "Places of Google Maps"
+msgstr ""
+
+#: project/views/manage.py:302
+msgid "You are not a member of this organization"
+msgstr ""
+
+#: project/views/manage.py:321
+msgid "Organization successfully left"
 msgstr ""
 
 #: project/views/oauth2_client.py:37

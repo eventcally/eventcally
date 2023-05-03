@@ -8,6 +8,7 @@ from sqlalchemy import and_
 
 from project import app
 from project.models import AdminUnit, AdminUnitMember, Event, PublicStatus, User
+from project.models.admin_unit import AdminUnitMemberRole
 from project.services.admin_unit import get_member_for_admin_unit_by_user_id
 
 
@@ -237,4 +238,19 @@ def get_admin_unit_members_with_permission(admin_unit_id: int, permission: str) 
         filter(
             lambda member: has_admin_unit_member_permission(member, permission), members
         )
+    )
+
+
+def can_current_user_delete_member(member: AdminUnitMember) -> bool:
+    if current_user.has_role("admin"):
+        return True
+
+    # Check if there is another admin
+    return (
+        AdminUnitMember.query.filter(
+            AdminUnitMember.user_id != member.user_id,
+            AdminUnitMember.admin_unit_id == member.admin_unit_id,
+            AdminUnitMember.roles.any(AdminUnitMemberRole.name == "admin"),
+        ).first()
+        is not None
     )
