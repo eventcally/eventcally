@@ -38,6 +38,9 @@ def manage_admin_unit_member_update(id):
         member.roles.clear()
         add_roles_to_admin_unit_member(member, form.roles.data)
 
+        if member.user_id == current_user.id and not current_user.has_role("admin"):
+            add_roles_to_admin_unit_member(member, ["admin"])
+
         try:
             db.session.commit()
             flash(gettext("Member successfully updated"), "success")
