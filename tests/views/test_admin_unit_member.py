@@ -33,6 +33,41 @@ def test_update(client, app, utils, seeder):
             assert any(r.name == "admin" for r in member.roles)
 
 
+def test_update_self(client, app, utils: UtilActions, seeder: Seeder):
+    seeder.create_user()
+    user_id = utils.login()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+
+    with app.app_context():
+        from project.services.admin_unit import get_member_for_admin_unit_by_user_id
+
+        member = get_member_for_admin_unit_by_user_id(admin_unit_id, user_id)
+        member_id = member.id
+
+    url = "/manage/member/%d/update" % member_id
+    response = client.get(url)
+    assert response.status_code == 200
+
+    with client:
+        response = client.post(
+            url,
+            data={
+                "csrf_token": utils.get_csrf(response),
+                "roles": "event_verifier",
+                "submit": "Submit",
+            },
+        )
+        assert response.status_code == 302
+
+        with app.app_context():
+            from project.services.admin_unit import get_admin_unit_member
+
+            member = get_admin_unit_member(member_id)
+            assert len(member.roles) == 2
+            assert any(r.name == "event_verifier" for r in member.roles)
+            assert any(r.name == "admin" for r in member.roles)
+
+
 def test_update_db_error(client, app, utils, seeder, mocker):
     seeder.create_user()
     user_id = utils.login()
