@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-05-03 20:26+0200\n"
+"POT-Creation-Date: 2023-05-04 14:04+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1270,14 +1270,14 @@ msgstr "Wähle aus, warum du die Anfrage abgelehnt hast."
 msgid "Save review"
 msgstr "Prüfung speichern"
 
-#: project/forms/security.py:33
+#: project/forms/security.py:34
 msgid "register_email_desc"
 msgstr ""
 "Stelle sicher, dass du Zugriff auf das E-Mail-Postfach hast. Denn nach "
 "der Eingabe wird dir eine Mail geschickt, damit du bestätigen kannst, "
 "dass die E-Mail-Adresse dir gehört."
 
-#: project/forms/security.py:47
+#: project/forms/security.py:48 project/forms/security.py:63
 msgid "login_confirmation_required"
 msgstr ""
 "Beachte, dass du deine E-Mail-Adresse bestätigen muss. Dazu wird dir nach"
@@ -1285,11 +1285,11 @@ msgstr ""
 "geschickt. Bitte beachte, dass es einige Minuten dauern kann, bis die "
 "Mail bei dir eintrifft. Schaue zur Sicherheit auch im Spam-Ordner nach."
 
-#: project/forms/security.py:57
+#: project/forms/security.py:73
 msgid "Allow"
 msgstr "Erlauben"
 
-#: project/forms/security.py:58
+#: project/forms/security.py:74
 msgid "Deny"
 msgstr "Ablehnen"
 
@@ -1866,6 +1866,7 @@ msgid "No files available"
 msgstr "Keine Dateien vorhanden"
 
 #: project/templates/email/event_report_notice.html:4
+#: project/templates/email/event_report_notice.txt:1
 msgid "There is a new event report."
 msgstr "Es gibt eine neue Meldung zu einer Veranstaltung."
 
@@ -1873,7 +1874,12 @@ msgstr "Es gibt eine neue Meldung zu einer Veranstaltung."
 msgid "Click here to view the event"
 msgstr "Klicke hier, um die Veranstaltung anzuzeigen"
 
+#: project/templates/email/event_report_notice.txt:9
+msgid "Click the link below to view the event"
+msgstr "Klicke auf den unten stehenden Link, um die Veranstaltung anzuzeigen"
+
 #: project/templates/email/invitation_notice.html:4
+#: project/templates/email/invitation_notice.txt:1
 #, python-format
 msgid "You have been invited to join %(admin_unit_name)s."
 msgstr "Du wurdest eingeladen, %(admin_unit_name)s beizutreten."
@@ -1882,6 +1888,11 @@ msgstr "Du wurdest eingeladen, %(admin_unit_name)s beizutreten."
 #: project/templates/email/organization_invitation_notice.html:5
 msgid "Click here to view the invitation"
 msgstr "Klicke hier, um die Einladung anzunehmen."
+
+#: project/templates/email/invitation_notice.txt:2
+#: project/templates/email/organization_invitation_notice.txt:2
+msgid "Click the link below to view the invitation"
+msgstr "Klicke auf den unten stehenden Link, um die Einladung anzunehmen"
 
 #: project/templates/email/layout.html:350
 msgid "Hi there"
@@ -1893,10 +1904,12 @@ msgid "this is a message from %(site_name)s."
 msgstr "das ist eine Nachricht von %(site_name)s."
 
 #: project/templates/email/newsletter.html:7
+#: project/templates/email/newsletter.txt:3
 msgid "Notification settings"
 msgstr "Benachrichtigungseinstellungen"
 
 #: project/templates/email/organization_deletion_requested_notice.html:4
+#: project/templates/email/organization_deletion_requested_notice.txt:1
 #, python-format
 msgid "%(admin_unit_name)s is scheduled for deletion."
 msgstr "%(admin_unit_name)s ist zur Löschung vorgesehen."
@@ -1905,7 +1918,14 @@ msgstr "%(admin_unit_name)s ist zur Löschung vorgesehen."
 msgid "Click here below to cancel the deletion"
 msgstr "Klicke hier, um das Löschen abzubrechen"
 
+#: project/templates/email/organization_deletion_requested_notice.txt:2
+#: project/templates/email/user_deletion_requested_notice.html:5
+#: project/templates/email/user_deletion_requested_notice.txt:2
+msgid "Click the link below to cancel the deletion"
+msgstr "Klicke den Link, um das Löschen abzubrechen"
+
 #: project/templates/email/organization_invitation_accepted_notice.html:4
+#: project/templates/email/organization_invitation_accepted_notice.txt:1
 #, python-format
 msgid ""
 "%(email)s accepted your invitation to create the organisation "
@@ -1918,12 +1938,18 @@ msgstr ""
 msgid "Click here to view the relation"
 msgstr "Klicke hier, um die Beziehung anzuzeigen."
 
+#: project/templates/email/organization_invitation_accepted_notice.txt:2
+msgid "Click the link below to view the relation"
+msgstr "Klicke auf den unten stehenden Link, um die Beziehung anzuzeigen"
+
 #: project/templates/email/organization_invitation_notice.html:4
+#: project/templates/email/organization_invitation_notice.txt:1
 #, python-format
 msgid "%(admin_unit_name)s invited you to create an organization."
 msgstr "%(admin_unit_name)s hat dich eingeladen, eine Organisation zu erstellen."
 
 #: project/templates/email/reference_auto_verified_notice.html:4
+#: project/templates/email/reference_auto_verified_notice.txt:1
 msgid "There is a new referenced event that was automatically verified."
 msgstr "Es gibt eine neue Empfehlung, die automatisch verifiziert wurde."
 
@@ -1932,7 +1958,13 @@ msgstr "Es gibt eine neue Empfehlung, die automatisch verifiziert wurde."
 msgid "Click here to view the reference"
 msgstr "Klicke hier, um die Empfehlung anzuzeigen"
 
+#: project/templates/email/reference_auto_verified_notice.txt:2
+#: project/templates/email/referenced_event_changed_notice.txt:2
+msgid "Click the link below to view the reference"
+msgstr "Klicke auf den unten stehenden Link, um die Empfehlung anzuzeigen"
+
 #: project/templates/email/reference_request_notice.html:4
+#: project/templates/email/reference_request_notice.txt:1
 msgid "There is a new event reference request that needs to be reviewed."
 msgstr "Es gibt eine neue Empfehlungsanfrage, die geprüft werden muss."
 
@@ -1940,7 +1972,12 @@ msgstr "Es gibt eine neue Empfehlungsanfrage, die geprüft werden muss."
 msgid "Click here to review the request"
 msgstr "Klicke hier, um die Anfrage anzuzeigen"
 
+#: project/templates/email/reference_request_notice.txt:2
+msgid "Click the link below to review the request"
+msgstr "Klicke auf den unten stehenden Link, um die Anfrage anzuzeigen"
+
 #: project/templates/email/reference_request_review_status_notice.html:4
+#: project/templates/email/reference_request_review_status_notice.txt:1
 msgid "The review status of your event reference request has been updated."
 msgstr "Der Prüfungsstatus deiner Empfehlungsanfrage wurde aktualisiert"
 
@@ -1949,11 +1986,18 @@ msgstr "Der Prüfungsstatus deiner Empfehlungsanfrage wurde aktualisiert"
 msgid "Click here to view the status"
 msgstr "Klicke hier, um den Status anzuzeigen"
 
+#: project/templates/email/reference_request_review_status_notice.txt:2
+#: project/templates/email/review_status_notice.txt:2
+msgid "Click the link below to view the status"
+msgstr "Klicke auf den unten stehenden Link, um den Status anzuzeigen"
+
 #: project/templates/email/referenced_event_changed_notice.html:4
+#: project/templates/email/referenced_event_changed_notice.txt:1
 msgid "A referenced event was changed."
 msgstr "Eine empfohlene Veranstaltung wurde geändert."
 
 #: project/templates/email/review_notice.html:4
+#: project/templates/email/review_notice.txt:1
 msgid "There is a new event that needs to be reviewed."
 msgstr "Es wurde eine neue Veranstaltung eingetragen, die geprüft werden muss."
 
@@ -1961,11 +2005,17 @@ msgstr "Es wurde eine neue Veranstaltung eingetragen, die geprüft werden muss."
 msgid "Click here to review the event suggestion"
 msgstr "Klicke hier, um den Vorschlag zu prüfen"
 
+#: project/templates/email/review_notice.txt:2
+msgid "Click the link below to review the event suggestion"
+msgstr "Klicke auf den unten stehenden Link, um den Vorschlag anzuzeigen"
+
 #: project/templates/email/review_status_notice.html:4
+#: project/templates/email/review_status_notice.txt:1
 msgid "The review status of your event has been updated."
 msgstr "Der Prüfungsstatus deiner Veranstaltung wurde aktualisiert"
 
 #: project/templates/email/test_email.html:4
+#: project/templates/email/test_email.txt:1
 msgid "This is a test mail"
 msgstr "Das ist eine Test-Mail"
 
@@ -1973,14 +2023,15 @@ msgstr "Das ist eine Test-Mail"
 msgid "Click here to open the site"
 msgstr "Klicke hier, um die Seite zu öffnen"
 
+#: project/templates/email/test_email.txt:2
+msgid "Click the link below to open the site"
+msgstr "Klicke auf den unten stehenden Link, um die Seite zu öffnen"
+
 #: project/templates/email/user_deletion_requested_notice.html:4
+#: project/templates/email/user_deletion_requested_notice.txt:1
 #, python-format
 msgid "%(user_email)s is scheduled for deletion."
 msgstr "%(user_email)s ist zur Löschung vorgesehen."
-
-#: project/templates/email/user_deletion_requested_notice.html:5
-msgid "Click the link below to cancel the deletion"
-msgstr "Klicke den Link, um das Löschen abzubrechen"
 
 #: project/templates/event/actions.html:5
 #: project/templates/event/actions.html:22
@@ -2400,19 +2451,15 @@ msgstr "Organisationseinladung akzeptiert"
 msgid "Organization deletion requested"
 msgstr "Löschung der Organisation beantragt"
 
-#: project/views/admin_unit_member.py:43
+#: project/views/admin_unit_member.py:46
 msgid "Member successfully updated"
 msgstr "Mitglied erfolgreich aktualisiert"
 
-#: project/views/admin_unit_member.py:70 project/views/manage.py:307
-msgid "Last remaining administrator can not leave the organization."
-msgstr "Der letzte verbleibende Administrator kann die Organisation nicht verlassen."
-
-#: project/views/admin_unit_member.py:79
+#: project/views/admin_unit_member.py:75
 msgid "Entered email does not match member email"
 msgstr "Die eingegebene Email passt nicht zur Email des Mitglieds"
 
-#: project/views/admin_unit_member.py:84
+#: project/views/admin_unit_member.py:80
 msgid "Member successfully deleted"
 msgstr "Mitglied erfolgreich gelöscht"
 
@@ -2508,6 +2555,12 @@ msgstr "Orte von Google Maps"
 #: project/views/manage.py:302
 msgid "You are not a member of this organization"
 msgstr "Du bist kein Mitglied dieser Organisation"
+
+#: project/views/manage.py:307
+msgid "Last remaining administrator can not leave the organization."
+msgstr ""
+"Der letzte verbleibende Administrator kann die Organisation nicht "
+"verlassen."
 
 #: project/views/manage.py:321
 msgid "Organization successfully left"

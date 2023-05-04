@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-05-03 20:26+0200\n"
+"POT-Creation-Date: 2023-05-04 14:04+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -1223,14 +1223,14 @@ msgstr ""
 msgid "Save review"
 msgstr ""
 
-#: project/forms/security.py:33
+#: project/forms/security.py:34
 msgid "register_email_desc"
 msgstr ""
 "Make sure you have access to the email inbox. Because after you have "
 "entered it, an email will be sent to you so that you can confirm that the"
 " email address belongs to you."
 
-#: project/forms/security.py:47
+#: project/forms/security.py:48 project/forms/security.py:63
 msgid "login_confirmation_required"
 msgstr ""
 "Note that you will need to confirm your email address. Confirmation "
@@ -1238,11 +1238,11 @@ msgstr ""
 "Please note that it may take a few minutes for the email to reach you. To"
 " be on the safe side, also check the spam folder."
 
-#: project/forms/security.py:57
+#: project/forms/security.py:73
 msgid "Allow"
 msgstr ""
 
-#: project/forms/security.py:58
+#: project/forms/security.py:74
 msgid "Deny"
 msgstr ""
 
@@ -1815,6 +1815,7 @@ msgid "No files available"
 msgstr ""
 
 #: project/templates/email/event_report_notice.html:4
+#: project/templates/email/event_report_notice.txt:1
 msgid "There is a new event report."
 msgstr ""
 
@@ -1822,7 +1823,12 @@ msgstr ""
 msgid "Click here to view the event"
 msgstr ""
 
+#: project/templates/email/event_report_notice.txt:9
+msgid "Click the link below to view the event"
+msgstr ""
+
 #: project/templates/email/invitation_notice.html:4
+#: project/templates/email/invitation_notice.txt:1
 #, python-format
 msgid "You have been invited to join %(admin_unit_name)s."
 msgstr ""
@@ -1830,6 +1836,11 @@ msgstr ""
 #: project/templates/email/invitation_notice.html:5
 #: project/templates/email/organization_invitation_notice.html:5
 msgid "Click here to view the invitation"
+msgstr ""
+
+#: project/templates/email/invitation_notice.txt:2
+#: project/templates/email/organization_invitation_notice.txt:2
+msgid "Click the link below to view the invitation"
 msgstr ""
 
 #: project/templates/email/layout.html:350
@@ -1842,10 +1853,12 @@ msgid "this is a message from %(site_name)s."
 msgstr ""
 
 #: project/templates/email/newsletter.html:7
+#: project/templates/email/newsletter.txt:3
 msgid "Notification settings"
 msgstr ""
 
 #: project/templates/email/organization_deletion_requested_notice.html:4
+#: project/templates/email/organization_deletion_requested_notice.txt:1
 #, python-format
 msgid "%(admin_unit_name)s is scheduled for deletion."
 msgstr ""
@@ -1854,7 +1867,14 @@ msgstr ""
 msgid "Click here below to cancel the deletion"
 msgstr ""
 
+#: project/templates/email/organization_deletion_requested_notice.txt:2
+#: project/templates/email/user_deletion_requested_notice.html:5
+#: project/templates/email/user_deletion_requested_notice.txt:2
+msgid "Click the link below to cancel the deletion"
+msgstr ""
+
 #: project/templates/email/organization_invitation_accepted_notice.html:4
+#: project/templates/email/organization_invitation_accepted_notice.txt:1
 #, python-format
 msgid ""
 "%(email)s accepted your invitation to create the organisation "
@@ -1865,12 +1885,18 @@ msgstr ""
 msgid "Click here to view the relation"
 msgstr ""
 
+#: project/templates/email/organization_invitation_accepted_notice.txt:2
+msgid "Click the link below to view the relation"
+msgstr ""
+
 #: project/templates/email/organization_invitation_notice.html:4
+#: project/templates/email/organization_invitation_notice.txt:1
 #, python-format
 msgid "%(admin_unit_name)s invited you to create an organization."
 msgstr ""
 
 #: project/templates/email/reference_auto_verified_notice.html:4
+#: project/templates/email/reference_auto_verified_notice.txt:1
 msgid "There is a new referenced event that was automatically verified."
 msgstr ""
 
@@ -1879,7 +1905,13 @@ msgstr ""
 msgid "Click here to view the reference"
 msgstr ""
 
+#: project/templates/email/reference_auto_verified_notice.txt:2
+#: project/templates/email/referenced_event_changed_notice.txt:2
+msgid "Click the link below to view the reference"
+msgstr ""
+
 #: project/templates/email/reference_request_notice.html:4
+#: project/templates/email/reference_request_notice.txt:1
 msgid "There is a new event reference request that needs to be reviewed."
 msgstr ""
 
@@ -1887,7 +1919,12 @@ msgstr ""
 msgid "Click here to review the request"
 msgstr ""
 
+#: project/templates/email/reference_request_notice.txt:2
+msgid "Click the link below to review the request"
+msgstr ""
+
 #: project/templates/email/reference_request_review_status_notice.html:4
+#: project/templates/email/reference_request_review_status_notice.txt:1
 msgid "The review status of your event reference request has been updated."
 msgstr ""
 
@@ -1896,11 +1933,18 @@ msgstr ""
 msgid "Click here to view the status"
 msgstr ""
 
+#: project/templates/email/reference_request_review_status_notice.txt:2
+#: project/templates/email/review_status_notice.txt:2
+msgid "Click the link below to view the status"
+msgstr ""
+
 #: project/templates/email/referenced_event_changed_notice.html:4
+#: project/templates/email/referenced_event_changed_notice.txt:1
 msgid "A referenced event was changed."
 msgstr ""
 
 #: project/templates/email/review_notice.html:4
+#: project/templates/email/review_notice.txt:1
 msgid "There is a new event that needs to be reviewed."
 msgstr ""
 
@@ -1908,11 +1952,17 @@ msgstr ""
 msgid "Click here to review the event suggestion"
 msgstr ""
 
+#: project/templates/email/review_notice.txt:2
+msgid "Click the link below to review the event suggestion"
+msgstr ""
+
 #: project/templates/email/review_status_notice.html:4
+#: project/templates/email/review_status_notice.txt:1
 msgid "The review status of your event has been updated."
 msgstr ""
 
 #: project/templates/email/test_email.html:4
+#: project/templates/email/test_email.txt:1
 msgid "This is a test mail"
 msgstr ""
 
@@ -1920,13 +1970,14 @@ msgstr ""
 msgid "Click here to open the site"
 msgstr ""
 
-#: project/templates/email/user_deletion_requested_notice.html:4
-#, python-format
-msgid "%(user_email)s is scheduled for deletion."
+#: project/templates/email/test_email.txt:2
+msgid "Click the link below to open the site"
 msgstr ""
 
-#: project/templates/email/user_deletion_requested_notice.html:5
-msgid "Click the link below to cancel the deletion"
+#: project/templates/email/user_deletion_requested_notice.html:4
+#: project/templates/email/user_deletion_requested_notice.txt:1
+#, python-format
+msgid "%(user_email)s is scheduled for deletion."
 msgstr ""
 
 #: project/templates/event/actions.html:5
@@ -2333,19 +2384,15 @@ msgstr ""
 msgid "Organization deletion requested"
 msgstr ""
 
-#: project/views/admin_unit_member.py:43
+#: project/views/admin_unit_member.py:46
 msgid "Member successfully updated"
 msgstr ""
 
-#: project/views/admin_unit_member.py:70 project/views/manage.py:307
-msgid "Last remaining administrator can not leave the organization."
-msgstr ""
-
-#: project/views/admin_unit_member.py:79
+#: project/views/admin_unit_member.py:75
 msgid "Entered email does not match member email"
 msgstr ""
 
-#: project/views/admin_unit_member.py:84
+#: project/views/admin_unit_member.py:80
 msgid "Member successfully deleted"
 msgstr ""
 
@@ -2440,6 +2487,10 @@ msgstr ""
 
 #: project/views/manage.py:302
 msgid "You are not a member of this organization"
+msgstr ""
+
+#: project/views/manage.py:307
+msgid "Last remaining administrator can not leave the organization."
 msgstr ""
 
 #: project/views/manage.py:321
