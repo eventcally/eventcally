@@ -3,6 +3,7 @@ from flask_security import url_for_security
 from flask_security.forms import (
     ConfirmRegisterForm,
     EqualTo,
+    ForgotPasswordForm,
     LoginForm,
     get_form_field_label,
 )
@@ -39,6 +40,21 @@ class ExtendedLoginForm(LoginForm):
         super().__init__(*args, **kwargs)
         self._fields["email"].flags.required = True
 
+    def validate(self, **kwargs):
+        result = super().validate(**kwargs)
+
+        if not result and self.requires_confirmation:
+            flash_message(
+                gettext("login_confirmation_required"),
+                url_for_security("send_confirmation"),
+                localize_callback("Resend confirmation instructions"),
+                "danger",
+            )
+
+        return result
+
+
+class ExtendedForgotPasswordForm(ForgotPasswordForm):
     def validate(self, **kwargs):
         result = super().validate(**kwargs)
 

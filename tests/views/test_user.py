@@ -114,6 +114,29 @@ def test_login_flash(client, seeder, utils):
     )
 
 
+def test_forgot_reset_flash(client, seeder, utils):
+    email = "test@test.de"
+    password = "MeinPasswortIstDasBeste"
+    seeder.create_user(email, password, confirm=False)
+
+    response = client.get("/login")
+    assert response.status_code == 200
+
+    with client:
+        response = client.post(
+            "/reset",
+            data={
+                "email": email,
+                "csrf_token": utils.get_csrf(response),
+                "submit": "Passwort wiederherstellen",
+            },
+        )
+
+    utils.assert_response_error_message(
+        response, "Beachte, dass du deine E-Mail-Adresse bestätigen muss."
+    )
+
+
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("non_match", [True, False])
 def test_user_request_deletion(

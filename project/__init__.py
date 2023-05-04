@@ -209,7 +209,11 @@ from project.jsonld import CustomJsonProvider
 
 app.json_provider_class = CustomJsonProvider
 
-from project.forms.security import ExtendedConfirmRegisterForm, ExtendedLoginForm
+from project.forms.security import (
+    ExtendedConfirmRegisterForm,
+    ExtendedForgotPasswordForm,
+    ExtendedLoginForm,
+)
 
 # Setup Flask-Security
 from project.models import Role, User
@@ -220,6 +224,7 @@ security = Security(
     user_datastore,
     confirm_register_form=ExtendedConfirmRegisterForm,
     login_form=ExtendedLoginForm,
+    forgot_password_form=ExtendedForgotPasswordForm,
 )
 app.session_interface = CustomSessionInterface()
 
