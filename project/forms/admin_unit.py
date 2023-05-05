@@ -11,10 +11,16 @@ from project.models import AdminUnitRelation, Image, Location
 
 
 class AdminUnitLocationForm(FlaskForm):
-    street = StringField(lazy_gettext("Street"), validators=[Optional()])
-    postalCode = StringField(lazy_gettext("Postal code"), validators=[DataRequired()])
-    city = StringField(lazy_gettext("City"), validators=[DataRequired()])
-    state = StringField(lazy_gettext("State"), validators=[Optional()])
+    street = StringField(
+        lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
+    )
+    postalCode = StringField(
+        lazy_gettext("Postal code"), validators=[DataRequired(), Length(max=255)]
+    )
+    city = StringField(
+        lazy_gettext("City"), validators=[DataRequired(), Length(max=255)]
+    )
+    state = StringField(lazy_gettext("State"), validators=[Optional(), Length(max=255)])
     latitude = DecimalField(
         lazy_gettext("Latitude"), places=16, validators=[Optional()]
     )
@@ -43,10 +49,10 @@ class BaseAdminUnitForm(FlaskForm):
             ),
         ],
     )
-    url = URLField(lazy_gettext("Link URL"), validators=[Optional()])
-    email = EmailField(lazy_gettext("Email"), validators=[Optional()])
-    phone = TelField(lazy_gettext("Phone"), validators=[Optional()])
-    fax = TelField(lazy_gettext("Fax"), validators=[Optional()])
+    url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
+    email = EmailField(lazy_gettext("Email"), validators=[Optional(), Length(max=255)])
+    phone = TelField(lazy_gettext("Phone"), validators=[Optional(), Length(max=255)])
+    fax = TelField(lazy_gettext("Fax"), validators=[Optional(), Length(max=255)])
     logo = FormField(Base64ImageForm, lazy_gettext("Logo"), default=lambda: Image())
     location = FormField(AdminUnitLocationForm, default=lambda: Location())
 
@@ -107,7 +113,9 @@ class UpdateAdminUnitForm(BaseAdminUnitForm):
 
 
 class UpdateAdminUnitWidgetForm(FlaskForm):
-    widget_font = StringField(lazy_gettext("Font"), validators=[Optional()])
+    widget_font = StringField(
+        lazy_gettext("Font"), validators=[Optional(), Length(max=255)]
+    )
     widget_background_color = StringField(
         lazy_gettext("Background Color"),
         default="#ffffff",

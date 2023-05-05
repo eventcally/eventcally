@@ -3,7 +3,7 @@ from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from markupsafe import Markup
 from wtforms import HiddenField, StringField
-from wtforms.validators import Optional
+from wtforms.validators import Length, Optional
 
 from project.imageutils import (
     get_bytes_from_image,
@@ -17,7 +17,7 @@ from project.imageutils import (
 
 class BaseImageForm(FlaskForm):
     copyright_text = StringField(
-        lazy_gettext("Copyright text"), validators=[Optional()]
+        lazy_gettext("Copyright text"), validators=[Optional(), Length(max=255)]
     )
 
 
