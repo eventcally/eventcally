@@ -2,17 +2,21 @@ from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaField
 from wtforms.fields import URLField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Length, Optional
 
 from project.forms.common import Base64ImageForm
 from project.models import Image, Location
 
 
 class EventPlaceLocationForm(FlaskForm):
-    street = StringField(lazy_gettext("Street"), validators=[Optional()])
-    postalCode = StringField(lazy_gettext("Postal code"), validators=[Optional()])
-    city = StringField(lazy_gettext("City"), validators=[Optional()])
-    state = StringField(lazy_gettext("State"), validators=[Optional()])
+    street = StringField(
+        lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
+    )
+    postalCode = StringField(
+        lazy_gettext("Postal code"), validators=[Optional(), Length(max=255)]
+    )
+    city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
+    state = StringField(lazy_gettext("State"), validators=[Optional(), Length(max=255)])
     latitude = DecimalField(
         lazy_gettext("Latitude"), places=16, validators=[Optional()]
     )
@@ -22,8 +26,10 @@ class EventPlaceLocationForm(FlaskForm):
 
 
 class BaseEventPlaceForm(FlaskForm):
-    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
-    url = URLField(lazy_gettext("Link URL"), validators=[Optional()])
+    name = StringField(
+        lazy_gettext("Name"), validators=[DataRequired(), Length(max=255)]
+    )
+    url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
     photo = FormField(Base64ImageForm, lazy_gettext("Photo"), default=lambda: Image())
     description = TextAreaField(lazy_gettext("Description"), validators=[Optional()])
     location = FormField(EventPlaceLocationForm)

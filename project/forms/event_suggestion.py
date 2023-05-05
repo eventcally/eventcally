@@ -8,7 +8,7 @@ from wtforms import (
     SubmitField,
 )
 from wtforms.fields import EmailField, TelField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Length, Optional
 
 from project.forms.common import get_accept_tos_markup
 from project.forms.event import EventDateDefinitionFormMixin, SharedEventForm
@@ -24,19 +24,19 @@ from project.models import (
 class CreateEventSuggestionForm(SharedEventForm, EventDateDefinitionFormMixin):
     contact_name = StringField(
         lazy_gettext("Name"),
-        validators=[DataRequired()],
+        validators=[DataRequired(), Length(max=255)],
         description=lazy_gettext("Please enter your name for the review."),
     )
     contact_phone = TelField(
         lazy_gettext("Phone"),
-        validators=[Optional()],
+        validators=[Optional(), Length(max=255)],
         description=lazy_gettext(
             "Please enter your phone number or email address for the review."
         ),
     )
     contact_email = EmailField(
         lazy_gettext("Email"),
-        validators=[Optional()],
+        validators=[Optional(), Length(max=255)],
         description=lazy_gettext(
             "Please enter your email address or phone number for the review."
         ),

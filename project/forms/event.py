@@ -101,12 +101,12 @@ class OrganizerForm(EventPlaceForm):
 class EventOrganizerForm(FlaskForm):
     name = StringField(
         lazy_gettext("Organizator"),
-        validators=[Optional()],
+        validators=[Optional(), Length(max=255)],
     )
-    url = URLField(lazy_gettext("Link URL"), validators=[Optional()])
-    email = EmailField(lazy_gettext("Email"), validators=[Optional()])
-    phone = StringField(lazy_gettext("Phone"), validators=[Optional()])
-    fax = StringField(lazy_gettext("Fax"), validators=[Optional()])
+    url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
+    email = EmailField(lazy_gettext("Email"), validators=[Optional(), Length(max=255)])
+    phone = StringField(lazy_gettext("Phone"), validators=[Optional(), Length(max=255)])
+    fax = StringField(lazy_gettext("Fax"), validators=[Optional(), Length(max=255)])
 
 
 class SharedEventForm(FlaskForm):
@@ -122,14 +122,14 @@ class SharedEventForm(FlaskForm):
     )
     external_link = URLField(
         lazy_gettext("Link URL"),
-        validators=[Optional()],
+        validators=[Optional(), Length(max=255)],
         description=lazy_gettext(
             "Enter a link to an external website containing more information about the event."
         ),
     )
     ticket_link = URLField(
         lazy_gettext("Ticket Link URL"),
-        validators=[Optional()],
+        validators=[Optional(), Length(max=255)],
         description=lazy_gettext("Enter a link where tickets can be purchased."),
     )
     tags = StringField(
