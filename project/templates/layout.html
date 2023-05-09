@@ -300,10 +300,12 @@
               <div class="row">
                 <div class="col h-100 text-center my-auto">
                   <ul class="list-inline mb-2">
+                    {% if has_tos() %}
                     <li class="list-inline-item">
                       <a href="{{ url_for('tos') }}" class="text-muted">{{ _('Terms of service') }}</a>
                     </li>
                     <li class="list-inline-item">&sdot;</li>
+                    {% endif %}
                     <li class="list-inline-item">
                       <a href="{{ url_for('legal_notice') }}" class="text-muted">{{ _('Legal notice') }}</a>
                     </li>

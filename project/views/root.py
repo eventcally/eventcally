@@ -1,7 +1,7 @@
 import json
 import os.path
 
-from flask import render_template, request, send_from_directory, url_for
+from flask import abort, render_template, request, send_from_directory, url_for
 from flask_babel import gettext
 from markupsafe import Markup
 from sqlalchemy import text
@@ -54,6 +54,10 @@ def up():
 def tos():
     title = gettext("Terms of service")
     settings = upsert_settings()
+
+    if not settings.tos:
+        abort(404)
+
     content = Markup(settings.tos)
     return render_template("legal.html", title=title, content=content)
 

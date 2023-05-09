@@ -61,15 +61,28 @@ class Base64ImageForm(BaseImageForm):
 
 
 def get_accept_tos_markup():
+    from project.services.admin import has_tos
+
     tos_open = '<a href="%s">' % url_for("tos")
     tos_close = "</a>"
 
     privacy_open = '<a href="%s">' % url_for("privacy")
     privacy_close = "</a>"
 
+    if has_tos():
+        return Markup(
+            lazy_gettext(
+                "I read and accept %(tos_open)sTerms of Service%(tos_close)s and %(privacy_open)sPrivacy%(privacy_close)s.",
+                tos_open=tos_open,
+                tos_close=tos_close,
+                privacy_open=privacy_open,
+                privacy_close=privacy_close,
+            )
+        )
+
     return Markup(
         lazy_gettext(
-            "I read and accept %(tos_open)sTerms of Service%(tos_close)s and %(privacy_open)sPrivacy%(privacy_close)s.",
+            "I read and accept %(privacy_open)sPrivacy%(privacy_close)s.",
             tos_open=tos_open,
             tos_close=tos_close,
             privacy_open=privacy_open,

@@ -97,8 +97,14 @@ def get_context_processors():
             "reference_requests_incoming_badge": reference_requests_incoming_badge,
         }
 
+    def has_tos():
+        from project.services.admin import has_tos
+
+        return has_tos()
+
     return dict(
         current_admin_unit=get_current_admin_unit(),
         get_manage_menu_options=get_manage_menu_options,
         has_access=has_access,
+        has_tos=has_tos,
     )

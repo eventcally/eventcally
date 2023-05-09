@@ -1,5 +1,7 @@
 import os
 
+from tests.utils import UtilActions
+
 
 def test_home(client, seeder, utils):
     url = utils.get_url("home")
@@ -14,7 +16,11 @@ def test_up(app, utils):
     utils.get_ok("up")
 
 
-def test_tos(app, db, utils):
+def test_tos(app, db, utils: UtilActions):
+    url = utils.get_url("tos")
+    response = utils.get(url)
+    utils.assert_response_notFound(response)
+
     with app.app_context():
         from project.services.admin import upsert_settings
 
