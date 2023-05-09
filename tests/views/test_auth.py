@@ -1,5 +1,17 @@
-def test_register(client, app, utils):
+import pytest
+
+
+@pytest.mark.parametrize("settings", [True, False])
+def test_register(client, app, db, utils, settings):
     from project.services.user import find_user_by_email
+
+    if settings:
+        with app.app_context():
+            from project.services.admin import upsert_settings
+
+            settings = upsert_settings()
+            settings.tos = "Meine Nutzungsbedingungen"
+            db.session.commit()
 
     utils.register("test@test.de", "MeinPasswortIstDasBeste")
 

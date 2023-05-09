@@ -3,7 +3,7 @@ describe("Root", () => {
     cy.visit("/");
     cy.screenshot("home");
 
-    cy.visit("/tos");
+    cy.visit("/tos", {failOnStatusCode: false});
     cy.screenshot("tos");
 
     cy.visit("/legal_notice");
