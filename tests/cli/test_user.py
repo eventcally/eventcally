@@ -37,7 +37,15 @@ def test_create(client, seeder, app):
 
     runner = app.test_cli_runner()
     result = runner.invoke(
-        args=["user", "create", "test@test.de", "password", "--confirm", "--admin"]
+        args=[
+            "user",
+            "create",
+            "test@test.de",
+            "password",
+            "--confirm",
+            "--admin",
+            "--accept-tos",
+        ]
     )
     assert "user_id" in result.output
 
@@ -46,6 +54,7 @@ def test_create(client, seeder, app):
 
         user = find_user_by_email("test@test.de")
         assert user.confirmed_at is not None
+        assert user.tos_accepted_at is not None
 
 
 def test_confirm(client, seeder, app):

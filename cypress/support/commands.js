@@ -13,13 +13,13 @@ Cypress.Commands.add("logexec", (command) => {
 
 Cypress.Commands.add("setup", () => {
   cy.logexec("flask test reset --seed");
-  cy.logexec("flask user create test@test.de password --confirm");
+  cy.logexec("flask user create test@test.de password --confirm --accept-tos");
 });
 
 Cypress.Commands.add(
   "createUser",
   (email = "test@test.de", password = "password", admin = false) => {
-    let cmd = 'flask user create "' + email + '" "' + password + '" --confirm';
+    let cmd = 'flask user create "' + email + '" "' + password + '" --confirm --accept-tos';
     if (admin) {
       cmd += " --admin";
     }
