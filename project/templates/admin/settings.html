@@ -24,4 +24,8 @@
     {{ render_field(form.submit) }}
 </form>
 
+<div class="my-4">
+    <a class="btn btn-outline-danger m-1" href="{{ url_for('admin_reset_tos_accepted') }}" role="button">{{ _('Reset acceptance of terms of service and privacy') }}&hellip;</a>
+</div>
+
 {% endblock %}

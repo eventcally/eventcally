@@ -1,9 +1,27 @@
 from datetime import datetime, timedelta
 
-from flask import g, request
+from flask import g, redirect, request, url_for
 from flask_login.utils import encode_cookie
+from flask_security import current_user
 
 from project import app
+
+
+@app.after_request
+def check_tos_accepted(response):
+    if (
+        response.status_code == 200
+        and request.endpoint
+        and not request.endpoint.startswith("api_")
+        and not request.endpoint.startswith("widget_")
+        and request.endpoint not in ["static", "user_accept_tos"]
+        and current_user
+        and current_user.is_authenticated
+        and not current_user.tos_accepted_at
+    ):
+        return redirect(url_for("user_accept_tos", next=request.url))
+
+    return response
 
 
 @app.after_request

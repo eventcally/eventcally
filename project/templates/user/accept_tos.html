@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field %}
+
+{% block content %}
+
+<h1>{{ _('Confirmation required') }}</h1>
+<div>
+    <form action="" method="POST">
+      {{ form.hidden_tag() }}
+
+      <div class="form-group form-check">
+        <div class="input-group">
+          {{ form.accept_tos(class="form-check-input")|safe }}
+          {{ form.accept_tos.label(class="form-check-label") }}
+        </div>
+      </div>
+
+      {{ render_field(form.submit) }}
+    </form>
+</div>
+
+{% endblock %}

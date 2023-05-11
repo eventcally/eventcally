@@ -34,6 +34,7 @@ class Seeder(object):
         password="MeinPasswortIstDasBeste",
         admin=False,
         confirm=True,
+        tos_accepted=True,
     ):
         from flask_security.confirmable import confirm_user
 
@@ -41,6 +42,7 @@ class Seeder(object):
             add_admin_roles_to_user,
             create_user,
             find_user_by_email,
+            set_user_accepted_tos,
         )
 
         with self._app.app_context():
@@ -51,6 +53,9 @@ class Seeder(object):
 
                 if confirm:
                     confirm_user(user)
+
+                if tos_accepted:
+                    set_user_accepted_tos(user)
 
             if admin:
                 add_admin_roles_to_user(email)

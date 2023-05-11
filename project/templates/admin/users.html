@@ -19,6 +19,7 @@
                 <th>{{ _('Email') }}</th>
                 <th>created_at</th>
                 <th>confirmed_at</th>
+                <th>tos_accepted_at</th>
                 <th>deletion_requested_at</th>
                 <th></th>
             </tr>
@@ -29,6 +30,7 @@
                     <td>{{ user.email }}</td>
                     <td>{% if user.created_at %}{{ user.created_at | dateformat }}{% endif %}</td>
                     <td>{% if user.confirmed_at %}{{ user.confirmed_at | dateformat }}{% endif %}</td>
+                    <td>{% if user.tos_accepted_at %}{{ user.tos_accepted_at | dateformat }}{% endif %}</td>
                     <td>{% if user.deletion_requested_at %}{{ user.deletion_requested_at | dateformat }}{% endif %}</td>
                     <td>
                         <a href="{{ url_for('admin_user_update', id=user.id) }}">{{ _('Edit') }}</a>
@@ -41,5 +43,10 @@
 </div>
 
 <div class="my-4">{{ render_pagination(pagination) }}</div>
+
+<div class="my-4">
+    <a class="btn btn-outline-danger m-1" href="{{ url_for('admin_reset_tos_accepted') }}" role="button">{{ _('Reset acceptance of terms of service and privacy') }}&hellip;</a>
+</div>
+
 
 {% endblock %}

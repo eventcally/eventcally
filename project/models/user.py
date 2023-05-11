@@ -59,7 +59,10 @@ class User(db.Model, UserMixin):
             server_default="1",
         )
     )
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    tos_accepted_at = Column(
+        DateTime(),
+        nullable=True,
+    )
     created_at = deferred(Column(DateTime, default=datetime.datetime.utcnow))
     deletion_requested_at = deferred(Column(DateTime, nullable=True))
 

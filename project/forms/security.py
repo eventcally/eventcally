@@ -72,3 +72,12 @@ class ExtendedForgotPasswordForm(ForgotPasswordForm):
 class AuthorizeForm(FlaskForm):
     allow = SubmitField(lazy_gettext("Allow"))
     deny = SubmitField(lazy_gettext("Deny"))
+
+
+class AcceptTosForm(FlaskForm):
+    accept_tos = BooleanField(validators=[DataRequired()])
+    submit = SubmitField(lazy_gettext("Confirm"))
+
+    def __init__(self, **kwargs):
+        super(AcceptTosForm, self).__init__(**kwargs)
+        self._fields["accept_tos"].label.text = get_accept_tos_markup()

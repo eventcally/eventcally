@@ -9,6 +9,7 @@ from project.services.user import (
     add_admin_roles_to_user,
     create_user,
     find_user_by_email,
+    set_user_accepted_tos,
 )
 
 user_cli = AppGroup("user")
@@ -27,7 +28,8 @@ def add_admin_roles(email):
 @click.argument("password")
 @click.option("--confirm/--no-confirm", default=False)
 @click.option("--admin/--no-admin", default=False)
-def create(email, password, confirm, admin):
+@click.option("--accept-tos/--no-accept-tos", default=False)
+def create(email, password, confirm, admin, accept_tos):
     user = create_user(email, password)
 
     if confirm:
@@ -35,6 +37,9 @@ def create(email, password, confirm, admin):
 
     if admin:
         add_admin_roles_to_user(email)
+
+    if accept_tos:
+        set_user_accepted_tos(user)
 
     db.session.commit()
     result = {"user_id": user.id}

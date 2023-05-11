@@ -17,6 +17,13 @@ class AdminSettingsForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Save"))
 
 
+class ResetTosAceptedForm(FlaskForm):
+    reset_for_users = BooleanField(
+        lazy_gettext("Reset for all users"), validators=[DataRequired()]
+    )
+    submit = SubmitField(lazy_gettext("Reset"))
+
+
 class UpdateUserForm(FlaskForm):
     roles = MultiCheckboxField(lazy_gettext("Roles"))
     submit = SubmitField(lazy_gettext("Update user"))

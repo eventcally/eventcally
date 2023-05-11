@@ -13,6 +13,7 @@ from project.forms.admin import (
     AdminTestEmailForm,
     DeleteAdminUnitForm,
     DeleteUserForm,
+    ResetTosAceptedForm,
     UpdateAdminUnitForm,
     UpdateUserForm,
 )
@@ -97,6 +98,26 @@ def admin_admin_unit_delete(id):
     return render_template(
         "admin/delete_admin_unit.html", form=form, admin_unit=admin_unit
     )
+
+
+@app.route("/admin/reset-tos-accepted", methods=("GET", "POST"))
+@roles_required("admin")
+def admin_reset_tos_accepted():
+    from project.services.admin import reset_tos_accepted_for_users
+
+    form = ResetTosAceptedForm()
+
+    if form.validate_on_submit():
+        try:
+            reset_tos_accepted_for_users()
+            return redirect(url_for("admin"))
+        except SQLAlchemyError as e:  # pragma: no cover
+            db.session.rollback()
+            flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
+    return render_template("admin/reset_tos_accepted.html", form=form)
 
 
 @app.route("/admin/settings", methods=("GET", "POST"))

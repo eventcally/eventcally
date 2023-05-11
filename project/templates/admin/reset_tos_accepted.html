@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field_with_errors, render_field %}
+{%- block title -%}
+{{ _('Reset acceptance of terms of service and privacy') }}
+{%- endblock -%}
+{% block content %}
+
+<h1>{{ _('Reset acceptance of terms of service and privacy') }}</h1>
+
+<form action="" method="POST">
+  {{ form.hidden_tag() }}
+  {{ render_field_with_errors(form.reset_for_users, ri="checkbox") }}
+  {{ render_field(form.submit) }}
+</form>
+
+{% endblock %}

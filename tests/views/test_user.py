@@ -1,6 +1,7 @@
 import pytest
 
 from tests.seeder import Seeder
+from tests.utils import UtilActions
 
 
 def test_profile(client, seeder, utils):
@@ -245,3 +246,28 @@ def test_user_cancel_deletion(
 
         user = db.session.get(User, user_id)
         assert user.deletion_requested_at is None
+
+
+def test_user_accept_tos(client, app, db, seeder: Seeder, utils: UtilActions):
+    seeder.setup_base()
+
+    with app.app_context():
+        from project.services.admin import reset_tos_accepted_for_users
+
+        reset_tos_accepted_for_users()
+
+    response = utils.get_endpoint("profile")
+    utils.assert_response_redirect(
+        response, "user_accept_tos", next="http://localhost/profile"
+    )
+
+    response = utils.get_endpoint_ok("user_accept_tos", next="/profile")
+    response = utils.post_form(
+        response.request.url,
+        response,
+        {
+            "accept_tos": "y",
+            "submit": "Confirm",
+        },
+    )
+    utils.assert_response_redirect(response, "profile")

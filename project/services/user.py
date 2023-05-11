@@ -122,3 +122,7 @@ def is_user_admin_member(user: User) -> bool:
         ).first()
         is not None
     )
+
+
+def set_user_accepted_tos(user: User):
+    user.tos_accepted_at = datetime.datetime.utcnow()

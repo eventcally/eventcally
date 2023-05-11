@@ -2,6 +2,8 @@ import base64
 
 import pytest
 
+from tests.seeder import Seeder
+
 
 def test_read(client, app, db, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
@@ -412,7 +414,7 @@ def test_put_invalidDateFormat(client, seeder, utils, app):
     utils.assert_response_unprocessable_entity(response)
 
 
-def test_put_startAfterEnd(client, seeder, utils, app):
+def test_put_startAfterEnd(client, seeder: Seeder, utils, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
