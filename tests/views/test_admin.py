@@ -1,5 +1,8 @@
 import pytest
 
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
 
 def test_normal_user(client, seeder, utils):
     seeder.create_user()
@@ -285,3 +288,23 @@ def test_admin_unit_delete(client, seeder, utils, app, db, mocker, db_error, non
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         assert admin_unit is None
+
+
+def test_admin_reset_tos_accepted(client, app, db, seeder: Seeder, utils: UtilActions):
+    seeder.setup_base(admin=True)
+
+    response = utils.get_endpoint_ok("admin_reset_tos_accepted")
+    response = utils.post_form(
+        response.request.url,
+        response,
+        {
+            "reset_for_users": "y",
+            "submit": "Reset",
+        },
+    )
+    utils.assert_response_redirect(response, "admin")
+
+    with app.app_context():
+        from project.models.user import User
+
+        assert len(User.query.filter(User.tos_accepted_at.isnot(None)).all()) == 0

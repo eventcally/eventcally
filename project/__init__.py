@@ -1,6 +1,6 @@
 import logging
 import os
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from flask import Flask
 from flask_babel import Babel
@@ -9,7 +9,7 @@ from flask_gzip import Gzip
 from flask_mail import Mail, email_dispatched
 from flask_migrate import Migrate
 from flask_qrcode import QRcode
-from flask_security import Security, SQLAlchemySessionUserDatastore
+from flask_security import Security, SQLAlchemySessionUserDatastore, user_registered
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy import MetaData
@@ -228,6 +228,16 @@ security = Security(
 )
 app.session_interface = CustomSessionInterface()
 
+
+@user_registered.connect_via(app)
+def user_registered_sighandler(app, user, confirm_token, confirmation_token, form_data):
+    if "accept_tos" in form_data and form_data["accept_tos"]:
+        from project.services.user import set_user_accepted_tos
+
+        set_user_accepted_tos(user)
+        db.session.commit()
+
+
 # OAuth2
 from project.oauth2 import config_oauth
 
@@ -276,9 +286,9 @@ from project.views import (
     reference_request,
     reference_request_review,
     root,
-    user,
-    widget,
 )
+from project.views import user as user_view
+from project.views import widget
 
 if __name__ == "__main__":  # pragma: no cover
     app.run()

@@ -35,7 +35,12 @@ from project.services.event_suggestion import insert_event_suggestion
 from project.services.oauth2_client import complete_oauth2_client
 from project.services.organizer import get_event_organizer, upsert_event_organizer
 from project.services.place import get_event_places, upsert_event_place
-from project.services.user import create_user, find_user_by_email, get_user
+from project.services.user import (
+    create_user,
+    find_user_by_email,
+    get_user,
+    set_user_accepted_tos,
+)
 
 test_cli = AppGroup("test")
 
@@ -61,12 +66,18 @@ def _get_default_organizer_id(admin_unit_id):
 
 
 def _create_user(
-    email="test@test.de", password="MeinPasswortIstDasBeste", confirm=True
+    email="test@test.de",
+    password="MeinPasswortIstDasBeste",
+    confirm=True,
+    tos_accepted=True,
 ):
     user = create_user(email, password)
 
     if confirm:
         confirm_user(user)
+
+    if tos_accepted:
+        set_user_accepted_tos(user)
 
     db.session.commit()
     return user.id

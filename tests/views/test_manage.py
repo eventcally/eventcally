@@ -4,7 +4,7 @@ from tests.seeder import Seeder
 from tests.utils import UtilActions
 
 
-def test_index_noCookie(client, seeder, utils):
+def test_index_noCookie(client, seeder: Seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
 
     response = utils.get_endpoint("manage")
