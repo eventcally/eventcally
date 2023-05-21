@@ -52,6 +52,7 @@ app.config["SEO_SITEMAP_PING_GOOGLE"] = getenv_bool("SEO_SITEMAP_PING_GOOGLE", "
 app.config["GOOGLE_MAPS_API_KEY"] = os.getenv("GOOGLE_MAPS_API_KEY")
 set_env_to_app(app, "SITE_NAME", "EventCally")
 app.config["FLASK_DEBUG"] = getenv_bool("FLASK_DEBUG", "False")
+app.config["API_READ_ANONYM"] = getenv_bool("API_READ_ANONYM", "False")
 
 # if app.config["FLASK_DEBUG"]:
 #     logging.basicConfig(level=logging.DEBUG)
@@ -268,6 +269,7 @@ from project.views import (
     admin_unit,
     admin_unit_member,
     admin_unit_member_invitation,
+    custom_widget,
     dump,
     event,
     event_date,

@@ -26,10 +26,9 @@ from project.api.event_date.schemas import (
     EventDateListRequestSchema,
     EventDateListResponseSchema,
 )
-from project.api.resources import BaseResource
+from project.api.resources import BaseResource, require_api_access
 from project.api.schemas import NoneSchema
 from project.models import AdminUnit, Event, EventDate, PublicStatus
-from project.oauth2 import require_oauth
 from project.services.event import (
     get_event_with_details_or_404,
     get_events_query,
@@ -61,6 +60,7 @@ class EventListResource(BaseResource):
     @doc(summary="List events", tags=["Events"])
     @use_kwargs(EventListRequestSchema, location=("query"))
     @marshal_with(EventListResponseSchema)
+    @require_api_access()
     def get(self, **kwargs):
         pagination = (
             Event.query.join(Event.admin_unit)
@@ -78,7 +78,7 @@ class EventListResource(BaseResource):
 class EventResource(BaseResource):
     @doc(summary="Get event", tags=["Events"])
     @marshal_with(EventSchema)
-    @require_oauth(optional=True)
+    @require_api_access()
     def get(self, id):
         login_api_user()
         event = get_event_with_details_or_404(id)
@@ -86,11 +86,12 @@ class EventResource(BaseResource):
         return event
 
     @doc(
-        summary="Update event", tags=["Events"], security=[{"oauth2": ["event:write"]}]
+        summary="Update event",
+        tags=["Events"],
     )
     @use_kwargs(EventPostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_oauth("event:write")
+    @require_api_access("event:write")
     def put(self, id):
         login_api_user_or_401()
         event = Event.query.get_or_404(id)
@@ -106,10 +107,13 @@ class EventResource(BaseResource):
 
         return make_response("", 204)
 
-    @doc(summary="Patch event", tags=["Events"], security=[{"oauth2": ["event:write"]}])
+    @doc(
+        summary="Patch event",
+        tags=["Events"],
+    )
     @use_kwargs(EventPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_oauth("event:write")
+    @require_api_access("event:write")
     def patch(self, id):
         login_api_user_or_401()
         event = Event.query.get_or_404(id)
@@ -126,10 +130,11 @@ class EventResource(BaseResource):
         return make_response("", 204)
 
     @doc(
-        summary="Delete event", tags=["Events"], security=[{"oauth2": ["event:write"]}]
+        summary="Delete event",
+        tags=["Events"],
     )
     @marshal_with(None, 204)
-    @require_oauth("event:write")
+    @require_api_access("event:write")
     def delete(self, id):
         login_api_user_or_401()
         event = Event.query.get_or_404(id)
@@ -145,7 +150,7 @@ class EventDatesResource(BaseResource):
     @doc(summary="List dates for event", tags=["Events", "Event Dates"])
     @use_kwargs(EventDateListRequestSchema, location=("query"))
     @marshal_with(EventDateListResponseSchema)
-    @require_oauth(optional=True)
+    @require_api_access()
     def get(self, id, **kwargs):
         event = Event.query.options(
             load_only(Event.id, Event.public_status)
@@ -164,7 +169,7 @@ class EventSearchResource(BaseResource):
     @doc(summary="Search for events", tags=["Events"])
     @use_kwargs(EventSearchRequestSchema, location=("query"))
     @marshal_with(EventSearchResponseSchema)
-    @require_oauth(optional=True)
+    @require_api_access()
     def get(self, **kwargs):
         login_api_user()
         params = EventSearchParams()
@@ -177,6 +182,7 @@ class EventReportsResource(BaseResource):
     @doc(summary="Add event report", tags=["Events"])
     @use_kwargs(EventReportPostSchema, location="json", apply=False)
     @marshal_with(NoneSchema, 204)
+    @require_api_access()
     def post(self, id):
         event = Event.query.options(
             load_only(Event.id, Event.public_status)

@@ -42,7 +42,6 @@
     </a>
 </div>
 
-{% if current_user.has_permission('oauth2_client:read') %}
 <h2>{{ _('Developer') }}</h2>
 
 <div class="list-group">
@@ -51,6 +50,5 @@
         <i class="fa fa-caret-right"></i>
     </a>
 </div>
-{% endif %}
 
 {% endblock %}

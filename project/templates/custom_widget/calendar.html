@@ -96,6 +96,7 @@
   <script src="/static/ext/moment.2.24.0.with-locales.min.js"></script>
   <script>
       axios.defaults.baseURL = window.location.origin;
+      axios.defaults.headers.common["X-CSRFToken"] = "[% csrf_token() %]";
       moment.locale("de");
 
 Vue.component('event-warning-pills', {

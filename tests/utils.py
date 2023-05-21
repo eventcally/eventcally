@@ -105,7 +105,7 @@ class UtilActions(object):
         )
 
     def get_ajax_csrf(self, response):
-        pattern = 'var csrf_token = "(.*)";'
+        pattern = r"xhr\.setRequestHeader\(\"X-CSRFToken\", \"(.*)\"\);"
         match = re.search(pattern.encode("utf-8"), response.data)
 
         if not match:
@@ -159,6 +159,11 @@ class UtilActions(object):
         self.log_request(url)
         response = self._client.get(url, headers=self.get_headers())
         self.log_response(response)
+        return response
+
+    def get_json_ok(self, url):
+        response = self.get_json(url)
+        self.assert_response_ok(response)
         return response
 
     def post_json(self, url, data: dict):
@@ -374,31 +379,48 @@ class UtilActions(object):
         code = params["code"]
 
         # Mit dem Code den Access-Token abfragen
-        token_url = self.get_url("issue_token")
-        response = self.post_form_data(
-            token_url,
-            data={
-                "client_id": client_id,
-                "client_secret": client_secret,
-                "grant_type": "authorization_code",
-                "scope": scope,
-                "code": code,
-                "redirect_uri": redirect_uri,
-            },
+        self._get_token(
+            client_id, client_secret, scope, "authorization_code", code, redirect_uri
         )
+
+    def grant_client_credentials(self, client_id, client_secret, scope):
+        # Mit den Credentials den Access-Token abfragen
+        self._get_token(client_id, client_secret, scope, "client_credentials")
+
+    def _get_token(
+        self, client_id, client_secret, scope, grant_type, code=None, redirect_uri=None
+    ):
+        data = {
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "grant_type": grant_type,
+            "scope": scope,
+        }
+
+        if grant_type == "authorization_code":
+            data["code"] = code
+            data["redirect_uri"] = redirect_uri
+
+        token_url = self.get_url("issue_token")
+        response = self.post_form_data(token_url, data=data)
 
         self.assert_response_ok(response)
         assert response.content_type == "application/json"
         assert "access_token" in response.json
         assert "expires_in" in response.json
-        assert "refresh_token" in response.json
+
+        if grant_type == "authorization_code":
+            assert "refresh_token" in response.json
+
         assert response.json["scope"] == scope
         assert response.json["token_type"] == "Bearer"
 
         self._client_id = client_id
         self._client_secret = client_secret
         self._access_token = response.json["access_token"]
-        self._refresh_token = response.json["refresh_token"]
+
+        if grant_type == "authorization_code":
+            self._refresh_token = response.json["refresh_token"]
 
     def refresh_token(self):
         token_url = self.get_url("issue_token")

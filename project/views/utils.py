@@ -317,8 +317,7 @@ def manage_required(permission=None):
                     url_for("manage_admin_unit", id=admin_unit.id)
                 )
 
-            g.admin_unit = admin_unit
-
+            set_current_admin_unit(admin_unit)
             return f(id, *args, **kwargs)
 
         return decorated_function

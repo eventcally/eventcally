@@ -1,4 +1,4 @@
-from apispec import APISpec
+from apispec import APISpec, BasePlugin
 from apispec.exceptions import DuplicateComponentNameError
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import url_for
@@ -115,6 +115,11 @@ class RestApi(Api):
                     data["errors"] = errors
 
 
+class DocSecurityPlugin(BasePlugin):
+    def operation_helper(self, path=None, operations=None, **kwargs):
+        pass
+
+
 scope_list = [
     "openid",
     "profile",
@@ -138,7 +143,7 @@ app.config.update(
         "APISPEC_SPEC": APISpec(
             title="Event calendar API",
             version="0.1.0",
-            plugins=[marshmallow_plugin],
+            plugins=[marshmallow_plugin, DocSecurityPlugin()],
             openapi_version="2.0",
             info=dict(
                 description="This API provides endpoints to interact with the event calendar data."
@@ -174,16 +179,33 @@ def add_oauth2_scheme_with_transport(insecure: bool):
         authorizationUrl = url_for("authorize", _external=True, _scheme="https")
         tokenUrl = url_for("issue_token", _external=True, _scheme="https")
 
-    oauth2_scheme = {
+    scopes = {k: k for _, k in enumerate(scope_list)}
+    oauth2_authorization_code_scheme = {
         "type": "oauth2",
         "authorizationUrl": authorizationUrl,
         "tokenUrl": tokenUrl,
         "flow": "accessCode",
-        "scopes": {k: k for _, k in enumerate(scope_list)},
+        "scopes": scopes,
     }
 
     try:
-        api_docs.spec.components.security_scheme("oauth2", oauth2_scheme)
+        api_docs.spec.components.security_scheme(
+            "oauth2AuthCode", oauth2_authorization_code_scheme
+        )
+    except DuplicateComponentNameError:  # pragma: no cover
+        pass
+
+    oauth2_client_credentials_scheme = {
+        "type": "oauth2",
+        "tokenUrl": tokenUrl,
+        "flow": "application",
+        "scopes": scopes,
+    }
+
+    try:
+        api_docs.spec.components.security_scheme(
+            "oauth2ClientCredentials", oauth2_client_credentials_scheme
+        )
     except DuplicateComponentNameError:  # pragma: no cover
         pass
 

@@ -1,12 +1,16 @@
-def test_read(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
+
+def test_read(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
     url = utils.get_url("api_v1_organizer", id=organizer_id)
-    utils.get_ok(url)
+    utils.get_json_ok(url)
 
 
-def test_put(client, seeder, utils, app, db):
+def test_put(client, seeder: Seeder, utils: UtilActions, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
@@ -21,7 +25,7 @@ def test_put(client, seeder, utils, app, db):
         assert organizer.name == "Neuer Name"
 
 
-def test_patch(client, seeder, utils, app, db):
+def test_patch(client, seeder: Seeder, utils: UtilActions, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
@@ -37,7 +41,7 @@ def test_patch(client, seeder, utils, app, db):
         assert organizer.phone == "55555"
 
 
-def test_delete(client, seeder, utils, app, db):
+def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 

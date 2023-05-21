@@ -1,13 +1,17 @@
-def test_read(client, app, db, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
+
+def test_read(client, app, db, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_list_id = seeder.create_event_list(admin_unit_id)
 
     url = utils.get_url("api_v1_event_list_model", id=event_list_id)
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert response.json["id"] == event_list_id
 
 
-def test_put(client, seeder, utils, app, db):
+def test_put(client, seeder: Seeder, utils: UtilActions, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     event_list_id = seeder.create_event_list(admin_unit_id)
 
@@ -22,7 +26,7 @@ def test_put(client, seeder, utils, app, db):
         assert event_list.name == "Neuer Name"
 
 
-def test_patch(client, seeder, utils, app, db):
+def test_patch(client, seeder: Seeder, utils: UtilActions, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     event_list_id = seeder.create_event_list(admin_unit_id)
 
@@ -37,7 +41,7 @@ def test_patch(client, seeder, utils, app, db):
         assert event_list.name == "Neuer Name"
 
 
-def test_delete(client, seeder, utils, app, db):
+def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     event_list_id = seeder.create_event_list(admin_unit_id)
 
@@ -52,18 +56,18 @@ def test_delete(client, seeder, utils, app, db):
         assert event_list is None
 
 
-def test_events(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
+def test_events(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     event_list_id = seeder.create_event_list(admin_unit_id, event_id)
 
     url = utils.get_url("api_v1_event_list_event_list", id=event_list_id)
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == event_id
 
 
-def test_events_put(client, seeder, utils, app, db):
+def test_events_put(client, seeder: Seeder, utils: UtilActions, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     event_list_id = seeder.create_event_list(admin_unit_id)
@@ -82,7 +86,7 @@ def test_events_put(client, seeder, utils, app, db):
         assert event_list.events[0].id == event_id
 
 
-def test_events_delete(client, seeder, utils, app, db):
+def test_events_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     event_list_id = seeder.create_event_list(admin_unit_id, event_id)

@@ -1,12 +1,14 @@
 from flask import request
 from flask.json import jsonify
 from flask_babel import gettext
+from flask_cors import cross_origin
 from flask_security import url_for_security
 from flask_security.utils import localize_callback
 
 from project import app, csrf
+from project.api.custom_widget.schemas import CustomWidgetSchema
 from project.maputils import find_gmaps_places, get_gmaps_place
-from project.models import AdminUnit
+from project.models import AdminUnit, CustomWidget
 from project.services.place import get_event_places
 from project.services.user import find_user_by_email
 from project.utils import get_place_str
@@ -124,3 +126,11 @@ def js_autocomplete_gmaps_place():
     gmaps_id = request.args["gmaps_id"]
     place = get_gmaps_place(gmaps_id)
     return jsonify(place)
+
+
+@app.route("/js/wlcw/<int:id>")
+@cross_origin()
+def js_widget_loader_custom_widget(id: int):
+    widget = CustomWidget.query.get_or_404(id)
+    schema = CustomWidgetSchema()
+    return schema.dump(widget)

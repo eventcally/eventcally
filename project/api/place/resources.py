@@ -9,23 +9,24 @@ from project.api.place.schemas import (
     PlacePostRequestSchema,
     PlaceSchema,
 )
-from project.api.resources import BaseResource
+from project.api.resources import BaseResource, require_api_access
 from project.models import EventPlace
-from project.oauth2 import require_oauth
 
 
 class PlaceResource(BaseResource):
     @doc(summary="Get place", tags=["Places"])
     @marshal_with(PlaceSchema)
+    @require_api_access()
     def get(self, id):
         return EventPlace.query.get_or_404(id)
 
     @doc(
-        summary="Update place", tags=["Places"], security=[{"oauth2": ["place:write"]}]
+        summary="Update place",
+        tags=["Places"],
     )
     @use_kwargs(PlacePostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_oauth("place:write")
+    @require_api_access("place:write")
     def put(self, id):
         login_api_user_or_401()
         place = EventPlace.query.get_or_404(id)
@@ -36,10 +37,13 @@ class PlaceResource(BaseResource):
 
         return make_response("", 204)
 
-    @doc(summary="Patch place", tags=["Places"], security=[{"oauth2": ["place:write"]}])
+    @doc(
+        summary="Patch place",
+        tags=["Places"],
+    )
     @use_kwargs(PlacePatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_oauth("place:write")
+    @require_api_access("place:write")
     def patch(self, id):
         login_api_user_or_401()
         place = EventPlace.query.get_or_404(id)
@@ -51,10 +55,11 @@ class PlaceResource(BaseResource):
         return make_response("", 204)
 
     @doc(
-        summary="Delete place", tags=["Places"], security=[{"oauth2": ["place:write"]}]
+        summary="Delete place",
+        tags=["Places"],
     )
     @marshal_with(None, 204)
-    @require_oauth("place:write")
+    @require_api_access("place:write")
     def delete(self, id):
         login_api_user_or_401()
         place = EventPlace.query.get_or_404(id)

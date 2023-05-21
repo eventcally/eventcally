@@ -19,7 +19,6 @@ class OrganizationRelationResource(BaseResource):
     @doc(
         summary="Get organization relation",
         tags=["Organization Relations"],
-        security=[{"oauth2": ["organization:read"]}],
     )
     @marshal_with(OrganizationRelationSchema)
     @require_api_access("organization:read")
@@ -37,7 +36,6 @@ class OrganizationRelationResource(BaseResource):
     @doc(
         summary="Update organization relation",
         tags=["Organization Relations"],
-        security=[{"oauth2": ["organization:write"]}],
     )
     @use_kwargs(OrganizationRelationUpdateRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
@@ -57,7 +55,6 @@ class OrganizationRelationResource(BaseResource):
     @doc(
         summary="Patch organization relation",
         tags=["Organization Relations"],
-        security=[{"oauth2": ["organization:write"]}],
     )
     @use_kwargs(OrganizationRelationPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
@@ -77,7 +74,6 @@ class OrganizationRelationResource(BaseResource):
     @doc(
         summary="Delete organization relation",
         tags=["Organization Relations"],
-        security=[{"oauth2": ["organization:write"]}],
     )
     @marshal_with(None, 204)
     @require_api_access("organization:write")

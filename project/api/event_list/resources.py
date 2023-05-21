@@ -19,13 +19,13 @@ from project.services.event_search import EventSearchParams
 class EventListModelResource(BaseResource):
     @doc(summary="Get event list", tags=["Event Lists"])
     @marshal_with(EventListSchema)
+    @require_api_access()
     def get(self, id):
         return EventList.query.get_or_404(id)
 
     @doc(
         summary="Update event list",
         tags=["Event Lists"],
-        security=[{"oauth2": ["eventlist:write"]}],
     )
     @use_kwargs(EventListUpdateRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
@@ -45,7 +45,6 @@ class EventListModelResource(BaseResource):
     @doc(
         summary="Patch event list",
         tags=["Event Lists"],
-        security=[{"oauth2": ["eventlist:write"]}],
     )
     @use_kwargs(EventListPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
@@ -65,7 +64,6 @@ class EventListModelResource(BaseResource):
     @doc(
         summary="Delete event list",
         tags=["Event Lists"],
-        security=[{"oauth2": ["eventlist:write"]}],
     )
     @marshal_with(None, 204)
     @require_api_access("eventlist:write")
@@ -87,6 +85,7 @@ class EventListEventListResource(BaseResource):
     )
     @use_kwargs(EventListRequestSchema, location=("query"))
     @marshal_with(EventListResponseSchema)
+    @require_api_access()
     def get(self, id, **kwargs):
         params = EventSearchParams()
         params.event_list_id = id
@@ -98,7 +97,6 @@ class EventListEventListWriteResource(BaseResource):
     @doc(
         summary="Add event",
         tags=["Event Lists", "Events"],
-        security=[{"oauth2": ["eventlist:write"]}],
     )
     @marshal_with(None, 204)
     @require_api_access("eventlist:write")
@@ -120,7 +118,6 @@ class EventListEventListWriteResource(BaseResource):
     @doc(
         summary="Remove event",
         tags=["Event Lists", "Events"],
-        security=[{"oauth2": ["eventlist:write"]}],
     )
     @marshal_with(None, 204)
     @require_api_access("eventlist:write")

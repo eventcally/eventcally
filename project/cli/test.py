@@ -258,9 +258,6 @@ def _insert_default_oauth2_client(user_id):
     metadata = dict()
     metadata["client_name"] = "Mein Client"
     metadata["scope"] = " ".join(scope_list)
-    metadata["grant_types"] = ["authorization_code", "refresh_token"]
-    metadata["response_types"] = ["code"]
-    metadata["token_endpoint_auth_method"] = "client_secret_post"
     metadata["redirect_uris"] = ["/"]
     client.set_client_metadata(metadata)
 

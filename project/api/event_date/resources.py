@@ -12,9 +12,8 @@ from project.api.event_date.schemas import (
     EventDateSearchRequestSchema,
     EventDateSearchResponseSchema,
 )
-from project.api.resources import BaseResource
+from project.api.resources import BaseResource, require_api_access
 from project.models import AdminUnit, Event, EventDate, PublicStatus
-from project.oauth2 import require_oauth
 from project.services.event import get_event_dates_query
 from project.services.event_search import EventSearchParams
 
@@ -23,6 +22,7 @@ class EventDateListResource(BaseResource):
     @doc(summary="List event dates", tags=["Event Dates"])
     @use_kwargs(EventDateListRequestSchema, location=("query"))
     @marshal_with(EventDateListResponseSchema)
+    @require_api_access()
     def get(self, **kwargs):
         pagination = (
             EventDate.query.join(EventDate.event)
@@ -42,7 +42,7 @@ class EventDateListResource(BaseResource):
 class EventDateResource(BaseResource):
     @doc(summary="Get event date", tags=["Event Dates"])
     @marshal_with(EventDateSchema)
-    @require_oauth(optional=True)
+    @require_api_access()
     def get(self, id):
         event_date = EventDate.query.options(
             defaultload(EventDate.event).load_only(
@@ -57,7 +57,7 @@ class EventDateSearchResource(BaseResource):
     @doc(summary="Search for event dates", tags=["Event Dates"])
     @use_kwargs(EventDateSearchRequestSchema, location=("query"))
     @marshal_with(EventDateSearchResponseSchema)
-    @require_oauth(optional=True)
+    @require_api_access()
     def get(self, **kwargs):
         login_api_user()
         params = EventSearchParams()

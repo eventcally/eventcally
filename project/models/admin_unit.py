@@ -276,7 +276,7 @@ class AdminUnit(db.Model, TrackableMixin):
             server_default="0",
         )
     )
-    incoming_verification_requests_text = Column(UnicodeText())
+    incoming_verification_requests_text = deferred(Column(UnicodeText()))
     can_invite_other = deferred(
         Column(
             Boolean(),

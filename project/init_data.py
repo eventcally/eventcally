@@ -47,16 +47,7 @@ def create_initial_data():
         "reference_request:delete",
         "reference_request:verify",
     ]
-    early_adopter_permissions = [
-        "oauth2_client:create",
-        "oauth2_client:read",
-        "oauth2_client:update",
-        "oauth2_client:delete",
-        "oauth2_token:create",
-        "oauth2_token:read",
-        "oauth2_token:update",
-        "oauth2_token:delete",
-    ]
+    early_adopter_permissions = []
 
     upsert_admin_unit_member_role("admin", "Administrator", admin_permissions)
     upsert_admin_unit_member_role("event_verifier", "Event expert", event_permissions)

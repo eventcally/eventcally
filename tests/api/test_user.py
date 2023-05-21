@@ -1,5 +1,5 @@
 def test_organization_invitation_list(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base(log_in=False)
+    _, admin_unit_id = seeder.setup_api_access(user_access=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     seeder.create_user("invited@test.de")
@@ -15,7 +15,7 @@ def test_organization_invitation_list(client, seeder, utils):
 
 
 def test_organization_invitation_read(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base(log_in=False)
+    _, admin_unit_id = seeder.setup_api_access(user_access=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     seeder.create_user("invited@test.de")
@@ -33,7 +33,7 @@ def test_organization_invitation_read(client, seeder, utils):
 
 
 def test_organization_invitation_read_wrongEmail(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base(log_in=False)
+    _, admin_unit_id = seeder.setup_api_access(user_access=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     seeder.create_user("other@test.de")
@@ -45,7 +45,7 @@ def test_organization_invitation_read_wrongEmail(client, seeder, utils):
 
 
 def test_organization_invitation_delete(client, app, seeder, utils, db):
-    _, admin_unit_id = seeder.setup_base(log_in=False)
+    _, admin_unit_id = seeder.setup_api_access(user_access=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     seeder.create_user("invited@test.de")

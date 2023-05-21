@@ -3,10 +3,11 @@ import base64
 import pytest
 
 from tests.seeder import Seeder
+from tests.utils import UtilActions
 
 
-def test_read(client, app, db, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_read(client, app, db, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
@@ -20,12 +21,21 @@ def test_read(client, app, db, seeder, utils):
         db.session.commit()
 
     url = utils.get_url("api_v1_event", id=event_id)
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert response.json["status"] == "scheduled"
 
 
-def test_read_otherDraft(client, app, db, seeder, utils):
+def test_read_anonym(client, app, db, seeder: Seeder, utils: UtilActions):
+    app.config["API_READ_ANONYM"] = True
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    utils.get_json_ok(url)
+
+
+def test_read_otherDraft(client, app, db, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id, draft=True)
 
     url = utils.get_url("api_v1_event", id=event_id)
@@ -33,7 +43,7 @@ def test_read_otherDraft(client, app, db, seeder, utils):
     utils.assert_response_unauthorized(response)
 
 
-def test_read_myDraft(client, app, db, seeder, utils):
+def test_read_myDraft(client, app, db, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id, draft=True)
 
@@ -43,7 +53,7 @@ def test_read_myDraft(client, app, db, seeder, utils):
     assert response.json["public_status"] == "draft"
 
 
-def test_read_otherUnverified(client, app, db, seeder, utils):
+def test_read_otherUnverified(client, app, db, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(log_in=False, admin_unit_verified=False)
     event_id = seeder.create_event(admin_unit_id, draft=True)
 
@@ -52,7 +62,7 @@ def test_read_otherUnverified(client, app, db, seeder, utils):
     utils.assert_response_unauthorized(response)
 
 
-def test_read_myUnverified(client, app, db, seeder, utils):
+def test_read_myUnverified(client, app, db, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access(admin_unit_verified=False)
     event_id = seeder.create_event(admin_unit_id)
 
@@ -61,8 +71,8 @@ def test_read_myUnverified(client, app, db, seeder, utils):
     utils.assert_response_ok(response)
 
 
-def test_read_co_organizers(client, app, db, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_read_co_organizers(client, app, db, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
         admin_unit_id
     )
@@ -74,20 +84,20 @@ def test_read_co_organizers(client, app, db, seeder, utils):
     assert response.json["co_organizers"][1]["id"] == organizer_b_id
 
 
-def test_list(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_list(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
     seeder.create_event_unverified()
 
     url = utils.get_url("api_v1_event_list")
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == event_id
 
 
-def test_search(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_search(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     image_id = seeder.upsert_default_image()
     seeder.assign_image_to_event(event_id, image_id)
@@ -95,49 +105,52 @@ def test_search(client, seeder, utils):
     seeder.create_event_unverified()
 
     url = utils.get_url("api_v1_event_search")
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == event_id
 
 
-def test_search_is_favored(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_search_is_favored(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     seeder.add_favorite_event(user_id, event_id)
 
     url = utils.get_url("api_v1_event_search")
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == event_id
     assert response.json["items"][0]["is_favored"]
 
 
-def test_dates(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+def test_dates(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     url = utils.get_url("api_v1_event_dates", id=event_id)
-    utils.get_ok(url)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
 
     event_id = seeder.create_event(admin_unit_id, draft=True)
     url = utils.get_url("api_v1_event_dates", id=event_id)
-    response = utils.get(url)
+    response = utils.get_json(url)
     utils.assert_response_unauthorized(response)
 
     _, _, event_id = seeder.create_event_unverified()
     url = utils.get_url("api_v1_event_dates", id=event_id)
-    response = utils.get(url)
+    response = utils.get_json(url)
     utils.assert_response_unauthorized(response)
 
     event_id = seeder.create_event(
         admin_unit_id, recurrence_rule="RRULE:FREQ=DAILY;COUNT=51"
     )
     url = utils.get_url("api_v1_event_dates", id=event_id)
-    utils.get_ok(url)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
     url = utils.get_url("api_v1_event_dates", id=event_id, page=2)
-    utils.get_ok(url)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
 
 
-def test_dates_myDraft(client, seeder, utils):
+def test_dates_myDraft(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id, draft=True)
 
@@ -146,7 +159,7 @@ def test_dates_myDraft(client, seeder, utils):
     utils.assert_response_ok(response)
 
 
-def test_dates_myUnverified(client, seeder, utils):
+def test_dates_myUnverified(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access(admin_unit_verified=False)
     event_id = seeder.create_event(admin_unit_id)
 
@@ -180,7 +193,7 @@ def create_put(
 @pytest.mark.parametrize(
     "variant", ["normal", "legacy", "recurrence", "two_date_definitions"]
 )
-def test_put(client, seeder, utils, app, db, mocker, variant):
+def test_put(client, seeder: Seeder, utils: UtilActions, app, db, mocker, variant):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -270,7 +283,7 @@ def test_put(client, seeder, utils, app, db, mocker, variant):
             assert len_dates == 1
 
 
-def test_put_invalidRecurrenceRule(client, seeder, utils, app):
+def test_put_invalidRecurrenceRule(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -284,7 +297,7 @@ def test_put_invalidRecurrenceRule(client, seeder, utils, app):
     utils.assert_response_unprocessable_entity(response)
 
 
-def test_put_missingName(client, seeder, utils, app):
+def test_put_missingName(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -298,7 +311,7 @@ def test_put_missingName(client, seeder, utils, app):
     utils.assert_response_unprocessable_entity(response)
 
 
-def test_put_missingPlace(client, seeder, utils, app):
+def test_put_missingPlace(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -312,7 +325,7 @@ def test_put_missingPlace(client, seeder, utils, app):
     utils.assert_response_unprocessable_entity(response)
 
 
-def test_put_placeFromAnotherAdminUnit(client, seeder, utils, app):
+def test_put_placeFromAnotherAdminUnit(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
@@ -326,7 +339,7 @@ def test_put_placeFromAnotherAdminUnit(client, seeder, utils, app):
     utils.assert_response_api_error(response, "Check Violation")
 
 
-def test_put_missingOrganizer(client, seeder, utils, app):
+def test_put_missingOrganizer(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -340,7 +353,9 @@ def test_put_missingOrganizer(client, seeder, utils, app):
     utils.assert_response_unprocessable_entity(response)
 
 
-def test_put_organizerFromAnotherAdminUnit(client, seeder, utils, app):
+def test_put_organizerFromAnotherAdminUnit(
+    client, seeder: Seeder, utils: UtilActions, app
+):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -354,7 +369,7 @@ def test_put_organizerFromAnotherAdminUnit(client, seeder, utils, app):
     utils.assert_response_api_error(response, "Check Violation")
 
 
-def test_put_co_organizers(client, seeder, utils, app, db):
+def test_put_co_organizers(client, seeder: Seeder, utils: UtilActions, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -381,7 +396,9 @@ def test_put_co_organizers(client, seeder, utils, app, db):
         assert event.co_organizers[1].id == organizer_b_id
 
 
-def test_put_co_organizerFromAnotherAdminUnit(client, seeder, utils, app):
+def test_put_co_organizerFromAnotherAdminUnit(
+    client, seeder: Seeder, utils: UtilActions, app
+):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -401,7 +418,7 @@ def test_put_co_organizerFromAnotherAdminUnit(client, seeder, utils, app):
     utils.assert_response_api_error(response, "Check Violation")
 
 
-def test_put_invalidDateFormat(client, seeder, utils, app):
+def test_put_invalidDateFormat(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -414,7 +431,7 @@ def test_put_invalidDateFormat(client, seeder, utils, app):
     utils.assert_response_unprocessable_entity(response)
 
 
-def test_put_startAfterEnd(client, seeder: Seeder, utils, app):
+def test_put_startAfterEnd(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -429,7 +446,9 @@ def test_put_startAfterEnd(client, seeder: Seeder, utils, app):
     utils.assert_response_bad_request(response)
 
 
-def test_put_durationMoreThanMaxAllowedDuration(client, seeder, utils, app):
+def test_put_durationMoreThanMaxAllowedDuration(
+    client, seeder: Seeder, utils: UtilActions, app
+):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -444,7 +463,7 @@ def test_put_durationMoreThanMaxAllowedDuration(client, seeder, utils, app):
     utils.assert_response_bad_request(response)
 
 
-def test_put_categories(client, seeder, utils, app, db):
+def test_put_categories(client, seeder: Seeder, utils: UtilActions, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -465,7 +484,7 @@ def test_put_categories(client, seeder, utils, app, db):
         assert event.category.name == "Art"
 
 
-def test_put_dateWithTimezone(client, seeder, utils, app, db):
+def test_put_dateWithTimezone(client, seeder: Seeder, utils: UtilActions, app, db):
     from project.dateutils import create_berlin_date
 
     user_id, admin_unit_id = seeder.setup_api_access()
@@ -488,7 +507,7 @@ def test_put_dateWithTimezone(client, seeder, utils, app, db):
         assert event.date_definitions[0].start == expected
 
 
-def test_put_dateWithoutTimezone(client, seeder, utils, app, db):
+def test_put_dateWithoutTimezone(client, seeder: Seeder, utils: UtilActions, app, db):
     from project.dateutils import create_berlin_date
 
     user_id, admin_unit_id = seeder.setup_api_access()
@@ -511,7 +530,9 @@ def test_put_dateWithoutTimezone(client, seeder, utils, app, db):
         assert event.date_definitions[0].start == expected
 
 
-def test_put_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
+def test_put_referencedEventUpdate_sendsMail(
+    client, seeder: Seeder, utils: UtilActions, app, mocker
+):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event_via_api(admin_unit_id)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -532,7 +553,7 @@ def test_put_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker)
 
 
 def test_put_referencedEventNonDirtyUpdate_doesNotSendMail(
-    client, seeder, utils, app, mocker
+    client, seeder: Seeder, utils: UtilActions, app, mocker
 ):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event_via_api(admin_unit_id)
@@ -553,7 +574,7 @@ def test_put_referencedEventNonDirtyUpdate_doesNotSendMail(
     mail_mock.assert_not_called()
 
 
-def test_patch(client, seeder, utils, app, db):
+def test_patch(client, seeder: Seeder, utils: UtilActions, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -569,7 +590,7 @@ def test_patch(client, seeder, utils, app, db):
         assert event.description == "Neu"
 
 
-def test_patch_startAfterEnd(client, seeder, utils, app, db):
+def test_patch_startAfterEnd(client, seeder: Seeder, utils: UtilActions, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -586,7 +607,9 @@ def test_patch_startAfterEnd(client, seeder, utils, app, db):
     utils.assert_response_bad_request(response)
 
 
-def test_patch_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
+def test_patch_referencedEventUpdate_sendsMail(
+    client, seeder: Seeder, utils: UtilActions, app, mocker
+):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event_via_api(admin_unit_id)
 
@@ -602,7 +625,9 @@ def test_patch_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocke
     utils.assert_send_mail_called(mail_mock, "other@test.de")
 
 
-def test_patch_photo(client, seeder, utils, app, db, requests_mock):
+def test_patch_photo(
+    client, seeder: Seeder, utils: UtilActions, app, db, requests_mock
+):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -625,7 +650,7 @@ def test_patch_photo(client, seeder, utils, app, db, requests_mock):
         assert event.photo.encoding_format == "image/png"
 
 
-def test_patch_photo_copyright(client, db, seeder, utils, app):
+def test_patch_photo_copyright(client, db, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     image_id = seeder.upsert_default_image()
@@ -647,7 +672,7 @@ def test_patch_photo_copyright(client, db, seeder, utils, app):
         assert event.photo.copyright_text == "Heiner"
 
 
-def test_patch_photo_delete(client, db, seeder, utils, app):
+def test_patch_photo_delete(client, db, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     image_id = seeder.upsert_default_image()
@@ -670,7 +695,7 @@ def test_patch_photo_delete(client, db, seeder, utils, app):
         assert image is None
 
 
-def test_delete(client, seeder, utils, app, db):
+def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -685,8 +710,8 @@ def test_delete(client, seeder, utils, app, db):
         assert event is None
 
 
-def test_report_mail(client, seeder, utils, app, mocker):
-    user_id, admin_unit_id = seeder.setup_base(admin=False, log_in=False)
+def test_report_mail(client, seeder: Seeder, utils: UtilActions, app, mocker):
+    user_id, admin_unit_id = seeder.setup_api_access(admin=False, user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_user(email="admin@test.de", admin=True)
     seeder.create_user(email="normal@test.de", admin=False)

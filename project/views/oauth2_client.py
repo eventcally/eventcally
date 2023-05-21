@@ -1,6 +1,6 @@
 from flask import flash, redirect, render_template, url_for
 from flask_babel import gettext
-from flask_security import current_user, permissions_required
+from flask_security import current_user
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
@@ -21,7 +21,6 @@ from project.views.utils import (
 
 
 @app.route("/oauth2_client/create", methods=("GET", "POST"))
-@permissions_required("oauth2_client:create")
 def oauth2_client_create():
     form = CreateOAuth2ClientForm()
 
@@ -46,7 +45,6 @@ def oauth2_client_create():
 
 
 @app.route("/oauth2_client/<int:id>/update", methods=("GET", "POST"))
-@permissions_required("oauth2_client:update")
 def oauth2_client_update(id):
     oauth2_client = OAuth2Client.query.get_or_404(id)
     owner_access_or_401(oauth2_client.user_id)
@@ -73,7 +71,6 @@ def oauth2_client_update(id):
 
 
 @app.route("/oauth2_client/<int:id>/delete", methods=("GET", "POST"))
-@permissions_required("oauth2_client:delete")
 def oauth2_client_delete(id):
     oauth2_client = OAuth2Client.query.get_or_404(id)
     owner_access_or_401(oauth2_client.user_id)
@@ -101,7 +98,6 @@ def oauth2_client_delete(id):
 
 
 @app.route("/oauth2_client/<int:id>")
-@permissions_required("oauth2_client:read")
 def oauth2_client(id):
     oauth2_client = OAuth2Client.query.get_or_404(id)
     owner_access_or_401(oauth2_client.user_id)
@@ -113,7 +109,6 @@ def oauth2_client(id):
 
 
 @app.route("/oauth2_clients")
-@permissions_required("oauth2_client:read")
 def oauth2_clients():
     oauth2_clients = (
         OAuth2Client.query.filter(OAuth2Client.user_id == current_user.id)

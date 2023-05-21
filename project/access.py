@@ -34,6 +34,7 @@ def owner_access_or_401(user_id):
 def login_api_user() -> bool:
     return (
         current_token
+        and current_token.user
         and login_user(current_token.user)
         or current_user
         and current_user.is_authenticated
