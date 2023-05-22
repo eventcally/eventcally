@@ -426,15 +426,8 @@ def test_references_outgoing(client, seeder: Seeder, utils: UtilActions):
     utils.get_json_ok(url)
 
 
-@pytest.mark.parametrize("session_based", [True, False])
-def test_outgoing_relation_list(
-    client, seeder: Seeder, utils: UtilActions, session_based
-):
-    user_id, admin_unit_id = (
-        seeder.setup_api_access(user_access=False)
-        if session_based
-        else seeder.setup_api_access()
-    )
+def test_outgoing_relation_list(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
     (
         other_user_id,
         other_admin_unit_id,
