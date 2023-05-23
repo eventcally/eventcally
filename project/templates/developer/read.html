@@ -7,9 +7,18 @@
 
 <h1>{{ _('Developer') }}</h1>
 
+{% if config["DOCS_URL"] %}
+    <div class="my-2">
+        <a class="btn btn-outline-info" href="{{ config["DOCS_URL"] }}/category/developer" target="_blank" rel="noopener noreferrer" role="button"><i class="fa fa-fw fa-info-circle"></i> Documentation</a>
+    </div>
+{% endif %}
+
 <h2>API</h2>
 <ul>
-    <li>Documentation: <a href="/swagger-ui" target="_blank" rel="noopener noreferrer">Swagger/OpenAPI</a></li>
+    {% if config["DOCS_URL"] %}
+        <li>Authorization: <a href="{{ config["DOCS_URL"] }}/goto/dev-api-auth" target="_blank" rel="noopener noreferrer">Documentation</a></li>
+    {% endif %}
+    <li>Endpoints: <a href="/swagger-ui" target="_blank" rel="noopener noreferrer">Swagger UI</a></li>
     <li>Code generation: <a href="https://editor.swagger.io/?url={{ url_for('home', _external=True) }}swagger/" target="_blank" rel="noopener noreferrer">Swagger Editor</a></li>
 </ul>
 
