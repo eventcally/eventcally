@@ -34,7 +34,6 @@ class UserOrganizationInvitationListResource(BaseResource):
     @doc(
         summary="List organization invitations of user",
         tags=["Users", "Organization Invitations"],
-        security=[{"oauth2": ["user:read"]}],
     )
     @use_kwargs(OrganizationInvitationListRequestSchema, location=("query"))
     @marshal_with(OrganizationInvitationListResponseSchema)
@@ -53,7 +52,6 @@ class UserOrganizationInvitationResource(BaseResource):
     @doc(
         summary="Get organization invitation of user",
         tags=["Users", "Organization Invitations"],
-        security=[{"oauth2": ["user:read"]}],
     )
     @marshal_with(OrganizationInvitationSchema)
     @require_api_access("user:read")
@@ -67,7 +65,6 @@ class UserOrganizationInvitationResource(BaseResource):
     @doc(
         summary="Delete organization invitation of user",
         tags=["Users", "Organization Invitations"],
-        security=[{"oauth2": ["user:write"]}],
     )
     @marshal_with(None, 204)
     @require_api_access("user:write")
@@ -86,7 +83,6 @@ class UserFavoriteEventListResource(BaseResource):
     @doc(
         summary="List favorite events of user",
         tags=["Users", "Events"],
-        security=[{"oauth2": ["user:read"]}],
     )
     @use_kwargs(UserFavoriteEventListRequestSchema, location=("query"))
     @marshal_with(UserFavoriteEventListResponseSchema)
@@ -104,7 +100,6 @@ class UserFavoriteEventSearchResource(BaseResource):
     @doc(
         summary="Search for favorite events of user",
         tags=["Users", "Events"],
-        security=[{"oauth2": ["user:read"]}],
     )
     @use_kwargs(EventSearchRequestSchema, location=("query"))
     @marshal_with(EventSearchResponseSchema)
@@ -124,7 +119,6 @@ class UserFavoriteEventListWriteResource(BaseResource):
     @doc(
         summary="Add event to users favorites",
         tags=["Users", "Events"],
-        security=[{"oauth2": ["user:write"]}],
     )
     @marshal_with(None, 204)
     @require_api_access("user:write")
@@ -142,7 +136,6 @@ class UserFavoriteEventListWriteResource(BaseResource):
     @doc(
         summary="Remove event from users favorites",
         tags=["Users", "Events"],
-        security=[{"oauth2": ["user:write"]}],
     )
     @marshal_with(None, 204)
     @require_api_access("user:write")

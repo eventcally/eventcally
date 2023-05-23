@@ -71,6 +71,10 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
         return db.session.get(User, authorization_code.user_id)
 
 
+class ClientCredentialsGrant(grants.ClientCredentialsGrant):
+    TOKEN_ENDPOINT_AUTH_METHODS = ["client_secret_basic", "client_secret_post"]
+
+
 class OpenIDCode(_OpenIDCode):
     def exists_nonce(self, nonce, request):
         return exists_nonce(nonce, request)
@@ -176,6 +180,7 @@ def config_oauth(app):
         AuthorizationCodeGrant,
         [CodeChallenge(required=True), OpenIDCode()],
     )
+    authorization.register_grant(ClientCredentialsGrant)
     authorization.register_grant(RefreshTokenGrant)
 
     # support revocation

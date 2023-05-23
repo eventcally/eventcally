@@ -74,7 +74,6 @@ from project.api.place.schemas import (
 )
 from project.api.resources import BaseResource, require_api_access
 from project.models import AdminUnit, Event, PublicStatus
-from project.oauth2 import require_oauth
 from project.services.admin_unit import (
     get_admin_unit_invitation_query,
     get_admin_unit_query,
@@ -98,7 +97,7 @@ from project.views.utils import send_mail
 class OrganizationResource(BaseResource):
     @doc(summary="Get organization", tags=["Organizations"])
     @marshal_with(OrganizationSchema)
-    @require_oauth(optional=True)
+    @require_api_access()
     def get(self, id):
         return AdminUnit.query.get_or_404(id)
 
@@ -111,7 +110,7 @@ class OrganizationEventDateSearchResource(BaseResource):
     )
     @use_kwargs(EventDateSearchRequestSchema, location=("query"))
     @marshal_with(EventDateSearchResponseSchema)
-    @require_oauth(optional=True)
+    @require_api_access()
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
 
@@ -128,7 +127,7 @@ class OrganizationEventSearchResource(BaseResource):
     @doc(summary="Search for events of organization", tags=["Organizations", "Events"])
     @use_kwargs(EventSearchRequestSchema, location=("query"))
     @marshal_with(EventSearchResponseSchema)
-    @require_oauth(optional=True)
+    @require_api_access()
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
 
@@ -145,7 +144,7 @@ class OrganizationEventListResource(BaseResource):
     @doc(summary="List events of organization", tags=["Organizations", "Events"])
     @use_kwargs(EventListRequestSchema, location=("query"))
     @marshal_with(EventListResponseSchema)
-    @require_oauth(optional=True)
+    @require_api_access()
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
 
@@ -164,11 +163,10 @@ class OrganizationEventListResource(BaseResource):
     @doc(
         summary="Add new event",
         tags=["Organizations", "Events"],
-        security=[{"oauth2": ["event:write"]}],
     )
     @use_kwargs(EventPostRequestSchema, location="json", apply=False)
     @marshal_with(EventIdSchema, 201)
-    @require_oauth("event:write")
+    @require_api_access("event:write")
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
@@ -189,6 +187,7 @@ class OrganizationEventImportResource(BaseResource):
     @marshal_with(EventIdSchema, 201)
     @require_api_access("event:write")
     def post(self, id, **kwargs):
+        login_api_user_or_401()
         admin_unit = AdminUnit.query.get_or_404(id)
         access_or_401(admin_unit, "event:create")
 
@@ -211,10 +210,13 @@ class OrganizationEventImportResource(BaseResource):
 
 
 class OrganizationListResource(BaseResource):
-    @doc(summary="List organizations", tags=["Organizations"])
+    @doc(
+        summary="List organizations",
+        tags=["Organizations"],
+    )
     @use_kwargs(OrganizationListRequestSchema, location=("query"))
     @marshal_with(OrganizationListResponseSchema)
-    @require_oauth(optional=True)
+    @require_api_access()
     def get(self, **kwargs):
         keyword = kwargs["keyword"] if "keyword" in kwargs else None
 
@@ -231,6 +233,7 @@ class OrganizationOrganizerListResource(BaseResource):
     )
     @use_kwargs(OrganizerListRequestSchema, location=("query"))
     @marshal_with(OrganizerListResponseSchema)
+    @require_api_access()
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
         name = kwargs["name"] if "name" in kwargs else None
@@ -241,11 +244,10 @@ class OrganizationOrganizerListResource(BaseResource):
     @doc(
         summary="Add new organizer",
         tags=["Organizations", "Organizers"],
-        security=[{"oauth2": ["organizer:write"]}],
     )
     @use_kwargs(OrganizerPostRequestSchema, location="json", apply=False)
     @marshal_with(OrganizerIdSchema, 201)
-    @require_oauth("organizer:write")
+    @require_api_access("organizer:write")
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
@@ -264,6 +266,7 @@ class OrganizationPlaceListResource(BaseResource):
     @doc(summary="List places of organization", tags=["Organizations", "Places"])
     @use_kwargs(PlaceListRequestSchema, location=("query"))
     @marshal_with(PlaceListResponseSchema)
+    @require_api_access()
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
         name = kwargs["name"] if "name" in kwargs else None
@@ -274,11 +277,10 @@ class OrganizationPlaceListResource(BaseResource):
     @doc(
         summary="Add new place",
         tags=["Organizations", "Places"],
-        security=[{"oauth2": ["place:write"]}],
     )
     @use_kwargs(PlacePostRequestSchema, location="json", apply=False)
     @marshal_with(PlaceIdSchema, 201)
-    @require_oauth("place:write")
+    @require_api_access("place:write")
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
@@ -300,6 +302,7 @@ class OrganizationIncomingEventReferenceListResource(BaseResource):
     )
     @use_kwargs(EventReferenceListRequestSchema, location=("query"))
     @marshal_with(EventReferenceListResponseSchema)
+    @require_api_access()
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
 
@@ -314,6 +317,7 @@ class OrganizationOutgoingEventReferenceListResource(BaseResource):
     )
     @use_kwargs(EventReferenceListRequestSchema, location=("query"))
     @marshal_with(EventReferenceListResponseSchema)
+    @require_api_access()
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
 
@@ -325,7 +329,6 @@ class OrganizationOutgoingRelationListResource(BaseResource):
     @doc(
         summary="List outgoing relations of organization",
         tags=["Organizations", "Organization Relations"],
-        security=[{"oauth2": ["organization:read"]}],
     )
     @use_kwargs(OrganizationRelationListRequestSchema, location=("query"))
     @marshal_with(OrganizationRelationListResponseSchema)
@@ -341,7 +344,6 @@ class OrganizationOutgoingRelationListResource(BaseResource):
     @doc(
         summary="Add new outgoing relation",
         tags=["Organizations", "Organization Relations"],
-        security=[{"oauth2": ["organization:write"]}],
     )
     @use_kwargs(OrganizationRelationCreateRequestSchema, location="json", apply=False)
     @marshal_with(OrganizationRelationIdSchema, 201)
@@ -364,7 +366,6 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
     @doc(
         summary="List organization invitations of organization",
         tags=["Organizations", "Organization Invitations"],
-        security=[{"oauth2": ["organization:read"]}],
     )
     @use_kwargs(OrganizationInvitationListRequestSchema, location=("query"))
     @marshal_with(OrganizationInvitationListResponseSchema)
@@ -380,7 +381,6 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
     @doc(
         summary="Add new organization invitation",
         tags=["Organizations", "Organization Invitations"],
-        security=[{"oauth2": ["organization:write"]}],
     )
     @use_kwargs(OrganizationInvitationCreateRequestSchema, location="json", apply=False)
     @marshal_with(OrganizationInvitationIdSchema, 201)
@@ -413,6 +413,7 @@ class OrganizationEventListListResource(BaseResource):
     )
     @use_kwargs(EventListListRequestSchema, location=("query"))
     @marshal_with(EventListListResponseSchema)
+    @require_api_access()
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
         name = kwargs["name"] if "name" in kwargs else None
@@ -423,7 +424,6 @@ class OrganizationEventListListResource(BaseResource):
     @doc(
         summary="Add new event list",
         tags=["Organizations", "Event Lists"],
-        security=[{"oauth2": ["eventlist:write"]}],
     )
     @use_kwargs(EventListCreateRequestSchema, location="json", apply=False)
     @marshal_with(EventListIdSchema, 201)
@@ -449,6 +449,7 @@ class OrganizationEventListStatusListResource(BaseResource):
     )
     @use_kwargs(EventListListRequestSchema, location=("query"))
     @marshal_with(EventListStatusListResponseSchema)
+    @require_api_access()
     def get(self, id, event_id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
         name = kwargs["name"] if "name" in kwargs else None
@@ -466,6 +467,7 @@ class OrganizationCustomWidgetListResource(BaseResource):
     )
     @use_kwargs(CustomWidgetListRequestSchema, location=("query"))
     @marshal_with(CustomWidgetListResponseSchema)
+    @require_api_access()
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
         name = kwargs["name"] if "name" in kwargs else None
@@ -476,7 +478,6 @@ class OrganizationCustomWidgetListResource(BaseResource):
     @doc(
         summary="Add new custom widget",
         tags=["Organizations", "CustomWidgets"],
-        security=[{"oauth2": ["customwidget:write"]}],
     )
     @use_kwargs(CustomWidgetPostRequestSchema, location="json", apply=False)
     @marshal_with(CustomWidgetIdSchema, 201)

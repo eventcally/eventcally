@@ -2,7 +2,7 @@ from flask_apispec import doc, marshal_with
 
 from project.api import add_api_resource
 from project.api.dump.schemas import DumpResponseSchema
-from project.api.resources import BaseResource
+from project.api.resources import BaseResource, require_api_access
 from project.api.schemas import NoneSchema
 
 
@@ -14,6 +14,7 @@ class DumpResource(BaseResource):
     )
     @marshal_with(NoneSchema, 404)
     @marshal_with(DumpResponseSchema, 200)
+    @require_api_access()
     def get(self, **kwargs):
         return None, 404
 

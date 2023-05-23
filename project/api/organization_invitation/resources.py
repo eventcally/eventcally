@@ -18,7 +18,6 @@ class OrganizationInvitationResource(BaseResource):
     @doc(
         summary="Get organization invitation",
         tags=["Organization Invitations"],
-        security=[{"oauth2": ["organization:read"]}],
     )
     @marshal_with(OrganizationInvitationSchema)
     @require_api_access("organization:read")
@@ -32,7 +31,6 @@ class OrganizationInvitationResource(BaseResource):
     @doc(
         summary="Update organization invitation",
         tags=["Organization Invitations"],
-        security=[{"oauth2": ["organization:write"]}],
     )
     @use_kwargs(OrganizationInvitationUpdateRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
@@ -52,7 +50,6 @@ class OrganizationInvitationResource(BaseResource):
     @doc(
         summary="Patch organization invitation",
         tags=["Organization Invitations"],
-        security=[{"oauth2": ["organization:write"]}],
     )
     @use_kwargs(OrganizationInvitationPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
@@ -72,7 +69,6 @@ class OrganizationInvitationResource(BaseResource):
     @doc(
         summary="Delete organization invitation",
         tags=["Organization Invitations"],
-        security=[{"oauth2": ["organization:write"]}],
     )
     @marshal_with(None, 204)
     @require_api_access("organization:write")

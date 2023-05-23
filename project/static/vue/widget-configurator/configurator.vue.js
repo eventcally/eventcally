@@ -411,7 +411,7 @@ const WidgetConfigurator = {
   }),
   computed: {
     iFrameSource() {
-      return `${window.location.origin}/static/widget/${this.widgetType}.html`;
+      return `${window.location.origin}/custom_widget/${this.widgetType}`;
     },
     organizationId() {
       return this.$route.params.organization_id;

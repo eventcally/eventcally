@@ -175,7 +175,7 @@ def admin_unit_update(id):
 @auth_required()
 @manage_required("admin_unit:update")
 def admin_unit_request_deletion(id):
-    admin_unit = g.admin_unit
+    admin_unit = g.manage_admin_unit
 
     if admin_unit.deletion_requested_at:  # pragma: no cover
         return redirect(url_for("admin_unit_cancel_deletion", id=admin_unit.id))
@@ -208,7 +208,7 @@ def admin_unit_request_deletion(id):
 @auth_required()
 @manage_required("admin_unit:update")
 def admin_unit_cancel_deletion(id):
-    admin_unit = g.admin_unit
+    admin_unit = g.manage_admin_unit
 
     if not admin_unit.deletion_requested_at:  # pragma: no cover
         return redirect(url_for("admin_unit_request_deletion", id=admin_unit.id))

@@ -3,7 +3,7 @@ import os
 from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 from project.api import scopes
 from project.forms.widgets import MultiCheckboxField
@@ -13,11 +13,11 @@ from project.utils import split_by_crlf
 class BaseOAuth2ClientForm(FlaskForm):
     client_name = StringField(lazy_gettext("Client name"), validators=[DataRequired()])
     redirect_uris = TextAreaField(
-        lazy_gettext("Redirect URIs"), validators=[DataRequired()]
+        lazy_gettext("Redirect URIs"), validators=[Optional()]
     )
     scope = MultiCheckboxField(
         lazy_gettext("Scopes"),
-        validators=[DataRequired()],
+        validators=[Optional()],
         choices=[(k, k) for k, v in scopes.items()],
     )
 

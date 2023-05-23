@@ -1,5 +1,9 @@
-def test_read(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
+
+def test_read(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_api_access(user_access=False)
     custom_widget_id = seeder.insert_event_custom_widget(admin_unit_id)
 
     url = utils.get_url("api_v1_custom_widget", id=custom_widget_id)
@@ -8,7 +12,7 @@ def test_read(client, seeder, utils):
     assert response.json["settings"]["color"] == "black"
 
 
-def test_put(client, seeder, utils, app, db):
+def test_put(client, seeder: Seeder, utils: UtilActions, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     custom_widget_id = seeder.insert_event_custom_widget(admin_unit_id)
 
@@ -24,7 +28,7 @@ def test_put(client, seeder, utils, app, db):
         assert custom_widget.widget_type == "search"
 
 
-def test_patch(client, seeder, utils, app, db):
+def test_patch(client, seeder: Seeder, utils: UtilActions, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     custom_widget_id = seeder.insert_event_custom_widget(admin_unit_id)
 
@@ -40,7 +44,7 @@ def test_patch(client, seeder, utils, app, db):
         assert custom_widget.widget_type == "search"
 
 
-def test_delete(client, seeder, utils, app, db):
+def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     _, admin_unit_id = seeder.setup_api_access()
     custom_widget_id = seeder.insert_event_custom_widget(admin_unit_id)
 

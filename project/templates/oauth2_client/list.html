@@ -12,11 +12,9 @@
     </ol>
 </nav>
 
-{% if current_user.has_permission('oauth2_client:create') %}
 <div class="my-4">
     <a class="btn btn-outline-secondary my-1" href="{{ url_for('oauth2_client_create') }}" role="button"><i class="fa fa-plus"></i> {{ _('Create OAuth2 client') }}</a>
 </div>
-{% endif %}
 
 <div class="table-responsive">
     <table class="table table-sm table-bordered table-hover table-striped">

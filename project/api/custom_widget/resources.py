@@ -16,13 +16,13 @@ from project.models import CustomWidget
 class CustomWidgetResource(BaseResource):
     @doc(summary="Get custom widget", tags=["Custom Widgets"])
     @marshal_with(CustomWidgetSchema)
+    @require_api_access()
     def get(self, id):
         return CustomWidget.query.get_or_404(id)
 
     @doc(
         summary="Update custom widget",
         tags=["Custom Widgets"],
-        security=[{"oauth2": ["customwidget:write"]}],
     )
     @use_kwargs(CustomWidgetPostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
@@ -42,7 +42,6 @@ class CustomWidgetResource(BaseResource):
     @doc(
         summary="Patch custom widget",
         tags=["Custom Widgets"],
-        security=[{"oauth2": ["customwidget:write"]}],
     )
     @use_kwargs(CustomWidgetPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
@@ -62,7 +61,6 @@ class CustomWidgetResource(BaseResource):
     @doc(
         summary="Delete custom widget",
         tags=["Custom Widgets"],
-        security=[{"oauth2": ["customwidget:write"]}],
     )
     @marshal_with(None, 204)
     @require_api_access("customwidget:write")

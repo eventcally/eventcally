@@ -234,6 +234,7 @@
     </div>
     <script>
 axios.defaults.baseURL = window.location.origin;
+axios.defaults.headers.common["X-CSRFToken"] = "[% csrf_token() %]";
 moment.locale("de");
 
 const localizedMessages = {

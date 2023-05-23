@@ -1,5 +1,8 @@
+from tests.utils import UtilActions
+
+
 class Seeder(object):
-    def __init__(self, app, db, utils):
+    def __init__(self, app, db, utils: UtilActions):
         self._app = app
         self._db = db
         self._utils = utils
@@ -247,6 +250,25 @@ class Seeder(object):
 
         return organizer_id
 
+    def upsert_admin_unit_api_key(self, admin_unit_id, name):
+        from project.services.api_key import upsert_api_key
+
+        with self._app.app_context():
+            api_key = upsert_api_key(admin_unit_id, name)
+            self._db.session.commit()
+            api_key_id = api_key.id
+
+        return api_key_id
+
+    def upsert_default_admin_unit_api_key(self, admin_unit_id):
+        from project.services.admin_unit import get_admin_unit_by_id
+
+        with self._app.app_context():
+            admin_unit = get_admin_unit_by_id(admin_unit_id)
+            api_key_id = self.upsert_admin_unit_api_key(admin_unit_id, admin_unit.name)
+
+        return api_key_id
+
     def insert_event_custom_widget(
         self,
         admin_unit_id,
@@ -282,9 +304,6 @@ class Seeder(object):
             metadata = dict()
             metadata["client_name"] = "Mein Client"
             metadata["scope"] = " ".join(scope_list)
-            metadata["grant_types"] = ["authorization_code", "refresh_token"]
-            metadata["response_types"] = ["code"]
-            metadata["token_endpoint_auth_method"] = "client_secret_post"
             metadata["redirect_uris"] = [self._utils.get_url("swagger_oauth2_redirect")]
             client.set_client_metadata(metadata)
 
@@ -294,11 +313,17 @@ class Seeder(object):
 
         return client_id
 
-    def setup_api_access(self, admin=True, admin_unit_verified=True):
+    def setup_api_access(self, admin=True, admin_unit_verified=True, user_access=True):
         user_id, admin_unit_id = self.setup_base(
             admin=admin, log_in=False, admin_unit_verified=admin_unit_verified
         )
-        return self.authorize_api_access(user_id, admin_unit_id)
+
+        if user_access:
+            self.authorize_api_access(user_id, admin_unit_id)
+        else:
+            self.grant_client_credentials_api_access(user_id)
+
+        return (user_id, admin_unit_id)
 
     def authorize_api_access(self, user_id, admin_unit_id):
         oauth2_client_id = self.insert_default_oauth2_client(user_id)
@@ -315,6 +340,19 @@ class Seeder(object):
         self._utils.authorize(client_id, client_secret, scope)
         self._utils.logout()
         return (user_id, admin_unit_id)
+
+    def grant_client_credentials_api_access(self, user_id):
+        oauth2_client_id = self.insert_default_oauth2_client(user_id)
+
+        with self._app.app_context():
+            from project.models import OAuth2Client
+
+            oauth2_client = self._db.session.get(OAuth2Client, oauth2_client_id)
+            client_id = oauth2_client.client_id
+            client_secret = oauth2_client.client_secret
+            scope = oauth2_client.scope
+
+        self._utils.grant_client_credentials(client_id, client_secret, scope)
 
     def get_event_category_id(self, category_name):
         from project.services.event import get_event_category

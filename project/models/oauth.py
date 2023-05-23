@@ -22,7 +22,7 @@ class OAuth2Client(db.Model, OAuth2ClientMixin):
 
     @OAuth2ClientMixin.grant_types.getter
     def grant_types(self):
-        return ["authorization_code", "refresh_token"]
+        return ["authorization_code", "refresh_token", "client_credentials"]
 
     @OAuth2ClientMixin.response_types.getter
     def response_types(self):

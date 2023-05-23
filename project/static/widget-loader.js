@@ -38,11 +38,11 @@
       var googleTagManager = false;
 
       if (customId != null) {
-        var url = baseUrl + "/api/v1/custom-widgets/" + customId;
+        var url = baseUrl + "/js/wlcw/" + customId;
 
         customWidgetData = loadJSON(url);
         var settings = customWidgetData.settings;
-        src = baseUrl + "/static/widget/" + customWidgetData.widget_type + ".html";
+        src = baseUrl + "/custom_widget/" + customWidgetData.widget_type;
 
         if (settings.hasOwnProperty('iFrameAutoResize') && settings.iFrameAutoResize != null) {
           resize = settings.iFrameAutoResize;
@@ -232,6 +232,8 @@
       if (mimeType != null && xmlhttp.overrideMimeType) {
         xmlhttp.overrideMimeType(mimeType);
       }
+
+      xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
 
       xmlhttp.send();
       return xmlhttp.responseText;

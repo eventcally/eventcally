@@ -1,27 +1,30 @@
 import pytest
 
+from tests.seeder import Seeder
+from tests.utils import UtilActions
 
-def test_read(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base(admin=True, log_in=False)
+
+def test_read(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
 
     url = utils.get_url("api_v1_organization", id=admin_unit_id)
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert "can_verify_other" not in response.json
 
     seeder.authorize_api_access(user_id, admin_unit_id)
 
-    response = utils.get_json(url)
+    response = utils.get_json_ok(url)
     assert "can_verify_other" in response.json
 
 
-def test_list(client, seeder, utils):
-    seeder.setup_base()
+def test_list(client, seeder: Seeder, utils: UtilActions):
+    seeder.setup_api_access(user_access=False)
     url = utils.get_url("api_v1_organization_list", keyword="crew")
-    utils.get_ok(url)
+    utils.get_json_ok(url)
 
 
-def test_list_unverified(client, app, seeder, utils):
-    _, verified_admin_unit_id = seeder.setup_base(
+def test_list_unverified(client, app, seeder: Seeder, utils: UtilActions):
+    user_id, verified_admin_unit_id = seeder.setup_base(
         email="verified@test.de",
         log_in=False,
         name="Verified",
@@ -33,17 +36,18 @@ def test_list_unverified(client, app, seeder, utils):
         name="Unverified",
         admin_unit_verified=False,
     )
+    seeder.grant_client_credentials_api_access(user_id)
 
     # Unauthorisierte Nutzer sehen nur verifizierte Organisationen
     url = utils.get_url("api_v1_organization_list")
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == verified_admin_unit_id
 
     # user_id1 sieht verified_admin_unit_id, weil sie verifiziert ist,
     # aber nicht unverified_admin_unit_id, weil sie nicht verifiziert ist.
     utils.login("verified@test.de")
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == verified_admin_unit_id
 
@@ -56,7 +60,7 @@ def test_list_unverified(client, app, seeder, utils):
 
     utils.logout()
     utils.login("admin@eventcally.com")
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 3
     assert response.json["items"][0]["id"] == eventcally_id
     assert response.json["items"][1]["id"] == unverified_admin_unit_id
@@ -66,12 +70,12 @@ def test_list_unverified(client, app, seeder, utils):
     seeder.create_user("admin@test.de", admin=True)
     utils.logout()
     utils.login("admin@test.de")
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 3
 
 
-def test_event_date_search(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+def test_event_date_search(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
     seeder.create_event_unverified()
@@ -79,7 +83,7 @@ def test_event_date_search(client, seeder, utils):
     url = utils.get_url(
         "api_v1_organization_event_date_search", id=admin_unit_id, sort="-rating"
     )
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["event"]["id"] == event_id
 
@@ -90,14 +94,14 @@ def test_event_date_search(client, seeder, utils):
     assert response.json["items"][1]["event"]["public_status"] == "draft"
 
 
-def test_event_search(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+def test_event_search(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
     seeder.create_event_unverified()
 
     url = utils.get_url("api_v1_organization_event_search", id=admin_unit_id)
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == event_id
 
@@ -111,17 +115,17 @@ def test_event_search(client, seeder, utils):
     )
 
 
-def test_organizers(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_organizers(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     seeder.upsert_default_event_organizer(admin_unit_id)
 
     url = utils.get_url(
         "api_v1_organization_organizer_list", id=admin_unit_id, name="crew"
     )
-    utils.get_ok(url)
+    utils.get_json_ok(url)
 
 
-def test_organizers_post(client, seeder, utils, app):
+def test_organizers_post(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
 
     url = utils.get_url("api_v1_organization_organizer_list", id=admin_unit_id)
@@ -140,13 +144,13 @@ def test_organizers_post(client, seeder, utils, app):
         assert organizer is not None
 
 
-def test_events(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+def test_events(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
 
     url = utils.get_url("api_v1_organization_event_list", id=admin_unit_id)
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == event_id
 
@@ -178,7 +182,7 @@ def prepare_events_post_data(seeder, utils, legacy=False):
 
 
 @pytest.mark.parametrize("variant", ["allday", "legacy", "two_date_definitions"])
-def test_events_post(client, seeder, utils, app, variant):
+def test_events_post(client, seeder: Seeder, utils: UtilActions, app, variant):
     url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
         seeder, utils, variant == "legacy"
     )
@@ -215,7 +219,7 @@ def test_events_post(client, seeder, utils, app, variant):
             assert len(event.date_definitions) == 1
 
 
-def test_events_post_co_organizers(client, seeder, utils, app, db):
+def test_events_post_co_organizers(client, seeder: Seeder, utils: UtilActions, app, db):
     url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
         seeder, utils
     )
@@ -239,7 +243,7 @@ def test_events_post_co_organizers(client, seeder, utils, app, db):
         assert event.co_organizers[1].id == organizer_b_id
 
 
-def test_events_post_photo_no_data(client, seeder, utils, app):
+def test_events_post_photo_no_data(client, seeder: Seeder, utils: UtilActions, app):
     url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
         seeder, utils
     )
@@ -252,7 +256,7 @@ def test_events_post_photo_no_data(client, seeder, utils, app):
     assert error["message"] == "Either image_url or image_base64 has to be defined."
 
 
-def test_events_post_photo_too_small(client, seeder, utils, app):
+def test_events_post_photo_too_small(client, seeder: Seeder, utils: UtilActions, app):
     url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
         seeder, utils
     )
@@ -267,13 +271,15 @@ def test_events_post_photo_too_small(client, seeder, utils, app):
     assert error["message"] == "Image is too small (1x1px). At least 320x320px."
 
 
-def test_events_import(client, seeder, utils, app, db, shared_datadir):
+def test_events_import(
+    client, seeder: Seeder, utils: UtilActions, app, db, shared_datadir
+):
     external_url = "https://www.harzinfo.de/event/xy"
     utils.mock_get_request_with_file(
         external_url, shared_datadir, "harzinfo_biathlon.html"
     )
 
-    _, admin_unit_id = seeder.setup_base()
+    _, admin_unit_id = seeder.setup_api_access()
     url = utils.get_url("api_v1_organization_event_import", id=admin_unit_id)
     response = utils.post_json(url, {"url": external_url})
 
@@ -294,15 +300,15 @@ def test_events_import(client, seeder, utils, app, db, shared_datadir):
     utils.assert_response_unprocessable_entity(response)
 
 
-def test_places(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_places(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     seeder.upsert_default_event_place(admin_unit_id)
 
     url = utils.get_url("api_v1_organization_place_list", id=admin_unit_id, name="crew")
-    utils.get_ok(url)
+    utils.get_json_ok(url)
 
 
-def test_places_post(client, seeder, utils, app):
+def test_places_post(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
 
     url = utils.get_url("api_v1_organization_place_list", id=admin_unit_id)
@@ -331,19 +337,19 @@ def test_places_post(client, seeder, utils, app):
         assert place.location.city == "Goslar"
 
 
-def test_event_lists(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
+def test_event_lists(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_list_id = seeder.create_event_list(admin_unit_id, name="Meine Liste")
 
     url = utils.get_url(
         "api_v1_organization_event_list_list", id=admin_unit_id, name="meine"
     )
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == event_list_id
 
 
-def test_event_lists_post(client, seeder, utils, app):
+def test_event_lists_post(client, seeder: Seeder, utils: UtilActions, app):
     _, admin_unit_id = seeder.setup_api_access()
 
     url = utils.get_url("api_v1_organization_event_list_list", id=admin_unit_id)
@@ -368,8 +374,8 @@ def test_event_lists_post(client, seeder, utils, app):
         assert event_list.name == "Neue Liste"
 
 
-def test_event_lists_status(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
+def test_event_lists_status(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     event_list_id = seeder.create_event_list(
         admin_unit_id, event_id, name="Meine Liste"
@@ -381,14 +387,14 @@ def test_event_lists_status(client, seeder, utils):
         event_id=event_id,
         name="meine",
     )
-    response = utils.get_ok(url)
+    response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["event_list"]["id"] == event_list_id
     assert response.json["items"][0]["contains_event"]
 
 
-def test_references_incoming(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_references_incoming(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     (
         other_user_id,
         other_admin_unit_id,
@@ -401,11 +407,11 @@ def test_references_incoming(client, seeder, utils):
         id=admin_unit_id,
         name="crew",
     )
-    utils.get_ok(url)
+    utils.get_json_ok(url)
 
 
-def test_references_outgoing(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_references_outgoing(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
 
     other_user_id = seeder.create_user("other@test.de")
@@ -417,14 +423,11 @@ def test_references_outgoing(client, seeder, utils):
         id=admin_unit_id,
         name="crew",
     )
-    utils.get_ok(url)
+    utils.get_json_ok(url)
 
 
-@pytest.mark.parametrize("session_based", [True, False])
-def test_outgoing_relation_list(client, seeder, utils, session_based):
-    user_id, admin_unit_id = (
-        seeder.setup_base() if session_based else seeder.setup_api_access()
-    )
+def test_outgoing_relation_list(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
     (
         other_user_id,
         other_admin_unit_id,
@@ -443,8 +446,10 @@ def test_outgoing_relation_list(client, seeder, utils, session_based):
     assert response.json["items"][0]["target_organization"]["id"] == other_admin_unit_id
 
 
-def test_outgoing_relation_list_notAuthenticated(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+def test_outgoing_relation_list_notAuthenticated(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     (
         other_user_id,
         other_admin_unit_id,
@@ -459,7 +464,7 @@ def test_outgoing_relation_list_notAuthenticated(client, seeder, utils):
     utils.assert_response_unauthorized(response)
 
 
-def test_outgoing_relation_post(client, app, seeder, utils, db):
+def test_outgoing_relation_post(client, app, seeder: Seeder, utils: UtilActions, db):
     user_id, admin_unit_id = seeder.setup_api_access()
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
@@ -487,7 +492,9 @@ def test_outgoing_relation_post(client, app, seeder, utils, db):
         assert relation.auto_verify_event_reference_requests
 
 
-def test_outgoing_relation_post_unknownTarget(client, app, seeder, utils):
+def test_outgoing_relation_post_unknownTarget(
+    client, app, seeder: Seeder, utils: UtilActions
+):
     user_id, admin_unit_id = seeder.setup_api_access()
 
     url = utils.get_url(
@@ -503,7 +510,9 @@ def test_outgoing_relation_post_unknownTarget(client, app, seeder, utils):
     utils.assert_response_unprocessable_entity(response)
 
 
-def test_outgoing_relation_post_selfReference(client, app, seeder, utils):
+def test_outgoing_relation_post_selfReference(
+    client, app, seeder: Seeder, utils: UtilActions
+):
     user_id, admin_unit_id = seeder.setup_api_access()
 
     url = utils.get_url(
@@ -519,8 +528,8 @@ def test_outgoing_relation_post_selfReference(client, app, seeder, utils):
     utils.assert_response_bad_request(response)
 
 
-def test_organization_invitation_list(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_organization_invitation_list(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     url = utils.get_url(
@@ -573,17 +582,17 @@ def test_organization_invitation_list_post(client, app, seeder, db, utils, mocke
     utils.assert_send_mail_called(mail_mock, "invited@test.de", invitation_url)
 
 
-def test_custom_widgets(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
+def test_custom_widgets(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_api_access(user_access=False)
     seeder.insert_event_custom_widget(admin_unit_id)
 
     url = utils.get_url(
         "api_v1_organization_custom_widget_list", id=admin_unit_id, name="mein"
     )
-    utils.get_ok(url)
+    utils.get_json_ok(url)
 
 
-def test_custom_widgets_post(client, seeder, utils, app):
+def test_custom_widgets_post(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access()
 
     url = utils.get_url("api_v1_organization_custom_widget_list", id=admin_unit_id)

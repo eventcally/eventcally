@@ -2,7 +2,7 @@ from tests.seeder import Seeder
 from tests.utils import UtilActions
 
 
-def test_js_check_org_short_name(client, seeder, utils):
+def test_js_check_org_short_name(client, seeder, utils: UtilActions):
     seeder.create_user(admin=True)
     utils.login()
 
@@ -210,3 +210,11 @@ def test_js_autocomplete_gmaps_place(client, seeder: Seeder, utils: UtilActions)
 
         utils.assert_response_ok(response)
         assert response.json["place_id"] == "123"
+
+
+def test_js_widget_loader_custom_widget(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    custom_widget_id = seeder.insert_event_custom_widget(admin_unit_id)
+
+    url = utils.get_url("js_widget_loader_custom_widget", id=custom_widget_id)
+    utils.get_ok(url)

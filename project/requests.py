@@ -44,6 +44,8 @@ def set_manage_admin_unit_cookie(response):
 @app.after_request
 def set_response_headers(response):
     if request and request.endpoint:
+        if request.endpoint.startswith("api_"):
+            return response
         if request.endpoint != "static" and request.endpoint != "widget_event_dates":
             response.headers["X-Frame-Options"] = "SAMEORIGIN"
 
