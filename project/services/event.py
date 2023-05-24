@@ -46,7 +46,7 @@ from project.models import (
     sanitize_allday_instance,
 )
 from project.services.event_search import EventSearchParams
-from project.services.reference import upsert_event_reference
+from project.services.reference import get_event_reference, upsert_event_reference
 from project.utils import get_pending_changes, get_place_str
 from project.views.utils import truncate
 
@@ -662,11 +662,16 @@ def create_bulk_event_references(admin_unit_id: int, postalCodes: list):
     query = get_events_query(params)
     query = query.filter(Event.admin_unit_id != admin_unit_id)
 
-    count = 0
+    new_references = list()
     events = query.all()
     for event in events:
-        if upsert_event_reference(event.id, admin_unit_id):
-            count = count + 1
+        if not get_event_reference(event.id, admin_unit_id):
+            reference = upsert_event_reference(event.id, admin_unit_id)
+            new_references.append(reference)
 
     db.session.commit()
-    app.logger.info(f"{count} reference(s) created.")
+    app.logger.info(f"{len(new_references)} reference(s) created.")
+
+    for new_reference in new_references:
+        url = url_for("event", event_id=new_reference.event_id, _external=True)
+        app.logger.info(url)

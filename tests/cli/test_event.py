@@ -31,6 +31,7 @@ def test_create_bulk_event_references(client, seeder, app):
     event_id_38690 = _create_event(seeder, other_admin_unit_id, "38690")
     event_id_55555 = _create_event(seeder, other_admin_unit_id, "55555")
 
+    app.config["SERVER_NAME"] = "localhost"
     runner = app.test_cli_runner()
     result = runner.invoke(
         args=[

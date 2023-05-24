@@ -15,13 +15,17 @@ def create_event_reference_for_request(request):
     return upsert_event_reference(request.event_id, request.admin_unit_id)
 
 
-def upsert_event_reference(event_id: int, admin_unit_id: int):
-    result = EventReference.query.filter(
+def get_event_reference(event_id: int, admin_unit_id: int):
+    return EventReference.query.filter(
         and_(
             EventReference.event_id == event_id,
             EventReference.admin_unit_id == admin_unit_id,
         )
     ).first()
+
+
+def upsert_event_reference(event_id: int, admin_unit_id: int):
+    result = get_event_reference(event_id, admin_unit_id)
 
     if result is None:
         result = EventReference(event_id=event_id, admin_unit_id=admin_unit_id)
