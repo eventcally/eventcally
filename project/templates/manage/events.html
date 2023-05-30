@@ -1,6 +1,6 @@
 {% extends "layout_vue.html" %}
 {% set active_id = "events" %}
-{% from "_macros.html" import render_jquery_steps_header, render_google_filter_autocomplete_header, render_event_dates_location_field, render_field, render_event_dates_date_field, render_event_in_list, render_manage_form_styles, render_manage_form_scripts, render_event_dates_filter_form, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
+{% from "_macros.html" import render_jquery_steps_header, render_google_filter_autocomplete_header, render_event_dates_location_field, render_field, render_event_dates_date_field, render_event_in_list, render_manage_form_styles, render_manage_form_scripts, render_event_warning_pills, render_pagination, render_event_date, render_field_with_errors, render_event_organizer %}
 
 {%- block title -%}
 {{ _('Events') }}
@@ -55,7 +55,7 @@ var vue_app_data = { eventId: 0 };
     <a class="btn btn-outline-secondary btn-sm m-1" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
 </h1>
 
-<div class="my-4">
+<div class="my-4 w-normal">
     <form action="" id="filter_form" class="form" method="GET" autocomplete="off">
         {{ form.hidden_tag() }}
 
@@ -65,7 +65,7 @@ var vue_app_data = { eventId: 0 };
             {{ render_field_with_errors(form.keyword, formrow="1") }}
         {% endif %}
 
-        {% set form_collapsed = not form.category_id.data and not form.organizer_id.data and not form.event_place_id.data and not form.postal_code.data and not form.coordinate.data  %}
+        {% set form_collapsed = not form.exclude_recurring.data and not form.category_id.data and not form.organizer_id.data and not form.event_place_id.data and not form.postal_code.data and not form.coordinate.data  %}
         <div id="extended_search_form" class="{% if form_collapsed %}collapse{% else %}show{% endif %}">
 
         {% if form.category_id %}
@@ -83,6 +83,8 @@ var vue_app_data = { eventId: 0 };
         {{ render_field_with_errors(form.postal_code, formrow="1") }}
 
         {{ render_event_dates_location_field(form.location, form.distance) }}
+
+        {{ render_field_with_errors(form.exclude_recurring, ri="checkbox", formrow="1") }}
 
         </div>
 

@@ -76,6 +76,10 @@ tr.table-line-through td {
   max-width: 1024px;
 }
 
+.w-medium {
+  max-width: 400px;
+}
+
 .dropzone-wrapper {
   border: 2px dashed #91b0b3;
   color: #92b0b3;

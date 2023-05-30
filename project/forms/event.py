@@ -451,6 +451,10 @@ class FindEventForm(FlaskForm):
         choices=distance_choices,
     )
     postal_code = StringField(lazy_gettext("Postal code"), validators=[Optional()])
+    exclude_recurring = BooleanField(
+        lazy_gettext("Exclude recurring events"),
+        validators=[Optional()],
+    )
 
     submit = SubmitField(lazy_gettext("Find events"))
 

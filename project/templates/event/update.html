@@ -87,12 +87,16 @@
           data: function (params) {
             return {
               name: params.term,
-              per_page: 5
+              per_page: 5,
+              page: params.page || 1
             };
           },
           processResults: function (data) {
             return {
-              results: data.items.map(p => ({"id": p.id, "text": p.name}))
+              results: data.items.map(p => ({"id": p.id, "text": p.name})),
+              pagination: {
+                  more: data.has_next
+              }
             };
           }
         },

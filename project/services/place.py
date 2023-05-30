@@ -28,9 +28,13 @@ def get_event_places(admin_unit_id, keyword=None, limit=None):
 
     if keyword:
         like_keyword = "%" + keyword + "%"
+        order_keyword = keyword + "%"
         query = query.filter(EventPlace.name.ilike(like_keyword))
-
-    query = query.order_by(func.lower(EventPlace.name))
+        query = query.order_by(
+            EventPlace.name.ilike(order_keyword).desc(), func.lower(EventPlace.name)
+        )
+    else:
+        query = query.order_by(func.lower(EventPlace.name))
 
     if limit:
         query = query.limit(5)

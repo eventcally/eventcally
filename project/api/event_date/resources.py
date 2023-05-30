@@ -1,3 +1,4 @@
+from flask import request
 from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy import and_
 from sqlalchemy.orm import defaultload, lazyload
@@ -16,6 +17,7 @@ from project.api.resources import BaseResource, require_api_access
 from project.models import AdminUnit, Event, EventDate, PublicStatus
 from project.services.event import get_event_dates_query
 from project.services.event_search import EventSearchParams
+from project.views.utils import get_current_admin_unit_for_api
 
 
 class EventDateListResource(BaseResource):
@@ -62,6 +64,13 @@ class EventDateSearchResource(BaseResource):
         login_api_user()
         params = EventSearchParams()
         params.load_from_request()
+
+        if "not_referenced" in request.args:
+            admin_unit = get_current_admin_unit_for_api()
+
+            if admin_unit:
+                params.not_referenced_by_organization_id = admin_unit.id
+
         pagination = get_event_dates_query(params).paginate()
         return pagination
 

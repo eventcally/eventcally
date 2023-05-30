@@ -1025,38 +1025,6 @@
   {% endif %}
 {% endmacro %}
 
-{% macro render_event_dates_filter_form(form) %}
-<form action="" id="filter_form" class="form" method="GET" autocomplete="off">
-  {{ form.hidden_tag() }}
-
-  {% if form.keyword %}
-    {{ render_field_with_errors(form.keyword, formrow="1") }}
-  {% endif %}
-
-  {% if form.category_id %}
-    {{ render_field_with_errors(form.category_id, formrow="1") }}
-  {% endif %}
-
-  {% if form.organizer_id and form.organizer_id.type != "HiddenField" %}
-    {{ render_field_with_errors(form.organizer_id, formrow="1") }}
-  {% endif %}
-
-  {% if form.event_place_id and form.event_place_id.type != "HiddenField" %}
-    {{ render_field_with_errors(form.event_place_id, formrow="1") }}
-  {% endif %}
-
-  {{ render_event_dates_date_field(form.date_from, form.date_to) }}
-
-  {% if form.weekday and form.weekday.choices|length > 0 %}
-    {{ render_field_with_errors(form.weekday, ri="multicheckbox", formrow="1") }}
-  {% endif %}
-
-  {{ render_event_dates_location_field(form.location, form.distance) }}
-
-  {{ render_field(form.submit) }}
-</form>
-{% endmacro %}
-
 {% macro render_cropper_code(field_id = "photo", min_width=320, min_height=160) %}
 var field_id = "#{{ field_id }}-image_base64";
 var inputImage = document.getElementById('photo-image_file');
@@ -1690,8 +1658,8 @@ $('#allday').on('change', function() {
 {% macro render_form_scripts() %}
 <script src="{{ url_for('static', filename='ext/jquery-ui.1.12.1/jquery-ui.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/jquery-ui-i18n.1.11.4.min.js')}}"></script>
-<script src="{{ url_for('static', filename='ext/select2.4.1.0-beta.1.min.js')}}"></script>
-<script src="{{ url_for('static', filename='ext/select2.i18n.de.4.1.0-beta.1.min.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/select2.4.0.13.min.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/select2.i18n.de.4.0.13.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/jquery.timepicker.1.13.18.min.js')}}"></script>
 <script type="text/javascript">
   $.datepicker.setDefaults($.datepicker.regional["de"]);
@@ -1717,7 +1685,7 @@ $('#allday').on('change', function() {
 
 {% macro render_form_styles() %}
 <link rel="stylesheet" href="{{ url_for('static', filename='ext/jquery-ui.1.12.1/jquery-ui.min.css')}}">
-<link rel="stylesheet" href="{{ url_for('static', filename='ext/select2.4.1.0-beta.1.min.css')}}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='ext/select2.4.0.13.min.css')}}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='ext/select2-bootstrap4.1.5.2.min.css')}}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='ext/jquery.timepicker.1.13.18.min.css')}}" />
 {% endmacro %}
@@ -1799,12 +1767,16 @@ $('#co_organizer_ids').select2({
     data: function (params) {
       return {
         name: params.term,
-        per_page: 5
+        per_page: 5,
+        page: params.page || 1
       };
     },
     processResults: function (data) {
       return {
-        results: data.items.map(p => ({"id": p.id, "text": p.name}))
+        results: data.items.map(p => ({"id": p.id, "text": p.name})),
+        pagination: {
+            more: data.has_next
+        }
       };
     }
   },
@@ -1823,12 +1795,16 @@ $('#event_list_ids').select2({
     data: function (params) {
       return {
         name: params.term,
-        per_page: 5
+        per_page: 5,
+        page: params.page || 1
       };
     },
     processResults: function (data) {
       return {
-        results: data.items.map(p => ({"id": p.id, "text": p.name}))
+        results: data.items.map(p => ({"id": p.id, "text": p.name})),
+        pagination: {
+            more: data.has_next
+        }
       };
     }
   },

@@ -132,6 +132,7 @@ scope_list = [
     "organization:write",
     "eventlist:write",
     "customwidget:write",
+    "eventreference:write",
 ]
 scopes = {k: get_localized_scope(k) for v, k in enumerate(scope_list)}
 

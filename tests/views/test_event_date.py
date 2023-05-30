@@ -1,4 +1,8 @@
-def test_read(client, seeder, utils):
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
+
+def test_read(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
 
@@ -18,7 +22,7 @@ def test_read(client, seeder, utils):
     response = utils.get(url)
 
 
-def test_ical(client, seeder, utils):
+def test_ical(client, seeder: Seeder, utils: UtilActions):
     from project.dateutils import create_berlin_date
 
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
@@ -70,9 +74,10 @@ def test_ical(client, seeder, utils):
     utils.assert_response_contains(response, "DTEND;VALUE=DATE:20200104")
 
 
-def test_list(client, seeder, utils):
+def test_list(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.create_event(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
     url = utils.get_url("event_dates")
     utils.get_ok(url)
@@ -81,4 +86,10 @@ def test_list(client, seeder, utils):
     utils.get_ok(url)
 
     url = utils.get_url("event_dates", category_id=2000)
+    utils.get_ok(url)
+
+    url = utils.get_url("event_dates", admin_unit_id=admin_unit_id)
+    utils.get_ok(url)
+
+    url = utils.get_url("event_dates", organizer_id=organizer_id)
     utils.get_ok(url)

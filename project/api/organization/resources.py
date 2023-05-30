@@ -40,6 +40,8 @@ from project.api.event_list.schemas import (
     EventListStatusListResponseSchema,
 )
 from project.api.event_reference.schemas import (
+    EventReferenceCreateRequestSchema,
+    EventReferenceIdSchema,
     EventReferenceListRequestSchema,
     EventReferenceListResponseSchema,
 )
@@ -308,6 +310,26 @@ class OrganizationIncomingEventReferenceListResource(BaseResource):
 
         pagination = get_reference_incoming_query(admin_unit).paginate()
         return pagination
+
+    @doc(
+        summary="Add reference",
+        tags=["Organizations", "Event References"],
+    )
+    @use_kwargs(EventReferenceCreateRequestSchema, location="json", apply=False)
+    @marshal_with(EventReferenceIdSchema, 201)
+    @require_api_access("eventreference:write")
+    def post(self, id):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+        access_or_401(admin_unit, "event:reference")
+
+        reference = self.create_instance(
+            EventReferenceCreateRequestSchema, admin_unit_id=admin_unit.id
+        )
+        db.session.add(reference)
+        db.session.commit()
+
+        return reference, 201
 
 
 class OrganizationOutgoingEventReferenceListResource(BaseResource):

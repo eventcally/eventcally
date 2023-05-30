@@ -1,18 +1,25 @@
 from marshmallow import fields
 
 from project.api import marshmallow
-from project.api.event.schemas import EventRefSchema
+from project.api.event.schemas import EventRefSchema, EventWriteIdSchema
 from project.api.organization.schemas import OrganizationRefSchema
-from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.api.schemas import (
+    IdSchemaMixin,
+    PaginationRequestSchema,
+    PaginationResponseSchema,
+    SQLAlchemyBaseSchema,
+)
 from project.models import EventReference
 
 
-class EventReferenceIdSchema(marshmallow.SQLAlchemySchema):
+class EventReferenceModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = EventReference
         load_instance = True
 
-    id = marshmallow.auto_field()
+
+class EventReferenceIdSchema(EventReferenceModelSchema, IdSchemaMixin):
+    pass
 
 
 class EventReferenceRefSchema(EventReferenceIdSchema):
@@ -38,3 +45,20 @@ class EventReferenceListResponseSchema(PaginationResponseSchema):
         fields.Nested(EventReferenceRefSchema),
         metadata={"description": "Event references"},
     )
+
+
+class EventReferenceWriteSchemaMixin(object):
+    event = fields.Nested(
+        EventWriteIdSchema,
+        required=True,
+        metadata={"description": "Event to reference"},
+    )
+
+
+class EventReferenceCreateRequestSchema(
+    EventReferenceModelSchema,
+    EventReferenceWriteSchemaMixin,
+):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.make_post_schema()
