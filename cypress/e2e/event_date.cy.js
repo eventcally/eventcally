@@ -9,7 +9,7 @@ describe("Event Date", () => {
         cy.screenshotDatepicker("#date_from-user");
         cy.get("#toggle-search-btn").click();
 
-        cy.get(".text-body:first").click();
+        cy.get(".text-body:visible:first").click();
         cy.screenshot("event-date");
       });
     });
