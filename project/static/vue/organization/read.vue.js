@@ -40,7 +40,7 @@ const OrganizationRead = {
               </div>
 
               <b-list-group class="mt-4">
-              <b-list-group-item :href="'/eventdates?organization_id=' + organization.id">
+              <b-list-group-item :href="'/eventdates?admin_unit_id=' + organization.id">
                 <i class="fa fa-fw fa-list"></i>
                 {{ $t("shared.models.event.listName") }}
               </b-list-group-item>
@@ -65,10 +65,6 @@ const OrganizationRead = {
               </b-modal>
             </b-col>
           </b-row>
-
-          <div>
-            <iframe id="eventcally-widget" :src="'/' + organization.short_name + '/widget/eventdates'" style="width: 1px; min-width: 100%; max-width:100%;"></iframe>
-          </div>
         </div>
       </b-overlay>
     </div>
@@ -122,9 +118,6 @@ const OrganizationRead = {
         })
         .then((response) => {
           this.organization = response.data;
-          Vue.nextTick(function () {
-            iFrameResize({ minHeight: 300, onMessage: function(m) {} }, '#eventcally-widget');
-          });
         });
     },
     handleLoading(isLoading) {

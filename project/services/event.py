@@ -64,7 +64,7 @@ def upsert_event_category(category_name):
     return result
 
 
-def fill_event_filter(event_filter, params):
+def fill_event_filter(event_filter, params: EventSearchParams):
     if params.keyword:
         tq = func.websearch_to_tsquery("german", params.keyword)
         event_filter = and_(
@@ -137,10 +137,27 @@ def fill_event_filter(event_filter, params):
             user_favorite_exists,
         )
 
+    if params.not_referenced_by_organization_id:
+        reference_does_not_exist = ~EventReference.query.filter(
+            EventReference.event_id == Event.id,
+            EventReference.admin_unit_id == params.not_referenced_by_organization_id,
+        ).exists()
+        event_filter = and_(
+            event_filter,
+            Event.admin_unit_id != params.not_referenced_by_organization_id,
+            reference_does_not_exist,
+        )
+
+    if params.exclude_recurring:
+        event_filter = and_(
+            event_filter,
+            ~Event.is_recurring,
+        )
+
     return event_filter
 
 
-def get_event_dates_query(params):
+def get_event_dates_query(params: EventSearchParams):
     event_filter = 1 == 1
     date_filter = EventDate.start >= datetime.min
 
@@ -314,7 +331,7 @@ def get_event_with_details_or_404(event_id):
     )
 
 
-def get_events_query(params):
+def get_events_query(params: EventSearchParams):
     event_filter = 1 == 1
     date_filter = EventDate.start >= datetime.min
 

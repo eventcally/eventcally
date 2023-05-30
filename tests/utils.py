@@ -155,14 +155,19 @@ class UtilActions(object):
         print(response.data)
         print(response.json)
 
-    def get_json(self, url):
+    def get_json(self, url, **kwargs):
         self.log_request(url)
-        response = self._client.get(url, headers=self.get_headers())
+        headers = self.get_headers()
+
+        if "headers" in kwargs:
+            headers.update(kwargs["headers"])
+
+        response = self._client.get(url, headers=headers)
         self.log_response(response)
         return response
 
-    def get_json_ok(self, url):
-        response = self.get_json(url)
+    def get_json_ok(self, url, **kwargs):
+        response = self.get_json(url, **kwargs)
         self.assert_response_ok(response)
         return response
 

@@ -11,7 +11,7 @@ from project.access import (
     get_admin_unit_members_with_permission,
 )
 from project.dateutils import get_next_full_hour
-from project.forms.event_date import FindEventDateForm
+from project.forms.event_date import FindEventDateWidgetForm
 from project.forms.event_suggestion import CreateEventSuggestionForm
 from project.jsonld import get_sd_for_event_date
 from project.models import AdminUnit, EventOrganizer, EventReviewStatus, EventSuggestion
@@ -23,7 +23,6 @@ from project.services.event_search import EventSearchParams
 from project.services.event_suggestion import insert_event_suggestion
 from project.services.place import get_event_places
 from project.views.event import get_event_category_choices
-from project.views.event_date import prepare_event_date_form
 from project.views.utils import (
     flash_errors,
     flash_message,
@@ -44,8 +43,9 @@ def widget_event_dates(au_short_name):
     params = EventSearchParams()
     params.set_default_date_range()
 
-    form = FindEventDateForm(formdata=request.args, obj=params)
-    prepare_event_date_form(form)
+    form = FindEventDateWidgetForm(formdata=request.args, obj=params)
+    form.category_id.choices = get_event_category_choices()
+    form.category_id.choices.insert(0, (0, ""))
 
     if form.validate():
         form.populate_obj(params)

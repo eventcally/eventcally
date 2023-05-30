@@ -1,14 +1,13 @@
-from flask import request
 from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import HiddenField, SelectField, StringField, SubmitField
+from wtforms import BooleanField, HiddenField, SelectField, StringField, SubmitField
 from wtforms.validators import Optional
 
 from project.forms.common import distance_choices
 from project.forms.widgets import CustomDateField
 
 
-class FindEventDateForm(FlaskForm):
+class FindEventDateBaseForm(FlaskForm):
     class Meta:
         csrf = False
 
@@ -20,6 +19,9 @@ class FindEventDateForm(FlaskForm):
     category_id = SelectField(
         lazy_gettext("Category"), validators=[Optional()], coerce=int
     )
+
+
+class FindEventDateForm(FindEventDateBaseForm):
     coordinate = HiddenField(validators=[Optional()])
     location = SelectField(lazy_gettext("Location"), validators=[Optional()])
     distance = SelectField(
@@ -29,14 +31,33 @@ class FindEventDateForm(FlaskForm):
         choices=distance_choices,
     )
     event_list_id = HiddenField(validators=[Optional()])
-    organization_id = HiddenField(validators=[Optional()])
-    organizer_id = HiddenField(validators=[Optional()])
+    admin_unit_id = SelectField(
+        lazy_gettext("Organization"),
+        validators=[Optional()],
+        coerce=int,
+    )
+    organizer_id = SelectField(
+        lazy_gettext("Organizer"),
+        validators=[Optional()],
+        coerce=int,
+    )
+    not_referenced = BooleanField(
+        lazy_gettext("Show unreferenced events only"),
+        validators=[Optional()],
+    )
+    exclude_recurring = BooleanField(
+        lazy_gettext("Exclude recurring events"),
+        validators=[Optional()],
+    )
+    postal_code = StringField(lazy_gettext("Postal code"), validators=[Optional()])
+
+    submit = SubmitField(lazy_gettext("Find events"))
+
+
+class FindEventDateWidgetForm(FindEventDateBaseForm):
     s_ft = HiddenField(validators=[Optional()])
     s_bg = HiddenField(validators=[Optional()])
     s_pr = HiddenField(validators=[Optional()])
     s_li = HiddenField(validators=[Optional()])
 
     submit = SubmitField(lazy_gettext("Find"))
-
-    def is_submitted(self):
-        return "submit" in request.args

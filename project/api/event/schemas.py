@@ -163,7 +163,37 @@ class EventCurrentUserMixin(object):
         return has_favorite_event(current_user.id, event.id)
 
 
-class EventSchema(EventIdSchema, EventBaseSchemaMixin, EventCurrentUserMixin):
+class EventCurrentOrganizationMixin(object):
+    reference_id = fields.Method(
+        "get_reference_id",
+        metadata={
+            "description": "Reference id, if event is referenced by current organization"
+        },
+    )
+
+    def get_reference_id(self, event):
+        if not current_user or not current_user.is_authenticated:
+            return None
+
+        from project.views.utils import get_current_admin_unit_for_api
+
+        admin_unit = get_current_admin_unit_for_api()
+
+        if not admin_unit:
+            return None
+
+        from project.services.reference import get_event_reference
+
+        reference = get_event_reference(event.id, admin_unit.id)
+        return reference.id if reference is not None else None
+
+
+class EventSchema(
+    EventIdSchema,
+    EventBaseSchemaMixin,
+    EventCurrentUserMixin,
+    EventCurrentOrganizationMixin,
+):
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
     organizer = fields.Nested(OrganizerRefSchema)
     place = fields.Nested(PlaceRefSchema, attribute="event_place")
@@ -191,7 +221,9 @@ class EventRefSchema(EventIdSchema):
     name = marshmallow.auto_field()
 
 
-class EventSearchItemSchema(EventRefSchema, EventCurrentUserMixin):
+class EventSearchItemSchema(
+    EventRefSchema, EventCurrentUserMixin, EventCurrentOrganizationMixin
+):
     description = marshmallow.auto_field()
     date_definitions = fields.List(fields.Nested(EventDateDefinitionSchema))
     photo = fields.Nested(ImageSchema)

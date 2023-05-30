@@ -188,13 +188,20 @@ def get_admin_unit_query(
 
     if keyword:
         like_keyword = "%" + keyword + "%"
+        order_keyword = keyword + "%"
         keyword_filter = or_(
             AdminUnit.name.ilike(like_keyword),
             AdminUnit.short_name.ilike(like_keyword),
         )
-        query = query.filter(keyword_filter)
+        query = query.filter(keyword_filter).order_by(
+            AdminUnit.name.ilike(order_keyword).desc(),
+            AdminUnit.short_name.ilike(order_keyword).desc(),
+            func.lower(AdminUnit.name),
+        )
+    else:
+        query = query.order_by(func.lower(AdminUnit.name))
 
-    return query.order_by(func.lower(AdminUnit.name))
+    return query
 
 
 def get_organizer_query(admin_unit_id, name=None):
@@ -202,9 +209,15 @@ def get_organizer_query(admin_unit_id, name=None):
 
     if name:
         like_name = "%" + name + "%"
-        query = query.filter(EventOrganizer.name.ilike(like_name))
+        order_name = name + "%"
+        query = query.filter(EventOrganizer.name.ilike(like_name)).order_by(
+            EventOrganizer.name.ilike(order_name).desc(),
+            func.lower(EventOrganizer.name),
+        )
+    else:
+        query = query.order_by(func.lower(EventOrganizer.name))
 
-    return query.order_by(func.lower(EventOrganizer.name))
+    return query
 
 
 def get_custom_widget_query(admin_unit_id, name=None):

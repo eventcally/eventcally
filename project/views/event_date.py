@@ -1,11 +1,12 @@
 from flask import render_template, request, url_for
 from flask.wrappers import Response
 
-from project import app
+from project import app, db
 from project.access import can_read_event_or_401
 from project.dateutils import create_icalendar
 from project.forms.event_date import FindEventDateForm
 from project.jsonld import get_sd_for_event_date
+from project.models import AdminUnit, EventOrganizer
 from project.services.event import (
     create_ical_event_for_date,
     get_event_date_with_details_or_404,
@@ -25,6 +26,28 @@ def prepare_event_date_form(form):
     form.category_id.choices = get_event_category_choices()
     form.category_id.choices.insert(0, (0, ""))
     form.location.choices = []
+
+    organizer = None
+    admin_unit = None
+
+    if form.organizer_id.data and form.organizer_id.data > 0:
+        organizer = db.session.get(EventOrganizer, form.organizer_id.data)
+
+        if organizer:
+            form.organizer_id.choices = [(organizer.id, organizer.name)]
+            admin_unit = organizer.adminunit
+
+    if not admin_unit and form.admin_unit_id.data and form.admin_unit_id.data > 0:
+        admin_unit = db.session.get(AdminUnit, form.admin_unit_id.data)
+
+    if admin_unit:
+        form.admin_unit_id.choices = [(admin_unit.id, admin_unit.name)]
+
+    if not form.admin_unit_id.choices:
+        form.admin_unit_id.choices = []
+
+    if not form.organizer_id.choices:
+        form.organizer_id.choices = []
 
 
 @app.route("/eventdates")

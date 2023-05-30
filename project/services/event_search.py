@@ -31,6 +31,8 @@ class EventSearchParams(object):
         self.status = None
         self.favored_by_user_id = None
         self.postal_code = None
+        self.not_referenced_by_organization_id = None
+        self.exclude_recurring = False
 
     @property
     def date_from(self):
@@ -94,6 +96,9 @@ class EventSearchParams(object):
     def load_list_param(self, param: str):
         item_ids = request.args.getlist(param)
 
+        if len(item_ids) == 1 and "," in item_ids[0]:
+            item_ids = [i.strip() for i in item_ids[0].split(",")]
+
         if "0" in item_ids:
             item_ids.remove("0")
 
@@ -101,6 +106,9 @@ class EventSearchParams(object):
             return item_ids
 
         return None
+
+    def load_bool_param(self, param: str):
+        return request.args[param] == "y"
 
     def load_status_list_param(self):
         stati = self.load_list_param("status")
@@ -149,7 +157,7 @@ class EventSearchParams(object):
         if "event_list_id" in request.args:
             self.event_list_id = self.load_list_param("event_list_id")
 
-        if "postal_code" in request.args:  # pragma: no cover
+        if "postal_code" in request.args:
             self.postal_code = self.load_list_param("postal_code")
 
         if "sort" in request.args:
@@ -158,5 +166,11 @@ class EventSearchParams(object):
         if "organization_id" in request.args:
             self.admin_unit_id = request.args["organization_id"]
 
+        if "admin_unit_id" in request.args:
+            self.admin_unit_id = request.args["admin_unit_id"]
+
         if "status" in request.args:
             self.status = self.load_status_list_param()
+
+        if "exclude_recurring" in request.args:
+            self.exclude_recurring = self.load_bool_param("exclude_recurring")

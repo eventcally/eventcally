@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_form_styles, render_form_scripts, render_jquery_steps_header, render_google_filter_autocomplete_header, render_event_dates_filter_form, render_pagination, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_field, render_event_dates_location_field, render_event_dates_date_field, render_field_with_errors, render_form_styles, render_form_scripts, render_jquery_steps_header, render_google_filter_autocomplete_header, render_pagination, render_place, render_events_sub_menu %}
+{% set user_can_reference_event = current_admin_unit and has_access(current_admin_unit, "event:reference") %}
 
 {%- block title -%}
 {{ _('Event Dates') }}
@@ -148,7 +149,46 @@
         }
     }
 
-    function start_request() {
+    {% if user_can_reference_event %}
+    function add_reference(event_id) {
+        $.ajax({
+            url: "{{ url_for('api_v1_organization_incoming_event_reference_list', id=current_admin_unit.id) }}",
+            type: "post",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify({
+                "event": {"id": event_id},
+            }),
+            error: function(xhr, status, error) {
+                alert_request_error(xhr, status, error);
+            },
+            success: function (data) {
+                start_request(true);
+            }
+        });
+    }
+
+    function remove_reference(reference_id) {
+        $.ajax({
+            url: "/api/v1/event-references/" + reference_id,
+            type: "delete",
+            error: function(xhr, status, error) {
+                alert_request_error(xhr, status, error);
+            },
+            success: function (data) {
+                start_request(true);
+            }
+        });
+    }
+    {% endif %}
+
+    var scrollPos;
+
+    function start_request(remember_scroll_pos = false) {
+        if (remember_scroll_pos) {
+            scrollPos = $(window).scrollTop();
+        }
+
         handle_request_start();
 
         var result_list = $("#result_list");
@@ -164,27 +204,26 @@
             type: "get",
             dataType: "json",
             data: req_data,
+            {% if user_can_reference_event %}
+            headers: {"X-OrganizationId": "{{ current_admin_unit.id }}"},
+            {% endif %}
             error: function(xhr, status, error) {
                 handle_request_error(xhr, status, error);
             },
             success: function (data) {
-
                 var content = '';
                 current_data = data;
                 event_dates = data.items;
                 var event_date_count = event_dates.length;
-                var cols = 3;
+
+                var inactive_class = "text-primary";
+                var disabled_class = "text-secondary";
+                var active_class = "text-success";
+                var action_button_cls = "btn";
+                var action_icon_style = "";
 
                 $.each(event_dates, function(index, event_date) {
                     event = event_date.event;
-                    var is_card_deck = (index % cols == 0);
-
-                    if (is_card_deck) {
-                        if (content != '') {
-                            content += '</div>';
-                        }
-                        content += '<div class="card-deck">';
-                    }
 
                     var start = moment(event_date.start);
                     var img_tag = '';
@@ -200,29 +239,73 @@
 
                     if (event.place != null && event.place.location != null && event.place.location.latitude != null) {
                         var location = event.place.location;
-                        map_link_start = '<a href="#" onclick="fly_to_event(' + location.latitude + ', ' + location.longitude + '); return false;">';
+                        map_link_start = '<a href="#" onclick="fly_to_event(' + location.latitude + ', ' + location.longitude + '); return false;" class="text-secondary">';
                         map_link_end = '</a>';
                     }
 
-                    content += '<div class="card mb-3" id="event_card_' + event_date.id + '">' +
-                                        img_tag +
-                                        '<div class="card-body" style="padding:0.5rem">' +
-                                            '<div class="small text-uppercase" style="font-weight: 600;">' + format_event_date_instance(start, event_date.allday) + '</div>' +
-                                            '<h2 class="card-title m-0"><a href="eventdate/' + event_date.id + '" class="stretched-link text-body">' + event.name + '</a> <span class="small" style="vertical-align: middle;">' + render_event_warning_pills(event) + '</span></h2>' +
-                                            '<div class="text-muted" style="font-weight: 500;">' + map_link_start + event.place.name + map_link_end + '</div>' +
+                    var action_tag = '';
+                    {% if user_can_reference_event %}
+                        if (event.organization.id == {{ current_admin_unit.id }}) {
+                            action_tag += '<button type="button" class="' + action_button_cls + ' px-0" data-toggle="tooltip" title="{{ _('Own events cannot be referenced') }}"><i class="fa fa-fw fa-link ' + disabled_class + '" style="' + action_icon_style + '"></i> <span class="d-none d-sm-inline small ' + disabled_class + '">{{ _('Own event') }}</span></button>';
+                        } else if (event.reference_id == null) {
+                            action_tag += '<button type="button" onclick="$(this).tooltip(\'hide\'); add_reference(\'' + event.id + '\');" class="' + action_button_cls + ' px-0" data-toggle="tooltip" title="{{ _('Reference event') }}"><i class="fa fa-fw fa-link ' + inactive_class + '" style="' + action_icon_style + '"></i> <span class="d-none d-sm-inline small ' + inactive_class + '">{{ _('Not referenced') }}</span></button>';
+                        } else {
+                            action_tag += '<button type="button" onclick="$(this).tooltip(\'hide\'); remove_reference(\'' + event.reference_id + '\');" class="' + action_button_cls + ' px-0" data-toggle="tooltip" title="{{ _('Delete reference') }}"><i class="fa fa-fw fa-link ' + active_class + '" style="' + action_icon_style + '"></i> <span class="d-none d-sm-inline small ' + active_class + '">{{ _('Referenced') }}</span></button>';
+                        }
+                    {% endif %}
+
+                    var action_div = action_tag == '' ? '' : '<div class="col-lg d-flex justify-content-between p-0 w-medium" style="font-size:0.9rem; text-align:right;">' + action_tag + '</div>';
+                    var organization_name = event.organization.name == event.organizer.name ? '' : event.organization.name;
+
+                    var desktop = '<div class="row mb-3 d-none d-sm-block">' +
+                                        '<div class="col-sm">' +
+                                            '<div class="card">' +
+                                                '<div class="card-body">' +
+                                                    '<div class="row">' +
+                                                        '<div class="col-sm-8">' +
+                                                            '<h5 class="card-title"><a href="eventdate/' + event_date.id + '" class="text-body">' + event.name + '</a> <span class="small" style="vertical-align: middle;">' + render_event_warning_pills(event) + '</span></h5>' +
+                                                            '<h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> ' + format_event_date_instance(start, event_date.allday) + '</h6>' +
+                                                            (event.description != null ? '<p class="card-text">' + event.description.truncate(200, true) + '</p>' : '') +
+                                                            '<small class="text-muted mr-2"><i class="fa fa-server"></i> ' + event.organizer.name + '</small>' +
+                                                            (organization_name != '' ? '<small class="text-muted mr-2"><i class="fa fa-database"></i> ' + organization_name + '</small>' : '') +
+                                                            '<small class="text-muted"><i class="fa fa-map-marker"></i> ' + map_link_start + event.place.name + map_link_end + '</small>' +
+                                                        '</div>' +
+                                                        '<div class="col-sm-4 text-right">' +
+                                                            (event.photo != null ? '<img src="' + event.photo.image_url + '" style="object-fit: contain; width: 160px; height: 160px;" alt="Event image" />' : '') +
+                                                        '</div>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                                (action_div != '' ? '<div class="card-footer py-1">' + action_div + '</div>' : '') +
+                                            '</div>' +
                                         '</div>' +
+                                    '</div>';
+                    var mobile = '<div class="row mb-3 d-sm-none">' +
+                                    '<div class="col-sm">' +
+                                        '<div class="card">' +
+                                            '<div>' +
+                                                (event.photo != null ? '<img src="' + event.photo.image_url + '" class="card-img-top" style="object-fit: cover; height: 12vh;" alt="Event image" />' : '') +
+                                            '</div>' +
+                                            '<div class="card-body" style="padding:0.5rem">' +
+                                                '<div class="row">' +
+                                                    '<div class="col-sm-12">' +
+                                                        '<h5 class="card-title"><a href="eventdate/' + event_date.id + '" class="text-body">' + event.name + '</a> <span class="small" style="vertical-align: middle;">' + render_event_warning_pills(event) + '</span></h5>' +
+                                                        '<h6 class="card-subtitle mb-2 text-body"><i class="fa fa-calendar"></i> ' + format_event_date_instance(start, event_date.allday) + '</h6>' +
+                                                        (event.description != null ? '<p class="card-text">' + event.description.truncate(100, true) + '</p>' : '') +
+                                                        '<small class="text-muted mr-2"><i class="fa fa-server"></i> ' + event.organizer.name + '</small>' +
+                                                        (organization_name != '' ? '<small class="text-muted mr-2"><i class="fa fa-database"></i> ' + organization_name + '</small>' : '') +
+                                                        '<small class="text-muted"><i class="fa fa-map-marker"></i> ' + map_link_start + event.place.name + map_link_end + '</small>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                            '</div>' +
+                                            '<div class="card-footer bg-transparent border-0 p-2">' +
+                                                action_div +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>' +
                                 '</div>';
+
+                    content += '<div id="event_card_' + event_date.id + '">' + desktop + mobile + '</div>';
                 });
-
-                if (content != '') {
-                    var remaining_cols = (cols - (event_date_count % cols)) % cols;
-
-                    for (i = 0; i < remaining_cols; i++) {
-                        content += '<div class="card mb-3"></div>';
-                    }
-
-                    content += '</div>';
-                }
 
                 result_list.append(content);
 
@@ -250,8 +333,23 @@
                 if (leaflet_map != null) {
                     add_events_to_map();
                 }
+
+                $('[data-toggle="tooltip"]').tooltip();
+
+                if (remember_scroll_pos) {
+                    $(window).scrollTop(scrollPos);
+                }
             }
         });
+    }
+
+    function update_organizer_filter_enabled() {
+        if ($('#admin_unit_id').val() == null) {
+            $('#organizer_id').attr('disabled', 'disabled');
+            $('#organizer_id').val(null).trigger('change');
+        } else {
+            $('#organizer_id').removeAttr('disabled');
+        }
     }
 
     $( function() {
@@ -290,27 +388,118 @@
 
         $('#map').hide();
         $("#filter_form").submit();
+
+        $('#admin_unit_id').select2({
+            width: '100%',
+            theme: 'bootstrap4',
+            ajax: {
+                url: "{{ url_for('api_v1_organization_list') }}",
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                data: function (params) {
+                    return {
+                        keyword: params.term,
+                        per_page: 5,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.items.map(p => ({"id": p.id, "text": p.name})),
+                        pagination: {
+                            more: data.has_next
+                        }
+                    };
+                }
+            },
+            placeholder: "{{ _('Enter organization') }}",
+            allowClear: true
+        });
+
+        $('#organizer_id').select2({
+            width: '100%',
+            theme: 'bootstrap4',
+            ajax: {
+                url: function (params) {
+                    return '/api/v1/organizations/' + $('#admin_unit_id').val() + '/organizers';
+                },
+                dataType: 'json',
+                delay: 250,
+                cache: true,
+                data: function (params) {
+                    return {
+                        name: params.term,
+                        per_page: 5,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.items.map(p => ({"id": p.id, "text": p.name})),
+                        pagination: {
+                            more: data.has_next
+                        }
+                    };
+                }
+            },
+            placeholder: "{{ _('Enter organizer') }}",
+            allowClear: true
+        });
+
+        $('#admin_unit_id').on('change', function (e) {
+            update_organizer_filter_enabled();
+        });
+
+        update_organizer_filter_enabled();
     });
     </script>
 {% endblock %}
 
 {% block content %}
 
-    <h1 class="mb-3">{{ _('Event Dates') }}</h1>
-    <div class="btn-group mb-3">
-        <button type="button" id="toggle-search-btn" class="btn btn-outline-secondary btn-sm" data-toggle="collapse" data-target="#search_form" aria-expanded="{% if form.is_submitted() %}true{% else %}false{% endif %}"><i class="fa fa-search"></i> {{ _('Search') }}</button>
-        <button type="button" id="toggle-map-btn" class="btn btn-outline-secondary btn-sm" onclick="toggle_map()"><i class="fa fa-map"></i> {{ _('Map view') }}</button>
-    </div>
+    <h1 class="mb-0">{{ _('Event Dates') }}</h1>
 
-    <div class="{% if form.is_submitted() %}{% else %}collapse{% endif %}" id="search_form">
-        {{ render_event_dates_filter_form(form) }}
+    <div class="my-4 w-normal" id="search_form">
+        <form action="" id="filter_form" class="form" method="GET" autocomplete="off">
+            {{ form.hidden_tag() }}
+
+            {{ render_event_dates_date_field(form.date_from, form.date_to) }}
+            {{ render_field_with_errors(form.keyword, formrow="1") }}
+
+            {% set form_collapsed = not form.category_id.data and not form.admin_unit_id.data and not form.organizer_id.data and not form.coordinate.data  %}
+            <div id="extended_search_form" class="{% if form_collapsed %}collapse{% else %}show{% endif %}">
+
+            {{ render_field_with_errors(form.category_id, formrow="1") }}
+
+            {{ render_field_with_errors(form.admin_unit_id, class="w-100", formrow="1") }}
+
+            {{ render_field_with_errors(form.organizer_id, class="w-100", formrow="1") }}
+
+            {{ render_field_with_errors(form.postal_code, formrow="1") }}
+
+            {{ render_event_dates_location_field(form.location, form.distance) }}
+
+            {{ render_field_with_errors(form.exclude_recurring, ri="checkbox", formrow="1") }}
+
+            {% if user_can_reference_event %}
+                {{ render_field_with_errors(form.not_referenced, ri="checkbox", formrow="1") }}
+            {% endif %}
+            </div>
+
+            <p>
+                {{ form.submit(class="btn btn-primary")|safe }}
+                <button id="toggle-search-btn" type="button" class="btn btn-secondary mx-2" data-toggle="collapse" data-target="#extended_search_form" aria-expanded="{% if form_collapsed %}false{% else %}true{% endif %}">{{ _('More filters') }}</button>
+                <button type="button" id="toggle-map-btn" class="btn btn-outline-secondary" onclick="toggle_map()"><i class="fa fa-map"></i> {{ _('Map view') }}</button>
+            </p>
+        </form>
     </div>
 
     <div class="row">
         <div class="col-md mx-3 mb-3" id="map" style="height: 400px;">
         </div>
         <div class="col-md">
-            <div id="result_container">
+            <div id="result_container" class="w-normal">
                 <div class="m-1 small text-center text-secondary" id="result_info"></div>
                 <div style="min-height: 300px;">
                     <div id="result_list">

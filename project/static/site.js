@@ -225,6 +225,14 @@ function handle_request_start(
   $(error_id).hide();
 }
 
+function create_request_error_message(
+  xhr,
+  status,
+  error,
+) {
+  return status + " " + xhr.statusText + " " + xhr.responseText;
+}
+
 function handle_request_error(
   xhr,
   status,
@@ -236,6 +244,14 @@ function handle_request_error(
   $(error_id).text(status);
   $(error_id).show();
   $(spinner_id).hide();
+}
+
+function alert_request_error(
+  xhr,
+  status,
+  error,
+) {
+  alert(create_request_error_message(xhr, status, error));
 }
 
 function handle_request_success(

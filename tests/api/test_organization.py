@@ -119,6 +119,9 @@ def test_organizers(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     seeder.upsert_default_event_organizer(admin_unit_id)
 
+    url = utils.get_url("api_v1_organization_organizer_list", id=admin_unit_id)
+    utils.get_json_ok(url)
+
     url = utils.get_url(
         "api_v1_organization_organizer_list", id=admin_unit_id, name="crew"
     )
@@ -408,6 +411,51 @@ def test_references_incoming(client, seeder: Seeder, utils: UtilActions):
         name="crew",
     )
     utils.get_json_ok(url)
+
+
+def test_references_incoming_post(client, app, seeder: Seeder, utils: UtilActions, db):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_admin_unit_id = seeder.create_admin_unit(user_id, "Other Crew")
+    event_id = seeder.create_event(other_admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_incoming_event_reference_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "event": {"id": event_id},
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_created(response)
+    assert "id" in response.json
+
+    with app.app_context():
+        from project.models import EventReference
+
+        reference = db.session.get(EventReference, int(response.json["id"]))
+        assert reference is not None
+        assert reference.admin_unit_id == admin_unit_id
+        assert reference.event_id == event_id
+        assert reference.rating == 50
+
+
+def test_references_incoming_post_selfReference(
+    client, app, seeder: Seeder, utils: UtilActions, db
+):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_incoming_event_reference_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "event": {"id": event_id},
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_bad_request(response)
 
 
 def test_references_outgoing(client, seeder: Seeder, utils: UtilActions):
