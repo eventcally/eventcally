@@ -24,7 +24,7 @@ def test_index_withValidCookie(client, seeder, app, utils):
     utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
 
 
-def test_index_withInvalidCookie(client, seeder, utils):
+def test_index_withInvalidCookie(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     client.set_cookie("localhost", "manage_admin_unit_id", "invalid")
 
@@ -70,7 +70,7 @@ def test_index_after_login_organization_invitation(client, app, db, utils, seede
     )
 
 
-def test_admin_unit(client, seeder, utils):
+def test_admin_unit(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
     response = utils.get_endpoint("manage_admin_unit", id=admin_unit_id)
@@ -79,7 +79,7 @@ def test_admin_unit(client, seeder, utils):
     )
 
 
-def test_admin_unit_404(client, seeder, utils):
+def test_admin_unit_404(client, seeder: Seeder, utils: UtilActions):
     owner_id = seeder.create_user("owner@owner")
     admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
     seeder.create_user()
@@ -89,13 +89,13 @@ def test_admin_unit_404(client, seeder, utils):
     utils.assert_response_notFound(response)
 
 
-def test_admin_unit_event_reviews(client, seeder, utils):
+def test_admin_unit_event_reviews(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
     utils.get_endpoint_ok("manage_admin_unit_event_reviews", id=admin_unit_id)
 
 
-def test_admin_unit_events(client, seeder, utils):
+def test_admin_unit_events(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
 
     utils.get_endpoint_ok(
@@ -112,7 +112,9 @@ def test_admin_unit_events(client, seeder, utils):
     utils.assert_response_contains(response, event_url)
 
 
-def test_admin_unit_events_invalidDateFormat(client, seeder, utils):
+def test_admin_unit_events_invalidDateFormat(
+    client, seeder: Seeder, utils: UtilActions
+):
     user_id, admin_unit_id = seeder.setup_base()
 
     utils.get_endpoint_ok(
@@ -126,7 +128,7 @@ def test_admin_unit_events_invalidDateFormat(client, seeder, utils):
     )
 
 
-def test_admin_unit_events_place(client, seeder, utils):
+def test_admin_unit_events_place(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
     seeder.create_event(admin_unit_id, draft=True)
     event_place_id = seeder.upsert_default_event_place(admin_unit_id)
@@ -136,25 +138,27 @@ def test_admin_unit_events_place(client, seeder, utils):
     )
 
 
-def test_admin_unit_organizers(client, seeder, utils):
+def test_admin_unit_organizers(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
     utils.get_endpoint_ok("manage_admin_unit_organizers", id=admin_unit_id)
 
 
-def test_admin_unit_event_places(client, seeder, utils):
+def test_admin_unit_event_places(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
     utils.get_endpoint_ok("manage_admin_unit_event_places", id=admin_unit_id)
 
 
-def test_admin_unit_members(client, seeder, utils):
+def test_admin_unit_members(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
     utils.get_endpoint_ok("manage_admin_unit_members", id=admin_unit_id)
 
 
-def test_admin_unit_members_permission_missing(client, seeder, utils):
+def test_admin_unit_members_permission_missing(
+    client, seeder: Seeder, utils: UtilActions
+):
     owner_id, admin_unit_id, member_id = seeder.setup_base_event_verifier()
 
     response = utils.get_endpoint("manage_admin_unit_members", id=admin_unit_id)
@@ -164,7 +168,9 @@ def test_admin_unit_members_permission_missing(client, seeder, utils):
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_admin_unit_widgets(client, seeder, utils, mocker, db_error):
+def test_admin_unit_widgets(
+    client, seeder: Seeder, utils: UtilActions, mocker, db_error
+):
     user_id, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("manage_admin_unit_widgets", id=admin_unit_id)
@@ -184,7 +190,9 @@ def test_admin_unit_widgets(client, seeder, utils, mocker, db_error):
     )
 
 
-def test_admin_unit_widgets_permission_missing(client, seeder, utils, mocker):
+def test_admin_unit_widgets_permission_missing(
+    client, seeder: Seeder, utils: UtilActions, mocker
+):
     owner_id, admin_unit_id, member_id = seeder.setup_base_event_verifier()
 
     url = utils.get_url("manage_admin_unit_widgets", id=admin_unit_id)
@@ -196,61 +204,41 @@ def test_admin_unit_widgets_permission_missing(client, seeder, utils, mocker):
     )
 
 
-def test_admin_unit_relations(client, seeder, utils):
+def test_admin_unit_relations(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("manage_admin_unit_relations", id=admin_unit_id)
     utils.get_ok(url)
 
 
-def test_admin_unit_organization_invitations(client, seeder, utils):
+def test_admin_unit_organization_invitations(
+    client, seeder: Seeder, utils: UtilActions
+):
     user_id, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("manage_admin_unit_organization_invitations", id=admin_unit_id)
     utils.get_ok(url)
 
 
-def test_admin_unit_event_lists(client, seeder, utils):
+def test_admin_unit_event_lists(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("manage_admin_unit_event_lists", id=admin_unit_id)
     utils.get_ok(url)
 
 
-def test_admin_unit_custom_widgets(client, seeder, utils):
+def test_admin_unit_custom_widgets(client, seeder: Seeder, utils: UtilActions):
     _, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("manage_admin_unit_custom_widgets", id=admin_unit_id)
     utils.get_ok(url)
 
 
-def test_admin_unit_events_import(client, seeder, utils):
+def test_admin_unit_events_import(client, seeder: Seeder, utils: UtilActions):
     _, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("manage_admin_unit_events_import", id=admin_unit_id)
     utils.get_ok(url)
-
-
-def test_verification_requests_outgoing(client, seeder, utils):
-    user_id = seeder.create_user()
-    seeder.create_admin_unit(
-        user_id,
-        "Stadtmarketing",
-        verified=True,
-        can_verify_other=True,
-        incoming_verification_requests_allowed=True,
-        incoming_verification_requests_text="Please give us a call",
-    )
-
-    _, other_admin_unit_id = seeder.setup_base(
-        admin_unit_verified=False, email="mitglied@verein.de", name="Verein"
-    )
-
-    response = utils.get_endpoint_ok(
-        "manage_admin_unit_verification_requests_outgoing", id=other_admin_unit_id
-    )
-    utils.assert_response_contains(response, "Stadtmarketing")
-    utils.assert_response_contains(response, "Please give us a call")
 
 
 @pytest.mark.parametrize("scenario", ["db_error", "default", "last_admin", "non_match"])

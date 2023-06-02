@@ -12,6 +12,8 @@ from project.init_data import create_initial_data
 from project.models import (
     AdminUnit,
     AdminUnitInvitation,
+    AdminUnitVerificationRequest,
+    AdminUnitVerificationRequestReviewStatus,
     Event,
     EventAttendanceMode,
     EventDateDefinition,
@@ -152,6 +154,7 @@ def _create_admin_unit(user_id, name, verified=False):
     admin_unit.name = name
     admin_unit.short_name = name.lower().replace(" ", "")
     admin_unit.incoming_reference_requests_allowed = True
+    admin_unit.incoming_verification_requests_allowed = True
     admin_unit.suggestions_enabled = True
     admin_unit.can_create_other = True
     admin_unit.can_verify_other = True
@@ -171,9 +174,10 @@ def _create_admin_unit(user_id, name, verified=False):
 @test_cli.command("admin-unit-create")
 @click.argument("user_email")
 @click.argument("name", default="Meine Crew")
-def create_admin_unit(user_email, name):
+@click.option("--verified/--no-verified", default=True)
+def create_admin_unit(user_email, name, verified):
     user = find_user_by_email(user_email)
-    admin_unit_id = _create_admin_unit(user.id, name, verified=True)
+    admin_unit_id = _create_admin_unit(user.id, name, verified=verified)
     result = {"admin_unit_id": admin_unit_id}
     click.echo(json.dumps(result))
 
@@ -321,6 +325,48 @@ def create_incoming_reference_request(admin_unit_id):
         "other_admin_unit_id": other_admin_unit_id,
         "event_id": event_id,
         "reference_request_id": reference_request_id,
+    }
+    click.echo(json.dumps(result))
+
+
+def _create_admin_unit_verification_request(source_admin_unit_id, target_admin_unit_id):
+    target_admin_unit = get_admin_unit_by_id(target_admin_unit_id)
+    target_admin_unit.can_verify_other = True
+    target_admin_unit.incoming_verification_requests_allowed = True
+
+    request = AdminUnitVerificationRequest()
+    request.source_admin_unit_id = source_admin_unit_id
+    request.target_admin_unit_id = target_admin_unit_id
+    request.review_status = AdminUnitVerificationRequestReviewStatus.inbox
+    db.session.add(request)
+    db.session.commit()
+    request_id = request.id
+    return request_id
+
+
+def _create_incoming_admin_unit_verification_request(admin_unit_id):
+    other_user_id = _create_user("other@test.de")
+    other_admin_unit_id = _create_admin_unit(
+        other_user_id, "Other Crew", verified=False
+    )
+    request_id = _create_admin_unit_verification_request(
+        other_admin_unit_id, admin_unit_id
+    )
+    return (other_user_id, other_admin_unit_id, request_id)
+
+
+@test_cli.command("verification-request-create-incoming")
+@click.argument("admin_unit_id")
+def create_incoming_admin_unit_verification_request(admin_unit_id):
+    (
+        other_user_id,
+        other_admin_unit_id,
+        verification_request_id,
+    ) = _create_incoming_admin_unit_verification_request(admin_unit_id)
+    result = {
+        "other_user_id": other_user_id,
+        "other_admin_unit_id": other_admin_unit_id,
+        "verification_request_id": verification_request_id,
     }
     click.echo(json.dumps(result))
 

@@ -677,6 +677,68 @@ class Seeder(object):
         )
         return (other_user_id, other_admin_unit_id, relation_id)
 
+    def setup_admin_unit_missing_verification_scenario(self, log_in_verifier=False):
+        verifier_user_id = self.create_user()
+        verifier_admin_unit_id = self.create_admin_unit(
+            verifier_user_id,
+            "Stadtmarketing",
+            verified=True,
+            can_verify_other=True,
+            incoming_verification_requests_allowed=True,
+            incoming_verification_requests_text="Please give us a call",
+        )
+
+        unverified_user_id, unverified_admin_unit_id = self.setup_base(
+            log_in=not log_in_verifier,
+            admin_unit_verified=False,
+            email="mitglied@verein.de",
+            name="Verein",
+        )
+
+        if log_in_verifier:
+            self._utils.login()
+
+        return (
+            verifier_user_id,
+            verifier_admin_unit_id,
+            unverified_user_id,
+            unverified_admin_unit_id,
+        )
+
+    def create_admin_unit_verification_request(
+        self, source_admin_unit_id, target_admin_unit_id
+    ):
+        from project.models import (
+            AdminUnitVerificationRequest,
+            AdminUnitVerificationRequestReviewStatus,
+        )
+
+        with self._app.app_context():
+            from project.services.admin_unit import get_admin_unit_by_id
+
+            target_admin_unit = get_admin_unit_by_id(target_admin_unit_id)
+            target_admin_unit.can_verify_other = True
+            target_admin_unit.incoming_verification_requests_allowed = True
+
+            request = AdminUnitVerificationRequest()
+            request.source_admin_unit_id = source_admin_unit_id
+            request.target_admin_unit_id = target_admin_unit_id
+            request.review_status = AdminUnitVerificationRequestReviewStatus.inbox
+            self._db.session.add(request)
+            self._db.session.commit()
+            request_id = request.id
+        return request_id
+
+    def create_incoming_admin_unit_verification_request(self, admin_unit_id):
+        other_user_id = self.create_user("other@test.de")
+        other_admin_unit_id = self.create_admin_unit(
+            other_user_id, "Other Crew", verified=False
+        )
+        request_id = self.create_admin_unit_verification_request(
+            other_admin_unit_id, admin_unit_id
+        )
+        return (other_user_id, other_admin_unit_id, request_id)
+
     def create_reference_request(self, event_id, admin_unit_id):
         from project.models import (
             EventReferenceRequest,

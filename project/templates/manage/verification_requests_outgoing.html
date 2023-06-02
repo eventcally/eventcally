@@ -1,45 +1,33 @@
 {% extends "layout.html" %}
 {% set active_id = "verification_requests_outgoing" %}
-{% from "_macros.html" import render_logo, render_location_prop, render_fax_prop, render_phone_prop, render_email_prop,
-render_link_prop, render_admin_unit_badges, render_pagination %}
+{% from "_macros.html" import render_verification_request_review_status_pill, render_pagination %}
 {%- block title -%}
-{{ _('Verification requests') }}
+{{ _('Outgoing verification requests') }}
 {%- endblock -%}
 {% block content %}
 
 <h1 class="mb-1">
-    {{ _('Verification requests') }}
+    {{ _('Outgoing verification requests') }}
+    <a class="btn btn-outline-secondary btn-sm m-1" href="{{ url_for('manage_admin_unit_verification_requests_outgoing_create_select', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Request verification') }}</a>
     {% if config["DOCS_URL"] %}
         <a class="btn btn-outline-info btn-sm m-1 my-auto float-right" href="{{ config["DOCS_URL"] }}/goto/organization-verify" target="_blank" rel="noopener noreferrer" role="button"><i class="fa fa-fw fa-info-circle"></i> {{ _('Docs') }}</a>
     {% endif %}
 </h1>
-<p class="text-muted">{{ _('Here you can find organizations that can verify other organizations.') }}</p>
 
-{% for other_admin_unit in admin_units %}
-<div class="card mb-3">
-    <div class="card-body p-3">
-        <h2 class="mt-0">
-            <a href="{{ url_for('organizations', path=other_admin_unit.id) }}" class="text-body">{{
-                other_admin_unit.name }}</a>
-            {{ render_admin_unit_badges(other_admin_unit) }}
-        </h2>
-        <p>{{ other_admin_unit.incoming_verification_requests_text }}</p>
-        <div class="row">
-            {% if other_admin_unit.logo_id %}
-            <div class="col-12 col-sm-auto order-sm-last">{{ render_logo(other_admin_unit.logo) }}</div>
-            {% endif %}
-
-            <div class="col-12 col-sm">
-                {{ render_link_prop(other_admin_unit.url) }}
-                {{ render_email_prop(other_admin_unit.email) }}
-                {{ render_phone_prop(other_admin_unit.phone) }}
-                {{ render_fax_prop(other_admin_unit.fax) }}
-                {{ render_location_prop(other_admin_unit.location) }}
+<ul class="list-group mt-4">
+    {% for request in requests %}
+        <li class="list-group-item">
+            <div class="dropdown d-inline-block">
+                <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ request.target_admin_unit.name }}</button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{{ url_for('admin_unit_verification_request_review_status', id=request.id) }}">{{ _('Show review status') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('admin_unit_verification_request_delete', id=request.id) }}">{{ _('Delete request') }}&hellip;</a>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-{% endfor %}
+            {{ render_verification_request_review_status_pill(request) }}
+        </li>
+    {% endfor %}
+</ul>
 
 <div class="my-4">{{ render_pagination(pagination) }}</div>
 

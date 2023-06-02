@@ -39,6 +39,10 @@ const OrganizationRead = {
                 {{ organization.location.postalCode }} {{ organization.location.city }}
               </div>
 
+              <div v-if="organization.description" class="mt-3">
+                <span style="white-space: pre;">{{ organization.description }}</span>
+              </div>
+
               <b-list-group class="mt-4">
               <b-list-group-item :href="'/eventdates?admin_unit_id=' + organization.id">
                 <i class="fa fa-fw fa-list"></i>

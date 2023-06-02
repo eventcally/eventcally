@@ -31,10 +31,12 @@ class AdminUnitLocationForm(FlaskForm):
 
 class BaseAdminUnitForm(FlaskForm):
     name = HTML5StringField(
-        lazy_gettext("Name"), validators=[DataRequired(), Length(min=5, max=255)]
+        lazy_gettext("Name of organization"),
+        description=lazy_gettext("The full name of the organization"),
+        validators=[DataRequired(), Length(min=5, max=255)],
     )
     short_name = HTML5StringField(
-        lazy_gettext("Short name"),
+        lazy_gettext("Short name for organization"),
         description=lazy_gettext(
             "The short name is used to create a unique identifier for your events"
         ),
@@ -48,6 +50,11 @@ class BaseAdminUnitForm(FlaskForm):
                 ),
             ),
         ],
+    )
+    description = TextAreaField(
+        lazy_gettext("Description"),
+        description=lazy_gettext("Describe the organization in a few words"),
+        validators=[Optional()],
     )
     url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
     email = EmailField(lazy_gettext("Email"), validators=[Optional(), Length(max=255)])

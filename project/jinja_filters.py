@@ -83,11 +83,17 @@ def get_context_processors():
         from project.services.reference import (
             get_reference_requests_incoming_badge_query,
         )
+        from project.services.verification import (
+            get_verification_requests_incoming_badge_query,
+        )
 
         reviews_badge = 0
         reference_requests_incoming_badge = get_reference_requests_incoming_badge_query(
             admin_unit
         ).count()
+        verification_requests_incoming_badge = (
+            get_verification_requests_incoming_badge_query(admin_unit).count()
+        )
 
         if has_access(admin_unit, "event:verify"):
             reviews_badge = get_event_reviews_badge_query(admin_unit).count()
@@ -95,6 +101,7 @@ def get_context_processors():
         return {
             "reviews_badge": reviews_badge,
             "reference_requests_incoming_badge": reference_requests_incoming_badge,
+            "verification_requests_incoming_badge": verification_requests_incoming_badge,
         }
 
     def has_tos():

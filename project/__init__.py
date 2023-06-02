@@ -290,7 +290,7 @@ from project.views import (
     root,
 )
 from project.views import user as user_view
-from project.views import widget
+from project.views import verification_request, verification_request_review, widget
 
 if __name__ == "__main__":  # pragma: no cover
     app.run()

@@ -6,6 +6,11 @@ from project.models.admin_unit import (
     AdminUnitMemberRole,
     AdminUnitRelation,
 )
+from project.models.admin_unit_verification_request import (
+    AdminUnitVerificationRequest,
+    AdminUnitVerificationRequestRejectionReason,
+    AdminUnitVerificationRequestReviewStatus,
+)
 from project.models.custom_widget import CustomWidget
 from project.models.event import Event, EventStatus, PublicStatus
 from project.models.event_category import EventCategory

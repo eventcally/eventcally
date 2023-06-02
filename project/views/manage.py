@@ -40,7 +40,6 @@ from project.models import (
 from project.services.admin_unit import (
     get_admin_unit_member_invitations,
     get_admin_unit_organization_invitations,
-    get_admin_unit_query,
     get_member_for_admin_unit_by_user_id,
 )
 from project.services.event import get_events_query
@@ -492,17 +491,3 @@ def manage_admin_unit_widgets(id):
         flash_errors(form)
 
     return render_template("manage/widgets.html", form=form, admin_unit=admin_unit)
-
-
-@app.route("/manage/admin_unit/<int:id>/verification_requests/outgoing")
-@auth_required()
-def manage_admin_unit_verification_requests_outgoing(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    admin_units = get_admin_unit_query(only_verifier=True).paginate()
-
-    return render_template(
-        "manage/verification_requests_outgoing.html",
-        admin_unit=admin_unit,
-        admin_units=admin_units.items,
-        pagination=get_pagination_urls(admin_units, id=id),
-    )

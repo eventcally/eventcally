@@ -255,16 +255,35 @@
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle text-truncate" href="#" id="navbarAdminUnitOrganizationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ _('Organization') }}
+                    {% if menu_options['verification_requests_incoming_badge'] > 0 %}
+                      <span class="badge badge-secondary badge-pill">{{ menu_options['verification_requests_incoming_badge'] }}</span>
+                    {% endif %}
                   </a>
                   <div class="dropdown-menu" aria-labelledby="navbarAdminUnitOrganizationDropdown">
+                    {% if not current_admin_unit.is_verified %}
+                      <a class="dropdown-item" href="{{ url_for('manage_admin_unit_verification_requests_outgoing', id=current_admin_unit.id) }}">{{ _('Outgoing verification requests') }}</a>
+                      <div class="dropdown-divider"></div>
+                    {% endif %}
+
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_organizers', id=current_admin_unit.id) }}">{{ _('Organizers') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_event_places', id=current_admin_unit.id) }}">{{ _('Places') }}</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_members', id=current_admin_unit.id) }}">{{ _('Members') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_relations', id=current_admin_unit.id) }}">{{ _('Relations') }}</a>
+
+                    {% if current_admin_unit.can_verify_other %}
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_verification_requests_incoming', id=current_admin_unit.id) }}">{{ _('Incoming verification requests') }}
+                      {% if menu_options['verification_requests_incoming_badge'] > 0 %}
+                        <span class="badge badge-secondary badge-pill">{{ menu_options['verification_requests_incoming_badge'] }}</span>
+                      {% endif %}
+                    </a>
+                    {% endif %}
+
                     {% if current_admin_unit.can_invite_other %}
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_organization_invitations', id=current_admin_unit.id) }}">{{ _('Organization invitations') }}</a>
                     {% endif %}
+
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('admin_unit_update', id=current_admin_unit.id) }}">{{ _('Settings') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_export', id=current_admin_unit.id) }}">{{ _('Export') }}</a>
