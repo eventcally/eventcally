@@ -177,6 +177,15 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_text_prop(prop, icon = None, label_key = None) %}
+{% if prop %}
+<div>
+  {% if icon %}<i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>{% endif %}
+  <span style="white-space:pre-wrap;">{{ prop }}</span>
+</div>
+{% endif %}
+{% endmacro %}
+
 {% macro render_int_prop(prop, icon = None, label_key = None) %}
 {% if prop %}
 <div>
@@ -280,6 +289,12 @@
 {% endif %}
 {% endmacro %}
 
+{% macro render_verification_request_review_status_pill(reference_request) %}
+{% if reference_request.review_status %}
+ <span class="badge badge-pill {% if reference_request.review_status == 1 %}badge-info{% elif reference_request.review_status == 2 %}badge-success{% else %}badge-danger{% endif %}">{{ reference_request.review_status | loc_enum }}</span>
+{% endif %}
+{% endmacro %}
+
 {% macro render_admin_unit_badges(admin_unit) %}
 {% if admin_unit.is_verified %}<i class="fa fa-check-circle text-primary" data-toggle="tooltip" title="{{ _('Verified') }}"></i>{% endif %}
 {% endmacro %}
@@ -338,6 +353,11 @@
 {% macro render_reference_request_review_status(reference_request) %}
   {{ render_enum_prop(reference_request.review_status, 'fa-certificate', 'Review status') }}
   {{ render_enum_prop(reference_request.rejection_reason, 'fa-search-minus', 'Rejection reason') }}
+{% endmacro %}
+
+{% macro render_verification_request_review_status(verification_request) %}
+  {{ render_enum_prop(verification_request.review_status, 'fa-certificate', 'Review status') }}
+  {{ render_enum_prop(verification_request.rejection_reason, 'fa-search-minus', 'Rejection reason') }}
 {% endmacro %}
 
 {% macro render_audit(tracking_mixing, show_user=False) %}

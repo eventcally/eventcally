@@ -1,0 +1,3 @@
+{{ _('There is a new verification request that needs to be reviewed.') }}
+{{ _('Click the link below to review the request') }}
+{{ url_for('admin_unit_verification_request_review', id=request.id, _external=True) }}

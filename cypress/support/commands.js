@@ -32,9 +32,11 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   "createAdminUnit",
-  (userEmail = "test@test.de", name = "Meine Crew") => {
+  (userEmail = "test@test.de", name = "Meine Crew", verified = true) => {
+    let cmd = "flask test admin-unit-create " + userEmail + ' "' + name + '"';
+    cmd += (verified) ? " --verified" : " --no-verified";
     return cy
-      .logexec("flask test admin-unit-create " + userEmail + ' "' + name + '"')
+      .logexec(cmd)
       .then(function (result) {
         let json = JSON.parse(result.stdout);
         return json.admin_unit_id;
@@ -111,6 +113,15 @@ Cypress.Commands.add("createOauth2Client", (userId) => {
     .then(function (result) {
       let json = JSON.parse(result.stdout);
       return json;
+    });
+});
+
+Cypress.Commands.add("createIncomingVerificationRequest", (adminUnitId) => {
+  return cy
+    .logexec("flask test verification-request-create-incoming " + adminUnitId)
+    .then(function (result) {
+      let json = JSON.parse(result.stdout);
+      return json.verification_request_id;
     });
 });
 

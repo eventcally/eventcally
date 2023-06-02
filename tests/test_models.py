@@ -14,7 +14,7 @@ def test_location_update_coordinate(client, app, db):
     assert location.coordinate is not None
 
 
-def test_event_category(client, app, db, seeder):
+def test_event_category(client, app, db, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -28,7 +28,7 @@ def test_event_category(client, app, db, seeder):
         assert event.category is None
 
 
-def test_event_properties(client, app, db, seeder):
+def test_event_properties(client, app, db, seeder: Seeder):
     with app.app_context():
         from sqlalchemy.exc import IntegrityError
 
@@ -51,7 +51,7 @@ def test_event_properties(client, app, db, seeder):
         assert event.min_start == start
 
 
-def test_event_allday(client, app, db, seeder):
+def test_event_allday(client, app, db, seeder: Seeder):
     from project.dateutils import create_berlin_date
 
     user_id, admin_unit_id = seeder.setup_base()
@@ -93,7 +93,7 @@ def test_event_allday(client, app, db, seeder):
         assert event_date.end == create_berlin_date(2031, 1, 1, 23, 59, 59)
 
 
-def test_event_has_multiple_dates(client, app, db, seeder):
+def test_event_has_multiple_dates(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base()
     event_with_recc_id = seeder.create_event(
         admin_unit_id, recurrence_rule="RRULE:FREQ=DAILY;COUNT=7"
@@ -110,7 +110,7 @@ def test_event_has_multiple_dates(client, app, db, seeder):
         assert event_without_recc.has_multiple_dates() is False
 
 
-def test_oauth2_token(client, app, seeder):
+def test_oauth2_token(client, app, seeder: Seeder):
     import time
 
     from project.models import OAuth2Token
@@ -124,7 +124,7 @@ def test_oauth2_token(client, app, seeder):
     assert not token.is_refresh_token_active()
 
 
-def test_admin_unit_relations(client, app, db, seeder):
+def test_admin_unit_relations(client, app, db, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     (
         other_user_id,
@@ -145,7 +145,34 @@ def test_admin_unit_relations(client, app, db, seeder):
         assert len(admin_unit.outgoing_relations) == 0
 
 
-def test_event_date_defintion_deletion(client, app, db, seeder):
+def test_admin_unit_verification_requests(client, app, db, seeder: Seeder):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    (
+        other_user_id,
+        other_admin_unit_id,
+        request_id,
+    ) = seeder.create_incoming_admin_unit_verification_request(admin_unit_id)
+
+    with app.app_context():
+        from project.services.admin_unit import get_admin_unit_by_id
+
+        admin_unit = get_admin_unit_by_id(admin_unit_id)
+        assert len(admin_unit.incoming_verification_requests) == 1
+        request = admin_unit.incoming_verification_requests[0]
+        assert request.id == request_id
+
+        other_admin_unit = get_admin_unit_by_id(other_admin_unit_id)
+        assert len(other_admin_unit.outgoing_verification_requests) == 1
+        request = other_admin_unit.outgoing_verification_requests[0]
+        assert request.id == request_id
+
+        db.session.delete(request)
+        db.session.commit()
+        assert len(admin_unit.incoming_verification_requests) == 0
+        assert len(other_admin_unit.outgoing_verification_requests) == 0
+
+
+def test_event_date_defintion_deletion(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)
 
@@ -180,7 +207,7 @@ def test_event_date_defintion_deletion(client, app, db, seeder):
         assert event.date_definitions[0].id == date_definition2_id
 
 
-def test_admin_unit_deletion(client, app, db, seeder):
+def test_admin_unit_deletion(client, app, db, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     my_event_id = seeder.create_event(admin_unit_id)
     suggestion_id = seeder.create_event_suggestion(admin_unit_id)
@@ -206,12 +233,19 @@ def test_admin_unit_deletion(client, app, db, seeder):
     )
     incoming_reference_id = seeder.create_reference(other_event_id, admin_unit_id)
     outgoing_reference_id = seeder.create_reference(my_event_id, other_admin_unit_id)
+    incoming_verification_request_id = seeder.create_admin_unit_verification_request(
+        other_admin_unit_id, admin_unit_id
+    )
+    outgoing_verification_request_id = seeder.create_admin_unit_verification_request(
+        admin_unit_id, other_admin_unit_id
+    )
 
     with app.app_context():
         from project.models import (
             AdminUnit,
             AdminUnitMemberInvitation,
             AdminUnitRelation,
+            AdminUnitVerificationRequest,
             Event,
             EventDate,
             EventDateDefinition,
@@ -247,6 +281,18 @@ def test_admin_unit_deletion(client, app, db, seeder):
         assert (
             db.session.get(EventReferenceRequest, outgoing_reference_request_id) is None
         )
+        assert (
+            db.session.get(
+                AdminUnitVerificationRequest, incoming_verification_request_id
+            )
+            is None
+        )
+        assert (
+            db.session.get(
+                AdminUnitVerificationRequest, outgoing_verification_request_id
+            )
+            is None
+        )
         assert db.session.get(EventSuggestion, suggestion_id) is None
         assert db.session.get(EventPlace, event_place_id) is None
         assert db.session.get(EventOrganizer, organizer_id) is None
@@ -257,7 +303,7 @@ def test_admin_unit_deletion(client, app, db, seeder):
         assert db.session.get(Event, other_event_id) is not None
 
 
-def test_event_co_organizers_deletion(client, app, db, seeder):
+def test_event_co_organizers_deletion(client, app, db, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
         admin_unit_id
@@ -282,7 +328,7 @@ def test_event_co_organizers_deletion(client, app, db, seeder):
         assert db.session.get(EventOrganizer, organizer_b_id).id is not None
 
 
-def test_admin_unit_verification(client, app, db, seeder):
+def test_admin_unit_verification(client, app, db, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base(log_in=False, admin_unit_verified=False)
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
@@ -323,7 +369,7 @@ def test_admin_unit_verification(client, app, db, seeder):
         assert len(all_verified) == 0
 
 
-def test_admin_unit_invitations(client, app, db, seeder):
+def test_admin_unit_invitations(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
@@ -342,7 +388,7 @@ def test_admin_unit_invitations(client, app, db, seeder):
         assert invitation is None
 
 
-def test_event_list_deletion(client, app, db, seeder):
+def test_event_list_deletion(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)
     event_list_a_id = seeder.create_event_list(admin_unit_id, event_id, "List A")
@@ -381,7 +427,7 @@ def test_event_list_deletion(client, app, db, seeder):
         assert len(event_list_b.events) == 0
 
 
-def test_event_is_favored_by_current_user(client, app, db, seeder):
+def test_event_is_favored_by_current_user(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)
 
@@ -392,7 +438,7 @@ def test_event_is_favored_by_current_user(client, app, db, seeder):
         assert event.is_favored_by_current_user() is False
 
 
-def test_purge_event_photo(client, app, db, seeder):
+def test_purge_event_photo(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)
     first_image_id = seeder.upsert_default_image()
@@ -414,7 +460,7 @@ def test_purge_event_photo(client, app, db, seeder):
         assert image is None
 
 
-def test_purge_event_place_photo(client, app, db, seeder):
+def test_purge_event_place_photo(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     first_image_id = seeder.upsert_default_image()
@@ -451,7 +497,7 @@ def test_purge_event_place_photo(client, app, db, seeder):
         assert image is None
 
 
-def test_purge_eventsuggestion_photo(client, app, db, seeder):
+def test_purge_eventsuggestion_photo(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     suggestion_id = seeder.create_event_suggestion(admin_unit_id)
     image_id = seeder.upsert_default_image()
@@ -475,7 +521,7 @@ def test_purge_eventsuggestion_photo(client, app, db, seeder):
         assert image is None
 
 
-def test_purge_adminunit(client, app, db, seeder):
+def test_purge_adminunit(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     instance_id = admin_unit_id
     image_id = seeder.upsert_default_image()
@@ -507,7 +553,7 @@ def test_purge_adminunit(client, app, db, seeder):
         assert location is None
 
 
-def test_purge_eventorganizer(client, app, db, seeder):
+def test_purge_eventorganizer(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     instance_id = seeder.upsert_default_event_organizer(admin_unit_id)
     image_id = seeder.upsert_default_image()
@@ -539,7 +585,7 @@ def test_purge_eventorganizer(client, app, db, seeder):
         assert location is None
 
 
-def test_delete_admin_unit(client, app, db, seeder):
+def test_delete_admin_unit(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     instance_id = seeder.upsert_default_event_organizer(admin_unit_id)
     image_id = seeder.upsert_default_image()

@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_verification_request_review_status %}
+{%- block title -%}
+{{ _('Review status') }}
+{%- endblock -%}
+{% block content %}
+
+    <h1>{{ verification_request.source_admin_unit.name }} - {{ verification_request.target_admin_unit.name }}</h1>
+
+    <div class="card mb-3">
+        <div class="card-header">
+          {{ _('Review status') }}
+        </div>
+        <div class="card-body">
+            {{ render_verification_request_review_status(verification_request) }}
+        </div>
+    </div>
+
+{% endblock %}

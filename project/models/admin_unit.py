@@ -22,6 +22,7 @@ from sqlalchemy.schema import CheckConstraint
 from sqlalchemy_utils import ColorType
 
 from project import db
+from project.models.admin_unit_verification_request import AdminUnitVerificationRequest
 from project.models.trackable_mixin import TrackableMixin
 from project.utils import make_check_violation
 
@@ -239,6 +240,7 @@ class AdminUnit(db.Model, TrackableMixin):
     email = deferred(Column(Unicode(255)), group="detail")
     phone = deferred(Column(Unicode(255)), group="detail")
     fax = deferred(Column(Unicode(255)), group="detail")
+    description = deferred(Column(UnicodeText(), nullable=True), group="detail")
     widget_font = deferred(Column(Unicode(255)), group="widget")
     widget_background_color = deferred(Column(ColorType), group="widget")
     widget_primary_color = deferred(Column(ColorType), group="widget")
@@ -299,6 +301,27 @@ class AdminUnit(db.Model, TrackableMixin):
     incoming_relations = relationship(
         "AdminUnitRelation",
         primaryjoin=remote(AdminUnitRelation.target_admin_unit_id) == id,
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        backref=backref(
+            "target_admin_unit",
+            lazy=True,
+        ),
+    )
+    outgoing_verification_requests = relationship(
+        "AdminUnitVerificationRequest",
+        primaryjoin=remote(AdminUnitVerificationRequest.source_admin_unit_id) == id,
+        single_parent=True,
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        backref=backref(
+            "source_admin_unit",
+            lazy=True,
+        ),
+    )
+    incoming_verification_requests = relationship(
+        "AdminUnitVerificationRequest",
+        primaryjoin=remote(AdminUnitVerificationRequest.target_admin_unit_id) == id,
         cascade="all, delete-orphan",
         passive_deletes=True,
         backref=backref(

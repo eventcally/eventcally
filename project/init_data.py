@@ -23,6 +23,11 @@ def create_initial_data():
         "admin_unit.members:read",
         "admin_unit.members:update",
         "admin_unit.members:delete",
+        "verification_request:create",
+        "verification_request:read",
+        "verification_request:update",
+        "verification_request:delete",
+        "verification_request:verify",
     ]
     event_permissions = [
         "event:verify",
