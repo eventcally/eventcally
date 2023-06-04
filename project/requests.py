@@ -46,7 +46,11 @@ def set_response_headers(response):
     if request and request.endpoint:
         if request.endpoint.startswith("api_"):
             return response
-        if request.endpoint != "static" and request.endpoint != "widget_event_dates":
+        if (
+            request.endpoint != "static"
+            and request.endpoint != "widget_event_dates"
+            and request.endpoint != "custom_widget_type"
+        ):
             response.headers["X-Frame-Options"] = "SAMEORIGIN"
 
     response.headers["X-Content-Type-Options"] = "nosniff"

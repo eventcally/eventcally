@@ -233,7 +233,7 @@
         xmlhttp.overrideMimeType(mimeType);
       }
 
-      xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
+      xmlhttp.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
 
       xmlhttp.send();
       return xmlhttp.responseText;
