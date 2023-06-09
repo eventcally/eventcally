@@ -283,7 +283,7 @@ from project.views import (
     oauth2_token,
     organization,
     organizer,
-    planing,
+    planning,
     reference,
     reference_request,
     reference_request_review,

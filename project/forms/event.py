@@ -315,6 +315,7 @@ class CreateEventForm(BaseEventForm):
     new_organizer = FormField(OrganizerForm, default=lambda: EventOrganizer())
 
     submit_draft = SubmitField(lazy_gettext("Save as draft"))
+    submit_planned = SubmitField(lazy_gettext("Save as planned"))
     submit = SubmitField(lazy_gettext("Publish event"))
 
     def populate_obj(self, obj):
@@ -338,7 +339,11 @@ class CreateEventForm(BaseEventForm):
             field.populate_obj(obj, name)
 
         obj.public_status = (
-            PublicStatus.published if self.submit.data else PublicStatus.draft
+            PublicStatus.published
+            if self.submit.data
+            else PublicStatus.planned
+            if self.submit_planned.data
+            else PublicStatus.draft
         )
 
     def validate(self, extra_validators=None):
@@ -399,9 +404,12 @@ class UpdateEventForm(BaseEventForm):
         coerce=int,
         choices=[
             (int(PublicStatus.published), lazy_gettext("PublicStatus.published")),
+            (int(PublicStatus.planned), lazy_gettext("PublicStatus.planned")),
             (int(PublicStatus.draft), lazy_gettext("PublicStatus.draft")),
         ],
-        description=lazy_gettext("Select the public status of the event."),
+        description=lazy_gettext(
+            "Planned events appear in the scheduling view, but not on public calendars."
+        ),
     )
 
     submit = SubmitField(lazy_gettext("Update event"))

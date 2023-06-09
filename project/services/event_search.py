@@ -18,6 +18,7 @@ class EventSearchParams(object):
         self._coordinate = None
         self.admin_unit_id = None
         self.can_read_private_events = None
+        self.can_read_planned_events = None
         self.keyword = None
         self.latitude = None
         self.longitude = None
@@ -29,10 +30,12 @@ class EventSearchParams(object):
         self.weekday = None
         self.sort = None
         self.status = None
+        self.public_status = None
         self.favored_by_user_id = None
         self.postal_code = None
         self.not_referenced_by_organization_id = None
         self.exclude_recurring = False
+        self.expected_participants_min = None
 
     @property
     def date_from(self):
@@ -88,7 +91,7 @@ class EventSearchParams(object):
         self.date_from = today
         self.date_to = None
 
-    def set_planing_date_range(self):
+    def set_planning_date_range(self):
         today = get_today()
         self.date_from = today
         self.date_to = date_set_end_of_day(today + relativedelta(months=3))
@@ -126,6 +129,22 @@ class EventSearchParams(object):
 
         return result
 
+    def load_public_status_list_param(self):
+        public_stati = self.load_list_param("public_status")
+
+        if public_stati is None:  # pragma: no cover
+            return None
+
+        from project.models import PublicStatus
+
+        result = list()
+
+        for public_status in public_stati:
+            if public_status in PublicStatus.__members__:
+                result.append(PublicStatus.__members__[public_status])
+
+        return result
+
     def load_from_request(self):
         if "date_from" in request.args:
             self.date_from_str = request.args["date_from"]
@@ -154,6 +173,9 @@ class EventSearchParams(object):
         if "event_place_id" in request.args:
             self.event_place_id = request.args["event_place_id"]
 
+        if "expected_participants_min" in request.args:
+            self.expected_participants_min = request.args["expected_participants_min"]
+
         if "event_list_id" in request.args:
             self.event_list_id = self.load_list_param("event_list_id")
 
@@ -171,6 +193,9 @@ class EventSearchParams(object):
 
         if "status" in request.args:
             self.status = self.load_status_list_param()
+
+        if "public_status" in request.args:
+            self.public_status = self.load_public_status_list_param()
 
         if "exclude_recurring" in request.args:
             self.exclude_recurring = self.load_bool_param("exclude_recurring")

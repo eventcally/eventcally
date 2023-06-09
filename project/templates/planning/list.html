@@ -1,0 +1,110 @@
+{% extends "layout_vue.html" %}
+{% from "_macros.html" import render_form_styles, render_form_scripts, render_jquery_steps_header, render_field, render_field_with_errors, render_event_dates_date_field, render_event_dates_location_field, render_google_filter_autocomplete_header, render_pagination, render_place, render_events_sub_menu %}
+
+{%- block title -%}
+{{ _('Event Planning') }}
+{%- endblock -%}
+
+{%- block styles_before %}
+<link href="/static/ext/materialdesignicons.6.5.95.min.css" rel="stylesheet">
+<link href="/static/ext/vuetify.2.6.2.min.css" rel="stylesheet">
+{%- endblock styles_before %}
+
+{% block styles %}
+{{ render_form_styles() }}
+<link rel="stylesheet" type="text/css" href="/static/widget/calendar.css">
+<style>
+    [v-cloak] {
+        display: none;
+    }
+    .col,.col-1,.col-2,.col-3,.col-4,.col-5,.col-6,.col-7,.col-8,.col-9,.col-10,.col-11,.col-12,.col-auto,.col-lg,.col-lg-1,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-auto,.col-md,.col-md-1,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9,.col-md-10,.col-md-11,.col-md-12,.col-md-auto,.col-sm,.col-sm-1,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-auto,.col-xl,.col-xl-1,.col-xl-2,.col-xl-3,.col-xl-4,.col-xl-5,.col-xl-6,.col-xl-7,.col-xl-8,.col-xl-9,.col-xl-10,.col-xl-11,.col-xl-12,.col-xl-auto {
+        padding-top:0;
+        padding-bottom:0;
+    }
+</style>
+{% endblock %}
+
+{% block header_before_site_js %}
+{{ super() }}
+{{ render_form_scripts() }}
+{%- endblock -%}
+
+{% block component_scripts %}
+<script src="/static/ext/vuetify.2.6.2.js"></script>
+<script src="{{ url_for('static', filename='vue/planning/list.vue.js')}}"></script>
+{% endblock %}
+
+{% block component_definitions %}
+Vue.component("PlanningList", PlanningList);
+{% endblock %}
+
+{% block vue_init_data %}
+{{ super() }}
+vue_init_data.vuetify = new Vuetify();
+{% endblock %}
+
+{% block vue_container %}
+{% endblock %}
+
+{% block header %}
+{{ render_jquery_steps_header() }}
+{{ render_google_filter_autocomplete_header() }}
+<script>
+
+$( function() {
+    $("#refresh-button").click(function() {
+        $('#filterFormModal').modal('hide');
+        app.$refs.planninglist.parameterChanged();
+    });
+});
+
+</script>
+{% endblock %}
+{% block content %}
+
+    <h1 class="mb-4">
+        {{ _('Event Planning') }}
+        {% if config["DOCS_URL"] %}
+            <a class="btn btn-outline-info btn-sm m-1 my-auto float-right" href="{{ config["DOCS_URL"] }}/goto/event-planning" target="_blank" rel="noopener noreferrer" role="button"><i class="fa fa-fw fa-info-circle"></i> {{ _('Docs') }}</a>
+        {% endif %}
+    </h1>
+
+    <div class="modal fade" id="filterFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ _('Filters') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" id="filter_form" class="form" method="GET" autocomplete="off">
+                        {{ form.hidden_tag() }}
+                        <input id="page" name="page" type="hidden" value="1" />
+                        <input id="per_page" name="per_page" type="hidden" value="50" />
+                        <input name="public_status" type="hidden" value="published" />
+                        <input name="public_status" type="hidden" value="published" />
+
+                        {{ render_field_with_errors(form.category_id, ri="multicheckbox-inline", formrow="1") }}
+                        {{ render_field_with_errors(form.postal_code, formrow="1") }}
+                        {{ render_event_dates_location_field(form.location, form.distance) }}
+                        {{ render_field_with_errors(form.expected_participants_min, formrow="1") }}
+                        {{ render_field_with_errors(form.exclude_recurring, ri="checkbox", formrow="1") }}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
+                    <button type="button" id="refresh-button" class="btn btn-primary">{{ _('Refresh') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="vue-container">
+        <planning-list ref="planninglist" />
+    </div>
+
+    {{ super() }}
+
+{% endblock %}

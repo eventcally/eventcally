@@ -365,7 +365,8 @@
   vue_app_data["docsUrl"] = "{{ config["DOCS_URL"] }}";
   {% endif %}
 
-  var app = new Vue({
+  {% block vue_init_data %}
+  var vue_init_data = {
     el: "#vue-container",
     i18n,
     router: router,
@@ -473,10 +474,50 @@
 
           return instance.format(format);
       },
+      render_event_date(start, end, allday) {
+          const start_instance = moment(start);
+          const start_date_str = start_instance.format("dd. DD.MM.YYYY");
+          let result = start_date_str;
+
+          if (!allday) {
+              result += " " + start_instance.format("LT");
+          }
+
+          if (end != null) {
+            const end_instance = moment(end);
+            const end_date_str = end_instance.format("dd. DD.MM.YYYY");
+
+            if (end_date_str != start_date_str || !allday) {
+              result += " - ";
+            }
+
+            if (end_date_str != start_date_str) {
+              result += end_date_str;
+            }
+
+            if (!allday) {
+              result += " " + end_instance.format("LT");
+            }
+          }
+
+          return result;
+      },
+      event_has_status_info(event) {
+        if (event.public_status && event.public_status != 'published') {
+          return true;
+        }
+        if (event.status && event.status != 'scheduled') {
+          return true;
+        }
+        return false;
+      },
       url_for_image(image, size) {
           return `${axios.defaults.baseURL}${image.image_url}?s=${size}`
       },
     },
-  });
+  };
+  {% endblock %}
+
+  var app = new Vue(vue_init_data);
 </script>
 {% endblock %}

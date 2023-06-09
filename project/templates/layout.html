@@ -43,6 +43,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='apple-touch-icon.png')}}">
     <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest')}}">
 
+    {%- block styles_before %}
+    {%- endblock styles_before %}
+
     <link rel="stylesheet" href="{{ url_for('static', filename='ext/bootstrap.4.6.2.min.css')}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='ext/font-awesome.5.13.1/css/all.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}" />
@@ -166,7 +169,7 @@
               <div class="navbar-nav mr-auto">
                 <a class="nav-item nav-link" href="{{ url_for('event_dates') }}">{{ _('Events') }}</a>
                 <a class="nav-item nav-link" href="{{ url_for('organizations') }}">{{ _('Organizations') }}</a>
-                <a class="nav-item nav-link" href="{{ url_for('planing') }}">{{ _('Planing') }}</a>
+                <a class="nav-item nav-link" href="{{ url_for('planning') }}">{{ _('Planning') }}</a>
               </div>
               <div class="navbar-nav navbar-right">
                 {% if config["DOCS_URL"] %}

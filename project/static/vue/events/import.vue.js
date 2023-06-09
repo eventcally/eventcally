@@ -11,6 +11,7 @@ const EventImport = {
             rules="required|url" />
           <b-form-group v-slot="{ ariaDescribedby }">
             <b-form-radio v-model="form.publicStatus" :aria-describedby="ariaDescribedby" value="draft">{{ $t("comp.draft") }}</b-form-radio>
+            <b-form-radio v-model="form.publicStatus" :aria-describedby="ariaDescribedby" value="planned">{{ $t("comp.planned") }}</b-form-radio>
             <b-form-radio v-model="form.publicStatus" :aria-describedby="ariaDescribedby" value="published">{{ $t("comp.published") }}</b-form-radio>
           </b-form-group>
           <b-button variant="primary" type="submit" v-bind:disabled="isSubmitting">
@@ -28,6 +29,7 @@ const EventImport = {
           title: "Import event",
           url: "URL",
           published: "Publish event",
+          planned: "Save as planned",
           draft: "Save as draft",
           importError: "Unfortunately, no event could be imported from the URL.",
         },
@@ -37,6 +39,7 @@ const EventImport = {
           title: "Veranstaltung importieren",
           url: "URL",
           published: "Veranstaltung veröffentlichen",
+          planned: "Als geplant speichern",
           draft: "Als Entwurf speichern",
           importError: "Von der URL konnte leider keine Veranstaltung importiert werden."
         },

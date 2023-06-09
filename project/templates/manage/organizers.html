@@ -19,8 +19,8 @@
                 <th>{{ _('Location') }}</th>
                 <th>{{ _('Phone') }}</th>
                 <th>{{ _('Email') }} / {{ _('Link URL') }}</th>
-                <th><i class="fa fa-fw fa-image" data-toggle="tooltip" title="{{ _('Logo') }}"></i></th>
-                <th><i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Number of events') }}"></i></th>
+                <th><i class="fa fa-fw fa-image" data-toggle="tooltip" data-boundary="window" title="{{ _('Logo') }}"></i></th>
+                <th><i class="fa fa-fw fa-calendar" data-toggle="tooltip" data-boundary="window" title="{{ _('Number of events') }}"></i></th>
             </tr>
         </thead>
         <tbody>
@@ -44,8 +44,8 @@
                         <div>{{ organizer.email or '' }}</div>
                         <div>{{ organizer.url or '' }}</div>
                     </td>
-                    <td><i class="fa fa-fw fa-image {% if organizer.logo %}text-success{% else %}text-muted{% endif %}" data-toggle="tooltip" title="{{ _('Logo') }}"></i></td>
-                    <td><a class="text-body" href="{{ url_for('manage_admin_unit_events', id=admin_unit.id, organizer_id=organizer.id) }}" data-toggle="tooltip" title="{{ _('Number of events') }}">{{ organizer.events|length }}</a></td>
+                    <td><i class="fa fa-fw fa-image {% if organizer.logo %}text-success{% else %}text-muted{% endif %}" data-toggle="tooltip" data-boundary="window" title="{{ _('Logo') }}"></i></td>
+                    <td><a class="text-body" href="{{ url_for('manage_admin_unit_events', id=admin_unit.id, organizer_id=organizer.id) }}" data-toggle="tooltip" data-boundary="window" title="{{ _('Number of events') }}">{{ organizer.events|length }}</a></td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -88,6 +88,35 @@ def fill_event_filter(event_filter, params: EventSearchParams):
             stati = [params.status]
         event_filter = and_(event_filter, Event.status.in_(stati))
 
+    if params.public_status:
+        if type(params.public_status) is list:
+            public_stati = params.public_status
+        else:  # pragma: no cover
+            public_stati = [params.public_status]
+    else:
+        public_stati = [
+            PublicStatus.published,
+            PublicStatus.draft,
+        ]
+
+    if not params.can_read_private_events and PublicStatus.draft in public_stati:
+        public_stati.remove(PublicStatus.draft)
+
+    if (
+        not params.can_read_private_events
+        and not params.can_read_planned_events
+        and PublicStatus.planned in public_stati
+    ):
+        public_stati.remove(PublicStatus.planned)
+
+    if not params.can_read_private_events or not params.admin_unit_id:
+        event_filter = and_(
+            event_filter,
+            AdminUnit.is_verified,
+        )
+
+    event_filter = and_(event_filter, Event.public_status.in_(public_stati))
+
     if params.event_list_id:
         if type(params.event_list_id) is list:
             event_list_ids = params.event_list_id
@@ -154,6 +183,12 @@ def fill_event_filter(event_filter, params: EventSearchParams):
             ~Event.is_recurring,
         )
 
+    if params.expected_participants_min:
+        event_filter = and_(
+            event_filter,
+            Event.expected_participants >= params.expected_participants_min,
+        )
+
     return event_filter
 
 
@@ -176,19 +211,6 @@ def get_event_dates_query(params: EventSearchParams):
                 Event.admin_unit_id == params.admin_unit_id,
                 admin_unit_reference.id.isnot(None),
             ),
-        )
-
-        if not params.can_read_private_events:
-            event_filter = and_(
-                event_filter,
-                Event.public_status == PublicStatus.published,
-                AdminUnit.is_verified,
-            )
-    else:
-        event_filter = and_(
-            event_filter,
-            Event.public_status == PublicStatus.published,
-            AdminUnit.is_verified,
         )
 
     if params.date_from:
@@ -339,19 +361,6 @@ def get_events_query(params: EventSearchParams):
 
     if params.admin_unit_id:
         event_filter = and_(event_filter, Event.admin_unit_id == params.admin_unit_id)
-
-        if not params.can_read_private_events:
-            event_filter = and_(
-                event_filter,
-                Event.public_status == PublicStatus.published,
-                AdminUnit.is_verified,
-            )
-    else:
-        event_filter = and_(
-            event_filter,
-            Event.public_status == PublicStatus.published,
-            AdminUnit.is_verified,
-        )
 
     if params.date_from:
         date_filter = EventDate.start >= params.date_from

@@ -26,6 +26,7 @@ class EventStatus(IntEnum):
 class PublicStatus(IntEnum):
     draft = 1
     published = 2
+    planned = 3
 
 
 class Event(db.Model, TrackableMixin, EventMixin):
