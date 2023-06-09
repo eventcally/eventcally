@@ -19,8 +19,15 @@ def test_read(client, seeder: Seeder, utils: UtilActions):
     response = utils.get_json(unverified_url)
     utils.assert_response_unauthorized(response)
 
+    seeder.create_event(admin_unit_id, planned=True)
+    planned_url = utils.get_url("api_v1_event_date", id=4)
+    response = utils.get_json(planned_url)
+    utils.assert_response_unauthorized(response)
+
     seeder.authorize_api_access(user_id, admin_unit_id)
     response = utils.get_json(draft_url)
+    utils.assert_response_ok(response)
+    response = utils.get_json(planned_url)
     utils.assert_response_ok(response)
 
 
@@ -127,6 +134,35 @@ def test_search(client, seeder: Seeder, utils: UtilActions, app, db):
     url = utils.get_url("api_v1_event_date_search", status=["scheduled", "cancelled"])
     response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 2
+
+    url = utils.get_url("api_v1_event_date_search", expected_participants_min=100)
+    response = utils.get_json_ok(url)
+    assert len(response.json["items"]) == 0
+
+
+def test_search_public_status(client, seeder: Seeder, utils: UtilActions, app, db):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
+    published_id = seeder.create_event(admin_unit_id)
+    planned_id = seeder.create_event(admin_unit_id, planned=True)
+    seeder.create_event(admin_unit_id, draft=True)
+
+    url = utils.get_url("api_v1_event_date_search")
+    response = utils.get_json_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["event"]["id"] == published_id
+
+    url = utils.get_url(
+        "api_v1_event_date_search", public_status=["published", "planned"]
+    )
+    response = utils.get_json_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["event"]["id"] == published_id
+
+    seeder.authorize_api_access(user_id, admin_unit_id)
+    response = utils.get_json_ok(url)
+    assert len(response.json["items"]) == 2
+    assert response.json["items"][0]["event"]["id"] == published_id
+    assert response.json["items"][1]["event"]["id"] == planned_id
 
 
 def test_search_oneDay(client, seeder: Seeder, utils: UtilActions):

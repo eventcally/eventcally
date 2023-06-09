@@ -368,8 +368,11 @@ $( function() {
   </div>
   {% endif %}
 
+  <p class="px-2 text-muted">{{ _('Planned events appear in the scheduling view, but not on public calendars.') }}</p>
+
   <div class="d-flex flex-column flex-sm-row">
     {{ form.submit(class="btn btn-primary m-1")|safe }}
+    {{ form.submit_planned(class="btn btn-secondary m-1")|safe }}
     {{ form.submit_draft(class="btn btn-secondary m-1")|safe }}
   </div>
 

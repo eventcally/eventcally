@@ -66,6 +66,15 @@ class User(db.Model, UserMixin):
     created_at = deferred(Column(DateTime, default=datetime.datetime.utcnow))
     deletion_requested_at = deferred(Column(DateTime, nullable=True))
 
+    @property
+    def is_member_of_verified_admin_unit(self):
+        if not self.adminunitmembers:  # pragma: no cover
+            return False
+
+        return any(
+            m.adminunit and m.adminunit.is_verified for m in self.adminunitmembers
+        )
+
     def get_user_id(self):
         return self.id
 

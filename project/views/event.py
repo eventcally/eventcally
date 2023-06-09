@@ -181,6 +181,8 @@ def event_create_for_admin_unit_id(id):
                 gettext("Event successfully published")
                 if event.public_status == PublicStatus.published
                 else gettext("Draft successfully saved")
+                if event.public_status == PublicStatus.draft
+                else gettext("Event successfully planned")
             )
             flash_message(
                 success_msg,

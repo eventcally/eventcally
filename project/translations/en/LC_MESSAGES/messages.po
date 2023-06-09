@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-06-02 12:16+0200\n"
+"POT-Creation-Date: 2023-06-09 13:32+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -203,24 +203,24 @@ msgstr ""
 msgid "You have received an invitation"
 msgstr ""
 
-#: project/forms/admin.py:11 project/templates/layout.html:334
+#: project/forms/admin.py:11 project/templates/layout.html:337
 #: project/views/root.py:55
 msgid "Terms of service"
 msgstr ""
 
-#: project/forms/admin.py:12 project/templates/layout.html:339
+#: project/forms/admin.py:12 project/templates/layout.html:342
 #: project/views/root.py:67
 msgid "Legal notice"
 msgstr ""
 
-#: project/forms/admin.py:13 project/templates/_macros.html:1461
-#: project/templates/layout.html:343
+#: project/forms/admin.py:13 project/templates/_macros.html:1465
+#: project/templates/layout.html:346
 #: project/templates/widget/event_suggestion/create.html:204
 #: project/views/admin_unit.py:83 project/views/root.py:75
 msgid "Contact"
 msgstr ""
 
-#: project/forms/admin.py:14 project/templates/layout.html:347
+#: project/forms/admin.py:14 project/templates/layout.html:350
 #: project/views/root.py:83
 msgid "Privacy"
 msgstr ""
@@ -261,7 +261,7 @@ msgstr ""
 #: project/forms/admin_unit_member.py:30 project/forms/event.py:107
 #: project/forms/event_suggestion.py:38 project/forms/organizer.py:33
 #: project/forms/user.py:18 project/forms/user.py:23
-#: project/templates/_macros.html:246 project/templates/_macros.html:1557
+#: project/templates/_macros.html:246 project/templates/_macros.html:1561
 #: project/templates/admin/admin.html:27 project/templates/admin/email.html:4
 #: project/templates/admin/email.html:66 project/templates/admin/users.html:19
 #: project/templates/manage/organizers.html:21
@@ -366,9 +366,9 @@ msgstr ""
 msgid "Street"
 msgstr ""
 
-#: project/forms/admin_unit.py:18 project/forms/event.py:453
+#: project/forms/admin_unit.py:18 project/forms/event.py:461
 #: project/forms/event_date.py:52 project/forms/event_place.py:16
-#: project/forms/organizer.py:16
+#: project/forms/organizer.py:16 project/forms/planning.py:44
 msgid "Postal code"
 msgstr ""
 
@@ -408,7 +408,7 @@ msgstr ""
 msgid "The short name is used to create a unique identifier for your events"
 msgstr ""
 
-#: project/forms/admin_unit.py:48 project/templates/_macros.html:1599
+#: project/forms/admin_unit.py:48 project/templates/_macros.html:1603
 msgid "Short name must contain only letters numbers or underscore"
 msgstr ""
 
@@ -429,13 +429,13 @@ msgstr ""
 
 #: project/forms/admin_unit.py:61 project/forms/event.py:108
 #: project/forms/event_suggestion.py:31 project/forms/organizer.py:34
-#: project/templates/_macros.html:305
+#: project/templates/_macros.html:309
 #: project/templates/manage/organizers.html:20
 msgid "Phone"
 msgstr ""
 
 #: project/forms/admin_unit.py:62 project/forms/event.py:109
-#: project/forms/organizer.py:35 project/templates/_macros.html:313
+#: project/forms/organizer.py:35 project/templates/_macros.html:317
 msgid "Fax"
 msgstr ""
 
@@ -520,7 +520,7 @@ msgstr ""
 msgid "Cancel deletion"
 msgstr ""
 
-#: project/forms/admin_unit.py:158 project/templates/layout.html:305
+#: project/forms/admin_unit.py:158 project/templates/layout.html:308
 #: project/templates/manage/delete_membership.html:6
 msgid "Leave organization"
 msgstr ""
@@ -654,20 +654,20 @@ msgid ""
 "days."
 msgstr ""
 
-#: project/forms/event.py:50 project/templates/planing/list.html:75
+#: project/forms/event.py:50
 msgid "All-day"
 msgstr ""
 
-#: project/forms/event.py:54 project/templates/_macros.html:1769
+#: project/forms/event.py:54 project/templates/_macros.html:1773
 #: project/templates/widget/event_suggestion/create.html:240
 msgid "Recurring event"
 msgstr ""
 
-#: project/forms/event.py:61 project/templates/_macros.html:1318
+#: project/forms/event.py:61 project/templates/_macros.html:1322
 msgid "The start must be before the end."
 msgstr ""
 
-#: project/forms/event.py:67 project/templates/_macros.html:1335
+#: project/forms/event.py:67 project/templates/_macros.html:1339
 msgid "An event can last a maximum of 14 days."
 msgstr ""
 
@@ -748,7 +748,7 @@ msgid "If the participants needs to register for the event."
 msgstr ""
 
 #: project/forms/event.py:170 project/templates/_macros.html:260
-#: project/templates/layout.html:115
+#: project/templates/layout.html:118
 msgid "Booked up"
 msgstr ""
 
@@ -804,11 +804,11 @@ msgstr ""
 msgid "EventAttendanceMode.offline"
 msgstr "Normal (Offline)"
 
-#: project/forms/event.py:217 project/templates/layout.html:103
+#: project/forms/event.py:217 project/templates/layout.html:106
 msgid "EventAttendanceMode.online"
 msgstr "Online"
 
-#: project/forms/event.py:219 project/templates/layout.html:106
+#: project/forms/event.py:219 project/templates/layout.html:109
 msgid "EventAttendanceMode.mixed"
 msgstr "Online and offline"
 
@@ -831,8 +831,8 @@ msgid ""
 " course it works without it."
 msgstr ""
 
-#: project/forms/event.py:242 project/templates/_macros.html:418
-#: project/templates/_macros.html:581
+#: project/forms/event.py:242 project/templates/_macros.html:422
+#: project/templates/_macros.html:585
 msgid "Previous start date"
 msgstr ""
 
@@ -877,9 +877,9 @@ msgid "Invalid co-organizer."
 msgstr ""
 
 #: project/forms/event.py:286 project/forms/event.py:295
-#: project/forms/event.py:368 project/forms/event.py:442
-#: project/forms/event_suggestion.py:50 project/templates/_macros.html:458
-#: project/templates/_macros.html:624 project/templates/event/create.html:288
+#: project/forms/event.py:373 project/forms/event.py:450
+#: project/forms/event_suggestion.py:50 project/templates/_macros.html:462
+#: project/templates/_macros.html:628 project/templates/event/create.html:288
 #: project/templates/event/update.html:170
 #: project/templates/event_place/create.html:31
 #: project/templates/event_place/delete.html:13
@@ -897,9 +897,9 @@ msgid "Enter new place"
 msgstr ""
 
 #: project/forms/event.py:302 project/forms/event.py:311
-#: project/forms/event.py:376 project/forms/event.py:439
+#: project/forms/event.py:381 project/forms/event.py:447
 #: project/forms/event_date.py:40 project/forms/event_suggestion.py:60
-#: project/templates/_macros.html:495 project/templates/_macros.html:667
+#: project/templates/_macros.html:499 project/templates/_macros.html:671
 #: project/templates/event/create.html:257
 #: project/templates/event/update.html:160
 #: project/templates/manage/events.html:104
@@ -922,110 +922,118 @@ msgid "Save as draft"
 msgstr ""
 
 #: project/forms/event.py:318
+msgid "Save as planned"
+msgstr ""
+
+#: project/forms/event.py:319
 msgid "Publish event"
 msgstr ""
 
-#: project/forms/event.py:350
+#: project/forms/event.py:355
 msgid "Select existing place or enter new place"
 msgstr ""
 
-#: project/forms/event.py:358
+#: project/forms/event.py:363
 msgid "Select existing organizer or enter new organizer"
 msgstr ""
 
-#: project/forms/event.py:371
+#: project/forms/event.py:376
 msgid ""
 "Choose where the event takes place. You can add and modify places at "
 "Organization > Places."
 msgstr ""
 
-#: project/forms/event.py:379
+#: project/forms/event.py:384
 msgid ""
 "Select the organizer. You can add and modify organizers at Organization >"
 " Organizers."
 msgstr ""
 
-#: project/forms/event.py:385 project/templates/event/update.html:149
+#: project/forms/event.py:390 project/templates/event/update.html:149
 #: project/templates/oauth2_token/list.html:21
 msgid "Status"
 msgstr ""
 
-#: project/forms/event.py:388
+#: project/forms/event.py:393
 msgid "EventStatus.scheduled"
 msgstr "Scheduled"
 
-#: project/forms/event.py:389 project/templates/layout.html:69
-#: project/templates/layout.html:84
+#: project/forms/event.py:394 project/templates/layout.html:72
+#: project/templates/layout.html:87
 msgid "EventStatus.cancelled"
 msgstr "Cancelled"
 
-#: project/forms/event.py:390 project/templates/layout.html:72
-#: project/templates/layout.html:87
+#: project/forms/event.py:395 project/templates/layout.html:75
+#: project/templates/layout.html:90
 msgid "EventStatus.movedOnline"
 msgstr "Moved online"
 
-#: project/forms/event.py:391 project/templates/layout.html:75
-#: project/templates/layout.html:90
+#: project/forms/event.py:396 project/templates/layout.html:78
+#: project/templates/layout.html:93
 msgid "EventStatus.postponed"
 msgstr "Postponed"
 
-#: project/forms/event.py:392 project/templates/layout.html:78
-#: project/templates/layout.html:93
+#: project/forms/event.py:397 project/templates/layout.html:81
+#: project/templates/layout.html:96
 msgid "EventStatus.rescheduled"
 msgstr "Rescheduled"
 
-#: project/forms/event.py:394
+#: project/forms/event.py:399
 msgid "Select the status of the event."
 msgstr ""
 
-#: project/forms/event.py:398
+#: project/forms/event.py:403
 msgid "Public status"
 msgstr ""
 
-#: project/forms/event.py:401
+#: project/forms/event.py:406
 msgid "PublicStatus.published"
 msgstr ""
 
-#: project/forms/event.py:402 project/templates/_macros.html:266
+#: project/forms/event.py:407 project/templates/_macros.html:269
+msgid "PublicStatus.planned"
+msgstr ""
+
+#: project/forms/event.py:408 project/templates/_macros.html:267
 msgid "PublicStatus.draft"
 msgstr ""
 
-#: project/forms/event.py:404
-msgid "Select the public status of the event."
+#: project/forms/event.py:410 project/templates/event/create.html:371
+msgid "Planned events appear in the scheduling view, but not on public calendars."
 msgstr ""
 
-#: project/forms/event.py:407 project/templates/event/update.html:5
+#: project/forms/event.py:415 project/templates/event/update.html:5
 #: project/templates/event/update.html:117
 msgid "Update event"
 msgstr ""
 
-#: project/forms/event.py:423 project/templates/_macros.html:1275
+#: project/forms/event.py:431 project/templates/_macros.html:1279
 #: project/templates/event/actions.html:66
 #: project/templates/event/delete.html:6
 msgid "Delete event"
 msgstr ""
 
-#: project/forms/event.py:430 project/forms/event_date.py:14
-#: project/forms/planing.py:14
+#: project/forms/event.py:438 project/forms/event_date.py:14
+#: project/forms/planning.py:21
 msgid "From"
 msgstr ""
 
-#: project/forms/event.py:432 project/forms/event_date.py:16
-#: project/forms/planing.py:16
+#: project/forms/event.py:440 project/forms/event_date.py:16
+#: project/forms/planning.py:22
 msgid "to"
 msgstr ""
 
-#: project/forms/event.py:434 project/forms/event_date.py:18
+#: project/forms/event.py:442 project/forms/event_date.py:18
 msgid "Keyword"
 msgstr ""
 
-#: project/forms/event.py:436 project/forms/event_date.py:20
-#: project/forms/planing.py:19 project/templates/_macros.html:391
+#: project/forms/event.py:444 project/forms/event_date.py:20
+#: project/forms/planning.py:24 project/templates/_macros.html:395
 msgid "Category"
 msgstr ""
 
-#: project/forms/event.py:446 project/forms/event_date.py:26
-#: project/forms/planing.py:22 project/templates/_macros.html:320
+#: project/forms/event.py:454 project/forms/event_date.py:26
+#: project/forms/planning.py:27 project/templates/_macros.html:324
 #: project/templates/admin_unit/create.html:39
 #: project/templates/admin_unit/update.html:47
 #: project/templates/event_place/create.html:40
@@ -1037,28 +1045,29 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: project/forms/event.py:448 project/forms/event_date.py:28
-#: project/forms/planing.py:24
+#: project/forms/event.py:456 project/forms/event_date.py:28
+#: project/forms/planning.py:29
 msgid "Distance"
 msgstr ""
 
-#: project/forms/event.py:455 project/forms/event_date.py:49
+#: project/forms/event.py:463 project/forms/event_date.py:49
+#: project/forms/planning.py:41
 msgid "Exclude recurring events"
 msgstr ""
 
-#: project/forms/event.py:459 project/forms/event_date.py:54
+#: project/forms/event.py:467 project/forms/event_date.py:54
 msgid "Find events"
 msgstr ""
 
 #: project/forms/event_date.py:35 project/forms/reference.py:11
-#: project/forms/reference_request.py:16 project/templates/_macros.html:511
-#: project/templates/_macros.html:684
+#: project/forms/reference_request.py:16 project/templates/_macros.html:515
+#: project/templates/_macros.html:688
 #: project/templates/admin/delete_admin_unit.html:13
 #: project/templates/admin_unit/cancel_deletion.html:13
 #: project/templates/admin_unit/create.html:28
 #: project/templates/admin_unit/request_deletion.html:15
 #: project/templates/admin_unit/update.html:36
-#: project/templates/layout.html:257
+#: project/templates/layout.html:260
 #: project/templates/manage/delete_membership.html:13
 #: project/templates/verification_request/delete.html:13
 #: project/templates/verification_request/review.html:28
@@ -1069,7 +1078,7 @@ msgstr ""
 msgid "Show unreferenced events only"
 msgstr ""
 
-#: project/forms/event_date.py:63 project/forms/planing.py:36
+#: project/forms/event_date.py:63
 #: project/templates/widget/event_date/list.html:82
 msgid "Find"
 msgstr ""
@@ -1194,8 +1203,16 @@ msgstr ""
 msgid "Delete organizer"
 msgstr ""
 
-#: project/forms/planing.py:30
+#: project/forms/planning.py:35
 msgid "Weekdays"
+msgstr ""
+
+#: project/forms/planning.py:46
+msgid "Min. expected number of participants"
+msgstr ""
+
+#: project/forms/planning.py:50 project/templates/planning/list.html:98
+msgid "Refresh"
 msgstr ""
 
 #: project/forms/reference.py:22
@@ -1223,7 +1240,7 @@ msgid "Delete request"
 msgstr ""
 
 #: project/forms/reference_request.py:28
-#: project/forms/verification_request.py:24 project/templates/_macros.html:1473
+#: project/forms/verification_request.py:24 project/templates/_macros.html:1477
 #: project/templates/event_suggestion/review_status.html:18
 #: project/templates/reference_request/review_status.html:12
 #: project/templates/verification_request/review_status.html:4
@@ -1373,31 +1390,31 @@ msgstr ""
 msgid "Link"
 msgstr ""
 
-#: project/templates/_macros.html:299
+#: project/templates/_macros.html:303
 msgid "Verified"
 msgstr ""
 
-#: project/templates/_macros.html:368
+#: project/templates/_macros.html:372
 #, python-format
 msgid "Created at %(created_at)s by %(created_by)s."
 msgstr ""
 
-#: project/templates/_macros.html:370
+#: project/templates/_macros.html:374
 #, python-format
 msgid "Created at %(created_at)s."
 msgstr ""
 
-#: project/templates/_macros.html:375
+#: project/templates/_macros.html:379
 #, python-format
 msgid "Last updated at %(updated_at)s by %(updated_by)s."
 msgstr ""
 
-#: project/templates/_macros.html:377
+#: project/templates/_macros.html:381
 #, python-format
 msgid "Last updated at %(updated_at)s."
 msgstr ""
 
-#: project/templates/_macros.html:407 project/templates/_macros.html:577
+#: project/templates/_macros.html:411 project/templates/_macros.html:581
 #: project/templates/event/actions.html:25
 #: project/templates/event/create.html:234
 #: project/templates/event/update.html:126
@@ -1406,44 +1423,44 @@ msgstr ""
 msgid "Event"
 msgstr ""
 
-#: project/templates/_macros.html:413 project/templates/_macros.html:999
+#: project/templates/_macros.html:417 project/templates/_macros.html:1003
 msgid "Date"
 msgstr ""
 
-#: project/templates/_macros.html:440 project/templates/_macros.html:599
-#: project/templates/_macros.html:1542 project/templates/event/actions.html:51
+#: project/templates/_macros.html:444 project/templates/_macros.html:603
+#: project/templates/_macros.html:1546 project/templates/event/actions.html:51
 msgid "Share"
 msgstr ""
 
-#: project/templates/_macros.html:444 project/templates/_macros.html:603
-#: project/templates/_macros.html:1572
+#: project/templates/_macros.html:448 project/templates/_macros.html:607
+#: project/templates/_macros.html:1576
 msgid "Add to calendar"
 msgstr ""
 
-#: project/templates/_macros.html:452 project/templates/_macros.html:617
+#: project/templates/_macros.html:456 project/templates/_macros.html:621
 #: project/templates/event/report.html:4
 msgid "Report event"
 msgstr ""
 
-#: project/templates/_macros.html:479 project/templates/_macros.html:650
+#: project/templates/_macros.html:483 project/templates/_macros.html:654
 msgid "Show directions"
 msgstr ""
 
-#: project/templates/_macros.html:484 project/templates/_macros.html:642
+#: project/templates/_macros.html:488 project/templates/_macros.html:646
 msgid "The event takes place online."
 msgstr ""
 
-#: project/templates/_macros.html:486 project/templates/_macros.html:644
+#: project/templates/_macros.html:490 project/templates/_macros.html:648
 msgid "The event takes place both offline and online."
 msgstr ""
 
-#: project/templates/_macros.html:607 project/templates/layout.html:183
+#: project/templates/_macros.html:611 project/templates/layout.html:186
 #: project/templates/user/favorite_events.html:4
 msgid "Favorite events"
 msgstr ""
 
-#: project/templates/_macros.html:610 project/templates/_macros.html:653
-#: project/templates/_macros.html:785
+#: project/templates/_macros.html:614 project/templates/_macros.html:657
+#: project/templates/_macros.html:789
 #: project/templates/admin/admin_units.html:36
 #: project/templates/admin/users.html:36
 #: project/templates/manage/events.html:118
@@ -1456,11 +1473,11 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: project/templates/_macros.html:711
+#: project/templates/_macros.html:715
 msgid "Referenced by"
 msgstr ""
 
-#: project/templates/_macros.html:723 project/templates/_macros.html:1285
+#: project/templates/_macros.html:727 project/templates/_macros.html:1289
 #: project/templates/event/actions.html:38
 #: project/templates/event_date/list.html:251
 #: project/templates/manage/events.html:125
@@ -1468,39 +1485,39 @@ msgstr ""
 msgid "Reference event"
 msgstr ""
 
-#: project/templates/_macros.html:732
+#: project/templates/_macros.html:736
 #: project/templates/manage/reference_requests_incoming.html:5
 #: project/templates/manage/reference_requests_outgoing.html:5
 msgid "Reference requests"
 msgstr ""
 
-#: project/templates/_macros.html:743 project/templates/_macros.html:1282
+#: project/templates/_macros.html:747 project/templates/_macros.html:1286
 #: project/templates/event/actions.html:32
 #: project/templates/manage/events.html:123
 msgid "Request reference"
 msgstr ""
 
-#: project/templates/_macros.html:751 project/templates/event_date/list.html:6
+#: project/templates/_macros.html:755 project/templates/event_date/list.html:6
 #: project/templates/event_date/list.html:461
 #: project/templates/reference_request/review.html:32
 msgid "Event Dates"
 msgstr ""
 
-#: project/templates/_macros.html:849
+#: project/templates/_macros.html:853
 msgid "Search location on Google"
 msgstr ""
 
-#: project/templates/_macros.html:916
+#: project/templates/_macros.html:920
 #, python-format
 msgid "%(count)d event dates"
 msgstr ""
 
-#: project/templates/_macros.html:939 project/templates/_macros.html:941
+#: project/templates/_macros.html:943 project/templates/_macros.html:945
 #: project/templates/event_date/list.html:510
 msgid "First"
 msgstr ""
 
-#: project/templates/_macros.html:944 project/templates/_macros.html:946
+#: project/templates/_macros.html:948 project/templates/_macros.html:950
 #: project/templates/event_date/list.html:511
 #: project/templates/widget/event_suggestion/create.html:193
 #: project/templates/widget/event_suggestion/create.html:218
@@ -1511,12 +1528,12 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: project/templates/_macros.html:948
+#: project/templates/_macros.html:952
 #, python-format
 msgid "Page %(page)d of %(pages)d (%(total)d total)"
 msgstr ""
 
-#: project/templates/_macros.html:950 project/templates/_macros.html:952
+#: project/templates/_macros.html:954 project/templates/_macros.html:956
 #: project/templates/event_date/list.html:513
 #: project/templates/widget/event_suggestion/create.html:194
 #: project/templates/widget/event_suggestion/create.html:219
@@ -1526,98 +1543,98 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: project/templates/_macros.html:955 project/templates/_macros.html:957
+#: project/templates/_macros.html:959 project/templates/_macros.html:961
 #: project/templates/event_date/list.html:514
 msgid "Last"
 msgstr ""
 
-#: project/templates/_macros.html:1022
+#: project/templates/_macros.html:1026
 msgid "Radius"
 msgstr ""
 
-#: project/templates/_macros.html:1204
+#: project/templates/_macros.html:1208
 msgid "Edit image"
 msgstr ""
 
-#: project/templates/_macros.html:1225
+#: project/templates/_macros.html:1229 project/templates/planning/list.html:97
 msgid "Close"
 msgstr ""
 
-#: project/templates/_macros.html:1226
+#: project/templates/_macros.html:1230
 msgid "Okay"
 msgstr ""
 
-#: project/templates/_macros.html:1238
+#: project/templates/_macros.html:1242
 msgid "Choose image file"
 msgstr ""
 
-#: project/templates/_macros.html:1274 project/templates/event/actions.html:65
+#: project/templates/_macros.html:1278 project/templates/event/actions.html:65
 #: project/templates/event/delete.html:12
 msgid "Edit event"
 msgstr ""
 
-#: project/templates/_macros.html:1278 project/templates/event/actions.html:58
+#: project/templates/_macros.html:1282 project/templates/event/actions.html:58
 msgid "Duplicate event"
 msgstr ""
 
-#: project/templates/_macros.html:1289 project/templates/event/actions.html:44
+#: project/templates/_macros.html:1293 project/templates/event/actions.html:44
 #: project/templates/manage/events.html:129
 msgid "Add to list"
 msgstr ""
 
-#: project/templates/_macros.html:1292 project/templates/manage/events.html:132
+#: project/templates/_macros.html:1296 project/templates/manage/events.html:132
 msgid "More"
 msgstr ""
 
-#: project/templates/_macros.html:1339
+#: project/templates/_macros.html:1343
 msgid "Please enter a valid time, between 00:00 and 23:59."
 msgstr ""
 
-#: project/templates/_macros.html:1367
+#: project/templates/_macros.html:1371
 #, python-format
 msgid "Just use %(term)s"
 msgstr ""
 
-#: project/templates/_macros.html:1433
+#: project/templates/_macros.html:1437
 msgid "Event suggestion"
 msgstr ""
 
-#: project/templates/_macros.html:1551
+#: project/templates/_macros.html:1555
 msgid "Link copied"
 msgstr ""
 
-#: project/templates/_macros.html:1551
+#: project/templates/_macros.html:1555
 msgid "Copy link"
 msgstr ""
 
-#: project/templates/_macros.html:1581
+#: project/templates/_macros.html:1585
 msgid "Google calendar"
 msgstr ""
 
-#: project/templates/_macros.html:1583
+#: project/templates/_macros.html:1587
 msgid "Apple calendar"
 msgstr ""
 
-#: project/templates/_macros.html:1584
+#: project/templates/_macros.html:1588
 msgid "Yahoo calendar"
 msgstr ""
 
-#: project/templates/_macros.html:1585
+#: project/templates/_macros.html:1589
 msgid "Other calendar"
 msgstr ""
 
-#: project/templates/_macros.html:1770
+#: project/templates/_macros.html:1774
 msgid "Remove event date"
 msgstr ""
 
-#: project/templates/_macros.html:1803 project/templates/event/create.html:180
+#: project/templates/_macros.html:1807 project/templates/event/create.html:180
 #: project/templates/event/update.html:103
 #: project/templates/event_date/list.html:446
 #: project/templates/widget/event_suggestion/create.html:129
 msgid "Enter organizer"
 msgstr ""
 
-#: project/templates/_macros.html:1831
+#: project/templates/_macros.html:1835
 msgid "Enter list name"
 msgstr ""
 
@@ -1625,10 +1642,11 @@ msgstr ""
 msgid "Manage"
 msgstr ""
 
-#: project/templates/home.html:37 project/templates/layout.html:173
+#: project/templates/home.html:37 project/templates/layout.html:176
 #: project/templates/manage/admin_units.html:28
 #: project/templates/manage/verification_requests_outgoing.html:13
 #: project/templates/manage/verification_requests_outgoing_create_select.html:13
+#: project/templates/planning/list.html:68
 #: project/templates/security/login_user.html:21
 #: project/templates/security/register_user.html:43
 msgid "Docs"
@@ -1638,7 +1656,7 @@ msgstr ""
 msgid "Features"
 msgstr ""
 
-#: project/templates/layout.html:167 project/templates/layout.html:215
+#: project/templates/layout.html:170 project/templates/layout.html:218
 #: project/templates/manage/events.html:6
 #: project/templates/manage/events.html:54
 #: project/templates/manage/events_vue.html:4
@@ -1648,18 +1666,18 @@ msgstr ""
 #: project/templates/admin/admin.html:19
 #: project/templates/admin/admin_units.html:4
 #: project/templates/admin/admin_units.html:11
-#: project/templates/layout.html:168 project/templates/layout.html:181
+#: project/templates/layout.html:171 project/templates/layout.html:184
 #: project/templates/manage/admin_units.html:3
 #: project/templates/manage/admin_units.html:26
 #: project/templates/organization/main.html:4
 msgid "Organizations"
 msgstr ""
 
-#: project/templates/layout.html:169
-msgid "Planing"
+#: project/templates/layout.html:172
+msgid "Planning"
 msgstr ""
 
-#: project/templates/layout.html:182 project/templates/layout.html:294
+#: project/templates/layout.html:185 project/templates/layout.html:297
 #: project/templates/oauth2_client/list.html:10
 #: project/templates/oauth2_client/read.html:10
 #: project/templates/oauth2_token/list.html:10 project/templates/profile.html:4
@@ -1672,100 +1690,100 @@ msgstr ""
 #: project/templates/admin/email.html:65
 #: project/templates/admin/newsletter.html:92
 #: project/templates/admin/settings.html:10
-#: project/templates/admin/users.html:10 project/templates/layout.html:186
+#: project/templates/admin/users.html:10 project/templates/layout.html:189
 msgid "Admin"
 msgstr ""
 
-#: project/templates/layout.html:190
+#: project/templates/layout.html:193
 msgid "Logout"
 msgstr ""
 
-#: project/templates/layout.html:221
+#: project/templates/layout.html:224
 msgid "Show events"
 msgstr ""
 
 #: project/templates/event/create.html:5
-#: project/templates/event/create.html:225 project/templates/layout.html:222
+#: project/templates/event/create.html:225 project/templates/layout.html:225
 #: project/templates/manage/events.html:55
 #: project/templates/manage/organizers.html:38
 msgid "Create event"
 msgstr ""
 
-#: project/templates/layout.html:223
+#: project/templates/layout.html:226
 msgid "Import event"
 msgstr ""
 
-#: project/templates/layout.html:225
+#: project/templates/layout.html:228
 #: project/templates/manage/event_lists.html:4
 msgid "Event lists"
 msgstr ""
 
-#: project/templates/layout.html:228
+#: project/templates/layout.html:231
 msgid "Review suggestions"
 msgstr ""
 
-#: project/templates/layout.html:238
+#: project/templates/layout.html:241
 #: project/templates/manage/references_incoming.html:5
 #: project/templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr ""
 
-#: project/templates/layout.html:244
+#: project/templates/layout.html:247
 #: project/templates/manage/references_incoming.html:9
 msgid "Incoming references"
 msgstr ""
 
-#: project/templates/layout.html:245
+#: project/templates/layout.html:248
 #: project/templates/manage/references_outgoing.html:9
 msgid "Outgoing references"
 msgstr ""
 
-#: project/templates/layout.html:247
+#: project/templates/layout.html:250
 #: project/templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
 msgstr ""
 
-#: project/templates/layout.html:252
+#: project/templates/layout.html:255
 #: project/templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
 msgstr ""
 
-#: project/templates/layout.html:264
+#: project/templates/layout.html:267
 #: project/templates/manage/verification_requests_outgoing.html:5
 #: project/templates/manage/verification_requests_outgoing.html:10
 msgid "Outgoing verification requests"
 msgstr ""
 
-#: project/templates/layout.html:268 project/templates/manage/organizers.html:5
+#: project/templates/layout.html:271 project/templates/manage/organizers.html:5
 #: project/templates/manage/organizers.html:10
 #: project/templates/organizer/main.html:4
 msgid "Organizers"
 msgstr ""
 
 #: project/templates/event_place/list.html:3
-#: project/templates/event_place/list.html:7 project/templates/layout.html:269
+#: project/templates/event_place/list.html:7 project/templates/layout.html:272
 #: project/templates/manage/places.html:5
 #: project/templates/manage/places.html:10
 msgid "Places"
 msgstr ""
 
-#: project/templates/layout.html:271 project/templates/manage/members.html:5
+#: project/templates/layout.html:274 project/templates/manage/members.html:5
 #: project/templates/manage/members.html:28
 #: project/templates/verification_request/review.html:54
 msgid "Members"
 msgstr ""
 
-#: project/templates/layout.html:272 project/templates/manage/relations.html:4
+#: project/templates/layout.html:275 project/templates/manage/relations.html:4
 msgid "Relations"
 msgstr ""
 
-#: project/templates/layout.html:276
+#: project/templates/layout.html:279
 #: project/templates/manage/verification_requests_incoming.html:5
 #: project/templates/manage/verification_requests_incoming.html:9
 msgid "Incoming verification requests"
 msgstr ""
 
-#: project/templates/layout.html:284
+#: project/templates/layout.html:287
 #: project/templates/manage/admin_units.html:17
 #: project/templates/manage/organization_invitations.html:4
 #: project/templates/user/organization_invitations.html:4
@@ -1777,33 +1795,33 @@ msgstr ""
 #: project/templates/admin/settings.html:11
 #: project/templates/admin_unit/update.html:6
 #: project/templates/admin_unit/update.html:30
-#: project/templates/layout.html:288 project/templates/manage/widgets.html:11
+#: project/templates/layout.html:291 project/templates/manage/widgets.html:11
 #: project/templates/manage/widgets.html:15 project/templates/profile.html:32
 msgid "Settings"
 msgstr ""
 
-#: project/templates/layout.html:289 project/templates/manage/export.html:3
+#: project/templates/layout.html:292 project/templates/manage/export.html:3
 #: project/templates/manage/export.html:63
 msgid "Export"
 msgstr ""
 
-#: project/templates/layout.html:291
+#: project/templates/layout.html:294
 #: project/templates/manage/custom_widgets.html:13
 msgid "Custom widgets"
 msgstr ""
 
-#: project/templates/layout.html:292 project/templates/manage/reviews.html:10
+#: project/templates/layout.html:295 project/templates/manage/reviews.html:10
 #: project/templates/manage/widgets.html:5
 #: project/templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr ""
 
-#: project/templates/layout.html:304
+#: project/templates/layout.html:307
 msgid "Switch organization"
 msgstr ""
 
 #: project/templates/developer/read.html:4
-#: project/templates/developer/read.html:8 project/templates/layout.html:351
+#: project/templates/developer/read.html:8 project/templates/layout.html:354
 #: project/templates/profile.html:45
 msgid "Developer"
 msgstr ""
@@ -2408,9 +2426,13 @@ msgstr ""
 msgid "Revoke"
 msgstr ""
 
-#: project/templates/planing/list.html:5
-#: project/templates/planing/list.html:105
-msgid "Event Planing"
+#: project/templates/planning/list.html:5
+#: project/templates/planning/list.html:66
+msgid "Event Planning"
+msgstr ""
+
+#: project/templates/planning/list.html:76
+msgid "Filters"
 msgstr ""
 
 #: project/templates/reference/read.html:4
@@ -2624,19 +2646,23 @@ msgstr ""
 msgid "Draft successfully saved"
 msgstr ""
 
-#: project/views/event.py:226
+#: project/views/event.py:185
+msgid "Event successfully planned"
+msgstr ""
+
+#: project/views/event.py:228
 msgid "Event successfully updated"
 msgstr ""
 
-#: project/views/event.py:252
+#: project/views/event.py:254
 msgid "Event successfully deleted"
 msgstr ""
 
-#: project/views/event.py:417
+#: project/views/event.py:419
 msgid "Referenced event changed"
 msgstr ""
 
-#: project/views/event.py:440
+#: project/views/event.py:442
 msgid "New event report"
 msgstr ""
 
@@ -2929,5 +2955,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Short name"
+#~ msgstr ""
+
+#~ msgid "Select the public status of the event."
 #~ msgstr ""
 

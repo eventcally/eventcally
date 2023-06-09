@@ -201,6 +201,16 @@ def can_create_admin_unit():
     return any(admin_unit.can_create_other for admin_unit in admin_units)
 
 
+def can_use_planning():
+    if not current_user.is_authenticated:
+        return False
+
+    if has_current_user_role("admin"):  # pragma: no cover
+        return True
+
+    return current_user.is_member_of_verified_admin_unit
+
+
 def can_verify_admin_unit():
     if not current_user.is_authenticated:  # pragma: no cover
         return False
@@ -214,6 +224,13 @@ def can_verify_admin_unit():
 
 def can_read_event(event: Event) -> bool:
     if event.public_status == PublicStatus.published and event.admin_unit.is_verified:
+        return True
+
+    if (
+        event.public_status == PublicStatus.planned
+        and event.admin_unit.is_verified
+        and can_use_planning()
+    ):
         return True
 
     return has_access(event.admin_unit, "event:read")

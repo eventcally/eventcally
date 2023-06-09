@@ -488,9 +488,9 @@
             </div>
 
             <p>
-                {{ form.submit(class="btn btn-primary")|safe }}
-                <button id="toggle-search-btn" type="button" class="btn btn-secondary mx-2" data-toggle="collapse" data-target="#extended_search_form" aria-expanded="{% if form_collapsed %}false{% else %}true{% endif %}">{{ _('More filters') }}</button>
-                <button type="button" id="toggle-map-btn" class="btn btn-outline-secondary" onclick="toggle_map()"><i class="fa fa-map"></i> {{ _('Map view') }}</button>
+                {{ form.submit(class="btn btn-primary mt-1 mr-1")|safe }}
+                <button id="toggle-search-btn" type="button" class="btn btn-secondary mt-1 mr-1" data-toggle="collapse" data-target="#extended_search_form" aria-expanded="{% if form_collapsed %}false{% else %}true{% endif %}">{{ _('More filters') }}</button>
+                <button type="button" id="toggle-map-btn" class="btn btn-outline-secondary mt-1 mr-1" onclick="toggle_map()"><i class="fa fa-map"></i> {{ _('Map view') }}</button>
             </p>
         </form>
     </div>

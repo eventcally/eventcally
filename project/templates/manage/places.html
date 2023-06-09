@@ -17,9 +17,9 @@
             <tr>
                 <th>{{ _('Name') }}</th>
                 <th>{{ _('Location') }}</th>
-                <th><i class="fa fa-fw fa-map-marker-alt" data-toggle="tooltip" title="{{ _('Coordinates') }}"></i></th>
-                <th><i class="fa fa-fw fa-image" data-toggle="tooltip" title="{{ _('Photo') }}"></i></th>
-                <th><i class="fa fa-fw fa-calendar" data-toggle="tooltip" title="{{ _('Number of events') }}"></i></th>
+                <th><i class="fa fa-fw fa-map-marker-alt" data-toggle="tooltip" data-boundary="window" title="{{ _('Coordinates') }}"></i></th>
+                <th><i class="fa fa-fw fa-image" data-toggle="tooltip" data-boundary="window" title="{{ _('Photo') }}"></i></th>
+                <th><i class="fa fa-fw fa-calendar" data-toggle="tooltip" data-boundary="window" title="{{ _('Number of events') }}"></i></th>
             </tr>
         </thead>
         <tbody>
@@ -35,9 +35,9 @@
                         </div>
                     </td>
                     <td>{{ render_location(place.location) }}</td>
-                    <td><i class="fa fa-fw fa-map-marker-alt {% if place.location and place.location.coordinate %}text-success{% else %}text-muted{% endif %}" data-toggle="tooltip" title="{{ _('Coordinates') }}"></i></td>
-                    <td><i class="fa fa-fw fa-image {% if place.photo %}text-success{% else %}text-muted{% endif %}" data-toggle="tooltip" title="{{ _('Photo') }}"></i></td>
-                    <td><a class="text-body" href="{{ url_for('manage_admin_unit_events', id=admin_unit.id, event_place_id=place.id) }}" data-toggle="tooltip" title="{{ _('Number of events') }}">{{ place.events|length }}</a></td>
+                    <td><i class="fa fa-fw fa-map-marker-alt {% if place.location and place.location.coordinate %}text-success{% else %}text-muted{% endif %}" data-toggle="tooltip" data-boundary="window" title="{{ _('Coordinates') }}"></i></td>
+                    <td><i class="fa fa-fw fa-image {% if place.photo %}text-success{% else %}text-muted{% endif %}" data-toggle="tooltip" data-boundary="window" title="{{ _('Photo') }}"></i></td>
+                    <td><a class="text-body" href="{{ url_for('manage_admin_unit_events', id=admin_unit.id, event_place_id=place.id) }}" data-toggle="tooltip" data-boundary="window" title="{{ _('Number of events') }}">{{ place.events|length }}</a></td>
                 </tr>
             {% endfor %}
         </tbody>

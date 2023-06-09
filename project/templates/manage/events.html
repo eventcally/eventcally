@@ -89,8 +89,8 @@ var vue_app_data = { eventId: 0 };
         </div>
 
         <p>
-            {{ form.submit(class="btn btn-primary")|safe }}
-            <button id="toggle-search-btn" type="button" class="btn btn-secondary mx-2" data-toggle="collapse" data-target="#extended_search_form" aria-expanded="{% if form_collapsed %}false{% else %}true{% endif %}">{{ _('More filters') }}</button>
+            {{ form.submit(class="btn btn-primary mt-1 mr-1")|safe }}
+            <button id="toggle-search-btn" type="button" class="btn btn-secondary mt-1 mr-1" data-toggle="collapse" data-target="#extended_search_form" aria-expanded="{% if form_collapsed %}false{% else %}true{% endif %}">{{ _('More filters') }}</button>
         </p>
     </form>
 </div>
@@ -103,8 +103,8 @@ var vue_app_data = { eventId: 0 };
                 <th>{{ _('Event') }}</th>
                 <th>{{ _('Organizer') }}</th>
                 <th>{{ _('Place') }}</th>
-                <th><i class="fa fa-fw fa-image" data-toggle="tooltip" title="{{ _('Photo') }}"></i></th>
-                <th><i class="fa fa-fw fa-link" data-toggle="tooltip" title="{{ _('Number of references') }} / {{ _('Number of reference requests.') }}"></i></th>
+                <th><i class="fa fa-fw fa-image" data-toggle="tooltip" data-boundary="window" title="{{ _('Photo') }}"></i></th>
+                <th><i class="fa fa-fw fa-link" data-toggle="tooltip" data-boundary="window" title="{{ _('Number of references') }} / {{ _('Number of reference requests.') }}"></i></th>
             </tr>
         </thead>
         <tbody>
@@ -138,8 +138,8 @@ var vue_app_data = { eventId: 0 };
                         <div><a href="{{ url_for('event_place_update', id=event.event_place.id) }}" class="text-body">{{ event.event_place.name }}</a></div>
                         <div>{% if event.event_place.location %}{{ event.event_place.location.postalCode }} {{ event.event_place.location.city }}{% endif %}</div>
                     </td>
-                    <td><i class="fa fa-fw fa-image {% if event.photo %}text-success{% else %}text-muted{% endif %}" data-toggle="tooltip" title="{{ _('Photo') }}"></i></td>
-                    <td class="fit"><span data-toggle="tooltip" title="{{ _('Number of references') }} / {{ _('Number of reference requests.') }}">{{ event.references|length }}/{{ event.reference_requests|length }}</span></td>
+                    <td><i class="fa fa-fw fa-image {% if event.photo %}text-success{% else %}text-muted{% endif %}" data-toggle="tooltip" data-boundary="window" title="{{ _('Photo') }}"></i></td>
+                    <td class="fit"><span data-toggle="tooltip" data-boundary="window" title="{{ _('Number of references') }} / {{ _('Number of reference requests.') }}">{{ event.references|length }}/{{ event.reference_requests|length }}</span></td>
                 </tr>
             {% endfor %}
         </tbody>

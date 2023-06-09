@@ -1,6 +1,10 @@
 const EventWarningPills = {
   template: `
     <span>
+      <span v-if="event.public_status" class="badge badge-pill badge-dark">
+          <template v-if="event.public_status == 'draft'">Entwurf</template>
+          <template v-else-if="event.public_status == 'planned'">In Planung</template>
+      </span>
       <span v-if="event.status" class="badge badge-pill badge-warning">
           <template v-if="event.status == 'cancelled'">Abgesagt</template>
           <template v-else-if="event.status == 'movedOnline'">Online verschoben</template>

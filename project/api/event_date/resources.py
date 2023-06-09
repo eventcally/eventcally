@@ -3,7 +3,7 @@ from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy import and_
 from sqlalchemy.orm import defaultload, lazyload
 
-from project.access import login_api_user
+from project.access import can_use_planning, login_api_user
 from project.api import add_api_resource
 from project.api.event.resources import api_can_read_event_or_401
 from project.api.event_date.schemas import (
@@ -64,6 +64,7 @@ class EventDateSearchResource(BaseResource):
         login_api_user()
         params = EventSearchParams()
         params.load_from_request()
+        params.can_read_planned_events = can_use_planning()
 
         if "not_referenced" in request.args:
             admin_unit = get_current_admin_unit_for_api()

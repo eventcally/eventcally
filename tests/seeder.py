@@ -250,25 +250,6 @@ class Seeder(object):
 
         return organizer_id
 
-    def upsert_admin_unit_api_key(self, admin_unit_id, name):
-        from project.services.api_key import upsert_api_key
-
-        with self._app.app_context():
-            api_key = upsert_api_key(admin_unit_id, name)
-            self._db.session.commit()
-            api_key_id = api_key.id
-
-        return api_key_id
-
-    def upsert_default_admin_unit_api_key(self, admin_unit_id):
-        from project.services.admin_unit import get_admin_unit_by_id
-
-        with self._app.app_context():
-            admin_unit = get_admin_unit_by_id(admin_unit_id)
-            api_key_id = self.upsert_admin_unit_api_key(admin_unit_id, admin_unit.name)
-
-        return api_key_id
-
     def insert_event_custom_widget(
         self,
         admin_unit_id,
@@ -385,6 +366,7 @@ class Seeder(object):
         description="Beschreibung",
         tags="",
         place_id=None,
+        planned=False,
         **kwargs
     ):
         from project.models import (
@@ -418,6 +400,9 @@ class Seeder(object):
                 start, end, allday, recurrence_rule
             )
             event.date_definitions = [date_definition]
+
+            if planned:
+                event.public_status = PublicStatus.planned
 
             if draft:
                 event.public_status = PublicStatus.draft
