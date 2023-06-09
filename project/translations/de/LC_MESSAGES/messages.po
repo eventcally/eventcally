@@ -1568,7 +1568,7 @@ msgstr "%(count)d Termine"
 #: project/templates/_macros.html:943 project/templates/_macros.html:945
 #: project/templates/event_date/list.html:510
 msgid "First"
-msgstr "Letzte"
+msgstr "Erste"
 
 #: project/templates/_macros.html:948 project/templates/_macros.html:950
 #: project/templates/event_date/list.html:511
@@ -1599,7 +1599,7 @@ msgstr "Weiter"
 #: project/templates/_macros.html:959 project/templates/_macros.html:961
 #: project/templates/event_date/list.html:514
 msgid "Last"
-msgstr "Erste"
+msgstr "Letzte"
 
 #: project/templates/_macros.html:1026
 msgid "Radius"
