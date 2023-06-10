@@ -25,6 +25,7 @@
 <script src="{{ url_for('static', filename='ext/VueTypeaheadBootstrap.2.12.0.umd.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/vee-validate.full.3.4.11.min.js')}}"></script>
 <script src="{{ url_for('static', filename='vue/common/typeahead.vue.js')}}"></script>
+<script src="{{ url_for('static', filename='vue/common/total-pagination.vue.js')}}"></script>
 <script src="{{ url_for('static', filename='vue/common/validated-input.vue.js')}}"></script>
 <script src="{{ url_for('static', filename='vue/common/validated-switch.vue.js')}}"></script>
 <script src="{{ url_for('static', filename='vue/common/validated-textarea.vue.js')}}"></script>
@@ -44,6 +45,7 @@
   Vue.component("ValidationProvider", VeeValidate.ValidationProvider);
 
   Vue.component("custom-typeahead", CustomTypeahead);
+  Vue.component("total-pagination", TotalPagination);
   Vue.component("validated-input", ValidatedInput);
   Vue.component("validated-switch", ValidatedSwitch);
   Vue.component("validated-textarea", ValidatedTextarea);
@@ -115,6 +117,13 @@
         delete: "Delete",
         remove: "Remove",
         emptyData: "No data available",
+        pagination: {
+          info: "Page {page} of {pages} ({total} total)",
+          first: "First",
+          previous: "Previous",
+          next: "Next",
+          last: "Last",
+        },
         errors: {
           uniqueViolation:
             "An entry with the entered values ​​already exists. Duplicate entries are not allowed.",
@@ -228,6 +237,13 @@
         delete: "Löschen",
         remove: "Entfernen",
         emptyData: "Keine Daten vorhanden",
+        pagination: {
+          info: "Seite {page} von {pages} ({total} insgesamt)",
+          first: "Erste",
+          previous: "Zurück",
+          next: "Weiter",
+          last: "Letzte",
+        },
         errors: {
           uniqueViolation:
             "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte Einträge sind nicht erlaubt.",

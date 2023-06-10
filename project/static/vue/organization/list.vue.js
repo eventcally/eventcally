@@ -42,12 +42,13 @@ const OrganizationList = {
             </b-link>
           </template>
         </b-table>
-        <b-pagination v-if="totalRows > 0"
+        <total-pagination
           v-model="currentPage"
-          :total-rows="totalRows"
           :per-page="perPage"
-          aria-controls="main-table"
-        ></b-pagination>
+          :totalPages="totalPages"
+          :totalRows="totalRows"
+          aria-controls="main-table">
+        </total-pagination>
     </div>
     `,
   data: () => ({
@@ -59,13 +60,19 @@ const OrganizationList = {
       },
     ],
     filter: null,
-    totalRows: 0,
     currentPage: 1,
     perPage: 10,
+    totalPages: 0,
+    totalRows: 0,
     searchResult: {
       items: [],
     },
   }),
+  watch: {
+    filter(newVal) {
+      this.currentPage = 1;
+    }
+  },
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
@@ -81,6 +88,7 @@ const OrganizationList = {
         })
         .then((response) => {
           vm.totalRows = response.data.total;
+          vm.totalPages = response.data.pages;
           callback(response.data.items);
         })
         .catch(() => {
