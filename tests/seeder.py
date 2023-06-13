@@ -77,6 +77,7 @@ class Seeder(object):
         can_verify_other=False,
         verified=False,
         can_invite_other=True,
+        incoming_verification_requests_allowed=False,
         **kwargs
     ):
         from project.models import AdminUnit, Location
@@ -93,6 +94,9 @@ class Seeder(object):
             admin_unit.can_create_other = can_create_other
             admin_unit.can_verify_other = can_verify_other
             admin_unit.can_invite_other = can_invite_other
+            admin_unit.incoming_verification_requests_allowed = (
+                incoming_verification_requests_allowed
+            )
 
             location = Location()
             location.postalCode = "12345"
@@ -108,6 +112,13 @@ class Seeder(object):
             self.verify_admin_unit(admin_unit_id)
 
         return admin_unit_id
+
+    def get_eventcally_admin_unit_id(self):
+        from project.services.admin_unit import get_admin_unit_by_name
+
+        with self._app.app_context():
+            other_admin_unit = get_admin_unit_by_name("eventcally")
+            return other_admin_unit.id if other_admin_unit else None
 
     def verify_admin_unit(self, admin_unit_id):
         from project.services.admin_unit import get_admin_unit_by_name

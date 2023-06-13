@@ -1,5 +1,5 @@
 from sqlalchemy import and_
-from sqlalchemy.orm import load_only
+from sqlalchemy.orm import defaultload, joinedload, load_only
 
 from project import db
 from project.models import (
@@ -9,6 +9,7 @@ from project.models import (
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
 )
+from project.models.admin_unit import AdminUnit
 
 
 def create_event_reference_for_request(request):
@@ -68,4 +69,60 @@ def get_reference_requests_incoming_badge_query(admin_unit):
 def get_relation_outgoing_query(admin_unit):
     return AdminUnitRelation.query.filter(
         AdminUnitRelation.source_admin_unit_id == admin_unit.id
+    )
+
+
+def get_newest_reference_requests(admin_unit_id: int, limit: int):
+    return (
+        EventReferenceRequest.query.join(
+            Event, EventReferenceRequest.event_id == Event.id
+        )
+        .join(
+            AdminUnit,
+            EventReferenceRequest.admin_unit_id == AdminUnit.id,
+        )
+        .options(
+            load_only(EventReferenceRequest.id),
+            defaultload(EventReferenceRequest.event).load_only(Event.id),
+            joinedload(EventReferenceRequest.admin_unit).load_only(
+                AdminUnit.id, AdminUnit.name
+            ),
+        )
+        .filter(
+            and_(
+                Event.admin_unit_id == admin_unit_id,
+                AdminUnit.id != admin_unit_id,
+                AdminUnit.incoming_reference_requests_allowed,
+            )
+        )
+        .order_by(EventReferenceRequest.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+
+
+def get_newest_references(admin_unit_id: int, limit: int):
+    return (
+        EventReference.query.join(Event, EventReference.event_id == Event.id)
+        .join(
+            AdminUnit,
+            EventReference.admin_unit_id == AdminUnit.id,
+        )
+        .options(
+            load_only(EventReference.id),
+            defaultload(EventReference.event).load_only(Event.id),
+            joinedload(EventReference.admin_unit).load_only(
+                AdminUnit.id, AdminUnit.name
+            ),
+        )
+        .filter(
+            and_(
+                Event.admin_unit_id == admin_unit_id,
+                AdminUnit.id != admin_unit_id,
+                AdminUnit.incoming_reference_requests_allowed,
+            )
+        )
+        .order_by(EventReference.created_at.desc())
+        .limit(limit)
+        .all()
     )

@@ -1,6 +1,9 @@
 import pytest
 from psycopg2.errors import UniqueViolation
 
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
 
 @pytest.mark.parametrize(
     "external_link", [None, "https://example.com", "www.example.com"]
@@ -54,7 +57,7 @@ def test_read_co_organizers(seeder, utils):
 
 
 @pytest.mark.parametrize("variant", ["normal", "db_error", "two_date_definitions"])
-def test_create(client, app, utils, seeder, mocker, variant):
+def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
@@ -105,7 +108,7 @@ def test_create(client, app, utils, seeder, mocker, variant):
             assert len(event.date_definitions) == 1
 
 
-def test_create_allday(client, app, utils, seeder):
+def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
@@ -142,7 +145,100 @@ def test_create_allday(client, app, utils, seeder):
         assert event.date_definitions[0].allday
 
 
-def test_create_newPlaceAndOrganizer(client, app, utils, seeder, mocker):
+def test_create_with_reference_requests(
+    client, app, utils: UtilActions, seeder: Seeder
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    eventcally_admin_unit_id = seeder.get_eventcally_admin_unit_id()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(
+        other_user_id,
+        "Other Crew",
+        verified=True,
+        incoming_verification_requests_allowed=True,
+    )
+    seeder.create_admin_unit_relation(
+        other_admin_unit_id, admin_unit_id, auto_verify_event_reference_requests=True
+    )
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "description": "Beschreibung",
+            "date_definitions-0-start": ["2030-12-31", "00:00"],
+            "date_definitions-0-end": ["2030-12-31", "23:59"],
+            "event_place_id": place_id,
+            "organizer_id": organizer_id,
+            "reference_request_admin_unit_id": [
+                eventcally_admin_unit_id,
+                other_admin_unit_id,
+            ],
+        },
+    )
+
+    utils.assert_response_redirect(response, "event_actions", event_id=1)
+
+    with app.app_context():
+        from project.models import (
+            Event,
+            EventReference,
+            EventReferenceRequest,
+            EventReferenceRequestReviewStatus,
+        )
+
+        event = (
+            Event.query.filter(Event.admin_unit_id == admin_unit_id)
+            .filter(Event.name == "Name")
+            .first()
+        )
+        assert event is not None
+
+        reference_request = (
+            EventReferenceRequest.query.filter(
+                EventReferenceRequest.admin_unit_id == eventcally_admin_unit_id
+            )
+            .filter(EventReferenceRequest.event_id == event.id)
+            .first()
+        )
+        assert reference_request is not None
+        assert (
+            reference_request.review_status == EventReferenceRequestReviewStatus.inbox
+        )
+
+        reference_request = (
+            EventReferenceRequest.query.filter(
+                EventReferenceRequest.admin_unit_id == other_admin_unit_id
+            )
+            .filter(EventReferenceRequest.event_id == event.id)
+            .first()
+        )
+        assert reference_request is not None
+        assert (
+            reference_request.review_status
+            == EventReferenceRequestReviewStatus.verified
+        )
+
+        reference = (
+            EventReference.query.filter(
+                EventReference.admin_unit_id == other_admin_unit_id
+            )
+            .filter(EventReference.event_id == event.id)
+            .first()
+        )
+        assert reference is not None
+
+
+def test_create_newPlaceAndOrganizer(
+    client, app, utils: UtilActions, seeder: Seeder, mocker
+):
     user_id, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
@@ -174,7 +270,7 @@ def test_create_newPlaceAndOrganizer(client, app, utils, seeder, mocker):
         assert event is not None
 
 
-def test_create_missingName(client, app, utils, seeder, mocker):
+def test_create_missingName(client, app, utils: UtilActions, seeder: Seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
@@ -189,7 +285,7 @@ def test_create_missingName(client, app, utils, seeder, mocker):
     utils.assert_response_error_message(response)
 
 
-def test_create_missingPlace(client, app, utils, seeder, mocker):
+def test_create_missingPlace(client, app, utils: UtilActions, seeder: Seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
@@ -208,7 +304,9 @@ def test_create_missingPlace(client, app, utils, seeder, mocker):
     utils.assert_response_error_message(response)
 
 
-def test_create_missingOrganizer(client, app, utils, seeder, mocker):
+def test_create_missingOrganizer(
+    client, app, utils: UtilActions, seeder: Seeder, mocker
+):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
@@ -229,7 +327,9 @@ def test_create_missingOrganizer(client, app, utils, seeder, mocker):
     utils.assert_response_error_message(response)
 
 
-def test_create_invalidOrganizer(client, app, utils, seeder, mocker):
+def test_create_invalidOrganizer(
+    client, app, utils: UtilActions, seeder: Seeder, mocker
+):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
@@ -254,7 +354,9 @@ def test_create_invalidOrganizer(client, app, utils, seeder, mocker):
     utils.assert_response_contains(response, "Ungültiger Mitveranstalter")
 
 
-def test_create_invalidDateFormat(client, app, utils, seeder, mocker):
+def test_create_invalidDateFormat(
+    client, app, utils: UtilActions, seeder: Seeder, mocker
+):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
@@ -275,7 +377,7 @@ def test_create_invalidDateFormat(client, app, utils, seeder, mocker):
     utils.assert_response_error_message(response)
 
 
-def test_create_startInvalid(client, app, utils, seeder, mocker):
+def test_create_startInvalid(client, app, utils: UtilActions, seeder: Seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
@@ -296,7 +398,7 @@ def test_create_startInvalid(client, app, utils, seeder, mocker):
     utils.assert_response_error_message(response)
 
 
-def test_create_startAfterEnd(client, app, utils, seeder, mocker):
+def test_create_startAfterEnd(client, app, utils: UtilActions, seeder: Seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
@@ -322,7 +424,9 @@ def test_create_startAfterEnd(client, app, utils, seeder, mocker):
     )
 
 
-def test_create_durationMoreThanMaxAllowedDuration(client, app, utils, seeder, mocker):
+def test_create_durationMoreThanMaxAllowedDuration(
+    client, app, utils: UtilActions, seeder: Seeder, mocker
+):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
@@ -347,7 +451,7 @@ def test_create_durationMoreThanMaxAllowedDuration(client, app, utils, seeder, m
 
 
 @pytest.mark.parametrize("allday", [True, False])
-def test_duplicate(client, app, utils, seeder, mocker, allday):
+def test_duplicate(client, app, utils: UtilActions, seeder: Seeder, mocker, allday):
     user_id, admin_unit_id = seeder.setup_base()
     template_event_id = seeder.create_event(admin_unit_id, allday=allday)
 
@@ -380,7 +484,7 @@ def test_duplicate(client, app, utils, seeder, mocker, allday):
 @pytest.mark.parametrize("free_text", [True, False])
 @pytest.mark.parametrize("allday", [True, False])
 def test_create_fromSuggestion(
-    client, app, db, utils, seeder, mocker, free_text, allday
+    client, app, db, utils: UtilActions, seeder: Seeder, mocker, free_text, allday
 ):
     user_id, admin_unit_id = seeder.setup_base()
     suggestion_id = seeder.create_event_suggestion(admin_unit_id, free_text, allday)
@@ -413,7 +517,7 @@ def test_create_fromSuggestion(
 
 
 def test_create_verifiedSuggestionRedirectsToReviewStatus(
-    client, app, utils, seeder, mocker
+    client, app, utils: UtilActions, seeder: Seeder, mocker
 ):
     user_id, admin_unit_id = seeder.setup_base()
     suggestion_id = seeder.create_event_suggestion(admin_unit_id)

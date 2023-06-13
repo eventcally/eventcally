@@ -1,6 +1,7 @@
 import datetime
 
 from sqlalchemy import and_, func, or_
+from sqlalchemy.orm import joinedload, load_only
 
 from project import db
 from project.models import (
@@ -294,6 +295,52 @@ def upsert_admin_unit_relation(source_admin_unit_id: int, target_admin_unit_id: 
         result = insert_admin_unit_relation(source_admin_unit_id, target_admin_unit_id)
 
     return result
+
+
+def get_admin_unit_relations_for_reference_requests(
+    target_admin_unit_id: int, limit: int
+):
+    return (
+        AdminUnitRelation.query.join(
+            AdminUnit,
+            AdminUnitRelation.source_admin_unit_id == AdminUnit.id,
+        )
+        .options(
+            joinedload(AdminUnitRelation.source_admin_unit).load_only(
+                AdminUnit.id, AdminUnit.name
+            ),
+        )
+        .filter(
+            and_(
+                AdminUnitRelation.target_admin_unit_id == target_admin_unit_id,
+                AdminUnit.incoming_reference_requests_allowed,
+            )
+        )
+        .order_by(
+            AdminUnitRelation.auto_verify_event_reference_requests.desc(),
+            AdminUnitRelation.verify.desc(),
+            AdminUnitRelation.invited.desc(),
+            AdminUnitRelation.created_at.desc(),
+        )
+        .limit(limit)
+        .all()
+    )
+
+
+def get_admin_units_for_reference_requests(admin_unit_id: int, limit: int):
+    return (
+        AdminUnit.query.options(
+            load_only(AdminUnit.id, AdminUnit.name),
+        )
+        .filter(
+            and_(
+                AdminUnit.id != admin_unit_id,
+                AdminUnit.incoming_reference_requests_allowed,
+            )
+        )
+        .limit(limit)
+        .all()
+    )
 
 
 def get_admin_unit_invitation_query(admin_unit):
