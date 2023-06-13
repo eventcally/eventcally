@@ -128,11 +128,21 @@ def get_admin_units_for_event_reference(event):
     return result
 
 
-def can_request_event_reference(event):
-    if not has_access(event.admin_unit, "reference_request:create"):
+def can_request_event_reference_from_admin_unit(admin_unit):
+    if not has_access(admin_unit, "reference_request:create"):
         return False
 
-    if not event.admin_unit.is_verified:
+    if not admin_unit.is_verified:
+        return False
+
+    return True
+
+
+def can_request_event_reference(event):
+    if not can_request_event_reference_from_admin_unit(event.admin_unit):
+        return False
+
+    if event.public_status != PublicStatus.published:
         return False
 
     return len(get_admin_units_for_event_reference_request(event)) > 0

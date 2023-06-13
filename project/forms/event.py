@@ -19,7 +19,12 @@ from wtforms.validators import DataRequired, Length, Optional
 
 from project.forms.common import Base64ImageForm, distance_choices, event_rating_choices
 from project.forms.event_place import EventPlaceLocationForm
-from project.forms.widgets import CustomDateField, CustomDateTimeField, HTML5StringField
+from project.forms.widgets import (
+    CustomDateField,
+    CustomDateTimeField,
+    HTML5StringField,
+    MultiCheckboxField,
+)
 from project.models import (
     EventAttendanceMode,
     EventDateDefinition,
@@ -313,6 +318,10 @@ class CreateEventForm(BaseEventForm):
         coerce=int,
     )
     new_organizer = FormField(OrganizerForm, default=lambda: EventOrganizer())
+
+    reference_request_admin_unit_id = MultiCheckboxField(
+        lazy_gettext("Reference requests"), validators=[Optional()], coerce=int
+    )
 
     submit_draft = SubmitField(lazy_gettext("Save as draft"))
     submit_planned = SubmitField(lazy_gettext("Save as planned"))

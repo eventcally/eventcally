@@ -17,7 +17,7 @@ from project.models import (
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
 )
-from project.services.admin_unit import get_admin_unit_relation
+from project.services.admin_unit import get_admin_unit_by_id, get_admin_unit_relation
 from project.services.reference import (
     create_event_reference_for_request,
     get_reference_requests_incoming_query,
@@ -92,23 +92,7 @@ def event_reference_request_create(event_id):
         try:
             db.session.add(request)
 
-            relation = get_admin_unit_relation(
-                request.admin_unit_id, event.admin_unit_id
-            )
-            auto_verify = relation and relation.auto_verify_event_reference_requests
-
-            if auto_verify:
-                request.review_status = EventReferenceRequestReviewStatus.verified
-                reference = create_event_reference_for_request(request)
-                send_auto_reference_inbox_mails(reference)
-                msg = gettext("Reference successfully created")
-            else:
-                request.review_status = EventReferenceRequestReviewStatus.inbox
-                send_reference_request_inbox_mails(request)
-                msg = gettext(
-                    "Request successfully created. You will be notified after the other organization reviews the event."
-                )
-
+            msg = handle_request_according_to_relation(request, event)
             db.session.commit()
             flash(msg, "success")
             return redirect(
@@ -124,6 +108,32 @@ def event_reference_request_create(event_id):
         flash_errors(form)
 
     return render_template("event/reference_request.html", form=form, event=event)
+
+
+def handle_request_according_to_relation(
+    request: EventReferenceRequest, event: Event
+) -> str:
+    admin_unit = get_admin_unit_by_id(request.admin_unit_id)
+    relation = get_admin_unit_relation(request.admin_unit_id, event.admin_unit_id)
+    auto_verify = relation and relation.auto_verify_event_reference_requests
+
+    if auto_verify:
+        request.review_status = EventReferenceRequestReviewStatus.verified
+        reference = create_event_reference_for_request(request)
+        send_auto_reference_inbox_mails(reference)
+        msg = gettext(
+            "%(organization)s accepted your reference request",
+            organization=admin_unit.name,
+        )
+    else:
+        request.review_status = EventReferenceRequestReviewStatus.inbox
+        send_reference_request_inbox_mails(request)
+        msg = gettext(
+            "Reference request to %(organization)s successfully created. You will be notified after the other organization reviews the event.",
+            organization=admin_unit.name,
+        )
+
+    return msg
 
 
 def send_member_reference_request_verify_mails(

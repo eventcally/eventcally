@@ -11,6 +11,7 @@ from project.access import (
     can_read_event_or_401,
     can_reference_event,
     can_request_event_reference,
+    can_request_event_reference_from_admin_unit,
     get_admin_unit_members_with_permission,
     has_access,
 )
@@ -28,6 +29,11 @@ from project.models import (
     EventSuggestion,
     PublicStatus,
 )
+from project.models.event_reference_request import EventReferenceRequest
+from project.services.admin_unit import (
+    get_admin_unit_relations_for_reference_requests,
+    get_admin_units_for_reference_requests,
+)
 from project.services.event import (
     create_ical_events_for_event,
     get_event_with_details_or_404,
@@ -38,8 +44,13 @@ from project.services.event import (
     update_event,
     upsert_event_category,
 )
+from project.services.reference import (
+    get_newest_reference_requests,
+    get_newest_references,
+)
 from project.utils import get_event_category_name, get_place_str
 from project.views.event_suggestion import send_event_suggestion_review_status_mail
+from project.views.reference_request import handle_request_according_to_relation
 from project.views.utils import (
     flash_errors,
     flash_message,
@@ -103,6 +114,61 @@ def event_report(event_id):
     return render_template("event/report.html")
 
 
+def prepare_form_reference_requests(form, admin_unit):
+    if not can_request_event_reference_from_admin_unit(admin_unit):
+        form.reference_request_admin_unit_id.choices = []
+        return
+
+    max_choices = 5
+    admin_unit_ids = []
+    admin_unit_choices = []
+    selected_ids = []
+
+    def add_admin_units(admin_units, selected=True):
+        for admin_unit in admin_units:
+            if admin_unit.id in admin_unit_ids:
+                continue
+
+            admin_unit_ids.append(admin_unit.id)
+            admin_unit_choices.append(admin_unit)
+
+            if selected:
+                selected_ids.append(admin_unit.id)
+
+    # Neuste ausgehende Empfehlungsanfragen
+    limit = max_choices - len(admin_unit_ids)
+    reference_requests = get_newest_reference_requests(admin_unit.id, limit)
+    add_admin_units([r.admin_unit for r in reference_requests])
+
+    # Neuste ausgehende Empfehlungen
+    limit = max_choices - len(admin_unit_ids)
+    if limit > 0:
+        references = get_newest_references(admin_unit.id, limit)
+        add_admin_units([r.admin_unit for r in references])
+
+    # Eingehende Beziehungen, die Organisation oder Events automatisch verifizieren
+    limit = max_choices - len(admin_unit_ids)
+    if limit > 0:
+        relations = get_admin_unit_relations_for_reference_requests(
+            admin_unit.id, limit
+        )
+        add_admin_units([r.source_admin_unit for r in relations])
+
+    # Organisationen, die eingehende Empfehlungsanfragen erlauben
+    limit = max_choices - len(admin_unit_ids)
+    if limit > 0:
+        admin_units_for_reference = get_admin_units_for_reference_requests(
+            admin_unit.id, limit
+        )
+        add_admin_units(admin_units_for_reference, False)
+
+    form.reference_request_admin_unit_id.choices = sorted(
+        [(a.id, a.name) for a in admin_unit_choices],
+        key=lambda a: a[1],
+    )
+    form.reference_request_admin_unit_id.data = selected_ids
+
+
 @app.route("/admin_unit/<int:id>/events/create", methods=("GET", "POST"))
 @auth_required()
 def event_create_for_admin_unit_id(id):
@@ -114,6 +180,7 @@ def event_create_for_admin_unit_id(id):
         admin_unit_id=admin_unit.id, category_ids=[upsert_event_category("Other").id]
     )
     prepare_event_form(form)
+    prepare_form_reference_requests(form, admin_unit)
 
     # Vorlagen
     event_suggestion = None
@@ -188,6 +255,20 @@ def event_create_for_admin_unit_id(id):
                 success_msg,
                 url_for("event", event_id=event.id),
             )
+
+            if (
+                event.public_status == PublicStatus.published
+                and form.reference_request_admin_unit_id.data
+            ):
+                for target_admin_unit_id in form.reference_request_admin_unit_id.data:
+                    reference_request = EventReferenceRequest()
+                    reference_request.event_id = event.id
+                    reference_request.admin_unit_id = target_admin_unit_id
+                    db.session.add(reference_request)
+                    msg = handle_request_according_to_relation(reference_request, event)
+                    db.session.commit()
+                    flash(msg, "success")
+
             return redirect(url_for("event_actions", event_id=event.id))
         except SQLAlchemyError as e:
             db.session.rollback()
