@@ -57,6 +57,7 @@ def add_relation(admin_unit, form, current_admin_unit):
     relation.auto_verify_event_reference_requests = auto_verify_event_reference_requests
 
     db.session.commit()
+    return relation
 
 
 @app.route("/admin_unit/create", methods=("GET", "POST"))
@@ -119,7 +120,7 @@ def admin_unit_create():
             )
 
             if embedded_relation_enabled:
-                add_relation(admin_unit, form, current_admin_unit)
+                relation = add_relation(admin_unit, form, current_admin_unit)
 
             if invitation and relation:
                 send_admin_unit_invitation_accepted_mails(
@@ -131,7 +132,21 @@ def admin_unit_create():
                 db.session.commit()
 
             flash(gettext("Organization successfully created"), "success")
-            return redirect(url_for("manage_admin_unit", id=admin_unit.id))
+
+            if relation and relation.verify:
+                url = url_for("manage_admin_unit", id=admin_unit.id)
+            else:
+                url = url_for(
+                    "manage_admin_unit_verification_requests_outgoing", id=admin_unit.id
+                )
+                flash(
+                    gettext(
+                        "The organization is not verified. Events are therefore not publicly visible."
+                    ),
+                    "warning",
+                )
+
+            return redirect(url)
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")

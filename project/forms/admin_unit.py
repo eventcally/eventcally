@@ -15,11 +15,9 @@ class AdminUnitLocationForm(FlaskForm):
         lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
     )
     postalCode = StringField(
-        lazy_gettext("Postal code"), validators=[DataRequired(), Length(max=255)]
+        lazy_gettext("Postal code"), validators=[Optional(), Length(max=255)]
     )
-    city = StringField(
-        lazy_gettext("City"), validators=[DataRequired(), Length(max=255)]
-    )
+    city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
     state = StringField(lazy_gettext("State"), validators=[Optional(), Length(max=255)])
     latitude = DecimalField(
         lazy_gettext("Latitude"), places=16, validators=[Optional()]
