@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_manage_form_styles, render_manage_form_scripts, render_admin_unit_form_script, render_jquery_steps_header, render_cropper_logo_block, render_crop_image_form_section, render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_manage_form_styles, render_manage_form_scripts, render_admin_unit_form_script, render_jquery_steps_header, render_cropper_logo_block, render_crop_image_form_section, render_field_with_errors, render_field %}
 
 {%- block title -%}
 {{ _('Create organization') }}
@@ -12,7 +12,6 @@
 {% block header %}
 {{ render_manage_form_scripts() }}
 {{ render_jquery_steps_header() }}
-{{ render_google_place_autocomplete_header() }}
 {{ render_cropper_logo_block() }}
 {{ render_admin_unit_form_script() }}
 {% endblock %}
@@ -40,19 +39,12 @@
     </div>
     <div class="card-body">
 
-      {{ render_google_place_autocomplete_field(True) }}
-
       {{ form.location.hidden_tag() }}
       {{ render_field_with_errors(form.location.street) }}
       {{ render_field_with_errors(form.location.postalCode) }}
       {{ render_field_with_errors(form.location.city) }}
-      {{ render_field_with_errors(form.location.state) }}
-      {{ render_field_with_errors(form.location.latitude) }}
-      {{ render_field_with_errors(form.location.longitude) }}
     </div>
   </div>
-
-  {{ render_crop_image_form_section(form.logo) }}
 
   <div class="card mb-4">
     <div class="card-header">
@@ -65,6 +57,8 @@
     {{ render_field_with_errors(form.fax) }}
     </div>
   </div>
+
+  {{ render_crop_image_form_section(form.logo) }}
 
   {% if embedded_relation_enabled %}
   <div class="card mb-4">
