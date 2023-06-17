@@ -23,6 +23,18 @@ def test_list(client, seeder: Seeder, utils: UtilActions):
     utils.get_json_ok(url)
 
 
+def test_list_for_reference_request(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+
+    url = utils.get_url("api_v1_organization_list", for_reference_request="1")
+    response = utils.get_json_ok(url, headers={"X-OrganizationId": str(admin_unit_id)})
+
+    assert len(response.json["items"]) == 2
+    assert response.json["items"][1]["id"] == other_admin_unit_id
+
+
 def test_list_unverified(client, app, seeder: Seeder, utils: UtilActions):
     user_id, verified_admin_unit_id = seeder.setup_base(
         email="verified@test.de",

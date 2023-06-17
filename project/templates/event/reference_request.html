@@ -1,8 +1,57 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_field_with_errors, render_field %}
+{% from "_macros.html" import render_field_with_errors, render_field, render_form_styles, render_form_scripts %}
+
 {%- block title -%}
 {{ event.name }}
 {%- endblock -%}
+
+{% block styles %}
+{{ render_form_styles() }}
+{% endblock %}
+
+{% block header_before_site_js %}
+{{ render_form_scripts() }}
+{%- endblock -%}
+
+{% block header %}
+<script>
+    $(function() {
+
+        $('#admin_unit_id').select2({
+            width: '100%',
+            theme: 'bootstrap4',
+            ajax: {
+                url: function (params) {
+                    return '/api/v1/organizations?for_reference_request=1';
+                },
+                dataType: 'json',
+                headers: {"X-OrganizationId": "{{ current_admin_unit.id }}"},
+                delay: 250,
+                cache: true,
+                data: function (params) {
+                    return {
+                        name: params.term,
+                        per_page: 5,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.items.map(p => ({"id": p.id, "text": p.name})),
+                        pagination: {
+                            more: data.has_next
+                        }
+                    };
+                }
+            },
+            placeholder: "{{ _('Enter organization') }}",
+            allowClear: false
+        });
+
+    });
+</script>
+{% endblock %}
+
 {% block content %}
 
 <h1>{{ _('Request reference for event "%(name)s"', name=event.name) }}</h1>

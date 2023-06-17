@@ -4,9 +4,9 @@ from flask_login import login_user
 from flask_principal import Permission, RoleNeed
 from flask_security import current_user
 from flask_security.utils import FsPermNeed
-from sqlalchemy import and_
+from sqlalchemy import and_, exists
 
-from project import app
+from project import app, db
 from project.models import AdminUnit, AdminUnitMember, Event, PublicStatus, User
 from project.models.admin_unit import AdminUnitMemberRole
 from project.services.admin_unit import get_member_for_admin_unit_by_user_id
@@ -145,16 +145,16 @@ def can_request_event_reference(event):
     if event.public_status != PublicStatus.published:
         return False
 
-    return len(get_admin_units_for_event_reference_request(event)) > 0
-
-
-def get_admin_units_for_event_reference_request(event):
-    return AdminUnit.query.filter(
-        and_(
-            AdminUnit.id != event.admin_unit_id,
-            AdminUnit.incoming_reference_requests_allowed,
+    return db.session.scalar(
+        exists()
+        .where(
+            and_(
+                AdminUnit.id != event.admin_unit_id,
+                AdminUnit.incoming_reference_requests_allowed,
+            )
         )
-    ).all()
+        .select()
+    )
 
 
 def admin_units_the_current_user_is_member_of():
