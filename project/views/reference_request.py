@@ -9,7 +9,6 @@ from project.access import (
     can_request_event_reference,
     get_admin_unit_for_manage_or_404,
     get_admin_unit_members_with_permission,
-    get_admin_units_for_event_reference_request,
 )
 from project.forms.reference_request import CreateEventReferenceRequestForm
 from project.models import (
@@ -17,7 +16,11 @@ from project.models import (
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
 )
-from project.services.admin_unit import get_admin_unit_by_id, get_admin_unit_relation
+from project.services.admin_unit import (
+    get_admin_unit_by_id,
+    get_admin_unit_relation,
+    get_admin_unit_suggestions_for_reference_requests,
+)
 from project.services.reference import (
     create_event_reference_for_request,
     get_reference_requests_incoming_query,
@@ -76,13 +79,24 @@ def event_reference_request_create(event_id):
         abort(401)
 
     form = CreateEventReferenceRequestForm()
-    form.admin_unit_id.choices = sorted(
-        [
-            (admin_unit.id, admin_unit.name)
-            for admin_unit in get_admin_units_for_event_reference_request(event)
-        ],
-        key=lambda admin_unit: admin_unit[1],
-    )
+
+    if form.admin_unit_id.data and form.admin_unit_id.data > 0:
+        admin_unit = get_admin_unit_by_id(form.admin_unit_id.data)
+
+        if admin_unit:
+            form.admin_unit_id.choices = [(admin_unit.id, admin_unit.name)]
+
+    if not form.admin_unit_id.choices:
+        (
+            admin_unit_choices,
+            selected_ids,
+        ) = get_admin_unit_suggestions_for_reference_requests(
+            event.admin_unit, max_choices=1
+        )
+        form.admin_unit_id.choices = [(a.id, a.name) for a in admin_unit_choices]
+        form.admin_unit_id.data = (
+            admin_unit_choices[0].id if len(admin_unit_choices) > 0 else None
+        )
 
     if form.validate_on_submit():
         request = EventReferenceRequest()

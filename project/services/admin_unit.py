@@ -20,6 +20,10 @@ from project.models import (
 )
 from project.services.image import upsert_image_with_data
 from project.services.location import assign_location_values
+from project.services.reference import (
+    get_newest_reference_requests,
+    get_newest_references,
+)
 
 
 def insert_admin_unit_for_user(admin_unit, user, invitation=None):
@@ -175,6 +179,7 @@ def get_admin_unit_query(
     keyword=None,
     include_unverified=False,
     only_verifier=False,
+    reference_request_for_admin_unit_id=None,
 ):
     query = AdminUnit.query
 
@@ -186,6 +191,13 @@ def get_admin_unit_query(
             AdminUnit.can_verify_other, AdminUnit.incoming_verification_requests_allowed
         )
         query = query.filter(only_verifier_filter)
+
+    if reference_request_for_admin_unit_id:
+        request_filter = and_(
+            AdminUnit.id != reference_request_for_admin_unit_id,
+            AdminUnit.incoming_reference_requests_allowed,
+        )
+        query = query.filter(request_filter)
 
     if keyword:
         like_keyword = "%" + keyword + "%"
@@ -384,3 +396,49 @@ def get_admin_units_with_due_delete_request():
 def delete_admin_unit(admin_unit: AdminUnit):
     db.session.delete(admin_unit)
     db.session.commit()
+
+
+def get_admin_unit_suggestions_for_reference_requests(admin_unit, max_choices=5):
+    admin_unit_ids = []
+    admin_unit_choices = []
+    selected_ids = []
+
+    def add_admin_units(admin_units, selected=True):
+        for admin_unit in admin_units:
+            if admin_unit.id in admin_unit_ids:
+                continue
+
+            admin_unit_ids.append(admin_unit.id)
+            admin_unit_choices.append(admin_unit)
+
+            if selected:
+                selected_ids.append(admin_unit.id)
+
+    # Neuste ausgehende Empfehlungsanfragen
+    limit = max_choices - len(admin_unit_ids)
+    reference_requests = get_newest_reference_requests(admin_unit.id, limit)
+    add_admin_units([r.admin_unit for r in reference_requests])
+
+    # Neuste ausgehende Empfehlungen
+    limit = max_choices - len(admin_unit_ids)
+    if limit > 0:
+        references = get_newest_references(admin_unit.id, limit)
+        add_admin_units([r.admin_unit for r in references])
+
+    # Eingehende Beziehungen, die Organisation oder Events automatisch verifizieren
+    limit = max_choices - len(admin_unit_ids)
+    if limit > 0:
+        relations = get_admin_unit_relations_for_reference_requests(
+            admin_unit.id, limit
+        )
+        add_admin_units([r.source_admin_unit for r in relations])
+
+    # Organisationen, die eingehende Empfehlungsanfragen erlauben
+    limit = max_choices - len(admin_unit_ids)
+    if limit > 0:
+        admin_units_for_reference = get_admin_units_for_reference_requests(
+            admin_unit.id, limit
+        )
+        add_admin_units(admin_units_for_reference, False)
+
+    return (admin_unit_choices, selected_ids)

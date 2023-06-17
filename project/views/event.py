@@ -31,8 +31,7 @@ from project.models import (
 )
 from project.models.event_reference_request import EventReferenceRequest
 from project.services.admin_unit import (
-    get_admin_unit_relations_for_reference_requests,
-    get_admin_units_for_reference_requests,
+    get_admin_unit_suggestions_for_reference_requests,
 )
 from project.services.event import (
     create_ical_events_for_event,
@@ -43,10 +42,6 @@ from project.services.event import (
     insert_event,
     update_event,
     upsert_event_category,
-)
-from project.services.reference import (
-    get_newest_reference_requests,
-    get_newest_references,
 )
 from project.utils import get_event_category_name, get_place_str
 from project.views.event_suggestion import send_event_suggestion_review_status_mail
@@ -119,48 +114,10 @@ def prepare_form_reference_requests(form, admin_unit):
         form.reference_request_admin_unit_id.choices = []
         return
 
-    max_choices = 5
-    admin_unit_ids = []
-    admin_unit_choices = []
-    selected_ids = []
-
-    def add_admin_units(admin_units, selected=True):
-        for admin_unit in admin_units:
-            if admin_unit.id in admin_unit_ids:
-                continue
-
-            admin_unit_ids.append(admin_unit.id)
-            admin_unit_choices.append(admin_unit)
-
-            if selected:
-                selected_ids.append(admin_unit.id)
-
-    # Neuste ausgehende Empfehlungsanfragen
-    limit = max_choices - len(admin_unit_ids)
-    reference_requests = get_newest_reference_requests(admin_unit.id, limit)
-    add_admin_units([r.admin_unit for r in reference_requests])
-
-    # Neuste ausgehende Empfehlungen
-    limit = max_choices - len(admin_unit_ids)
-    if limit > 0:
-        references = get_newest_references(admin_unit.id, limit)
-        add_admin_units([r.admin_unit for r in references])
-
-    # Eingehende Beziehungen, die Organisation oder Events automatisch verifizieren
-    limit = max_choices - len(admin_unit_ids)
-    if limit > 0:
-        relations = get_admin_unit_relations_for_reference_requests(
-            admin_unit.id, limit
-        )
-        add_admin_units([r.source_admin_unit for r in relations])
-
-    # Organisationen, die eingehende Empfehlungsanfragen erlauben
-    limit = max_choices - len(admin_unit_ids)
-    if limit > 0:
-        admin_units_for_reference = get_admin_units_for_reference_requests(
-            admin_unit.id, limit
-        )
-        add_admin_units(admin_units_for_reference, False)
+    (
+        admin_unit_choices,
+        selected_ids,
+    ) = get_admin_unit_suggestions_for_reference_requests(admin_unit)
 
     form.reference_request_admin_unit_id.choices = sorted(
         [(a.id, a.name) for a in admin_unit_choices],

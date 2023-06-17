@@ -93,7 +93,7 @@ from project.services.reference import (
     get_reference_outgoing_query,
     get_relation_outgoing_query,
 )
-from project.views.utils import send_mail
+from project.views.utils import get_current_admin_unit_for_api, send_mail
 
 
 class OrganizationResource(BaseResource):
@@ -224,8 +224,19 @@ class OrganizationListResource(BaseResource):
 
         login_api_user()
         include_unverified = can_verify_admin_unit()
+        reference_request_for_admin_unit_id = None
 
-        pagination = get_admin_unit_query(keyword, include_unverified).paginate()
+        if "for_reference_request" in request.args:
+            admin_unit = get_current_admin_unit_for_api()
+
+            if admin_unit:
+                reference_request_for_admin_unit_id = admin_unit.id
+
+        pagination = get_admin_unit_query(
+            keyword,
+            include_unverified,
+            reference_request_for_admin_unit_id=reference_request_for_admin_unit_id,
+        ).paginate()
         return pagination
 
 
