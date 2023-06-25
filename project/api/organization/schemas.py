@@ -68,6 +68,7 @@ class OrganizationRefSchema(OrganizationIdSchema):
 
 class OrganizationListRefSchema(OrganizationRefSchema):
     short_name = marshmallow.auto_field()
+    is_verified = fields.Boolean()
 
 
 class OrganizationListRequestSchema(PaginationRequestSchema):

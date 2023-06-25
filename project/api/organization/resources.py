@@ -61,6 +61,7 @@ from project.api.organization_relation.schemas import (
     OrganizationRelationIdSchema,
     OrganizationRelationListRequestSchema,
     OrganizationRelationListResponseSchema,
+    OrganizationRelationSchema,
 )
 from project.api.organizer.schemas import (
     OrganizerIdSchema,
@@ -76,6 +77,7 @@ from project.api.place.schemas import (
 )
 from project.api.resources import BaseResource, require_api_access
 from project.models import AdminUnit, Event, PublicStatus
+from project.models.admin_unit import AdminUnitRelation
 from project.services.admin_unit import (
     get_admin_unit_invitation_query,
     get_admin_unit_query,
@@ -395,6 +397,25 @@ class OrganizationOutgoingRelationListResource(BaseResource):
         return relation, 201
 
 
+class OrganizationOutgoingRelationResource(BaseResource):
+    @doc(
+        summary="Get outgoing relation to given target organization",
+        tags=["Organizations", "Organization Relations"],
+    )
+    @marshal_with(OrganizationRelationSchema)
+    @require_api_access("organization:read")
+    def get(self, id, target_id):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+        access_or_401(admin_unit, "admin_unit:update")
+
+        relation = AdminUnitRelation.query.filter(
+            AdminUnitRelation.source_admin_unit_id == id,
+            AdminUnitRelation.target_admin_unit_id == target_id,
+        ).first_or_404(id)
+        return relation
+
+
 class OrganizationOrganizationInvitationListResource(BaseResource):
     @doc(
         summary="List organization invitations of organization",
@@ -585,6 +606,11 @@ add_api_resource(
     OrganizationOutgoingRelationListResource,
     "/organizations/<int:id>/relations/outgoing",
     "api_v1_organization_outgoing_relation_list",
+)
+add_api_resource(
+    OrganizationOutgoingRelationResource,
+    "/organizations/<int:id>/relations/outgoing/<int:target_id>",
+    "api_v1_organization_outgoing_relation",
 )
 add_api_resource(
     OrganizationOrganizationInvitationListResource,

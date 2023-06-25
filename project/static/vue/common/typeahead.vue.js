@@ -102,10 +102,17 @@ const CustomTypeahead = {
     );
   },
   watch: {
+    // Handles internal model changes.
     selected(newVal) {
-      this.$emit("input", newVal)
-      this.$refs.validationProvider.syncValue(newVal)
-      this.$refs.validationProvider.validate()
+      this.$emit("input", newVal);
+      this.$refs.validationProvider.syncValue(newVal);
+      this.$refs.validationProvider.validate();
+    },
+    // Handles external model changes.
+    value(newVal) {
+      this.selected = newVal;
+      this.$refs.typeahead.inputValue =
+        newVal != null ? this.$refs.typeahead.serializer(newVal) : null;
     }
   }
 };

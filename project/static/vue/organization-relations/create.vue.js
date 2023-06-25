@@ -73,7 +73,7 @@ const OrganizationRelationCreate = {
     this.form = {
         targetOrganization: null,
         auto_verify_event_reference_requests: false,
-        verify: false,
+        verify: this.$route.query.verify == "1",
     }
     this.loadAdminUnit();
   },
@@ -86,6 +86,22 @@ const OrganizationRelationCreate = {
           })
           .then((response) => {
             this.adminUnit = response.data;
+            this.loadTarget();
+          });
+      },
+      loadTarget() {
+        if (this.$route.query.target == undefined) {
+          return;
+        }
+        axios
+          .get(`/api/v1/organizations/${this.$route.query.target}`, {
+            withCredentials: true,
+          })
+          .then((response) => {
+            this.form.targetOrganization = {
+              id: response.data.id,
+              name: response.data.name
+            };
           });
       },
       handleLoadingAdminUnit(isLoading) {
