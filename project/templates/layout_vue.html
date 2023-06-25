@@ -523,7 +523,7 @@
         });
       },
       goBack(fallbackPath) {
-        if ('referrer' in document) {
+        if ('referrer' in document && document.referrer) {
           window.location = document.referrer;
           return;
         }
