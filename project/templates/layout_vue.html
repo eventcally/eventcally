@@ -348,6 +348,11 @@
 
   axios.defaults.baseURL = "{{ get_base_url() }}";
   axios.defaults.headers.common["X-CSRFToken"] = "{{ csrf_token() }}";
+
+  {% if current_admin_unit %}
+  axios.defaults.headers.common["X-OrganizationId"] = "{{ current_admin_unit.id }}";
+  {% endif %}
+
   axios.interceptors.request.use(
     function (config) {
       if (config) {
@@ -381,6 +386,29 @@
   vue_app_data["docsUrl"] = "{{ config["DOCS_URL"] }}";
   {% endif %}
 
+  {% if current_user %}
+  vue_app_data["currentUser"] = {
+    {% if current_user.is_authenticated %}
+    isAuthenticated: true,
+    id: "{{ current_user.id }}",
+    email: "{{ current_user.email }}",
+    roles: [{% for role in get_current_user_roles() %}"{{ role }}"{% if not loop.last %},{% endif %}{% endfor %}],
+    permissions: [{% for permission in get_current_user_permissions() %}"{{ permission }}"{% if not loop.last %},{% endif %}{% endfor %}]
+    {% else %}
+    isAuthenticated: false
+    {% endif %}
+  };
+  {% endif %}
+
+  {% if current_admin_unit %}
+  vue_app_data["currentAdminUnit"] = {
+    id: "{{ current_admin_unit.id }}",
+    name: "{{ current_admin_unit.name }}",
+    roles: [{% for role in get_current_admin_unit_roles() %}"{{ role }}"{% if not loop.last %},{% endif %}{% endfor %}],
+    permissions: [{% for permission in get_current_admin_unit_permissions() %}"{{ permission }}"{% if not loop.last %},{% endif %}{% endfor %}]
+  };
+  {% endif %}
+
   {% block vue_init_data %}
   var vue_init_data = {
     el: "#vue-container",
@@ -399,6 +427,14 @@
 
         if (
           config &&
+          config.handler &&
+          config.handler.hasOwnProperty("handleLoading")
+        ) {
+          config.handler.handleLoading(true);
+        }
+
+        if (
+          config &&
           config.hasOwnProperty("handleLoading")
         ) {
           config.handleLoading(true);
@@ -411,6 +447,14 @@
           config.handler.hasOwnProperty("handleRequestFinish")
         ) {
           config.handler.handleRequestFinish();
+        }
+
+        if (
+          config &&
+          config.handler &&
+          config.handler.hasOwnProperty("handleLoading")
+        ) {
+          config.handler.handleLoading(false);
         }
 
         if (
@@ -479,6 +523,11 @@
         });
       },
       goBack(fallbackPath) {
+        if ('referrer' in document && document.referrer) {
+          window.location = document.referrer;
+          return;
+        }
+
         window.history.length > 1 ? this.$router.go(-1) : this.$router.push({ path: fallbackPath })
       },
       render_event_date_instance(value, allday, format = "dd. DD.MM.YYYY LT", alldayFormat = "dd. DD.MM.YYYY") {
@@ -530,6 +579,22 @@
       url_for_image(image, size) {
           return `${axios.defaults.baseURL}${image.image_url}?s=${size}`
       },
+      has_access(permission) {
+        if (!this.currentUser.isAuthenticated) {
+          return false;
+        }
+
+        if (this.currentUser.permissions.includes(permission)) {
+          return true;
+        }
+
+        if (this.hasOwnProperty("currentAdminUnit") &&
+            this.currentAdminUnit.permissions.includes(permission)) {
+          return true;
+        }
+
+        return false;
+      }
     },
   };
   {% endblock %}

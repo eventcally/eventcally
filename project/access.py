@@ -225,7 +225,7 @@ def can_verify_admin_unit():
     if not current_user.is_authenticated:  # pragma: no cover
         return False
 
-    if has_current_user_role("admin"):
+    if has_current_user_role("admin"):  # pragma: no cover
         return True
 
     admin_units = get_admin_units_for_manage()

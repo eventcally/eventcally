@@ -109,9 +109,59 @@ def get_context_processors():
 
         return has_tos()
 
+    def get_current_user_roles():
+        from flask_security import current_user
+
+        if not current_user.is_authenticated:  # pragma: no cover
+            return []
+
+        return [r.name for r in current_user.roles]
+
+    def get_current_user_permissions():
+        from flask_security import current_user
+
+        if not current_user.is_authenticated:  # pragma: no cover
+            return []
+
+        return sum([r.permissions for r in current_user.roles], [])
+
+    def get_current_admin_unit_roles():
+        from project.access import get_current_user_member_for_admin_unit
+
+        current_admin_unit = get_current_admin_unit()
+
+        if not current_admin_unit:  # pragma: no cover
+            return []
+
+        member = get_current_user_member_for_admin_unit(current_admin_unit.id)
+
+        if not member:  # pragma: no cover
+            return []
+
+        return [r.name for r in member.roles]
+
+    def get_current_admin_unit_permissions():
+        from project.access import get_current_user_member_for_admin_unit
+
+        current_admin_unit = get_current_admin_unit()
+
+        if not current_admin_unit:  # pragma: no cover
+            return []
+
+        member = get_current_user_member_for_admin_unit(current_admin_unit.id)
+
+        if not member:  # pragma: no cover
+            return []
+
+        return sum([r.permissions for r in member.roles], [])
+
     return dict(
         current_admin_unit=get_current_admin_unit(),
+        get_current_admin_unit_roles=get_current_admin_unit_roles,
+        get_current_admin_unit_permissions=get_current_admin_unit_permissions,
         get_manage_menu_options=get_manage_menu_options,
         has_access=has_access,
         has_tos=has_tos,
+        get_current_user_roles=get_current_user_roles,
+        get_current_user_permissions=get_current_user_permissions,
     )

@@ -486,6 +486,26 @@ def test_references_outgoing(client, seeder: Seeder, utils: UtilActions):
     utils.get_json_ok(url)
 
 
+def test_outgoing_relation_read(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    (
+        other_user_id,
+        other_admin_unit_id,
+        relation_id,
+    ) = seeder.create_any_admin_unit_relation(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_relation",
+        id=admin_unit_id,
+        target_id=other_admin_unit_id,
+    )
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+    assert response.json["id"] == relation_id
+    assert response.json["source_organization"]["id"] == admin_unit_id
+    assert response.json["target_organization"]["id"] == other_admin_unit_id
+
+
 def test_outgoing_relation_list(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access()
     (

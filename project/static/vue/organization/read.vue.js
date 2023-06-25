@@ -40,19 +40,59 @@ const OrganizationRead = {
               </div>
 
               <div v-if="organization.description" class="mt-3">
-                <span style="white-space: pre;">{{ organization.description }}</span>
+                <span style="white-space: pre-wrap;">{{ organization.description }}</span>
+              </div>
+
+              <div v-if="canRelation" class="mt-3">
+                <b-overlay :show="isLoadingRelation">
+                  <div>
+                    <b-card v-if="relation">
+                      <b-card-text>
+                        <div v-if="relation.verify">
+                          <i class="fa fa-fw fa-check-circle"></i> {{ $t('comp.relationVerify', { source: $root.currentAdminUnit.name, target: organization.name }) }}
+                        </div>
+                        <div v-if="relation.auto_verify_event_reference_requests">
+                          <i class="fa fa-fw fa-check-circle"></i> {{ $t('comp.relationAutoVerifyEventReferenceRequests', { source: $root.currentAdminUnit.name, target: organization.name }) }}
+                        </div>
+                      </b-card-text>
+                      <b-link :href="relationEditUrl">
+                        {{ $t("comp.relationEdit") }}
+                      </b-link>
+                    </b-card>
+
+                    <template v-if="relationDoesNotExist">
+                      <b-card v-if="organization.is_verified">
+                        <b-card-text>
+                          {{ $t('comp.relationDoesNotExist', { source: $root.currentAdminUnit.name, target: organization.name }) }}
+                        </b-card-text>
+                        <b-link :href="relationCreateUrl">
+                          {{ $t("comp.relationCreate") }}
+                        </b-link>
+                      </b-card>
+
+                      <b-card v-else border-variant="warning">
+                        <b-card-text>
+                          {{ $t("comp.organizationNotVerified", { organization: organization.name }) }}
+                        </b-card-text>
+                        <b-link :href="relationCreateUrl">
+                          {{ $t("comp.relationCreateToVerify", { organization: organization.name }) }}
+                        </b-link>
+                      </b-card>
+                    </template>
+                  </div>
+                </b-overlay>
               </div>
 
               <b-list-group class="mt-4">
-              <b-list-group-item :href="'/eventdates?admin_unit_id=' + organization.id">
-                <i class="fa fa-fw fa-list"></i>
-                {{ $t("shared.models.event.listName") }}
-              </b-list-group-item>
-              <b-list-group-item button v-b-modal.modal-ical>
-                <i class="fa fa-fw fa-calendar"></i>
-                {{ $t("comp.icalExport") }}
-              </b-list-group-item>
-            </b-list-group>
+                <b-list-group-item :href="'/eventdates?admin_unit_id=' + organization.id">
+                  <i class="fa fa-fw fa-list"></i>
+                  {{ $t("shared.models.event.listName") }}
+                </b-list-group-item>
+                <b-list-group-item button v-b-modal.modal-ical>
+                  <i class="fa fa-fw fa-calendar"></i>
+                  {{ $t("comp.icalExport") }}
+                </b-list-group-item>
+              </b-list-group>
 
               <b-modal id="modal-ical" :title="$t('comp.icalExport')" size="lg" ok-only>
                 <template #default="{ hide }">
@@ -67,6 +107,7 @@ const OrganizationRead = {
                   <b-button variant="outline-secondary" @click="hide()">{{ $t("shared.close") }}</b-button>
                 </template>
               </b-modal>
+
             </b-col>
           </b-row>
         </div>
@@ -81,6 +122,13 @@ const OrganizationRead = {
           download: "Download",
           icalCopied: "Link copied",
           icalExport: "iCal calendar",
+          organizationNotVerified: "{organization} is not verified",
+          relationVerify: "{source} verifies {target}",
+          relationAutoVerifyEventReferenceRequests: "{source} verifies reference requests from {target} automatically",
+          relationDoesNotExist: "There is no relation from {source} to {target}",
+          relationEdit: "Edit relation",
+          relationCreate: "Create relation",
+          relationCreateToVerify: "Verify {organization}",
         },
       },
       de: {
@@ -89,13 +137,24 @@ const OrganizationRead = {
           download: "Runterladen",
           icalCopied: "Link kopiert",
           icalExport: "iCal Kalender",
+          organizationNotVerified: "{organization} ist nicht verifiziert",
+          relationVerify: "{source} verifiziert {target}",
+          relationAutoVerifyEventReferenceRequests: "{source} verifiziert Empfehlungsanfragen von {target} automatisch",
+          relationDoesNotExist: "Es besteht keine Beziehung von {source} zu {target}",
+          relationEdit: "Beziehung bearbeiten",
+          relationCreate: "Beziehung erstellen",
+          relationCreateToVerify: "Verifiziere {organization}",
         },
       },
     },
   },
   data: () => ({
     isLoading: false,
+    isLoadingRelation: false,
     organization: null,
+    relation: null,
+    canRelation: false,
+    relationDoesNotExist: false,
   }),
   computed: {
     organizationId() {
@@ -107,11 +166,22 @@ const OrganizationRead = {
     icalDocsUrl() {
       return this.$root.docsUrl ? `${this.$root.docsUrl}/goto/ical-calendar` : null;
     },
+    relationEditUrl() {
+      return `/manage/admin_unit/${this.$root.currentAdminUnit.id}/relations/${this.relation.id}/update`;
+    },
+    relationCreateUrl() {
+      return `/manage/admin_unit/${this.$root.currentAdminUnit.id}/relations/create?target=${this.organizationId}&verify=1`;
+    },
   },
   mounted() {
     this.isLoading = false;
+    this.isLoadingRelation = false;
     this.organization = null;
+    this.relation = null;
+    this.canRelation = this.$root.has_access("admin_unit:update");
+    this.relationDoesNotExist = false;
     this.loadData();
+    this.loadRelationData();
   },
   methods: {
     loadData() {
@@ -122,6 +192,33 @@ const OrganizationRead = {
         })
         .then((response) => {
           this.organization = response.data;
+        });
+    },
+    loadRelationData() {
+      if (!this.$root.hasOwnProperty("currentAdminUnit")) {
+        return;
+      }
+      const vm = this;
+      axios
+        .get(`/api/v1/organizations/${this.$root.currentAdminUnit.id}/relations/outgoing/${this.organizationId}`, {
+          withCredentials: true,
+          handleLoading: this.handleLoadingRelation,
+          handler: {
+            handleLoading: function(isLoading) {
+                vm.isLoadingRelation = isLoading;
+            },
+            handleRequestError: function(error, message) {
+              const status = error && error.response && error.response.status;
+              if (status == 404) {
+                vm.relationDoesNotExist = true;
+                return;
+              }
+              this.$root.makeErrorToast(message);
+            }
+          }
+        })
+        .then((response) => {
+          this.relation = response.data;
         });
     },
     handleLoading(isLoading) {

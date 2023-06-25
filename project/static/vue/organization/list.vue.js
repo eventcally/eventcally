@@ -37,7 +37,7 @@ const OrganizationList = {
         >
           <template #cell(name)="data">
             <b-link :to="{ name: 'OrganizationById', params: { organization_id: data.item.id } }">
-              <div>{{ data.item.name }}</div>
+              <div>{{ data.item.name }} <template v-if="data.item.is_verified"><i class="fa fa-check-circle text-primary"></i></template></div>
               <div class="text-muted">@{{ data.item.short_name }}</div>
             </b-link>
           </template>
