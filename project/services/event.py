@@ -192,26 +192,39 @@ def fill_event_filter(event_filter, params: EventSearchParams):
     return event_filter
 
 
+def fill_event_admin_unit_filter(event_filter, params: EventSearchParams):
+    admin_unit_reference = None
+
+    if params.admin_unit_id:
+        if params.include_admin_unit_references:
+            admin_unit_refs_subquery = EventReference.query.filter(
+                EventReference.admin_unit_id == params.admin_unit_id
+            ).subquery()
+            admin_unit_reference = aliased(EventReference, admin_unit_refs_subquery)
+
+            event_filter = and_(
+                event_filter,
+                or_(
+                    Event.admin_unit_id == params.admin_unit_id,
+                    admin_unit_reference.id.isnot(None),
+                ),
+            )
+        else:
+            event_filter = and_(
+                event_filter, Event.admin_unit_id == params.admin_unit_id
+            )
+
+    return admin_unit_reference, event_filter
+
+
 def get_event_dates_query(params: EventSearchParams):
     event_filter = 1 == 1
     date_filter = EventDate.start >= datetime.min
 
     event_filter = fill_event_filter(event_filter, params)
-
-    admin_unit_reference = None
-    if params.admin_unit_id:
-        admin_unit_refs_subquery = EventReference.query.filter(
-            EventReference.admin_unit_id == params.admin_unit_id
-        ).subquery()
-        admin_unit_reference = aliased(EventReference, admin_unit_refs_subquery)
-
-        event_filter = and_(
-            event_filter,
-            or_(
-                Event.admin_unit_id == params.admin_unit_id,
-                admin_unit_reference.id.isnot(None),
-            ),
-        )
+    admin_unit_reference, event_filter = fill_event_admin_unit_filter(
+        event_filter, params
+    )
 
     if params.date_from:
         date_filter = EventDate.start >= params.date_from
@@ -358,9 +371,9 @@ def get_events_query(params: EventSearchParams):
     date_filter = EventDate.start >= datetime.min
 
     event_filter = fill_event_filter(event_filter, params)
-
-    if params.admin_unit_id:
-        event_filter = and_(event_filter, Event.admin_unit_id == params.admin_unit_id)
+    admin_unit_reference, event_filter = fill_event_admin_unit_filter(
+        event_filter, params
+    )
 
     if params.date_from:
         date_filter = EventDate.start >= params.date_from
@@ -369,11 +382,21 @@ def get_events_query(params: EventSearchParams):
         date_filter = and_(date_filter, EventDate.start < params.date_to)
 
     event_filter = and_(event_filter, Event.dates.any(date_filter))
-    return (
+    result = (
         Event.query.join(Event.admin_unit)
         .join(Event.event_place, isouter=True)
         .join(EventPlace.location, isouter=True)
-        .options(
+    )
+
+    if admin_unit_reference:
+        result = result.join(
+            admin_unit_reference,
+            Event.id == admin_unit_reference.event_id,
+            isouter=True,
+        )
+
+    result = (
+        result.options(
             contains_eager(Event.event_place).contains_eager(EventPlace.location),
             joinedload(Event.categories),
             joinedload(Event.organizer),
@@ -383,6 +406,8 @@ def get_events_query(params: EventSearchParams):
         .filter(event_filter)
         .order_by(Event.min_start)
     )
+
+    return result
 
 
 def get_recurring_events():

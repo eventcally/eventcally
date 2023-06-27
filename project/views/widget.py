@@ -52,6 +52,8 @@ def widget_event_dates(au_short_name):
 
     if not params.event_list_id:
         params.admin_unit_id = admin_unit.id
+
+    params.include_admin_unit_references = True
     dates = get_event_dates_query(params).paginate()
 
     return render_template(

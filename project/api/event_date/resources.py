@@ -65,6 +65,7 @@ class EventDateSearchResource(BaseResource):
         params = EventSearchParams()
         params.load_from_request()
         params.can_read_planned_events = can_use_planning()
+        params.include_admin_unit_references = True
 
         if "not_referenced" in request.args:
             admin_unit = get_current_admin_unit_for_api()

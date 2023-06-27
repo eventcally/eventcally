@@ -198,6 +198,9 @@ const OrganizationRead = {
       if (!this.$root.hasOwnProperty("currentAdminUnit")) {
         return;
       }
+      if (this.$root.currentAdminUnit.id == this.organizationId) {
+        return;
+      }
       const vm = this;
       axios
         .get(`/api/v1/organizations/${this.$root.currentAdminUnit.id}/relations/outgoing/${this.organizationId}`, {
