@@ -384,6 +384,7 @@ def create_ical_events_for_admin_unit(
     params.date_from = get_today() - relativedelta(months=1)
     params.admin_unit_id = admin_unit.id
     params.can_read_private_events = False
+    params.include_admin_unit_references = True
 
     return create_ical_events_for_search(params)
 

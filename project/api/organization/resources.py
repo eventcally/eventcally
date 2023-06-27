@@ -122,6 +122,7 @@ class OrganizationEventDateSearchResource(BaseResource):
         params.load_from_request()
         params.admin_unit_id = admin_unit.id
         params.can_read_private_events = api_can_read_private_events(admin_unit)
+        params.include_admin_unit_references = True
 
         pagination = get_event_dates_query(params).paginate()
         return pagination
