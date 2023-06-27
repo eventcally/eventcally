@@ -935,6 +935,19 @@
   {% endif %}
 {% endmacro %}
 
+{% macro render_event_in_email(event) %}
+  <ul>
+    <li>{{ event.name }}</li>
+    <li>{{ render_event_date_instance(event.min_start_definition.start, event.min_start_definition.allday) }}
+      {% if event.is_recurring %}
+        ({{ _('Recurring event') }})
+      {% endif %}</li>
+    <li>{{ _('Organization') }}: {{ event.admin_unit.name }}</li>
+    <li>{{ _('Organizer') }}: {{ event.organizer.name }}</li>
+  </ul>
+  <p>
+{% endmacro %}
+
 {% macro render_pagination(pagination) %}
 {% if pagination['prev_url'] or pagination['next_url'] %}
 <nav aria-label="Page navigation">

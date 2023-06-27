@@ -1,6 +1,7 @@
 {% extends "email/layout.html" %}
-{% from "_macros.html" import render_email_button %}
+{% from "_macros.html" import render_event_in_email, render_email_button %}
 {% block content %}
 <p>{{ _('There is a new referenced event that was automatically verified.') }}</p>
+{{ render_event_in_email(reference.event) }}
 {{ render_email_button(url_for('event_reference', id=reference.id, _external=True), _('Click here to view the reference')) }}
 {% endblock %}
