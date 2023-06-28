@@ -21,6 +21,10 @@ def is_list(value):
     return isinstance(value, list)
 
 
+def js_bool(value):
+    return "true" if value else "false"
+
+
 def any_dict_value_true(data: dict):
     return any(data.values())
 
@@ -51,6 +55,7 @@ app.jinja_env.filters["loc_scope"] = lambda s: get_localized_scope(s)
 app.jinja_env.filters["env_override"] = env_override
 app.jinja_env.filters["quote_plus"] = lambda u: quote_plus(u)
 app.jinja_env.filters["is_list"] = is_list
+app.jinja_env.filters["js_bool"] = js_bool
 app.jinja_env.filters["any_dict_value_true"] = any_dict_value_true
 app.jinja_env.filters["ensure_link_scheme"] = lambda s: ensure_link_scheme(s)
 app.jinja_env.filters["place_str"] = lambda p: get_place_str(p)

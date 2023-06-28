@@ -178,7 +178,9 @@ const OrganizationRead = {
     this.isLoadingRelation = false;
     this.organization = null;
     this.relation = null;
-    this.canRelation = this.$root.has_access("admin_unit:update");
+    this.canRelation = this.$root.has_access("admin_unit:update") &&
+      this.$root.hasOwnProperty("currentAdminUnit") &&
+      (this.$root.currentAdminUnit.canVerifyOther || this.$root.currentAdminUnit.incomingReferenceRequestsAllowed);
     this.relationDoesNotExist = false;
     this.loadData();
     this.loadRelationData();
@@ -195,7 +197,7 @@ const OrganizationRead = {
         });
     },
     loadRelationData() {
-      if (!this.$root.hasOwnProperty("currentAdminUnit")) {
+      if (!this.canRelation) {
         return;
       }
       if (this.$root.currentAdminUnit.id == this.organizationId) {
