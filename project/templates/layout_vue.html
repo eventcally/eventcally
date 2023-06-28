@@ -404,6 +404,8 @@
   vue_app_data["currentAdminUnit"] = {
     id: "{{ current_admin_unit.id }}",
     name: "{{ current_admin_unit.name }}",
+    canVerifyOther: {{ current_admin_unit.can_verify_other | js_bool }},
+    incomingReferenceRequestsAllowed: {{ current_admin_unit.incoming_reference_requests_allowed | js_bool }},
     roles: [{% for role in get_current_admin_unit_roles() %}"{{ role }}"{% if not loop.last %},{% endif %}{% endfor %}],
     permissions: [{% for permission in get_current_admin_unit_permissions() %}"{{ permission }}"{% if not loop.last %},{% endif %}{% endfor %}]
   };
