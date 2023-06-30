@@ -20,7 +20,7 @@ from project.views.utils import (
     get_invitation_access_result,
     handleSqlError,
     non_match_for_deletion,
-    send_mail,
+    send_mail_async,
 )
 
 
@@ -155,7 +155,7 @@ def user_cancel_deletion():
 
 
 def send_user_deletion_requested_mail(user):
-    send_mail(
+    send_mail_async(
         user.email,
         gettext("User deletion requested"),
         "user_deletion_requested_notice",

@@ -625,7 +625,7 @@ def test_organization_invitation_list(client, seeder: Seeder, utils: UtilActions
 
 
 def test_organization_invitation_list_post(client, app, seeder, db, utils, mocker):
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     _, admin_unit_id = seeder.setup_api_access()
 
     url = utils.get_url(

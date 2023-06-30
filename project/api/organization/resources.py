@@ -95,7 +95,7 @@ from project.services.reference import (
     get_reference_outgoing_query,
     get_relation_outgoing_query,
 )
-from project.views.utils import get_current_admin_unit_for_api, send_mail
+from project.views.utils import get_current_admin_unit_for_api, send_mail_async
 
 
 class OrganizationResource(BaseResource):
@@ -451,7 +451,7 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
         db.session.add(invitation)
         db.session.commit()
 
-        send_mail(
+        send_mail_async(
             invitation.email,
             gettext("You have received an invitation"),
             "organization_invitation_notice",

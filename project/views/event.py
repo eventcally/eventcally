@@ -52,7 +52,7 @@ from project.views.utils import (
     get_calendar_links_for_event,
     get_share_links,
     handleSqlError,
-    send_mails,
+    send_mails_async,
     set_current_admin_unit,
 )
 
@@ -452,7 +452,7 @@ def send_referenced_event_changed_mails(event):
         )
         emails = list(map(lambda member: member.user.email, members))
 
-        send_mails(
+        send_mails_async(
             emails,
             gettext("Referenced event changed"),
             "referenced_event_changed_notice",
@@ -475,7 +475,7 @@ def send_event_report_mails(event: Event, report: dict):
     admin_emails = list(map(lambda admin: admin.email, admins))
     emails.extend(x for x in admin_emails if x not in emails)
 
-    send_mails(
+    send_mails_async(
         emails,
         gettext("New event report"),
         "event_report_notice",

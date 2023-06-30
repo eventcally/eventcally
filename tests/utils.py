@@ -204,6 +204,9 @@ class UtilActions(object):
     def mock_send_mails(self, mocker):
         return mocker.patch("project.views.utils.send_mails_with_body")
 
+    def mock_send_mails_async(self, mocker):
+        return mocker.patch("project.views.utils.send_mails_with_body_async")
+
     def assert_send_mail_called(
         self, mock, expected_recipients, expected_contents=None
     ):

@@ -542,7 +542,7 @@ def test_put_referencedEventUpdate_sendsMail(
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
     seeder.create_reference(event_id, other_admin_unit_id)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     url = utils.get_url("api_v1_event", id=event_id)
     put = create_put(place_id, organizer_id)
     put["name"] = "Changed name"
@@ -564,7 +564,7 @@ def test_put_referencedEventNonDirtyUpdate_doesNotSendMail(
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
     seeder.create_reference(event_id, other_admin_unit_id)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     url = utils.get_url("api_v1_event", id=event_id)
     put = create_put(place_id, organizer_id)
     put["name"] = "Name"
@@ -617,7 +617,7 @@ def test_patch_referencedEventUpdate_sendsMail(
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
     seeder.create_reference(event_id, other_admin_unit_id)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.patch_json(url, {"name": "Changed name"})
 
@@ -716,7 +716,7 @@ def test_report_mail(client, seeder: Seeder, utils: UtilActions, app, mocker):
     seeder.create_user(email="admin@test.de", admin=True)
     seeder.create_user(email="normal@test.de", admin=False)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     url = utils.get_url("api_v1_event_reports", id=event_id)
     response = utils.post_json(
         url,

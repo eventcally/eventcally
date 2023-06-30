@@ -21,7 +21,7 @@ from project.services.admin_unit import (
     upsert_admin_unit_relation,
 )
 from project.services.reference import create_event_reference_for_request
-from project.views.utils import flash_errors, handleSqlError, send_mails
+from project.views.utils import flash_errors, handleSqlError, send_mails_async
 
 
 @app.route("/reference_request/<int:id>/review", methods=("GET", "POST"))
@@ -130,7 +130,7 @@ def send_reference_request_review_status_mails(request):
     )
     emails = list(map(lambda member: member.user.email, members))
 
-    send_mails(
+    send_mails_async(
         emails,
         gettext("Event review status updated"),
         "reference_request_review_status_notice",

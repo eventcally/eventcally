@@ -23,7 +23,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     if db_error:
         utils.mock_db_commit(mocker)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     response = utils.post_form(
         url,
         response,

@@ -30,7 +30,7 @@ from project.views.utils import (
     get_pagination_urls,
     get_share_links,
     handleSqlError,
-    send_mails,
+    send_mails_async,
 )
 
 
@@ -214,7 +214,7 @@ def send_event_inbox_mails(admin_unit, event_suggestion):
     members = get_admin_unit_members_with_permission(admin_unit.id, "event:verify")
     emails = list(map(lambda member: member.user.email, members))
 
-    send_mails(
+    send_mails_async(
         emails,
         gettext("New event review"),
         "review_notice",

@@ -197,7 +197,7 @@ db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=False)
 
 # Celery tasks
-from project import celery_tasks
+from project import base_tasks, celery_tasks
 
 # API
 from project.api import RestApi

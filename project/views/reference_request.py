@@ -29,7 +29,7 @@ from project.views.utils import (
     flash_errors,
     get_pagination_urls,
     handleSqlError,
-    send_mails,
+    send_mails_async,
 )
 
 
@@ -159,7 +159,7 @@ def send_member_reference_request_verify_mails(
     )
     emails = list(map(lambda member: member.user.email, members))
 
-    send_mails(emails, subject, template, **context)
+    send_mails_async(emails, subject, template, **context)
 
 
 def send_reference_request_inbox_mails(request):
