@@ -138,7 +138,7 @@ def test_create_requiresAdmin_memberOfOrgWithFlag(client, app, utils, seeder):
 
 
 def test_create_from_invitation(client, app, db, utils, seeder, mocker):
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(
         user_id, can_invite_other=True, can_verify_other=True

@@ -1,4 +1,3 @@
-from celery import group
 from flask import flash, redirect, render_template, request, url_for
 from flask_babel import gettext
 from flask_security import roles_required
@@ -6,7 +5,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
 from project import app, db
-from project.base_tasks import send_mail_task
 from project.forms.admin import (
     AdminNewsletterForm,
     AdminSettingsForm,
@@ -24,11 +22,12 @@ from project.services.user import delete_user, set_roles_for_user
 from project.views.utils import (
     flash_errors,
     get_celery_poll_group_result,
-    get_celery_poll_result,
     get_pagination_urls,
     handleSqlError,
     non_match_for_deletion,
     send_mail,
+    send_mail_async,
+    send_mails_async,
 )
 
 
@@ -148,7 +147,7 @@ def admin_email():
     form = AdminTestEmailForm()
 
     if "poll" in request.args:  # pragma: no cover
-        return get_celery_poll_result()
+        return get_celery_poll_group_result()
 
     if form.validate_on_submit():
         subject = gettext(
@@ -157,7 +156,8 @@ def admin_email():
         )
 
         if "async" in request.args:  # pragma: no cover
-            result = send_mail_task.delay(form.recipient.data, subject, "test_email")
+            result = send_mail_async(form.recipient.data, subject, "test_email")
+            result.save()
             return {"result_id": result.id}
 
         try:
@@ -196,10 +196,9 @@ def admin_newsletter():
             )
             recipients = [u.email for u in users]
 
-        result = group(
-            send_mail_task.s(r, subject, "newsletter", message=form.message.data)
-            for r in recipients
-        ).delay()
+        result = send_mails_async(
+            recipients, subject, "newsletter", message=form.message.data
+        )
         result.save()
         return {"result_id": result.id}
 

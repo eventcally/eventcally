@@ -32,7 +32,7 @@ from project.views.utils import (
     manage_required,
     non_match_for_deletion,
     permission_missing,
-    send_mails,
+    send_mails_async,
 )
 
 
@@ -260,7 +260,7 @@ def send_admin_unit_invitation_accepted_mails(
     )
     emails = list(map(lambda member: member.user.email, members))
 
-    send_mails(
+    send_mails_async(
         emails,
         gettext("Organization invitation accepted"),
         "organization_invitation_accepted_notice",
@@ -274,7 +274,7 @@ def send_admin_unit_deletion_requested_mails(admin_unit: AdminUnit):
     members = get_admin_unit_members_with_permission(admin_unit.id, "admin_unit:update")
     emails = list(map(lambda member: member.user.email, members))
 
-    send_mails(
+    send_mails_async(
         emails,
         gettext("Organization deletion requested"),
         "organization_deletion_requested_notice",

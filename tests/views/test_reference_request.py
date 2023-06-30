@@ -1,8 +1,11 @@
 import pytest
 
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_create(client, app, utils, seeder, mocker, db_error):
+def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -15,7 +18,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
     if db_error:
         utils.mock_db_commit(mocker)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     response = utils.post_form(
         url,
         response,
@@ -50,7 +53,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         )
 
 
-def test_create_duplicateNotAllowed(client, app, utils, seeder):
+def test_create_duplicateNotAllowed(client, app, utils: UtilActions, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
     other_user_id = seeder.create_user("other@test.de")
@@ -80,7 +83,9 @@ def test_create_duplicateNotAllowed(client, app, utils, seeder):
     assert b"duplicate key" in response.data
 
 
-def test_create_unverifiedAdminUnitNotAllowed(client, app, utils, seeder):
+def test_create_unverifiedAdminUnitNotAllowed(
+    client, app, utils: UtilActions, seeder: Seeder
+):
     _, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
     event_id = seeder.create_event(admin_unit_id)
     other_user_id = seeder.create_user("other@test.de")
@@ -91,14 +96,14 @@ def test_create_unverifiedAdminUnitNotAllowed(client, app, utils, seeder):
     utils.assert_response_unauthorized(response)
 
 
-def test_create_autoVerify(client, app, utils, seeder, mocker):
+def test_create_autoVerify(client, app, utils: UtilActions, seeder: Seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
     seeder.create_admin_unit_relation(other_admin_unit_id, admin_unit_id, True)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     url = utils.get_url("event_reference_request_create", event_id=event_id)
     response = utils.get_ok(url)
     response = utils.post_form(

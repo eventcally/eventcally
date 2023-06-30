@@ -18,7 +18,7 @@ from project.views.utils import (
     handleSqlError,
     non_match_for_deletion,
     permission_missing,
-    send_mail,
+    send_mail_async,
 )
 
 
@@ -84,7 +84,7 @@ def manage_admin_unit_member_invite(id):
             db.session.add(invitation)
             db.session.commit()
 
-            send_mail(
+            send_mail_async(
                 invitation.email,
                 gettext("You have received an invitation"),
                 "invitation_notice",

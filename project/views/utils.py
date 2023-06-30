@@ -168,9 +168,37 @@ def send_mails(recipients, subject, template, **context):
     if len(recipients) == 0:  # pragma: no cover
         return
 
+    body, html = render_mail_body(template, **context)
+    send_mails_with_body(recipients, subject, body, html)
+
+
+def send_mail_async(recipient, subject, template, **context):
+    send_mails_async([recipient], subject, template, **context)
+
+
+def send_mails_async(recipients, subject, template, **context):
+    if len(recipients) == 0:  # pragma: no cover
+        return
+
+    body, html = render_mail_body(template, **context)
+    return send_mails_with_body_async(recipients, subject, body, html)
+
+
+def send_mails_with_body_async(recipients, subject, body, html):
+    from celery import group
+
+    from project.base_tasks import send_mail_with_body_task
+
+    result = group(
+        send_mail_with_body_task.s(r, subject, body, html) for r in recipients
+    ).delay()
+    return result
+
+
+def render_mail_body(template, **context):
     body = render_template("email/%s.txt" % template, **context)
     html = render_template("email/%s.html" % template, **context)
-    send_mails_with_body(recipients, subject, body, html)
+    return body, html
 
 
 def send_mails_with_body(recipients, subject, body, html):

@@ -50,7 +50,7 @@ def test_reject(client, app, utils, seeder, mocker, db, db_error, is_verified):
     if db_error:
         utils.mock_db_commit(mocker)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     response = utils.post_form(
         url,
         response,

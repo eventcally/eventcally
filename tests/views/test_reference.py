@@ -197,7 +197,7 @@ def test_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
     url = utils.get_url("event_update", event_id=event_id)
     response = utils.get_ok(url)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     response = utils.post_form(
         url,
         response,
@@ -226,7 +226,7 @@ def test_referencedEventNonDirtyUpdate_doesNotSendMail(
     url = utils.get_url("event_update", event_id=event_id)
     response = utils.get_ok(url)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
     response = utils.post_form(
         url,
         response,

@@ -22,7 +22,7 @@ from project.views.utils import (
     handleSqlError,
     manage_required,
     non_match_for_deletion,
-    send_mails,
+    send_mails_async,
 )
 
 
@@ -192,7 +192,7 @@ def send_member_verification_request_verify_mails(
     )
     emails = list(map(lambda member: member.user.email, members))
 
-    send_mails(emails, subject, template, **context)
+    send_mails_async(emails, subject, template, **context)
 
 
 def send_verification_request_inbox_mails(request):

@@ -15,7 +15,7 @@ from project.models import (
     AdminUnitVerificationRequestReviewStatus,
 )
 from project.services.admin_unit import upsert_admin_unit_relation
-from project.views.utils import flash_errors, handleSqlError, send_mails
+from project.views.utils import flash_errors, handleSqlError, send_mails_async
 
 
 @app.route("/verification_request/<int:id>/review", methods=("GET", "POST"))
@@ -110,7 +110,7 @@ def send_verification_request_review_status_mails(request):
     )
     emails = list(map(lambda member: member.user.email, members))
 
-    send_mails(
+    send_mails_async(
         emails,
         gettext("Verification request review status updated"),
         "verification_request_review_status_notice",

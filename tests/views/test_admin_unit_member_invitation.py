@@ -11,7 +11,7 @@ def test_create(client, app, utils, seeder, mocker):
     assert response.status_code == 200
 
     with client:
-        mail_mock = utils.mock_send_mails(mocker)
+        mail_mock = utils.mock_send_mails_async(mocker)
         email = "new@member.de"
         response = client.post(
             url,

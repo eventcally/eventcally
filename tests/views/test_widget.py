@@ -197,7 +197,7 @@ def test_event_suggestion_create_for_admin_unit(
     if db_error:
         utils.mock_db_commit(mocker)
 
-    mail_mock = utils.mock_send_mails(mocker)
+    mail_mock = utils.mock_send_mails_async(mocker)
 
     if missing_preview_field:
         del data["accept_tos"]
