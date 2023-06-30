@@ -5,3 +5,10 @@
 
 {{ confirmation_link }}
 {% endif %}
+
+{% if config["DOCS_URL"] %}
+
+{{ _('View documentation') }}:
+
+{{ config["DOCS_URL"] }}/goto/first-steps
+{% endif %}

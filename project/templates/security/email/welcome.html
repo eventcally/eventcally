@@ -5,3 +5,7 @@
 
 <p><a href="{{ confirmation_link }}">{{ _fsdomain('Confirm my account') }}</a></p>
 {% endif %}
+
+{% if config["DOCS_URL"] %}
+<p><a href="{{ config["DOCS_URL"] }}/goto/first-steps">{{ _('View documentation') }}</a></p>
+{% endif %}
