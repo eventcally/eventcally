@@ -19,6 +19,7 @@
             {% if user_rights['can_delete_reference'] %}
                 <a class="dropdown-item" href="{{ url_for('reference_delete', id=reference.id) }}"><i class="fa fa-trash"></i> {{ _('Delete reference') }}&hellip;</a>
             {% endif %}
+            <a class="dropdown-item" href="{{ url_for('event', event_id=event.id) }}">{{ _('View event') }}</a>
         </div>
     </div>
     {% endif %}
@@ -29,8 +30,8 @@
               {{ _('Event reference') }}
             </div>
             <div class="card-body">
-                {% if event.rating %}
-                    {{ render_string_prop("%d/10" % (event.rating/10), 'fa-adjust', 'Rating') }}
+                {% if reference.rating %}
+                    {{ render_string_prop("%d/10" % (reference.rating/10), 'fa-adjust', 'Rating') }}
                 {% endif %}
             </div>
             <div class="card-footer small">
