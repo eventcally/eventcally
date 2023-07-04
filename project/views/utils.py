@@ -173,7 +173,7 @@ def send_mails(recipients, subject, template, **context):
 
 
 def send_mail_async(recipient, subject, template, **context):
-    send_mails_async([recipient], subject, template, **context)
+    return send_mails_async([recipient], subject, template, **context)
 
 
 def send_mails_async(recipients, subject, template, **context):
