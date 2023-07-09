@@ -10,6 +10,7 @@ from project.models import (
     EventReferenceRequestReviewStatus,
 )
 from project.models.admin_unit import AdminUnit
+from project.services.search_params import EventReferenceSearchParams
 
 
 def create_event_reference_for_request(request):
@@ -36,12 +37,24 @@ def upsert_event_reference(event_id: int, admin_unit_id: int):
     return result
 
 
-def get_reference_incoming_query(admin_unit):
-    return EventReference.query.filter(EventReference.admin_unit_id == admin_unit.id)
+def get_reference_incoming_query(params: EventReferenceSearchParams):
+    result = EventReference.query
+
+    if params.admin_unit_id:
+        result = result.filter(EventReference.admin_unit_id == params.admin_unit_id)
+
+    result = params.get_trackable_query(result, EventReference)
+    result = params.get_trackable_order_by(result, EventReference)
+    result = result.order_by(EventReference.created_at.desc())
+    return result
 
 
 def get_reference_outgoing_query(admin_unit):
-    return EventReference.query.join(Event).filter(Event.admin_unit_id == admin_unit.id)
+    return (
+        EventReference.query.join(Event)
+        .filter(Event.admin_unit_id == admin_unit.id)
+        .order_by(EventReference.created_at.desc())
+    )
 
 
 def get_reference_requests_incoming_query(admin_unit):

@@ -24,6 +24,11 @@ from project.services.reference import (
     get_newest_reference_requests,
     get_newest_references,
 )
+from project.services.search_params import (
+    AdminUnitSearchParams,
+    EventPlaceSearchParams,
+    OrganizerSearchParams,
+)
 
 
 def insert_admin_unit_for_user(admin_unit, user, invitation=None):
@@ -175,59 +180,66 @@ def get_admin_unit_member(id):
     return AdminUnitMember.query.filter_by(id=id).first()
 
 
-def get_admin_unit_query(
-    keyword=None,
-    include_unverified=False,
-    only_verifier=False,
-    reference_request_for_admin_unit_id=None,
-):
+def get_admin_unit_query(params: AdminUnitSearchParams):
     query = AdminUnit.query
 
-    if not include_unverified:
+    if not params.include_unverified:
         query = query.filter(AdminUnit.is_verified)
 
-    if only_verifier:
+    if params.only_verifier:
         only_verifier_filter = and_(
             AdminUnit.can_verify_other, AdminUnit.incoming_verification_requests_allowed
         )
         query = query.filter(only_verifier_filter)
 
-    if reference_request_for_admin_unit_id:
+    if params.reference_request_for_admin_unit_id:
         request_filter = and_(
-            AdminUnit.id != reference_request_for_admin_unit_id,
+            AdminUnit.id != params.reference_request_for_admin_unit_id,
             AdminUnit.incoming_reference_requests_allowed,
         )
         query = query.filter(request_filter)
 
-    if keyword:
-        like_keyword = "%" + keyword + "%"
-        order_keyword = keyword + "%"
+    query = params.get_trackable_query(query, AdminUnit)
+
+    if params.keyword:
+        like_keyword = "%" + params.keyword + "%"
+        order_keyword = params.keyword + "%"
         keyword_filter = or_(
             AdminUnit.name.ilike(like_keyword),
             AdminUnit.short_name.ilike(like_keyword),
         )
-        query = query.filter(keyword_filter).order_by(
+        query = query.filter(keyword_filter)
+
+        query = params.get_trackable_order_by(query, AdminUnit)
+        query = query.order_by(
             AdminUnit.name.ilike(order_keyword).desc(),
             AdminUnit.short_name.ilike(order_keyword).desc(),
             func.lower(AdminUnit.name),
         )
     else:
+        query = params.get_trackable_order_by(query, AdminUnit)
         query = query.order_by(func.lower(AdminUnit.name))
 
     return query
 
 
-def get_organizer_query(admin_unit_id, name=None):
-    query = EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit_id)
+def get_organizer_query(params: OrganizerSearchParams):
+    query = EventOrganizer.query.filter(
+        EventOrganizer.admin_unit_id == params.admin_unit_id
+    )
 
-    if name:
-        like_name = "%" + name + "%"
-        order_name = name + "%"
+    query = params.get_trackable_query(query, EventOrganizer)
+
+    if params.name:
+        like_name = "%" + params.name + "%"
+        order_name = params.name + "%"
+        query = params.get_trackable_order_by(query, EventOrganizer)
         query = query.filter(EventOrganizer.name.ilike(like_name)).order_by(
             EventOrganizer.name.ilike(order_name).desc(),
             func.lower(EventOrganizer.name),
         )
     else:
+        query = params.get_trackable_order_by(query, EventOrganizer)
         query = query.order_by(func.lower(EventOrganizer.name))
 
     return query
@@ -243,13 +255,15 @@ def get_custom_widget_query(admin_unit_id, name=None):
     return query.order_by(func.lower(CustomWidget.name))
 
 
-def get_place_query(admin_unit_id, name=None):
-    query = EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
+def get_place_query(params: EventPlaceSearchParams):
+    query = EventPlace.query.filter(EventPlace.admin_unit_id == params.admin_unit_id)
+    query = params.get_trackable_query(query, EventPlace)
 
-    if name:
-        like_name = "%" + name + "%"
+    if params.name:
+        like_name = "%" + params.name + "%"
         query = query.filter(EventPlace.name.ilike(like_name))
 
+    query = params.get_trackable_order_by(query, EventPlace)
     return query.order_by(func.lower(EventPlace.name))
 
 
@@ -378,7 +392,7 @@ def create_ical_events_for_admin_unit(
 
     from project.dateutils import get_today
     from project.services.event import create_ical_events_for_search
-    from project.services.event_search import EventSearchParams
+    from project.services.search_params import EventSearchParams
 
     params = EventSearchParams()
     params.date_from = get_today() - relativedelta(months=1)

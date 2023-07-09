@@ -13,7 +13,7 @@ from project.api.event_list.schemas import (
 from project.api.resources import BaseResource, require_api_access
 from project.models import Event, EventList
 from project.services.event import get_events_query
-from project.services.event_search import EventSearchParams
+from project.services.search_params import EventSearchParams
 
 
 class EventListModelResource(BaseResource):

@@ -27,7 +27,7 @@ def create_ical_events_for_organizer(
 
     from project.dateutils import get_today
     from project.services.event import create_ical_events_for_search
-    from project.services.event_search import EventSearchParams
+    from project.services.search_params import EventSearchParams
 
     params = EventSearchParams()
     params.date_from = get_today() - relativedelta(months=1)

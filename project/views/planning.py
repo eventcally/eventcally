@@ -4,7 +4,7 @@ from flask_security import auth_required
 from project import app
 from project.access import can_use_planning
 from project.forms.planning import PlanningForm
-from project.services.event_search import EventSearchParams
+from project.services.search_params import EventSearchParams
 from project.views.event import get_event_category_choices
 from project.views.utils import permission_missing
 

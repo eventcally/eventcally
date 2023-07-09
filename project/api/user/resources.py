@@ -21,7 +21,7 @@ from project.api.resources import BaseResource, require_api_access
 from project.models import AdminUnitInvitation, Event
 from project.services.admin_unit import get_admin_unit_organization_invitations_query
 from project.services.event import get_events_query
-from project.services.event_search import EventSearchParams
+from project.services.search_params import EventSearchParams, TrackableSearchParams
 from project.utils import strings_are_equal_ignoring_case
 
 
@@ -41,11 +41,14 @@ class UserOrganizationInvitationListResource(BaseResource):
     def get(self, **kwargs):
         login_api_user_or_401()
 
-        pagination = get_admin_unit_organization_invitations_query(
-            current_user.email
-        ).paginate()
+        params = TrackableSearchParams()
+        params.load_from_request(**kwargs)
 
-        return pagination
+        query = get_admin_unit_organization_invitations_query(current_user.email)
+        query = params.get_trackable_query(query, AdminUnitInvitation)
+        query = params.get_trackable_order_by(query, AdminUnitInvitation)
+
+        return query.paginate()
 
 
 class UserOrganizationInvitationResource(BaseResource):
@@ -92,8 +95,15 @@ class UserFavoriteEventListResource(BaseResource):
 
         login_api_user_or_401()
 
-        pagination = get_favorite_events_query(current_user.id).paginate()
-        return pagination
+        query = get_favorite_events_query(current_user.id)
+
+        params = EventSearchParams()
+        params.load_from_request(**kwargs)
+        query = params.get_trackable_query(query, Event)
+        query = params.get_trackable_order_by(query, Event)
+        query = query.order_by(Event.min_start)
+
+        return query.paginate()
 
 
 class UserFavoriteEventSearchResource(BaseResource):
@@ -108,7 +118,7 @@ class UserFavoriteEventSearchResource(BaseResource):
         login_api_user_or_401()
 
         params = EventSearchParams()
-        params.load_from_request()
+        params.load_from_request(**kwargs)
         params.favored_by_user_id = current_user.id
 
         pagination = get_events_query(params).paginate()

@@ -16,6 +16,7 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     SQLAlchemyBaseSchema,
+    TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
     WriteIdSchemaMixin,
 )
@@ -64,15 +65,25 @@ class PlaceSearchItemSchema(PlaceRefSchema):
     location = fields.Nested(LocationSearchItemSchema)
 
 
-class PlaceListRequestSchema(PaginationRequestSchema):
+class PlaceListRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixin):
     name = fields.Str(
         metadata={"description": "Looks for name."},
     )
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+        validate=validate.OneOf(
+            ["-created_at", "-updated_at", "-last_modified_at", "name"]
+        ),
+    )
+
+
+class PlaceListRefSchema(PlaceRefSchema, TrackableSchemaMixin):
+    pass
 
 
 class PlaceListResponseSchema(PaginationResponseSchema):
     items = fields.List(
-        fields.Nested(PlaceRefSchema), metadata={"description": "Places"}
+        fields.Nested(PlaceListRefSchema), metadata={"description": "Places"}
     )
 
 

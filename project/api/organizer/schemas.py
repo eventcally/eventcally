@@ -15,6 +15,7 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     SQLAlchemyBaseSchema,
+    TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
     WriteIdSchemaMixin,
 )
@@ -67,15 +68,25 @@ class OrganizerRefSchema(OrganizerIdSchema):
     name = marshmallow.auto_field()
 
 
-class OrganizerListRequestSchema(PaginationRequestSchema):
+class OrganizerListRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixin):
     name = fields.Str(
         metadata={"description": "Looks for name."},
     )
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+        validate=validate.OneOf(
+            ["-created_at", "-updated_at", "-last_modified_at", "name"]
+        ),
+    )
+
+
+class OrganizerListRefSchema(OrganizerRefSchema, TrackableSchemaMixin):
+    pass
 
 
 class OrganizerListResponseSchema(PaginationResponseSchema):
     items = fields.List(
-        fields.Nested(OrganizerRefSchema), metadata={"description": "Organizers"}
+        fields.Nested(OrganizerListRefSchema), metadata={"description": "Organizers"}
     )
 
 

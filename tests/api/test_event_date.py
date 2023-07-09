@@ -61,6 +61,15 @@ def test_search(client, seeder: Seeder, utils: UtilActions, app, db):
     seeder.create_event(admin_unit_id, draft=True)
     seeder.create_event_unverified()
 
+    url = utils.get_url("api_v1_event_date_search", sort="-created_at")
+    response = utils.get_json_ok(url)
+
+    url = utils.get_url("api_v1_event_date_search", sort="-updated_at")
+    response = utils.get_json_ok(url)
+
+    url = utils.get_url("api_v1_event_date_search", sort="-last_modified_at")
+    response = utils.get_json_ok(url)
+
     url = utils.get_url("api_v1_event_date_search", sort="-rating")
     response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
@@ -81,6 +90,13 @@ def test_search(client, seeder: Seeder, utils: UtilActions, app, db):
 
     url = utils.get_url(
         "api_v1_event_date_search", date_from="2020-10-03", date_to="2021-10-03"
+    )
+    response = utils.get_json_ok(url)
+
+    url = utils.get_url(
+        "api_v1_event_date_search",
+        created_at_from="2023-07-07T00:00:00",
+        created_at_to="2023-07-08T00:00:00",
     )
     response = utils.get_json_ok(url)
 
@@ -138,6 +154,14 @@ def test_search(client, seeder: Seeder, utils: UtilActions, app, db):
     url = utils.get_url("api_v1_event_date_search", expected_participants_min=100)
     response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 0
+
+    seeder.create_any_reference(admin_unit_id)
+    url = utils.get_url(
+        "api_v1_event_date_search",
+        organization_id=admin_unit_id,
+        sort="-reference_created_at",
+    )
+    response = utils.get_json_ok(url)
 
 
 def test_search_public_status(client, seeder: Seeder, utils: UtilActions, app, db):

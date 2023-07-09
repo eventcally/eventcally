@@ -16,7 +16,7 @@ from project.api.event_date.schemas import (
 from project.api.resources import BaseResource, require_api_access
 from project.models import AdminUnit, Event, EventDate, PublicStatus
 from project.services.event import get_event_dates_query
-from project.services.event_search import EventSearchParams
+from project.services.search_params import EventSearchParams
 from project.views.utils import get_current_admin_unit_for_api
 
 
@@ -26,7 +26,7 @@ class EventDateListResource(BaseResource):
     @marshal_with(EventDateListResponseSchema)
     @require_api_access()
     def get(self, **kwargs):
-        pagination = (
+        query = (
             EventDate.query.join(EventDate.event)
             .join(Event.admin_unit)
             .options(lazyload(EventDate.event))
@@ -36,9 +36,14 @@ class EventDateListResource(BaseResource):
                     AdminUnit.is_verified,
                 )
             )
-            .paginate()
         )
-        return pagination
+
+        params = EventSearchParams()
+        params.load_from_request(**kwargs)
+        query = params.get_trackable_query(query, Event)
+        query = params.get_trackable_order_by(query, Event)
+        query = query.order_by(EventDate.start)
+        return query.paginate()
 
 
 class EventDateResource(BaseResource):
@@ -63,9 +68,9 @@ class EventDateSearchResource(BaseResource):
     def get(self, **kwargs):
         login_api_user()
         params = EventSearchParams()
-        params.load_from_request()
-        params.can_read_planned_events = can_use_planning()
         params.include_admin_unit_references = True
+        params.load_from_request(**kwargs)
+        params.can_read_planned_events = can_use_planning()
 
         if "not_referenced" in request.args:
             admin_unit = get_current_admin_unit_for_api()
