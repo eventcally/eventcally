@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-06-30 16:34+0200\n"
+"POT-Creation-Date: 2023-07-09 21:57+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -183,6 +183,10 @@ msgid "Scope_organization:write"
 msgstr "Organisationen anlegen, ändern und löschen"
 
 #: project/i10n.py:56
+msgid "Scope_customwidget:write"
+msgstr "Widgets anlegen, ändern und löschen"
+
+#: project/i10n.py:57
 msgid "There must be no self-reference."
 msgstr "Es darf keine Selbstreferenz geben."
 
@@ -198,7 +202,7 @@ msgstr "."
 msgid "message"
 msgstr "message"
 
-#: project/api/organization/resources.py:456
+#: project/api/organization/resources.py:479
 #: project/views/admin_unit_member_invitation.py:89
 msgid "You have received an invitation"
 msgstr "Du hast eine Einladung erhalten"
@@ -213,7 +217,7 @@ msgstr "Nutzungsbedingungen"
 msgid "Legal notice"
 msgstr "Impressum"
 
-#: project/forms/admin.py:13 project/templates/_macros.html:1478
+#: project/forms/admin.py:13 project/templates/_macros.html:1480
 #: project/templates/layout.html:346
 #: project/templates/widget/event_suggestion/create.html:204
 #: project/views/admin_unit.py:84 project/views/root.py:75
@@ -261,7 +265,7 @@ msgstr "Nutzer löschen"
 #: project/forms/admin_unit_member.py:30 project/forms/event.py:112
 #: project/forms/event_suggestion.py:38 project/forms/organizer.py:33
 #: project/forms/user.py:18 project/forms/user.py:23
-#: project/templates/_macros.html:246 project/templates/_macros.html:1574
+#: project/templates/_macros.html:246 project/templates/_macros.html:1576
 #: project/templates/admin/admin.html:27 project/templates/admin/email.html:4
 #: project/templates/admin/email.html:66 project/templates/admin/users.html:19
 #: project/templates/manage/organizers.html:21
@@ -419,7 +423,7 @@ msgstr ""
 "eindeutig zu identifizieren. Der Kurzname darf nur Buchstaben, Nummern "
 "und Unterstriche enthalten."
 
-#: project/forms/admin_unit.py:46 project/templates/_macros.html:1616
+#: project/forms/admin_unit.py:46 project/templates/_macros.html:1618
 msgid "Short name must contain only letters numbers or underscore"
 msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
 
@@ -682,17 +686,17 @@ msgstr "Gib an, wann der Termin endet. Ein Termin darf maximal 14 Tage dauern."
 msgid "All-day"
 msgstr "Ganztägig"
 
-#: project/forms/event.py:59 project/templates/_macros.html:943
-#: project/templates/_macros.html:1786
+#: project/forms/event.py:59 project/templates/_macros.html:945
+#: project/templates/_macros.html:1788
 #: project/templates/widget/event_suggestion/create.html:240
 msgid "Recurring event"
 msgstr "Serientermin"
 
-#: project/forms/event.py:66 project/templates/_macros.html:1335
+#: project/forms/event.py:66 project/templates/_macros.html:1337
 msgid "The start must be before the end."
 msgstr "Der Start muss vor dem Ende sein."
 
-#: project/forms/event.py:72 project/templates/_macros.html:1352
+#: project/forms/event.py:72 project/templates/_macros.html:1354
 msgid "An event can last a maximum of 14 days."
 msgstr "Eine Veranstaltung darf maximal 14 Tage dauern."
 
@@ -867,8 +871,8 @@ msgstr ""
 "Wir empfehlen dir, ein Foto für die Veranstaltung hochzuladen. Es macht "
 "schon deutlich mehr her, aber es geht natürlich auch ohne."
 
-#: project/forms/event.py:247 project/templates/_macros.html:422
-#: project/templates/_macros.html:585
+#: project/forms/event.py:247 project/templates/_macros.html:424
+#: project/templates/_macros.html:587
 msgid "Previous start date"
 msgstr "Vorheriges Startdatum"
 
@@ -920,8 +924,8 @@ msgstr "Ungültiger Mitveranstalter."
 
 #: project/forms/event.py:291 project/forms/event.py:300
 #: project/forms/event.py:382 project/forms/event.py:459
-#: project/forms/event_suggestion.py:50 project/templates/_macros.html:462
-#: project/templates/_macros.html:628 project/templates/event/create.html:288
+#: project/forms/event_suggestion.py:50 project/templates/_macros.html:464
+#: project/templates/_macros.html:630 project/templates/event/create.html:288
 #: project/templates/event/update.html:170
 #: project/templates/event_place/create.html:31
 #: project/templates/event_place/delete.html:13
@@ -941,8 +945,8 @@ msgstr "Neuen Ort eingeben"
 #: project/forms/event.py:307 project/forms/event.py:316
 #: project/forms/event.py:390 project/forms/event.py:456
 #: project/forms/event_date.py:40 project/forms/event_suggestion.py:60
-#: project/templates/_macros.html:499 project/templates/_macros.html:671
-#: project/templates/_macros.html:946 project/templates/event/create.html:257
+#: project/templates/_macros.html:501 project/templates/_macros.html:673
+#: project/templates/_macros.html:948 project/templates/event/create.html:257
 #: project/templates/event/update.html:160
 #: project/templates/manage/events.html:104
 #: project/templates/organizer/create.html:27
@@ -959,7 +963,7 @@ msgstr "Vorhandenen Veranstalter auswählen"
 msgid "Enter new organizer"
 msgstr "Neuen Veranstalter eingeben"
 
-#: project/forms/event.py:323 project/templates/_macros.html:736
+#: project/forms/event.py:323 project/templates/_macros.html:738
 #: project/templates/event/create.html:374
 #: project/templates/manage/reference_requests_incoming.html:5
 #: project/templates/manage/reference_requests_outgoing.html:5
@@ -1062,7 +1066,7 @@ msgstr ""
 msgid "Update event"
 msgstr "Veranstaltung aktualisieren"
 
-#: project/forms/event.py:440 project/templates/_macros.html:1292
+#: project/forms/event.py:440 project/templates/_macros.html:1294
 #: project/templates/event/actions.html:66
 #: project/templates/event/delete.html:6
 msgid "Delete event"
@@ -1083,7 +1087,7 @@ msgid "Keyword"
 msgstr "Stichwort"
 
 #: project/forms/event.py:453 project/forms/event_date.py:20
-#: project/forms/planning.py:24 project/templates/_macros.html:395
+#: project/forms/planning.py:24 project/templates/_macros.html:397
 msgid "Category"
 msgstr "Kategorie"
 
@@ -1115,8 +1119,8 @@ msgid "Find events"
 msgstr "Veranstaltungen finden"
 
 #: project/forms/event_date.py:35 project/forms/reference.py:11
-#: project/forms/reference_request.py:16 project/templates/_macros.html:515
-#: project/templates/_macros.html:688 project/templates/_macros.html:945
+#: project/forms/reference_request.py:16 project/templates/_macros.html:517
+#: project/templates/_macros.html:690 project/templates/_macros.html:947
 #: project/templates/admin/delete_admin_unit.html:13
 #: project/templates/admin_unit/cancel_deletion.html:13
 #: project/templates/admin_unit/create.html:27
@@ -1299,7 +1303,7 @@ msgid "Delete request"
 msgstr "Anfrage löschen"
 
 #: project/forms/reference_request.py:28
-#: project/forms/verification_request.py:24 project/templates/_macros.html:1490
+#: project/forms/verification_request.py:24 project/templates/_macros.html:1492
 #: project/templates/event_suggestion/review_status.html:18
 #: project/templates/reference_request/review_status.html:12
 #: project/templates/verification_request/review_status.html:4
@@ -1453,27 +1457,27 @@ msgstr "Link"
 msgid "Verified"
 msgstr "Verifiziert"
 
-#: project/templates/_macros.html:372
+#: project/templates/_macros.html:371
 #, python-format
 msgid "Created at %(created_at)s by %(created_by)s."
 msgstr "Erstellt am %(created_at)s von %(created_by)s."
 
-#: project/templates/_macros.html:374
+#: project/templates/_macros.html:373
 #, python-format
 msgid "Created at %(created_at)s."
 msgstr "Erstellt am %(created_at)s."
 
-#: project/templates/_macros.html:379
+#: project/templates/_macros.html:380
 #, python-format
 msgid "Last updated at %(updated_at)s by %(updated_by)s."
 msgstr "Zuletzt aktualisiert am %(updated_at)s von %(updated_by)s."
 
-#: project/templates/_macros.html:381
+#: project/templates/_macros.html:382
 #, python-format
 msgid "Last updated at %(updated_at)s."
 msgstr "Zuletzt aktualisiert am %(updated_at)s."
 
-#: project/templates/_macros.html:411 project/templates/_macros.html:581
+#: project/templates/_macros.html:413 project/templates/_macros.html:583
 #: project/templates/event/actions.html:25
 #: project/templates/event/create.html:234
 #: project/templates/event/update.html:126
@@ -1482,46 +1486,46 @@ msgstr "Zuletzt aktualisiert am %(updated_at)s."
 msgid "Event"
 msgstr "Veranstaltung"
 
-#: project/templates/_macros.html:417 project/templates/_macros.html:1016
+#: project/templates/_macros.html:419 project/templates/_macros.html:1018
 msgid "Date"
 msgstr "Datum"
 
-#: project/templates/_macros.html:444 project/templates/_macros.html:603
-#: project/templates/_macros.html:1559 project/templates/event/actions.html:51
+#: project/templates/_macros.html:446 project/templates/_macros.html:605
+#: project/templates/_macros.html:1561 project/templates/event/actions.html:51
 msgid "Share"
 msgstr "Teilen"
 
-#: project/templates/_macros.html:448 project/templates/_macros.html:607
-#: project/templates/_macros.html:1589
+#: project/templates/_macros.html:450 project/templates/_macros.html:609
+#: project/templates/_macros.html:1591
 msgid "Add to calendar"
 msgstr "Zum Kalender"
 
-#: project/templates/_macros.html:456 project/templates/_macros.html:621
+#: project/templates/_macros.html:458 project/templates/_macros.html:623
 #: project/templates/event/report.html:4
 msgid "Report event"
 msgstr "Veranstaltung melden"
 
-#: project/templates/_macros.html:483 project/templates/_macros.html:654
+#: project/templates/_macros.html:485 project/templates/_macros.html:656
 msgid "Show directions"
 msgstr "Anreise planen"
 
-#: project/templates/_macros.html:488 project/templates/_macros.html:646
+#: project/templates/_macros.html:490 project/templates/_macros.html:648
 msgid "The event takes place online."
 msgstr "Die Veranstaltung findet online statt."
 
-#: project/templates/_macros.html:490 project/templates/_macros.html:648
+#: project/templates/_macros.html:492 project/templates/_macros.html:650
 msgid "The event takes place both offline and online."
 msgstr ""
 "Die Veranstaltung findet sowohl als Präsenzveranstaltung als auch online "
 "statt."
 
-#: project/templates/_macros.html:611 project/templates/layout.html:186
+#: project/templates/_macros.html:613 project/templates/layout.html:186
 #: project/templates/user/favorite_events.html:4
 msgid "Favorite events"
 msgstr "Merkzettel"
 
-#: project/templates/_macros.html:614 project/templates/_macros.html:657
-#: project/templates/_macros.html:789
+#: project/templates/_macros.html:616 project/templates/_macros.html:659
+#: project/templates/_macros.html:791
 #: project/templates/admin/admin_units.html:36
 #: project/templates/admin/users.html:36
 #: project/templates/manage/events.html:118
@@ -1534,11 +1538,11 @@ msgstr "Merkzettel"
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: project/templates/_macros.html:715
+#: project/templates/_macros.html:717
 msgid "Referenced by"
 msgstr "Empfohlen von"
 
-#: project/templates/_macros.html:727 project/templates/_macros.html:1302
+#: project/templates/_macros.html:729 project/templates/_macros.html:1304
 #: project/templates/event/actions.html:38
 #: project/templates/event_date/list.html:251
 #: project/templates/manage/events.html:125
@@ -1546,33 +1550,33 @@ msgstr "Empfohlen von"
 msgid "Reference event"
 msgstr "Veranstaltung empfehlen"
 
-#: project/templates/_macros.html:747 project/templates/_macros.html:1299
+#: project/templates/_macros.html:749 project/templates/_macros.html:1301
 #: project/templates/event/actions.html:32
 #: project/templates/manage/events.html:123
 msgid "Request reference"
 msgstr "Empfehlung anfragen"
 
-#: project/templates/_macros.html:755 project/templates/event_date/list.html:6
+#: project/templates/_macros.html:757 project/templates/event_date/list.html:6
 #: project/templates/event_date/list.html:461
 #: project/templates/reference_request/review.html:32
 msgid "Event Dates"
 msgstr "Termine"
 
-#: project/templates/_macros.html:853
+#: project/templates/_macros.html:855
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
-#: project/templates/_macros.html:920
+#: project/templates/_macros.html:922
 #, python-format
 msgid "%(count)d event dates"
 msgstr "%(count)d Termine"
 
-#: project/templates/_macros.html:956 project/templates/_macros.html:958
+#: project/templates/_macros.html:958 project/templates/_macros.html:960
 #: project/templates/event_date/list.html:510
 msgid "First"
 msgstr "Erste"
 
-#: project/templates/_macros.html:961 project/templates/_macros.html:963
+#: project/templates/_macros.html:963 project/templates/_macros.html:965
 #: project/templates/event_date/list.html:511
 #: project/templates/widget/event_suggestion/create.html:193
 #: project/templates/widget/event_suggestion/create.html:218
@@ -1583,12 +1587,12 @@ msgstr "Erste"
 msgid "Previous"
 msgstr "Zurück"
 
-#: project/templates/_macros.html:965
+#: project/templates/_macros.html:967
 #, python-format
 msgid "Page %(page)d of %(pages)d (%(total)d total)"
 msgstr "Seite %(page)d von %(pages)d (%(total)d insgesamt)"
 
-#: project/templates/_macros.html:967 project/templates/_macros.html:969
+#: project/templates/_macros.html:969 project/templates/_macros.html:971
 #: project/templates/event_date/list.html:513
 #: project/templates/widget/event_suggestion/create.html:194
 #: project/templates/widget/event_suggestion/create.html:219
@@ -1598,98 +1602,98 @@ msgstr "Seite %(page)d von %(pages)d (%(total)d insgesamt)"
 msgid "Next"
 msgstr "Weiter"
 
-#: project/templates/_macros.html:972 project/templates/_macros.html:974
+#: project/templates/_macros.html:974 project/templates/_macros.html:976
 #: project/templates/event_date/list.html:514
 msgid "Last"
 msgstr "Letzte"
 
-#: project/templates/_macros.html:1039
+#: project/templates/_macros.html:1041
 msgid "Radius"
 msgstr "Umkreis"
 
-#: project/templates/_macros.html:1221
+#: project/templates/_macros.html:1223
 msgid "Edit image"
 msgstr "Bild bearbeiten"
 
-#: project/templates/_macros.html:1242 project/templates/planning/list.html:97
+#: project/templates/_macros.html:1244 project/templates/planning/list.html:97
 msgid "Close"
 msgstr "Schließen"
 
-#: project/templates/_macros.html:1243
+#: project/templates/_macros.html:1245
 msgid "Okay"
 msgstr "OK"
 
-#: project/templates/_macros.html:1255
+#: project/templates/_macros.html:1257
 msgid "Choose image file"
 msgstr "Bild-Datei auswählen"
 
-#: project/templates/_macros.html:1291 project/templates/event/actions.html:65
+#: project/templates/_macros.html:1293 project/templates/event/actions.html:65
 #: project/templates/event/delete.html:12
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: project/templates/_macros.html:1295 project/templates/event/actions.html:58
+#: project/templates/_macros.html:1297 project/templates/event/actions.html:58
 msgid "Duplicate event"
 msgstr "Veranstaltung duplizieren"
 
-#: project/templates/_macros.html:1306 project/templates/event/actions.html:44
+#: project/templates/_macros.html:1308 project/templates/event/actions.html:44
 #: project/templates/manage/events.html:129
 msgid "Add to list"
 msgstr "Zu Liste hinzufügen"
 
-#: project/templates/_macros.html:1309 project/templates/manage/events.html:132
+#: project/templates/_macros.html:1311 project/templates/manage/events.html:132
 msgid "More"
 msgstr "Mehr"
 
-#: project/templates/_macros.html:1356
+#: project/templates/_macros.html:1358
 msgid "Please enter a valid time, between 00:00 and 23:59."
 msgstr "Bitte gib eine gültige Uhrzeit zwischen 00:00 und 23:59 ein."
 
-#: project/templates/_macros.html:1384
+#: project/templates/_macros.html:1386
 #, python-format
 msgid "Just use %(term)s"
 msgstr "Verwende einfach %(term)s"
 
-#: project/templates/_macros.html:1450
+#: project/templates/_macros.html:1452
 msgid "Event suggestion"
 msgstr "Veranstaltungsvorschlag"
 
-#: project/templates/_macros.html:1568
+#: project/templates/_macros.html:1570
 msgid "Link copied"
 msgstr "Link kopiert"
 
-#: project/templates/_macros.html:1568
+#: project/templates/_macros.html:1570
 msgid "Copy link"
 msgstr "Link kopieren"
 
-#: project/templates/_macros.html:1598
+#: project/templates/_macros.html:1600
 msgid "Google calendar"
 msgstr "Google Kalender"
 
-#: project/templates/_macros.html:1600
+#: project/templates/_macros.html:1602
 msgid "Apple calendar"
 msgstr "Apple Kalender"
 
-#: project/templates/_macros.html:1601
+#: project/templates/_macros.html:1603
 msgid "Yahoo calendar"
 msgstr "Yahoo Kalender"
 
-#: project/templates/_macros.html:1602
+#: project/templates/_macros.html:1604
 msgid "Other calendar"
 msgstr "Anderer Kalender"
 
-#: project/templates/_macros.html:1787
+#: project/templates/_macros.html:1789
 msgid "Remove event date"
 msgstr "Termin entfernen"
 
-#: project/templates/_macros.html:1820 project/templates/event/create.html:180
+#: project/templates/_macros.html:1822 project/templates/event/create.html:180
 #: project/templates/event/update.html:103
 #: project/templates/event_date/list.html:446
 #: project/templates/widget/event_suggestion/create.html:129
 msgid "Enter organizer"
 msgstr "Veranstalter eingeben"
 
-#: project/templates/_macros.html:1848
+#: project/templates/_macros.html:1850
 msgid "Enter list name"
 msgstr "Listenname eingeben"
 
@@ -2336,6 +2340,7 @@ msgstr "Veranstaltungsvorschlag prüfen"
 
 #: project/templates/event_suggestion/review.html:28
 #: project/templates/event_suggestion/review_status.html:24
+#: project/templates/reference/read.html:22
 #: project/templates/reference_request/review_status.html:17
 msgid "View event"
 msgstr "Veranstaltung anzeigen"
@@ -2516,7 +2521,7 @@ msgstr "Filter"
 
 #: project/templates/reference/read.html:4
 #: project/templates/reference/read.html:8
-#: project/templates/reference/read.html:29
+#: project/templates/reference/read.html:30
 msgid "Event reference"
 msgstr "Empfehlung"
 
@@ -2634,7 +2639,7 @@ msgstr "Organisation erfolgreich aktualisiert"
 
 #: project/views/admin.py:85 project/views/admin_unit.py:202
 #: project/views/admin_unit.py:235 project/views/manage.py:315
-#: project/views/verification_request.py:163
+#: project/views/verification_request.py:167
 msgid "Entered name does not match organization name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Organisation"
 
@@ -2857,7 +2862,7 @@ msgstr "Veranstaltung erfolgreich empfohlen"
 msgid "Reference successfully updated"
 msgstr "Empfehlung erfolgreich empfohlen"
 
-#: project/views/reference.py:159
+#: project/views/reference.py:153
 msgid "Reference successfully deleted"
 msgstr "Empfehlung erfolgreich gelöscht"
 
@@ -2952,7 +2957,7 @@ msgstr ""
 "Die Einladung wurde für einen anderen Nutzer ausgestellt. Melde dich mit "
 "der Email-Adresse an, an die die Einladung geschickt wurde."
 
-#: project/views/verification_request.py:127
+#: project/views/verification_request.py:131
 msgid ""
 "Request successfully created. You will be notified after the other "
 "organization reviewed the request."
@@ -2960,11 +2965,11 @@ msgstr ""
 "Verifizierungsanfrage erfolgreich erstellt. Du wirst benachrichtigt, "
 "nachdem die andere Organisation die Anfrage geprüft hat."
 
-#: project/views/verification_request.py:168
+#: project/views/verification_request.py:172
 msgid "Verification request successfully deleted"
 msgstr "Verifizierungsanfrage erfolgreich gelöscht"
 
-#: project/views/verification_request.py:201
+#: project/views/verification_request.py:205
 msgid "New verification request"
 msgstr "Neue Verifizierungsanfrage"
 

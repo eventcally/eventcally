@@ -27,7 +27,7 @@ def authorize():
         except OAuth2Error as error:
             return error.description, error.status_code
 
-        grant_scopes = grant.request.scope.split(" ")
+        grant_scopes = grant.request.scope.split(" ") if grant.request.scope else []
         filtered_scopes = {k: scopes[k] for k in grant_scopes}
         return render_template(
             "security/authorize.html",
