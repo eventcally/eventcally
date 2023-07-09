@@ -255,13 +255,13 @@ class EventListRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixi
     )
 
 
-class EventListRefSchema(EventRefSchema, TrackableSchemaMixin):
+class EventListItemRefSchema(EventRefSchema, TrackableSchemaMixin):
     pass
 
 
 class EventListResponseSchema(PaginationResponseSchema):
     items = fields.List(
-        fields.Nested(EventListRefSchema), metadata={"description": "Events"}
+        fields.Nested(EventListItemRefSchema), metadata={"description": "Events"}
     )
 
 
@@ -283,7 +283,7 @@ class UserFavoriteEventListRequestSchema(
 
 class UserFavoriteEventListResponseSchema(PaginationResponseSchema):
     items = fields.List(
-        fields.Nested(EventListRefSchema), metadata={"description": "Events"}
+        fields.Nested(EventListItemRefSchema), metadata={"description": "Events"}
     )
 
 

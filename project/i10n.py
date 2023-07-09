@@ -53,4 +53,5 @@ def print_dynamic_texts():
     gettext("Scope_eventreference:write")
     gettext("Scope_organization:read")
     gettext("Scope_organization:write")
+    gettext("Scope_customwidget:write")
     gettext("There must be no self-reference.")
