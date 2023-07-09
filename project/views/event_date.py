@@ -13,7 +13,7 @@ from project.services.event import (
     get_meta_data,
     get_upcoming_event_dates,
 )
-from project.services.event_search import EventSearchParams
+from project.services.search_params import EventSearchParams
 from project.views.event import get_event_category_choices, get_user_rights
 from project.views.utils import (
     flash_errors,

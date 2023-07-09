@@ -2,7 +2,6 @@ from flask import abort, flash, redirect, render_template, url_for
 from flask_babel import gettext
 from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.sql import desc
 
 from project import app, db
 from project.access import (
@@ -22,6 +21,7 @@ from project.services.reference import (
     get_reference_incoming_query,
     get_reference_outgoing_query,
 )
+from project.services.search_params import EventReferenceSearchParams
 from project.views.utils import flash_errors, get_pagination_urls, handleSqlError
 
 
@@ -112,11 +112,9 @@ def event_reference_update(id):
 @auth_required()
 def manage_admin_unit_references_incoming(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    references = (
-        get_reference_incoming_query(admin_unit)
-        .order_by(desc(EventReference.created_at))
-        .paginate()
-    )
+    params = EventReferenceSearchParams()
+    params.admin_unit_id = admin_unit.id
+    references = get_reference_incoming_query(params).paginate()
 
     return render_template(
         "manage/references_incoming.html",
@@ -130,11 +128,7 @@ def manage_admin_unit_references_incoming(id):
 @auth_required()
 def manage_admin_unit_references_outgoing(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    references = (
-        get_reference_outgoing_query(admin_unit)
-        .order_by(desc(EventReference.created_at))
-        .paginate()
-    )
+    references = get_reference_outgoing_query(admin_unit).paginate()
 
     return render_template(
         "manage/references_outgoing.html",

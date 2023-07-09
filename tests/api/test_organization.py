@@ -126,6 +126,21 @@ def test_event_search(client, seeder: Seeder, utils: UtilActions):
         or response.json["items"][1]["public_status"] == "draft"
     )
 
+    seeder.create_any_reference(admin_unit_id)
+    url = utils.get_url(
+        "api_v1_organization_event_search",
+        id=admin_unit_id,
+        include_organization_references="yes",
+    )
+    response = utils.get_json_ok(url)
+
+    url = utils.get_url(
+        "api_v1_organization_event_search",
+        id=admin_unit_id,
+        organization_references_only="yes",
+    )
+    response = utils.get_json_ok(url)
+
 
 def test_organizers(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
@@ -420,7 +435,14 @@ def test_references_incoming(client, seeder: Seeder, utils: UtilActions):
     url = utils.get_url(
         "api_v1_organization_incoming_event_reference_list",
         id=admin_unit_id,
-        name="crew",
+    )
+    utils.get_json_ok(url)
+
+    url = utils.get_url(
+        "api_v1_organization_incoming_event_reference_list",
+        id=admin_unit_id,
+        created_at_from="2023-07-07T00:00:00",
+        created_at_to="2023-07-08T00:00:00",
     )
     utils.get_json_ok(url)
 

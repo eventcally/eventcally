@@ -1,4 +1,4 @@
-from marshmallow import fields, post_dump
+from marshmallow import fields, post_dump, validate
 
 from project.access import has_access, login_api_user
 from project.api import marshmallow
@@ -9,6 +9,8 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     SQLAlchemyBaseSchema,
+    TrackableRequestSchemaMixin,
+    TrackableSchemaMixin,
     WriteIdSchemaMixin,
 )
 from project.models import AdminUnit
@@ -66,14 +68,22 @@ class OrganizationRefSchema(OrganizationIdSchema):
     name = marshmallow.auto_field()
 
 
-class OrganizationListRefSchema(OrganizationRefSchema):
+class OrganizationListRefSchema(OrganizationRefSchema, TrackableSchemaMixin):
     short_name = marshmallow.auto_field()
     is_verified = fields.Boolean()
 
 
-class OrganizationListRequestSchema(PaginationRequestSchema):
+class OrganizationListRequestSchema(
+    PaginationRequestSchema, TrackableRequestSchemaMixin
+):
     keyword = fields.Str(
         metadata={"description": "Looks for keyword in name and short name."},
+    )
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+        validate=validate.OneOf(
+            ["-created_at", "-updated_at", "-last_modified_at", "name"]
+        ),
     )
 
 

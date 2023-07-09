@@ -199,7 +199,7 @@ def test_get_events_query(client, seeder, app):
 
     with app.app_context():
         from project.services.event import get_events_query
-        from project.services.event_search import EventSearchParams
+        from project.services.search_params import EventSearchParams
 
         params = EventSearchParams()
         params.admin_unit_id = admin_unit_id
@@ -253,7 +253,7 @@ def test_get_events_fulltext(
 
     with app.app_context():
         from project.services.event import get_events_query
-        from project.services.event_search import EventSearchParams
+        from project.services.search_params import EventSearchParams
 
         params = EventSearchParams()
         params.keyword = keyword

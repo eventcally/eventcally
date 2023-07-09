@@ -37,6 +37,7 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     SQLAlchemyBaseSchema,
+    TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
     WriteIdSchemaMixin,
 )
@@ -222,7 +223,10 @@ class EventRefSchema(EventIdSchema):
 
 
 class EventSearchItemSchema(
-    EventRefSchema, EventCurrentUserMixin, EventCurrentOrganizationMixin
+    EventRefSchema,
+    EventCurrentUserMixin,
+    EventCurrentOrganizationMixin,
+    TrackableSchemaMixin,
 ):
     description = marshmallow.auto_field()
     date_definitions = fields.List(fields.Nested(EventDateDefinitionSchema))
@@ -237,27 +241,53 @@ class EventSearchItemSchema(
     public_status = EnumField(PublicStatus)
 
 
-class EventListRequestSchema(PaginationRequestSchema):
+class EventListRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixin):
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+        validate=validate.OneOf(
+            [
+                "-created_at",
+                "-updated_at",
+                "-last_modified_at",
+                "start",
+            ]
+        ),
+    )
+
+
+class EventListRefSchema(EventRefSchema, TrackableSchemaMixin):
     pass
 
 
 class EventListResponseSchema(PaginationResponseSchema):
     items = fields.List(
-        fields.Nested(EventRefSchema), metadata={"description": "Events"}
+        fields.Nested(EventListRefSchema), metadata={"description": "Events"}
     )
 
 
-class UserFavoriteEventListRequestSchema(PaginationRequestSchema):
-    pass
+class UserFavoriteEventListRequestSchema(
+    PaginationRequestSchema, TrackableRequestSchemaMixin
+):
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+        validate=validate.OneOf(
+            [
+                "-created_at",
+                "-updated_at",
+                "-last_modified_at",
+                "start",
+            ]
+        ),
+    )
 
 
 class UserFavoriteEventListResponseSchema(PaginationResponseSchema):
     items = fields.List(
-        fields.Nested(EventRefSchema), metadata={"description": "Events"}
+        fields.Nested(EventListRefSchema), metadata={"description": "Events"}
     )
 
 
-class EventSearchRequestSchema(PaginationRequestSchema):
+class EventSearchRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixin):
     keyword = fields.Str(
         metadata={"description": "Looks for keyword in name, description and tags."},
     )
@@ -267,9 +297,7 @@ class EventSearchRequestSchema(PaginationRequestSchema):
         },
     )
     date_to = fields.Date(
-        metadata={
-            "description": "Looks for events at or before this date, e.g. 2020-12-31."
-        },
+        metadata={"description": "Looks for events before this date, e.g. 2020-12-31."},
     )
     coordinate = fields.Str(
         metadata={
@@ -294,10 +322,37 @@ class EventSearchRequestSchema(PaginationRequestSchema):
     )
     sort = fields.Str(
         metadata={"description": "Sort result items."},
+        validate=validate.OneOf(
+            [
+                "-created_at",
+                "-updated_at",
+                "-last_modified_at",
+                "-rating",
+                "-reference_created_at",
+                "start",
+            ]
+        ),
     )
     status = fields.List(
         EnumField(EventStatus),
         metadata={"description": "Looks for events with this stati."},
+    )
+    postal_code = fields.List(
+        fields.Str(),
+        metadata={"description": "Looks for events with places with this postal code."},
+    )
+    exclude_recurring = fields.Bool(
+        metadata={"description": "Exclude recurring events"},
+    )
+    include_organization_references = fields.Bool(
+        metadata={
+            "description": "Include events referenced by organization. Only valid if there is an organization context."
+        },
+    )
+    organization_references_only = fields.Bool(
+        metadata={
+            "description": "Only events referenced by organization. Only valid if there is an organization context."
+        },
     )
 
 

@@ -366,7 +366,6 @@
 
 {% macro render_audit(tracking_mixing, show_user=False) %}
   {% set created_at = tracking_mixing.created_at | datetimeformat('short') %}
-  {% set updated_at = tracking_mixing.updated_at | datetimeformat('short') %}
 
   {% if show_user %}
     {{ _('Created at %(created_at)s by %(created_by)s.', created_at=created_at, created_by=tracking_mixing.created_by.email) }}
@@ -374,11 +373,14 @@
     {{ _('Created at %(created_at)s.', created_at=created_at) }}
   {% endif %}
 
-  {% if created_at != updated_at %}
-    {% if show_user %}
-      {{ _('Last updated at %(updated_at)s by %(updated_by)s.', updated_at=updated_at, updated_by=tracking_mixing.updated_by.email) }}
-    {% else %}
-      {{ _('Last updated at %(updated_at)s.', updated_at=updated_at) }}
+  {% if tracking_mixing.updated_at %}
+    {% set updated_at = tracking_mixing.updated_at | datetimeformat('short') %}
+    {% if created_at != updated_at %}
+      {% if show_user %}
+        {{ _('Last updated at %(updated_at)s by %(updated_by)s.', updated_at=updated_at, updated_by=tracking_mixing.updated_by.email) }}
+      {% else %}
+        {{ _('Last updated at %(updated_at)s.', updated_at=updated_at) }}
+      {% endif %}
     {% endif %}
   {% endif %}
 {% endmacro %}

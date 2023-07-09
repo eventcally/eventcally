@@ -43,8 +43,8 @@ from project.services.admin_unit import (
     get_member_for_admin_unit_by_user_id,
 )
 from project.services.event import get_events_query
-from project.services.event_search import EventSearchParams
 from project.services.event_suggestion import get_event_reviews_query
+from project.services.search_params import EventSearchParams
 from project.utils import get_place_str
 from project.views.event import get_event_category_choices
 from project.views.utils import (

@@ -1,4 +1,4 @@
-from marshmallow import fields
+from marshmallow import fields, validate
 
 from project.api import marshmallow
 from project.api.event.schemas import (
@@ -7,7 +7,12 @@ from project.api.event.schemas import (
     EventSearchRequestSchema,
 )
 from project.api.fields import CustomDateTimeField
-from project.api.schemas import PaginationRequestSchema, PaginationResponseSchema
+from project.api.schemas import (
+    PaginationRequestSchema,
+    PaginationResponseSchema,
+    TrackableRequestSchemaMixin,
+    TrackableSchemaMixin,
+)
 from project.models import EventDate
 
 
@@ -32,13 +37,27 @@ class EventDateRefSchema(marshmallow.SQLAlchemySchema):
     start = CustomDateTimeField()
 
 
-class EventDateListRequestSchema(PaginationRequestSchema):
+class EventDateListRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixin):
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+        validate=validate.OneOf(
+            [
+                "-created_at",
+                "-updated_at",
+                "-last_modified_at",
+                "start",
+            ]
+        ),
+    )
+
+
+class EventDateListRefSchema(EventDateRefSchema, TrackableSchemaMixin):
     pass
 
 
 class EventDateListResponseSchema(PaginationResponseSchema):
     items = fields.List(
-        fields.Nested(EventDateRefSchema), metadata={"description": "Dates"}
+        fields.Nested(EventDateListRefSchema), metadata={"description": "Dates"}
     )
 
 

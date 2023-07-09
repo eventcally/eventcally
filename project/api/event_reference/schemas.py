@@ -1,4 +1,4 @@
-from marshmallow import fields
+from marshmallow import fields, validate
 
 from project.api import marshmallow
 from project.api.event.schemas import EventRefSchema, EventWriteIdSchema
@@ -8,6 +8,8 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     SQLAlchemyBaseSchema,
+    TrackableRequestSchemaMixin,
+    TrackableSchemaMixin,
 )
 from project.models import EventReference
 
@@ -22,7 +24,7 @@ class EventReferenceIdSchema(EventReferenceModelSchema, IdSchemaMixin):
     pass
 
 
-class EventReferenceRefSchema(EventReferenceIdSchema):
+class EventReferenceRefSchema(EventReferenceIdSchema, TrackableSchemaMixin):
     event = fields.Nested(EventRefSchema)
 
 
@@ -36,8 +38,13 @@ class EventReferenceDumpSchema(EventReferenceIdSchema):
     organization_id = fields.Int(attribute="admin_unit_id")
 
 
-class EventReferenceListRequestSchema(PaginationRequestSchema):
-    pass
+class EventReferenceListRequestSchema(
+    PaginationRequestSchema, TrackableRequestSchemaMixin
+):
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+        validate=validate.OneOf(["-created_at", "-updated_at", "-last_modified_at"]),
+    )
 
 
 class EventReferenceListResponseSchema(PaginationResponseSchema):

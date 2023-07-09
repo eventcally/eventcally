@@ -24,7 +24,7 @@ def generate_sitemap(pinggoogle: bool):
     today = get_today()
     events = (
         Event.query.join(Event.admin_unit)
-        .options(load_only(Event.id, Event.updated_at))
+        .options(load_only(Event.id, Event.last_modified_at))
         .filter(Event.dates.any(EventDate.start >= today))
         .filter(
             and_(
@@ -38,7 +38,11 @@ def generate_sitemap(pinggoogle: bool):
 
     for event in events:
         loc = url_for("event", event_id=event.id)
-        lastmod = event.updated_at.strftime("%Y-%m-%d") if event.updated_at else None
+        lastmod = (
+            event.last_modified_at.strftime("%Y-%m-%d")
+            if event.last_modified_at
+            else None
+        )
         lastmod_tag = f"<lastmod>{lastmod}</lastmod>" if lastmod else ""
         buf.write(f"<url><loc>{loc}</loc>{lastmod_tag}</url>")
 

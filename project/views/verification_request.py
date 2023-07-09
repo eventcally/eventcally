@@ -15,6 +15,7 @@ from project.models import (
 )
 from project.models.admin_unit import AdminUnit
 from project.services.admin_unit import get_admin_unit_query
+from project.services.search_params import AdminUnitSearchParams
 from project.services.verification import get_verification_requests_incoming_query
 from project.views.utils import (
     flash_errors,
@@ -79,7 +80,10 @@ def manage_admin_unit_verification_requests_outgoing(id):
 @manage_required("verification_request:create")
 def manage_admin_unit_verification_requests_outgoing_create_select(id):
     admin_unit = g.manage_admin_unit
-    admin_units = get_admin_unit_query(only_verifier=True).paginate()
+
+    params = AdminUnitSearchParams()
+    params.only_verifier = True
+    admin_units = get_admin_unit_query(params).paginate()
 
     return render_template(
         "manage/verification_requests_outgoing_create_select.html",

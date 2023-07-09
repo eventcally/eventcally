@@ -19,9 +19,9 @@ from project.services.event import (
     get_event_date_with_details_or_404,
     get_event_dates_query,
 )
-from project.services.event_search import EventSearchParams
 from project.services.event_suggestion import insert_event_suggestion
 from project.services.place import get_event_places
+from project.services.search_params import EventSearchParams
 from project.views.event import get_event_category_choices
 from project.views.utils import (
     flash_errors,

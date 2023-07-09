@@ -2,6 +2,7 @@ from marshmallow import ValidationError, fields, missing, validate
 from marshmallow.decorators import pre_load
 
 from project.api import marshmallow
+from project.api.fields import GmtDateTimeField
 
 
 class SQLAlchemyBaseSchema(marshmallow.SQLAlchemySchema):
@@ -39,8 +40,21 @@ class WriteIdSchemaMixin(object):
 
 
 class TrackableSchemaMixin(object):
-    created_at = marshmallow.auto_field(dump_only=True)
-    updated_at = marshmallow.auto_field(dump_only=True)
+    created_at = GmtDateTimeField(dump_only=True)
+    updated_at = GmtDateTimeField(dump_only=True)
+
+
+class TrackableRequestSchemaMixin(object):
+    created_at_from = GmtDateTimeField(
+        metadata={
+            "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00."
+        },
+    )
+    created_at_to = GmtDateTimeField(
+        metadata={
+            "description": "Items created before this date time in GTM, e.g. 2020-12-31T00:00:00."
+        },
+    )
 
 
 class ErrorResponseSchema(marshmallow.Schema):

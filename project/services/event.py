@@ -45,8 +45,8 @@ from project.models import (
     UserFavoriteEvents,
     sanitize_allday_instance,
 )
-from project.services.event_search import EventSearchParams
 from project.services.reference import get_event_reference, upsert_event_reference
+from project.services.search_params import EventSearchParams
 from project.utils import get_pending_changes, get_place_str
 from project.views.utils import truncate
 
@@ -65,6 +65,8 @@ def upsert_event_category(category_name):
 
 
 def fill_event_filter(event_filter, params: EventSearchParams):
+    event_filter = params.fill_trackable_filter(event_filter, Event)
+
     if params.keyword:
         tq = func.websearch_to_tsquery("german", params.keyword)
         event_filter = and_(
@@ -196,19 +198,25 @@ def fill_event_admin_unit_filter(event_filter, params: EventSearchParams):
     admin_unit_reference = None
 
     if params.admin_unit_id:
-        if params.include_admin_unit_references:
+        if params.include_admin_unit_references or params.admin_unit_references_only:
             admin_unit_refs_subquery = EventReference.query.filter(
                 EventReference.admin_unit_id == params.admin_unit_id
             ).subquery()
             admin_unit_reference = aliased(EventReference, admin_unit_refs_subquery)
 
-            event_filter = and_(
-                event_filter,
-                or_(
-                    Event.admin_unit_id == params.admin_unit_id,
+            if params.admin_unit_references_only:
+                event_filter = and_(
+                    event_filter,
                     admin_unit_reference.id.isnot(None),
-                ),
-            )
+                )
+            else:
+                event_filter = and_(
+                    event_filter,
+                    or_(
+                        Event.admin_unit_id == params.admin_unit_id,
+                        admin_unit_reference.id.isnot(None),
+                    ),
+                )
         else:
             event_filter = and_(
                 event_filter, Event.admin_unit_id == params.admin_unit_id
@@ -271,21 +279,9 @@ def get_event_dates_query(params: EventSearchParams):
         .filter(event_filter)
     )
 
-    if params.sort == "-rating":
-        if admin_unit_reference:
-            result = result.order_by(
-                case(
-                    (
-                        admin_unit_reference.rating.isnot(None),
-                        admin_unit_reference.rating,
-                    ),
-                    else_=Event.rating,
-                ).desc()
-            )
-        else:
-            result = result.order_by(Event.rating.desc())
-
+    result = fill_event_query_order(result, admin_unit_reference, params)
     result = result.order_by(EventDate.start)
+
     return result
 
 
@@ -395,17 +391,38 @@ def get_events_query(params: EventSearchParams):
             isouter=True,
         )
 
-    result = (
-        result.options(
-            contains_eager(Event.event_place).contains_eager(EventPlace.location),
-            joinedload(Event.categories),
-            joinedload(Event.organizer),
-            joinedload(Event.photo),
-            joinedload(Event.admin_unit),
-        )
-        .filter(event_filter)
-        .order_by(Event.min_start)
-    )
+    result = result.options(
+        contains_eager(Event.event_place).contains_eager(EventPlace.location),
+        joinedload(Event.categories),
+        joinedload(Event.organizer),
+        joinedload(Event.photo),
+        joinedload(Event.admin_unit),
+    ).filter(event_filter)
+
+    result = fill_event_query_order(result, admin_unit_reference, params)
+    result = result.order_by(Event.min_start)
+
+    return result
+
+
+def fill_event_query_order(result, admin_unit_reference, params: EventSearchParams):
+    result = params.get_trackable_order_by(result, Event)
+
+    if params.sort == "-rating":
+        if admin_unit_reference:
+            result = result.order_by(
+                case(
+                    (
+                        admin_unit_reference.rating.isnot(None),
+                        admin_unit_reference.rating,
+                    ),
+                    else_=Event.rating,
+                ).desc()
+            )
+        else:
+            result = result.order_by(Event.rating.desc())
+    elif params.sort == "-reference_created_at" and admin_unit_reference:
+        result = result.order_by(admin_unit_reference.created_at.desc())
 
     return result
 
@@ -551,8 +568,8 @@ def populate_ical_event_with_event(
     if model_event.created_at:
         ical_event.add("dtstamp", model_event.created_at)
 
-    if model_event.updated_at:
-        ical_event.add("last-modified", model_event.updated_at)
+    if model_event.last_modified_at:
+        ical_event.add("last-modified", model_event.last_modified_at)
 
     if model_event.status and model_event.status == EventStatus.cancelled:
         ical_event.add("status", "CANCELLED")

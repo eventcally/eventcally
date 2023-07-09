@@ -35,7 +35,7 @@ from project.services.event import (
     get_significant_event_changes,
     update_event,
 )
-from project.services.event_search import EventSearchParams
+from project.services.search_params import EventSearchParams
 from project.views.event import (
     send_event_report_mails,
     send_referenced_event_changed_mails,
@@ -62,17 +62,20 @@ class EventListResource(BaseResource):
     @marshal_with(EventListResponseSchema)
     @require_api_access()
     def get(self, **kwargs):
-        pagination = (
-            Event.query.join(Event.admin_unit)
-            .filter(
-                and_(
-                    Event.public_status == PublicStatus.published,
-                    AdminUnit.is_verified,
-                )
+        params = EventSearchParams()
+        params.load_from_request(**kwargs)
+
+        query = Event.query.join(Event.admin_unit).filter(
+            and_(
+                Event.public_status == PublicStatus.published,
+                AdminUnit.is_verified,
             )
-            .paginate()
         )
-        return pagination
+        query = params.get_trackable_query(query, Event)
+        query = params.get_trackable_order_by(query, Event)
+        query = query.order_by(Event.min_start)
+
+        return query.paginate()
 
 
 class EventResource(BaseResource):
@@ -173,7 +176,7 @@ class EventSearchResource(BaseResource):
     def get(self, **kwargs):
         login_api_user()
         params = EventSearchParams()
-        params.load_from_request()
+        params.load_from_request(**kwargs)
         pagination = get_events_query(params).paginate()
         return pagination
 

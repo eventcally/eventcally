@@ -1,7 +1,7 @@
 from marshmallow import ValidationError, fields
 from marshmallow_sqlalchemy import fields as msfields
 
-from project.dateutils import berlin_tz
+from project.dateutils import berlin_tz, gmt_tz
 
 
 class NumericStr(fields.String):
@@ -30,6 +30,22 @@ class CustomDateTimeField(fields.DateTime):
 
         if result and result.tzinfo is None:
             result = berlin_tz.localize(result)
+
+        return result
+
+
+class GmtDateTimeField(fields.DateTime):
+    def _serialize(self, value, attr, obj, **kwargs):
+        if value:
+            value = value.replace(tzinfo=gmt_tz)
+
+        return super()._serialize(value, attr, obj, **kwargs)
+
+    def deserialize(self, value, attr, data, **kwargs):
+        result = super().deserialize(value, attr, data, **kwargs)
+
+        if result and result.tzinfo is None:
+            result = gmt_tz.localize(result)
 
         return result
 

@@ -14,7 +14,7 @@ from project.utils import make_dir
 @app.route("/image/<int:id>/<hash>")
 def image(id, hash=None):
     image = Image.query.options(
-        load_only(Image.id, Image.encoding_format, Image.updated_at)
+        load_only(Image.id, Image.encoding_format, Image.last_modified_at)
     ).get_or_404(id)
 
     # Dimensions

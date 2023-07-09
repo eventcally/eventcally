@@ -1,6 +1,6 @@
 def test_date_str(client, seeder, utils):
     from project.dateutils import create_berlin_date
-    from project.services.event_search import EventSearchParams
+    from project.services.search_params import EventSearchParams
 
     params = EventSearchParams()
     params.date_from = create_berlin_date(2030, 12, 30, 0)

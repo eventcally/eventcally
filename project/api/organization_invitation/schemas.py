@@ -1,4 +1,4 @@
-from marshmallow import fields
+from marshmallow import fields, validate
 
 from project.api import marshmallow
 from project.api.organization.schemas import OrganizationRefSchema
@@ -7,6 +7,7 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     SQLAlchemyBaseSchema,
+    TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
 )
 from project.models import AdminUnitInvitation
@@ -40,13 +41,26 @@ class OrganizationInvitationRefSchema(OrganizationInvitationIdSchema):
     email = marshmallow.auto_field()
 
 
-class OrganizationInvitationListRequestSchema(PaginationRequestSchema):
+class OrganizationInvitationListRequestSchema(
+    PaginationRequestSchema, TrackableRequestSchemaMixin
+):
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+        validate=validate.OneOf(
+            ["-created_at", "-updated_at", "-last_modified_at", "name"]
+        ),
+    )
+
+
+class OrganizationInvitationListRefSchema(
+    OrganizationInvitationRefSchema, TrackableSchemaMixin
+):
     pass
 
 
 class OrganizationInvitationListResponseSchema(PaginationResponseSchema):
     items = fields.List(
-        fields.Nested(OrganizationInvitationRefSchema),
+        fields.Nested(OrganizationInvitationListRefSchema),
         metadata={"description": "Organization invitations"},
     )
 

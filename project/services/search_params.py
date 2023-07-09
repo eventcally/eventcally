@@ -1,5 +1,8 @@
+from typing import Type
+
 from dateutil.relativedelta import relativedelta
 from flask import request
+from sqlalchemy import and_
 
 from project.dateutils import (
     date_set_end_of_day,
@@ -7,10 +10,100 @@ from project.dateutils import (
     form_input_to_date,
     get_today,
 )
+from project.models.trackable_mixin import TrackableMixin
 
 
-class EventSearchParams(object):
+class BaseSearchParams(object):
     def __init__(self):
+        self.sort = None
+
+    def load_from_request(self, **kwargs):
+        self.sort = kwargs.get("sort", self.sort)
+
+
+class TrackableSearchParams(BaseSearchParams):
+    def __init__(self):
+        super().__init__()
+        self.created_at_from = None
+        self.created_at_to = None
+
+    def load_from_request(self, **kwargs):
+        super().load_from_request(**kwargs)
+
+        self.created_at_from = kwargs.get("created_at_from", self.created_at_from)
+        self.created_at_to = kwargs.get("created_at_to", self.created_at_to)
+
+    def get_trackable_query(self, query, klass: Type[TrackableMixin]):
+        filter = self.fill_trackable_filter(1 == 1, klass)
+        return query.filter(filter)
+
+    def fill_trackable_filter(self, filter, klass: Type[TrackableMixin]):
+        if self.created_at_from:
+            filter = and_(filter, klass.created_at >= self.created_at_from)
+
+        if self.created_at_to:
+            filter = and_(filter, klass.created_at < self.created_at_to)
+
+        return filter
+
+    def get_trackable_order_by(self, query, klass: Type[TrackableMixin]):
+        if self.sort == "-created_at":
+            query = query.order_by(klass.created_at.desc())
+        elif self.sort == "-updated_at":
+            query = query.order_by(klass.updated_at.desc().nulls_last())
+        elif self.sort == "-last_modified_at":
+            query = query.order_by(klass.last_modified_at.desc())
+
+        return query
+
+
+class EventReferenceSearchParams(TrackableSearchParams):
+    def __init__(self):
+        super().__init__()
+        self.admin_unit_id = None
+
+
+class AdminUnitSearchParams(TrackableSearchParams):
+    def __init__(self):
+        super().__init__()
+        self.keyword = None
+        self.include_unverified = False
+        self.only_verifier = False
+        self.reference_request_for_admin_unit_id = None
+
+    def load_from_request(self, **kwargs):
+        super().load_from_request(**kwargs)
+
+        self.keyword = kwargs.get("keyword", self.keyword)
+
+
+class OrganizerSearchParams(TrackableSearchParams):
+    def __init__(self):
+        super().__init__()
+        self.admin_unit_id = None
+        self.name = None
+
+    def load_from_request(self, **kwargs):
+        super().load_from_request(**kwargs)
+
+        self.name = kwargs.get("name", self.name)
+
+
+class EventPlaceSearchParams(TrackableSearchParams):
+    def __init__(self):
+        super().__init__()
+        self.admin_unit_id = None
+        self.name = None
+
+    def load_from_request(self, **kwargs):
+        super().load_from_request(**kwargs)
+
+        self.name = kwargs.get("name", self.name)
+
+
+class EventSearchParams(TrackableSearchParams):
+    def __init__(self):
+        super().__init__()
         self._date_from = None
         self._date_to = None
         self._date_from_str = None
@@ -18,6 +111,7 @@ class EventSearchParams(object):
         self._coordinate = None
         self.admin_unit_id = None
         self.include_admin_unit_references = None
+        self.admin_unit_references_only = None
         self.can_read_private_events = None
         self.can_read_planned_events = None
         self.keyword = None
@@ -29,7 +123,6 @@ class EventSearchParams(object):
         self.event_place_id = None
         self.event_list_id = None
         self.weekday = None
-        self.sort = None
         self.status = None
         self.public_status = None
         self.favored_by_user_id = None
@@ -112,7 +205,7 @@ class EventSearchParams(object):
         return None
 
     def load_bool_param(self, param: str):
-        return request.args[param] == "y"
+        return request.args[param].lower() in ("true", "t", "yes", "y", "on", "1")
 
     def load_status_list_param(self):
         stati = self.load_list_param("status")
@@ -146,7 +239,9 @@ class EventSearchParams(object):
 
         return result
 
-    def load_from_request(self):
+    def load_from_request(self, **kwargs):
+        super().load_from_request(**kwargs)
+
         if "date_from" in request.args:
             self.date_from_str = request.args["date_from"]
 
@@ -183,9 +278,6 @@ class EventSearchParams(object):
         if "postal_code" in request.args:
             self.postal_code = self.load_list_param("postal_code")
 
-        if "sort" in request.args:
-            self.sort = request.args["sort"]
-
         if "organization_id" in request.args:
             self.admin_unit_id = request.args["organization_id"]
 
@@ -200,3 +292,13 @@ class EventSearchParams(object):
 
         if "exclude_recurring" in request.args:
             self.exclude_recurring = self.load_bool_param("exclude_recurring")
+
+        if "include_organization_references" in request.args:
+            self.include_admin_unit_references = self.load_bool_param(
+                "include_organization_references"
+            )
+
+        if "organization_references_only" in request.args:
+            self.admin_unit_references_only = self.load_bool_param(
+                "organization_references_only"
+            )
