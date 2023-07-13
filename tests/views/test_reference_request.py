@@ -157,11 +157,7 @@ def test_admin_unit_reference_requests_incoming(client, seeder, utils):
 
 def test_admin_unit_reference_requests_outgoing(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
-
-    other_user_id = seeder.create_user("other@test.de")
-    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
-    seeder.create_reference_request(event_id, other_admin_unit_id)
+    seeder.create_outgoing_reference_request(admin_unit_id)
 
     utils.get_endpoint_ok(
         "manage_admin_unit_reference_requests_outgoing", id=admin_unit_id

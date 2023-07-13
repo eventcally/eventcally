@@ -2,7 +2,6 @@ from flask import abort, flash, redirect, render_template, url_for
 from flask_babel import gettext
 from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.sql import desc
 
 from project import app, db
 from project.access import (
@@ -16,6 +15,7 @@ from project.models import (
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
 )
+from project.models.event_reference import EventReference
 from project.services.admin_unit import (
     get_admin_unit_by_id,
     get_admin_unit_relation,
@@ -24,7 +24,9 @@ from project.services.admin_unit import (
 from project.services.reference import (
     create_event_reference_for_request,
     get_reference_requests_incoming_query,
+    get_reference_requests_outgoing_query,
 )
+from project.services.search_params import EventReferenceRequestSearchParams
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
@@ -37,11 +39,10 @@ from project.views.utils import (
 @auth_required()
 def manage_admin_unit_reference_requests_incoming(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    requests = (
-        get_reference_requests_incoming_query(admin_unit)
-        .order_by(desc(EventReferenceRequest.created_at))
-        .paginate()
-    )
+
+    params = EventReferenceRequestSearchParams()
+    params.admin_unit_id = admin_unit.id
+    requests = get_reference_requests_incoming_query(params).paginate()
 
     return render_template(
         "manage/reference_requests_incoming.html",
@@ -55,12 +56,10 @@ def manage_admin_unit_reference_requests_incoming(id):
 @auth_required()
 def manage_admin_unit_reference_requests_outgoing(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    requests = (
-        EventReferenceRequest.query.join(Event)
-        .filter(Event.admin_unit_id == admin_unit.id)
-        .order_by(desc(EventReferenceRequest.created_at))
-        .paginate()
-    )
+
+    params = EventReferenceRequestSearchParams()
+    params.admin_unit_id = admin_unit.id
+    requests = get_reference_requests_outgoing_query(params).paginate()
 
     return render_template(
         "manage/reference_requests_outgoing.html",
@@ -99,15 +98,18 @@ def event_reference_request_create(event_id):
         )
 
     if form.validate_on_submit():
-        request = EventReferenceRequest()
-        form.populate_obj(request)
-        request.event = event
+        reference_request = EventReferenceRequest()
+        form.populate_obj(reference_request)
+        reference_request.event = event
 
         try:
-            db.session.add(request)
+            db.session.add(reference_request)
 
-            msg = handle_request_according_to_relation(request, event)
+            reference, msg = handle_request_according_to_relation(
+                reference_request, event
+            )
             db.session.commit()
+            send_reference_request_mails(reference_request, reference)
             flash(msg, "success")
             return redirect(
                 url_for(
@@ -127,30 +129,62 @@ def event_reference_request_create(event_id):
 def handle_request_according_to_relation(
     request: EventReferenceRequest, event: Event
 ) -> str:
-    admin_unit = get_admin_unit_by_id(request.admin_unit_id)
-    relation = get_admin_unit_relation(request.admin_unit_id, event.admin_unit_id)
+    admin_unit = (
+        request.admin_unit
+        if request.admin_unit
+        else get_admin_unit_by_id(request.admin_unit_id)
+    )
+    relation = get_admin_unit_relation(admin_unit.id, event.admin_unit_id)
     auto_verify = relation and relation.auto_verify_event_reference_requests
+    reference = None
 
     if auto_verify:
         request.review_status = EventReferenceRequestReviewStatus.verified
         reference = create_event_reference_for_request(request)
-        send_auto_reference_inbox_mails(reference)
+
         msg = gettext(
             "%(organization)s accepted your reference request",
             organization=admin_unit.name,
         )
     else:
         request.review_status = EventReferenceRequestReviewStatus.inbox
-        send_reference_request_inbox_mails(request)
+
         msg = gettext(
             "Reference request to %(organization)s successfully created. You will be notified after the other organization reviews the event.",
             organization=admin_unit.name,
         )
 
-    return msg
+    return reference, msg
 
 
-def send_member_reference_request_verify_mails(
+def send_reference_request_mails(
+    request: EventReferenceRequest, reference: EventReference
+):
+    if reference:
+        _send_auto_reference_mails(reference)
+    else:
+        _send_reference_request_inbox_mails(request)
+
+
+def _send_reference_request_inbox_mails(request):
+    _send_member_reference_request_verify_mails(
+        request.admin_unit_id,
+        gettext("New reference request"),
+        "reference_request_notice",
+        request=request,
+    )
+
+
+def _send_auto_reference_mails(reference):
+    _send_member_reference_request_verify_mails(
+        reference.admin_unit_id,
+        gettext("New reference automatically verified"),
+        "reference_auto_verified_notice",
+        reference=reference,
+    )
+
+
+def _send_member_reference_request_verify_mails(
     admin_unit_id, subject, template, **context
 ):
     # Benachrichtige alle Mitglieder der AdminUnit, die Requests verifizieren können
@@ -160,21 +194,3 @@ def send_member_reference_request_verify_mails(
     emails = list(map(lambda member: member.user.email, members))
 
     send_mails_async(emails, subject, template, **context)
-
-
-def send_reference_request_inbox_mails(request):
-    send_member_reference_request_verify_mails(
-        request.admin_unit_id,
-        gettext("New reference request"),
-        "reference_request_notice",
-        request=request,
-    )
-
-
-def send_auto_reference_inbox_mails(reference):
-    send_member_reference_request_verify_mails(
-        reference.admin_unit_id,
-        gettext("New reference automatically verified"),
-        "reference_auto_verified_notice",
-        reference=reference,
-    )

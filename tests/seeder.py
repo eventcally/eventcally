@@ -758,6 +758,15 @@ class Seeder(object):
         reference_request_id = self.create_reference_request(event_id, admin_unit_id)
         return (other_user_id, other_admin_unit_id, event_id, reference_request_id)
 
+    def create_outgoing_reference_request(self, admin_unit_id):
+        other_user_id = self.create_user("other@test.de")
+        other_admin_unit_id = self.create_admin_unit(other_user_id, "Other Crew")
+        event_id = self.create_event(admin_unit_id)
+        reference_request_id = self.create_reference_request(
+            event_id, other_admin_unit_id
+        )
+        return (other_user_id, other_admin_unit_id, event_id, reference_request_id)
+
     def get_now_by_minute(self):
         from datetime import datetime
 

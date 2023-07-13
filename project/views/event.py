@@ -45,7 +45,10 @@ from project.services.event import (
 )
 from project.utils import get_event_category_name, get_place_str
 from project.views.event_suggestion import send_event_suggestion_review_status_mail
-from project.views.reference_request import handle_request_according_to_relation
+from project.views.reference_request import (
+    handle_request_according_to_relation,
+    send_reference_request_mails,
+)
 from project.views.utils import (
     flash_errors,
     flash_message,
@@ -222,8 +225,11 @@ def event_create_for_admin_unit_id(id):
                     reference_request.event_id = event.id
                     reference_request.admin_unit_id = target_admin_unit_id
                     db.session.add(reference_request)
-                    msg = handle_request_according_to_relation(reference_request, event)
+                    reference, msg = handle_request_according_to_relation(
+                        reference_request, event
+                    )
                     db.session.commit()
+                    send_reference_request_mails(reference_request, reference)
                     flash(msg, "success")
 
             return redirect(url_for("event_actions", event_id=event.id))

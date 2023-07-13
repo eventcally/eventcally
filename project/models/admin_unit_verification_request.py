@@ -66,4 +66,10 @@ class AdminUnitVerificationRequest(db.Model, TrackableMixin):
 @listens_for(AdminUnitVerificationRequest, "before_insert")
 @listens_for(AdminUnitVerificationRequest, "before_update")
 def before_saving_admin_unit_verification_request(mapper, connect, self):
+    if self.review_status != AdminUnitVerificationRequestReviewStatus.rejected:
+        self.rejection_reason = None
+
+    if self.rejection_reason == 0:
+        self.rejection_reason = None
+
     self.validate()

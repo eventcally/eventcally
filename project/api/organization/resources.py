@@ -6,6 +6,7 @@ from sqlalchemy import and_
 from project import db
 from project.access import (
     access_or_401,
+    can_request_event_reference,
     can_verify_admin_unit,
     get_admin_unit_for_manage_or_404,
     login_api_user,
@@ -44,6 +45,12 @@ from project.api.event_reference.schemas import (
     EventReferenceIdSchema,
     EventReferenceListRequestSchema,
     EventReferenceListResponseSchema,
+)
+from project.api.event_reference_request.schemas import (
+    EventReferenceRequestIdSchema,
+    EventReferenceRequestListRequestSchema,
+    EventReferenceRequestListResponseSchema,
+    EventReferenceRequestPostRequestSchema,
 )
 from project.api.organization.schemas import (
     OrganizationListRequestSchema,
@@ -92,15 +99,22 @@ from project.services.importer.event_importer import EventImporter
 from project.services.reference import (
     get_reference_incoming_query,
     get_reference_outgoing_query,
+    get_reference_requests_incoming_query,
+    get_reference_requests_outgoing_query,
     get_relation_outgoing_query,
 )
 from project.services.search_params import (
     AdminUnitSearchParams,
     EventPlaceSearchParams,
+    EventReferenceRequestSearchParams,
     EventReferenceSearchParams,
     EventSearchParams,
     OrganizerSearchParams,
     TrackableSearchParams,
+)
+from project.views.reference_request import (
+    handle_request_according_to_relation,
+    send_reference_request_mails,
 )
 from project.views.utils import get_current_admin_unit_for_api, send_mail_async
 
@@ -375,8 +389,76 @@ class OrganizationOutgoingEventReferenceListResource(BaseResource):
     def get(self, id, **kwargs):
         admin_unit = AdminUnit.query.get_or_404(id)
 
-        pagination = get_reference_outgoing_query(admin_unit).paginate()
+        params = EventReferenceSearchParams()
+        params.load_from_request(**kwargs)
+        params.admin_unit_id = admin_unit.id
+        pagination = get_reference_outgoing_query(params).paginate()
         return pagination
+
+
+class OrganizationIncomingEventReferenceRequestListResource(BaseResource):
+    @doc(
+        summary="List incoming event reference requests of organization",
+        tags=["Organizations", "Event Reference Requests"],
+    )
+    @use_kwargs(EventReferenceRequestListRequestSchema, location=("query"))
+    @marshal_with(EventReferenceRequestListResponseSchema)
+    @require_api_access("eventreferencerequest:read")
+    def get(self, id, **kwargs):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+
+        params = EventReferenceRequestSearchParams()
+        params.load_from_request(**kwargs)
+        params.admin_unit_id = admin_unit.id
+        pagination = get_reference_requests_incoming_query(params).paginate()
+        return pagination
+
+
+class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
+    @doc(
+        summary="List outgoing event reference requests of organization",
+        tags=["Organizations", "Event Reference Requests"],
+    )
+    @use_kwargs(EventReferenceRequestListRequestSchema, location=("query"))
+    @marshal_with(EventReferenceRequestListResponseSchema)
+    @require_api_access("eventreferencerequest:read")
+    def get(self, id, **kwargs):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+
+        params = EventReferenceRequestSearchParams()
+        params.load_from_request(**kwargs)
+        params.admin_unit_id = admin_unit.id
+        pagination = get_reference_requests_outgoing_query(params).paginate()
+        return pagination
+
+    @doc(
+        summary="Add reference request",
+        tags=["Organizations", "Event Reference Requests"],
+    )
+    @use_kwargs(EventReferenceRequestPostRequestSchema, location="json", apply=False)
+    @marshal_with(EventReferenceRequestIdSchema, 201)
+    @require_api_access("eventreferencerequest:write")
+    def post(self, id):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+
+        reference_request = self.create_instance(EventReferenceRequestPostRequestSchema)
+        event = reference_request.event
+
+        if event.admin_unit_id != admin_unit.id:
+            abort(404)
+
+        if not can_request_event_reference(event):
+            abort(401)
+
+        db.session.add(reference_request)
+        reference, _ = handle_request_according_to_relation(reference_request, event)
+        db.session.commit()
+        send_reference_request_mails(reference_request, reference)
+
+        return reference_request, 201
 
 
 class OrganizationOutgoingRelationListResource(BaseResource):
@@ -626,6 +708,18 @@ add_api_resource(
     "/organizations/<int:id>/event-references/outgoing",
     "api_v1_organization_outgoing_event_reference_list",
 )
+
+add_api_resource(
+    OrganizationIncomingEventReferenceRequestListResource,
+    "/organizations/<int:id>/event-reference-requests/incoming",
+    "api_v1_organization_incoming_event_reference_request_list",
+)
+add_api_resource(
+    OrganizationOutgoingEventReferenceRequestListResource,
+    "/organizations/<int:id>/event-reference-requests/outgoing",
+    "api_v1_organization_outgoing_event_reference_request_list",
+)
+
 add_api_resource(
     OrganizationOutgoingRelationListResource,
     "/organizations/<int:id>/relations/outgoing",

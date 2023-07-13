@@ -133,6 +133,8 @@ scope_list = [
     "eventlist:write",
     "customwidget:write",
     "eventreference:write",
+    "eventreferencerequest:read",
+    "eventreferencerequest:write",
 ]
 scopes = {k: get_localized_scope(k) for v, k in enumerate(scope_list)}
 
@@ -220,6 +222,7 @@ import project.api.event_category.resources
 import project.api.event_date.resources
 import project.api.event_list.resources
 import project.api.event_reference.resources
+import project.api.event_reference_request.resources
 import project.api.organization.resources
 import project.api.organization_invitation.resources
 import project.api.organization_relation.resources
