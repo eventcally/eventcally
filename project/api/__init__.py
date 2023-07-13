@@ -113,6 +113,9 @@ class RestApi(Api):
 
                 if len(errors) > 0:
                     data["errors"] = errors
+            elif isinstance(arg, str):
+                if arg:
+                    data["message"] = arg
 
 
 class DocSecurityPlugin(BasePlugin):
@@ -135,6 +138,8 @@ scope_list = [
     "eventreference:write",
     "eventreferencerequest:read",
     "eventreferencerequest:write",
+    "organizationverificationrequest:read",
+    "organizationverificationrequest:write",
 ]
 scopes = {k: get_localized_scope(k) for v, k in enumerate(scope_list)}
 
@@ -226,6 +231,7 @@ import project.api.event_reference_request.resources
 import project.api.organization.resources
 import project.api.organization_invitation.resources
 import project.api.organization_relation.resources
+import project.api.organization_verification_request.resources
 import project.api.organizer.resources
 import project.api.place.resources
 import project.api.user.resources

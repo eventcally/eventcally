@@ -25,7 +25,7 @@ def admin_unit_verification_request_review(id):
     access_or_401(request.target_admin_unit, "verification_request:verify")
 
     if request.review_status == AdminUnitVerificationRequestReviewStatus.verified:
-        flash(gettext("Request already verified"), "danger")
+        flash(gettext("Verification request already verified"), "danger")
         return redirect(
             url_for(
                 "manage_admin_unit_verification_requests_incoming",

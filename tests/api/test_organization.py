@@ -662,6 +662,87 @@ def test_reference_requests_outgoing_post_draft(
     utils.assert_response_unauthorized(response)
 
 
+def test_organization_verification_requests_incoming(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    seeder.create_incoming_admin_unit_verification_request(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_incoming_organization_verification_request_list",
+        id=admin_unit_id,
+    )
+    utils.get_json_ok(url)
+
+
+def test_organization_verification_requests_outgoing(
+    client, seeder: Seeder, utils: UtilActions
+):
+    (
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario(api=True)
+    seeder.create_admin_unit_verification_request(
+        unverified_admin_unit_id, verifier_admin_unit_id
+    )
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_organization_verification_request_list",
+        id=unverified_admin_unit_id,
+    )
+    utils.get_json_ok(url)
+
+
+def test_organization_verification_requests_outgoing_post(
+    client, app, seeder: Seeder, utils: UtilActions, db, mocker
+):
+    mail_mock = utils.mock_send_mails_async(mocker)
+    (
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario(api=True)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_organization_verification_request_list",
+        id=unverified_admin_unit_id,
+    )
+    data = {
+        "target_organization": {"id": verifier_admin_unit_id},
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_created(response)
+    assert "id" in response.json
+    utils.assert_send_mail_called(mail_mock, "test@test.de")
+
+    with app.app_context():
+        from project.models import (
+            AdminUnitVerificationRequest,
+            AdminUnitVerificationRequestReviewStatus,
+        )
+
+        organization_verification_request = db.session.get(
+            AdminUnitVerificationRequest, int(response.json["id"])
+        )
+        assert organization_verification_request is not None
+        assert (
+            organization_verification_request.source_admin_unit_id
+            == unverified_admin_unit_id
+        )
+        assert (
+            organization_verification_request.target_admin_unit_id
+            == verifier_admin_unit_id
+        )
+        assert (
+            organization_verification_request.review_status
+            == AdminUnitVerificationRequestReviewStatus.inbox
+        )
+
+
 def test_outgoing_relation_read(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access()
     (

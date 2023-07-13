@@ -15,8 +15,15 @@ from project.models import (
 )
 from project.models.admin_unit import AdminUnit
 from project.services.admin_unit import get_admin_unit_query
-from project.services.search_params import AdminUnitSearchParams
-from project.services.verification import get_verification_requests_incoming_query
+from project.services.search_params import (
+    AdminUnitSearchParams,
+    AdminUnitVerificationRequestSearchParams,
+)
+from project.services.verification import (
+    admin_unit_can_verify_admin_unit,
+    get_verification_requests_incoming_query,
+    get_verification_requests_outgoing_query,
+)
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
@@ -32,11 +39,10 @@ from project.views.utils import (
 @manage_required("verification_request:read")
 def manage_admin_unit_verification_requests_incoming(id):
     admin_unit = g.manage_admin_unit
-    requests = (
-        get_verification_requests_incoming_query(admin_unit)
-        .order_by(AdminUnitVerificationRequest.created_at.desc())
-        .paginate()
-    )
+
+    params = AdminUnitVerificationRequestSearchParams()
+    params.target_admin_unit_id = admin_unit.id
+    requests = get_verification_requests_incoming_query(params).paginate()
 
     return render_template(
         "manage/verification_requests_incoming.html",
@@ -51,13 +57,10 @@ def manage_admin_unit_verification_requests_incoming(id):
 @manage_required("verification_request:read")
 def manage_admin_unit_verification_requests_outgoing(id):
     admin_unit = g.manage_admin_unit
-    requests = (
-        AdminUnitVerificationRequest.query.filter(
-            AdminUnitVerificationRequest.source_admin_unit_id == admin_unit.id
-        )
-        .order_by(AdminUnitVerificationRequest.created_at.desc())
-        .paginate()
-    )
+
+    params = AdminUnitVerificationRequestSearchParams()
+    params.target_admin_unit_id = admin_unit.id
+    requests = get_verification_requests_outgoing_query(params).paginate()
 
     if not admin_unit.is_verified and requests.total == 0:
         return redirect(
@@ -103,10 +106,8 @@ def manage_admin_unit_verification_requests_outgoing_create(id, target_id):
     admin_unit = g.manage_admin_unit
     target_admin_unit = AdminUnit.query.get_or_404(target_id)
 
-    if (
-        target_admin_unit.id == admin_unit.id
-        or not target_admin_unit.can_verify_other
-        or not target_admin_unit.incoming_verification_requests_allowed
+    if not admin_unit_can_verify_admin_unit(
+        admin_unit, target_admin_unit
     ):  # pragma: no cover
         return redirect(
             url_for(
