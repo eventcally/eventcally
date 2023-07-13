@@ -508,6 +508,160 @@ def test_references_outgoing(client, seeder: Seeder, utils: UtilActions):
     utils.get_json_ok(url)
 
 
+def test_reference_requests_incoming(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    seeder.create_incoming_reference_request(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_incoming_event_reference_request_list",
+        id=admin_unit_id,
+    )
+    utils.get_json_ok(url)
+
+
+def test_reference_requests_outgoing(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    seeder.create_outgoing_reference_request(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_event_reference_request_list",
+        id=admin_unit_id,
+    )
+    utils.get_json_ok(url)
+
+
+def test_reference_requests_outgoing_post(
+    client, app, seeder: Seeder, utils: UtilActions, db, mocker
+):
+    mail_mock = utils.mock_send_mails_async(mocker)
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_event_reference_request_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "event": {"id": event_id},
+        "target_organization": {"id": other_admin_unit_id},
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_created(response)
+    assert "id" in response.json
+    utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+    with app.app_context():
+        from project.models import (
+            EventReferenceRequest,
+            EventReferenceRequestReviewStatus,
+        )
+
+        reference_request = db.session.get(
+            EventReferenceRequest, int(response.json["id"])
+        )
+        assert reference_request is not None
+        assert reference_request.admin_unit_id == other_admin_unit_id
+        assert reference_request.event_id == event_id
+        assert (
+            reference_request.review_status == EventReferenceRequestReviewStatus.inbox
+        )
+
+
+def test_reference_requests_outgoing_post_autoVerify(
+    client, app, seeder: Seeder, utils: UtilActions, db, mocker
+):
+    mail_mock = utils.mock_send_mails_async(mocker)
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    seeder.create_admin_unit_relation(other_admin_unit_id, admin_unit_id, True)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_event_reference_request_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "event": {"id": event_id},
+        "target_organization": {"id": other_admin_unit_id},
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_created(response)
+    assert "id" in response.json
+    utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+    with app.app_context():
+        from project.models import (
+            EventReference,
+            EventReferenceRequest,
+            EventReferenceRequestReviewStatus,
+        )
+
+        reference_request = db.session.get(
+            EventReferenceRequest, int(response.json["id"])
+        )
+        assert reference_request is not None
+        assert reference_request.admin_unit_id == other_admin_unit_id
+        assert reference_request.event_id == event_id
+        assert (
+            reference_request.review_status
+            == EventReferenceRequestReviewStatus.verified
+        )
+
+        reference = (
+            EventReference.query.filter(
+                EventReference.admin_unit_id == other_admin_unit_id
+            )
+            .filter(EventReference.event_id == event_id)
+            .first()
+        )
+        assert reference is not None
+
+
+def test_reference_requests_outgoing_post_foreignEvent(
+    client, app, seeder: Seeder, utils: UtilActions, db
+):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_admin_unit_id = seeder.create_admin_unit(user_id, "Other Crew")
+    event_id = seeder.create_event(other_admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_event_reference_request_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "event": {"id": event_id},
+        "target_organization": {"id": other_admin_unit_id},
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_notFound(response)
+
+
+def test_reference_requests_outgoing_post_draft(
+    client, app, seeder: Seeder, utils: UtilActions, db
+):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_admin_unit_id = seeder.create_admin_unit(user_id, "Other Crew")
+    event_id = seeder.create_event(admin_unit_id, draft=True)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_event_reference_request_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "event": {"id": event_id},
+        "target_organization": {"id": other_admin_unit_id},
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_unauthorized(response)
+
+
 def test_outgoing_relation_read(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access()
     (

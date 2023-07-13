@@ -128,7 +128,10 @@ def manage_admin_unit_references_incoming(id):
 @auth_required()
 def manage_admin_unit_references_outgoing(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    references = get_reference_outgoing_query(admin_unit).paginate()
+
+    params = EventReferenceSearchParams()
+    params.admin_unit_id = admin_unit.id
+    references = get_reference_outgoing_query(params).paginate()
 
     return render_template(
         "manage/references_outgoing.html",

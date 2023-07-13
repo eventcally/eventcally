@@ -44,12 +44,6 @@ def event_reference_request_review(id):
     if form.validate_on_submit():
         form.populate_obj(request)
 
-        if request.review_status != EventReferenceRequestReviewStatus.rejected:
-            request.rejection_reason = None
-
-        if request.rejection_reason == 0:
-            request.rejection_reason = None
-
         try:
             if request.review_status == EventReferenceRequestReviewStatus.verified:
                 reference = create_event_reference_for_request(request)

@@ -10,7 +10,10 @@ from project.models import (
     EventReferenceRequestReviewStatus,
 )
 from project.models.admin_unit import AdminUnit
-from project.services.search_params import EventReferenceSearchParams
+from project.services.search_params import (
+    EventReferenceRequestSearchParams,
+    EventReferenceSearchParams,
+)
 
 
 def create_event_reference_for_request(request):
@@ -49,22 +52,42 @@ def get_reference_incoming_query(params: EventReferenceSearchParams):
     return result
 
 
-def get_reference_outgoing_query(admin_unit):
-    return (
-        EventReference.query.join(Event)
-        .filter(Event.admin_unit_id == admin_unit.id)
-        .order_by(EventReference.created_at.desc())
-    )
+def get_reference_outgoing_query(params: EventReferenceSearchParams):
+    result = EventReference.query.join(Event)
+
+    if params.admin_unit_id:
+        result = result.filter(Event.admin_unit_id == params.admin_unit_id)
+
+    result = params.get_trackable_query(result, EventReference)
+    result = params.get_trackable_order_by(result, EventReference)
+    result = result.order_by(EventReference.created_at.desc())
+    return result
 
 
-def get_reference_requests_incoming_query(admin_unit):
-    return EventReferenceRequest.query.filter(
-        and_(
-            EventReferenceRequest.review_status
-            != EventReferenceRequestReviewStatus.verified,
-            EventReferenceRequest.admin_unit_id == admin_unit.id,
+def get_reference_requests_incoming_query(params: EventReferenceRequestSearchParams):
+    result = EventReferenceRequest.query
+
+    if params.admin_unit_id:
+        result = result.filter(
+            EventReferenceRequest.admin_unit_id == params.admin_unit_id
         )
-    )
+
+    result = params.get_trackable_query(result, EventReferenceRequest)
+    result = params.get_trackable_order_by(result, EventReferenceRequest)
+    result = result.order_by(EventReferenceRequest.created_at.desc())
+    return result
+
+
+def get_reference_requests_outgoing_query(params: EventReferenceRequestSearchParams):
+    result = EventReferenceRequest.query.join(Event)
+
+    if params.admin_unit_id:
+        result = result.filter(Event.admin_unit_id == params.admin_unit_id)
+
+    result = params.get_trackable_query(result, EventReferenceRequest)
+    result = params.get_trackable_order_by(result, EventReferenceRequest)
+    result = result.order_by(EventReferenceRequest.created_at.desc())
+    return result
 
 
 def get_reference_requests_incoming_badge_query(admin_unit):

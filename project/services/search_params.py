@@ -63,6 +63,13 @@ class EventReferenceSearchParams(TrackableSearchParams):
         self.admin_unit_id = None
 
 
+class EventReferenceRequestSearchParams(TrackableSearchParams):
+    def __init__(self):
+        super().__init__()
+        self.admin_unit_id = None
+        self.review_status = None
+
+
 class AdminUnitSearchParams(TrackableSearchParams):
     def __init__(self):
         super().__init__()

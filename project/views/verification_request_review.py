@@ -38,12 +38,6 @@ def admin_unit_verification_request_review(id):
     if form.validate_on_submit():
         form.populate_obj(request)
 
-        if request.review_status != AdminUnitVerificationRequestReviewStatus.rejected:
-            request.rejection_reason = None
-
-        if request.rejection_reason == 0:
-            request.rejection_reason = None
-
         try:
             if (
                 request.review_status
