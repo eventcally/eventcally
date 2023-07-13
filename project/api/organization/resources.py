@@ -70,6 +70,12 @@ from project.api.organization_relation.schemas import (
     OrganizationRelationListResponseSchema,
     OrganizationRelationSchema,
 )
+from project.api.organization_verification_request.schemas import (
+    OrganizationVerificationRequestIdSchema,
+    OrganizationVerificationRequestListRequestSchema,
+    OrganizationVerificationRequestListResponseSchema,
+    OrganizationVerificationRequestPostRequestSchema,
+)
 from project.api.organizer.schemas import (
     OrganizerIdSchema,
     OrganizerListRequestSchema,
@@ -85,6 +91,9 @@ from project.api.place.schemas import (
 from project.api.resources import BaseResource, require_api_access
 from project.models import AdminUnit, Event, PublicStatus
 from project.models.admin_unit import AdminUnitInvitation, AdminUnitRelation
+from project.models.admin_unit_verification_request import (
+    AdminUnitVerificationRequestReviewStatus,
+)
 from project.services.admin_unit import (
     get_admin_unit_invitation_query,
     get_admin_unit_query,
@@ -105,6 +114,7 @@ from project.services.reference import (
 )
 from project.services.search_params import (
     AdminUnitSearchParams,
+    AdminUnitVerificationRequestSearchParams,
     EventPlaceSearchParams,
     EventReferenceRequestSearchParams,
     EventReferenceSearchParams,
@@ -112,11 +122,17 @@ from project.services.search_params import (
     OrganizerSearchParams,
     TrackableSearchParams,
 )
+from project.services.verification import (
+    admin_unit_can_verify_admin_unit,
+    get_verification_requests_incoming_query,
+    get_verification_requests_outgoing_query,
+)
 from project.views.reference_request import (
     handle_request_according_to_relation,
     send_reference_request_mails,
 )
 from project.views.utils import get_current_admin_unit_for_api, send_mail_async
+from project.views.verification_request import send_verification_request_inbox_mails
 
 
 class OrganizationResource(BaseResource):
@@ -461,6 +477,76 @@ class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
         return reference_request, 201
 
 
+class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResource):
+    @doc(
+        summary="List incoming organization verification requests of organization",
+        tags=["Organizations", "Organization Verification Requests"],
+    )
+    @use_kwargs(OrganizationVerificationRequestListRequestSchema, location=("query"))
+    @marshal_with(OrganizationVerificationRequestListResponseSchema)
+    @require_api_access("organizationverificationrequest:read")
+    def get(self, id, **kwargs):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+
+        params = AdminUnitVerificationRequestSearchParams()
+        params.load_from_request(**kwargs)
+        params.target_admin_unit_id = admin_unit.id
+        pagination = get_verification_requests_incoming_query(params).paginate()
+        return pagination
+
+
+class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResource):
+    @doc(
+        summary="List outgoing organization verification requests of organization",
+        tags=["Organizations", "Organization Verification Requests"],
+    )
+    @use_kwargs(OrganizationVerificationRequestListRequestSchema, location=("query"))
+    @marshal_with(OrganizationVerificationRequestListResponseSchema)
+    @require_api_access("organizationverificationrequest:read")
+    def get(self, id, **kwargs):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+
+        params = AdminUnitVerificationRequestSearchParams()
+        params.load_from_request(**kwargs)
+        params.source_admin_unit_id = admin_unit.id
+        pagination = get_verification_requests_outgoing_query(params).paginate()
+        return pagination
+
+    @doc(
+        summary="Add verification request",
+        tags=["Organizations", "Organization Verification Requests"],
+    )
+    @use_kwargs(
+        OrganizationVerificationRequestPostRequestSchema, location="json", apply=False
+    )
+    @marshal_with(OrganizationVerificationRequestIdSchema, 201)
+    @require_api_access("organizationverificationrequest:write")
+    def post(self, id):
+        login_api_user_or_401()
+        admin_unit = get_admin_unit_for_manage_or_404(id)
+        access_or_401(admin_unit, "verification_request:create")
+
+        verification_request = self.create_instance(
+            OrganizationVerificationRequestPostRequestSchema,
+            source_admin_unit_id=admin_unit.id,
+            review_status=AdminUnitVerificationRequestReviewStatus.inbox,
+        )
+        target_admin_unit = verification_request.target_admin_unit
+
+        if not admin_unit_can_verify_admin_unit(
+            admin_unit, target_admin_unit
+        ):  # pragma: no cover
+            abort(401)
+
+        db.session.add(verification_request)
+        db.session.commit()
+        send_verification_request_inbox_mails(verification_request)
+
+        return verification_request, 201
+
+
 class OrganizationOutgoingRelationListResource(BaseResource):
     @doc(
         summary="List outgoing relations of organization",
@@ -708,7 +794,6 @@ add_api_resource(
     "/organizations/<int:id>/event-references/outgoing",
     "api_v1_organization_outgoing_event_reference_list",
 )
-
 add_api_resource(
     OrganizationIncomingEventReferenceRequestListResource,
     "/organizations/<int:id>/event-reference-requests/incoming",
@@ -719,7 +804,16 @@ add_api_resource(
     "/organizations/<int:id>/event-reference-requests/outgoing",
     "api_v1_organization_outgoing_event_reference_request_list",
 )
-
+add_api_resource(
+    OrganizationIncomingOrganizationVerificationRequestListResource,
+    "/organizations/<int:id>/organization-verification-requests/incoming",
+    "api_v1_organization_incoming_organization_verification_request_list",
+)
+add_api_resource(
+    OrganizationOutgoingOrganizationVerificationRequestListResource,
+    "/organizations/<int:id>/organization-verification-requests/outgoing",
+    "api_v1_organization_outgoing_organization_verification_request_list",
+)
 add_api_resource(
     OrganizationOutgoingRelationListResource,
     "/organizations/<int:id>/relations/outgoing",

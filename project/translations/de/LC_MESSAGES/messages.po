@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-07-09 21:57+0200\n"
+"POT-Creation-Date: 2023-07-13 15:39+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -202,7 +202,7 @@ msgstr "."
 msgid "message"
 msgstr "message"
 
-#: project/api/organization/resources.py:479
+#: project/api/organization/resources.py:645
 #: project/views/admin_unit_member_invitation.py:89
 msgid "You have received an invitation"
 msgstr "Du hast eine Einladung erhalten"
@@ -2639,7 +2639,7 @@ msgstr "Organisation erfolgreich aktualisiert"
 
 #: project/views/admin.py:85 project/views/admin_unit.py:202
 #: project/views/admin_unit.py:235 project/views/manage.py:315
-#: project/views/verification_request.py:167
+#: project/views/verification_request.py:168
 msgid "Entered name does not match organization name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Organisation"
 
@@ -2731,31 +2731,31 @@ msgstr "Die eingegebene Email passt nicht zur Email der Einladung"
 msgid "Invitation successfully deleted"
 msgstr "Einladung erfolgreich gelöscht"
 
-#: project/views/event.py:205
+#: project/views/event.py:208
 msgid "Event successfully published"
 msgstr "Veranstaltung erfolgreich veröffentlicht"
 
-#: project/views/event.py:207
+#: project/views/event.py:210
 msgid "Draft successfully saved"
 msgstr "Entwurf erfolgreich gespeichert"
 
-#: project/views/event.py:209
+#: project/views/event.py:212
 msgid "Event successfully planned"
 msgstr "Veranstaltung erfolgreich geplant"
 
-#: project/views/event.py:266
+#: project/views/event.py:272
 msgid "Event successfully updated"
 msgstr "Veranstaltung erfolgreich aktualisiert"
 
-#: project/views/event.py:292
+#: project/views/event.py:298
 msgid "Event successfully deleted"
 msgstr "Veranstaltung erfolgreich gelöscht"
 
-#: project/views/event.py:457
+#: project/views/event.py:463
 msgid "Referenced event changed"
 msgstr "Empfohlene Veranstaltung wurde geändert"
 
-#: project/views/event.py:480
+#: project/views/event.py:486
 msgid "New event report"
 msgstr "Neue Meldung zu einer Veranstaltung"
 
@@ -2780,7 +2780,7 @@ msgid "Event suggestion successfully rejected"
 msgstr "Veranstaltungsvorschlag erfolgreich abgelehnt"
 
 #: project/views/event_suggestion.py:87
-#: project/views/reference_request_review.py:135
+#: project/views/reference_request_review.py:129
 msgid "Event review status updated"
 msgstr "Prüfungsstatus aktualisiert"
 
@@ -2862,16 +2862,16 @@ msgstr "Veranstaltung erfolgreich empfohlen"
 msgid "Reference successfully updated"
 msgstr "Empfehlung erfolgreich empfohlen"
 
-#: project/views/reference.py:153
+#: project/views/reference.py:156
 msgid "Reference successfully deleted"
 msgstr "Empfehlung erfolgreich gelöscht"
 
-#: project/views/reference_request.py:138
+#: project/views/reference_request.py:145
 #, python-format
 msgid "%(organization)s accepted your reference request"
 msgstr "%(organization)s hat deine Empfehlungsanfrage akzeptiert"
 
-#: project/views/reference_request.py:145
+#: project/views/reference_request.py:152
 #, python-format
 msgid ""
 "Reference request to %(organization)s successfully created. You will be "
@@ -2881,29 +2881,28 @@ msgstr ""
 "benachrichtigt, nachdem die andere Organisation die Veranstaltung geprüft"
 " hat."
 
-#: project/views/reference_request.py:168
+#: project/views/reference_request.py:172
 msgid "New reference request"
 msgstr "Neue Empfehlungsanfrage"
 
-#: project/views/reference_request.py:177
+#: project/views/reference_request.py:181
 msgid "New reference automatically verified"
 msgstr "Neue automatisch verifizierte Empfehlung"
 
 #: project/views/reference_request_review.py:34
-#: project/views/verification_request_review.py:28
 msgid "Request already verified"
 msgstr "Empfehlungsanfrage ist bereits verifiziert"
 
-#: project/views/reference_request_review.py:57
+#: project/views/reference_request_review.py:51
 msgid "Reference successfully created"
 msgstr "Empfehlung erfolgreich erstellt"
 
-#: project/views/reference_request_review.py:65
+#: project/views/reference_request_review.py:59
 msgid "Request successfully updated"
 msgstr "Empfehlungsanfrage erfolgreich aktualisiert"
 
-#: project/views/reference_request_review.py:88
-#: project/views/verification_request_review.py:79
+#: project/views/reference_request_review.py:82
+#: project/views/verification_request_review.py:73
 #, python-format
 msgid ""
 "If all upcoming reference requests of %(admin_unit_name)s should be "
@@ -2957,7 +2956,7 @@ msgstr ""
 "Die Einladung wurde für einen anderen Nutzer ausgestellt. Melde dich mit "
 "der Email-Adresse an, an die die Einladung geschickt wurde."
 
-#: project/views/verification_request.py:131
+#: project/views/verification_request.py:132
 msgid ""
 "Request successfully created. You will be notified after the other "
 "organization reviewed the request."
@@ -2965,23 +2964,27 @@ msgstr ""
 "Verifizierungsanfrage erfolgreich erstellt. Du wirst benachrichtigt, "
 "nachdem die andere Organisation die Anfrage geprüft hat."
 
-#: project/views/verification_request.py:172
+#: project/views/verification_request.py:173
 msgid "Verification request successfully deleted"
 msgstr "Verifizierungsanfrage erfolgreich gelöscht"
 
-#: project/views/verification_request.py:205
+#: project/views/verification_request.py:206
 msgid "New verification request"
 msgstr "Neue Verifizierungsanfrage"
 
-#: project/views/verification_request_review.py:60
+#: project/views/verification_request_review.py:28
+msgid "Verification request already verified"
+msgstr "Verifizierungsanfrage ist bereits verifiziert"
+
+#: project/views/verification_request_review.py:54
 msgid "Organization successfully verified"
 msgstr "Organisation erfolgreich verifiziert"
 
-#: project/views/verification_request_review.py:62
+#: project/views/verification_request_review.py:56
 msgid "Verification request successfully updated"
 msgstr "Verifizierungsanfrage erfolgreich aktualisiert"
 
-#: project/views/verification_request_review.py:115
+#: project/views/verification_request_review.py:109
 msgid "Verification request review status updated"
 msgstr "Prüfungsstatus der Verifizierungsanfrage aktualisiert"
 

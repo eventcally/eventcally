@@ -305,9 +305,16 @@ class Seeder(object):
 
         return client_id
 
-    def setup_api_access(self, admin=True, admin_unit_verified=True, user_access=True):
+    def setup_api_access(
+        self,
+        admin=True,
+        admin_unit_verified=True,
+        user_access=True,
+        email="test@test.de",
+        admin_unit_name="Meine Crew",
+    ):
         user_id, admin_unit_id = self.setup_base(
-            admin=admin, log_in=False, admin_unit_verified=admin_unit_verified
+            admin, False, admin_unit_verified, email, admin_unit_name
         )
 
         if user_access:
@@ -322,13 +329,17 @@ class Seeder(object):
 
         with self._app.app_context():
             from project.models import OAuth2Client
+            from project.services.user import get_user
+
+            user = get_user(user_id)
+            email = user.email
 
             oauth2_client = self._db.session.get(OAuth2Client, oauth2_client_id)
             client_id = oauth2_client.client_id
             client_secret = oauth2_client.client_secret
             scope = oauth2_client.scope
 
-        self._utils.login(follow_redirects=False)
+        self._utils.login(email=email, follow_redirects=False)
         self._utils.authorize(client_id, client_secret, scope)
         self._utils.logout()
         return (user_id, admin_unit_id)
@@ -673,7 +684,9 @@ class Seeder(object):
         )
         return (other_user_id, other_admin_unit_id, relation_id)
 
-    def setup_admin_unit_missing_verification_scenario(self, log_in_verifier=False):
+    def setup_admin_unit_missing_verification_scenario(
+        self, log_in_verifier=False, api=False
+    ):
         verifier_user_id = self.create_user()
         verifier_admin_unit_id = self.create_admin_unit(
             verifier_user_id,
@@ -684,15 +697,26 @@ class Seeder(object):
             incoming_verification_requests_text="Please give us a call",
         )
 
-        unverified_user_id, unverified_admin_unit_id = self.setup_base(
-            log_in=not log_in_verifier,
-            admin_unit_verified=False,
-            email="mitglied@verein.de",
-            name="Verein",
-        )
+        if api:
+            unverified_user_id, unverified_admin_unit_id = self.setup_api_access(
+                admin=False,
+                admin_unit_verified=False,
+                email="mitglied@verein.de",
+                admin_unit_name="Verein",
+            )
 
-        if log_in_verifier:
-            self._utils.login()
+            if log_in_verifier:
+                self.authorize_api_access(verifier_user_id, verifier_admin_unit_id)
+        else:
+            unverified_user_id, unverified_admin_unit_id = self.setup_base(
+                log_in=not log_in_verifier,
+                admin_unit_verified=False,
+                email="mitglied@verein.de",
+                name="Verein",
+            )
+
+            if log_in_verifier:
+                self._utils.login()
 
         return (
             verifier_user_id,

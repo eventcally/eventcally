@@ -1,7 +1,6 @@
 from marshmallow import fields, validate
 from marshmallow_enum import EnumField
 
-from project.api import marshmallow
 from project.api.event.schemas import EventRefSchema, EventWriteIdSchema
 from project.api.organization.schemas import (
     OrganizationRefSchema,
@@ -53,11 +52,6 @@ class EventReferenceRequestSchema(
 ):
     event = fields.Nested(EventRefSchema)
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
-
-
-class EventReferenceRequestDumpSchema(EventReferenceRequestIdSchema):
-    event_id = marshmallow.auto_field()
-    organization_id = fields.Int(attribute="admin_unit_id")
 
 
 class EventReferenceRequestListRequestSchema(
