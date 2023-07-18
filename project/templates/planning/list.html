@@ -48,7 +48,7 @@ vue_init_data.vuetify = new Vuetify();
 
 {% block header %}
 {{ render_jquery_steps_header() }}
-{{ render_google_filter_autocomplete_header() }}
+{{ render_google_filter_autocomplete_header(dropdownParent="$('#filterFormModal')") }}
 <script>
 
 $( function() {
