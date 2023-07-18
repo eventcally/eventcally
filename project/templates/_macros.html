@@ -858,12 +858,15 @@
   </div>
 {% endmacro %}
 
-{% macro render_google_filter_autocomplete_header() %}
+{% macro render_google_filter_autocomplete_header(dropdownParent=None) %}
 <script>
   $( function() {
 
     $('#location').select2({
       theme: 'bootstrap4',
+      {% if dropdownParent -%}
+      dropdownParent: {{ dropdownParent | safe }},
+      {%- endif %}
       ajax: {
         url: "{{ url_for('js_autocomplete_place') }}",
         dataType: 'json',
