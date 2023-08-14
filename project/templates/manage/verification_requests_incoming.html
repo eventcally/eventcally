@@ -16,6 +16,7 @@
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ url_for('admin_unit_verification_request_review_status', id=request.id) }}">{{ _('Show review status') }}</a>
                 <a class="dropdown-item" href="{{ url_for('admin_unit_verification_request_review', id=request.id) }}">{{ _('Review request') }}&hellip;</a>
+                <a class="dropdown-item" href="{{ url_for('organizations', path=request.source_admin_unit_id) }}">{{ _('View organization') }}&hellip;</a>
             </div>
         </div>
         {{ render_verification_request_review_status_pill(request) }}

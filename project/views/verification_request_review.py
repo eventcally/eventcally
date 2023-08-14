@@ -15,7 +15,12 @@ from project.models import (
     AdminUnitVerificationRequestReviewStatus,
 )
 from project.services.admin_unit import upsert_admin_unit_relation
-from project.views.utils import flash_errors, handleSqlError, send_mails_async
+from project.views.utils import (
+    flash_errors,
+    flash_message,
+    handleSqlError,
+    send_mails_async,
+)
 
 
 @app.route("/verification_request/<int:id>/review", methods=("GET", "POST"))
@@ -25,7 +30,12 @@ def admin_unit_verification_request_review(id):
     access_or_401(request.target_admin_unit, "verification_request:verify")
 
     if request.review_status == AdminUnitVerificationRequestReviewStatus.verified:
-        flash(gettext("Verification request already verified"), "danger")
+        flash_message(
+            gettext("Verification request already verified"),
+            url_for("organizations", path=request.source_admin_unit_id),
+            gettext("View organization"),
+            "danger",
+        )
         return redirect(
             url_for(
                 "manage_admin_unit_verification_requests_incoming",
