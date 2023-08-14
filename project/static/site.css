@@ -111,3 +111,8 @@ tr.table-line-through td {
 .dropzone-wrapper.dragover {
   background: #ecf0f5;
 }
+
+button.dropdown-toggle {
+  white-space: normal;
+  text-align: inherit;
+}

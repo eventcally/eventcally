@@ -21,7 +21,12 @@ from project.services.admin_unit import (
     upsert_admin_unit_relation,
 )
 from project.services.reference import create_event_reference_for_request
-from project.views.utils import flash_errors, handleSqlError, send_mails_async
+from project.views.utils import (
+    flash_errors,
+    flash_message,
+    handleSqlError,
+    send_mails_async,
+)
 
 
 @app.route("/reference_request/<int:id>/review", methods=("GET", "POST"))
@@ -31,7 +36,12 @@ def event_reference_request_review(id):
     access_or_401(request.admin_unit, "reference_request:verify")
 
     if request.review_status == EventReferenceRequestReviewStatus.verified:
-        flash(gettext("Request already verified"), "danger")
+        flash_message(
+            gettext("Request already verified"),
+            url_for("event", event_id=request.event_id),
+            gettext("View event"),
+            "danger",
+        )
         return redirect(
             url_for(
                 "manage_admin_unit_reference_requests_incoming",

@@ -17,6 +17,7 @@
             <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ request.event.name }}</button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ url_for('event_reference_request_review', id=request.id) }}">{{ _('Review request') }}&hellip;</a>
+                <a class="dropdown-item" href="{{ url_for('event', event_id=request.event_id) }}">{{ _('View event') }}</a>
             </div>
         </div>
         {{ render_reference_request_review_status_pill(request) }}
