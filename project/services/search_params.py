@@ -145,6 +145,7 @@ class EventSearchParams(TrackableSearchParams):
         self.not_referenced_by_organization_id = None
         self.exclude_recurring = False
         self.expected_participants_min = None
+        self.sort = "start"
 
     @property
     def date_from(self):

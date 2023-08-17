@@ -111,7 +111,8 @@ class CustomDateField(DateTimeField):
                     self.data = None
                     return
 
-                date = datetime.strptime(date_str, "%Y-%m-%d")
+                date_str_p = date_str.split(" ")[0].split("T")[0]
+                date = datetime.strptime(date_str_p, "%Y-%m-%d")
                 localized_date = berlin_tz.localize(date)
 
                 if self.set_end_of_day:

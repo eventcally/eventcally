@@ -1017,14 +1017,18 @@
 {% endmacro %}
 
 {% macro render_event_dates_date_field(from_field, to_field) %}
+{{ render_date_field_range(from_field, to_field, _('Date')) }}
+{% endmacro %}
+
+{% macro render_date_field_range(from_field, to_field, label) %}
 <div class="form-group row">
-  <label class="col-sm-2 col-form-label">{{ _('Date') }}</label>
+  <label class="col-sm-2 col-form-label">{{ label }}</label>
   <div class="col-sm-5 mb-1">
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text">{{ from_field.label.text }}</span>
       </div>
-      {{ from_field(**{"class":"form-control datepicker", "data-range-to":"#date_to"})|safe }}
+      {{ from_field(**{"class":"form-control datepicker", "data-range-to":"#" + to_field.id})|safe }}
     </div>
   </div>
   <div class="col-sm-5">
