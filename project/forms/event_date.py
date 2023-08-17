@@ -51,6 +51,25 @@ class FindEventDateForm(FindEventDateBaseForm):
     )
     postal_code = StringField(lazy_gettext("Postal code"), validators=[Optional()])
 
+    created_at_from = CustomDateField(lazy_gettext("From"), validators=[Optional()])
+    created_at_to = CustomDateField(
+        lazy_gettext("to"), set_end_of_day=True, validators=[Optional()]
+    )
+    sort = SelectField(
+        lazy_gettext("Sort"),
+        choices=[
+            (
+                "start",
+                lazy_gettext("Earliest start first"),
+            ),
+            (
+                "-created_at",
+                lazy_gettext("Newest first"),
+            ),
+        ],
+        default="start",
+    )
+
     submit = SubmitField(lazy_gettext("Find events"))
 
 

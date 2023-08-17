@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_field, render_event_dates_location_field, render_event_dates_date_field, render_field_with_errors, render_form_styles, render_form_scripts, render_jquery_steps_header, render_google_filter_autocomplete_header, render_pagination, render_place, render_events_sub_menu %}
+{% from "_macros.html" import render_date_field_range, render_field, render_event_dates_location_field, render_event_dates_date_field, render_field_with_errors, render_form_styles, render_form_scripts, render_jquery_steps_header, render_google_filter_autocomplete_header, render_pagination, render_place, render_events_sub_menu %}
 {% set user_can_reference_event = current_admin_unit and has_access(current_admin_unit, "event:reference") %}
 
 {%- block title -%}
@@ -338,6 +338,8 @@
 
                 if (remember_scroll_pos) {
                     $(window).scrollTop(scrollPos);
+                } else {
+                    scroll_to_element($('#result_container'));
                 }
             }
         });
@@ -467,7 +469,7 @@
             {{ render_event_dates_date_field(form.date_from, form.date_to) }}
             {{ render_field_with_errors(form.keyword, formrow="1") }}
 
-            {% set form_collapsed = not form.category_id.data and not form.admin_unit_id.data and not form.organizer_id.data and not form.coordinate.data  %}
+            {% set form_collapsed = not form.category_id.data and not form.admin_unit_id.data and not form.organizer_id.data and not form.coordinate.data and not form.created_at_from.data and not form.created_at_to.data and form.sort.data == "start" %}
             <div id="extended_search_form" class="{% if form_collapsed %}collapse{% else %}show{% endif %}">
 
             {{ render_field_with_errors(form.category_id, formrow="1") }}
@@ -479,6 +481,10 @@
             {{ render_field_with_errors(form.postal_code, formrow="1") }}
 
             {{ render_event_dates_location_field(form.location, form.distance) }}
+
+            {{ render_date_field_range(form.created_at_from, form.created_at_to, _('Created at')) }}
+
+            {{ render_field_with_errors(form.sort, formrow="1") }}
 
             {{ render_field_with_errors(form.exclude_recurring, ri="checkbox", formrow="1") }}
 
