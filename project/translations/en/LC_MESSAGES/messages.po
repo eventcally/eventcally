@@ -1000,15 +1000,15 @@ msgstr ""
 
 #: project/forms/event.py:415
 msgid "PublicStatus.published"
-msgstr ""
+msgstr "Published"
 
 #: project/forms/event.py:416 project/templates/_macros.html:269
 msgid "PublicStatus.planned"
-msgstr ""
+msgstr "Planned"
 
 #: project/forms/event.py:417 project/templates/_macros.html:267
 msgid "PublicStatus.draft"
-msgstr ""
+msgstr "Draft"
 
 #: project/forms/event.py:419 project/templates/event/create.html:386
 msgid "Planned events appear in the scheduling view, but not on public calendars."

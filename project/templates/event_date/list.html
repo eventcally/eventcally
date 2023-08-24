@@ -28,7 +28,7 @@
 <script>
 
     var page = 1;
-    var per_page = 18; // 3*6
+    var per_page = 50;
 
     var leaflet_map = null;
     var map_cluster_group = null;
@@ -321,7 +321,7 @@
                     $('#last_item,#next_item').addClass('disabled');
                 }
 
-                if (data.has_prev || data.has_next) {
+                if (data.total > 0) {
                     $('#page_info_text').text("Seite " + data.page + " von " + data.pages + " (" + data.total + " insgesamt)")
                     $('#page_info').removeClass("d-none");
                 } else {
