@@ -19,23 +19,28 @@
         <meta property="og:url" content="{{ canonical_url }}" />
       {% endif %}
 
+      {% set meta_description = 'Mit der offenen Veranstaltungsdatenbank Events einfach bekannt machen!' %}
+      {% set meta_image = url_for('static', filename='android-chrome-512x512.png', _external=True) %}
+      {% set og_image = url_for('static', filename='og_image.png', _external=True) %}
+      {% set twitter_card = 'summary' %}
+
       {% if meta %}
-        <meta name="description" content="{{ meta['description'] }}">
-        <meta property="og:description" content="{{ meta['description'] }}">
+        {% set meta_description = meta['description'] %}
 
-        <meta name="twitter:title" content="{{ self.title() }}">
         {% if 'image' in meta %}
-          <meta property="og:image" content="{{ meta['image'] }}">
-          <meta name="twitter:image" content="{{ meta['image'] }}">
-          <meta name="twitter:card" content="summary_large_image">
-        {% else %}
-          <meta name="twitter:card" content="summary">
+          {% set meta_image = meta['image'] %}
+          {% set og_image = meta['image'] %}
+          {% set twitter_card = 'summary_large_image' %}
         {% endif %}
-
-      {% else %}
-        <meta name="description" content="Mit der offenen Veranstaltungsdatenbank Events einfach bekannt machen!">
-        <meta property="og:description" content="Mit der offenen Veranstaltungsdatenbank Events einfach bekannt machen!">
       {% endif %}
+
+      <meta property="og:image" content="{{ og_image }}">
+      <meta name="twitter:image" content="{{ twitter_image }}">
+      <meta name="twitter:card" content="{{ twitter_card }}">
+
+      <meta name="description" content="{{ meta_description }}">
+      <meta property="og:description" content="{{ meta_description }}">
+      <meta name="twitter:title" content="{{ self.title() }}">
     {%- endblock metas %}
 
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png')}}">
