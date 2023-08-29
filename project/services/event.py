@@ -69,9 +69,16 @@ def fill_event_filter(event_filter, params: EventSearchParams):
 
     if params.keyword:
         tq = func.websearch_to_tsquery("german", params.keyword)
+        like_keyword = "%" + params.keyword + "%"
         event_filter = and_(
             event_filter,
-            Event.__ts_vector__.op("@@")(tq),
+            or_(
+                Event.__ts_vector__.op("@@")(tq),
+                Event.name.ilike(like_keyword),
+                EventPlace.name.ilike(like_keyword),
+                Location.city.ilike(like_keyword),
+                EventOrganizer.name.ilike(like_keyword),
+            ),
         )
 
     if params.category_id:
@@ -250,6 +257,7 @@ def get_event_dates_query(params: EventSearchParams):
         .join(Event.admin_unit)
         .join(Event.event_place, isouter=True)
         .join(EventPlace.location, isouter=True)
+        .join(Event.organizer, isouter=True)
     )
 
     if admin_unit_reference:
@@ -268,7 +276,7 @@ def get_event_dates_query(params: EventSearchParams):
             .joinedload(Event.categories)
             .load_only(EventCategory.id, EventCategory.name),
             joinedload(EventDate.event)
-            .joinedload(Event.organizer)
+            .contains_eager(Event.organizer)
             .load_only(EventOrganizer.id, EventOrganizer.name),
             joinedload(EventDate.event).joinedload(Event.photo).load_only(Image.id),
             joinedload(EventDate.event)
@@ -382,6 +390,7 @@ def get_events_query(params: EventSearchParams):
         Event.query.join(Event.admin_unit)
         .join(Event.event_place, isouter=True)
         .join(EventPlace.location, isouter=True)
+        .join(Event.organizer, isouter=True)
     )
 
     if admin_unit_reference:

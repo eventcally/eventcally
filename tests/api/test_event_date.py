@@ -176,7 +176,9 @@ def test_search_public_status(client, seeder: Seeder, utils: UtilActions, app, d
     assert response.json["items"][0]["event"]["id"] == published_id
 
     url = utils.get_url(
-        "api_v1_event_date_search", public_status=["published", "planned"]
+        "api_v1_event_date_search",
+        public_status=["published", "planned"],
+        sort="-created_at",
     )
     response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
@@ -185,8 +187,8 @@ def test_search_public_status(client, seeder: Seeder, utils: UtilActions, app, d
     seeder.authorize_api_access(user_id, admin_unit_id)
     response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 2
-    assert response.json["items"][0]["event"]["id"] == published_id
-    assert response.json["items"][1]["event"]["id"] == planned_id
+    assert response.json["items"][0]["event"]["id"] == planned_id
+    assert response.json["items"][1]["event"]["id"] == published_id
 
 
 def test_search_oneDay(client, seeder: Seeder, utils: UtilActions):
