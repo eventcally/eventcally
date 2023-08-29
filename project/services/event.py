@@ -390,6 +390,7 @@ def get_events_query(params: EventSearchParams):
         Event.query.join(Event.admin_unit)
         .join(Event.event_place, isouter=True)
         .join(EventPlace.location, isouter=True)
+        .join(Event.organizer, isouter=True)
     )
 
     if admin_unit_reference:
