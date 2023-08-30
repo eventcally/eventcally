@@ -314,6 +314,10 @@ function fill_place_form_with_gmaps_place(
   if (!location_only) {
     $("#" + prefix + "name").val(place.name);
 
+    if ($.isFunction($("#" + prefix + "name").valid)) {
+      $("#" + prefix + "name").valid();
+    }
+
     if (place.website) {
       $("#" + prefix + "url").val(place.website);
     }

@@ -35,6 +35,18 @@ $( function() {
               depends: function(element) {
                 return $('input[type=radio][name=event_place_choice]:checked').val() == "2";
               }
+            },
+            remote: {
+              url: "{{ url_for('js_check_event_place_name') }}",
+              type: "post",
+              data: {
+                admin_unit_id: function() {
+                  return "{{ current_admin_unit.id }}";
+                },
+                name: function() {
+                  return $("#new_event_place-name").val();
+                }
+              }
             }
           },
           organizer_id: {
@@ -50,6 +62,18 @@ $( function() {
               param: true,
               depends: function(element) {
                 return $('input[type=radio][name=organizer_choice]:checked').val() == "2";
+              }
+            },
+            remote: {
+              url: "{{ url_for('js_check_organizer_name') }}",
+              type: "post",
+              data: {
+                admin_unit_id: function() {
+                  return "{{ current_admin_unit.id }}";
+                },
+                name: function() {
+                  return $("#new_organizer-name").val();
+                }
               }
             }
           }

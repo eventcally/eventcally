@@ -2,7 +2,7 @@ from tests.seeder import Seeder
 from tests.utils import UtilActions
 
 
-def test_js_check_org_short_name(client, seeder, utils: UtilActions):
+def test_js_check_org_short_name(client, seeder: Seeder, utils: UtilActions):
     seeder.create_user(admin=True)
     utils.login()
 
@@ -18,10 +18,10 @@ def test_js_check_org_short_name(client, seeder, utils: UtilActions):
             },
         )
         utils.assert_response_ok(response)
-        assert response.json
+        assert response.json is True
 
 
-def test_js_check_org_short_name_exists(client, seeder, utils):
+def test_js_check_org_short_name_exists(client, seeder: Seeder, utils: UtilActions):
     seeder.create_user(admin=True)
     user_id = utils.login()
     seeder.create_admin_unit(user_id, "Meine Crew")
@@ -41,7 +41,7 @@ def test_js_check_org_short_name_exists(client, seeder, utils):
         assert response.json == "Der Kurzname ist bereits vergeben"
 
 
-def test_js_check_org_name(client, seeder, utils):
+def test_js_check_org_name(client, seeder: Seeder, utils: UtilActions):
     seeder.create_user(admin=True)
     utils.login()
 
@@ -57,10 +57,10 @@ def test_js_check_org_name(client, seeder, utils):
             },
         )
         utils.assert_response_ok(response)
-        assert response.json
+        assert response.json is True
 
 
-def test_js_check_org_name_exists(client, seeder, utils):
+def test_js_check_org_name_exists(client, seeder: Seeder, utils: UtilActions):
     seeder.create_user(admin=True)
     user_id = utils.login()
     seeder.create_admin_unit(user_id, "Meine Crew")
@@ -80,7 +80,87 @@ def test_js_check_org_name_exists(client, seeder, utils):
         assert response.json == "Der Name ist bereits vergeben"
 
 
-def test_js_js_check_register_email(client, seeder, utils):
+def test_js_check_event_place_name(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(admin=True)
+    seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit_places_create", id=admin_unit_id)
+    response = utils.get(url)
+
+    with client:
+        url = utils.get_url("js_check_event_place_name")
+        response = utils.post_form_data(
+            url,
+            {
+                "admin_unit_id": admin_unit_id,
+                "name": "Meine Crew 2",
+            },
+        )
+        utils.assert_response_ok(response)
+        assert response.json is True
+
+
+def test_js_check_event_place_name_exists(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(admin=True)
+    seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit_places_create", id=admin_unit_id)
+    response = utils.get(url)
+
+    with client:
+        url = utils.get_url("js_check_event_place_name")
+        response = utils.post_form_data(
+            url,
+            {
+                "admin_unit_id": admin_unit_id,
+                "name": "Meine Crew",
+            },
+        )
+        utils.assert_response_ok(response)
+        assert response.json == "Mit diesem Namen existiert bereits ein Ort."
+
+
+def test_js_check_organizer_name(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(admin=True)
+    seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit_organizer_create", id=admin_unit_id)
+    response = utils.get(url)
+
+    with client:
+        url = utils.get_url("js_check_organizer_name")
+        response = utils.post_form_data(
+            url,
+            {
+                "admin_unit_id": admin_unit_id,
+                "name": "Meine Crew 2",
+            },
+        )
+        utils.assert_response_ok(response)
+        assert response.json is True
+
+
+def test_js_check_organizer_name_exists(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(admin=True)
+    seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit_organizer_create", id=admin_unit_id)
+    response = utils.get(url)
+
+    with client:
+        url = utils.get_url("js_check_organizer_name")
+        response = utils.post_form_data(
+            url,
+            {
+                "admin_unit_id": admin_unit_id,
+                "name": "Meine Crew",
+            },
+        )
+        utils.assert_response_ok(response)
+        assert response.json == "Mit diesem Namen existiert bereits ein Veranstalter."
+
+
+def test_js_js_check_register_email(client, seeder: Seeder, utils: UtilActions):
     url = utils.get_url("security.register")
     response = utils.get(url)
 
@@ -93,10 +173,10 @@ def test_js_js_check_register_email(client, seeder, utils):
             },
         )
         utils.assert_response_ok(response)
-        assert response.json
+        assert response.json is True
 
 
-def test_js_js_check_register_email_exists(client, seeder, utils):
+def test_js_js_check_register_email_exists(client, seeder: Seeder, utils: UtilActions):
     seeder.create_user()
     url = utils.get_url("security.register")
     response = utils.get(url)
