@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_manage_form_styles, render_manage_form_scripts, render_jquery_steps_header, render_cropper_block, render_crop_image_form_section, render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_event_place_form_script, render_manage_form_styles, render_manage_form_scripts, render_jquery_steps_header, render_cropper_block, render_crop_image_form_section, render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
 
 {%- block title -%}
 {{ _('Update place') }}
@@ -13,13 +13,14 @@
 {{ render_manage_form_scripts() }}
 {{ render_jquery_steps_header() }}
 {{ render_google_place_autocomplete_header() }}
+{{ render_event_place_form_script(current_admin_unit, place) }}
 {{ render_cropper_block() }}
 {% endblock %}
 
 {% block content %}
 
 <h1>{{ _('Update place') }}</h1>
-<form action="" method="POST" enctype="multipart/form-data">
+<form id="main-form" action="" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
   <div class="my-5">

@@ -4,11 +4,12 @@ from flask_babel import gettext
 from flask_cors import cross_origin
 from flask_security import url_for_security
 from flask_security.utils import localize_callback
+from sqlalchemy import func
 
 from project import app, csrf
 from project.api.custom_widget.schemas import CustomWidgetSchema
 from project.maputils import find_gmaps_places, get_gmaps_place
-from project.models import AdminUnit, CustomWidget
+from project.models import AdminUnit, CustomWidget, EventOrganizer, EventPlace
 from project.services.place import get_event_places
 from project.services.user import find_user_by_email
 from project.utils import get_place_str
@@ -22,7 +23,9 @@ def js_check_org_short_name():
     admin_unit_id = (
         int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
     )
-    organization = AdminUnit.query.filter(AdminUnit.short_name == short_name).first()
+    organization = AdminUnit.query.filter(
+        func.lower(AdminUnit.short_name) == short_name.lower()
+    ).first()
 
     if not organization or organization.id == admin_unit_id:
         return jsonify(True)
@@ -39,12 +42,62 @@ def js_check_org_name():
     admin_unit_id = (
         int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
     )
-    organization = AdminUnit.query.filter(AdminUnit.name == name).first()
+    organization = AdminUnit.query.filter(
+        func.lower(AdminUnit.name) == name.lower()
+    ).first()
 
     if not organization or organization.id == admin_unit_id:
         return jsonify(True)
 
     error = gettext("Name is already taken")
+    return jsonify(error)
+
+
+@app.route("/js/check/event_place/name", methods=["POST"])
+def js_check_event_place_name():
+    csrf.protect()
+
+    name = request.form["name"]
+    admin_unit_id = (
+        int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
+    )
+    event_place_id = (
+        int(request.form["event_place_id"]) if "event_place_id" in request.form else -1
+    )
+    event_place = (
+        EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
+        .filter(func.lower(EventPlace.name) == name.lower())
+        .first()
+    )
+
+    if not event_place or event_place.id == event_place_id:
+        return jsonify(True)
+
+    error = gettext("A place already exists with this name.")
+    return jsonify(error)
+
+
+@app.route("/js/check/organizer/name", methods=["POST"])
+def js_check_organizer_name():
+    csrf.protect()
+
+    name = request.form["name"]
+    admin_unit_id = (
+        int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
+    )
+    organizer_id = (
+        int(request.form["organizer_id"]) if "organizer_id" in request.form else -1
+    )
+    organizer = (
+        EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit_id)
+        .filter(func.lower(EventOrganizer.name) == name.lower())
+        .first()
+    )
+
+    if not organizer or organizer.id == organizer_id:
+        return jsonify(True)
+
+    error = gettext("An organizer already exists with this name.")
     return jsonify(error)
 
 
