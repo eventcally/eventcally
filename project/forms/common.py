@@ -34,13 +34,20 @@ class Base64ImageForm(BaseImageForm):
 
     def validate(self, extra_validators=None):
         result = super().validate(extra_validators)
+        self.image_base64.encoding_format = None
+        self.image_base64.image_data = None
 
         if self.image_base64.data:
-            image = get_image_from_base64_str(self.image_base64.data)
             try:
+                image = get_image_from_base64_str(self.image_base64.data)
                 validate_image(image)
-            except ValueError as e:
+                resize_image_to_max(image)
+                self.image_base64.encoding_format = get_mime_type_from_image(image)
+                self.image_base64.image_data = get_bytes_from_image(image)
+            except Exception as e:
                 msg = str(e)
+                self.image_base64.encoding_format = None
+                self.image_base64.image_data = None
                 self.image_base64.errors.append(msg)
                 result = False
 
@@ -49,12 +56,9 @@ class Base64ImageForm(BaseImageForm):
     def populate_obj(self, obj):
         super(BaseImageForm, self).populate_obj(obj)
 
-        if self.image_base64.data:
-            image = get_image_from_base64_str(self.image_base64.data)
-            validate_image(image)
-            resize_image_to_max(image)
-            obj.encoding_format = get_mime_type_from_image(image)
-            obj.data = get_bytes_from_image(image)
+        if self.image_base64.image_data and self.image_base64.encoding_format:
+            obj.data = self.image_base64.image_data
+            obj.encoding_format = self.image_base64.encoding_format
         else:
             obj.data = None
             obj.encoding_format = None
