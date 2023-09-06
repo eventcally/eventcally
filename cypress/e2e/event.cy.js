@@ -11,14 +11,14 @@ describe("Event", () => {
         cy.get("#add-date-defintion-btn").click();
         cy.checkEventStartEnd(false, test.recurrence, "date_definitions-1-");
 
-        cy.select2("event_place_id", "Neu");
+        cy.get('#event_place_choice-1').click();
         cy.get("#new_event_place-location-city").type("Goslar");
-        cy.get("#new_place_container_search_link").click();
-        cy.select2("event_place_id", "Gos", "Goslar, 38640 Goslar");
+        cy.get('#event_place_choice-0').click();
+        cy.select2("event_place_id", "Gos", "Goslar");
 
-        cy.select2("organizer_id", "Neu");
+        cy.get('#organizer_choice-1').click();
         cy.get("#new_organizer-location-city").type("Goslar");
-        cy.get("#new_organizer_container_search_link").click();
+        cy.get('#organizer_choice-0').click();
         cy.select2("organizer_id", "Mei", "Meine Crew");
 
         cy.get("#submit").click();
@@ -54,7 +54,7 @@ describe("Event", () => {
       cy.visit("/admin_unit/" + adminUnitId + "/events/create");
 
       cy.get("#name").type("Stadtfest");
-      cy.select2("event_place_id", "Gos", "Goslar, 38640 Goslar");
+      cy.select2("event_place_id", "Gos", "Goslar");
       cy.select2("organizer_id", "Mei", "Meine Crew");
 
       cy.get("#submit_draft").click();

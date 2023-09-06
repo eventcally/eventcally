@@ -61,19 +61,27 @@
         width: '100%',
         theme: 'bootstrap4',
         ajax: {
-          url: "{{ url_for('js_autocomplete_place') }}",
+          url: "{{ url_for('api_v1_organization_place_list', id=event.admin_unit.id) }}",
           dataType: 'json',
           delay: 250,
           cache: true,
           data: function (params) {
             return {
-              keyword: params.term,
-              admin_unit_id: '{{ event.admin_unit_id }}',
-              exclude_gmaps: 1,
+              name: params.term,
+              per_page: 5,
+              page: params.page || 1
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data.items.map(p => ({"id": p.id, "text": p.name})),
+              pagination: {
+                  more: data.has_next
+              }
             };
           }
         },
-        placeholder: "{{ _('Enter place or address') }}"
+        placeholder: "{{ _('Enter place') }}"
       });
 
       $('#organizer_id').select2({

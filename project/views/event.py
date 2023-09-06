@@ -43,7 +43,7 @@ from project.services.event import (
     update_event,
     upsert_event_category,
 )
-from project.utils import get_event_category_name, get_place_str
+from project.utils import get_event_category_name
 from project.views.event_suggestion import send_event_suggestion_review_status_mail
 from project.views.reference_request import (
     handle_request_according_to_relation,
@@ -340,7 +340,7 @@ def prepare_event_place(form):
         place = db.session.get(EventPlace, form.event_place_id.data)
 
         if place:
-            form.event_place_id.choices = [(place.id, get_place_str(place))]
+            form.event_place_id.choices = [(place.id, place.name)]
 
     if not form.event_place_id.choices:
         form.event_place_id.choices = []

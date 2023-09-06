@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_co_organizer_select2, render_event_date_defintion_code, render_date_definition_container, render_manage_form_styles, render_manage_form_scripts, render_cropper_header, render_end_container_handling, render_jquery_steps_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_co_organizer_select2, render_event_date_defintion_code, render_date_definition_container, render_manage_form_styles, render_manage_form_scripts, render_cropper_header, render_end_container_handling, render_jquery_steps_header, render_cropper_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
 
 {%- block title -%}
 {{ _('Create event') }}
@@ -12,6 +12,7 @@
 {% block header_before_site_js %}
 {{ render_manage_form_scripts() }}
 {{ render_jquery_steps_header() }}
+{{ render_google_place_autocomplete_header("new_event_place-") }}
 {{ render_cropper_header() }}
 <script>
 $( function() {
@@ -87,6 +88,7 @@ $( function() {
       case '1':
         $('#existing_place_container').show();
         $('#new_place_container').hide();
+        reset_place_form('new_event_place-');
         break;
       case '2':
         $('#existing_place_container').hide();
@@ -98,23 +100,28 @@ $( function() {
   $('#event_place_id').select2({
     width: '100%',
     theme: 'bootstrap4',
-    tags: true,
     ajax: {
-      url: "{{ url_for('js_autocomplete_place') }}",
+      url: "{{ url_for('api_v1_organization_place_list', id=admin_unit.id) }}",
       dataType: 'json',
       delay: 250,
       cache: true,
       data: function (params) {
         return {
-          keyword: params.term,
-          admin_unit_id: '{{ admin_unit.id }}'
+          name: params.term,
+          per_page: 5,
+          page: params.page || 1
+        };
+      },
+      processResults: function (data) {
+        return {
+          results: data.items.map(p => ({"id": p.id, "text": p.name})),
+          pagination: {
+              more: data.has_next
+          }
         };
       }
     },
-    placeholder: "{{ _('Enter place or address') }}",
-    createTag: createSelect2Tag,
-    insertTag: insertSelect2Tag,
-    templateResult: select2TemplateResult
+    placeholder: "{{ _('Enter place') }}"
   }).on('select2:close', function (e) {
     var data = select2GetData(e);
 
@@ -154,13 +161,6 @@ $( function() {
     update_place_container($(this).val());
   });
 
-  $('#new_place_container_search_link').click(function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      reset_place_form('new_event_place-');
-      $('input[type=radio][name=event_place_choice][value=1]').click();
-  });
-
   update_place_container($('input[type=radio][name=event_place_choice]:checked').val());
 
   function update_organizer_container(value) {
@@ -168,6 +168,7 @@ $( function() {
       case '1':
         $('#existing_organizer_container').show();
         $('#new_organizer_container').hide();
+        reset_organizer_form('new_organizer-');
         break;
       case '2':
         $('#existing_organizer_container').hide();
@@ -179,7 +180,6 @@ $( function() {
   $('#organizer_id').select2({
     width: '100%',
     theme: 'bootstrap4',
-    tags: true,
     ajax: {
       url: "{{ url_for('api_v1_organization_organizer_list', id=admin_unit.id) }}",
       dataType: 'json',
@@ -201,10 +201,7 @@ $( function() {
         };
       }
     },
-    placeholder: "{{ _('Enter organizer') }}",
-    createTag: createSelect2Tag,
-    insertTag: insertSelect2Tag,
-    templateResult: select2TemplateResult
+    placeholder: "{{ _('Enter organizer') }}"
   }).on('select2:close', function (e) {
     var data = select2GetData(e);
 
@@ -228,13 +225,6 @@ $( function() {
 
   $('#organizer_id').on('select2:select', function (e) {
       $(this).valid();
-  });
-
-  $('#new_organizer_container_search_link').click(function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      reset_organizer_form('new_organizer-');
-      $('input[type=radio][name=organizer_choice][value=1]').click();
   });
 
   update_organizer_container($('input[type=radio][name=organizer_choice]:checked').val());
@@ -283,7 +273,7 @@ $( function() {
     <div class="card-body">
       <div>
         <div class="form-text mt-0 text-muted w-100">{{ _("Select the organizer. If the organizer is not yet on the list, just enter it.") }}</div>
-        <div style="display: none;">{{ render_radio_buttons(form.organizer_choice) }}</div>
+        <div>{{ render_radio_buttons(form.organizer_choice) }}</div>
       </div>
 
       <div class="my-2" id="existing_organizer_container">
@@ -297,10 +287,6 @@ $( function() {
         {{ render_field_with_errors(form.new_organizer.form.location.street) }}
         {{ render_field_with_errors(form.new_organizer.form.location.postalCode) }}
         {{ render_field_with_errors(form.new_organizer.form.location.city) }}
-
-        <div class="my-4">
-          <a href="#" id="new_organizer_container_search_link"><i class="fa fa-search"></i> {{ _('Switch to organizer search') }}</a>
-        </div>
       </div>
 
       {{ render_field_with_errors(form.co_organizer_ids, class="w-100") }}
@@ -315,7 +301,7 @@ $( function() {
 
       <div>
         <div class="form-text mt-0 text-muted w-100">{{ _("Choose where the event takes place. If the venue is not yet in the list, just enter it.") }}</div>
-        <div style="display: none;">{{ render_radio_buttons(form.event_place_choice) }}</div>
+        <div>{{ render_radio_buttons(form.event_place_choice) }}</div>
       </div>
 
       <div class="my-2" id="existing_place_container">
@@ -323,6 +309,8 @@ $( function() {
       </div>
 
       <div class="my-2" id="new_place_container">
+        {{ render_google_place_autocomplete_field() }}
+
         {{ form.new_event_place.hidden_tag() }}
         {{ render_field_with_errors(form.new_event_place.form.name, is_required=True) }}
         {{ form.new_event_place.form.location.hidden_tag() }}
@@ -332,10 +320,6 @@ $( function() {
         {{ render_field_with_errors(form.new_event_place.form.location.state) }}
         {{ render_field_with_errors(form.new_event_place.form.location.latitude) }}
         {{ render_field_with_errors(form.new_event_place.form.location.longitude) }}
-
-        <div class="my-4">
-          <a href="#" id="new_place_container_search_link"><i class="fa fa-search"></i> {{ _('Switch to place search') }}</a>
-        </div>
       </div>
 
     </div>

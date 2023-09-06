@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-08-29 23:52+0200\n"
+"POT-Creation-Date: 2023-09-06 17:11+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -423,7 +423,7 @@ msgstr ""
 "eindeutig zu identifizieren. Der Kurzname darf nur Buchstaben, Nummern "
 "und Unterstriche enthalten."
 
-#: project/forms/admin_unit.py:46 project/templates/_macros.html:1690
+#: project/forms/admin_unit.py:46 project/templates/_macros.html:1692
 msgid "Short name must contain only letters numbers or underscore"
 msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
 
@@ -583,7 +583,7 @@ msgstr "Copyright Text"
 msgid "Image"
 msgstr "Bild"
 
-#: project/forms/common.py:74
+#: project/forms/common.py:78
 #, python-format
 msgid ""
 "I read and accept %(tos_open)sTerms of Service%(tos_close)s and "
@@ -593,74 +593,74 @@ msgstr ""
 "%(privacy_open)sDatenschutzerklärung%(privacy_close)s gelesen und "
 "akzeptiere diese."
 
-#: project/forms/common.py:84
+#: project/forms/common.py:88
 #, python-format
 msgid "I read and accept %(privacy_open)sPrivacy%(privacy_close)s."
 msgstr ""
 "Ich habe die %(privacy_open)sDatenschutzerklärung%(privacy_close)s "
 "gelesen und akzeptiere diese."
 
-#: project/forms/common.py:95
+#: project/forms/common.py:99
 msgid "0 (Little relevant)"
 msgstr "0 (Wenig relevant)"
 
-#: project/forms/common.py:100
+#: project/forms/common.py:104
 msgid "5 (Default)"
 msgstr "5 (Standard)"
 
-#: project/forms/common.py:105
+#: project/forms/common.py:109
 msgid "10 (Highlight)"
 msgstr "10 (Highlight)"
 
-#: project/forms/common.py:109
+#: project/forms/common.py:113
 msgid "Monday"
 msgstr "Montag"
 
-#: project/forms/common.py:110
+#: project/forms/common.py:114
 msgid "Tueday"
 msgstr "Dienstag"
 
-#: project/forms/common.py:111
+#: project/forms/common.py:115
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: project/forms/common.py:112
+#: project/forms/common.py:116
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: project/forms/common.py:113
+#: project/forms/common.py:117
 msgid "Friday"
 msgstr "Freitag"
 
-#: project/forms/common.py:114
+#: project/forms/common.py:118
 msgid "Saturday"
 msgstr "Samstag"
 
-#: project/forms/common.py:115
+#: project/forms/common.py:119
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: project/forms/common.py:119
+#: project/forms/common.py:123
 msgid "500 m"
 msgstr "500 m"
 
-#: project/forms/common.py:120
+#: project/forms/common.py:124
 msgid "5 km"
 msgstr "5 km"
 
-#: project/forms/common.py:121
+#: project/forms/common.py:125
 msgid "10 km"
 msgstr "10 km"
 
-#: project/forms/common.py:122
+#: project/forms/common.py:126
 msgid "20 km"
 msgstr "20 km"
 
-#: project/forms/common.py:123
+#: project/forms/common.py:127
 msgid "50 km"
 msgstr "50 km"
 
-#: project/forms/common.py:124
+#: project/forms/common.py:128
 msgid "100 km"
 msgstr "100 km"
 
@@ -687,7 +687,7 @@ msgid "All-day"
 msgstr "Ganztägig"
 
 #: project/forms/event.py:59 project/templates/_macros.html:951
-#: project/templates/_macros.html:1860
+#: project/templates/_macros.html:1862
 #: project/templates/widget/event_suggestion/create.html:240
 msgid "Recurring event"
 msgstr "Serientermin"
@@ -892,8 +892,8 @@ msgstr "Wähle Kategorien, die zur Veranstaltung passen."
 
 #: project/forms/event.py:260 project/forms/reference.py:14
 #: project/forms/reference.py:27 project/forms/reference_request.py:76
-#: project/templates/event/create.html:387
-#: project/templates/event/update.html:220
+#: project/templates/event/create.html:371
+#: project/templates/event/update.html:228
 msgid "Rating"
 msgstr "Bewertung"
 
@@ -925,8 +925,8 @@ msgstr "Ungültiger Mitveranstalter."
 #: project/forms/event.py:291 project/forms/event.py:300
 #: project/forms/event.py:382 project/forms/event.py:459
 #: project/forms/event_suggestion.py:50 project/templates/_macros.html:464
-#: project/templates/_macros.html:630 project/templates/event/create.html:312
-#: project/templates/event/update.html:170
+#: project/templates/_macros.html:630 project/templates/event/create.html:298
+#: project/templates/event/update.html:178
 #: project/templates/event_place/create.html:32
 #: project/templates/event_place/delete.html:13
 #: project/templates/event_place/update.html:32
@@ -946,8 +946,8 @@ msgstr "Neuen Ort eingeben"
 #: project/forms/event.py:390 project/forms/event.py:456
 #: project/forms/event_date.py:40 project/forms/event_suggestion.py:60
 #: project/templates/_macros.html:501 project/templates/_macros.html:673
-#: project/templates/_macros.html:954 project/templates/event/create.html:281
-#: project/templates/event/update.html:160
+#: project/templates/_macros.html:954 project/templates/event/create.html:271
+#: project/templates/event/update.html:168
 #: project/templates/manage/events.html:108
 #: project/templates/organizer/create.html:28
 #: project/templates/organizer/delete.html:13
@@ -964,7 +964,7 @@ msgid "Enter new organizer"
 msgstr "Neuen Veranstalter eingeben"
 
 #: project/forms/event.py:323 project/templates/_macros.html:738
-#: project/templates/event/create.html:398
+#: project/templates/event/create.html:382
 #: project/templates/manage/reference_requests_incoming.html:5
 #: project/templates/manage/reference_requests_outgoing.html:5
 msgid "Reference requests"
@@ -1006,7 +1006,7 @@ msgstr ""
 "Wähle den Veranstalter. Du kannst Veranstalter unter Organisation > "
 "Veranstalter hinzufügen und ändern."
 
-#: project/forms/event.py:399 project/templates/event/update.html:149
+#: project/forms/event.py:399 project/templates/event/update.html:157
 #: project/templates/oauth2_token/list.html:21
 msgid "Status"
 msgstr "Status"
@@ -1055,14 +1055,14 @@ msgstr "In Planung"
 msgid "PublicStatus.draft"
 msgstr "Entwurf"
 
-#: project/forms/event.py:419 project/templates/event/create.html:410
+#: project/forms/event.py:419 project/templates/event/create.html:394
 msgid "Planned events appear in the scheduling view, but not on public calendars."
 msgstr ""
 "Geplante Veranstaltungen werden in der Planungsansicht angezeigt, aber "
 "nicht in öffentlichen Kalendern."
 
 #: project/forms/event.py:424 project/templates/event/update.html:5
-#: project/templates/event/update.html:117
+#: project/templates/event/update.html:125
 msgid "Update event"
 msgstr "Veranstaltung aktualisieren"
 
@@ -1196,7 +1196,7 @@ msgstr "Bitte gib deine Email-Adresse oder deine Telefonnummer für die Prüfung
 msgid "I would like to be notified by email after the review"
 msgstr "Ich möchte per Email benachrichtigt werden nach der Prüfung"
 
-#: project/forms/event_suggestion.py:52 project/templates/event/create.html:317
+#: project/forms/event_suggestion.py:52 project/templates/event/create.html:303
 msgid ""
 "Choose where the event takes place. If the venue is not yet in the list, "
 "just enter it."
@@ -1204,7 +1204,7 @@ msgstr ""
 "Wähle aus, wo die Veranstaltung stattfindet. Ist der Veranstaltungsort "
 "noch nicht in der Liste, trage ihn einfach ein."
 
-#: project/forms/event_suggestion.py:62 project/templates/event/create.html:285
+#: project/forms/event_suggestion.py:62 project/templates/event/create.html:275
 msgid ""
 "Select the organizer. If the organizer is not yet on the list, just enter"
 " it."
@@ -1497,8 +1497,8 @@ msgstr "Zuletzt aktualisiert am %(updated_at)s."
 
 #: project/templates/_macros.html:413 project/templates/_macros.html:583
 #: project/templates/event/actions.html:25
-#: project/templates/event/create.html:258
-#: project/templates/event/update.html:126
+#: project/templates/event/create.html:248
+#: project/templates/event/update.html:134
 #: project/templates/manage/events.html:107
 #: project/templates/widget/event_suggestion/create.html:229
 msgid "Event"
@@ -1700,18 +1700,18 @@ msgstr "Yahoo Kalender"
 msgid "Other calendar"
 msgstr "Anderer Kalender"
 
-#: project/templates/_macros.html:1861
+#: project/templates/_macros.html:1863
 msgid "Remove event date"
 msgstr "Termin entfernen"
 
-#: project/templates/_macros.html:1894 project/templates/event/create.html:204
-#: project/templates/event/update.html:103
+#: project/templates/_macros.html:1896 project/templates/event/create.html:204
+#: project/templates/event/update.html:111
 #: project/templates/event_date/list.html:448
 #: project/templates/widget/event_suggestion/create.html:129
 msgid "Enter organizer"
 msgstr "Veranstalter eingeben"
 
-#: project/templates/_macros.html:1922
+#: project/templates/_macros.html:1924
 msgid "Enter list name"
 msgstr "Listenname eingeben"
 
@@ -1780,7 +1780,7 @@ msgid "Show events"
 msgstr "Veranstaltungen anzeigen"
 
 #: project/templates/event/create.html:5
-#: project/templates/event/create.html:249 project/templates/layout.html:230
+#: project/templates/event/create.html:239 project/templates/layout.html:230
 #: project/templates/manage/events.html:55
 #: project/templates/manage/organizers.html:38
 msgid "Create event"
@@ -1986,8 +1986,8 @@ msgstr "Akzeptanz der Nutzungsbedingungen und des Datenschutzes zurücksetzen"
 
 #: project/templates/admin_unit/create.html:51
 #: project/templates/admin_unit/update.html:67
-#: project/templates/event/create.html:375
-#: project/templates/event/update.html:208
+#: project/templates/event/create.html:359
+#: project/templates/event/update.html:216
 #: project/templates/event_place/create.html:58
 #: project/templates/event_place/update.html:58
 #: project/templates/organizer/create.html:57
@@ -2258,45 +2258,36 @@ msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
 msgid "Add event to list"
 msgstr "Veranstaltung zu Liste hinzufügen"
 
-#: project/templates/event/create.html:114
-#: project/templates/event/update.html:76
-#: project/templates/widget/event_suggestion/create.html:104
-msgid "Enter place or address"
-msgstr "Orte oder Adresse eingeben"
+#: project/templates/event/create.html:124
+#: project/templates/event/update.html:84
+msgid "Enter place"
+msgstr "Ort eingeben"
 
-#: project/templates/event/create.html:268
-#: project/templates/event/update.html:136
+#: project/templates/event/create.html:258
+#: project/templates/event/update.html:144
 msgid "Event dates"
 msgstr "Termine"
 
-#: project/templates/event/create.html:275
-#: project/templates/event/update.html:143
+#: project/templates/event/create.html:265
+#: project/templates/event/update.html:151
 msgid "Add event date"
 msgstr "Termin hinzufügen"
 
-#: project/templates/event/create.html:302
-msgid "Switch to organizer search"
-msgstr "Zur Veranstaltersuche wechseln"
-
-#: project/templates/event/create.html:337
-msgid "Switch to place search"
-msgstr "Zur Ortssuche wechseln"
-
-#: project/templates/event/create.html:348
-#: project/templates/event/update.html:181
+#: project/templates/event/create.html:332
+#: project/templates/event/update.html:189
 msgid "Access"
 msgstr "Zugang"
 
-#: project/templates/event/create.html:362
-#: project/templates/event/update.html:195
+#: project/templates/event/create.html:346
+#: project/templates/event/update.html:203
 msgid "Target group"
 msgstr "Zielgruppe"
 
-#: project/templates/event/create.html:402
+#: project/templates/event/create.html:386
 msgid "References are important for the visibility of your events."
 msgstr "Empfehlungen sind wichtig für die Sichtbarkeit deiner Veranstaltungen."
 
-#: project/templates/event/create.html:403
+#: project/templates/event/create.html:387
 msgid "Select organizations to display your event on their calendars."
 msgstr ""
 "Wähle Organisationen aus, die deine Veranstaltung in ihren Kalendern "
@@ -2650,6 +2641,10 @@ msgstr "Widget"
 #: project/templates/widget/event_date/list.html:153
 msgid "Print"
 msgstr "Drucken"
+
+#: project/templates/widget/event_suggestion/create.html:104
+msgid "Enter place or address"
+msgstr "Orte oder Adresse eingeben"
 
 #: project/templates/widget/event_suggestion/create.html:175
 msgid "Continue as guest"
@@ -3129,4 +3124,10 @@ msgstr "Neue Veranstaltung zu prüfen"
 #~ "Empfehlungsanfrage erfolgreich erstellt. Du "
 #~ "wirst benachrichtigt, nachdem die andere "
 #~ "Organisation die Veranstaltung geprüft hat."
+
+#~ msgid "Switch to organizer search"
+#~ msgstr "Zur Veranstaltersuche wechseln"
+
+#~ msgid "Switch to place search"
+#~ msgstr "Zur Ortssuche wechseln"
 
