@@ -793,7 +793,7 @@
 {% endif %}
 {% endmacro %}
 
-{% macro render_google_place_autocomplete_header() %}
+{% macro render_google_place_autocomplete_header(target_prefix='') %}
 <script>
   $( function() {
 
@@ -840,7 +840,7 @@
           dataType: "json",
           data: "gmaps_id=" + place_id,
           success: function (data) {
-            fill_place_form_with_gmaps_place(data, "", location_only);
+            fill_place_form_with_gmaps_place(data, "{{ target_prefix }}", location_only);
           }
       });
     }
