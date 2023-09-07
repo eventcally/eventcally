@@ -107,3 +107,16 @@ def test_sitemap_xml(seeder, app, utils):
     result = runner.invoke(args=["seo", "generate-sitemap"])
     assert result.exit_code == 0
     utils.get_endpoint_ok("sitemap_xml")
+
+
+def test_announcement(app, db, utils: UtilActions):
+    with app.app_context():
+        from project.services.admin import upsert_settings
+
+        settings = upsert_settings()
+        settings.announcement = "Wartungsarbeiten"
+        db.session.commit()
+
+    url = utils.get_url("home")
+    response = utils.get_ok(url)
+    assert b"Wartungsarbeiten" in response.data

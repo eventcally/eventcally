@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-09-06 17:11+0200\n"
+"POT-Creation-Date: 2023-09-07 22:40+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -233,34 +233,38 @@ msgstr "Datenschutz"
 msgid "Start page"
 msgstr "Startseite"
 
-#: project/forms/admin.py:17 project/forms/oauth2_client.py:24
+#: project/forms/admin.py:16
+msgid "Announcement"
+msgstr "Ankündigung"
+
+#: project/forms/admin.py:18 project/forms/oauth2_client.py:24
 #: project/forms/user.py:13
 msgid "Save"
 msgstr "Speichern"
 
-#: project/forms/admin.py:22
+#: project/forms/admin.py:23
 msgid "Reset for all users"
 msgstr "Für alle Nutzer zurücksetzen"
 
-#: project/forms/admin.py:24
+#: project/forms/admin.py:25
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: project/forms/admin.py:28 project/forms/admin_unit_member.py:14
+#: project/forms/admin.py:29 project/forms/admin_unit_member.py:14
 #: project/forms/admin_unit_member.py:34
 msgid "Roles"
 msgstr "Rollen"
 
-#: project/forms/admin.py:29 project/templates/admin/update_user.html:4
+#: project/forms/admin.py:30 project/templates/admin/update_user.html:4
 #: project/templates/admin/update_user.html:8
 msgid "Update user"
 msgstr "Nutzer aktualisieren"
 
-#: project/forms/admin.py:33 project/templates/admin/delete_user.html:6
+#: project/forms/admin.py:34 project/templates/admin/delete_user.html:6
 msgid "Delete user"
 msgstr "Nutzer löschen"
 
-#: project/forms/admin.py:34 project/forms/admin_unit.py:58
+#: project/forms/admin.py:35 project/forms/admin_unit.py:58
 #: project/forms/admin_unit_member.py:12 project/forms/admin_unit_member.py:25
 #: project/forms/admin_unit_member.py:30 project/forms/event.py:112
 #: project/forms/event_suggestion.py:38 project/forms/organizer.py:33
@@ -272,11 +276,11 @@ msgstr "Nutzer löschen"
 msgid "Email"
 msgstr "Email"
 
-#: project/forms/admin.py:39
+#: project/forms/admin.py:40
 msgid "Incoming reference requests allowed"
 msgstr "Eingehende Empfehlungsanfragen erlauben"
 
-#: project/forms/admin.py:40
+#: project/forms/admin.py:41
 msgid ""
 "If set, other organizations can ask this organization to reference their "
 "event."
@@ -284,56 +288,56 @@ msgstr ""
 "Wenn gesetzt, können andere Organisationen diese Organisation bitten, "
 "deren Veranstaltungen zu empfehlen."
 
-#: project/forms/admin.py:46
+#: project/forms/admin.py:47
 msgid "Suggestions enabled"
 msgstr "Vorschläge aktiv"
 
-#: project/forms/admin.py:47
+#: project/forms/admin.py:48
 msgid "If set, the organization can work with suggestions."
 msgstr "Wenn gesetzt, kann die Organisation mit Vorschlägen arbeiten."
 
-#: project/forms/admin.py:51
+#: project/forms/admin.py:52
 msgid "Create other organizations"
 msgstr "Andere Organisationen erstellen"
 
-#: project/forms/admin.py:52
+#: project/forms/admin.py:53
 msgid "If set, members of the organization can create other organizations."
 msgstr ""
 "Wenn gesetzt, können Mitglieder der Organisation andere Organisationen "
 "erstellen."
 
-#: project/forms/admin.py:58
+#: project/forms/admin.py:59
 msgid "Invite other organizations"
 msgstr "Andere Organisationen einladen"
 
-#: project/forms/admin.py:59
+#: project/forms/admin.py:60
 msgid "If set, members of the organization can invite other organizations."
 msgstr ""
 "Wenn gesetzt, können Mitglieder der Organisation andere Organisationen "
 "einladen."
 
-#: project/forms/admin.py:65
+#: project/forms/admin.py:66
 msgid "Verify other organizations"
 msgstr "Andere Organisationen verifizieren"
 
-#: project/forms/admin.py:66
+#: project/forms/admin.py:67
 msgid "If set, members of the organization can verify other organizations."
 msgstr ""
 "Wenn gesetzt, können Mitglieder der Organisation andere Organisationen "
 "verifizieren."
 
-#: project/forms/admin.py:71 project/templates/admin/update_admin_unit.html:4
+#: project/forms/admin.py:72 project/templates/admin/update_admin_unit.html:4
 #: project/templates/admin/update_admin_unit.html:8
 msgid "Update organization"
 msgstr "Organisation aktualisieren"
 
-#: project/forms/admin.py:75 project/templates/admin/delete_admin_unit.html:6
+#: project/forms/admin.py:76 project/templates/admin/delete_admin_unit.html:6
 #: project/templates/admin_unit/request_deletion.html:6
 #: project/templates/admin_unit/update.html:94
 msgid "Delete organization"
 msgstr "Organisation löschen"
 
-#: project/forms/admin.py:76 project/forms/admin_unit.py:147
+#: project/forms/admin.py:77 project/forms/admin_unit.py:147
 #: project/forms/admin_unit.py:152 project/forms/admin_unit.py:157
 #: project/forms/event.py:90 project/forms/event.py:119
 #: project/forms/event_place.py:30 project/forms/event_place.py:56
@@ -349,27 +353,27 @@ msgstr "Organisation löschen"
 msgid "Name"
 msgstr "Name"
 
-#: project/forms/admin.py:80 project/forms/admin.py:87
+#: project/forms/admin.py:81 project/forms/admin.py:88
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: project/forms/admin.py:82
+#: project/forms/admin.py:83
 msgid "Send test mail synchronously"
 msgstr "Test-Mail synchron senden"
 
-#: project/forms/admin.py:89 project/forms/admin.py:95
+#: project/forms/admin.py:90 project/forms/admin.py:96
 msgid "Test recipient"
 msgstr "Test-Empfänger"
 
-#: project/forms/admin.py:90
+#: project/forms/admin.py:91
 msgid "All users with enabled newsletter setting"
 msgstr "Alle Nutzer mit aktiviertem Newsletter"
 
-#: project/forms/admin.py:96
+#: project/forms/admin.py:97
 msgid "Message"
 msgstr "Nachricht"
 
-#: project/forms/admin.py:97
+#: project/forms/admin.py:98
 msgid "Send newsletter"
 msgstr "Newsletter senden"
 
@@ -1979,7 +1983,7 @@ msgstr "Mails erfolgreich gesendet"
 
 #: project/templates/admin/reset_tos_accepted.html:4
 #: project/templates/admin/reset_tos_accepted.html:8
-#: project/templates/admin/settings.html:28
+#: project/templates/admin/settings.html:29
 #: project/templates/admin/users.html:48
 msgid "Reset acceptance of terms of service and privacy"
 msgstr "Akzeptanz der Nutzungsbedingungen und des Datenschutzes zurücksetzen"

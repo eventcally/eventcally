@@ -323,7 +323,9 @@
 
           {% block content_container -%}
           <main {% block content_container_attribs %}class="p-3"{% endblock content_container_attribs %}>
-            {% include "_messages.html" %}
+            <div {% block messages_container_attribs %}{% endblock messages_container_attribs %}>
+              {% include "_messages.html" %}
+            </div>
 
             {% block content -%}
             {%- endblock content %}

@@ -2,6 +2,7 @@ import os
 from urllib.parse import quote_plus
 
 from flask import url_for
+from markupsafe import Markup
 
 from project import app
 from project.utils import (
@@ -114,6 +115,15 @@ def get_context_processors():
 
         return has_tos()
 
+    def get_announcement():
+        from project.services.admin import has_announcement, upsert_settings
+
+        if not has_announcement():
+            return None
+
+        settings = upsert_settings()
+        return Markup(settings.announcement) if settings.announcement else None
+
     def get_current_user_roles():
         from flask_security import current_user
 
@@ -167,6 +177,7 @@ def get_context_processors():
         get_manage_menu_options=get_manage_menu_options,
         has_access=has_access,
         has_tos=has_tos,
+        get_announcement=get_announcement,
         get_current_user_roles=get_current_user_roles,
         get_current_user_permissions=get_current_user_permissions,
     )
