@@ -1,3 +1,8 @@
+{% set announcement = get_announcement() %}
+{% if announcement %}
+  <div class="alert alert-warning" role="alert">{{ announcement }}</div>
+{% endif %}
+
 {%- with messages = get_flashed_messages(with_categories=true) -%}
   {% if messages %}
     {% for category, message in messages %}

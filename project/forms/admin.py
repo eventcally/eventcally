@@ -13,6 +13,7 @@ class AdminSettingsForm(FlaskForm):
     contact = TextAreaField(lazy_gettext("Contact"), validators=[Optional()])
     privacy = TextAreaField(lazy_gettext("Privacy"), validators=[Optional()])
     start_page = TextAreaField(lazy_gettext("Start page"), validators=[Optional()])
+    announcement = TextAreaField(lazy_gettext("Announcement"), validators=[Optional()])
 
     submit = SubmitField(lazy_gettext("Save"))
 
