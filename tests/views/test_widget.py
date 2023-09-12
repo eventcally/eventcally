@@ -1,36 +1,34 @@
 import pytest
 
+from tests.seeder import Seeder
+from tests.utils import UtilActions
 
-def test_event_dates(client, seeder, utils):
+
+def test_event_dates(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
-    au_short_name = "meinecrew"
 
-    url = utils.get_url("widget_event_dates", au_short_name=au_short_name)
+    url = utils.get_url("widget_event_dates", id=admin_unit_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "widget.css")
     assert "X-Frame-Options" not in response.headers
 
-    event_url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=1)
+    event_url = utils.get_url("event_date", id=1)
     utils.assert_response_contains(response, event_url)
 
-    draft_url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=2)
+    draft_url = utils.get_url("event_date", id=2)
     utils.assert_response_contains_not(response, draft_url)
 
-    url = utils.get_url(
-        "widget_event_dates", au_short_name=au_short_name, keyword="name"
-    )
+    url = utils.get_url("widget_event_dates", id=admin_unit_id, keyword="name")
     utils.get_ok(url)
 
-    url = utils.get_url(
-        "widget_event_dates", au_short_name=au_short_name, category_id=1
-    )
+    url = utils.get_url("widget_event_dates", id=admin_unit_id, category_id=1)
     utils.get_ok(url)
 
     url = utils.get_url(
         "widget_event_dates",
-        au_short_name=au_short_name,
+        id=admin_unit_id,
         coordinate="51.9077888,10.4333312",
         distance=500,
     )
@@ -38,7 +36,7 @@ def test_event_dates(client, seeder, utils):
 
     url = utils.get_url(
         "widget_event_dates",
-        au_short_name=au_short_name,
+        id=admin_unit_id,
         date_from="2020-10-03",
         date_to="2021-10-03",
     )
@@ -46,7 +44,7 @@ def test_event_dates(client, seeder, utils):
 
     url = utils.get_url(
         "widget_event_dates",
-        au_short_name=au_short_name,
+        id=admin_unit_id,
         s_ft="Verdana",
         s_bg="#eceef0",
         s_pr="#b09641",
@@ -55,15 +53,12 @@ def test_event_dates(client, seeder, utils):
     utils.get_ok(url)
 
     # Unverified
-    au_short_name = "unverifiedcrew"
-    _, _, unverified_id = seeder.create_event_unverified()
-    url = utils.get_url("widget_event_dates", au_short_name=au_short_name)
+    _, unverified_admin_unit_id, unverified_id = seeder.create_event_unverified()
+    url = utils.get_url("widget_event_dates", id=unverified_admin_unit_id)
     response = utils.get_ok(url)
 
     unverified_date_id = seeder.get_event_date_id(unverified_id)
-    unverified_url = utils.get_url(
-        "widget_event_date", au_short_name=au_short_name, id=unverified_date_id
-    )
+    unverified_url = utils.get_url("event_date", id=unverified_date_id)
     utils.assert_response_contains_not(response, unverified_url)
 
 
@@ -71,7 +66,6 @@ def test_event_dates_oneDay(client, seeder, utils):
     from project.dateutils import create_berlin_date
 
     user_id, admin_unit_id = seeder.setup_base()
-    au_short_name = "meinecrew"
 
     start = create_berlin_date(2020, 10, 3, 10)
     end = create_berlin_date(2020, 10, 3, 11)
@@ -80,7 +74,7 @@ def test_event_dates_oneDay(client, seeder, utils):
 
     url = utils.get_url(
         "widget_event_dates",
-        au_short_name=au_short_name,
+        id=admin_unit_id,
         date_from="2020-10-03",
         date_to="2020-10-03",
     )
@@ -90,61 +84,10 @@ def test_event_dates_oneDay(client, seeder, utils):
 
 def test_event_dates_noneDescription(client, seeder, utils):
     _, admin_unit_id = seeder.setup_base()
-    au_short_name = "meinecrew"
     seeder.create_event(admin_unit_id, description=None)
 
-    url = utils.get_url("widget_event_dates", au_short_name=au_short_name)
+    url = utils.get_url("widget_event_dates", id=admin_unit_id)
     utils.get_ok(url)
-
-
-def test_event_date(client, seeder, utils, app, db):
-    user_id, admin_unit_id = seeder.setup_base(log_in=False)
-    seeder.create_event(admin_unit_id)
-    au_short_name = "meinecrew"
-
-    with app.app_context():
-        from colour import Color
-
-        from project.models import AdminUnit
-
-        admin_unit = db.session.get(AdminUnit, admin_unit_id)
-        admin_unit.widget_font = "Verdana"
-        admin_unit.widget_background_color = Color("#eceef0")
-        admin_unit.widget_primary_color = Color("#b09641")
-        admin_unit.widget_link_color = Color("#7b2424")
-        db.session.commit()
-
-    url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=1)
-    response = utils.get_ok(url)
-    utils.assert_response_contains(response, "widget.css")
-
-    seeder.create_event(admin_unit_id, draft=True)
-    url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=2)
-    response = utils.get(url)
-    utils.assert_response_unauthorized(response)
-
-    # Unverified
-    au_short_name = "unverifiedcrew"
-    _, _, unverified_id = seeder.create_event_unverified()
-    unverified_date_id = seeder.get_event_date_id(unverified_id)
-    url = utils.get_url(
-        "widget_event_date", au_short_name=au_short_name, id=unverified_date_id
-    )
-    utils.assert_response_unauthorized(response)
-
-
-def test_event_date_co_organizers(client, seeder, utils, app, db):
-    user_id, admin_unit_id = seeder.setup_base(log_in=False)
-    event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
-        admin_unit_id
-    )
-    au_short_name = "meinecrew"
-
-    url = utils.get_url("widget_event_date", au_short_name=au_short_name, id=event_id)
-    response = utils.get(url)
-    response = utils.get_ok(url)
-    utils.assert_response_contains(response, "Organizer A")
-    utils.assert_response_contains(response, "Organizer B")
 
 
 def get_create_data():
@@ -158,6 +101,26 @@ def get_create_data():
         "event_place_id": "Freitext Ort",
         "organizer_id": "Freitext Organisator",
     }
+
+
+def test_event_dates_colors(client, seeder, utils, app, db):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from colour import Color
+
+        from project.models import AdminUnit
+
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        admin_unit.widget_font = "Verdana"
+        admin_unit.widget_background_color = Color("#eceef0")
+        admin_unit.widget_primary_color = Color("#b09641")
+        admin_unit.widget_link_color = Color("#7b2424")
+        db.session.commit()
+
+    url = utils.get_url("widget_event_dates", id=admin_unit_id)
+    utils.get_ok(url)
 
 
 @pytest.mark.parametrize("db_error", [True, False])
@@ -177,11 +140,8 @@ def test_event_suggestion_create_for_admin_unit(
 ):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
-    au_short_name = "meinecrew"
 
-    url = utils.get_url(
-        "event_suggestion_create_for_admin_unit", au_short_name=au_short_name
-    )
+    url = utils.get_url("event_suggestion_create_for_admin_unit", id=admin_unit_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "widget.css")
 
@@ -252,11 +212,8 @@ def test_event_suggestion_create_for_admin_unit_allday(
 ):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
-    au_short_name = "meinecrew"
 
-    url = utils.get_url(
-        "event_suggestion_create_for_admin_unit", au_short_name=au_short_name
-    )
+    url = utils.get_url("event_suggestion_create_for_admin_unit", id=admin_unit_id)
     response = utils.get_ok(url)
 
     data = get_create_data()
@@ -285,15 +242,12 @@ def test_event_suggestion_create_for_admin_unit_allday(
 
 
 def test_event_suggestion_create_for_admin_unit_startAfterEnd(
-    client, app, seeder, utils, mocker
+    client, app, seeder: Seeder, utils: UtilActions, mocker
 ):
     user_id = seeder.create_user()
-    seeder.create_admin_unit(user_id, "Meine Crew")
-    au_short_name = "meinecrew"
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 
-    url = utils.get_url(
-        "event_suggestion_create_for_admin_unit", au_short_name=au_short_name
-    )
+    url = utils.get_url("event_suggestion_create_for_admin_unit", id=admin_unit_id)
     response = utils.get_ok(url)
 
     data = get_create_data()
@@ -314,12 +268,9 @@ def test_event_suggestion_create_for_admin_unit_emptyFreeText(
     client, app, seeder, utils, mocker
 ):
     user_id = seeder.create_user()
-    seeder.create_admin_unit(user_id, "Meine Crew")
-    au_short_name = "meinecrew"
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 
-    url = utils.get_url(
-        "event_suggestion_create_for_admin_unit", au_short_name=au_short_name
-    )
+    url = utils.get_url("event_suggestion_create_for_admin_unit", id=admin_unit_id)
     response = utils.get_ok(url)
 
     data = get_create_data()
@@ -338,12 +289,9 @@ def test_event_suggestion_create_for_admin_unit_invalidEventPlaceId(
     client, app, seeder, utils, mocker
 ):
     user_id = seeder.create_user()
-    seeder.create_admin_unit(user_id, "Meine Crew")
-    au_short_name = "meinecrew"
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 
-    url = utils.get_url(
-        "event_suggestion_create_for_admin_unit", au_short_name=au_short_name
-    )
+    url = utils.get_url("event_suggestion_create_for_admin_unit", id=admin_unit_id)
     response = utils.get_ok(url)
 
     data = get_create_data()
@@ -359,11 +307,10 @@ def test_event_suggestion_create_for_admin_unit_invalidEventPlaceId(
 
 def test_event_suggestion_create_for_admin_unit_notEnabled(client, app, seeder, utils):
     user_id = seeder.create_user()
-    seeder.create_admin_unit(user_id, "Meine Crew", suggestions_enabled=False)
-    au_short_name = "meinecrew"
-
-    url = utils.get_url(
-        "event_suggestion_create_for_admin_unit", au_short_name=au_short_name
+    admin_unit_id = seeder.create_admin_unit(
+        user_id, "Meine Crew", suggestions_enabled=False
     )
+
+    url = utils.get_url("event_suggestion_create_for_admin_unit", id=admin_unit_id)
     response = utils.get(url)
     utils.assert_response_notFound(response)
