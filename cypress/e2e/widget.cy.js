@@ -2,7 +2,7 @@ describe("Widget", () => {
   it("event dates", () => {
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEvent(adminUnitId).then(function (eventId) {
-        cy.visit("/organization/" + adminUnitId + "/widget/eventdates");
+        cy.visit("/organizations/" + adminUnitId + "/widget/eventdates");
         cy.screenshotDatepicker("#date_from-user");
         cy.screenshot("eventdates");
 
@@ -34,7 +34,7 @@ describe("Widget", () => {
       () => {
         cy.createAdminUnit().then(function (adminUnitId) {
           // Start
-          cy.visit("/organization/" + adminUnitId + "/widget/event_suggestions/create");
+          cy.visit("/organizations/" + adminUnitId + "/widget/event_suggestions/create");
           cy.wait(1000); // Wait for jQuery to load
           cy.get(".wizard-next:visible").click();
 
