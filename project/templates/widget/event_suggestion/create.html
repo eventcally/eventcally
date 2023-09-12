@@ -25,7 +25,7 @@
 
     var req_data = form.serialize();
     $.ajax({
-            url: "{{ url_for('event_suggestion_create_for_admin_unit', au_short_name=admin_unit.short_name) }}?preview=true",
+            url: "{{ url_for('event_suggestion_create_for_admin_unit', id=admin_unit.id) }}?preview=true",
             type: "post",
             data: req_data,
             error: function(xhr, status, error) {

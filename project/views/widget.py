@@ -7,18 +7,13 @@ from sqlalchemy.sql import func
 from project import app, db
 from project.access import (
     admin_unit_suggestions_enabled_or_404,
-    can_read_event_or_401,
     get_admin_unit_members_with_permission,
 )
 from project.dateutils import get_next_full_hour
 from project.forms.event_date import FindEventDateWidgetForm
 from project.forms.event_suggestion import CreateEventSuggestionForm
-from project.jsonld import get_sd_for_event_date
 from project.models import AdminUnit, EventOrganizer, EventReviewStatus, EventSuggestion
-from project.services.event import (
-    get_event_date_with_details_or_404,
-    get_event_dates_query,
-)
+from project.services.event import get_event_dates_query
 from project.services.event_suggestion import insert_event_suggestion
 from project.services.place import get_event_places
 from project.services.search_params import EventSearchParams
@@ -26,19 +21,15 @@ from project.views.event import get_event_category_choices
 from project.views.utils import (
     flash_errors,
     flash_message,
-    get_calendar_links_for_event_date,
     get_pagination_urls,
-    get_share_links,
     handleSqlError,
     send_mails_async,
 )
 
 
-@app.route("/<string:au_short_name>/widget/eventdates")
-def widget_event_dates(au_short_name):
-    admin_unit = AdminUnit.query.filter(
-        AdminUnit.short_name == au_short_name
-    ).first_or_404()
+@app.route("/organizations/<int:id>/widget/eventdates")
+def widget_event_dates(id):
+    admin_unit = AdminUnit.query.get_or_404(id)
 
     params = EventSearchParams()
     params.set_default_date_range()
@@ -63,41 +54,15 @@ def widget_event_dates(au_short_name):
         admin_unit=admin_unit,
         params=params,
         dates=dates.items,
-        pagination=get_pagination_urls(dates, au_short_name=au_short_name),
-    )
-
-
-@app.route("/<string:au_short_name>/widget/eventdate/<int:id>")
-def widget_event_date(au_short_name, id):
-    admin_unit = AdminUnit.query.filter(
-        AdminUnit.short_name == au_short_name
-    ).first_or_404()
-
-    event_date = get_event_date_with_details_or_404(id)
-    can_read_event_or_401(event_date.event)
-    structured_data = app.json.dumps(get_sd_for_event_date(event_date), indent=2)
-
-    url = url_for("event_date", id=id, _external=True)
-    share_links = get_share_links(url, event_date.event.name)
-    calendar_links = get_calendar_links_for_event_date(event_date)
-
-    return render_template(
-        "widget/event_date/read.html",
-        event_date=event_date,
-        styles=get_styles(admin_unit),
-        structured_data=structured_data,
-        share_links=share_links,
-        calendar_links=calendar_links,
+        pagination=get_pagination_urls(dates, id=id),
     )
 
 
 @app.route(
-    "/<string:au_short_name>/widget/event_suggestions/create", methods=("GET", "POST")
+    "/organizations/<int:id>/widget/event_suggestions/create", methods=("GET", "POST")
 )
-def event_suggestion_create_for_admin_unit(au_short_name):
-    admin_unit = AdminUnit.query.filter(
-        AdminUnit.short_name == au_short_name
-    ).first_or_404()
+def event_suggestion_create_for_admin_unit(id):
+    admin_unit = AdminUnit.query.get_or_404(id)
     admin_unit_suggestions_enabled_or_404(admin_unit)
 
     form = CreateEventSuggestionForm()
