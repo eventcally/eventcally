@@ -70,8 +70,16 @@
         resize = getWidgetBoolData(element, 'resize', false);
         googleTagManager = getWidgetBoolData(element, 'google-tag-manager', false);
 
-        var shortName = getWidgetData(element, 'short-name');
-        var src = baseUrl + "/" + shortName + "/widget/eventdates?";
+        var shortName = getWidgetData(element, 'short-name'); // Legacy
+        var organizationId = getWidgetData(element, 'organization-id');
+        var src = baseUrl;
+
+        if (shortName != null) {
+          src += "/" + shortName + "/widget/eventdates?";
+        } else {
+          src += "/organizations/" + organizationId + "/widget/eventdates?";
+        }
+
         src = addParamToQuery(element, src, 'event-list', 'event_list_id');
         src = addParamToQuery(element, src, 'font', 's_ft');
         src = addParamToQuery(element, src, 'background', 's_bg');
