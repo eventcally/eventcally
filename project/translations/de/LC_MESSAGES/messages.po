@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-09-07 22:40+0200\n"
+"POT-Creation-Date: 2023-09-30 11:43+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -207,24 +207,24 @@ msgstr "message"
 msgid "You have received an invitation"
 msgstr "Du hast eine Einladung erhalten"
 
-#: project/forms/admin.py:11 project/templates/layout.html:342
+#: project/forms/admin.py:11 project/templates/layout.html:344
 #: project/views/root.py:55
 msgid "Terms of service"
 msgstr "Nutzungsbedingungen"
 
-#: project/forms/admin.py:12 project/templates/layout.html:347
+#: project/forms/admin.py:12 project/templates/layout.html:349
 #: project/views/root.py:67
 msgid "Legal notice"
 msgstr "Impressum"
 
 #: project/forms/admin.py:13 project/templates/_macros.html:1490
-#: project/templates/layout.html:351
+#: project/templates/layout.html:353
 #: project/templates/widget/event_suggestion/create.html:204
 #: project/views/admin_unit.py:84 project/views/root.py:75
 msgid "Contact"
 msgstr "Kontakt"
 
-#: project/forms/admin.py:14 project/templates/layout.html:355
+#: project/forms/admin.py:14 project/templates/layout.html:357
 #: project/views/root.py:83
 msgid "Privacy"
 msgstr "Datenschutz"
@@ -264,7 +264,7 @@ msgstr "Nutzer aktualisieren"
 msgid "Delete user"
 msgstr "Nutzer löschen"
 
-#: project/forms/admin.py:35 project/forms/admin_unit.py:58
+#: project/forms/admin.py:35 project/forms/admin_unit.py:67
 #: project/forms/admin_unit_member.py:12 project/forms/admin_unit_member.py:25
 #: project/forms/admin_unit_member.py:30 project/forms/event.py:112
 #: project/forms/event_suggestion.py:38 project/forms/organizer.py:33
@@ -333,12 +333,12 @@ msgstr "Organisation aktualisieren"
 
 #: project/forms/admin.py:76 project/templates/admin/delete_admin_unit.html:6
 #: project/templates/admin_unit/request_deletion.html:6
-#: project/templates/admin_unit/update.html:94
+#: project/templates/admin_unit/update.html:113
 msgid "Delete organization"
 msgstr "Organisation löschen"
 
-#: project/forms/admin.py:77 project/forms/admin_unit.py:147
-#: project/forms/admin_unit.py:152 project/forms/admin_unit.py:157
+#: project/forms/admin.py:77 project/forms/admin_unit.py:166
+#: project/forms/admin_unit.py:171 project/forms/admin_unit.py:176
 #: project/forms/event.py:90 project/forms/event.py:119
 #: project/forms/event_place.py:30 project/forms/event_place.py:56
 #: project/forms/event_suggestion.py:26 project/forms/oauth2_client.py:66
@@ -377,108 +377,108 @@ msgstr "Nachricht"
 msgid "Send newsletter"
 msgstr "Newsletter senden"
 
-#: project/forms/admin_unit.py:15 project/forms/event_place.py:13
+#: project/forms/admin_unit.py:22 project/forms/event_place.py:13
 #: project/forms/organizer.py:13
 msgid "Street"
 msgstr "Straße"
 
-#: project/forms/admin_unit.py:18 project/forms/event.py:470
+#: project/forms/admin_unit.py:25 project/forms/event.py:470
 #: project/forms/event_date.py:52 project/forms/event_place.py:16
 #: project/forms/organizer.py:16 project/forms/planning.py:44
 msgid "Postal code"
 msgstr "Postleitzahl"
 
-#: project/forms/admin_unit.py:20 project/forms/event_place.py:18
+#: project/forms/admin_unit.py:28 project/forms/event_place.py:18
 #: project/forms/organizer.py:18
 msgid "City"
 msgstr "Stadt/Ort"
 
-#: project/forms/admin_unit.py:21 project/forms/event_place.py:19
+#: project/forms/admin_unit.py:30 project/forms/event_place.py:19
 #: project/forms/organizer.py:19
 msgid "State"
 msgstr "Bundesland"
 
-#: project/forms/admin_unit.py:23 project/forms/event_place.py:21
+#: project/forms/admin_unit.py:32 project/forms/event_place.py:21
 #: project/forms/organizer.py:21
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: project/forms/admin_unit.py:26 project/forms/event_place.py:24
+#: project/forms/admin_unit.py:35 project/forms/event_place.py:24
 #: project/forms/organizer.py:24
 msgid "Longitude"
 msgstr "Längengrad"
 
-#: project/forms/admin_unit.py:32
+#: project/forms/admin_unit.py:41
 msgid "Name of organization"
 msgstr "Name der Organisation"
 
-#: project/forms/admin_unit.py:33
+#: project/forms/admin_unit.py:42
 msgid "The full name of the organization"
 msgstr "Vollständiger Name der Organisation"
 
-#: project/forms/admin_unit.py:37
+#: project/forms/admin_unit.py:46
 msgid "Short name for organization"
 msgstr "Kurzname für die Organisation"
 
-#: project/forms/admin_unit.py:38
+#: project/forms/admin_unit.py:47
 msgid "The short name is used to create a unique identifier for your events"
 msgstr ""
 "Der Kurzname wird verwendet, um die Veranstaltungen der Organisation "
 "eindeutig zu identifizieren. Der Kurzname darf nur Buchstaben, Nummern "
 "und Unterstriche enthalten."
 
-#: project/forms/admin_unit.py:46 project/templates/_macros.html:1692
+#: project/forms/admin_unit.py:55 project/templates/_macros.html:1692
 msgid "Short name must contain only letters numbers or underscore"
 msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
 
-#: project/forms/admin_unit.py:53 project/forms/event.py:124
+#: project/forms/admin_unit.py:62 project/forms/event.py:124
 #: project/forms/event_place.py:34
 msgid "Description"
 msgstr "Beschreibung"
 
-#: project/forms/admin_unit.py:54
+#: project/forms/admin_unit.py:63
 msgid "Describe the organization in a few words"
 msgstr "Beschreibe die Organisation in wenigen Worten"
 
-#: project/forms/admin_unit.py:57 project/forms/event.py:111
+#: project/forms/admin_unit.py:66 project/forms/event.py:111
 #: project/forms/event.py:129 project/forms/event_place.py:32
 #: project/forms/organizer.py:32 project/templates/manage/organizers.html:21
 msgid "Link URL"
 msgstr "Link URL"
 
-#: project/forms/admin_unit.py:59 project/forms/event.py:113
+#: project/forms/admin_unit.py:68 project/forms/event.py:113
 #: project/forms/event_suggestion.py:31 project/forms/organizer.py:34
 #: project/templates/_macros.html:309
 #: project/templates/manage/organizers.html:20
 msgid "Phone"
 msgstr "Telefon"
 
-#: project/forms/admin_unit.py:60 project/forms/event.py:114
+#: project/forms/admin_unit.py:69 project/forms/event.py:114
 #: project/forms/organizer.py:35 project/templates/_macros.html:317
 msgid "Fax"
 msgstr "Fax"
 
-#: project/forms/admin_unit.py:61 project/forms/organizer.py:36
+#: project/forms/admin_unit.py:70 project/forms/organizer.py:36
 #: project/templates/manage/organizers.html:22
 #: project/templates/manage/organizers.html:47
 msgid "Logo"
 msgstr "Logo"
 
-#: project/forms/admin_unit.py:65
+#: project/forms/admin_unit.py:74
 msgid "Allow verification requests"
 msgstr "Verifizierungsanfragen erlauben"
 
-#: project/forms/admin_unit.py:66
+#: project/forms/admin_unit.py:75
 msgid "If set, unverified organizations may ask you for verification."
 msgstr ""
 "Wenn gesetzt, können nicht verifizierte Organisationen um eine "
 "Verifizierung bitten."
 
-#: project/forms/admin_unit.py:72
+#: project/forms/admin_unit.py:81
 msgid "Verification requests information"
 msgstr "Text für Verifizierungsanfragen"
 
-#: project/forms/admin_unit.py:74
+#: project/forms/admin_unit.py:84
 msgid ""
 "This text is shown to unverified organizations to help them decide "
 "whether they ask you for verification."
@@ -486,22 +486,30 @@ msgstr ""
 "Dieser Text wird nicht verifizierten Organisationen angezeigt, um ihnen "
 "bei der Entscheidung zu helfen, ob sie um eine Verifizierung bitten."
 
-#: project/forms/admin_unit.py:90
+#: project/forms/admin_unit.py:89
+msgid "Verification requests postal codes"
+msgstr "Postleitzahlen für Verifizierungsanfragen"
+
+#: project/forms/admin_unit.py:93
+msgid "Limit verification requests to organizations with these postal codes."
+msgstr "Limitiere Verifizierungsanfragen auf Oranisationen mit diesen Postleitzahlen"
+
+#: project/forms/admin_unit.py:109
 msgid "Verify new organization"
 msgstr "Neue Organisation verifizieren"
 
-#: project/forms/admin_unit.py:91
+#: project/forms/admin_unit.py:110
 msgid "If set, events of the new organization are publicly visible."
 msgstr ""
 "Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich "
 "sichtbar."
 
-#: project/forms/admin_unit.py:97 project/forms/reference_request.py:86
+#: project/forms/admin_unit.py:116 project/forms/reference_request.py:86
 #: project/forms/verification_request.py:86
 msgid "Verify reference requests automatically"
 msgstr "Empfehlungsanfragen automatisch verifizieren"
 
-#: project/forms/admin_unit.py:98
+#: project/forms/admin_unit.py:117
 msgid ""
 "If set, all upcoming reference requests of the new organization are "
 "verified automatically."
@@ -509,45 +517,45 @@ msgstr ""
 "Wenn gesetzt, werden alle zukünftigen Empfehlungsanfragen der neuen "
 "Organisation automatisch verifiziert."
 
-#: project/forms/admin_unit.py:109 project/templates/admin_unit/create.html:5
+#: project/forms/admin_unit.py:128 project/templates/admin_unit/create.html:5
 #: project/templates/admin_unit/create.html:21
 #: project/templates/manage/admin_units.html:32
 msgid "Create organization"
 msgstr "Organisation erstellen"
 
-#: project/forms/admin_unit.py:117 project/forms/admin_unit.py:142
+#: project/forms/admin_unit.py:136 project/forms/admin_unit.py:161
 msgid "Update settings"
 msgstr "Einstellungen speichern"
 
-#: project/forms/admin_unit.py:122
+#: project/forms/admin_unit.py:141
 msgid "Font"
 msgstr "Schriftart"
 
-#: project/forms/admin_unit.py:125
+#: project/forms/admin_unit.py:144
 msgid "Background Color"
 msgstr "Hintergrundfarbe"
 
-#: project/forms/admin_unit.py:131
+#: project/forms/admin_unit.py:150
 msgid "Primary Color"
 msgstr "Hauptfarbe"
 
-#: project/forms/admin_unit.py:137
+#: project/forms/admin_unit.py:156
 msgid "Link Color"
 msgstr "Linkfarbe"
 
-#: project/forms/admin_unit.py:146 project/forms/user.py:17
+#: project/forms/admin_unit.py:165 project/forms/user.py:17
 msgid "Request deletion"
 msgstr "Löschung beantragen"
 
-#: project/forms/admin_unit.py:151 project/forms/user.py:22
+#: project/forms/admin_unit.py:170 project/forms/user.py:22
 #: project/templates/admin_unit/cancel_deletion.html:6
-#: project/templates/admin_unit/update.html:26
+#: project/templates/admin_unit/update.html:44
 #: project/templates/manage/events.html:49 project/templates/profile.html:13
 #: project/templates/user/cancel_deletion.html:6
 msgid "Cancel deletion"
 msgstr "Löschen abbrechen"
 
-#: project/forms/admin_unit.py:156 project/templates/layout.html:313
+#: project/forms/admin_unit.py:175 project/templates/layout.html:313
 #: project/templates/manage/delete_membership.html:6
 msgid "Leave organization"
 msgstr "Organisation verlassen"
@@ -1100,7 +1108,7 @@ msgstr "Kategorie"
 #: project/forms/event.py:463 project/forms/event_date.py:26
 #: project/forms/planning.py:27 project/templates/_macros.html:324
 #: project/templates/admin_unit/create.html:38
-#: project/templates/admin_unit/update.html:47
+#: project/templates/admin_unit/update.html:65
 #: project/templates/event_place/create.html:41
 #: project/templates/event_place/update.html:41
 #: project/templates/manage/organizers.html:19
@@ -1147,7 +1155,7 @@ msgstr "Veranstaltungen finden"
 #: project/templates/admin_unit/cancel_deletion.html:13
 #: project/templates/admin_unit/create.html:27
 #: project/templates/admin_unit/request_deletion.html:15
-#: project/templates/admin_unit/update.html:36
+#: project/templates/admin_unit/update.html:54
 #: project/templates/layout.html:265
 #: project/templates/manage/delete_membership.html:13
 #: project/templates/verification_request/delete.html:13
@@ -1719,11 +1727,11 @@ msgstr "Veranstalter eingeben"
 msgid "Enter list name"
 msgstr "Listenname eingeben"
 
-#: project/templates/admin/admin_units.html:34 project/templates/home.html:25
+#: project/templates/admin/admin_units.html:34 project/templates/home.html:26
 msgid "Manage"
 msgstr "Verwaltung"
 
-#: project/templates/home.html:37 project/templates/layout.html:181
+#: project/templates/home.html:38 project/templates/layout.html:181
 #: project/templates/manage/admin_units.html:28
 #: project/templates/manage/verification_requests_outgoing.html:13
 #: project/templates/manage/verification_requests_outgoing_create_select.html:13
@@ -1733,7 +1741,7 @@ msgstr "Verwaltung"
 msgid "Docs"
 msgstr "Doku"
 
-#: project/templates/home.html:40
+#: project/templates/home.html:41
 msgid "Features"
 msgstr "Features"
 
@@ -1875,7 +1883,7 @@ msgstr "Organisationseinladungen"
 #: project/templates/admin/settings.html:4
 #: project/templates/admin/settings.html:11
 #: project/templates/admin_unit/update.html:6
-#: project/templates/admin_unit/update.html:30
+#: project/templates/admin_unit/update.html:48
 #: project/templates/layout.html:296 project/templates/manage/widgets.html:11
 #: project/templates/manage/widgets.html:15 project/templates/profile.html:32
 msgid "Settings"
@@ -1902,7 +1910,7 @@ msgid "Switch organization"
 msgstr "Organisation wechseln"
 
 #: project/templates/developer/read.html:4
-#: project/templates/developer/read.html:8 project/templates/layout.html:359
+#: project/templates/developer/read.html:8 project/templates/layout.html:361
 #: project/templates/profile.html:45
 msgid "Developer"
 msgstr "Entwickler"
@@ -1989,7 +1997,7 @@ msgid "Reset acceptance of terms of service and privacy"
 msgstr "Akzeptanz der Nutzungsbedingungen und des Datenschutzes zurücksetzen"
 
 #: project/templates/admin_unit/create.html:51
-#: project/templates/admin_unit/update.html:67
+#: project/templates/admin_unit/update.html:85
 #: project/templates/event/create.html:359
 #: project/templates/event/update.html:216
 #: project/templates/event_place/create.html:58
@@ -2017,12 +2025,12 @@ msgstr ""
 "Die Organisation wird nicht sofort gelöscht. Nach einer Frist wird die "
 "Organisation gelöscht. Bis dahin kann die Löschung abgebrochen werden."
 
-#: project/templates/admin_unit/update.html:25
+#: project/templates/admin_unit/update.html:43
 #: project/templates/manage/events.html:48
 msgid "The organization is scheduled for deletion."
 msgstr "Die Organisation ist zur Löschung vorgesehen."
 
-#: project/templates/admin_unit/update.html:80
+#: project/templates/admin_unit/update.html:98
 #: project/templates/manage/verification_requests_outgoing_create_select.html:6
 #: project/templates/manage/verification_requests_outgoing_create_select.html:11
 msgid "Verification requests"
@@ -2495,6 +2503,13 @@ msgstr ""
 "Hier findest du Organisationen, die deine Organisationen verifizieren "
 "können."
 
+#: project/templates/manage/verification_requests_outgoing_create_select.html:44
+#, python-format
+msgid ""
+"No organizations were found that can verify your organization with postal"
+" code %(postal_code)s."
+msgstr "Es wurden keine Organisationen gefunden, die deine Organisation mit der Postleitzahl %(postal_code)s verifizieren können."
+
 #: project/templates/manage/widgets.html:87
 msgid "Link, um Veranstaltungen vorzuschlagen"
 msgstr "Link, um Veranstaltungen vorzuschlagen"
@@ -2598,7 +2613,7 @@ msgstr "Angemeldet bleiben"
 msgid "You do not have an account yet? Not a problem!"
 msgstr "Du hast noch keinen Account? Kein Problem!"
 
-#: project/templates/security/login_user.html:44 project/views/widget.py:157
+#: project/templates/security/login_user.html:44 project/views/widget.py:122
 msgid "Register for free"
 msgstr "Kostenlos registrieren"
 
@@ -2666,9 +2681,9 @@ msgstr "Vorschau"
 msgid "Organization successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin.py:85 project/views/admin_unit.py:202
-#: project/views/admin_unit.py:235 project/views/manage.py:315
-#: project/views/verification_request.py:168
+#: project/views/admin.py:85 project/views/admin_unit.py:208
+#: project/views/admin_unit.py:241 project/views/manage.py:315
+#: project/views/verification_request.py:169
 msgid "Entered name does not match organization name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Organisation"
 
@@ -2716,15 +2731,15 @@ msgstr ""
 msgid "Organization successfully created"
 msgstr "Organisation erfolgreich erstellt"
 
-#: project/views/admin_unit.py:178
+#: project/views/admin_unit.py:184
 msgid "AdminUnit successfully updated"
 msgstr "Organisation erfolgreich aktualisiert"
 
-#: project/views/admin_unit.py:265
+#: project/views/admin_unit.py:271
 msgid "Organization invitation accepted"
 msgstr "Organisationseinladung akzeptiert"
 
-#: project/views/admin_unit.py:279
+#: project/views/admin_unit.py:285
 msgid "Organization deletion requested"
 msgstr "Löschung der Organisation beantragt"
 
@@ -2993,7 +3008,7 @@ msgstr ""
 "Die Einladung wurde für einen anderen Nutzer ausgestellt. Melde dich mit "
 "der Email-Adresse an, an die die Einladung geschickt wurde."
 
-#: project/views/verification_request.py:132
+#: project/views/verification_request.py:133
 msgid ""
 "Request successfully created. You will be notified after the other "
 "organization reviewed the request."
@@ -3001,11 +3016,11 @@ msgstr ""
 "Verifizierungsanfrage erfolgreich erstellt. Du wirst benachrichtigt, "
 "nachdem die andere Organisation die Anfrage geprüft hat."
 
-#: project/views/verification_request.py:173
+#: project/views/verification_request.py:174
 msgid "Verification request successfully deleted"
 msgstr "Verifizierungsanfrage erfolgreich gelöscht"
 
-#: project/views/verification_request.py:206
+#: project/views/verification_request.py:207
 msgid "New verification request"
 msgstr "Neue Verifizierungsanfrage"
 
@@ -3025,11 +3040,11 @@ msgstr "Verifizierungsanfrage erfolgreich aktualisiert"
 msgid "Verification request review status updated"
 msgstr "Prüfungsstatus der Verifizierungsanfrage aktualisiert"
 
-#: project/views/widget.py:149
+#: project/views/widget.py:114
 msgid "Thank you so much! The event is being verified."
 msgstr "Vielen Dank! Die Veranstaltung wird geprüft."
 
-#: project/views/widget.py:153
+#: project/views/widget.py:118
 msgid ""
 "For more options and your own calendar of events, you can register for "
 "free."
@@ -3037,7 +3052,7 @@ msgstr ""
 "Für mehr Optionen und einen eigenen Veranstaltungskalender, kannst du "
 "dich kostenlos registrieren."
 
-#: project/views/widget.py:219
+#: project/views/widget.py:184
 msgid "New event review"
 msgstr "Neue Veranstaltung zu prüfen"
 

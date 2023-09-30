@@ -10,6 +10,24 @@
 {{ render_manage_form_styles() }}
 {% endblock %}
 
+{% block header_before_site_js %}
+<script>
+$( function() {
+  $('#incoming_verification_requests_postal_codes').select2({
+    width: '100%',
+    theme: 'bootstrap4',
+    tags: true,
+    tokenSeparators: [',', ' '],
+    language: {
+        noResults: function () {
+              return "";
+        }
+    }
+  });
+});
+</script>
+{% endblock %}
+
 {% block header %}
 {{ render_manage_form_scripts() }}
 {{ render_jquery_steps_header() }}
@@ -82,6 +100,7 @@
     <div class="card-body">
     {{ render_field_with_errors(form.incoming_verification_requests_allowed, ri="checkbox") }}
     {{ render_field_with_errors(form.incoming_verification_requests_text) }}
+    {{ render_field_with_errors(form.incoming_verification_requests_postal_codes, class="w-100") }}
     </div>
   </div>
   {% endif %}

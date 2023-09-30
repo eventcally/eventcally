@@ -169,6 +169,12 @@ def admin_unit_update(id):
         return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))
 
     form = UpdateAdminUnitForm(obj=admin_unit)
+    form.incoming_verification_requests_postal_codes.data = sorted(
+        form.incoming_verification_requests_postal_codes.data
+    )
+    form.incoming_verification_requests_postal_codes.choices = (
+        form.incoming_verification_requests_postal_codes.data
+    )
 
     if form.validate_on_submit():
         update_admin_unit_with_form(admin_unit, form)

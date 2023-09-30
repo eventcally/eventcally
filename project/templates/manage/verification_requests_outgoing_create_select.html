@@ -39,6 +39,10 @@ render_link_prop, render_admin_unit_badges, render_pagination %}
             </div>
         </div>
     </div>
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            {{ _('No organizations were found that can verify your organization with postal code %(postal_code)s.', postal_code=admin_unit.location.postalCode) }}
+        </div>
     {% endfor %}
 
     <div class="my-4">{{ render_pagination(pagination) }}</div>

@@ -199,6 +199,15 @@ def get_admin_unit_query(params: AdminUnitSearchParams):
         )
         query = query.filter(request_filter)
 
+    if params.incoming_verification_requests_postal_code:
+        request_filter = or_(
+            AdminUnit.incoming_verification_requests_postal_codes.contains(
+                [params.incoming_verification_requests_postal_code]
+            ),
+            AdminUnit.incoming_verification_requests_postal_codes == "{}",
+        )
+        query = query.filter(request_filter)
+
     query = params.get_trackable_query(query, AdminUnit)
 
     if params.keyword:
