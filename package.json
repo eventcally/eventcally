@@ -23,7 +23,7 @@
   "homepage": "https://github.com/eventcally/eventcally#readme",
   "devDependencies": {
     "cd": "^0.3.3",
-    "cypress": "^12.8.1",
+    "cypress": "^13.3.0",
     "cypress-fail-on-console-error": "^4.0.2"
   }
 }
