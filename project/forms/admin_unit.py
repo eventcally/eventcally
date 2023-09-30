@@ -1,6 +1,13 @@
 from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaField
+from wtforms import (
+    DecimalField,
+    FormField,
+    SelectMultipleField,
+    StringField,
+    SubmitField,
+    TextAreaField,
+)
 from wtforms.fields import BooleanField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp
 from wtforms.widgets import ColorInput
@@ -15,9 +22,11 @@ class AdminUnitLocationForm(FlaskForm):
         lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
     )
     postalCode = StringField(
-        lazy_gettext("Postal code"), validators=[Optional(), Length(max=255)]
+        lazy_gettext("Postal code"), validators=[DataRequired(), Length(max=10)]
     )
-    city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
+    city = StringField(
+        lazy_gettext("City"), validators=[DataRequired(), Length(max=255)]
+    )
     state = StringField(lazy_gettext("State"), validators=[Optional(), Length(max=255)])
     latitude = DecimalField(
         lazy_gettext("Latitude"), places=16, validators=[Optional()]
@@ -71,8 +80,18 @@ class BaseAdminUnitForm(FlaskForm):
     incoming_verification_requests_text = TextAreaField(
         lazy_gettext("Verification requests information"),
         validators=[Optional()],
+        default=[],
         description=lazy_gettext(
             "This text is shown to unverified organizations to help them decide whether they ask you for verification."
+        ),
+    )
+    incoming_verification_requests_postal_codes = SelectMultipleField(
+        lazy_gettext("Verification requests postal codes"),
+        validators=[Optional()],
+        validate_choice=False,
+        choices=[],
+        description=lazy_gettext(
+            "Limit verification requests to organizations with these postal codes."
         ),
     )
 

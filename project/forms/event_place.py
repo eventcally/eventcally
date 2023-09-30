@@ -13,7 +13,7 @@ class EventPlaceLocationForm(FlaskForm):
         lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
     )
     postalCode = StringField(
-        lazy_gettext("Postal code"), validators=[Optional(), Length(max=255)]
+        lazy_gettext("Postal code"), validators=[Optional(), Length(max=10)]
     )
     city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
     state = StringField(lazy_gettext("State"), validators=[Optional(), Length(max=255)])

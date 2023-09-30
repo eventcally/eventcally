@@ -85,6 +85,7 @@ class AdminUnitSearchParams(TrackableSearchParams):
         self.include_unverified = False
         self.only_verifier = False
         self.reference_request_for_admin_unit_id = None
+        self.incoming_verification_requests_postal_code = None
 
     def load_from_request(self, **kwargs):
         super().load_from_request(**kwargs)

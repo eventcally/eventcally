@@ -16,6 +16,11 @@ def admin_unit_can_verify_admin_unit(
         target_admin_unit.id != source_admin_unit.id
         and target_admin_unit.can_verify_other
         and target_admin_unit.incoming_verification_requests_allowed
+        and (
+            len(target_admin_unit.incoming_verification_requests_postal_codes) == 0
+            or source_admin_unit.location.postalCode
+            in target_admin_unit.incoming_verification_requests_postal_codes
+        )
     )
 
 

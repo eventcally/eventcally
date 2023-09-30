@@ -10,9 +10,11 @@ from sqlalchemy import (
     UnicodeText,
     UniqueConstraint,
     and_,
+    cast,
     func,
     select,
 )
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.mutable import MutableList
@@ -155,6 +157,14 @@ def before_saving_admin_unit_relation(mapper, connect, self):
 
 class AdminUnit(db.Model, TrackableMixin):
     __tablename__ = "adminunit"
+    __table_args__ = (
+        db.Index(
+            "idx_adminunit_incoming_verification_requests_postal_codes",
+            "incoming_verification_requests_postal_codes",
+            postgresql_using="gin",
+        ),
+    )
+
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), unique=True)
     short_name = Column(Unicode(100), unique=True)
@@ -279,6 +289,16 @@ class AdminUnit(db.Model, TrackableMixin):
         )
     )
     incoming_verification_requests_text = deferred(Column(UnicodeText()))
+    incoming_verification_requests_postal_codes = deferred(
+        Column(
+            postgresql.ARRAY(Unicode(255)),
+            nullable=False,
+            default=cast(
+                postgresql.array([], type_=Unicode(255)), postgresql.ARRAY(Unicode(255))
+            ),
+            server_default="{}",
+        )
+    )
     can_invite_other = deferred(
         Column(
             Boolean(),

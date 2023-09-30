@@ -86,6 +86,7 @@ def manage_admin_unit_verification_requests_outgoing_create_select(id):
 
     params = AdminUnitSearchParams()
     params.only_verifier = True
+    params.incoming_verification_requests_postal_code = admin_unit.location.postalCode
     admin_units = get_admin_unit_query(params).paginate()
 
     return render_template(
