@@ -181,7 +181,7 @@ def get_admin_unit_member(id):
 
 
 def get_admin_unit_query(params: AdminUnitSearchParams):
-    query = AdminUnit.query
+    query = AdminUnit.query.join(AdminUnit.location, isouter=True)
 
     if not params.include_unverified:
         query = query.filter(AdminUnit.is_verified)
@@ -209,6 +209,23 @@ def get_admin_unit_query(params: AdminUnitSearchParams):
         query = query.filter(request_filter)
 
     query = params.get_trackable_query(query, AdminUnit)
+
+    if params.postal_code:
+        if type(params.postal_code) is list:
+            postalCodes = params.postal_code
+        else:  # pragma: no cover
+            postalCodes = [params.postal_code]
+
+        postalCodeFilters = None
+        for postalCode in postalCodes:
+            postalCodeFilter = Location.postalCode.ilike(postalCode + "%")
+            if postalCodeFilters is not None:
+                postalCodeFilters = or_(postalCodeFilters, postalCodeFilter)
+            else:
+                postalCodeFilters = postalCodeFilter
+
+        if postalCodeFilters is not None:
+            query = query.filter(postalCodeFilters)
 
     if params.keyword:
         like_keyword = "%" + params.keyword + "%"
