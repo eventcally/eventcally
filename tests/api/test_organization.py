@@ -23,6 +23,12 @@ def test_list(client, seeder: Seeder, utils: UtilActions):
     utils.get_json_ok(url)
 
 
+def test_list_postal_code(client, seeder: Seeder, utils: UtilActions):
+    seeder.setup_api_access(user_access=False)
+    url = utils.get_url("api_v1_organization_list", postal_code="38640,38690")
+    utils.get_json_ok(url)
+
+
 def test_list_for_reference_request(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access()
     other_user_id = seeder.create_user("other@test.de")

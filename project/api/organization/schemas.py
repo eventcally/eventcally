@@ -79,6 +79,10 @@ class OrganizationListRequestSchema(
     keyword = fields.Str(
         metadata={"description": "Looks for keyword in name and short name."},
     )
+    postal_code = fields.List(
+        fields.Str(),
+        metadata={"description": "Looks for organizations with this postal code."},
+    )
     sort = fields.Str(
         metadata={"description": "Sort result items."},
         validate=validate.OneOf(

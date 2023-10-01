@@ -20,6 +20,23 @@ class BaseSearchParams(object):
     def load_from_request(self, **kwargs):
         self.sort = kwargs.get("sort", self.sort)
 
+    def load_list_param(self, param: str):
+        item_ids = request.args.getlist(param)
+
+        if len(item_ids) == 1 and "," in item_ids[0]:
+            item_ids = [i.strip() for i in item_ids[0].split(",")]
+
+        if "0" in item_ids:
+            item_ids.remove("0")
+
+        if len(item_ids) > 0:
+            return item_ids
+
+        return None
+
+    def load_bool_param(self, param: str):
+        return request.args[param].lower() in ("true", "t", "yes", "y", "on", "1")
+
 
 class TrackableSearchParams(BaseSearchParams):
     def __init__(self):
@@ -86,11 +103,15 @@ class AdminUnitSearchParams(TrackableSearchParams):
         self.only_verifier = False
         self.reference_request_for_admin_unit_id = None
         self.incoming_verification_requests_postal_code = None
+        self.postal_code = None
 
     def load_from_request(self, **kwargs):
         super().load_from_request(**kwargs)
 
         self.keyword = kwargs.get("keyword", self.keyword)
+
+        if "postal_code" in request.args:
+            self.postal_code = self.load_list_param("postal_code")
 
 
 class OrganizerSearchParams(TrackableSearchParams):
@@ -206,23 +227,6 @@ class EventSearchParams(TrackableSearchParams):
         today = get_today()
         self.date_from = today
         self.date_to = date_set_end_of_day(today + relativedelta(months=3))
-
-    def load_list_param(self, param: str):
-        item_ids = request.args.getlist(param)
-
-        if len(item_ids) == 1 and "," in item_ids[0]:
-            item_ids = [i.strip() for i in item_ids[0].split(",")]
-
-        if "0" in item_ids:
-            item_ids.remove("0")
-
-        if len(item_ids) > 0:
-            return item_ids
-
-        return None
-
-    def load_bool_param(self, param: str):
-        return request.args[param].lower() in ("true", "t", "yes", "y", "on", "1")
 
     def load_status_list_param(self):
         stati = self.load_list_param("status")
