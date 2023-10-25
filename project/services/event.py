@@ -102,6 +102,12 @@ def fill_event_filter(event_filter, params: EventSearchParams):
             public_stati = params.public_status
         else:  # pragma: no cover
             public_stati = [params.public_status]
+    elif params.can_read_private_events:
+        public_stati = [
+            PublicStatus.published,
+            PublicStatus.planned,
+            PublicStatus.draft,
+        ]
     else:
         public_stati = [
             PublicStatus.published,
