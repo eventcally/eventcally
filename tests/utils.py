@@ -5,6 +5,7 @@ from urllib.parse import parse_qs, urlsplit
 import googlemaps
 from bs4 import BeautifulSoup
 from flask import g, url_for
+from flask_login import login_url
 from sqlalchemy.exc import IntegrityError
 
 
@@ -312,12 +313,23 @@ class UtilActions(object):
         return self.get_ok(self.get_url(endpoint, **values))
 
     def assert_response_redirect(self, response, endpoint, **values):
-        assert response.status_code == 302
+        redirect_url = self.get_url(endpoint, **values)
+        self.assert_response_redirect_to_url(response, redirect_url)
+
+    def assert_response_redirect_to_url(self, response, redirect_url):
+        absolute_url = "http://localhost" + redirect_url
 
         response_location = response.headers["Location"]
-        redirect_url = self.get_url(endpoint, **values)
-        absolute_url = "http://localhost" + redirect_url
         assert response_location == redirect_url or response_location == absolute_url
+
+    def assert_response_redirect_to_login(self, response, next_url):
+        assert response.status_code == 302
+
+        with self._client:
+            with self._app.test_request_context():
+                redirect_url = login_url("security.login", next_url)
+
+        self.assert_response_redirect_to_url(response, redirect_url)
 
     def assert_response_contains_alert(self, response, category, message=None):
         assert response.status_code == 200

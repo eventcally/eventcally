@@ -224,7 +224,7 @@ def test_read_new_member_not_authenticated(client, app, utils, seeder):
 
     url = "/invitations/%d" % invitation_id
     response = client.get(url)
-    utils.assert_response_redirect(response, "security.login", next=url)
+    utils.assert_response_redirect_to_login(response, url)
 
 
 @pytest.mark.parametrize("user_exists", [True, False])
