@@ -27,8 +27,9 @@ def test_organization_invitation_not_authenticated(client, app, utils, seeder):
 
     seeder.create_user("invited@test.de")
     url = utils.get_url("user_organization_invitation", id=invitation_id)
+
     response = client.get(url)
-    utils.assert_response_redirect(response, "security.login", next=url)
+    utils.assert_response_redirect_to_login(response, url)
 
 
 @pytest.mark.parametrize("user_exists", [True, False])

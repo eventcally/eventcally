@@ -19,7 +19,7 @@ blinker==1.4
 cached-property==1.5.2
 cachetools==5.3.0
 celery==5.2.7
-certifi==2022.12.7
+certifi==2023.7.22
 cffi==1.14.4
 cfgv==3.2.0
 chardet==3.0.4
@@ -30,7 +30,7 @@ click-repl==0.2.0
 colour==0.1.5
 coverage==5.5
 coveralls==3.3.1
-cryptography==41.0.3
+cryptography==41.0.4
 decorator==5.1.0
 distlib==0.3.6
 dnspython==2.0.0
@@ -47,7 +47,7 @@ Flask-Bootstrap==3.3.7.1
 Flask-Cors==3.0.10
 Flask-Dance==6.2.0
 Flask-gzip==0.2
-Flask-Login==0.6.2
+Flask-Login==0.6.3
 Flask-Mail==0.9.1
 flask-marshmallow==0.15.0
 Flask-Migrate==4.0.4
@@ -56,7 +56,7 @@ Flask-QRcode==3.1.0
 Flask-RESTful==0.3.9
 Flask-Security-Too==5.1.2
 Flask-SQLAlchemy==3.0.3
-Flask-WTF==1.1.1
+Flask-WTF==1.2.1
 GeoAlchemy2==0.13.1
 googlemaps==4.10.0
 greenlet==2.0.2
@@ -87,7 +87,7 @@ packaging==23.0
 passlib==1.7.4
 pathspec==0.11.0
 pilkit==2.0
-Pillow==9.5.0
+Pillow==10.0.1
 pipdeptree==2.7.0
 pkginfo==1.9.6
 platformdirs==3.1.0
@@ -133,7 +133,7 @@ toml==0.10.2
 tomli==2.0.1
 typed-ast==1.5.4
 typing_extensions==4.5.0
-urllib3==1.26.5
+urllib3==1.26.18
 URLObject==2.4.3
 validators==0.20.0
 vine==5.0.0
@@ -141,7 +141,7 @@ virtualenv==20.21.0
 visitor==0.1.3
 wcwidth==0.2.6
 webargs==7.0.1
-Werkzeug==2.2.3
+Werkzeug==3.0.1
 wimpy==0.6
 WTForms==3.0.1
 WTForms-SQLAlchemy==0.3

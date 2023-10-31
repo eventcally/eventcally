@@ -18,7 +18,7 @@ def test_index_withValidCookie(client, seeder, app, utils):
 
     with app.app_context():
         encoded = encode_cookie(str(admin_unit_id))
-        client.set_cookie("localhost", "manage_admin_unit_id", encoded)
+        client.set_cookie("manage_admin_unit_id", encoded)
 
     response = utils.get_endpoint("manage")
     utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
@@ -26,7 +26,7 @@ def test_index_withValidCookie(client, seeder, app, utils):
 
 def test_index_withInvalidCookie(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
-    client.set_cookie("localhost", "manage_admin_unit_id", "invalid")
+    client.set_cookie("manage_admin_unit_id", "invalid")
 
     response = utils.get_endpoint("manage")
     utils.assert_response_redirect(response, "manage_admin_units")
