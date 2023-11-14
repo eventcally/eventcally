@@ -86,7 +86,8 @@ def test_newsletter(app, utils, seeder):
     user_id, admin_unit_id = seeder.setup_base(True)
 
     for i in range(10):
-        seeder.create_user(f"test{i}@test.de")
+        locale = "de" if (i % 3) == 0 else "en" if (i % 3) == 1 else None
+        seeder.create_user(f"test{i}@test.de", locale=locale)
 
     url = utils.get_url("admin_newsletter")
     response = utils.get_ok(url)

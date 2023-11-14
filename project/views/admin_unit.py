@@ -9,7 +9,6 @@ from project import app, db
 from project.access import (
     can_create_admin_unit,
     get_admin_unit_for_manage_or_404,
-    get_admin_unit_members_with_permission,
     has_access,
 )
 from project.forms.admin_unit import (
@@ -32,7 +31,7 @@ from project.views.utils import (
     manage_required,
     non_match_for_deletion,
     permission_missing,
-    send_mails_async,
+    send_template_mails_to_admin_unit_members_async,
 )
 
 
@@ -261,14 +260,9 @@ def send_admin_unit_invitation_accepted_mails(
     invitation: AdminUnitInvitation, relation: AdminUnitRelation, admin_unit: AdminUnit
 ):
     # Benachrichtige alle Mitglieder der AdminUnit, die diese Einladung erstellt hatte
-    members = get_admin_unit_members_with_permission(
-        invitation.admin_unit_id, "admin_unit:update"
-    )
-    emails = list(map(lambda member: member.user.email, members))
-
-    send_mails_async(
-        emails,
-        gettext("Organization invitation accepted"),
+    send_template_mails_to_admin_unit_members_async(
+        invitation.admin_unit_id,
+        "admin_unit:update",
         "organization_invitation_accepted_notice",
         invitation=invitation,
         relation=relation,
@@ -277,12 +271,9 @@ def send_admin_unit_invitation_accepted_mails(
 
 
 def send_admin_unit_deletion_requested_mails(admin_unit: AdminUnit):
-    members = get_admin_unit_members_with_permission(admin_unit.id, "admin_unit:update")
-    emails = list(map(lambda member: member.user.email, members))
-
-    send_mails_async(
-        emails,
-        gettext("Organization deletion requested"),
+    send_template_mails_to_admin_unit_members_async(
+        admin_unit.id,
+        "admin_unit:update",
         "organization_deletion_requested_notice",
         admin_unit=admin_unit,
     )

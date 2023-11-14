@@ -4,11 +4,7 @@ from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
-from project.access import (
-    access_or_401,
-    get_admin_unit_members_with_permission,
-    has_access,
-)
+from project.access import access_or_401, has_access
 from project.forms.verification_request import VerificationRequestReviewForm
 from project.models import (
     AdminUnitVerificationRequest,
@@ -19,7 +15,7 @@ from project.views.utils import (
     flash_errors,
     flash_message,
     handleSqlError,
-    send_mails_async,
+    send_template_mails_to_admin_unit_members_async,
 )
 
 
@@ -109,14 +105,9 @@ def admin_unit_verification_request_review_status(id):
 
 def send_verification_request_review_status_mails(request):
     # Benachrichtige alle Mitglieder der AdminUnit, die diesen Request erstellt hatte
-    members = get_admin_unit_members_with_permission(
-        request.source_admin_unit_id, "verification_request:create"
-    )
-    emails = list(map(lambda member: member.user.email, members))
-
-    send_mails_async(
-        emails,
-        gettext("Verification request review status updated"),
+    send_template_mails_to_admin_unit_members_async(
+        request.source_admin_unit_id,
+        "verification_request:create",
         "verification_request_review_status_notice",
         request=request,
     )

@@ -1,7 +1,26 @@
 from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, EmailField, SubmitField
+from wtforms import BooleanField, EmailField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional
+
+
+class GeneralForm(FlaskForm):
+    locale = SelectField(
+        lazy_gettext("Language"),
+        choices=[
+            ("None", lazy_gettext("Default")),
+            ("de", "Deutsch"),
+            ("en", "English"),
+        ],
+        default="None",
+        validators=[Optional()],
+    )
+    submit = SubmitField(lazy_gettext("Save"))
+
+    def populate_obj(self, obj):
+        super().populate_obj(obj)
+        if obj.locale == "None":
+            obj.locale = None
 
 
 class NotificationForm(FlaskForm):

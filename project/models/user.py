@@ -65,6 +65,7 @@ class User(db.Model, UserMixin):
     )
     created_at = deferred(Column(DateTime, default=datetime.datetime.utcnow))
     deletion_requested_at = deferred(Column(DateTime, nullable=True))
+    locale = Column(String(255), nullable=True)
 
     @property
     def is_member_of_verified_admin_unit(self):

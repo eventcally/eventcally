@@ -1,6 +1,6 @@
-def test_send_mails(client, seeder, app, db, utils):
+def test_send_template_mails(client, seeder, app, db, utils):
     from project.models import AdminUnitMemberInvitation
-    from project.views.utils import send_mail
+    from project.views.utils import send_template_mail
 
     user_id, admin_unit_id = seeder.setup_base()
     email = "new@member.de"
@@ -12,9 +12,8 @@ def test_send_mails(client, seeder, app, db, utils):
 
             mail.default_sender = None
             invitation = db.session.get(AdminUnitMemberInvitation, invitation_id)
-            send_mail(
+            send_template_mail(
                 email,
-                "You have received an invitation",
                 "invitation_notice",
                 invitation=invitation,
             )

@@ -4,11 +4,7 @@ from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
-from project.access import (
-    can_request_event_reference,
-    get_admin_unit_for_manage_or_404,
-    get_admin_unit_members_with_permission,
-)
+from project.access import can_request_event_reference, get_admin_unit_for_manage_or_404
 from project.forms.reference_request import CreateEventReferenceRequestForm
 from project.models import (
     Event,
@@ -31,7 +27,7 @@ from project.views.utils import (
     flash_errors,
     get_pagination_urls,
     handleSqlError,
-    send_mails_async,
+    send_template_mails_to_admin_unit_members_async,
 )
 
 
@@ -169,7 +165,6 @@ def send_reference_request_mails(
 def _send_reference_request_inbox_mails(request):
     _send_member_reference_request_verify_mails(
         request.admin_unit_id,
-        gettext("New reference request"),
         "reference_request_notice",
         request=request,
     )
@@ -178,19 +173,13 @@ def _send_reference_request_inbox_mails(request):
 def _send_auto_reference_mails(reference):
     _send_member_reference_request_verify_mails(
         reference.admin_unit_id,
-        gettext("New reference automatically verified"),
         "reference_auto_verified_notice",
         reference=reference,
     )
 
 
-def _send_member_reference_request_verify_mails(
-    admin_unit_id, subject, template, **context
-):
+def _send_member_reference_request_verify_mails(admin_unit_id, template, **context):
     # Benachrichtige alle Mitglieder der AdminUnit, die Requests verifizieren können
-    members = get_admin_unit_members_with_permission(
-        admin_unit_id, "reference_request:verify"
+    send_template_mails_to_admin_unit_members_async(
+        admin_unit_id, "reference_request:verify", template, **context
     )
-    emails = list(map(lambda member: member.user.email, members))
-
-    send_mails_async(emails, subject, template, **context)

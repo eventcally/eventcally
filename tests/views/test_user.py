@@ -69,6 +69,35 @@ def test_user_favorite_events(client, seeder, utils):
     utils.get_ok(url)
 
 
+@pytest.mark.parametrize("locale", [None, "de"])
+def test_user_general(client, seeder, utils, app, db, locale):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("user_general")
+    response = utils.get_ok(url)
+
+    if locale is None:
+        values = dict()
+    else:
+        values = {
+            "locale": locale,
+        }
+
+    response = utils.post_form(
+        url,
+        response,
+        values,
+    )
+
+    utils.assert_response_redirect(response, "profile")
+
+    with app.app_context():
+        from project.models import User
+
+        user = db.session.get(User, user_id)
+        assert user.locale == locale
+
+
 def test_user_notifications(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_base()
 
@@ -88,8 +117,8 @@ def test_user_notifications(client, seeder, utils, app, db):
     with app.app_context():
         from project.models import User
 
-        place = db.session.get(User, user_id)
-        assert not place.newsletter_enabled
+        user = db.session.get(User, user_id)
+        assert not user.newsletter_enabled
 
 
 def test_login_flash(client, seeder, utils):

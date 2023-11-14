@@ -7,7 +7,7 @@ from project import app, db
 from project.access import access_or_401
 from project.forms.event_suggestion import RejectEventSuggestionForm
 from project.models import EventReviewStatus, EventSuggestion
-from project.views.utils import flash_errors, handleSqlError, send_mail_async
+from project.views.utils import flash_errors, handleSqlError, send_template_mail_async
 
 
 @app.route("/event_suggestion/<int:event_suggestion_id>/review")
@@ -82,9 +82,8 @@ def event_suggestion_review_status(event_suggestion_id):
 
 def send_event_suggestion_review_status_mail(event_suggestion):
     if event_suggestion.contact_email and event_suggestion.contact_email_notice:
-        send_mail_async(
+        send_template_mail_async(
             event_suggestion.contact_email,
-            gettext("Event review status updated"),
             "review_status_notice",
             event_suggestion=event_suggestion,
         )

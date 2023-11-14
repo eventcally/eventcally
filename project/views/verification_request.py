@@ -4,7 +4,7 @@ from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
-from project.access import access_or_401, get_admin_unit_members_with_permission
+from project.access import access_or_401
 from project.forms.verification_request import (
     CreateAdminUnitVerificationRequestForm,
     DeleteVerificationRequestForm,
@@ -30,7 +30,7 @@ from project.views.utils import (
     handleSqlError,
     manage_required,
     non_match_for_deletion,
-    send_mails_async,
+    send_template_mails_to_admin_unit_members_async,
 )
 
 
@@ -189,22 +189,12 @@ def admin_unit_verification_request_delete(id):
     )
 
 
-def send_member_verification_request_verify_mails(
-    admin_unit_id, subject, template, **context
-):
-    # Benachrichtige alle Mitglieder der AdminUnit, die Requests verifizieren können
-    members = get_admin_unit_members_with_permission(
-        admin_unit_id, "verification_request:verify"
-    )
-    emails = list(map(lambda member: member.user.email, members))
-
-    send_mails_async(emails, subject, template, **context)
-
-
 def send_verification_request_inbox_mails(request):
-    send_member_verification_request_verify_mails(
-        request.target_admin_unit_id or request.target_admin_unit.id,
-        gettext("New verification request"),
+    # Benachrichtige alle Mitglieder der AdminUnit, die Requests verifizieren können
+    admin_unit_id = request.target_admin_unit_id or request.target_admin_unit.id
+    send_template_mails_to_admin_unit_members_async(
+        admin_unit_id,
+        "verification_request:verify",
         "verification_request_notice",
         request=request,
     )
