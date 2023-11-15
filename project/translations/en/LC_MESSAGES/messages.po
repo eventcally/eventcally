@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-09-30 11:43+0200\n"
+"POT-Creation-Date: 2023-11-13 17:25+0100\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,193 +18,188 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.12.1\n"
 
-#: project/i10n.py:15
+#: project/i10n.py:32
 msgid "Event_Art"
 msgstr "Art"
 
-#: project/i10n.py:16
+#: project/i10n.py:33
 msgid "Event_Book"
 msgstr "Book"
 
-#: project/i10n.py:17
+#: project/i10n.py:34
 msgid "Event_Movie"
 msgstr "Movie"
 
-#: project/i10n.py:18
+#: project/i10n.py:35
 msgid "Event_Family"
 msgstr "Family"
 
-#: project/i10n.py:19
+#: project/i10n.py:36
 msgid "Event_Festival"
 msgstr "Festival"
 
-#: project/i10n.py:20
+#: project/i10n.py:37
 msgid "Event_Religious"
 msgstr "Religious"
 
-#: project/i10n.py:21
+#: project/i10n.py:38
 msgid "Event_Shopping"
 msgstr "Shopping"
 
-#: project/i10n.py:22
+#: project/i10n.py:39
 msgid "Event_Comedy"
 msgstr "Comedy"
 
-#: project/i10n.py:23
+#: project/i10n.py:40
 msgid "Event_Music"
 msgstr "Music"
 
-#: project/i10n.py:24
+#: project/i10n.py:41
 msgid "Event_Dance"
 msgstr "Dance"
 
-#: project/i10n.py:25
+#: project/i10n.py:42
 msgid "Event_Nightlife"
 msgstr "Nightlife"
 
-#: project/i10n.py:26
+#: project/i10n.py:43
 msgid "Event_Theater"
 msgstr "Theater"
 
-#: project/i10n.py:27
+#: project/i10n.py:44
 msgid "Event_Dining"
 msgstr "Dining"
 
-#: project/i10n.py:28
+#: project/i10n.py:45
 msgid "Event_Conference"
 msgstr "Conference"
 
-#: project/i10n.py:29
+#: project/i10n.py:46
 msgid "Event_Meetup"
 msgstr "Meetup"
 
-#: project/i10n.py:30
+#: project/i10n.py:47
 msgid "Event_Fitness"
 msgstr "Fitness"
 
-#: project/i10n.py:31
+#: project/i10n.py:48
 msgid "Event_Sports"
 msgstr "Sports"
 
-#: project/i10n.py:32
+#: project/i10n.py:49
 msgid "Event_Other"
 msgstr "Other"
 
-#: project/i10n.py:33
+#: project/i10n.py:50
 msgid "Event_Exhibition"
 msgstr "Exhibition"
 
-#: project/i10n.py:34
+#: project/i10n.py:51
 msgid "Event_Culture"
 msgstr "Culture"
 
-#: project/i10n.py:35
+#: project/i10n.py:52
 msgid "Event_Tour"
 msgstr "Tour"
 
-#: project/i10n.py:36
+#: project/i10n.py:53
 msgid "Event_OpenAir"
 msgstr "Open Air"
 
-#: project/i10n.py:37
+#: project/i10n.py:54
 msgid "Event_Stage"
 msgstr "Stage"
 
-#: project/i10n.py:38
+#: project/i10n.py:55
 msgid "Event_Lecture"
 msgstr "Lecture"
 
-#: project/i10n.py:39
+#: project/i10n.py:56
 msgid "Typical Age range"
 msgstr ""
 
-#: project/i10n.py:40
+#: project/i10n.py:57
 msgid "Administrator"
 msgstr ""
 
-#: project/i10n.py:41
+#: project/i10n.py:58
 msgid "Event expert"
 msgstr ""
 
-#: project/i10n.py:42
+#: project/i10n.py:59
 msgid "EventReviewStatus.inbox"
 msgstr "Inbox"
 
-#: project/i10n.py:43
+#: project/i10n.py:60
 msgid "EventReviewStatus.verified"
 msgstr "Verified"
 
-#: project/i10n.py:44
+#: project/i10n.py:61
 msgid "EventReviewStatus.rejected"
 msgstr "Rejected"
 
-#: project/i10n.py:45
+#: project/i10n.py:62
 msgid "Scope_openid"
 msgstr "Verify identity"
 
-#: project/i10n.py:46
+#: project/i10n.py:63
 msgid "Scope_profile"
 msgstr "Profile information"
 
-#: project/i10n.py:47
+#: project/i10n.py:64
 msgid "Scope_user:read"
 msgstr "Read user settings"
 
-#: project/i10n.py:48
+#: project/i10n.py:65
 msgid "Scope_user:write"
 msgstr "Create, update and delete user settings"
 
-#: project/i10n.py:49
+#: project/i10n.py:66
 msgid "Scope_organizer:write"
 msgstr "Create, update and delete organizers"
 
-#: project/i10n.py:50
+#: project/i10n.py:67
 msgid "Scope_place:write"
 msgstr "Create, update and delete places"
 
-#: project/i10n.py:51
+#: project/i10n.py:68
 msgid "Scope_event:write"
 msgstr "Create, update and delete events"
 
-#: project/i10n.py:52
+#: project/i10n.py:69
 msgid "Scope_eventlist:write"
 msgstr "Create, update and delete event lists"
 
-#: project/i10n.py:53
+#: project/i10n.py:70
 msgid "Scope_eventreference:write"
 msgstr ""
 
-#: project/i10n.py:54
+#: project/i10n.py:71
 msgid "Scope_organization:read"
 msgstr "Read organizations"
 
-#: project/i10n.py:55
+#: project/i10n.py:72
 msgid "Scope_organization:write"
 msgstr "Create, update and delete organizations"
 
-#: project/i10n.py:56
+#: project/i10n.py:73
 msgid "Scope_customwidget:write"
 msgstr ""
 
-#: project/i10n.py:57
+#: project/i10n.py:74
 msgid "There must be no self-reference."
 msgstr ""
 
-#: project/utils.py:15
+#: project/utils.py:19
 msgid "Event_"
 msgstr ""
 
-#: project/utils.py:19
+#: project/utils.py:23
 msgid "."
 msgstr ""
 
 #: project/api/__init__.py:85
 msgid "message"
-msgstr ""
-
-#: project/api/organization/resources.py:647
-#: project/views/admin_unit_member_invitation.py:89
-msgid "You have received an invitation"
 msgstr ""
 
 #: project/forms/admin.py:11 project/templates/layout.html:344
@@ -238,7 +233,7 @@ msgid "Announcement"
 msgstr ""
 
 #: project/forms/admin.py:18 project/forms/oauth2_client.py:24
-#: project/forms/user.py:13
+#: project/forms/user.py:18 project/forms/user.py:32
 msgid "Save"
 msgstr ""
 
@@ -268,7 +263,7 @@ msgstr ""
 #: project/forms/admin_unit_member.py:12 project/forms/admin_unit_member.py:25
 #: project/forms/admin_unit_member.py:30 project/forms/event.py:112
 #: project/forms/event_suggestion.py:38 project/forms/organizer.py:33
-#: project/forms/user.py:18 project/forms/user.py:23
+#: project/forms/user.py:37 project/forms/user.py:42
 #: project/templates/_macros.html:246 project/templates/_macros.html:1586
 #: project/templates/admin/admin.html:27 project/templates/admin/email.html:4
 #: project/templates/admin/email.html:66 project/templates/admin/users.html:19
@@ -476,7 +471,7 @@ msgid "Verification requests postal codes"
 msgstr ""
 
 #: project/forms/admin_unit.py:93
-msgid "Accept verification requests to organizations with these postal codes."
+msgid "Limit verification requests to organizations with these postal codes."
 msgstr ""
 
 #: project/forms/admin_unit.py:109
@@ -524,11 +519,11 @@ msgstr ""
 msgid "Link Color"
 msgstr ""
 
-#: project/forms/admin_unit.py:165 project/forms/user.py:17
+#: project/forms/admin_unit.py:165 project/forms/user.py:36
 msgid "Request deletion"
 msgstr ""
 
-#: project/forms/admin_unit.py:170 project/forms/user.py:22
+#: project/forms/admin_unit.py:170 project/forms/user.py:41
 #: project/templates/admin_unit/cancel_deletion.html:6
 #: project/templates/admin_unit/update.html:44
 #: project/templates/manage/events.html:49 project/templates/profile.html:13
@@ -1364,13 +1359,21 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: project/forms/user.py:9 project/templates/admin/admin.html:31
+#: project/forms/user.py:9
+msgid "Language"
+msgstr ""
+
+#: project/forms/user.py:11
+msgid "Default"
+msgstr ""
+
+#: project/forms/user.py:28 project/templates/admin/admin.html:31
 #: project/templates/admin/newsletter.html:4
 #: project/templates/admin/newsletter.html:93
 msgid "Newsletter"
 msgstr ""
 
-#: project/forms/user.py:10
+#: project/forms/user.py:29
 msgid "Information about new features and improvements."
 msgstr ""
 
@@ -1858,7 +1861,7 @@ msgstr ""
 
 #: project/templates/developer/read.html:4
 #: project/templates/developer/read.html:8 project/templates/layout.html:361
-#: project/templates/profile.html:45
+#: project/templates/profile.html:49
 msgid "Developer"
 msgstr ""
 
@@ -1872,20 +1875,25 @@ msgstr ""
 msgid "Delete account"
 msgstr ""
 
-#: project/templates/profile.html:36
+#: project/templates/profile.html:36 project/templates/user/general.html:4
+#: project/templates/user/general.html:8
+msgid "General"
+msgstr ""
+
+#: project/templates/profile.html:40
 #: project/templates/user/notifications.html:4
 #: project/templates/user/notifications.html:8
 msgid "Notifications"
 msgstr ""
 
-#: project/templates/profile.html:40
+#: project/templates/profile.html:44
 msgid "Applications"
 msgstr ""
 
 #: project/templates/oauth2_client/list.html:4
 #: project/templates/oauth2_client/list.html:11
 #: project/templates/oauth2_client/read.html:11
-#: project/templates/profile.html:49
+#: project/templates/profile.html:53
 msgid "OAuth2 clients"
 msgstr ""
 
@@ -1920,7 +1928,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: project/templates/admin/email.html:47 project/views/admin.py:165
+#: project/templates/admin/email.html:47 project/views/admin.py:163
 msgid "Mail sent successfully"
 msgstr ""
 
@@ -2305,7 +2313,7 @@ msgstr ""
 #: project/templates/manage/reference_requests_incoming.html:20
 #: project/templates/reference/read.html:22
 #: project/templates/reference_request/review_status.html:17
-#: project/views/reference_request_review.py:42
+#: project/views/reference_request_review.py:38
 msgid "View event"
 msgstr ""
 
@@ -2416,7 +2424,7 @@ msgid "Reviews"
 msgstr ""
 
 #: project/templates/manage/verification_requests_incoming.html:19
-#: project/views/verification_request_review.py:36
+#: project/views/verification_request_review.py:32
 msgid "View organization"
 msgstr ""
 
@@ -2545,7 +2553,7 @@ msgstr ""
 msgid "You do not have an account yet? Not a problem!"
 msgstr ""
 
-#: project/templates/security/login_user.html:44 project/views/widget.py:122
+#: project/templates/security/login_user.html:44 project/views/widget.py:119
 msgid "Register for free"
 msgstr ""
 
@@ -2622,29 +2630,19 @@ msgid "Organization successfully deleted"
 msgstr ""
 
 #: project/views/admin.py:133 project/views/manage.py:485
-#: project/views/user.py:63
+#: project/views/user.py:64 project/views/user.py:83
 msgid "Settings successfully updated"
 msgstr ""
 
-#: project/views/admin.py:153
-#, python-format
-msgid "Test mail from %(site_name)s"
-msgstr ""
-
-#: project/views/admin.py:183
-#, python-format
-msgid "Newsletter from %(site_name)s"
-msgstr ""
-
-#: project/views/admin.py:232
+#: project/views/admin.py:233
 msgid "User successfully updated"
 msgstr ""
 
-#: project/views/admin.py:252
+#: project/views/admin.py:253
 msgid "Entered email does not match user email"
 msgstr ""
 
-#: project/views/admin.py:256
+#: project/views/admin.py:257
 msgid "User successfully deleted"
 msgstr ""
 
@@ -2660,14 +2658,6 @@ msgstr ""
 
 #: project/views/admin_unit.py:184
 msgid "AdminUnit successfully updated"
-msgstr ""
-
-#: project/views/admin_unit.py:271
-msgid "Organization invitation accepted"
-msgstr ""
-
-#: project/views/admin_unit.py:285
-msgid "Organization deletion requested"
 msgstr ""
 
 #: project/views/admin_unit_member.py:46
@@ -2690,44 +2680,36 @@ msgstr ""
 msgid "Invitation successfully declined"
 msgstr ""
 
-#: project/views/admin_unit_member_invitation.py:94
+#: project/views/admin_unit_member_invitation.py:93
 msgid "Invitation successfully sent"
 msgstr ""
 
-#: project/views/admin_unit_member_invitation.py:117
+#: project/views/admin_unit_member_invitation.py:116
 msgid "Entered email does not match invitation email"
 msgstr ""
 
-#: project/views/admin_unit_member_invitation.py:122
+#: project/views/admin_unit_member_invitation.py:121
 msgid "Invitation successfully deleted"
 msgstr ""
 
-#: project/views/event.py:208
+#: project/views/event.py:209
 msgid "Event successfully published"
 msgstr ""
 
-#: project/views/event.py:210
+#: project/views/event.py:211
 msgid "Draft successfully saved"
 msgstr ""
 
-#: project/views/event.py:212
+#: project/views/event.py:213
 msgid "Event successfully planned"
 msgstr ""
 
-#: project/views/event.py:272
+#: project/views/event.py:273
 msgid "Event successfully updated"
 msgstr ""
 
-#: project/views/event.py:298
+#: project/views/event.py:299
 msgid "Event successfully deleted"
-msgstr ""
-
-#: project/views/event.py:463
-msgid "Referenced event changed"
-msgstr ""
-
-#: project/views/event.py:486
-msgid "New event report"
 msgstr ""
 
 #: project/views/event_place.py:34
@@ -2748,11 +2730,6 @@ msgstr ""
 
 #: project/views/event_suggestion.py:54
 msgid "Event suggestion successfully rejected"
-msgstr ""
-
-#: project/views/event_suggestion.py:87
-#: project/views/reference_request_review.py:139
-msgid "Event review status updated"
 msgstr ""
 
 #: project/views/js.py:33
@@ -2855,68 +2832,114 @@ msgid ""
 "notified after the other organization reviews the event."
 msgstr ""
 
-#: project/views/reference_request.py:172
-msgid "New reference request"
-msgstr ""
-
-#: project/views/reference_request.py:181
-msgid "New reference automatically verified"
-msgstr ""
-
-#: project/views/reference_request_review.py:40
+#: project/views/reference_request_review.py:36
 msgid "Request already verified"
 msgstr ""
 
-#: project/views/reference_request_review.py:61
+#: project/views/reference_request_review.py:57
 msgid "Reference successfully created"
 msgstr ""
 
-#: project/views/reference_request_review.py:69
+#: project/views/reference_request_review.py:65
 msgid "Request successfully updated"
 msgstr ""
 
-#: project/views/reference_request_review.py:92
-#: project/views/verification_request_review.py:83
+#: project/views/reference_request_review.py:88
+#: project/views/verification_request_review.py:79
 #, python-format
 msgid ""
 "If all upcoming reference requests of %(admin_unit_name)s should be "
 "verified automatically."
 msgstr ""
 
-#: project/views/user.py:107
+#: project/views/user.py:127
 msgid ""
 "You are administrator of at least one organization. Cancel your "
 "membership to delete your account."
 msgstr ""
 
-#: project/views/user.py:114 project/views/user.py:141
+#: project/views/user.py:134 project/views/user.py:161
 msgid "Entered email does not match your email"
 msgstr ""
 
-#: project/views/user.py:160
+#: project/views/utils.py:27
+msgid "New event report"
+msgstr ""
+
+#: project/views/utils.py:28 project/views/utils.py:36
+msgid "You have received an invitation"
+msgstr ""
+
+#: project/views/utils.py:29
+#, python-format
+msgid "Newsletter from %(site_name)s"
+msgstr ""
+
+#: project/views/utils.py:30
+msgid "Organization deletion requested"
+msgstr ""
+
+#: project/views/utils.py:33
+msgid "Organization invitation accepted"
+msgstr ""
+
+#: project/views/utils.py:37
+msgid "New reference automatically verified"
+msgstr ""
+
+#: project/views/utils.py:40
+msgid "New reference request"
+msgstr ""
+
+#: project/views/utils.py:41 project/views/utils.py:46
+msgid "Event review status updated"
+msgstr ""
+
+#: project/views/utils.py:44
+msgid "Referenced event changed"
+msgstr ""
+
+#: project/views/utils.py:45
+msgid "New event review"
+msgstr ""
+
+#: project/views/utils.py:47
 msgid "User deletion requested"
 msgstr ""
 
-#: project/views/utils.py:91
+#: project/views/utils.py:48
+#, python-format
+msgid "Test mail from %(site_name)s"
+msgstr ""
+
+#: project/views/utils.py:49
+msgid "New verification request"
+msgstr ""
+
+#: project/views/utils.py:50
+msgid "Verification request review status updated"
+msgstr ""
+
+#: project/views/utils.py:122
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
 "not allowed."
 msgstr ""
 
-#: project/views/utils.py:142
+#: project/views/utils.py:173
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr ""
 
-#: project/views/utils.py:149
+#: project/views/utils.py:180
 msgid "Show"
 msgstr ""
 
-#: project/views/utils.py:157
+#: project/views/utils.py:188
 msgid "You do not have permission for this action"
 msgstr ""
 
-#: project/views/utils.py:306
+#: project/views/utils.py:382
 msgid ""
 "The invitation was issued to another user. Sign in with the email address"
 " the invitation was sent to."
@@ -2932,38 +2955,26 @@ msgstr ""
 msgid "Verification request successfully deleted"
 msgstr ""
 
-#: project/views/verification_request.py:207
-msgid "New verification request"
-msgstr ""
-
-#: project/views/verification_request_review.py:34
+#: project/views/verification_request_review.py:30
 msgid "Verification request already verified"
 msgstr ""
 
-#: project/views/verification_request_review.py:64
+#: project/views/verification_request_review.py:60
 msgid "Organization successfully verified"
 msgstr ""
 
-#: project/views/verification_request_review.py:66
+#: project/views/verification_request_review.py:62
 msgid "Verification request successfully updated"
 msgstr ""
 
-#: project/views/verification_request_review.py:119
-msgid "Verification request review status updated"
-msgstr ""
-
-#: project/views/widget.py:114
+#: project/views/widget.py:111
 msgid "Thank you so much! The event is being verified."
 msgstr ""
 
-#: project/views/widget.py:118
+#: project/views/widget.py:115
 msgid ""
 "For more options and your own calendar of events, you can register for "
 "free."
-msgstr ""
-
-#: project/views/widget.py:184
-msgid "New event review"
 msgstr ""
 
 #~ msgid ""
@@ -3050,5 +3061,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Switch to place search"
+#~ msgstr ""
+
+#~ msgid "Accept verification requests to organizations with these postal codes."
 #~ msgstr ""
 

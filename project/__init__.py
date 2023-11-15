@@ -142,7 +142,7 @@ sitemap_path = os.path.join(cache_path, sitemap_file)
 robots_txt_path = os.path.join(cache_path, robots_txt_file)
 
 # i18n
-from project.i10n import get_locale
+from project.i10n import get_locale, get_locale_from_request
 
 app.config["BABEL_DEFAULT_LOCALE"] = "de"
 app.config["BABEL_DEFAULT_TIMEZONE"] = "Europe/Berlin"
@@ -236,6 +236,10 @@ def user_registered_sighandler(app, user, confirm_token, confirmation_token, for
         from project.services.user import set_user_accepted_tos
 
         set_user_accepted_tos(user)
+        db.session.commit()
+
+    if not user.locale:
+        user.locale = get_locale_from_request()
         db.session.commit()
 
 

@@ -5,10 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
 from project import app, db
-from project.access import (
-    admin_unit_suggestions_enabled_or_404,
-    get_admin_unit_members_with_permission,
-)
+from project.access import admin_unit_suggestions_enabled_or_404
 from project.dateutils import get_next_full_hour
 from project.forms.event_date import FindEventDateWidgetForm
 from project.forms.event_suggestion import CreateEventSuggestionForm
@@ -23,7 +20,7 @@ from project.views.utils import (
     flash_message,
     get_pagination_urls,
     handleSqlError,
-    send_mails_async,
+    send_template_mails_to_admin_unit_members_async,
 )
 
 
@@ -176,12 +173,9 @@ def get_styles(admin_unit):
 
 
 def send_event_inbox_mails(admin_unit, event_suggestion):
-    members = get_admin_unit_members_with_permission(admin_unit.id, "event:verify")
-    emails = list(map(lambda member: member.user.email, members))
-
-    send_mails_async(
-        emails,
-        gettext("New event review"),
+    send_template_mails_to_admin_unit_members_async(
+        admin_unit.id,
+        "event:verify",
         "review_notice",
         event_suggestion=event_suggestion,
     )

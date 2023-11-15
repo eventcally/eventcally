@@ -38,6 +38,7 @@ class Seeder(object):
         admin=False,
         confirm=True,
         tos_accepted=True,
+        locale=None,
     ):
         from flask_security.confirmable import confirm_user
 
@@ -63,6 +64,7 @@ class Seeder(object):
             if admin:
                 add_admin_roles_to_user(email)
 
+            user.locale = locale
             self._db.session.commit()
             user_id = user.id
 

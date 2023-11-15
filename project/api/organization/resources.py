@@ -1,6 +1,5 @@
 from flask import abort, request
 from flask_apispec import doc, marshal_with, use_kwargs
-from flask_babel import gettext
 from sqlalchemy import and_
 
 from project import db
@@ -131,7 +130,7 @@ from project.views.reference_request import (
     handle_request_according_to_relation,
     send_reference_request_mails,
 )
-from project.views.utils import get_current_admin_unit_for_api, send_mail_async
+from project.views.utils import get_current_admin_unit_for_api, send_template_mail_async
 from project.views.verification_request import send_verification_request_inbox_mails
 
 
@@ -642,9 +641,8 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
         db.session.add(invitation)
         db.session.commit()
 
-        send_mail_async(
+        send_template_mail_async(
             invitation.email,
-            gettext("You have received an invitation"),
             "organization_invitation_notice",
             invitation=invitation,
         )

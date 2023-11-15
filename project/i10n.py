@@ -1,14 +1,35 @@
 from flask import request
-from flask_babel import gettext
+from flask_babel import Locale, gettext
+from flask_security import current_user
 
 from project import app
 
 
 def get_locale():
-    if not request:
-        return app.config["LANGUAGES"][0]
+    try:
+        if (
+            current_user
+            and current_user.is_authenticated
+            and current_user.locale
+            and Locale.parse(current_user.locale)
+        ):
+            return current_user.locale
+    except Exception:
+        pass
 
-    return request.accept_languages.best_match(app.config["LANGUAGES"])
+    if not request:
+        return app.config["BABEL_DEFAULT_LOCALE"]
+
+    return get_locale_from_request()
+
+
+def get_locale_from_request():
+    if not request:  # pragma: no cover
+        return None
+
+    return request.accept_languages.best_match(
+        app.config["LANGUAGES"], app.config["BABEL_DEFAULT_LOCALE"]
+    )
 
 
 def print_dynamic_texts():

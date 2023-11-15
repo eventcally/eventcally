@@ -55,7 +55,8 @@ from project.views.utils import (
     get_calendar_links_for_event,
     get_share_links,
     handleSqlError,
-    send_mails_async,
+    send_template_mails_to_admin_unit_members_async,
+    send_template_mails_to_users_async,
     set_current_admin_unit,
 )
 
@@ -453,14 +454,9 @@ def send_referenced_event_changed_mails(event):
     references = EventReference.query.filter(EventReference.event_id == event.id).all()
     for reference in references:
         # Alle Mitglieder der AdminUnit, die das Recht haben, Requests zu verifizieren
-        members = get_admin_unit_members_with_permission(
-            reference.admin_unit_id, "reference_request:verify"
-        )
-        emails = list(map(lambda member: member.user.email, members))
-
-        send_mails_async(
-            emails,
-            gettext("Referenced event changed"),
+        send_template_mails_to_admin_unit_members_async(
+            reference.admin_unit_id,
+            "reference_request:verify",
             "referenced_event_changed_notice",
             event=event,
             reference=reference,
@@ -474,16 +470,16 @@ def send_event_report_mails(event: Event, report: dict):
     members = get_admin_unit_members_with_permission(
         event.admin_unit_id, "event:update"
     )
-    emails = list(map(lambda member: member.user.email, members))
+    users = [member.user for member in members]
 
     # Alle globalen Admins
     admins = find_all_users_with_role("admin")
-    admin_emails = list(map(lambda admin: admin.email, admins))
-    emails.extend(x for x in admin_emails if x not in emails)
+    users.extend(
+        admin for admin in admins if all(user.id != admin.id for user in users)
+    )
 
-    send_mails_async(
-        emails,
-        gettext("New event report"),
+    send_template_mails_to_users_async(
+        users,
         "event_report_notice",
         event=event,
         report=report,

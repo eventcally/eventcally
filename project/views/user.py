@@ -10,6 +10,7 @@ from project import app, db
 from project.forms.security import AcceptTosForm
 from project.forms.user import (
     CancelUserDeletionForm,
+    GeneralForm,
     NotificationForm,
     RequestUserDeletionForm,
 )
@@ -20,7 +21,7 @@ from project.views.utils import (
     get_invitation_access_result,
     handleSqlError,
     non_match_for_deletion,
-    send_mail_async,
+    send_template_mails_to_users_async,
 )
 
 
@@ -48,6 +49,25 @@ def user_accept_tos():
             flash(handleSqlError(e), "danger")
 
     return render_template("user/accept_tos.html", form=form)
+
+
+@app.route("/user/general", methods=("GET", "POST"))
+@auth_required()
+def user_general():
+    user = User.query.get_or_404(current_user.id)
+    form = GeneralForm(obj=user)
+
+    if form.validate_on_submit():
+        try:
+            form.populate_obj(user)
+            db.session.commit()
+            flash(gettext("Settings successfully updated"), "success")
+            return redirect(url_for("profile"))
+        except SQLAlchemyError as e:  # pragma: no cover
+            db.session.rollback()
+            flash(handleSqlError(e), "danger")
+
+    return render_template("user/general.html", form=form)
 
 
 @app.route("/user/notifications", methods=("GET", "POST"))
@@ -155,9 +175,8 @@ def user_cancel_deletion():
 
 
 def send_user_deletion_requested_mail(user):
-    send_mail_async(
-        user.email,
-        gettext("User deletion requested"),
+    send_template_mails_to_users_async(
+        [user],
         "user_deletion_requested_notice",
         user=user,
     )

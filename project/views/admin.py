@@ -25,9 +25,9 @@ from project.views.utils import (
     get_pagination_urls,
     handleSqlError,
     non_match_for_deletion,
-    send_mail,
-    send_mail_async,
-    send_mails_async,
+    send_template_mail,
+    send_template_mail_async,
+    send_template_mails_to_users_async,
 )
 
 
@@ -150,18 +150,16 @@ def admin_email():
         return get_celery_poll_group_result()
 
     if form.validate_on_submit():
-        subject = gettext(
-            "Test mail from %(site_name)s",
-            site_name=app.config["SITE_NAME"],
-        )
+        template = "test_email"
+        context = {"site_name": app.config["SITE_NAME"]}
 
         if "async" in request.args:  # pragma: no cover
-            result = send_mail_async(form.recipient.data, subject, "test_email")
+            result = send_template_mail_async(form.recipient.data, template, **context)
             result.save()
             return {"result_id": result.id}
 
         try:
-            send_mail(form.recipient.data, subject, "test_email")
+            send_template_mail(form.recipient.data, template, **context)
             flash(gettext("Mail sent successfully"), "success")
         except Exception as e:  # pragma: no cover
             flash(str(e), "danger")
@@ -180,13 +178,15 @@ def admin_newsletter():
         return get_celery_poll_group_result()
 
     if form.validate_on_submit():
-        subject = gettext(
-            "Newsletter from %(site_name)s",
-            site_name=app.config["SITE_NAME"],
-        )
+        template = "newsletter"
+        context = {"site_name": app.config["SITE_NAME"], "message": form.message.data}
 
         if form.recipient_choice.data == 1:  # pragma: no cover
-            recipients = [form.test_recipient.data]
+            result = send_template_mail_async(
+                form.test_recipient.data,
+                template,
+                **context,
+            )
         else:
             users = (
                 User.query.filter(User.email != None)
@@ -194,11 +194,12 @@ def admin_newsletter():
                 .filter(User.newsletter_enabled)
                 .all()
             )
-            recipients = [u.email for u in users]
+            result = send_template_mails_to_users_async(
+                users,
+                template,
+                **context,
+            )
 
-        result = send_mails_async(
-            recipients, subject, "newsletter", message=form.message.data
-        )
         result.save()
         return {"result_id": result.id}
 

@@ -4,11 +4,7 @@ from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
-from project.access import (
-    access_or_401,
-    get_admin_unit_members_with_permission,
-    has_access,
-)
+from project.access import access_or_401, has_access
 from project.dateutils import get_today
 from project.forms.reference_request import ReferenceRequestReviewForm
 from project.models import (
@@ -25,7 +21,7 @@ from project.views.utils import (
     flash_errors,
     flash_message,
     handleSqlError,
-    send_mails_async,
+    send_template_mails_to_admin_unit_members_async,
 )
 
 
@@ -129,14 +125,9 @@ def event_reference_request_review_status(id):
 
 def send_reference_request_review_status_mails(request):
     # Benachrichtige alle Mitglieder der AdminUnit, die diesen Request erstellt hatte
-    members = get_admin_unit_members_with_permission(
-        request.event.admin_unit_id, "reference_request:create"
-    )
-    emails = list(map(lambda member: member.user.email, members))
-
-    send_mails_async(
-        emails,
-        gettext("Event review status updated"),
+    send_template_mails_to_admin_unit_members_async(
+        request.event.admin_unit_id,
+        "reference_request:create",
         "reference_request_review_status_notice",
         request=request,
     )

@@ -206,14 +206,21 @@ class UtilActions(object):
         return mocker.patch("project.views.utils.send_mails_with_body")
 
     def mock_send_mails_async(self, mocker):
-        return mocker.patch("project.views.utils.send_mails_with_body_async")
+        return mocker.patch("project.views.utils.send_mails_with_signatures_async")
 
     def assert_send_mail_called(
         self, mock, expected_recipients, expected_contents=None
     ):
         mock.assert_called_once()
         args, kwargs = mock.call_args
-        send_recipients, subject, body, html = args
+
+        if mock._extract_mock_name() == "send_mails_with_signatures_async":
+            signatures = args[0]
+            send_recipients = [s[0] for s in signatures]
+            first_signature = signatures[0]
+            _, subject, body, html = first_signature
+        else:
+            send_recipients, subject, body, html = args
 
         if not isinstance(expected_recipients, list):
             expected_recipients = [expected_recipients]
