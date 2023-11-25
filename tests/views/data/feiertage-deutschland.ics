@@ -1,0 +1,2464 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//https://www.feiertage-deutschland.de/kalender-download/
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:6f5bf4073a952c3ce732fe7ea600bef9@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Neujahrstag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/neujahr/
+SUMMARY:Neujahr (§)
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20100101
+END:VEVENT
+BEGIN:VEVENT
+UID:707337a4b01c6b004076d23a7315be3b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,ST
+DESCRIPTION:Der Dreikönigstag ist ein gesetzlicher Feiertag in: Baden-Württemberg\, Bayern und Sachsen-Anhalt.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/heilige-drei-koenige/
+SUMMARY:Heilige Drei Könige (§)
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20100106
+END:VEVENT
+BEGIN:VEVENT
+UID:0779531cee3fc9fcae7d4d3050d250f2@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BE
+DESCRIPTION:Der Internationale Frauentag ist seit 2019 ein gesetzlicher Feiertag in Berlin und seit 2023 in Mecklenburg-Vorpommern.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/frauentag/
+SUMMARY:Frauentag (§)
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20190308
+END:VEVENT
+BEGIN:VEVENT
+UID:7603115f685bbd622d14be859abbf469@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Tag der Arbeit ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/tag-der-arbeit/
+SUMMARY:Tag der Arbeit (§)
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20100501
+END:VEVENT
+BEGIN:VEVENT
+UID:a42e3c49fb3f91138051627f2cc03618@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY
+DESCRIPTION:Das Augsburger Hohes Friedensfest ist ausschließlich in der Stadt Augsburg ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/augsburger-friedensfest/
+SUMMARY:Augsburger Friedensfest
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20100808
+END:VEVENT
+BEGIN:VEVENT
+UID:4ab5d4e7e753c4435d70a9cb7c3d0459@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SL
+DESCRIPTION:Mariä Himmelfahrt ist ein gesetzlicher Feiertag in folgenden Bundesländern: Saarland\, Bayern (in Gemeinden mit überwiegend katholischer Bevölkerung).
+URL;VALUE=URI:https://www.feiertage-deutschland.de/mariae-himmelfahrt/
+SUMMARY:Mariä Himmelfahrt (§)
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20100815
+END:VEVENT
+BEGIN:VEVENT
+UID:2bc7b5376709dec6003b834caa5021f6@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:TH
+DESCRIPTION:Der Weltkindertag ist seit 2019 ein gesetzlicher Feiertag in Thüringen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/weltkindertag/
+SUMMARY:Weltkindertag (§)
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20190920
+END:VEVENT
+BEGIN:VEVENT
+UID:68951db7f4f395cdb97e79954d871742@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Tag der Deutschen Einheit ist in allen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/tag-der-deutschen-einheit/
+SUMMARY:Tag der Deutschen Einheit (§)
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20101003
+END:VEVENT
+BEGIN:VEVENT
+UID:53cb08113f96eb790dea7294b42a3c08@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,MV\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20101031
+END:VEVENT
+BEGIN:VEVENT
+UID:bfb75ea2e1246cc3f78822c6ec525cf9@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,NW\,RP\,SL
+DESCRIPTION:Allerheiligen ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Nordrhein-Westfalen\, Rheinland-Pfalz und Saarland.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/allerheiligen/
+SUMMARY:Allerheiligen (§)
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20101101
+END:VEVENT
+BEGIN:VEVENT
+UID:20beac638cbab427612730625adcea12@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der erste und zweite Weihnachtsfeiertag sind in ganz Deutschland gesetzliche Feiertage.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/weihnachten/
+SUMMARY:1. Weihnachtstag (§)
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20101225
+END:VEVENT
+BEGIN:VEVENT
+UID:428523de96cdd75512e21c5067b94baf@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der erste und zweite Weihnachtsfeiertag sind in ganz Deutschland gesetzliche Feiertage.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/weihnachten/
+SUMMARY:2. Weihnachtstag (§)
+RRULE:FREQ=YEARLY
+DTSTART;VALUE=DATE:20101226
+END:VEVENT
+BEGIN:VEVENT
+UID:c4ef0c08db1cdd87f36222c30f1616e1@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,MV\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20111031
+END:VEVENT
+BEGIN:VEVENT
+UID:1f432889427bc735ef0ed04d7c04b1c9@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,MV\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20121031
+END:VEVENT
+BEGIN:VEVENT
+UID:2ebc9c2cf7af481d6d13d0cfaffac5c1@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,MV\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20131031
+END:VEVENT
+BEGIN:VEVENT
+UID:16d27b60bb838c1621171208c9712811@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,MV\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20141031
+END:VEVENT
+BEGIN:VEVENT
+UID:32addeb6af8ea87b45e00dd0abcab1da@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,MV\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20151031
+END:VEVENT
+BEGIN:VEVENT
+UID:bad47bebffdf94f7037354e209d61274@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,MV\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20161031
+END:VEVENT
+BEGIN:VEVENT
+UID:411d86845ef5faae7506cad961e98490@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Reformationstag ist 2017 einmalig in allen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20171031
+END:VEVENT
+BEGIN:VEVENT
+UID:9cf451b268fd4677737cf5c4c6f9708b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20181031
+END:VEVENT
+BEGIN:VEVENT
+UID:ef762528ba9e9d79cd4448a8e707fc6b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20191031
+END:VEVENT
+BEGIN:VEVENT
+UID:92a5d15a9909012abd0009c1c791819d@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20201031
+END:VEVENT
+BEGIN:VEVENT
+UID:4f3d03d915cf67a94995f8972ab0eaee@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BE
+DESCRIPTION:Der Tag der Befreiung ist 2020 anlässlich des 75. Jahrestages zum Ende des Zweiten Weltkrieges einmalig ein gesetzlicher Feiertag in Berlin.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/tag-der-befreiung/
+SUMMARY:Tag der Befreiung (§)
+DTSTART;VALUE=DATE:20200508
+END:VEVENT
+BEGIN:VEVENT
+UID:8ee89dcddd55a4368e00a328b3441eb1@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20211031
+END:VEVENT
+BEGIN:VEVENT
+UID:5e429880b373b0fc480b84d0c4782ad7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20221031
+END:VEVENT
+BEGIN:VEVENT
+UID:87c04646fefbaff91fb930e50a390945@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20231031
+END:VEVENT
+BEGIN:VEVENT
+UID:3afd088f52389e2b022b2f2ba896dd1e@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20241031
+END:VEVENT
+BEGIN:VEVENT
+UID:006028850286f4bd69f0e074805ed4e3@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20251031
+END:VEVENT
+BEGIN:VEVENT
+UID:643da33bfe8c7009c3bcc7e8c02b4d99@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20261031
+END:VEVENT
+BEGIN:VEVENT
+UID:292f00a0d6382ca8a67f3a8f3973412d@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20271031
+END:VEVENT
+BEGIN:VEVENT
+UID:51f75650dfae12b5c05daa921057e763@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20281031
+END:VEVENT
+BEGIN:VEVENT
+UID:94f84e16e98a72b1c3e53f26a87b201d@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20291031
+END:VEVENT
+BEGIN:VEVENT
+UID:e5b490e9292eb4f6d92189c0a8f45203@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20301031
+END:VEVENT
+BEGIN:VEVENT
+UID:7fb9cefa3fa140fe41c1bf415ba8c5aa@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20311031
+END:VEVENT
+BEGIN:VEVENT
+UID:98f7ec7d275d555a8552385c0dcd2c3a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20321031
+END:VEVENT
+BEGIN:VEVENT
+UID:599f9da4661726c7a7ada5ead856e70e@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20331031
+END:VEVENT
+BEGIN:VEVENT
+UID:e7cfc48f809e970ca219d2b6422a1b2c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20341031
+END:VEVENT
+BEGIN:VEVENT
+UID:5db6d93c5f9d793b8f30ce373d78f9f7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB\,HB\,HH\,MV\,NI\,SH\,SN\,ST\,TH
+DESCRIPTION:Der Reformationstag ist in folgenden Bundesländern ein gesetzlicher Feiertag: Brandenburg\, Mecklenburg-Vorpommern\, Sachsen\, Sachsen-Anhalt\, Thüringen und seit 2018 auch in Schleswig-Holstein\, Hamburg\, Bremen und Niedersachsen.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/reformationstag/
+SUMMARY:Reformationstag (§)
+DTSTART;VALUE=DATE:20351031
+END:VEVENT
+BEGIN:VEVENT
+UID:a2803d0120caffa620bf1282ef9bcb7b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20100401
+END:VEVENT
+BEGIN:VEVENT
+UID:384cc6d34c6439783f072ec3b329017a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20100402
+END:VEVENT
+BEGIN:VEVENT
+UID:c9e0af3c11b5b6d58ff2312e30fb62cf@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20100404
+END:VEVENT
+BEGIN:VEVENT
+UID:cc1dfc2d1b3861584079c6d415efcdd3@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20100405
+END:VEVENT
+BEGIN:VEVENT
+UID:f7c4db9aa5778ab3d688df5931144d88@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20100513
+END:VEVENT
+BEGIN:VEVENT
+UID:c5bb824a6d31eff8035053a6799b478c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20100523
+END:VEVENT
+BEGIN:VEVENT
+UID:95dcf9e52b6c43ad8721ff518c13dbfe@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20100524
+END:VEVENT
+BEGIN:VEVENT
+UID:2b180f4a06864a8efcaf7d1a07bb9c9a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20100603
+END:VEVENT
+BEGIN:VEVENT
+UID:856b0a853f1f95b79b881162e755c2fe@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20101117
+END:VEVENT
+BEGIN:VEVENT
+UID:283b15997cc0d92c6a5fab049797a21c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20110421
+END:VEVENT
+BEGIN:VEVENT
+UID:f905725264a06a205192f70ea1452554@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20110422
+END:VEVENT
+BEGIN:VEVENT
+UID:4f4715b1904d8d5c21ced40a449606bd@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20110424
+END:VEVENT
+BEGIN:VEVENT
+UID:61591d7d15607412abcb478775a7aba0@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20110425
+END:VEVENT
+BEGIN:VEVENT
+UID:e7ca27952653ef58d23f36be9821f631@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20110602
+END:VEVENT
+BEGIN:VEVENT
+UID:8235c87e29c2b52eccb95d646ab07391@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20110612
+END:VEVENT
+BEGIN:VEVENT
+UID:ba063534906a522f2724ecf38e2eecb8@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20110613
+END:VEVENT
+BEGIN:VEVENT
+UID:3a53d3c30e3ab5b565edada90ed9c640@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20110623
+END:VEVENT
+BEGIN:VEVENT
+UID:71c681762e809642302eed45f9424d02@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20111116
+END:VEVENT
+BEGIN:VEVENT
+UID:beaf76f631a5ffb15f60b519ba8cddf2@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20120405
+END:VEVENT
+BEGIN:VEVENT
+UID:ee292e317f984b946ee72401100afbce@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20120406
+END:VEVENT
+BEGIN:VEVENT
+UID:a0fc7eedd6a91b49a2977776cdedc9d9@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20120408
+END:VEVENT
+BEGIN:VEVENT
+UID:093af657da9a3d611e998e52d56471ba@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20120409
+END:VEVENT
+BEGIN:VEVENT
+UID:4d7a5e40c9a77dbe947debd53f7b800a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20120517
+END:VEVENT
+BEGIN:VEVENT
+UID:9544d43551aa8c2005efaa1bae2fa982@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20120527
+END:VEVENT
+BEGIN:VEVENT
+UID:ac90ea64c7c7c41a07c85410fdab25b9@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20120528
+END:VEVENT
+BEGIN:VEVENT
+UID:204bcb0cc599d494ed89492bf7c24c31@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20120607
+END:VEVENT
+BEGIN:VEVENT
+UID:ca9d9903efd87c3e7edac5cf3573768e@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20121121
+END:VEVENT
+BEGIN:VEVENT
+UID:a99cd90bb23002232803048991092560@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20130328
+END:VEVENT
+BEGIN:VEVENT
+UID:4c2752d1e8bbdd90d5a3be267e25efbd@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20130329
+END:VEVENT
+BEGIN:VEVENT
+UID:c228357a22178fbd873c3a3486de4963@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20130331
+END:VEVENT
+BEGIN:VEVENT
+UID:e20d671a28e303daa687218b01a2f701@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20130401
+END:VEVENT
+BEGIN:VEVENT
+UID:f1e2ed4c06d94563eebf39f660e1cfa7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20130509
+END:VEVENT
+BEGIN:VEVENT
+UID:5a55648cb5b21e2744c49d1655cd56c5@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20130519
+END:VEVENT
+BEGIN:VEVENT
+UID:6e1cfcd32a131b5bd07e51cefef99dc5@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20130520
+END:VEVENT
+BEGIN:VEVENT
+UID:9f686cc00dee9f592d108ff1645f65f6@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20130530
+END:VEVENT
+BEGIN:VEVENT
+UID:db71392a2560a849645938e274874b12@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20131120
+END:VEVENT
+BEGIN:VEVENT
+UID:13162f6c5ee9ed86b86f77aad82f253f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20140417
+END:VEVENT
+BEGIN:VEVENT
+UID:b84209a5bf92ad958a8cdd74e36a0e98@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20140418
+END:VEVENT
+BEGIN:VEVENT
+UID:186bed9b51fc074943e9c09b6789374c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20140420
+END:VEVENT
+BEGIN:VEVENT
+UID:348fba38980e9a49d647714487595451@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20140421
+END:VEVENT
+BEGIN:VEVENT
+UID:82729aab9b8c90119dd91a823ed59d61@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20140529
+END:VEVENT
+BEGIN:VEVENT
+UID:bfbe23f6bf5662890e23f144323b2520@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20140608
+END:VEVENT
+BEGIN:VEVENT
+UID:b09d0d4f60bf3d304adc51fbfe554020@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20140609
+END:VEVENT
+BEGIN:VEVENT
+UID:68127e70bb736130769abea2ab539ef3@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20140619
+END:VEVENT
+BEGIN:VEVENT
+UID:484699df2d06e811b37236f7d44040d5@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20141119
+END:VEVENT
+BEGIN:VEVENT
+UID:31124c1edaddebd4714d7b618a24c36d@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20150402
+END:VEVENT
+BEGIN:VEVENT
+UID:5a8012cb71db0b35cfb79dd2bb383aa6@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20150403
+END:VEVENT
+BEGIN:VEVENT
+UID:53488b5fb54148263d28c13a241b1574@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20150405
+END:VEVENT
+BEGIN:VEVENT
+UID:d09d0942feea5d28d2c7b8fea3828394@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20150406
+END:VEVENT
+BEGIN:VEVENT
+UID:ad9b9783b133f8946bf60087e6475989@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20150514
+END:VEVENT
+BEGIN:VEVENT
+UID:65d7140055ad2bd10d76305127bd3b21@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20150524
+END:VEVENT
+BEGIN:VEVENT
+UID:2cf908041d3f1aa821b1c0107901ff48@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20150525
+END:VEVENT
+BEGIN:VEVENT
+UID:4cac73c04e28e38af579af7c6d258fdf@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20150604
+END:VEVENT
+BEGIN:VEVENT
+UID:5b434e81e66a3c998f46e244208d6109@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20151118
+END:VEVENT
+BEGIN:VEVENT
+UID:ca02af9776d7ea82bc5a825af066c29b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20160324
+END:VEVENT
+BEGIN:VEVENT
+UID:21718c72690cdd4aee8f1398f04b14be@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20160325
+END:VEVENT
+BEGIN:VEVENT
+UID:2b89cb8bab52811441302ae7307025b7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20160327
+END:VEVENT
+BEGIN:VEVENT
+UID:304c4905893257236e14cc213a2fddfa@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20160328
+END:VEVENT
+BEGIN:VEVENT
+UID:96227cdbdd8873a346fd9baac1741617@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20160505
+END:VEVENT
+BEGIN:VEVENT
+UID:c1e4bdb1749961db1d43a289eb4bc3e2@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20160515
+END:VEVENT
+BEGIN:VEVENT
+UID:527e89b57742fe7c1c3036596aa2608f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20160516
+END:VEVENT
+BEGIN:VEVENT
+UID:d4cbff2d10e93afa405dc86976aef767@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20160526
+END:VEVENT
+BEGIN:VEVENT
+UID:2b9d25b1a0667b5f544816b42a4f5fbe@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20161116
+END:VEVENT
+BEGIN:VEVENT
+UID:0589d0e77b9d06dc329759f855d2d257@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20170413
+END:VEVENT
+BEGIN:VEVENT
+UID:fa7ae7a7add4071edc86f99dc1dbf266@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20170414
+END:VEVENT
+BEGIN:VEVENT
+UID:7e77ad9ee40ed397361021b825ee614b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20170416
+END:VEVENT
+BEGIN:VEVENT
+UID:3392ec82b7c770690998b7fbddd6e36f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20170417
+END:VEVENT
+BEGIN:VEVENT
+UID:2c0231d883390dc112d5045f2c823422@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20170525
+END:VEVENT
+BEGIN:VEVENT
+UID:53f354489b3ab6cc555c62af4a3d486c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20170604
+END:VEVENT
+BEGIN:VEVENT
+UID:d1ca8df5a7be472ec6bb7bfd7d8fc2aa@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20170605
+END:VEVENT
+BEGIN:VEVENT
+UID:50e86b4ea724192c196f9099271c0a0f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20170615
+END:VEVENT
+BEGIN:VEVENT
+UID:335410a757e180f8e0fbc794e1ea297c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20171122
+END:VEVENT
+BEGIN:VEVENT
+UID:6b3e9b4373abff842c15bc5a8ca04c3c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20180329
+END:VEVENT
+BEGIN:VEVENT
+UID:1b9c8c2be63d27c4eda4ef9ab3c555bb@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20180330
+END:VEVENT
+BEGIN:VEVENT
+UID:3627e8320922615ff1869e6a6a54d016@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20180401
+END:VEVENT
+BEGIN:VEVENT
+UID:7824fd5736ba03ded61cc779e8d284f6@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20180402
+END:VEVENT
+BEGIN:VEVENT
+UID:ae990fa54a1da06503a836b82a99d78f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20180510
+END:VEVENT
+BEGIN:VEVENT
+UID:e92d8697df9cc2a7f61a10da80095a12@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20180520
+END:VEVENT
+BEGIN:VEVENT
+UID:bf2ce333886aa3a19d1cf1e37cd6a292@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20180521
+END:VEVENT
+BEGIN:VEVENT
+UID:b140ebaabc1c8e88fca5e03dbf6fe0f1@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20180531
+END:VEVENT
+BEGIN:VEVENT
+UID:95e45d1272607e00fa2367b724eb845a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20181121
+END:VEVENT
+BEGIN:VEVENT
+UID:0d7422d551864e884bf8de8169446ef2@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20190418
+END:VEVENT
+BEGIN:VEVENT
+UID:60b25f41f1c2f4688926ca42b732d343@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20190419
+END:VEVENT
+BEGIN:VEVENT
+UID:ea6a06318c232f49977cfcd278cf0eb5@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20190421
+END:VEVENT
+BEGIN:VEVENT
+UID:9fe080967e04e0a353b920bb0a407ded@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20190422
+END:VEVENT
+BEGIN:VEVENT
+UID:52b3b3ac98008bf4e07943b4dd170aea@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20190530
+END:VEVENT
+BEGIN:VEVENT
+UID:2723903ece8b53a2e1bc73407e88f1d2@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20190609
+END:VEVENT
+BEGIN:VEVENT
+UID:ef8455172e0913806e9f486a7bd3081f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20190610
+END:VEVENT
+BEGIN:VEVENT
+UID:b3386d521fa04a2f6fe4fcb3bcfb281f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20190620
+END:VEVENT
+BEGIN:VEVENT
+UID:db3dc8faea47f33c63ce6091242b0432@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20191120
+END:VEVENT
+BEGIN:VEVENT
+UID:2ea230429b3f4030c07a177fd8a1f51c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20200409
+END:VEVENT
+BEGIN:VEVENT
+UID:503d5e7055e1ed959810e6b204b5c9f0@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20200410
+END:VEVENT
+BEGIN:VEVENT
+UID:0b2900584d544f91fe647b414e2951fe@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20200412
+END:VEVENT
+BEGIN:VEVENT
+UID:3e3c9a8f46206994581038ffb61b5cf3@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20200413
+END:VEVENT
+BEGIN:VEVENT
+UID:1ffd55fdbd98a5373f5ea36061212719@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20200521
+END:VEVENT
+BEGIN:VEVENT
+UID:dab9e99da6c4d05c4b808b424640422b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20200531
+END:VEVENT
+BEGIN:VEVENT
+UID:e88b68b2ee484e73cfa5613747c5e195@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20200601
+END:VEVENT
+BEGIN:VEVENT
+UID:d72e6dd72a902e3e3b6259c1cb2b36d7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20200611
+END:VEVENT
+BEGIN:VEVENT
+UID:9cafc0d7587db9d89b669d5450784d96@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20201118
+END:VEVENT
+BEGIN:VEVENT
+UID:1df399809d3f2c299260cde9623abd2e@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20210401
+END:VEVENT
+BEGIN:VEVENT
+UID:54ee1fde38fc35a8c410eae3ebc83442@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20210402
+END:VEVENT
+BEGIN:VEVENT
+UID:e23e2ef41a9781f0ff0b3d0c26eb09b8@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20210404
+END:VEVENT
+BEGIN:VEVENT
+UID:ec4ac9a3d89643fb238408163f4cbc0b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20210405
+END:VEVENT
+BEGIN:VEVENT
+UID:c4b672167f9fe94344a5af84b7ababf8@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20210513
+END:VEVENT
+BEGIN:VEVENT
+UID:3698a64c920cc1292d26dfb440aa4c0f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20210523
+END:VEVENT
+BEGIN:VEVENT
+UID:0a9f71e48aa1abc4899d4e82775c02f5@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20210524
+END:VEVENT
+BEGIN:VEVENT
+UID:344f088e41f05cd33cca2214cae3fa0a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20210603
+END:VEVENT
+BEGIN:VEVENT
+UID:1240b3cb77024c7cad16ae3c17c6dc33@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20211117
+END:VEVENT
+BEGIN:VEVENT
+UID:a0a9753a0f5cbdecb4be3e1f4c2bb5cb@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20220414
+END:VEVENT
+BEGIN:VEVENT
+UID:ae051a8295b6289eed960336c5bb5322@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20220415
+END:VEVENT
+BEGIN:VEVENT
+UID:cfc32f9745a30edcaf90b70e651b8fd4@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20220417
+END:VEVENT
+BEGIN:VEVENT
+UID:6d4f9cd76aee45c0275f8013afc8d747@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20220418
+END:VEVENT
+BEGIN:VEVENT
+UID:d681d7f30b47d4a88aeaee29a067048b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20220526
+END:VEVENT
+BEGIN:VEVENT
+UID:45bd097c1918956b7bf841c91c1a5541@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20220605
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff4b1cf8ed0f830200029e7af431d8a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20220606
+END:VEVENT
+BEGIN:VEVENT
+UID:46de9299e7d5eb7e0ce9195458849655@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20220616
+END:VEVENT
+BEGIN:VEVENT
+UID:293cbfcd79d9bba1a416217c794869c1@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20221116
+END:VEVENT
+BEGIN:VEVENT
+UID:174ccab0db2142443fad507187ebd340@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20230406
+END:VEVENT
+BEGIN:VEVENT
+UID:cc3926b726b81a612f9e5604c66d4465@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20230407
+END:VEVENT
+BEGIN:VEVENT
+UID:ba04fd9149a9123f42a4a5556e3f9cee@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20230409
+END:VEVENT
+BEGIN:VEVENT
+UID:983590654f77162d819edabdfdeb35bd@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20230410
+END:VEVENT
+BEGIN:VEVENT
+UID:cdd76ec764a5887678b40560a171037f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20230518
+END:VEVENT
+BEGIN:VEVENT
+UID:c0574c3dbf4826d65d146f0d4fedaa69@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20230528
+END:VEVENT
+BEGIN:VEVENT
+UID:0f6d3fdba0e58fbdb9b30a99d7fc279a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20230529
+END:VEVENT
+BEGIN:VEVENT
+UID:6be124937a0ade0fff2e4fd965f3152c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20230608
+END:VEVENT
+BEGIN:VEVENT
+UID:ec37a36c0e3fab42a71be8964731d670@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20231122
+END:VEVENT
+BEGIN:VEVENT
+UID:7835b717827a119097fd190d521911d3@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20240328
+END:VEVENT
+BEGIN:VEVENT
+UID:8d54b2531202f8dadbdb94444337bba3@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20240329
+END:VEVENT
+BEGIN:VEVENT
+UID:3c1253bbe716fb30a77debcc311276dd@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20240331
+END:VEVENT
+BEGIN:VEVENT
+UID:a58ba294f599b148e4886d4f651c335e@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20240401
+END:VEVENT
+BEGIN:VEVENT
+UID:67ee7a546efc620a77e2b45948a407ab@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20240509
+END:VEVENT
+BEGIN:VEVENT
+UID:34efe49e8bc9715bc9fe2ae98d8e19cc@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20240519
+END:VEVENT
+BEGIN:VEVENT
+UID:bd875c44f647511cfc1491701827174e@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20240520
+END:VEVENT
+BEGIN:VEVENT
+UID:97f762164d8ced5fc9cd019870d7ee9d@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20240530
+END:VEVENT
+BEGIN:VEVENT
+UID:e6771ca4dfa24358386493d3f7a53fb7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20241120
+END:VEVENT
+BEGIN:VEVENT
+UID:34db18cc6ac879832db97dd0a71638b7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20250417
+END:VEVENT
+BEGIN:VEVENT
+UID:fe2243108b9982bcc92b46c14c26e4cf@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20250418
+END:VEVENT
+BEGIN:VEVENT
+UID:2be34d5cac4f19fcf727265971586291@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20250420
+END:VEVENT
+BEGIN:VEVENT
+UID:ff94685744c714ab1e020ad81c9e447d@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20250421
+END:VEVENT
+BEGIN:VEVENT
+UID:1bc62bb7b017c787e523d9688b603930@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20250529
+END:VEVENT
+BEGIN:VEVENT
+UID:5494702254ac5827b47a96d441e4a1b4@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20250608
+END:VEVENT
+BEGIN:VEVENT
+UID:3fe966641733445dbb0aacb175df61b6@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20250609
+END:VEVENT
+BEGIN:VEVENT
+UID:9c2f740c9ef6f2d678d1d704d0430cb9@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20250619
+END:VEVENT
+BEGIN:VEVENT
+UID:686561c6d275183290e1ae27b3a821b6@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20251119
+END:VEVENT
+BEGIN:VEVENT
+UID:05e580f8cd09d3672250730a22484b6c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20260402
+END:VEVENT
+BEGIN:VEVENT
+UID:d2a1a6f10c424c1da64a5862b306e03f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20260403
+END:VEVENT
+BEGIN:VEVENT
+UID:622ca740b485f92fa92575f2bc4e1ec4@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20260405
+END:VEVENT
+BEGIN:VEVENT
+UID:a44f2c4f36048391a70aed7e009b08f4@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20260406
+END:VEVENT
+BEGIN:VEVENT
+UID:afe20b5a20e953fc08807c37f17a4d7a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20260514
+END:VEVENT
+BEGIN:VEVENT
+UID:d800958d4fe6fb3d4551210a5a5a009c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20260524
+END:VEVENT
+BEGIN:VEVENT
+UID:e49151c2836ec925f5c0d9abe17a28c2@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20260525
+END:VEVENT
+BEGIN:VEVENT
+UID:0ef0a6092d550a24dd41bde69b395aed@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20260604
+END:VEVENT
+BEGIN:VEVENT
+UID:fdc89a5438a97f57c8996e295ea6b47c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20261118
+END:VEVENT
+BEGIN:VEVENT
+UID:7c9c661173f8bb91102d00b53e32f40e@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20270325
+END:VEVENT
+BEGIN:VEVENT
+UID:d41dfcc7184c7d36a055bf5f0f263e52@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20270326
+END:VEVENT
+BEGIN:VEVENT
+UID:21293720e1ddb0e6999143b81d9a548b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20270328
+END:VEVENT
+BEGIN:VEVENT
+UID:07fba88ae7b03c47e4e2b276007371ac@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20270329
+END:VEVENT
+BEGIN:VEVENT
+UID:9ceb53b6c7238ca369fbbc8cd3df4940@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20270506
+END:VEVENT
+BEGIN:VEVENT
+UID:f0c756f42dfbea0145eb148582056960@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20270516
+END:VEVENT
+BEGIN:VEVENT
+UID:d0bd016047e14621276f54a2019ce73c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20270517
+END:VEVENT
+BEGIN:VEVENT
+UID:7a9c6e1256b49787c8b3c1b21af9588a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20270527
+END:VEVENT
+BEGIN:VEVENT
+UID:e1cef564bc8415d0b0c250d7899b1cf7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20271117
+END:VEVENT
+BEGIN:VEVENT
+UID:e05e1ac6851a1535b365290e84db542c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20280413
+END:VEVENT
+BEGIN:VEVENT
+UID:62d9ac9b5acb6c567d9f0b1ce6dc13a0@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20280414
+END:VEVENT
+BEGIN:VEVENT
+UID:6e65fcb17158468ba4054d586af88813@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20280416
+END:VEVENT
+BEGIN:VEVENT
+UID:44f488d1349cc540db0f56cc2bbd6fdb@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20280417
+END:VEVENT
+BEGIN:VEVENT
+UID:249b6e777aa88c4e961f5a9f57105093@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20280525
+END:VEVENT
+BEGIN:VEVENT
+UID:18735e5619f9443975b99f4b0eac925e@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20280604
+END:VEVENT
+BEGIN:VEVENT
+UID:c91811b291c13a9bdd0b3ba5cd6cde20@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20280605
+END:VEVENT
+BEGIN:VEVENT
+UID:0794a1460ab43eecbfce603f80b53af0@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20280615
+END:VEVENT
+BEGIN:VEVENT
+UID:cd9c80f060c19bb1988baf9121ae310d@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20281122
+END:VEVENT
+BEGIN:VEVENT
+UID:cf85009483448b372776bb0081c90207@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20290329
+END:VEVENT
+BEGIN:VEVENT
+UID:af99a0795cf486eb8b7e0bcc5f3484f0@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20290330
+END:VEVENT
+BEGIN:VEVENT
+UID:d7ebe368a31d4369a188b783920c8b31@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20290401
+END:VEVENT
+BEGIN:VEVENT
+UID:09ad9e17af906946e939943dcc4cdb66@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20290402
+END:VEVENT
+BEGIN:VEVENT
+UID:6cfab0f95c4eeee3fba683e362b465da@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20290510
+END:VEVENT
+BEGIN:VEVENT
+UID:5732356bde245a471625e4bd112e27a0@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20290520
+END:VEVENT
+BEGIN:VEVENT
+UID:58d5cae331f655dfc0d631745ece80e5@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20290521
+END:VEVENT
+BEGIN:VEVENT
+UID:6129a8fe6e4ba198e87646a58565e1d6@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20290531
+END:VEVENT
+BEGIN:VEVENT
+UID:fe8cb795fa94c232dc4b286315862753@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20291121
+END:VEVENT
+BEGIN:VEVENT
+UID:03ea5b1f0dc14a47b46740630f6b72ad@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20300418
+END:VEVENT
+BEGIN:VEVENT
+UID:d7f991724a7c82fda5aec48dc4665b4f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20300419
+END:VEVENT
+BEGIN:VEVENT
+UID:43f680c94f6c0685a7eb24b2821a5bb7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20300421
+END:VEVENT
+BEGIN:VEVENT
+UID:f67482f159396d6e7d0dec25667882cf@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20300422
+END:VEVENT
+BEGIN:VEVENT
+UID:07569b2ce2fad9b0060849aa12963ec6@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20300530
+END:VEVENT
+BEGIN:VEVENT
+UID:676a6bda70765bca4af2b2790b4d192f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20300609
+END:VEVENT
+BEGIN:VEVENT
+UID:ada2adaad5bc4727fae751243ba61a56@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20300610
+END:VEVENT
+BEGIN:VEVENT
+UID:be484274495d8730941623ddb2c47788@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20300620
+END:VEVENT
+BEGIN:VEVENT
+UID:7ca1fc1b1626b489d23037a8989ae2df@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20301120
+END:VEVENT
+BEGIN:VEVENT
+UID:93d5ccba12c599ddea02df0737280fd4@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20310410
+END:VEVENT
+BEGIN:VEVENT
+UID:831120301a333e9d58cf3987f6551cde@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20310411
+END:VEVENT
+BEGIN:VEVENT
+UID:20af0b8f3b4bba4b1fc1c5eef7f42fb7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20310413
+END:VEVENT
+BEGIN:VEVENT
+UID:2b77a1d29787bb081a6d66a8d3514700@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20310414
+END:VEVENT
+BEGIN:VEVENT
+UID:5af9595c2a24344b4ec12f8a76debc41@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20310522
+END:VEVENT
+BEGIN:VEVENT
+UID:d71945b16e38566e0765dbd0d9281aa4@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20310601
+END:VEVENT
+BEGIN:VEVENT
+UID:e8faab9da2d954c7ffb18cf6eb77718f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20310602
+END:VEVENT
+BEGIN:VEVENT
+UID:3594bb59205a85e887ef8125317c93e4@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20310612
+END:VEVENT
+BEGIN:VEVENT
+UID:3e0d9ef3a4006e612e56103281a6854a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20311119
+END:VEVENT
+BEGIN:VEVENT
+UID:5bd97e46432b0690bbb27413eed5b93c@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20320325
+END:VEVENT
+BEGIN:VEVENT
+UID:e41457431289bf7dbac06d1d274b47a8@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20320326
+END:VEVENT
+BEGIN:VEVENT
+UID:e5e95b67b1a9dcc76782f826a516985f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20320328
+END:VEVENT
+BEGIN:VEVENT
+UID:4bf66bce381894a2eaa1af5beaf8c4c7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20320329
+END:VEVENT
+BEGIN:VEVENT
+UID:8a74ad667aca96e5ca0b409446fe25a8@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20320506
+END:VEVENT
+BEGIN:VEVENT
+UID:a6a22c25f08edc79a57d9f8a53b7a22b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20320516
+END:VEVENT
+BEGIN:VEVENT
+UID:295c033a2168f07ccfd3adb9770fd8eb@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20320517
+END:VEVENT
+BEGIN:VEVENT
+UID:f19863dade1ded79eb5cd6c605f7bf99@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20320527
+END:VEVENT
+BEGIN:VEVENT
+UID:efa31a0b441c2009759b4f876271a974@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20321117
+END:VEVENT
+BEGIN:VEVENT
+UID:756da35993bde34666af602a60cb14c5@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20330414
+END:VEVENT
+BEGIN:VEVENT
+UID:80dd79e53574ddadfe9cde7f0056175f@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20330415
+END:VEVENT
+BEGIN:VEVENT
+UID:c7580e8658333f816160e0294e6a7ccf@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20330417
+END:VEVENT
+BEGIN:VEVENT
+UID:8c5d962d6f82dbc390db5efc23627436@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20330418
+END:VEVENT
+BEGIN:VEVENT
+UID:a03c9aacad72ad9e80273e686d3e72f7@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20330526
+END:VEVENT
+BEGIN:VEVENT
+UID:0255d39402bbf76a8ee85c5c09d63873@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20330605
+END:VEVENT
+BEGIN:VEVENT
+UID:ccfdf6f2c095a3581407405e97f02dfb@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20330606
+END:VEVENT
+BEGIN:VEVENT
+UID:cabb8e238e21f6d8d8c536f6836d1fa2@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20330616
+END:VEVENT
+BEGIN:VEVENT
+UID:63fd7ba0d7c4eb5959089caf7251d8ed@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20331116
+END:VEVENT
+BEGIN:VEVENT
+UID:16b58bf73979fc27dc7b5cd8dc9f8f38@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20340406
+END:VEVENT
+BEGIN:VEVENT
+UID:a7131b3f2a72f3a3ca4838a34b01e6c5@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20340407
+END:VEVENT
+BEGIN:VEVENT
+UID:12aaa2b72ee931156fe9ec1ad67621a8@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20340409
+END:VEVENT
+BEGIN:VEVENT
+UID:6eaac5821ee567751e0d1433536f58a0@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20340410
+END:VEVENT
+BEGIN:VEVENT
+UID:b208968070f985f4fcc994f99f91a124@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20340518
+END:VEVENT
+BEGIN:VEVENT
+UID:6fa48e1f5cc67414ac81df5e79415077@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20340528
+END:VEVENT
+BEGIN:VEVENT
+UID:a60ee96f33edea19b65661a7773ad456@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20340529
+END:VEVENT
+BEGIN:VEVENT
+UID:0dc194c90b3ca25f0360a8775abf5edd@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20340608
+END:VEVENT
+BEGIN:VEVENT
+UID:b0fb4e41e9f3e4fb87b4e7e3fe7f289b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20341122
+END:VEVENT
+BEGIN:VEVENT
+UID:9e5a62b72b7cec4fd6cb92538069c56b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW
+DESCRIPTION:In keinem Bundesland ist der Gründonnerstag ein gesetzlicher Feiertag. In Baden-Württemberg ist an Gründonnerstag schulfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/gruendonnerstag/
+SUMMARY:Gründonnerstag
+DTSTART;VALUE=DATE:20350322
+END:VEVENT
+BEGIN:VEVENT
+UID:2c8da987804f1b6d114f0dc67ab96f38@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Karfreitag ist ganz Deutschland ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/karfreitag/
+SUMMARY:Karfreitag (§)
+DTSTART;VALUE=DATE:20350323
+END:VEVENT
+BEGIN:VEVENT
+UID:37a240f71c8f26dc974454fe68079f1d@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Der Ostersonntag ist in Brandenburg ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Ostersonntag (§)
+DTSTART;VALUE=DATE:20350325
+END:VEVENT
+BEGIN:VEVENT
+UID:dbd490ca88d71a23b97fd191e7e39e43@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Der Ostermontag ist ganz Deutschland ein gesetzlicher Feiertag. 
+URL;VALUE=URI:https://www.feiertage-deutschland.de/ostermontag/
+SUMMARY:Ostermontag (§)
+DTSTART;VALUE=DATE:20350326
+END:VEVENT
+BEGIN:VEVENT
+UID:f1fcb9fa45a9f55467872600b83e2992@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Christi Himmelfahrt ist ganz Deutschland ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de/christi-himmelfahrt/
+SUMMARY:Christi Himmelfahrt (§)
+DTSTART;VALUE=DATE:20350503
+END:VEVENT
+BEGIN:VEVENT
+UID:6688737a280cc03ad244ca872e59ae0b@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BB
+DESCRIPTION:Pfingstsonntag ist in Brandenburg ein gesetzlicher Feiertag
+URL;VALUE=URI:https://www.feiertage-deutschland.de
+SUMMARY:Pfingstsonntag (§)
+DTSTART;VALUE=DATE:20350513
+END:VEVENT
+BEGIN:VEVENT
+UID:a6102d8ed0e8c837b26ee4081a6c9b27@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:Alle Bundesländer
+DESCRIPTION:Pfingstmontag ist in allen deutschen Bundesländern ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/pfingstmontag/
+SUMMARY:Pfingstmontag (§)
+DTSTART;VALUE=DATE:20350514
+END:VEVENT
+BEGIN:VEVENT
+UID:9e75d20105ae0218c8134391f613619a@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BW\,BY\,HE\,NW\,RP\,SL\,SN\,TH
+DESCRIPTION:Fronleichnam ist in folgenden Bundesländern ein gesetzlicher Feiertag: Baden-Württemberg\, Bayern\, Hessen\, Nordrhein-Westfalen\, Rheinland-Pfalz\, Saarland. In Sachsen und Thüringen ist Fronleichnam nur in bestimmten Gemeinden ein gesetzlicher Feiertag.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/fronleichnam/
+SUMMARY:Fronleichnam (§)
+DTSTART;VALUE=DATE:20350524
+END:VEVENT
+BEGIN:VEVENT
+UID:c36d73a12027f5b47b179fb2b9661233@feiertage-deutschland.de
+DTSTAMP:20230424T045959Z
+LOCATION:BY\,SN
+DESCRIPTION:Der Buß- und Bettag ist in Sachsen ein gesetzlicher Feiertag. In Bayern ist der Buß- und Bettag unterrichtsfrei.
+URL;VALUE=URI:https://www.feiertage-deutschland.de/buss-und-bettag/
+SUMMARY:Buß- und Bettag (§)
+DTSTART;VALUE=DATE:20351121
+END:VEVENT
+END:VCALENDAR

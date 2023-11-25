@@ -43,6 +43,10 @@ Vue.component("PlanningList", PlanningList);
 vue_init_data.vuetify = new Vuetify();
 {% endblock %}
 
+{% block vue_app_data_fill %}
+vue_app_data["externalCals"] = {{ initial_external_calendars | safe }};
+{% endblock %}
+
 {% block vue_container %}
 {% endblock %}
 

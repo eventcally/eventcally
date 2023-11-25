@@ -7,6 +7,7 @@ from sqlalchemy.sql import func
 from project import app, db
 from project.forms.admin import (
     AdminNewsletterForm,
+    AdminPlanningForm,
     AdminSettingsForm,
     AdminTestEmailForm,
     DeleteAdminUnitForm,
@@ -263,3 +264,25 @@ def admin_user_delete(id):
         flash_errors(form)
 
     return render_template("admin/delete_user.html", form=form, user=user)
+
+
+@app.route("/admin/planning", methods=("GET", "POST"))
+@roles_required("admin")
+def admin_planning():
+    settings = upsert_settings()
+    form = AdminPlanningForm(obj=settings)
+
+    if form.validate_on_submit():
+        form.populate_obj(settings)
+
+        try:
+            db.session.commit()
+            flash(gettext("Settings successfully updated"), "success")
+            return redirect(url_for("admin"))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), "danger")
+    else:
+        flash_errors(form)
+
+    return render_template("admin/planning.html", form=form)

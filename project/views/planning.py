@@ -4,6 +4,7 @@ from flask_security import auth_required
 from project import app
 from project.access import can_use_planning
 from project.forms.planning import PlanningForm
+from project.services.admin import upsert_settings
 from project.services.search_params import EventSearchParams
 from project.views.event import get_event_category_choices
 from project.views.utils import permission_missing
@@ -24,4 +25,16 @@ def planning():
     form.weekday.data = [c[0] for c in form.weekday.choices]
     form.exclude_recurring.data = True
 
-    return render_template("planning/list.html", form=form, params=params)
+    settings = upsert_settings()
+    initial_external_calendars = (
+        settings.planning_external_calendars
+        if settings.planning_external_calendars
+        else "[]"
+    )
+
+    return render_template(
+        "planning/list.html",
+        form=form,
+        params=params,
+        initial_external_calendars=initial_external_calendars,
+    )

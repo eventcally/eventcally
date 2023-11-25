@@ -108,6 +108,7 @@
         },
         cancel: "Cancel",
         close: "Close",
+        refresh: "Refresh",
         decline: "Decline",
         docs: "Docs",
         save: "Save",
@@ -230,6 +231,7 @@
         close: "Schließen",
         decline: "Ablehnen",
         docs: "Doku",
+        refresh: "Aktualisieren",
         save: "Speichern",
         submit: "Senden",
         view: "Anzeigen",
@@ -380,6 +382,9 @@
 
   {% block vue_app_data %}
   var vue_app_data = {};
+  {% endblock %}
+
+  {% block vue_app_data_fill %}
   {% endblock %}
 
   {% if config["DOCS_URL"] %}

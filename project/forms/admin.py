@@ -1,3 +1,5 @@
+import json
+
 from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, RadioField, StringField, SubmitField, TextAreaField
@@ -16,6 +18,30 @@ class AdminSettingsForm(FlaskForm):
     announcement = TextAreaField(lazy_gettext("Announcement"), validators=[Optional()])
 
     submit = SubmitField(lazy_gettext("Save"))
+
+
+class AdminPlanningForm(FlaskForm):
+    planning_external_calendars = TextAreaField(
+        lazy_gettext("External calendars"), validators=[Optional()]
+    )
+
+    submit = SubmitField(lazy_gettext("Save"))
+
+    def validate(self, extra_validators=None):
+        result = super().validate(extra_validators)
+
+        if self.planning_external_calendars.data:
+            try:
+                json_object = json.loads(self.planning_external_calendars.data)
+                self.planning_external_calendars.data = json.dumps(
+                    json_object, indent=2
+                )
+            except Exception as e:  # pragma: no cover
+                msg = str(e)
+                self.planning_external_calendars.errors.append(msg)
+                result = False
+
+        return result
 
 
 class ResetTosAceptedForm(FlaskForm):

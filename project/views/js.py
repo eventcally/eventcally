@@ -1,18 +1,24 @@
+from datetime import datetime
+
+import icalendar
+import recurring_ical_events
+import requests
 from flask import request
 from flask.json import jsonify
 from flask_babel import gettext
 from flask_cors import cross_origin
-from flask_security import url_for_security
+from flask_security import auth_required, url_for_security
 from flask_security.utils import localize_callback
 from sqlalchemy import func
 
 from project import app, csrf
 from project.api.custom_widget.schemas import CustomWidgetSchema
+from project.dateutils import form_input_to_date
 from project.maputils import find_gmaps_places, get_gmaps_place
 from project.models import AdminUnit, CustomWidget, EventOrganizer, EventPlace
 from project.services.place import get_event_places
 from project.services.user import find_user_by_email
-from project.utils import get_place_str
+from project.utils import decode_response_content, get_place_str
 
 
 @app.route("/js/check/organization/short_name", methods=["POST"])
@@ -179,6 +185,70 @@ def js_autocomplete_gmaps_place():
     gmaps_id = request.args["gmaps_id"]
     place = get_gmaps_place(gmaps_id)
     return jsonify(place)
+
+
+@app.route("/js/icalevents", methods=["POST"])
+@auth_required()
+def js_icalevents():
+    csrf.protect()
+
+    try:
+        url = request.form["url"]
+        date_from = request.form["date_from"]
+        date_to = request.form["date_to"]
+
+        start_date = form_input_to_date(date_from).date()
+        end_date = form_input_to_date(date_to).date()
+
+        response = requests.get(url)
+        ical_string = decode_response_content(response)
+        calendar = icalendar.Calendar.from_ical(ical_string)
+        events = recurring_ical_events.of(calendar).between(start_date, end_date)
+        items = list()
+
+        for event in events:
+            summary = event.get("SUMMARY")
+            dt_start = event.get("DTSTART")
+            dt_end = event.get("DTEND")
+            location = event.get("LOCATION")
+            description = event.get("DESCRIPTION")
+
+            if not summary or not dt_start:  # pragma: no cover
+                continue
+
+            start = dt_start.dt
+
+            item = {
+                "name": summary,
+                "start": start,
+                "allday": not isinstance(start, datetime),
+            }
+
+            if dt_end:
+                item["end"] = dt_end.dt
+
+            vevent = {
+                "url": url,
+            }
+
+            if location:
+                vevent["location"] = location
+
+            if dt_end:
+                vevent["description"] = description
+
+            item["vevent"] = vevent
+            items.append(item)
+
+        result = {
+            "url": url,
+            "items": items,
+        }
+
+        return jsonify(result)
+    except Exception as e:  # pragma: no cover
+        app.logger.exception(url)
+        return getattr(e, "message", "Unknown error"), 400
 
 
 @app.route("/js/wlcw/<int:id>")

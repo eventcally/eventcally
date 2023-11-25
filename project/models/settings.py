@@ -14,3 +14,4 @@ class Settings(db.Model, TrackableMixin):
     privacy = deferred(Column(UnicodeText()))
     start_page = deferred(Column(UnicodeText()))
     announcement = deferred(Column(UnicodeText()))
+    planning_external_calendars = deferred(Column(UnicodeText()))

@@ -309,3 +309,34 @@ def test_admin_reset_tos_accepted(client, app, db, seeder: Seeder, utils: UtilAc
         from project.models.user import User
 
         assert len(User.query.filter(User.tos_accepted_at.isnot(None)).all()) == 0
+
+
+@pytest.mark.parametrize("db_error", [True, False])
+def test_admin_planning(client, seeder, utils, app, mocker, db_error):
+    user_id, admin_unit_id = seeder.setup_base(True)
+
+    url = utils.get_url("admin_planning")
+    response = utils.get_ok(url)
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "planning_external_calendars": "[]",
+        },
+    )
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
+    utils.assert_response_redirect(response, "admin")
+
+    with app.app_context():
+        from project.services.admin import upsert_settings
+
+        settings = upsert_settings()
+        assert settings.planning_external_calendars == "[]"
