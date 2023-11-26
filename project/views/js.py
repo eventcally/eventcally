@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 import icalendar
@@ -16,6 +17,7 @@ from project.api.custom_widget.schemas import CustomWidgetSchema
 from project.dateutils import form_input_to_date
 from project.maputils import find_gmaps_places, get_gmaps_place
 from project.models import AdminUnit, CustomWidget, EventOrganizer, EventPlace
+from project.services.admin import upsert_settings
 from project.services.place import get_event_places
 from project.services.user import find_user_by_email
 from project.utils import decode_response_content, get_place_str
@@ -200,7 +202,16 @@ def js_icalevents():
         start_date = form_input_to_date(date_from).date()
         end_date = form_input_to_date(date_to).date()
 
-        response = requests.get(url)
+        settings = upsert_settings()
+        planning_external_calendars_str = (
+            settings.planning_external_calendars
+            if settings.planning_external_calendars
+            else "[]"
+        )
+        external_calendars = json.loads(planning_external_calendars_str)
+        external_calendar = next((c for c in external_calendars if c["url"] == url))
+
+        response = requests.get(external_calendar["url"])
         ical_string = decode_response_content(response)
         calendar = icalendar.Calendar.from_ical(ical_string)
         events = recurring_ical_events.of(calendar).between(start_date, end_date)

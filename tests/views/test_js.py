@@ -301,11 +301,26 @@ def test_js_widget_loader_custom_widget(client, seeder: Seeder, utils: UtilActio
 
 
 def test_js_icalevents(
-    client, seeder: Seeder, utils: UtilActions, shared_datadir, requests_mock
+    client, app, db, seeder: Seeder, utils: UtilActions, shared_datadir, requests_mock
 ):
     user_id, admin_unit_id = seeder.setup_base()
     url = utils.get_url("planning")
     utils.get(url)
+
+    with app.app_context():
+        import json
+
+        from project.services.admin import upsert_settings
+
+        settings = upsert_settings()
+        settings.planning_external_calendars = json.dumps(
+            [
+                {
+                    "url": "http://test.de",
+                }
+            ]
+        )
+        db.session.commit()
 
     params = (client, utils, shared_datadir)
     _assert_icalevents(params, "feiertage-deutschland.ics")
