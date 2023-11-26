@@ -298,3 +298,51 @@ def test_js_widget_loader_custom_widget(client, seeder: Seeder, utils: UtilActio
 
     url = utils.get_url("js_widget_loader_custom_widget", id=custom_widget_id)
     utils.get_ok(url)
+
+
+def test_js_icalevents(
+    client, app, db, seeder: Seeder, utils: UtilActions, shared_datadir, requests_mock
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    url = utils.get_url("planning")
+    utils.get(url)
+
+    with app.app_context():
+        import json
+
+        from project.services.admin import upsert_settings
+
+        settings = upsert_settings()
+        settings.planning_external_calendars = json.dumps(
+            [
+                {
+                    "url": "http://test.de",
+                }
+            ]
+        )
+        db.session.commit()
+
+    params = (client, utils, shared_datadir)
+    _assert_icalevents(params, "feiertage-deutschland.ics")
+    _assert_icalevents(params, "recurring-events-changed-duration.ics")
+
+
+def _assert_icalevents(params, filename):
+    client, utils, datadir = params
+
+    utils.mock_get_request_with_file("http://test.de", datadir, filename)
+
+    with client:
+        url = utils.get_url("js_icalevents")
+        response = utils.post_form_data(
+            url,
+            {
+                "date_from": "2019-03-05",
+                "date_to": "2019-04-01",
+                "url": "http://test.de",
+            },
+        )
+        utils.assert_response_ok(response)
+        json = response.json
+        first = json["items"][0]
+        assert first["name"]

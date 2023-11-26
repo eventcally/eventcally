@@ -1,6 +1,7 @@
 import os
 import pathlib
 
+import requests
 from flask_babel import lazy_gettext
 from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
 from sqlalchemy.exc import IntegrityError
@@ -123,3 +124,10 @@ def get_pending_changes(
             result[attr.key] = [new_value, old_value]
 
     return result
+
+
+def decode_response_content(response: requests.Response) -> str:
+    try:
+        return response.content.decode("UTF-8")
+    except Exception:  # pragma: no cover
+        return response.content.decode(response.apparent_encoding)

@@ -60,7 +60,7 @@ GeoAlchemy2==0.13.1
 googlemaps==4.10.0
 greenlet==2.0.2
 gunicorn==20.1.0
-icalendar==5.0.5
+icalendar==5.0.11
 identify==1.5.10
 idna==2.10
 importlib-metadata==6.3.0
@@ -109,9 +109,10 @@ python-dateutil==2.8.1
 python-dotenv==0.15.0
 python-editor==1.0.4
 pytoolconfig==1.2.5
-pytz==2022.7.1
+pytz==2023.3
 PyYAML==6.0.1
 qrcode==6.1
+recurring-ical-events==2.1.0
 redis==4.5.4
 regex==2023.3.23
 requests==2.31.0

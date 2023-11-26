@@ -5,6 +5,7 @@ from sqlalchemy import and_
 
 from project.models import Event, EventOrganizer, EventPlace
 from project.services.importer.ld_json_importer import LdJsonImporter
+from project.utils import decode_response_content
 
 
 class EventImporter:
@@ -21,12 +22,7 @@ class EventImporter:
             ] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
 
         response = requests.get(sanitized_url, headers=headers)
-
-        try:
-            html = response.content.decode("UTF-8")
-        except Exception:  # pragma: no cover
-            html = response.content.decode(response.apparent_encoding)
-
+        html = decode_response_content(response)
         return self.load_event_from_html(html, absolute_url)
 
     def load_event_from_html(self, html: str, origin_url: str):

@@ -39,6 +39,64 @@ const PlanningList = {
                                   </v-icon>
                                   {{ $t("comp.filter") }}
                                 </v-btn>
+
+
+                                <v-dialog
+                                v-model="externalMenu"
+                                persistent
+                                max-width="600px"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn color="primary"
+                                  v-if="externalCalMenuVisible"
+                                  depressed outlined class="mr-4" v-bind="attrs"
+                                  v-on="on">
+                                    <v-icon small>
+                                      mdi-calendar-multiple
+                                    </v-icon>
+                                  </v-btn>
+                                </template>
+
+
+                                <v-card>
+                                <v-card-title>{{ $t("comp.externalCalTitle") }}</v-card-title>
+                                <v-card-text>
+                                  <v-list two-line flat>
+                                    <v-list-item-group>
+                                      <v-list-item v-for="(externalCal, i) in externalCals" :value="externalCal" :key="i">
+                                        <template>
+                                          <v-list-item-action>
+                                            <v-checkbox v-model="externalCal.active"></v-checkbox>
+                                          </v-list-item-action>
+                                          <v-list-item-content>
+                                            <v-list-item-title v-text="externalCal.title"></v-list-item-title>
+                                            <v-list-item-subtitle v-text="externalCal.url"></v-list-item-subtitle>
+                                          </v-list-item-content>
+                                        </template>
+                                      </v-list-item>
+                                    </v-list-item-group>
+                                  </v-list>
+
+                                  <!--<v-text-field
+                                    v-model="externalNewUrl"
+                                    @keyup.enter="addExternalUrl"
+                                    :label="$t('comp.externalCalAddUrl')"
+                                    required
+                                  ></v-text-field>-->
+
+                                </v-card-text>
+                                  <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn
+                                      text
+                                      @click="closeExternalMenu"
+                                    >
+                                      {{ $t("shared.close") }}
+                                    </v-btn>
+                                  </v-card-actions>
+                                </v-card>
+                              </v-dialog>
+
                                 <v-spacer></v-spacer>
 
                                 <v-btn-toggle
@@ -74,7 +132,7 @@ const PlanningList = {
                                 locale="de"
                                 :weekdays="[1, 2, 3, 4, 5, 6, 0]"
                                 :type="type"
-                                :events="events"
+                                :events="allEvents"
                                 :event-color="getEventColor"
                                 event-more-text="{0} weitere"
                                 @click:event="showEvent"
@@ -92,12 +150,19 @@ const PlanningList = {
                                   <v-card-title>{{ selectedEvent.name }}</v-card-title>
                                   <v-card-subtitle>
                                       <v-icon small>mdi-calendar</v-icon> {{ $root.render_event_date(selectedEvent.date.start, selectedEvent.date.end, selectedEvent.date.allday) }}
-                                      <event-warning-pills :event="selectedEvent.date.event"></event-warning-pills>
+                                      <event-warning-pills v-if="selectedEvent.date.event" :event="selectedEvent.date.event"></event-warning-pills>
                                   </v-card-subtitle>
                                   <v-card-text>
-                                    <div><v-icon small>mdi-database</v-icon> {{ selectedEvent.date.event.organization.name }}</div>
-                                    <div v-if="selectedEvent.date.event.organizer.name != selectedEvent.date.event.organization.name"><v-icon small>mdi-server</v-icon> {{ selectedEvent.date.event.organizer.name }}</div>
-                                    <div><v-icon small>mdi-map-marker</v-icon> {{ selectedEvent.date.event.place.name }}</div>
+                                    <template v-if="selectedEvent.date.event">
+                                      <div><v-icon small>mdi-database</v-icon> {{ selectedEvent.date.event.organization.name }}</div>
+                                      <div v-if="selectedEvent.date.event.organizer.name != selectedEvent.date.event.organization.name"><v-icon small>mdi-server</v-icon> {{ selectedEvent.date.event.organizer.name }}</div>
+                                      <div><v-icon small>mdi-map-marker</v-icon> {{ selectedEvent.date.event.place.name }}</div>
+                                    </template>
+                                    <template v-if="selectedEvent.date.vevent">
+                                      <div v-if="selectedEvent.date.vevent.description">{{ selectedEvent.date.vevent.description }}</div>
+                                      <div v-if="selectedEvent.date.vevent.location"><v-icon small>mdi-map-marker</v-icon> {{ selectedEvent.date.vevent.location }}</div>
+                                      <div><v-icon small>mdi-database</v-icon> {{ selectedEvent.date.vevent.url }}</div>
+                                    </template>
                                   </v-card-text>
 
                                   <v-card-actions>
@@ -110,6 +175,7 @@ const PlanningList = {
                                     {{ $t("shared.close") }}
                                     </v-btn>
                                     <v-btn
+                                      v-if="selectedEvent.date.event"
                                       text
                                       color="primary"
                                       @click="openEventDate(selectedEvent.date)"
@@ -137,6 +203,8 @@ const PlanningList = {
           week: "Week",
           month: "Month",
           filter: "Filter",
+          externalCalTitle: "External Calendars",
+          externalCalAddUrl: "Add link to iCal calendar",
         },
       },
       de: {
@@ -148,6 +216,8 @@ const PlanningList = {
           week: "Woche",
           month: "Monat",
           filter: "Filter",
+          externalCalTitle: "Externe Kalender",
+          externalCalAddUrl: "Link zu iCal-Kalendar hinzufügen",
         },
       },
     },
@@ -164,8 +234,21 @@ const PlanningList = {
     isLoading: false,
     maxDates: 200,
     warning: null,
+    externalMenu: false,
+    externalNewUrl: "",
+    externalEvents: [],
+    externalCals: [],
   }),
+  computed: {
+    allEvents() {
+      return [...this.events,...this.externalEvents];
+    },
+    externalCalMenuVisible() {
+      return this.externalCals.length > 0;
+    },
+  },
   mounted () {
+    this.externalCals = this.$root.externalCals;
     this.$refs.calendar.checkChange();
   },
   methods: {
@@ -177,7 +260,11 @@ const PlanningList = {
     calendarChanged({ start, end }) {
       $('#date_from').val(start.date);
       $('#date_to').val(end.date);
+      this.load();
+    },
+    load() {
       this.loadEvents();
+      this.loadExternalCalendars();
     },
     loadEvents(page = 1) {
       $('#page').val(page);
@@ -217,6 +304,39 @@ const PlanningList = {
 
               if (response.data.has_next) {
                 vm.loadEvents(response.data.next_num);
+              }
+          });
+    },
+    loadExternalCalendars() {
+      this.externalEvents = [];
+
+      this.externalCals.forEach(externalCal => {
+        if (externalCal.active) {
+          this.loadExternalCalendar(externalCal);
+        }
+      });
+    },
+    loadExternalCalendar(externalCal) {
+      var bodyFormData = new FormData();
+      bodyFormData.append('date_from', $('#date_from').val());
+      bodyFormData.append('date_to', $('#date_to').val());
+      bodyFormData.append('url', externalCal.url);
+
+      const vm = this;
+      axios
+          .post(`/js/icalevents`, bodyFormData, {
+            withCredentials: true,
+          })
+          .then((response) => {
+              for (const item of response.data.items) {
+                  vm.externalEvents.push({
+                      name: item.name,
+                      start: moment(item.start).toDate(),
+                      end: item.end != null ? moment(item.end).toDate() : null,
+                      timed: !item.allday,
+                      date: item,
+                      color: '#aa7bff'
+                  });
               }
           });
     },
@@ -274,5 +394,17 @@ const PlanningList = {
     handleLoading(isLoading) {
       this.isLoading = isLoading;
     },
+    addExternalUrl() {
+      this.externalCals.push({
+        title: this.externalNewUrl,
+        url: this.externalNewUrl,
+        active: true,
+      });
+      this.externalNewUrl = "";
+    },
+    closeExternalMenu() {
+      this.externalMenu = false;
+      this.loadExternalCalendars();
+    }
   },
 };

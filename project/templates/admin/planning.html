@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% from "_macros.html" import render_field, render_field_with_errors %}
+{%- block title -%}
+{{ _('Planning') }}
+{%- endblock -%}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin') }}">{{ _('Admin') }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ _('Planning') }}</li>
+    </ol>
+</nav>
+
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+
+    <textarea class="form-control text-monospace" style="font-size: 0.7rem;" disabled rows="12">
+[
+    {
+        "title": "Feiertage Deutschland",
+        "url": "https://www.feiertage-deutschland.de/kalender-download/ics/feiertage-deutschland.ics",
+        "active": false
+    },
+    {
+        "title": "Schulferien Niedersachsen",
+        "url": "https://www.feiertage-deutschland.de/kalender-download/ics/schulferien-niedersachsen.ics",
+        "active": false
+    }
+]
+    </textarea>
+
+    {{ render_field_with_errors(form.planning_external_calendars) }}
+
+    {{ render_field(form.submit) }}
+</form>
+
+{% endblock %}
