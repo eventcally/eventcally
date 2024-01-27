@@ -320,6 +320,19 @@ class EventSearchRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMi
             "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..)."
         },
     )
+    organization_id = fields.Int(
+        metadata={"description": "Looks for events with this organization id."},
+    )
+    organizer_id = fields.Int(
+        metadata={"description": "Looks for events with this organizer id."},
+    )
+    event_place_id = fields.Int(
+        metadata={"description": "Looks for events with this event place id."},
+    )
+    event_list_id = fields.List(
+        fields.Int(),
+        metadata={"description": "Looks for events with this event list ids."},
+    )
     sort = fields.Str(
         metadata={"description": "Sort result items."},
         validate=validate.OneOf(
@@ -336,6 +349,10 @@ class EventSearchRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMi
     status = fields.List(
         EnumField(EventStatus),
         metadata={"description": "Looks for events with this stati."},
+    )
+    public_status = fields.List(
+        EnumField(PublicStatus),
+        metadata={"description": "Looks for events with this public stati."},
     )
     postal_code = fields.List(
         fields.Str(),
