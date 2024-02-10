@@ -127,7 +127,9 @@ def prepare_form_reference_requests(form, admin_unit):
         [(a.id, a.name) for a in admin_unit_choices],
         key=lambda a: a[1],
     )
-    form.reference_request_admin_unit_id.data = selected_ids
+
+    if not form.is_submitted():
+        form.reference_request_admin_unit_id.data = selected_ids
 
 
 @app.route("/admin_unit/<int:id>/events/create", methods=("GET", "POST"))

@@ -276,8 +276,11 @@ const PlanningList = {
         this.countTitle = "";
       }
       const vm = this;
+      const req_data = $("#filter_form :input").filter(function () {
+          return this.value.length > 0
+      }).serialize()
       axios
-          .get(`/api/v1/event-dates/search?` + $("#filter_form").serialize(), {
+          .get(`/api/v1/event-dates/search?` + req_data, {
               withCredentials: true,
               handleLoading: this.handleLoading,
           })
