@@ -820,9 +820,9 @@
         $(this).val(null).trigger('change');
         var location_only = $(this).attr("data-location-only");
         if (location_only) {
-          reset_location_form();
+          reset_location_form("{{ target_prefix }}");
         } else {
-          reset_place_form();
+          reset_place_form("{{ target_prefix }}");
           $('#place-name').val(data.main_text);
           if ($('#place-name').length > 0 && $.isFunction($('#place-name').valid)) {
             $('#place-name').valid();
