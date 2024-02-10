@@ -1361,7 +1361,7 @@ if (URL) {
     var end = get_moment_with_time(end_id);
     var max = start.add(14, 'day');
     return end <= max;
-  }, jQuery.validator.format("{{ _('An event can last a maximum of 14 days.') }}"));
+  }, jQuery.validator.format("{{ _('An event can last a maximum of 180 days.') }}"));
 
   $.validator.addMethod( "time", function( value, element ) {
     return this.optional( element ) || /^([01]\d|2[0-3]|[0-9])(:[0-5]\d){1,2}$/.test( value );
@@ -1855,7 +1855,7 @@ $('#allday').on('change', function() {
   <div class="card-body">
     <div id="{{ date_definition.id }}-single-event-container">
       {{ date_definition.form.hidden_tag() }}
-      {{ render_field_with_errors(date_definition.form.start, **{"data-range-to":"#"+date_definition.form.end.id, "data-range-max-days": "14", "data-allday": "#"+date_definition.form.allday.id}) }}
+      {{ render_field_with_errors(date_definition.form.start, **{"data-range-to":"#"+date_definition.form.end.id, "data-range-max-days": "180", "data-allday": "#"+date_definition.form.allday.id}) }}
       {{ render_field_with_errors(date_definition.form.end, is_collapsible=1) }}
       {{ render_field_with_errors(date_definition.form.allday, ri="checkbox") }}
 

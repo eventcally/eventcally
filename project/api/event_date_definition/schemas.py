@@ -32,7 +32,7 @@ class EventDateDefinitionBaseSchemaMixin(object):
     )
     end = CustomDateTimeField(
         metadata={
-            "description": "When the event will end. An event can last a maximum of 14 days. If the event takes place regularly, enter when the first date will end."
+            "description": "When the event will end. An event can last a maximum of 180 days. If the event takes place regularly, enter when the first date will end."
         },
     )
     allday = fields.Bool(
