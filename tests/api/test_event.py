@@ -456,7 +456,7 @@ def test_put_durationMoreThanMaxAllowedDuration(
 
     put = create_put(place_id, organizer_id)
     put["date_definitions"][0]["start"] = "2021-02-07T11:00:00.000Z"
-    put["date_definitions"][0]["end"] = "2021-02-21T11:01:00.000Z"
+    put["date_definitions"][0]["end"] = "2022-02-21T11:01:00.000Z"
 
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.put_json(url, put)

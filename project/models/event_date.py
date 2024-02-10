@@ -46,9 +46,9 @@ class EventDateDefinition(db.Model):
             if self.start > self.end:
                 raise make_check_violation("The start must be before the end.")
 
-            max_end = self.start + relativedelta(days=14)
+            max_end = self.start + relativedelta(days=180)
             if self.end > max_end:
-                raise make_check_violation("An event can last a maximum of 14 days.")
+                raise make_check_violation("An event can last a maximum of 180 days.")
 
 
 @listens_for(EventDateDefinition, "before_insert")

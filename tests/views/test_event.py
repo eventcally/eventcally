@@ -439,14 +439,14 @@ def test_create_durationMoreThanMaxAllowedDuration(
         {
             "name": "Name",
             "date_definitions-0-start": ["2030-12-30", "12:00"],
-            "date_definitions-0-end": ["2031-01-13", "12:01"],
+            "date_definitions-0-end": ["2031-06-29", "12:01"],
             "event_place_id": place_id,
         },
     )
 
     utils.assert_response_error_message(
         response,
-        "Eine Veranstaltung darf maximal 14 Tage dauern",
+        "Eine Veranstaltung darf maximal 180 Tage dauern",
     )
 
 

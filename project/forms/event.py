@@ -48,7 +48,7 @@ class EventDateDefinitionFormMixin:
         lazy_gettext("End"),
         validators=[Optional()],
         description=lazy_gettext(
-            "Indicate when the event date will end. An event can last a maximum of 14 days."
+            "Indicate when the event date will end. An event can last a maximum of 180 days."
         ),
     )
     allday = BooleanField(
@@ -67,9 +67,9 @@ class EventDateDefinitionFormMixin:
                 self.start.errors.append(msg)
                 return False
 
-            max_end = self.start.data + relativedelta(days=14)
+            max_end = self.start.data + relativedelta(days=180)
             if self.end.data > max_end:
-                msg = gettext("An event can last a maximum of 14 days.")
+                msg = gettext("An event can last a maximum of 180 days.")
                 self.end.errors.append(msg)
                 return False
         return True

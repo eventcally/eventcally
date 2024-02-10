@@ -248,7 +248,7 @@ $( function() {
       {{ _('Event') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.name) }}
+      {{ render_field_with_errors(form.name, role="presentation", autocomplete="off") }}
       {{ render_field_with_errors(form.description, style="min-height:10rem;") }}
     </div>
   </div>

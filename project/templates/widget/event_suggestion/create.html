@@ -229,12 +229,12 @@
         {{ _('Event') }}
       </div>
       <div class="card-body">
-        {{ render_field_with_errors(form.name) }}
+        {{ render_field_with_errors(form.name, role="presentation", autocomplete="off") }}
         {{ render_field_with_errors(form.event_place_id, class="w-100") }}
         {{ render_field_with_errors(form.organizer_id, class="w-100") }}
 
         <div id="single-event-container" class="mb-3">
-          {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "14", "data-allday": "#allday"}) }}
+          {{ render_field_with_errors(form.start, **{"data-range-to":"#end", "data-range-max-days": "180", "data-allday": "#allday"}) }}
           {{ render_field_with_errors(form.allday, ri="checkbox") }}
           {{ render_field_with_errors(form.end, is_collapsible=1) }}
           <button type="button" id="recc-button" class="btn btn-outline-secondary"><i class="fas fa-history"></i> {{ _('Recurring event') }}</button>

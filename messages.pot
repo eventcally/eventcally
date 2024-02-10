@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2023 ORGANIZATION
+# Copyright (C) 2024 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-13 17:25+0100\n"
+"POT-Creation-Date: 2024-02-10 17:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,183 +17,183 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.12.1\n"
 
-#: project/i10n.py:32
+#: project/i10n.py:36
 msgid "Event_Art"
 msgstr ""
 
-#: project/i10n.py:33
+#: project/i10n.py:37
 msgid "Event_Book"
 msgstr ""
 
-#: project/i10n.py:34
+#: project/i10n.py:38
 msgid "Event_Movie"
 msgstr ""
 
-#: project/i10n.py:35
+#: project/i10n.py:39
 msgid "Event_Family"
 msgstr ""
 
-#: project/i10n.py:36
+#: project/i10n.py:40
 msgid "Event_Festival"
 msgstr ""
 
-#: project/i10n.py:37
+#: project/i10n.py:41
 msgid "Event_Religious"
 msgstr ""
 
-#: project/i10n.py:38
+#: project/i10n.py:42
 msgid "Event_Shopping"
 msgstr ""
 
-#: project/i10n.py:39
+#: project/i10n.py:43
 msgid "Event_Comedy"
 msgstr ""
 
-#: project/i10n.py:40
+#: project/i10n.py:44
 msgid "Event_Music"
 msgstr ""
 
-#: project/i10n.py:41
+#: project/i10n.py:45
 msgid "Event_Dance"
 msgstr ""
 
-#: project/i10n.py:42
+#: project/i10n.py:46
 msgid "Event_Nightlife"
 msgstr ""
 
-#: project/i10n.py:43
+#: project/i10n.py:47
 msgid "Event_Theater"
 msgstr ""
 
-#: project/i10n.py:44
+#: project/i10n.py:48
 msgid "Event_Dining"
 msgstr ""
 
-#: project/i10n.py:45
+#: project/i10n.py:49
 msgid "Event_Conference"
 msgstr ""
 
-#: project/i10n.py:46
+#: project/i10n.py:50
 msgid "Event_Meetup"
 msgstr ""
 
-#: project/i10n.py:47
+#: project/i10n.py:51
 msgid "Event_Fitness"
 msgstr ""
 
-#: project/i10n.py:48
+#: project/i10n.py:52
 msgid "Event_Sports"
 msgstr ""
 
-#: project/i10n.py:49
+#: project/i10n.py:53
 msgid "Event_Other"
 msgstr ""
 
-#: project/i10n.py:50
+#: project/i10n.py:54
 msgid "Event_Exhibition"
 msgstr ""
 
-#: project/i10n.py:51
+#: project/i10n.py:55
 msgid "Event_Culture"
 msgstr ""
 
-#: project/i10n.py:52
+#: project/i10n.py:56
 msgid "Event_Tour"
 msgstr ""
 
-#: project/i10n.py:53
+#: project/i10n.py:57
 msgid "Event_OpenAir"
 msgstr ""
 
-#: project/i10n.py:54
+#: project/i10n.py:58
 msgid "Event_Stage"
 msgstr ""
 
-#: project/i10n.py:55
+#: project/i10n.py:59
 msgid "Event_Lecture"
 msgstr ""
 
-#: project/i10n.py:56
+#: project/i10n.py:60
 msgid "Typical Age range"
 msgstr ""
 
-#: project/i10n.py:57
+#: project/i10n.py:61
 msgid "Administrator"
 msgstr ""
 
-#: project/i10n.py:58
+#: project/i10n.py:62
 msgid "Event expert"
 msgstr ""
 
-#: project/i10n.py:59
+#: project/i10n.py:63
 msgid "EventReviewStatus.inbox"
 msgstr ""
 
-#: project/i10n.py:60
+#: project/i10n.py:64
 msgid "EventReviewStatus.verified"
 msgstr ""
 
-#: project/i10n.py:61
+#: project/i10n.py:65
 msgid "EventReviewStatus.rejected"
 msgstr ""
 
-#: project/i10n.py:62
+#: project/i10n.py:66
 msgid "Scope_openid"
 msgstr ""
 
-#: project/i10n.py:63
+#: project/i10n.py:67
 msgid "Scope_profile"
 msgstr ""
 
-#: project/i10n.py:64
+#: project/i10n.py:68
 msgid "Scope_user:read"
 msgstr ""
 
-#: project/i10n.py:65
+#: project/i10n.py:69
 msgid "Scope_user:write"
 msgstr ""
 
-#: project/i10n.py:66
+#: project/i10n.py:70
 msgid "Scope_organizer:write"
 msgstr ""
 
-#: project/i10n.py:67
+#: project/i10n.py:71
 msgid "Scope_place:write"
 msgstr ""
 
-#: project/i10n.py:68
+#: project/i10n.py:72
 msgid "Scope_event:write"
 msgstr ""
 
-#: project/i10n.py:69
+#: project/i10n.py:73
 msgid "Scope_eventlist:write"
 msgstr ""
 
-#: project/i10n.py:70
+#: project/i10n.py:74
 msgid "Scope_eventreference:write"
 msgstr ""
 
-#: project/i10n.py:71
+#: project/i10n.py:75
 msgid "Scope_organization:read"
 msgstr ""
 
-#: project/i10n.py:72
+#: project/i10n.py:76
 msgid "Scope_organization:write"
 msgstr ""
 
-#: project/i10n.py:73
+#: project/i10n.py:77
 msgid "Scope_customwidget:write"
 msgstr ""
 
-#: project/i10n.py:74
+#: project/i10n.py:78
 msgid "There must be no self-reference."
 msgstr ""
 
-#: project/utils.py:19
+#: project/utils.py:20
 msgid "Event_"
 msgstr ""
 
-#: project/utils.py:23
+#: project/utils.py:24
 msgid "."
 msgstr ""
 
@@ -201,64 +201,69 @@ msgstr ""
 msgid "message"
 msgstr ""
 
-#: project/forms/admin.py:11 project/templates/layout.html:344
+#: project/forms/admin.py:13 project/templates/layout.html:344
 #: project/views/root.py:55
 msgid "Terms of service"
 msgstr ""
 
-#: project/forms/admin.py:12 project/templates/layout.html:349
+#: project/forms/admin.py:14 project/templates/layout.html:349
 #: project/views/root.py:67
 msgid "Legal notice"
 msgstr ""
 
-#: project/forms/admin.py:13 project/templates/_macros.html:1490
+#: project/forms/admin.py:15 project/templates/_macros.html:1490
 #: project/templates/layout.html:353
 #: project/templates/widget/event_suggestion/create.html:204
-#: project/views/admin_unit.py:84 project/views/root.py:75
+#: project/views/admin_unit.py:83 project/views/root.py:75
 msgid "Contact"
 msgstr ""
 
-#: project/forms/admin.py:14 project/templates/layout.html:357
+#: project/forms/admin.py:16 project/templates/layout.html:357
 #: project/views/root.py:83
 msgid "Privacy"
 msgstr ""
 
-#: project/forms/admin.py:15
+#: project/forms/admin.py:17
 msgid "Start page"
 msgstr ""
 
-#: project/forms/admin.py:16
+#: project/forms/admin.py:18
 msgid "Announcement"
 msgstr ""
 
-#: project/forms/admin.py:18 project/forms/oauth2_client.py:24
-#: project/forms/user.py:18 project/forms/user.py:32
+#: project/forms/admin.py:20 project/forms/admin.py:28
+#: project/forms/oauth2_client.py:24 project/forms/user.py:18
+#: project/forms/user.py:32
 msgid "Save"
 msgstr ""
 
-#: project/forms/admin.py:23
+#: project/forms/admin.py:25
+msgid "External calendars"
+msgstr ""
+
+#: project/forms/admin.py:49
 msgid "Reset for all users"
 msgstr ""
 
-#: project/forms/admin.py:25
+#: project/forms/admin.py:51
 msgid "Reset"
 msgstr ""
 
-#: project/forms/admin.py:29 project/forms/admin_unit_member.py:14
+#: project/forms/admin.py:55 project/forms/admin_unit_member.py:14
 #: project/forms/admin_unit_member.py:34
 msgid "Roles"
 msgstr ""
 
-#: project/forms/admin.py:30 project/templates/admin/update_user.html:4
+#: project/forms/admin.py:56 project/templates/admin/update_user.html:4
 #: project/templates/admin/update_user.html:8
 msgid "Update user"
 msgstr ""
 
-#: project/forms/admin.py:34 project/templates/admin/delete_user.html:6
+#: project/forms/admin.py:60 project/templates/admin/delete_user.html:6
 msgid "Delete user"
 msgstr ""
 
-#: project/forms/admin.py:35 project/forms/admin_unit.py:67
+#: project/forms/admin.py:61 project/forms/admin_unit.py:67
 #: project/forms/admin_unit_member.py:12 project/forms/admin_unit_member.py:25
 #: project/forms/admin_unit_member.py:30 project/forms/event.py:112
 #: project/forms/event_suggestion.py:38 project/forms/organizer.py:33
@@ -270,60 +275,60 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: project/forms/admin.py:40
+#: project/forms/admin.py:66
 msgid "Incoming reference requests allowed"
 msgstr ""
 
-#: project/forms/admin.py:41
+#: project/forms/admin.py:67
 msgid ""
 "If set, other organizations can ask this organization to reference their "
 "event."
 msgstr ""
 
-#: project/forms/admin.py:47
+#: project/forms/admin.py:73
 msgid "Suggestions enabled"
 msgstr ""
 
-#: project/forms/admin.py:48
+#: project/forms/admin.py:74
 msgid "If set, the organization can work with suggestions."
 msgstr ""
 
-#: project/forms/admin.py:52
+#: project/forms/admin.py:78
 msgid "Create other organizations"
 msgstr ""
 
-#: project/forms/admin.py:53
+#: project/forms/admin.py:79
 msgid "If set, members of the organization can create other organizations."
 msgstr ""
 
-#: project/forms/admin.py:59
+#: project/forms/admin.py:85
 msgid "Invite other organizations"
 msgstr ""
 
-#: project/forms/admin.py:60
+#: project/forms/admin.py:86
 msgid "If set, members of the organization can invite other organizations."
 msgstr ""
 
-#: project/forms/admin.py:66
+#: project/forms/admin.py:92
 msgid "Verify other organizations"
 msgstr ""
 
-#: project/forms/admin.py:67
+#: project/forms/admin.py:93
 msgid "If set, members of the organization can verify other organizations."
 msgstr ""
 
-#: project/forms/admin.py:72 project/templates/admin/update_admin_unit.html:4
+#: project/forms/admin.py:98 project/templates/admin/update_admin_unit.html:4
 #: project/templates/admin/update_admin_unit.html:8
 msgid "Update organization"
 msgstr ""
 
-#: project/forms/admin.py:76 project/templates/admin/delete_admin_unit.html:6
+#: project/forms/admin.py:102 project/templates/admin/delete_admin_unit.html:6
 #: project/templates/admin_unit/request_deletion.html:6
 #: project/templates/admin_unit/update.html:113
 msgid "Delete organization"
 msgstr ""
 
-#: project/forms/admin.py:77 project/forms/admin_unit.py:166
+#: project/forms/admin.py:103 project/forms/admin_unit.py:166
 #: project/forms/admin_unit.py:171 project/forms/admin_unit.py:176
 #: project/forms/event.py:90 project/forms/event.py:119
 #: project/forms/event_place.py:30 project/forms/event_place.py:56
@@ -339,27 +344,27 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: project/forms/admin.py:81 project/forms/admin.py:88
+#: project/forms/admin.py:107 project/forms/admin.py:114
 msgid "Recipient"
 msgstr ""
 
-#: project/forms/admin.py:83
+#: project/forms/admin.py:109
 msgid "Send test mail synchronously"
 msgstr ""
 
-#: project/forms/admin.py:90 project/forms/admin.py:96
+#: project/forms/admin.py:116 project/forms/admin.py:122
 msgid "Test recipient"
 msgstr ""
 
-#: project/forms/admin.py:91
+#: project/forms/admin.py:117
 msgid "All users with enabled newsletter setting"
 msgstr ""
 
-#: project/forms/admin.py:97
+#: project/forms/admin.py:123
 msgid "Message"
 msgstr ""
 
-#: project/forms/admin.py:98
+#: project/forms/admin.py:124
 msgid "Send newsletter"
 msgstr ""
 
@@ -660,8 +665,8 @@ msgstr ""
 
 #: project/forms/event.py:50
 msgid ""
-"Indicate when the event date will end. An event can last a maximum of 14 "
-"days."
+"Indicate when the event date will end. An event can last a maximum of 180"
+" days."
 msgstr ""
 
 #: project/forms/event.py:55
@@ -679,7 +684,7 @@ msgid "The start must be before the end."
 msgstr ""
 
 #: project/forms/event.py:72 project/templates/_macros.html:1364
-msgid "An event can last a maximum of 14 days."
+msgid "An event can last a maximum of 180 days."
 msgstr ""
 
 #: project/forms/event.py:108
@@ -1247,7 +1252,7 @@ msgstr ""
 msgid "Min. expected number of participants"
 msgstr ""
 
-#: project/forms/planning.py:50 project/templates/planning/list.html:98
+#: project/forms/planning.py:50 project/templates/planning/list.html:102
 msgid "Refresh"
 msgstr ""
 
@@ -1587,7 +1592,7 @@ msgstr ""
 msgid "Edit image"
 msgstr ""
 
-#: project/templates/_macros.html:1254 project/templates/planning/list.html:97
+#: project/templates/_macros.html:1254 project/templates/planning/list.html:101
 msgid "Close"
 msgstr ""
 
@@ -1677,7 +1682,7 @@ msgstr ""
 #: project/templates/manage/admin_units.html:28
 #: project/templates/manage/verification_requests_outgoing.html:13
 #: project/templates/manage/verification_requests_outgoing_create_select.html:13
-#: project/templates/planning/list.html:68
+#: project/templates/planning/list.html:72
 #: project/templates/security/login_user.html:21
 #: project/templates/security/register_user.html:43
 msgid "Docs"
@@ -1704,7 +1709,9 @@ msgstr ""
 msgid "Organizations"
 msgstr ""
 
-#: project/templates/layout.html:177
+#: project/templates/admin/admin.html:35
+#: project/templates/admin/planning.html:4
+#: project/templates/admin/planning.html:11 project/templates/layout.html:177
 msgid "Planning"
 msgstr ""
 
@@ -1712,7 +1719,8 @@ msgstr ""
 #: project/templates/oauth2_client/list.html:10
 #: project/templates/oauth2_client/read.html:10
 #: project/templates/oauth2_token/list.html:10 project/templates/profile.html:4
-#: project/templates/profile.html:17
+#: project/templates/profile.html:17 project/templates/user/general.html:10
+#: project/templates/user/notifications.html:10
 msgid "Profile"
 msgstr ""
 
@@ -1720,6 +1728,7 @@ msgstr ""
 #: project/templates/admin/admin_units.html:10
 #: project/templates/admin/email.html:65
 #: project/templates/admin/newsletter.html:92
+#: project/templates/admin/planning.html:10
 #: project/templates/admin/settings.html:10
 #: project/templates/admin/users.html:10 project/templates/layout.html:194
 msgid "Admin"
@@ -1857,7 +1866,7 @@ msgstr ""
 msgid "Developer"
 msgstr ""
 
-#: project/templates/profile.html:12 project/views/admin_unit.py:90
+#: project/templates/profile.html:12 project/views/admin_unit.py:89
 #: project/views/admin_unit_member_invitation.py:39
 msgid "Your account is scheduled for deletion."
 msgstr ""
@@ -1868,13 +1877,13 @@ msgid "Delete account"
 msgstr ""
 
 #: project/templates/profile.html:36 project/templates/user/general.html:4
-#: project/templates/user/general.html:8
+#: project/templates/user/general.html:11
 msgid "General"
 msgstr ""
 
 #: project/templates/profile.html:40
 #: project/templates/user/notifications.html:4
-#: project/templates/user/notifications.html:8
+#: project/templates/user/notifications.html:11
 msgid "Notifications"
 msgstr ""
 
@@ -1920,7 +1929,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: project/templates/admin/email.html:47 project/views/admin.py:163
+#: project/templates/admin/email.html:47 project/views/admin.py:164
 msgid "Mail sent successfully"
 msgstr ""
 
@@ -2349,7 +2358,7 @@ msgstr ""
 msgid "Member"
 msgstr ""
 
-#: project/templates/manage/events.html:42 project/views/admin_unit.py:143
+#: project/templates/manage/events.html:42 project/views/admin_unit.py:142
 msgid ""
 "The organization is not verified. Events are therefore not publicly "
 "visible."
@@ -2483,11 +2492,11 @@ msgid "Revoke"
 msgstr ""
 
 #: project/templates/planning/list.html:5
-#: project/templates/planning/list.html:66
+#: project/templates/planning/list.html:70
 msgid "Event Planning"
 msgstr ""
 
-#: project/templates/planning/list.html:76
+#: project/templates/planning/list.html:80
 msgid "Filters"
 msgstr ""
 
@@ -2607,48 +2616,49 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: project/views/admin.py:63
+#: project/views/admin.py:64
 msgid "Organization successfully updated"
 msgstr ""
 
-#: project/views/admin.py:85 project/views/admin_unit.py:208
-#: project/views/admin_unit.py:241 project/views/manage.py:315
+#: project/views/admin.py:86 project/views/admin_unit.py:207
+#: project/views/admin_unit.py:240 project/views/manage.py:315
 #: project/views/verification_request.py:169
 msgid "Entered name does not match organization name"
 msgstr ""
 
-#: project/views/admin.py:89
+#: project/views/admin.py:90
 msgid "Organization successfully deleted"
 msgstr ""
 
-#: project/views/admin.py:133 project/views/manage.py:485
-#: project/views/user.py:64 project/views/user.py:83
+#: project/views/admin.py:134 project/views/admin.py:280
+#: project/views/manage.py:485 project/views/user.py:64
+#: project/views/user.py:83
 msgid "Settings successfully updated"
 msgstr ""
 
-#: project/views/admin.py:233
+#: project/views/admin.py:234
 msgid "User successfully updated"
 msgstr ""
 
-#: project/views/admin.py:253
+#: project/views/admin.py:254
 msgid "Entered email does not match user email"
 msgstr ""
 
-#: project/views/admin.py:257
+#: project/views/admin.py:258
 msgid "User successfully deleted"
 msgstr ""
 
-#: project/views/admin_unit.py:80
+#: project/views/admin_unit.py:79
 msgid ""
 "Organizations cannot currently be created. The project is in a closed "
 "test phase. If you are interested, you can contact us."
 msgstr ""
 
-#: project/views/admin_unit.py:134
+#: project/views/admin_unit.py:133
 msgid "Organization successfully created"
 msgstr ""
 
-#: project/views/admin_unit.py:184
+#: project/views/admin_unit.py:183
 msgid "AdminUnit successfully updated"
 msgstr ""
 
@@ -2684,23 +2694,23 @@ msgstr ""
 msgid "Invitation successfully deleted"
 msgstr ""
 
-#: project/views/event.py:209
+#: project/views/event.py:211
 msgid "Event successfully published"
 msgstr ""
 
-#: project/views/event.py:211
+#: project/views/event.py:213
 msgid "Draft successfully saved"
 msgstr ""
 
-#: project/views/event.py:213
+#: project/views/event.py:215
 msgid "Event successfully planned"
 msgstr ""
 
-#: project/views/event.py:273
+#: project/views/event.py:275
 msgid "Event successfully updated"
 msgstr ""
 
-#: project/views/event.py:299
+#: project/views/event.py:301
 msgid "Event successfully deleted"
 msgstr ""
 
@@ -2724,31 +2734,31 @@ msgstr ""
 msgid "Event suggestion successfully rejected"
 msgstr ""
 
-#: project/views/js.py:33
+#: project/views/js.py:41
 msgid "Short name is already taken"
 msgstr ""
 
-#: project/views/js.py:52
+#: project/views/js.py:60
 msgid "Name is already taken"
 msgstr ""
 
-#: project/views/js.py:76
+#: project/views/js.py:84
 msgid "A place already exists with this name."
 msgstr ""
 
-#: project/views/js.py:100
+#: project/views/js.py:108
 msgid "An organizer already exists with this name."
 msgstr ""
 
-#: project/views/js.py:114
+#: project/views/js.py:122
 msgid "An account already exists with this email."
 msgstr ""
 
-#: project/views/js.py:158
+#: project/views/js.py:166
 msgid "Places of organization"
 msgstr ""
 
-#: project/views/js.py:166
+#: project/views/js.py:174
 msgid "Places of Google Maps"
 msgstr ""
 
@@ -2812,12 +2822,12 @@ msgstr ""
 msgid "Reference successfully deleted"
 msgstr ""
 
-#: project/views/reference_request.py:145
+#: project/views/reference_request.py:141
 #, python-format
 msgid "%(organization)s accepted your reference request"
 msgstr ""
 
-#: project/views/reference_request.py:152
+#: project/views/reference_request.py:148
 #, python-format
 msgid ""
 "Reference request to %(organization)s successfully created. You will be "
@@ -2931,7 +2941,7 @@ msgstr ""
 msgid "You do not have permission for this action"
 msgstr ""
 
-#: project/views/utils.py:382
+#: project/views/utils.py:386
 msgid ""
 "The invitation was issued to another user. Sign in with the email address"
 " the invitation was sent to."
