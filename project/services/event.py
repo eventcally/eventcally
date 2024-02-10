@@ -238,25 +238,39 @@ def fill_event_admin_unit_filter(event_filter, params: EventSearchParams):
     return admin_unit_reference, event_filter
 
 
+def get_event_date_range_filter(params: EventSearchParams):
+    date_filter = EventDate.start >= datetime.min
+
+    if params.date_from:
+        date_filter = or_(
+            EventDate.start >= params.date_from,
+            and_(EventDate.end.isnot(None), EventDate.end >= params.date_from),
+        )
+
+    if params.date_to:
+        date_to_filter = or_(
+            EventDate.start < params.date_to,
+            and_(EventDate.end.isnot(None), EventDate.end < params.date_to),
+        )
+        date_filter = and_(date_filter, date_to_filter)
+
+    # PostgreSQL specific https://stackoverflow.com/a/25597632
+    if params.weekday and type(params.weekday) is list:
+        weekdays = params.weekday
+        date_filter = and_(date_filter, extract("dow", EventDate.start).in_(weekdays))
+
+    return date_filter
+
+
 def get_event_dates_query(params: EventSearchParams):
     event_filter = 1 == 1
-    date_filter = EventDate.start >= datetime.min
 
     event_filter = fill_event_filter(event_filter, params)
     admin_unit_reference, event_filter = fill_event_admin_unit_filter(
         event_filter, params
     )
 
-    if params.date_from:
-        date_filter = EventDate.start >= params.date_from
-
-    if params.date_to:
-        date_filter = and_(date_filter, EventDate.start < params.date_to)
-
-    # PostgreSQL specific https://stackoverflow.com/a/25597632
-    if params.weekday and type(params.weekday) is list:
-        weekdays = params.weekday
-        date_filter = and_(date_filter, extract("dow", EventDate.start).in_(weekdays))
+    date_filter = get_event_date_range_filter(params)
 
     result = (
         EventDate.query.join(EventDate.event)
@@ -378,19 +392,13 @@ def get_event_with_details_or_404(event_id):
 
 def get_events_query(params: EventSearchParams):
     event_filter = 1 == 1
-    date_filter = EventDate.start >= datetime.min
 
     event_filter = fill_event_filter(event_filter, params)
     admin_unit_reference, event_filter = fill_event_admin_unit_filter(
         event_filter, params
     )
 
-    if params.date_from:
-        date_filter = EventDate.start >= params.date_from
-
-    if params.date_to:
-        date_filter = and_(date_filter, EventDate.start < params.date_to)
-
+    date_filter = get_event_date_range_filter(params)
     event_filter = and_(event_filter, Event.dates.any(date_filter))
     result = (
         Event.query.join(Event.admin_unit)
