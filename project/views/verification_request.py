@@ -59,7 +59,7 @@ def manage_admin_unit_verification_requests_outgoing(id):
     admin_unit = g.manage_admin_unit
 
     params = AdminUnitVerificationRequestSearchParams()
-    params.target_admin_unit_id = admin_unit.id
+    params.source_admin_unit_id_admin_unit_id = admin_unit.id
     requests = get_verification_requests_outgoing_query(params).paginate()
 
     if not admin_unit.is_verified and requests.total == 0:
