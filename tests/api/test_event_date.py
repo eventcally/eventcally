@@ -125,6 +125,9 @@ def test_search(client, seeder: Seeder, utils: UtilActions, app, db):
     url = utils.get_url("api_v1_event_date_search", postal_code="38640,38690")
     response = utils.get_json_ok(url)
 
+    url = utils.get_url("api_v1_event_date_search", tag="tag,schmag")
+    response = utils.get_json_ok(url)
+
     listed_event_id = seeder.create_event(admin_unit_id)
     event_list_id = seeder.create_event_list(admin_unit_id, listed_event_id)
     url = utils.get_url("api_v1_event_date_search", event_list_id=event_list_id)
@@ -162,6 +165,32 @@ def test_search(client, seeder: Seeder, utils: UtilActions, app, db):
         sort="-reference_created_at",
     )
     response = utils.get_json_ok(url)
+
+
+def test_search_tags(client, seeder: Seeder, utils: UtilActions, app, db):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
+    seeder.create_event(admin_unit_id, tags="")
+    event_id_1 = seeder.create_event(
+        admin_unit_id, tags="ical-importer,ical-importer-uuid-1"
+    )
+    event_id_2 = seeder.create_event(
+        admin_unit_id, tags="ical-importer,ical-importer-uuid-2"
+    )
+    event_id_11 = seeder.create_event(
+        admin_unit_id, tags="ical-importer,ical-importer-uuid-11"
+    )
+
+    url = utils.get_url("api_v1_event_date_search", tag="ical-importer")
+    response = utils.get_json_ok(url)
+    assert len(response.json["items"]) == 3
+    assert response.json["items"][0]["id"] == event_id_1
+    assert response.json["items"][1]["id"] == event_id_2
+    assert response.json["items"][2]["id"] == event_id_11
+
+    url = utils.get_url("api_v1_event_date_search", tag="ical-importer-uuid-1")
+    response = utils.get_json_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == event_id_1
 
 
 def test_search_public_status(client, seeder: Seeder, utils: UtilActions, app, db):

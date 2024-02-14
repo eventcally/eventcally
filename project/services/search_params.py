@@ -168,6 +168,7 @@ class EventSearchParams(TrackableSearchParams):
         self.exclude_recurring = False
         self.expected_participants_min = None
         self.sort = "start"
+        self.tag = None
 
     @property
     def date_from(self):
@@ -298,6 +299,9 @@ class EventSearchParams(TrackableSearchParams):
 
         if "postal_code" in request.args:
             self.postal_code = self.load_list_param("postal_code")
+
+        if "tag" in request.args:
+            self.tag = self.load_list_param("tag")
 
         if "organization_id" in request.args:
             self.admin_unit_id = request.args["organization_id"]

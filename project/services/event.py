@@ -171,6 +171,11 @@ def fill_event_filter(event_filter, params: EventSearchParams):
         if postalCodeFilters is not None:
             event_filter = and_(event_filter, postalCodeFilters)
 
+    if params.tag:
+        tags = params.tag if type(params.tag) is list else [params.tag]
+        tag_filter = (func.string_to_array(Event.tags, ",")).op("@>")(tags)
+        event_filter = and_(event_filter, tag_filter)
+
     if params.favored_by_user_id:
         user_favorite_exists = UserFavoriteEvents.query.filter(
             UserFavoriteEvents.event_id == Event.id,
