@@ -1100,7 +1100,7 @@ msgstr "bis"
 
 #: project/forms/event.py:451 project/forms/event_date.py:18
 msgid "Keyword"
-msgstr "Stichwort"
+msgstr "Suche"
 
 #: project/forms/event.py:453 project/forms/event_date.py:20
 #: project/forms/planning.py:24 project/templates/_macros.html:397

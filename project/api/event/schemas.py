@@ -291,6 +291,10 @@ class EventSearchRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMi
     keyword = fields.Str(
         metadata={"description": "Looks for keyword in name, description and tags."},
     )
+    tag = fields.List(
+        fields.Str(),
+        metadata={"description": "Looks for events having all given tags."},
+    )
     date_from = fields.Date(
         metadata={
             "description": "Looks for events at or after this date, e.g. 2020-12-31."
