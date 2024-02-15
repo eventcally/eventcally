@@ -421,10 +421,11 @@ def create_ical_events_for_admin_unit(
     from project.services.search_params import EventSearchParams
 
     params = EventSearchParams()
+    params.include_admin_unit_references = True
+    params.load_from_request()
     params.date_from = get_today() - relativedelta(months=1)
     params.admin_unit_id = admin_unit.id
     params.can_read_private_events = False
-    params.include_admin_unit_references = True
 
     return create_ical_events_for_search(params)
 

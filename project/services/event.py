@@ -607,9 +607,11 @@ def populate_ical_event_with_event(
 
     if model_event.organizer:
         desc_items.append(f"{gettext('Organizer')}: {model_event.organizer.name}")
+        ical_event.add("x-eventcally-organizer", model_event.organizer.name)
 
     if model_event.admin_unit:
         desc_items.append(f"{gettext('Organization')}: {model_event.admin_unit.name}")
+        ical_event.add("x-eventcally-organization", model_event.admin_unit.name)
 
     if model_event.description:
         desc_short = truncate(model_event.description, 300)

@@ -8,6 +8,7 @@ from project.api.location.schemas import (
     LocationPatchRequestSchema,
     LocationPostRequestSchema,
     LocationSchema,
+    LocationSearchItemSchema,
 )
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
@@ -66,6 +67,11 @@ class OrganizerDumpSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):
 
 class OrganizerRefSchema(OrganizerIdSchema):
     name = marshmallow.auto_field()
+
+
+class OrganizerSearchItemSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):
+    location = fields.Nested(LocationSearchItemSchema)
+    logo = fields.Nested(ImageSchema)
 
 
 class OrganizerListRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixin):

@@ -61,8 +61,9 @@ class PlaceRefSchema(PlaceIdSchema):
     name = marshmallow.auto_field()
 
 
-class PlaceSearchItemSchema(PlaceRefSchema):
+class PlaceSearchItemSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
     location = fields.Nested(LocationSearchItemSchema)
+    photo = fields.Nested(ImageSchema)
 
 
 class PlaceListRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixin):

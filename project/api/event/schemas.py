@@ -21,10 +21,14 @@ from project.api.image.schemas import (
     ImagePostRequestSchema,
     ImageSchema,
 )
-from project.api.organization.schemas import OrganizationRefSchema
+from project.api.organization.schemas import (
+    OrganizationRefSchema,
+    OrganizationSearchItemSchema,
+)
 from project.api.organizer.schemas import (
     OrganizerDumpIdSchema,
     OrganizerRefSchema,
+    OrganizerSearchItemSchema,
     OrganizerWriteIdSchema,
 )
 from project.api.place.schemas import (
@@ -223,22 +227,18 @@ class EventRefSchema(EventIdSchema):
 
 
 class EventSearchItemSchema(
-    EventRefSchema,
+    EventIdSchema,
+    EventBaseSchemaMixin,
     EventCurrentUserMixin,
     EventCurrentOrganizationMixin,
     TrackableSchemaMixin,
 ):
-    description = marshmallow.auto_field()
     date_definitions = fields.List(fields.Nested(EventDateDefinitionSchema))
     photo = fields.Nested(ImageSchema)
     place = fields.Nested(PlaceSearchItemSchema, attribute="event_place")
-    status = EnumField(EventStatus)
-    booked_up = marshmallow.auto_field()
-    organizer = fields.Nested(OrganizerRefSchema)
-    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
+    organizer = fields.Nested(OrganizerSearchItemSchema)
+    organization = fields.Nested(OrganizationSearchItemSchema, attribute="admin_unit")
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
-    attendance_mode = EnumField(EventAttendanceMode)
-    public_status = EnumField(PublicStatus)
 
 
 class EventListRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixin):
