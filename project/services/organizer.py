@@ -30,6 +30,7 @@ def create_ical_events_for_organizer(
     from project.services.search_params import EventSearchParams
 
     params = EventSearchParams()
+    params.load_from_request()
     params.date_from = get_today() - relativedelta(months=1)
     params.organizer_id = organizer.id
     params.can_read_private_events = False

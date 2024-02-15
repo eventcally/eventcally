@@ -3,7 +3,11 @@ from marshmallow import fields, post_dump, validate
 from project.access import has_access, login_api_user
 from project.api import marshmallow
 from project.api.image.schemas import ImageDumpSchema, ImageSchema
-from project.api.location.schemas import LocationDumpSchema, LocationSchema
+from project.api.location.schemas import (
+    LocationDumpSchema,
+    LocationSchema,
+    LocationSearchItemSchema,
+)
 from project.api.schemas import (
     IdSchemaMixin,
     PaginationRequestSchema,
@@ -62,6 +66,11 @@ class OrganizationSchema(OrganizationBaseSchema):
 class OrganizationDumpSchema(OrganizationBaseSchema):
     location = fields.Nested(LocationDumpSchema)
     logo = fields.Nested(ImageDumpSchema)
+
+
+class OrganizationSearchItemSchema(OrganizationBaseSchema):
+    location = fields.Nested(LocationSearchItemSchema)
+    logo = fields.Nested(ImageSchema)
 
 
 class OrganizationRefSchema(OrganizationIdSchema):
