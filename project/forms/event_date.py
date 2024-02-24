@@ -19,6 +19,7 @@ class FindEventDateBaseForm(FlaskForm):
     category_id = SelectField(
         lazy_gettext("Category"), validators=[Optional()], coerce=int
     )
+    tag = StringField(lazy_gettext("Tags"), validators=[Optional()])
 
 
 class FindEventDateForm(FindEventDateBaseForm):

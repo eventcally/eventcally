@@ -469,10 +469,12 @@
             {{ render_event_dates_date_field(form.date_from, form.date_to) }}
             {{ render_field_with_errors(form.keyword, formrow="1") }}
 
-            {% set form_collapsed = not form.category_id.data and not form.admin_unit_id.data and not form.organizer_id.data and not form.coordinate.data and not form.created_at_from.data and not form.created_at_to.data and form.sort.data == "start" %}
+            {% set form_collapsed = not form.category_id.data and not form.tag.data and not form.admin_unit_id.data and not form.organizer_id.data and not form.coordinate.data and not form.created_at_from.data and not form.created_at_to.data and form.sort.data == "start" %}
             <div id="extended_search_form" class="{% if form_collapsed %}collapse{% else %}show{% endif %}">
 
             {{ render_field_with_errors(form.category_id, formrow="1") }}
+
+            {{ render_field_with_errors(form.tag, formrow="1") }}
 
             {{ render_field_with_errors(form.admin_unit_id, class="w-100", formrow="1") }}
 

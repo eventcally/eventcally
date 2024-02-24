@@ -350,9 +350,9 @@ class CreateEventForm(BaseEventForm):
         obj.public_status = (
             PublicStatus.published
             if self.submit.data
-            else PublicStatus.planned
-            if self.submit_planned.data
-            else PublicStatus.draft
+            else (
+                PublicStatus.planned if self.submit_planned.data else PublicStatus.draft
+            )
         )
 
     def validate(self, extra_validators=None):
@@ -452,6 +452,7 @@ class FindEventForm(FlaskForm):
     category_id = SelectField(
         lazy_gettext("Category"), validators=[Optional()], coerce=int
     )
+    tag = StringField(lazy_gettext("Tags"), validators=[Optional()])
     organizer_id = SelectField(
         lazy_gettext("Organizer"), validators=[Optional()], coerce=int
     )
