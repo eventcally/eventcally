@@ -40,9 +40,11 @@ def oauth2_token_revoke(id):
 
 @app.route("/oauth2_tokens")
 def oauth2_tokens():
-    oauth2_tokens = OAuth2Token.query.filter(
-        OAuth2Token.user_id == current_user.id
-    ).paginate()
+    oauth2_tokens = (
+        OAuth2Token.query.filter(OAuth2Token.user_id == current_user.id)
+        .order_by(OAuth2Token.issued_at.desc())
+        .paginate()
+    )
 
     return render_template(
         "oauth2_token/list.html",

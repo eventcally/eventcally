@@ -6,7 +6,7 @@
   "configurations": [
     {
       "name": "Flask",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "module": "flask",
       "env": {
@@ -20,7 +20,7 @@
     },
     {
       "name": "Flask HTTPS",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "module": "flask",
       "env": {
@@ -41,7 +41,7 @@
     },
     {
       "name": "Flask CLI",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "module": "flask",
       "env": {
@@ -54,20 +54,20 @@
     },
     {
       "name": "Python: Aktuelle Datei",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal"
     },
     {
       "name": "Debug Unit Test",
-      "type": "python",
+      "type": "debugpy",
       "request": "test",
       "justMyCode": false
     },
     {
       "name": "Celery worker",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "module": "celery",
       "args": [
@@ -82,7 +82,7 @@
     },
     {
       "name": "Celery beat",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "module": "celery",
       "args": ["-A", "project.celery", "beat", "--loglevel=debug"],
@@ -91,7 +91,7 @@
     },
     {
       "name": "Gunicorn",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "module": "gunicorn",
       "args": ["-c", "gunicorn.conf.py", "-w", "1", "project:app"],

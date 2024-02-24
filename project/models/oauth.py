@@ -1,3 +1,4 @@
+import datetime
 import time
 
 from authlib.integrations.sqla_oauth2 import (
@@ -9,6 +10,7 @@ from flask import request
 from sqlalchemy.orm import object_session
 
 from project import db
+from project.dateutils import gmt_tz
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
 
@@ -84,3 +86,11 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
 
     def revoke_token(self):
         self.access_token_revoked_at = int(time.time())
+
+    @property
+    def expires_at_datetime(self):
+        return datetime.datetime.fromtimestamp(self.expires_at, gmt_tz)
+
+    @property
+    def issued_at_datetime(self):
+        return datetime.datetime.fromtimestamp(self.issued_at, gmt_tz)
