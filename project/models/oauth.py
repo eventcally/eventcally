@@ -13,6 +13,7 @@ from project import db
 from project.dateutils import gmt_tz
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
+oauth_refresh_token_expires_in = 90 * 86400  # 90 days
 
 
 class OAuth2Client(db.Model, OAuth2ClientMixin):
@@ -82,7 +83,8 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
         if self.is_revoked():
             return False
 
-        return self.expires_at >= time.time()
+        refresh_token_expires_at = self.issued_at + oauth_refresh_token_expires_in
+        return refresh_token_expires_at >= time.time()
 
     def revoke_token(self):
         self.access_token_revoked_at = int(time.time())
