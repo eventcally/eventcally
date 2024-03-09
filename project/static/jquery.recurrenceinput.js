@@ -509,7 +509,7 @@
                                                         '</div>',
                                                         '<select name="rimonthlyweekdayofmonthindex" class="form-control">',
                                                             '{{for i18n.orderIndexes}}',
-                                                                '<option value="{{:~root.orderIndexes[$index]}}">{{:}}</option>',
+                                                                '<option value="{{:~root.orderIndexes[#getIndex()]}}">{{:}}</option>',
                                                             '{{/for}}',
                                                         '</select>',
                                                         '<select name="rimonthlyweekdayofmonth" class="form-control">',
@@ -1610,7 +1610,7 @@
                 }
 
                 // Check repeat on
-                if (form.find('#rimonthlyoptions input:checked').length === 0) {
+                if (form.find('#' + conf.prefix + 'rimonthlyoptions input:checked').length === 0) {
                     messagearea.text(conf.i18n.noRepeatOn).show();
                     return false;
                 }
@@ -1626,7 +1626,7 @@
                 }
 
                 // Check repeat on
-                if (form.find('#riyearlyoptions input:checked').length === 0) {
+                if (form.find('#' + conf.prefix + 'riyearlyoptions input:checked').length === 0) {
                     messagearea.text(conf.i18n.noRepeatOn).show();
                     return false;
                 }
