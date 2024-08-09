@@ -33,5 +33,5 @@ docker compose exec -it web /bin/sh
 ## Worker active tasks
 
 ```sh
-docker compose exec -it worker celery -A project.celery inspect active
+docker compose exec -it worker celery -A project.celery_init inspect active
 ```

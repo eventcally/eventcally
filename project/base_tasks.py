@@ -1,5 +1,5 @@
 from project import app, celery
-from project.celery import force_locale
+from project.celery_init import force_locale
 from project.views.utils import send_mails_with_body
 
 

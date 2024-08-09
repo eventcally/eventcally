@@ -1,6 +1,6 @@
 [run]
 omit =
-    project/celery.py
+    project/celery_init.py
     project/base_tasks.py
     project/celery_tasks.py
     project/cli/test.py

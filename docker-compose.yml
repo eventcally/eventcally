@@ -14,6 +14,7 @@ x-web-env:
   GUNICORN_LOG_LEVEL: debug
   FLASK_DEBUG: 1
   SERVER_NAME: "127.0.0.1:5000"
+  SECRET_KEY: "pf9Wkove4IKEAXvy-cQkeDPhv9Cb3Ag-wyJILbq_dFw"
 
 x-web:
   &default-web
@@ -64,12 +65,12 @@ services:
 
   worker:
     <<: *default-web
-    command: celery -A project.celery worker --loglevel=error
+    command: celery -A project.celery_init worker --loglevel=error
     entrypoint: []
 
   scheduler:
     <<: *default-web
-    command: celery -A project.celery beat --loglevel=error
+    command: celery -A project.celery_init beat --loglevel=error
     entrypoint: []
 
   flower:
