@@ -86,5 +86,5 @@ pybabel compile -d project/translations
 ## Celery
 
 ```sh
-dotenv run celery -A project.celery purge
+dotenv run celery -A project.celery_init purge
 ```

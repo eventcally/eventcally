@@ -102,12 +102,12 @@ services:
 
   worker:
     <<: *default-web
-    command: celery -A project.celery worker --loglevel=error
+    command: celery -A project.celery_init worker --loglevel=error
     entrypoint: []
 
   scheduler:
     <<: *default-web
-    command: celery -A project.celery beat --loglevel=error
+    command: celery -A project.celery_init beat --loglevel=error
     entrypoint: []
 
   fluentd:

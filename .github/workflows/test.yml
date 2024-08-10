@@ -36,17 +36,17 @@ jobs:
           - 5432:5432
 
       redis:
-          # Docker Hub image
-          image: redis
-          # Set health checks to wait until redis has started
-          options: >-
-            --health-cmd "redis-cli ping"
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 5
-          ports:
-            # Maps port 6379 on service container to the host
-            - 6379:6379
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
 
     steps:
       - name: Check out repository code
@@ -55,7 +55,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
@@ -74,7 +74,6 @@ jobs:
           name: coverage${{ matrix.group }}
           path: .coverage
 
-
   coverage:
     needs: integration-tests
     if: ${{ success() }}
@@ -86,7 +85,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |

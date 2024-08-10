@@ -10,7 +10,7 @@ docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/eventca
 
 ### Requirements
 
-- Python 3.10
+- Python 3.12
 - pip
 - Postgres with postgis
 
@@ -56,7 +56,7 @@ flask user add-admin-roles super@hero.com
 ### Worker active tasks
 
 ```sh
-celery -A project.celery inspect active
+celery -A project.celery_init inspect active
 ```
 
 ## Configuration

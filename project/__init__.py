@@ -8,7 +8,6 @@ from flask_cors import CORS
 from flask_gzip import Gzip
 from flask_mail import Mail, email_dispatched
 from flask_migrate import Migrate
-from flask_qrcode import QRcode
 from flask_security import Security, SQLAlchemySessionUserDatastore, user_registered
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
@@ -93,7 +92,7 @@ app.config.update(
 )
 
 
-from project.celery import create_celery
+from project.celery_init import create_celery
 
 celery = create_celery(app)
 
@@ -201,9 +200,6 @@ from project import base_tasks, celery_tasks
 
 # API
 from project.api import RestApi
-
-# qr code
-QRcode(app)
 
 # JSON
 from project.jsonld import CustomJsonProvider

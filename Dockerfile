@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.12
 
 # Add rsync
 RUN apt update -qq && apt upgrade -y && apt autoremove -y

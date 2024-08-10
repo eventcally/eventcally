@@ -7,6 +7,7 @@ from project.services.admin_unit import create_ical_events_for_admin_unit
 
 
 @app.route("/organizations")
+@app.route("/organizations/")
 @app.route("/organizations/<path:path>")
 def organizations(path=None):
     return render_template("organization/main.html")
