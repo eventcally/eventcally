@@ -28,7 +28,7 @@ class Seeder(object):
         owner_id = self.create_user("owner@owner")
         admin_unit_id = self.create_admin_unit(owner_id, "Other crew")
         member_id = self.create_admin_unit_member_event_verifier(admin_unit_id)
-        self._utils.login(follow_redirects=False)
+        self._utils.login()
         return (owner_id, admin_unit_id, member_id)
 
     def create_user(
@@ -341,7 +341,7 @@ class Seeder(object):
             client_secret = oauth2_client.client_secret
             scope = oauth2_client.scope
 
-        self._utils.login(email=email, follow_redirects=False)
+        self._utils.login(email=email)
         self._utils.authorize(client_id, client_secret, scope)
         self._utils.logout()
         return (user_id, admin_unit_id)

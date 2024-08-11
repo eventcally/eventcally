@@ -5,6 +5,7 @@ Revises: 58d8aae621e6
 Create Date: 2023-04-28 13:04:22.142011
 
 """
+
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.sql.elements import conv

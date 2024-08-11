@@ -52,9 +52,9 @@ def test_get_users_with_due_delete_request(client, seeder, db, utils, app):
         from project.services.user import get_users_with_due_delete_request
 
         user = db.session.get(User, user_id)
-        user.deletion_requested_at = datetime.datetime.utcnow() - datetime.timedelta(
-            days=4
-        )
+        user.deletion_requested_at = datetime.datetime.now(
+            datetime.UTC
+        ) - datetime.timedelta(days=4)
         db.session.commit()
 
         due_users = get_users_with_due_delete_request()

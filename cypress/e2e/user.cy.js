@@ -48,7 +48,7 @@ describe("User", () => {
     cy.get("#submit").click();
 
     cy.url().should("eq", Cypress.config().baseUrl + "/");
-    cy.get("div.alert").should("contain", "Bestätigungsanleitung");
+    cy.get("div.alert").should("contain", "bestätigen");
   });
 
    it("login", () => {

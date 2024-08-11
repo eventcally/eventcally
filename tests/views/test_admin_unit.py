@@ -360,7 +360,7 @@ def test_admin_unit_cancel_deletion(
         from project.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
-        admin_unit.deletion_requested_at = datetime.datetime.utcnow()
+        admin_unit.deletion_requested_at = datetime.datetime.now(datetime.UTC)
         db.session.commit()
 
     url = utils.get_url("admin_unit_cancel_deletion", id=admin_unit_id)

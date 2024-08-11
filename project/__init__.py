@@ -292,5 +292,11 @@ from project.views import (
 from project.views import user as user_view
 from project.views import verification_request, verification_request_review, widget
 
+if not getenv_bool("TESTING"):  # pragma: no cover
+    with app.app_context():
+        from project.init_data import create_initial_data
+
+        create_initial_data()
+
 if __name__ == "__main__":  # pragma: no cover
     app.run()

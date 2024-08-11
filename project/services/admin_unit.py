@@ -431,7 +431,7 @@ def create_ical_events_for_admin_unit(
 
 
 def get_admin_units_with_due_delete_request():
-    due = datetime.datetime.utcnow() - datetime.timedelta(days=3)
+    due = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=3)
     return AdminUnit.query.filter(AdminUnit.deletion_requested_at < due).all()
 
 
