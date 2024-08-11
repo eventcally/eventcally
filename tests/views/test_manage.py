@@ -33,6 +33,16 @@ def test_index_withInvalidCookie(client, seeder: Seeder, utils: UtilActions):
 
 
 def test_index_after_login(client, app, db, utils, seeder):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    response = utils.get_endpoint("manage_after_login")
+    utils.assert_response_redirect(response, "manage", from_login=1)
+
+    response = utils.get_endpoint("manage", from_login=1)
+    utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
+
+
+def test_index_after_login_with_invitation(client, app, db, utils, seeder):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 

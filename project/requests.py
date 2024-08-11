@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+import datetime
 
 from flask import g, redirect, request, url_for
 from flask_login.utils import encode_cookie
@@ -33,7 +33,7 @@ def set_manage_admin_unit_cookie(response):
         response.set_cookie(
             "manage_admin_unit_id",
             value=encoded,
-            expires=datetime.utcnow() + timedelta(days=365),
+            expires=datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=365),
             secure=app.config["SESSION_COOKIE_SECURE"],
             samesite=app.config["SESSION_COOKIE_SAMESITE"],
         )
@@ -55,7 +55,7 @@ def set_response_headers(response):
 
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers[
-        "Content-Security-Policy"
-    ] = "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' blob: data: *.openstreetmap.org; connect-src 'self' blob: data:;"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' blob: data: *.openstreetmap.org; connect-src 'self' blob: data:;"
+    )
     return response

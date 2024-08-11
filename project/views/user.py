@@ -133,7 +133,7 @@ def user_request_deletion():
         if non_match_for_deletion(form.email.data, current_user.email):
             flash(gettext("Entered email does not match your email"), "danger")
         else:
-            current_user.deletion_requested_at = datetime.datetime.utcnow()
+            current_user.deletion_requested_at = datetime.datetime.now(datetime.UTC)
 
             try:
                 db.session.commit()

@@ -12,6 +12,17 @@ def test_profile(client, seeder, utils):
     utils.get_ok(url)
 
 
+def test_organization_invitation(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
+
+    seeder.create_user("invited@test.de")
+    utils.login("invited@test.de")
+
+    url = utils.get_url("user_organization_invitation", id=invitation_id)
+    utils.get_ok(url)
+
+
 def test_organization_invitation_not_registered(client, app, utils, seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
@@ -237,7 +248,7 @@ def test_user_cancel_deletion(
         from project.models import User
 
         user = db.session.get(User, user_id)
-        user.deletion_requested_at = datetime.datetime.utcnow()
+        user.deletion_requested_at = datetime.datetime.now(datetime.UTC)
         db.session.commit()
 
     url = utils.get_url("user_cancel_deletion")

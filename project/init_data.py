@@ -8,14 +8,14 @@ from project.services.event import upsert_event_category
 from project.services.user import upsert_user_role
 
 
-@app.before_first_request
+@app.before_request
 def add_oauth2_scheme():
+    app.before_request_funcs[None].remove(add_oauth2_scheme)
     # At some sites the https scheme is not set yet
     insecure = os.getenv("AUTHLIB_INSECURE_TRANSPORT", "False").lower() in ["true", "1"]
     add_oauth2_scheme_with_transport(insecure)
 
 
-@app.before_first_request
 def create_initial_data():
     admin_permissions = [
         "admin_unit:update",

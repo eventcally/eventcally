@@ -29,9 +29,9 @@ class RestApi(Api):
         if isinstance(err, IntegrityError) and err.orig:
             if err.orig.pgcode == UNIQUE_VIOLATION:
                 data["name"] = "Unique Violation"
-                data[
-                    "message"
-                ] = "An entry with the entered values ​​already exists. Duplicate entries are not allowed."
+                data["message"] = (
+                    "An entry with the entered values ​​already exists. Duplicate entries are not allowed."
+                )
             elif err.orig.pgcode == CHECK_VIOLATION:
                 data["name"] = "Check Violation"
 
@@ -66,9 +66,9 @@ class RestApi(Api):
                 schema = ErrorResponseSchema()
         elif isinstance(err, ValidationError):
             data["name"] = "Unprocessable Entity"
-            data[
-                "message"
-            ] = "The request was well-formed but was unable to be followed due to semantic errors."
+            data["message"] = (
+                "The request was well-formed but was unable to be followed due to semantic errors."
+            )
             code = 422
             schema = UnprocessableEntityResponseSchema()
             self.fill_validation_data(err, data)

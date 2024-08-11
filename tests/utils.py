@@ -5,7 +5,7 @@ from urllib.parse import parse_qs, urlsplit
 import googlemaps
 from bs4 import BeautifulSoup
 from flask import g, url_for
-from flask_login import login_url
+from flask_security.utils import url_for_security
 from sqlalchemy.exc import IntegrityError
 
 
@@ -58,7 +58,6 @@ class UtilActions(object):
         self,
         email="test@test.de",
         password="MeinPasswortIstDasBeste",
-        follow_redirects=True,
     ):
         from project.services.user import find_user_by_email
 
@@ -75,14 +74,9 @@ class UtilActions(object):
                         "csrf_token": self.get_csrf(response),
                         "submit": "Anmelden",
                     },
-                    follow_redirects=follow_redirects,
                 )
 
-                if follow_redirects:
-                    assert response.status_code == 200
-                else:
-                    assert response.status_code == 302
-
+                assert response.status_code == 302
                 assert g.identity.user.email == email
 
                 user = find_user_by_email(email)
@@ -325,8 +319,8 @@ class UtilActions(object):
 
     def assert_response_redirect_to_url(self, response, redirect_url):
         absolute_url = "http://localhost" + redirect_url
-
         response_location = response.headers["Location"]
+
         assert response_location == redirect_url or response_location == absolute_url
 
     def assert_response_redirect_to_login(self, response, next_url):
@@ -334,7 +328,7 @@ class UtilActions(object):
 
         with self._client:
             with self._app.test_request_context():
-                redirect_url = login_url("security.login", next_url)
+                redirect_url = url_for_security("login", next=next_url)
 
         self.assert_response_redirect_to_url(response, redirect_url)
 

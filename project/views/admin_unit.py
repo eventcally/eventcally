@@ -206,7 +206,7 @@ def admin_unit_request_deletion(id):
         if non_match_for_deletion(form.name.data, admin_unit.name):
             flash(gettext("Entered name does not match organization name"), "danger")
         else:
-            admin_unit.deletion_requested_at = datetime.datetime.utcnow()
+            admin_unit.deletion_requested_at = datetime.datetime.now(datetime.UTC)
             admin_unit.deletion_requested_by_id = current_user.id
 
             try:

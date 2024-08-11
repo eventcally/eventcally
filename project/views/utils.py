@@ -2,11 +2,12 @@ from functools import wraps
 from itertools import groupby
 from urllib.parse import quote_plus
 
-from flask import Markup, flash, g, redirect, render_template, request, url_for
+from flask import flash, g, redirect, render_template, request, url_for
 from flask_babel import force_locale, gettext
 from flask_login.utils import decode_cookie
 from flask_mail import Message
 from flask_security import current_user
+from markupsafe import Markup
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
 from wtforms import FormField
@@ -317,12 +318,12 @@ def get_share_links(url: str, title: str) -> dict:
     encoded_url = quote_plus(url)
     encoded_title = quote_plus(title)
 
-    share_links[
-        "facebook"
-    ] = f"https://www.facebook.com/sharer/sharer.php?u={encoded_url}"
-    share_links[
-        "twitter"
-    ] = f"https://twitter.com/intent/tweet?url={encoded_url}&text={encoded_title}"
+    share_links["facebook"] = (
+        f"https://www.facebook.com/sharer/sharer.php?u={encoded_url}"
+    )
+    share_links["twitter"] = (
+        f"https://twitter.com/intent/tweet?url={encoded_url}&text={encoded_title}"
+    )
     share_links["email"] = f"mailto:?subject={encoded_title}&body={encoded_url}"
     share_links["whatsapp"] = f"whatsapp://send?text={encoded_url}"
     share_links["telegram"] = f"https://t.me/share/url?url={encoded_url}"
@@ -359,9 +360,9 @@ def get_calendar_links_for_event_date(event_date: EventDate) -> dict:
     else:
         locationParam = ""
 
-    calendar_links[
-        "google"
-    ] = f"http://www.google.com/calendar/event?action=TEMPLATE&text={encoded_title}&dates={start}/{end}&ctz={encoded_timezone}&details={encoded_url}{locationParam}"
+    calendar_links["google"] = (
+        f"http://www.google.com/calendar/event?action=TEMPLATE&text={encoded_title}&dates={start}/{end}&ctz={encoded_timezone}&details={encoded_url}{locationParam}"
+    )
 
     calendar_links["ics"] = url_for("event_date_ical", id=event_date.id, _external=True)
 

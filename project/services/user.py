@@ -105,7 +105,7 @@ def remove_favorite_event(user_id: int, event_id: int):
 
 
 def get_users_with_due_delete_request():
-    due = datetime.datetime.utcnow() - datetime.timedelta(days=3)
+    due = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=3)
     return User.query.filter(User.deletion_requested_at < due).all()
 
 
@@ -125,4 +125,4 @@ def is_user_admin_member(user: User) -> bool:
 
 
 def set_user_accepted_tos(user: User):
-    user.tos_accepted_at = datetime.datetime.utcnow()
+    user.tos_accepted_at = datetime.datetime.now(datetime.UTC)
