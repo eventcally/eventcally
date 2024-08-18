@@ -1,0 +1,259 @@
+from flask import flash, redirect, render_template
+from flask.views import View
+from flask_babel import lazy_gettext
+from sqlalchemy.exc import SQLAlchemyError
+
+from project import db
+from project.views.utils import flash_errors, get_pagination_urls, handleSqlError
+
+
+class BaseView(View):
+    template_file_name = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+
+        self.handler = kwargs.get("handler")
+        self.decorators.extend(self.handler.decorators)
+
+    @property
+    def model(self):
+        return self.handler.model
+
+    def get_title(self, **kwargs):  # pragma: no cover
+        return ""
+
+    def get_templates(self):
+        return [
+            f"{self.model.__model_name__}/{self.template_file_name}",
+            f"generic/{self.template_file_name}",
+        ]
+
+    def render_template(self, **kwargs):
+        kwargs.setdefault("title", self.get_title(**kwargs))
+        kwargs.setdefault("view", self)
+        return render_template(self.get_templates(), **kwargs)
+
+    def get_breadcrumbs(self):
+        return self.handler.get_breadcrumbs()
+
+
+class BaseListView(BaseView):
+    list_context_name = None
+    template_file_name = "list.html"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not self.list_context_name and self.model:
+            self.list_context_name = f"{self.model.__model_name_plural__}"
+
+    def get_title(self, **kwargs):
+        return self.model.get_display_name_plural()
+
+    def get_objects_query_from_kwargs(self, **kwargs):
+        return self.handler.get_objects_query_from_kwargs(**kwargs)
+
+    def render_template(self, **kwargs):
+        if "objects" in kwargs and self.list_context_name:
+            kwargs[self.list_context_name] = kwargs.get("objects")
+        return super().render_template(**kwargs)
+
+    def dispatch_request(self, **kwargs):
+        query = self.get_objects_query_from_kwargs(**kwargs)
+        paginate = query.paginate()
+        objects = paginate.items
+        pagination = get_pagination_urls(paginate)
+        return self.render_template(objects=objects, pagination=pagination)
+
+
+class BaseObjectView(BaseView):
+    object_context_name = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.object_context_name and self.model:
+            self.object_context_name = f"{self.model.__model_name__}"
+
+    def get_object_from_kwargs(self, **kwargs):
+        return self.model.query.get_or_404(kwargs.get("id"))
+
+    def check_object_access(self, object):
+        self.handler.check_object_access(object)
+
+    def render_template(self, **kwargs):
+        object = kwargs.get("object")
+        if object and self.object_context_name:
+            kwargs[self.object_context_name] = object
+        return super().render_template(**kwargs)
+
+    def get_breadcrumbs(self):
+        result = super().get_breadcrumbs()
+
+        list_url = self.handler.get_list_url()
+        if list_url:
+            result.append(
+                {
+                    "url": list_url,
+                    "title": self.model.get_display_name_plural(),
+                }
+            )
+
+        return result
+
+
+class BaseFormView(BaseObjectView):
+    methods = ["GET", "POST"]
+    form_class = None
+
+    def create_form(self, **kwargs):
+        return self.form_class(**kwargs)
+
+    def create_object(self):
+        return self.model()
+
+    def complete_object(self, object):
+        self.handler.complete_object(object)
+
+    def get_redirect_url(self, **kwargs):  # pragma: no cover
+        return None
+
+    def get_success_text(self):  # pragma: no cover
+        return ""
+
+
+class BaseReadView(BaseFormView):
+    template_file_name = "read.html"
+
+    def get_title(self, **kwargs):
+        return str(kwargs["object"])
+
+    def dispatch_request(self, **kwargs):
+        object = self.get_object_from_kwargs(**kwargs)
+        self.check_object_access(object)
+        form = self.create_form(obj=object)
+        return self.render_template(form=form, object=object)
+
+
+class BaseCreateView(BaseFormView):
+    template_file_name = "create.html"
+
+    def get_redirect_url(self, **kwargs):
+        return self.handler.get_read_url(**kwargs)
+
+    def get_title(self, **kwargs):
+        return lazy_gettext(
+            "Create %(model_display_name)s",
+            model_display_name=self.model.get_display_name(),
+        )
+
+    def get_success_text(self):
+        return lazy_gettext(
+            "%(model_display_name)s successfully created",
+            model_display_name=self.model.get_display_name(),
+        )
+
+    def dispatch_request(self, **kwargs):
+        form = self.create_form()
+        object = None
+
+        if form.validate_on_submit():
+            object = self.create_object()
+            form.populate_obj(object)
+            self.complete_object(object)
+
+            try:
+                db.session.add(object)
+                db.session.commit()
+                flash(self.get_success_text(), "success")
+                return redirect(self.get_redirect_url(object=object))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), "danger")
+        else:
+            flash_errors(form)
+
+        return self.render_template(form=form, object=object)
+
+
+class BaseUpdateView(BaseFormView):
+    template_file_name = "update.html"
+
+    def get_redirect_url(self, **kwargs):
+        return self.handler.get_read_url(**kwargs)
+
+    def get_title(self, **kwargs):
+        return lazy_gettext(
+            "Update %(model_display_name)s",
+            model_display_name=self.model.get_display_name(),
+        )
+
+    def get_success_text(self):
+        return lazy_gettext(
+            "%(model_display_name)s successfully updated",
+            model_display_name=self.model.get_display_name(),
+        )
+
+    def dispatch_request(self, **kwargs):
+        object = self.get_object_from_kwargs(**kwargs)
+        self.check_object_access(object)
+        form = self.create_form(obj=object)
+
+        if form.validate_on_submit():
+            form.populate_obj(object)
+            self.complete_object(object)
+
+            try:
+                db.session.commit()
+                flash(self.get_success_text(), "success")
+                return redirect(self.get_redirect_url(object=object))
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), "danger")
+        else:
+            flash_errors(form)
+
+        return self.render_template(form=form, object=object)
+
+
+class BaseDeleteView(BaseFormView):
+    template_file_name = "delete.html"
+
+    def can_object_be_deleted(self, form, object):
+        return self.handler.can_object_be_deleted(form, object)
+
+    def get_redirect_url(self, **kwargs):
+        return self.handler.get_list_url(**kwargs)
+
+    def get_title(self, **kwargs):
+        return lazy_gettext(
+            "Delete %(model_display_name)s '%(object_title)s'",
+            model_display_name=self.model.get_display_name(),
+            object_title=str(kwargs["object"]),
+        )
+
+    def get_success_text(self):
+        return lazy_gettext(
+            "%(model_display_name)s successfully deleted",
+            model_display_name=self.model.get_display_name(),
+        )
+
+    def dispatch_request(self, **kwargs):
+        object = self.get_object_from_kwargs(**kwargs)
+        self.check_object_access(object)
+        form = self.create_form()
+
+        if form.validate_on_submit():
+            if self.can_object_be_deleted(form, object):
+                try:
+                    db.session.delete(object)
+                    db.session.commit()
+                    flash(self.get_success_text(), "success")
+                    return redirect(self.get_redirect_url())
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    flash(handleSqlError(e), "danger")
+        else:
+            flash_errors(form)
+
+        return self.render_template(form=form, object=object)

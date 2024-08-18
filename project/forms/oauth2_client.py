@@ -1,16 +1,16 @@
 import os
 
 from flask_babel import lazy_gettext
-from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Optional
 
 from project.api import scopes
+from project.forms.base_form import BaseForm
 from project.forms.widgets import MultiCheckboxField
 from project.utils import split_by_crlf
 
 
-class BaseOAuth2ClientForm(FlaskForm):
+class BaseOAuth2ClientForm(BaseForm):
     client_name = StringField(lazy_gettext("Client name"), validators=[DataRequired()])
     redirect_uris = TextAreaField(
         lazy_gettext("Redirect URIs"), validators=[Optional()]
@@ -19,6 +19,7 @@ class BaseOAuth2ClientForm(FlaskForm):
         lazy_gettext("Scopes"),
         validators=[Optional()],
         choices=[(k, k) for k, v in scopes.items()],
+        render_kw={"ri": "multicheckbox"},
     )
 
     submit = SubmitField(lazy_gettext("Save"))
@@ -61,6 +62,21 @@ class UpdateOAuth2ClientForm(BaseOAuth2ClientForm):
     pass
 
 
-class DeleteOAuth2ClientForm(FlaskForm):
+class ReadOAuth2ClientForm(BaseForm):
+    client_id = StringField(lazy_gettext("Client ID"))
+    client_secret = StringField(lazy_gettext("Client secret"))
+    client_uri = StringField(lazy_gettext("Client URI"))
+    grant_types = StringField(lazy_gettext("Grant types"))
+    redirect_uris = StringField(lazy_gettext("Redirect URIs"))
+    response_types = StringField(lazy_gettext("Response types"))
+    scope = StringField(lazy_gettext("Scope"))
+    token_endpoint_auth_method = StringField(lazy_gettext("Token endpoint auth method"))
+
+
+class DeleteOAuth2ClientForm(BaseForm):
     submit = SubmitField(lazy_gettext("Delete OAuth2 client"))
-    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
+    name = StringField(
+        lazy_gettext("Name"),
+        validators=[DataRequired()],
+        render_kw={"role": "presentation", "autocomplete": "off"},
+    )

@@ -20,6 +20,7 @@ def test_read_notOwner(client, seeder, utils):
 
 def test_list(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(True)
+    seeder.insert_default_oauth2_client(user_id)
 
     url = utils.get_url("oauth2_clients")
     utils.get_ok(url)

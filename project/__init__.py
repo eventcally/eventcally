@@ -184,6 +184,8 @@ if app.config["MAIL_SUPPRESS_SEND"]:
     email_dispatched.connect(log_message)
 
 # Create db
+from project.base_model import CustomModel
+
 convention = {
     "ix": "ix_%(column_0_label)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",
@@ -192,7 +194,7 @@ convention = {
     "pk": "pk_%(table_name)s",
 }
 metadata = MetaData(naming_convention=convention)
-db = SQLAlchemy(app, metadata=metadata)
+db = SQLAlchemy(app, metadata=metadata, model_class=CustomModel)
 migrate = Migrate(app, db, render_as_batch=False)
 
 # Celery tasks

@@ -1,0 +1,12 @@
+{% macro render_breadcrumb(breadcrumbs, current) %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for item in breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{{ item['url'] }}">{{ item['title'] }}</a></li>
+        {% endfor %}
+        {% if current %}
+        <li class="breadcrumb-item active" aria-current="page">{{ current }}</li>
+        {% endif %}
+    </ol>
+</nav>
+{% endmacro %}

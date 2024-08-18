@@ -3,6 +3,7 @@ import pathlib
 
 import requests
 from flask_babel import lazy_gettext
+from flask_sqlalchemy.model import camel_to_snake_case
 from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.base import NO_CHANGE, object_state
@@ -131,3 +132,27 @@ def decode_response_content(response: requests.Response) -> str:
         return response.content.decode("UTF-8")
     except Exception:  # pragma: no cover
         return response.content.decode(response.apparent_encoding)
+
+
+def snake_case_to_human(snake_case):
+    result = snake_case.replace("_", " ")
+    return result[:1].upper() + result[1:]
+
+
+def class_name_to_model_name(class_name):
+    result = camel_to_snake_case(class_name)
+
+    if result[1] == "_":
+        result = result[:1] + result[2:]
+
+    return result
+
+
+def model_name_to_plural(model_name):
+    if model_name.endswith("s"):
+        return model_name
+
+    if model_name.endswith("y"):
+        return model_name[:-1] + "ies"
+
+    return f"{model_name}s"

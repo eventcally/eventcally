@@ -18,6 +18,7 @@ oauth_refresh_token_expires_in = 90 * 86400  # 90 days
 
 class OAuth2Client(db.Model, OAuth2ClientMixin):
     __tablename__ = "oauth2_client"
+    __display_name__ = "OAuth2 client"
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
@@ -50,6 +51,9 @@ class OAuth2Client(db.Model, OAuth2ClientMixin):
 
         return True
 
+    def __str__(self):
+        return self.client_name or super().__str__()
+
 
 class OAuth2AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
     __tablename__ = "oauth2_code"
@@ -61,6 +65,7 @@ class OAuth2AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
 
 class OAuth2Token(db.Model, OAuth2TokenMixin):
     __tablename__ = "oauth2_token"
+    __display_name__ = "OAuth2 token"
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
