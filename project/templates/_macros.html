@@ -33,7 +33,7 @@
             {% set field_class = field_class + ' is-invalid' %}
           {% endif %}
 
-          {% if 'ri' in kwargs and kwargs['ri'] == 'multicheckbox' %}
+          {% if (field.render_kw and field.render_kw.get('ri') == 'multicheckbox') or ('ri' in kwargs and kwargs['ri'] == 'multicheckbox') %}
             <fieldset class="form-group">
               {% for choice in field %}
                   <div class="form-check">

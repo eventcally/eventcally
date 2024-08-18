@@ -62,25 +62,25 @@ flask db upgrade
 ### Init
 
 ```sh
-pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -k lazy_gettext -k dummy_gettext -o messages.pot . && pybabel init -i messages.pot -d project/translations -l de
+.scripts/translations/init.sh
 ```
 
 ### Add locale
 
 ```sh
-pybabel init -i messages.pot -d project/translations -l en
+.scripts/translations/add_locale.sh de
 ```
 
 ### Extract new msgid's and merge into \*.po files
 
 ```sh
-pybabel extract -F babel.cfg -o messages.pot . && pybabel extract -F babel.cfg -k lazy_gettext -k dummy_gettext -o messages.pot . && pybabel update -N -i messages.pot -d project/translations
+.scripts/translations/extract.sh
 ```
 
 #### Compile after translation is done
 
 ```sh
-pybabel compile -d project/translations
+.scripts/translations/compile.sh
 ```
 
 ## Celery

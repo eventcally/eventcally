@@ -1,0 +1,27 @@
+{% from "_macros.html" import render_field_with_errors, render_field, render_kv_begin, render_kv_end, render_kv_prop %}
+
+{% macro render_form(form) %}
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+
+    <div class="card mb-4">
+        <div class="card-body">
+            {% for field in form.get_input_fields() %}
+            {{ render_field_with_errors(field) }}
+            {% endfor %}
+        </div>
+    </div>
+
+    {% for field in form.get_button_fields() %}
+    {{ render_field(field) }}
+    {% endfor %}
+</form>
+{% endmacro %}
+
+{% macro render_read_form(form) %}
+{{ render_kv_begin() }}
+{% for field in form.get_input_fields() %}
+{{ render_kv_prop(field.data, field.label) }}
+{% endfor %}
+{{ render_kv_end() }}
+{% endmacro %}

@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% from "macros/nav.html.j2" import render_breadcrumb %}
+{% from "_macros.html" import render_pagination %}
+{% block content %}
+
+{{ render_breadcrumb(view.get_breadcrumbs(), title) }}
+
+{% set create_url = view.handler.get_create_url(object=object) %}
+{% if create_url %}
+<div class="my-4">
+    <a class="btn btn-outline-secondary my-1" href="{{ create_url }}" role="button"><i class="fa fa-plus"></i> {{ _('Create %(model_display_name)s', model_display_name=view.model.get_display_name()) }}</a>
+</div>
+{% endif %}
+
+<div class="table-responsive">
+    <table class="table table-sm table-bordered table-hover table-striped">
+        <tbody>
+            {% for object in objects %}
+                <tr>
+                    <td>
+                        {% set read_url = view.handler.get_read_url(object=object) %}
+                        {% if read_url %}
+                            <a href="{{ read_url }}">{{ object }}</a>
+                        {% endif %}
+                    <td>
+                        {% set update_url = view.handler.get_update_url(object=object) %}
+                        {% if update_url %}
+                            <a href="{{ update_url }}">{{ _('Edit') }}</a>
+                        {% endif %}
+                        {% set delete_url = view.handler.get_delete_url(object=object) %}
+                        {% if delete_url %}
+                            <a href="{{ delete_url }}">{{ _('Delete') }}&hellip;</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="my-4">{{ render_pagination(pagination) }}</div>
+
+{% endblock %}

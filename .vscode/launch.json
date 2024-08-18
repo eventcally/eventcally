@@ -100,6 +100,26 @@
       "args": ["-c", "gunicorn.conf.py", "-w", "1", "project:app"],
       "justMyCode": false,
       "console": "integratedTerminal"
+    },
+    {
+      "name": "pybabel",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/env/bin/pybabel",
+      "console": "integratedTerminal",
+      "args": [
+        "extract",
+        "-F",
+        "babel.cfg",
+        "-o",
+        "messages.pot",
+        "--sort-output",
+        "."
+      ],
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${PYTHONPATH}:${workspaceFolder}"
+      }
     }
   ],
   "compounds": [
