@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
 {% from "macros/forms.html.j2" import render_form %}
-{% from "macros/nav.html.j2" import render_breadcrumb %}
+{% from "macros/nav.html.j2" import render_breadcrumb, render_instuction %}
 {% block content %}
 
 {{ render_breadcrumb(view.get_breadcrumbs(), title) }}
+{{ render_instuction(instruction) }}
 {{ render_form(form) }}
 
 {% endblock %}

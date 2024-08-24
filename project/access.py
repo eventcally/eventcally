@@ -29,6 +29,7 @@ def has_owner_access(user_id):
 def owner_access_or_401(user_id):
     if not has_owner_access(user_id):
         abort(401)
+    return None
 
 
 def login_api_user() -> bool:

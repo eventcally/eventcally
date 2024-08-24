@@ -10,3 +10,9 @@
     </ol>
 </nav>
 {% endmacro %}
+
+{% macro render_instuction(instruction) %}
+{% if instruction %}
+<p>{{ instruction }}</p>
+{% endif %}
+{% endmacro %}

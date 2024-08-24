@@ -1,25 +1,21 @@
 {% extends "layout.html" %}
-{% from "macros/forms.html.j2" import render_read_form %}
+{% from "macros/display.html.j2" import render_read_display %}
 {% from "macros/nav.html.j2" import render_breadcrumb %}
 {% block content %}
 
 {{ render_breadcrumb(view.get_breadcrumbs(), object) }}
 
-{% set update_url = view.handler.get_update_url(object=object) %}
-{% set delete_url = view.handler.get_delete_url(object=object) %}
-{% if update_url or delete_url %}
+{% set actions = view.handler.get_read_actions(object) %}
+{% if actions %}
 <div class="my-3">
-    {% if update_url %}
-    <a class="btn btn-outline-secondary" href="{{ update_url }}">{{ _('Edit') }}</a>
-    {% endif %}
-    {% if delete_url %}
-    <a class="btn btn-outline-secondary" href="{{ delete_url }}">{{ _('Delete') }}&hellip;</a>
-    {% endif %}
+    {% for action in view.handler.get_read_actions(object) %}
+        <a class="btn btn-outline-secondary" href="{{ action["url"] }}">{{ action["title"] }}</a>
+    {% endfor %}
 </div>
 {% endif %}
 
 <div class="w-normal">
-    {{ render_read_form(form) }}
+    {{ render_read_display(display, object) }}
 </div>
 
 {% endblock %}

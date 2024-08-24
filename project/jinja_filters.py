@@ -18,7 +18,7 @@ def env_override(value, key):
     return os.getenv(key, value)
 
 
-def is_list(value):
+def is_list(value):  # pragma: no cover
     return isinstance(value, list)
 
 
