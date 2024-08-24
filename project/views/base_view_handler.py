@@ -1,4 +1,5 @@
 from flask import url_for
+from flask_babel import gettext
 
 from project.views.base_views import (
     BaseCreateView,
@@ -15,12 +16,13 @@ class BaseViewHandler:
     create_view_class = BaseCreateView
     create_form_class = None
     read_view_class = BaseReadView
-    read_form_class = None
+    read_display_class = None
     update_view_class = BaseUpdateView
     update_form_class = None
     delete_view_class = BaseDeleteView
     delete_form_class = None
     list_view_class = BaseListView
+    list_display_class = BaseListView
 
     def __init__(self, *args, **kwargs):
         super().__init__()
@@ -30,7 +32,7 @@ class BaseViewHandler:
         pass
 
     def check_object_access(self, object):  # pragma: no cover
-        pass
+        return None
 
     def get_objects_query_from_kwargs(self, **kwargs):
         return self.apply_objects_query_order(self.apply_base_filter(self.model.query))
@@ -65,6 +67,67 @@ class BaseViewHandler:
     def get_list_url(self, **kwargs):
         return self.get_endpoint_url("list")
 
+    def _create_breadcrumb(self, url, title):
+        if url:
+            return {
+                "url": url,
+                "title": title,
+            }
+
+        return None  # pragma: no cover
+
+    def get_breadcrumbs(self):
+        return list()
+
+    def _create_action(self, url, title):
+        if url:
+            return {
+                "url": url,
+                "title": title,
+            }
+
+        return None
+
+    def get_read_action(self, object):
+        return self._create_action(self.get_read_url(object=object), gettext("View"))
+
+    def get_update_action(self, object):
+        return self._create_action(self.get_update_url(object=object), gettext("Edit"))
+
+    def get_delete_action(self, object):
+        return self._create_action(
+            self.get_delete_url(object=object), gettext("Delete")
+        )
+
+    def get_default_list_action(self, object):
+        return self.get_read_action(object)
+
+    def get_additional_list_actions(self, object):
+        result = list()
+
+        update_action = self.get_update_action(object=object)
+        if update_action:
+            result.append(update_action)
+
+        delete_action = self.get_delete_action(object=object)
+        if delete_action:
+            result.append(delete_action)
+
+        return result
+
+    def get_read_actions(self, object):
+        result = list()
+
+        update_action = self.get_update_action(object=object)
+        if update_action:
+            result.append(update_action)
+
+        delete_action = self.get_delete_action(object=object)
+        if delete_action:
+            result.append(delete_action)
+
+        return result
+
     def _add_view(self, key, url, view_class, endpoint, app):
         app.add_url_rule(
             url,
@@ -72,13 +135,7 @@ class BaseViewHandler:
         )
         self.endpoints[key] = endpoint
 
-    def get_breadcrumbs(self):
-        return list()
-
-    def init_app(self, app):
-        url_prefix = self.model.__model_name__
-        endpoint_prefix = self.model.__model_name__
-
+    def add_views(self, app, url_prefix, endpoint_prefix):
         if self.create_view_class:
 
             class CreateView(self.create_view_class):
@@ -95,7 +152,7 @@ class BaseViewHandler:
         if self.read_view_class:
 
             class ReadView(self.read_view_class):
-                form_class = self.read_form_class
+                display_class = self.read_display_class
 
             self._add_view(
                 "read",
@@ -134,7 +191,7 @@ class BaseViewHandler:
         if self.list_view_class:
 
             class ListView(self.list_view_class):
-                pass
+                display_class = self.list_display_class
 
             self._add_view(
                 "list",
@@ -143,3 +200,8 @@ class BaseViewHandler:
                 self.model.__model_name_plural__,
                 app,
             )
+
+    def init_app(self, app):
+        url_prefix = self.model.__model_name__
+        endpoint_prefix = self.model.__model_name__
+        self.add_views(app, url_prefix, endpoint_prefix)

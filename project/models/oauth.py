@@ -101,3 +101,10 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
     @property
     def issued_at_datetime(self):
         return datetime.datetime.fromtimestamp(self.issued_at, gmt_tz)
+
+    @property
+    def client_name(self):
+        return self.client.client_name
+
+    def __str__(self):
+        return f"{super().__str__()} ({self.client_name})"

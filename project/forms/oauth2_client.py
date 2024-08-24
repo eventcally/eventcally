@@ -62,17 +62,6 @@ class UpdateOAuth2ClientForm(BaseOAuth2ClientForm):
     pass
 
 
-class ReadOAuth2ClientForm(BaseForm):
-    client_id = StringField(lazy_gettext("Client ID"))
-    client_secret = StringField(lazy_gettext("Client secret"))
-    client_uri = StringField(lazy_gettext("Client URI"))
-    grant_types = StringField(lazy_gettext("Grant types"))
-    redirect_uris = StringField(lazy_gettext("Redirect URIs"))
-    response_types = StringField(lazy_gettext("Response types"))
-    scope = StringField(lazy_gettext("Scope"))
-    token_endpoint_auth_method = StringField(lazy_gettext("Token endpoint auth method"))
-
-
 class DeleteOAuth2ClientForm(BaseForm):
     submit = SubmitField(lazy_gettext("Delete OAuth2 client"))
     name = StringField(

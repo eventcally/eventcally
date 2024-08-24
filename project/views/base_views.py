@@ -23,6 +23,9 @@ class BaseView(View):
     def get_title(self, **kwargs):  # pragma: no cover
         return ""
 
+    def get_instruction(self, **kwargs):  # pragma: no cover
+        return ""
+
     def get_templates(self):
         return [
             f"{self.model.__model_name__}/{self.template_file_name}",
@@ -31,6 +34,7 @@ class BaseView(View):
 
     def render_template(self, **kwargs):
         kwargs.setdefault("title", self.get_title(**kwargs))
+        kwargs.setdefault("instruction", self.get_instruction(**kwargs))
         kwargs.setdefault("view", self)
         return render_template(self.get_templates(), **kwargs)
 
@@ -39,6 +43,7 @@ class BaseView(View):
 
 
 class BaseListView(BaseView):
+    display_class = None
     list_context_name = None
     template_file_name = "list.html"
 
@@ -47,6 +52,9 @@ class BaseListView(BaseView):
 
         if not self.list_context_name and self.model:
             self.list_context_name = f"{self.model.__model_name_plural__}"
+
+    def create_display(self, **kwargs):
+        return self.display_class(**kwargs)
 
     def get_title(self, **kwargs):
         return self.model.get_display_name_plural()
@@ -64,7 +72,10 @@ class BaseListView(BaseView):
         paginate = query.paginate()
         objects = paginate.items
         pagination = get_pagination_urls(paginate)
-        return self.render_template(objects=objects, pagination=pagination)
+        display = self.create_display()
+        return self.render_template(
+            display=display, objects=objects, pagination=pagination
+        )
 
 
 class BaseObjectView(BaseView):
@@ -79,7 +90,7 @@ class BaseObjectView(BaseView):
         return self.model.query.get_or_404(kwargs.get("id"))
 
     def check_object_access(self, object):
-        self.handler.check_object_access(object)
+        return self.handler.check_object_access(object)
 
     def render_template(self, **kwargs):
         object = kwargs.get("object")
@@ -93,10 +104,9 @@ class BaseObjectView(BaseView):
         list_url = self.handler.get_list_url()
         if list_url:
             result.append(
-                {
-                    "url": list_url,
-                    "title": self.model.get_display_name_plural(),
-                }
+                self.handler._create_breadcrumb(
+                    list_url, self.model.get_display_name_plural()
+                )
             )
 
         return result
@@ -122,17 +132,25 @@ class BaseFormView(BaseObjectView):
         return ""
 
 
-class BaseReadView(BaseFormView):
+class BaseReadView(BaseObjectView):
+    display_class = None
     template_file_name = "read.html"
+
+    def create_display(self, **kwargs):
+        return self.display_class(**kwargs)
 
     def get_title(self, **kwargs):
         return str(kwargs["object"])
 
     def dispatch_request(self, **kwargs):
         object = self.get_object_from_kwargs(**kwargs)
-        self.check_object_access(object)
-        form = self.create_form(obj=object)
-        return self.render_template(form=form, object=object)
+        response = self.check_object_access(object)
+
+        if response:  # pragma: no cover
+            return response
+
+        display = self.create_display()
+        return self.render_template(display=display, object=object)
 
 
 class BaseCreateView(BaseFormView):
@@ -196,7 +214,11 @@ class BaseUpdateView(BaseFormView):
 
     def dispatch_request(self, **kwargs):
         object = self.get_object_from_kwargs(**kwargs)
-        self.check_object_access(object)
+        response = self.check_object_access(object)
+
+        if response:
+            return response
+
         form = self.create_form(obj=object)
 
         if form.validate_on_submit():
@@ -227,8 +249,13 @@ class BaseDeleteView(BaseFormView):
 
     def get_title(self, **kwargs):
         return lazy_gettext(
-            "Delete %(model_display_name)s '%(object_title)s'",
+            "Delete %(model_display_name)s",
             model_display_name=self.model.get_display_name(),
+        )
+
+    def get_instruction(self, **kwargs):
+        return lazy_gettext(
+            "Do you want to delete '%(object_title)s'?",
             object_title=str(kwargs["object"]),
         )
 
@@ -240,7 +267,11 @@ class BaseDeleteView(BaseFormView):
 
     def dispatch_request(self, **kwargs):
         object = self.get_object_from_kwargs(**kwargs)
-        self.check_object_access(object)
+        response = self.check_object_access(object)
+
+        if response:  # pragma: no cover
+            return response
+
         form = self.create_form()
 
         if form.validate_on_submit():

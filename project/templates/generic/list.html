@@ -14,26 +14,36 @@
 
 <div class="table-responsive">
     <table class="table table-sm table-bordered table-hover table-striped">
+        <thead>
+            {% for prop in display.get_ordered_props() %}
+                <th>{{ display.get_prop_label(prop) }}</th>
+            {% endfor %}
+            <th></th>
+        </thead>
         <tbody>
-            {% for object in objects %}
+                {% for object in objects %}
                 <tr>
+                    {% for prop in display.get_ordered_props() %}
+                        {% set show_link = False %}
+                        {% set action = "" %}
+                        {% if loop.first %}
+                            {% set action = view.handler.get_default_list_action(object) %}
+                            {% set show_link = action != None %}
+                        {% endif %}
+                        <td>
+                            {% if show_link %}<a href="{{ action["url"] }}">{% endif -%}
+                            {{ display.get_prop_display_value(prop, object) }}
+                            {%- if show_link %}</a>{% endif %}
+                        </td>
+                    {% endfor %}
+
                     <td>
-                        {% set read_url = view.handler.get_read_url(object=object) %}
-                        {% if read_url %}
-                            <a href="{{ read_url }}">{{ object }}</a>
-                        {% endif %}
-                    <td>
-                        {% set update_url = view.handler.get_update_url(object=object) %}
-                        {% if update_url %}
-                            <a href="{{ update_url }}">{{ _('Edit') }}</a>
-                        {% endif %}
-                        {% set delete_url = view.handler.get_delete_url(object=object) %}
-                        {% if delete_url %}
-                            <a href="{{ delete_url }}">{{ _('Delete') }}&hellip;</a>
-                        {% endif %}
+                        {% for action in view.handler.get_additional_list_actions(object) %}
+                            <a href="{{ action["url"] }}">{{ action["title"] }}</a>
+                        {% endfor %}
                     </td>
                 </tr>
-            {% endfor %}
+                {% endfor %}
         </tbody>
     </table>
 </div>

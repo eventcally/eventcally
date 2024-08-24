@@ -39,4 +39,5 @@ class CustomModel(SQLAlchemyModel):
         return gettext(cls.__display_name_plural__)
 
     def __str__(self):  # pragma: no cover
-        return getattr(self, "name", self.__repr__())
+        id = getattr(self, "id", "")
+        return f"{self.get_display_name()} {id}"
