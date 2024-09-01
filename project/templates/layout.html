@@ -274,7 +274,7 @@
                     {% endif %}
 
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_organizers', id=current_admin_unit.id) }}">{{ _('Organizers') }}</a>
-                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_event_places', id=current_admin_unit.id) }}">{{ _('Places') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_places', id=current_admin_unit.id) }}">{{ _('Places') }}</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_members', id=current_admin_unit.id) }}">{{ _('Members') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_relations', id=current_admin_unit.id) }}">{{ _('Relations') }}</a>

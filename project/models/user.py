@@ -92,6 +92,7 @@ class UserFavoriteEvents(db.Model):
 
 
 class OAuth(OAuthConsumerMixin, db.Model):
+    __display_name__ = "OAuth connection"
     provider_user_id = Column(String(256), unique=True, nullable=False)
     user_id = Column(Integer(), ForeignKey("user.id"), nullable=False)
     user = db.relationship("User")

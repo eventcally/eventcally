@@ -10,6 +10,7 @@ from flask_security import current_user
 from markupsafe import Markup
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.local import LocalProxy
 from wtforms import FormField
 
 from project import app, celery, mail
@@ -52,6 +53,9 @@ mail_template_subject_mapping = {
         "Verification request review status updated"
     ),
 }
+
+
+current_admin_unit = LocalProxy(lambda: get_current_admin_unit(False, False, False))
 
 
 def set_current_admin_unit(admin_unit):
@@ -448,6 +452,22 @@ def manage_required(permission=None):
 
             set_current_admin_unit(admin_unit)
             return f(id, *args, **kwargs)
+
+        return decorated_function
+
+    return decorator
+
+
+def manage_permission_required(permission):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not has_access(g.manage_admin_unit, permission):
+                return permission_missing(
+                    url_for("manage_admin_unit", id=g.manage_admin_unit.id)
+                )
+
+            return f(*args, **kwargs)
 
         return decorated_function
 

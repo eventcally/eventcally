@@ -1,5 +1,7 @@
 from flask_babel import format_datetime
 
+from project.utils import get_location_str
+
 
 class BasePropFormatter:
     def format(self, data):  # pragma: no cover
@@ -14,6 +16,11 @@ class ListPropFormatter(BasePropFormatter):
 class DateTimePropFormatter(BasePropFormatter):
     def format(self, data):
         return format_datetime(data)
+
+
+class LocationPropFormatter(BasePropFormatter):
+    def format(self, data):
+        return get_location_str(data)
 
 
 class UnboundProp:
@@ -72,6 +79,12 @@ class MethodProp(BaseProp):
     def get_display_value(self, object):
         method = getattr(self._display, self.method_name)
         return method(object)
+
+
+class LocationProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", LocationPropFormatter())
+        super().__init__(*args, **kwargs)
 
 
 class ListProp(BaseProp):

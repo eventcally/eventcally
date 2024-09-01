@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% from "macros/nav.html.j2" import render_breadcrumb %}
+{% from "macros/display.html.j2" import render_prop_display_value %}
 {% from "_macros.html" import render_pagination %}
 {% block content %}
 
@@ -18,31 +19,26 @@
             {% for prop in display.get_ordered_props() %}
                 <th>{{ display.get_prop_label(prop) }}</th>
             {% endfor %}
-            <th></th>
         </thead>
         <tbody>
                 {% for object in objects %}
-                <tr>
-                    {% for prop in display.get_ordered_props() %}
-                        {% set show_link = False %}
-                        {% set action = "" %}
-                        {% if loop.first %}
-                            {% set action = view.handler.get_default_list_action(object) %}
-                            {% set show_link = action != None %}
-                        {% endif %}
-                        <td>
-                            {% if show_link %}<a href="{{ action["url"] }}">{% endif -%}
-                            {{ display.get_prop_display_value(prop, object) }}
-                            {%- if show_link %}</a>{% endif %}
-                        </td>
-                    {% endfor %}
-
-                    <td>
-                        {% for action in view.handler.get_additional_list_actions(object) %}
-                            <a href="{{ action["url"] }}">{{ action["title"] }}</a>
+                    {% set actions = view.handler.get_all_list_actions(object) %}
+                    <tr>
+                        {% for prop in display.get_ordered_props() %}
+                            <td>
+                                {% if loop.first and actions %}
+                                <button class="btn btn-link dropdown-toggle p-0 text-wrap text-left" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ render_prop_display_value(display, prop, object) }}</button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    {% for action in actions %}
+                                    <a class="dropdown-item" href="{{ action["url"] }}">{{ action["title"] }}</a>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                    {{ render_prop_display_value(display, prop, object) }}
+                                {% endif %}
+                            </td>
                         {% endfor %}
-                    </td>
-                </tr>
+                    </tr>
                 {% endfor %}
         </tbody>
     </table>

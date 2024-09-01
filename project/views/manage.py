@@ -28,7 +28,6 @@ from project.forms.admin_unit import (
     UpdateAdminUnitWidgetForm,
 )
 from project.forms.event import FindEventForm
-from project.forms.event_place import FindEventPlaceForm
 from project.models import (
     AdminUnitMember,
     AdminUnitMemberInvitation,
@@ -227,28 +226,6 @@ def manage_admin_unit_organizers(id):
         admin_unit=admin_unit,
         organizers=organizers.items,
         pagination=get_pagination_urls(organizers, id=id),
-    )
-
-
-@app.route("/manage/admin_unit/<int:id>/event_places")
-@auth_required()
-def manage_admin_unit_event_places(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    set_current_admin_unit(admin_unit)
-
-    form = FindEventPlaceForm(**request.args)
-
-    places = (
-        EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit.id)
-        .order_by(func.lower(EventPlace.name))
-        .paginate(per_page=50)
-    )
-    return render_template(
-        "manage/places.html",
-        admin_unit=admin_unit,
-        form=form,
-        places=places.items,
-        pagination=get_pagination_urls(places, id=id),
     )
 
 

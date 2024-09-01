@@ -5,7 +5,7 @@ def test_list(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_api_access()
     utils.login()
 
-    url = utils.get_url("oauth2_tokens")
+    url = utils.get_url("user.oauth2_tokens")
     utils.get_ok(url)
 
 
@@ -20,7 +20,7 @@ def test_revoke(client, seeder, utils, app, db, mocker, db_error):
         oauth2_token = OAuth2Token.query.filter(OAuth2Token.user_id == user_id).first()
         oauth2_token_id = oauth2_token.id
 
-    url = utils.get_url("oauth2_token_revoke", id=oauth2_token_id)
+    url = utils.get_url("user.oauth2_token_revoke", oauth2_token_id=oauth2_token_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -36,7 +36,7 @@ def test_revoke(client, seeder, utils, app, db, mocker, db_error):
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "oauth2_tokens")
+    utils.assert_response_redirect(response, "user.oauth2_tokens")
 
     with app.app_context():
         from project.models import OAuth2Token
@@ -46,4 +46,4 @@ def test_revoke(client, seeder, utils, app, db, mocker, db_error):
 
     # Kann nicht zweimal revoked werden
     response = utils.get(url)
-    utils.assert_response_redirect(response, "oauth2_tokens")
+    utils.assert_response_redirect(response, "user.oauth2_tokens")

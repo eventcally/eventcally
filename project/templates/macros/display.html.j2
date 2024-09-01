@@ -1,8 +1,17 @@
+{% macro render_prop_display_value(display, prop, object) -%}
+{% set display_value = display.get_prop_display_value(prop, object) %}
+{% if display_value is boolean %}
+{% if display_value %}<i class="fa fa-fw fa-check-circle"></i>{% endif %}
+{% else %}
+{{ display_value }}
+{% endif -%}
+{%- endmacro %}
+
 {% macro render_read_display(display, object) %}
 <dl class="row">
     {% for prop in display.get_ordered_props() %}
     <dt class="col-sm-3">{{ display.get_prop_label(prop) }}</dt>
-    <dd class="col-sm-9">{{ display.get_prop_display_value(prop, object) }}</dd>
+    <dd class="col-sm-9">{{ render_prop_display_value(display, prop, object) }}</dd>
     {% endfor %}
 </dl>
 {% endmacro %}

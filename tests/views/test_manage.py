@@ -161,7 +161,7 @@ def test_admin_unit_organizers(client, seeder: Seeder, utils: UtilActions):
 def test_admin_unit_event_places(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
-    utils.get_endpoint_ok("manage_admin_unit_event_places", id=admin_unit_id)
+    utils.get_endpoint_ok("manage_admin_unit.event_places", id=admin_unit_id)
 
 
 def test_admin_unit_members(client, seeder: Seeder, utils: UtilActions):
@@ -253,6 +253,16 @@ def test_admin_unit_events_import(client, seeder: Seeder, utils: UtilActions):
 
     url = utils.get_url("manage_admin_unit_events_import", id=admin_unit_id)
     utils.get_ok(url)
+
+
+def test_admin_unit_events_import_unauthorized(client, app, utils, seeder):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+
+    url = utils.get_url("manage_admin_unit_events_import", id=admin_unit_id)
+    utils.get_unauthorized(url)
 
 
 @pytest.mark.parametrize("scenario", ["db_error", "default", "last_admin", "non_match"])

@@ -4,7 +4,7 @@ describe("OAuth2 Client", () => {
       cy.createOauth2Client(userId).then(function (result) {
         cy.login("new@test.de");
 
-        cy.visit("/oauth2_client/create");
+        cy.visit("/user/oauth2_client/create");
         cy.get("#client_name").type("Mein Client");
         cy.get("#scope-0").check();
         cy.get("#redirect_uris").type("/oauth2-redirect.html");
@@ -19,7 +19,7 @@ describe("OAuth2 Client", () => {
       cy.createOauth2Client(userId).then(function (result) {
         cy.login("new@test.de");
 
-        cy.visit("/oauth2_client/" + result.oauth2_client_id + "/update");
+        cy.visit("/user/oauth2_client/" + result.oauth2_client_id + "/update");
         cy.screenshot("update");
         cy.get("#submit").click();
       });
@@ -31,11 +31,11 @@ describe("OAuth2 Client", () => {
       cy.createOauth2Client(userId).then(function (result) {
         cy.login("new@test.de");
 
-        cy.visit("/oauth2_client/" + result.oauth2_client_id + "/delete");
+        cy.visit("/user/oauth2_client/" + result.oauth2_client_id + "/delete");
         cy.get("#name").type("Mein Client");
         cy.screenshot("delete");
         cy.get("#submit").click();
-        cy.url().should("include", "/oauth2_clients");
+        cy.url().should("include", "/user/oauth2_clients");
       });
     });
   });
@@ -45,10 +45,10 @@ describe("OAuth2 Client", () => {
       cy.createOauth2Client(userId).then(function (result) {
         cy.login("new@test.de");
 
-        cy.visit("/oauth2_clients");
+        cy.visit("/user/oauth2_clients");
         cy.screenshot("list");
 
-        cy.visit("/oauth2_client/" + result.oauth2_client_id);
+        cy.visit("/user/oauth2_client/" + result.oauth2_client_id);
         cy.screenshot("read");
       });
     });

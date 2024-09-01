@@ -2,7 +2,7 @@ import logging
 import os
 from datetime import datetime, timedelta
 
-from flask import Flask
+from flask import Blueprint, Flask, g
 from flask_babel import Babel
 from flask_cors import CORS
 from flask_gzip import Gzip
@@ -275,14 +275,12 @@ from project.views import (
     dump,
     event,
     event_date,
-    event_place,
     event_suggestion,
     image,
     js,
     manage,
+    manage_admin_unit,
     oauth,
-    oauth2_client,
-    oauth2_token,
     organization,
     organizer,
     planning,
@@ -292,7 +290,12 @@ from project.views import (
     root,
 )
 from project.views import user as user_view
-from project.views import verification_request, verification_request_review, widget
+from project.views import (
+    user_blueprint,
+    verification_request,
+    verification_request_review,
+    widget,
+)
 
 if not getenv_bool("TESTING"):  # pragma: no cover
     with app.app_context():

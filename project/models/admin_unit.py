@@ -31,6 +31,7 @@ from project.utils import make_check_violation
 
 class AdminUnitMemberRolesMembers(db.Model):
     __tablename__ = "adminunitmemberroles_members"
+    __display_name__ = "Organization member role members"
     id = Column(Integer(), primary_key=True)
     member_id = Column("member_id", Integer(), ForeignKey("adminunitmember.id"))
     role_id = Column("role_id", Integer(), ForeignKey("adminunitmemberrole.id"))
@@ -38,6 +39,7 @@ class AdminUnitMemberRolesMembers(db.Model):
 
 class AdminUnitMemberRole(db.Model, RoleMixin):
     __tablename__ = "adminunitmemberrole"
+    __display_name__ = "Organization member role"
     id = Column(Integer(), primary_key=True)
     name = Column(String(80), unique=True)
     title = Column(Unicode(255))
@@ -47,6 +49,7 @@ class AdminUnitMemberRole(db.Model, RoleMixin):
 
 class AdminUnitMember(db.Model):
     __tablename__ = "adminunitmember"
+    __display_name__ = "Organization member"
     id = Column(Integer(), primary_key=True)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
     user = db.relationship("User", backref=db.backref("adminunitmembers", lazy=True))
@@ -68,6 +71,7 @@ class AdminUnitMember(db.Model):
 class AdminUnitMemberInvitation(db.Model):
     __tablename__ = "adminunitmemberinvitation"
     __table_args__ = (UniqueConstraint("email", "admin_unit_id"),)
+    __display_name__ = "Organization member invitation"
     id = Column(Integer(), primary_key=True)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
     email = Column(String(255))
@@ -76,6 +80,7 @@ class AdminUnitMemberInvitation(db.Model):
 
 class AdminUnitInvitation(db.Model, TrackableMixin):
     __tablename__ = "adminunitinvitation"
+    __display_name__ = "Organization invitation"
     id = Column(Integer(), primary_key=True)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
     email = Column(String(255), nullable=False)
@@ -102,6 +107,7 @@ class AdminUnitRelation(db.Model, TrackableMixin):
             "source_admin_unit_id != target_admin_unit_id", name="source_neq_target"
         ),
     )
+    __display_name__ = "Organization relation"
     id = Column(Integer(), primary_key=True)
     source_admin_unit_id = db.Column(
         db.Integer, db.ForeignKey("adminunit.id", ondelete="CASCADE"), nullable=False
@@ -164,6 +170,7 @@ class AdminUnit(db.Model, TrackableMixin):
             postgresql_using="gin",
         ),
     )
+    __display_name__ = "Organization"
 
     id = Column(Integer(), primary_key=True)
     name = Column(Unicode(255), unique=True)
