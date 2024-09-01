@@ -5,7 +5,7 @@ def test_read(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(True)
     oauth2_client_id = seeder.insert_default_oauth2_client(user_id)
 
-    url = utils.get_url("oauth2_client", id=oauth2_client_id)
+    url = utils.get_url("user.oauth2_client", oauth2_client_id=oauth2_client_id)
     utils.get_ok(url)
 
 
@@ -14,7 +14,7 @@ def test_read_notOwner(client, seeder, utils):
     oauth2_client_id = seeder.insert_default_oauth2_client(user_id)
 
     seeder.setup_base(True)
-    url = utils.get_url("oauth2_client", id=oauth2_client_id)
+    url = utils.get_url("user.oauth2_client", oauth2_client_id=oauth2_client_id)
     utils.get_unauthorized(url)
 
 
@@ -22,7 +22,7 @@ def test_list(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(True)
     seeder.insert_default_oauth2_client(user_id)
 
-    url = utils.get_url("oauth2_clients")
+    url = utils.get_url("user.oauth2_clients")
     utils.get_ok(url)
 
 
@@ -32,7 +32,7 @@ def test_create_authorization_code(client, app, utils, seeder, mocker, db_error)
 
     user_id, admin_unit_id = seeder.setup_base(True)
 
-    url = utils.get_url("oauth2_client_create")
+    url = utils.get_url("user.oauth2_client_create")
     response = utils.get_ok(url)
 
     if db_error:
@@ -61,7 +61,9 @@ def test_create_authorization_code(client, app, utils, seeder, mocker, db_error)
         assert oauth2_client is not None
         client_id = oauth2_client.id
 
-    utils.assert_response_redirect(response, "oauth2_client", id=client_id)
+    utils.assert_response_redirect(
+        response, "user.oauth2_client", oauth2_client_id=client_id
+    )
 
 
 @pytest.mark.parametrize("db_error", [True, False])
@@ -69,7 +71,7 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base(True)
     oauth2_client_id = seeder.insert_default_oauth2_client(user_id)
 
-    url = utils.get_url("oauth2_client_update", id=oauth2_client_id)
+    url = utils.get_url("user.oauth2_client_update", oauth2_client_id=oauth2_client_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -88,7 +90,9 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "oauth2_client", id=oauth2_client_id)
+    utils.assert_response_redirect(
+        response, "user.oauth2_client", oauth2_client_id=oauth2_client_id
+    )
 
     with app.app_context():
         from project.models import OAuth2Client
@@ -104,7 +108,7 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     user_id, admin_unit_id = seeder.setup_base(True)
     oauth2_client_id = seeder.insert_default_oauth2_client(user_id)
 
-    url = utils.get_url("oauth2_client_delete", id=oauth2_client_id)
+    url = utils.get_url("user.oauth2_client_delete", oauth2_client_id=oauth2_client_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -131,7 +135,7 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "oauth2_clients")
+    utils.assert_response_redirect(response, "user.oauth2_clients")
 
     with app.app_context():
         from project.models import OAuth2Client

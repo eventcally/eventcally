@@ -84,7 +84,7 @@ def test_js_check_event_place_name(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(admin=True)
     seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit_places_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_place_create", id=admin_unit_id)
     response = utils.get(url)
 
     with client:
@@ -104,7 +104,7 @@ def test_js_check_event_place_name_exists(client, seeder: Seeder, utils: UtilAct
     user_id, admin_unit_id = seeder.setup_base(admin=True)
     seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit_places_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_place_create", id=admin_unit_id)
     response = utils.get(url)
 
     with client:

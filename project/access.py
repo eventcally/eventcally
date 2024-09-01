@@ -1,5 +1,5 @@
 from authlib.integrations.flask_oauth2 import current_token
-from flask import abort
+from flask import abort, g
 from flask_login import login_user
 from flask_principal import Permission, RoleNeed
 from flask_security import current_user
@@ -101,6 +101,17 @@ def has_access(admin_unit, permission):
 def access_or_401(admin_unit, permission):
     if not has_access(admin_unit, permission):
         abort(401)
+
+
+def has_admin_unit_owner_access(admin_unit_id):
+    admin_unit = getattr(g, "manage_admin_unit", None)
+    return admin_unit and (admin_unit_id == admin_unit.id)
+
+
+def admin_unit_owner_access_or_401(admin_unit_id):
+    if not has_admin_unit_owner_access(admin_unit_id):
+        abort(401)
+    return None
 
 
 def get_admin_units_with_current_user_permission(permission):

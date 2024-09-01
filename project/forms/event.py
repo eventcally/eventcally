@@ -18,7 +18,6 @@ from wtforms.fields import EmailField, FieldList, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
 from project.forms.common import Base64ImageForm, distance_choices, event_rating_choices
-from project.forms.event_place import EventPlaceLocationForm
 from project.forms.widgets import (
     CustomDateField,
     CustomDateTimeField,
@@ -36,6 +35,7 @@ from project.models import (
     Location,
     PublicStatus,
 )
+from project.views.manage_admin_unit.event_place.forms import EventPlaceLocationForm
 
 
 class EventDateDefinitionFormMixin:

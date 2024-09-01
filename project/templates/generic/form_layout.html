@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% from "macros/forms.html.j2" import render_form %}
+{% from "macros/nav.html.j2" import render_breadcrumb, render_instuction %}
+{% from "_macros.html" import render_jquery_steps_header, render_form_styles, render_form_scripts %}
+
+{% block styles %}
+{{ render_form_styles() }}
+{% endblock %}
+
+{% block header %}
+{{ render_form_scripts() }}
+{{ render_jquery_steps_header() }}
+{% endblock %}
+
+{% block content %}
+
+{% block breadcrumbs %}
+{{ render_breadcrumb(view.get_breadcrumbs(), title) }}
+{% endblock %}
+
+{% block instruction %}
+{{ render_instuction(instruction) }}
+{% endblock %}
+
+{% block form %}
+{{ render_form(form) }}
+{% endblock %}
+
+{% endblock %}

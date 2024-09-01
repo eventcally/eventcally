@@ -27,10 +27,18 @@ class BaseView(View):
         return ""
 
     def get_templates(self):
-        return [
-            f"{self.model.__model_name__}/{self.template_file_name}",
-            f"generic/{self.template_file_name}",
-        ]
+        result = list()
+
+        for path in self.handler.template_pathes:
+            result.append(
+                f"{path}{self.model.__model_name__}/{self.template_file_name}"
+            )
+            result.append(f"{path}generic/{self.template_file_name}")
+
+        return result
+
+    def check_access(self, **kwargs):
+        return self.handler.check_access(**kwargs)
 
     def render_template(self, **kwargs):
         kwargs.setdefault("title", self.get_title(**kwargs))
@@ -67,11 +75,19 @@ class BaseListView(BaseView):
             kwargs[self.list_context_name] = kwargs.get("objects")
         return super().render_template(**kwargs)
 
+    def get_list_per_page(self):
+        return self.handler.get_list_per_page()
+
     def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
         query = self.get_objects_query_from_kwargs(**kwargs)
-        paginate = query.paginate()
+        paginate = query.paginate(per_page=self.get_list_per_page())
         objects = paginate.items
-        pagination = get_pagination_urls(paginate)
+        pagination = get_pagination_urls(paginate, **kwargs)
         display = self.create_display()
         return self.render_template(
             display=display, objects=objects, pagination=pagination
@@ -87,7 +103,9 @@ class BaseObjectView(BaseView):
             self.object_context_name = f"{self.model.__model_name__}"
 
     def get_object_from_kwargs(self, **kwargs):
-        return self.model.query.get_or_404(kwargs.get("id"))
+        return self.model.query.get_or_404(
+            kwargs.get(self.handler.get_id_query_arg_name())
+        )
 
     def check_object_access(self, object):
         return self.handler.check_object_access(object)
@@ -143,6 +161,11 @@ class BaseReadView(BaseObjectView):
         return str(kwargs["object"])
 
     def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
         object = self.get_object_from_kwargs(**kwargs)
         response = self.check_object_access(object)
 
@@ -157,7 +180,12 @@ class BaseCreateView(BaseFormView):
     template_file_name = "create.html"
 
     def get_redirect_url(self, **kwargs):
-        return self.handler.get_read_url(**kwargs)
+        result = self.handler.get_read_url(**kwargs)
+
+        if not result:
+            result = self.handler.get_list_url(**kwargs)
+
+        return result
 
     def get_title(self, **kwargs):
         return lazy_gettext(
@@ -172,6 +200,11 @@ class BaseCreateView(BaseFormView):
         )
 
     def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
         form = self.create_form()
         object = None
 
@@ -198,7 +231,12 @@ class BaseUpdateView(BaseFormView):
     template_file_name = "update.html"
 
     def get_redirect_url(self, **kwargs):
-        return self.handler.get_read_url(**kwargs)
+        result = self.handler.get_read_url(**kwargs)
+
+        if not result:
+            result = self.handler.get_list_url(**kwargs)
+
+        return result
 
     def get_title(self, **kwargs):
         return lazy_gettext(
@@ -213,6 +251,11 @@ class BaseUpdateView(BaseFormView):
         )
 
     def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
         object = self.get_object_from_kwargs(**kwargs)
         response = self.check_object_access(object)
 
@@ -266,6 +309,11 @@ class BaseDeleteView(BaseFormView):
         )
 
     def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
         object = self.get_object_from_kwargs(**kwargs)
         response = self.check_object_access(object)
 

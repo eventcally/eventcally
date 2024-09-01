@@ -40,7 +40,7 @@
         {{ _('Notifications') }}
         <i class="fa fa-caret-right"></i>
     </a>
-    <a href="{{ url_for('oauth2_tokens') }}" class="list-group-item">
+    <a href="{{ url_for('user.oauth2_tokens') }}" class="list-group-item">
         {{ _('Applications') }}
         <i class="fa fa-caret-right"></i>
     </a>
@@ -49,7 +49,7 @@
 <h2>{{ _('Developer') }}</h2>
 
 <div class="list-group">
-    <a href="{{ url_for('oauth2_clients') }}" class="list-group-item">
+    <a href="{{ url_for('user.oauth2_clients') }}" class="list-group-item">
         {{ _('OAuth2 clients') }}
         <i class="fa fa-caret-right"></i>
     </a>

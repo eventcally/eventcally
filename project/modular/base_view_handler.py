@@ -1,7 +1,7 @@
-from flask import url_for
+from flask import Blueprint, url_for
 from flask_babel import gettext
 
-from project.views.base_views import (
+from project.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
     BaseListView,
@@ -15,23 +15,33 @@ class BaseViewHandler:
     model = None
     create_view_class = BaseCreateView
     create_form_class = None
+    create_decorators = []
     read_view_class = BaseReadView
     read_display_class = None
+    read_decorators = []
     update_view_class = BaseUpdateView
     update_form_class = None
+    update_decorators = []
     delete_view_class = BaseDeleteView
     delete_form_class = None
+    delete_decorators = []
     list_view_class = BaseListView
     list_display_class = BaseListView
+    list_decorators = []
 
     def __init__(self, *args, **kwargs):
         super().__init__()
+        self.app = None
         self.endpoints = dict()
+        self.template_pathes = list()
 
     def complete_object(self, object):  # pragma: no cover
         pass
 
     def check_object_access(self, object):  # pragma: no cover
+        return None
+
+    def check_access(self, **kwargs):
         return None
 
     def get_objects_query_from_kwargs(self, **kwargs):
@@ -46,23 +56,32 @@ class BaseViewHandler:
     def can_object_be_deleted(self, form, object):  # pragma: no cover
         return True
 
+    def get_list_per_page(self):
+        return 20
+
     def get_endpoint_url(self, endpoint_key, **kwargs):
         endpoint = self.endpoints.get(endpoint_key)
         if endpoint:
-            return url_for(endpoint, **kwargs)
+            app_endpoint = (
+                f".{endpoint}" if isinstance(self.app, Blueprint) else endpoint
+            )
+            return url_for(app_endpoint, **kwargs)
         return None  # pragma: no cover
 
     def get_read_url(self, object, **kwargs):
-        return self.get_endpoint_url("read", id=object.id)
+        kwargs.setdefault(self.get_id_query_arg_name(), object.id)
+        return self.get_endpoint_url("read", **kwargs)
 
     def get_create_url(self, object, **kwargs):
         return self.get_endpoint_url("create")
 
     def get_update_url(self, object, **kwargs):
-        return self.get_endpoint_url("update", id=object.id)
+        kwargs.setdefault(self.get_id_query_arg_name(), object.id)
+        return self.get_endpoint_url("update", **kwargs)
 
     def get_delete_url(self, object, **kwargs):
-        return self.get_endpoint_url("delete", id=object.id)
+        kwargs.setdefault(self.get_id_query_arg_name(), object.id)
+        return self.get_endpoint_url("delete", **kwargs)
 
     def get_list_url(self, **kwargs):
         return self.get_endpoint_url("list")
@@ -115,6 +134,17 @@ class BaseViewHandler:
 
         return result
 
+    def get_all_list_actions(self, object):
+        result = list()
+
+        default_action = self.get_default_list_action(object)
+        if default_action:
+            result.append(default_action)
+
+        result.extend(self.get_additional_list_actions(object))
+
+        return result
+
     def get_read_actions(self, object):
         result = list()
 
@@ -135,10 +165,24 @@ class BaseViewHandler:
         )
         self.endpoints[key] = endpoint
 
-    def add_views(self, app, url_prefix, endpoint_prefix):
+    def get_url_prefix(self):
+        return self.model.__model_name__
+
+    def get_endpoint_prefix(self):
+        return self.model.__model_name__
+
+    def get_id_query_arg_name(self):  # pragma: no cover
+        return "id"
+
+    def add_views(self, app):
+        url_prefix = self.get_url_prefix()
+        endpoint_prefix = self.get_endpoint_prefix()
+        id_query_arg_name = self.get_id_query_arg_name()
+
         if self.create_view_class:
 
             class CreateView(self.create_view_class):
+                decorators = self.create_decorators
                 form_class = self.create_form_class
 
             self._add_view(
@@ -152,11 +196,12 @@ class BaseViewHandler:
         if self.read_view_class:
 
             class ReadView(self.read_view_class):
+                self.decorators = self.read_decorators
                 display_class = self.read_display_class
 
             self._add_view(
                 "read",
-                f"/{url_prefix}/<int:id>",
+                f"/{url_prefix}/<int:{id_query_arg_name}>",
                 ReadView,
                 endpoint_prefix,
                 app,
@@ -165,11 +210,12 @@ class BaseViewHandler:
         if self.update_view_class:
 
             class UpdateView(self.update_view_class):
+                decorators = self.update_decorators
                 form_class = self.update_form_class
 
             self._add_view(
                 "update",
-                f"/{url_prefix}/<int:id>/update",
+                f"/{url_prefix}/<int:{id_query_arg_name}>/update",
                 UpdateView,
                 f"{endpoint_prefix}_update",
                 app,
@@ -178,11 +224,12 @@ class BaseViewHandler:
         if self.delete_view_class:
 
             class DeleteView(self.delete_view_class):
+                decorators = self.delete_decorators
                 form_class = self.delete_form_class
 
             self._add_view(
                 "delete",
-                f"/{url_prefix}/<int:id>/delete",
+                f"/{url_prefix}/<int:{id_query_arg_name}>/delete",
                 DeleteView,
                 f"{endpoint_prefix}_delete",
                 app,
@@ -191,6 +238,7 @@ class BaseViewHandler:
         if self.list_view_class:
 
             class ListView(self.list_view_class):
+                decorators = self.list_decorators
                 display_class = self.list_display_class
 
             self._add_view(
@@ -201,7 +249,13 @@ class BaseViewHandler:
                 app,
             )
 
+    def _init_template_pathes(self):
+        if isinstance(self.app, Blueprint):
+            self.template_pathes.append(f"{self.app.name}/")
+
+        self.template_pathes.append("")
+
     def init_app(self, app):
-        url_prefix = self.model.__model_name__
-        endpoint_prefix = self.model.__model_name__
-        self.add_views(app, url_prefix, endpoint_prefix)
+        self.app = app
+        self._init_template_pathes()
+        self.add_views(app)

@@ -641,7 +641,7 @@
                 <a href="http://www.google.com/maps?q={{ render_place(event.event_place) | quote_plus }}" class="btn btn-outline-secondary mr-1" target="_blank" rel="noopener noreferrer"><i class="fa fa-directions"></i> {{ _('Show directions') }}</a>
               {% endif %}
               {% if user_rights['can_update_event'] %}
-                <a href="{{ url_for('event_place_update', id=event.event_place.id) }}" class="btn btn-outline-secondary"><i class="fa fa-edit"></i> {{ _('Edit') }}</a>
+                <a href="{{ url_for('manage_admin_unit.event_place_update', id=event.event_place.admin_unit_id, event_place_id=event.event_place.id) }}" class="btn btn-outline-secondary"><i class="fa fa-edit"></i> {{ _('Edit') }}</a>
               {% endif %}
             </div>
           {% endif %}

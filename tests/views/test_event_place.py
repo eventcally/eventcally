@@ -5,7 +5,7 @@ import pytest
 def test_create(client, app, utils, seeder, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit_places_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_place_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -24,7 +24,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_event_places", id=admin_unit_id
+        response, "manage_admin_unit.event_places", id=admin_unit_id
     )
 
     with app.app_context():
@@ -43,7 +43,11 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("event_place_update", id=place_id)
+    url = utils.get_url(
+        "manage_admin_unit.event_place_update",
+        id=admin_unit_id,
+        event_place_id=place_id,
+    )
     response = utils.get_ok(url)
 
     if db_error:
@@ -62,7 +66,7 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_event_places", id=admin_unit_id
+        response, "manage_admin_unit.event_places", id=admin_unit_id
     )
 
     with app.app_context():
@@ -72,13 +76,30 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
         assert place.name == "Neuer Name"
 
 
+def test_update_otherAdminUnit(client, seeder, utils, app, db):
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    other_admin_unit_id = seeder.create_admin_unit(user_id, "Other crew")
+
+    url = utils.get_url(
+        "manage_admin_unit.event_place_update",
+        id=other_admin_unit_id,
+        event_place_id=place_id,
+    )
+    utils.get_unauthorized(url)
+
+
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("non_match", [True, False])
 def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
 
-    url = utils.get_url("event_place_delete", id=place_id)
+    url = utils.get_url(
+        "manage_admin_unit.event_place_delete",
+        id=admin_unit_id,
+        event_place_id=place_id,
+    )
     response = utils.get_ok(url)
 
     if db_error:
@@ -108,7 +129,7 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_event_places", id=admin_unit_id
+        response, "manage_admin_unit.event_places", id=admin_unit_id
     )
 
     with app.app_context():
@@ -124,12 +145,16 @@ def test_create_Unauthorized(client, app, utils, seeder):
     seeder.create_admin_unit_member(admin_unit_id, [])
     utils.login()
 
-    url = utils.get_url("manage_admin_unit_places_create", id=admin_unit_id)
-    utils.get_unauthorized(url)
+    response = utils.get_endpoint(
+        "manage_admin_unit.event_place_create", id=admin_unit_id
+    )
+    utils.assert_response_permission_missing(
+        response, "manage_admin_unit", id=admin_unit_id
+    )
 
 
 def test_create_admin(client, app, utils, seeder):
     user_id, admin_unit_id = seeder.setup_base(admin=True)
 
-    url = utils.get_url("manage_admin_unit_places_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_place_create", id=admin_unit_id)
     utils.get_ok(url)

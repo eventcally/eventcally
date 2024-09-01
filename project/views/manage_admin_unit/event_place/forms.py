@@ -1,14 +1,14 @@
 from flask_babel import lazy_gettext
-from flask_wtf import FlaskForm
 from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaField
 from wtforms.fields import URLField
 from wtforms.validators import DataRequired, Length, Optional
 
+from project.forms.base_form import BaseForm
 from project.forms.common import Base64ImageForm
 from project.models import Image, Location
 
 
-class EventPlaceLocationForm(FlaskForm):
+class EventPlaceLocationForm(BaseForm):
     street = StringField(
         lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
     )
@@ -25,7 +25,7 @@ class EventPlaceLocationForm(FlaskForm):
     )
 
 
-class BaseEventPlaceForm(FlaskForm):
+class BaseEventPlaceForm(BaseForm):
     name = StringField(
         lazy_gettext("Name"), validators=[DataRequired(), Length(max=255)]
     )
@@ -51,13 +51,6 @@ class UpdateEventPlaceForm(BaseEventPlaceForm):
     submit = SubmitField(lazy_gettext("Update place"))
 
 
-class DeleteEventPlaceForm(FlaskForm):
+class DeleteEventPlaceForm(BaseForm):
     submit = SubmitField(lazy_gettext("Delete place"))
     name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
-
-
-class FindEventPlaceForm(FlaskForm):
-    class Meta:
-        csrf = False
-
-    submit = SubmitField(lazy_gettext("Find places"))
