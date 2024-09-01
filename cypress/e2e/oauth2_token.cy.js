@@ -4,7 +4,9 @@ describe("OAuth2 token", () => {
       cy.visit("/user/oauth2_tokens");
       cy.screenshot("list");
 
-      cy.get("a[href$=revoke]").click();
+      cy.get('.dropdown-toggle.btn-link').click();
+      cy.get("a[href$=revoke]").click({force: true});
+
       cy.screenshot("revoke");
       cy.get("#submit").click();
 
