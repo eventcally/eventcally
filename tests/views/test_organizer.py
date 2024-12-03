@@ -17,6 +17,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         {
             "name": "Neuer Organisator",
             "logo-image_base64": seeder.get_default_image_upload_base64(),
+            "logo-copyright_text": "EventCally",
         },
     )
 

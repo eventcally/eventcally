@@ -23,6 +23,7 @@ def test_post_load_image_data(seeder):
 
     data = {
         "image_base64": seeder.get_default_image_upload_base64(),
+        "copyright_text": "EventCally",
     }
 
     item = dict()

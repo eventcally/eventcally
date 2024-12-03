@@ -9,6 +9,7 @@ def upsert_image_with_data(image, data, encoding_format="image/jpeg"):
 
     image.data = data
     image.encoding_format = encoding_format
+    image.copyright_text = "EventCally"
 
     return image
 

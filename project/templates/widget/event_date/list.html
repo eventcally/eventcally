@@ -106,7 +106,12 @@
                         </div>
                         <div class="col-sm-4 text-right">
                             {% if date.event.photo_id %}
-                                <img src="{{ url_for_image(date.event.photo, s=200) }}" style="object-fit: cover; width: 200px;" />
+                                <div class="img-overlay-container">
+                                    <img src="{{ url_for_image(date.event.photo, s=200) }}" style="object-fit: cover; width: 200px;" />
+                                    {% if date.event.photo.copyright_text %}
+                                        <div class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" title="{{ date.event.photo.copyright_text }}">&copy;</div>
+                                    {% endif %}
+                                </div>
                             {% endif %}
                         </div>
                     </div>
@@ -121,7 +126,12 @@
             <div class="card">
                 <div>
                     {% if date.event.photo_id %}
-                        <img src="{{ url_for_image(date.event.photo, s=500) }}" class="card-img-top" style="object-fit: cover; height: 40vw;" />
+                        <div class="img-overlay-container">
+                            <img src="{{ url_for_image(date.event.photo, s=500) }}" class="card-img-top" style="object-fit: cover; height: 40vw;" />
+                            {% if date.event.photo.copyright_text %}
+                                <div class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" title="{{ date.event.photo.copyright_text }}">&copy;</div>
+                            {% endif %}
+                        </div>
                     {% endif %}
                 </div>
                 <div class="card-body">

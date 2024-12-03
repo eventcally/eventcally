@@ -638,7 +638,7 @@ def test_patch_photo(
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.patch_json(
         url,
-        {"photo": {"image_url": "https://image.com"}},
+        {"photo": {"image_url": "https://image.com", "copyright_text": "EventCally"}},
     )
     utils.assert_response_no_content(response)
 

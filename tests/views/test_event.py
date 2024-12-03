@@ -75,6 +75,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
         "event_place_id": place_id,
         "organizer_id": organizer_id,
         "photo-image_base64": seeder.get_default_image_upload_base64(),
+        "photo-copyright_text": "EventCally",
     }
 
     if variant == "two_date_definitions":
@@ -128,6 +129,7 @@ def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
             "event_place_id": place_id,
             "organizer_id": organizer_id,
             "photo-image_base64": seeder.get_default_image_upload_base64(),
+            "photo-copyright_text": "EventCally",
         },
     )
 

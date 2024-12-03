@@ -51,6 +51,7 @@ def test_get_sd_for_place(client, app, db, utils, seeder):
 
         photo = Image()
         photo.data = b"something"
+        photo.copyright_text = "EventCally"
         place.photo = photo
 
         location = Location()
@@ -118,6 +119,7 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
 
         photo = Image()
         photo.data = b"something"
+        photo.copyright_text = "EventCally"
         event.photo = photo
 
         update_event(event)

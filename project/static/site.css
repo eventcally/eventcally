@@ -116,3 +116,14 @@ button.dropdown-toggle {
   white-space: normal;
   text-align: inherit;
 }
+
+.img-overlay-container {
+  position: relative;
+}
+
+.img-overlay-copyright {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  text-align: center;
+}

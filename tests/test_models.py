@@ -51,6 +51,21 @@ def test_event_properties(client, app, db, seeder: Seeder):
         assert event.min_start == start
 
 
+def test_image_copyright_text(client, app, db, seeder: Seeder):
+    from project.services.image import upsert_image_with_base64_str
+
+    with app.app_context():
+        from sqlalchemy.exc import IntegrityError
+
+        base64_str = seeder.get_default_image_base64()
+        image = upsert_image_with_base64_str(None, base64_str, "image/png")
+        image.copyright_text = None
+
+        with pytest.raises(IntegrityError) as e:
+            image.validate()
+        assert e.value.orig.message == "Copyright text is required."
+
+
 def test_event_allday(client, app, db, seeder: Seeder):
     from project.dateutils import create_berlin_date
 
