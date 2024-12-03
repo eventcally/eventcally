@@ -22,6 +22,7 @@ def test_create(client, app, utils, seeder):
 
     data = create_form_data(response, utils)
     data["logo-image_base64"] = seeder.get_default_image_upload_base64()
+    data["logo-copyright_text"] = "EventCally"
 
     with client:
         response = client.post(

@@ -271,7 +271,7 @@
                                                             '<small class="text-muted"><i class="fa fa-map-marker"></i> ' + map_link_start + event.place.name + map_link_end + '</small>' +
                                                         '</div>' +
                                                         '<div class="col-sm-4 text-right">' +
-                                                            (event.photo != null ? '<img src="' + event.photo.image_url + '" style="object-fit: contain; width: 160px; height: 160px;" alt="Event image" />' : '') +
+                                                            (event.photo != null ? '<div class="img-overlay-container"><img src="' + event.photo.image_url + '" style="object-fit: contain; width: 160px; height: 160px;" alt="Event image" />' + (event.photo.copyright_text != null ? '<div class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" title="' + event.photo.copyright_text + '">&copy;</div>' : '') + '</div>' : '') +
                                                         '</div>' +
                                                     '</div>' +
                                                 '</div>' +
@@ -283,7 +283,7 @@
                                     '<div class="col-sm">' +
                                         '<div class="card">' +
                                             '<div>' +
-                                                (event.photo != null ? '<img src="' + event.photo.image_url + '" class="card-img-top" style="object-fit: cover; height: 12vh;" alt="Event image" />' : '') +
+                                                (event.photo != null ? '<div class="img-overlay-container"><img src="' + event.photo.image_url + '" class="card-img-top" style="object-fit: cover; height: 12vh;" alt="Event image" />' + (event.photo.copyright_text != null ? '<div class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" title="' + event.photo.copyright_text + '">&copy;</div>' : '') : '') +
                                             '</div>' +
                                             '<div class="card-body" style="padding:0.5rem">' +
                                                 '<div class="row">' +

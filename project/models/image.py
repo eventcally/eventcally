@@ -1,9 +1,11 @@
 from sqlalchemy import Column, Integer, String, Unicode
+from sqlalchemy.event import listens_for
 from sqlalchemy.orm import deferred
 
 from project import db
 from project.models.iowned import IOwned
 from project.models.trackable_mixin import TrackableMixin
+from project.utils import make_check_violation
 
 
 class Image(db.Model, TrackableMixin, IOwned):
@@ -44,3 +46,15 @@ class Image(db.Model, TrackableMixin, IOwned):
 
             if is_dirty:
                 session.delete(self)
+
+    def validate(self):
+        if (
+            not self.copyright_text or not self.copyright_text.strip()
+        ) and not self.is_empty():
+            raise make_check_violation("Copyright text is required.")
+
+
+@listens_for(Image, "before_insert")
+@listens_for(Image, "before_update")
+def before_saving_image(mapper, connect, self):
+    self.validate()

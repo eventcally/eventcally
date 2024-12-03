@@ -510,6 +510,7 @@ class Seeder(object):
                 "event_place_id": place_id,
                 "organizer_id": organizer_id,
                 "photo-image_base64": self.get_default_image_upload_base64(),
+                "photo-copyright_text": "EventCally",
             },
         )
 

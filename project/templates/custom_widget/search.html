@@ -12,6 +12,17 @@
         [v-cloak] {
            display: none;
         }
+
+        .img-overlay-container {
+           position: relative;
+        }
+
+        .img-overlay-copyright {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            text-align: center;
+        }
     </style>
 
     <script src="/static/ext/vue.2.6.14.min.js"></script>
@@ -171,7 +182,10 @@
                                                 <a href="#" @click.stop.prevent="openEventDate(date)" class="stretched-link"></a>
                                             </div>
                                             <div class="col-sm-4 text-right">
-                                                <img v-if="date.event.photo" :src="url_for_image(date.event.photo, 200)" style="object-fit: cover; width: 200px;" />
+                                                <div class="img-overlay-container" v-if="date.event.photo">
+                                                    <img :src="url_for_image(date.event.photo, 200)" style="object-fit: cover; width: 200px;" />
+                                                    <div v-if="date.event.photo.copyright_text" class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" :title="date.event.photo.copyright_text">&copy;</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -184,7 +198,10 @@
                             <div class="col-sm">
                                 <div class="card">
                                     <div>
-                                        <img v-if="date.event.photo" :src="url_for_image(date.event.photo, 500)" class="card-img-top" style="object-fit: cover; height: 40vw;" />
+                                        <div class="img-overlay-container" v-if="date.event.photo">
+                                            <img v-if="date.event.photo" :src="url_for_image(date.event.photo, 500)" class="card-img-top" style="object-fit: cover; height: 40vw;" />
+                                            <div v-if="date.event.photo.copyright_text" class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" :title="date.event.photo.copyright_text">&copy;</div>
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">

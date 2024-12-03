@@ -1061,6 +1061,7 @@
 
 {% macro render_cropper_code(field_id = "photo", min_width=320, min_height=160) %}
 var field_id = "#{{ field_id }}-image_base64";
+var copyright_field_id = "#{{ field_id }}-copyright_text";
 var inputImage = document.getElementById('photo-image_file');
 var Cropper = window.Cropper;
 var URL = window.URL || window.webkitURL;
@@ -1129,8 +1130,10 @@ if (URL) {
   if ($('#photo_preview').attr("src")) {
     image.src = uploadedImageURL = $('#photo_preview').attr("src");
     $('.hide-if-photo-exists').hide();
+    $(copyright_field_id).prop('required', true);
   } else {
     $('.show-if-photo-exists').hide();
+    $(copyright_field_id).prop('required', false);
   }
   $('#photo-edit-btn').click(function(e){
     e.preventDefault();
@@ -1142,6 +1145,8 @@ if (URL) {
     $('#photo_preview').attr("src", '');
     $('.show-if-photo-exists').hide();
     $('.hide-if-photo-exists').show();
+    $(copyright_field_id).prop('required', false);
+    $(copyright_field_id).valid();
   });
 
   $('#photo-zoom-in').click(function(e){
@@ -1181,6 +1186,8 @@ if (URL) {
       $('#photo_preview').attr("src", data_url);
       $('.show-if-photo-exists').show();
       $('.hide-if-photo-exists').hide();
+      $(copyright_field_id).prop('required', true);
+      $(copyright_field_id).valid();
     }
   });
 
@@ -1258,7 +1265,7 @@ if (URL) {
     </div>
   </div>
 
-  {{ render_field_with_errors(form_field.copyright_text) }}
+  {{ render_field_with_errors(form_field.copyright_text, is_required=True) }}
 {% endmacro %}
 
 {% macro render_crop_image_form_section(form_field) %}

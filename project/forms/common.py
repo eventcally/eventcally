@@ -1,5 +1,5 @@
 from flask import url_for
-from flask_babel import lazy_gettext
+from flask_babel import gettext, lazy_gettext
 from flask_wtf import FlaskForm
 from markupsafe import Markup
 from wtforms import HiddenField, StringField
@@ -38,6 +38,11 @@ class Base64ImageForm(BaseImageForm):
         self.image_base64.image_data = None
 
         if self.image_base64.data:
+            if not self.copyright_text.data or not self.copyright_text.data.strip():
+                msg = gettext("This field is required.")
+                self.copyright_text.errors.append(msg)
+                result = False
+
             try:
                 image = get_image_from_base64_str(self.image_base64.data)
                 validate_image(image)

@@ -206,7 +206,10 @@ def prepare_events_post_data(seeder, utils, legacy=False):
         "name": "Fest",
         "place": {"id": place_id},
         "organizer": {"id": organizer_id},
-        "photo": {"image_base64": seeder.get_default_image_base64()},
+        "photo": {
+            "image_base64": seeder.get_default_image_base64(),
+            "copyright_text": "EventCally",
+        },
     }
 
     if legacy:
@@ -283,7 +286,7 @@ def test_events_post_photo_no_data(client, seeder: Seeder, utils: UtilActions, a
     url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
         seeder, utils
     )
-    data["photo"] = dict()
+    data["photo"] = {"copyright_text": "EventCally"}
     response = utils.post_json(url, data)
     utils.assert_response_unprocessable_entity(response)
 

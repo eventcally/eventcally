@@ -21,7 +21,9 @@ class ImageModelSchema(SQLAlchemyBaseSchema):
 
 
 class ImageBaseSchemaMixin(object):
-    copyright_text = marshmallow.auto_field()
+    copyright_text = marshmallow.auto_field(
+        required=True, validate=validate.Length(min=3, max=255)
+    )
 
 
 class ImageSchema(ImageModelSchema, ImageBaseSchemaMixin):
