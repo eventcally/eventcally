@@ -11,12 +11,11 @@ from flask import (
 from flask_babel import gettext
 from flask_security import auth_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.sql import desc, func
+from sqlalchemy.sql import func
 
 from project import app, db, dump_org_path
 from project.access import (
     access_or_401,
-    admin_unit_suggestions_enabled_or_404,
     can_current_user_delete_member,
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_manage,
@@ -33,7 +32,6 @@ from project.models import (
     AdminUnitMemberInvitation,
     EventOrganizer,
     EventPlace,
-    EventSuggestion,
     User,
 )
 from project.services.admin_unit import (
@@ -42,7 +40,6 @@ from project.services.admin_unit import (
     get_member_for_admin_unit_by_user_id,
 )
 from project.services.event import get_events_query
-from project.services.event_suggestion import get_event_reviews_query
 from project.services.search_params import EventSearchParams
 from project.utils import get_place_str
 from project.views.event import get_event_category_choices
@@ -136,28 +133,6 @@ def manage_admin_unit(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
     set_current_admin_unit(admin_unit)
     return redirect(url_for("manage_admin_unit_events", id=admin_unit.id))
-
-
-@app.route("/manage/admin_unit/<int:id>/reviews")
-@auth_required()
-def manage_admin_unit_event_reviews(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    set_current_admin_unit(admin_unit)
-    admin_unit_suggestions_enabled_or_404(admin_unit)
-
-    event_suggestions_paginate = (
-        get_event_reviews_query(admin_unit)
-        .order_by(desc(EventSuggestion.created_at))
-        .paginate()
-    )
-    event_suggestions = event_suggestions_paginate.items
-
-    return render_template(
-        "manage/reviews.html",
-        admin_unit=admin_unit,
-        event_suggestions=event_suggestions,
-        pagination=get_pagination_urls(event_suggestions_paginate, id=id),
-    )
 
 
 @app.route("/manage/admin_unit/<int:id>/events")

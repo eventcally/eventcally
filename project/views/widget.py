@@ -1,27 +1,12 @@
-from flask import flash, redirect, render_template, request, url_for
-from flask_babel import gettext
-from flask_security import current_user
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.sql import func
+from flask import render_template, request
 
-from project import app, db
-from project.access import admin_unit_suggestions_enabled_or_404
-from project.dateutils import get_next_full_hour
+from project import app
 from project.forms.event_date import FindEventDateWidgetForm
-from project.forms.event_suggestion import CreateEventSuggestionForm
-from project.models import AdminUnit, EventOrganizer, EventReviewStatus, EventSuggestion
+from project.models import AdminUnit
 from project.services.event import get_event_dates_query
-from project.services.event_suggestion import insert_event_suggestion
-from project.services.place import get_event_places
 from project.services.search_params import EventSearchParams
 from project.views.event import get_event_category_choices
-from project.views.utils import (
-    flash_errors,
-    flash_message,
-    get_pagination_urls,
-    handleSqlError,
-    send_template_mails_to_admin_unit_members_async,
-)
+from project.views.utils import get_pagination_urls
 
 
 @app.route("/organizations/<int:id>/widget/eventdates")
@@ -55,97 +40,6 @@ def widget_event_dates(id):
     )
 
 
-@app.route(
-    "/organizations/<int:id>/widget/event_suggestions/create", methods=("GET", "POST")
-)
-def event_suggestion_create_for_admin_unit(id):
-    admin_unit = AdminUnit.query.get_or_404(id)
-    admin_unit_suggestions_enabled_or_404(admin_unit)
-
-    form = CreateEventSuggestionForm()
-
-    organizers = EventOrganizer.query.filter(
-        EventOrganizer.admin_unit_id == admin_unit.id
-    ).order_by(func.lower(EventOrganizer.name))
-    form.organizer_id.choices = [(o.id, o.name) for o in organizers]
-
-    places = get_event_places(admin_unit.id)
-    form.event_place_id.choices = [(p.id, p.name) for p in places]
-
-    form.organizer_id.choices.insert(0, ("", ""))
-    form.event_place_id.choices.insert(0, ("", ""))
-
-    form.category_ids.choices = get_event_category_choices()
-
-    if not form.start.data:
-        form.start.data = get_next_full_hour()
-
-    if form.validate_on_submit():
-        event_suggestion = EventSuggestion()
-        form.populate_obj(event_suggestion)
-        event_suggestion.admin_unit_id = admin_unit.id
-        event_suggestion.review_status = EventReviewStatus.inbox
-
-        if "preview" in request.args:
-            with db.session.no_autoflush:
-                event_suggestion.admin_unit = admin_unit
-                event_suggestion.organizer = next(
-                    (o for o in organizers if o.id == event_suggestion.organizer_id),
-                    None,
-                )
-                event_suggestion.event_place = next(
-                    (p for p in places if p.id == event_suggestion.event_place_id), None
-                )
-
-            return render_template(
-                "widget/event_suggestion/create_preview.html",
-                admin_unit=admin_unit,
-                event_suggestion=event_suggestion,
-            )
-
-        try:
-            insert_event_suggestion(event_suggestion)
-            db.session.commit()
-
-            send_event_inbox_mails(admin_unit, event_suggestion)
-            flash(gettext("Thank you so much! The event is being verified."), "success")
-
-            if not current_user.is_authenticated:
-                flash_message(
-                    gettext(
-                        "For more options and your own calendar of events, you can register for free."
-                    ),
-                    url_for("security.register"),
-                    gettext("Register for free"),
-                    "info",
-                )
-
-            return redirect(
-                url_for(
-                    "event_suggestion_review_status",
-                    event_suggestion_id=event_suggestion.id,
-                )
-            )
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
-    else:
-        flash_errors(form)
-
-    if "preview" in request.args:
-        return render_template(
-            "widget/event_suggestion/create_preview.html",
-            admin_unit=admin_unit,
-        )
-
-    return render_template(
-        "widget/event_suggestion/create.html",
-        form=form,
-        admin_unit=admin_unit,
-        styles=get_styles(admin_unit),
-    )
-
-
 def get_styles(admin_unit):
     styles = dict()
 
@@ -170,12 +64,3 @@ def get_styles(admin_unit):
         styles["link"] = admin_unit.widget_link_color.hex
 
     return styles
-
-
-def send_event_inbox_mails(admin_unit, event_suggestion):
-    send_template_mails_to_admin_unit_members_async(
-        admin_unit.id,
-        "event:verify",
-        "review_notice",
-        event_suggestion=event_suggestion,
-    )

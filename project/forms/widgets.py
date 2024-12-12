@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from flask_babel import gettext, to_user_timezone
+from flask_babel import to_user_timezone
 from markupsafe import Markup
-from wtforms import DateTimeField, SelectField, SelectMultipleField
+from wtforms import DateTimeField, SelectMultipleField
 from wtforms.fields import StringField
-from wtforms.validators import Length, StopValidation
+from wtforms.validators import Length
 from wtforms.widgets import CheckboxInput, ListWidget, html_params
 
 from project.dateutils import berlin_tz, date_set_end_of_day
@@ -121,44 +121,6 @@ class CustomDateField(DateTimeField):
                 self.data = localized_date
             except Exception:
                 raise ValueError("Not a valid date value. Looking for YYYY-MM-DD.")
-
-
-def try_to_int(value):
-    if isinstance(value, int):
-        return value
-
-    if isinstance(value, str) and value.isdigit():
-        try:
-            return int(value)
-        except ValueError:
-            return value
-
-    return value
-
-
-class TagSelectField(SelectField):
-    def __init__(
-        self,
-        label=None,
-        validators=None,
-        coerce=try_to_int,
-        choices=None,
-        validate_choice=True,
-        **kwargs
-    ):
-        super(TagSelectField, self).__init__(
-            label, validators, coerce, choices, validate_choice, **kwargs
-        )
-
-    def pre_validate(self, form):
-        if self.is_free_text():
-            if not self.data or not self.data.strip():
-                raise StopValidation(gettext("This field is required."))
-        else:
-            super(TagSelectField, self).pre_validate(form)
-
-    def is_free_text(self):
-        return isinstance(self.data, str)
 
 
 class HTML5StringField(StringField):

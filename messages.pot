@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-09-01 12:06+0200\n"
+"POT-Creation-Date: 2024-12-12 17:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,7 +57,7 @@ msgstr ""
 msgid "%(model_display_name)s successfully deleted"
 msgstr ""
 
-#: project/views/oauth2_token.py:51
+#: project/views/user_blueprint/oauth2_token/views.py:44
 #, python-format
 msgid "%(model_display_name)s successfully revoked"
 msgstr ""
@@ -82,39 +82,39 @@ msgstr ""
 msgid "."
 msgstr ""
 
-#: project/forms/common.py:99
+#: project/forms/common.py:104
 msgid "0 (Little relevant)"
 msgstr ""
 
-#: project/forms/common.py:109
+#: project/forms/common.py:114
 msgid "10 (Highlight)"
 msgstr ""
 
-#: project/forms/common.py:125
+#: project/forms/common.py:130
 msgid "10 km"
 msgstr ""
 
-#: project/forms/common.py:128
+#: project/forms/common.py:133
 msgid "100 km"
 msgstr ""
 
-#: project/forms/common.py:126
+#: project/forms/common.py:131
 msgid "20 km"
 msgstr ""
 
-#: project/forms/common.py:104
+#: project/forms/common.py:109
 msgid "5 (Default)"
 msgstr ""
 
-#: project/forms/common.py:124
+#: project/forms/common.py:129
 msgid "5 km"
 msgstr ""
 
-#: project/forms/common.py:127
+#: project/forms/common.py:132
 msgid "50 km"
 msgstr ""
 
-#: project/forms/common.py:123
+#: project/forms/common.py:128
 msgid "500 m"
 msgstr ""
 
@@ -181,11 +181,11 @@ msgid "Add this event to a list of your organization."
 msgstr ""
 
 #: project/templates/_macros.html:435 project/templates/_macros.html:594
-#: project/templates/_macros.html:1586
+#: project/templates/_macros.html:1541
 msgid "Add to calendar"
 msgstr ""
 
-#: project/templates/_macros.html:1303 project/templates/event/actions.html:44
+#: project/templates/_macros.html:1310 project/templates/event/actions.html:44
 #: project/templates/manage/events.html:137
 msgid "Add to list"
 msgstr ""
@@ -262,7 +262,7 @@ msgstr ""
 msgid "All data"
 msgstr ""
 
-#: project/forms/admin.py:117
+#: project/forms/admin.py:112
 msgid "All users with enabled newsletter setting"
 msgstr ""
 
@@ -288,7 +288,7 @@ msgid ""
 "not allowed."
 msgstr ""
 
-#: project/forms/event.py:72 project/templates/_macros.html:1349
+#: project/forms/event.py:72 project/templates/_macros.html:1356
 msgid "An event can last a maximum of 180 days."
 msgstr ""
 
@@ -300,11 +300,11 @@ msgstr ""
 msgid "Announcement"
 msgstr ""
 
-#: project/templates/_macros.html:1597
+#: project/templates/_macros.html:1552
 msgid "Apple calendar"
 msgstr ""
 
-#: project/views/oauth2_token.py:57
+#: project/views/user_blueprint/oauth2_token/displays.py:9
 msgid "Application"
 msgstr ""
 
@@ -335,7 +335,6 @@ msgstr ""
 msgid "Booked up"
 msgstr ""
 
-#: project/templates/event_suggestion/review.html:53
 #: project/templates/reference_request/review.html:72
 #: project/templates/reference_request/review.html:97
 #: project/templates/verification_request/review.html:90
@@ -351,7 +350,7 @@ msgstr ""
 msgid "Cancel deletion"
 msgstr ""
 
-#: project/forms/event.py:254 project/forms/event_suggestion.py:71
+#: project/forms/event.py:254
 msgid "Categories"
 msgstr ""
 
@@ -360,7 +359,7 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
-#: project/forms/event.py:257 project/forms/event_suggestion.py:74
+#: project/forms/event.py:257
 msgid "Choose categories that fit the event."
 msgstr ""
 
@@ -375,7 +374,7 @@ msgid ""
 "visible and is used for sorting."
 msgstr ""
 
-#: project/templates/_macros.html:1252
+#: project/templates/_macros.html:1259
 msgid "Choose image file"
 msgstr ""
 
@@ -384,7 +383,7 @@ msgstr ""
 msgid "Choose the result of your review."
 msgstr ""
 
-#: project/forms/event_suggestion.py:52 project/templates/event/create.html:303
+#: project/templates/event/create.html:303
 msgid ""
 "Choose where the event takes place. If the venue is not yet in the list, "
 "just enter it."
@@ -420,10 +419,6 @@ msgstr ""
 msgid "Click here to open the site"
 msgstr ""
 
-#: project/templates/email/review_notice.html:5
-msgid "Click here to review the event suggestion"
-msgstr ""
-
 #: project/templates/email/reference_request_notice.html:6
 #: project/templates/email/verification_request_notice.html:5
 msgid "Click here to review the request"
@@ -448,7 +443,6 @@ msgid "Click here to view the relation"
 msgstr ""
 
 #: project/templates/email/reference_request_review_status_notice.html:5
-#: project/templates/email/review_status_notice.html:5
 #: project/templates/email/verification_request_review_status_notice.html:5
 msgid "Click here to view the status"
 msgstr ""
@@ -461,10 +455,6 @@ msgstr ""
 
 #: project/templates/email/test_email.txt:2
 msgid "Click the link below to open the site"
-msgstr ""
-
-#: project/templates/email/review_notice.txt:2
-msgid "Click the link below to review the event suggestion"
 msgstr ""
 
 #: project/templates/email/reference_request_notice.txt:2
@@ -491,32 +481,31 @@ msgid "Click the link below to view the relation"
 msgstr ""
 
 #: project/templates/email/reference_request_review_status_notice.txt:2
-#: project/templates/email/review_status_notice.txt:2
 #: project/templates/email/verification_request_review_status_notice.txt:2
 msgid "Click the link below to view the status"
 msgstr ""
 
-#: project/views/oauth2_client.py:21
+#: project/views/user_blueprint/oauth2_client/displays.py:8
 msgid "Client ID"
 msgstr ""
 
-#: project/views/oauth2_client.py:32
+#: project/views/user_blueprint/oauth2_client/displays.py:19
 msgid "Client Name"
 msgstr ""
 
-#: project/views/oauth2_client.py:23
+#: project/views/user_blueprint/oauth2_client/displays.py:10
 msgid "Client URI"
 msgstr ""
 
-#: project/forms/oauth2_client.py:14
+#: project/views/user_blueprint/oauth2_client/forms.py:14
 msgid "Client name"
 msgstr ""
 
-#: project/views/oauth2_client.py:22
+#: project/views/user_blueprint/oauth2_client/displays.py:9
 msgid "Client secret"
 msgstr ""
 
-#: project/templates/_macros.html:1239 project/templates/planning/list.html:101
+#: project/templates/_macros.html:1246 project/templates/planning/list.html:101
 msgid "Close"
 msgstr ""
 
@@ -532,22 +521,16 @@ msgstr ""
 msgid "Confirmation required"
 msgstr ""
 
-#: project/forms/admin.py:15 project/templates/_macros.html:1475
-#: project/templates/layout.html:353
-#: project/templates/widget/event_suggestion/create.html:204
+#: project/forms/admin.py:15 project/templates/layout.html:342
 #: project/views/admin_unit.py:83 project/views/root.py:75
 msgid "Contact"
 msgstr ""
 
-#: project/templates/widget/event_suggestion/create.html:175
-msgid "Continue as guest"
-msgstr ""
-
-#: project/views/manage_admin_unit/event_place/list_display.py:10
+#: project/views/manage_admin_unit/event_place/displays.py:10
 msgid "Coordinates"
 msgstr ""
 
-#: project/templates/_macros.html:1565
+#: project/templates/_macros.html:1520
 msgid "Copy link"
 msgstr ""
 
@@ -566,20 +549,10 @@ msgid "Create another event for %(admin_unit_name)s"
 msgstr ""
 
 #: project/templates/event/create.html:5
-#: project/templates/event/create.html:239 project/templates/layout.html:230
+#: project/templates/event/create.html:239 project/templates/layout.html:227
 #: project/templates/manage/events.html:55
 #: project/templates/manage/organizers.html:38
 msgid "Create event"
-msgstr ""
-
-#: project/templates/event_suggestion/review.html:32
-msgid "Create event from suggestion"
-msgstr ""
-
-#: project/forms/event_suggestion.py:78
-#: project/templates/widget/event_suggestion/create.html:5
-#: project/templates/widget/event_suggestion/create.html:157
-msgid "Create event suggestion"
 msgstr ""
 
 #: project/templates/manage/export.html:77
@@ -598,7 +571,7 @@ msgstr ""
 msgid "Create organizer"
 msgstr ""
 
-#: project/forms/admin.py:78
+#: project/forms/admin.py:73
 msgid "Create other organizations"
 msgstr ""
 
@@ -625,7 +598,7 @@ msgstr ""
 msgid "Custom widget"
 msgstr ""
 
-#: project/babel.py:1 project/templates/layout.html:299
+#: project/babel.py:1 project/templates/layout.html:288
 #: project/templates/manage/custom_widgets.html:13
 msgid "Custom widgets"
 msgstr ""
@@ -658,7 +631,7 @@ msgstr ""
 msgid "Delete %(model_display_name)s"
 msgstr ""
 
-#: project/forms/oauth2_client.py:66
+#: project/views/user_blueprint/oauth2_client/forms.py:66
 msgid "Delete OAuth2 client"
 msgstr ""
 
@@ -667,7 +640,7 @@ msgstr ""
 msgid "Delete account"
 msgstr ""
 
-#: project/forms/event.py:440 project/templates/_macros.html:1289
+#: project/forms/event.py:440 project/templates/_macros.html:1296
 #: project/templates/event/actions.html:66
 #: project/templates/event/delete.html:6
 msgid "Delete event"
@@ -683,7 +656,7 @@ msgstr ""
 msgid "Delete member"
 msgstr ""
 
-#: project/forms/admin.py:102 project/templates/admin/delete_admin_unit.html:6
+#: project/forms/admin.py:97 project/templates/admin/delete_admin_unit.html:6
 #: project/templates/admin_unit/request_deletion.html:6
 #: project/templates/admin_unit/update.html:113
 msgid "Delete organization"
@@ -731,7 +704,7 @@ msgid "Description"
 msgstr ""
 
 #: project/templates/developer/read.html:4
-#: project/templates/developer/read.html:8 project/templates/layout.html:361
+#: project/templates/developer/read.html:8 project/templates/layout.html:350
 #: project/templates/profile.html:49
 msgid "Developer"
 msgstr ""
@@ -746,7 +719,7 @@ msgstr ""
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr ""
 
-#: project/views/oauth2_token.py:45
+#: project/views/user_blueprint/oauth2_token/views.py:38
 #, python-format
 msgid "Do you want to revoke '%(object_title)s'?"
 msgstr ""
@@ -766,7 +739,7 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: project/views/event.py:214
+#: project/views/event.py:178
 msgid "Draft successfully saved"
 msgstr ""
 
@@ -774,7 +747,7 @@ msgstr ""
 msgid "Duplicate"
 msgstr ""
 
-#: project/templates/_macros.html:1292 project/templates/event/actions.html:58
+#: project/templates/_macros.html:1299 project/templates/event/actions.html:58
 msgid "Duplicate event"
 msgstr ""
 
@@ -793,12 +766,12 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: project/templates/_macros.html:1288 project/templates/event/actions.html:65
+#: project/templates/_macros.html:1295 project/templates/event/actions.html:65
 #: project/templates/event/delete.html:12
 msgid "Edit event"
 msgstr ""
 
-#: project/templates/_macros.html:1218
+#: project/templates/_macros.html:1225
 msgid "Edit image"
 msgstr ""
 
@@ -809,11 +782,11 @@ msgstr ""
 #: project/forms/admin.py:61 project/forms/admin_unit.py:67
 #: project/forms/admin_unit_member.py:12 project/forms/admin_unit_member.py:25
 #: project/forms/admin_unit_member.py:30 project/forms/event.py:112
-#: project/forms/event_suggestion.py:38 project/forms/organizer.py:33
-#: project/forms/user.py:37 project/forms/user.py:42
-#: project/templates/_macros.html:231 project/templates/_macros.html:1571
-#: project/templates/admin/admin.html:27 project/templates/admin/email.html:4
-#: project/templates/admin/email.html:66 project/templates/admin/users.html:19
+#: project/forms/organizer.py:33 project/forms/user.py:37
+#: project/forms/user.py:42 project/templates/_macros.html:231
+#: project/templates/_macros.html:1526 project/templates/admin/admin.html:27
+#: project/templates/admin/email.html:4 project/templates/admin/email.html:66
+#: project/templates/admin/users.html:19
 #: project/templates/manage/organizers.html:21
 msgid "Email"
 msgstr ""
@@ -847,7 +820,7 @@ msgid ""
 " be entered if they are already in the name or description."
 msgstr ""
 
-#: project/templates/_macros.html:1909
+#: project/templates/_macros.html:1864
 msgid "Enter list name"
 msgstr ""
 
@@ -864,20 +837,15 @@ msgstr ""
 msgid "Enter organization"
 msgstr ""
 
-#: project/templates/_macros.html:1881 project/templates/event/create.html:204
+#: project/templates/_macros.html:1836 project/templates/event/create.html:204
 #: project/templates/event/update.html:111
 #: project/templates/event_date/list.html:448
-#: project/templates/widget/event_suggestion/create.html:129
 msgid "Enter organizer"
 msgstr ""
 
 #: project/templates/event/create.html:124
 #: project/templates/event/update.html:84
 msgid "Enter place"
-msgstr ""
-
-#: project/templates/widget/event_suggestion/create.html:104
-msgid "Enter place or address"
 msgstr ""
 
 #: project/forms/event.py:187
@@ -906,12 +874,12 @@ msgstr ""
 msgid "Entered email does not match your email"
 msgstr ""
 
-#: project/views/oauth2_client.py:64
+#: project/views/user_blueprint/oauth2_client/view_handler.py:34
 msgid "Entered name does not match OAuth2 client name"
 msgstr ""
 
 #: project/views/admin.py:86 project/views/admin_unit.py:207
-#: project/views/admin_unit.py:240 project/views/manage.py:292
+#: project/views/admin_unit.py:240 project/views/manage.py:267
 #: project/views/verification_request.py:169
 msgid "Entered name does not match organization name"
 msgstr ""
@@ -920,7 +888,7 @@ msgstr ""
 msgid "Entered name does not match organizer name"
 msgstr ""
 
-#: project/views/manage_admin_unit/event_place/view_handler.py:63
+#: project/views/manage_admin_unit/event_place/view_handler.py:58
 msgid "Entered name does not match place name"
 msgstr ""
 
@@ -934,7 +902,6 @@ msgstr ""
 #: project/templates/event/create.html:248
 #: project/templates/event/update.html:134
 #: project/templates/manage/events.html:111
-#: project/templates/widget/event_suggestion/create.html:229
 msgid "Event"
 msgstr ""
 
@@ -994,7 +961,7 @@ msgstr ""
 msgid "Event list"
 msgstr ""
 
-#: project/babel.py:1 project/templates/layout.html:233
+#: project/babel.py:1 project/templates/layout.html:230
 #: project/templates/manage/event_lists.html:4
 msgid "Event lists"
 msgstr ""
@@ -1029,15 +996,15 @@ msgstr ""
 msgid "Event review status updated"
 msgstr ""
 
-#: project/views/event.py:303
+#: project/views/event.py:266
 msgid "Event successfully deleted"
 msgstr ""
 
-#: project/views/event.py:216
+#: project/views/event.py:180
 msgid "Event successfully planned"
 msgstr ""
 
-#: project/views/event.py:211
+#: project/views/event.py:175
 msgid "Event successfully published"
 msgstr ""
 
@@ -1045,24 +1012,8 @@ msgstr ""
 msgid "Event successfully referenced"
 msgstr ""
 
-#: project/views/event.py:277
+#: project/views/event.py:240
 msgid "Event successfully updated"
-msgstr ""
-
-#: project/babel.py:1 project/templates/_macros.html:1447
-msgid "Event suggestion"
-msgstr ""
-
-#: project/babel.py:1
-msgid "Event suggestion event categories"
-msgstr ""
-
-#: project/views/event_suggestion.py:54
-msgid "Event suggestion successfully rejected"
-msgstr ""
-
-#: project/babel.py:1
-msgid "Event suggestions"
 msgstr ""
 
 #: project/forms/event.py:224 project/templates/layout.html:114
@@ -1107,22 +1058,6 @@ msgstr ""
 
 #: project/forms/reference_request.py:37
 msgid "EventReferenceRequestReviewStatus.verified"
-msgstr ""
-
-#: project/forms/event_suggestion.py:133
-msgid "EventRejectionReason.duplicate"
-msgstr ""
-
-#: project/forms/event_suggestion.py:141
-msgid "EventRejectionReason.illegal"
-msgstr ""
-
-#: project/forms/event_suggestion.py:129
-msgid "EventRejectionReason.noreason"
-msgstr ""
-
-#: project/forms/event_suggestion.py:137
-msgid "EventRejectionReason.untrustworthy"
 msgstr ""
 
 #: project/i10n.py:63
@@ -1289,15 +1224,15 @@ msgstr ""
 msgid "Expected number of participants"
 msgstr ""
 
-#: project/views/oauth2_token.py:65
+#: project/views/user_blueprint/oauth2_token/displays.py:17
 msgid "Expired"
 msgstr ""
 
-#: project/views/oauth2_token.py:60
+#: project/views/user_blueprint/oauth2_token/displays.py:12
 msgid "Expires"
 msgstr ""
 
-#: project/templates/layout.html:297 project/templates/manage/export.html:3
+#: project/templates/layout.html:286 project/templates/manage/export.html:3
 #: project/templates/manage/export.html:63
 msgid "Export"
 msgstr ""
@@ -1342,13 +1277,7 @@ msgstr ""
 msgid "Font"
 msgstr ""
 
-#: project/views/widget.py:115
-msgid ""
-"For more options and your own calendar of events, you can register for "
-"free."
-msgstr ""
-
-#: project/forms/common.py:117
+#: project/forms/common.py:122
 msgid "Friday"
 msgstr ""
 
@@ -1363,11 +1292,11 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: project/templates/_macros.html:1595
+#: project/templates/_macros.html:1550
 msgid "Google calendar"
 msgstr ""
 
-#: project/views/oauth2_client.py:24
+#: project/views/user_blueprint/oauth2_client/displays.py:11
 msgid "Grant types"
 msgstr ""
 
@@ -1379,23 +1308,19 @@ msgstr ""
 msgid "Hi there"
 msgstr ""
 
-#: project/forms/common.py:88
+#: project/forms/common.py:93
 #, python-format
 msgid "I read and accept %(privacy_open)sPrivacy%(privacy_close)s."
 msgstr ""
 
-#: project/forms/common.py:78
+#: project/forms/common.py:83
 #, python-format
 msgid ""
 "I read and accept %(tos_open)sTerms of Service%(tos_close)s and "
 "%(privacy_open)sPrivacy%(privacy_close)s."
 msgstr ""
 
-#: project/forms/event_suggestion.py:45
-msgid "I would like to be notified by email after the review"
-msgstr ""
-
-#: project/views/oauth2_token.py:56
+#: project/views/user_blueprint/oauth2_token/displays.py:8
 msgid "ID"
 msgstr ""
 
@@ -1417,15 +1342,15 @@ msgstr ""
 msgid "If set, events of the new organization are publicly visible."
 msgstr ""
 
-#: project/forms/admin.py:79
+#: project/forms/admin.py:74
 msgid "If set, members of the organization can create other organizations."
 msgstr ""
 
-#: project/forms/admin.py:86
+#: project/forms/admin.py:81
 msgid "If set, members of the organization can invite other organizations."
 msgstr ""
 
-#: project/forms/admin.py:93
+#: project/forms/admin.py:88
 msgid "If set, members of the organization can verify other organizations."
 msgstr ""
 
@@ -1433,10 +1358,6 @@ msgstr ""
 msgid ""
 "If set, other organizations can ask this organization to reference their "
 "event."
-msgstr ""
-
-#: project/forms/admin.py:74
-msgid "If set, the organization can work with suggestions."
 msgstr ""
 
 #: project/forms/admin_unit.py:75
@@ -1467,11 +1388,11 @@ msgstr ""
 msgid "Images"
 msgstr ""
 
-#: project/templates/layout.html:231
+#: project/templates/layout.html:228
 msgid "Import event"
 msgstr ""
 
-#: project/templates/layout.html:255
+#: project/templates/layout.html:244
 #: project/templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
 msgstr ""
@@ -1480,12 +1401,12 @@ msgstr ""
 msgid "Incoming reference requests allowed"
 msgstr ""
 
-#: project/templates/layout.html:252
+#: project/templates/layout.html:241
 #: project/templates/manage/references_incoming.html:9
 msgid "Incoming references"
 msgstr ""
 
-#: project/templates/layout.html:284
+#: project/templates/layout.html:273
 #: project/templates/manage/verification_requests_incoming.html:5
 #: project/templates/manage/verification_requests_incoming.html:9
 msgid "Incoming verification requests"
@@ -1544,7 +1465,7 @@ msgstr ""
 msgid "Invite organization"
 msgstr ""
 
-#: project/forms/admin.py:85
+#: project/forms/admin.py:80
 msgid "Invite other organizations"
 msgstr ""
 
@@ -1553,11 +1474,11 @@ msgstr ""
 msgid "Invite user"
 msgstr ""
 
-#: project/views/oauth2_token.py:59
+#: project/views/user_blueprint/oauth2_token/displays.py:11
 msgid "Issued"
 msgstr ""
 
-#: project/templates/_macros.html:1381
+#: project/templates/_macros.html:1388
 #, python-format
 msgid "Just use %(term)s"
 msgstr ""
@@ -1583,7 +1504,7 @@ msgstr ""
 msgid "Last modified first"
 msgstr ""
 
-#: project/views/manage.py:283
+#: project/views/manage.py:258
 msgid "Last remaining administrator can not leave the organization."
 msgstr ""
 
@@ -1602,12 +1523,12 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: project/forms/admin_unit.py:175 project/templates/layout.html:313
+#: project/forms/admin_unit.py:175 project/templates/layout.html:302
 #: project/templates/manage/delete_membership.html:6
 msgid "Leave organization"
 msgstr ""
 
-#: project/forms/admin.py:14 project/templates/layout.html:349
+#: project/forms/admin.py:14 project/templates/layout.html:338
 #: project/views/root.py:67
 msgid "Legal notice"
 msgstr ""
@@ -1631,12 +1552,8 @@ msgstr ""
 msgid "Link URL"
 msgstr ""
 
-#: project/templates/_macros.html:1565
+#: project/templates/_macros.html:1520
 msgid "Link copied"
-msgstr ""
-
-#: project/templates/manage/widgets.html:87
-msgid "Link, um Veranstaltungen vorzuschlagen"
 msgstr ""
 
 #: project/templates/event/actions.html:62
@@ -1651,7 +1568,7 @@ msgstr ""
 #: project/templates/manage/organizers.html:19
 #: project/templates/organizer/create.html:37
 #: project/templates/organizer/update.html:37
-#: project/views/manage_admin_unit/event_place/list_display.py:9
+#: project/views/manage_admin_unit/event_place/displays.py:9
 msgid "Location"
 msgstr ""
 
@@ -1702,13 +1619,13 @@ msgstr ""
 msgid "Member successfully updated"
 msgstr ""
 
-#: project/templates/layout.html:279 project/templates/manage/members.html:5
+#: project/templates/layout.html:268 project/templates/manage/members.html:5
 #: project/templates/manage/members.html:28
 #: project/templates/verification_request/review.html:54
 msgid "Members"
 msgstr ""
 
-#: project/forms/admin.py:123
+#: project/forms/admin.py:118
 msgid "Message"
 msgstr ""
 
@@ -1716,11 +1633,11 @@ msgstr ""
 msgid "Min. expected number of participants"
 msgstr ""
 
-#: project/forms/common.py:113
+#: project/forms/common.py:118
 msgid "Monday"
 msgstr ""
 
-#: project/templates/_macros.html:1306 project/templates/manage/events.html:140
+#: project/templates/_macros.html:1313 project/templates/manage/events.html:140
 msgid "More"
 msgstr ""
 
@@ -1729,18 +1646,18 @@ msgstr ""
 msgid "More filters"
 msgstr ""
 
-#: project/forms/admin.py:103 project/forms/admin_unit.py:166
+#: project/forms/admin.py:98 project/forms/admin_unit.py:166
 #: project/forms/admin_unit.py:171 project/forms/admin_unit.py:176
 #: project/forms/event.py:90 project/forms/event.py:119
-#: project/forms/event_suggestion.py:26 project/forms/oauth2_client.py:68
 #: project/forms/organizer.py:30 project/forms/organizer.py:58
 #: project/forms/reference_request.py:23
 #: project/forms/verification_request.py:19
 #: project/templates/admin/admin_units.html:19
 #: project/templates/manage/organizers.html:18
+#: project/views/manage_admin_unit/event_place/displays.py:8
 #: project/views/manage_admin_unit/event_place/forms.py:30
 #: project/views/manage_admin_unit/event_place/forms.py:56
-#: project/views/manage_admin_unit/event_place/list_display.py:8
+#: project/views/user_blueprint/oauth2_client/forms.py:68
 msgid "Name"
 msgstr ""
 
@@ -1789,11 +1706,6 @@ msgstr ""
 
 #: project/templates/_macros.html:960 project/templates/_macros.html:962
 #: project/templates/event_date/list.html:521
-#: project/templates/widget/event_suggestion/create.html:194
-#: project/templates/widget/event_suggestion/create.html:219
-#: project/templates/widget/event_suggestion/create.html:248
-#: project/templates/widget/event_suggestion/create.html:271
-#: project/templates/widget/event_suggestion/create.html:304
 msgid "Next"
 msgstr ""
 
@@ -1826,7 +1738,7 @@ msgstr ""
 
 #: project/templates/manage/organizers.html:23
 #: project/templates/manage/organizers.html:48
-#: project/views/manage_admin_unit/event_place/list_display.py:13
+#: project/views/manage_admin_unit/event_place/displays.py:13
 msgid "Number of events"
 msgstr ""
 
@@ -1872,12 +1784,8 @@ msgstr ""
 msgid "Oauth2 authorization codes"
 msgstr ""
 
-#: project/templates/_macros.html:1240
+#: project/templates/_macros.html:1247
 msgid "Okay"
-msgstr ""
-
-#: project/templates/widget/event_suggestion/create.html:281
-msgid "Optional details"
 msgstr ""
 
 #: project/babel.py:1 project/forms/event_date.py:36
@@ -1889,7 +1797,7 @@ msgstr ""
 #: project/templates/admin_unit/create.html:27
 #: project/templates/admin_unit/request_deletion.html:15
 #: project/templates/admin_unit/update.html:54
-#: project/templates/layout.html:265
+#: project/templates/layout.html:254
 #: project/templates/manage/delete_membership.html:13
 #: project/templates/verification_request/delete.html:13
 #: project/templates/verification_request/review.html:28
@@ -1908,7 +1816,7 @@ msgstr ""
 msgid "Organization invitation accepted"
 msgstr ""
 
-#: project/babel.py:1 project/templates/layout.html:292
+#: project/babel.py:1 project/templates/layout.html:281
 #: project/templates/manage/admin_units.html:17
 #: project/templates/manage/organization_invitations.html:4
 #: project/templates/user/organization_invitations.html:4
@@ -1959,7 +1867,7 @@ msgstr ""
 msgid "Organization successfully deleted"
 msgstr ""
 
-#: project/views/manage.py:297
+#: project/views/manage.py:272
 msgid "Organization successfully left"
 msgstr ""
 
@@ -2001,10 +1909,9 @@ msgstr ""
 
 #: project/forms/event.py:307 project/forms/event.py:316
 #: project/forms/event.py:390 project/forms/event.py:457
-#: project/forms/event_date.py:41 project/forms/event_suggestion.py:60
-#: project/services/event.py:609 project/templates/_macros.html:486
-#: project/templates/_macros.html:658 project/templates/_macros.html:939
-#: project/templates/event/create.html:271
+#: project/forms/event_date.py:41 project/services/event.py:609
+#: project/templates/_macros.html:486 project/templates/_macros.html:658
+#: project/templates/_macros.html:939 project/templates/event/create.html:271
 #: project/templates/event/update.html:168
 #: project/templates/manage/events.html:112
 #: project/templates/organizer/create.html:28
@@ -2025,27 +1932,27 @@ msgstr ""
 msgid "Organizer successfully updated"
 msgstr ""
 
-#: project/templates/layout.html:276 project/templates/manage/organizers.html:5
+#: project/templates/layout.html:265 project/templates/manage/organizers.html:5
 #: project/templates/manage/organizers.html:10
 #: project/templates/organizer/main.html:4
 msgid "Organizers"
 msgstr ""
 
-#: project/templates/_macros.html:1599
+#: project/templates/_macros.html:1554
 msgid "Other calendar"
 msgstr ""
 
-#: project/templates/layout.html:260
+#: project/templates/layout.html:249
 #: project/templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
 msgstr ""
 
-#: project/templates/layout.html:253
+#: project/templates/layout.html:242
 #: project/templates/manage/references_outgoing.html:9
 msgid "Outgoing references"
 msgstr ""
 
-#: project/templates/layout.html:272
+#: project/templates/layout.html:261
 #: project/templates/manage/verification_requests_outgoing.html:5
 #: project/templates/manage/verification_requests_outgoing.html:10
 msgid "Outgoing verification requests"
@@ -2065,30 +1972,28 @@ msgid "Page %(page)d of %(pages)d (%(total)d total)"
 msgstr ""
 
 #: project/forms/admin_unit.py:68 project/forms/event.py:113
-#: project/forms/event_suggestion.py:31 project/forms/organizer.py:34
-#: project/templates/_macros.html:294
+#: project/forms/organizer.py:34 project/templates/_macros.html:294
 #: project/templates/manage/organizers.html:20
 msgid "Phone"
 msgstr ""
 
 #: project/forms/event.py:230 project/templates/manage/events.html:114
 #: project/templates/manage/events.html:149
-#: project/templates/widget/event_suggestion/create.html:258
+#: project/views/manage_admin_unit/event_place/displays.py:11
 #: project/views/manage_admin_unit/event_place/forms.py:33
-#: project/views/manage_admin_unit/event_place/list_display.py:11
 msgid "Photo"
 msgstr ""
 
 #: project/babel.py:1 project/forms/event.py:291 project/forms/event.py:300
 #: project/forms/event.py:382 project/forms/event.py:460
-#: project/forms/event_suggestion.py:50 project/templates/_macros.html:449
-#: project/templates/_macros.html:615 project/templates/event/create.html:298
+#: project/templates/_macros.html:449 project/templates/_macros.html:615
+#: project/templates/event/create.html:298
 #: project/templates/event/update.html:178
 #: project/templates/manage/events.html:113
 msgid "Place"
 msgstr ""
 
-#: project/babel.py:1 project/templates/layout.html:277
+#: project/babel.py:1 project/templates/layout.html:266
 msgid "Places"
 msgstr ""
 
@@ -2110,20 +2015,8 @@ msgstr ""
 msgid "Planning"
 msgstr ""
 
-#: project/templates/_macros.html:1353
+#: project/templates/_macros.html:1360
 msgid "Please enter a valid time, between 00:00 and 23:59."
-msgstr ""
-
-#: project/forms/event_suggestion.py:40
-msgid "Please enter your email address or phone number for the review."
-msgstr ""
-
-#: project/forms/event_suggestion.py:28
-msgid "Please enter your name for the review."
-msgstr ""
-
-#: project/forms/event_suggestion.py:33
-msgid "Please enter your phone number or email address for the review."
 msgstr ""
 
 #: project/forms/admin_unit.py:25 project/forms/event.py:471
@@ -2133,18 +2026,8 @@ msgstr ""
 msgid "Postal code"
 msgstr ""
 
-#: project/templates/widget/event_suggestion/create.html:314
-msgid "Preview"
-msgstr ""
-
 #: project/templates/_macros.html:954 project/templates/_macros.html:956
 #: project/templates/event_date/list.html:519
-#: project/templates/widget/event_suggestion/create.html:193
-#: project/templates/widget/event_suggestion/create.html:218
-#: project/templates/widget/event_suggestion/create.html:247
-#: project/templates/widget/event_suggestion/create.html:270
-#: project/templates/widget/event_suggestion/create.html:303
-#: project/templates/widget/event_suggestion/create.html:332
 msgid "Previous"
 msgstr ""
 
@@ -2161,20 +2044,20 @@ msgstr ""
 msgid "Primary Color"
 msgstr ""
 
-#: project/templates/widget/event_date/list.html:153
+#: project/templates/widget/event_date/list.html:163
 msgid "Print"
 msgstr ""
 
-#: project/forms/admin.py:16 project/templates/layout.html:357
+#: project/forms/admin.py:16 project/templates/layout.html:346
 #: project/views/root.py:83
 msgid "Privacy"
 msgstr ""
 
-#: project/templates/layout.html:190 project/templates/layout.html:302
+#: project/templates/layout.html:190 project/templates/layout.html:291
 #: project/templates/profile.html:4 project/templates/profile.html:17
 #: project/templates/user/general.html:10
 #: project/templates/user/notifications.html:10
-#: project/views/oauth2_client.py:46 project/views/oauth2_token.py:98
+#: project/views/user_blueprint/child_view_handler.py:15
 msgid "Profile"
 msgstr ""
 
@@ -2209,21 +2092,21 @@ msgstr ""
 msgid "Rating"
 msgstr ""
 
-#: project/forms/admin.py:107 project/forms/admin.py:114
+#: project/forms/admin.py:102 project/forms/admin.py:109
 msgid "Recipient"
 msgstr ""
 
 #: project/forms/event.py:59 project/templates/_macros.html:936
-#: project/templates/_macros.html:1847
-#: project/templates/widget/event_suggestion/create.html:240
+#: project/templates/_macros.html:1802
 msgid "Recurring event"
 msgstr ""
 
-#: project/forms/oauth2_client.py:16 project/views/oauth2_client.py:25
+#: project/views/user_blueprint/oauth2_client/displays.py:12
+#: project/views/user_blueprint/oauth2_client/forms.py:16
 msgid "Redirect URIs"
 msgstr ""
 
-#: project/templates/_macros.html:714 project/templates/_macros.html:1299
+#: project/templates/_macros.html:714 project/templates/_macros.html:1306
 #: project/templates/event/actions.html:38
 #: project/templates/event_date/list.html:251
 #: project/templates/manage/events.html:133
@@ -2279,7 +2162,7 @@ msgstr ""
 msgid "Referenced event changed"
 msgstr ""
 
-#: project/templates/layout.html:246
+#: project/templates/layout.html:235
 #: project/templates/manage/references_incoming.html:5
 #: project/templates/manage/references_outgoing.html:5
 msgid "References"
@@ -2293,20 +2176,12 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-#: project/templates/security/login_user.html:44 project/views/widget.py:119
+#: project/templates/security/login_user.html:44
 msgid "Register for free"
 msgstr ""
 
 #: project/forms/event.py:168
 msgid "Registration required"
-msgstr ""
-
-#: project/forms/event_suggestion.py:146
-#: project/templates/event_suggestion/reject.html:9
-#: project/templates/event_suggestion/review.html:33
-#: project/templates/event_suggestion/review.html:40
-#: project/templates/event_suggestion/review.html:54
-msgid "Reject event suggestion"
 msgstr ""
 
 #: project/templates/reference_request/review.html:44
@@ -2321,7 +2196,7 @@ msgstr ""
 msgid "Reject verification request"
 msgstr ""
 
-#: project/forms/event_suggestion.py:124 project/forms/reference_request.py:48
+#: project/forms/reference_request.py:48
 #: project/forms/verification_request.py:44
 msgid "Rejection reason"
 msgstr ""
@@ -2331,7 +2206,7 @@ msgstr ""
 msgid "Relation to %(admin_unit_name)s"
 msgstr ""
 
-#: project/templates/layout.html:280 project/templates/manage/relations.html:4
+#: project/templates/layout.html:269 project/templates/manage/relations.html:4
 msgid "Relations"
 msgstr ""
 
@@ -2339,7 +2214,7 @@ msgstr ""
 msgid "Remember me"
 msgstr ""
 
-#: project/templates/_macros.html:1848
+#: project/templates/_macros.html:1803
 msgid "Remove event date"
 msgstr ""
 
@@ -2356,7 +2231,7 @@ msgstr ""
 msgid "Request deletion"
 msgstr ""
 
-#: project/templates/_macros.html:734 project/templates/_macros.html:1296
+#: project/templates/_macros.html:734 project/templates/_macros.html:1303
 #: project/templates/event/actions.html:32
 #: project/templates/manage/events.html:131
 msgid "Request reference"
@@ -2404,17 +2279,12 @@ msgstr ""
 msgid "Reset for all users"
 msgstr ""
 
-#: project/views/oauth2_client.py:26
+#: project/views/user_blueprint/oauth2_client/displays.py:13
 msgid "Response types"
 msgstr ""
 
 #: project/templates/reference_request/review.html:23
 msgid "Review event reference request"
-msgstr ""
-
-#: project/templates/event_suggestion/review.html:20
-#: project/templates/manage/reviews.html:19
-msgid "Review event suggestion"
 msgstr ""
 
 #: project/templates/manage/reference_requests_incoming.html:19
@@ -2423,41 +2293,31 @@ msgid "Review request"
 msgstr ""
 
 #: project/forms/reference_request.py:28
-#: project/forms/verification_request.py:24 project/templates/_macros.html:1487
-#: project/templates/event_suggestion/review_status.html:18
+#: project/forms/verification_request.py:24
 #: project/templates/reference_request/review_status.html:12
 #: project/templates/verification_request/review_status.html:4
 #: project/templates/verification_request/review_status.html:12
 msgid "Review status"
 msgstr ""
 
-#: project/templates/layout.html:236
-msgid "Review suggestions"
-msgstr ""
-
 #: project/templates/verification_request/review.html:23
 msgid "Review verification request"
 msgstr ""
 
-#: project/templates/manage/reviews.html:5
-#: project/templates/manage/reviews.html:9
-msgid "Reviews"
-msgstr ""
-
-#: project/views/oauth2_token.py:106
+#: project/views/user_blueprint/oauth2_token/view_handler.py:41
 msgid "Revoke"
 msgstr ""
 
-#: project/views/oauth2_token.py:39
+#: project/views/user_blueprint/oauth2_token/views.py:32
 #, python-format
 msgid "Revoke %(model_display_name)s"
 msgstr ""
 
-#: project/forms/oauth2_token.py:8 project/templates/oauth2_token/revoke.html:6
+#: project/views/user_blueprint/oauth2_token/forms.py:8
 msgid "Revoke OAuth2 token"
 msgstr ""
 
-#: project/views/oauth2_token.py:68
+#: project/views/user_blueprint/oauth2_token/displays.py:20
 msgid "Revoked"
 msgstr ""
 
@@ -2474,13 +2334,13 @@ msgstr ""
 msgid "Roles users"
 msgstr ""
 
-#: project/forms/common.py:118
+#: project/forms/common.py:123
 msgid "Saturday"
 msgstr ""
 
-#: project/forms/admin.py:20 project/forms/admin.py:28
-#: project/forms/oauth2_client.py:25 project/forms/user.py:18
+#: project/forms/admin.py:20 project/forms/admin.py:28 project/forms/user.py:18
 #: project/forms/user.py:32
+#: project/views/user_blueprint/oauth2_client/forms.py:25
 msgid "Save"
 msgstr ""
 
@@ -2505,7 +2365,7 @@ msgstr ""
 msgid "Save review"
 msgstr ""
 
-#: project/views/oauth2_client.py:27
+#: project/views/user_blueprint/oauth2_client/displays.py:14
 msgid "Scope"
 msgstr ""
 
@@ -2557,7 +2417,8 @@ msgstr ""
 msgid "Scope_user:write"
 msgstr ""
 
-#: project/forms/oauth2_client.py:19 project/views/oauth2_token.py:58
+#: project/views/user_blueprint/oauth2_client/forms.py:19
+#: project/views/user_blueprint/oauth2_token/displays.py:10
 msgid "Scopes"
 msgstr ""
 
@@ -2591,7 +2452,7 @@ msgstr ""
 msgid "Select organizations to display your event on their calendars."
 msgstr ""
 
-#: project/forms/event_suggestion.py:62 project/templates/event/create.html:275
+#: project/templates/event/create.html:275
 msgid ""
 "Select the organizer. If the organizer is not yet on the list, just enter"
 " it."
@@ -2607,7 +2468,7 @@ msgstr ""
 msgid "Select the status of the event."
 msgstr ""
 
-#: project/forms/admin.py:124
+#: project/forms/admin.py:119
 msgid "Send newsletter"
 msgstr ""
 
@@ -2615,7 +2476,7 @@ msgstr ""
 msgid "Send test mail asynchronously"
 msgstr ""
 
-#: project/forms/admin.py:109
+#: project/forms/admin.py:104
 msgid "Send test mail synchronously"
 msgstr ""
 
@@ -2624,19 +2485,19 @@ msgstr ""
 #: project/templates/admin/settings.html:11
 #: project/templates/admin_unit/update.html:6
 #: project/templates/admin_unit/update.html:48
-#: project/templates/layout.html:296 project/templates/manage/widgets.html:11
+#: project/templates/layout.html:285 project/templates/manage/widgets.html:11
 #: project/templates/manage/widgets.html:15 project/templates/profile.html:32
 msgid "Settings"
 msgstr ""
 
 #: project/views/admin.py:134 project/views/admin.py:280
-#: project/views/manage.py:462 project/views/user.py:64
+#: project/views/manage.py:437 project/views/user.py:64
 #: project/views/user.py:83
 msgid "Settings successfully updated"
 msgstr ""
 
 #: project/templates/_macros.html:431 project/templates/_macros.html:590
-#: project/templates/_macros.html:1556 project/templates/event/actions.html:51
+#: project/templates/_macros.html:1511 project/templates/event/actions.html:51
 msgid "Share"
 msgstr ""
 
@@ -2648,7 +2509,7 @@ msgstr ""
 msgid "Short name is already taken"
 msgstr ""
 
-#: project/forms/admin_unit.py:55 project/templates/_macros.html:1677
+#: project/forms/admin_unit.py:55 project/templates/_macros.html:1632
 msgid "Short name must contain only letters numbers or underscore"
 msgstr ""
 
@@ -2660,7 +2521,7 @@ msgstr ""
 msgid "Show directions"
 msgstr ""
 
-#: project/templates/layout.html:229
+#: project/templates/layout.html:226
 msgid "Show events"
 msgstr ""
 
@@ -2696,7 +2557,7 @@ msgid "State"
 msgstr ""
 
 #: project/forms/event.py:399 project/templates/event/update.html:157
-#: project/views/oauth2_token.py:61
+#: project/views/user_blueprint/oauth2_token/displays.py:13
 msgid "Status"
 msgstr ""
 
@@ -2705,15 +2566,11 @@ msgstr ""
 msgid "Street"
 msgstr ""
 
-#: project/forms/admin.py:73
-msgid "Suggestions enabled"
-msgstr ""
-
-#: project/forms/common.py:119
+#: project/forms/common.py:124
 msgid "Sunday"
 msgstr ""
 
-#: project/templates/layout.html:312
+#: project/templates/layout.html:301
 msgid "Switch organization"
 msgstr ""
 
@@ -2731,7 +2588,7 @@ msgstr ""
 msgid "Target group origin"
 msgstr ""
 
-#: project/forms/admin.py:13 project/templates/layout.html:344
+#: project/forms/admin.py:13 project/templates/layout.html:333
 #: project/views/root.py:55
 msgid "Terms of service"
 msgstr ""
@@ -2745,12 +2602,8 @@ msgstr ""
 msgid "Test mail from %(site_name)s"
 msgstr ""
 
-#: project/forms/admin.py:116 project/forms/admin.py:122
+#: project/forms/admin.py:111 project/forms/admin.py:117
 msgid "Test recipient"
-msgstr ""
-
-#: project/views/widget.py:111
-msgid "Thank you so much! The event is being verified."
 msgstr ""
 
 #: project/templates/user/request_deletion.html:8
@@ -2806,11 +2659,6 @@ msgstr ""
 msgid "The organization is scheduled for deletion."
 msgstr ""
 
-#: project/templates/email/review_status_notice.html:4
-#: project/templates/email/review_status_notice.txt:1
-msgid "The review status of your event has been updated."
-msgstr ""
-
 #: project/templates/email/reference_request_review_status_notice.html:4
 #: project/templates/email/reference_request_review_status_notice.txt:1
 msgid "The review status of your event reference request has been updated."
@@ -2825,7 +2673,7 @@ msgstr ""
 msgid "The short name is used to create a unique identifier for your events"
 msgstr ""
 
-#: project/forms/event.py:66 project/templates/_macros.html:1332
+#: project/forms/event.py:66 project/templates/_macros.html:1339
 msgid "The start must be before the end."
 msgstr ""
 
@@ -2837,11 +2685,6 @@ msgstr ""
 #: project/templates/email/event_report_notice.html:4
 #: project/templates/email/event_report_notice.txt:1
 msgid "There is a new event report."
-msgstr ""
-
-#: project/templates/email/review_notice.html:4
-#: project/templates/email/review_notice.txt:1
-msgid "There is a new event that needs to be reviewed."
 msgstr ""
 
 #: project/templates/email/reference_auto_verified_notice.html:4
@@ -2858,7 +2701,7 @@ msgstr ""
 msgid "There must be no self-reference."
 msgstr ""
 
-#: project/forms/widgets.py:156
+#: project/forms/common.py:42
 msgid "This field is required."
 msgstr ""
 
@@ -2878,7 +2721,7 @@ msgstr ""
 msgid "This will allow \"%(client_name)s\" to:"
 msgstr ""
 
-#: project/forms/common.py:116
+#: project/forms/common.py:121
 msgid "Thursday"
 msgstr ""
 
@@ -2886,11 +2729,11 @@ msgstr ""
 msgid "Ticket Link URL"
 msgstr ""
 
-#: project/views/oauth2_client.py:28
+#: project/views/user_blueprint/oauth2_client/displays.py:15
 msgid "Token endpoint auth method"
 msgstr ""
 
-#: project/forms/common.py:114
+#: project/forms/common.py:119
 msgid "Tueday"
 msgstr ""
 
@@ -2921,7 +2764,7 @@ msgstr ""
 msgid "Update member"
 msgstr ""
 
-#: project/forms/admin.py:98 project/templates/admin/update_admin_unit.html:4
+#: project/forms/admin.py:93 project/templates/admin/update_admin_unit.html:4
 #: project/templates/admin/update_admin_unit.html:8
 msgid "Update organization"
 msgstr ""
@@ -3023,7 +2866,7 @@ msgstr ""
 msgid "Verify organization"
 msgstr ""
 
-#: project/forms/admin.py:92
+#: project/forms/admin.py:87
 msgid "Verify other organizations"
 msgstr ""
 
@@ -3045,8 +2888,6 @@ msgstr ""
 msgid "View documentation"
 msgstr ""
 
-#: project/templates/event_suggestion/review.html:28
-#: project/templates/event_suggestion/review_status.html:24
 #: project/templates/manage/reference_requests_incoming.html:20
 #: project/templates/reference/read.html:22
 #: project/templates/reference_request/review_status.html:17
@@ -3055,7 +2896,7 @@ msgid "View event"
 msgstr ""
 
 #: project/templates/manage/organizers.html:36
-#: project/views/manage_admin_unit/event_place/view_handler.py:54
+#: project/views/manage_admin_unit/event_place/view_handler.py:49
 msgid "View events"
 msgstr ""
 
@@ -3070,7 +2911,7 @@ msgid ""
 " course it works without it."
 msgstr ""
 
-#: project/forms/common.py:115
+#: project/forms/common.py:120
 msgid "Wednesday"
 msgstr ""
 
@@ -3082,8 +2923,7 @@ msgstr ""
 msgid "Widget"
 msgstr ""
 
-#: project/templates/layout.html:300 project/templates/manage/reviews.html:10
-#: project/templates/manage/widgets.html:5
+#: project/templates/layout.html:289 project/templates/manage/widgets.html:5
 #: project/templates/manage/widgets.html:9
 msgid "Widgets"
 msgstr ""
@@ -3093,7 +2933,7 @@ msgstr ""
 msgid "Would you like to accept the invitation from %(name)s?"
 msgstr ""
 
-#: project/templates/_macros.html:1598
+#: project/templates/_macros.html:1553
 msgid "Yahoo calendar"
 msgstr ""
 
@@ -3109,12 +2949,8 @@ msgid ""
 "membership to delete your account."
 msgstr ""
 
-#: project/views/manage.py:278
+#: project/views/manage.py:253
 msgid "You are not a member of this organization"
-msgstr ""
-
-#: project/templates/event_suggestion/review_status.html:12
-msgid "You can visit this page again to check the status."
 msgstr ""
 
 #: project/templates/security/login_user.html:42

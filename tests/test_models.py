@@ -225,7 +225,6 @@ def test_event_date_defintion_deletion(client, app, db, seeder: Seeder):
 def test_admin_unit_deletion(client, app, db, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     my_event_id = seeder.create_event(admin_unit_id)
-    suggestion_id = seeder.create_event_suggestion(admin_unit_id)
     event_place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
     invitation_id = seeder.create_invitation(admin_unit_id, "newbie@domain.com")
@@ -269,7 +268,6 @@ def test_admin_unit_deletion(client, app, db, seeder: Seeder):
             EventPlace,
             EventReference,
             EventReferenceRequest,
-            EventSuggestion,
         )
         from project.services.admin_unit import get_admin_unit_by_id
 
@@ -308,7 +306,6 @@ def test_admin_unit_deletion(client, app, db, seeder: Seeder):
             )
             is None
         )
-        assert db.session.get(EventSuggestion, suggestion_id) is None
         assert db.session.get(EventPlace, event_place_id) is None
         assert db.session.get(EventOrganizer, organizer_id) is None
         assert db.session.get(AdminUnitMemberInvitation, invitation_id) is None
@@ -509,30 +506,6 @@ def test_purge_event_place_photo(client, app, db, seeder: Seeder):
         assert place.photo is None
 
         image = db.session.get(Image, second_image_id)
-        assert image is None
-
-
-def test_purge_eventsuggestion_photo(client, app, db, seeder: Seeder):
-    _, admin_unit_id = seeder.setup_base(log_in=False)
-    suggestion_id = seeder.create_event_suggestion(admin_unit_id)
-    image_id = seeder.upsert_default_image()
-
-    with app.app_context():
-        from project.models import EventSuggestion, Image
-
-        suggestion = db.session.get(EventSuggestion, suggestion_id)
-        suggestion.photo = db.session.get(Image, image_id)
-        db.session.commit()
-
-        assert suggestion.photo is not None
-
-        suggestion.photo.data = None
-        db.session.commit()
-
-        suggestion = db.session.get(EventSuggestion, suggestion_id)
-        assert suggestion.photo is None
-
-        image = db.session.get(Image, image_id)
         assert image is None
 
 

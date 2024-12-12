@@ -19,7 +19,6 @@ class Image(db.Model, TrackableMixin, IOwned):
     event = db.relationship("Event", uselist=False)
     eventorganizer = db.relationship("EventOrganizer", uselist=False)
     eventplace = db.relationship("EventPlace", uselist=False)
-    eventsuggestion = db.relationship("EventSuggestion", uselist=False)
 
     def is_empty(self):
         return not self.data
@@ -40,9 +39,6 @@ class Image(db.Model, TrackableMixin, IOwned):
 
             if self.eventplace:
                 self.eventplace.photo = None
-
-            if self.eventsuggestion:
-                self.eventsuggestion.photo = None
 
             if is_dirty:
                 session.delete(self)

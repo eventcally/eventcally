@@ -30,13 +30,11 @@ def create_initial_data():
         "verification_request:verify",
     ]
     event_permissions = [
-        "event:verify",
         "event:create",
         "event:read",
         "event:update",
         "event:delete",
         "event:reference",
-        "event_suggestion:read",
         "organizer:create",
         "organizer:update",
         "organizer:delete",

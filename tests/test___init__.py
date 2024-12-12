@@ -76,7 +76,6 @@ def test_migrations(app, seeder):
         seeder.upsert_default_event_organizer(admin_unit_id)
         event_id = seeder.create_event(admin_unit_id)
         seeder.upsert_default_image()
-        seeder.create_event_suggestion(admin_unit_id)
         seeder.create_any_reference(admin_unit_id)
         seeder.create_reference_request(event_id, admin_unit_id)
         db.session.commit()

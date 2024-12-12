@@ -29,15 +29,12 @@ from project.models.event_reference_request import (
     EventReferenceRequestRejectionReason,
     EventReferenceRequestReviewStatus,
 )
-from project.models.event_suggestion import (
-    EventRejectionReason,
-    EventReviewStatus,
-    EventSuggestion,
-)
 from project.models.functions import sanitize_allday_instance
 from project.models.image import Image
 from project.models.iowned import IOwned
 from project.models.legacy import (
+    EventRejectionReason,
+    EventReviewStatus,
     FeaturedEventRejectionReason,
     FeaturedEventReviewStatus,
 )

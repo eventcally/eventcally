@@ -1,6 +1,0 @@
-{% extends "email/layout.html" %}
-{% from "_macros.html" import render_email_button %}
-{% block content %}
-<p>{{ _('There is a new event that needs to be reviewed.') }}</p>
-{{ render_email_button(url_for('event_suggestion_review', event_suggestion_id=event_suggestion.id, _external=True), _('Click here to review the event suggestion')) }}
-{% endblock %}

@@ -202,11 +202,6 @@ class AdminUnit(db.Model, TrackableMixin):
     events = relationship(
         "Event", cascade="all, delete-orphan", backref=backref("admin_unit", lazy=True)
     )
-    eventsuggestions = relationship(
-        "EventSuggestion",
-        cascade="all, delete-orphan",
-        backref=backref("admin_unit", lazy=True),
-    )
     references = relationship(
         "EventReference",
         cascade="all, delete-orphan",
@@ -263,14 +258,6 @@ class AdminUnit(db.Model, TrackableMixin):
     widget_primary_color = deferred(Column(ColorType), group="widget")
     widget_link_color = deferred(Column(ColorType), group="widget")
     incoming_reference_requests_allowed = deferred(Column(Boolean()))
-    suggestions_enabled = deferred(
-        Column(
-            Boolean(),
-            nullable=False,
-            default=False,
-            server_default="0",
-        )
-    )
     can_create_other = deferred(
         Column(
             Boolean(),

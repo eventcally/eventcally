@@ -99,12 +99,6 @@ def test_admin_unit_404(client, seeder: Seeder, utils: UtilActions):
     utils.assert_response_notFound(response)
 
 
-def test_admin_unit_event_reviews(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base()
-
-    utils.get_endpoint_ok("manage_admin_unit_event_reviews", id=admin_unit_id)
-
-
 def test_admin_unit_events(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
     draft_id = seeder.create_event(admin_unit_id, draft=True)

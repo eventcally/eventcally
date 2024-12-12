@@ -83,11 +83,4 @@
     <a class="btn btn-outline-info" href="{{ url_for('widget_event_dates', id=admin_unit.id) }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-external-link-alt"></i> Vorschau</a>
 </div>
 
-{% if admin_unit.suggestions_enabled %}
-<h2>{{ _('Link, um Veranstaltungen vorzuschlagen') }}</h2>
-<input class="form-control text-monospace" style="font-size: 0.7rem;" disabled value="{{ url_for('event_suggestion_create_for_admin_unit', id=admin_unit.id, _external=True) }}" />
-<p><a class="btn btn-outline-info my-2" href="{{ url_for('event_suggestion_create_for_admin_unit', id=admin_unit.id, _external=True) }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-external-link-alt"></i> Vorschau</a></p>
-{% endif %}
-
-
 {% endblock %}

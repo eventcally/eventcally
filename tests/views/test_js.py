@@ -269,6 +269,12 @@ def test_js_autocomplete_place_exclude_gmaps(
         utils.assert_response_ok(response)
         assert response.json["results"][0]["text"] == "Meine Crew"
 
+        utils.get_endpoint_ok(
+            "js_autocomplete_place",
+            admin_unit_id=admin_unit_id,
+            exclude_gmaps=1,
+        )
+
 
 def test_js_autocomplete_gmaps_place(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
