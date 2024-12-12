@@ -25,8 +25,6 @@ from project.models import (
     EventOrganizer,
     EventPlace,
     EventReference,
-    EventReviewStatus,
-    EventSuggestion,
     PublicStatus,
 )
 from project.models.event_reference_request import EventReferenceRequest
@@ -44,7 +42,6 @@ from project.services.event import (
     upsert_event_category,
 )
 from project.utils import get_event_category_name
-from project.views.event_suggestion import send_event_suggestion_review_status_mail
 from project.views.reference_request import (
     handle_request_according_to_relation,
     send_reference_request_mails,
@@ -146,7 +143,6 @@ def event_create_for_admin_unit_id(id):
     prepare_form_reference_requests(form, admin_unit)
 
     # Vorlagen
-    event_suggestion = None
     event_template = None
 
     event_template_id = (
@@ -160,33 +156,9 @@ def event_create_for_admin_unit_id(id):
             prepare_organizer(form)
             prepare_event_place(form)
 
-    if not event_template:
-        event_suggestion_id = (
-            int(request.args.get("event_suggestion_id"))
-            if "event_suggestion_id" in request.args
-            else 0
-        )
-
-        if event_suggestion_id > 0:
-            event_suggestion = EventSuggestion.query.get_or_404(event_suggestion_id)
-            access_or_401(event_suggestion.admin_unit, "event:verify")
-
-            if event_suggestion.verified and event_suggestion.event_id:
-                return redirect(
-                    url_for(
-                        "event_suggestion_review_status",
-                        event_suggestion_id=event_suggestion.id,
-                    )
-                )
-
-            prepare_event_form_for_suggestion(form, event_suggestion)
-            if form.is_submitted():
-                form.process(request.form)
-                prepare_date_definition(form)
-
     if form.validate_on_submit():
         event = Event()
-        update_event_with_form(event, form, event_suggestion)
+        update_event_with_form(event, form)
         event.admin_unit_id = admin_unit.id
 
         if form.event_place_choice.data == 2:
@@ -196,16 +168,8 @@ def event_create_for_admin_unit_id(id):
             event.organizer.admin_unit_id = event.admin_unit_id
 
         try:
-            if event_suggestion:
-                event_suggestion.event = event
-                event_suggestion.review_status = EventReviewStatus.verified
-                event_suggestion.rejection_resaon = None
-
             insert_event(event)
             db.session.commit()
-
-            if event_suggestion:
-                send_event_suggestion_review_status_mail(event_suggestion)
 
             success_msg = (
                 gettext("Event successfully published")
@@ -247,7 +211,6 @@ def event_create_for_admin_unit_id(id):
         "event/create.html",
         admin_unit=admin_unit,
         form=form,
-        event_suggestion=event_suggestion,
     )
 
 
@@ -389,51 +352,7 @@ def prepare_date_definition(form):
         form.date_definitions[0].start.data = next_full_hour
 
 
-def prepare_event_form_for_suggestion(form, event_suggestion):
-    form.name.data = event_suggestion.name
-    form.date_definitions[0].start.data = event_suggestion.start
-    form.date_definitions[0].end.data = event_suggestion.end
-    form.date_definitions[0].recurrence_rule.data = event_suggestion.recurrence_rule
-    form.date_definitions[0].allday.data = event_suggestion.allday
-    form.external_link.data = event_suggestion.external_link
-    form.description.data = event_suggestion.description
-
-    form.ticket_link.data = event_suggestion.ticket_link
-    form.tags.data = event_suggestion.tags
-    form.kid_friendly.data = event_suggestion.kid_friendly
-    form.accessible_for_free.data = event_suggestion.accessible_for_free
-    form.age_from.data = event_suggestion.age_from
-    form.age_to.data = event_suggestion.age_to
-    form.target_group_origin.data = event_suggestion.target_group_origin
-    form.attendance_mode.data = event_suggestion.attendance_mode
-    form.registration_required.data = event_suggestion.registration_required
-    form.booked_up.data = event_suggestion.booked_up
-    form.expected_participants.data = event_suggestion.expected_participants
-    form.price_info.data = event_suggestion.price_info
-
-    if event_suggestion.categories:
-        form.category_ids.data = [c.id for c in event_suggestion.categories]
-
-    if event_suggestion.photo:
-        form.photo.form.process(obj=event_suggestion.photo)
-
-    if event_suggestion.event_place:
-        form.event_place_id.data = event_suggestion.event_place.id
-    else:
-        form.event_place_choice.data = 2
-        form.new_event_place.form.name.data = event_suggestion.event_place_text
-
-    if event_suggestion.organizer:
-        form.organizer_id.data = event_suggestion.organizer.id
-    else:
-        form.organizer_choice.data = 2
-        form.new_organizer.form.name.data = event_suggestion.organizer_text
-
-    prepare_organizer(form)
-    prepare_event_place(form)
-
-
-def update_event_with_form(event, form, event_suggestion=None):
+def update_event_with_form(event, form):
     with db.session.no_autoflush:
         form.populate_obj(event)
         event.categories = EventCategory.query.filter(

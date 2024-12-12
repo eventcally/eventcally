@@ -483,63 +483,6 @@ def test_duplicate(client, app, utils: UtilActions, seeder: Seeder, mocker, alld
         )
 
 
-@pytest.mark.parametrize("free_text", [True, False])
-@pytest.mark.parametrize("allday", [True, False])
-def test_create_fromSuggestion(
-    client, app, db, utils: UtilActions, seeder: Seeder, mocker, free_text, allday
-):
-    user_id, admin_unit_id = seeder.setup_base()
-    suggestion_id = seeder.create_event_suggestion(admin_unit_id, free_text, allday)
-
-    url = utils.get_url(
-        "event_create_for_admin_unit_id",
-        id=admin_unit_id,
-        event_suggestion_id=suggestion_id,
-    )
-    response = utils.get_ok(url)
-
-    response = utils.post_form(url, response, {})
-    utils.assert_response_redirect(response, "event_actions", event_id=1)
-
-    with app.app_context():
-        from project.models import Event, EventSuggestion
-
-        event = (
-            Event.query.filter(Event.admin_unit_id == admin_unit_id)
-            .filter(Event.name == "Vorschlag")
-            .first()
-        )
-        assert event is not None
-        assert event.date_definitions[0].allday == allday
-
-        suggestion = db.session.get(EventSuggestion, suggestion_id)
-        assert suggestion is not None
-        assert suggestion.verified
-        assert suggestion.event_id == event.id
-
-
-def test_create_verifiedSuggestionRedirectsToReviewStatus(
-    client, app, utils: UtilActions, seeder: Seeder, mocker
-):
-    user_id, admin_unit_id = seeder.setup_base()
-    suggestion_id = seeder.create_event_suggestion(admin_unit_id)
-
-    url = utils.get_url(
-        "event_create_for_admin_unit_id",
-        id=admin_unit_id,
-        event_suggestion_id=suggestion_id,
-    )
-    response = utils.get_ok(url)
-
-    response = utils.post_form(url, response, {})
-    utils.assert_response_redirect(response, "event_actions", event_id=1)
-
-    response = client.get(url)
-    utils.assert_response_redirect(
-        response, "event_suggestion_review_status", event_suggestion_id=suggestion_id
-    )
-
-
 def test_actions(seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)

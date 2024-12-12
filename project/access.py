@@ -204,11 +204,6 @@ def get_admin_unit_for_manage_or_404(admin_unit_id):
     return admin_unit
 
 
-def admin_unit_suggestions_enabled_or_404(admin_unit: AdminUnit):
-    if not admin_unit.suggestions_enabled:
-        abort(404)
-
-
 def can_create_admin_unit():
     if not current_user.is_authenticated:  # pragma: no cover
         return False

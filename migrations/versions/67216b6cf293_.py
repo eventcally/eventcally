@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from alembic import op
 
 from project import dbtypes
-from project.models import EventRejectionReason, EventReviewStatus
+from project.models.legacy import EventRejectionReason, EventReviewStatus
 
 # revision identifiers, used by Alembic.
 revision = "67216b6cf293"

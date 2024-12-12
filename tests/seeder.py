@@ -74,7 +74,6 @@ class Seeder(object):
         self,
         user_id,
         name="Meine Crew",
-        suggestions_enabled=True,
         can_create_other=False,
         can_verify_other=False,
         verified=False,
@@ -92,7 +91,6 @@ class Seeder(object):
             admin_unit.name = name
             admin_unit.short_name = name.lower().replace(" ", "")
             admin_unit.incoming_reference_requests_allowed = True
-            admin_unit.suggestions_enabled = suggestions_enabled
             admin_unit.can_create_other = can_create_other
             admin_unit.can_verify_other = can_verify_other
             admin_unit.can_invite_other = can_invite_other
@@ -569,39 +567,6 @@ class Seeder(object):
             event.photo_id = image_id
             self._db.session.commit()
 
-    def create_event_suggestion(self, admin_unit_id, free_text=False, allday=False):
-        from project.models import EventSuggestion
-        from project.services.event import upsert_event_category
-        from project.services.event_suggestion import insert_event_suggestion
-
-        with self._app.app_context():
-            suggestion = EventSuggestion()
-            suggestion.admin_unit_id = admin_unit_id
-            suggestion.contact_name = "Vorname Nachname"
-            suggestion.contact_email = "vorname@nachname.de"
-            suggestion.contact_email_notice = True
-            suggestion.name = "Vorschlag"
-            suggestion.description = "Beschreibung"
-            suggestion.start = self.get_now_by_minute()
-            suggestion.allday = allday
-            suggestion.photo_id = self.upsert_default_image()
-            suggestion.categories = [upsert_event_category("Other")]
-
-            if free_text:
-                suggestion.event_place_text = "Freitext Ort"
-                suggestion.organizer_text = "Freitext Organisator"
-            else:
-                suggestion.event_place_id = self.upsert_default_event_place(
-                    admin_unit_id
-                )
-                suggestion.organizer_id = self.upsert_default_event_organizer(
-                    admin_unit_id
-                )
-            insert_event_suggestion(suggestion)
-            self._db.session.commit()
-            suggestion_id = suggestion.id
-        return suggestion_id
-
     def add_event_to_list(self, event_list_id, event_id):
         from project.models import Event, EventList
 
@@ -819,7 +784,6 @@ class Seeder(object):
             eventcally_admin_unit_id = self.create_admin_unit(
                 admin_id,
                 "eventcally",
-                suggestions_enabled=True,
                 can_create_other=True,
                 can_verify_other=True,
                 verified=False,

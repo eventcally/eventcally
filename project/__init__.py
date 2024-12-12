@@ -275,7 +275,6 @@ from project.views import (
     dump,
     event,
     event_date,
-    event_suggestion,
     image,
     js,
     manage,

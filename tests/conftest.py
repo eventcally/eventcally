@@ -55,6 +55,19 @@ def db(app):
     return db
 
 
+def drop_all_with_reflection(db):
+    from sqlalchemy import MetaData
+
+    metadata = MetaData()
+    metadata.reflect(bind=db.engine)
+
+    exclude_tables = {"spatial_ref_sys"}
+    tables_to_drop = [
+        table for table in metadata.tables.values() if table.name not in exclude_tables
+    ]
+    metadata.drop_all(bind=db.engine, tables=tables_to_drop)
+
+
 @pytest.fixture
 def client(app, db):
     return app.test_client()

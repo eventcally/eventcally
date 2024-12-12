@@ -17,15 +17,3 @@ class EventEventCategories(db.Model):
     category_id = db.Column(
         db.Integer, db.ForeignKey("eventcategory.id"), nullable=False
     )
-
-
-class EventSuggestionEventCategories(db.Model):
-    __tablename__ = "eventsuggestion_eventcategories"
-    __table_args__ = (UniqueConstraint("event_suggestion_id", "category_id"),)
-    id = Column(Integer(), primary_key=True)
-    event_suggestion_id = db.Column(
-        db.Integer, db.ForeignKey("eventsuggestion.id"), nullable=False
-    )
-    category_id = db.Column(
-        db.Integer, db.ForeignKey("eventcategory.id"), nullable=False
-    )

@@ -21,7 +21,6 @@ from project.models import (
     EventReference,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
-    EventSuggestion,
     Location,
     OAuth2Client,
 )
@@ -33,7 +32,6 @@ from project.services.admin_unit import (
     upsert_admin_unit_relation,
 )
 from project.services.event import insert_event, upsert_event_category
-from project.services.event_suggestion import insert_event_suggestion
 from project.services.oauth2_client import complete_oauth2_client
 from project.services.organizer import get_event_organizer, upsert_event_organizer
 from project.services.place import get_event_places, upsert_event_place
@@ -155,7 +153,6 @@ def _create_admin_unit(user_id, name, verified=False):
     admin_unit.short_name = name.lower().replace(" ", "")
     admin_unit.incoming_reference_requests_allowed = True
     admin_unit.incoming_verification_requests_allowed = True
-    admin_unit.suggestions_enabled = True
     admin_unit.can_create_other = True
     admin_unit.can_verify_other = True
     admin_unit.can_invite_other = True
@@ -463,40 +460,6 @@ def create_admin_unit_organization_invitation(admin_unit_id, email):
     invitation_id = _create_admin_unit_invitation(admin_unit_id, email)
     result = {
         "invitation_id": invitation_id,
-    }
-    click.echo(json.dumps(result))
-
-
-def _create_event_suggestion(admin_unit_id, free_text=False):
-    suggestion = EventSuggestion()
-    suggestion.admin_unit_id = admin_unit_id
-    suggestion.contact_name = "Vorname Nachname"
-    suggestion.contact_email = "vorname@nachname.de"
-    suggestion.contact_email_notice = False
-    suggestion.name = "Vorschlag"
-    suggestion.description = "Beschreibung"
-    suggestion.start = _get_now_by_minute()
-    suggestion.categories = [upsert_event_category("Other")]
-
-    if free_text:
-        suggestion.event_place_text = "Freitext Ort"
-        suggestion.organizer_text = "Freitext Organisator"
-    else:
-        suggestion.event_place_id = _get_default_event_place_id(admin_unit_id)
-        suggestion.organizer_id = _get_default_organizer_id(admin_unit_id)
-
-    insert_event_suggestion(suggestion)
-    db.session.commit()
-    return suggestion.id
-
-
-@test_cli.command("suggestion-create")
-@click.argument("admin_unit_id")
-@click.option("--freetext/--no-freetext", default=False)
-def create_event_suggestion(admin_unit_id, freetext):
-    event_suggestion_id = _create_event_suggestion(admin_unit_id, freetext)
-    result = {
-        "event_suggestion_id": event_suggestion_id,
     }
     click.echo(json.dumps(result))
 
