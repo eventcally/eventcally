@@ -4,7 +4,7 @@
 {% block header %}
 {{ super() }}
 {{ render_google_place_autocomplete_header() }}
-{{ render_organizer_form_script(current_admin_unit, organizer) }}
+{{ render_organizer_form_script(current_admin_unit, object) }}
 {{ render_cropper_logo_block() }}
 {% endblock %}
 
