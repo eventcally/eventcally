@@ -5,7 +5,7 @@ import pytest
 def test_create(client, app, utils, seeder, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit_organizer_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_organizer_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -26,7 +26,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_organizers", id=admin_unit_id
+        response, "manage_admin_unit.event_organizers", id=admin_unit_id
     )
 
     with app.app_context():
@@ -43,7 +43,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
 def test_create_logo_too_small(client, app, utils, seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit_organizer_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_organizer_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -63,7 +63,11 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("organizer_update", id=organizer_id)
+    url = utils.get_url(
+        "manage_admin_unit.event_organizer_update",
+        id=admin_unit_id,
+        event_organizer_id=organizer_id,
+    )
     response = utils.get_ok(url)
 
     if db_error:
@@ -83,7 +87,7 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_organizers", id=admin_unit_id
+        response, "manage_admin_unit.event_organizers", id=admin_unit_id
     )
 
     with app.app_context():
@@ -99,7 +103,11 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     user_id, admin_unit_id = seeder.setup_base()
     organizer_id = seeder.upsert_event_organizer(admin_unit_id, "Mein Organisator")
 
-    url = utils.get_url("organizer_delete", id=organizer_id)
+    url = utils.get_url(
+        "manage_admin_unit.event_organizer_delete",
+        id=admin_unit_id,
+        event_organizer_id=organizer_id,
+    )
     response = utils.get_ok(url)
 
     if db_error:
@@ -130,7 +138,7 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_organizers", id=admin_unit_id
+        response, "manage_admin_unit.event_organizers", id=admin_unit_id
     )
 
     with app.app_context():

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-12-12 17:21+0100\n"
+"POT-Creation-Date: 2025-01-01 17:16+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -197,8 +197,6 @@ msgstr "Zu Liste hinzufügen"
 #: project/templates/admin_unit/update.html:85
 #: project/templates/event/create.html:359
 #: project/templates/event/update.html:216
-#: project/templates/organizer/create.html:57
-#: project/templates/organizer/update.html:57
 msgid "Additional information"
 msgstr "Zusätzliche Informationen"
 
@@ -421,7 +419,8 @@ msgstr ""
 msgid "Choose why you rejected the request."
 msgstr "Wähle aus, warum du die Anfrage abgelehnt hast."
 
-#: project/forms/admin_unit.py:28 project/forms/organizer.py:18
+#: project/forms/admin_unit.py:28
+#: project/views/manage_admin_unit/event_organizer/forms.py:18
 #: project/views/manage_admin_unit/event_place/forms.py:18
 msgid "City"
 msgstr "Stadt/Ort"
@@ -566,7 +565,6 @@ msgstr "Erstelle eine weitere Veranstaltung für %(admin_unit_name)s"
 #: project/templates/event/create.html:5
 #: project/templates/event/create.html:239 project/templates/layout.html:227
 #: project/templates/manage/events.html:55
-#: project/templates/manage/organizers.html:38
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
@@ -580,9 +578,7 @@ msgstr "Export-Dateien erstellen"
 msgid "Create organization"
 msgstr "Organisation erstellen"
 
-#: project/forms/organizer.py:49 project/templates/manage/organizers.html:11
-#: project/templates/organizer/create.html:5
-#: project/templates/organizer/create.html:22
+#: project/views/manage_admin_unit/event_organizer/forms.py:49
 msgid "Create organizer"
 msgstr "Veranstalter hinzufügen"
 
@@ -636,7 +632,6 @@ msgstr "Standard"
 #: project/templates/manage/events.html:127
 #: project/templates/manage/members.html:21
 #: project/templates/manage/members.html:36
-#: project/templates/manage/organizers.html:34
 #: project/templates/manage/references_incoming.html:21
 msgid "Delete"
 msgstr "Löschen"
@@ -677,7 +672,7 @@ msgstr "Mitglied löschen"
 msgid "Delete organization"
 msgstr "Organisation löschen"
 
-#: project/forms/organizer.py:57 project/templates/organizer/delete.html:6
+#: project/views/manage_admin_unit/event_organizer/forms.py:57
 msgid "Delete organizer"
 msgstr "Veranstalter löschen"
 
@@ -776,7 +771,6 @@ msgstr "Frühester Beginn zuerst"
 #: project/templates/admin/users.html:36
 #: project/templates/manage/events.html:126
 #: project/templates/manage/members.html:35
-#: project/templates/manage/organizers.html:33
 #: project/templates/manage/references_incoming.html:20
 msgid "Edit"
 msgstr "Bearbeiten"
@@ -797,12 +791,12 @@ msgstr "Empfehlung bearbeiten"
 #: project/forms/admin.py:61 project/forms/admin_unit.py:67
 #: project/forms/admin_unit_member.py:12 project/forms/admin_unit_member.py:25
 #: project/forms/admin_unit_member.py:30 project/forms/event.py:112
-#: project/forms/organizer.py:33 project/forms/user.py:37
-#: project/forms/user.py:42 project/templates/_macros.html:231
-#: project/templates/_macros.html:1526 project/templates/admin/admin.html:27
-#: project/templates/admin/email.html:4 project/templates/admin/email.html:66
-#: project/templates/admin/users.html:19
-#: project/templates/manage/organizers.html:21
+#: project/forms/user.py:37 project/forms/user.py:42
+#: project/templates/_macros.html:231 project/templates/_macros.html:1526
+#: project/templates/admin/admin.html:27 project/templates/admin/email.html:4
+#: project/templates/admin/email.html:66 project/templates/admin/users.html:19
+#: project/views/manage_admin_unit/event_organizer/displays.py:11
+#: project/views/manage_admin_unit/event_organizer/forms.py:33
 msgid "Email"
 msgstr "Email"
 
@@ -903,12 +897,12 @@ msgid "Entered name does not match OAuth2 client name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen des OAuth2 Clients"
 
 #: project/views/admin.py:86 project/views/admin_unit.py:207
-#: project/views/admin_unit.py:240 project/views/manage.py:267
+#: project/views/admin_unit.py:240 project/views/manage.py:247
 #: project/views/verification_request.py:169
 msgid "Entered name does not match organization name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Organisation"
 
-#: project/views/organizer.py:83
+#: project/views/manage_admin_unit/event_organizer/view_handler.py:68
 msgid "Entered name does not match organizer name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen des Veranstalters"
 
@@ -1271,7 +1265,8 @@ msgid "Favorite events"
 msgstr "Merkzettel"
 
 #: project/forms/admin_unit.py:69 project/forms/event.py:114
-#: project/forms/organizer.py:35 project/templates/_macros.html:302
+#: project/templates/_macros.html:302
+#: project/views/manage_admin_unit/event_organizer/forms.py:35
 msgid "Fax"
 msgstr "Fax"
 
@@ -1551,7 +1546,7 @@ msgstr "Letzte"
 msgid "Last modified first"
 msgstr "Zuletzt geändert zuerst"
 
-#: project/views/manage.py:258
+#: project/views/manage.py:238
 msgid "Last remaining administrator can not leave the organization."
 msgstr ""
 "Der letzte verbleibende Administrator kann die Organisation nicht "
@@ -1567,7 +1562,8 @@ msgstr "Zuletzt aktualisiert am %(updated_at)s von %(updated_by)s."
 msgid "Last updated at %(updated_at)s."
 msgstr "Zuletzt aktualisiert am %(updated_at)s."
 
-#: project/forms/admin_unit.py:32 project/forms/organizer.py:21
+#: project/forms/admin_unit.py:32
+#: project/views/manage_admin_unit/event_organizer/forms.py:21
 #: project/views/manage_admin_unit/event_place/forms.py:21
 msgid "Latitude"
 msgstr "Breitengrad"
@@ -1597,8 +1593,9 @@ msgid "Link Color"
 msgstr "Linkfarbe"
 
 #: project/forms/admin_unit.py:66 project/forms/event.py:111
-#: project/forms/event.py:129 project/forms/organizer.py:32
-#: project/templates/manage/organizers.html:21
+#: project/forms/event.py:129
+#: project/views/manage_admin_unit/event_organizer/displays.py:12
+#: project/views/manage_admin_unit/event_organizer/forms.py:32
 #: project/views/manage_admin_unit/event_place/forms.py:32
 msgid "Link URL"
 msgstr "Link URL"
@@ -1616,9 +1613,7 @@ msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
 #: project/forms/planning.py:27 project/templates/_macros.html:309
 #: project/templates/admin_unit/create.html:38
 #: project/templates/admin_unit/update.html:65
-#: project/templates/manage/organizers.html:19
-#: project/templates/organizer/create.html:37
-#: project/templates/organizer/update.html:37
+#: project/views/manage_admin_unit/event_organizer/displays.py:9
 #: project/views/manage_admin_unit/event_place/displays.py:9
 msgid "Location"
 msgstr "Standort"
@@ -1627,9 +1622,9 @@ msgstr "Standort"
 msgid "Locations"
 msgstr "Orte"
 
-#: project/forms/admin_unit.py:70 project/forms/organizer.py:36
-#: project/templates/manage/organizers.html:22
-#: project/templates/manage/organizers.html:47
+#: project/forms/admin_unit.py:70
+#: project/views/manage_admin_unit/event_organizer/displays.py:13
+#: project/views/manage_admin_unit/event_organizer/forms.py:36
 msgid "Logo"
 msgstr "Logo"
 
@@ -1637,7 +1632,8 @@ msgstr "Logo"
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: project/forms/admin_unit.py:35 project/forms/organizer.py:24
+#: project/forms/admin_unit.py:35
+#: project/views/manage_admin_unit/event_organizer/forms.py:24
 #: project/views/manage_admin_unit/event_place/forms.py:24
 msgid "Longitude"
 msgstr "Längengrad"
@@ -1700,11 +1696,12 @@ msgstr "Weitere Filter"
 #: project/forms/admin.py:98 project/forms/admin_unit.py:166
 #: project/forms/admin_unit.py:171 project/forms/admin_unit.py:176
 #: project/forms/event.py:90 project/forms/event.py:119
-#: project/forms/organizer.py:30 project/forms/organizer.py:58
 #: project/forms/reference_request.py:23
 #: project/forms/verification_request.py:19
 #: project/templates/admin/admin_units.html:19
-#: project/templates/manage/organizers.html:18
+#: project/views/manage_admin_unit/event_organizer/displays.py:8
+#: project/views/manage_admin_unit/event_organizer/forms.py:30
+#: project/views/manage_admin_unit/event_organizer/forms.py:58
 #: project/views/manage_admin_unit/event_place/displays.py:8
 #: project/views/manage_admin_unit/event_place/forms.py:30
 #: project/views/manage_admin_unit/event_place/forms.py:56
@@ -1789,8 +1786,7 @@ msgstr "Benachrichtigungseinstellungen"
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: project/templates/manage/organizers.html:23
-#: project/templates/manage/organizers.html:48
+#: project/views/manage_admin_unit/event_organizer/displays.py:15
 #: project/views/manage_admin_unit/event_place/displays.py:13
 msgid "Number of events"
 msgstr "Anzahl an Veranstaltungen"
@@ -1920,7 +1916,7 @@ msgstr "Organisation erfolgreich erstellt"
 msgid "Organization successfully deleted"
 msgstr "Organisation erfolgreich gelöscht"
 
-#: project/views/manage.py:272
+#: project/views/manage.py:252
 msgid "Organization successfully left"
 msgstr "Organisation erfolgreich verlassen"
 
@@ -1970,27 +1966,10 @@ msgstr "Veranstalter"
 #: project/templates/_macros.html:939 project/templates/event/create.html:271
 #: project/templates/event/update.html:168
 #: project/templates/manage/events.html:112
-#: project/templates/organizer/create.html:28
-#: project/templates/organizer/delete.html:13
-#: project/templates/organizer/update.html:28
 msgid "Organizer"
 msgstr "Veranstalter"
 
-#: project/views/organizer.py:35
-msgid "Organizer successfully created"
-msgstr "Veranstalter erfolgreich erstellt"
-
-#: project/views/organizer.py:88
-msgid "Organizer successfully deleted"
-msgstr "Veranstalter erfolgreich gelöscht"
-
-#: project/views/organizer.py:60
-msgid "Organizer successfully updated"
-msgstr "Veranstalter erfolgreich aktualisiert"
-
-#: project/templates/layout.html:265 project/templates/manage/organizers.html:5
-#: project/templates/manage/organizers.html:10
-#: project/templates/organizer/main.html:4
+#: project/templates/layout.html:265 project/templates/organizer/main.html:4
 msgid "Organizers"
 msgstr "Veranstalter"
 
@@ -2028,8 +2007,9 @@ msgid "Page %(page)d of %(pages)d (%(total)d total)"
 msgstr "Seite %(page)d von %(pages)d (%(total)d insgesamt)"
 
 #: project/forms/admin_unit.py:68 project/forms/event.py:113
-#: project/forms/organizer.py:34 project/templates/_macros.html:294
-#: project/templates/manage/organizers.html:20
+#: project/templates/_macros.html:294
+#: project/views/manage_admin_unit/event_organizer/displays.py:10
+#: project/views/manage_admin_unit/event_organizer/forms.py:34
 msgid "Phone"
 msgstr "Telefon"
 
@@ -2078,8 +2058,8 @@ msgid "Please enter a valid time, between 00:00 and 23:59."
 msgstr "Bitte gib eine gültige Uhrzeit zwischen 00:00 und 23:59 ein."
 
 #: project/forms/admin_unit.py:25 project/forms/event.py:471
-#: project/forms/event_date.py:53 project/forms/organizer.py:16
-#: project/forms/planning.py:44
+#: project/forms/event_date.py:53 project/forms/planning.py:44
+#: project/views/manage_admin_unit/event_organizer/forms.py:16
 #: project/views/manage_admin_unit/event_place/forms.py:16
 msgid "Postal code"
 msgstr "Postleitzahl"
@@ -2562,7 +2542,7 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #: project/views/admin.py:134 project/views/admin.py:280
-#: project/views/manage.py:437 project/views/user.py:64
+#: project/views/manage.py:417 project/views/user.py:64
 #: project/views/user.py:83
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
@@ -2622,7 +2602,8 @@ msgstr "Beginn"
 msgid "Start page"
 msgstr "Startseite"
 
-#: project/forms/admin_unit.py:30 project/forms/organizer.py:19
+#: project/forms/admin_unit.py:30
+#: project/views/manage_admin_unit/event_organizer/forms.py:19
 #: project/views/manage_admin_unit/event_place/forms.py:19
 msgid "State"
 msgstr "Bundesland"
@@ -2632,7 +2613,8 @@ msgstr "Bundesland"
 msgid "Status"
 msgstr "Status"
 
-#: project/forms/admin_unit.py:22 project/forms/organizer.py:13
+#: project/forms/admin_unit.py:22
+#: project/views/manage_admin_unit/event_organizer/forms.py:13
 #: project/views/manage_admin_unit/event_place/forms.py:13
 msgid "Street"
 msgstr "Straße"
@@ -2855,8 +2837,7 @@ msgstr "Mitglied aktualisieren"
 msgid "Update organization"
 msgstr "Organisation aktualisieren"
 
-#: project/forms/organizer.py:53 project/templates/organizer/update.html:5
-#: project/templates/organizer/update.html:22
+#: project/views/manage_admin_unit/event_organizer/forms.py:53
 msgid "Update organizer"
 msgstr "Veranstalter aktualisieren"
 
@@ -2964,9 +2945,9 @@ msgstr "Empfehlungsanfragen automatisch verifizieren"
 #: project/modular/base_view_handler.py:111
 #: project/templates/admin/admin_units.html:35
 #: project/templates/manage/events.html:125
-#: project/templates/manage/organizers.html:32
 #: project/templates/manage/references_incoming.html:19
 #: project/templates/manage/references_outgoing.html:19
+#: project/views/manage_admin_unit/event_organizer/view_handler.py:48
 msgid "View"
 msgstr "Anzeigen"
 
@@ -2981,7 +2962,7 @@ msgstr "Dokumentation anzeigen"
 msgid "View event"
 msgstr "Veranstaltung anzeigen"
 
-#: project/templates/manage/organizers.html:36
+#: project/views/manage_admin_unit/event_organizer/view_handler.py:59
 #: project/views/manage_admin_unit/event_place/view_handler.py:49
 msgid "View events"
 msgstr "Veranstaltungen anzeigen"
@@ -3042,7 +3023,7 @@ msgstr ""
 "Du bist Administrator von mindestens einer Organisation. Beende deine "
 "Mitgliedschaft, um deinen Account zu löschen."
 
-#: project/views/manage.py:253
+#: project/views/manage.py:233
 msgid "You are not a member of this organization"
 msgstr "Du bist kein Mitglied dieser Organisation"
 
@@ -3412,4 +3393,13 @@ msgstr "bis"
 
 #~ msgid "You can visit this page again to check the status."
 #~ msgstr "Du kannst diese Seite erneut besuchen, um den Status zu prüfen."
+
+#~ msgid "Organizer successfully created"
+#~ msgstr "Veranstalter erfolgreich erstellt"
+
+#~ msgid "Organizer successfully deleted"
+#~ msgstr "Veranstalter erfolgreich gelöscht"
+
+#~ msgid "Organizer successfully updated"
+#~ msgstr "Veranstalter erfolgreich aktualisiert"
 

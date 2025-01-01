@@ -773,7 +773,7 @@
 </div>
 {% if user_rights['can_update_event'] %}
 <div class="mt-2">
-  <a href="{{ url_for('organizer_update', id=organizer.id) }}" class="btn btn-outline-secondary"><i class="fa fa-edit"></i> {{ _('Edit') }}</a>
+  <a href="{{ url_for('manage_admin_unit.event_organizer_update', event_organizer_id=organizer.id) }}" class="btn btn-outline-secondary"><i class="fa fa-edit"></i> {{ _('Edit') }}</a>
 </div>
 {% endif %}
 {% endmacro %}

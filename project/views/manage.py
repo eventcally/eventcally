@@ -184,26 +184,6 @@ def manage_admin_unit_events(id):
     )
 
 
-@app.route("/manage/admin_unit/<int:id>/organizers")
-@auth_required()
-def manage_admin_unit_organizers(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    set_current_admin_unit(admin_unit)
-
-    organizers = (
-        EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id)
-        .order_by(func.lower(EventOrganizer.name))
-        .paginate(per_page=50)
-    )
-
-    return render_template(
-        "manage/organizers.html",
-        admin_unit=admin_unit,
-        organizers=organizers.items,
-        pagination=get_pagination_urls(organizers, id=id),
-    )
-
-
 @app.route("/manage/admin_unit/<int:id>/members")
 @auth_required()
 def manage_admin_unit_members(id):

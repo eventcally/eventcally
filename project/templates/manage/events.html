@@ -141,7 +141,7 @@ var vue_app_data = { eventId: 0 };
                         </div>
                         {{ render_event_warning_pills(event) }}
                     </td>
-                    <td><a href="{{ url_for('organizer_update', id=event.organizer.id) }}" class="text-body">{{ event.organizer.name }}</a></td>
+                    <td><a href="{{ url_for('manage_admin_unit.event_organizer_update', event_organizer_id=event.organizer.id) }}" class="text-body">{{ event.organizer.name }}</a></td>
                     <td>
                         <div><a href="{{ url_for('manage_admin_unit.event_place_update', event_place_id=event.event_place.id) }}" class="text-body">{{ event.event_place.name }}</a></div>
                         <div>{% if event.event_place.location %}{{ event.event_place.location.postalCode }} {{ event.event_place.location.city }}{% endif %}</div>

@@ -32,6 +32,9 @@ class EventOrganizer(db.Model, TrackableMixin):
     )
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=True)
 
+    def __str__(self):
+        return self.name or super().__str__()
+
 
 class EventCoOrganizers(db.Model):
     __tablename__ = "event_coorganizers"
