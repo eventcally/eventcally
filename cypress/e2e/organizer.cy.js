@@ -2,7 +2,7 @@ describe("Event organizer", () => {
   it("creates", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
-      cy.visit("/manage/admin_unit/" + adminUnitId + "/organizers/create");
+      cy.visit("/manage/admin_unit/" + adminUnitId + "/event_organizers/create");
       cy.get("#name").type("Mein Veranstalter");
       cy.screenshot("create");
       cy.get("#submit").click();
@@ -18,7 +18,7 @@ describe("Event organizer", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEventOrganizer(adminUnitId).then(function (eventOrganizerId) {
-        cy.visit("/organizer/" + eventOrganizerId + "/update");
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/event_organizer/" + eventOrganizerId + "/update");
         cy.screenshot("update");
         cy.get("#submit").click();
         cy.url().should(
@@ -33,7 +33,7 @@ describe("Event organizer", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEventOrganizer(adminUnitId).then(function (eventOrganizerId) {
-        cy.visit("/organizer/" + eventOrganizerId + "/delete");
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/event_organizer/" + eventOrganizerId + "/delete");
         cy.get("#name").type("Mein Veranstalter");
         cy.screenshot("delete");
         cy.get("#submit").click();

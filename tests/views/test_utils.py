@@ -26,7 +26,7 @@ def test_get_pagination_urls(client, seeder, app, utils):
         seeder.upsert_event_organizer(admin_unit_id, "Organizer %d" % i)
 
     utils.get_endpoint_ok(
-        "manage_admin_unit_organizers", id=admin_unit_id, page=2, per_page=10
+        "manage_admin_unit.event_organizers", id=admin_unit_id, page=2, per_page=10
     )
 
 

@@ -39,7 +39,7 @@
         return false;
       });
       $('#organizer-add-btn').click(function () {
-        window.open('{{ url_for("manage_admin_unit_organizer_create", id=event.admin_unit_id) }}');
+        window.open('{{ url_for("manage_admin_unit.event_organizer_create", id=event.admin_unit_id) }}');
         return false;
       });
 

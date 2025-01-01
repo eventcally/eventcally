@@ -1,26 +1,16 @@
-{% extends "layout.html" %}
+{% extends "generic/update.html" %}
 {% from "_macros.html" import render_organizer_form_script, render_manage_form_styles, render_manage_form_scripts, render_jquery_steps_header, render_cropper_logo_block, render_crop_image_form_section, render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
 
-{%- block title -%}
-{{ _('Update organizer') }}
-{%- endblock -%}
-
-{% block styles %}
-{{ render_manage_form_styles() }}
-{% endblock %}
-
 {% block header %}
-{{ render_manage_form_scripts() }}
-{{ render_jquery_steps_header() }}
+{{ super() }}
 {{ render_google_place_autocomplete_header() }}
 {{ render_organizer_form_script(current_admin_unit, organizer) }}
 {{ render_cropper_logo_block() }}
 {% endblock %}
 
-{% block content %}
+{% block form %}
 
-<h1>{{ _('Update organizer') }}</h1>
-<form id="main-form" action="{{ url_for('organizer_update', id=organizer.id) }}" method="POST" enctype="multipart/form-data">
+<form id="main-form" action="" method="POST" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
 
   <div class="card mb-4">

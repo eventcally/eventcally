@@ -149,7 +149,7 @@ def test_admin_unit_events_place(client, seeder: Seeder, utils: UtilActions):
 def test_admin_unit_organizers(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
-    utils.get_endpoint_ok("manage_admin_unit_organizers", id=admin_unit_id)
+    utils.get_endpoint_ok("manage_admin_unit.event_organizers", id=admin_unit_id)
 
 
 def test_admin_unit_event_places(client, seeder: Seeder, utils: UtilActions):

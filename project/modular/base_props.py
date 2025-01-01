@@ -18,6 +18,11 @@ class DateTimePropFormatter(BasePropFormatter):
         return format_datetime(data)
 
 
+class StringPropFormatter(BasePropFormatter):
+    def format(self, data):
+        return data or ""
+
+
 class LocationPropFormatter(BasePropFormatter):
     def format(self, data):
         return get_location_str(data)
@@ -68,7 +73,9 @@ class BaseProp:
 
 
 class StringProp(BaseProp):
-    pass
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", StringPropFormatter())
+        super().__init__(*args, **kwargs)
 
 
 class MethodProp(BaseProp):

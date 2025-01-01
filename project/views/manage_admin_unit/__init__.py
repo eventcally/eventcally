@@ -24,6 +24,7 @@ def manage_admin_unit_url_value_preprocessor(endpoint, values):
     set_current_admin_unit(admin_unit_for_manage)
 
 
+import project.views.manage_admin_unit.event_organizer.view_handler
 import project.views.manage_admin_unit.event_place.view_handler
 from project import app
 
