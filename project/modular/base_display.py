@@ -33,3 +33,12 @@ class BaseDisplay:
 
     def get_prop_display_value(self, prop, object):
         return prop.get_display_value(object)
+
+    def get_prop_link(self, prop, object):
+        return prop.get_link(object)
+
+    def should_show_audit(self, object):
+        return False
+
+    def should_audit_show_user(self, object):  # pragma: no cover
+        return False

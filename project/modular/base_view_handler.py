@@ -28,12 +28,19 @@ class BaseViewHandler:
     list_view_class = BaseListView
     list_display_class = BaseListView
     list_decorators = []
+    generic_prefix = ""
 
     def __init__(self, *args, **kwargs):
         super().__init__()
         self.app = None
         self.endpoints = dict()
         self.template_pathes = list()
+
+    def get_model_display_name(self):
+        return self.model.get_display_name()
+
+    def get_model_display_name_plural(self):
+        return self.model.get_display_name_plural()
 
     def complete_object(self, object):  # pragma: no cover
         pass
@@ -44,8 +51,15 @@ class BaseViewHandler:
     def check_access(self, **kwargs):
         return None
 
+    def get_objects_base_query_from_kwargs(self, **kwargs):
+        return self.model.query
+
     def get_objects_query_from_kwargs(self, **kwargs):
-        return self.apply_objects_query_order(self.apply_base_filter(self.model.query))
+        return self.apply_objects_query_order(
+            self.apply_base_filter(
+                self.get_objects_base_query_from_kwargs(**kwargs), **kwargs
+            )
+        )
 
     def apply_base_filter(self, query, **kwargs):  # pragma: no cover
         return query
@@ -145,7 +159,7 @@ class BaseViewHandler:
 
         return result
 
-    def get_read_actions(self, object):
+    def get_additional_read_actions(self, object):
         result = list()
 
         update_action = self.get_update_action(object=object)
@@ -158,6 +172,13 @@ class BaseViewHandler:
 
         return result
 
+    def get_read_actions(self, object):
+        result = list()
+
+        result.extend(self.get_additional_read_actions(object))
+
+        return result
+
     def _add_view(self, key, url, view_class, endpoint, app):
         app.add_url_rule(
             url,
@@ -165,20 +186,46 @@ class BaseViewHandler:
         )
         self.endpoints[key] = endpoint
 
-    def get_url_prefix(self):
-        return self.model.__model_name__
+    def get_single_url_folder(self):
+        return f"{self.generic_prefix}{self.model.__model_name__}"
 
-    def get_endpoint_prefix(self):
-        return self.model.__model_name__
+    def get_plural_url_folder(self):
+        return f"{self.generic_prefix}{self.model.__model_name_plural__}"
+
+    def get_single_endpoint_name(self):
+        return f"{self.generic_prefix}{self.model.__model_name__}"
+
+    def get_plural_endpoint_name(self):
+        return f"{self.generic_prefix}{self.model.__model_name_plural__}"
 
     def get_id_query_arg_name(self):  # pragma: no cover
         return "id"
 
     def add_views(self, app):
-        url_prefix = self.get_url_prefix()
-        endpoint_prefix = self.get_endpoint_prefix()
+        single_url_folder = self.get_single_url_folder()
+        plural_url_folder = self.get_plural_url_folder()
+        single_endpoint_name = self.get_single_endpoint_name()
+        plural_endpoint_name = self.get_plural_endpoint_name()
         id_query_arg_name = self.get_id_query_arg_name()
 
+        self._add_views(
+            app,
+            single_url_folder,
+            plural_url_folder,
+            single_endpoint_name,
+            plural_endpoint_name,
+            id_query_arg_name,
+        )
+
+    def _add_views(
+        self,
+        app,
+        single_url_folder,
+        plural_url_folder,
+        single_endpoint_name,
+        plural_endpoint_name,
+        id_query_arg_name,
+    ):
         if self.create_view_class:
 
             class CreateView(self.create_view_class):
@@ -187,9 +234,9 @@ class BaseViewHandler:
 
             self._add_view(
                 "create",
-                f"/{url_prefix}/create",
+                f"/{single_url_folder}/create",
                 CreateView,
-                f"{endpoint_prefix}_create",
+                f"{single_endpoint_name}_create",
                 app,
             )
 
@@ -201,9 +248,9 @@ class BaseViewHandler:
 
             self._add_view(
                 "read",
-                f"/{url_prefix}/<int:{id_query_arg_name}>",
+                f"/{single_url_folder}/<int:{id_query_arg_name}>",
                 ReadView,
-                endpoint_prefix,
+                single_endpoint_name,
                 app,
             )
 
@@ -215,9 +262,9 @@ class BaseViewHandler:
 
             self._add_view(
                 "update",
-                f"/{url_prefix}/<int:{id_query_arg_name}>/update",
+                f"/{single_url_folder}/<int:{id_query_arg_name}>/update",
                 UpdateView,
-                f"{endpoint_prefix}_update",
+                f"{single_endpoint_name}_update",
                 app,
             )
 
@@ -229,9 +276,9 @@ class BaseViewHandler:
 
             self._add_view(
                 "delete",
-                f"/{url_prefix}/<int:{id_query_arg_name}>/delete",
+                f"/{single_url_folder}/<int:{id_query_arg_name}>/delete",
                 DeleteView,
-                f"{endpoint_prefix}_delete",
+                f"{single_endpoint_name}_delete",
                 app,
             )
 
@@ -243,11 +290,14 @@ class BaseViewHandler:
 
             self._add_view(
                 "list",
-                f"/{self.model.__model_name_plural__}",
+                f"/{plural_url_folder}",
                 ListView,
-                self.model.__model_name_plural__,
+                plural_endpoint_name,
                 app,
             )
+
+    def get_template_folder(self):
+        return f"{self.generic_prefix}{self.model.__model_name__}"
 
     def _init_template_pathes(self):
         if isinstance(self.app, Blueprint):

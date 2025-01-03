@@ -1,6 +1,6 @@
-from flask_babel import format_datetime
+from flask_babel import format_date, format_datetime
 
-from project.utils import get_location_str
+from project.utils import get_location_str, getattr_keypath
 
 
 class BasePropFormatter:
@@ -18,6 +18,11 @@ class DateTimePropFormatter(BasePropFormatter):
         return format_datetime(data)
 
 
+class DatePropFormatter(BasePropFormatter):
+    def format(self, data):
+        return format_date(data)
+
+
 class StringPropFormatter(BasePropFormatter):
     def format(self, data):
         return data or ""
@@ -26,6 +31,11 @@ class StringPropFormatter(BasePropFormatter):
 class LocationPropFormatter(BasePropFormatter):
     def format(self, data):
         return get_location_str(data)
+
+
+class EventPropFormatter(BasePropFormatter):
+    def format(self, data):
+        return data.name
 
 
 class UnboundProp:
@@ -57,19 +67,48 @@ class BaseProp:
         else:
             return UnboundProp(cls, *args, **kwargs)
 
-    def __init__(self, label=None, name=None, formatter=None, _display=None):
+    def __init__(
+        self,
+        label=None,
+        name=None,
+        formatter=None,
+        keypath=None,
+        method_name=None,
+        link_method_name=None,
+        _display=None,
+    ):
         self.label = label
         self.name = name
         self.formatter = formatter
+        self.keypath = keypath
+        self.method_name = method_name
+        self.link_method_name = link_method_name
         self._display = _display
 
-    def get_display_value(self, object):
-        if object is not None and hasattr(object, self.name):
-            data = getattr(object, self.name)
-        else:  # pragma: no cover
-            data = None
+    def get_display_data(self, object):
+        if self.method_name:
+            method = getattr(self._display, self.method_name)
+            return method(object)
 
+        if object is not None:
+            if self.keypath:
+                return getattr_keypath(object, self.keypath)
+
+            if hasattr(object, self.name):
+                return getattr(object, self.name)
+
+        return None  # pragma: no cover
+
+    def get_display_value(self, object):
+        data = self.get_display_data(object)
         return self.formatter.format(data) if self.formatter else data
+
+    def get_link(self, object):
+        if not self.link_method_name:
+            return None
+
+        method = getattr(self._display, self.link_method_name)
+        return method(object)
 
 
 class StringProp(BaseProp):
@@ -78,19 +117,15 @@ class StringProp(BaseProp):
         super().__init__(*args, **kwargs)
 
 
-class MethodProp(BaseProp):
-    def __init__(self, method_name, *args, **kwargs):
-        self.method_name = method_name
-        super().__init__(*args, **kwargs)
-
-    def get_display_value(self, object):
-        method = getattr(self._display, self.method_name)
-        return method(object)
-
-
 class LocationProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", LocationPropFormatter())
+        super().__init__(*args, **kwargs)
+
+
+class EventProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", EventPropFormatter())
         super().__init__(*args, **kwargs)
 
 
@@ -104,3 +139,21 @@ class DateTimeProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", DateTimePropFormatter())
         super().__init__(*args, **kwargs)
+
+
+class DateProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", DatePropFormatter())
+        super().__init__(*args, **kwargs)
+
+
+class BoolProp(BaseProp):
+    def get_display_data(self, object):
+        data = super().get_display_data(object)
+        return True if data else False
+
+
+class CountProp(BaseProp):
+    def get_display_data(self, object):
+        data = super().get_display_data(object)
+        return len(data) if data else None

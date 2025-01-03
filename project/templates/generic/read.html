@@ -1,16 +1,22 @@
 {% extends "layout.html" %}
 {% from "macros/display.html.j2" import render_read_display %}
 {% from "macros/nav.html.j2" import render_breadcrumb %}
+{% from "_macros.html" import render_audit_container %}
 {% block content %}
 
 {{ render_breadcrumb(view.get_breadcrumbs(), object) }}
 
 {% set actions = view.handler.get_read_actions(object) %}
 {% if actions %}
-<div class="my-3">
-    {% for action in view.handler.get_read_actions(object) %}
-        <a class="btn btn-outline-secondary" href="{{ action["url"] }}">{{ action["title"] }}</a>
-    {% endfor %}
+<div class="dropdown my-4">
+    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{ _('Actions') }}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        {% for action in actions %}
+            <a class="dropdown-item" href="{{ action["url"] }}">{{ action["title"] }}</a>
+        {% endfor %}
+    </div>
 </div>
 {% endif %}
 

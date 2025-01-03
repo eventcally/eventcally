@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-01 17:16+0100\n"
+"POT-Creation-Date: 2025-01-03 15:34+0100\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -79,7 +79,7 @@ msgstr ""
 msgid "%(user_email)s is scheduled for deletion."
 msgstr ""
 
-#: project/utils.py:25
+#: project/utils.py:26
 msgid "."
 msgstr ""
 
@@ -153,7 +153,7 @@ msgstr ""
 msgid "Accessible for free"
 msgstr ""
 
-#: project/templates/reference/read.html:13
+#: project/templates/generic/read.html:13
 msgid "Actions"
 msgstr ""
 
@@ -367,7 +367,8 @@ msgid "Choose how people can attend the event."
 msgstr ""
 
 #: project/forms/event.py:264 project/forms/reference.py:18
-#: project/forms/reference.py:31 project/forms/reference_request.py:80
+#: project/forms/reference_request.py:80
+#: project/views/manage_admin_unit/incoming_event_reference/forms.py:14
 msgid ""
 "Choose how relevant the event is to your organization. The value is not "
 "visible and is used for sorting."
@@ -538,7 +539,7 @@ msgstr ""
 msgid "Copyright text"
 msgstr ""
 
-#: project/modular/base_views.py:193 project/templates/generic/list.html:12
+#: project/modular/base_views.py:193 project/templates/generic/list.html:16
 #, python-format
 msgid "Create %(model_display_name)s"
 msgstr ""
@@ -578,6 +579,8 @@ msgstr ""
 
 #: project/templates/event_date/list.html:487
 #: project/templates/manage/events.html:91
+#: project/views/manage_admin_unit/incoming_event_reference/displays.py:31
+#: project/views/manage_admin_unit/outgoing_event_reference/displays.py:10
 msgid "Created at"
 msgstr ""
 
@@ -612,13 +615,12 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: project/modular/base_view_handler.py:118
+#: project/modular/base_view_handler.py:132
 #: project/templates/admin/admin_units.html:37
 #: project/templates/admin/users.html:37
 #: project/templates/manage/events.html:127
 #: project/templates/manage/members.html:21
 #: project/templates/manage/members.html:36
-#: project/templates/manage/references_incoming.html:21
 msgid "Delete"
 msgstr ""
 
@@ -666,9 +668,8 @@ msgstr ""
 msgid "Delete place"
 msgstr ""
 
-#: project/forms/reference.py:39 project/templates/event_date/list.html:253
-#: project/templates/reference/delete.html:6
-#: project/templates/reference/read.html:20
+#: project/templates/event_date/list.html:253
+#: project/views/manage_admin_unit/incoming_event_reference/forms.py:25
 msgid "Delete reference"
 msgstr ""
 
@@ -751,13 +752,12 @@ msgstr ""
 msgid "Earliest start first"
 msgstr ""
 
-#: project/modular/base_view_handler.py:114 project/templates/_macros.html:601
+#: project/modular/base_view_handler.py:128 project/templates/_macros.html:601
 #: project/templates/_macros.html:644 project/templates/_macros.html:776
 #: project/templates/admin/admin_units.html:36
 #: project/templates/admin/users.html:36
 #: project/templates/manage/events.html:126
 #: project/templates/manage/members.html:35
-#: project/templates/manage/references_incoming.html:20
 msgid "Edit"
 msgstr ""
 
@@ -768,10 +768,6 @@ msgstr ""
 
 #: project/templates/_macros.html:1225
 msgid "Edit image"
-msgstr ""
-
-#: project/templates/reference/read.html:17
-msgid "Edit reference"
 msgstr ""
 
 #: project/forms/admin.py:61 project/forms/admin_unit.py:67
@@ -897,6 +893,9 @@ msgstr ""
 #: project/templates/event/create.html:248
 #: project/templates/event/update.html:134
 #: project/templates/manage/events.html:111
+#: project/views/manage_admin_unit/incoming_event_reference/displays.py:9
+#: project/views/manage_admin_unit/incoming_event_reference/displays.py:29
+#: project/views/manage_admin_unit/outgoing_event_reference/displays.py:8
 msgid "Event"
 msgstr ""
 
@@ -969,9 +968,7 @@ msgstr ""
 msgid "Event organizers"
 msgstr ""
 
-#: project/babel.py:1 project/templates/reference/read.html:4
-#: project/templates/reference/read.html:8
-#: project/templates/reference/read.html:30
+#: project/babel.py:1
 msgid "Event reference"
 msgstr ""
 
@@ -1003,7 +1000,7 @@ msgstr ""
 msgid "Event successfully published"
 msgstr ""
 
-#: project/views/reference.py:72
+#: project/views/reference.py:37
 msgid "Event successfully referenced"
 msgstr ""
 
@@ -1103,7 +1100,7 @@ msgstr "Mainly for residents"
 msgid "EventTargetGroupOrigin.tourist"
 msgstr "Mainly for tourists"
 
-#: project/utils.py:21
+#: project/utils.py:22
 msgid "Event_"
 msgstr ""
 
@@ -1296,8 +1293,27 @@ msgstr ""
 msgid "Grant types"
 msgstr ""
 
+#: project/views/manage_admin_unit/incoming_event_reference/views.py:18
+#, python-format
+msgid ""
+"Here you can find events from other organizations that you referenced. To"
+" reference an event, select "
+"%(reference_open)s%(reference_title)s%(reference_close)s on an event page"
+" that you can find through the %(search_open)ssearch%(search_close)s."
+msgstr ""
+
 #: project/templates/manage/verification_requests_outgoing_create_select.html:18
 msgid "Here you can find organizations that can verify other organizations."
+msgstr ""
+
+#: project/views/manage_admin_unit/outgoing_event_reference/views.py:20
+#, python-format
+msgid ""
+"Here you can find your events that are recommended by other "
+"organizations. To ask another organization for a recommendation, select "
+"%(reference_open)s%(reference_title)s%(reference_close)s on one of your "
+"event pages that you can find through the "
+"%(search_open)ssearch%(search_close)s."
 msgstr ""
 
 #: project/templates/email/layout.html:350
@@ -1388,6 +1404,10 @@ msgstr ""
 msgid "Import event"
 msgstr ""
 
+#: project/views/manage_admin_unit/incoming_event_reference/view_handler.py:35
+msgid "Incoming reference"
+msgstr ""
+
 #: project/templates/layout.html:244
 #: project/templates/manage/reference_requests_incoming.html:9
 msgid "Incoming reference requests"
@@ -1398,7 +1418,7 @@ msgid "Incoming reference requests allowed"
 msgstr ""
 
 #: project/templates/layout.html:241
-#: project/templates/manage/references_incoming.html:9
+#: project/views/manage_admin_unit/incoming_event_reference/view_handler.py:38
 msgid "Incoming references"
 msgstr ""
 
@@ -1734,8 +1754,8 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-#: project/views/manage_admin_unit/event_organizer/displays.py:15
-#: project/views/manage_admin_unit/event_place/displays.py:13
+#: project/views/manage_admin_unit/event_organizer/displays.py:14
+#: project/views/manage_admin_unit/event_place/displays.py:12
 msgid "Number of events"
 msgstr ""
 
@@ -1798,6 +1818,8 @@ msgstr ""
 #: project/templates/manage/delete_membership.html:13
 #: project/templates/verification_request/delete.html:13
 #: project/templates/verification_request/review.html:28
+#: project/views/manage_admin_unit/incoming_event_reference/displays.py:30
+#: project/views/manage_admin_unit/outgoing_event_reference/displays.py:9
 msgid "Organization"
 msgstr ""
 
@@ -1922,6 +1944,10 @@ msgstr ""
 msgid "Other calendar"
 msgstr ""
 
+#: project/views/manage_admin_unit/outgoing_event_reference/view_handler.py:28
+msgid "Outgoing reference"
+msgstr ""
+
 #: project/templates/layout.html:249
 #: project/templates/manage/reference_requests_outgoing.html:9
 msgid "Outgoing reference requests"
@@ -1929,6 +1955,7 @@ msgstr ""
 
 #: project/templates/layout.html:242
 #: project/templates/manage/references_outgoing.html:9
+#: project/views/manage_admin_unit/outgoing_event_reference/view_handler.py:31
 msgid "Outgoing references"
 msgstr ""
 
@@ -2067,9 +2094,11 @@ msgid "Radius"
 msgstr ""
 
 #: project/forms/event.py:260 project/forms/reference.py:14
-#: project/forms/reference.py:27 project/forms/reference_request.py:76
+#: project/forms/reference_request.py:76
 #: project/templates/event/create.html:371
 #: project/templates/event/update.html:228
+#: project/views/manage_admin_unit/incoming_event_reference/displays.py:10
+#: project/views/manage_admin_unit/incoming_event_reference/forms.py:10
 msgid "Rating"
 msgstr ""
 
@@ -2091,7 +2120,7 @@ msgstr ""
 #: project/templates/event/actions.html:38
 #: project/templates/event_date/list.html:251
 #: project/templates/manage/events.html:133
-#: project/templates/manage/references_incoming.html:10
+#: project/views/manage_admin_unit/incoming_event_reference/views.py:12
 msgid "Reference event"
 msgstr ""
 
@@ -2118,14 +2147,6 @@ msgstr ""
 msgid "Reference successfully created"
 msgstr ""
 
-#: project/views/reference.py:156
-msgid "Reference successfully deleted"
-msgstr ""
-
-#: project/views/reference.py:96
-msgid "Reference successfully updated"
-msgstr ""
-
 #: project/templates/event/actions.html:39
 #: project/templates/event/reference.html:9
 msgid "Reference this event on your organization's calendar."
@@ -2144,7 +2165,6 @@ msgid "Referenced event changed"
 msgstr ""
 
 #: project/templates/layout.html:235
-#: project/templates/manage/references_incoming.html:5
 #: project/templates/manage/references_outgoing.html:5
 msgid "References"
 msgstr ""
@@ -2215,6 +2235,7 @@ msgstr ""
 #: project/templates/_macros.html:734 project/templates/_macros.html:1303
 #: project/templates/event/actions.html:32
 #: project/templates/manage/events.html:131
+#: project/views/manage_admin_unit/outgoing_event_reference/views.py:12
 msgid "Request reference"
 msgstr ""
 
@@ -2285,7 +2306,7 @@ msgstr ""
 msgid "Review verification request"
 msgstr ""
 
-#: project/views/user_blueprint/oauth2_token/view_handler.py:41
+#: project/views/user_blueprint/oauth2_token/view_handler.py:53
 msgid "Revoke"
 msgstr ""
 
@@ -2760,14 +2781,8 @@ msgstr ""
 msgid "Update place"
 msgstr ""
 
-#: project/forms/reference.py:35
+#: project/views/manage_admin_unit/incoming_event_reference/forms.py:21
 msgid "Update reference"
-msgstr ""
-
-#: project/templates/reference/update.html:4
-#: project/templates/reference/update.html:8
-#, python-format
-msgid "Update reference to event \"%(name)s\""
 msgstr ""
 
 #: project/forms/admin_unit.py:136 project/forms/admin_unit.py:161
@@ -2857,10 +2872,9 @@ msgstr ""
 msgid "Verify reference requests automatically"
 msgstr ""
 
-#: project/modular/base_view_handler.py:111
+#: project/modular/base_view_handler.py:125
 #: project/templates/admin/admin_units.html:35
 #: project/templates/manage/events.html:125
-#: project/templates/manage/references_incoming.html:19
 #: project/templates/manage/references_outgoing.html:19
 #: project/views/manage_admin_unit/event_organizer/view_handler.py:48
 msgid "View"
@@ -2871,8 +2885,9 @@ msgid "View documentation"
 msgstr ""
 
 #: project/templates/manage/reference_requests_incoming.html:20
-#: project/templates/reference/read.html:22
 #: project/templates/reference_request/review_status.html:17
+#: project/views/manage_admin_unit/incoming_event_reference/view_handler.py:54
+#: project/views/manage_admin_unit/outgoing_event_reference/view_handler.py:53
 #: project/views/reference_request_review.py:38
 msgid "View event"
 msgstr ""
@@ -3297,5 +3312,17 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Organizer successfully updated"
+#~ msgstr ""
+
+#~ msgid "Edit reference"
+#~ msgstr ""
+
+#~ msgid "Reference successfully deleted"
+#~ msgstr ""
+
+#~ msgid "Reference successfully updated"
+#~ msgstr ""
+
+#~ msgid "Update reference to event \"%(name)s\""
 #~ msgstr ""
 

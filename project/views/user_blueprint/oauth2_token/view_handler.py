@@ -17,17 +17,29 @@ class OAuth2TokenViewHandler(UserChildViewHandler):
     delete_view_class = None
     list_display_class = ListDisplay
 
-    def add_views(self, app):
-        super().add_views(app)
-        url_prefix = self.get_url_prefix()
-        endpoint_prefix = self.get_endpoint_prefix()
-        id_query_arg_name = self.get_id_query_arg_name()
+    def _add_views(
+        self,
+        app,
+        single_url_folder,
+        plural_url_folder,
+        single_endpoint_name,
+        plural_endpoint_name,
+        id_query_arg_name,
+    ):
+        super()._add_views(
+            app,
+            single_url_folder,
+            plural_url_folder,
+            single_endpoint_name,
+            plural_endpoint_name,
+            id_query_arg_name,
+        )
 
         self._add_view(
             "revoke",
-            f"/{url_prefix}/<int:{id_query_arg_name}>/revoke",
+            f"/{single_url_folder}/<int:{id_query_arg_name}>/revoke",
             RevokeView,
-            f"{endpoint_prefix}_revoke",
+            f"{single_endpoint_name}_revoke",
             app,
         )
 

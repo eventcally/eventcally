@@ -376,6 +376,9 @@ class AdminUnit(db.Model, TrackableMixin):
             > 0
         )
 
+    def __str__(self):
+        return self.name or super().__str__()
+
 
 @listens_for(AdminUnit.can_invite_other, "set")
 def set_admin_unit_can_invite_other(target, value, oldvalue, initiator):
