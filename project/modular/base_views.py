@@ -31,7 +31,7 @@ class BaseView(View):
 
         for path in self.handler.template_pathes:
             result.append(
-                f"{path}{self.model.__model_name__}/{self.template_file_name}"
+                f"{path}{self.handler.get_template_folder()}/{self.template_file_name}"
             )
             result.append(f"{path}generic/{self.template_file_name}")
 
@@ -65,7 +65,7 @@ class BaseListView(BaseView):
         return self.display_class(**kwargs)
 
     def get_title(self, **kwargs):
-        return self.model.get_display_name_plural()
+        return self.handler.get_model_display_name_plural()
 
     def get_objects_query_from_kwargs(self, **kwargs):
         return self.handler.get_objects_query_from_kwargs(**kwargs)
@@ -123,7 +123,7 @@ class BaseObjectView(BaseView):
         if list_url:
             result.append(
                 self.handler._create_breadcrumb(
-                    list_url, self.model.get_display_name_plural()
+                    list_url, self.handler.get_model_display_name_plural()
                 )
             )
 
@@ -190,13 +190,13 @@ class BaseCreateView(BaseFormView):
     def get_title(self, **kwargs):
         return lazy_gettext(
             "Create %(model_display_name)s",
-            model_display_name=self.model.get_display_name(),
+            model_display_name=self.handler.get_model_display_name(),
         )
 
     def get_success_text(self):
         return lazy_gettext(
             "%(model_display_name)s successfully created",
-            model_display_name=self.model.get_display_name(),
+            model_display_name=self.handler.get_model_display_name(),
         )
 
     def dispatch_request(self, **kwargs):
@@ -241,13 +241,13 @@ class BaseUpdateView(BaseFormView):
     def get_title(self, **kwargs):
         return lazy_gettext(
             "Update %(model_display_name)s",
-            model_display_name=self.model.get_display_name(),
+            model_display_name=self.handler.get_model_display_name(),
         )
 
     def get_success_text(self):
         return lazy_gettext(
             "%(model_display_name)s successfully updated",
-            model_display_name=self.model.get_display_name(),
+            model_display_name=self.handler.get_model_display_name(),
         )
 
     def dispatch_request(self, **kwargs):
@@ -293,7 +293,7 @@ class BaseDeleteView(BaseFormView):
     def get_title(self, **kwargs):
         return lazy_gettext(
             "Delete %(model_display_name)s",
-            model_display_name=self.model.get_display_name(),
+            model_display_name=self.handler.get_model_display_name(),
         )
 
     def get_instruction(self, **kwargs):
@@ -305,7 +305,7 @@ class BaseDeleteView(BaseFormView):
     def get_success_text(self):
         return lazy_gettext(
             "%(model_display_name)s successfully deleted",
-            model_display_name=self.model.get_display_name(),
+            model_display_name=self.handler.get_model_display_name(),
         )
 
     def dispatch_request(self, **kwargs):

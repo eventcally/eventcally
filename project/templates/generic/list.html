@@ -1,10 +1,14 @@
 {% extends "layout.html" %}
-{% from "macros/nav.html.j2" import render_breadcrumb %}
+{% from "macros/nav.html.j2" import render_breadcrumb, render_instuction %}
 {% from "macros/display.html.j2" import render_prop_display_value %}
 {% from "_macros.html" import render_pagination %}
 {% block content %}
 
 {{ render_breadcrumb(view.get_breadcrumbs(), title) }}
+
+{% block instruction %}
+{{ render_instuction(instruction) }}
+{% endblock %}
 
 {% set create_url = view.handler.get_create_url(object=object) %}
 {% if create_url %}

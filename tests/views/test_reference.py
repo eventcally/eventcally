@@ -10,7 +10,11 @@ def test_read(seeder, utils):
         reference_id,
     ) = seeder.create_any_reference(admin_unit_id)
 
-    url = utils.get_url("event_reference", id=reference_id)
+    url = utils.get_url(
+        "manage_admin_unit.incoming_event_reference",
+        id=admin_unit_id,
+        event_reference_id=reference_id,
+    )
     utils.get_ok(url)
 
 
@@ -93,7 +97,11 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
         reference_id,
     ) = seeder.create_any_reference(admin_unit_id)
 
-    url = utils.get_url("event_reference_update", id=reference_id)
+    url = utils.get_url(
+        "manage_admin_unit.incoming_event_reference_update",
+        id=admin_unit_id,
+        event_reference_id=reference_id,
+    )
     response = utils.get_ok(url)
 
     if db_error:
@@ -112,7 +120,10 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_references_incoming", id=admin_unit_id
+        response,
+        "manage_admin_unit.incoming_event_reference",
+        id=admin_unit_id,
+        event_reference_id=reference_id,
     )
 
     with app.app_context():
@@ -132,7 +143,11 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error):
         reference_id,
     ) = seeder.create_any_reference(admin_unit_id)
 
-    url = utils.get_url("reference_delete", id=reference_id)
+    url = utils.get_url(
+        "manage_admin_unit.incoming_event_reference_delete",
+        id=admin_unit_id,
+        event_reference_id=reference_id,
+    )
     response = utils.get_ok(url)
 
     if db_error:
@@ -149,7 +164,7 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error):
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_references_incoming", id=admin_unit_id
+        response, "manage_admin_unit.incoming_event_references", id=admin_unit_id
     )
 
     with app.app_context():
@@ -168,7 +183,9 @@ def test_admin_unit_references_incoming(client, seeder, utils):
         reference_id,
     ) = seeder.create_any_reference(admin_unit_id)
 
-    utils.get_endpoint_ok("manage_admin_unit_references_incoming", id=admin_unit_id)
+    utils.get_endpoint_ok(
+        "manage_admin_unit.incoming_event_references", id=admin_unit_id
+    )
 
 
 def test_admin_unit_references_outgoing(client, seeder, utils):
@@ -179,7 +196,9 @@ def test_admin_unit_references_outgoing(client, seeder, utils):
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
     seeder.create_reference(event_id, other_admin_unit_id)
 
-    utils.get_endpoint_ok("manage_admin_unit_references_outgoing", id=admin_unit_id)
+    utils.get_endpoint_ok(
+        "manage_admin_unit.outgoing_event_references", id=admin_unit_id
+    )
 
 
 def test_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):

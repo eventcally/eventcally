@@ -3,10 +3,7 @@ describe("Reference", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createIncomingReference(adminUnitId).then(function (referenceId) {
-        cy.visit("/reference/" + referenceId);
-        cy.screenshot("read");
-
-        cy.visit("/manage/admin_unit/" + adminUnitId + "/references/outgoing");
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/outgoing_event_references");
         cy.screenshot("outgoing");
       });
     });
@@ -32,12 +29,12 @@ describe("Reference", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createIncomingReference(adminUnitId).then(function (referenceId) {
-        cy.visit("/reference/" + referenceId + "/update");
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/incoming_event_reference/" + referenceId + "/update");
         cy.screenshot("update");
         cy.get("#submit").click();
         cy.url().should(
           "include",
-          "/manage/admin_unit/" + adminUnitId + "/references/incoming"
+          "/manage/admin_unit/" + adminUnitId + "/incoming_event_reference/" + referenceId
         );
         cy.screenshot("incoming");
       });
@@ -48,12 +45,12 @@ describe("Reference", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createIncomingReference(adminUnitId).then(function (referenceId) {
-        cy.visit("/reference/" + referenceId + "/delete");
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/incoming_event_reference/" + referenceId + "/delete");
         cy.screenshot("delete");
         cy.get("#submit").click();
         cy.url().should(
           "include",
-          "/manage/admin_unit/" + adminUnitId + "/references/incoming"
+          "/manage/admin_unit/" + adminUnitId + "/incoming_event_references"
         );
       });
     });

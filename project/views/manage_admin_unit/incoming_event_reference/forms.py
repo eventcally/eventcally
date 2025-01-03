@@ -1,15 +1,11 @@
 from flask_babel import lazy_gettext
-from flask_wtf import FlaskForm
 from wtforms import SelectField, SubmitField
-from wtforms.validators import DataRequired
 
+from project.forms.base_form import BaseForm
 from project.forms.common import event_rating_choices
 
 
-class CreateEventReferenceForm(FlaskForm):
-    admin_unit_id = SelectField(
-        lazy_gettext("Organization"), validators=[DataRequired()], coerce=int
-    )
+class BaseEventReferenceForm(BaseForm):
     rating = SelectField(
         lazy_gettext("Rating"),
         default=50,
@@ -19,4 +15,11 @@ class CreateEventReferenceForm(FlaskForm):
             "Choose how relevant the event is to your organization. The value is not visible and is used for sorting."
         ),
     )
-    submit = SubmitField(lazy_gettext("Save reference"))
+
+
+class UpdateEventReferenceForm(BaseEventReferenceForm):
+    submit = SubmitField(lazy_gettext("Update reference"))
+
+
+class DeleteEventReferenceForm(BaseForm):
+    submit = SubmitField(lazy_gettext("Delete reference"))

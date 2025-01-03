@@ -1,7 +1,7 @@
 from flask_babel import gettext, lazy_gettext
 
 from project.modular.base_display import BaseDisplay
-from project.modular.base_props import DateTimeProp, MethodProp, StringProp
+from project.modular.base_props import BaseProp, DateTimeProp, StringProp
 
 
 class ListDisplay(BaseDisplay):
@@ -10,7 +10,7 @@ class ListDisplay(BaseDisplay):
     scope = StringProp(lazy_gettext("Scopes"))
     issued_at_datetime = DateTimeProp(lazy_gettext("Issued"))
     expires_at_datetime = DateTimeProp(lazy_gettext("Expires"))
-    status = MethodProp("get_status_display_value", lazy_gettext("Status"))
+    status = BaseProp(lazy_gettext("Status"), method_name="get_status_display_value")
 
     def get_status_display_value(self, object):
         if object.is_expired():  # pragma: no cover

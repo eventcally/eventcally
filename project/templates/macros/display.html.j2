@@ -1,7 +1,10 @@
 {% macro render_prop_display_value(display, prop, object) -%}
 {% set display_value = display.get_prop_display_value(prop, object) %}
+{% set link = display.get_prop_link(prop, object) %}
 {% if display_value is boolean %}
 {% if display_value %}<i class="fa fa-fw fa-check-circle"></i>{% endif %}
+{% elif link %}
+<a href="{{ link }}">{{ display_value }}</a>
 {% else %}
 {{ display_value }}
 {% endif -%}
@@ -14,4 +17,33 @@
     <dd class="col-sm-9">{{ render_prop_display_value(display, prop, object) }}</dd>
     {% endfor %}
 </dl>
+
+{% if display.should_show_audit(object) %}
+<div class="my-4 small text-muted">
+    {{ render_audit(object, display.should_audit_show_user(object)) }}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_audit(tracking_mixing, show_user=False) %}
+{% set created_at = tracking_mixing.created_at | datetimeformat('short') %}
+
+{% if show_user %}
+{{ _('Created at %(created_at)s by %(created_by)s.', created_at=created_at, created_by=tracking_mixing.created_by.email)
+}}
+{% else %}
+{{ _('Created at %(created_at)s.', created_at=created_at) }}
+{% endif %}
+
+{% if tracking_mixing.updated_at %}
+{% set updated_at = tracking_mixing.updated_at | datetimeformat('short') %}
+{% if created_at != updated_at %}
+{% if show_user %}
+{{ _('Last updated at %(updated_at)s by %(updated_by)s.', updated_at=updated_at,
+updated_by=tracking_mixing.updated_by.email) }}
+{% else %}
+{{ _('Last updated at %(updated_at)s.', updated_at=updated_at) }}
+{% endif %}
+{% endif %}
+{% endif %}
 {% endmacro %}

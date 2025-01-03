@@ -3,5 +3,5 @@
 {% block content %}
 <p>{{ _('A referenced event was changed.') }}</p>
 {{ render_event_in_email(reference.event) }}
-{{ render_email_button(url_for('event_reference', id=reference.id, _external=True), _('Click here to view the reference')) }}
+{{ render_email_button(url_for('manage_admin_unit.incoming_event_reference', id=reference.admin_unit.id, event_reference_id=reference.id, _external=True), _('Click here to view the reference')) }}
 {% endblock %}

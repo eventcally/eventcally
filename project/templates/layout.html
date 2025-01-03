@@ -238,8 +238,8 @@
                     {% endif %}
                   </a>
                   <div class="dropdown-menu" aria-labelledby="navbarAdminUnitReferencesDropdown">
-                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_references_incoming', id=current_admin_unit.id) }}">{{ _('Incoming references') }}</a>
-                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_references_outgoing', id=current_admin_unit.id) }}">{{ _('Outgoing references') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.incoming_event_references', id=current_admin_unit.id) }}">{{ _('Incoming references') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_event_references', id=current_admin_unit.id) }}">{{ _('Outgoing references') }}</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_reference_requests_incoming', id=current_admin_unit.id) }}">{{ _('Incoming reference requests') }}
                       {% if menu_options['reference_requests_incoming_badge'] > 0 %}

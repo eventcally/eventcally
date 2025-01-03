@@ -1,5 +1,6 @@
 import os
 import pathlib
+from functools import reduce
 
 import requests
 from flask_babel import lazy_gettext
@@ -156,3 +157,10 @@ def model_name_to_plural(model_name):
         return model_name[:-1] + "ies"
 
     return f"{model_name}s"
+
+
+def getattr_keypath(obj, keypath, default=None):
+    try:
+        return reduce(getattr, keypath.split("."), obj)
+    except AttributeError:  # pragma: no cover
+        return default
