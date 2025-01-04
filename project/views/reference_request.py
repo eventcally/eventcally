@@ -4,7 +4,7 @@ from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
-from project.access import can_request_event_reference, get_admin_unit_for_manage_or_404
+from project.access import can_request_event_reference
 from project.forms.reference_request import CreateEventReferenceRequestForm
 from project.models import (
     Event,
@@ -17,52 +17,12 @@ from project.services.admin_unit import (
     get_admin_unit_relation,
     get_admin_unit_suggestions_for_reference_requests,
 )
-from project.services.reference import (
-    create_event_reference_for_request,
-    get_reference_requests_incoming_query,
-    get_reference_requests_outgoing_query,
-)
-from project.services.search_params import EventReferenceRequestSearchParams
+from project.services.reference import create_event_reference_for_request
 from project.views.utils import (
     flash_errors,
-    get_pagination_urls,
     handleSqlError,
     send_template_mails_to_admin_unit_members_async,
 )
-
-
-@app.route("/manage/admin_unit/<int:id>/reference_requests/incoming")
-@auth_required()
-def manage_admin_unit_reference_requests_incoming(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-
-    params = EventReferenceRequestSearchParams()
-    params.admin_unit_id = admin_unit.id
-    requests = get_reference_requests_incoming_query(params).paginate()
-
-    return render_template(
-        "manage/reference_requests_incoming.html",
-        admin_unit=admin_unit,
-        requests=requests.items,
-        pagination=get_pagination_urls(requests, id=id),
-    )
-
-
-@app.route("/manage/admin_unit/<int:id>/reference_requests/outgoing")
-@auth_required()
-def manage_admin_unit_reference_requests_outgoing(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-
-    params = EventReferenceRequestSearchParams()
-    params.admin_unit_id = admin_unit.id
-    requests = get_reference_requests_outgoing_query(params).paginate()
-
-    return render_template(
-        "manage/reference_requests_outgoing.html",
-        admin_unit=admin_unit,
-        requests=requests.items,
-        pagination=get_pagination_urls(requests, id=id),
-    )
 
 
 @app.route("/event/<int:event_id>/reference_request/create", methods=("GET", "POST"))
@@ -109,7 +69,7 @@ def event_reference_request_create(event_id):
             flash(msg, "success")
             return redirect(
                 url_for(
-                    "manage_admin_unit_reference_requests_outgoing",
+                    "manage_admin_unit.outgoing_event_reference_requests",
                     id=event.admin_unit_id,
                 )
             )

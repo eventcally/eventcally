@@ -22,8 +22,8 @@ class OAuth2ClientViewHandler(UserChildViewHandler):
     read_display_class = ReadDisplay
     list_display_class = ListDisplay
 
-    def complete_object(self, object):
-        super().complete_object(object)
+    def complete_object(self, object, form):
+        super().complete_object(object, form)
         complete_oauth2_client(object)
 
     def apply_objects_query_order(self, query, **kwargs):

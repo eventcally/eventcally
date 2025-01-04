@@ -8,8 +8,8 @@ from project.views.utils import current_admin_unit
 class ManageAdminUnitChildViewHandler(BaseViewHandler):
     decorators = [auth_required()]
 
-    def complete_object(self, object):
-        super().complete_object(object)
+    def complete_object(self, object, form):
+        super().complete_object(object, form)
         object.admin_unit_id = current_admin_unit.id
 
     def apply_base_filter(self, query, **kwargs):

@@ -19,8 +19,8 @@ class RevokeView(BaseUpdateView):
 
         return None
 
-    def complete_object(self, object):
-        super().complete_object(object)
+    def complete_object(self, object, form):
+        super().complete_object(object, form)
         object.revoke_token()
 
     def get_redirect_url(self, **kwargs):
@@ -38,7 +38,7 @@ class RevokeView(BaseUpdateView):
             object_title=str(kwargs["object"]),
         )
 
-    def get_success_text(self):
+    def get_success_text(self, object, form):
         return lazy_gettext(
             "%(model_display_name)s successfully revoked",
             model_display_name=self.model.get_display_name(),

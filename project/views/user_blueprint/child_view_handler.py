@@ -15,8 +15,8 @@ class UserChildViewHandler(BaseViewHandler):
         result.append(self._create_breadcrumb(url_for("profile"), gettext("Profile")))
         return result
 
-    def complete_object(self, object):
-        super().complete_object(object)
+    def complete_object(self, object, form):
+        super().complete_object(object, form)
         object.user_id = current_user.id
 
     def apply_base_filter(self, query, **kwargs):
