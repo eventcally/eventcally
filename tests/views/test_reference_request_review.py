@@ -12,7 +12,11 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
         reference_request_id,
     ) = seeder.create_incoming_reference_request(admin_unit_id)
 
-    url = utils.get_url("event_reference_request_review", id=reference_request_id)
+    url = utils.get_url(
+        "manage_admin_unit.incoming_event_reference_request_review",
+        id=admin_unit_id,
+        event_reference_request_id=reference_request_id,
+    )
 
     if is_verified:
         with app.app_context():
@@ -29,7 +33,9 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
 
         response = client.get(url)
         utils.assert_response_redirect(
-            response, "manage_admin_unit_reference_requests_incoming", id=admin_unit_id
+            response,
+            "manage_admin_unit.incoming_event_reference_requests",
+            id=admin_unit_id,
         )
         return
 
@@ -53,7 +59,9 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_reference_requests_incoming", id=admin_unit_id
+        response,
+        "manage_admin_unit.incoming_event_reference_requests",
+        id=admin_unit_id,
     )
     utils.assert_send_mail_called(mail_mock, "other@test.de")
 
@@ -88,7 +96,11 @@ def test_review_reject(client, seeder, utils, app, db, mocker):
         reference_request_id,
     ) = seeder.create_incoming_reference_request(admin_unit_id)
 
-    url = utils.get_url("event_reference_request_review", id=reference_request_id)
+    url = utils.get_url(
+        "manage_admin_unit.incoming_event_reference_request_review",
+        id=admin_unit_id,
+        event_reference_request_id=reference_request_id,
+    )
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -101,7 +113,9 @@ def test_review_reject(client, seeder, utils, app, db, mocker):
     )
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_reference_requests_incoming", id=admin_unit_id
+        response,
+        "manage_admin_unit.incoming_event_reference_requests",
+        id=admin_unit_id,
     )
 
     with app.app_context():
@@ -125,15 +139,17 @@ def test_review_status(client, seeder, utils):
         other_admin_unit_id,
         event_id,
         reference_request_id,
-    ) = seeder.create_incoming_reference_request(admin_unit_id)
+    ) = seeder.create_outgoing_reference_request(admin_unit_id)
 
     url = utils.get_url(
-        "event_reference_request_review_status", id=reference_request_id
+        "manage_admin_unit.outgoing_event_reference_request",
+        id=admin_unit_id,
+        event_reference_request_id=reference_request_id,
     )
     utils.get_ok(url)
 
 
-def test_review_status_401_third(client, seeder, utils):
+def test_review_status_404_third(client, seeder, utils):
     seeder.create_user()
     seeder._utils.login()
 
@@ -147,13 +163,15 @@ def test_review_status_401_third(client, seeder, utils):
     ) = seeder.create_incoming_reference_request(third_admin_unit_id)
 
     url = utils.get_url(
-        "event_reference_request_review_status", id=reference_request_id
+        "manage_admin_unit.outgoing_event_reference_request",
+        id=third_admin_unit_id,
+        event_reference_request_id=reference_request_id,
     )
     response = client.get(url)
-    assert response.status_code == 401
+    assert response.status_code == 404
 
 
-def test_review_status_401_unauthorized(client, seeder, utils):
+def test_review_status_404_unauthorized(client, seeder, utils):
     seeder.create_user()
 
     third_user_id = seeder.create_user("third@third.de")
@@ -166,7 +184,9 @@ def test_review_status_401_unauthorized(client, seeder, utils):
     ) = seeder.create_incoming_reference_request(third_admin_unit_id)
 
     url = utils.get_url(
-        "event_reference_request_review_status", id=reference_request_id
+        "manage_admin_unit.outgoing_event_reference_request",
+        id=third_admin_unit_id,
+        event_reference_request_id=reference_request_id,
     )
     response = client.get(url)
-    assert response.status_code == 401
+    assert response.status_code == 404

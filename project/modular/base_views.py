@@ -140,13 +140,16 @@ class BaseFormView(BaseObjectView):
     def create_object(self):
         return self.model()
 
-    def complete_object(self, object):
-        self.handler.complete_object(object)
+    def complete_object(self, object, form):
+        self.handler.complete_object(object, form)
+
+    def after_commit(self, object, form):
+        pass
 
     def get_redirect_url(self, **kwargs):  # pragma: no cover
         return None
 
-    def get_success_text(self):  # pragma: no cover
+    def get_success_text(self, object, form):  # pragma: no cover
         return ""
 
 
@@ -193,7 +196,7 @@ class BaseCreateView(BaseFormView):
             model_display_name=self.handler.get_model_display_name(),
         )
 
-    def get_success_text(self):
+    def get_success_text(self, object, form):
         return lazy_gettext(
             "%(model_display_name)s successfully created",
             model_display_name=self.handler.get_model_display_name(),
@@ -211,12 +214,13 @@ class BaseCreateView(BaseFormView):
         if form.validate_on_submit():
             object = self.create_object()
             form.populate_obj(object)
-            self.complete_object(object)
 
             try:
+                self.complete_object(object, form)
                 db.session.add(object)
                 db.session.commit()
-                flash(self.get_success_text(), "success")
+                self.after_commit(object, form)
+                flash(self.get_success_text(object, form), "success")
                 return redirect(self.get_redirect_url(object=object))
             except SQLAlchemyError as e:
                 db.session.rollback()
@@ -244,7 +248,7 @@ class BaseUpdateView(BaseFormView):
             model_display_name=self.handler.get_model_display_name(),
         )
 
-    def get_success_text(self):
+    def get_success_text(self, object, form):
         return lazy_gettext(
             "%(model_display_name)s successfully updated",
             model_display_name=self.handler.get_model_display_name(),
@@ -266,11 +270,12 @@ class BaseUpdateView(BaseFormView):
 
         if form.validate_on_submit():
             form.populate_obj(object)
-            self.complete_object(object)
 
             try:
+                self.complete_object(object, form)
                 db.session.commit()
-                flash(self.get_success_text(), "success")
+                self.after_commit(object, form)
+                flash(self.get_success_text(object, form), "success")
                 return redirect(self.get_redirect_url(object=object))
             except SQLAlchemyError as e:
                 db.session.rollback()
@@ -302,7 +307,7 @@ class BaseDeleteView(BaseFormView):
             object_title=str(kwargs["object"]),
         )
 
-    def get_success_text(self):
+    def get_success_text(self, object, form):
         return lazy_gettext(
             "%(model_display_name)s successfully deleted",
             model_display_name=self.handler.get_model_display_name(),
@@ -327,7 +332,8 @@ class BaseDeleteView(BaseFormView):
                 try:
                     db.session.delete(object)
                     db.session.commit()
-                    flash(self.get_success_text(), "success")
+                    self.after_commit(object, form)
+                    flash(self.get_success_text(object, form), "success")
                     return redirect(self.get_redirect_url())
                 except SQLAlchemyError as e:
                     db.session.rollback()

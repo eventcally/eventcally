@@ -6,7 +6,7 @@ describe("Reference request", () => {
         referenceRequestId
       ) {
         cy.visit(
-          "/manage/admin_unit/" + adminUnitId + "/reference_requests/incoming"
+          "/manage/admin_unit/" + adminUnitId + "/incoming_event_reference_requests"
         );
         cy.screenshot("incoming");
       });
@@ -21,7 +21,7 @@ describe("Reference request", () => {
           cy.visit("/event/" + eventId + "/reference_request/create");
           cy.screenshot("create");
           cy.get("#submit").click();
-          cy.url().should("include", "/reference_requests/outgoing");
+          cy.url().should("include", "/manage/admin_unit/" + adminUnitId + "/outgoing_event_reference_requests");
           cy.screenshot("outgoing");
         });
       });

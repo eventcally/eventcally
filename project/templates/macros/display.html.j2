@@ -13,8 +13,10 @@
 {% macro render_read_display(display, object) %}
 <dl class="row">
     {% for prop in display.get_ordered_props() %}
+    {% if display.should_display_prop(prop, object) %}
     <dt class="col-sm-3">{{ display.get_prop_label(prop) }}</dt>
     <dd class="col-sm-9">{{ render_prop_display_value(display, prop, object) }}</dd>
+    {% endif %}
     {% endfor %}
 </dl>
 

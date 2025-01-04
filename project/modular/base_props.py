@@ -1,6 +1,7 @@
 from flask_babel import format_date, format_datetime
+from markupsafe import Markup
 
-from project.utils import get_location_str, getattr_keypath
+from project.utils import get_localized_enum_name, get_location_str, getattr_keypath
 
 
 class BasePropFormatter:
@@ -36,6 +37,25 @@ class LocationPropFormatter(BasePropFormatter):
 class EventPropFormatter(BasePropFormatter):
     def format(self, data):
         return data.name
+
+
+class EnumPropFormatter(BasePropFormatter):
+    def format(self, data):
+        return get_localized_enum_name(data) if data else ""
+
+
+class BadgePropFormatter(EnumPropFormatter):
+    badge_mapping = dict()
+
+    def format(self, data):
+        localized = super().format(data)
+        if not localized:  # pragma: no cover
+            return localized
+
+        badge_class = self.badge_mapping[data]
+        return Markup(
+            f'<span class="badge badge-pill badge-{badge_class}">{localized}</span>'
+        )
 
 
 class UnboundProp:
@@ -75,6 +95,7 @@ class BaseProp:
         keypath=None,
         method_name=None,
         link_method_name=None,
+        hide_when_empty=False,
         _display=None,
     ):
         self.label = label
@@ -83,6 +104,7 @@ class BaseProp:
         self.keypath = keypath
         self.method_name = method_name
         self.link_method_name = link_method_name
+        self.hide_when_empty = hide_when_empty
         self._display = _display
 
     def get_display_data(self, object):
@@ -102,6 +124,12 @@ class BaseProp:
     def get_display_value(self, object):
         data = self.get_display_data(object)
         return self.formatter.format(data) if self.formatter else data
+
+    def should_display(self, object):
+        if not self.hide_when_empty:
+            return True
+
+        return self.get_display_value(object)
 
     def get_link(self, object):
         if not self.link_method_name:
@@ -126,6 +154,12 @@ class LocationProp(BaseProp):
 class EventProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", EventPropFormatter())
+        super().__init__(*args, **kwargs)
+
+
+class EnumProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", EnumPropFormatter())
         super().__init__(*args, **kwargs)
 
 

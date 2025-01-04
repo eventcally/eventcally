@@ -42,7 +42,7 @@ class BaseViewHandler:
     def get_model_display_name_plural(self):
         return self.model.get_display_name_plural()
 
-    def complete_object(self, object):  # pragma: no cover
+    def complete_object(self, object, form):  # pragma: no cover
         pass
 
     def check_object_access(self, object):  # pragma: no cover
@@ -243,7 +243,7 @@ class BaseViewHandler:
         if self.read_view_class:
 
             class ReadView(self.read_view_class):
-                self.decorators = self.read_decorators
+                decorators = self.read_decorators
                 display_class = self.read_display_class
 
             self._add_view(

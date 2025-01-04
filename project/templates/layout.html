@@ -241,12 +241,12 @@
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.incoming_event_references', id=current_admin_unit.id) }}">{{ _('Incoming references') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_event_references', id=current_admin_unit.id) }}">{{ _('Outgoing references') }}</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_reference_requests_incoming', id=current_admin_unit.id) }}">{{ _('Incoming reference requests') }}
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.incoming_event_reference_requests', id=current_admin_unit.id) }}">{{ _('Incoming reference requests') }}
                       {% if menu_options['reference_requests_incoming_badge'] > 0 %}
                         <span class="badge badge-secondary badge-pill">{{ menu_options['reference_requests_incoming_badge'] }}</span>
                       {% endif %}
                     </a>
-                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_reference_requests_outgoing', id=current_admin_unit.id) }}">{{ _('Outgoing reference requests') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_event_reference_requests', id=current_admin_unit.id) }}">{{ _('Outgoing reference requests') }}</a>
                   </div>
                 </li>
                 <li class="nav-item dropdown">

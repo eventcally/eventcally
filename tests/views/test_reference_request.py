@@ -30,7 +30,9 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_reference_requests_outgoing", id=admin_unit_id
+        response,
+        "manage_admin_unit.outgoing_event_reference_requests",
+        id=admin_unit_id,
     )
     utils.assert_send_mail_called(mail_mock, "other@test.de")
 
@@ -68,7 +70,9 @@ def test_create_duplicateNotAllowed(client, app, utils: UtilActions, seeder: See
         {"admin_unit_id": other_admin_unit_id},
     )
     utils.assert_response_redirect(
-        response, "manage_admin_unit_reference_requests_outgoing", id=admin_unit_id
+        response,
+        "manage_admin_unit.outgoing_event_reference_requests",
+        id=admin_unit_id,
     )
 
     # Second
@@ -112,7 +116,9 @@ def test_create_autoVerify(client, app, utils: UtilActions, seeder: Seeder, mock
         {"admin_unit_id": other_admin_unit_id},
     )
     utils.assert_response_redirect(
-        response, "manage_admin_unit_reference_requests_outgoing", id=admin_unit_id
+        response,
+        "manage_admin_unit.outgoing_event_reference_requests",
+        id=admin_unit_id,
     )
     utils.assert_send_mail_called(mail_mock, "other@test.de")
 
@@ -151,7 +157,7 @@ def test_admin_unit_reference_requests_incoming(client, seeder, utils):
     seeder.create_incoming_reference_request(admin_unit_id)
 
     utils.get_endpoint_ok(
-        "manage_admin_unit_reference_requests_incoming", id=admin_unit_id
+        "manage_admin_unit.incoming_event_reference_requests", id=admin_unit_id
     )
 
 
@@ -160,5 +166,5 @@ def test_admin_unit_reference_requests_outgoing(client, seeder, utils):
     seeder.create_outgoing_reference_request(admin_unit_id)
 
     utils.get_endpoint_ok(
-        "manage_admin_unit_reference_requests_outgoing", id=admin_unit_id
+        "manage_admin_unit.outgoing_event_reference_requests", id=admin_unit_id
     )
