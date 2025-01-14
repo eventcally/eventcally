@@ -474,9 +474,9 @@ def manage_permission_required(permission):
     return decorator
 
 
-def get_docs_url(path: str, **kwargs):
+def get_docs_url(path: str, **kwargs):  # pragma: no cover
     base_url = current_app.config["DOCS_URL"]
-    if not base_url:  # pragma: no cover
+    if not base_url:
         return None
 
     return f"{base_url}{path}"
