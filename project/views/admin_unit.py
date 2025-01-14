@@ -136,7 +136,8 @@ def admin_unit_create():
                 url = url_for("manage_admin_unit", id=admin_unit.id)
             else:
                 url = url_for(
-                    "manage_admin_unit_verification_requests_outgoing", id=admin_unit.id
+                    "manage_admin_unit.outgoing_admin_unit_verification_requests",
+                    id=admin_unit.id,
                 )
                 flash(
                     gettext(

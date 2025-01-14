@@ -26,6 +26,9 @@ class BaseView(View):
     def get_instruction(self, **kwargs):  # pragma: no cover
         return ""
 
+    def get_docs_url(self, **kwargs):  # pragma: no cover
+        return None
+
     def get_templates(self):
         result = list()
 

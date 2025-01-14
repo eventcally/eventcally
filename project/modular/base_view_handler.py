@@ -1,6 +1,7 @@
 from flask import Blueprint, url_for
 from flask_babel import gettext
 
+from project.modular.base_form import BaseDeleteForm
 from project.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
@@ -23,7 +24,7 @@ class BaseViewHandler:
     update_form_class = None
     update_decorators = []
     delete_view_class = BaseDeleteView
-    delete_form_class = None
+    delete_form_class = BaseDeleteForm
     delete_decorators = []
     list_view_class = BaseListView
     list_display_class = BaseListView

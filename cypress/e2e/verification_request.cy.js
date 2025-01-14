@@ -6,7 +6,7 @@ describe("Verification request", () => {
         requestId
       ) {
         cy.visit(
-          "/manage/admin_unit/" + adminUnitId + "/verification_requests/incoming"
+          "/manage/admin_unit/" + adminUnitId + "/incoming_admin_unit_verification_requests"
         );
         cy.screenshot("incoming");
       });
@@ -25,8 +25,14 @@ describe("Verification request", () => {
         cy.screenshot("create");
         cy.get("#submit").click();
 
-        cy.url().should("include", "/verification_requests/outgoing");
+        cy.url().should("include", "/outgoing_admin_unit_verification_requests");
         cy.screenshot("outgoing");
+
+        // Status
+        cy.get('.dropdown-toggle.btn-link').click();
+        cy.get('a:contains(Anzeigen)').click({force: true});
+        cy.url().should("include", "/outgoing_admin_unit_verification_request/");
+        cy.screenshot("status");
       });
     });
   });

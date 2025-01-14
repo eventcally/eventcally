@@ -4,78 +4,22 @@ from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import app, db
-from project.access import access_or_401
-from project.forms.verification_request import (
-    CreateAdminUnitVerificationRequestForm,
-    DeleteVerificationRequestForm,
-)
+from project.forms.verification_request import CreateAdminUnitVerificationRequestForm
 from project.models import (
     AdminUnitVerificationRequest,
     AdminUnitVerificationRequestReviewStatus,
 )
 from project.models.admin_unit import AdminUnit
 from project.services.admin_unit import get_admin_unit_query
-from project.services.search_params import (
-    AdminUnitSearchParams,
-    AdminUnitVerificationRequestSearchParams,
-)
-from project.services.verification import (
-    admin_unit_can_verify_admin_unit,
-    get_verification_requests_incoming_query,
-    get_verification_requests_outgoing_query,
-)
+from project.services.search_params import AdminUnitSearchParams
+from project.services.verification import admin_unit_can_verify_admin_unit
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
     handleSqlError,
     manage_required,
-    non_match_for_deletion,
     send_template_mails_to_admin_unit_members_async,
 )
-
-
-@app.route("/manage/admin_unit/<int:id>/verification_requests/incoming")
-@auth_required()
-@manage_required("verification_request:read")
-def manage_admin_unit_verification_requests_incoming(id):
-    admin_unit = g.manage_admin_unit
-
-    params = AdminUnitVerificationRequestSearchParams()
-    params.target_admin_unit_id = admin_unit.id
-    requests = get_verification_requests_incoming_query(params).paginate()
-
-    return render_template(
-        "manage/verification_requests_incoming.html",
-        admin_unit=admin_unit,
-        requests=requests.items,
-        pagination=get_pagination_urls(requests, id=id),
-    )
-
-
-@app.route("/manage/admin_unit/<int:id>/verification_requests/outgoing")
-@auth_required()
-@manage_required("verification_request:read")
-def manage_admin_unit_verification_requests_outgoing(id):
-    admin_unit = g.manage_admin_unit
-
-    params = AdminUnitVerificationRequestSearchParams()
-    params.source_admin_unit_id = admin_unit.id
-    requests = get_verification_requests_outgoing_query(params).paginate()
-
-    if not admin_unit.is_verified and requests.total == 0:
-        return redirect(
-            url_for(
-                "manage_admin_unit_verification_requests_outgoing_create_select",
-                id=admin_unit.id,
-            )
-        )
-
-    return render_template(
-        "manage/verification_requests_outgoing.html",
-        admin_unit=admin_unit,
-        requests=requests.items,
-        pagination=get_pagination_urls(requests, id=id),
-    )
 
 
 @app.route("/manage/admin_unit/<int:id>/verification_requests/outgoing/create/select")
@@ -138,7 +82,7 @@ def manage_admin_unit_verification_requests_outgoing_create(id, target_id):
             flash(msg, "success")
             return redirect(
                 url_for(
-                    "manage_admin_unit_verification_requests_outgoing",
+                    "manage_admin_unit.outgoing_admin_unit_verification_requests",
                     id=admin_unit.id,
                 )
             )
@@ -153,39 +97,6 @@ def manage_admin_unit_verification_requests_outgoing_create(id, target_id):
         form=form,
         admin_unit=admin_unit,
         target_admin_unit=target_admin_unit,
-    )
-
-
-@app.route("/verification_request/<int:id>/delete", methods=("GET", "POST"))
-@auth_required()
-def admin_unit_verification_request_delete(id):
-    request = AdminUnitVerificationRequest.query.get_or_404(id)
-    access_or_401(request.source_admin_unit, "verification_request:delete")
-
-    form = DeleteVerificationRequestForm()
-
-    if form.validate_on_submit():
-        if non_match_for_deletion(form.name.data, request.target_admin_unit.name):
-            flash(gettext("Entered name does not match organization name"), "danger")
-        else:
-            try:
-                db.session.delete(request)
-                db.session.commit()
-                flash(gettext("Verification request successfully deleted"), "success")
-                return redirect(
-                    url_for(
-                        "manage_admin_unit_verification_requests_outgoing",
-                        id=request.source_admin_unit.id,
-                    )
-                )
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                flash(handleSqlError(e), "danger")
-    else:
-        flash_errors(form)
-
-    return render_template(
-        "verification_request/delete.html", form=form, verification_request=request
     )
 
 

@@ -3,9 +3,9 @@ from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaF
 from wtforms.fields import URLField
 from wtforms.validators import DataRequired, Length, Optional
 
-from project.forms.base_form import BaseForm
 from project.forms.common import Base64ImageForm
 from project.models import Image, Location
+from project.modular.base_form import BaseForm
 
 
 class EventPlaceLocationForm(BaseForm):

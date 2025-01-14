@@ -2,5 +2,5 @@
 {% from "_macros.html" import render_email_button %}
 {% block content %}
 <p>{{ _('The review status of your verification request has been updated.') }}</p>
-{{ render_email_button(url_for('admin_unit_verification_request_review_status', id=request.id, _external=True), _('Click here to view the status')) }}
+{{ render_email_button(url_for('manage_admin_unit.outgoing_admin_unit_verification_request', id=request.source_admin_unit_id, admin_unit_verification_request_id=request.id, _external=True), _('Click here to view the status')) }}
 {% endblock %}

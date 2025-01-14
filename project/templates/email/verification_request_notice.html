@@ -2,5 +2,5 @@
 {% from "_macros.html" import render_email_button %}
 {% block content %}
 <p>{{ _('There is a new verification request that needs to be reviewed.') }}</p>
-{{ render_email_button(url_for('admin_unit_verification_request_review', id=request.id, _external=True), _('Click here to review the request')) }}
+{{ render_email_button(url_for('manage_admin_unit.incoming_admin_unit_verification_request_review', id=request.target_admin_unit_id, admin_unit_verification_request_id=request.id, _external=True), _('Click here to review the request')) }}
 {% endblock %}

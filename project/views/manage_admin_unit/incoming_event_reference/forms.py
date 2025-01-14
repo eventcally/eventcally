@@ -1,8 +1,8 @@
 from flask_babel import lazy_gettext
 from wtforms import SelectField, SubmitField
 
-from project.forms.base_form import BaseForm
 from project.forms.common import event_rating_choices
+from project.modular.base_form import BaseForm
 
 
 class BaseEventReferenceForm(BaseForm):

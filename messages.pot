@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-04 17:30+0100\n"
+"POT-Creation-Date: 2025-01-14 16:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,12 +47,12 @@ msgid ""
 "%(admin_unit_name)s."
 msgstr ""
 
-#: project/modular/base_views.py:202
+#: project/modular/base_views.py:205
 #, python-format
 msgid "%(model_display_name)s successfully created"
 msgstr ""
 
-#: project/modular/base_views.py:313
+#: project/modular/base_views.py:316
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr ""
@@ -62,7 +62,7 @@ msgstr ""
 msgid "%(model_display_name)s successfully revoked"
 msgstr ""
 
-#: project/modular/base_views.py:254
+#: project/modular/base_views.py:257
 #, python-format
 msgid "%(model_display_name)s successfully updated"
 msgstr ""
@@ -140,6 +140,9 @@ msgstr ""
 #: project/templates/verification_request/review.html:67
 #: project/templates/verification_request/review.html:75
 #: project/templates/verification_request/review.html:91
+#: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:65
+#: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:73
+#: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:89
 msgid "Accept verification request"
 msgstr ""
 
@@ -211,47 +214,47 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#: project/views/admin_unit.py:183
+#: project/views/admin_unit.py:184
 msgid "AdminUnit successfully updated"
 msgstr ""
 
-#: project/forms/verification_request.py:75
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:65
 msgid "AdminUnitVerificationRequestRejectionReason.illegal"
 msgstr ""
 
-#: project/forms/verification_request.py:79
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:69
 msgid "AdminUnitVerificationRequestRejectionReason.irrelevant"
 msgstr ""
 
-#: project/forms/verification_request.py:59
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:49
 msgid "AdminUnitVerificationRequestRejectionReason.missinginformation"
 msgstr ""
 
-#: project/forms/verification_request.py:49
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:39
 msgid "AdminUnitVerificationRequestRejectionReason.noreason"
 msgstr ""
 
-#: project/forms/verification_request.py:53
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:43
 msgid "AdminUnitVerificationRequestRejectionReason.notresponsible"
 msgstr ""
 
-#: project/forms/verification_request.py:65
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:55
 msgid "AdminUnitVerificationRequestRejectionReason.unknown"
 msgstr ""
 
-#: project/forms/verification_request.py:69
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:59
 msgid "AdminUnitVerificationRequestRejectionReason.untrustworthy"
 msgstr ""
 
-#: project/forms/verification_request.py:29
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:19
 msgid "AdminUnitVerificationRequestReviewStatus.inbox"
 msgstr ""
 
-#: project/forms/verification_request.py:37
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:27
 msgid "AdminUnitVerificationRequestReviewStatus.rejected"
 msgstr ""
 
-#: project/forms/verification_request.py:33
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:23
 msgid "AdminUnitVerificationRequestReviewStatus.verified"
 msgstr ""
 
@@ -339,6 +342,8 @@ msgstr ""
 
 #: project/templates/verification_request/review.html:90
 #: project/templates/verification_request/review.html:115
+#: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:88
+#: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:113
 #: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_event_reference_request/review.html:69
 #: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_event_reference_request/review.html:94
 msgid "Cancel"
@@ -382,8 +387,8 @@ msgstr ""
 msgid "Choose image file"
 msgstr ""
 
-#: project/forms/verification_request.py:40
 #: project/views/manage_admin_unit/incoming_event_reference_request/forms.py:51
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:30
 msgid "Choose the result of your review."
 msgstr ""
 
@@ -405,8 +410,8 @@ msgid ""
 "residents."
 msgstr ""
 
-#: project/forms/verification_request.py:82
 #: project/views/manage_admin_unit/incoming_event_reference_request/forms.py:79
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:72
 msgid "Choose why you rejected the request."
 msgstr ""
 
@@ -543,7 +548,7 @@ msgstr ""
 msgid "Copyright text"
 msgstr ""
 
-#: project/modular/base_views.py:196 project/templates/generic/list.html:16
+#: project/modular/base_views.py:199 project/templates/generic/list.html:16
 #, python-format
 msgid "Create %(model_display_name)s"
 msgstr ""
@@ -585,8 +590,10 @@ msgstr ""
 #: project/templates/manage/events.html:91
 #: project/views/manage_admin_unit/incoming_event_reference/displays.py:31
 #: project/views/manage_admin_unit/incoming_event_reference_request/displays.py:32
+#: project/views/manage_admin_unit/incoming_verification_request/displays.py:16
 #: project/views/manage_admin_unit/outgoing_event_reference/displays.py:10
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:34
+#: project/views/manage_admin_unit/outgoing_verification_request/displays.py:33
 msgid "Created at"
 msgstr ""
 
@@ -623,7 +630,7 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: project/modular/base_view_handler.py:132
+#: project/modular/base_form.py:26 project/modular/base_view_handler.py:133
 #: project/templates/admin/admin_units.html:37
 #: project/templates/admin/users.html:37
 #: project/templates/manage/events.html:127
@@ -632,7 +639,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: project/modular/base_views.py:301
+#: project/modular/base_views.py:304
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr ""
@@ -685,11 +692,6 @@ msgstr ""
 msgid "Delete reference request"
 msgstr ""
 
-#: project/forms/verification_request.py:18
-#: project/templates/manage/verification_requests_outgoing.html:24
-msgid "Delete request"
-msgstr ""
-
 #: project/forms/admin.py:60 project/templates/admin/delete_user.html:6
 msgid "Delete user"
 msgstr ""
@@ -722,7 +724,7 @@ msgstr ""
 msgid "Distance"
 msgstr ""
 
-#: project/modular/base_views.py:307
+#: project/modular/base_views.py:310
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr ""
@@ -733,8 +735,8 @@ msgid "Do you want to revoke '%(object_title)s'?"
 msgstr ""
 
 #: project/templates/home.html:38 project/templates/layout.html:181
+#: project/templates/macros/nav.html.j2:15
 #: project/templates/manage/admin_units.html:28
-#: project/templates/manage/verification_requests_outgoing.html:13
 #: project/templates/manage/verification_requests_outgoing_create_select.html:13
 #: project/templates/planning/list.html:72
 #: project/templates/security/login_user.html:21
@@ -763,7 +765,7 @@ msgstr ""
 msgid "Earliest start first"
 msgstr ""
 
-#: project/modular/base_view_handler.py:128 project/templates/_macros.html:601
+#: project/modular/base_view_handler.py:129 project/templates/_macros.html:601
 #: project/templates/_macros.html:644 project/templates/_macros.html:776
 #: project/templates/admin/admin_units.html:36
 #: project/templates/admin/users.html:36
@@ -875,9 +877,8 @@ msgstr ""
 msgid "Entered name does not match OAuth2 client name"
 msgstr ""
 
-#: project/views/admin.py:86 project/views/admin_unit.py:207
-#: project/views/admin_unit.py:240 project/views/manage.py:247
-#: project/views/verification_request.py:169
+#: project/views/admin.py:86 project/views/admin_unit.py:208
+#: project/views/admin_unit.py:241 project/views/manage.py:247
 msgid "Entered name does not match organization name"
 msgstr ""
 
@@ -1362,7 +1363,7 @@ msgid "ID"
 msgstr ""
 
 #: project/views/manage_admin_unit/incoming_event_reference_request/views.py:64
-#: project/views/verification_request_review.py:79
+#: project/views/manage_admin_unit/incoming_verification_request/views.py:46
 #, python-format
 msgid ""
 "If all upcoming reference requests of %(admin_unit_name)s should be "
@@ -1448,8 +1449,7 @@ msgid "Incoming references"
 msgstr ""
 
 #: project/templates/layout.html:273
-#: project/templates/manage/verification_requests_incoming.html:5
-#: project/templates/manage/verification_requests_incoming.html:9
+#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:36
 msgid "Incoming verification requests"
 msgstr ""
 
@@ -1670,6 +1670,7 @@ msgstr ""
 #: project/templates/layout.html:268 project/templates/manage/members.html:5
 #: project/templates/manage/members.html:28
 #: project/templates/verification_request/review.html:54
+#: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:52
 msgid "Members"
 msgstr ""
 
@@ -1697,7 +1698,6 @@ msgstr ""
 #: project/forms/admin.py:98 project/forms/admin_unit.py:166
 #: project/forms/admin_unit.py:171 project/forms/admin_unit.py:176
 #: project/forms/event.py:90 project/forms/event.py:119
-#: project/forms/verification_request.py:19
 #: project/templates/admin/admin_units.html:19
 #: project/views/manage_admin_unit/event_organizer/displays.py:8
 #: project/views/manage_admin_unit/event_organizer/forms.py:30
@@ -1850,9 +1850,13 @@ msgstr ""
 #: project/templates/verification_request/review.html:28
 #: project/views/manage_admin_unit/incoming_event_reference/displays.py:30
 #: project/views/manage_admin_unit/incoming_event_reference_request/displays.py:29
+#: project/views/manage_admin_unit/incoming_verification_request/displays.py:11
 #: project/views/manage_admin_unit/outgoing_event_reference/displays.py:9
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:18
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:33
+#: project/views/manage_admin_unit/outgoing_verification_request/displays.py:19
+#: project/views/manage_admin_unit/outgoing_verification_request/displays.py:28
+#: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:26
 msgid "Organization"
 msgstr ""
 
@@ -1927,7 +1931,7 @@ msgstr ""
 msgid "Organization successfully updated"
 msgstr ""
 
-#: project/views/verification_request_review.py:60
+#: project/views/manage_admin_unit/incoming_verification_request/views.py:70
 msgid "Organization successfully verified"
 msgstr ""
 
@@ -1980,7 +1984,7 @@ msgid "Other calendar"
 msgstr ""
 
 #: project/templates/layout.html:249
-#: project/views/manage_admin_unit/outgoing_event_reference_request/view_handler.py:34
+#: project/views/manage_admin_unit/outgoing_event_reference_request/view_handler.py:36
 msgid "Outgoing reference requests"
 msgstr ""
 
@@ -1990,8 +1994,7 @@ msgid "Outgoing references"
 msgstr ""
 
 #: project/templates/layout.html:261
-#: project/templates/manage/verification_requests_outgoing.html:5
-#: project/templates/manage/verification_requests_outgoing.html:10
+#: project/views/manage_admin_unit/outgoing_verification_request/view_handler.py:58
 msgid "Outgoing verification requests"
 msgstr ""
 
@@ -2224,12 +2227,16 @@ msgstr ""
 #: project/templates/verification_request/review.html:68
 #: project/templates/verification_request/review.html:101
 #: project/templates/verification_request/review.html:116
+#: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:66
+#: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:99
+#: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:114
 msgid "Reject verification request"
 msgstr ""
 
-#: project/forms/verification_request.py:44
 #: project/views/manage_admin_unit/incoming_event_reference_request/forms.py:55
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:34
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:17
+#: project/views/manage_admin_unit/outgoing_verification_request/displays.py:24
 msgid "Rejection reason"
 msgstr ""
 
@@ -2276,7 +2283,7 @@ msgstr ""
 msgid "Request reference for event \"%(name)s\""
 msgstr ""
 
-#: project/views/verification_request.py:133
+#: project/views/verification_request.py:77
 msgid ""
 "Request successfully created. You will be notified after the other "
 "organization reviewed the request."
@@ -2286,8 +2293,7 @@ msgstr ""
 msgid "Request successfully updated"
 msgstr ""
 
-#: project/forms/verification_request.py:14
-#: project/templates/manage/verification_requests_outgoing.html:11
+#: project/forms/verification_request.py:7
 #: project/templates/manage/verification_requests_outgoing_create_select.html:37
 msgid "Request verification"
 msgstr ""
@@ -2318,22 +2324,26 @@ msgid "Response types"
 msgstr ""
 
 #: project/views/manage_admin_unit/incoming_event_reference_request/views.py:37
+#: project/views/manage_admin_unit/incoming_verification_request/views.py:26
 #, python-format
 msgid "Review %(model_display_name)s"
 msgstr ""
 
-#: project/templates/manage/verification_requests_incoming.html:18
 #: project/views/manage_admin_unit/incoming_event_reference_request/view_handler.py:71
+#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:79
 msgid "Review request"
 msgstr ""
 
-#: project/forms/verification_request.py:24
 #: project/templates/verification_request/review_status.html:4
 #: project/templates/verification_request/review_status.html:12
 #: project/views/manage_admin_unit/incoming_event_reference_request/displays.py:25
 #: project/views/manage_admin_unit/incoming_event_reference_request/forms.py:35
+#: project/views/manage_admin_unit/incoming_verification_request/displays.py:13
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:14
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:14
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:30
+#: project/views/manage_admin_unit/outgoing_verification_request/displays.py:21
+#: project/views/manage_admin_unit/outgoing_verification_request/displays.py:30
 msgid "Review status"
 msgstr ""
 
@@ -2397,8 +2407,8 @@ msgstr ""
 msgid "Save request"
 msgstr ""
 
-#: project/forms/verification_request.py:90
 #: project/views/manage_admin_unit/incoming_event_reference_request/forms.py:97
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:80
 msgid "Save review"
 msgstr ""
 
@@ -2566,11 +2576,6 @@ msgstr ""
 msgid "Show on Google Maps"
 msgstr ""
 
-#: project/templates/manage/verification_requests_incoming.html:17
-#: project/templates/manage/verification_requests_outgoing.html:23
-msgid "Show review status"
-msgstr ""
-
 #: project/forms/event_date.py:46
 msgid "Show unreferenced events only"
 msgstr ""
@@ -2686,7 +2691,7 @@ msgid ""
 "organization will be deleted. Until then, the deletion can be canceled."
 msgstr ""
 
-#: project/templates/manage/events.html:42 project/views/admin_unit.py:142
+#: project/templates/manage/events.html:42 project/views/admin_unit.py:143
 msgid ""
 "The organization is not verified. Events are therefore not publicly "
 "visible."
@@ -2787,7 +2792,7 @@ msgstr ""
 msgid "Typical Age to"
 msgstr ""
 
-#: project/modular/base_views.py:248
+#: project/modular/base_views.py:251
 #, python-format
 msgid "Update %(model_display_name)s"
 msgstr ""
@@ -2859,7 +2864,7 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: project/views/verification_request_review.py:30
+#: project/views/manage_admin_unit/incoming_verification_request/views.py:36
 msgid "Verification request already verified"
 msgstr ""
 
@@ -2867,11 +2872,7 @@ msgstr ""
 msgid "Verification request review status updated"
 msgstr ""
 
-#: project/views/verification_request.py:174
-msgid "Verification request successfully deleted"
-msgstr ""
-
-#: project/views/verification_request_review.py:62
+#: project/views/manage_admin_unit/incoming_verification_request/views.py:72
 msgid "Verification request successfully updated"
 msgstr ""
 
@@ -2905,12 +2906,13 @@ msgstr ""
 msgid "Verify other organizations"
 msgstr ""
 
-#: project/forms/admin_unit.py:116 project/forms/verification_request.py:86
+#: project/forms/admin_unit.py:116
 #: project/views/manage_admin_unit/incoming_event_reference_request/forms.py:93
+#: project/views/manage_admin_unit/incoming_verification_request/forms.py:76
 msgid "Verify reference requests automatically"
 msgstr ""
 
-#: project/modular/base_view_handler.py:125
+#: project/modular/base_view_handler.py:126
 #: project/templates/admin/admin_units.html:35
 #: project/templates/manage/events.html:125
 #: project/views/manage_admin_unit/event_organizer/view_handler.py:48
@@ -2933,8 +2935,8 @@ msgstr ""
 msgid "View events"
 msgstr ""
 
-#: project/templates/manage/verification_requests_incoming.html:19
-#: project/views/verification_request_review.py:32
+#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:86
+#: project/views/manage_admin_unit/incoming_verification_request/views.py:38
 msgid "View organization"
 msgstr ""
 

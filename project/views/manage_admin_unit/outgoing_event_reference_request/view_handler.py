@@ -14,17 +14,19 @@ from project.views.manage_admin_unit.outgoing_event_reference_request.displays i
 from project.views.manage_admin_unit.outgoing_event_reference_request.views import (
     ListView,
 )
-from project.views.utils import current_admin_unit
+from project.views.utils import current_admin_unit, manage_permission_required
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = EventReferenceRequest
     create_view_class = None
     read_display_class = ReadDisplay
+    read_decorators = [manage_permission_required("reference_request:read")]
     update_view_class = None
     delete_view_class = None
     list_display_class = ListDisplay
     list_view_class = ListView
+    list_decorators = [manage_permission_required("reference_request:read")]
     generic_prefix = "outgoing_"
 
     def check_object_access(self, object):

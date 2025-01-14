@@ -36,7 +36,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
 
     utils.assert_response_redirect(
         response,
-        "manage_admin_unit_verification_requests_outgoing",
+        "manage_admin_unit.outgoing_admin_unit_verification_requests",
         id=unverified_admin_unit_id,
     )
     utils.assert_send_mail_called(mail_mock, "test@test.de")
@@ -72,7 +72,7 @@ def test_admin_unit_verification_requests_incoming(
     seeder.create_incoming_admin_unit_verification_request(admin_unit_id)
 
     utils.get_endpoint_ok(
-        "manage_admin_unit_verification_requests_incoming", id=admin_unit_id
+        "manage_admin_unit.incoming_admin_unit_verification_requests", id=admin_unit_id
     )
 
 
@@ -85,7 +85,8 @@ def test_verification_requests_outgoing(client, seeder: Seeder, utils: UtilActio
     ) = seeder.setup_admin_unit_missing_verification_scenario()
 
     response = utils.get_endpoint(
-        "manage_admin_unit_verification_requests_outgoing", id=unverified_admin_unit_id
+        "manage_admin_unit.outgoing_admin_unit_verification_requests",
+        id=unverified_admin_unit_id,
     )
     utils.assert_response_redirect(
         response,
@@ -104,16 +105,13 @@ def test_verification_requests_outgoing(client, seeder: Seeder, utils: UtilActio
         unverified_admin_unit_id, verifier_admin_unit_id
     )
     response = utils.get_endpoint_ok(
-        "manage_admin_unit_verification_requests_outgoing",
+        "manage_admin_unit.outgoing_admin_unit_verification_requests",
         id=unverified_admin_unit_id,
     )
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-@pytest.mark.parametrize("non_match", [True, False])
-def test_delete(
-    client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_error, non_match
-):
+def test_delete(client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_error):
     (
         verifier_user_id,
         verifier_admin_unit_id,
@@ -124,30 +122,21 @@ def test_delete(
         unverified_admin_unit_id, verifier_admin_unit_id
     )
 
-    url = utils.get_url("admin_unit_verification_request_delete", id=request_id)
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_admin_unit_verification_request_delete",
+        id=unverified_admin_unit_id,
+        admin_unit_verification_request_id=request_id,
+    )
     response = utils.get_ok(url)
 
     if db_error:
         utils.mock_db_commit(mocker)
 
-    form_name = "Stadtmarketing"
-
-    if non_match:
-        form_name = "Falscher Name"
-
     response = utils.post_form(
         url,
         response,
-        {
-            "name": form_name,
-        },
+        {},
     )
-
-    if non_match:
-        utils.assert_response_error_message(
-            response, "Der eingegebene Name entspricht nicht dem Namen der Organisation"
-        )
-        return
 
     if db_error:
         utils.assert_response_db_error(response)
@@ -155,7 +144,7 @@ def test_delete(
 
     utils.assert_response_redirect(
         response,
-        "manage_admin_unit_verification_requests_outgoing",
+        "manage_admin_unit.outgoing_admin_unit_verification_requests",
         id=unverified_admin_unit_id,
     )
 
