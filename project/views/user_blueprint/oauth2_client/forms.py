@@ -5,8 +5,8 @@ from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Optional
 
 from project.api import scopes
-from project.forms.base_form import BaseForm
 from project.forms.widgets import MultiCheckboxField
+from project.modular.base_form import BaseForm
 from project.utils import split_by_crlf
 
 

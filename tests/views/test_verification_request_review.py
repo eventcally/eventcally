@@ -20,7 +20,9 @@ def test_review_verify(
     )
 
     url = utils.get_url(
-        "admin_unit_verification_request_review", id=verification_request_id
+        "manage_admin_unit.incoming_admin_unit_verification_request_review",
+        id=verifier_admin_unit_id,
+        admin_unit_verification_request_id=verification_request_id,
     )
 
     if is_verified:
@@ -41,7 +43,7 @@ def test_review_verify(
         response = client.get(url)
         utils.assert_response_redirect(
             response,
-            "manage_admin_unit_verification_requests_incoming",
+            "manage_admin_unit.incoming_admin_unit_verification_requests",
             id=verifier_admin_unit_id,
         )
         return
@@ -67,7 +69,7 @@ def test_review_verify(
 
     utils.assert_response_redirect(
         response,
-        "manage_admin_unit_verification_requests_incoming",
+        "manage_admin_unit.incoming_admin_unit_verification_requests",
         id=verifier_admin_unit_id,
     )
     utils.assert_send_mail_called(mail_mock, "mitglied@verein.de")
@@ -104,7 +106,9 @@ def test_review_reject(client, seeder: Seeder, utils: UtilActions, app, db, mock
     )
 
     url = utils.get_url(
-        "admin_unit_verification_request_review", id=verification_request_id
+        "manage_admin_unit.incoming_admin_unit_verification_request_review",
+        id=verifier_admin_unit_id,
+        admin_unit_verification_request_id=verification_request_id,
     )
     response = utils.get_ok(url)
 
@@ -119,7 +123,7 @@ def test_review_reject(client, seeder: Seeder, utils: UtilActions, app, db, mock
 
     utils.assert_response_redirect(
         response,
-        "manage_admin_unit_verification_requests_incoming",
+        "manage_admin_unit.incoming_admin_unit_verification_requests",
         id=verifier_admin_unit_id,
     )
 
@@ -139,24 +143,7 @@ def test_review_reject(client, seeder: Seeder, utils: UtilActions, app, db, mock
         assert verification_request.rejection_reason is None
 
 
-def test_review_status(client, seeder: Seeder, utils: UtilActions):
-    (
-        verifier_user_id,
-        verifier_admin_unit_id,
-        unverified_user_id,
-        unverified_admin_unit_id,
-    ) = seeder.setup_admin_unit_missing_verification_scenario(log_in_verifier=True)
-    verification_request_id = seeder.create_admin_unit_verification_request(
-        unverified_admin_unit_id, verifier_admin_unit_id
-    )
-
-    url = utils.get_url(
-        "admin_unit_verification_request_review_status", id=verification_request_id
-    )
-    utils.get_ok(url)
-
-
-def test_review_status_401_unauthorized(client, seeder: Seeder, utils: UtilActions):
+def test_review_status_404(client, seeder: Seeder, utils: UtilActions):
     seeder.create_user()
 
     third_user_id = seeder.create_user("third@third.de")
@@ -168,7 +155,9 @@ def test_review_status_401_unauthorized(client, seeder: Seeder, utils: UtilActio
     ) = seeder.create_incoming_admin_unit_verification_request(third_admin_unit_id)
 
     url = utils.get_url(
-        "admin_unit_verification_request_review_status", id=verification_request_id
+        "manage_admin_unit.outgoing_admin_unit_verification_request",
+        id=other_admin_unit_id,
+        admin_unit_verification_request_id=verification_request_id,
     )
     response = client.get(url)
-    assert response.status_code == 401
+    assert response.status_code == 404

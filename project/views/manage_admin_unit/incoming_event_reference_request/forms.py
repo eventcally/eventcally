@@ -2,12 +2,12 @@ from flask_babel import lazy_gettext
 from wtforms import BooleanField, SelectField, SubmitField
 from wtforms.validators import Optional
 
-from project.forms.base_form import BaseForm
 from project.forms.common import event_rating_choices
 from project.models.event_reference_request import (
     EventReferenceRequestRejectionReason,
     EventReferenceRequestReviewStatus,
 )
+from project.modular.base_form import BaseForm
 
 
 class BaseEventReferenceRequestForm(BaseForm):

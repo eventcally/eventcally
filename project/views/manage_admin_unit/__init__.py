@@ -28,8 +28,10 @@ import project.views.manage_admin_unit.event_organizer.view_handler
 import project.views.manage_admin_unit.event_place.view_handler
 import project.views.manage_admin_unit.incoming_event_reference.view_handler
 import project.views.manage_admin_unit.incoming_event_reference_request.view_handler
+import project.views.manage_admin_unit.incoming_verification_request.view_handler
 import project.views.manage_admin_unit.outgoing_event_reference.view_handler
 import project.views.manage_admin_unit.outgoing_event_reference_request.view_handler
+import project.views.manage_admin_unit.outgoing_verification_request.view_handler
 from project import app
 
 app.register_blueprint(manage_admin_unit_bp)

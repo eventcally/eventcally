@@ -2,7 +2,7 @@ from functools import wraps
 from itertools import groupby
 from urllib.parse import quote_plus
 
-from flask import flash, g, redirect, render_template, request, url_for
+from flask import current_app, flash, g, redirect, render_template, request, url_for
 from flask_babel import force_locale, gettext
 from flask_login.utils import decode_cookie
 from flask_mail import Message
@@ -472,3 +472,11 @@ def manage_permission_required(permission):
         return decorated_function
 
     return decorator
+
+
+def get_docs_url(path: str, **kwargs):  # pragma: no cover
+    base_url = current_app.config["DOCS_URL"]
+    if not base_url:
+        return None
+
+    return f"{base_url}{path}"

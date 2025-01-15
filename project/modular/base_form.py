@@ -1,3 +1,4 @@
+from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import HiddenField, SubmitField
 
@@ -19,3 +20,7 @@ class BaseForm(FlaskForm):
                 self.__iter__(),
             )
         )
+
+
+class BaseDeleteForm(BaseForm):
+    submit = SubmitField(lazy_gettext("Delete"))
