@@ -99,6 +99,7 @@ class BaseListView(BaseView):
 
 class BaseObjectView(BaseView):
     object_context_name = None
+    display_class = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -113,10 +114,17 @@ class BaseObjectView(BaseView):
     def check_object_access(self, object):
         return self.handler.check_object_access(object)
 
+    def create_display(self, **kwargs):
+        return self.display_class(**kwargs)
+
     def render_template(self, **kwargs):
         object = kwargs.get("object")
         if object and self.object_context_name:
             kwargs[self.object_context_name] = object
+
+        if self.display_class:
+            kwargs["display"] = self.create_display()
+
         return super().render_template(**kwargs)
 
     def get_breadcrumbs(self):
@@ -157,11 +165,7 @@ class BaseFormView(BaseObjectView):
 
 
 class BaseReadView(BaseObjectView):
-    display_class = None
     template_file_name = "read.html"
-
-    def create_display(self, **kwargs):
-        return self.display_class(**kwargs)
 
     def get_title(self, **kwargs):
         return str(kwargs["object"])
@@ -178,8 +182,7 @@ class BaseReadView(BaseObjectView):
         if response:  # pragma: no cover
             return response
 
-        display = self.create_display()
-        return self.render_template(display=display, object=object)
+        return self.render_template(object=object)
 
 
 class BaseCreateView(BaseFormView):

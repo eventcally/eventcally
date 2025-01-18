@@ -80,6 +80,7 @@ class AdminUnitMemberInvitation(db.Model):
 
 class AdminUnitInvitation(db.Model, TrackableMixin):
     __tablename__ = "adminunitinvitation"
+    __model_name__ = "organization_invitation"
     __display_name__ = "Organization invitation"
     id = Column(Integer(), primary_key=True)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)

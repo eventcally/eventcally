@@ -5,7 +5,11 @@
     {{ form.hidden_tag() }}
 
     {% for field in form.get_input_fields() %}
+    {% if field.render_kw %}
+    {{ render_field_with_errors(field, **field.render_kw) }}
+    {% else %}
     {{ render_field_with_errors(field) }}
+    {% endif %}
     {% endfor %}
 
     {% for field in form.get_button_fields() %}
