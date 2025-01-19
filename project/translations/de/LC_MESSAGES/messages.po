@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-14 16:42+0100\n"
+"POT-Creation-Date: 2025-01-18 16:46+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -50,12 +50,12 @@ msgstr ""
 "%(email)s hat deine Einladung akzeptiert, um die Organisation "
 "%(admin_unit_name)s zu erstellen."
 
-#: project/modular/base_views.py:205
+#: project/modular/base_views.py:208
 #, python-format
 msgid "%(model_display_name)s successfully created"
 msgstr "%(model_display_name)s erfolgreich erstellt"
 
-#: project/modular/base_views.py:316
+#: project/modular/base_views.py:319
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr "%(model_display_name)s erfolgreich gelöscht"
@@ -65,7 +65,7 @@ msgstr "%(model_display_name)s erfolgreich gelöscht"
 msgid "%(model_display_name)s successfully revoked"
 msgstr "%(model_display_name)s erfolgreich widerrufen"
 
-#: project/modular/base_views.py:257
+#: project/modular/base_views.py:260
 #, python-format
 msgid "%(model_display_name)s successfully updated"
 msgstr "%(model_display_name)s erfolgreich aktualisiert"
@@ -563,7 +563,11 @@ msgstr "Link kopieren"
 msgid "Copyright text"
 msgstr "Copyright Text"
 
-#: project/modular/base_views.py:199 project/templates/generic/list.html:16
+#: project/modular/base_form.py:29
+msgid "Create"
+msgstr "Erstellen"
+
+#: project/modular/base_views.py:202 project/templates/generic/list.html:16
 #, python-format
 msgid "Create %(model_display_name)s"
 msgstr "%(model_display_name)s erstellen"
@@ -606,6 +610,7 @@ msgstr "Ort hinzufügen"
 #: project/views/manage_admin_unit/incoming_event_reference/displays.py:31
 #: project/views/manage_admin_unit/incoming_event_reference_request/displays.py:32
 #: project/views/manage_admin_unit/incoming_verification_request/displays.py:16
+#: project/views/manage_admin_unit/organization_invitation/displays.py:10
 #: project/views/manage_admin_unit/outgoing_event_reference/displays.py:10
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:34
 #: project/views/manage_admin_unit/outgoing_verification_request/displays.py:33
@@ -613,13 +618,13 @@ msgid "Created at"
 msgstr "Erstellt am"
 
 #: project/templates/_macros.html:356
-#: project/templates/macros/display.html.j2:34
+#: project/templates/macros/display.html.j2:36
 #, python-format
 msgid "Created at %(created_at)s by %(created_by)s."
 msgstr "Erstellt am %(created_at)s von %(created_by)s."
 
 #: project/templates/_macros.html:358
-#: project/templates/macros/display.html.j2:37
+#: project/templates/macros/display.html.j2:39
 #, python-format
 msgid "Created at %(created_at)s."
 msgstr "Erstellt am %(created_at)s."
@@ -645,7 +650,7 @@ msgstr "Ablehnen"
 msgid "Default"
 msgstr "Standard"
 
-#: project/modular/base_form.py:26 project/modular/base_view_handler.py:133
+#: project/modular/base_form.py:37 project/modular/base_view_handler.py:134
 #: project/templates/admin/admin_units.html:37
 #: project/templates/admin/users.html:37
 #: project/templates/manage/events.html:127
@@ -654,7 +659,7 @@ msgstr "Standard"
 msgid "Delete"
 msgstr "Löschen"
 
-#: project/modular/base_views.py:304
+#: project/modular/base_views.py:307
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr "%(model_display_name)s löschen"
@@ -739,7 +744,7 @@ msgstr "Entwickler"
 msgid "Distance"
 msgstr "Distanz"
 
-#: project/modular/base_views.py:310
+#: project/modular/base_views.py:313
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr "Möchtest du '%(object_title)s' löschen?"
@@ -780,7 +785,7 @@ msgstr "Veranstaltung duplizieren"
 msgid "Earliest start first"
 msgstr "Frühester Beginn zuerst"
 
-#: project/modular/base_view_handler.py:129 project/templates/_macros.html:601
+#: project/modular/base_view_handler.py:130 project/templates/_macros.html:601
 #: project/templates/_macros.html:644 project/templates/_macros.html:776
 #: project/templates/admin/admin_units.html:36
 #: project/templates/admin/users.html:36
@@ -807,6 +812,9 @@ msgstr "Bild bearbeiten"
 #: project/templates/admin/email.html:66 project/templates/admin/users.html:19
 #: project/views/manage_admin_unit/event_organizer/displays.py:11
 #: project/views/manage_admin_unit/event_organizer/forms.py:33
+#: project/views/manage_admin_unit/organization_invitation/displays.py:8
+#: project/views/manage_admin_unit/organization_invitation/displays.py:14
+#: project/views/manage_admin_unit/organization_invitation/forms.py:31
 msgid "Email"
 msgstr "Email"
 
@@ -1421,6 +1429,7 @@ msgstr ""
 "automatisch verifiziert werden sollen."
 
 #: project/forms/admin_unit.py:117
+#: project/views/manage_admin_unit/organization_invitation/forms.py:22
 msgid ""
 "If set, all upcoming reference requests of the new organization are "
 "verified automatically."
@@ -1429,6 +1438,7 @@ msgstr ""
 "Organisation automatisch verifiziert."
 
 #: project/forms/admin_unit.py:110
+#: project/views/manage_admin_unit/organization_invitation/forms.py:15
 msgid "If set, events of the new organization are publicly visible."
 msgstr ""
 "Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich "
@@ -1616,13 +1626,13 @@ msgstr ""
 "verlassen."
 
 #: project/templates/_macros.html:365
-#: project/templates/macros/display.html.j2:44
+#: project/templates/macros/display.html.j2:46
 #, python-format
 msgid "Last updated at %(updated_at)s by %(updated_by)s."
 msgstr "Zuletzt aktualisiert am %(updated_at)s von %(updated_by)s."
 
 #: project/templates/_macros.html:367
-#: project/templates/macros/display.html.j2:47
+#: project/templates/macros/display.html.j2:49
 #, python-format
 msgid "Last updated at %(updated_at)s."
 msgstr "Zuletzt aktualisiert am %(updated_at)s."
@@ -1793,6 +1803,10 @@ msgstr "Neue Meldung zu einer Veranstaltung"
 msgid "New event review"
 msgstr "Neue Veranstaltung zu prüfen"
 
+#: project/views/manage_admin_unit/organization_invitation/forms.py:10
+msgid "New organization's name"
+msgstr "Name der neuen Organisation"
+
 #: project/views/utils.py:39
 msgid "New reference automatically verified"
 msgstr "Neue automatisch verifizierte Empfehlung"
@@ -1921,6 +1935,7 @@ msgstr "OK"
 #: project/views/manage_admin_unit/incoming_event_reference/displays.py:30
 #: project/views/manage_admin_unit/incoming_event_reference_request/displays.py:29
 #: project/views/manage_admin_unit/incoming_verification_request/displays.py:11
+#: project/views/manage_admin_unit/organization_invitation/displays.py:9
 #: project/views/manage_admin_unit/outgoing_event_reference/displays.py:9
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:18
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:33
@@ -1944,7 +1959,6 @@ msgstr "Organisationseinladung akzeptiert"
 
 #: project/babel.py:1 project/templates/layout.html:281
 #: project/templates/manage/admin_units.html:17
-#: project/templates/manage/organization_invitations.html:4
 #: project/templates/user/organization_invitations.html:4
 msgid "Organization invitations"
 msgstr "Organisationseinladungen"
@@ -2626,7 +2640,7 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #: project/views/admin.py:134 project/views/admin.py:280
-#: project/views/manage.py:417 project/views/user.py:64
+#: project/views/manage.py:404 project/views/user.py:64
 #: project/views/user.py:83
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
@@ -2771,6 +2785,10 @@ msgstr ""
 "Die Einladung wurde für einen anderen Nutzer ausgestellt. Melde dich mit "
 "der Email-Adresse an, an die die Einladung geschickt wurde."
 
+#: project/views/manage_admin_unit/organization_invitation/forms.py:32
+msgid "The invitation will be sent to this email address."
+msgstr "An diese Email-Adresse wird die Einladung gesendet."
+
 #: project/forms/event.py:165
 msgid "The maximum age that participants should be."
 msgstr "Das maximale Alter, das die Teilnehmer haben sollten."
@@ -2895,7 +2913,11 @@ msgstr "Typische Altersspanne"
 msgid "Typical Age to"
 msgstr "Typisches Alter bis"
 
-#: project/modular/base_views.py:251
+#: project/modular/base_form.py:33
+msgid "Update"
+msgstr "Aktualisieren"
+
+#: project/modular/base_views.py:254
 #, python-format
 msgid "Update %(model_display_name)s"
 msgstr "%(model_display_name)s aktualisieren"
@@ -2998,6 +3020,7 @@ msgid "Verified"
 msgstr "Verifiziert"
 
 #: project/forms/admin_unit.py:109
+#: project/views/manage_admin_unit/organization_invitation/forms.py:14
 msgid "Verify new organization"
 msgstr "Neue Organisation verifizieren"
 
@@ -3012,10 +3035,11 @@ msgstr "Andere Organisationen verifizieren"
 #: project/forms/admin_unit.py:116
 #: project/views/manage_admin_unit/incoming_event_reference_request/forms.py:93
 #: project/views/manage_admin_unit/incoming_verification_request/forms.py:76
+#: project/views/manage_admin_unit/organization_invitation/forms.py:21
 msgid "Verify reference requests automatically"
 msgstr "Empfehlungsanfragen automatisch verifizieren"
 
-#: project/modular/base_view_handler.py:126
+#: project/modular/base_view_handler.py:127
 #: project/templates/admin/admin_units.html:35
 #: project/templates/manage/events.html:125
 #: project/views/manage_admin_unit/event_organizer/view_handler.py:48

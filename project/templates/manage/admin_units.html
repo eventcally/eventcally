@@ -31,7 +31,7 @@
 <div class="my-4">
     <a class="btn btn-outline-secondary m-1" href="{{ url_for('admin_unit_create') }}" role="button"><i class="fa fa-fw fa-plus"></i> {{ _('Create organization') }}</a>
     {% if current_admin_unit and current_admin_unit.can_invite_other %}
-    <a class="btn btn-outline-secondary m-1" href="{{ url_for('manage_admin_unit_organization_invitations', id=current_admin_unit.id, path='create') }}" role="button"><i class="fa fa-fw fa-plus"></i> {{ _('Invite organization') }}</a>
+    <a class="btn btn-outline-secondary m-1" href="{{ url_for('manage_admin_unit.organization_invitation_create', id=current_admin_unit.id) }}" role="button"><i class="fa fa-fw fa-plus"></i> {{ _('Invite organization') }}</a>
     {% endif %}
 </div>
 

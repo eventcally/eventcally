@@ -11,6 +11,7 @@
 {%- endmacro %}
 
 {% macro render_read_display(display, object) %}
+{% if display %}
 <dl class="row">
     {% for prop in display.get_ordered_props() %}
     {% if display.should_display_prop(prop, object) %}
@@ -24,6 +25,7 @@
 <div class="my-4 small text-muted">
     {{ render_audit(object, display.should_audit_show_user(object)) }}
 </div>
+{% endif %}
 {% endif %}
 {% endmacro %}
 

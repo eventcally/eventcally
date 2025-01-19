@@ -21,6 +21,17 @@ class BaseForm(FlaskForm):
             )
         )
 
+    def move_field_to_top(self, key: str):
+        self._fields.move_to_end(key, False)
+
+
+class BaseCreateForm(BaseForm):
+    submit = SubmitField(lazy_gettext("Create"))
+
+
+class BaseUpdateForm(BaseForm):
+    submit = SubmitField(lazy_gettext("Update"))
+
 
 class BaseDeleteForm(BaseForm):
     submit = SubmitField(lazy_gettext("Delete"))

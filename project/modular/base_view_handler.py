@@ -22,12 +22,13 @@ class BaseViewHandler:
     read_decorators = []
     update_view_class = BaseUpdateView
     update_form_class = None
+    update_display_class = None
     update_decorators = []
     delete_view_class = BaseDeleteView
     delete_form_class = BaseDeleteForm
     delete_decorators = []
     list_view_class = BaseListView
-    list_display_class = BaseListView
+    list_display_class = None
     list_decorators = []
     generic_prefix = ""
 
@@ -260,6 +261,7 @@ class BaseViewHandler:
             class UpdateView(self.update_view_class):
                 decorators = self.update_decorators
                 form_class = self.update_form_class
+                display_class = self.update_display_class
 
             self._add_view(
                 "update",

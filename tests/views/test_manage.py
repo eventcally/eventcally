@@ -224,7 +224,7 @@ def test_admin_unit_organization_invitations(
 ):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit_organization_invitations", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.organization_invitations", id=admin_unit_id)
     utils.get_ok(url)
 
 
