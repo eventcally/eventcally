@@ -269,7 +269,6 @@ from project import init_data, jinja_filters, requests
 from project.views import (
     admin,
     admin_unit,
-    admin_unit_member,
     admin_unit_member_invitation,
     custom_widget,
     dump,

@@ -49,6 +49,7 @@ class AdminUnitMemberRole(db.Model, RoleMixin):
 
 class AdminUnitMember(db.Model):
     __tablename__ = "adminunitmember"
+    __model_name__ = "organization_member"
     __display_name__ = "Organization member"
     id = Column(Integer(), primary_key=True)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
@@ -67,10 +68,14 @@ class AdminUnitMember(db.Model):
         backref=backref("members", lazy="dynamic"),
     )
 
+    def __str__(self):
+        return self.user.__str__() if self.user else super().__str__()
+
 
 class AdminUnitMemberInvitation(db.Model):
     __tablename__ = "adminunitmemberinvitation"
     __table_args__ = (UniqueConstraint("email", "admin_unit_id"),)
+    __model_name__ = "organization_member_invitation"
     __display_name__ = "Organization member invitation"
     id = Column(Integer(), primary_key=True)
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)

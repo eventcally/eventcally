@@ -161,7 +161,7 @@ def test_admin_unit_event_places(client, seeder: Seeder, utils: UtilActions):
 def test_admin_unit_members(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
-    utils.get_endpoint_ok("manage_admin_unit_members", id=admin_unit_id)
+    utils.get_endpoint_ok("manage_admin_unit.organization_members", id=admin_unit_id)
 
 
 def test_admin_unit_members_permission_missing(
@@ -169,7 +169,9 @@ def test_admin_unit_members_permission_missing(
 ):
     owner_id, admin_unit_id, member_id = seeder.setup_base_event_verifier()
 
-    response = utils.get_endpoint("manage_admin_unit_members", id=admin_unit_id)
+    response = utils.get_endpoint(
+        "manage_admin_unit.organization_members", id=admin_unit_id
+    )
     utils.assert_response_permission_missing(
         response, "manage_admin_unit", id=admin_unit_id
     )

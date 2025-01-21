@@ -65,7 +65,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     def apply_objects_query_order(self, query, **kwargs):
         return query.order_by(AdminUnitVerificationRequest.created_at.desc())
 
-    def get_create_url(self, object, **kwargs):
+    def get_create_url(self, **kwargs):
         return url_for(
             "manage_admin_unit_verification_requests_outgoing_create_select",
             id=current_admin_unit.id,
