@@ -265,11 +265,12 @@
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_organizers', id=current_admin_unit.id) }}">{{ _('Organizers') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_places', id=current_admin_unit.id) }}">{{ _('Places') }}</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_members', id=current_admin_unit.id) }}">{{ _('Members') }}</a>
-                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_relations', id=current_admin_unit.id) }}">{{ _('Relations') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.organization_members', id=current_admin_unit.id) }}">{{ _('Members') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.organization_member_invitations', id=current_admin_unit.id) }}">{{ _('Organization member invitations') }}</a>
 
-                    {% if current_admin_unit.can_verify_other %}
                     <div class="dropdown-divider"></div>
+                    {% if current_admin_unit.can_verify_other %}
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_relations', id=current_admin_unit.id) }}">{{ _('Relations') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.incoming_admin_unit_verification_requests', id=current_admin_unit.id) }}">{{ _('Incoming verification requests') }}
                       {% if menu_options['verification_requests_incoming_badge'] > 0 %}
                         <span class="badge badge-secondary badge-pill">{{ menu_options['verification_requests_incoming_badge'] }}</span>

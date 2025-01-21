@@ -79,6 +79,9 @@ class User(db.Model, UserMixin):
     def get_user_id(self):
         return self.id
 
+    def __str__(self):
+        return self.email or super().__str__()
+
 
 class UserFavoriteEvents(db.Model):
     __tablename__ = "user_favoriteevents"

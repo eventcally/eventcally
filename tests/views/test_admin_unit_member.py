@@ -4,33 +4,38 @@ from tests.seeder import Seeder
 from tests.utils import UtilActions
 
 
-def test_update(client, app, utils, seeder):
+def test_update(client, app, utils: UtilActions, seeder):
     seeder.create_user()
     user_id = utils.login()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
     member_id = seeder.create_admin_unit_member_event_verifier(admin_unit_id)
 
-    url = "/manage/member/%d/update" % member_id
-    response = client.get(url)
-    assert response.status_code == 200
+    url = utils.get_url(
+        "manage_admin_unit.organization_member_update",
+        id=admin_unit_id,
+        organization_member_id=member_id,
+    )
+    response = utils.get_ok(url)
 
-    with client:
-        response = client.post(
-            url,
-            data={
-                "csrf_token": utils.get_csrf(response),
-                "roles": "admin",
-                "submit": "Submit",
-            },
-        )
-        assert response.status_code == 302
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "role_names": "admin",
+            "submit": "Submit",
+        },
+    )
 
-        with app.app_context():
-            from project.services.admin_unit import get_admin_unit_member
+    utils.assert_response_redirect(
+        response, "manage_admin_unit.organization_members", id=admin_unit_id
+    )
 
-            member = get_admin_unit_member(member_id)
-            assert len(member.roles) == 1
-            assert any(r.name == "admin" for r in member.roles)
+    with app.app_context():
+        from project.services.admin_unit import get_admin_unit_member
+
+        member = get_admin_unit_member(member_id)
+        assert len(member.roles) == 1
+        assert any(r.name == "admin" for r in member.roles)
 
 
 def test_update_self(client, app, utils: UtilActions, seeder: Seeder):
@@ -44,64 +49,33 @@ def test_update_self(client, app, utils: UtilActions, seeder: Seeder):
         member = get_member_for_admin_unit_by_user_id(admin_unit_id, user_id)
         member_id = member.id
 
-    url = "/manage/member/%d/update" % member_id
-    response = client.get(url)
-    assert response.status_code == 200
+    url = utils.get_url(
+        "manage_admin_unit.organization_member_update",
+        id=admin_unit_id,
+        organization_member_id=member_id,
+    )
+    response = utils.get_ok(url)
 
-    with client:
-        response = client.post(
-            url,
-            data={
-                "csrf_token": utils.get_csrf(response),
-                "roles": "event_verifier",
-                "submit": "Submit",
-            },
-        )
-        assert response.status_code == 302
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "role_names": "event_verifier",
+            "submit": "Submit",
+        },
+    )
 
-        with app.app_context():
-            from project.services.admin_unit import get_admin_unit_member
+    utils.assert_response_redirect(
+        response, "manage_admin_unit.organization_members", id=admin_unit_id
+    )
 
-            member = get_admin_unit_member(member_id)
-            assert len(member.roles) == 2
-            assert any(r.name == "event_verifier" for r in member.roles)
-            assert any(r.name == "admin" for r in member.roles)
+    with app.app_context():
+        from project.services.admin_unit import get_admin_unit_member
 
-
-def test_update_db_error(client, app, utils, seeder, mocker):
-    seeder.create_user()
-    user_id = utils.login()
-    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
-    member_id = seeder.create_admin_unit_member_event_verifier(admin_unit_id)
-
-    url = "/manage/member/%d/update" % member_id
-    response = client.get(url)
-    assert response.status_code == 200
-
-    with client:
-        utils.mock_db_commit(mocker)
-
-        response = client.post(
-            url,
-            data={
-                "csrf_token": utils.get_csrf(response),
-                "roles": "admin",
-                "submit": "Submit",
-            },
-        )
-        assert response.status_code == 200
-        assert b"MockException" in response.data
-
-
-def test_update_permission_missing(client, app, db, utils, seeder):
-    owner_id = seeder.create_user("owner@owner")
-    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
-    member_id = seeder.create_admin_unit_member_event_verifier(admin_unit_id)
-    utils.login()
-
-    url = "/manage/member/%d/update" % member_id
-    response = client.get(url)
-    assert response.status_code == 302
+        member = get_admin_unit_member(member_id)
+        assert len(member.roles) == 2
+        assert any(r.name == "event_verifier" for r in member.roles)
+        assert any(r.name == "admin" for r in member.roles)
 
 
 @pytest.mark.parametrize("scenario", ["default", "current_user"])
@@ -114,8 +88,12 @@ def test_delete(client, app, db, utils: UtilActions, seeder: Seeder, scenario: s
         admin_unit_id, email=member_email
     )
 
-    url = "/manage/member/%d/delete" % member_id
-    response = client.get(url)
+    url = utils.get_url(
+        "manage_admin_unit.organization_member_delete",
+        id=admin_unit_id,
+        organization_member_id=member_id,
+    )
+    response = utils.get(url)
 
     if scenario == "current_user":
         utils.assert_response_redirect(
@@ -123,74 +101,22 @@ def test_delete(client, app, db, utils: UtilActions, seeder: Seeder, scenario: s
         )
         return
 
-    assert response.status_code == 200
+    utils.assert_response_ok(response)
 
-    with client:
-        response = client.post(
-            url,
-            data={
-                "csrf_token": utils.get_csrf(response),
-                "email": "member@test.de",
-                "submit": "Submit",
-            },
-        )
-        assert response.status_code == 302
-
-        with app.app_context():
-            from project.services.admin_unit import get_admin_unit_member
-
-            member = get_admin_unit_member(member_id)
-            assert member is None
-
-
-def test_delete_db_error(client, app, utils, seeder, mocker):
-    seeder.create_user()
-    user_id = utils.login()
-    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
-    member_id = seeder.create_admin_unit_member_event_verifier(
-        admin_unit_id, email="member@test.de"
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "submit": "Submit",
+        },
     )
 
-    url = "/manage/member/%d/delete" % member_id
-    response = client.get(url)
-    assert response.status_code == 200
-
-    with client:
-        utils.mock_db_commit(mocker)
-
-        response = client.post(
-            url,
-            data={
-                "csrf_token": utils.get_csrf(response),
-                "email": "member@test.de",
-                "submit": "Submit",
-            },
-        )
-
-        assert response.status_code == 200
-        assert b"MockException" in response.data
-
-
-def test_delete_email_does_not_match(client, app, utils, seeder):
-    seeder.create_user()
-    user_id = utils.login()
-    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
-    member_id = seeder.create_admin_unit_member_event_verifier(
-        admin_unit_id, email="member@test.de"
+    utils.assert_response_redirect(
+        response, "manage_admin_unit.organization_members", id=admin_unit_id
     )
 
-    url = "/manage/member/%d/delete" % member_id
-    response = client.get(url)
-    assert response.status_code == 200
+    with app.app_context():
+        from project.services.admin_unit import get_admin_unit_member
 
-    with client:
-        response = client.post(
-            url,
-            data={
-                "csrf_token": utils.get_csrf(response),
-                "email": "wrong@test.de",
-                "submit": "Submit",
-            },
-        )
-        assert response.status_code == 200
-        assert b"Die eingegebene Email passt nicht zur Email" in response.data
+        member = get_admin_unit_member(member_id)
+        assert member is None

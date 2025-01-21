@@ -88,8 +88,8 @@ class BaseViewHandler:
         kwargs.setdefault(self.get_id_query_arg_name(), object.id)
         return self.get_endpoint_url("read", **kwargs)
 
-    def get_create_url(self, object, **kwargs):
-        return self.get_endpoint_url("create")
+    def get_create_url(self, **kwargs):
+        return self.get_endpoint_url("create", **kwargs)
 
     def get_update_url(self, object, **kwargs):
         kwargs.setdefault(self.get_id_query_arg_name(), object.id)

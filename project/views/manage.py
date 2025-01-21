@@ -27,13 +27,7 @@ from project.forms.admin_unit import (
     UpdateAdminUnitWidgetForm,
 )
 from project.forms.event import FindEventForm
-from project.models import (
-    AdminUnitMember,
-    AdminUnitMemberInvitation,
-    EventOrganizer,
-    EventPlace,
-    User,
-)
+from project.models import EventOrganizer, EventPlace
 from project.services.admin_unit import (
     get_admin_unit_member_invitations,
     get_admin_unit_organization_invitations,
@@ -184,39 +178,6 @@ def manage_admin_unit_events(id):
     )
 
 
-@app.route("/manage/admin_unit/<int:id>/members")
-@auth_required()
-def manage_admin_unit_members(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    set_current_admin_unit(admin_unit)
-
-    if not has_access(admin_unit, "admin_unit.members:read"):
-        return permission_missing(url_for("manage_admin_unit", id=id))
-
-    members = (
-        AdminUnitMember.query.join(User)
-        .filter(AdminUnitMember.admin_unit_id == admin_unit.id)
-        .order_by(func.lower(User.email))
-        .paginate()
-    )
-    invitations = (
-        AdminUnitMemberInvitation.query.filter(
-            AdminUnitMemberInvitation.admin_unit_id == admin_unit.id
-        )
-        .order_by(func.lower(AdminUnitMemberInvitation.email))
-        .all()
-    )
-
-    return render_template(
-        "manage/members.html",
-        admin_unit=admin_unit,
-        can_invite_users=has_access(admin_unit, "admin_unit.members:invite"),
-        members=members.items,
-        invitations=invitations,
-        pagination=get_pagination_urls(members, id=id),
-    )
-
-
 @app.route("/manage/admin_unit/<int:id>/membership/delete", methods=("GET", "POST"))
 @auth_required()
 def manage_admin_unit_delete_membership(id):
@@ -231,14 +192,14 @@ def manage_admin_unit_delete_membership(id):
     if not member:
         # E.g. global admin
         flash(gettext("You are not a member of this organization"), "danger")
-        return redirect(url_for("manage_admin_unit_members", id=id))
+        return redirect(url_for("manage_admin_unit.organization_members", id=id))
 
     if not can_current_user_delete_member(member):
         flash(
             gettext("Last remaining administrator can not leave the organization."),
             "danger",
         )
-        return redirect(url_for("manage_admin_unit_members", id=id))
+        return redirect(url_for("manage_admin_unit.organization_members", id=id))
 
     form = AdminUnitDeleteMembershipForm()
 
