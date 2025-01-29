@@ -217,7 +217,9 @@ def test_admin_unit_widgets_permission_missing(
 def test_admin_unit_relations(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit_relations", id=admin_unit_id)
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_organization_relations", id=admin_unit_id
+    )
     utils.get_ok(url)
 
 

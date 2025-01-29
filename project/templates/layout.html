@@ -270,7 +270,7 @@
 
                     <div class="dropdown-divider"></div>
                     {% if current_admin_unit.can_verify_other %}
-                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_relations', id=current_admin_unit.id) }}">{{ _('Relations') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_organization_relations', id=current_admin_unit.id) }}">{{ _('Relations') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.incoming_admin_unit_verification_requests', id=current_admin_unit.id) }}">{{ _('Incoming verification requests') }}
                       {% if menu_options['verification_requests_incoming_badge'] > 0 %}
                         <span class="badge badge-secondary badge-pill">{{ menu_options['verification_requests_incoming_badge'] }}</span>

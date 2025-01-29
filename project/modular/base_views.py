@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template
+from flask import flash, redirect, render_template, request
 from flask.views import View
 from flask_babel import lazy_gettext
 from sqlalchemy.exc import SQLAlchemyError
@@ -42,6 +42,9 @@ class BaseView(View):
 
     def check_access(self, **kwargs):
         return self.handler.check_access(**kwargs)
+
+    def handle_backend_for_frontend(self, **kwargs):
+        return None
 
     def render_template(self, **kwargs):
         kwargs.setdefault("title", self.get_title(**kwargs))
@@ -154,6 +157,20 @@ class BaseFormView(BaseObjectView):
     def complete_object(self, object, form):
         self.handler.complete_object(object, form)
 
+    def handle_backend_for_frontend(self, **kwargs):
+        response = super().handle_backend_for_frontend(**kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
+        if request.headers.get("X-Backend-For-Frontend") != "ajax_lookup":
+            return None
+
+        form = self.create_form()
+        field_name = request.args.get("field_name")
+        field = getattr(form, field_name)
+        return field.loader.get_ajax_pagination(request.args.get("term"))
+
     def after_commit(self, object, form):
         pass
 
@@ -214,7 +231,13 @@ class BaseCreateView(BaseFormView):
         if response:  # pragma: no cover
             return response
 
+        response = self.handle_backend_for_frontend(**kwargs)
+
+        if response:
+            return response
+
         form = self.create_form()
+
         object = None
 
         if form.validate_on_submit():
@@ -272,6 +295,11 @@ class BaseUpdateView(BaseFormView):
         if response:
             return response
 
+        response = self.handle_backend_for_frontend(**kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
         form = self.create_form(obj=object)
 
         if form.validate_on_submit():
@@ -327,6 +355,11 @@ class BaseDeleteView(BaseFormView):
 
         object = self.get_object_from_kwargs(**kwargs)
         response = self.check_object_access(object)
+
+        if response:  # pragma: no cover
+            return response
+
+        response = self.handle_backend_for_frontend(**kwargs)
 
         if response:  # pragma: no cover
             return response

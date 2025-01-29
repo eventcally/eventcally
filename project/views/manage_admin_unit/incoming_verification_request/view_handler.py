@@ -1,7 +1,6 @@
 from flask import url_for
 from flask_babel import gettext
 
-from project.access import admin_unit_owner_access_or_401
 from project.models import AdminUnitVerificationRequest
 from project.models.admin_unit_verification_request import (
     AdminUnitVerificationRequestReviewStatus,
@@ -16,11 +15,12 @@ from project.views.manage_admin_unit.incoming_verification_request.displays impo
 from project.views.manage_admin_unit.incoming_verification_request.views import (
     ReviewView,
 )
-from project.views.utils import current_admin_unit, manage_permission_required
+from project.views.utils import manage_permission_required
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = AdminUnitVerificationRequest
+    admin_unit_id_attribute_name = "target_admin_unit_id"
     create_view_class = None
     read_view_class = None
     update_view_class = None
@@ -29,16 +29,8 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     list_decorators = [manage_permission_required("verification_request:read")]
     generic_prefix = "incoming_"
 
-    def check_object_access(self, object):
-        return admin_unit_owner_access_or_401(object.target_admin_unit_id)
-
     def get_model_display_name_plural(self):
         return gettext("Incoming verification requests")
-
-    def apply_base_filter(self, query, **kwargs):
-        return query.filter(
-            AdminUnitVerificationRequest.target_admin_unit_id == current_admin_unit.id
-        )
 
     def apply_objects_query_order(self, query, **kwargs):
         return query.order_by(AdminUnitVerificationRequest.created_at.desc())
