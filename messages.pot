@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-21 14:53+0100\n"
+"POT-Creation-Date: 2025-01-29 13:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,12 +47,12 @@ msgid ""
 "%(admin_unit_name)s."
 msgstr ""
 
-#: project/modular/base_views.py:208
+#: project/modular/base_views.py:225
 #, python-format
 msgid "%(model_display_name)s successfully created"
 msgstr ""
 
-#: project/modular/base_views.py:319
+#: project/modular/base_views.py:347
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr ""
@@ -62,7 +62,7 @@ msgstr ""
 msgid "%(model_display_name)s successfully revoked"
 msgstr ""
 
-#: project/modular/base_views.py:260
+#: project/modular/base_views.py:283
 #, python-format
 msgid "%(model_display_name)s successfully updated"
 msgstr ""
@@ -448,7 +448,7 @@ msgstr ""
 msgid "Click here to view the reference"
 msgstr ""
 
-#: project/templates/email/organization_invitation_accepted_notice.html:6
+#: project/templates/email/organization_invitation_accepted_notice.html:5
 msgid "Click here to view the relation"
 msgstr ""
 
@@ -552,7 +552,7 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
-#: project/modular/base_views.py:202 project/templates/generic/list.html:16
+#: project/modular/base_views.py:219 project/templates/generic/list.html:16
 #, python-format
 msgid "Create %(model_display_name)s"
 msgstr ""
@@ -642,7 +642,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: project/modular/base_views.py:307
+#: project/modular/base_views.py:335
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr ""
@@ -721,7 +721,7 @@ msgstr ""
 msgid "Distance"
 msgstr ""
 
-#: project/modular/base_views.py:313
+#: project/modular/base_views.py:341
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr ""
@@ -822,7 +822,7 @@ msgid ""
 " be entered if they are already in the name or description."
 msgstr ""
 
-#: project/templates/_macros.html:1864
+#: project/templates/_macros.html:1851
 msgid "Enter list name"
 msgstr ""
 
@@ -839,7 +839,7 @@ msgstr ""
 msgid "Enter organization"
 msgstr ""
 
-#: project/templates/_macros.html:1836 project/templates/event/create.html:204
+#: project/templates/_macros.html:1823 project/templates/event/create.html:204
 #: project/templates/event/update.html:111
 #: project/templates/event_date/list.html:448
 msgid "Enter organizer"
@@ -1372,9 +1372,19 @@ msgid ""
 "verified automatically."
 msgstr ""
 
+#: project/views/manage_admin_unit/outgoing_organization_relation/forms.py:39
+msgid ""
+"If set, all upcoming reference requests of the other organization are "
+"verified automatically."
+msgstr ""
+
 #: project/forms/admin_unit.py:110
 #: project/views/manage_admin_unit/organization_invitation/forms.py:15
 msgid "If set, events of the new organization are publicly visible."
+msgstr ""
+
+#: project/views/manage_admin_unit/outgoing_organization_relation/forms.py:32
+msgid "If set, events of the other organization are publicly visible."
 msgstr ""
 
 #: project/forms/admin.py:74
@@ -1446,7 +1456,7 @@ msgid "Incoming references"
 msgstr ""
 
 #: project/templates/layout.html:274
-#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:36
+#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:33
 msgid "Incoming verification requests"
 msgstr ""
 
@@ -1738,6 +1748,10 @@ msgid ""
 " code %(postal_code)s."
 msgstr ""
 
+#: project/modular/fields.py:59
+msgid "Not a valid choice"
+msgstr ""
+
 #: project/templates/event_date/list.html:251
 msgid "Not referenced"
 msgstr ""
@@ -1824,6 +1838,8 @@ msgstr ""
 #: project/views/manage_admin_unit/outgoing_event_reference/displays.py:9
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:18
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:33
+#: project/views/manage_admin_unit/outgoing_organization_relation/displays.py:9
+#: project/views/manage_admin_unit/outgoing_organization_relation/displays.py:15
 #: project/views/manage_admin_unit/outgoing_verification_request/displays.py:19
 #: project/views/manage_admin_unit/outgoing_verification_request/displays.py:28
 #: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:26
@@ -1952,6 +1968,18 @@ msgstr ""
 msgid "Other calendar"
 msgstr ""
 
+#: project/views/manage_admin_unit/outgoing_organization_relation/forms.py:49
+msgid "Other organization"
+msgstr ""
+
+#: project/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:48
+msgid "Outgoing organization relation"
+msgstr ""
+
+#: project/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:51
+msgid "Outgoing organization relations"
+msgstr ""
+
 #: project/templates/layout.html:249
 #: project/views/manage_admin_unit/outgoing_event_reference_request/view_handler.py:36
 msgid "Outgoing reference requests"
@@ -1963,7 +1991,7 @@ msgid "Outgoing references"
 msgstr ""
 
 #: project/templates/layout.html:261
-#: project/views/manage_admin_unit/outgoing_verification_request/view_handler.py:58
+#: project/views/manage_admin_unit/outgoing_verification_request/view_handler.py:55
 msgid "Outgoing verification requests"
 msgstr ""
 
@@ -2029,6 +2057,10 @@ msgstr ""
 
 #: project/templates/_macros.html:1360
 msgid "Please enter a valid time, between 00:00 and 23:59."
+msgstr ""
+
+#: project/modular/widgets.py:45
+msgid "Please select"
 msgstr ""
 
 #: project/forms/admin_unit.py:25 project/forms/event.py:471
@@ -2112,7 +2144,7 @@ msgid "Recipient"
 msgstr ""
 
 #: project/forms/event.py:59 project/templates/_macros.html:936
-#: project/templates/_macros.html:1802
+#: project/templates/_macros.html:1789
 msgid "Recurring event"
 msgstr ""
 
@@ -2214,7 +2246,7 @@ msgstr ""
 msgid "Relation to %(admin_unit_name)s"
 msgstr ""
 
-#: project/templates/layout.html:273 project/templates/manage/relations.html:4
+#: project/templates/layout.html:273
 msgid "Relations"
 msgstr ""
 
@@ -2222,7 +2254,7 @@ msgstr ""
 msgid "Remember me"
 msgstr ""
 
-#: project/templates/_macros.html:1803
+#: project/templates/_macros.html:1790
 msgid "Remove event date"
 msgstr ""
 
@@ -2299,7 +2331,7 @@ msgid "Review %(model_display_name)s"
 msgstr ""
 
 #: project/views/manage_admin_unit/incoming_event_reference_request/view_handler.py:71
-#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:79
+#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:71
 msgid "Review request"
 msgstr ""
 
@@ -2510,7 +2542,7 @@ msgid "Settings"
 msgstr ""
 
 #: project/views/admin.py:134 project/views/admin.py:280
-#: project/views/manage.py:365 project/views/user.py:64
+#: project/views/manage.py:352 project/views/user.py:64
 #: project/views/user.py:83
 msgid "Settings successfully updated"
 msgstr ""
@@ -2772,7 +2804,7 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
-#: project/modular/base_views.py:254
+#: project/modular/base_views.py:277
 #, python-format
 msgid "Update %(model_display_name)s"
 msgstr ""
@@ -2882,6 +2914,10 @@ msgstr ""
 msgid "Verify organization"
 msgstr ""
 
+#: project/views/manage_admin_unit/outgoing_organization_relation/forms.py:31
+msgid "Verify other organization"
+msgstr ""
+
 #: project/forms/admin.py:87
 msgid "Verify other organizations"
 msgstr ""
@@ -2890,6 +2926,7 @@ msgstr ""
 #: project/views/manage_admin_unit/incoming_event_reference_request/forms.py:93
 #: project/views/manage_admin_unit/incoming_verification_request/forms.py:76
 #: project/views/manage_admin_unit/organization_invitation/forms.py:21
+#: project/views/manage_admin_unit/outgoing_organization_relation/forms.py:38
 msgid "Verify reference requests automatically"
 msgstr ""
 
@@ -2916,7 +2953,7 @@ msgstr ""
 msgid "View events"
 msgstr ""
 
-#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:86
+#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:78
 #: project/views/manage_admin_unit/incoming_verification_request/views.py:38
 msgid "View organization"
 msgstr ""

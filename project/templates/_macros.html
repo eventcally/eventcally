@@ -1711,23 +1711,10 @@ $('#allday').on('change', function() {
 {% macro render_form_scripts() %}
 <script src="{{ url_for('static', filename='ext/jquery-ui.1.12.1/jquery-ui.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/jquery-ui-i18n.1.11.4.min.js')}}"></script>
-<script src="{{ url_for('static', filename='ext/select2.4.0.13.min.js')}}"></script>
+<script src="{{ url_for('static', filename='ext/select2.4.0.13.full.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/select2.i18n.de.4.0.13.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/jquery.timepicker.1.13.18.min.js')}}"></script>
-<script type="text/javascript">
-  $.datepicker.setDefaults($.datepicker.regional["de"]);
-  $.fn.select2.defaults.set("language", "de");
-
-  $(function () {
-    $(".autocomplete").select2({
-      width: "100%",
-      theme: "bootstrap4",
-    });
-    $(".autocomplete-multi").select2({
-      width: "100%",
-    });
-  });
-</script>
+<script src="{{ url_for('static', filename='form.js')}}"></script>
 {% endmacro %}
 
 {% macro render_manage_form_scripts() %}

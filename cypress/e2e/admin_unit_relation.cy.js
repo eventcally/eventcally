@@ -5,7 +5,7 @@ describe("Admin unit relations", () => {
       cy.createAdminUnit("test@test.de", "Other Crew").then(function (
         otherAdminUnitId
       ) {
-        cy.visit("/manage/admin_unit/" + adminUnitId + "/relations");
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/outgoing_organization_relations");
         cy.screenshot("list");
       });
     });
@@ -17,13 +17,11 @@ describe("Admin unit relations", () => {
       cy.createAdminUnit("test@test.de", "Other Crew").then(function (
         otherAdminUnitId
       ) {
-        cy.visit("/manage/admin_unit/" + adminUnitId + "/relations");
-        cy.visit("/manage/admin_unit/" + adminUnitId + "/relations/create");
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/outgoing_organization_relation/create");
 
-        cy.get("#targetOrganization input").type("ot");
-        cy.get(".vbt-autcomplete-list").click();
+        cy.select2("target_admin_unit", "Oth", "Other Crew");
         cy.screenshot("create");
-        cy.get("button[type=submit]").click();
+        cy.get("input[type=submit]").click();
 
         cy.url().should(
           "not.include",
@@ -37,10 +35,9 @@ describe("Admin unit relations", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createAdminUnitRelation(adminUnitId).then(function (relationId) {
-        cy.visit("/manage/admin_unit/" + adminUnitId + "/relations");
-        cy.visit("/manage/admin_unit/" + adminUnitId + "/relations/" + relationId + "/update");
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/outgoing_organization_relation/" + relationId + "/update");
         cy.screenshot("update");
-        cy.get("button[type=submit]").click();
+        cy.get("input[type=submit]").click();
         cy.url().should(
           "not.include",
           "/update"
@@ -53,16 +50,15 @@ describe("Admin unit relations", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createAdminUnitRelation(adminUnitId).then(function (relationId) {
-        cy.visit("/manage/admin_unit/" + adminUnitId + "/relations");
-
-        cy.get('.dropdown-toggle.btn-link').click();
-        cy.get('.b-dropdown.show li:last').click();
-
-        cy.get('.dropdown-toggle.btn-link').should('not.exist');
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/outgoing_organization_relation/" + relationId + "/delete");
+        cy.screenshot("update");
+        cy.get("input[type=submit]").click();
+        cy.url().should(
+          "not.include",
+          "/update"
+        );
       });
     });
   });
-
-
 
 });

@@ -183,10 +183,12 @@ def test_create_from_invitation(client, app, db, utils, seeder, mocker):
         invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is None
 
-    invitation_url = utils.get_url(
-        "manage_admin_unit_relations", id=admin_unit_id, path=f"{relation_id}/update"
+    relation_url = utils.get_url(
+        "manage_admin_unit.outgoing_organization_relation_update",
+        id=admin_unit_id,
+        organization_relation_id=relation_id,
     )
-    utils.assert_send_mail_called(mail_mock, "test@test.de", invitation_url)
+    utils.assert_send_mail_called(mail_mock, "test@test.de", relation_url)
 
 
 def test_create_from_invitation_currentUserDoesNotMatchInvitationEmail(

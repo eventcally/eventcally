@@ -13,7 +13,7 @@
 {% set create_url = view.handler.get_create_url() %}
 {% if create_url %}
 <div class="my-4">
-    <a class="btn btn-outline-secondary my-1" href="{{ create_url }}" role="button"><i class="fa fa-plus"></i> {{ _('Create %(model_display_name)s', model_display_name=view.model.get_display_name()) }}</a>
+    <a class="btn btn-outline-secondary my-1" href="{{ create_url }}" role="button"><i class="fa fa-plus"></i> {{ _('Create %(model_display_name)s', model_display_name=view.handler.get_model_display_name()) }}</a>
 </div>
 {% endif %}
 

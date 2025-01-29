@@ -1,7 +1,6 @@
 from flask import redirect, url_for
 from flask_babel import gettext
 
-from project.access import admin_unit_owner_access_or_401
 from project.models import AdminUnitVerificationRequest
 from project.services.search_params import AdminUnitVerificationRequestSearchParams
 from project.services.verification import get_verification_requests_outgoing_query
@@ -19,6 +18,7 @@ from project.views.utils import current_admin_unit, manage_permission_required
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = AdminUnitVerificationRequest
+    admin_unit_id_attribute_name = "source_admin_unit_id"
     create_view_class = None
     create_decorators = [manage_permission_required("verification_request:create")]
     read_display_class = ReadDisplay
@@ -51,16 +51,8 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
 
         return None
 
-    def check_object_access(self, object):
-        return admin_unit_owner_access_or_401(object.source_admin_unit_id)
-
     def get_model_display_name_plural(self):
         return gettext("Outgoing verification requests")
-
-    def apply_base_filter(self, query, **kwargs):
-        return query.filter(
-            AdminUnitVerificationRequest.source_admin_unit_id == current_admin_unit.id
-        )
 
     def apply_objects_query_order(self, query, **kwargs):
         return query.order_by(AdminUnitVerificationRequest.created_at.desc())

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-21 14:53+0100\n"
+"POT-Creation-Date: 2025-01-29 13:30+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -50,12 +50,12 @@ msgstr ""
 "%(email)s hat deine Einladung akzeptiert, um die Organisation "
 "%(admin_unit_name)s zu erstellen."
 
-#: project/modular/base_views.py:208
+#: project/modular/base_views.py:225
 #, python-format
 msgid "%(model_display_name)s successfully created"
 msgstr "%(model_display_name)s erfolgreich erstellt"
 
-#: project/modular/base_views.py:319
+#: project/modular/base_views.py:347
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr "%(model_display_name)s erfolgreich gelöscht"
@@ -65,7 +65,7 @@ msgstr "%(model_display_name)s erfolgreich gelöscht"
 msgid "%(model_display_name)s successfully revoked"
 msgstr "%(model_display_name)s erfolgreich widerrufen"
 
-#: project/modular/base_views.py:260
+#: project/modular/base_views.py:283
 #, python-format
 msgid "%(model_display_name)s successfully updated"
 msgstr "%(model_display_name)s erfolgreich aktualisiert"
@@ -463,7 +463,7 @@ msgstr "Klicke hier, um die Einladung anzunehmen."
 msgid "Click here to view the reference"
 msgstr "Klicke hier, um die Empfehlung anzuzeigen"
 
-#: project/templates/email/organization_invitation_accepted_notice.html:6
+#: project/templates/email/organization_invitation_accepted_notice.html:5
 msgid "Click here to view the relation"
 msgstr "Klicke hier, um die Beziehung anzuzeigen."
 
@@ -567,7 +567,7 @@ msgstr "Copyright Text"
 msgid "Create"
 msgstr "Erstellen"
 
-#: project/modular/base_views.py:202 project/templates/generic/list.html:16
+#: project/modular/base_views.py:219 project/templates/generic/list.html:16
 #, python-format
 msgid "Create %(model_display_name)s"
 msgstr "%(model_display_name)s erstellen"
@@ -657,7 +657,7 @@ msgstr "Standard"
 msgid "Delete"
 msgstr "Löschen"
 
-#: project/modular/base_views.py:307
+#: project/modular/base_views.py:335
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr "%(model_display_name)s löschen"
@@ -736,7 +736,7 @@ msgstr "Entwickler"
 msgid "Distance"
 msgstr "Distanz"
 
-#: project/modular/base_views.py:313
+#: project/modular/base_views.py:341
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr "Möchtest du '%(object_title)s' löschen?"
@@ -842,7 +842,7 @@ msgstr ""
 "Worte müssen nicht eingegeben werden, wenn sie bereits im Namen oder in "
 "der Beschreibung enthalten sind."
 
-#: project/templates/_macros.html:1864
+#: project/templates/_macros.html:1851
 msgid "Enter list name"
 msgstr "Listenname eingeben"
 
@@ -859,7 +859,7 @@ msgstr "Neuen Ort eingeben"
 msgid "Enter organization"
 msgstr "Organisation eingeben"
 
-#: project/templates/_macros.html:1836 project/templates/event/create.html:204
+#: project/templates/_macros.html:1823 project/templates/event/create.html:204
 #: project/templates/event/update.html:111
 #: project/templates/event_date/list.html:448
 msgid "Enter organizer"
@@ -1424,11 +1424,25 @@ msgstr ""
 "Wenn gesetzt, werden alle zukünftigen Empfehlungsanfragen der neuen "
 "Organisation automatisch verifiziert."
 
+#: project/views/manage_admin_unit/outgoing_organization_relation/forms.py:39
+msgid ""
+"If set, all upcoming reference requests of the other organization are "
+"verified automatically."
+msgstr ""
+"Wenn gesetzt, werden alle zukünftigen Empfehlungsanfragen der anderen "
+"Organisation automatisch verifiziert."
+
 #: project/forms/admin_unit.py:110
 #: project/views/manage_admin_unit/organization_invitation/forms.py:15
 msgid "If set, events of the new organization are publicly visible."
 msgstr ""
 "Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich "
+"sichtbar."
+
+#: project/views/manage_admin_unit/outgoing_organization_relation/forms.py:32
+msgid "If set, events of the other organization are publicly visible."
+msgstr ""
+"Wenn gesetzt, sind Veranstaltungen der anderen Organisation öffentlich "
 "sichtbar."
 
 #: project/forms/admin.py:74
@@ -1510,7 +1524,7 @@ msgid "Incoming references"
 msgstr "Eingehende Empfehlungen"
 
 #: project/templates/layout.html:274
-#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:36
+#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:33
 msgid "Incoming verification requests"
 msgstr "Eingehende Verifizierungsanfragen"
 
@@ -1808,6 +1822,10 @@ msgstr ""
 "Es wurden keine Organisationen gefunden, die deine Organisation mit der "
 "Postleitzahl %(postal_code)s verifizieren können."
 
+#: project/modular/fields.py:59
+msgid "Not a valid choice"
+msgstr "Keine gültige Auswahl"
+
 #: project/templates/event_date/list.html:251
 msgid "Not referenced"
 msgstr "Nicht empfohlen"
@@ -1894,6 +1912,8 @@ msgstr "OK"
 #: project/views/manage_admin_unit/outgoing_event_reference/displays.py:9
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:18
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:33
+#: project/views/manage_admin_unit/outgoing_organization_relation/displays.py:9
+#: project/views/manage_admin_unit/outgoing_organization_relation/displays.py:15
 #: project/views/manage_admin_unit/outgoing_verification_request/displays.py:19
 #: project/views/manage_admin_unit/outgoing_verification_request/displays.py:28
 #: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:26
@@ -1948,11 +1968,11 @@ msgstr "Mitglieder"
 
 #: project/babel.py:1
 msgid "Organization relation"
-msgstr "Verbindung"
+msgstr "Beziehung"
 
 #: project/babel.py:1
 msgid "Organization relations"
-msgstr "Verbindungen"
+msgstr "Beziehungen"
 
 #: project/views/admin_unit.py:133
 msgid "Organization successfully created"
@@ -2025,6 +2045,18 @@ msgstr "Veranstalter"
 msgid "Other calendar"
 msgstr "Anderer Kalender"
 
+#: project/views/manage_admin_unit/outgoing_organization_relation/forms.py:49
+msgid "Other organization"
+msgstr "Andere Organisation"
+
+#: project/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:48
+msgid "Outgoing organization relation"
+msgstr "Ausgehende Organisationsbeziehung"
+
+#: project/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:51
+msgid "Outgoing organization relations"
+msgstr "Ausgehende Organisationsbeziehungen"
+
 #: project/templates/layout.html:249
 #: project/views/manage_admin_unit/outgoing_event_reference_request/view_handler.py:36
 msgid "Outgoing reference requests"
@@ -2036,7 +2068,7 @@ msgid "Outgoing references"
 msgstr "Ausgehende Empfehlungen"
 
 #: project/templates/layout.html:261
-#: project/views/manage_admin_unit/outgoing_verification_request/view_handler.py:58
+#: project/views/manage_admin_unit/outgoing_verification_request/view_handler.py:55
 msgid "Outgoing verification requests"
 msgstr "Ausgehende Verifizierungsanfragen"
 
@@ -2105,6 +2137,10 @@ msgstr "Planung"
 #: project/templates/_macros.html:1360
 msgid "Please enter a valid time, between 00:00 and 23:59."
 msgstr "Bitte gib eine gültige Uhrzeit zwischen 00:00 und 23:59 ein."
+
+#: project/modular/widgets.py:45
+msgid "Please select"
+msgstr "Bitte auswählen"
 
 #: project/forms/admin_unit.py:25 project/forms/event.py:471
 #: project/forms/event_date.py:53 project/forms/planning.py:44
@@ -2187,7 +2223,7 @@ msgid "Recipient"
 msgstr "Empfänger"
 
 #: project/forms/event.py:59 project/templates/_macros.html:936
-#: project/templates/_macros.html:1802
+#: project/templates/_macros.html:1789
 msgid "Recurring event"
 msgstr "Serientermin"
 
@@ -2292,7 +2328,7 @@ msgstr "Ablehnungsgrund"
 msgid "Relation to %(admin_unit_name)s"
 msgstr "Beziehung zu %(admin_unit_name)s"
 
-#: project/templates/layout.html:273 project/templates/manage/relations.html:4
+#: project/templates/layout.html:273
 msgid "Relations"
 msgstr "Beziehungen"
 
@@ -2300,7 +2336,7 @@ msgstr "Beziehungen"
 msgid "Remember me"
 msgstr "Angemeldet bleiben"
 
-#: project/templates/_macros.html:1803
+#: project/templates/_macros.html:1790
 msgid "Remove event date"
 msgstr "Termin entfernen"
 
@@ -2379,7 +2415,7 @@ msgid "Review %(model_display_name)s"
 msgstr "%(model_display_name)s prüfen"
 
 #: project/views/manage_admin_unit/incoming_event_reference_request/view_handler.py:71
-#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:79
+#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:71
 msgid "Review request"
 msgstr "Anfrage prüfen"
 
@@ -2598,7 +2634,7 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #: project/views/admin.py:134 project/views/admin.py:280
-#: project/views/manage.py:365 project/views/user.py:64
+#: project/views/manage.py:352 project/views/user.py:64
 #: project/views/user.py:83
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
@@ -2875,7 +2911,7 @@ msgstr "Typisches Alter bis"
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: project/modular/base_views.py:254
+#: project/modular/base_views.py:277
 #, python-format
 msgid "Update %(model_display_name)s"
 msgstr "%(model_display_name)s aktualisieren"
@@ -2985,6 +3021,10 @@ msgstr "Neue Organisation verifizieren"
 msgid "Verify organization"
 msgstr "Organisation verifizieren"
 
+#: project/views/manage_admin_unit/outgoing_organization_relation/forms.py:31
+msgid "Verify other organization"
+msgstr "Andere Organisation verifizieren"
+
 #: project/forms/admin.py:87
 msgid "Verify other organizations"
 msgstr "Andere Organisationen verifizieren"
@@ -2993,6 +3033,7 @@ msgstr "Andere Organisationen verifizieren"
 #: project/views/manage_admin_unit/incoming_event_reference_request/forms.py:93
 #: project/views/manage_admin_unit/incoming_verification_request/forms.py:76
 #: project/views/manage_admin_unit/organization_invitation/forms.py:21
+#: project/views/manage_admin_unit/outgoing_organization_relation/forms.py:38
 msgid "Verify reference requests automatically"
 msgstr "Empfehlungsanfragen automatisch verifizieren"
 
@@ -3019,7 +3060,7 @@ msgstr "Veranstaltung anzeigen"
 msgid "View events"
 msgstr "Veranstaltungen anzeigen"
 
-#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:86
+#: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:78
 #: project/views/manage_admin_unit/incoming_verification_request/views.py:38
 msgid "View organization"
 msgstr "Organisation anzeigen"

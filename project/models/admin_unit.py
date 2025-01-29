@@ -113,6 +113,7 @@ class AdminUnitRelation(db.Model, TrackableMixin):
             "source_admin_unit_id != target_admin_unit_id", name="source_neq_target"
         ),
     )
+    __model_name__ = "organization_relation"
     __display_name__ = "Organization relation"
     id = Column(Integer(), primary_key=True)
     source_admin_unit_id = db.Column(
