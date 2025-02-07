@@ -1,11 +1,11 @@
 {% extends "generic/create.html" %}
-{% from "_macros.html" import render_event_place_form_script, render_manage_form_styles, render_manage_form_scripts, render_jquery_steps_header, render_cropper_block, render_crop_image_form_section, render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_event_place_form_script, render_manage_form_styles, render_manage_form_scripts, render_jquery_steps_header, render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
+{% import "macros/forms.html.j2" as forms %}
 
 {% block header %}
 {{ super() }}
 {{ render_google_place_autocomplete_header() }}
 {{ render_event_place_form_script(current_admin_unit, object) }}
-{{ render_cropper_block() }}
 {% endblock %}
 
 {% block form %}
@@ -41,7 +41,7 @@
     </div>
   </div>
 
-  {{ render_crop_image_form_section(form.photo) }}
+  {{ forms.render_field(form.photo) }}
 
   <div class="card mb-4">
     <div class="card-header">

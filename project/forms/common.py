@@ -1,8 +1,7 @@
 from flask import url_for
 from flask_babel import gettext, lazy_gettext
-from flask_wtf import FlaskForm
 from markupsafe import Markup
-from wtforms import HiddenField, StringField
+from wtforms import StringField
 from wtforms.validators import Length, Optional
 
 from project.imageutils import (
@@ -13,19 +12,26 @@ from project.imageutils import (
     resize_image_to_max,
     validate_image,
 )
+from project.modular.base_form import BaseForm
 
 
-class BaseImageForm(FlaskForm):
+class Base64ImageForm(BaseForm):
+    image_base64 = StringField(
+        lazy_gettext("Image"),
+        render_kw={
+            "data-role": "cropper-image",
+            "data-min-width": 320,
+            "data-min-height": 320,
+        },
+    )
     copyright_text = StringField(
-        lazy_gettext("Copyright text"), validators=[Optional(), Length(max=255)]
+        lazy_gettext("Copyright text"),
+        validators=[Optional(), Length(max=255)],
+        render_kw={"is_required": True},
     )
 
-
-class Base64ImageForm(BaseImageForm):
-    image_base64 = HiddenField(lazy_gettext("Image"))
-
     def process(self, formdata=None, obj=None, data=None, **kwargs):
-        super(BaseImageForm, self).process(formdata, obj, data, **kwargs)
+        super().process(formdata, obj, data, **kwargs)
 
         if self.image_base64.data is None and obj and obj.data:
             self.image_base64.data = get_data_uri_from_bytes(
@@ -59,7 +65,7 @@ class Base64ImageForm(BaseImageForm):
         return result
 
     def populate_obj(self, obj):
-        super(BaseImageForm, self).populate_obj(obj)
+        super().populate_obj(obj)
 
         if self.image_base64.image_data and self.image_base64.encoding_format:
             obj.data = self.image_base64.image_data

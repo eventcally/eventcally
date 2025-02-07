@@ -190,4 +190,4 @@ class BoolProp(BaseProp):
 class CountProp(BaseProp):
     def get_display_data(self, object):
         data = super().get_display_data(object)
-        return len(data) if data else None
+        return len(data) if hasattr(data, "__len__") else None

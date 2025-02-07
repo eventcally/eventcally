@@ -5,15 +5,46 @@
     {{ form.hidden_tag() }}
 
     {% for field in form.get_input_fields() %}
-    {% if field.render_kw %}
-    {{ render_field_with_errors(field, **field.render_kw) }}
-    {% else %}
-    {{ render_field_with_errors(field) }}
-    {% endif %}
+    {{ render_field(field) }}
     {% endfor %}
 
     {% for field in form.get_button_fields() %}
     {{ render_field(field) }}
     {% endfor %}
 </form>
+{% endmacro %}
+
+{% macro render_field(field) %}
+{% if 'FormField' in field.__class__.__name__ %}
+{{ render_form_field(field) }}
+
+{% elif field.render_kw %}
+{{ render_field_with_errors(field, **field.render_kw) }}
+
+{% else %}
+{{ render_field_with_errors(field) }}
+{% endif %}
+{% endmacro %}
+
+{% macro render_form_field(form_field) %}
+<div class="card mb-4" data-element="subform">
+    <div class="card-header">
+        {{ form_field.label(class="mb-0") }}
+    </div>
+    <div class="card-body">
+        {% if form_field.description %}
+        <div class="form-text mt-0 mb-2 text-muted w-100">
+            {{ form_field.description }}
+        </div>
+        {% endif %}
+
+        <div id="{{ form_field.id }}">
+            {% set form = form_field.form %}
+            {{ form.hidden_tag() }}
+            {% for subfield in form.get_input_fields() %}
+            {{ render_field(subfield) }}
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endmacro %}
