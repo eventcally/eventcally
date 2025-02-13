@@ -1,30 +1,22 @@
 {% extends "generic/update.html" %}
-{% from "_macros.html" import render_event_place_form_script, render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_field_with_errors, render_field %}
 {% import "macros/forms.html.j2" as forms %}
 
 {% block header %}
 {{ super() }}
 {{ render_google_place_autocomplete_header() }}
-{{ render_event_place_form_script(current_admin_unit, object) }}
 {% endblock %}
 
 {% block form %}
 
-<form id="main-form" action="" method="POST" enctype="multipart/form-data">
+<form id="main-form" action="" method="POST" data-role="validation-form">
   {{ form.hidden_tag() }}
 
   <div class="my-5">
     {{ render_google_place_autocomplete_field() }}
   </div>
 
-  <div class="card mb-4">
-    <div class="card-header">
-      {{ _('Place') }}
-    </div>
-    <div class="card-body">
-      {{ render_field_with_errors(form.name, role="presentation", autocomplete="off") }}
-    </div>
-  </div>
+  {{ forms.render_field(form.name) }}
 
   <div class="card mb-4">
     <div class="card-header">

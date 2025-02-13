@@ -118,8 +118,13 @@ class UtilActions(object):
         form = Form(soup.find("form"))
         return form.fill(values)
 
-    def post_form_data(self, url, data: dict):
-        return self._client.post(url, data=data, headers=self.get_headers())
+    def post_form_data(self, url, data: dict, **kwargs):
+        headers = self.get_headers()
+
+        if "headers" in kwargs:
+            headers.update(kwargs["headers"])
+
+        return self._client.post(url, data=data, headers=headers)
 
     def post_form(self, url, response, values: dict):
         data = self.create_form_data(response, values)
@@ -508,3 +513,18 @@ class UtilActions(object):
     def mock_image_request_with_file(self, url: str, path: pathlib.Path, filename: str):
         content = (path / filename).read_bytes()
         self.mock_get_request_with_content(url, content)
+
+    def ajax_validation(self, url: str, field_name: str, field_value: str, expected):
+        validation_url = f"{url}?field_name={field_name}"
+        validation_response = self.post_form_data(
+            validation_url,
+            {
+                field_name: field_value,
+            },
+            headers={"X-Backend-For-Frontend": "ajax_validation"},
+        )
+
+        if expected is True:
+            assert validation_response.json is True
+        else:
+            assert isinstance(validation_response.json, str)

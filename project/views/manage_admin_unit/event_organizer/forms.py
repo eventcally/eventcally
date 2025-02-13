@@ -1,11 +1,16 @@
-from flask_babel import lazy_gettext
+from flask import request
+from flask_babel import gettext, lazy_gettext
+from sqlalchemy import func
 from wtforms import DecimalField, FormField, StringField, SubmitField
 from wtforms.fields import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
 from project.forms.common import Base64ImageForm
 from project.models import Image, Location
+from project.models.event_organizer import EventOrganizer
 from project.modular.base_form import BaseForm
+from project.modular.widgets import AjaxValidationWidget
+from project.views.utils import current_admin_unit
 
 
 class EventOrganizerLocationForm(BaseForm):
@@ -27,7 +32,10 @@ class EventOrganizerLocationForm(BaseForm):
 
 class BaseEventOrganizerForm(BaseForm):
     name = StringField(
-        lazy_gettext("Name"), validators=[DataRequired(), Length(max=255)]
+        lazy_gettext("Name"),
+        validators=[DataRequired(), Length(max=255)],
+        widget=AjaxValidationWidget(),
+        render_kw={"role": "presentation", "autocomplete": "off"},
     )
     url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
     email = EmailField(lazy_gettext("Email"), validators=[Optional(), Length(max=255)])
@@ -43,6 +51,22 @@ class BaseEventOrganizerForm(BaseForm):
             elif name == "logo" and not obj.logo:
                 obj.logo = Image()
             field.populate_obj(obj, name)
+
+    def ajax_validate_name(self, object, field, **kwargs):
+        name = request.form["name"]
+        admin_unit_id = current_admin_unit.id
+        event_organizer_id = object.id if object else -1
+        event_organizer = (
+            EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit_id)
+            .filter(EventOrganizer.id != event_organizer_id)
+            .filter(func.lower(EventOrganizer.name) == name.lower())
+            .first()
+        )
+
+        if event_organizer:
+            return gettext("An organizer already exists with this name.")
+
+        return True
 
 
 class CreateEventOrganizerForm(BaseEventOrganizerForm):
