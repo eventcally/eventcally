@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, request
+from flask import flash, jsonify, redirect, render_template, request
 from flask.views import View
 from flask_babel import lazy_gettext
 from sqlalchemy.exc import SQLAlchemyError
@@ -43,7 +43,7 @@ class BaseView(View):
     def check_access(self, **kwargs):
         return self.handler.check_access(**kwargs)
 
-    def handle_backend_for_frontend(self, **kwargs):
+    def handle_backend_for_frontend(self, object=None, form=None, **kwargs):
         return None
 
     def render_template(self, **kwargs):
@@ -157,19 +157,31 @@ class BaseFormView(BaseObjectView):
     def complete_object(self, object, form):
         self.handler.complete_object(object, form)
 
-    def handle_backend_for_frontend(self, **kwargs):
-        response = super().handle_backend_for_frontend(**kwargs)
+    def handle_backend_for_frontend(self, object=None, form=None, **kwargs):
+        response = super().handle_backend_for_frontend(object, form, **kwargs)
 
         if response:  # pragma: no cover
             return response
 
-        if request.headers.get("X-Backend-For-Frontend") != "ajax_lookup":
-            return None
+        if request.headers.get("X-Backend-For-Frontend") == "ajax_lookup":
+            field_name = request.args.get("field_name")
+            field = getattr(form, field_name)
+            return self.handle_ajax_lookup(object, form, field, **kwargs)
 
-        form = self.create_form()
-        field_name = request.args.get("field_name")
-        field = getattr(form, field_name)
+        if request.headers.get("X-Backend-For-Frontend") == "ajax_validation":
+            field_name = request.args.get("field_name")
+            field = getattr(form, field_name)
+            return self.handle_ajax_validation(object, form, field, **kwargs)
+
+        return None
+
+    def handle_ajax_lookup(self, object, form, field, **kwargs):
         return field.loader.get_ajax_pagination(request.args.get("term"))
+
+    def handle_ajax_validation(self, object, form, field, **kwargs):
+        if form:
+            return form.handle_ajax_validation(object, field, **kwargs)
+        return jsonify(True)  # pragma: no cover
 
     def after_commit(self, object, form):
         pass
@@ -231,14 +243,13 @@ class BaseCreateView(BaseFormView):
         if response:  # pragma: no cover
             return response
 
-        response = self.handle_backend_for_frontend(**kwargs)
+        form = self.create_form()
+        object = None
+
+        response = self.handle_backend_for_frontend(object, form, **kwargs)
 
         if response:
             return response
-
-        form = self.create_form()
-
-        object = None
 
         if form.validate_on_submit():
             object = self.create_object()
@@ -295,12 +306,12 @@ class BaseUpdateView(BaseFormView):
         if response:
             return response
 
-        response = self.handle_backend_for_frontend(**kwargs)
+        form = self.create_form(obj=object)
+
+        response = self.handle_backend_for_frontend(object, form, **kwargs)
 
         if response:  # pragma: no cover
             return response
-
-        form = self.create_form(obj=object)
 
         if form.validate_on_submit():
             form.populate_obj(object)
@@ -359,12 +370,12 @@ class BaseDeleteView(BaseFormView):
         if response:  # pragma: no cover
             return response
 
-        response = self.handle_backend_for_frontend(**kwargs)
+        form = self.create_form()
+
+        response = self.handle_backend_for_frontend(object, form, **kwargs)
 
         if response:  # pragma: no cover
             return response
-
-        form = self.create_form()
 
         if form.validate_on_submit():
             if self.can_object_be_deleted(form, object):

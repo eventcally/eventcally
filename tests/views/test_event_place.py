@@ -1,12 +1,20 @@
 import pytest
 
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_create(client, app, utils, seeder, mocker, db_error):
+def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
+    seeder.upsert_default_event_place(admin_unit_id)
 
     url = utils.get_url("manage_admin_unit.event_place_create", id=admin_unit_id)
     response = utils.get_ok(url)
+
+    # Validation
+    utils.ajax_validation(url, "name", "Meine Crew 2", True)
+    utils.ajax_validation(url, "name", "Meine Crew", False)
 
     if db_error:
         utils.mock_db_commit(mocker)

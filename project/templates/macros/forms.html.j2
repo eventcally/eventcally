@@ -1,7 +1,7 @@
 {% from "_macros.html" import render_field_with_errors, render_field %}
 
 {% macro render_form(form) %}
-<form id="main-form" action="" method="post">
+<form id="main-form" data-role="validation-form" action="" method="post">
     {{ form.hidden_tag() }}
 
     {% for field in form.get_input_fields() %}

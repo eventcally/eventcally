@@ -221,10 +221,31 @@ function processCropperImage($el) {
   }
 }
 
+function processFormValidation($form) {
+  $form.validate({rules: {}});
+
+  $form.find("input[data-role=ajax-validation]").each(function () {
+    var $input = $(this);
+    $input.rules("add", {
+      remote: {
+        url: $input.attr("data-url"),
+        headers: { "X-Backend-For-Frontend": "ajax_validation" },
+        type: "post",
+        async: false,
+      }
+    });
+  });
+}
+
 $(function () {
   $("select[data-role=select2-ajax]").each(function () {
     var $el = $(this);
     processSelect2Ajax($el);
+  });
+
+  $("form[data-role=validation-form]").each(function () {
+    var $el = $(this);
+    processFormValidation($el);
   });
 
   $("input[data-role=cropper-image]").each(function () {

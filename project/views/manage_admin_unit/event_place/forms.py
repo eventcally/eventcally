@@ -1,11 +1,16 @@
-from flask_babel import lazy_gettext
+from flask import request
+from flask_babel import gettext, lazy_gettext
+from sqlalchemy import func
 from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaField
 from wtforms.fields import URLField
 from wtforms.validators import DataRequired, Length, Optional
 
 from project.forms.common import Base64ImageForm
 from project.models import Image, Location
+from project.models.event_place import EventPlace
 from project.modular.base_form import BaseForm
+from project.modular.widgets import AjaxValidationWidget
+from project.views.utils import current_admin_unit
 
 
 class EventPlaceLocationForm(BaseForm):
@@ -27,7 +32,10 @@ class EventPlaceLocationForm(BaseForm):
 
 class BaseEventPlaceForm(BaseForm):
     name = StringField(
-        lazy_gettext("Name"), validators=[DataRequired(), Length(max=255)]
+        lazy_gettext("Name"),
+        validators=[DataRequired(), Length(max=255)],
+        widget=AjaxValidationWidget(),
+        render_kw={"role": "presentation", "autocomplete": "off"},
     )
     url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
     photo = FormField(Base64ImageForm, lazy_gettext("Photo"), default=lambda: Image())
@@ -41,6 +49,22 @@ class BaseEventPlaceForm(BaseForm):
             elif name == "photo" and not obj.photo:
                 obj.photo = Image()
             field.populate_obj(obj, name)
+
+    def ajax_validate_name(self, object, field, **kwargs):
+        name = request.form["name"]
+        admin_unit_id = current_admin_unit.id
+        event_place_id = object.id if object else -1
+        event_place = (
+            EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
+            .filter(EventPlace.id != event_place_id)
+            .filter(func.lower(EventPlace.name) == name.lower())
+            .first()
+        )
+
+        if event_place:
+            return gettext("A place already exists with this name.")
+
+        return True
 
 
 class CreateEventPlaceForm(BaseEventPlaceForm):

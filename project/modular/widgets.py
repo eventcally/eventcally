@@ -1,7 +1,14 @@
 from flask import json, request, url_for
 from flask_babel import gettext
 from markupsafe import Markup
-from wtforms.widgets import html_params
+from wtforms.widgets import TextInput, html_params
+
+
+class AjaxValidationWidget(TextInput):
+    def __call__(self, field, **kwargs):
+        kwargs.setdefault("data-role", "ajax-validation")
+        kwargs.setdefault("data-url", f"{request.base_url}?field_name={field.name}")
+        return super().__call__(field, **kwargs)
 
 
 class AjaxSelect2Widget(object):
