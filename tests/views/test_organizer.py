@@ -16,6 +16,10 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     utils.ajax_validation(url, "name", "Meine Crew 2", True)
     utils.ajax_validation(url, "name", "Meine Crew", False)
 
+    # Google Place Autocomplete
+    utils.ajax_google_places(url, "location-google_place", "test")
+    utils.ajax_google_place(url, "location-google_place", "123")
+
     if db_error:
         utils.mock_db_commit(mocker)
 

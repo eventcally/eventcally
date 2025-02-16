@@ -1,7 +1,6 @@
-from flask import jsonify
 from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import HiddenField, SubmitField
+from wtforms import FormField, HiddenField, SubmitField
 
 
 class BaseForm(FlaskForm):
@@ -22,15 +21,29 @@ class BaseForm(FlaskForm):
             )
         )
 
+    def get_field_by_name(self, name: str):
+        for field in self.get_input_fields():
+            if field.name == name:
+                return field
+
+            if isinstance(field, FormField) and isinstance(
+                field.form, BaseForm
+            ):  # pragma: no cover
+                form_result = field.form.get_field_by_name(name)
+                if form_result:
+                    return form_result
+
+        return None  # pragma: no cover
+
     def move_field_to_top(self, key: str):
         self._fields.move_to_end(key, False)
 
-    def handle_ajax_validation(self, object, field, **kwargs):
+    def handle_bff_ajax_validation(self, object, field, **kwargs):
         method = getattr(self, f"ajax_validate_{field.name}", None)
         if callable(method):
-            return jsonify(method(object, field, **kwargs))
+            return method(object, field, **kwargs)
 
-        return jsonify(True)  # pragma: no cover
+        return True  # pragma: no cover
 
 
 class BaseCreateForm(BaseForm):

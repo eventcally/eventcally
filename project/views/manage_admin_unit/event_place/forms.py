@@ -9,6 +9,7 @@ from project.forms.common import Base64ImageForm
 from project.models import Image, Location
 from project.models.event_place import EventPlace
 from project.modular.base_form import BaseForm
+from project.modular.fields import GooglePlaceField
 from project.modular.widgets import AjaxValidationWidget
 from project.views.utils import current_admin_unit
 
@@ -31,16 +32,17 @@ class EventPlaceLocationForm(BaseForm):
 
 
 class BaseEventPlaceForm(BaseForm):
+    google_place = GooglePlaceField()
     name = StringField(
         lazy_gettext("Name"),
         validators=[DataRequired(), Length(max=255)],
         widget=AjaxValidationWidget(),
         render_kw={"role": "presentation", "autocomplete": "off"},
     )
-    url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
+    location = FormField(EventPlaceLocationForm, lazy_gettext("Location"))
     photo = FormField(Base64ImageForm, lazy_gettext("Photo"), default=lambda: Image())
+    url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
     description = TextAreaField(lazy_gettext("Description"), validators=[Optional()])
-    location = FormField(EventPlaceLocationForm)
 
     def populate_obj(self, obj):
         for name, field in self._fields.items():

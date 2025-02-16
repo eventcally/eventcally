@@ -163,25 +163,29 @@ class BaseFormView(BaseObjectView):
         if response:  # pragma: no cover
             return response
 
-        if request.headers.get("X-Backend-For-Frontend") == "ajax_lookup":
-            field_name = request.args.get("field_name")
-            field = getattr(form, field_name)
-            return self.handle_ajax_lookup(object, form, field, **kwargs)
-
-        if request.headers.get("X-Backend-For-Frontend") == "ajax_validation":
-            field_name = request.args.get("field_name")
-            field = getattr(form, field_name)
-            return self.handle_ajax_validation(object, form, field, **kwargs)
+        bff_header = request.headers.get("X-Backend-For-Frontend")
+        if bff_header:
+            method = getattr(self, f"handle_bff_{bff_header}", None)
+            if callable(method):
+                field_name = request.args.get("field_name")
+                field = form.get_field_by_name(field_name)
+                return jsonify(method(object, form, field, **kwargs))
 
         return None
 
-    def handle_ajax_lookup(self, object, form, field, **kwargs):
+    def handle_bff_ajax_lookup(self, object, form, field, **kwargs):
         return field.loader.get_ajax_pagination(request.args.get("term"))
 
-    def handle_ajax_validation(self, object, form, field, **kwargs):
+    def handle_bff_ajax_validation(self, object, form, field, **kwargs):
         if form:
-            return form.handle_ajax_validation(object, field, **kwargs)
-        return jsonify(True)  # pragma: no cover
+            return form.handle_bff_ajax_validation(object, field, **kwargs)
+        return True  # pragma: no cover
+
+    def handle_bff_google_places(self, object, form, field, **kwargs):
+        return field.get_bff_google_places(request.args.get("keyword"))
+
+    def handle_bff_google_place(self, object, form, field, **kwargs):
+        return field.get_bff_google_place(request.args.get("gmaps_id"))
 
     def after_commit(self, object, form):
         pass

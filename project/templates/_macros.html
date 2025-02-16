@@ -14,7 +14,7 @@
       {% set is_required = kwargs['is_required'] if 'is_required' in kwargs else field.flags.required %}
       {% set label_text = field.label.text + ' *' if is_required else field.label.text %}
       <div class="form-group {% if field.errors %} has-error{% endif -%} {% if 'formrow' in kwargs %} row{% endif -%}">
-        {% if 'label_hidden' in kwargs or ('ri' in kwargs and kwargs['ri'] == 'checkbox') %}
+        {% if 'label_hidden' in kwargs or (field.render_kw and field.render_kw.get('label_hidden')) or ('ri' in kwargs and kwargs['ri'] == 'checkbox') %}
         {% else %}
           {% set label_class = "col-sm-2 col-form-label" if 'formrow' in kwargs else "mb-0" %}
           {{ field.label(text=label_text, class=label_class) }}

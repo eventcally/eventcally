@@ -1,4 +1,4 @@
-{% from "_macros.html" import render_field_with_errors, render_field %}
+{% import "_macros.html" as _macros %}
 
 {% macro render_form(form) %}
 <form id="main-form" data-role="validation-form" action="" method="post">
@@ -9,7 +9,7 @@
     {% endfor %}
 
     {% for field in form.get_button_fields() %}
-    {{ render_field(field) }}
+    {{ _macros.render_field(field) }}
     {% endfor %}
 </form>
 {% endmacro %}
@@ -19,10 +19,10 @@
 {{ render_form_field(field) }}
 
 {% elif field.render_kw %}
-{{ render_field_with_errors(field, **field.render_kw) }}
+{{ _macros.render_field_with_errors(field, **field.render_kw) }}
 
 {% else %}
-{{ render_field_with_errors(field) }}
+{{ _macros.render_field_with_errors(field) }}
 {% endif %}
 {% endmacro %}
 

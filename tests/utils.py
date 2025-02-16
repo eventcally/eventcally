@@ -515,9 +515,9 @@ class UtilActions(object):
         self.mock_get_request_with_content(url, content)
 
     def ajax_validation(self, url: str, field_name: str, field_value: str, expected):
-        validation_url = f"{url}?field_name={field_name}"
-        validation_response = self.post_form_data(
-            validation_url,
+        ajax_url = f"{url}?field_name={field_name}"
+        ajax_response = self.post_form_data(
+            ajax_url,
             {
                 field_name: field_value,
             },
@@ -525,6 +525,30 @@ class UtilActions(object):
         )
 
         if expected is True:
-            assert validation_response.json is True
+            assert ajax_response.json is True
         else:
-            assert isinstance(validation_response.json, str)
+            assert isinstance(ajax_response.json, str)
+
+    def ajax_google_places(self, url: str, field_name: str, keyword: str):
+        ajax_url = f"{url}?field_name={field_name}"
+        ajax_response = self.post_form_data(
+            ajax_url,
+            {
+                "keyword": keyword,
+            },
+            headers={"X-Backend-For-Frontend": "google_places"},
+        )
+        self.assert_response_ok(ajax_response)
+        return ajax_response
+
+    def ajax_google_place(self, url: str, field_name: str, gmaps_id: str):
+        ajax_url = f"{url}?field_name={field_name}"
+        ajax_response = self.post_form_data(
+            ajax_url,
+            {
+                "gmaps_id": gmaps_id,
+            },
+            headers={"X-Backend-For-Frontend": "google_place"},
+        )
+        self.assert_response_ok(ajax_response)
+        return ajax_response

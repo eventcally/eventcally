@@ -9,11 +9,13 @@ from project.forms.common import Base64ImageForm
 from project.models import Image, Location
 from project.models.event_organizer import EventOrganizer
 from project.modular.base_form import BaseForm
+from project.modular.fields import GooglePlaceField
 from project.modular.widgets import AjaxValidationWidget
 from project.views.utils import current_admin_unit
 
 
 class EventOrganizerLocationForm(BaseForm):
+    google_place = GooglePlaceField(location_only=True)
     street = StringField(
         lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
     )
@@ -37,12 +39,12 @@ class BaseEventOrganizerForm(BaseForm):
         widget=AjaxValidationWidget(),
         render_kw={"role": "presentation", "autocomplete": "off"},
     )
+    location = FormField(EventOrganizerLocationForm, lazy_gettext("Location"))
+    logo = FormField(Base64ImageForm, lazy_gettext("Logo"), default=lambda: Image())
     url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
     email = EmailField(lazy_gettext("Email"), validators=[Optional(), Length(max=255)])
     phone = TelField(lazy_gettext("Phone"), validators=[Optional(), Length(max=255)])
     fax = TelField(lazy_gettext("Fax"), validators=[Optional()])
-    logo = FormField(Base64ImageForm, lazy_gettext("Logo"), default=lambda: Image())
-    location = FormField(EventOrganizerLocationForm)
 
     def populate_obj(self, obj):
         for name, field in self._fields.items():
