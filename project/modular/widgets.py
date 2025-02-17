@@ -4,6 +4,23 @@ from markupsafe import Markup
 from wtforms.widgets import TextInput, html_params
 
 
+class GooglePlaceWidget(object):
+    def __call__(self, field, **kwargs):
+        kwargs.setdefault("id", field.id)
+        kwargs.setdefault("data-role", "google-place")
+        kwargs.setdefault("data-url", f"{request.base_url}?field_name={field.name}")
+        kwargs.setdefault("data-placeholder", gettext("Search location on Google"))
+        kwargs.setdefault("class", "form-control")
+
+        if field.location_only:
+            kwargs.setdefault("data-location-only", "1")
+
+        return Markup(
+            '<div class="input-group-prepend"><span class="input-group-text"><span><i class="fab fa-google"></i></span></span></div><select %s></select>'
+            % html_params(**kwargs)
+        )
+
+
 class AjaxValidationWidget(TextInput):
     def __call__(self, field, **kwargs):
         kwargs.setdefault("data-role", "ajax-validation")

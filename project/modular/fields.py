@@ -1,6 +1,34 @@
 from wtforms import SelectFieldBase, ValidationError
 
-from project.modular.widgets import AjaxSelect2Widget
+from project.maputils import find_gmaps_places, get_gmaps_place
+from project.modular.widgets import AjaxSelect2Widget, GooglePlaceWidget
+
+
+class GooglePlaceField(SelectFieldBase):
+    widget = GooglePlaceWidget()
+
+    def __init__(self, label=None, validators=None, location_only=False, **kwargs):
+        render_kw = kwargs.setdefault("render_kw", dict())
+        render_kw.setdefault("label_hidden", True)
+        super().__init__(label, validators, **kwargs)
+
+        self.location_only = location_only
+
+    def get_bff_google_places(self, keyword):
+        google_places = find_gmaps_places(keyword) if keyword else list()
+        google_places_result = [
+            {
+                "id": p["place_id"],
+                "gmaps_id": p["place_id"],
+                "text": p["description"],
+                "main_text": p["structured_formatting"]["main_text"],
+            }
+            for p in google_places
+        ]
+        return {"results": google_places_result}
+
+    def get_bff_google_place(self, gmaps_id):
+        return get_gmaps_place(gmaps_id)
 
 
 class AjaxSelectField(SelectFieldBase):

@@ -1,6 +1,3 @@
-from flask import Response, json
-
-
 def get_primary_key(model):
     """
     Return primary key name from a model. If the primary key consists of multiple columns,
@@ -51,5 +48,4 @@ class AjaxModelLoader:
             "items": [self.format(m) for m in pagination.items],
             "has_next": pagination.has_next,
         }
-
-        return Response(json.dumps(result), mimetype="application/json")
+        return result
