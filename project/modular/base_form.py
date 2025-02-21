@@ -2,6 +2,8 @@ from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import FormField, HiddenField, SubmitField
 
+from project.modular.fields import VirtualFormField
+
 
 class BaseForm(FlaskForm):
     def get_input_fields(self):
@@ -39,11 +41,23 @@ class BaseForm(FlaskForm):
         self._fields.move_to_end(key, False)
 
     def handle_bff_ajax_validation(self, object, field, **kwargs):
+        field.validate(self)
+
+        if field.errors:
+            return ". ".join([str(e) for e in field.errors])
+
         method = getattr(self, f"ajax_validate_{field.name}", None)
         if callable(method):
             return method(object, field, **kwargs)
 
         return True  # pragma: no cover
+
+    def process(self, formdata=None, obj=None, data=None, extra_filters=None, **kwargs):
+        for name, field in self._fields.items():
+            if isinstance(field, VirtualFormField):
+                kwargs.setdefault(name, obj)
+
+        super().process(formdata, obj, data, extra_filters, **kwargs)
 
 
 class BaseCreateForm(BaseForm):

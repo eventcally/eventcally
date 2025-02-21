@@ -36,10 +36,10 @@ describe("Admin Unit", () => {
   it("updates", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
-      cy.visit("/admin_unit/" + adminUnitId + "/update");
+      cy.visit("/manage/admin_unit/" + adminUnitId + "/update");
       cy.screenshot("update");
       cy.get("#submit").click();
-      cy.url().should("include", "/admin_unit/" + adminUnitId + "/update");
+      cy.url().should("include", "/manage/admin_unit/" + adminUnitId + "/update");
       cy.get("div.alert").should(
         "contain",
         "Organisation erfolgreich aktualisiert"
@@ -51,7 +51,6 @@ describe("Admin Unit", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.visit("/manage/admin_unit/" + adminUnitId + "/widgets");
-      cy.get("#toggle-settings-btn").click();
       cy.screenshot("widgets");
       cy.get("#submit").click();
       cy.url().should(

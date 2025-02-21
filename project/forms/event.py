@@ -17,7 +17,12 @@ from wtforms import (
 from wtforms.fields import EmailField, FieldList, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
-from project.forms.common import Base64ImageForm, distance_choices, event_rating_choices
+from project.forms.common import (
+    Base64ImageForm,
+    LocationForm,
+    distance_choices,
+    event_rating_choices,
+)
 from project.forms.widgets import (
     CustomDateField,
     CustomDateTimeField,
@@ -35,7 +40,6 @@ from project.models import (
     Location,
     PublicStatus,
 )
-from project.views.manage_admin_unit.event_place.forms import EventPlaceLocationForm
 
 
 class EventDateDefinitionFormMixin:
@@ -90,7 +94,7 @@ class EventPlaceForm(FlaskForm):
         lazy_gettext("Name"),
         validators=[Optional()],
     )
-    location = FormField(EventPlaceLocationForm, default=lambda: Location())
+    location = FormField(LocationForm, default=lambda: Location())
 
     def populate_obj(self, obj):
         for name, field in self._fields.items():

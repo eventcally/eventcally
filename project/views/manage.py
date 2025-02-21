@@ -22,10 +22,7 @@ from project.access import (
     has_access,
 )
 from project.celery_tasks import dump_admin_unit_task
-from project.forms.admin_unit import (
-    AdminUnitDeleteMembershipForm,
-    UpdateAdminUnitWidgetForm,
-)
+from project.forms.admin_unit import AdminUnitDeleteMembershipForm
 from project.forms.event import FindEventForm
 from project.models import EventOrganizer, EventPlace
 from project.services.admin_unit import (
@@ -310,51 +307,3 @@ def manage_admin_unit_export_dump_files(id, path):
     access_or_401(admin_unit, "admin_unit:update")
 
     return send_from_directory(dump_org_path, path)
-
-
-@app.route("/manage/admin_unit/<int:id>/widgets", methods=("GET", "POST"))
-@auth_required()
-def manage_admin_unit_widgets(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    set_current_admin_unit(admin_unit)
-
-    default_background_color = "#ffffff"
-    default_primary_color = "#007bff"
-
-    form = UpdateAdminUnitWidgetForm(obj=admin_unit)
-
-    if not form.widget_background_color.data:
-        form.widget_background_color.data = default_background_color
-
-    if not form.widget_primary_color.data:
-        form.widget_primary_color.data = default_primary_color
-
-    if not form.widget_link_color.data:
-        form.widget_link_color.data = default_primary_color
-
-    if form.validate_on_submit():
-        if not has_access(admin_unit, "admin_unit:update"):
-            return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))
-
-        form.populate_obj(admin_unit)
-
-        if form.widget_background_color.data == default_background_color:
-            admin_unit.widget_background_color = None
-
-        if form.widget_primary_color.data == default_primary_color:
-            admin_unit.widget_primary_color = None
-
-        if form.widget_link_color.data == default_primary_color:
-            admin_unit.widget_link_color = None
-
-        try:
-            db.session.commit()
-            flash(gettext("Settings successfully updated"), "success")
-            return redirect(url_for("manage_admin_unit_widgets", id=admin_unit.id))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
-    else:
-        flash_errors(form)
-
-    return render_template("manage/widgets.html", form=form, admin_unit=admin_unit)

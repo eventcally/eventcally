@@ -283,11 +283,11 @@
                     {% endif %}
 
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ url_for('admin_unit_update', id=current_admin_unit.id) }}">{{ _('Settings') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.update', id=current_admin_unit.id) }}">{{ _('Settings') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_export', id=current_admin_unit.id) }}">{{ _('Export') }}</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_custom_widgets', id=current_admin_unit.id) }}">{{ _('Custom widgets') }}</a>
-                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit_widgets', id=current_admin_unit.id) }}">{{ _('Widgets') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.widgets', id=current_admin_unit.id) }}">{{ _('Widgets') }}</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('organizations', path=current_admin_unit.id) }}">{{ _('Profile') }}</a>
                   </div>

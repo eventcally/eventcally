@@ -110,9 +110,7 @@ class BaseObjectView(BaseView):
             self.object_context_name = f"{self.model.__model_name__}"
 
     def get_object_from_kwargs(self, **kwargs):
-        return self.model.query.get_or_404(
-            kwargs.get(self.handler.get_id_query_arg_name())
-        )
+        return self.handler.get_object_from_kwargs(**kwargs)
 
     def check_object_access(self, object):
         return self.handler.check_object_access(object)
@@ -275,7 +273,40 @@ class BaseCreateView(BaseFormView):
         return self.render_template(form=form, object=object)
 
 
-class BaseUpdateView(BaseFormView):
+class BaseObjectFormView(BaseFormView):
+    def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
+        object = self.get_object_from_kwargs(**kwargs)
+        response = self.check_object_access(object)
+
+        if response:  # pragma: no cover
+            return response
+
+        form = self.create_form(obj=object)
+
+        response = self.handle_backend_for_frontend(object, form, **kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
+        if form.validate_on_submit():
+            response = self.dispatch_validated_form(form, object, **kwargs)
+            if response:
+                return response
+        else:
+            flash_errors(form)
+
+        return self.render_template(form=form, object=object)
+
+    def dispatch_validated_form(self, form, object, **kwargs):  # pragma: no cover
+        raise NotImplementedError()
+
+
+class BaseUpdateView(BaseObjectFormView):
     template_file_name = "update.html"
 
     def get_redirect_url(self, **kwargs):
@@ -298,44 +329,21 @@ class BaseUpdateView(BaseFormView):
             model_display_name=self.handler.get_model_display_name(),
         )
 
-    def dispatch_request(self, **kwargs):
-        response = self.check_access(**kwargs)
+    def dispatch_validated_form(self, form, object, **kwargs):
+        form.populate_obj(object)
 
-        if response:  # pragma: no cover
-            return response
-
-        object = self.get_object_from_kwargs(**kwargs)
-        response = self.check_object_access(object)
-
-        if response:
-            return response
-
-        form = self.create_form(obj=object)
-
-        response = self.handle_backend_for_frontend(object, form, **kwargs)
-
-        if response:  # pragma: no cover
-            return response
-
-        if form.validate_on_submit():
-            form.populate_obj(object)
-
-            try:
-                self.complete_object(object, form)
-                db.session.commit()
-                self.after_commit(object, form)
-                flash(self.get_success_text(object, form), "success")
-                return redirect(self.get_redirect_url(object=object))
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                flash(handleSqlError(e), "danger")
-        else:
-            flash_errors(form)
-
-        return self.render_template(form=form, object=object)
+        try:
+            self.complete_object(object, form)
+            db.session.commit()
+            self.after_commit(object, form)
+            flash(self.get_success_text(object, form), "success")
+            return redirect(self.get_redirect_url(object=object))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), "danger")
 
 
-class BaseDeleteView(BaseFormView):
+class BaseDeleteView(BaseObjectFormView):
     template_file_name = "delete.html"
 
     def can_object_be_deleted(self, form, object):
@@ -362,37 +370,24 @@ class BaseDeleteView(BaseFormView):
             model_display_name=self.handler.get_model_display_name(),
         )
 
-    def dispatch_request(self, **kwargs):
-        response = self.check_access(**kwargs)
+    def create_form(self, **kwargs):
+        del kwargs["obj"]
+        return self.form_class(**kwargs)
 
-        if response:  # pragma: no cover
-            return response
+    def delete_object_from_db(self, object):
+        db.session.delete(object)
+        db.session.commit()
 
-        object = self.get_object_from_kwargs(**kwargs)
-        response = self.check_object_access(object)
+    def flask_success_text(self, form, object):
+        flash(self.get_success_text(object, form), "success")
 
-        if response:  # pragma: no cover
-            return response
-
-        form = self.create_form()
-
-        response = self.handle_backend_for_frontend(object, form, **kwargs)
-
-        if response:  # pragma: no cover
-            return response
-
-        if form.validate_on_submit():
-            if self.can_object_be_deleted(form, object):
-                try:
-                    db.session.delete(object)
-                    db.session.commit()
-                    self.after_commit(object, form)
-                    flash(self.get_success_text(object, form), "success")
-                    return redirect(self.get_redirect_url())
-                except SQLAlchemyError as e:
-                    db.session.rollback()
-                    flash(handleSqlError(e), "danger")
-        else:
-            flash_errors(form)
-
-        return self.render_template(form=form, object=object)
+    def dispatch_validated_form(self, form, object, **kwargs):
+        if self.can_object_be_deleted(form, object):
+            try:
+                self.delete_object_from_db(object)
+                self.after_commit(object, form)
+                self.flask_success_text(form, object)
+                return redirect(self.get_redirect_url())
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(handleSqlError(e), "danger")

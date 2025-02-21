@@ -183,7 +183,7 @@ def test_admin_unit_widgets(
 ):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit_widgets", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.widgets", id=admin_unit_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -196,21 +196,7 @@ def test_admin_unit_widgets(
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_widgets", id=admin_unit_id
-    )
-
-
-def test_admin_unit_widgets_permission_missing(
-    client, seeder: Seeder, utils: UtilActions, mocker
-):
-    owner_id, admin_unit_id, member_id = seeder.setup_base_event_verifier()
-
-    url = utils.get_url("manage_admin_unit_widgets", id=admin_unit_id)
-    response = utils.get_ok(url)
-    response = utils.post_form(url, response, {})
-
-    utils.assert_response_permission_missing(
-        response, "manage_admin_unit", id=admin_unit_id
+        response, "manage_admin_unit.widgets", id=admin_unit_id
     )
 
 

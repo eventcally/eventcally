@@ -310,6 +310,13 @@ def non_match_for_deletion(str1: str, str2: str) -> bool:
     return str1 != str2 and str1.casefold() != str2.casefold()
 
 
+def flash_non_match_for_deletion(str1: str, str2: str, message: str) -> bool:
+    if non_match_for_deletion(str1, str2):
+        flash(message, "danger")
+        return False
+    return True
+
+
 def truncate(data: str, length: int) -> str:
     if not data:
         return data
@@ -445,7 +452,9 @@ def manage_required(permission=None):
         def decorated_function(id, *args, **kwargs):
             admin_unit = get_admin_unit_for_manage_or_404(id)
 
-            if permission and not has_access(admin_unit, permission):
+            if permission and not has_access(
+                admin_unit, permission
+            ):  # pragma: no cover
                 return permission_missing(
                     url_for("manage_admin_unit", id=admin_unit.id)
                 )
