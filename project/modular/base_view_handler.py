@@ -44,6 +44,9 @@ class BaseViewHandler:
     def get_model_display_name_plural(self):
         return self.model.get_display_name_plural()
 
+    def get_object_from_kwargs(self, **kwargs):
+        return self.model.query.get_or_404(kwargs.get(self.get_id_query_arg_name()))
+
     def complete_object(self, object, form):  # pragma: no cover
         pass
 

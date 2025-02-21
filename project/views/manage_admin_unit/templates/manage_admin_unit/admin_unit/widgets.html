@@ -1,29 +1,7 @@
-{% extends "layout.html" %}
-{% set active_id = "widgets" %}
-{% from "_macros.html" import render_pagination, render_event_date, render_field, render_field_with_errors, render_event_organizer %}
-{%- block title -%}
-{{ _('Widgets') }}
-{%- endblock -%}
-{% block content %}
+{% extends "generic/update.html" %}
 
-<h1 class="mb-3">{{ _('Widgets') }}</h1>
-<div class="btn-group mb-3">
-    <button type="button" id="toggle-settings-btn" class="btn btn-outline-secondary btn-sm" data-toggle="collapse" data-target="#settingsContainer" aria-expanded="false" aria-controls="settingsContainer"><i class="fa fa-cog"></i> {{ _('Settings') }}</button>
-</div>
-
-<div class="collapse pb-4" id="settingsContainer">
-    <h2 class="mt-0">{{ _('Settings') }}</h2>
-    <form action="" method="POST">
-        {{ form.hidden_tag() }}
-
-        {{ render_field_with_errors(form.widget_font) }}
-        {{ render_field_with_errors(form.widget_background_color) }}
-        {{ render_field_with_errors(form.widget_primary_color) }}
-        {{ render_field_with_errors(form.widget_link_color) }}
-
-        {{ render_field(form.submit) }}
-    </form>
-</div>
+{% block form %}
+{{ super() }}
 
 <h2>Veranstaltungen als Widget einbinden</h2>
 <p>Auf deiner Webseite kannst du per Widget ganz einfach die Veranstaltungen deiner Organisation einbinden.</p>
@@ -82,5 +60,4 @@
     <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#embedWidgetModal"><i class="fa fa-wrench"></i> Installation</button>
     <a class="btn btn-outline-info" href="{{ url_for('widget_event_dates', id=admin_unit.id) }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-external-link-alt"></i> Vorschau</a>
 </div>
-
 {% endblock %}

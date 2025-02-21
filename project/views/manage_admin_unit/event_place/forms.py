@@ -1,34 +1,17 @@
 from flask import request
 from flask_babel import gettext, lazy_gettext
 from sqlalchemy import func
-from wtforms import DecimalField, FormField, StringField, SubmitField, TextAreaField
+from wtforms import FormField, StringField, SubmitField, TextAreaField
 from wtforms.fields import URLField
 from wtforms.validators import DataRequired, Length, Optional
 
-from project.forms.common import Base64ImageForm
+from project.forms.common import Base64ImageForm, LocationForm
 from project.models import Image, Location
 from project.models.event_place import EventPlace
 from project.modular.base_form import BaseForm
 from project.modular.fields import GooglePlaceField
 from project.modular.widgets import AjaxValidationWidget
 from project.views.utils import current_admin_unit
-
-
-class EventPlaceLocationForm(BaseForm):
-    street = StringField(
-        lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
-    )
-    postalCode = StringField(
-        lazy_gettext("Postal code"), validators=[Optional(), Length(max=10)]
-    )
-    city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
-    state = StringField(lazy_gettext("State"), validators=[Optional(), Length(max=255)])
-    latitude = DecimalField(
-        lazy_gettext("Latitude"), places=16, validators=[Optional()]
-    )
-    longitude = DecimalField(
-        lazy_gettext("Longitude"), places=16, validators=[Optional()]
-    )
 
 
 class BaseEventPlaceForm(BaseForm):
@@ -39,7 +22,7 @@ class BaseEventPlaceForm(BaseForm):
         widget=AjaxValidationWidget(),
         render_kw={"role": "presentation", "autocomplete": "off"},
     )
-    location = FormField(EventPlaceLocationForm, lazy_gettext("Location"))
+    location = FormField(LocationForm, lazy_gettext("Location"))
     photo = FormField(Base64ImageForm, lazy_gettext("Photo"), default=lambda: Image())
     url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
     description = TextAreaField(lazy_gettext("Description"), validators=[Optional()])

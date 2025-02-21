@@ -191,6 +191,20 @@ $.fn.select2.defaults.set("language", "de");
       $el.select2(opts);
     }
 
+    function processSelect2Tags($el) {
+      $el.select2({
+        width: '100%',
+        theme: 'bootstrap4',
+        tags: true,
+        tokenSeparators: [',', ' '],
+        language: {
+            noResults: function () {
+                  return "";
+            }
+        }
+      });
+    }
+
     function processCropperImage($el) {
       var subForm = $el.closest("[data-element=subform]");
       var container = $el.closest("[data-element=cropper-image-container]");
@@ -375,6 +389,11 @@ $.fn.select2.defaults.set("language", "de");
       $("select[data-role=select2-ajax]").each(function () {
         var $el = $(this);
         processSelect2Ajax($el);
+      });
+
+      $("select[data-role=select2-tags]").each(function () {
+        var $el = $(this);
+        processSelect2Tags($el);
       });
 
       $("select[data-role=google-place]").each(function () {

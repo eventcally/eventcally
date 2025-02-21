@@ -46,7 +46,7 @@ var vue_app_data = { eventId: 0 };
 {% if admin_unit.deletion_requested_at %}
     <div class="alert alert-danger" role="alert">
       {{ _('The organization is scheduled for deletion.') }}
-      <a class="alert-link" href="{{ url_for('admin_unit_cancel_deletion', id=admin_unit.id) }}" role="button">{{ _('Cancel deletion') }}</a>
+      <a class="alert-link" href="{{ url_for('manage_admin_unit.cancel_deletion', id=admin_unit.id) }}" role="button">{{ _('Cancel deletion') }}</a>
     </div>
 {% endif %}
 

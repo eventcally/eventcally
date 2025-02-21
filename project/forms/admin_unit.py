@@ -10,7 +10,6 @@ from wtforms import (
 )
 from wtforms.fields import BooleanField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp
-from wtforms.widgets import ColorInput
 
 from project.forms.common import Base64ImageForm
 from project.forms.widgets import HTML5StringField
@@ -134,41 +133,6 @@ class CreateAdminUnitForm(BaseAdminUnitForm):
 
 class UpdateAdminUnitForm(BaseAdminUnitForm):
     submit = SubmitField(lazy_gettext("Update settings"))
-
-
-class UpdateAdminUnitWidgetForm(FlaskForm):
-    widget_font = StringField(
-        lazy_gettext("Font"), validators=[Optional(), Length(max=255)]
-    )
-    widget_background_color = StringField(
-        lazy_gettext("Background Color"),
-        default="#ffffff",
-        widget=ColorInput(),
-        validators=[Optional()],
-    )
-    widget_primary_color = StringField(
-        lazy_gettext("Primary Color"),
-        default="#007bff",
-        widget=ColorInput(),
-        validators=[Optional()],
-    )
-    widget_link_color = StringField(
-        lazy_gettext("Link Color"),
-        default="#007bff",
-        widget=ColorInput(),
-        validators=[Optional()],
-    )
-    submit = SubmitField(lazy_gettext("Update settings"))
-
-
-class RequestAdminUnitDeletionForm(FlaskForm):
-    submit = SubmitField(lazy_gettext("Request deletion"))
-    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
-
-
-class CancelAdminUnitDeletionForm(FlaskForm):
-    submit = SubmitField(lazy_gettext("Cancel deletion"))
-    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
 
 
 class AdminUnitDeleteMembershipForm(FlaskForm):

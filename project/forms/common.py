@@ -1,7 +1,7 @@
 from flask import url_for
 from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
-from wtforms import StringField
+from wtforms import DecimalField, StringField
 from wtforms.validators import Length, Optional
 
 from project.imageutils import (
@@ -13,6 +13,32 @@ from project.imageutils import (
     validate_image,
 )
 from project.modular.base_form import BaseForm
+from project.modular.fields import GooglePlaceField
+
+
+class LocationForm(BaseForm):
+    street = StringField(
+        lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
+    )
+    postalCode = StringField(
+        lazy_gettext("Postal code"), validators=[Optional(), Length(max=10)]
+    )
+    city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
+    state = StringField(lazy_gettext("State"), validators=[Optional(), Length(max=255)])
+    latitude = DecimalField(
+        lazy_gettext("Latitude"), places=16, validators=[Optional()]
+    )
+    longitude = DecimalField(
+        lazy_gettext("Longitude"), places=16, validators=[Optional()]
+    )
+
+
+class GooglePlaceLocationForm(LocationForm):
+    google_place = GooglePlaceField(location_only=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.move_field_to_top("google_place")
 
 
 class Base64ImageForm(BaseForm):

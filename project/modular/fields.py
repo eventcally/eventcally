@@ -1,7 +1,22 @@
-from wtforms import SelectFieldBase, ValidationError
+from wtforms import FormField, SelectFieldBase, SelectMultipleField, ValidationError
+from wtforms.utils import unset_value
 
 from project.maputils import find_gmaps_places, get_gmaps_place
 from project.modular.widgets import AjaxSelect2Widget, GooglePlaceWidget
+
+
+class VirtualFormField(FormField):
+    def __init__(
+        self, form_class, label=None, validators=None, separator="-", **kwargs
+    ):
+        kwargs.setdefault("default", dict)
+        super().__init__(form_class, label, validators, separator, **kwargs)
+
+    def process(self, formdata, data=unset_value, extra_filters=None):
+        return super().process(formdata, data, extra_filters)
+
+    def populate_obj(self, obj, name):
+        self.form.populate_obj(obj)
 
 
 class GooglePlaceField(SelectFieldBase):
@@ -31,6 +46,28 @@ class GooglePlaceField(SelectFieldBase):
         return get_gmaps_place(gmaps_id)
 
 
+class SelectMultipleTagField(SelectMultipleField):
+    def __init__(
+        self,
+        label=None,
+        validators=None,
+        coerce=str,
+        **kwargs,
+    ):
+        validate_choice = False
+        choices = []
+        render_kw = kwargs.setdefault("render_kw", dict())
+        render_kw.setdefault("data-role", "select2-tags")
+        super().__init__(label, validators, coerce, choices, validate_choice, **kwargs)
+
+    def process_data(self, value):
+        super().process_data(value)
+
+        if self.data:
+            self.data = sorted(self.data)
+            self.choices = self.data
+
+
 class AjaxSelectField(SelectFieldBase):
     """
     Ajax Model Select Field
@@ -47,7 +84,7 @@ class AjaxSelectField(SelectFieldBase):
         validators=None,
         allow_blank=False,
         blank_text="",
-        **kwargs
+        **kwargs,
     ):
         super(AjaxSelectField, self).__init__(label, validators, **kwargs)
         self.loader = loader

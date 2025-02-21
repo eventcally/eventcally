@@ -1,35 +1,16 @@
 from flask import request
 from flask_babel import gettext, lazy_gettext
 from sqlalchemy import func
-from wtforms import DecimalField, FormField, StringField, SubmitField
+from wtforms import FormField, StringField, SubmitField
 from wtforms.fields import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
-from project.forms.common import Base64ImageForm
+from project.forms.common import Base64ImageForm, GooglePlaceLocationForm
 from project.models import Image, Location
 from project.models.event_organizer import EventOrganizer
 from project.modular.base_form import BaseForm
-from project.modular.fields import GooglePlaceField
 from project.modular.widgets import AjaxValidationWidget
 from project.views.utils import current_admin_unit
-
-
-class EventOrganizerLocationForm(BaseForm):
-    google_place = GooglePlaceField(location_only=True)
-    street = StringField(
-        lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
-    )
-    postalCode = StringField(
-        lazy_gettext("Postal code"), validators=[Optional(), Length(max=10)]
-    )
-    city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
-    state = StringField(lazy_gettext("State"), validators=[Optional(), Length(max=255)])
-    latitude = DecimalField(
-        lazy_gettext("Latitude"), places=16, validators=[Optional()]
-    )
-    longitude = DecimalField(
-        lazy_gettext("Longitude"), places=16, validators=[Optional()]
-    )
 
 
 class BaseEventOrganizerForm(BaseForm):
@@ -39,7 +20,7 @@ class BaseEventOrganizerForm(BaseForm):
         widget=AjaxValidationWidget(),
         render_kw={"role": "presentation", "autocomplete": "off"},
     )
-    location = FormField(EventOrganizerLocationForm, lazy_gettext("Location"))
+    location = FormField(GooglePlaceLocationForm, lazy_gettext("Location"))
     logo = FormField(Base64ImageForm, lazy_gettext("Logo"), default=lambda: Image())
     url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
     email = EmailField(lazy_gettext("Email"), validators=[Optional(), Length(max=255)])

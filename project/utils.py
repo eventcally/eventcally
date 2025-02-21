@@ -9,6 +9,9 @@ from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.base import NO_CHANGE, object_state
 
+widget_default_background_color = "#ffffff"
+widget_default_primary_color = "#007bff"
+
 
 def dummy_gettext(message: str):
     return message
