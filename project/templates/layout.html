@@ -268,7 +268,10 @@
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.organization_members', id=current_admin_unit.id) }}">{{ _('Members') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.organization_member_invitations', id=current_admin_unit.id) }}">{{ _('Organization member invitations') }}</a>
 
+                    {% if current_admin_unit.can_verify_other or current_admin_unit.can_invite_other %}
                     <div class="dropdown-divider"></div>
+                    {% endif %}
+
                     {% if current_admin_unit.can_verify_other %}
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_organization_relations', id=current_admin_unit.id) }}">{{ _('Relations') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.incoming_admin_unit_verification_requests', id=current_admin_unit.id) }}">{{ _('Incoming verification requests') }}

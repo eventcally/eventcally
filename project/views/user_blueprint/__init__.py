@@ -9,6 +9,7 @@ user_bp = Blueprint(
 
 import project.views.user_blueprint.oauth2_client.view_handler
 import project.views.user_blueprint.oauth2_token.view_handler
+import project.views.user_blueprint.organization_member_invitation.view_handler
 from project import app
 
 app.register_blueprint(user_bp)

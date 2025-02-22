@@ -9,9 +9,18 @@
     {% endfor %}
 
     {% for field in form.get_button_fields() %}
-    {{ _macros.render_field(field) }}
+    {{ render_button(field) }}
     {% endfor %}
 </form>
+{% endmacro %}
+
+{% macro render_button(field) %}
+{% if field.render_kw %}
+{% set _dummy = field.render_kw.setdefault("class", "btn btn-primary") %}
+<p>{{ field()|safe }}</p>
+{% else %}
+<p>{{ field(class="btn btn-primary")|safe }}</p>
+{% endif %}
 {% endmacro %}
 
 {% macro render_field(field) %}

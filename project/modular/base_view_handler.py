@@ -87,20 +87,21 @@ class BaseViewHandler:
             return url_for(app_endpoint, **kwargs)
         return None  # pragma: no cover
 
-    def get_read_url(self, object, **kwargs):
+    def _get_object_url(self, endpoint_key, object, **kwargs):
         kwargs.setdefault(self.get_id_query_arg_name(), object.id)
-        return self.get_endpoint_url("read", **kwargs)
+        return self.get_endpoint_url(endpoint_key, **kwargs)
+
+    def get_read_url(self, object, **kwargs):
+        return self._get_object_url("read", object, **kwargs)
 
     def get_create_url(self, **kwargs):
         return self.get_endpoint_url("create", **kwargs)
 
     def get_update_url(self, object, **kwargs):
-        kwargs.setdefault(self.get_id_query_arg_name(), object.id)
-        return self.get_endpoint_url("update", **kwargs)
+        return self._get_object_url("update", object, **kwargs)
 
     def get_delete_url(self, object, **kwargs):
-        kwargs.setdefault(self.get_id_query_arg_name(), object.id)
-        return self.get_endpoint_url("delete", **kwargs)
+        return self._get_object_url("delete", object, **kwargs)
 
     def get_list_url(self, **kwargs):
         return self.get_endpoint_url("list")
