@@ -1,10 +1,20 @@
 from flask_babel import lazy_gettext
-from flask_wtf import FlaskForm
 from wtforms import BooleanField, EmailField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional
 
+from project.modular.base_form import BaseForm
 
-class GeneralForm(FlaskForm):
+
+class RequestDeletionForm(BaseForm):
+    email = EmailField(lazy_gettext("Email"), validators=[DataRequired()])
+    submit = SubmitField(lazy_gettext("Request deletion"))
+
+
+class CancelDeletionForm(RequestDeletionForm):
+    submit = SubmitField(lazy_gettext("Cancel deletion"))
+
+
+class GeneralForm(BaseForm):
     locale = SelectField(
         lazy_gettext("Language"),
         choices=[
@@ -23,20 +33,13 @@ class GeneralForm(FlaskForm):
             obj.locale = None
 
 
-class NotificationForm(FlaskForm):
+class NotificationForm(BaseForm):
     newsletter_enabled = BooleanField(
         lazy_gettext("Newsletter"),
         description=lazy_gettext("Information about new features and improvements."),
         validators=[Optional()],
+        render_kw={
+            "ri": "switch",
+        },
     )
     submit = SubmitField(lazy_gettext("Save"))
-
-
-class RequestUserDeletionForm(FlaskForm):
-    submit = SubmitField(lazy_gettext("Request deletion"))
-    email = EmailField(lazy_gettext("Email"), validators=[DataRequired()])
-
-
-class CancelUserDeletionForm(FlaskForm):
-    submit = SubmitField(lazy_gettext("Cancel deletion"))
-    email = EmailField(lazy_gettext("Email"), validators=[DataRequired()])

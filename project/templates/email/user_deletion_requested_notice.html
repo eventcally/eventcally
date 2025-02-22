@@ -2,5 +2,5 @@
 {% from "_macros.html" import render_email_button %}
 {% block content %}
 <p>{{ _('%(user_email)s is scheduled for deletion.', user_email=user.email) }}</p>
-{{ render_email_button(url_for('user_cancel_deletion', _external=True), _('Click the link below to cancel the deletion')) }}
+{{ render_email_button(url_for('user.cancel_deletion', _external=True), _('Click the link below to cancel the deletion')) }}
 {% endblock %}

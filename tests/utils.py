@@ -274,8 +274,8 @@ class UtilActions(object):
 
         return response
 
-    def get_ok(self, url):
-        response = self.get(url)
+    def get_ok(self, url, **kwargs):
+        response = self.get(url, **kwargs)
         self.assert_response_ok(response)
         return response
 

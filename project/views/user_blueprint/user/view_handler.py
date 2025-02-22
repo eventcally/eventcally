@@ -1,13 +1,14 @@
+from flask_login import current_user
+
 from project.models.admin_unit import AdminUnit
 from project.modular.base_view_handler import BaseViewHandler
-from project.views.manage_admin_unit import manage_admin_unit_bp
-from project.views.manage_admin_unit.admin_unit.views import (
+from project.views.user_blueprint import user_bp
+from project.views.user_blueprint.user.views import (
     CancelDeletionView,
+    GeneralView,
+    NotificationView,
     RequestDeletionView,
-    UpdateView,
-    UpdateWidgetView,
 )
-from project.views.utils import current_admin_unit
 
 
 class ViewHandler(BaseViewHandler):
@@ -19,7 +20,7 @@ class ViewHandler(BaseViewHandler):
     list_view_class = None
 
     def get_object_from_kwargs(self, **kwargs):
-        return current_admin_unit
+        return current_user
 
     def _add_views(
         self,
@@ -40,22 +41,6 @@ class ViewHandler(BaseViewHandler):
         )
 
         self._add_view(
-            "update",
-            "/update",
-            UpdateView,
-            "update",
-            app,
-        )
-
-        self._add_view(
-            "widgets",
-            "/widgets",
-            UpdateWidgetView,
-            "widgets",
-            app,
-        )
-
-        self._add_view(
             "request_deletion",
             "/request-deletion",
             RequestDeletionView,
@@ -71,8 +56,24 @@ class ViewHandler(BaseViewHandler):
             app,
         )
 
+        self._add_view(
+            "general",
+            "/general",
+            GeneralView,
+            "general",
+            app,
+        )
+
+        self._add_view(
+            "notifications",
+            "/notifications",
+            NotificationView,
+            "notifications",
+            app,
+        )
+
         return result
 
 
 handler = ViewHandler()
-handler.init_app(manage_admin_unit_bp)
+handler.init_app(user_bp)

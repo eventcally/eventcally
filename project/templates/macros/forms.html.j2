@@ -8,18 +8,20 @@
     {{ render_field(field) }}
     {% endfor %}
 
-    {% for field in form.get_button_fields() %}
-    {{ render_button(field) }}
-    {% endfor %}
+    <div class="d-flex justify-content-between my-4 w-medium button-container">
+        {% for button in form.get_button_fields() %}
+        {{ render_button(button) }}
+        {% endfor %}
+    </div>
 </form>
 {% endmacro %}
 
 {% macro render_button(field) %}
 {% if field.render_kw %}
 {% set _dummy = field.render_kw.setdefault("class", "btn btn-primary") %}
-<p>{{ field()|safe }}</p>
+{{ field()|safe }}
 {% else %}
-<p>{{ field(class="btn btn-primary")|safe }}</p>
+{{ field(class="btn btn-primary")|safe }}</p>
 {% endif %}
 {% endmacro %}
 

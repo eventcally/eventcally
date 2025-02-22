@@ -22,7 +22,7 @@
         <i class="fa fa-caret-right"></i>
     </a>
     {% if not current_user.deletion_requested_at %}
-    <a href="{{ url_for('user_request_deletion') }}" class="list-group-item text-danger">
+    <a href="{{ url_for('user.request_deletion') }}" class="list-group-item text-danger">
         {{ _('Delete account') }}
         <i class="fa fa-caret-right"></i>
     </a>
@@ -32,11 +32,11 @@
 <h2>{{ _('Settings') }}</h2>
 
 <div class="list-group">
-    <a href="{{ url_for('user_general') }}" class="list-group-item">
+    <a href="{{ url_for('user.general') }}" class="list-group-item">
         {{ _('General') }}
         <i class="fa fa-caret-right"></i>
     </a>
-    <a href="{{ url_for('user_notifications') }}" class="list-group-item">
+    <a href="{{ url_for('user.notifications') }}" class="list-group-item">
         {{ _('Notifications') }}
         <i class="fa fa-caret-right"></i>
     </a>
@@ -46,6 +46,10 @@
     </a>
     <a href="{{ url_for('user.organization_member_invitations') }}" class="list-group-item">
         {{ _('Organization member invitations') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
+    <a href="{{ url_for('user.organization_invitations') }}" class="list-group-item">
+        {{ _('Organization invitations') }}
         <i class="fa fa-caret-right"></i>
     </a>
 </div>
