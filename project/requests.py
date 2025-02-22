@@ -14,12 +14,12 @@ def check_tos_accepted(response):
         and request.endpoint
         and not request.endpoint.startswith("api_")
         and not request.endpoint.startswith("widget_")
-        and request.endpoint not in ["static", "user_accept_tos"]
+        and request.endpoint not in ["static", "user.accept_tos"]
         and current_user
         and current_user.is_authenticated
         and not current_user.tos_accepted_at
     ):
-        return redirect(url_for("user_accept_tos", next=request.url))
+        return redirect(url_for("user.accept_tos", next=request.url))
 
     return response
 

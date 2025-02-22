@@ -2,6 +2,7 @@ from flask_babel import lazy_gettext
 from wtforms import BooleanField, EmailField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional
 
+from project.forms.common import get_accept_tos_markup
 from project.modular.base_form import BaseForm
 
 
@@ -43,3 +44,12 @@ class NotificationForm(BaseForm):
         },
     )
     submit = SubmitField(lazy_gettext("Save"))
+
+
+class AcceptTosForm(BaseForm):
+    accept_tos = BooleanField(validators=[DataRequired()], render_kw={"ri": "checkbox"})
+    submit = SubmitField(lazy_gettext("Confirm"))
+
+    def __init__(self, **kwargs):
+        super(AcceptTosForm, self).__init__(**kwargs)
+        self._fields["accept_tos"].label.text = get_accept_tos_markup()

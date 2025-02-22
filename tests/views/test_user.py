@@ -334,10 +334,10 @@ def test_user_accept_tos(client, app, db, seeder: Seeder, utils: UtilActions):
 
     response = utils.get_endpoint("profile")
     utils.assert_response_redirect(
-        response, "user_accept_tos", next="http://localhost/profile"
+        response, "user.accept_tos", next="http://localhost/profile"
     )
 
-    response = utils.get_endpoint_ok("user_accept_tos", next="/profile")
+    response = utils.get_endpoint_ok("user.accept_tos", next="/profile")
     response = utils.post_form(
         response.request.url,
         response,

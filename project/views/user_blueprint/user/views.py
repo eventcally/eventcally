@@ -3,18 +3,24 @@ import datetime
 from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 from flask_security import current_user
+from flask_security.utils import get_post_login_redirect
 
 from project import db
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
-from project.services.user import is_user_admin_member
+from project.services.user import is_user_admin_member, set_user_accepted_tos
 from project.views.user import send_user_deletion_requested_mail
 from project.views.user_blueprint.user.forms import (
+    AcceptTosForm,
     CancelDeletionForm,
     GeneralForm,
     NotificationForm,
     RequestDeletionForm,
 )
-from project.views.utils import current_admin_unit, flash_non_match_for_deletion
+from project.views.utils import (
+    current_admin_unit,
+    flash_non_match_for_deletion,
+    handle_db_error,
+)
 
 
 class RequestDeletionView(BaseDeleteView):
@@ -127,3 +133,25 @@ class NotificationView(BaseSettingView):
 
     def get_title(self, **kwargs):
         return lazy_gettext("Notifications")
+
+
+class AcceptTosView(BaseUpdateView):
+    form_class = AcceptTosForm
+
+    def get_title(self, **kwargs):
+        return lazy_gettext("Confirmation required")
+
+    def check_object_access(self, object):
+        result = super().check_object_access(object)
+
+        if result:  # pragma: no cover
+            return result
+
+        if object.tos_accepted_at:  # pragma: no cover
+            return redirect(get_post_login_redirect())
+
+    @handle_db_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        set_user_accepted_tos(current_user)
+        db.session.commit()
+        return redirect(get_post_login_redirect())
