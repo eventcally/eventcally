@@ -30,7 +30,11 @@ class DeleteView(BaseDeleteView):
                 gettext("Last remaining administrator can not leave the organization."),
                 "danger",
             )
-            return redirect(url_for("manage_admin_unit.organization_members", id=id))
+            return redirect(
+                url_for(
+                    "manage_admin_unit.organization_members", id=object.adminunit.id
+                )
+            )
 
     def can_object_be_deleted(self, form, object):
         return flash_non_match_for_deletion(

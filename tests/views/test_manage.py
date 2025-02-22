@@ -309,7 +309,7 @@ def test_manage_admin_unit_delete_membership(
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "manage_admin_units")
+    utils.assert_response_redirect(response, "user.organization_members")
 
     with app.app_context():
         from project.models import AdminUnitMember
