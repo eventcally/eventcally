@@ -12,7 +12,7 @@ def test_profile(client, seeder, utils):
     utils.get_ok(url)
 
 
-def test_organization_invitation(client, seeder, utils):
+def test_organization_invitation(client, seeder, utils: UtilActions):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
@@ -20,7 +20,40 @@ def test_organization_invitation(client, seeder, utils):
     utils.login("invited@test.de")
 
     url = utils.get_url("user_organization_invitation", id=invitation_id)
-    utils.get_ok(url)
+    response = utils.get(url)
+    utils.assert_response_redirect(
+        response,
+        "user.organization_invitation_negotiate",
+        organization_invitation_id=invitation_id,
+    )
+
+    url = utils.get_url(
+        "user.organization_invitation_negotiate",
+        organization_invitation_id=invitation_id,
+    )
+    response = utils.get_ok(url)
+    response = utils.post_form(url, response, {"accept": "y"})
+    utils.assert_response_redirect(
+        response,
+        "admin_unit_create",
+        invitation_id=invitation_id,
+    )
+
+
+def test_organization_invitation_decline(client, seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
+
+    seeder.create_user("invited@test.de")
+    utils.login("invited@test.de")
+
+    url = utils.get_url(
+        "user.organization_invitation_negotiate",
+        organization_invitation_id=invitation_id,
+    )
+    response = utils.get_ok(url)
+    response = utils.post_form(url, response, {"accept": None, "decline": "y"})
+    utils.assert_response_redirect(response, "user.organization_invitations")
 
 
 def test_organization_invitation_not_registered(client, app, utils, seeder):
@@ -69,7 +102,7 @@ def test_organization_invitation_list(client, seeder, utils):
     seeder.create_user("invited@test.de")
     utils.login("invited@test.de")
 
-    url = utils.get_url("user_organization_invitations")
+    url = utils.get_url("user.organization_invitations")
     utils.get_ok(url)
 
 
@@ -84,7 +117,7 @@ def test_user_favorite_events(client, seeder, utils):
 def test_user_general(client, seeder, utils, app, db, locale):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("user_general")
+    url = utils.get_url("user.general")
     response = utils.get_ok(url)
 
     if locale is None:
@@ -112,7 +145,7 @@ def test_user_general(client, seeder, utils, app, db, locale):
 def test_user_notifications(client, seeder, utils, app, db):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("user_notifications")
+    url = utils.get_url("user.notifications")
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -186,7 +219,7 @@ def test_user_request_deletion(
 ):
     owner_id, admin_unit_id, member_id = seeder.setup_base_event_verifier()
 
-    url = utils.get_url("user_request_deletion")
+    url = utils.get_url("user.request_deletion")
     response = utils.get_ok(url)
 
     if db_error:
@@ -224,11 +257,13 @@ def test_user_request_deletion(
         assert user.deletion_requested_at is not None
 
 
-def test_user_request_deletion_admin_member(client, seeder: Seeder, utils, app, db):
+def test_user_request_deletion_admin_member(
+    client, seeder: Seeder, utils: UtilActions, app, db
+):
     seeder.setup_base()
 
-    url = utils.get_url("user_request_deletion")
-    response = utils.get_ok(url)
+    url = utils.get_url("user.request_deletion")
+    response = utils.get_ok(url, follow_redirects=True)
     utils.assert_response_error_message(
         response,
         "Du bist Administrator von mindestens einer Organisation. Beende deine Mitgliedschaft, um deinen Account zu löschen.",
@@ -251,7 +286,7 @@ def test_user_cancel_deletion(
         user.deletion_requested_at = datetime.datetime.now(datetime.UTC)
         db.session.commit()
 
-    url = utils.get_url("user_cancel_deletion")
+    url = utils.get_url("user.cancel_deletion")
     response = utils.get_ok(url)
 
     if db_error:

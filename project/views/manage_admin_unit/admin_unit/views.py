@@ -8,10 +8,23 @@ from project import db
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.utils import widget_default_background_color, widget_default_primary_color
 from project.views.admin_unit import send_admin_unit_deletion_requested_mails
-from project.views.utils import current_admin_unit, flash_non_match_for_deletion
+from project.views.manage_admin_unit.admin_unit.forms import (
+    CancelDeletionForm,
+    RequestDeletionForm,
+    UpdateForm,
+    UpdateWidgetForm,
+)
+from project.views.utils import (
+    current_admin_unit,
+    flash_non_match_for_deletion,
+    manage_permission_required,
+)
 
 
 class UpdateView(BaseUpdateView):
+    decorators = [manage_permission_required("admin_unit:update")]
+    form_class = UpdateForm
+
     def get_title(self, **kwargs):
         return lazy_gettext("Settings")
 
@@ -29,6 +42,8 @@ class UpdateView(BaseUpdateView):
 
 class UpdateWidgetView(BaseUpdateView):
     template_file_name = "widgets.html"
+    decorators = [manage_permission_required("admin_unit:update")]
+    form_class = UpdateWidgetForm
 
     def get_title(self, **kwargs):
         return lazy_gettext("Widgets")
@@ -68,6 +83,8 @@ class UpdateWidgetView(BaseUpdateView):
 
 class RequestDeletionView(BaseDeleteView):
     template_file_name = "delete.html"
+    decorators = [manage_permission_required("admin_unit:update")]
+    form_class = RequestDeletionForm
 
     def check_object_access(self, object):
         result = super().check_object_access(object)
@@ -107,6 +124,8 @@ class RequestDeletionView(BaseDeleteView):
 
 class CancelDeletionView(BaseDeleteView):
     template_file_name = "delete.html"
+    decorators = [manage_permission_required("admin_unit:update")]
+    form_class = CancelDeletionForm
 
     def check_object_access(self, object):
         result = super().check_object_access(object)

@@ -85,39 +85,4 @@ describe("User", () => {
     cy.visit("/profile");
     cy.screenshot("profile");
   });
-
-  it("accepts organization invitation", () => {
-    cy.createAdminUnit().then(function (adminUnitId) {
-      cy.createAdminUnitOrganizationInvitation(adminUnitId).then(function (invitationId) {
-        cy.createUser("invited@test.de").then(function () {
-          cy.login("invited@test.de", "password", "/user/organization-invitations/" + invitationId);
-
-          cy.get("button.btn-success");
-          cy.get(".b-overlay").should('not.exist');
-          cy.screenshot("choice-accept");
-
-          cy.get("button.btn-success").click();
-          cy.url().should("include", "admin_unit/create?invitation_id=" + invitationId);
-        });
-      });
-    });
-  });
-
-  it("declines organization invitation", () => {
-    cy.createAdminUnit().then(function (adminUnitId) {
-      cy.createAdminUnitOrganizationInvitation(adminUnitId).then(function (invitationId) {
-        cy.createUser("invited@test.de").then(function () {
-          cy.login("invited@test.de", "password", "/user/organization-invitations/" + invitationId);
-
-          cy.get("button.btn-danger");
-          cy.get(".b-overlay").should('not.exist');
-          cy.screenshot("choice-decline");
-
-          cy.get("button.btn-danger").click();
-          cy.url().should("include", "manage/admin_units");
-          cy.get("h1:contains('Organisationseinladungen')").should('not.exist');
-        });
-      });
-    });
-  });
 });
