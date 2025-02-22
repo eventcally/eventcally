@@ -236,7 +236,7 @@ class BaseViewHandler:
 
             class CreateView(self.create_view_class):
                 decorators = self.create_decorators
-                form_class = self.create_form_class
+                form_class = self.create_view_class.form_class or self.create_form_class
 
             self._add_view(
                 "create",
@@ -264,7 +264,7 @@ class BaseViewHandler:
 
             class UpdateView(self.update_view_class):
                 decorators = self.update_decorators
-                form_class = self.update_form_class
+                form_class = self.update_view_class.form_class or self.update_form_class
                 display_class = self.update_display_class
 
             self._add_view(
@@ -279,7 +279,7 @@ class BaseViewHandler:
 
             class DeleteView(self.delete_view_class):
                 decorators = self.delete_decorators
-                form_class = self.delete_form_class
+                form_class = self.delete_view_class.form_class or self.delete_form_class
 
             self._add_view(
                 "delete",

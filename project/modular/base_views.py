@@ -383,7 +383,7 @@ class BaseDeleteView(BaseObjectFormView):
         db.session.delete(object)
         db.session.commit()
 
-    def flask_success_text(self, form, object):
+    def flash_success_text(self, form, object):
         flash(self.get_success_text(object, form), "success")
 
     @handle_db_error
@@ -391,5 +391,5 @@ class BaseDeleteView(BaseObjectFormView):
         if self.can_object_be_deleted(form, object):
             self.delete_object_from_db(object)
             self.after_commit(object, form)
-            self.flask_success_text(form, object)
+            self.flash_success_text(form, object)
             return redirect(self.get_redirect_url())

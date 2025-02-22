@@ -5,7 +5,6 @@ from flask_security import current_user
 from project.models.admin_unit import AdminUnitMemberRole
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.services.admin_unit import add_roles_to_admin_unit_member
-from project.views.utils import current_admin_unit
 
 
 class UpdateView(BaseUpdateView):
@@ -43,7 +42,9 @@ class DeleteView(BaseDeleteView):
 
         if object.user_id == current_user.id:
             return redirect(
-                url_for("manage_admin_unit_delete_membership", id=current_admin_unit.id)
+                url_for(
+                    "user.organization_member_delete", organization_member_id=object.id
+                )
             )
 
         return None
