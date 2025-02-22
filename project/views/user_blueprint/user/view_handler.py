@@ -4,6 +4,7 @@ from project.models.admin_unit import AdminUnit
 from project.modular.base_view_handler import BaseViewHandler
 from project.views.user_blueprint import user_bp
 from project.views.user_blueprint.user.views import (
+    AcceptTosView,
     CancelDeletionView,
     GeneralView,
     NotificationView,
@@ -69,6 +70,14 @@ class ViewHandler(BaseViewHandler):
             "/notifications",
             NotificationView,
             "notifications",
+            app,
+        )
+
+        self._add_view(
+            "accept_tos",
+            "/accept-tos",
+            AcceptTosView,
+            "accept_tos",
             app,
         )
 
