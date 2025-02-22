@@ -68,7 +68,19 @@ def test_update(client, app, utils: UtilActions, seeder: Seeder):
     )
 
 
-def test_read_accept(client, app, db, utils, seeder):
+def test_list(client, app, db, utils: UtilActions, seeder):
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
+
+    email = "new@member.de"
+    _ = seeder.create_user(email)
+    utils.login(email)
+
+    _ = seeder.create_invitation(admin_unit_id, email)
+    utils.get_endpoint_ok("user.organization_member_invitations")
+
+
+def test_read_accept(client, app, db, utils: UtilActions, seeder):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 
@@ -78,7 +90,17 @@ def test_read_accept(client, app, db, utils, seeder):
 
     invitation_id = seeder.create_invitation(admin_unit_id, email)
 
-    url = "/invitations/%d" % invitation_id
+    response = utils.get_endpoint("admin_unit_member_invitation", id=invitation_id)
+    utils.assert_response_redirect(
+        response,
+        "user.organization_member_invitation_negotiate",
+        organization_member_invitation_id=invitation_id,
+    )
+
+    url = utils.get_url(
+        "user.organization_member_invitation_negotiate",
+        organization_member_invitation_id=invitation_id,
+    )
     response = client.get(url)
     assert response.status_code == 200
 
@@ -108,7 +130,7 @@ def test_read_accept(client, app, db, utils, seeder):
             assert any(r.name == "admin" for r in member.roles)
 
 
-def test_read_accept_WrongRole(client, app, db, utils, seeder):
+def test_read_accept_WrongRole(client, app, db, utils: UtilActions, seeder):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 
@@ -118,7 +140,10 @@ def test_read_accept_WrongRole(client, app, db, utils, seeder):
 
     invitation_id = seeder.create_invitation(admin_unit_id, email, ["wrongrole"])
 
-    url = "/invitations/%d" % invitation_id
+    url = utils.get_url(
+        "user.organization_member_invitation_negotiate",
+        organization_member_invitation_id=invitation_id,
+    )
     response = client.get(url)
     assert response.status_code == 200
 
@@ -133,7 +158,7 @@ def test_read_accept_WrongRole(client, app, db, utils, seeder):
         utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
 
 
-def test_read_decline(client, app, db, utils, seeder):
+def test_read_decline(client, app, db, utils: UtilActions, seeder):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 
@@ -143,7 +168,10 @@ def test_read_decline(client, app, db, utils, seeder):
 
     invitation_id = seeder.create_invitation(admin_unit_id, email)
 
-    url = "/invitations/%d" % invitation_id
+    url = utils.get_url(
+        "user.organization_member_invitation_negotiate",
+        organization_member_invitation_id=invitation_id,
+    )
     response = client.get(url)
     assert response.status_code == 200
 
@@ -172,7 +200,7 @@ def test_read_decline(client, app, db, utils, seeder):
             assert member is None
 
 
-def test_read_db_error(client, app, utils, seeder, mocker):
+def test_read_db_error(client, app, utils: UtilActions, seeder, mocker):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 
@@ -182,7 +210,10 @@ def test_read_db_error(client, app, utils, seeder, mocker):
 
     invitation_id = seeder.create_invitation(admin_unit_id, email)
 
-    url = "/invitations/%d" % invitation_id
+    url = utils.get_url(
+        "user.organization_member_invitation_negotiate",
+        organization_member_invitation_id=invitation_id,
+    )
     response = client.get(url)
     assert response.status_code == 200
 
@@ -201,7 +232,7 @@ def test_read_db_error(client, app, utils, seeder, mocker):
         assert b"MockException" in response.data
 
 
-def test_read_new_member_not_registered(client, app, utils, seeder):
+def test_read_new_member_not_registered(client, app, utils: UtilActions, seeder):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
     email = "new@member.de"
@@ -213,7 +244,7 @@ def test_read_new_member_not_registered(client, app, utils, seeder):
     utils.assert_response_redirect(response, "security.register")
 
 
-def test_read_new_member_not_authenticated(client, app, utils, seeder):
+def test_read_new_member_not_authenticated(client, app, utils: UtilActions, seeder):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 
@@ -229,7 +260,7 @@ def test_read_new_member_not_authenticated(client, app, utils, seeder):
 
 @pytest.mark.parametrize("user_exists", [True, False])
 def test_read_currentUserDoesNotMatchInvitationEmail(
-    client, app, db, utils, seeder, user_exists
+    client, app, db, utils: UtilActions, seeder, user_exists
 ):
     user_id = seeder.create_user()
     utils.login()

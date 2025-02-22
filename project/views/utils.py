@@ -13,7 +13,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.local import LocalProxy
 from wtforms import FormField
 
-from project import app, celery, mail
+from project import app, celery, db, mail
 from project.access import (
     get_admin_unit_for_manage,
     get_admin_unit_for_manage_or_404,
@@ -489,3 +489,15 @@ def get_docs_url(path: str, **kwargs):  # pragma: no cover
         return None
 
     return f"{base_url}{path}"
+
+
+def handle_db_error(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(handleSqlError(e), "danger")
+
+    return wrapper

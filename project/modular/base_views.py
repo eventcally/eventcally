@@ -4,7 +4,12 @@ from flask_babel import lazy_gettext
 from sqlalchemy.exc import SQLAlchemyError
 
 from project import db
-from project.views.utils import flash_errors, get_pagination_urls, handleSqlError
+from project.views.utils import (
+    flash_errors,
+    get_pagination_urls,
+    handle_db_error,
+    handleSqlError,
+)
 
 
 class BaseView(View):
@@ -381,13 +386,10 @@ class BaseDeleteView(BaseObjectFormView):
     def flask_success_text(self, form, object):
         flash(self.get_success_text(object, form), "success")
 
+    @handle_db_error
     def dispatch_validated_form(self, form, object, **kwargs):
         if self.can_object_be_deleted(form, object):
-            try:
-                self.delete_object_from_db(object)
-                self.after_commit(object, form)
-                self.flask_success_text(form, object)
-                return redirect(self.get_redirect_url())
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                flash(handleSqlError(e), "danger")
+            self.delete_object_from_db(object)
+            self.after_commit(object, form)
+            self.flask_success_text(form, object)
+            return redirect(self.get_redirect_url())
