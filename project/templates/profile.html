@@ -44,6 +44,16 @@
         {{ _('Applications') }}
         <i class="fa fa-caret-right"></i>
     </a>
+</div>
+
+<h2>{{ _('Organizations') }}</h2>
+
+<div class="list-group">
+
+    <a href="{{ url_for('user.organization_members') }}" class="list-group-item">
+        {{ _('Organizations') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
     <a href="{{ url_for('user.organization_member_invitations') }}" class="list-group-item">
         {{ _('Organization member invitations') }}
         <i class="fa fa-caret-right"></i>

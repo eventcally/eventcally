@@ -133,8 +133,3 @@ class CreateAdminUnitForm(BaseAdminUnitForm):
 
 class UpdateAdminUnitForm(BaseAdminUnitForm):
     submit = SubmitField(lazy_gettext("Update settings"))
-
-
-class AdminUnitDeleteMembershipForm(FlaskForm):
-    submit = SubmitField(lazy_gettext("Leave organization"))
-    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])

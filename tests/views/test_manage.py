@@ -269,7 +269,9 @@ def test_manage_admin_unit_delete_membership(
             admin_unit_id, ["admin"], "admin.member@test.de"
         )
 
-    url = utils.get_url("manage_admin_unit_delete_membership", id=admin_unit_id)
+    url = utils.get_url(
+        "user.organization_member_delete", organization_member_id=member_id
+    )
 
     if scenario == "last_admin":
         response = utils.get(url, follow_redirects=True)
@@ -313,19 +315,3 @@ def test_manage_admin_unit_delete_membership(
         from project.models import AdminUnitMember
 
         assert db.session.get(AdminUnitMember, member_id) is None
-
-
-def test_manage_admin_unit_delete_membership_no_member(
-    client, utils: UtilActions, seeder: Seeder, app, db
-):
-    user_id, admin_unit_id = seeder.setup_base(admin=True)
-    other_user_id, other_admin_unit_id = seeder.setup_base(
-        log_in=False, email="other@test.de", name="Other Crew"
-    )
-
-    url = utils.get_url("manage_admin_unit_delete_membership", id=other_admin_unit_id)
-    response = utils.get(url, follow_redirects=True)
-    utils.assert_response_error_message(
-        response,
-        "Du bist kein Mitglied dieser Organisation",
-    )

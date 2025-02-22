@@ -97,7 +97,9 @@ def test_delete(client, app, db, utils: UtilActions, seeder: Seeder, scenario: s
 
     if scenario == "current_user":
         utils.assert_response_redirect(
-            response, "manage_admin_unit_delete_membership", id=admin_unit_id
+            response,
+            "user.organization_member_delete",
+            organization_member_id=member_id,
         )
         return
 

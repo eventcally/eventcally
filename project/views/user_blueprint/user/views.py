@@ -70,7 +70,7 @@ class RequestDeletionView(BaseDeleteView):
     def get_redirect_url(self, **kwargs):
         return url_for("profile")
 
-    def flask_success_text(self, form, object):
+    def flash_success_text(self, form, object):
         pass
 
 
@@ -109,7 +109,7 @@ class CancelDeletionView(BaseDeleteView):
     def get_redirect_url(self, **kwargs):
         return url_for("profile")
 
-    def flask_success_text(self, form, object):
+    def flash_success_text(self, form, object):
         pass
 
 

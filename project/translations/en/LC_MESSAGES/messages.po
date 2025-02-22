@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-02-22 12:33+0100\n"
+"POT-Creation-Date: 2025-02-22 19:27+0100\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -68,7 +68,7 @@ msgstr ""
 msgid "%(model_display_name)s successfully updated"
 msgstr ""
 
-#: project/views/user_blueprint/organization_invitation/views.py:18
+#: project/views/user_blueprint/organization_invitation/views.py:16
 #, python-format
 msgid "%(name)s invited you to create an organization."
 msgstr ""
@@ -354,8 +354,8 @@ msgstr ""
 #: project/views/manage_admin_unit/admin_unit/forms.py:174
 #: project/views/manage_admin_unit/admin_unit/views.py:142
 #: project/views/manage_admin_unit/templates/manage_admin_unit/admin_unit/update.html:35
-#: project/views/user_blueprint/user/forms.py:14
-#: project/views/user_blueprint/user/views.py:87
+#: project/views/user_blueprint/user/forms.py:15
+#: project/views/user_blueprint/user/views.py:93
 msgid "Cancel deletion"
 msgstr ""
 
@@ -524,15 +524,15 @@ msgstr ""
 msgid "Co-organizers"
 msgstr ""
 
-#: project/forms/security.py:79
+#: project/views/user_blueprint/user/forms.py:51
 msgid "Confirm"
 msgstr ""
 
-#: project/templates/user/accept_tos.html:6
+#: project/views/user_blueprint/user/views.py:142
 msgid "Confirmation required"
 msgstr ""
 
-#: project/forms/admin.py:15 project/templates/layout.html:346
+#: project/forms/admin.py:15 project/templates/layout.html:345
 #: project/views/admin_unit.py:70 project/views/root.py:75
 msgid "Contact"
 msgstr ""
@@ -602,7 +602,6 @@ msgstr ""
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:34
 #: project/views/manage_admin_unit/outgoing_verification_request/displays.py:33
 #: project/views/user_blueprint/organization_invitation/displays.py:12
-#: project/views/user_blueprint/organization_member_invitation/displays.py:11
 msgid "Created at"
 msgstr ""
 
@@ -636,7 +635,7 @@ msgstr ""
 msgid "Decline"
 msgstr ""
 
-#: project/views/user_blueprint/user/forms.py:21
+#: project/views/user_blueprint/user/forms.py:22
 msgid "Default"
 msgstr ""
 
@@ -657,7 +656,7 @@ msgid "Delete OAuth2 client"
 msgstr ""
 
 #: project/templates/profile.html:26
-#: project/views/user_blueprint/user/views.py:43
+#: project/views/user_blueprint/user/views.py:49
 msgid "Delete account"
 msgstr ""
 
@@ -713,8 +712,8 @@ msgid "Description"
 msgstr ""
 
 #: project/templates/developer/read.html:4
-#: project/templates/developer/read.html:8 project/templates/layout.html:354
-#: project/templates/profile.html:53
+#: project/templates/developer/read.html:8 project/templates/layout.html:353
+#: project/templates/profile.html:67
 msgid "Developer"
 msgstr ""
 
@@ -726,6 +725,11 @@ msgstr ""
 #: project/modular/base_views.py:369
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
+msgstr ""
+
+#: project/views/user_blueprint/organization_member/views.py:18
+#, python-format
+msgid "Do you want to leave organization %(name)s?"
 msgstr ""
 
 #: project/views/user_blueprint/oauth2_token/views.py:38
@@ -798,7 +802,7 @@ msgstr ""
 #: project/views/manage_admin_unit/organization_invitation/displays.py:14
 #: project/views/manage_admin_unit/organization_invitation/forms.py:31
 #: project/views/user_blueprint/organization_invitation/displays.py:16
-#: project/views/user_blueprint/user/forms.py:9
+#: project/views/user_blueprint/user/forms.py:10
 msgid "Email"
 msgstr ""
 
@@ -868,8 +872,8 @@ msgstr ""
 msgid "Entered email does not match user email"
 msgstr ""
 
-#: project/views/user_blueprint/user/views.py:54
-#: project/views/user_blueprint/user/views.py:96
+#: project/views/user_blueprint/user/views.py:60
+#: project/views/user_blueprint/user/views.py:102
 msgid "Entered email does not match your email"
 msgstr ""
 
@@ -877,9 +881,10 @@ msgstr ""
 msgid "Entered name does not match OAuth2 client name"
 msgstr ""
 
-#: project/views/admin.py:86 project/views/manage.py:205
+#: project/views/admin.py:86
 #: project/views/manage_admin_unit/admin_unit/views.py:107
 #: project/views/manage_admin_unit/admin_unit/views.py:151
+#: project/views/user_blueprint/organization_member/views.py:39
 msgid "Entered name does not match organization name"
 msgstr ""
 
@@ -1293,7 +1298,7 @@ msgid "From"
 msgstr ""
 
 #: project/templates/profile.html:36
-#: project/views/user_blueprint/user/views.py:122
+#: project/views/user_blueprint/user/views.py:128
 msgid "General"
 msgstr ""
 
@@ -1478,7 +1483,7 @@ msgstr ""
 msgid "Indicate when the event date will start."
 msgstr ""
 
-#: project/views/user_blueprint/user/forms.py:39
+#: project/views/user_blueprint/user/forms.py:40
 msgid "Information about new features and improvements."
 msgstr ""
 
@@ -1486,8 +1491,6 @@ msgstr ""
 msgid "Invalid co-organizer."
 msgstr ""
 
-#: project/templates/invitation/read.html:4
-#: project/templates/invitation/read.html:8
 #: project/views/manage_admin_unit/templates/manage_admin_unit/read.html:4
 #: project/views/manage_admin_unit/templates/manage_admin_unit/read.html:8
 msgid "Invitation"
@@ -1497,7 +1500,7 @@ msgstr ""
 msgid "Invitation successfully accepted"
 msgstr ""
 
-#: project/views/user_blueprint/organization_invitation/views.py:32
+#: project/views/user_blueprint/organization_invitation/views.py:30
 #: project/views/user_blueprint/organization_member_invitation/views.py:39
 msgid "Invitation successfully declined"
 msgstr ""
@@ -1531,7 +1534,7 @@ msgstr ""
 msgid "Kid friendly"
 msgstr ""
 
-#: project/views/user_blueprint/user/forms.py:19
+#: project/views/user_blueprint/user/forms.py:20
 msgid "Language"
 msgstr ""
 
@@ -1544,7 +1547,7 @@ msgstr ""
 msgid "Last modified first"
 msgstr ""
 
-#: project/views/manage.py:196
+#: project/views/user_blueprint/organization_member/views.py:30
 msgid "Last remaining administrator can not leave the organization."
 msgstr ""
 
@@ -1564,12 +1567,12 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: project/forms/admin_unit.py:139 project/templates/layout.html:306
-#: project/templates/manage/delete_membership.html:6
+#: project/views/user_blueprint/organization_member/forms.py:15
+#: project/views/user_blueprint/organization_member/views.py:14
 msgid "Leave organization"
 msgstr ""
 
-#: project/forms/admin.py:14 project/templates/layout.html:342
+#: project/forms/admin.py:14 project/templates/layout.html:341
 #: project/views/root.py:67
 msgid "Legal notice"
 msgstr ""
@@ -1678,9 +1681,8 @@ msgstr ""
 msgid "More filters"
 msgstr ""
 
-#: project/forms/admin.py:98 project/forms/admin_unit.py:140
-#: project/forms/event.py:94 project/forms/event.py:123
-#: project/templates/admin/admin_units.html:19
+#: project/forms/admin.py:98 project/forms/event.py:94
+#: project/forms/event.py:123 project/templates/admin/admin_units.html:19
 #: project/views/manage_admin_unit/event_organizer/displays.py:8
 #: project/views/manage_admin_unit/event_organizer/forms.py:18
 #: project/views/manage_admin_unit/event_organizer/forms.py:65
@@ -1689,6 +1691,7 @@ msgstr ""
 #: project/views/manage_admin_unit/event_place/forms.py:65
 #: project/views/user_blueprint/oauth2_client/forms.py:68
 #: project/views/user_blueprint/organization_invitation/displays.py:11
+#: project/views/user_blueprint/organization_member/forms.py:10
 msgid "Name"
 msgstr ""
 
@@ -1734,7 +1737,7 @@ msgstr ""
 #: project/templates/admin/admin.html:31
 #: project/templates/admin/newsletter.html:4
 #: project/templates/admin/newsletter.html:93
-#: project/views/user_blueprint/user/forms.py:38
+#: project/views/user_blueprint/user/forms.py:39
 msgid "Newsletter"
 msgstr ""
 
@@ -1774,7 +1777,7 @@ msgid "Notification settings"
 msgstr ""
 
 #: project/templates/profile.html:40
-#: project/views/user_blueprint/user/views.py:129
+#: project/views/user_blueprint/user/views.py:135
 msgid "Notifications"
 msgstr ""
 
@@ -1805,7 +1808,7 @@ msgstr ""
 msgid "OAuth2 client"
 msgstr ""
 
-#: project/babel.py:1 project/templates/profile.html:57
+#: project/babel.py:1 project/templates/profile.html:71
 msgid "OAuth2 clients"
 msgstr ""
 
@@ -1836,7 +1839,6 @@ msgstr ""
 #: project/templates/admin/delete_admin_unit.html:13
 #: project/templates/admin_unit/create.html:27
 #: project/templates/layout.html:254
-#: project/templates/manage/delete_membership.html:13
 #: project/templates/verification_request/delete.html:13
 #: project/templates/verification_request/review.html:28
 #: project/views/manage_admin_unit/incoming_event_reference/displays.py:30
@@ -1852,6 +1854,8 @@ msgstr ""
 #: project/views/manage_admin_unit/outgoing_verification_request/displays.py:28
 #: project/views/manage_admin_unit/templates/manage_admin_unit/incoming_admin_unit_verification_request/review.html:26
 #: project/views/user_blueprint/organization_invitation/displays.py:9
+#: project/views/user_blueprint/organization_member/displays.py:9
+#: project/views/user_blueprint/organization_member/view_handler.py:19
 #: project/views/user_blueprint/organization_member_invitation/displays.py:9
 msgid "Organization"
 msgstr ""
@@ -1870,7 +1874,7 @@ msgstr ""
 
 #: project/babel.py:1 project/templates/layout.html:285
 #: project/templates/manage/admin_units.html:17
-#: project/templates/user/organization_invitations.html:4
+#: project/templates/profile.html:62
 msgid "Organization invitations"
 msgstr ""
 
@@ -1883,7 +1887,7 @@ msgid "Organization member invitation"
 msgstr ""
 
 #: project/babel.py:1 project/templates/layout.html:269
-#: project/templates/profile.html:48
+#: project/templates/profile.html:58
 msgid "Organization member invitations"
 msgstr ""
 
@@ -1919,7 +1923,7 @@ msgstr ""
 msgid "Organization successfully deleted"
 msgstr ""
 
-#: project/views/manage.py:210
+#: project/views/user_blueprint/organization_member/views.py:43
 msgid "Organization successfully left"
 msgstr ""
 
@@ -1945,7 +1949,9 @@ msgstr ""
 #: project/templates/layout.html:176 project/templates/layout.html:189
 #: project/templates/manage/admin_units.html:3
 #: project/templates/manage/admin_units.html:26
-#: project/templates/organization/main.html:4
+#: project/templates/organization/main.html:4 project/templates/profile.html:49
+#: project/templates/profile.html:54
+#: project/views/user_blueprint/organization_member/view_handler.py:22
 msgid "Organizations"
 msgstr ""
 
@@ -2099,7 +2105,7 @@ msgstr ""
 msgid "Print"
 msgstr ""
 
-#: project/forms/admin.py:16 project/templates/layout.html:350
+#: project/forms/admin.py:16 project/templates/layout.html:349
 #: project/views/root.py:83
 msgid "Privacy"
 msgstr ""
@@ -2273,7 +2279,7 @@ msgid "Request already verified"
 msgstr ""
 
 #: project/views/manage_admin_unit/admin_unit/forms.py:170
-#: project/views/user_blueprint/user/forms.py:10
+#: project/views/user_blueprint/user/forms.py:11
 msgid "Request deletion"
 msgstr ""
 
@@ -2396,8 +2402,8 @@ msgstr ""
 
 #: project/forms/admin.py:20 project/forms/admin.py:28
 #: project/views/user_blueprint/oauth2_client/forms.py:25
-#: project/views/user_blueprint/user/forms.py:28
-#: project/views/user_blueprint/user/forms.py:45
+#: project/views/user_blueprint/user/forms.py:29
+#: project/views/user_blueprint/user/forms.py:46
 msgid "Save"
 msgstr ""
 
@@ -2547,7 +2553,7 @@ msgstr ""
 
 #: project/views/admin.py:134 project/views/admin.py:280
 #: project/views/manage_admin_unit/admin_unit/views.py:78
-#: project/views/user_blueprint/user/views.py:112
+#: project/views/user_blueprint/user/views.py:118
 msgid "Settings successfully updated"
 msgstr ""
 
@@ -2638,7 +2644,7 @@ msgstr ""
 msgid "Target group origin"
 msgstr "Suitable for tourists / residents"
 
-#: project/forms/admin.py:13 project/templates/layout.html:337
+#: project/forms/admin.py:13 project/templates/layout.html:336
 #: project/views/root.py:55
 msgid "Terms of service"
 msgstr ""
@@ -2656,7 +2662,7 @@ msgstr ""
 msgid "Test recipient"
 msgstr ""
 
-#: project/views/user_blueprint/user/views.py:46
+#: project/views/user_blueprint/user/views.py:52
 msgid ""
 "The account is not deleted immediately. After a period of time, the "
 "account will be deleted. Until then, the deletion can be canceled."
@@ -2985,7 +2991,6 @@ msgstr ""
 msgid "Widgets"
 msgstr ""
 
-#: project/templates/invitation/read.html:10
 #: project/views/manage_admin_unit/templates/manage_admin_unit/read.html:10
 #: project/views/user_blueprint/organization_member_invitation/views.py:20
 #, python-format
@@ -3002,14 +3007,10 @@ msgid ""
 "delete a single date instead, you have to edit the event to do so."
 msgstr ""
 
-#: project/views/user_blueprint/user/views.py:35
+#: project/views/user_blueprint/user/views.py:41
 msgid ""
 "You are administrator of at least one organization. Cancel your "
 "membership to delete your account."
-msgstr ""
-
-#: project/views/manage.py:191
-msgid "You are not a member of this organization"
 msgstr ""
 
 #: project/templates/security/login_user.html:42
@@ -3452,5 +3453,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Update member"
+#~ msgstr ""
+
+#~ msgid "You are not a member of this organization"
 #~ msgstr ""
 

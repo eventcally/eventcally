@@ -1,46 +1,31 @@
 import os
 
-from flask import (
-    flash,
-    redirect,
-    render_template,
-    request,
-    send_from_directory,
-    url_for,
-)
-from flask_babel import gettext
+from flask import redirect, render_template, request, send_from_directory, url_for
 from flask_security import auth_required, current_user
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
-from project import app, db, dump_org_path
+from project import app, dump_org_path
 from project.access import (
     access_or_401,
-    can_current_user_delete_member,
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_manage,
     has_access,
 )
 from project.celery_tasks import dump_admin_unit_task
-from project.forms.admin_unit import AdminUnitDeleteMembershipForm
 from project.forms.event import FindEventForm
 from project.models import EventOrganizer, EventPlace
 from project.services.admin_unit import (
     get_admin_unit_member_invitations,
     get_admin_unit_organization_invitations,
-    get_member_for_admin_unit_by_user_id,
 )
 from project.services.event import get_events_query
 from project.services.search_params import EventSearchParams
 from project.utils import get_place_str
 from project.views.event import get_event_category_choices
 from project.views.utils import (
-    flash_errors,
     get_celery_poll_result,
     get_current_admin_unit,
     get_pagination_urls,
-    handleSqlError,
-    non_match_for_deletion,
     permission_missing,
     set_current_admin_unit,
 )
@@ -172,54 +157,6 @@ def manage_admin_unit_events(id):
         form=form,
         events=events.items,
         pagination=get_pagination_urls(events, id=id),
-    )
-
-
-@app.route("/manage/admin_unit/<int:id>/membership/delete", methods=("GET", "POST"))
-@auth_required()
-def manage_admin_unit_delete_membership(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    set_current_admin_unit(admin_unit)
-
-    member = get_member_for_admin_unit_by_user_id(
-        admin_unit.id,
-        current_user.id,
-    )
-
-    if not member:
-        # E.g. global admin
-        flash(gettext("You are not a member of this organization"), "danger")
-        return redirect(url_for("manage_admin_unit.organization_members", id=id))
-
-    if not can_current_user_delete_member(member):
-        flash(
-            gettext("Last remaining administrator can not leave the organization."),
-            "danger",
-        )
-        return redirect(url_for("manage_admin_unit.organization_members", id=id))
-
-    form = AdminUnitDeleteMembershipForm()
-
-    if form.validate_on_submit():
-        if non_match_for_deletion(form.name.data, admin_unit.name):
-            flash(gettext("Entered name does not match organization name"), "danger")
-        else:
-            try:
-                db.session.delete(member)
-                db.session.commit()
-                flash(gettext("Organization successfully left"), "success")
-                return redirect(url_for("manage_admin_units"))
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                flash(handleSqlError(e), "danger")
-    else:
-        flash_errors(form)
-
-    return render_template(
-        "manage/delete_membership.html",
-        admin_unit=admin_unit,
-        member=member,
-        form=form,
     )
 
 
