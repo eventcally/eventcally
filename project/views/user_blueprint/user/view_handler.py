@@ -1,4 +1,5 @@
 from flask_login import current_user
+from flask_security import auth_required
 
 from project.models.admin_unit import AdminUnit
 from project.modular.base_view_handler import BaseViewHandler
@@ -13,6 +14,7 @@ from project.views.user_blueprint.user.views import (
 
 
 class ViewHandler(BaseViewHandler):
+    decorators = [auth_required()]
     model = AdminUnit
     create_view_class = None
     read_view_class = None

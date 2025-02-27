@@ -2,7 +2,7 @@ import datetime
 
 from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
-from flask_security import current_user
+from flask_security import auth_required, current_user
 from flask_security.utils import get_post_login_redirect
 
 from project import db
@@ -24,6 +24,7 @@ from project.views.utils import (
 
 
 class RequestDeletionView(BaseDeleteView):
+    decorators = [auth_required()]
     template_file_name = "delete.html"
     form_class = RequestDeletionForm
 
@@ -75,6 +76,7 @@ class RequestDeletionView(BaseDeleteView):
 
 
 class CancelDeletionView(BaseDeleteView):
+    decorators = [auth_required()]
     template_file_name = "delete.html"
     form_class = CancelDeletionForm
 
@@ -114,6 +116,8 @@ class CancelDeletionView(BaseDeleteView):
 
 
 class BaseSettingView(BaseUpdateView):
+    decorators = [auth_required()]
+
     def get_success_text(self, object, form):
         return gettext("Settings successfully updated")
 
@@ -122,6 +126,7 @@ class BaseSettingView(BaseUpdateView):
 
 
 class GeneralView(BaseSettingView):
+    decorators = [auth_required()]
     form_class = GeneralForm
 
     def get_title(self, **kwargs):
@@ -129,6 +134,7 @@ class GeneralView(BaseSettingView):
 
 
 class NotificationView(BaseSettingView):
+    decorators = [auth_required()]
     form_class = NotificationForm
 
     def get_title(self, **kwargs):
@@ -136,6 +142,7 @@ class NotificationView(BaseSettingView):
 
 
 class AcceptTosView(BaseUpdateView):
+    decorators = [auth_required()]
     form_class = AcceptTosForm
 
     def get_title(self, **kwargs):

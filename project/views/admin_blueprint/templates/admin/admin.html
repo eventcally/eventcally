@@ -1,21 +1,13 @@
-{% extends "layout.html" %}
-{%- block title -%}
-{{ _('Admin') }}
-{%- endblock -%}
+{% extends "generic/base.html" %}
 {% block content %}
-
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">{{ _('Admin') }}</li>
-    </ol>
-</nav>
+{{ super() }}
 
 <div class="list-group">
     <a href="{{ url_for('admin_settings') }}" class="list-group-item">
         {{ _('Settings') }}
         <i class="fa fa-caret-right"></i>
     </a>
-    <a href="{{ url_for('admin_admin_units') }}" class="list-group-item">
+    <a href="{{ url_for('admin.admin_units') }}" class="list-group-item">
         {{ _('Organizations') }}
         <i class="fa fa-caret-right"></i>
     </a>
