@@ -10,15 +10,12 @@ from project.forms.admin import (
     AdminPlanningForm,
     AdminSettingsForm,
     AdminTestEmailForm,
-    DeleteAdminUnitForm,
     DeleteUserForm,
     ResetTosAceptedForm,
-    UpdateAdminUnitForm,
     UpdateUserForm,
 )
-from project.models import AdminUnit, Role, User
+from project.models import Role, User
 from project.services.admin import upsert_settings
-from project.services.admin_unit import delete_admin_unit
 from project.services.user import delete_user, set_roles_for_user
 from project.views.utils import (
     flash_errors,
@@ -32,74 +29,6 @@ from project.views.utils import (
 )
 
 
-@app.route("/admin")
-@roles_required("admin")
-def admin():
-    return render_template("admin/admin.html")
-
-
-@app.route("/admin/admin_units")
-@roles_required("admin")
-def admin_admin_units():
-    admin_units = AdminUnit.query.order_by(func.lower(AdminUnit.name)).paginate()
-    return render_template(
-        "admin/admin_units.html",
-        admin_units=admin_units.items,
-        pagination=get_pagination_urls(admin_units),
-    )
-
-
-@app.route("/admin/admin_unit/<int:id>/update", methods=("GET", "POST"))
-@roles_required("admin")
-def admin_admin_unit_update(id):
-    admin_unit = AdminUnit.query.get_or_404(id)
-
-    form = UpdateAdminUnitForm(obj=admin_unit)
-
-    if form.validate_on_submit():
-        form.populate_obj(admin_unit)
-
-        try:
-            db.session.commit()
-            flash(gettext("Organization successfully updated"), "success")
-            return redirect(url_for("admin_admin_units"))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
-    else:
-        flash_errors(form)
-
-    return render_template(
-        "admin/update_admin_unit.html", admin_unit=admin_unit, form=form
-    )
-
-
-@app.route("/admin/admin_unit/<int:id>/delete", methods=("GET", "POST"))
-@roles_required("admin")
-def admin_admin_unit_delete(id):
-    admin_unit = AdminUnit.query.get_or_404(id)
-
-    form = DeleteAdminUnitForm()
-
-    if form.validate_on_submit():
-        if non_match_for_deletion(form.name.data, admin_unit.name):
-            flash(gettext("Entered name does not match organization name"), "danger")
-        else:
-            try:
-                delete_admin_unit(admin_unit)
-                flash(gettext("Organization successfully deleted"), "success")
-                return redirect(url_for("admin_admin_units"))
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                flash(handleSqlError(e), "danger")
-    else:
-        flash_errors(form)
-
-    return render_template(
-        "admin/delete_admin_unit.html", form=form, admin_unit=admin_unit
-    )
-
-
 @app.route("/admin/reset-tos-accepted", methods=("GET", "POST"))
 @roles_required("admin")
 def admin_reset_tos_accepted():
@@ -110,7 +39,7 @@ def admin_reset_tos_accepted():
     if form.validate_on_submit():
         try:
             reset_tos_accepted_for_users()
-            return redirect(url_for("admin"))
+            return redirect(url_for("admin.admin"))
         except SQLAlchemyError as e:  # pragma: no cover
             db.session.rollback()
             flash(handleSqlError(e), "danger")
@@ -132,7 +61,7 @@ def admin_settings():
         try:
             db.session.commit()
             flash(gettext("Settings successfully updated"), "success")
-            return redirect(url_for("admin"))
+            return redirect(url_for("admin.admin"))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
@@ -278,7 +207,7 @@ def admin_planning():
         try:
             db.session.commit()
             flash(gettext("Settings successfully updated"), "success")
-            return redirect(url_for("admin"))
+            return redirect(url_for("admin.admin"))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")

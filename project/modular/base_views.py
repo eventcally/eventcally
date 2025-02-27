@@ -60,6 +60,14 @@ class BaseView(View):
     def get_breadcrumbs(self):
         return self.handler.get_breadcrumbs()
 
+    def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
+        return self.render_template(**kwargs)
+
 
 class BaseListView(BaseView):
     display_class = None

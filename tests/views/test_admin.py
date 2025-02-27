@@ -51,7 +51,7 @@ def test_admin_settings(client, seeder, utils, app, mocker, db_error):
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "admin")
+    utils.assert_response_redirect(response, "admin.admin")
 
     with app.app_context():
         from project.services.admin import upsert_settings
@@ -212,7 +212,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
         admin_unit.can_verify_other = False
         db.session.commit()
 
-    url = utils.get_url("admin_admin_unit_update", id=admin_unit_id)
+    url = utils.get_url("admin.admin_unit_update", id=admin_unit_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -233,7 +233,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "admin_admin_units")
+    utils.assert_response_redirect(response, "admin.admin_units")
 
     with app.app_context():
         from project.models import AdminUnit
@@ -250,7 +250,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
 def test_admin_unit_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     user_id, admin_unit_id = seeder.setup_base(True)
 
-    url = utils.get_url("admin_admin_unit_delete", id=admin_unit_id)
+    url = utils.get_url("admin.admin_unit_delete", id=admin_unit_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -279,7 +279,7 @@ def test_admin_unit_delete(client, seeder, utils, app, db, mocker, db_error, non
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "admin_admin_units")
+    utils.assert_response_redirect(response, "admin.admin_units")
 
     with app.app_context():
         from project.models import AdminUnit
@@ -300,7 +300,7 @@ def test_admin_reset_tos_accepted(client, app, db, seeder: Seeder, utils: UtilAc
             "submit": "Reset",
         },
     )
-    utils.assert_response_redirect(response, "admin")
+    utils.assert_response_redirect(response, "admin.admin")
 
     with app.app_context():
         from project.models.user import User
@@ -330,7 +330,7 @@ def test_admin_planning(client, seeder, utils, app, mocker, db_error):
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "admin")
+    utils.assert_response_redirect(response, "admin.admin")
 
     with app.app_context():
         from project.services.admin import upsert_settings

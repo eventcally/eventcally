@@ -4,7 +4,9 @@
 {% from "_macros.html" import render_audit_container %}
 {% block content %}
 
+{% block breadcrumbs %}
 {{ render_breadcrumb(view.get_breadcrumbs(), object) }}
+{% endblock %}
 
 {% set actions = view.handler.get_read_actions(object) %}
 {% if actions %}

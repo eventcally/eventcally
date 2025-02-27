@@ -21,7 +21,7 @@ class DateTimePropFormatter(BasePropFormatter):
 
 class DatePropFormatter(BasePropFormatter):
     def format(self, data):
-        return format_date(data)
+        return format_date(data) if data else ""
 
 
 class StringPropFormatter(BasePropFormatter):

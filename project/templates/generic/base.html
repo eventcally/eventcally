@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% from "macros/nav.html.j2" import render_breadcrumb %}
+{% block content %}
+
+{% block breadcrumbs %}
+{{ render_breadcrumb(view.get_breadcrumbs(), title) }}
+{% endblock %}
+
+{% endblock %}
