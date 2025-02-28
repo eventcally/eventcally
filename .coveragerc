@@ -6,3 +6,4 @@ omit =
     project/celery_tasks.py
     project/cli/test.py
     project/templates/email/*
+    project/views/flask_admin.py

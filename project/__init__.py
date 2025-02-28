@@ -275,6 +275,7 @@ from project.views import (
     dump,
     event,
     event_date,
+    flask_admin,
     image,
     js,
     manage,
