@@ -29,7 +29,7 @@ def test_read(client, seeder, utils, external_link):
     utils.assert_response_unauthorized(response)
 
 
-def test_read_containsActionLink(seeder, utils):
+def test_read_containsActionLink(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(
@@ -42,6 +42,17 @@ def test_read_containsActionLink(seeder, utils):
 
     action_url = utils.get_url("event_actions", event_id=event_id)
     assert action_url in str(response.data)
+
+
+def test_read_shows_reference_requests(seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    other_user_id, other_admin_unit_id, event_id, reference_request_id = (
+        seeder.create_outgoing_reference_request(admin_unit_id)
+    )
+
+    url = utils.get_url("event", event_id=event_id)
+    utils.get_ok(url)
 
 
 def test_read_co_organizers(seeder, utils):

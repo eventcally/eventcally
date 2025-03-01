@@ -781,7 +781,7 @@
     <div class="list-group list-group-flush mb-4" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
       {% for reference_request in event.reference_requests %}
         <span class="list-group-item">
-          <a href="{{ url_for('manage_admin_unit.outgoing_event_reference_request', id=request.event.admin_unit.id, event_reference_request_id=reference_request.id) }}">{{ reference_request.admin_unit.name }}</a>
+          <a href="{{ url_for('manage_admin_unit.outgoing_event_reference_request', id=reference_request.event.admin_unit.id, event_reference_request_id=reference_request.id) }}">{{ reference_request.admin_unit.name }}</a>
           {{ render_reference_request_review_status_pill(reference_request) }}
         </span>
       {% endfor %}
