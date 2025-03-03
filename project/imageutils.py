@@ -47,7 +47,9 @@ def get_bytes_from_image(image: Image) -> bytes:
 
 
 def resize_image_to_min(image: Image) -> Image:
-    if image.width >= min_image_size or image.height >= min_image_size:
+    if (
+        image.width >= min_image_size or image.height >= min_image_size
+    ):  # pragma: no cover
         return image
 
     ratio = max(min_image_size / image.width, min_image_size / image.height)

@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_manage_form_styles, render_manage_form_scripts, render_admin_unit_form_script, render_jquery_steps_header, render_cropper_logo_block, render_crop_image_form_section, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_cropper_header, render_manage_form_styles, render_manage_form_scripts, render_admin_unit_form_script, render_jquery_steps_header, render_field_with_errors, render_field %}
+{% import "macros/forms.html.j2" as forms %}
 
 {%- block title -%}
 {{ _('Create organization') }}
@@ -12,8 +13,8 @@
 {% block header %}
 {{ render_manage_form_scripts() }}
 {{ render_jquery_steps_header() }}
-{{ render_cropper_logo_block() }}
 {{ render_admin_unit_form_script() }}
+{{ render_cropper_header() }}
 {% endblock %}
 
 {% block content %}
@@ -58,7 +59,7 @@
     </div>
   </div>
 
-  {{ render_crop_image_form_section(form.logo) }}
+  {{ forms.render_field(form.logo) }}
 
   {% if embedded_relation_enabled %}
   <div class="card mb-4">

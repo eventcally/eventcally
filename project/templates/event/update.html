@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
-{% from "_macros.html" import render_co_organizer_select2, render_event_date_defintion_code, render_date_definition_container, render_manage_form_styles, render_manage_form_scripts, render_cropper_header, render_end_container_handling, render_jquery_steps_header, render_cropper_code, render_crop_image_form_section, render_radio_buttons, render_field_with_errors, render_field %}
+{% from "_macros.html" import render_co_organizer_select2, render_event_date_defintion_code, render_date_definition_container, render_manage_form_styles, render_manage_form_scripts, render_cropper_header, render_end_container_handling, render_jquery_steps_header, render_radio_buttons, render_field_with_errors, render_field %}
+{% import "macros/forms.html.j2" as forms %}
 
 {%- block title -%}
 {{ _('Update event') }}
@@ -16,8 +17,6 @@
 
   <script>
     $( function() {
-
-      {{ render_cropper_code() }}
 
       var form = $("#main-form");
       form.validate({
@@ -182,7 +181,7 @@
     </div>
   </div>
 
-  {{ render_crop_image_form_section(form.photo) }}
+  {{ forms.render_field(form.photo) }}
 
   <div class="card mb-4">
     <div class="card-header">
