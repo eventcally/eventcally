@@ -188,19 +188,6 @@ def manage_admin_unit_custom_widgets(id, path=None):
     )
 
 
-@app.route("/manage/admin_unit/<int:id>/events/import")
-@auth_required()
-def manage_admin_unit_events_import(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    access_or_401(admin_unit, "event:create")
-    set_current_admin_unit(admin_unit)
-
-    return render_template(
-        "manage/events_vue.html",
-        admin_unit=admin_unit,
-    )
-
-
 @app.route("/manage/admin_unit/<int:id>/export", methods=["GET", "POST"])
 @auth_required()
 def manage_admin_unit_export(id):

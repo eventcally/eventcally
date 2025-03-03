@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 
 import icalendar
 import pytz
-from dateutil.parser import isoparse
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import rrulestr
 
@@ -80,10 +79,6 @@ def form_input_to_date(date_str, hour=0, minute=0, second=0):
 
 def form_input_from_date(date):
     return date.strftime("%Y-%m-%d") if date else ""
-
-
-def parse_iso_string(input: str) -> datetime:
-    return isoparse(input)
 
 
 def dates_from_recurrence_rule(start, recurrence_rule):

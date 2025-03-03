@@ -120,6 +120,16 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
             assert len(event.date_definitions) == 1
 
 
+def test_create_unauthorized(client, app, utils, seeder):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+
+    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    utils.get_unauthorized(url)
+
+
 def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)

@@ -232,23 +232,6 @@ def test_admin_unit_custom_widgets(client, seeder: Seeder, utils: UtilActions):
     utils.get_ok(url)
 
 
-def test_admin_unit_events_import(client, seeder: Seeder, utils: UtilActions):
-    _, admin_unit_id = seeder.setup_base()
-
-    url = utils.get_url("manage_admin_unit_events_import", id=admin_unit_id)
-    utils.get_ok(url)
-
-
-def test_admin_unit_events_import_unauthorized(client, app, utils, seeder):
-    owner_id = seeder.create_user("owner@owner")
-    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
-    seeder.create_admin_unit_member(admin_unit_id, [])
-    utils.login()
-
-    url = utils.get_url("manage_admin_unit_events_import", id=admin_unit_id)
-    utils.get_unauthorized(url)
-
-
 @pytest.mark.parametrize("scenario", ["db_error", "default", "last_admin", "non_match"])
 def test_manage_admin_unit_delete_membership(
     client, utils: UtilActions, seeder: Seeder, app, db, mocker, scenario: str
