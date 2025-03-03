@@ -19,6 +19,13 @@ def test_review_verify(
         unverified_admin_unit_id, verifier_admin_unit_id
     )
 
+    with app.app_context():
+        from project.models import AdminUnit
+
+        admin_unit = db.session.get(AdminUnit, unverified_admin_unit_id)
+        admin_unit.description = "Beschreibung"
+        db.session.commit()
+
     url = utils.get_url(
         "manage_admin_unit.incoming_admin_unit_verification_request_review",
         id=verifier_admin_unit_id,
