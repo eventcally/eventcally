@@ -33,6 +33,9 @@ class Role(db.Model, RoleMixin):
     description = Column(String(255))
     permissions = Column(MutableList.as_mutable(AsaList()), nullable=True)
 
+    def __str__(self):  # pragma: no cover
+        return self.name or super().__str__()
+
 
 class User(db.Model, UserMixin):
     __tablename__ = "user"
