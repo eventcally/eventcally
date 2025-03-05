@@ -1,9 +1,15 @@
 from flask import redirect, request, url_for
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.model.template import EndpointLinkRowAction
+from flask_babel import lazy_gettext
 from flask_security import current_user
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from project import app, db
+from project.models.admin_unit import AdminUnit
+from project.models.event_place import EventPlace
+from project.models.user import User
 
 
 class AuthAdminIndexView(AdminIndexView):
@@ -17,10 +23,12 @@ class AuthModelView(ModelView):
     column_display_pk = True
     column_display_all_relations = True
     column_hide_backrefs = False
+    named_filter_urls = True
+    can_set_page_size = True
 
     def _get_endpoint(self, endpoint):
         result = super()._get_endpoint(endpoint)
-        return f"flask_admin_{result}"
+        return f"flask_admin_{self.__class__.__name__.lower()}_{result}"
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.has_role("admin")
@@ -33,21 +41,127 @@ class AuthModelView(ModelView):
         )
         return redirect(url)
 
-    def __init__(self, model, session, **kwargs):
-        super().__init__(model, session, **kwargs)
+    def scaffold_list_columns(self):
+        columns = super().scaffold_list_columns()
 
+        for c_attr in self.model.__mapper__.column_attrs:
+            if c_attr.key not in columns:
+                columns.append(c_attr.key)
+
+        for (
+            descriptor_key,
+            descriptor,
+        ) in self.model.__mapper__.all_orm_descriptors.items():
+            if (
+                isinstance(descriptor, hybrid_property)
+                and descriptor_key not in columns
+            ):
+                try:
+                    getattr(self.model, descriptor_key)
+                except NotImplementedError:
+                    continue
+                columns.append(descriptor_key)
+
+        if self.model.__tablename__ == "image":
+            columns.remove("data")
+
+        if self.model.__tablename__ == "role":
+            columns.remove("users")
+
+        if self.model.__tablename__ == "adminunitmemberrole":
+            columns.remove("members")
+
+        return columns
+
+    def get_filters(self):
         if not self.column_filters:
-            self._init_filters()
+            column_filters = list()
+            for c in self._list_columns:
+                flt = self.scaffold_filters(c[0])
+                if flt:
+                    column_filters.extend(flt)
+            self.column_filters = column_filters
 
-    def _init_filters(self):
-        column_filters = list()
-        for c in self._list_columns:
-            flt = self.scaffold_filters(c[0])
-            if flt:
-                column_filters.extend(flt)
-        self.column_filters = column_filters
-        self._refresh_filters_cache()
-        pass
+        return super().get_filters()
+
+
+class OrganizationView(AuthModelView):
+    column_list = (
+        AdminUnit.name,
+        AdminUnit.is_verified,
+        AdminUnit.incoming_reference_requests_allowed,
+        AdminUnit.can_create_other,
+        AdminUnit.can_invite_other,
+        AdminUnit.can_verify_other,
+        AdminUnit.created_at,
+        AdminUnit.deletion_requested_at,
+    )
+    column_filters = (
+        AdminUnit.name,
+        "is_verified",
+        AdminUnit.incoming_reference_requests_allowed,
+        AdminUnit.can_create_other,
+        AdminUnit.can_invite_other,
+        AdminUnit.can_verify_other,
+        AdminUnit.created_at,
+        AdminUnit.deletion_requested_at,
+    )
+    column_searchable_list = (AdminUnit.name,)
+    column_default_sort = "name"
+    form_columns = (
+        AdminUnit.incoming_reference_requests_allowed,
+        AdminUnit.can_create_other,
+        AdminUnit.can_invite_other,
+        AdminUnit.can_verify_other,
+    )
+    edit_modal = True
+    column_extra_row_actions = [
+        EndpointLinkRowAction("fa fa-eye", "manage_admin_unit", lazy_gettext("Manage")),
+        EndpointLinkRowAction(
+            "fa fa-eye", "organizations", lazy_gettext("View"), "path"
+        ),
+    ]
+
+
+class UserView(AuthModelView):
+    column_list = (
+        User.email,
+        User.created_at,
+        User.confirmed_at,
+        User.deletion_requested_at,
+        User.active,
+        User.tos_accepted_at,
+        User.locale,
+    )
+    column_filters = (
+        User.email,
+        User.created_at,
+        User.confirmed_at,
+        User.deletion_requested_at,
+        User.active,
+        User.tos_accepted_at,
+        User.locale,
+    )
+    column_searchable_list = (User.email,)
+    column_default_sort = "email"
+    form_columns = (
+        "roles",
+        User.active,
+        User.confirmed_at,
+        User.deletion_requested_at,
+        User.tos_accepted_at,
+        User.locale,
+    )
+    edit_modal = True
+
+
+class EventPlaceView(AuthModelView):
+    column_list = (
+        EventPlace.name,
+        "location",
+    )
+    column_searchable_list = (EventPlace.name,)
+    column_default_sort = "name"
 
 
 admin = Admin(
@@ -65,13 +179,41 @@ for mapper in db.Model.registry.mappers:
     if not class_:
         continue
 
-    class CustomModelView(AuthModelView):
-        column_list = [c_attr.key for c_attr in class_.__mapper__.column_attrs]
+    name = class_.get_display_name_plural()
+    category = class_.get_display_name().split(" ")[0]
 
     admin.add_view(
-        CustomModelView(
+        AuthModelView(
             class_,
             db.session,
-            name=class_.get_display_name_plural(),
+            name=name,
+            category=category,
         )
     )
+
+admin.add_view(
+    OrganizationView(
+        AdminUnit,
+        db.session,
+        name="AdminUnit",
+        category="Custom Views",
+    )
+)
+
+admin.add_view(
+    UserView(
+        User,
+        db.session,
+        name="User",
+        category="Custom Views",
+    )
+)
+
+admin.add_view(
+    EventPlaceView(
+        EventPlace,
+        db.session,
+        name="EventPlace",
+        category="Custom Views",
+    )
+)
