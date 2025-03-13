@@ -167,3 +167,14 @@ def getattr_keypath(obj, keypath, default=None):
         return reduce(getattr, keypath.split("."), obj)
     except AttributeError:  # pragma: no cover
         return default
+
+
+def parse_like_term(term):
+    if term.startswith("^"):
+        stmt = "%s%%" % term[1:]
+    elif term.startswith("="):
+        stmt = term[1:]
+    else:
+        stmt = "%%%s%%" % term
+
+    return stmt

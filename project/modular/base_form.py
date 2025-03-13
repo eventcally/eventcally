@@ -1,5 +1,7 @@
+from flask import request
 from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
+from sqlalchemy import or_
 from wtforms import FormField, HiddenField, SubmitField
 
 from project.modular.fields import VirtualFormField
@@ -22,6 +24,9 @@ class BaseForm(FlaskForm):
                 self.__iter__(),
             )
         )
+
+    def has_data(self):
+        return self.is_submitted()
 
     def get_field_by_name(self, name: str):
         for field in self.get_input_fields():
@@ -70,3 +75,43 @@ class BaseUpdateForm(BaseForm):
 
 class BaseDeleteForm(BaseForm):
     submit = SubmitField(lazy_gettext("Delete"), render_kw={"class": "btn btn-danger"})
+
+
+class BaseListForm(BaseForm):
+    class Meta:
+        csrf = False
+
+    filters = []
+    search_definitions = []
+    sort_definitions = []
+
+    submit = SubmitField(
+        lazy_gettext("Refresh"), render_kw={"class": "btn btn-primary"}
+    )
+
+    def apply_query_filter(self, query, **kwargs):
+        for filter in self.filters:
+            form_field = getattr(self, filter.key)
+            if form_field and form_field.data:
+                query = filter.apply(query, form_field.data, None)
+
+        if self.search_definitions and self.keyword and self.keyword.data:
+            filter_stmt = []
+
+            for definition in self.search_definitions:
+                filter = definition.get_filter(self.keyword.data)
+                filter_stmt.append(filter)
+
+            query = query.filter(or_(*filter_stmt))
+
+        return query
+
+    def apply_query_order(self, query, **kwargs):
+        for definition in self.sort_definitions:
+            if self.sort.data == definition.key:
+                return definition.apply(query)
+
+        return query  # pragma: no cover
+
+    def is_submitted(self):  # pragma: no cover
+        return super().is_submitted() or "submit" in request.args

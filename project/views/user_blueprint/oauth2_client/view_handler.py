@@ -27,7 +27,9 @@ class OAuth2ClientViewHandler(UserChildViewHandler):
         complete_oauth2_client(object)
 
     def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(OAuth2Client.id)
+        return (
+            super().apply_objects_query_order(query, **kwargs).order_by(OAuth2Client.id)
+        )
 
     def can_object_be_deleted(self, form, object):
         if non_match_for_deletion(form.name.data, object.client_name):

@@ -34,7 +34,11 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
         return query.filter(Event.admin_unit_id == current_admin_unit.id)
 
     def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(EventReference.created_at.desc())
+        return (
+            super()
+            .apply_objects_query_order(query, **kwargs)
+            .order_by(EventReference.created_at.desc())
+        )
 
     def get_list_per_page(self):
         return 50

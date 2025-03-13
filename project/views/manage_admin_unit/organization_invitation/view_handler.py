@@ -34,7 +34,11 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     list_display_class = ListDisplay
 
     def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(AdminUnitInvitation.created_at.desc())
+        return (
+            super()
+            .apply_objects_query_order(query, **kwargs)
+            .order_by(AdminUnitInvitation.created_at.desc())
+        )
 
 
 handler = ViewHandler()

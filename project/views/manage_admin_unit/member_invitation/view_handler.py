@@ -37,7 +37,11 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     list_decorators = [manage_permission_required("admin_unit.members:read")]
 
     def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(func.lower(AdminUnitMemberInvitation.email))
+        return (
+            super()
+            .apply_objects_query_order(query, **kwargs)
+            .order_by(func.lower(AdminUnitMemberInvitation.email))
+        )
 
 
 handler = ViewHandler()

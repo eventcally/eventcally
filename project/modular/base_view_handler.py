@@ -30,6 +30,7 @@ class BaseViewHandler:
     list_view_class = BaseListView
     list_display_class = None
     list_decorators = []
+    list_form_class = None
     generic_prefix = ""
 
     def __init__(self, *args, **kwargs):
@@ -63,13 +64,24 @@ class BaseViewHandler:
         return self.apply_objects_query_order(
             self.apply_base_filter(
                 self.get_objects_base_query_from_kwargs(**kwargs), **kwargs
-            )
+            ),
+            **kwargs,
         )
 
-    def apply_base_filter(self, query, **kwargs):  # pragma: no cover
+    def apply_base_filter(self, query, **kwargs):
+        form = kwargs.get("form", None)
+
+        if form:
+            return form.apply_query_filter(query, **kwargs)
+
         return query
 
-    def apply_objects_query_order(self, query, **kwargs):  # pragma: no cover
+    def apply_objects_query_order(self, query, **kwargs):
+        form = kwargs.get("form", None)
+
+        if form:
+            return form.apply_query_order(query, **kwargs)
+
         return query
 
     def can_object_be_deleted(self, form, object):  # pragma: no cover
@@ -294,6 +306,7 @@ class BaseViewHandler:
             class ListView(self.list_view_class):
                 decorators = self.list_decorators
                 display_class = self.list_display_class
+                form_class = self.list_view_class.form_class or self.list_form_class
 
             self._add_view(
                 "list",

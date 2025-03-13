@@ -24,7 +24,11 @@ class ViewHandler(AdminChildViewHandler):
     list_display_class = ListDisplay
 
     def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(func.lower(AdminUnit.name))
+        return (
+            super()
+            .apply_objects_query_order(query, **kwargs)
+            .order_by(func.lower(AdminUnit.name))
+        )
 
     def get_additional_list_actions(self, object):
         result = super().get_additional_list_actions(object)

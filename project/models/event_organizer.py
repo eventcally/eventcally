@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Unicode, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Unicode, UniqueConstraint, func, select
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import deferred
 
 from project import db
@@ -31,6 +32,18 @@ class EventOrganizer(db.Model, TrackableMixin):
         back_populates="eventorganizer",
     )
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=True)
+
+    @hybrid_property
+    def number_of_events(self):
+        return len(self.events)
+
+    @number_of_events.expression
+    def number_of_events(cls):
+        from project.models.event import Event
+
+        return (
+            select(func.count()).where(Event.organizer_id == cls.id).scalar_subquery()
+        )
 
     def __str__(self):
         return self.name or super().__str__()

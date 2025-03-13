@@ -1,6 +1,6 @@
 from flask import request
 
-from project.modular.base_views import BaseCreateView, BaseUpdateView
+from project.modular.base_views import BaseCreateView, BaseListView, BaseUpdateView
 from project.views.utils import current_admin_unit
 
 
@@ -32,3 +32,13 @@ class CreateView(SharedFormViewMixin, BaseCreateView):
 
 class UpdateView(SharedFormViewMixin, BaseUpdateView):
     pass
+
+
+class ListView(SharedFormViewMixin, BaseListView):
+    def create_display(self, **kwargs):
+        display = super().create_display(**kwargs)
+
+        if not current_admin_unit.can_verify_other:
+            del display.verify
+
+        return display

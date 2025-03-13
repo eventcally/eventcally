@@ -24,7 +24,7 @@ def generate_sitemap(pinggoogle: bool):
     today = get_today()
     events = (
         Event.query.join(Event.admin_unit)
-        .options(load_only(Event.id, Event.last_modified_at))
+        .options(load_only(Event.id, Event.created_at, Event.updated_at))
         .filter(Event.dates.any(EventDate.start >= today))
         .filter(
             and_(

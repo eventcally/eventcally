@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey
+from sqlalchemy import Column, DateTime, ForeignKey, func
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref, declared_attr, deferred, relationship
 
@@ -68,6 +68,10 @@ class TrackableMixin(object):
     @hybrid_property
     def last_modified_at(self):
         return self.updated_at if self.updated_at else self.created_at
+
+    @last_modified_at.expression
+    def last_modified_at(cls):
+        return func.coalesce(cls.updated_at, cls.created_at)
 
     def get_hash(self):
         return (

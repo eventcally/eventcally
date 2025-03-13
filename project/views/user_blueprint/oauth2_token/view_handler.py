@@ -58,7 +58,11 @@ class OAuth2TokenViewHandler(UserChildViewHandler):
         return result
 
     def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(OAuth2Token.issued_at.desc())
+        return (
+            super()
+            .apply_objects_query_order(query, **kwargs)
+            .order_by(OAuth2Token.issued_at.desc())
+        )
 
 
 handler = OAuth2TokenViewHandler()

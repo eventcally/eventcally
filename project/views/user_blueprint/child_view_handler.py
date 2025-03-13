@@ -20,7 +20,11 @@ class UserChildViewHandler(BaseViewHandler):
         object.user_id = current_user.id
 
     def apply_base_filter(self, query, **kwargs):
-        return query.filter(self.model.user_id == current_user.id)
+        return (
+            super()
+            .apply_base_filter(query, **kwargs)
+            .filter(self.model.user_id == current_user.id)
+        )
 
     def check_object_access(self, object):
         return owner_access_or_401(object.user_id)

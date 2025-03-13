@@ -21,7 +21,11 @@ class ManageAdminUnitChildViewHandler(BaseViewHandler):
         setattr(object, self.admin_unit_id_attribute_name, current_admin_unit.id)
 
     def apply_base_filter(self, query, **kwargs):
-        return query.filter(self.admin_unit_id_column == current_admin_unit.id)
+        return (
+            super()
+            .apply_base_filter(query, **kwargs)
+            .filter(self.admin_unit_id_column == current_admin_unit.id)
+        )
 
     def check_object_access(self, object):
         return admin_unit_owner_access_or_401(
