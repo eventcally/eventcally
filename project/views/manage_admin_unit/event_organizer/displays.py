@@ -1,7 +1,13 @@
 from flask_babel import lazy_gettext
 
 from project.modular.base_display import BaseDisplay
-from project.modular.base_props import BoolProp, CountProp, LocationProp, StringProp
+from project.modular.base_props import (
+    BoolProp,
+    DateProp,
+    IntProp,
+    LocationProp,
+    StringProp,
+)
 
 
 class ListDisplay(BaseDisplay):
@@ -11,4 +17,5 @@ class ListDisplay(BaseDisplay):
     email = StringProp(lazy_gettext("Email"))
     url = StringProp(lazy_gettext("Link URL"))
     logo = BoolProp(lazy_gettext("Logo"))
-    events = CountProp(lazy_gettext("Number of events"))
+    number_of_events = IntProp(lazy_gettext("Number of events"))
+    last_modified_at = DateProp(lazy_gettext("Last modified at"))

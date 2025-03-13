@@ -55,7 +55,11 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
         return gettext("Outgoing verification requests")
 
     def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(AdminUnitVerificationRequest.created_at.desc())
+        return (
+            super()
+            .apply_objects_query_order(query, **kwargs)
+            .order_by(AdminUnitVerificationRequest.created_at.desc())
+        )
 
     def get_create_url(self, **kwargs):
         return url_for(

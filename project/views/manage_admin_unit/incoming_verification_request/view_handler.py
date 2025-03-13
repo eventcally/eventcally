@@ -33,7 +33,11 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
         return gettext("Incoming verification requests")
 
     def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(AdminUnitVerificationRequest.created_at.desc())
+        return (
+            super()
+            .apply_objects_query_order(query, **kwargs)
+            .order_by(AdminUnitVerificationRequest.created_at.desc())
+        )
 
     def _add_views(
         self,

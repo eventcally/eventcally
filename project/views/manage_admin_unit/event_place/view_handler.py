@@ -1,6 +1,5 @@
 from flask import flash, url_for
 from flask_babel import gettext
-from sqlalchemy.sql import func
 
 from project.models import EventPlace
 from project.views.manage_admin_unit import manage_admin_unit_bp
@@ -11,6 +10,7 @@ from project.views.manage_admin_unit.event_place.displays import ListDisplay
 from project.views.manage_admin_unit.event_place.forms import (
     CreateEventPlaceForm,
     DeleteEventPlaceForm,
+    ListForm,
     UpdateEventPlaceForm,
 )
 from project.views.utils import (
@@ -30,9 +30,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     delete_decorators = [manage_permission_required("place:delete")]
     delete_form_class = DeleteEventPlaceForm
     list_display_class = ListDisplay
-
-    def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(func.lower(EventPlace.name))
+    list_form_class = ListForm
 
     def get_list_per_page(self):
         return 50

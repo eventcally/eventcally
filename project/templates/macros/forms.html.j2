@@ -16,6 +16,22 @@
 </form>
 {% endmacro %}
 
+{% macro render_search_form(form) %}
+<form id="search-form" action="" method="get" autocomplete="off">
+    {{ form.hidden_tag() }}
+
+    {% for field in form.get_input_fields() %}
+    {{ render_field(field) }}
+    {% endfor %}
+
+    <div class="d-flex justify-content-between my-4 w-medium button-container">
+        {% for button in form.get_button_fields() %}
+        {{ render_button(button) }}
+        {% endfor %}
+    </div>
+</form>
+{% endmacro %}
+
 {% macro render_button(field) %}
 {% if field.render_kw %}
 {% set _dummy = field.render_kw.setdefault("class", "btn btn-primary") %}

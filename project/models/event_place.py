@@ -1,6 +1,17 @@
-from sqlalchemy import Column, Integer, String, Unicode, UnicodeText, UniqueConstraint
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Unicode,
+    UnicodeText,
+    UniqueConstraint,
+    func,
+    select,
+)
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from project import db
+from project.models.event import Event
 from project.models.trackable_mixin import TrackableMixin
 
 
@@ -29,6 +40,16 @@ class EventPlace(db.Model, TrackableMixin):
     url = Column(String(255))
     description = Column(UnicodeText())
     admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=True)
+
+    @hybrid_property
+    def number_of_events(self):
+        return len(self.events)
+
+    @number_of_events.expression
+    def number_of_events(cls):
+        return (
+            select(func.count()).where(Event.event_place_id == cls.id).scalar_subquery()
+        )
 
     def __str__(self):
         return self.name or super().__str__()

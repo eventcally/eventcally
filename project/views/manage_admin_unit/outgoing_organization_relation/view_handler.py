@@ -1,5 +1,4 @@
 from flask_babel import gettext
-from sqlalchemy import func
 
 from project.models import AdminUnitRelation
 from project.models.admin_unit import AdminUnit
@@ -14,10 +13,12 @@ from project.views.manage_admin_unit.outgoing_organization_relation.displays imp
 )
 from project.views.manage_admin_unit.outgoing_organization_relation.forms import (
     CreateForm,
+    ListForm,
     UpdateForm,
 )
 from project.views.manage_admin_unit.outgoing_organization_relation.views import (
     CreateView,
+    ListView,
     UpdateView,
 )
 from project.views.utils import manage_permission_required
@@ -37,6 +38,8 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     delete_decorators = [manage_permission_required("admin_unit:update")]
     delete_form_class = BaseDeleteForm
     list_display_class = ListDisplay
+    list_form_class = ListForm
+    list_view_class = ListView
     generic_prefix = "outgoing_"
 
     def get_model_display_name(self):
@@ -51,9 +54,6 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
             .get_objects_base_query_from_kwargs(**kwargs)
             .join(AdminUnit, AdminUnitRelation.target_admin_unit_id == AdminUnit.id)
         )
-
-    def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(func.lower(AdminUnit.name))
 
 
 handler = ViewHandler()

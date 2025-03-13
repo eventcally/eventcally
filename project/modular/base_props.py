@@ -145,6 +145,10 @@ class StringProp(BaseProp):
         super().__init__(*args, **kwargs)
 
 
+class IntProp(StringProp):
+    pass
+
+
 class LocationProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", LocationPropFormatter())
@@ -187,7 +191,7 @@ class BoolProp(BaseProp):
         return True if data else False
 
 
-class CountProp(BaseProp):
+class CountProp(BaseProp):  # pragma: no cover
     def get_display_data(self, object):
         data = super().get_display_data(object)
         return len(data) if hasattr(data, "__len__") else None

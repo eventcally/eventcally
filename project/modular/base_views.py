@@ -2,8 +2,10 @@ from flask import flash, jsonify, redirect, render_template, request
 from flask.views import View
 from flask_babel import lazy_gettext
 from sqlalchemy.exc import SQLAlchemyError
+from wtforms import RadioField, SelectField, StringField
 
 from project import db
+from project.modular.filters import BooleanFilter
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
@@ -73,6 +75,7 @@ class BaseListView(BaseView):
     display_class = None
     list_context_name = None
     template_file_name = "list.html"
+    form_class = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -82,6 +85,62 @@ class BaseListView(BaseView):
 
     def create_display(self, **kwargs):
         return self.display_class(**kwargs)
+
+    def create_form(self, **kwargs):
+        if not self.form_class:
+            return None
+
+        class ListForm(self.form_class):
+            pass
+
+        if self.form_class.search_definitions:
+            field = self.create_search_field()
+            setattr(ListForm, "keyword", field)
+
+        for filter in self.form_class.filters:
+            field = self.create_field_for_filter(filter)
+            setattr(ListForm, filter.key, field)
+
+        if self.form_class.sort_definitions:
+            field = self.create_sort_field(self.form_class.sort_definitions)
+            setattr(ListForm, "sort", field)
+
+        form = ListForm(**kwargs)
+        return form
+
+    def create_field_for_filter(self, filter):
+        if isinstance(filter, BooleanFilter):
+            field = RadioField(
+                filter.label,
+                choices=filter.options,
+                default="",
+                coerce=str,
+                render_kw={"formrow": True, "ri": "radio"},
+            )
+        else:
+            raise NotImplementedError()  # pragma: no cover
+
+        return field
+
+    def create_search_field(self):
+        field = StringField(lazy_gettext("Keyword"), render_kw={"formrow": True})
+        return field
+
+    def create_sort_field(self, definitions):
+        choices = list()
+
+        for definition in definitions:
+            choices.append((definition.key, definition.label))
+
+        default = choices[0][0]
+
+        field = SelectField(
+            lazy_gettext("Sort"),
+            render_kw={"formrow": True},
+            choices=choices,
+            default=default,
+        )
+        return field
 
     def get_title(self, **kwargs):
         return self.handler.get_model_display_name_plural()
@@ -103,13 +162,15 @@ class BaseListView(BaseView):
         if response:  # pragma: no cover
             return response
 
-        query = self.get_objects_query_from_kwargs(**kwargs)
+        form = self.create_form(formdata=request.args)
+        query = self.get_objects_query_from_kwargs(form=form, **kwargs)
         paginate = query.paginate(per_page=self.get_list_per_page())
         objects = paginate.items
         pagination = get_pagination_urls(paginate, **kwargs)
         display = self.create_display()
+
         return self.render_template(
-            display=display, objects=objects, pagination=pagination
+            display=display, form=form, objects=objects, pagination=pagination
         )
 
 

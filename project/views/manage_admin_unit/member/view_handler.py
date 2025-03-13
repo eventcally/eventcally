@@ -32,7 +32,11 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
         return super().get_objects_base_query_from_kwargs(**kwargs).join(User)
 
     def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(func.lower(User.email))
+        return (
+            super()
+            .apply_objects_query_order(query, **kwargs)
+            .order_by(func.lower(User.email))
+        )
 
     def get_create_url(self, **kwargs):
         return url_for(

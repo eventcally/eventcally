@@ -156,6 +156,21 @@ def test_admin_unit_event_places(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
     utils.get_endpoint_ok("manage_admin_unit.event_places", id=admin_unit_id)
+    utils.get_endpoint_ok(
+        "manage_admin_unit.event_places", id=admin_unit_id, keyword="Test"
+    )
+    utils.get_endpoint_ok(
+        "manage_admin_unit.event_places", id=admin_unit_id, keyword="^Test"
+    )
+    utils.get_endpoint_ok(
+        "manage_admin_unit.event_places", id=admin_unit_id, keyword="=Test"
+    )
+    utils.get_endpoint_ok(
+        "manage_admin_unit.event_places", id=admin_unit_id, sort="-number_of_events"
+    )
+    utils.get_endpoint_ok(
+        "manage_admin_unit.event_places", id=admin_unit_id, sort="-last_modified_at"
+    )
 
 
 def test_admin_unit_members(client, seeder: Seeder, utils: UtilActions):
@@ -203,10 +218,16 @@ def test_admin_unit_widgets(
 def test_admin_unit_relations(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url(
-        "manage_admin_unit.outgoing_organization_relations", id=admin_unit_id
+    utils.get_endpoint_ok(
+        "manage_admin_unit.outgoing_organization_relations",
+        id=admin_unit_id,
+        auto_verify_event_reference_requests="0",
     )
-    utils.get_ok(url)
+    utils.get_endpoint_ok(
+        "manage_admin_unit.outgoing_organization_relations",
+        id=admin_unit_id,
+        auto_verify_event_reference_requests="1",
+    )
 
 
 def test_admin_unit_organization_invitations(

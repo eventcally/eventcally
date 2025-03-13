@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% from "macros/nav.html.j2" import render_breadcrumb, render_instruction %}
 {% from "macros/display.html.j2" import render_prop_display_value %}
+{% from "macros/forms.html.j2" import render_search_form %}
 {% from "_macros.html" import render_pagination %}
 {% block content %}
 
@@ -16,6 +17,21 @@
     <a class="btn btn-outline-secondary my-1" href="{{ create_url }}" role="button"><i class="fa fa-plus"></i> {{ _('Create %(model_display_name)s', model_display_name=view.handler.get_model_display_name()) }}</a>
 </div>
 {% endif %}
+
+{% block search_form %}
+{% if form %}
+{% set is_expanded = form.has_data() %}
+<div class="my-4 w-normal">
+    <button type="button" class="btn btn-outline-primary mr-1" data-toggle="collapse" data-target="#search_form_container" aria-expanded="{% if is_expanded %}true{% else %}false{% endif %}">
+        <i class="fa fa-filter"></i>
+        {{ _('Filters') }}
+    </button>
+    <div id="search_form_container" class="mt-4 {% if is_expanded %}show{% else %}collapse{% endif %}">
+    {{ render_search_form(form) }}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
 
 <div class="table-responsive">
     <table class="table table-sm table-bordered table-hover table-striped">

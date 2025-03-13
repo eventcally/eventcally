@@ -11,6 +11,7 @@ from project.views.manage_admin_unit.event_organizer.displays import ListDisplay
 from project.views.manage_admin_unit.event_organizer.forms import (
     CreateEventOrganizerForm,
     DeleteEventOrganizerForm,
+    ListForm,
     UpdateEventOrganizerForm,
 )
 from project.views.utils import (
@@ -30,9 +31,14 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     delete_decorators = [manage_permission_required("organizer:delete")]
     delete_form_class = DeleteEventOrganizerForm
     list_display_class = ListDisplay
+    list_form_class = ListForm
 
     def apply_objects_query_order(self, query, **kwargs):
-        return query.order_by(func.lower(EventOrganizer.name))
+        return (
+            super()
+            .apply_objects_query_order(query, **kwargs)
+            .order_by(func.lower(EventOrganizer.name))
+        )
 
     def get_list_per_page(self):
         return 50

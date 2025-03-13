@@ -1,12 +1,16 @@
 from flask_babel import lazy_gettext
+from sqlalchemy import func
 from wtforms import BooleanField
 from wtforms.validators import DataRequired
 
 from project import db
-from project.models.admin_unit import AdminUnit
+from project.models.admin_unit import AdminUnit, AdminUnitRelation
 from project.modular.ajax import AjaxModelLoader
-from project.modular.base_form import BaseCreateForm, BaseUpdateForm
+from project.modular.base_form import BaseCreateForm, BaseListForm, BaseUpdateForm
 from project.modular.fields import AjaxSelectField
+from project.modular.filters import BooleanFilter
+from project.modular.search_definition import SearchDefinition
+from project.modular.sort_definition import SortDefinition
 from project.services.admin_unit import get_admin_unit_query
 from project.services.search_params import AdminUnitSearchParams
 from project.views.utils import current_admin_unit
@@ -57,3 +61,24 @@ class CreateForm(BaseCreateForm, SharedFormMixin):
 
 class UpdateForm(BaseUpdateForm, SharedFormMixin):
     pass
+
+
+class ListForm(BaseListForm):
+    filters = [
+        BooleanFilter(
+            AdminUnitRelation.verify, label=lazy_gettext("Verify other organization")
+        ),
+        BooleanFilter(
+            AdminUnitRelation.auto_verify_event_reference_requests,
+            label=lazy_gettext("Verify reference requests automatically"),
+        ),
+    ]
+    search_definitions = [SearchDefinition(AdminUnit.name)]
+    sort_definitions = [
+        SortDefinition(AdminUnit.name, func=func.lower, label=lazy_gettext("Name")),
+        SortDefinition(
+            AdminUnit.last_modified_at,
+            desc=True,
+            label=lazy_gettext("Last modified first"),
+        ),
+    ]

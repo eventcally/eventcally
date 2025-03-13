@@ -8,8 +8,10 @@ from wtforms.validators import DataRequired, Length, Optional
 from project.forms.common import Base64ImageForm, LocationForm
 from project.models import Image, Location
 from project.models.event_place import EventPlace
-from project.modular.base_form import BaseForm
+from project.modular.base_form import BaseForm, BaseListForm
 from project.modular.fields import GooglePlaceField
+from project.modular.search_definition import SearchDefinition
+from project.modular.sort_definition import SortDefinition
 from project.modular.widgets import AjaxValidationWidget
 from project.views.utils import current_admin_unit
 
@@ -63,3 +65,40 @@ class UpdateEventPlaceForm(BaseEventPlaceForm):
 class DeleteEventPlaceForm(BaseForm):
     submit = SubmitField(lazy_gettext("Delete place"))
     name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
+
+
+class ListForm(BaseListForm):
+    sort_definitions = [
+        SortDefinition(EventPlace.name, func=func.lower, label=lazy_gettext("Name")),
+        SortDefinition(
+            EventPlace.last_modified_at,
+            desc=True,
+            label=lazy_gettext("Last modified first"),
+        ),
+        SortDefinition(
+            EventPlace.number_of_events,
+            desc=True,
+            label=lazy_gettext("Number of events"),
+        ),
+    ]
+    search_definitions = [SearchDefinition(EventPlace.name)]
+
+    # def apply_query_filter(self, query, **kwargs):
+    #     query = super().apply_query_filter(query, **kwargs)
+    #     if not self.keyword.data:
+    #         return query
+
+    #     stmt = parse_like_term(self.keyword.data)
+
+    #     filter_stmt = []
+    #     filter_stmt.append(EventPlace.name.ilike(stmt))
+
+    #     location_alias = aliased(Location)
+    #     query = query.outerjoin(location_alias)
+    #     filter_stmt.append(location_alias.postalCode.ilike(stmt))
+    #     filter_stmt.append(location_alias.street.ilike(stmt))
+    #     filter_stmt.append(location_alias.city.ilike(stmt))
+    #     filter_stmt.append(location_alias.state.ilike(stmt))
+
+    #     query = query.filter(or_(*filter_stmt))
+    #     return query
