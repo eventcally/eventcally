@@ -8,9 +8,7 @@ from wtforms.validators import DataRequired, Length, Optional
 from project.forms.common import Base64ImageForm, GooglePlaceLocationForm
 from project.models import Image, Location
 from project.models.event_organizer import EventOrganizer
-from project.modular.base_form import BaseForm, BaseListForm
-from project.modular.search_definition import SearchDefinition
-from project.modular.sort_definition import SortDefinition
+from project.modular.base_form import BaseForm
 from project.modular.widgets import AjaxValidationWidget
 from project.views.utils import current_admin_unit
 
@@ -65,22 +63,3 @@ class UpdateEventOrganizerForm(BaseEventOrganizerForm):
 class DeleteEventOrganizerForm(BaseForm):
     submit = SubmitField(lazy_gettext("Delete organizer"))
     name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
-
-
-class ListForm(BaseListForm):
-    sort_definitions = [
-        SortDefinition(
-            EventOrganizer.name, func=func.lower, label=lazy_gettext("Name")
-        ),
-        SortDefinition(
-            EventOrganizer.last_modified_at,
-            desc=True,
-            label=lazy_gettext("Last modified first"),
-        ),
-        SortDefinition(
-            EventOrganizer.number_of_events,
-            desc=True,
-            label=lazy_gettext("Number of events"),
-        ),
-    ]
-    search_definitions = [SearchDefinition(EventOrganizer.name)]

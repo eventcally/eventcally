@@ -1,10 +1,12 @@
 from flask import url_for
-from flask_babel import gettext
+from flask_babel import gettext, lazy_gettext
 
 from project.models import AdminUnitVerificationRequest
 from project.models.admin_unit_verification_request import (
     AdminUnitVerificationRequestReviewStatus,
 )
+from project.modular.filters import EnumFilter
+from project.modular.sort_definition import SortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -27,17 +29,23 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     delete_view_class = None
     list_display_class = ListDisplay
     list_decorators = [manage_permission_required("verification_request:read")]
+    list_filters = [
+        EnumFilter(
+            AdminUnitVerificationRequest.review_status,
+            label=lazy_gettext("Review status"),
+        ),
+    ]
+    list_sort_definitions = [
+        SortDefinition(
+            AdminUnitVerificationRequest.created_at,
+            desc=True,
+            label=lazy_gettext("Last created first"),
+        ),
+    ]
     generic_prefix = "incoming_"
 
     def get_model_display_name_plural(self):
         return gettext("Incoming verification requests")
-
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(AdminUnitVerificationRequest.created_at.desc())
-        )
 
     def _add_views(
         self,

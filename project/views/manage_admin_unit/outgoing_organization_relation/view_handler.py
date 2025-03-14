@@ -1,8 +1,12 @@
-from flask_babel import gettext
+from flask_babel import gettext, lazy_gettext
+from sqlalchemy import func
 
 from project.models import AdminUnitRelation
 from project.models.admin_unit import AdminUnit
 from project.modular.base_form import BaseDeleteForm
+from project.modular.filters import BooleanFilter
+from project.modular.search_definition import SearchDefinition
+from project.modular.sort_definition import SortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -13,7 +17,6 @@ from project.views.manage_admin_unit.outgoing_organization_relation.displays imp
 )
 from project.views.manage_admin_unit.outgoing_organization_relation.forms import (
     CreateForm,
-    ListForm,
     UpdateForm,
 )
 from project.views.manage_admin_unit.outgoing_organization_relation.views import (
@@ -38,8 +41,25 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     delete_decorators = [manage_permission_required("admin_unit:update")]
     delete_form_class = BaseDeleteForm
     list_display_class = ListDisplay
-    list_form_class = ListForm
     list_view_class = ListView
+    list_filters = [
+        BooleanFilter(
+            AdminUnitRelation.verify, label=lazy_gettext("Verify other organization")
+        ),
+        BooleanFilter(
+            AdminUnitRelation.auto_verify_event_reference_requests,
+            label=lazy_gettext("Verify reference requests automatically"),
+        ),
+    ]
+    list_search_definitions = [SearchDefinition(AdminUnit.name)]
+    list_sort_definitions = [
+        SortDefinition(AdminUnit.name, func=func.lower, label=lazy_gettext("Name")),
+        SortDefinition(
+            AdminUnit.last_modified_at,
+            desc=True,
+            label=lazy_gettext("Last modified first"),
+        ),
+    ]
     generic_prefix = "outgoing_"
 
     def get_model_display_name(self):

@@ -72,7 +72,14 @@ def test_admin_unit_verification_requests_incoming(
     seeder.create_incoming_admin_unit_verification_request(admin_unit_id)
 
     utils.get_endpoint_ok(
-        "manage_admin_unit.incoming_admin_unit_verification_requests", id=admin_unit_id
+        "manage_admin_unit.incoming_admin_unit_verification_requests",
+        id=admin_unit_id,
+        review_status=-1,
+    )
+    utils.get_endpoint_ok(
+        "manage_admin_unit.incoming_admin_unit_verification_requests",
+        id=admin_unit_id,
+        review_status=1,
     )
 
 

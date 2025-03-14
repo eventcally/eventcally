@@ -1,7 +1,10 @@
 from flask import flash, url_for
-from flask_babel import gettext
+from flask_babel import gettext, lazy_gettext
+from sqlalchemy import func
 
 from project.models import EventPlace
+from project.modular.search_definition import SearchDefinition
+from project.modular.sort_definition import SortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -10,7 +13,6 @@ from project.views.manage_admin_unit.event_place.displays import ListDisplay
 from project.views.manage_admin_unit.event_place.forms import (
     CreateEventPlaceForm,
     DeleteEventPlaceForm,
-    ListForm,
     UpdateEventPlaceForm,
 )
 from project.views.utils import (
@@ -30,7 +32,20 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     delete_decorators = [manage_permission_required("place:delete")]
     delete_form_class = DeleteEventPlaceForm
     list_display_class = ListDisplay
-    list_form_class = ListForm
+    list_sort_definitions = [
+        SortDefinition(EventPlace.name, func=func.lower, label=lazy_gettext("Name")),
+        SortDefinition(
+            EventPlace.last_modified_at,
+            desc=True,
+            label=lazy_gettext("Last modified first"),
+        ),
+        SortDefinition(
+            EventPlace.number_of_events,
+            desc=True,
+            label=lazy_gettext("Number of events"),
+        ),
+    ]
+    list_search_definitions = [SearchDefinition(EventPlace.name)]
 
     def get_list_per_page(self):
         return 50

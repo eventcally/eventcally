@@ -1006,7 +1006,6 @@
 {% endmacro %}
 
 {% macro render_pagination(pagination) %}
-{% if pagination['prev_url'] or pagination['next_url'] %}
 <nav aria-label="Page navigation">
   <ul class="pagination">
     {% if pagination['first_url'] %}
@@ -1032,7 +1031,6 @@
     {% endif %}
   </ul>
 </nav>
-{% endif %}
 {% endmacro %}
 
 {% macro render_roles(roles) %}
@@ -1074,8 +1072,8 @@
 
 {% macro render_date_field_range(from_field, to_field, label) %}
 <div class="form-group row">
-  <label class="col-sm-2 col-form-label">{{ label }}</label>
-  <div class="col-sm-5 mb-1">
+  <label class="col-sm-4 col-form-label">{{ label }}</label>
+  <div class="col-sm-4 mb-1">
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text">{{ from_field.label.text }}</span>
@@ -1083,7 +1081,7 @@
       {{ from_field(**{"class":"form-control datepicker", "data-range-to":"#" + to_field.id})|safe }}
     </div>
   </div>
-  <div class="col-sm-5">
+  <div class="col-sm-4">
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text">{{ to_field.label.text }}</span>
@@ -1097,8 +1095,8 @@
 {% macro render_event_dates_location_field(location_field, distance_field) %}
 {% if location_field %}
   <div class="form-group row">
-    <label for="location" class="col-sm-2 col-form-label">{{ _('Radius') }}</label>
-    <div class="col-sm-7 mb-1">
+    <label for="location" class="col-sm-4 col-form-label">{{ _('Radius') }}</label>
+    <div class="col-sm-5 mb-1">
       <div class="input-group">
         {{ location_field(class="form-control", placeholder='Ort', autocomplete="off")|safe }}
         <div class="input-group-append">
