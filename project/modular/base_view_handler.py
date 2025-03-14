@@ -1,7 +1,7 @@
 from flask import Blueprint, url_for
 from flask_babel import gettext
 
-from project.modular.base_form import BaseDeleteForm
+from project.modular.base_form import BaseDeleteForm, BaseListForm
 from project.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
@@ -31,6 +31,9 @@ class BaseViewHandler:
     list_display_class = None
     list_decorators = []
     list_form_class = None
+    list_filters = []
+    list_search_definitions = []
+    list_sort_definitions = []
     generic_prefix = ""
 
     def __init__(self, *args, **kwargs):
@@ -38,6 +41,17 @@ class BaseViewHandler:
         self.app = None
         self.endpoints = dict()
         self.template_pathes = list()
+
+        if not self.list_form_class and (
+            self.list_filters
+            or self.list_search_definitions
+            or self.list_sort_definitions
+        ):
+
+            class ListForm(BaseListForm):
+                pass
+
+            self.list_form_class = ListForm
 
     def get_model_display_name(self):
         return self.model.get_display_name()
@@ -61,19 +75,17 @@ class BaseViewHandler:
         return self.model.query
 
     def get_objects_query_from_kwargs(self, **kwargs):
-        return self.apply_objects_query_order(
-            self.apply_base_filter(
-                self.get_objects_base_query_from_kwargs(**kwargs), **kwargs
-            ),
-            **kwargs,
-        )
+        query = self.get_objects_base_query_from_kwargs(**kwargs)
+        query = self.apply_base_filter(query, **kwargs)
+
+        form = kwargs.get("form", None)
+        if form:
+            query = form.apply_query_filter(query, **kwargs)
+
+        query = self.apply_objects_query_order(query, **kwargs)
+        return query
 
     def apply_base_filter(self, query, **kwargs):
-        form = kwargs.get("form", None)
-
-        if form:
-            return form.apply_query_filter(query, **kwargs)
-
         return query
 
     def apply_objects_query_order(self, query, **kwargs):
@@ -302,11 +314,21 @@ class BaseViewHandler:
             )
 
         if self.list_view_class:
+            list_form_class = self.list_view_class.form_class or self.list_form_class
+
+            if list_form_class:
+                list_form_class.filters = list_form_class.filters or self.list_filters
+                list_form_class.search_definitions = (
+                    list_form_class.search_definitions or self.list_search_definitions
+                )
+                list_form_class.sort_definitions = (
+                    list_form_class.sort_definitions or self.list_sort_definitions
+                )
 
             class ListView(self.list_view_class):
                 decorators = self.list_decorators
                 display_class = self.list_display_class
-                form_class = self.list_view_class.form_class or self.list_form_class
+                form_class = list_form_class
 
             self._add_view(
                 "list",

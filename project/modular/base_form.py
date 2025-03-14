@@ -81,19 +81,20 @@ class BaseListForm(BaseForm):
     class Meta:
         csrf = False
 
-    filters = []
-    search_definitions = []
-    sort_definitions = []
+    filters = None
+    search_definitions = None
+    sort_definitions = None
 
     submit = SubmitField(
         lazy_gettext("Refresh"), render_kw={"class": "btn btn-primary"}
     )
 
     def apply_query_filter(self, query, **kwargs):
-        for filter in self.filters:
-            form_field = getattr(self, filter.key)
-            if form_field and form_field.data:
-                query = filter.apply(query, form_field.data, None)
+        if self.filters:
+            for filter in self.filters:
+                form_field = getattr(self, filter.key)
+                if form_field and form_field.data:
+                    query = filter.apply(query, form_field.data, None)
 
         if self.search_definitions and self.keyword and self.keyword.data:
             filter_stmt = []
@@ -107,9 +108,10 @@ class BaseListForm(BaseForm):
         return query
 
     def apply_query_order(self, query, **kwargs):
-        for definition in self.sort_definitions:
-            if self.sort.data == definition.key:
-                return definition.apply(query)
+        if self.sort_definitions:
+            for definition in self.sort_definitions:
+                if self.sort.data == definition.key:
+                    return definition.apply(query)
 
         return query  # pragma: no cover
 

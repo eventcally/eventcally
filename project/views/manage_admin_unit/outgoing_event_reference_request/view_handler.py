@@ -1,8 +1,10 @@
-from flask_babel import gettext
+from flask_babel import gettext, lazy_gettext
 
 from project.access import admin_unit_owner_access_or_401
 from project.models import EventReferenceRequest
 from project.models.event import Event
+from project.modular.filters import EnumFilter
+from project.modular.sort_definition import SortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -27,6 +29,18 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     list_display_class = ListDisplay
     list_view_class = ListView
     list_decorators = [manage_permission_required("reference_request:read")]
+    list_filters = [
+        EnumFilter(
+            EventReferenceRequest.review_status, label=lazy_gettext("Review status")
+        ),
+    ]
+    list_sort_definitions = [
+        SortDefinition(
+            EventReferenceRequest.created_at,
+            desc=True,
+            label=lazy_gettext("Last created first"),
+        ),
+    ]
     generic_prefix = "outgoing_"
 
     def check_object_access(self, object):
@@ -40,13 +54,6 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
 
     def apply_base_filter(self, query, **kwargs):
         return query.filter(Event.admin_unit_id == current_admin_unit.id)
-
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(EventReferenceRequest.created_at.desc())
-        )
 
     def get_list_per_page(self):
         return 50

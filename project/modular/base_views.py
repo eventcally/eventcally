@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from wtforms import RadioField, SelectField, StringField
 
 from project import db
-from project.modular.filters import BooleanFilter
+from project.modular.filters import BooleanFilter, EnumFilter
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
@@ -116,6 +116,14 @@ class BaseListView(BaseView):
                 default="",
                 coerce=str,
                 render_kw={"formrow": True, "ri": "radio"},
+            )
+        elif isinstance(filter, EnumFilter):
+            field = SelectField(
+                filter.label,
+                choices=filter.options,
+                default="",
+                coerce=int,
+                render_kw={"formrow": True},
             )
         else:
             raise NotImplementedError()  # pragma: no cover

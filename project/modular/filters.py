@@ -1,5 +1,7 @@
 from flask_babel import lazy_gettext
 
+from project.utils import get_localized_enum_name
+
 
 class BaseFilter(object):
     def __init__(self, column, **kwargs):
@@ -41,3 +43,26 @@ class BooleanFilter(BaseFilter):
             return query.filter(self.get_column(alias).is_(False))
 
         return query  # pragma: no cover
+
+
+class EnumFilter(BaseFilter):
+    def __init__(self, column, **kwargs):
+        self.enum_type = column.type._enumtype
+
+        if "options" not in kwargs:
+            options = [(-1, lazy_gettext("All"))]
+
+            for e in self.enum_type:
+                options.append((int(e), get_localized_enum_name(e)))
+
+            kwargs["options"] = options
+        super().__init__(
+            column,
+            **kwargs,
+        )
+
+    def apply(self, query, value, alias=None):
+        if value == -1:
+            return query
+
+        return query.filter(self.get_column(alias) == value)

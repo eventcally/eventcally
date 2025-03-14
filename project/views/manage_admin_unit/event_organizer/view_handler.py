@@ -1,8 +1,10 @@
 from flask import flash, url_for
-from flask_babel import gettext
+from flask_babel import gettext, lazy_gettext
 from sqlalchemy.sql import func
 
 from project.models import EventOrganizer
+from project.modular.search_definition import SearchDefinition
+from project.modular.sort_definition import SortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -11,7 +13,6 @@ from project.views.manage_admin_unit.event_organizer.displays import ListDisplay
 from project.views.manage_admin_unit.event_organizer.forms import (
     CreateEventOrganizerForm,
     DeleteEventOrganizerForm,
-    ListForm,
     UpdateEventOrganizerForm,
 )
 from project.views.utils import (
@@ -31,7 +32,22 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     delete_decorators = [manage_permission_required("organizer:delete")]
     delete_form_class = DeleteEventOrganizerForm
     list_display_class = ListDisplay
-    list_form_class = ListForm
+    list_sort_definitions = [
+        SortDefinition(
+            EventOrganizer.name, func=func.lower, label=lazy_gettext("Name")
+        ),
+        SortDefinition(
+            EventOrganizer.last_modified_at,
+            desc=True,
+            label=lazy_gettext("Last modified first"),
+        ),
+        SortDefinition(
+            EventOrganizer.number_of_events,
+            desc=True,
+            label=lazy_gettext("Number of events"),
+        ),
+    ]
+    list_search_definitions = [SearchDefinition(EventOrganizer.name)]
 
     def apply_objects_query_order(self, query, **kwargs):
         return (

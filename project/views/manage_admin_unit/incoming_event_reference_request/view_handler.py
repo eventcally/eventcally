@@ -1,8 +1,10 @@
 from flask import url_for
-from flask_babel import gettext
+from flask_babel import gettext, lazy_gettext
 
 from project.models import EventReferenceRequest
 from project.models.event_reference_request import EventReferenceRequestReviewStatus
+from project.modular.filters import EnumFilter
+from project.modular.sort_definition import SortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -24,17 +26,22 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     delete_view_class = None
     list_display_class = ListDisplay
     list_view_class = ListView
+    list_filters = [
+        EnumFilter(
+            EventReferenceRequest.review_status, label=lazy_gettext("Review status")
+        ),
+    ]
+    list_sort_definitions = [
+        SortDefinition(
+            EventReferenceRequest.created_at,
+            desc=True,
+            label=lazy_gettext("Last created first"),
+        ),
+    ]
     generic_prefix = "incoming_"
 
     def get_model_display_name_plural(self):
         return gettext("Incoming reference requests")
-
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(EventReferenceRequest.created_at.desc())
-        )
 
     def get_list_per_page(self):
         return 50
