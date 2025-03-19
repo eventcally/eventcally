@@ -514,6 +514,13 @@ class UtilActions(object):
         content = (path / filename).read_bytes()
         self.mock_get_request_with_content(url, content)
 
+    def ajax_lookup(self, url: str, field_name: str, term: str = ""):
+        ajax_url = f"{url}?field_name={field_name}&term={term}"
+        ajax_response = self.get_json_ok(
+            ajax_url, headers={"X-Backend-For-Frontend": "ajax_lookup"}
+        )
+        return ajax_response
+
     def ajax_validation(self, url: str, field_name: str, field_value: str, expected):
         ajax_url = f"{url}?field_name={field_name}"
         ajax_response = self.post_form_data(

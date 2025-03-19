@@ -1,7 +1,13 @@
-from flask_babel import format_date, format_datetime
+from flask_babel import format_date, format_datetime, format_time
 from markupsafe import Markup
 
-from project.utils import get_localized_enum_name, get_location_str, getattr_keypath
+from project.models.event import EventStatus, PublicStatus
+from project.utils import (
+    get_event_category_name,
+    get_localized_enum_name,
+    get_location_str,
+    getattr_keypath,
+)
 
 
 class BasePropFormatter:
@@ -16,7 +22,7 @@ class ListPropFormatter(BasePropFormatter):
 
 class DateTimePropFormatter(BasePropFormatter):
     def format(self, data):
-        return format_datetime(data)
+        return format_datetime(data) if data else ""
 
 
 class DatePropFormatter(BasePropFormatter):
@@ -24,14 +30,38 @@ class DatePropFormatter(BasePropFormatter):
         return format_date(data) if data else ""
 
 
+class EventDateStartPropFormatter(BasePropFormatter):
+    def format(self, data):
+        parts = [format_date(data.start, "short")]
+
+        if not data.allday:
+            parts.append(format_time(data.start, "short"))
+
+        return " ".join(parts)
+
+
 class StringPropFormatter(BasePropFormatter):
     def format(self, data):
-        return data or ""
+        return data if data is not None else ""
 
 
 class LocationPropFormatter(BasePropFormatter):
     def format(self, data):
         return get_location_str(data)
+
+
+class EventPlacePropFormatter(BasePropFormatter):
+    def format(self, data):
+        parts = [data.name]
+
+        location = data.location
+        if location:
+            if location.postalCode:
+                parts.append(location.postalCode)
+            if location.city:
+                parts.append(location.city)
+
+        return " ".join(parts)
 
 
 class EventPropFormatter(BasePropFormatter):
@@ -96,6 +126,7 @@ class BaseProp:
         method_name=None,
         link_method_name=None,
         hide_when_empty=False,
+        no_wrap=False,
         _display=None,
     ):
         self.label = label
@@ -105,6 +136,7 @@ class BaseProp:
         self.method_name = method_name
         self.link_method_name = link_method_name
         self.hide_when_empty = hide_when_empty
+        self.no_wrap = no_wrap
         self._display = _display
 
     def get_display_data(self, object):
@@ -155,6 +187,12 @@ class LocationProp(BaseProp):
         super().__init__(*args, **kwargs)
 
 
+class EventPlaceProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", EventPlacePropFormatter())
+        super().__init__(*args, **kwargs)
+
+
 class EventProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", EventPropFormatter())
@@ -179,6 +217,13 @@ class DateTimeProp(BaseProp):
         super().__init__(*args, **kwargs)
 
 
+class EventDateStartProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", EventDateStartPropFormatter())
+        kwargs.setdefault("no_wrap", True)
+        super().__init__(*args, **kwargs)
+
+
 class DateProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", DatePropFormatter())
@@ -195,3 +240,45 @@ class CountProp(BaseProp):  # pragma: no cover
     def get_display_data(self, object):
         data = super().get_display_data(object)
         return len(data) if hasattr(data, "__len__") else None
+
+
+class PublicStatusPropFormatter(BadgePropFormatter):
+    badge_mapping = {
+        PublicStatus.draft: "light",
+        PublicStatus.published: "success",
+        PublicStatus.planned: "secondary",
+    }
+
+
+class PublicStatusProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", PublicStatusPropFormatter())
+        super().__init__(*args, **kwargs)
+
+
+class EventStatusPropFormatter(BadgePropFormatter):
+    badge_mapping = {
+        EventStatus.scheduled: "success",
+        EventStatus.cancelled: "danger",
+        EventStatus.movedOnline: "warning",
+        EventStatus.postponed: "warning",
+        EventStatus.rescheduled: "warning",
+    }
+
+
+class EventStatusProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", EventStatusPropFormatter())
+        super().__init__(*args, **kwargs)
+
+
+class EventCategoryListPropFormatter(BasePropFormatter):
+    def format(self, data):
+        names = [str(get_event_category_name(c)) for c in data]
+        return ", ".join(names)
+
+
+class EventCategoryListProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", EventCategoryListPropFormatter())
+        super().__init__(*args, **kwargs)

@@ -8,9 +8,11 @@ from sqlalchemy.orm import backref, relationship
 
 from project import db
 from project.dbtypes import IntegerEnum
-from project.models.event_date import EventDateDefinition
+from project.models.event_date import EventDate, EventDateDefinition
 from project.models.event_mixin import EventMixin
 from project.models.event_organizer import EventOrganizer
+from project.models.event_reference import EventReference
+from project.models.event_reference_request import EventReferenceRequest
 from project.models.trackable_mixin import TrackableMixin
 from project.utils import make_check_violation
 
@@ -131,16 +133,51 @@ class Event(db.Model, TrackableMixin, EventMixin):
         "EventDate", backref=backref("event", lazy=False), cascade="all, delete-orphan"
     )
 
+    @hybrid_property
+    def number_of_dates(self):  # pragma: no cover
+        return len(self.dates)
+
+    @number_of_dates.expression
+    def number_of_dates(cls):
+        return (
+            select(func.count()).where(EventDate.event_id == cls.id).scalar_subquery()
+        )
+
     references = relationship(
         "EventReference",
         backref=backref("event", lazy=False),
         cascade="all, delete-orphan",
     )
+
+    @hybrid_property
+    def number_of_references(self):  # pragma: no cover
+        return len(self.references)
+
+    @number_of_references.expression
+    def number_of_references(cls):
+        return (
+            select(func.count())
+            .where(EventReference.event_id == cls.id)
+            .scalar_subquery()
+        )
+
     reference_requests = relationship(
         "EventReferenceRequest",
         backref=backref("event", lazy=False),
         cascade="all, delete-orphan",
     )
+
+    @hybrid_property
+    def number_of_reference_requests(self):  # pragma: no cover
+        return len(self.reference_requests)
+
+    @number_of_reference_requests.expression
+    def number_of_reference_requests(cls):
+        return (
+            select(func.count())
+            .where(EventReferenceRequest.event_id == cls.id)
+            .scalar_subquery()
+        )
 
     @hybrid_property
     def category(self):

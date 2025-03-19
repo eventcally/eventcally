@@ -1,8 +1,9 @@
-{% extends "layout.html" %}
+{% extends "generic/form_layout.html" %}
 {% from "macros/nav.html.j2" import render_breadcrumb, render_instruction %}
 {% from "macros/display.html.j2" import render_prop_display_value %}
 {% from "macros/forms.html.j2" import render_search_form %}
 {% from "_macros.html" import render_pagination %}
+
 {% block content %}
 
 {{ render_breadcrumb(view.get_breadcrumbs(), title, view.get_docs_url()) }}
@@ -45,8 +46,8 @@
                     {% set actions = view.handler.get_all_list_actions(object) %}
                     <tr>
                         {% for prop in display.get_ordered_props() %}
-                            <td>
-                                {% if loop.first and actions %}
+                            <td{% if prop.no_wrap %} class="fit"{% endif %}>
+                                {% if loop.index0 == display.main_index and actions %}
                                 <button class="btn btn-link dropdown-toggle p-0 text-wrap text-left" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ render_prop_display_value(display, prop, object) }}</button>
                                 <div class="dropdown-menu dropdown-menu-right">
                                     {% for action in actions %}

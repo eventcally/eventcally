@@ -22,15 +22,11 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, db):
     )
     response = utils.get_ok(url)
 
-    lookup_url = utils.get_url(
+    url = utils.get_url(
         "manage_admin_unit.outgoing_organization_relation_create",
         id=admin_unit_id,
-        field_name="target_admin_unit",
-        term="Other",
     )
-    lookup_response = utils.get_json_ok(
-        lookup_url, headers={"X-Backend-For-Frontend": "ajax_lookup"}
-    )
+    lookup_response = utils.ajax_lookup(url, "target_admin_unit", "Other")
     assert lookup_response.json["items"][0][0] == other_admin_unit_id
 
     url = utils.get_url(

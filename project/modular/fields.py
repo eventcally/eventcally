@@ -2,7 +2,7 @@ from wtforms import FormField, SelectFieldBase, SelectMultipleField, ValidationE
 from wtforms.utils import unset_value
 
 from project.maputils import find_gmaps_places, get_gmaps_place
-from project.modular.widgets import AjaxSelect2Widget, GooglePlaceWidget
+from project.modular.widgets import AjaxSelect2Widget, GooglePlaceWidget, RangeWidget
 
 
 class VirtualFormField(FormField):
@@ -16,6 +16,28 @@ class VirtualFormField(FormField):
         return super().process(formdata, data, extra_filters)
 
     def populate_obj(self, obj, name):
+        self.form.populate_obj(obj)
+
+
+class DateRangeField(FormField):
+    widget = RangeWidget()
+
+    def __init__(
+        self, form_class=None, label=None, validators=None, separator="_", **kwargs
+    ):
+        if not form_class:
+            from project.modular.base_form import DateRangeForm
+
+            form_class = DateRangeForm
+        kwargs.setdefault("default", dict)
+        render_kw = kwargs.setdefault("render_kw", dict())
+        render_kw.setdefault("group_class", "")
+        super().__init__(form_class, label, validators, separator, **kwargs)
+
+    def process(self, formdata, data=unset_value, extra_filters=None):
+        return super().process(formdata, data, extra_filters)
+
+    def populate_obj(self, obj, name):  # pragma: no cover
         self.form.populate_obj(obj)
 
 
