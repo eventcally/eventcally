@@ -110,6 +110,32 @@ def test_admin_unit_events(client, seeder: Seeder, utils: UtilActions):
         date_from="2020-10-03",
         date_to="2021-10-03",
     )
+    utils.get_endpoint_ok(
+        "manage_admin_unit.test_events",
+        id=admin_unit_id,
+        created_at_from="2020-10-03",
+        created_at_to="2021-10-03",
+    )
+
+    category_id = seeder.get_event_category_id("Other")
+    utils.get_endpoint_ok(
+        "manage_admin_unit.test_events",
+        id=admin_unit_id,
+        category_id=category_id,
+    )
+    utils.get_endpoint_ok(
+        "manage_admin_unit.test_events",
+        id=admin_unit_id,
+        tag="Tag",
+    )
+
+    url = utils.get_url(
+        "manage_admin_unit.test_events",
+        id=admin_unit_id,
+    )
+    utils.ajax_lookup(url, "category_id")
+    utils.ajax_lookup(url, "event_place_id")
+    utils.ajax_lookup(url, "organizer_id")
 
     response = utils.get_endpoint_ok("manage_admin_unit_events", id=admin_unit_id)
 
@@ -136,13 +162,36 @@ def test_admin_unit_events_invalidDateFormat(
     )
 
 
-def test_admin_unit_events_place(client, seeder: Seeder, utils: UtilActions):
+def test_admin_unit_events_place(app, client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
     seeder.create_event(admin_unit_id, draft=True)
     event_place_id = seeder.upsert_default_event_place(admin_unit_id)
 
     utils.get_endpoint_ok(
         "manage_admin_unit_events", id=admin_unit_id, event_place_id=event_place_id
+    )
+
+    from project.models import Location
+
+    place_id = seeder.upsert_event_place(
+        admin_unit_id,
+        "Place",
+        Location(
+            street="Markt 7",
+            postalCode="38640",
+            city="Goslar",
+            latitude=51.9077888,
+            longitude=10.4333312,
+        ),
+    )
+    seeder.create_event(admin_unit_id, place_id=place_id)
+    utils.get_endpoint_ok(
+        "manage_admin_unit.test_events", id=admin_unit_id, event_place_id=event_place_id
+    )
+
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+    utils.get_endpoint_ok(
+        "manage_admin_unit.test_events", id=admin_unit_id, organizer_id=organizer_id
     )
 
 

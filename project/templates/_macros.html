@@ -32,7 +32,8 @@
           </div>
         {% endif %}
 
-        <div class="input-group">
+        {% set group_class = field.render_kw['group_class'] if field.render_kw and 'group_class' in field.render_kw else "input-group" %}
+        <div class="{{ group_class }}">
           {% if (field.render_kw and 'prepend_text' in field.render_kw) %}
           <div class="input-group-prepend">
               <span class="input-group-text">{{ field.render_kw['prepend_text'] }}</span>

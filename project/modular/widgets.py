@@ -64,10 +64,36 @@ class AjaxSelect2Widget(object):
                 kwargs["value"] = data[0]
                 kwargs["data-json"] = json.dumps(data)
 
-        placeholder = field.loader.options.get("placeholder", gettext("Please select"))
+        placeholder = field.loader.placeholder or gettext("Please select")
         kwargs.setdefault("data-placeholder", placeholder)
 
-        minimum_input_length = int(field.loader.options.get("minimum_input_length", 1))
-        kwargs.setdefault("data-minimum-input-length", minimum_input_length)
+        kwargs.setdefault(
+            "data-minimum-input-length", field.loader.minimum_input_length
+        )
 
         return Markup("<select %s></select>" % html_params(name=field.name, **kwargs))
+
+
+class RangeWidget:
+    def __call__(self, field, **kwargs):
+        html = []
+        html.append("<div %s>" % html_params(class_="row mb-1"))
+
+        for subfield in field:
+            if subfield.type in ("HiddenField", "CSRFTokenField"):  # pragma: no cover
+                continue
+
+            html.append("<div %s>" % html_params(class_="col-sm"))
+            html.append("<div %s>" % html_params(class_="input-group"))
+            html.append("<div %s>" % html_params(class_="input-group-prepend"))
+            html.append(
+                "<span %s>%s</span>"
+                % (html_params(class_="input-group-text"), str(subfield.label.text))
+            )
+            html.append("</div>")
+            html.append(str(subfield))
+            html.append("</div>")
+            html.append("</div>")
+
+        html.append("</div>")
+        return Markup("".join(html))

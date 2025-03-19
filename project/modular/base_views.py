@@ -5,7 +5,14 @@ from sqlalchemy.exc import SQLAlchemyError
 from wtforms import RadioField, SelectField, StringField
 
 from project import db
-from project.modular.filters import BooleanFilter, EnumFilter
+from project.modular.fields import AjaxSelectField, DateRangeField
+from project.modular.filters import (
+    BooleanFilter,
+    DateRangeFilter,
+    EnumFilter,
+    SelectModelFilter,
+    TagFilter,
+)
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
@@ -51,7 +58,29 @@ class BaseView(View):
         return self.handler.check_access(**kwargs)
 
     def handle_backend_for_frontend(self, object=None, form=None, **kwargs):
+        bff_header = request.headers.get("X-Backend-For-Frontend")
+        if bff_header and form:
+            method = getattr(self, f"handle_bff_{bff_header}", None)
+            if callable(method):
+                field_name = request.args.get("field_name")
+                field = form.get_field_by_name(field_name)
+                return jsonify(method(object, form, field, **kwargs))
+
         return None
+
+    def handle_bff_ajax_lookup(self, object, form, field, **kwargs):
+        return field.loader.get_ajax_pagination(request.args.get("term"))
+
+    def handle_bff_ajax_validation(self, object, form, field, **kwargs):
+        if form:
+            return form.handle_bff_ajax_validation(object, field, **kwargs)
+        return True  # pragma: no cover
+
+    def handle_bff_google_places(self, object, form, field, **kwargs):
+        return field.get_bff_google_places(request.args.get("keyword"))
+
+    def handle_bff_google_place(self, object, form, field, **kwargs):
+        return field.get_bff_google_place(request.args.get("gmaps_id"))
 
     def render_template(self, **kwargs):
         kwargs.setdefault("title", self.get_title(**kwargs))
@@ -125,6 +154,23 @@ class BaseListView(BaseView):
                 coerce=int,
                 render_kw={"formrow": True},
             )
+        elif isinstance(filter, DateRangeFilter):
+            field = DateRangeField(
+                label=filter.label,
+                render_kw={"formrow": True},
+            )
+        elif isinstance(filter, SelectModelFilter):
+            field = AjaxSelectField(
+                filter.loader,
+                label=filter.label,
+                allow_blank=filter.allow_blank,
+                render_kw={"formrow": True},
+            )
+        elif isinstance(filter, TagFilter):
+            field = StringField(
+                label=filter.label,
+                render_kw={"formrow": True},
+            )
         else:
             raise NotImplementedError()  # pragma: no cover
 
@@ -171,6 +217,12 @@ class BaseListView(BaseView):
             return response
 
         form = self.create_form(formdata=request.args)
+
+        response = self.handle_backend_for_frontend(None, form, **kwargs)
+
+        if response:
+            return response
+
         query = self.get_objects_query_from_kwargs(form=form, **kwargs)
         paginate = query.paginate(per_page=self.get_list_per_page())
         objects = paginate.items
@@ -236,36 +288,6 @@ class BaseFormView(BaseObjectView):
 
     def complete_object(self, object, form):
         self.handler.complete_object(object, form)
-
-    def handle_backend_for_frontend(self, object=None, form=None, **kwargs):
-        response = super().handle_backend_for_frontend(object, form, **kwargs)
-
-        if response:  # pragma: no cover
-            return response
-
-        bff_header = request.headers.get("X-Backend-For-Frontend")
-        if bff_header:
-            method = getattr(self, f"handle_bff_{bff_header}", None)
-            if callable(method):
-                field_name = request.args.get("field_name")
-                field = form.get_field_by_name(field_name)
-                return jsonify(method(object, form, field, **kwargs))
-
-        return None
-
-    def handle_bff_ajax_lookup(self, object, form, field, **kwargs):
-        return field.loader.get_ajax_pagination(request.args.get("term"))
-
-    def handle_bff_ajax_validation(self, object, form, field, **kwargs):
-        if form:
-            return form.handle_bff_ajax_validation(object, field, **kwargs)
-        return True  # pragma: no cover
-
-    def handle_bff_google_places(self, object, form, field, **kwargs):
-        return field.get_bff_google_places(request.args.get("keyword"))
-
-    def handle_bff_google_place(self, object, form, field, **kwargs):
-        return field.get_bff_google_place(request.args.get("gmaps_id"))
 
     def after_commit(self, object, form):
         pass

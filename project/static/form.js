@@ -146,7 +146,7 @@ $.fn.select2.defaults.set("language", "de");
           data: function (params) {
             return {
               term: params.term,
-              per_page: 5,
+              per_page: 10,
               page: params.page || 1,
             };
           },

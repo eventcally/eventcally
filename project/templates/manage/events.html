@@ -147,7 +147,7 @@ var vue_app_data = { eventId: 0 };
                         <div>{% if event.event_place.location %}{{ event.event_place.location.postalCode }} {{ event.event_place.location.city }}{% endif %}</div>
                     </td>
                     <td><i class="fa fa-fw fa-image {% if event.photo %}text-success{% else %}text-muted{% endif %}" data-toggle="tooltip" data-boundary="window" title="{{ _('Photo') }}"></i></td>
-                    <td class="fit"><span data-toggle="tooltip" data-boundary="window" title="{{ _('Number of references') }} / {{ _('Number of reference requests.') }}">{{ event.references|length }}/{{ event.reference_requests|length }}</span></td>
+                    <td class="fit"><span data-toggle="tooltip" data-boundary="window" title="{{ _('Number of references') }} / {{ _('Number of reference requests') }}">{{ event.references|length }}/{{ event.reference_requests|length }}</span></td>
                 </tr>
             {% endfor %}
         </tbody>

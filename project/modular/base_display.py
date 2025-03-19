@@ -2,6 +2,8 @@ from typing import OrderedDict
 
 
 class BaseDisplay:
+    main_index = 0
+
     def __init_subclass__(cls):
         props = []
         for name in dir(cls):

@@ -1,3 +1,5 @@
+from sqlalchemy import or_
+
 from project.utils import parse_like_term
 
 
@@ -22,3 +24,17 @@ class SearchDefinition(BaseSearchDefinition):
     def get_filter(self, value):
         like = parse_like_term(value)
         return self.get_column().ilike(like)
+
+
+def apply_search_definitions(query, search_definitions, keyword):
+    if not search_definitions or not keyword:  # pragma: no cover
+        return query
+
+    filter_stmt = []
+
+    for definition in search_definitions:
+        filter = definition.get_filter(keyword)
+        filter_stmt.append(filter)
+
+    query = query.filter(or_(*filter_stmt))
+    return query
