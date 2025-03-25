@@ -18,11 +18,11 @@ def test_admin_user(client, seeder, utils, app):
     assert response.status_code == 200
 
 
-def test_admin_units(client, seeder, utils, app):
+def test_admin_units(client, seeder, utils: UtilActions, app):
     seeder.create_user(admin=True)
     user = utils.login()
     seeder.create_admin_unit(user, "Meine Crew")
-    response = client.get("/admin/admin_units")
+    response = utils.get_endpoint("admin.organizations")
     assert b"Meine Crew" in response.data
 
 
@@ -212,7 +212,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
         admin_unit.can_verify_other = False
         db.session.commit()
 
-    url = utils.get_url("admin.admin_unit_update", id=admin_unit_id)
+    url = utils.get_url("admin.organization_update", id=admin_unit_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -233,7 +233,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "admin.admin_units")
+    utils.assert_response_redirect(response, "admin.organizations")
 
     with app.app_context():
         from project.models import AdminUnit
@@ -250,7 +250,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
 def test_admin_unit_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     user_id, admin_unit_id = seeder.setup_base(True)
 
-    url = utils.get_url("admin.admin_unit_delete", id=admin_unit_id)
+    url = utils.get_url("admin.organization_delete", id=admin_unit_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -279,7 +279,7 @@ def test_admin_unit_delete(client, seeder, utils, app, db, mocker, db_error, non
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "admin.admin_units")
+    utils.assert_response_redirect(response, "admin.organizations")
 
     with app.app_context():
         from project.models import AdminUnit

@@ -12,12 +12,12 @@ describe("Admin", () => {
   it("admin units", () => {
     cy.createUser("admin@test.de", "password", true).then(function (userId) {
       cy.login("admin@test.de");
-      cy.visit("/admin/admin_units");
+      cy.visit("/admin/organizations");
 
       cy.createAdminUnit().then(function (adminUnitId) {
-        cy.visit("/admin/admin_unit/" + adminUnitId + "/update");
+        cy.visit("/admin/organization/" + adminUnitId + "/update");
         cy.get("#submit").click();
-        cy.url().should("include", "/admin/admin_units");
+        cy.url().should("include", "/admin/organizations");
       });
     });
   });

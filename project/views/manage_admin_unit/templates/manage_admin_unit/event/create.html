@@ -1,10 +1,6 @@
-{% extends "layout.html" %}
+{% extends "generic/create.html" %}
 {% from "_macros.html" import render_google_place_autocomplete_header, render_google_place_autocomplete_field, render_co_organizer_select2, render_event_date_defintion_code, render_date_definition_container, render_manage_form_styles, render_manage_form_scripts, render_cropper_header, render_end_container_handling, render_jquery_steps_header, render_cropper_header, render_radio_buttons, render_field_with_errors, render_field %}
 {% import "macros/forms.html.j2" as forms %}
-
-{%- block title -%}
-{{ _('Create event') }}
-{%- endblock -%}
 
 {% block styles %}
 {{ render_manage_form_styles() }}
@@ -21,7 +17,7 @@ $( function() {
   var form = $("#main-form");
   form.validate({
         rules: {
-          event_place_id: {
+          event_place: {
             required: {
               param: true,
               depends: function(element) {
@@ -49,7 +45,7 @@ $( function() {
               }
             }
           },
-          organizer_id: {
+          organizer: {
             required: {
               param: true,
               depends: function(element) {
@@ -82,164 +78,59 @@ $( function() {
 
     {{ render_event_date_defintion_code() }}
 
-  function update_place_container(value) {
-    switch (value) {
-      case '1':
-        $('#existing_place_container').show();
-        $('#new_place_container').hide();
-        reset_place_form('new_event_place-');
-        break;
-      case '2':
-        $('#existing_place_container').hide();
-        $('#new_place_container').show();
-        break;
-    }
-  }
-
-  $('#event_place_id').select2({
-    width: '100%',
-    theme: 'bootstrap4',
-    ajax: {
-      url: "{{ url_for('api_v1_organization_place_list', id=admin_unit.id) }}",
-      dataType: 'json',
-      delay: 250,
-      cache: true,
-      data: function (params) {
-        return {
-          name: params.term,
-          per_page: 5,
-          page: params.page || 1
-        };
-      },
-      processResults: function (data) {
-        return {
-          results: data.items.map(p => ({"id": p.id, "text": p.name})),
-          pagination: {
-              more: data.has_next
-          }
-        };
+    function update_place_container(value) {
+      switch (value) {
+        case '1':
+          $('#existing_place_container').show();
+          $('#new_place_container').hide();
+          reset_place_form('new_event_place-');
+          break;
+        case '2':
+          $('#existing_place_container').hide();
+          $('#new_place_container').show();
+          break;
       }
-    },
-    placeholder: "{{ _('Enter place') }}"
-  }).on('select2:close', function (e) {
-    var data = select2GetData(e);
-
-    if ("is_new_tag" in data || "gmaps_id" in data) {
-      $(this).val(null).trigger('change');
-      $('input[type=radio][name=event_place_choice][value=2]').click();
-      reset_place_form('new_event_place-');
-
-      if ("is_new_tag" in data) {
-        $('#new_event_place-name').val(data.term);
-      } else {
-        $('#new_event_place-name').val(data.main_text);
-        get_gmaps_place_details(data.gmaps_id);
-      }
-
-      $('#new_place_container').find(':input').valid();
-      $(this).removeClass('is-valid');
-    } else {
-      $(this).valid();
     }
-  });
 
-  function get_gmaps_place_details(place_id) {
-    $.ajax({
-        url: "{{ url_for('js_autocomplete_gmaps_place') }}",
-        type: "get",
-        dataType: "json",
-        data: "gmaps_id=" + place_id,
-        success: function (data) {
-          fill_place_form_with_gmaps_place(data, 'new_event_place-');
-          $('#new_place_container').find(':input').valid();
-        }
+    $('#organizer,#event_place').on('select2:select', function (e) {
+        $(this).valid();
     });
-  }
 
-  $('input[type=radio][name=event_place_choice]').on('change', function() {
-    update_place_container($(this).val());
-  });
+    $('input[type=radio][name=event_place_choice]').on('change', function() {
+      update_place_container($(this).val());
+    });
 
-  update_place_container($('input[type=radio][name=event_place_choice]:checked').val());
+    update_place_container($('input[type=radio][name=event_place_choice]:checked').val());
 
-  function update_organizer_container(value) {
-    switch (value) {
-      case '1':
-        $('#existing_organizer_container').show();
-        $('#new_organizer_container').hide();
-        reset_organizer_form('new_organizer-');
-        break;
-      case '2':
-        $('#existing_organizer_container').hide();
-        $('#new_organizer_container').show();
-        break;
-    }
-  }
-
-  $('#organizer_id').select2({
-    width: '100%',
-    theme: 'bootstrap4',
-    ajax: {
-      url: "{{ url_for('api_v1_organization_organizer_list', id=admin_unit.id) }}",
-      dataType: 'json',
-      delay: 250,
-      cache: true,
-      data: function (params) {
-        return {
-          name: params.term,
-          per_page: 5,
-          page: params.page || 1
-        };
-      },
-      processResults: function (data) {
-        return {
-          results: data.items.map(p => ({"id": p.id, "text": p.name})),
-          pagination: {
-              more: data.has_next
-          }
-        };
+    function update_organizer_container(value) {
+      switch (value) {
+        case '1':
+          $('#existing_organizer_container').show();
+          $('#new_organizer_container').hide();
+          reset_organizer_form('new_organizer-');
+          break;
+        case '2':
+          $('#existing_organizer_container').hide();
+          $('#new_organizer_container').show();
+          break;
       }
-    },
-    placeholder: "{{ _('Enter organizer') }}"
-  }).on('select2:close', function (e) {
-    var data = select2GetData(e);
-
-    if ("is_new_tag" in data) {
-      $(this).val(null).trigger('change');
-      $('input[type=radio][name=organizer_choice][value=2]').click();
-      reset_organizer_form('new_organizer-');
-
-      $('#new_organizer-name').val(data.term);
-
-      $('#new_organizer_container').find(':input').valid();
-      $(this).removeClass('is-valid');
-    } else {
-      $(this).valid();
     }
-  });
 
-  $('input[type=radio][name=organizer_choice]').on('change', function() {
-    update_organizer_container($(this).val());
-  });
+    $('input[type=radio][name=organizer_choice]').on('change', function() {
+      update_organizer_container($(this).val());
+    });
 
-  $('#organizer_id').on('select2:select', function (e) {
-      $(this).valid();
-  });
-
-  update_organizer_container($('input[type=radio][name=organizer_choice]:checked').val());
-
-  {{ render_co_organizer_select2(admin_unit.id) }}
+    update_organizer_container($('input[type=radio][name=organizer_choice]:checked').val());
 
 });
 </script>
 {% endblock %}
-{% block content %}
 
-<h1>{{ _('Create event') }}</h1>
+{% block form %}
 
 {{ render_date_definition_container(form.date_definition_template, "date-definition-template d-none") }}
 
-<form id="main-form" action="" method="POST" enctype="multipart/form-data">
+<form id="main-form" action="" method="POST">
   {{ form.hidden_tag() }}
 
   <div class="card mb-4">
@@ -276,7 +167,7 @@ $( function() {
       </div>
 
       <div class="my-2" id="existing_organizer_container">
-        {{ render_field_with_errors(form.organizer_id, class="w-100", label_hidden=True) }}
+        {{ render_field_with_errors(form.organizer, label_hidden=True) }}
       </div>
 
       <div class="my-2" id="new_organizer_container">
@@ -288,7 +179,7 @@ $( function() {
         {{ render_field_with_errors(form.new_organizer.form.location.city) }}
       </div>
 
-      {{ render_field_with_errors(form.co_organizer_ids, class="w-100") }}
+      {{ render_field_with_errors(form.co_organizers) }}
     </div>
   </div>
 
@@ -304,7 +195,7 @@ $( function() {
       </div>
 
       <div class="my-2" id="existing_place_container">
-        {{ render_field_with_errors(form.event_place_id, class="w-100", label_hidden=True) }}
+        {{ render_field_with_errors(form.event_place, label_hidden=True) }}
       </div>
 
       <div class="my-2" id="new_place_container">
@@ -358,7 +249,7 @@ $( function() {
       {{ _('Additional information') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.category_ids, class="autocomplete-multi w-100") }}
+      {{ render_field_with_errors(form.categories) }}
       {{ render_field_with_errors(form.tags) }}
       {{ render_field_with_errors(form.external_link) }}
     </div>

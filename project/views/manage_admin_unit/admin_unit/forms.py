@@ -1,3 +1,4 @@
+from flask import request
 from flask_babel import lazy_gettext
 from sqlalchemy import func
 from wtforms import FormField, StringField, SubmitField, TextAreaField, ValidationError
@@ -5,7 +6,7 @@ from wtforms.fields import BooleanField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp
 from wtforms.widgets import ColorInput
 
-from project.forms.common import Base64ImageForm, GooglePlaceLocationForm
+from project.forms.common import Base64ImageForm, StrictGooglePlaceLocationForm
 from project.forms.widgets import HTML5StringField
 from project.models import Image, Location
 from project.models.admin_unit import AdminUnit
@@ -34,7 +35,7 @@ class VerificationRequestsForm(BaseForm):
     incoming_verification_requests_text = TextAreaField(
         lazy_gettext("Verification requests information"),
         validators=[Optional()],
-        default=[],
+        default="",
         description=lazy_gettext(
             "This text is shown to unverified organizations to help them decide whether they ask you for verification."
         ),
@@ -50,7 +51,11 @@ class VerificationRequestsForm(BaseForm):
 
 def validate_organization_name(form, field):
     name = field.data
-    admin_unit_id = current_admin_unit.id
+    admin_unit_id = (
+        current_admin_unit.id
+        if current_admin_unit and request.endpoint == "manage_admin_unit.update"
+        else -1
+    )
     organization = (
         AdminUnit.query.filter(AdminUnit.id != admin_unit_id)
         .filter(func.lower(AdminUnit.name) == name.lower())
@@ -63,7 +68,11 @@ def validate_organization_name(form, field):
 
 def validate_organization_short_name(form, field):
     short_name = field.data
-    admin_unit_id = current_admin_unit.id
+    admin_unit_id = (
+        current_admin_unit.id
+        if current_admin_unit and request.endpoint == "manage_admin_unit.update"
+        else -1
+    )
     organization = (
         AdminUnit.query.filter(AdminUnit.id != admin_unit_id)
         .filter(func.lower(AdminUnit.short_name) == short_name.lower())
@@ -74,7 +83,7 @@ def validate_organization_short_name(form, field):
         raise ValidationError(lazy_gettext("Short name is already taken"))
 
 
-class UpdateForm(BaseUpdateForm):
+class AdminUnitFormMixin(object):
     name = HTML5StringField(
         lazy_gettext("Name of organization"),
         description=lazy_gettext("The full name of the organization"),
@@ -113,7 +122,7 @@ class UpdateForm(BaseUpdateForm):
         validators=[Optional()],
     )
     location = FormField(
-        GooglePlaceLocationForm,
+        StrictGooglePlaceLocationForm,
         default=lambda: Location(),
         label=lazy_gettext("Location"),
     )
@@ -121,6 +130,9 @@ class UpdateForm(BaseUpdateForm):
     additional_information = VirtualFormField(
         AdditionalInformationForm, lazy_gettext("Additional information")
     )
+
+
+class UpdateForm(BaseUpdateForm, AdminUnitFormMixin):
     verfication_requests = VirtualFormField(
         VerificationRequestsForm, lazy_gettext("Verification requests")
     )

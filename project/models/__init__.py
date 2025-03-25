@@ -38,6 +38,7 @@ from project.models.legacy import (
     FeaturedEventRejectionReason,
     FeaturedEventReviewStatus,
 )
+from project.models.license import License
 from project.models.location import Location
 from project.models.oauth import OAuth2AuthorizationCode, OAuth2Client, OAuth2Token
 from project.models.session_events import before_flush

@@ -2,84 +2,6 @@ from tests.seeder import Seeder
 from tests.utils import UtilActions
 
 
-def test_js_check_org_short_name(client, seeder: Seeder, utils: UtilActions):
-    seeder.create_user(admin=True)
-    utils.login()
-
-    url = utils.get_url("admin_unit_create")
-    response = utils.get(url)
-
-    with client:
-        url = utils.get_url("js_check_org_short_name")
-        response = utils.post_form_data(
-            url,
-            {
-                "short_name": "meinecrew",
-            },
-        )
-        utils.assert_response_ok(response)
-        assert response.json is True
-
-
-def test_js_check_org_short_name_exists(client, seeder: Seeder, utils: UtilActions):
-    seeder.create_user(admin=True)
-    user_id = utils.login()
-    seeder.create_admin_unit(user_id, "Meine Crew")
-
-    url = utils.get_url("admin_unit_create")
-    response = utils.get(url)
-
-    with client:
-        url = utils.get_url("js_check_org_short_name")
-        response = utils.post_form_data(
-            url,
-            {
-                "short_name": "meinecrew",
-            },
-        )
-        utils.assert_response_ok(response)
-        assert response.json == "Der Kurzname ist bereits vergeben"
-
-
-def test_js_check_org_name(client, seeder: Seeder, utils: UtilActions):
-    seeder.create_user(admin=True)
-    utils.login()
-
-    url = utils.get_url("admin_unit_create")
-    response = utils.get(url)
-
-    with client:
-        url = utils.get_url("js_check_org_name")
-        response = utils.post_form_data(
-            url,
-            {
-                "name": "Meine Crew",
-            },
-        )
-        utils.assert_response_ok(response)
-        assert response.json is True
-
-
-def test_js_check_org_name_exists(client, seeder: Seeder, utils: UtilActions):
-    seeder.create_user(admin=True)
-    user_id = utils.login()
-    seeder.create_admin_unit(user_id, "Meine Crew")
-
-    url = utils.get_url("admin_unit_create")
-    response = utils.get(url)
-
-    with client:
-        url = utils.get_url("js_check_org_name")
-        response = utils.post_form_data(
-            url,
-            {
-                "name": "Meine Crew",
-            },
-        )
-        utils.assert_response_ok(response)
-        assert response.json == "Der Name ist bereits vergeben"
-
-
 def test_js_check_event_place_name(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(admin=True)
     seeder.upsert_default_event_place(admin_unit_id)
@@ -203,7 +125,7 @@ def test_js_autocomplete_place(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get(url)
 
     utils.gmaps_places_autocomplete_query.return_value = [
@@ -254,7 +176,7 @@ def test_js_autocomplete_place_exclude_gmaps(
     user_id, admin_unit_id = seeder.setup_base()
     seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get(url)
 
     with client:
@@ -280,7 +202,7 @@ def test_js_autocomplete_gmaps_place(client, seeder: Seeder, utils: UtilActions)
     user_id, admin_unit_id = seeder.setup_base()
     seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get(url)
 
     utils.gmaps_place.return_value = {

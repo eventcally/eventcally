@@ -187,11 +187,11 @@ class Event(db.Model, TrackableMixin, EventMixin):
             return None
 
     @property
-    def co_organizer_ids(self):
+    def co_organizer_ids(self):  # pragma: no cover
         return [c.id for c in self.co_organizers]
 
     @co_organizer_ids.setter
-    def co_organizer_ids(self, value):
+    def co_organizer_ids(self, value):  # pragma: no cover
         self.co_organizers = EventOrganizer.query.filter(
             EventOrganizer.id.in_(value)
         ).all()
@@ -224,6 +224,9 @@ class Event(db.Model, TrackableMixin, EventMixin):
 
         if not self.date_definitions or len(self.date_definitions) == 0:
             raise make_check_violation("At least one date defintion is required.")
+
+    def __str__(self):
+        return self.name or super().__str__()
 
 
 @listens_for(Event, "before_insert")

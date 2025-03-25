@@ -1,10 +1,6 @@
-{% extends "layout.html" %}
+{% extends "generic/update.html" %}
 {% from "_macros.html" import render_co_organizer_select2, render_event_date_defintion_code, render_date_definition_container, render_manage_form_styles, render_manage_form_scripts, render_cropper_header, render_end_container_handling, render_jquery_steps_header, render_radio_buttons, render_field_with_errors, render_field %}
 {% import "macros/forms.html.j2" as forms %}
-
-{%- block title -%}
-{{ _('Update event') }}
-{%- endblock -%}
 
 {% block styles %}
 {{ render_manage_form_styles() }}
@@ -21,20 +17,20 @@
       var form = $("#main-form");
       form.validate({
             rules: {
-              event_place_id: "required",
-              organizer_id: "required"
+              event_place: "required",
+              organizer: "required"
             }
         });
 
       {{ render_event_date_defintion_code() }}
 
       // Organizer
-      var organizer_select =$('#organizer_id');
+      var organizer_select =$('#organizer');
       var input_group = organizer_select.parent();
       input_group.append('<button type="button" id="organizer-edit-btn" class="btn btn-outline-secondary my-1"><i class="fa fa-edit"></i></button>');
       input_group.append('<button type="button" id="organizer-add-btn" class="btn btn-outline-secondary m-1"><i class="fa fa-plus"></i></button>');
       $('#organizer-edit-btn').click(function () {
-        window.open('/organizer/' + organizer_select.val() + '/update');
+        window.open('/manage/admin_unit/{{ event.admin_unit_id }}/event_organizer/' + organizer_select.val() + '/update');
         return false;
       });
       $('#organizer-add-btn').click(function () {
@@ -43,12 +39,12 @@
       });
 
       // Place
-      var place_select =$('#event_place_id');
+      var place_select =$('#event_place');
       var input_group = place_select.parent();
       input_group.append('<button type="button" id="place-edit-btn" class="btn btn-outline-secondary my-1"><i class="fa fa-edit"></i></button>');
       input_group.append('<button type="button" id="place-add-btn" class="btn btn-outline-secondary m-1"><i class="fa fa-plus"></i></button>');
       $('#place-edit-btn').click(function () {
-        window.open('/event_place/' + place_select.val() + '/update');
+        window.open('/manage/admin_unit/{{ event.admin_unit_id }}/event_place/' + place_select.val() + '/update');
         return false;
       });
       $('#place-add-btn').click(function () {
@@ -56,61 +52,7 @@
         return false;
       });
 
-      $('#event_place_id').select2({
-        width: '100%',
-        theme: 'bootstrap4',
-        ajax: {
-          url: "{{ url_for('api_v1_organization_place_list', id=event.admin_unit.id) }}",
-          dataType: 'json',
-          delay: 250,
-          cache: true,
-          data: function (params) {
-            return {
-              name: params.term,
-              per_page: 5,
-              page: params.page || 1
-            };
-          },
-          processResults: function (data) {
-            return {
-              results: data.items.map(p => ({"id": p.id, "text": p.name})),
-              pagination: {
-                  more: data.has_next
-              }
-            };
-          }
-        },
-        placeholder: "{{ _('Enter place') }}"
-      });
-
-      $('#organizer_id').select2({
-        width: '100%',
-        theme: 'bootstrap4',
-        ajax: {
-          url: "{{ url_for('api_v1_organization_organizer_list', id=event.admin_unit.id) }}",
-          dataType: 'json',
-          delay: 250,
-          cache: true,
-          data: function (params) {
-            return {
-              name: params.term,
-              per_page: 5,
-              page: params.page || 1
-            };
-          },
-          processResults: function (data) {
-            return {
-              results: data.items.map(p => ({"id": p.id, "text": p.name})),
-              pagination: {
-                  more: data.has_next
-              }
-            };
-          }
-        },
-        placeholder: "{{ _('Enter organizer') }}"
-      });
-
-      $('#organizer_id,#event_place_id').on('select2:select', function (e) {
+      $('#organizer,#event_place').on('select2:select', function (e) {
           $(this).valid();
       });
 
@@ -119,13 +61,12 @@
     });
   </script>
 {% endblock %}
-{% block content %}
 
-<h1>{{ _('Update event') }}</h1>
+{% block form %}
 
 {{ render_date_definition_container(form.date_definition_template, "date-definition-template d-none") }}
 
-<form id="main-form" action="{{ url_for('event_update', event_id=event.id) }}" method="POST" enctype="multipart/form-data">
+<form id="main-form" action="" method="POST">
   {{ form.hidden_tag() }}
 
   <div class="card mb-4">
@@ -167,8 +108,8 @@
       {{ _('Organizer') }}
     </div>
     <div class="card-body pb-0">
-      {{ render_field_with_errors(form.organizer_id, class="w-100", label_hidden=True) }}
-      {{ render_field_with_errors(form.co_organizer_ids, class="w-100") }}
+      {{ render_field_with_errors(form.organizer, class="w-100", label_hidden=True) }}
+      {{ render_field_with_errors(form.co_organizers) }}
     </div>
   </div>
 
@@ -177,7 +118,7 @@
       {{ _('Place') }}
     </div>
     <div class="card-body pb-0">
-      {{ render_field_with_errors(form.event_place_id, class="w-100", label_hidden=True) }}
+      {{ render_field_with_errors(form.event_place, class="w-100", label_hidden=True) }}
     </div>
   </div>
 
@@ -215,7 +156,7 @@
       {{ _('Additional information') }}
     </div>
     <div class="card-body">
-      {{ render_field_with_errors(form.category_ids, class="autocomplete-multi w-100") }}
+      {{ render_field_with_errors(form.categories) }}
       {{ render_field_with_errors(form.tags) }}
       {{ render_field_with_errors(form.external_link) }}
     </div>

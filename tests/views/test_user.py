@@ -35,7 +35,7 @@ def test_organization_invitation(client, seeder, utils: UtilActions):
     response = utils.post_form(url, response, {"accept": "y"})
     utils.assert_response_redirect(
         response,
-        "admin_unit_create",
+        "manage.organization_create",
         invitation_id=invitation_id,
     )
 

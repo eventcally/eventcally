@@ -363,10 +363,9 @@ class BaseCreateView(BaseFormView):
 
             try:
                 self.complete_object(object, form)
-                db.session.add(object)
-                db.session.commit()
+                self.insert_object(object)
                 self.after_commit(object, form)
-                flash(self.get_success_text(object, form), "success")
+                self.flash_success_message(object, form)
                 return redirect(self.get_redirect_url(object=object))
             except SQLAlchemyError as e:
                 db.session.rollback()
@@ -375,6 +374,13 @@ class BaseCreateView(BaseFormView):
             flash_errors(form)
 
         return self.render_template(form=form, object=object)
+
+    def flash_success_message(self, object, form):
+        flash(self.get_success_text(object, form), "success")
+
+    def insert_object(self, object):
+        db.session.add(object)
+        db.session.commit()
 
 
 class BaseObjectFormView(BaseFormView):

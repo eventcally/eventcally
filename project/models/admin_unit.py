@@ -177,6 +177,7 @@ class AdminUnit(db.Model, TrackableMixin):
             postgresql_using="gin",
         ),
     )
+    __model_name__ = "organization"
     __display_name__ = "Organization"
 
     id = Column(Integer(), primary_key=True)

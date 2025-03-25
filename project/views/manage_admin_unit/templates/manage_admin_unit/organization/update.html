@@ -1,0 +1,26 @@
+{% extends "generic/update.html" %}
+
+{% block header %}
+{{ super() }}
+<script src="{{ url_for('manage.static', filename='admin_unit.js')}}"></script>
+{% endblock %}
+
+{% block instruction %}
+{{ super() }}
+{% if object.deletion_requested_at %}
+    <div class="alert alert-danger" role="alert">
+      {{ _('The organization is scheduled for deletion.') }}
+      <a class="alert-link" href="{{ url_for('manage_admin_unit.cancel_deletion', id=object.id) }}" role="button">{{ _('Cancel deletion') }}</a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block form %}
+{{ super() }}
+
+{% if not object.deletion_requested_at %}
+<div class="my-4">
+  <a class="btn btn-danger" href="{{ url_for('manage_admin_unit.request_deletion', id=object.id) }}" role="button">{{ _('Delete organization') }}&hellip;</a>
+</div>
+{% endif %}
+{% endblock %}

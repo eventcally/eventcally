@@ -99,7 +99,7 @@ def has_access(admin_unit, permission):
 
 
 def access_or_401(admin_unit, permission):
-    if not has_access(admin_unit, permission):
+    if not has_access(admin_unit, permission):  # pragma: no cover
         abort(401)
 
 

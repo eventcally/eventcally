@@ -23,7 +23,9 @@ class NegotiateView(BaseObjectFormView):
         invitation = object
 
         if form.accept.data:
-            return redirect(url_for("admin_unit_create", invitation_id=invitation.id))
+            return redirect(
+                url_for("manage.organization_create", invitation_id=invitation.id)
+            )
 
         db.session.delete(invitation)
         db.session.commit()

@@ -2,7 +2,7 @@ from flask import url_for
 from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
 from wtforms import DecimalField, StringField
-from wtforms.validators import Length, Optional
+from wtforms.validators import DataRequired, Length, Optional
 
 from project.imageutils import (
     get_bytes_from_image,
@@ -12,18 +12,15 @@ from project.imageutils import (
     resize_image_to_max,
     validate_image,
 )
+from project.modular.ajax import LicenseAjaxModelLoader
 from project.modular.base_form import BaseForm
-from project.modular.fields import GooglePlaceField
+from project.modular.fields import AjaxSelectField, GooglePlaceField
 
 
-class LocationForm(BaseForm):
+class LocationFormMixin(object):
     street = StringField(
         lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
     )
-    postalCode = StringField(
-        lazy_gettext("Postal code"), validators=[Optional(), Length(max=10)]
-    )
-    city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
     state = StringField(lazy_gettext("State"), validators=[Optional(), Length(max=255)])
     latitude = DecimalField(
         lazy_gettext("Latitude"), places=16, validators=[Optional()]
@@ -33,7 +30,31 @@ class LocationForm(BaseForm):
     )
 
 
+class LocationForm(BaseForm, LocationFormMixin):
+    postalCode = StringField(
+        lazy_gettext("Postal code"), validators=[Optional(), Length(max=10)]
+    )
+    city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
+
+
+class StrictLocationForm(BaseForm, LocationFormMixin):
+    postalCode = StringField(
+        lazy_gettext("Postal code"), validators=[DataRequired(), Length(max=10)]
+    )
+    city = StringField(
+        lazy_gettext("City"), validators=[DataRequired(), Length(max=255)]
+    )
+
+
 class GooglePlaceLocationForm(LocationForm):
+    google_place = GooglePlaceField(location_only=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.move_field_to_top("google_place")
+
+
+class StrictGooglePlaceLocationForm(StrictLocationForm):
     google_place = GooglePlaceField(location_only=True)
 
     def __init__(self, *args, **kwargs):
@@ -54,6 +75,15 @@ class Base64ImageForm(BaseForm):
         lazy_gettext("Copyright text"),
         validators=[Optional(), Length(max=255)],
         render_kw={"is_required": True},
+    )
+    license = AjaxSelectField(
+        LicenseAjaxModelLoader(),
+        lazy_gettext("License"),
+        validators=[Optional()],
+        allow_blank=True,
+        description=lazy_gettext(
+            "Please select if the image should be displayed in external event calendars."
+        ),
     )
 
     def process(self, formdata=None, obj=None, data=None, **kwargs):

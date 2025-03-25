@@ -159,29 +159,6 @@ $.fn.select2.defaults.set("language", "de");
             };
           },
         },
-        initSelection: function (element, callback) {
-          $el = $(element);
-          var result = [];
-
-          if ($el.attr("data-json")) {
-            var value = JSON.parse($el.attr("data-json"));
-
-            if (value) {
-              if (multiple) {
-                for (var k in value) {
-                  var v = value[k];
-                  result.push({ id: v[0], text: v[1] });
-                }
-
-                callback(result);
-              } else {
-                result = { id: value[0], text: value[1] };
-              }
-            }
-          }
-
-          callback(result);
-        },
       };
 
       if ($el.attr("data-allow-blank")) opts["allowClear"] = true;

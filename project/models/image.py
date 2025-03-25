@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Unicode
 from sqlalchemy.event import listens_for
-from sqlalchemy.orm import deferred
+from sqlalchemy.orm import backref, deferred
 
 from project import db
 from project.models.iowned import IOwned
@@ -14,6 +14,13 @@ class Image(db.Model, TrackableMixin, IOwned):
     data = deferred(db.Column(db.LargeBinary))
     encoding_format = Column(String(80))
     copyright_text = Column(Unicode(255))
+
+    license_id = db.Column(db.Integer, db.ForeignKey("license.id"), nullable=True)
+    license = db.relationship(
+        "License",
+        uselist=False,
+        backref=backref("images", lazy=True),
+    )
 
     adminunit = db.relationship("AdminUnit", uselist=False)
     event = db.relationship("Event", uselist=False)

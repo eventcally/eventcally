@@ -155,6 +155,12 @@ class UtilActions(object):
         print(response.data)
         print(response.json)
 
+        if response.status_code == 200 and response.data:
+            danger_alerts = self.get_response_danger_alerts(response)
+            if danger_alerts:
+                print("Danger alerts:")
+                print(danger_alerts)
+
     def get_json(self, url, **kwargs):
         self.log_request(url)
         headers = self.get_headers()
@@ -323,10 +329,18 @@ class UtilActions(object):
         self.assert_response_redirect_to_url(response, redirect_url)
 
     def assert_response_redirect_to_url(self, response, redirect_url):
+        self.assert_status_code(response, 302)
+
         absolute_url = "http://localhost" + redirect_url
         response_location = response.headers["Location"]
 
         assert response_location == redirect_url or response_location == absolute_url
+
+    def assert_status_code(self, response, status_code):
+        if response.status_code != status_code:
+            self.log_response(response)
+
+        assert response.status_code == status_code
 
     def assert_response_redirect_to_login(self, response, next_url):
         assert response.status_code == 302
@@ -352,6 +366,14 @@ class UtilActions(object):
                 return
 
         assert False, "Alert not found"
+
+    def get_response_alerts(self, response, category):
+        soup = self.get_soup(response)
+        alerts = soup.find_all("div", class_="alert-" + category)
+        return " ".join([a.text for a in alerts])
+
+    def get_response_danger_alerts(self, response):
+        return self.get_response_alerts(response, "danger")
 
     def assert_response_error_message(self, response, message=None):
         self.assert_response_contains_alert(response, "danger", message)

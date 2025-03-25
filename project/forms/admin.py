@@ -2,7 +2,7 @@ import json
 
 from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, RadioField, StringField, SubmitField, TextAreaField
+from wtforms import BooleanField, RadioField, SubmitField, TextAreaField
 from wtforms.fields import EmailField
 from wtforms.validators import DataRequired, Optional
 
@@ -59,43 +59,6 @@ class UpdateUserForm(FlaskForm):
 class DeleteUserForm(FlaskForm):
     submit = SubmitField(lazy_gettext("Delete user"))
     email = EmailField(lazy_gettext("Email"), validators=[DataRequired()])
-
-
-class UpdateAdminUnitForm(FlaskForm):
-    incoming_reference_requests_allowed = BooleanField(
-        lazy_gettext("Incoming reference requests allowed"),
-        description=lazy_gettext(
-            "If set, other organizations can ask this organization to reference their event."
-        ),
-        validators=[Optional()],
-    )
-    can_create_other = BooleanField(
-        lazy_gettext("Create other organizations"),
-        description=lazy_gettext(
-            "If set, members of the organization can create other organizations."
-        ),
-        validators=[Optional()],
-    )
-    can_invite_other = BooleanField(
-        lazy_gettext("Invite other organizations"),
-        description=lazy_gettext(
-            "If set, members of the organization can invite other organizations."
-        ),
-        validators=[Optional()],
-    )
-    can_verify_other = BooleanField(
-        lazy_gettext("Verify other organizations"),
-        description=lazy_gettext(
-            "If set, members of the organization can verify other organizations."
-        ),
-        validators=[Optional()],
-    )
-    submit = SubmitField(lazy_gettext("Update organization"))
-
-
-class DeleteAdminUnitForm(FlaskForm):
-    submit = SubmitField(lazy_gettext("Delete organization"))
-    name = StringField(lazy_gettext("Name"), validators=[DataRequired()])
 
 
 class AdminTestEmailForm(FlaskForm):

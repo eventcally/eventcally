@@ -256,6 +256,21 @@
 
                     var action_div = action_tag == '' ? '' : '<div class="col-lg d-flex justify-content-between p-0 w-medium" style="font-size:0.9rem; text-align:right;">' + action_tag + '</div>';
                     var organization_name = event.organization.name == event.organizer.name ? '' : event.organization.name;
+                    var copyright_div = '';
+
+                    if (event.photo.copyright_text || event.photo.license) {
+                        var copyright_license = '';
+
+                        if (event.photo.copyright_text) {
+                            copyright_license += '&copy; ' + event.photo.copyright_text;
+                        }
+
+                        if (event.photo.license != null) {
+                            copyright_license += ' <a href="' + event.photo.license.url + '" target="_blank" rel="noopener noreferrer">' + event.photo.license.code + '</a>';
+                        }
+
+                        copyright_div += '<div class="small px-1 text-muted">' + copyright_license + '</div>'
+                    }
 
                     var desktop = '<div class="row mb-3 d-none d-sm-block">' +
                                         '<div class="col-sm">' +
@@ -271,7 +286,7 @@
                                                             '<small class="text-muted"><i class="fa fa-map-marker"></i> ' + map_link_start + event.place.name + map_link_end + '</small>' +
                                                         '</div>' +
                                                         '<div class="col-sm-4 text-right">' +
-                                                            (event.photo != null ? '<div class="img-overlay-container"><img src="' + event.photo.image_url + '" style="object-fit: contain; width: 160px; height: 160px;" alt="Event image" />' + (event.photo.copyright_text ? '<div class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" title="' + event.photo.copyright_text + '">&copy;</div>' : '') + '</div>' : '') +
+                                                            (event.photo != null ? '<div class="img-overlay-container"><img src="' + event.photo.image_url + '" style="object-fit: contain; width: 160px; height: 160px;" alt="Event image" />' + copyright_div + '</div>' : '') +
                                                         '</div>' +
                                                     '</div>' +
                                                 '</div>' +
@@ -283,7 +298,7 @@
                                     '<div class="col-sm">' +
                                         '<div class="card">' +
                                             '<div>' +
-                                                (event.photo != null ? '<div class="img-overlay-container"><img src="' + event.photo.image_url + '" class="card-img-top" style="object-fit: cover; height: 12vh;" alt="Event image" />' + (event.photo.copyright_text ? '<div class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" title="' + event.photo.copyright_text + '">&copy;</div>' : '') : '') +
+                                                (event.photo != null ? '<div class="img-overlay-container"><img src="' + event.photo.image_url + '" class="card-img-top" style="object-fit: cover; height: 12vh;" alt="Event image" />' + copyright_div : '') +
                                             '</div>' +
                                             '<div class="card-body" style="padding:0.5rem">' +
                                                 '<div class="row">' +

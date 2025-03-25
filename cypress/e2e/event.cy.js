@@ -3,7 +3,7 @@ describe("Event", () => {
     it("creates event with recurrence=" + test.recurrence, () => {
       cy.login();
       cy.createAdminUnit().then(function (adminUnitId) {
-        cy.visit("/admin_unit/" + adminUnitId + "/events/create");
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/event/create");
 
         cy.get("#name").type("Stadtfest");
         cy.checkEventStartEnd(false, test.recurrence, "date_definitions-0-");
@@ -14,12 +14,12 @@ describe("Event", () => {
         cy.get('#event_place_choice-1').click();
         cy.get("#new_event_place-location-city").type("Goslar");
         cy.get('#event_place_choice-0').click();
-        cy.select2("event_place_id", "Gos", "Goslar");
+        cy.select2("event_place", "Gos", "Goslar, 38640 Goslar");
 
         cy.get('#organizer_choice-1').click();
         cy.get("#new_organizer-location-city").type("Goslar");
         cy.get('#organizer_choice-0').click();
-        cy.select2("organizer_id", "Mei", "Meine Crew");
+        cy.select2("organizer", "Mei", "Meine Crew");
 
         cy.get("#submit").click();
         cy.url().should("include", "/actions");
@@ -51,11 +51,11 @@ describe("Event", () => {
   it("saves draft", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
-      cy.visit("/admin_unit/" + adminUnitId + "/events/create");
+      cy.visit("/manage/admin_unit/" + adminUnitId + "/event/create");
 
       cy.get("#name").type("Stadtfest");
-      cy.select2("event_place_id", "Gos", "Goslar");
-      cy.select2("organizer_id", "Mei", "Meine Crew");
+      cy.select2("event_place", "Gos", "Goslar, 38640 Goslar");
+      cy.select2("organizer", "Mei", "Meine Crew");
 
       cy.get("#submit_draft").click();
       cy.url().should("include", "/actions");
@@ -127,7 +127,7 @@ describe("Event", () => {
     cy.login();
     cy.createAdminUnit().then(function (adminUnitId) {
       cy.createEvent(adminUnitId).then(function (eventId) {
-        cy.visit("/event/" + eventId + "/delete");
+        cy.visit("/manage/admin_unit/" + adminUnitId + "/event/" + eventId + "/delete");
         cy.screenshot("delete");
         cy.get("#submit").click();
         cy.url().should(
