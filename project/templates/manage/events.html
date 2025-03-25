@@ -52,7 +52,7 @@ var vue_app_data = { eventId: 0 };
 
 <h1 class="mb-0">
     {{ _('Events') }}
-    <a class="btn btn-outline-secondary btn-sm m-1" href="{{ url_for('event_create_for_admin_unit_id', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
+    <a class="btn btn-outline-secondary btn-sm m-1" href="{{ url_for('manage_admin_unit.event_create', id=admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Create event') }}</a>
 </h1>
 
 <div class="my-4 w-normal">
@@ -112,7 +112,7 @@ var vue_app_data = { eventId: 0 };
                 <th>{{ _('Organizer') }}</th>
                 <th>{{ _('Place') }}</th>
                 <th><i class="fa fa-fw fa-image" data-toggle="tooltip" data-boundary="window" title="{{ _('Photo') }}"></i></th>
-                <th><i class="fa fa-fw fa-link" data-toggle="tooltip" data-boundary="window" title="{{ _('Number of references') }} / {{ _('Number of reference requests.') }}"></i></th>
+                <th><i class="fa fa-fw fa-link" data-toggle="tooltip" data-boundary="window" title="{{ _('Number of references') }} / {{ _('Number of reference requests') }}"></i></th>
             </tr>
         </thead>
         <tbody>
@@ -123,9 +123,9 @@ var vue_app_data = { eventId: 0 };
                         <button class="btn btn-link dropdown-toggle p-0 text-wrap text-left" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ event.name }}</button>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="{{ url_for('event', event_id=event.id) }}">{{ _('View') }}</a>
-                            <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}">{{ _('Edit') }}</a>
-                            <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}">{{ _('Delete') }}&hellip;</a>
-                            <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}">{{ _('Duplicate') }}&hellip;</a>
+                            <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_update', id=event.admin_unit_id, event_id=event.id) }}">{{ _('Edit') }}</a>
+                            <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_delete', id=event.admin_unit_id, event_id=event.id) }}">{{ _('Delete') }}&hellip;</a>
+                            <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_create', id=event.admin_unit_id, template_id=event.id) }}">{{ _('Duplicate') }}&hellip;</a>
                             <div class="dropdown-divider"></div>
                             {% if event.admin_unit_id == current_admin_unit.id %}
                             <a class="dropdown-item" href="{{ url_for('event_reference_request_create', event_id=event.id) }}">{{ _('Request reference') }}&hellip;</a>

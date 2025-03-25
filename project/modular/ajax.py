@@ -2,9 +2,10 @@ from flask import request
 
 from project import db
 from project.models.event_category import EventCategory
-from project.modular.search_definition import apply_search_definitions
+from project.models.license import License
+from project.modular.search_definition import SearchDefinition, apply_search_definitions
+from project.modular.sort_definition import SortDefinition
 from project.utils import get_event_category_name
-from project.views.event import get_event_category_choices
 
 
 def get_primary_key(model):
@@ -85,6 +86,8 @@ class EventCategoryAjaxModelLoader(AjaxModelLoader):
         super().__init__(db.session, EventCategory, **kwargs)
 
     def get_ajax_pagination(self, term):
+        from project.views.event import get_event_category_choices
+
         all = get_event_category_choices()
         matching = [i for i in all if term in i[1]] if term else all
 
@@ -102,3 +105,16 @@ class EventCategoryAjaxModelLoader(AjaxModelLoader):
 
     def format_model(self, model):
         return get_event_category_name(model)
+
+
+class LicenseAjaxModelLoader(AjaxModelLoader):
+    def __init__(self, **kwargs):
+        kwargs["search_definitions"] = [
+            SearchDefinition(License.code),
+            SearchDefinition(License.name),
+        ]
+        kwargs["sort_definitions"] = [SortDefinition(License.sort)]
+        super().__init__(db.session, License, **kwargs)
+
+    def format_model(self, model):
+        return f"{model.code} ({model.name})"

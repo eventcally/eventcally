@@ -22,16 +22,23 @@ from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
 from project.views.manage_admin_unit.event.displays import ListDisplay
-from project.views.utils import current_admin_unit
+from project.views.manage_admin_unit.event.views import (
+    CreateView,
+    DeleteView,
+    UpdateView,
+)
+from project.views.utils import current_admin_unit, manage_permission_required
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = Event
-    generic_prefix = "test_"
-    create_view_class = None
+    create_decorators = [manage_permission_required("event:create")]
+    create_view_class = CreateView
     read_view_class = None
-    update_view_class = None
-    delete_view_class = None
+    update_decorators = [manage_permission_required("event:update")]
+    update_view_class = UpdateView
+    delete_decorators = [manage_permission_required("event:delete")]
+    delete_view_class = DeleteView
     list_display_class = ListDisplay
     list_filters = [
         EventCategoryFilter(
@@ -69,6 +76,9 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     ]
     list_search_definitions = [SearchDefinition(Event.name)]
 
+    def get_plural_url_folder(self):
+        return f"new_{super().get_plural_url_folder()}"
+
     def get_list_per_page(self):
         return 50
 
@@ -84,26 +94,6 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
         )
         if view_action:
             result.append(view_action)
-
-        update_action = self._create_action(
-            url_for(
-                "event_update",
-                event_id=object.id,
-            ),
-            gettext("Edit"),
-        )
-        if update_action:
-            result.append(update_action)
-
-        delete_action = self._create_action(
-            url_for(
-                "event_delete",
-                event_id=object.id,
-            ),
-            gettext("Delete"),
-        )
-        if delete_action:
-            result.append(delete_action)
 
         if object.admin_unit_id == current_admin_unit.id:
             reference_request_create_action = self._create_action(

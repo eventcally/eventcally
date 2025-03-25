@@ -111,7 +111,7 @@ def test_admin_unit_events(client, seeder: Seeder, utils: UtilActions):
         date_to="2021-10-03",
     )
     utils.get_endpoint_ok(
-        "manage_admin_unit.test_events",
+        "manage_admin_unit.events",
         id=admin_unit_id,
         created_at_from="2020-10-03",
         created_at_to="2021-10-03",
@@ -119,18 +119,18 @@ def test_admin_unit_events(client, seeder: Seeder, utils: UtilActions):
 
     category_id = seeder.get_event_category_id("Other")
     utils.get_endpoint_ok(
-        "manage_admin_unit.test_events",
+        "manage_admin_unit.events",
         id=admin_unit_id,
         category_id=category_id,
     )
     utils.get_endpoint_ok(
-        "manage_admin_unit.test_events",
+        "manage_admin_unit.events",
         id=admin_unit_id,
         tag="Tag",
     )
 
     url = utils.get_url(
-        "manage_admin_unit.test_events",
+        "manage_admin_unit.events",
         id=admin_unit_id,
     )
     utils.ajax_lookup(url, "category_id")
@@ -186,12 +186,12 @@ def test_admin_unit_events_place(app, client, seeder: Seeder, utils: UtilActions
     )
     seeder.create_event(admin_unit_id, place_id=place_id)
     utils.get_endpoint_ok(
-        "manage_admin_unit.test_events", id=admin_unit_id, event_place_id=event_place_id
+        "manage_admin_unit.events", id=admin_unit_id, event_place_id=event_place_id
     )
 
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
     utils.get_endpoint_ok(
-        "manage_admin_unit.test_events", id=admin_unit_id, organizer_id=organizer_id
+        "manage_admin_unit.events", id=admin_unit_id, organizer_id=organizer_id
     )
 
 

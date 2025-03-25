@@ -388,11 +388,18 @@
   {% set img_class = img_class + ' figure-img img-fluid' %}
   <figure class="figure mx-auto">
     {{ render_img_src(image, size, class=img_class, style=img_style, **kwargs) }}
-    {% if image.copyright_text %}
-      <figcaption class="figure-caption">&copy; {{ image.copyright_text }}</figcaption>
+    {% if image.copyright_text or image.license %}
+      <figcaption class="figure-caption">
+        {{ render_image_copyright_license(image) }}
+      </figcaption>
     {% endif %}
   </figure>
 {% endif %}
+{% endmacro %}
+
+{% macro render_image_copyright_license(image) %}
+  {% if image.copyright_text %}&copy; {{ image.copyright_text }}{% endif %}
+  {% if image.license %}<a href="{{ image.license.url }}" target="_blank" rel="noopener noreferrer">{{ image.license.code }}</a>{% endif %}
 {% endmacro %}
 
 {% macro render_logo(image) %}
@@ -663,7 +670,7 @@
           <button type="button" class="btn btn-outline-secondary mb-1 toggle-user-event-favorite" data-event-id="{{ event.id }}"><i class="{%if event.is_favored_by_current_user() %}fa{% else %}far{% endif %} fa-bookmark"></i> {{ _('Favorite events') }}</button>
         {% endif %}
         {% if user_rights['can_update_event'] %}
-          <a href="{{ url_for('event_update', event_id=event.id) }}" class="btn btn-outline-secondary mb-1"><i class="fa fa-edit"></i> {{ _('Edit') }}</a>
+          <a href="{{ url_for('manage_admin_unit.event_update', id=event.admin_unit_id, event_id=event.id) }}" class="btn btn-outline-secondary mb-1"><i class="fa fa-edit"></i> {{ _('Edit') }}</a>
         {% endif %}
       </div>
       {% endif %}
@@ -1130,11 +1137,11 @@
       </button>
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
           {% if user_rights['can_update_event'] %}
-              <a class="dropdown-item" href="{{ url_for('event_update', event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
-              <a class="dropdown-item" href="{{ url_for('event_delete', event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}&hellip;</a>
+              <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_update', id=event.admin_unit_id, event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>
+              <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_delete', id=event.admin_unit_id, event_id=event.id) }}"><i class="fa fa-trash"></i> {{ _('Delete event') }}&hellip;</a>
           {% endif %}
           {% if user_rights['can_duplicate_event'] %}
-              <a class="dropdown-item" href="{{ url_for('event_create_for_admin_unit_id', id=event.admin_unit_id, template_id=event.id) }}"><i class="fa fa-copy"></i> {{ _('Duplicate event') }}</a>
+              <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_create', id=event.admin_unit_id, template_id=event.id) }}"><i class="fa fa-copy"></i> {{ _('Duplicate event') }}</a>
           {% endif %}
           <div class="dropdown-divider"></div>
           {% if user_rights['can_create_reference_request'] %}
@@ -1395,91 +1402,6 @@ $('#allday').on('change', function() {
       </div>
   </div>
 </div>
-{% endmacro %}
-
-{% macro render_admin_unit_form_script(admin_unit=None) %}
-<script>
-
-  $( function() {
-    jQuery.validator.addMethod("shortName", function(value, element) {
-      return this.optional(element) || /^\w+$/i.test(value);
-    }, jQuery.validator.format("{{ _('Short name must contain only letters numbers or underscore') }}"));
-
-    var form = $("#main-form");
-    var validator = form.validate({
-          rules: {
-          }
-      });
-
-    $("#name").rules("add", {
-      remote: {
-        param: {
-          url: "{{ url_for('js_check_org_name') }}",
-          type: "post"
-          {% if admin_unit %}
-          ,data: {
-            admin_unit_id: function() {
-              return "{{ admin_unit.id }}";
-            }
-          }
-          {% endif %}
-        }
-        {% if admin_unit and admin_unit.name %}
-        ,depends: function(element) {
-            return $('#name').val() !== '{{ admin_unit.name }}';
-        }
-        {% endif %}
-      }
-    });
-
-    $("#short_name").rules("add", "shortName");
-    $("#short_name").rules("add", {
-      remote: {
-        param: {
-          url: "{{ url_for('js_check_org_short_name') }}",
-          type: "post"
-          {% if admin_unit %}
-          ,data: {
-            admin_unit_id: function() {
-              return "{{ admin_unit.id }}";
-            }
-          }
-          {% endif %}
-        }
-        {% if admin_unit.short_name %}
-        ,depends: function(element) {
-            return $('#short_name').val() !== '{{ admin_unit.short_name }}';
-        }
-        {% endif %}
-      }
-    });
-
-    function suggest_short_name() {
-      if ($("#short_name").val().length == 0) {
-        var name = $("#name").val().toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
-        var re = /\w/g;
-        var suggestion = (name.match(re) || []).join('');
-
-        $("#short_name").val(suggestion);
-        $("#short_name").valid();
-      }
-    }
-
-    $("#name").blur(function() {
-      suggest_short_name();
-    });
-
-    if ($("#name").val().length > 0) {
-      $("#name").valid();
-      suggest_short_name();
-    }
-
-    $('#location_search').on('place_changed', function() {
-      $('#location_search').closest('.card-body').find(':input').valid();
-      $('#location_search').removeClass('is-valid');
-    });
-  });
-</script>
 {% endmacro %}
 
 {% macro render_form_scripts() %}

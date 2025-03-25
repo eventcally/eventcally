@@ -16,49 +16,11 @@ from project import app, csrf
 from project.api.custom_widget.schemas import CustomWidgetSchema
 from project.dateutils import form_input_to_date
 from project.maputils import find_gmaps_places, get_gmaps_place
-from project.models import AdminUnit, CustomWidget, EventOrganizer, EventPlace
+from project.models import CustomWidget, EventOrganizer, EventPlace
 from project.services.admin import upsert_settings
 from project.services.place import get_event_places
 from project.services.user import find_user_by_email
 from project.utils import decode_response_content, get_place_str
-
-
-@app.route("/js/check/organization/short_name", methods=["POST"])
-def js_check_org_short_name():
-    csrf.protect()
-
-    short_name = request.form["short_name"]
-    admin_unit_id = (
-        int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
-    )
-    organization = AdminUnit.query.filter(
-        func.lower(AdminUnit.short_name) == short_name.lower()
-    ).first()
-
-    if not organization or organization.id == admin_unit_id:
-        return jsonify(True)
-
-    error = gettext("Short name is already taken")
-    return jsonify(error)
-
-
-@app.route("/js/check/organization/name", methods=["POST"])
-def js_check_org_name():
-    csrf.protect()
-
-    name = request.form["name"]
-    admin_unit_id = (
-        int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
-    )
-    organization = AdminUnit.query.filter(
-        func.lower(AdminUnit.name) == name.lower()
-    ).first()
-
-    if not organization or organization.id == admin_unit_id:
-        return jsonify(True)
-
-    error = gettext("Name is already taken")
-    return jsonify(error)
 
 
 @app.route("/js/check/event_place/name", methods=["POST"])

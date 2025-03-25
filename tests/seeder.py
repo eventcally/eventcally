@@ -496,7 +496,7 @@ class Seeder(object):
     def create_event_via_form(self, admin_unit_id: int) -> str:
         place_id = self.upsert_default_event_place(admin_unit_id)
         organizer_id = self.upsert_default_event_organizer(admin_unit_id)
-        url = self._utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+        url = self._utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
         response = self._utils.get_ok(url)
         response = self._utils.post_form(
             url,
@@ -505,8 +505,8 @@ class Seeder(object):
                 "name": "Name",
                 "description": "Beschreibung",
                 "date_definitions-0-start": ["2030-12-31", "23:59"],
-                "event_place_id": place_id,
-                "organizer_id": organizer_id,
+                "event_place": place_id,
+                "organizer": organizer_id,
                 "photo-image_base64": self.get_default_image_upload_base64(),
                 "photo-copyright_text": "EventCally",
             },

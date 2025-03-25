@@ -19,7 +19,12 @@ Cypress.Commands.add("setup", () => {
 Cypress.Commands.add(
   "createUser",
   (email = "test@test.de", password = "password", admin = false) => {
-    let cmd = 'flask user create "' + email + '" "' + password + '" --confirm --accept-tos';
+    let cmd =
+      'flask user create "' +
+      email +
+      '" "' +
+      password +
+      '" --confirm --accept-tos';
     if (admin) {
       cmd += " --admin";
     }
@@ -34,13 +39,11 @@ Cypress.Commands.add(
   "createAdminUnit",
   (userEmail = "test@test.de", name = "Meine Crew", verified = true) => {
     let cmd = "flask test admin-unit-create " + userEmail + ' "' + name + '"';
-    cmd += (verified) ? " --verified" : " --no-verified";
-    return cy
-      .logexec(cmd)
-      .then(function (result) {
-        let json = JSON.parse(result.stdout);
-        return json.admin_unit_id;
-      });
+    cmd += verified ? " --verified" : " --no-verified";
+    return cy.logexec(cmd).then(function (result) {
+      let json = JSON.parse(result.stdout);
+      return json.admin_unit_id;
+    });
   }
 );
 
@@ -152,14 +155,23 @@ Cypress.Commands.add("createAdminUnitRelation", (adminUnitId) => {
     });
 });
 
-Cypress.Commands.add("createAdminUnitOrganizationInvitation", (adminUnitId, email="invited@test.de") => {
-  return cy
-    .logexec("flask test admin-unit-organization-invitation-create " + adminUnitId + ' "' + email + '"')
-    .then(function (result) {
-      let json = JSON.parse(result.stdout);
-      return json.invitation_id;
-    });
-});
+Cypress.Commands.add(
+  "createAdminUnitOrganizationInvitation",
+  (adminUnitId, email = "invited@test.de") => {
+    return cy
+      .logexec(
+        "flask test admin-unit-organization-invitation-create " +
+          adminUnitId +
+          ' "' +
+          email +
+          '"'
+      )
+      .then(function (result) {
+        let json = JSON.parse(result.stdout);
+        return json.invitation_id;
+      });
+  }
+);
 
 Cypress.Commands.add("createEventList", (adminUnitId) => {
   return cy
@@ -208,10 +220,9 @@ Cypress.Commands.add(
     );
 
     if (expectedText) {
-      cy.get("#select2-" + selectId + "-container").should(
-        "have.text",
-        expectedText
-      );
+      cy.get("#select2-" + selectId + "-container")
+        .invoke("text")
+        .should("be.oneOf", [expectedText, "×" + expectedText]);
     }
 
     if (expectedValue) {
@@ -232,95 +243,105 @@ Cypress.Commands.add(
   "checkEventStartEnd",
   (update = false, recurrence = false, prefix = "") => {
     if (update && recurrence) {
-      cy.get('#' + prefix + 'single-event-container').should("not.be.visible");
-      cy.get('#' + prefix + 'recc-event-container').should("be.visible");
-      cy.get('div[data-prefix=' + prefix + '] [name="riedit"]').click();
+      cy.get("#" + prefix + "single-event-container").should("not.be.visible");
+      cy.get("#" + prefix + "recc-event-container").should("be.visible");
+      cy.get("div[data-prefix=" + prefix + '] [name="riedit"]').click();
     } else {
       cy.checkEventAllday(prefix);
 
-      cy.get('#' + prefix + 'start-user').click();
+      cy.get("#" + prefix + "start-user").click();
       cy.get("#ui-datepicker-div").should("be.visible");
       cy.get("#ui-datepicker-div a.ui-state-default:first").click(); // select first date
       cy.get("#ui-datepicker-div").should("not.be.visible");
 
-      cy.get('#' + prefix + 'start-time').click();
+      cy.get("#" + prefix + "start-time").click();
       cy.get(".ui-timepicker-wrapper:visible").should("be.visible");
-      cy.get(".ui-timepicker-wrapper:visible .ui-timepicker-am[data-time=0]").click(); // select 00:00
+      cy.get(
+        ".ui-timepicker-wrapper:visible .ui-timepicker-am[data-time=0]"
+      ).click(); // select 00:00
       cy.get("#ui-datepicker-div").should("not.be.visible");
 
-      cy.get('#' + prefix + 'end-container').should("not.be.visible");
-      cy.get('#' + prefix + 'end-show-container .show-link').click();
-      cy.get('#' + prefix + 'end-show-container').should("not.be.visible");
-      cy.get('#' + prefix + 'end-container').should("be.visible");
-      cy.inputsShouldHaveSameValue('#' + prefix + 'start-user', '#' + prefix + 'end-user');
-      cy.get('#' + prefix + 'end-time').should("have.value", "03:00");
-      cy.get('#' + prefix + 'end-hide-container .hide-link').click();
-      cy.get('#' + prefix + 'end-show-container').should("be.visible");
-      cy.get('#' + prefix + 'end-container').should("not.be.visible");
-      cy.get('#' + prefix + 'end-user').should("have.value", "");
-      cy.get('#' + prefix + 'end-time').should("have.value", "");
+      cy.get("#" + prefix + "end-container").should("not.be.visible");
+      cy.get("#" + prefix + "end-show-container .show-link").click();
+      cy.get("#" + prefix + "end-show-container").should("not.be.visible");
+      cy.get("#" + prefix + "end-container").should("be.visible");
+      cy.inputsShouldHaveSameValue(
+        "#" + prefix + "start-user",
+        "#" + prefix + "end-user"
+      );
+      cy.get("#" + prefix + "end-time").should("have.value", "03:00");
+      cy.get("#" + prefix + "end-hide-container .hide-link").click();
+      cy.get("#" + prefix + "end-show-container").should("be.visible");
+      cy.get("#" + prefix + "end-container").should("not.be.visible");
+      cy.get("#" + prefix + "end-user").should("have.value", "");
+      cy.get("#" + prefix + "end-time").should("have.value", "");
 
-      cy.get('#' + prefix + 'recc-event-container').should("not.be.visible");
-      cy.get('#' + prefix + 'recc-button').click();
+      cy.get("#" + prefix + "recc-event-container").should("not.be.visible");
+      cy.get("#" + prefix + "recc-button").click();
     }
 
     cy.get(".modal-recurrence").should("be.visible");
     cy.wait(1000);
 
-    cy.inputsShouldHaveSameValue('#' + prefix + 'start-user', '#' + prefix + 'recc-start-user');
-    cy.inputsShouldHaveSameValue('#' + prefix + 'start-time', '#' + prefix + 'recc-start-time');
-    cy.get('#' + prefix + 'rirtemplate option').should("have.length", 4);
-    cy.get(".modal-recurrence:visible input[value=BYENDDATE]").should("be.checked");
+    cy.inputsShouldHaveSameValue(
+      "#" + prefix + "start-user",
+      "#" + prefix + "recc-start-user"
+    );
+    cy.inputsShouldHaveSameValue(
+      "#" + prefix + "start-time",
+      "#" + prefix + "recc-start-time"
+    );
+    cy.get("#" + prefix + "rirtemplate option").should("have.length", 4);
+    cy.get(".modal-recurrence:visible input[value=BYENDDATE]").should(
+      "be.checked"
+    );
     cy.get(".modal-recurrence:visible .modal-footer .btn-primary").click();
 
-    cy.get('#' + prefix + 'single-event-container').should("not.be.visible");
-    cy.get('#' + prefix + 'recc-event-container').should("be.visible");
+    cy.get("#" + prefix + "single-event-container").should("not.be.visible");
+    cy.get("#" + prefix + "recc-event-container").should("be.visible");
 
     if (recurrence == false) {
       cy.get('[name="ridelete"]:visible').click();
-      cy.get('#' + prefix + 'single-event-container').should("be.visible");
-      cy.get('#' + prefix + 'recc-event-container').should("not.be.visible");
-      cy.get('#' + prefix + 'end-container').should("not.be.visible");
+      cy.get("#" + prefix + "single-event-container").should("be.visible");
+      cy.get("#" + prefix + "recc-event-container").should("not.be.visible");
+      cy.get("#" + prefix + "end-container").should("not.be.visible");
     }
   }
 );
 
-Cypress.Commands.add(
-  "checkEventAllday",
-  (prefix = "") => {
-    // Turn on
-    cy.get('#' + prefix + 'allday').click();
-    cy.get('#' + prefix + 'end-container').should("be.visible");
-    cy.get('#' + prefix + 'start-time').should("not.be.visible");
-    cy.get('#' + prefix + 'end-time').should("not.be.visible");
+Cypress.Commands.add("checkEventAllday", (prefix = "") => {
+  // Turn on
+  cy.get("#" + prefix + "allday").click();
+  cy.get("#" + prefix + "end-container").should("be.visible");
+  cy.get("#" + prefix + "start-time").should("not.be.visible");
+  cy.get("#" + prefix + "end-time").should("not.be.visible");
 
-    // Recurrence
-    cy.get('#' + prefix + 'recc-button').click();
-    cy.get(".modal-recurrence").should("be.visible");
-    cy.get('#' + prefix + 'recc-allday').should("be.checked");
-    cy.get('#' + prefix + 'recc-start-time').should("not.be.visible");
-    cy.get('#' + prefix + 'recc-fo-end-time').should("not.be.visible");
+  // Recurrence
+  cy.get("#" + prefix + "recc-button").click();
+  cy.get(".modal-recurrence").should("be.visible");
+  cy.get("#" + prefix + "recc-allday").should("be.checked");
+  cy.get("#" + prefix + "recc-start-time").should("not.be.visible");
+  cy.get("#" + prefix + "recc-fo-end-time").should("not.be.visible");
 
-    cy.get('#' + prefix + 'recc-allday').click();
-    cy.get('#' + prefix + 'recc-start-time').should("be.visible");
-    cy.get('#' + prefix + 'recc-fo-end-time').should("be.visible");
-    cy.get(".modal-recurrence:visible .modal-footer .btn-secondary").click();
+  cy.get("#" + prefix + "recc-allday").click();
+  cy.get("#" + prefix + "recc-start-time").should("be.visible");
+  cy.get("#" + prefix + "recc-fo-end-time").should("be.visible");
+  cy.get(".modal-recurrence:visible .modal-footer .btn-secondary").click();
 
-    // Turn off
-    cy.get('#' + prefix + 'allday').click();
-    cy.get('#' + prefix + 'start-time').should("be.visible");
-    cy.get('#' + prefix + 'end-time').should("be.visible");
+  // Turn off
+  cy.get("#" + prefix + "allday").click();
+  cy.get("#" + prefix + "start-time").should("be.visible");
+  cy.get("#" + prefix + "end-time").should("be.visible");
 
-    // Turn again
-    cy.get('#' + prefix + 'allday').click();
-    cy.get('#' + prefix + 'end-container').should("be.visible");
+  // Turn again
+  cy.get("#" + prefix + "allday").click();
+  cy.get("#" + prefix + "end-container").should("be.visible");
 
-    // Removing end turns off allday
-    cy.get('#' + prefix + 'end-hide-container .hide-link').click();
-    cy.get('#' + prefix + 'allday').should("not.be.checked");
-    cy.get('#' + prefix + 'start-time').should("be.visible");
-  }
-);
+  // Removing end turns off allday
+  cy.get("#" + prefix + "end-hide-container .hide-link").click();
+  cy.get("#" + prefix + "allday").should("not.be.checked");
+  cy.get("#" + prefix + "start-time").should("be.visible");
+});
 
 Cypress.Commands.add(
   "screenshotDatepicker",

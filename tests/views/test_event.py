@@ -8,7 +8,7 @@ from tests.utils import UtilActions
 @pytest.mark.parametrize(
     "external_link", [None, "https://example.com", "www.example.com"]
 )
-def test_read(client, seeder, utils, external_link):
+def test_read(client, seeder: Seeder, utils: UtilActions, external_link):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id, external_link=external_link)
 
@@ -55,7 +55,7 @@ def test_read_shows_reference_requests(seeder: Seeder, utils: UtilActions):
     utils.get_ok(url)
 
 
-def test_read_co_organizers(seeder, utils):
+def test_read_co_organizers(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
         admin_unit_id
@@ -73,7 +73,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     if variant == "db_error":
@@ -83,8 +83,8 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
         "name": "Name",
         "description": "Beschreibung",
         "date_definitions-0-start": ["2030-12-31", "23:59"],
-        "event_place_id": place_id,
-        "organizer_id": organizer_id,
+        "event_place": place_id,
+        "organizer": organizer_id,
         "photo-image_base64": seeder.get_default_image_upload_base64(),
         "photo-copyright_text": "EventCally",
     }
@@ -120,14 +120,16 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
             assert len(event.date_definitions) == 1
 
 
-def test_create_unauthorized(client, app, utils, seeder):
+def test_create_unauthorized(client, app, utils: UtilActions, seeder: Seeder):
     owner_id = seeder.create_user("owner@owner")
     admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
     seeder.create_admin_unit_member(admin_unit_id, [])
     utils.login()
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
-    utils.get_unauthorized(url)
+    response = utils.get_endpoint("manage_admin_unit.event_create", id=admin_unit_id)
+    utils.assert_response_permission_missing(
+        response, "manage_admin_unit", id=admin_unit_id
+    )
 
 
 def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
@@ -135,7 +137,7 @@ def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -147,8 +149,8 @@ def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
             "date_definitions-0-start": ["2030-12-31", "00:00"],
             "date_definitions-0-end": ["2030-12-31", "23:59"],
             "date_definitions-0-allday": "y",
-            "event_place_id": place_id,
-            "organizer_id": organizer_id,
+            "event_place": place_id,
+            "organizer": organizer_id,
             "photo-image_base64": seeder.get_default_image_upload_base64(),
             "photo-copyright_text": "EventCally",
         },
@@ -187,7 +189,7 @@ def test_create_with_reference_requests(
         other_admin_unit_id, admin_unit_id, auto_verify_event_reference_requests=True
     )
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -198,8 +200,8 @@ def test_create_with_reference_requests(
             "description": "Beschreibung",
             "date_definitions-0-start": ["2030-12-31", "00:00"],
             "date_definitions-0-end": ["2030-12-31", "23:59"],
-            "event_place_id": place_id,
-            "organizer_id": organizer_id,
+            "event_place": place_id,
+            "organizer": organizer_id,
             "reference_request_admin_unit_id": [
                 eventcally_admin_unit_id,
                 other_admin_unit_id,
@@ -264,7 +266,7 @@ def test_create_newPlaceAndOrganizer(
 ):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -296,7 +298,7 @@ def test_create_newPlaceAndOrganizer(
 def test_create_missingName(client, app, utils: UtilActions, seeder: Seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -311,7 +313,7 @@ def test_create_missingName(client, app, utils: UtilActions, seeder: Seeder, moc
 def test_create_missingPlace(client, app, utils: UtilActions, seeder: Seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -333,7 +335,7 @@ def test_create_missingOrganizer(
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -343,7 +345,7 @@ def test_create_missingOrganizer(
             "name": "Name",
             "description": "Beschreibung",
             "date_definitions-0-start": ["2030-12-31", "23:59"],
-            "event_place_id": place_id,
+            "event_place": place_id,
         },
     )
 
@@ -357,7 +359,7 @@ def test_create_invalidOrganizer(
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -367,9 +369,9 @@ def test_create_invalidOrganizer(
             "name": "Name",
             "description": "Beschreibung",
             "date_definitions-0-start": ["2030-12-31", "23:59"],
-            "event_place_id": place_id,
-            "organizer_id": organizer_id,
-            "co_organizer_ids": [organizer_id],
+            "event_place": place_id,
+            "organizer": organizer_id,
+            "co_organizers": [organizer_id],
         },
     )
 
@@ -383,7 +385,7 @@ def test_create_invalidDateFormat(
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -393,7 +395,7 @@ def test_create_invalidDateFormat(
             "name": "Name",
             "description": "Beschreibung",
             "date_definitions-0-start": ["2030-12-31", "23:59"],
-            "event_place_id": place_id,
+            "event_place": place_id,
         },
     )
 
@@ -404,7 +406,7 @@ def test_create_startInvalid(client, app, utils: UtilActions, seeder: Seeder, mo
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -414,7 +416,7 @@ def test_create_startInvalid(client, app, utils: UtilActions, seeder: Seeder, mo
             "name": "Name",
             "date_definitions-0-start": ["31.12.2030", "23:59"],
             "date_definitions-0-end": ["2030-12-31", "23:58"],
-            "event_place_id": place_id,
+            "event_place": place_id,
         },
     )
 
@@ -426,7 +428,7 @@ def test_create_startAfterEnd(client, app, utils: UtilActions, seeder: Seeder, m
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -436,8 +438,8 @@ def test_create_startAfterEnd(client, app, utils: UtilActions, seeder: Seeder, m
             "name": "Name",
             "date_definitions-0-start": ["2030-12-31", "23:59"],
             "date_definitions-0-end": ["2030-12-31", "23:58"],
-            "event_place_id": place_id,
-            "organizer_id": organizer_id,
+            "event_place": place_id,
+            "organizer": organizer_id,
         },
     )
 
@@ -453,7 +455,7 @@ def test_create_durationMoreThanMaxAllowedDuration(
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("event_create_for_admin_unit_id", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -463,7 +465,7 @@ def test_create_durationMoreThanMaxAllowedDuration(
             "name": "Name",
             "date_definitions-0-start": ["2030-12-30", "12:00"],
             "date_definitions-0-end": ["2031-06-29", "12:01"],
-            "event_place_id": place_id,
+            "event_place": place_id,
         },
     )
 
@@ -479,7 +481,7 @@ def test_duplicate(client, app, utils: UtilActions, seeder: Seeder, mocker, alld
     template_event_id = seeder.create_event(admin_unit_id, allday=allday)
 
     url = utils.get_url(
-        "event_create_for_admin_unit_id",
+        "manage_admin_unit.event_create",
         id=admin_unit_id,
         template_id=template_event_id,
     )
@@ -504,7 +506,7 @@ def test_duplicate(client, app, utils: UtilActions, seeder: Seeder, mocker, alld
         )
 
 
-def test_actions(seeder, utils):
+def test_actions(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)
 
@@ -529,7 +531,7 @@ def test_actions(seeder, utils):
     utils.assert_response_unauthorized(response)
 
 
-def test_actions_withReferenceRequestLink(seeder, utils):
+def test_actions_withReferenceRequestLink(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
     other_user_id = seeder.create_user("other@test.de")
@@ -545,7 +547,9 @@ def test_actions_withReferenceRequestLink(seeder, utils):
     assert b"Veranstaltung empfehlen" not in response.data
 
 
-def test_actions_unverifiedWithoutReferenceRequestLink(seeder, utils):
+def test_actions_unverifiedWithoutReferenceRequestLink(
+    seeder: Seeder, utils: UtilActions
+):
     user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
     event_id = seeder.create_event(admin_unit_id)
     other_user_id = seeder.create_user("other@test.de")
@@ -558,7 +562,7 @@ def test_actions_unverifiedWithoutReferenceRequestLink(seeder, utils):
     assert b"Empfehlung anfragen" not in response.data
 
 
-def test_actions_withReferenceLink(seeder, utils):
+def test_actions_withReferenceLink(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(
@@ -579,15 +583,19 @@ def test_actions_withReferenceLink(seeder, utils):
 @pytest.mark.parametrize(
     "variant", ["normal", "db_error", "add_date_definition", "remove_date_definition"]
 )
-def test_update(client, seeder, utils, app, mocker, variant):
+def test_update(client, seeder: Seeder, utils: UtilActions, app, mocker, variant):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
 
     if variant == "remove_date_definition":
         seeder.add_event_date_definition(event_id)
 
-    url = utils.get_url("event_update", event_id=event_id)
+    url = utils.get_url(
+        "manage_admin_unit.event_update", id=admin_unit_id, event_id=event_id
+    )
     response = utils.get_ok(url)
+
+    utils.ajax_lookup(url, "photo-license")
 
     if variant == "db_error":
         utils.mock_db_commit(mocker)
@@ -636,13 +644,15 @@ def test_update(client, seeder, utils, app, mocker, variant):
             assert len(event.date_definitions) == 1
 
 
-def test_update_co_organizers(client, seeder, utils, app):
+def test_update_co_organizers(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_base()
     event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
         admin_unit_id
     )
 
-    url = utils.get_url("event_update", event_id=event_id)
+    url = utils.get_url(
+        "manage_admin_unit.event_update", id=admin_unit_id, event_id=event_id
+    )
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -659,11 +669,13 @@ def test_update_co_organizers(client, seeder, utils, app):
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_delete(client, seeder, utils, app, mocker, db_error):
+def test_delete(client, seeder: Seeder, utils: UtilActions, app, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
 
-    url = utils.get_url("event_delete", event_id=event_id)
+    url = utils.get_url(
+        "manage_admin_unit.event_delete", id=admin_unit_id, event_id=event_id
+    )
     response = utils.get_ok(url)
 
     if db_error:
@@ -694,7 +706,7 @@ def test_delete(client, seeder, utils, app, mocker, db_error):
         assert event is None
 
 
-def test_rrule(client, seeder, utils, app):
+def test_rrule(client, seeder: Seeder, utils: UtilActions, app):
     url = utils.get_url("event_rrule")
     response = utils.post_json(
         url,
@@ -715,7 +727,7 @@ def test_rrule(client, seeder, utils, app):
     assert occurence["formattedDate"] == '"25.11.2020"'
 
 
-def test_rrule_bad_request(client, seeder, utils, app):
+def test_rrule_bad_request(client, seeder: Seeder, utils: UtilActions, app):
     url = utils.get_url("event_rrule")
     response = utils.post_json(
         url,
@@ -730,7 +742,7 @@ def test_rrule_bad_request(client, seeder, utils, app):
     utils.assert_response_bad_request(response)
 
 
-def test_report(seeder, utils):
+def test_report(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
 
@@ -738,7 +750,7 @@ def test_report(seeder, utils):
     utils.get_ok(url)
 
 
-def test_ical(client, seeder, utils):
+def test_ical(client, seeder: Seeder, utils: UtilActions):
     from project.dateutils import create_berlin_date
 
     user_id, admin_unit_id = seeder.setup_base(log_in=False)

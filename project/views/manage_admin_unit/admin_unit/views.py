@@ -6,8 +6,8 @@ from flask_security import current_user
 
 from project import db
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
+from project.services.admin_unit import send_admin_unit_deletion_requested_mails
 from project.utils import widget_default_background_color, widget_default_primary_color
-from project.views.admin_unit import send_admin_unit_deletion_requested_mails
 from project.views.manage_admin_unit.admin_unit.forms import (
     CancelDeletionForm,
     RequestDeletionForm,

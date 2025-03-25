@@ -1,0 +1,6 @@
+{% extends "generic/create.html" %}
+
+{% block header %}
+{{ super() }}
+<script src="{{ url_for('manage.static', filename='admin_unit.js')}}"></script>
+{% endblock %}

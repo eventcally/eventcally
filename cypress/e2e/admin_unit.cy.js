@@ -1,7 +1,7 @@
 describe("Admin Unit", () => {
   it("creates", () => {
     cy.login();
-    cy.visit("/admin_unit/create");
+    cy.visit("/manage/organization/create");
     cy.get("#name").type("Second Crew");
     cy.get("#location-postalCode").type("38640");
     cy.get("#location-city").type("Goslar");
@@ -18,7 +18,7 @@ describe("Admin Unit", () => {
         adminUnitId,
         "test@test.de"
       ).then(function (invitationId) {
-        cy.visit("admin_unit/create?invitation_id=" + invitationId);
+        cy.visit("/manage/organization/create?invitation_id=" + invitationId);
 
         cy.get("#name").should("have.value", "Invited Organization");
         cy.get("#short_name").should("have.value", "invitedorganization");

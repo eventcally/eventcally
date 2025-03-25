@@ -51,8 +51,66 @@ def db(app):
         db.create_all()
         stamp()
         create_initial_data()
+        create_initial_test_data()
 
     return db
+
+
+def create_initial_test_data():
+    from project import db
+    from project.models import License
+
+    db.session.add(
+        License(
+            code="CC0 1.0",
+            name="Creative Commons Zero v1.0 Universal",
+            url="https://creativecommons.org/publicdomain/zero/1.0/",
+        )
+    )
+    db.session.add(
+        License(
+            code="CC BY 4.0",
+            name="Creative Commons Attribution 4.0 International",
+            url="https://creativecommons.org/licenses/by/4.0/",
+        )
+    )
+    db.session.add(
+        License(
+            code="CC BY-SA 4.0",
+            name="Creative Commons Attribution-ShareAlike 4.0 International",
+            url="https://creativecommons.org/licenses/by-sa/4.0/",
+        )
+    )
+    db.session.add(
+        License(
+            code="CC BY-NC-SA 4.0",
+            name="Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International",
+            url="https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        )
+    )
+    db.session.add(
+        License(
+            code="CC BY-NC 4.0",
+            name="Creative Commons Attribution-NonCommercial 4.0 International",
+            url="https://creativecommons.org/licenses/by-nc/4.0/",
+        )
+    )
+    db.session.add(
+        License(
+            code="CC BY-ND 4.0",
+            name="Creative Commons Attribution-NoDerivatives 4.0 International",
+            url="https://creativecommons.org/licenses/by-nd/4.0/",
+        )
+    )
+    db.session.add(
+        License(
+            code="CC BY-NC-ND 4.0",
+            name="Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International",
+            url="https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        )
+    )
+
+    db.session.commit()
 
 
 def drop_all_with_reflection(db):

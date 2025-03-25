@@ -184,7 +184,10 @@
                                             <div class="col-sm-4 text-right">
                                                 <div class="img-overlay-container" v-if="date.event.photo">
                                                     <img :src="url_for_image(date.event.photo, 200)" style="object-fit: cover; width: 200px;" />
-                                                    <div v-if="date.event.photo.copyright_text" class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" :title="date.event.photo.copyright_text">&copy;</div>
+                                                    <div v-if="date.event.photo.copyright_text || date.event.photo.license" class="px-1 text-muted">
+                                                        <small v-if="date.event.photo.copyright_text">&copy; {{ date.event.photo.copyright_text }}</small>
+                                                        <small v-if="date.event.photo.license"><a :href="date.event.photo.license.url" target="_blank" rel="noopener noreferrer">{{ date.event.photo.license.code }}</a></small>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -200,7 +203,10 @@
                                     <div>
                                         <div class="img-overlay-container" v-if="date.event.photo">
                                             <img v-if="date.event.photo" :src="url_for_image(date.event.photo, 500)" class="card-img-top" style="object-fit: cover; height: 40vw;" />
-                                            <div v-if="date.event.photo.copyright_text" class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" :title="date.event.photo.copyright_text">&copy;</div>
+                                            <div v-if="date.event.photo.copyright_text || date.event.photo.license" class="px-1 text-muted">
+                                                <small v-if="date.event.photo.copyright_text">&copy; {{ date.event.photo.copyright_text }}</small>
+                                                <small v-if="date.event.photo.license"><a :href="date.event.photo.license.url" target="_blank" rel="noopener noreferrer">{{ date.event.photo.license.code }}</a></small>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="card-body">

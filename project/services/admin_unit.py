@@ -340,15 +340,6 @@ def get_admin_unit_relation(source_admin_unit_id: int, target_admin_unit_id: int
     ).first()
 
 
-def upsert_admin_unit_relation(source_admin_unit_id: int, target_admin_unit_id: int):
-    result = get_admin_unit_relation(source_admin_unit_id, target_admin_unit_id)
-
-    if result is None:
-        result = insert_admin_unit_relation(source_admin_unit_id, target_admin_unit_id)
-
-    return result
-
-
 def get_admin_unit_relations_for_reference_requests(
     target_admin_unit_id: int, limit: int
 ):
@@ -484,3 +475,59 @@ def get_admin_unit_suggestions_for_reference_requests(admin_unit, max_choices=5)
         add_admin_units(admin_units_for_reference, False)
 
     return (admin_unit_choices, selected_ids)
+
+
+def add_relation(admin_unit, form, current_admin_unit):
+    embedded_relation = form.embedded_relation.object_data
+
+    verify = embedded_relation.verify and current_admin_unit.can_verify_other
+    auto_verify_event_reference_requests = (
+        embedded_relation.auto_verify_event_reference_requests
+        and current_admin_unit.incoming_reference_requests_allowed
+    )
+
+    if not verify and not auto_verify_event_reference_requests:
+        return
+
+    relation = upsert_admin_unit_relation(current_admin_unit.id, admin_unit.id)
+    relation.verify = verify
+    relation.auto_verify_event_reference_requests = auto_verify_event_reference_requests
+
+    db.session.commit()
+    return relation
+
+
+def send_admin_unit_invitation_accepted_mails(
+    invitation: AdminUnitInvitation, relation: AdminUnitRelation, admin_unit: AdminUnit
+):
+    from project.views.utils import send_template_mails_to_admin_unit_members_async
+
+    # Benachrichtige alle Mitglieder der AdminUnit, die diese Einladung erstellt hatte
+    send_template_mails_to_admin_unit_members_async(
+        invitation.admin_unit_id,
+        "admin_unit:update",
+        "organization_invitation_accepted_notice",
+        invitation=invitation,
+        relation=relation,
+        admin_unit=admin_unit,
+    )
+
+
+def send_admin_unit_deletion_requested_mails(admin_unit: AdminUnit):
+    from project.views.utils import send_template_mails_to_admin_unit_members_async
+
+    send_template_mails_to_admin_unit_members_async(
+        admin_unit.id,
+        "admin_unit:update",
+        "organization_deletion_requested_notice",
+        admin_unit=admin_unit,
+    )
+
+
+def upsert_admin_unit_relation(source_admin_unit_id: int, target_admin_unit_id: int):
+    result = get_admin_unit_relation(source_admin_unit_id, target_admin_unit_id)
+
+    if result is None:
+        result = insert_admin_unit_relation(source_admin_unit_id, target_admin_unit_id)
+
+    return result

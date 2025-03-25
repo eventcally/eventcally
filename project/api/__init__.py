@@ -228,6 +228,7 @@ import project.api.event_date.resources
 import project.api.event_list.resources
 import project.api.event_reference.resources
 import project.api.event_reference_request.resources
+import project.api.license.resources
 import project.api.organization.resources
 import project.api.organization_invitation.resources
 import project.api.organization_relation.resources

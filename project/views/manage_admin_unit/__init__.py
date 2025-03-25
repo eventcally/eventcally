@@ -5,6 +5,7 @@ manage_admin_unit_bp = Blueprint(
     __name__,
     url_prefix="/manage/admin_unit/<int:id>",
     template_folder="templates",
+    static_folder="static",
 )
 
 

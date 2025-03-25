@@ -213,7 +213,9 @@ def test_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
     event_id = seeder.create_event_via_form(other_admin_unit_id)
     seeder.create_reference(event_id, admin_unit_id)
 
-    url = utils.get_url("event_update", event_id=event_id)
+    url = utils.get_url(
+        "manage_admin_unit.event_update", id=other_admin_unit_id, event_id=event_id
+    )
     response = utils.get_ok(url)
 
     mail_mock = utils.mock_send_mails_async(mocker)
@@ -242,7 +244,9 @@ def test_referencedEventNonDirtyUpdate_doesNotSendMail(
     event_id = seeder.create_event_via_form(other_admin_unit_id)
     seeder.create_reference(event_id, admin_unit_id)
 
-    url = utils.get_url("event_update", event_id=event_id)
+    url = utils.get_url(
+        "manage_admin_unit.event_update", id=other_admin_unit_id, event_id=event_id
+    )
     response = utils.get_ok(url)
 
     mail_mock = utils.mock_send_mails_async(mocker)

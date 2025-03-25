@@ -1,5 +1,5 @@
 {% extends "layout_widget.html" %}
-{% from "_macros.html" import render_event_date_instance, render_form_styles, render_form_scripts, render_pagination, render_event_warning_pills, render_event_warning_pills, render_place %}
+{% from "_macros.html" import render_image_copyright_license, render_event_date_instance, render_form_styles, render_form_scripts, render_pagination, render_event_warning_pills, render_event_warning_pills, render_place %}
 
 {%- block title -%}
 {{ _('Widget') }}
@@ -108,8 +108,8 @@
                             {% if date.event.photo_id %}
                                 <div class="img-overlay-container">
                                     <img src="{{ url_for_image(date.event.photo, s=200) }}" style="object-fit: cover; width: 200px;" />
-                                    {% if date.event.photo.copyright_text %}
-                                        <div class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" title="{{ date.event.photo.copyright_text }}">&copy;</div>
+                                    {% if date.event.photo.copyright_text or  date.event.photo.license %}
+                                        <div class="small px-1 text-muted">{{ render_image_copyright_license(date.event.photo) }}</div>
                                     {% endif %}
                                 </div>
                             {% endif %}
@@ -128,8 +128,8 @@
                     {% if date.event.photo_id %}
                         <div class="img-overlay-container">
                             <img src="{{ url_for_image(date.event.photo, s=500) }}" class="card-img-top" style="object-fit: cover; height: 40vw;" />
-                            {% if date.event.photo.copyright_text %}
-                                <div class="img-overlay-copyright bg-white small px-1" data-toggle="tooltip" title="{{ date.event.photo.copyright_text }}">&copy;</div>
+                            {% if date.event.photo.copyright_text or  date.event.photo.license %}
+                                <div class="small px-1 text-muted">{{ render_image_copyright_license(date.event.photo) }}</div>
                             {% endif %}
                         </div>
                     {% endif %}

@@ -20,7 +20,8 @@ def create_form_data(response, utils: UtilActions):
 def test_create(client, app, utils: UtilActions, seeder: Seeder):
     seeder.create_user()
     utils.login()
-    response = client.get("/admin_unit/create")
+    url = utils.get_url("manage.organization_create")
+    response = client.get(url)
     assert response.status_code == 200
 
     data = create_form_data(response, utils)
@@ -28,10 +29,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder):
     data["logo-copyright_text"] = "EventCally"
 
     with client:
-        response = client.post(
-            "/admin_unit/create",
-            data=data,
-        )
+        response = utils.post_form(url, response, data)
         assert response.status_code == 302
 
         with app.app_context():
@@ -66,16 +64,14 @@ def test_create_duplicate(client, app, utils: UtilActions, seeder: Seeder):
     user_id = utils.login()
     seeder.create_admin_unit(user_id, "Meine Crew")
 
-    response = client.get("/admin_unit/create")
+    url = utils.get_url("manage.organization_create")
+    response = client.get(url)
     assert response.status_code == 200
 
     with client:
-        response = client.post(
-            "/admin_unit/create",
-            data=create_form_data(response, utils),
-        )
+        response = utils.post_form(url, response, create_form_data(response, utils))
         assert response.status_code == 200
-        assert b"duplicate" in response.data
+        assert b"Der Name ist bereits vergeben" in response.data
 
 
 def test_create_requiresAdmin_nonAdmin(client, app, utils: UtilActions, seeder: Seeder):
@@ -84,7 +80,7 @@ def test_create_requiresAdmin_nonAdmin(client, app, utils: UtilActions, seeder: 
     seeder.create_user()
     utils.login()
 
-    url = utils.get_url("admin_unit_create")
+    url = utils.get_url("manage.organization_create")
     response = utils.get(url)
     utils.assert_response_redirect(response, "manage_admin_units")
 
@@ -96,7 +92,7 @@ def test_create_requiresAdmin_globalAdmin(
     seeder.create_user(admin=True)
     utils.login()
 
-    url = utils.get_url("admin_unit_create")
+    url = utils.get_url("manage.organization_create")
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -118,7 +114,7 @@ def test_create_requiresAdmin_memberOfOrgWithoutFlag(
     app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = True
     seeder.setup_base()
 
-    url = utils.get_url("admin_unit_create")
+    url = utils.get_url("manage.organization_create")
     response = utils.get(url)
     utils.assert_response_redirect(response, "manage_admin_units")
 
@@ -131,7 +127,7 @@ def test_create_requiresAdmin_memberOfOrgWithFlag(
     utils.login()
     seeder.create_admin_unit(user_id, can_create_other=True)
 
-    url = utils.get_url("admin_unit_create")
+    url = utils.get_url("manage.organization_create")
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -163,7 +159,7 @@ def test_create_from_invitation(
 
     seeder.create_user("invited@test.de")
     utils.login("invited@test.de")
-    url = utils.get_url("admin_unit_create", invitation_id=invitation_id)
+    url = utils.get_url("manage.organization_create", invitation_id=invitation_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -217,7 +213,7 @@ def test_create_from_invitation_currentUserDoesNotMatchInvitationEmail(
 
     seeder.create_user("other@test.de")
     utils.login("other@test.de")
-    url = utils.get_url("admin_unit_create", invitation_id=invitation_id)
+    url = utils.get_url("manage.organization_create", invitation_id=invitation_id)
     response = utils.get(url)
     utils.assert_response_redirect(response, "manage_admin_units")
 
@@ -225,9 +221,11 @@ def test_create_from_invitation_currentUserDoesNotMatchInvitationEmail(
 def test_create_with_relation(client, app, utils: UtilActions, seeder: Seeder):
     user_id = seeder.create_user(admin=False)
     utils.login()
-    admin_unit_id = seeder.create_admin_unit(user_id, can_verify_other=True)
+    admin_unit_id = seeder.create_admin_unit(
+        user_id, can_verify_other=True, incoming_reference_requests_allowed=False
+    )
 
-    url = utils.get_url("admin_unit_create")
+    url = utils.get_url("manage.organization_create")
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -252,6 +250,43 @@ def test_create_with_relation(client, app, utils: UtilActions, seeder: Seeder):
         assert relation.source_admin_unit_id == admin_unit_id
         assert relation.auto_verify_event_reference_requests is False
         assert relation.verify
+
+
+def test_create_with_relation_auto_verify(
+    client, app, utils: UtilActions, seeder: Seeder
+):
+    user_id = seeder.create_user(admin=False)
+    utils.login()
+    admin_unit_id = seeder.create_admin_unit(
+        user_id, can_verify_other=False, incoming_reference_requests_allowed=True
+    )
+
+    url = utils.get_url("manage.organization_create")
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Other Crew",
+            "short_name": "other_crew",
+            "location-postalCode": "38640",
+            "location-city": "Goslar",
+            "embedded_relation-auto_verify_event_reference_requests": "y",
+        },
+    )
+    assert response.status_code == 302
+
+    with app.app_context():
+        from project.services.admin_unit import get_admin_unit_by_name
+
+        admin_unit = get_admin_unit_by_name("Other Crew")
+        assert admin_unit is not None
+
+        relation = admin_unit.incoming_relations[0]
+        assert relation.source_admin_unit_id == admin_unit_id
+        assert relation.auto_verify_event_reference_requests is True
+        assert relation.verify is False
 
 
 def test_update(db, app, utils: UtilActions, seeder: Seeder):

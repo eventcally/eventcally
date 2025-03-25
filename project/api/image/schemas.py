@@ -1,6 +1,7 @@
 from marshmallow import ValidationError, fields, post_load, validate, validates_schema
 
 from project.api import marshmallow
+from project.api.license.schemas import LicenseRefSchema
 from project.api.schemas import IdSchemaMixin, SQLAlchemyBaseSchema
 from project.imageutils import (
     get_bytes_from_image,
@@ -33,6 +34,7 @@ class ImageSchema(ImageModelSchema, ImageBaseSchemaMixin):
             "description": "Image URL. Append query argument s for size (Smaller side in pixels)."
         },
     )
+    license = fields.Nested(LicenseRefSchema)
 
     def get_image_url(self, image):
         return url_for_image(image)
