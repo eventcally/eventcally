@@ -258,18 +258,20 @@
                     var organization_name = event.organization.name == event.organizer.name ? '' : event.organization.name;
                     var copyright_div = '';
 
-                    if (event.photo.copyright_text || event.photo.license) {
-                        var copyright_license = '';
+                    if (event.photo != null) {
+                        if (event.photo.copyright_text || event.photo.license) {
+                            var copyright_license = '';
 
-                        if (event.photo.copyright_text) {
-                            copyright_license += '&copy; ' + event.photo.copyright_text;
+                            if (event.photo.copyright_text) {
+                                copyright_license += '&copy; ' + event.photo.copyright_text;
+                            }
+
+                            if (event.photo.license != null) {
+                                copyright_license += ' <a href="' + event.photo.license.url + '" target="_blank" rel="noopener noreferrer">' + event.photo.license.code + '</a>';
+                            }
+
+                            copyright_div += '<div class="small px-1 text-muted">' + copyright_license + '</div>'
                         }
-
-                        if (event.photo.license != null) {
-                            copyright_license += ' <a href="' + event.photo.license.url + '" target="_blank" rel="noopener noreferrer">' + event.photo.license.code + '</a>';
-                        }
-
-                        copyright_div += '<div class="small px-1 text-muted">' + copyright_license + '</div>'
                     }
 
                     var desktop = '<div class="row mb-3 d-none d-sm-block">' +
