@@ -2,12 +2,17 @@ from flask import url_for
 from flask_babel import gettext, lazy_gettext
 
 from project.models import Event
+from project.models.event_place import EventPlace
+from project.models.location import Location
 from project.modular.ajax import EventCategoryAjaxModelLoader
 from project.modular.filters import (
     BooleanFilter,
     DateRangeFilter,
     EnumFilter,
     EventCategoryFilter,
+    EventDateRangeFilter,
+    PostalCodeFilter,
+    RadiusFilter,
     SelectModelFilter,
     TagFilter,
 )
@@ -25,6 +30,7 @@ from project.views.manage_admin_unit.event.displays import ListDisplay
 from project.views.manage_admin_unit.event.views import (
     CreateView,
     DeleteView,
+    ListView,
     UpdateView,
 )
 from project.views.utils import current_admin_unit, manage_permission_required
@@ -39,8 +45,10 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     update_view_class = UpdateView
     delete_decorators = [manage_permission_required("event:delete")]
     delete_view_class = DeleteView
+    list_view_class = ListView
     list_display_class = ListDisplay
     list_filters = [
+        EventDateRangeFilter(Event.dates, label=lazy_gettext("Date"), key="date"),
         EventCategoryFilter(
             Event.categories,
             EventCategoryAjaxModelLoader(),
@@ -56,6 +64,10 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
         SelectModelFilter(
             Event.event_place, EventPlaceAjaxModelLoader(), label=lazy_gettext("Place")
         ),
+        PostalCodeFilter(
+            Location.postalCode, key="postal_code", label=lazy_gettext("Postal code")
+        ),
+        RadiusFilter(Location.coordinate, key="radius", label=lazy_gettext("Radius")),
         EnumFilter(Event.status, label=lazy_gettext("Status")),
         EnumFilter(Event.public_status, label=lazy_gettext("Public status")),
         DateRangeFilter(Event.created_at, label=lazy_gettext("Created at")),
@@ -78,6 +90,14 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
 
     def get_plural_url_folder(self):
         return f"new_{super().get_plural_url_folder()}"
+
+    def get_objects_base_query_from_kwargs(self, **kwargs):
+        query = super().get_objects_base_query_from_kwargs(**kwargs)
+        return (
+            query.join(Event.event_place, isouter=True)
+            .join(EventPlace.location, isouter=True)
+            .join(Event.organizer, isouter=True)
+        )
 
     def get_list_per_page(self):
         return 50

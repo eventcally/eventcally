@@ -3,10 +3,15 @@ from flask_babel import gettext
 
 from project import db
 from project.access import can_request_event_reference_from_admin_unit
-from project.dateutils import get_next_full_hour
+from project.dateutils import get_next_full_hour, get_today
 from project.models.event import Event, PublicStatus
 from project.models.event_reference_request import EventReferenceRequest
-from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
+from project.modular.base_views import (
+    BaseCreateView,
+    BaseDeleteView,
+    BaseListView,
+    BaseUpdateView,
+)
 from project.services.admin_unit import (
     get_admin_unit_suggestions_for_reference_requests,
 )
@@ -153,3 +158,13 @@ class UpdateView(BaseUpdateView):
 class DeleteView(BaseDeleteView):
     def get_redirect_url(self, **kwargs):
         return url_for("manage_admin_unit_events", id=current_admin_unit.id)
+
+
+class ListView(BaseListView):
+    def create_form(self, **kwargs):
+        form = super().create_form(**kwargs)
+
+        if not form.is_submitted() and not form.date.form.from_field.data:
+            form.date.form.from_field.data = get_today()
+
+        return form

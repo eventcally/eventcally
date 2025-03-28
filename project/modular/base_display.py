@@ -1,5 +1,7 @@
 from typing import OrderedDict
 
+from markupsafe import Markup
+
 
 class BaseDisplay:
     main_index = 0
@@ -32,6 +34,15 @@ class BaseDisplay:
 
     def get_prop_label(self, prop):
         return prop.label
+
+    def get_prop_header(self, prop):
+        return (
+            Markup(
+                f'<i class="fa-fw {prop.icon}" data-toggle="tooltip" title="{prop.label}" data-boundary="window"></i>'
+            )
+            if prop.icon
+            else self.get_prop_label(prop)
+        )
 
     def should_display_prop(self, prop, object):
         return prop.should_display(object)

@@ -127,6 +127,7 @@ class BaseProp:
         link_method_name=None,
         hide_when_empty=False,
         no_wrap=False,
+        icon=None,
         _display=None,
     ):
         self.label = label
@@ -137,6 +138,7 @@ class BaseProp:
         self.link_method_name = link_method_name
         self.hide_when_empty = hide_when_empty
         self.no_wrap = no_wrap
+        self.icon = icon
         self._display = _display
 
     def get_display_data(self, object):
