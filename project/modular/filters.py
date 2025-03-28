@@ -1,5 +1,5 @@
 from flask_babel import lazy_gettext
-from sqlalchemy import func
+from sqlalchemy import and_, func, or_
 
 from project.models.event_category import EventCategory
 from project.utils import get_localized_enum_name
@@ -84,6 +84,51 @@ class DateRangeFilter(BaseFilter):
         return query
 
 
+class RadiusFilter(BaseFilter):
+    def apply(self, query, value, alias=None):
+        coordinate = value.get("coordinate")
+        distance = value.get("distance")
+
+        if coordinate and len(coordinate) > 1 and distance:
+            (latitude, longitude) = coordinate.split(",")
+            point = "POINT({} {})".format(longitude, latitude)
+            query.filter(
+                func.ST_DistanceSphere(self.get_column(alias), point) <= distance,
+            )
+
+        return query
+
+
+class EventDateRangeFilter(DateRangeFilter):
+    def apply(self, query, value, alias=None):
+        from project.models import EventDate
+
+        from_value = value.get("from_field")
+        to_value = value.get("to_field")
+        filters = []
+
+        if from_value:
+            filters.append(
+                or_(
+                    EventDate.start >= from_value,
+                    and_(EventDate.end.isnot(None), EventDate.end >= from_value),
+                )
+            )
+
+        if to_value:
+            filters.append(
+                or_(
+                    EventDate.start < to_value,
+                    and_(EventDate.end.isnot(None), EventDate.end < to_value),
+                )
+            )
+
+        if not filters:  # pragma: no cover
+            return query
+
+        return query.filter(self.get_column(alias).any(and_(*filters)))
+
+
 class SelectModelFilter(BaseFilter):
     def __init__(self, column, loader, **kwargs):
         kwargs.setdefault("key", f"{column.key}_id")
@@ -109,7 +154,11 @@ class EventCategoryFilter(SelectModelFilter):
         return query.filter(self.get_column(alias).any(EventCategory.id == value.id))
 
 
-class TagFilter(BaseFilter):
+class StringFilter(BaseFilter):
+    pass
+
+
+class TagFilter(StringFilter):
     def apply(self, query, value, alias=None):
         if not value:  # pragma: no cover
             return query
@@ -118,3 +167,17 @@ class TagFilter(BaseFilter):
         return query.filter(
             (func.string_to_array(self.get_column(alias), ",")).op("@>")(tags)
         )
+
+
+class PostalCodeFilter(StringFilter):
+    def apply(self, query, value, alias=None):
+        if not value:  # pragma: no cover
+            return query
+
+        postal_codes = value if type(value) is list else value.split(",")
+        filters = []
+
+        for postal_code in postal_codes:
+            filters.append(self.get_column(alias).ilike(f"{postal_code}%"))
+
+        return query.filter(or_(*filters))

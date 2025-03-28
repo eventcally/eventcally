@@ -22,6 +22,43 @@ class GooglePlaceWidget(object):
         )
 
 
+class GooglePlaceCoordinateWidget(Select):
+    def __call__(self, field, **kwargs):
+        kwargs.setdefault("id", field.id)
+        kwargs.setdefault("name", field.name)
+        kwargs.setdefault("data-role", "google-place-coordinate")
+        kwargs.setdefault("data-url", f"{request.base_url}?field_name={field.name}")
+        kwargs.setdefault("data-placeholder", gettext("Search location on Google"))
+        kwargs.setdefault("class", "form-control")
+
+        html = []
+        html.append("<div %s>" % html_params(class_="input-group-prepend"))
+        html.append(
+            '<span class="input-group-text"><span><i class="fab fa-google"></i></span></span>'
+        )
+        html.append("</div>")
+
+        html.append("<select %s>" % html_params(**kwargs))
+        for val, label, selected in field.iter_choices():
+            html.append(self.render_option(val, label, selected))
+        html.append("</select>")
+
+        html.append("<div %s>" % html_params(class_="input-group-append"))
+        html.append(
+            '<button class="btn btn-outline-secondary" type="button" data-role="clear-location-btn">'
+        )
+        html.append('<i class="fa fa-times"></i>')
+        html.append("</button>")
+        html.append(
+            '<button class="btn btn-outline-primary" type="button" data-role="geolocation-btn">'
+        )
+        html.append('<i class="fa fa-location-arrow"></i>')
+        html.append("</button>")
+        html.append("</div>")
+
+        return Markup("".join(html))
+
+
 class AjaxValidationWidget(TextInput):
     def __call__(self, field, **kwargs):
         kwargs.setdefault("data-role", "ajax-validation")
@@ -54,7 +91,7 @@ class AjaxSelect2Widget(Select):
         return super().__call__(field, **kwargs)
 
 
-class RangeWidget:
+class DateRangeWidget:
     def __call__(self, field, **kwargs):
         html = []
         html.append("<div %s>" % html_params(class_="row mb-1"))
@@ -76,4 +113,37 @@ class RangeWidget:
             html.append("</div>")
 
         html.append("</div>")
+        return Markup("".join(html))
+
+
+class RadiusWidget:
+    def __call__(self, field, **kwargs):
+        html = []
+        html.append("<div %s>" % html_params(class_="row mb-1"))
+
+        # Location
+        subfield = field.location
+        html.append("<div %s>" % html_params(class_="col-sm-8"))
+        html.append("<div %s>" % html_params(class_="input-group"))
+        html.append(str(subfield))
+        html.append("</div>")
+        html.append("</div>")
+
+        # Distance
+        subfield = field.distance
+        html.append("<div %s>" % html_params(class_="col-sm-4"))
+        html.append("<div %s>" % html_params(class_="input-group"))
+        html.append("<div %s>" % html_params(class_="input-group-prepend"))
+        html.append(
+            "<span %s>%s</span>"
+            % (html_params(class_="input-group-text"), str(subfield.label.text))
+        )
+        html.append("</div>")
+        html.append(str(subfield))
+        html.append("</div>")
+        html.append("</div>")
+
+        html.append("</div>")
+        html.append(str(field.coordinate))
+        html.append(str(field.location_name))
         return Markup("".join(html))

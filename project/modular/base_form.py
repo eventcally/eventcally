@@ -2,9 +2,7 @@ from flask import request
 from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import FormField, HiddenField, SubmitField
-from wtforms.validators import Optional
 
-from project.forms.widgets import CustomDateField
 from project.modular.fields import VirtualFormField
 from project.modular.search_definition import apply_search_definitions
 
@@ -115,31 +113,3 @@ class BaseListForm(BaseForm):
 
     def is_submitted(self):  # pragma: no cover
         return super().is_submitted() or "submit" in request.args
-
-
-class DateRangeForm(BaseForm):
-    class Meta:
-        csrf = False
-
-    from_field = CustomDateField(
-        lazy_gettext("From"),
-        name="from",
-        validators=[Optional()],
-        render_kw={
-            "class": "datepicker form-control",
-        },
-    )
-    to_field = CustomDateField(
-        lazy_gettext("to"),
-        name="to",
-        set_end_of_day=True,
-        validators=[Optional()],
-        render_kw={
-            "class": "datepicker form-control",
-        },
-    )
-
-    def __init__(self, formdata=..., **kwargs):
-        super().__init__(formdata, **kwargs)
-
-        self.from_field.render_kw["data-range-to"] = f"#{self.to_field.id}"

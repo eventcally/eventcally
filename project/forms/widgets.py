@@ -35,7 +35,7 @@ class CustomDateTimeWidget:
             value=date,
             required=required,
             class_=date_class,
-            **kwargs
+            **kwargs,
         )
 
         time_class = kwargs_class + " timepicker"
@@ -45,7 +45,7 @@ class CustomDateTimeWidget:
             value=time,
             required=required,
             class_=time_class,
-            **kwargs
+            **kwargs,
         )
 
         return Markup(
@@ -85,7 +85,19 @@ class CustomDateWidget:
             date = date_value.strftime("%Y-%m-%d")
 
         date_params = html_params(name=field.name, id=id, value=date, **kwargs)
-        return Markup('<input type="text" {}/>'.format(date_params))
+
+        html = []
+        html.append('<input type="text" {}/>'.format(date_params))
+
+        if field.clearable:
+            html.append("<div %s>" % html_params(class_="input-group-append"))
+            html.append(
+                f'<button class="btn btn-outline-secondary" type="button" data-role="clear-datepicker-btn" data-target="#{id}">'
+            )
+            html.append('<i class="fa fa-times"></i>')
+            html.append("</div>")
+
+        return Markup("".join(html))
 
 
 class CustomDateField(DateTimeField):
@@ -98,10 +110,12 @@ class CustomDateField(DateTimeField):
         validators=None,
         format="%Y-%m-%d %H:%M:%S",
         set_end_of_day=False,
-        **kwargs
+        clearable=False,
+        **kwargs,
     ):
         super(CustomDateField, self).__init__(label, validators, format, **kwargs)
         self.set_end_of_day = set_end_of_day
+        self.clearable = clearable
 
     def process_formdata(self, valuelist):
         if valuelist:

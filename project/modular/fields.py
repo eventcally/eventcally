@@ -1,8 +1,20 @@
-from wtforms import FormField, SelectFieldBase, SelectMultipleField, ValidationError
+from wtforms import (
+    FormField,
+    SelectField,
+    SelectFieldBase,
+    SelectMultipleField,
+    ValidationError,
+)
 from wtforms.utils import unset_value
 
 from project.maputils import find_gmaps_places, get_gmaps_place
-from project.modular.widgets import AjaxSelect2Widget, GooglePlaceWidget, RangeWidget
+from project.modular.widgets import (
+    AjaxSelect2Widget,
+    DateRangeWidget,
+    GooglePlaceCoordinateWidget,
+    GooglePlaceWidget,
+    RadiusWidget,
+)
 
 
 class VirtualFormField(FormField):
@@ -20,13 +32,13 @@ class VirtualFormField(FormField):
 
 
 class DateRangeField(FormField):
-    widget = RangeWidget()
+    widget = DateRangeWidget()
 
     def __init__(
         self, form_class=None, label=None, validators=None, separator="_", **kwargs
     ):
         if not form_class:
-            from project.modular.base_form import DateRangeForm
+            from project.forms.common import DateRangeForm
 
             form_class = DateRangeForm
         kwargs.setdefault("default", dict)
@@ -34,17 +46,29 @@ class DateRangeField(FormField):
         render_kw.setdefault("group_class", "")
         super().__init__(form_class, label, validators, separator, **kwargs)
 
-    def process(self, formdata, data=unset_value, extra_filters=None):
-        return super().process(formdata, data, extra_filters)
 
-    def populate_obj(self, obj, name):  # pragma: no cover
-        self.form.populate_obj(obj)
+class RadiusField(FormField):
+    widget = RadiusWidget()
+
+    def __init__(
+        self, form_class=None, label=None, validators=None, separator="_", **kwargs
+    ):
+        if not form_class:
+            from project.forms.common import RadiusForm
+
+            form_class = RadiusForm
+        kwargs.setdefault("default", dict)
+        render_kw = kwargs.setdefault("render_kw", dict())
+        render_kw.setdefault("group_class", "")
+        super().__init__(form_class, label, validators, separator, **kwargs)
 
 
-class GooglePlaceField(SelectFieldBase):
+class GooglePlaceField(SelectField):
     widget = GooglePlaceWidget()
 
     def __init__(self, label=None, validators=None, location_only=False, **kwargs):
+        kwargs.setdefault("choices", [])
+        kwargs.setdefault("validate_choice", False)
         render_kw = kwargs.setdefault("render_kw", dict())
         render_kw.setdefault("label_hidden", True)
         super().__init__(label, validators, **kwargs)
@@ -66,6 +90,10 @@ class GooglePlaceField(SelectFieldBase):
 
     def get_bff_google_place(self, gmaps_id):
         return get_gmaps_place(gmaps_id)
+
+
+class GooglePlaceCoordinateField(GooglePlaceField):
+    widget = GooglePlaceCoordinateWidget()
 
 
 class SelectMultipleTagField(SelectMultipleField):

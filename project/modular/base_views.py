@@ -5,13 +5,14 @@ from sqlalchemy.exc import SQLAlchemyError
 from wtforms import RadioField, SelectField, StringField
 
 from project import db
-from project.modular.fields import AjaxSelectField, DateRangeField
+from project.modular.fields import AjaxSelectField, DateRangeField, RadiusField
 from project.modular.filters import (
     BooleanFilter,
     DateRangeFilter,
     EnumFilter,
+    RadiusFilter,
     SelectModelFilter,
-    TagFilter,
+    StringFilter,
 )
 from project.views.utils import (
     flash_errors,
@@ -159,6 +160,11 @@ class BaseListView(BaseView):
                 label=filter.label,
                 render_kw={"formrow": True},
             )
+        elif isinstance(filter, RadiusFilter):
+            field = RadiusField(
+                label=filter.label,
+                render_kw={"formrow": True},
+            )
         elif isinstance(filter, SelectModelFilter):
             field = AjaxSelectField(
                 filter.loader,
@@ -166,7 +172,7 @@ class BaseListView(BaseView):
                 allow_blank=filter.allow_blank,
                 render_kw={"formrow": True},
             )
-        elif isinstance(filter, TagFilter):
+        elif isinstance(filter, StringFilter):
             field = StringField(
                 label=filter.label,
                 render_kw={"formrow": True},

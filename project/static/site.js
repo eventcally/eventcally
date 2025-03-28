@@ -1,5 +1,48 @@
 moment.locale("de");
 
+function do_geolocation(coordinate_field, location_field, location_name_field) {
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      coordinate_field.val(
+        position.coords.latitude + "," + position.coords.longitude
+      );
+      location_field.val("Aktuelle Position");
+      location_name_field.val("Aktuelle Position");
+
+      // Set the value, creating a new option if necessary
+      var data = { id: "current_position", text: "Aktuelle Position" };
+      if (location_field.find("option[value='" + data.id + "']").length) {
+        location_field.val(data.id).trigger('change');
+      } else {
+        var newOption = new Option(data.text, data.id, true, true);
+        location_field.append(newOption).trigger('change');
+      }
+
+      location_field.removeClass("is-invalid");
+    }, handleError);
+
+    function handleError(error) {
+      //Handle Errors
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          alert("User denied the request for Geolocation.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          alert("Location information is unavailable.");
+          break;
+        case error.TIMEOUT:
+          alert("The request to get user location timed out.");
+          break;
+        case error.UNKNOWN_ERROR:
+          alert("An unknown error occurred.");
+          break;
+      }
+    }
+  } else {
+    alert("Browser doesn't support geolocation!");
+  }
+}
+
 function get_moment_with_time_from_fields(date_field, time_field) {
   var date_time_string = $(date_field).val();
   var time_string = $(time_field).val();
@@ -506,35 +549,7 @@ $(function () {
   });
 
   $("#geolocation_btn").click(function () {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        $("#coordinate").val(
-          position.coords.latitude + "," + position.coords.longitude
-        );
-        $("#location").val("Aktuelle Position");
-        $("#location").removeClass("is-invalid");
-      }, handleError);
-
-      function handleError(error) {
-        //Handle Errors
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            alert("User denied the request for Geolocation.");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            alert("Location information is unavailable.");
-            break;
-          case error.TIMEOUT:
-            alert("The request to get user location timed out.");
-            break;
-          case error.UNKNOWN_ERROR:
-            alert("An unknown error occurred.");
-            break;
-        }
-      }
-    } else {
-      alert("Browser doesn't support geolocation!");
-    }
+    do_geolocation($("#coordinate"), $("#location"), $("#location_name"));
   });
 
   $(".dropzone-wrapper").on("dragover", function (e) {

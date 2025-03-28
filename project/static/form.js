@@ -4,6 +4,60 @@ $.fn.select2.defaults.set("language", "de");
 (function() {
   var CustomFormModule = function() {
 
+    function processClearDatePickerButton($el) {
+      var datepicker = $($el.attr("data-target"));
+      $el.click(function () {
+        datepicker.datepicker().val(null).trigger("change");
+      });
+    }
+
+    function processGooglePlaceCoordinate($el) {
+      var data_url = $el.attr("data-url");
+      var coordinate_field = $($el.attr("data-coordinate-field"));
+      var location_name_field = $($el.attr("data-location-name-field"));
+      var container = $el.closest("div.input-group");
+      var clear_location_btn = container.find("[data-role=clear-location-btn]");
+      var geolocation_btn = container.find("[data-role=geolocation-btn]");
+
+      $el.select2({
+        theme: 'bootstrap4',
+        ajax: {
+          url: data_url,
+          headers: { "X-Backend-For-Frontend": "google_places" },
+          dataType: 'json',
+          delay: 250,
+          cache: true,
+          data: function (params) {
+            return {
+              keyword: params.term
+            };
+          }
+        },
+        placeholder: $el.attr("data-placeholder"),
+        minimumInputLength: 1,
+        templateResult: select2TemplateResult
+      }).on('select2:close', function (e) {
+        var select_data = select2GetData(e);
+
+        if ("gmaps_id" in select_data) {
+          get_gmaps_place_details(data_url, select_data.gmaps_id, function(details_data) {
+            coordinate_field.val('' + details_data.geometry.location.lat + ',' + details_data.geometry.location.lng);
+            location_name_field.val(select_data.text);
+          });
+        }
+      });
+
+      clear_location_btn.click(function () {
+        coordinate_field.val("");
+        location_name_field.val("");
+        $el.val("").trigger('change');
+      });
+
+      geolocation_btn.click(function () {
+        do_geolocation(coordinate_field, $el, location_name_field);
+      });
+    }
+
     function processGooglePlace($el) {
       var target_prefix = $el.attr("data-target-prefix") || "";
       $el.select2({
@@ -39,21 +93,21 @@ $.fn.select2.defaults.set("language", "de");
             }
           }
 
-          get_gmaps_place_details($el.attr("data-url"), target_prefix, data.gmaps_id, location_only);
+          get_gmaps_place_details($el.attr("data-url"), data.gmaps_id, function(data) {
+            fill_place_form_with_gmaps_place(data, target_prefix, location_only);
+          });
         }
       });
     }
 
-    function get_gmaps_place_details(url, target_prefix, place_id, location_only) {
+    function get_gmaps_place_details(url, place_id, success) {
       $.ajax({
           url: url,
           headers: { "X-Backend-For-Frontend": "google_place" },
           type: "get",
           dataType: "json",
           data: "gmaps_id=" + place_id,
-          success: function (data) {
-            fill_place_form_with_gmaps_place(data, target_prefix, location_only);
-          }
+          success: success
       });
     }
 
@@ -378,6 +432,11 @@ $.fn.select2.defaults.set("language", "de");
         processGooglePlace($el);
       });
 
+      $("select[data-role=google-place-coordinate]").each(function () {
+        var $el = $(this);
+        processGooglePlaceCoordinate($el);
+      });
+
       $("form[data-role=validation-form]").each(function () {
         var $el = $(this);
         processFormValidation($el);
@@ -386,6 +445,11 @@ $.fn.select2.defaults.set("language", "de");
       $("input[data-role=cropper-image]").each(function () {
         var $el = $(this);
         processCropperImage($el);
+      });
+
+      $("button[data-role=clear-datepicker-btn]").each(function () {
+        var $el = $(this);
+        processClearDatePickerButton($el);
       });
 
       $(".autocomplete").select2({

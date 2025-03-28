@@ -128,6 +128,25 @@ def test_admin_unit_events(client, seeder: Seeder, utils: UtilActions):
         id=admin_unit_id,
         tag="Tag",
     )
+    utils.get_endpoint_ok(
+        "manage_admin_unit.events",
+        id=admin_unit_id,
+        postal_code="38640,38690",
+    )
+    utils.get_endpoint_ok(
+        "manage_admin_unit.events",
+        id=admin_unit_id,
+        date_from="2020-10-03",
+        date_to="2021-10-03",
+    )
+    utils.get_endpoint_ok(
+        "manage_admin_unit.events",
+        id=admin_unit_id,
+        radius_location="current_position",
+        radius_coordinate="51.9077888,10.4333312",
+        radius_distance=500,
+        radius_location_name="Aktuelle Position",
+    )
 
     url = utils.get_url(
         "manage_admin_unit.events",
