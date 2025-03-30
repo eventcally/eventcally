@@ -249,7 +249,7 @@ def test_put(client, seeder: Seeder, utils: UtilActions, app, db, mocker, varian
         assert event.description == put["description"]
         assert event.external_link == put["external_link"]
         assert event.ticket_link == put["ticket_link"]
-        assert event.tags == put["tags"]
+        assert event.tags == put["tags"].replace(" ", "")
         assert event.kid_friendly == put["kid_friendly"]
         assert event.accessible_for_free == put["accessible_for_free"]
         assert event.age_from == put["age_from"]

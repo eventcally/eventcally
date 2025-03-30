@@ -4,7 +4,7 @@ from flask_security import current_user
 from sqlalchemy import Column, Integer, and_, func, select
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import backref, relationship, validates
 
 from project import db
 from project.dbtypes import IntegerEnum
@@ -227,6 +227,10 @@ class Event(db.Model, TrackableMixin, EventMixin):
 
     def __str__(self):
         return self.name or super().__str__()
+
+    @validates("tags")
+    def validate_tags(self, key, value):
+        return value.replace(" ", "") if value else None
 
 
 @listens_for(Event, "before_insert")
