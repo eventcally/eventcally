@@ -14,6 +14,8 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
         crontab(hour=0, minute=40), delete_user_with_due_request_task
     )
+    sender.add_periodic_task(crontab(hour=0, minute=45), delete_ghost_users_task)
+    sender.add_periodic_task(crontab(hour=0, minute=50), delete_old_events_task)
     sender.add_periodic_task(crontab(hour=1, minute=0), update_recurring_dates_task)
     sender.add_periodic_task(crontab(hour=2, minute=0), dump_all_task)
     sender.add_periodic_task(crontab(hour=3, minute=0), seo_generate_sitemap_task)
@@ -119,6 +121,36 @@ def delete_user_with_due_request_task():
     acks_late=True,
     reject_on_worker_lost=True,
 )
+def delete_ghost_users_task():
+    from project.services.user import get_ghost_users
+
+    users = get_ghost_users()
+
+    if not users:
+        return
+
+    group(delete_user_task.s(user.id) for user in users).delay()
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
+def delete_old_events_task():
+    from project.services.event import get_old_events
+
+    events = get_old_events()
+
+    if not events:
+        return
+
+    group(delete_event_task.s(event.id) for event in events).delay()
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
 def delete_user_task(user_id):
     from project.services.user import delete_user, get_user
 
@@ -128,6 +160,23 @@ def delete_user_task(user_id):
         return
 
     delete_user(user)
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
+def delete_event_task(event_id):
+    from project import db
+    from project.models import Event
+
+    event = Event.query.get(event_id)
+
+    if not event:
+        return
+
+    db.session.delete(event)
+    db.session.commit()
 
 
 @celery.task(

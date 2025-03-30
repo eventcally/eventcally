@@ -1,5 +1,5 @@
+import datetime
 import os
-from datetime import datetime
 
 import icalendar
 from dateutil.relativedelta import relativedelta
@@ -244,7 +244,7 @@ def fill_event_admin_unit_filter(event_filter, params: EventSearchParams):
 
 
 def get_event_date_range_filter(params: EventSearchParams):
-    date_filter = EventDate.start >= datetime.min
+    date_filter = EventDate.start >= datetime.datetime.min
 
     if params.date_from:
         date_filter = or_(
@@ -773,3 +773,18 @@ def create_bulk_event_references(admin_unit_id: int, postalCodes: list):
     for new_reference in new_references:
         url = url_for("event", event_id=new_reference.event_id, _external=True)
         app.logger.info(url)
+
+
+def get_old_events():
+    min_start_before = datetime.datetime.now(datetime.UTC) - datetime.timedelta(
+        days=366
+    )
+    last_modified_before = datetime.datetime.now(datetime.UTC) - datetime.timedelta(
+        days=366
+    )
+    return (
+        Event.query.filter(Event.min_start < min_start_before)
+        .filter(Event.last_modified_at < last_modified_before)
+        .filter(Event.number_of_dates < 2)
+        .all()
+    )

@@ -7,6 +7,7 @@ from sqlalchemy.sql import func
 from project import app, dump_org_path
 from project.access import (
     access_or_401,
+    admin_units_the_current_user_is_member_of,
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_manage,
     has_access,
@@ -85,7 +86,7 @@ def manage():
 @app.route("/manage/admin_units")
 @auth_required()
 def manage_admin_units():
-    admin_units = get_admin_units_for_manage()
+    admin_units = admin_units_the_current_user_is_member_of()
     invitations = get_admin_unit_member_invitations(current_user.email)
     organization_invitations = get_admin_unit_organization_invitations(
         current_user.email

@@ -311,3 +311,14 @@ def test_create_ical_events_for_event(client, app, db, utils, seeder):
 
         ical = ical_event.to_ical()
         assert ical
+
+
+def test_get_old_events(client, seeder, utils, app, db, mocker):
+    _, admin_unit_id = seeder.setup_base()
+    seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.services.event import get_old_events
+
+        old_events = get_old_events()
+        assert len(old_events) == 0

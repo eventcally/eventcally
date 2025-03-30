@@ -75,10 +75,12 @@
       "module": "celery",
       "args": [
         "-A",
-        "project.celery_init",
+        "project.celery",
         "worker",
         "--loglevel=debug",
-        "--concurrency=1"
+        "--concurrency=1",
+        "--pool",
+        "solo"
       ],
       "justMyCode": false,
       "console": "integratedTerminal"
@@ -88,7 +90,7 @@
       "type": "debugpy",
       "request": "launch",
       "module": "celery",
-      "args": ["-A", "project.celery_init", "beat", "--loglevel=debug"],
+      "args": ["-A", "project.celery", "beat", "--loglevel=debug"],
       "justMyCode": false,
       "console": "integratedTerminal"
     },
