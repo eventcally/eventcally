@@ -276,7 +276,7 @@
 {% if tags %}
 <div>
   <i class="fa fa-fw fa-tags" data-toggle="tooltip" title="{{ _('Tags') }}"></i>
-  {{ tags }}
+  {{ tags.replace(",", ", ") }}
 </div>
 {% endif %}
 {% endmacro %}

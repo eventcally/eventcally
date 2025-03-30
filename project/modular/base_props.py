@@ -45,6 +45,11 @@ class StringPropFormatter(BasePropFormatter):
         return data if data is not None else ""
 
 
+class TagPropFormatter(BasePropFormatter):
+    def format(self, data):
+        return data.replace(",", ", ") if data is not None else ""
+
+
 class LocationPropFormatter(BasePropFormatter):
     def format(self, data):
         return get_location_str(data)
