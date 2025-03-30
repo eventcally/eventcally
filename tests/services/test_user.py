@@ -1,3 +1,6 @@
+from tests.seeder import Seeder
+
+
 def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app):
     user_id, admin_unit_id = seeder.setup_base(admin=False, log_in=False)
     seeder.create_event(admin_unit_id)
@@ -59,3 +62,14 @@ def test_get_users_with_due_delete_request(client, seeder, db, utils, app):
 
         due_users = get_users_with_due_delete_request()
         assert len(due_users) == 1
+
+
+def test_get_ghost_users(client, seeder: Seeder, db, utils, app):
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.create_user("second@test.de", confirm=False)
+
+    with app.app_context():
+        from project.services.user import get_ghost_users
+
+        ghost_users = get_ghost_users()
+        assert len(ghost_users) == 0

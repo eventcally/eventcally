@@ -109,6 +109,15 @@ def get_users_with_due_delete_request():
     return User.query.filter(User.deletion_requested_at < due).all()
 
 
+def get_ghost_users():
+    created_before = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=31)
+    return (
+        User.query.filter(User.created_at < created_before)
+        .filter(User.confirmed_at.is_(None))
+        .all()
+    )
+
+
 def delete_user(user):
     user_datastore.delete_user(user)
     db.session.commit()
