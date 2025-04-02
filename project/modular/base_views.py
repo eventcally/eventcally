@@ -465,9 +465,6 @@ class BaseDeleteView(BaseObjectFormView):
     def can_object_be_deleted(self, form, object):
         return self.handler.can_object_be_deleted(form, object)
 
-    def get_redirect_url(self, **kwargs):
-        return self.handler.get_list_url(**kwargs)
-
     def get_title(self, **kwargs):
         return lazy_gettext(
             "Delete %(model_display_name)s",
@@ -496,6 +493,9 @@ class BaseDeleteView(BaseObjectFormView):
 
     def flash_success_text(self, form, object):
         flash(self.get_success_text(object, form), "success")
+
+    def get_redirect_url(self, **kwargs):
+        return self.handler.get_list_url(**kwargs)
 
     @handle_db_error
     def dispatch_validated_form(self, form, object, **kwargs):

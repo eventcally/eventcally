@@ -31,18 +31,10 @@ describe("Manage", () => {
           );
           cy.screenshot("events");
 
-          cy.get("#toggle-search-btn").click();
+          cy.get("[data-target='#search_form_container']").click();
           cy.screenshot("search-form");
           cy.screenshotDatepicker("#date_from-user");
-          cy.get("#toggle-search-btn").click();
-
-          cy.get('.dropdown-toggle.btn-link').click();
-          cy.get('a:contains(Zu Liste)').click({force: true});
-          cy.get(".btn:contains(OK)").should("be.visible");
-          cy.screenshot("lists");
-
-          cy.get(".btn:contains(OK)").click();
-          cy.get(".btn:contains(OK)").should("not.exist");
+          cy.get("[data-target='#search_form_container']").click();
         });
       });
     });

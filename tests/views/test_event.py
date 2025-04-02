@@ -625,7 +625,7 @@ def test_update(client, seeder: Seeder, utils: UtilActions, app, mocker, variant
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_events", id=admin_unit_id
+        response, "manage_admin_unit.events", id=admin_unit_id
     )
 
     with app.app_context():
@@ -664,7 +664,7 @@ def test_update_co_organizers(client, seeder: Seeder, utils: UtilActions, app):
     )
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_events", id=admin_unit_id
+        response, "manage_admin_unit.events", id=admin_unit_id
     )
 
 
@@ -692,7 +692,7 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, mocker, db_erro
         return
 
     utils.assert_response_redirect(
-        response, "manage_admin_unit_events", id=admin_unit_id
+        response, "manage_admin_unit.events", id=admin_unit_id
     )
 
     with app.app_context():

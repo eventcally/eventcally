@@ -334,7 +334,9 @@ class UtilActions(object):
         absolute_url = "http://localhost" + redirect_url
         response_location = response.headers["Location"]
 
-        assert response_location == redirect_url or response_location == absolute_url
+        assert (
+            response_location == redirect_url or response_location == absolute_url
+        ), f"{response_location} != {redirect_url} != {absolute_url}"
 
     def assert_status_code(self, response, status_code):
         if response.status_code != status_code:

@@ -12,7 +12,7 @@ class ListView(BaseListView):
         request_title = gettext("Request reference")
 
         search_open = '<a href="%s">' % url_for(
-            "manage_admin_unit_events", id=g.manage_admin_unit.id
+            "manage_admin_unit.events", id=g.manage_admin_unit.id
         )
         search_close = "</a>"
 
