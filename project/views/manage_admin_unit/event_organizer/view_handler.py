@@ -74,7 +74,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
 
         view_events_action = self._create_action(
             url_for(
-                "manage_admin_unit_events",
+                "manage_admin_unit.events",
                 id=current_admin_unit.id,
                 organizer_id=object.id,
             ),

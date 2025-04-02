@@ -151,13 +151,9 @@ class UpdateView(BaseUpdateView):
         if self.changes:
             send_referenced_event_changed_mails(object)
 
-    def get_redirect_url(self, object, **kwargs):
-        return url_for("manage_admin_unit_events", id=object.admin_unit_id)
-
 
 class DeleteView(BaseDeleteView):
-    def get_redirect_url(self, **kwargs):
-        return url_for("manage_admin_unit_events", id=current_admin_unit.id)
+    pass
 
 
 class ListView(BaseListView):

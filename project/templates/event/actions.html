@@ -59,7 +59,7 @@ Vue.component("EventListAddEvent", EventListAddEvent);
             {% endif %}
             {% if user_rights['can_create_event'] %}
                 <a class="list-group-item list-group-item-action" href="{{ url_for('manage_admin_unit.event_create', id=event.admin_unit_id) }}"><i class="fa fa-plus"></i> {{ _('Create another event for %(admin_unit_name)s', admin_unit_name=event.admin_unit.name) }}</a>
-                <a class="list-group-item list-group-item-action" href="{{ url_for('manage_admin_unit_events', id=event.admin_unit_id) }}"><i class="fa fa-list"></i> {{ _('List all events of %(admin_unit_name)s', admin_unit_name=event.admin_unit.name) }}</a>
+                <a class="list-group-item list-group-item-action" href="{{ url_for('manage_admin_unit.events', id=event.admin_unit_id) }}"><i class="fa fa-list"></i> {{ _('List all events of %(admin_unit_name)s', admin_unit_name=event.admin_unit.name) }}</a>
             {% endif %}
             {% if user_rights['can_update_event'] %}
               <a class="list-group-item list-group-item-action" href="{{ url_for('manage_admin_unit.event_update', id=event.admin_unit_id, event_id=event.id) }}"><i class="fa fa-edit"></i> {{ _('Edit event') }}</a>

@@ -2,7 +2,6 @@ import os
 
 from flask import redirect, render_template, request, send_from_directory, url_for
 from flask_security import auth_required, current_user
-from sqlalchemy.sql import func
 
 from project import app, dump_org_path
 from project.access import (
@@ -13,20 +12,13 @@ from project.access import (
     has_access,
 )
 from project.celery_tasks import dump_admin_unit_task
-from project.forms.event import FindEventForm
-from project.models import EventOrganizer, EventPlace
 from project.services.admin_unit import (
     get_admin_unit_member_invitations,
     get_admin_unit_organization_invitations,
 )
-from project.services.event import get_events_query
-from project.services.search_params import EventSearchParams
-from project.utils import get_place_str
-from project.views.event import get_event_category_choices
 from project.views.utils import (
     get_celery_poll_result,
     get_current_admin_unit,
-    get_pagination_urls,
     permission_missing,
     set_current_admin_unit,
 )
@@ -109,56 +101,7 @@ def manage_admin_units():
 def manage_admin_unit(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
     set_current_admin_unit(admin_unit)
-    return redirect(url_for("manage_admin_unit_events", id=admin_unit.id))
-
-
-@app.route("/manage/admin_unit/<int:id>/events")
-@auth_required()
-def manage_admin_unit_events(id):
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-    set_current_admin_unit(admin_unit)
-
-    params = EventSearchParams()
-    params.set_default_date_range()
-
-    form = FindEventForm(formdata=request.args, obj=params)
-    form.category_id.choices = get_event_category_choices()
-    form.category_id.choices.insert(0, (0, ""))
-
-    organizers = (
-        EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit.id)
-        .order_by(func.lower(EventOrganizer.name))
-        .all()
-    )
-    form.organizer_id.choices = [(o.id, o.name) for o in organizers]
-    form.organizer_id.choices.insert(0, (0, ""))
-
-    event_places = (
-        EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit.id)
-        .order_by(func.lower(EventPlace.name))
-        .all()
-    )
-    form.event_place_id.choices = [(p.id, get_place_str(p)) for p in event_places]
-    form.event_place_id.choices.insert(0, (0, ""))
-
-    if form.location.data:  # pragma: no cover
-        form.location.choices = [(form.location.data, form.location_name.data)]
-    else:
-        form.location.choices = []
-
-    if form.validate():
-        form.populate_obj(params)
-
-    params.admin_unit_id = admin_unit.id
-    params.can_read_private_events = True
-    events = get_events_query(params).paginate(per_page=50)
-    return render_template(
-        "manage/events.html",
-        admin_unit=admin_unit,
-        form=form,
-        events=events.items,
-        pagination=get_pagination_urls(events, id=id),
-    )
+    return redirect(url_for("manage_admin_unit.events", id=admin_unit.id))
 
 
 @app.route("/manage/admin_unit/<int:id>/event-lists")

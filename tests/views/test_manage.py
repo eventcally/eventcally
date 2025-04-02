@@ -85,7 +85,7 @@ def test_admin_unit(client, seeder: Seeder, utils: UtilActions):
 
     response = utils.get_endpoint("manage_admin_unit", id=admin_unit_id)
     utils.assert_response_redirect(
-        response, "manage_admin_unit_events", id=admin_unit_id
+        response, "manage_admin_unit.events", id=admin_unit_id
     )
 
 
@@ -105,7 +105,7 @@ def test_admin_unit_events(client, seeder: Seeder, utils: UtilActions):
     planned_id = seeder.create_event(admin_unit_id, planned=True)
 
     utils.get_endpoint_ok(
-        "manage_admin_unit_events",
+        "manage_admin_unit.events",
         id=admin_unit_id,
         date_from="2020-10-03",
         date_to="2021-10-03",
@@ -156,7 +156,7 @@ def test_admin_unit_events(client, seeder: Seeder, utils: UtilActions):
     utils.ajax_lookup(url, "event_place_id")
     utils.ajax_lookup(url, "organizer_id")
 
-    response = utils.get_endpoint_ok("manage_admin_unit_events", id=admin_unit_id)
+    response = utils.get_endpoint_ok("manage_admin_unit.events", id=admin_unit_id)
 
     event_url = utils.get_url("event", event_id=draft_id)
     utils.assert_response_contains(response, event_url)
@@ -171,13 +171,13 @@ def test_admin_unit_events_invalidDateFormat(
     user_id, admin_unit_id = seeder.setup_base()
 
     utils.get_endpoint_ok(
-        "manage_admin_unit_events",
+        "manage_admin_unit.events",
         id=admin_unit_id,
         date_from="03.10.2020",
         date_to="2021-10-03",
     )
     utils.get_endpoint_ok(
-        "manage_admin_unit_events", id=admin_unit_id, date_from="", date_to=""
+        "manage_admin_unit.events", id=admin_unit_id, date_from="", date_to=""
     )
 
 
@@ -187,7 +187,7 @@ def test_admin_unit_events_place(app, client, seeder: Seeder, utils: UtilActions
     event_place_id = seeder.upsert_default_event_place(admin_unit_id)
 
     utils.get_endpoint_ok(
-        "manage_admin_unit_events", id=admin_unit_id, event_place_id=event_place_id
+        "manage_admin_unit.events", id=admin_unit_id, event_place_id=event_place_id
     )
 
     from project.models import Location

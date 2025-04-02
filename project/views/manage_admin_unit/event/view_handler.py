@@ -88,9 +88,6 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     ]
     list_search_definitions = [SearchDefinition(Event.name)]
 
-    def get_plural_url_folder(self):
-        return f"new_{super().get_plural_url_folder()}"
-
     def get_objects_base_query_from_kwargs(self, **kwargs):
         query = super().get_objects_base_query_from_kwargs(**kwargs)
         return (
