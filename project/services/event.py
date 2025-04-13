@@ -171,10 +171,16 @@ def fill_event_filter(event_filter, params: EventSearchParams):
         if postalCodeFilters is not None:
             event_filter = and_(event_filter, postalCodeFilters)
 
-    if params.tag:
-        tags = params.tag if type(params.tag) is list else [params.tag]
-        tag_filter = (func.string_to_array(Event.tags, ",")).op("@>")(tags)
-        event_filter = and_(event_filter, tag_filter)
+    event_filter = add_tag_filter(event_filter, Event.tags, params.tag)
+
+    if (
+        params.can_read_private_events
+        and params.admin_unit_id
+        and not params.include_admin_unit_references
+    ):
+        event_filter = add_tag_filter(
+            event_filter, Event.internal_tags, params.internal_tag
+        )
 
     if params.favored_by_user_id:
         user_favorite_exists = UserFavoriteEvents.query.filter(
@@ -208,6 +214,15 @@ def fill_event_filter(event_filter, params: EventSearchParams):
             event_filter,
             Event.expected_participants >= params.expected_participants_min,
         )
+
+    return event_filter
+
+
+def add_tag_filter(event_filter, column, tag):
+    if tag:
+        tags = tag if type(tag) is list else [tag]
+        tag_filter = (func.string_to_array(column, ",")).op("@>")(tags)
+        event_filter = and_(event_filter, tag_filter)
 
     return event_filter
 

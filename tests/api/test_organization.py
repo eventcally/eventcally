@@ -196,6 +196,51 @@ def test_events(client, seeder: Seeder, utils: UtilActions):
     assert len(response.json["items"]) == 2
 
 
+@pytest.mark.parametrize("user_access", [True, False])
+def test_event_search_internal_tags(
+    client, seeder: Seeder, utils: UtilActions, app, db, user_access
+):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=user_access)
+    seeder.create_event(admin_unit_id, internal_tags="")
+    event_id_1 = seeder.create_event(
+        admin_unit_id, internal_tags="ical-importer,ical-importer-uuid-1"
+    )
+    event_id_2 = seeder.create_event(
+        admin_unit_id, internal_tags="ical-importer,ical-importer-uuid-2"
+    )
+    event_id_11 = seeder.create_event(
+        admin_unit_id, internal_tags="ical-importer,ical-importer-uuid-11"
+    )
+
+    url = utils.get_url(
+        "api_v1_organization_event_search",
+        id=admin_unit_id,
+        internal_tag="ical-importer",
+    )
+    response = utils.get_json_ok(url)
+
+    if user_access:
+        assert len(response.json["items"]) == 3
+        assert response.json["items"][0]["id"] == event_id_2
+        assert response.json["items"][1]["id"] == event_id_11
+        assert response.json["items"][2]["id"] == event_id_1
+    else:
+        assert len(response.json["items"]) == 4
+
+    url = utils.get_url(
+        "api_v1_organization_event_search",
+        id=admin_unit_id,
+        internal_tag="ical-importer-uuid-1",
+    )
+    response = utils.get_json_ok(url)
+
+    if user_access:
+        assert len(response.json["items"]) == 1
+        assert response.json["items"][0]["id"] == event_id_1
+    else:
+        assert len(response.json["items"]) == 4
+
+
 def prepare_events_post_data(seeder, utils, legacy=False):
     user_id, admin_unit_id = seeder.setup_api_access()
     place_id = seeder.upsert_default_event_place(admin_unit_id)

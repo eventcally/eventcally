@@ -34,6 +34,7 @@ class EventMixin(object):
 
     ticket_link = Column(String(255))
     tags = Column(UnicodeText())
+    internal_tags = Column(UnicodeText())
     kid_friendly = Column(Boolean())
     accessible_for_free = Column(Boolean())
     age_from = Column(Integer())

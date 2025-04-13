@@ -295,6 +295,12 @@ class EventSearchRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMi
         fields.Str(),
         metadata={"description": "Looks for events having all given tags."},
     )
+    internal_tag = fields.List(
+        fields.Str(),
+        metadata={
+            "description": "Looks for events having all given internal tags. Only works with corresponding rights."
+        },
+    )
     date_from = fields.Date(
         metadata={
             "description": "Looks for events at or after this date, e.g. 2020-12-31."

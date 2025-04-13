@@ -56,6 +56,9 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
             label=lazy_gettext("Categories"),
         ),
         TagFilter(Event.tags, key="tag", label=lazy_gettext("Tags")),
+        TagFilter(
+            Event.internal_tags, key="internal_tag", label=lazy_gettext("Internal tags")
+        ),
         SelectModelFilter(
             Event.organizer,
             EventOrganizerAjaxModelLoader(),

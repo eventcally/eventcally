@@ -232,6 +232,10 @@ class Event(db.Model, TrackableMixin, EventMixin):
     def validate_tags(self, key, value):
         return value.replace(" ", "") if value else None
 
+    @validates("internal_tags")
+    def validate_internal_tags(self, key, value):
+        return value.replace(" ", "") if value else None
+
 
 @listens_for(Event, "before_insert")
 @listens_for(Event, "before_update")
