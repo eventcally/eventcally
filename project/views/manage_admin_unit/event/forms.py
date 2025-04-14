@@ -119,6 +119,13 @@ class EventFormMixin(object):
             "Enter keywords with which the event should be found. Words do not need to be entered if they are already in the name or description."
         ),
     )
+    internal_tags = StringField(
+        lazy_gettext("Internal tags"),
+        validators=[Optional()],
+        description=lazy_gettext(
+            "Keywords for internal use. These will not be published."
+        ),
+    )
     kid_friendly = BooleanField(
         lazy_gettext("Kid friendly"),
         validators=[Optional()],

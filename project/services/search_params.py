@@ -169,6 +169,7 @@ class EventSearchParams(TrackableSearchParams):
         self.expected_participants_min = None
         self.sort = "start"
         self.tag = None
+        self.internal_tag = None
 
     @property
     def date_from(self):
@@ -302,6 +303,9 @@ class EventSearchParams(TrackableSearchParams):
 
         if "tag" in request.args:
             self.tag = self.load_list_param("tag")
+
+        if "internal_tag" in request.args:
+            self.internal_tag = self.load_list_param("internal_tag")
 
         if "organization_id" in request.args:
             self.admin_unit_id = request.args["organization_id"]

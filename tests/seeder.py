@@ -389,6 +389,7 @@ class Seeder(object):
         tags="",
         place_id=None,
         planned=False,
+        internal_tags="",
         **kwargs
     ):
         from project.models import (
@@ -410,6 +411,7 @@ class Seeder(object):
             event.external_link = external_link
             event.ticket_link = ""
             event.tags = tags
+            event.internal_tags = internal_tags
             event.price_info = ""
             event.attendance_mode = EventAttendanceMode.offline
 

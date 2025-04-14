@@ -272,10 +272,10 @@
 {% endif %}
 {% endmacro %}
 
-{% macro render_tag_prop(tags) %}
+{% macro render_tag_prop(tags, label_key='Tags') %}
 {% if tags %}
 <div>
-  <i class="fa fa-fw fa-tags" data-toggle="tooltip" title="{{ _('Tags') }}"></i>
+  <i class="fa fa-fw fa-tags" data-toggle="tooltip" title="{{ _(label_key) }}"></i>
   {{ tags.replace(",", ", ") }}
 </div>
 {% endif %}
@@ -650,6 +650,9 @@
 
       <div>
         {{ render_event_add_props(event) }}
+        {% if user_rights and user_rights['can_update_event'] %}
+          {{ render_tag_prop(event.internal_tags, 'Internal tags') }}
+        {% endif %}
       </div>
 
       {% if event.description %}

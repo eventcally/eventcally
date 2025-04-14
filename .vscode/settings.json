@@ -9,6 +9,7 @@
       "source.organizeImports": "explicit"
     }
   },
+  "black-formatter.path": ["env/bin/black"],
   "[html]": {
     "editor.formatOnSave": false
   },

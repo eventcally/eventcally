@@ -25,6 +25,9 @@ class ListDisplay(BaseDisplay):
     event_place = EventPlaceProp(lazy_gettext("Place"))
     categories = EventCategoryListProp(lazy_gettext("Categories"))
     tags = StringProp(lazy_gettext("Tags"), formatter=TagPropFormatter())
+    internal_tags = StringProp(
+        lazy_gettext("Internal tags"), formatter=TagPropFormatter()
+    )
     status = EventStatusProp(lazy_gettext("Status"))
     public_status = PublicStatusProp(lazy_gettext("Public status"))
     photo = BoolProp(lazy_gettext("Photo"), icon="fa fa-image")
