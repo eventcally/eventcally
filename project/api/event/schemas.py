@@ -3,6 +3,7 @@ from marshmallow import fields, validate
 from marshmallow.decorators import pre_load
 from marshmallow_enum import EnumField
 
+from project.access import can_read_private_events
 from project.api import marshmallow
 from project.api.event_category.schemas import (
     EventCategoryIdSchema,
@@ -175,6 +176,12 @@ class EventCurrentOrganizationMixin(object):
             "description": "Reference id, if event is referenced by current organization"
         },
     )
+    internal_tags = fields.Method(
+        "get_internal_tags",
+        metadata={
+            "description": "Comma separated keywords for internal use. These will not be published. Only visible with corresponding rights."
+        },
+    )
 
     def get_reference_id(self, event):
         if not current_user or not current_user.is_authenticated:
@@ -191,6 +198,12 @@ class EventCurrentOrganizationMixin(object):
 
         reference = get_event_reference(event.id, admin_unit.id)
         return reference.id if reference is not None else None
+
+    def get_internal_tags(self, event):
+        if not event or not can_read_private_events(event.admin_unit):
+            return None
+
+        return event.internal_tags
 
 
 class EventSchema(
@@ -416,6 +429,11 @@ class EventWriteSchemaMixin(object):
         metadata={
             "description": "How relevant the event is to your organization. 0 (Little relevant), 50 (Default), 100 (Highlight)."
         },
+    )
+    internal_tags = marshmallow.auto_field(
+        metadata={
+            "description": "Comma separated keywords for internal use. These will not be published. Only visible with corresponding rights."
+        }
     )
 
     @pre_load()

@@ -222,10 +222,15 @@ def test_event_search_internal_tags(
     if user_access:
         assert len(response.json["items"]) == 3
         assert response.json["items"][0]["id"] == event_id_2
+        assert (
+            response.json["items"][0]["internal_tags"]
+            == "ical-importer,ical-importer-uuid-2"
+        )
         assert response.json["items"][1]["id"] == event_id_11
         assert response.json["items"][2]["id"] == event_id_1
     else:
         assert len(response.json["items"]) == 4
+        assert response.json["items"][0]["internal_tags"] is None
 
     url = utils.get_url(
         "api_v1_organization_event_search",
