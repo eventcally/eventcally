@@ -34,6 +34,7 @@
 {% endif %}
 {% endblock %}
 
+{% if objects %}
 <div class="table-responsive">
     <table class="table table-sm table-bordered table-hover table-striped">
         <thead>
@@ -66,5 +67,5 @@
 </div>
 
 <div class="my-4">{{ render_pagination(pagination) }}</div>
-
+{% endif %}
 {% endblock %}

@@ -180,6 +180,12 @@ def add_api_resource(resource, url, endpoint):
 
 
 def add_oauth2_scheme_with_transport(insecure: bool):
+    def _add_scheme(scheme_name, scheme):
+        try:
+            api_docs.spec.components.security_scheme(scheme_name, scheme)
+        except DuplicateComponentNameError:  # pragma: no cover
+            pass
+
     if insecure:
         authorizationUrl = url_for("authorize", _external=True)
         tokenUrl = url_for("issue_token", _external=True)
@@ -187,6 +193,7 @@ def add_oauth2_scheme_with_transport(insecure: bool):
         authorizationUrl = url_for("authorize", _external=True, _scheme="https")
         tokenUrl = url_for("issue_token", _external=True, _scheme="https")
 
+    # OAuth2 authorization code flow
     scopes = {k: k for _, k in enumerate(scope_list)}
     oauth2_authorization_code_scheme = {
         "type": "oauth2",
@@ -195,27 +202,24 @@ def add_oauth2_scheme_with_transport(insecure: bool):
         "flow": "accessCode",
         "scopes": scopes,
     }
+    _add_scheme("oauth2AuthCode", oauth2_authorization_code_scheme)
 
-    try:
-        api_docs.spec.components.security_scheme(
-            "oauth2AuthCode", oauth2_authorization_code_scheme
-        )
-    except DuplicateComponentNameError:  # pragma: no cover
-        pass
-
+    # OAuth2 client credentials flow
     oauth2_client_credentials_scheme = {
         "type": "oauth2",
         "tokenUrl": tokenUrl,
         "flow": "application",
         "scopes": scopes,
     }
+    _add_scheme("oauth2ClientCredentials", oauth2_client_credentials_scheme)
 
-    try:
-        api_docs.spec.components.security_scheme(
-            "oauth2ClientCredentials", oauth2_client_credentials_scheme
-        )
-    except DuplicateComponentNameError:  # pragma: no cover
-        pass
+    # API key
+    api_key_scheme = {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+    }
+    _add_scheme("apiKey", api_key_scheme)
 
 
 marshmallow_plugin.converter.add_attribute_function(enum_to_properties)

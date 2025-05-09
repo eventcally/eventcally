@@ -74,6 +74,7 @@ class BaseUpdateForm(BaseForm):
 
 
 class BaseDeleteForm(BaseForm):
+    confirmation_field_name = None
     submit = SubmitField(lazy_gettext("Delete"), render_kw={"class": "btn btn-danger"})
 
 

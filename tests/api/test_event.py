@@ -34,6 +34,22 @@ def test_read_anonym(client, app, db, seeder: Seeder, utils: UtilActions):
     utils.get_json_ok(url)
 
 
+def test_search_with_api_key(client, app, db, seeder: Seeder, utils: UtilActions):
+    app.config["API_READ_ANONYM"] = False
+    url = utils.get_url("api_v1_event_search")
+
+    # Test with invalid API key
+    utils.setup_api_key("invalid_key")
+    response = utils.get_json(url)
+    utils.assert_response_unauthorized(response)
+
+    # Test with valid API key
+    user_id, admin_unit_id = seeder.setup_api_access(
+        user_access=False, use_api_key=True
+    )
+    utils.get_json_ok(url)
+
+
 def test_read_otherDraft(client, app, db, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id, draft=True)
