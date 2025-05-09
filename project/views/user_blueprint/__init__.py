@@ -7,6 +7,7 @@ user_bp = Blueprint(
     template_folder="templates",
 )
 
+import project.views.user_blueprint.api_key.view_handler
 import project.views.user_blueprint.oauth2_client.view_handler
 import project.views.user_blueprint.oauth2_token.view_handler
 import project.views.user_blueprint.organization_invitation.view_handler

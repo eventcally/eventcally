@@ -71,6 +71,10 @@
         {{ _('OAuth2 clients') }}
         <i class="fa fa-caret-right"></i>
     </a>
+    <a href="{{ url_for('user.api_keys') }}" class="list-group-item">
+        {{ _('API keys') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
 </div>
 
 {% endblock %}

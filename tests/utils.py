@@ -20,6 +20,7 @@ class UtilActions(object):
         self._client_id = None
         self._client_secret = None
         self._ajax_csrf = None
+        self._api_key = None
 
         self.gmaps_places_autocomplete_query = self._mocker.patch.object(
             googlemaps.Client, "places_autocomplete_query", return_value=list()
@@ -138,6 +139,9 @@ class UtilActions(object):
 
         if self._ajax_csrf:
             headers["X-CSRFToken"] = self._ajax_csrf
+
+        if self._api_key:
+            headers["X-API-Key"] = self._api_key
 
         return headers
 
@@ -432,6 +436,9 @@ class UtilActions(object):
         self._get_token(
             client_id, client_secret, scope, "authorization_code", code, redirect_uri
         )
+
+    def setup_api_key(self, api_key):
+        self._api_key = api_key
 
     def grant_client_credentials(self, client_id, client_secret, scope):
         # Mit den Credentials den Access-Token abfragen

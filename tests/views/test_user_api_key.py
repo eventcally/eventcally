@@ -1,0 +1,65 @@
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
+
+def test_list(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(True)
+    seeder.insert_default_api_key(user_id)
+
+    url = utils.get_url("user.api_keys")
+    utils.get_ok(url)
+
+
+def test_create(client, app, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(True)
+
+    url = utils.get_url("user.api_key_create")
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Mein API Key",
+        },
+    )
+
+    with app.app_context():
+        from project.models import ApiKey
+
+        api_key = ApiKey.query.filter(ApiKey.user_id == user_id).first()
+        assert api_key is not None
+
+
+def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
+    user_id, admin_unit_id = seeder.setup_base(True)
+    api_key_id, key = seeder.insert_default_api_key(user_id)
+
+    url = utils.get_url("user.api_key_delete", api_key_id=api_key_id)
+    get_response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        get_response,
+        {
+            "name": "Falscher Name",
+        },
+    )
+    utils.assert_response_error_message(response)
+
+    url = utils.get_url("user.api_key_delete", api_key_id=api_key_id)
+    get_response = utils.get_ok(url)
+    response = utils.post_form(
+        url,
+        get_response,
+        {
+            "name": "Mein API Key",
+        },
+    )
+    utils.assert_response_redirect(response, "user.api_keys")
+
+    with app.app_context():
+        from project.models import ApiKey
+
+        api_key = db.session.get(ApiKey, api_key_id)
+        assert api_key is None

@@ -156,7 +156,7 @@ def model_name_to_plural(model_name):
     if model_name.endswith("s"):
         return model_name
 
-    if model_name.endswith("y"):
+    if model_name.endswith("y") and not model_name.endswith("key"):
         return model_name[:-1] + "ies"
 
     return f"{model_name}s"
@@ -178,3 +178,15 @@ def parse_like_term(term):
         stmt = "%%%s%%" % term
 
     return stmt
+
+
+def generate_api_key() -> str:
+    from werkzeug.security import gen_salt
+
+    return gen_salt(32)
+
+
+def hash_api_key(api_key: str) -> str:
+    from flask_security.utils import get_hmac
+
+    return get_hmac(api_key).decode("ascii")

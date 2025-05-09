@@ -305,6 +305,22 @@ class Seeder(object):
 
         return client_id
 
+    def insert_default_api_key(self, user_id=None, admin_unit_id=None):
+        from project.models import ApiKey
+
+        with self._app.app_context():
+            api_key = ApiKey()
+            api_key.user_id = user_id
+            api_key.admin_unit_id = admin_unit_id
+            api_key.name = "Mein API Key"
+            key = api_key.generate_key()
+
+            self._db.session.add(api_key)
+            self._db.session.commit()
+            api_key_id = api_key.id
+
+        return (api_key_id, key)
+
     def setup_api_access(
         self,
         admin=True,
@@ -312,6 +328,7 @@ class Seeder(object):
         user_access=True,
         email="test@test.de",
         admin_unit_name="Meine Crew",
+        use_api_key=False,
     ):
         user_id, admin_unit_id = self.setup_base(
             admin, False, admin_unit_verified, email, admin_unit_name
@@ -319,6 +336,8 @@ class Seeder(object):
 
         if user_access:
             self.authorize_api_access(user_id, admin_unit_id)
+        elif use_api_key:
+            self.api_key_api_access(user_id)
         else:
             self.grant_client_credentials_api_access(user_id)
 
@@ -343,6 +362,10 @@ class Seeder(object):
         self._utils.authorize(client_id, client_secret, scope)
         self._utils.logout()
         return (user_id, admin_unit_id)
+
+    def api_key_api_access(self, user_id):
+        api_key_id, key = self.insert_default_api_key(user_id)
+        self._utils.setup_api_key(key)
 
     def grant_client_credentials_api_access(self, user_id):
         oauth2_client_id = self.insert_default_oauth2_client(user_id)

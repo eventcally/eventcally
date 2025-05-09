@@ -19,6 +19,7 @@ from project.views.utils import (
     get_pagination_urls,
     handle_db_error,
     handleSqlError,
+    non_match_for_deletion,
 )
 
 
@@ -463,7 +464,32 @@ class BaseDeleteView(BaseObjectFormView):
     template_file_name = "delete.html"
 
     def can_object_be_deleted(self, form, object):
-        return self.handler.can_object_be_deleted(form, object)
+        if not self.handler.can_object_be_deleted(form, object):
+            return False
+
+        if not form:  # pragma: no cover
+            return True
+
+        if not hasattr(form, "confirmation_field_name"):
+            return True
+
+        confirmation_field_name = getattr(form, "confirmation_field_name")
+        confirmation_field = form.get_field_by_name(confirmation_field_name)
+        if not confirmation_field:  # pragma: no cover
+            return True
+
+        field_data = confirmation_field.data
+        object_data = getattr(object, confirmation_field_name)
+
+        if non_match_for_deletion(field_data, object_data):
+            message = lazy_gettext(
+                "Entered %(property_name)s does not match %(model_display_name)s %(property_name)s",
+                model_display_name=self.handler.get_model_display_name(),
+                property_name=confirmation_field.label.text,
+            )
+            flash(message, "danger")
+            return False
+        return True
 
     def get_title(self, **kwargs):
         return lazy_gettext(

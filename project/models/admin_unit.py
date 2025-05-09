@@ -25,6 +25,7 @@ from sqlalchemy_utils import ColorType
 
 from project import db
 from project.models.admin_unit_verification_request import AdminUnitVerificationRequest
+from project.models.api_key import ApiKey
 from project.models.trackable_mixin import TrackableMixin
 from project.utils import make_check_violation
 
@@ -350,6 +351,12 @@ class AdminUnit(db.Model, TrackableMixin):
             "target_admin_unit",
             lazy=True,
         ),
+    )
+    api_keys = relationship(
+        "ApiKey",
+        primaryjoin=remote(ApiKey.admin_unit_id) == id,
+        cascade="all, delete-orphan",
+        backref=backref("admin_unit", lazy=True),
     )
 
     @hybrid_property

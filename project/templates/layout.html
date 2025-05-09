@@ -291,6 +291,8 @@
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit_custom_widgets', id=current_admin_unit.id) }}">{{ _('Custom widgets') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.widgets', id=current_admin_unit.id) }}">{{ _('Widgets') }}</a>
                     <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.api_keys', id=current_admin_unit.id) }}">{{ _('API keys') }}</a>
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('organizations', path=current_admin_unit.id) }}">{{ _('Profile') }}</a>
                   </div>
                 </li>

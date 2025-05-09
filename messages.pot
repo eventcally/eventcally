@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-13 15:25+0200\n"
+"POT-Creation-Date: 2025-05-09 21:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,12 +47,12 @@ msgid ""
 "%(admin_unit_name)s."
 msgstr ""
 
-#: project/modular/base_views.py:349
+#: project/modular/base_views.py:350
 #, python-format
 msgid "%(model_display_name)s successfully created"
 msgstr ""
 
-#: project/modular/base_views.py:483
+#: project/modular/base_views.py:509
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr ""
@@ -62,7 +62,7 @@ msgstr ""
 msgid "%(model_display_name)s successfully revoked"
 msgstr ""
 
-#: project/modular/base_views.py:445
+#: project/modular/base_views.py:446
 #, python-format
 msgid "%(model_display_name)s successfully updated"
 msgstr ""
@@ -131,6 +131,15 @@ msgstr ""
 #: project/templates/email/referenced_event_changed_notice.html:4
 #: project/templates/email/referenced_event_changed_notice.txt:1
 msgid "A referenced event was changed."
+msgstr ""
+
+#: project/babel.py:1
+msgid "API key"
+msgstr ""
+
+#: project/babel.py:1 project/templates/layout.html:294
+#: project/templates/profile.html:75
+msgid "API keys"
 msgstr ""
 
 #: project/views/user_blueprint/organization_member_invitation/forms.py:8
@@ -538,7 +547,7 @@ msgstr ""
 msgid "Confirmation required"
 msgstr ""
 
-#: project/forms/admin.py:15 project/templates/layout.html:344
+#: project/forms/admin.py:15 project/templates/layout.html:346
 #: project/views/manage_blueprint/organization/views.py:53
 #: project/views/root.py:75
 msgid "Contact"
@@ -564,7 +573,7 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
-#: project/modular/base_views.py:343 project/templates/generic/list.html:18
+#: project/modular/base_views.py:344 project/templates/generic/list.html:18
 #, python-format
 msgid "Create %(model_display_name)s"
 msgstr ""
@@ -609,6 +618,8 @@ msgstr ""
 #: project/views/manage_admin_unit/outgoing_event_reference/displays.py:10
 #: project/views/manage_admin_unit/outgoing_event_reference_request/displays.py:34
 #: project/views/manage_admin_unit/outgoing_verification_request/displays.py:33
+#: project/views/user_blueprint/api_key/displays.py:9
+#: project/views/user_blueprint/api_key/displays.py:14
 #: project/views/user_blueprint/organization_invitation/displays.py:12
 msgid "Created at"
 msgstr ""
@@ -648,12 +659,12 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: project/modular/base_form.py:77 project/modular/base_view_handler.py:162
+#: project/modular/base_form.py:78 project/modular/base_view_handler.py:162
 #: project/templates/admin/users.html:37
 msgid "Delete"
 msgstr ""
 
-#: project/modular/base_views.py:471
+#: project/modular/base_views.py:497
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr ""
@@ -719,7 +730,7 @@ msgid "Description"
 msgstr ""
 
 #: project/templates/developer/read.html:4
-#: project/templates/developer/read.html:8 project/templates/layout.html:352
+#: project/templates/developer/read.html:8 project/templates/layout.html:354
 #: project/templates/profile.html:67
 msgid "Developer"
 msgstr ""
@@ -729,7 +740,7 @@ msgstr ""
 msgid "Distance"
 msgstr ""
 
-#: project/modular/base_views.py:477
+#: project/modular/base_views.py:503
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr ""
@@ -861,6 +872,13 @@ msgstr ""
 
 #: project/views/manage_admin_unit/event/forms.py:228
 msgid "Enter when the event should have taken place before it was postponed."
+msgstr ""
+
+#: project/modular/base_views.py:487
+#, python-format
+msgid ""
+"Entered %(property_name)s does not match %(model_display_name)s "
+"%(property_name)s"
 msgstr ""
 
 #: project/views/admin.py:183
@@ -1520,7 +1538,7 @@ msgstr ""
 msgid "Just use %(term)s"
 msgstr ""
 
-#: project/forms/event_date.py:18 project/modular/base_views.py:186
+#: project/forms/event_date.py:18 project/modular/base_views.py:187
 msgid "Keyword"
 msgstr ""
 
@@ -1541,9 +1559,11 @@ msgstr ""
 msgid "Last"
 msgstr ""
 
+#: project/views/manage_admin_unit/api_key/view_handler.py:32
 #: project/views/manage_admin_unit/incoming_event_reference_request/view_handler.py:38
 #: project/views/manage_admin_unit/incoming_verification_request/view_handler.py:42
 #: project/views/manage_admin_unit/outgoing_event_reference_request/view_handler.py:41
+#: project/views/user_blueprint/api_key/view_handler.py:30
 msgid "Last created first"
 msgstr ""
 
@@ -1586,7 +1606,7 @@ msgstr ""
 msgid "Leave organization"
 msgstr ""
 
-#: project/forms/admin.py:14 project/templates/layout.html:340
+#: project/forms/admin.py:14 project/templates/layout.html:342
 #: project/views/root.py:67
 msgid "Legal notice"
 msgstr ""
@@ -1705,6 +1725,7 @@ msgstr ""
 #: project/views/admin_blueprint/organization/displays.py:8
 #: project/views/admin_blueprint/organization/displays.py:15
 #: project/views/admin_blueprint/organization/forms.py:45
+#: project/views/manage_admin_unit/api_key/view_handler.py:28
 #: project/views/manage_admin_unit/event/displays.py:23
 #: project/views/manage_admin_unit/event/forms.py:94
 #: project/views/manage_admin_unit/event/forms.py:259
@@ -1717,6 +1738,12 @@ msgstr ""
 #: project/views/manage_admin_unit/event_place/forms.py:65
 #: project/views/manage_admin_unit/event_place/view_handler.py:36
 #: project/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:56
+#: project/views/user_blueprint/api_key/displays.py:8
+#: project/views/user_blueprint/api_key/displays.py:13
+#: project/views/user_blueprint/api_key/forms.py:10
+#: project/views/user_blueprint/api_key/forms.py:18
+#: project/views/user_blueprint/api_key/forms.py:27
+#: project/views/user_blueprint/api_key/view_handler.py:26
 #: project/views/user_blueprint/oauth2_client/forms.py:68
 #: project/views/user_blueprint/organization_invitation/displays.py:11
 #: project/views/user_blueprint/organization_member/forms.py:10
@@ -2083,6 +2110,11 @@ msgstr ""
 msgid "Please enter a valid time, between 00:00 and 23:59."
 msgstr ""
 
+#: project/views/user_blueprint/api_key/views.py:15
+#, python-format
+msgid "Please note the key: %(key)s. It will only be displayed once."
+msgstr ""
+
 #: project/modular/widgets.py:81
 msgid "Please select"
 msgstr ""
@@ -2121,12 +2153,12 @@ msgstr ""
 msgid "Print"
 msgstr ""
 
-#: project/forms/admin.py:16 project/templates/layout.html:348
+#: project/forms/admin.py:16 project/templates/layout.html:350
 #: project/views/root.py:83
 msgid "Privacy"
 msgstr ""
 
-#: project/templates/layout.html:190 project/templates/layout.html:294
+#: project/templates/layout.html:190 project/templates/layout.html:296
 #: project/templates/profile.html:4 project/templates/profile.html:17
 #: project/views/user_blueprint/child_view_handler.py:15
 msgid "Profile"
@@ -2245,7 +2277,7 @@ msgstr ""
 msgid "References are important for the visibility of your events."
 msgstr ""
 
-#: project/forms/planning.py:50 project/modular/base_form.py:89
+#: project/forms/planning.py:50 project/modular/base_form.py:90
 #: project/templates/planning/list.html:102
 msgid "Refresh"
 msgstr ""
@@ -2626,7 +2658,7 @@ msgstr ""
 msgid "Show unreferenced events only"
 msgstr ""
 
-#: project/forms/event_date.py:60 project/modular/base_views.py:198
+#: project/forms/event_date.py:60 project/modular/base_views.py:199
 msgid "Sort"
 msgstr ""
 
@@ -2659,7 +2691,7 @@ msgstr ""
 msgid "Sunday"
 msgstr ""
 
-#: project/templates/layout.html:304
+#: project/templates/layout.html:306
 msgid "Switch organization"
 msgstr ""
 
@@ -2679,7 +2711,7 @@ msgstr ""
 msgid "Target group origin"
 msgstr ""
 
-#: project/forms/admin.py:13 project/templates/layout.html:335
+#: project/forms/admin.py:13 project/templates/layout.html:337
 #: project/views/root.py:55
 msgid "Terms of service"
 msgstr ""
@@ -2792,7 +2824,7 @@ msgstr ""
 msgid "There is a new verification request that needs to be reviewed."
 msgstr ""
 
-#: project/i10n.py:78 project/models/admin_unit.py:162
+#: project/i10n.py:78 project/models/admin_unit.py:163
 #: project/models/admin_unit_verification_request.py:64
 msgid "There must be no self-reference."
 msgstr ""
@@ -2849,7 +2881,7 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
-#: project/modular/base_views.py:439
+#: project/modular/base_views.py:440
 #, python-format
 msgid "Update %(model_display_name)s"
 msgstr ""

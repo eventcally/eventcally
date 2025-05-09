@@ -14,8 +14,10 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import backref, deferred, relationship
+from sqlalchemy.orm.relationships import remote
 
 from project import db
+from project.models.api_key import ApiKey
 
 
 class RolesUsers(db.Model):
@@ -69,6 +71,12 @@ class User(db.Model, UserMixin):
     created_at = deferred(Column(DateTime, default=datetime.datetime.utcnow))
     deletion_requested_at = deferred(Column(DateTime, nullable=True))
     locale = Column(String(255), nullable=True)
+    api_keys = relationship(
+        "ApiKey",
+        primaryjoin=remote(ApiKey.user_id) == id,
+        cascade="all, delete-orphan",
+        backref=backref("user", lazy=True),
+    )
 
     @property
     def is_member_of_verified_admin_unit(self):

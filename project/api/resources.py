@@ -9,7 +9,9 @@ from flask_wtf.csrf import validate_csrf
 
 from project import app, csrf, db
 from project.api.schemas import ErrorResponseSchema, UnprocessableEntityResponseSchema
+from project.models.api_key import ApiKey
 from project.oauth2 import require_oauth
+from project.utils import hash_api_key
 
 
 def etag_cache(func):
@@ -30,6 +32,19 @@ def is_internal_request() -> bool:
         return False
 
 
+def request_has_api_key() -> bool:
+    request_api_key = request.headers.get("X-API-Key")
+    if not request_api_key:
+        return False
+
+    key_hash = hash_api_key(request_api_key)
+    api_key = db.session.query(ApiKey).filter_by(key_hash=key_hash).first()
+    if not api_key:
+        return False
+
+    return True
+
+
 def require_api_access(scopes=None):
     def inner_decorator(func):
         def wrapped(*args, **kwargs):  # see authlib ResourceProtector#__call__
@@ -39,9 +54,11 @@ def require_api_access(scopes=None):
                 except OAuth2Error as error:
                     require_oauth.raise_error_response(error)
             except Exception as e:
-                if app.config["API_READ_ANONYM"]:
-                    return func(*args, **kwargs)
-                if not is_internal_request():
+                if (
+                    not app.config["API_READ_ANONYM"]
+                    and not is_internal_request()
+                    and not request_has_api_key()
+                ):
                     raise e
             return func(*args, **kwargs)
 
@@ -52,6 +69,11 @@ def require_api_access(scopes=None):
             security.append(
                 {
                     "oauth2ClientCredentials": scope_list,
+                }
+            )
+            security.append(
+                {
+                    "apiKey": scope_list,
                 }
             )
 
