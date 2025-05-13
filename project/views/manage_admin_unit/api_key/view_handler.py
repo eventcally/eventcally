@@ -14,15 +14,21 @@ from project.views.user_blueprint.api_key.forms import (
     UpdateForm,
 )
 from project.views.user_blueprint.api_key.views import CreateView
+from project.views.utils import manage_permission_required
 
 
 class ApiKeyViewHandler(ManageAdminUnitChildViewHandler):
     model = ApiKey
+    create_decorators = [manage_permission_required("admin_unit:update")]
     create_view_class = CreateView
     create_form_class = CreateForm
+    update_decorators = [manage_permission_required("admin_unit:update")]
     update_form_class = UpdateForm
+    delete_decorators = [manage_permission_required("admin_unit:update")]
     delete_form_class = DeleteForm
+    read_decorators = [manage_permission_required("admin_unit:update")]
     read_display_class = ReadDisplay
+    list_decorators = [manage_permission_required("admin_unit:update")]
     list_display_class = ListDisplay
     list_sort_definitions = [
         SortDefinition(ApiKey.name, func=func.lower, label=lazy_gettext("Name")),
