@@ -14,10 +14,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import backref, deferred, relationship
-from sqlalchemy.orm.relationships import remote
 
 from project import db
-from project.models.api_key import ApiKey
+from project.models.api_key import ApiKeyOwnerMixin
 
 
 class RolesUsers(db.Model):
@@ -39,7 +38,7 @@ class Role(db.Model, RoleMixin):
         return self.name or super().__str__()
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, UserMixin, ApiKeyOwnerMixin):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True)
     email = Column(String(255), unique=True)
@@ -73,10 +72,16 @@ class User(db.Model, UserMixin):
     locale = Column(String(255), nullable=True)
     api_keys = relationship(
         "ApiKey",
-        primaryjoin=remote(ApiKey.user_id) == id,
+        primaryjoin="ApiKey.user_id == User.id",
         cascade="all, delete-orphan",
         backref=backref("user", lazy=True),
     )
+
+    @property
+    def number_of_api_keys(self):
+        from project.models.api_key import ApiKey
+
+        return ApiKey.query.filter(ApiKey.user_id == self.id).count()
 
     @property
     def is_member_of_verified_admin_unit(self):

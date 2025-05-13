@@ -25,7 +25,7 @@ from sqlalchemy_utils import ColorType
 
 from project import db
 from project.models.admin_unit_verification_request import AdminUnitVerificationRequest
-from project.models.api_key import ApiKey
+from project.models.api_key import ApiKeyOwnerMixin
 from project.models.trackable_mixin import TrackableMixin
 from project.utils import make_check_violation
 
@@ -169,7 +169,7 @@ def before_saving_admin_unit_relation(mapper, connect, self):
     self.validate()
 
 
-class AdminUnit(db.Model, TrackableMixin):
+class AdminUnit(db.Model, TrackableMixin, ApiKeyOwnerMixin):
     __tablename__ = "adminunit"
     __table_args__ = (
         db.Index(
@@ -354,10 +354,16 @@ class AdminUnit(db.Model, TrackableMixin):
     )
     api_keys = relationship(
         "ApiKey",
-        primaryjoin=remote(ApiKey.admin_unit_id) == id,
+        primaryjoin="ApiKey.admin_unit_id == AdminUnit.id",
         cascade="all, delete-orphan",
         backref=backref("admin_unit", lazy=True),
     )
+
+    @property
+    def number_of_api_keys(self):
+        from project.models.api_key import ApiKey
+
+        return ApiKey.query.filter(ApiKey.admin_unit_id == self.id).count()
 
     @hybrid_property
     def is_verified(self):

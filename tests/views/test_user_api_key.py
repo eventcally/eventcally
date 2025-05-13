@@ -30,6 +30,19 @@ def test_create(client, app, seeder: Seeder, utils: UtilActions):
         api_key = ApiKey.query.filter(ApiKey.user_id == user_id).first()
         assert api_key is not None
 
+    # limit
+    response = utils.get_ok(url)
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Mein API Key 2",
+        },
+    )
+    utils.assert_response_error_message(
+        response, "Die maximale Anzahl an API-Schlüsseln wurde erreicht."
+    )
+
 
 def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     user_id, admin_unit_id = seeder.setup_base(True)
