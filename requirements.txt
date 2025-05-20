@@ -34,6 +34,7 @@ colour==0.1.5
 coverage==7.3.2
 cryptography==42.0.4
 decorator==5.1.0
+Deprecated==1.2.18
 distlib==0.3.6
 dnspython==2.6.1
 docopt==0.6.2
@@ -50,6 +51,7 @@ Flask-Bootstrap==3.3.7.1
 Flask-Cors==4.0.1
 Flask-Dance==6.2.0
 Flask-gzip==0.2
+Flask-Limiter==3.12
 Flask-Login==0.6.3
 Flask-Mail==0.9.1
 flask-marshmallow==0.15.0
@@ -76,16 +78,20 @@ Jinja2==3.1.4
 johnnydep==1.18.0
 jsonschema==3.2.0
 kombu==5.4.0
+limits==5.1.0
 Mako==1.2.2
+markdown-it-py==3.0.0
 MarkupSafe==2.1.2
 marshmallow==3.19.0
 marshmallow-enum==1.5.1
 marshmallow-sqlalchemy==0.29.0
 mccabe==0.7.0
+mdurl==0.1.2
 mistune==2.0.5
 mypy-extensions==0.4.3
 nodeenv==1.5.0
 oauthlib==3.1.0
+ordered-set==4.1.0
 oyaml==1.0
 packaging==23.0
 passlib==1.7.4
@@ -102,6 +108,7 @@ psycopg2-binary==2.9.6
 pycodestyle==2.11.1
 pycparser==2.20
 pyflakes==3.1.0
+Pygments==2.19.1
 pyparsing==2.4.7
 pyrsistent==0.17.3
 pytest==8.3.4
@@ -123,6 +130,7 @@ regex==2023.3.23
 requests==2.32.0
 requests-mock==1.10.0
 requests-oauthlib==1.3.0
+rich==13.9.4
 rope==1.7.0
 setuptools==72.1.0
 six==1.16.0
@@ -150,6 +158,7 @@ webargs==7.0.1
 Werkzeug==3.0.3
 wheel==0.44.0
 wimpy==0.6
+wrapt==1.17.2
 WTForms==3.0.1
 WTForms-SQLAlchemy==0.3
 x-wr-timezone==0.0.7

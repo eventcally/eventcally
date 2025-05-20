@@ -11,14 +11,19 @@ from sqlalchemy.orm import object_session
 
 from project import db
 from project.dateutils import gmt_tz
+from project.models.rate_limit_provider_mixin import (
+    RateLimitHolderMixin,
+    RateLimitProviderMixin,
+)
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
 oauth_refresh_token_expires_in = 90 * 86400  # 90 days
 
 
-class OAuth2Client(db.Model, OAuth2ClientMixin):
+class OAuth2Client(db.Model, OAuth2ClientMixin, RateLimitHolderMixin):
     __tablename__ = "oauth2_client"
     __display_name__ = "OAuth2 client"
+    __default_rate_limit_value__ = "5000/hour"
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
@@ -63,7 +68,7 @@ class OAuth2AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
     user = db.relationship("User")
 
 
-class OAuth2Token(db.Model, OAuth2TokenMixin):
+class OAuth2Token(db.Model, OAuth2TokenMixin, RateLimitProviderMixin):
     __tablename__ = "oauth2_token"
     __display_name__ = "OAuth2 token"
 
@@ -108,3 +113,12 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
 
     def __str__(self):
         return f"{super().__str__()} ({self.client_name})"
+
+    def get_rate_limit_key(self):
+        if self.user_id:
+            return f"{self.client.get_rate_limit_key()}-{self.user_id}"
+
+        return self.client.get_rate_limit_key()
+
+    def get_rate_limit_value(self):
+        return self.client.rate_limit_value

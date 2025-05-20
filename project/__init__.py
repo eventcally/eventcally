@@ -6,6 +6,8 @@ from flask import Blueprint, Flask, g
 from flask_babel import Babel
 from flask_cors import CORS
 from flask_gzip import Gzip
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask_mail import Mail, email_dispatched
 from flask_migrate import Migrate
 from flask_security import Security, SQLAlchemySessionUserDatastore, user_registered
@@ -33,6 +35,7 @@ def set_env_to_app(app: Flask, key: str, default: str = None):
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["REDIS_URL"] = os.getenv("REDIS_URL")
+app.config["LIMITER_REDIS_URL"] = os.getenv("LIMITER_REDIS_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECURITY_CONFIRMABLE"] = True
 app.config["SECURITY_POST_LOGIN_VIEW"] = "manage_after_login"
@@ -159,6 +162,15 @@ app.config["WTF_CSRF_CHECK_DEFAULT"] = False
 
 # Mail
 mail_server = os.getenv("MAIL_SERVER")
+
+# Rate limiting
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    storage_uri=app.config["LIMITER_REDIS_URL"],
+    headers_enabled=True,
+)
+
 
 if not mail_server:
     app.config["MAIL_SUPPRESS_SEND"] = True

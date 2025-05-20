@@ -10,6 +10,14 @@ def test_list(client, seeder: Seeder, utils: UtilActions):
     utils.get_ok(url)
 
 
+def test_read(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(True)
+    api_key_id, key = seeder.insert_default_api_key(user_id)
+
+    url = utils.get_url("user.api_key", api_key_id=api_key_id)
+    utils.get_ok(url)
+
+
 def test_create(client, app, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(True)
 

@@ -77,8 +77,7 @@ class User(db.Model, UserMixin, ApiKeyOwnerMixin):
         backref=backref("user", lazy=True),
     )
 
-    @property
-    def number_of_api_keys(self):
+    def get_number_of_api_keys(self):
         from project.models.api_key import ApiKey
 
         return ApiKey.query.filter(ApiKey.user_id == self.id).count()

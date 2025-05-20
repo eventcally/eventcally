@@ -3,11 +3,12 @@ from sqlalchemy.event import listens_for
 from sqlalchemy.orm import declared_attr, deferred
 
 from project import db
+from project.models.rate_limit_provider_mixin import RateLimitHolderMixin
 from project.models.trackable_mixin import TrackableMixin
 from project.utils import make_check_violation
 
 
-class ApiKey(db.Model, TrackableMixin):
+class ApiKey(db.Model, TrackableMixin, RateLimitHolderMixin):
     __tablename__ = "apikey"
     __display_name__ = "API key"
     __table_args__ = (
@@ -18,6 +19,7 @@ class ApiKey(db.Model, TrackableMixin):
         UniqueConstraint("name", "admin_unit_id", name="uq_apikey_name_admin_unit_id"),
         UniqueConstraint("name", "user_id", name="uq_apikey_name_user_id"),
     )
+    __default_rate_limit_value__ = "500/hour"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
@@ -68,6 +70,8 @@ def before_saving_api_key(mapper, connect, self):
 
 
 class ApiKeyOwnerMixin:
+    # api_keys = relationship("ApiKey")
+
     @declared_attr
     def max_api_keys(cls):
         return deferred(
@@ -81,4 +85,7 @@ class ApiKeyOwnerMixin:
         )
 
     def allows_another_api_key(self):
-        return self.number_of_api_keys < self.max_api_keys
+        return self.get_number_of_api_keys() < self.max_api_keys
+
+    def get_number_of_api_keys(self):  # pragma: no cover
+        raise NotImplementedError()

@@ -5,13 +5,32 @@ from flask import request
 from flask_apispec import marshal_with
 from flask_apispec.annotations import annotate
 from flask_apispec.views import MethodResource
+from flask_limiter.extension import LimitDecorator
 from flask_wtf.csrf import validate_csrf
 
-from project import app, csrf, db
-from project.api.schemas import ErrorResponseSchema, UnprocessableEntityResponseSchema
+from project import app, csrf, db, limiter
+from project.api.schemas import (
+    ErrorResponseSchema,
+    TooManyRequestsResponseSchema,
+    UnprocessableEntityResponseSchema,
+)
 from project.models.api_key import ApiKey
+from project.models.rate_limit_provider_mixin import RateLimitProviderMixin
 from project.oauth2 import require_oauth
 from project.utils import hash_api_key
+
+api_rate_limit_scope = "api"
+
+
+def get_limit_decorator_for_provider(
+    provider: RateLimitProviderMixin,
+) -> LimitDecorator:
+    key = provider.get_rate_limit_key()
+    return limiter.shared_limit(
+        provider.get_rate_limit_value(),
+        scope=api_rate_limit_scope,
+        key_func=lambda: key,
+    )
 
 
 def etag_cache(func):
@@ -32,7 +51,7 @@ def is_internal_request() -> bool:
         return False
 
 
-def request_has_api_key() -> bool:
+def get_api_key_from_request() -> bool:
     request_api_key = request.headers.get("X-API-Key")
     if not request_api_key:
         return False
@@ -42,25 +61,37 @@ def request_has_api_key() -> bool:
     if not api_key:
         return False
 
-    return True
+    return api_key
 
 
 def require_api_access(scopes=None):
     def inner_decorator(func):
         def wrapped(*args, **kwargs):  # see authlib ResourceProtector#__call__
+            limit_decorator = None
             try:  # pragma: no cover
                 try:
-                    require_oauth.acquire_token(scopes)
+                    token = require_oauth.acquire_token(scopes)
+                    limit_decorator = get_limit_decorator_for_provider(token)
                 except OAuth2Error as error:
                     require_oauth.raise_error_response(error)
             except Exception as e:
-                if (
-                    not app.config["API_READ_ANONYM"]
-                    and not is_internal_request()
-                    and not request_has_api_key()
-                ):
-                    raise e
-            return func(*args, **kwargs)
+                if app.config["API_READ_ANONYM"]:
+                    limit_decorator = limiter.shared_limit(
+                        "60/minute", scope=api_rate_limit_scope
+                    )
+                elif is_internal_request():
+                    limit_decorator = limiter.shared_limit(
+                        "1000/minute", scope=api_rate_limit_scope
+                    )
+                else:
+                    api_key = get_api_key_from_request()
+                    if api_key:
+                        limit_decorator = get_limit_decorator_for_provider(api_key)
+                    else:
+                        raise e
+
+            with limit_decorator:
+                return func(*args, **kwargs)
 
         scope_list = scopes if type(scopes) is list else [scopes] if scopes else list()
         security = [{"oauth2AuthCode": scope_list}]
@@ -89,6 +120,7 @@ def require_api_access(scopes=None):
 
 @marshal_with(ErrorResponseSchema, 400, "Bad Request")
 @marshal_with(UnprocessableEntityResponseSchema, 422, "Unprocessable Entity")
+@marshal_with(TooManyRequestsResponseSchema, 429, "Too many requests")
 class BaseResource(MethodResource):
     decorators = [etag_cache]
 
