@@ -12,6 +12,7 @@ from project import (
     celery,
     db,
     dump_path,
+    limiter,
     robots_txt_file,
     sitemap_file,
 )
@@ -46,6 +47,11 @@ def up():
 
     if "REDIS_URL" in app.config and app.config["REDIS_URL"]:  # pragma: no cover
         celery.control.ping()
+
+    if (
+        "LIMITER_REDIS_URL" in app.config and app.config["LIMITER_REDIS_URL"]
+    ):  # pragma: no cover
+        limiter.storage.storage.ping()
 
     return "OK"
 

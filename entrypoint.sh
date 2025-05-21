@@ -14,6 +14,15 @@ if [[ ! -z "${REDIS_URL}" ]]; then
     done
 fi
 
+if [[ ! -z "${LIMITER_REDIS_URL}" ]]; then
+    PONG=`redis-cli -u ${LIMITER_REDIS_URL} ping | grep PONG`
+    while [ -z "$PONG" ]; do
+        sleep 2
+        echo "Waiting for limiter redis server to become available..."
+        PONG=`redis-cli -u ${LIMITER_REDIS_URL} ping | grep PONG`
+    done
+fi
+
 until flask db upgrade
 do
     echo "Waiting for postgres server to become available..."

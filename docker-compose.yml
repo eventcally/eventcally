@@ -6,6 +6,7 @@ x-web-env:
   FLASK_APP: main.py
   DATABASE_URL: postgresql://eventcally:pass@db/eventcally
   REDIS_URL: redis://default:pass@redis
+  LIMITER_REDIS_URL: redis://default:pass@limiter_redis
   MAIL_DEFAULT_SENDER: noresponse@eventcally.com
   MAIL_SERVER: mailhog
   MAIL_PORT: 1025
@@ -41,6 +42,14 @@ services:
       - POSTGRES_PASSWORD=pass
 
   redis:
+    image: bitnami/redis:6.2
+    healthcheck:
+      test: "redis-cli -a 'pass' ping | grep PONG"
+      start_period: "5s"
+    environment:
+      REDIS_PASSWORD: pass
+
+  limiter_redis:
     image: bitnami/redis:6.2
     healthcheck:
       test: "redis-cli -a 'pass' ping | grep PONG"

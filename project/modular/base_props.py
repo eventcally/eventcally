@@ -1,3 +1,5 @@
+import os
+
 from flask_babel import format_date, format_datetime, format_time
 from markupsafe import Markup
 
@@ -289,3 +291,28 @@ class EventCategoryListProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", EventCategoryListPropFormatter())
         super().__init__(*args, **kwargs)
+
+
+class RateLimitPropPropFormatter(BasePropFormatter):
+    def format(self, data):
+        from project.api.resources import get_limit_decorator_for_provider, limiter
+
+        rows = []
+        limit_group = get_limit_decorator_for_provider(data).limit_group
+        for limit in limit_group:
+            key = limit_group.key_function()
+            args = [key, limit.scope_for("", "")]
+            stats = limiter.limiter.get_window_stats(limit.limit, *args)
+            row = f"{limit.limit}: {stats.remaining} remaining"
+            rows.append(row)
+
+        return os.linesep.join(rows)
+
+
+class RateLimitProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", RateLimitPropPropFormatter())
+        super().__init__(*args, **kwargs)
+
+    def get_display_data(self, object):
+        return object

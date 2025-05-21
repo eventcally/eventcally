@@ -67,6 +67,10 @@ class UnprocessableEntityErrorSchema(marshmallow.Schema):
     message = fields.Str()
 
 
+class TooManyRequestsResponseSchema(ErrorResponseSchema):
+    pass
+
+
 class UnprocessableEntityResponseSchema(ErrorResponseSchema):
     errors = fields.List(fields.Nested(UnprocessableEntityErrorSchema))
 

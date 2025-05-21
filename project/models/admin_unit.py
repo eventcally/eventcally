@@ -359,8 +359,7 @@ class AdminUnit(db.Model, TrackableMixin, ApiKeyOwnerMixin):
         backref=backref("admin_unit", lazy=True),
     )
 
-    @property
-    def number_of_api_keys(self):
+    def get_number_of_api_keys(self):
         from project.models.api_key import ApiKey
 
         return ApiKey.query.filter(ApiKey.admin_unit_id == self.id).count()

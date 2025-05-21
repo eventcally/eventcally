@@ -23,3 +23,13 @@ services:
       - 6380:6379
     environment:
       REDIS_PASSWORD: pass
+
+  limiter_redis:
+    image: bitnami/redis:6.2
+    healthcheck:
+      test: "redis-cli -a 'pass' ping | grep PONG"
+      start_period: "5s"
+    ports:
+      - 6381:6379
+    environment:
+      REDIS_PASSWORD: pass

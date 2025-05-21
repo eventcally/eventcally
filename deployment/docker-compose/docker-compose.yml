@@ -6,6 +6,7 @@ x-web-env:
   FLASK_APP: main.py
   DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
   REDIS_URL: redis://default:${REDIS_PASSWORD}@redis
+  LIMITER_REDIS_URL: redis://default:${LIMITER_REDIS_PASSWORD}@limiter_redis
   SECRET_KEY: ${SECRET_KEY}
   SECURITY_PASSWORD_HASH: ${SECURITY_PASSWORD_HASH}
   MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER}
@@ -87,6 +88,17 @@ services:
       - ${REDIS_DATA_PATH}:/bitnami/redis/data
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+  limiter_redis:
+    image: bitnami/redis:6.2
+    restart: always
+    healthcheck:
+      test: "redis-cli -a '${LIMITER_REDIS_PASSWORD}' ping | grep PONG"
+      start_period: "5s"
+    volumes:
+      - ${LIMITER_REDIS_DATA_PATH}:/bitnami/redis/data
+    environment:
+      REDIS_PASSWORD: ${LIMITER_REDIS_PASSWORD}
 
   web:
     <<: *default-web
