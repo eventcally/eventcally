@@ -75,11 +75,7 @@ def require_api_access(scopes=None):
                 except OAuth2Error as error:
                     require_oauth.raise_error_response(error)
             except Exception as e:
-                if app.config["API_READ_ANONYM"]:
-                    limit_decorator = limiter.shared_limit(
-                        "60/minute", scope=api_rate_limit_scope
-                    )
-                elif is_internal_request():
+                if is_internal_request():
                     limit_decorator = limiter.shared_limit(
                         "1000/minute", scope=api_rate_limit_scope
                     )
@@ -88,7 +84,12 @@ def require_api_access(scopes=None):
                     if api_key:
                         limit_decorator = get_limit_decorator_for_provider(api_key)
                     else:
-                        raise e
+                        if app.config["API_READ_ANONYM"]:
+                            limit_decorator = limiter.shared_limit(
+                                "60/minute", scope=api_rate_limit_scope
+                            )
+                        else:
+                            raise e
 
             with limit_decorator:
                 return func(*args, **kwargs)
