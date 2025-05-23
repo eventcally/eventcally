@@ -167,16 +167,20 @@ def delete_user_task(user_id):
     reject_on_worker_lost=True,
 )
 def delete_event_task(event_id):
-    from project import db
+    from project import app, db
     from project.models import Event
 
-    event = Event.query.get(event_id)
-
-    if not event:
-        return
-
-    db.session.delete(event)
-    db.session.commit()
+    try:
+        event = db.session.get(Event, event_id)
+        if event:
+            db.session.delete(event)
+            db.session.commit()
+    except Exception:
+        app.logger.exception(f"Failed to delete event {event_id}")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(

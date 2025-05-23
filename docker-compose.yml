@@ -76,6 +76,15 @@ services:
     <<: *default-web
     command: celery -A project.celery_init worker --loglevel=error
     entrypoint: []
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+      limiter_redis:
+        condition: service_healthy
 
   scheduler:
     <<: *default-web
