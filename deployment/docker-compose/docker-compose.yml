@@ -111,6 +111,13 @@ services:
       - "5000:5000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      limiter_redis:
+        condition: service_healthy
 
   worker:
     <<: *default-web

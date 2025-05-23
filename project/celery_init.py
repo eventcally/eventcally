@@ -78,7 +78,10 @@ def close_session(*args, **kwargs):
     # context, this ensures tasks have a fresh session (e.g. session errors
     # won't propagate across tasks)
     with app.app_context():
-        sqlalchemydb.session.remove()
+        try:
+            sqlalchemydb.session.remove()
+        except Exception:
+            app.logger.exception("Session removal failed")
 
 
 @contextmanager
