@@ -791,15 +791,11 @@ def create_bulk_event_references(admin_unit_id: int, postalCodes: list):
 
 
 def get_old_events():
-    min_start_before = datetime.datetime.now(datetime.UTC) - datetime.timedelta(
-        days=366
-    )
-    last_modified_before = datetime.datetime.now(datetime.UTC) - datetime.timedelta(
-        days=366
-    )
+    reference_date = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=366)
     return (
-        Event.query.filter(Event.min_start < min_start_before)
-        .filter(Event.last_modified_at < last_modified_before)
-        .filter(Event.number_of_dates < 2)
+        Event.query.filter(
+            or_(Event.max_date_end.is_(None), Event.max_date_end < reference_date)
+        )
+        .filter(Event.last_modified_at < reference_date)
         .all()
     )

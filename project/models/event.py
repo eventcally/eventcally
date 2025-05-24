@@ -143,6 +143,40 @@ class Event(db.Model, TrackableMixin, EventMixin):
             select(func.count()).where(EventDate.event_id == cls.id).scalar_subquery()
         )
 
+    @hybrid_property
+    def min_date_start(self):  # pragma: no cover
+        if self.dates:
+            return min(d.start for d in self.dates)
+        else:
+            return None
+
+    @min_date_start.expression
+    def min_date_start(cls):
+        return (
+            select(EventDate.start)
+            .where(EventDate.event_id == cls.id)
+            .order_by(EventDate.start)
+            .limit(1)
+            .scalar_subquery()
+        )
+
+    @hybrid_property
+    def max_date_end(self):  # pragma: no cover
+        if self.dates:
+            return max(d.end_or_start for d in self.dates)
+        else:
+            return None
+
+    @max_date_end.expression
+    def max_date_end(cls):
+        return (
+            select(EventDate.start)
+            .where(EventDate.event_id == cls.id)
+            .order_by(EventDate.end_or_start.desc())
+            .limit(1)
+            .scalar_subquery()
+        )
+
     references = relationship(
         "EventReference",
         backref=backref("event", lazy=False),
