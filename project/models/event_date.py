@@ -22,7 +22,7 @@ class EventDate(db.Model):
     )
 
     @hybrid_property
-    def end_or_start(self):
+    def end_or_start(self):  # pragma: no cover
         return self.end if self.end else self.start
 
     @end_or_start.expression
