@@ -1,6 +1,7 @@
 from dateutil.relativedelta import relativedelta
-from sqlalchemy import Boolean, Column, Integer, UnicodeText
+from sqlalchemy import Boolean, Column, Integer, UnicodeText, func
 from sqlalchemy.event import listens_for
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from project import db
 from project.models.functions import sanitize_allday_instance
@@ -19,6 +20,14 @@ class EventDate(db.Model):
         default=False,
         server_default="0",
     )
+
+    @hybrid_property
+    def end_or_start(self):
+        return self.end if self.end else self.start
+
+    @end_or_start.expression
+    def end_or_start(cls):
+        return func.coalesce(cls.end, cls.start)
 
 
 @listens_for(EventDate, "before_insert")
