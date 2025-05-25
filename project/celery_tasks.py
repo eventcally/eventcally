@@ -92,14 +92,21 @@ def delete_admin_units_with_due_request_task():
     reject_on_worker_lost=True,
 )
 def delete_admin_unit_task(admin_unit_id):
-    from project.services.admin_unit import delete_admin_unit, get_admin_unit_by_id
+    from project import app, db
+    from project.models import AdminUnit
 
-    admin_unit = get_admin_unit_by_id(admin_unit_id)
+    admin_unit = db.session.get(AdminUnit, admin_unit_id)
 
-    if not admin_unit:
-        return
-
-    delete_admin_unit(admin_unit)
+    try:
+        if admin_unit:
+            db.session.delete(admin_unit)
+            db.session.commit()
+    except Exception:
+        app.logger.exception(f"Failed to delete admin unit {admin_unit_id}")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(
@@ -152,14 +159,21 @@ def delete_old_events_task():
     reject_on_worker_lost=True,
 )
 def delete_user_task(user_id):
-    from project.services.user import delete_user, get_user
+    from project import app, db
+    from project.models import User
 
-    user = get_user(user_id)
+    user = db.session.get(User, user_id)
 
-    if not user:
-        return
-
-    delete_user(user)
+    try:
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+    except Exception:
+        app.logger.exception(f"Failed to delete user {user_id}")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(
