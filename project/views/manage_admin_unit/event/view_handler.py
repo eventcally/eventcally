@@ -33,17 +33,14 @@ from project.views.manage_admin_unit.event.views import (
     ListView,
     UpdateView,
 )
-from project.views.utils import current_admin_unit, manage_permission_required
+from project.views.utils import current_admin_unit
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = Event
-    create_decorators = [manage_permission_required("event:create")]
     create_view_class = CreateView
     read_view_class = None
-    update_decorators = [manage_permission_required("event:update")]
     update_view_class = UpdateView
-    delete_decorators = [manage_permission_required("event:delete")]
     delete_view_class = DeleteView
     list_view_class = ListView
     list_display_class = ListDisplay
@@ -118,7 +115,8 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
         if object.admin_unit_id == current_admin_unit.id:
             reference_request_create_action = self._create_action(
                 url_for(
-                    "event_reference_request_create",
+                    "manage_admin_unit.outgoing_event_reference_request_create_for_event",
+                    id=object.admin_unit_id,
                     event_id=object.id,
                 ),
                 gettext("Request reference"),

@@ -34,9 +34,11 @@ class OrganizationVerificationRequestResource(BaseResource):
         verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
 
         if not has_access(
-            verification_request.source_admin_unit, "verification_request:read"
+            verification_request.source_admin_unit,
+            "outgoing_organization_verification_requests:read",
         ) and not has_access(
-            verification_request.target_admin_unit, "verification_request:verify"
+            verification_request.target_admin_unit,
+            "incoming_organization_verification_requests:read",
         ):
             abort(401)
 
@@ -52,7 +54,8 @@ class OrganizationVerificationRequestResource(BaseResource):
         login_api_user_or_401()
         verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
         access_or_401(
-            verification_request.source_admin_unit, "verification_request:delete"
+            verification_request.source_admin_unit,
+            "outgoing_organization_verification_requests:write",
         )
 
         db.session.delete(verification_request)
@@ -75,7 +78,8 @@ class OrganizationVerificationRequestVerifyResource(BaseResource):
         login_api_user_or_401()
         verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
         access_or_401(
-            verification_request.target_admin_unit, "verification_request:verify"
+            verification_request.target_admin_unit,
+            "incoming_organization_verification_requests:write",
         )
 
         if (
@@ -117,7 +121,8 @@ class OrganizationVerificationRequestRejectResource(BaseResource):
         login_api_user_or_401()
         verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
         access_or_401(
-            verification_request.target_admin_unit, "verification_request:verify"
+            verification_request.target_admin_unit,
+            "incoming_organization_verification_requests:write",
         )
 
         if (

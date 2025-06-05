@@ -1,4 +1,4 @@
-from flask_babel import gettext, lazy_gettext
+from flask_babel import lazy_gettext
 
 from project.access import admin_unit_owner_access_or_401
 from project.models import EventReferenceRequest
@@ -14,21 +14,20 @@ from project.views.manage_admin_unit.outgoing_event_reference_request.displays i
     ReadDisplay,
 )
 from project.views.manage_admin_unit.outgoing_event_reference_request.views import (
+    CreateView,
     ListView,
 )
-from project.views.utils import current_admin_unit, manage_permission_required
+from project.views.utils import current_admin_unit
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = EventReferenceRequest
     create_view_class = None
     read_display_class = ReadDisplay
-    read_decorators = [manage_permission_required("reference_request:read")]
     update_view_class = None
     delete_view_class = None
     list_display_class = ListDisplay
     list_view_class = ListView
-    list_decorators = [manage_permission_required("reference_request:read")]
     list_filters = [
         EnumFilter(
             EventReferenceRequest.review_status, label=lazy_gettext("Review status")
@@ -47,7 +46,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
         return admin_unit_owner_access_or_401(object.event.admin_unit_id)
 
     def get_model_display_name_plural(self):
-        return gettext("Outgoing reference requests")
+        return lazy_gettext("Outgoing reference requests")
 
     def get_objects_base_query_from_kwargs(self, **kwargs):
         return super().get_objects_base_query_from_kwargs(**kwargs).join(Event)
@@ -57,6 +56,32 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
 
     def get_list_per_page(self):
         return 50
+
+    def _add_views(
+        self,
+        app,
+        single_url_folder,
+        plural_url_folder,
+        single_endpoint_name,
+        plural_endpoint_name,
+        id_query_arg_name,
+    ):
+        super()._add_views(
+            app,
+            single_url_folder,
+            plural_url_folder,
+            single_endpoint_name,
+            plural_endpoint_name,
+            id_query_arg_name,
+        )
+
+        self._add_view(
+            "create_for_event",
+            f"/{single_url_folder}/create_for_event/<int:event_id>",
+            CreateView,
+            f"{single_endpoint_name}_create_for_event",
+            app,
+        )
 
 
 handler = ViewHandler()

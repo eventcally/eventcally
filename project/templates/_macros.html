@@ -806,7 +806,7 @@
       {% endfor %}
     </div>
     <div class="ml-3 mb-3">
-      <a href="{{ url_for('event_reference_request_create', event_id=event.id) }}" class="btn btn-outline-secondary"><i class="fa fa-link"></i> {{ _('Request reference') }}</a>
+      <a href="{{ url_for('manage_admin_unit.outgoing_event_reference_request_create_for_event', id=event.admin_unit_id, event_id=event.id) }}" class="btn btn-outline-secondary"><i class="fa fa-link"></i> {{ _('Request reference') }}</a>
     </div>
   </div>
   {% endif %}
@@ -1148,7 +1148,7 @@
           {% endif %}
           <div class="dropdown-divider"></div>
           {% if user_rights['can_create_reference_request'] %}
-            <a class="dropdown-item" href="{{ url_for('event_reference_request_create', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Request reference') }}</a>
+            <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_event_reference_request_create_for_event', id=event.admin_unit_id, event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Request reference') }}</a>
           {% endif %}
           {% if user_rights['can_reference_event'] %}
             <a class="dropdown-item" href="{{ url_for('event_reference_create', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>

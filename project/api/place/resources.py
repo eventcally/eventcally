@@ -30,7 +30,7 @@ class PlaceResource(BaseResource):
     def put(self, id):
         login_api_user_or_401()
         place = EventPlace.query.get_or_404(id)
-        access_or_401(place.adminunit, "place:update")
+        access_or_401(place.adminunit, "event_places:write")
 
         place = self.update_instance(PlacePostRequestSchema, instance=place)
         db.session.commit()
@@ -47,7 +47,7 @@ class PlaceResource(BaseResource):
     def patch(self, id):
         login_api_user_or_401()
         place = EventPlace.query.get_or_404(id)
-        access_or_401(place.adminunit, "place:update")
+        access_or_401(place.adminunit, "event_places:write")
 
         place = self.update_instance(PlacePatchRequestSchema, instance=place)
         db.session.commit()
@@ -63,7 +63,7 @@ class PlaceResource(BaseResource):
     def delete(self, id):
         login_api_user_or_401()
         place = EventPlace.query.get_or_404(id)
-        access_or_401(place.adminunit, "place:delete")
+        access_or_401(place.adminunit, "event_places:write")
 
         db.session.delete(place)
         db.session.commit()

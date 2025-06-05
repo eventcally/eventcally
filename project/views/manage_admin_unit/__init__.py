@@ -1,6 +1,8 @@
-from flask import Blueprint, g
+from flask import g
 
-manage_admin_unit_bp = Blueprint(
+from project.modular.base_blueprint import BaseBlueprint
+
+manage_admin_unit_bp = BaseBlueprint(
     "manage_admin_unit",
     __name__,
     url_prefix="/manage/admin_unit/<int:id>",

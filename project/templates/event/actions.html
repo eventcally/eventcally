@@ -17,7 +17,7 @@ Vue.component("EventListAddEvent", EventListAddEvent);
 {% endblock %}
 
 {% block content %}
-    {% set can_add_to_list = current_admin_unit and has_access(current_admin_unit, "admin_unit:update")%}
+    {% set can_add_to_list = current_admin_unit and has_access(current_admin_unit, "event_lists:write")%}
     <div class="w-normal">
         <h5 class="card-title">{{ _('Actions for event') }}</h5>
 
@@ -28,7 +28,7 @@ Vue.component("EventListAddEvent", EventListAddEvent);
 
         <div class="list-group mt-4">
             {% if user_rights['can_create_reference_request'] %}
-                <a class="list-group-item list-group-item-action" href="{{ url_for('event_reference_request_create', event_id=event.id) }}">
+                <a class="list-group-item list-group-item-action" href="{{ url_for('manage_admin_unit.outgoing_event_reference_request_create_for_event', id=event.admin_unit_id, event_id=event.id) }}">
                     <p class="mb-1"><i class="fa fa-link"></i> {{ _('Request reference') }}</p>
                     <small>{{ _('Ask another organization to reference your event on their calendar.') }}</small>
                 </a>

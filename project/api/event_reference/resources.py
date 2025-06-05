@@ -25,7 +25,7 @@ class EventReferenceResource(BaseResource):
     def delete(self, id):
         login_api_user_or_401()
         reference = EventReference.query.get_or_404(id)
-        access_or_401(reference.admin_unit, "event:reference")
+        access_or_401(reference.admin_unit, "incoming_event_references:write")
 
         db.session.delete(reference)
         db.session.commit()

@@ -112,13 +112,13 @@ def get_event_category_choices():
 
 def get_user_rights(event):
     return {
-        "can_duplicate_event": has_access(event.admin_unit, "event:create"),
+        "can_duplicate_event": has_access(event.admin_unit, "events:write"),
         "can_verify_event": has_access(event.admin_unit, "event:verify"),
         "can_reference_event": can_reference_event(event),
         "can_create_reference_request": can_request_event_reference(event),
-        "can_create_event": has_access(event.admin_unit, "event:create"),
+        "can_create_event": has_access(event.admin_unit, "events:write"),
         "can_view_actions": current_user.is_authenticated,
-        "can_update_event": has_access(event.admin_unit, "event:update"),
+        "can_update_event": has_access(event.admin_unit, "events:write"),
     }
 
 
@@ -129,7 +129,7 @@ def send_referenced_event_changed_mails(event):
         # Alle Mitglieder der AdminUnit, die das Recht haben, Requests zu verifizieren
         send_template_mails_to_admin_unit_members_async(
             reference.admin_unit_id,
-            "reference_request:verify",
+            "incoming_event_reference_requests:write",
             "referenced_event_changed_notice",
             event=event,
             reference=reference,
@@ -141,7 +141,7 @@ def send_event_report_mails(event: Event, report: dict):
 
     # Alle Mitglieder der AdminUnit, die das Recht haben, Events zu bearbeiten
     members = get_admin_unit_members_with_permission(
-        event.admin_unit_id, "event:update"
+        event.admin_unit_id, "events:write"
     )
     users = [member.user for member in members]
 

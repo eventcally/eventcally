@@ -178,7 +178,7 @@ const OrganizationRead = {
     this.isLoadingRelation = false;
     this.organization = null;
     this.relation = null;
-    this.canRelation = this.$root.has_access("admin_unit:update") &&
+    this.canRelation = this.$root.has_access("outgoing_organization_relations:write") &&
       this.$root.hasOwnProperty("currentAdminUnit") &&
       (this.$root.currentAdminUnit.canVerifyOther || this.$root.currentAdminUnit.incomingReferenceRequestsAllowed);
     this.relationDoesNotExist = false;

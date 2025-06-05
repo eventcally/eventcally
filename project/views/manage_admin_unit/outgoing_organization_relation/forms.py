@@ -2,28 +2,9 @@ from flask_babel import lazy_gettext
 from wtforms import BooleanField
 from wtforms.validators import DataRequired
 
-from project import db
-from project.models.admin_unit import AdminUnit
-from project.modular.ajax import AjaxModelLoader
 from project.modular.base_form import BaseCreateForm, BaseUpdateForm
 from project.modular.fields import AjaxSelectField
-from project.services.admin_unit import get_admin_unit_query
-from project.services.search_params import AdminUnitSearchParams
-from project.views.utils import current_admin_unit
-
-
-class OrganizationAjaxModelLoader(AjaxModelLoader):
-    def __init__(self, **options):
-        options["fields"] = [AdminUnit.name]
-        super().__init__(db.session, AdminUnit, **options)
-
-    def get_pagination(self, term):
-        params = AdminUnitSearchParams()
-        params.keyword = term
-        params.include_unverified = current_admin_unit.can_verify_other
-
-        pagination = get_admin_unit_query(params).paginate()
-        return pagination
+from project.views.manage_admin_unit.ajax import OrganizationAjaxModelLoader
 
 
 class SharedFormMixin(object):

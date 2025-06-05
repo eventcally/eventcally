@@ -1,6 +1,7 @@
 from flask import Blueprint, url_for
 from flask_babel import gettext
 
+from project.modular.base_blueprint import BaseBlueprint
 from project.modular.base_form import BaseDeleteForm, BaseListForm
 from project.modular.base_views import (
     BaseCreateView,
@@ -8,6 +9,7 @@ from project.modular.base_views import (
     BaseListView,
     BaseReadView,
     BaseUpdateView,
+    BaseView,
 )
 
 
@@ -41,6 +43,7 @@ class BaseViewHandler:
         self.app = None
         self.endpoints = dict()
         self.template_pathes = list()
+        self.permissions = set()
 
         if not self.list_form_class and (
             self.list_filters
@@ -209,12 +212,19 @@ class BaseViewHandler:
 
         return result
 
-    def _add_view(self, key, url, view_class, endpoint, app):
+    def _add_view(self, key, url, view_class, endpoint, app, **kwargs):
+        if not issubclass(view_class, BaseView):  # pragma: no cover
+            raise ValueError(f"view_class must inherit from {BaseView}")
+
+        kwargs["handler"] = self
         app.add_url_rule(
             url,
-            view_func=view_class.as_view(endpoint, handler=self),
+            view_func=view_class.as_view(endpoint, **kwargs),
         )
         self.endpoints[key] = endpoint
+
+    def get_permission_entity(self):
+        return f"{self.generic_prefix}{self.model.__model_name_plural__}"
 
     def get_single_url_folder(self):
         return f"{self.generic_prefix}{self.model.__model_name__}"
@@ -348,6 +358,9 @@ class BaseViewHandler:
         self.template_pathes.append("")
 
     def init_app(self, app):
+        if isinstance(app, BaseBlueprint):
+            app.view_handlers.append(self)
+
         self.app = app
         self._init_template_pathes()
         self.add_views(app)

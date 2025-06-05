@@ -24,7 +24,7 @@ class OrganizationInvitationResource(BaseResource):
     def get(self, id):
         login_api_user_or_401()
         invitation = AdminUnitInvitation.query.get_or_404(id)
-        access_or_401(invitation.adminunit, "admin_unit:update")
+        access_or_401(invitation.adminunit, "organization_invitations:read")
 
         return invitation
 
@@ -38,7 +38,7 @@ class OrganizationInvitationResource(BaseResource):
     def put(self, id):
         login_api_user_or_401()
         invitation = AdminUnitInvitation.query.get_or_404(id)
-        access_or_401(invitation.adminunit, "admin_unit:update")
+        access_or_401(invitation.adminunit, "organization_invitations:write")
 
         invitation = self.update_instance(
             OrganizationInvitationUpdateRequestSchema, instance=invitation
@@ -57,7 +57,7 @@ class OrganizationInvitationResource(BaseResource):
     def patch(self, id):
         login_api_user_or_401()
         invitation = AdminUnitInvitation.query.get_or_404(id)
-        access_or_401(invitation.adminunit, "admin_unit:update")
+        access_or_401(invitation.adminunit, "organization_invitations:write")
 
         invitation = self.update_instance(
             OrganizationInvitationPatchRequestSchema, instance=invitation
@@ -75,7 +75,7 @@ class OrganizationInvitationResource(BaseResource):
     def delete(self, id):
         login_api_user_or_401()
         invitation = AdminUnitInvitation.query.get_or_404(id)
-        access_or_401(invitation.adminunit, "admin_unit:update")
+        access_or_401(invitation.adminunit, "organization_invitations:write")
 
         db.session.delete(invitation)
         db.session.commit()

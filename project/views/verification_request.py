@@ -24,8 +24,8 @@ from project.views.utils import (
 
 @app.route("/manage/admin_unit/<int:id>/verification_requests/outgoing/create/select")
 @auth_required()
-@manage_required("verification_request:create")
-def manage_admin_unit_verification_requests_outgoing_create_select(id):
+@manage_required("outgoing_organization_verification_requests:write")
+def manage_organization_verification_requests_outgoing_create_select(id):
     admin_unit = g.manage_admin_unit
 
     params = AdminUnitSearchParams()
@@ -46,8 +46,8 @@ def manage_admin_unit_verification_requests_outgoing_create_select(id):
     methods=("GET", "POST"),
 )
 @auth_required()
-@manage_required("verification_request:create")
-def manage_admin_unit_verification_requests_outgoing_create(id, target_id):
+@manage_required("outgoing_organization_verification_requests:write")
+def manage_organization_requests_outgoing_create(id, target_id):
     admin_unit = g.manage_admin_unit
     target_admin_unit = AdminUnit.query.get_or_404(target_id)
 
@@ -56,7 +56,7 @@ def manage_admin_unit_verification_requests_outgoing_create(id, target_id):
     ):  # pragma: no cover
         return redirect(
             url_for(
-                "manage_admin_unit_verification_requests_outgoing_create_select",
+                "manage_organization_verification_requests_outgoing_create_select",
                 id=admin_unit.id,
             )
         )
@@ -82,7 +82,7 @@ def manage_admin_unit_verification_requests_outgoing_create(id, target_id):
             flash(msg, "success")
             return redirect(
                 url_for(
-                    "manage_admin_unit.outgoing_admin_unit_verification_requests",
+                    "manage_admin_unit.outgoing_organization_verification_requests",
                     id=admin_unit.id,
                 )
             )
@@ -105,7 +105,7 @@ def send_verification_request_inbox_mails(request):
     admin_unit_id = request.target_admin_unit_id or request.target_admin_unit.id
     send_template_mails_to_admin_unit_members_async(
         admin_unit_id,
-        "verification_request:verify",
+        "incoming_organization_verification_requests:write",
         "verification_request_notice",
         request=request,
     )

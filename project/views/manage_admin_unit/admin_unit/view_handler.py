@@ -1,5 +1,4 @@
 from project.models.admin_unit import AdminUnit
-from project.modular.base_view_handler import BaseViewHandler
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.admin_unit.views import (
     CancelDeletionView,
@@ -7,10 +6,13 @@ from project.views.manage_admin_unit.admin_unit.views import (
     UpdateView,
     UpdateWidgetView,
 )
+from project.views.manage_admin_unit.child_view_handler import (
+    ManageAdminUnitBaseViewHandler,
+)
 from project.views.utils import current_admin_unit
 
 
-class ViewHandler(BaseViewHandler):
+class ViewHandler(ManageAdminUnitBaseViewHandler):
     model = AdminUnit
     create_view_class = None
     read_view_class = None

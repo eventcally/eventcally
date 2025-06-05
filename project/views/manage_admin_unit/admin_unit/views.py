@@ -14,16 +14,12 @@ from project.views.manage_admin_unit.admin_unit.forms import (
     UpdateForm,
     UpdateWidgetForm,
 )
-from project.views.utils import (
-    current_admin_unit,
-    flash_non_match_for_deletion,
-    manage_permission_required,
-)
+from project.views.utils import current_admin_unit, flash_non_match_for_deletion
 
 
 class UpdateView(BaseUpdateView):
-    decorators = [manage_permission_required("admin_unit:update")]
     form_class = UpdateForm
+    permission = "settings:write"
 
     def get_title(self, **kwargs):
         return lazy_gettext("Settings")
@@ -42,8 +38,8 @@ class UpdateView(BaseUpdateView):
 
 class UpdateWidgetView(BaseUpdateView):
     template_file_name = "widgets.html"
-    decorators = [manage_permission_required("admin_unit:update")]
     form_class = UpdateWidgetForm
+    permission = "widgets:write"
 
     def get_title(self, **kwargs):
         return lazy_gettext("Widgets")
@@ -83,8 +79,8 @@ class UpdateWidgetView(BaseUpdateView):
 
 class RequestDeletionView(BaseDeleteView):
     template_file_name = "delete.html"
-    decorators = [manage_permission_required("admin_unit:update")]
     form_class = RequestDeletionForm
+    permission = "settings:write"
 
     def check_object_access(self, object):
         result = super().check_object_access(object)
@@ -124,8 +120,8 @@ class RequestDeletionView(BaseDeleteView):
 
 class CancelDeletionView(BaseDeleteView):
     template_file_name = "delete.html"
-    decorators = [manage_permission_required("admin_unit:update")]
     form_class = CancelDeletionForm
+    permission = "settings:write"
 
     def check_object_access(self, object):
         result = super().check_object_access(object)

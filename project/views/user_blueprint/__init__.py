@@ -1,6 +1,6 @@
-from flask import Blueprint, g
+from project.modular.base_blueprint import BaseBlueprint
 
-user_bp = Blueprint(
+user_bp = BaseBlueprint(
     "user",
     __name__,
     url_prefix="/user",

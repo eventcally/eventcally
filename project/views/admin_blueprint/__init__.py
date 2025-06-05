@@ -1,6 +1,6 @@
-from flask import Blueprint, g
+from project.modular.base_blueprint import BaseBlueprint
 
-admin_bp = Blueprint(
+admin_bp = BaseBlueprint(
     "admin",
     __name__,
     url_prefix="/admin",

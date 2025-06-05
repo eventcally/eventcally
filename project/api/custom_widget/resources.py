@@ -30,7 +30,7 @@ class CustomWidgetResource(BaseResource):
     def put(self, id):
         login_api_user_or_401()
         customwidget = CustomWidget.query.get_or_404(id)
-        access_or_401(customwidget.adminunit, "admin_unit:update")
+        access_or_401(customwidget.adminunit, "custom_widgets:write")
 
         customwidget = self.update_instance(
             CustomWidgetPostRequestSchema, instance=customwidget
@@ -49,7 +49,7 @@ class CustomWidgetResource(BaseResource):
     def patch(self, id):
         login_api_user_or_401()
         customwidget = CustomWidget.query.get_or_404(id)
-        access_or_401(customwidget.adminunit, "admin_unit:update")
+        access_or_401(customwidget.adminunit, "custom_widgets:write")
 
         customwidget = self.update_instance(
             CustomWidgetPatchRequestSchema, instance=customwidget
@@ -67,7 +67,7 @@ class CustomWidgetResource(BaseResource):
     def delete(self, id):
         login_api_user_or_401()
         customwidget = CustomWidget.query.get_or_404(id)
-        access_or_401(customwidget.adminunit, "admin_unit:update")
+        access_or_401(customwidget.adminunit, "custom_widgets:write")
 
         db.session.delete(customwidget)
         db.session.commit()

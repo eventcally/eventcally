@@ -3,11 +3,32 @@ from sqlalchemy.orm import class_mapper
 
 from project.access import admin_unit_owner_access_or_401
 from project.modular.base_view_handler import BaseViewHandler
-from project.views.utils import current_admin_unit
+from project.views.utils import current_admin_unit, manage_permission_required
 
 
-class ManageAdminUnitChildViewHandler(BaseViewHandler):
+class ManageAdminUnitBaseViewHandler(BaseViewHandler):
     decorators = [auth_required()]
+
+    def _add_view(self, key, url, view_class, endpoint, app, **kwargs):
+        if (
+            view_class.permission is None and view_class.permission_action is None
+        ):  # pragma: no cover
+            raise ValueError("permission or permission_action must be set")
+
+        if view_class.permission is None:
+            view_class.permission = (
+                f"{self.get_permission_entity()}:{view_class.permission_action.name}"
+            )
+
+        decorator = manage_permission_required(view_class.permission)
+        decorators = kwargs.setdefault("decorators", [])
+        decorators.append(decorator)
+        self.permissions.add(view_class.permission)
+
+        return super()._add_view(key, url, view_class, endpoint, app, **kwargs)
+
+
+class ManageAdminUnitChildViewHandler(ManageAdminUnitBaseViewHandler):
     admin_unit_id_attribute_name = "admin_unit_id"
 
     def __init__(self, *args, **kwargs):

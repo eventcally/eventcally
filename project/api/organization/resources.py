@@ -215,7 +215,7 @@ class OrganizationEventListResource(BaseResource):
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "event:create")
+        access_or_401(admin_unit, "events:write")
 
         event = self.create_instance(
             EventPostRequestSchema, admin_unit_id=admin_unit.id
@@ -279,7 +279,7 @@ class OrganizationOrganizerListResource(BaseResource):
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "organizer:create")
+        access_or_401(admin_unit, "event_organizers:write")
 
         organizer = self.create_instance(
             OrganizerPostRequestSchema, admin_unit_id=admin_unit.id
@@ -314,7 +314,7 @@ class OrganizationPlaceListResource(BaseResource):
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "place:create")
+        access_or_401(admin_unit, "event_places:write")
 
         place = self.create_instance(
             PlacePostRequestSchema, admin_unit_id=admin_unit.id
@@ -352,7 +352,7 @@ class OrganizationIncomingEventReferenceListResource(BaseResource):
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "event:reference")
+        access_or_401(admin_unit, "incoming_event_references:write")
 
         reference = self.create_instance(
             EventReferenceCreateRequestSchema, admin_unit_id=admin_unit.id
@@ -495,7 +495,7 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "verification_request:create")
+        access_or_401(admin_unit, "outgoing_organization_verification_requests:write")
 
         verification_request = self.create_instance(
             OrganizationVerificationRequestPostRequestSchema,
@@ -527,7 +527,7 @@ class OrganizationOutgoingRelationListResource(BaseResource):
     def get(self, id, **kwargs):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "admin_unit:update")
+        access_or_401(admin_unit, "outgoing_organization_relations:read")
 
         pagination = get_relation_outgoing_query(admin_unit).paginate()
         return pagination
@@ -542,7 +542,7 @@ class OrganizationOutgoingRelationListResource(BaseResource):
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "admin_unit:update")
+        access_or_401(admin_unit, "outgoing_organization_relations:write")
 
         relation = self.create_instance(
             OrganizationRelationCreateRequestSchema, source_admin_unit_id=admin_unit.id
@@ -563,7 +563,7 @@ class OrganizationOutgoingRelationResource(BaseResource):
     def get(self, id, target_id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "admin_unit:update")
+        access_or_401(admin_unit, "outgoing_organization_relations:read")
 
         relation = AdminUnitRelation.query.filter(
             AdminUnitRelation.source_admin_unit_id == id,
@@ -583,7 +583,7 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
     def get(self, id, **kwargs):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "admin_unit:update")
+        access_or_401(admin_unit, "organization_invitations:read")
 
         params = TrackableSearchParams()
         params.load_from_request(**kwargs)
@@ -603,7 +603,7 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "admin_unit:update")
+        access_or_401(admin_unit, "organization_invitations:write")
 
         invitation = self.create_instance(
             OrganizationInvitationCreateRequestSchema, admin_unit_id=admin_unit.id
@@ -645,7 +645,7 @@ class OrganizationEventListListResource(BaseResource):
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "admin_unit:update")
+        access_or_401(admin_unit, "event_lists:write")
 
         event_list = self.create_instance(
             EventListCreateRequestSchema, admin_unit_id=admin_unit.id
@@ -699,7 +699,7 @@ class OrganizationCustomWidgetListResource(BaseResource):
     def post(self, id):
         login_api_user_or_401()
         admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "admin_unit:update")
+        access_or_401(admin_unit, "custom_widgets:write")
 
         custom_widget = self.create_instance(
             CustomWidgetPostRequestSchema, admin_unit_id=admin_unit.id
