@@ -37,9 +37,17 @@ def clear_images_task():
     reject_on_worker_lost=True,
 )
 def update_recurring_dates_task():
+    from project import app, db
     from project.services.event import update_recurring_dates
 
-    update_recurring_dates()
+    try:
+        update_recurring_dates()
+    except Exception:
+        app.logger.exception("Failed update_recurring_dates_task")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(
@@ -47,9 +55,17 @@ def update_recurring_dates_task():
     reject_on_worker_lost=True,
 )
 def dump_all_task():
+    from project import app, db
     from project.services.dump import dump_all
 
-    dump_all()
+    try:
+        dump_all()
+    except Exception:
+        app.logger.exception("Failed dump_all_task")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(
@@ -57,9 +73,17 @@ def dump_all_task():
     reject_on_worker_lost=True,
 )
 def dump_admin_unit_task(admin_unit_id):
+    from project import app, db
     from project.services.dump import dump_admin_unit
 
-    dump_admin_unit(admin_unit_id)
+    try:
+        dump_admin_unit(admin_unit_id)
+    except Exception:
+        app.logger.exception(f"Failed dump_admin_unit_task {admin_unit_id}")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(
@@ -77,14 +101,24 @@ def clear_admin_unit_dumps_task():
     reject_on_worker_lost=True,
 )
 def delete_admin_units_with_due_request_task():
+    from project import app, db
     from project.services.admin_unit import get_admin_units_with_due_delete_request
 
-    admin_units = get_admin_units_with_due_delete_request()
+    try:
+        admin_units = get_admin_units_with_due_delete_request()
 
-    if not admin_units:
-        return
+        if not admin_units:
+            return
 
-    group(delete_admin_unit_task.s(admin_unit.id) for admin_unit in admin_units).delay()
+        group(
+            delete_admin_unit_task.s(admin_unit.id) for admin_unit in admin_units
+        ).delay()
+    except Exception:
+        app.logger.exception("Failed delete_admin_units_with_due_request_task")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(
@@ -95,9 +129,9 @@ def delete_admin_unit_task(admin_unit_id):
     from project import app, db
     from project.models import AdminUnit
 
-    admin_unit = db.session.get(AdminUnit, admin_unit_id)
-
     try:
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+
         if admin_unit:
             db.session.delete(admin_unit)
             db.session.commit()
@@ -115,14 +149,22 @@ def delete_admin_unit_task(admin_unit_id):
     reject_on_worker_lost=True,
 )
 def delete_user_with_due_request_task():
+    from project import app, db
     from project.services.user import get_users_with_due_delete_request
 
-    users = get_users_with_due_delete_request()
+    try:
+        users = get_users_with_due_delete_request()
 
-    if not users:
-        return
+        if not users:
+            return
 
-    group(delete_user_task.s(user.id) for user in users).delay()
+        group(delete_user_task.s(user.id) for user in users).delay()
+    except Exception:
+        app.logger.exception("Failed delete_user_with_due_request_task")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(
@@ -130,14 +172,22 @@ def delete_user_with_due_request_task():
     reject_on_worker_lost=True,
 )
 def delete_ghost_users_task():
+    from project import app, db
     from project.services.user import get_ghost_users
 
-    users = get_ghost_users()
+    try:
+        users = get_ghost_users()
 
-    if not users:
-        return
+        if not users:
+            return
 
-    group(delete_user_task.s(user.id) for user in users).delay()
+        group(delete_user_task.s(user.id) for user in users).delay()
+    except Exception:
+        app.logger.exception("Failed delete_ghost_users_task")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(
@@ -145,14 +195,22 @@ def delete_ghost_users_task():
     reject_on_worker_lost=True,
 )
 def delete_old_events_task():
+    from project import app, db
     from project.services.event import get_old_events
 
-    events = get_old_events()
+    try:
+        events = get_old_events()
 
-    if not events:
-        return
+        if not events:
+            return
 
-    group(delete_event_task.s(event.id) for event in events).delay()
+        group(delete_event_task.s(event.id) for event in events).delay()
+    except Exception:
+        app.logger.exception("Failed delete_old_events_task")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(
@@ -163,9 +221,9 @@ def delete_user_task(user_id):
     from project import app, db
     from project.models import User
 
-    user = db.session.get(User, user_id)
-
     try:
+        user = db.session.get(User, user_id)
+
         if user:
             db.session.delete(user)
             db.session.commit()
@@ -205,10 +263,17 @@ def delete_event_task(event_id):
     reject_on_worker_lost=True,
 )
 def seo_generate_sitemap_task():
-    from project import app
+    from project import app, db
     from project.services.seo import generate_sitemap
 
-    generate_sitemap(app.config["SEO_SITEMAP_PING_GOOGLE"])
+    try:
+        generate_sitemap(app.config["SEO_SITEMAP_PING_GOOGLE"])
+    except Exception:
+        app.logger.exception("Failed seo_generate_sitemap_task")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 @celery.task(
@@ -216,6 +281,14 @@ def seo_generate_sitemap_task():
     reject_on_worker_lost=True,
 )
 def generate_robots_txt_task():
+    from project import app, db
     from project.services.seo import generate_robots_txt
 
-    generate_robots_txt()
+    try:
+        generate_robots_txt()
+    except Exception:
+        app.logger.exception("Failed generate_robots_txt_task")
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()

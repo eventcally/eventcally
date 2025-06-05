@@ -5,7 +5,7 @@ from urllib.error import URLError
 from babel import Locale
 from celery import Celery
 from celery import Task as BaseTask
-from celery.signals import after_setup_logger, after_setup_task_logger, task_postrun
+from celery.signals import after_setup_logger, after_setup_task_logger
 from requests.exceptions import RequestException
 
 
@@ -66,22 +66,6 @@ def setup_task_logger(logger, *args, **kwargs):
     from project.one_line_formatter import init_logger_with_one_line_formatter
 
     init_logger_with_one_line_formatter(logger)
-
-
-@task_postrun.connect
-def close_session(*args, **kwargs):
-    from project import app
-    from project import db as sqlalchemydb
-
-    # Flask SQLAlchemy will automatically create new sessions for you from
-    # a scoped session factory, given that we are maintaining the same app
-    # context, this ensures tasks have a fresh session (e.g. session errors
-    # won't propagate across tasks)
-    with app.app_context():
-        try:
-            sqlalchemydb.session.remove()
-        except Exception:
-            app.logger.exception("Session removal failed")
 
 
 @contextmanager
