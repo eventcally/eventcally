@@ -17,7 +17,6 @@ from project.views.manage_admin_unit.incoming_verification_request.displays impo
 from project.views.manage_admin_unit.incoming_verification_request.views import (
     ReviewView,
 )
-from project.views.utils import manage_permission_required
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
@@ -28,7 +27,6 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     update_view_class = None
     delete_view_class = None
     list_display_class = ListDisplay
-    list_decorators = [manage_permission_required("verification_request:read")]
     list_filters = [
         EnumFilter(
             AdminUnitVerificationRequest.review_status,
@@ -45,7 +43,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     generic_prefix = "incoming_"
 
     def get_model_display_name_plural(self):
-        return gettext("Incoming verification requests")
+        return lazy_gettext("Incoming verification requests")
 
     def _add_views(
         self,

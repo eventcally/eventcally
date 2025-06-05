@@ -14,6 +14,7 @@ from project.modular.filters import (
     SelectModelFilter,
     StringFilter,
 )
+from project.permissions import PermissionAction
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
@@ -25,12 +26,25 @@ from project.views.utils import (
 
 class BaseView(View):
     template_file_name = None
+    permission: str = None
+    permission_action: PermissionAction = None
 
     def __init__(self, *args, **kwargs):
         super().__init__()
 
         self.handler = kwargs.get("handler")
-        self.decorators.extend(self.handler.decorators)
+
+    @classmethod
+    def as_view(cls, name, *class_args, **class_kwargs):
+        view = super().as_view(name, *class_args, **class_kwargs)
+
+        for decorator in class_kwargs.get("handler").decorators:
+            view = decorator(view)
+
+        for decorator in class_kwargs.get("decorators", []):
+            view = decorator(view)
+
+        return view
 
     @property
     def model(self):
@@ -107,6 +121,7 @@ class BaseListView(BaseView):
     list_context_name = None
     template_file_name = "list.html"
     form_class = None
+    permission_action = PermissionAction.read
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -308,6 +323,7 @@ class BaseFormView(BaseObjectView):
 
 class BaseReadView(BaseObjectView):
     template_file_name = "read.html"
+    permission_action = PermissionAction.read
 
     def get_title(self, **kwargs):
         return str(kwargs["object"])
@@ -329,6 +345,7 @@ class BaseReadView(BaseObjectView):
 
 class BaseCreateView(BaseFormView):
     template_file_name = "create.html"
+    permission_action = PermissionAction.write
 
     def get_redirect_url(self, **kwargs):
         result = self.handler.get_read_url(**kwargs)
@@ -425,6 +442,7 @@ class BaseObjectFormView(BaseFormView):
 
 class BaseUpdateView(BaseObjectFormView):
     template_file_name = "update.html"
+    permission_action = PermissionAction.write
 
     def get_redirect_url(self, **kwargs):
         result = self.handler.get_read_url(**kwargs)
@@ -462,6 +480,7 @@ class BaseUpdateView(BaseObjectFormView):
 
 class BaseDeleteView(BaseObjectFormView):
     template_file_name = "delete.html"
+    permission_action = PermissionAction.write
 
     def can_object_be_deleted(self, form, object):
         if not self.handler.can_object_be_deleted(form, object):

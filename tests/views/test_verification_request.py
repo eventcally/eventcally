@@ -14,7 +14,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     ) = seeder.setup_admin_unit_missing_verification_scenario()
 
     url = utils.get_url(
-        "manage_admin_unit_verification_requests_outgoing_create",
+        "manage_organization_requests_outgoing_create",
         id=unverified_admin_unit_id,
         target_id=verifier_admin_unit_id,
     )
@@ -36,7 +36,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
 
     utils.assert_response_redirect(
         response,
-        "manage_admin_unit.outgoing_admin_unit_verification_requests",
+        "manage_admin_unit.outgoing_organization_verification_requests",
         id=unverified_admin_unit_id,
     )
     utils.assert_send_mail_called(mail_mock, "test@test.de")
@@ -72,12 +72,12 @@ def test_admin_unit_verification_requests_incoming(
     seeder.create_incoming_admin_unit_verification_request(admin_unit_id)
 
     utils.get_endpoint_ok(
-        "manage_admin_unit.incoming_admin_unit_verification_requests",
+        "manage_admin_unit.incoming_organization_verification_requests",
         id=admin_unit_id,
         review_status=-1,
     )
     utils.get_endpoint_ok(
-        "manage_admin_unit.incoming_admin_unit_verification_requests",
+        "manage_admin_unit.incoming_organization_verification_requests",
         id=admin_unit_id,
         review_status=1,
     )
@@ -92,17 +92,17 @@ def test_verification_requests_outgoing(client, seeder: Seeder, utils: UtilActio
     ) = seeder.setup_admin_unit_missing_verification_scenario()
 
     response = utils.get_endpoint(
-        "manage_admin_unit.outgoing_admin_unit_verification_requests",
+        "manage_admin_unit.outgoing_organization_verification_requests",
         id=unverified_admin_unit_id,
     )
     utils.assert_response_redirect(
         response,
-        "manage_admin_unit_verification_requests_outgoing_create_select",
+        "manage_organization_verification_requests_outgoing_create_select",
         id=unverified_admin_unit_id,
     )
 
     response = utils.get_endpoint_ok(
-        "manage_admin_unit_verification_requests_outgoing_create_select",
+        "manage_organization_verification_requests_outgoing_create_select",
         id=unverified_admin_unit_id,
     )
     utils.assert_response_contains(response, "Stadtmarketing")
@@ -112,7 +112,7 @@ def test_verification_requests_outgoing(client, seeder: Seeder, utils: UtilActio
         unverified_admin_unit_id, verifier_admin_unit_id
     )
     response = utils.get_endpoint_ok(
-        "manage_admin_unit.outgoing_admin_unit_verification_requests",
+        "manage_admin_unit.outgoing_organization_verification_requests",
         id=unverified_admin_unit_id,
     )
 
@@ -130,9 +130,9 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_
     )
 
     url = utils.get_url(
-        "manage_admin_unit.outgoing_admin_unit_verification_request_delete",
+        "manage_admin_unit.outgoing_organization_verification_request_delete",
         id=unverified_admin_unit_id,
-        admin_unit_verification_request_id=request_id,
+        organization_verification_request_id=request_id,
     )
     response = utils.get_ok(url)
 
@@ -151,7 +151,7 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_
 
     utils.assert_response_redirect(
         response,
-        "manage_admin_unit.outgoing_admin_unit_verification_requests",
+        "manage_admin_unit.outgoing_organization_verification_requests",
         id=unverified_admin_unit_id,
     )
 

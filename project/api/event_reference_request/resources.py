@@ -29,8 +29,10 @@ class EventReferenceRequestResource(BaseResource):
         reference_request = EventReferenceRequest.query.get_or_404(id)
 
         if not has_access(
-            reference_request.event.admin_unit, "reference_request:read"
-        ) and not has_access(reference_request.admin_unit, "reference_request:verify"):
+            reference_request.event.admin_unit, "outgoing_event_reference_requests:read"
+        ) and not has_access(
+            reference_request.admin_unit, "incoming_event_reference_requests:write"
+        ):
             abort(401)
 
         return reference_request
@@ -44,7 +46,10 @@ class EventReferenceRequestResource(BaseResource):
     def delete(self, id):
         login_api_user_or_401()
         reference_request = EventReferenceRequest.query.get_or_404(id)
-        access_or_401(reference_request.event.admin_unit, "reference_request:delete")
+        access_or_401(
+            reference_request.event.admin_unit,
+            "outgoing_event_reference_requests:write",
+        )
 
         db.session.delete(reference_request)
         db.session.commit()
@@ -63,7 +68,9 @@ class EventReferenceRequestVerifyResource(BaseResource):
     def post(self, id, **kwargs):
         login_api_user_or_401()
         reference_request = EventReferenceRequest.query.get_or_404(id)
-        access_or_401(reference_request.admin_unit, "reference_request:verify")
+        access_or_401(
+            reference_request.admin_unit, "incoming_event_reference_requests:write"
+        )
 
         if (
             reference_request.review_status
@@ -93,7 +100,9 @@ class EventReferenceRequestRejectResource(BaseResource):
     def post(self, id):
         login_api_user_or_401()
         reference_request = EventReferenceRequest.query.get_or_404(id)
-        access_or_401(reference_request.admin_unit, "reference_request:verify")
+        access_or_401(
+            reference_request.admin_unit, "incoming_event_reference_requests:write"
+        )
 
         if (
             reference_request.review_status

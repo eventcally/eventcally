@@ -34,7 +34,7 @@ render_link_prop, render_admin_unit_badges, render_pagination %}
                     {{ render_location_prop(other_admin_unit.location) }}
                     <p>{{ render_text_prop(other_admin_unit.description) }}</p>
                     <p>{{ render_text_prop(other_admin_unit.incoming_verification_requests_text) }}</p>
-                    <a class="btn btn-primary btn-sm" href="{{ url_for('manage_admin_unit_verification_requests_outgoing_create', id=admin_unit.id, target_id=other_admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Request verification') }}&hellip;</a>
+                    <a class="btn btn-primary btn-sm" href="{{ url_for('manage_organization_requests_outgoing_create', id=admin_unit.id, target_id=other_admin_unit.id) }}" role="button"><i class="fa fa-plus"></i> {{ _('Request verification') }}&hellip;</a>
                 </div>
             </div>
         </div>

@@ -34,6 +34,7 @@ class AdminUnitVerificationRequest(db.Model, TrackableMixin):
             name="auvr_source_neq_target",
         ),
     )
+    __model_name__ = "organization_verification_request"
     __display_name__ = "Organization verification request"
     id = Column(Integer(), primary_key=True)
     source_admin_unit_id = db.Column(

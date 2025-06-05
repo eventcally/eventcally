@@ -56,7 +56,7 @@ class OrganizationSchema(OrganizationBaseSchema):
     @post_dump(pass_original=True)
     def remove_private_fields(self, data, original_data, **kwargs):
         login_api_user()
-        if not has_access(original_data, "admin_unit:update"):
+        if not has_access(original_data, "settings:read"):
             data.pop("can_verify_other", None)
             data.pop("incoming_reference_requests_allowed", None)
 

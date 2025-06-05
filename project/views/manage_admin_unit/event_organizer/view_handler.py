@@ -15,21 +15,14 @@ from project.views.manage_admin_unit.event_organizer.forms import (
     DeleteEventOrganizerForm,
     UpdateEventOrganizerForm,
 )
-from project.views.utils import (
-    current_admin_unit,
-    manage_permission_required,
-    non_match_for_deletion,
-)
+from project.views.utils import current_admin_unit, non_match_for_deletion
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = EventOrganizer
-    create_decorators = [manage_permission_required("organizer:create")]
     create_form_class = CreateEventOrganizerForm
     read_view_class = None
-    update_decorators = [manage_permission_required("organizer:update")]
     update_form_class = UpdateEventOrganizerForm
-    delete_decorators = [manage_permission_required("organizer:delete")]
     delete_form_class = DeleteEventOrganizerForm
     list_display_class = ListDisplay
     list_sort_definitions = [

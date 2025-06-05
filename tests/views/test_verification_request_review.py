@@ -27,10 +27,17 @@ def test_review_verify(
         db.session.commit()
 
     url = utils.get_url(
-        "manage_admin_unit.incoming_admin_unit_verification_request_review",
+        "manage_admin_unit.incoming_organization_verification_request_review",
+        id=verifier_admin_unit_id,
+        organization_verification_request_id=verification_request_id,
+    )
+
+    legacy_review_url = utils.get_url(
+        "manage_admin_unit_incoming_admin_unit_verification_request_review",
         id=verifier_admin_unit_id,
         admin_unit_verification_request_id=verification_request_id,
     )
+    utils.assert_response_redirect_to_url(client.get(legacy_review_url), url)
 
     if is_verified:
         with app.app_context():
@@ -50,7 +57,7 @@ def test_review_verify(
         response = client.get(url)
         utils.assert_response_redirect(
             response,
-            "manage_admin_unit.incoming_admin_unit_verification_requests",
+            "manage_admin_unit.incoming_organization_verification_requests",
             id=verifier_admin_unit_id,
         )
         return
@@ -76,7 +83,7 @@ def test_review_verify(
 
     utils.assert_response_redirect(
         response,
-        "manage_admin_unit.incoming_admin_unit_verification_requests",
+        "manage_admin_unit.incoming_organization_verification_requests",
         id=verifier_admin_unit_id,
     )
     utils.assert_send_mail_called(mail_mock, "mitglied@verein.de")
@@ -113,9 +120,9 @@ def test_review_reject(client, seeder: Seeder, utils: UtilActions, app, db, mock
     )
 
     url = utils.get_url(
-        "manage_admin_unit.incoming_admin_unit_verification_request_review",
+        "manage_admin_unit.incoming_organization_verification_request_review",
         id=verifier_admin_unit_id,
-        admin_unit_verification_request_id=verification_request_id,
+        organization_verification_request_id=verification_request_id,
     )
     response = utils.get_ok(url)
 
@@ -130,7 +137,7 @@ def test_review_reject(client, seeder: Seeder, utils: UtilActions, app, db, mock
 
     utils.assert_response_redirect(
         response,
-        "manage_admin_unit.incoming_admin_unit_verification_requests",
+        "manage_admin_unit.incoming_organization_verification_requests",
         id=verifier_admin_unit_id,
     )
 
@@ -162,9 +169,17 @@ def test_review_status_404(client, seeder: Seeder, utils: UtilActions):
     ) = seeder.create_incoming_admin_unit_verification_request(third_admin_unit_id)
 
     url = utils.get_url(
-        "manage_admin_unit.outgoing_admin_unit_verification_request",
+        "manage_admin_unit.outgoing_organization_verification_request",
+        id=other_admin_unit_id,
+        organization_verification_request_id=verification_request_id,
+    )
+
+    legacy_review_url = utils.get_url(
+        "manage_admin_unit_outgoing_admin_unit_verification_request",
         id=other_admin_unit_id,
         admin_unit_verification_request_id=verification_request_id,
     )
+    utils.assert_response_redirect_to_url(client.get(legacy_review_url), url)
+
     response = client.get(url)
     assert response.status_code == 404

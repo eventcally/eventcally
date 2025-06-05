@@ -109,6 +109,10 @@ def manage_admin_unit(id):
 @auth_required()
 def manage_admin_unit_event_lists(id, path=None):
     admin_unit = get_admin_unit_for_manage_or_404(id)
+
+    if not has_access(admin_unit, "event_lists:read"):  # pragma: no cover
+        return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))
+
     set_current_admin_unit(admin_unit)
 
     return render_template(
@@ -122,6 +126,10 @@ def manage_admin_unit_event_lists(id, path=None):
 @auth_required()
 def manage_admin_unit_custom_widgets(id, path=None):
     admin_unit = get_admin_unit_for_manage_or_404(id)
+
+    if not has_access(admin_unit, "custom_widgets:read"):  # pragma: no cover
+        return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))
+
     set_current_admin_unit(admin_unit)
     full_height = path is not None and (path == "create" or path.endswith("/update"))
 
@@ -137,7 +145,7 @@ def manage_admin_unit_custom_widgets(id, path=None):
 def manage_admin_unit_export(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
-    if not has_access(admin_unit, "admin_unit:update"):  # pragma: no cover
+    if not has_access(admin_unit, "export:read"):  # pragma: no cover
         return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))
 
     if "poll" in request.args:  # pragma: no cover
@@ -172,6 +180,39 @@ def manage_admin_unit_export(id):
 @app.route("/manage/admin_unit/<int:id>/export/dump/<path:path>")
 def manage_admin_unit_export_dump_files(id, path):
     admin_unit = get_admin_unit_for_manage_or_404(id)
-    access_or_401(admin_unit, "admin_unit:update")
+    access_or_401(admin_unit, "export:read")
 
     return send_from_directory(dump_org_path, path)
+
+
+# Legacy mail redirects
+
+
+@app.route(
+    "/manage/admin_unit/<int:id>/incoming_admin_unit_verification_request/<int:admin_unit_verification_request_id>/review"
+)
+def manage_admin_unit_incoming_admin_unit_verification_request_review(
+    id, admin_unit_verification_request_id
+):
+    return redirect(
+        url_for(
+            "manage_admin_unit.incoming_organization_verification_request_review",
+            id=id,
+            organization_verification_request_id=admin_unit_verification_request_id,
+        )
+    )
+
+
+@app.route(
+    "/manage/admin_unit/<int:id>/outgoing_admin_unit_verification_request/<int:admin_unit_verification_request_id>"
+)
+def manage_admin_unit_outgoing_admin_unit_verification_request(
+    id, admin_unit_verification_request_id
+):
+    return redirect(
+        url_for(
+            "manage_admin_unit.outgoing_organization_verification_request",
+            id=id,
+            organization_verification_request_id=admin_unit_verification_request_id,
+        )
+    )

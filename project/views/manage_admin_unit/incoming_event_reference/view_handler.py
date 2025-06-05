@@ -1,5 +1,5 @@
 from flask import url_for
-from flask_babel import gettext
+from flask_babel import gettext, lazy_gettext
 
 from project.models import EventReference
 from project.views.manage_admin_unit import manage_admin_unit_bp
@@ -15,27 +15,23 @@ from project.views.manage_admin_unit.incoming_event_reference.forms import (
     UpdateEventReferenceForm,
 )
 from project.views.manage_admin_unit.incoming_event_reference.views import ListView
-from project.views.utils import manage_permission_required
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = EventReference
     create_view_class = None
-    read_decorators = [manage_permission_required("reference:read")]
     read_display_class = ReadDisplay
-    update_decorators = [manage_permission_required("reference:update")]
     update_form_class = UpdateEventReferenceForm
-    delete_decorators = [manage_permission_required("reference:delete")]
     delete_form_class = DeleteEventReferenceForm
     list_display_class = ListDisplay
     list_view_class = ListView
     generic_prefix = "incoming_"
 
     def get_model_display_name(self):
-        return gettext("Incoming reference")
+        return lazy_gettext("Incoming reference")
 
     def get_model_display_name_plural(self):
-        return gettext("Incoming references")
+        return lazy_gettext("Incoming references")
 
     def apply_objects_query_order(self, query, **kwargs):
         return (

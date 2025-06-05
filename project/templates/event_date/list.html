@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% from "_macros.html" import render_date_field_range, render_field, render_event_dates_location_field, render_event_dates_date_field, render_field_with_errors, render_form_styles, render_form_scripts, render_jquery_steps_header, render_google_filter_autocomplete_header, render_pagination, render_place, render_events_sub_menu %}
-{% set user_can_reference_event = current_admin_unit and has_access(current_admin_unit, "event:reference") %}
+{% set user_can_reference_event = current_admin_unit and has_access(current_admin_unit, "incoming_event_references:write") %}
 
 {%- block title -%}
 {{ _('Event Dates') }}

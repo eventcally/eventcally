@@ -101,6 +101,7 @@ def delete_admin_unit_task(admin_unit_id):
         if admin_unit:
             db.session.delete(admin_unit)
             db.session.commit()
+            app.logger.info(f"Delete admin unit {admin_unit_id}")
     except Exception:
         app.logger.exception(f"Failed to delete admin unit {admin_unit_id}")
         db.session.rollback()
@@ -168,6 +169,7 @@ def delete_user_task(user_id):
         if user:
             db.session.delete(user)
             db.session.commit()
+            app.logger.info(f"Deleted user {user_id}")
     except Exception:
         app.logger.exception(f"Failed to delete user {user_id}")
         db.session.rollback()
@@ -189,6 +191,7 @@ def delete_event_task(event_id):
         if event:
             db.session.delete(event)
             db.session.commit()
+            app.logger.info(f"Deleted event {event_id}")
     except Exception:
         app.logger.exception(f"Failed to delete event {event_id}")
         db.session.rollback()

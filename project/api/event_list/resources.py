@@ -33,7 +33,7 @@ class EventListModelResource(BaseResource):
     def put(self, id):
         login_api_user_or_401()
         event_list = EventList.query.get_or_404(id)
-        access_or_401(event_list.adminunit, "admin_unit:update")
+        access_or_401(event_list.adminunit, "event_lists:write")
 
         event_list = self.update_instance(
             EventListUpdateRequestSchema, instance=event_list
@@ -52,7 +52,7 @@ class EventListModelResource(BaseResource):
     def patch(self, id):
         login_api_user_or_401()
         event_list = EventList.query.get_or_404(id)
-        access_or_401(event_list.adminunit, "admin_unit:update")
+        access_or_401(event_list.adminunit, "event_lists:write")
 
         event_list = self.update_instance(
             EventListPatchRequestSchema, instance=event_list
@@ -70,7 +70,7 @@ class EventListModelResource(BaseResource):
     def delete(self, id):
         login_api_user_or_401()
         event_list = EventList.query.get_or_404(id)
-        access_or_401(event_list.adminunit, "admin_unit:update")
+        access_or_401(event_list.adminunit, "event_lists:write")
 
         db.session.delete(event_list)
         db.session.commit()
@@ -103,7 +103,7 @@ class EventListEventListWriteResource(BaseResource):
     def put(self, id, event_id):
         login_api_user_or_401()
         event_list = EventList.query.get_or_404(id)
-        access_or_401(event_list.adminunit, "admin_unit:update")
+        access_or_401(event_list.adminunit, "event_lists:write")
         event = Event.query.get_or_404(event_id)
 
         exists = (
@@ -124,7 +124,7 @@ class EventListEventListWriteResource(BaseResource):
     def delete(self, id, event_id):
         login_api_user_or_401()
         event_list = EventList.query.get_or_404(id)
-        access_or_401(event_list.adminunit, "admin_unit:update")
+        access_or_401(event_list.adminunit, "event_lists:write")
         event = Event.query.get_or_404(event_id)
 
         exists = (

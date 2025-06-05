@@ -505,7 +505,7 @@ def send_admin_unit_invitation_accepted_mails(
     # Benachrichtige alle Mitglieder der AdminUnit, die diese Einladung erstellt hatte
     send_template_mails_to_admin_unit_members_async(
         invitation.admin_unit_id,
-        "admin_unit:update",
+        "organization_invitations:write",
         "organization_invitation_accepted_notice",
         invitation=invitation,
         relation=relation,
@@ -518,7 +518,7 @@ def send_admin_unit_deletion_requested_mails(admin_unit: AdminUnit):
 
     send_template_mails_to_admin_unit_members_async(
         admin_unit.id,
-        "admin_unit:update",
+        "settings:write",
         "organization_deletion_requested_notice",
         admin_unit=admin_unit,
     )

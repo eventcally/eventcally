@@ -64,7 +64,9 @@ class CreateView(BaseCreateView):
         self.embedded_relation_enabled = (
             not invitation
             and self.current_admin_unit
-            and has_access(self.current_admin_unit, "admin_unit:update")
+            and has_access(
+                self.current_admin_unit, "outgoing_organization_relations:write"
+            )
             and (
                 self.current_admin_unit.can_verify_other
                 or self.current_admin_unit.incoming_reference_requests_allowed
@@ -131,6 +133,6 @@ class CreateView(BaseCreateView):
             return url_for("manage_admin_unit", id=admin_unit.id)
 
         return url_for(
-            "manage_admin_unit.outgoing_admin_unit_verification_requests",
+            "manage_admin_unit.outgoing_organization_verification_requests",
             id=admin_unit.id,
         )

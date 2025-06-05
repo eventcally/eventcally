@@ -30,7 +30,7 @@ class OrganizerResource(BaseResource):
     def put(self, id):
         login_api_user_or_401()
         organizer = EventOrganizer.query.get_or_404(id)
-        access_or_401(organizer.adminunit, "organizer:update")
+        access_or_401(organizer.adminunit, "event_organizers:write")
 
         organizer = self.update_instance(OrganizerPostRequestSchema, instance=organizer)
         db.session.commit()
@@ -47,7 +47,7 @@ class OrganizerResource(BaseResource):
     def patch(self, id):
         login_api_user_or_401()
         organizer = EventOrganizer.query.get_or_404(id)
-        access_or_401(organizer.adminunit, "organizer:update")
+        access_or_401(organizer.adminunit, "event_organizers:write")
 
         organizer = self.update_instance(
             OrganizerPatchRequestSchema, instance=organizer
@@ -65,7 +65,7 @@ class OrganizerResource(BaseResource):
     def delete(self, id):
         login_api_user_or_401()
         organizer = EventOrganizer.query.get_or_404(id)
-        access_or_401(organizer.adminunit, "organizer:delete")
+        access_or_401(organizer.adminunit, "event_organizers:write")
 
         db.session.delete(organizer)
         db.session.commit()

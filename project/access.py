@@ -132,7 +132,9 @@ def can_reference_event(event):
 def get_admin_units_for_event_reference(event):
     result = list()
 
-    admin_units = get_admin_units_with_current_user_permission("event:reference")
+    admin_units = get_admin_units_with_current_user_permission(
+        "incoming_event_references:write"
+    )
     for admin_unit in admin_units:
         if admin_unit.id != event.admin_unit_id:
             result.append(admin_unit)
@@ -141,7 +143,7 @@ def get_admin_units_for_event_reference(event):
 
 
 def can_request_event_reference_from_admin_unit(admin_unit):
-    if not has_access(admin_unit, "reference_request:create"):
+    if not has_access(admin_unit, "outgoing_event_reference_requests:write"):
         return False
 
     if not admin_unit.is_verified:
@@ -250,7 +252,7 @@ def can_read_event(event: Event) -> bool:
     ):
         return True
 
-    return has_access(event.admin_unit, "event:read")
+    return has_access(event.admin_unit, "events:read")
 
 
 def can_read_event_or_401(event: Event):
@@ -259,7 +261,7 @@ def can_read_event_or_401(event: Event):
 
 
 def can_read_private_events(admin_unit: AdminUnit) -> bool:
-    return has_access(admin_unit, "event:read")
+    return has_access(admin_unit, "events:read")
 
 
 def get_admin_unit_members_with_permission(admin_unit_id: int, permission: str) -> list:

@@ -16,7 +16,7 @@ from project.views.manage_admin_unit.incoming_event_reference_request.forms impo
 from project.views.reference_request_review import (
     send_reference_request_review_status_mails,
 )
-from project.views.utils import flash_message, manage_permission_required
+from project.views.utils import flash_message
 
 
 class ListView(BaseListView):
@@ -28,7 +28,6 @@ class ListView(BaseListView):
 
 class ReviewView(BaseUpdateView):
     form_class = ReferenceRequestReviewForm
-    decorators = [manage_permission_required("reference_request:verify")]
     template_file_name = "review.html"
 
     def get_title(self, **kwargs):

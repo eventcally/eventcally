@@ -12,8 +12,14 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
 
-    url = utils.get_url("event_reference_request_create", event_id=event_id)
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_event_reference_request_create_for_event",
+        id=admin_unit_id,
+        event_id=event_id,
+    )
     response = utils.get_ok(url)
+
+    utils.ajax_lookup(url, "admin_unit")
 
     if db_error:
         utils.mock_db_commit(mocker)
@@ -22,7 +28,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     response = utils.post_form(
         url,
         response,
-        {"admin_unit_id": other_admin_unit_id},
+        {"admin_unit": other_admin_unit_id},
     )
 
     if db_error:
@@ -62,12 +68,16 @@ def test_create_duplicateNotAllowed(client, app, utils: UtilActions, seeder: See
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
 
     # First
-    url = utils.get_url("event_reference_request_create", event_id=event_id)
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_event_reference_request_create_for_event",
+        id=admin_unit_id,
+        event_id=event_id,
+    )
     response = utils.get_ok(url)
     response = utils.post_form(
         url,
         response,
-        {"admin_unit_id": other_admin_unit_id},
+        {"admin_unit": other_admin_unit_id},
     )
     utils.assert_response_redirect(
         response,
@@ -76,12 +86,16 @@ def test_create_duplicateNotAllowed(client, app, utils: UtilActions, seeder: See
     )
 
     # Second
-    url = utils.get_url("event_reference_request_create", event_id=event_id)
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_event_reference_request_create_for_event",
+        id=admin_unit_id,
+        event_id=event_id,
+    )
     response = utils.get_ok(url)
     response = utils.post_form(
         url,
         response,
-        {"admin_unit_id": other_admin_unit_id},
+        {"admin_unit": other_admin_unit_id},
     )
     utils.assert_response_ok(response)
     assert b"duplicate key" in response.data
@@ -95,7 +109,11 @@ def test_create_unverifiedAdminUnitNotAllowed(
     other_user_id = seeder.create_user("other@test.de")
     seeder.create_admin_unit(other_user_id, "Other Crew")
 
-    url = utils.get_url("event_reference_request_create", event_id=event_id)
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_event_reference_request_create_for_event",
+        id=admin_unit_id,
+        event_id=event_id,
+    )
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
@@ -108,12 +126,16 @@ def test_create_autoVerify(client, app, utils: UtilActions, seeder: Seeder, mock
     seeder.create_admin_unit_relation(other_admin_unit_id, admin_unit_id, True)
 
     mail_mock = utils.mock_send_mails_async(mocker)
-    url = utils.get_url("event_reference_request_create", event_id=event_id)
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_event_reference_request_create_for_event",
+        id=admin_unit_id,
+        event_id=event_id,
+    )
     response = utils.get_ok(url)
     response = utils.post_form(
         url,
         response,
-        {"admin_unit_id": other_admin_unit_id},
+        {"admin_unit": other_admin_unit_id},
     )
     utils.assert_response_redirect(
         response,

@@ -9,7 +9,7 @@ from project.services.admin_unit import upsert_admin_unit_relation
 from project.views.manage_admin_unit.incoming_verification_request.forms import (
     VerificationRequestReviewForm,
 )
-from project.views.utils import flash_message, manage_permission_required
+from project.views.utils import flash_message
 from project.views.verification_request_review import (
     send_verification_request_review_status_mails,
 )
@@ -17,7 +17,6 @@ from project.views.verification_request_review import (
 
 class ReviewView(BaseUpdateView):
     form_class = VerificationRequestReviewForm
-    decorators = [manage_permission_required("verification_request:verify")]
     template_file_name = "review.html"
 
     def get_title(self, **kwargs):

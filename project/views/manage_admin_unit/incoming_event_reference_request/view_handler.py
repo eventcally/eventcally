@@ -41,7 +41,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     generic_prefix = "incoming_"
 
     def get_model_display_name_plural(self):
-        return gettext("Incoming reference requests")
+        return lazy_gettext("Incoming reference requests")
 
     def get_list_per_page(self):
         return 50

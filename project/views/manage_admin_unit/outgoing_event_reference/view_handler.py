@@ -1,5 +1,5 @@
 from flask import url_for
-from flask_babel import gettext
+from flask_babel import gettext, lazy_gettext
 
 from project.models import EventReference
 from project.models.event import Event
@@ -25,7 +25,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     generic_prefix = "outgoing_"
 
     def get_model_display_name_plural(self):
-        return gettext("Outgoing references")
+        return lazy_gettext("Outgoing references")
 
     def get_objects_base_query_from_kwargs(self, **kwargs):
         return super().get_objects_base_query_from_kwargs(**kwargs).join(Event)

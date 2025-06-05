@@ -1,10 +1,9 @@
-from flask import abort
 from flask.helpers import make_response
 from flask_apispec import doc, marshal_with
 from flask_apispec.annotations import use_kwargs
 
 from project import db
-from project.access import access_or_401, has_access, login_api_user_or_401
+from project.access import access_or_401, login_api_user_or_401
 from project.api import add_api_resource
 from project.api.organization_relation.schemas import (
     OrganizationRelationPatchRequestSchema,
@@ -25,11 +24,9 @@ class OrganizationRelationResource(BaseResource):
     def get(self, id):
         login_api_user_or_401()
         relation = AdminUnitRelation.query.get_or_404(id)
-
-        if not has_access(
-            relation.source_admin_unit, "admin_unit:update"
-        ) and not has_access(relation.target_admin_unit, "admin_unit:update"):
-            abort(401)
+        access_or_401(
+            relation.source_admin_unit, "outgoing_organization_relations:read"
+        )
 
         return relation
 
@@ -43,7 +40,9 @@ class OrganizationRelationResource(BaseResource):
     def put(self, id):
         login_api_user_or_401()
         relation = AdminUnitRelation.query.get_or_404(id)
-        access_or_401(relation.source_admin_unit, "admin_unit:update")
+        access_or_401(
+            relation.source_admin_unit, "outgoing_organization_relations:write"
+        )
 
         relation = self.update_instance(
             OrganizationRelationUpdateRequestSchema, instance=relation
@@ -62,7 +61,9 @@ class OrganizationRelationResource(BaseResource):
     def patch(self, id):
         login_api_user_or_401()
         relation = AdminUnitRelation.query.get_or_404(id)
-        access_or_401(relation.source_admin_unit, "admin_unit:update")
+        access_or_401(
+            relation.source_admin_unit, "outgoing_organization_relations:write"
+        )
 
         relation = self.update_instance(
             OrganizationRelationPatchRequestSchema, instance=relation
@@ -80,7 +81,9 @@ class OrganizationRelationResource(BaseResource):
     def delete(self, id):
         login_api_user_or_401()
         relation = AdminUnitRelation.query.get_or_404(id)
-        access_or_401(relation.source_admin_unit, "admin_unit:update")
+        access_or_401(
+            relation.source_admin_unit, "outgoing_organization_relations:write"
+        )
 
         db.session.delete(relation)
         db.session.commit()
