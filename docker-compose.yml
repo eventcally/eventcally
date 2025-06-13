@@ -17,25 +17,13 @@ x-web-env:
   SERVER_NAME: "127.0.0.1:5000"
   SECRET_KEY: "pf9Wkove4IKEAXvy-cQkeDPhv9Cb3Ag-wyJILbq_dFw"
 
-x-web:
-  &default-web
-  build: .
-  environment:
-    <<: *default-web-env
-  depends_on:
-    db:
-      condition: service_healthy
-    redis:
-      condition: service_healthy
-    mailhog:
-      condition: service_started
-
 services:
   db:
     image: postgis/postgis:12-3.1
     healthcheck:
       test: "pg_isready --username=eventcally && psql --username=eventcally --list"
       start_period: "5s"
+    stop_grace_period: 60s
     environment:
       - POSTGRES_DB=eventcally
       - POSTGRES_USER=eventcally
@@ -46,6 +34,7 @@ services:
     healthcheck:
       test: "redis-cli -a 'pass' ping | grep PONG"
       start_period: "5s"
+    stop_grace_period: 30s
     environment:
       REDIS_PASSWORD: pass
 
@@ -54,6 +43,7 @@ services:
     healthcheck:
       test: "redis-cli -a 'pass' ping | grep PONG"
       start_period: "5s"
+    stop_grace_period: 30s
     environment:
       REDIS_PASSWORD: pass
 
@@ -68,13 +58,33 @@ services:
      - "8026:8025"
 
   web:
-    <<: *default-web
+    build: .
+    environment:
+      <<: *default-web-env
+    healthcheck:
+      test: "curl -f ${SERVER_NAME}/up"
+      interval: "60s"
+      timeout: "5s"
+      start_period: "5s"
+    stop_grace_period: 45s
     ports:
       - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      limiter_redis:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
 
   worker:
-    <<: *default-web
-    command: celery -A project.celery_init worker --loglevel=error
+    build: .
+    environment:
+      <<: *default-web-env
+    stop_grace_period: 45s
+    command: celery -A project.celery worker --loglevel=info
     entrypoint: []
     depends_on:
       db:
@@ -83,13 +93,21 @@ services:
         condition: service_healthy
       mailhog:
         condition: service_started
-      limiter_redis:
-        condition: service_healthy
 
   scheduler:
-    <<: *default-web
-    command: celery -A project.celery_init beat --loglevel=error
+    build: .
+    environment:
+      <<: *default-web-env
+    stop_grace_period: 45s
+    command: celery -A project.celery beat --loglevel=info
     entrypoint: []
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
 
   flower:
     image: mher/flower:1.2
