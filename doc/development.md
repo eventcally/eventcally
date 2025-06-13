@@ -86,5 +86,5 @@ flask db upgrade
 ## Celery
 
 ```sh
-dotenv run celery -A project.celery_init purge
+dotenv run celery -A project.celery purge
 ```

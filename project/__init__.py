@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from datetime import datetime, timedelta
 
 from flask import Blueprint, Flask, g
@@ -60,6 +61,12 @@ app.config["API_READ_ANONYM"] = getenv_bool("API_READ_ANONYM", "False")
 #     logging.basicConfig(level=logging.DEBUG)
 #     logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 #     logging.getLogger("authlib").setLevel(logging.DEBUG)
+
+if "celery" in sys.argv[0]:  # pragma: no cover
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_recycle": 60,
+        "pool_pre_ping": True,
+    }
 
 # Proxy handling
 if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover
@@ -265,6 +272,7 @@ import project.api
 
 # Command line
 import project.cli.cache
+import project.cli.data
 import project.cli.dump
 import project.cli.event
 import project.cli.seo
@@ -308,12 +316,6 @@ from project.views import (
     verification_request_review,
     widget,
 )
-
-if not getenv_bool("TESTING"):  # pragma: no cover
-    with app.app_context():
-        from project.init_data import create_initial_data
-
-        create_initial_data()
 
 if __name__ == "__main__":  # pragma: no cover
     app.run()

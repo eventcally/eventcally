@@ -28,6 +28,8 @@ source env/bin/activate
 (env) pip install -r requirements.txt
 (env) export DATABASE_URL='postgresql://postgres@localhost/eventcally'
 (env) flask db upgrade
+(env) flask db upgrade
+(env) flask data seed
 (env) gunicorn -c gunicorn.conf.py project:app
 ```
 
@@ -56,7 +58,7 @@ flask user add-admin-roles super@hero.com
 ### Worker active tasks
 
 ```sh
-celery -A project.celery_init inspect active
+celery -A project.celery inspect active
 ```
 
 ## Configuration

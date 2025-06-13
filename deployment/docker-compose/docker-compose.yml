@@ -33,6 +33,7 @@ x-web:
   &default-web
   image: eventcally/eventcally:${WEB_TAG}
   restart: always
+  stop_grace_period: 30s
   extra_hosts:
     - "host.docker.internal:host-gateway"
   environment:
@@ -53,6 +54,7 @@ services:
     healthcheck:
       test: "pg_isready --username=${POSTGRES_USER} && psql --username=${POSTGRES_USER} --list"
       start_period: "5s"
+    stop_grace_period: 60s
     ports:
       - 5434:5432
     environment:
@@ -65,6 +67,7 @@ services:
   db-backup:
     image: prodrigestivill/postgres-backup-local:12
     restart: always
+    stop_grace_period: 60s
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -84,6 +87,7 @@ services:
     healthcheck:
       test: "redis-cli -a '${REDIS_PASSWORD}' ping | grep PONG"
       start_period: "5s"
+    stop_grace_period: 30s
     volumes:
       - ${REDIS_DATA_PATH}:/bitnami/redis/data
     environment:
@@ -95,6 +99,7 @@ services:
     healthcheck:
       test: "redis-cli -a '${LIMITER_REDIS_PASSWORD}' ping | grep PONG"
       start_period: "5s"
+    stop_grace_period: 30s
     volumes:
       - ${LIMITER_REDIS_DATA_PATH}:/bitnami/redis/data
     environment:
@@ -121,12 +126,12 @@ services:
 
   worker:
     <<: *default-web
-    command: celery -A project.celery_init worker --loglevel=error
+    command: celery -A project.celery worker --loglevel=error
     entrypoint: []
 
   scheduler:
     <<: *default-web
-    command: celery -A project.celery_init beat --loglevel=error
+    command: celery -A project.celery beat --loglevel=error
     entrypoint: []
 
   fluentd:
