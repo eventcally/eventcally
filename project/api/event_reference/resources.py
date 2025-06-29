@@ -21,7 +21,7 @@ class EventReferenceResource(BaseResource):
         tags=["Event References"],
     )
     @marshal_with(None, 204)
-    @require_api_access("eventreference:write")
+    @require_api_access("organization.incoming_event_references:write")
     def delete(self, id):
         login_api_user_or_401()
         reference = EventReference.query.get_or_404(id)

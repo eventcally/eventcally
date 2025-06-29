@@ -22,13 +22,13 @@ def add_roles_to_user(email, roles):
 
 
 def add_admin_roles_to_user(email):
-    add_roles_to_user(email, ["admin", "event_verifier", "early_adopter"])
+    add_roles_to_user(email, ["admin"])
 
 
 def remove_roles_from_user(email, roles):
     user = find_user_by_email(email)
 
-    for role in roles:
+    for role in roles:  # pragma: no cover
         user_datastore.remove_role_from_user(user, role)
 
 

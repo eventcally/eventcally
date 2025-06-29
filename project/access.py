@@ -85,7 +85,7 @@ def has_current_user_permission_for_admin_unit(admin_unit, permission):
     if not current_user.is_authenticated:
         return False
 
-    if has_current_user_permission(permission):
+    if has_current_user_permission(permission):  # pragma: no cover
         return True
 
     if has_current_user_member_permission_for_admin_unit(admin_unit.id, permission):

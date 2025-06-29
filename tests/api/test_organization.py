@@ -435,7 +435,7 @@ def test_event_lists_post(client, seeder: Seeder, utils: UtilActions, app):
 
 
 def test_event_lists_status(client, seeder: Seeder, utils: UtilActions):
-    _, admin_unit_id = seeder.setup_api_access(user_access=False)
+    _, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     event_list_id = seeder.create_event_list(
         admin_unit_id, event_id, name="Meine Liste"
@@ -454,7 +454,7 @@ def test_event_lists_status(client, seeder: Seeder, utils: UtilActions):
 
 
 def test_references_incoming(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
+    user_id, admin_unit_id = seeder.setup_api_access()
     (
         other_user_id,
         other_admin_unit_id,
@@ -523,7 +523,7 @@ def test_references_incoming_post_selfReference(
 
 
 def test_references_outgoing(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
+    user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
 
     other_user_id = seeder.create_user("other@test.de")
@@ -950,7 +950,7 @@ def test_organization_invitation_list_post(client, app, seeder, db, utils, mocke
 
 
 def test_custom_widgets(client, seeder: Seeder, utils: UtilActions):
-    _, admin_unit_id = seeder.setup_api_access(user_access=False)
+    _, admin_unit_id = seeder.setup_api_access()
     seeder.insert_event_custom_widget(admin_unit_id)
 
     url = utils.get_url(

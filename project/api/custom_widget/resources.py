@@ -16,9 +16,10 @@ from project.models import CustomWidget
 class CustomWidgetResource(BaseResource):
     @doc(summary="Get custom widget", tags=["Custom Widgets"])
     @marshal_with(CustomWidgetSchema)
-    @require_api_access()
+    @require_api_access("organization.custom_widgets:read")
     def get(self, id):
-        return CustomWidget.query.get_or_404(id)
+        customwidget = CustomWidget.query.get_or_404(id)
+        return customwidget
 
     @doc(
         summary="Update custom widget",
@@ -26,7 +27,7 @@ class CustomWidgetResource(BaseResource):
     )
     @use_kwargs(CustomWidgetPostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("customwidget:write")
+    @require_api_access("organization.custom_widgets:write")
     def put(self, id):
         login_api_user_or_401()
         customwidget = CustomWidget.query.get_or_404(id)
@@ -45,7 +46,7 @@ class CustomWidgetResource(BaseResource):
     )
     @use_kwargs(CustomWidgetPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("customwidget:write")
+    @require_api_access("organization.custom_widgets:write")
     def patch(self, id):
         login_api_user_or_401()
         customwidget = CustomWidget.query.get_or_404(id)
@@ -63,7 +64,7 @@ class CustomWidgetResource(BaseResource):
         tags=["Custom Widgets"],
     )
     @marshal_with(None, 204)
-    @require_api_access("customwidget:write")
+    @require_api_access("organization.custom_widgets:write")
     def delete(self, id):
         login_api_user_or_401()
         customwidget = CustomWidget.query.get_or_404(id)

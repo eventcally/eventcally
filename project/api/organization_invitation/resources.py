@@ -20,7 +20,7 @@ class OrganizationInvitationResource(BaseResource):
         tags=["Organization Invitations"],
     )
     @marshal_with(OrganizationInvitationSchema)
-    @require_api_access("organization:read")
+    @require_api_access("organization.organization_invitations:read")
     def get(self, id):
         login_api_user_or_401()
         invitation = AdminUnitInvitation.query.get_or_404(id)
@@ -34,7 +34,7 @@ class OrganizationInvitationResource(BaseResource):
     )
     @use_kwargs(OrganizationInvitationUpdateRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization:write")
+    @require_api_access("organization.organization_invitations:write")
     def put(self, id):
         login_api_user_or_401()
         invitation = AdminUnitInvitation.query.get_or_404(id)
@@ -53,7 +53,7 @@ class OrganizationInvitationResource(BaseResource):
     )
     @use_kwargs(OrganizationInvitationPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization:write")
+    @require_api_access("organization.organization_invitations:write")
     def patch(self, id):
         login_api_user_or_401()
         invitation = AdminUnitInvitation.query.get_or_404(id)
@@ -71,7 +71,7 @@ class OrganizationInvitationResource(BaseResource):
         tags=["Organization Invitations"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organization:write")
+    @require_api_access("organization.organization_invitations:write")
     def delete(self, id):
         login_api_user_or_401()
         invitation = AdminUnitInvitation.query.get_or_404(id)

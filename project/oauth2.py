@@ -1,4 +1,5 @@
 from authlib.integrations.flask_oauth2 import AuthorizationServer, ResourceProtector
+from authlib.integrations.flask_oauth2.requests import FlaskOAuth2Request
 from authlib.integrations.sqla_oauth2 import (
     create_bearer_token_validator,
     create_query_client_func,
@@ -10,6 +11,7 @@ from authlib.oauth2.rfc7636 import CodeChallenge
 from authlib.oauth2.rfc7662 import IntrospectionEndpoint
 from authlib.oidc.core import UserInfo
 from authlib.oidc.core.grants import OpenIDCode as _OpenIDCode
+from flask import request as flask_req
 from flask import url_for
 
 from project import app, db
@@ -145,7 +147,22 @@ class MyIntrospectionEndpoint(IntrospectionEndpoint):
 
 query_client = create_query_client_func(db.session, OAuth2Client)
 save_token = create_save_token_func(db.session, OAuth2Token)
-authorization = AuthorizationServer(
+
+
+class CustomFlaskOAuth2Request(FlaskOAuth2Request):
+    @property
+    def scope(self) -> str:
+        from project.api import replace_legacy_scopes
+
+        return replace_legacy_scopes(super().scope)
+
+
+class OAuth2AuthorizationServer(AuthorizationServer):
+    def create_oauth2_request(self, request):
+        return CustomFlaskOAuth2Request(flask_req)
+
+
+authorization = OAuth2AuthorizationServer(
     query_client=query_client,
     save_token=save_token,
 )

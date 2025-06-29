@@ -343,7 +343,7 @@ class Seeder(object):
 
         return (user_id, admin_unit_id)
 
-    def authorize_api_access(self, user_id, admin_unit_id):
+    def authorize_api_access(self, user_id, admin_unit_id, authorize_scope=None):
         oauth2_client_id = self.insert_default_oauth2_client(user_id)
 
         with self._app.app_context():
@@ -357,6 +357,9 @@ class Seeder(object):
             client_id = oauth2_client.client_id
             client_secret = oauth2_client.client_secret
             scope = oauth2_client.scope
+
+        if authorize_scope:
+            scope = authorize_scope
 
         self._utils.login(email=email)
         self._utils.authorize(client_id, client_secret, scope)

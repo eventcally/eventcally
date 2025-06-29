@@ -469,7 +469,9 @@ class UtilActions(object):
         if grant_type == "authorization_code":
             assert "refresh_token" in response.json
 
-        assert response.json["scope"] == scope
+        from project.api import replace_legacy_scopes
+
+        assert response.json["scope"] == replace_legacy_scopes(scope)
         assert response.json["token_type"] == "Bearer"
 
         self._client_id = client_id

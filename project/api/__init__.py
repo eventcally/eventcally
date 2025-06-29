@@ -126,22 +126,36 @@ class DocSecurityPlugin(BasePlugin):
 scope_list = [
     "openid",
     "profile",
-    "user:read",
-    "user:write",
-    "organizer:write",
-    "place:write",
-    "event:write",
-    "organization:read",
-    "organization:write",
-    "eventlist:write",
-    "customwidget:write",
-    "eventreference:write",
-    "eventreferencerequest:read",
-    "eventreferencerequest:write",
-    "organizationverificationrequest:read",
-    "organizationverificationrequest:write",
 ]
 scopes = {k: get_localized_scope(k) for v, k in enumerate(scope_list)}
+from project.permissions import permission_infos
+
+for permission_info in permission_infos:
+    if permission_info.no_api_access:
+        continue
+
+    permission = permission_info.full_permission
+    scope_list.append(permission)
+    scopes[permission] = permission_info.full_label
+
+
+legacy_scope_mapping = {
+    "organizer:write": "organization.event_organizers:write",
+    "place:write": "organization.event_places:write",
+    "event:write": "organization.events:write",
+    "user:read": "user.organization_invitations:read user.favorite_events:read",
+    "user:write": "user.organization_invitations:write user.favorite_events:write",
+}
+
+
+def replace_legacy_scopes(scope: str) -> str:
+    if scope:
+        for legacy_scope, new_scope in legacy_scope_mapping.items():
+            if legacy_scope in scope:
+                scope = scope.replace(legacy_scope, new_scope)
+
+    return scope
+
 
 rest_api = RestApi(app, "/api/v1", catch_all_404s=True)
 marshmallow = Marshmallow(app)

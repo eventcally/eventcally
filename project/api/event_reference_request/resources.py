@@ -23,7 +23,7 @@ from project.views.reference_request_review import (
 class EventReferenceRequestResource(BaseResource):
     @doc(summary="Get event reference request", tags=["Event Reference Requests"])
     @marshal_with(EventReferenceRequestSchema)
-    @require_api_access("eventreferencerequest:read")
+    @require_api_access("organization.outgoing_event_reference_requests:read")
     def get(self, id):
         login_api_user_or_401()
         reference_request = EventReferenceRequest.query.get_or_404(id)
@@ -42,7 +42,7 @@ class EventReferenceRequestResource(BaseResource):
         tags=["Event Reference Requests"],
     )
     @marshal_with(None, 204)
-    @require_api_access("eventreferencerequest:write")
+    @require_api_access("organization.outgoing_event_reference_requests:write")
     def delete(self, id):
         login_api_user_or_401()
         reference_request = EventReferenceRequest.query.get_or_404(id)
@@ -64,7 +64,7 @@ class EventReferenceRequestVerifyResource(BaseResource):
     )
     @use_kwargs(EventReferenceRequestVerifyRequestSchema, location="json", apply=True)
     @marshal_with(EventReferenceIdSchema, 201)
-    @require_api_access("eventreferencerequest:write")
+    @require_api_access("organization.incoming_event_reference_requests:write")
     def post(self, id, **kwargs):
         login_api_user_or_401()
         reference_request = EventReferenceRequest.query.get_or_404(id)
@@ -96,7 +96,7 @@ class EventReferenceRequestRejectResource(BaseResource):
     )
     @use_kwargs(EventReferenceRequestRejectRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("eventreferencerequest:write")
+    @require_api_access("organization.incoming_event_reference_requests:write")
     def post(self, id):
         login_api_user_or_401()
         reference_request = EventReferenceRequest.query.get_or_404(id)

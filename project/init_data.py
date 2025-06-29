@@ -16,56 +16,58 @@ def add_oauth2_scheme():
     add_oauth2_scheme_with_transport(insecure)
 
 
+organization_admin_permissions = [
+    "api_keys:read",
+    "api_keys:write",
+    "custom_widgets:read",
+    "custom_widgets:write",
+    "export:read",
+    "incoming_organization_verification_requests:read",
+    "incoming_organization_verification_requests:write",
+    "organization_invitations:read",
+    "organization_invitations:write",
+    "organization_member_invitations:read",
+    "organization_member_invitations:write",
+    "organization_members:read",
+    "organization_members:write",
+    "outgoing_organization_relations:read",
+    "outgoing_organization_relations:write",
+    "outgoing_organization_verification_requests:read",
+    "outgoing_organization_verification_requests:write",
+    "settings:read",
+    "settings:write",
+    "widgets:read",
+    "widgets:write",
+]
+organization_event_expert_permissions = [
+    "event_lists:read",
+    "event_lists:write",
+    "event_organizers:read",
+    "event_organizers:write",
+    "event_places:read",
+    "event_places:write",
+    "events:read",
+    "events:write",
+    "incoming_event_reference_requests:read",
+    "incoming_event_reference_requests:write",
+    "incoming_event_references:read",
+    "incoming_event_references:write",
+    "outgoing_event_reference_requests:read",
+    "outgoing_event_reference_requests:write",
+    "outgoing_event_references:read",
+    "outgoing_event_references:write",
+]
+
+
 def create_initial_data():
-    admin_permissions = [
-        "api_keys:read",
-        "api_keys:write",
-        "custom_widgets:read",
-        "custom_widgets:write",
-        "export:read",
-        "incoming_organization_verification_requests:read",
-        "incoming_organization_verification_requests:write",
-        "organization_invitations:read",
-        "organization_invitations:write",
-        "organization_member_invitations:read",
-        "organization_member_invitations:write",
-        "organization_members:read",
-        "organization_members:write",
-        "outgoing_organization_relations:read",
-        "outgoing_organization_relations:write",
-        "outgoing_organization_verification_requests:read",
-        "outgoing_organization_verification_requests:write",
-        "settings:read",
-        "settings:write",
-        "widgets:read",
-        "widgets:write",
-    ]
-    event_permissions = [
-        "event_lists:read",
-        "event_lists:write",
-        "event_organizers:read",
-        "event_organizers:write",
-        "event_places:read",
-        "event_places:write",
-        "events:read",
-        "events:write",
-        "incoming_event_reference_requests:read",
-        "incoming_event_reference_requests:write",
-        "incoming_event_references:read",
-        "incoming_event_references:write",
-        "outgoing_event_reference_requests:read",
-        "outgoing_event_reference_requests:write",
-        "outgoing_event_references:read",
-        "outgoing_event_references:write",
-    ]
-    early_adopter_permissions = []
+    upsert_admin_unit_member_role(
+        "admin", "Administrator", organization_admin_permissions
+    )
+    upsert_admin_unit_member_role(
+        "event_verifier", "Event expert", organization_event_expert_permissions
+    )
 
-    upsert_admin_unit_member_role("admin", "Administrator", admin_permissions)
-    upsert_admin_unit_member_role("event_verifier", "Event expert", event_permissions)
-
-    upsert_user_role("admin", "Administrator", admin_permissions)
-    upsert_user_role("event_verifier", "Event expert", event_permissions)
-    upsert_user_role("early_adopter", "Early Adopter", early_adopter_permissions)
+    upsert_user_role("admin", "Administrator", [])
 
     Location.update_coordinates()
 

@@ -94,7 +94,7 @@ class EventResource(BaseResource):
     )
     @use_kwargs(EventPostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("event:write")
+    @require_api_access("organization.events:write")
     def put(self, id):
         login_api_user_or_401()
         event = Event.query.get_or_404(id)
@@ -116,7 +116,7 @@ class EventResource(BaseResource):
     )
     @use_kwargs(EventPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("event:write")
+    @require_api_access("organization.events:write")
     def patch(self, id):
         login_api_user_or_401()
         event = Event.query.get_or_404(id)
@@ -137,7 +137,7 @@ class EventResource(BaseResource):
         tags=["Events"],
     )
     @marshal_with(None, 204)
-    @require_api_access("event:write")
+    @require_api_access("organization.events:write")
     def delete(self, id):
         login_api_user_or_401()
         event = Event.query.get_or_404(id)
