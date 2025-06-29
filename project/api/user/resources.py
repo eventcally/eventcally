@@ -37,7 +37,7 @@ class UserOrganizationInvitationListResource(BaseResource):
     )
     @use_kwargs(OrganizationInvitationListRequestSchema, location=("query"))
     @marshal_with(OrganizationInvitationListResponseSchema)
-    @require_api_access("user:read")
+    @require_api_access("user.organization_invitations:read")
     def get(self, **kwargs):
         login_api_user_or_401()
 
@@ -57,7 +57,7 @@ class UserOrganizationInvitationResource(BaseResource):
         tags=["Users", "Organization Invitations"],
     )
     @marshal_with(OrganizationInvitationSchema)
-    @require_api_access("user:read")
+    @require_api_access("user.organization_invitations:read")
     def get(self, id):
         login_api_user_or_401()
         invitation = AdminUnitInvitation.query.get_or_404(id)
@@ -70,7 +70,7 @@ class UserOrganizationInvitationResource(BaseResource):
         tags=["Users", "Organization Invitations"],
     )
     @marshal_with(None, 204)
-    @require_api_access("user:write")
+    @require_api_access("user.organization_invitations:write")
     def delete(self, id):
         login_api_user_or_401()
         invitation = AdminUnitInvitation.query.get_or_404(id)
@@ -89,7 +89,7 @@ class UserFavoriteEventListResource(BaseResource):
     )
     @use_kwargs(UserFavoriteEventListRequestSchema, location=("query"))
     @marshal_with(UserFavoriteEventListResponseSchema)
-    @require_api_access("user:read")
+    @require_api_access("user.favorite_events:read")
     def get(self, **kwargs):
         from project.services.user import get_favorite_events_query
 
@@ -113,7 +113,7 @@ class UserFavoriteEventSearchResource(BaseResource):
     )
     @use_kwargs(EventSearchRequestSchema, location=("query"))
     @marshal_with(EventSearchResponseSchema)
-    @require_api_access("user:read")
+    @require_api_access("user.favorite_events:read")
     def get(self, **kwargs):
         login_api_user_or_401()
 
@@ -131,7 +131,7 @@ class UserFavoriteEventListWriteResource(BaseResource):
         tags=["Users", "Events"],
     )
     @marshal_with(None, 204)
-    @require_api_access("user:write")
+    @require_api_access("user.favorite_events:write")
     def put(self, event_id):
         from project.services.user import add_favorite_event
 
@@ -148,7 +148,7 @@ class UserFavoriteEventListWriteResource(BaseResource):
         tags=["Users", "Events"],
     )
     @marshal_with(None, 204)
-    @require_api_access("user:write")
+    @require_api_access("user.favorite_events:write")
     def delete(self, event_id):
         from project.services.user import remove_favorite_event
 

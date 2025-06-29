@@ -28,7 +28,7 @@ class OrganizationVerificationRequestResource(BaseResource):
         tags=["Organization Verification Requests"],
     )
     @marshal_with(OrganizationVerificationRequestSchema)
-    @require_api_access("organizationverificationrequest:read")
+    @require_api_access("organization.outgoing_event_reference_requests:read")
     def get(self, id):
         login_api_user_or_401()
         verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
@@ -49,7 +49,9 @@ class OrganizationVerificationRequestResource(BaseResource):
         tags=["Organization Verification Requests"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organizationverificationrequest:write")
+    @require_api_access(
+        "organization.outgoing_organization_verification_requests:write"
+    )
     def delete(self, id):
         login_api_user_or_401()
         verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
@@ -73,7 +75,9 @@ class OrganizationVerificationRequestVerifyResource(BaseResource):
         OrganizationVerificationRequestVerifyRequestSchema, location="json", apply=True
     )
     @marshal_with(OrganizationRelationIdSchema, 201)
-    @require_api_access("organizationverificationrequest:write")
+    @require_api_access(
+        "organization.outgoing_organization_verification_requests:write"
+    )
     def post(self, id, **kwargs):
         login_api_user_or_401()
         verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
@@ -116,7 +120,9 @@ class OrganizationVerificationRequestRejectResource(BaseResource):
         OrganizationVerificationRequestRejectRequestSchema, location="json", apply=False
     )
     @marshal_with(None, 204)
-    @require_api_access("organizationverificationrequest:write")
+    @require_api_access(
+        "organization.outgoing_organization_verification_requests:write"
+    )
     def post(self, id):
         login_api_user_or_401()
         verification_request = AdminUnitVerificationRequest.query.get_or_404(id)

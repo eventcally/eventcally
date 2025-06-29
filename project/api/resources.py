@@ -95,14 +95,14 @@ def require_api_access(scopes=None):
                 return func(*args, **kwargs)
 
         scope_list = scopes if type(scopes) is list else [scopes] if scopes else list()
-        security = [{"oauth2AuthCode": scope_list}]
+        security = [
+            {
+                "oauth2AuthCode": scope_list,
+                "oauth2ClientCredentials": scope_list,
+            }
+        ]
 
         if not scope_list:
-            security.append(
-                {
-                    "oauth2ClientCredentials": scope_list,
-                }
-            )
             security.append(
                 {
                     "apiKey": scope_list,

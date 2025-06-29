@@ -29,7 +29,7 @@ class EventListModelResource(BaseResource):
     )
     @use_kwargs(EventListUpdateRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("eventlist:write")
+    @require_api_access("organization.event_lists:write")
     def put(self, id):
         login_api_user_or_401()
         event_list = EventList.query.get_or_404(id)
@@ -48,7 +48,7 @@ class EventListModelResource(BaseResource):
     )
     @use_kwargs(EventListPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("eventlist:write")
+    @require_api_access("organization.event_lists:write")
     def patch(self, id):
         login_api_user_or_401()
         event_list = EventList.query.get_or_404(id)
@@ -66,7 +66,7 @@ class EventListModelResource(BaseResource):
         tags=["Event Lists"],
     )
     @marshal_with(None, 204)
-    @require_api_access("eventlist:write")
+    @require_api_access("organization.event_lists:write")
     def delete(self, id):
         login_api_user_or_401()
         event_list = EventList.query.get_or_404(id)
@@ -99,7 +99,7 @@ class EventListEventListWriteResource(BaseResource):
         tags=["Event Lists", "Events"],
     )
     @marshal_with(None, 204)
-    @require_api_access("eventlist:write")
+    @require_api_access("organization.event_lists:write")
     def put(self, id, event_id):
         login_api_user_or_401()
         event_list = EventList.query.get_or_404(id)
@@ -120,7 +120,7 @@ class EventListEventListWriteResource(BaseResource):
         tags=["Event Lists", "Events"],
     )
     @marshal_with(None, 204)
-    @require_api_access("eventlist:write")
+    @require_api_access("organization.event_lists:write")
     def delete(self, id, event_id):
         login_api_user_or_401()
         event_list = EventList.query.get_or_404(id)

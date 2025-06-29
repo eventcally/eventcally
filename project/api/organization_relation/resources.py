@@ -20,7 +20,7 @@ class OrganizationRelationResource(BaseResource):
         tags=["Organization Relations"],
     )
     @marshal_with(OrganizationRelationSchema)
-    @require_api_access("organization:read")
+    @require_api_access("organization.outgoing_organization_relations:read")
     def get(self, id):
         login_api_user_or_401()
         relation = AdminUnitRelation.query.get_or_404(id)
@@ -36,7 +36,7 @@ class OrganizationRelationResource(BaseResource):
     )
     @use_kwargs(OrganizationRelationUpdateRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization:write")
+    @require_api_access("organization.outgoing_organization_relations:write")
     def put(self, id):
         login_api_user_or_401()
         relation = AdminUnitRelation.query.get_or_404(id)
@@ -57,7 +57,7 @@ class OrganizationRelationResource(BaseResource):
     )
     @use_kwargs(OrganizationRelationPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization:write")
+    @require_api_access("organization.outgoing_organization_relations:write")
     def patch(self, id):
         login_api_user_or_401()
         relation = AdminUnitRelation.query.get_or_404(id)
@@ -77,7 +77,7 @@ class OrganizationRelationResource(BaseResource):
         tags=["Organization Relations"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organization:write")
+    @require_api_access("organization.outgoing_organization_relations:write")
     def delete(self, id):
         login_api_user_or_401()
         relation = AdminUnitRelation.query.get_or_404(id)

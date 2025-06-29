@@ -26,7 +26,7 @@ class OrganizerResource(BaseResource):
     )
     @use_kwargs(OrganizerPostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organizer:write")
+    @require_api_access("organization.event_organizers:write")
     def put(self, id):
         login_api_user_or_401()
         organizer = EventOrganizer.query.get_or_404(id)
@@ -43,7 +43,7 @@ class OrganizerResource(BaseResource):
     )
     @use_kwargs(OrganizerPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organizer:write")
+    @require_api_access("organization.event_organizers:write")
     def patch(self, id):
         login_api_user_or_401()
         organizer = EventOrganizer.query.get_or_404(id)
@@ -61,7 +61,7 @@ class OrganizerResource(BaseResource):
         tags=["Organizers"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organizer:write")
+    @require_api_access("organization.event_organizers:write")
     def delete(self, id):
         login_api_user_or_401()
         organizer = EventOrganizer.query.get_or_404(id)

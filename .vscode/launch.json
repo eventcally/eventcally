@@ -16,7 +16,9 @@
       },
       "args": ["run", "--no-debugger", "--host", "0.0.0.0"],
       "justMyCode": false,
-      "jinja": true
+      "jinja": true,
+      "console": "integratedTerminal",
+      "consoleName": "Flask"
     },
     {
       "name": "Flask HTTPS",
@@ -83,7 +85,8 @@
         "solo"
       ],
       "justMyCode": false,
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "consoleName": "Celery worker"
     },
     {
       "name": "Celery beat",
@@ -92,7 +95,8 @@
       "module": "celery",
       "args": ["-A", "project.celery", "beat", "--loglevel=debug"],
       "justMyCode": false,
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "consoleName": "Celery beat"
     },
     {
       "name": "Gunicorn",
@@ -101,7 +105,8 @@
       "module": "gunicorn",
       "args": ["-c", "gunicorn.conf.py", "-w", "1", "project:app"],
       "justMyCode": false,
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "consoleName": "Gunicorn"
     },
     {
       "name": "pybabel",

@@ -26,7 +26,7 @@ class PlaceResource(BaseResource):
     )
     @use_kwargs(PlacePostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("place:write")
+    @require_api_access("organization.event_places:write")
     def put(self, id):
         login_api_user_or_401()
         place = EventPlace.query.get_or_404(id)
@@ -43,7 +43,7 @@ class PlaceResource(BaseResource):
     )
     @use_kwargs(PlacePatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("place:write")
+    @require_api_access("organization.event_places:write")
     def patch(self, id):
         login_api_user_or_401()
         place = EventPlace.query.get_or_404(id)
@@ -59,7 +59,7 @@ class PlaceResource(BaseResource):
         tags=["Places"],
     )
     @marshal_with(None, 204)
-    @require_api_access("place:write")
+    @require_api_access("organization.event_places:write")
     def delete(self, id):
         login_api_user_or_401()
         place = EventPlace.query.get_or_404(id)

@@ -3,17 +3,37 @@ from enum import Enum
 from flask_babel import lazy_gettext
 
 
+class PermissionDomain(Enum):
+    user = 1
+    organization = 2
+
+
 class PermissionAction(Enum):
     read = 1
     write = 2
 
 
 class PermissionInfo:  # pragma: no cover
-    def __init__(self, entity: str, action: PermissionAction, entity_display_name: str):
+    def __init__(
+        self,
+        domain: PermissionDomain,
+        entity: str,
+        action: PermissionAction,
+        entity_display_name: str,
+        no_api_access: bool = False,
+    ):
+        self.domain = domain
         self.entity = entity
         self.action = action
         self.entity_display_name = entity_display_name
         self.permission = f"{entity}:{action.name}"
+        self.full_permission = f"{domain.name}.{self.permission}"
+        self.no_api_access = no_api_access
+        self.domain_label = PermissionInfo._get_domain_label(domain)
+        self.label = PermissionInfo._get_label(entity_display_name, action)
+        self.full_label = PermissionInfo._get_full_label(
+            self.domain_label, entity_display_name, action
+        )
 
     def __str__(self):
         return self.permission
@@ -28,48 +48,92 @@ class PermissionInfo:  # pragma: no cover
             else False
         )
 
-    @property
-    def display_action(self):
-        if self.action == PermissionAction.read:
-            return lazy_gettext("Read")
-        elif self.action == PermissionAction.write:
-            return lazy_gettext("Write")
+    @staticmethod
+    def _get_domain_label(domain: PermissionDomain):
+        if domain == PermissionDomain.user:
+            return lazy_gettext("User")
+        elif domain == PermissionDomain.organization:
+            return lazy_gettext("Organization")
         else:
-            raise ValueError(f"Unknown action: {self.action}")
+            raise ValueError(f"Unknown domain: {domain}")
+
+    @staticmethod
+    def _get_label(entity_display_name: str, action: PermissionAction):
+        if action == PermissionAction.read:
+            return lazy_gettext(
+                "Read %(entity_display_name)s", entity_display_name=entity_display_name
+            )
+        elif action == PermissionAction.write:
+            return lazy_gettext(
+                "Write %(entity_display_name)s", entity_display_name=entity_display_name
+            )
+        else:
+            raise ValueError(f"Unknown action: {action}")
+
+    @staticmethod
+    def _get_full_label(
+        domain_label: str, entity_display_name: str, action: PermissionAction
+    ):
+        return lazy_gettext(
+            "%(domain_label)s: %(label)s",
+            domain_label=domain_label,
+            label=PermissionInfo._get_label(entity_display_name, action),
+        )
 
 
-organization_permission_infos = list()
+permission_infos: list[PermissionInfo] = list()
 
 
-def get_organization_permission_info(
-    permission: str,
-) -> PermissionInfo | None:  # pragma: no cover
-    return next(
-        (
-            info
-            for info in organization_permission_infos
-            if info.permission == permission
-        ),
-        None,
-    )
+def _add_permission_info(
+    domain: PermissionDomain,
+    entity: str,
+    entity_display_name: str,
+    actions=[PermissionAction.read, PermissionAction.write],
+    no_api_access: bool = False,
+):
+    for action in actions:
+        permission_infos.append(
+            PermissionInfo(
+                domain,
+                entity,
+                action,
+                entity_display_name,
+                no_api_access=no_api_access,
+            )
+        )
 
 
 def _add_org(
     entity: str,
     entity_display_name: str,
     actions=[PermissionAction.read, PermissionAction.write],
+    no_api_access: bool = False,
 ):
-    for action in actions:
-        organization_permission_infos.append(
-            PermissionInfo(
-                entity,
-                action,
-                entity_display_name,
-            )
-        )
+    _add_permission_info(
+        PermissionDomain.organization,
+        entity,
+        entity_display_name,
+        actions=actions,
+        no_api_access=no_api_access,
+    )
 
 
-_add_org("api_keys", lazy_gettext("API keys"))
+def _add_user(
+    entity: str,
+    entity_display_name: str,
+    actions=[PermissionAction.read, PermissionAction.write],
+    no_api_access: bool = False,
+):
+    _add_permission_info(
+        PermissionDomain.user,
+        entity,
+        entity_display_name,
+        actions=actions,
+        no_api_access=no_api_access,
+    )
+
+
+_add_org("api_keys", lazy_gettext("API keys"), no_api_access=True)
 _add_org("custom_widgets", lazy_gettext("Custom widgets"))
 _add_org("event_lists", lazy_gettext("Event lists"))
 _add_org("event_organizers", lazy_gettext("Event organizers"))
@@ -102,3 +166,7 @@ _add_org(
     "outgoing_organization_relations", lazy_gettext("Outgoing organization relations")
 )
 _add_org("widgets", lazy_gettext("Widgets"))
+
+_add_user("api_keys", lazy_gettext("API keys"), no_api_access=True)
+_add_user("organization_invitations", lazy_gettext("Organization invitations"))
+_add_user("favorite_events", lazy_gettext("Favorite events"))

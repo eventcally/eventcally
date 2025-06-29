@@ -123,7 +123,7 @@ def test_admin_user_update(client, seeder, utils, app, mocker, db, db_error):
         from project.services.user import set_roles_for_user
 
         user = User.query.get_or_404(other_user_id)
-        set_roles_for_user(user.email, ["event_verifier"])
+        set_roles_for_user(user.email, [])
         db.session.commit()
 
     url = utils.get_url("admin_user_update", id=other_user_id)
