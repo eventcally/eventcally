@@ -416,9 +416,11 @@ class Seeder(object):
         place_id=None,
         planned=False,
         internal_tags="",
+        custom_category_ids=None,
         **kwargs
     ):
         from project.models import (
+            CustomEventCategory,
             Event,
             EventAttendanceMode,
             EventOrganizer,
@@ -463,10 +465,26 @@ class Seeder(object):
                 ).all()
                 event.co_organizers = co_organizers
 
+            if custom_category_ids:
+                custom_categories = CustomEventCategory.query.filter(
+                    CustomEventCategory.id.in_(custom_category_ids)
+                ).all()
+                event.custom_categories = custom_categories
+
             insert_event(event)
             self._db.session.commit()
             event_id = event.id
         return event_id
+
+    def get_one_custom_event_category_set(self) -> tuple[int, int]:
+        with self._app.app_context():
+            from project.models import CustomEventCategorySet
+
+            custom_event_category_set = CustomEventCategorySet.query.first()
+            custom_event_category_set_id = custom_event_category_set.id
+            custom_event_category_id = custom_event_category_set.categories[0].id
+
+        return (custom_event_category_set_id, custom_event_category_id)
 
     def create_event_date_definition(
         self, start=None, end=None, allday=False, recurrence_rule=""

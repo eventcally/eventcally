@@ -1,5 +1,5 @@
-from flask import redirect, request, url_for
-from flask_admin import Admin, AdminIndexView
+from flask import flash, redirect, request, url_for
+from flask_admin import Admin, AdminIndexView, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.template import EndpointLinkRowAction
 from flask_babel import lazy_gettext
@@ -13,6 +13,11 @@ from project.models.user import User
 
 
 class AuthAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.has_role("admin")
+
+
+class AuthBaseView(BaseView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.has_role("admin")
 
@@ -164,6 +169,57 @@ class EventPlaceView(AuthModelView):
     column_default_sort = "name"
 
 
+class CustomCategoryExtensionView(AuthBaseView):
+    @expose("/", methods=["GET", "POST"])
+    def index(self):
+        if request.method == "POST":
+            file = request.files.get("file")
+            if not file:
+                flash("No file uploaded", "error")
+                return redirect(request.url)
+
+            try:
+                import json
+
+                from project.models import CustomEventCategory, CustomEventCategorySet
+
+                category_set_id = request.form.get("category_set_id")
+                category_set = db.session.get(CustomEventCategorySet, category_set_id)
+
+                if not category_set:
+                    flash(
+                        f"Category set with {category_set_id} does not exist",
+                        "error",
+                    )
+                    return redirect(request.url)
+
+                data = json.loads(file.read().decode("utf-8"))
+
+                # Clear existing categories
+                for category in category_set.categories:
+                    db.session.delete(category)
+                db.session.commit()
+
+                # Insert new categories
+                for item in data:
+                    category = CustomEventCategory(
+                        category_set_id=category_set_id, name=item
+                    )
+                    db.session.add(category)
+                db.session.commit()
+
+                flash(f"{len(data)} categories inserted successfully!", "success")
+                return redirect(request.url)
+            except Exception as e:
+                db.session.rollback()
+                flash(f"Error: {str(e)}", "error")
+                return redirect(request.url)
+
+        return self.render(
+            "flask-admin/custom_category_extension_bulk_insert_view.html"
+        )
+
+
 admin = Admin(
     app,
     endpoint="flask_admin",
@@ -215,5 +271,11 @@ admin.add_view(
         db.session,
         name="EventPlace",
         category="Custom Views",
+    )
+)
+
+admin.add_view(
+    CustomCategoryExtensionView(
+        name="Custom category extension", endpoint="custom_category_extension"
     )
 )

@@ -30,7 +30,7 @@ from project.models import (
 from project.models.event_organizer import EventOrganizer
 from project.models.event_place import EventPlace
 from project.models.location import Location
-from project.modular.ajax import EventCategoryAjaxModelLoader
+from project.modular.ajax import CustomEventCategoryLoader, EventCategoryAjaxModelLoader
 from project.modular.base_form import BaseCreateForm, BaseForm, BaseUpdateForm
 from project.modular.fields import AjaxSelectField, AjaxSelectMultipleField
 from project.views.manage_admin_unit.ajax import (
@@ -87,6 +87,43 @@ class EventDateDefinitionForm(BaseForm, EventDateDefinitionFormMixin):
             result = False
 
         return result
+
+
+class CustomEventCategoryForm(BaseForm):
+    def __init__(self, *args, **kwargs):
+        from project.models.event_category import CustomEventCategorySet
+
+        for category_set in CustomEventCategorySet.query.all():
+            field_name = f"set_{category_set.id}"
+            field = AjaxSelectMultipleField(
+                CustomEventCategoryLoader(category_set_id=category_set.id),
+                label=category_set.label_or_name,
+                validators=[Optional()],
+            )
+            self._unbound_fields.append((field_name, field))
+
+        super().__init__(*args, **kwargs)
+
+    def process(self, formdata=None, obj=None, data=None, extra_filters=None, **kwargs):
+        from project.models.event_category import CustomEventCategorySet
+
+        if obj:
+            categories = obj
+            for category_set in CustomEventCategorySet.query.all():
+                field_name = f"set_{category_set.id}"
+                field_data = list(
+                    filter(lambda c: c.category_set_id == category_set.id, categories)
+                )
+                kwargs.setdefault(field_name, field_data)
+
+        return super().process(formdata, obj, data, extra_filters, **kwargs)
+
+    def populate_obj(self, obj):
+        categories = obj
+        categories.clear()
+        for name, field in self._fields.items():
+            if name.startswith("set_") and field.data:
+                categories.extend(field.data)
 
 
 class EventFormMixin(object):
@@ -234,6 +271,10 @@ class EventFormMixin(object):
         lazy_gettext("Categories"),
         validators=[DataRequired()],
         description=lazy_gettext("Choose categories that fit the event."),
+    )
+    custom_categories = FormField(
+        CustomEventCategoryForm,
+        lazy_gettext("Custom event categories"),
     )
     rating = SelectField(
         lazy_gettext("Rating"),

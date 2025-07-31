@@ -1,7 +1,7 @@
 from flask import request
 
 from project import db
-from project.models.event_category import EventCategory
+from project.models.event_category import CustomEventCategory, EventCategory
 from project.models.license import License
 from project.modular.search_definition import SearchDefinition, apply_search_definitions
 from project.modular.sort_definition import SortDefinition
@@ -105,6 +105,30 @@ class EventCategoryAjaxModelLoader(AjaxModelLoader):
 
     def format_model(self, model):
         return get_event_category_name(model)
+
+
+class CustomEventCategoryLoader(AjaxModelLoader):
+    def __init__(self, **kwargs):
+        self.category_set_id = kwargs.pop("category_set_id")
+        kwargs["search_definitions"] = [
+            SearchDefinition(CustomEventCategory.name),
+            SearchDefinition(CustomEventCategory.label),
+        ]
+        kwargs["sort_definitions"] = [
+            SortDefinition(CustomEventCategory.name),
+            SortDefinition(CustomEventCategory.label),
+        ]
+        super().__init__(db.session, CustomEventCategory, **kwargs)
+
+    def get_query(self):
+        return (
+            super()
+            .get_query()
+            .filter(CustomEventCategory.category_set_id == self.category_set_id)
+        )
+
+    def format_model(self, model):
+        return model.label_or_name
 
 
 class LicenseAjaxModelLoader(AjaxModelLoader):

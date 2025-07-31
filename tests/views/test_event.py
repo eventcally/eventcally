@@ -70,6 +70,18 @@ def test_read_co_organizers(seeder: Seeder, utils: UtilActions):
     utils.assert_response_contains(response, "Organizer B")
 
 
+def test_read_with_custom_category(seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base()
+    _, custom_event_category_id = seeder.get_one_custom_event_category_set()
+    event_id = seeder.create_event(
+        admin_unit_id, custom_category_ids=[custom_event_category_id]
+    )
+
+    url = utils.get_url("event", event_id=event_id)
+    response = utils.get_ok(url)
+    utils.assert_response_contains(response, "Custom Category")
+
+
 @pytest.mark.parametrize("variant", ["normal", "db_error", "two_date_definitions"])
 def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant):
     user_id, admin_unit_id = seeder.setup_base()
@@ -262,6 +274,54 @@ def test_create_with_reference_requests(
             .first()
         )
         assert reference is not None
+
+
+def test_create_with_custom_category(client, app, utils: UtilActions, seeder: Seeder):
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    custom_event_category_set_id, custom_event_category_id = (
+        seeder.get_one_custom_event_category_set()
+    )
+
+    field_name = f"custom_categories-set_{custom_event_category_set_id}"
+    utils.ajax_lookup(url, field_name)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "description": "Beschreibung",
+            "date_definitions-0-start": ["2030-12-31", "00:00"],
+            "date_definitions-0-end": ["2030-12-31", "23:59"],
+            "date_definitions-0-allday": "y",
+            "event_place": place_id,
+            "organizer": organizer_id,
+            "photo-image_base64": seeder.get_default_image_upload_base64(),
+            "photo-copyright_text": "EventCally",
+            field_name: [custom_event_category_id],
+        },
+    )
+
+    utils.assert_response_redirect(response, "event_actions", event_id=1)
+
+    with app.app_context():
+        from project.models import Event
+
+        event = (
+            Event.query.filter(Event.admin_unit_id == admin_unit_id)
+            .filter(Event.name == "Name")
+            .first()
+        )
+        assert event is not None
+
+        assert len(event.custom_categories) == 1
+        assert event.custom_categories[0].id == custom_event_category_id
 
 
 def test_create_newPlaceAndOrganizer(
@@ -669,6 +729,40 @@ def test_update_co_organizers(client, seeder: Seeder, utils: UtilActions, app):
     utils.assert_response_redirect(
         response, "manage_admin_unit.events", id=admin_unit_id
     )
+
+
+def test_update_with_custom_category(client, seeder: Seeder, utils: UtilActions, app):
+    _, admin_unit_id = seeder.setup_base()
+    _, custom_event_category_id = seeder.get_one_custom_event_category_set()
+    event_id = seeder.create_event(
+        admin_unit_id, custom_category_ids=[custom_event_category_id]
+    )
+
+    url = utils.get_url(
+        "manage_admin_unit.event_update", id=admin_unit_id, event_id=event_id
+    )
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Neuer Name",
+        },
+    )
+
+    utils.assert_response_redirect(
+        response, "manage_admin_unit.events", id=admin_unit_id
+    )
+
+    with app.app_context():
+        from project.models import Event
+
+        event = Event.query.filter(Event.id == event_id).first()
+        assert event is not None
+
+        assert len(event.custom_categories) == 1
+        assert event.custom_categories[0].id == custom_event_category_id
 
 
 @pytest.mark.parametrize("db_error", [True, False])

@@ -45,6 +45,7 @@ from project.models import (
     UserFavoriteEvents,
     sanitize_allday_instance,
 )
+from project.models.event_category import CustomEventCategory
 from project.services.reference import get_event_reference, upsert_event_reference
 from project.services.search_params import EventSearchParams
 from project.utils import get_pending_changes, get_place_str
@@ -88,6 +89,18 @@ def fill_event_filter(event_filter, params: EventSearchParams):
             category_ids = [params.category_id]
         event_filter = and_(
             event_filter, Event.categories.any(EventCategory.id.in_(category_ids))
+        )
+
+    if params.custom_category_set_id:
+        if type(params.custom_category_set_id) is list:
+            category_set_ids = params.custom_category_set_id
+        else:  # pragma: no cover
+            category_set_ids = [params.custom_category_set_id]
+        event_filter = and_(
+            event_filter,
+            Event.custom_categories.any(
+                CustomEventCategory.category_set_id.in_(category_set_ids)
+            ),
         )
 
     if params.status:
