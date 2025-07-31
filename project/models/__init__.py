@@ -14,7 +14,11 @@ from project.models.admin_unit_verification_request import (
 from project.models.api_key import ApiKey
 from project.models.custom_widget import CustomWidget
 from project.models.event import Event, EventStatus, PublicStatus
-from project.models.event_category import EventCategory
+from project.models.event_category import (
+    CustomEventCategory,
+    CustomEventCategorySet,
+    EventCategory,
+)
 from project.models.event_date import EventDate, EventDateDefinition
 from project.models.event_list import EventEventLists, EventList
 from project.models.event_mixin import (

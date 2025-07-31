@@ -238,6 +238,7 @@ def add_oauth2_scheme_with_transport(insecure: bool):
 
 marshmallow_plugin.converter.add_attribute_function(enum_to_properties)
 
+import project.api.custom_event_category_set.resources
 import project.api.custom_widget.resources
 import project.api.dump.resources
 import project.api.event.resources

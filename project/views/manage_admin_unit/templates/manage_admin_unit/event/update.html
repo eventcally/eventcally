@@ -163,6 +163,8 @@
     </div>
   </div>
 
+  {{ forms.render_field(form.custom_categories) }}
+
   {% if form.rating.choices|length > 1 %}
   <div class="card mb-4">
     <div class="card-header">

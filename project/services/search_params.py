@@ -156,6 +156,7 @@ class EventSearchParams(TrackableSearchParams):
         self.longitude = None
         self.distance = None
         self.category_id = None
+        self.custom_category_set_id = None
         self.organizer_id = None
         self.event_place_id = None
         self.event_list_id = None
@@ -282,6 +283,9 @@ class EventSearchParams(TrackableSearchParams):
 
         if "category_id" in request.args:
             self.category_id = self.load_list_param("category_id")
+
+        if "custom_category_set_id" in request.args:
+            self.custom_category_set_id = self.load_list_param("custom_category_set_id")
 
         if "weekday" in request.args:
             self.weekday = request.args.getlist("weekday")

@@ -5,6 +5,11 @@ from marshmallow_enum import EnumField
 
 from project.access import can_read_private_events
 from project.api import marshmallow
+from project.api.custom_event_category.schemas import (
+    CustomEventCategoryIdSchema,
+    CustomEventCategoryRefSchema,
+    CustomEventCategoryWriteIdSchema,
+)
 from project.api.event_category.schemas import (
     EventCategoryIdSchema,
     EventCategoryRefSchema,
@@ -217,6 +222,7 @@ class EventSchema(
     place = fields.Nested(PlaceRefSchema, attribute="event_place")
     photo = fields.Nested(ImageSchema)
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
+    custom_categories = fields.List(fields.Nested(CustomEventCategoryRefSchema))
     co_organizers = fields.List(fields.Nested(OrganizerRefSchema))
     date_definitions = fields.List(fields.Nested(EventDateDefinitionSchema))
 
@@ -228,6 +234,9 @@ class EventDumpSchema(EventIdSchema, EventBaseSchemaMixin):
     photo = fields.Nested(ImageDumpSchema)
     category_ids = fields.Pluck(
         EventCategoryIdSchema, "id", many=True, attribute="categories"
+    )
+    custom_category_ids = fields.Pluck(
+        CustomEventCategoryIdSchema, "id", many=True, attribute="custom_categories"
     )
     co_organizer_ids = fields.Pluck(
         OrganizerDumpIdSchema, "id", many=True, attribute="co_organizers"
@@ -252,6 +261,7 @@ class EventSearchItemSchema(
     organizer = fields.Nested(OrganizerSearchItemSchema)
     organization = fields.Nested(OrganizationSearchItemSchema, attribute="admin_unit")
     categories = fields.List(fields.Nested(EventCategoryRefSchema))
+    custom_categories = fields.List(fields.Nested(CustomEventCategoryRefSchema))
 
 
 class EventListRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixin):
@@ -337,6 +347,12 @@ class EventSearchRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMi
         fields.Int(),
         metadata={"description": "Looks for events with this category ids."},
     )
+    custom_category_set_id = fields.List(
+        fields.Int(),
+        metadata={
+            "description": "Looks for events with custom categories from set with this id."
+        },
+    )
     weekday = fields.List(
         fields.Int(validate=validate.Range(min=0, max=6)),
         metadata={
@@ -421,6 +437,10 @@ class EventWriteSchemaMixin(object):
     categories = fields.List(
         fields.Nested(EventCategoryWriteIdSchema),
         metadata={"description": "Categories that fit the event."},
+    )
+    custom_categories = fields.List(
+        fields.Nested(CustomEventCategoryWriteIdSchema),
+        metadata={"description": "Custom categories that fit the event."},
     )
     rating = marshmallow.auto_field(
         load_default=50,

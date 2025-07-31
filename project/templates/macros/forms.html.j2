@@ -54,6 +54,9 @@
 {% endmacro %}
 
 {% macro render_form_field(form_field) %}
+{% set form = form_field.form %}
+{% set input_fields = form.get_input_fields() %}
+{% if input_fields %}
 <div class="card mb-4" data-element="subform">
     <div class="card-header">
         {{ form_field.label(class="mb-0") }}
@@ -66,12 +69,12 @@
         {% endif %}
 
         <div id="{{ form_field.id }}">
-            {% set form = form_field.form %}
             {{ form.hidden_tag() }}
-            {% for subfield in form.get_input_fields() %}
+            {% for subfield in input_fields %}
             {{ render_field(subfield) }}
             {% endfor %}
         </div>
     </div>
 </div>
+{% endif %}
 {% endmacro %}

@@ -56,6 +56,11 @@ class Event(db.Model, TrackableMixin, EventMixin):
     )
 
     categories = relationship("EventCategory", secondary="event_eventcategories")
+    custom_categories = relationship(
+        "CustomEventCategory",
+        secondary="event_customeventcategories",
+        backref=backref("events", lazy=True),
+    )
     co_organizers = relationship(
         "EventOrganizer",
         secondary="event_coorganizers",
@@ -76,6 +81,15 @@ class Event(db.Model, TrackableMixin, EventMixin):
     status = Column(IntegerEnum(EventStatus))
     previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
     rating = Column(Integer(), default=50)
+
+    @property
+    def custom_categories_by_set(self):
+        categories_by_set = {}
+        for category in self.custom_categories:
+            if category.category_set_id not in categories_by_set:
+                categories_by_set[category.category_set_id] = []
+            categories_by_set[category.category_set_id].append(category)
+        return categories_by_set
 
     @property
     def min_start_definition(self):

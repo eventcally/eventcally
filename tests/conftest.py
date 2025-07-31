@@ -61,7 +61,7 @@ def db(app):
 
 def create_initial_test_data():
     from project import db
-    from project.models import License
+    from project.models import CustomEventCategory, CustomEventCategorySet, License
 
     db.session.add(
         License(
@@ -112,6 +112,26 @@ def create_initial_test_data():
             url="https://creativecommons.org/licenses/by-nc-nd/4.0/",
         )
     )
+
+    custom_event_category_set = CustomEventCategorySet(
+        name="Default",
+        label="Default Custom Categories",
+    )
+    custom_event_category_set.categories = [
+        CustomEventCategory(
+            name="Custom Category 1",
+            label="Custom Category 1",
+        ),
+        CustomEventCategory(
+            name="Custom Category 2",
+            label="Custom Category 2",
+        ),
+        CustomEventCategory(
+            name="Custom Category 3",
+            label="Custom Category 3",
+        ),
+    ]
+    db.session.add(custom_event_category_set)
 
     db.session.commit()
 

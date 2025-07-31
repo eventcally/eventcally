@@ -126,6 +126,26 @@ def test_search(client, seeder: Seeder, utils: UtilActions):
     assert response.json["items"][0]["id"] == event_id
 
 
+def test_search_with_custom_category(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
+    custom_event_category_set_id, custom_event_category_id = (
+        seeder.get_one_custom_event_category_set()
+    )
+    event_id = seeder.create_event(
+        admin_unit_id, custom_category_ids=[custom_event_category_id]
+    )
+
+    url = utils.get_url(
+        "api_v1_event_search", custom_category_set_id=custom_event_category_set_id
+    )
+    response = utils.get_json_ok(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == event_id
+    assert (
+        response.json["items"][0]["custom_categories"]["id"] == custom_event_category_id
+    )
+
+
 def test_search_is_favored(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)

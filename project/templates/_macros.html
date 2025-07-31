@@ -453,6 +453,9 @@
 {% if event.category %}
   <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ _('Category') }}"></i> {% for category in event.categories %}{{ category | event_category_name }}{%if not loop.last %}, {% endif %}{% endfor %}</div>
 {% endif %}
+{% for custom_categories in event.custom_categories_by_set.values() %}
+  <div><i class="fa fa-fw fa-archive" data-toggle="tooltip" title="{{ custom_categories[0].category_set.label_or_name }}"></i> {% for custom_category in custom_categories %}{{ custom_category.label_or_name }}{%if not loop.last %}, {% endif %}{% endfor %}</div>
+{% endfor %}
 {{ render_tag_prop(event.tags) }}
 {{ render_bool_prop(event.kid_friendly, 'fa-child', 'Kid friendly') }}
 {{ render_bool_prop(event.accessible_for_free, 'fa-door-open', 'Accessible for free') }}
