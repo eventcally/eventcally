@@ -142,7 +142,8 @@ def test_search_with_custom_category(client, seeder: Seeder, utils: UtilActions)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == event_id
     assert (
-        response.json["items"][0]["custom_categories"]["id"] == custom_event_category_id
+        response.json["items"][0]["custom_categories"][0]["id"]
+        == custom_event_category_id
     )
 
 
