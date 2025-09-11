@@ -143,7 +143,7 @@ def require_organization_api_access(scope: str, model=None, **outer_kwargs):
             else:
                 admin_unit_id = id
 
-            if current_token.app_installation:
+            if current_token and current_token.app_installation:
                 if (
                     current_token.app_installation.admin_unit_id != admin_unit_id
                 ):  # pragma: no cover
