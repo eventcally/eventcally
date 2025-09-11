@@ -4,8 +4,8 @@ from sqlalchemy import Column, DateTime, ForeignKey, func
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref, declared_attr, deferred, relationship
 
+from project.actor import current_actor
 from project.dateutils import gmt_tz
-from project.models.functions import _current_user_id_or_none
 
 
 class TrackableMixin(object):
@@ -31,7 +31,7 @@ class TrackableMixin(object):
             Column(
                 "created_by_id",
                 ForeignKey("user.id", ondelete="SET NULL"),
-                default=_current_user_id_or_none,
+                default=current_actor.current_user_id_or_none,
             ),
             group="trackable",
         )
@@ -51,7 +51,7 @@ class TrackableMixin(object):
             Column(
                 "updated_by_id",
                 ForeignKey("user.id", ondelete="SET NULL"),
-                onupdate=_current_user_id_or_none,
+                onupdate=current_actor.current_user_id_or_none,
             ),
             group="trackable",
         )
@@ -65,6 +65,48 @@ class TrackableMixin(object):
             backref=backref("updated_%s" % cls.__tablename__, lazy=True),
         )
 
+    @declared_attr
+    def created_by_app_installation_id(cls):
+        return deferred(
+            Column(
+                "created_by_app_installation_id",
+                ForeignKey("app_installation.id", ondelete="SET NULL"),
+                default=current_actor.current_app_installation_id_or_none,
+            ),
+            group="trackable",
+        )
+
+    @declared_attr
+    def created_by_app_installation(cls):
+        return relationship(
+            "AppInstallation",
+            primaryjoin="AppInstallation.id == %s.created_by_app_installation_id"
+            % cls.__name__,
+            remote_side="AppInstallation.id",
+            backref=backref("created_%s" % cls.__tablename__, lazy=True),
+        )
+
+    @declared_attr
+    def updated_by_app_installation_id(cls):
+        return deferred(
+            Column(
+                "updated_by_app_installation_id",
+                ForeignKey("app_installation.id", ondelete="SET NULL"),
+                onupdate=current_actor.current_app_installation_id_or_none,
+            ),
+            group="trackable",
+        )
+
+    @declared_attr
+    def updated_by_app_installation(cls):
+        return relationship(
+            "AppInstallation",
+            primaryjoin="AppInstallation.id == %s.updated_by_app_installation_id"
+            % cls.__name__,
+            remote_side="AppInstallation.id",
+            backref=backref("updated_%s" % cls.__tablename__, lazy=True),
+        )
+
     @hybrid_property
     def last_modified_at(self):
         return self.updated_at if self.updated_at else self.created_at
@@ -72,6 +114,26 @@ class TrackableMixin(object):
     @last_modified_at.expression
     def last_modified_at(cls):
         return func.coalesce(cls.updated_at, cls.created_at)
+
+    @property
+    def created_by_label(self):
+        if self.created_by:
+            return self.created_by.email
+
+        if self.created_by_app_installation:
+            return self.created_by_app_installation.oauth2_client.client_name
+
+        return None  # pragma: no cover
+
+    @property
+    def updated_by_label(self):
+        if self.updated_by:
+            return self.updated_by.email
+
+        if self.updated_by_app_installation:
+            return self.updated_by_app_installation.oauth2_client.client_name
+
+        return None  # pragma: no cover
 
     def get_hash(self):
         return (

@@ -1,4 +1,3 @@
-from flask import flash
 from flask_babel import gettext
 
 from project.models import OAuth2Client
@@ -11,7 +10,7 @@ from project.views.user_blueprint.oauth2_client.forms import (
     DeleteOAuth2ClientForm,
     UpdateOAuth2ClientForm,
 )
-from project.views.utils import non_match_for_deletion
+from project.views.utils import flash_non_match_for_deletion
 
 
 class OAuth2ClientViewHandler(UserChildViewHandler):
@@ -32,10 +31,11 @@ class OAuth2ClientViewHandler(UserChildViewHandler):
         )
 
     def can_object_be_deleted(self, form, object):
-        if non_match_for_deletion(form.name.data, object.client_name):
-            flash(gettext("Entered name does not match OAuth2 client name"), "danger")
-            return False
-        return True
+        return flash_non_match_for_deletion(
+            form.name.data,
+            object.client_name,
+            gettext("Entered name does not match OAuth2 client name"),
+        )
 
 
 handler = OAuth2ClientViewHandler()

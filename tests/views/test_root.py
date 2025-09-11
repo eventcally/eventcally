@@ -3,6 +3,11 @@ import os
 from tests.utils import UtilActions
 
 
+def test_index(client):
+    response = client.get("/")
+    assert b"EventCally" in response.data
+
+
 def test_home(client, seeder, utils):
     url = utils.get_url("home")
     response = utils.get_ok(url)

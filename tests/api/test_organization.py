@@ -4,14 +4,18 @@ from tests.seeder import Seeder
 from tests.utils import UtilActions
 
 
-def test_read(client, seeder: Seeder, utils: UtilActions):
+@pytest.mark.parametrize("as_app_installation", [True, False])
+def test_read(client, seeder: Seeder, utils: UtilActions, as_app_installation: bool):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
 
     url = utils.get_url("api_v1_organization", id=admin_unit_id)
     response = utils.get_json_ok(url)
     assert "can_verify_other" not in response.json
 
-    seeder.authorize_api_access(user_id, admin_unit_id)
+    if as_app_installation:
+        seeder.authorize_api_access_as_app_installation(admin_unit_id)
+    else:
+        seeder.authorize_api_access(user_id, admin_unit_id)
 
     response = utils.get_json_ok(url)
     assert "can_verify_other" in response.json
@@ -92,7 +96,41 @@ def test_list_unverified(client, app, seeder: Seeder, utils: UtilActions):
     assert len(response.json["items"]) == 3
 
 
-def test_event_date_search(client, seeder: Seeder, utils: UtilActions):
+def test_list_unverified_app_installation(
+    client, app, seeder: Seeder, utils: UtilActions
+):
+    user_id, verified_admin_unit_id = seeder.setup_base(
+        email="verified@test.de",
+        log_in=False,
+        name="Verified",
+        admin_unit_verified=True,
+    )
+    _, unverified_admin_unit_id = seeder.setup_base(
+        email="unverified@test.de",
+        log_in=False,
+        name="Unverified",
+        admin_unit_verified=False,
+    )
+
+    with app.app_context():
+        from project.services.admin_unit import get_admin_unit_by_name
+
+        eventcally_id = get_admin_unit_by_name("eventcally").id
+
+    seeder.authorize_api_access_as_app_installation(eventcally_id)
+
+    url = utils.get_url("api_v1_organization_list")
+    response = utils.get_json_ok(url)
+    assert len(response.json["items"]) == 3
+    assert response.json["items"][0]["id"] == eventcally_id
+    assert response.json["items"][1]["id"] == unverified_admin_unit_id
+    assert response.json["items"][2]["id"] == verified_admin_unit_id
+
+
+@pytest.mark.parametrize("as_app_installation", [True, False])
+def test_event_date_search(
+    client, seeder: Seeder, utils: UtilActions, as_app_installation: bool
+):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
@@ -105,14 +143,21 @@ def test_event_date_search(client, seeder: Seeder, utils: UtilActions):
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["event"]["id"] == event_id
 
-    seeder.authorize_api_access(user_id, admin_unit_id)
+    if as_app_installation:
+        seeder.authorize_api_access_as_app_installation(admin_unit_id)
+    else:
+        seeder.authorize_api_access(user_id, admin_unit_id)
+
     response = utils.get_json(url)
     utils.assert_response_ok(response)
     assert len(response.json["items"]) == 2
     assert response.json["items"][1]["event"]["public_status"] == "draft"
 
 
-def test_event_search(client, seeder: Seeder, utils: UtilActions):
+@pytest.mark.parametrize("as_app_installation", [True, False])
+def test_event_search(
+    client, seeder: Seeder, utils: UtilActions, as_app_installation: bool
+):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
@@ -123,7 +168,10 @@ def test_event_search(client, seeder: Seeder, utils: UtilActions):
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == event_id
 
-    seeder.authorize_api_access(user_id, admin_unit_id)
+    if as_app_installation:
+        seeder.authorize_api_access_as_app_installation(admin_unit_id)
+    else:
+        seeder.authorize_api_access(user_id, admin_unit_id)
     response = utils.get_json(url)
     utils.assert_response_ok(response)
     assert len(response.json["items"]) == 2
@@ -180,7 +228,8 @@ def test_organizers_post(client, seeder: Seeder, utils: UtilActions, app):
         assert organizer is not None
 
 
-def test_events(client, seeder: Seeder, utils: UtilActions):
+@pytest.mark.parametrize("as_app_installation", [True, False])
+def test_events(client, seeder: Seeder, utils: UtilActions, as_app_installation: bool):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
@@ -190,7 +239,11 @@ def test_events(client, seeder: Seeder, utils: UtilActions):
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == event_id
 
-    seeder.authorize_api_access(user_id, admin_unit_id)
+    if as_app_installation:
+        seeder.authorize_api_access_as_app_installation(admin_unit_id)
+    else:
+        seeder.authorize_api_access(user_id, admin_unit_id)
+
     response = utils.get_json(url)
     utils.assert_response_ok(response)
     assert len(response.json["items"]) == 2
@@ -368,8 +421,13 @@ def test_places(client, seeder: Seeder, utils: UtilActions):
     utils.get_json_ok(url)
 
 
-def test_places_post(client, seeder: Seeder, utils: UtilActions, app):
-    user_id, admin_unit_id = seeder.setup_api_access()
+@pytest.mark.parametrize("as_app_installation", [True, False])
+def test_places_post(
+    client, seeder: Seeder, utils: UtilActions, app, as_app_installation: bool
+):
+    user_id, admin_unit_id = seeder.setup_api_access(
+        as_app_installation=as_app_installation
+    )
 
     url = utils.get_url("api_v1_organization_place_list", id=admin_unit_id)
     response = utils.post_json(
@@ -395,6 +453,12 @@ def test_places_post(client, seeder: Seeder, utils: UtilActions, app):
         assert place.location.street == "Straße 1"
         assert place.location.postalCode == "38640"
         assert place.location.city == "Goslar"
+        assert place.created_by_label is not None
+
+        if as_app_installation:
+            assert place.created_by_app_installation_id is not None
+        else:
+            assert place.created_by is not None
 
 
 def test_event_lists(client, seeder: Seeder, utils: UtilActions):

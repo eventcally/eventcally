@@ -33,7 +33,7 @@
 {% set created_at = tracking_mixing.created_at | datetimeformat('short') %}
 
 {% if show_user %}
-{{ _('Created at %(created_at)s by %(created_by)s.', created_at=created_at, created_by=tracking_mixing.created_by.email)
+{{ _('Created at %(created_at)s by %(created_by)s.', created_at=created_at, created_by=tracking_mixing.created_by_label)
 }}
 {% else %}
 {{ _('Created at %(created_at)s.', created_at=created_at) }}
@@ -44,7 +44,7 @@
 {% if created_at != updated_at %}
 {% if show_user %}
 {{ _('Last updated at %(updated_at)s by %(updated_by)s.', updated_at=updated_at,
-updated_by=tracking_mixing.updated_by.email) }}
+updated_by=tracking_mixing.updated_by_label) }}
 {% else %}
 {{ _('Last updated at %(updated_at)s.', updated_at=updated_at) }}
 {% endif %}

@@ -167,10 +167,10 @@ const OrganizationRead = {
       return this.$root.docsUrl ? `${this.$root.docsUrl}/goto/ical-calendar` : null;
     },
     relationEditUrl() {
-      return `/manage/admin_unit/${this.$root.currentAdminUnit.id}/relations/${this.relation.id}/update`;
+      return `/manage/admin_unit/${this.$root.currentAdminUnit.id}/outgoing_organization_relation/${this.relation.id}/update`;
     },
     relationCreateUrl() {
-      return `/manage/admin_unit/${this.$root.currentAdminUnit.id}/relations/create?target=${this.organizationId}&verify=1`;
+      return `/manage/admin_unit/${this.$root.currentAdminUnit.id}/outgoing_organization_relation/create?target=${this.organizationId}&verify=1`;
     },
   },
   mounted() {

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from flask import flash, jsonify, redirect, render_template, request
 from flask.views import View
 from flask_babel import lazy_gettext
@@ -30,9 +32,11 @@ class BaseView(View):
     permission_action: PermissionAction = None
 
     def __init__(self, *args, **kwargs):
+        from project.modular.base_view_handler import BaseViewHandler
+
         super().__init__()
 
-        self.handler = kwargs.get("handler")
+        self.handler: Optional[BaseViewHandler] = kwargs.get("handler")
 
     @classmethod
     def as_view(cls, name, *class_args, **class_kwargs):
@@ -373,7 +377,7 @@ class BaseCreateView(BaseFormView):
         if response:  # pragma: no cover
             return response
 
-        form = self.create_form()
+        form = self.create_form(**kwargs)
         object = None
 
         response = self.handle_backend_for_frontend(object, form, **kwargs)

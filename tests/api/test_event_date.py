@@ -1,8 +1,11 @@
+import pytest
+
 from tests.seeder import Seeder
 from tests.utils import UtilActions
 
 
-def test_read(client, seeder: Seeder, utils: UtilActions):
+@pytest.mark.parametrize("as_app_installation", [True, False])
+def test_read(client, seeder: Seeder, utils: UtilActions, as_app_installation: bool):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     seeder.create_event(admin_unit_id)
     url = utils.get_url("api_v1_event_date", id=1)
@@ -24,7 +27,10 @@ def test_read(client, seeder: Seeder, utils: UtilActions):
     response = utils.get_json(planned_url)
     utils.assert_response_unauthorized(response)
 
-    seeder.authorize_api_access(user_id, admin_unit_id)
+    if as_app_installation:
+        seeder.authorize_api_access_as_app_installation(admin_unit_id)
+    else:
+        seeder.authorize_api_access(user_id, admin_unit_id)
     response = utils.get_json(draft_url)
     utils.assert_response_ok(response)
     response = utils.get_json(planned_url)
@@ -193,7 +199,10 @@ def test_search_tags(client, seeder: Seeder, utils: UtilActions, app, db):
     assert response.json["items"][0]["id"] == event_id_1
 
 
-def test_search_public_status(client, seeder: Seeder, utils: UtilActions, app, db):
+@pytest.mark.parametrize("as_app_installation", [True, False])
+def test_search_public_status(
+    client, seeder: Seeder, utils: UtilActions, app, db, as_app_installation: bool
+):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     published_id = seeder.create_event(admin_unit_id)
     planned_id = seeder.create_event(admin_unit_id, planned=True)
@@ -213,7 +222,10 @@ def test_search_public_status(client, seeder: Seeder, utils: UtilActions, app, d
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["event"]["id"] == published_id
 
-    seeder.authorize_api_access(user_id, admin_unit_id)
+    if as_app_installation:
+        seeder.authorize_api_access_as_app_installation(admin_unit_id)
+    else:
+        seeder.authorize_api_access(user_id, admin_unit_id)
     response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 2
     assert response.json["items"][0]["event"]["id"] == planned_id

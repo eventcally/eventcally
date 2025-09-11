@@ -1,9 +1,8 @@
-from flask import abort, make_response
+from flask import g, make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 from marshmallow import ValidationError
 
 from project import db
-from project.access import access_or_401, has_access, login_api_user_or_401
 from project.api import add_api_resource
 from project.api.organization_relation.schemas import OrganizationRelationIdSchema
 from project.api.organization_verification_request.schemas import (
@@ -11,7 +10,7 @@ from project.api.organization_verification_request.schemas import (
     OrganizationVerificationRequestSchema,
     OrganizationVerificationRequestVerifyRequestSchema,
 )
-from project.api.resources import BaseResource, require_api_access
+from project.api.resources import BaseResource, require_organization_api_access
 from project.models import AdminUnitVerificationRequest
 from project.models.admin_unit_verification_request import (
     AdminUnitVerificationRequestReviewStatus,
@@ -28,19 +27,13 @@ class OrganizationVerificationRequestResource(BaseResource):
         tags=["Organization Verification Requests"],
     )
     @marshal_with(OrganizationVerificationRequestSchema)
-    @require_api_access("organization.outgoing_event_reference_requests:read")
+    @require_organization_api_access(
+        "organization.outgoing_organization_verification_requests:read",
+        AdminUnitVerificationRequest,
+        admin_unit_id_path="source_admin_unit_id",
+    )
     def get(self, id):
-        login_api_user_or_401()
-        verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
-
-        if not has_access(
-            verification_request.source_admin_unit,
-            "outgoing_organization_verification_requests:read",
-        ) and not has_access(
-            verification_request.target_admin_unit,
-            "incoming_organization_verification_requests:read",
-        ):
-            abort(401)
+        verification_request = g.manage_admin_unit_instance
 
         return verification_request
 
@@ -49,17 +42,13 @@ class OrganizationVerificationRequestResource(BaseResource):
         tags=["Organization Verification Requests"],
     )
     @marshal_with(None, 204)
-    @require_api_access(
-        "organization.outgoing_organization_verification_requests:write"
+    @require_organization_api_access(
+        "organization.outgoing_organization_verification_requests:write",
+        AdminUnitVerificationRequest,
+        admin_unit_id_path="source_admin_unit_id",
     )
     def delete(self, id):
-        login_api_user_or_401()
-        verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
-        access_or_401(
-            verification_request.source_admin_unit,
-            "outgoing_organization_verification_requests:write",
-        )
-
+        verification_request = g.manage_admin_unit_instance
         db.session.delete(verification_request)
         db.session.commit()
 
@@ -75,16 +64,13 @@ class OrganizationVerificationRequestVerifyResource(BaseResource):
         OrganizationVerificationRequestVerifyRequestSchema, location="json", apply=True
     )
     @marshal_with(OrganizationRelationIdSchema, 201)
-    @require_api_access(
-        "organization.outgoing_organization_verification_requests:write"
+    @require_organization_api_access(
+        "organization.incoming_organization_verification_requests:write",
+        AdminUnitVerificationRequest,
+        admin_unit_id_path="target_admin_unit_id",
     )
     def post(self, id, **kwargs):
-        login_api_user_or_401()
-        verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
-        access_or_401(
-            verification_request.target_admin_unit,
-            "incoming_organization_verification_requests:write",
-        )
+        verification_request = g.manage_admin_unit_instance
 
         if (
             verification_request.review_status
@@ -120,16 +106,13 @@ class OrganizationVerificationRequestRejectResource(BaseResource):
         OrganizationVerificationRequestRejectRequestSchema, location="json", apply=False
     )
     @marshal_with(None, 204)
-    @require_api_access(
-        "organization.outgoing_organization_verification_requests:write"
+    @require_organization_api_access(
+        "organization.incoming_organization_verification_requests:write",
+        AdminUnitVerificationRequest,
+        admin_unit_id_path="target_admin_unit_id",
     )
     def post(self, id):
-        login_api_user_or_401()
-        verification_request = AdminUnitVerificationRequest.query.get_or_404(id)
-        access_or_401(
-            verification_request.target_admin_unit,
-            "incoming_organization_verification_requests:write",
-        )
+        verification_request = g.manage_admin_unit_instance
 
         if (
             verification_request.review_status

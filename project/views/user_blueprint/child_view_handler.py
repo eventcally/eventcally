@@ -30,4 +30,4 @@ class UserChildViewHandler(BaseViewHandler):
         return owner_access_or_401(object.user_id)
 
     def get_id_query_arg_name(self):
-        return f"{self.model.__model_name__}_id"
+        return f"{self.get_model_name()}_id"

@@ -1,16 +1,16 @@
+from flask import g
 from flask.helpers import make_response
 from flask_apispec import doc, marshal_with
 from flask_apispec.annotations import use_kwargs
 
 from project import db
-from project.access import access_or_401, login_api_user_or_401
 from project.api import add_api_resource
 from project.api.organization_relation.schemas import (
     OrganizationRelationPatchRequestSchema,
     OrganizationRelationSchema,
     OrganizationRelationUpdateRequestSchema,
 )
-from project.api.resources import BaseResource, require_api_access
+from project.api.resources import BaseResource, require_organization_api_access
 from project.models import AdminUnitRelation
 
 
@@ -20,13 +20,13 @@ class OrganizationRelationResource(BaseResource):
         tags=["Organization Relations"],
     )
     @marshal_with(OrganizationRelationSchema)
-    @require_api_access("organization.outgoing_organization_relations:read")
+    @require_organization_api_access(
+        "organization.outgoing_organization_relations:read",
+        AdminUnitRelation,
+        admin_unit_id_path="source_admin_unit_id",
+    )
     def get(self, id):
-        login_api_user_or_401()
-        relation = AdminUnitRelation.query.get_or_404(id)
-        access_or_401(
-            relation.source_admin_unit, "outgoing_organization_relations:read"
-        )
+        relation = g.manage_admin_unit_instance
 
         return relation
 
@@ -36,14 +36,13 @@ class OrganizationRelationResource(BaseResource):
     )
     @use_kwargs(OrganizationRelationUpdateRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization.outgoing_organization_relations:write")
+    @require_organization_api_access(
+        "organization.outgoing_organization_relations:write",
+        AdminUnitRelation,
+        admin_unit_id_path="source_admin_unit_id",
+    )
     def put(self, id):
-        login_api_user_or_401()
-        relation = AdminUnitRelation.query.get_or_404(id)
-        access_or_401(
-            relation.source_admin_unit, "outgoing_organization_relations:write"
-        )
-
+        relation = g.manage_admin_unit_instance
         relation = self.update_instance(
             OrganizationRelationUpdateRequestSchema, instance=relation
         )
@@ -57,14 +56,13 @@ class OrganizationRelationResource(BaseResource):
     )
     @use_kwargs(OrganizationRelationPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization.outgoing_organization_relations:write")
+    @require_organization_api_access(
+        "organization.outgoing_organization_relations:write",
+        AdminUnitRelation,
+        admin_unit_id_path="source_admin_unit_id",
+    )
     def patch(self, id):
-        login_api_user_or_401()
-        relation = AdminUnitRelation.query.get_or_404(id)
-        access_or_401(
-            relation.source_admin_unit, "outgoing_organization_relations:write"
-        )
-
+        relation = g.manage_admin_unit_instance
         relation = self.update_instance(
             OrganizationRelationPatchRequestSchema, instance=relation
         )
@@ -77,14 +75,13 @@ class OrganizationRelationResource(BaseResource):
         tags=["Organization Relations"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organization.outgoing_organization_relations:write")
+    @require_organization_api_access(
+        "organization.outgoing_organization_relations:write",
+        AdminUnitRelation,
+        admin_unit_id_path="source_admin_unit_id",
+    )
     def delete(self, id):
-        login_api_user_or_401()
-        relation = AdminUnitRelation.query.get_or_404(id)
-        access_or_401(
-            relation.source_admin_unit, "outgoing_organization_relations:write"
-        )
-
+        relation = g.manage_admin_unit_instance
         db.session.delete(relation)
         db.session.commit()
 

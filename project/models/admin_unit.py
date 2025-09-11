@@ -358,6 +358,18 @@ class AdminUnit(db.Model, TrackableMixin, ApiKeyOwnerMixin):
         cascade="all, delete-orphan",
         backref=backref("admin_unit", lazy=True),
     )
+    oauth2_clients = relationship(
+        "OAuth2Client",
+        primaryjoin="OAuth2Client.admin_unit_id == AdminUnit.id",
+        cascade="all, delete-orphan",
+        backref=backref("admin_unit", lazy=True),
+    )
+    app_installations = relationship(
+        "AppInstallation",
+        primaryjoin="AppInstallation.admin_unit_id == AdminUnit.id",
+        cascade="all, delete-orphan",
+        backref=backref("admin_unit", lazy=True),
+    )
 
     def get_number_of_api_keys(self):
         from project.models.api_key import ApiKey

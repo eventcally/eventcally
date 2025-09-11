@@ -1,15 +1,18 @@
-from flask import make_response
+from flask import g, make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 
 from project import db
-from project.access import access_or_401, login_api_user_or_401
 from project.api import add_api_resource
 from project.api.custom_widget.schemas import (
     CustomWidgetPatchRequestSchema,
     CustomWidgetPostRequestSchema,
     CustomWidgetSchema,
 )
-from project.api.resources import BaseResource, require_api_access
+from project.api.resources import (
+    BaseResource,
+    require_api_access,
+    require_organization_api_access,
+)
 from project.models import CustomWidget
 
 
@@ -27,12 +30,9 @@ class CustomWidgetResource(BaseResource):
     )
     @use_kwargs(CustomWidgetPostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization.custom_widgets:write")
+    @require_organization_api_access("organization.custom_widgets:write", CustomWidget)
     def put(self, id):
-        login_api_user_or_401()
-        customwidget = CustomWidget.query.get_or_404(id)
-        access_or_401(customwidget.adminunit, "custom_widgets:write")
-
+        customwidget = g.manage_admin_unit_instance
         customwidget = self.update_instance(
             CustomWidgetPostRequestSchema, instance=customwidget
         )
@@ -46,12 +46,9 @@ class CustomWidgetResource(BaseResource):
     )
     @use_kwargs(CustomWidgetPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization.custom_widgets:write")
+    @require_organization_api_access("organization.custom_widgets:write", CustomWidget)
     def patch(self, id):
-        login_api_user_or_401()
-        customwidget = CustomWidget.query.get_or_404(id)
-        access_or_401(customwidget.adminunit, "custom_widgets:write")
-
+        customwidget = g.manage_admin_unit_instance
         customwidget = self.update_instance(
             CustomWidgetPatchRequestSchema, instance=customwidget
         )
@@ -64,12 +61,9 @@ class CustomWidgetResource(BaseResource):
         tags=["Custom Widgets"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organization.custom_widgets:write")
+    @require_organization_api_access("organization.custom_widgets:write", CustomWidget)
     def delete(self, id):
-        login_api_user_or_401()
-        customwidget = CustomWidget.query.get_or_404(id)
-        access_or_401(customwidget.adminunit, "custom_widgets:write")
-
+        customwidget = g.manage_admin_unit_instance
         db.session.delete(customwidget)
         db.session.commit()
 

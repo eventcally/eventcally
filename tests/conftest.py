@@ -42,6 +42,31 @@ def app():
     return app
 
 
+def drop_all_with_reflection(db):
+    from sqlalchemy import MetaData
+
+    metadata = MetaData()
+    metadata.reflect(bind=db.engine)
+
+    exclude_tables = {"spatial_ref_sys"}
+    tables_to_drop = [
+        table for table in metadata.tables.values() if table.name not in exclude_tables
+    ]
+    metadata.drop_all(bind=db.engine, tables=tables_to_drop)
+
+
+def force_drop_all(db):
+    try:
+        db.drop_all()
+    except Exception:
+        pass
+
+    try:
+        drop_all_with_reflection(db)
+    except Exception:
+        pass
+
+
 @pytest.fixture
 def db(app):
     from flask_migrate import stamp
@@ -50,7 +75,7 @@ def db(app):
     from project.init_data import create_initial_data
 
     with app.app_context():
-        db.drop_all()
+        force_drop_all(db)
         db.create_all()
         stamp()
         create_initial_data()
@@ -134,19 +159,6 @@ def create_initial_test_data():
     db.session.add(custom_event_category_set)
 
     db.session.commit()
-
-
-def drop_all_with_reflection(db):
-    from sqlalchemy import MetaData
-
-    metadata = MetaData()
-    metadata.reflect(bind=db.engine)
-
-    exclude_tables = {"spatial_ref_sys"}
-    tables_to_drop = [
-        table for table in metadata.tables.values() if table.name not in exclude_tables
-    ]
-    metadata.drop_all(bind=db.engine, tables=tables_to_drop)
 
 
 @pytest.fixture

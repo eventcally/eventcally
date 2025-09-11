@@ -17,7 +17,7 @@ from project.api.schemas import (
 from project.models.api_key import ApiKey
 from project.models.rate_limit_provider_mixin import RateLimitProviderMixin
 from project.oauth2 import require_oauth
-from project.utils import hash_api_key
+from project.utils import getattr_keypath, hash_api_key
 
 api_rate_limit_scope = "api"
 
@@ -114,6 +114,50 @@ def require_api_access(scopes=None):
             "docs",
             [{"security": security}],
         )
+        return wrapped
+
+    return inner_decorator
+
+
+def require_organization_api_access(scope: str, model=None, **outer_kwargs):
+    def inner_decorator(func):
+        @require_api_access([scope])
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            from authlib.integrations.flask_oauth2 import current_token
+            from flask import abort, g
+
+            from project.access import access_or_401, login_api_user_or_401
+            from project.models import AdminUnit
+            from project.views.utils import set_current_admin_unit
+
+            id = kwargs.get("id")
+
+            if model:
+                instance = model.query.get_or_404(id)
+                admin_unit_id_path = outer_kwargs.get(
+                    "admin_unit_id_path", "admin_unit_id"
+                )
+                admin_unit_id = getattr_keypath(instance, admin_unit_id_path)
+                setattr(g, "manage_admin_unit_instance", instance)
+            else:
+                admin_unit_id = id
+
+            if current_token.app_installation:
+                if (
+                    current_token.app_installation.admin_unit_id != admin_unit_id
+                ):  # pragma: no cover
+                    abort(401)
+            else:
+                login_api_user_or_401()
+
+            admin_unit = AdminUnit.query.get_or_404(admin_unit_id)
+            permission = scope.replace("organization.", "")
+            access_or_401(admin_unit, permission)
+            set_current_admin_unit(admin_unit)
+
+            return func(*args, **kwargs)
+
         return wrapped
 
     return inner_decorator

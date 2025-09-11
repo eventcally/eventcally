@@ -1,15 +1,18 @@
-from flask import make_response
+from flask import g, make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 
 from project import db
-from project.access import access_or_401, login_api_user_or_401
 from project.api import add_api_resource
 from project.api.place.schemas import (
     PlacePatchRequestSchema,
     PlacePostRequestSchema,
     PlaceSchema,
 )
-from project.api.resources import BaseResource, require_api_access
+from project.api.resources import (
+    BaseResource,
+    require_api_access,
+    require_organization_api_access,
+)
 from project.models import EventPlace
 
 
@@ -26,12 +29,9 @@ class PlaceResource(BaseResource):
     )
     @use_kwargs(PlacePostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization.event_places:write")
+    @require_organization_api_access("organization.event_places:write", EventPlace)
     def put(self, id):
-        login_api_user_or_401()
-        place = EventPlace.query.get_or_404(id)
-        access_or_401(place.adminunit, "event_places:write")
-
+        place = g.manage_admin_unit_instance
         place = self.update_instance(PlacePostRequestSchema, instance=place)
         db.session.commit()
 
@@ -43,12 +43,9 @@ class PlaceResource(BaseResource):
     )
     @use_kwargs(PlacePatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization.event_places:write")
+    @require_organization_api_access("organization.event_places:write", EventPlace)
     def patch(self, id):
-        login_api_user_or_401()
-        place = EventPlace.query.get_or_404(id)
-        access_or_401(place.adminunit, "event_places:write")
-
+        place = g.manage_admin_unit_instance
         place = self.update_instance(PlacePatchRequestSchema, instance=place)
         db.session.commit()
 
@@ -59,12 +56,9 @@ class PlaceResource(BaseResource):
         tags=["Places"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organization.event_places:write")
+    @require_organization_api_access("organization.event_places:write", EventPlace)
     def delete(self, id):
-        login_api_user_or_401()
-        place = EventPlace.query.get_or_404(id)
-        access_or_401(place.adminunit, "event_places:write")
-
+        place = g.manage_admin_unit_instance
         db.session.delete(place)
         db.session.commit()
 

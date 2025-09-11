@@ -283,7 +283,7 @@ class Seeder(object):
 
         return custom_widget_id
 
-    def insert_default_oauth2_client(self, user_id):
+    def insert_default_oauth2_client(self, user_id=None, admin_unit_id=None):
         from project.api import scope_list
         from project.models import OAuth2Client
         from project.services.oauth2_client import complete_oauth2_client
@@ -291,6 +291,7 @@ class Seeder(object):
         with self._app.app_context():
             client = OAuth2Client()
             client.user_id = user_id
+            client.admin_unit_id = admin_unit_id
             complete_oauth2_client(client)
 
             metadata = dict()
@@ -304,6 +305,36 @@ class Seeder(object):
             client_id = client.id
 
         return client_id
+
+    def insert_default_oauth2_client_app(
+        self, user_id=None, admin_unit_id=None, **kwargs
+    ):
+        oauth2_client_id = self.insert_default_oauth2_client(user_id, admin_unit_id)
+
+        with self._app.app_context():
+            from project.models import OAuth2Client
+            from project.permissions import organization_app_permission_infos
+
+            oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+            oauth2_client.app_permissions = [
+                i.permission for i in organization_app_permission_infos
+            ]
+            oauth2_client.__dict__.update(kwargs)
+            self._db.session.commit()
+
+        return oauth2_client_id
+
+    def insert_app_key(self, oauth2_client_id) -> tuple[bytes, int]:
+        with self._app.app_context():
+            from project.models import OAuth2Client
+            from project.services.oauth2_client import add_keypair_to_oauth2_client
+
+            oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+            private_pem, app_key = add_keypair_to_oauth2_client(oauth2_client)
+            self._db.session.commit()
+            app_key_id = app_key.id
+
+        return (private_pem, app_key_id)
 
     def insert_default_api_key(self, user_id=None, admin_unit_id=None):
         from project.models import ApiKey
@@ -321,6 +352,23 @@ class Seeder(object):
 
         return (api_key_id, key)
 
+    def install_app(self, oauth2_client_id, admin_unit_id):
+        from project.models import AppInstallation, OAuth2Client
+
+        with self._app.app_context():
+            app_installation = AppInstallation()
+            app_installation.oauth2_client_id = oauth2_client_id
+            app_installation.admin_unit_id = admin_unit_id
+
+            oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+            app_installation.permissions = oauth2_client.app_permissions
+
+            self._db.session.add(app_installation)
+            self._db.session.commit()
+            app_installation_id = app_installation.id
+
+        return app_installation_id
+
     def setup_api_access(
         self,
         admin=True,
@@ -329,12 +377,15 @@ class Seeder(object):
         email="test@test.de",
         admin_unit_name="Meine Crew",
         use_api_key=False,
+        as_app_installation=False,
     ):
         user_id, admin_unit_id = self.setup_base(
             admin, False, admin_unit_verified, email, admin_unit_name
         )
 
-        if user_access:
+        if as_app_installation:
+            self.authorize_api_access_as_app_installation(admin_unit_id)
+        elif user_access:
             self.authorize_api_access(user_id, admin_unit_id)
         elif use_api_key:
             self.api_key_api_access(user_id)
@@ -382,6 +433,21 @@ class Seeder(object):
             scope = oauth2_client.scope
 
         self._utils.grant_client_credentials(client_id, client_secret, scope)
+
+    def authorize_api_access_as_app_installation(self, admin_unit_id):
+        oauth2_client_id = self.insert_default_oauth2_client_app(
+            admin_unit_id=admin_unit_id
+        )
+        private_pem, app_key_id = self.insert_app_key(oauth2_client_id)
+        app_installation_id = self.install_app(oauth2_client_id, admin_unit_id)
+
+        with self._app.app_context():
+            from project.models import AppKey
+
+            app_key = AppKey.query.get(app_key_id)
+            kid = app_key.kid
+
+        self._utils.authorize_as_app_installation(app_installation_id, private_pem, kid)
 
     def get_event_category_id(self, category_name):
         from project.services.event import get_event_category

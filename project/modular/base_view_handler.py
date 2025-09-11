@@ -1,4 +1,6 @@
-from flask import Blueprint, url_for
+from typing import Optional
+
+from flask import Blueprint, current_app, url_for
 from flask_babel import gettext
 
 from project.modular.base_blueprint import BaseBlueprint
@@ -40,6 +42,7 @@ class BaseViewHandler:
 
     def __init__(self, *args, **kwargs):
         super().__init__()
+        self.parent: Optional[BaseViewHandler] = kwargs.get("parent", None)
         self.app = None
         self.endpoints = dict()
         self.template_pathes = list()
@@ -108,9 +111,14 @@ class BaseViewHandler:
     def get_endpoint_url(self, endpoint_key, **kwargs):
         endpoint = self.endpoints.get(endpoint_key)
         if endpoint:
-            app_endpoint = (
-                f".{endpoint}" if isinstance(self.app, Blueprint) else endpoint
-            )
+            if isinstance(self.app, Blueprint):
+                blueprint_endpoint = next(
+                    (k for k, v in current_app.blueprints.items() if v == self.app),
+                    None,
+                )
+                app_endpoint = f"{blueprint_endpoint}.{endpoint}"
+            else:  # pragma: no cover
+                app_endpoint = endpoint
             return url_for(app_endpoint, **kwargs)
         return None  # pragma: no cover
 
@@ -143,7 +151,12 @@ class BaseViewHandler:
         return None  # pragma: no cover
 
     def get_breadcrumbs(self):
-        return list()
+        result = list()
+
+        if self.parent:
+            result.extend(self.parent.get_breadcrumbs())
+
+        return result
 
     def _create_action(self, url, title):
         if url:
@@ -223,20 +236,26 @@ class BaseViewHandler:
         )
         self.endpoints[key] = endpoint
 
+    def get_model_name(self):
+        return self.model.__model_name__
+
+    def get_model_name_plural(self):
+        return self.model.__model_name_plural__
+
     def get_permission_entity(self):
-        return f"{self.generic_prefix}{self.model.__model_name_plural__}"
+        return f"{self.generic_prefix}{self.get_model_name_plural()}"
 
     def get_single_url_folder(self):
-        return f"{self.generic_prefix}{self.model.__model_name__}"
+        return f"{self.generic_prefix}{self.get_model_name()}"
 
     def get_plural_url_folder(self):
-        return f"{self.generic_prefix}{self.model.__model_name_plural__}"
+        return f"{self.generic_prefix}{self.get_model_name_plural()}"
 
     def get_single_endpoint_name(self):
-        return f"{self.generic_prefix}{self.model.__model_name__}"
+        return f"{self.generic_prefix}{self.get_model_name()}"
 
     def get_plural_endpoint_name(self):
-        return f"{self.generic_prefix}{self.model.__model_name_plural__}"
+        return f"{self.generic_prefix}{self.get_model_name_plural()}"
 
     def get_id_query_arg_name(self):  # pragma: no cover
         return "id"
@@ -349,7 +368,7 @@ class BaseViewHandler:
             )
 
     def get_template_folder(self):
-        return f"{self.generic_prefix}{self.model.__model_name__}"
+        return f"{self.generic_prefix}{self.get_model_name()}"
 
     def _init_template_pathes(self):
         if isinstance(self.app, Blueprint):

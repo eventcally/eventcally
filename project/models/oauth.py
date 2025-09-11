@@ -7,7 +7,10 @@ from authlib.integrations.sqla_oauth2 import (
     OAuth2TokenMixin,
 )
 from flask import request
-from sqlalchemy.orm import object_session
+from flask_security import AsaList
+from sqlalchemy import CheckConstraint
+from sqlalchemy.ext.mutable import MutableList
+from sqlalchemy.orm import backref, object_session, relationship
 
 from project import db
 from project.dateutils import gmt_tz
@@ -15,23 +18,53 @@ from project.models.rate_limit_provider_mixin import (
     RateLimitHolderMixin,
     RateLimitProviderMixin,
 )
+from project.models.trackable_mixin import TrackableMixin
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
 oauth_refresh_token_expires_in = 90 * 86400  # 90 days
 
 
-class OAuth2Client(db.Model, OAuth2ClientMixin, RateLimitHolderMixin):
+class OAuth2Client(db.Model, OAuth2ClientMixin, RateLimitHolderMixin, TrackableMixin):
     __tablename__ = "oauth2_client"
     __display_name__ = "OAuth2 client"
+    __table_args__ = (
+        CheckConstraint(
+            "(admin_unit_id IS NULL) <> (user_id IS NULL)",
+            name="oauth2_client_admin_unit_xor_user",
+        ),
+    )
     __default_rate_limit_value__ = "5000/hour"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
-    user = db.relationship("User")
+
+    admin_unit_id = db.Column(
+        db.Integer, db.ForeignKey("adminunit.id", ondelete="CASCADE"), nullable=True
+    )
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=True
+    )
+
+    app_permissions = db.Column(MutableList.as_mutable(AsaList()), nullable=True)
+    app_installations = relationship(
+        "AppInstallation",
+        primaryjoin="AppInstallation.oauth2_client_id == OAuth2Client.id",
+        cascade="all, delete-orphan",
+        backref=backref("oauth2_client", lazy=True),
+    )
+    app_keys = relationship(
+        "AppKey",
+        cascade="all, delete-orphan",
+        backref=backref("oauth2_client", lazy=True),
+    )
 
     @OAuth2ClientMixin.grant_types.getter
     def grant_types(self):
-        return ["authorization_code", "refresh_token", "client_credentials"]
+        return [
+            "authorization_code",
+            "refresh_token",
+            "client_credentials",
+            "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        ]
 
     @OAuth2ClientMixin.response_types.getter
     def response_types(self):
@@ -75,6 +108,16 @@ class OAuth2Token(db.Model, OAuth2TokenMixin, RateLimitProviderMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
     user = db.relationship("User")
+
+    app_id = db.Column(
+        db.Integer, db.ForeignKey("oauth2_client.id", ondelete="CASCADE")
+    )
+    app = db.relationship("OAuth2Client")
+
+    app_installation_id = db.Column(
+        db.Integer, db.ForeignKey("app_installation.id", ondelete="CASCADE")
+    )
+    app_installation = db.relationship("AppInstallation")
 
     @property
     def client(self):

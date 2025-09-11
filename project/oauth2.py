@@ -4,9 +4,9 @@ from authlib.integrations.sqla_oauth2 import (
     create_bearer_token_validator,
     create_query_client_func,
     create_query_token_func,
-    create_save_token_func,
 )
 from authlib.oauth2.rfc6749 import grants
+from authlib.oauth2.rfc7523 import JWTBearerGrant as _JWTBearerGrant
 from authlib.oauth2.rfc7636 import CodeChallenge
 from authlib.oauth2.rfc7662 import IntrospectionEndpoint
 from authlib.oidc.core import UserInfo
@@ -15,7 +15,14 @@ from flask import request as flask_req
 from flask import url_for
 
 from project import app, db
-from project.models import OAuth2AuthorizationCode, OAuth2Client, OAuth2Token, User
+from project.models import (
+    AppInstallation,
+    AppKey,
+    OAuth2AuthorizationCode,
+    OAuth2Client,
+    OAuth2Token,
+    User,
+)
 
 
 def get_issuer():
@@ -145,8 +152,30 @@ class MyIntrospectionEndpoint(IntrospectionEndpoint):
         }
 
 
+def save_token(token, request):
+    user_id = app_id = app_installation_id = None
+
+    if request.user:
+        if isinstance(request.user, User):
+            user_id = request.user.id
+        elif isinstance(request.user, OAuth2Client):
+            app_id = request.user.id
+        elif isinstance(request.user, AppInstallation):
+            app_installation_id = request.user.id
+
+    client = request.client
+    item = OAuth2Token(
+        client_id=client.client_id,
+        user_id=user_id,
+        app_id=app_id,
+        app_installation_id=app_installation_id,
+        **token
+    )
+    db.session.add(item)
+    db.session.commit()
+
+
 query_client = create_query_client_func(db.session, OAuth2Client)
-save_token = create_save_token_func(db.session, OAuth2Token)
 
 
 class CustomFlaskOAuth2Request(FlaskOAuth2Request):
@@ -188,6 +217,35 @@ def create_revocation_endpoint(session, token_model):
     return _RevocationEndpoint
 
 
+class JWTBearerGrant(_JWTBearerGrant):
+    def resolve_issuer_client(self, issuer):
+        return OAuth2Client.query.filter_by(client_id=issuer).first()
+
+    def resolve_client_key(self, client, headers, payload):
+        app_key = AppKey.query.filter(AppKey.kid == headers["kid"]).first()
+        return app_key.get_jwk()
+
+    def authenticate_user(self, subject):
+        if subject.startswith("app:"):
+            client_id = subject[4:]
+            return db.session.get(OAuth2Client, client_id)
+
+        if subject.startswith("app_installation:"):
+            app_installation_id = subject[17:]
+            return db.session.get(AppInstallation, app_installation_id)
+
+        return None  # pragma: no cover
+
+    def has_granted_permission(self, client, user):
+        if isinstance(user, OAuth2Client):
+            return True
+
+        if isinstance(user, AppInstallation):
+            return user.oauth2_client_id == client.id
+
+        return False  # pragma: no cover
+
+
 def config_oauth(app):
     app.config["OAUTH2_REFRESH_TOKEN_GENERATOR"] = True
     authorization.init_app(app)
@@ -199,6 +257,7 @@ def config_oauth(app):
     )
     authorization.register_grant(ClientCredentialsGrant)
     authorization.register_grant(RefreshTokenGrant)
+    authorization.register_grant(JWTBearerGrant)
 
     # support revocation
     revocation_cls = create_revocation_endpoint(db.session, OAuth2Token)
