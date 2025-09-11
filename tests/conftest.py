@@ -59,12 +59,8 @@ def force_drop_all(db):
     try:
         db.drop_all()
     except Exception:
-        pass
-
-    try:
-        drop_all_with_reflection(db)
-    except Exception:
-        pass
+        raise
+        # drop_all_with_reflection(db)
 
 
 @pytest.fixture

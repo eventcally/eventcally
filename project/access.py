@@ -3,18 +3,12 @@ from flask import abort, g
 from flask_login import login_user
 from flask_principal import Permission, RoleNeed
 from flask_security import current_user
-from flask_security.utils import FsPermNeed
 from sqlalchemy import and_, exists
 
 from project import app, db
 from project.models import AdminUnit, AdminUnitMember, Event, PublicStatus, User
 from project.models.admin_unit import AdminUnitMemberRole
 from project.services.admin_unit import get_member_for_admin_unit_by_user_id
-
-
-def has_current_user_permission(permission):
-    user_perm = Permission(FsPermNeed(permission))
-    return user_perm.can()
 
 
 def has_current_user_role(role):
@@ -85,7 +79,7 @@ def has_current_user_permission_for_admin_unit(admin_unit, permission):
     if not current_user.is_authenticated:
         return False
 
-    if has_current_user_permission(permission):  # pragma: no cover
+    if has_current_user_role("admin"):
         return True
 
     if has_current_user_member_permission_for_admin_unit(admin_unit.id, permission):
