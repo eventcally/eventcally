@@ -76,6 +76,12 @@ class User(db.Model, UserMixin, ApiKeyOwnerMixin):
         cascade="all, delete-orphan",
         backref=backref("user", lazy=True),
     )
+    oauth2_clients = relationship(
+        "OAuth2Client",
+        primaryjoin="OAuth2Client.user_id == User.id",
+        cascade="all, delete-orphan",
+        backref=backref("user", lazy=True),
+    )
 
     def get_number_of_api_keys(self):
         from project.models.api_key import ApiKey
@@ -90,9 +96,6 @@ class User(db.Model, UserMixin, ApiKeyOwnerMixin):
         return any(
             m.adminunit and m.adminunit.is_verified for m in self.adminunitmembers
         )
-
-    def get_user_id(self):
-        return self.id
 
     def __str__(self):
         return self.email or super().__str__()

@@ -3,12 +3,15 @@ from tests.utils import UtilActions
 
 
 def test_read(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_api_access()
     (
-        other_user_id,
-        other_admin_unit_id,
-        request_id,
-    ) = seeder.create_incoming_admin_unit_verification_request(admin_unit_id)
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario(api=True)
+    request_id = seeder.create_admin_unit_verification_request(
+        unverified_admin_unit_id, verifier_admin_unit_id
+    )
 
     url = utils.get_url("api_v1_organization_verification_request", id=request_id)
     utils.get_json_ok(url)

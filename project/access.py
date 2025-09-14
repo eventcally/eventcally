@@ -3,18 +3,12 @@ from flask import abort, g
 from flask_login import login_user
 from flask_principal import Permission, RoleNeed
 from flask_security import current_user
-from flask_security.utils import FsPermNeed
 from sqlalchemy import and_, exists
 
 from project import app, db
 from project.models import AdminUnit, AdminUnitMember, Event, PublicStatus, User
 from project.models.admin_unit import AdminUnitMemberRole
 from project.services.admin_unit import get_member_for_admin_unit_by_user_id
-
-
-def has_current_user_permission(permission):
-    user_perm = Permission(FsPermNeed(permission))
-    return user_perm.can()
 
 
 def has_current_user_role(role):
@@ -85,7 +79,7 @@ def has_current_user_permission_for_admin_unit(admin_unit, permission):
     if not current_user.is_authenticated:
         return False
 
-    if has_current_user_permission(permission):  # pragma: no cover
+    if has_current_user_role("admin"):
         return True
 
     if has_current_user_member_permission_for_admin_unit(admin_unit.id, permission):
@@ -94,8 +88,23 @@ def has_current_user_permission_for_admin_unit(admin_unit, permission):
     return False
 
 
+def has_current_token_permission_for_admin_unit(admin_unit, permission):
+    if not current_token:
+        return False
+
+    if not current_token.app_installation:
+        return False
+
+    if current_token.app_installation.admin_unit_id != admin_unit.id:
+        return False
+
+    return permission in current_token.app_installation.permissions
+
+
 def has_access(admin_unit, permission):
-    return has_current_user_permission_for_admin_unit(admin_unit, permission)
+    return has_current_user_permission_for_admin_unit(
+        admin_unit, permission
+    ) or has_current_token_permission_for_admin_unit(admin_unit, permission)
 
 
 def access_or_401(admin_unit, permission):
@@ -125,6 +134,29 @@ def get_admin_units_with_current_user_permission(permission):
     return result
 
 
+def get_admin_units_with_current_token_permission(permission):  # pragma: no cover
+    result = list()
+
+    if not current_token:
+        return result
+
+    if not current_token.app_installation:
+        return result
+
+    if permission not in current_token.app_installation.permissions:
+        return result
+
+    result.append(current_token.app_installation.admin_unit)
+    return result
+
+
+def get_admin_units_with_current_user_or_token_permission(permission):
+    if current_user.is_authenticated:
+        return get_admin_units_with_current_user_permission(permission)
+
+    return get_admin_units_with_current_token_permission(permission)
+
+
 def can_reference_event(event):
     return len(get_admin_units_for_event_reference(event)) > 0
 
@@ -132,7 +164,7 @@ def can_reference_event(event):
 def get_admin_units_for_event_reference(event):
     result = list()
 
-    admin_units = get_admin_units_with_current_user_permission(
+    admin_units = get_admin_units_with_current_user_or_token_permission(
         "incoming_event_references:write"
     )
     for admin_unit in admin_units:
@@ -220,8 +252,8 @@ def can_create_admin_unit():
     return any(admin_unit.can_create_other for admin_unit in admin_units)
 
 
-def can_use_planning():
-    if not current_user.is_authenticated:
+def can_use_planning_user():
+    if not current_user.is_authenticated:  # pragma: no cover
         return False
 
     if has_current_user_role("admin"):  # pragma: no cover
@@ -230,7 +262,21 @@ def can_use_planning():
     return current_user.is_member_of_verified_admin_unit
 
 
-def can_verify_admin_unit():
+def can_use_planning_token():
+    if not current_token:  # pragma: no cover
+        return False
+
+    if not current_token.app_installation:
+        return False
+
+    return current_token.app_installation.admin_unit.is_verified
+
+
+def can_use_planning():
+    return can_use_planning_user() or can_use_planning_token()
+
+
+def can_verify_admin_unit_user():
     if not current_user.is_authenticated:  # pragma: no cover
         return False
 
@@ -239,6 +285,20 @@ def can_verify_admin_unit():
 
     admin_units = get_admin_units_for_manage()
     return any(admin_unit.can_verify_other for admin_unit in admin_units)
+
+
+def can_verify_admin_unit_token():
+    if not current_token:  # pragma: no cover
+        return False
+
+    if not current_token.app_installation:
+        return False
+
+    return current_token.app_installation.admin_unit.can_verify_other
+
+
+def can_verify_admin_unit():
+    return can_verify_admin_unit_user() or can_verify_admin_unit_token()
 
 
 def can_read_event(event: Event) -> bool:

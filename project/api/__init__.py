@@ -27,10 +27,17 @@ class RestApi(Api):
         code = 500
 
         if isinstance(err, IntegrityError) and err.orig:
+            from project import db
+
+            try:
+                db.session.rollback()
+            except Exception:  # pragma: no cover
+                pass
+
             if err.orig.pgcode == UNIQUE_VIOLATION:
                 data["name"] = "Unique Violation"
                 data["message"] = (
-                    "An entry with the entered values ​​already exists. Duplicate entries are not allowed."
+                    "An entry with the entered values ​already exists. Duplicate entries are not allowed."
                 )
             elif err.orig.pgcode == CHECK_VIOLATION:
                 data["name"] = "Check Violation"
@@ -128,12 +135,9 @@ scope_list = [
     "profile",
 ]
 scopes = {k: get_localized_scope(k) for v, k in enumerate(scope_list)}
-from project.permissions import permission_infos
+from project.permissions import api_permission_infos
 
-for permission_info in permission_infos:
-    if permission_info.no_api_access:
-        continue
-
+for permission_info in api_permission_infos:
     permission = permission_info.full_permission
     scope_list.append(permission)
     scopes[permission] = permission_info.full_label
@@ -171,6 +175,7 @@ app.config.update(
                 description="This API provides endpoints to interact with the event calendar data."
             ),
         ),
+        "OAUTH2_SCOPES_SUPPORTED": scope_list,
     }
 )
 
@@ -238,6 +243,7 @@ def add_oauth2_scheme_with_transport(insecure: bool):
 
 marshmallow_plugin.converter.add_attribute_function(enum_to_properties)
 
+import project.api.app.resources
 import project.api.custom_event_category_set.resources
 import project.api.custom_widget.resources
 import project.api.dump.resources

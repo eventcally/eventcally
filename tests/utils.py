@@ -592,3 +592,79 @@ class UtilActions(object):
         )
         self.assert_response_ok(ajax_response)
         return ajax_response
+
+    def _create_jwt_assertion(self, issuer, subject, private_pem, kid):
+        from authlib.oauth2.rfc7523.assertion import sign_jwt_bearer_assertion
+
+        token_url = self.get_url("issue_token")
+        assertion = sign_jwt_bearer_assertion(
+            key=private_pem,
+            issuer=issuer,
+            subject=subject,
+            audience=token_url,
+            claims=None,
+            header={"kid": kid},
+            alg="RS256",
+        )
+
+        return assertion
+
+    def authorize_as_app(self, oauth2_client_id, private_pem, kid):
+        with self._app.app_context():
+            from project.models import OAuth2Client
+
+            oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+            oauth2_client_client_id = oauth2_client.client_id
+
+        assertion = self._create_jwt_assertion(
+            oauth2_client_client_id,
+            f"app:{oauth2_client_id}",
+            private_pem,
+            kid,
+        )
+
+        # Send assertion (JWT) to token endpoint and get access token
+        data = {
+            "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+            "assertion": assertion,
+        }
+        token_url = self.get_url("issue_token")
+        response = self.post_form_data(token_url, data=data)
+        self.assert_response_ok(response)
+        assert response.content_type == "application/json"
+
+        self._client_id = oauth2_client_id
+        self._access_token = response.json["access_token"]
+
+    def authorize_as_app_installation(
+        self, app_installation_id, private_pem, kid, **kwargs
+    ):
+        with self._app.app_context():
+            from project.models import AppInstallation
+
+            app_installation = AppInstallation.query.get(app_installation_id)
+            oauth2_client = app_installation.oauth2_client
+            oauth2_client_id = oauth2_client.id
+            oauth2_client_client_id = oauth2_client.client_id
+            scope = kwargs.pop("scope", oauth2_client.scope)
+
+        assertion = self._create_jwt_assertion(
+            oauth2_client_client_id,
+            f"app_installation:{app_installation_id}",
+            private_pem,
+            kid,
+        )
+
+        # Send assertion (JWT) to token endpoint and get access token
+        data = {
+            "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+            "assertion": assertion,
+            "scope": scope,
+        }
+        token_url = self.get_url("issue_token")
+        response = self.post_form_data(token_url, data=data)
+        self.assert_response_ok(response)
+        assert response.content_type == "application/json"
+
+        self._client_id = oauth2_client_id
+        self._access_token = response.json["access_token"]

@@ -14,7 +14,7 @@ def get_locale():
             and Locale.parse(current_user.locale)
         ):
             return current_user.locale
-    except Exception:
+    except Exception:  # pragma: no cover
         pass
 
     if not request:

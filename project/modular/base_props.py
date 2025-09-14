@@ -4,6 +4,7 @@ from flask_babel import format_date, format_datetime, format_time
 from markupsafe import Markup
 
 from project.models.event import EventStatus, PublicStatus
+from project.permissions import get_organization_permission_infos
 from project.utils import (
     get_event_category_name,
     get_localized_enum_name,
@@ -316,3 +317,15 @@ class RateLimitProp(BaseProp):
 
     def get_display_data(self, object):
         return object
+
+
+class OrganizationAppPermissionListPropFormatter(BasePropFormatter):
+    def format(self, data):
+        labels = [str(i.label) for i in get_organization_permission_infos(data)]
+        return ", ".join(labels)
+
+
+class OrganizationAppPermissionListProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", OrganizationAppPermissionListPropFormatter())
+        super().__init__(*args, **kwargs)

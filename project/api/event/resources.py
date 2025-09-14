@@ -1,4 +1,4 @@
-from flask import make_response, request
+from flask import g, make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy import and_
 from sqlalchemy.orm import lazyload, load_only
@@ -9,7 +9,6 @@ from project.access import (
     can_read_event_or_401,
     can_read_private_events,
     login_api_user,
-    login_api_user_or_401,
 )
 from project.api import add_api_resource, rest_api
 from project.api.event.schemas import (
@@ -26,7 +25,11 @@ from project.api.event_date.schemas import (
     EventDateListRequestSchema,
     EventDateListResponseSchema,
 )
-from project.api.resources import BaseResource, require_api_access
+from project.api.resources import (
+    BaseResource,
+    require_api_access,
+    require_organization_api_access,
+)
 from project.api.schemas import NoneSchema
 from project.models import AdminUnit, Event, EventDate, PublicStatus
 from project.services.event import (
@@ -94,12 +97,9 @@ class EventResource(BaseResource):
     )
     @use_kwargs(EventPostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization.events:write")
+    @require_organization_api_access("organization.events:write", Event)
     def put(self, id):
-        login_api_user_or_401()
-        event = Event.query.get_or_404(id)
-        access_or_401(event.admin_unit, "events:write")
-
+        event = g.manage_admin_unit_instance
         event = self.update_instance(EventPostRequestSchema, instance=event)
         update_event(event)
         changes = get_significant_event_changes(event)
@@ -116,12 +116,9 @@ class EventResource(BaseResource):
     )
     @use_kwargs(EventPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization.events:write")
+    @require_organization_api_access("organization.events:write", Event)
     def patch(self, id):
-        login_api_user_or_401()
-        event = Event.query.get_or_404(id)
-        access_or_401(event.admin_unit, "events:write")
-
+        event = g.manage_admin_unit_instance
         event = self.update_instance(EventPatchRequestSchema, instance=event)
         update_event(event)
         changes = get_significant_event_changes(event)
@@ -137,9 +134,9 @@ class EventResource(BaseResource):
         tags=["Events"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organization.events:write")
+    @require_organization_api_access("organization.events:write", Event)
     def delete(self, id):
-        login_api_user_or_401()
+        event = g.manage_admin_unit_instance
         event = Event.query.get_or_404(id)
         access_or_401(event.admin_unit, "events:write")
 

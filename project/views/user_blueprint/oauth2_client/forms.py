@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Optional
 
 from project.api import scopes
 from project.forms.widgets import MultiCheckboxField
-from project.modular.base_form import BaseForm
+from project.modular.base_form import BaseDeleteForm, BaseForm
 from project.utils import split_by_crlf
 
 
@@ -62,7 +62,7 @@ class UpdateOAuth2ClientForm(BaseOAuth2ClientForm):
     pass
 
 
-class DeleteOAuth2ClientForm(BaseForm):
+class DeleteOAuth2ClientForm(BaseDeleteForm):
     submit = SubmitField(lazy_gettext("Delete OAuth2 client"))
     name = StringField(
         lazy_gettext("Name"),

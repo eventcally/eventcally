@@ -1,4 +1,3 @@
-from flask_security import current_user
 from sqlalchemy import func
 from sqlalchemy.sql.operators import op
 
@@ -15,13 +14,6 @@ def create_tsvector(*args):
             ),
         )
     return exp
-
-
-def _current_user_id_or_none():
-    if current_user and current_user.is_authenticated:
-        return current_user.id
-
-    return None
 
 
 def sanitize_allday_instance(instance):

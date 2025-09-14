@@ -13,9 +13,11 @@ def test_mail_server():
 
 
 def drop_db(db):
+    from tests.conftest import force_drop_all
+
     with db.engine.connect() as conn:
         with conn.begin():
-            db.drop_all()
+            force_drop_all(db)
             conn.execute(sqlalchemy.text("DROP TABLE IF EXISTS alembic_version;"))
             conn.execute(sqlalchemy.text("DROP TABLE IF EXISTS analytics;"))
 

@@ -1,3 +1,5 @@
+import pytest
+
 from tests.seeder import Seeder
 from tests.utils import UtilActions
 
@@ -10,8 +12,13 @@ def test_read(client, app, db, seeder: Seeder, utils: UtilActions):
     utils.get_json_ok(url)
 
 
-def test_put(client, seeder: Seeder, utils: UtilActions, app, db):
-    user_id, admin_unit_id = seeder.setup_api_access()
+@pytest.mark.parametrize("as_app_installation", [True, False])
+def test_put(
+    client, seeder: Seeder, utils: UtilActions, app, db, as_app_installation: bool
+):
+    user_id, admin_unit_id = seeder.setup_api_access(
+        as_app_installation=as_app_installation
+    )
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
     url = utils.get_url("api_v1_place", id=place_id)
@@ -23,6 +30,12 @@ def test_put(client, seeder: Seeder, utils: UtilActions, app, db):
 
         place = db.session.get(EventPlace, place_id)
         assert place.name == "Neuer Name"
+        assert place.updated_by_label is not None
+
+        if as_app_installation:
+            assert place.updated_by_app_installation_id is not None
+        else:
+            assert place.updated_by is not None
 
 
 def test_put_nonActiveReturnsUnauthorized(client, seeder, db, utils, app):

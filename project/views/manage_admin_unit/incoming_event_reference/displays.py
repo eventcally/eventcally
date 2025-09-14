@@ -12,12 +12,6 @@ class ReadDisplay(BaseDisplay):
     def get_rating(self, object):
         return "%d/10" % (object.rating / 10) if object.rating else None
 
-    def should_show_audit(self, object):
-        return True
-
-    def should_audit_show_user(self, object):
-        return True
-
     def get_event_link(self, object):
         return url_for(
             "event",

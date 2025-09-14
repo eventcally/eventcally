@@ -1,15 +1,12 @@
-from flask import abort, request
+from flask import abort, g, request
 from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy import and_
 
 from project import db
 from project.access import (
-    access_or_401,
     can_request_event_reference,
     can_verify_admin_unit,
-    get_admin_unit_for_manage_or_404,
     login_api_user,
-    login_api_user_or_401,
 )
 from project.api import add_api_resource
 from project.api.custom_widget.schemas import (
@@ -86,7 +83,11 @@ from project.api.place.schemas import (
     PlaceListResponseSchema,
     PlacePostRequestSchema,
 )
-from project.api.resources import BaseResource, require_api_access
+from project.api.resources import (
+    BaseResource,
+    require_api_access,
+    require_organization_api_access,
+)
 from project.models import AdminUnit, Event, PublicStatus
 from project.models.admin_unit import AdminUnitInvitation, AdminUnitRelation
 from project.models.admin_unit_verification_request import (
@@ -211,11 +212,9 @@ class OrganizationEventListResource(BaseResource):
     )
     @use_kwargs(EventPostRequestSchema, location="json", apply=False)
     @marshal_with(EventIdSchema, 201)
-    @require_api_access("organization.events:write")
+    @require_organization_api_access("organization.events:write")
     def post(self, id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "events:write")
+        admin_unit = g.manage_admin_unit
 
         event = self.create_instance(
             EventPostRequestSchema, admin_unit_id=admin_unit.id
@@ -275,11 +274,9 @@ class OrganizationOrganizerListResource(BaseResource):
     )
     @use_kwargs(OrganizerPostRequestSchema, location="json", apply=False)
     @marshal_with(OrganizerIdSchema, 201)
-    @require_api_access("organization.event_organizers:write")
+    @require_organization_api_access("organization.event_organizers:write")
     def post(self, id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "event_organizers:write")
+        admin_unit = g.manage_admin_unit
 
         organizer = self.create_instance(
             OrganizerPostRequestSchema, admin_unit_id=admin_unit.id
@@ -310,11 +307,9 @@ class OrganizationPlaceListResource(BaseResource):
     )
     @use_kwargs(PlacePostRequestSchema, location="json", apply=False)
     @marshal_with(PlaceIdSchema, 201)
-    @require_api_access("organization.event_places:write")
+    @require_organization_api_access("organization.event_places:write")
     def post(self, id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "event_places:write")
+        admin_unit = g.manage_admin_unit
 
         place = self.create_instance(
             PlacePostRequestSchema, admin_unit_id=admin_unit.id
@@ -332,11 +327,9 @@ class OrganizationIncomingEventReferenceListResource(BaseResource):
     )
     @use_kwargs(EventReferenceListRequestSchema, location=("query"))
     @marshal_with(EventReferenceListResponseSchema)
-    @require_api_access("organization.incoming_event_references:read")
+    @require_organization_api_access("organization.incoming_event_references:read")
     def get(self, id, **kwargs):
-        login_api_user_or_401()
-        admin_unit = AdminUnit.query.get_or_404(id)
-        access_or_401(admin_unit, "incoming_event_references:read")
+        admin_unit = g.manage_admin_unit
 
         params = EventReferenceSearchParams()
         params.load_from_request(**kwargs)
@@ -350,11 +343,9 @@ class OrganizationIncomingEventReferenceListResource(BaseResource):
     )
     @use_kwargs(EventReferenceCreateRequestSchema, location="json", apply=False)
     @marshal_with(EventReferenceIdSchema, 201)
-    @require_api_access("organization.incoming_event_references:write")
+    @require_organization_api_access("organization.incoming_event_references:write")
     def post(self, id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "incoming_event_references:write")
+        admin_unit = g.manage_admin_unit
 
         reference = self.create_instance(
             EventReferenceCreateRequestSchema, admin_unit_id=admin_unit.id
@@ -372,11 +363,9 @@ class OrganizationOutgoingEventReferenceListResource(BaseResource):
     )
     @use_kwargs(EventReferenceListRequestSchema, location=("query"))
     @marshal_with(EventReferenceListResponseSchema)
-    @require_api_access("organization.outgoing_event_references:read")
+    @require_organization_api_access("organization.outgoing_event_references:read")
     def get(self, id, **kwargs):
-        login_api_user_or_401()
-        admin_unit = AdminUnit.query.get_or_404(id)
-        access_or_401(admin_unit, "outgoing_event_references:read")
+        admin_unit = g.manage_admin_unit
 
         params = EventReferenceSearchParams()
         params.load_from_request(**kwargs)
@@ -392,11 +381,9 @@ class OrganizationIncomingEventReferenceRequestListResource(BaseResource):
     )
     @use_kwargs(EventReferenceRequestListRequestSchema, location=("query"))
     @marshal_with(EventReferenceRequestListResponseSchema)
-    @require_api_access("organization.incoming_event_references:read")
+    @require_organization_api_access("organization.incoming_event_references:read")
     def get(self, id, **kwargs):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "incoming_event_references:read")
+        admin_unit = g.manage_admin_unit
 
         params = EventReferenceRequestSearchParams()
         params.load_from_request(**kwargs)
@@ -412,11 +399,11 @@ class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
     )
     @use_kwargs(EventReferenceRequestListRequestSchema, location=("query"))
     @marshal_with(EventReferenceRequestListResponseSchema)
-    @require_api_access("organization.outgoing_event_reference_requests:read")
+    @require_organization_api_access(
+        "organization.outgoing_event_reference_requests:read"
+    )
     def get(self, id, **kwargs):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "outgoing_event_reference_requests:read")
+        admin_unit = g.manage_admin_unit
 
         params = EventReferenceRequestSearchParams()
         params.load_from_request(**kwargs)
@@ -430,10 +417,11 @@ class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
     )
     @use_kwargs(EventReferenceRequestPostRequestSchema, location="json", apply=False)
     @marshal_with(EventReferenceRequestIdSchema, 201)
-    @require_api_access("organization.outgoing_event_reference_requests:write")
+    @require_organization_api_access(
+        "organization.outgoing_event_reference_requests:write"
+    )
     def post(self, id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
+        admin_unit = g.manage_admin_unit
 
         reference_request = self.create_instance(EventReferenceRequestPostRequestSchema)
         event = reference_request.event
@@ -459,11 +447,11 @@ class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResour
     )
     @use_kwargs(OrganizationVerificationRequestListRequestSchema, location=("query"))
     @marshal_with(OrganizationVerificationRequestListResponseSchema)
-    @require_api_access("organization.outgoing_event_reference_requests:read")
+    @require_organization_api_access(
+        "organization.outgoing_event_reference_requests:read"
+    )
     def get(self, id, **kwargs):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "outgoing_event_reference_requests:read")
+        admin_unit = g.manage_admin_unit
 
         params = AdminUnitVerificationRequestSearchParams()
         params.load_from_request(**kwargs)
@@ -479,10 +467,11 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
     )
     @use_kwargs(OrganizationVerificationRequestListRequestSchema, location=("query"))
     @marshal_with(OrganizationVerificationRequestListResponseSchema)
-    @require_api_access("organization.outgoing_event_reference_requests:read")
+    @require_organization_api_access(
+        "organization.outgoing_event_reference_requests:read"
+    )
     def get(self, id, **kwargs):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
+        admin_unit = g.manage_admin_unit
 
         params = AdminUnitVerificationRequestSearchParams()
         params.load_from_request(**kwargs)
@@ -498,14 +487,11 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
         OrganizationVerificationRequestPostRequestSchema, location="json", apply=False
     )
     @marshal_with(OrganizationVerificationRequestIdSchema, 201)
-    @require_api_access(
+    @require_organization_api_access(
         "organization.outgoing_organization_verification_requests:write"
     )
     def post(self, id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "outgoing_organization_verification_requests:write")
-
+        admin_unit = g.manage_admin_unit
         verification_request = self.create_instance(
             OrganizationVerificationRequestPostRequestSchema,
             source_admin_unit_id=admin_unit.id,
@@ -532,11 +518,11 @@ class OrganizationOutgoingRelationListResource(BaseResource):
     )
     @use_kwargs(OrganizationRelationListRequestSchema, location=("query"))
     @marshal_with(OrganizationRelationListResponseSchema)
-    @require_api_access("organization.outgoing_organization_relations:read")
+    @require_organization_api_access(
+        "organization.outgoing_organization_relations:read"
+    )
     def get(self, id, **kwargs):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "outgoing_organization_relations:read")
+        admin_unit = g.manage_admin_unit
 
         pagination = get_relation_outgoing_query(admin_unit).paginate()
         return pagination
@@ -547,11 +533,11 @@ class OrganizationOutgoingRelationListResource(BaseResource):
     )
     @use_kwargs(OrganizationRelationCreateRequestSchema, location="json", apply=False)
     @marshal_with(OrganizationRelationIdSchema, 201)
-    @require_api_access("organization.outgoing_organization_relations:write")
+    @require_organization_api_access(
+        "organization.outgoing_organization_relations:write"
+    )
     def post(self, id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "outgoing_organization_relations:write")
+        admin_unit = g.manage_admin_unit
 
         relation = self.create_instance(
             OrganizationRelationCreateRequestSchema, source_admin_unit_id=admin_unit.id
@@ -568,12 +554,10 @@ class OrganizationOutgoingRelationResource(BaseResource):
         tags=["Organizations", "Organization Relations"],
     )
     @marshal_with(OrganizationRelationSchema)
-    @require_api_access("organization.outgoing_organization_relations:read")
+    @require_organization_api_access(
+        "organization.outgoing_organization_relations:read"
+    )
     def get(self, id, target_id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "outgoing_organization_relations:read")
-
         relation = AdminUnitRelation.query.filter(
             AdminUnitRelation.source_admin_unit_id == id,
             AdminUnitRelation.target_admin_unit_id == target_id,
@@ -588,11 +572,9 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
     )
     @use_kwargs(OrganizationInvitationListRequestSchema, location=("query"))
     @marshal_with(OrganizationInvitationListResponseSchema)
-    @require_api_access("organization.organization_invitations:read")
+    @require_organization_api_access("organization.organization_invitations:read")
     def get(self, id, **kwargs):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "organization_invitations:read")
+        admin_unit = g.manage_admin_unit
 
         params = TrackableSearchParams()
         params.load_from_request(**kwargs)
@@ -608,11 +590,9 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
     )
     @use_kwargs(OrganizationInvitationCreateRequestSchema, location="json", apply=False)
     @marshal_with(OrganizationInvitationIdSchema, 201)
-    @require_api_access("organization.organization_invitations:write")
+    @require_organization_api_access("organization.organization_invitations:write")
     def post(self, id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "organization_invitations:write")
+        admin_unit = g.manage_admin_unit
 
         invitation = self.create_instance(
             OrganizationInvitationCreateRequestSchema, admin_unit_id=admin_unit.id
@@ -650,11 +630,9 @@ class OrganizationEventListListResource(BaseResource):
     )
     @use_kwargs(EventListCreateRequestSchema, location="json", apply=False)
     @marshal_with(EventListIdSchema, 201)
-    @require_api_access("organization.event_lists:write")
+    @require_organization_api_access("organization.event_lists:write")
     def post(self, id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "event_lists:write")
+        admin_unit = g.manage_admin_unit
 
         event_list = self.create_instance(
             EventListCreateRequestSchema, admin_unit_id=admin_unit.id
@@ -672,11 +650,9 @@ class OrganizationEventListStatusListResource(BaseResource):
     )
     @use_kwargs(EventListListRequestSchema, location=("query"))
     @marshal_with(EventListStatusListResponseSchema)
-    @require_api_access("organization.event_lists:read")
+    @require_organization_api_access("organization.event_lists:read")
     def get(self, id, event_id, **kwargs):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "event_lists:read")
+        admin_unit = g.manage_admin_unit
         name = kwargs["name"] if "name" in kwargs else None
 
         pagination = get_event_list_status_query(
@@ -692,11 +668,9 @@ class OrganizationCustomWidgetListResource(BaseResource):
     )
     @use_kwargs(CustomWidgetListRequestSchema, location=("query"))
     @marshal_with(CustomWidgetListResponseSchema)
-    @require_api_access("organization.custom_widgets:read")
+    @require_organization_api_access("organization.custom_widgets:read")
     def get(self, id, **kwargs):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "custom_widgets:read")
+        admin_unit = g.manage_admin_unit
         name = kwargs["name"] if "name" in kwargs else None
 
         pagination = get_custom_widget_query(admin_unit.id, name).paginate()
@@ -708,11 +682,9 @@ class OrganizationCustomWidgetListResource(BaseResource):
     )
     @use_kwargs(CustomWidgetPostRequestSchema, location="json", apply=False)
     @marshal_with(CustomWidgetIdSchema, 201)
-    @require_api_access("organization.custom_widgets:write")
+    @require_organization_api_access("organization.custom_widgets:write")
     def post(self, id):
-        login_api_user_or_401()
-        admin_unit = get_admin_unit_for_manage_or_404(id)
-        access_or_401(admin_unit, "custom_widgets:write")
+        admin_unit = g.manage_admin_unit
 
         custom_widget = self.create_instance(
             CustomWidgetPostRequestSchema, admin_unit_id=admin_unit.id

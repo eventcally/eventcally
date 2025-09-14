@@ -133,6 +133,8 @@ def _add_user(
     )
 
 
+_add_org("apps", lazy_gettext("Apps"), no_api_access=True)
+_add_org("app_keys", lazy_gettext("App keys"), no_api_access=True)
 _add_org("api_keys", lazy_gettext("API keys"), no_api_access=True)
 _add_org("custom_widgets", lazy_gettext("Custom widgets"))
 _add_org("event_lists", lazy_gettext("Event lists"))
@@ -166,7 +168,28 @@ _add_org(
     "outgoing_organization_relations", lazy_gettext("Outgoing organization relations")
 )
 _add_org("widgets", lazy_gettext("Widgets"))
+_add_org("oauth2_clients", lazy_gettext("OAuth2 clients"), no_api_access=True)
+_add_org("app_installations", lazy_gettext("App installations"), no_api_access=True)
 
 _add_user("api_keys", lazy_gettext("API keys"), no_api_access=True)
 _add_user("organization_invitations", lazy_gettext("Organization invitations"))
 _add_user("favorite_events", lazy_gettext("Favorite events"))
+
+api_permission_infos = [p for p in permission_infos if not p.no_api_access]
+organization_app_permission_infos = [
+    p for p in api_permission_infos if p.domain == PermissionDomain.organization
+]
+
+
+def get_permission_infos(
+    domain: PermissionDomain, permissions: list[str]
+) -> list[PermissionInfo]:
+    return [
+        p
+        for p in permission_infos
+        if p.domain == domain and p.permission in permissions
+    ]
+
+
+def get_organization_permission_infos(permissions: list[str]) -> list[PermissionInfo]:
+    return get_permission_infos(PermissionDomain.organization, permissions)

@@ -1,11 +1,14 @@
-from flask import make_response
+from flask import g, make_response
 from flask_apispec import doc, marshal_with
 
 from project import db
-from project.access import access_or_401, login_api_user_or_401
 from project.api import add_api_resource
 from project.api.event_reference.schemas import EventReferenceSchema
-from project.api.resources import BaseResource, require_api_access
+from project.api.resources import (
+    BaseResource,
+    require_api_access,
+    require_organization_api_access,
+)
 from project.models import EventReference
 
 
@@ -21,12 +24,11 @@ class EventReferenceResource(BaseResource):
         tags=["Event References"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organization.incoming_event_references:write")
+    @require_organization_api_access(
+        "organization.incoming_event_references:write", EventReference
+    )
     def delete(self, id):
-        login_api_user_or_401()
-        reference = EventReference.query.get_or_404(id)
-        access_or_401(reference.admin_unit, "incoming_event_references:write")
-
+        reference = g.manage_admin_unit_instance
         db.session.delete(reference)
         db.session.commit()
 

@@ -1,8 +1,7 @@
-from flask import make_response
+from flask import g, make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 
 from project import db
-from project.access import access_or_401, login_api_user_or_401
 from project.api import add_api_resource
 from project.api.event.schemas import EventListRequestSchema, EventListResponseSchema
 from project.api.event_list.schemas import (
@@ -10,7 +9,11 @@ from project.api.event_list.schemas import (
     EventListSchema,
     EventListUpdateRequestSchema,
 )
-from project.api.resources import BaseResource, require_api_access
+from project.api.resources import (
+    BaseResource,
+    require_api_access,
+    require_organization_api_access,
+)
 from project.models import Event, EventList
 from project.services.event import get_events_query
 from project.services.search_params import EventSearchParams
@@ -29,12 +32,9 @@ class EventListModelResource(BaseResource):
     )
     @use_kwargs(EventListUpdateRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization.event_lists:write")
+    @require_organization_api_access("organization.event_lists:write", EventList)
     def put(self, id):
-        login_api_user_or_401()
-        event_list = EventList.query.get_or_404(id)
-        access_or_401(event_list.adminunit, "event_lists:write")
-
+        event_list = g.manage_admin_unit_instance
         event_list = self.update_instance(
             EventListUpdateRequestSchema, instance=event_list
         )
@@ -48,12 +48,9 @@ class EventListModelResource(BaseResource):
     )
     @use_kwargs(EventListPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_api_access("organization.event_lists:write")
+    @require_organization_api_access("organization.event_lists:write", EventList)
     def patch(self, id):
-        login_api_user_or_401()
-        event_list = EventList.query.get_or_404(id)
-        access_or_401(event_list.adminunit, "event_lists:write")
-
+        event_list = g.manage_admin_unit_instance
         event_list = self.update_instance(
             EventListPatchRequestSchema, instance=event_list
         )
@@ -66,12 +63,9 @@ class EventListModelResource(BaseResource):
         tags=["Event Lists"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organization.event_lists:write")
+    @require_organization_api_access("organization.event_lists:write", EventList)
     def delete(self, id):
-        login_api_user_or_401()
-        event_list = EventList.query.get_or_404(id)
-        access_or_401(event_list.adminunit, "event_lists:write")
-
+        event_list = g.manage_admin_unit_instance
         db.session.delete(event_list)
         db.session.commit()
 
@@ -99,11 +93,9 @@ class EventListEventListWriteResource(BaseResource):
         tags=["Event Lists", "Events"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organization.event_lists:write")
+    @require_organization_api_access("organization.event_lists:write", EventList)
     def put(self, id, event_id):
-        login_api_user_or_401()
-        event_list = EventList.query.get_or_404(id)
-        access_or_401(event_list.adminunit, "event_lists:write")
+        event_list = g.manage_admin_unit_instance
         event = Event.query.get_or_404(event_id)
 
         exists = (
@@ -120,11 +112,9 @@ class EventListEventListWriteResource(BaseResource):
         tags=["Event Lists", "Events"],
     )
     @marshal_with(None, 204)
-    @require_api_access("organization.event_lists:write")
+    @require_organization_api_access("organization.event_lists:write", EventList)
     def delete(self, id, event_id):
-        login_api_user_or_401()
-        event_list = EventList.query.get_or_404(id)
-        access_or_401(event_list.adminunit, "event_lists:write")
+        event_list = g.manage_admin_unit_instance
         event = Event.query.get_or_404(event_id)
 
         exists = (
