@@ -1,7 +1,8 @@
 from functools import wraps
 
+from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
-from flask import request
+from flask import abort, request
 from flask_apispec import marshal_with
 from flask_apispec.annotations import annotate
 from flask_apispec.views import MethodResource
@@ -64,17 +65,29 @@ def get_api_key_from_request() -> bool:
     return api_key
 
 
-def require_api_access(scopes=None):
+class AppTokenRequiredException(OAuth2Error):
+    error = "app_token_required"
+    description = "App token required."
+
+
+def require_api_access(scopes=None, app_token_required=False):
     def inner_decorator(func):
         def wrapped(*args, **kwargs):  # see authlib ResourceProtector#__call__
             limit_decorator = None
             try:  # pragma: no cover
                 try:
                     token = require_oauth.acquire_token(scopes)
+
+                    if app_token_required and (
+                        not token or not token.app_id
+                    ):  # pragma: no cover
+                        raise AppTokenRequiredException()
                     limit_decorator = get_limit_decorator_for_provider(token)
                 except OAuth2Error as error:
                     require_oauth.raise_error_response(error)
             except Exception as e:
+                if app_token_required:
+                    raise e
                 if is_internal_request():
                     limit_decorator = limiter.shared_limit(
                         "1000/minute", scope=api_rate_limit_scope
@@ -102,7 +115,7 @@ def require_api_access(scopes=None):
             }
         ]
 
-        if not scope_list:
+        if not scope_list and not app_token_required:
             security.append(
                 {
                     "apiKey": scope_list,
@@ -193,3 +206,8 @@ class BaseResource(MethodResource):
                 validate()
 
         return instance
+
+
+def current_token_as_app_or_401():
+    if not current_token or not current_token.app_id:  # pragma: no cover
+        abort(401)

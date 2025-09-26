@@ -1,7 +1,9 @@
+from authlib.integrations.flask_oauth2 import current_token
 from flask import abort
 from flask.helpers import make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 from flask_security import current_user
+from sqlalchemy import and_
 
 from project import db
 from project.access import login_api_user_or_401
@@ -18,7 +20,15 @@ from project.api.organization_invitation.schemas import (
     OrganizationInvitationSchema,
 )
 from project.api.resources import BaseResource, require_api_access
+from project.api.user.schemas import (
+    OrganizationMembershipListRequestSchema,
+    OrganizationMembershipListResponseSchema,
+    UserAppInstallationListRequestSchema,
+    UserAppInstallationListResponseSchema,
+)
 from project.models import AdminUnitInvitation, Event
+from project.models.admin_unit import AdminUnit, AdminUnitMember
+from project.models.app import AppInstallation
 from project.services.admin_unit import get_admin_unit_organization_invitations_query
 from project.services.event import get_events_query
 from project.services.search_params import EventSearchParams, TrackableSearchParams
@@ -159,6 +169,70 @@ class UserFavoriteEventListWriteResource(BaseResource):
             db.session.commit()
 
         return make_response("", 204)
+
+
+class UserOrganizationMembershipListResource(BaseResource):
+    @doc(
+        summary="List organization memberships of user",
+        tags=["Users", "Organization Members"],
+    )
+    @use_kwargs(OrganizationMembershipListRequestSchema, location=("query"))
+    @marshal_with(OrganizationMembershipListResponseSchema)
+    @require_api_access("user.organization_memberships:read")
+    def get(self, **kwargs):
+        login_api_user_or_401()
+
+        query = AdminUnitMember.query.filter_by(user_id=current_user.id)
+        return query.paginate()
+
+
+class UserAppInstallationListResource(BaseResource):
+    @doc(
+        summary="List installations of your app that the authenticated user has permission to access.",
+        tags=["Users", "Apps"],
+    )
+    @use_kwargs(UserAppInstallationListRequestSchema, location=("query"))
+    @marshal_with(UserAppInstallationListResponseSchema)
+    @require_api_access()
+    def get(self, **kwargs):
+        if not current_token or not current_token.client_id:  # pragma: no cover
+            abort(401)
+        login_api_user_or_401()
+
+        app_id = current_token.client.id
+        user_id = current_user.id
+
+        query = AppInstallation.query.join(
+            AdminUnit, AdminUnit.id == AppInstallation.admin_unit_id
+        ).filter(AppInstallation.oauth2_client_id == app_id)
+
+        admin_only = "admin_only" in kwargs and kwargs.get("admin_only", False)
+        if admin_only:
+            query = query.filter(
+                AdminUnit.members.any(
+                    and_(AdminUnitMember.user_id == user_id, AdminUnitMember.is_admin)
+                )
+            )
+        else:
+            query = query.filter(
+                AdminUnit.members.any(AdminUnitMember.user_id == user_id)
+            )
+
+        pagination = query.paginate()
+        return pagination
+
+
+add_api_resource(
+    UserAppInstallationListResource,
+    "/user/app_installations",
+    "api_v1_user_app_installation_list",
+)
+
+add_api_resource(
+    UserOrganizationMembershipListResource,
+    "/user/organization-memberships",
+    "api_v1_user_organization_membership_list",
+)
 
 
 add_api_resource(

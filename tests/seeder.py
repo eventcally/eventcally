@@ -396,6 +396,13 @@ class Seeder(object):
 
     def authorize_api_access(self, user_id, admin_unit_id, authorize_scope=None):
         oauth2_client_id = self.insert_default_oauth2_client(user_id)
+        self.authorize_api_access_with_client(
+            oauth2_client_id, user_id, admin_unit_id, authorize_scope
+        )
+
+    def authorize_api_access_with_client(
+        self, oauth2_client_id, user_id, admin_unit_id, authorize_scope=None
+    ):
 
         with self._app.app_context():
             from project.models import OAuth2Client

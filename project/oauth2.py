@@ -228,7 +228,11 @@ class JWTBearerGrant(_JWTBearerGrant):
     def authenticate_user(self, subject):
         if subject.startswith("app:"):
             client_id = subject[4:]
-            return db.session.get(OAuth2Client, client_id)
+            return (
+                OAuth2Client.query.filter(OAuth2Client.id == client_id)
+                .filter(OAuth2Client.is_app)
+                .first()
+            )
 
         if subject.startswith("app_installation:"):
             app_installation_id = subject[17:]

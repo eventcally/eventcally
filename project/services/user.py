@@ -4,7 +4,7 @@ from flask_security import hash_password
 
 from project import db, user_datastore
 from project.models import Event, Role, User, UserFavoriteEvents
-from project.models.admin_unit import AdminUnitMember, AdminUnitMemberRole
+from project.models.admin_unit import AdminUnitMember
 
 
 def create_user(email, password):
@@ -127,7 +127,7 @@ def is_user_admin_member(user: User) -> bool:
     return (
         AdminUnitMember.query.filter(
             AdminUnitMember.user_id == user.id,
-            AdminUnitMember.roles.any(AdminUnitMemberRole.name == "admin"),
+            AdminUnitMember.is_admin,
         ).first()
         is not None
     )

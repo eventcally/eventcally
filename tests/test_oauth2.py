@@ -40,10 +40,17 @@ def test_jwt_bearer_grant(app, db, seeder: Seeder, utils: UtilActions):
 
     # Get installations
     app_installation_id = seeder.install_app(oauth2_client_id, admin_unit_id)
-    url = utils.get_url("api_v1_app_installation_list")
+    url = utils.get_url(
+        "api_v1_app_installation_list",
+    )
     response = utils.get_json(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == app_installation_id
+
+    # Get installation
+    url = utils.get_url("api_v1_app_installation", id=app_installation_id)
+    response = utils.get_json(url)
+    assert response.json["id"] == app_installation_id
 
     # Authorize as app installation
     utils.authorize_as_app_installation(app_installation_id, private_pem, kid)
@@ -53,3 +60,10 @@ def test_jwt_bearer_grant(app, db, seeder: Seeder, utils: UtilActions):
         "api_v1_organization_incoming_event_reference_list", id=admin_unit_id
     )
     response = utils.get_json_ok(url)
+
+    # Can't get installation list with installation token
+    url = utils.get_url(
+        "api_v1_app_installation_list",
+    )
+    response = utils.get_json(url)
+    utils.assert_response_bad_request(response)

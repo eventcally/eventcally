@@ -57,10 +57,7 @@ class EventReferenceRequestSchema(
 class EventReferenceRequestListRequestSchema(
     PaginationRequestSchema, TrackableRequestSchemaMixin
 ):
-    sort = fields.Str(
-        metadata={"description": "Sort result items."},
-        validate=validate.OneOf(["-created_at", "-updated_at", "-last_modified_at"]),
-    )
+    pass
 
 
 class EventReferenceRequestListResponseSchema(PaginationResponseSchema):

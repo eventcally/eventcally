@@ -9,6 +9,7 @@ from authlib.integrations.sqla_oauth2 import (
 from flask import request
 from flask_security import AsaList
 from sqlalchemy import CheckConstraint
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import backref, object_session, relationship
 
@@ -56,6 +57,14 @@ class OAuth2Client(db.Model, OAuth2ClientMixin, RateLimitHolderMixin, TrackableM
         cascade="all, delete-orphan",
         backref=backref("oauth2_client", lazy=True),
     )
+
+    @hybrid_property
+    def is_app(self):  # pragma: no cover
+        return self.app_permissions is not None
+
+    @is_app.expression
+    def is_app(cls):
+        return cls.app_permissions.isnot(None)
 
     @OAuth2ClientMixin.grant_types.getter
     def grant_types(self):

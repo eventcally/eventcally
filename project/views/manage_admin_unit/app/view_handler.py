@@ -39,11 +39,7 @@ class AppViewHandler(ManageAdminUnitChildViewHandler):
         return gettext("Apps")
 
     def apply_base_filter(self, query, **kwargs):
-        return (
-            super()
-            .apply_base_filter(query, **kwargs)
-            .filter(OAuth2Client.app_permissions.isnot(None))
-        )
+        return super().apply_base_filter(query, **kwargs).filter(OAuth2Client.is_app)
 
     def complete_object(self, object, form):
         super().complete_object(object, form)

@@ -11,6 +11,7 @@ from project.dateutils import (
     get_today,
 )
 from project.models.trackable_mixin import TrackableMixin
+from project.utils import str_to_bool
 
 
 class BaseSearchParams(object):
@@ -35,7 +36,7 @@ class BaseSearchParams(object):
         return None
 
     def load_bool_param(self, param: str):
-        return request.args[param].lower() in ("true", "t", "yes", "y", "on", "1")
+        return str_to_bool(request.args[param])
 
 
 class TrackableSearchParams(BaseSearchParams):
@@ -43,12 +44,22 @@ class TrackableSearchParams(BaseSearchParams):
         super().__init__()
         self.created_at_from = None
         self.created_at_to = None
+        self.updated_at_from = None
+        self.updated_at_to = None
+        self.last_modified_at_from = None
+        self.last_modified_at_to = None
 
     def load_from_request(self, **kwargs):
         super().load_from_request(**kwargs)
 
         self.created_at_from = kwargs.get("created_at_from", self.created_at_from)
         self.created_at_to = kwargs.get("created_at_to", self.created_at_to)
+        self.updated_at_from = kwargs.get("updated_at_from", self.updated_at_from)
+        self.updated_at_to = kwargs.get("updated_at_to", self.updated_at_to)
+        self.last_modified_at_from = kwargs.get(
+            "last_modified_at_from", self.last_modified_at_from
+        )
+        self.last_modified_at_to = kwargs.get("last_modified_at_to", self.created_at_to)
 
     def get_trackable_query(self, query, klass: Type[TrackableMixin]):
         filter = self.fill_trackable_filter(1 == 1, klass)
@@ -60,6 +71,18 @@ class TrackableSearchParams(BaseSearchParams):
 
         if self.created_at_to:
             filter = and_(filter, klass.created_at < self.created_at_to)
+
+        if self.updated_at_from:
+            filter = and_(filter, klass.updated_at >= self.updated_at_from)
+
+        if self.updated_at_to:
+            filter = and_(filter, klass.updated_at < self.updated_at_to)
+
+        if self.last_modified_at_from:
+            filter = and_(filter, klass.last_modified_at >= self.last_modified_at_from)
+
+        if self.last_modified_at_to:
+            filter = and_(filter, klass.last_modified_at < self.last_modified_at_to)
 
         return filter
 
