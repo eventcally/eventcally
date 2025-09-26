@@ -1,3 +1,7 @@
+from tests.seeder import Seeder
+from tests.utils import UtilActions
+
+
 def test_organization_invitation_list(client, seeder, utils):
     _, admin_unit_id = seeder.setup_api_access(user_access=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
@@ -124,3 +128,29 @@ def test_favorite_event_list_delete(client, seeder, utils, app):
 
         favorite = get_favorite_event(user_id, event_id)
         assert favorite is None
+
+
+def test_app_installations(app, db, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(admin=True, log_in=False)
+    oauth2_client_id = seeder.insert_default_oauth2_client_app(
+        admin_unit_id=admin_unit_id
+    )
+    app_installation_id = seeder.install_app(oauth2_client_id, admin_unit_id)
+
+    # Authorize as user with app client
+    seeder.authorize_api_access_with_client(oauth2_client_id, user_id, admin_unit_id)
+
+    url = utils.get_url("api_v1_user_app_installation_list")
+    response = utils.get_json(url)
+
+    url = utils.get_url("api_v1_user_app_installation_list", admin_only=1)
+    response = utils.get_json(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == app_installation_id
+
+
+def test_memberships(app, db, seeder: Seeder, utils: UtilActions):
+    seeder.setup_api_access(admin=True)
+
+    url = utils.get_url("api_v1_user_organization_membership_list")
+    utils.get_json(url)

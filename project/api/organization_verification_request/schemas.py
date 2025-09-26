@@ -1,4 +1,4 @@
-from marshmallow import fields, validate
+from marshmallow import fields
 from marshmallow_enum import EnumField
 
 from project.api.organization.schemas import (
@@ -68,10 +68,7 @@ class OrganizationVerificationRequestSchema(
 class OrganizationVerificationRequestListRequestSchema(
     PaginationRequestSchema, TrackableRequestSchemaMixin
 ):
-    sort = fields.Str(
-        metadata={"description": "Sort result items."},
-        validate=validate.OneOf(["-created_at", "-updated_at", "-last_modified_at"]),
-    )
+    pass
 
 
 class OrganizationVerificationRequestListResponseSchema(PaginationResponseSchema):

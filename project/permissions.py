@@ -172,6 +172,7 @@ _add_org("oauth2_clients", lazy_gettext("OAuth2 clients"), no_api_access=True)
 _add_org("app_installations", lazy_gettext("App installations"), no_api_access=True)
 
 _add_user("api_keys", lazy_gettext("API keys"), no_api_access=True)
+_add_user("organization_memberships", lazy_gettext("Organization memberships"))
 _add_user("organization_invitations", lazy_gettext("Organization invitations"))
 _add_user("favorite_events", lazy_gettext("Favorite events"))
 

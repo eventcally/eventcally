@@ -1,4 +1,4 @@
-from marshmallow import fields, validate
+from marshmallow import fields
 
 from project.api import marshmallow
 from project.api.event.schemas import EventRefSchema, EventWriteIdSchema
@@ -41,10 +41,7 @@ class EventReferenceDumpSchema(EventReferenceIdSchema):
 class EventReferenceListRequestSchema(
     PaginationRequestSchema, TrackableRequestSchemaMixin
 ):
-    sort = fields.Str(
-        metadata={"description": "Sort result items."},
-        validate=validate.OneOf(["-created_at", "-updated_at", "-last_modified_at"]),
-    )
+    pass
 
 
 class EventReferenceListResponseSchema(PaginationResponseSchema):

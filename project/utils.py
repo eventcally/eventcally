@@ -190,3 +190,7 @@ def hash_api_key(api_key: str) -> str:
     from flask_security.utils import get_hmac
 
     return get_hmac(api_key).decode("ascii")
+
+
+def str_to_bool(str_val: str) -> bool:
+    return str_val.lower() in ("true", "t", "yes", "y", "on", "1")

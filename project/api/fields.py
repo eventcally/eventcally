@@ -25,7 +25,10 @@ class TimezoneDateTimeField(fields.DateTime):
 
     def _serialize(self, value, attr, obj, **kwargs):
         if value:
-            value = value.astimezone(self.custom_timezone)
+            if value.tzinfo:
+                value = value.astimezone(self.custom_timezone)
+            else:
+                value = value.replace(tzinfo=self.custom_timezone)
 
         return super()._serialize(value, attr, obj, **kwargs)
 

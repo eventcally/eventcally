@@ -72,6 +72,37 @@ class AdminUnitMember(db.Model):
     def __str__(self):
         return self.user.__str__() if self.user else super().__str__()
 
+    def has_role(self, role: str | RoleMixin) -> bool:
+        """Returns `True` if the user identifies with the specified role.
+
+        :param role: A role name or `Role` instance"""
+        if isinstance(role, str):
+            return role in (role.name for role in self.roles)
+        else:  # pragma: no cover
+            return role in self.roles
+
+    @hybrid_property
+    def is_admin(self):
+        return self.has_role("admin")
+
+    @is_admin.expression
+    def is_admin(cls):
+        return (
+            select(func.count())
+            .select_from(AdminUnitMemberRole.__table__)
+            .join(
+                AdminUnitMemberRolesMembers.__table__,
+                AdminUnitMemberRolesMembers.role_id == AdminUnitMemberRole.id,
+            )
+            .where(
+                and_(
+                    AdminUnitMemberRolesMembers.member_id == cls.id,
+                    AdminUnitMemberRole.name == "admin",
+                )
+            )
+            .scalar_subquery()
+        ) > 0
+
 
 class AdminUnitMemberInvitation(db.Model):
     __tablename__ = "adminunitmemberinvitation"

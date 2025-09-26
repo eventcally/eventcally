@@ -55,6 +55,30 @@ class TrackableRequestSchemaMixin(object):
             "description": "Items created before this date time in GTM, e.g. 2020-12-31T00:00:00."
         },
     )
+    updated_at_from = GmtDateTimeField(
+        metadata={
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00."
+        },
+    )
+    updated_at_to = GmtDateTimeField(
+        metadata={
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00."
+        },
+    )
+    last_modified_at_from = GmtDateTimeField(
+        metadata={
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00."
+        },
+    )
+    last_modified_at_to = GmtDateTimeField(
+        metadata={
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00."
+        },
+    )
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+        validate=validate.OneOf(["-created_at", "-updated_at", "-last_modified_at"]),
+    )
 
 
 class ErrorResponseSchema(marshmallow.Schema):

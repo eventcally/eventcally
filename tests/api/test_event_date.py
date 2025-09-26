@@ -107,6 +107,20 @@ def test_search(client, seeder: Seeder, utils: UtilActions, app, db):
     response = utils.get_json_ok(url)
 
     url = utils.get_url(
+        "api_v1_event_date_search",
+        updated_at_from="2023-07-07T00:00:00",
+        updated_at_to="2023-07-08T00:00:00",
+    )
+    response = utils.get_json_ok(url)
+
+    url = utils.get_url(
+        "api_v1_event_date_search",
+        last_modified_at_from="2023-07-07T00:00:00",
+        last_modified_at_to="2023-07-08T00:00:00",
+    )
+    response = utils.get_json_ok(url)
+
+    url = utils.get_url(
         "api_v1_event_date_search", coordinate="51.9077888,10.4333312", distance=500
     )
     response = utils.get_json_ok(url)
