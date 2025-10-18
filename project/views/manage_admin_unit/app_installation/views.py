@@ -1,20 +1,25 @@
-from flask_babel import lazy_gettext
+from flask import flash
+from flask_babel import gettext, lazy_gettext
 
 from project.models.oauth import OAuth2Client
 from project.modular.base_views import BaseCreateView, BaseUpdateView
 from project.permissions import get_organization_permission_infos
 from project.views.manage_admin_unit.app_installation.displays import (
     AcceptPermissionsDisplay,
+    InstallDisplay,
 )
 from project.views.manage_admin_unit.app_installation.forms import (
     AcceptPermissionsForm,
     InstallAppForm,
 )
+from project.views.utils import flash_message
 
 
 class InstallView(BaseCreateView):
     form_class = InstallAppForm
     template_file_name = "install.html"
+    display_class = InstallDisplay
+    app_event_name = "app_installation.created"
 
     def dispatch_request(self, **kwargs):
         self.oauth2_client = OAuth2Client.query.get_or_404(kwargs.get("app_id"))
@@ -47,6 +52,19 @@ class InstallView(BaseCreateView):
         super().complete_object(object, form)
         object.oauth2_client = self.oauth2_client
         object.permissions = self.oauth2_client.app_permissions
+
+    def flash_success_message(self, object, form):
+        text = gettext("App successfully installed")
+
+        if self.oauth2_client.setup_url:  # pragma: no cover
+            flash_message(
+                text,
+                self.oauth2_client.setup_url,
+                gettext("Setup"),
+                "success",
+            )
+        else:
+            flash(text, "success")
 
 
 class AcceptPermissionsView(BaseUpdateView):

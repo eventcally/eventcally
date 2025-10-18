@@ -1,5 +1,5 @@
 {% extends "generic/create.html" %}
 
-{% block instruction %}
-{{ super() }}
+{% block display %}
+{{ render_read_display(display, oauth2_client) }}
 {% endblock %}

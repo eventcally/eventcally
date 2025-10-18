@@ -329,3 +329,16 @@ class OrganizationAppPermissionListProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", OrganizationAppPermissionListPropFormatter())
         super().__init__(*args, **kwargs)
+
+
+class URLPropFormatter(StringPropFormatter):
+    pass
+
+
+class URLProp(BaseProp):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("formatter", URLPropFormatter())
+        super().__init__(*args, **kwargs)
+
+    def get_link(self, object):
+        return self.get_display_data(object)

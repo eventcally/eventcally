@@ -7,6 +7,7 @@ from project.modular.base_props import (
     IntProp,
     LocationProp,
     StringProp,
+    URLProp,
 )
 
 
@@ -15,7 +16,7 @@ class ListDisplay(BaseDisplay):
     location = LocationProp(lazy_gettext("Location"))
     phone = StringProp(lazy_gettext("Phone"))
     email = StringProp(lazy_gettext("Email"))
-    url = StringProp(lazy_gettext("Link URL"))
+    url = URLProp(lazy_gettext("Link URL"))
     logo = BoolProp(lazy_gettext("Logo"))
     number_of_events = IntProp(lazy_gettext("Number of events"))
     last_modified_at = DateProp(lazy_gettext("Last modified at"))

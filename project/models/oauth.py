@@ -11,7 +11,7 @@ from flask_security import AsaList
 from sqlalchemy import CheckConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.mutable import MutableList
-from sqlalchemy.orm import backref, object_session, relationship
+from sqlalchemy.orm import backref, deferred, object_session, relationship
 
 from project import db
 from project.dateutils import gmt_tz
@@ -37,6 +37,12 @@ class OAuth2Client(db.Model, OAuth2ClientMixin, RateLimitHolderMixin, TrackableM
     __default_rate_limit_value__ = "5000/hour"
 
     id = db.Column(db.Integer, primary_key=True)
+
+    homepage_url = deferred(db.Column(db.String(255)), group="detail")
+    setup_url = deferred(db.Column(db.String(255)), group="detail")
+    webhook_url = deferred(db.Column(db.String(255)), group="detail")
+    webhook_secret = deferred(db.Column(db.Unicode(255)), group="detail")
+    description = deferred(db.Column(db.UnicodeText(), nullable=True), group="detail")
 
     admin_unit_id = db.Column(
         db.Integer, db.ForeignKey("adminunit.id", ondelete="CASCADE"), nullable=True

@@ -6,19 +6,23 @@ from project.modular.base_props import (
     ListProp,
     OrganizationAppPermissionListProp,
     StringProp,
+    URLProp,
 )
 
 
 class ReadDisplay(BaseDisplay):
     client_id = StringProp(lazy_gettext("Client ID"))
     client_secret = StringProp(lazy_gettext("Client secret"))
-    client_uri = StringProp(lazy_gettext("Client URI"))
     grant_types = ListProp(lazy_gettext("Grant types"))
     redirect_uris = ListProp(lazy_gettext("Redirect URIs"))
     response_types = ListProp(lazy_gettext("Response types"))
     scope = StringProp(lazy_gettext("Scope"))
     token_endpoint_auth_method = ListProp(lazy_gettext("Token endpoint auth method"))
     app_permissions = OrganizationAppPermissionListProp(lazy_gettext("Permissions"))
+    homepage_url = URLProp(lazy_gettext("Homepage"))
+    setup_url = URLProp(lazy_gettext("Setup URL"))
+    webhook_url = URLProp(lazy_gettext("Webhook URL"))
+    description = StringProp(lazy_gettext("Description"))
     app_keys = StringProp(
         lazy_gettext("App keys"),
         method_name="get_app_keys",
