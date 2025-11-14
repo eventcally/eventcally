@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask_babel import lazy_gettext
 
 from project.access import admin_unit_owner_access_or_401
@@ -5,6 +8,9 @@ from project.models import EventReferenceRequest
 from project.models.event import Event
 from project.modular.filters import EnumFilter
 from project.modular.sort_definition import SortDefinition
+from project.services.event_reference_request_service import (
+    EventReferenceRequestService,
+)
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -21,7 +27,12 @@ from project.views.utils import current_admin_unit
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
+    admin_unit_id_attribute_name = None
     model = EventReferenceRequest
+    object_service: Annotated[
+        EventReferenceRequestService,
+        Provide["services.event_reference_request_service"],
+    ]
     create_view_class = None
     read_display_class = ReadDisplay
     update_view_class = None

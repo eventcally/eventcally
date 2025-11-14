@@ -3,10 +3,7 @@ from flask_security import auth_required
 
 from project import app
 from project.models import AdminUnitInvitation
-from project.views.utils import (
-    get_invitation_access_result,
-    send_template_mails_to_users_async,
-)
+from project.views.utils import get_invitation_access_result
 
 
 @app.route("/profile")
@@ -36,11 +33,3 @@ def user_organization_invitation(id):
 @auth_required()
 def user_favorite_events():
     return render_template("user/favorite_events.html")
-
-
-def send_user_deletion_requested_mail(user):
-    send_template_mails_to_users_async(
-        [user],
-        "user_deletion_requested_notice",
-        user=user,
-    )

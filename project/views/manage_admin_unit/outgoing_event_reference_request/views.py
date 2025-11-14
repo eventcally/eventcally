@@ -1,18 +1,18 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import abort, g, url_for
 from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
 
-from project import db
 from project.access import can_request_event_reference
 from project.models.event import Event
 from project.modular.base_views import BaseCreateView, BaseListView
+from project.services import organization_service
 from project.views.manage_admin_unit.outgoing_event_reference_request.forms import (
     CreateForm,
 )
-from project.views.reference_request import (
-    handle_request_according_to_relation,
-    send_reference_request_mails,
-)
+from project.views.reference_request import get_success_text_for_request_creation
 
 
 class ListView(BaseListView):
@@ -40,6 +40,10 @@ class ListView(BaseListView):
 
 class CreateView(BaseCreateView):
     form_class = CreateForm
+    organization_service: Annotated[
+        organization_service.OrganizationService,
+        Provide["services.organization_service"],
+    ]
 
     def get_instruction(self, **kwargs):
         return lazy_gettext(
@@ -63,20 +67,11 @@ class CreateView(BaseCreateView):
         super().complete_object(object, form)
         object.event = self.event
 
-    def insert_object(self, object):
-        db.session.add(object)
-        self.reference, self.msg = handle_request_according_to_relation(
-            object, self.event
-        )
-        db.session.commit()
-
-    def after_commit(self, object, form):
-        super().after_commit(object, form)
-
-        send_reference_request_mails(object, self.reference)
+    def insert_object(self, object, form):
+        self.organization_service.insert_outgoing_event_reference_request(object)
 
     def get_success_text(self, object, form):
-        return self.msg
+        return get_success_text_for_request_creation(object)
 
     def get_redirect_url(self, **kwargs):
         return self.handler.get_list_url(**kwargs)

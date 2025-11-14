@@ -1,5 +1,12 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
+
 from project.models import AdminUnitInvitation
 from project.modular.base_form import BaseDeleteForm
+from project.services.organization_invitation_service import (
+    OrganizationInvitationService,
+)
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -20,6 +27,10 @@ from project.views.manage_admin_unit.organization_invitation.views import (
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = AdminUnitInvitation
+    object_service: Annotated[
+        OrganizationInvitationService,
+        Provide["services.organization_invitation_service"],
+    ]
     create_form_class = CreateForm
     create_view_class = CreateView
     read_view_class = None

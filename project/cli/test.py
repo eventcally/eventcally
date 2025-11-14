@@ -31,7 +31,6 @@ from project.services.admin_unit import (
     insert_admin_unit_member_invitation,
     upsert_admin_unit_relation,
 )
-from project.services.event import insert_event, upsert_event_category
 from project.services.oauth2_client import complete_oauth2_client
 from project.services.organizer import get_event_organizer, upsert_event_organizer
 from project.services.place import get_event_places, upsert_event_place
@@ -201,9 +200,10 @@ def create_admin_unit_member(admin_unit_id, user_email):
 
 
 def _create_event(admin_unit_id):
+    event_category_service = app.container.services.event_category_service()
     event = Event()
     event.admin_unit_id = admin_unit_id
-    event.categories = [upsert_event_category("Other")]
+    event.categories = [event_category_service.upsert_event_category("Other")]
     event.name = "Name"
     event.description = "Beschreibung"
     event.event_place_id = _get_default_event_place_id(admin_unit_id)
@@ -217,8 +217,7 @@ def _create_event(admin_unit_id):
     date_definition.start = _get_now_by_minute()
     event.date_definitions = [date_definition]
 
-    insert_event(event)
-    db.session.commit()
+    app.container.services.event_service().insert_object(event)
 
     return event.id
 

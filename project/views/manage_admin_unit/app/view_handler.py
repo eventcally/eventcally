@@ -1,6 +1,10 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask_babel import gettext
 
 from project.models import OAuth2Client
+from project.services.app_service import AppService
 from project.services.oauth2_client import complete_oauth2_client
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.app.displays import ListDisplay, ReadDisplay
@@ -18,6 +22,7 @@ from project.views.utils import flash_non_match_for_deletion
 
 class AppViewHandler(ManageAdminUnitChildViewHandler):
     model = OAuth2Client
+    object_service: Annotated[AppService, Provide["services.app_service"]]
     create_form_class = CreateAppForm
     create_view_class = CreateView
     update_form_class = UpdateAppForm

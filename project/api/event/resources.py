@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import g, make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy import and_
@@ -32,17 +35,10 @@ from project.api.resources import (
 )
 from project.api.schemas import NoneSchema
 from project.models import AdminUnit, Event, EventDate, PublicStatus
-from project.services.event import (
-    get_event_with_details_or_404,
-    get_events_query,
-    get_significant_event_changes,
-    update_event,
-)
+from project.services.event import get_event_with_details_or_404, get_events_query
+from project.services.event_service import EventService
 from project.services.search_params import EventSearchParams
-from project.views.event import (
-    send_event_report_mails,
-    send_referenced_event_changed_mails,
-)
+from project.views.event import send_event_report_mails
 
 
 def api_can_read_event_or_401(event: Event):
@@ -82,6 +78,8 @@ class EventListResource(BaseResource):
 
 
 class EventResource(BaseResource):
+    event_service: Annotated[EventService, Provide["services.event_service"]]
+
     @doc(summary="Get event", tags=["Events"])
     @marshal_with(EventSchema)
     @require_api_access()
@@ -101,12 +99,7 @@ class EventResource(BaseResource):
     def put(self, id):
         event = g.manage_admin_unit_instance
         event = self.update_instance(EventPostRequestSchema, instance=event)
-        update_event(event)
-        changes = get_significant_event_changes(event)
-        db.session.commit()
-
-        if changes:
-            send_referenced_event_changed_mails(event)
+        self.event_service.update_object(event)
 
         return make_response("", 204)
 
@@ -120,12 +113,7 @@ class EventResource(BaseResource):
     def patch(self, id):
         event = g.manage_admin_unit_instance
         event = self.update_instance(EventPatchRequestSchema, instance=event)
-        update_event(event)
-        changes = get_significant_event_changes(event)
-        db.session.commit()
-
-        if changes:
-            send_referenced_event_changed_mails(event)
+        self.event_service.update_object(event)
 
         return make_response("", 204)
 

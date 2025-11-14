@@ -1,6 +1,10 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask_babel import gettext
 
 from project.models import AppInstallation
+from project.services.app_installation_service import AppInstallationService
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.app_installation.displays import (
     ListDisplay,
@@ -17,6 +21,9 @@ from project.views.manage_admin_unit.child_view_handler import (
 
 class AppInstallationViewHandler(ManageAdminUnitChildViewHandler):
     model = AppInstallation
+    object_service: Annotated[
+        AppInstallationService, Provide["services.app_installation_service"]
+    ]
     create_view_class = None
     update_view_class = None
     read_display_class = ReadDisplay

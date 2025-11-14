@@ -1,15 +1,16 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import flash, redirect, request, url_for
 from flask_babel import gettext, lazy_gettext
 from flask_security import current_user
 
-from project import db
 from project.access import can_create_admin_unit, has_access
 from project.models import AdminUnitInvitation
 from project.modular.base_views import BaseCreateView
-from project.services.admin_unit import (
-    add_relation,
-    insert_admin_unit_for_user,
-    send_admin_unit_invitation_accepted_mails,
+from project.services.admin_unit import add_relation, insert_admin_unit_for_user
+from project.services.organization_invitation_service import (
+    OrganizationInvitationService,
 )
 from project.utils import strings_are_equal_ignoring_case
 from project.views.manage_blueprint.organization.forms import CreateForm
@@ -21,6 +22,10 @@ from project.views.utils import (
 
 
 class CreateView(BaseCreateView):
+    organization_invitation_service: Annotated[
+        OrganizationInvitationService,
+        Provide["services.organization_invitation_service"],
+    ]
     form_class = CreateForm
 
     def check_access(self, **kwargs):
@@ -98,25 +103,21 @@ class CreateView(BaseCreateView):
 
         return form
 
-    def insert_object(self, admin_unit):
+    def insert_object(self, admin_unit, form):
         _, _, self.relation = insert_admin_unit_for_user(
             admin_unit, current_user, self.invitation
         )
-
-    def after_commit(self, admin_unit, form):
-        super().after_commit(admin_unit, form)
 
         if self.embedded_relation_enabled:
             self.relation = add_relation(admin_unit, form, self.current_admin_unit)
 
         if self.invitation and self.relation:
-            send_admin_unit_invitation_accepted_mails(
+            self.organization_invitation_service.send_admin_unit_invitation_accepted_mails(
                 self.invitation, self.relation, admin_unit
             )
 
         if self.invitation:
-            db.session.delete(self.invitation)
-            db.session.commit()
+            self.organization_invitation_service.delete_object(self.invitation)
 
         if not self.relation or not self.relation.verify:
             flash(

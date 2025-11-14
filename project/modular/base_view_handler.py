@@ -1,6 +1,6 @@
 from typing import Optional
 
-from flask import Blueprint, current_app, url_for
+from flask import Blueprint, abort, current_app, url_for
 from flask_babel import gettext
 
 from project.modular.base_blueprint import BaseBlueprint
@@ -18,6 +18,7 @@ from project.modular.base_views import (
 class BaseViewHandler:
     decorators = []
     model = None
+    object_service = None
     create_view_class = BaseCreateView
     create_form_class = None
     create_decorators = []
@@ -66,7 +67,25 @@ class BaseViewHandler:
         return self.model.get_display_name_plural()
 
     def get_object_from_kwargs(self, **kwargs):
-        return self.model.query.get_or_404(kwargs.get(self.get_id_query_arg_name()))
+        object_id = kwargs.get(self.get_id_query_arg_name())
+        object = self.get_object_by_id(object_id)
+
+        if not object:  # pragma: no cover
+            abort(404)
+
+        return object
+
+    def get_object_by_id(self, object_id):
+        return self.object_service.get_object_by_id(object_id)
+
+    def insert_object(self, object):
+        self.object_service.insert_object(object)
+
+    def save_object(self, object):
+        self.object_service.update_object(object)
+
+    def delete_object(self, object):
+        self.object_service.delete_object(object)
 
     def complete_object(self, object, form):  # pragma: no cover
         pass

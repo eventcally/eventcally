@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import url_for
 from flask_babel import gettext, lazy_gettext
 
@@ -7,6 +10,9 @@ from project.models.admin_unit_verification_request import (
 )
 from project.modular.filters import EnumFilter
 from project.modular.sort_definition import SortDefinition
+from project.services.organization_verification_request_service import (
+    OrganizationVerificationRequestService,
+)
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -21,6 +27,10 @@ from project.views.manage_admin_unit.incoming_verification_request.views import 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = AdminUnitVerificationRequest
+    object_service: Annotated[
+        OrganizationVerificationRequestService,
+        Provide["services.organization_verification_request_service"],
+    ]
     admin_unit_id_attribute_name = "target_admin_unit_id"
     create_view_class = None
     read_view_class = None

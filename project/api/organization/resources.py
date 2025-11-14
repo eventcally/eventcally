@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import abort, g, request
 from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy import and_
@@ -93,6 +96,7 @@ from project.models.admin_unit import AdminUnitInvitation, AdminUnitRelation
 from project.models.admin_unit_verification_request import (
     AdminUnitVerificationRequestReviewStatus,
 )
+from project.services import organization_service
 from project.services.admin_unit import (
     get_admin_unit_invitation_query,
     get_admin_unit_query,
@@ -102,7 +106,14 @@ from project.services.admin_unit import (
     get_organizer_query,
     get_place_query,
 )
-from project.services.event import get_event_dates_query, get_events_query, insert_event
+from project.services.event import get_event_dates_query, get_events_query
+from project.services.event_service import EventService
+from project.services.organization_invitation_service import (
+    OrganizationInvitationService,
+)
+from project.services.organization_verification_request_service import (
+    OrganizationVerificationRequestService,
+)
 from project.services.reference import (
     get_reference_incoming_query,
     get_reference_outgoing_query,
@@ -125,12 +136,7 @@ from project.services.verification import (
     get_verification_requests_incoming_query,
     get_verification_requests_outgoing_query,
 )
-from project.views.reference_request import (
-    handle_request_according_to_relation,
-    send_reference_request_mails,
-)
-from project.views.utils import get_current_admin_unit_for_api, send_template_mail_async
-from project.views.verification_request import send_verification_request_inbox_mails
+from project.views.utils import get_current_admin_unit_for_api
 
 
 class OrganizationResource(BaseResource):
@@ -181,6 +187,8 @@ class OrganizationEventSearchResource(BaseResource):
 
 
 class OrganizationEventListResource(BaseResource):
+    event_service: Annotated[EventService, Provide["services.event_service"]]
+
     @doc(summary="List events of organization", tags=["Organizations", "Events"])
     @use_kwargs(EventListRequestSchema, location=("query"))
     @marshal_with(EventListResponseSchema)
@@ -219,8 +227,7 @@ class OrganizationEventListResource(BaseResource):
         event = self.create_instance(
             EventPostRequestSchema, admin_unit_id=admin_unit.id
         )
-        insert_event(event)
-        db.session.commit()
+        self.event_service.insert_object(event)
 
         return event, 201
 
@@ -393,6 +400,11 @@ class OrganizationIncomingEventReferenceRequestListResource(BaseResource):
 
 
 class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
+    organization_service: Annotated[
+        organization_service.OrganizationService,
+        Provide["services.organization_service"],
+    ]
+
     @doc(
         summary="List outgoing event reference requests of organization",
         tags=["Organizations", "Event Reference Requests"],
@@ -432,11 +444,9 @@ class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
         if not can_request_event_reference(event):
             abort(401)
 
-        db.session.add(reference_request)
-        reference, _ = handle_request_according_to_relation(reference_request, event)
-        db.session.commit()
-        send_reference_request_mails(reference_request, reference)
-
+        self.organization_service.insert_outgoing_event_reference_request(
+            reference_request
+        )
         return reference_request, 201
 
 
@@ -461,6 +471,11 @@ class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResour
 
 
 class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResource):
+    organization_verification_request_service: Annotated[
+        OrganizationVerificationRequestService,
+        Provide["services.organization_verification_request_service"],
+    ]
+
     @doc(
         summary="List outgoing organization verification requests of organization",
         tags=["Organizations", "Organization Verification Requests"],
@@ -504,9 +519,9 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
         ):  # pragma: no cover
             abort(401)
 
-        db.session.add(verification_request)
-        db.session.commit()
-        send_verification_request_inbox_mails(verification_request)
+        self.organization_verification_request_service.insert_object(
+            verification_request
+        )
 
         return verification_request, 201
 
@@ -566,6 +581,11 @@ class OrganizationOutgoingRelationResource(BaseResource):
 
 
 class OrganizationOrganizationInvitationListResource(BaseResource):
+    organization_invitation_service: Annotated[
+        OrganizationInvitationService,
+        Provide["services.organization_invitation_service"],
+    ]
+
     @doc(
         summary="List organization invitations of organization",
         tags=["Organizations", "Organization Invitations"],
@@ -597,14 +617,7 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
         invitation = self.create_instance(
             OrganizationInvitationCreateRequestSchema, admin_unit_id=admin_unit.id
         )
-        db.session.add(invitation)
-        db.session.commit()
-
-        send_template_mail_async(
-            invitation.email,
-            "organization_invitation_notice",
-            invitation=invitation,
-        )
+        self.organization_invitation_service.insert_object(invitation)
 
         return invitation, 201
 

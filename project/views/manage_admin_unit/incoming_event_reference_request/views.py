@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import redirect, url_for
 from flask_babel import gettext, lazy_gettext
 
@@ -5,16 +8,13 @@ from project.dateutils import get_today
 from project.models.event_date import EventDate
 from project.models.event_reference_request import EventReferenceRequestReviewStatus
 from project.modular.base_views import BaseListView, BaseUpdateView
-from project.services.admin_unit import (
-    get_admin_unit_relation,
-    upsert_admin_unit_relation,
+from project.services.admin_unit import get_admin_unit_relation
+from project.services.event_reference_request_service import (
+    EventReferenceRequestService,
 )
-from project.services.reference import create_event_reference_for_request
+from project.services.organization_service import OrganizationService
 from project.views.manage_admin_unit.incoming_event_reference_request.forms import (
     ReferenceRequestReviewForm,
-)
-from project.views.reference_request_review import (
-    send_reference_request_review_status_mails,
 )
 from project.views.utils import flash_message
 
@@ -27,6 +27,13 @@ class ListView(BaseListView):
 
 
 class ReviewView(BaseUpdateView):
+    organization_service: Annotated[
+        OrganizationService, Provide["services.organization_service"]
+    ]
+    event_reference_request_service: Annotated[
+        EventReferenceRequestService,
+        Provide["services.event_reference_request_service"],
+    ]
     form_class = ReferenceRequestReviewForm
     template_file_name = "review.html"
 
@@ -75,21 +82,20 @@ class ReviewView(BaseUpdateView):
 
         return super().render_template(form=form, object=object, dates=dates, **kwargs)
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-
+    def save_object(self, object, form):
         if object.review_status == EventReferenceRequestReviewStatus.verified:
-            reference = create_event_reference_for_request(object)
-            reference.rating = form.rating.data
+            self.organization_service.verify_incoming_event_reference_request(
+                object, form.rating.data
+            )
+        else:
+            self.event_reference_request_service.update_object(object)
 
-            if form.auto_verify.data:
-                relation = upsert_admin_unit_relation(
-                    object.admin_unit_id, object.event.admin_unit_id
-                )
-                relation.auto_verify_event_reference_requests = True
-
-    def after_commit(self, object, form):
-        send_reference_request_review_status_mails(object)
+        if form.auto_verify.data:
+            self.organization_service.update_organization_relation(
+                object.admin_unit_id,
+                object.event.admin_unit_id,
+                auto_verify_event_reference_requests=True,
+            )
 
     def get_success_text(self, object, form):
         if object.review_status == EventReferenceRequestReviewStatus.verified:

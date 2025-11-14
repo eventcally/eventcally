@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import url_for
 from flask_babel import gettext
 from flask_login import current_user
@@ -5,9 +8,11 @@ from flask_security import auth_required
 
 from project.access import owner_access_or_401
 from project.modular.base_view_handler import BaseViewHandler
+from project.services.user_service import UserService
 
 
 class UserChildViewHandler(BaseViewHandler):
+    user_service: Annotated[UserService, Provide["services.user_service"]]
     decorators = [auth_required()]
 
     def get_breadcrumbs(self):

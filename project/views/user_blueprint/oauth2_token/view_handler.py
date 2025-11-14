@@ -1,7 +1,11 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask_babel import gettext
 from flask_security import auth_required
 
 from project.models import OAuth2Token
+from project.services.oauth2_token_service import OAuth2TokenService
 from project.views.user_blueprint import user_bp
 from project.views.user_blueprint.child_view_handler import UserChildViewHandler
 from project.views.user_blueprint.oauth2_token.displays import ListDisplay
@@ -10,6 +14,9 @@ from project.views.user_blueprint.oauth2_token.views import RevokeView
 
 class OAuth2TokenViewHandler(UserChildViewHandler):
     decorators = [auth_required()]
+    object_service: Annotated[
+        OAuth2TokenService, Provide["services.oauth2_token_service"]
+    ]
     model = OAuth2Token
     create_view_class = None
     read_view_class = None

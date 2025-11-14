@@ -315,9 +315,6 @@ class BaseFormView(BaseObjectView):
     def complete_object(self, object, form):
         self.handler.complete_object(object, form)
 
-    def after_commit(self, object, form):
-        pass
-
     def get_redirect_url(self, **kwargs):  # pragma: no cover
         return None
 
@@ -391,8 +388,7 @@ class BaseCreateView(BaseFormView):
 
             try:
                 self.complete_object(object, form)
-                self.insert_object(object)
-                self.after_commit(object, form)
+                self.insert_object(object, form)
                 self.flash_success_message(object, form)
                 return redirect(self.get_redirect_url(object=object))
             except SQLAlchemyError as e:
@@ -406,9 +402,8 @@ class BaseCreateView(BaseFormView):
     def flash_success_message(self, object, form):
         flash(self.get_success_text(object, form), "success")
 
-    def insert_object(self, object):
-        db.session.add(object)
-        db.session.commit()
+    def insert_object(self, object, form):
+        self.handler.insert_object(object)
 
 
 class BaseObjectFormView(BaseFormView):
@@ -468,13 +463,15 @@ class BaseUpdateView(BaseObjectFormView):
             model_display_name=self.handler.get_model_display_name(),
         )
 
+    def save_object(self, object, form):
+        self.handler.save_object(object)
+
     def dispatch_validated_form(self, form, object, **kwargs):
         form.populate_obj(object)
 
         try:
             self.complete_object(object, form)
-            db.session.commit()
-            self.after_commit(object, form)
+            self.save_object(object, form)
             flash(self.get_success_text(object, form), "success")
             return redirect(self.get_redirect_url(object=object))
         except SQLAlchemyError as e:
@@ -537,8 +534,7 @@ class BaseDeleteView(BaseObjectFormView):
         return self.form_class(**kwargs)
 
     def delete_object_from_db(self, object):
-        db.session.delete(object)
-        db.session.commit()
+        self.handler.delete_object(object)
 
     def flash_success_text(self, form, object):
         flash(self.get_success_text(object, form), "success")
@@ -550,6 +546,5 @@ class BaseDeleteView(BaseObjectFormView):
     def dispatch_validated_form(self, form, object, **kwargs):
         if self.can_object_be_deleted(form, object):
             self.delete_object_from_db(object)
-            self.after_commit(object, form)
             self.flash_success_text(form, object)
             return redirect(self.get_redirect_url())

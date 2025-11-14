@@ -52,19 +52,6 @@ from project.utils import get_pending_changes, get_place_str
 from project.views.utils import truncate
 
 
-def get_event_category(category_name):
-    return EventCategory.query.filter_by(name=category_name).first()
-
-
-def upsert_event_category(category_name):
-    result = get_event_category(category_name)
-    if result is None:
-        result = EventCategory(name=category_name)
-        db.session.add(result)
-
-    return result
-
-
 def fill_event_filter(event_filter, params: EventSearchParams):
     event_filter = params.fill_trackable_filter(event_filter, Event)
 
@@ -540,22 +527,6 @@ def update_event_dates_with_recurrence_rule(event):
 
     event.dates = [date for date in event.dates if date not in dates_to_remove]
     event.dates.extend(dates_to_add)
-
-
-def insert_event(event):
-    if not event.status:
-        event.status = EventStatus.scheduled
-
-    if not event.public_status:
-        event.public_status = PublicStatus.published
-
-    update_event_dates_with_recurrence_rule(event)
-    db.session.add(event)
-
-
-def update_event(event):
-    with db.session.no_autoflush:
-        update_event_dates_with_recurrence_rule(event)
 
 
 def get_upcoming_event_dates(event_id):

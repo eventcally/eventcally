@@ -12,13 +12,11 @@ def test_read(client, app, db, seeder: Seeder, utils: UtilActions):
 
     with app.app_context():
         from project.models import Event, EventStatus
-        from project.services.event import update_event
 
         event = db.session.get(Event, event_id)
         event.status = EventStatus.scheduled
 
-        update_event(event)
-        db.session.commit()
+        app.container.services.event_service().update_object(event)
 
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.get_json_ok(url)
