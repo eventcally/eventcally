@@ -1,12 +1,8 @@
-import datetime
-
 from flask import redirect, request, url_for
 from flask_babel import gettext, lazy_gettext
-from flask_security import current_user
 
 from project import db
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
-from project.services.admin_unit import send_admin_unit_deletion_requested_mails
 from project.utils import widget_default_background_color, widget_default_primary_color
 from project.views.manage_admin_unit.admin_unit.forms import (
     CancelDeletionForm,
@@ -102,14 +98,6 @@ class RequestDeletionView(BaseDeleteView):
             object.name,
             gettext("Entered name does not match organization name"),
         )
-
-    def delete_object_from_db(self, object):
-        object.deletion_requested_at = datetime.datetime.now(datetime.UTC)
-        object.deletion_requested_by_id = current_user.id
-        db.session.commit()
-
-    def after_commit(self, object, form):
-        send_admin_unit_deletion_requested_mails(object)
 
     def get_redirect_url(self, **kwargs):
         return url_for("manage_admin_unit", id=current_admin_unit.id)

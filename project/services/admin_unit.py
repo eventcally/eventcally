@@ -123,17 +123,6 @@ def insert_admin_unit_member_invitation(admin_unit_id, email, role_names):
     return invitation
 
 
-def upsert_admin_unit_member_role(role_name, role_title, permissions):
-    result = AdminUnitMemberRole.query.filter_by(name=role_name).first()
-    if result is None:
-        result = AdminUnitMemberRole(name=role_name)
-        db.session.add(result)
-
-    result.title = role_title
-    result.permissions = permissions
-    return result
-
-
 def add_user_to_admin_unit(user, admin_unit):
     result = (
         AdminUnitMember.query.with_parent(admin_unit).filter_by(user_id=user.id).first()
@@ -495,33 +484,6 @@ def add_relation(admin_unit, form, current_admin_unit):
 
     db.session.commit()
     return relation
-
-
-def send_admin_unit_invitation_accepted_mails(
-    invitation: AdminUnitInvitation, relation: AdminUnitRelation, admin_unit: AdminUnit
-):
-    from project.views.utils import send_template_mails_to_admin_unit_members_async
-
-    # Benachrichtige alle Mitglieder der AdminUnit, die diese Einladung erstellt hatte
-    send_template_mails_to_admin_unit_members_async(
-        invitation.admin_unit_id,
-        "organization_invitations:write",
-        "organization_invitation_accepted_notice",
-        invitation=invitation,
-        relation=relation,
-        admin_unit=admin_unit,
-    )
-
-
-def send_admin_unit_deletion_requested_mails(admin_unit: AdminUnit):
-    from project.views.utils import send_template_mails_to_admin_unit_members_async
-
-    send_template_mails_to_admin_unit_members_async(
-        admin_unit.id,
-        "settings:write",
-        "organization_deletion_requested_notice",
-        admin_unit=admin_unit,
-    )
 
 
 def upsert_admin_unit_relation(source_admin_unit_id: int, target_admin_unit_id: int):

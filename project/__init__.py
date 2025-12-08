@@ -3,6 +3,7 @@ import os
 import sys
 from datetime import datetime, timedelta
 
+from dependency_injector import containers, providers
 from flask import Blueprint, Flask, g
 from flask_babel import Babel
 from flask_cors import CORS
@@ -265,6 +266,15 @@ from project.oauth2 import config_oauth
 
 config_oauth(app)
 
+# Dependency Injection Container
+from project.container import Application
+
+container = Application()
+container.config.from_dict(app.config)
+
+# Make container available in Flask app
+app.container = container
+
 # Init misc modules
 
 # API Resources
@@ -306,16 +316,10 @@ from project.views import (
     planning,
     reference,
     reference_request,
-    reference_request_review,
     root,
 )
 from project.views import user as user_view
-from project.views import (
-    user_blueprint,
-    verification_request,
-    verification_request_review,
-    widget,
-)
+from project.views import user_blueprint, verification_request, widget
 
 if __name__ == "__main__":  # pragma: no cover
     app.run()

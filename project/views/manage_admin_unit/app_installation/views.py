@@ -19,7 +19,6 @@ class InstallView(BaseCreateView):
     form_class = InstallAppForm
     template_file_name = "install.html"
     display_class = InstallDisplay
-    app_event_name = "app_installation.created"
 
     def dispatch_request(self, **kwargs):
         self.oauth2_client = OAuth2Client.query.get_or_404(kwargs.get("app_id"))

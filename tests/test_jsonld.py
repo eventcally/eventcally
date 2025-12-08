@@ -106,7 +106,6 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         from project.dateutils import create_berlin_date
         from project.jsonld import get_sd_for_event_date
         from project.models import Event, Image
-        from project.services.event import update_event
 
         event = db.session.get(Event, event_id)
         date_definition = event.date_definitions[0]
@@ -122,8 +121,7 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         photo.copyright_text = "EventCally"
         event.photo = photo
 
-        update_event(event)
-        db.session.commit()
+        app.container.services.event_service().update_object(event)
         event_date = event.dates[0]
 
         with app.test_request_context():
@@ -147,7 +145,6 @@ def test_get_sd_for_event_date_allday(client, app, db, seeder, utils):
         from project.dateutils import create_berlin_date
         from project.jsonld import get_sd_for_event_date
         from project.models import Event
-        from project.services.event import update_event
 
         event = db.session.get(Event, event_id)
         date_definition = event.date_definitions[0]
@@ -155,8 +152,7 @@ def test_get_sd_for_event_date_allday(client, app, db, seeder, utils):
         date_definition.end = create_berlin_date(2030, 12, 31, 16, 30)
         date_definition.allday = True
 
-        update_event(event)
-        db.session.commit()
+        app.container.services.event_service().update_object(event)
         event_date = event.dates[0]
 
         with app.test_request_context():
@@ -200,14 +196,12 @@ def test_get_sd_for_event_date_ageRange(
     with app.app_context():
         from project.jsonld import get_sd_for_event_date
         from project.models import Event
-        from project.services.event import update_event
 
         event = db.session.get(Event, event_id)
         event.age_from = age_from
         event.age_to = age_to
 
-        update_event(event)
-        db.session.commit()
+        app.container.services.event_service().update_object(event)
         event_date = event.dates[0]
 
         with app.test_request_context():
@@ -233,13 +227,11 @@ def test_get_sd_for_event_date_eventAttendanceMode(
     with app.app_context():
         from project.jsonld import get_sd_for_event_date
         from project.models import Event, EventAttendanceMode
-        from project.services.event import update_event
 
         event = db.session.get(Event, event_id)
         event.attendance_mode = EventAttendanceMode(attendance_mode)
 
-        update_event(event)
-        db.session.commit()
+        app.container.services.event_service().update_object(event)
         event_date = event.dates[0]
 
         with app.test_request_context():
@@ -267,13 +259,11 @@ def test_get_sd_for_event_date_eventStatus(
     with app.app_context():
         from project.jsonld import get_sd_for_event_date
         from project.models import Event, EventStatus
-        from project.services.event import update_event
 
         event = db.session.get(Event, event_id)
         event.status = EventStatus(status)
 
-        update_event(event)
-        db.session.commit()
+        app.container.services.event_service().update_object(event)
         event_date = event.dates[0]
 
         with app.test_request_context():

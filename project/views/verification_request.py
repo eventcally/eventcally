@@ -11,6 +11,9 @@ from project.models import (
 )
 from project.models.admin_unit import AdminUnit
 from project.services.admin_unit import get_admin_unit_query
+from project.services.organization_verification_request_service import (
+    OrganizationVerificationRequestService,
+)
 from project.services.search_params import AdminUnitSearchParams
 from project.services.verification import admin_unit_can_verify_admin_unit
 from project.views.utils import (
@@ -18,7 +21,6 @@ from project.views.utils import (
     get_pagination_urls,
     handleSqlError,
     manage_required,
-    send_template_mails_to_admin_unit_members_async,
 )
 
 
@@ -47,7 +49,10 @@ def manage_organization_verification_requests_outgoing_create_select(id):
 )
 @auth_required()
 @manage_required("outgoing_organization_verification_requests:write")
-def manage_organization_requests_outgoing_create(id, target_id):
+def manage_organization_requests_outgoing_create(
+    id,
+    target_id,
+):
     admin_unit = g.manage_admin_unit
     target_admin_unit = AdminUnit.query.get_or_404(target_id)
 
@@ -73,12 +78,14 @@ def manage_organization_requests_outgoing_create(id, target_id):
             db.session.add(request)
 
             request.review_status = AdminUnitVerificationRequestReviewStatus.inbox
-            send_verification_request_inbox_mails(request)
+
+            organization_verification_request_service: (
+                OrganizationVerificationRequestService
+            ) = app.container.services.organization_verification_request_service()
+            organization_verification_request_service.insert_object(request)
             msg = gettext(
                 "Request successfully created. You will be notified after the other organization reviewed the request."
             )
-
-            db.session.commit()
             flash(msg, "success")
             return redirect(
                 url_for(
@@ -97,15 +104,4 @@ def manage_organization_requests_outgoing_create(id, target_id):
         form=form,
         admin_unit=admin_unit,
         target_admin_unit=target_admin_unit,
-    )
-
-
-def send_verification_request_inbox_mails(request):
-    # Benachrichtige alle Mitglieder der AdminUnit, die Requests verifizieren können
-    admin_unit_id = request.target_admin_unit_id or request.target_admin_unit.id
-    send_template_mails_to_admin_unit_members_async(
-        admin_unit_id,
-        "incoming_organization_verification_requests:write",
-        "verification_request_notice",
-        request=request,
     )

@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import url_for
 from flask_babel import gettext, lazy_gettext
 
@@ -18,6 +21,7 @@ from project.modular.filters import (
 )
 from project.modular.search_definition import SearchDefinition
 from project.modular.sort_definition import SortDefinition
+from project.services.event_service import EventService
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.ajax import (
     EventOrganizerAjaxModelLoader,
@@ -38,6 +42,7 @@ from project.views.utils import current_admin_unit
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = Event
+    object_service: Annotated[EventService, Provide["services.event_service"]]
     create_view_class = CreateView
     read_view_class = None
     update_view_class = UpdateView

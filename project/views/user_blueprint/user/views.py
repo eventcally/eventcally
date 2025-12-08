@@ -1,5 +1,6 @@
-import datetime
+from typing import Annotated
 
+from dependency_injector.wiring import Provide
 from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 from flask_security import auth_required, current_user
@@ -8,7 +9,7 @@ from flask_security.utils import get_post_login_redirect
 from project import db
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.services.user import is_user_admin_member, set_user_accepted_tos
-from project.views.user import send_user_deletion_requested_mail
+from project.services.user_service import UserService
 from project.views.user_blueprint.user.forms import (
     AcceptTosForm,
     CancelDeletionForm,
@@ -24,6 +25,7 @@ from project.views.utils import (
 
 
 class RequestDeletionView(BaseDeleteView):
+    user_service: Annotated[UserService, Provide["services.user_service"]]
     decorators = [auth_required()]
     template_file_name = "delete.html"
     form_class = RequestDeletionForm
@@ -62,11 +64,7 @@ class RequestDeletionView(BaseDeleteView):
         )
 
     def delete_object_from_db(self, object):
-        object.deletion_requested_at = datetime.datetime.now(datetime.UTC)
-        db.session.commit()
-
-    def after_commit(self, object, form):
-        send_user_deletion_requested_mail(object)
+        self.user_service.request_deletion(object)
 
     def get_redirect_url(self, **kwargs):
         return url_for("profile")

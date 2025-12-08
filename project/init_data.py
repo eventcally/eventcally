@@ -3,9 +3,6 @@ import os
 from project import app, db
 from project.api import add_oauth2_scheme_with_transport
 from project.models import Location
-from project.services.admin_unit import upsert_admin_unit_member_role
-from project.services.event import upsert_event_category
-from project.services.user import upsert_user_role
 
 
 @app.before_request
@@ -68,40 +65,44 @@ organization_event_expert_permissions = [
 
 
 def create_initial_data():
-    upsert_admin_unit_member_role(
+    organization_member_role_service = (
+        app.container.services.organization_member_role_service()
+    )
+    organization_member_role_service.upsert_role(
         "admin", "Administrator", organization_admin_permissions
     )
-    upsert_admin_unit_member_role(
+    organization_member_role_service.upsert_role(
         "event_verifier", "Event expert", organization_event_expert_permissions
     )
 
-    upsert_user_role("admin", "Administrator", [])
+    role_service = app.container.services.role_service()
+    role_service.upsert_role("admin", "Administrator", [])
 
     Location.update_coordinates()
-
-    upsert_event_category("Art")
-    upsert_event_category("Book")
-    upsert_event_category("Movie")
-    upsert_event_category("Family")
-    upsert_event_category("Festival")
-    upsert_event_category("Religious")
-    upsert_event_category("Shopping")
-    upsert_event_category("Comedy")
-    upsert_event_category("Music")
-    upsert_event_category("Dance")
-    upsert_event_category("Nightlife")
-    upsert_event_category("Theater")
-    upsert_event_category("Dining")
-    upsert_event_category("Conference")
-    upsert_event_category("Meetup")
-    upsert_event_category("Fitness")
-    upsert_event_category("Sports")
-    upsert_event_category("Other")
-    upsert_event_category("Exhibition")
-    upsert_event_category("Culture")
-    upsert_event_category("Tour")
-    upsert_event_category("OpenAir")
-    upsert_event_category("Stage")
-    upsert_event_category("Lecture")
-
     db.session.commit()
+
+    event_category_service = app.container.services.event_category_service()
+    event_category_service.upsert_event_category("Art")
+    event_category_service.upsert_event_category("Book")
+    event_category_service.upsert_event_category("Movie")
+    event_category_service.upsert_event_category("Family")
+    event_category_service.upsert_event_category("Festival")
+    event_category_service.upsert_event_category("Religious")
+    event_category_service.upsert_event_category("Shopping")
+    event_category_service.upsert_event_category("Comedy")
+    event_category_service.upsert_event_category("Music")
+    event_category_service.upsert_event_category("Dance")
+    event_category_service.upsert_event_category("Nightlife")
+    event_category_service.upsert_event_category("Theater")
+    event_category_service.upsert_event_category("Dining")
+    event_category_service.upsert_event_category("Conference")
+    event_category_service.upsert_event_category("Meetup")
+    event_category_service.upsert_event_category("Fitness")
+    event_category_service.upsert_event_category("Sports")
+    event_category_service.upsert_event_category("Other")
+    event_category_service.upsert_event_category("Exhibition")
+    event_category_service.upsert_event_category("Culture")
+    event_category_service.upsert_event_category("Tour")
+    event_category_service.upsert_event_category("OpenAir")
+    event_category_service.upsert_event_category("Stage")
+    event_category_service.upsert_event_category("Lecture")

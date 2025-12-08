@@ -1,7 +1,13 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import redirect, url_for
 from flask_babel import lazy_gettext
 
 from project.models import AdminUnitVerificationRequest
+from project.services.organization_verification_request_service import (
+    OrganizationVerificationRequestService,
+)
 from project.services.search_params import AdminUnitVerificationRequestSearchParams
 from project.services.verification import get_verification_requests_outgoing_query
 from project.views.manage_admin_unit import manage_admin_unit_bp
@@ -18,6 +24,10 @@ from project.views.utils import current_admin_unit
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = AdminUnitVerificationRequest
+    object_service: Annotated[
+        OrganizationVerificationRequestService,
+        Provide["services.organization_verification_request_service"],
+    ]
     admin_unit_id_attribute_name = "source_admin_unit_id"
     create_view_class = None
     read_display_class = ReadDisplay

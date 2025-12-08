@@ -1,7 +1,13 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from sqlalchemy.sql import func
 
 from project.models import AdminUnitMemberInvitation
 from project.modular.base_form import BaseDeleteForm
+from project.services.organization_member_invitation_service import (
+    OrganizationMemberInvitationService,
+)
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -22,6 +28,10 @@ from project.views.manage_admin_unit.member_invitation.views import (
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = AdminUnitMemberInvitation
+    object_service: Annotated[
+        OrganizationMemberInvitationService,
+        Provide["services.organization_member_invitation_service"],
+    ]
     create_form_class = CreateForm
     create_view_class = CreateView
     read_view_class = None

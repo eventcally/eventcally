@@ -1,9 +1,15 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import abort
 from flask_babel import gettext
 from flask_login import current_user
 from sqlalchemy import func
 
 from project.models import AdminUnitMemberInvitation
+from project.services.organization_member_invitation_service import (
+    OrganizationMemberInvitationService,
+)
 from project.utils import strings_are_equal_ignoring_case
 from project.views.user_blueprint import user_bp
 from project.views.user_blueprint.child_view_handler import UserChildViewHandler
@@ -17,6 +23,10 @@ from project.views.user_blueprint.organization_member_invitation.views import (
 
 class ViewHandler(UserChildViewHandler):
     model = AdminUnitMemberInvitation
+    object_service: Annotated[
+        OrganizationMemberInvitationService,
+        Provide["services.organization_member_invitation_service"],
+    ]
     create_view_class = None
     read_view_class = None
     update_view_class = None

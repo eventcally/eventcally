@@ -8,7 +8,6 @@ from sqlalchemy import and_, exists
 from project import app, db
 from project.models import AdminUnit, AdminUnitMember, Event, PublicStatus, User
 from project.models.admin_unit import AdminUnitMemberRole
-from project.services.admin_unit import get_member_for_admin_unit_by_user_id
 
 
 def has_current_user_role(role):
@@ -56,6 +55,8 @@ def has_admin_unit_member_permission(admin_unit_member, permission):
 
 
 def get_current_user_member_for_admin_unit(admin_unit_id):
+    from project.services.admin_unit import get_member_for_admin_unit_by_user_id
+
     return get_member_for_admin_unit_by_user_id(admin_unit_id, current_user.id)
 
 

@@ -1,5 +1,5 @@
 from project.modular.base_views import BaseCreateView, BaseUpdateView
-from project.views.utils import current_admin_unit, send_template_mail_async
+from project.views.utils import current_admin_unit
 
 
 class SharedFormViewMixin(object):
@@ -13,12 +13,7 @@ class SharedFormViewMixin(object):
 
 
 class CreateView(SharedFormViewMixin, BaseCreateView):
-    def after_commit(self, object, form):
-        send_template_mail_async(
-            object.email,
-            "organization_invitation_notice",
-            invitation=object,
-        )
+    pass
 
 
 class UpdateView(SharedFormViewMixin, BaseUpdateView):

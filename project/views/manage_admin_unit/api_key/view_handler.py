@@ -1,8 +1,12 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask_babel import lazy_gettext
 from sqlalchemy import func
 
 from project.models import ApiKey
 from project.modular.sort_definition import SortDefinition
+from project.services.api_key_service import ApiKeyService
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -18,6 +22,7 @@ from project.views.user_blueprint.api_key.views import CreateView
 
 class ApiKeyViewHandler(ManageAdminUnitChildViewHandler):
     model = ApiKey
+    object_service: Annotated[ApiKeyService, Provide["services.api_key_service"]]
     create_view_class = CreateView
     create_form_class = CreateForm
     update_form_class = UpdateForm

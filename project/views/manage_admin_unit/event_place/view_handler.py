@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import flash, url_for
 from flask_babel import gettext, lazy_gettext
 from sqlalchemy import func
@@ -5,6 +8,7 @@ from sqlalchemy import func
 from project.models import EventPlace
 from project.modular.search_definition import SearchDefinition
 from project.modular.sort_definition import SortDefinition
+from project.services.event_place_service import EventPlaceService
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -20,6 +24,9 @@ from project.views.utils import current_admin_unit, non_match_for_deletion
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = EventPlace
+    object_service: Annotated[
+        EventPlaceService, Provide["services.event_place_service"]
+    ]
     create_form_class = CreateEventPlaceForm
     read_view_class = None
     update_form_class = UpdateEventPlaceForm

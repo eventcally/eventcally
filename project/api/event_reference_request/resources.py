@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import g, make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 from marshmallow import ValidationError
@@ -13,10 +16,7 @@ from project.api.event_reference_request.schemas import (
 from project.api.resources import BaseResource, require_organization_api_access
 from project.models import EventReferenceRequest
 from project.models.event_reference_request import EventReferenceRequestReviewStatus
-from project.services.reference import create_event_reference_for_request
-from project.views.reference_request_review import (
-    send_reference_request_review_status_mails,
-)
+from project.services.organization_service import OrganizationService
 
 
 class EventReferenceRequestResource(BaseResource):
@@ -50,6 +50,10 @@ class EventReferenceRequestResource(BaseResource):
 
 
 class EventReferenceRequestVerifyResource(BaseResource):
+    organization_service: Annotated[
+        OrganizationService, Provide["services.organization_service"]
+    ]
+
     @doc(
         summary="Verify event reference request. Returns reference id.",
         tags=["Event Reference Requests"],
@@ -68,14 +72,9 @@ class EventReferenceRequestVerifyResource(BaseResource):
         ):  # pragma: no cover
             raise ValidationError("Request already verified")
 
-        reference_request.review_status = EventReferenceRequestReviewStatus.verified
-
-        reference = create_event_reference_for_request(reference_request)
-        reference.rating = kwargs.get("rating", reference.rating)
-        db.session.commit()
-
-        send_reference_request_review_status_mails(reference_request)
-
+        reference = self.organization_service.verify_incoming_event_reference_request(
+            reference_request, kwargs.get("rating", 50)
+        )
         return reference, 201
 
 

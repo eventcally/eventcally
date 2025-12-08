@@ -16,10 +16,6 @@ from project.services.search_params import (
 )
 
 
-def create_event_reference_for_request(request):
-    return upsert_event_reference(request.event_id, request.admin_unit_id)
-
-
 def get_event_reference(event_id: int, admin_unit_id: int):
     return EventReference.query.filter(
         and_(

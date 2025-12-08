@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import g, make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 from marshmallow import ValidationError
@@ -15,9 +18,9 @@ from project.models import AdminUnitVerificationRequest
 from project.models.admin_unit_verification_request import (
     AdminUnitVerificationRequestReviewStatus,
 )
-from project.services.admin_unit import upsert_admin_unit_relation
-from project.views.verification_request_review import (
-    send_verification_request_review_status_mails,
+from project.services.organization_service import OrganizationService
+from project.services.organization_verification_request_service import (
+    OrganizationVerificationRequestService,
 )
 
 
@@ -56,6 +59,10 @@ class OrganizationVerificationRequestResource(BaseResource):
 
 
 class OrganizationVerificationRequestVerifyResource(BaseResource):
+    organization_service: Annotated[
+        OrganizationService, Provide["services.organization_service"]
+    ]
+
     @doc(
         summary="Verify organization verification request. Returns relation id.",
         tags=["Organization Verification Requests"],
@@ -78,26 +85,21 @@ class OrganizationVerificationRequestVerifyResource(BaseResource):
         ):
             raise ValidationError("Verification request already verified")
 
-        verification_request.review_status = (
-            AdminUnitVerificationRequestReviewStatus.verified
+        relation = (
+            self.organization_service.verify_incoming_organization_verification_request(
+                verification_request,
+                kwargs.get("auto_verify_event_reference_requests", None),
+            )
         )
-
-        relation = upsert_admin_unit_relation(
-            verification_request.target_admin_unit_id,
-            verification_request.source_admin_unit_id,
-        )
-        relation.verify = True
-        relation.auto_verify_event_reference_requests = kwargs.get(
-            "auto_verify_event_reference_requests",
-            relation.auto_verify_event_reference_requests,
-        )
-        db.session.commit()
-
-        send_verification_request_review_status_mails(verification_request)
         return relation, 201
 
 
 class OrganizationVerificationRequestRejectResource(BaseResource):
+    organization_verification_request_service: Annotated[
+        OrganizationVerificationRequestService,
+        Provide["services.organization_verification_request_service"],
+    ]
+
     @doc(
         summary="Reject organization verification request",
         tags=["Organization Verification Requests"],
@@ -127,9 +129,10 @@ class OrganizationVerificationRequestRejectResource(BaseResource):
         verification_request.review_status = (
             AdminUnitVerificationRequestReviewStatus.rejected
         )
-        db.session.commit()
 
-        send_verification_request_review_status_mails(verification_request)
+        self.organization_verification_request_service.update_object(
+            verification_request
+        )
         return make_response("", 204)
 
 

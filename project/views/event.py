@@ -13,7 +13,7 @@ from project.access import (
 )
 from project.dateutils import create_icalendar
 from project.jsonld import get_sd_for_event_date
-from project.models import Event, EventCategory, EventReference
+from project.models import Event, EventCategory
 from project.services.event import (
     create_ical_events_for_event,
     get_event_with_details_or_404,
@@ -24,7 +24,6 @@ from project.utils import get_event_category_name
 from project.views.utils import (
     get_calendar_links_for_event,
     get_share_links,
-    send_template_mails_to_admin_unit_members_async,
     send_template_mails_to_users_async,
 )
 
@@ -120,20 +119,6 @@ def get_user_rights(event):
         "can_view_actions": current_user.is_authenticated,
         "can_update_event": has_access(event.admin_unit, "events:write"),
     }
-
-
-def send_referenced_event_changed_mails(event):
-    # Alle Referenzen
-    references = EventReference.query.filter(EventReference.event_id == event.id).all()
-    for reference in references:
-        # Alle Mitglieder der AdminUnit, die das Recht haben, Requests zu verifizieren
-        send_template_mails_to_admin_unit_members_async(
-            reference.admin_unit_id,
-            "incoming_event_reference_requests:write",
-            "referenced_event_changed_notice",
-            event=event,
-            reference=reference,
-        )
 
 
 def send_event_report_mails(event: Event, report: dict):

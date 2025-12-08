@@ -1,7 +1,11 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask_babel import gettext
 
 from project.models import OAuth2Client
 from project.services.oauth2_client import complete_oauth2_client
+from project.services.oauth2_client_service import OAuth2ClientService
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -17,6 +21,9 @@ from project.views.utils import flash_non_match_for_deletion
 
 class OAuth2ClientViewHandler(ManageAdminUnitChildViewHandler):
     model = OAuth2Client
+    object_service: Annotated[
+        OAuth2ClientService, Provide["services.oauth2_client_service"]
+    ]
     create_form_class = CreateOAuth2ClientForm
     update_form_class = UpdateOAuth2ClientForm
     delete_form_class = DeleteOAuth2ClientForm

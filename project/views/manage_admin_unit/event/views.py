@@ -1,7 +1,9 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import flash, request, url_for
 from flask_babel import gettext
 
-from project import db
 from project.access import can_request_event_reference_from_admin_unit
 from project.dateutils import get_next_full_hour, get_today
 from project.models.event import Event, PublicStatus
@@ -12,21 +14,14 @@ from project.modular.base_views import (
     BaseListView,
     BaseUpdateView,
 )
+from project.services import organization_service
 from project.services.admin_unit import (
     get_admin_unit_suggestions_for_reference_requests,
 )
-from project.services.event import (
-    get_significant_event_changes,
-    insert_event,
-    update_event,
-    upsert_event_category,
-)
-from project.views.event import send_referenced_event_changed_mails
+from project.services.event_category_service import EventCategoryService
+from project.services.event_service import EventService
 from project.views.manage_admin_unit.event.forms import CreateForm, UpdateForm
-from project.views.reference_request import (
-    handle_request_according_to_relation,
-    send_reference_request_mails,
-)
+from project.views.reference_request import get_success_text_for_request_creation
 from project.views.utils import current_admin_unit, flash_message
 
 
@@ -63,9 +58,20 @@ def prepare_form_reference_requests(form, admin_unit):
 
 class CreateView(BaseCreateView):
     form_class = CreateForm
+    event_service: Annotated[EventService, Provide["services.event_service"]]
+    organization_service: Annotated[
+        organization_service.OrganizationService,
+        Provide["services.organization_service"],
+    ]
+    event_category_service: Annotated[
+        EventCategoryService,
+        Provide["services.event_category_service"],
+    ]
 
     def create_form(self, **kwargs):
-        kwargs.setdefault("categories", [upsert_event_category("Other")])
+        kwargs.setdefault(
+            "categories", [self.event_category_service.upsert_event_category("Other")]
+        )
         form = super().create_form(**kwargs)
         prepare_event_form(form)
         prepare_form_reference_requests(form, current_admin_unit)
@@ -92,10 +98,8 @@ class CreateView(BaseCreateView):
         if form.organizer_choice.data == 2:
             object.organizer.admin_unit_id = object.admin_unit_id
 
-        insert_event(object)
-
-    def after_commit(self, object, form):
-        super().after_commit(object, form)
+    def insert_object(self, object, form):
+        self.event_service.insert_object(object)
 
         if (
             object.public_status == PublicStatus.published
@@ -105,12 +109,11 @@ class CreateView(BaseCreateView):
                 reference_request = EventReferenceRequest()
                 reference_request.event_id = object.id
                 reference_request.admin_unit_id = target_admin_unit_id
-                db.session.add(reference_request)
-                reference, msg = handle_request_according_to_relation(
-                    reference_request, object
+
+                self.organization_service.insert_outgoing_event_reference_request(
+                    reference_request
                 )
-                db.session.commit()
-                send_reference_request_mails(reference_request, reference)
+                msg = get_success_text_for_request_creation(reference_request)
                 flash(msg, "success")
 
     def flash_success_message(self, object, form):
@@ -134,22 +137,15 @@ class CreateView(BaseCreateView):
 
 class UpdateView(BaseUpdateView):
     form_class = UpdateForm
+    event_service: Annotated[EventService, Provide["services.event_service"]]
 
     def create_form(self, **kwargs):
         form = super().create_form(**kwargs)
         prepare_event_form(form)
         return form
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-        update_event(object)
-        self.changes = get_significant_event_changes(object)
-
-    def after_commit(self, object, form):
-        super().after_commit(object, form)
-
-        if self.changes:
-            send_referenced_event_changed_mails(object)
+    def save_object(self, object, form):
+        self.event_service.update_object(object)
 
 
 class DeleteView(BaseDeleteView):

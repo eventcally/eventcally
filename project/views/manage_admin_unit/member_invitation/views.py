@@ -2,7 +2,6 @@ from flask_babel import gettext
 
 from project.models.admin_unit import AdminUnitMemberRole
 from project.modular.base_views import BaseCreateView, BaseUpdateView
-from project.views.utils import send_template_mail_async
 
 
 class SharedFormViewMixin(object):
@@ -18,12 +17,7 @@ class SharedFormViewMixin(object):
 
 
 class CreateView(SharedFormViewMixin, BaseCreateView):
-    def after_commit(self, object, form):
-        send_template_mail_async(
-            object.email,
-            "invitation_notice",
-            invitation=object,
-        )
+    pass
 
 
 class UpdateView(SharedFormViewMixin, BaseUpdateView):

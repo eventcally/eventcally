@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask_babel import lazy_gettext
 from sqlalchemy import func
 
@@ -7,6 +10,7 @@ from project.modular.base_form import BaseDeleteForm
 from project.modular.filters import BooleanFilter
 from project.modular.search_definition import SearchDefinition
 from project.modular.sort_definition import SortDefinition
+from project.services.organization_relation_service import OrganizationRelationService
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -28,6 +32,9 @@ from project.views.manage_admin_unit.outgoing_organization_relation.views import
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
     model = AdminUnitRelation
+    object_service: Annotated[
+        OrganizationRelationService, Provide["services.organization_relation_service"]
+    ]
     admin_unit_id_attribute_name = "source_admin_unit_id"
     create_form_class = CreateForm
     create_view_class = CreateView

@@ -1,9 +1,13 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import url_for
 from flask_babel import gettext
 from sqlalchemy import func
 
 from project.models.admin_unit import AdminUnit
 from project.modular.search_definition import SearchDefinition
+from project.services.organization_service import OrganizationService
 from project.views.admin_blueprint import admin_bp
 from project.views.admin_blueprint.child_view_handler import AdminChildViewHandler
 from project.views.admin_blueprint.organization.displays import (
@@ -16,6 +20,9 @@ from project.views.admin_blueprint.organization.views import DeleteView
 
 class ViewHandler(AdminChildViewHandler):
     model = AdminUnit
+    object_service: Annotated[
+        OrganizationService, Provide["services.organization_service"]
+    ]
     create_view_class = None
     read_view_class = None
     update_form_class = UpdateForm

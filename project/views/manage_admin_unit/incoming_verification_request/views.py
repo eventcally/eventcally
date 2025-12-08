@@ -1,3 +1,6 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide
 from flask import redirect, url_for
 from flask_babel import gettext, lazy_gettext
 
@@ -5,17 +8,24 @@ from project.models.admin_unit_verification_request import (
     AdminUnitVerificationRequestReviewStatus,
 )
 from project.modular.base_views import BaseUpdateView
-from project.services.admin_unit import upsert_admin_unit_relation
+from project.services.organization_service import OrganizationService
+from project.services.organization_verification_request_service import (
+    OrganizationVerificationRequestService,
+)
 from project.views.manage_admin_unit.incoming_verification_request.forms import (
     VerificationRequestReviewForm,
 )
 from project.views.utils import flash_message
-from project.views.verification_request_review import (
-    send_verification_request_review_status_mails,
-)
 
 
 class ReviewView(BaseUpdateView):
+    organization_service: Annotated[
+        OrganizationService, Provide["services.organization_service"]
+    ]
+    organization_verification_request_service: Annotated[
+        OrganizationVerificationRequestService,
+        Provide["services.organization_verification_request_service"],
+    ]
     form_class = VerificationRequestReviewForm
     template_file_name = "review.html"
 
@@ -49,20 +59,13 @@ class ReviewView(BaseUpdateView):
 
         return super().render_template(form=form, object=object, **kwargs)
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-
+    def save_object(self, object, form):
         if object.review_status == AdminUnitVerificationRequestReviewStatus.verified:
-            relation = upsert_admin_unit_relation(
-                object.target_admin_unit_id, object.source_admin_unit_id
+            self.organization_service.verify_incoming_organization_verification_request(
+                object, form.auto_verify.data if form.auto_verify.data else None
             )
-            relation.verify = True
-
-            if form.auto_verify.data:
-                relation.auto_verify_event_reference_requests = True
-
-    def after_commit(self, object, form):
-        send_verification_request_review_status_mails(object)
+        else:
+            self.organization_verification_request_service.update_object(object)
 
     def get_success_text(self, object, form):
         if object.review_status == AdminUnitVerificationRequestReviewStatus.verified:

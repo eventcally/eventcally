@@ -80,6 +80,13 @@ def db(app):
     return db
 
 
+@pytest.fixture
+def container(app):
+    """Provides access to the dependency injection container."""
+    with app.app_context():
+        yield app.container
+
+
 def create_initial_test_data():
     from project import db
     from project.models import CustomEventCategory, CustomEventCategorySet, License

@@ -457,10 +457,11 @@ class Seeder(object):
         self._utils.authorize_as_app_installation(app_installation_id, private_pem, kid)
 
     def get_event_category_id(self, category_name):
-        from project.services.event import get_event_category
-
         with self._app.app_context():
-            category = get_event_category(category_name)
+            event_category_service = (
+                self._app.container.services.event_category_service()
+            )
+            category = event_category_service.get_event_category(category_name)
 
         return category.id
 
@@ -499,13 +500,15 @@ class Seeder(object):
             EventOrganizer,
             PublicStatus,
         )
-        from project.services.event import insert_event, upsert_event_category
 
         with self._app.app_context():
+            event_category_service = (
+                self._app.container.services.event_category_service()
+            )
             event = Event()
             event.__dict__.update(kwargs)
             event.admin_unit_id = admin_unit_id
-            event.categories = [upsert_event_category("Other")]
+            event.categories = [event_category_service.upsert_event_category("Other")]
             event.name = name
             event.description = description
             event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
@@ -544,8 +547,7 @@ class Seeder(object):
                 ).all()
                 event.custom_categories = custom_categories
 
-            insert_event(event)
-            self._db.session.commit()
+            self._app.container.services.event_service().insert_object(event)
             event_id = event.id
         return event_id
 
@@ -577,7 +579,6 @@ class Seeder(object):
         self, event_id, start=None, end=None, allday=False, recurrence_rule=""
     ):
         from project.models import Event
-        from project.services.event import update_event
 
         with self._app.app_context():
             event = self._db.session.get(Event, event_id)
@@ -591,8 +592,7 @@ class Seeder(object):
             date_definitions = event.date_definitions
             date_definitions.append(date_definition)
             event.date_definitions = date_definitions
-            update_event(event)
-            self._db.session.commit()
+            self._app.container.services.event_service().update_object(event)
 
             date_definition_id = date_definition.id
 
