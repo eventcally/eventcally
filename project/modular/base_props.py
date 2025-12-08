@@ -3,7 +3,7 @@ import os
 from flask_babel import format_date, format_datetime, format_time
 from markupsafe import Markup
 
-from project.models.event import EventStatus, PublicStatus
+from project.models import EventPublicStatus, EventStatus
 from project.permissions import get_organization_permission_infos
 from project.utils import (
     get_event_category_name,
@@ -254,9 +254,9 @@ class CountProp(BaseProp):  # pragma: no cover
 
 class PublicStatusPropFormatter(BadgePropFormatter):
     badge_mapping = {
-        PublicStatus.draft: "light",
-        PublicStatus.published: "success",
-        PublicStatus.planned: "secondary",
+        EventPublicStatus.draft: "light",
+        EventPublicStatus.published: "success",
+        EventPublicStatus.planned: "secondary",
     }
 
 

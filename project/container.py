@@ -334,7 +334,7 @@ class Services(containers.DeclarativeContainer):
 
 class Application(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
-        packages=["project"], warn_unresolved=True
+        packages=["project.views", "project.api"], warn_unresolved=True
     )
 
     config = providers.Configuration()

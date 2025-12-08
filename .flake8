@@ -12,3 +12,4 @@ exclude =
 per-file-ignores =
     __init__.py: F401, E402
     migrations/*: F401, E402
+    **/*_generated.py: F401, E303, W391

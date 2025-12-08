@@ -24,7 +24,7 @@ class OrganizationMembershipIdSchema(OrganizationMembershipModelSchema, IdSchema
 
 
 class OrganizationMembershipSchema(OrganizationMembershipIdSchema):
-    organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
     is_admin = fields.Bool(dump_only=True)
 
 

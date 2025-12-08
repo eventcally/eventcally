@@ -1,4 +1,4 @@
-from project.models.event import Event, EventStatus, PublicStatus
+from project.models import Event, EventPublicStatus, EventStatus
 from project.models.event_reference import EventReference
 from project.services.base_service import BaseService
 from project.services.event import (
@@ -15,7 +15,7 @@ class EventService(BaseService[Event]):
             object.status = EventStatus.scheduled
 
         if not object.public_status:
-            object.public_status = PublicStatus.published
+            object.public_status = EventPublicStatus.published
 
         update_event_dates_with_recurrence_rule(object)
         super().insert_object(object)

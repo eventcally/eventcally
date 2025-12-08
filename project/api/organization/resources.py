@@ -91,7 +91,7 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
-from project.models import AdminUnit, Event, PublicStatus
+from project.models import AdminUnit, Event, EventPublicStatus
 from project.models.admin_unit import AdminUnitInvitation, AdminUnitRelation
 from project.models.admin_unit_verification_request import (
     AdminUnitVerificationRequestReviewStatus,
@@ -203,7 +203,7 @@ class OrganizationEventListResource(BaseResource):
         if not api_can_read_private_events(admin_unit):
             event_filter = and_(
                 event_filter,
-                Event.public_status == PublicStatus.published,
+                Event.public_status == EventPublicStatus.published,
                 AdminUnit.is_verified,
             )
 

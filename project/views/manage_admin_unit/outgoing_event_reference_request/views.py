@@ -6,7 +6,7 @@ from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
 
 from project.access import can_request_event_reference
-from project.models.event import Event
+from project.models import Event
 from project.modular.base_views import BaseCreateView, BaseListView
 from project.services import organization_service
 from project.views.manage_admin_unit.outgoing_event_reference_request.forms import (

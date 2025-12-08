@@ -1,0 +1,28 @@
+models:
+  - name: AdminUnitVerificationRequest
+    model_name: organization_verification_request
+    mixins: [Trackable]
+    columns:
+      - name: review_status
+        type: enum
+        enum: [inbox, verified, rejected]
+      - name: rejection_reason
+        type: enum
+        enum: [notresponsible, missinginformation, unknown, untrustworthy, illegal, irrelevant]
+    relationships:
+      - name: source_admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: outgoing_verification_requests
+      - name: target_admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: incoming_verification_requests
+    constraints:
+      - type: unique
+        columns: [source_admin_unit_id, target_admin_unit_id]
+      - type: check
+        name: auvr_source_neq_target
+        expression: source_admin_unit_id != target_admin_unit_id

@@ -1,0 +1,24 @@
+models:
+  - name: EventReferenceRequest
+    mixins: [Trackable]
+    columns:
+      - name: review_status
+        type: enum
+        enum: [inbox, verified, rejected]
+      - name: rejection_reason
+        type: enum
+        enum: [duplicate, untrustworthy, illegal, irrelevant]
+    relationships:
+      - name: event
+        target_model: Event
+        pattern: many-to-one
+        relation: parent
+        back_populates: reference_requests
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: reference_requests
+    constraints:
+      - type: unique
+        columns: [event_id, admin_unit_id]

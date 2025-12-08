@@ -1,0 +1,14 @@
+models:
+  - name: CustomEventCategorySet
+    columns:
+      - name: name
+        type: string!
+      - name: label
+        type: string
+        nullable: true
+    relationships:
+      - name: categories
+        target_model: CustomEventCategory
+        pattern: one-to-many
+        relation: owned
+        back_populates: category_set

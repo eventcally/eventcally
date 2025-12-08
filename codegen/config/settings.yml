@@ -1,0 +1,25 @@
+models:
+  - name: Settings
+    mixins: [Trackable]
+    columns:
+      - name: tos
+        type: text
+        deferred: true
+      - name: legal_notice
+        type: text
+        deferred: true
+      - name: contact
+        type: text
+        deferred: true
+      - name: privacy
+        type: text
+        deferred: true
+      - name: start_page
+        type: text
+        deferred: true
+      - name: announcement
+        type: text
+        deferred: true
+      - name: planning_external_calendars
+        type: text
+        deferred: true

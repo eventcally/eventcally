@@ -498,7 +498,7 @@ class Seeder(object):
             Event,
             EventAttendanceMode,
             EventOrganizer,
-            PublicStatus,
+            EventPublicStatus,
         )
 
         with self._app.app_context():
@@ -530,10 +530,10 @@ class Seeder(object):
             event.date_definitions = [date_definition]
 
             if planned:
-                event.public_status = PublicStatus.planned
+                event.public_status = EventPublicStatus.planned
 
             if draft:
-                event.public_status = PublicStatus.draft
+                event.public_status = EventPublicStatus.draft
 
             if co_organizer_ids:
                 co_organizers = EventOrganizer.query.filter(

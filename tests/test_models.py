@@ -613,7 +613,7 @@ def test_delete_user(client, app, db, seeder: Seeder):
         from project.services.user import delete_user
 
         user = db.session.get(User, user_id)
-        member_id = user.adminunitmembers[0].id
+        member_id = user.admin_unit_memberships[0].id
         delete_user(user)
 
         # User and membership should be gone

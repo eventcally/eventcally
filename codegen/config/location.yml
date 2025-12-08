@@ -1,0 +1,41 @@
+models:
+  - name: Location
+    mixins: [Trackable]
+    columns:
+      - name: street
+        type: string
+      - name: postalCode
+        type: string
+      - name: city
+        type: string
+      - name: state
+        type: string
+      - name: country
+        type: string
+      - name: latitude
+        type: numeric
+        precision: 18
+        scale: 16
+      - name: longitude
+        type: numeric
+        precision: 19
+        scale: 16
+      - name: coordinate
+        type: geometry
+        geometry_type: POINT
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: one-to-one
+        relation: reference
+        back_populates: location
+      - name: event_organizer
+        target_model: EventOrganizer
+        pattern: one-to-one
+        relation: reference
+        back_populates: location
+      - name: event_place
+        target_model: EventPlace
+        pattern: one-to-one
+        relation: reference
+        back_populates: location

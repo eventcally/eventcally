@@ -1,3 +1,3 @@
-{{ _('You have been invited to join %(admin_unit_name)s.', admin_unit_name=invitation.adminunit.name) }}
+{{ _('You have been invited to join %(admin_unit_name)s.', admin_unit_name=invitation.admin_unit.name) }}
 {{ _('Click the link below to view the invitation') }}
 {{ url_for('admin_unit_member_invitation', id=invitation.id, _external=True) }}

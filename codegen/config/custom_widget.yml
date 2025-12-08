@@ -1,0 +1,16 @@
+models:
+  - name: CustomWidget
+    mixins: [Trackable]
+    columns:
+      - name: widget_type
+        type: string!
+      - name: name
+        type: string!
+      - name: settings
+        type: json
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: custom_widgets

@@ -1,0 +1,33 @@
+models:
+  - name: ApiKey
+    mixins: [Trackable, ApiKeyOwner, RateLimitHolder]
+    display_name: API key
+    columns:
+      - name: name
+        type: string!
+      - name: key_hash
+        type: string!
+        unique: true
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        nullable: true
+        back_populates: api_keys
+      - name: user
+        target_model: User
+        pattern: many-to-one
+        relation: parent
+        nullable: true
+        back_populates: api_keys
+    constraints:
+      - type: check
+        name: apikey_admin_unit_xor_user
+        expression: (admin_unit_id IS NULL) <> (user_id IS NULL)
+      - type: unique
+        name: uq_apikey_name_admin_unit_id
+        columns: [name, admin_unit_id]
+      - type: unique
+        name: uq_apikey_name_user_id
+        columns: [name, user_id]

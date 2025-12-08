@@ -271,9 +271,9 @@ def test_put(client, seeder: Seeder, utils: UtilActions, app, db, mocker, varian
         from project.models import (
             Event,
             EventAttendanceMode,
+            EventPublicStatus,
             EventStatus,
             EventTargetGroupOrigin,
-            PublicStatus,
         )
 
         event = db.session.get(Event, event_id)
@@ -297,7 +297,7 @@ def test_put(client, seeder: Seeder, utils: UtilActions, app, db, mocker, varian
         assert event.booked_up == put["booked_up"]
         assert event.expected_participants == put["expected_participants"]
         assert event.price_info == put["price_info"]
-        assert event.public_status == PublicStatus.draft
+        assert event.public_status == EventPublicStatus.draft
 
         if variant == "two_date_definitions":
             assert len(event.date_definitions) == 2

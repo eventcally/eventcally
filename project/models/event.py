@@ -1,86 +1,23 @@
-from enum import IntEnum
-
 from flask_security import current_user
-from sqlalchemy import Column, Integer, and_, func, select
+from sqlalchemy import and_, func, select
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import backref, relationship, validates
+from sqlalchemy.orm import declared_attr, validates
 
 from project import db
-from project.dbtypes import IntegerEnum
 from project.models.event_date import EventDate, EventDateDefinition
-from project.models.event_mixin import EventMixin
+from project.models.event_generated import EventGeneratedMixin
 from project.models.event_organizer import EventOrganizer
 from project.models.event_reference import EventReference
 from project.models.event_reference_request import EventReferenceRequest
-from project.models.trackable_mixin import TrackableMixin
+from project.models.functions import create_tsvector
 from project.utils import make_check_violation
 
 
-class EventStatus(IntEnum):
-    scheduled = 1
-    cancelled = 2
-    movedOnline = 3
-    postponed = 4
-    rescheduled = 5
-
-
-class PublicStatus(IntEnum):
-    draft = 1
-    published = 2
-    planned = 3
-
-
-class Event(db.Model, TrackableMixin, EventMixin):
-    __tablename__ = "event"
-    id = Column(Integer(), primary_key=True)
-
-    admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
-    organizer_id = db.Column(
-        db.Integer, db.ForeignKey("eventorganizer.id"), nullable=False
-    )
-    organizer = db.relationship(
-        "EventOrganizer",
-        uselist=False,
-        backref=backref("events", lazy=True),
-    )
-    event_place_id = db.Column(
-        db.Integer,
-        db.ForeignKey("eventplace.id"),
-        nullable=False,
-    )
-    event_place = db.relationship(
-        "EventPlace",
-        uselist=False,
-        backref=backref("events", lazy=True),
-    )
-
-    categories = relationship("EventCategory", secondary="event_eventcategories")
-    custom_categories = relationship(
-        "CustomEventCategory",
-        secondary="event_customeventcategories",
-        backref=backref("events", lazy=True),
-    )
-    co_organizers = relationship(
-        "EventOrganizer",
-        secondary="event_coorganizers",
-        backref=backref("co_organized_events", lazy=True),
-    )
-    event_lists = relationship(
-        "EventList",
-        secondary="event_eventlists",
-        backref=backref("events", lazy=True),
-    )
-
-    public_status = Column(
-        IntegerEnum(PublicStatus),
-        nullable=False,
-        default=PublicStatus.published.value,
-        server_default=str(PublicStatus.published.value),
-    )
-    status = Column(IntegerEnum(EventStatus))
-    previous_start_date = db.Column(db.DateTime(timezone=True), nullable=True)
-    rating = Column(Integer(), default=50)
+class Event(db.Model, EventGeneratedMixin):
+    @declared_attr
+    def __ts_vector__(cls):
+        return create_tsvector((cls.name, "A"), (cls.tags, "B"), (cls.description, "C"))
 
     @property
     def custom_categories_by_set(self):
@@ -136,17 +73,6 @@ class Event(db.Model, TrackableMixin, EventMixin):
             .scalar_subquery()
         ) > 0
 
-    date_definitions = relationship(
-        "EventDateDefinition",
-        order_by="EventDateDefinition.start",
-        backref=backref("event", lazy=False),
-        cascade="all, delete-orphan",
-    )
-
-    dates = relationship(
-        "EventDate", backref=backref("event", lazy=False), cascade="all, delete-orphan"
-    )
-
     @hybrid_property
     def number_of_dates(self):  # pragma: no cover
         return len(self.dates)
@@ -191,12 +117,6 @@ class Event(db.Model, TrackableMixin, EventMixin):
             .scalar_subquery()
         )
 
-    references = relationship(
-        "EventReference",
-        backref=backref("event", lazy=False),
-        cascade="all, delete-orphan",
-    )
-
     @hybrid_property
     def number_of_references(self):  # pragma: no cover
         return len(self.references)
@@ -208,12 +128,6 @@ class Event(db.Model, TrackableMixin, EventMixin):
             .where(EventReference.event_id == cls.id)
             .scalar_subquery()
         )
-
-    reference_requests = relationship(
-        "EventReferenceRequest",
-        backref=backref("event", lazy=False),
-        cascade="all, delete-orphan",
-    )
 
     @hybrid_property
     def number_of_reference_requests(self):  # pragma: no cover

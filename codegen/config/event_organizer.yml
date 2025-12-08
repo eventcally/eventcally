@@ -1,0 +1,49 @@
+models:
+  - name: EventOrganizer
+    columns:
+      - name: name
+        type: string!
+        min_length: 3
+      - name: url
+        type: string
+        validation: url
+        deferred: detail
+      - name: email
+        type: string
+        validation: email
+        deferred: detail
+      - name: phone
+        type: string
+        deferred: detail
+      - name: fax
+        type: string
+        deferred: detail
+    relationships:
+      - name: location
+        target_model: Location
+        pattern: one-to-one
+        relation: owned
+      - name: logo
+        target_model: Image
+        pattern: one-to-one
+        relation: owned
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: event_organizers
+      - name: events
+        target_model: Event
+        pattern: one-to-many
+        relation: reference
+        back_populates: organizer
+      - name: co_organized_events
+        target_model: Event
+        pattern: many-to-many
+        association_model: EventCoOrganizers
+        association_table: event_coorganizers
+        back_populates: co_organizers
+    constraints:
+      - type: unique
+        columns: [name, admin_unit_id]
+    mixins: [Trackable]

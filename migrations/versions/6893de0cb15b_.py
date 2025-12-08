@@ -6,12 +6,20 @@ Create Date: 2021-08-13 08:28:00.156404
 
 """
 
+from enum import IntEnum
+
 import sqlalchemy as sa
 import sqlalchemy_utils
 from alembic import op
 
 from project import dbtypes
-from project.models import PublicStatus
+
+
+class PublicStatus(IntEnum):
+    draft = 1
+    published = 2
+    planned = 3
+
 
 # revision identifiers, used by Alembic.
 revision = "6893de0cb15b"

@@ -1,0 +1,9 @@
+models:
+  - name: OAuth2AuthorizationCode
+    table_name: oauth2_code
+    columns: []
+    relationships:
+      - name: user
+        target_model: User
+        pattern: many-to-one
+        relation: parent

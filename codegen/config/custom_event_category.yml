@@ -1,0 +1,23 @@
+models:
+  - name: CustomEventCategory
+    columns:
+      - name: name
+        type: string!
+      - name: label
+        type: string
+        nullable: true
+    relationships:
+      - name: category_set
+        target_model: CustomEventCategorySet
+        pattern: many-to-one
+        relation: parent
+        back_populates: categories
+      - name: events
+        target_model: Event
+        pattern: many-to-many
+        association_model: EventCustomEventCategories
+        association_table: event_customeventcategories
+        back_populates: custom_categories
+    constraints:
+      - type: unique
+        columns: [name, category_set_id]

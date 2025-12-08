@@ -56,7 +56,7 @@ class OrganizerBaseSchemaMixin(TrackableSchemaMixin):
 class OrganizerSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):
     location = fields.Nested(LocationSchema)
     logo = fields.Nested(ImageSchema)
-    organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
 
 
 class OrganizerDumpSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):

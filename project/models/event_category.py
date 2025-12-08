@@ -1,13 +1,17 @@
-from sqlalchemy import Column, Integer, Unicode, UniqueConstraint
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy import Column, Integer, UniqueConstraint
 
 from project import db
+from project.models.custom_event_category_generated import (
+    CustomEventCategoryGeneratedMixin,
+)
+from project.models.custom_event_category_set_generated import (
+    CustomEventCategorySetGeneratedMixin,
+)
+from project.models.event_category_generated import EventCategoryGeneratedMixin
 
 
-class EventCategory(db.Model):
-    __tablename__ = "eventcategory"
-    id = Column(Integer(), primary_key=True)
-    name = Column(Unicode(255), nullable=False, unique=True)
+class EventCategory(db.Model, EventCategoryGeneratedMixin):
+    pass
 
 
 class EventEventCategories(db.Model):
@@ -20,16 +24,8 @@ class EventEventCategories(db.Model):
     )
 
 
-class CustomEventCategorySet(db.Model):
-    __tablename__ = "customeventcategoryset"
-    id = Column(Integer(), primary_key=True)
-    name = Column(Unicode(255), nullable=False)
-    label = Column(Unicode(255), nullable=True)
-    categories = relationship(
-        "CustomEventCategory",
-        cascade="all, delete-orphan",
-        backref=backref("category_set", lazy=True),
-    )
+class CustomEventCategorySet(db.Model, CustomEventCategorySetGeneratedMixin):
+    pass
 
     @property
     def label_or_name(self):
@@ -39,17 +35,8 @@ class CustomEventCategorySet(db.Model):
         return self.name or super().__str__()
 
 
-class CustomEventCategory(db.Model):
-    __tablename__ = "customeventcategory"
-    __table_args__ = (UniqueConstraint("name", "category_set_id"),)
-    id = Column(Integer(), primary_key=True)
-    name = Column(Unicode(255), nullable=False)
-    label = Column(Unicode(255), nullable=True)
-    category_set_id = db.Column(
-        db.Integer,
-        db.ForeignKey("customeventcategoryset.id", ondelete="CASCADE"),
-        nullable=False,
-    )
+class CustomEventCategory(db.Model, CustomEventCategoryGeneratedMixin):
+    pass
 
     @property
     def label_or_name(self):

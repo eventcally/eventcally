@@ -34,7 +34,7 @@ from project.api.resources import (
     require_organization_api_access,
 )
 from project.api.schemas import NoneSchema
-from project.models import AdminUnit, Event, EventDate, PublicStatus
+from project.models import AdminUnit, Event, EventDate, EventPublicStatus
 from project.services.event import get_event_with_details_or_404, get_events_query
 from project.services.event_service import EventService
 from project.services.search_params import EventSearchParams
@@ -43,7 +43,7 @@ from project.views.event import send_event_report_mails
 
 def api_can_read_event_or_401(event: Event):
     if (
-        event.public_status != PublicStatus.published
+        event.public_status != EventPublicStatus.published
         or not event.admin_unit.is_verified
     ):
         login_api_user()
@@ -66,7 +66,7 @@ class EventListResource(BaseResource):
 
         query = Event.query.join(Event.admin_unit).filter(
             and_(
-                Event.public_status == PublicStatus.published,
+                Event.public_status == EventPublicStatus.published,
                 AdminUnit.is_verified,
             )
         )

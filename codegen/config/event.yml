@@ -1,0 +1,122 @@
+models:
+  - name: Event
+    mixins: [Trackable]
+    columns:
+      - name: name
+        type: string!
+      - name: external_link
+        type: string
+      - name: description
+        type: text
+        nullable: true
+      - name: ticket_link
+        type: string
+      - name: tags
+        type: text
+      - name: internal_tags
+        type: text
+      - name: kid_friendly
+        type: boolean
+      - name: accessible_for_free
+        type: boolean
+      - name: age_from
+        type: integer
+      - name: age_to
+        type: integer
+      - name: target_group_origin
+        type: enum
+        enum: [both, tourist, resident]
+      - name: attendance_mode
+        type: enum
+        enum: [offline, online, mixed]
+      - name: registration_required
+        type: boolean
+      - name: booked_up
+        type: boolean
+      - name: expected_participants
+        type: integer
+      - name: price_info
+        type: text
+      - name: public_status
+        type: enum
+        enum: [draft, published, planned]
+        nullable: false
+        default: published
+      - name: status
+        type: enum
+        enum: [scheduled, cancelled, movedOnline, postponed, rescheduled]
+      - name: previous_start_date
+        type: datetimetz
+        nullable: true
+      - name: rating
+        type: integer
+        default: 50
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+      - name: organizer
+        target_model: EventOrganizer
+        pattern: many-to-one
+        relation: reference
+        nullable: false
+      - name: event_place
+        target_model: EventPlace
+        pattern: many-to-one
+        relation: reference
+        nullable: false
+      - name: photo
+        target_model: Image
+        pattern: one-to-one
+        relation: owned
+      - name: categories
+        target_model: EventCategory
+        pattern: many-to-many
+        association_model: EventEventCategories
+        association_table: event_eventcategories
+        back_populates: events
+      - name: custom_categories
+        target_model: CustomEventCategory
+        pattern: many-to-many
+        association_table: event_customeventcategories
+        association_model: EventCustomEventCategories
+        back_populates: events
+      - name: co_organizers
+        target_model: EventOrganizer
+        pattern: many-to-many
+        association_model: EventCoOrganizers
+        association_table: event_coorganizers
+        back_populates: co_organized_events
+      - name: event_lists
+        target_model: EventList
+        pattern: many-to-many
+        association_model: EventEventLists
+        association_table: event_eventlists
+        back_populates: events
+      - name: date_definitions
+        target_model: EventDateDefinition
+        pattern: one-to-many
+        relation: owned
+        back_populates: event
+        order_by: start
+      - name: dates
+        target_model: EventDate
+        pattern: one-to-many
+        relation: owned
+        back_populates: event
+      - name: references
+        target_model: EventReference
+        pattern: one-to-many
+        relation: owned
+        back_populates: event
+      - name: reference_requests
+        target_model: EventReferenceRequest
+        pattern: one-to-many
+        relation: owned
+        back_populates: event
+      - name: favored_by_users
+        target_model: User
+        pattern: many-to-many
+        association_table: user_favoriteevents
+        back_populates: favorite_events

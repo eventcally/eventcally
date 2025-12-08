@@ -2204,16 +2204,16 @@ msgstr ""
 
 #: project/templates/_macros.html:317
 #: project/views/manage_admin_unit/event/forms.py:442
-msgid "PublicStatus.draft"
+msgid "EventPublicStatus.draft"
 msgstr ""
 
 #: project/templates/_macros.html:319
 #: project/views/manage_admin_unit/event/forms.py:441
-msgid "PublicStatus.planned"
+msgid "EventPublicStatus.planned"
 msgstr ""
 
 #: project/views/manage_admin_unit/event/forms.py:440
-msgid "PublicStatus.published"
+msgid "EventPublicStatus.published"
 msgstr ""
 
 #: project/views/manage_admin_unit/event/forms.py:357

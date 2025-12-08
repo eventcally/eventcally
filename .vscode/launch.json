@@ -62,6 +62,14 @@
       "console": "integratedTerminal"
     },
     {
+      "name": "Python: generate.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/codegen/generate.py",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
       "name": "Debug Unit Test",
       "type": "debugpy",
       "request": "launch",

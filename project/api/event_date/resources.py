@@ -14,7 +14,7 @@ from project.api.event_date.schemas import (
     EventDateSearchResponseSchema,
 )
 from project.api.resources import BaseResource, require_api_access
-from project.models import AdminUnit, Event, EventDate, PublicStatus
+from project.models import AdminUnit, Event, EventDate, EventPublicStatus
 from project.services.event import get_event_dates_query
 from project.services.search_params import EventSearchParams
 from project.views.utils import get_current_admin_unit_for_api
@@ -32,7 +32,7 @@ class EventDateListResource(BaseResource):
             .options(lazyload(EventDate.event))
             .filter(
                 and_(
-                    Event.public_status == PublicStatus.published,
+                    Event.public_status == EventPublicStatus.published,
                     AdminUnit.is_verified,
                 )
             )

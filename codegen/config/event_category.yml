@@ -1,0 +1,13 @@
+models:
+  - name: EventCategory
+    columns:
+      - name: name
+        type: string!
+        unique: true
+    relationships:
+      - name: events
+        target_model: Event
+        pattern: many-to-many
+        association_model: EventEventCategories
+        association_table: event_eventcategories
+        back_populates: categories

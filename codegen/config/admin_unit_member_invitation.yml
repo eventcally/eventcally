@@ -1,0 +1,19 @@
+models:
+  - name: AdminUnitMemberInvitation
+    table_name: adminunitmemberinvitation
+    model_name: organization_member_invitation
+    display_name: Organization member invitation
+    constraints:
+      - type: unique
+        columns: [email, admin_unit_id]
+    columns:
+      - name: email
+        type: string
+      - name: roles
+        type: text
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: invitations

@@ -1,0 +1,22 @@
+models:
+  - name: AdminUnitMemberRole
+    table_name: adminunitmemberrole
+    display_name: Organization member role
+    columns:
+      - name: name
+        type: string
+        length: 80
+        unique: true
+      - name: title
+        type: string
+      - name: description
+        type: string
+      - name: permissions
+        type: mutable_list
+        nullable: true
+    relationships:
+      - name: members
+        target_model: AdminUnitMember
+        pattern: many-to-many
+        association_table: adminunitmemberroles_members
+        back_populates: roles

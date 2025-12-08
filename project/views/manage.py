@@ -85,8 +85,8 @@ def manage_admin_units():
     )
 
     admin_units.sort(key=lambda x: x.name)
-    invitations.sort(key=lambda x: x.adminunit.name)
-    organization_invitations.sort(key=lambda x: x.adminunit.name)
+    invitations.sort(key=lambda x: x.admin_unit.name)
+    organization_invitations.sort(key=lambda x: x.admin_unit.name)
 
     return render_template(
         "manage/admin_units.html",

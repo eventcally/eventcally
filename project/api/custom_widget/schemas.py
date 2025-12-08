@@ -42,7 +42,7 @@ class CustomWidgetBaseSchemaMixin(TrackableSchemaMixin):
 
 
 class CustomWidgetSchema(CustomWidgetIdSchema, CustomWidgetBaseSchemaMixin):
-    organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
 
 
 class CustomWidgetDumpSchema(CustomWidgetIdSchema, CustomWidgetBaseSchemaMixin):

@@ -35,7 +35,7 @@ class EventListBaseSchemaMixin(TrackableSchemaMixin):
 
 
 class EventListSchema(EventListIdSchema, EventListBaseSchemaMixin):
-    organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
 
 
 class EventListRefSchema(EventListIdSchema):

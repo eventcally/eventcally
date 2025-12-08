@@ -1,0 +1,200 @@
+models:
+  - name: AdminUnit
+    mixins: [Trackable, ApiKeyOwner]
+    table_name: adminunit
+    model_name: organization
+    display_name: Organization
+    indexes:
+      - name: idx_adminunit_incoming_verification_requests_postal_codes
+        columns: [incoming_verification_requests_postal_codes]
+        using: gin
+    columns:
+      - name: name
+        type: string
+        unique: true
+      - name: short_name
+        type: string
+        length: 100
+        unique: true
+      - name: deletion_requested_at
+        type: datetime
+        nullable: true
+        deferred: deletion
+      - name: url
+        type: string
+        deferred: detail
+      - name: email
+        type: string
+        deferred: detail
+      - name: phone
+        type: string
+        deferred: detail
+      - name: fax
+        type: string
+        deferred: detail
+      - name: description
+        type: text
+        nullable: true
+        deferred: detail
+      - name: widget_font
+        type: string
+        deferred: widget
+      - name: widget_background_color
+        type: color
+        deferred: widget
+      - name: widget_primary_color
+        type: color
+        deferred: widget
+      - name: widget_link_color
+        type: color
+        deferred: widget
+      - name: incoming_reference_requests_allowed
+        type: boolean
+        deferred: true
+      - name: can_create_other
+        type: boolean
+        nullable: false
+        default: false
+        deferred: true
+      - name: can_verify_other
+        type: boolean
+        nullable: false
+        default: false
+        deferred: true
+      - name: incoming_verification_requests_allowed
+        type: boolean
+        nullable: false
+        default: false
+        deferred: true
+      - name: incoming_verification_requests_text
+        type: text
+        deferred: true
+      - name: incoming_verification_requests_postal_codes
+        type: array
+        array_type: string
+        nullable: false
+        default: []
+        deferred: true
+      - name: can_invite_other
+        type: boolean
+        nullable: false
+        default: false
+        deferred: true
+    relationships:
+      - name: deletion_requested_by
+        target_model: User
+        pattern: many-to-one
+        relation: reference
+        nullable: true
+        deferred: deletion
+        primaryjoin_: "User.id == AdminUnit.deletion_requested_by_id"
+        back_populates: admin_units_deletion_requested
+      - name: members
+        target_model: AdminUnitMember
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
+      - name: invitations
+        target_model: AdminUnitMemberInvitation
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
+      - name: admin_unit_invitations
+        target_model: AdminUnitInvitation
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
+      - name: events
+        target_model: Event
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
+      - name: references
+        target_model: EventReference
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
+      - name: reference_requests
+        target_model: EventReferenceRequest
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
+      - name: event_organizers
+        target_model: EventOrganizer
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
+      - name: event_places
+        target_model: EventPlace
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
+      - name: event_lists
+        target_model: EventList
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
+      - name: custom_widgets
+        target_model: CustomWidget
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
+      - name: location
+        target_model: Location
+        pattern: one-to-one
+        relation: owned
+        back_populates: admin_unit
+        deferred: true
+      - name: logo
+        target_model: Image
+        pattern: one-to-one
+        relation: owned
+        back_populates: admin_unit
+        deferred: true
+      - name: outgoing_relations
+        target_model: AdminUnitRelation
+        pattern: one-to-many
+        relation: owned
+        primaryjoin: "AdminUnitRelation.source_admin_unit_id == AdminUnit.id"
+        back_populates: source_admin_unit
+      - name: incoming_relations
+        target_model: AdminUnitRelation
+        pattern: one-to-many
+        relation: owned
+        primaryjoin: "AdminUnitRelation.target_admin_unit_id == AdminUnit.id"
+        back_populates: target_admin_unit
+      - name: outgoing_verification_requests
+        target_model: AdminUnitVerificationRequest
+        pattern: one-to-many
+        relation: owned
+        primaryjoin: "AdminUnitVerificationRequest.source_admin_unit_id == AdminUnit.id"
+        back_populates: source_admin_unit
+      - name: incoming_verification_requests
+        target_model: AdminUnitVerificationRequest
+        pattern: one-to-many
+        relation: owned
+        primaryjoin: "AdminUnitVerificationRequest.target_admin_unit_id == AdminUnit.id"
+        back_populates: target_admin_unit
+      - name: api_keys
+        target_model: ApiKey
+        pattern: one-to-many
+        relation: owned
+        primaryjoin: "ApiKey.admin_unit_id == AdminUnit.id"
+        back_populates: admin_unit
+      - name: oauth2_clients
+        target_model: OAuth2Client
+        pattern: one-to-many
+        relation: owned
+        primaryjoin: "OAuth2Client.admin_unit_id == AdminUnit.id"
+        back_populates: admin_unit
+      - name: app_installations
+        target_model: AppInstallation
+        pattern: one-to-many
+        relation: owned
+        primaryjoin: "AppInstallation.admin_unit_id == AdminUnit.id"
+        back_populates: admin_unit
+      - name: app_keys
+        target_model: AppKey
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit

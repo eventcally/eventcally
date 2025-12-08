@@ -1,0 +1,39 @@
+models:
+  - name: AdminUnitRelation
+    mixins: [Trackable]
+    table_name: adminunitrelation
+    model_name: organization_relation
+    display_name: Organization relation
+    constraints:
+      - type: unique
+        columns: [source_admin_unit_id, target_admin_unit_id]
+      - type: check
+        expression: source_admin_unit_id != target_admin_unit_id
+        name: source_neq_target
+    columns:
+      - name: auto_verify_event_reference_requests
+        type: boolean
+        nullable: false
+        default: false
+        deferred: true
+      - name: verify
+        type: boolean
+        nullable: false
+        default: false
+        deferred: true
+      - name: invited
+        type: boolean
+        nullable: false
+        default: false
+        deferred: true
+    relationships:
+      - name: source_admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: outgoing_relations
+      - name: target_admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: incoming_relations

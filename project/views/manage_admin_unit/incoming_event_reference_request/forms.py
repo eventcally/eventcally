@@ -3,7 +3,7 @@ from wtforms import BooleanField, SelectField, SubmitField
 from wtforms.validators import Optional
 
 from project.forms.common import event_rating_choices
-from project.models.event_reference_request import (
+from project.models import (
     EventReferenceRequestRejectionReason,
     EventReferenceRequestReviewStatus,
 )

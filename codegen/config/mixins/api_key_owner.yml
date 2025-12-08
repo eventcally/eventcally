@@ -1,0 +1,6 @@
+models:
+  - name: ApiKeyOwner
+    columns:
+      - name: max_api_keys
+        type: integer!
+        default: 1

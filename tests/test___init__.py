@@ -88,7 +88,7 @@ def test_migration_public_status(app, seeder):
     from flask_migrate import upgrade
 
     from project import db
-    from project.models import Event, PublicStatus
+    from project.models import Event, EventPublicStatus
 
     with app.app_context():
         drop_db(db)
@@ -100,7 +100,7 @@ def test_migration_public_status(app, seeder):
         assert len(events) > 0
 
         for event in events:
-            assert event.public_status == PublicStatus.published
+            assert event.public_status == EventPublicStatus.published
 
 
 def test_migration_event_definitions(app, seeder):

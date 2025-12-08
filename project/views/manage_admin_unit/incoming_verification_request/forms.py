@@ -2,7 +2,7 @@ from flask_babel import lazy_gettext
 from wtforms import BooleanField, SelectField, SubmitField
 from wtforms.validators import Optional
 
-from project.models.admin_unit_verification_request import (
+from project.models import (
     AdminUnitVerificationRequestRejectionReason,
     AdminUnitVerificationRequestReviewStatus,
 )

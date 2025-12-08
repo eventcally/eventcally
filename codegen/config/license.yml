@@ -1,0 +1,22 @@
+models:
+  - name: License
+    mixins: [Trackable]
+    columns:
+      - name: sort
+        type: integer!
+        default: 0
+      - name: code
+        type: string
+        unique: true
+      - name: name
+        type: string
+        unique: true
+      - name: url
+        type: string
+        unique: true
+    relationships:
+      - name: images
+        target_model: Image
+        pattern: one-to-many
+        relation: reference
+        back_populates: license

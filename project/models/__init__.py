@@ -6,44 +6,39 @@ from project.models.admin_unit import (
     AdminUnitMemberRole,
     AdminUnitRelation,
 )
-from project.models.admin_unit_verification_request import (
-    AdminUnitVerificationRequest,
+from project.models.admin_unit_verification_request import AdminUnitVerificationRequest
+from project.models.admin_unit_verification_request_generated import (
     AdminUnitVerificationRequestRejectionReason,
     AdminUnitVerificationRequestReviewStatus,
 )
 from project.models.api_key import ApiKey
 from project.models.app import AppInstallation, AppKey
 from project.models.custom_widget import CustomWidget
-from project.models.event import Event, EventStatus, PublicStatus
+from project.models.event import Event
 from project.models.event_category import (
     CustomEventCategory,
     CustomEventCategorySet,
     EventCategory,
 )
 from project.models.event_date import EventDate, EventDateDefinition
-from project.models.event_list import EventEventLists, EventList
-from project.models.event_mixin import (
+from project.models.event_generated import (
     EventAttendanceMode,
-    EventMixin,
+    EventPublicStatus,
+    EventStatus,
     EventTargetGroupOrigin,
 )
+from project.models.event_list import EventEventLists, EventList
 from project.models.event_organizer import EventOrganizer
 from project.models.event_place import EventPlace
 from project.models.event_reference import EventReference
-from project.models.event_reference_request import (
-    EventReferenceRequest,
+from project.models.event_reference_request import EventReferenceRequest
+from project.models.event_reference_request_generated import (
     EventReferenceRequestRejectionReason,
     EventReferenceRequestReviewStatus,
 )
 from project.models.functions import sanitize_allday_instance
 from project.models.image import Image
 from project.models.iowned import IOwned
-from project.models.legacy import (
-    EventRejectionReason,
-    EventReviewStatus,
-    FeaturedEventRejectionReason,
-    FeaturedEventReviewStatus,
-)
 from project.models.license import License
 from project.models.location import Location
 from project.models.oauth import OAuth2AuthorizationCode, OAuth2Client, OAuth2Token

@@ -6,15 +6,29 @@ Create Date: 2023-05-31 22:37:22.719433
 
 """
 
+from enum import IntEnum
+
 import sqlalchemy as sa
 import sqlalchemy_utils
 from alembic import op
 
 from project import dbtypes
-from project.models import (
-    AdminUnitVerificationRequestRejectionReason,
-    AdminUnitVerificationRequestReviewStatus,
-)
+
+
+class AdminUnitVerificationRequestReviewStatus(IntEnum):
+    inbox = 1
+    verified = 2
+    rejected = 3
+
+
+class AdminUnitVerificationRequestRejectionReason(IntEnum):
+    notresponsible = 1
+    missinginformation = 2
+    unknown = 3
+    untrustworthy = 4
+    illegal = 5
+    irrelevant = 6
+
 
 # revision identifiers, used by Alembic.
 revision = "6634c8f0b7fc"

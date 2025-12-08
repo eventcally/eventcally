@@ -54,9 +54,9 @@ from project.api.schemas import (
 from project.models import (
     Event,
     EventAttendanceMode,
+    EventPublicStatus,
     EventStatus,
     EventTargetGroupOrigin,
-    PublicStatus,
 )
 
 
@@ -153,8 +153,8 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
         },
     )
     public_status = EnumField(
-        PublicStatus,
-        load_default=PublicStatus.published,
+        EventPublicStatus,
+        load_default=EventPublicStatus.published,
         metadata={"description": "Public status of the event."},
     )
 
@@ -390,7 +390,7 @@ class EventSearchRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMi
         metadata={"description": "Looks for events with this stati."},
     )
     public_status = fields.List(
-        EnumField(PublicStatus),
+        EnumField(EventPublicStatus),
         metadata={"description": "Looks for events with this public stati."},
     )
     postal_code = fields.List(
@@ -521,7 +521,7 @@ class EventImportRequestSchema(marshmallow.Schema):
         },
     )
     public_status = EnumField(
-        PublicStatus,
-        load_default=PublicStatus.published,
+        EventPublicStatus,
+        load_default=EventPublicStatus.published,
         metadata={"description": "Public status of the event."},
     )
