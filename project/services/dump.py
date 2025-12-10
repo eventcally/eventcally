@@ -19,8 +19,8 @@ from project.models import (
     EventCategory,
     EventOrganizer,
     EventPlace,
+    EventPublicStatus,
     EventReference,
-    PublicStatus,
 )
 from project.utils import clear_files_in_dir, make_dir
 
@@ -44,7 +44,7 @@ class Dumper(object):
             .options(joinedload(Event.categories))
             .filter(
                 and_(
-                    Event.public_status == PublicStatus.published,
+                    Event.public_status == EventPublicStatus.published,
                     AdminUnit.is_verified,
                 )
             )

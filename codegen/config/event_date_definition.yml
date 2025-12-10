@@ -1,0 +1,19 @@
+models:
+  - name: EventDateDefinition
+    columns:
+      - name: start
+        type: datetimetz!
+      - name: end
+        type: datetimetz
+        nullable: true
+      - name: allday
+        type: boolean!
+        default: false
+      - name: recurrence_rule
+        type: text
+    relationships:
+      - name: event
+        target_model: Event
+        pattern: many-to-one
+        relation: parent
+        back_populates: date_definitions

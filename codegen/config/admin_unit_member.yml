@@ -1,0 +1,23 @@
+models:
+  - name: AdminUnitMember
+    table_name: adminunitmember
+    model_name: organization_member
+    display_name: Organization member
+    columns: []
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: members
+      - name: user
+        target_model: User
+        pattern: many-to-one
+        relation: parent
+        back_populates: admin_unit_memberships
+      - name: roles
+        target_model: AdminUnitMemberRole
+        pattern: many-to-many
+        association_table: adminunitmemberroles_members
+        order_by: id
+        back_populates: members

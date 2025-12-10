@@ -6,11 +6,25 @@ Create Date: 2020-08-01 15:43:11.377833
 
 """
 
+from enum import IntEnum
+
 import sqlalchemy as sa
 from alembic import op
 
 from project import dbtypes
-from project.models.legacy import EventRejectionReason, EventReviewStatus
+
+
+class EventReviewStatus(IntEnum):
+    inbox = 1
+    verified = 2
+    rejected = 3
+
+
+class EventRejectionReason(IntEnum):
+    duplicate = 1
+    untrustworthy = 2
+    illegal = 3
+
 
 # revision identifiers, used by Alembic.
 revision = "67216b6cf293"

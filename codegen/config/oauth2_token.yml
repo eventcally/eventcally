@@ -1,0 +1,24 @@
+models:
+  - name: OAuth2Token
+    table_name: oauth2_token
+    display_name: OAuth2 token
+    columns: []
+    relationships:
+      - name: user
+        target_model: User
+        pattern: many-to-one
+        relation: parent
+        nullable: true
+      - name: app
+        target_model: OAuth2Client
+        table_name: oauth2_client
+        pattern: many-to-one
+        relation: parent
+        back_populates: app_oauth2_tokens
+        nullable: true
+      - name: app_installation
+        target_model: AppInstallation
+        table_name: app_installation
+        pattern: many-to-one
+        relation: parent
+        nullable: true

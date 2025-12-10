@@ -7,62 +7,28 @@ from authlib.integrations.sqla_oauth2 import (
     OAuth2TokenMixin,
 )
 from flask import request
-from flask_security import AsaList
-from sqlalchemy import CheckConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.ext.mutable import MutableList
-from sqlalchemy.orm import backref, deferred, object_session, relationship
+from sqlalchemy.orm import object_session
 
 from project import db
 from project.dateutils import gmt_tz
-from project.models.rate_limit_provider_mixin import (
-    RateLimitHolderMixin,
-    RateLimitProviderMixin,
+from project.models.oauth2_authorization_code_generated import (
+    OAuth2AuthorizationCodeGeneratedMixin,
 )
-from project.models.trackable_mixin import TrackableMixin
+from project.models.oauth2_client_generated import OAuth2ClientGeneratedMixin
+from project.models.oauth2_token_generated import OAuth2TokenGeneratedMixin
+from project.models.rate_limit_provider_mixin import RateLimitProviderMixin
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
 oauth_refresh_token_expires_in = 90 * 86400  # 90 days
 
 
-class OAuth2Client(db.Model, OAuth2ClientMixin, RateLimitHolderMixin, TrackableMixin):
-    __tablename__ = "oauth2_client"
-    __display_name__ = "OAuth2 client"
-    __table_args__ = (
-        CheckConstraint(
-            "(admin_unit_id IS NULL) <> (user_id IS NULL)",
-            name="oauth2_client_admin_unit_xor_user",
-        ),
-    )
+class OAuth2Client(
+    db.Model,
+    OAuth2ClientGeneratedMixin,
+    OAuth2ClientMixin,
+):
     __default_rate_limit_value__ = "5000/hour"
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    homepage_url = deferred(db.Column(db.String(255)), group="detail")
-    setup_url = deferred(db.Column(db.String(255)), group="detail")
-    webhook_url = deferred(db.Column(db.String(255)), group="detail")
-    webhook_secret = deferred(db.Column(db.Unicode(255)), group="detail")
-    description = deferred(db.Column(db.UnicodeText(), nullable=True), group="detail")
-
-    admin_unit_id = db.Column(
-        db.Integer, db.ForeignKey("adminunit.id", ondelete="CASCADE"), nullable=True
-    )
-    user_id = db.Column(
-        db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=True
-    )
-
-    app_permissions = db.Column(MutableList.as_mutable(AsaList()), nullable=True)
-    app_installations = relationship(
-        "AppInstallation",
-        primaryjoin="AppInstallation.oauth2_client_id == OAuth2Client.id",
-        cascade="all, delete-orphan",
-        backref=backref("oauth2_client", lazy=True),
-    )
-    app_keys = relationship(
-        "AppKey",
-        cascade="all, delete-orphan",
-        backref=backref("oauth2_client", lazy=True),
-    )
 
     @hybrid_property
     def is_app(self):  # pragma: no cover
@@ -108,32 +74,15 @@ class OAuth2Client(db.Model, OAuth2ClientMixin, RateLimitHolderMixin, TrackableM
         return self.client_name or super().__str__()
 
 
-class OAuth2AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
-    __tablename__ = "oauth2_code"
-
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
-    user = db.relationship("User")
+class OAuth2AuthorizationCode(
+    db.Model, OAuth2AuthorizationCodeGeneratedMixin, OAuth2AuthorizationCodeMixin
+):
+    pass
 
 
-class OAuth2Token(db.Model, OAuth2TokenMixin, RateLimitProviderMixin):
-    __tablename__ = "oauth2_token"
-    __display_name__ = "OAuth2 token"
-
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
-    user = db.relationship("User")
-
-    app_id = db.Column(
-        db.Integer, db.ForeignKey("oauth2_client.id", ondelete="CASCADE")
-    )
-    app = db.relationship("OAuth2Client")
-
-    app_installation_id = db.Column(
-        db.Integer, db.ForeignKey("app_installation.id", ondelete="CASCADE")
-    )
-    app_installation = db.relationship("AppInstallation")
-
+class OAuth2Token(
+    db.Model, OAuth2TokenGeneratedMixin, OAuth2TokenMixin, RateLimitProviderMixin
+):
     @property
     def client(self):
         return (

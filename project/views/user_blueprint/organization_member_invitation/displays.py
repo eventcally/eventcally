@@ -6,5 +6,5 @@ from project.modular.base_props import StringProp
 
 class ListDisplay(BaseDisplay):
     organization_name = StringProp(
-        lazy_gettext("Organization"), keypath="adminunit.name"
+        lazy_gettext("Organization"), keypath="admin_unit.name"
     )

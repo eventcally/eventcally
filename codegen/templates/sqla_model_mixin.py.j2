@@ -1,0 +1,62 @@
+from enum import IntEnum
+from flask_security import AsaList
+from geoalchemy2 import Geometry
+from project import db
+from sqlalchemy import Index, Boolean, DateTime, Column, Integer, LargeBinary, Numeric, String, Unicode, UniqueConstraint, ForeignKey, UnicodeText, CheckConstraint, cast
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.mutable import MutableList
+from sqlalchemy.orm import backref, deferred, relationship, remote
+from sqlalchemy_utils import ColorType
+import datetime
+from project.dbtypes import IntegerEnum
+from sqlalchemy.ext.declarative import declared_attr
+{%- for import_statement in model.imports %}
+{{ import_statement }}
+{%- endfor %}
+
+{% for enum_name, enum_values in model.enums.items() %}
+
+class {{ enum_name }}(IntEnum):
+{%- for value in enum_values %}
+    {{ value }} = {{ loop.index }}
+{%- endfor %}
+{% endfor %}
+
+
+class {{ model.mixin_name }}({{ model.mixins|join(', ') }}):
+    __tablename__ = "{{ model.table_name }}"
+{%- if model.constraints or model.indexes %}
+    __table_args__ = (
+{%- if model.indexes %}
+{%- for index in model.indexes %}
+        {{ index }},
+{%- endfor %}
+{%- endif %}
+{%- if model.constraints %}
+{%- for constraint in model.constraints %}
+        {{ constraint }},
+{%- endfor %}
+{%- endif %}
+    )
+{%- endif %}
+
+    __model_name__ = "{{ model.model_name }}"
+    __model_name_plural__ = "{{ model.model_name_plural }}"
+    __display_name__ = "{{ model.display_name }}"
+    __display_name_plural__ = "{{ model.display_name_plural }}"
+{% for column in columns %}
+    @declared_attr
+    def {{ column.name }}(cls):
+        return {{ column.rendered }}
+{% endfor %}
+{% for relationship in model.relationships %}
+    @declared_attr
+    def {{ relationship.name }}(cls):
+        return relationship(
+            "{{ relationship.target_model }}",
+{%- for key, value in relationship.kwargs.items() %}
+            {{ key }}={{ value }},
+{%- endfor %}
+        )
+{% endfor %}

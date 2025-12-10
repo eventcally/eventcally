@@ -16,7 +16,7 @@ class DeleteView(BaseDeleteView):
     def get_instruction(self, **kwargs):
         member = kwargs.get("object")
         return lazy_gettext(
-            "Do you want to leave organization %(name)s?", name=member.adminunit.name
+            "Do you want to leave organization %(name)s?", name=member.admin_unit.name
         )
 
     def check_object_access(self, object):
@@ -32,14 +32,14 @@ class DeleteView(BaseDeleteView):
             )
             return redirect(
                 url_for(
-                    "manage_admin_unit.organization_members", id=object.adminunit.id
+                    "manage_admin_unit.organization_members", id=object.admin_unit.id
                 )
             )
 
     def can_object_be_deleted(self, form, object):
         return flash_non_match_for_deletion(
             form.name.data,
-            object.adminunit.name,
+            object.admin_unit.name,
             gettext("Entered name does not match organization name"),
         )
 

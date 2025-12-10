@@ -9,7 +9,7 @@ from sqlalchemy.orm import load_only
 
 from project import app, cache_path, robots_txt_path, sitemap_path
 from project.dateutils import get_today
-from project.models import AdminUnit, Event, EventDate, PublicStatus
+from project.models import AdminUnit, Event, EventDate, EventPublicStatus
 from project.utils import make_dir
 
 
@@ -28,7 +28,7 @@ def generate_sitemap(pinggoogle: bool):
         .filter(Event.dates.any(EventDate.start >= today))
         .filter(
             and_(
-                Event.public_status == PublicStatus.published,
+                Event.public_status == EventPublicStatus.published,
                 AdminUnit.is_verified,
             )
         )

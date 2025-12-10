@@ -1,0 +1,21 @@
+models:
+  - name: EventList
+    mixins: [Trackable]
+    columns:
+      - name: name
+        type: string
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: event_lists
+      - name: events
+        target_model: Event
+        pattern: many-to-many
+        association_model: EventEventLists
+        association_table: event_eventlists
+        back_populates: event_lists
+    constraints:
+      - type: unique
+        columns: [name, admin_unit_id]

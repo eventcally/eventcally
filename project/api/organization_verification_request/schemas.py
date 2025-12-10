@@ -13,8 +13,8 @@ from project.api.schemas import (
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
 )
-from project.models import AdminUnitVerificationRequest
-from project.models.admin_unit_verification_request import (
+from project.models import (
+    AdminUnitVerificationRequest,
     AdminUnitVerificationRequestRejectionReason,
     AdminUnitVerificationRequestReviewStatus,
 )

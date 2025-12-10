@@ -1,0 +1,26 @@
+models:
+  - name: AdminUnitInvitation
+    mixins: [Trackable]
+    table_name: adminunitinvitation
+    model_name: organization_invitation
+    display_name: Organization invitation
+    columns:
+      - name: email
+        type: string
+        nullable: false
+      - name: admin_unit_name
+        type: string
+      - name: relation_auto_verify_event_reference_requests
+        type: boolean
+        nullable: false
+        default: false
+      - name: relation_verify
+        type: boolean
+        nullable: false
+        default: false
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: admin_unit_invitations

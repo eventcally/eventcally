@@ -1,32 +1,12 @@
-from sqlalchemy import Column, Integer, String, Unicode
 from sqlalchemy.event import listens_for
-from sqlalchemy.orm import backref, deferred
 
 from project import db
+from project.models.image_generated import ImageGeneratedMixin
 from project.models.iowned import IOwned
-from project.models.trackable_mixin import TrackableMixin
 from project.utils import make_check_violation
 
 
-class Image(db.Model, TrackableMixin, IOwned):
-    __tablename__ = "image"
-    id = Column(Integer(), primary_key=True)
-    data = deferred(db.Column(db.LargeBinary))
-    encoding_format = Column(String(80))
-    copyright_text = Column(Unicode(255))
-
-    license_id = db.Column(db.Integer, db.ForeignKey("license.id"), nullable=True)
-    license = db.relationship(
-        "License",
-        uselist=False,
-        backref=backref("images", lazy=True),
-    )
-
-    adminunit = db.relationship("AdminUnit", uselist=False)
-    event = db.relationship("Event", uselist=False)
-    eventorganizer = db.relationship("EventOrganizer", uselist=False)
-    eventplace = db.relationship("EventPlace", uselist=False)
-
+class Image(db.Model, ImageGeneratedMixin, IOwned):
     def is_empty(self):
         return not self.data
 
@@ -35,17 +15,17 @@ class Image(db.Model, TrackableMixin, IOwned):
 
     def before_flush(self, session, is_dirty):
         if self.is_empty():
-            if self.adminunit:
-                self.adminunit.logo = None
+            if self.admin_unit:
+                self.admin_unit.logo = None
 
             if self.event:
                 self.event.photo = None
 
-            if self.eventorganizer:
-                self.eventorganizer.logo = None
+            if self.event_organizer:
+                self.event_organizer.logo = None
 
-            if self.eventplace:
-                self.eventplace.photo = None
+            if self.event_place:
+                self.event_place.photo = None
 
             if is_dirty:
                 session.delete(self)

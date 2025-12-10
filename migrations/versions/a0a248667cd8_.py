@@ -6,12 +6,26 @@ Create Date: 2021-01-18 15:02:58.354511
 
 """
 
+from enum import IntEnum
+
 import sqlalchemy as sa
 import sqlalchemy_utils
 from alembic import op
 
 from project import dbtypes
-from project.models import EventAttendanceMode, EventTargetGroupOrigin
+
+
+class EventTargetGroupOrigin(IntEnum):
+    both = 1
+    tourist = 2
+    resident = 3
+
+
+class EventAttendanceMode(IntEnum):
+    offline = 1
+    online = 2
+    mixed = 3
+
 
 # revision identifiers, used by Alembic.
 revision = "a0a248667cd8"

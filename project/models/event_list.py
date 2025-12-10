@@ -1,15 +1,11 @@
-from sqlalchemy import Column, Integer, Unicode, UniqueConstraint
+from sqlalchemy import Column, Integer, UniqueConstraint
 
 from project import db
-from project.models.trackable_mixin import TrackableMixin
+from project.models.event_list_generated import EventListGeneratedMixin
 
 
-class EventList(db.Model, TrackableMixin):
-    __tablename__ = "eventlist"
-    __table_args__ = (UniqueConstraint("name", "admin_unit_id"),)
-    id = Column(Integer(), primary_key=True)
-    name = Column(Unicode(255))
-    admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=False)
+class EventList(db.Model, EventListGeneratedMixin):
+    pass
 
 
 class EventEventLists(db.Model):

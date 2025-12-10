@@ -1,6 +1,6 @@
 {% extends "email/layout.html" %}
 {% from "_macros.html" import render_email_button %}
 {% block content %}
-<p>{{ _('You have been invited to join %(admin_unit_name)s.', admin_unit_name=invitation.adminunit.name) }}</p>
+<p>{{ _('You have been invited to join %(admin_unit_name)s.', admin_unit_name=invitation.admin_unit.name) }}</p>
 {{ render_email_button(url_for('admin_unit_member_invitation', id=invitation.id, _external=True), _('Click here to view the invitation')) }}
 {% endblock %}

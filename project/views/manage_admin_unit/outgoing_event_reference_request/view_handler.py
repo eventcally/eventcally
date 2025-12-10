@@ -4,8 +4,7 @@ from dependency_injector.wiring import Provide
 from flask_babel import lazy_gettext
 
 from project.access import admin_unit_owner_access_or_401
-from project.models import EventReferenceRequest
-from project.models.event import Event
+from project.models import Event, EventReferenceRequest
 from project.modular.filters import EnumFilter
 from project.modular.sort_definition import SortDefinition
 from project.services.event_reference_request_service import (

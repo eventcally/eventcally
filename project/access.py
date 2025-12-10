@@ -6,7 +6,7 @@ from flask_security import current_user
 from sqlalchemy import and_, exists
 
 from project import app, db
-from project.models import AdminUnit, AdminUnitMember, Event, PublicStatus, User
+from project.models import AdminUnit, AdminUnitMember, Event, EventPublicStatus, User
 from project.models.admin_unit import AdminUnitMemberRole
 
 
@@ -189,7 +189,7 @@ def can_request_event_reference(event):
     if not can_request_event_reference_from_admin_unit(event.admin_unit):
         return False
 
-    if event.public_status != PublicStatus.published:
+    if event.public_status != EventPublicStatus.published:
         return False
 
     return db.session.scalar(
@@ -212,7 +212,7 @@ def admin_units_the_current_user_is_member_of():
             user_id=current_user.id
         ).all()
         for admin_unit_member in admin_unit_members:
-            result.append(admin_unit_member.adminunit)
+            result.append(admin_unit_member.admin_unit)
 
     return result
 
@@ -303,11 +303,14 @@ def can_verify_admin_unit():
 
 
 def can_read_event(event: Event) -> bool:
-    if event.public_status == PublicStatus.published and event.admin_unit.is_verified:
+    if (
+        event.public_status == EventPublicStatus.published
+        and event.admin_unit.is_verified
+    ):
         return True
 
     if (
-        event.public_status == PublicStatus.planned
+        event.public_status == EventPublicStatus.planned
         and event.admin_unit.is_verified
         and can_use_planning()
     ):

@@ -1,4 +1,4 @@
-from project.models.event import EventReferenceRequest
+from project.models import EventReferenceRequest
 from project.models.event_reference_request import EventReferenceRequestReviewStatus
 from project.services.base_service import BaseService
 from project.views.utils import send_template_mails_to_admin_unit_members_async

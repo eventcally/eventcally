@@ -1,4 +1,4 @@
-from project.models.event import EventReference
+from project.models import EventReference
 from project.models.event_reference_request import EventReferenceRequest
 from project.repos.event_reference_repo import EventReferenceRepo
 from project.services.base_service import BaseService

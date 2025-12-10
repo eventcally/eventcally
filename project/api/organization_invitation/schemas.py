@@ -33,7 +33,7 @@ class OrganizationInvitationSchema(
     OrganizationInvitationIdSchema, OrganizationInvitationBaseSchemaMixin
 ):
     email = marshmallow.auto_field()
-    organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
 
 
 class OrganizationInvitationRefSchema(OrganizationInvitationIdSchema):

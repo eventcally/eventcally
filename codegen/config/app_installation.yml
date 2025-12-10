@@ -1,0 +1,25 @@
+models:
+  - name: AppInstallation
+    table_name: app_installation
+    mixins: [Trackable]
+    columns:
+      - name: permissions
+        type: mutable_list
+        nullable: true
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+      - name: oauth2_client
+        target_model: OAuth2Client
+        table_name: oauth2_client
+        pattern: many-to-one
+        relation: parent
+      - name: oauth2_tokens
+        target_model: OAuth2Token
+        pattern: one-to-many
+        relation: owned
+    constraints:
+      - type: unique
+        columns: [admin_unit_id, oauth2_client_id]

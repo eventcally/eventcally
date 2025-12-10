@@ -276,13 +276,13 @@ class EventSearchParams(TrackableSearchParams):
         if public_stati is None:  # pragma: no cover
             return None
 
-        from project.models import PublicStatus
+        from project.models import EventPublicStatus
 
         result = list()
 
         for public_status in public_stati:
-            if public_status in PublicStatus.__members__:
-                result.append(PublicStatus.__members__[public_status])
+            if public_status in EventPublicStatus.__members__:
+                result.append(EventPublicStatus.__members__[public_status])
 
         return result
 

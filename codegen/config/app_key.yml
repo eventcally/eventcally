@@ -1,0 +1,25 @@
+models:
+  - name: AppKey
+    table_name: app_key
+    mixins: [Trackable]
+    columns:
+      - name: checksum
+        type: string!
+      - name: kid
+        type: string!
+        index: true
+      - name: public_key
+        type: text!
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+      - name: oauth2_client
+        target_model: OAuth2Client
+        table_name: oauth2_client
+        pattern: many-to-one
+        relation: parent
+    constraints:
+      - type: unique
+        columns: [kid, oauth2_client_id]

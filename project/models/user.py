@@ -1,22 +1,11 @@
-import datetime
-
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
-from flask_security import AsaList, RoleMixin, UserMixin
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-    Unicode,
-    UniqueConstraint,
-)
-from sqlalchemy.ext.mutable import MutableList
-from sqlalchemy.orm import backref, deferred, relationship
+from flask_security import RoleMixin, UserMixin
+from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 
 from project import db
-from project.models.api_key import ApiKeyOwnerMixin
+from project.models.api_key_owner_mixin import ApiKeyOwnerMixin
+from project.models.role_generated import RoleGeneratedMixin
+from project.models.user_generated import UserGeneratedMixin
 
 
 class RolesUsers(db.Model):
@@ -26,63 +15,12 @@ class RolesUsers(db.Model):
     role_id = Column("role_id", Integer(), ForeignKey("role.id"))
 
 
-class Role(db.Model, RoleMixin):
-    __tablename__ = "role"
-    id = Column(Integer(), primary_key=True)
-    name = Column(String(80), unique=True)
-    title = Column(Unicode(255))
-    description = Column(String(255))
-    permissions = Column(MutableList.as_mutable(AsaList()), nullable=True)
-
+class Role(db.Model, RoleGeneratedMixin, RoleMixin):
     def __str__(self):  # pragma: no cover
         return self.name or super().__str__()
 
 
-class User(db.Model, UserMixin, ApiKeyOwnerMixin):
-    __tablename__ = "user"
-    id = Column(Integer, primary_key=True)
-    email = Column(String(255), unique=True)
-    username = Column(String(255))
-    password = Column(String(255))
-    active = Column(Boolean())
-    fs_uniquifier = Column(String(255))
-    confirmed_at = Column(DateTime())
-    roles = relationship(
-        "Role", secondary="roles_users", backref=backref("users", lazy="dynamic")
-    )
-    favorite_events = relationship(
-        "Event",
-        secondary="user_favoriteevents",
-        backref=backref("favored_by_users", lazy=True),
-    )
-    newsletter_enabled = deferred(
-        Column(
-            Boolean(),
-            nullable=True,
-            default=True,
-            server_default="1",
-        )
-    )
-    tos_accepted_at = Column(
-        DateTime(),
-        nullable=True,
-    )
-    created_at = deferred(Column(DateTime, default=datetime.datetime.utcnow))
-    deletion_requested_at = deferred(Column(DateTime, nullable=True))
-    locale = Column(String(255), nullable=True)
-    api_keys = relationship(
-        "ApiKey",
-        primaryjoin="ApiKey.user_id == User.id",
-        cascade="all, delete-orphan",
-        backref=backref("user", lazy=True),
-    )
-    oauth2_clients = relationship(
-        "OAuth2Client",
-        primaryjoin="OAuth2Client.user_id == User.id",
-        cascade="all, delete-orphan",
-        backref=backref("user", lazy=True),
-    )
-
+class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
     def get_number_of_api_keys(self):
         from project.models.api_key import ApiKey
 
@@ -90,11 +28,12 @@ class User(db.Model, UserMixin, ApiKeyOwnerMixin):
 
     @property
     def is_member_of_verified_admin_unit(self):
-        if not self.adminunitmembers:  # pragma: no cover
+        if not self.admin_unit_memberships:  # pragma: no cover
             return False
 
         return any(
-            m.adminunit and m.adminunit.is_verified for m in self.adminunitmembers
+            m.admin_unit and m.admin_unit.is_verified
+            for m in self.admin_unit_memberships
         )
 
     def __str__(self):

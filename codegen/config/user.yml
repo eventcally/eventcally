@@ -1,0 +1,72 @@
+models:
+  - name: User
+    mixins: [ApiKeyOwner]
+    columns:
+      - name: email
+        type: string
+        unique: true
+      - name: username
+        type: string
+      - name: password
+        type: string
+      - name: active
+        type: boolean
+      - name: fs_uniquifier
+        type: string
+      - name: confirmed_at
+        type: datetime
+      - name: newsletter_enabled
+        type: boolean
+        nullable: true
+        default: true
+        deferred: true
+      - name: tos_accepted_at
+        type: datetime
+        nullable: true
+      - name: created_at
+        type: datetime
+        default: now
+        deferred: true
+      - name: deletion_requested_at
+        type: datetime
+        nullable: true
+        deferred: true
+      - name: locale
+        type: string
+        nullable: true
+    relationships:
+      - name: roles
+        target_model: Role
+        pattern: many-to-many
+        association_table: roles_users
+      - name: favorite_events
+        target_model: Event
+        pattern: many-to-many
+        association_table: user_favoriteevents
+        back_populates: favored_by_users
+      - name: api_keys
+        target_model: ApiKey
+        pattern: one-to-many
+        relation: owned
+      - name: oauth2_clients
+        target_model: OAuth2Client
+        pattern: one-to-many
+        relation: owned
+      - name: oauth2_tokens
+        target_model: OAuth2Token
+        pattern: one-to-many
+        relation: owned
+      - name: admin_unit_memberships
+        target_model: AdminUnitMember
+        pattern: one-to-many
+        relation: owned
+        back_populates: user
+      - name: admin_units_deletion_requested
+        target_model: AdminUnit
+        pattern: one-to-many
+        relation: reference
+        back_populates: deletion_requested_by
+      - name: oauth2_authorization_codes
+        target_model: OAuth2AuthorizationCode
+        pattern: one-to-many
+        relation: owned

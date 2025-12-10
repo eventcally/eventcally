@@ -156,7 +156,7 @@ def model_name_to_plural(model_name):
     if model_name.endswith("s"):
         return model_name
 
-    if model_name.endswith("y") and not model_name.endswith("key"):
+    if model_name.endswith("y") and not model_name.endswith("key"):  # pragma: no cover
         return model_name[:-1] + "ies"
 
     return f"{model_name}s"

@@ -22,10 +22,10 @@ from project.forms.widgets import (
 from project.models import (
     EventAttendanceMode,
     EventDateDefinition,
+    EventPublicStatus,
     EventStatus,
     EventTargetGroupOrigin,
     Image,
-    PublicStatus,
 )
 from project.models.event_organizer import EventOrganizer
 from project.models.event_place import EventPlace
@@ -377,10 +377,12 @@ class CreateForm(BaseCreateForm, EventFormMixin):
             field.populate_obj(obj, name)
 
         obj.public_status = (
-            PublicStatus.published
+            EventPublicStatus.published
             if self.submit.data
             else (
-                PublicStatus.planned if self.submit_planned.data else PublicStatus.draft
+                EventPublicStatus.planned
+                if self.submit_planned.data
+                else EventPublicStatus.draft
             )
         )
 
@@ -437,9 +439,12 @@ class UpdateForm(BaseUpdateForm, EventFormMixin):
         lazy_gettext("Public status"),
         coerce=int,
         choices=[
-            (int(PublicStatus.published), lazy_gettext("PublicStatus.published")),
-            (int(PublicStatus.planned), lazy_gettext("PublicStatus.planned")),
-            (int(PublicStatus.draft), lazy_gettext("PublicStatus.draft")),
+            (
+                int(EventPublicStatus.published),
+                lazy_gettext("EventPublicStatus.published"),
+            ),
+            (int(EventPublicStatus.planned), lazy_gettext("EventPublicStatus.planned")),
+            (int(EventPublicStatus.draft), lazy_gettext("EventPublicStatus.draft")),
         ],
         description=lazy_gettext(
             "Planned events appear in the scheduling view, but not on public calendars."

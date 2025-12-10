@@ -340,7 +340,7 @@ def test_events_post(client, seeder: Seeder, utils: UtilActions, app, variant):
     assert "id" in response.json
 
     with app.app_context():
-        from project.models import Event, PublicStatus
+        from project.models import Event, EventPublicStatus
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -352,7 +352,7 @@ def test_events_post(client, seeder: Seeder, utils: UtilActions, app, variant):
         assert event.organizer_id == organizer_id
         assert event.photo is not None
         assert event.photo.encoding_format == "image/png"
-        assert event.public_status == PublicStatus.published
+        assert event.public_status == EventPublicStatus.published
         assert event.date_definitions[0].allday == (variant == "allday")
 
         if variant == "two_date_definitions":

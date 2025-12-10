@@ -48,7 +48,7 @@ class PlaceBaseSchemaMixin(TrackableSchemaMixin):
 class PlaceSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
     location = fields.Nested(LocationSchema)
     photo = fields.Nested(ImageSchema)
-    organization = fields.Nested(OrganizationRefSchema, attribute="adminunit")
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
 
 
 class PlaceDumpSchema(PlaceIdSchema, PlaceBaseSchemaMixin):

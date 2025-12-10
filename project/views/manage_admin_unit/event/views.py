@@ -6,7 +6,7 @@ from flask_babel import gettext
 
 from project.access import can_request_event_reference_from_admin_unit
 from project.dateutils import get_next_full_hour, get_today
-from project.models.event import Event, PublicStatus
+from project.models import Event, EventPublicStatus
 from project.models.event_reference_request import EventReferenceRequest
 from project.modular.base_views import (
     BaseCreateView,
@@ -102,7 +102,7 @@ class CreateView(BaseCreateView):
         self.event_service.insert_object(object)
 
         if (
-            object.public_status == PublicStatus.published
+            object.public_status == EventPublicStatus.published
             and form.reference_request_admin_unit_id.data
         ):
             for target_admin_unit_id in form.reference_request_admin_unit_id.data:
@@ -119,10 +119,10 @@ class CreateView(BaseCreateView):
     def flash_success_message(self, object, form):
         success_msg = (
             gettext("Event successfully published")
-            if object.public_status == PublicStatus.published
+            if object.public_status == EventPublicStatus.published
             else (
                 gettext("Draft successfully saved")
-                if object.public_status == PublicStatus.draft
+                if object.public_status == EventPublicStatus.draft
                 else gettext("Event successfully planned")
             )
         )

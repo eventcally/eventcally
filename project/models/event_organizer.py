@@ -1,38 +1,11 @@
-from sqlalchemy import Column, Integer, String, Unicode, UniqueConstraint, func, select
+from sqlalchemy import Column, Integer, UniqueConstraint, func, select
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import deferred
 
 from project import db
-from project.models.trackable_mixin import TrackableMixin
+from project.models.event_organizer_generated import EventOrganizerGeneratedMixin
 
 
-class EventOrganizer(db.Model, TrackableMixin):
-    __tablename__ = "eventorganizer"
-    __table_args__ = (UniqueConstraint("name", "admin_unit_id"),)
-    id = Column(Integer(), primary_key=True)
-    name = Column(Unicode(255), nullable=False)
-    url = deferred(Column(String(255)), group="detail")
-    email = deferred(Column(Unicode(255)), group="detail")
-    phone = deferred(Column(Unicode(255)), group="detail")
-    fax = deferred(Column(Unicode(255)), group="detail")
-    location_id = deferred(db.Column(db.Integer, db.ForeignKey("location.id")))
-    location = db.relationship(
-        "Location",
-        uselist=False,
-        single_parent=True,
-        cascade="all, delete-orphan",
-        back_populates="eventorganizer",
-    )
-    logo_id = deferred(db.Column(db.Integer, db.ForeignKey("image.id")))
-    logo = db.relationship(
-        "Image",
-        uselist=False,
-        single_parent=True,
-        cascade="all, delete-orphan",
-        back_populates="eventorganizer",
-    )
-    admin_unit_id = db.Column(db.Integer, db.ForeignKey("adminunit.id"), nullable=True)
-
+class EventOrganizer(db.Model, EventOrganizerGeneratedMixin):
     @hybrid_property
     def number_of_events(self):
         return len(self.events)

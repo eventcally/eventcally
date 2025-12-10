@@ -19,7 +19,7 @@ class NegotiateView(BaseObjectFormView):
         invitation = kwargs.get("object")
         return lazy_gettext(
             "Would you like to accept the invitation from %(name)s?",
-            name=invitation.adminunit.name,
+            name=invitation.admin_unit.name,
         )
 
     @handle_db_error
@@ -33,7 +33,9 @@ class NegotiateView(BaseObjectFormView):
 
             message = gettext("Invitation successfully accepted")
             roles = invitation.roles.split(",")
-            add_user_to_admin_unit_with_roles(current_user, invitation.adminunit, roles)
+            add_user_to_admin_unit_with_roles(
+                current_user, invitation.admin_unit, roles
+            )
             url = url_for("manage_admin_unit", id=invitation.admin_unit_id)
         else:
             message = gettext("Invitation successfully declined")

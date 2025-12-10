@@ -1,0 +1,39 @@
+models:
+  - name: Image
+    mixins: [Trackable]
+    columns:
+      - name: data
+        type: blob
+        deferred: true
+      - name: encoding_format
+        type: string
+        length: 80
+      - name: copyright_text
+        type: string
+    relationships:
+      - name: license
+        target_model: License
+        pattern: many-to-one
+        relation: reference
+        nullable: true
+        back_populates: images
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: one-to-one
+        relation: reference
+        back_populates: logo
+      - name: event
+        target_model: Event
+        pattern: one-to-one
+        relation: reference
+        back_populates: photo
+      - name: event_organizer
+        target_model: EventOrganizer
+        pattern: one-to-one
+        relation: reference
+        back_populates: logo
+      - name: event_place
+        target_model: EventPlace
+        pattern: one-to-one
+        relation: reference
+        back_populates: photo

@@ -35,7 +35,7 @@ def prepare_event_date_form(form):
 
         if organizer:
             form.organizer_id.choices = [(organizer.id, organizer.name)]
-            admin_unit = organizer.adminunit
+            admin_unit = organizer.admin_unit
 
     if not admin_unit and form.admin_unit_id.data and form.admin_unit_id.data > 0:
         admin_unit = db.session.get(AdminUnit, form.admin_unit_id.data)

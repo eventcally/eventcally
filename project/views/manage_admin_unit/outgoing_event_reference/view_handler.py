@@ -1,8 +1,7 @@
 from flask import url_for
 from flask_babel import gettext, lazy_gettext
 
-from project.models import EventReference
-from project.models.event import Event
+from project.models import Event, EventReference
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,

@@ -1,0 +1,57 @@
+models:
+  - name: OAuth2Client
+    mixins: [Trackable, RateLimitHolder]
+    table_name: oauth2_client
+    display_name: OAuth2 client
+    constraints:
+      - type: check
+        expression: (admin_unit_id IS NULL) <> (user_id IS NULL)
+        name: oauth2_client_admin_unit_xor_user
+    columns:
+      - name: homepage_url
+        type: string
+        deferred: detail
+      - name: setup_url
+        type: string
+        deferred: detail
+      - name: webhook_url
+        type: string
+        deferred: detail
+      - name: webhook_secret
+        type: string
+        deferred: detail
+      - name: description
+        type: text
+        nullable: true
+        deferred: detail
+      - name: app_permissions
+        type: mutable_list
+        nullable: true
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        nullable: true
+      - name: user
+        target_model: User
+        pattern: many-to-one
+        relation: parent
+        nullable: true
+      - name: app_installations
+        target_model: AppInstallation
+        pattern: one-to-many
+        relation: owned
+        primaryjoin: "AppInstallation.oauth2_client_id == OAuth2Client.id"
+        back_populates: oauth2_client
+      - name: app_keys
+        target_model: AppKey
+        pattern: one-to-many
+        relation: owned
+        back_populates: oauth2_client
+      - name: app_oauth2_tokens
+        target_model: OAuth2Token
+        pattern: one-to-many
+        relation: owned
+        primaryjoin: "OAuth2Token.app_id == OAuth2Client.id"
+        back_populates: app

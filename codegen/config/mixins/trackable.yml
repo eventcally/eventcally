@@ -1,0 +1,40 @@
+models:
+  - name: Trackable
+    columns:
+      - name: created_at
+        type: datetime
+        default: now
+        deferred: trackable
+      - name: updated_at
+        type: datetime
+        onupdate: now
+        deferred: trackable
+    relationships:
+      - name: created_by
+        target_model: User
+        pattern: many-to-one
+        relation: reference
+        default: current_actor.current_user_id_or_none
+        back_populates: none
+        deferred: trackable
+      - name: updated_by
+        target_model: User
+        pattern: many-to-one
+        relation: reference
+        onupdate: current_actor.current_user_id_or_none
+        back_populates: none
+        deferred: trackable
+      - name: created_by_app_installation
+        target_model: AppInstallation
+        pattern: many-to-one
+        relation: reference
+        default: current_actor.current_app_installation_id_or_none
+        back_populates: none
+        deferred: trackable
+      - name: updated_by_app_installation
+        target_model: AppInstallation
+        pattern: many-to-one
+        relation: reference
+        onupdate: current_actor.current_app_installation_id_or_none
+        back_populates: none
+        deferred: trackable

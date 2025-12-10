@@ -15,7 +15,7 @@ class NegotiateView(BaseObjectFormView):
         invitation = kwargs.get("object")
         return lazy_gettext(
             "%(name)s invited you to create an organization.",
-            name=invitation.adminunit.name,
+            name=invitation.admin_unit.name,
         )
 
     @handle_db_error

@@ -37,11 +37,11 @@ from project.models import (
     EventList,
     EventOrganizer,
     EventPlace,
+    EventPublicStatus,
     EventReference,
     EventStatus,
     Image,
     Location,
-    PublicStatus,
     UserFavoriteEvents,
     sanitize_allday_instance,
 )
@@ -104,25 +104,25 @@ def fill_event_filter(event_filter, params: EventSearchParams):
             public_stati = [params.public_status]
     elif params.can_read_private_events:
         public_stati = [
-            PublicStatus.published,
-            PublicStatus.planned,
-            PublicStatus.draft,
+            EventPublicStatus.published,
+            EventPublicStatus.planned,
+            EventPublicStatus.draft,
         ]
     else:
         public_stati = [
-            PublicStatus.published,
-            PublicStatus.draft,
+            EventPublicStatus.published,
+            EventPublicStatus.draft,
         ]
 
-    if not params.can_read_private_events and PublicStatus.draft in public_stati:
-        public_stati.remove(PublicStatus.draft)
+    if not params.can_read_private_events and EventPublicStatus.draft in public_stati:
+        public_stati.remove(EventPublicStatus.draft)
 
     if (
         not params.can_read_private_events
         and not params.can_read_planned_events
-        and PublicStatus.planned in public_stati
+        and EventPublicStatus.planned in public_stati
     ):
-        public_stati.remove(PublicStatus.planned)
+        public_stati.remove(EventPublicStatus.planned)
 
     if not params.can_read_private_events or not params.admin_unit_id:
         event_filter = and_(

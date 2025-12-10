@@ -1,0 +1,33 @@
+models:
+  - name: EventPlace
+    display_name: Place
+    mixins: [Trackable]
+    columns:
+      - name: name
+        type: string!
+      - name: url
+        type: string
+      - name: description
+        type: text
+    relationships:
+      - name: location
+        target_model: Location
+        pattern: one-to-one
+        relation: owned
+      - name: photo
+        target_model: Image
+        pattern: one-to-one
+        relation: owned
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: event_places
+      - name: events
+        target_model: Event
+        pattern: one-to-many
+        relation: reference
+        back_populates: event_place
+    constraints:
+      - type: unique
+        columns: [name, admin_unit_id]

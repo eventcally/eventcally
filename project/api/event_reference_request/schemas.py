@@ -14,8 +14,8 @@ from project.api.schemas import (
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
 )
-from project.models import EventReferenceRequest
-from project.models.event_reference_request import (
+from project.models import (
+    EventReferenceRequest,
     EventReferenceRequestRejectionReason,
     EventReferenceRequestReviewStatus,
 )

@@ -1,0 +1,19 @@
+models:
+  - name: Role
+    columns:
+      - name: name
+        type: string
+        length: 80
+        unique: true
+      - name: title
+        type: string
+      - name: description
+        type: string
+      - name: permissions
+        type: mutable_list
+        nullable: true
+    relationships:
+      - name: users
+        target_model: User
+        pattern: many-to-many
+        association_table: roles_users

@@ -1,0 +1,7 @@
+models:
+  - name: RateLimitHolder
+    columns:
+      - name: rate_limit_value
+        type: string!
+        default: cls.__default_rate_limit_value__
+        server_default: cls.__default_rate_limit_value__

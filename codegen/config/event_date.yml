@@ -1,0 +1,19 @@
+models:
+  - name: EventDate
+    columns:
+      - name: start
+        type: datetimetz!
+        index: true
+      - name: end
+        type: datetimetz
+        nullable: true
+        index: true
+      - name: allday
+        type: boolean!
+        default: false
+    relationships:
+      - name: event
+        target_model: Event
+        pattern: many-to-one
+        relation: parent
+        back_populates: dates
