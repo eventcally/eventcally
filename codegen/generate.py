@@ -5,6 +5,7 @@ Code generator script that reads YAML schema and generates SQLAlchemy models.
 
 import os
 import re
+import subprocess
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
@@ -47,6 +48,21 @@ class Model:
     indexes: List[str] = field(default_factory=list)
     mixins: List[str] = field(default_factory=list)
     enums: Dict[str, List[str]] = field(default_factory=dict)
+
+
+@dataclass
+class AssociationTable:
+    name: str = None
+    mixin_name: str = None
+    table_name: str = None
+    file_name: str = None
+    left_model: str = None
+    left_table: str = None
+    right_model: str = None
+    right_table: str = None
+    left_fk: str = None
+    right_fk: str = None
+    constraints: List[str] = field(default_factory=list)
 
 
 def snake_case_to_human(snake_case):
@@ -108,20 +124,26 @@ class SQLAlchemyGenerator:
     def __init__(
         self,
         template_dir: str,
-        models_dir: str,
+        output_models_dir: str,
         config_dir: str,
         mixins_dir: str = None,
     ):
         self.env = Environment(loader=FileSystemLoader(template_dir))
-        self.models_dir = models_dir
+        self.output_models_dir = output_models_dir
+        self.output_association_tables_dir = os.path.join(
+            output_models_dir, "association_tables"
+        )
+        self.output_mixins_dir = os.path.join(output_models_dir, "mixins")
         self.config_dir = config_dir
         self.mixins_dir = mixins_dir
         self.mixin_definitions = {}
         self.model_definitions = {}
         self.generated_mixins: Dict[str, Model] = {}
+        self.association_tables: Dict[str, AssociationTable] = {}
 
         self._load_models()
         self._load_mixins()
+        self._collect_association_tables()
 
     def _load_mixins(self):
         """Load all mixin definitions from the mixins directory."""
@@ -166,6 +188,49 @@ class SQLAlchemyGenerator:
                     model_name = model_data["name"]
                     self.model_definitions[model_name] = model_data
 
+    def _collect_association_tables(self):
+        """Collect all association table definitions from model relationships."""
+        for model_name, model_data in self.model_definitions.items():
+            for rel_data in model_data.get("relationships", []):
+                if rel_data["pattern"] == "many-to-many":
+                    if "association_model" not in rel_data:
+                        raise ValueError(
+                            f"Many-to-many relationship {model_name}.{rel_data['name']} must specify 'association_model'"
+                        )
+                    if "association_table" not in rel_data:
+                        raise ValueError(
+                            f"Many-to-many relationship {model_name}.{rel_data['name']} must specify 'association_table'"
+                        )
+
+                    table_name = model_data.get("table_name", model_name.lower())
+                    association_column = rel_data.get(
+                        "association_column",
+                        f"{class_name_to_model_name(model_name)}_id",
+                    )
+
+                    assoc_model_name = rel_data["association_model"]
+                    assoc_table_name = rel_data["association_table"]
+                    assoc_table = self.association_tables.get(assoc_model_name)
+
+                    if not assoc_table:  # left
+                        assoc_table = AssociationTable(
+                            name=assoc_model_name,
+                            mixin_name=f"{assoc_model_name}GeneratedMixin",
+                            table_name=assoc_table_name,
+                            file_name=class_name_to_model_name(assoc_model_name),
+                            left_model=model_name,
+                            left_table=table_name,
+                            left_fk=association_column,
+                        )
+                        self.association_tables[assoc_model_name] = assoc_table
+                    else:  # right
+                        assoc_table.right_model = model_name
+                        assoc_table.right_table = table_name
+                        assoc_table.right_fk = association_column
+                        assoc_table.constraints.append(
+                            f'UniqueConstraint("{assoc_table.left_fk}", "{assoc_table.right_fk}")'
+                        )
+
     def parse_yaml(self, yaml_path: str) -> List[Model]:
         """Parse YAML schema file and return list of Model objects."""
         with open(yaml_path, "r") as f:
@@ -208,7 +273,7 @@ class SQLAlchemyGenerator:
 
                 mixin_model = self.generated_mixins[mixin_name]
                 model.imports.append(
-                    f"from project.models.{mixin_model.file_name} import {mixin_class_name}"
+                    f"from project.models.mixins.{mixin_model.file_name} import {mixin_class_name}"
                 )
             else:
                 print(f"Warning: Mixin '{mixin_name}' not found")
@@ -543,7 +608,9 @@ class SQLAlchemyGenerator:
         )
 
         # Write to file
-        output_file = os.path.join(self.models_dir, f"{model.file_name}_generated.py")
+        output_file = os.path.join(
+            self.output_models_dir, f"{model.file_name}_generated.py"
+        )
         with open(output_file, "w") as f:
             f.write(sqla_model_mixin)
 
@@ -572,24 +639,42 @@ class SQLAlchemyGenerator:
 
         # Write to file
         output_file = os.path.join(
-            self.models_dir, f"{temp_model.file_name}_generated.py"
+            self.output_mixins_dir, f"{temp_model.file_name}_generated.py"
         )
         with open(output_file, "w") as f:
             f.write(mixin_code)
 
         self.generated_mixins[mixin_name] = temp_model
 
+    def generate_association_table_code(self, assoc_table: AssociationTable):
+        """Generate SQLAlchemy association table code."""
+        context = {"assoc_table": assoc_table}
+
+        assoc_code = self.env.get_template("sqla_association_table.py.j2").render(
+            **context
+        )
+
+        # Write to file
+        output_file = os.path.join(
+            self.output_association_tables_dir, f"{assoc_table.file_name}_generated.py"
+        )
+        with open(output_file, "w") as f:
+            f.write(assoc_code)
+
 
 def main():
     """Main entry point."""
     script_dir = os.path.dirname(os.path.abspath(__file__))
     config_dir = os.path.join(script_dir, "config")
-    mixins_dir = os.path.join(config_dir, "mixins")
+    models_dir = os.path.join(config_dir, "models")
+    mixins_dir = os.path.join(models_dir, "mixins")
     template_dir = os.path.join(script_dir, "templates")
     project_dir = os.path.dirname(script_dir)
-    models_dir = os.path.join(project_dir, "project", "models")
+    output_models_dir = os.path.join(project_dir, "project", "models")
 
-    generator = SQLAlchemyGenerator(template_dir, models_dir, config_dir, mixins_dir)
+    generator = SQLAlchemyGenerator(
+        template_dir, output_models_dir, models_dir, mixins_dir
+    )
 
     # Generate mixin files first
     for mixin_name, mixin_data in generator.mixin_definitions.items():
@@ -601,6 +686,13 @@ def main():
         print(f"Generating model {model_name}...")
         model = generator._parse_model(model_data)
         generator.generate_code(model)
+
+    # Generate association tables
+    for assoc_name, assoc_table in generator.association_tables.items():
+        print(f"Generating association table {assoc_name}...")
+        generator.generate_association_table_code(assoc_table)
+
+    subprocess.run(["black", output_models_dir], check=True, capture_output=True)
 
 
 if __name__ == "__main__":

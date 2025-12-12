@@ -2,7 +2,7 @@ from typing import OrderedDict
 
 from markupsafe import Markup
 
-from project.models.trackable_mixin import TrackableMixin
+from project.models.mixins.trackable_mixin import TrackableMixin
 
 
 class BaseDisplay:

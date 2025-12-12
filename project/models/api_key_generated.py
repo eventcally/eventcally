@@ -26,9 +26,9 @@ from sqlalchemy_utils import ColorType
 import datetime
 from project.dbtypes import IntegerEnum
 from sqlalchemy.ext.declarative import declared_attr
-from project.models.trackable_mixin import TrackableMixin
-from project.models.api_key_owner_mixin import ApiKeyOwnerMixin
-from project.models.rate_limit_holder_mixin import RateLimitHolderMixin
+from project.models.mixins.trackable_mixin import TrackableMixin
+from project.models.mixins.api_key_owner_mixin import ApiKeyOwnerMixin
+from project.models.mixins.rate_limit_holder_mixin import RateLimitHolderMixin
 
 
 class ApiKeyGeneratedMixin(TrackableMixin, ApiKeyOwnerMixin, RateLimitHolderMixin):

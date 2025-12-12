@@ -18,5 +18,7 @@ models:
       - name: members
         target_model: AdminUnitMember
         pattern: many-to-many
+        association_model: AdminUnitMemberRolesMembers
         association_table: adminunitmemberroles_members
+        association_column: role_id
         back_populates: roles

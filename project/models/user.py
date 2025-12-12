@@ -1,18 +1,21 @@
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from flask_security import RoleMixin, UserMixin
-from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import Column, ForeignKey, Integer, String
 
 from project import db
-from project.models.api_key_owner_mixin import ApiKeyOwnerMixin
+from project.models.association_tables.roles_users_generated import (
+    RolesUsersGeneratedMixin,
+)
+from project.models.association_tables.user_favorite_event_generated import (
+    UserFavoriteEventGeneratedMixin,
+)
+from project.models.mixins.api_key_owner_mixin import ApiKeyOwnerMixin
 from project.models.role_generated import RoleGeneratedMixin
 from project.models.user_generated import UserGeneratedMixin
 
 
-class RolesUsers(db.Model):
-    __tablename__ = "roles_users"
-    id = Column(Integer(), primary_key=True)
-    user_id = Column("user_id", Integer(), ForeignKey("user.id"))
-    role_id = Column("role_id", Integer(), ForeignKey("role.id"))
+class RolesUsers(db.Model, RolesUsersGeneratedMixin):
+    pass
 
 
 class Role(db.Model, RoleGeneratedMixin, RoleMixin):
@@ -40,12 +43,8 @@ class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
         return self.email or super().__str__()
 
 
-class UserFavoriteEvents(db.Model):
-    __tablename__ = "user_favoriteevents"
-    __table_args__ = (UniqueConstraint("user_id", "event_id"),)
-    id = Column(Integer(), primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
+class UserFavoriteEvents(db.Model, UserFavoriteEventGeneratedMixin):
+    pass
 
 
 # OAuth Consumer: Wenn wir OAuth consumen und sich ein Nutzer per Google oder Facebook anmelden möchte

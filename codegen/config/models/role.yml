@@ -16,4 +16,5 @@ models:
       - name: users
         target_model: User
         pattern: many-to-many
+        association_model: RolesUsers
         association_table: roles_users

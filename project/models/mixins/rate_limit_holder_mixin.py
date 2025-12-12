@@ -1,7 +1,7 @@
-from project.models.rate_limit_holder_mixin_generated import (
+from project.models.mixins.rate_limit_holder_mixin_generated import (
     RateLimitHolderGeneratedMixin,
 )
-from project.models.rate_limit_provider_mixin import RateLimitProviderMixin
+from project.models.mixins.rate_limit_provider_mixin import RateLimitProviderMixin
 
 
 class RateLimitHolderMixin(RateLimitHolderGeneratedMixin, RateLimitProviderMixin):
