@@ -38,10 +38,12 @@ models:
       - name: roles
         target_model: Role
         pattern: many-to-many
+        association_model: RolesUsers
         association_table: roles_users
       - name: favorite_events
         target_model: Event
         pattern: many-to-many
+        association_model: UserFavoriteEvent
         association_table: user_favoriteevents
         back_populates: favored_by_users
       - name: api_keys

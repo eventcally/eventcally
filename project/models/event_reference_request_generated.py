@@ -26,7 +26,7 @@ from sqlalchemy_utils import ColorType
 import datetime
 from project.dbtypes import IntegerEnum
 from sqlalchemy.ext.declarative import declared_attr
-from project.models.trackable_mixin import TrackableMixin
+from project.models.mixins.trackable_mixin import TrackableMixin
 
 
 class EventReferenceRequestReviewStatus(IntEnum):

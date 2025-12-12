@@ -12,12 +12,12 @@ from sqlalchemy.orm import object_session
 
 from project import db
 from project.dateutils import gmt_tz
+from project.models.mixins.rate_limit_provider_mixin import RateLimitProviderMixin
 from project.models.oauth2_authorization_code_generated import (
     OAuth2AuthorizationCodeGeneratedMixin,
 )
 from project.models.oauth2_client_generated import OAuth2ClientGeneratedMixin
 from project.models.oauth2_token_generated import OAuth2TokenGeneratedMixin
-from project.models.rate_limit_provider_mixin import RateLimitProviderMixin
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
 oauth_refresh_token_expires_in = 90 * 86400  # 90 days

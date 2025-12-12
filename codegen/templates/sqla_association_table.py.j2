@@ -1,0 +1,17 @@
+from project import db
+from sqlalchemy import Column, ForeignKey, Integer, UniqueConstraint
+
+
+class {{ assoc_table.mixin_name }}():
+    __tablename__ = "{{ assoc_table.table_name }}"
+{%- if assoc_table.constraints %}
+    __table_args__ = (
+{%- for constraint in assoc_table.constraints %}
+        {{ constraint }},
+{%- endfor %}
+    )
+{%- endif %}
+    id = Column(Integer(), primary_key=True)
+    {{ assoc_table.left_fk }} = db.Column(db.Integer, db.ForeignKey("{{ assoc_table.left_table }}.id", ondelete="CASCADE"), nullable=False)
+    {{ assoc_table.right_fk }} = db.Column(db.Integer, db.ForeignKey("{{ assoc_table.right_table }}.id", ondelete="CASCADE"), nullable=False)
+

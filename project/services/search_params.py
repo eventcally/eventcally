@@ -10,7 +10,7 @@ from project.dateutils import (
     form_input_to_date,
     get_today,
 )
-from project.models.trackable_mixin import TrackableMixin
+from project.models.mixins.trackable_mixin import TrackableMixin
 from project.utils import str_to_bool
 
 

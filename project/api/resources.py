@@ -16,7 +16,7 @@ from project.api.schemas import (
     UnprocessableEntityResponseSchema,
 )
 from project.models.api_key import ApiKey
-from project.models.rate_limit_provider_mixin import RateLimitProviderMixin
+from project.models.mixins.rate_limit_provider_mixin import RateLimitProviderMixin
 from project.oauth2 import require_oauth
 from project.utils import getattr_keypath, hash_api_key
 

@@ -1,6 +1,0 @@
-[tool.black]
-extend-exclude = '''
-(
-  .*_generated.py
-)
-'''

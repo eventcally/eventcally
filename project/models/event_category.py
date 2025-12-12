@@ -1,6 +1,10 @@
-from sqlalchemy import Column, Integer, UniqueConstraint
-
 from project import db
+from project.models.association_tables.event_custom_event_categories_generated import (
+    EventCustomEventCategoriesGeneratedMixin,
+)
+from project.models.association_tables.event_event_categories_generated import (
+    EventEventCategoriesGeneratedMixin,
+)
 from project.models.custom_event_category_generated import (
     CustomEventCategoryGeneratedMixin,
 )
@@ -14,14 +18,8 @@ class EventCategory(db.Model, EventCategoryGeneratedMixin):
     pass
 
 
-class EventEventCategories(db.Model):
-    __tablename__ = "event_eventcategories"
-    __table_args__ = (UniqueConstraint("event_id", "category_id"),)
-    id = Column(Integer(), primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
-    category_id = db.Column(
-        db.Integer, db.ForeignKey("eventcategory.id"), nullable=False
-    )
+class EventEventCategories(db.Model, EventEventCategoriesGeneratedMixin):
+    pass
 
 
 class CustomEventCategorySet(db.Model, CustomEventCategorySetGeneratedMixin):
@@ -46,11 +44,5 @@ class CustomEventCategory(db.Model, CustomEventCategoryGeneratedMixin):
         return self.name or super().__str__()
 
 
-class EventCustomEventCategories(db.Model):
-    __tablename__ = "event_customeventcategories"
-    __table_args__ = (UniqueConstraint("event_id", "category_id"),)
-    id = Column(Integer(), primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
-    category_id = db.Column(
-        db.Integer, db.ForeignKey("customeventcategory.id"), nullable=False
-    )
+class EventCustomEventCategories(db.Model, EventCustomEventCategoriesGeneratedMixin):
+    pass

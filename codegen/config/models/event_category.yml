@@ -10,4 +10,5 @@ models:
         pattern: many-to-many
         association_model: EventEventCategories
         association_table: event_eventcategories
+        association_column: category_id
         back_populates: categories

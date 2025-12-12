@@ -1,7 +1,10 @@
-from sqlalchemy import Column, Integer, UniqueConstraint, func, select
+from sqlalchemy import func, select
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from project import db
+from project.models.association_tables.event_co_organizers_generated import (
+    EventCoOrganizersGeneratedMixin,
+)
 from project.models.event_organizer_generated import EventOrganizerGeneratedMixin
 
 
@@ -22,11 +25,5 @@ class EventOrganizer(db.Model, EventOrganizerGeneratedMixin):
         return self.name or super().__str__()
 
 
-class EventCoOrganizers(db.Model):
-    __tablename__ = "event_coorganizers"
-    __table_args__ = (UniqueConstraint("event_id", "organizer_id"),)
-    id = Column(Integer(), primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
-    organizer_id = db.Column(
-        db.Integer, db.ForeignKey("eventorganizer.id"), nullable=False
-    )
+class EventCoOrganizers(db.Model, EventCoOrganizersGeneratedMixin):
+    pass

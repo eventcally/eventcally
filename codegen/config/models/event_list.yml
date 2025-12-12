@@ -15,6 +15,7 @@ models:
         pattern: many-to-many
         association_model: EventEventLists
         association_table: event_eventlists
+        association_column: list_id
         back_populates: event_lists
     constraints:
       - type: unique

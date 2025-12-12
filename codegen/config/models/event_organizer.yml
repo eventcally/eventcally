@@ -42,6 +42,7 @@ models:
         pattern: many-to-many
         association_model: EventCoOrganizers
         association_table: event_coorganizers
+        association_column: organizer_id
         back_populates: co_organizers
     constraints:
       - type: unique

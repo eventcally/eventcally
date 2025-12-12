@@ -17,6 +17,7 @@ models:
         pattern: many-to-many
         association_model: EventCustomEventCategories
         association_table: event_customeventcategories
+        association_column: category_id
         back_populates: custom_categories
     constraints:
       - type: unique

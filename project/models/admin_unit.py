@@ -1,5 +1,5 @@
 from flask_security import RoleMixin
-from sqlalchemy import Column, ForeignKey, Integer, and_, func, select
+from sqlalchemy import and_, func, select
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import aliased
@@ -17,16 +17,15 @@ from project.models.admin_unit_member_role_generated import (
     AdminUnitMemberRoleGeneratedMixin,
 )
 from project.models.admin_unit_relation_generated import AdminUnitRelationGeneratedMixin
-from project.models.api_key_owner_mixin import ApiKeyOwnerMixin
+from project.models.association_tables.admin_unit_member_roles_members_generated import (
+    AdminUnitMemberRolesMembersGeneratedMixin,
+)
+from project.models.mixins.api_key_owner_mixin import ApiKeyOwnerMixin
 from project.utils import make_check_violation
 
 
-class AdminUnitMemberRolesMembers(db.Model):
-    __tablename__ = "adminunitmemberroles_members"
-    __display_name__ = "Organization member role members"
-    id = Column(Integer(), primary_key=True)
-    member_id = Column("member_id", Integer(), ForeignKey("adminunitmember.id"))
-    role_id = Column("role_id", Integer(), ForeignKey("adminunitmemberrole.id"))
+class AdminUnitMemberRolesMembers(db.Model, AdminUnitMemberRolesMembersGeneratedMixin):
+    pass
 
 
 class AdminUnitMemberRole(db.Model, AdminUnitMemberRoleGeneratedMixin, RoleMixin):

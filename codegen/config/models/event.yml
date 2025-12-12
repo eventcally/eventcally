@@ -118,5 +118,6 @@ models:
       - name: favored_by_users
         target_model: User
         pattern: many-to-many
+        association_model: UserFavoriteEvent
         association_table: user_favoriteevents
         back_populates: favorite_events
