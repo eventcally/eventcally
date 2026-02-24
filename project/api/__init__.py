@@ -12,6 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import HTTPException, UnprocessableEntity
 
 from project import app
+from project.domain.errors import BaseError, DuplicateError
 from project.utils import get_localized_scope
 
 
@@ -37,7 +38,7 @@ class RestApi(Api):
             if err.orig.pgcode == UNIQUE_VIOLATION:
                 data["name"] = "Unique Violation"
                 data["message"] = (
-                    "An entry with the entered values ​already exists. Duplicate entries are not allowed."
+                    "An entry with the entered values already exists. Duplicate entries are not allowed."
                 )
             elif err.orig.pgcode == CHECK_VIOLATION:
                 data["name"] = "Check Violation"
@@ -50,6 +51,11 @@ class RestApi(Api):
             else:
                 data["name"] = "Integrity Error"
                 data["message"] = "Action violates database integrity."
+            code = 400
+            schema = ErrorResponseSchema()
+        elif isinstance(err, BaseError):
+            data["name"] = err.__class__.__name__
+            data["message"] = err.message
             code = 400
             schema = ErrorResponseSchema()
         elif isinstance(err, HTTPException):

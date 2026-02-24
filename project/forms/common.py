@@ -4,6 +4,12 @@ from markupsafe import Markup
 from wtforms import DecimalField, HiddenField, SelectField, StringField
 from wtforms.validators import DataRequired, Length, Optional
 
+from project.domain.commands import (
+    CreateImage,
+    CreateLocation,
+    UpdateImage,
+    UpdateLocation,
+)
 from project.forms.widgets import CustomDateField
 from project.imageutils import (
     get_bytes_from_image,
@@ -35,14 +41,36 @@ class LocationFormMixin(object):
     )
 
 
-class LocationForm(BaseForm, LocationFormMixin):
+class LocationCommandFormMixin(object):
+    def create_create_command(self):
+        return CreateLocation(
+            street=self.street.data,
+            postalCode=self.postalCode.data,
+            city=self.city.data,
+            state=self.state.data,
+            latitude=self.latitude.data,
+            longitude=self.longitude.data,
+        )
+
+    def create_update_command(self):
+        return UpdateLocation(
+            street=self.street.data,
+            postalCode=self.postalCode.data,
+            city=self.city.data,
+            state=self.state.data,
+            latitude=self.latitude.data,
+            longitude=self.longitude.data,
+        )
+
+
+class LocationForm(BaseForm, LocationFormMixin, LocationCommandFormMixin):
     postalCode = StringField(
         lazy_gettext("Postal code"), validators=[Optional(), Length(max=10)]
     )
     city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
 
 
-class StrictLocationForm(BaseForm, LocationFormMixin):
+class StrictLocationForm(BaseForm, LocationFormMixin, LocationCommandFormMixin):
     postalCode = StringField(
         lazy_gettext("Postal code"), validators=[DataRequired(), Length(max=10)]
     )
@@ -134,6 +162,28 @@ class Base64ImageForm(BaseForm):
         else:
             obj.data = None
             obj.encoding_format = None
+
+    def create_create_command(self):
+        if not self.image_base64.image_data:
+            return None
+
+        return CreateImage(
+            data=self.image_base64.image_data,
+            encoding_format=self.image_base64.encoding_format,
+            copyright_text=self.copyright_text.data,
+            license_id=self.license.data.id if self.license.data else None,
+        )
+
+    def create_update_command(self):
+        if self.image_base64.data and self.image_base64.encoding_format:
+            return UpdateImage(
+                data=self.image_base64.image_data,
+                encoding_format=self.image_base64.encoding_format,
+                copyright_text=self.copyright_text.data,
+                license_id=self.license.data.id if self.license.data else None,
+            )
+
+        return None
 
 
 def get_accept_tos_markup():

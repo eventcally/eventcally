@@ -32,12 +32,61 @@ def pytest_generate_tests(metafunc):
 @pytest.fixture
 def app():
     from project import app
+    from project.domain import events
+    from project.service_layer.abstract_event_dispatcher import AbstractEventDispatcher
+    from project.service_layer.services.abstract_email_service import (
+        AbstractEmailService,
+    )
 
-    app.config["SERVER_NAME"] = None
+    assert os.environ["DATABASE_URL"] == os.environ.get(
+        "TEST_DATABASE_URL", "postgresql://user:pass@myserver/ec_tests"
+    )
+
+    app.config["SERVER_NAME"] = "localhost"
     app.config["TESTING"] = True
     app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = False
     app.config["API_READ_ANONYM"] = False
     app.testing = True
+
+    class TestEventDispatcher(AbstractEventDispatcher):
+        def __init__(self, container):
+            super().__init__()
+            self.container = container
+            self.events = []
+
+        def dispatch(self, event: events.Event):
+            self.events.append(event)
+
+        def handle_pending_events(self):
+            message_bus = self.container.cqrs.message_bus()
+
+            for event in self.events:
+                message_bus.handle(event)
+
+            self.events = []
+
+    app.test_event_dispatcher = TestEventDispatcher(app.container)
+    app.container.cqrs.event_dispatcher.override(app.test_event_dispatcher)
+
+    class TestEmailService(AbstractEmailService):
+        def __init__(self, default_locale):
+            super().__init__(default_locale)
+            self.sent_emails = []
+
+        def send_mails_with_signatures_async(self, signatures):
+            for signature in signatures:
+                recipient, subject, body, html = signature
+                self.sent_emails.append(
+                    {
+                        "recipient": recipient,
+                        "subject": subject,
+                        "body": body,
+                        "html": html,
+                    }
+                )
+
+    app.test_email_service = TestEmailService(default_locale="de")
+    app.container.services.email_service.override(app.test_email_service)
 
     return app
 
@@ -85,6 +134,12 @@ def container(app):
     """Provides access to the dependency injection container."""
     with app.app_context():
         yield app.container
+
+
+@pytest.fixture
+def message_bus(container):
+    """Provides access to the message bus."""
+    return container.cqrs.message_bus()
 
 
 def create_initial_test_data():

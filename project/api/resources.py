@@ -2,6 +2,7 @@ from functools import wraps
 
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
+from dependency_injector.wiring import Provide, inject
 from flask import abort, request
 from flask_apispec import marshal_with
 from flask_apispec.annotations import annotate
@@ -15,9 +16,11 @@ from project.api.schemas import (
     TooManyRequestsResponseSchema,
     UnprocessableEntityResponseSchema,
 )
+from project.container import Application
 from project.models.api_key import ApiKey
 from project.models.mixins.rate_limit_provider_mixin import RateLimitProviderMixin
 from project.oauth2 import require_oauth
+from project.service_layer.message_bus import MessageBus
 from project.utils import getattr_keypath, hash_api_key
 
 api_rate_limit_scope = "api"
@@ -144,6 +147,7 @@ def require_organization_api_access(scope: str, model=None, **outer_kwargs):
             from project.models import AdminUnit
             from project.views.utils import set_current_admin_unit
 
+            api_command_context = {}
             id = kwargs.get("id")
 
             if model:
@@ -153,6 +157,7 @@ def require_organization_api_access(scope: str, model=None, **outer_kwargs):
                 )
                 admin_unit_id = getattr_keypath(instance, admin_unit_id_path)
                 setattr(g, "manage_admin_unit_instance", instance)
+                api_command_context["id"] = id
             else:
                 admin_unit_id = id
 
@@ -169,6 +174,9 @@ def require_organization_api_access(scope: str, model=None, **outer_kwargs):
             access_or_401(admin_unit, permission)
             set_current_admin_unit(admin_unit)
 
+            api_command_context["admin_unit_id"] = admin_unit_id
+            setattr(g, "api_command_context", api_command_context)
+
             return func(*args, **kwargs)
 
         return wrapped
@@ -181,6 +189,10 @@ def require_organization_api_access(scope: str, model=None, **outer_kwargs):
 @marshal_with(TooManyRequestsResponseSchema, 429, "Too many requests")
 class BaseResource(MethodResource):
     decorators = [etag_cache]
+
+    @inject
+    def __init__(self, message_bus: MessageBus = Provide[Application.cqrs.message_bus]):
+        self.message_bus = message_bus
 
     def create_instance(self, schema_cls, **kwargs):
         instance = schema_cls().load(request.json, session=db.session)

@@ -22,6 +22,7 @@ from project.access import (
     has_access,
 )
 from project.dateutils import berlin_tz, round_to_next_day
+from project.domain.errors import BaseError
 from project.models import Event, EventAttendanceMode, EventDate
 from project.utils import dummy_gettext, get_place_str, strings_are_equal_ignoring_case
 
@@ -132,6 +133,18 @@ def handleSqlError(e: SQLAlchemyError) -> str:
         return message
 
     return "%s (%s)" % (prefix, message)
+
+
+def handleBaseError(e: BaseError) -> str:
+    message = gettext(e.message)
+
+    if e.cause:
+        detail = (
+            gettext(e.cause.message) if hasattr(e.cause, "message") else str(e.cause)
+        )
+        return f"{message} ({detail})"
+
+    return message  # pragma: no cover
 
 
 def get_pagination_urls(pagination, **kwargs):
@@ -499,5 +512,16 @@ def handle_db_error(func):
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
+
+    return wrapper
+
+
+def handle_base_error(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except BaseError as e:
+            flash(handleBaseError(e), "danger")
 
     return wrapper

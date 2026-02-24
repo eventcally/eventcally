@@ -75,12 +75,14 @@ from project.api.organization_verification_request.schemas import (
     OrganizationVerificationRequestPostRequestSchema,
 )
 from project.api.organizer.schemas import (
+    OrganizerCreateRequestPlainSchema,
     OrganizerIdSchema,
     OrganizerListRequestSchema,
     OrganizerListResponseSchema,
     OrganizerPostRequestSchema,
 )
 from project.api.place.schemas import (
+    PlaceCreateRequestPlainSchema,
     PlaceIdSchema,
     PlaceListRequestSchema,
     PlaceListResponseSchema,
@@ -283,15 +285,11 @@ class OrganizationOrganizerListResource(BaseResource):
     @marshal_with(OrganizerIdSchema, 201)
     @require_organization_api_access("organization.event_organizers:write")
     def post(self, id):
-        admin_unit = g.manage_admin_unit
-
-        organizer = self.create_instance(
-            OrganizerPostRequestSchema, admin_unit_id=admin_unit.id
+        cmd = OrganizerCreateRequestPlainSchema(context=g.api_command_context).load(
+            request.json
         )
-        db.session.add(organizer)
-        db.session.commit()
-
-        return organizer, 201
+        cmd_result = self.message_bus.handle_command(cmd)
+        return cmd_result, 201
 
 
 class OrganizationPlaceListResource(BaseResource):
@@ -316,15 +314,11 @@ class OrganizationPlaceListResource(BaseResource):
     @marshal_with(PlaceIdSchema, 201)
     @require_organization_api_access("organization.event_places:write")
     def post(self, id):
-        admin_unit = g.manage_admin_unit
-
-        place = self.create_instance(
-            PlacePostRequestSchema, admin_unit_id=admin_unit.id
+        cmd = PlaceCreateRequestPlainSchema(context=g.api_command_context).load(
+            request.json
         )
-        db.session.add(place)
-        db.session.commit()
-
-        return place, 201
+        cmd_result = self.message_bus.handle_command(cmd)
+        return cmd_result, 201
 
 
 class OrganizationIncomingEventReferenceListResource(BaseResource):

@@ -1,12 +1,15 @@
-from marshmallow import fields, validate
+from marshmallow import fields, post_load, validate
 
 from project.api import marshmallow
 from project.api.fields import Owned
 from project.api.image.schemas import ImageDumpSchema, ImageSchema
 from project.api.location.schemas import (
+    LocationCreateRequestPlainSchema,
     LocationDumpSchema,
+    LocationPatchRequestPlainSchema,
     LocationPatchRequestSchema,
     LocationPostRequestSchema,
+    LocationPutRequestPlainSchema,
     LocationSchema,
     LocationSearchItemSchema,
 )
@@ -15,11 +18,17 @@ from project.api.schemas import (
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
+    PlainBaseSchema,
     SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
     WriteIdSchemaMixin,
 )
+from project.domain.commands import (
+    CreateEventOrganizerCommand,
+    UpdateEventOrganizerCommand,
+)
+from project.domain.types import unset
 from project.models import EventOrganizer
 
 
@@ -42,15 +51,11 @@ class OrganizerWriteIdSchema(OrganizerModelSchema, WriteIdSchemaMixin):
 
 
 class OrganizerBaseSchemaMixin(TrackableSchemaMixin):
-    name = marshmallow.auto_field(
-        required=True, validate=validate.Length(min=3, max=255)
-    )
-    url = marshmallow.auto_field(validate=[validate.URL(), validate.Length(max=255)])
-    email = marshmallow.auto_field(
-        validate=[validate.Email(), validate.Length(max=255)]
-    )
-    phone = marshmallow.auto_field()
-    fax = marshmallow.auto_field()
+    name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
+    url = fields.Str(validate=[validate.URL(), validate.Length(max=255)])
+    email = fields.Str(validate=[validate.Email(), validate.Length(max=255)])
+    phone = fields.Str(validate=validate.Length(max=255))
+    fax = fields.Str(validate=validate.Length(max=255))
 
 
 class OrganizerSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):
@@ -110,3 +115,69 @@ class OrganizerPatchRequestSchema(OrganizerModelSchema, OrganizerBaseSchemaMixin
         self.make_patch_schema()
 
     location = Owned(LocationPatchRequestSchema)
+
+
+class OrganizerCreateRequestPlainSchema(PlainBaseSchema):
+    name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
+    url = fields.Str(
+        load_default=None, validate=[validate.URL(), validate.Length(max=255)]
+    )
+    email = fields.Str(
+        load_default=None, validate=[validate.Email(), validate.Length(max=255)]
+    )
+    phone = fields.Str(load_default=None, validate=validate.Length(max=255))
+    fax = fields.Str(load_default=None, validate=validate.Length(max=255))
+    location = fields.Nested(LocationCreateRequestPlainSchema, load_default=None)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["admin_unit_id"] = self.context.get("admin_unit_id")
+        return CreateEventOrganizerCommand.model_construct(**data)
+
+
+class OrganizerPutRequestPlainSchema(PlainBaseSchema):
+    name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
+    url = fields.Str(
+        load_default=None, validate=[validate.URL(), validate.Length(max=255)]
+    )
+    email = fields.Str(
+        load_default=None, validate=[validate.Email(), validate.Length(max=255)]
+    )
+    phone = fields.Str(load_default=None, validate=validate.Length(max=255))
+    fax = fields.Str(load_default=None, validate=validate.Length(max=255))
+    location = fields.Nested(LocationPutRequestPlainSchema, load_default=None)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        return UpdateEventOrganizerCommand.model_construct(**data)
+
+
+class OrganizerPatchRequestPlainSchema(PlainBaseSchema):
+    name = fields.Str(
+        load_default=unset, allow_none=True, validate=validate.Length(min=3, max=255)
+    )
+    url = fields.Str(
+        load_default=unset,
+        allow_none=True,
+        validate=[validate.URL(), validate.Length(max=255)],
+    )
+    email = fields.Str(
+        load_default=unset,
+        allow_none=True,
+        validate=[validate.Email(), validate.Length(max=255)],
+    )
+    phone = fields.Str(
+        load_default=unset, allow_none=True, validate=validate.Length(max=255)
+    )
+    fax = fields.Str(
+        load_default=unset, allow_none=True, validate=validate.Length(max=255)
+    )
+    location = fields.Nested(
+        LocationPatchRequestPlainSchema, load_default=unset, allow_none=True
+    )
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        return UpdateEventOrganizerCommand.model_construct(**data)

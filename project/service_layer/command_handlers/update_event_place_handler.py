@@ -1,0 +1,13 @@
+from project.domain import commands
+from project.domain.abstract_unit_of_work import AbstractUnitOfWork
+
+from .abstract_command_handler import AbstractCommandHandler
+from .event_place_utils import ensure_event_place_exists
+
+
+class UpdateEventPlaceHandler(AbstractCommandHandler):
+    def handle(self, cmd: commands.UpdateEventPlaceCommand, uow: AbstractUnitOfWork):
+        with uow:
+            event_place = ensure_event_place_exists(cmd.id, uow)
+            event_place.update(cmd)
+            uow.commit()

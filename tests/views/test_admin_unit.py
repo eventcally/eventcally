@@ -406,6 +406,13 @@ def test_admin_unit_request_deletion(
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         assert admin_unit.deletion_requested_at is not None
 
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert (
+        app.test_email_service.sent_emails[0]["subject"]
+        == "Löschung der Organisation beantragt"
+    )
+
 
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("non_match", [True, False])

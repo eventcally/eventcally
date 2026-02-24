@@ -1,11 +1,12 @@
-from flask import g, make_response
+from flask import g, make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
 
-from project import db
 from project.api import add_api_resource
 from project.api.organizer.schemas import (
+    OrganizerPatchRequestPlainSchema,
     OrganizerPatchRequestSchema,
     OrganizerPostRequestSchema,
+    OrganizerPutRequestPlainSchema,
     OrganizerSchema,
 )
 from project.api.resources import (
@@ -13,6 +14,7 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
+from project.domain.commands import DeleteEventOrganizerCommand
 from project.models import EventOrganizer
 
 
@@ -33,9 +35,10 @@ class OrganizerResource(BaseResource):
         "organization.event_organizers:write", EventOrganizer
     )
     def put(self, id):
-        organizer = g.manage_admin_unit_instance
-        organizer = self.update_instance(OrganizerPostRequestSchema, instance=organizer)
-        db.session.commit()
+        cmd = OrganizerPutRequestPlainSchema(context=g.api_command_context).load(
+            request.json
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -49,11 +52,10 @@ class OrganizerResource(BaseResource):
         "organization.event_organizers:write", EventOrganizer
     )
     def patch(self, id):
-        organizer = g.manage_admin_unit_instance
-        organizer = self.update_instance(
-            OrganizerPatchRequestSchema, instance=organizer
+        cmd = OrganizerPatchRequestPlainSchema(context=g.api_command_context).load(
+            request.json
         )
-        db.session.commit()
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -66,9 +68,8 @@ class OrganizerResource(BaseResource):
         "organization.event_organizers:write", EventOrganizer
     )
     def delete(self, id):
-        organizer = g.manage_admin_unit_instance
-        db.session.delete(organizer)
-        db.session.commit()
+        cmd = DeleteEventOrganizerCommand.model_construct(id=id)
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 

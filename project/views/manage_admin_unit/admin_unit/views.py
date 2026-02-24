@@ -102,7 +102,7 @@ class RequestDeletionView(BaseDeleteView):
     def get_redirect_url(self, **kwargs):
         return url_for("manage_admin_unit", id=current_admin_unit.id)
 
-    def flash_success_text(self, form, object):
+    def flash_success_message(self, form, object):
         pass
 
 
@@ -143,5 +143,5 @@ class CancelDeletionView(BaseDeleteView):
     def get_redirect_url(self, **kwargs):
         return url_for("manage_admin_unit", id=current_admin_unit.id)
 
-    def flash_success_text(self, form, object):
+    def flash_success_message(self, form, object):
         pass

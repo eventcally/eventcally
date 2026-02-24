@@ -14,6 +14,84 @@ def test_location_update_coordinate(client, app, db):
     assert location.coordinate is not None
 
 
+def test_image_update(client, app, db, seeder: Seeder):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_place_id = seeder.upsert_default_event_place(admin_unit_id)
+    image_id = seeder.upsert_default_image()
+
+    with app.app_context():
+        from project.domain.commands import UpdateEventPlaceCommand
+        from project.domain.types import Actor
+        from project.models import EventPlace
+
+        place = db.session.get(EventPlace, event_place_id)
+        place.photo_id = image_id
+        db.session.commit()
+
+        place.update(
+            UpdateEventPlaceCommand(
+                id=event_place_id, actor=Actor(user_id=user_id), photo=None
+            )
+        )
+        db.session.commit()
+
+        assert place.photo is None
+
+        domain_event = place.domain_events[0]
+        assert domain_event.photo is None
+
+
+def test_event_place_update_not_existing(message_bus, app, db, seeder: Seeder):
+    user_id, _ = seeder.setup_base()
+
+    with app.app_context():
+        from project.domain.commands.update_event_place_command import (
+            UpdateEventPlaceCommand,
+        )
+        from project.domain.errors import NotFoundError
+        from project.domain.types import Actor
+
+        with pytest.raises(NotFoundError):
+            message_bus.handle(
+                UpdateEventPlaceCommand(id=999, actor=Actor(user_id=user_id))
+            )
+
+
+def test_event_organizer_created_event_handler(message_bus, app, db, seeder: Seeder):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    with app.app_context():
+        from project.domain.events import EventOrganizerCreated
+        from project.domain.types import Actor
+
+        message_bus.handle(
+            EventOrganizerCreated(
+                id=999,
+                admin_unit_id=admin_unit_id,
+                name="Test Organizer",
+                actor=Actor(user_id=user_id),
+            )
+        )
+
+
+def test_organization_deletion_requested_email_event_handler(
+    message_bus, app, db, seeder: Seeder
+):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    app.container.services.email_service.reset_override()
+    with app.app_context():
+        from project.domain.events import OrganizationDeletionRequested
+        from project.domain.types import Actor
+
+        message_bus.handle(
+            OrganizationDeletionRequested(
+                id=admin_unit_id,
+                actor=Actor(user_id=user_id),
+            )
+        )
+
+
 def test_event_category(client, app, db, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)

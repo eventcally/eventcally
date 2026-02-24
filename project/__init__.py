@@ -15,6 +15,7 @@ from flask_migrate import Migrate
 from flask_security import Security, SQLAlchemySessionUserDatastore, user_registered
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+from regex import T
 from sqlalchemy import MetaData
 
 from project.custom_session_interface import CustomSessionInterface
@@ -220,9 +221,6 @@ migrate = Migrate(app, db, render_as_batch=False)
 # Celery tasks
 from project import base_tasks, celery_tasks
 
-# API
-from project.api import RestApi
-
 # JSON
 from project.jsonld import CustomJsonProvider
 
@@ -271,6 +269,13 @@ from project.container import Application
 
 container = Application()
 container.config.from_dict(app.config)
+container.wire(
+    packages=[
+        "project.views",
+        "project.api",
+    ],
+    warn_unresolved=True,
+)
 
 # Make container available in Flask app
 app.container = container

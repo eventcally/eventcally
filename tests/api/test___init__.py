@@ -57,6 +57,21 @@ def test_handle_error_httpException(app):
         assert code == 500
 
 
+def test_handle_error_domain_error(app):
+    from project.api import RestApi
+    from project.domain.errors import DuplicateError
+
+    error = DuplicateError("Custom message")
+
+    with app.app_context():
+        app.config["PROPAGATE_EXCEPTIONS"] = False
+        api = RestApi(app)
+        (data, code) = api.handle_error(error)
+        assert code == 400
+        assert data["name"] == "DuplicateError"
+        assert data["message"] == "Custom message"
+
+
 def test_handle_error_unprocessableEntity(app):
     from marshmallow import ValidationError
     from werkzeug.exceptions import UnprocessableEntity
