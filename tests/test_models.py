@@ -79,17 +79,20 @@ def test_organization_deletion_requested_email_event_handler(
 ):
     user_id, admin_unit_id = seeder.setup_base()
 
-    app.container.services.email_service.reset_override()
-    with app.app_context():
-        from project.domain.events import OrganizationDeletionRequested
-        from project.domain.types import Actor
+    try:
+        app.container.services.email_service.reset_override()
+        with app.app_context():
+            from project.domain.events import OrganizationDeletionRequested
+            from project.domain.types import Actor
 
-        message_bus.handle(
-            OrganizationDeletionRequested(
-                id=admin_unit_id,
-                actor=Actor(user_id=user_id),
+            message_bus.handle(
+                OrganizationDeletionRequested(
+                    id=admin_unit_id,
+                    actor=Actor(user_id=user_id),
+                )
             )
-        )
+    finally:
+        app.container.services.email_service.override(app.test_email_service)
 
 
 def test_event_category(client, app, db, seeder: Seeder):

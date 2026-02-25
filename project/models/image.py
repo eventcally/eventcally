@@ -41,7 +41,6 @@ class Image(db.Model, ImageGeneratedMixin, IOwned):
         setattr(parent, field_name, instance)
 
         event = ImageCreated(
-            data=instance.data,
             encoding_format=instance.encoding_format,
             copyright_text=instance.copyright_text,
             license_id=instance.license_id,
@@ -75,7 +74,6 @@ class Image(db.Model, ImageGeneratedMixin, IOwned):
             instance = cls()
 
         event = ImageUpdated()
-        instance._update_field(cmd, event, "data")
         instance._update_field(cmd, event, "encoding_format")
         instance._update_field(cmd, event, "copyright_text")
         instance._update_field(cmd, event, "license_id")

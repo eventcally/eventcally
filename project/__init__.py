@@ -15,7 +15,6 @@ from flask_migrate import Migrate
 from flask_security import Security, SQLAlchemySessionUserDatastore, user_registered
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
-from regex import T
 from sqlalchemy import MetaData
 
 from project.custom_session_interface import CustomSessionInterface
