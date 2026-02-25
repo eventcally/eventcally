@@ -16,29 +16,32 @@ def test_organizers(client, seeder: Seeder, utils: UtilActions):
 
 
 def test_organizers_post(client, seeder: Seeder, utils: UtilActions, app):
-    app.container.cqrs.event_dispatcher.reset_override()
-    user_id, admin_unit_id = seeder.setup_api_access()
+    try:
+        app.container.cqrs.event_dispatcher.reset_override()
+        user_id, admin_unit_id = seeder.setup_api_access()
 
-    url = utils.get_url("api_v1_organization_organizer_list", id=admin_unit_id)
-    response = utils.post_json(
-        url,
-        {
-            "name": "Neuer Organisator",
-            "url": "http://test.de",
-            "email": "test@example.com",
-            "phone": "1234567890",
-            "fax": "0987654321",
-            "location": {
-                "street": "Straße 1",
-                "postalCode": "38640",
-                "city": "Goslar",
-                "latitude": "51.9077888",
-                "longitude": "10.4333312",
+        url = utils.get_url("api_v1_organization_organizer_list", id=admin_unit_id)
+        response = utils.post_json(
+            url,
+            {
+                "name": "Neuer Organisator",
+                "url": "http://test.de",
+                "email": "test@example.com",
+                "phone": "1234567890",
+                "fax": "0987654321",
+                "location": {
+                    "street": "Straße 1",
+                    "postalCode": "38640",
+                    "city": "Goslar",
+                    "latitude": "51.9077888",
+                    "longitude": "10.4333312",
+                },
             },
-        },
-    )
-    utils.assert_response_created(response)
-    assert "id" in response.json
+        )
+        utils.assert_response_created(response)
+        assert "id" in response.json
+    finally:
+        app.container.cqrs.event_dispatcher.override(app.test_event_dispatcher)
 
     with app.app_context():
         from project.models import EventOrganizer
