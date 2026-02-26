@@ -50,25 +50,28 @@ class CustomModel(SQLAlchemyModel):
     def _update_field(
         self,
         command: commands.Command,
-        event: events.Event,
+        event: events.Event | None,
         field_name: str,
         event_field_name: Optional[str] = None,
-    ):
+    ) -> bool:
         new_value = getattr(command, field_name)
         if new_value == types.unset:
-            return
+            return False
 
         old_value = getattr(self, field_name)
         if old_value == new_value:
-            return
+            return False
 
         setattr(self, field_name, new_value)
 
-        if event_field_name is None:
-            event_field_name = field_name
+        if event is not None:
+            if event_field_name is None:
+                event_field_name = field_name
 
-        changed_value = types.ChangedValue(old=old_value, new=new_value)
-        setattr(event, event_field_name, changed_value)
+            changed_value = types.ChangedValue(old=old_value, new=new_value)
+            setattr(event, event_field_name, changed_value)
+
+        return True
 
     def __str__(self):  # pragma: no cover
         id = getattr(self, "id", "")

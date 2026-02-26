@@ -74,6 +74,8 @@ class Image(db.Model, ImageGeneratedMixin, IOwned):
             instance = cls()
 
         event = ImageUpdated()
+        if instance._update_field(cmd, None, "data"):
+            event.data_changed = True
         instance._update_field(cmd, event, "encoding_format")
         instance._update_field(cmd, event, "copyright_text")
         instance._update_field(cmd, event, "license_id")
