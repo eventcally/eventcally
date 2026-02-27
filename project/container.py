@@ -386,6 +386,9 @@ class Cqrs(containers.DeclarativeContainer):
             commands.RequestOrganizationDeletionCommand: providers.Factory(
                 command_handlers.RequestOrganizationDeletionHandler
             ),
+            commands.CancelOrganizationDeletionCommand: providers.Factory(
+                command_handlers.CancelOrganizationDeletionHandler
+            ),
         }
     )
 

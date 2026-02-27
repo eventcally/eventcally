@@ -1,7 +1,9 @@
 from flask import redirect, request, url_for
 from flask_babel import gettext, lazy_gettext
 
-from project import db
+from project.domain.commands.cancel_organization_deletion_command import (
+    CancelOrganizationDeletionCommand,
+)
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.utils import widget_default_background_color, widget_default_primary_color
 from project.views.manage_admin_unit.admin_unit.forms import (
@@ -136,9 +138,8 @@ class CancelDeletionView(BaseDeleteView):
         )
 
     def delete_object_from_db(self, object):
-        object.deletion_requested_at = None
-        object.deletion_requested_by_id = None
-        db.session.commit()
+        cmd = CancelOrganizationDeletionCommand.model_construct(id=object.id)
+        self.message_bus.handle_command(cmd)
 
     def get_redirect_url(self, **kwargs):
         return url_for("manage_admin_unit", id=current_admin_unit.id)

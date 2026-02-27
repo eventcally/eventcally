@@ -1,4 +1,5 @@
 from .base import Command, CommandResult, CommandResultType, CommandWithResult
+from .cancel_organization_deletion_command import CancelOrganizationDeletionCommand
 from .create_event_organizer_command import (
     CreateEventOrganizerCommand,
     CreateEventOrganizerCommandResult,
@@ -35,4 +36,5 @@ __all__ = [
     "UpdateImage",
     "UpdateLocation",
     "RequestOrganizationDeletionCommand",
+    "CancelOrganizationDeletionCommand",
 ]

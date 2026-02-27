@@ -7,8 +7,14 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import aliased
 
 from project import db
-from project.domain.commands import RequestOrganizationDeletionCommand
-from project.domain.events import OrganizationDeletionRequested
+from project.domain.commands import (
+    CancelOrganizationDeletionCommand,
+    RequestOrganizationDeletionCommand,
+)
+from project.domain.events import (
+    OrganizationDeletionCancelled,
+    OrganizationDeletionRequested,
+)
 from project.models.admin_unit_generated import AdminUnitGeneratedMixin
 from project.models.admin_unit_invitation_generated import (
     AdminUnitInvitationGeneratedMixin,
@@ -117,6 +123,16 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
         self.deletion_requested_by_id = cmd.actor.user_id
 
         event = OrganizationDeletionRequested(
+            actor=cmd.actor,
+            id=self.id,
+        )
+        self.domain_events.append(event)
+
+    def cancel_deletion(self, cmd: CancelOrganizationDeletionCommand):
+        self.deletion_requested_at = None
+        self.deletion_requested_by_id = None
+
+        event = OrganizationDeletionCancelled(
             actor=cmd.actor,
             id=self.id,
         )

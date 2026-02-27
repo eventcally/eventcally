@@ -9,6 +9,7 @@ from .image_created import ImageCreated
 from .image_updated import ImageUpdated
 from .location_created import LocationCreated
 from .location_updated import LocationUpdated
+from .organization_deletion_cancelled import OrganizationDeletionCancelled
 from .organization_deletion_requested import OrganizationDeletionRequested
 
 __all__ = [
@@ -24,4 +25,5 @@ __all__ = [
     "LocationCreated",
     "LocationUpdated",
     "OrganizationDeletionRequested",
+    "OrganizationDeletionCancelled",
 ]
