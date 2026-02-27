@@ -175,7 +175,7 @@ class Base64ImageForm(BaseForm):
         )
 
     def create_update_command(self):
-        if self.image_base64.data and self.image_base64.encoding_format:
+        if self.image_base64.image_data and self.image_base64.encoding_format:
             return UpdateImage(
                 data=self.image_base64.image_data,
                 encoding_format=self.image_base64.encoding_format,

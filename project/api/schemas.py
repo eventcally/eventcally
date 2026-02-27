@@ -34,6 +34,10 @@ class IdSchemaMixin(object):
     id = marshmallow.auto_field(dump_only=True, dump_default=missing)
 
 
+class IdPlainSchemaMixin(object):
+    id = fields.Integer(dump_only=True, dump_default=missing)
+
+
 class WriteIdSchemaMixin(object):
     id = marshmallow.auto_field(required=True)
 

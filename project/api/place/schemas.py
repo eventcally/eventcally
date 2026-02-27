@@ -15,6 +15,7 @@ from project.api.location.schemas import (
 )
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
+    IdPlainSchemaMixin,
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
@@ -36,6 +37,10 @@ class PlaceModelSchema(SQLAlchemyBaseSchema):
 
 
 class PlaceIdSchema(PlaceModelSchema, IdSchemaMixin):
+    pass
+
+
+class PlaceIdPlainSchema(PlainBaseSchema, IdPlainSchemaMixin):
     pass
 
 

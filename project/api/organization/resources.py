@@ -76,14 +76,14 @@ from project.api.organization_verification_request.schemas import (
 )
 from project.api.organizer.schemas import (
     OrganizerCreateRequestPlainSchema,
-    OrganizerIdSchema,
+    OrganizerIdPlainSchema,
     OrganizerListRequestSchema,
     OrganizerListResponseSchema,
     OrganizerPostRequestSchema,
 )
 from project.api.place.schemas import (
     PlaceCreateRequestPlainSchema,
-    PlaceIdSchema,
+    PlaceIdPlainSchema,
     PlaceListRequestSchema,
     PlaceListResponseSchema,
     PlacePostRequestSchema,
@@ -282,7 +282,7 @@ class OrganizationOrganizerListResource(BaseResource):
         tags=["Organizations", "Organizers"],
     )
     @use_kwargs(OrganizerPostRequestSchema, location="json", apply=False)
-    @marshal_with(OrganizerIdSchema, 201)
+    @marshal_with(OrganizerIdPlainSchema, 201)
     @require_organization_api_access("organization.event_organizers:write")
     def post(self, id):
         cmd = OrganizerCreateRequestPlainSchema(context=g.api_command_context).load(
@@ -311,7 +311,7 @@ class OrganizationPlaceListResource(BaseResource):
         tags=["Organizations", "Places"],
     )
     @use_kwargs(PlacePostRequestSchema, location="json", apply=False)
-    @marshal_with(PlaceIdSchema, 201)
+    @marshal_with(PlaceIdPlainSchema, 201)
     @require_organization_api_access("organization.event_places:write")
     def post(self, id):
         cmd = PlaceCreateRequestPlainSchema(context=g.api_command_context).load(
