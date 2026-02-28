@@ -1,0 +1,16 @@
+from typing import Optional
+
+from project.domain.events.image_updated import ImageUpdated
+from project.domain.events.location_updated import LocationUpdated
+from project.domain.types import ChangedValue, ObjectId, Unsetable, unset
+
+from .base import Event
+
+
+class EventPlaceUpdated(Event):
+    id: ObjectId
+    name: Optional[ChangedValue[str]] = None
+    url: Optional[ChangedValue[str]] = None
+    description: Optional[ChangedValue[str]] = None
+    location: Unsetable[LocationUpdated] = unset
+    photo: Unsetable[ImageUpdated] = unset

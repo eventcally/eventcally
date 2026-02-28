@@ -196,38 +196,6 @@ def test_event_search(
     response = utils.get_json_ok(url)
 
 
-def test_organizers(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
-    seeder.upsert_default_event_organizer(admin_unit_id)
-
-    url = utils.get_url("api_v1_organization_organizer_list", id=admin_unit_id)
-    utils.get_json_ok(url)
-
-    url = utils.get_url(
-        "api_v1_organization_organizer_list", id=admin_unit_id, name="crew"
-    )
-    utils.get_json_ok(url)
-
-
-def test_organizers_post(client, seeder: Seeder, utils: UtilActions, app):
-    user_id, admin_unit_id = seeder.setup_api_access()
-
-    url = utils.get_url("api_v1_organization_organizer_list", id=admin_unit_id)
-    response = utils.post_json(url, {"name": "Neuer Organisator"})
-    utils.assert_response_created(response)
-    assert "id" in response.json
-
-    with app.app_context():
-        from project.models import EventOrganizer
-
-        organizer = (
-            EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit_id)
-            .filter(EventOrganizer.name == "Neuer Organisator")
-            .first()
-        )
-        assert organizer is not None
-
-
 @pytest.mark.parametrize("as_app_installation", [True, False])
 def test_events(client, seeder: Seeder, utils: UtilActions, as_app_installation: bool):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
@@ -411,54 +379,6 @@ def test_events_post_photo_too_small(client, seeder: Seeder, utils: UtilActions,
     error = response.json["errors"][0]
     assert error["field"] == "photo"
     assert error["message"] == "Image is too small (1x1px). At least 320x320px."
-
-
-def test_places(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
-    seeder.upsert_default_event_place(admin_unit_id)
-
-    url = utils.get_url("api_v1_organization_place_list", id=admin_unit_id, name="crew")
-    utils.get_json_ok(url)
-
-
-@pytest.mark.parametrize("as_app_installation", [True, False])
-def test_places_post(
-    client, seeder: Seeder, utils: UtilActions, app, as_app_installation: bool
-):
-    user_id, admin_unit_id = seeder.setup_api_access(
-        as_app_installation=as_app_installation
-    )
-
-    url = utils.get_url("api_v1_organization_place_list", id=admin_unit_id)
-    response = utils.post_json(
-        url,
-        {
-            "name": "Neuer Ort",
-            "location": {"street": "Straße 1", "postalCode": "38640", "city": "Goslar"},
-        },
-    )
-    utils.assert_response_created(response)
-    assert "id" in response.json
-
-    with app.app_context():
-        from project.models import EventPlace
-
-        place = (
-            EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
-            .filter(EventPlace.name == "Neuer Ort")
-            .first()
-        )
-        assert place is not None
-        assert place.name == "Neuer Ort"
-        assert place.location.street == "Straße 1"
-        assert place.location.postalCode == "38640"
-        assert place.location.city == "Goslar"
-        assert place.created_by_label is not None
-
-        if as_app_installation:
-            assert place.created_by_app_installation_id is not None
-        else:
-            assert place.created_by is not None
 
 
 def test_event_lists(client, seeder: Seeder, utils: UtilActions):

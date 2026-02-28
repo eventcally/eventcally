@@ -5,8 +5,12 @@ from wtforms import FormField, StringField, SubmitField
 from wtforms.fields import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
+from project.domain.commands import (
+    CreateEventOrganizerCommand,
+    UpdateEventOrganizerCommand,
+)
 from project.forms.common import Base64ImageForm, GooglePlaceLocationForm
-from project.models import Image, Location
+from project.models import Image
 from project.models.event_organizer import EventOrganizer
 from project.modular.base_form import BaseForm
 from project.modular.widgets import AjaxValidationWidget
@@ -26,14 +30,6 @@ class BaseEventOrganizerForm(BaseForm):
     email = EmailField(lazy_gettext("Email"), validators=[Optional(), Length(max=255)])
     phone = TelField(lazy_gettext("Phone"), validators=[Optional(), Length(max=255)])
     fax = TelField(lazy_gettext("Fax"), validators=[Optional()])
-
-    def populate_obj(self, obj):
-        for name, field in self._fields.items():
-            if name == "location" and not obj.location:
-                obj.location = Location()
-            elif name == "logo" and not obj.logo:
-                obj.logo = Image()
-            field.populate_obj(obj, name)
 
     def ajax_validate_name(self, object, field, **kwargs):
         name = request.form["name"]
@@ -55,9 +51,35 @@ class BaseEventOrganizerForm(BaseForm):
 class CreateEventOrganizerForm(BaseEventOrganizerForm):
     submit = SubmitField(lazy_gettext("Create organizer"))
 
+    def create_create_command(self, admin_unit_id: int) -> CreateEventOrganizerCommand:
+        return CreateEventOrganizerCommand.model_construct(
+            admin_unit_id=admin_unit_id,
+            name=self.name.data,
+            url=self.url.data,
+            email=self.email.data,
+            phone=self.phone.data,
+            fax=self.fax.data,
+            location=self.location.form.create_create_command(),
+            logo=self.logo.form.create_create_command(),
+        )
+
 
 class UpdateEventOrganizerForm(BaseEventOrganizerForm):
     submit = SubmitField(lazy_gettext("Update organizer"))
+
+    def create_update_command(
+        self, event_organizer_id: int
+    ) -> UpdateEventOrganizerCommand:
+        return UpdateEventOrganizerCommand.model_construct(
+            id=event_organizer_id,
+            name=self.name.data,
+            url=self.url.data,
+            email=self.email.data,
+            phone=self.phone.data,
+            fax=self.fax.data,
+            location=self.location.form.create_update_command(),
+            logo=self.logo.form.create_update_command(),
+        )
 
 
 class DeleteEventOrganizerForm(BaseForm):

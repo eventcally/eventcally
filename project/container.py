@@ -4,10 +4,24 @@ from dependency_injector import containers, providers
 
 from project import db, repos, services
 from project.context import ContextProvider
+from project.domain import commands, events
+from project.infrastructure.sql_alchemy_unit_of_work import SqlAlchemyUnitOfWork
+from project.service_layer import command_handlers, event_handlers
+from project.service_layer.celery_event_dispatcher import CeleryEventDispatcher
+from project.service_layer.message_bus import MessageBus
+from project.service_layer.services.celery_email_service import CeleryEmailService
+
+
+def get_app_logger():
+    from project import app
+
+    return app.logger
 
 
 class Infrastructure(containers.DeclarativeContainer):
     db = providers.Object(db)  # SQLAlchemy database instance
+    session_factory = providers.Callable(lambda: db.session)
+    logger = providers.Callable(get_app_logger)
 
 
 class Context(containers.DeclarativeContainer):
@@ -158,6 +172,11 @@ class Repos(containers.DeclarativeContainer):
 class Services(containers.DeclarativeContainer):
     repos = providers.DependenciesContainer()
     context = providers.DependenciesContainer()
+    config = providers.Configuration()
+
+    email_service = providers.Factory(
+        CeleryEmailService, default_locale=config.BABEL_DEFAULT_LOCALE
+    )
 
     app_service = providers.Factory(
         services.AppService,
@@ -309,6 +328,7 @@ class Services(containers.DeclarativeContainer):
         event_repo=repos.event_repo,
         event_reference_service=event_reference_service,
         organization_verification_request_service=organization_verification_request_service,
+        email_service=email_service,
     )
     role_service = providers.Factory(
         services.RoleService,
@@ -332,12 +352,82 @@ class Services(containers.DeclarativeContainer):
     )
 
 
-class Application(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(
-        packages=["project.views", "project.api"], warn_unresolved=True
+class Cqrs(containers.DeclarativeContainer):
+    __self__ = providers.Self()
+    infrastructure = providers.DependenciesContainer()
+    context = providers.DependenciesContainer()
+    services = providers.DependenciesContainer()
+
+    uow = providers.Factory(
+        SqlAlchemyUnitOfWork,
+        scoped_session_or_factory=infrastructure.session_factory,
     )
 
+    command_handler_factory = providers.FactoryAggregate(
+        {
+            commands.CreateEventOrganizerCommand: providers.Factory(
+                command_handlers.CreateEventOrganizerHandler
+            ),
+            commands.UpdateEventOrganizerCommand: providers.Factory(
+                command_handlers.UpdateEventOrganizerHandler
+            ),
+            commands.DeleteEventOrganizerCommand: providers.Factory(
+                command_handlers.DeleteEventOrganizerHandler
+            ),
+            commands.CreateEventPlaceCommand: providers.Factory(
+                command_handlers.CreateEventPlaceHandler
+            ),
+            commands.UpdateEventPlaceCommand: providers.Factory(
+                command_handlers.UpdateEventPlaceHandler
+            ),
+            commands.DeleteEventPlaceCommand: providers.Factory(
+                command_handlers.DeleteEventPlaceHandler
+            ),
+            commands.RequestOrganizationDeletionCommand: providers.Factory(
+                command_handlers.RequestOrganizationDeletionHandler
+            ),
+            commands.CancelOrganizationDeletionCommand: providers.Factory(
+                command_handlers.CancelOrganizationDeletionHandler
+            ),
+        }
+    )
+
+    event_handler_factory = providers.FactoryAggregate(
+        {
+            events.EventOrganizerCreated: providers.List(
+                providers.Factory(
+                    event_handlers.LogEventHandler, logger=infrastructure.logger
+                )
+            ),
+            events.EventOrganizerUpdated: providers.List(
+                providers.Factory(
+                    event_handlers.LogEventHandler, logger=infrastructure.logger
+                )
+            ),
+            events.OrganizationDeletionRequested: providers.List(
+                providers.Factory(
+                    event_handlers.OrganizationDeletionRequestedEmailEventHandler,
+                    organization_service=services.organization_service,
+                )
+            ),
+        }
+    )
+
+    event_dispatcher = providers.Factory(CeleryEventDispatcher)
+
+    message_bus = providers.Factory(
+        MessageBus,
+        uow_factory=__self__,
+        context_provider=context.context_provider,
+        command_handler_factory=command_handler_factory,
+        event_handler_factory=event_handler_factory,
+        event_dispatcher=event_dispatcher,
+    )
+
+
+class Application(containers.DeclarativeContainer):
     config = providers.Configuration()
+    __self__ = providers.Self()
 
     infrastructure = providers.Container(Infrastructure)
     context = providers.Container(Context)
@@ -349,4 +439,11 @@ class Application(containers.DeclarativeContainer):
         Services,
         repos=repos,
         context=context,
+        config=config,
+    )
+    cqrs = providers.Container(
+        Cqrs,
+        infrastructure=infrastructure,
+        context=context,
+        services=services,
     )

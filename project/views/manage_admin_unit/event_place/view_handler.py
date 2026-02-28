@@ -14,10 +14,10 @@ from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
 from project.views.manage_admin_unit.event_place.displays import ListDisplay
-from project.views.manage_admin_unit.event_place.forms import (
-    CreateEventPlaceForm,
-    DeleteEventPlaceForm,
-    UpdateEventPlaceForm,
+from project.views.manage_admin_unit.event_place.views import (
+    CreateView,
+    DeleteView,
+    UpdateView,
 )
 from project.views.utils import current_admin_unit, non_match_for_deletion
 
@@ -27,10 +27,10 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     object_service: Annotated[
         EventPlaceService, Provide["services.event_place_service"]
     ]
-    create_form_class = CreateEventPlaceForm
+    create_view_class = CreateView
+    update_view_class = UpdateView
+    delete_view_class = DeleteView
     read_view_class = None
-    update_form_class = UpdateEventPlaceForm
-    delete_form_class = DeleteEventPlaceForm
     list_display_class = ListDisplay
     list_sort_definitions = [
         SortDefinition(EventPlace.name, func=func.lower, label=lazy_gettext("Name")),

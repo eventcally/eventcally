@@ -1,11 +1,12 @@
-from flask import g, make_response
+from flask import g, make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
 
-from project import db
 from project.api import add_api_resource
 from project.api.place.schemas import (
+    PlacePatchRequestPlainSchema,
     PlacePatchRequestSchema,
     PlacePostRequestSchema,
+    PlacePutRequestPlainSchema,
     PlaceSchema,
 )
 from project.api.resources import (
@@ -13,6 +14,7 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
+from project.domain.commands import DeleteEventPlaceCommand
 from project.models import EventPlace
 
 
@@ -31,9 +33,10 @@ class PlaceResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access("organization.event_places:write", EventPlace)
     def put(self, id):
-        place = g.manage_admin_unit_instance
-        place = self.update_instance(PlacePostRequestSchema, instance=place)
-        db.session.commit()
+        cmd = PlacePutRequestPlainSchema(context=g.api_command_context).load(
+            request.json
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -45,9 +48,10 @@ class PlaceResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access("organization.event_places:write", EventPlace)
     def patch(self, id):
-        place = g.manage_admin_unit_instance
-        place = self.update_instance(PlacePatchRequestSchema, instance=place)
-        db.session.commit()
+        cmd = PlacePatchRequestPlainSchema(context=g.api_command_context).load(
+            request.json
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -58,9 +62,8 @@ class PlaceResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access("organization.event_places:write", EventPlace)
     def delete(self, id):
-        place = g.manage_admin_unit_instance
-        db.session.delete(place)
-        db.session.commit()
+        cmd = DeleteEventPlaceCommand.model_construct(id=id)
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 

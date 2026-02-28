@@ -5,10 +5,7 @@ from project.api import marshmallow
 from project.api.fields import GmtDateTimeField
 
 
-class SQLAlchemyBaseSchema(marshmallow.SQLAlchemySchema):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
+class PostPatchSchemaMixin(object):
     def make_post_schema(self):
         for name, field in self.fields.items():
             if not field.required:
@@ -25,8 +22,20 @@ class SQLAlchemyBaseSchema(marshmallow.SQLAlchemySchema):
             field.allow_none = True
 
 
+class SQLAlchemyBaseSchema(marshmallow.SQLAlchemySchema, PostPatchSchemaMixin):
+    pass
+
+
+class PlainBaseSchema(marshmallow.Schema, PostPatchSchemaMixin):
+    pass
+
+
 class IdSchemaMixin(object):
     id = marshmallow.auto_field(dump_only=True, dump_default=missing)
+
+
+class IdPlainSchemaMixin(object):
+    id = fields.Integer(dump_only=True, dump_default=missing)
 
 
 class WriteIdSchemaMixin(object):

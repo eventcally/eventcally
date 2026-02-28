@@ -1,6 +1,6 @@
-import datetime
 from typing import Optional
 
+from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.models import AdminUnit
 from project.models.admin_unit import AdminUnitRelation
 from project.models.admin_unit_verification_request import (
@@ -14,6 +14,7 @@ from project.models.event_reference_request import (
 )
 from project.repos.event_repo import EventRepo
 from project.repos.organization_relation_repo import OrganizationRelationRepo
+from project.service_layer.services.abstract_email_service import AbstractEmailService
 from project.services import EventReferenceRequestService, EventReferenceService
 from project.services.base_service import BaseService
 from project.services.organization_verification_request_service import (
@@ -32,6 +33,7 @@ class OrganizationService(BaseService[AdminUnit]):
         event_repo: EventRepo,
         event_reference_service: EventReferenceService,
         organization_verification_request_service: OrganizationVerificationRequestService,
+        email_service: AbstractEmailService,
         **kwargs
     ):
         super().__init__(repo, context_provider, **kwargs)
@@ -42,6 +44,7 @@ class OrganizationService(BaseService[AdminUnit]):
         self.organization_verification_request_service = (
             organization_verification_request_service
         )
+        self.email_service = email_service
 
     def verify_incoming_organization_verification_request(
         self,
@@ -141,19 +144,13 @@ class OrganizationService(BaseService[AdminUnit]):
             reference=reference,
         )
 
-    def request_deletion(self, object: AdminUnit):
-        object.deletion_requested_at = datetime.datetime.now(datetime.UTC)
-        object.deletion_requested_by_id = self.context_provider.current_user_id_or_none
-        self.repo.update_object(object)
-
-        self._send_admin_unit_deletion_requested_mails(object)
-
-    def _send_admin_unit_deletion_requested_mails(self, admin_unit: AdminUnit):
-        from project.views.utils import send_template_mails_to_admin_unit_members_async
-
-        send_template_mails_to_admin_unit_members_async(
-            admin_unit.id,
-            "settings:write",
-            "organization_deletion_requested_notice",
-            admin_unit=admin_unit,
+    def send_template_mails_to_members_async(
+        self, uow: AbstractUnitOfWork, admin_unit_id, permissions, template, **context
+    ):
+        members = uow.organizations.get_members_with_permission(
+            admin_unit_id, permissions
+        )
+        users = [member.user for member in members]
+        self.email_service.send_template_mails_to_users_async(
+            users, template, **context
         )

@@ -3,10 +3,8 @@ from typing import Optional
 from flask import flash, jsonify, redirect, render_template, request
 from flask.views import View
 from flask_babel import lazy_gettext
-from sqlalchemy.exc import SQLAlchemyError
 from wtforms import RadioField, SelectField, StringField
 
-from project import db
 from project.modular.fields import AjaxSelectField, DateRangeField, RadiusField
 from project.modular.filters import (
     BooleanFilter,
@@ -17,11 +15,12 @@ from project.modular.filters import (
     StringFilter,
 )
 from project.permissions import PermissionAction
+from project.service_layer.message_bus import MessageBus
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
+    handle_base_error,
     handle_db_error,
-    handleSqlError,
     non_match_for_deletion,
 )
 
@@ -37,6 +36,10 @@ class BaseView(View):
         super().__init__()
 
         self.handler: Optional[BaseViewHandler] = kwargs.get("handler")
+
+    @property
+    def message_bus(self) -> MessageBus:
+        return self.handler.message_bus
 
     @classmethod
     def as_view(cls, name, *class_args, **class_kwargs):
@@ -321,6 +324,9 @@ class BaseFormView(BaseObjectView):
     def get_success_text(self, object, form):  # pragma: no cover
         return ""
 
+    def flash_success_message(self, object, form):
+        flash(self.get_success_text(object, form), "success")
+
 
 class BaseReadView(BaseObjectView):
     template_file_name = "read.html"
@@ -383,24 +389,24 @@ class BaseCreateView(BaseFormView):
             return response
 
         if form.validate_on_submit():
-            object = self.create_object()
-            form.populate_obj(object)
-
-            try:
-                self.complete_object(object, form)
-                self.insert_object(object, form)
-                self.flash_success_message(object, form)
-                return redirect(self.get_redirect_url(object=object))
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                flash(handleSqlError(e), "danger")
+            response = self.dispatch_validated_form(form, object, **kwargs)
+            if response:
+                return response
         else:
             flash_errors(form)
 
         return self.render_template(form=form, object=object)
 
-    def flash_success_message(self, object, form):
-        flash(self.get_success_text(object, form), "success")
+    @handle_base_error
+    @handle_db_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        object = self.create_object()
+        form.populate_obj(object)
+
+        self.complete_object(object, form)
+        self.insert_object(object, form)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
 
     def insert_object(self, object, form):
         self.handler.insert_object(object)
@@ -466,17 +472,15 @@ class BaseUpdateView(BaseObjectFormView):
     def save_object(self, object, form):
         self.handler.save_object(object)
 
+    @handle_base_error
+    @handle_db_error
     def dispatch_validated_form(self, form, object, **kwargs):
         form.populate_obj(object)
 
-        try:
-            self.complete_object(object, form)
-            self.save_object(object, form)
-            flash(self.get_success_text(object, form), "success")
-            return redirect(self.get_redirect_url(object=object))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
+        self.complete_object(object, form)
+        self.save_object(object, form)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
 
 
 class BaseDeleteView(BaseObjectFormView):
@@ -536,15 +540,16 @@ class BaseDeleteView(BaseObjectFormView):
     def delete_object_from_db(self, object):
         self.handler.delete_object(object)
 
-    def flash_success_text(self, form, object):
-        flash(self.get_success_text(object, form), "success")
-
     def get_redirect_url(self, **kwargs):
         return self.handler.get_list_url(**kwargs)
 
+    @handle_base_error
     @handle_db_error
     def dispatch_validated_form(self, form, object, **kwargs):
         if self.can_object_be_deleted(form, object):
-            self.delete_object_from_db(object)
-            self.flash_success_text(form, object)
-            return redirect(self.get_redirect_url())
+            return self.dispatch_validated_form_deletable(form, object, **kwargs)
+
+    def dispatch_validated_form_deletable(self, form, object, **kwargs):
+        self.delete_object_from_db(object)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url())

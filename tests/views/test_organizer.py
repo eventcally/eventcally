@@ -28,6 +28,15 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
         response,
         {
             "name": "Neuer Organisator",
+            "url": "http://test.de",
+            "email": "test@example.com",
+            "phone": "1234567890",
+            "fax": "0987654321",
+            "location-street": "Straße 1",
+            "location-postalCode": "38640",
+            "location-city": "Goslar",
+            "location-latitude": "51.9077888",
+            "location-longitude": "10.4333312",
             "logo-image_base64": seeder.get_default_image_upload_base64(),
             "logo-copyright_text": "EventCally",
         },
@@ -50,6 +59,19 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
             .first()
         )
         assert organizer is not None
+        assert organizer.name == "Neuer Organisator"
+        assert organizer.url == "http://test.de"
+        assert organizer.email == "test@example.com"
+        assert organizer.phone == "1234567890"
+        assert organizer.fax == "0987654321"
+        location = organizer.location
+        assert location.street == "Straße 1"
+        assert location.postalCode == "38640"
+        assert location.city == "Goslar"
+        assert float(location.latitude) == float("51.9077888")
+        assert float(location.longitude) == float("10.4333312")
+        assert organizer.logo is not None
+        assert organizer.logo.copyright_text == "EventCally"
 
 
 def test_create_logo_too_small(client, app, utils, seeder, mocker):
@@ -107,6 +129,38 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
 
         organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer.name == "Neuer Name"
+
+
+def test_update_logo(client, seeder, utils, app, db, mocker):
+    user_id, admin_unit_id = seeder.setup_base()
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    url = utils.get_url(
+        "manage_admin_unit.event_organizer_update",
+        id=admin_unit_id,
+        event_organizer_id=organizer_id,
+    )
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "logo-image_base64": seeder.get_default_image_upload_base64(),
+            "logo-copyright_text": "New EventCally",
+        },
+    )
+
+    utils.assert_response_redirect(
+        response, "manage_admin_unit.event_organizers", id=admin_unit_id
+    )
+
+    with app.app_context():
+        from project.models import EventOrganizer
+
+        organizer = db.session.get(EventOrganizer, organizer_id)
+        assert organizer.logo is not None
+        assert organizer.logo.copyright_text == "New EventCally"
 
 
 @pytest.mark.parametrize("db_error", [True, False])

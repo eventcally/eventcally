@@ -1,3 +1,5 @@
+import datetime
+
 from flask_security import RoleMixin
 from sqlalchemy import and_, func, select
 from sqlalchemy.event import listens_for
@@ -5,6 +7,14 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import aliased
 
 from project import db
+from project.domain.commands import (
+    CancelOrganizationDeletionCommand,
+    RequestOrganizationDeletionCommand,
+)
+from project.domain.events import (
+    OrganizationDeletionCancelled,
+    OrganizationDeletionRequested,
+)
 from project.models.admin_unit_generated import AdminUnitGeneratedMixin
 from project.models.admin_unit_invitation_generated import (
     AdminUnitInvitationGeneratedMixin,
@@ -44,6 +54,15 @@ class AdminUnitMember(db.Model, AdminUnitMemberGeneratedMixin):
             return role in (role.name for role in self.roles)
         else:  # pragma: no cover
             return role in self.roles
+
+    def has_permission(self, permission: str) -> bool:
+        """Returns `True` if the user has the specified permission through any of their roles.
+
+        :param permission: The name of the permission to check for."""
+        for role in self.roles:
+            if permission in role.get_permissions():
+                return True
+        return False  # pragma: no cover
 
     @hybrid_property
     def is_admin(self):
@@ -99,6 +118,26 @@ def before_saving_admin_unit_relation(mapper, connect, self):
 
 
 class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
+    def request_deletion(self, cmd: RequestOrganizationDeletionCommand):
+        self.deletion_requested_at = datetime.datetime.now(datetime.UTC)
+        self.deletion_requested_by_id = cmd.actor.user_id
+
+        event = OrganizationDeletionRequested(
+            actor=cmd.actor,
+            id=self.id,
+        )
+        self.domain_events.append(event)
+
+    def cancel_deletion(self, cmd: CancelOrganizationDeletionCommand):
+        self.deletion_requested_at = None
+        self.deletion_requested_by_id = None
+
+        event = OrganizationDeletionCancelled(
+            actor=cmd.actor,
+            id=self.id,
+        )
+        self.domain_events.append(event)
+
     def get_number_of_api_keys(self):
         from project.models.api_key import ApiKey
 

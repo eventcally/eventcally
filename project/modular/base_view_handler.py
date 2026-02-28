@@ -1,8 +1,11 @@
-from typing import Optional
+from typing import Annotated, Optional
 
+from dependency_injector.providers import Factory
+from dependency_injector.wiring import Provider
 from flask import Blueprint, abort, current_app, url_for
 from flask_babel import gettext
 
+from project.container import Application
 from project.modular.base_blueprint import BaseBlueprint
 from project.modular.base_form import BaseDeleteForm, BaseListForm
 from project.modular.base_views import (
@@ -13,10 +16,14 @@ from project.modular.base_views import (
     BaseUpdateView,
     BaseView,
 )
+from project.service_layer.message_bus import MessageBus
 
 
 class BaseViewHandler:
     decorators = []
+    message_bus_factory: Annotated[
+        Factory[MessageBus], Provider[Application.cqrs.message_bus]
+    ]
     model = None
     object_service = None
     create_view_class = BaseCreateView
@@ -59,6 +66,10 @@ class BaseViewHandler:
                 pass
 
             self.list_form_class = ListForm
+
+    @property
+    def message_bus(self) -> MessageBus:
+        return self.message_bus_factory()
 
     def get_model_display_name(self):
         return self.model.get_display_name()
