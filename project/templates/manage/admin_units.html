@@ -8,7 +8,7 @@
 <h1>{{ _('Invitations') }}</h1>
 <div class="list-group mb-4">
     {% for invitation in invitations %}
-        <a href="{{ url_for('admin_unit_member_invitation', id=invitation.id) }}" class="list-group-item">{{ invitation.admin_unit.name }}</a>
+        <a href="{{ url_for('main.admin_unit_member_invitation', id=invitation.id) }}" class="list-group-item">{{ invitation.admin_unit.name }}</a>
     {% endfor %}
 </div>
 {% endif %}
@@ -17,7 +17,7 @@
 <h1>{{ _('Organization invitations') }}</h1>
 <div class="list-group mb-4">
     {% for invitation in organization_invitations %}
-        <a href="{{ url_for('user_organization_invitation', id=invitation.id) }}" class="list-group-item">{{ invitation.admin_unit_name }}</a>
+        <a href="{{ url_for('main.user_organization_invitation', id=invitation.id) }}" class="list-group-item">{{ invitation.admin_unit_name }}</a>
     {% endfor %}
 </div>
 {% endif %}
@@ -37,7 +37,7 @@
 
 <div class="list-group">
 {% for admin_unit in admin_units %}
-    <a href="{{ url_for('manage_admin_unit', id=admin_unit.id) }}" class="list-group-item">{{ admin_unit.name }}</a>
+    <a href="{{ url_for('main.manage_admin_unit', id=admin_unit.id) }}" class="list-group-item">{{ admin_unit.name }}</a>
 {% endfor %}
 </div>
 

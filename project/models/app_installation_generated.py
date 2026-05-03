@@ -1,7 +1,7 @@
 from enum import IntEnum
 from flask_security import AsaList
 from geoalchemy2 import Geometry
-from project import db
+from project.extensions import db
 from sqlalchemy import (
     Index,
     Boolean,
@@ -83,4 +83,12 @@ class AppInstallationGeneratedMixin(TrackableMixin):
             cascade="all, delete-orphan",
             back_populates="app_installation",
             primaryjoin="OAuth2Token.app_installation_id == AppInstallation.id",
+        )
+
+    @declared_attr
+    def webhook_deliveries(cls):
+        return relationship(
+            "WebhookDelivery",
+            back_populates="app_installation",
+            primaryjoin="WebhookDelivery.app_installation_id == AppInstallation.id",
         )

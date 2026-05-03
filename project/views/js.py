@@ -4,7 +4,7 @@ from datetime import datetime
 import icalendar
 import recurring_ical_events
 import requests
-from flask import request
+from flask import current_app, request
 from flask.json import jsonify
 from flask_babel import gettext
 from flask_cors import cross_origin
@@ -12,18 +12,19 @@ from flask_security import auth_required, url_for_security
 from flask_security.utils import localize_callback
 from sqlalchemy import func
 
-from project import app, csrf
 from project.api.custom_widget.schemas import CustomWidgetSchema
 from project.dateutils import form_input_to_date
+from project.extensions import csrf
 from project.maputils import find_gmaps_places, get_gmaps_place
 from project.models import CustomWidget, EventOrganizer, EventPlace
 from project.services.admin import upsert_settings
 from project.services.place import get_event_places
 from project.services.user import find_user_by_email
 from project.utils import decode_response_content, get_place_str
+from project.views.main_blueprint import main_bp
 
 
-@app.route("/js/check/event_place/name", methods=["POST"])
+@main_bp.route("/js/check/event_place/name", methods=["POST"])
 def js_check_event_place_name():
     csrf.protect()
 
@@ -47,7 +48,7 @@ def js_check_event_place_name():
     return jsonify(error)
 
 
-@app.route("/js/check/organizer/name", methods=["POST"])
+@main_bp.route("/js/check/organizer/name", methods=["POST"])
 def js_check_organizer_name():
     csrf.protect()
 
@@ -71,7 +72,7 @@ def js_check_organizer_name():
     return jsonify(error)
 
 
-@app.route("/js/check/register/email", methods=["POST"])
+@main_bp.route("/js/check/register/email", methods=["POST"])
 def js_check_register_email():
     csrf.protect()
 
@@ -89,7 +90,7 @@ def js_check_register_email():
     return jsonify(error)
 
 
-@app.route("/js/autocomplete/place")
+@main_bp.route("/js/autocomplete/place")
 def js_autocomplete_place():
     csrf.protect()
 
@@ -142,7 +143,7 @@ def js_autocomplete_place():
     return jsonify(result)
 
 
-@app.route("/js/autocomplete/gmaps_place")
+@main_bp.route("/js/autocomplete/gmaps_place")
 def js_autocomplete_gmaps_place():
     csrf.protect()
 
@@ -151,7 +152,7 @@ def js_autocomplete_gmaps_place():
     return jsonify(place)
 
 
-@app.route("/js/icalevents", methods=["POST"])
+@main_bp.route("/js/icalevents", methods=["POST"])
 @auth_required()
 def js_icalevents():
     csrf.protect()
@@ -220,11 +221,11 @@ def js_icalevents():
 
         return jsonify(result)
     except Exception as e:  # pragma: no cover
-        app.logger.exception(url)
+        current_app.logger.exception(url)
         return getattr(e, "message", "Unknown error"), 400
 
 
-@app.route("/js/wlcw/<int:id>")
+@main_bp.route("/js/wlcw/<int:id>")
 @cross_origin()
 def js_widget_loader_custom_widget(id: int):
     widget = CustomWidget.query.get_or_404(id)

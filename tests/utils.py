@@ -83,6 +83,9 @@ class UtilActions(object):
                 user = find_user_by_email(email)
                 user_id = user.id
 
+                session_cookie = self._client.get_cookie("session")
+                assert session_cookie is not None
+
         return user_id
 
     def logout(self):
@@ -164,6 +167,9 @@ class UtilActions(object):
             if danger_alerts:
                 print("Danger alerts:")
                 print(danger_alerts)
+
+        if response.status_code == 302:
+            print("Redirect to:", response.headers["Location"])
 
     def get_json(self, url, **kwargs):
         self.log_request(url)
@@ -268,7 +274,7 @@ class UtilActions(object):
         return url
 
     def get_image_url_for_id(self, image_id, **values):
-        from project import db
+        from project.extensions import db
         from project.models import Image
 
         with self._app.app_context():
@@ -290,6 +296,9 @@ class UtilActions(object):
         return response
 
     def assert_response_ok(self, response):
+        if response.status_code != 200:
+            self.log_response(response)
+
         assert response.status_code == 200
 
     def assert_response_created(self, response):
@@ -406,9 +415,9 @@ class UtilActions(object):
 
     def authorize(self, client_id, client_secret, scope):
         # Authorize-Seite öffnen
-        redirect_uri = self.get_url("swagger_oauth2_redirect")
+        redirect_uri = self.get_url("main.swagger_oauth2_redirect")
         url = self.get_url(
-            "authorize",
+            "main.authorize",
             nonce=4711,
             response_type="code",
             client_id=client_id,
@@ -458,7 +467,7 @@ class UtilActions(object):
             data["code"] = code
             data["redirect_uri"] = redirect_uri
 
-        token_url = self.get_url("issue_token")
+        token_url = self.get_url("main.issue_token")
         response = self.post_form_data(token_url, data=data)
 
         self.assert_response_ok(response)
@@ -482,7 +491,7 @@ class UtilActions(object):
             self._refresh_token = response.json["refresh_token"]
 
     def refresh_token(self):
-        token_url = self.get_url("issue_token")
+        token_url = self.get_url("main.issue_token")
         response = self.post_form_data(
             token_url,
             data={
@@ -502,7 +511,7 @@ class UtilActions(object):
         self._access_token = response.json["access_token"]
 
     def revoke_token(self):
-        url = self.get_url("revoke_token")
+        url = self.get_url("main.revoke_token")
         response = self.post_form_data(
             url,
             data={
@@ -516,7 +525,7 @@ class UtilActions(object):
         self.assert_response_ok(response)
 
     def introspect(self, token, token_type_hint):
-        url = self.get_url("introspect")
+        url = self.get_url("main.introspect")
         response = self.post_form_data(
             url,
             data={
@@ -530,7 +539,7 @@ class UtilActions(object):
         self.assert_response_ok(response)
 
     def get_oauth_userinfo(self):
-        url = self.get_url("oauth_userinfo")
+        url = self.get_url("main.oauth_userinfo")
         return self.get_json(url)
 
     def mock_get_request_with_text(self, url: str, text: str):
@@ -596,7 +605,7 @@ class UtilActions(object):
     def _create_jwt_assertion(self, issuer, subject, private_pem, kid):
         from authlib.oauth2.rfc7523.assertion import sign_jwt_bearer_assertion
 
-        token_url = self.get_url("issue_token")
+        token_url = self.get_url("main.issue_token")
         assertion = sign_jwt_bearer_assertion(
             key=private_pem,
             issuer=issuer,
@@ -628,7 +637,7 @@ class UtilActions(object):
             "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
             "assertion": assertion,
         }
-        token_url = self.get_url("issue_token")
+        token_url = self.get_url("main.issue_token")
         response = self.post_form_data(token_url, data=data)
         self.assert_response_ok(response)
         assert response.content_type == "application/json"
@@ -661,7 +670,7 @@ class UtilActions(object):
             "assertion": assertion,
             "scope": scope,
         }
-        token_url = self.get_url("issue_token")
+        token_url = self.get_url("main.issue_token")
         response = self.post_form_data(token_url, data=data)
         self.assert_response_ok(response)
         assert response.content_type == "application/json"

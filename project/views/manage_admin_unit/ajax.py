@@ -1,6 +1,6 @@
 from sqlalchemy import func
 
-from project import db
+from project.extensions import db
 from project.models.admin_unit import AdminUnit
 from project.models.event_organizer import EventOrganizer
 from project.models.event_place import EventPlace

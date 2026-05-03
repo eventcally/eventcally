@@ -8,6 +8,7 @@ from dependency_injector.errors import NoSuchProviderError
 from project.context import ContextProvider
 from project.domain import commands, events
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
+from project.service_layer.abstract_command_dispatcher import AbstractCommandDispatcher
 from project.service_layer.abstract_event_dispatcher import AbstractEventDispatcher
 
 logger = logging.getLogger(__name__)
@@ -23,15 +24,20 @@ class MessageBus:
         command_handler_factory,
         event_handler_factory,
         event_dispatcher: AbstractEventDispatcher,
+        command_dispatcher: AbstractCommandDispatcher,
     ):
         self.uow_factory = uow_factory
         self.context_provider = context_provider
         self.command_handler_factory = command_handler_factory
         self.event_handler_factory = event_handler_factory
         self.event_dispatcher = event_dispatcher
+        self.command_dispatcher = command_dispatcher
+
+    def create_uow(self) -> AbstractUnitOfWork:
+        return self.uow_factory.uow()
 
     def handle(self, message: Message):
-        uow = self.uow_factory.uow()
+        uow = self.create_uow()
         result = None
 
         if isinstance(message, events.Event):
@@ -50,6 +56,11 @@ class MessageBus:
         self, command: commands.CommandWithResult[commands.CommandResultType]
     ) -> commands.CommandResultType:
         return self.handle(command)
+
+    def dispatch_command(self, command: commands.Command):
+        self._set_missing_command_fields(command)
+        self.command_dispatcher.dispatch(command)
+        logger.debug(f"Dispatched {command.__class__.__name__}")
 
     def _dispatch_event(self, event: events.Event):
         self.event_dispatcher.dispatch(event)
@@ -71,9 +82,7 @@ class MessageBus:
 
     def _handle_command(self, command: commands.Command, uow: AbstractUnitOfWork):
         logger.debug("handling command %s", command)
-
-        if not hasattr(command, "actor"):
-            command.actor = self.context_provider.current_actor
+        self._set_missing_command_fields(command)
 
         try:
             command.model_validate(command.model_dump())
@@ -83,3 +92,7 @@ class MessageBus:
         except Exception:
             logger.exception("Exception handling command %s", command)
             raise
+
+    def _set_missing_command_fields(self, command):
+        if not hasattr(command, "actor"):
+            command.actor = self.context_provider.current_actor

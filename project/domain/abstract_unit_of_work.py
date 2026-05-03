@@ -9,12 +9,18 @@ from project.domain.repositories import (
     AbstractEventPlaceRepository,
     AbstractOrganizationRepository,
 )
+from project.domain.repositories.abstract_app_repository import AbstractAppRepository
+from project.domain.repositories.abstract_webhook_repository import (
+    AbstractWebhookRepository,
+)
 
 
 class AbstractUnitOfWork(abc.ABC):
     event_organizers: AbstractEventOrganizerRepository
     event_places: AbstractEventPlaceRepository
     organizations: AbstractOrganizationRepository
+    webhooks: AbstractWebhookRepository
+    apps: AbstractAppRepository
     pending_events: List[events.Event] = []
 
     def __enter__(self) -> AbstractUnitOfWork:
@@ -46,6 +52,8 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.event_organizers)
         self._collect_domain_events_from_repo(self.event_places)
         self._collect_domain_events_from_repo(self.organizations)
+        self._collect_domain_events_from_repo(self.webhooks)
+        self._collect_domain_events_from_repo(self.apps)
 
     def _collect_domain_events_from_repo(self, repo):
         for model in repo.seen:

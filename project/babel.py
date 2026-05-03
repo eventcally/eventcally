@@ -31,12 +31,12 @@ def babel_extract(fileobj, keywords, comment_tags, options):
         _add_key(model_class.__display_name__)
         _add_key(model_class.__display_name_plural__)
 
-    from project import app
+    from flask import current_app
 
-    with app.app_context():
-        with app.test_request_context():
-            from project import db
+    from project.extensions import db
 
+    with current_app.app_context():
+        with current_app.test_request_context():
             for mapper in db.Model.registry.mappers:
                 _add_model(mapper.class_)
 

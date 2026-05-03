@@ -1,0 +1,33 @@
+models:
+  - name: Webhook
+    table_name: webhook
+    model_name: webhook
+    display_name: Webhook
+    indexes:
+      - name: idx_webhook_event_types
+        columns: [event_types]
+        using: gin
+    columns:
+      - name: url
+        type: string
+      - name: secret
+        type: string
+      - name: disabled
+        type: boolean!
+        default: false
+      - name: event_types
+        type: array
+        array_type: string
+        nullable: false
+        default: []
+    relationships:
+      - name: app
+        target_model: OAuth2Client
+        pattern: one-to-one
+        relation: reference
+        back_populates: webhook
+      - name: deliveries
+        target_model: WebhookDelivery
+        pattern: one-to-many
+        relation: owned
+        back_populates: webhook

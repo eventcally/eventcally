@@ -111,7 +111,7 @@
       "type": "debugpy",
       "request": "launch",
       "module": "gunicorn",
-      "args": ["-c", "gunicorn.conf.py", "-w", "1", "project:app"],
+      "args": ["-c", "gunicorn.conf.py", "-w", "1", "main:app"],
       "justMyCode": false,
       "console": "integratedTerminal",
       "consoleName": "Gunicorn"

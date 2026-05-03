@@ -9,7 +9,7 @@ def test_index(client):
 
 
 def test_home(client, seeder, utils):
-    url = utils.get_url("home")
+    url = utils.get_url("main.home")
     response = utils.get_ok(url)
     assert response.headers["X-Frame-Options"] == "SAMEORIGIN"
     assert response.headers["X-Content-Type-Options"] == "nosniff"
@@ -22,7 +22,7 @@ def test_up(app, utils):
 
 
 def test_tos(app, db, utils: UtilActions):
-    url = utils.get_url("tos")
+    url = utils.get_url("main.tos")
     response = utils.get(url)
     utils.assert_response_notFound(response)
 
@@ -33,7 +33,7 @@ def test_tos(app, db, utils: UtilActions):
         settings.tos = "Meine Nutzungsbedingungen"
         db.session.commit()
 
-    url = utils.get_url("tos")
+    url = utils.get_url("main.tos")
     response = utils.get_ok(url)
     assert b"Meine Nutzungsbedingungen" in response.data
 
@@ -46,7 +46,7 @@ def test_legal_notice(app, db, utils):
         settings.legal_notice = "Mein Impressum"
         db.session.commit()
 
-    url = utils.get_url("legal_notice")
+    url = utils.get_url("main.legal_notice")
     response = utils.get_ok(url)
     assert b"Mein Impressum" in response.data
 
@@ -59,7 +59,7 @@ def test_contact(app, db, utils):
         settings.contact = "Mein Kontakt"
         db.session.commit()
 
-    url = utils.get_url("contact")
+    url = utils.get_url("main.contact")
     response = utils.get_ok(url)
     assert b"Mein Kontakt" in response.data
 
@@ -72,7 +72,7 @@ def test_privacy(app, db, utils):
         settings.privacy = "Mein Datenschutz"
         db.session.commit()
 
-    url = utils.get_url("privacy")
+    url = utils.get_url("main.privacy")
     response = utils.get_ok(url)
     assert b"Mein Datenschutz" in response.data
 
@@ -86,7 +86,7 @@ def test_developer(client, seeder, utils):
     if os.path.exists(all_path):
         os.remove(all_path)
 
-    url = utils.get_url("developer")
+    url = utils.get_url("main.developer")
     utils.get_ok(url)
 
 
@@ -100,7 +100,7 @@ def test_robots_txt(app, utils):
     runner.invoke(args=["seo", "generate-sitemap"])
     result = runner.invoke(args=["seo", "generate-robots-txt"])
     assert result.exit_code == 0
-    utils.get_endpoint_ok("robots_txt")
+    utils.get_endpoint_ok("main.robots_txt")
 
 
 def test_sitemap_xml(seeder, app, utils):
@@ -111,7 +111,7 @@ def test_sitemap_xml(seeder, app, utils):
     runner = app.test_cli_runner()
     result = runner.invoke(args=["seo", "generate-sitemap"])
     assert result.exit_code == 0
-    utils.get_endpoint_ok("sitemap_xml")
+    utils.get_endpoint_ok("main.sitemap_xml")
 
 
 def test_announcement(app, db, utils: UtilActions):
@@ -122,6 +122,6 @@ def test_announcement(app, db, utils: UtilActions):
         settings.announcement = "Wartungsarbeiten"
         db.session.commit()
 
-    url = utils.get_url("home")
+    url = utils.get_url("main.home")
     response = utils.get_ok(url)
     assert b"Wartungsarbeiten" in response.data

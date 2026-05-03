@@ -14,7 +14,7 @@ class ReadDisplay(BaseDisplay):
 
     def get_event_link(self, object):
         return url_for(
-            "event",
+            "main.event",
             event_id=object.event.id,
         )
 

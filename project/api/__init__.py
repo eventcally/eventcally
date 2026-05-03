@@ -11,7 +11,6 @@ from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import HTTPException, UnprocessableEntity
 
-from project import app
 from project.domain.errors import BaseError, DuplicateError
 from project.utils import get_localized_scope
 
@@ -28,7 +27,7 @@ class RestApi(Api):
         code = 500
 
         if isinstance(err, IntegrityError) and err.orig:
-            from project import db
+            from project.extensions import db
 
             try:
                 db.session.rollback()
@@ -167,25 +166,74 @@ def replace_legacy_scopes(scope: str) -> str:
     return scope
 
 
-rest_api = RestApi(app, "/api/v1", catch_all_404s=True)
-marshmallow = Marshmallow(app)
+# Module-level instances (marshmallow created here for schema imports)
+marshmallow = Marshmallow()
 marshmallow_plugin = MarshmallowPlugin()
-app.config.update(
-    {
-        "APISPEC_SPEC": APISpec(
-            title="Event calendar API",
-            version="0.1.0",
-            plugins=[marshmallow_plugin, DocSecurityPlugin()],
-            openapi_version="2.0",
-            info=dict(
-                description="This API provides endpoints to interact with the event calendar data."
-            ),
-        ),
-        "OAUTH2_SCOPES_SUPPORTED": scope_list,
-    }
-)
 
-api_docs = FlaskApiSpec(app)
+# These will be initialized by init_api()
+rest_api = None
+api_docs = None
+resource_registry = {}
+
+
+def init_api(app):
+    """Initialize REST API with the Flask app instance.
+
+    This function creates the API instances and registers all resource endpoints.
+    Must be called from create_app() to support the application factory pattern.
+
+    Args:
+        app: Flask application instance
+    """
+    global rest_api, api_docs
+
+    rest_api = RestApi(app, "/api/v1", catch_all_404s=True)
+    marshmallow.init_app(app)
+    app.config.update(
+        {
+            "APISPEC_SPEC": APISpec(
+                title="Event calendar API",
+                version="0.1.0",
+                plugins=[marshmallow_plugin, DocSecurityPlugin()],
+                openapi_version="2.0",
+                info=dict(
+                    description="This API provides endpoints to interact with the event calendar data."
+                ),
+            ),
+            "OAUTH2_SCOPES_SUPPORTED": scope_list,
+        }
+    )
+
+    api_docs = FlaskApiSpec(app)
+
+    # Add enum field support
+    marshmallow_plugin.converter.add_attribute_function(enum_to_properties)
+
+    # Import all API resources to register routes
+    import project.api.app.resources
+    import project.api.custom_event_category_set.resources
+    import project.api.custom_widget.resources
+    import project.api.dump.resources
+    import project.api.event.resources
+    import project.api.event_category.resources
+    import project.api.event_date.resources
+    import project.api.event_list.resources
+    import project.api.event_reference.resources
+    import project.api.event_reference_request.resources
+    import project.api.license.resources
+    import project.api.organization.resources
+    import project.api.organization_invitation.resources
+    import project.api.organization_relation.resources
+    import project.api.organization_verification_request.resources
+    import project.api.organizer.resources
+    import project.api.place.resources
+    import project.api.user.resources
+
+    # Re-register all resources for the current app instance.
+    for endpoint, (resource, url, api_docs_flag) in resource_registry.items():
+        rest_api.add_resource(resource, url, endpoint=endpoint)
+        if api_docs_flag:
+            api_docs.register(resource, endpoint=endpoint)
 
 
 def enum_to_properties(self, field, **kwargs):
@@ -199,9 +247,8 @@ def enum_to_properties(self, field, **kwargs):
     return {}
 
 
-def add_api_resource(resource, url, endpoint):
-    rest_api.add_resource(resource, url, endpoint=endpoint)
-    api_docs.register(resource, endpoint=endpoint)
+def add_api_resource(resource, url, endpoint, api_docs=True):
+    resource_registry[endpoint] = (resource, url, api_docs)
 
 
 def add_oauth2_scheme_with_transport(insecure: bool):
@@ -212,11 +259,11 @@ def add_oauth2_scheme_with_transport(insecure: bool):
             pass
 
     if insecure:
-        authorizationUrl = url_for("authorize", _external=True)
-        tokenUrl = url_for("issue_token", _external=True)
+        authorizationUrl = url_for("main.authorize", _external=True)
+        tokenUrl = url_for("main.issue_token", _external=True)
     else:
-        authorizationUrl = url_for("authorize", _external=True, _scheme="https")
-        tokenUrl = url_for("issue_token", _external=True, _scheme="https")
+        authorizationUrl = url_for("main.authorize", _external=True, _scheme="https")
+        tokenUrl = url_for("main.issue_token", _external=True, _scheme="https")
 
     # OAuth2 authorization code flow
     scopes = {k: k for _, k in enumerate(scope_list)}
@@ -245,25 +292,3 @@ def add_oauth2_scheme_with_transport(insecure: bool):
         "name": "X-API-Key",
     }
     _add_scheme("apiKey", api_key_scheme)
-
-
-marshmallow_plugin.converter.add_attribute_function(enum_to_properties)
-
-import project.api.app.resources
-import project.api.custom_event_category_set.resources
-import project.api.custom_widget.resources
-import project.api.dump.resources
-import project.api.event.resources
-import project.api.event_category.resources
-import project.api.event_date.resources
-import project.api.event_list.resources
-import project.api.event_reference.resources
-import project.api.event_reference_request.resources
-import project.api.license.resources
-import project.api.organization.resources
-import project.api.organization_invitation.resources
-import project.api.organization_relation.resources
-import project.api.organization_verification_request.resources
-import project.api.organizer.resources
-import project.api.place.resources
-import project.api.user.resources

@@ -1,15 +1,16 @@
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
-from flask import jsonify, redirect, render_template, request, url_for
+from flask import current_app, jsonify, redirect, render_template, request, url_for
 from flask_security import current_user
 
-from project import app
 from project.api import scope_list, scopes
 from project.forms.security import AuthorizeForm
-from project.oauth2 import authorization, generate_user_info, get_issuer, require_oauth
+from project.oauth2 import generate_user_info, get_issuer
+from project.oauth2_extensions import authorization, require_oauth
+from project.views.main_blueprint import main_bp
 
 
-@app.route("/oauth/authorize", methods=["GET", "POST"])
+@main_bp.route("/oauth/authorize", methods=["GET", "POST"])
 def authorize():
     user = current_user
 
@@ -38,52 +39,54 @@ def authorize():
         )
 
 
-@app.route("/oauth/token", methods=["POST"])
+@main_bp.route("/oauth/token", methods=["POST"])
 def issue_token():
     return authorization.create_token_response()
 
 
-@app.route("/oauth/revoke", methods=["POST"])
+@main_bp.route("/oauth/revoke", methods=["POST"])
 def revoke_token():
     return authorization.create_endpoint_response("revocation")
 
 
-@app.route("/oauth/introspect", methods=["POST"])
+@main_bp.route("/oauth/introspect", methods=["POST"])
 def introspect():
     return authorization.create_endpoint_response("introspection")
 
 
-@app.route("/oauth2-redirect.html")
+@main_bp.route("/oauth2-redirect.html")
 def swagger_oauth2_redirect():
     return redirect(
         url_for("flask-apispec.static", filename="oauth2-redirect.html", **request.args)
     )
 
 
-@app.route("/oauth/userinfo")
+@main_bp.route("/oauth/userinfo")
 @require_oauth("profile")
 def oauth_userinfo():
     return jsonify(generate_user_info(current_token.user, current_token.scope))
 
 
-@app.route("/.well-known/jwks.json")
+@main_bp.route("/.well-known/jwks.json")
 def jwks():
-    response = app.response_class(
-        response=app.config["JWT_PUBLIC_JWKS"], status=200, mimetype="application/json"
+    response = current_app.response_class(
+        response=current_app.config["JWT_PUBLIC_JWKS"],
+        status=200,
+        mimetype="application/json",
     )
     return response
 
 
-@app.route("/.well-known/openid-configuration")
+@main_bp.route("/.well-known/openid-configuration")
 def openid_configuration():
     c = dict()
     c["issuer"] = get_issuer()
-    c["authorization_endpoint"] = url_for("authorize", _external=True)
-    c["token_endpoint"] = url_for("issue_token", _external=True)
-    c["userinfo_endpoint"] = url_for("oauth_userinfo", _external=True)
-    c["revocation_endpoint"] = url_for("revoke_token", _external=True)
-    c["introspection_endpoint"] = url_for("introspect", _external=True)
-    c["jwks_uri"] = url_for("jwks", _external=True)
+    c["authorization_endpoint"] = url_for("main.authorize", _external=True)
+    c["token_endpoint"] = url_for("main.issue_token", _external=True)
+    c["userinfo_endpoint"] = url_for("main.oauth_userinfo", _external=True)
+    c["revocation_endpoint"] = url_for("main.revoke_token", _external=True)
+    c["introspection_endpoint"] = url_for("main.introspect", _external=True)
+    c["jwks_uri"] = url_for("main.jwks", _external=True)
     c["scopes_supported"] = scope_list
     c["token_endpoint_auth_methods_supported"] = [
         "client_secret_post",

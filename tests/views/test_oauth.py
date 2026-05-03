@@ -1,5 +1,5 @@
 def test_authorize_unauthorizedRedirects(seeder, utils):
-    url = utils.get_url("authorize")
+    url = utils.get_url("main.authorize")
     response = utils.get(url)
 
     assert response.status_code == 302
@@ -8,7 +8,7 @@ def test_authorize_unauthorizedRedirects(seeder, utils):
 
 def test_authorize_validateThrowsError(seeder, utils):
     seeder.setup_base()
-    url = utils.get_url("authorize")
+    url = utils.get_url("main.authorize")
     response = utils.get(url)
 
     utils.assert_response_bad_request(response)
@@ -28,7 +28,7 @@ def test_introspect(seeder, utils):
 
 
 def test_swagger_redirect(utils):
-    url = utils.get_url("swagger_oauth2_redirect")
+    url = utils.get_url("main.swagger_oauth2_redirect")
     response = utils.get(url)
     assert response.status_code == 302
 
@@ -39,8 +39,8 @@ def test_oauth_userinfo(seeder, utils):
 
 
 def test_jwks(utils):
-    utils.get_endpoint_ok("jwks")
+    utils.get_endpoint_ok("main.jwks")
 
 
 def test_openid_configuration(utils):
-    utils.get_endpoint_ok("openid_configuration")
+    utils.get_endpoint_ok("main.openid_configuration")

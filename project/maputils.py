@@ -1,12 +1,22 @@
 import googlemaps
+from flask import current_app
 
-from project import app
+google_maps_api_key = None
+gmaps = None
 
-google_maps_api_key = app.config["GOOGLE_MAPS_API_KEY"]
-gmaps = googlemaps.Client(key=google_maps_api_key) if google_maps_api_key else None
+
+def _init_gmaps():
+    """Lazy initialization of Google Maps client."""
+    global google_maps_api_key, gmaps
+    if google_maps_api_key is None:
+        google_maps_api_key = current_app.config["GOOGLE_MAPS_API_KEY"]
+        gmaps = (
+            googlemaps.Client(key=google_maps_api_key) if google_maps_api_key else None
+        )
 
 
 def find_gmaps_places(query: str) -> list:
+    _init_gmaps()
     result = list()
 
     if gmaps:
@@ -17,12 +27,13 @@ def find_gmaps_places(query: str) -> list:
             result = list(filter(lambda p: "place_id" in p, places))
 
         except Exception as e:  # pragma: no cover
-            app.logger.exception(e)
+            current_app.logger.exception(e)
 
     return result
 
 
 def get_gmaps_place(gmaps_id) -> dict:
+    _init_gmaps()
     result = dict()
 
     if gmaps:
@@ -36,6 +47,6 @@ def get_gmaps_place(gmaps_id) -> dict:
             if place["status"] == "OK":
                 result = place["result"]
         except Exception as e:  # pragma: no cover
-            app.logger.exception(e)
+            current_app.logger.exception(e)
 
     return result

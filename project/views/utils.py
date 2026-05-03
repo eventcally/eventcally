@@ -13,7 +13,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.local import LocalProxy
 from wtforms import FormField
 
-from project import app, celery, db, mail
 from project.access import (
     get_admin_unit_for_manage,
     get_admin_unit_for_manage_or_404,
@@ -23,6 +22,7 @@ from project.access import (
 )
 from project.dateutils import berlin_tz, round_to_next_day
 from project.domain.errors import BaseError
+from project.extensions import db, mail
 from project.models import Event, EventAttendanceMode, EventDate
 from project.utils import dummy_gettext, get_place_str, strings_are_equal_ignoring_case
 
@@ -235,7 +235,7 @@ def send_template_mails_async(recipients, template, **context):
 
 def render_mail_body_with_subject(template, **context):
     subject_key = mail_template_subject_mapping.get(template)
-    locale = context.get("locale", None) or app.config["BABEL_DEFAULT_LOCALE"]
+    locale = context.get("locale", None) or current_app.config["BABEL_DEFAULT_LOCALE"]
 
     with force_locale(locale):
         subject = gettext(subject_key, **context)
@@ -311,9 +311,9 @@ def send_mails_with_body(recipients, subject, body, html):
 
 def send_mail_message(msg):
     if not mail.default_sender:
-        app.logger.info(",".join(msg.recipients))
-        app.logger.info(msg.subject)
-        app.logger.info(msg.body)
+        current_app.logger.info(",".join(msg.recipients))
+        current_app.logger.info(msg.subject)
+        current_app.logger.info(msg.body)
         return
 
     mail.send(msg)  # pragma: no cover
@@ -359,7 +359,7 @@ def get_share_links(url: str, title: str) -> dict:
 def get_calendar_links_for_event_date(event_date: EventDate) -> dict:
     calendar_links = dict()
 
-    url = url_for("event_date", id=event_date.id, _external=True)
+    url = url_for("main.event_date", id=event_date.id, _external=True)
     encoded_url = quote_plus(url)
     encoded_title = quote_plus(event_date.event.name)
     encoded_timezone = quote_plus(berlin_tz.zone)
@@ -388,14 +388,16 @@ def get_calendar_links_for_event_date(event_date: EventDate) -> dict:
         f"http://www.google.com/calendar/event?action=TEMPLATE&text={encoded_title}&dates={start}/{end}&ctz={encoded_timezone}&details={encoded_url}{locationParam}"
     )
 
-    calendar_links["ics"] = url_for("event_date_ical", id=event_date.id, _external=True)
+    calendar_links["ics"] = url_for(
+        "main.event_date_ical", id=event_date.id, _external=True
+    )
 
     return calendar_links
 
 
 def get_calendar_links_for_event(event: Event) -> dict:
     calendar_links = dict()
-    calendar_links["ics"] = url_for("event_ical", id=event.id, _external=True)
+    calendar_links["ics"] = url_for("main.event_ical", id=event.id, _external=True)
     return calendar_links
 
 
@@ -407,7 +409,7 @@ def get_invitation_access_result(email: str):
         email, current_user.email
     ):
         return permission_missing(
-            url_for("profile"),
+            url_for("main.profile"),
             gettext(
                 "The invitation was issued to another user. Sign in with the email address the invitation was sent to."
             ),
@@ -419,12 +421,14 @@ def get_invitation_access_result(email: str):
 
     # Wenn nicht angemeldet, dann zum Login
     if not current_user.is_authenticated:
-        return app.login_manager.unauthorized()
+        return current_app.login_manager.unauthorized()
 
     return None
 
 
 def get_celery_poll_result():  # pragma: no cover
+    from project import celery
+
     try:
         result = celery.AsyncResult(request.args["poll"])
         ready = result.ready()
@@ -442,6 +446,8 @@ def get_celery_poll_result():  # pragma: no cover
 
 
 def get_celery_poll_group_result():  # pragma: no cover
+    from project import celery
+
     try:
         result = celery.GroupResult.restore(request.args["poll"])
         ready = result.ready()
@@ -469,7 +475,7 @@ def manage_required(permission=None):
                 admin_unit, permission
             ):  # pragma: no cover
                 return permission_missing(
-                    url_for("manage_admin_unit", id=admin_unit.id)
+                    url_for("main.manage_admin_unit", id=admin_unit.id)
                 )
 
             set_current_admin_unit(admin_unit)
@@ -486,7 +492,7 @@ def manage_permission_required(permission):
         def decorated_function(*args, **kwargs):
             if not has_access(g.manage_admin_unit, permission):
                 return permission_missing(
-                    url_for("manage_admin_unit", id=g.manage_admin_unit.id)
+                    url_for("main.manage_admin_unit", id=g.manage_admin_unit.id)
                 )
 
             return f(*args, **kwargs)

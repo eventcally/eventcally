@@ -131,7 +131,7 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         assert result["endDate"] == date_definition.end
         assert result["previousStartDate"] == event.previous_start_date
         assert result["isAccessibleForFree"]
-        assert result["url"][0] == utils.get_url("event_date", id=event_date.id)
+        assert result["url"][0] == utils.get_url("main.event_date", id=event_date.id)
         assert result["url"][1] == "www.goslar.de"
         assert result["url"][2] == "www.tickets.de"
         assert result["image"] == utils.get_image_url(photo)

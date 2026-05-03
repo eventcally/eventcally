@@ -1,11 +1,11 @@
 from flask import redirect, url_for
 
-from project import app
 from project.models import AdminUnitMemberInvitation
+from project.views.main_blueprint import main_bp
 from project.views.utils import get_invitation_access_result
 
 
-@app.route("/invitations/<int:id>", methods=("GET", "POST"))
+@main_bp.route("/invitations/<int:id>", methods=("GET", "POST"))
 def admin_unit_member_invitation(id):
     # Endpunkt erforderlich, weil Nutzer noch nicht registriert sein können
     invitation = AdminUnitMemberInvitation.query.get_or_404(id)

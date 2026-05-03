@@ -11,7 +11,7 @@ class ListView(BaseListView):
         reference_close = "&quot;"
         reference_title = gettext("Reference event")
 
-        search_open = '<a href="%s">' % url_for("event_dates")
+        search_open = '<a href="%s">' % url_for("main.event_dates")
         search_close = "</a>"
 
         return Markup(

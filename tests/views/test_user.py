@@ -8,7 +8,7 @@ def test_profile(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.create_event(admin_unit_id)
 
-    url = utils.get_url("profile", id=1)
+    url = utils.get_url("main.profile", id=1)
     utils.get_ok(url)
 
 
@@ -19,7 +19,7 @@ def test_organization_invitation(client, seeder, utils: UtilActions):
     seeder.create_user("invited@test.de")
     utils.login("invited@test.de")
 
-    url = utils.get_url("user_organization_invitation", id=invitation_id)
+    url = utils.get_url("main.user_organization_invitation", id=invitation_id)
     response = utils.get(url)
     utils.assert_response_redirect(
         response,
@@ -60,7 +60,7 @@ def test_organization_invitation_not_registered(client, app, utils, seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
-    url = utils.get_url("user_organization_invitation", id=invitation_id)
+    url = utils.get_url("main.user_organization_invitation", id=invitation_id)
     response = client.get(url)
     utils.assert_response_redirect(response, "security.register")
 
@@ -70,7 +70,7 @@ def test_organization_invitation_not_authenticated(client, app, utils, seeder):
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     seeder.create_user("invited@test.de")
-    url = utils.get_url("user_organization_invitation", id=invitation_id)
+    url = utils.get_url("main.user_organization_invitation", id=invitation_id)
 
     response = client.get(url)
     utils.assert_response_redirect_to_login(response, url)
@@ -86,7 +86,7 @@ def test_organization_invitation_currentUserDoesNotMatchInvitationEmail(
     if user_exists:
         seeder.create_user("invited@test.de")
 
-    url = utils.get_url("user_organization_invitation", id=invitation_id)
+    url = utils.get_url("main.user_organization_invitation", id=invitation_id)
     response = client.get(url, follow_redirects=True)
 
     utils.assert_response_ok(response)
@@ -109,7 +109,7 @@ def test_organization_invitation_list(client, seeder, utils):
 def test_user_favorite_events(client, seeder, utils):
     _, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("user_favorite_events")
+    url = utils.get_url("main.user_favorite_events")
     utils.get_ok(url)
 
 
@@ -133,7 +133,7 @@ def test_user_general(client, seeder, utils, app, db, locale):
         values,
     )
 
-    utils.assert_response_redirect(response, "profile")
+    utils.assert_response_redirect(response, "main.profile")
 
     with app.app_context():
         from project.models import User
@@ -156,7 +156,7 @@ def test_user_notifications(client, seeder, utils, app, db):
         },
     )
 
-    utils.assert_response_redirect(response, "profile")
+    utils.assert_response_redirect(response, "main.profile")
 
     with app.app_context():
         from project.models import User
@@ -248,7 +248,7 @@ def test_user_request_deletion(
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "profile")
+    utils.assert_response_redirect(response, "main.profile")
 
     with app.app_context():
         from project.models import User
@@ -315,7 +315,7 @@ def test_user_cancel_deletion(
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "profile")
+    utils.assert_response_redirect(response, "main.profile")
 
     with app.app_context():
         from project.models import User
@@ -332,7 +332,7 @@ def test_user_accept_tos(client, app, db, seeder: Seeder, utils: UtilActions):
 
         reset_tos_accepted_for_users()
 
-    response = utils.get_endpoint("profile")
+    response = utils.get_endpoint("main.profile")
     utils.assert_response_redirect(
         response, "user.accept_tos", next="http://localhost/profile"
     )
@@ -346,4 +346,4 @@ def test_user_accept_tos(client, app, db, seeder: Seeder, utils: UtilActions):
             "submit": "Confirm",
         },
     )
-    utils.assert_response_redirect(response, "profile")
+    utils.assert_response_redirect(response, "main.profile")

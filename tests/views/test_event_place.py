@@ -157,7 +157,7 @@ def test_create_Unauthorized(client, app, utils, seeder):
         "manage_admin_unit.event_place_create", id=admin_unit_id
     )
     utils.assert_response_permission_missing(
-        response, "manage_admin_unit", id=admin_unit_id
+        response, "main.manage_admin_unit", id=admin_unit_id
     )
 
 

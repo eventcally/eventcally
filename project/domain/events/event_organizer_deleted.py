@@ -5,3 +5,4 @@ from .base import Event
 
 class EventOrganizerDeleted(Event):
     id: ObjectId
+    admin_unit_id: ObjectId

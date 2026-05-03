@@ -2,5 +2,5 @@
 {% from "_macros.html" import render_email_button %}
 {% block content %}
 <p>{{ _('This is a test mail') }}</p>
-{{ render_email_button(url_for('home', _external=True), _('Click here to open the site')) }}
+{{ render_email_button(url_for('main.home', _external=True), _('Click here to open the site')) }}
 {% endblock %}

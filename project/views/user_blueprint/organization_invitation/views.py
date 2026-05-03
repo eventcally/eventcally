@@ -1,7 +1,7 @@
 from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 
-from project import db
+from project.extensions import db
 from project.modular.base_views import BaseObjectFormView
 from project.views.user_blueprint.organization_invitation.forms import NegotiateForm
 from project.views.utils import handle_db_error

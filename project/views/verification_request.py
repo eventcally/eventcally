@@ -1,9 +1,9 @@
-from flask import flash, g, redirect, render_template, url_for
+from flask import current_app, flash, g, redirect, render_template, url_for
 from flask_babel import gettext
 from flask_security import auth_required
 from sqlalchemy.exc import SQLAlchemyError
 
-from project import app, db
+from project.extensions import db
 from project.forms.verification_request import CreateAdminUnitVerificationRequestForm
 from project.models import (
     AdminUnitVerificationRequest,
@@ -16,6 +16,7 @@ from project.services.organization_verification_request_service import (
 )
 from project.services.search_params import AdminUnitSearchParams
 from project.services.verification import admin_unit_can_verify_admin_unit
+from project.views.main_blueprint import main_bp
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
@@ -24,7 +25,9 @@ from project.views.utils import (
 )
 
 
-@app.route("/manage/admin_unit/<int:id>/verification_requests/outgoing/create/select")
+@main_bp.route(
+    "/manage/admin_unit/<int:id>/verification_requests/outgoing/create/select"
+)
 @auth_required()
 @manage_required("outgoing_organization_verification_requests:write")
 def manage_organization_verification_requests_outgoing_create_select(id):
@@ -43,7 +46,7 @@ def manage_organization_verification_requests_outgoing_create_select(id):
     )
 
 
-@app.route(
+@main_bp.route(
     "/manage/admin_unit/<int:id>/verification_requests/outgoing/create/target/<int:target_id>",
     methods=("GET", "POST"),
 )
@@ -61,7 +64,7 @@ def manage_organization_requests_outgoing_create(
     ):  # pragma: no cover
         return redirect(
             url_for(
-                "manage_organization_verification_requests_outgoing_create_select",
+                "main.manage_organization_verification_requests_outgoing_create_select",
                 id=admin_unit.id,
             )
         )
@@ -81,7 +84,9 @@ def manage_organization_requests_outgoing_create(
 
             organization_verification_request_service: (
                 OrganizationVerificationRequestService
-            ) = app.container.services.organization_verification_request_service()
+            ) = (
+                current_app.container.services.organization_verification_request_service()
+            )
             organization_verification_request_service.insert_object(request)
             msg = gettext(
                 "Request successfully created. You will be notified after the other organization reviewed the request."

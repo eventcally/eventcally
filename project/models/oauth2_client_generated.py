@@ -1,7 +1,7 @@
 from enum import IntEnum
 from flask_security import AsaList
 from geoalchemy2 import Geometry
-from project import db
+from project.extensions import db
 from sqlalchemy import (
     Index,
     Boolean,
@@ -57,14 +57,6 @@ class OAuth2ClientGeneratedMixin(TrackableMixin, RateLimitHolderMixin):
         return deferred(Column(Unicode(255), nullable=True), group="detail")
 
     @declared_attr
-    def webhook_url(cls):
-        return deferred(Column(Unicode(255), nullable=True), group="detail")
-
-    @declared_attr
-    def webhook_secret(cls):
-        return deferred(Column(Unicode(255), nullable=True), group="detail")
-
-    @declared_attr
     def description(cls):
         return deferred(Column(UnicodeText(), nullable=True), group="detail")
 
@@ -82,6 +74,12 @@ class OAuth2ClientGeneratedMixin(TrackableMixin, RateLimitHolderMixin):
     def user_id(cls):
         return Column(
             Integer(), ForeignKey("user.id", ondelete="CASCADE"), nullable=True
+        )
+
+    @declared_attr
+    def webhook_id(cls):
+        return Column(
+            Integer(), ForeignKey("webhook.id", ondelete="SET NULL"), nullable=True
         )
 
     @declared_attr
@@ -125,4 +123,23 @@ class OAuth2ClientGeneratedMixin(TrackableMixin, RateLimitHolderMixin):
             cascade="all, delete-orphan",
             back_populates="app",
             primaryjoin="OAuth2Token.app_id == OAuth2Client.id",
+        )
+
+    @declared_attr
+    def webhook(cls):
+        return relationship(
+            "Webhook",
+            foreign_keys=[cls.webhook_id],
+            uselist=False,
+            single_parent=True,
+            cascade="all, delete-orphan",
+            back_populates="app",
+        )
+
+    @declared_attr
+    def webhook_deliveries(cls):
+        return relationship(
+            "WebhookDelivery",
+            back_populates="app",
+            primaryjoin="WebhookDelivery.app_id == OAuth2Client.id",
         )

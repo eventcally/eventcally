@@ -297,7 +297,9 @@ class Seeder(object):
             metadata = dict()
             metadata["client_name"] = "Mein Client"
             metadata["scope"] = " ".join(scope_list)
-            metadata["redirect_uris"] = [self._utils.get_url("swagger_oauth2_redirect")]
+            metadata["redirect_uris"] = [
+                self._utils.get_url("main.swagger_oauth2_redirect")
+            ]
             client.set_client_metadata(metadata)
 
             self._db.session.add(client)

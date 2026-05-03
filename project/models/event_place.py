@@ -3,7 +3,6 @@ from __future__ import annotations
 from sqlalchemy import func, select
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from project import db
 from project.domain.commands import (
     CreateEventPlaceCommand,
     DeleteEventPlaceCommand,
@@ -14,6 +13,7 @@ from project.domain.events import (
     EventPlaceDeleted,
     EventPlaceUpdated,
 )
+from project.extensions import db
 from project.models.event import Event
 from project.models.event_place_generated import EventPlaceGeneratedMixin
 
@@ -51,7 +51,9 @@ class EventPlace(db.Model, EventPlaceGeneratedMixin):
     def update(self, cmd: UpdateEventPlaceCommand):
         from project.models import Image, Location
 
-        event = EventPlaceUpdated(actor=cmd.actor, id=self.id)
+        event = EventPlaceUpdated(
+            actor=cmd.actor, id=self.id, admin_unit_id=self.admin_unit_id
+        )
 
         self._update_field(cmd, event, "name")
         self._update_field(cmd, event, "url")
@@ -64,7 +66,11 @@ class EventPlace(db.Model, EventPlaceGeneratedMixin):
             self.domain_events.append(event)
 
     def delete(self, cmd: DeleteEventPlaceCommand):
-        self.domain_events.append(EventPlaceDeleted(actor=cmd.actor, id=self.id))
+        self.domain_events.append(
+            EventPlaceDeleted(
+                actor=cmd.actor, id=self.id, admin_unit_id=self.admin_unit_id
+            )
+        )
 
     @hybrid_property
     def number_of_events(self):

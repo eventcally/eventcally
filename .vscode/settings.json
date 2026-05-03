@@ -1,7 +1,7 @@
 {
   "editor.formatOnSave": false,
   "isort.args": ["-sp", ".isort.cfg"],
-  "python.testing.pytestArgs": ["tests", "--capture=sys"],
+  "python.testing.pytestArgs": ["tests", "--capture=sys", "--cov=project", "--cov-append"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "python.analysis.autoImportCompletions": true,

@@ -94,7 +94,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
                 result.append(review_action)
 
         view_organization_action = self._create_action(
-            url_for("organizations", path=object.source_admin_unit_id),
+            url_for("main.organizations", path=object.source_admin_unit_id),
             gettext("View organization"),
         )
         if view_organization_action:

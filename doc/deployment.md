@@ -30,7 +30,7 @@ source env/bin/activate
 (env) flask db upgrade
 (env) flask db upgrade
 (env) flask data seed
-(env) gunicorn -c gunicorn.conf.py project:app
+(env) gunicorn -c gunicorn.conf.py main:app
 ```
 
 ## Scheduled/Cron jobs

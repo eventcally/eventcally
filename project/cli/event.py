@@ -1,7 +1,6 @@
 import click
 from flask.cli import AppGroup
 
-from project import app
 from project.cli import click_logging
 from project.services import event
 
@@ -20,6 +19,3 @@ def update_recurring_dates():
 @click_logging
 def create_bulk_event_references(admin_unit_id, postal_codes):
     event.create_bulk_event_references(admin_unit_id, list(postal_codes))
-
-
-app.cli.add_command(event_cli)

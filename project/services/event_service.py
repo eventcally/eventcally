@@ -21,7 +21,7 @@ class EventService(BaseService[Event]):
         super().insert_object(object)
 
     def update_object(self, object: Event):
-        from project import db
+        from project.extensions import db
 
         # TODO: Find a better way to handle this without importing db here
         with db.session.no_autoflush:

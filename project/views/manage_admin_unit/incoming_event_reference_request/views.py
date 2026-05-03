@@ -51,7 +51,7 @@ class ReviewView(BaseUpdateView):
         if object.review_status == EventReferenceRequestReviewStatus.verified:
             flash_message(
                 gettext("Request already verified"),
-                url_for("event", event_id=object.event_id),
+                url_for("main.event", event_id=object.event_id),
                 gettext("View event"),
                 "danger",
             )

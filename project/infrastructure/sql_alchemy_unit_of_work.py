@@ -12,6 +12,12 @@ from project.infrastructure.repositories import (
     SqlAlchemyEventPlaceRepository,
     SqlAlchemyOrganizationRepository,
 )
+from project.infrastructure.repositories.sql_alchemy_app_repository import (
+    SqlAlchemyAppRepository,
+)
+from project.infrastructure.repositories.sql_alchemy_webhook_repository import (
+    SqlAlchemyWebhookRepository,
+)
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
@@ -29,6 +35,8 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.event_organizers = SqlAlchemyEventOrganizerRepository(self.session)
         self.event_places = SqlAlchemyEventPlaceRepository(self.session)
         self.organizations = SqlAlchemyOrganizationRepository(self.session)
+        self.webhooks = SqlAlchemyWebhookRepository(self.session)
+        self.apps = SqlAlchemyAppRepository(self.session)
 
     def __exit__(self, exc_type, exc, traceback) -> bool:
         super().__exit__(exc_type, exc, traceback)

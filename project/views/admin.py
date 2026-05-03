@@ -1,10 +1,10 @@
-from flask import flash, redirect, render_template, request, url_for
+from flask import current_app, flash, redirect, render_template, request, url_for
 from flask_babel import gettext
 from flask_security import roles_required
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
-from project import app, db
+from project.extensions import db
 from project.forms.admin import (
     AdminNewsletterForm,
     AdminPlanningForm,
@@ -17,6 +17,7 @@ from project.forms.admin import (
 from project.models import Role, User
 from project.services.admin import upsert_settings
 from project.services.user import delete_user, set_roles_for_user
+from project.views.admin_blueprint import admin_bp
 from project.views.utils import (
     flash_errors,
     get_celery_poll_group_result,
@@ -29,7 +30,7 @@ from project.views.utils import (
 )
 
 
-@app.route("/admin/reset-tos-accepted", methods=("GET", "POST"))
+@admin_bp.route("/reset-tos-accepted", methods=("GET", "POST"))
 @roles_required("admin")
 def admin_reset_tos_accepted():
     from project.services.admin import reset_tos_accepted_for_users
@@ -49,7 +50,7 @@ def admin_reset_tos_accepted():
     return render_template("admin/reset_tos_accepted.html", form=form)
 
 
-@app.route("/admin/settings", methods=("GET", "POST"))
+@admin_bp.route("/settings", methods=("GET", "POST"))
 @roles_required("admin")
 def admin_settings():
     settings = upsert_settings()
@@ -71,7 +72,7 @@ def admin_settings():
     return render_template("admin/settings.html", form=form)
 
 
-@app.route("/admin/email", methods=["GET", "POST"])
+@admin_bp.route("/email", methods=["GET", "POST"])
 @roles_required("admin")
 def admin_email():
     form = AdminTestEmailForm()
@@ -81,7 +82,7 @@ def admin_email():
 
     if form.validate_on_submit():
         template = "test_email"
-        context = {"site_name": app.config["SITE_NAME"]}
+        context = {"site_name": current_app.config["SITE_NAME"]}
 
         if "async" in request.args:  # pragma: no cover
             result = send_template_mail_async(form.recipient.data, template, **context)
@@ -99,7 +100,7 @@ def admin_email():
     return render_template("admin/email.html", form=form)
 
 
-@app.route("/admin/newsletter", methods=["GET", "POST"])
+@admin_bp.route("/newsletter", methods=["GET", "POST"])
 @roles_required("admin")
 def admin_newsletter():
     form = AdminNewsletterForm()
@@ -109,7 +110,10 @@ def admin_newsletter():
 
     if form.validate_on_submit():
         template = "newsletter"
-        context = {"site_name": app.config["SITE_NAME"], "message": form.message.data}
+        context = {
+            "site_name": current_app.config["SITE_NAME"],
+            "message": form.message.data,
+        }
 
         if form.recipient_choice.data == 1:  # pragma: no cover
             result = send_template_mail_async(
@@ -136,7 +140,7 @@ def admin_newsletter():
     return render_template("admin/newsletter.html", form=form)
 
 
-@app.route("/admin/users")
+@admin_bp.route("/users")
 @roles_required("admin")
 def admin_users():
     users = User.query.order_by(func.lower(User.email)).paginate()
@@ -145,7 +149,7 @@ def admin_users():
     )
 
 
-@app.route("/admin/user/<int:id>/update", methods=("GET", "POST"))
+@admin_bp.route("/user/<int:id>/update", methods=("GET", "POST"))
 @roles_required("admin")
 def admin_user_update(id):
     user = User.query.get_or_404(id)
@@ -161,7 +165,7 @@ def admin_user_update(id):
         try:
             db.session.commit()
             flash(gettext("User successfully updated"), "success")
-            return redirect(url_for("admin_users"))
+            return redirect(url_for("admin.admin_users"))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")
@@ -171,7 +175,7 @@ def admin_user_update(id):
     return render_template("admin/update_user.html", user=user, form=form)
 
 
-@app.route("/admin/user/<int:id>/delete", methods=("GET", "POST"))
+@admin_bp.route("/user/<int:id>/delete", methods=("GET", "POST"))
 @roles_required("admin")
 def admin_user_delete(id):
     user = User.query.get_or_404(id)
@@ -185,7 +189,7 @@ def admin_user_delete(id):
             try:
                 delete_user(user)
                 flash(gettext("User successfully deleted"), "success")
-                return redirect(url_for("admin_users"))
+                return redirect(url_for("admin.admin_users"))
             except SQLAlchemyError as e:
                 db.session.rollback()
                 flash(handleSqlError(e), "danger")
@@ -195,7 +199,7 @@ def admin_user_delete(id):
     return render_template("admin/delete_user.html", form=form, user=user)
 
 
-@app.route("/admin/planning", methods=("GET", "POST"))
+@admin_bp.route("/planning", methods=("GET", "POST"))
 @roles_required("admin")
 def admin_planning():
     settings = upsert_settings()

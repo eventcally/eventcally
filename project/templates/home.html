@@ -23,7 +23,7 @@
             <div class="mx-auto" style="max-width: 320px;">
               {% if current_user.is_authenticated %}
               <div>
-                <a class="btn btn-primary btn-block" href="{{ url_for('manage') }}" role="button">{{ _('Manage') }}</a>
+                <a class="btn btn-primary btn-block" href="{{ url_for('main.manage') }}" role="button">{{ _('Manage') }}</a>
               </div>
               {% elif not config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] %}
               <div>

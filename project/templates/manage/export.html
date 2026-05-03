@@ -8,7 +8,7 @@
         $("#submit_async"). prop("disabled", true);
         handle_request_start();
         $.ajax({
-            url: "{{ url_for('manage_admin_unit_export', id=admin_unit.id) }}",
+            url: "{{ url_for('main.manage_admin_unit_export', id=admin_unit.id) }}",
             type: "post",
             dataType: "json",
             error: function(xhr, status, error) {
@@ -23,7 +23,7 @@
 
     function poll(result_id) {
         $.ajax({
-            url: "{{ url_for('manage_admin_unit_export', id=admin_unit.id) }}",
+            url: "{{ url_for('main.manage_admin_unit_export', id=admin_unit.id) }}",
             type: "get",
             dataType: "json",
             data: "poll=" + result_id,

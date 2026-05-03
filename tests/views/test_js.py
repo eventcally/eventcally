@@ -10,7 +10,7 @@ def test_js_check_event_place_name(client, seeder: Seeder, utils: UtilActions):
     response = utils.get(url)
 
     with client:
-        url = utils.get_url("js_check_event_place_name")
+        url = utils.get_url("main.js_check_event_place_name")
         response = utils.post_form_data(
             url,
             {
@@ -30,7 +30,7 @@ def test_js_check_event_place_name_exists(client, seeder: Seeder, utils: UtilAct
     response = utils.get(url)
 
     with client:
-        url = utils.get_url("js_check_event_place_name")
+        url = utils.get_url("main.js_check_event_place_name")
         response = utils.post_form_data(
             url,
             {
@@ -50,7 +50,7 @@ def test_js_check_organizer_name(client, seeder: Seeder, utils: UtilActions):
     response = utils.get(url)
 
     with client:
-        url = utils.get_url("js_check_organizer_name")
+        url = utils.get_url("main.js_check_organizer_name")
         response = utils.post_form_data(
             url,
             {
@@ -70,7 +70,7 @@ def test_js_check_organizer_name_exists(client, seeder: Seeder, utils: UtilActio
     response = utils.get(url)
 
     with client:
-        url = utils.get_url("js_check_organizer_name")
+        url = utils.get_url("main.js_check_organizer_name")
         response = utils.post_form_data(
             url,
             {
@@ -87,7 +87,7 @@ def test_js_js_check_register_email(client, seeder: Seeder, utils: UtilActions):
     response = utils.get(url)
 
     with client:
-        url = utils.get_url("js_check_register_email")
+        url = utils.get_url("main.js_check_register_email")
         response = utils.post_form_data(
             url,
             {
@@ -103,11 +103,11 @@ def test_js_js_check_register_email_exists(client, seeder: Seeder, utils: UtilAc
     url = utils.get_url("security.register")
     response = utils.get(url)
 
-    url = utils.get_url("js_check_register_email")
+    url = utils.get_url("main.js_check_register_email")
     response = utils.get(url)
 
     with client:
-        url = utils.get_url("js_check_register_email")
+        url = utils.get_url("main.js_check_register_email")
         response = utils.post_form_data(
             url,
             {
@@ -138,7 +138,7 @@ def test_js_autocomplete_place(client, seeder: Seeder, utils: UtilActions):
 
     with client:
         url = utils.get_url(
-            "js_autocomplete_place", admin_unit_id=admin_unit_id, keyword="crew"
+            "main.js_autocomplete_place", admin_unit_id=admin_unit_id, keyword="crew"
         )
         response = utils.get(url)
 
@@ -151,7 +151,7 @@ def test_js_autocomplete_place_gmaps_only(client, seeder: Seeder, utils: UtilAct
     user_id, admin_unit_id = seeder.setup_base()
     seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("event_dates")
+    url = utils.get_url("main.event_dates")
     response = utils.get(url)
 
     utils.gmaps_places_autocomplete_query.return_value = [
@@ -163,7 +163,7 @@ def test_js_autocomplete_place_gmaps_only(client, seeder: Seeder, utils: UtilAct
     ]
 
     with client:
-        url = utils.get_url("js_autocomplete_place", keyword="crew")
+        url = utils.get_url("main.js_autocomplete_place", keyword="crew")
         response = utils.get(url)
 
         utils.assert_response_ok(response)
@@ -181,7 +181,7 @@ def test_js_autocomplete_place_exclude_gmaps(
 
     with client:
         url = utils.get_url(
-            "js_autocomplete_place",
+            "main.js_autocomplete_place",
             admin_unit_id=admin_unit_id,
             keyword="crew",
             exclude_gmaps=1,
@@ -192,7 +192,7 @@ def test_js_autocomplete_place_exclude_gmaps(
         assert response.json["results"][0]["text"] == "Meine Crew"
 
         utils.get_endpoint_ok(
-            "js_autocomplete_place",
+            "main.js_autocomplete_place",
             admin_unit_id=admin_unit_id,
             exclude_gmaps=1,
         )
@@ -213,7 +213,7 @@ def test_js_autocomplete_gmaps_place(client, seeder: Seeder, utils: UtilActions)
     }
 
     with client:
-        url = utils.get_url("js_autocomplete_gmaps_place", gmaps_id="123")
+        url = utils.get_url("main.js_autocomplete_gmaps_place", gmaps_id="123")
         response = utils.get(url)
 
         utils.assert_response_ok(response)
@@ -224,7 +224,7 @@ def test_js_widget_loader_custom_widget(client, seeder: Seeder, utils: UtilActio
     _, admin_unit_id = seeder.setup_base(log_in=False)
     custom_widget_id = seeder.insert_event_custom_widget(admin_unit_id)
 
-    url = utils.get_url("js_widget_loader_custom_widget", id=custom_widget_id)
+    url = utils.get_url("main.js_widget_loader_custom_widget", id=custom_widget_id)
     utils.get_ok(url)
 
 
@@ -232,7 +232,7 @@ def test_js_icalevents(
     client, app, db, seeder: Seeder, utils: UtilActions, shared_datadir, requests_mock
 ):
     user_id, admin_unit_id = seeder.setup_base()
-    url = utils.get_url("planning")
+    url = utils.get_url("main.planning")
     utils.get(url)
 
     with app.app_context():
@@ -261,7 +261,7 @@ def _assert_icalevents(params, filename):
     utils.mock_get_request_with_file("http://test.de", datadir, filename)
 
     with client:
-        url = utils.get_url("js_icalevents")
+        url = utils.get_url("main.js_icalevents")
         response = utils.post_form_data(
             url,
             {

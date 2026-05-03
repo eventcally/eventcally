@@ -2,16 +2,18 @@ import json
 import os
 import shutil
 
+from flask import current_app
 from sqlalchemy import and_
 from sqlalchemy.orm import joinedload
 
-from project import app, db, dump_org_path, dump_path
+from project import dump_org_path, dump_path
 from project.api.event.schemas import EventDumpSchema
 from project.api.event_category.schemas import EventCategoryDumpSchema
 from project.api.event_reference.schemas import EventReferenceDumpSchema
 from project.api.organization.schemas import OrganizationDumpSchema
 from project.api.organizer.schemas import OrganizerDumpSchema
 from project.api.place.schemas import PlaceDumpSchema
+from project.extensions import db
 from project.imageutils import get_image_from_bytes
 from project.models import (
     AdminUnit,
@@ -89,7 +91,7 @@ class Dumper(object):
         with open(path, "w") as outfile:
             json.dump(result, outfile, ensure_ascii=False, indent=4)
 
-        app.logger.info(f"{len(items)} item(s) dumped to {path}.")
+        current_app.logger.info(f"{len(items)} item(s) dumped to {path}.")
 
     def dump_item(self, items, schema, file_base_name):
         result = schema.dump(items)
@@ -98,7 +100,7 @@ class Dumper(object):
         with open(path, "w") as outfile:
             json.dump(result, outfile, ensure_ascii=False, indent=4)
 
-        app.logger.info(f"Item dumped to {path}.")
+        current_app.logger.info(f"Item dumped to {path}.")
 
     def setup_tmp_dir(self):
         self.tmp_path = os.path.join(self.dump_base_path, f"tmp-{self.file_base_name}")
@@ -110,7 +112,7 @@ class Dumper(object):
     def zip_tmp_dir(self):
         zip_base_name = os.path.join(self.dump_base_path, self.file_base_name)
         zip_path = shutil.make_archive(zip_base_name, "zip", self.tmp_path)
-        app.logger.info(f"Zipped all up to {zip_path}.")
+        current_app.logger.info(f"Zipped all up to {zip_path}.")
 
     def dump_image(self, image):
         if not image:
@@ -179,6 +181,6 @@ def dump_admin_unit(admin_unit_id):
 
 
 def clear_admin_unit_dumps():
-    app.logger.info("Clearing admin unit dumps..")
+    current_app.logger.info("Clearing admin unit dumps..")
     clear_files_in_dir(dump_org_path)
-    app.logger.info("Done.")
+    current_app.logger.info("Done.")

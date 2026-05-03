@@ -1,7 +1,7 @@
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from project import db
+from project.extensions import db
 from project.models.admin_unit_verification_request_generated import (
     AdminUnitVerificationRequestGeneratedMixin,
     AdminUnitVerificationRequestReviewStatus,

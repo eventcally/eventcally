@@ -12,11 +12,11 @@ def test_read(client, seeder: Seeder, utils: UtilActions, external_link):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id, external_link=external_link)
 
-    url = utils.get_url("event", event_id=event_id)
+    url = utils.get_url("main.event", event_id=event_id)
     utils.get_ok(url)
 
     event_id = seeder.create_event(admin_unit_id, draft=True)
-    url = utils.get_url("event", event_id=event_id)
+    url = utils.get_url("main.event", event_id=event_id)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
@@ -24,7 +24,7 @@ def test_read(client, seeder: Seeder, utils: UtilActions, external_link):
     utils.get_ok(url)
 
     _, _, event_id = seeder.create_event_unverified()
-    url = utils.get_url("event", event_id=event_id)
+    url = utils.get_url("main.event", event_id=event_id)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
@@ -37,10 +37,10 @@ def test_read_containsActionLink(seeder: Seeder, utils: UtilActions):
     )
     event_id = seeder.create_event(other_admin_unit_id)
 
-    url = utils.get_url("event", event_id=event_id)
+    url = utils.get_url("main.event", event_id=event_id)
     response = utils.get_ok(url)
 
-    action_url = utils.get_url("event_actions", event_id=event_id)
+    action_url = utils.get_url("main.event_actions", event_id=event_id)
     assert action_url in str(response.data)
 
 
@@ -54,7 +54,7 @@ def test_read_shows_reference_requests(seeder: Seeder, utils: UtilActions):
         reference_request_id,
     ) = seeder.create_outgoing_reference_request(admin_unit_id)
 
-    url = utils.get_url("event", event_id=event_id)
+    url = utils.get_url("main.event", event_id=event_id)
     utils.get_ok(url)
 
 
@@ -64,7 +64,7 @@ def test_read_co_organizers(seeder: Seeder, utils: UtilActions):
         admin_unit_id
     )
 
-    url = utils.get_url("event", event_id=event_id)
+    url = utils.get_url("main.event", event_id=event_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "Organizer A")
     utils.assert_response_contains(response, "Organizer B")
@@ -77,7 +77,7 @@ def test_read_with_custom_category(seeder: Seeder, utils: UtilActions):
         admin_unit_id, custom_category_ids=[custom_event_category_id]
     )
 
-    url = utils.get_url("event", event_id=event_id)
+    url = utils.get_url("main.event", event_id=event_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "Custom Category")
 
@@ -117,7 +117,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "event_actions", event_id=1)
+    utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
         from project.models import Event
@@ -143,7 +143,7 @@ def test_create_unauthorized(client, app, utils: UtilActions, seeder: Seeder):
 
     response = utils.get_endpoint("manage_admin_unit.event_create", id=admin_unit_id)
     utils.assert_response_permission_missing(
-        response, "manage_admin_unit", id=admin_unit_id
+        response, "main.manage_admin_unit", id=admin_unit_id
     )
 
 
@@ -171,7 +171,7 @@ def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
         },
     )
 
-    utils.assert_response_redirect(response, "event_actions", event_id=1)
+    utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
         from project.models import Event
@@ -224,7 +224,7 @@ def test_create_with_reference_requests(
         },
     )
 
-    utils.assert_response_redirect(response, "event_actions", event_id=1)
+    utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
         from project.models import (
@@ -308,7 +308,7 @@ def test_create_with_custom_category(client, app, utils: UtilActions, seeder: Se
         },
     )
 
-    utils.assert_response_redirect(response, "event_actions", event_id=1)
+    utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
         from project.models import Event
@@ -345,7 +345,7 @@ def test_create_newPlaceAndOrganizer(
             "new_event_place-name": "Neuer Ort",
         },
     )
-    utils.assert_response_redirect(response, "event_actions", event_id=1)
+    utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
         from project.models import Event
@@ -551,7 +551,7 @@ def test_duplicate(client, app, utils: UtilActions, seeder: Seeder, mocker, alld
     response = utils.get_ok(url)
 
     response = utils.post_form(url, response, {})
-    utils.assert_response_redirect(response, "event_actions", event_id=2)
+    utils.assert_response_redirect(response, "main.event_actions", event_id=2)
 
     with app.app_context():
         from project.models import Event
@@ -573,7 +573,7 @@ def test_actions(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)
 
-    url = utils.get_url("event_actions", event_id=event_id)
+    url = utils.get_url("main.event_actions", event_id=event_id)
     response = utils.get_ok(url)
 
     # Nutzer ist alleine auf der Welt. Deshalb darf es keine Referenz-Links geben
@@ -581,7 +581,7 @@ def test_actions(seeder: Seeder, utils: UtilActions):
     assert b"Veranstaltung empfehlen" not in response.data
 
     event_id = seeder.create_event(admin_unit_id, draft=True)
-    url = utils.get_url("event_actions", event_id=event_id)
+    url = utils.get_url("main.event_actions", event_id=event_id)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
@@ -589,7 +589,7 @@ def test_actions(seeder: Seeder, utils: UtilActions):
     utils.get_ok(url)
 
     _, _, event_id = seeder.create_event_unverified()
-    url = utils.get_url("event_actions", event_id=event_id)
+    url = utils.get_url("main.event_actions", event_id=event_id)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
@@ -600,7 +600,7 @@ def test_actions_withReferenceRequestLink(seeder: Seeder, utils: UtilActions):
     other_user_id = seeder.create_user("other@test.de")
     seeder.create_admin_unit(other_user_id, "Other Crew")
 
-    url = utils.get_url("event_actions", event_id=event_id)
+    url = utils.get_url("main.event_actions", event_id=event_id)
     response = utils.get_ok(url)
 
     # 'Empfehlung anfragen' erlaubt: Referenz-Anfrage an andere AdminUnit
@@ -618,7 +618,7 @@ def test_actions_unverifiedWithoutReferenceRequestLink(
     other_user_id = seeder.create_user("other@test.de")
     seeder.create_admin_unit(other_user_id, "Other Crew")
 
-    url = utils.get_url("event_actions", event_id=event_id)
+    url = utils.get_url("main.event_actions", event_id=event_id)
     response = utils.get_ok(url)
 
     # 'Empfehlung anfragen' nicht erlaubt
@@ -633,7 +633,7 @@ def test_actions_withReferenceLink(seeder: Seeder, utils: UtilActions):
     )
     event_id = seeder.create_event(other_admin_unit_id)
 
-    url = utils.get_url("event_actions", event_id=event_id)
+    url = utils.get_url("main.event_actions", event_id=event_id)
     response = utils.get_ok(url)
 
     # 'Empfehlung anfragen' nicht erlaubt: Der aktuelle Nutzer ist nicht Mitglied der anderen AdminUnit.
@@ -804,7 +804,7 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, mocker, db_erro
 
 
 def test_rrule(client, seeder: Seeder, utils: UtilActions, app):
-    url = utils.get_url("event_rrule")
+    url = utils.get_url("main.event_rrule")
     response = utils.post_json(
         url,
         {
@@ -825,7 +825,7 @@ def test_rrule(client, seeder: Seeder, utils: UtilActions, app):
 
 
 def test_rrule_bad_request(client, seeder: Seeder, utils: UtilActions, app):
-    url = utils.get_url("event_rrule")
+    url = utils.get_url("main.event_rrule")
     response = utils.post_json(
         url,
         {
@@ -843,7 +843,7 @@ def test_report(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
 
-    url = utils.get_url("event_report", event_id=event_id)
+    url = utils.get_url("main.event_report", event_id=event_id)
     utils.get_ok(url)
 
 
@@ -854,7 +854,7 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
 
     # Default
     event_id = seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
-    url = utils.get_url("event_ical", id=event_id)
+    url = utils.get_url("main.event_ical", id=event_id)
     utils.get_ok(url)
 
     # Draft
@@ -864,7 +864,7 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
         start=create_berlin_date(2020, 1, 2, 14, 30),
         end=create_berlin_date(2020, 1, 3, 14, 30),
     )
-    url = utils.get_url("event_ical", id=draft_id)
+    url = utils.get_url("main.event_ical", id=draft_id)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
@@ -873,7 +873,7 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
 
     # Unverified
     _, _, unverified_id = seeder.create_event_unverified()
-    url = utils.get_url("event_ical", id=unverified_id)
+    url = utils.get_url("main.event_ical", id=unverified_id)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
@@ -881,7 +881,7 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
     allday_id = seeder.create_event(
         admin_unit_id, allday=True, start=create_berlin_date(2020, 1, 2, 14, 30)
     )
-    url = utils.get_url("event_ical", id=allday_id)
+    url = utils.get_url("main.event_ical", id=allday_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "DTSTART;VALUE=DATE:20200102")
     utils.assert_response_contains_not(response, "DTEND;VALUE=DATE:")
@@ -893,7 +893,7 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
         start=create_berlin_date(2020, 1, 2, 14, 30),
         end=create_berlin_date(2020, 1, 3, 14, 30),
     )
-    url = utils.get_url("event_ical", id=allday_id)
+    url = utils.get_url("main.event_ical", id=allday_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "DTSTART;VALUE=DATE:20200102")
     utils.assert_response_contains(response, "DTEND;VALUE=DATE:20200104")
@@ -902,6 +902,6 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
     event_with_recc_id = seeder.create_event(
         admin_unit_id, recurrence_rule="RRULE:FREQ=DAILY;COUNT=7"
     )
-    url = utils.get_url("event_ical", id=event_with_recc_id)
+    url = utils.get_url("main.event_ical", id=event_with_recc_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "FREQ=DAILY;COUNT=7")

@@ -3,7 +3,6 @@ from __future__ import annotations
 from sqlalchemy import func, select
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from project import db
 from project.domain.commands import (
     CreateEventOrganizerCommand,
     DeleteEventOrganizerCommand,
@@ -14,6 +13,7 @@ from project.domain.events import (
     EventOrganizerDeleted,
     EventOrganizerUpdated,
 )
+from project.extensions import db
 from project.models.association_tables.event_co_organizers_generated import (
     EventCoOrganizersGeneratedMixin,
 )
@@ -57,7 +57,9 @@ class EventOrganizer(db.Model, EventOrganizerGeneratedMixin):
     def update(self, cmd: UpdateEventOrganizerCommand):
         from project.models import Image, Location
 
-        event = EventOrganizerUpdated(actor=cmd.actor, id=self.id)
+        event = EventOrganizerUpdated(
+            actor=cmd.actor, id=self.id, admin_unit_id=self.admin_unit_id
+        )
 
         self._update_field(cmd, event, "name")
         self._update_field(cmd, event, "url")
@@ -72,7 +74,11 @@ class EventOrganizer(db.Model, EventOrganizerGeneratedMixin):
             self.domain_events.append(event)
 
     def delete(self, cmd: DeleteEventOrganizerCommand):
-        self.domain_events.append(EventOrganizerDeleted(actor=cmd.actor, id=self.id))
+        self.domain_events.append(
+            EventOrganizerDeleted(
+                actor=cmd.actor, id=self.id, admin_unit_id=self.admin_unit_id
+            )
+        )
 
     @hybrid_property
     def number_of_events(self):

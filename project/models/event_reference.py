@@ -1,6 +1,6 @@
 from sqlalchemy.event import listens_for
 
-from project import db
+from project.extensions import db
 from project.models.event_reference_generated import EventReferenceGeneratedMixin
 from project.utils import make_check_violation
 

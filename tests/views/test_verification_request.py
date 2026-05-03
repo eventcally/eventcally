@@ -14,7 +14,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     ) = seeder.setup_admin_unit_missing_verification_scenario()
 
     url = utils.get_url(
-        "manage_organization_requests_outgoing_create",
+        "main.manage_organization_requests_outgoing_create",
         id=unverified_admin_unit_id,
         target_id=verifier_admin_unit_id,
     )
@@ -97,12 +97,12 @@ def test_verification_requests_outgoing(client, seeder: Seeder, utils: UtilActio
     )
     utils.assert_response_redirect(
         response,
-        "manage_organization_verification_requests_outgoing_create_select",
+        "main.manage_organization_verification_requests_outgoing_create_select",
         id=unverified_admin_unit_id,
     )
 
     response = utils.get_endpoint_ok(
-        "manage_organization_verification_requests_outgoing_create_select",
+        "main.manage_organization_verification_requests_outgoing_create_select",
         id=unverified_admin_unit_id,
     )
     utils.assert_response_contains(response, "Stadtmarketing")

@@ -23,7 +23,7 @@ Vue.component("EventListAddEvent", EventListAddEvent);
 
         <div>
             <i class="fa fa-fw fa-link" data-toggle="tooltip" title="{{ _('Event') }}"></i>
-            <a href="{{ url_for('event', event_id=event.id) }}">{{ event.name }}</a>
+            <a href="{{ url_for('main.event', event_id=event.id) }}">{{ event.name }}</a>
         </div>
 
         <div class="list-group mt-4">
@@ -34,7 +34,7 @@ Vue.component("EventListAddEvent", EventListAddEvent);
                 </a>
             {% endif %}
             {% if user_rights['can_reference_event'] %}
-                <a class="list-group-item list-group-item-action" href="{{ url_for('event_reference_create', event_id=event.id) }}">
+                <a class="list-group-item list-group-item-action" href="{{ url_for('main.event_reference_create', event_id=event.id) }}">
                     <p class="mb-1"><i class="fa fa-link"></i> {{ _('Reference event') }}</p>
                     <small>{{ _('Reference this event on your organization\'s calendar.') }}</small>
                 </a>

@@ -3,18 +3,18 @@ import shutil
 from io import StringIO
 
 import requests
-from flask import url_for
+from flask import current_app, url_for
 from sqlalchemy import and_
 from sqlalchemy.orm import load_only
 
-from project import app, cache_path, robots_txt_path, sitemap_path
+from project import cache_path, robots_txt_path, sitemap_path
 from project.dateutils import get_today
 from project.models import AdminUnit, Event, EventDate, EventPublicStatus
 from project.utils import make_dir
 
 
 def generate_sitemap(pinggoogle: bool):
-    app.logger.info("Generating sitemap..")
+    current_app.logger.info("Generating sitemap..")
     make_dir(cache_path)
 
     buf = StringIO()
@@ -34,10 +34,10 @@ def generate_sitemap(pinggoogle: bool):
         )
         .all()
     )
-    app.logger.info(f"Found {len(events)} events")
+    current_app.logger.info(f"Found {len(events)} events")
 
     for event in events:
-        loc = url_for("event", event_id=event.id)
+        loc = url_for("main.event", event_id=event.id)
         lastmod = (
             event.last_modified_at.strftime("%Y-%m-%d")
             if event.last_modified_at
@@ -53,27 +53,27 @@ def generate_sitemap(pinggoogle: bool):
         shutil.copyfileobj(buf, fd)
 
     size = os.path.getsize(sitemap_path)
-    app.logger.info(f"Generated sitemap at {sitemap_path} ({size} Bytes)")
+    current_app.logger.info(f"Generated sitemap at {sitemap_path} ({size} Bytes)")
 
     if size > 52428800:  # pragma: no cover
-        app.logger.error(f"Size of sitemap ({size} Bytes) is larger than 50MB.")
+        current_app.logger.error(f"Size of sitemap ({size} Bytes) is larger than 50MB.")
 
     if pinggoogle:  # pragma: no cover
-        sitemap_url = requests.utils.quote(url_for("sitemap_xml"))
+        sitemap_url = requests.utils.quote(url_for("main.sitemap_xml"))
         google_url = f"http://www.google.com/ping?sitemap={sitemap_url}"
-        app.logger.info(f"Pinging {google_url} ..")
+        current_app.logger.info(f"Pinging {google_url} ..")
 
         response = requests.get(google_url)
-        app.logger.info(f"Response {response.status_code}")
+        current_app.logger.info(f"Response {response.status_code}")
 
         if response.status_code != 200:
-            app.logger.error(
+            current_app.logger.error(
                 f"Google ping returned unexpected status code {response.status_code}."
             )
 
 
 def generate_robots_txt():
-    app.logger.info("Generating robots.txt..")
+    current_app.logger.info("Generating robots.txt..")
     make_dir(cache_path)
 
     buf = StringIO()
@@ -84,11 +84,11 @@ def generate_robots_txt():
     buf.write(f"Allow: /event/{os.linesep}")
 
     if os.path.exists(sitemap_path):
-        sitemap_url = url_for("sitemap_xml")
+        sitemap_url = url_for("main.sitemap_xml")
         buf.write(f"Sitemap: {sitemap_url}{os.linesep}")
 
     with open(robots_txt_path, "w") as fd:
         buf.seek(0)
         shutil.copyfileobj(buf, fd)
 
-    app.logger.info(f"Generated robots.txt at {robots_txt_path}")
+    current_app.logger.info(f"Generated robots.txt at {robots_txt_path}")

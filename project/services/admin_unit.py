@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import joinedload, load_only
 
-from project import db
+from project.extensions import db
 from project.models import (
     AdminUnit,
     AdminUnitInvitation,

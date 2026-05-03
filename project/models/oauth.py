@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import time
 
@@ -10,14 +12,19 @@ from flask import request
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import object_session
 
-from project import db
 from project.dateutils import gmt_tz
+from project.domain import events
+from project.domain.commands.create_app_command import CreateAppCommand
+from project.domain.commands.delete_app_command import DeleteAppCommand
+from project.domain.commands.update_app_command import UpdateAppCommand
+from project.extensions import db
 from project.models.mixins.rate_limit_provider_mixin import RateLimitProviderMixin
 from project.models.oauth2_authorization_code_generated import (
     OAuth2AuthorizationCodeGeneratedMixin,
 )
 from project.models.oauth2_client_generated import OAuth2ClientGeneratedMixin
 from project.models.oauth2_token_generated import OAuth2TokenGeneratedMixin
+from project.utils import update_field_with_command
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
 oauth_refresh_token_expires_in = 90 * 86400  # 90 days
@@ -29,6 +36,67 @@ class OAuth2Client(
     OAuth2ClientMixin,
 ):
     __default_rate_limit_value__ = "5000/hour"
+
+    @classmethod
+    def create_app(cls, cmd: CreateAppCommand) -> OAuth2Client:
+        from project.models import Webhook
+
+        instance = cls()
+
+        instance.admin_unit_id = cmd.admin_unit_id
+        instance.description = cmd.description
+        instance.app_permissions = cmd.app_permissions
+        instance.homepage_url = cmd.homepage_url
+        instance.setup_url = cmd.setup_url
+
+        metadata = {
+            "client_name": cmd.name,
+            "scope": cmd.scope,
+            "redirect_uris": cmd.redirect_uris,
+        }
+        instance.set_client_metadata(metadata)
+
+        event = events.AppCreated(
+            actor=cmd.actor,
+            id=-1,
+            admin_unit_id=instance.admin_unit_id,
+        )
+
+        Webhook.create(cmd.webhook, instance, event, "webhook")
+
+        instance.domain_events.append(event)
+        return instance
+
+    def update_app(self, cmd: UpdateAppCommand):
+        from project.models import Webhook
+
+        event = events.AppUpdated(
+            actor=cmd.actor,
+            id=self.id,
+            admin_unit_id=self.admin_unit_id,
+        )
+
+        self._update_field(cmd, event, "description")
+        self._update_field(cmd, event, "app_permissions")
+        self._update_field(cmd, event, "homepage_url")
+        self._update_field(cmd, event, "setup_url")
+
+        metadata = self.client_metadata or {}
+        update_field_with_command(metadata, cmd, event, "client_name", "name", "name")
+        update_field_with_command(metadata, cmd, event, "scope")
+        update_field_with_command(metadata, cmd, event, "redirect_uris")
+        self.set_client_metadata(metadata)
+
+        Webhook.update(cmd.webhook, self, event, "webhook")
+
+        self.domain_events.append(event)
+
+    def delete_app(self, cmd: DeleteAppCommand):
+        self.domain_events.append(
+            events.AppDeleted(
+                actor=cmd.actor, id=self.id, admin_unit_id=self.admin_unit_id
+            )
+        )
 
     @hybrid_property
     def is_app(self):  # pragma: no cover

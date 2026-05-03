@@ -6,10 +6,26 @@ def test_mail_server():
 
     os.environ["MAIL_SERVER"] = "mailserver.com"
 
-    from project import app
+    from project import create_app
 
-    app.config["TESTING"] = True
+    app = create_app({"TESTING": True})
     app.testing = True
+
+
+def test_log_message_called_via_email_dispatched_signal(app):
+    """Covers __init__.py lines 187-188: log_message function body."""
+    from unittest.mock import MagicMock
+
+    from flask_mail import email_dispatched
+
+    # The log_message function is registered when MAIL_SUPPRESS_SEND=True (always in tests).
+    # Emit the signal manually to exercise the inner function.
+    msg = MagicMock()
+    msg.subject = "Test Subject"
+    msg.body = "Test Body"
+
+    with app.app_context():
+        email_dispatched.send(msg, app=app)
 
 
 def drop_db(db):
@@ -64,7 +80,7 @@ def migrate_with_result(app):
 def test_migrations(app, seeder):
     from flask_migrate import downgrade, upgrade
 
-    from project import db
+    from project.extensions import db
     from project.init_data import create_initial_data
 
     with app.app_context():
@@ -87,7 +103,7 @@ def test_migrations(app, seeder):
 def test_migration_public_status(app, seeder):
     from flask_migrate import upgrade
 
-    from project import db
+    from project.extensions import db
     from project.models import Event, EventPublicStatus
 
     with app.app_context():
@@ -106,7 +122,7 @@ def test_migration_public_status(app, seeder):
 def test_migration_event_definitions(app, seeder):
     from flask_migrate import upgrade
 
-    from project import db
+    from project.extensions import db
     from project.models import Event
 
     with app.app_context():

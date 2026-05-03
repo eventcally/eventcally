@@ -17,7 +17,9 @@ class UserChildViewHandler(BaseViewHandler):
 
     def get_breadcrumbs(self):
         result = super().get_breadcrumbs()
-        result.append(self._create_breadcrumb(url_for("profile"), gettext("Profile")))
+        result.append(
+            self._create_breadcrumb(url_for("main.profile"), gettext("Profile"))
+        )
         return result
 
     def complete_object(self, object, form):

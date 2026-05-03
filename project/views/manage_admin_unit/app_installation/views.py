@@ -1,8 +1,9 @@
-from flask import flash
+from flask import flash, redirect
 from flask_babel import gettext, lazy_gettext
 
+from project.domain.commands import UninstallAppCommand
 from project.models.oauth import OAuth2Client
-from project.modular.base_views import BaseCreateView, BaseUpdateView
+from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
 from project.permissions import get_organization_permission_infos
 from project.views.manage_admin_unit.app_installation.displays import (
     AcceptPermissionsDisplay,
@@ -12,7 +13,7 @@ from project.views.manage_admin_unit.app_installation.forms import (
     AcceptPermissionsForm,
     InstallAppForm,
 )
-from project.views.utils import flash_message
+from project.views.utils import current_admin_unit, flash_message, handle_base_error
 
 
 class InstallView(BaseCreateView):
@@ -47,10 +48,15 @@ class InstallView(BaseCreateView):
         kwargs.setdefault("oauth2_client", self.oauth2_client)
         return super().render_template(**kwargs)
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-        object.oauth2_client = self.oauth2_client
-        object.permissions = self.oauth2_client.app_permissions
+    @handle_base_error
+    def dispatch_validated_form(self, form: InstallAppForm, object, **kwargs):
+        cmd = form.create_create_command(
+            admin_unit_id=current_admin_unit.id,
+            app_id=self.oauth2_client.id,
+        )
+        cmd_result = self.message_bus.handle_command(cmd)
+        self.flash_success_message(cmd_result, form)
+        return redirect(self.get_redirect_url(object=cmd_result))
 
     def flash_success_message(self, object, form):
         text = gettext("App successfully installed")
@@ -82,6 +88,18 @@ class AcceptPermissionsView(BaseUpdateView):
 
         return form
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-        object.permissions = object.oauth2_client.app_permissions
+    @handle_base_error
+    def dispatch_validated_form(self, form: AcceptPermissionsForm, object, **kwargs):
+        cmd = form.create_update_command(object.id)
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
+
+
+class DeleteView(BaseDeleteView):
+    @handle_base_error
+    def dispatch_validated_form_deletable(self, form, object, **kwargs):
+        cmd = UninstallAppCommand.model_construct(id=object.id)
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url())

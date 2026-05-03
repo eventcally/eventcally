@@ -96,7 +96,7 @@
             {% if kwargs['ri'] == 'rrule' %}
               <script type="text/javascript">
                 $( function() {
-                  $("textarea[name=recurrence_rule]").recurrenceinput({lang:'de', startField: "start",  ajaxURL: "{{ url_for('event_rrule') }}", firstDay: 1});
+                  $("textarea[name=recurrence_rule]").recurrenceinput({lang:'de', startField: "start",  ajaxURL: "{{ url_for('main.event_rrule') }}", firstDay: 1});
                 });
               </script>
             {% endif %}
@@ -515,7 +515,7 @@
     </div>
     <div class="card-footer small">
       {{ render_audit(event, show_rating) }}
-      <a href="{{ url_for('event_report', event_id=event.id) }}" class="text-dark" target="_blank" rel="noopener noreferrer">{{ _('Report event') }}</a>
+      <a href="{{ url_for('main.event_report', event_id=event.id) }}" class="text-dark" target="_blank" rel="noopener noreferrer">{{ _('Report event') }}</a>
     </div>
   </div>
 
@@ -683,7 +683,7 @@
 
       <div class="small mt-2">
         {{ render_audit(event, show_rating) }}
-        <a href="{{ url_for('event_report', event_id=event.id) }}" class="text-dark">{{ _('Report event') }}</a>
+        <a href="{{ url_for('main.event_report', event_id=event.id) }}" class="text-dark">{{ _('Report event') }}</a>
       </div>
     </div>
   </div>
@@ -759,7 +759,7 @@
 
         <div class="col-12 col-sm">
           <div class="font-weight-bold">
-            <a href="{{ url_for('organizations', path=event.admin_unit.id) }}">{{ event.admin_unit.name }}</a>
+            <a href="{{ url_for('main.organizations', path=event.admin_unit.id) }}">{{ event.admin_unit.name }}</a>
             {{ render_admin_unit_badges(event.admin_unit) }}
           </div>
 
@@ -782,14 +782,14 @@
     <div class="list-group list-group-flush mb-4" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
       {% for event_reference in event.references %}
         <span class="list-group-item">
-          <a href="{{ url_for('organizations', path=event_reference.admin_unit.id) }}">{{ event_reference.admin_unit.name }}</a>
+          <a href="{{ url_for('main.organizations', path=event_reference.admin_unit.id) }}">{{ event_reference.admin_unit.name }}</a>
           {{ render_admin_unit_badges(event_reference.admin_unit) }}
         </span>
       {% endfor %}
     </div>
     {% if user_rights['can_reference_event'] %}
       <div class="ml-3 mb-3">
-          <a href="{{ url_for('event_reference_create', event_id=event.id) }}" class="btn btn-outline-secondary"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
+          <a href="{{ url_for('main.event_reference_create', event_id=event.id) }}" class="btn btn-outline-secondary"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
       </div>
     {% endif %}
   </div>
@@ -821,7 +821,7 @@
         </div>
         <div class="list-group list-group-flush mb-4" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
         {% for date in dates %}
-            <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item">{{ render_event_date(date.start, date.end, date.allday) }}</a>
+            <a href="{{ url_for('main.event_date', id=date.id) }}" class="list-group-item">{{ render_event_date(date.start, date.end, date.allday) }}</a>
         {% endfor %}
         </div>
     </div>
@@ -840,7 +840,7 @@
 
   <div class="col-12 col-sm">
     <div class="font-weight-bold">
-      <a href="{{ url_for('organizers', path=organizer.id) }}">{{ organizer.name }}</a>
+      <a href="{{ url_for('main.organizers', path=organizer.id) }}">{{ organizer.name }}</a>
     </div>
 
     {{ render_link_prop(organizer.url) }}
@@ -863,7 +863,7 @@
     $('#location_search').select2({
       theme: 'bootstrap4',
       ajax: {
-        url: "{{ url_for('js_autocomplete_place') }}",
+        url: "{{ url_for('main.js_autocomplete_place') }}",
         dataType: 'json',
         delay: 250,
         cache: true,
@@ -898,7 +898,7 @@
 
     function get_gmaps_place_details(place_id, location_only) {
       $.ajax({
-          url: "{{ url_for('js_autocomplete_gmaps_place') }}",
+          url: "{{ url_for('main.js_autocomplete_gmaps_place') }}",
           type: "get",
           dataType: "json",
           data: "gmaps_id=" + place_id,
@@ -934,7 +934,7 @@
       dropdownParent: {{ dropdownParent | safe }},
       {%- endif %}
       ajax: {
-        url: "{{ url_for('js_autocomplete_place') }}",
+        url: "{{ url_for('main.js_autocomplete_place') }}",
         dataType: 'json',
         delay: 250,
         cache: true,
@@ -957,7 +957,7 @@
 
     function get_gmaps_place_details(place_id, place_name) {
       $.ajax({
-          url: "{{ url_for('js_autocomplete_gmaps_place') }}",
+          url: "{{ url_for('main.js_autocomplete_gmaps_place') }}",
           type: "get",
           dataType: "json",
           data: "gmaps_id=" + place_id,
@@ -1154,14 +1154,14 @@
             <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_event_reference_request_create_for_event', id=event.admin_unit_id, event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Request reference') }}</a>
           {% endif %}
           {% if user_rights['can_reference_event'] %}
-            <a class="dropdown-item" href="{{ url_for('event_reference_create', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
+            <a class="dropdown-item" href="{{ url_for('main.event_reference_create', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
           {% endif %}
           {% if can_add_to_list %}
           <div class="dropdown-divider"></div>
             <a class="dropdown-item" onclick="app.$bvModal.show('add-event-to-list-modal'); return false;" href="#"><i class="fa fa-plus-circle"></i> {{ _('Add to list') }}</a>
           {% endif %}
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{{ url_for('event_actions', event_id=event.id) }}">{{ _('More') }}&hellip;</a>
+          <a class="dropdown-item" href="{{ url_for('main.event_actions', event_id=event.id) }}">{{ _('More') }}&hellip;</a>
       </div>
   </div>
 {% endif %}

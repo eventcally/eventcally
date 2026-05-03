@@ -1,11 +1,11 @@
 from authlib.integrations.flask_oauth2 import current_token
-from flask import abort, g
+from flask import abort, current_app, g
 from flask_login import login_user
 from flask_principal import Permission, RoleNeed
 from flask_security import current_user
 from sqlalchemy import and_, exists
 
-from project import app, db
+from project.extensions import db
 from project.models import AdminUnit, AdminUnitMember, Event, EventPublicStatus, User
 from project.models.admin_unit import AdminUnitMemberRole
 
@@ -243,7 +243,7 @@ def can_create_admin_unit():
     if not current_user.is_authenticated:  # pragma: no cover
         return False
 
-    if not app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"]:
+    if not current_app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"]:
         return True
 
     if has_current_user_role("admin"):

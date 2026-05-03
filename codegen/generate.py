@@ -113,6 +113,7 @@ class SQLAlchemyGenerator:
         "float": "Float()",
         "enum": "IntegerEnum()",
         "json": "JSONB",
+        "json!": "JSONB",
         "mutable_list": "MutableList.as_mutable(AsaList())",
         "blob": "LargeBinary",
         "numeric": "Numeric()",

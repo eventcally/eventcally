@@ -1,4 +1,5 @@
-from project.domain.types import ObjectId, Unsetable, unset
+from project.domain.types import ObjectId, Unsetable
+from project.domain.types.unset_field_factory import UnsetField
 
 from .base import Command
 from .update_image import UpdateImage
@@ -7,10 +8,10 @@ from .update_location import UpdateLocation
 
 class UpdateEventOrganizerCommand(Command):
     id: ObjectId
-    name: Unsetable[str] = unset
-    url: Unsetable[str] = unset
-    email: Unsetable[str] = unset
-    phone: Unsetable[str] = unset
-    fax: Unsetable[str] = unset
-    location: Unsetable[UpdateLocation] = unset
-    logo: Unsetable[UpdateImage] = unset
+    name: Unsetable[str] = UnsetField()
+    url: Unsetable[str] = UnsetField()
+    email: Unsetable[str] = UnsetField()
+    phone: Unsetable[str] = UnsetField()
+    fax: Unsetable[str] = UnsetField()
+    location: Unsetable[UpdateLocation] = UnsetField()
+    logo: Unsetable[UpdateImage] = UnsetField()

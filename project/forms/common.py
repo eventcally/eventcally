@@ -1,7 +1,7 @@
 from flask import url_for
 from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
-from wtforms import DecimalField, HiddenField, SelectField, StringField
+from wtforms import BooleanField, DecimalField, HiddenField, SelectField, StringField
 from wtforms.validators import DataRequired, Length, Optional
 
 from project.domain.commands import (
@@ -10,7 +10,9 @@ from project.domain.commands import (
     UpdateImage,
     UpdateLocation,
 )
-from project.forms.widgets import CustomDateField
+from project.domain.commands.create_webhook import CreateWebhook
+from project.domain.commands.update_webhook import UpdateWebhook
+from project.forms.widgets import CustomDateField, MultiCheckboxField
 from project.imageutils import (
     get_bytes_from_image,
     get_data_uri_from_bytes,
@@ -186,13 +188,52 @@ class Base64ImageForm(BaseForm):
         return None
 
 
+class WebhookForm(BaseForm):
+    url = StringField(lazy_gettext("URL"), validators=[Optional(), Length(max=255)])
+    secret = StringField(
+        lazy_gettext("Secret"), validators=[Optional(), Length(max=255)]
+    )
+    disabled = BooleanField(
+        lazy_gettext("Disabled"),
+        validators=[Optional()],
+        render_kw={"ri": "switch"},
+    )
+    event_types = MultiCheckboxField(
+        lazy_gettext("Event types"),
+        validators=[Optional()],
+        render_kw={"ri": "multicheckbox"},
+    )
+
+    def create_create_command(self):
+        if not self.url.data:
+            return None
+
+        return CreateWebhook(
+            url=self.url.data,
+            secret=self.secret.data,
+            disabled=self.disabled.data,
+            event_types=self.event_types.data,
+        )
+
+    def create_update_command(self):
+        if not self.url.data:
+            return None
+
+        return UpdateWebhook(
+            url=self.url.data,
+            secret=self.secret.data,
+            disabled=self.disabled.data,
+            event_types=self.event_types.data,
+        )
+
+
 def get_accept_tos_markup():
     from project.services.admin import has_tos
 
-    tos_open = '<a href="%s">' % url_for("tos")
+    tos_open = '<a href="%s">' % url_for("main.tos")
     tos_close = "</a>"
 
-    privacy_open = '<a href="%s">' % url_for("privacy")
+    privacy_open = '<a href="%s">' % url_for("main.privacy")
     privacy_close = "</a>"
 
     if has_tos():

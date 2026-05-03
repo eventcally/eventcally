@@ -38,7 +38,7 @@ def test_create(client, app, utils: UtilActions, seeder, mocker):
         assert invitation is not None
 
     invitation_url = utils.get_url(
-        "admin_unit_member_invitation",
+        "main.admin_unit_member_invitation",
         id=invitation.id,
     )
     utils.assert_send_mail_called(mail_mock, "invited@test.de", invitation_url)
@@ -90,7 +90,7 @@ def test_read_accept(client, app, db, utils: UtilActions, seeder):
 
     invitation_id = seeder.create_invitation(admin_unit_id, email)
 
-    response = utils.get_endpoint("admin_unit_member_invitation", id=invitation_id)
+    response = utils.get_endpoint("main.admin_unit_member_invitation", id=invitation_id)
     utils.assert_response_redirect(
         response,
         "user.organization_member_invitation_negotiate",
@@ -112,22 +112,21 @@ def test_read_accept(client, app, db, utils: UtilActions, seeder):
                 "accept": "Akzeptieren",
             },
         )
-        utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
+        utils.assert_response_redirect(
+            response, "main.manage_admin_unit", id=admin_unit_id
+        )
 
-        with app.app_context():
-            from project.services.admin_unit import (
-                find_admin_unit_member_invitation,
-                get_member_for_admin_unit_by_user_id,
-            )
+        from project.services.admin_unit import (
+            find_admin_unit_member_invitation,
+            get_member_for_admin_unit_by_user_id,
+        )
 
-            invitation = find_admin_unit_member_invitation(email, admin_unit_id)
-            assert invitation is None
+        invitation = find_admin_unit_member_invitation(email, admin_unit_id)
+        assert invitation is None
 
-            member = get_member_for_admin_unit_by_user_id(
-                admin_unit_id, new_member_user_id
-            )
-            assert len(member.roles) == 1
-            assert any(r.name == "admin" for r in member.roles)
+        member = get_member_for_admin_unit_by_user_id(admin_unit_id, new_member_user_id)
+        assert len(member.roles) == 1
+        assert any(r.name == "admin" for r in member.roles)
 
 
 def test_read_accept_WrongRole(client, app, db, utils: UtilActions, seeder):
@@ -155,7 +154,9 @@ def test_read_accept_WrongRole(client, app, db, utils: UtilActions, seeder):
                 "accept": "Akzeptieren",
             },
         )
-        utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
+        utils.assert_response_redirect(
+            response, "main.manage_admin_unit", id=admin_unit_id
+        )
 
 
 def test_read_decline(client, app, db, utils: UtilActions, seeder):
@@ -183,21 +184,18 @@ def test_read_decline(client, app, db, utils: UtilActions, seeder):
                 "decline": "Ablehnen",
             },
         )
-        utils.assert_response_redirect(response, "manage")
+        utils.assert_response_redirect(response, "main.manage")
 
-        with app.app_context():
-            from project.services.admin_unit import (
-                find_admin_unit_member_invitation,
-                get_member_for_admin_unit_by_user_id,
-            )
+        from project.services.admin_unit import (
+            find_admin_unit_member_invitation,
+            get_member_for_admin_unit_by_user_id,
+        )
 
-            invitation = find_admin_unit_member_invitation(email, admin_unit_id)
-            assert invitation is None
+        invitation = find_admin_unit_member_invitation(email, admin_unit_id)
+        assert invitation is None
 
-            member = get_member_for_admin_unit_by_user_id(
-                admin_unit_id, new_member_user_id
-            )
-            assert member is None
+        member = get_member_for_admin_unit_by_user_id(admin_unit_id, new_member_user_id)
+        assert member is None
 
 
 def test_read_db_error(client, app, utils: UtilActions, seeder, mocker):

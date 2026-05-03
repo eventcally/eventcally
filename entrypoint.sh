@@ -5,4 +5,4 @@ if [[ ! -z "${STATIC_FILES_MIRROR}" ]]; then
     rsync -a --delete project/static/ "${STATIC_FILES_MIRROR}"
 fi
 
-gunicorn -c gunicorn.conf.py project:app
+gunicorn -c gunicorn.conf.py main:app

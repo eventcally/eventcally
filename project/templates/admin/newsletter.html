@@ -18,7 +18,7 @@
         update_progress_bar(0, 0);
         handle_request_start();
         $.ajax({
-            url: "{{ url_for('admin_newsletter', async=1) }}",
+            url: "{{ url_for('admin.admin_newsletter', async=1) }}",
             type: "post",
             dataType: "json",
             data: $("#newsletter_form").serialize(),
@@ -33,7 +33,7 @@
 
     function poll(result_id) {
         $.ajax({
-            url: "{{ url_for('admin_newsletter') }}",
+            url: "{{ url_for('admin.admin_newsletter') }}",
             type: "get",
             dataType: "json",
             data: "poll=" + result_id,

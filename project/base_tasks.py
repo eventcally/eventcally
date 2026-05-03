@@ -1,12 +1,12 @@
 import importlib
 
-from project import app, celery
-from project.celery_init import force_locale
+from flask import current_app
+
+from project.celery_init import celery, force_locale
 from project.views.utils import send_mails_with_body
 
 
 @celery.task(
-    base=getattr(app, "celery_http_task_cls"),
     priority=0,
 )
 def send_mail_with_body_task(recipient, subject, body, html):
@@ -28,5 +28,23 @@ def process_delayed_event(event_class_path: str, event_dict: dict):
     event = event_class.model_validate(event_dict)
 
     # Process through message bus
-    message_bus = app.container.cqrs.message_bus()
+    message_bus = current_app.container.cqrs.message_bus()
     message_bus.handle(event)
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
+def process_delayed_command(command_class_path: str, command_dict: dict):
+    # Import the command class dynamically
+    module_path, class_name = command_class_path.rsplit(".", 1)
+    module = importlib.import_module(module_path)
+    command_class = getattr(module, class_name)
+
+    # Reconstruct the command using Pydantic's model_validate
+    command = command_class.model_validate(command_dict)
+
+    # Process through message bus
+    message_bus = current_app.container.cqrs.message_bus()
+    message_bus.handle(command)

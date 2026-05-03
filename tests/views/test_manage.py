@@ -7,8 +7,8 @@ from tests.utils import UtilActions
 def test_index_noCookie(client, seeder: Seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
 
-    response = utils.get_endpoint("manage")
-    utils.assert_response_redirect(response, "manage_admin_units")
+    response = utils.get_endpoint("main.manage")
+    utils.assert_response_redirect(response, "main.manage_admin_units")
 
 
 def test_index_withValidCookie(client, seeder, app, utils):
@@ -20,26 +20,26 @@ def test_index_withValidCookie(client, seeder, app, utils):
         encoded = encode_cookie(str(admin_unit_id))
         client.set_cookie("manage_admin_unit_id", encoded)
 
-    response = utils.get_endpoint("manage")
-    utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
+    response = utils.get_endpoint("main.manage")
+    utils.assert_response_redirect(response, "main.manage_admin_unit", id=admin_unit_id)
 
 
 def test_index_withInvalidCookie(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     client.set_cookie("manage_admin_unit_id", "invalid")
 
-    response = utils.get_endpoint("manage")
-    utils.assert_response_redirect(response, "manage_admin_units")
+    response = utils.get_endpoint("main.manage")
+    utils.assert_response_redirect(response, "main.manage_admin_units")
 
 
 def test_index_after_login(client, app, db, utils, seeder):
     user_id, admin_unit_id = seeder.setup_base()
 
-    response = utils.get_endpoint("manage_after_login")
-    utils.assert_response_redirect(response, "manage", from_login=1)
+    response = utils.get_endpoint("main.manage_after_login")
+    utils.assert_response_redirect(response, "main.manage", from_login=1)
 
-    response = utils.get_endpoint("manage", from_login=1)
-    utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
+    response = utils.get_endpoint("main.manage", from_login=1)
+    utils.assert_response_redirect(response, "main.manage_admin_unit", id=admin_unit_id)
 
 
 def test_index_after_login_with_invitation(client, app, db, utils, seeder):
@@ -52,12 +52,12 @@ def test_index_after_login_with_invitation(client, app, db, utils, seeder):
     seeder.create_user(email)
     utils.login(email)
 
-    response = utils.get_endpoint("manage_after_login")
-    utils.assert_response_redirect(response, "manage", from_login=1)
+    response = utils.get_endpoint("main.manage_after_login")
+    utils.assert_response_redirect(response, "main.manage", from_login=1)
 
-    response = utils.get_endpoint("manage", from_login=1)
+    response = utils.get_endpoint("main.manage", from_login=1)
     utils.assert_response_redirect(
-        response, "admin_unit_member_invitation", id=invitation_id
+        response, "main.admin_unit_member_invitation", id=invitation_id
     )
 
 
@@ -71,19 +71,19 @@ def test_index_after_login_organization_invitation(client, app, db, utils, seede
     seeder.create_user(email)
     utils.login(email)
 
-    response = utils.get_endpoint("manage_after_login")
-    utils.assert_response_redirect(response, "manage", from_login=1)
+    response = utils.get_endpoint("main.manage_after_login")
+    utils.assert_response_redirect(response, "main.manage", from_login=1)
 
-    response = utils.get_endpoint("manage", from_login=1)
+    response = utils.get_endpoint("main.manage", from_login=1)
     utils.assert_response_redirect(
-        response, "user_organization_invitation", id=invitation_id
+        response, "main.user_organization_invitation", id=invitation_id
     )
 
 
 def test_admin_unit(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
-    response = utils.get_endpoint("manage_admin_unit", id=admin_unit_id)
+    response = utils.get_endpoint("main.manage_admin_unit", id=admin_unit_id)
     utils.assert_response_redirect(
         response, "manage_admin_unit.events", id=admin_unit_id
     )
@@ -95,7 +95,7 @@ def test_admin_unit_404(client, seeder: Seeder, utils: UtilActions):
     seeder.create_user()
     utils.login()
 
-    response = utils.get_endpoint("manage_admin_unit", id=admin_unit_id)
+    response = utils.get_endpoint("main.manage_admin_unit", id=admin_unit_id)
     utils.assert_response_notFound(response)
 
 
@@ -158,10 +158,10 @@ def test_admin_unit_events(client, seeder: Seeder, utils: UtilActions):
 
     response = utils.get_endpoint_ok("manage_admin_unit.events", id=admin_unit_id)
 
-    event_url = utils.get_url("event", event_id=draft_id)
+    event_url = utils.get_url("main.event", event_id=draft_id)
     utils.assert_response_contains(response, event_url)
 
-    planned_url = utils.get_url("event", event_id=planned_id)
+    planned_url = utils.get_url("main.event", event_id=planned_id)
     utils.assert_response_contains(response, planned_url)
 
 
@@ -256,7 +256,7 @@ def test_admin_unit_members_permission_missing(
         "manage_admin_unit.organization_members", id=admin_unit_id
     )
     utils.assert_response_permission_missing(
-        response, "manage_admin_unit", id=admin_unit_id
+        response, "main.manage_admin_unit", id=admin_unit_id
     )
 
 
@@ -310,14 +310,14 @@ def test_admin_unit_organization_invitations(
 def test_admin_unit_event_lists(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit_event_lists", id=admin_unit_id)
+    url = utils.get_url("main.manage_admin_unit_event_lists", id=admin_unit_id)
     utils.get_ok(url)
 
 
 def test_admin_unit_custom_widgets(client, seeder: Seeder, utils: UtilActions):
     _, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit_custom_widgets", id=admin_unit_id)
+    url = utils.get_url("main.manage_admin_unit_custom_widgets", id=admin_unit_id)
     utils.get_ok(url)
 
 

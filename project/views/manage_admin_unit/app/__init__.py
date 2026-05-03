@@ -29,6 +29,7 @@ def app_bp_url_value_preprocessor(endpoint, values):
 
 
 import project.views.manage_admin_unit.app.app_key.view_handler
+import project.views.manage_admin_unit.app.webhook_delivery.view_handler
 from project.views.manage_admin_unit import manage_admin_unit_bp
 
 manage_admin_unit_bp.register_blueprint(app_bp)

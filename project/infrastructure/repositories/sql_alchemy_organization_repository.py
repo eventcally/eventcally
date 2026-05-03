@@ -2,7 +2,10 @@ from project.domain.repositories import AbstractOrganizationRepository
 from project.domain.types.object_id import ObjectId
 from project.models import AdminUnit
 from project.models.admin_unit import AdminUnitMember
+from project.models.app import AppInstallation
+from project.models.oauth import OAuth2Client
 from project.models.user import User
+from project.models.webhook import Webhook
 
 
 class SqlAlchemyOrganizationRepository(AbstractOrganizationRepository):
@@ -29,3 +32,18 @@ class SqlAlchemyOrganizationRepository(AbstractOrganizationRepository):
         )
 
         return list(filter(lambda member: member.has_permission(permission), members))
+
+    def _get_app_installations_with_webhook(
+        self, admin_unit_id: ObjectId, event_type: str
+    ) -> list[AppInstallation]:
+        return (
+            self.session.query(AppInstallation)
+            .join(AppInstallation.oauth2_client)
+            .join(OAuth2Client.webhook)
+            .filter(OAuth2Client.is_app)
+            .filter(AppInstallation.admin_unit_id == admin_unit_id)
+            .filter(Webhook.url.isnot(None))
+            .filter(Webhook.disabled.isnot(True))
+            .filter(Webhook.event_types.contains([event_type]))
+            .all()
+        )

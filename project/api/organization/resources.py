@@ -5,7 +5,6 @@ from flask import abort, g, request
 from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy import and_
 
-from project import db
 from project.access import (
     can_request_event_reference,
     can_verify_admin_unit,
@@ -93,6 +92,7 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
+from project.extensions import db
 from project.models import AdminUnit, Event, EventPublicStatus
 from project.models.admin_unit import AdminUnitInvitation, AdminUnitRelation
 from project.models.admin_unit_verification_request import (

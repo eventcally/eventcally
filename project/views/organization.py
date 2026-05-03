@@ -1,19 +1,19 @@
 from flask import Response, render_template
 
-from project import app
 from project.dateutils import create_icalendar
 from project.models import AdminUnit
 from project.services.admin_unit import create_ical_events_for_admin_unit
+from project.views.main_blueprint import main_bp
 
 
-@app.route("/organizations")
-@app.route("/organizations/")
-@app.route("/organizations/<path:path>")
+@main_bp.route("/organizations")
+@main_bp.route("/organizations/")
+@main_bp.route("/organizations/<path:path>")
 def organizations(path=None):
     return render_template("organization/main.html")
 
 
-@app.route("/organizations/<int:id>/ical")
+@main_bp.route("/organizations/<int:id>/ical")
 def organization_ical(id):
     admin_unit = AdminUnit.query.get_or_404(id)
 

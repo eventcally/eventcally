@@ -33,7 +33,7 @@ def test_review_verify(
     )
 
     legacy_review_url = utils.get_url(
-        "manage_admin_unit_incoming_admin_unit_verification_request_review",
+        "main.manage_admin_unit_incoming_admin_unit_verification_request_review",
         id=verifier_admin_unit_id,
         admin_unit_verification_request_id=verification_request_id,
     )
@@ -175,7 +175,7 @@ def test_review_status_404(client, seeder: Seeder, utils: UtilActions):
     )
 
     legacy_review_url = utils.get_url(
-        "manage_admin_unit_outgoing_admin_unit_verification_request",
+        "main.manage_admin_unit_outgoing_admin_unit_verification_request",
         id=other_admin_unit_id,
         admin_unit_verification_request_id=verification_request_id,
     )

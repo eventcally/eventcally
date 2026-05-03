@@ -6,7 +6,7 @@ from flask_babel import lazy_gettext
 from flask_security import current_user
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from project import app, db
+from project.extensions import db
 from project.models.admin_unit import AdminUnit
 from project.models.event_place import EventPlace
 from project.models.user import User
@@ -42,7 +42,7 @@ class AuthModelView(ModelView):
         url = (
             url_for("security.login", next=request.url)
             if not current_user.is_authenticated
-            else url_for("home")
+            else url_for("main.home")
         )
         return redirect(url)
 
@@ -121,9 +121,11 @@ class OrganizationView(AuthModelView):
     )
     edit_modal = True
     column_extra_row_actions = [
-        EndpointLinkRowAction("fa fa-eye", "manage_admin_unit", lazy_gettext("Manage")),
         EndpointLinkRowAction(
-            "fa fa-eye", "organizations", lazy_gettext("View"), "path"
+            "fa fa-eye", "main.manage_admin_unit", lazy_gettext("Manage")
+        ),
+        EndpointLinkRowAction(
+            "fa fa-eye", "main.organizations", lazy_gettext("View"), "path"
         ),
     ]
 
@@ -220,62 +222,77 @@ class CustomCategoryExtensionView(AuthBaseView):
         )
 
 
-admin = Admin(
-    app,
-    endpoint="flask_admin",
-    index_view=AuthAdminIndexView(url="/admin/flask-admin", endpoint="flask_admin"),
-    url="/admin/flask-admin",
-    name=app.config["SITE_NAME"],
-    template_mode="bootstrap4",
-)
+def init_admin(app):
+    """Initialize Flask-Admin with the Flask app instance.
 
+    This function creates the Admin instance and registers all model views.
+    Must be called from create_app() to support the application factory pattern.
 
-for mapper in db.Model.registry.mappers:
-    class_ = mapper.class_
-    if not class_:
-        continue
+    Args:
+        app: Flask application instance
 
-    name = class_.get_display_name_plural()
-    category = class_.get_display_name().split(" ")[0]
+    Returns:
+        Admin: The configured Flask-Admin instance
+    """
+    admin = Admin(
+        app,
+        endpoint="flask_admin",
+        index_view=AuthAdminIndexView(url="/admin/flask-admin", endpoint="flask_admin"),
+        url="/admin/flask-admin",
+        name=app.config["SITE_NAME"],
+        template_mode="bootstrap4",
+    )
 
+    # Auto-register all SQLAlchemy models
+    for mapper in db.Model.registry.mappers:
+        class_ = mapper.class_
+        if not class_:
+            continue
+
+        name = class_.get_display_name_plural()
+        category = class_.get_display_name().split(" ")[0]
+
+        admin.add_view(
+            AuthModelView(
+                class_,
+                db.session,
+                name=name,
+                category=category,
+            )
+        )
+
+    # Register custom views
     admin.add_view(
-        AuthModelView(
-            class_,
+        OrganizationView(
+            AdminUnit,
             db.session,
-            name=name,
-            category=category,
+            name="AdminUnit",
+            category="Custom Views",
         )
     )
 
-admin.add_view(
-    OrganizationView(
-        AdminUnit,
-        db.session,
-        name="AdminUnit",
-        category="Custom Views",
+    admin.add_view(
+        UserView(
+            User,
+            db.session,
+            name="User",
+            category="Custom Views",
+        )
     )
-)
 
-admin.add_view(
-    UserView(
-        User,
-        db.session,
-        name="User",
-        category="Custom Views",
+    admin.add_view(
+        EventPlaceView(
+            EventPlace,
+            db.session,
+            name="EventPlace",
+            category="Custom Views",
+        )
     )
-)
 
-admin.add_view(
-    EventPlaceView(
-        EventPlace,
-        db.session,
-        name="EventPlace",
-        category="Custom Views",
+    admin.add_view(
+        CustomCategoryExtensionView(
+            name="Custom category extension", endpoint="custom_category_extension"
+        )
     )
-)
 
-admin.add_view(
-    CustomCategoryExtensionView(
-        name="Custom category extension", endpoint="custom_category_extension"
-    )
-)
+    return admin

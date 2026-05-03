@@ -1,6 +1,7 @@
-from flask import g
+from flask import abort, g
 from sqlalchemy.orm import class_mapper
 
+from project.utils import getattr_keypath
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
@@ -11,20 +12,26 @@ class AppChildViewHandler(ManageAdminUnitChildViewHandler):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.app_id_column = class_mapper(self.model).columns[
-            self.app_id_attribute_name
-        ]
+        self.app_id_column = None
+        if self.app_id_attribute_name:
+            columns = class_mapper(self.model).columns
+            self.app_id_column = columns.get(self.app_id_attribute_name)
+
+    def check_object_access(self, object):
+        super().check_object_access(object)
+
+        if not getattr_keypath(object, self.app_id_attribute_name) == g.current_app.id:
+            abort(401)
 
     def complete_object(self, object, form):
         super().complete_object(object, form)
         setattr(object, self.app_id_attribute_name, g.current_app.id)
 
     def apply_base_filter(self, query, **kwargs):
-        return (
-            super()
-            .apply_base_filter(query, **kwargs)
-            .filter(self.app_id_column == g.current_app.id)
-        )
+        query = super().apply_base_filter(query, **kwargs)
+        if self.app_id_column is not None:
+            query = query.filter(self.app_id_column == g.current_app.id)
+        return query
 
     def get_breadcrumbs(self):
         result = super().get_breadcrumbs()

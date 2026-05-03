@@ -1,16 +1,28 @@
 import os
 
-from project import app, db
+from flask import current_app
+
 from project.api import add_oauth2_scheme_with_transport
+from project.extensions import db
 from project.models import Location
 
 
-@app.before_request
-def add_oauth2_scheme():
-    app.before_request_funcs[None].remove(add_oauth2_scheme)
-    # At some sites the https scheme is not set yet
-    insecure = os.getenv("AUTHLIB_INSECURE_TRANSPORT", "False").lower() in ["true", "1"]
-    add_oauth2_scheme_with_transport(insecure)
+def register_oauth2_scheme_once(app):
+    """Register OAuth2 scheme once on first request.
+
+    This function should be called from create_app() to register
+    a before_request handler that adds the OAuth2 scheme.
+    """
+
+    @app.before_request
+    def add_oauth2_scheme():
+        app.before_request_funcs[None].remove(add_oauth2_scheme)
+        # At some sites the https scheme is not set yet
+        insecure = os.getenv("AUTHLIB_INSECURE_TRANSPORT", "False").lower() in [
+            "true",
+            "1",
+        ]
+        add_oauth2_scheme_with_transport(insecure)
 
 
 organization_admin_permissions = [
@@ -66,7 +78,7 @@ organization_event_expert_permissions = [
 
 def create_initial_data():
     organization_member_role_service = (
-        app.container.services.organization_member_role_service()
+        current_app.container.services.organization_member_role_service()
     )
     organization_member_role_service.upsert_role(
         "admin", "Administrator", organization_admin_permissions
@@ -75,13 +87,13 @@ def create_initial_data():
         "event_verifier", "Event expert", organization_event_expert_permissions
     )
 
-    role_service = app.container.services.role_service()
+    role_service = current_app.container.services.role_service()
     role_service.upsert_role("admin", "Administrator", [])
 
     Location.update_coordinates()
     db.session.commit()
 
-    event_category_service = app.container.services.event_category_service()
+    event_category_service = current_app.container.services.event_category_service()
     event_category_service.upsert_event_category("Art")
     event_category_service.upsert_event_category("Book")
     event_category_service.upsert_event_category("Movie")

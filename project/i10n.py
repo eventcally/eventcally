@@ -1,8 +1,6 @@
-from flask import request
+from flask import current_app, request
 from flask_babel import Locale, gettext
 from flask_security import current_user
-
-from project import app
 
 
 def get_locale():
@@ -18,7 +16,7 @@ def get_locale():
         pass
 
     if not request:
-        return app.config["BABEL_DEFAULT_LOCALE"]
+        return current_app.config["BABEL_DEFAULT_LOCALE"]
 
     return get_locale_from_request()
 
@@ -28,7 +26,7 @@ def get_locale_from_request():
         return None
 
     return request.accept_languages.best_match(
-        app.config["LANGUAGES"], app.config["BABEL_DEFAULT_LOCALE"]
+        current_app.config["LANGUAGES"], current_app.config["BABEL_DEFAULT_LOCALE"]
     )
 
 

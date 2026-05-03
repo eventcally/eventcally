@@ -2,7 +2,7 @@ from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from flask_security import RoleMixin, UserMixin
 from sqlalchemy import Column, ForeignKey, Integer, String
 
-from project import db
+from project.extensions import db
 from project.models.association_tables.roles_users_generated import (
     RolesUsersGeneratedMixin,
 )

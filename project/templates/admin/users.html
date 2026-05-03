@@ -33,8 +33,8 @@
                     <td>{% if user.tos_accepted_at %}{{ user.tos_accepted_at | dateformat }}{% endif %}</td>
                     <td>{% if user.deletion_requested_at %}{{ user.deletion_requested_at | dateformat }}{% endif %}</td>
                     <td>
-                        <a href="{{ url_for('admin_user_update', id=user.id) }}">{{ _('Edit') }}</a>
-                        <a href="{{ url_for('admin_user_delete', id=user.id) }}">{{ _('Delete') }}</a>
+                        <a href="{{ url_for('admin.admin_user_update', id=user.id) }}">{{ _('Edit') }}</a>
+                        <a href="{{ url_for('admin.admin_user_delete', id=user.id) }}">{{ _('Delete') }}</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -45,7 +45,7 @@
 <div class="my-4">{{ render_pagination(pagination) }}</div>
 
 <div class="my-4">
-    <a class="btn btn-outline-danger m-1" href="{{ url_for('admin_reset_tos_accepted') }}" role="button">{{ _('Reset acceptance of terms of service and privacy') }}&hellip;</a>
+    <a class="btn btn-outline-danger m-1" href="{{ url_for('admin.admin_reset_tos_accepted') }}" role="button">{{ _('Reset acceptance of terms of service and privacy') }}&hellip;</a>
 </div>
 
 

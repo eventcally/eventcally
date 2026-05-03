@@ -3,23 +3,23 @@ from functools import wraps
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
 from dependency_injector.wiring import Provide, inject
-from flask import abort, request
+from flask import abort, current_app, request
 from flask_apispec import marshal_with
 from flask_apispec.annotations import annotate
 from flask_apispec.views import MethodResource
 from flask_limiter.extension import LimitDecorator
 from flask_wtf.csrf import validate_csrf
 
-from project import app, csrf, db, limiter
 from project.api.schemas import (
     ErrorResponseSchema,
     TooManyRequestsResponseSchema,
     UnprocessableEntityResponseSchema,
 )
 from project.container import Application
+from project.extensions import csrf, db, limiter
 from project.models.api_key import ApiKey
 from project.models.mixins.rate_limit_provider_mixin import RateLimitProviderMixin
-from project.oauth2 import require_oauth
+from project.oauth2_extensions import require_oauth
 from project.service_layer.message_bus import MessageBus
 from project.utils import getattr_keypath, hash_api_key
 
@@ -100,7 +100,7 @@ def require_api_access(scopes=None, app_token_required=False):
                     if api_key:
                         limit_decorator = get_limit_decorator_for_provider(api_key)
                     else:
-                        if app.config["API_READ_ANONYM"]:
+                        if current_app.config["API_READ_ANONYM"]:
                             limit_decorator = limiter.shared_limit(
                                 "60/minute", scope=api_rate_limit_scope
                             )

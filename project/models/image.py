@@ -4,12 +4,12 @@ from typing import Optional
 
 from sqlalchemy.event import listens_for
 
-from project import db
 from project.domain import events
 from project.domain.commands import CreateImage, UpdateImage
 from project.domain.events import ImageUpdated
 from project.domain.events.image_created import ImageCreated
 from project.domain.types import Unsetable, unset
+from project.extensions import db
 from project.models.image_generated import ImageGeneratedMixin
 from project.models.iowned import IOwned
 from project.utils import make_check_violation
@@ -40,7 +40,7 @@ class Image(db.Model, ImageGeneratedMixin, IOwned):
         instance.validate()
         setattr(parent, field_name, instance)
 
-        event = ImageCreated(
+        event = ImageCreated.model_construct(
             encoding_format=instance.encoding_format,
             copyright_text=instance.copyright_text,
             license_id=instance.license_id,
@@ -73,7 +73,7 @@ class Image(db.Model, ImageGeneratedMixin, IOwned):
         if instance is None:
             instance = cls()
 
-        event = ImageUpdated()
+        event = ImageUpdated.model_construct()
         if instance._update_field(cmd, None, "data"):
             event.data_changed = True
         instance._update_field(cmd, event, "encoding_format")
