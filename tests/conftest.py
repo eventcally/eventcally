@@ -111,12 +111,23 @@ def app():
 
 
 def drop_all_with_reflection(db):
-    from sqlalchemy import MetaData
+    from sqlalchemy import MetaData, text
 
     metadata = MetaData()
     metadata.reflect(bind=db.engine)
 
-    exclude_tables = {"spatial_ref_sys"}
+    with db.engine.connect() as conn:
+        result = conn.execute(
+            text(
+                "SELECT c.relname FROM pg_class c"
+                " JOIN pg_depend d ON d.objid = c.oid"
+                " JOIN pg_extension e ON e.oid = d.refobjid"
+                " WHERE d.deptype = 'e' AND c.relkind = 'r'"
+            )
+        )
+        extension_tables = {row[0] for row in result}
+
+    exclude_tables = {"spatial_ref_sys"} | extension_tables
     tables_to_drop = [
         table for table in metadata.tables.values() if table.name not in exclude_tables
     ]
