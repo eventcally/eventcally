@@ -36,7 +36,7 @@ class TestCreateView(BaseTestObjectViewMixin, BaseTestCreateView):
         values["app_permissions"] = [
             i.permission for i in organization_app_permission_infos
         ]
-        values["redirect_uris"] = self.utils.get_url("swagger_oauth2_redirect")
+        values["redirect_uris"] = self.utils.get_url("main.swagger_oauth2_redirect")
 
 
 class TestReadView(BaseTestObjectViewMixin, BaseTestReadView):

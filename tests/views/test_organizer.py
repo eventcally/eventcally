@@ -215,7 +215,7 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
 
 
 def test_organizers(client, seeder, utils):
-    url = utils.get_url("organizers")
+    url = utils.get_url("main.organizers")
     utils.get_ok(url)
 
 
@@ -223,5 +223,5 @@ def test_ical(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
 
     seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
-    url = utils.get_url("organizer_ical", id=admin_unit_id)
+    url = utils.get_url("main.organizer_ical", id=admin_unit_id)
     utils.get_ok(url)

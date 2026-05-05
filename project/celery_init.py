@@ -6,6 +6,7 @@ from babel import Locale
 from celery import Celery
 from celery import Task as BaseTask
 from celery.signals import after_setup_logger, after_setup_task_logger
+from flask import current_app
 from requests.exceptions import RequestException
 
 
@@ -13,8 +14,13 @@ class HttpTaskException(Exception):
     pass
 
 
-def create_celery(app):
-    celery = Celery(app.import_name)
+# Create unbound celery instance (configured by init_celery)
+celery = Celery()
+
+
+def init_celery(app):
+    """Initialize Celery with Flask app configuration."""
+    celery.main = app.import_name
     celery.conf.update(app.config["CELERY_CONFIG"])
     TaskBase = BaseTask
 
@@ -51,8 +57,6 @@ def create_celery(app):
 
     setattr(app, "celery_http_task_cls", HttpTask)
 
-    return celery
-
 
 @after_setup_logger.connect
 def setup_logger(logger, *args, **kwargs):
@@ -69,8 +73,16 @@ def setup_task_logger(logger, *args, **kwargs):
 
 
 @contextmanager
-def force_locale(locale=None):
-    from project import app
+def force_locale(locale=None, app=None):
+    """
+    Force a specific locale in a context.
+
+    Args:
+        locale: The locale to use (defaults to 'de')
+        app: The Flask app instance (defaults to current_app)
+    """
+    if app is None:
+        app = current_app._get_current_object()
 
     if not locale:
         locale = Locale.parse("de")

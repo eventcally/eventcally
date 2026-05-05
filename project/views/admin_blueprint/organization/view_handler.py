@@ -44,7 +44,7 @@ class ViewHandler(AdminChildViewHandler):
 
         view_action = self._create_action(
             url_for(
-                "organizations",
+                "main.organizations",
                 path=object.id,
             ),
             gettext("View"),
@@ -54,7 +54,7 @@ class ViewHandler(AdminChildViewHandler):
 
         manage_action = self._create_action(
             url_for(
-                "manage_admin_unit",
+                "main.manage_admin_unit",
                 id=object.id,
             ),
             gettext("Manage"),

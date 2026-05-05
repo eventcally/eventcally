@@ -7,4 +7,4 @@
 {{ report['message'] }}
 
 {{ _('Click the link below to view the event') }}
-{{ url_for('event', event_id=event.id, _external=True) }}
+{{ url_for('main.event', event_id=event.id, _external=True) }}

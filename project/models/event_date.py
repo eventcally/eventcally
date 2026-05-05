@@ -3,7 +3,7 @@ from sqlalchemy import func
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from project import db
+from project.extensions import db
 from project.models.event_date_definition_generated import (
     EventDateDefinitionGeneratedMixin,
 )

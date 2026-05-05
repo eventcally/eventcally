@@ -5,5 +5,5 @@
 <p>{{ report['contact_name'] }}</p>
 <p>{{ report['contact_email'] }}</p>
 <p>{{ report['message'] }}</p>
-{{ render_email_button(url_for('event', event_id=event.id, _external=True), _('Click here to view the event')) }}
+{{ render_email_button(url_for('main.event', event_id=event.id, _external=True), _('Click here to view the event')) }}
 {% endblock %}

@@ -6,7 +6,6 @@ from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import aliased
 
-from project import db
 from project.domain.commands import (
     CancelOrganizationDeletionCommand,
     RequestOrganizationDeletionCommand,
@@ -15,6 +14,7 @@ from project.domain.events import (
     OrganizationDeletionCancelled,
     OrganizationDeletionRequested,
 )
+from project.extensions import db
 from project.models.admin_unit_generated import AdminUnitGeneratedMixin
 from project.models.admin_unit_invitation_generated import (
     AdminUnitInvitationGeneratedMixin,

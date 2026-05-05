@@ -4,7 +4,6 @@ from urllib.parse import quote_plus
 from flask import url_for
 from markupsafe import Markup
 
-from project import app
 from project.utils import (
     get_event_category_name,
     get_localized_enum_name,
@@ -49,126 +48,136 @@ def human_file_size(bytes, units=[" bytes", "KB", "MB", "GB", "TB", "PB", "EB"])
     )
 
 
-app.jinja_env.filters["event_category_name"] = lambda u: get_event_category_name(u)
-app.jinja_env.filters["loc_enum"] = lambda u: get_localized_enum_name(u)
-app.jinja_env.filters["env_override"] = env_override
-app.jinja_env.filters["quote_plus"] = lambda u: quote_plus(u)
-app.jinja_env.filters["is_list"] = is_list
-app.jinja_env.filters["js_bool"] = js_bool
-app.jinja_env.filters["any_dict_value_true"] = any_dict_value_true
-app.jinja_env.filters["ensure_link_scheme"] = lambda s: ensure_link_scheme(s)
-app.jinja_env.filters["place_str"] = lambda p: get_place_str(p)
-app.jinja_env.filters["location_str"] = lambda location: get_location_str(location)
-app.jinja_env.filters["human_file_size"] = lambda size: human_file_size(size)
-
-
 def get_base_url():
-    return url_for("home", _external=True).rstrip("/")
+    return url_for("main.home", _external=True).rstrip("/")
 
 
 def url_for_image(image, **values):
-    return url_for("image", id=image.id, hash=image.get_hash(), **values)
+    return url_for("main.image", id=image.id, hash=image.get_hash(), **values)
 
 
-app.jinja_env.globals.update(
-    get_base_url=get_base_url,
-    url_for_image=url_for_image,
-)
+def init_jinja_filters(app):
+    """Initialize Jinja filters and globals with the Flask app instance.
 
+    This function registers custom Jinja filters, globals, and context processors.
+    Must be called from create_app() to support the application factory pattern.
 
-@app.context_processor
-def get_context_processors():
-    from project.access import has_access
-    from project.views.utils import get_current_admin_unit
+    Args:
+        app: Flask application instance
+    """
+    # Register filters
+    app.jinja_env.filters["event_category_name"] = lambda u: get_event_category_name(u)
+    app.jinja_env.filters["loc_enum"] = lambda u: get_localized_enum_name(u)
+    app.jinja_env.filters["env_override"] = env_override
+    app.jinja_env.filters["quote_plus"] = lambda u: quote_plus(u)
+    app.jinja_env.filters["is_list"] = is_list
+    app.jinja_env.filters["js_bool"] = js_bool
+    app.jinja_env.filters["any_dict_value_true"] = any_dict_value_true
+    app.jinja_env.filters["ensure_link_scheme"] = lambda s: ensure_link_scheme(s)
+    app.jinja_env.filters["place_str"] = lambda p: get_place_str(p)
+    app.jinja_env.filters["location_str"] = lambda location: get_location_str(location)
+    app.jinja_env.filters["human_file_size"] = lambda size: human_file_size(size)
 
-    def get_manage_menu_options(admin_unit):
-        from project.services.reference import (
-            get_reference_requests_incoming_badge_query,
-        )
-        from project.services.verification import (
-            get_verification_requests_incoming_badge_query,
-        )
-
-        reference_requests_incoming_badge = get_reference_requests_incoming_badge_query(
-            admin_unit
-        ).count()
-        verification_requests_incoming_badge = (
-            get_verification_requests_incoming_badge_query(admin_unit).count()
-        )
-
-        return {
-            "reference_requests_incoming_badge": reference_requests_incoming_badge,
-            "verification_requests_incoming_badge": verification_requests_incoming_badge,
-        }
-
-    def has_tos():
-        from project.services.admin import has_tos
-
-        return has_tos()
-
-    def get_announcement():
-        from project.services.admin import has_announcement, upsert_settings
-
-        if not has_announcement():
-            return None
-
-        settings = upsert_settings()
-        return Markup(settings.announcement) if settings.announcement else None
-
-    def get_current_user_roles():
-        from flask_security import current_user
-
-        if not current_user.is_authenticated:  # pragma: no cover
-            return []
-
-        return [r.name for r in current_user.roles]
-
-    def get_current_user_permissions():
-        from flask_security import current_user
-
-        if not current_user.is_authenticated:  # pragma: no cover
-            return []
-
-        return sum([r.permissions for r in current_user.roles], [])
-
-    def get_current_admin_unit_roles():
-        from project.access import get_current_user_member_for_admin_unit
-
-        current_admin_unit = get_current_admin_unit()
-
-        if not current_admin_unit:  # pragma: no cover
-            return []
-
-        member = get_current_user_member_for_admin_unit(current_admin_unit.id)
-
-        if not member:  # pragma: no cover
-            return []
-
-        return [r.name for r in member.roles]
-
-    def get_current_admin_unit_permissions():
-        from project.access import get_current_user_member_for_admin_unit
-
-        current_admin_unit = get_current_admin_unit()
-
-        if not current_admin_unit:  # pragma: no cover
-            return []
-
-        member = get_current_user_member_for_admin_unit(current_admin_unit.id)
-
-        if not member:  # pragma: no cover
-            return []
-
-        return sum([r.permissions for r in member.roles], [])
-
-    return dict(
-        current_admin_unit=get_current_admin_unit(),
-        get_current_admin_unit_roles=get_current_admin_unit_roles,
-        get_current_admin_unit_permissions=get_current_admin_unit_permissions,
-        get_manage_menu_options=get_manage_menu_options,
-        has_access=has_access,
-        has_tos=has_tos,
-        get_announcement=get_announcement,
-        get_current_user_roles=get_current_user_roles,
-        get_current_user_permissions=get_current_user_permissions,
+    # Register globals
+    app.jinja_env.globals.update(
+        get_base_url=get_base_url,
+        url_for_image=url_for_image,
     )
+
+    # Register context processor
+    @app.context_processor
+    def get_context_processors():
+        from project.access import has_access
+        from project.views.utils import get_current_admin_unit
+
+        def get_manage_menu_options(admin_unit):
+            from project.services.reference import (
+                get_reference_requests_incoming_badge_query,
+            )
+            from project.services.verification import (
+                get_verification_requests_incoming_badge_query,
+            )
+
+            reference_requests_incoming_badge = (
+                get_reference_requests_incoming_badge_query(admin_unit).count()
+            )
+            verification_requests_incoming_badge = (
+                get_verification_requests_incoming_badge_query(admin_unit).count()
+            )
+
+            return {
+                "reference_requests_incoming_badge": reference_requests_incoming_badge,
+                "verification_requests_incoming_badge": verification_requests_incoming_badge,
+            }
+
+        def has_tos():
+            from project.services.admin import has_tos
+
+            return has_tos()
+
+        def get_announcement():
+            from project.services.admin import has_announcement, upsert_settings
+
+            if not has_announcement():
+                return None
+
+            settings = upsert_settings()
+            return Markup(settings.announcement) if settings.announcement else None
+
+        def get_current_user_roles():
+            from flask_security import current_user
+
+            if not current_user.is_authenticated:  # pragma: no cover
+                return []
+
+            return [r.name for r in current_user.roles]
+
+        def get_current_user_permissions():
+            from flask_security import current_user
+
+            if not current_user.is_authenticated:  # pragma: no cover
+                return []
+
+            return sum([r.permissions for r in current_user.roles], [])
+
+        def get_current_admin_unit_roles():
+            from project.access import get_current_user_member_for_admin_unit
+
+            current_admin_unit = get_current_admin_unit()
+
+            if not current_admin_unit:  # pragma: no cover
+                return []
+
+            member = get_current_user_member_for_admin_unit(current_admin_unit.id)
+
+            if not member:  # pragma: no cover
+                return []
+
+            return [r.name for r in member.roles]
+
+        def get_current_admin_unit_permissions():
+            from project.access import get_current_user_member_for_admin_unit
+
+            current_admin_unit = get_current_admin_unit()
+
+            if not current_admin_unit:  # pragma: no cover
+                return []
+
+            member = get_current_user_member_for_admin_unit(current_admin_unit.id)
+
+            if not member:  # pragma: no cover
+                return []
+
+            return sum([r.permissions for r in member.roles], [])
+
+        return dict(
+            current_admin_unit=get_current_admin_unit(),
+            get_current_admin_unit_roles=get_current_admin_unit_roles,
+            get_current_admin_unit_permissions=get_current_admin_unit_permissions,
+            get_manage_menu_options=get_manage_menu_options,
+            has_access=has_access,
+            has_tos=has_tos,
+            get_announcement=get_announcement,
+            get_current_user_roles=get_current_user_roles,
+            get_current_user_permissions=get_current_user_permissions,
+        )

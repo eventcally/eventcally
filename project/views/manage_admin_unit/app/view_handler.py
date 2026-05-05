@@ -13,7 +13,7 @@ from project.views.manage_admin_unit.app.forms import (
     DeleteAppForm,
     UpdateAppForm,
 )
-from project.views.manage_admin_unit.app.views import CreateView, UpdateView
+from project.views.manage_admin_unit.app.views import CreateView, DeleteView, UpdateView
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
@@ -28,6 +28,7 @@ class AppViewHandler(ManageAdminUnitChildViewHandler):
     update_form_class = UpdateAppForm
     update_view_class = UpdateView
     delete_form_class = DeleteAppForm
+    delete_view_class = DeleteView
     read_display_class = ReadDisplay
     list_display_class = ListDisplay
 

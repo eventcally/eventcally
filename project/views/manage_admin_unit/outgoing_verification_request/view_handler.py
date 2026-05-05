@@ -49,7 +49,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
             if request_count == 0:
                 return redirect(
                     url_for(
-                        "manage_organization_verification_requests_outgoing_create_select",
+                        "main.manage_organization_verification_requests_outgoing_create_select",
                         id=current_admin_unit.id,
                     )
                 )
@@ -68,7 +68,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
 
     def get_create_url(self, **kwargs):
         return url_for(
-            "manage_organization_verification_requests_outgoing_create_select",
+            "main.manage_organization_verification_requests_outgoing_create_select",
             id=current_admin_unit.id,
         )
 

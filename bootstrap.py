@@ -1,1 +1,3 @@
-from project import app  # noqa: F401
+from project import create_app
+
+app = create_app()

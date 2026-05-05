@@ -153,6 +153,9 @@ class BaseViewHandler:
         return None  # pragma: no cover
 
     def _get_object_url(self, endpoint_key, object, **kwargs):
+        if not object:  # pragma: no cover
+            return None
+
         kwargs.setdefault(self.get_id_query_arg_name(), object.id)
         return self.get_endpoint_url(endpoint_key, **kwargs)
 

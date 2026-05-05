@@ -5,11 +5,11 @@ from typing import Optional
 from sqlalchemy import and_
 from sqlalchemy.event import listens_for
 
-from project import db
 from project.domain import events
 from project.domain.commands import CreateLocation, UpdateLocation
 from project.domain.events import LocationCreated, LocationUpdated
 from project.domain.types import Unsetable, unset
+from project.extensions import db
 from project.models.iowned import IOwned
 from project.models.location_generated import LocationGeneratedMixin
 

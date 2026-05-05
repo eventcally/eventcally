@@ -35,7 +35,7 @@ def test_create(client, app, utils, seeder, mocker):
         assert invitation is not None
 
     invitation_url = utils.get_url(
-        "user_organization_invitation",
+        "main.user_organization_invitation",
         id=invitation.id,
     )
     utils.assert_send_mail_called(mail_mock, "invited@test.de", invitation_url)

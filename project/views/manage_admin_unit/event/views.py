@@ -128,11 +128,11 @@ class CreateView(BaseCreateView):
         )
         flash_message(
             success_msg,
-            url_for("event", event_id=object.id),
+            url_for("main.event", event_id=object.id),
         )
 
     def get_redirect_url(self, object, **kwargs):
-        return url_for("event_actions", event_id=object.id)
+        return url_for("main.event_actions", event_id=object.id)
 
 
 class UpdateView(BaseUpdateView):

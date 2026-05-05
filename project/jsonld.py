@@ -124,7 +124,7 @@ def get_sd_for_event_date(event_date):
             result["endDate"] = get_date_from_datetime(result["endDate"])
 
     url_list = list()
-    url_list.append(url_for("event_date", id=event_date.id))
+    url_list.append(url_for("main.event_date", id=event_date.id))
 
     if event.external_link:
         url_list.append(event.external_link)

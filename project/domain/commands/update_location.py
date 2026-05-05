@@ -1,13 +1,13 @@
-from pydantic import BaseModel
+from project.domain.types import Unsetable
+from project.domain.types.custom_base_model import CustomBaseModel
+from project.domain.types.unset_field_factory import UnsetField
 
-from project.domain.types import Unsetable, unset
 
-
-class UpdateLocation(BaseModel):
-    street: Unsetable[str] = unset
-    postalCode: Unsetable[str] = unset
-    city: Unsetable[str] = unset
-    state: Unsetable[str] = unset
-    country: Unsetable[str] = unset
-    latitude: Unsetable[float] = unset
-    longitude: Unsetable[float] = unset
+class UpdateLocation(CustomBaseModel):
+    street: Unsetable[str] = UnsetField()
+    postalCode: Unsetable[str] = UnsetField()
+    city: Unsetable[str] = UnsetField()
+    state: Unsetable[str] = UnsetField()
+    country: Unsetable[str] = UnsetField()
+    latitude: Unsetable[float] = UnsetField()
+    longitude: Unsetable[float] = UnsetField()

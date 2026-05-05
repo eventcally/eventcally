@@ -3,7 +3,7 @@ import os
 from flask import redirect, render_template, request, send_from_directory, url_for
 from flask_security import auth_required, current_user
 
-from project import app, dump_org_path
+from project import dump_org_path
 from project.access import (
     access_or_401,
     admin_units_the_current_user_is_member_of,
@@ -16,6 +16,7 @@ from project.services.admin_unit import (
     get_admin_unit_member_invitations,
     get_admin_unit_organization_invitations,
 )
+from project.views.main_blueprint import main_bp
 from project.views.utils import (
     get_celery_poll_result,
     get_current_admin_unit,
@@ -24,19 +25,19 @@ from project.views.utils import (
 )
 
 
-@app.route("/manage_after_login")
+@main_bp.route("/manage_after_login")
 @auth_required()
 def manage_after_login():
-    return redirect(url_for("manage", from_login=1))
+    return redirect(url_for("main.manage", from_login=1))
 
 
-@app.route("/manage")
+@main_bp.route("/manage")
 @auth_required()
 def manage():
     admin_unit = get_current_admin_unit(False)
 
     if admin_unit:
-        return redirect(url_for("manage_admin_unit", id=admin_unit.id))
+        return redirect(url_for("main.manage_admin_unit", id=admin_unit.id))
 
     if "from_login" in request.args:
         admin_units = get_admin_units_for_manage()
@@ -50,7 +51,7 @@ def manage():
             and len(invitations) == 0
             and len(organization_invitations) == 0
         ):
-            return redirect(url_for("manage_admin_unit", id=admin_units[0].id))
+            return redirect(url_for("main.manage_admin_unit", id=admin_units[0].id))
 
         if (
             len(admin_units) == 0
@@ -58,7 +59,7 @@ def manage():
             and len(organization_invitations) == 0
         ):
             return redirect(
-                url_for("admin_unit_member_invitation", id=invitations[0].id)
+                url_for("main.admin_unit_member_invitation", id=invitations[0].id)
             )
 
         if (
@@ -68,14 +69,15 @@ def manage():
         ):
             return redirect(
                 url_for(
-                    "user_organization_invitation", id=organization_invitations[0].id
+                    "main.user_organization_invitation",
+                    id=organization_invitations[0].id,
                 )
             )
 
-    return redirect(url_for("manage_admin_units"))
+    return redirect(url_for("main.manage_admin_units"))
 
 
-@app.route("/manage/admin_units")
+@main_bp.route("/manage/admin_units")
 @auth_required()
 def manage_admin_units():
     admin_units = admin_units_the_current_user_is_member_of()
@@ -96,7 +98,7 @@ def manage_admin_units():
     )
 
 
-@app.route("/manage/admin_unit/<int:id>")
+@main_bp.route("/manage/admin_unit/<int:id>")
 @auth_required()
 def manage_admin_unit(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
@@ -104,14 +106,14 @@ def manage_admin_unit(id):
     return redirect(url_for("manage_admin_unit.events", id=admin_unit.id))
 
 
-@app.route("/manage/admin_unit/<int:id>/event-lists")
-@app.route("/manage/admin_unit/<int:id>/event-lists/<path:path>")
+@main_bp.route("/manage/admin_unit/<int:id>/event-lists")
+@main_bp.route("/manage/admin_unit/<int:id>/event-lists/<path:path>")
 @auth_required()
 def manage_admin_unit_event_lists(id, path=None):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
     if not has_access(admin_unit, "event_lists:read"):  # pragma: no cover
-        return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))
+        return permission_missing(url_for("main.manage_admin_unit", id=admin_unit.id))
 
     set_current_admin_unit(admin_unit)
 
@@ -121,14 +123,14 @@ def manage_admin_unit_event_lists(id, path=None):
     )
 
 
-@app.route("/manage/admin_unit/<int:id>/custom-widgets")
-@app.route("/manage/admin_unit/<int:id>/custom-widgets/<path:path>")
+@main_bp.route("/manage/admin_unit/<int:id>/custom-widgets")
+@main_bp.route("/manage/admin_unit/<int:id>/custom-widgets/<path:path>")
 @auth_required()
 def manage_admin_unit_custom_widgets(id, path=None):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
     if not has_access(admin_unit, "custom_widgets:read"):  # pragma: no cover
-        return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))
+        return permission_missing(url_for("main.manage_admin_unit", id=admin_unit.id))
 
     set_current_admin_unit(admin_unit)
     full_height = path is not None and (path == "create" or path.endswith("/update"))
@@ -140,13 +142,13 @@ def manage_admin_unit_custom_widgets(id, path=None):
     )
 
 
-@app.route("/manage/admin_unit/<int:id>/export", methods=["GET", "POST"])
+@main_bp.route("/manage/admin_unit/<int:id>/export", methods=["GET", "POST"])
 @auth_required()
 def manage_admin_unit_export(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
 
     if not has_access(admin_unit, "export:read"):  # pragma: no cover
-        return permission_missing(url_for("manage_admin_unit", id=admin_unit.id))
+        return permission_missing(url_for("main.manage_admin_unit", id=admin_unit.id))
 
     if "poll" in request.args:  # pragma: no cover
         return get_celery_poll_result()
@@ -164,7 +166,9 @@ def manage_admin_unit_export(id):
     if os.path.exists(file_path):
         dump_file = {
             "url": url_for(
-                "manage_admin_unit_export_dump_files", id=admin_unit.id, path=file_name
+                "main.manage_admin_unit_export_dump_files",
+                id=admin_unit.id,
+                path=file_name,
             ),
             "size": os.path.getsize(file_path),
             "ctime": os.path.getctime(file_path),
@@ -177,7 +181,7 @@ def manage_admin_unit_export(id):
     )
 
 
-@app.route("/manage/admin_unit/<int:id>/export/dump/<path:path>")
+@main_bp.route("/manage/admin_unit/<int:id>/export/dump/<path:path>")
 def manage_admin_unit_export_dump_files(id, path):
     admin_unit = get_admin_unit_for_manage_or_404(id)
     access_or_401(admin_unit, "export:read")
@@ -188,7 +192,7 @@ def manage_admin_unit_export_dump_files(id, path):
 # Legacy mail redirects
 
 
-@app.route(
+@main_bp.route(
     "/manage/admin_unit/<int:id>/incoming_admin_unit_verification_request/<int:admin_unit_verification_request_id>/review"
 )
 def manage_admin_unit_incoming_admin_unit_verification_request_review(
@@ -203,7 +207,7 @@ def manage_admin_unit_incoming_admin_unit_verification_request_review(
     )
 
 
-@app.route(
+@main_bp.route(
     "/manage/admin_unit/<int:id>/outgoing_admin_unit_verification_request/<int:admin_unit_verification_request_id>"
 )
 def manage_admin_unit_outgoing_admin_unit_verification_request(

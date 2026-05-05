@@ -3,7 +3,7 @@ import os
 
 import icalendar
 from dateutil.relativedelta import relativedelta
-from flask import url_for
+from flask import current_app, url_for
 from flask_babel import format_date, format_time, gettext
 from icalendar.prop import vDDDLists
 from sqlalchemy import and_, case, func, or_
@@ -17,7 +17,6 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.sql import extract
 
-from project import app, db
 from project.dateutils import (
     berlin_tz,
     date_add_time,
@@ -26,6 +25,7 @@ from project.dateutils import (
     get_today,
     round_to_next_day,
 )
+from project.extensions import db
 from project.jinja_filters import url_for_image
 from project.models import (
     AdminUnit,
@@ -684,7 +684,7 @@ def populate_ical_event_with_datish(
 
 
 def create_ical_event_for_date(event_date: EventDate) -> icalendar.Event:
-    url = url_for("event_date", id=event_date.id, _external=True)
+    url = url_for("main.event_date", id=event_date.id, _external=True)
 
     ical_event = icalendar.Event()
     populate_ical_event_with_event(ical_event, event_date.event, url)
@@ -697,7 +697,7 @@ def create_ical_event_for_date(event_date: EventDate) -> icalendar.Event:
 def create_ical_event_for_date_definition(
     date_definition: EventDateDefinition,
 ) -> icalendar.Event:
-    url = url_for("event", event_id=date_definition.event.id, _external=True)
+    url = url_for("main.event", event_id=date_definition.event.id, _external=True)
 
     ical_event = icalendar.Event()
     populate_ical_event_with_event(ical_event, date_definition.event, url)
@@ -718,7 +718,7 @@ def create_ical_events_for_event(event: Event) -> list:  # list[icalendar.Event]
             ical_event = create_ical_event_for_date_definition(date_definition)
             result.append(ical_event)
         except Exception as e:  # pragma: no cover
-            app.logger.exception(e)
+            current_app.logger.exception(e)
 
     return result
 
@@ -748,7 +748,7 @@ def update_recurring_dates():
         update_event_dates_with_recurrence_rule(event)
         db.session.commit()
 
-    app.logger.info(f"{len(events)} event(s) were updated.")
+    current_app.logger.info(f"{len(events)} event(s) were updated.")
 
 
 def create_bulk_event_references(admin_unit_id: int, postalCodes: list):
@@ -767,11 +767,11 @@ def create_bulk_event_references(admin_unit_id: int, postalCodes: list):
             new_references.append(reference)
 
     db.session.commit()
-    app.logger.info(f"{len(new_references)} reference(s) created.")
+    current_app.logger.info(f"{len(new_references)} reference(s) created.")
 
     for new_reference in new_references:
-        url = url_for("event", event_id=new_reference.event_id, _external=True)
-        app.logger.info(url)
+        url = url_for("main.event", event_id=new_reference.event_id, _external=True)
+        current_app.logger.info(url)
 
 
 def get_old_events():

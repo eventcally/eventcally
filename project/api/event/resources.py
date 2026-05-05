@@ -6,14 +6,13 @@ from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy import and_
 from sqlalchemy.orm import lazyload, load_only
 
-from project import db
 from project.access import (
     access_or_401,
     can_read_event_or_401,
     can_read_private_events,
     login_api_user,
 )
-from project.api import add_api_resource, rest_api
+from project.api import add_api_resource
 from project.api.event.schemas import (
     EventListRequestSchema,
     EventListResponseSchema,
@@ -34,6 +33,7 @@ from project.api.resources import (
     require_organization_api_access,
 )
 from project.api.schemas import NoneSchema
+from project.extensions import db
 from project.models import AdminUnit, Event, EventDate, EventPublicStatus
 from project.services.event import get_event_with_details_or_404, get_events_query
 from project.services.event_service import EventService
@@ -186,6 +186,9 @@ add_api_resource(EventListResource, "/events", "api_v1_event_list")
 add_api_resource(EventResource, "/events/<int:id>", "api_v1_event")
 add_api_resource(EventDatesResource, "/events/<int:id>/dates", "api_v1_event_dates")
 add_api_resource(EventSearchResource, "/events/search", "api_v1_event_search")
-rest_api.add_resource(
-    EventReportsResource, "/events/<int:id>/reports", endpoint="api_v1_event_reports"
+add_api_resource(
+    EventReportsResource,
+    "/events/<int:id>/reports",
+    "api_v1_event_reports",
+    api_docs=False,
 )

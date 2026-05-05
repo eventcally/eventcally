@@ -1,9 +1,9 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from project.domain.types.custom_base_model import CustomBaseModel
 
 
-class CreateLocation(BaseModel):
+class CreateLocation(CustomBaseModel):
     street: Optional[str] = None
     postalCode: Optional[str] = None
     city: Optional[str] = None

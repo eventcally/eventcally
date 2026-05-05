@@ -1,12 +1,12 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from project.domain.types import Unsetable
+from project.domain.types.custom_base_model import CustomBaseModel
+from project.domain.types.unset_field_factory import UnsetField
 
-from project.domain.types import Unsetable, unset
 
-
-class UpdateImage(BaseModel):
-    data: Unsetable[bytes] = unset
-    encoding_format: Unsetable[str] = unset
-    copyright_text: Unsetable[Optional[str]] = unset
-    license_id: Unsetable[Optional[int]] = unset
+class UpdateImage(CustomBaseModel):
+    data: Unsetable[bytes] = UnsetField()
+    encoding_format: Unsetable[str] = UnsetField()
+    copyright_text: Unsetable[Optional[str]] = UnsetField()
+    license_id: Unsetable[Optional[int]] = UnsetField()

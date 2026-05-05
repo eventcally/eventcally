@@ -4,14 +4,15 @@ import PIL
 from flask import request, send_file
 from sqlalchemy.orm import load_only
 
-from project import app, img_path
+from project import img_path
 from project.imageutils import get_image_from_bytes
 from project.models import Image
 from project.utils import make_dir
+from project.views.main_blueprint import main_bp
 
 
-@app.route("/image/<int:id>")
-@app.route("/image/<int:id>/<hash>")
+@main_bp.route("/image/<int:id>")
+@main_bp.route("/image/<int:id>/<hash>")
 def image(id, hash=None):
     image = Image.query.options(
         load_only(Image.id, Image.encoding_format, Image.created_at, Image.updated_at)

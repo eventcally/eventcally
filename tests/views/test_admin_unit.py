@@ -21,8 +21,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder):
     seeder.create_user()
     utils.login()
     url = utils.get_url("manage.organization_create")
-    response = client.get(url)
-    assert response.status_code == 200
+    response = utils.get_ok(url)
 
     data = create_form_data(response, utils)
     data["logo-image_base64"] = seeder.get_default_image_upload_base64()
@@ -82,7 +81,7 @@ def test_create_requiresAdmin_nonAdmin(client, app, utils: UtilActions, seeder: 
 
     url = utils.get_url("manage.organization_create")
     response = utils.get(url)
-    utils.assert_response_redirect(response, "manage_admin_units")
+    utils.assert_response_redirect(response, "main.manage_admin_units")
 
 
 def test_create_requiresAdmin_globalAdmin(
@@ -116,7 +115,7 @@ def test_create_requiresAdmin_memberOfOrgWithoutFlag(
 
     url = utils.get_url("manage.organization_create")
     response = utils.get(url)
-    utils.assert_response_redirect(response, "manage_admin_units")
+    utils.assert_response_redirect(response, "main.manage_admin_units")
 
 
 def test_create_requiresAdmin_memberOfOrgWithFlag(
@@ -215,7 +214,7 @@ def test_create_from_invitation_currentUserDoesNotMatchInvitationEmail(
     utils.login("other@test.de")
     url = utils.get_url("manage.organization_create", invitation_id=invitation_id)
     response = utils.get(url)
-    utils.assert_response_redirect(response, "manage_admin_units")
+    utils.assert_response_redirect(response, "main.manage_admin_units")
 
 
 def test_create_with_relation(client, app, utils: UtilActions, seeder: Seeder):
@@ -358,7 +357,8 @@ def test_list(client, app, utils: UtilActions, seeder: Seeder):
     seeder.create_user()
     user_id = utils.login()
     seeder.create_admin_unit(user_id, "Meine Crew")
-    response = client.get("/manage/admin_units")
+    url = utils.get_url("main.manage_admin_units")
+    response = utils.get_ok(url)
     assert b"Meine Crew" in response.data
 
 
@@ -398,7 +398,7 @@ def test_admin_unit_request_deletion(
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
+    utils.assert_response_redirect(response, "main.manage_admin_unit", id=admin_unit_id)
 
     with app.app_context():
         from project.models import AdminUnit
@@ -459,7 +459,7 @@ def test_admin_unit_cancel_deletion(
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "manage_admin_unit", id=admin_unit_id)
+    utils.assert_response_redirect(response, "main.manage_admin_unit", id=admin_unit_id)
 
     with app.app_context():
         from project.models import AdminUnit
@@ -475,5 +475,5 @@ def test_admin_unit_cancel_deletion_permission_missing(
 
     response = utils.get_endpoint("manage_admin_unit.cancel_deletion", id=admin_unit_id)
     utils.assert_response_permission_missing(
-        response, "manage_admin_unit", id=admin_unit_id
+        response, "main.manage_admin_unit", id=admin_unit_id
     )

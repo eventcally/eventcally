@@ -64,7 +64,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
 
         view_action = self._create_action(
             url_for(
-                "organizers",
+                "main.organizers",
                 path=object.id,
             ),
             gettext("View"),

@@ -6,7 +6,7 @@ from flask_babel import gettext, lazy_gettext
 from flask_security import auth_required, current_user
 from flask_security.utils import get_post_login_redirect
 
-from project import db
+from project.extensions import db
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.services.user import is_user_admin_member, set_user_accepted_tos
 from project.services.user_service import UserService
@@ -46,7 +46,7 @@ class RequestDeletionView(BaseDeleteView):
                 ),
                 "danger",
             )
-            return redirect(url_for("manage_admin_units"))
+            return redirect(url_for("main.manage_admin_units"))
 
     def get_title(self, **kwargs):
         return lazy_gettext("Delete account")
@@ -67,7 +67,7 @@ class RequestDeletionView(BaseDeleteView):
         self.user_service.request_deletion(object)
 
     def get_redirect_url(self, **kwargs):
-        return url_for("profile")
+        return url_for("main.profile")
 
     def flash_success_message(self, form, object):
         pass
@@ -107,7 +107,7 @@ class CancelDeletionView(BaseDeleteView):
         db.session.commit()
 
     def get_redirect_url(self, **kwargs):
-        return url_for("profile")
+        return url_for("main.profile")
 
     def flash_success_message(self, form, object):
         pass
@@ -120,7 +120,7 @@ class BaseSettingView(BaseUpdateView):
         return gettext("Settings successfully updated")
 
     def get_redirect_url(self, **kwargs):
-        return url_for("profile")
+        return url_for("main.profile")
 
 
 class GeneralView(BaseSettingView):

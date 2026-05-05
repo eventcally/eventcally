@@ -7,25 +7,25 @@ def test_event_dates(client, seeder: Seeder, utils: UtilActions):
     seeder.create_event(admin_unit_id)
     seeder.create_event(admin_unit_id, draft=True)
 
-    url = utils.get_url("widget_event_dates", id=admin_unit_id)
+    url = utils.get_url("main.widget_event_dates", id=admin_unit_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "widget.css")
     assert "X-Frame-Options" not in response.headers
 
-    event_url = utils.get_url("event_date", id=1)
+    event_url = utils.get_url("main.event_date", id=1)
     utils.assert_response_contains(response, event_url)
 
-    draft_url = utils.get_url("event_date", id=2)
+    draft_url = utils.get_url("main.event_date", id=2)
     utils.assert_response_contains_not(response, draft_url)
 
-    url = utils.get_url("widget_event_dates", id=admin_unit_id, keyword="name")
+    url = utils.get_url("main.widget_event_dates", id=admin_unit_id, keyword="name")
     utils.get_ok(url)
 
-    url = utils.get_url("widget_event_dates", id=admin_unit_id, category_id=1)
+    url = utils.get_url("main.widget_event_dates", id=admin_unit_id, category_id=1)
     utils.get_ok(url)
 
     url = utils.get_url(
-        "widget_event_dates",
+        "main.widget_event_dates",
         id=admin_unit_id,
         coordinate="51.9077888,10.4333312",
         distance=500,
@@ -33,7 +33,7 @@ def test_event_dates(client, seeder: Seeder, utils: UtilActions):
     utils.get_ok(url)
 
     url = utils.get_url(
-        "widget_event_dates",
+        "main.widget_event_dates",
         id=admin_unit_id,
         date_from="2020-10-03",
         date_to="2021-10-03",
@@ -41,7 +41,7 @@ def test_event_dates(client, seeder: Seeder, utils: UtilActions):
     utils.get_ok(url)
 
     url = utils.get_url(
-        "widget_event_dates",
+        "main.widget_event_dates",
         id=admin_unit_id,
         s_ft="Verdana",
         s_bg="#eceef0",
@@ -52,11 +52,11 @@ def test_event_dates(client, seeder: Seeder, utils: UtilActions):
 
     # Unverified
     _, unverified_admin_unit_id, unverified_id = seeder.create_event_unverified()
-    url = utils.get_url("widget_event_dates", id=unverified_admin_unit_id)
+    url = utils.get_url("main.widget_event_dates", id=unverified_admin_unit_id)
     response = utils.get_ok(url)
 
     unverified_date_id = seeder.get_event_date_id(unverified_id)
-    unverified_url = utils.get_url("event_date", id=unverified_date_id)
+    unverified_url = utils.get_url("main.event_date", id=unverified_date_id)
     utils.assert_response_contains_not(response, unverified_url)
 
 
@@ -71,7 +71,7 @@ def test_event_dates_oneDay(client, seeder, utils):
     seeder.create_event(admin_unit_id, name=name, start=start, end=end)
 
     url = utils.get_url(
-        "widget_event_dates",
+        "main.widget_event_dates",
         id=admin_unit_id,
         date_from="2020-10-03",
         date_to="2020-10-03",
@@ -84,7 +84,7 @@ def test_event_dates_noneDescription(client, seeder, utils):
     _, admin_unit_id = seeder.setup_base()
     seeder.create_event(admin_unit_id, description=None)
 
-    url = utils.get_url("widget_event_dates", id=admin_unit_id)
+    url = utils.get_url("main.widget_event_dates", id=admin_unit_id)
     utils.get_ok(url)
 
 
@@ -117,5 +117,5 @@ def test_event_dates_colors(client, seeder, utils, app, db):
         admin_unit.widget_link_color = Color("#7b2424")
         db.session.commit()
 
-    url = utils.get_url("widget_event_dates", id=admin_unit_id)
+    url = utils.get_url("main.widget_event_dates", id=admin_unit_id)
     utils.get_ok(url)

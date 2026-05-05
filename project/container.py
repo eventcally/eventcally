@@ -1,21 +1,25 @@
 """Dependency Injection Container for EventCally application."""
 
 from dependency_injector import containers, providers
+from flask import current_app
 
-from project import db, repos, services
+from project import repos, services
 from project.context import ContextProvider
 from project.domain import commands, events
+from project.extensions import db
+from project.infrastructure.celery_command_dispatcher import CeleryCommandDispatcher
+from project.infrastructure.celery_event_dispatcher import CeleryEventDispatcher
+from project.infrastructure.services.celery_email_service import CeleryEmailService
 from project.infrastructure.sql_alchemy_unit_of_work import SqlAlchemyUnitOfWork
 from project.service_layer import command_handlers, event_handlers
-from project.service_layer.celery_event_dispatcher import CeleryEventDispatcher
 from project.service_layer.message_bus import MessageBus
-from project.service_layer.services.celery_email_service import CeleryEmailService
+from project.service_layer.services.webhook_delivery_service import (
+    WebhookDeliveryService,
+)
 
 
 def get_app_logger():
-    from project import app
-
-    return app.logger
+    return current_app.logger
 
 
 class Infrastructure(containers.DeclarativeContainer):
@@ -173,9 +177,14 @@ class Services(containers.DeclarativeContainer):
     repos = providers.DependenciesContainer()
     context = providers.DependenciesContainer()
     config = providers.Configuration()
+    infrastructure = providers.Configuration()
 
     email_service = providers.Factory(
         CeleryEmailService, default_locale=config.BABEL_DEFAULT_LOCALE
+    )
+    webhook_delivery_service = providers.Factory(
+        WebhookDeliveryService,
+        logger=infrastructure.logger,
     )
 
     app_service = providers.Factory(
@@ -383,26 +392,92 @@ class Cqrs(containers.DeclarativeContainer):
             commands.DeleteEventPlaceCommand: providers.Factory(
                 command_handlers.DeleteEventPlaceHandler
             ),
+            commands.DeleteOldWebhookEventsCommand: providers.Factory(
+                command_handlers.DeleteOldWebhookEventsHandler
+            ),
             commands.RequestOrganizationDeletionCommand: providers.Factory(
                 command_handlers.RequestOrganizationDeletionHandler
             ),
             commands.CancelOrganizationDeletionCommand: providers.Factory(
                 command_handlers.CancelOrganizationDeletionHandler
             ),
+            commands.CreateAppCommand: providers.Factory(
+                command_handlers.CreateAppHandler
+            ),
+            commands.UpdateAppCommand: providers.Factory(
+                command_handlers.UpdateAppHandler
+            ),
+            commands.UpdateAppInstallationPermissionsCommand: providers.Factory(
+                command_handlers.UpdateAppInstallationPermissionsHandler
+            ),
+            commands.UninstallAppCommand: providers.Factory(
+                command_handlers.UninstallAppHandler
+            ),
+            commands.DeleteAppCommand: providers.Factory(
+                command_handlers.DeleteAppHandler
+            ),
+            commands.InstallAppCommand: providers.Factory(
+                command_handlers.InstallAppHandler
+            ),
+            commands.AttemptToDeliverWebhookCommand: providers.Factory(
+                command_handlers.AttemptToDeliverWebhookHandler,
+                webhook_delivery_service=services.webhook_delivery_service,
+            ),
         }
     )
 
     event_handler_factory = providers.FactoryAggregate(
         {
+            events.WebhookDeliveryCreated: providers.List(
+                providers.Factory(
+                    event_handlers.WebhookDeliveryCreatedAttemptEventHandler,
+                    webhook_delivery_service=services.webhook_delivery_service,
+                ),
+            ),
             events.EventOrganizerCreated: providers.List(
                 providers.Factory(
-                    event_handlers.LogEventHandler, logger=infrastructure.logger
-                )
+                    event_handlers.AppInstallationWebhookEventHandler,
+                ),
             ),
             events.EventOrganizerUpdated: providers.List(
                 providers.Factory(
-                    event_handlers.LogEventHandler, logger=infrastructure.logger
-                )
+                    event_handlers.AppInstallationWebhookEventHandler,
+                ),
+            ),
+            events.EventOrganizerDeleted: providers.List(
+                providers.Factory(
+                    event_handlers.AppInstallationWebhookEventHandler,
+                ),
+            ),
+            events.EventPlaceCreated: providers.List(
+                providers.Factory(
+                    event_handlers.AppInstallationWebhookEventHandler,
+                ),
+            ),
+            events.EventPlaceUpdated: providers.List(
+                providers.Factory(
+                    event_handlers.AppInstallationWebhookEventHandler,
+                ),
+            ),
+            events.EventPlaceDeleted: providers.List(
+                providers.Factory(
+                    event_handlers.AppInstallationWebhookEventHandler,
+                ),
+            ),
+            events.AppInstallationCreated: providers.List(
+                providers.Factory(
+                    event_handlers.AppWebhookEventHandler,
+                ),
+            ),
+            events.AppInstallationPermissionsUpdated: providers.List(
+                providers.Factory(
+                    event_handlers.AppWebhookEventHandler,
+                ),
+            ),
+            events.AppUninstalled: providers.List(
+                providers.Factory(
+                    event_handlers.AppWebhookEventHandler,
+                ),
             ),
             events.OrganizationDeletionRequested: providers.List(
                 providers.Factory(
@@ -414,6 +489,7 @@ class Cqrs(containers.DeclarativeContainer):
     )
 
     event_dispatcher = providers.Factory(CeleryEventDispatcher)
+    command_dispatcher = providers.Factory(CeleryCommandDispatcher)
 
     message_bus = providers.Factory(
         MessageBus,
@@ -422,6 +498,7 @@ class Cqrs(containers.DeclarativeContainer):
         command_handler_factory=command_handler_factory,
         event_handler_factory=event_handler_factory,
         event_dispatcher=event_dispatcher,
+        command_dispatcher=command_dispatcher,
     )
 
 

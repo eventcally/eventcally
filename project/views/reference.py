@@ -2,14 +2,15 @@ from flask import abort, flash, redirect, render_template, url_for
 from flask_babel import gettext
 from sqlalchemy.exc import SQLAlchemyError
 
-from project import app, db
 from project.access import can_reference_event, get_admin_units_for_event_reference
+from project.extensions import db
 from project.forms.reference import CreateEventReferenceForm
 from project.models import Event, EventReference
+from project.views.main_blueprint import main_bp
 from project.views.utils import flash_errors, handleSqlError
 
 
-@app.route("/event/<int:event_id>/reference", methods=("GET", "POST"))
+@main_bp.route("/event/<int:event_id>/reference", methods=("GET", "POST"))
 def event_reference_create(event_id):
     event = Event.query.get_or_404(event_id)
     user_can_reference_event = can_reference_event(event)
@@ -35,7 +36,7 @@ def event_reference_create(event_id):
             db.session.add(reference)
             db.session.commit()
             flash(gettext("Event successfully referenced"), "success")
-            return redirect(url_for("event", event_id=event.id))
+            return redirect(url_for("main.event", event_id=event.id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(handleSqlError(e), "danger")

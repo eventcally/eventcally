@@ -12,6 +12,7 @@ from project.views.manage_admin_unit.app_installation.displays import (
 )
 from project.views.manage_admin_unit.app_installation.views import (
     AcceptPermissionsView,
+    DeleteView,
     InstallView,
 )
 from project.views.manage_admin_unit.child_view_handler import (
@@ -26,6 +27,7 @@ class AppInstallationViewHandler(ManageAdminUnitChildViewHandler):
     ]
     create_view_class = None
     update_view_class = None
+    delete_view_class = DeleteView
     read_display_class = ReadDisplay
     list_display_class = ListDisplay
 

@@ -1,6 +1,7 @@
 import os
 import pathlib
 from functools import reduce
+from typing import Optional
 
 import requests
 from flask_babel import lazy_gettext
@@ -8,6 +9,8 @@ from flask_sqlalchemy.model import camel_to_snake_case
 from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.base import NO_CHANGE, object_state
+
+from project.domain import commands, events, types
 
 widget_default_background_color = "#ffffff"
 widget_default_primary_color = "#007bff"
@@ -194,3 +197,39 @@ def hash_api_key(api_key: str) -> str:
 
 def str_to_bool(str_val: str) -> bool:
     return str_val.lower() in ("true", "t", "yes", "y", "on", "1")
+
+
+def update_field_with_command(
+    obj,
+    command: commands.Command,
+    event: events.Event | None,
+    field_name: str,
+    event_field_name: Optional[str] = None,
+    command_field_name: Optional[str] = None,
+) -> bool:
+    if command_field_name is None:
+        command_field_name = field_name
+
+    new_value = getattr(command, command_field_name)
+    if new_value == types.unset:
+        return False
+
+    old_value = (
+        obj.get(field_name) if isinstance(obj, dict) else getattr(obj, field_name)
+    )
+    if old_value == new_value:
+        return False
+
+    if isinstance(obj, dict):
+        obj[field_name] = new_value
+    else:
+        setattr(obj, field_name, new_value)
+
+    if event is not None:
+        if event_field_name is None:
+            event_field_name = field_name
+
+        changed_value = types.ChangedValue(old=old_value, new=new_value)
+        setattr(event, event_field_name, changed_value)
+
+    return True

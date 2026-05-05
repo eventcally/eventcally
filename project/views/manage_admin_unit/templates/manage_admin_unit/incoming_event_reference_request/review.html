@@ -30,7 +30,7 @@ $( function() {
           </div>
           <div class="list-group list-group-flush" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
           {% for date in dates %}
-              <a href="{{ url_for('event_date', id=date.id) }}" class="list-group-item">{{ date.start | dateformat('short') }}</a>
+              <a href="{{ url_for('main.event_date', id=date.id) }}" class="list-group-item">{{ date.start | dateformat('short') }}</a>
           {% endfor %}
           </div>
       </div>

@@ -1,15 +1,14 @@
 from typing import Generic, TypeVar
 
-from pydantic import BaseModel
-
 from project.domain.types import Actor
+from project.domain.types.custom_base_model import CustomBaseModel
 
 
-class Command(BaseModel):
+class Command(CustomBaseModel):
     actor: Actor
 
 
-class CommandResult(BaseModel):
+class CommandResult(CustomBaseModel):
     pass
 
 

@@ -11,6 +11,3 @@ manage_bp = BaseBlueprint(
 )
 
 import project.views.manage_blueprint.organization.view_handler
-from project import app
-
-app.register_blueprint(manage_bp)

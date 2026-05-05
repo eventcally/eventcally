@@ -1,8 +1,9 @@
 from flask import send_from_directory
 
-from project import app, dump_path
+from project import dump_path
+from project.views.main_blueprint import main_bp
 
 
-@app.route("/dump/<path:path>")
+@main_bp.route("/dump/<path:path>")
 def dump_files(path):
     return send_from_directory(dump_path, path)

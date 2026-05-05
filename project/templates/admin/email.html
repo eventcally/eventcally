@@ -8,7 +8,7 @@
     function submit_async() {
         handle_request_start();
         $.ajax({
-            url: "{{ url_for('admin_email', async=1) }}",
+            url: "{{ url_for('admin.admin_email', async=1) }}",
             type: "post",
             dataType: "json",
             data: $("#test_mail_form").serialize(),
@@ -23,7 +23,7 @@
 
     function poll(result_id) {
         $.ajax({
-            url: "{{ url_for('admin_email') }}",
+            url: "{{ url_for('admin.admin_email') }}",
             type: "get",
             dataType: "json",
             data: "poll=" + result_id,

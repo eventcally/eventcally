@@ -7,12 +7,11 @@ def test_handle_error_unique(app):
 
     error = make_unique_violation()
 
-    with app.app_context():
-        app.config["PROPAGATE_EXCEPTIONS"] = False
-        api = RestApi(app)
-        (data, code) = api.handle_error(error)
-        assert code == 400
-        assert data["name"] == "Unique Violation"
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+    api = RestApi(app)
+    (data, code) = api.handle_error(error)
+    assert code == 400
+    assert data["name"] == "Unique Violation"
 
 
 def test_handle_error_checkViolation(app):
@@ -21,12 +20,11 @@ def test_handle_error_checkViolation(app):
 
     error = make_check_violation()
 
-    with app.app_context():
-        app.config["PROPAGATE_EXCEPTIONS"] = False
-        api = RestApi(app)
-        (data, code) = api.handle_error(error)
-        assert code == 400
-        assert data["name"] == "Check Violation"
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+    api = RestApi(app)
+    (data, code) = api.handle_error(error)
+    assert code == 400
+    assert data["name"] == "Check Violation"
 
 
 def test_handle_error_integrity(app):
@@ -35,12 +33,11 @@ def test_handle_error_integrity(app):
 
     error = make_integrity_error("custom")
 
-    with app.app_context():
-        app.config["PROPAGATE_EXCEPTIONS"] = False
-        api = RestApi(app)
-        (data, code) = api.handle_error(error)
-        assert code == 400
-        assert data["name"] == "Integrity Error"
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+    api = RestApi(app)
+    (data, code) = api.handle_error(error)
+    assert code == 400
+    assert data["name"] == "Integrity Error"
 
 
 def test_handle_error_httpException(app):
@@ -50,11 +47,10 @@ def test_handle_error_httpException(app):
 
     error = InternalServerError()
 
-    with app.app_context():
-        app.config["PROPAGATE_EXCEPTIONS"] = False
-        api = RestApi(app)
-        (data, code) = api.handle_error(error)
-        assert code == 500
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+    api = RestApi(app)
+    (data, code) = api.handle_error(error)
+    assert code == 500
 
 
 def test_handle_error_domain_error(app):
@@ -63,13 +59,12 @@ def test_handle_error_domain_error(app):
 
     error = DuplicateError("Custom message")
 
-    with app.app_context():
-        app.config["PROPAGATE_EXCEPTIONS"] = False
-        api = RestApi(app)
-        (data, code) = api.handle_error(error)
-        assert code == 400
-        assert data["name"] == "DuplicateError"
-        assert data["message"] == "Custom message"
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+    api = RestApi(app)
+    (data, code) = api.handle_error(error)
+    assert code == 400
+    assert data["name"] == "DuplicateError"
+    assert data["message"] == "Custom message"
 
 
 def test_handle_error_unprocessableEntity(app):
@@ -84,13 +79,12 @@ def test_handle_error_unprocessableEntity(app):
     error = UnprocessableEntity()
     error.exc = validation_error
 
-    with app.app_context():
-        app.config["PROPAGATE_EXCEPTIONS"] = False
-        api = RestApi(app)
-        (data, code) = api.handle_error(error)
-        assert code == 422
-        assert data["errors"][0]["field"] == "name"
-        assert data["errors"][0]["message"] == "Required"
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+    api = RestApi(app)
+    (data, code) = api.handle_error(error)
+    assert code == 422
+    assert data["errors"][0]["field"] == "name"
+    assert data["errors"][0]["message"] == "Required"
 
 
 def test_handle_error_validationError(app):
@@ -101,25 +95,23 @@ def test_handle_error_validationError(app):
     args = {"name": ["Required"]}
     validation_error = ValidationError(args)
 
-    with app.app_context():
-        app.config["PROPAGATE_EXCEPTIONS"] = False
-        api = RestApi(app)
-        (data, code) = api.handle_error(validation_error)
-        assert code == 422
-        assert data["errors"][0]["field"] == "name"
-        assert data["errors"][0]["message"] == "Required"
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+    api = RestApi(app)
+    (data, code) = api.handle_error(validation_error)
+    assert code == 422
+    assert data["errors"][0]["field"] == "name"
+    assert data["errors"][0]["message"] == "Required"
 
 
 def test_handle_error_unspecificRaises(app):
     error = Exception()
     from project.api import RestApi
 
-    with app.app_context():
-        app.config["PROPAGATE_EXCEPTIONS"] = False
-        api = RestApi(app)
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+    api = RestApi(app)
 
-        with pytest.raises(Exception):
-            api.handle_error(error)
+    with pytest.raises(Exception):
+        api.handle_error(error)
 
 
 def test_add_oauth2_scheme(app, utils):

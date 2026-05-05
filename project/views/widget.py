@@ -1,15 +1,15 @@
 from flask import render_template, request
 
-from project import app
 from project.forms.event_date import FindEventDateWidgetForm
 from project.models import AdminUnit
 from project.services.event import get_event_dates_query
 from project.services.search_params import EventSearchParams
 from project.views.event import get_event_category_choices
+from project.views.main_blueprint import main_bp
 from project.views.utils import get_pagination_urls
 
 
-@app.route("/organizations/<int:id>/widget/eventdates")
+@main_bp.route("/organizations/<int:id>/widget/eventdates")
 def widget_event_dates(id):
     admin_unit = AdminUnit.query.get_or_404(id)
 

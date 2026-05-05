@@ -26,8 +26,9 @@ class UnsetableAdapter:
             inner_schema = core_schema.any_schema()
 
         def validate(value: Any) -> Any:
-            if isinstance(value, _Unset):
-                return value
+            return value
+
+        def serialize(value: Any) -> Any:
             return value
 
         return core_schema.no_info_before_validator_function(
@@ -39,9 +40,7 @@ class UnsetableAdapter:
                     core_schema.none_schema(),
                 ]
             ),
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                lambda v: None if isinstance(v, _Unset) else v
-            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(serialize),
         )
 
 

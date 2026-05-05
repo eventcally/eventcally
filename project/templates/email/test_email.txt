@@ -1,3 +1,3 @@
 {{ _('This is a test mail') }}
 {{ _('Click the link below to open the site') }}
-{{ url_for('home', _external=True) }}
+{{ url_for('main.home', _external=True) }}

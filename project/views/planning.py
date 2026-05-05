@@ -1,20 +1,20 @@
 from flask import render_template, request, url_for
 from flask_security import auth_required
 
-from project import app
 from project.access import can_use_planning
 from project.forms.planning import PlanningForm
 from project.services.admin import upsert_settings
 from project.services.search_params import EventSearchParams
 from project.views.event import get_event_category_choices
+from project.views.main_blueprint import main_bp
 from project.views.utils import permission_missing
 
 
-@app.route("/planning")
+@main_bp.route("/planning")
 @auth_required()
 def planning():
     if not can_use_planning():
-        return permission_missing(url_for("manage_admin_units"))
+        return permission_missing(url_for("main.manage_admin_units"))
 
     params = EventSearchParams()
     params.set_planning_date_range()

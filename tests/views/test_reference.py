@@ -24,7 +24,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
     other_admin_unit_id = seeder.create_admin_unit(user_id, "Other Crew")
     event_id = seeder.create_event(other_admin_unit_id)
 
-    url = utils.get_url("event_reference_create", event_id=event_id)
+    url = utils.get_url("main.event_reference_create", event_id=event_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -40,7 +40,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "event", event_id=event_id)
+    utils.assert_response_redirect(response, "main.event", event_id=event_id)
 
     with app.app_context():
         from project.models import EventReference
@@ -62,7 +62,7 @@ def test_create_duplicateNotAllowed(client, seeder, utils, app):
         reference_id,
     ) = seeder.create_any_reference(admin_unit_id)
 
-    url = utils.get_url("event_reference_create", event_id=event_id)
+    url = utils.get_url("main.event_reference_create", event_id=event_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -82,7 +82,7 @@ def test_create_401(client, app, utils, seeder, mocker):
     other_admin_unit_id = seeder.create_admin_unit(owner_id, "Other Crew")
     event_id = seeder.create_event(other_admin_unit_id)
 
-    url = utils.get_url("event_reference_create", event_id=event_id)
+    url = utils.get_url("main.event_reference_create", event_id=event_id)
     response = client.get(url)
     assert response.status_code == 401
 

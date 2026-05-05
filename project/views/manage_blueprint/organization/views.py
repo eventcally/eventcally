@@ -46,7 +46,7 @@ class CreateView(BaseCreateView):
             if not strings_are_equal_ignoring_case(
                 invitation.email, current_user.email
             ):
-                return permission_missing(url_for("manage_admin_units"))
+                return permission_missing(url_for("main.manage_admin_units"))
 
         if not invitation:
             if not can_create_admin_unit():
@@ -54,15 +54,15 @@ class CreateView(BaseCreateView):
                     gettext(
                         "Organizations cannot currently be created. The project is in a closed test phase. If you are interested, you can contact us."
                     ),
-                    url_for("contact"),
+                    url_for("main.contact"),
                     gettext("Contact"),
                     "danger",
                 )
-                return redirect(url_for("manage_admin_units"))
+                return redirect(url_for("main.manage_admin_units"))
 
             if current_user.deletion_requested_at:  # pragma: no cover
                 flash(gettext("Your account is scheduled for deletion."), "danger")
-                return redirect(url_for("profile"))
+                return redirect(url_for("main.profile"))
 
         self.invitation = invitation
         self.current_admin_unit = get_current_admin_unit()
@@ -131,7 +131,7 @@ class CreateView(BaseCreateView):
         admin_unit = object
 
         if self.relation and self.relation.verify:
-            return url_for("manage_admin_unit", id=admin_unit.id)
+            return url_for("main.manage_admin_unit", id=admin_unit.id)
 
         return url_for(
             "manage_admin_unit.outgoing_organization_verification_requests",

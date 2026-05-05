@@ -3,7 +3,6 @@ from flask.helpers import make_response
 from flask_apispec import doc, marshal_with
 from flask_apispec.annotations import use_kwargs
 
-from project import db
 from project.api import add_api_resource
 from project.api.organization_invitation.schemas import (
     OrganizationInvitationPatchRequestSchema,
@@ -11,6 +10,7 @@ from project.api.organization_invitation.schemas import (
     OrganizationInvitationUpdateRequestSchema,
 )
 from project.api.resources import BaseResource, require_organization_api_access
+from project.extensions import db
 from project.models import AdminUnitInvitation
 
 

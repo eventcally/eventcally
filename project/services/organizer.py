@@ -1,6 +1,6 @@
 from sqlalchemy import and_
 
-from project import db
+from project.extensions import db
 from project.models import EventOrganizer, Location
 
 

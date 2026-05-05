@@ -3,11 +3,12 @@ from typing import List, Optional
 from flask_babel import gettext
 from flask_sqlalchemy.model import Model as SQLAlchemyModel
 
-from project.domain import commands, events, types
+from project.domain import commands, events
 from project.utils import (
     class_name_to_model_name,
     model_name_to_plural,
     snake_case_to_human,
+    update_field_with_command,
 )
 
 
@@ -53,25 +54,11 @@ class CustomModel(SQLAlchemyModel):
         event: events.Event | None,
         field_name: str,
         event_field_name: Optional[str] = None,
+        command_field_name: Optional[str] = None,
     ) -> bool:
-        new_value = getattr(command, field_name)
-        if new_value == types.unset:
-            return False
-
-        old_value = getattr(self, field_name)
-        if old_value == new_value:
-            return False
-
-        setattr(self, field_name, new_value)
-
-        if event is not None:
-            if event_field_name is None:
-                event_field_name = field_name
-
-            changed_value = types.ChangedValue(old=old_value, new=new_value)
-            setattr(event, event_field_name, changed_value)
-
-        return True
+        return update_field_with_command(
+            self, command, event, field_name, event_field_name, command_field_name
+        )
 
     def __str__(self):  # pragma: no cover
         id = getattr(self, "id", "")

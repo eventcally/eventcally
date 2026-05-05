@@ -1,13 +1,14 @@
 import json
 
 import click
+from flask import current_app
 from flask.cli import AppGroup
 from flask_migrate import stamp
 from flask_security.confirmable import confirm_user
 from sqlalchemy import MetaData, text
 
-from project import app, db
 from project.api import scope_list
+from project.extensions import db
 from project.init_data import create_initial_data
 from project.models import (
     AdminUnit,
@@ -200,7 +201,7 @@ def create_admin_unit_member(admin_unit_id, user_email):
 
 
 def _create_event(admin_unit_id):
-    event_category_service = app.container.services.event_category_service()
+    event_category_service = current_app.container.services.event_category_service()
     event = Event()
     event.admin_unit_id = admin_unit_id
     event.categories = [event_category_service.upsert_event_category("Other")]
@@ -217,7 +218,7 @@ def _create_event(admin_unit_id):
     date_definition.start = _get_now_by_minute()
     event.date_definitions = [date_definition]
 
-    app.container.services.event_service().insert_object(event)
+    current_app.container.services.event_service().insert_object(event)
 
     return event.id
 
@@ -495,6 +496,3 @@ def create_event_list(admin_unit_id):
         "event_list_id": event_list_id,
     }
     click.echo(json.dumps(result))
-
-
-app.cli.add_command(test_cli)

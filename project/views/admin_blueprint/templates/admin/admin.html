@@ -3,7 +3,7 @@
 {{ super() }}
 
 <div class="list-group">
-    <a href="{{ url_for('admin_settings') }}" class="list-group-item">
+    <a href="{{ url_for('admin.admin_settings') }}" class="list-group-item">
         {{ _('Settings') }}
         <i class="fa fa-caret-right"></i>
     </a>
@@ -11,19 +11,19 @@
         {{ _('Organizations') }}
         <i class="fa fa-caret-right"></i>
     </a>
-    <a href="{{ url_for('admin_users') }}" class="list-group-item">
+    <a href="{{ url_for('admin.admin_users') }}" class="list-group-item">
         {{ _('Users') }}
         <i class="fa fa-caret-right"></i>
     </a>
-    <a href="{{ url_for('admin_email') }}" class="list-group-item">
+    <a href="{{ url_for('admin.admin_email') }}" class="list-group-item">
         {{ _('Email') }}
         <i class="fa fa-caret-right"></i>
     </a>
-    <a href="{{ url_for('admin_newsletter') }}" class="list-group-item">
+    <a href="{{ url_for('admin.admin_newsletter') }}" class="list-group-item">
         {{ _('Newsletter') }}
         <i class="fa fa-caret-right"></i>
     </a>
-    <a href="{{ url_for('admin_planning') }}" class="list-group-item">
+    <a href="{{ url_for('admin.admin_planning') }}" class="list-group-item">
         {{ _('Planning') }}
         <i class="fa fa-caret-right"></i>
     </a>

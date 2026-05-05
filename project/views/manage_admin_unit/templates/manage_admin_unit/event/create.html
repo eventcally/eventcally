@@ -33,7 +33,7 @@ $( function() {
               }
             },
             remote: {
-              url: "{{ url_for('js_check_event_place_name') }}",
+              url: "{{ url_for('main.js_check_event_place_name') }}",
               type: "post",
               data: {
                 admin_unit_id: function() {
@@ -61,7 +61,7 @@ $( function() {
               }
             },
             remote: {
-              url: "{{ url_for('js_check_organizer_name') }}",
+              url: "{{ url_for('main.js_check_organizer_name') }}",
               type: "post",
               data: {
                 admin_unit_id: function() {

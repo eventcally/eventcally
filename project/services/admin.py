@@ -1,6 +1,6 @@
 from sqlalchemy import exists, func, update
 
-from project import db
+from project.extensions import db
 from project.models import Settings, User
 
 

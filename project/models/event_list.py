@@ -1,4 +1,4 @@
-from project import db
+from project.extensions import db
 from project.models.association_tables.event_event_lists_generated import (
     EventEventListsGeneratedMixin,
 )

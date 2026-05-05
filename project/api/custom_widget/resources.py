@@ -1,7 +1,6 @@
 from flask import g, make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 
-from project import db
 from project.api import add_api_resource
 from project.api.custom_widget.schemas import (
     CustomWidgetPatchRequestSchema,
@@ -13,6 +12,7 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
+from project.extensions import db
 from project.models import CustomWidget
 
 

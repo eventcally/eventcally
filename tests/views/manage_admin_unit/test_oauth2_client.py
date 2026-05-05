@@ -31,7 +31,7 @@ class TestCreateView(BaseTestObjectViewMixin, BaseTestCreateView):
         super()._fill_form_values(values)
         values["client_name"] = "Mein Client"
         values["scope"] = scope_list
-        values["redirect_uris"] = self.utils.get_url("swagger_oauth2_redirect")
+        values["redirect_uris"] = self.utils.get_url("main.swagger_oauth2_redirect")
 
 
 class TestReadView(BaseTestObjectViewMixin, BaseTestReadView):

@@ -30,7 +30,7 @@ def test_admin_units(client, seeder, utils: UtilActions, app):
 def test_admin_settings(client, seeder, utils, app, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base(True)
 
-    url = utils.get_url("admin_settings")
+    url = utils.get_url("admin.admin_settings")
     response = utils.get_ok(url)
 
     if db_error:
@@ -66,7 +66,7 @@ def test_admin_settings(client, seeder, utils, app, mocker, db_error):
 def test_admin_email(client, seeder, utils, app, mocker):
     user_id, admin_unit_id = seeder.setup_base(True)
 
-    url = utils.get_url("admin_email")
+    url = utils.get_url("admin.admin_email")
     response = utils.get_ok(url)
 
     mail_mock = utils.mock_send_mails(mocker)
@@ -89,7 +89,7 @@ def test_newsletter(app, utils, seeder):
         locale = "de" if (i % 3) == 0 else "en" if (i % 3) == 1 else None
         seeder.create_user(f"test{i}@test.de", locale=locale)
 
-    url = utils.get_url("admin_newsletter")
+    url = utils.get_url("admin.admin_newsletter")
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -126,7 +126,7 @@ def test_admin_user_update(client, seeder, utils, app, mocker, db, db_error):
         set_roles_for_user(user.email, [])
         db.session.commit()
 
-    url = utils.get_url("admin_user_update", id=other_user_id)
+    url = utils.get_url("admin.admin_user_update", id=other_user_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -144,7 +144,7 @@ def test_admin_user_update(client, seeder, utils, app, mocker, db, db_error):
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "admin_users")
+    utils.assert_response_redirect(response, "admin.admin_users")
 
     with app.app_context():
         from project.models import User
@@ -160,7 +160,7 @@ def test_user_delete(client, seeder, utils, app, db, mocker, db_error, non_match
     user_id, admin_unit_id = seeder.setup_base(True)
     other_user_id = seeder.create_user("other@test.de")
 
-    url = utils.get_url("admin_user_delete", id=other_user_id)
+    url = utils.get_url("admin.admin_user_delete", id=other_user_id)
     response = utils.get_ok(url)
 
     if db_error:
@@ -189,7 +189,7 @@ def test_user_delete(client, seeder, utils, app, db, mocker, db_error, non_match
         utils.assert_response_db_error(response)
         return
 
-    utils.assert_response_redirect(response, "admin_users")
+    utils.assert_response_redirect(response, "admin.admin_users")
 
     with app.app_context():
         from project.models import User
@@ -291,7 +291,7 @@ def test_admin_unit_delete(client, seeder, utils, app, db, mocker, db_error, non
 def test_admin_reset_tos_accepted(client, app, db, seeder: Seeder, utils: UtilActions):
     seeder.setup_base(admin=True)
 
-    response = utils.get_endpoint_ok("admin_reset_tos_accepted")
+    response = utils.get_endpoint_ok("admin.admin_reset_tos_accepted")
     response = utils.post_form(
         response.request.url,
         response,
@@ -312,7 +312,7 @@ def test_admin_reset_tos_accepted(client, app, db, seeder: Seeder, utils: UtilAc
 def test_admin_planning(client, seeder, utils, app, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base(True)
 
-    url = utils.get_url("admin_planning")
+    url = utils.get_url("admin.admin_planning")
     response = utils.get_ok(url)
 
     if db_error:

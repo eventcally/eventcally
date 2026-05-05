@@ -5,7 +5,6 @@ from flask_apispec import doc, marshal_with, use_kwargs
 from flask_security import current_user
 from sqlalchemy import and_
 
-from project import db
 from project.access import login_api_user_or_401
 from project.api import add_api_resource
 from project.api.event.schemas import (
@@ -26,6 +25,7 @@ from project.api.user.schemas import (
     UserAppInstallationListRequestSchema,
     UserAppInstallationListResponseSchema,
 )
+from project.extensions import db
 from project.models import AdminUnitInvitation, Event
 from project.models.admin_unit import AdminUnit, AdminUnitMember
 from project.models.app import AppInstallation

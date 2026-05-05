@@ -9,6 +9,3 @@ admin_bp = BaseBlueprint(
 
 import project.views.admin_blueprint.admin.view_handler
 import project.views.admin_blueprint.organization.view_handler
-from project import app
-
-app.register_blueprint(admin_bp)

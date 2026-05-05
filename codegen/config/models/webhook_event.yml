@@ -1,0 +1,16 @@
+models:
+  - name: WebhookEvent
+    table_name: webhook_event
+    columns:
+      - name: timestamp
+        type: datetime!
+      - name: event_type
+        type: string!
+      - name: payload
+        type: json!
+    relationships:
+      - name: deliveries
+        target_model: WebhookDelivery
+        pattern: one-to-many
+        relation: owned
+        back_populates: webhook_event

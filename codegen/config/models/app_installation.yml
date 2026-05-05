@@ -20,6 +20,11 @@ models:
         target_model: OAuth2Token
         pattern: one-to-many
         relation: owned
+      - name: webhook_deliveries
+        target_model: WebhookDelivery
+        pattern: one-to-many
+        relation: reference
+        back_populates: app_installation
     constraints:
       - type: unique
         columns: [admin_unit_id, oauth2_client_id]

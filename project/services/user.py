@@ -1,14 +1,17 @@
 import datetime
 
+from flask import current_app
 from flask_security import hash_password
 
-from project import db, user_datastore
+from project.extensions import db
 from project.models import Event, Role, User, UserFavoriteEvents
 from project.models.admin_unit import AdminUnitMember
 
 
 def create_user(email, password):
-    return user_datastore.create_user(email=email, password=hash_password(password))
+    return current_app.extensions["security"].datastore.create_user(
+        email=email, password=hash_password(password)
+    )
 
 
 def add_roles_to_user(email, roles):
@@ -18,7 +21,7 @@ def add_roles_to_user(email, roles):
         raise ValueError("User with given email does not exist.")
 
     for role in roles:
-        user_datastore.add_role_to_user(user, role)
+        current_app.extensions["security"].datastore.add_role_to_user(user, role)
 
 
 def add_admin_roles_to_user(email):
@@ -29,7 +32,7 @@ def remove_roles_from_user(email, roles):
     user = find_user_by_email(email)
 
     for role in roles:  # pragma: no cover
-        user_datastore.remove_role_from_user(user, role)
+        current_app.extensions["security"].datastore.remove_role_from_user(user, role)
 
 
 def remove_all_roles_from_user(email):
@@ -43,11 +46,13 @@ def set_roles_for_user(email, roles):
 
 
 def find_user_by_email(email):
-    return user_datastore.find_user(email=email, case_insensitive=True)
+    return current_app.extensions["security"].datastore.find_user(
+        email=email, case_insensitive=True
+    )
 
 
 def get_user(id):
-    return user_datastore.find_user(id=id)
+    return current_app.extensions["security"].datastore.find_user(id=id)
 
 
 def find_all_users_with_role(role_name: str) -> list:
@@ -75,8 +80,6 @@ def has_favorite_event(user_id: int, event_id: int) -> bool:
 
 
 def add_favorite_event(user_id: int, event_id: int) -> bool:
-    from project import db
-
     if has_favorite_event(user_id, event_id):
         return False
 
@@ -86,8 +89,6 @@ def add_favorite_event(user_id: int, event_id: int) -> bool:
 
 
 def remove_favorite_event(user_id: int, event_id: int):
-    from project import db
-
     favorite = get_favorite_event(user_id, event_id)
 
     if not favorite:
@@ -112,7 +113,7 @@ def get_ghost_users():
 
 
 def delete_user(user):
-    user_datastore.delete_user(user)
+    current_app.extensions["security"].datastore.delete_user(user)
     db.session.commit()
 
 

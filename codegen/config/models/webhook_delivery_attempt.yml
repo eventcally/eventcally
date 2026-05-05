@@ -1,0 +1,20 @@
+models:
+  - name: WebhookDeliveryAttempt
+    table_name: webhook_delivery_attempt
+    columns:
+      - name: url
+        type: string!
+      - name: status
+        type: string
+      - name: status_code
+        type: string
+      - name: start_at
+        type: datetime!
+      - name: end_at
+        type: datetime!
+    relationships:
+      - name: webhook_delivery
+        target_model: WebhookDelivery
+        pattern: many-to-one
+        relation: parent
+        back_populates: attempts

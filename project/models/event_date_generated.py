@@ -1,7 +1,7 @@
 from enum import IntEnum
 from flask_security import AsaList
 from geoalchemy2 import Geometry
-from project import db
+from project.extensions import db
 from sqlalchemy import (
     Index,
     Boolean,

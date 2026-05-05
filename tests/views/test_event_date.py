@@ -6,11 +6,11 @@ def test_read(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
 
-    url = utils.get_url("event_date", id=1)
+    url = utils.get_url("main.event_date", id=1)
     utils.get_ok(url)
 
     seeder.create_event(admin_unit_id, draft=True)
-    url = utils.get_url("event_date", id=2)
+    url = utils.get_url("main.event_date", id=2)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
@@ -18,7 +18,7 @@ def test_read(client, seeder: Seeder, utils: UtilActions):
     utils.get_ok(url)
 
     seeder.create_event_unverified()
-    url = utils.get_url("event_date", id=3)
+    url = utils.get_url("main.event_date", id=3)
     response = utils.get(url)
 
 
@@ -29,7 +29,7 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
 
     # Default
     event_id = seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
-    url = utils.get_url("event_date_ical", id=event_id)
+    url = utils.get_url("main.event_date_ical", id=event_id)
     utils.get_ok(url)
 
     # Draft
@@ -39,7 +39,7 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
         start=create_berlin_date(2020, 1, 2, 14, 30),
         end=create_berlin_date(2020, 1, 3, 14, 30),
     )
-    url = utils.get_url("event_date_ical", id=draft_id)
+    url = utils.get_url("main.event_date_ical", id=draft_id)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
@@ -48,7 +48,7 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
 
     # Unverified
     _, _, unverified_id = seeder.create_event_unverified()
-    url = utils.get_url("event_date_ical", id=unverified_id)
+    url = utils.get_url("main.event_date_ical", id=unverified_id)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
@@ -56,7 +56,7 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
     allday_id = seeder.create_event(
         admin_unit_id, allday=True, start=create_berlin_date(2020, 1, 2, 14, 30)
     )
-    url = utils.get_url("event_date_ical", id=allday_id)
+    url = utils.get_url("main.event_date_ical", id=allday_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "DTSTART;VALUE=DATE:20200102")
     utils.assert_response_contains_not(response, "DTEND;VALUE=DATE:")
@@ -68,7 +68,7 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
         start=create_berlin_date(2020, 1, 2, 14, 30),
         end=create_berlin_date(2020, 1, 3, 14, 30),
     )
-    url = utils.get_url("event_date_ical", id=allday_id)
+    url = utils.get_url("main.event_date_ical", id=allday_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "DTSTART;VALUE=DATE:20200102")
     utils.assert_response_contains(response, "DTEND;VALUE=DATE:20200104")
@@ -79,17 +79,17 @@ def test_list(client, seeder: Seeder, utils: UtilActions):
     seeder.create_event(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("event_dates")
+    url = utils.get_url("main.event_dates")
     utils.get_ok(url)
 
-    url = utils.get_url("event_dates", keyword="name")
+    url = utils.get_url("main.event_dates", keyword="name")
     utils.get_ok(url)
 
-    url = utils.get_url("event_dates", category_id=2000)
+    url = utils.get_url("main.event_dates", category_id=2000)
     utils.get_ok(url)
 
-    url = utils.get_url("event_dates", admin_unit_id=admin_unit_id)
+    url = utils.get_url("main.event_dates", admin_unit_id=admin_unit_id)
     utils.get_ok(url)
 
-    url = utils.get_url("event_dates", organizer_id=organizer_id)
+    url = utils.get_url("main.event_dates", organizer_id=organizer_id)
     utils.get_ok(url)

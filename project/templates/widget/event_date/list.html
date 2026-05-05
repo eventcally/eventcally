@@ -102,7 +102,7 @@
                                 <small class="text-muted mr-2"><i class="fa fa-server"></i> {{ date.event.organizer.name }}</small>
                             {% endif %}
                             <small class="text-muted"><i class="fa fa-map-marker"></i> {{ date.event.event_place.name }}</small>
-                            <a href="{{ url_for('event_date', id=date.id) }}" target="_blank" rel="noopener noreferrer" class="stretched-link"></a>
+                            <a href="{{ url_for('main.event_date', id=date.id) }}" target="_blank" rel="noopener noreferrer" class="stretched-link"></a>
                         </div>
                         <div class="col-sm-4 text-right">
                             {% if date.event.photo_id %}
@@ -148,7 +148,7 @@
                                 <small class="text-muted mr-2"><i class="fa fa-server"></i> {{ date.event.organizer.name }}</small>
                             {% endif %}
                             <small class="text-muted"><i class="fa fa-map-marker"></i> {{ date.event.event_place.name }}</small>
-                            <a href="{{ url_for('event_date', id=date.id) }}" target="_blank" rel="noopener noreferrer" class="stretched-link"></a>
+                            <a href="{{ url_for('main.event_date', id=date.id) }}" target="_blank" rel="noopener noreferrer" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>

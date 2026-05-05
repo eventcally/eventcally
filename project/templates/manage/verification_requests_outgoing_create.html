@@ -14,7 +14,7 @@
     <div class="card mb-3">
         <div class="card-body p-3">
             <h2 class="mt-0">
-                <a href="{{ url_for('organizations', path=target_admin_unit.id) }}" class="text-body">{{
+                <a href="{{ url_for('main.organizations', path=target_admin_unit.id) }}" class="text-body">{{
                     target_admin_unit.name }}</a>
                 {{ render_admin_unit_badges(target_admin_unit) }}
             </h2>

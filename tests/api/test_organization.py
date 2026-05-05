@@ -927,7 +927,7 @@ def test_organization_invitation_list_post(client, app, seeder, db, utils, mocke
         assert invitation.relation_verify
 
     invitation_url = utils.get_url(
-        "user_organization_invitation",
+        "main.user_organization_invitation",
         id=invitation_id,
     )
     utils.assert_send_mail_called(mail_mock, "invited@test.de", invitation_url)

@@ -2,7 +2,7 @@ from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 from flask_security import current_user
 
-from project import db
+from project.extensions import db
 from project.modular.base_views import BaseObjectFormView
 from project.services.admin_unit import add_user_to_admin_unit_with_roles
 from project.views.user_blueprint.organization_member_invitation.forms import (
@@ -29,17 +29,17 @@ class NegotiateView(BaseObjectFormView):
         if form.accept.data:
             if current_user.deletion_requested_at:  # pragma: no cover
                 flash(gettext("Your account is scheduled for deletion."), "danger")
-                return redirect(url_for("profile"))
+                return redirect(url_for("main.profile"))
 
             message = gettext("Invitation successfully accepted")
             roles = invitation.roles.split(",")
             add_user_to_admin_unit_with_roles(
                 current_user, invitation.admin_unit, roles
             )
-            url = url_for("manage_admin_unit", id=invitation.admin_unit_id)
+            url = url_for("main.manage_admin_unit", id=invitation.admin_unit_id)
         else:
             message = gettext("Invitation successfully declined")
-            url = url_for("manage")
+            url = url_for("main.manage")
 
         db.session.delete(invitation)
         db.session.commit()

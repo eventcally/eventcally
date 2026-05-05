@@ -1,9 +1,9 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from project.domain.types.custom_base_model import CustomBaseModel
 
 
-class CreateImage(BaseModel):
+class CreateImage(CustomBaseModel):
     data: bytes
     encoding_format: str
     copyright_text: Optional[str] = None

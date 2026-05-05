@@ -5,7 +5,6 @@ from flask import g, make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 from marshmallow import ValidationError
 
-from project import db
 from project.api import add_api_resource
 from project.api.event_reference.schemas import EventReferenceIdSchema
 from project.api.event_reference_request.schemas import (
@@ -14,6 +13,7 @@ from project.api.event_reference_request.schemas import (
     EventReferenceRequestVerifyRequestSchema,
 )
 from project.api.resources import BaseResource, require_organization_api_access
+from project.extensions import db
 from project.models import EventReferenceRequest
 from project.models.event_reference_request import EventReferenceRequestReviewStatus
 from project.services.organization_service import OrganizationService

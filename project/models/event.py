@@ -4,7 +4,7 @@ from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import declared_attr, validates
 
-from project import db
+from project.extensions import db
 from project.models.event_date import EventDate, EventDateDefinition
 from project.models.event_generated import EventGeneratedMixin
 from project.models.event_organizer import EventOrganizer

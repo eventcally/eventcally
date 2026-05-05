@@ -48,7 +48,7 @@
                     <div class="tab-pane fade py-3" id="embedWidgetModalIframeTab" role="tabpanel" aria-labelledby="embedWidgetModalIframeTabLink">
                         <p>Alternativ zur Einbindung per Script kann das Widget direkt per iFrame eingebunden werden.</p>
                         <p>Kopiere den unten stehenden Code und füge ihn auf deiner Website ein. Füge den folgenden Code an der Stelle im <code>&lt;body&gt;</code> der Seite ein, wo das Widget dargestellt werden soll.</p>
-                        <textarea class="form-control text-monospace" style="font-size: 0.7rem;" disabled><iframe src="{{ url_for('widget_event_dates', id=object.id, _external=True) }}"></iframe></textarea>
+                        <textarea class="form-control text-monospace" style="font-size: 0.7rem;" disabled><iframe src="{{ url_for('main.widget_event_dates', id=object.id, _external=True) }}"></iframe></textarea>
                     </div>
                   </div>
             </div>
@@ -58,6 +58,6 @@
 
 <div class="btn-group mb-3">
     <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#embedWidgetModal"><i class="fa fa-wrench"></i> Installation</button>
-    <a class="btn btn-outline-info" href="{{ url_for('widget_event_dates', id=object.id) }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-external-link-alt"></i> Vorschau</a>
+    <a class="btn btn-outline-info" href="{{ url_for('main.widget_event_dates', id=object.id) }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-external-link-alt"></i> Vorschau</a>
 </div>
 {% endblock %}

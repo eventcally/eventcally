@@ -3,7 +3,7 @@ from tests.utils import UtilActions
 
 
 def test_organizations(client, seeder: Seeder, utils: UtilActions):
-    url = utils.get_url("organizations")
+    url = utils.get_url("main.organizations")
     utils.get_ok(url)
 
     url = utils.get_url("api_v1_organization_list")
@@ -14,5 +14,5 @@ def test_ical(client, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
 
     seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
-    url = utils.get_url("organization_ical", id=admin_unit_id)
+    url = utils.get_url("main.organization_ical", id=admin_unit_id)
     utils.get_ok(url)

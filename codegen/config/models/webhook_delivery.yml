@@ -1,0 +1,29 @@
+models:
+  - name: WebhookDelivery
+    table_name: webhook_delivery
+    relationships:
+      - name: attempts
+        target_model: WebhookDeliveryAttempt
+        pattern: one-to-many
+        relation: owned
+        back_populates: webhook_delivery
+      - name: webhook_event
+        target_model: WebhookEvent
+        pattern: many-to-one
+        relation: parent
+        back_populates: deliveries
+      - name: webhook
+        target_model: Webhook
+        pattern: many-to-one
+        relation: parent
+        back_populates: deliveries
+      - name: app_installation
+        target_model: AppInstallation
+        pattern: many-to-one
+        relation: reference
+        nullable: true
+      - name: app
+        target_model: OAuth2Client
+        pattern: many-to-one
+        relation: reference
+        nullable: true

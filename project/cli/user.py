@@ -4,7 +4,7 @@ import click
 from flask.cli import AppGroup
 from flask_security.confirmable import confirm_user
 
-from project import app, db
+from project.extensions import db
 from project.services.user import (
     add_admin_roles_to_user,
     create_user,
@@ -53,6 +53,3 @@ def confirm(email):
     confirm_user(user)
     db.session.commit()
     click.echo(f"Confirmed user {email}.")
-
-
-app.cli.add_command(user_cli)

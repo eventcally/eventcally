@@ -14,12 +14,6 @@ models:
       - name: setup_url
         type: string
         deferred: detail
-      - name: webhook_url
-        type: string
-        deferred: detail
-      - name: webhook_secret
-        type: string
-        deferred: detail
       - name: description
         type: text
         nullable: true
@@ -54,4 +48,14 @@ models:
         pattern: one-to-many
         relation: owned
         primaryjoin: "OAuth2Token.app_id == OAuth2Client.id"
+        back_populates: app
+      - name: webhook
+        target_model: Webhook
+        pattern: one-to-one
+        relation: owned
+        back_populates: app
+      - name: webhook_deliveries
+        target_model: WebhookDelivery
+        pattern: one-to-many
+        relation: reference
         back_populates: app

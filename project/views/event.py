@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from flask import Response, jsonify, render_template, request, url_for
+from flask import Response, current_app, jsonify, render_template, request, url_for
 from flask_security import current_user
 
-from project import app
 from project.access import (
     can_read_event_or_401,
     can_reference_event,
@@ -21,6 +20,7 @@ from project.services.event import (
     get_upcoming_event_dates,
 )
 from project.utils import get_event_category_name
+from project.views.main_blueprint import main_bp
 from project.views.utils import (
     get_calendar_links_for_event,
     get_share_links,
@@ -28,19 +28,21 @@ from project.views.utils import (
 )
 
 
-@app.route("/event/<int:event_id>")
+@main_bp.route("/event/<int:event_id>")
 def event(event_id):
     event = get_event_with_details_or_404(event_id)
     can_read_event_or_401(event)
     user_rights = get_user_rights(event)
     dates = get_upcoming_event_dates(event.id)
-    url = url_for("event", event_id=event_id, _external=True)
+    url = url_for("main.event", event_id=event_id, _external=True)
     share_links = get_share_links(url, event.name)
     calendar_links = get_calendar_links_for_event(event)
 
     structured_datas = list()
     for event_date in dates:
-        structured_data = app.json.dumps(get_sd_for_event_date(event_date), indent=2)
+        structured_data = current_app.json.dumps(
+            get_sd_for_event_date(event_date), indent=2
+        )
         structured_datas.append(structured_data)
 
     return render_template(
@@ -50,18 +52,18 @@ def event(event_id):
         structured_datas=structured_datas,
         meta=get_meta_data(event),
         user_rights=user_rights,
-        canonical_url=url_for("event", event_id=event_id, _external=True),
+        canonical_url=url_for("main.event", event_id=event_id, _external=True),
         share_links=share_links,
         calendar_links=calendar_links,
     )
 
 
-@app.route("/event/<int:event_id>/actions")
+@main_bp.route("/event/<int:event_id>/actions")
 def event_actions(event_id):
     event = Event.query.get_or_404(event_id)
     can_read_event_or_401(event)
     user_rights = get_user_rights(event)
-    url = url_for("event", event_id=event_id, _external=True)
+    url = url_for("main.event", event_id=event_id, _external=True)
     share_links = get_share_links(url, event.name)
 
     return render_template(
@@ -72,7 +74,7 @@ def event_actions(event_id):
     )
 
 
-@app.route("/event/<int:event_id>/report")
+@main_bp.route("/event/<int:event_id>/report")
 def event_report(event_id):
     event = Event.query.get_or_404(event_id)
     can_read_event_or_401(event)
@@ -80,7 +82,7 @@ def event_report(event_id):
     return render_template("event/report.html")
 
 
-@app.route("/events/rrule", methods=["POST"])
+@main_bp.route("/events/rrule", methods=["POST"])
 def event_rrule():
     year = request.json["year"]
     month = request.json["month"]
@@ -98,7 +100,7 @@ def event_rrule():
         )
         return jsonify(result)
     except Exception as e:
-        app.logger.exception(request.json)
+        current_app.logger.exception(request.json)
         return getattr(e, "message", "Unknown error"), 400
 
 
@@ -144,7 +146,7 @@ def send_event_report_mails(event: Event, report: dict):
     )
 
 
-@app.route("/event/<int:id>/ical")
+@main_bp.route("/event/<int:id>/ical")
 def event_ical(id):
     event = get_event_with_details_or_404(id)
     can_read_event_or_401(event)

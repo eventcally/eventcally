@@ -1,7 +1,7 @@
 from sqlalchemy import and_
 from sqlalchemy.orm import defaultload, joinedload, load_only
 
-from project import db
+from project.extensions import db
 from project.models import (
     AdminUnitRelation,
     Event,

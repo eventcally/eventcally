@@ -31,21 +31,34 @@ def pytest_generate_tests(metafunc):
 
 @pytest.fixture
 def app():
-    from project import app
+    from project import create_app
     from project.domain import events
     from project.service_layer.abstract_event_dispatcher import AbstractEventDispatcher
     from project.service_layer.services.abstract_email_service import (
         AbstractEmailService,
     )
 
+    app = create_app(
+        {
+            "SERVER_NAME": "localhost",
+            "TESTING": True,
+            "ADMIN_UNIT_CREATE_REQUIRES_ADMIN": False,
+            "API_READ_ANONYM": False,
+            "SECURITY_EMAIL_VALIDATOR_ARGS": {"check_deliverability": False},
+            "SECURITY_PASSWORD_HASH": "plaintext",
+            "SQLALCHEMY_ENGINE_OPTIONS": {
+                "pool_pre_ping": True,
+                "pool_size": 5,
+                "max_overflow": 0,
+            },
+        }
+    )
+
     assert os.environ["DATABASE_URL"] == os.environ.get(
         "TEST_DATABASE_URL", "postgresql://user:pass@myserver/ec_tests"
     )
+    assert app.config["SQLALCHEMY_DATABASE_URI"] == os.environ["DATABASE_URL"]
 
-    app.config["SERVER_NAME"] = "localhost"
-    app.config["TESTING"] = True
-    app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = False
-    app.config["API_READ_ANONYM"] = False
     app.testing = True
 
     class TestEventDispatcher(AbstractEventDispatcher):
@@ -88,16 +101,33 @@ def app():
     app.test_email_service = TestEmailService(default_locale="de")
     app.container.services.email_service.override(app.test_email_service)
 
-    return app
+    yield app
+
+    from project.extensions import db
+
+    with app.app_context():
+        db.session.remove()
+        db.engine.dispose()
 
 
 def drop_all_with_reflection(db):
-    from sqlalchemy import MetaData
+    from sqlalchemy import MetaData, text
 
     metadata = MetaData()
     metadata.reflect(bind=db.engine)
 
-    exclude_tables = {"spatial_ref_sys"}
+    with db.engine.connect() as conn:
+        result = conn.execute(
+            text(
+                "SELECT c.relname FROM pg_class c"
+                " JOIN pg_depend d ON d.objid = c.oid"
+                " JOIN pg_extension e ON e.oid = d.refobjid"
+                " WHERE d.deptype = 'e' AND c.relkind = 'r'"
+            )
+        )
+        extension_tables = {row[0] for row in result}
+
+    exclude_tables = {"spatial_ref_sys"} | extension_tables
     tables_to_drop = [
         table for table in metadata.tables.values() if table.name not in exclude_tables
     ]
@@ -108,16 +138,20 @@ def force_drop_all(db):
     try:
         db.drop_all()
     except Exception:
-        raise
-        # drop_all_with_reflection(db)
+        drop_all_with_reflection(db)
 
 
 @pytest.fixture
 def db(app):
     from flask_migrate import stamp
 
-    from project import db
+    from project.extensions import db
     from project.init_data import create_initial_data
+
+    assert os.environ["DATABASE_URL"] == os.environ.get(
+        "TEST_DATABASE_URL", "postgresql://user:pass@myserver/ec_tests"
+    )
+    assert app.config["SQLALCHEMY_DATABASE_URI"] == os.environ["DATABASE_URL"]
 
     with app.app_context():
         force_drop_all(db)
@@ -126,7 +160,11 @@ def db(app):
         create_initial_data()
         create_initial_test_data()
 
-    return db
+    yield db
+
+    with app.app_context():
+        db.session.rollback()
+        db.session.remove()
 
 
 @pytest.fixture
@@ -143,7 +181,7 @@ def message_bus(container):
 
 
 def create_initial_test_data():
-    from project import db
+    from project.extensions import db
     from project.models import CustomEventCategory, CustomEventCategorySet, License
 
     db.session.add(
