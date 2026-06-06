@@ -218,8 +218,9 @@ def _create_event(admin_unit_id):
     command.price_info = ""
     command.attendance_mode = EventAttendanceMode.offline
 
-    date_definition = EventDateDefinitionValueObject()
-    date_definition.start = _get_now_by_minute()
+    date_definition = EventDateDefinitionValueObject(
+        start=_get_now_by_minute(),
+    )
     command.date_definitions = [date_definition]
 
     message_bus = current_app.container.cqrs.message_bus()
