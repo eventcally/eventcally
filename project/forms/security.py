@@ -12,9 +12,6 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
 
-from project.forms.common import get_accept_tos_markup
-from project.views.utils import flash_message
-
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
     password = PasswordField(
@@ -30,6 +27,8 @@ class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
     accept_tos = BooleanField(validators=[DataRequired()])
 
     def __init__(self, *args, **kwargs):
+        from project.forms.common import get_accept_tos_markup
+
         super(ExtendedConfirmRegisterForm, self).__init__(*args, **kwargs)
         self._fields["email"].description = lazy_gettext("register_email_desc")
         self._fields["accept_tos"].label.text = get_accept_tos_markup()
@@ -41,6 +40,8 @@ class ExtendedLoginForm(LoginForm):
         self._fields["email"].flags.required = True
 
     def validate(self, **kwargs):
+        from project.views.utils import flash_message
+
         result = super().validate(**kwargs)
 
         if not result and self.requires_confirmation:
@@ -56,6 +57,8 @@ class ExtendedLoginForm(LoginForm):
 
 class ExtendedForgotPasswordForm(ForgotPasswordForm):
     def validate(self, **kwargs):
+        from project.views.utils import flash_message
+
         result = super().validate(**kwargs)
 
         if not result and self.requires_confirmation:

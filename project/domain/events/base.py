@@ -3,7 +3,7 @@ import datetime
 from pydantic import Field
 
 from project.domain.events.has_changed_value_mixin import HasChangedValueMixin
-from project.domain.types import Actor
+from project.domain.models.entities.actor import Actor
 from project.domain.types.custom_base_model import CustomBaseModel
 
 

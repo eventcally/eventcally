@@ -8,7 +8,7 @@ EventCally follows **Domain-Driven Design** with clear layer separation:
 
 - `project/domain/` - Domain logic, abstract repositories, commands, events
 - `project/infrastructure/` - Concrete implementations (SQLAlchemy repositories, Celery dispatchers)
-- `project/service_layer/` - Command/event handlers, message bus orchestration
+- `project/application/` - Command/event handlers, message bus orchestration
 - `project/models/` - SQLAlchemy models (many auto-generated)
 - `project/repos/` - Repository implementations
 - `project/api/` - REST API endpoints
@@ -130,9 +130,9 @@ Asynchronous tasks via Celery:
 
 ### Adding a New Feature (DDD Style)
 
-1. **Define command** in `project/domain/commands/` (inherit from `Command` or `CommandWithResult`)
-2. **Create handler** in `project/service_layer/command_handlers/`
-3. **Register handler** in message bus (`project/service_layer/message_bus.py`)
+1. **Define command** in `project/application/commands/` (inherit from `Command` or `CommandWithResult`)
+2. **Create handler** in `project/application/command_handlers/`
+3. **Register handler** in message bus (`project/application/message_bus.py`)
 4. **Add to container** if new repository/service needed (`project/container.py`)
 5. **Wire up API/view** to dispatch command via message bus
 
@@ -153,7 +153,7 @@ class SqlAlchemyEventRepository(AbstractEventRepository):
 
 ### Testing Conventions
 
-- Test files mirror source structure: `tests/service_layer/`, `tests/api/`
+- Test files mirror source structure: `tests/application/`, `tests/api/`
 - Use fixtures from [`tests/conftest.py`](../tests/conftest.py)
 - Database rollback per test via `base_test.py`
 - Mock external services (email, geocoding)

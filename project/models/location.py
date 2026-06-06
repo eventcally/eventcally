@@ -1,96 +1,36 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from sqlalchemy import and_
 from sqlalchemy.event import listens_for
 
-from project.domain import events
-from project.domain.commands import CreateLocation, UpdateLocation
-from project.domain.events import LocationCreated, LocationUpdated
-from project.domain.types import Unsetable, unset
+from project.domain.models.value_objects.location_value_object import (
+    LocationValueObject,
+)
 from project.extensions import db
 from project.models.iowned import IOwned
 from project.models.location_generated import LocationGeneratedMixin
 
 
 class Location(db.Model, LocationGeneratedMixin, IOwned):
+    def fill_from_value_object(self, value: LocationValueObject):
+        self.street = value.street
+        self.postalCode = value.postalCode
+        self.city = value.city
+        self.state = value.state
+        self.country = value.country
+        self.latitude = value.latitude
+        self.longitude = value.longitude
 
-    @classmethod
-    def create(
-        cls,
-        cmd: Optional[CreateLocation],
-        parent,
-        parent_event: events.Event,
-        field_name: str,
-        event_field_name: Optional[str] = None,
-    ):
-        if cmd is None:
-            return
-
-        if event_field_name is None:
-            event_field_name = field_name
-
-        instance = cls()
-        instance.street = cmd.street
-        instance.postalCode = cmd.postalCode
-        instance.city = cmd.city
-        instance.state = cmd.state
-        instance.country = cmd.country
-        instance.latitude = cmd.latitude
-        instance.longitude = cmd.longitude
-        setattr(parent, field_name, instance)
-
-        event = LocationCreated(
-            street=instance.street,
-            postalCode=instance.postalCode,
-            city=instance.city,
-            state=instance.state,
-            country=instance.country,
-            latitude=instance.latitude,
-            longitude=instance.longitude,
+    def to_value_object(self) -> LocationValueObject:
+        return LocationValueObject(
+            street=self.street,
+            postalCode=self.postalCode,
+            city=self.city,
+            state=self.state,
+            country=self.country,
+            latitude=self.latitude,
+            longitude=self.longitude,
         )
-        setattr(parent_event, event_field_name, event)
-
-    @classmethod
-    def update(
-        cls,
-        cmd: Unsetable[UpdateLocation],
-        parent,
-        parent_event: events.Event,
-        field_name: str,
-        event_field_name: Optional[str] = None,
-    ):
-        if cmd == unset:
-            return
-
-        if event_field_name is None:
-            event_field_name = field_name
-
-        instance = getattr(parent, field_name)
-
-        if cmd is None:
-            if instance is not None:
-                setattr(parent, field_name, None)
-                setattr(parent_event, event_field_name, None)
-            return
-
-        if instance is None:
-            instance = cls()
-
-        event = LocationUpdated()
-        instance._update_field(cmd, event, "street")
-        instance._update_field(cmd, event, "postalCode")
-        instance._update_field(cmd, event, "city")
-        instance._update_field(cmd, event, "state")
-        instance._update_field(cmd, event, "country")
-        instance._update_field(cmd, event, "latitude")
-        instance._update_field(cmd, event, "longitude")
-
-        setattr(parent, field_name, instance)
-
-        if event.has_changed_values():
-            setattr(parent_event, event_field_name, event)
 
     def is_empty(self):
         return (

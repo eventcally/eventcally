@@ -5,7 +5,10 @@ from wtforms import FormField, StringField, SubmitField, TextAreaField
 from wtforms.fields import URLField
 from wtforms.validators import DataRequired, Length, Optional
 
-from project.domain.commands import CreateEventPlaceCommand, UpdateEventPlaceCommand
+from project.application.commands import (
+    CreateEventPlaceCommand,
+    UpdateEventPlaceCommand,
+)
 from project.forms.common import Base64ImageForm, LocationForm
 from project.models import Image
 from project.models.event_place import EventPlace

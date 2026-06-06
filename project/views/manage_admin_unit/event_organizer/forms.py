@@ -5,7 +5,7 @@ from wtforms import FormField, StringField, SubmitField
 from wtforms.fields import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
-from project.domain.commands import (
+from project.application.commands import (
     CreateEventOrganizerCommand,
     UpdateEventOrganizerCommand,
 )

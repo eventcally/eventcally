@@ -4,8 +4,6 @@ from flask_apispec import doc, marshal_with, use_kwargs
 from project.api import add_api_resource
 from project.api.organizer.schemas import (
     OrganizerPatchRequestPlainSchema,
-    OrganizerPatchRequestSchema,
-    OrganizerPostRequestSchema,
     OrganizerPutRequestPlainSchema,
     OrganizerSchema,
 )
@@ -14,7 +12,7 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
-from project.domain.commands import DeleteEventOrganizerCommand
+from project.application.commands import DeleteEventOrganizerCommand
 from project.models import EventOrganizer
 
 
@@ -29,7 +27,7 @@ class OrganizerResource(BaseResource):
         summary="Update organizer",
         tags=["Organizers"],
     )
-    @use_kwargs(OrganizerPostRequestSchema, location="json", apply=False)
+    @use_kwargs(OrganizerPutRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access(
         "organization.event_organizers:write", EventOrganizer
@@ -46,7 +44,7 @@ class OrganizerResource(BaseResource):
         summary="Patch organizer",
         tags=["Organizers"],
     )
-    @use_kwargs(OrganizerPatchRequestSchema, location="json", apply=False)
+    @use_kwargs(OrganizerPatchRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access(
         "organization.event_organizers:write", EventOrganizer

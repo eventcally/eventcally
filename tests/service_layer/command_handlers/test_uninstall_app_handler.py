@@ -1,4 +1,5 @@
-from project.domain import commands, events
+from project.application import commands
+from project.domain import events
 from project.models import AppInstallation
 
 
@@ -23,7 +24,7 @@ def test_uninstall_app_command_removes_app_installation(app, db, seeder):
         matching_events = [
             e
             for e in app.test_event_dispatcher.events
-            if isinstance(e, events.AppUninstalled)
+            if isinstance(e, events.AppInstallationDeleted)
         ]
         assert len(matching_events) == 1
 

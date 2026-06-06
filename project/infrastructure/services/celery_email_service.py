@@ -1,4 +1,4 @@
-from project.service_layer.services.abstract_email_service import AbstractEmailService
+from project.application.services.abstract_email_service import AbstractEmailService
 
 
 class CeleryEmailService(AbstractEmailService):

@@ -4,13 +4,13 @@ import pytest
 def test_validate_image():
     from marshmallow import ValidationError
 
-    from project.api.image.schemas import ImagePostRequestSchema
+    from project.api.image.schemas import ImageWriteRequestPlainSchema
 
     data = {
         "copyright_text": "Horst",
     }
 
-    schema = ImagePostRequestSchema()
+    schema = ImageWriteRequestPlainSchema()
 
     with pytest.raises(ValidationError) as e:
         schema.load(data)
@@ -19,26 +19,24 @@ def test_validate_image():
 
 
 def test_post_load_image_data(seeder):
-    from project.api.image.schemas import ImagePostRequestSchema
+    from project.api.image.schemas import ImageWriteRequestPlainSchema
 
     data = {
         "image_base64": seeder.get_default_image_upload_base64(),
         "copyright_text": "EventCally",
     }
 
-    item = dict()
-    schema = ImagePostRequestSchema()
-    schema.post_load_image_data(item, data)
+    schema = ImageWriteRequestPlainSchema()
+    result = schema.post_load_image_data(data)
     schema.load(data)
 
-    assert item.get("encoding_format") is not None
-    assert item.get("data") is not None
+    assert result is not None
 
 
 def test_load_image_data():
-    from project.api.image.schemas import ImagePostRequestSchema
+    from project.api.image.schemas import ImageWriteRequestPlainSchema
 
-    schema = ImagePostRequestSchema()
+    schema = ImageWriteRequestPlainSchema()
     encoding_format, data = schema.load_image_data(None, None)
 
     assert encoding_format is None

@@ -72,6 +72,7 @@ identify==1.5.10
 idna==3.7
 importlib-metadata==6.3.0
 importlib_resources==6.4.0
+import-linter==1.12.1
 iniconfig==1.1.1
 isort==5.12.0
 itsdangerous==2.1.2

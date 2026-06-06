@@ -4,7 +4,7 @@ from flask_apispec import doc
 
 from project.api import add_api_resource
 from project.api.resources import BaseResource
-from project.service_layer.webhooks.schema_exporter import export_all_webhook_schemas
+from project.application.webhooks.schema_exporter import export_all_webhook_schemas
 
 
 class AppWebhookSchemaListResource(BaseResource):

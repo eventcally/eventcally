@@ -1,8 +1,8 @@
 import sys
 from unittest.mock import MagicMock
 
-from project.domain import commands
-from project.domain.types.actor import Actor
+from project.application import commands
+from project.domain.models.entities.actor import Actor
 from project.infrastructure.celery_command_dispatcher import CeleryCommandDispatcher
 
 

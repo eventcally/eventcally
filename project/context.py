@@ -1,7 +1,7 @@
 from authlib.integrations.flask_oauth2 import current_token
 from flask_security import current_user
 
-from project.domain.types import Actor
+from project.domain.models.entities.actor import Actor
 
 
 class ContextProvider:

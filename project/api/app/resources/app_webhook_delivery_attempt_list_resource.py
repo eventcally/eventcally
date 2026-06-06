@@ -9,7 +9,7 @@ from project.api.app.schemas import (
     AppWebhookDeliveryAttemptTriggerRequestSchema,
 )
 from project.api.resources import BaseResource, require_api_access
-from project.domain.commands import AttemptToDeliverWebhookCommand
+from project.application.commands import AttemptToDeliverWebhookCommand
 from project.models import WebhookDelivery, WebhookDeliveryAttempt
 
 

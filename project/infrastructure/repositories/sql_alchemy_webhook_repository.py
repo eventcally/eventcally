@@ -1,28 +1,32 @@
 import datetime
 
-from project.domain.repositories.abstract_webhook_repository import (
-    AbstractWebhookRepository,
+from project.domain.models.aggregates.webhook_event_aggregate import (
+    WebhookEventAggregate,
 )
-from project.models.webhook_delivery import WebhookDelivery
-from project.models.webhook_delivery_attempt import WebhookDeliveryAttempt
+from project.domain.repositories.abstract_webhook_event_repository import (
+    AbstractWebhookEventRepository,
+)
 from project.models.webhook_event import WebhookEvent
 
 
-class SqlAlchemyWebhookRepository(AbstractWebhookRepository):
+class SqlAlchemyWebhookEventRepository(AbstractWebhookEventRepository):
     def __init__(self, session):
         super().__init__()
         self.session = session
 
-    def _add_event(self, event: WebhookEvent):
-        self.session.add(event)
+    def _add(self, event: WebhookEventAggregate):
+        model = WebhookEvent.from_aggregate(event)
+        self.session.add(model)
+        self.session.flush()
 
-    def _get_delivery(self, object_id: int):
-        return self.session.query(WebhookDelivery).filter_by(id=object_id).first()
+        event.id = model.id
 
-    def _get_delivery_attempt(self, object_id: int):
-        return (
-            self.session.query(WebhookDeliveryAttempt).filter_by(id=object_id).first()
-        )
+    def _get(self, object_id: int) -> WebhookEventAggregate:
+        model = self._get_model(object_id)
+        return WebhookEvent.to_aggregate(model)
+
+    def _get_model(self, object_id: int) -> WebhookEvent:
+        return self.session.query(WebhookEvent).filter_by(id=object_id).first()
 
     def _delete_old_events(self, days: int) -> int:
         threshold_date = datetime.datetime.now(datetime.UTC) - datetime.timedelta(

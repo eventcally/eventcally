@@ -3,18 +3,18 @@
 from types import SimpleNamespace
 from unittest.mock import Mock
 
-from project.domain import commands
-from project.domain.types.actor import Actor
-from project.service_layer.message_bus import MessageBus
+from project.application import commands
+from project.application.message_bus import MessageBus
+from project.domain.models.entities.actor import Actor
 
 
 def _make_message_bus():
-    context_provider = SimpleNamespace(current_actor=Actor())
+    app_context_provider = SimpleNamespace(get_current_actor=lambda: Actor())
     command_dispatcher = Mock()
     return (
         MessageBus(
             uow_factory=Mock(),
-            context_provider=context_provider,
+            app_context_provider=app_context_provider,
             command_handler_factory=Mock(),
             event_handler_factory=Mock(),
             event_dispatcher=Mock(),

@@ -5,7 +5,6 @@ from flask_babel import gettext
 
 from project.models import OAuth2Client
 from project.services.app_service import AppService
-from project.services.oauth2_client import complete_oauth2_client
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.app.displays import ListDisplay, ReadDisplay
 from project.views.manage_admin_unit.app.forms import (
@@ -46,10 +45,6 @@ class AppViewHandler(ManageAdminUnitChildViewHandler):
 
     def apply_base_filter(self, query, **kwargs):
         return super().apply_base_filter(query, **kwargs).filter(OAuth2Client.is_app)
-
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-        complete_oauth2_client(object)
 
     def apply_objects_query_order(self, query, **kwargs):
         return (

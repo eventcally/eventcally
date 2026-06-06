@@ -17,4 +17,10 @@ jobs:
       - uses: TrueBrain/actions-flake8@v2.4
         with:
           flake8_version: "6.1.0"
+      - name: Run import whitelist check
+        run: python .scripts/module_import_whitelist.py project/domain project/application
+      - name: Install import-linter
+        run: pip install import-linter==1.12.1
+      - name: Run import-linter
+        run: lint-imports
 

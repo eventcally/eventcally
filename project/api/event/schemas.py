@@ -1,5 +1,5 @@
 from flask_security import current_user
-from marshmallow import fields, validate
+from marshmallow import fields, post_load, validate
 from marshmallow.decorators import pre_load
 from marshmallow_enum import EnumField
 
@@ -16,16 +16,14 @@ from project.api.event_category.schemas import (
     EventCategoryWriteIdSchema,
 )
 from project.api.event_date_definition.schemas import (
-    EventDateDefinitionPatchRequestSchema,
-    EventDateDefinitionPostRequestSchema,
+    EventDateDefinitionPlainSchema,
     EventDateDefinitionSchema,
 )
-from project.api.fields import CustomDateTimeField, Owned
+from project.api.fields import CustomDateTimeField
 from project.api.image.schemas import (
     ImageDumpSchema,
-    ImagePatchRequestSchema,
-    ImagePostRequestSchema,
     ImageSchema,
+    ImageWriteRequestPlainSchema,
 )
 from project.api.organization.schemas import (
     OrganizationRefSchema,
@@ -43,14 +41,19 @@ from project.api.place.schemas import (
     PlaceWriteIdSchema,
 )
 from project.api.schemas import (
+    IdPlainSchemaMixin,
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
+    PlainBaseSchema,
     SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
+    WriteIdPlainSchema,
     WriteIdSchemaMixin,
 )
+from project.application.commands.create_event_command import CreateEventCommand
+from project.application.commands.update_event_command import UpdateEventCommand
 from project.models import (
     Event,
     EventAttendanceMode,
@@ -67,6 +70,10 @@ class EventModelSchema(SQLAlchemyBaseSchema):
 
 
 class EventIdSchema(EventModelSchema, IdSchemaMixin):
+    pass
+
+
+class EventIdPlainSchema(PlainBaseSchema, IdPlainSchemaMixin):
     pass
 
 
@@ -456,6 +463,155 @@ class EventWriteSchemaMixin(object):
         }
     )
 
+
+class EventCreateRequestPlainSchema(PlainBaseSchema):
+    name = fields.Str(
+        required=True,
+        validate=validate.Length(min=3, max=255),
+        metadata={"description": "A short, meaningful name for the event."},
+    )
+    description = fields.Str(
+        load_default=None,
+        metadata={"description": "Description of the event"},
+    )
+    external_link = fields.Str(
+        load_default=None,
+        validate=[validate.URL(), validate.Length(max=255)],
+        metadata={
+            "description": "A link to an external website containing more information about the event."
+        },
+    )
+    ticket_link = fields.Str(
+        load_default=None,
+        validate=[validate.URL(), validate.Length(max=255)],
+        metadata={"description": "A link where tickets can be purchased."},
+    )
+    tags = fields.Str(
+        load_default=None,
+        metadata={
+            "description": "Comma separated keywords with which the event should be found. Words do not need to be entered if they are already in the name or description."
+        },
+    )
+    kid_friendly = fields.Bool(
+        load_default=False,
+        metadata={"description": "If the event is particularly suitable for children."},
+    )
+    accessible_for_free = fields.Bool(
+        load_default=False,
+        metadata={"description": "If the event is accessible for free."},
+    )
+    age_from = fields.Int(
+        load_default=None,
+        metadata={"description": "The minimum age that participants should be."},
+    )
+    age_to = fields.Int(
+        load_default=None,
+        metadata={"description": "The maximum age that participants should be."},
+    )
+    target_group_origin = EnumField(
+        EventTargetGroupOrigin,
+        load_default=EventTargetGroupOrigin.both,
+        metadata={
+            "description": "Whether the event is particularly suitable for tourists or residents."
+        },
+    )
+    attendance_mode = EnumField(
+        EventAttendanceMode,
+        load_default=EventAttendanceMode.offline,
+        metadata={"description": "Choose how people can attend the event."},
+    )
+    status = EnumField(
+        EventStatus,
+        load_default=EventStatus.scheduled,
+        metadata={"description": "Select the status of the event."},
+    )
+    previous_start_date = CustomDateTimeField(
+        load_default=None,
+        metadata={
+            "description": "When the event should have taken place before it was postponed."
+        },
+    )
+    registration_required = fields.Bool(
+        load_default=False,
+        metadata={
+            "description": "If the participants needs to register for the event."
+        },
+    )
+    booked_up = fields.Bool(
+        load_default=False,
+        metadata={"description": "If the event is booked up or sold out."},
+    )
+    expected_participants = fields.Int(
+        load_default=None,
+        metadata={"description": "The estimated expected attendance."},
+    )
+    price_info = fields.Str(
+        load_default=None,
+        metadata={
+            "description": "Price information in textual form. E.g., different prices for adults and children."
+        },
+    )
+    public_status = EnumField(
+        EventPublicStatus,
+        load_default=EventPublicStatus.published,
+        metadata={"description": "Public status of the event."},
+    )
+    date_definitions = fields.List(
+        fields.Nested(EventDateDefinitionPlainSchema),
+        dump_default=None,
+        required=True,
+        validate=[validate.Length(min=1)],
+        metadata={"description": "At least one date definition."},
+    )
+    photo = fields.Nested(
+        ImageWriteRequestPlainSchema,
+        load_default=None,
+    )
+    organizer = fields.Nested(
+        WriteIdPlainSchema,
+        attribute="organizer_id",
+        required=True,
+        metadata={"description": "Who is organizing the event."},
+    )
+    co_organizers = fields.List(
+        fields.Nested(WriteIdPlainSchema),
+        attribute="co_organizer_ids",
+        load_default=None,
+        metadata={"description": "Optional co-organizers."},
+    )
+    place = fields.Nested(
+        WriteIdPlainSchema,
+        attribute="event_place_id",
+        required=True,
+        metadata={"description": "Where the event takes place."},
+    )
+    categories = fields.List(
+        fields.Nested(WriteIdPlainSchema),
+        attribute="category_ids",
+        load_default=None,
+        metadata={"description": "Categories that fit the event."},
+    )
+    custom_categories = fields.List(
+        fields.Nested(WriteIdPlainSchema),
+        attribute="custom_category_ids",
+        load_default=None,
+        metadata={"description": "Custom categories that fit the event."},
+    )
+    rating = fields.Int(
+        load_default=50,
+        dump_default=50,
+        validate=validate.OneOf([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]),
+        metadata={
+            "description": "How relevant the event is to your organization. 0 (Little relevant), 50 (Default), 100 (Highlight)."
+        },
+    )
+    internal_tags = fields.Str(
+        load_default=None,
+        metadata={
+            "description": "Comma separated keywords for internal use. These will not be published. Only visible with corresponding rights."
+        },
+    )
+
     @pre_load()
     def handle_deprecated_fields(self, data, **kwargs):
         if "start" in data:
@@ -464,39 +620,325 @@ class EventWriteSchemaMixin(object):
             data.pop("start")
         return data
 
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["admin_unit_id"] = self.context.get("admin_unit_id")
+        return CreateEventCommand.model_construct(**data)
 
-class EventPostRequestSchema(
-    EventModelSchema, EventBaseSchemaMixin, EventWriteSchemaMixin
-):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.make_post_schema()
 
+class EventPutRequestPlainSchema(PlainBaseSchema):
+    name = fields.Str(
+        required=True,
+        validate=validate.Length(min=3, max=255),
+        metadata={"description": "A short, meaningful name for the event."},
+    )
+    description = fields.Str(
+        load_default=None,
+        metadata={"description": "Description of the event"},
+    )
+    external_link = fields.Str(
+        load_default=None,
+        validate=[validate.URL(), validate.Length(max=255)],
+        metadata={
+            "description": "A link to an external website containing more information about the event."
+        },
+    )
+    ticket_link = fields.Str(
+        load_default=None,
+        validate=[validate.URL(), validate.Length(max=255)],
+        metadata={"description": "A link where tickets can be purchased."},
+    )
+    tags = fields.Str(
+        load_default=None,
+        metadata={
+            "description": "Comma separated keywords with which the event should be found. Words do not need to be entered if they are already in the name or description."
+        },
+    )
+    kid_friendly = fields.Bool(
+        load_default=False,
+        metadata={"description": "If the event is particularly suitable for children."},
+    )
+    accessible_for_free = fields.Bool(
+        load_default=False,
+        metadata={"description": "If the event is accessible for free."},
+    )
+    age_from = fields.Int(
+        load_default=None,
+        metadata={"description": "The minimum age that participants should be."},
+    )
+    age_to = fields.Int(
+        load_default=None,
+        metadata={"description": "The maximum age that participants should be."},
+    )
+    target_group_origin = EnumField(
+        EventTargetGroupOrigin,
+        load_default=EventTargetGroupOrigin.both,
+        metadata={
+            "description": "Whether the event is particularly suitable for tourists or residents."
+        },
+    )
+    attendance_mode = EnumField(
+        EventAttendanceMode,
+        load_default=EventAttendanceMode.offline,
+        metadata={"description": "Choose how people can attend the event."},
+    )
+    status = EnumField(
+        EventStatus,
+        load_default=EventStatus.scheduled,
+        metadata={"description": "Select the status of the event."},
+    )
+    previous_start_date = CustomDateTimeField(
+        load_default=None,
+        metadata={
+            "description": "When the event should have taken place before it was postponed."
+        },
+    )
+    registration_required = fields.Bool(
+        load_default=False,
+        metadata={
+            "description": "If the participants needs to register for the event."
+        },
+    )
+    booked_up = fields.Bool(
+        load_default=False,
+        metadata={"description": "If the event is booked up or sold out."},
+    )
+    expected_participants = fields.Int(
+        load_default=None,
+        metadata={"description": "The estimated expected attendance."},
+    )
+    price_info = fields.Str(
+        load_default=None,
+        metadata={
+            "description": "Price information in textual form. E.g., different prices for adults and children."
+        },
+    )
+    public_status = EnumField(
+        EventPublicStatus,
+        load_default=EventPublicStatus.published,
+        metadata={"description": "Public status of the event."},
+    )
     date_definitions = fields.List(
-        fields.Nested(EventDateDefinitionPostRequestSchema),
+        fields.Nested(EventDateDefinitionPlainSchema),
         dump_default=None,
         required=True,
         validate=[validate.Length(min=1)],
         metadata={"description": "At least one date definition."},
     )
-    photo = Owned(ImagePostRequestSchema)
-
-
-class EventPatchRequestSchema(
-    EventModelSchema, EventBaseSchemaMixin, EventWriteSchemaMixin
-):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.make_patch_schema()
-
-    date_definitions = fields.List(
-        fields.Nested(EventDateDefinitionPatchRequestSchema),
-        dump_default=None,
+    photo = fields.Nested(
+        ImageWriteRequestPlainSchema,
+        load_default=None,
+    )
+    organizer = fields.Nested(
+        WriteIdPlainSchema,
+        attribute="organizer_id",
         required=True,
+        metadata={"description": "Who is organizing the event."},
+    )
+    co_organizers = fields.List(
+        fields.Nested(WriteIdPlainSchema),
+        attribute="co_organizer_ids",
+        load_default=None,
+        metadata={"description": "Optional co-organizers."},
+    )
+    place = fields.Nested(
+        WriteIdPlainSchema,
+        attribute="event_place_id",
+        required=True,
+        metadata={"description": "Where the event takes place."},
+    )
+    categories = fields.List(
+        fields.Nested(WriteIdPlainSchema),
+        attribute="category_ids",
+        load_default=None,
+        metadata={"description": "Categories that fit the event."},
+    )
+    custom_categories = fields.List(
+        fields.Nested(WriteIdPlainSchema),
+        attribute="custom_category_ids",
+        load_default=None,
+        metadata={"description": "Custom categories that fit the event."},
+    )
+    rating = fields.Int(
+        load_default=50,
+        dump_default=50,
+        validate=validate.OneOf([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]),
+        metadata={
+            "description": "How relevant the event is to your organization. 0 (Little relevant), 50 (Default), 100 (Highlight)."
+        },
+    )
+    internal_tags = fields.Str(
+        load_default=None,
+        metadata={
+            "description": "Comma separated keywords for internal use. These will not be published. Only visible with corresponding rights."
+        },
+    )
+
+    @pre_load()
+    def handle_deprecated_fields(self, data, **kwargs):
+        if "start" in data:
+            if "date_definitions" not in data:
+                data["date_definitions"] = [{"start": data["start"]}]
+            data.pop("start")
+        return data
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        return UpdateEventCommand.model_construct(**data)
+
+
+class EventPatchRequestPlainSchema(PlainBaseSchema):
+    name = fields.Str(
+        allow_none=True,
+        validate=validate.Length(min=3, max=255),
+        metadata={"description": "A short, meaningful name for the event."},
+    )
+    description = fields.Str(
+        allow_none=True,
+        metadata={"description": "Description of the event"},
+    )
+    external_link = fields.Str(
+        allow_none=True,
+        validate=[validate.URL(), validate.Length(max=255)],
+        metadata={
+            "description": "A link to an external website containing more information about the event."
+        },
+    )
+    ticket_link = fields.Str(
+        allow_none=True,
+        validate=[validate.URL(), validate.Length(max=255)],
+        metadata={"description": "A link where tickets can be purchased."},
+    )
+    tags = fields.Str(
+        allow_none=True,
+        metadata={
+            "description": "Comma separated keywords with which the event should be found. Words do not need to be entered if they are already in the name or description."
+        },
+    )
+    kid_friendly = fields.Bool(
+        allow_none=True,
+        metadata={"description": "If the event is particularly suitable for children."},
+    )
+    accessible_for_free = fields.Bool(
+        allow_none=True,
+        metadata={"description": "If the event is accessible for free."},
+    )
+    age_from = fields.Int(
+        allow_none=True,
+        metadata={"description": "The minimum age that participants should be."},
+    )
+    age_to = fields.Int(
+        allow_none=True,
+        metadata={"description": "The maximum age that participants should be."},
+    )
+    target_group_origin = EnumField(
+        EventTargetGroupOrigin,
+        allow_none=True,
+        metadata={
+            "description": "Whether the event is particularly suitable for tourists or residents."
+        },
+    )
+    attendance_mode = EnumField(
+        EventAttendanceMode,
+        allow_none=True,
+        metadata={"description": "Choose how people can attend the event."},
+    )
+    status = EnumField(
+        EventStatus,
+        allow_none=True,
+        metadata={"description": "Select the status of the event."},
+    )
+    previous_start_date = CustomDateTimeField(
+        allow_none=True,
+        metadata={
+            "description": "When the event should have taken place before it was postponed."
+        },
+    )
+    registration_required = fields.Bool(
+        allow_none=True,
+        metadata={
+            "description": "If the participants needs to register for the event."
+        },
+    )
+    booked_up = fields.Bool(
+        allow_none=True,
+        metadata={"description": "If the event is booked up or sold out."},
+    )
+    expected_participants = fields.Int(
+        allow_none=True,
+        metadata={"description": "The estimated expected attendance."},
+    )
+    price_info = fields.Str(
+        allow_none=True,
+        metadata={
+            "description": "Price information in textual form. E.g., different prices for adults and children."
+        },
+    )
+    public_status = EnumField(
+        EventPublicStatus,
+        allow_none=True,
+        metadata={"description": "Public status of the event."},
+    )
+    date_definitions = fields.List(
+        fields.Nested(EventDateDefinitionPlainSchema),
+        dump_default=None,
+        allow_none=True,
         validate=[validate.Length(min=1)],
         metadata={"description": "At least one date definition."},
     )
-    photo = Owned(ImagePatchRequestSchema)
+    photo = fields.Nested(
+        ImageWriteRequestPlainSchema,
+        allow_none=True,
+    )
+    organizer = fields.Nested(
+        WriteIdPlainSchema,
+        attribute="organizer_id",
+        allow_none=True,
+        metadata={"description": "Who is organizing the event."},
+    )
+    co_organizers = fields.List(
+        fields.Nested(WriteIdPlainSchema),
+        attribute="co_organizer_ids",
+        allow_none=True,
+        metadata={"description": "Optional co-organizers."},
+    )
+    place = fields.Nested(
+        WriteIdPlainSchema,
+        attribute="event_place_id",
+        allow_none=True,
+        metadata={"description": "Where the event takes place."},
+    )
+    categories = fields.List(
+        fields.Nested(WriteIdPlainSchema),
+        attribute="category_ids",
+        allow_none=True,
+        metadata={"description": "Categories that fit the event."},
+    )
+    custom_categories = fields.List(
+        fields.Nested(WriteIdPlainSchema),
+        attribute="custom_category_ids",
+        allow_none=True,
+        metadata={"description": "Custom categories that fit the event."},
+    )
+    rating = fields.Int(
+        allow_none=True,
+        validate=validate.OneOf([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]),
+        metadata={
+            "description": "How relevant the event is to your organization. 0 (Little relevant), 50 (Default), 100 (Highlight)."
+        },
+    )
+    internal_tags = fields.Str(
+        allow_none=True,
+        metadata={
+            "description": "Comma separated keywords for internal use. These will not be published. Only visible with corresponding rights."
+        },
+    )
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        return UpdateEventCommand.model_construct(**data)
 
 
 class EventReportPostSchema(marshmallow.Schema):

@@ -2,8 +2,8 @@ from flask_babel import lazy_gettext
 from wtforms import SubmitField
 from wtforms.validators import DataRequired
 
-from project.domain.commands.install_app_command import InstallAppCommand
-from project.domain.commands.update_app_installation_permissions_command import (
+from project.application.commands.install_app_command import InstallAppCommand
+from project.application.commands.update_app_installation_permissions_command import (
     UpdateAppInstallationPermissionsCommand,
 )
 from project.forms.widgets import MultiCheckboxField

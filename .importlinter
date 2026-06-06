@@ -1,0 +1,13 @@
+[importlinter]
+root_package = project
+include_external_packages=True
+
+[importlinter:contract:my-layers-contract]
+name = My layers contract
+type = layers
+layers =
+    project.infrastructure
+    project.application
+    project.domain
+ignore_imports =
+  project -> project.**

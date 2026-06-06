@@ -13,10 +13,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import object_session
 
 from project.dateutils import gmt_tz
-from project.domain import events
-from project.domain.commands.create_app_command import CreateAppCommand
-from project.domain.commands.delete_app_command import DeleteAppCommand
-from project.domain.commands.update_app_command import UpdateAppCommand
+from project.domain.models.aggregates.app_aggregate import AppAggregate
 from project.extensions import db
 from project.models.mixins.rate_limit_provider_mixin import RateLimitProviderMixin
 from project.models.oauth2_authorization_code_generated import (
@@ -24,7 +21,7 @@ from project.models.oauth2_authorization_code_generated import (
 )
 from project.models.oauth2_client_generated import OAuth2ClientGeneratedMixin
 from project.models.oauth2_token_generated import OAuth2TokenGeneratedMixin
-from project.utils import update_field_with_command
+from project.models.webhook import Webhook
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
 oauth_refresh_token_expires_in = 90 * 86400  # 90 days
@@ -38,65 +35,55 @@ class OAuth2Client(
     __default_rate_limit_value__ = "5000/hour"
 
     @classmethod
-    def create_app(cls, cmd: CreateAppCommand) -> OAuth2Client:
-        from project.models import Webhook
+    def from_aggregate(cls, aggregate: AppAggregate) -> AppAggregate:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
 
-        instance = cls()
-
-        instance.admin_unit_id = cmd.admin_unit_id
-        instance.description = cmd.description
-        instance.app_permissions = cmd.app_permissions
-        instance.homepage_url = cmd.homepage_url
-        instance.setup_url = cmd.setup_url
-
-        metadata = {
-            "client_name": cmd.name,
-            "scope": cmd.scope,
-            "redirect_uris": cmd.redirect_uris,
-        }
-        instance.set_client_metadata(metadata)
-
-        event = events.AppCreated(
-            actor=cmd.actor,
-            id=-1,
-            admin_unit_id=instance.admin_unit_id,
-        )
-
-        Webhook.create(cmd.webhook, instance, event, "webhook")
-
-        instance.domain_events.append(event)
-        return instance
-
-    def update_app(self, cmd: UpdateAppCommand):
-        from project.models import Webhook
-
-        event = events.AppUpdated(
-            actor=cmd.actor,
-            id=self.id,
-            admin_unit_id=self.admin_unit_id,
-        )
-
-        self._update_field(cmd, event, "description")
-        self._update_field(cmd, event, "app_permissions")
-        self._update_field(cmd, event, "homepage_url")
-        self._update_field(cmd, event, "setup_url")
+    def fill_from_aggregate(self, aggregate: AppAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.admin_unit_id = aggregate.admin_unit_id
+        self.description = aggregate.description
+        self.app_permissions = aggregate.app_permissions
+        self.homepage_url = aggregate.homepage_url
+        self.setup_url = aggregate.setup_url
 
         metadata = self.client_metadata or {}
-        update_field_with_command(metadata, cmd, event, "client_name", "name", "name")
-        update_field_with_command(metadata, cmd, event, "scope")
-        update_field_with_command(metadata, cmd, event, "redirect_uris")
+        metadata["client_name"] = aggregate.name
+        metadata["scope"] = aggregate.scope
+        metadata["redirect_uris"] = aggregate.redirect_uris
         self.set_client_metadata(metadata)
 
-        Webhook.update(cmd.webhook, self, event, "webhook")
+        if aggregate.webhook:
+            if not self.webhook:
+                self.webhook = Webhook()
+            self.webhook.fill_from_value_object(aggregate.webhook)
+        else:
+            self.webhook = None
 
-        self.domain_events.append(event)
+        return self
 
-    def delete_app(self, cmd: DeleteAppCommand):
-        self.domain_events.append(
-            events.AppDeleted(
-                actor=cmd.actor, id=self.id, admin_unit_id=self.admin_unit_id
-            )
+    @classmethod
+    def to_aggregate(cls, model: OAuth2Client) -> AppAggregate:
+        if model is None:  # pragma: no cover
+            return None
+
+        metadata = model.client_metadata or {}
+
+        aggregate = AppAggregate(
+            id=model.id,
+            admin_unit_id=model.admin_unit_id,
+            name=metadata.get("client_name"),
+            scope=metadata.get("scope"),
+            redirect_uris=metadata.get("redirect_uris"),
+            app_permissions=model.app_permissions,
+            description=model.description,
+            homepage_url=model.homepage_url,
+            setup_url=model.setup_url,
+            webhook=model.webhook.to_value_object() if model.webhook else None,
         )
+
+        return aggregate
 
     @hybrid_property
     def is_app(self):  # pragma: no cover

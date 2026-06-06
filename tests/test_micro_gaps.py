@@ -2,7 +2,7 @@
 
 import pytest
 
-from project.domain.commands.update_app_command import UpdateAppCommand
+from project.application.commands.update_app_command import UpdateAppCommand
 from project.models.webhook import Webhook
 
 # ---------------------------------------------------------------------------
@@ -30,24 +30,24 @@ def test_webhook_is_enabled_for_event_type_true():
     webhook = Webhook()
     webhook.url = "https://example.test/hook"
     webhook.disabled = False
-    webhook.event_types = ["app.installed", "app.uninstalled"]
+    webhook.event_types = ["app_installation.created", "app_installation.deleted"]
 
-    assert webhook.is_enabled_for_event_type("app.installed") is True
+    assert webhook.is_enabled_for_event_type("app_installation.created") is True
 
 
 def test_webhook_is_enabled_for_event_type_false_when_disabled():
     webhook = Webhook()
     webhook.url = "https://example.test/hook"
     webhook.disabled = True
-    webhook.event_types = ["app.installed"]
+    webhook.event_types = ["app_installation.created"]
 
-    assert not webhook.is_enabled_for_event_type("app.installed")
+    assert not webhook.is_enabled_for_event_type("app_installation.created")
 
 
 def test_webhook_is_enabled_for_event_type_false_when_not_in_list():
     webhook = Webhook()
     webhook.url = "https://example.test/hook"
     webhook.disabled = False
-    webhook.event_types = ["app.uninstalled"]
+    webhook.event_types = ["app_installation.deleted"]
 
-    assert not webhook.is_enabled_for_event_type("app.installed")
+    assert not webhook.is_enabled_for_event_type("app_installation.created")

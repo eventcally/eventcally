@@ -1,12 +1,12 @@
 from flask import redirect
 
-from project.domain.commands.delete_app_command import DeleteAppCommand
-from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
-from project.permissions import organization_app_permission_infos
-from project.service_layer.webhooks.app_installation_webhooks import (
+from project.application.commands.delete_app_command import DeleteAppCommand
+from project.application.webhooks.app_installation_webhooks import (
     app_installation_webhook_infos,
 )
-from project.service_layer.webhooks.app_webhooks import app_webhook_infos
+from project.application.webhooks.app_webhooks import app_webhook_infos
+from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
+from project.permissions import organization_app_permission_infos
 from project.views.manage_admin_unit.app.forms import CreateAppForm, UpdateAppForm
 from project.views.utils import handle_base_error
 

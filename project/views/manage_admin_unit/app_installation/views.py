@@ -1,7 +1,7 @@
 from flask import flash, redirect
 from flask_babel import gettext, lazy_gettext
 
-from project.domain.commands import UninstallAppCommand
+from project.application.commands import UninstallAppCommand
 from project.models.oauth import OAuth2Client
 from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
 from project.permissions import get_organization_permission_infos

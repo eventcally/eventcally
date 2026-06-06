@@ -8,6 +8,11 @@ from flask_security.confirmable import confirm_user
 from sqlalchemy import MetaData, text
 
 from project.api import scope_list
+from project.application.commands.create_event_command import CreateEventCommand
+from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
+from project.domain.models.value_objects.event_date_definition_value_object import (
+    EventDateDefinitionValueObject,
+)
 from project.extensions import db
 from project.init_data import create_initial_data
 from project.models import (
@@ -16,8 +21,6 @@ from project.models import (
     AdminUnitVerificationRequest,
     AdminUnitVerificationRequestReviewStatus,
     Event,
-    EventAttendanceMode,
-    EventDateDefinition,
     EventList,
     EventReference,
     EventReferenceRequest,
@@ -202,25 +205,27 @@ def create_admin_unit_member(admin_unit_id, user_email):
 
 def _create_event(admin_unit_id):
     event_category_service = current_app.container.services.event_category_service()
-    event = Event()
-    event.admin_unit_id = admin_unit_id
-    event.categories = [event_category_service.upsert_event_category("Other")]
-    event.name = "Name"
-    event.description = "Beschreibung"
-    event.event_place_id = _get_default_event_place_id(admin_unit_id)
-    event.organizer_id = _get_default_organizer_id(admin_unit_id)
-    event.ticket_link = ""
-    event.tags = ""
-    event.price_info = ""
-    event.attendance_mode = EventAttendanceMode.offline
 
-    date_definition = EventDateDefinition()
+    command = CreateEventCommand.model_construct()
+    command.admin_unit_id = admin_unit_id
+    command.category_ids = [event_category_service.upsert_event_category("Other").id]
+    command.name = "Name"
+    command.description = "Beschreibung"
+    command.event_place_id = _get_default_event_place_id(admin_unit_id)
+    command.organizer_id = _get_default_organizer_id(admin_unit_id)
+    command.ticket_link = ""
+    command.tags = ""
+    command.price_info = ""
+    command.attendance_mode = EventAttendanceMode.offline
+
+    date_definition = EventDateDefinitionValueObject()
     date_definition.start = _get_now_by_minute()
-    event.date_definitions = [date_definition]
+    command.date_definitions = [date_definition]
 
-    current_app.container.services.event_service().insert_object(event)
+    message_bus = current_app.container.cqrs.message_bus()
+    result = message_bus.handle(command)
 
-    return event.id
+    return result.id
 
 
 @test_cli.command("event-create")

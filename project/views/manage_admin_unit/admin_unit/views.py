@@ -1,7 +1,7 @@
 from flask import redirect, request, url_for
 from flask_babel import gettext, lazy_gettext
 
-from project.domain.commands.cancel_organization_deletion_command import (
+from project.application.commands.cancel_organization_deletion_command import (
     CancelOrganizationDeletionCommand,
 )
 from project.modular.base_views import BaseDeleteView, BaseUpdateView

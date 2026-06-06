@@ -1,4 +1,5 @@
-from project.domain import commands, events
+from project.application import commands
+from project.domain import events
 from project.models import AppInstallation
 
 

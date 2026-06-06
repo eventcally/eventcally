@@ -5,7 +5,6 @@ from flask.json.provider import DefaultJSONProvider
 
 from project.dateutils import berlin_tz
 from project.jinja_filters import url_for_image
-from project.models import EventAttendanceMode, EventStatus
 
 
 class CustomJsonProvider(DefaultJSONProvider):
@@ -101,6 +100,8 @@ def get_date_from_datetime(value: datetime.datetime) -> datetime.date:
 
 
 def get_sd_for_event_date(event_date):
+    from project.models import EventAttendanceMode, EventStatus
+
     event = event_date.event
 
     result = {}

@@ -41,6 +41,20 @@ With coverage:
 pytest --cov-report=html --cov=project
 ```
 
+## Linting
+
+Run all configured hooks:
+
+```sh
+pre-commit run --all-files
+```
+
+Run only architecture import checks (domain isolation contract):
+
+```sh
+lint-imports
+```
+
 ## Database
 
 ### Create new revision

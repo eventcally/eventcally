@@ -1,1 +1,1 @@
-flake8 && black . && isort .
+black . && isort . && flake8 && python .scripts/module_import_whitelist.py project/domain project/application

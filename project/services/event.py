@@ -48,7 +48,7 @@ from project.models import (
 from project.models.event_category import CustomEventCategory
 from project.services.reference import get_event_reference, upsert_event_reference
 from project.services.search_params import EventSearchParams
-from project.utils import get_pending_changes, get_place_str
+from project.utils import get_place_str
 from project.views.utils import truncate
 
 
@@ -537,20 +537,6 @@ def get_upcoming_event_dates(event_id):
         .order_by(EventDate.start)
         .all()
     )
-
-
-def get_significant_event_changes(event) -> dict:
-    keys = [
-        "name",
-        "start",
-        "recurrence_rule",
-        "status",
-        "attendance_mode",
-        "booked_up",
-        "event_place_id",
-        "organizer_id",
-    ]
-    return get_pending_changes(event, include_collections=False, include_keys=keys)
 
 
 def get_meta_data(event: Event, event_date: EventDate = None) -> dict:

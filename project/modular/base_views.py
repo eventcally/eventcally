@@ -5,6 +5,7 @@ from flask.views import View
 from flask_babel import lazy_gettext
 from wtforms import RadioField, SelectField, StringField
 
+from project.application.message_bus import MessageBus
 from project.modular.fields import AjaxSelectField, DateRangeField, RadiusField
 from project.modular.filters import (
     BooleanFilter,
@@ -15,7 +16,6 @@ from project.modular.filters import (
     StringFilter,
 )
 from project.permissions import PermissionAction
-from project.service_layer.message_bus import MessageBus
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,

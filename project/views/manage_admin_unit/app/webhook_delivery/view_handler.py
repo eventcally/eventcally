@@ -20,7 +20,7 @@ class WebhookDeliveryViewHandler(AppChildViewHandler):
 
     def get_object_by_id(self, object_id):
         with self.message_bus.create_uow() as uow:
-            return uow.webhooks.get_delivery(object_id)
+            return uow.webhook_deliveries._get_model(object_id)
 
     def apply_objects_query_order(self, query, **kwargs):
         return (

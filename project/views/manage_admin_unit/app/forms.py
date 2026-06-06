@@ -2,8 +2,8 @@ from flask_babel import lazy_gettext
 from wtforms import FormField, StringField, TextAreaField
 from wtforms.validators import DataRequired, Length, Optional
 
-from project.domain.commands.create_app_command import CreateAppCommand
-from project.domain.commands.update_app_command import UpdateAppCommand
+from project.application.commands.create_app_command import CreateAppCommand
+from project.application.commands.update_app_command import UpdateAppCommand
 from project.forms.common import WebhookForm
 from project.forms.widgets import MultiCheckboxField
 from project.modular.base_form import BaseDeleteForm

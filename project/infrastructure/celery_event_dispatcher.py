@@ -1,5 +1,5 @@
+from project.application.abstract_event_dispatcher import AbstractEventDispatcher
 from project.domain import events
-from project.service_layer.abstract_event_dispatcher import AbstractEventDispatcher
 
 
 class CeleryEventDispatcher(AbstractEventDispatcher):

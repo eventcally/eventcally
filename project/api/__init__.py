@@ -12,6 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import HTTPException, UnprocessableEntity
 
 from project.domain.errors import BaseError, DuplicateError
+from project.domain.errors.constraint_error import ConstraintError
 from project.utils import get_localized_scope
 
 
@@ -53,7 +54,12 @@ class RestApi(Api):
             code = 400
             schema = ErrorResponseSchema()
         elif isinstance(err, BaseError):
-            data["name"] = err.__class__.__name__
+            if isinstance(err, DuplicateError):
+                data["name"] = "Unique Violation"
+            elif isinstance(err, ConstraintError):
+                data["name"] = "Check Violation"
+            else:  # pragma: no cover
+                data["name"] = err.__class__.__name__
             data["message"] = err.message
             code = 400
             schema = ErrorResponseSchema()

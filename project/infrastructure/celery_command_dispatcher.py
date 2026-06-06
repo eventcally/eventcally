@@ -1,5 +1,5 @@
-from project.domain import commands
-from project.service_layer.abstract_command_dispatcher import AbstractCommandDispatcher
+from project.application import commands
+from project.application.abstract_command_dispatcher import AbstractCommandDispatcher
 
 
 class CeleryCommandDispatcher(AbstractCommandDispatcher):
