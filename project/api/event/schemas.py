@@ -54,13 +54,11 @@ from project.api.schemas import (
 )
 from project.application.commands.create_event_command import CreateEventCommand
 from project.application.commands.update_event_command import UpdateEventCommand
-from project.models import (
-    Event,
-    EventAttendanceMode,
-    EventPublicStatus,
-    EventStatus,
-    EventTargetGroupOrigin,
-)
+from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
+from project.domain.models.enums.event_public_status import EventPublicStatus
+from project.domain.models.enums.event_status import EventStatus
+from project.domain.models.enums.event_target_group_origin import EventTargetGroupOrigin
+from project.models import Event
 
 
 class EventModelSchema(SQLAlchemyBaseSchema):

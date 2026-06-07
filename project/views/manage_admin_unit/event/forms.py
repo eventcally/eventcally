@@ -21,6 +21,10 @@ from project.application.commands.create_event_place_command import (
     CreateEventPlaceCommand,
 )
 from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
+from project.domain.models.enums.event_public_status import EventPublicStatus
+from project.domain.models.enums.event_status import EventStatus
+from project.domain.models.enums.event_target_group_origin import EventTargetGroupOrigin
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
 )
@@ -30,14 +34,7 @@ from project.forms.widgets import (
     HTML5StringField,
     MultiCheckboxField,
 )
-from project.models import (
-    EventAttendanceMode,
-    EventDateDefinition,
-    EventPublicStatus,
-    EventStatus,
-    EventTargetGroupOrigin,
-    Image,
-)
+from project.models import EventDateDefinition, Image
 from project.models.event_organizer import EventOrganizer
 from project.models.event_place import EventPlace
 from project.models.location import Location
@@ -433,8 +430,8 @@ class CreateForm(BaseCreateForm, EventFormMixin):
             booked_up=self.booked_up.data,
             expected_participants=self.expected_participants.data,
             price_info=self.price_info.data,
-            target_group_origin=self.target_group_origin.data,
-            attendance_mode=self.attendance_mode.data,
+            target_group_origin=EventTargetGroupOrigin(self.target_group_origin.data),
+            attendance_mode=EventAttendanceMode(self.attendance_mode.data),
             photo=self.photo.form.create_create_command(),
             previous_start_date=self.previous_start_date.data,
             category_ids=category_ids,
@@ -522,8 +519,8 @@ class UpdateForm(BaseUpdateForm, EventFormMixin):
             organizer_id=self.organizer.data.id,
             event_place_id=self.event_place.data.id,
             date_definitions=date_definitions,
-            status=self.status.data,
-            public_status=self.public_status.data,
+            status=EventStatus(self.status.data),
+            public_status=EventPublicStatus(self.public_status.data),
             description=self.description.data,
             external_link=self.external_link.data,
             ticket_link=self.ticket_link.data,
@@ -537,8 +534,8 @@ class UpdateForm(BaseUpdateForm, EventFormMixin):
             booked_up=self.booked_up.data,
             expected_participants=self.expected_participants.data,
             price_info=self.price_info.data,
-            target_group_origin=self.target_group_origin.data,
-            attendance_mode=self.attendance_mode.data,
+            target_group_origin=EventTargetGroupOrigin(self.target_group_origin.data),
+            attendance_mode=EventAttendanceMode(self.attendance_mode.data),
             photo=self.photo.form.create_update_command(),
             previous_start_date=self.previous_start_date.data,
             category_ids=category_ids,
