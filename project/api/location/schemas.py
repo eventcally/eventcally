@@ -2,8 +2,9 @@ from marshmallow import ValidationError, fields, post_load, validate, validates_
 
 from project.api.fields import NumericStr
 from project.api.schemas import PlainBaseSchema, SQLAlchemyBaseSchema
-from project.domain.commands import CreateLocation, UpdateLocation
-from project.domain.types import unset
+from project.domain.models.value_objects.location_value_object import (
+    LocationValueObject,
+)
 from project.models import Location
 
 
@@ -56,19 +57,7 @@ class LocationSearchItemSchema(LocationSchema):
     pass
 
 
-class LocationPostRequestSchema(LocationModelSchema, LocationBaseSchemaMixin):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.make_post_schema()
-
-
-class LocationPatchRequestSchema(LocationModelSchema, LocationBaseSchemaMixin):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.make_patch_schema()
-
-
-class LocationCreateRequestPlainSchema(
+class LocationWriteRequestPlainSchema(
     PlainBaseSchema, LocationCoordinateValidationMixin
 ):
     street = fields.Str(load_default=None, validate=validate.Length(max=255))
@@ -89,62 +78,4 @@ class LocationCreateRequestPlainSchema(
 
     @post_load
     def make_instance(self, data, **kwargs):
-        return CreateLocation(**data)
-
-
-class LocationPutRequestPlainSchema(PlainBaseSchema, LocationCoordinateValidationMixin):
-    street = fields.Str(load_default=None, validate=validate.Length(max=255))
-    postalCode = fields.Str(load_default=None, validate=validate.Length(max=10))
-    city = fields.Str(load_default=None, validate=validate.Length(max=255))
-    state = fields.Str(load_default=None, validate=validate.Length(max=255))
-    country = fields.Str(load_default=None, validate=validate.Length(max=255))
-    latitude = NumericStr(
-        load_default=None,
-        validate=validate.Range(-90, 90, min_inclusive=False, max_inclusive=False),
-        metadata={"description": "Latitude between (-90, 90)"},
-    )
-    longitude = NumericStr(
-        load_default=None,
-        validate=validate.Range(-180, 180, min_inclusive=False, max_inclusive=False),
-        metadata={"description": "Longitude between (-180, 180)"},
-    )
-
-    @post_load
-    def make_instance(self, data, **kwargs):
-        return UpdateLocation(**data)
-
-
-class LocationPatchRequestPlainSchema(
-    PlainBaseSchema, LocationCoordinateValidationMixin
-):
-    street = fields.Str(
-        load_default=unset, allow_none=True, validate=validate.Length(max=255)
-    )
-    postalCode = fields.Str(
-        load_default=unset, allow_none=True, validate=validate.Length(max=10)
-    )
-    city = fields.Str(
-        load_default=unset, allow_none=True, validate=validate.Length(max=255)
-    )
-    state = fields.Str(
-        load_default=unset, allow_none=True, validate=validate.Length(max=255)
-    )
-    country = fields.Str(
-        load_default=unset, allow_none=True, validate=validate.Length(max=255)
-    )
-    latitude = NumericStr(
-        load_default=unset,
-        allow_none=True,
-        validate=validate.Range(-90, 90, min_inclusive=False, max_inclusive=False),
-        metadata={"description": "Latitude between (-90, 90)"},
-    )
-    longitude = NumericStr(
-        load_default=unset,
-        allow_none=True,
-        validate=validate.Range(-180, 180, min_inclusive=False, max_inclusive=False),
-        metadata={"description": "Longitude between (-180, 180)"},
-    )
-
-    @post_load
-    def make_instance(self, data, **kwargs):
-        return UpdateLocation(**data)
+        return LocationValueObject(**data)

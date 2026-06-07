@@ -1,4 +1,6 @@
-import datetime
+from __future__ import annotations
+
+from typing import Optional
 
 from flask_security import RoleMixin
 from sqlalchemy import and_, func, select
@@ -6,13 +8,11 @@ from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import aliased
 
-from project.domain.commands import (
-    CancelOrganizationDeletionCommand,
-    RequestOrganizationDeletionCommand,
+from project.domain.models.aggregates.organization_aggregate import (
+    OrganizationAggregate,
 )
-from project.domain.events import (
-    OrganizationDeletionCancelled,
-    OrganizationDeletionRequested,
+from project.domain.models.aggregates.organization_member_aggregate import (
+    OrganisationMemberAggregate,
 )
 from project.extensions import db
 from project.models.admin_unit_generated import AdminUnitGeneratedMixin
@@ -43,6 +43,20 @@ class AdminUnitMemberRole(db.Model, AdminUnitMemberRoleGeneratedMixin, RoleMixin
 
 
 class AdminUnitMember(db.Model, AdminUnitMemberGeneratedMixin):
+
+    @classmethod
+    def to_aggregate(cls, model: AdminUnitMember) -> OrganisationMemberAggregate:
+        if model is None:  # pragma: no cover
+            return None
+
+        aggregate = OrganisationMemberAggregate(
+            id=model.id,
+            admin_unit_id=model.admin_unit_id,
+            user_id=model.user_id,
+        )
+
+        return aggregate
+
     def __str__(self):
         return self.user.__str__() if self.user else super().__str__()
 
@@ -118,25 +132,26 @@ def before_saving_admin_unit_relation(mapper, connect, self):
 
 
 class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
-    def request_deletion(self, cmd: RequestOrganizationDeletionCommand):
-        self.deletion_requested_at = datetime.datetime.now(datetime.UTC)
-        self.deletion_requested_by_id = cmd.actor.user_id
 
-        event = OrganizationDeletionRequested(
-            actor=cmd.actor,
-            id=self.id,
+    def fill_from_aggregate(self, aggregate: OrganizationAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.deletion_requested_at = aggregate.deletion_requested_at
+        self.deletion_requested_by_id = aggregate.deletion_requested_by_id
+
+    @classmethod
+    def to_aggregate(
+        cls, model: Optional[AdminUnit]
+    ) -> Optional[OrganizationAggregate]:
+        if model is None:  # pragma: no cover
+            return None
+
+        aggregate = OrganizationAggregate(
+            id=model.id,
+            deletion_requested_at=model.deletion_requested_at,
+            deletion_requested_by_id=model.deletion_requested_by_id,
         )
-        self.domain_events.append(event)
 
-    def cancel_deletion(self, cmd: CancelOrganizationDeletionCommand):
-        self.deletion_requested_at = None
-        self.deletion_requested_by_id = None
-
-        event = OrganizationDeletionCancelled(
-            actor=cmd.actor,
-            id=self.id,
-        )
-        self.domain_events.append(event)
+        return aggregate
 
     def get_number_of_api_keys(self):
         from project.models.api_key import ApiKey

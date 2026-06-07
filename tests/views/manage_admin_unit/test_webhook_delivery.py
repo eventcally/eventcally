@@ -24,7 +24,7 @@ def _create_webhook_delivery(app, db, seeder, admin_unit_id):
         db.session.flush()  # get webhook.id
 
         webhook_event = WebhookEvent()
-        webhook_event.event_type = "app.installed"
+        webhook_event.event_type = "app_installation.created"
         webhook_event.timestamp = datetime.datetime.now(datetime.timezone.utc)
         webhook_event.payload = {}
         db.session.add(webhook_event)
@@ -164,7 +164,7 @@ def test_webhook_delivery_child_view_handler_check_object_access_abort(
         from project.models.webhook_event import WebhookEvent
 
         webhook_event_2 = WebhookEvent()
-        webhook_event_2.event_type = "app.installed"
+        webhook_event_2.event_type = "app_installation.created"
         webhook_event_2.timestamp = datetime.datetime.now(datetime.timezone.utc)
         webhook_event_2.payload = {}
         db.session.add(webhook_event_2)

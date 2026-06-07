@@ -15,3 +15,17 @@ repos:
     rev: 6.1.0
     hooks:
     - id: flake8
+  - repo: local
+    hooks:
+      - id: import-whitelist
+        name: import-whitelist
+        entry: python .scripts/module_import_whitelist.py project/domain project/application
+        language: python
+        pass_filenames: false
+      - id: import-linter
+        name: import-linter
+        entry: lint-imports
+        language: python
+        additional_dependencies:
+          - import-linter==1.12.1
+        pass_filenames: false

@@ -4,8 +4,6 @@ from flask_apispec import doc, marshal_with, use_kwargs
 from project.api import add_api_resource
 from project.api.place.schemas import (
     PlacePatchRequestPlainSchema,
-    PlacePatchRequestSchema,
-    PlacePostRequestSchema,
     PlacePutRequestPlainSchema,
     PlaceSchema,
 )
@@ -14,7 +12,7 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
-from project.domain.commands import DeleteEventPlaceCommand
+from project.application.commands import DeleteEventPlaceCommand
 from project.models import EventPlace
 
 
@@ -29,7 +27,7 @@ class PlaceResource(BaseResource):
         summary="Update place",
         tags=["Places"],
     )
-    @use_kwargs(PlacePostRequestSchema, location="json", apply=False)
+    @use_kwargs(PlacePutRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access("organization.event_places:write", EventPlace)
     def put(self, id):
@@ -44,7 +42,7 @@ class PlaceResource(BaseResource):
         summary="Patch place",
         tags=["Places"],
     )
-    @use_kwargs(PlacePatchRequestSchema, location="json", apply=False)
+    @use_kwargs(PlacePatchRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access("organization.event_places:write", EventPlace)
     def patch(self, id):

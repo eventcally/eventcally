@@ -13,20 +13,28 @@ from wtforms import (
 from wtforms.fields import FieldList, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
+from project.application.commands.create_event_command import CreateEventCommand
+from project.application.commands.create_event_organizer_command import (
+    CreateEventOrganizerCommand,
+)
+from project.application.commands.create_event_place_command import (
+    CreateEventPlaceCommand,
+)
+from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
+from project.domain.models.enums.event_public_status import EventPublicStatus
+from project.domain.models.enums.event_status import EventStatus
+from project.domain.models.enums.event_target_group_origin import EventTargetGroupOrigin
+from project.domain.models.value_objects.event_date_definition_value_object import (
+    EventDateDefinitionValueObject,
+)
 from project.forms.common import Base64ImageForm, LocationForm, event_rating_choices
 from project.forms.widgets import (
     CustomDateTimeField,
     HTML5StringField,
     MultiCheckboxField,
 )
-from project.models import (
-    EventAttendanceMode,
-    EventDateDefinition,
-    EventPublicStatus,
-    EventStatus,
-    EventTargetGroupOrigin,
-    Image,
-)
+from project.models import EventDateDefinition, Image
 from project.models.event_organizer import EventOrganizer
 from project.models.event_place import EventPlace
 from project.models.location import Location
@@ -88,6 +96,14 @@ class EventDateDefinitionForm(BaseForm, EventDateDefinitionFormMixin):
 
         return result
 
+    def create_value_object(self):
+        return EventDateDefinitionValueObject(
+            start=self.start.data,
+            end=self.end.data,
+            allday=self.allday.data,
+            recurrence_rule=self.recurrence_rule.data,
+        )
+
 
 class CustomEventCategoryForm(BaseForm):
     def __init__(self, *args, **kwargs):
@@ -118,12 +134,18 @@ class CustomEventCategoryForm(BaseForm):
 
         return super().process(formdata, obj, data, extra_filters, **kwargs)
 
-    def populate_obj(self, obj):
-        categories = obj
-        categories.clear()
+    def get_category_ids(self):
+        category_ids = []
         for name, field in self._fields.items():
-            if name.startswith("set_") and field.data:
-                categories.extend(field.data)
+            if (
+                name.startswith("set_")
+                and field.data
+                and isinstance(field, AjaxSelectMultipleField)
+            ):
+                data_ids = field.get_data_ids()
+                if data_ids:
+                    category_ids.extend(data_ids)
+        return category_ids
 
 
 class EventFormMixin(object):
@@ -302,15 +324,27 @@ class EventPlaceForm(BaseForm):
     )
     location = FormField(LocationForm, default=lambda: Location())
 
-    def populate_obj(self, obj):
-        for name, field in self._fields.items():
-            if name == "location" and not obj.location:
-                obj.location = Location()
-            field.populate_obj(obj, name)
+    def create_create_command(self, admin_unit_id: int) -> CreateEventPlaceCommand:
+        return CreateEventPlaceCommand.model_construct(
+            admin_unit_id=admin_unit_id,
+            name=self.name.data,
+            location=self.location.form.create_create_command(),
+        )
 
 
-class OrganizerForm(EventPlaceForm):
-    pass
+class OrganizerForm(BaseForm):
+    name = StringField(
+        lazy_gettext("Name"),
+        validators=[Optional()],
+    )
+    location = FormField(LocationForm, default=lambda: Location())
+
+    def create_create_command(self, admin_unit_id: int) -> CreateEventOrganizerCommand:
+        return CreateEventOrganizerCommand.model_construct(
+            admin_unit_id=admin_unit_id,
+            name=self.name.data,
+            location=self.location.form.create_create_command(),
+        )
 
 
 class CreateForm(BaseCreateForm, EventFormMixin):
@@ -356,27 +390,17 @@ class CreateForm(BaseCreateForm, EventFormMixin):
     submit_planned = SubmitField(lazy_gettext("Save as planned"))
     submit = SubmitField(lazy_gettext("Publish event"))
 
-    def populate_obj(self, obj):
-        for name, field in self._fields.items():
-            if name == "new_event_place":
-                if self.event_place_choice.data != 2:
-                    continue
-                if not obj.event_place:
-                    obj.event_place = EventPlace()
-                field.populate_obj(obj, "event_place")
-            elif name == "new_organizer":
-                if self.organizer_choice.data != 2:
-                    continue
-                if not obj.organizer:
-                    obj.organizer = EventOrganizer()
-                field.populate_obj(obj, "organizer")
-            elif name == "photo" and not obj.photo:
-                obj.photo = Image()
-            elif name == "date_definition_template":
-                continue
-            field.populate_obj(obj, name)
+    def create_create_command(
+        self, admin_unit_id: int, event_place_id: int, organizer_id: int
+    ) -> CreateEventCommand:
+        date_definitions = [
+            dd_form.create_value_object() for dd_form in self.date_definitions.entries
+        ]
+        category_ids = self.categories.get_data_ids()
+        co_organizer_ids = self.co_organizers.get_data_ids()
+        custom_category_ids = self.custom_categories.get_category_ids()
 
-        obj.public_status = (
+        public_status = (
             EventPublicStatus.published
             if self.submit.data
             else (
@@ -384,6 +408,36 @@ class CreateForm(BaseCreateForm, EventFormMixin):
                 if self.submit_planned.data
                 else EventPublicStatus.draft
             )
+        )
+        return CreateEventCommand.model_construct(
+            admin_unit_id=admin_unit_id,
+            name=self.name.data,
+            organizer_id=organizer_id,
+            event_place_id=event_place_id,
+            date_definitions=date_definitions,
+            status=EventStatus.scheduled,
+            public_status=public_status,
+            description=self.description.data,
+            external_link=self.external_link.data,
+            ticket_link=self.ticket_link.data,
+            tags=self.tags.data,
+            internal_tags=self.internal_tags.data,
+            kid_friendly=self.kid_friendly.data,
+            accessible_for_free=self.accessible_for_free.data,
+            age_from=self.age_from.data,
+            age_to=self.age_to.data,
+            registration_required=self.registration_required.data,
+            booked_up=self.booked_up.data,
+            expected_participants=self.expected_participants.data,
+            price_info=self.price_info.data,
+            target_group_origin=EventTargetGroupOrigin(self.target_group_origin.data),
+            attendance_mode=EventAttendanceMode(self.attendance_mode.data),
+            photo=self.photo.form.create_create_command(),
+            previous_start_date=self.previous_start_date.data,
+            category_ids=category_ids,
+            custom_category_ids=custom_category_ids,
+            rating=self.rating.data,
+            co_organizer_ids=co_organizer_ids,
         )
 
     def validate(self, extra_validators=None):
@@ -451,14 +505,41 @@ class UpdateForm(BaseUpdateForm, EventFormMixin):
         ),
     )
 
-    def populate_obj(self, obj):
-        for name, field in self._fields.items():
-            if name == "photo" and not obj.photo:
-                obj.photo = Image()
-            elif name == "date_definition_template":
-                continue
-            field.populate_obj(obj, name)
+    def create_update_command(self, event_id: int) -> UpdateEventCommand:
+        date_definitions = [
+            dd_form.create_value_object() for dd_form in self.date_definitions.entries
+        ]
+        category_ids = self.categories.get_data_ids()
+        co_organizer_ids = self.co_organizers.get_data_ids()
+        custom_category_ids = self.custom_categories.get_category_ids()
 
-        if obj.photo and obj.photo.is_empty():
-            obj.photo = None
-            obj.photo_id = None
+        return UpdateEventCommand.model_construct(
+            id=event_id,
+            name=self.name.data,
+            organizer_id=self.organizer.data.id,
+            event_place_id=self.event_place.data.id,
+            date_definitions=date_definitions,
+            status=EventStatus(self.status.data),
+            public_status=EventPublicStatus(self.public_status.data),
+            description=self.description.data,
+            external_link=self.external_link.data,
+            ticket_link=self.ticket_link.data,
+            tags=self.tags.data,
+            internal_tags=self.internal_tags.data,
+            kid_friendly=self.kid_friendly.data,
+            accessible_for_free=self.accessible_for_free.data,
+            age_from=self.age_from.data,
+            age_to=self.age_to.data,
+            registration_required=self.registration_required.data,
+            booked_up=self.booked_up.data,
+            expected_participants=self.expected_participants.data,
+            price_info=self.price_info.data,
+            target_group_origin=EventTargetGroupOrigin(self.target_group_origin.data),
+            attendance_mode=EventAttendanceMode(self.attendance_mode.data),
+            photo=self.photo.form.create_update_command(),
+            previous_start_date=self.previous_start_date.data,
+            category_ids=category_ids,
+            custom_category_ids=custom_category_ids,
+            rating=self.rating.data,
+            co_organizer_ids=co_organizer_ids,
+        )

@@ -3,7 +3,7 @@ from celery.schedules import crontab
 from flask import current_app
 
 from project.celery_init import celery
-from project.domain.types.actor import Actor
+from project.domain.models.entities.actor import Actor
 from project.extensions import db
 
 
@@ -31,7 +31,7 @@ def setup_periodic_tasks(sender, **kwargs):
     reject_on_worker_lost=True,
 )
 def delete_old_webhook_events_task():
-    from project.domain import commands
+    from project.application import commands
 
     command = commands.DeleteOldWebhookEventsCommand(actor=Actor())
     message_bus = current_app.container.cqrs.message_bus()

@@ -77,3 +77,17 @@ def test_get_calendar_links(client, seeder, utils, app, db, mocker):
             event_date = event.dates[0]
             links = get_calendar_links_for_event_date(event_date)
             assert "&dates=20200102/20200104&" in links["google"]
+
+
+def test_handleBaseError():
+    from project.domain.errors import BaseError
+    from project.views.utils import handleBaseError
+
+    class MyError(BaseError):
+        def __init__(self, message):
+            super().__init__(message)
+            self.cause = "This is the cause of the error."
+
+    error = MyError("Something went wrong")
+    result = handleBaseError(error)
+    assert result == "Something went wrong (This is the cause of the error.)"

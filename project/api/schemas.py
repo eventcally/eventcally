@@ -1,4 +1,4 @@
-from marshmallow import ValidationError, fields, missing, validate
+from marshmallow import ValidationError, fields, missing, post_load, validate
 from marshmallow.decorators import pre_load
 
 from project.api import marshmallow
@@ -10,7 +10,7 @@ class PostPatchSchemaMixin(object):
         for name, field in self.fields.items():
             if not field.required:
                 if field.load_default is missing:
-                    if isinstance(field, fields.List):
+                    if isinstance(field, fields.List):  # pragma: no cover
                         field.load_default = list()
                     else:
                         field.load_default = None
@@ -46,6 +46,14 @@ class WriteIdSchemaMixin(object):
         if not self.get_instance(data):
             raise ValidationError("Referenced object does not exist")
         return data
+
+
+class WriteIdPlainSchema(PlainBaseSchema):
+    id = fields.Int(required=True)
+
+    @post_load
+    def coerce_to_id(self, data, **kwargs):
+        return data["id"]
 
 
 class TrackableSchemaMixin(object):

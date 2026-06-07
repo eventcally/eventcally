@@ -63,7 +63,7 @@ def test_handle_error_domain_error(app):
     api = RestApi(app)
     (data, code) = api.handle_error(error)
     assert code == 400
-    assert data["name"] == "DuplicateError"
+    assert data["name"] == "Unique Violation"
     assert data["message"] == "Custom message"
 
 

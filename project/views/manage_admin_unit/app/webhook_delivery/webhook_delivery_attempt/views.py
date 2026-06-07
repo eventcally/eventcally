@@ -1,6 +1,6 @@
 from flask import g, redirect
 
-from project.domain.commands.attempt_to_deliver_webhook_command import (
+from project.application.commands.attempt_to_deliver_webhook_command import (
     AttemptToDeliverWebhookCommand,
 )
 from project.modular.base_form import BaseCreateForm

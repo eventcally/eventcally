@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from flask_security import RoleMixin, UserMixin
 from sqlalchemy import Column, ForeignKey, Integer, String
 
+from project.domain.models.aggregates.user_aggregate import UserAggregate
 from project.extensions import db
 from project.models.association_tables.roles_users_generated import (
     RolesUsersGeneratedMixin,
@@ -24,6 +27,18 @@ class Role(db.Model, RoleGeneratedMixin, RoleMixin):
 
 
 class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
+    @classmethod
+    def to_aggregate(cls, model: User) -> UserAggregate:
+        if model is None:  # pragma: no cover
+            return None
+
+        aggregate = UserAggregate(
+            id=model.id,
+            email=model.email,
+            locale=model.locale,
+        )
+        return aggregate
+
     def get_number_of_api_keys(self):
         from project.models.api_key import ApiKey
 

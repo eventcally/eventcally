@@ -7,7 +7,6 @@ from sqlalchemy import and_
 from sqlalchemy.orm import lazyload, load_only
 
 from project.access import (
-    access_or_401,
     can_read_event_or_401,
     can_read_private_events,
     login_api_user,
@@ -16,8 +15,8 @@ from project.api import add_api_resource
 from project.api.event.schemas import (
     EventListRequestSchema,
     EventListResponseSchema,
-    EventPatchRequestSchema,
-    EventPostRequestSchema,
+    EventPatchRequestPlainSchema,
+    EventPutRequestPlainSchema,
     EventReportPostSchema,
     EventSchema,
     EventSearchRequestSchema,
@@ -33,7 +32,7 @@ from project.api.resources import (
     require_organization_api_access,
 )
 from project.api.schemas import NoneSchema
-from project.extensions import db
+from project.application.commands.delete_event_command import DeleteEventCommand
 from project.models import AdminUnit, Event, EventDate, EventPublicStatus
 from project.services.event import get_event_with_details_or_404, get_events_query
 from project.services.event_service import EventService
@@ -93,13 +92,14 @@ class EventResource(BaseResource):
         summary="Update event",
         tags=["Events"],
     )
-    @use_kwargs(EventPostRequestSchema, location="json", apply=False)
+    @use_kwargs(EventPutRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access("organization.events:write", Event)
     def put(self, id):
-        event = g.manage_admin_unit_instance
-        event = self.update_instance(EventPostRequestSchema, instance=event)
-        self.event_service.update_object(event)
+        cmd = EventPutRequestPlainSchema(context=g.api_command_context).load(
+            request.json
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -107,13 +107,14 @@ class EventResource(BaseResource):
         summary="Patch event",
         tags=["Events"],
     )
-    @use_kwargs(EventPatchRequestSchema, location="json", apply=False)
+    @use_kwargs(EventPatchRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access("organization.events:write", Event)
     def patch(self, id):
-        event = g.manage_admin_unit_instance
-        event = self.update_instance(EventPatchRequestSchema, instance=event)
-        self.event_service.update_object(event)
+        cmd = EventPatchRequestPlainSchema(context=g.api_command_context).load(
+            request.json
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -124,12 +125,8 @@ class EventResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access("organization.events:write", Event)
     def delete(self, id):
-        event = g.manage_admin_unit_instance
-        event = Event.query.get_or_404(id)
-        access_or_401(event.admin_unit, "events:write")
-
-        db.session.delete(event)
-        db.session.commit()
+        cmd = DeleteEventCommand.model_construct(id=id)
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from dependency_injector.wiring import Provide
 
-from project.domain.commands import RequestOrganizationDeletionCommand
+from project.application.commands import RequestOrganizationDeletionCommand
 from project.models.admin_unit import AdminUnit
 from project.services.organization_service import OrganizationService
 from project.views.manage_admin_unit import manage_admin_unit_bp

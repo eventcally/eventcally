@@ -5,6 +5,7 @@ from dependency_injector.wiring import Provider
 from flask import Blueprint, abort, current_app, url_for
 from flask_babel import gettext
 
+from project.application.message_bus import MessageBus
 from project.container import Application
 from project.modular.base_blueprint import BaseBlueprint
 from project.modular.base_form import BaseDeleteForm, BaseListForm
@@ -16,7 +17,6 @@ from project.modular.base_views import (
     BaseUpdateView,
     BaseView,
 )
-from project.service_layer.message_bus import MessageBus
 
 
 class BaseViewHandler:

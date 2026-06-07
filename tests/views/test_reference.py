@@ -201,7 +201,7 @@ def test_admin_unit_references_outgoing(client, seeder, utils):
     )
 
 
-def test_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
+def test_referencedEventUpdate_sendsMail(client, seeder, utils, app):
     user_id, admin_unit_id = seeder.setup_base()
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
@@ -218,7 +218,6 @@ def test_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
     )
     response = utils.get_ok(url)
 
-    mail_mock = utils.mock_send_mails_async(mocker)
     response = utils.post_form(
         url,
         response,
@@ -227,12 +226,17 @@ def test_referencedEventUpdate_sendsMail(client, seeder, utils, app, mocker):
         },
     )
 
-    utils.assert_send_mail_called(mail_mock, "test@test.de")
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert (
+        app.test_email_service.sent_emails[0]["subject"]
+        == "Empfohlene Veranstaltung wurde geändert"
+    )
+    assert app.test_email_service.sent_emails[0]["recipient"] == "test@test.de"
 
 
-def test_referencedEventNonDirtyUpdate_doesNotSendMail(
-    client, seeder, utils, app, mocker
-):
+def test_referencedEventNonDirtyUpdate_doesNotSendMail(client, seeder, utils, app):
     user_id, admin_unit_id = seeder.setup_base()
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
@@ -249,11 +253,13 @@ def test_referencedEventNonDirtyUpdate_doesNotSendMail(
     )
     response = utils.get_ok(url)
 
-    mail_mock = utils.mock_send_mails_async(mocker)
     response = utils.post_form(
         url,
         response,
         {},
     )
 
-    mail_mock.assert_not_called()
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 0

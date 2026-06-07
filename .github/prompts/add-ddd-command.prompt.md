@@ -9,7 +9,7 @@ Scaffold a complete DDD command following EventCally's architecture patterns.
 
 ## Pre-Flight Checks
 
-1. **Verify command doesn't exist**: Search [`project/domain/commands/`](../../project/domain/commands/) for similar commands
+1. **Verify command doesn't exist**: Search [`project/application/commands/`](../../project/application/commands/) for similar commands
 2. **Identify return type**: Does the command return data (use `CommandWithResult`) or just mutate state (use `Command`)?
 3. **Plan handler logic**: Determine required repositories and domain operations
 
@@ -17,7 +17,7 @@ Scaffold a complete DDD command following EventCally's architecture patterns.
 
 ### 1. Create Command Class
 
-Location: `project/domain/commands/<snake_case_name>_command.py`
+Location: `project/application/commands/<snake_case_name>_command.py`
 
 **Pattern A: Command without result** (mutations only)
 ```python
@@ -51,17 +51,17 @@ class CreateEventPlaceCommand(CommandWithResult[CreateEventPlaceCommandResult]):
 
 ### 2. Export Command
 
-Add to [`project/domain/commands/__init__.py`](../../project/domain/commands/__init__.py):
+Add to [`project/application/commands/__init__.py`](../../project/application/commands/__init__.py):
 ```python
 from .your_command import YourCommand, YourCommandResult  # noqa: F401
 ```
 
 ### 3. Create Handler
 
-Location: `project/service_layer/command_handlers/<snake_case_name>_handler.py`
+Location: `project/application/command_handlers/<snake_case_name>_handler.py`
 
 ```python
-from project.domain import commands
+from project.application import commands
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from .abstract_command_handler import AbstractCommandHandler
 
@@ -85,20 +85,20 @@ class YourCommandHandler(AbstractCommandHandler):
 **Handler patterns**:
 - Always use `with uow:` context manager
 - Load entities via repositories from `uow`
-- Call domain methods on entities (pass `cmd` for audit trails)
+- Call domain methods on entities, passing `cmd.actor` for audit context
 - Commit before returning
 - For `CommandWithResult`, return the result object
 
 ### 4. Export Handler
 
-Add to [`project/service_layer/command_handlers/__init__.py`](../../project/service_layer/command_handlers/__init__.py):
+Add to [`project/application/command_handlers/__init__.py`](../../project/application/command_handlers/__init__.py):
 ```python
 from .your_handler import YourCommandHandler  # noqa: F401
 ```
 
 ### 5. Wire Up Container
 
-Add to [`project/container.py`](../../project/container.py) in the `command_handler_factory` FactoryAggregate (around line 375):
+Add to [`project/container.py`](../../project/container.py) inside `class Cqrs(containers.DeclarativeContainer):`, in the `command_handler_factory` FactoryAggregate:
 
 ```python
 commands.YourCommand: providers.Factory(
@@ -114,25 +114,32 @@ commands.YourCommand: providers.Factory(
 ),
 ```
 
-Keep alphabetical order within the FactoryAggregate.
+Keep consistent with the existing grouping order within the FactoryAggregate.
 
 ### 6. Create Tests
 
 Location: `tests/service_layer/command_handlers/test_<snake_case_name>_handler.py`
 
 ```python
-from project.domain import commands
+from project.application import commands
 
-def test_your_command(uow):
+def test_your_command(app, db, seeder):
     # Arrange
-    cmd = commands.YourCommand(id=1, field="value")
+    some_id = seeder.create_something()
 
-    # Act
-    result = uow.message_bus.handle(cmd)
+    with app.app_context():
+        message_bus = app.container.cqrs.message_bus()
+        cmd = commands.YourCommand.model_construct(
+            id=some_id,
+            field="value",
+        )
 
-    # Assert
-    assert result.id == 1
-    # ... verify state changes
+        # Act
+        result = message_bus.handle_command(cmd)
+
+        # Assert
+        assert result.id == some_id
+        # ... verify state changes
 ```
 
 Use fixtures from [`tests/conftest.py`](../../tests/conftest.py). Database rolls back after each test.
@@ -143,15 +150,15 @@ Dispatch via message bus:
 
 ```python
 from flask import current_app
-from project.domain import commands
+from project.application import commands
 
 # Synchronous
-result = current_app.container.message_bus().handle(
+result = current_app.container.cqrs.message_bus().handle_command(
     commands.YourCommand(id=1)
 )
 
 # Asynchronous (via Celery)
-current_app.container.message_bus().dispatch_command(
+current_app.container.cqrs.message_bus().dispatch_command(
     commands.YourCommand(id=1)
 )
 ```
@@ -169,7 +176,7 @@ After scaffolding:
 
 **Soft delete**:
 ```python
-entity.delete(cmd)
+entity.delete(cmd.actor)
 uow.repo.remove(entity)
 ```
 
@@ -188,6 +195,6 @@ uow.commit()  # Events dispatched after commit
 ## References
 
 - Architecture overview: [copilot-instructions.md](../copilot-instructions.md#architecture)
-- Example command: [`delete_event_place_command.py`](../../project/domain/commands/delete_event_place_command.py)
-- Example handler: [`delete_event_place_handler.py`](../../project/service_layer/command_handlers/delete_event_place_handler.py)
+- Example command: [`delete_event_place_command.py`](../../project/application/commands/delete_event_place_command.py)
+- Example handler: [`delete_event_place_handler.py`](../../project/application/command_handlers/delete_event_place_handler.py)
 - Unit of Work pattern: [`project/domain/abstract_unit_of_work.py`](../../project/domain/abstract_unit_of_work.py)

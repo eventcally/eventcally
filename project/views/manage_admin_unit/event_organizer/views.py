@@ -1,6 +1,6 @@
 from flask import redirect
 
-from project.domain.commands import DeleteEventOrganizerCommand
+from project.application.commands import DeleteEventOrganizerCommand
 from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
 from project.views.manage_admin_unit.event_organizer.forms import (
     CreateEventOrganizerForm,

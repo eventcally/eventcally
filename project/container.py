@@ -4,21 +4,42 @@ from dependency_injector import containers, providers
 from flask import current_app
 
 from project import repos, services
+from project.application import command_handlers, commands, event_handlers
+from project.application.message_bus import MessageBus
+from project.application.services.organization_application_service import (
+    OrganizationApplicationService,
+)
+from project.application.services.webhook_delivery_service import WebhookDeliveryService
+from project.application.webhooks.webhook_mapper_context import WebhookMapperContext
 from project.context import ContextProvider
-from project.domain import commands, events
+from project.domain import events
 from project.extensions import db
 from project.infrastructure.celery_command_dispatcher import CeleryCommandDispatcher
 from project.infrastructure.celery_event_dispatcher import CeleryEventDispatcher
-from project.infrastructure.services.celery_email_service import CeleryEmailService
-from project.infrastructure.sql_alchemy_unit_of_work import SqlAlchemyUnitOfWork
-from project.service_layer import command_handlers, event_handlers
-from project.service_layer.message_bus import MessageBus
-from project.service_layer.services.webhook_delivery_service import (
-    WebhookDeliveryService,
+from project.infrastructure.command_handler_factory import CommandHandlerFactory
+from project.infrastructure.event_handler_factory import EventHandlerFactory
+from project.infrastructure.read_repositories.sql_alchemy_event_read_repository import (
+    SqlAlchemyEventReadRepository,
 )
+from project.infrastructure.read_repositories.sql_alchemy_webhook_delivery_read_repository import (
+    SqlAlchemyWebhookDeliveryReadRepository,
+)
+from project.infrastructure.services.app_context_provider import AppContextProvider
+from project.infrastructure.services.celery_email_service import CeleryEmailService
+from project.infrastructure.services.flask_babel_localization_service import (
+    FlaskBabelLocalizationService,
+)
+from project.infrastructure.services.flask_template_render_service import (
+    FlaskTemplateRenderService,
+)
+from project.infrastructure.services.flask_url_provider import FlaskUrlProvider
+from project.infrastructure.services.requests_webhook_delivery_sender import (
+    RequestsWebhookDeliverySender,
+)
+from project.infrastructure.sql_alchemy_unit_of_work import SqlAlchemyUnitOfWork
 
 
-def get_app_logger():
+def get_app_logger():  # pragma: no cover
     return current_app.logger
 
 
@@ -26,10 +47,39 @@ class Infrastructure(containers.DeclarativeContainer):
     db = providers.Object(db)  # SQLAlchemy database instance
     session_factory = providers.Callable(lambda: db.session)
     logger = providers.Callable(get_app_logger)
+    localization_service = providers.Singleton(
+        FlaskBabelLocalizationService,
+    )
+    template_render_service = providers.Singleton(
+        FlaskTemplateRenderService,
+    )
+    url_provider = providers.Singleton(
+        FlaskUrlProvider,
+    )
+    webhook_delivery_sender = providers.Singleton(
+        RequestsWebhookDeliverySender,
+        logger=logger,
+    )
 
 
 class Context(containers.DeclarativeContainer):
     context_provider = providers.Singleton(ContextProvider)
+    app_context_provider = providers.Singleton(
+        AppContextProvider, context_provider=context_provider
+    )
+
+
+class ReadRepos(containers.DeclarativeContainer):
+    infrastructure = providers.DependenciesContainer()
+
+    event_read_repo = providers.Factory(
+        SqlAlchemyEventReadRepository,
+        session=infrastructure.session_factory,
+    )
+    webhook_delivery_read_repo = providers.Factory(
+        SqlAlchemyWebhookDeliveryReadRepository,
+        session=infrastructure.session_factory,
+    )
 
 
 class Repos(containers.DeclarativeContainer):
@@ -175,16 +225,26 @@ class Repos(containers.DeclarativeContainer):
 
 class Services(containers.DeclarativeContainer):
     repos = providers.DependenciesContainer()
+    read_repos = providers.DependenciesContainer()
     context = providers.DependenciesContainer()
     config = providers.Configuration()
-    infrastructure = providers.Configuration()
+    infrastructure = providers.DependenciesContainer()
 
     email_service = providers.Factory(
-        CeleryEmailService, default_locale=config.BABEL_DEFAULT_LOCALE
+        CeleryEmailService,
+        default_locale=config.BABEL_DEFAULT_LOCALE,
+        localization_service=infrastructure.localization_service,
+        template_render_service=infrastructure.template_render_service,
     )
     webhook_delivery_service = providers.Factory(
         WebhookDeliveryService,
         logger=infrastructure.logger,
+        webhook_delivery_sender=infrastructure.webhook_delivery_sender,
+        webhook_delivery_read_repo=read_repos.webhook_delivery_read_repo,
+    )
+    organization_application_service = providers.Factory(
+        OrganizationApplicationService,
+        email_service=email_service,
     )
 
     app_service = providers.Factory(
@@ -337,7 +397,6 @@ class Services(containers.DeclarativeContainer):
         event_repo=repos.event_repo,
         event_reference_service=event_reference_service,
         organization_verification_request_service=organization_verification_request_service,
-        email_service=email_service,
     )
     role_service = providers.Factory(
         services.RoleService,
@@ -366,126 +425,163 @@ class Cqrs(containers.DeclarativeContainer):
     infrastructure = providers.DependenciesContainer()
     context = providers.DependenciesContainer()
     services = providers.DependenciesContainer()
+    read_repos = providers.DependenciesContainer()
 
     uow = providers.Factory(
         SqlAlchemyUnitOfWork,
         scoped_session_or_factory=infrastructure.session_factory,
     )
 
-    command_handler_factory = providers.FactoryAggregate(
-        {
-            commands.CreateEventOrganizerCommand: providers.Factory(
-                command_handlers.CreateEventOrganizerHandler
-            ),
-            commands.UpdateEventOrganizerCommand: providers.Factory(
-                command_handlers.UpdateEventOrganizerHandler
-            ),
-            commands.DeleteEventOrganizerCommand: providers.Factory(
-                command_handlers.DeleteEventOrganizerHandler
-            ),
-            commands.CreateEventPlaceCommand: providers.Factory(
-                command_handlers.CreateEventPlaceHandler
-            ),
-            commands.UpdateEventPlaceCommand: providers.Factory(
-                command_handlers.UpdateEventPlaceHandler
-            ),
-            commands.DeleteEventPlaceCommand: providers.Factory(
-                command_handlers.DeleteEventPlaceHandler
-            ),
-            commands.DeleteOldWebhookEventsCommand: providers.Factory(
-                command_handlers.DeleteOldWebhookEventsHandler
-            ),
-            commands.RequestOrganizationDeletionCommand: providers.Factory(
-                command_handlers.RequestOrganizationDeletionHandler
-            ),
-            commands.CancelOrganizationDeletionCommand: providers.Factory(
-                command_handlers.CancelOrganizationDeletionHandler
-            ),
-            commands.CreateAppCommand: providers.Factory(
-                command_handlers.CreateAppHandler
-            ),
-            commands.UpdateAppCommand: providers.Factory(
-                command_handlers.UpdateAppHandler
-            ),
-            commands.UpdateAppInstallationPermissionsCommand: providers.Factory(
-                command_handlers.UpdateAppInstallationPermissionsHandler
-            ),
-            commands.UninstallAppCommand: providers.Factory(
-                command_handlers.UninstallAppHandler
-            ),
-            commands.DeleteAppCommand: providers.Factory(
-                command_handlers.DeleteAppHandler
-            ),
-            commands.InstallAppCommand: providers.Factory(
-                command_handlers.InstallAppHandler
-            ),
-            commands.AttemptToDeliverWebhookCommand: providers.Factory(
-                command_handlers.AttemptToDeliverWebhookHandler,
-                webhook_delivery_service=services.webhook_delivery_service,
-            ),
-        }
+    webhook_mapper_context = providers.Singleton(
+        WebhookMapperContext,
+        url_provider=infrastructure.url_provider,
     )
 
-    event_handler_factory = providers.FactoryAggregate(
-        {
-            events.WebhookDeliveryCreated: providers.List(
-                providers.Factory(
-                    event_handlers.WebhookDeliveryCreatedAttemptEventHandler,
+    command_handler_factory = providers.Singleton(
+        CommandHandlerFactory,
+        factory_aggregate=providers.FactoryAggregate(
+            {
+                commands.CreateEventCommand: providers.Factory(
+                    command_handlers.CreateEventHandler
+                ),
+                commands.UpdateEventCommand: providers.Factory(
+                    command_handlers.UpdateEventHandler
+                ),
+                commands.DeleteEventCommand: providers.Factory(
+                    command_handlers.DeleteEventHandler
+                ),
+                commands.CreateEventOrganizerCommand: providers.Factory(
+                    command_handlers.CreateEventOrganizerHandler
+                ),
+                commands.UpdateEventOrganizerCommand: providers.Factory(
+                    command_handlers.UpdateEventOrganizerHandler
+                ),
+                commands.DeleteEventOrganizerCommand: providers.Factory(
+                    command_handlers.DeleteEventOrganizerHandler
+                ),
+                commands.CreateEventPlaceCommand: providers.Factory(
+                    command_handlers.CreateEventPlaceHandler
+                ),
+                commands.UpdateEventPlaceCommand: providers.Factory(
+                    command_handlers.UpdateEventPlaceHandler
+                ),
+                commands.DeleteEventPlaceCommand: providers.Factory(
+                    command_handlers.DeleteEventPlaceHandler
+                ),
+                commands.DeleteOldWebhookEventsCommand: providers.Factory(
+                    command_handlers.DeleteOldWebhookEventsHandler
+                ),
+                commands.RequestOrganizationDeletionCommand: providers.Factory(
+                    command_handlers.RequestOrganizationDeletionHandler
+                ),
+                commands.CancelOrganizationDeletionCommand: providers.Factory(
+                    command_handlers.CancelOrganizationDeletionHandler
+                ),
+                commands.CreateAppCommand: providers.Factory(
+                    command_handlers.CreateAppHandler
+                ),
+                commands.UpdateAppCommand: providers.Factory(
+                    command_handlers.UpdateAppHandler
+                ),
+                commands.UpdateAppInstallationPermissionsCommand: providers.Factory(
+                    command_handlers.UpdateAppInstallationPermissionsHandler
+                ),
+                commands.UninstallAppCommand: providers.Factory(
+                    command_handlers.UninstallAppHandler
+                ),
+                commands.DeleteAppCommand: providers.Factory(
+                    command_handlers.DeleteAppHandler
+                ),
+                commands.InstallAppCommand: providers.Factory(
+                    command_handlers.InstallAppHandler
+                ),
+                commands.AttemptToDeliverWebhookCommand: providers.Factory(
+                    command_handlers.AttemptToDeliverWebhookHandler,
                     webhook_delivery_service=services.webhook_delivery_service,
                 ),
-            ),
-            events.EventOrganizerCreated: providers.List(
-                providers.Factory(
-                    event_handlers.AppInstallationWebhookEventHandler,
+            }
+        ),
+    )
+
+    event_handler_factory = providers.Singleton(
+        EventHandlerFactory,
+        factory_aggregate=providers.FactoryAggregate(
+            {
+                events.WebhookDeliveryCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.WebhookDeliveryCreatedAttemptEventHandler,
+                        webhook_delivery_service=services.webhook_delivery_service,
+                    ),
                 ),
-            ),
-            events.EventOrganizerUpdated: providers.List(
-                providers.Factory(
-                    event_handlers.AppInstallationWebhookEventHandler,
+                events.EventOrganizerCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.AppInstallationWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
                 ),
-            ),
-            events.EventOrganizerDeleted: providers.List(
-                providers.Factory(
-                    event_handlers.AppInstallationWebhookEventHandler,
+                events.EventOrganizerUpdated: providers.List(
+                    providers.Factory(
+                        event_handlers.AppInstallationWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
                 ),
-            ),
-            events.EventPlaceCreated: providers.List(
-                providers.Factory(
-                    event_handlers.AppInstallationWebhookEventHandler,
+                events.EventOrganizerDeleted: providers.List(
+                    providers.Factory(
+                        event_handlers.AppInstallationWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
                 ),
-            ),
-            events.EventPlaceUpdated: providers.List(
-                providers.Factory(
-                    event_handlers.AppInstallationWebhookEventHandler,
+                events.EventPlaceCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.AppInstallationWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
                 ),
-            ),
-            events.EventPlaceDeleted: providers.List(
-                providers.Factory(
-                    event_handlers.AppInstallationWebhookEventHandler,
+                events.EventPlaceUpdated: providers.List(
+                    providers.Factory(
+                        event_handlers.AppInstallationWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
                 ),
-            ),
-            events.AppInstallationCreated: providers.List(
-                providers.Factory(
-                    event_handlers.AppWebhookEventHandler,
+                events.EventPlaceDeleted: providers.List(
+                    providers.Factory(
+                        event_handlers.AppInstallationWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
                 ),
-            ),
-            events.AppInstallationPermissionsUpdated: providers.List(
-                providers.Factory(
-                    event_handlers.AppWebhookEventHandler,
+                events.AppInstallationCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.AppWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
                 ),
-            ),
-            events.AppUninstalled: providers.List(
-                providers.Factory(
-                    event_handlers.AppWebhookEventHandler,
+                events.AppInstallationPermissionsUpdated: providers.List(
+                    providers.Factory(
+                        event_handlers.AppWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
                 ),
-            ),
-            events.OrganizationDeletionRequested: providers.List(
-                providers.Factory(
-                    event_handlers.OrganizationDeletionRequestedEmailEventHandler,
-                    organization_service=services.organization_service,
-                )
-            ),
-        }
+                events.AppInstallationDeleted: providers.List(
+                    providers.Factory(
+                        event_handlers.AppWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
+                ),
+                events.OrganizationDeletionRequested: providers.List(
+                    providers.Factory(
+                        event_handlers.OrganizationDeletionRequestedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                    )
+                ),
+                events.EventUpdated: providers.List(
+                    providers.Factory(
+                        event_handlers.ReferenceEventChangedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                        event_read_repo=read_repos.event_read_repo,
+                    )
+                ),
+            }
+        ),
     )
 
     event_dispatcher = providers.Factory(CeleryEventDispatcher)
@@ -494,7 +590,7 @@ class Cqrs(containers.DeclarativeContainer):
     message_bus = providers.Factory(
         MessageBus,
         uow_factory=__self__,
-        context_provider=context.context_provider,
+        app_context_provider=context.app_context_provider,
         command_handler_factory=command_handler_factory,
         event_handler_factory=event_handler_factory,
         event_dispatcher=event_dispatcher,
@@ -512,15 +608,22 @@ class Application(containers.DeclarativeContainer):
         Repos,
         infrastructure=infrastructure,
     )
+    read_repos = providers.Container(
+        ReadRepos,
+        infrastructure=infrastructure,
+    )
     services = providers.Container(
         Services,
         repos=repos,
         context=context,
         config=config,
+        read_repos=read_repos,
+        infrastructure=infrastructure,
     )
     cqrs = providers.Container(
         Cqrs,
         infrastructure=infrastructure,
         context=context,
         services=services,
+        read_repos=read_repos,
     )

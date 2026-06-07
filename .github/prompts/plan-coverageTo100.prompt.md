@@ -34,16 +34,16 @@ Drive measured coverage from current 99% to 100% by adding targeted tests only (
 **Relevant files**
 - `/Users/daniel/Projects/eventcally/.coveragerc` — preserve existing omit policy; do not expand omits.
 - `/Users/daniel/Projects/eventcally/.vscode/settings.json` — confirms VS Code pytest coverage args include `--cov=project --cov-append` behavior.
-- `/Users/daniel/Projects/eventcally/project/service_layer/event_handlers/app_webhook_event_handler.py` — largest uncovered handler paths.
-- `/Users/daniel/Projects/eventcally/project/service_layer/command_handlers/attempt_to_deliver_webhook_command_handler.py` — retry/error branches.
-- `/Users/daniel/Projects/eventcally/project/service_layer/event_handlers/webhook_delivery_created_attempt_event_handler.py` — delivery-attempt event branches.
+- `/Users/daniel/Projects/eventcally/project/application/event_handlers/app_webhook_event_handler.py` — largest uncovered handler paths.
+- `/Users/daniel/Projects/eventcally/project/application/command_handlers/attempt_to_deliver_webhook_command_handler.py` — retry/error branches.
+- `/Users/daniel/Projects/eventcally/project/application/event_handlers/webhook_delivery_created_attempt_event_handler.py` — delivery-attempt event branches.
 - `/Users/daniel/Projects/eventcally/project/infrastructure/celery_command_dispatcher.py` — dispatch paths missing tests.
 - `/Users/daniel/Projects/eventcally/project/api/app/resources/app_webhook_delivery_attempt_list_resource.py` — list edge cases (largest API gap).
 - `/Users/daniel/Projects/eventcally/project/api/app/resources/app_webhook_delivery_list_resource.py` — filter/order/list branches.
 - `/Users/daniel/Projects/eventcally/project/api/app/resources/app_webhook_delivery_resource.py` — remaining single branch.
 - `/Users/daniel/Projects/eventcally/project/__init__.py` — minor remaining bootstrap branch.
 - `/Users/daniel/Projects/eventcally/project/container.py` — minor DI branch.
-- `/Users/daniel/Projects/eventcally/tests/service_layer/test_app_installation_webhook_event_handler.py` — primary pattern to mirror for event-handler tests.
+- `/Users/daniel/Projects/eventcally/tests/application/test_app_installation_webhook_event_handler.py` — primary pattern to mirror for event-handler tests.
 - `/Users/daniel/Projects/eventcally/tests/conftest.py` — fixture behavior to reuse for deterministic DB-backed tests.
 
 **Verification**

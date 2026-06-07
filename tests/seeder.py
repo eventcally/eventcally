@@ -1,3 +1,7 @@
+from project.application.commands.create_event_command import CreateEventCommand
+from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
+from project.domain.models.enums.event_public_status import EventPublicStatus
 from tests.utils import UtilActions
 
 
@@ -495,62 +499,60 @@ class Seeder(object):
         custom_category_ids=None,
         **kwargs
     ):
-        from project.models import (
-            CustomEventCategory,
-            Event,
-            EventAttendanceMode,
-            EventOrganizer,
-            EventPublicStatus,
-        )
+        from project.models import CustomEventCategory, EventOrganizer
 
         with self._app.app_context():
             event_category_service = (
                 self._app.container.services.event_category_service()
             )
-            event = Event()
-            event.__dict__.update(kwargs)
-            event.admin_unit_id = admin_unit_id
-            event.categories = [event_category_service.upsert_event_category("Other")]
-            event.name = name
-            event.description = description
-            event.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
-            event.external_link = external_link
-            event.ticket_link = ""
-            event.tags = tags
-            event.internal_tags = internal_tags
-            event.price_info = ""
-            event.attendance_mode = EventAttendanceMode.offline
+
+            command = CreateEventCommand.model_construct()
+            command.__dict__.update(kwargs)
+            command.admin_unit_id = admin_unit_id
+            command.category_ids = [
+                event_category_service.upsert_event_category("Other").id
+            ]
+            command.name = name
+            command.description = description
+            command.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
+            command.external_link = external_link
+            command.ticket_link = ""
+            command.tags = tags
+            command.internal_tags = internal_tags
+            command.price_info = ""
+            command.attendance_mode = EventAttendanceMode.offline
 
             if place_id:
-                event.event_place_id = place_id
+                command.event_place_id = place_id
             else:
-                event.event_place_id = self.upsert_default_event_place(admin_unit_id)
+                command.event_place_id = self.upsert_default_event_place(admin_unit_id)
 
             date_definition = self.create_event_date_definition(
                 start, end, allday, recurrence_rule
             )
-            event.date_definitions = [date_definition]
+            command.date_definitions = [date_definition.to_value_object()]
 
             if planned:
-                event.public_status = EventPublicStatus.planned
+                command.public_status = EventPublicStatus.planned
 
             if draft:
-                event.public_status = EventPublicStatus.draft
+                command.public_status = EventPublicStatus.draft
 
             if co_organizer_ids:
                 co_organizers = EventOrganizer.query.filter(
                     EventOrganizer.id.in_(co_organizer_ids)
                 ).all()
-                event.co_organizers = co_organizers
+                command.co_organizer_ids = [c.id for c in co_organizers]
 
             if custom_category_ids:
                 custom_categories = CustomEventCategory.query.filter(
                     CustomEventCategory.id.in_(custom_category_ids)
                 ).all()
-                event.custom_categories = custom_categories
+                command.custom_category_ids = [c.id for c in custom_categories]
 
-            self._app.container.services.event_service().insert_object(event)
-            event_id = event.id
+            message_bus = self._app.container.cqrs.message_bus()
+            result = message_bus.handle(command)
+            event_id = result.id
         return event_id
 
     def get_one_custom_event_category_set(self) -> tuple[int, int]:
@@ -577,28 +579,29 @@ class Seeder(object):
 
             return date_definition
 
+    def handle_message(self, message):
+        message_bus = self._app.container.cqrs.message_bus()
+        return message_bus.handle(message)
+
     def add_event_date_definition(
         self, event_id, start=None, end=None, allday=False, recurrence_rule=""
     ):
-        from project.models import Event
-
         with self._app.app_context():
-            event = self._db.session.get(Event, event_id)
-
-            date_definition = self.create_event_date_definition(
+            new_date_definition = self.create_event_date_definition(
                 start, end, allday, recurrence_rule
+            ).to_value_object()
+
+            message_bus = self._app.container.cqrs.message_bus()
+            with message_bus.create_uow() as uow:
+                event = uow.events.get(event_id)
+                date_definitions = event.date_definitions
+
+            date_definitions.append(new_date_definition)
+
+            command = UpdateEventCommand.model_construct(
+                id=event_id, date_definitions=date_definitions
             )
-            date_definition.event = event
-            self._db.session.add(date_definition)
-
-            date_definitions = event.date_definitions
-            date_definitions.append(date_definition)
-            event.date_definitions = date_definitions
-            self._app.container.services.event_service().update_object(event)
-
-            date_definition_id = date_definition.id
-
-        return date_definition_id
+            message_bus.handle(command)
 
     def create_event_unverified(self):
         user_id = self.create_user("unverified@test.de")

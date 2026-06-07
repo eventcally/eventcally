@@ -15,12 +15,12 @@ from project.api.schemas import (
     TooManyRequestsResponseSchema,
     UnprocessableEntityResponseSchema,
 )
+from project.application.message_bus import MessageBus
 from project.container import Application
 from project.extensions import csrf, db, limiter
 from project.models.api_key import ApiKey
 from project.models.mixins.rate_limit_provider_mixin import RateLimitProviderMixin
 from project.oauth2_extensions import require_oauth
-from project.service_layer.message_bus import MessageBus
 from project.utils import getattr_keypath, hash_api_key
 
 api_rate_limit_scope = "api"

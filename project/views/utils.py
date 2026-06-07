@@ -118,7 +118,7 @@ def get_current_admin_unit_from_headers():
 
 
 def handleSqlError(e: SQLAlchemyError) -> str:
-    if not e.orig:
+    if not hasattr(e, "orig") or not e.orig:
         return str(e)
 
     prefix = None
@@ -138,7 +138,10 @@ def handleSqlError(e: SQLAlchemyError) -> str:
 def handleBaseError(e: BaseError) -> str:
     message = gettext(e.message)
 
-    if e.cause:
+    if hasattr(e, "cause") and e.cause:
+        if isinstance(e.cause, SQLAlchemyError):
+            return handleSqlError(e.cause)
+
         detail = (
             gettext(e.cause.message) if hasattr(e.cause, "message") else str(e.cause)
         )

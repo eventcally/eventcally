@@ -1,23 +1,20 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from project.domain.commands import (
-    CreateEventOrganizerCommand,
-    DeleteEventOrganizerCommand,
-    UpdateEventOrganizerCommand,
-)
-from project.domain.events import (
-    EventOrganizerCreated,
-    EventOrganizerDeleted,
-    EventOrganizerUpdated,
+from project.domain.models.aggregates.event_organizer_aggregate import (
+    EventOrganizerAggregate,
 )
 from project.extensions import db
 from project.models.association_tables.event_co_organizers_generated import (
     EventCoOrganizersGeneratedMixin,
 )
 from project.models.event_organizer_generated import EventOrganizerGeneratedMixin
+from project.models.image import Image
+from project.models.location import Location
 
 
 class EventOrganizer(db.Model, EventOrganizerGeneratedMixin):
@@ -25,60 +22,54 @@ class EventOrganizer(db.Model, EventOrganizerGeneratedMixin):
         super().__init__(**kwargs)
 
     @classmethod
-    def create(cls, cmd: CreateEventOrganizerCommand) -> EventOrganizer:
-        from project.models import Image, Location
+    def from_aggregate(cls, aggregate: EventOrganizerAggregate) -> EventOrganizer:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
 
-        instance = cls()
+    def fill_from_aggregate(self, aggregate: EventOrganizerAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.admin_unit_id = aggregate.admin_unit_id
+        self.name = aggregate.name
+        self.url = aggregate.url
+        self.email = aggregate.email
+        self.phone = aggregate.phone
+        self.fax = aggregate.fax
 
-        instance.admin_unit_id = cmd.admin_unit_id
-        instance.name = cmd.name
-        instance.url = cmd.url
-        instance.email = cmd.email
-        instance.phone = cmd.phone
-        instance.fax = cmd.fax
+        if aggregate.location:
+            if not self.location:
+                self.location = Location()
+            self.location.fill_from_value_object(aggregate.location)
+        else:
+            self.location = None
 
-        event = EventOrganizerCreated(
-            actor=cmd.actor,
-            id=-1,
-            admin_unit_id=instance.admin_unit_id,
-            name=instance.name,
-            url=instance.url,
-            email=instance.email,
-            phone=instance.phone,
-            fax=instance.fax,
+        if aggregate.logo:
+            if not self.logo:
+                self.logo = Image()
+            self.logo.fill_from_entity(aggregate.logo)
+        else:
+            self.logo = None
+
+    @classmethod
+    def to_aggregate(
+        cls, model: Optional[EventOrganizer]
+    ) -> Optional[EventOrganizerAggregate]:
+        if model is None:  # pragma: no cover
+            return None
+
+        aggregate = EventOrganizerAggregate(
+            id=model.id,
+            admin_unit_id=model.admin_unit_id,
+            name=model.name,
+            url=model.url,
+            email=model.email,
+            phone=model.phone,
+            fax=model.fax,
+            location=model.location.to_value_object() if model.location else None,
+            logo=model.logo.to_entity() if model.logo else None,
         )
 
-        Location.create(cmd.location, instance, event, "location")
-        Image.create(cmd.logo, instance, event, "logo")
-
-        instance.domain_events.append(event)
-        return instance
-
-    def update(self, cmd: UpdateEventOrganizerCommand):
-        from project.models import Image, Location
-
-        event = EventOrganizerUpdated(
-            actor=cmd.actor, id=self.id, admin_unit_id=self.admin_unit_id
-        )
-
-        self._update_field(cmd, event, "name")
-        self._update_field(cmd, event, "url")
-        self._update_field(cmd, event, "email")
-        self._update_field(cmd, event, "phone")
-        self._update_field(cmd, event, "fax")
-
-        Location.update(cmd.location, self, event, "location")
-        Image.update(cmd.logo, self, event, "logo")
-
-        if event.has_changed_values():
-            self.domain_events.append(event)
-
-    def delete(self, cmd: DeleteEventOrganizerCommand):
-        self.domain_events.append(
-            EventOrganizerDeleted(
-                actor=cmd.actor, id=self.id, admin_unit_id=self.admin_unit_id
-            )
-        )
+        return aggregate
 
     @hybrid_property
     def number_of_events(self):

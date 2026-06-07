@@ -1,16 +1,12 @@
 import os
 import pathlib
 from functools import reduce
-from typing import Optional
 
 import requests
 from flask_babel import lazy_gettext
 from flask_sqlalchemy.model import camel_to_snake_case
 from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm.base import NO_CHANGE, object_state
-
-from project.domain import commands, events, types
 
 widget_default_background_color = "#ffffff"
 widget_default_primary_color = "#007bff"
@@ -102,38 +98,6 @@ def make_unique_violation(message: str = None, statement: str = "") -> Integrity
     return make_integrity_error(UNIQUE_VIOLATION, message, statement)
 
 
-def get_pending_changes(
-    instance, include_collections=True, passive=None, include_keys=None
-) -> dict:
-    result = {}
-
-    state = object_state(instance)
-
-    if not state.modified:  # pragma: no cover
-        return result
-
-    dict_ = state.dict
-
-    for attr in state.manager.attributes:
-        if (
-            (include_keys and attr.key not in include_keys)
-            or (not include_collections and hasattr(attr.impl, "get_collection"))
-            or not hasattr(attr.impl, "get_history")
-        ):  # pragma: no cover
-            continue
-
-        (added, unchanged, deleted) = attr.impl.get_history(
-            state, dict_, passive=NO_CHANGE
-        )
-
-        if added or deleted:
-            old_value = deleted[0] if deleted else None
-            new_value = added[0] if added else None
-            result[attr.key] = [new_value, old_value]
-
-    return result
-
-
 def decode_response_content(response: requests.Response) -> str:
     try:
         return response.content.decode("UTF-8")
@@ -197,39 +161,3 @@ def hash_api_key(api_key: str) -> str:
 
 def str_to_bool(str_val: str) -> bool:
     return str_val.lower() in ("true", "t", "yes", "y", "on", "1")
-
-
-def update_field_with_command(
-    obj,
-    command: commands.Command,
-    event: events.Event | None,
-    field_name: str,
-    event_field_name: Optional[str] = None,
-    command_field_name: Optional[str] = None,
-) -> bool:
-    if command_field_name is None:
-        command_field_name = field_name
-
-    new_value = getattr(command, command_field_name)
-    if new_value == types.unset:
-        return False
-
-    old_value = (
-        obj.get(field_name) if isinstance(obj, dict) else getattr(obj, field_name)
-    )
-    if old_value == new_value:
-        return False
-
-    if isinstance(obj, dict):
-        obj[field_name] = new_value
-    else:
-        setattr(obj, field_name, new_value)
-
-    if event is not None:
-        if event_field_name is None:
-            event_field_name = field_name
-
-        changed_value = types.ChangedValue(old=old_value, new=new_value)
-        setattr(event, event_field_name, changed_value)
-
-    return True

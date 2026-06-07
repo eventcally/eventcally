@@ -2,6 +2,8 @@ import base64
 
 import pytest
 
+from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.enums.event_status import EventStatus
 from tests.seeder import Seeder
 from tests.utils import UtilActions
 
@@ -11,12 +13,11 @@ def test_read(client, app, db, seeder: Seeder, utils: UtilActions):
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
-        from project.models import Event, EventStatus
-
-        event = db.session.get(Event, event_id)
-        event.status = EventStatus.scheduled
-
-        app.container.services.event_service().update_object(event)
+        command = UpdateEventCommand.model_construct(
+            id=event_id, status=EventStatus.scheduled
+        )
+        message_bus = app.container.cqrs.message_bus()
+        message_bus.handle(command)
 
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.get_json_ok(url)
@@ -566,7 +567,7 @@ def test_put_dateWithoutTimezone(client, seeder: Seeder, utils: UtilActions, app
 
 
 def test_put_referencedEventUpdate_sendsMail(
-    client, seeder: Seeder, utils: UtilActions, app, mocker
+    client, seeder: Seeder, utils: UtilActions, app
 ):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event_via_api(admin_unit_id)
@@ -577,18 +578,20 @@ def test_put_referencedEventUpdate_sendsMail(
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
     seeder.create_reference(event_id, other_admin_unit_id)
 
-    mail_mock = utils.mock_send_mails_async(mocker)
     url = utils.get_url("api_v1_event", id=event_id)
     put = create_put(place_id, organizer_id)
     put["name"] = "Changed name"
     response = utils.put_json(url, put)
 
     utils.assert_response_no_content(response)
-    utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+    assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
 
 def test_put_referencedEventNonDirtyUpdate_doesNotSendMail(
-    client, seeder: Seeder, utils: UtilActions, app, mocker
+    client, seeder: Seeder, utils: UtilActions, app
 ):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event_via_api(admin_unit_id)
@@ -599,14 +602,41 @@ def test_put_referencedEventNonDirtyUpdate_doesNotSendMail(
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
     seeder.create_reference(event_id, other_admin_unit_id)
 
-    mail_mock = utils.mock_send_mails_async(mocker)
     url = utils.get_url("api_v1_event", id=event_id)
     put = create_put(place_id, organizer_id)
     put["name"] = "Name"
     response = utils.put_json(url, put)
 
     utils.assert_response_no_content(response)
-    mail_mock.assert_not_called()
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+    assert len(app.test_email_service.sent_emails) == 0
+
+
+def test_put_photo_delete(client, db, seeder: Seeder, utils: UtilActions, app):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+    image_id = seeder.upsert_default_image()
+    seeder.assign_image_to_event(event_id, image_id)
+
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    put = create_put(place_id, organizer_id)
+    put["photo"] = None
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.put_json(url, put)
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import Event, Image
+
+        event = db.session.get(Event, event_id)
+        assert event.photo_id is None
+
+        image = db.session.get(Image, image_id)
+        assert image is None
 
 
 def test_patch(client, seeder: Seeder, utils: UtilActions, app, db):
@@ -643,7 +673,7 @@ def test_patch_startAfterEnd(client, seeder: Seeder, utils: UtilActions, app, db
 
 
 def test_patch_referencedEventUpdate_sendsMail(
-    client, seeder: Seeder, utils: UtilActions, app, mocker
+    client, seeder: Seeder, utils: UtilActions, app
 ):
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event_via_api(admin_unit_id)
@@ -652,12 +682,13 @@ def test_patch_referencedEventUpdate_sendsMail(
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
     seeder.create_reference(event_id, other_admin_unit_id)
 
-    mail_mock = utils.mock_send_mails_async(mocker)
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.patch_json(url, {"name": "Changed name"})
 
     utils.assert_response_no_content(response)
-    utils.assert_send_mail_called(mail_mock, "other@test.de")
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+    assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
 
 def test_patch_photo(
@@ -696,15 +727,7 @@ def test_patch_photo_copyright(client, db, seeder: Seeder, utils: UtilActions, a
         url,
         {"photo": {"copyright_text": "Heiner"}},
     )
-    utils.assert_response_no_content(response)
-
-    with app.app_context():
-        from project.models import Event
-
-        event = db.session.get(Event, event_id)
-        assert event.photo.id == image_id
-        assert event.photo.data is not None
-        assert event.photo.copyright_text == "Heiner"
+    utils.assert_response_unprocessable_entity(response)
 
 
 def test_patch_photo_delete(client, db, seeder: Seeder, utils: UtilActions, app):

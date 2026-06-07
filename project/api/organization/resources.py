@@ -19,10 +19,10 @@ from project.api.custom_widget.schemas import (
 )
 from project.api.event.resources import api_can_read_private_events
 from project.api.event.schemas import (
-    EventIdSchema,
+    EventCreateRequestPlainSchema,
+    EventIdPlainSchema,
     EventListRequestSchema,
     EventListResponseSchema,
-    EventPostRequestSchema,
     EventSearchRequestSchema,
     EventSearchResponseSchema,
 )
@@ -78,14 +78,12 @@ from project.api.organizer.schemas import (
     OrganizerIdPlainSchema,
     OrganizerListRequestSchema,
     OrganizerListResponseSchema,
-    OrganizerPostRequestSchema,
 )
 from project.api.place.schemas import (
     PlaceCreateRequestPlainSchema,
     PlaceIdPlainSchema,
     PlaceListRequestSchema,
     PlaceListResponseSchema,
-    PlacePostRequestSchema,
 )
 from project.api.resources import (
     BaseResource,
@@ -220,18 +218,15 @@ class OrganizationEventListResource(BaseResource):
         summary="Add new event",
         tags=["Organizations", "Events"],
     )
-    @use_kwargs(EventPostRequestSchema, location="json", apply=False)
-    @marshal_with(EventIdSchema, 201)
+    @use_kwargs(EventCreateRequestPlainSchema, location="json", apply=False)
+    @marshal_with(EventIdPlainSchema, 201)
     @require_organization_api_access("organization.events:write")
     def post(self, id):
-        admin_unit = g.manage_admin_unit
-
-        event = self.create_instance(
-            EventPostRequestSchema, admin_unit_id=admin_unit.id
+        cmd = EventCreateRequestPlainSchema(context=g.api_command_context).load(
+            request.json
         )
-        self.event_service.insert_object(event)
-
-        return event, 201
+        cmd_result = self.message_bus.handle_command(cmd)
+        return cmd_result, 201
 
 
 class OrganizationListResource(BaseResource):
@@ -281,7 +276,7 @@ class OrganizationOrganizerListResource(BaseResource):
         summary="Add new organizer",
         tags=["Organizations", "Organizers"],
     )
-    @use_kwargs(OrganizerPostRequestSchema, location="json", apply=False)
+    @use_kwargs(OrganizerCreateRequestPlainSchema, location="json", apply=False)
     @marshal_with(OrganizerIdPlainSchema, 201)
     @require_organization_api_access("organization.event_organizers:write")
     def post(self, id):
@@ -310,7 +305,7 @@ class OrganizationPlaceListResource(BaseResource):
         summary="Add new place",
         tags=["Organizations", "Places"],
     )
-    @use_kwargs(PlacePostRequestSchema, location="json", apply=False)
+    @use_kwargs(PlaceCreateRequestPlainSchema, location="json", apply=False)
     @marshal_with(PlaceIdPlainSchema, 201)
     @require_organization_api_access("organization.event_places:write")
     def post(self, id):

@@ -36,14 +36,14 @@ def _create_webhook_delivery(app, db, oauth2_client_id):
         if oauth2_client.webhook is None:
             webhook = Webhook()
             webhook.url = "https://example.test/webhook"
-            webhook.event_types = ["app.installed"]
+            webhook.event_types = ["app_installation.created"]
             session.add(webhook)
             session.flush()
             oauth2_client.webhook = webhook
             session.flush()
 
         webhook_event = WebhookEvent()
-        webhook_event.event_type = "app.installed"
+        webhook_event.event_type = "app_installation.created"
         webhook_event.timestamp = datetime.datetime.now(datetime.timezone.utc)
         webhook_event.payload = {}
         session.add(webhook_event)

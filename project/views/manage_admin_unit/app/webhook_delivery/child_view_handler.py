@@ -24,14 +24,6 @@ class WebhookDeliveryChildViewHandler(AppChildViewHandler):
         ):
             abort(401)
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-        setattr(
-            object,
-            self.webhook_delivery_id_attribute_name,
-            g.current_webhook_delivery.id,
-        )
-
     def apply_base_filter(self, query, **kwargs):
         return (
             super()

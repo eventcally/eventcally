@@ -4,14 +4,11 @@ from markupsafe import Markup
 from wtforms import BooleanField, DecimalField, HiddenField, SelectField, StringField
 from wtforms.validators import DataRequired, Length, Optional
 
-from project.domain.commands import (
-    CreateImage,
-    CreateLocation,
-    UpdateImage,
-    UpdateLocation,
+from project.domain.models.value_objects.image_value_object import ImageValueObject
+from project.domain.models.value_objects.location_value_object import (
+    LocationValueObject,
 )
-from project.domain.commands.create_webhook import CreateWebhook
-from project.domain.commands.update_webhook import UpdateWebhook
+from project.domain.models.value_objects.webhook_value_object import WebhookValueObject
 from project.forms.widgets import CustomDateField, MultiCheckboxField
 from project.imageutils import (
     get_bytes_from_image,
@@ -45,7 +42,7 @@ class LocationFormMixin(object):
 
 class LocationCommandFormMixin(object):
     def create_create_command(self):
-        return CreateLocation(
+        return LocationValueObject(
             street=self.street.data,
             postalCode=self.postalCode.data,
             city=self.city.data,
@@ -55,7 +52,7 @@ class LocationCommandFormMixin(object):
         )
 
     def create_update_command(self):
-        return UpdateLocation(
+        return LocationValueObject(
             street=self.street.data,
             postalCode=self.postalCode.data,
             city=self.city.data,
@@ -169,7 +166,7 @@ class Base64ImageForm(BaseForm):
         if not self.image_base64.image_data:
             return None
 
-        return CreateImage(
+        return ImageValueObject(
             data=self.image_base64.image_data,
             encoding_format=self.image_base64.encoding_format,
             copyright_text=self.copyright_text.data,
@@ -178,7 +175,7 @@ class Base64ImageForm(BaseForm):
 
     def create_update_command(self):
         if self.image_base64.image_data and self.image_base64.encoding_format:
-            return UpdateImage(
+            return ImageValueObject(
                 data=self.image_base64.image_data,
                 encoding_format=self.image_base64.encoding_format,
                 copyright_text=self.copyright_text.data,
@@ -208,7 +205,7 @@ class WebhookForm(BaseForm):
         if not self.url.data:
             return None
 
-        return CreateWebhook(
+        return WebhookValueObject(
             url=self.url.data,
             secret=self.secret.data,
             disabled=self.disabled.data,
@@ -219,7 +216,7 @@ class WebhookForm(BaseForm):
         if not self.url.data:
             return None
 
-        return UpdateWebhook(
+        return WebhookValueObject(
             url=self.url.data,
             secret=self.secret.data,
             disabled=self.disabled.data,

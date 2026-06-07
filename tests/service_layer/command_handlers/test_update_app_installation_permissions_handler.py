@@ -1,4 +1,5 @@
-from project.domain import commands, events
+from project.application import commands
+from project.domain import events
 from project.models import AppInstallation
 
 
@@ -41,4 +42,4 @@ def test_update_app_installation_permissions_command_sets_current_app_permission
         assert event.id == app_installation_id
         assert event.admin_unit_id == admin_unit_id
         assert event.app_id == app_id
-        assert event.permissions == new_permissions
+        assert event.permissions.new == new_permissions

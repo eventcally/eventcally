@@ -240,3 +240,7 @@ class AjaxSelectMultipleField(AjaxSelectField):
     def pre_validate(self, form):
         if self._invalid_formdata:  # pragma: no cover
             raise ValidationError(self.gettext("Not a valid choice"))
+
+    def get_data_ids(self):
+        data = self.data
+        return [c.id for c in data] if data else None

@@ -1,17 +1,12 @@
 from marshmallow import fields, post_load, validate
 
 from project.api import marshmallow
-from project.api.fields import Owned
 from project.api.image.schemas import ImageDumpSchema, ImageSchema
 from project.api.location.schemas import (
-    LocationCreateRequestPlainSchema,
     LocationDumpSchema,
-    LocationPatchRequestPlainSchema,
-    LocationPatchRequestSchema,
-    LocationPostRequestSchema,
-    LocationPutRequestPlainSchema,
     LocationSchema,
     LocationSearchItemSchema,
+    LocationWriteRequestPlainSchema,
 )
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
@@ -25,11 +20,10 @@ from project.api.schemas import (
     TrackableSchemaMixin,
     WriteIdSchemaMixin,
 )
-from project.domain.commands import (
+from project.application.commands import (
     CreateEventOrganizerCommand,
     UpdateEventOrganizerCommand,
 )
-from project.domain.types import unset
 from project.models import EventOrganizer
 
 
@@ -106,22 +100,6 @@ class OrganizerListResponseSchema(PaginationResponseSchema):
     )
 
 
-class OrganizerPostRequestSchema(OrganizerModelSchema, OrganizerBaseSchemaMixin):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.make_post_schema()
-
-    location = Owned(LocationPostRequestSchema)
-
-
-class OrganizerPatchRequestSchema(OrganizerModelSchema, OrganizerBaseSchemaMixin):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.make_patch_schema()
-
-    location = Owned(LocationPatchRequestSchema)
-
-
 class OrganizerCreateRequestPlainSchema(PlainBaseSchema):
     name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
     url = fields.Str(
@@ -132,7 +110,7 @@ class OrganizerCreateRequestPlainSchema(PlainBaseSchema):
     )
     phone = fields.Str(load_default=None, validate=validate.Length(max=255))
     fax = fields.Str(load_default=None, validate=validate.Length(max=255))
-    location = fields.Nested(LocationCreateRequestPlainSchema, load_default=None)
+    location = fields.Nested(LocationWriteRequestPlainSchema, load_default=None)
 
     @post_load
     def make_instance(self, data, **kwargs):
@@ -150,7 +128,7 @@ class OrganizerPutRequestPlainSchema(PlainBaseSchema):
     )
     phone = fields.Str(load_default=None, validate=validate.Length(max=255))
     fax = fields.Str(load_default=None, validate=validate.Length(max=255))
-    location = fields.Nested(LocationPutRequestPlainSchema, load_default=None)
+    location = fields.Nested(LocationWriteRequestPlainSchema, load_default=None)
 
     @post_load
     def make_instance(self, data, **kwargs):
@@ -159,28 +137,18 @@ class OrganizerPutRequestPlainSchema(PlainBaseSchema):
 
 
 class OrganizerPatchRequestPlainSchema(PlainBaseSchema):
-    name = fields.Str(
-        load_default=unset, allow_none=True, validate=validate.Length(min=3, max=255)
-    )
+    name = fields.Str(allow_none=True, validate=validate.Length(min=3, max=255))
     url = fields.Str(
-        load_default=unset,
         allow_none=True,
         validate=[validate.URL(), validate.Length(max=255)],
     )
     email = fields.Str(
-        load_default=unset,
         allow_none=True,
         validate=[validate.Email(), validate.Length(max=255)],
     )
-    phone = fields.Str(
-        load_default=unset, allow_none=True, validate=validate.Length(max=255)
-    )
-    fax = fields.Str(
-        load_default=unset, allow_none=True, validate=validate.Length(max=255)
-    )
-    location = fields.Nested(
-        LocationPatchRequestPlainSchema, load_default=unset, allow_none=True
-    )
+    phone = fields.Str(allow_none=True, validate=validate.Length(max=255))
+    fax = fields.Str(allow_none=True, validate=validate.Length(max=255))
+    location = fields.Nested(LocationWriteRequestPlainSchema, allow_none=True)
 
     @post_load
     def make_instance(self, data, **kwargs):

@@ -1,5 +1,13 @@
 import pytest
 
+from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
+from project.domain.models.enums.event_status import EventStatus
+from project.domain.models.value_objects.event_date_definition_value_object import (
+    EventDateDefinitionValueObject,
+)
+from project.domain.models.value_objects.image_value_object import ImageValueObject
+
 
 def test_get_sd_for_admin_unit(client, app, db, seeder):
     user_id, admin_unit_id = seeder.setup_base()
@@ -105,23 +113,28 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
     with app.app_context():
         from project.dateutils import create_berlin_date
         from project.jsonld import get_sd_for_event_date
-        from project.models import Event, Image
+        from project.models import Event
+
+        date_definition = EventDateDefinitionValueObject(
+            start=create_berlin_date(2030, 12, 31, 14, 30),
+            end=create_berlin_date(2030, 12, 31, 16, 30),
+        )
+        command = UpdateEventCommand.model_construct(
+            id=event_id, date_definitions=[date_definition]
+        )
+        command.previous_start_date = create_berlin_date(2030, 12, 30, 14, 30)
+        command.external_link = "www.goslar.de"
+        command.ticket_link = "www.tickets.de"
+        command.accessible_for_free = True
+
+        photo = ImageValueObject.model_construct()
+        photo.data = b"something"
+        photo.encoding_format = "jpeg"
+        photo.copyright_text = "EventCally"
+        command.photo = photo
+        seeder.handle_message(command)
 
         event = db.session.get(Event, event_id)
-        date_definition = event.date_definitions[0]
-        date_definition.start = create_berlin_date(2030, 12, 31, 14, 30)
-        date_definition.end = create_berlin_date(2030, 12, 31, 16, 30)
-        event.previous_start_date = create_berlin_date(2030, 12, 30, 14, 30)
-        event.external_link = "www.goslar.de"
-        event.ticket_link = "www.tickets.de"
-        event.accessible_for_free = True
-
-        photo = Image()
-        photo.data = b"something"
-        photo.copyright_text = "EventCally"
-        event.photo = photo
-
-        app.container.services.event_service().update_object(event)
         event_date = event.dates[0]
 
         with app.test_request_context():
@@ -134,7 +147,7 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         assert result["url"][0] == utils.get_url("main.event_date", id=event_date.id)
         assert result["url"][1] == "www.goslar.de"
         assert result["url"][2] == "www.tickets.de"
-        assert result["image"] == utils.get_image_url(photo)
+        assert result["image"] == utils.get_image_url(event.photo)
 
 
 def test_get_sd_for_event_date_allday(client, app, db, seeder, utils):
@@ -146,13 +159,17 @@ def test_get_sd_for_event_date_allday(client, app, db, seeder, utils):
         from project.jsonld import get_sd_for_event_date
         from project.models import Event
 
-        event = db.session.get(Event, event_id)
-        date_definition = event.date_definitions[0]
-        date_definition.start = create_berlin_date(2030, 12, 31, 14, 30)
-        date_definition.end = create_berlin_date(2030, 12, 31, 16, 30)
-        date_definition.allday = True
+        date_definition = EventDateDefinitionValueObject(
+            start=create_berlin_date(2030, 12, 31, 14, 30),
+            end=create_berlin_date(2030, 12, 31, 16, 30),
+            allday=True,
+        )
+        command = UpdateEventCommand.model_construct(
+            id=event_id, date_definitions=[date_definition]
+        )
+        seeder.handle_message(command)
 
-        app.container.services.event_service().update_object(event)
+        event = db.session.get(Event, event_id)
         event_date = event.dates[0]
 
         with app.test_request_context():
@@ -191,17 +208,13 @@ def test_get_sd_for_event_date_ageRange(
     client, app, db, seeder, utils, age_from, age_to, typicalAgeRange
 ):
     user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
+    event_id = seeder.create_event(admin_unit_id, age_from=age_from, age_to=age_to)
 
     with app.app_context():
         from project.jsonld import get_sd_for_event_date
         from project.models import Event
 
         event = db.session.get(Event, event_id)
-        event.age_from = age_from
-        event.age_to = age_to
-
-        app.container.services.event_service().update_object(event)
         event_date = event.dates[0]
 
         with app.test_request_context():
@@ -225,13 +238,15 @@ def test_get_sd_for_event_date_eventAttendanceMode(
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
+        command = UpdateEventCommand.model_construct(
+            id=event_id, attendance_mode=EventAttendanceMode(attendance_mode)
+        )
+        seeder.handle_message(command)
+
         from project.jsonld import get_sd_for_event_date
-        from project.models import Event, EventAttendanceMode
+        from project.models import Event
 
         event = db.session.get(Event, event_id)
-        event.attendance_mode = EventAttendanceMode(attendance_mode)
-
-        app.container.services.event_service().update_object(event)
         event_date = event.dates[0]
 
         with app.test_request_context():
@@ -257,13 +272,15 @@ def test_get_sd_for_event_date_eventStatus(
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
+        command = UpdateEventCommand.model_construct(
+            id=event_id, status=EventStatus(status)
+        )
+        seeder.handle_message(command)
+
         from project.jsonld import get_sd_for_event_date
-        from project.models import Event, EventStatus
+        from project.models import Event
 
         event = db.session.get(Event, event_id)
-        event.status = EventStatus(status)
-
-        app.container.services.event_service().update_object(event)
         event_date = event.dates[0]
 
         with app.test_request_context():

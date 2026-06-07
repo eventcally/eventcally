@@ -32,11 +32,6 @@ def pytest_generate_tests(metafunc):
 @pytest.fixture
 def app():
     from project import create_app
-    from project.domain import events
-    from project.service_layer.abstract_event_dispatcher import AbstractEventDispatcher
-    from project.service_layer.services.abstract_email_service import (
-        AbstractEmailService,
-    )
 
     app = create_app(
         {
@@ -61,6 +56,9 @@ def app():
 
     app.testing = True
 
+    from project.application.abstract_event_dispatcher import AbstractEventDispatcher
+    from project.domain import events
+
     class TestEventDispatcher(AbstractEventDispatcher):
         def __init__(self, container):
             super().__init__()
@@ -81,9 +79,15 @@ def app():
     app.test_event_dispatcher = TestEventDispatcher(app.container)
     app.container.cqrs.event_dispatcher.override(app.test_event_dispatcher)
 
+    from project.application.services.abstract_email_service import AbstractEmailService
+
     class TestEmailService(AbstractEmailService):
-        def __init__(self, default_locale):
-            super().__init__(default_locale)
+        def __init__(
+            self, default_locale, localization_service, template_render_service
+        ):
+            super().__init__(
+                default_locale, localization_service, template_render_service
+            )
             self.sent_emails = []
 
         def send_mails_with_signatures_async(self, signatures):
@@ -98,7 +102,13 @@ def app():
                     }
                 )
 
-    app.test_email_service = TestEmailService(default_locale="de")
+    localization_service = app.container.infrastructure.localization_service()
+    template_render_service = app.container.infrastructure.template_render_service()
+    app.test_email_service = TestEmailService(
+        default_locale="de",
+        localization_service=localization_service,
+        template_render_service=template_render_service,
+    )
     app.container.services.email_service.override(app.test_email_service)
 
     yield app

@@ -8,6 +8,11 @@ from flask_security.confirmable import confirm_user
 from sqlalchemy import MetaData, text
 
 from project.api import scope_list
+from project.application.commands.create_event_command import CreateEventCommand
+from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
+from project.domain.models.value_objects.event_date_definition_value_object import (
+    EventDateDefinitionValueObject,
+)
 from project.extensions import db
 from project.init_data import create_initial_data
 from project.models import (
@@ -16,8 +21,6 @@ from project.models import (
     AdminUnitVerificationRequest,
     AdminUnitVerificationRequestReviewStatus,
     Event,
-    EventAttendanceMode,
-    EventDateDefinition,
     EventList,
     EventReference,
     EventReferenceRequest,
@@ -180,7 +183,7 @@ def create_admin_unit(user_email, name, verified):
 
 
 @test_cli.command("admin-unit-member-invitation-create")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 @click.argument("email")
 def create_admin_unit_member_invitation(admin_unit_id, email):
     invitation = insert_admin_unit_member_invitation(admin_unit_id, email, [])
@@ -189,7 +192,7 @@ def create_admin_unit_member_invitation(admin_unit_id, email):
 
 
 @test_cli.command("admin-unit-member-create")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 @click.argument("user_email")
 def create_admin_unit_member(admin_unit_id, user_email):
     user = find_user_by_email(user_email)
@@ -202,29 +205,32 @@ def create_admin_unit_member(admin_unit_id, user_email):
 
 def _create_event(admin_unit_id):
     event_category_service = current_app.container.services.event_category_service()
-    event = Event()
-    event.admin_unit_id = admin_unit_id
-    event.categories = [event_category_service.upsert_event_category("Other")]
-    event.name = "Name"
-    event.description = "Beschreibung"
-    event.event_place_id = _get_default_event_place_id(admin_unit_id)
-    event.organizer_id = _get_default_organizer_id(admin_unit_id)
-    event.ticket_link = ""
-    event.tags = ""
-    event.price_info = ""
-    event.attendance_mode = EventAttendanceMode.offline
 
-    date_definition = EventDateDefinition()
-    date_definition.start = _get_now_by_minute()
-    event.date_definitions = [date_definition]
+    command = CreateEventCommand.model_construct()
+    command.admin_unit_id = admin_unit_id
+    command.category_ids = [event_category_service.upsert_event_category("Other").id]
+    command.name = "Name"
+    command.description = "Beschreibung"
+    command.event_place_id = _get_default_event_place_id(admin_unit_id)
+    command.organizer_id = _get_default_organizer_id(admin_unit_id)
+    command.ticket_link = ""
+    command.tags = ""
+    command.price_info = ""
+    command.attendance_mode = EventAttendanceMode.offline
 
-    current_app.container.services.event_service().insert_object(event)
+    date_definition = EventDateDefinitionValueObject(
+        start=_get_now_by_minute(),
+    )
+    command.date_definitions = [date_definition]
 
-    return event.id
+    message_bus = current_app.container.cqrs.message_bus()
+    result = message_bus.handle(command)
+
+    return result.id
 
 
 @test_cli.command("event-create")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 def create_event(admin_unit_id):
     event_id = _create_event(admin_unit_id)
     result = {"event_id": event_id}
@@ -232,7 +238,7 @@ def create_event(admin_unit_id):
 
 
 @test_cli.command("event-place-create")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 @click.argument("name")
 def create_event_place(admin_unit_id, name):
     event_place = upsert_event_place(admin_unit_id, name)
@@ -242,7 +248,7 @@ def create_event_place(admin_unit_id, name):
 
 
 @test_cli.command("event-organizer-create")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 @click.argument("name")
 def create_event_organizer(admin_unit_id, name):
     event_organizer = upsert_event_organizer(admin_unit_id, name)
@@ -269,7 +275,7 @@ def _insert_default_oauth2_client(user_id):
 
 
 @test_cli.command("oauth2-client-create")
-@click.argument("user_id")
+@click.argument("user_id", type=click.INT)
 def create_oauth2_client(user_id):
     oauth2_client = _insert_default_oauth2_client(user_id)
     result = {
@@ -292,8 +298,8 @@ def _create_reference_request(event_id, admin_unit_id):
 
 
 @test_cli.command("reference-request-create")
-@click.argument("event_id")
-@click.argument("admin_unit_id")
+@click.argument("event_id", type=click.INT)
+@click.argument("admin_unit_id", type=click.INT)
 def create_reference_request(event_id, admin_unit_id):
     reference_request_id = _create_reference_request(event_id, admin_unit_id)
     result = {"reference_request_id": reference_request_id}
@@ -309,7 +315,7 @@ def _create_incoming_reference_request(admin_unit_id):
 
 
 @test_cli.command("reference-request-create-incoming")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 def create_incoming_reference_request(admin_unit_id):
     (
         other_user_id,
@@ -353,7 +359,7 @@ def _create_incoming_admin_unit_verification_request(admin_unit_id):
 
 
 @test_cli.command("verification-request-create-incoming")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 def create_incoming_admin_unit_verification_request(admin_unit_id):
     (
         other_user_id,
@@ -386,7 +392,7 @@ def _create_incoming_reference(admin_unit_id):
 
 
 @test_cli.command("reference-create-incoming")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 def create_incoming_request(admin_unit_id):
     (
         other_user_id,
@@ -424,7 +430,7 @@ def _create_any_admin_unit_relation(admin_unit_id):
 
 
 @test_cli.command("admin-unit-relation-create")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 def create_admin_unit_relation(admin_unit_id):
     (
         other_user_id,
@@ -454,7 +460,7 @@ def _create_admin_unit_invitation(
 
 
 @test_cli.command("admin-unit-organization-invitation-create")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 @click.argument("email")
 def create_admin_unit_organization_invitation(admin_unit_id, email):
     invitation_id = _create_admin_unit_invitation(admin_unit_id, email)
@@ -489,7 +495,7 @@ def _create_event_list(admin_unit_id, event_ids=list(), name="My list"):
 
 
 @test_cli.command("event-list-create")
-@click.argument("admin_unit_id")
+@click.argument("admin_unit_id", type=click.INT)
 def create_event_list(admin_unit_id):
     event_list_id = _create_event_list(admin_unit_id)
     result = {

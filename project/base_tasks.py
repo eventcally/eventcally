@@ -3,13 +3,14 @@ import importlib
 from flask import current_app
 
 from project.celery_init import celery, force_locale
-from project.views.utils import send_mails_with_body
 
 
 @celery.task(
     priority=0,
 )
 def send_mail_with_body_task(recipient, subject, body, html):
+    from project.views.utils import send_mails_with_body
+
     with force_locale():
         send_mails_with_body([recipient], subject, body, html)
 

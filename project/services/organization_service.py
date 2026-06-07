@@ -1,6 +1,5 @@
 from typing import Optional
 
-from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.models import AdminUnit
 from project.models.admin_unit import AdminUnitRelation
 from project.models.admin_unit_verification_request import (
@@ -14,7 +13,6 @@ from project.models.event_reference_request import (
 )
 from project.repos.event_repo import EventRepo
 from project.repos.organization_relation_repo import OrganizationRelationRepo
-from project.service_layer.services.abstract_email_service import AbstractEmailService
 from project.services import EventReferenceRequestService, EventReferenceService
 from project.services.base_service import BaseService
 from project.services.organization_verification_request_service import (
@@ -33,7 +31,6 @@ class OrganizationService(BaseService[AdminUnit]):
         event_repo: EventRepo,
         event_reference_service: EventReferenceService,
         organization_verification_request_service: OrganizationVerificationRequestService,
-        email_service: AbstractEmailService,
         **kwargs
     ):
         super().__init__(repo, context_provider, **kwargs)
@@ -44,7 +41,6 @@ class OrganizationService(BaseService[AdminUnit]):
         self.organization_verification_request_service = (
             organization_verification_request_service
         )
-        self.email_service = email_service
 
     def verify_incoming_organization_verification_request(
         self,
@@ -142,15 +138,4 @@ class OrganizationService(BaseService[AdminUnit]):
             "incoming_event_reference_requests:write",
             "reference_auto_verified_notice",
             reference=reference,
-        )
-
-    def send_template_mails_to_members_async(
-        self, uow: AbstractUnitOfWork, admin_unit_id, permissions, template, **context
-    ):
-        members = uow.organizations.get_members_with_permission(
-            admin_unit_id, permissions
-        )
-        users = [member.user for member in members]
-        self.email_service.send_template_mails_to_users_async(
-            users, template, **context
         )

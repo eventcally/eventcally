@@ -3,19 +3,12 @@ from __future__ import annotations
 from sqlalchemy import func, select
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from project.domain.commands import (
-    CreateEventPlaceCommand,
-    DeleteEventPlaceCommand,
-    UpdateEventPlaceCommand,
-)
-from project.domain.events import (
-    EventPlaceCreated,
-    EventPlaceDeleted,
-    EventPlaceUpdated,
-)
+from project.domain.models.aggregates.event_place_aggregate import EventPlaceAggregate
 from project.extensions import db
 from project.models.event import Event
 from project.models.event_place_generated import EventPlaceGeneratedMixin
+from project.models.image import Image
+from project.models.location import Location
 
 
 class EventPlace(db.Model, EventPlaceGeneratedMixin):
@@ -23,54 +16,50 @@ class EventPlace(db.Model, EventPlaceGeneratedMixin):
         super().__init__(**kwargs)
 
     @classmethod
-    def create(cls, cmd: CreateEventPlaceCommand) -> EventPlace:
-        from project.models import Image, Location
+    def from_aggregate(cls, aggregate: EventPlaceAggregate) -> EventPlace:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
 
-        instance = cls()
+    def fill_from_aggregate(self, aggregate: EventPlaceAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.admin_unit_id = aggregate.admin_unit_id
+        self.name = aggregate.name
+        self.url = aggregate.url
+        self.description = aggregate.description
 
-        instance.admin_unit_id = cmd.admin_unit_id
-        instance.name = cmd.name
-        instance.url = cmd.url
-        instance.description = cmd.description
+        if aggregate.location:
+            if not self.location:
+                self.location = Location()
+            self.location.fill_from_value_object(aggregate.location)
+        else:
+            self.location = None
 
-        event = EventPlaceCreated(
-            actor=cmd.actor,
-            id=-1,
-            admin_unit_id=instance.admin_unit_id,
-            name=instance.name,
-            url=instance.url,
-            description=instance.description,
+        if aggregate.photo:
+            if not self.photo:
+                self.photo = Image()
+            self.photo.fill_from_entity(aggregate.photo)
+        else:
+            self.photo = None
+
+        return self
+
+    @classmethod
+    def to_aggregate(cls, model: EventPlace) -> EventPlaceAggregate:
+        if model is None:  # pragma: no cover
+            return None
+
+        aggregate = EventPlaceAggregate(
+            id=model.id,
+            admin_unit_id=model.admin_unit_id,
+            name=model.name,
+            url=model.url,
+            description=model.description,
+            location=model.location.to_value_object() if model.location else None,
+            photo=model.photo.to_entity() if model.photo else None,
         )
 
-        Location.create(cmd.location, instance, event, "location")
-        Image.create(cmd.photo, instance, event, "photo")
-
-        instance.domain_events.append(event)
-        return instance
-
-    def update(self, cmd: UpdateEventPlaceCommand):
-        from project.models import Image, Location
-
-        event = EventPlaceUpdated(
-            actor=cmd.actor, id=self.id, admin_unit_id=self.admin_unit_id
-        )
-
-        self._update_field(cmd, event, "name")
-        self._update_field(cmd, event, "url")
-        self._update_field(cmd, event, "description")
-
-        Location.update(cmd.location, self, event, "location")
-        Image.update(cmd.photo, self, event, "photo")
-
-        if event.has_changed_values():
-            self.domain_events.append(event)
-
-    def delete(self, cmd: DeleteEventPlaceCommand):
-        self.domain_events.append(
-            EventPlaceDeleted(
-                actor=cmd.actor, id=self.id, admin_unit_id=self.admin_unit_id
-            )
-        )
+        return aggregate
 
     @hybrid_property
     def number_of_events(self):

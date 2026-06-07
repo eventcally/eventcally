@@ -260,6 +260,7 @@ class UtilActions(object):
 
         now = create_berlin_date(year, month, day)
         mocker.patch("project.dateutils.get_now", return_value=now)
+        mocker.patch("project.domain.dateutils.get_now", return_value=now)
 
     def get_url(self, endpoint, **values):
         with self._app.test_request_context():
