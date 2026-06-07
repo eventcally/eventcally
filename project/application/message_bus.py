@@ -89,9 +89,12 @@ class MessageBus:
         self._set_missing_command_fields(command)
 
         try:
-            command.model_validate(command.model_dump())
-            handler = self.command_handler_factory(type(command))
-            result = handler.handle(command, uow)
+            command_type = type(command)
+            validated_command = command_type.model_validate(
+                command.model_dump(round_trip=True), strict=True
+            )
+            handler = self.command_handler_factory(command_type)
+            result = handler.handle(validated_command, uow)
             return result
         except Exception:
             logger.exception("Exception handling command %s", command)
