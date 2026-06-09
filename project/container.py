@@ -513,6 +513,24 @@ class Cqrs(containers.DeclarativeContainer):
                         webhook_delivery_service=services.webhook_delivery_service,
                     ),
                 ),
+                events.EventCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.AppInstallationWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
+                ),
+                events.EventUpdated: providers.List(
+                    providers.Factory(
+                        event_handlers.AppInstallationWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
+                ),
+                events.EventDeleted: providers.List(
+                    providers.Factory(
+                        event_handlers.AppInstallationWebhookEventHandler,
+                        mapper_context=webhook_mapper_context,
+                    ),
+                ),
                 events.EventOrganizerCreated: providers.List(
                     providers.Factory(
                         event_handlers.AppInstallationWebhookEventHandler,

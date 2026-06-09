@@ -8,6 +8,30 @@ from project.application.webhooks.app_installation_webhooks.app_installation_web
 app_installation_webhook_infos: list[AppInstallationWebhookInfo] = list()
 app_installation_webhook_infos.append(
     AppInstallationWebhookInfo(
+        entity="event",
+        action="created",
+        permissions=["events:read"],
+        payload_cls=payloads.EventCreatedPayload,
+    )
+)
+app_installation_webhook_infos.append(
+    AppInstallationWebhookInfo(
+        entity="event",
+        action="updated",
+        permissions=["events:read"],
+        payload_cls=payloads.EventUpdatedPayload,
+    )
+)
+app_installation_webhook_infos.append(
+    AppInstallationWebhookInfo(
+        entity="event",
+        action="deleted",
+        permissions=["events:read"],
+        payload_cls=payloads.EventDeletedPayload,
+    )
+)
+app_installation_webhook_infos.append(
+    AppInstallationWebhookInfo(
         entity="event_organizer",
         action="created",
         permissions=["event_organizers:read"],

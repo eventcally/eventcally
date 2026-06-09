@@ -1,5 +1,6 @@
 """Unit tests for AppInstallationWebhookEventHandler."""
 
+import datetime
 from unittest.mock import MagicMock
 
 from project.application.event_handlers.app_installation_webhook_event_handler import (
@@ -7,6 +8,12 @@ from project.application.event_handlers.app_installation_webhook_event_handler i
 )
 from project.domain import events
 from project.domain.models.entities.actor import Actor
+from project.domain.models.entities.event_date_entity import EventDateEntity
+from project.domain.models.enums.event_status import EventStatus
+from project.domain.models.value_objects.event_date_definition_value_object import (
+    EventDateDefinitionValueObject,
+)
+from project.domain.types.changed_value import ChangedValue
 
 # ---------------------------------------------------------------------------
 # Helpers — fake installation with oauth2_client attributes
@@ -124,6 +131,81 @@ class TestAppInstallationWebhookEventHandler:
         uow.organization_app_installations._webhook_installations = [installation]
 
         ev = events.EventPlaceDeleted(actor=Actor(), id=1, admin_unit_id=2)
+        self._handler().handle(ev, uow)
+
+        assert len(uow.webhook_events._store) == 1
+
+    def test_event_created_event_type(self, uow):
+        installation = _FakeInstallation()
+        uow.organization_app_installations._webhook_installations = [installation]
+
+        ev = events.EventCreated(
+            actor=Actor(),
+            id=1,
+            admin_unit_id=2,
+            name="Event",
+            organizer_id=3,
+            event_place_id=4,
+            date_definitions=[],
+            dates=[],
+        )
+        self._handler().handle(ev, uow)
+
+        assert len(uow.webhook_events._store) == 1
+
+    def test_event_updated_event_type(self, uow):
+        installation = _FakeInstallation()
+        uow.organization_app_installations._webhook_installations = [installation]
+
+        ev = events.EventUpdated(
+            actor=Actor(),
+            id=1,
+            admin_unit_id=2,
+            status=ChangedValue(old=EventStatus.scheduled, new=EventStatus.postponed),
+            date_definitions=ChangedValue(
+                old=[
+                    EventDateDefinitionValueObject(
+                        start=datetime.datetime(2024, 1, 1, 10, 0),
+                        end=datetime.datetime(2024, 1, 1, 12, 0),
+                    )
+                ],
+                new=[
+                    EventDateDefinitionValueObject(
+                        start=datetime.datetime(2024, 1, 1, 10, 0),
+                        end=datetime.datetime(2024, 1, 1, 12, 0),
+                    )
+                ],
+            ),
+            dates=ChangedValue(
+                old=[
+                    EventDateEntity(
+                        id=1,
+                        start=datetime.datetime(2024, 1, 1, 10, 0),
+                        end=datetime.datetime(2024, 1, 1, 12, 0),
+                    )
+                ],
+                new=[
+                    EventDateEntity(
+                        id=2,
+                        start=datetime.datetime(2024, 1, 1, 10, 0),
+                        end=datetime.datetime(2024, 1, 1, 12, 0),
+                    )
+                ],
+            ),
+        )
+        self._handler().handle(ev, uow)
+
+        assert len(uow.webhook_events._store) == 1
+
+    def test_event_deleted_event_type(self, uow):
+        installation = _FakeInstallation()
+        uow.organization_app_installations._webhook_installations = [installation]
+
+        ev = events.EventDeleted(
+            actor=Actor(),
+            id=1,
+            admin_unit_id=2,
+        )
         self._handler().handle(ev, uow)
 
         assert len(uow.webhook_events._store) == 1

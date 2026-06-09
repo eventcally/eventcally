@@ -16,5 +16,5 @@ class EventHandlerFactory(AbstractEventHandlerFactory):
     def __call__(self, event_type: type[events.Event]) -> list[AbstractEventHandler]:
         try:
             return self.factory_aggregate(event_type)
-        except NoSuchProviderError:
+        except NoSuchProviderError:  # pragma: no cover
             return []

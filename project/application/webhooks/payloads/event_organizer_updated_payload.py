@@ -13,6 +13,9 @@ from project.application.webhooks.payloads.nested.payload_location import (
 from project.application.webhooks.payloads.webhook_payload_base import (
     WebhookPayloadBase,
 )
+from project.application.webhooks.payloads.webhook_value_mapping import (
+    map_changed_value,
+)
 from project.domain import events
 from project.domain.types import ChangedValue
 from project.domain.types.optional_changed_value_field_factory import (
@@ -44,6 +47,10 @@ class EventOrganizerUpdatedPayload(WebhookPayloadBase):
             email=e.email,
             phone=e.phone,
             fax=e.fax,
-            location=PayloadLocation.from_event(e.location, ctx),
-            logo=PayloadImage.from_event(e.logo, ctx),
+            location=map_changed_value(
+                e.location, lambda loc: PayloadLocation.from_event(loc, ctx)
+            ),
+            logo=map_changed_value(
+                e.logo, lambda img: PayloadImage.from_event(img, ctx)
+            ),
         )

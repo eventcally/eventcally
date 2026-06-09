@@ -6,6 +6,7 @@ from .app_installation_permissions_updated import AppInstallationPermissionsUpda
 from .app_updated import AppUpdated
 from .base import Event
 from .event_created import EventCreated
+from .event_deleted import EventDeleted
 from .event_organizer_created import EventOrganizerCreated
 from .event_organizer_deleted import EventOrganizerDeleted
 from .event_organizer_updated import EventOrganizerUpdated
@@ -20,6 +21,7 @@ from .webhook_delivery_created import WebhookDeliveryCreated
 __all__ = [
     "Event",
     "EventCreated",
+    "EventDeleted",
     "EventOrganizerCreated",
     "EventOrganizerDeleted",
     "EventOrganizerUpdated",
