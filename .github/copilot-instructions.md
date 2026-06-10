@@ -1,173 +1,62 @@
-# EventCally - Workspace Instructions
+# EventCally Agent Instructions
 
-Open event calendar platform built with Flask, SQLAlchemy, and Domain-Driven Design.
+EventCally is a Flask + SQLAlchemy event calendar platform using Domain-Driven Design patterns.
 
-## Architecture
+## Agent Quickstart
 
-EventCally follows **Domain-Driven Design** with clear layer separation:
+- Install dependencies: `pip install -r requirements.txt`
+- Run app locally: `./runlocal.sh`
+- Run unit tests: `pytest`
+- Run coverage tests: `pytest --cov-report=html --cov=project`
+- Run parallel test script: `./runpytest.sh`
+- Run e2e tests: `npm install && ./runcypress.sh`
+- Run lint/format checks before commit: `pre-commit run --all-files`
 
-- `project/domain/` - Domain logic, abstract repositories, commands, events
-- `project/infrastructure/` - Concrete implementations (SQLAlchemy repositories, Celery dispatchers)
-- `project/application/` - Command/event handlers, message bus orchestration
-- `project/models/` - SQLAlchemy models (many auto-generated)
-- `project/repos/` - Repository implementations
-- `project/api/` - REST API endpoints
-- `project/views/` - Web UI views
+For full environment setup, use [doc/development.md](../doc/development.md).
 
-Key architectural patterns:
-- **Command Pattern**: Actions are modeled as command objects dispatched through message bus
-- **Event-Driven**: Domain events trigger side effects via event handlers
-- **Repository Pattern**: Data access abstracted via interfaces in `domain/`, implemented in `infrastructure/`
-- **Unit of Work**: Transaction management via `SqlAlchemyUnitOfWork`
-- **Dependency Injection**: Centralized container in [`project/container.py`](../project/container.py)
+## Architecture Guardrails
 
-## Code Generation
+Respect strict DDD layering:
 
-**CRITICAL**: Files ending in `*_generated.py` are auto-generated from YAML schemas in [`codegen/config/`](../codegen/config/).
+- `project/domain/`: core business logic and abstract interfaces
+- `project/application/`: commands, handlers, message bus orchestration
+- `project/infrastructure/`: concrete adapters (SQLAlchemy, Celery, external services)
 
-- **Never manually edit** `*_generated.py` files
-- To modify models, edit the YAML schema and regenerate: `python codegen/generate.py`
-- Generated files are mixins extended by hand-written models
-- Linting rules ignore generated files (F401, E303, W391)
+The layering rule is enforced by [.importlinter](../.importlinter). Avoid introducing imports that violate these boundaries.
 
-Example: `project/models/event_generated.py` (generated) → extended by `project/models/event.py` (handwritten)
+Primary integration points:
 
-## Code Style
+- DI container: [project/container.py](../project/container.py)
+- Message bus: [project/application/message_bus.py](../project/application/message_bus.py)
+- API wiring: [project/api/__init__.py](../project/api/__init__.py)
 
-Enforced via pre-commit hooks:
+## Generated Code Rules
 
-- **black**: Auto-formatting (profile: black)
-- **isort**: Import sorting (multi_line_output=3, profile=black)
-- **flake8**: Linting with extensions (E501, E203, E711 ignored)
+- Never edit `*_generated.py` files directly.
+- Update YAML model schemas under [codegen/config/](../codegen/config/) and regenerate with `python codegen/generate.py`.
+- Put custom model logic in handwritten extensions (for example `event.py` extending `event_generated.py`).
 
-Config files: [`.flake8`](../.flake8), [`.isort.cfg`](../.isort.cfg), [`.pre-commit-config.yaml`](../.pre-commit-config.yaml)
+## Database, Migrations, and PostGIS
 
-**Run before committing**: `pre-commit run --all-files`
+- Use Postgres with PostGIS extension in both dev and test databases.
+- After model changes: `flask db migrate`, then review migration, then `flask db upgrade`.
+- Be careful with PostGIS-related migration diffs; they sometimes need manual correction.
 
-## Build and Test
+## Testing Conventions
 
-### Local Development
+- Prefer existing fixtures and app context setup from [tests/conftest.py](../tests/conftest.py).
+- Keep tests aligned with source structure (application/api/infrastructure/domain).
+- For command/event flows, assert behavior through the message bus and repository interfaces instead of bypassing architecture.
 
-```bash
-# Install dependencies
-python3 -m venv env
-source env/bin/activate
-pip install -r requirements.txt
+## Common Pitfalls
 
-# Database setup
-psql -c 'create database eventcally;' -U postgres
-psql -c 'create extension postgis;' -d eventcally -U postgres
-flask db upgrade
+- New Celery tasks must be imported/registered in [project/celery_tasks.py](../project/celery_tasks.py).
+- Deferred SQLAlchemy columns may require explicit `undefer()` in query options.
+- Avoid editing generated files or relying on behavior that codegen overwrites.
+- Commands are defined in [project/application/commands/](../project/application/commands/), not in a domain commands package.
 
-# Run locally
-./runlocal.sh
-```
+## Canonical References
 
-### Testing
-
-```bash
-# Create test database (one-time)
-psql -c 'create database eventcally_tests;' -U postgres
-psql -c 'create extension postgis;' -d eventcally_tests -U postgres
-
-# Run unit tests
-pytest
-
-# With coverage
-pytest --cov-report=html --cov=project
-
-# E2E tests
-npm install
-./runcypress.sh
-```
-
-See [doc/development.md](../doc/development.md) for full setup.
-
-## Dependency Injection
-
-Services and repositories injected via [`project/container.py`](../project/container.py):
-
-- Container organized into: `Infrastructure`, `Context`, `Repos`, `Services`, `MessageBus`
-- Access via `current_app.container.repos.event_repo()` or inject into handlers
-- Repositories follow Abstract (domain) → Concrete (infrastructure) pattern
-
-## Database Migrations
-
-```bash
-# Create migration after model changes
-flask db migrate
-
-# Apply migrations
-flask db upgrade
-```
-
-**Always review** generated migrations before committing.
-
-## Internationalization
-
-Babel-based i18n workflow (supported: `en`, `de`):
-
-```bash
-# Extract translatable strings
-.scripts/translations/extract.sh
-
-# Add new locale
-.scripts/translations/add_locale.sh <locale>
-
-# Compile translations
-.scripts/translations/compile.sh
-```
-
-## Celery Tasks
-
-Asynchronous tasks via Celery:
-
-- Task definitions: [`project/celery_tasks.py`](project/celery_tasks.py)
-- Command dispatching: `CeleryCommandDispatcher` for async command execution
-- Run worker: `celery -A project.celery worker --loglevel=debug`
-
-## Common Patterns
-
-### Adding a New Feature (DDD Style)
-
-1. **Define command** in `project/application/commands/` (inherit from `Command` or `CommandWithResult`)
-2. **Create handler** in `project/application/command_handlers/`
-3. **Register handler** in message bus (`project/application/message_bus.py`)
-4. **Add to container** if new repository/service needed (`project/container.py`)
-5. **Wire up API/view** to dispatch command via message bus
-
-### Repository Pattern
-
-```python
-# Abstract (domain layer)
-class AbstractEventRepository(abc.ABC):
-    @abc.abstractmethod
-    def find_by_id(self, id: int) -> Event:
-        pass
-
-# Concrete (infrastructure layer)
-class SqlAlchemyEventRepository(AbstractEventRepository):
-    def find_by_id(self, id: int) -> Event:
-        return self.db.session.get(Event, id)
-```
-
-### Testing Conventions
-
-- Test files mirror source structure: `tests/application/`, `tests/api/`
-- Use fixtures from [`tests/conftest.py`](../tests/conftest.py)
-- Database rollback per test via `base_test.py`
-- Mock external services (email, geocoding)
-
-## Gotchas
-
-- **Generated files**: Modifications will be overwritten on next codegen run
-- **Celery tasks**: Must be imported in [`project/celery_tasks.py`](../project/celery_tasks.py) to be discovered
-- **Migrations**: PostGIS schema migrations sometimes need manual tweaks
-- **Import order**: Domain → Service Layer → Infrastructure (avoid circular imports)
-- **Deferred columns**: Some large columns use `deferred=True`, load explicitly with `.options(undefer())`
-
-## Additional Documentation
-
-- Deployment: [doc/deployment.md](../doc/deployment.md)
-- Development setup: [doc/development.md](../doc/development.md)
-- Project README: [README.md](../README.md)
+- Development guide: [doc/development.md](../doc/development.md)
+- Deployment guide: [doc/deployment.md](../doc/deployment.md)
+- Project overview: [README.md](../README.md)

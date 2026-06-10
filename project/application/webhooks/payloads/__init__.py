@@ -14,6 +14,12 @@ from project.application.webhooks.payloads.app_installation_deleted_payload impo
 from project.application.webhooks.payloads.app_installation_permissions_updated_payload import (
     AppInstallationPermissionsUpdatedPayload,
 )
+from project.application.webhooks.payloads.event_created_payload import (
+    EventCreatedPayload,
+)
+from project.application.webhooks.payloads.event_deleted_payload import (
+    EventDeletedPayload,
+)
 from project.application.webhooks.payloads.event_organizer_created_payload import (
     EventOrganizerCreatedPayload,
 )
@@ -32,6 +38,9 @@ from project.application.webhooks.payloads.event_place_deleted_payload import (
 from project.application.webhooks.payloads.event_place_updated_payload import (
     EventPlaceUpdatedPayload,
 )
+from project.application.webhooks.payloads.event_updated_payload import (
+    EventUpdatedPayload,
+)
 from project.application.webhooks.payloads.nested import (
     PayloadActor,
     PayloadImage,
@@ -46,6 +55,9 @@ __all__ = [
     "PayloadActor",
     "PayloadLocation",
     "PayloadImage",
+    "EventCreatedPayload",
+    "EventUpdatedPayload",
+    "EventDeletedPayload",
     "EventOrganizerCreatedPayload",
     "EventOrganizerUpdatedPayload",
     "EventOrganizerDeletedPayload",

@@ -17,6 +17,9 @@ from project.domain.models.entities.actor import Actor
 from .abstract_event_handler import AbstractEventHandler
 
 _EVENT_WEBHOOK_EVENT_TYPE: dict[type, str] = {
+    events.EventCreated: "event.created",
+    events.EventUpdated: "event.updated",
+    events.EventDeleted: "event.deleted",
     events.EventOrganizerCreated: "event_organizer.created",
     events.EventOrganizerUpdated: "event_organizer.updated",
     events.EventOrganizerDeleted: "event_organizer.deleted",
