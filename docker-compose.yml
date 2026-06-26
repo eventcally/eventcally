@@ -30,7 +30,7 @@ services:
       - POSTGRES_PASSWORD=pass
 
   redis:
-    image: bitnami/redis:6.2
+    image: soldevelo/redis:6.2
     healthcheck:
       test: "redis-cli -a 'pass' ping | grep PONG"
       start_period: "5s"
@@ -39,7 +39,7 @@ services:
       REDIS_PASSWORD: pass
 
   limiter_redis:
-    image: bitnami/redis:6.2
+    image: soldevelo/redis:6.2
     healthcheck:
       test: "redis-cli -a 'pass' ping | grep PONG"
       start_period: "5s"

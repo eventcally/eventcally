@@ -82,7 +82,7 @@ services:
         condition: service_healthy
 
   redis:
-    image: bitnami/redis:6.2
+    image: soldevelo/redis:6.2
     restart: always
     healthcheck:
       test: "redis-cli -a '${REDIS_PASSWORD}' ping | grep PONG"
@@ -94,7 +94,7 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
 
   limiter_redis:
-    image: bitnami/redis:6.2
+    image: soldevelo/redis:6.2
     restart: always
     healthcheck:
       test: "redis-cli -a '${LIMITER_REDIS_PASSWORD}' ping | grep PONG"
