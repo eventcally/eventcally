@@ -409,7 +409,6 @@ class Seeder(object):
     def authorize_api_access_with_client(
         self, oauth2_client_id, user_id, admin_unit_id, authorize_scope=None
     ):
-
         with self._app.app_context():
             from project.models import OAuth2Client
             from project.services.user import get_user
@@ -509,9 +508,9 @@ class Seeder(object):
             command = CreateEventCommand.model_construct()
             command.__dict__.update(kwargs)
             command.admin_unit_id = admin_unit_id
-            command.category_ids = [
+            command.category_ids = {
                 event_category_service.upsert_event_category("Other").id
-            ]
+            }
             command.name = name
             command.description = description
             command.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
@@ -542,13 +541,13 @@ class Seeder(object):
                 co_organizers = EventOrganizer.query.filter(
                     EventOrganizer.id.in_(co_organizer_ids)
                 ).all()
-                command.co_organizer_ids = [c.id for c in co_organizers]
+                command.co_organizer_ids = {c.id for c in co_organizers}
 
             if custom_category_ids:
                 custom_categories = CustomEventCategory.query.filter(
                     CustomEventCategory.id.in_(custom_category_ids)
                 ).all()
-                command.custom_category_ids = [c.id for c in custom_categories]
+                command.custom_category_ids = {c.id for c in custom_categories}
 
             message_bus = self._app.container.cqrs.message_bus()
             result = message_bus.handle(command)
@@ -592,9 +591,9 @@ class Seeder(object):
             ).to_value_object()
 
             message_bus = self._app.container.cqrs.message_bus()
-            with message_bus.create_uow() as uow:
-                event = uow.events.get(event_id)
-                date_definitions = event.date_definitions
+            uow = message_bus.create_uow()
+            event = uow.events.get(event_id)
+            date_definitions = event.date_definitions
 
             date_definitions.append(new_date_definition)
 

@@ -115,7 +115,8 @@ class OrganizerCreateRequestPlainSchema(PlainBaseSchema):
     @post_load
     def make_instance(self, data, **kwargs):
         data["admin_unit_id"] = self.context.get("admin_unit_id")
-        return CreateEventOrganizerCommand.model_construct(**data)
+        data["actor"] = self.context.get("actor")
+        return CreateEventOrganizerCommand(**data)
 
 
 class OrganizerPutRequestPlainSchema(PlainBaseSchema):
@@ -133,7 +134,8 @@ class OrganizerPutRequestPlainSchema(PlainBaseSchema):
     @post_load
     def make_instance(self, data, **kwargs):
         data["id"] = self.context.get("id")
-        return UpdateEventOrganizerCommand.model_construct(**data)
+        data["actor"] = self.context.get("actor")
+        return UpdateEventOrganizerCommand(**data)
 
 
 class OrganizerPatchRequestPlainSchema(PlainBaseSchema):
@@ -153,4 +155,5 @@ class OrganizerPatchRequestPlainSchema(PlainBaseSchema):
     @post_load
     def make_instance(self, data, **kwargs):
         data["id"] = self.context.get("id")
-        return UpdateEventOrganizerCommand.model_construct(**data)
+        data["actor"] = self.context.get("actor")
+        return UpdateEventOrganizerCommand(**data)

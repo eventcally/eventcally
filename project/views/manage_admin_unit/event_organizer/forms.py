@@ -52,7 +52,8 @@ class CreateEventOrganizerForm(BaseEventOrganizerForm):
     submit = SubmitField(lazy_gettext("Create organizer"))
 
     def create_create_command(self, admin_unit_id: int) -> CreateEventOrganizerCommand:
-        return CreateEventOrganizerCommand.model_construct(
+        return CreateEventOrganizerCommand(
+            actor=self.get_current_actor(),
             admin_unit_id=admin_unit_id,
             name=self.name.data,
             url=self.url.data,
@@ -70,7 +71,8 @@ class UpdateEventOrganizerForm(BaseEventOrganizerForm):
     def create_update_command(
         self, event_organizer_id: int
     ) -> UpdateEventOrganizerCommand:
-        return UpdateEventOrganizerCommand.model_construct(
+        return UpdateEventOrganizerCommand(
+            actor=self.get_current_actor(),
             id=event_organizer_id,
             name=self.name.data,
             url=self.url.data,

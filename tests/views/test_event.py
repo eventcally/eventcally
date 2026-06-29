@@ -1,5 +1,4 @@
 import pytest
-from psycopg2.errors import UniqueViolation
 
 from tests.seeder import Seeder
 from tests.utils import UtilActions
@@ -74,7 +73,7 @@ def test_read_with_custom_category(seeder: Seeder, utils: UtilActions):
     _, admin_unit_id = seeder.setup_base()
     _, custom_event_category_id = seeder.get_one_custom_event_category_set()
     event_id = seeder.create_event(
-        admin_unit_id, custom_category_ids=[custom_event_category_id]
+        admin_unit_id, custom_category_ids={custom_event_category_id}
     )
 
     url = utils.get_url("main.event", event_id=event_id)
@@ -92,7 +91,9 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
     response = utils.get_ok(url)
 
     if variant == "db_error":
-        utils.mock_db_commit(mocker, UniqueViolation("MockException", "MockException"))
+        from project.utils import make_unique_violation
+
+        utils.mock_db_commit_with_error(mocker, make_unique_violation("MockException"))
 
     data = {
         "name": "Name",
@@ -120,6 +121,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
     utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
+        from project.domain.events.event_created import EventCreated
         from project.models import Event
 
         event = (
@@ -133,6 +135,11 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
             assert len(event.date_definitions) == 2
         else:
             assert len(event.date_definitions) == 1
+
+        event_created = app.test_event_dispatcher.get_first_event_by_type(EventCreated)
+
+        if variant == "normal":
+            assert event_created.dates[0].id == event.dates[0].id
 
 
 def test_create_unauthorized(client, app, utils: UtilActions, seeder: Seeder):
@@ -284,9 +291,10 @@ def test_create_with_custom_category(client, app, utils: UtilActions, seeder: Se
     url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
-    custom_event_category_set_id, custom_event_category_id = (
-        seeder.get_one_custom_event_category_set()
-    )
+    (
+        custom_event_category_set_id,
+        custom_event_category_id,
+    ) = seeder.get_one_custom_event_category_set()
 
     field_name = f"custom_categories-set_{custom_event_category_set_id}"
     utils.ajax_lookup(url, field_name)
@@ -661,7 +669,9 @@ def test_update(client, seeder: Seeder, utils: UtilActions, app, mocker, variant
     utils.ajax_lookup(url, "photo-license")
 
     if variant == "db_error":
-        utils.mock_db_commit(mocker)
+        from project.utils import make_check_violation
+
+        utils.mock_db_commit_with_error(mocker, make_check_violation("MockException"))
 
     data = {
         "name": "Neuer Name",
@@ -692,6 +702,7 @@ def test_update(client, seeder: Seeder, utils: UtilActions, app, mocker, variant
     )
 
     with app.app_context():
+        from project.domain.events.event_updated import EventUpdated
         from project.models import Event
 
         event = (
@@ -705,6 +716,45 @@ def test_update(client, seeder: Seeder, utils: UtilActions, app, mocker, variant
             assert len(event.date_definitions) == 2
         else:
             assert len(event.date_definitions) == 1
+
+        event_updated = app.test_event_dispatcher.get_first_event_by_type(EventUpdated)
+
+        if variant == "add_date_definition":
+            assert event_updated.dates.new[0].id == event.dates[0].id
+            assert event_updated.dates.new[1].id == event.dates[1].id
+
+
+def test_update_unchanged(client, seeder: Seeder, utils: UtilActions, app):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url(
+        "manage_admin_unit.event_update", id=admin_unit_id, event_id=event_id
+    )
+
+    # First
+    response = utils.get_ok(url)
+    data = dict()
+    response = utils.post_form(
+        url,
+        response,
+        data,
+    )
+
+    with app.app_context():
+        app.test_event_dispatcher.events.clear()
+
+    # Second
+    response = utils.get_ok(url)
+    data = dict()
+    response = utils.post_form(
+        url,
+        response,
+        data,
+    )
+
+    with app.app_context():
+        assert len(app.test_event_dispatcher.events) == 0
 
 
 def test_update_co_organizers(client, seeder: Seeder, utils: UtilActions, app):
@@ -735,7 +785,7 @@ def test_update_with_custom_category(client, seeder: Seeder, utils: UtilActions,
     _, admin_unit_id = seeder.setup_base()
     _, custom_event_category_id = seeder.get_one_custom_event_category_set()
     event_id = seeder.create_event(
-        admin_unit_id, custom_category_ids=[custom_event_category_id]
+        admin_unit_id, custom_category_ids={custom_event_category_id}
     )
 
     url = utils.get_url(

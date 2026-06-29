@@ -26,8 +26,8 @@ class WebhookDeliveryAttemptViewHandler(WebhookDeliveryChildViewHandler):
     read_display_class = ReadDisplay
 
     def get_object_by_id(self, object_id):
-        with self.message_bus.create_uow() as uow:
-            return uow.webhook_delivery_attempts._get_model(object_id)
+        uow = self.message_bus.create_uow()
+        return uow.webhook_delivery_attempts._get_model(object_id)
 
     def apply_objects_query_order(self, query, **kwargs):
         return (

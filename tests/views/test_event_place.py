@@ -47,7 +47,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
 
 
 @pytest.mark.parametrize("db_error", [True, False])
-def test_update(client, seeder, utils, app, db, mocker, db_error):
+def test_update(client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
@@ -82,6 +82,78 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
 
         place = db.session.get(EventPlace, place_id)
         assert place.name == "Neuer Name"
+
+
+@pytest.mark.parametrize("change_location", [True, False])
+def test_update_location(
+    client, seeder: Seeder, utils: UtilActions, app, db, change_location
+):
+    _, admin_unit_id = seeder.setup_base()
+
+    from project.models import Location
+
+    place_id = seeder.upsert_event_place(
+        admin_unit_id,
+        "Place",
+        Location(
+            street="Markt 7",
+            postalCode="38640",
+            city="Goslar",
+            latitude=51.9077888,
+            longitude=10.4333312,
+        ),
+    )
+
+    url = utils.get_url(
+        "manage_admin_unit.event_place_update",
+        id=admin_unit_id,
+        event_place_id=place_id,
+    )
+    response = utils.get_ok(url)
+
+    # 1. Update location
+    data = dict()
+    response = utils.post_form(
+        url,
+        response,
+        data,
+    )
+    app.test_event_dispatcher.events.clear()
+
+    # 2. Update location
+    response = utils.get_ok(url)
+
+    if change_location:
+        data = {
+            "location-street": "Neue Straße 1",
+        }
+    response = utils.post_form(
+        url,
+        response,
+        data,
+    )
+
+    utils.assert_response_redirect(
+        response, "manage_admin_unit.event_places", id=admin_unit_id
+    )
+
+    with app.app_context():
+        from project.domain.events.event_place_updated import EventPlaceUpdated
+
+        event_place_updated = app.test_event_dispatcher.get_first_event_by_type(
+            EventPlaceUpdated
+        )
+
+        if change_location:
+            assert event_place_updated.model_fields_set == {
+                "actor",
+                "id",
+                "admin_unit_id",
+                "location",
+            }
+            assert event_place_updated.location.new.street == "Neue Straße 1"
+        else:
+            assert event_place_updated is None
 
 
 def test_update_otherAdminUnit(client, seeder, utils, app, db):

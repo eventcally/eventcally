@@ -6,6 +6,9 @@ from flask_babel import lazy_gettext
 from wtforms import RadioField, SelectField, StringField
 
 from project.application.message_bus import MessageBus
+from project.application.services.abstract_app_context_provider import (
+    AbstractAppContextProvider,
+)
 from project.modular.fields import AjaxSelectField, DateRangeField, RadiusField
 from project.modular.filters import (
     BooleanFilter,
@@ -40,6 +43,10 @@ class BaseView(View):
     @property
     def message_bus(self) -> MessageBus:
         return self.handler.message_bus
+
+    @property
+    def app_context_provider(self) -> AbstractAppContextProvider:
+        return self.handler.app_context_provider
 
     @classmethod
     def as_view(cls, name, *class_args, **class_kwargs):

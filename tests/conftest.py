@@ -1,5 +1,6 @@
 import os
 import warnings
+from typing import Optional
 
 import pytest
 from sqlalchemy.exc import SAWarning
@@ -75,6 +76,14 @@ def app():
                 message_bus.handle(event)
 
             self.events = []
+
+        def get_first_event_by_type(
+            self, event_type: type[events.base.TEvent]
+        ) -> Optional[events.base.TEvent]:
+            for event in self.events:
+                if isinstance(event, event_type):
+                    return event
+            return None  # pragma: no cover
 
     app.test_event_dispatcher = TestEventDispatcher(app.container)
     app.container.cqrs.event_dispatcher.override(app.test_event_dispatcher)

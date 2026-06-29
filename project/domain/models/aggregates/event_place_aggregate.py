@@ -82,16 +82,22 @@ class EventPlaceAggregate(BaseAggregate):
         self._update_field_with_value("name", name, event)
         self._update_field_with_value("url", url, event)
         self._update_field_with_value("description", description, event)
-        self._update_field_with_value("location", location, event)
+        self._update_field_with_value(
+            "location", location, event, compare_fn=LocationValueObject.compare
+        )
 
         old_photo_for_event = (
             ImageForEvent.from_image_entity(self.photo) if self.photo else None
         )
-        if self._update_field_with_value("photo", photo):
+        if self._update_field_with_value(
+            "photo", photo, compare_fn=ImageEntity.compare
+        ):
             new_photo_for_event = (
                 ImageForEvent.from_image_entity(self.photo) if self.photo else None
             )
             event.photo = ChangedValue(old=old_photo_for_event, new=new_photo_for_event)
+
+        self.validate_self()
 
         if event.has_changed_values():
             self.domain_events.append(event)

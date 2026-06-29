@@ -9,8 +9,6 @@ class CancelOrganizationDeletionHandler(AbstractCommandHandler):
     def handle(
         self, cmd: commands.CancelOrganizationDeletionCommand, uow: AbstractUnitOfWork
     ):
-        with uow:
-            organization = ensure_organization_exists(cmd.id, uow)
-            organization.cancel_deletion(cmd.actor)
-            uow.organizations.update(organization)
-            uow.commit()
+        organization = ensure_organization_exists(cmd.id, uow)
+        organization.cancel_deletion(cmd.actor)
+        uow.organizations.update(organization)

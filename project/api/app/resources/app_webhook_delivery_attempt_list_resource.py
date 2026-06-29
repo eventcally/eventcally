@@ -47,8 +47,9 @@ class AppWebhookDeliveryAttemptListResource(BaseResource):
             .first_or_404()
         )
 
-        cmd = AttemptToDeliverWebhookCommand.model_construct(
-            webhook_delivery_id=delivery.id
+        cmd = AttemptToDeliverWebhookCommand(
+            webhook_delivery_id=delivery.id,
+            actor=self.app_context_provider.get_current_actor(),
         )
         self.message_bus.dispatch_command(cmd)
 

@@ -11,7 +11,6 @@ from project.domain.types.object_id import ObjectId
 class WebhookDeliveryAggregate(BaseAggregate):
     id: ObjectId
     webhook_event_id: ObjectId
-    webhook_id: ObjectId
     app_installation_id: Optional[ObjectId] = None
     app_id: Optional[ObjectId] = None
 
@@ -20,14 +19,12 @@ class WebhookDeliveryAggregate(BaseAggregate):
         cls,
         actor: Actor,
         webhook_event_id: ObjectId,
-        webhook_id: ObjectId,
         app_installation_id: Optional[ObjectId] = None,
         app_id: Optional[ObjectId] = None,
     ) -> WebhookDeliveryAggregate:
         instance = cls(
             id=-1,
             webhook_event_id=webhook_event_id,
-            webhook_id=webhook_id,
             app_installation_id=app_installation_id,
             app_id=app_id,
         )

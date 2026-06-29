@@ -8,15 +8,13 @@ from .event_place_utils import ensure_event_place_exists
 
 class UpdateEventPlaceHandler(AbstractCommandHandler):
     def handle(self, cmd: commands.UpdateEventPlaceCommand, uow: AbstractUnitOfWork):
-        with uow:
-            event_place = ensure_event_place_exists(cmd.id, uow)
-            event_place.update(
-                actor=cmd.actor,
-                name=cmd.name,
-                url=cmd.url,
-                description=cmd.description,
-                location=cmd.location,
-                photo=ImageEntity.from_nullable_unsetable_value_object(cmd.photo),
-            )
-            uow.event_places.update(event_place)
-            uow.commit()
+        event_place = ensure_event_place_exists(cmd.id, uow)
+        event_place.update(
+            actor=cmd.actor,
+            name=cmd.name,
+            url=cmd.url,
+            description=cmd.description,
+            location=cmd.location,
+            photo=ImageEntity.from_nullable_unsetable_value_object(cmd.photo),
+        )
+        uow.event_places.update(event_place)

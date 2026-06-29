@@ -25,7 +25,7 @@ class SqlAlchemyEventOrganizerRepository(AbstractEventOrganizerRepository):
         event_organizer.id = model.id
         domain_event.id = model.id
 
-        if model.logo:
+        if model.logo and domain_event.logo:
             event_organizer.logo.id = model.logo.id
             domain_event.logo.id = model.logo.id
             domain_event.logo.hash = model.logo.get_hash()
@@ -36,14 +36,15 @@ class SqlAlchemyEventOrganizerRepository(AbstractEventOrganizerRepository):
         self.session.merge(model)
         self.session.flush()
 
-        if model.logo:
+        if model.logo and event_organizer.logo:
             event_organizer.logo.id = model.logo.id
 
             domain_event = event_organizer.get_first_domain_event_by_type(
                 EventOrganizerUpdated
             )
-            domain_event.logo.new.id = model.logo.id
-            domain_event.logo.new.hash = model.logo.get_hash()
+            if domain_event and domain_event.logo and domain_event.logo.new:
+                domain_event.logo.new.id = model.logo.id
+                domain_event.logo.new.hash = model.logo.get_hash()
 
     def _get_model(self, object_id: int) -> Optional[EventOrganizer]:
         return self.session.query(EventOrganizer).filter_by(id=object_id).first()

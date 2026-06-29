@@ -13,8 +13,6 @@ class AttemptToDeliverWebhookHandler(AbstractCommandHandler):
     def handle(
         self, cmd: commands.AttemptToDeliverWebhookCommand, uow: AbstractUnitOfWork
     ):
-        with uow:
-            self.webhook_delivery_service.send_webhook_delivery_sync(
-                uow, cmd.webhook_delivery_id
-            )
-            uow.commit()
+        self.webhook_delivery_service.send_webhook_delivery_sync(
+            uow, cmd.webhook_delivery_id
+        )

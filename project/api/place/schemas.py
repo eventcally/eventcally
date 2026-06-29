@@ -107,7 +107,8 @@ class PlaceCreateRequestPlainSchema(PlainBaseSchema):
     @post_load
     def make_instance(self, data, **kwargs):
         data["admin_unit_id"] = self.context.get("admin_unit_id")
-        return CreateEventPlaceCommand.model_construct(**data)
+        data["actor"] = self.context.get("actor")
+        return CreateEventPlaceCommand(**data)
 
 
 class PlacePutRequestPlainSchema(PlainBaseSchema):
@@ -121,7 +122,8 @@ class PlacePutRequestPlainSchema(PlainBaseSchema):
     @post_load
     def make_instance(self, data, **kwargs):
         data["id"] = self.context.get("id")
-        return UpdateEventPlaceCommand.model_construct(**data)
+        data["actor"] = self.context.get("actor")
+        return UpdateEventPlaceCommand(**data)
 
 
 class PlacePatchRequestPlainSchema(PlainBaseSchema):
@@ -136,4 +138,5 @@ class PlacePatchRequestPlainSchema(PlainBaseSchema):
     @post_load
     def make_instance(self, data, **kwargs):
         data["id"] = self.context.get("id")
-        return UpdateEventPlaceCommand.model_construct(**data)
+        data["actor"] = self.context.get("actor")
+        return UpdateEventPlaceCommand(**data)

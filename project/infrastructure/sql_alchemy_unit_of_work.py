@@ -39,6 +39,7 @@ from project.infrastructure.repositories.sql_alchemy_webhook_repository import (
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
     def __init__(self, scoped_session_or_factory):
+        super().__init__()
         if isinstance(scoped_session_or_factory, scoped_session):
             self.session_factory = scoped_session_or_factory
             self.is_scoped = True
@@ -66,18 +67,12 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         )
         self.organization_members = SqlAlchemyOrganizationMemberRepository(self.session)
 
-    def __exit__(self, exc_type, exc, traceback) -> bool:
-        super().__exit__(exc_type, exc, traceback)
-        if not self.is_scoped:  # pragma: no cover
-            self.session.close()
-
-        if isinstance(exc, SQLAlchemyError):
-            self._reraiseSqlErrorMessage(exc)
-
-        return False  # propagate domain errors
-
     def _commit(self):
-        self.session.commit()
+        try:
+            self.session.commit()
+        except SQLAlchemyError as e:
+            self.session.rollback()
+            self._reraiseSqlErrorMessage(e)
 
     def rollback(self):
         self.session.rollback()
@@ -87,7 +82,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             if e.orig.pgcode == UNIQUE_VIOLATION:
                 raise DuplicateError(cause=e)
 
-            if e.orig.pgcode == CHECK_VIOLATION:  # pragma: no cover
+            if e.orig.pgcode == CHECK_VIOLATION:
                 raise ConstraintError(cause=e)
 
         raise InfrastructureError(cause=e)

@@ -574,7 +574,6 @@ class EventCreateRequestPlainSchema(PlainBaseSchema):
     co_organizers = fields.List(
         fields.Nested(WriteIdPlainSchema),
         attribute="co_organizer_ids",
-        load_default=None,
         metadata={"description": "Optional co-organizers."},
     )
     place = fields.Nested(
@@ -586,13 +585,11 @@ class EventCreateRequestPlainSchema(PlainBaseSchema):
     categories = fields.List(
         fields.Nested(WriteIdPlainSchema),
         attribute="category_ids",
-        load_default=None,
         metadata={"description": "Categories that fit the event."},
     )
     custom_categories = fields.List(
         fields.Nested(WriteIdPlainSchema),
         attribute="custom_category_ids",
-        load_default=None,
         metadata={"description": "Custom categories that fit the event."},
     )
     rating = fields.Int(
@@ -621,7 +618,8 @@ class EventCreateRequestPlainSchema(PlainBaseSchema):
     @post_load
     def make_instance(self, data, **kwargs):
         data["admin_unit_id"] = self.context.get("admin_unit_id")
-        return CreateEventCommand.model_construct(**data)
+        data["actor"] = self.context.get("actor")
+        return CreateEventCommand(**data)
 
 
 class EventPutRequestPlainSchema(PlainBaseSchema):
@@ -736,7 +734,6 @@ class EventPutRequestPlainSchema(PlainBaseSchema):
     co_organizers = fields.List(
         fields.Nested(WriteIdPlainSchema),
         attribute="co_organizer_ids",
-        load_default=None,
         metadata={"description": "Optional co-organizers."},
     )
     place = fields.Nested(
@@ -748,13 +745,11 @@ class EventPutRequestPlainSchema(PlainBaseSchema):
     categories = fields.List(
         fields.Nested(WriteIdPlainSchema),
         attribute="category_ids",
-        load_default=None,
         metadata={"description": "Categories that fit the event."},
     )
     custom_categories = fields.List(
         fields.Nested(WriteIdPlainSchema),
         attribute="custom_category_ids",
-        load_default=None,
         metadata={"description": "Custom categories that fit the event."},
     )
     rating = fields.Int(
@@ -783,7 +778,8 @@ class EventPutRequestPlainSchema(PlainBaseSchema):
     @post_load
     def make_instance(self, data, **kwargs):
         data["id"] = self.context.get("id")
-        return UpdateEventCommand.model_construct(**data)
+        data["actor"] = self.context.get("actor")
+        return UpdateEventCommand(**data)
 
 
 class EventPatchRequestPlainSchema(PlainBaseSchema):
@@ -936,7 +932,8 @@ class EventPatchRequestPlainSchema(PlainBaseSchema):
     @post_load
     def make_instance(self, data, **kwargs):
         data["id"] = self.context.get("id")
-        return UpdateEventCommand.model_construct(**data)
+        data["actor"] = self.context.get("actor")
+        return UpdateEventCommand(**data)
 
 
 class EventReportPostSchema(marshmallow.Schema):

@@ -30,7 +30,6 @@ from project.actor import current_actor
 
 
 class RateLimitHolderGeneratedMixin:
-
     @declared_attr
     def rate_limit_value(cls):
         return Column(

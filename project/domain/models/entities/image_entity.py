@@ -18,13 +18,26 @@ class ImageEntity(BaseEntity):
     license_id: Optional[ObjectId] = None
 
     @classmethod
+    def compare(
+        cls, old: "Optional[ImageEntity]", new: "Optional[ImageEntity]"
+    ) -> bool:
+        if old is None or new is None:
+            return old is new
+        return (
+            old.data == new.data
+            and old.encoding_format == new.encoding_format
+            and old.copyright_text == new.copyright_text
+            and old.license_id == new.license_id
+        )
+
+    @classmethod
     def from_value_object(
         cls, image_value_object: Optional[ImageValueObject]
     ) -> Optional[ImageEntity]:
         if image_value_object is None:
             return None
 
-        return cls.model_construct(
+        return cls(
             id=-1,
             hash=-1,
             data=image_value_object.data,

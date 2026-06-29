@@ -14,7 +14,7 @@ class OrganisationAppInstallationAggregate(BaseAggregate):
     id: ObjectId
     admin_unit_id: ObjectId
     app_id: ObjectId
-    permissions: list[str]
+    permissions: set[str]
 
     @classmethod
     def create(
@@ -22,7 +22,7 @@ class OrganisationAppInstallationAggregate(BaseAggregate):
         actor: Actor,
         admin_unit_id: ObjectId,
         app_id: ObjectId,
-        permissions: list[str],
+        permissions: set[str],
     ) -> OrganisationAppInstallationAggregate:
         instance = cls(
             id=-1, admin_unit_id=admin_unit_id, app_id=app_id, permissions=permissions
@@ -39,8 +39,8 @@ class OrganisationAppInstallationAggregate(BaseAggregate):
         instance.domain_events.append(event)
         return instance
 
-    def update_permissions(self, actor: Actor, permissions: list[str]):
-        event = AppInstallationPermissionsUpdated(
+    def update_permissions(self, actor: Actor, permissions: set[str]):
+        event = AppInstallationPermissionsUpdated.model_construct(
             actor=actor,
             id=self.id,
             admin_unit_id=self.admin_unit_id,
@@ -48,6 +48,8 @@ class OrganisationAppInstallationAggregate(BaseAggregate):
         )
 
         self._update_field_with_value("permissions", permissions, event)
+
+        self.validate_self()
 
         if event.has_changed_values():
             self.domain_events.append(event)

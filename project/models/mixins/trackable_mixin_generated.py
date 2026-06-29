@@ -30,7 +30,6 @@ from project.actor import current_actor
 
 
 class TrackableGeneratedMixin:
-
     @declared_attr
     def created_at(cls):
         return deferred(

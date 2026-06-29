@@ -308,6 +308,22 @@ class TestEventAggregateUpdate:
         assert isinstance(updated.organizer_id, ChangedValue)
         assert updated.organizer_id.new == 99
 
+    def test_update_category_ids_same_order_does_not_create_domain_event(
+        self, actor, date_def
+    ):
+        event = _make_event(actor, date_def, category_ids={1, 2})
+        initial_count = len(event.domain_events)
+        event.update(actor=actor, category_ids={1, 2})
+        assert len(event.domain_events) == initial_count
+
+    def test_update_category_ids_different_order_does_not_create_domain_event(
+        self, actor, date_def
+    ):
+        event = _make_event(actor, date_def, category_ids={1, 2})
+        initial_count = len(event.domain_events)
+        event.update(actor=actor, category_ids={2, 1})
+        assert len(event.domain_events) == initial_count
+
 
 class TestEventAggregateDelete:
     def test_delete_appends_deleted_event(self, actor, date_def):

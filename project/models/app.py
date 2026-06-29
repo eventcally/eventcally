@@ -9,7 +9,6 @@ from project.models.app_key_generated import AppKeyGeneratedMixin
 
 
 class AppInstallation(db.Model, AppInstallationGeneratedMixin):
-
     @classmethod
     def from_aggregate(
         cls, aggregate: OrganisationAppInstallationAggregate
@@ -22,7 +21,7 @@ class AppInstallation(db.Model, AppInstallationGeneratedMixin):
         self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
         self.admin_unit_id = aggregate.admin_unit_id
         self.oauth2_client_id = aggregate.app_id
-        self.permissions = aggregate.permissions
+        self.permissions = list(aggregate.permissions)
 
         return self
 
@@ -37,7 +36,7 @@ class AppInstallation(db.Model, AppInstallationGeneratedMixin):
             id=model.id,
             admin_unit_id=model.admin_unit_id,
             app_id=model.oauth2_client_id,
-            permissions=model.permissions,
+            permissions=set(model.permissions),
         )
 
         return aggregate

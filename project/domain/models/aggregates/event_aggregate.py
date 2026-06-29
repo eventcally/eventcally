@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import datetime
-from typing import List, Optional
+from typing import List, Optional, Set
 
 from project.domain.errors.constraint_error import ConstraintError
 from project.domain.events.event_created import EventCreated
@@ -52,10 +52,10 @@ class EventAggregate(BaseAggregate):
     attendance_mode: Optional[EventAttendanceMode] = None
     photo: Optional[ImageEntity] = None
     previous_start_date: Optional[datetime.datetime] = None
-    category_ids: Optional[List[ObjectId]] = None
-    custom_category_ids: Optional[List[ObjectId]] = None
+    category_ids: Set[ObjectId] = set()
+    custom_category_ids: Set[ObjectId] = set()
     rating: Optional[int] = None
-    co_organizer_ids: Optional[List[ObjectId]] = None
+    co_organizer_ids: Set[ObjectId] = set()
 
     @classmethod
     def create(
@@ -85,10 +85,10 @@ class EventAggregate(BaseAggregate):
         attendance_mode: Optional[EventAttendanceMode] = None,
         photo: Optional[ImageEntity] = None,
         previous_start_date: Optional[datetime.datetime] = None,
-        category_ids: Optional[List[ObjectId]] = None,
-        custom_category_ids: Optional[List[ObjectId]] = None,
+        category_ids: Set[ObjectId] = set(),
+        custom_category_ids: Set[ObjectId] = set(),
         rating: Optional[int] = None,
-        co_organizer_ids: Optional[List[ObjectId]] = None,
+        co_organizer_ids: Set[ObjectId] = set(),
     ) -> EventAggregate:
         instance = cls(
             id=-1,
@@ -195,10 +195,10 @@ class EventAggregate(BaseAggregate):
         attendance_mode: NullableUnsetable[EventAttendanceMode] = unset,
         photo: NullableUnsetable[ImageEntity] = unset,
         previous_start_date: NullableUnsetable[datetime.datetime] = unset,
-        category_ids: NullableUnsetable[List[ObjectId]] = unset,
-        custom_category_ids: NullableUnsetable[List[ObjectId]] = unset,
+        category_ids: Unsetable[Set[ObjectId]] = unset,
+        custom_category_ids: Unsetable[Set[ObjectId]] = unset,
         rating: NullableUnsetable[int] = unset,
-        co_organizer_ids: NullableUnsetable[List[ObjectId]] = unset,
+        co_organizer_ids: Unsetable[Set[ObjectId]] = unset,
     ):
         event = EventUpdated(actor=actor, id=self.id, admin_unit_id=self.admin_unit_id)
 
@@ -244,7 +244,9 @@ class EventAggregate(BaseAggregate):
         old_photo_for_event = (
             ImageForEvent.from_image_entity(self.photo) if self.photo else None
         )
-        if self._update_field_with_value("photo", photo):
+        if self._update_field_with_value(
+            "photo", photo, compare_fn=ImageEntity.compare
+        ):
             new_photo_for_event = (
                 ImageForEvent.from_image_entity(self.photo) if self.photo else None
             )
@@ -253,7 +255,11 @@ class EventAggregate(BaseAggregate):
         self.validate_instance()
 
         if date_definitions_changed:
-            self.update_event_dates_with_recurrence_rule()
+            old_dates = list(self.dates)
+            if self.update_event_dates_with_recurrence_rule():
+                event.dates = ChangedValue(old=old_dates, new=self.dates)
+
+        self.validate_self()
 
         if event.has_changed_values():
             self.domain_events.append(event)
@@ -270,7 +276,7 @@ class EventAggregate(BaseAggregate):
         if self.co_organizer_ids and self.organizer_id in self.co_organizer_ids:
             raise ConstraintError("Invalid co-organizer.")
 
-    def update_event_dates_with_recurrence_rule(self):
+    def update_event_dates_with_recurrence_rule(self) -> bool:
         from dateutil.relativedelta import relativedelta
 
         from project.domain.dateutils import (
@@ -279,6 +285,8 @@ class EventAggregate(BaseAggregate):
             date_set_end_of_day,
             dates_from_recurrence_rule,
         )
+
+        did_change = False
 
         dates_to_add = list()
         dates_to_remove = list(self.dates)
@@ -326,7 +334,7 @@ class EventAggregate(BaseAggregate):
                     if existing_date in dates_to_remove:
                         dates_to_remove.remove(existing_date)
                 else:
-                    new_date = EventDateEntity.model_construct(
+                    new_date = EventDateEntity(
                         id=-1,
                         start=rr_date_start,
                         end=rr_date_end,
@@ -334,5 +342,16 @@ class EventAggregate(BaseAggregate):
                     )
                     dates_to_add.append(new_date)
 
-        self.dates = [date for date in self.dates if date not in dates_to_remove]
-        self.dates.extend(dates_to_add)
+        new_dates = list()
+        for date in self.dates:
+            if date not in dates_to_remove:
+                new_dates.append(date)
+            else:
+                did_change = True
+
+        for date in dates_to_add:
+            new_dates.append(date)
+            did_change = True
+
+        self.dates = new_dates
+        return did_change

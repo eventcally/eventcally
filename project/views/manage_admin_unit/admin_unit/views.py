@@ -138,7 +138,9 @@ class CancelDeletionView(BaseDeleteView):
         )
 
     def delete_object_from_db(self, object):
-        cmd = CancelOrganizationDeletionCommand.model_construct(id=object.id)
+        cmd = CancelOrganizationDeletionCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
         self.message_bus.handle_command(cmd)
 
     def get_redirect_url(self, **kwargs):

@@ -226,15 +226,24 @@ def test_webhook_event_repository_roundtrip_and_delete_old_events(app, db):
         assert repo.get(recent_event.id) is not None
 
 
-def test_webhook_delivery_and_read_repository_roundtrip_aggregate(app, db):
+def test_webhook_delivery_and_read_repository_roundtrip_aggregate(app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
     with app.app_context():
         webhook_event, webhook = _create_enabled_webhook_event_and_webhook(db)
+
+        app_model = OAuth2Client(
+            admin_unit_id=admin_unit_id,
+            app_permissions=["events:read"],
+            webhook_id=webhook.id,
+        )
+        db.session.add(app_model)
+        db.session.commit()
 
         actor = Actor(user_id=1)
         delivery_aggregate = WebhookDeliveryAggregate.create(
             actor=actor,
             webhook_event_id=webhook_event.id,
-            webhook_id=webhook.id,
+            app_id=app_model.id,
         )
 
         write_repo = SqlAlchemyWebhookDeliveryRepository(db.session)
@@ -245,7 +254,6 @@ def test_webhook_delivery_and_read_repository_roundtrip_aggregate(app, db):
         assert isinstance(loaded, WebhookDeliveryAggregate)
         assert loaded.id == delivery_aggregate.id
         assert loaded.webhook_event_id == webhook_event.id
-        assert loaded.webhook_id == webhook.id
 
         read_repo = SqlAlchemyWebhookDeliveryReadRepository(db.session)
         read_model = read_repo.get(delivery_aggregate.id)
@@ -396,7 +404,7 @@ def test_organization_app_installation_repository_aggregate_and_webhook_filter(
     assert isinstance(loaded, OrganisationAppInstallationAggregate)
     assert loaded.id == installation.id
     assert loaded.app_id == app_id
-    assert loaded.permissions == list(app_model_app_permissions or [])
+    assert loaded.permissions == set(app_model_app_permissions or [])
     assert any(item.id == installation.id for item in filtered)
 
 

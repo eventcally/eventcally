@@ -120,7 +120,7 @@
       "name": "pybabel",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/env/bin/pybabel",
+      "program": "${workspaceFolder}/venv/bin/pybabel",
       "console": "integratedTerminal",
       "args": [
         "extract",

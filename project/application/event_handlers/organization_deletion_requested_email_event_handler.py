@@ -15,16 +15,15 @@ class OrganizationDeletionRequestedEmailEventHandler(AbstractEventHandler):
     def handle(
         self, event: events.OrganizationDeletionRequested, uow: AbstractUnitOfWork
     ):
-        with uow:
-            organization = uow.organizations.get(event.id)
+        organization = uow.organizations.get(event.id)
 
-            if not organization:  # pragma: no cover
-                return
+        if not organization:  # pragma: no cover
+            return
 
-            self.organization_service.send_template_mails_to_members_async(
-                uow,
-                organization.id,
-                "settings:write",
-                "organization_deletion_requested_notice",
-                admin_unit=organization,
-            )
+        self.organization_service.send_template_mails_to_members_async(
+            uow,
+            organization.id,
+            "settings:write",
+            "organization_deletion_requested_notice",
+            admin_unit=organization,
+        )

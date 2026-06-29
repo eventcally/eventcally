@@ -11,12 +11,10 @@ class UpdateAppInstallationPermissionsHandler(AbstractCommandHandler):
         cmd: commands.UpdateAppInstallationPermissionsCommand,
         uow: AbstractUnitOfWork,
     ):
-        with uow:
-            app_installation = uow.organization_app_installations.get(cmd.id)
+        app_installation = uow.organization_app_installations.get(cmd.id)
 
-            if not app_installation:
-                raise NotFoundError(f"App installation with id {cmd.id} not found")
+        if not app_installation:
+            raise NotFoundError(f"App installation with id {cmd.id} not found")
 
-            app_installation.update_permissions(cmd.actor, cmd.permissions)
-            uow.organization_app_installations.update(app_installation)
-            uow.commit()
+        app_installation.update_permissions(cmd.actor, cmd.permissions)
+        uow.organization_app_installations.update(app_installation)

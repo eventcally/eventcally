@@ -32,7 +32,7 @@ def _seed_org(uow):
 
 
 class TestRequestOrganizationDeletionHandler:
-    def test_requests_deletion_and_commits(self, uow):
+    def test_requests_deletion(self, uow):
         org = _seed_org(uow)
         cmd = commands.RequestOrganizationDeletionCommand.model_construct(
             actor=Actor(user_id=1), id=org.id
@@ -42,7 +42,6 @@ class TestRequestOrganizationDeletionHandler:
 
         updated = uow.organizations.get(org.id)
         assert updated.deletion_requested_at is not None
-        assert uow.committed
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.RequestOrganizationDeletionCommand.model_construct(
@@ -59,7 +58,7 @@ class TestRequestOrganizationDeletionHandler:
 
 
 class TestCancelOrganizationDeletionHandler:
-    def test_cancels_deletion_and_commits(self, uow):
+    def test_cancels_deletion(self, uow):
         org = _seed_org(uow)
         # First request deletion
         org.request_deletion(Actor(user_id=1))
@@ -74,7 +73,6 @@ class TestCancelOrganizationDeletionHandler:
 
         updated = uow.organizations.get(org.id)
         assert updated.deletion_requested_at is None
-        assert uow.committed
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.CancelOrganizationDeletionCommand.model_construct(

@@ -79,8 +79,8 @@ def _make_create_cmd(admin_unit_id, organizer_id, event_place_id, **kwargs):
         attendance_mode=None,
         photo=None,
         previous_start_date=None,
-        category_ids=None,
-        custom_category_ids=None,
+        category_ids=[],
+        custom_category_ids=[],
         rating=None,
         **kwargs,
     )
@@ -104,15 +104,6 @@ class TestCreateEventHandler:
         created = uow.events.get(result.id)
         assert created is not None
         assert created.name == "Test Event"
-
-    def test_commits(self, uow):
-        org = _make_organizer(uow, admin_unit_id=1)
-        place = _make_place(uow, admin_unit_id=1)
-        cmd = _make_create_cmd(1, org.id, place.id)
-
-        CreateEventHandler().handle(cmd, uow)
-
-        assert uow.committed
 
     def test_organizer_wrong_admin_unit_raises_constraint_error(self, uow):
         org = _make_organizer(uow, admin_unit_id=2)  # different unit
@@ -171,7 +162,7 @@ class TestUpdateEventHandler:
         uow.events.add(event)
         return event, org, place
 
-    def test_updates_event_and_commits(self, uow):
+    def test_updates_event(self, uow):
         event, _, _ = self._seed_event(uow)
         cmd = commands.UpdateEventCommand.model_construct(
             actor=Actor(),
@@ -179,8 +170,6 @@ class TestUpdateEventHandler:
         )
 
         UpdateEventHandler().handle(cmd, uow)
-
-        assert uow.committed
 
     def test_event_not_found_raises_not_found_error(self, uow):
         cmd = commands.UpdateEventCommand.model_construct(
@@ -234,7 +223,7 @@ class TestUpdateEventHandler:
 
 
 class TestDeleteEventHandler:
-    def test_removes_event_and_commits(self, uow):
+    def test_removes_event(self, uow):
         org = _make_organizer(uow, admin_unit_id=1)
         place = _make_place(uow, admin_unit_id=1)
         event = EventAggregate.create(
@@ -254,7 +243,6 @@ class TestDeleteEventHandler:
         DeleteEventHandler().handle(cmd, uow)
 
         assert uow.events.get(event_id) is None
-        assert uow.committed
 
     def test_event_not_found_raises_not_found_error(self, uow):
         cmd = commands.DeleteEventCommand.model_construct(actor=Actor(), id=9999)

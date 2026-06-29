@@ -11,6 +11,4 @@ class WebhookDeliveryCreatedAttemptEventHandler(AbstractEventHandler):
         self.webhook_delivery_service = webhook_delivery_service
 
     def handle(self, event: events.WebhookDeliveryCreated, uow: AbstractUnitOfWork):
-        with uow:
-            self.webhook_delivery_service.send_webhook_delivery_sync(uow, event.id)
-            uow.commit()
+        self.webhook_delivery_service.send_webhook_delivery_sync(uow, event.id)

@@ -43,17 +43,9 @@ class AbstractUnitOfWork(abc.ABC):
     organization_app_installations: AbstractOrganizationAppInstallationRepository
     organization_members: AbstractOrganizationMemberRepository
     users: AbstractUserRepository
-    pending_events: List[Event] = []
 
-    def __enter__(self) -> AbstractUnitOfWork:
-        self.pending_events = []
-        return self
-
-    def __exit__(self, exc_type, exc, traceback) -> bool:
-        if exc:
-            self.pending_events.clear()
-
-        self.rollback()
+    def __init__(self):
+        self.pending_events: List[Event] = []
 
     def commit(self):
         self._commit()

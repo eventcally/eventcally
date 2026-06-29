@@ -52,7 +52,8 @@ class CreateEventPlaceForm(BaseEventPlaceForm):
     submit = SubmitField(lazy_gettext("Create place"))
 
     def create_create_command(self, admin_unit_id: int) -> CreateEventPlaceCommand:
-        return CreateEventPlaceCommand.model_construct(
+        return CreateEventPlaceCommand(
+            actor=self.get_current_actor(),
             admin_unit_id=admin_unit_id,
             name=self.name.data,
             url=self.url.data,
@@ -66,7 +67,8 @@ class UpdateEventPlaceForm(BaseEventPlaceForm):
     submit = SubmitField(lazy_gettext("Update place"))
 
     def create_update_command(self, event_place_id: int) -> UpdateEventPlaceCommand:
-        return UpdateEventPlaceCommand.model_construct(
+        return UpdateEventPlaceCommand(
+            actor=self.get_current_actor(),
             id=event_place_id,
             name=self.name.data,
             url=self.url.data,

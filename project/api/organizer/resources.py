@@ -66,7 +66,9 @@ class OrganizerResource(BaseResource):
         "organization.event_organizers:write", EventOrganizer
     )
     def delete(self, id):
-        cmd = DeleteEventOrganizerCommand.model_construct(id=id)
+        cmd = DeleteEventOrganizerCommand(
+            id=id, actor=self.app_context_provider.get_current_actor()
+        )
         self.message_bus.handle_command(cmd)
 
         return make_response("", 204)

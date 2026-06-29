@@ -144,7 +144,7 @@ class TestAppCreated:
             app_permissions=["read"],
         )
         assert event.name == "My App"
-        assert event.app_permissions == ["read"]
+        assert event.app_permissions == {"read"}
 
     def test_optional_fields_default_to_none(self, actor):
         event = AppCreated(
@@ -170,10 +170,10 @@ class TestAppUpdated:
         assert event.description is None
 
     def test_changed_value_fields_set(self, actor):
-        cv = ChangedValue(old=["read"], new=["read", "write"])
+        cv = ChangedValue(old={"read"}, new={"read", "write"})
         event = AppUpdated(actor=actor, id=1, admin_unit_id=2, app_permissions=cv)
-        assert event.app_permissions.old == ["read"]
-        assert event.app_permissions.new == ["read", "write"]
+        assert event.app_permissions.old == {"read"}
+        assert event.app_permissions.new == {"read", "write"}
 
 
 class TestAppInstallationCreated:
@@ -181,22 +181,18 @@ class TestAppInstallationCreated:
         event = AppInstallationCreated(
             actor=actor, id=1, admin_unit_id=2, app_id=3, permissions=["admin"]
         )
-        assert event.permissions == ["admin"]
+        assert event.permissions == {"admin"}
 
 
 class TestAppInstallationPermissionsUpdated:
-    def test_optional_permissions_default_to_none(self, actor):
-        event = AppInstallationPermissionsUpdated(
-            actor=actor, id=1, admin_unit_id=2, app_id=3
-        )
-        assert event.permissions is None
-
     def test_permissions_changed_value(self, actor):
-        cv = ChangedValue(old=["read"], new=["write"])
+        cv = ChangedValue(old={"read"}, new={"write"})
         event = AppInstallationPermissionsUpdated(
             actor=actor, id=1, admin_unit_id=2, app_id=3, permissions=cv
         )
         assert isinstance(event.permissions, ChangedValue)
+        assert event.permissions.old == {"read"}
+        assert event.permissions.new == {"write"}
 
 
 class TestEventOrganizerCreated:

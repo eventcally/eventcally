@@ -4,7 +4,6 @@ from project.views.utils import send_template_mail_async
 
 
 class OrganizationMemberInvitationService(BaseService[AdminUnitMemberInvitation]):
-
     def insert_object(self, object: AdminUnitMemberInvitation):
         super().insert_object(object)
 

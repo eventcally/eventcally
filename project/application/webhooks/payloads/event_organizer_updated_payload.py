@@ -1,7 +1,5 @@
 """Event organizer updated data model."""
 
-from typing import Optional
-
 from project.application.webhooks.abstract_webhook_mapper_context import (
     AbstractWebhookMapperContext,
 )
@@ -17,7 +15,8 @@ from project.application.webhooks.payloads.webhook_value_mapping import (
     map_changed_value,
 )
 from project.domain import events
-from project.domain.types import ChangedValue
+from project.domain.types import OptionalChangedValue
+from project.domain.types.changed_value import OptionalChangedOptionalValue
 from project.domain.types.optional_changed_value_field_factory import (
     OptionalChangedValueField,
 )
@@ -26,13 +25,15 @@ from project.domain.types.optional_changed_value_field_factory import (
 class EventOrganizerUpdatedPayload(WebhookPayloadBase):
     id: int
     organization_id: int
-    name: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    url: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    email: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    phone: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    fax: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    location: Optional[ChangedValue[PayloadLocation]] = OptionalChangedValueField()
-    logo: Optional[ChangedValue[PayloadImage]] = OptionalChangedValueField()
+    name: OptionalChangedValue[str] = OptionalChangedValueField()
+    url: OptionalChangedOptionalValue[str] = OptionalChangedValueField()
+    email: OptionalChangedOptionalValue[str] = OptionalChangedValueField()
+    phone: OptionalChangedOptionalValue[str] = OptionalChangedValueField()
+    fax: OptionalChangedOptionalValue[str] = OptionalChangedValueField()
+    location: OptionalChangedOptionalValue[PayloadLocation] = (
+        OptionalChangedValueField()
+    )
+    logo: OptionalChangedOptionalValue[PayloadImage] = OptionalChangedValueField()
 
     @classmethod
     def from_event(

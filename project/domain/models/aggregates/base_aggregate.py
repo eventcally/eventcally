@@ -1,9 +1,7 @@
-from typing import List, Optional, TypeVar
+from typing import List, Optional
 
-from project.domain.events.base import Event
+from project.domain.events.base import Event, TEvent
 from project.domain.types.custom_base_model import CustomBaseModel
-
-TEvent = TypeVar("TEvent", bound=Event)
 
 
 class BaseAggregate(CustomBaseModel):

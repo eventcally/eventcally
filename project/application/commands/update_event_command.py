@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import List, Set
 
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.enums.event_public_status import EventPublicStatus
@@ -41,7 +41,7 @@ class UpdateEventCommand(Command):
     attendance_mode: NullableUnsetable[EventAttendanceMode] = UnsetField()
     photo: NullableUnsetable[ImageValueObject] = UnsetField()
     previous_start_date: NullableUnsetable[datetime.datetime] = UnsetField()
-    category_ids: NullableUnsetable[List[ObjectId]] = UnsetField()
-    custom_category_ids: NullableUnsetable[List[ObjectId]] = UnsetField()
+    category_ids: Unsetable[Set[ObjectId]] = UnsetField()
+    custom_category_ids: Unsetable[Set[ObjectId]] = UnsetField()
     rating: NullableUnsetable[int] = UnsetField()
-    co_organizer_ids: NullableUnsetable[List[ObjectId]] = UnsetField()
+    co_organizer_ids: Unsetable[Set[ObjectId]] = UnsetField()

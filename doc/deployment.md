@@ -23,8 +23,8 @@ psql -c 'create database eventcally;' -U postgres
 ### Install and run
 
 ```sh
-python3 -m venv env
-source env/bin/activate
+python3 -m venv
+source venv/bin/activate
 (env) pip install -r requirements.txt
 (env) export DATABASE_URL='postgresql://postgres@localhost/eventcally'
 (env) flask db upgrade

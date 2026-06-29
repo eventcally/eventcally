@@ -3,7 +3,6 @@
 from unittest.mock import MagicMock
 
 import pytest
-from pydantic import ValidationError
 
 from project.application.webhooks.payloads.app_installation_created_payload import (
     AppInstallationCreatedPayload,
@@ -215,7 +214,7 @@ class TestAppInstallationPayloads:
         assert payload.id == 20
         assert payload.app_id == 100
         assert payload.organization_id == 4
-        assert payload.permissions == ["events:read"]
+        assert payload.permissions == {"events:read"}
 
     def test_app_installation_deleted_payload(self, ctx):
         ev = events.AppInstallationDeleted(
@@ -231,9 +230,11 @@ class TestAppInstallationPayloads:
             id=22,
             admin_unit_id=4,
             app_id=100,
-            permissions=ChangedValue(old=[], new=["events:read"]),
+            permissions=ChangedValue(old=set(), new={"events:read"}),
         )
-        # Known production behavior: from_event passes ChangedValue directly into
-        # a list[str] payload field and triggers validation.
-        with pytest.raises(ValidationError):
-            AppInstallationPermissionsUpdatedPayload.from_event(ev, ctx)
+        payload = AppInstallationPermissionsUpdatedPayload.from_event(ev, ctx)
+        assert payload.id == 22
+        assert payload.app_id == 100
+        assert payload.organization_id == 4
+        assert payload.permissions.old == set()
+        assert payload.permissions.new == {"events:read"}

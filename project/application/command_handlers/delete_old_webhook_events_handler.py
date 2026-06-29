@@ -8,7 +8,5 @@ class DeleteOldWebhookEventsHandler(AbstractCommandHandler):
     def handle(
         self, cmd: commands.DeleteOldWebhookEventsCommand, uow: AbstractUnitOfWork
     ):
-        with uow:
-            deleted_count = uow.webhook_events.delete_old_events(days=3)
-            uow.commit()
-            return deleted_count
+        deleted_count = uow.webhook_events.delete_old_events(days=3)
+        return deleted_count

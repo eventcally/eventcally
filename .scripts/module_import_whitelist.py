@@ -12,6 +12,8 @@ DEFAULT_EXCLUDED_DIRS = {
     ".git",
     ".pytest_cache",
     "env",
+    "venv",
+    ".venv",
     "htmlcov",
     "node_modules",
     "tmp",

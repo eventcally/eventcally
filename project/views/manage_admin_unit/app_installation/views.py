@@ -99,7 +99,9 @@ class AcceptPermissionsView(BaseUpdateView):
 class DeleteView(BaseDeleteView):
     @handle_base_error
     def dispatch_validated_form_deletable(self, form, object, **kwargs):
-        cmd = UninstallAppCommand.model_construct(id=object.id)
+        cmd = UninstallAppCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
         self.message_bus.handle_command(cmd)
         self.flash_success_message(object, form)
         return redirect(self.get_redirect_url())

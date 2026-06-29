@@ -1,11 +1,14 @@
 from typing import Annotated, Optional
 
 from dependency_injector.providers import Factory
-from dependency_injector.wiring import Provider
+from dependency_injector.wiring import Provide, Provider
 from flask import Blueprint, abort, current_app, url_for
 from flask_babel import gettext
 
 from project.application.message_bus import MessageBus
+from project.application.services.abstract_app_context_provider import (
+    AbstractAppContextProvider,
+)
 from project.container import Application
 from project.modular.base_blueprint import BaseBlueprint
 from project.modular.base_form import BaseDeleteForm, BaseListForm
@@ -23,6 +26,9 @@ class BaseViewHandler:
     decorators = []
     message_bus_factory: Annotated[
         Factory[MessageBus], Provider[Application.cqrs.message_bus]
+    ]
+    app_context_provider: Annotated[
+        AbstractAppContextProvider, Provide[Application.context.app_context_provider]
     ]
     model = None
     object_service = None

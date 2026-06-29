@@ -33,23 +33,16 @@ def now():
 
 class TestWebhookDeliveryAggregate:
     def test_create_returns_instance(self, actor):
-        delivery = WebhookDeliveryAggregate.create(
-            actor=actor, webhook_event_id=10, webhook_id=20
-        )
+        delivery = WebhookDeliveryAggregate.create(actor=actor, webhook_event_id=10)
         assert delivery.webhook_event_id == 10
-        assert delivery.webhook_id == 20
 
     def test_create_appends_delivery_created_event(self, actor):
-        delivery = WebhookDeliveryAggregate.create(
-            actor=actor, webhook_event_id=10, webhook_id=20
-        )
+        delivery = WebhookDeliveryAggregate.create(actor=actor, webhook_event_id=10)
         assert len(delivery.domain_events) == 1
         assert isinstance(delivery.domain_events[0], WebhookDeliveryCreated)
 
     def test_optional_fields_default_none(self, actor):
-        delivery = WebhookDeliveryAggregate.create(
-            actor=actor, webhook_event_id=1, webhook_id=2
-        )
+        delivery = WebhookDeliveryAggregate.create(actor=actor, webhook_event_id=1)
         assert delivery.app_installation_id is None
         assert delivery.app_id is None
 
@@ -57,7 +50,6 @@ class TestWebhookDeliveryAggregate:
         delivery = WebhookDeliveryAggregate.create(
             actor=actor,
             webhook_event_id=1,
-            webhook_id=2,
             app_installation_id=3,
             app_id=4,
         )

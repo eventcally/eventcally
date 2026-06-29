@@ -7,7 +7,6 @@ from project.views.utils import send_template_mails_to_admin_unit_members_async
 
 
 class OrganizationVerificationRequestService(BaseService[AdminUnitVerificationRequest]):
-
     def insert_object(self, object: AdminUnitVerificationRequest):
         super().insert_object(object)
 

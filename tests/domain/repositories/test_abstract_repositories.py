@@ -284,7 +284,7 @@ def _member_agg():
 
 def _delivery_agg():
     return WebhookDeliveryAggregate.model_construct(
-        id=1, webhook_event_id=2, webhook_id=3, domain_events=[]
+        id=1, webhook_event_id=2, domain_events=[]
     )
 
 

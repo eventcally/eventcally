@@ -40,21 +40,6 @@ class TestCreateEventPlaceHandler:
         assert created is not None
         assert created.name == "Test Place"
 
-    def test_commits(self, uow):
-        cmd = commands.CreateEventPlaceCommand.model_construct(
-            actor=Actor(),
-            admin_unit_id=1,
-            name="Place",
-            url=None,
-            description=None,
-            location=None,
-            photo=None,
-        )
-
-        CreateEventPlaceHandler().handle(cmd, uow)
-
-        assert uow.committed
-
 
 # ---------------------------------------------------------------------------
 # UpdateEventPlaceHandler
@@ -69,15 +54,13 @@ class TestUpdateEventPlaceHandler:
         uow.event_places.add(place)
         return place
 
-    def test_updates_place_and_commits(self, uow):
+    def test_updates_place(self, uow):
         place = self._seed(uow)
         cmd = commands.UpdateEventPlaceCommand.model_construct(
             actor=Actor(), id=place.id
         )
 
         UpdateEventPlaceHandler().handle(cmd, uow)
-
-        assert uow.committed
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.UpdateEventPlaceCommand.model_construct(actor=Actor(), id=9999)
@@ -92,7 +75,7 @@ class TestUpdateEventPlaceHandler:
 
 
 class TestDeleteEventPlaceHandler:
-    def test_removes_place_and_commits(self, uow):
+    def test_removes_place(self, uow):
         place = EventPlaceAggregate.create(
             actor=Actor(), admin_unit_id=1, name="To Delete"
         )
@@ -105,7 +88,6 @@ class TestDeleteEventPlaceHandler:
         DeleteEventPlaceHandler().handle(cmd, uow)
 
         assert uow.event_places.get(place_id) is None
-        assert uow.committed
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.DeleteEventPlaceCommand.model_construct(actor=Actor(), id=9999)
