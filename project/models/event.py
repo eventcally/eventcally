@@ -118,46 +118,48 @@ class Event(db.Model, EventGeneratedMixin):
         if model is None:  # pragma: no cover
             return None
 
-        aggregate = EventAggregate.model_construct(
-            id=model.id,
-            admin_unit_id=model.admin_unit_id,
-            name=model.name,
-            organizer_id=model.organizer_id,
-            event_place_id=model.event_place_id,
-            status=model.status,
-            public_status=model.public_status,
-            description=model.description,
-            external_link=model.external_link,
-            ticket_link=model.ticket_link,
-            tags=model.tags,
-            internal_tags=model.internal_tags,
-            kid_friendly=model.kid_friendly,
-            accessible_for_free=model.accessible_for_free,
-            age_from=model.age_from,
-            age_to=model.age_to,
-            registration_required=model.registration_required,
-            booked_up=model.booked_up,
-            expected_participants=model.expected_participants,
-            price_info=model.price_info,
-            target_group_origin=model.target_group_origin,
-            attendance_mode=model.attendance_mode,
-            previous_start_date=model.previous_start_date,
-            category_ids=[c.id for c in model.categories],
-            custom_category_ids=[c.id for c in model.custom_categories],
-            rating=model.rating,
-            co_organizer_ids=[c.id for c in model.co_organizers],
-            photo=model.photo.to_entity() if model.photo else None,
-        )
+        values = {
+            "id": model.id,
+            "admin_unit_id": model.admin_unit_id,
+            "name": model.name,
+            "organizer_id": model.organizer_id,
+            "event_place_id": model.event_place_id,
+            "description": model.description,
+            "external_link": model.external_link,
+            "ticket_link": model.ticket_link,
+            "tags": model.tags,
+            "internal_tags": model.internal_tags,
+            "kid_friendly": model.kid_friendly,
+            "accessible_for_free": model.accessible_for_free,
+            "age_from": model.age_from,
+            "age_to": model.age_to,
+            "registration_required": model.registration_required,
+            "booked_up": model.booked_up,
+            "expected_participants": model.expected_participants,
+            "price_info": model.price_info,
+            "target_group_origin": (
+                model.target_group_origin.value if model.target_group_origin else None
+            ),
+            "attendance_mode": (
+                model.attendance_mode.value if model.attendance_mode else None
+            ),
+            "previous_start_date": model.previous_start_date,
+            "category_ids": {c.id for c in model.categories},
+            "custom_category_ids": {c.id for c in model.custom_categories},
+            "rating": model.rating,
+            "co_organizer_ids": {c.id for c in model.co_organizers},
+            "photo": model.photo.to_entity() if model.photo else None,
+            "date_definitions": [d.to_value_object() for d in model.date_definitions],
+            "dates": [d.to_entity() for d in model.dates],
+        }
 
-        # Date defintions
-        aggregate.date_definitions = [
-            d.to_value_object() for d in model.date_definitions
-        ]
+        if model.status:
+            values["status"] = model.status.value
 
-        # Dates
-        aggregate.dates = [d.to_entity() for d in model.dates]
+        if model.public_status:
+            values["public_status"] = model.public_status.value
 
-        return aggregate
+        return EventAggregate(**values)
 
     @classmethod
     def to_read_model(cls, model: Event) -> EventReadModel:

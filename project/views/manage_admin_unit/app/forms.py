@@ -32,11 +32,12 @@ class BaseAppForm(BaseOAuth2ClientForm):
 
 class CreateAppForm(BaseAppForm):
     def create_create_command(self, admin_unit_id: int) -> CreateAppCommand:
-        return CreateAppCommand.model_construct(
+        return CreateAppCommand(
+            actor=self.get_current_actor(),
             admin_unit_id=admin_unit_id,
             name=self.client_name.data,
-            app_permissions=self.app_permissions.data,
-            redirect_uris=split_by_crlf(self.redirect_uris.data),
+            app_permissions=set(self.app_permissions.data),
+            redirect_uris=set(split_by_crlf(self.redirect_uris.data)),
             scope=" ".join(self.scope.data),
             description=self.description.data,
             homepage_url=self.homepage_url.data,
@@ -47,11 +48,12 @@ class CreateAppForm(BaseAppForm):
 
 class UpdateAppForm(BaseAppForm):
     def create_update_command(self, app_id: int) -> UpdateAppCommand:
-        return UpdateAppCommand.model_construct(
+        return UpdateAppCommand(
+            actor=self.get_current_actor(),
             id=app_id,
             name=self.client_name.data,
-            app_permissions=self.app_permissions.data,
-            redirect_uris=split_by_crlf(self.redirect_uris.data),
+            app_permissions=set(self.app_permissions.data),
+            redirect_uris=set(split_by_crlf(self.redirect_uris.data)),
             scope=" ".join(self.scope.data),
             description=self.description.data,
             homepage_url=self.homepage_url.data,

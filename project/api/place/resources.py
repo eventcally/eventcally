@@ -60,7 +60,9 @@ class PlaceResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access("organization.event_places:write", EventPlace)
     def delete(self, id):
-        cmd = DeleteEventPlaceCommand.model_construct(id=id)
+        cmd = DeleteEventPlaceCommand(
+            id=id, actor=self.app_context_provider.get_current_actor()
+        )
         self.message_bus.handle_command(cmd)
 
         return make_response("", 204)

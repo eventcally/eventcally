@@ -15,7 +15,7 @@ def test_update_app_installation_permissions_command_sets_current_app_permission
 
     with app.app_context():
         app_installation = db.session.get(AppInstallation, app_installation_id)
-        new_permissions = app_installation.oauth2_client.app_permissions
+        new_permissions = set(app_installation.oauth2_client.app_permissions)
         app_installation.permissions = []
         db.session.commit()
 
@@ -29,7 +29,7 @@ def test_update_app_installation_permissions_command_sets_current_app_permission
 
         db.session.expire_all()
         app_installation = db.session.get(AppInstallation, app_installation_id)
-        assert app_installation.permissions == new_permissions
+        assert set(app_installation.permissions) == new_permissions
 
         matching_events = [
             e

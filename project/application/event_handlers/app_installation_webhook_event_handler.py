@@ -40,35 +40,29 @@ class AppInstallationWebhookEventHandler(AbstractEventHandler):
         required_permissions = webhook_info.permissions
         admin_unit_id = getattr(event, "admin_unit_id", None)
 
-        with uow:
-            installations = uow.organization_app_installations.get_all_with_webhook(
-                admin_unit_id, required_permissions, webhook_info.event_type
-            )
+        installations = uow.organization_app_installations.get_all_with_webhook(
+            admin_unit_id, required_permissions, webhook_info.event_type
+        )
 
-            if not installations:
-                return
+        if not installations:
+            return
 
-            payload_data = webhook_info.payload_cls.from_event(
-                event, self.mapper_context
-            )
-            actor = Actor()
+        payload_data = webhook_info.payload_cls.from_event(event, self.mapper_context)
+        actor = Actor()
 
-            webhook_event = WebhookEventAggregate.create(
+        webhook_event = WebhookEventAggregate.create(
+            actor,
+            event_type=webhook_info.event_type,
+            timestamp=event.timestamp,
+            payload=payload_data.model_dump(mode="json"),
+        )
+        uow.webhook_events.add(webhook_event)
+
+        for installation in installations:
+            webhook_delivery = WebhookDeliveryAggregate.create(
                 actor,
-                event_type=webhook_info.event_type,
-                timestamp=event.timestamp,
-                payload=payload_data.model_dump(),
+                webhook_event_id=webhook_event.id,
+                app_id=installation.app_id,
+                app_installation_id=installation.id,
             )
-            uow.webhook_events.add(webhook_event)
-
-            for installation in installations:
-                webhook_delivery = WebhookDeliveryAggregate.create(
-                    actor,
-                    webhook_event_id=webhook_event.id,
-                    app_id=installation.oauth2_client_id,
-                    app_installation_id=installation.id,
-                    webhook_id=installation.oauth2_client.webhook_id,
-                )
-                uow.webhook_deliveries.add(webhook_delivery)
-
-            uow.commit()
+            uow.webhook_deliveries.add(webhook_delivery)

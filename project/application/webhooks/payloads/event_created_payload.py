@@ -1,7 +1,7 @@
 """Event created data model."""
 
 import datetime
-from typing import List, Optional
+from typing import List, Optional, Set
 
 from project.application.webhooks.abstract_webhook_mapper_context import (
     AbstractWebhookMapperContext,
@@ -55,10 +55,10 @@ class EventCreatedPayload(WebhookPayloadBase):
     target_group_origin: Optional[WebhookEventTargetGroupOrigin] = None
     attendance_mode: Optional[WebhookEventAttendanceMode] = None
     previous_start_date: Optional[datetime.datetime] = None
-    category_ids: Optional[List[ObjectId]] = None
-    custom_category_ids: Optional[List[ObjectId]] = None
+    category_ids: Optional[Set[ObjectId]] = None
+    custom_category_ids: Optional[Set[ObjectId]] = None
     rating: Optional[int] = None
-    co_organizer_ids: Optional[List[ObjectId]] = None
+    co_organizer_ids: Optional[Set[ObjectId]] = None
 
     @classmethod
     def from_event(cls, e: events.EventCreated, ctx: AbstractWebhookMapperContext):

@@ -21,31 +21,30 @@ class ReferenceEventChangedEmailEventHandler(AbstractEventHandler):
         self.event_read_repo = event_read_repo
 
     def handle(self, event: events.EventUpdated, uow: AbstractUnitOfWork):
-        with uow:
-            event_instance = uow.events.get(event.id)
+        event_instance = uow.events.get(event.id)
 
-            if not event_instance:  # pragma: no cover
-                return
+        if not event_instance:  # pragma: no cover
+            return
 
-            if not self._has_significant_changes(event):
-                return
+        if not self._has_significant_changes(event):
+            return
 
-            references = uow.event_references.get_by_event_id(event_instance.id)
+        references = uow.event_references.get_by_event_id(event_instance.id)
 
-            if not references:
-                return
+        if not references:
+            return
 
-            event_read_model = self.event_read_repo.get(event_instance.id)
-            for reference in references:
-                # Alle Mitglieder der AdminUnit, die das Recht haben, Requests zu verifizieren
-                self.organization_service.send_template_mails_to_members_async(
-                    uow,
-                    reference.admin_unit_id,
-                    "incoming_event_reference_requests:write",
-                    "referenced_event_changed_notice",
-                    event=event_read_model,
-                    reference=reference,
-                )
+        event_read_model = self.event_read_repo.get(event_instance.id)
+        for reference in references:
+            # Alle Mitglieder der AdminUnit, die das Recht haben, Requests zu verifizieren
+            self.organization_service.send_template_mails_to_members_async(
+                uow,
+                reference.admin_unit_id,
+                "incoming_event_reference_requests:write",
+                "referenced_event_changed_notice",
+                event=event_read_model,
+                reference=reference,
+            )
 
     def _has_significant_changes(self, event: events.EventUpdated) -> bool:
         return (

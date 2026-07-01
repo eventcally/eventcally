@@ -1,23 +1,26 @@
 from project.application.webhooks.abstract_webhook_mapper_context import (
     AbstractWebhookMapperContext,
 )
+from project.application.webhooks.payloads.nested.payload_actor import PayloadActor
 from project.application.webhooks.payloads.webhook_payload_base import (
     WebhookPayloadBase,
 )
 from project.domain import events
+from project.domain.types import ObjectId
 
 
 class AppInstallationCreatedPayload(WebhookPayloadBase):
-    id: int
-    app_id: int
-    organization_id: int
-    permissions: list[str]
+    id: ObjectId
+    app_id: ObjectId
+    organization_id: ObjectId
+    permissions: set[str]
 
     @classmethod
     def from_event(
         cls, e: events.AppInstallationCreated, ctx: AbstractWebhookMapperContext
     ):
         return cls(
+            actor=PayloadActor.from_event(e.actor, ctx),
             id=e.id,
             app_id=e.app_id,
             organization_id=e.admin_unit_id,

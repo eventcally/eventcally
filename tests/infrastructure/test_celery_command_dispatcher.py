@@ -6,7 +6,7 @@ from project.domain.models.entities.actor import Actor
 from project.infrastructure.celery_command_dispatcher import CeleryCommandDispatcher
 
 
-def test_dispatch_calls_process_delayed_command(monkeypatch):
+def test_dispatch_calls_process_delayed_command_v2(monkeypatch):
     dispatcher = CeleryCommandDispatcher()
     cmd = commands.AttemptToDeliverWebhookCommand(
         actor=Actor(), webhook_delivery_id=123
@@ -14,14 +14,14 @@ def test_dispatch_calls_process_delayed_command(monkeypatch):
 
     fake_task = MagicMock()
 
-    # The dispatch method does `from project.base_tasks import process_delayed_command`
+    # The dispatch method does `from project.base_tasks import process_delayed_command_v2`
     # at call time, so we inject a fake module into sys.modules before the call.
     fake_base_tasks = MagicMock()
-    fake_base_tasks.process_delayed_command = fake_task
+    fake_base_tasks.process_delayed_command_v2 = fake_task
     monkeypatch.setitem(sys.modules, "project.base_tasks", fake_base_tasks)
 
     dispatcher.dispatch(cmd)
 
     expected_class_path = f"{cmd.__class__.__module__}.{cmd.__class__.__name__}"
-    expected_dict = cmd.model_dump(exclude_unset=True)
-    fake_task.delay.assert_called_once_with(expected_class_path, expected_dict)
+    expected_json = cmd.model_dump_json(exclude_unset=True)
+    fake_task.delay.assert_called_once_with(expected_class_path, expected_json)

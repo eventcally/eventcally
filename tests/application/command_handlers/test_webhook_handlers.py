@@ -24,13 +24,6 @@ class TestDeleteOldWebhookEventsHandler:
 
         assert uow.webhook_events.deleted_days == 3
 
-    def test_commits(self, uow):
-        cmd = commands.DeleteOldWebhookEventsCommand.model_construct(actor=Actor())
-
-        DeleteOldWebhookEventsHandler().handle(cmd, uow)
-
-        assert uow.committed
-
     def test_returns_deleted_count(self, uow):
         uow.webhook_events.delete_count = 5
         cmd = commands.DeleteOldWebhookEventsCommand.model_construct(actor=Actor())
@@ -58,16 +51,3 @@ class TestAttemptToDeliverWebhookHandler:
         )
 
         service.send_webhook_delivery_sync.assert_called_once_with(uow, 42)
-
-    def test_commits(self, uow):
-        service = MagicMock()
-        cmd = commands.AttemptToDeliverWebhookCommand.model_construct(
-            actor=Actor(),
-            webhook_delivery_id=1,
-        )
-
-        AttemptToDeliverWebhookHandler(webhook_delivery_service=service).handle(
-            cmd, uow
-        )
-
-        assert uow.committed

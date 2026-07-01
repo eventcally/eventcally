@@ -94,16 +94,20 @@ class EventOrganizerAggregate(BaseAggregate):
         self._update_field_with_value("email", email, event)
         self._update_field_with_value("phone", phone, event)
         self._update_field_with_value("fax", fax, event)
-        self._update_field_with_value("location", location, event)
+        self._update_field_with_value(
+            "location", location, event, compare_fn=LocationValueObject.compare
+        )
 
         old_logo_for_event = (
             ImageForEvent.from_image_entity(self.logo) if self.logo else None
         )
-        if self._update_field_with_value("logo", logo):
+        if self._update_field_with_value("logo", logo, compare_fn=ImageEntity.compare):
             new_logo_for_event = (
                 ImageForEvent.from_image_entity(self.logo) if self.logo else None
             )
             event.logo = ChangedValue(old=old_logo_for_event, new=new_logo_for_event)
+
+        self.validate_self()
 
         if event.has_changed_values():
             self.domain_events.append(event)

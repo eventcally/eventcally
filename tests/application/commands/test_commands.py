@@ -98,4 +98,4 @@ class TestUpdateAppCommand:
             id=1,
             app_permissions=["events:read"],
         )
-        assert cmd.app_permissions == ["events:read"]
+        assert cmd.app_permissions == {"events:read"}

@@ -127,9 +127,10 @@ def test_search(client, seeder: Seeder, utils: UtilActions):
 
 def test_search_with_custom_category(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
-    custom_event_category_set_id, custom_event_category_id = (
-        seeder.get_one_custom_event_category_set()
-    )
+    (
+        custom_event_category_set_id,
+        custom_event_category_id,
+    ) = seeder.get_one_custom_event_category_set()
     event_id = seeder.create_event(
         admin_unit_id, custom_category_ids=[custom_event_category_id]
     )
@@ -714,6 +715,17 @@ def test_patch_photo(
         event = db.session.get(Event, event_id)
         assert event.photo is not None
         assert event.photo.encoding_format == "image/png"
+        app.test_event_dispatcher.handle_pending_events()
+
+    # Patch again with the same image URL, should not create a new image
+    response = utils.patch_json(
+        url,
+        {"photo": {"image_url": "https://image.com", "copyright_text": "EventCally"}},
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        assert len(app.test_event_dispatcher.events) == 0
 
 
 def test_patch_photo_copyright(client, db, seeder: Seeder, utils: UtilActions, app):

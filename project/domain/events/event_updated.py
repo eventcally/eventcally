@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Optional
+from typing import List, Set
 
 from project.domain.events.nested.image_for_event import ImageForEvent
 from project.domain.models.entities.event_date_entity import EventDateEntity
@@ -10,7 +10,8 @@ from project.domain.models.enums.event_target_group_origin import EventTargetGro
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
 )
-from project.domain.types import ChangedValue, ObjectId
+from project.domain.types import ObjectId, OptionalChangedOptionalValue
+from project.domain.types.changed_value import OptionalChangedValue
 from project.domain.types.optional_changed_value_field_factory import (
     OptionalChangedValueField,
 )
@@ -21,45 +22,47 @@ from .base import Event
 class EventUpdated(Event):
     id: ObjectId
     admin_unit_id: ObjectId
-    name: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    photo: Optional[ChangedValue[ImageForEvent]] = OptionalChangedValueField()
-    organizer_id: Optional[ChangedValue[ObjectId]] = OptionalChangedValueField()
-    event_place_id: Optional[ChangedValue[ObjectId]] = OptionalChangedValueField()
-    date_definitions: Optional[ChangedValue[List[EventDateDefinitionValueObject]]] = (
+    name: OptionalChangedValue[str] = OptionalChangedValueField()
+    photo: OptionalChangedOptionalValue[ImageForEvent] = OptionalChangedValueField()
+    organizer_id: OptionalChangedValue[ObjectId] = OptionalChangedValueField()
+    event_place_id: OptionalChangedValue[ObjectId] = OptionalChangedValueField()
+    date_definitions: OptionalChangedValue[List[EventDateDefinitionValueObject]] = (
         OptionalChangedValueField()
     )
-    dates: Optional[ChangedValue[List[EventDateEntity]]] = OptionalChangedValueField()
-    status: Optional[ChangedValue[EventStatus]] = OptionalChangedValueField()
-    public_status: Optional[ChangedValue[EventPublicStatus]] = (
+    dates: OptionalChangedValue[List[EventDateEntity]] = OptionalChangedValueField()
+    status: OptionalChangedValue[EventStatus] = OptionalChangedValueField()
+    public_status: OptionalChangedValue[EventPublicStatus] = OptionalChangedValueField()
+    description: OptionalChangedOptionalValue[str] = OptionalChangedValueField()
+    external_link: OptionalChangedOptionalValue[str] = OptionalChangedValueField()
+    ticket_link: OptionalChangedOptionalValue[str] = OptionalChangedValueField()
+    tags: OptionalChangedOptionalValue[str] = OptionalChangedValueField()
+    internal_tags: OptionalChangedOptionalValue[str] = OptionalChangedValueField()
+    kid_friendly: OptionalChangedOptionalValue[bool] = OptionalChangedValueField()
+    accessible_for_free: OptionalChangedOptionalValue[bool] = (
         OptionalChangedValueField()
     )
-    description: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    external_link: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    ticket_link: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    tags: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    internal_tags: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    kid_friendly: Optional[ChangedValue[bool]] = OptionalChangedValueField()
-    accessible_for_free: Optional[ChangedValue[bool]] = OptionalChangedValueField()
-    age_from: Optional[ChangedValue[int]] = OptionalChangedValueField()
-    age_to: Optional[ChangedValue[int]] = OptionalChangedValueField()
-    registration_required: Optional[ChangedValue[bool]] = OptionalChangedValueField()
-    booked_up: Optional[ChangedValue[bool]] = OptionalChangedValueField()
-    expected_participants: Optional[ChangedValue[int]] = OptionalChangedValueField()
-    price_info: Optional[ChangedValue[str]] = OptionalChangedValueField()
-    target_group_origin: Optional[ChangedValue[EventTargetGroupOrigin]] = (
+    age_from: OptionalChangedOptionalValue[int] = OptionalChangedValueField()
+    age_to: OptionalChangedOptionalValue[int] = OptionalChangedValueField()
+    registration_required: OptionalChangedOptionalValue[bool] = (
         OptionalChangedValueField()
     )
-    attendance_mode: Optional[ChangedValue[EventAttendanceMode]] = (
+    booked_up: OptionalChangedOptionalValue[bool] = OptionalChangedValueField()
+    expected_participants: OptionalChangedOptionalValue[int] = (
         OptionalChangedValueField()
     )
-    previous_start_date: Optional[ChangedValue[datetime.datetime]] = (
+    price_info: OptionalChangedOptionalValue[str] = OptionalChangedValueField()
+    target_group_origin: OptionalChangedOptionalValue[EventTargetGroupOrigin] = (
         OptionalChangedValueField()
     )
-    category_ids: Optional[ChangedValue[List[ObjectId]]] = OptionalChangedValueField()
-    custom_category_ids: Optional[ChangedValue[List[ObjectId]]] = (
+    attendance_mode: OptionalChangedOptionalValue[EventAttendanceMode] = (
         OptionalChangedValueField()
     )
-    rating: Optional[ChangedValue[int]] = OptionalChangedValueField()
-    co_organizer_ids: Optional[ChangedValue[List[ObjectId]]] = (
+    previous_start_date: OptionalChangedOptionalValue[datetime.datetime] = (
         OptionalChangedValueField()
     )
+    category_ids: OptionalChangedValue[Set[ObjectId]] = OptionalChangedValueField()
+    custom_category_ids: OptionalChangedValue[Set[ObjectId]] = (
+        OptionalChangedValueField()
+    )
+    rating: OptionalChangedOptionalValue[int] = OptionalChangedValueField()
+    co_organizer_ids: OptionalChangedValue[Set[ObjectId]] = OptionalChangedValueField()

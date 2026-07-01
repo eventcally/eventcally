@@ -44,18 +44,14 @@ class MessageBus:
         return self.uow_factory.uow()
 
     def handle(self, message: Message):
-        uow = self.create_uow()
         result = None
 
         if isinstance(message, events.Event):
-            self._handle_event(message, uow)
+            self._handle_event(message)
         elif isinstance(message, commands.Command):
-            result = self._handle_command(message, uow)
+            result = self._handle_command(message)
         else:  # pragma: no cover
             raise Exception(f"{message} was not an Event or Command")
-
-        for event in uow.collect_pending_events():
-            self._dispatch_event(event)
 
         return result
 
@@ -70,24 +66,35 @@ class MessageBus:
         logger.debug(f"Dispatched {command.__class__.__name__}")
 
     def _dispatch_event(self, event: events.Event):
-        self.event_dispatcher.dispatch(event)
-        logger.debug(f"Dispatched {event.__class__.__name__}")
+        logger.debug("dispatching event %r", event)
 
-    def _handle_event(self, event: events.Event, uow: AbstractUnitOfWork):
+        try:
+            event.validate_self()
+            self.event_dispatcher.dispatch(event)
+        except Exception:  # pragma: no cover
+            logger.exception("Exception dispatching event %r", event)
+
+    def _handle_event(self, event: events.Event):
         handlers = self.event_handler_factory(type(event))
 
         for handler in handlers:
+            uow = self.create_uow()
             try:
-                logger.debug("handling event %s with handler %s", event, handler)
+                logger.debug("handling event %r with handler %r", event, handler)
                 handler.handle(event, uow)
+                uow.commit()
             except Exception:  # pragma: no cover
-                logger.exception("Exception handling event %s", event)
+                logger.exception("Exception handling event %r", event)
+                uow.rollback()
                 continue
 
-    def _handle_command(self, command: commands.Command, uow: AbstractUnitOfWork):
-        logger.debug("handling command %s", command)
+            self._dispatch_pending_events(uow)
+
+    def _handle_command(self, command: commands.Command):
+        logger.debug("handling command %r", command)
         self._set_missing_command_fields(command)
 
+        uow = self.create_uow()
         try:
             command_type = type(command)
             validated_command = command_type.model_validate(
@@ -95,10 +102,19 @@ class MessageBus:
             )
             handler = self.command_handler_factory(command_type)
             result = handler.handle(validated_command, uow)
-            return result
+            uow.commit()
         except Exception:
-            logger.exception("Exception handling command %s", command)
+            logger.exception("Exception handling command %r", command)
+            uow.rollback()
             raise
+
+        self._dispatch_pending_events(uow)
+
+        return result
+
+    def _dispatch_pending_events(self, uow: AbstractUnitOfWork):
+        for event in uow.collect_pending_events():
+            self._dispatch_event(event)
 
     def _set_missing_command_fields(self, command):
         if not hasattr(command, "actor"):

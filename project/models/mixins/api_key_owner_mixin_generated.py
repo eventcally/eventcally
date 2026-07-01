@@ -30,7 +30,6 @@ from project.actor import current_actor
 
 
 class ApiKeyOwnerGeneratedMixin:
-
     @declared_attr
     def max_api_keys(cls):
         return Column(Integer(), nullable=False, default=1, server_default="1")

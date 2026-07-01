@@ -31,7 +31,7 @@ class TestAppAggregateCreate:
         )
         assert app.name == "App"
         assert app.admin_unit_id == 2
-        assert app.app_permissions == ["write"]
+        assert app.app_permissions == {"write"}
 
     def test_appends_created_event(self, actor):
         app = AppAggregate.create(
@@ -50,7 +50,7 @@ class TestAppAggregateCreate:
         app = AppAggregate.create(
             actor=actor, admin_unit_id=2, name="App", app_permissions=[]
         )
-        assert app.redirect_uris is None
+        assert app.redirect_uris == set()
         assert app.scope is None
         assert app.description is None
         assert app.homepage_url is None
@@ -89,10 +89,10 @@ class TestAppAggregateUpdate:
         assert event.name.new == "Updated App"
 
     def test_update_app_permissions_sets_changed_value(self, app, actor):
-        app.update(actor=actor, app_permissions=["read", "write"])
+        app.update(actor=actor, app_permissions={"read", "write"})
         event = app.domain_events[-1]
         assert isinstance(event.app_permissions, ChangedValue)
-        assert event.app_permissions.new == ["read", "write"]
+        assert event.app_permissions.new == {"read", "write"}
 
     def test_update_webhook_sets_changed_value(self, app, actor):
         webhook = WebhookValueObject(url="https://example.com")

@@ -21,7 +21,7 @@ class SqlAlchemyEventPlaceRepository(AbstractEventPlaceRepository):
         event_place.id = model.id
         domain_event.id = model.id
 
-        if model.photo:
+        if model.photo and domain_event.photo:
             event_place.photo.id = model.photo.id
             domain_event.photo.id = model.photo.id
             domain_event.photo.hash = model.photo.get_hash()
@@ -32,12 +32,13 @@ class SqlAlchemyEventPlaceRepository(AbstractEventPlaceRepository):
         self.session.merge(model)
         self.session.flush()
 
-        if model.photo:
+        if model.photo and event_place.photo:
             event_place.photo.id = model.photo.id
 
             domain_event = event_place.get_first_domain_event_by_type(EventPlaceUpdated)
-            domain_event.photo.new.id = model.photo.id
-            domain_event.photo.new.hash = model.photo.get_hash()
+            if domain_event and domain_event.photo and domain_event.photo.new:
+                domain_event.photo.new.id = model.photo.id
+                domain_event.photo.new.hash = model.photo.get_hash()
 
     def _get_model(self, object_id: int) -> Optional[EventPlace]:
         return self.session.query(EventPlace).filter_by(id=object_id).first()

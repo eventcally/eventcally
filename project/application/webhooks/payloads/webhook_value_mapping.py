@@ -1,24 +1,24 @@
 """Functions for mapping ChangedValue objects."""
 
-from typing import Callable, List, Optional, TypeVar
+from typing import Callable, List, TypeVar
 
-from project.domain.types import ChangedValue
+from project.domain.types import ChangedValue, OptionalChangedValue
 
 T = TypeVar("T")
 U = TypeVar("U")
 
 
 def map_changed_value(
-    cv: Optional[ChangedValue[T]], converter: Callable[[T], U]
-) -> Optional[ChangedValue[U]]:
+    cv: OptionalChangedValue[T], converter: Callable[[T], U]
+) -> OptionalChangedValue[U]:
     if cv is None:
         return None
     return ChangedValue(old=converter(cv.old), new=converter(cv.new))
 
 
 def map_changed_list_value(
-    cv: Optional[ChangedValue[List[T]]], converter: Callable[[T], U]
-) -> Optional[ChangedValue[List[U]]]:
+    cv: OptionalChangedValue[List[T]], converter: Callable[[T], U]
+) -> OptionalChangedValue[List[U]]:
     if cv is None:  # pragma: no cover
         return None
     return ChangedValue(

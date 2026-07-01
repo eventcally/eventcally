@@ -9,8 +9,6 @@ class RequestOrganizationDeletionHandler(AbstractCommandHandler):
     def handle(
         self, cmd: commands.RequestOrganizationDeletionCommand, uow: AbstractUnitOfWork
     ):
-        with uow:
-            organization = ensure_organization_exists(cmd.id, uow)
-            organization.request_deletion(cmd.actor)
-            uow.organizations.update(organization)
-            uow.commit()
+        organization = ensure_organization_exists(cmd.id, uow)
+        organization.request_deletion(cmd.actor)
+        uow.organizations.update(organization)

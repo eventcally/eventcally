@@ -108,6 +108,7 @@ class FakeOrgAppInstallationRepo(FakeRepo):
 
 class FakeUnitOfWork(AbstractUnitOfWork):
     def __init__(self):
+        super().__init__()
         self.events = FakeRepo()
         self.event_organizers = FakeRepo()
         self.event_references = FakeEventReferenceRepo()

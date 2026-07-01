@@ -63,7 +63,7 @@ class TestWebhookValueObject:
         vo = WebhookValueObject(url="https://example.com")
         assert vo.secret is None
         assert vo.disabled is False
-        assert vo.event_types == []
+        assert vo.event_types == set()
 
     def test_with_secret_and_event_types(self):
         vo = WebhookValueObject(
@@ -74,7 +74,7 @@ class TestWebhookValueObject:
         )
         assert vo.secret == "my_secret"
         assert vo.disabled is True
-        assert vo.event_types == ["event.created", "event.deleted"]
+        assert vo.event_types == {"event.created", "event.deleted"}
 
 
 class TestEventDateDefinitionValueObject:

@@ -3,11 +3,17 @@ from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import FormField, HiddenField, SubmitField
 
+from project.domain.models.entities.actor import Actor
 from project.modular.fields import VirtualFormField
 from project.modular.search_definition import apply_search_definitions
 
 
 class BaseForm(FlaskForm):
+    def get_current_actor(self) -> Actor:
+        from flask import current_app
+
+        return current_app.container.context.context_provider().current_actor
+
     def get_input_fields(self):
         return list(
             filter(

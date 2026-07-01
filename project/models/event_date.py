@@ -18,6 +18,7 @@ from project.utils import make_check_violation
 
 class EventDate(db.Model, EventDateGeneratedMixin):
     def fill_from_entity(self, entity: EventDateEntity):
+        self._from_entity = entity
         self.id = entity.id if entity.id and entity.id > 0 else None
         self.start = entity.start
         self.end = entity.end

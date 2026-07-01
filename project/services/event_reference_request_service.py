@@ -5,7 +5,6 @@ from project.views.utils import send_template_mails_to_admin_unit_members_async
 
 
 class EventReferenceRequestService(BaseService[EventReferenceRequest]):
-
     def insert_object(self, object: EventReferenceRequest):
         super().insert_object(object)
 

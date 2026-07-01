@@ -12,7 +12,6 @@ from project.utils import make_check_violation
 class AdminUnitVerificationRequest(
     db.Model, AdminUnitVerificationRequestGeneratedMixin
 ):
-
     @hybrid_property
     def verified(self):
         return self.review_status == AdminUnitVerificationRequestReviewStatus.verified

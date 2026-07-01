@@ -524,6 +524,11 @@ class Cqrs(containers.DeclarativeContainer):
                         event_handlers.AppInstallationWebhookEventHandler,
                         mapper_context=webhook_mapper_context,
                     ),
+                    providers.Factory(
+                        event_handlers.ReferenceEventChangedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                        event_read_repo=read_repos.event_read_repo,
+                    ),
                 ),
                 events.EventDeleted: providers.List(
                     providers.Factory(
@@ -589,13 +594,6 @@ class Cqrs(containers.DeclarativeContainer):
                     providers.Factory(
                         event_handlers.OrganizationDeletionRequestedEmailEventHandler,
                         organization_service=services.organization_application_service,
-                    )
-                ),
-                events.EventUpdated: providers.List(
-                    providers.Factory(
-                        event_handlers.ReferenceEventChangedEmailEventHandler,
-                        organization_service=services.organization_application_service,
-                        event_read_repo=read_repos.event_read_repo,
                     )
                 ),
             }

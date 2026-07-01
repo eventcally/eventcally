@@ -10,12 +10,10 @@ from .app_utils import ensure_app_exists
 
 class InstallAppHandler(AbstractCommandHandler):
     def handle(self, cmd: commands.InstallAppCommand, uow: AbstractUnitOfWork):
-        with uow:
-            app = ensure_app_exists(cmd.app_id, uow)
-            app_installation = OrganisationAppInstallationAggregate.create(
-                cmd.actor, cmd.admin_unit_id, cmd.app_id, app.app_permissions
-            )
-            uow.organization_app_installations.add(app_installation)
-            uow.commit()
+        app = ensure_app_exists(cmd.app_id, uow)
+        app_installation = OrganisationAppInstallationAggregate.create(
+            cmd.actor, cmd.admin_unit_id, cmd.app_id, app.app_permissions
+        )
+        uow.organization_app_installations.add(app_installation)
 
-            return commands.InstallAppCommandResult(id=app_installation.id)
+        return commands.InstallAppCommandResult(id=app_installation.id)

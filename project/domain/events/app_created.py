@@ -10,8 +10,8 @@ class AppCreated(Event):
     id: ObjectId
     admin_unit_id: ObjectId
     name: str
-    app_permissions: list[str]
-    redirect_uris: Optional[list[str]] = None
+    app_permissions: set[str]
+    redirect_uris: Optional[set[str]] = None
     scope: Optional[str] = None
     description: Optional[str] = None
     homepage_url: Optional[str] = None

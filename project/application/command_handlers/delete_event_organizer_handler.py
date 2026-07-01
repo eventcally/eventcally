@@ -9,8 +9,6 @@ class DeleteEventOrganizerHandler(AbstractCommandHandler):
     def handle(
         self, cmd: commands.DeleteEventOrganizerCommand, uow: AbstractUnitOfWork
     ):
-        with uow:
-            event_organizer = ensure_event_organizer_exists(cmd.id, uow)
-            event_organizer.delete(cmd.actor)
-            uow.event_organizers.remove(event_organizer)
-            uow.commit()
+        event_organizer = ensure_event_organizer_exists(cmd.id, uow)
+        event_organizer.delete(cmd.actor)
+        uow.event_organizers.remove(event_organizer)

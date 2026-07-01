@@ -21,11 +21,14 @@ from tests.application.conftest import (
 
 
 class _FakeUoWFactory:
-    def __init__(self, uow):
+    def __init__(self, uow=None):
         self._uow = uow
+        self.created = []
 
     def uow(self):
-        return self._uow
+        uow = self._uow or FakeUnitOfWork()
+        self.created.append(uow)
+        return uow
 
 
 class _FakeCommandHandlerFactory:
@@ -52,13 +55,13 @@ def _make_bus(
     command_dispatcher=None,
     actor=None,
 ):
-    uow = uow or FakeUnitOfWork()
     event_dispatcher = event_dispatcher or FakeEventDispatcher()
     command_dispatcher = command_dispatcher or FakeCommandDispatcher()
     context_provider = FakeAppContextProvider(actor=actor)
+    factory = _FakeUoWFactory(uow)
 
     return MessageBus(
-        uow_factory=_FakeUoWFactory(uow),
+        uow_factory=factory,
         app_context_provider=context_provider,
         command_handler_factory=_FakeCommandHandlerFactory(command_handler),
         event_handler_factory=_FakeEventHandlerFactory(event_handlers_map),
@@ -178,13 +181,14 @@ class TestHandleCommand:
 
     def test_dispatches_pending_events_after_handle(self):
         dispatcher = FakeEventDispatcher()
-        uow = FakeUnitOfWork()
-        handler = _FakeCommandHandler()
-        bus = _make_bus(uow=uow, command_handler=handler, event_dispatcher=dispatcher)
-
-        # Plant a pending event to be collected after commit
         fake_event = MagicMock(spec=events.Event)
-        uow.pending_events = [fake_event]
+
+        class _HandlerWithEvents:
+            def handle(self, cmd, uow):
+                uow.pending_events.append(fake_event)
+
+        handler = _HandlerWithEvents()
+        bus = _make_bus(command_handler=handler, event_dispatcher=dispatcher)
 
         bus.handle(_make_fake_command())
 
@@ -216,6 +220,52 @@ class TestHandleEvent:
         ev = events.AppDeleted(actor=actor, id=1, admin_unit_id=2)
         bus = _make_bus(event_handlers_map={})
         bus.handle(ev)  # should not raise
+
+    def test_creates_fresh_uow_per_handler(self):
+        actor = Actor()
+        ev = events.AppDeleted(actor=actor, id=1, admin_unit_id=2)
+
+        uows = []
+
+        class _TrackingHandler:
+            def handle(self, event, uow):
+                uows.append(uow)
+
+        handler1 = _TrackingHandler()
+        handler2 = _TrackingHandler()
+        bus = _make_bus(
+            event_handlers_map={type(ev): [handler1, handler2]},
+        )
+
+        bus.handle(ev)
+
+        assert len(uows) == 2
+        assert uows[0] is not uows[1]
+
+    def test_rollback_on_handler_exception(self):
+        actor = Actor()
+        ev = events.AppDeleted(actor=actor, id=1, admin_unit_id=2)
+
+        class _FailingHandler:
+            def handle(self, event, uow):
+                raise ValueError("handler failed")
+
+        handler = _FailingHandler()
+        factory = _FakeUoWFactory()
+        bus = MessageBus(
+            uow_factory=factory,
+            app_context_provider=FakeAppContextProvider(actor=actor),
+            command_handler_factory=_FakeCommandHandlerFactory(None),
+            event_handler_factory=_FakeEventHandlerFactory({type(ev): [handler]}),
+            event_dispatcher=FakeEventDispatcher(),
+            command_dispatcher=FakeCommandDispatcher(),
+        )
+
+        bus.handle(ev)  # should not raise
+
+        assert len(factory.created) == 1
+        uow = factory.created[0]
+        assert uow.committed is False
 
 
 # ---------------------------------------------------------------------------

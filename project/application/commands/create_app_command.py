@@ -15,8 +15,8 @@ class CreateAppCommandResult(CommandResult):
 class CreateAppCommand(CommandWithResult[CreateAppCommandResult]):
     admin_unit_id: ObjectId
     name: str
-    app_permissions: list[str] = Field(min_length=1)
-    redirect_uris: Optional[list[str]] = None
+    app_permissions: set[str] = Field(min_length=1)
+    redirect_uris: set[str] = set()
     scope: Optional[str] = None
     description: Optional[str] = None
     homepage_url: Optional[str] = None

@@ -49,18 +49,6 @@ class TestInstallAppHandler:
         assert installation.app_id == app.id
         assert installation.admin_unit_id == 2
 
-    def test_commits(self, uow):
-        app = self._seed_app(uow)
-        cmd = commands.InstallAppCommand.model_construct(
-            actor=Actor(),
-            admin_unit_id=2,
-            app_id=app.id,
-        )
-
-        InstallAppHandler().handle(cmd, uow)
-
-        assert uow.committed
-
     def test_app_not_found_raises_not_found_error(self, uow):
         cmd = commands.InstallAppCommand.model_construct(
             actor=Actor(),
@@ -88,7 +76,7 @@ class TestUninstallAppHandler:
         uow.organization_app_installations.add(inst)
         return inst
 
-    def test_removes_installation_and_commits(self, uow):
+    def test_removes_installation(self, uow):
         inst = self._seed_installation(uow)
         inst_id = inst.id
 
@@ -96,7 +84,6 @@ class TestUninstallAppHandler:
         UninstallAppHandler().handle(cmd, uow)
 
         assert uow.organization_app_installations.get(inst_id) is None
-        assert uow.committed
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.UninstallAppCommand.model_construct(actor=Actor(), id=9999)
@@ -121,19 +108,18 @@ class TestUpdateAppInstallationPermissionsHandler:
         uow.organization_app_installations.add(inst)
         return inst
 
-    def test_updates_permissions_and_commits(self, uow):
+    def test_updates_permissions(self, uow):
         inst = self._seed_installation(uow)
         cmd = commands.UpdateAppInstallationPermissionsCommand.model_construct(
             actor=Actor(),
             id=inst.id,
-            permissions=["events:read", "events:write"],
+            permissions={"events:read", "events:write"},
         )
 
         UpdateAppInstallationPermissionsHandler().handle(cmd, uow)
 
         updated = uow.organization_app_installations.get(inst.id)
         assert "events:write" in updated.permissions
-        assert uow.committed
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.UpdateAppInstallationPermissionsCommand.model_construct(

@@ -15,9 +15,9 @@ from project.domain.models.entities.actor import Actor
 from .abstract_event_handler import AbstractEventHandler
 
 _EVENT_WEBHOOK_EVENT_TYPE: dict[type, str] = {
-    events.AppInstallationCreated: "app_installation.created",
+    events.AppInstallationCreated: "app.installed",
     events.AppInstallationPermissionsUpdated: "app_installation.permissions_updated",
-    events.AppInstallationDeleted: "app_installation.deleted",
+    events.AppInstallationDeleted: "app.uninstalled",
 }
 
 
@@ -31,35 +31,29 @@ class AppWebhookEventHandler(AbstractEventHandler):
         webhook_info = get_app_webhook_info_by_event_type(event_type)
         app_id = getattr(event, "app_id", None)
 
-        with uow:
-            app = uow.apps.get(app_id)
+        app = uow.apps.get(app_id)
 
-            if (
-                not app
-                or not app.webhook
-                or not app.webhook.is_enabled_for_event_type(event_type)
-            ):
-                return
+        if (
+            not app
+            or not app.webhook
+            or not app.webhook.is_enabled_for_event_type(event_type)
+        ):
+            return
 
-            payload_data = webhook_info.payload_cls.from_event(
-                event, self.mapper_context
-            )
-            actor = Actor()
+        payload_data = webhook_info.payload_cls.from_event(event, self.mapper_context)
+        actor = Actor()
 
-            webhook_event = WebhookEventAggregate.create(
-                actor,
-                event_type=webhook_info.event_type,
-                timestamp=event.timestamp,
-                payload=payload_data.model_dump(),
-            )
-            uow.webhook_events.add(webhook_event)
+        webhook_event = WebhookEventAggregate.create(
+            actor,
+            event_type=webhook_info.event_type,
+            timestamp=event.timestamp,
+            payload=payload_data.model_dump(mode="json"),
+        )
+        uow.webhook_events.add(webhook_event)
 
-            webhook_delivery = WebhookDeliveryAggregate.create(
-                actor,
-                webhook_event_id=webhook_event.id,
-                app_id=app.id,
-                webhook_id=app.webhook.id,
-            )
-            uow.webhook_deliveries.add(webhook_delivery)
-
-            uow.commit()
+        webhook_delivery = WebhookDeliveryAggregate.create(
+            actor,
+            webhook_event_id=webhook_event.id,
+            app_id=app.id,
+        )
+        uow.webhook_deliveries.add(webhook_delivery)

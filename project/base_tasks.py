@@ -37,6 +37,21 @@ def process_delayed_event(event_class_path: str, event_dict: dict):
     acks_late=True,
     reject_on_worker_lost=True,
 )
+def process_delayed_event_v2(event_class_path: str, event_json: str):
+    module_path, class_name = event_class_path.rsplit(".", 1)
+    module = importlib.import_module(module_path)
+    event_class = getattr(module, class_name)
+
+    event = event_class.model_validate_json(event_json)
+
+    message_bus = current_app.container.cqrs.message_bus()
+    message_bus.handle(event)
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
 def process_delayed_command(command_class_path: str, command_dict: dict):
     # Import the command class dynamically
     module_path, class_name = command_class_path.rsplit(".", 1)
@@ -47,5 +62,20 @@ def process_delayed_command(command_class_path: str, command_dict: dict):
     command = command_class.model_validate(command_dict)
 
     # Process through message bus
+    message_bus = current_app.container.cqrs.message_bus()
+    message_bus.handle(command)
+
+
+@celery.task(
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
+def process_delayed_command_v2(command_class_path: str, command_json: str):
+    module_path, class_name = command_class_path.rsplit(".", 1)
+    module = importlib.import_module(module_path)
+    command_class = getattr(module, class_name)
+
+    command = command_class.model_validate_json(command_json)
+
     message_bus = current_app.container.cqrs.message_bus()
     message_bus.handle(command)

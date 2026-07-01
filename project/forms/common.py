@@ -121,10 +121,19 @@ class Base64ImageForm(BaseForm):
     def process(self, formdata=None, obj=None, data=None, **kwargs):
         super().process(formdata, obj, data, **kwargs)
 
-        if self.image_base64.data is None and obj and obj.data:
-            self.image_base64.data = get_data_uri_from_bytes(
+        self._original_base64 = None
+        self._original_image_data = None
+        self._original_encoding_format = None
+
+        if obj and obj.data:
+            self._original_base64 = get_data_uri_from_bytes(
                 obj.data, obj.encoding_format
             )
+            self._original_image_data = obj.data
+            self._original_encoding_format = obj.encoding_format
+
+            if self.image_base64.data is None:
+                self.image_base64.data = self._original_base64
 
     def validate(self, extra_validators=None):
         result = super().validate(extra_validators)
@@ -137,18 +146,22 @@ class Base64ImageForm(BaseForm):
                 self.copyright_text.errors.append(msg)
                 result = False
 
-            try:
-                image = get_image_from_base64_str(self.image_base64.data)
-                validate_image(image)
-                resize_image_to_max(image)
-                self.image_base64.encoding_format = get_mime_type_from_image(image)
-                self.image_base64.image_data = get_bytes_from_image(image)
-            except Exception as e:
-                msg = str(e)
-                self.image_base64.encoding_format = None
-                self.image_base64.image_data = None
-                self.image_base64.errors.append(msg)
-                result = False
+            if self.image_base64.data == self._original_base64:
+                self.image_base64.encoding_format = self._original_encoding_format
+                self.image_base64.image_data = self._original_image_data
+            else:
+                try:
+                    image = get_image_from_base64_str(self.image_base64.data)
+                    validate_image(image)
+                    resize_image_to_max(image)
+                    self.image_base64.encoding_format = get_mime_type_from_image(image)
+                    self.image_base64.image_data = get_bytes_from_image(image)
+                except Exception as e:
+                    msg = str(e)
+                    self.image_base64.encoding_format = None
+                    self.image_base64.image_data = None
+                    self.image_base64.errors.append(msg)
+                    result = False
 
         return result
 

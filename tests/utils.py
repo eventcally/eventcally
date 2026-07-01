@@ -211,11 +211,15 @@ class UtilActions(object):
         self.log_response(response)
         return response
 
-    def mock_db_commit(self, mocker, orig=None):
+    def mock_db_commit(self, mocker):
         mocked_commit = mocker.patch("project.db.session.commit")
         mocked_commit.side_effect = IntegrityError(
-            "MockException", "MockException", orig
+            "MockException", "MockException", None
         )
+
+    def mock_db_commit_with_error(self, mocker, error: IntegrityError):
+        mocked_commit = mocker.patch("project.db.session.commit")
+        mocked_commit.side_effect = error
 
     def mock_send_mails(self, mocker):
         return mocker.patch("project.views.utils.send_mails_with_body")

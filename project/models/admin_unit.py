@@ -43,7 +43,6 @@ class AdminUnitMemberRole(db.Model, AdminUnitMemberRoleGeneratedMixin, RoleMixin
 
 
 class AdminUnitMember(db.Model, AdminUnitMemberGeneratedMixin):
-
     @classmethod
     def to_aggregate(cls, model: AdminUnitMember) -> OrganisationMemberAggregate:
         if model is None:  # pragma: no cover
@@ -132,7 +131,6 @@ def before_saving_admin_unit_relation(mapper, connect, self):
 
 
 class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
-
     def fill_from_aggregate(self, aggregate: OrganizationAggregate):
         self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
         self.deletion_requested_at = aggregate.deletion_requested_at

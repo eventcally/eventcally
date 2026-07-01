@@ -23,9 +23,8 @@ def test_install_app_command_creates_app_installation(app, db, seeder):
         assert app_installation is not None
         assert app_installation.admin_unit_id == admin_unit_id
         assert app_installation.oauth2_client_id == app_id
-        assert (
-            app_installation.permissions
-            == app_installation.oauth2_client.app_permissions
+        assert set(app_installation.permissions) == set(
+            app_installation.oauth2_client.app_permissions
         )
 
         installation_events = [
@@ -39,4 +38,4 @@ def test_install_app_command_creates_app_installation(app, db, seeder):
         assert event.id == app_installation.id
         assert event.admin_unit_id == admin_unit_id
         assert event.app_id == app_id
-        assert event.permissions == app_installation.permissions
+        assert set(event.permissions) == set(app_installation.permissions)

@@ -1,4 +1,5 @@
 import datetime
+from typing import TypeVar
 
 from pydantic import Field
 
@@ -15,3 +16,6 @@ class Event(CustomBaseModel, HasChangedValueMixin):
 
     def has_changed_values(self) -> bool:
         return self._has_set_changed_values()
+
+
+TEvent = TypeVar("TEvent", bound=Event)

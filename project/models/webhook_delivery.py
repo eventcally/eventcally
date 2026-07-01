@@ -9,6 +9,7 @@ from project.domain.models.aggregates.webhook_delivery_aggregate import (
     WebhookDeliveryAggregate,
 )
 from project.extensions import db
+from project.models.oauth import OAuth2Client
 from project.models.webhook_delivery_generated import WebhookDeliveryGeneratedMixin
 
 
@@ -22,9 +23,13 @@ class WebhookDelivery(db.Model, WebhookDeliveryGeneratedMixin):
     def fill_from_aggregate(self, aggregate: WebhookDeliveryAggregate):
         self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
         self.webhook_event_id = aggregate.webhook_event_id
-        self.webhook_id = aggregate.webhook_id
         self.app_installation_id = aggregate.app_installation_id
         self.app_id = aggregate.app_id
+
+        if self.app_id:
+            app = db.session.get(OAuth2Client, self.app_id)
+            if app:
+                self.webhook_id = app.webhook_id
 
         return self
 
@@ -36,7 +41,6 @@ class WebhookDelivery(db.Model, WebhookDeliveryGeneratedMixin):
         aggregate = WebhookDeliveryAggregate(
             id=model.id,
             webhook_event_id=model.webhook_event_id,
-            webhook_id=model.webhook_id,
             app_installation_id=model.app_installation_id,
             app_id=model.app_id,
         )

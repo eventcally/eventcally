@@ -325,7 +325,8 @@ class EventPlaceForm(BaseForm):
     location = FormField(LocationForm, default=lambda: Location())
 
     def create_create_command(self, admin_unit_id: int) -> CreateEventPlaceCommand:
-        return CreateEventPlaceCommand.model_construct(
+        return CreateEventPlaceCommand(
+            actor=self.get_current_actor(),
             admin_unit_id=admin_unit_id,
             name=self.name.data,
             location=self.location.form.create_create_command(),
@@ -340,7 +341,8 @@ class OrganizerForm(BaseForm):
     location = FormField(LocationForm, default=lambda: Location())
 
     def create_create_command(self, admin_unit_id: int) -> CreateEventOrganizerCommand:
-        return CreateEventOrganizerCommand.model_construct(
+        return CreateEventOrganizerCommand(
+            actor=self.get_current_actor(),
             admin_unit_id=admin_unit_id,
             name=self.name.data,
             location=self.location.form.create_create_command(),
@@ -409,8 +411,9 @@ class CreateForm(BaseCreateForm, EventFormMixin):
                 else EventPublicStatus.draft
             )
         )
-        return CreateEventCommand.model_construct(
+        return CreateEventCommand(
             admin_unit_id=admin_unit_id,
+            actor=self.get_current_actor(),
             name=self.name.data,
             organizer_id=organizer_id,
             event_place_id=event_place_id,
@@ -513,8 +516,9 @@ class UpdateForm(BaseUpdateForm, EventFormMixin):
         co_organizer_ids = self.co_organizers.get_data_ids()
         custom_category_ids = self.custom_categories.get_category_ids()
 
-        return UpdateEventCommand.model_construct(
+        return UpdateEventCommand(
             id=event_id,
+            actor=self.get_current_actor(),
             name=self.name.data,
             organizer_id=self.organizer.data.id,
             event_place_id=self.event_place.data.id,

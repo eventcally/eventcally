@@ -208,7 +208,7 @@ def _create_event(admin_unit_id):
 
     command = CreateEventCommand.model_construct()
     command.admin_unit_id = admin_unit_id
-    command.category_ids = [event_category_service.upsert_event_category("Other").id]
+    command.category_ids = {event_category_service.upsert_event_category("Other").id}
     command.name = "Name"
     command.description = "Beschreibung"
     command.event_place_id = _get_default_event_place_id(admin_unit_id)

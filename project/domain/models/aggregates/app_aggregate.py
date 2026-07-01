@@ -15,8 +15,8 @@ class AppAggregate(BaseAggregate):
     id: ObjectId
     admin_unit_id: ObjectId
     name: str
-    app_permissions: list[str]
-    redirect_uris: Optional[list[str]] = None
+    app_permissions: set[str]
+    redirect_uris: set[str] = set()
     scope: Optional[str] = None
     description: Optional[str] = None
     homepage_url: Optional[str] = None
@@ -29,8 +29,8 @@ class AppAggregate(BaseAggregate):
         actor: Actor,
         admin_unit_id: ObjectId,
         name: str,
-        app_permissions: list[str],
-        redirect_uris: Optional[list[str]] = None,
+        app_permissions: set[str],
+        redirect_uris: set[str] = set(),
         scope: Optional[str] = None,
         description: Optional[str] = None,
         homepage_url: Optional[str] = None,
@@ -71,8 +71,8 @@ class AppAggregate(BaseAggregate):
         self,
         actor: Actor,
         name: Unsetable[str] = unset,
-        app_permissions: Unsetable[list[str]] = unset,
-        redirect_uris: NullableUnsetable[list[str]] = unset,
+        app_permissions: Unsetable[set[str]] = unset,
+        redirect_uris: Unsetable[set[str]] = unset,
         scope: Unsetable[str] = unset,
         description: NullableUnsetable[str] = unset,
         homepage_url: NullableUnsetable[str] = unset,
@@ -93,6 +93,8 @@ class AppAggregate(BaseAggregate):
         self._update_field_with_value("homepage_url", homepage_url, event)
         self._update_field_with_value("setup_url", setup_url, event)
         self._update_field_with_value("webhook", webhook, event)
+
+        self.validate_self()
 
         if event.has_changed_values():
             self.domain_events.append(event)

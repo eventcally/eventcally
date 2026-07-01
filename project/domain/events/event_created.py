@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Optional
+from typing import List, Optional, Set
 
 from project.domain.events.nested.image_for_event import ImageForEvent
 from project.domain.models.entities.event_date_entity import EventDateEntity
@@ -42,7 +42,7 @@ class EventCreated(Event):
     target_group_origin: Optional[EventTargetGroupOrigin] = None
     attendance_mode: Optional[EventAttendanceMode] = None
     previous_start_date: Optional[datetime.datetime] = None
-    category_ids: Optional[List[ObjectId]] = None
-    custom_category_ids: Optional[List[ObjectId]] = None
+    category_ids: Optional[Set[ObjectId]] = None
+    custom_category_ids: Optional[Set[ObjectId]] = None
     rating: Optional[int] = None
-    co_organizer_ids: Optional[List[ObjectId]] = None
+    co_organizer_ids: Optional[Set[ObjectId]] = None

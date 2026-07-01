@@ -243,4 +243,4 @@ class AjaxSelectMultipleField(AjaxSelectField):
 
     def get_data_ids(self):
         data = self.data
-        return [c.id for c in data] if data else None
+        return [c.id for c in data] if data else []

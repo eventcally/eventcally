@@ -21,7 +21,8 @@ class InstallAppForm(BaseForm):
     def create_create_command(
         self, admin_unit_id: int, app_id: int
     ) -> InstallAppCommand:
-        return InstallAppCommand.model_construct(
+        return InstallAppCommand(
+            actor=self.get_current_actor(),
             admin_unit_id=admin_unit_id,
             app_id=app_id,
         )
@@ -37,7 +38,8 @@ class AcceptPermissionsForm(BaseUpdateForm):
     def create_update_command(
         self, app_installation_id: int
     ) -> UpdateAppInstallationPermissionsCommand:
-        return UpdateAppInstallationPermissionsCommand.model_construct(
+        return UpdateAppInstallationPermissionsCommand(
+            actor=self.get_current_actor(),
             id=app_installation_id,
             permissions=self.permissions.data,
         )

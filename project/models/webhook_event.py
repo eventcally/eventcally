@@ -8,7 +8,6 @@ from project.models.webhook_event_generated import WebhookEventGeneratedMixin
 
 
 class WebhookEvent(db.Model, WebhookEventGeneratedMixin):
-
     @classmethod
     def from_aggregate(cls, aggregate: WebhookEventAggregate) -> WebhookEvent:
         model = cls()

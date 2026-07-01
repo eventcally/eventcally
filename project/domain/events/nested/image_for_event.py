@@ -19,7 +19,7 @@ class ImageForEvent(CustomBaseModel):
         if image_entity is None:
             return None
 
-        return cls.model_construct(
+        return cls(
             id=image_entity.id,
             hash=image_entity.hash,
             encoding_format=image_entity.encoding_format,

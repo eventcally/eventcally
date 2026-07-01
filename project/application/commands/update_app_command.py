@@ -11,8 +11,8 @@ from .base import Command
 class UpdateAppCommand(Command):
     id: ObjectId
     name: Unsetable[str] = UnsetField()
-    app_permissions: Unsetable[list[str]] = UnsetField()
-    redirect_uris: NullableUnsetable[list[str]] = UnsetField()
+    app_permissions: Unsetable[set[str]] = UnsetField()
+    redirect_uris: Unsetable[set[str]] = UnsetField()
     scope: NullableUnsetable[str] = UnsetField()
     description: NullableUnsetable[str] = UnsetField()
     homepage_url: NullableUnsetable[str] = UnsetField()

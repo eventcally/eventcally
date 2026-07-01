@@ -53,6 +53,6 @@ def test_update_app_command_accepts_none_for_nullable_fields():
     )
 
     assert command.id == 1
-    assert command.app_permissions == ["read", "write"]
+    assert command.app_permissions == {"read", "write"}
     assert command.description is None
     assert command.webhook is None

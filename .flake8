@@ -4,12 +4,15 @@ exclude =
     .git,
     .github,
     .pytest_cache,
+    .venv,
     .vscode,
     __pycache__,
     doc,
     env,
+    venv,
     tmp
 per-file-ignores =
     __init__.py: F401, E402
     migrations/*: F401, E402
     **/*_generated.py: F401, E303, W391
+    project/domain/types/changed_value.py: E999

@@ -16,6 +16,9 @@ from project.api.schemas import (
     UnprocessableEntityResponseSchema,
 )
 from project.application.message_bus import MessageBus
+from project.application.services.abstract_app_context_provider import (
+    AbstractAppContextProvider,
+)
 from project.container import Application
 from project.extensions import csrf, db, limiter
 from project.models.api_key import ApiKey
@@ -144,6 +147,7 @@ def require_organization_api_access(scope: str, model=None, **outer_kwargs):
             from flask import abort, g
 
             from project.access import access_or_401, login_api_user_or_401
+            from project.context import ContextProvider
             from project.models import AdminUnit
             from project.views.utils import set_current_admin_unit
 
@@ -175,6 +179,7 @@ def require_organization_api_access(scope: str, model=None, **outer_kwargs):
             set_current_admin_unit(admin_unit)
 
             api_command_context["admin_unit_id"] = admin_unit_id
+            api_command_context["actor"] = ContextProvider().current_actor
             setattr(g, "api_command_context", api_command_context)
 
             return func(*args, **kwargs)
@@ -191,8 +196,15 @@ class BaseResource(MethodResource):
     decorators = [etag_cache]
 
     @inject
-    def __init__(self, message_bus: MessageBus = Provide[Application.cqrs.message_bus]):
+    def __init__(
+        self,
+        message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+        app_context_provider: AbstractAppContextProvider = Provide[
+            Application.context.app_context_provider
+        ],
+    ):
         self.message_bus = message_bus
+        self.app_context_provider = app_context_provider
 
     def create_instance(self, schema_cls, **kwargs):
         instance = schema_cls().load(request.json, session=db.session)

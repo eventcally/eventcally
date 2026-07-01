@@ -44,23 +44,6 @@ class TestCreateEventOrganizerHandler:
         assert created is not None
         assert created.name == "Test Organizer"
 
-    def test_commits(self, uow):
-        cmd = commands.CreateEventOrganizerCommand.model_construct(
-            actor=Actor(),
-            admin_unit_id=1,
-            name="Organizer",
-            url=None,
-            email=None,
-            phone=None,
-            fax=None,
-            location=None,
-            logo=None,
-        )
-
-        CreateEventOrganizerHandler().handle(cmd, uow)
-
-        assert uow.committed
-
 
 # ---------------------------------------------------------------------------
 # UpdateEventOrganizerHandler
@@ -75,15 +58,13 @@ class TestUpdateEventOrganizerHandler:
         uow.event_organizers.add(org)
         return org
 
-    def test_updates_organizer_and_commits(self, uow):
+    def test_updates_organizer(self, uow):
         org = self._seed(uow)
         cmd = commands.UpdateEventOrganizerCommand.model_construct(
             actor=Actor(), id=org.id
         )
 
         UpdateEventOrganizerHandler().handle(cmd, uow)
-
-        assert uow.committed
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.UpdateEventOrganizerCommand.model_construct(
@@ -100,7 +81,7 @@ class TestUpdateEventOrganizerHandler:
 
 
 class TestDeleteEventOrganizerHandler:
-    def test_removes_organizer_and_commits(self, uow):
+    def test_removes_organizer(self, uow):
         org = EventOrganizerAggregate.create(
             actor=Actor(), admin_unit_id=1, name="To Delete"
         )
@@ -113,7 +94,6 @@ class TestDeleteEventOrganizerHandler:
         DeleteEventOrganizerHandler().handle(cmd, uow)
 
         assert uow.event_organizers.get(org_id) is None
-        assert uow.committed
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.DeleteEventOrganizerCommand.model_construct(

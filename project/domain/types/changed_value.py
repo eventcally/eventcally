@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar
+from typing import Generic, Optional, TypeVar
 
 from pydantic import BaseModel, ConfigDict
 
@@ -12,3 +12,8 @@ class ChangedValue(BaseModel, Generic[T]):
 
     old: T
     new: T
+
+
+type ChangedOptionalValue[T] = ChangedValue[Optional[T]]
+type OptionalChangedOptionalValue[T] = Optional[ChangedOptionalValue[T]]
+type OptionalChangedValue[T] = Optional[ChangedValue[T]]

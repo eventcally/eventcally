@@ -21,15 +21,3 @@ class TestWebhookDeliveryCreatedAttemptEventHandler:
         handler.handle(ev, uow)
 
         service.send_webhook_delivery_sync.assert_called_once_with(uow, 77)
-
-    def test_commits(self, uow):
-        service = MagicMock()
-        actor = Actor()
-        ev = events.WebhookDeliveryCreated(actor=actor, id=1)
-        handler = WebhookDeliveryCreatedAttemptEventHandler(
-            webhook_delivery_service=service
-        )
-
-        handler.handle(ev, uow)
-
-        assert uow.committed

@@ -44,14 +44,14 @@ class OAuth2Client(
         self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
         self.admin_unit_id = aggregate.admin_unit_id
         self.description = aggregate.description
-        self.app_permissions = aggregate.app_permissions
+        self.app_permissions = list(aggregate.app_permissions)
         self.homepage_url = aggregate.homepage_url
         self.setup_url = aggregate.setup_url
 
         metadata = self.client_metadata or {}
         metadata["client_name"] = aggregate.name
         metadata["scope"] = aggregate.scope
-        metadata["redirect_uris"] = aggregate.redirect_uris
+        metadata["redirect_uris"] = list(aggregate.redirect_uris)
         self.set_client_metadata(metadata)
 
         if aggregate.webhook:
@@ -75,8 +75,10 @@ class OAuth2Client(
             admin_unit_id=model.admin_unit_id,
             name=metadata.get("client_name"),
             scope=metadata.get("scope"),
-            redirect_uris=metadata.get("redirect_uris"),
-            app_permissions=model.app_permissions,
+            redirect_uris=set(metadata.get("redirect_uris") or []),
+            app_permissions=(
+                set(model.app_permissions) if model.app_permissions else set()
+            ),
             description=model.description,
             homepage_url=model.homepage_url,
             setup_url=model.setup_url,

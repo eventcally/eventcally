@@ -5,6 +5,7 @@ from typing import Optional
 from project.application.webhooks.abstract_webhook_mapper_context import (
     AbstractWebhookMapperContext,
 )
+from project.application.webhooks.payloads.nested.payload_actor import PayloadActor
 from project.application.webhooks.payloads.nested.payload_image import PayloadImage
 from project.application.webhooks.payloads.nested.payload_location import (
     PayloadLocation,
@@ -31,6 +32,7 @@ class EventOrganizerCreatedPayload(WebhookPayloadBase):
         cls, e: events.EventOrganizerCreated, ctx: AbstractWebhookMapperContext
     ):
         return cls(
+            actor=PayloadActor.from_event(e.actor, ctx),
             id=e.id,
             organization_id=e.admin_unit_id,
             name=e.name,

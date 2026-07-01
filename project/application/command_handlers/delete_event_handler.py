@@ -7,8 +7,6 @@ from .abstract_command_handler import AbstractCommandHandler
 
 class DeleteEventHandler(AbstractCommandHandler):
     def handle(self, cmd: commands.DeleteEventCommand, uow: AbstractUnitOfWork):
-        with uow:
-            event = ensure_event_exists(cmd.id, uow)
-            event.delete(cmd.actor)
-            uow.events.remove(event)
-            uow.commit()
+        event = ensure_event_exists(cmd.id, uow)
+        event.delete(cmd.actor)
+        uow.events.remove(event)

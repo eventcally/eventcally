@@ -125,7 +125,9 @@ class EventResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access("organization.events:write", Event)
     def delete(self, id):
-        cmd = DeleteEventCommand.model_construct(id=id)
+        cmd = DeleteEventCommand(
+            id=id, actor=self.app_context_provider.get_current_actor()
+        )
         self.message_bus.handle_command(cmd)
 
         return make_response("", 204)

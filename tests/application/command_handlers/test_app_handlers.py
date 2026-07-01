@@ -22,7 +22,6 @@ class TestCreateAppHandler:
             admin_unit_id=1,
             name="My App",
             app_permissions=["events:read"],
-            redirect_uris=None,
             scope=None,
             description=None,
             homepage_url=None,
@@ -36,24 +35,6 @@ class TestCreateAppHandler:
         created = uow.apps.get(result.id)
         assert created is not None
         assert created.name == "My App"
-
-    def test_commits(self, uow):
-        cmd = commands.CreateAppCommand.model_construct(
-            actor=Actor(),
-            admin_unit_id=1,
-            name="My App",
-            app_permissions=["events:read"],
-            redirect_uris=None,
-            scope=None,
-            description=None,
-            homepage_url=None,
-            setup_url=None,
-            webhook=None,
-        )
-
-        CreateAppHandler().handle(cmd, uow)
-
-        assert uow.committed
 
 
 # ---------------------------------------------------------------------------
@@ -72,7 +53,7 @@ class TestUpdateAppHandler:
         uow.apps.add(app)
         return app
 
-    def test_updates_app_and_commits(self, uow):
+    def test_updates_app(self, uow):
         app = self._seed(uow)
         cmd = commands.UpdateAppCommand.model_construct(
             actor=Actor(),
@@ -85,8 +66,6 @@ class TestUpdateAppHandler:
         )
 
         UpdateAppHandler().handle(cmd, uow)
-
-        assert uow.committed
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.UpdateAppCommand.model_construct(
@@ -109,7 +88,7 @@ class TestUpdateAppHandler:
 
 
 class TestDeleteAppHandler:
-    def test_removes_app_and_commits(self, uow):
+    def test_removes_app(self, uow):
         app = AppAggregate.create(
             actor=Actor(),
             admin_unit_id=1,
@@ -123,7 +102,6 @@ class TestDeleteAppHandler:
         DeleteAppHandler().handle(cmd, uow)
 
         assert uow.apps.get(app_id) is None
-        assert uow.committed
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.DeleteAppCommand.model_construct(actor=Actor(), id=9999)

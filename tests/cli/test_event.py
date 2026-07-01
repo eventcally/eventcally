@@ -22,6 +22,24 @@ def _create_event(seeder, admin_unit_id, postalCode):
     )
 
 
+def _run_cli_command(app, args):
+    runner = app.test_cli_runner()
+    result = runner.invoke(args=args)
+
+    if result.exit_code != 0:
+        print(result.output)
+        print(result.exception)
+
+    assert result.exit_code == 0
+    return result
+
+
+def test_create_event(client, seeder, app):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    _run_cli_command(app, ["test", "event-create", str(admin_unit_id)])
+
+
 def test_create_bulk_event_references(client, seeder, app):
     user_id, admin_unit_id = seeder.setup_base()
     event_id_own = _create_event(seeder, admin_unit_id, "38640")
@@ -32,9 +50,9 @@ def test_create_bulk_event_references(client, seeder, app):
     event_id_55555 = _create_event(seeder, other_admin_unit_id, "55555")
 
     app.config["SERVER_NAME"] = "localhost"
-    runner = app.test_cli_runner()
-    result = runner.invoke(
-        args=[
+    _run_cli_command(
+        app,
+        [
             "event",
             "create-bulk-references",
             str(admin_unit_id),
@@ -42,9 +60,8 @@ def test_create_bulk_event_references(client, seeder, app):
             "38642",
             "38644",
             "38690",
-        ]
+        ],
     )
-    assert result.exit_code == 0
 
     with app.app_context():
         from project.models import EventReference

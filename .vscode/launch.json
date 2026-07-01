@@ -14,7 +14,12 @@
         "FLASK_ENV": "development",
         "FLASK_DEBUG": "1"
       },
-      "args": ["run", "--no-debugger", "--host", "0.0.0.0"],
+      "args": [
+        "run",
+        "--no-debugger",
+        "--host",
+        "0.0.0.0"
+      ],
       "justMyCode": false,
       "jinja": true,
       "console": "integratedTerminal",
@@ -51,7 +56,9 @@
         "FLASK_ENV": "development",
         "FLASK_DEBUG": "1"
       },
-      "args": ["cache", "clear-images"],
+      "args": [
+        "${input:flaskCliCommand}"
+      ],
       "justMyCode": false
     },
     {
@@ -74,7 +81,9 @@
       "type": "debugpy",
       "request": "launch",
       "program": "${file}",
-      "purpose": ["debug-test"],
+      "purpose": [
+        "debug-test"
+      ],
       "console": "integratedTerminal",
       "justMyCode": false
     },
@@ -101,7 +110,12 @@
       "type": "debugpy",
       "request": "launch",
       "module": "celery",
-      "args": ["-A", "project.celery", "beat", "--loglevel=debug"],
+      "args": [
+        "-A",
+        "project.celery",
+        "beat",
+        "--loglevel=debug"
+      ],
       "justMyCode": false,
       "console": "integratedTerminal",
       "consoleName": "Celery beat"
@@ -111,7 +125,13 @@
       "type": "debugpy",
       "request": "launch",
       "module": "gunicorn",
-      "args": ["-c", "gunicorn.conf.py", "-w", "1", "main:app"],
+      "args": [
+        "-c",
+        "gunicorn.conf.py",
+        "-w",
+        "1",
+        "main:app"
+      ],
       "justMyCode": false,
       "console": "integratedTerminal",
       "consoleName": "Gunicorn"
@@ -120,7 +140,7 @@
       "name": "pybabel",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/env/bin/pybabel",
+      "program": "${workspaceFolder}/venv/bin/pybabel",
       "console": "integratedTerminal",
       "args": [
         "extract",
@@ -137,15 +157,30 @@
       }
     }
   ],
+  "inputs": [
+    {
+      "id": "flaskCliCommand",
+      "type": "promptString",
+      "description": "Enter Flask CLI command",
+      "default": "cache clear-images"
+    }
+  ],
   "compounds": [
     {
       "name": "Flask/Celery",
-      "configurations": ["Flask", "Celery worker"],
+      "configurations": [
+        "Flask",
+        "Celery worker"
+      ],
       "stopAll": true
     },
     {
       "name": "Flask/Celery/Beat",
-      "configurations": ["Flask", "Celery worker", "Celery beat"],
+      "configurations": [
+        "Flask",
+        "Celery worker",
+        "Celery beat"
+      ],
       "stopAll": true
     }
   ]

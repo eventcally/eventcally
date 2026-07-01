@@ -13,8 +13,9 @@ class CreateView(BaseCreateView):
 
     @handle_base_error
     def dispatch_validated_form(self, form, object, **kwargs):
-        cmd = AttemptToDeliverWebhookCommand.model_construct(
-            webhook_delivery_id=g.current_webhook_delivery.id
+        cmd = AttemptToDeliverWebhookCommand(
+            webhook_delivery_id=g.current_webhook_delivery.id,
+            actor=self.app_context_provider.get_current_actor(),
         )
         self.message_bus.dispatch_command(cmd)
 

@@ -15,9 +15,10 @@ def test_set_list(client, seeder: Seeder, utils: UtilActions):
 
 def test_set_category_list(client, seeder: Seeder, utils: UtilActions):
     seeder.setup_api_access(user_access=False)
-    custom_event_category_set_id, custom_event_category_id = (
-        seeder.get_one_custom_event_category_set()
-    )
+    (
+        custom_event_category_set_id,
+        custom_event_category_id,
+    ) = seeder.get_one_custom_event_category_set()
 
     url = utils.get_url(
         "api_v1_custom_event_category_set_event_category_list",

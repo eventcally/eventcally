@@ -85,7 +85,9 @@ class ViewHandler(ManageAdminUnitBaseViewHandler):
         return result
 
     def delete_object(self, object):
-        cmd = RequestOrganizationDeletionCommand.model_construct(id=object.id)
+        cmd = RequestOrganizationDeletionCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
         self.message_bus.handle_command(cmd)
 
 
