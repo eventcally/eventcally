@@ -14,6 +14,7 @@ x-web-env:
   GUNICORN_ACCESS_LOG: "-"
   GUNICORN_LOG_LEVEL: debug
   FLASK_DEBUG: 1
+  FLASK_ENV: development
   SERVER_NAME: "127.0.0.1:5000"
   SECRET_KEY: "pf9Wkove4IKEAXvy-cQkeDPhv9Cb3Ag-wyJILbq_dFw"
 
@@ -24,26 +25,32 @@ services:
       test: "pg_isready --username=eventcally && psql --username=eventcally --list"
       start_period: "5s"
     stop_grace_period: 60s
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=eventcally
       - POSTGRES_USER=eventcally
       - POSTGRES_PASSWORD=pass
 
   redis:
-    image: bitnami/redis:6.2
+    image: bitnami/redis:latest
     healthcheck:
       test: "redis-cli -a 'pass' ping | grep PONG"
       start_period: "5s"
     stop_grace_period: 30s
+    volumes:
+      - redis_data:/bitnami/redis/data
     environment:
       REDIS_PASSWORD: pass
 
   limiter_redis:
-    image: bitnami/redis:6.2
+    image: bitnami/redis:latest
     healthcheck:
       test: "redis-cli -a 'pass' ping | grep PONG"
       start_period: "5s"
     stop_grace_period: 30s
+    volumes:
+      - limiter_redis_data:/bitnami/redis/data
     environment:
       REDIS_PASSWORD: pass
 
@@ -118,3 +125,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
+  limiter_redis_data:

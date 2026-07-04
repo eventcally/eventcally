@@ -1,0 +1,22 @@
+name: "eventcally-dev"
+
+services:
+  web:
+    entrypoint: []
+    volumes:
+      - .:/app
+    command: >
+      python -m debugpy --listen 0.0.0.0:5678 -m flask run --host 0.0.0.0 --port 5000 --no-reload
+    ports:
+      - "5000:5000"
+      - "5678:5678"
+
+  worker:
+    entrypoint: []
+    volumes:
+      - .:/app
+    command: >
+      python -m debugpy --listen 0.0.0.0:5679 -m celery -A project.celery worker
+      --loglevel=debug --concurrency=1 --pool solo
+    ports:
+      - "5679:5679"
