@@ -180,6 +180,7 @@ def create_app(config_override: dict | None = None) -> Flask:
 
     csrf.init_app(app)
     mail.init_app(app)
+    mail.default_sender = app.config.get("MAIL_DEFAULT_SENDER")
 
     if app.config["MAIL_SUPPRESS_SEND"]:
 

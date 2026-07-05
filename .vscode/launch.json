@@ -155,6 +155,41 @@
       "env": {
         "PYTHONPATH": "${PYTHONPATH}:${workspaceFolder}"
       }
+    },
+    {
+      "name": "Docker: Flask",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/app"
+        }
+      ],
+      "justMyCode": false,
+      "jinja": true,
+      "consoleName": "Docker: Flask"
+    },
+    {
+      "name": "Docker: Celery worker",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5679
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/app"
+        }
+      ],
+      "justMyCode": false,
+      "consoleName": "Docker: Celery worker"
     }
   ],
   "inputs": [
@@ -180,6 +215,14 @@
         "Flask",
         "Celery worker",
         "Celery beat"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "Docker: Flask/Celery",
+      "configurations": [
+        "Docker: Flask",
+        "Docker: Celery worker"
       ],
       "stopAll": true
     }

@@ -430,7 +430,7 @@ def get_invitation_access_result(email: str):
 
 
 def get_celery_poll_result():  # pragma: no cover
-    from project import celery
+    from project.celery_init import celery
 
     try:
         result = celery.AsyncResult(request.args["poll"])
@@ -449,7 +449,7 @@ def get_celery_poll_result():  # pragma: no cover
 
 
 def get_celery_poll_group_result():  # pragma: no cover
-    from project import celery
+    from project.celery_init import celery
 
     try:
         result = celery.GroupResult.restore(request.args["poll"])

@@ -20,5 +20,12 @@
   "[sql]": {
     "editor.formatOnSave": false
   },
-  "python.analysis.fixAll": ["source.unusedImports"]
+  "python.analysis.fixAll": ["source.unusedImports"],
+  "containers.commands.composeUp": [
+    {
+      "label": "debug-match",
+      "template": "docker-compose -f docker-compose.yml -f docker-compose.debug.yml up -d --build",
+      "match": "debug"
+    }
+  ]
 }
