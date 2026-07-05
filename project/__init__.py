@@ -31,6 +31,7 @@ def load_app_config_from_env(app: Flask):
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
     app.config["REDIS_URL"] = os.getenv("REDIS_URL")
     app.config["LIMITER_REDIS_URL"] = os.getenv("LIMITER_REDIS_URL")
+    app.config["RATELIMIT_STORAGE_URI"] = app.config["LIMITER_REDIS_URL"]
     app.config["SECURITY_EMAIL_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
     app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
     app.config["DOCS_URL"] = os.getenv("DOCS_URL")

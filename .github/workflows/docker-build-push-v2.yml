@@ -18,7 +18,7 @@ jobs:
           images: eventcally/eventcally
           tags: |
             type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}},match=v\d+\.\d+\.\d+$
+            type=semver,pattern={{major}}.{{minor}},match=v\d+\.\d+\.\d+
             type=sha
       -
         name: Set up QEMU
