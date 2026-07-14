@@ -4,6 +4,7 @@ import os.path
 from flask import (
     abort,
     current_app,
+    jsonify,
     render_template,
     request,
     send_from_directory,
@@ -60,7 +61,14 @@ def up():
         if hasattr(storage, "ping"):
             storage.ping()
 
-    return "OK"
+    tags = current_app.config.get("APP_TAGS", "")
+
+    return jsonify(
+        {
+            "status": "OK",
+            "tag-names": [tag for tag in tags.split(",") if tag],
+        }
+    )
 
 
 @main_bp.route("/tos")

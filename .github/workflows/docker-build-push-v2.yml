@@ -21,6 +21,12 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha
       -
+        name: Extract tag names
+        id: tag_names
+        run: |
+          names=$(echo "${{ steps.docker_meta.outputs.tags }}" | sed 's/.*://' | paste -sd, -)
+          echo "names=$names" >> "$GITHUB_OUTPUT"
+      -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v4
       -
@@ -40,6 +46,8 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           annotations: ${{ steps.docker_meta.outputs.annotations }}
+          build-args: |
+            APP_TAGS=${{ steps.tag_names.outputs.names }}
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
