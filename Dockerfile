@@ -25,6 +25,11 @@ ENV REDIS_URL=""
 ENV LIMITER_REDIS_URL=""
 ENV DOCS_URL=""
 
+# Docker image tag names (comma-separated), populated by the docker-build-push
+# workflow build-arg and exposed at runtime (see the /up endpoint).
+ARG APP_TAGS=""
+ENV APP_TAGS=${APP_TAGS}
+
 # Install pip requirements
 COPY requirements.txt .
 RUN python -m pip install --upgrade pip

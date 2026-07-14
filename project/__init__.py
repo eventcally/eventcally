@@ -47,6 +47,10 @@ def load_app_config_from_env(app: Flask):
     app.config["FLASK_DEBUG"] = getenv_bool("FLASK_DEBUG", "False")
     app.config["API_READ_ANONYM"] = getenv_bool("API_READ_ANONYM", "False")
 
+    # Docker image tag names (comma-separated) baked into the image at build
+    # time (see Dockerfile build-arg populated by the docker-build-push workflow).
+    app.config["APP_TAGS"] = os.getenv("APP_TAGS", "")
+
     if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover
         app.config["PREFERRED_URL_SCHEME"] = os.getenv("PREFERRED_URL_SCHEME")
 
