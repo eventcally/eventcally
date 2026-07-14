@@ -67,6 +67,11 @@ Create `.env` file in the root directory or pass as environment variables.
 
 ### Security
 
+> **Tip:** To generate all of the secrets below (plus the Postgres/Redis
+> passwords) at once, run [`deployment/generate-secrets.sh`](../deployment/generate-secrets.sh).
+> It prints `KEY=VALUE` lines ready to paste into your `.env` and only needs
+> `python3` and `openssl`.
+
 | Variable               | Function                                                                                                                                                                           |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | SECRET_KEY             | A secret key for verifying the integrity of signed cookies. Generate a nice key using `python3 -c "import secrets; print(secrets.token_urlsafe())"`.                               |

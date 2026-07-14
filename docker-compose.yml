@@ -1,4 +1,3 @@
-version: "3.9"
 name: "eventcally-dev"
 
 x-web-env:
@@ -15,8 +14,12 @@ x-web-env:
   GUNICORN_LOG_LEVEL: debug
   FLASK_DEBUG: 1
   FLASK_ENV: development
-  SERVER_NAME: "127.0.0.1:5000"
-  SECRET_KEY: "pf9Wkove4IKEAXvy-cQkeDPhv9Cb3Ag-wyJILbq_dFw"
+  SERVER_NAME: "127.0.0.1:${WEB_HOST_PORT:-5000}"
+  # Dev-only throwaway secrets — DO NOT use in production
+  SECRET_KEY: "pYmLqD_AKUU4vlMcbh_eZmezCAFT7WCkk6D1uZ2vETU"
+  SECURITY_PASSWORD_HASH: "37320869736736126829861775717578301214"
+  JWT_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDoGL61+Hda0oax\nOZOlmzhT8/Msm5zSD5WiBSzGkR4Nav4slK4gt+wRStzV66RLB2hFxmmguUamfmad\nnqMpxqj52JeCl1dyql8i6v1bg58Rw7Let7xecgH8YxUBIsc/Dw7FfUs+GQBX2vUX\nCn6hEimMR7Ya4DyHxYZ2S+KjVS/e6uRPZsA+k2AWwjnNYgliT3d/NxNiTDBBZBRn\nJENjaNpu2VhlybwDpFZz/ClgRFLN6DT9TSR9p2U2BMp7zu8vrrxcrchiSxwHhoIz\nbUHpukSr8FM3CUEeAlfo0yrWYKPic0KlV5utF+J8n38t3yQ/8l+cgbGUZ4dEV+yL\n9jVLwolrAgMBAAECggEAAc2naqcFmoX7Mo3wfPNMCZs6bMcHO46Y4+XmU4rZCkYh\n0f6l4aOLGGU7YAemKln4araCiKC2P16lxumazcTg72/BR9GvEzBZjr89+pIV5CUz\n109fDbDOh3z5Uar5izS/eB3WcvbldIKtHmp4bKXSeotpwDlLQDW1IkROZmTCZVJn\n+HTv9s3JvMO0Z9D2gpqqIRzmyCkAl77MJdAlRktbm7IHKnHTF/nmIY1GLRTxE/6u\nhmL6lcLjqZkVF4D/HvBg2hcomSpQSwHanyqSHco8QnNsP4bb9z4bFrM4O2MOz1z6\nNKOK6b4AK9xN64PM9EPbVNHj9ewjk795XoUAb0xNCQKBgQD89vdawJS5j9H/QW4D\n+KoujhgGSqR2Z5WemPfKsOENi5rkGnVB3+pHgRJqc+CTxyuYAWKvlFDIDhe2gX4r\nuL4oYzSbPZG4oM/ZCDogJLCEm6q7GYk8hJb5PmzFdu2nvJDHH2oCVHLyNAikvcK8\nfDioFhO4X5FOHm5yZlC9279AXwKBgQDq4a2ck8We2M1H12wMFEyxiZwzRRRxTi1g\nVMvDG4LW2K23gsZzTis+MCXh3fnqn5rFq/yNZi3D7yhiXvVQeRTGz39q8HdDkS6a\npfrs4xPrO1aG1tqlN7rhGEspIzMf0lzq8Y4PfHyFHPVOTF2zDmZX2sLxe2D0VEb6\n+UVB9iKidQKBgQDG+Qb1Fjelga+fBHshmo1Z0yCoiju0eqOgPRfjEZ/jxKSPuRP0\nPckMd0TiAMVr16S9ipFyI8oqoZMbVd3FTCoeoHG3jgU54Ru7zZHSyKkjlUIEqwBc\nXrpV0DlEVNh4MIT8awQ6UuybADywQCaVlWwHIl5ejqU/egZL65ikzd0wJwKBgHl9\nJXl5jZwt83AXYtGUpl6mGN8D+iDpGNtcwNA4KKLMDH6A6/i0E/XknZOIZz4OM9XO\nsaDJmx5fU3oeN7DaD/8NUJCVtHqEW6Ct/W4Nvj3LwWOZOhp/CvBmymmKxWTOQDVd\nn+cuspF/evp20XhOGG2Uv4R8FpgKB3TE/ieyEhQJAoGAS12ILIpjV9UqAnPGgUQ/\nrZN3SHAzUiiGKEiQ8fzZpJveVIMcnusAMj8ihNZwTtOeTYlLfbN5/+V0OLcLDi3L\nJ2CgLVs37Qs79Xrh/f544t2YnO+R5Gf9svTwWve7p0Re2EPVeTrm9wUk2ukc9G6B\nAdlCnBWhAeqm89h+RxUJqqA=\n-----END PRIVATE KEY-----\n"
+  JWT_PUBLIC_JWKS: '{"keys":[{"kid":"default","kty":"RSA","use":"sig","alg":"RS256","n":"6Bi-tfh3WtKGsTmTpZs4U_PzLJuc0g-VogUsxpEeDWr-LJSuILfsEUrc1eukSwdoRcZpoLlGpn5mnZ6jKcao-diXgpdXcqpfIur9W4OfEcOy3re8XnIB_GMVASLHPw8OxX1LPhkAV9r1Fwp-oRIpjEe2GuA8h8WGdkvio1Uv3urkT2bAPpNgFsI5zWIJYk93fzcTYkwwQWQUZyRDY2jabtlYZcm8A6RWc_wpYERSzeg0_U0kfadlNgTKe87vL668XK3IYkscB4aCM21B6bpEq_BTNwlBHgJX6NMq1mCj4nNCpVebrRfifJ9_Ld8kP_JfnIGxlGeHRFfsi_Y1S8KJaw","e":"AQAB"}]}'
 
 services:
   db:
@@ -75,7 +78,7 @@ services:
       start_period: "5s"
     stop_grace_period: 45s
     ports:
-      - "5000:5000"
+      - "${WEB_HOST_PORT:-5000}:${WEB_HOST_PORT:-5000}"
     depends_on:
       db:
         condition: service_healthy
