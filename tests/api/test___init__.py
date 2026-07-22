@@ -120,3 +120,39 @@ def test_add_oauth2_scheme(app, utils):
     app.config["SERVER_NAME"] = "127.0.0.1"
     with app.app_context():
         add_oauth2_scheme_with_transport(False)
+
+
+def test_init_api_event_lists_disabled():
+    from project import create_app
+    from project.api import EVENT_LIST_ENDPOINTS
+
+    app = create_app(
+        {
+            "TESTING": True,
+            "SERVER_NAME": "localhost",
+            "FEATURE_EVENT_LISTS_ENABLED": False,
+        }
+    )
+
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+
+    assert endpoints.isdisjoint(EVENT_LIST_ENDPOINTS)
+    assert "api_v1_organization_event_list" in endpoints
+
+
+def test_init_api_event_lists_enabled():
+    from project import create_app
+    from project.api import EVENT_LIST_ENDPOINTS
+
+    app = create_app(
+        {
+            "TESTING": True,
+            "SERVER_NAME": "localhost",
+            "FEATURE_EVENT_LISTS_ENABLED": True,
+        }
+    )
+
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+
+    assert EVENT_LIST_ENDPOINTS.issubset(endpoints)
+    assert "api_v1_organization_event_list" in endpoints

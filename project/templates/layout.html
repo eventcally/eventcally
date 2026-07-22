@@ -225,8 +225,10 @@
                   <div class="dropdown-menu" aria-labelledby="navbarAdminUnitEventsDropdown">
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.events', id=current_admin_unit.id) }}">{{ _('Show events') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_create', id=current_admin_unit.id) }}">{{ _('Create event') }}</a>
+                    {% if config["FEATURE_EVENT_LISTS_ENABLED"] %}
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('main.manage_admin_unit_event_lists', id=current_admin_unit.id) }}">{{ _('Event lists') }}</a>
+                    {% endif %}
                   </div>
                 </li>
                 <li class="nav-item dropdown">

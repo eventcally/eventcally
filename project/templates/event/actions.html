@@ -17,7 +17,7 @@ Vue.component("EventListAddEvent", EventListAddEvent);
 {% endblock %}
 
 {% block content %}
-    {% set can_add_to_list = current_admin_unit and has_access(current_admin_unit, "event_lists:write")%}
+    {% set can_add_to_list = config["FEATURE_EVENT_LISTS_ENABLED"] and current_admin_unit and has_access(current_admin_unit, "event_lists:write")%}
     <div class="w-normal">
         <h5 class="card-title">{{ _('Actions for event') }}</h5>
 
