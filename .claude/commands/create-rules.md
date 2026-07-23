@@ -190,7 +190,7 @@ pip install -r requirements.txt
 
 # Run (needs DATABASE_URL, SECRET_KEY, SERVER_NAME, REDIS_URL, LIMITER_REDIS_URL, GOOGLE_MAPS_API_KEY, mail settings)
 flask db upgrade
-./runlocal.sh                      # flask run --host 0.0.0.0
+flask run --host 0.0.0.0
 # or full stack via Docker (PostGIS, Redis, Mailhog, Flask, Celery worker/beat, Flower):
 docker-compose up --build
 
@@ -198,11 +198,10 @@ docker-compose up --build
 docker-compose -f docker-compose.test.services.yml up -d
 pytest                             # all tests
 pytest --cov=project --cov-report=html   # with coverage
-./runpytest.sh                     # parallel split runner
 pytest tests/views/test_event.py::TestEventView::test_create -v   # single test
 
 # End-to-end
-npm install && ./runcypress.sh
+npm install && npx cypress run
 
 # Regenerate model/repo code after editing codegen/config/ YAML
 python codegen/generate.py

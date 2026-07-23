@@ -159,7 +159,7 @@ Re-read the plan and find the end-to-end testing section. Execute every E2E test
 the plan as a checklist:
 
 - [ ] Bring up the app / dependencies (`docker-compose up --build`, or local Postgres/PostGIS
-      + Redis with `flask db upgrade` then `./runlocal.sh`)
+      + Redis with `flask db upgrade` then `flask run --host 0.0.0.0`)
 - [ ] For EACH end-to-end test in the plan:
   - [ ] Execute the test exactly as described
   - [ ] Verify the expected outcome matches the plan
@@ -168,7 +168,7 @@ the plan as a checklist:
 
 **If the plan has no E2E tests**, perform a basic smoke test: start the app (or hit the
 affected route/API/command/task), exercise the new/changed behavior, verify it works. For UI
-flows, the Cypress suite (`./runcypress.sh`) is available.
+flows, the Cypress suite (`npx cypress run`) is available.
 
 **This is a hard gate.** You cannot report the implementation as complete until E2E
 verification passes. Static checks and unit tests alone are never sufficient.
