@@ -22,6 +22,25 @@ def test_read(client, seeder: Seeder, utils: UtilActions):
     response = utils.get(url)
 
 
+def test_read_addToList(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("main.event_date", id=1)
+    response = utils.get_ok(url)
+    assert "Zu Liste hinzufügen".encode() in response.data
+
+
+def test_read_addToList_disabled(client, seeder: Seeder, utils: UtilActions, app):
+    app.config["FEATURE_EVENT_LISTS_ENABLED"] = False
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("main.event_date", id=1)
+    response = utils.get_ok(url)
+    assert "Zu Liste hinzufügen".encode() not in response.data
+
+
 def test_ical(client, seeder: Seeder, utils: UtilActions):
     from project.dateutils import create_berlin_date
 

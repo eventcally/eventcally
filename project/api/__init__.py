@@ -181,6 +181,14 @@ rest_api = None
 api_docs = None
 resource_registry = {}
 
+EVENT_LIST_ENDPOINTS = {
+    "api_v1_event_list_model",
+    "api_v1_event_list_event_list",
+    "api_v1_event_list_event_list_write",
+    "api_v1_organization_event_list_list",
+    "api_v1_organization_event_list_status_list",
+}
+
 
 def init_api(app):
     """Initialize REST API with the Flask app instance.
@@ -236,7 +244,10 @@ def init_api(app):
     import project.api.user.resources
 
     # Re-register all resources for the current app instance.
+    event_lists_enabled = app.config.get("FEATURE_EVENT_LISTS_ENABLED", True)
     for endpoint, (resource, url, api_docs_flag) in resource_registry.items():
+        if not event_lists_enabled and endpoint in EVENT_LIST_ENDPOINTS:
+            continue
         rest_api.add_resource(resource, url, endpoint=endpoint)
         if api_docs_flag:
             api_docs.register(resource, endpoint=endpoint)

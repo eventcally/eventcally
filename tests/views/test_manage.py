@@ -314,6 +314,17 @@ def test_admin_unit_event_lists(client, seeder: Seeder, utils: UtilActions):
     utils.get_ok(url)
 
 
+def test_admin_unit_event_lists_disabled(
+    client, seeder: Seeder, utils: UtilActions, app
+):
+    app.config["FEATURE_EVENT_LISTS_ENABLED"] = False
+    user_id, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("main.manage_admin_unit_event_lists", id=admin_unit_id)
+    response = utils.get(url)
+    utils.assert_response_notFound(response)
+
+
 def test_admin_unit_custom_widgets(client, seeder: Seeder, utils: UtilActions):
     _, admin_unit_id = seeder.setup_base()
 
