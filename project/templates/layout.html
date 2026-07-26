@@ -188,7 +188,9 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
                       <a class="dropdown-item" href="{{ url_for('main.manage_admin_units') }}">{{ _('Organizations') }}</a>
                       <a class="dropdown-item" href="{{ url_for('main.profile') }}">{{ _('Profile') }}</a>
+                      {% if config["FEATURE_USER_FAVORITES_ENABLED"] %}
                       <a class="dropdown-item" href="{{ url_for('main.user_favorite_events') }}">{{ _('Favorite events') }}</a>
+                      {% endif %}
 
                       {% if current_user.has_role('admin') %}
                       <a class="dropdown-item" href="{{ url_for('admin.admin') }}">{{ _('Admin') }}</a>

@@ -95,7 +95,7 @@ Create `.env` file in the root directory or pass as environment variables.
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | CACHE_PATH                  | Absolute or relative path to root directory for dump and image caching. Default: project/tmp                                             |
 | GOOGLE_MAPS_API_KEY         | Resolve addresses with Google Maps: API Key with Places API enabled                                                                      |
-| FEATURE_EVENT_LISTS_ENABLED | Set to `false` to hide the Event Lists feature (menu item, manage view, "Add to list" event actions, and the 5 EventList REST endpoints/Swagger docs). Default: `true`. |
+| FEATURE_FLAGS                | Comma-separated list of opt-out feature tokens. Known tokens: `EventListsDisabled` (hides the Event Lists feature: menu item, manage view, "Add to list" event actions, and the 5 EventList REST endpoints/Swagger docs), `UserFavoritesDisabled` (reserved for future use). Default: empty (all features enabled). Unknown tokens are ignored. Note: `FEATURE_EVENT_LISTS_ENABLED` is no longer read from the environment — use `FEATURE_FLAGS=EventListsDisabled` instead. |
 
 ## Generate JWT Keys for OIDC/OAuth
 

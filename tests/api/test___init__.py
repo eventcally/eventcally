@@ -156,3 +156,82 @@ def test_init_api_event_lists_enabled():
 
     assert EVENT_LIST_ENDPOINTS.issubset(endpoints)
     assert "api_v1_organization_event_list" in endpoints
+
+
+def test_init_api_event_lists_disabled_via_feature_flags_env(monkeypatch):
+    from project import create_app
+    from project.api import EVENT_LIST_ENDPOINTS
+
+    monkeypatch.setenv("FEATURE_FLAGS", "EventListsDisabled")
+
+    app = create_app(
+        {
+            "TESTING": True,
+            "SERVER_NAME": "localhost",
+        }
+    )
+
+    assert app.config["FEATURE_EVENT_LISTS_ENABLED"] is False
+    assert app.config["FEATURE_FLAGS"] == {"EventListsDisabled"}
+
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+
+    assert endpoints.isdisjoint(EVENT_LIST_ENDPOINTS)
+    assert "api_v1_organization_event_list" in endpoints
+
+
+def test_init_api_user_favorites_disabled():
+    from project import create_app
+    from project.api import USER_FAVORITE_ENDPOINTS
+
+    app = create_app(
+        {
+            "TESTING": True,
+            "SERVER_NAME": "localhost",
+            "FEATURE_USER_FAVORITES_ENABLED": False,
+        }
+    )
+
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+
+    assert endpoints.isdisjoint(USER_FAVORITE_ENDPOINTS)
+    assert "api_v1_user_organization_membership_list" in endpoints
+
+
+def test_init_api_user_favorites_enabled():
+    from project import create_app
+    from project.api import USER_FAVORITE_ENDPOINTS
+
+    app = create_app(
+        {
+            "TESTING": True,
+            "SERVER_NAME": "localhost",
+            "FEATURE_USER_FAVORITES_ENABLED": True,
+        }
+    )
+
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+
+    assert USER_FAVORITE_ENDPOINTS.issubset(endpoints)
+
+
+def test_init_api_user_favorites_disabled_via_feature_flags_env(monkeypatch):
+    from project import create_app
+    from project.api import USER_FAVORITE_ENDPOINTS
+
+    monkeypatch.setenv("FEATURE_FLAGS", "UserFavoritesDisabled")
+
+    app = create_app(
+        {
+            "TESTING": True,
+            "SERVER_NAME": "localhost",
+        }
+    )
+
+    assert app.config["FEATURE_USER_FAVORITES_ENABLED"] is False
+    assert app.config["FEATURE_FLAGS"] == {"UserFavoritesDisabled"}
+
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+
+    assert endpoints.isdisjoint(USER_FAVORITE_ENDPOINTS)
+    assert "api_v1_user_organization_membership_list" in endpoints

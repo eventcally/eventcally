@@ -672,7 +672,7 @@
           <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#calendarExportModal"><i class="fa fa-calendar"></i> {{ _('Add to calendar') }}</button>
           {{ render_calendar_export_modal(calendar_links) }}
         {% endif %}
-        {% if current_user and current_user.is_authenticated %}
+        {% if current_user and current_user.is_authenticated and config["FEATURE_USER_FAVORITES_ENABLED"] %}
           <button type="button" class="btn btn-outline-secondary mb-1 toggle-user-event-favorite" data-event-id="{{ event.id }}"><i class="{%if event.is_favored_by_current_user() %}fa{% else %}far{% endif %} fa-bookmark"></i> {{ _('Favorite events') }}</button>
         {% endif %}
         {% if user_rights['can_update_event'] %}
