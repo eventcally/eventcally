@@ -28,6 +28,25 @@ def test_read(client, seeder: Seeder, utils: UtilActions, external_link):
     utils.assert_response_unauthorized(response)
 
 
+def test_read_favorite_button(seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("main.event", event_id=event_id)
+    response = utils.get_ok(url)
+    assert b"toggle-user-event-favorite" in response.data
+
+
+def test_read_favorite_button_disabled(seeder: Seeder, utils: UtilActions, app):
+    app.config["FEATURE_USER_FAVORITES_ENABLED"] = False
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("main.event", event_id=event_id)
+    response = utils.get_ok(url)
+    assert b"toggle-user-event-favorite" not in response.data
+
+
 def test_read_containsActionLink(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     other_user_id = seeder.create_user("other@test.de")

@@ -189,6 +189,12 @@ EVENT_LIST_ENDPOINTS = {
     "api_v1_organization_event_list_status_list",
 }
 
+USER_FAVORITE_ENDPOINTS = {
+    "api_v1_user_favorite_event_list",
+    "api_v1_user_favorite_event_search",
+    "api_v1_user_favorite_event_list_write",
+}
+
 
 def init_api(app):
     """Initialize REST API with the Flask app instance.
@@ -245,8 +251,11 @@ def init_api(app):
 
     # Re-register all resources for the current app instance.
     event_lists_enabled = app.config.get("FEATURE_EVENT_LISTS_ENABLED", True)
+    user_favorites_enabled = app.config.get("FEATURE_USER_FAVORITES_ENABLED", True)
     for endpoint, (resource, url, api_docs_flag) in resource_registry.items():
         if not event_lists_enabled and endpoint in EVENT_LIST_ENDPOINTS:
+            continue
+        if not user_favorites_enabled and endpoint in USER_FAVORITE_ENDPOINTS:
             continue
         rest_api.add_resource(resource, url, endpoint=endpoint)
         if api_docs_flag:

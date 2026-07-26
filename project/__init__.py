@@ -11,6 +11,7 @@ from werkzeug.routing.exceptions import BuildError
 
 from project.custom_session_interface import CustomSessionInterface
 from project.extensions import babel, cors, csrf, db, limiter, mail, migrate, security
+from project.feature_flags import apply_feature_flags_to_config
 
 
 def getenv_bool(name: str, default: str = "False"):
@@ -46,9 +47,7 @@ def load_app_config_from_env(app: Flask):
     set_env_to_app(app, "SITE_NAME", "EventCally")
     app.config["FLASK_DEBUG"] = getenv_bool("FLASK_DEBUG", "False")
     app.config["API_READ_ANONYM"] = getenv_bool("API_READ_ANONYM", "False")
-    app.config["FEATURE_EVENT_LISTS_ENABLED"] = getenv_bool(
-        "FEATURE_EVENT_LISTS_ENABLED", "True"
-    )
+    apply_feature_flags_to_config(app.config, os.getenv("FEATURE_FLAGS"))
 
     # Docker image tag names (comma-separated) baked into the image at build
     # time (see Dockerfile build-arg populated by the docker-build-push workflow).

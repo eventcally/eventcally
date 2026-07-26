@@ -1,4 +1,4 @@
-from flask import redirect, render_template, url_for
+from flask import abort, current_app, redirect, render_template, url_for
 from flask_security import auth_required
 
 from project.models import AdminUnitInvitation
@@ -32,4 +32,7 @@ def user_organization_invitation(id):
 @main_bp.route("/user/favorite-events")
 @auth_required()
 def user_favorite_events():
+    if not current_app.config.get("FEATURE_USER_FAVORITES_ENABLED", True):
+        abort(404)
+
     return render_template("user/favorite_events.html")
