@@ -157,7 +157,9 @@ def test_review_reject(client, seeder: Seeder, utils: UtilActions, app, db, mock
         assert verification_request.rejection_reason is None
 
 
-def test_review_status_404(client, seeder: Seeder, utils: UtilActions):
+def test_review_status_unauthorized_redirects_to_login(
+    client, seeder: Seeder, utils: UtilActions
+):
     seeder.create_user()
 
     third_user_id = seeder.create_user("third@third.de")
@@ -182,4 +184,4 @@ def test_review_status_404(client, seeder: Seeder, utils: UtilActions):
     utils.assert_response_redirect_to_url(client.get(legacy_review_url), url)
 
     response = client.get(url)
-    assert response.status_code == 404
+    utils.assert_response_redirect_to_login(response, url)
