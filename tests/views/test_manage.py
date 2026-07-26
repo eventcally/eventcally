@@ -89,6 +89,17 @@ def test_admin_unit(client, seeder: Seeder, utils: UtilActions):
     )
 
 
+def test_admin_unit_child_route_not_authenticated_redirects_to_login(
+    client, seeder: Seeder, utils: UtilActions
+):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+
+    url = utils.get_url("manage_admin_unit.events", id=admin_unit_id)
+    response = client.get(url)
+
+    utils.assert_response_redirect_to_login(response, url)
+
+
 def test_admin_unit_404(client, seeder: Seeder, utils: UtilActions):
     owner_id = seeder.create_user("owner@owner")
     admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
