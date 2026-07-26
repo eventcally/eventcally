@@ -234,6 +234,10 @@ def get_admin_unit_for_manage_or_404(admin_unit_id):
     admin_unit = get_admin_unit_for_manage(admin_unit_id)
 
     if not admin_unit:
+        if not current_user.is_authenticated:
+            # Anonymous users following e.g. an email link should be sent to
+            # login (with a `next` back to the original page), not shown a 404.
+            abort(current_app.login_manager.unauthorized())
         abort(404)
 
     return admin_unit

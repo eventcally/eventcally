@@ -171,7 +171,7 @@ def test_review_status_404_third(client, seeder, utils):
     assert response.status_code == 404
 
 
-def test_review_status_404_unauthorized(client, seeder, utils):
+def test_review_status_unauthorized_redirects_to_login(client, seeder, utils):
     seeder.create_user()
 
     third_user_id = seeder.create_user("third@third.de")
@@ -189,4 +189,4 @@ def test_review_status_404_unauthorized(client, seeder, utils):
         event_reference_request_id=reference_request_id,
     )
     response = client.get(url)
-    assert response.status_code == 404
+    utils.assert_response_redirect_to_login(response, url)
