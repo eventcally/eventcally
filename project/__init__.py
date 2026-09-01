@@ -40,9 +40,6 @@ def load_app_config_from_env(app: Flask):
     app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = getenv_bool(
         "ADMIN_UNIT_CREATE_REQUIRES_ADMIN"
     )
-    app.config["SEO_SITEMAP_PING_GOOGLE"] = getenv_bool(
-        "SEO_SITEMAP_PING_GOOGLE", "False"
-    )
     app.config["GOOGLE_MAPS_API_KEY"] = os.getenv("GOOGLE_MAPS_API_KEY")
     set_env_to_app(app, "SITE_NAME", "EventCally")
     app.config["FLASK_DEBUG"] = getenv_bool("FLASK_DEBUG", "False")

@@ -43,7 +43,7 @@ Jobs that should run on a regular basis.
 flask cache clear-images
 flask event update-recurring-dates
 flask dump all
-flask seo generate-sitemap --pinggoogle
+flask seo generate-sitemap
 flask seo generate-robots-txt
 ```
 

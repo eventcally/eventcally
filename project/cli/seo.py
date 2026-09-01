@@ -1,4 +1,3 @@
-import click
 from flask.cli import AppGroup
 
 from project.cli import click_logging
@@ -8,10 +7,9 @@ seo_cli = AppGroup("seo")
 
 
 @seo_cli.command("generate-sitemap")
-@click.option("--pinggoogle/--no-pinggoogle", default=False)
 @click_logging
-def generate_sitemap(pinggoogle):
-    seo.generate_sitemap(pinggoogle)
+def generate_sitemap():
+    seo.generate_sitemap()
 
 
 @seo_cli.command("generate-robots-txt")
