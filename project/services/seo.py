@@ -2,7 +2,6 @@ import os
 import shutil
 from io import StringIO
 
-import requests
 from flask import current_app, url_for
 from sqlalchemy import and_
 from sqlalchemy.orm import load_only
@@ -13,7 +12,7 @@ from project.models import AdminUnit, Event, EventDate, EventPublicStatus
 from project.utils import make_dir
 
 
-def generate_sitemap(pinggoogle: bool):
+def generate_sitemap():
     current_app.logger.info("Generating sitemap..")
     make_dir(cache_path)
 
@@ -57,19 +56,6 @@ def generate_sitemap(pinggoogle: bool):
 
     if size > 52428800:  # pragma: no cover
         current_app.logger.error(f"Size of sitemap ({size} Bytes) is larger than 50MB.")
-
-    if pinggoogle:  # pragma: no cover
-        sitemap_url = requests.utils.quote(url_for("main.sitemap_xml"))
-        google_url = f"http://www.google.com/ping?sitemap={sitemap_url}"
-        current_app.logger.info(f"Pinging {google_url} ..")
-
-        response = requests.get(google_url)
-        current_app.logger.info(f"Response {response.status_code}")
-
-        if response.status_code != 200:
-            current_app.logger.error(
-                f"Google ping returned unexpected status code {response.status_code}."
-            )
 
 
 def generate_robots_txt():

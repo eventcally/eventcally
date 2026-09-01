@@ -272,7 +272,7 @@ def seo_generate_sitemap_task():
     from project.services.seo import generate_sitemap
 
     try:
-        generate_sitemap(current_app.config["SEO_SITEMAP_PING_GOOGLE"])
+        generate_sitemap()
     except Exception:
         current_app.logger.exception("Failed seo_generate_sitemap_task")
         db.session.rollback()
