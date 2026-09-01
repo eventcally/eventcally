@@ -53,7 +53,7 @@ git status
 
 | State | Action |
 | ------- | -------- |
-| On `main`, clean | Create branch: `git checkout -b feature/{plan-name}` |
+| On `main`, clean | Create branch: `git checkout -b issue/{plan-name}` (if the plan has a linked GitHub Issue number, prefix the plan name with it: `git checkout -b issue/{issue-number}-{plan-name}`) |
 | On `main`, dirty | STOP: "Stash or commit changes first" |
 | On feature branch | Use it |
 
@@ -179,10 +179,16 @@ verification passes. Static checks and unit tests alone are never sufficient.
 
 ### Create Report
 
-**Output path**: `.agents/reports/{plan-name}-report.md`
+**Output path**: `.agents/reports/{YYYY-MM-DD}-{plan-name}-report.md`
+
+Every generated markdown file **must** be prefixed with the current date in `YYYY-MM-DD`
+form. Use today's date (not the plan's date), and if the plan file name already carries a
+date prefix, strip it from `{plan-name}` so the prefix isn't duplicated. Get the date from
+the system — never guess it:
 
 ```bash
 mkdir -p .agents/reports
+date +%F   # e.g. 2026-09-01 -> .agents/reports/2026-09-01-my-feature-report.md
 ```
 
 ```markdown
@@ -301,7 +307,7 @@ The summary should include:
 
 ### Artifacts
 
-- Report: `.agents/reports/{name}-report.md`
+- Report: `.agents/reports/{YYYY-MM-DD}-{name}-report.md`
 - Plan archived: `.agents/plans/completed/`
 
 ### GitHub Issue

@@ -97,10 +97,14 @@ Use the Explore agent to find:
 
 ### Create Plan File
 
-**Output path**: `.agents/plans/{kebab-case-name}.plan.md`
+**Output path**: `.agents/plans/{YYYY-MM-DD}-{kebab-case-name}.plan.md`
+
+Every generated markdown file **must** be prefixed with the current date in `YYYY-MM-DD`
+form, so plans sort chronologically. Get the date from the system — never guess it:
 
 ```bash
 mkdir -p .agents/plans
+date +%F   # e.g. 2026-09-01 -> .agents/plans/2026-09-01-my-feature.plan.md
 ```
 
 ````markdown
@@ -213,7 +217,7 @@ pytest
 ```markdown
 ## Plan Created
 
-**File**: `.agents/plans/{name}.plan.md`
+**File**: `.agents/plans/{YYYY-MM-DD}-{name}.plan.md`
 
 **Summary**: {2-3 sentence overview}
 

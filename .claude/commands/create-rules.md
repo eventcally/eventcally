@@ -129,6 +129,10 @@ There is no template in `.claude/` — write CLAUDE.md from scratch, drawing on
 
 **Output path**: `CLAUDE.md` (project root)
 
+> **Exception to the date-prefix rule:** generated markdown normally gets a `YYYY-MM-DD-`
+> prefix (see `/plan`, `/implement`), but `CLAUDE.md` is a fixed, tool-loaded filename —
+> write it as `CLAUDE.md`, never `2026-09-01-CLAUDE.md`.
+
 **Adapt to the project:**
 
 - Remove sections that don't apply
