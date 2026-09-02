@@ -14,12 +14,6 @@ env:
 
 jobs:
   playwright:
-    # NON-BLOCKING through Stages 1-2 of the Cypress -> Playwright migration:
-    # Cypress is still the authority while the suite is being ported. Remove this
-    # line at Stage 3 (Task 11), together with adding the shards to the required
-    # checks in branch protection.
-    continue-on-error: true
-
     strategy:
       fail-fast: false
       matrix:
@@ -147,8 +141,7 @@ jobs:
   # merged here first.
   playwright-comment:
     needs: playwright
-    # The test job is continue-on-error, and a failing run is exactly when the
-    # comment matters most.
+    # always(), because a failing run is exactly when the comment matters most.
     if: always() && github.event_name == 'pull_request'
     runs-on: ubuntu-22.04
 
@@ -205,6 +198,5 @@ jobs:
           test-command: npx playwright test
           job-summary: "true"
           footer: |
-            Advisory while the Cypress → Playwright migration is in progress: this
-            check cannot block a merge until Stage 3. The merged HTML report is in
-            the [run artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+            The merged HTML report is in the
+            [run artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
