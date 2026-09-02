@@ -1,9 +1,101 @@
 // Flask CLI wrappers used to build test fixtures.
 //
 // Ported from cypress/support/commands.js:1-183. Unlike the Cypress commands
-// these are plain synchronous functions returning the id directly — no promise
-// chain — and they pass argv arrays instead of hand-quoted shell strings.
-const { execFileSync } = require("child_process");
+// these are plain synchronous functions returning the id directly -- no promise
+// chain -- and they pass argv arrays instead of hand-quoted shell strings.
+//
+// Commands go to the long-lived fixture server (.scripts/e2e_fixture_server.py)
+// rather than a fresh `flask` process. Importing the app costs ~3.8s and the
+// suite makes ~464 fixture calls, which was ~37 of its ~40 minutes; the server
+// pays that import once. It runs the same CLI commands, so behaviour is
+// unchanged -- only the transport differs.
+const { spawn, execFileSync } = require("child_process");
+const crypto = require("crypto");
+const path = require("path");
+
+const PORT = Number(process.env.E2E_FIXTURE_PORT || 5099);
+const BASE = `http://127.0.0.1:${PORT}/`;
+const SERVER = path.join(__dirname, "..", "..", ".scripts", "e2e_fixture_server.py");
+const READY_TIMEOUT_MS = 40000;
+
+let started = false;
+
+/** Fingerprint of the database this process expects, without its credentials. */
+function expectedFingerprint() {
+  return crypto
+    .createHash("sha256")
+    .update(process.env.DATABASE_URL || "")
+    .digest("hex")
+    .slice(0, 12);
+}
+
+/** @returns {{ok: boolean, database: string}|null} null when nothing answers. */
+function health() {
+  try {
+    return JSON.parse(
+      execFileSync("curl", ["-sS", "--fail", "-m", "2", `${BASE}health`], {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+      })
+    );
+  } catch (error) {
+    return null;
+  }
+}
+
+function ensureServer() {
+  if (started) return;
+
+  // Reuse a server that is already up -- but only if it is attached to the same
+  // database. Every fixture command truncates every table, so silently talking to
+  // a server left over from another run would wipe the wrong database.
+  const expected = expectedFingerprint();
+  const existing = health();
+
+  if (existing) {
+    if (existing.database !== expected) {
+      throw new Error(
+        `A fixture server is already running on port ${PORT}, but it is attached to a ` +
+          `different database (${existing.database}, expected ${expected}).\n` +
+          `Stop it, or set E2E_FIXTURE_PORT to use another port.`
+      );
+    }
+    started = true;
+    return;
+  }
+
+  const child = spawn("python", [SERVER, "--port", String(PORT)], {
+    stdio: ["ignore", "inherit", "inherit"],
+  });
+  const stop = () => child.kill();
+  process.on("exit", stop);
+  process.on("SIGINT", stop);
+  process.on("SIGTERM", stop);
+
+  const deadline = Date.now() + READY_TIMEOUT_MS;
+  while (Date.now() < deadline) {
+    if (child.exitCode !== null) {
+      throw new Error(`Fixture server exited with code ${child.exitCode} before becoming ready`);
+    }
+
+    const status = health();
+    if (status) {
+      if (status.database !== expected) {
+        throw new Error(
+          `Fixture server is attached to the wrong database ` +
+            `(${status.database}, expected ${expected})`
+        );
+      }
+      started = true;
+      return;
+    }
+
+    execFileSync("sleep", ["0.25"]);
+  }
+
+  child.kill();
+  throw new Error(`Fixture server did not become ready within ${READY_TIMEOUT_MS}ms`);
+}
 
 /**
  * Run `flask <args>` and return its stdout.
@@ -12,15 +104,33 @@ const { execFileSync } = require("child_process");
  * @returns {string}
  */
 function run(args) {
+  ensureServer();
+
+  let raw;
   try {
-    return execFileSync("flask", args, { encoding: "utf8" });
+    raw = execFileSync(
+      "curl",
+      ["-sS", "--fail", "-X", "POST", "--data-binary", JSON.stringify({ args }), BASE],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
+    );
   } catch (error) {
+    throw new Error(
+      `Could not reach the fixture server for "flask ${args.join(" ")}".\n` +
+        `It may have exited; check the output above.\n${error.message}`
+    );
+  }
+
+  const result = JSON.parse(raw);
+
+  if (!result.ok) {
     // SOURCE: cypress/support/commands.js:1-12 (error message format)
     throw new Error(`Execution of "flask ${args.join(" ")}" failed
-          Exit code: ${error.status}
-          Stdout:\n${error.stdout || ""}
-          Stderr:\n${error.stderr || error.message}`);
+          Exit code: ${result.exit_code}
+          Stdout:\n${result.output || ""}
+          Stderr:\n${result.error}`);
   }
+
+  return result.output;
 }
 
 /**
