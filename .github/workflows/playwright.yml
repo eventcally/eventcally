@@ -119,10 +119,6 @@ jobs:
           path: blob-report/
           retention-days: 1
 
-      - name: Migration progress
-        if: always()
-        run: python .scripts/e2e_migration_status.py >> "$GITHUB_STEP_SUMMARY"
-
       - name: Upload Playwright artifacts
         if: always()
         uses: actions/upload-artifact@v4
