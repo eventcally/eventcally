@@ -29,6 +29,22 @@ Violations fail `lint-imports`. Check both files before adding imports:
 - Key fixtures: `app`, `db`, `client`, `seeder`, `utils`, `container`, `message_bus` (see `tests/conftest.py`).
 - Test base classes in `tests/base_test.py` — use these for view tests instead of writing boilerplate.
 
+## End-to-end tests (Cypress → Playwright migration in progress)
+
+Both suites run against every PR: Cypress (`cypress/e2e/*.cy.js`) is still the authority,
+Playwright (`e2e/tests/*.spec.js`) is advisory until it is flipped to a required check.
+
+- **Write new e2e specs in Playwright only** (`e2e/tests/`). Fixing an existing `.cy.js`
+  spec is fine — it stays until the migration completes.
+- Every e2e test starts with `flask test reset --seed`, which **truncates every table in
+  whatever `DATABASE_URL` points at**. Point it at a throwaway database before running
+  either suite locally — the `DATABASE_URL` in `.env` is a real dev database.
+- Never run `npx cypress run` and `npx playwright test` at the same time locally: they
+  would truncate each other's data mid-test.
+- Playwright is pinned to `workers: 1` for that same reason. Parallelism comes from
+  `--shard` across CI jobs, not from workers.
+- `python .scripts/e2e_migration_status.py` shows which specs are still unported.
+
 ## Adding new DDD commands/events
 
 Templates with scaffolding guides exist in `.github/prompts/`:

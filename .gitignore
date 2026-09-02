@@ -6,6 +6,7 @@ __pycache__/
 .env
 runlocal.sh
 runcypress.sh
+runplaywright.sh
 runpytest.sh
 tmp/
 app.yaml
@@ -13,6 +14,9 @@ deployment.yaml
 node_modules
 cypress/videos
 cypress/screenshots
+test-results/
+playwright-report/
+e2e/screenshots/
 celerybeat-schedule
 
 # C extensions
