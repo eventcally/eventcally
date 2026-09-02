@@ -91,15 +91,13 @@ def _create_user(
 def reset(seed):
     meta = MetaData()
     meta.reflect(db.engine)
-    con = db.engine.connect()
-    trans = con.begin()
 
-    for table in meta.sorted_tables:
-        con.execute(text(f'ALTER TABLE "{table.name}" DISABLE TRIGGER ALL;'))
-        con.execute(table.delete())
-        con.execute(text(f'ALTER TABLE "{table.name}" ENABLE TRIGGER ALL;'))
-
-    trans.commit()
+    with db.engine.connect() as con:
+        with con.begin():
+            for table in meta.sorted_tables:
+                con.execute(text(f'ALTER TABLE "{table.name}" DISABLE TRIGGER ALL;'))
+                con.execute(table.delete())
+                con.execute(text(f'ALTER TABLE "{table.name}" ENABLE TRIGGER ALL;'))
 
     if seed:
         create_initial_data()
