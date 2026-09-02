@@ -168,7 +168,7 @@ the plan as a checklist:
 
 **If the plan has no E2E tests**, perform a basic smoke test: start the app (or hit the
 affected route/API/command/task), exercise the new/changed behavior, verify it works. For UI
-flows, the Cypress suite (`npx cypress run`) is available.
+flows, the Playwright suite (`npx playwright test`) is available.
 
 **This is a hard gate.** You cannot report the implementation as complete until E2E
 verification passes. Static checks and unit tests alone are never sufficient.

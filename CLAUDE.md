@@ -23,7 +23,7 @@ background work on Celery, and stores geo data in PostgreSQL/PostGIS.
 - **Serialization / commands**: marshmallow (API), pydantic (commands)
 - **Rate limiting**: Flask-Limiter (own `LIMITER_REDIS_URL`)
 - **Server**: gunicorn
-- **Tests**: pytest (pytest-split, pytest-cov, pytest-mock); Cypress e2e
+- **Tests**: pytest (pytest-split, pytest-cov, pytest-mock); Playwright e2e
 - **Lint/format**: isort, black, flake8, import-linter, pre-commit
 - **Other**: Babel (i18n), icalendar/recurring-ical-events, googlemaps, Authlib/Flask-Dance (OAuth)
 
@@ -44,7 +44,7 @@ docker-compose up --build                      # full stack: PostGIS, Redis, Mai
 docker-compose -f docker-compose.test.services.yml up -d
 pytest
 pytest tests/views/test_event.py::TestEventView::test_create -v   # single test
-npm install && npx cypress run                 # e2e
+npm install && npx playwright test             # e2e
 
 # Regenerate model/repo code after editing codegen/config/*.yaml
 python codegen/generate.py
@@ -65,7 +65,7 @@ isort . && black . && flake8 && lint-imports && \
 - `project/api/` — REST resources + marshmallow schemas
 - `codegen/` — `generate.py` + YAML schemas in `codegen/config/`
 - `tests/` — mirrors source; `conftest.py`, `base_test.py`, `seeder.py`
-- `cypress/`, `doc/`, `deployment/`, `.scripts/`
+- `e2e/`, `doc/`, `deployment/`, `.scripts/`
 
 **Flow:** view / API → application command → handler → repository (domain via infrastructure); events dispatch through the message bus, some onto Celery.
 
@@ -94,5 +94,5 @@ isort . && black . && flake8 && lint-imports && \
 - Tasks: `project/celery_tasks.py`, `project/base_tasks.py`
 - Codegen: `codegen/generate.py`, `codegen/config/`
 - Tests: `tests/conftest.py`, `tests/base_test.py`, `tests/seeder.py`
-- CI: `.github/workflows/{lint,test,cypress}.yml`
+- CI: `.github/workflows/{lint,test,playwright}.yml`
 - Docs: `doc/development.md`, `doc/deployment.md`
