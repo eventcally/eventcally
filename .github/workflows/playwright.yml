@@ -3,6 +3,12 @@ name: Playwright
 # Controls when the action will run.
 on: [pull_request, workflow_dispatch]
 
+# This workflow never uses GITHUB_TOKEN; checkout only needs to read the repo.
+# The repository default is currently `write`, so without this the job would hand
+# a write-capable token to everything `pip install` and `npm ci` pull in.
+permissions:
+  contents: read
+
 env:
   LANG: "de_DE.UTF-8"
 
