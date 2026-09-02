@@ -1,4 +1,3 @@
-// ported from cypress/e2e/admin.cy.js
 const { test, expect } = require("../fixtures");
 const { createUser, createAdminUnit } = require("../fixtures/flask");
 

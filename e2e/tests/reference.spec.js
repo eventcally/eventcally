@@ -1,4 +1,3 @@
-// ported from cypress/e2e/reference.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot } = require("../fixtures/helpers");
 const { createAdminUnit, createIncomingReference, createEvent } = require("../fixtures/flask");

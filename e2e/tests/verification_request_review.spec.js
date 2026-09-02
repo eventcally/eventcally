@@ -1,4 +1,3 @@
-// ported from cypress/e2e/verification_request_review.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot, screenshotElement, shouldContain } = require("../fixtures/helpers");
 const { createAdminUnit, createIncomingVerificationRequest } = require("../fixtures/flask");

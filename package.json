@@ -8,8 +8,6 @@
     "test": "tests"
   },
   "scripts": {
-    "cypress:open": "cypress open --config-file cypress/config/desktop.config.js",
-    "cypress:open:mobile": "cypress open --config-file cypress/config/mobile.config.js",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },
@@ -24,9 +22,6 @@
   },
   "homepage": "https://github.com/eventcally/eventcally#readme",
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
-    "cd": "^0.3.3",
-    "cypress": "^13.3.0",
-    "cypress-fail-on-console-error": "^4.0.2"
+    "@playwright/test": "^1.62.1"
   }
 }

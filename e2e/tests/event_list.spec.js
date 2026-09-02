@@ -1,4 +1,3 @@
-// ported from cypress/e2e/event_list.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot } = require("../fixtures/helpers");
 const { createAdminUnit, createEventList } = require("../fixtures/flask");
@@ -53,9 +52,9 @@ test.describe("Event lists", () => {
     await page.goto(`/manage/admin_unit/${adminUnitId}/event-lists`);
 
     await page.locator(".dropdown-toggle.btn-link").click();
-    // Cypress' `li:last` resolved once; here the menu items appear as the
-    // dropdown opens, so `.last()` can otherwise resolve to a partially rendered
-    // menu and click the wrong entry. Waiting for visibility re-resolves it.
+    // The menu items appear as the dropdown opens, so `.last()` can resolve
+    // against a partially rendered menu and click the wrong entry. Waiting for
+    // visibility re-resolves it.
     const deleteItem = page.locator(".b-dropdown.show li").last();
     await expect(deleteItem).toBeVisible();
     await deleteItem.click();

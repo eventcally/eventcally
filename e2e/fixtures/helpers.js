@@ -1,7 +1,6 @@
 // DOM helpers for the e2e suite.
 //
-// Ported from cypress/support/commands.js:185-395. Each helper takes `page` as
-// its first argument instead of being a chained Cypress command.
+// Each helper takes `page` (or a locator) as its first argument.
 const path = require("path");
 const { test, expect } = require("@playwright/test");
 const { createUser, createOauth2Client } = require("./flask");
@@ -9,8 +8,8 @@ const { createUser, createOauth2Client } = require("./flask");
 /**
  * Build the artifact path `e2e/screenshots/<spec>/<name>-<viewportWidth>.png`.
  *
- * The viewport suffix reproduces cypress/plugins/index.js:19-25 and is what
- * keeps the desktop and mobile runs from overwriting each other's artifacts.
+ * The viewport suffix is what keeps the desktop and mobile runs from
+ * overwriting each other's artifacts.
  */
 function screenshotPath(page, name) {
   const spec = path.basename(test.info().file);
@@ -20,8 +19,7 @@ function screenshotPath(page, name) {
 }
 
 /**
- * Full-page screenshot, matching Cypress' `cy.screenshot()` default of
- * `capture: "fullPage"`.
+ * Full-page screenshot.
  *
  * @param {import("@playwright/test").Page} page
  * @param {string} name
@@ -31,7 +29,7 @@ async function screenshot(page, name) {
 }
 
 /**
- * Element screenshot, matching Cypress' `cy.get(sel).screenshot()`.
+ * Element screenshot.
  *
  * @param {import("@playwright/test").Locator} locator
  * @param {string} name
@@ -40,32 +38,20 @@ async function screenshotElement(locator, name) {
   await locator.screenshot({ path: screenshotPath(locator.page(), name) });
 }
 
-/**
- * SOURCE: cypress/support/commands.js:185-188
- */
 async function assertValid(page, fieldId) {
   await expect(page.locator(`#${fieldId}`)).toHaveClass(/is-valid/);
   await expect(page.locator(`#${fieldId}-error`)).toBeEmpty();
 }
 
-/**
- * SOURCE: cypress/support/commands.js:190-193
- */
 async function assertInvalid(page, fieldId, msg) {
   await expect(page.locator(`#${fieldId}`)).toHaveClass(/is-invalid/);
   await expect(page.locator(`#${fieldId}-error`)).toContainText(msg);
 }
 
-/**
- * SOURCE: cypress/support/commands.js:195-197
- */
 async function assertRequired(page, fieldId) {
   await assertInvalid(page, fieldId, "Pflichtfeld");
 }
 
-/**
- * SOURCE: cypress/support/commands.js:211-232
- */
 async function select2(page, selectId, textToEnter, expectedText = null, expectedValue = null) {
   const container = page.locator(`#select2-${selectId}-container`);
   await container.click();
@@ -75,8 +61,8 @@ async function select2(page, selectId, textToEnter, expectedText = null, expecte
   await input.press("Enter");
 
   if (expectedText) {
-    // Cypress asserted `be.oneOf`: select2 renders a "×" clear affordance in
-    // front of the label for some widget variants.
+    // select2 renders a "×" clear affordance in front of the label for some
+    // widget variants, so either form is acceptable.
     await expect(async () => {
       const text = await container.textContent();
       expect([expectedText, `×${expectedText}`]).toContain(text);
@@ -89,27 +75,20 @@ async function select2(page, selectId, textToEnter, expectedText = null, expecte
 }
 
 /**
- * Cypress' `.should("contain", text)` passes when ANY element in the matched set
- * contains the text (chai-jquery delegates to `.is(":contains(...)")`). Playwright's
- * `toContainText` on a locator that resolves to several elements is a strict-mode
- * violation instead, so selectors like `div.alert` break as soon as a second alert
- * is on the page. This restores the original semantics.
+ * Asserts that ANY element in the matched set contains the text. Playwright's
+ * `toContainText` on a locator resolving to several elements is a strict-mode
+ * violation instead, so selectors like `div.alert` would otherwise break as soon
+ * as a second alert is on the page.
  */
 async function shouldContain(locator, text) {
   await expect(locator.filter({ hasText: text }).first()).toBeAttached();
 }
 
-/**
- * SOURCE: cypress/support/commands.js:234-240
- */
 async function inputsShouldHaveSameValue(page, input1, input2) {
   const value = await page.locator(input1).inputValue();
   await expect(page.locator(input2)).toHaveValue(value);
 }
 
-/**
- * SOURCE: cypress/support/commands.js:346-354
- */
 async function screenshotDatepicker(page, elementId, screenshotName = "datepicker") {
   await page.locator(elementId).click();
   await expect(page.locator("#ui-datepicker-div")).toBeVisible();
@@ -118,10 +97,8 @@ async function screenshotDatepicker(page, elementId, screenshotName = "datepicke
 }
 
 /**
- * SOURCE: cypress/support/commands.js:242-310
- *
- * The heaviest port in the suite: jQuery UI datepicker + timepicker + the
- * recurrence modal, driven almost entirely through visibility toggling.
+ * jQuery UI datepicker + timepicker + the recurrence modal, driven almost
+ * entirely through visibility toggling.
  */
 async function checkEventStartEnd(page, update = false, recurrence = false, prefix = "") {
   const id = (suffix) => page.locator(`#${prefix}${suffix}`);
@@ -164,8 +141,8 @@ async function checkEventStartEnd(page, update = false, recurrence = false, pref
   }
 
   await expect(openModal).toBeVisible();
-  // Cypress needed `cy.wait(1000)` here for the modal to copy the start values
-  // across; the retrying value assertions below wait for the real thing.
+  // The retrying value assertions below wait for the modal to copy the start
+  // values across.
   await inputsShouldHaveSameValue(page, `#${prefix}start-user`, `#${prefix}recc-start-user`);
   await inputsShouldHaveSameValue(page, `#${prefix}start-time`, `#${prefix}recc-start-time`);
   await expect(id("rirtemplate").locator("option")).toHaveCount(4);
@@ -183,9 +160,6 @@ async function checkEventStartEnd(page, update = false, recurrence = false, pref
   }
 }
 
-/**
- * SOURCE: cypress/support/commands.js:312-344
- */
 async function checkEventAllday(page, prefix = "") {
   const id = (suffix) => page.locator(`#${prefix}${suffix}`);
   const openModal = page.locator(".modal-recurrence").filter({ visible: true }).first();
@@ -224,10 +198,8 @@ async function checkEventAllday(page, prefix = "") {
 }
 
 /**
- * SOURCE: cypress/support/commands.js:356-395
- *
  * Uses `page.request` rather than the standalone `request` fixture so the token
- * POST shares the browser's session, the way `cy.request` did.
+ * POST shares the browser's session.
  */
 async function authorize(page, login, takeScreenshot = false) {
   const userId = createUser("new@test.de", "password", true);

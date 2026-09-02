@@ -1,4 +1,3 @@
-// ported from cypress/e2e/oauth2_token.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot, authorize } = require("../fixtures/helpers");
 

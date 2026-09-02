@@ -1,4 +1,3 @@
-// ported from cypress/e2e/verification_request.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot } = require("../fixtures/helpers");
 const { createAdminUnit, createIncomingVerificationRequest } = require("../fixtures/flask");
@@ -35,9 +34,8 @@ test.describe("Verification request", () => {
 
     // Status
     await page.locator(".dropdown-toggle.btn-link").click();
-    // `hasText` is case-insensitive, so it also matched "Veranstaltungen anzeigen".
-    // Cypress' `a:contains(Anzeigen)` is case-sensitive; getByRole + exact is the
-    // faithful equivalent.
+    // `hasText` is case-insensitive and would also match "Veranstaltungen
+    // anzeigen", so this needs an exact, case-sensitive match.
     await page.getByRole("link", { name: "Anzeigen", exact: true }).click({ force: true });
     await expect(page).toHaveURL(/\/outgoing_organization_verification_request\//);
     await screenshot(page, "status");

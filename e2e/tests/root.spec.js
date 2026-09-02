@@ -1,4 +1,3 @@
-// ported from cypress/e2e/root.cy.js
 const { test } = require("../fixtures");
 const { screenshot } = require("../fixtures/helpers");
 const { createAdminUnit, createEvent } = require("../fixtures/flask");
@@ -8,8 +7,8 @@ test.describe("Root", () => {
     await page.goto("/");
     await screenshot(page, "home");
 
-    // Cypress needed `{failOnStatusCode: false}` here; Playwright does not fail
-    // on a 4xx response, so a plain goto is the faithful translation.
+    // /tos legitimately 404s. Playwright does not fail on a 4xx response, and
+    // the console guard allows Chromium's "Failed to load resource" line.
     await page.goto("/tos");
     await screenshot(page, "tos");
 

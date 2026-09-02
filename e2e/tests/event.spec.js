@@ -1,4 +1,3 @@
-// ported from cypress/e2e/event.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot, select2, checkEventStartEnd, shouldContain } = require("../fixtures/helpers");
 const { createAdminUnit, createEvent, createEventList } = require("../fixtures/flask");
@@ -89,8 +88,8 @@ test.describe("Event", () => {
     await expect(toListLink).toBeVisible();
     await toListLink.click();
 
-    // A case-sensitive regex, matching Cypress' `:contains(OK)`; `hasText` with a
-    // plain string would be case-insensitive.
+    // A regex gives a case-sensitive match; `hasText` with a plain string would
+    // be case-insensitive and match "ok" inside other words.
     const okButton = page.locator(".btn").filter({ hasText: /OK/ });
     await expect(okButton).toBeVisible();
     await screenshot(page, "lists");

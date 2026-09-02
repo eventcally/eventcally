@@ -1,4 +1,3 @@
-// ported from cypress/e2e/manage.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot, screenshotDatepicker } = require("../fixtures/helpers");
 const {
@@ -18,7 +17,7 @@ test.describe("Manage", () => {
 
     await page.goto("/manage/admin_units");
     // "Einladungen" is also a substring of "Organisationseinladungen", so this
-    // matches two headings where Cypress' `h1:contains()` happily took both.
+    // matches two headings; .first() keeps it out of strict-mode trouble.
     await expect(page.locator("h1", { hasText: "Einladungen" }).first()).toBeAttached();
     await expect(
       page.locator("h1", { hasText: "Organisationseinladungen" }).first()

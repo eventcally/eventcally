@@ -71,7 +71,7 @@ Explore the codebase to understand organization:
 - `project/views/`, `project/forms/`, `project/templates/` — server-rendered UI
 - `codegen/` — `generate.py` + YAML schemas under `codegen/config/`
 - `tests/` — pytest suites mirroring source structure; `conftest.py`, `base_test.py`, `seeder.py`
-- `cypress/` — end-to-end tests
+- `e2e/` — end-to-end tests
 - `doc/`, `deployment/`, `.scripts/` — docs and ops/lint helpers
 
 ---
@@ -89,7 +89,7 @@ From `requirements.txt` and configs, identify:
 - **Database**: PostgreSQL + PostGIS via psycopg2 + SQLAlchemy 2 ORM + GeoAlchemy2; Alembic migrations
 - **Rate limiting**: Flask-Limiter (dedicated `LIMITER_REDIS_URL`)
 - **Server**: gunicorn
-- **Testing**: pytest (+ pytest-split, pytest-cov, pytest-mock); Cypress for e2e
+- **Testing**: pytest (+ pytest-split, pytest-cov, pytest-mock); Playwright for e2e
 - **Lint/format**: black, isort, flake8, import-linter, pre-commit
 - **Other**: marshmallow (serialization), pydantic (commands), Babel (i18n), icalendar/recurring-ical-events, googlemaps, Authlib/Flask-Dance (OAuth)
 
@@ -115,7 +115,7 @@ Study existing code for:
 - Tasks/schedules: `project/celery_tasks.py`, `project/base_tasks.py`
 - Codegen: `codegen/generate.py`, `codegen/config/`
 - Test fixtures: `tests/conftest.py`, `tests/base_test.py`, `tests/seeder.py`
-- CI: `.github/workflows/lint.yml`, `.github/workflows/test.yml`, `.github/workflows/cypress.yml`
+- CI: `.github/workflows/lint.yml`, `.github/workflows/test.yml`, `.github/workflows/playwright.yml`
 - Agent docs: `AGENTS.md`, `.github/copilot-instructions.md`, `doc/development.md`, `doc/deployment.md`
 
 ---
@@ -205,7 +205,7 @@ pytest --cov=project --cov-report=html   # with coverage
 pytest tests/views/test_event.py::TestEventView::test_create -v   # single test
 
 # End-to-end
-npm install && npx cypress run
+npm install && npx playwright test
 
 # Regenerate model/repo code after editing codegen/config/ YAML
 python codegen/generate.py

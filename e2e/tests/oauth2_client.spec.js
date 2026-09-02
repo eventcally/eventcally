@@ -1,4 +1,3 @@
-// ported from cypress/e2e/oauth2_client.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot } = require("../fixtures/helpers");
 const { createUser, createOauth2Client } = require("../fixtures/flask");

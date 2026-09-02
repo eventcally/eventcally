@@ -1,4 +1,3 @@
-// ported from cypress/e2e/admin_unit_relation.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot, select2 } = require("../fixtures/helpers");
 const { createAdminUnit, createAdminUnitRelation } = require("../fixtures/flask");

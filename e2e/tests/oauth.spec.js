@@ -1,4 +1,3 @@
-// ported from cypress/e2e/oauth.cy.js
 const { test } = require("../fixtures");
 const { authorize } = require("../fixtures/helpers");
 

@@ -1,4 +1,3 @@
-// ported from cypress/e2e/event_date.cy.js
 const { test } = require("../fixtures");
 const { screenshot, screenshotDatepicker } = require("../fixtures/helpers");
 const { createAdminUnit, createEvent } = require("../fixtures/flask");

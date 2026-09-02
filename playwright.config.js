@@ -4,9 +4,8 @@ const { defineConfig, devices } = require("@playwright/test");
 /**
  * Playwright configuration for the e2e suite.
  *
- * Runs alongside the Cypress suite in `cypress/` during the migration overlap.
- * Never run both against the same app/database at the same time: each test
- * truncates every table (see the `setup` fixture in `e2e/fixtures/index.js`).
+ * Never run two of these against the same app/database at the same time: each
+ * test truncates every table (see the `setup` fixture in `e2e/fixtures/index.js`).
  */
 module.exports = defineConfig({
   testDir: "./e2e/tests",
@@ -28,10 +27,9 @@ module.exports = defineConfig({
     screenshot: "only-on-failure",
 
     // The app picks its language from Accept-Language (project/i10n.py:24-29),
-    // so the browser locale decides whether the UI is German or English. Cypress
-    // inherited de-DE from the machine / the workflow's LANG=de_DE.UTF-8;
-    // Playwright's Chromium would default to en-US and every German assertion
-    // in the suite would fail. This is as load-bearing as the viewport.
+    // so the browser locale decides whether the UI is German or English.
+    // Chromium defaults to en-US, which would fail every German assertion in the
+    // suite. This is as load-bearing as the viewport.
     locale: "de-DE",
   },
 
@@ -40,7 +38,7 @@ module.exports = defineConfig({
       name: "desktop",
       use: {
         ...devices["Desktop Chrome"],
-        // Cypress' default viewport, mirrored so responsive assertions match.
+        // Changing this changes which responsive elements are visible.
         viewport: { width: 1000, height: 660 },
       },
     },
@@ -48,7 +46,6 @@ module.exports = defineConfig({
       name: "mobile",
       use: {
         ...devices["Desktop Chrome"],
-        // SOURCE: cypress/config/mobile.config.js:4-5
         viewport: { width: 375, height: 667 },
       },
     },

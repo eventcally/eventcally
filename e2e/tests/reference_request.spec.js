@@ -1,4 +1,3 @@
-// ported from cypress/e2e/reference_request.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot, select2 } = require("../fixtures/helpers");
 const {

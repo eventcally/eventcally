@@ -1,4 +1,3 @@
-// ported from cypress/e2e/profile.cy.js
 const { test, expect } = require("../fixtures");
 
 test.describe("Profile", () => {

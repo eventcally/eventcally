@@ -1,4 +1,3 @@
-// ported from cypress/e2e/user.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot, assertValid, assertInvalid, assertRequired, shouldContain } = require("../fixtures/helpers");
 

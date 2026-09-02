@@ -1,8 +1,7 @@
 // Flask CLI wrappers used to build test fixtures.
 //
-// Ported from cypress/support/commands.js:1-183. Unlike the Cypress commands
-// these are plain synchronous functions returning the id directly -- no promise
-// chain -- and they pass argv arrays instead of hand-quoted shell strings.
+// Plain synchronous functions returning the id directly, passing argv arrays
+// rather than hand-quoted shell strings.
 //
 // Commands go to the long-lived fixture server (.scripts/e2e_fixture_server.py)
 // rather than a fresh `flask` process. Importing the app costs ~3.8s and the
@@ -123,7 +122,6 @@ function run(args) {
   const result = JSON.parse(raw);
 
   if (!result.ok) {
-    // SOURCE: cypress/support/commands.js:1-12 (error message format)
     throw new Error(`Execution of "flask ${args.join(" ")}" failed
           Exit code: ${result.exit_code}
           Stdout:\n${result.output || ""}

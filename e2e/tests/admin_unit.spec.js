@@ -1,4 +1,3 @@
-// ported from cypress/e2e/admin_unit.cy.js
 const { test, expect } = require("../fixtures");
 const { screenshot, shouldContain } = require("../fixtures/helpers");
 const { createAdminUnit, createAdminUnitOrganizationInvitation } = require("../fixtures/flask");

@@ -9,7 +9,7 @@ EventCally is a Flask + SQLAlchemy event calendar platform using Domain-Driven D
 - Run unit tests: `pytest`
 - Run coverage tests: `pytest --cov-report=html --cov=project`
 - Run parallel test script: `./runpytest.sh`
-- Run e2e tests: `npm install && ./runcypress.sh`
+- Run e2e tests: `npm install && npx playwright test`
 - Run lint/format checks before commit: `pre-commit run --all-files`
 
 For full environment setup, use [doc/development.md](../doc/development.md).
