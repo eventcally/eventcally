@@ -73,3 +73,17 @@ def test_apply_feature_flags_to_config_unknown_token_ignored():
 def test_feature_flags_registry_mapping():
     assert FEATURE_FLAGS["EventListsDisabled"] == "FEATURE_EVENT_LISTS_ENABLED"
     assert FEATURE_FLAGS["UserFavoritesDisabled"] == "FEATURE_USER_FAVORITES_ENABLED"
+    assert FEATURE_FLAGS["ApiEventDateDisabled"] == "FEATURE_API_EVENT_DATE_ENABLED"
+    assert FEATURE_FLAGS["ApiEventDatesDisabled"] == "FEATURE_API_EVENT_DATES_ENABLED"
+    assert FEATURE_FLAGS["ApiEventListDisabled"] == "FEATURE_API_EVENT_LIST_ENABLED"
+
+
+def test_apply_feature_flags_to_config_api_endpoints_disabled():
+    config = {}
+    apply_feature_flags_to_config(
+        config, "ApiEventDateDisabled,ApiEventDatesDisabled,ApiEventListDisabled"
+    )
+    assert config["FEATURE_API_EVENT_DATE_ENABLED"] is False
+    assert config["FEATURE_API_EVENT_DATES_ENABLED"] is False
+    assert config["FEATURE_API_EVENT_LIST_ENABLED"] is False
+    assert config["FEATURE_EVENT_LISTS_ENABLED"] is True

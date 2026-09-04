@@ -4,6 +4,9 @@
 FEATURE_FLAGS = {
     "EventListsDisabled": "FEATURE_EVENT_LISTS_ENABLED",
     "UserFavoritesDisabled": "FEATURE_USER_FAVORITES_ENABLED",
+    "ApiEventDateDisabled": "FEATURE_API_EVENT_DATE_ENABLED",
+    "ApiEventDatesDisabled": "FEATURE_API_EVENT_DATES_ENABLED",
+    "ApiEventListDisabled": "FEATURE_API_EVENT_LIST_ENABLED",
 }
 
 
