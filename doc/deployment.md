@@ -95,7 +95,21 @@ Create `.env` file in the root directory or pass as environment variables.
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | CACHE_PATH                  | Absolute or relative path to root directory for dump and image caching. Default: project/tmp                                             |
 | GOOGLE_MAPS_API_KEY         | Resolve addresses with Google Maps: API Key with Places API enabled                                                                      |
-| FEATURE_FLAGS                | Comma-separated list of opt-out feature tokens. Known tokens: `EventListsDisabled` (hides the Event Lists feature: menu item, manage view, "Add to list" event actions, and the 5 EventList REST endpoints/Swagger docs), `UserFavoritesDisabled` (reserved for future use). Default: empty (all features enabled). Unknown tokens are ignored. Note: `FEATURE_EVENT_LISTS_ENABLED` is no longer read from the environment — use `FEATURE_FLAGS=EventListsDisabled` instead. |
+| FEATURE_FLAGS                | Comma-separated list of opt-out feature tokens, see below. Default: empty (all features enabled). Unknown tokens are ignored.                |
+
+#### Feature flag tokens
+
+Opt-out semantics: listing a token *disables* that feature. The derived
+`FEATURE_*_ENABLED` config keys are not read from the environment — set `FEATURE_FLAGS`
+instead.
+
+| Token                   | Effect                                                                                                                       |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `EventListsDisabled`    | Hides the Event Lists feature: menu item, manage view, "Add to list" event actions, and the 5 EventList REST endpoints/Swagger docs |
+| `UserFavoritesDisabled` | Hides the user favorites feature: menu item, favorite event actions, and the 3 favorite REST endpoints/Swagger docs           |
+| `ApiEventDateDisabled`  | Hides the unused `GET /api/v1/event-dates/<id>` endpoint and its Swagger docs                                                 |
+| `ApiEventDatesDisabled` | Hides the unused `GET /api/v1/events/<id>/dates` endpoint and its Swagger docs                                                |
+| `ApiEventListDisabled`  | Hides the unused `GET /api/v1/events` endpoint and its Swagger docs                                                           |
 
 ## Generate JWT Keys for OIDC/OAuth
 

@@ -195,6 +195,20 @@ USER_FAVORITE_ENDPOINTS = {
     "api_v1_user_favorite_event_list_write",
 }
 
+# Unused endpoints, each hidden behind its own flag so they can be retired one by one.
+API_EVENT_DATE_ENDPOINTS = {"api_v1_event_date"}
+API_EVENT_DATES_ENDPOINTS = {"api_v1_event_dates"}
+API_EVENT_LIST_ENDPOINTS = {"api_v1_event_list"}
+
+# app.config key (from project.feature_flags) -> endpoints hidden when it is False.
+FEATURE_ENDPOINTS = {
+    "FEATURE_EVENT_LISTS_ENABLED": EVENT_LIST_ENDPOINTS,
+    "FEATURE_USER_FAVORITES_ENABLED": USER_FAVORITE_ENDPOINTS,
+    "FEATURE_API_EVENT_DATE_ENABLED": API_EVENT_DATE_ENDPOINTS,
+    "FEATURE_API_EVENT_DATES_ENABLED": API_EVENT_DATES_ENDPOINTS,
+    "FEATURE_API_EVENT_LIST_ENABLED": API_EVENT_LIST_ENDPOINTS,
+}
+
 
 def init_api(app):
     """Initialize REST API with the Flask app instance.
@@ -250,12 +264,14 @@ def init_api(app):
     import project.api.user.resources
 
     # Re-register all resources for the current app instance.
-    event_lists_enabled = app.config.get("FEATURE_EVENT_LISTS_ENABLED", True)
-    user_favorites_enabled = app.config.get("FEATURE_USER_FAVORITES_ENABLED", True)
+    disabled_endpoints = {
+        endpoint
+        for config_key, endpoints in FEATURE_ENDPOINTS.items()
+        if not app.config.get(config_key, True)
+        for endpoint in endpoints
+    }
     for endpoint, (resource, url, api_docs_flag) in resource_registry.items():
-        if not event_lists_enabled and endpoint in EVENT_LIST_ENDPOINTS:
-            continue
-        if not user_favorites_enabled and endpoint in USER_FAVORITE_ENDPOINTS:
+        if endpoint in disabled_endpoints:
             continue
         rest_api.add_resource(resource, url, endpoint=endpoint)
         if api_docs_flag:

@@ -198,28 +198,59 @@ def test_init_api_user_favorites_disabled():
     assert "api_v1_user_organization_membership_list" in endpoints
 
 
-def test_init_api_user_favorites_enabled():
+# (endpoint set in project.api, derived config key, FEATURE_FLAGS token)
+UNUSED_API_ENDPOINT_FLAGS = [
+    (
+        "API_EVENT_DATE_ENDPOINTS",
+        "FEATURE_API_EVENT_DATE_ENABLED",
+        "ApiEventDateDisabled",
+    ),
+    (
+        "API_EVENT_DATES_ENDPOINTS",
+        "FEATURE_API_EVENT_DATES_ENABLED",
+        "ApiEventDatesDisabled",
+    ),
+    (
+        "API_EVENT_LIST_ENDPOINTS",
+        "FEATURE_API_EVENT_LIST_ENABLED",
+        "ApiEventListDisabled",
+    ),
+]
+
+
+def _endpoint_set(name):
+    import project.api
+
+    return getattr(project.api, name)
+
+
+@pytest.mark.parametrize(
+    "endpoint_set_name, config_key, token", UNUSED_API_ENDPOINT_FLAGS
+)
+def test_init_api_unused_endpoints_disabled(endpoint_set_name, config_key, token):
     from project import create_app
-    from project.api import USER_FAVORITE_ENDPOINTS
 
     app = create_app(
         {
             "TESTING": True,
             "SERVER_NAME": "localhost",
-            "FEATURE_USER_FAVORITES_ENABLED": True,
+            config_key: False,
         }
     )
 
     endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
 
-    assert USER_FAVORITE_ENDPOINTS.issubset(endpoints)
+    assert endpoints.isdisjoint(_endpoint_set(endpoint_set_name))
+    assert "api_v1_event_search" in endpoints
 
 
-def test_init_api_user_favorites_disabled_via_feature_flags_env(monkeypatch):
+@pytest.mark.parametrize(
+    "endpoint_set_name, config_key, token", UNUSED_API_ENDPOINT_FLAGS
+)
+def test_init_api_unused_endpoints_enabled_by_default(
+    endpoint_set_name, config_key, token
+):
     from project import create_app
-    from project.api import USER_FAVORITE_ENDPOINTS
-
-    monkeypatch.setenv("FEATURE_FLAGS", "UserFavoritesDisabled")
 
     app = create_app(
         {
@@ -228,10 +259,33 @@ def test_init_api_user_favorites_disabled_via_feature_flags_env(monkeypatch):
         }
     )
 
-    assert app.config["FEATURE_USER_FAVORITES_ENABLED"] is False
-    assert app.config["FEATURE_FLAGS"] == {"UserFavoritesDisabled"}
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+
+    assert app.config[config_key] is True
+    assert _endpoint_set(endpoint_set_name).issubset(endpoints)
+
+
+@pytest.mark.parametrize(
+    "endpoint_set_name, config_key, token", UNUSED_API_ENDPOINT_FLAGS
+)
+def test_init_api_unused_endpoints_disabled_via_feature_flags_env(
+    endpoint_set_name, config_key, token, monkeypatch
+):
+    from project import create_app
+
+    monkeypatch.setenv("FEATURE_FLAGS", token)
+
+    app = create_app(
+        {
+            "TESTING": True,
+            "SERVER_NAME": "localhost",
+        }
+    )
+
+    assert app.config[config_key] is False
+    assert app.config["FEATURE_FLAGS"] == {token}
 
     endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
 
-    assert endpoints.isdisjoint(USER_FAVORITE_ENDPOINTS)
-    assert "api_v1_user_organization_membership_list" in endpoints
+    assert endpoints.isdisjoint(_endpoint_set(endpoint_set_name))
+    assert "api_v1_event_search" in endpoints
