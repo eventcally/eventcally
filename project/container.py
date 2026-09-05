@@ -59,6 +59,7 @@ class Infrastructure(containers.DeclarativeContainer):
     webhook_delivery_sender = providers.Singleton(
         RequestsWebhookDeliverySender,
         logger=logger,
+        url_provider=url_provider,
     )
 
 

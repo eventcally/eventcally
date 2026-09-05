@@ -9,11 +9,22 @@ import requests
 from project.application.services.abstract_webhook_delivery_sender import (
     AbstractWebhookDeliverySender,
 )
+from project.application.webhooks.abstract_url_provider import AbstractUrlProvider
 
 
 class RequestsWebhookDeliverySender(AbstractWebhookDeliverySender):
-    def __init__(self, logger: logging.Logger):
+    def __init__(self, logger: logging.Logger, url_provider: AbstractUrlProvider):
         self.logger = logger
+        self.url_provider = url_provider
+
+    def _get_site_url(self) -> Optional[str]:
+        try:
+            return self.url_provider.get_site_url()
+        except Exception:  # pragma: no cover - defensive
+            self.logger.warning(
+                "Could not determine site url for webhook header", exc_info=True
+            )
+            return None
 
     def send(
         self,
@@ -33,6 +44,10 @@ class RequestsWebhookDeliverySender(AbstractWebhookDeliverySender):
 
         if app_installation_id:
             headers["X-EventCally-App-Installation-Id"] = str(app_installation_id)
+
+        site_url = self._get_site_url()
+        if site_url:
+            headers["X-EventCally-Site"] = site_url
 
         data_str = json.dumps(payload)
 
