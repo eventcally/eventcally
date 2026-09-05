@@ -6,3 +6,8 @@ class FlaskUrlProvider(AbstractUrlProvider):
         from flask import url_for
 
         return url_for("main.image", id=image_id, hash=image_hash)
+
+    def get_site_url(self) -> str:
+        from flask import url_for
+
+        return url_for("main.home", _external=True).rstrip("/")

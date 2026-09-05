@@ -11,8 +11,12 @@ from project.infrastructure.services.requests_webhook_delivery_sender import (
 )
 
 
-def _make_sender():
-    return RequestsWebhookDeliverySender(logger=logging.getLogger(__name__))
+def _make_sender(site_url="https://eventcally.test"):
+    url_provider = Mock()
+    url_provider.get_site_url.return_value = site_url
+    return RequestsWebhookDeliverySender(
+        logger=logging.getLogger(__name__), url_provider=url_provider
+    )
 
 
 def test_send_success_builds_headers_and_signature(monkeypatch):
@@ -52,10 +56,11 @@ def test_send_success_builds_headers_and_signature(monkeypatch):
     assert call_kwargs["headers"]["X-EventCally-Signature-256"] == (
         f"sha256={expected_signature}"
     )
+    assert call_kwargs["headers"]["X-EventCally-Site"] == "https://eventcally.test"
 
 
 def test_send_without_secret_or_installation_headers(monkeypatch):
-    sender = _make_sender()
+    sender = _make_sender(site_url=None)
 
     response = Mock()
     response.status_code = 200
@@ -78,6 +83,33 @@ def test_send_without_secret_or_installation_headers(monkeypatch):
     headers = post_mock.call_args.kwargs["headers"]
     assert "X-EventCally-Signature-256" not in headers
     assert "X-EventCally-App-Installation-Id" not in headers
+    assert "X-EventCally-Site" not in headers
+
+
+def test_send_omits_site_header_when_url_unavailable(monkeypatch):
+    sender = _make_sender()
+    sender.url_provider.get_site_url.side_effect = RuntimeError("no app context")
+
+    response = Mock()
+    response.status_code = 200
+    response.raise_for_status = Mock()
+    post_mock = Mock(return_value=response)
+    monkeypatch.setattr(requests, "post", post_mock)
+
+    status, status_code = sender.send(
+        url="https://example.test/webhook",
+        secret=None,
+        payload={"x": 1},
+        event_type="event.created",
+        webhook_delivery_id=42,
+        app_installation_id=None,
+    )
+
+    assert status == "OK"
+    assert status_code == "200"
+
+    headers = post_mock.call_args.kwargs["headers"]
+    assert "X-EventCally-Site" not in headers
 
 
 def test_send_timeout(monkeypatch):

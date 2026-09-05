@@ -58,3 +58,13 @@ class TestFlaskUrlProvider:
 
             mock_url_for.assert_called_once_with("main.image", id=1, hash=12345)
             assert result == "http://img.example.com/1/12345"
+
+    def test_get_site_url_calls_url_for(self):
+        with patch("flask.url_for") as mock_url_for:
+            mock_url_for.return_value = "http://localhost/"
+            provider = FlaskUrlProvider()
+
+            result = provider.get_site_url()
+
+            mock_url_for.assert_called_once_with("main.home", _external=True)
+            assert result == "http://localhost"
