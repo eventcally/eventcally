@@ -199,7 +199,7 @@ flask run --host 0.0.0.0
 docker-compose up --build
 
 # Test (application/ and domain/ tests need no services; the rest need PostGIS + Redis)
-docker-compose -f docker-compose.test.services.yml up -d
+docker compose -f docker-compose.test.yml up -d --wait
 pytest                             # all tests
 pytest --cov=project --cov-report=html   # with coverage
 pytest tests/views/test_event.py::TestEventView::test_create -v   # single test

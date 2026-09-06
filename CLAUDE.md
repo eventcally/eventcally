@@ -40,10 +40,9 @@ flask db upgrade
 flask run --host 0.0.0.0
 docker-compose up --build                      # full stack: PostGIS, Redis, Mailhog, Flask, Celery, Flower
 
-# Test (application/ + domain/ need no services; the rest need PostGIS + Redis)
-docker-compose -f docker-compose.test.services.yml up -d
-pytest
-pytest tests/views/test_event.py::TestEventView::test_create -v   # single test
+# Test — dockerized, no host Postgres/Redis/venv needed (application/ + domain/ need no services)
+./runtests.sh                                  # full parallel suite + coverage, in Docker
+docker compose -f docker-compose.test.yml run --rm pytest pytest tests/views/test_event.py::TestEventView::test_create -v   # single test
 npm install && npx playwright test             # e2e
 
 # Regenerate model/repo code after editing codegen/config/*.yaml

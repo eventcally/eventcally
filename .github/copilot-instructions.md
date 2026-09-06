@@ -5,10 +5,10 @@ EventCally is a Flask + SQLAlchemy event calendar platform using Domain-Driven D
 ## Agent Quickstart
 
 - Install dependencies: `pip install -r requirements.txt`
-- Run app locally: `./runlocal.sh`
+- Run app locally: `docker compose up --build`
 - Run unit tests: `pytest`
 - Run coverage tests: `pytest --cov-report=html --cov=project`
-- Run parallel test script: `./runpytest.sh`
+- Run parallel test script (dockerized, no host Postgres/Redis needed): `./runtests.sh`
 - Run e2e tests: `npm install && npx playwright test`
 - Run lint/format checks before commit: `pre-commit run --all-files`
 

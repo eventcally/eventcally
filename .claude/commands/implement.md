@@ -124,7 +124,7 @@ isort . && black . && flake8 && lint-imports && \
 # or: pre-commit run --all-files
 
 # Tests (most suites need PostGIS + Redis)
-docker-compose -f docker-compose.test.services.yml up -d
+docker compose -f docker-compose.test.yml up -d --wait
 pytest
 ```
 

@@ -1,4 +1,5 @@
 [run]
+relative_files = True
 omit =
     project/celery.py
     project/celery_init.py
