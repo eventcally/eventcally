@@ -6,10 +6,71 @@ name: Tests
 on: [pull_request, workflow_dispatch]
 
 jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      # Empty when this run cannot push (a pull_request from a fork gets a
+      # read-only GITHUB_TOKEN) -- integration-tests then falls back to the
+      # plain host-Python path instead of a job container.
+      image: ${{ steps.set-image.outputs.image }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Determine whether this run can push to GHCR
+        id: trust
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || \
+             [ "${{ github.event.pull_request.head.repo.full_name }}" = "${{ github.repository }}" ]; then
+            echo "trusted=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "trusted=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to GHCR
+        if: steps.trust.outputs.trusted == 'true'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push test image
+        if: steps.trust.outputs.trusted == 'true'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}/test:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Set image output
+        id: set-image
+        run: |
+          if [ "${{ steps.trust.outputs.trusted }}" = "true" ]; then
+            echo "image=ghcr.io/${{ github.repository }}/test:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "image=" >> "$GITHUB_OUTPUT"
+          fi
+
   # Label of the container job
   integration-tests:
+    needs: build-image
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    # Empty when build-image couldn't push (fork PR) -- runs on the bare
+    # runner instead, using the fallback steps below.
+    container: ${{ needs.build-image.outputs.image }}
     strategy:
       matrix:
         group: [1, 2, 3, 4]
@@ -18,8 +79,8 @@ jobs:
     services:
       # Label used to access the service container
       postgres:
-        # Docker Hub image
-        image: mdillon/postgis
+        # Docker Hub image -- production parity, same image as docker-compose.test.yml
+        image: postgis/postgis:12-3.1
         # Provide the password for postgres
         env:
           POSTGRES_USER: postgres
@@ -65,13 +126,17 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
+      # Fallback path only -- inside the build-image container, the
+      # interpreter and dependencies are already baked in.
       - name: Set up Python
+        if: needs.build-image.outputs.image == ''
         uses: actions/setup-python@v4
         with:
           python-version: "3.12"
           cache: "pip"
 
       - name: Install dependencies
+        if: needs.build-image.outputs.image == ''
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
@@ -79,9 +144,12 @@ jobs:
       - name: Run tests
         run: pytest --cov=project --splits 4 --group ${{ matrix.group }}
         env:
-          TEST_DATABASE_URL: postgresql://postgres:postgres@localhost/eventcally_tests
-          TEST_REDIS_URL: redis://localhost:6379
-          TEST_LIMITER_REDIS_URL: redis://localhost:6380
+          # Inside the job container, services resolve by service name, not
+          # localhost; limiter_redis is always reached on its container port
+          # 6379, not the 6380 published for host-side access.
+          TEST_DATABASE_URL: ${{ needs.build-image.outputs.image != '' && 'postgresql://postgres:postgres@postgres/eventcally_tests' || 'postgresql://postgres:postgres@localhost/eventcally_tests' }}
+          TEST_REDIS_URL: ${{ needs.build-image.outputs.image != '' && 'redis://redis:6379' || 'redis://localhost:6379' }}
+          TEST_LIMITER_REDIS_URL: ${{ needs.build-image.outputs.image != '' && 'redis://limiter_redis:6379' || 'redis://localhost:6380' }}
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
