@@ -1,8 +1,8 @@
-name: "eventcally-test-services"
+name: "eventcally-test"
 
 services:
   db:
-    image: postgis/postgis:12-3.1
+    image: ${TEST_DB_IMAGE:-postgis/postgis:12-3.1}
     healthcheck:
       test: "pg_isready --username=eventcally && psql --username=eventcally --list"
       start_period: "5s"
@@ -12,6 +12,9 @@ services:
       - POSTGRES_DB=eventcally
       - POSTGRES_USER=eventcally
       - POSTGRES_PASSWORD=pass
+    tmpfs:
+      - /var/lib/postgresql/data
+    command: postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=off -c max_connections=200
 
   redis:
     image: bitnami/redis:latest
@@ -32,3 +35,24 @@ services:
       - 6381:6379
     environment:
       REDIS_PASSWORD: pass
+
+  pytest:
+    build: .
+    entrypoint: []
+    working_dir: /app
+    volumes:
+      - .:/app
+    profiles:
+      - test
+    environment:
+      TEST_DB_ADMIN_URL: postgresql://eventcally:pass@db:5432/eventcally
+      TEST_DB_HOST: db
+      TEST_REDIS_HOST: redis
+      TEST_LIMITER_REDIS_HOST: limiter_redis
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      limiter_redis:
+        condition: service_healthy

@@ -3,7 +3,7 @@
 Drive measured coverage from current 99% to 100% by adding targeted tests only (no production refactors), preserving current `.coveragerc` omits, and using a clean first pytest-cov run followed by `--cov-append` for iterative runs.
 
 **Steps**
-1. Baseline and lock target set: run `runpytest.sh` (which deletes `.coverage`, spins up 8 parallel DB shards with `--cov-append`, and finishes with `coverage html` + `coverage report`) to establish the authoritative uncovered list.
+1. Baseline and lock target set: run `./runtests.sh` (which deletes `.coverage`, spins up 8 parallel DB shards, and finishes with `coverage combine` + `coverage html` + `coverage report`) to establish the authoritative uncovered list.
 2. Phase 1 (largest gains first): add service-layer tests for webhook event/command handlers that currently contain the biggest uncovered blocks. *Blocks step 3 because these paths drive multiple dependent lines.*
 3. Phase 2 (API resource edge paths): add REST resource tests for empty, invalid, and pagination/filter branches in webhook delivery endpoints. *Parallel with step 4 once step 2 is in progress.*
 4. Phase 3 (single-line branch closures): add pinpoint tests for remaining 1-2 line misses in initialization/DI/forms/i18n/model helper modules. *Parallel with step 3.*
@@ -12,10 +12,10 @@ Drive measured coverage from current 99% to 100% by adding targeted tests only (
 
 **Implementation detail by phase**
 1. Baseline command workflow:
-   1. Run `./runpytest.sh` — it already deletes `.coverage`, creates 8 parallel test databases, runs all splits with `--cov-append`, and ends with `coverage html` + `coverage report`.
+   1. Run `./runtests.sh` — it already deletes `.coverage`, creates 8 parallel test databases, runs all splits, and ends with `coverage combine` + `coverage html` + `coverage report`.
    2. Capture the `coverage report --show-missing` output as the authoritative uncovered-lines list.
    3. For targeted iterative runs after adding new tests, run only the affected test file(s) with `--cov=project --cov-append` against an existing test DB, then call `coverage report --show-missing --precision=2` to verify gaps closed.
-   4. Final verification: re-run `./runpytest.sh` from scratch to confirm `TOTAL ... 100%` under clean parallel conditions.
+   4. Final verification: re-run `./runtests.sh` from scratch to confirm `TOTAL ... 100%` under clean parallel conditions.
 2. Phase 1 test additions (highest impact):
    1. Add/extend tests for app webhook event dispatch edge cases: unmapped event type, app missing, webhook not configured, successful payload/delivery creation.
    2. Add/extend tests for webhook delivery attempt command handler failure/retry branches and delivery-created-attempt handler edge paths.
@@ -47,9 +47,9 @@ Drive measured coverage from current 99% to 100% by adding targeted tests only (
 - `/Users/daniel/Projects/eventcally/tests/conftest.py` — fixture behavior to reuse for deterministic DB-backed tests.
 
 **Verification**
-1. Run `./runpytest.sh` to obtain the fresh baseline `coverage report --show-missing` output.
+1. Run `./runtests.sh` to obtain the fresh baseline `coverage report --show-missing` output.
 2. After each phase, run only touched test modules with coverage append and verify that targeted missing lines disappear.
-3. Before completion, run `./runpytest.sh` end-to-end and verify `TOTAL ... 100%` in `coverage report`.
+3. Before completion, run `./runtests.sh` end-to-end and verify `TOTAL ... 100%` in `coverage report`.
 4. Open html coverage and spot-check previously problematic modules now show 100% lines covered.
 5. Run `pre-commit run --all-files` to ensure style/lint remains clean after test additions.
 
@@ -61,4 +61,4 @@ Drive measured coverage from current 99% to 100% by adding targeted tests only (
 
 **Further Considerations**
 1. If one or two lines remain unreachable due to framework import-time behavior, prefer a focused initialization-path test before considering `pragma` or omit changes.
-2. If `--cov-append` introduces confusing totals during iteration, re-run `./runpytest.sh` from scratch to re-establish a clean baseline.
+2. If `--cov-append` introduces confusing totals during iteration, re-run `./runtests.sh` from scratch to re-establish a clean baseline.

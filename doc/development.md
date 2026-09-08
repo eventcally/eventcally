@@ -22,23 +22,16 @@ docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@host.docker.inter
 
 ## Tests
 
-### Create test database
+### Run the full parallel suite (dockerized, no host Postgres/Redis needed)
 
 ```sh
-psql -c 'create database eventcally_tests;' -U postgres
-psql -c 'create extension postgis;' -d eventcally_tests -U postgres
+./runtests.sh
 ```
 
-### Run tests
+### Run a single test
 
 ```sh
-pytest
-```
-
-With coverage:
-
-```sh
-pytest --cov-report=html --cov=project
+docker compose -f docker-compose.test.yml run --rm pytest pytest tests/views/test_event.py -v
 ```
 
 ## Linting

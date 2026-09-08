@@ -25,3 +25,17 @@
 README.md
 tmp
 celerybeat-schedule
+venv/
+htmlcov/
+.pytest_cache/
+.coverage
+.coverage.*
+test-results/
+playwright-report/
+blob-report/
+e2e/screenshots/
+.agents/
+.import_linter_cache
+*.crt
+*.csr
+*.key
