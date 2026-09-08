@@ -189,6 +189,35 @@ def test_event_read_repository_get_returns_event_read_model(app, db, seeder):
     assert user_id is not None
 
 
+def test_event_read_repository_get_organizer_names(app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    organizer_id = seeder.upsert_event_organizer(admin_unit_id, "Infra Organizer")
+
+    with app.app_context():
+        repo = SqlAlchemyEventReadRepository(db.session)
+
+        assert repo.get_organizer_names(set()) == {}
+        assert repo.get_organizer_names({organizer_id}) == {
+            organizer_id: "Infra Organizer"
+        }
+        # Unknown ids are simply absent, which the summary reads as "deleted".
+        assert repo.get_organizer_names({organizer_id, -1}) == {
+            organizer_id: "Infra Organizer"
+        }
+
+
+def test_event_read_repository_get_place_names(app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    place_id = seeder.upsert_event_place(admin_unit_id, "Infra Place")
+
+    with app.app_context():
+        repo = SqlAlchemyEventReadRepository(db.session)
+
+        assert repo.get_place_names(set()) == {}
+        assert repo.get_place_names({place_id}) == {place_id: "Infra Place"}
+        assert repo.get_place_names({place_id, -1}) == {place_id: "Infra Place"}
+
+
 def test_webhook_event_repository_roundtrip_and_delete_old_events(app, db):
     with app.app_context():
         repo = SqlAlchemyWebhookEventRepository(db.session)

@@ -110,6 +110,7 @@ instead.
 | `ApiEventDateDisabled`  | Hides the unused `GET /api/v1/event-dates/<id>` endpoint and its Swagger docs                                                 |
 | `ApiEventDatesDisabled` | Hides the unused `GET /api/v1/events/<id>/dates` endpoint and its Swagger docs                                                |
 | `ApiEventListDisabled`  | Hides the unused `GET /api/v1/events` endpoint and its Swagger docs                                                           |
+| `ReferencedEventChangedDetailsDisabled` | Drops the "what changed" block from the referenced-event-changed notice mail, leaving only the event's current state and the link |
 
 ## Generate JWT Keys for OIDC/OAuth
 

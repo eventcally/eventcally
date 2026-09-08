@@ -1,3 +1,40 @@
+{% from "_macros.html" import render_event_date_instance, render_changed_reference, render_changed_bool, render_changed_enum -%}
 {{ _('A referenced event was changed.') }}
+
+{{ event.name }}
+{{ render_event_date_instance(event.min_start_definition.start, event.min_start_definition.allday) | trim }}{% if event.is_recurring %} ({{ _('Recurring event') }}){% endif %}
+{{ _('Organization') }}: {{ event.admin_unit.name }}
+{{ _('Organizer') }}: {{ event.organizer.name }}
+{% if changes %}
+{{ _('What changed') }}
+{% if changes.name -%}
+- {{ _('Name') }}: {{ changes.name.old }} -> {{ changes.name.new }}
+{% endif -%}
+{% if changes.status -%}
+- {{ _('Status') }}: {{ render_changed_enum(changes.status.old) }} -> {{ render_changed_enum(changes.status.new) }}
+{% endif -%}
+{% if changes.attendance_mode -%}
+- {{ _('Attendance mode') }}: {{ render_changed_enum(changes.attendance_mode.old) }} -> {{ render_changed_enum(changes.attendance_mode.new) }}
+{% endif -%}
+{% if changes.booked_up -%}
+- {{ _('Booked up') }}: {{ render_changed_bool(changes.booked_up.old) }} -> {{ render_changed_bool(changes.booked_up.new) }}
+{% endif -%}
+{% if changes.organizer -%}
+- {{ _('Organizer') }}: {{ render_changed_reference(changes.organizer.old) }} -> {{ render_changed_reference(changes.organizer.new) }}
+{% endif -%}
+{% if changes.event_place -%}
+- {{ _('Place') }}: {{ render_changed_reference(changes.event_place.old) }} -> {{ render_changed_reference(changes.event_place.new) }}
+{% endif -%}
+{% if changes.date_definitions -%}
+- {{ _('Dates (previously)') }}:
+{% for definition in changes.date_definitions.old %}  - {{ render_event_date_instance(definition.start, definition.allday) | trim }}{% if definition.recurrence_rule %} ({{ _('Recurring event') }}){% endif %}
+{% else %}  - {{ _('Not specified') }}
+{% endfor -%}
+- {{ _('Dates (new)') }}:
+{% for definition in changes.date_definitions.new %}  - {{ render_event_date_instance(definition.start, definition.allday) | trim }}{% if definition.recurrence_rule %} ({{ _('Recurring event') }}){% endif %}
+{% else %}  - {{ _('Not specified') }}
+{% endfor -%}
+{% endif -%}
+{% endif %}
 {{ _('Click the link below to view the reference') }}
 {{ url_for('manage_admin_unit.incoming_event_reference', id=reference.admin_unit_id, event_reference_id=reference.id, _external=True) }}

@@ -18,6 +18,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.12.1\n"
 
+#: project/templates/_macros.html:1024
+#: project/templates/email/referenced_event_changed_notice.txt:22
+msgid "(deleted)"
+msgstr "(gelöscht)"
+
+#: project/templates/_macros.html:1069
+#: project/templates/email/referenced_event_changed_notice.txt:35
+msgid "Dates (new)"
+msgstr "Termine (neu)"
+
+#: project/templates/_macros.html:1068
+#: project/templates/email/referenced_event_changed_notice.txt:29
+msgid "Dates (previously)"
+msgstr "Termine (bisher)"
+
+#: project/templates/_macros.html:1028 project/templates/_macros.html:1032
+#: project/templates/_macros.html:1041
+#: project/templates/email/referenced_event_changed_notice.txt:33
+msgid "Not specified"
+msgstr "Nicht angegeben"
+
+#: project/templates/_macros.html:1047
+#: project/templates/email/referenced_event_changed_notice.txt:9
+msgid "What changed"
+msgstr "Was sich geändert hat"
+
 #: project/templates/security/authorize.html:10
 #, python-format
 msgid "\"%(client_name)s\" wants to access your account"

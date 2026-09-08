@@ -6,6 +6,9 @@ from flask import current_app
 from project import repos, services
 from project.application import command_handlers, commands, event_handlers
 from project.application.message_bus import MessageBus
+from project.application.services.event_change_summary_service import (
+    EventChangeSummaryService,
+)
 from project.application.services.organization_application_service import (
     OrganizationApplicationService,
 )
@@ -247,6 +250,10 @@ class Services(containers.DeclarativeContainer):
         OrganizationApplicationService,
         email_service=email_service,
     )
+    event_change_summary_service = providers.Factory(
+        EventChangeSummaryService,
+        event_read_repo=read_repos.event_read_repo,
+    )
 
     app_service = providers.Factory(
         services.AppService,
@@ -427,6 +434,7 @@ class Cqrs(containers.DeclarativeContainer):
     context = providers.DependenciesContainer()
     services = providers.DependenciesContainer()
     read_repos = providers.DependenciesContainer()
+    config = providers.Configuration()
 
     uow = providers.Factory(
         SqlAlchemyUnitOfWork,
@@ -529,6 +537,8 @@ class Cqrs(containers.DeclarativeContainer):
                         event_handlers.ReferenceEventChangedEmailEventHandler,
                         organization_service=services.organization_application_service,
                         event_read_repo=read_repos.event_read_repo,
+                        change_summary_service=services.event_change_summary_service,
+                        details_enabled=config.FEATURE_REFERENCED_EVENT_CHANGED_DETAILS_ENABLED,
                     ),
                 ),
                 events.EventDeleted: providers.List(
@@ -643,4 +653,5 @@ class Application(containers.DeclarativeContainer):
         context=context,
         services=services,
         read_repos=read_repos,
+        config=config,
     )
