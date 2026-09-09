@@ -94,7 +94,15 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        # `--with-deps` shells out to apt-get, and the runner image ships Google's
+        # Chrome apt source. That source served a Release file newer than its own
+        # Packages index on 2026-09-09, so apt aborts on a hash mismatch and takes
+        # the whole install down with it. Playwright pulls its system libraries
+        # from the Ubuntu repos only, so drop the source instead of failing on it.
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list \
+                     /etc/apt/sources.list.d/google-chrome.sources
+          npx playwright install --with-deps chromium
 
       - name: Playwright run
         # blob is the only reporter whose output can be merged across shards;
