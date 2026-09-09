@@ -1,6 +1,9 @@
 from project.application.read_repositories.abstract_event_read_repository import (
     AbstractEventReadRepository,
 )
+from project.application.services.event_change_summary_service import (
+    EventChangeSummaryService,
+)
 from project.application.services.organization_application_service import (
     OrganizationApplicationService,
 )
@@ -15,10 +18,14 @@ class ReferenceEventChangedEmailEventHandler(AbstractEventHandler):
         self,
         organization_service: OrganizationApplicationService,
         event_read_repo: AbstractEventReadRepository,
+        change_summary_service: EventChangeSummaryService,
+        details_enabled: bool,
     ):
         super().__init__()
         self.organization_service = organization_service
         self.event_read_repo = event_read_repo
+        self.change_summary_service = change_summary_service
+        self.details_enabled = details_enabled
 
     def handle(self, event: events.EventUpdated, uow: AbstractUnitOfWork):
         event_instance = uow.events.get(event.id)
@@ -26,7 +33,7 @@ class ReferenceEventChangedEmailEventHandler(AbstractEventHandler):
         if not event_instance:  # pragma: no cover
             return
 
-        if not self._has_significant_changes(event):
+        if not self.change_summary_service.has_significant_changes(event):
             return
 
         references = uow.event_references.get_by_event_id(event_instance.id)
@@ -35,6 +42,12 @@ class ReferenceEventChangedEmailEventHandler(AbstractEventHandler):
             return
 
         event_read_model = self.event_read_repo.get(event_instance.id)
+
+        # The diff is identical for every reference, so resolve the names once.
+        changes = (
+            self.change_summary_service.build(event) if self.details_enabled else None
+        )
+
         for reference in references:
             # Alle Mitglieder der AdminUnit, die das Recht haben, Requests zu verifizieren
             self.organization_service.send_template_mails_to_members_async(
@@ -44,15 +57,5 @@ class ReferenceEventChangedEmailEventHandler(AbstractEventHandler):
                 "referenced_event_changed_notice",
                 event=event_read_model,
                 reference=reference,
+                changes=changes,
             )
-
-    def _has_significant_changes(self, event: events.EventUpdated) -> bool:
-        return (
-            event.name
-            or event.status
-            or event.attendance_mode
-            or event.booked_up
-            or event.event_place_id
-            or event.organizer_id
-            or event.date_definitions
-        )

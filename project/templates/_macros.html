@@ -1019,6 +1019,58 @@
   <p>
 {% endmacro %}
 
+{# Values arrive raw so that they are translated inside the recipient's locale. #}
+{% macro render_changed_reference(value) %}
+  {%- if value %}{{ value }}{% else %}{{ _('(deleted)') }}{% endif -%}
+{% endmacro %}
+
+{% macro render_changed_bool(value) %}
+  {%- if value is none %}{{ _('Not specified') }}{% elif value %}{{ _('Yes') }}{% else %}{{ _('No') }}{% endif -%}
+{% endmacro %}
+
+{% macro render_changed_enum(value) %}
+  {%- if value is none %}{{ _('Not specified') }}{% else %}{{ value | loc_enum }}{% endif -%}
+{% endmacro %}
+
+{% macro render_date_definition_list(definitions) %}
+  <ul>
+    {% for definition in definitions %}
+      <li>{{ render_event_date_instance(definition.start, definition.allday) }}
+        {% if definition.recurrence_rule %}({{ _('Recurring event') }}){% endif %}</li>
+    {% else %}
+      <li>{{ _('Not specified') }}</li>
+    {% endfor %}
+  </ul>
+{% endmacro %}
+
+{% macro render_event_changes(changes) %}
+  <p><strong>{{ _('What changed') }}</strong></p>
+  <ul>
+    {% if changes.name %}
+      <li>{{ _('Name') }}: {{ changes.name.old }} &rarr; {{ changes.name.new }}</li>
+    {% endif %}
+    {% if changes.status %}
+      <li>{{ _('Status') }}: {{ render_changed_enum(changes.status.old) }} &rarr; {{ render_changed_enum(changes.status.new) }}</li>
+    {% endif %}
+    {% if changes.attendance_mode %}
+      <li>{{ _('Attendance mode') }}: {{ render_changed_enum(changes.attendance_mode.old) }} &rarr; {{ render_changed_enum(changes.attendance_mode.new) }}</li>
+    {% endif %}
+    {% if changes.booked_up %}
+      <li>{{ _('Booked up') }}: {{ render_changed_bool(changes.booked_up.old) }} &rarr; {{ render_changed_bool(changes.booked_up.new) }}</li>
+    {% endif %}
+    {% if changes.organizer %}
+      <li>{{ _('Organizer') }}: {{ render_changed_reference(changes.organizer.old) }} &rarr; {{ render_changed_reference(changes.organizer.new) }}</li>
+    {% endif %}
+    {% if changes.event_place %}
+      <li>{{ _('Place') }}: {{ render_changed_reference(changes.event_place.old) }} &rarr; {{ render_changed_reference(changes.event_place.new) }}</li>
+    {% endif %}
+    {% if changes.date_definitions %}
+      <li>{{ _('Dates (previously)') }}: {{ render_date_definition_list(changes.date_definitions.old) }}</li>
+      <li>{{ _('Dates (new)') }}: {{ render_date_definition_list(changes.date_definitions.new) }}</li>
+    {% endif %}
+  </ul>
+{% endmacro %}
+
 {% macro render_pagination(pagination) %}
 <nav aria-label="Page navigation">
   <ul class="pagination">
