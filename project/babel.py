@@ -31,13 +31,15 @@ def babel_extract(fileobj, keywords, comment_tags, options):
         _add_key(model_class.__display_name__)
         _add_key(model_class.__display_name_plural__)
 
-    from flask import current_app
-
+    # Importing the models registers every mapper. Extraction runs under a bare
+    # `pybabel` process, so there is no application to borrow a context from --
+    # and none is needed: __display_name__ and __display_name_plural__ are plain
+    # attributes assigned by CustomModel.__init_subclass__ at class definition
+    # time, not lazily evaluated translations.
+    import project.models  # noqa: F401
     from project.extensions import db
 
-    with current_app.app_context():
-        with current_app.test_request_context():
-            for mapper in db.Model.registry.mappers:
-                _add_model(mapper.class_)
+    for mapper in db.Model.registry.mappers:
+        _add_model(mapper.class_)
 
     return result
