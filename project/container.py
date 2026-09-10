@@ -477,6 +477,15 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.DeleteEventPlaceCommand: providers.Factory(
                     command_handlers.DeleteEventPlaceHandler
                 ),
+                commands.CreateCustomWidgetCommand: providers.Factory(
+                    command_handlers.CreateCustomWidgetHandler
+                ),
+                commands.UpdateCustomWidgetCommand: providers.Factory(
+                    command_handlers.UpdateCustomWidgetHandler
+                ),
+                commands.DeleteCustomWidgetCommand: providers.Factory(
+                    command_handlers.DeleteCustomWidgetHandler
+                ),
                 commands.DeleteOldWebhookEventsCommand: providers.Factory(
                     command_handlers.DeleteOldWebhookEventsHandler
                 ),

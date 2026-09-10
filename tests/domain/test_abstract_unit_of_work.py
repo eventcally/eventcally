@@ -43,6 +43,7 @@ class _ConcreteUoW(AbstractUnitOfWork):
         self.organization_app_installations = _MockRepo()
         self.organization_members = _MockRepo()
         self.users = _MockRepo()
+        self.custom_widgets = _MockRepo()
         self.commit_called = False
         self.rollback_called = False
 

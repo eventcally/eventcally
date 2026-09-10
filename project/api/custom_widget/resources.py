@@ -1,10 +1,12 @@
-from flask import g, make_response
+from flask import g, make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
 
 from project.api import add_api_resource
 from project.api.custom_widget.schemas import (
+    CustomWidgetPatchRequestPlainSchema,
     CustomWidgetPatchRequestSchema,
     CustomWidgetPostRequestSchema,
+    CustomWidgetPutRequestPlainSchema,
     CustomWidgetSchema,
 )
 from project.api.resources import (
@@ -12,7 +14,7 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
-from project.extensions import db
+from project.application.commands import DeleteCustomWidgetCommand
 from project.models import CustomWidget
 
 
@@ -32,11 +34,10 @@ class CustomWidgetResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access("organization.custom_widgets:write", CustomWidget)
     def put(self, id):
-        customwidget = g.manage_admin_unit_instance
-        customwidget = self.update_instance(
-            CustomWidgetPostRequestSchema, instance=customwidget
+        cmd = CustomWidgetPutRequestPlainSchema(context=g.api_command_context).load(
+            request.json
         )
-        db.session.commit()
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -48,11 +49,10 @@ class CustomWidgetResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access("organization.custom_widgets:write", CustomWidget)
     def patch(self, id):
-        customwidget = g.manage_admin_unit_instance
-        customwidget = self.update_instance(
-            CustomWidgetPatchRequestSchema, instance=customwidget
+        cmd = CustomWidgetPatchRequestPlainSchema(context=g.api_command_context).load(
+            request.json
         )
-        db.session.commit()
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -63,9 +63,10 @@ class CustomWidgetResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access("organization.custom_widgets:write", CustomWidget)
     def delete(self, id):
-        customwidget = g.manage_admin_unit_instance
-        db.session.delete(customwidget)
-        db.session.commit()
+        cmd = DeleteCustomWidgetCommand(
+            id=id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 

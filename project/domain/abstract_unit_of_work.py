@@ -5,6 +5,7 @@ from typing import List
 
 from project.domain.events import Event
 from project.domain.repositories import (
+    AbstractCustomWidgetRepository,
     AbstractEventOrganizerRepository,
     AbstractEventPlaceRepository,
     AbstractEventReferenceRepository,
@@ -43,6 +44,7 @@ class AbstractUnitOfWork(abc.ABC):
     organization_app_installations: AbstractOrganizationAppInstallationRepository
     organization_members: AbstractOrganizationMemberRepository
     users: AbstractUserRepository
+    custom_widgets: AbstractCustomWidgetRepository
 
     def __init__(self):
         self.pending_events: List[Event] = []
@@ -75,6 +77,7 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.webhook_deliveries)
         self._collect_domain_events_from_repo(self.webhook_delivery_attempts)
         self._collect_domain_events_from_repo(self.users)
+        self._collect_domain_events_from_repo(self.custom_widgets)
 
     def _collect_domain_events_from_repo(self, repo):
         for model in repo.seen:

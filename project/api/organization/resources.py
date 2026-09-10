@@ -12,10 +12,10 @@ from project.access import (
 )
 from project.api import add_api_resource
 from project.api.custom_widget.schemas import (
-    CustomWidgetIdSchema,
+    CustomWidgetCreateRequestPlainSchema,
+    CustomWidgetIdPlainSchema,
     CustomWidgetListRequestSchema,
     CustomWidgetListResponseSchema,
-    CustomWidgetPostRequestSchema,
 )
 from project.api.event.resources import api_can_read_private_events
 from project.api.event.schemas import (
@@ -682,19 +682,15 @@ class OrganizationCustomWidgetListResource(BaseResource):
         summary="Add new custom widget",
         tags=["Organizations", "CustomWidgets"],
     )
-    @use_kwargs(CustomWidgetPostRequestSchema, location="json", apply=False)
-    @marshal_with(CustomWidgetIdSchema, 201)
+    @use_kwargs(CustomWidgetCreateRequestPlainSchema, location="json", apply=False)
+    @marshal_with(CustomWidgetIdPlainSchema, 201)
     @require_organization_api_access("organization.custom_widgets:write")
     def post(self, id):
-        admin_unit = g.manage_admin_unit
-
-        custom_widget = self.create_instance(
-            CustomWidgetPostRequestSchema, admin_unit_id=admin_unit.id
+        cmd = CustomWidgetCreateRequestPlainSchema(context=g.api_command_context).load(
+            request.json
         )
-        db.session.add(custom_widget)
-        db.session.commit()
-
-        return custom_widget, 201
+        cmd_result = self.message_bus.handle_command(cmd)
+        return cmd_result, 201
 
 
 add_api_resource(OrganizationResource, "/organizations/<int:id>", "api_v1_organization")

@@ -2,6 +2,10 @@ from .attempt_to_deliver_webhook_command import AttemptToDeliverWebhookCommand
 from .base import Command, CommandResult, CommandResultType, CommandWithResult
 from .cancel_organization_deletion_command import CancelOrganizationDeletionCommand
 from .create_app_command import CreateAppCommand, CreateAppCommandResult
+from .create_custom_widget_command import (
+    CreateCustomWidgetCommand,
+    CreateCustomWidgetCommandResult,
+)
 from .create_event_command import CreateEventCommand, CreateEventCommandResult
 from .create_event_organizer_command import (
     CreateEventOrganizerCommand,
@@ -12,6 +16,7 @@ from .create_event_place_command import (
     CreateEventPlaceCommandResult,
 )
 from .delete_app_command import DeleteAppCommand
+from .delete_custom_widget_command import DeleteCustomWidgetCommand
 from .delete_event_command import DeleteEventCommand
 from .delete_event_organizer_command import DeleteEventOrganizerCommand
 from .delete_event_place_command import DeleteEventPlaceCommand
@@ -23,6 +28,7 @@ from .update_app_command import UpdateAppCommand
 from .update_app_installation_permissions_command import (
     UpdateAppInstallationPermissionsCommand,
 )
+from .update_custom_widget_command import UpdateCustomWidgetCommand
 from .update_event_command import UpdateEventCommand
 from .update_event_organizer_command import UpdateEventOrganizerCommand
 from .update_event_place_command import UpdateEventPlaceCommand
@@ -32,6 +38,10 @@ __all__ = [
     "CommandResult",
     "CommandResultType",
     "CommandWithResult",
+    "CreateCustomWidgetCommand",
+    "CreateCustomWidgetCommandResult",
+    "DeleteCustomWidgetCommand",
+    "UpdateCustomWidgetCommand",
     "CreateEventOrganizerCommand",
     "CreateEventOrganizerCommandResult",
     "CreateEventPlaceCommand",

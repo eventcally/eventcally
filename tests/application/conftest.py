@@ -121,6 +121,7 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         self.organization_app_installations = FakeOrgAppInstallationRepo()
         self.organization_members = FakeOrganizationMemberRepo()
         self.users = FakeUserRepo()
+        self.custom_widgets = FakeRepo()
         self.committed = False
 
     def _commit(self):
