@@ -1,14 +1,20 @@
-from marshmallow import fields, validate
+from marshmallow import fields, post_load, validate
 
 from project.api import marshmallow
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
+    IdPlainSchemaMixin,
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
+    PlainBaseSchema,
     SQLAlchemyBaseSchema,
     TrackableSchemaMixin,
     WriteIdSchemaMixin,
+)
+from project.application.commands import (
+    CreateCustomWidgetCommand,
+    UpdateCustomWidgetCommand,
 )
 from project.models import CustomWidget
 
@@ -20,6 +26,10 @@ class CustomWidgetModelSchema(SQLAlchemyBaseSchema):
 
 
 class CustomWidgetIdSchema(CustomWidgetModelSchema, IdSchemaMixin):
+    pass
+
+
+class CustomWidgetIdPlainSchema(PlainBaseSchema, IdPlainSchemaMixin):
     pass
 
 
@@ -80,3 +90,39 @@ class CustomWidgetPatchRequestSchema(
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.make_patch_schema()
+
+
+class CustomWidgetCreateRequestPlainSchema(PlainBaseSchema):
+    widget_type = fields.Str(required=True, validate=validate.Length(min=3, max=255))
+    name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
+    settings = fields.Dict(keys=fields.Str(), load_default=None)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["admin_unit_id"] = self.context.get("admin_unit_id")
+        data["actor"] = self.context.get("actor")
+        return CreateCustomWidgetCommand(**data)
+
+
+class CustomWidgetPutRequestPlainSchema(PlainBaseSchema):
+    widget_type = fields.Str(required=True, validate=validate.Length(min=3, max=255))
+    name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
+    settings = fields.Dict(keys=fields.Str(), load_default=None)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        data["actor"] = self.context.get("actor")
+        return UpdateCustomWidgetCommand(**data)
+
+
+class CustomWidgetPatchRequestPlainSchema(PlainBaseSchema):
+    widget_type = fields.Str(allow_none=True, validate=validate.Length(min=3, max=255))
+    name = fields.Str(allow_none=True, validate=validate.Length(min=3, max=255))
+    settings = fields.Dict(keys=fields.Str(), allow_none=True)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        data["actor"] = self.context.get("actor")
+        return UpdateCustomWidgetCommand(**data)

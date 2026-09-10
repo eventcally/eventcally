@@ -8,6 +8,7 @@ from sqlalchemy.orm.session import Session
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.domain.errors import ConstraintError, DuplicateError, InfrastructureError
 from project.infrastructure.repositories import (
+    SqlAlchemyCustomWidgetRepository,
     SqlAlchemyEventOrganizerRepository,
     SqlAlchemyEventPlaceRepository,
     SqlAlchemyEventReferenceRepository,
@@ -66,6 +67,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             SqlAlchemyOrganizationAppInstallationRepository(self.session)
         )
         self.organization_members = SqlAlchemyOrganizationMemberRepository(self.session)
+        self.custom_widgets = SqlAlchemyCustomWidgetRepository(self.session)
 
     def _commit(self):
         try:
