@@ -1,12 +1,13 @@
 from flask_babel import lazy_gettext
-from flask_wtf import FlaskForm
 from wtforms import SelectField, SubmitField
 from wtforms.validators import DataRequired
 
+from project.application.commands import CreateEventReferenceCommand
 from project.forms.common import event_rating_choices
+from project.modular.base_form import BaseForm
 
 
-class CreateEventReferenceForm(FlaskForm):
+class CreateEventReferenceForm(BaseForm):
     admin_unit_id = SelectField(
         lazy_gettext("Organization"), validators=[DataRequired()], coerce=int
     )
@@ -20,3 +21,11 @@ class CreateEventReferenceForm(FlaskForm):
         ),
     )
     submit = SubmitField(lazy_gettext("Save reference"))
+
+    def create_create_command(self, event_id: int) -> CreateEventReferenceCommand:
+        return CreateEventReferenceCommand(
+            actor=self.get_current_actor(),
+            admin_unit_id=self.admin_unit_id.data,
+            event_id=event_id,
+            rating=self.rating.data,
+        )

@@ -15,11 +15,16 @@ from .create_event_place_command import (
     CreateEventPlaceCommand,
     CreateEventPlaceCommandResult,
 )
+from .create_event_reference_command import (
+    CreateEventReferenceCommand,
+    CreateEventReferenceCommandResult,
+)
 from .delete_app_command import DeleteAppCommand
 from .delete_custom_widget_command import DeleteCustomWidgetCommand
 from .delete_event_command import DeleteEventCommand
 from .delete_event_organizer_command import DeleteEventOrganizerCommand
 from .delete_event_place_command import DeleteEventPlaceCommand
+from .delete_event_reference_command import DeleteEventReferenceCommand
 from .delete_old_webhook_events_command import DeleteOldWebhookEventsCommand
 from .install_app_command import InstallAppCommand, InstallAppCommandResult
 from .request_organization_deletion_command import RequestOrganizationDeletionCommand
@@ -32,6 +37,7 @@ from .update_custom_widget_command import UpdateCustomWidgetCommand
 from .update_event_command import UpdateEventCommand
 from .update_event_organizer_command import UpdateEventOrganizerCommand
 from .update_event_place_command import UpdateEventPlaceCommand
+from .update_event_reference_command import UpdateEventReferenceCommand
 
 __all__ = [
     "Command",
@@ -66,4 +72,8 @@ __all__ = [
     "CreateEventCommandResult",
     "UpdateEventCommand",
     "DeleteEventCommand",
+    "CreateEventReferenceCommand",
+    "CreateEventReferenceCommandResult",
+    "UpdateEventReferenceCommand",
+    "DeleteEventReferenceCommand",
 ]

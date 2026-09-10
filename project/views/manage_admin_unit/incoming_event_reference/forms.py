@@ -1,6 +1,7 @@
 from flask_babel import lazy_gettext
 from wtforms import SelectField, SubmitField
 
+from project.application.commands import UpdateEventReferenceCommand
 from project.forms.common import event_rating_choices
 from project.modular.base_form import BaseForm
 
@@ -19,6 +20,15 @@ class BaseEventReferenceForm(BaseForm):
 
 class UpdateEventReferenceForm(BaseEventReferenceForm):
     submit = SubmitField(lazy_gettext("Update reference"))
+
+    def create_update_command(
+        self, event_reference_id: int
+    ) -> UpdateEventReferenceCommand:
+        return UpdateEventReferenceCommand(
+            actor=self.get_current_actor(),
+            id=event_reference_id,
+            rating=self.rating.data,
+        )
 
 
 class DeleteEventReferenceForm(BaseForm):

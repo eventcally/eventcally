@@ -1,16 +1,20 @@
-from marshmallow import fields
+from marshmallow import fields, post_load
 
 from project.api import marshmallow
-from project.api.event.schemas import EventRefSchema, EventWriteIdSchema
+from project.api.event.schemas import EventRefSchema
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
+    IdPlainSchemaMixin,
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
+    PlainBaseSchema,
     SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
+    WriteIdPlainSchema,
 )
+from project.application.commands import CreateEventReferenceCommand
 from project.models import EventReference
 
 
@@ -51,18 +55,20 @@ class EventReferenceListResponseSchema(PaginationResponseSchema):
     )
 
 
-class EventReferenceWriteSchemaMixin(object):
+class EventReferenceIdPlainSchema(PlainBaseSchema, IdPlainSchemaMixin):
+    pass
+
+
+class EventReferenceCreateRequestPlainSchema(PlainBaseSchema):
     event = fields.Nested(
-        EventWriteIdSchema,
+        WriteIdPlainSchema,
+        attribute="event_id",
         required=True,
         metadata={"description": "Event to reference"},
     )
 
-
-class EventReferenceCreateRequestSchema(
-    EventReferenceModelSchema,
-    EventReferenceWriteSchemaMixin,
-):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.make_post_schema()
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["admin_unit_id"] = self.context.get("admin_unit_id")
+        data["actor"] = self.context.get("actor")
+        return CreateEventReferenceCommand(**data)

@@ -38,8 +38,8 @@ from project.api.event_list.schemas import (
     EventListStatusListResponseSchema,
 )
 from project.api.event_reference.schemas import (
-    EventReferenceCreateRequestSchema,
-    EventReferenceIdSchema,
+    EventReferenceCreateRequestPlainSchema,
+    EventReferenceIdPlainSchema,
     EventReferenceListRequestSchema,
     EventReferenceListResponseSchema,
 )
@@ -337,19 +337,15 @@ class OrganizationIncomingEventReferenceListResource(BaseResource):
         summary="Add reference",
         tags=["Organizations", "Event References"],
     )
-    @use_kwargs(EventReferenceCreateRequestSchema, location="json", apply=False)
-    @marshal_with(EventReferenceIdSchema, 201)
+    @use_kwargs(EventReferenceCreateRequestPlainSchema, location="json", apply=False)
+    @marshal_with(EventReferenceIdPlainSchema, 201)
     @require_organization_api_access("organization.incoming_event_references:write")
     def post(self, id):
-        admin_unit = g.manage_admin_unit
-
-        reference = self.create_instance(
-            EventReferenceCreateRequestSchema, admin_unit_id=admin_unit.id
-        )
-        db.session.add(reference)
-        db.session.commit()
-
-        return reference, 201
+        cmd = EventReferenceCreateRequestPlainSchema(
+            context=g.api_command_context
+        ).load(request.json)
+        cmd_result = self.message_bus.handle_command(cmd)
+        return cmd_result, 201
 
 
 class OrganizationOutgoingEventReferenceListResource(BaseResource):
