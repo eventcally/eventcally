@@ -1,4 +1,4 @@
-from flask import g, make_response
+from flask import make_response
 from flask_apispec import doc, marshal_with
 
 from project.api import add_api_resource
@@ -8,7 +8,7 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
-from project.extensions import db
+from project.application.commands import DeleteEventReferenceCommand
 from project.models import EventReference
 
 
@@ -28,9 +28,10 @@ class EventReferenceResource(BaseResource):
         "organization.incoming_event_references:write", EventReference
     )
     def delete(self, id):
-        reference = g.manage_admin_unit_instance
-        db.session.delete(reference)
-        db.session.commit()
+        cmd = DeleteEventReferenceCommand(
+            id=id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 

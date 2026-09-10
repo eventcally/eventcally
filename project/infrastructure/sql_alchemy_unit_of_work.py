@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm.session import Session
 
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
-from project.domain.errors import ConstraintError, DuplicateError, InfrastructureError
 from project.infrastructure.repositories import (
     SqlAlchemyCustomWidgetRepository,
     SqlAlchemyEventOrganizerRepository,
@@ -35,6 +33,9 @@ from project.infrastructure.repositories.sql_alchemy_webhook_delivery_repository
 )
 from project.infrastructure.repositories.sql_alchemy_webhook_repository import (
     SqlAlchemyWebhookEventRepository,
+)
+from project.infrastructure.sql_error_translation import (
+    raise_domain_error_from_sql_error,
 )
 
 
@@ -80,11 +81,4 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.session.rollback()
 
     def _reraiseSqlErrorMessage(self, e: SQLAlchemyError):
-        if hasattr(e, "orig") and hasattr(e.orig, "pgcode"):
-            if e.orig.pgcode == UNIQUE_VIOLATION:
-                raise DuplicateError(cause=e)
-
-            if e.orig.pgcode == CHECK_VIOLATION:
-                raise ConstraintError(cause=e)
-
-        raise InfrastructureError(cause=e)
+        raise_domain_error_from_sql_error(e)

@@ -18,7 +18,11 @@ from project.views.manage_admin_unit.incoming_event_reference.forms import (
     DeleteEventReferenceForm,
     UpdateEventReferenceForm,
 )
-from project.views.manage_admin_unit.incoming_event_reference.views import ListView
+from project.views.manage_admin_unit.incoming_event_reference.views import (
+    DeleteView,
+    ListView,
+    UpdateView,
+)
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
@@ -30,6 +34,8 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     read_display_class = ReadDisplay
     update_form_class = UpdateEventReferenceForm
     delete_form_class = DeleteEventReferenceForm
+    update_view_class = UpdateView
+    delete_view_class = DeleteView
     list_display_class = ListDisplay
     list_view_class = ListView
     generic_prefix = "incoming_"

@@ -1,0 +1,14 @@
+from project.application import commands
+from project.domain.abstract_unit_of_work import AbstractUnitOfWork
+
+from .abstract_command_handler import AbstractCommandHandler
+from .event_reference_utils import ensure_event_reference_exists
+
+
+class DeleteEventReferenceHandler(AbstractCommandHandler):
+    def handle(
+        self, cmd: commands.DeleteEventReferenceCommand, uow: AbstractUnitOfWork
+    ):
+        event_reference = ensure_event_reference_exists(cmd.id, uow)
+        event_reference.delete(cmd.actor)
+        uow.event_references.remove(event_reference)

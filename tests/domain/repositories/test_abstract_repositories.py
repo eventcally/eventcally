@@ -125,12 +125,25 @@ class _ConcreteEventPlaceRepo(AbstractEventPlaceRepository):
 
 
 class _ConcreteEventReferenceRepo(AbstractEventReferenceRepository):
-    def __init__(self, return_values=None):
+    def __init__(self, return_values=None, return_value=None):
         super().__init__()
         self._return_values = return_values or []
+        self._return_value = return_value
 
     def _get_by_event_id(self, event_id):
         return self._return_values
+
+    def _add(self, event_reference):
+        pass
+
+    def _update(self, event_reference):
+        pass
+
+    def _get(self, object_id):
+        return self._return_value
+
+    def _remove(self, event_reference):
+        pass
 
 
 class _ConcreteOrganizationRepo(AbstractOrganizationRepository):
@@ -449,6 +462,36 @@ class TestAbstractEventReferenceRepository:
         repo = _ConcreteEventReferenceRepo(return_values=[])
         results = repo.get_by_event_id(10)
         assert results == []
+        assert len(repo.seen) == 0
+
+    def test_add_adds_to_seen(self):
+        repo = _ConcreteEventReferenceRepo()
+        agg = _ref_agg()
+        repo.add(agg)
+        assert agg in repo.seen
+
+    def test_update_adds_to_seen(self):
+        repo = _ConcreteEventReferenceRepo()
+        agg = _ref_agg()
+        repo.update(agg)
+        assert agg in repo.seen
+
+    def test_remove_adds_to_seen(self):
+        repo = _ConcreteEventReferenceRepo()
+        agg = _ref_agg()
+        repo.remove(agg)
+        assert agg in repo.seen
+
+    def test_get_with_result_adds_to_seen(self):
+        agg = _ref_agg()
+        repo = _ConcreteEventReferenceRepo(return_value=agg)
+        assert repo.get(1) is agg
+        assert agg in repo.seen
+
+    def test_get_none_does_not_add_to_seen(self):
+        repo = _ConcreteEventReferenceRepo(return_value=None)
+        assert repo.get(1) is None
+        assert len(repo.seen) == 0
         assert len(repo.seen) == 0
 
 

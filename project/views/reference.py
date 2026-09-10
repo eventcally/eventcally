@@ -1,17 +1,22 @@
+from dependency_injector.wiring import Provide, inject
 from flask import abort, flash, redirect, render_template, url_for
 from flask_babel import gettext
-from sqlalchemy.exc import SQLAlchemyError
 
 from project.access import can_reference_event, get_admin_units_for_event_reference
-from project.extensions import db
+from project.application.message_bus import MessageBus
+from project.container import Application
+from project.domain.errors import BaseError
 from project.forms.reference import CreateEventReferenceForm
-from project.models import Event, EventReference
+from project.models import Event
 from project.views.main_blueprint import main_bp
-from project.views.utils import flash_errors, handleSqlError
+from project.views.utils import flash_errors, handleBaseError
 
 
 @main_bp.route("/event/<int:event_id>/reference", methods=("GET", "POST"))
-def event_reference_create(event_id):
+@inject
+def event_reference_create(
+    event_id, message_bus: MessageBus = Provide[Application.cqrs.message_bus]
+):
     event = Event.query.get_or_404(event_id)
     user_can_reference_event = can_reference_event(event)
 
@@ -28,18 +33,12 @@ def event_reference_create(event_id):
     )
 
     if form.validate_on_submit():
-        reference = EventReference()
-        form.populate_obj(reference)
-        reference.event = event
-
         try:
-            db.session.add(reference)
-            db.session.commit()
+            message_bus.handle_command(form.create_create_command(event.id))
             flash(gettext("Event successfully referenced"), "success")
             return redirect(url_for("main.event", event_id=event.id))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
+        except BaseError as e:
+            flash(handleBaseError(e), "danger")
     else:
         flash_errors(form)
 
