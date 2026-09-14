@@ -1,10 +1,19 @@
 import datetime
 
+import pytest
+
+from project.domain.errors import DuplicateError
 from project.domain.events.event_place_created import EventPlaceCreated
 from project.domain.events.event_place_updated import EventPlaceUpdated
 from project.domain.models.aggregates.event_place_aggregate import EventPlaceAggregate
 from project.domain.models.aggregates.organization_app_installation_aggregate import (
     OrganisationAppInstallationAggregate,
+)
+from project.domain.models.aggregates.organization_relation_aggregate import (
+    OrganizationRelationAggregate,
+)
+from project.domain.models.aggregates.organization_verification_request_aggregate import (
+    OrganizationVerificationRequestAggregate,
 )
 from project.domain.models.aggregates.user_aggregate import UserAggregate
 from project.domain.models.aggregates.webhook_delivery_aggregate import (
@@ -18,6 +27,9 @@ from project.domain.models.aggregates.webhook_event_aggregate import (
 )
 from project.domain.models.entities.actor import Actor
 from project.domain.models.entities.image_entity import ImageEntity
+from project.domain.models.enums.organization_verification_request_review_status import (
+    OrganizationVerificationRequestReviewStatus,
+)
 from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
 )
@@ -36,8 +48,14 @@ from project.infrastructure.repositories.sql_alchemy_event_reference_repository 
 from project.infrastructure.repositories.sql_alchemy_organization_app_installation_repository import (
     SqlAlchemyOrganizationAppInstallationRepository,
 )
+from project.infrastructure.repositories.sql_alchemy_organization_relation_repository import (
+    SqlAlchemyOrganizationRelationRepository,
+)
 from project.infrastructure.repositories.sql_alchemy_organization_repository import (
     SqlAlchemyOrganizationRepository,
+)
+from project.infrastructure.repositories.sql_alchemy_organization_verification_request_repository import (
+    SqlAlchemyOrganizationVerificationRequestRepository,
 )
 from project.infrastructure.repositories.sql_alchemy_user_repository import (
     SqlAlchemyUserRepository,
@@ -376,6 +394,17 @@ def test_user_repository_get_and_get_all_with_ids_return_aggregates(app, db, see
     assert loaded_user.id == user_a
     assert {u.id for u in loaded_users} == {user_a, user_b}
     assert loaded_user in repo.seen
+    assert loaded_user.is_platform_admin is False
+
+
+def test_user_repository_marks_platform_admins(app, db, seeder):
+    admin_user_id = seeder.create_user(email="repo-admin@test.de", admin=True)
+
+    with app.app_context():
+        repo = SqlAlchemyUserRepository(db.session)
+        loaded_admin = repo.get(admin_user_id)
+
+    assert loaded_admin.is_platform_admin is True
 
 
 def test_organization_repository_updates_with_aggregate(app, db, seeder):
@@ -481,3 +510,188 @@ def test_webhook_delivery_read_repository_includes_app_installation_id(app, db, 
     assert read_model.id == delivery.id
     assert read_model.app_installation_id == installation_id
     assert read_model.webhook_event.payload["source"] == "integration-test"
+
+
+def test_organization_relation_repository_add_get_update_remove_roundtrip(
+    app, db, seeder: Seeder
+):
+    _, source_admin_unit_id = seeder.setup_base(
+        log_in=False, email="relation-source@test.de", name="Relation Source Unit"
+    )
+    _, target_admin_unit_id = seeder.setup_base(
+        log_in=False, email="relation-target@test.de", name="Relation Target Unit"
+    )
+
+    with app.app_context():
+        repo = SqlAlchemyOrganizationRelationRepository(db.session)
+        relation = OrganizationRelationAggregate.create(
+            actor=Actor(user_id=1),
+            source_admin_unit_id=source_admin_unit_id,
+            target_admin_unit_id=target_admin_unit_id,
+            invited=True,
+        )
+
+        repo.add(relation)
+        db.session.commit()
+
+        loaded = repo.get(relation.id)
+
+        assert isinstance(loaded, OrganizationRelationAggregate)
+        assert loaded.id == relation.id
+        assert loaded.source_admin_unit_id == source_admin_unit_id
+        assert loaded.target_admin_unit_id == target_admin_unit_id
+        assert loaded.invited is True
+        assert loaded.verify is False
+        assert loaded in repo.seen
+
+        loaded.update(actor=Actor(user_id=1), verify=True)
+        repo.update(loaded)
+        db.session.commit()
+
+        updated = repo.get(relation.id)
+        assert updated.verify is True
+        assert updated.invited is True
+
+        repo.remove(updated)
+        db.session.commit()
+
+        assert repo.get(relation.id) is None
+
+
+def test_organization_relation_repository_duplicate_raises_duplicate_error(
+    app, db, seeder: Seeder
+):
+    _, source_admin_unit_id = seeder.setup_base(
+        log_in=False, email="dup-source@test.de", name="Dup Source Unit"
+    )
+    _, target_admin_unit_id = seeder.setup_base(
+        log_in=False, email="dup-target@test.de", name="Dup Target Unit"
+    )
+
+    with app.app_context():
+        repo = SqlAlchemyOrganizationRelationRepository(db.session)
+        first = OrganizationRelationAggregate.create(
+            actor=Actor(user_id=1),
+            source_admin_unit_id=source_admin_unit_id,
+            target_admin_unit_id=target_admin_unit_id,
+        )
+        repo.add(first)
+        db.session.commit()
+
+        second = OrganizationRelationAggregate.create(
+            actor=Actor(user_id=1),
+            source_admin_unit_id=source_admin_unit_id,
+            target_admin_unit_id=target_admin_unit_id,
+        )
+
+        with pytest.raises(DuplicateError):
+            repo.add(second)
+
+
+def test_organization_relation_repository_get_by_source_and_target(
+    app, db, seeder: Seeder
+):
+    _, source_admin_unit_id = seeder.setup_base(
+        log_in=False, email="gbst-source@test.de", name="GBST Source Unit"
+    )
+    _, target_admin_unit_id = seeder.setup_base(
+        log_in=False, email="gbst-target@test.de", name="GBST Target Unit"
+    )
+
+    with app.app_context():
+        repo = SqlAlchemyOrganizationRelationRepository(db.session)
+
+        assert (
+            repo.get_by_source_and_target(source_admin_unit_id, target_admin_unit_id)
+            is None
+        )
+
+        relation = OrganizationRelationAggregate.create(
+            actor=Actor(user_id=1),
+            source_admin_unit_id=source_admin_unit_id,
+            target_admin_unit_id=target_admin_unit_id,
+        )
+        repo.add(relation)
+        db.session.commit()
+
+        found = repo.get_by_source_and_target(
+            source_admin_unit_id, target_admin_unit_id
+        )
+        assert found is not None
+        assert found.id == relation.id
+        assert found in repo.seen
+
+
+def test_organization_verification_request_repository_add_get_update_remove_roundtrip(
+    app, db, seeder: Seeder
+):
+    _, source_admin_unit_id = seeder.setup_base(
+        log_in=False, email="ovr-source@test.de", name="OVR Source Unit"
+    )
+    _, target_admin_unit_id = seeder.setup_base(
+        log_in=False, email="ovr-target@test.de", name="OVR Target Unit"
+    )
+
+    with app.app_context():
+        repo = SqlAlchemyOrganizationVerificationRequestRepository(db.session)
+        verification_request = OrganizationVerificationRequestAggregate.create(
+            actor=Actor(user_id=1),
+            source_admin_unit_id=source_admin_unit_id,
+            target_admin_unit_id=target_admin_unit_id,
+        )
+
+        repo.add(verification_request)
+        db.session.commit()
+
+        loaded = repo.get(verification_request.id)
+
+        assert isinstance(loaded, OrganizationVerificationRequestAggregate)
+        assert loaded.id == verification_request.id
+        assert loaded.source_admin_unit_id == source_admin_unit_id
+        assert loaded.target_admin_unit_id == target_admin_unit_id
+        assert loaded.review_status == OrganizationVerificationRequestReviewStatus.inbox
+        assert loaded in repo.seen
+
+        loaded.approve(Actor(user_id=1))
+        repo.update(loaded)
+        db.session.commit()
+
+        updated = repo.get(verification_request.id)
+        assert updated.review_status == (
+            OrganizationVerificationRequestReviewStatus.verified
+        )
+
+        repo.remove(updated)
+        db.session.commit()
+
+        assert repo.get(verification_request.id) is None
+
+
+def test_organization_verification_request_repository_duplicate_raises_duplicate_error(
+    app, db, seeder: Seeder
+):
+    _, source_admin_unit_id = seeder.setup_base(
+        log_in=False, email="ovr-dup-source@test.de", name="OVR Dup Source"
+    )
+    _, target_admin_unit_id = seeder.setup_base(
+        log_in=False, email="ovr-dup-target@test.de", name="OVR Dup Target"
+    )
+
+    with app.app_context():
+        repo = SqlAlchemyOrganizationVerificationRequestRepository(db.session)
+        first = OrganizationVerificationRequestAggregate.create(
+            actor=Actor(user_id=1),
+            source_admin_unit_id=source_admin_unit_id,
+            target_admin_unit_id=target_admin_unit_id,
+        )
+        repo.add(first)
+        db.session.commit()
+
+        second = OrganizationVerificationRequestAggregate.create(
+            actor=Actor(user_id=1),
+            source_admin_unit_id=source_admin_unit_id,
+            target_admin_unit_id=target_admin_unit_id,
+        )
+
+        with pytest.raises(DuplicateError):
+            repo.add(second)

@@ -11,7 +11,9 @@ from project.infrastructure.repositories import (
     SqlAlchemyEventPlaceRepository,
     SqlAlchemyEventReferenceRepository,
     SqlAlchemyEventRepository,
+    SqlAlchemyOrganizationRelationRepository,
     SqlAlchemyOrganizationRepository,
+    SqlAlchemyOrganizationVerificationRequestRepository,
 )
 from project.infrastructure.repositories.sql_alchemy_app_repository import (
     SqlAlchemyAppRepository,
@@ -57,6 +59,12 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.event_references = SqlAlchemyEventReferenceRepository(self.session)
         self.event_places = SqlAlchemyEventPlaceRepository(self.session)
         self.organizations = SqlAlchemyOrganizationRepository(self.session)
+        self.organization_relations = SqlAlchemyOrganizationRelationRepository(
+            self.session
+        )
+        self.organization_verification_requests = (
+            SqlAlchemyOrganizationVerificationRequestRepository(self.session)
+        )
         self.webhook_events = SqlAlchemyWebhookEventRepository(self.session)
         self.webhook_deliveries = SqlAlchemyWebhookDeliveryRepository(self.session)
         self.webhook_delivery_attempts = SqlAlchemyWebhookDeliveryAttemptRepository(

@@ -4,10 +4,15 @@ from project.domain.models.aggregates.event_place_aggregate import EventPlaceAgg
 from project.domain.models.entities.image_entity import ImageEntity
 
 from .abstract_command_handler import AbstractCommandHandler
+from .authorization_utils import ensure_actor_has_permission_for_admin_unit
 
 
 class CreateEventPlaceHandler(AbstractCommandHandler):
     def handle(self, cmd: commands.CreateEventPlaceCommand, uow: AbstractUnitOfWork):
+        ensure_actor_has_permission_for_admin_unit(
+            cmd.actor, cmd.admin_unit_id, "event_places:write", uow
+        )
+
         event_place = EventPlaceAggregate.create(
             actor=cmd.actor,
             admin_unit_id=cmd.admin_unit_id,

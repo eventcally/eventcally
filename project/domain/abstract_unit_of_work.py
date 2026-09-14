@@ -10,7 +10,9 @@ from project.domain.repositories import (
     AbstractEventPlaceRepository,
     AbstractEventReferenceRepository,
     AbstractEventRepository,
+    AbstractOrganizationRelationRepository,
     AbstractOrganizationRepository,
+    AbstractOrganizationVerificationRequestRepository,
 )
 from project.domain.repositories.abstract_app_repository import AbstractAppRepository
 from project.domain.repositories.abstract_organization_app_installation_repository import (
@@ -37,6 +39,10 @@ class AbstractUnitOfWork(abc.ABC):
     event_references: AbstractEventReferenceRepository
     event_places: AbstractEventPlaceRepository
     organizations: AbstractOrganizationRepository
+    organization_relations: AbstractOrganizationRelationRepository
+    organization_verification_requests: (
+        AbstractOrganizationVerificationRequestRepository
+    )
     webhook_events: AbstractWebhookEventRepository
     webhook_deliveries: AbstractWebhookDeliveryRepository
     webhook_delivery_attempts: AbstractWebhookDeliveryAttemptRepository
@@ -70,6 +76,8 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.event_references)
         self._collect_domain_events_from_repo(self.event_places)
         self._collect_domain_events_from_repo(self.organizations)
+        self._collect_domain_events_from_repo(self.organization_relations)
+        self._collect_domain_events_from_repo(self.organization_verification_requests)
         self._collect_domain_events_from_repo(self.webhook_events)
         self._collect_domain_events_from_repo(self.apps)
         self._collect_domain_events_from_repo(self.organization_app_installations)

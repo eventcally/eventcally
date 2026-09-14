@@ -67,6 +67,20 @@ def test_handle_error_domain_error(app):
     assert data["message"] == "Custom message"
 
 
+def test_handle_error_unauthorized(app):
+    from project.api import RestApi
+    from project.domain.errors import UnauthorizedError
+
+    error = UnauthorizedError("Custom message")
+
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+    api = RestApi(app)
+    (data, code) = api.handle_error(error)
+    assert code == 401
+    assert data["name"] == "Unauthorized"
+    assert data["message"] == "Custom message"
+
+
 def test_handle_error_unprocessableEntity(app):
     from marshmallow import ValidationError
     from werkzeug.exceptions import UnprocessableEntity

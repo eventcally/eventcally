@@ -13,6 +13,7 @@ from werkzeug.exceptions import HTTPException, UnprocessableEntity
 
 from project.domain.errors import BaseError, DuplicateError
 from project.domain.errors.constraint_error import ConstraintError
+from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.utils import get_localized_scope
 
 
@@ -52,6 +53,11 @@ class RestApi(Api):
                 data["name"] = "Integrity Error"
                 data["message"] = "Action violates database integrity."
             code = 400
+            schema = ErrorResponseSchema()
+        elif isinstance(err, UnauthorizedError):
+            data["name"] = "Unauthorized"
+            data["message"] = err.message
+            code = 401
             schema = ErrorResponseSchema()
         elif isinstance(err, BaseError):
             if isinstance(err, DuplicateError):

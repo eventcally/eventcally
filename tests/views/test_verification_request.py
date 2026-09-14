@@ -23,7 +23,6 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     if db_error:
         utils.mock_db_commit(mocker)
 
-    mail_mock = utils.mock_send_mails_async(mocker)
     response = utils.post_form(
         url,
         response,
@@ -39,7 +38,12 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
         "manage_admin_unit.outgoing_organization_verification_requests",
         id=unverified_admin_unit_id,
     )
-    utils.assert_send_mail_called(mail_mock, "test@test.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "test@test.de"
 
     with app.app_context():
         from project.models import (

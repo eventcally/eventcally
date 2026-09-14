@@ -6,7 +6,34 @@ All tests in tests/application/ run without a real database.
 import pytest
 
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
+from project.domain.models.aggregates.organization_member_aggregate import (
+    OrganisationMemberAggregate,
+)
 from project.domain.models.entities.actor import Actor
+
+# ---------------------------------------------------------------------------
+# Authorization helpers
+#
+# ACTOR is a user actor with a stable id; grant_permission() seeds it as an
+# AdminUnitMember with a given permission for a given admin unit, for tests
+# of handlers guarded by ensure_actor_has_permission_for_admin_unit.
+# ---------------------------------------------------------------------------
+
+ACTOR_USER_ID = 1
+ACTOR = Actor(user_id=ACTOR_USER_ID)
+
+
+def grant_permission(uow, admin_unit_id, permission, user_id=ACTOR_USER_ID):
+    uow.organization_members.set_members_for(
+        admin_unit_id,
+        permission,
+        [
+            OrganisationMemberAggregate(
+                id=admin_unit_id, admin_unit_id=admin_unit_id, user_id=user_id
+            )
+        ],
+    )
+
 
 # ---------------------------------------------------------------------------
 # Generic in-memory repository
@@ -92,6 +119,18 @@ class FakeEventReferenceRepo(FakeRepo):
         return self._references_by_event.get(event_id, [])
 
 
+class FakeOrganizationRelationRepo(FakeRepo):
+    def get_by_source_and_target(self, source_admin_unit_id, target_admin_unit_id):
+        for obj in self._store.values():
+            if (
+                obj.source_admin_unit_id == source_admin_unit_id
+                and obj.target_admin_unit_id == target_admin_unit_id
+            ):
+                self.seen.add(obj)
+                return obj
+        return None
+
+
 class FakeOrgAppInstallationRepo(FakeRepo):
     def __init__(self):
         super().__init__()
@@ -114,6 +153,8 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         self.event_references = FakeEventReferenceRepo()
         self.event_places = FakeRepo()
         self.organizations = FakeRepo()
+        self.organization_relations = FakeOrganizationRelationRepo()
+        self.organization_verification_requests = FakeRepo()
         self.webhook_events = FakeWebhookEventRepo()
         self.webhook_deliveries = FakeRepo()
         self.webhook_delivery_attempts = FakeRepo()

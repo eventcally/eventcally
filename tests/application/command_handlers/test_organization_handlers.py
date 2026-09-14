@@ -9,11 +9,12 @@ from project.application.command_handlers.cancel_organization_deletion_handler i
 from project.application.command_handlers.request_organization_deletion_handler import (
     RequestOrganizationDeletionHandler,
 )
-from project.domain.errors import NotFoundError
+from project.domain.errors import NotFoundError, UnauthorizedError
 from project.domain.models.aggregates.organization_aggregate import (
     OrganizationAggregate,
 )
 from project.domain.models.entities.actor import Actor
+from tests.application.conftest import ACTOR, grant_permission
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -34,8 +35,9 @@ def _seed_org(uow):
 class TestRequestOrganizationDeletionHandler:
     def test_requests_deletion(self, uow):
         org = _seed_org(uow)
+        grant_permission(uow, org.id, "settings:write")
         cmd = commands.RequestOrganizationDeletionCommand.model_construct(
-            actor=Actor(user_id=1), id=org.id
+            actor=ACTOR, id=org.id
         )
 
         RequestOrganizationDeletionHandler().handle(cmd, uow)
@@ -51,6 +53,15 @@ class TestRequestOrganizationDeletionHandler:
         with pytest.raises(NotFoundError):
             RequestOrganizationDeletionHandler().handle(cmd, uow)
 
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        org = _seed_org(uow)
+        cmd = commands.RequestOrganizationDeletionCommand.model_construct(
+            actor=ACTOR, id=org.id
+        )
+
+        with pytest.raises(UnauthorizedError):
+            RequestOrganizationDeletionHandler().handle(cmd, uow)
+
 
 # ---------------------------------------------------------------------------
 # CancelOrganizationDeletionHandler
@@ -64,9 +75,10 @@ class TestCancelOrganizationDeletionHandler:
         org.request_deletion(Actor(user_id=1))
         uow.organizations.update(org)
         assert org.deletion_requested_at is not None
+        grant_permission(uow, org.id, "settings:write")
 
         cmd = commands.CancelOrganizationDeletionCommand.model_construct(
-            actor=Actor(user_id=1), id=org.id
+            actor=ACTOR, id=org.id
         )
 
         CancelOrganizationDeletionHandler().handle(cmd, uow)
@@ -80,4 +92,16 @@ class TestCancelOrganizationDeletionHandler:
         )
 
         with pytest.raises(NotFoundError):
+            CancelOrganizationDeletionHandler().handle(cmd, uow)
+
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        org = _seed_org(uow)
+        org.request_deletion(Actor(user_id=1))
+        uow.organizations.update(org)
+
+        cmd = commands.CancelOrganizationDeletionCommand.model_construct(
+            actor=ACTOR, id=org.id
+        )
+
+        with pytest.raises(UnauthorizedError):
             CancelOrganizationDeletionHandler().handle(cmd, uow)

@@ -10,12 +10,13 @@ from project.application.command_handlers.uninstall_app_handler import (
 from project.application.command_handlers.update_app_installation_permissions_handler import (
     UpdateAppInstallationPermissionsHandler,
 )
-from project.domain.errors import NotFoundError
+from project.domain.errors import NotFoundError, UnauthorizedError
 from project.domain.models.aggregates.app_aggregate import AppAggregate
 from project.domain.models.aggregates.organization_app_installation_aggregate import (
     OrganisationAppInstallationAggregate,
 )
 from project.domain.models.entities.actor import Actor
+from tests.application.conftest import ACTOR, grant_permission
 
 # ---------------------------------------------------------------------------
 # InstallAppHandler
@@ -35,8 +36,9 @@ class TestInstallAppHandler:
 
     def test_creates_installation_and_returns_result(self, uow):
         app = self._seed_app(uow)
+        grant_permission(uow, 2, "app_installations:write")
         cmd = commands.InstallAppCommand.model_construct(
-            actor=Actor(),
+            actor=ACTOR,
             admin_unit_id=2,
             app_id=app.id,
         )
@@ -50,13 +52,25 @@ class TestInstallAppHandler:
         assert installation.admin_unit_id == 2
 
     def test_app_not_found_raises_not_found_error(self, uow):
+        grant_permission(uow, 2, "app_installations:write")
         cmd = commands.InstallAppCommand.model_construct(
-            actor=Actor(),
+            actor=ACTOR,
             admin_unit_id=2,
             app_id=9999,
         )
 
         with pytest.raises(NotFoundError):
+            InstallAppHandler().handle(cmd, uow)
+
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        app = self._seed_app(uow)
+        cmd = commands.InstallAppCommand.model_construct(
+            actor=ACTOR,
+            admin_unit_id=2,
+            app_id=app.id,
+        )
+
+        with pytest.raises(UnauthorizedError):
             InstallAppHandler().handle(cmd, uow)
 
 
@@ -79,8 +93,9 @@ class TestUninstallAppHandler:
     def test_removes_installation(self, uow):
         inst = self._seed_installation(uow)
         inst_id = inst.id
+        grant_permission(uow, 1, "app_installations:write")
 
-        cmd = commands.UninstallAppCommand.model_construct(actor=Actor(), id=inst_id)
+        cmd = commands.UninstallAppCommand.model_construct(actor=ACTOR, id=inst_id)
         UninstallAppHandler().handle(cmd, uow)
 
         assert uow.organization_app_installations.get(inst_id) is None
@@ -89,6 +104,14 @@ class TestUninstallAppHandler:
         cmd = commands.UninstallAppCommand.model_construct(actor=Actor(), id=9999)
 
         with pytest.raises(NotFoundError):
+            UninstallAppHandler().handle(cmd, uow)
+
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        inst = self._seed_installation(uow)
+
+        cmd = commands.UninstallAppCommand.model_construct(actor=ACTOR, id=inst.id)
+
+        with pytest.raises(UnauthorizedError):
             UninstallAppHandler().handle(cmd, uow)
 
 
@@ -110,8 +133,9 @@ class TestUpdateAppInstallationPermissionsHandler:
 
     def test_updates_permissions(self, uow):
         inst = self._seed_installation(uow)
+        grant_permission(uow, 1, "app_installations:write")
         cmd = commands.UpdateAppInstallationPermissionsCommand.model_construct(
-            actor=Actor(),
+            actor=ACTOR,
             id=inst.id,
             permissions={"events:read", "events:write"},
         )
@@ -129,4 +153,16 @@ class TestUpdateAppInstallationPermissionsHandler:
         )
 
         with pytest.raises(NotFoundError):
+            UpdateAppInstallationPermissionsHandler().handle(cmd, uow)
+
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        inst = self._seed_installation(uow)
+
+        cmd = commands.UpdateAppInstallationPermissionsCommand.model_construct(
+            actor=ACTOR,
+            id=inst.id,
+            permissions={"events:read"},
+        )
+
+        with pytest.raises(UnauthorizedError):
             UpdateAppInstallationPermissionsHandler().handle(cmd, uow)

@@ -1,6 +1,3 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import redirect, url_for
 from flask_babel import gettext, lazy_gettext
 
@@ -8,24 +5,13 @@ from project.models.admin_unit_verification_request import (
     AdminUnitVerificationRequestReviewStatus,
 )
 from project.modular.base_views import BaseUpdateView
-from project.services.organization_service import OrganizationService
-from project.services.organization_verification_request_service import (
-    OrganizationVerificationRequestService,
-)
 from project.views.manage_admin_unit.incoming_verification_request.forms import (
     VerificationRequestReviewForm,
 )
-from project.views.utils import flash_message
+from project.views.utils import flash_message, handle_base_error
 
 
 class ReviewView(BaseUpdateView):
-    organization_service: Annotated[
-        OrganizationService, Provide["services.organization_service"]
-    ]
-    organization_verification_request_service: Annotated[
-        OrganizationVerificationRequestService,
-        Provide["services.organization_verification_request_service"],
-    ]
     form_class = VerificationRequestReviewForm
     template_file_name = "review.html"
 
@@ -59,16 +45,19 @@ class ReviewView(BaseUpdateView):
 
         return super().render_template(form=form, object=object, **kwargs)
 
-    def save_object(self, object, form):
-        if object.review_status == AdminUnitVerificationRequestReviewStatus.verified:
-            self.organization_service.verify_incoming_organization_verification_request(
-                object, form.auto_verify.data if form.auto_verify.data else None
-            )
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        if form.review_status.data == AdminUnitVerificationRequestReviewStatus.verified:
+            cmd = form.create_approve_command(object.id)
         else:
-            self.organization_verification_request_service.update_object(object)
+            cmd = form.create_reject_command(object.id)
+
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url())
 
     def get_success_text(self, object, form):
-        if object.review_status == AdminUnitVerificationRequestReviewStatus.verified:
+        if form.review_status.data == AdminUnitVerificationRequestReviewStatus.verified:
             return gettext("Organization successfully verified")
 
         return gettext("Verification request successfully updated")

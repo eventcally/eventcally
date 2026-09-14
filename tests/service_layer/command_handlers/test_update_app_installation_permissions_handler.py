@@ -1,5 +1,6 @@
 from project.application import commands
 from project.domain import events
+from project.domain.models.entities.actor import Actor
 from project.models import AppInstallation
 
 
@@ -21,6 +22,7 @@ def test_update_app_installation_permissions_command_sets_current_app_permission
 
         message_bus = app.container.cqrs.message_bus()
         cmd = commands.UpdateAppInstallationPermissionsCommand.model_construct(
+            actor=Actor(user_id=user_id),
             id=app_installation_id,
             permissions=new_permissions,
         )

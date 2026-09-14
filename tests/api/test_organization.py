@@ -712,7 +712,6 @@ def test_organization_verification_requests_outgoing(
 def test_organization_verification_requests_outgoing_post(
     client, app, seeder: Seeder, utils: UtilActions, db, mocker
 ):
-    mail_mock = utils.mock_send_mails_async(mocker)
     (
         verifier_user_id,
         verifier_admin_unit_id,
@@ -731,7 +730,12 @@ def test_organization_verification_requests_outgoing_post(
     response = utils.post_json(url, data)
     utils.assert_response_created(response)
     assert "id" in response.json
-    utils.assert_send_mail_called(mail_mock, "test@test.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "test@test.de"
 
     with app.app_context():
         from project.models import (

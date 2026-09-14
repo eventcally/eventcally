@@ -3,6 +3,7 @@ from .constraint_error import ConstraintError
 from .duplicate_error import DuplicateError
 from .infrastructure_error import InfrastructureError
 from .not_found_error import NotFoundError
+from .unauthorized_error import UnauthorizedError
 
 __all__ = [
     "BaseError",
@@ -10,4 +11,5 @@ __all__ = [
     "DuplicateError",
     "InfrastructureError",
     "NotFoundError",
+    "UnauthorizedError",
 ]

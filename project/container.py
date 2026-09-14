@@ -404,7 +404,6 @@ class Services(containers.DeclarativeContainer):
         organization_relation_repo=repos.organization_relation_repo,
         event_repo=repos.event_repo,
         event_reference_service=event_reference_service,
-        organization_verification_request_service=organization_verification_request_service,
     )
     role_service = providers.Factory(
         services.RoleService,
@@ -494,6 +493,30 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.DeleteCustomWidgetCommand: providers.Factory(
                     command_handlers.DeleteCustomWidgetHandler
+                ),
+                commands.CreateOrganizationRelationCommand: providers.Factory(
+                    command_handlers.CreateOrganizationRelationHandler
+                ),
+                commands.UpdateOrganizationRelationCommand: providers.Factory(
+                    command_handlers.UpdateOrganizationRelationHandler
+                ),
+                commands.DeleteOrganizationRelationCommand: providers.Factory(
+                    command_handlers.DeleteOrganizationRelationHandler
+                ),
+                commands.RequestOrganizationVerificationCommand: providers.Factory(
+                    command_handlers.RequestOrganizationVerificationHandler
+                ),
+                commands.VerifyOrganizationCommand: providers.Factory(
+                    command_handlers.VerifyOrganizationHandler
+                ),
+                commands.ApproveOrganizationVerificationRequestCommand: providers.Factory(
+                    command_handlers.ApproveOrganizationVerificationRequestHandler
+                ),
+                commands.RejectOrganizationVerificationRequestCommand: providers.Factory(
+                    command_handlers.RejectOrganizationVerificationRequestHandler
+                ),
+                commands.WithdrawOrganizationVerificationRequestCommand: providers.Factory(
+                    command_handlers.WithdrawOrganizationVerificationRequestHandler
                 ),
                 commands.DeleteOldWebhookEventsCommand: providers.Factory(
                     command_handlers.DeleteOldWebhookEventsHandler
@@ -622,6 +645,18 @@ class Cqrs(containers.DeclarativeContainer):
                 events.OrganizationDeletionRequested: providers.List(
                     providers.Factory(
                         event_handlers.OrganizationDeletionRequestedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                    )
+                ),
+                events.OrganizationVerificationRequested: providers.List(
+                    providers.Factory(
+                        event_handlers.OrganizationVerificationRequestedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                    )
+                ),
+                events.OrganizationVerificationRequestReviewed: providers.List(
+                    providers.Factory(
+                        event_handlers.OrganizationVerificationRequestReviewedEmailEventHandler,
                         organization_service=services.organization_application_service,
                     )
                 ),

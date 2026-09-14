@@ -10,3 +10,4 @@ class UserAggregate(BaseAggregate):
     id: ObjectId
     email: str
     locale: Optional[str]
+    is_platform_admin: bool = False

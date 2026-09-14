@@ -57,7 +57,6 @@ def test_delete(client, app, db, seeder: Seeder, utils: UtilActions):
 
 
 def test_verify(client, app, db, seeder: Seeder, utils: UtilActions, mocker):
-    mail_mock = utils.mock_send_mails_async(mocker)
     (
         verifier_user_id,
         verifier_admin_unit_id,
@@ -79,7 +78,12 @@ def test_verify(client, app, db, seeder: Seeder, utils: UtilActions, mocker):
     response = utils.post_json(url, data)
     utils.assert_response_created(response)
     assert "id" in response.json
-    utils.assert_send_mail_called(mail_mock, "mitglied@verein.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "mitglied@verein.de"
 
     with app.app_context():
         from project.models import AdminUnitVerificationRequest
@@ -140,7 +144,6 @@ def test_verify_alreadyVerified(
 
 
 def test_reject(client, app, db, seeder: Seeder, utils: UtilActions, mocker):
-    mail_mock = utils.mock_send_mails_async(mocker)
     (
         verifier_user_id,
         verifier_admin_unit_id,
@@ -161,7 +164,12 @@ def test_reject(client, app, db, seeder: Seeder, utils: UtilActions, mocker):
     }
     response = utils.post_json(url, data)
     utils.assert_response_no_content(response)
-    utils.assert_send_mail_called(mail_mock, "mitglied@verein.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "mitglied@verein.de"
 
     with app.app_context():
         from project.models import (

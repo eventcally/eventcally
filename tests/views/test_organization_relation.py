@@ -62,7 +62,51 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, db):
         assert relation.verify
 
 
-def test_update(client, app, utils, seeder):
+def test_update(client, app, utils, seeder, db):
+    _, admin_unit_id = seeder.setup_base()
+    (
+        _,
+        _,
+        relation_id,
+    ) = seeder.create_any_admin_unit_relation(admin_unit_id)
+
+    with app.app_context():
+        from project.models import AdminUnit
+
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        admin_unit.can_verify_other = True
+        db.session.commit()
+
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_organization_relation_update",
+        id=admin_unit_id,
+        organization_relation_id=relation_id,
+    )
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "auto_verify_event_reference_requests": "y",
+            "verify": "y",
+        },
+    )
+
+    utils.assert_response_redirect(
+        response, "manage_admin_unit.outgoing_organization_relations", id=admin_unit_id
+    )
+
+    with app.app_context():
+        from project.models import AdminUnitRelation
+
+        relation = db.session.get(AdminUnitRelation, relation_id)
+        assert relation is not None
+        assert relation.auto_verify_event_reference_requests
+        assert relation.verify
+
+
+def test_delete(client, app, utils, seeder, db):
     _, admin_unit_id = seeder.setup_base()
     (
         _,
@@ -71,7 +115,7 @@ def test_update(client, app, utils, seeder):
     ) = seeder.create_any_admin_unit_relation(admin_unit_id)
 
     url = utils.get_url(
-        "manage_admin_unit.outgoing_organization_relation_update",
+        "manage_admin_unit.outgoing_organization_relation_delete",
         id=admin_unit_id,
         organization_relation_id=relation_id,
     )
@@ -86,3 +130,9 @@ def test_update(client, app, utils, seeder):
     utils.assert_response_redirect(
         response, "manage_admin_unit.outgoing_organization_relations", id=admin_unit_id
     )
+
+    with app.app_context():
+        from project.models import AdminUnitRelation
+
+        relation = db.session.get(AdminUnitRelation, relation_id)
+        assert relation is None

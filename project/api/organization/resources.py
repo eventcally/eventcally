@@ -61,14 +61,16 @@ from project.api.organization_invitation.schemas import (
     OrganizationInvitationListResponseSchema,
 )
 from project.api.organization_relation.schemas import (
+    OrganizationRelationCreateRequestPlainSchema,
     OrganizationRelationCreateRequestSchema,
-    OrganizationRelationIdSchema,
+    OrganizationRelationIdPlainSchema,
     OrganizationRelationListRequestSchema,
     OrganizationRelationListResponseSchema,
     OrganizationRelationSchema,
 )
 from project.api.organization_verification_request.schemas import (
-    OrganizationVerificationRequestIdSchema,
+    OrganizationVerificationRequestCreateRequestPlainSchema,
+    OrganizationVerificationRequestIdPlainSchema,
     OrganizationVerificationRequestListRequestSchema,
     OrganizationVerificationRequestListResponseSchema,
     OrganizationVerificationRequestPostRequestSchema,
@@ -93,9 +95,6 @@ from project.api.resources import (
 from project.extensions import db
 from project.models import AdminUnit, Event, EventPublicStatus
 from project.models.admin_unit import AdminUnitInvitation, AdminUnitRelation
-from project.models.admin_unit_verification_request import (
-    AdminUnitVerificationRequestReviewStatus,
-)
 from project.services import organization_service
 from project.services.admin_unit import (
     get_admin_unit_invitation_query,
@@ -110,9 +109,6 @@ from project.services.event import get_event_dates_query, get_events_query
 from project.services.event_service import EventService
 from project.services.organization_invitation_service import (
     OrganizationInvitationService,
-)
-from project.services.organization_verification_request_service import (
-    OrganizationVerificationRequestService,
 )
 from project.services.reference import (
     get_reference_incoming_query,
@@ -456,11 +452,6 @@ class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResour
 
 
 class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResource):
-    organization_verification_request_service: Annotated[
-        OrganizationVerificationRequestService,
-        Provide["services.organization_verification_request_service"],
-    ]
-
     @doc(
         summary="List outgoing organization verification requests of organization",
         tags=["Organizations", "Organization Verification Requests"],
@@ -486,29 +477,25 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
     @use_kwargs(
         OrganizationVerificationRequestPostRequestSchema, location="json", apply=False
     )
-    @marshal_with(OrganizationVerificationRequestIdSchema, 201)
+    @marshal_with(OrganizationVerificationRequestIdPlainSchema, 201)
     @require_organization_api_access(
         "organization.outgoing_organization_verification_requests:write"
     )
     def post(self, id):
         admin_unit = g.manage_admin_unit
-        verification_request = self.create_instance(
-            OrganizationVerificationRequestPostRequestSchema,
-            source_admin_unit_id=admin_unit.id,
-            review_status=AdminUnitVerificationRequestReviewStatus.inbox,
-        )
-        target_admin_unit = verification_request.target_admin_unit
+        cmd = OrganizationVerificationRequestCreateRequestPlainSchema(
+            context=g.api_command_context
+        ).load(request.json)
+        target_admin_unit = AdminUnit.query.get_or_404(cmd.target_admin_unit_id)
 
         if not admin_unit_can_verify_admin_unit(
             admin_unit, target_admin_unit
         ):  # pragma: no cover
             abort(401)
 
-        self.organization_verification_request_service.insert_object(
-            verification_request
-        )
+        cmd_result = self.message_bus.handle_command(cmd)
 
-        return verification_request, 201
+        return cmd_result, 201
 
 
 class OrganizationOutgoingRelationListResource(BaseResource):
@@ -532,20 +519,17 @@ class OrganizationOutgoingRelationListResource(BaseResource):
         tags=["Organizations", "Organization Relations"],
     )
     @use_kwargs(OrganizationRelationCreateRequestSchema, location="json", apply=False)
-    @marshal_with(OrganizationRelationIdSchema, 201)
+    @marshal_with(OrganizationRelationIdPlainSchema, 201)
     @require_organization_api_access(
         "organization.outgoing_organization_relations:write"
     )
     def post(self, id):
-        admin_unit = g.manage_admin_unit
+        cmd = OrganizationRelationCreateRequestPlainSchema(
+            context=g.api_command_context
+        ).load(request.json)
+        cmd_result = self.message_bus.handle_command(cmd)
 
-        relation = self.create_instance(
-            OrganizationRelationCreateRequestSchema, source_admin_unit_id=admin_unit.id
-        )
-        db.session.add(relation)
-        db.session.commit()
-
-        return relation, 201
+        return cmd_result, 201
 
 
 class OrganizationOutgoingRelationResource(BaseResource):

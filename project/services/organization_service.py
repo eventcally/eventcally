@@ -2,10 +2,6 @@ from typing import Optional
 
 from project.models import AdminUnit
 from project.models.admin_unit import AdminUnitRelation
-from project.models.admin_unit_verification_request import (
-    AdminUnitVerificationRequest,
-    AdminUnitVerificationRequestReviewStatus,
-)
 from project.models.event_reference import EventReference
 from project.models.event_reference_request import (
     EventReferenceRequest,
@@ -15,9 +11,6 @@ from project.repos.event_repo import EventRepo
 from project.repos.organization_relation_repo import OrganizationRelationRepo
 from project.services import EventReferenceRequestService, EventReferenceService
 from project.services.base_service import BaseService
-from project.services.organization_verification_request_service import (
-    OrganizationVerificationRequestService,
-)
 from project.views.utils import send_template_mails_to_admin_unit_members_async
 
 
@@ -30,7 +23,6 @@ class OrganizationService(BaseService[AdminUnit]):
         organization_relation_repo: OrganizationRelationRepo,
         event_repo: EventRepo,
         event_reference_service: EventReferenceService,
-        organization_verification_request_service: OrganizationVerificationRequestService,
         **kwargs
     ):
         super().__init__(repo, context_provider, **kwargs)
@@ -38,28 +30,6 @@ class OrganizationService(BaseService[AdminUnit]):
         self.organization_relation_repo = organization_relation_repo
         self.event_repo = event_repo
         self.event_reference_service = event_reference_service
-        self.organization_verification_request_service = (
-            organization_verification_request_service
-        )
-
-    def verify_incoming_organization_verification_request(
-        self,
-        organization_verification_request: AdminUnitVerificationRequest,
-        auto_verify_event_reference_requests: Optional[bool] = None,
-    ) -> AdminUnitRelation:
-        organization_verification_request.review_status = (
-            AdminUnitVerificationRequestReviewStatus.verified
-        )
-        self.organization_verification_request_service.update_object(
-            organization_verification_request
-        )
-        relation = self.update_organization_relation(
-            organization_verification_request.target_admin_unit_id,
-            organization_verification_request.source_admin_unit_id,
-            verify=True,
-            auto_verify_event_reference_requests=auto_verify_event_reference_requests,
-        )
-        return relation
 
     def update_organization_relation(
         self,

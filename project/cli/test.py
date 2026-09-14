@@ -9,6 +9,7 @@ from sqlalchemy import MetaData, text
 
 from project.api import scope_list
 from project.application.commands.create_event_command import CreateEventCommand
+from project.domain.models.entities.actor import Actor
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
@@ -18,6 +19,7 @@ from project.init_data import create_initial_data
 from project.models import (
     AdminUnit,
     AdminUnitInvitation,
+    AdminUnitMember,
     AdminUnitVerificationRequest,
     AdminUnitVerificationRequestReviewStatus,
     Event,
@@ -201,11 +203,20 @@ def create_admin_unit_member(admin_unit_id, user_email):
     click.echo(json.dumps(result))
 
 
+def _get_admin_unit_owner_id(admin_unit_id):
+    member = AdminUnitMember.query.filter(
+        AdminUnitMember.admin_unit_id == admin_unit_id,
+        AdminUnitMember.is_admin,
+    ).first()
+    return member.user_id if member else None
+
+
 def _create_event(admin_unit_id):
     event_category_service = current_app.container.services.event_category_service()
 
     command = CreateEventCommand.model_construct()
     command.admin_unit_id = admin_unit_id
+    command.actor = Actor(user_id=_get_admin_unit_owner_id(admin_unit_id))
     command.category_ids = {event_category_service.upsert_event_category("Other").id}
     command.name = "Name"
     command.description = "Beschreibung"

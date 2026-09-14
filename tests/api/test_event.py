@@ -3,6 +3,7 @@ import base64
 import pytest
 
 from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.entities.actor import Actor
 from project.domain.models.enums.event_status import EventStatus
 from tests.seeder import Seeder
 from tests.utils import UtilActions
@@ -14,7 +15,7 @@ def test_read(client, app, db, seeder: Seeder, utils: UtilActions):
 
     with app.app_context():
         command = UpdateEventCommand.model_construct(
-            id=event_id, status=EventStatus.scheduled
+            id=event_id, status=EventStatus.scheduled, actor=Actor(user_id=user_id)
         )
         message_bus = app.container.cqrs.message_bus()
         message_bus.handle(command)

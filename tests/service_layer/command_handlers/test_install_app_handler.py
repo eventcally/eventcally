@@ -1,5 +1,6 @@
 from project.application import commands
 from project.domain import events
+from project.domain.models.entities.actor import Actor
 from project.models import AppInstallation
 
 
@@ -13,6 +14,7 @@ def test_install_app_command_creates_app_installation(app, db, seeder):
     with app.app_context():
         message_bus = app.container.cqrs.message_bus()
         cmd = commands.InstallAppCommand.model_construct(
+            actor=Actor(user_id=user_id),
             admin_unit_id=admin_unit_id,
             app_id=app_id,
         )

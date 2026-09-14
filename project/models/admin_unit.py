@@ -14,6 +14,9 @@ from project.domain.models.aggregates.organization_aggregate import (
 from project.domain.models.aggregates.organization_member_aggregate import (
     OrganisationMemberAggregate,
 )
+from project.domain.models.aggregates.organization_relation_aggregate import (
+    OrganizationRelationAggregate,
+)
 from project.extensions import db
 from project.models.admin_unit_generated import AdminUnitGeneratedMixin
 from project.models.admin_unit_invitation_generated import (
@@ -109,6 +112,40 @@ class AdminUnitInvitation(db.Model, AdminUnitInvitationGeneratedMixin):
 
 
 class AdminUnitRelation(db.Model, AdminUnitRelationGeneratedMixin):
+    @classmethod
+    def from_aggregate(
+        cls, aggregate: OrganizationRelationAggregate
+    ) -> AdminUnitRelation:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
+
+    def fill_from_aggregate(self, aggregate: OrganizationRelationAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.source_admin_unit_id = aggregate.source_admin_unit_id
+        self.target_admin_unit_id = aggregate.target_admin_unit_id
+        self.auto_verify_event_reference_requests = (
+            aggregate.auto_verify_event_reference_requests
+        )
+        self.verify = aggregate.verify
+        self.invited = aggregate.invited
+
+    @classmethod
+    def to_aggregate(
+        cls, model: Optional[AdminUnitRelation]
+    ) -> Optional[OrganizationRelationAggregate]:
+        if model is None:  # pragma: no cover
+            return None
+
+        return OrganizationRelationAggregate(
+            id=model.id,
+            source_admin_unit_id=model.source_admin_unit_id,
+            target_admin_unit_id=model.target_admin_unit_id,
+            auto_verify_event_reference_requests=model.auto_verify_event_reference_requests,
+            verify=model.verify,
+            invited=model.invited,
+        )
+
     def validate(self):
         source_id = (
             self.source_admin_unit.id
@@ -147,6 +184,12 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
             id=model.id,
             deletion_requested_at=model.deletion_requested_at,
             deletion_requested_by_id=model.deletion_requested_by_id,
+            can_verify_other=model.can_verify_other,
+            incoming_verification_requests_allowed=model.incoming_verification_requests_allowed,
+            incoming_verification_requests_postal_codes=list(
+                model.incoming_verification_requests_postal_codes or []
+            ),
+            location=model.location.to_value_object() if model.location else None,
         )
 
         return aggregate

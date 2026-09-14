@@ -435,6 +435,24 @@ def test_admin_unit_verification(client, app, db, seeder: Seeder):
         assert len(all_verified) == 0
 
 
+def test_admin_unit_relation_self_reference(client, app, db, seeder: Seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+
+    with app.app_context():
+        from sqlalchemy.exc import IntegrityError
+
+        from project.models import AdminUnitRelation
+
+        relation = AdminUnitRelation(
+            source_admin_unit_id=admin_unit_id,
+            target_admin_unit_id=admin_unit_id,
+        )
+
+        with pytest.raises(IntegrityError) as e:
+            relation.validate()
+        assert e.value.orig.message == "There must be no self-reference."
+
+
 def test_admin_unit_invitations(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)

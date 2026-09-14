@@ -1,4 +1,7 @@
 from .abstract_command_handler import AbstractCommandHandler
+from .approve_organization_verification_request_handler import (
+    ApproveOrganizationVerificationRequestHandler,
+)
 from .attempt_to_deliver_webhook_command_handler import AttemptToDeliverWebhookHandler
 from .cancel_organization_deletion_handler import CancelOrganizationDeletionHandler
 from .create_app_handler import CreateAppHandler
@@ -7,6 +10,7 @@ from .create_event_handler import CreateEventHandler
 from .create_event_organizer_handler import CreateEventOrganizerHandler
 from .create_event_place_handler import CreateEventPlaceHandler
 from .create_event_reference_handler import CreateEventReferenceHandler
+from .create_organization_relation_handler import CreateOrganizationRelationHandler
 from .delete_app_handler import DeleteAppHandler
 from .delete_custom_widget_handler import DeleteCustomWidgetHandler
 from .delete_event_handler import DeleteEventHandler
@@ -14,8 +18,15 @@ from .delete_event_organizer_handler import DeleteEventOrganizerHandler
 from .delete_event_place_handler import DeleteEventPlaceHandler
 from .delete_event_reference_handler import DeleteEventReferenceHandler
 from .delete_old_webhook_events_handler import DeleteOldWebhookEventsHandler
+from .delete_organization_relation_handler import DeleteOrganizationRelationHandler
 from .install_app_handler import InstallAppHandler
+from .reject_organization_verification_request_handler import (
+    RejectOrganizationVerificationRequestHandler,
+)
 from .request_organization_deletion_handler import RequestOrganizationDeletionHandler
+from .request_organization_verification_handler import (
+    RequestOrganizationVerificationHandler,
+)
 from .uninstall_app_handler import UninstallAppHandler
 from .update_app_handler import UpdateAppHandler
 from .update_app_installation_permissions_handler import (
@@ -26,6 +37,11 @@ from .update_event_handler import UpdateEventHandler
 from .update_event_organizer_handler import UpdateEventOrganizerHandler
 from .update_event_place_handler import UpdateEventPlaceHandler
 from .update_event_reference_handler import UpdateEventReferenceHandler
+from .update_organization_relation_handler import UpdateOrganizationRelationHandler
+from .verify_organization_handler import VerifyOrganizationHandler
+from .withdraw_organization_verification_request_handler import (
+    WithdrawOrganizationVerificationRequestHandler,
+)
 
 __all__ = [
     "AbstractCommandHandler",
@@ -55,4 +71,12 @@ __all__ = [
     "CreateEventReferenceHandler",
     "UpdateEventReferenceHandler",
     "DeleteEventReferenceHandler",
+    "CreateOrganizationRelationHandler",
+    "UpdateOrganizationRelationHandler",
+    "DeleteOrganizationRelationHandler",
+    "RequestOrganizationVerificationHandler",
+    "VerifyOrganizationHandler",
+    "ApproveOrganizationVerificationRequestHandler",
+    "RejectOrganizationVerificationRequestHandler",
+    "WithdrawOrganizationVerificationRequestHandler",
 ]

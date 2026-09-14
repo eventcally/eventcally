@@ -25,6 +25,7 @@ from project.views.manage_admin_unit.outgoing_organization_relation.forms import
 )
 from project.views.manage_admin_unit.outgoing_organization_relation.views import (
     CreateView,
+    DeleteView,
     ListView,
     UpdateView,
 )
@@ -43,6 +44,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     update_view_class = UpdateView
     update_display_class = UpdateDisplay
     delete_form_class = BaseDeleteForm
+    delete_view_class = DeleteView
     list_display_class = ListDisplay
     list_view_class = ListView
     list_filters = [

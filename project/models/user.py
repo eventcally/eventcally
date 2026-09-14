@@ -36,6 +36,7 @@ class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
             id=model.id,
             email=model.email,
             locale=model.locale,
+            is_platform_admin=any(role.name == "admin" for role in model.roles),
         )
         return aggregate
 

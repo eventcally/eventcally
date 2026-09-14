@@ -36,6 +36,8 @@ class _ConcreteUoW(AbstractUnitOfWork):
         self.event_references = _MockRepo()
         self.event_places = _MockRepo()
         self.organizations = _MockRepo()
+        self.organization_relations = _MockRepo()
+        self.organization_verification_requests = _MockRepo()
         self.webhook_events = _MockRepo()
         self.webhook_deliveries = _MockRepo()
         self.webhook_delivery_attempts = _MockRepo()

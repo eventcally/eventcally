@@ -12,11 +12,16 @@ from project.domain.models.entities.image_entity import ImageEntity
 from project.domain.types import unset
 
 from .abstract_command_handler import AbstractCommandHandler
+from .authorization_utils import ensure_actor_has_permission_for_admin_unit
 
 
 class UpdateEventHandler(AbstractCommandHandler):
     def handle(self, cmd: UpdateEventCommand, uow: AbstractUnitOfWork):
         event = ensure_event_exists(cmd.id, uow)
+
+        ensure_actor_has_permission_for_admin_unit(
+            cmd.actor, event.admin_unit_id, "events:write", uow
+        )
 
         if cmd.organizer_id != unset:
             event_organizer = ensure_event_organizer_exists(cmd.organizer_id, uow)

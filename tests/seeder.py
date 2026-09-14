@@ -1,5 +1,6 @@
 from project.application.commands.create_event_command import CreateEventCommand
 from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.entities.actor import Actor
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from tests.utils import UtilActions
@@ -116,6 +117,19 @@ class Seeder(object):
             self.verify_admin_unit(admin_unit_id)
 
         return admin_unit_id
+
+    def get_admin_unit_owner_id(self, admin_unit_id):
+        """The user_id of an AdminUnitMember with the "admin" role for
+        `admin_unit_id` — a permitted actor for commands guarded by
+        ensure_actor_has_permission_for_admin_unit."""
+        from project.models.admin_unit import AdminUnitMember
+
+        with self._app.app_context():
+            member = AdminUnitMember.query.filter(
+                AdminUnitMember.admin_unit_id == admin_unit_id,
+                AdminUnitMember.is_admin,
+            ).first()
+            return member.user_id if member else None
 
     def get_eventcally_admin_unit_id(self):
         from project.services.admin_unit import get_admin_unit_by_name
@@ -508,6 +522,10 @@ class Seeder(object):
             command = CreateEventCommand.model_construct()
             command.__dict__.update(kwargs)
             command.admin_unit_id = admin_unit_id
+            if "actor" not in kwargs:
+                command.actor = Actor(
+                    user_id=self.get_admin_unit_owner_id(admin_unit_id)
+                )
             command.category_ids = {
                 event_category_service.upsert_event_category("Other").id
             }
@@ -598,7 +616,9 @@ class Seeder(object):
             date_definitions.append(new_date_definition)
 
             command = UpdateEventCommand.model_construct(
-                id=event_id, date_definitions=date_definitions
+                id=event_id,
+                date_definitions=date_definitions,
+                actor=Actor(user_id=self.get_admin_unit_owner_id(event.admin_unit_id)),
             )
             message_bus.handle(command)
 

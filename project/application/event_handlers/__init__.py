@@ -4,6 +4,12 @@ from .app_webhook_event_handler import AppWebhookEventHandler
 from .organization_deletion_requested_email_event_handler import (
     OrganizationDeletionRequestedEmailEventHandler,
 )
+from .organization_verification_request_reviewed_email_event_handler import (
+    OrganizationVerificationRequestReviewedEmailEventHandler,
+)
+from .organization_verification_requested_email_event_handler import (
+    OrganizationVerificationRequestedEmailEventHandler,
+)
 from .reference_event_changed_email_event_handler import (
     ReferenceEventChangedEmailEventHandler,
 )
@@ -18,4 +24,6 @@ __all__ = [
     "WebhookDeliveryCreatedAttemptEventHandler",
     "AppWebhookEventHandler",
     "ReferenceEventChangedEmailEventHandler",
+    "OrganizationVerificationRequestedEmailEventHandler",
+    "OrganizationVerificationRequestReviewedEmailEventHandler",
 ]

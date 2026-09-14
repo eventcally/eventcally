@@ -3,10 +3,15 @@ from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.domain.models.aggregates.app_aggregate import AppAggregate
 
 from .abstract_command_handler import AbstractCommandHandler
+from .authorization_utils import ensure_actor_has_permission_for_admin_unit
 
 
 class CreateAppHandler(AbstractCommandHandler):
     def handle(self, cmd: commands.CreateAppCommand, uow: AbstractUnitOfWork):
+        ensure_actor_has_permission_for_admin_unit(
+            cmd.actor, cmd.admin_unit_id, "apps:write", uow
+        )
+
         app = AppAggregate.create(
             actor=cmd.actor,
             admin_unit_id=cmd.admin_unit_id,

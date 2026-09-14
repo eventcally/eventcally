@@ -1,6 +1,7 @@
 import pytest
 
 from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.entities.actor import Actor
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.enums.event_status import EventStatus
 from project.domain.models.value_objects.event_date_definition_value_object import (
@@ -132,6 +133,7 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         photo.encoding_format = "jpeg"
         photo.copyright_text = "EventCally"
         command.photo = photo
+        command.actor = Actor(user_id=user_id)
         seeder.handle_message(command)
 
         event = db.session.get(Event, event_id)
@@ -167,6 +169,7 @@ def test_get_sd_for_event_date_allday(client, app, db, seeder, utils):
         command = UpdateEventCommand.model_construct(
             id=event_id, date_definitions=[date_definition]
         )
+        command.actor = Actor(user_id=user_id)
         seeder.handle_message(command)
 
         event = db.session.get(Event, event_id)
@@ -241,6 +244,7 @@ def test_get_sd_for_event_date_eventAttendanceMode(
         command = UpdateEventCommand.model_construct(
             id=event_id, attendance_mode=EventAttendanceMode(attendance_mode)
         )
+        command.actor = Actor(user_id=user_id)
         seeder.handle_message(command)
 
         from project.jsonld import get_sd_for_event_date
@@ -275,6 +279,7 @@ def test_get_sd_for_event_date_eventStatus(
         command = UpdateEventCommand.model_construct(
             id=event_id, status=EventStatus(status)
         )
+        command.actor = Actor(user_id=user_id)
         seeder.handle_message(command)
 
         from project.jsonld import get_sd_for_event_date

@@ -12,9 +12,10 @@ from project.application.command_handlers.delete_event_place_handler import (
 from project.application.command_handlers.update_event_place_handler import (
     UpdateEventPlaceHandler,
 )
-from project.domain.errors import NotFoundError
+from project.domain.errors import NotFoundError, UnauthorizedError
 from project.domain.models.aggregates.event_place_aggregate import EventPlaceAggregate
 from project.domain.models.entities.actor import Actor
+from tests.application.conftest import ACTOR, grant_permission
 
 # ---------------------------------------------------------------------------
 # CreateEventPlaceHandler
@@ -23,8 +24,9 @@ from project.domain.models.entities.actor import Actor
 
 class TestCreateEventPlaceHandler:
     def test_creates_place_and_returns_result(self, uow):
+        grant_permission(uow, 1, "event_places:write")
         cmd = commands.CreateEventPlaceCommand.model_construct(
-            actor=Actor(),
+            actor=ACTOR,
             admin_unit_id=1,
             name="Test Place",
             url=None,
@@ -39,6 +41,20 @@ class TestCreateEventPlaceHandler:
         created = uow.event_places.get(result.id)
         assert created is not None
         assert created.name == "Test Place"
+
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        cmd = commands.CreateEventPlaceCommand.model_construct(
+            actor=ACTOR,
+            admin_unit_id=1,
+            name="Test Place",
+            url=None,
+            description=None,
+            location=None,
+            photo=None,
+        )
+
+        with pytest.raises(UnauthorizedError):
+            CreateEventPlaceHandler().handle(cmd, uow)
 
 
 # ---------------------------------------------------------------------------
@@ -56,9 +72,8 @@ class TestUpdateEventPlaceHandler:
 
     def test_updates_place(self, uow):
         place = self._seed(uow)
-        cmd = commands.UpdateEventPlaceCommand.model_construct(
-            actor=Actor(), id=place.id
-        )
+        grant_permission(uow, 1, "event_places:write")
+        cmd = commands.UpdateEventPlaceCommand.model_construct(actor=ACTOR, id=place.id)
 
         UpdateEventPlaceHandler().handle(cmd, uow)
 
@@ -68,6 +83,13 @@ class TestUpdateEventPlaceHandler:
         with pytest.raises(NotFoundError):
             UpdateEventPlaceHandler().handle(cmd, uow)
 
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        place = self._seed(uow)
+        cmd = commands.UpdateEventPlaceCommand.model_construct(actor=ACTOR, id=place.id)
+
+        with pytest.raises(UnauthorizedError):
+            UpdateEventPlaceHandler().handle(cmd, uow)
+
 
 # ---------------------------------------------------------------------------
 # DeleteEventPlaceHandler
@@ -75,16 +97,19 @@ class TestUpdateEventPlaceHandler:
 
 
 class TestDeleteEventPlaceHandler:
-    def test_removes_place(self, uow):
+    def _seed(self, uow):
         place = EventPlaceAggregate.create(
             actor=Actor(), admin_unit_id=1, name="To Delete"
         )
         uow.event_places.add(place)
-        place_id = place.id
+        return place
 
-        cmd = commands.DeleteEventPlaceCommand.model_construct(
-            actor=Actor(), id=place_id
-        )
+    def test_removes_place(self, uow):
+        place = self._seed(uow)
+        place_id = place.id
+        grant_permission(uow, 1, "event_places:write")
+
+        cmd = commands.DeleteEventPlaceCommand.model_construct(actor=ACTOR, id=place_id)
         DeleteEventPlaceHandler().handle(cmd, uow)
 
         assert uow.event_places.get(place_id) is None
@@ -93,4 +118,11 @@ class TestDeleteEventPlaceHandler:
         cmd = commands.DeleteEventPlaceCommand.model_construct(actor=Actor(), id=9999)
 
         with pytest.raises(NotFoundError):
+            DeleteEventPlaceHandler().handle(cmd, uow)
+
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        place = self._seed(uow)
+        cmd = commands.DeleteEventPlaceCommand.model_construct(actor=ACTOR, id=place.id)
+
+        with pytest.raises(UnauthorizedError):
             DeleteEventPlaceHandler().handle(cmd, uow)
