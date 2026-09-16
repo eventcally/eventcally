@@ -17,6 +17,7 @@ from project.domain.models.aggregates.admin_unit_member_invitation_aggregate imp
 )
 from project.domain.models.aggregates.api_key_aggregate import ApiKeyAggregate
 from project.domain.models.aggregates.app_aggregate import AppAggregate
+from project.domain.models.aggregates.app_key_aggregate import AppKeyAggregate
 from project.domain.models.aggregates.event_place_aggregate import EventPlaceAggregate
 from project.domain.models.aggregates.oauth2_client_aggregate import (
     OAuth2ClientAggregate,
@@ -59,6 +60,9 @@ from project.infrastructure.read_repositories.sql_alchemy_webhook_delivery_read_
 )
 from project.infrastructure.repositories.sql_alchemy_api_key_repository import (
     SqlAlchemyApiKeyRepository,
+)
+from project.infrastructure.repositories.sql_alchemy_app_key_repository import (
+    SqlAlchemyAppKeyRepository,
 )
 from project.infrastructure.repositories.sql_alchemy_app_repository import (
     SqlAlchemyAppRepository,
@@ -1077,3 +1081,38 @@ def test_organization_member_repository_add_get_update_roundtrip_with_roles(
 
         assert repo.get(updated.id) is None
         assert repo.get_by_admin_unit_and_user(admin_unit_id, new_user_id) is None
+
+
+def test_app_key_repository_add_get_remove_roundtrip(app, db, seeder: Seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    app_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
+
+    with app.app_context():
+        repo = SqlAlchemyAppKeyRepository(db.session)
+        app_key = AppKeyAggregate.create(
+            actor=Actor(user_id=1),
+            admin_unit_id=admin_unit_id,
+            app_id=app_id,
+            checksum="checksum",
+            kid="kid",
+            public_key="public-key",
+        )
+
+        repo.add(app_key)
+        db.session.commit()
+
+        loaded = repo.get(app_key.id)
+
+        assert isinstance(loaded, AppKeyAggregate)
+        assert loaded.id == app_key.id
+        assert loaded.admin_unit_id == admin_unit_id
+        assert loaded.app_id == app_id
+        assert loaded.checksum == "checksum"
+        assert loaded.kid == "kid"
+        assert loaded.public_key == "public-key"
+        assert loaded in repo.seen
+
+        repo.remove(loaded)
+        db.session.commit()
+
+        assert repo.get(app_key.id) is None

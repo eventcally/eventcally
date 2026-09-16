@@ -415,9 +415,6 @@ class BaseCreateView(BaseFormView):
         self.flash_success_message(object, form)
         return redirect(self.get_redirect_url(object=object))
 
-    def insert_object(self, object, form):
-        self.handler.insert_object(object)
-
 
 class BaseObjectFormView(BaseFormView):
     def dispatch_request(self, **kwargs):

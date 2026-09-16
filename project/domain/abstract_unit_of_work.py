@@ -6,6 +6,7 @@ from typing import List
 from project.domain.events import Event
 from project.domain.repositories import (
     AbstractApiKeyRepository,
+    AbstractAppKeyRepository,
     AbstractCustomWidgetRepository,
     AbstractEventOrganizerRepository,
     AbstractEventPlaceRepository,
@@ -57,6 +58,7 @@ class AbstractUnitOfWork(abc.ABC):
     users: AbstractUserRepository
     custom_widgets: AbstractCustomWidgetRepository
     api_keys: AbstractApiKeyRepository
+    app_keys: AbstractAppKeyRepository
     oauth2_clients: AbstractOAuth2ClientRepository
     oauth2_tokens: AbstractOAuth2TokenRepository
     organization_invitations: AbstractOrganizationInvitationRepository
@@ -97,6 +99,7 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.users)
         self._collect_domain_events_from_repo(self.custom_widgets)
         self._collect_domain_events_from_repo(self.api_keys)
+        self._collect_domain_events_from_repo(self.app_keys)
         self._collect_domain_events_from_repo(self.oauth2_clients)
         self._collect_domain_events_from_repo(self.oauth2_tokens)
         self._collect_domain_events_from_repo(self.organization_invitations)

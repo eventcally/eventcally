@@ -11,6 +11,7 @@ from .change_organization_member_roles_command import (
 )
 from .create_api_key_command import CreateApiKeyCommand, CreateApiKeyCommandResult
 from .create_app_command import CreateAppCommand, CreateAppCommandResult
+from .create_app_key_command import CreateAppKeyCommand, CreateAppKeyCommandResult
 from .create_custom_widget_command import (
     CreateCustomWidgetCommand,
     CreateCustomWidgetCommandResult,
@@ -42,6 +43,7 @@ from .decline_organization_invitation_command import (
 )
 from .delete_api_key_command import DeleteApiKeyCommand
 from .delete_app_command import DeleteAppCommand
+from .delete_app_key_command import DeleteAppKeyCommand
 from .delete_custom_widget_command import DeleteCustomWidgetCommand
 from .delete_event_command import DeleteEventCommand
 from .delete_event_organizer_command import DeleteEventOrganizerCommand
@@ -123,6 +125,9 @@ __all__ = [
     "CreateAppCommand",
     "CreateAppCommandResult",
     "DeleteAppCommand",
+    "CreateAppKeyCommand",
+    "CreateAppKeyCommandResult",
+    "DeleteAppKeyCommand",
     "InstallAppCommand",
     "InstallAppCommandResult",
     "UpdateAppCommand",

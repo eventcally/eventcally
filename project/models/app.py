@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from typing import Optional
+
+from project.domain.models.aggregates.app_key_aggregate import AppKeyAggregate
 from project.domain.models.aggregates.organization_app_installation_aggregate import (
     OrganisationAppInstallationAggregate,
 )
@@ -43,6 +46,34 @@ class AppInstallation(db.Model, AppInstallationGeneratedMixin):
 
 
 class AppKey(db.Model, AppKeyGeneratedMixin):
+    @classmethod
+    def from_aggregate(cls, aggregate: AppKeyAggregate) -> AppKey:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
+
+    def fill_from_aggregate(self, aggregate: AppKeyAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.admin_unit_id = aggregate.admin_unit_id
+        self.oauth2_client_id = aggregate.app_id
+        self.checksum = aggregate.checksum
+        self.kid = aggregate.kid
+        self.public_key = aggregate.public_key
+
+    @classmethod
+    def to_aggregate(cls, model: Optional[AppKey]) -> Optional[AppKeyAggregate]:
+        if model is None:  # pragma: no cover
+            return None
+
+        return AppKeyAggregate(
+            id=model.id,
+            admin_unit_id=model.admin_unit_id,
+            app_id=model.oauth2_client_id,
+            checksum=model.checksum,
+            kid=model.kid,
+            public_key=model.public_key,
+        )
+
     def generate_key(self) -> bytes:
         import hashlib
         import secrets

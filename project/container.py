@@ -39,6 +39,7 @@ from project.infrastructure.services.flask_url_provider import FlaskUrlProvider
 from project.infrastructure.services.requests_webhook_delivery_sender import (
     RequestsWebhookDeliverySender,
 )
+from project.infrastructure.services.rsa_app_key_generator import RsaAppKeyGenerator
 from project.infrastructure.services.werkzeug_api_key_generator import (
     WerkzeugApiKeyGenerator,
 )
@@ -72,6 +73,9 @@ class Infrastructure(containers.DeclarativeContainer):
     )
     api_key_generator = providers.Singleton(
         WerkzeugApiKeyGenerator,
+    )
+    app_key_generator = providers.Singleton(
+        RsaAppKeyGenerator,
     )
     oauth2_client_credentials_generator = providers.Singleton(
         WerkzeugOAuth2ClientCredentialsGenerator,
@@ -567,6 +571,13 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.InstallAppCommand: providers.Factory(
                     command_handlers.InstallAppHandler
+                ),
+                commands.CreateAppKeyCommand: providers.Factory(
+                    command_handlers.CreateAppKeyHandler,
+                    app_key_generator=infrastructure.app_key_generator,
+                ),
+                commands.DeleteAppKeyCommand: providers.Factory(
+                    command_handlers.DeleteAppKeyHandler
                 ),
                 commands.CreateOAuth2ClientCommand: providers.Factory(
                     command_handlers.CreateOAuth2ClientHandler,

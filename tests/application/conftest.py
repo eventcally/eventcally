@@ -180,6 +180,7 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         self.users = FakeUserRepo()
         self.custom_widgets = FakeRepo()
         self.api_keys = FakeApiKeyRepo()
+        self.app_keys = FakeRepo()
         self.oauth2_clients = FakeRepo()
         self.oauth2_tokens = FakeRepo()
         self.organization_invitations = FakeRepo()
@@ -240,6 +241,23 @@ class FakeApiKeyGenerator:
 
     def generate(self):
         return self.key, self.key_hash
+
+
+class FakeAppKeyGenerator:
+    def __init__(
+        self,
+        checksum="fake-checksum",
+        kid="fake-kid",
+        public_key="fake-public-key",
+        private_pem="fake-private-pem",
+    ):
+        self.checksum = checksum
+        self.kid = kid
+        self.public_key = public_key
+        self.private_pem = private_pem
+
+    def generate(self):
+        return self.checksum, self.kid, self.public_key, self.private_pem
 
 
 class FakeOAuth2ClientCredentialsGenerator:

@@ -23,10 +23,6 @@ class AppChildViewHandler(ManageAdminUnitChildViewHandler):
         if not getattr_keypath(object, self.app_id_attribute_name) == g.current_app.id:
             abort(401)
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-        setattr(object, self.app_id_attribute_name, g.current_app.id)
-
     def apply_base_filter(self, query, **kwargs):
         query = super().apply_base_filter(query, **kwargs)
         if self.app_id_column is not None:

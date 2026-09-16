@@ -10,6 +10,7 @@ from .change_organization_member_roles_handler import (
 )
 from .create_api_key_handler import CreateApiKeyHandler
 from .create_app_handler import CreateAppHandler
+from .create_app_key_handler import CreateAppKeyHandler
 from .create_custom_widget_handler import CreateCustomWidgetHandler
 from .create_event_handler import CreateEventHandler
 from .create_event_organizer_handler import CreateEventOrganizerHandler
@@ -23,6 +24,7 @@ from .decline_organization_invitation_handler import (
 )
 from .delete_api_key_handler import DeleteApiKeyHandler
 from .delete_app_handler import DeleteAppHandler
+from .delete_app_key_handler import DeleteAppKeyHandler
 from .delete_custom_widget_handler import DeleteCustomWidgetHandler
 from .delete_event_handler import DeleteEventHandler
 from .delete_event_organizer_handler import DeleteEventOrganizerHandler
@@ -91,6 +93,8 @@ __all__ = [
     "UninstallAppHandler",
     "DeleteAppHandler",
     "InstallAppHandler",
+    "CreateAppKeyHandler",
+    "DeleteAppKeyHandler",
     "CreateOAuth2ClientHandler",
     "UpdateOAuth2ClientHandler",
     "DeleteOAuth2ClientHandler",
