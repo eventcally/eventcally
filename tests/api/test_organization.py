@@ -545,9 +545,8 @@ def test_reference_requests_outgoing(client, seeder: Seeder, utils: UtilActions)
 
 
 def test_reference_requests_outgoing_post(
-    client, app, seeder: Seeder, utils: UtilActions, db, mocker
+    client, app, seeder: Seeder, utils: UtilActions, db
 ):
-    mail_mock = utils.mock_send_mails_async(mocker)
     user_id, admin_unit_id = seeder.setup_api_access()
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
@@ -565,7 +564,12 @@ def test_reference_requests_outgoing_post(
     response = utils.post_json(url, data)
     utils.assert_response_created(response)
     assert "id" in response.json
-    utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
         from project.models import (
@@ -585,9 +589,8 @@ def test_reference_requests_outgoing_post(
 
 
 def test_reference_requests_outgoing_post_autoVerify(
-    client, app, seeder: Seeder, utils: UtilActions, db, mocker
+    client, app, seeder: Seeder, utils: UtilActions, db
 ):
-    mail_mock = utils.mock_send_mails_async(mocker)
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     other_user_id = seeder.create_user("other@test.de")
@@ -606,7 +609,12 @@ def test_reference_requests_outgoing_post_autoVerify(
     response = utils.post_json(url, data)
     utils.assert_response_created(response)
     assert "id" in response.json
-    utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
         from project.models import (

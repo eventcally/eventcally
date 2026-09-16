@@ -62,10 +62,15 @@ from .invite_user_to_organization_command import (
     InviteUserToOrganizationCommandResult,
 )
 from .leave_organization_command import LeaveOrganizationCommand
+from .reject_event_reference_request_command import RejectEventReferenceRequestCommand
 from .reject_organization_verification_request_command import (
     RejectOrganizationVerificationRequestCommand,
 )
 from .remove_organization_member_command import RemoveOrganizationMemberCommand
+from .request_event_reference_command import (
+    RequestEventReferenceCommand,
+    RequestEventReferenceCommandResult,
+)
 from .request_organization_deletion_command import RequestOrganizationDeletionCommand
 from .request_organization_verification_command import (
     RequestOrganizationVerificationCommand,
@@ -89,9 +94,16 @@ from .update_member_invitation_command import UpdateMemberInvitationCommand
 from .update_oauth2_client_command import UpdateOAuth2ClientCommand
 from .update_organization_invitation_command import UpdateOrganizationInvitationCommand
 from .update_organization_relation_command import UpdateOrganizationRelationCommand
+from .verify_event_reference_request_command import (
+    VerifyEventReferenceRequestCommand,
+    VerifyEventReferenceRequestCommandResult,
+)
 from .verify_organization_command import (
     VerifyOrganizationCommand,
     VerifyOrganizationCommandResult,
+)
+from .withdraw_event_reference_request_command import (
+    WithdrawEventReferenceRequestCommand,
 )
 from .withdraw_organization_verification_request_command import (
     WithdrawOrganizationVerificationRequestCommand,
@@ -172,4 +184,10 @@ __all__ = [
     "ChangeOrganizationMemberRolesCommand",
     "RemoveOrganizationMemberCommand",
     "LeaveOrganizationCommand",
+    "RequestEventReferenceCommand",
+    "RequestEventReferenceCommandResult",
+    "VerifyEventReferenceRequestCommand",
+    "VerifyEventReferenceRequestCommandResult",
+    "RejectEventReferenceRequestCommand",
+    "WithdrawEventReferenceRequestCommand",
 ]

@@ -93,10 +93,10 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
+from project.application.commands import RequestEventReferenceCommand
 from project.extensions import db
-from project.models import AdminUnit, Event, EventPublicStatus
+from project.models import AdminUnit, Event, EventPublicStatus, EventReferenceRequest
 from project.models.admin_unit import AdminUnitInvitation, AdminUnitRelation
-from project.services import organization_service
 from project.services.admin_unit import (
     get_admin_unit_invitation_query,
     get_admin_unit_query,
@@ -379,11 +379,6 @@ class OrganizationIncomingEventReferenceRequestListResource(BaseResource):
 
 
 class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
-    organization_service: Annotated[
-        organization_service.OrganizationService,
-        Provide["services.organization_service"],
-    ]
-
     @doc(
         summary="List outgoing event reference requests of organization",
         tags=["Organizations", "Event Reference Requests"],
@@ -423,10 +418,15 @@ class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
         if not can_request_event_reference(event):
             abort(401)
 
-        self.organization_service.insert_outgoing_event_reference_request(
-            reference_request
+        cmd = RequestEventReferenceCommand(
+            actor=self.app_context_provider.get_current_actor(),
+            admin_unit_id=reference_request.admin_unit.id,
+            event_id=event.id,
         )
-        return reference_request, 201
+        cmd_result = self.message_bus.handle_command(cmd)
+
+        created = EventReferenceRequest.query.get(cmd_result.id)
+        return created, 201
 
 
 class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResource):

@@ -11,6 +11,7 @@ from project.domain.repositories import (
     AbstractEventOrganizerRepository,
     AbstractEventPlaceRepository,
     AbstractEventReferenceRepository,
+    AbstractEventReferenceRequestRepository,
     AbstractEventRepository,
     AbstractMemberInvitationRepository,
     AbstractOAuth2ClientRepository,
@@ -43,6 +44,7 @@ class AbstractUnitOfWork(abc.ABC):
     events: AbstractEventRepository
     event_organizers: AbstractEventOrganizerRepository
     event_references: AbstractEventReferenceRepository
+    event_reference_requests: AbstractEventReferenceRequestRepository
     event_places: AbstractEventPlaceRepository
     organizations: AbstractOrganizationRepository
     organization_relations: AbstractOrganizationRelationRepository
@@ -86,6 +88,7 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.events)
         self._collect_domain_events_from_repo(self.event_organizers)
         self._collect_domain_events_from_repo(self.event_references)
+        self._collect_domain_events_from_repo(self.event_reference_requests)
         self._collect_domain_events_from_repo(self.event_places)
         self._collect_domain_events_from_repo(self.organizations)
         self._collect_domain_events_from_repo(self.organization_relations)

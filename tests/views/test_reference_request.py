@@ -24,7 +24,6 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     if db_error:
         utils.mock_db_commit(mocker)
 
-    mail_mock = utils.mock_send_mails_async(mocker)
     response = utils.post_form(
         url,
         response,
@@ -40,7 +39,12 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
         "manage_admin_unit.outgoing_event_reference_requests",
         id=admin_unit_id,
     )
-    utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
         from project.models import (
@@ -118,14 +122,13 @@ def test_create_unverifiedAdminUnitNotAllowed(
     utils.assert_response_unauthorized(response)
 
 
-def test_create_autoVerify(client, app, utils: UtilActions, seeder: Seeder, mocker):
+def test_create_autoVerify(client, app, utils: UtilActions, seeder: Seeder):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
     seeder.create_admin_unit_relation(other_admin_unit_id, admin_unit_id, True)
 
-    mail_mock = utils.mock_send_mails_async(mocker)
     url = utils.get_url(
         "manage_admin_unit.outgoing_event_reference_request_create_for_event",
         id=admin_unit_id,
@@ -142,7 +145,12 @@ def test_create_autoVerify(client, app, utils: UtilActions, seeder: Seeder, mock
         "manage_admin_unit.outgoing_event_reference_requests",
         id=admin_unit_id,
     )
-    utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
         from project.models import (

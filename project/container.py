@@ -416,10 +416,6 @@ class Services(containers.DeclarativeContainer):
         services.OrganizationService,
         repo=repos.organization_repo,
         context_provider=context.context_provider,
-        event_reference_request_service=event_reference_request_service,
-        organization_relation_repo=repos.organization_relation_repo,
-        event_repo=repos.event_repo,
-        event_reference_service=event_reference_service,
     )
     role_service = providers.Factory(
         services.RoleService,
@@ -500,6 +496,18 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.DeleteEventReferenceCommand: providers.Factory(
                     command_handlers.DeleteEventReferenceHandler
+                ),
+                commands.RequestEventReferenceCommand: providers.Factory(
+                    command_handlers.RequestEventReferenceHandler
+                ),
+                commands.VerifyEventReferenceRequestCommand: providers.Factory(
+                    command_handlers.VerifyEventReferenceRequestHandler
+                ),
+                commands.RejectEventReferenceRequestCommand: providers.Factory(
+                    command_handlers.RejectEventReferenceRequestHandler
+                ),
+                commands.WithdrawEventReferenceRequestCommand: providers.Factory(
+                    command_handlers.WithdrawEventReferenceRequestHandler
                 ),
                 commands.CreateCustomWidgetCommand: providers.Factory(
                     command_handlers.CreateCustomWidgetHandler
@@ -753,6 +761,26 @@ class Cqrs(containers.DeclarativeContainer):
                     providers.Factory(
                         event_handlers.MemberInvitationCreatedEmailEventHandler,
                         email_service=services.email_service,
+                    )
+                ),
+                events.EventReferenceRequestCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.EventReferenceRequestCreatedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                        event_read_repo=read_repos.event_read_repo,
+                    )
+                ),
+                events.EventReferenceRequestAutoVerified: providers.List(
+                    providers.Factory(
+                        event_handlers.EventReferenceRequestAutoVerifiedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                        event_read_repo=read_repos.event_read_repo,
+                    )
+                ),
+                events.EventReferenceRequestReviewed: providers.List(
+                    providers.Factory(
+                        event_handlers.EventReferenceRequestReviewedEmailEventHandler,
+                        organization_service=services.organization_application_service,
                     )
                 ),
             }

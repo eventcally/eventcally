@@ -1,9 +1,5 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
-from flask import g, make_response
+from flask import g, make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
-from marshmallow import ValidationError
 
 from project.api import add_api_resource
 from project.api.event_reference.schemas import EventReferenceIdSchema
@@ -13,10 +9,15 @@ from project.api.event_reference_request.schemas import (
     EventReferenceRequestVerifyRequestSchema,
 )
 from project.api.resources import BaseResource, require_organization_api_access
-from project.extensions import db
-from project.models import EventReferenceRequest
-from project.models.event_reference_request import EventReferenceRequestReviewStatus
-from project.services.organization_service import OrganizationService
+from project.application.commands import (
+    RejectEventReferenceRequestCommand,
+    VerifyEventReferenceRequestCommand,
+    WithdrawEventReferenceRequestCommand,
+)
+from project.domain.models.enums.event_reference_request_rejection_reason import (
+    EventReferenceRequestRejectionReason,
+)
+from project.models import EventReference, EventReferenceRequest
 
 
 class EventReferenceRequestResource(BaseResource):
@@ -42,18 +43,15 @@ class EventReferenceRequestResource(BaseResource):
         admin_unit_id_path="event.admin_unit_id",
     )
     def delete(self, id):
-        reference_request = g.manage_admin_unit_instance
-        db.session.delete(reference_request)
-        db.session.commit()
+        cmd = WithdrawEventReferenceRequestCommand(
+            id=id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
 
 class EventReferenceRequestVerifyResource(BaseResource):
-    organization_service: Annotated[
-        OrganizationService, Provide["services.organization_service"]
-    ]
-
     @doc(
         summary="Verify event reference request. Returns reference id.",
         tags=["Event Reference Requests"],
@@ -64,17 +62,14 @@ class EventReferenceRequestVerifyResource(BaseResource):
         "organization.incoming_event_reference_requests:write", EventReferenceRequest
     )
     def post(self, id, **kwargs):
-        reference_request = g.manage_admin_unit_instance
-
-        if (
-            reference_request.review_status
-            == EventReferenceRequestReviewStatus.verified
-        ):  # pragma: no cover
-            raise ValidationError("Request already verified")
-
-        reference = self.organization_service.verify_incoming_event_reference_request(
-            reference_request, kwargs.get("rating", 50)
+        cmd = VerifyEventReferenceRequestCommand(
+            id=id,
+            rating=kwargs.get("rating", 50),
+            actor=self.app_context_provider.get_current_actor(),
         )
+        cmd_result = self.message_bus.handle_command(cmd)
+
+        reference = EventReference.query.get(cmd_result.reference_id)
         return reference, 201
 
 
@@ -89,19 +84,19 @@ class EventReferenceRequestRejectResource(BaseResource):
         "organization.incoming_event_reference_requests:write", EventReferenceRequest
     )
     def post(self, id):
-        reference_request = g.manage_admin_unit_instance
-
-        if (
-            reference_request.review_status
-            == EventReferenceRequestReviewStatus.verified
-        ):  # pragma: no cover
-            raise ValidationError("Request already verified")
-
-        reference_request = self.update_instance(
-            EventReferenceRequestRejectRequestSchema, instance=reference_request
+        rejection_reason_name = (request.json or {}).get("rejection_reason")
+        rejection_reason = (
+            EventReferenceRequestRejectionReason[rejection_reason_name]
+            if rejection_reason_name
+            else None
         )
-        reference_request.review_status = EventReferenceRequestReviewStatus.rejected
-        db.session.commit()
+
+        cmd = RejectEventReferenceRequestCommand(
+            id=id,
+            rejection_reason=rejection_reason,
+            actor=self.app_context_provider.get_current_actor(),
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 

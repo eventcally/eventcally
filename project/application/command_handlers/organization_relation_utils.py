@@ -49,20 +49,22 @@ def ensure_organization_relation_exists(
     return organization_relation
 
 
-def verify_organization_relation(
+def get_or_create_organization_relation(
     uow: AbstractUnitOfWork,
     actor: Actor,
     source_admin_unit_id: ObjectId,
     target_admin_unit_id: ObjectId,
+    verify: Optional[bool] = None,
     auto_verify_event_reference_requests: Optional[bool] = None,
 ) -> OrganizationRelationAggregate:
-    """Mark `source_admin_unit` as having verified `target_admin_unit`.
-
-    Get-or-create the relation between the two organizations and set `verify`.
-    Shared by the pure `VerifyOrganizationCommand` and by
-    `ApproveOrganizationVerificationRequestCommand` (which resolves this
-    function's arguments from the approved request before calling it) so both
-    entry points run identical domain logic in their own transaction.
+    """Get-or-create the relation between the two organizations, setting only
+    the flags that were explicitly passed (`None` leaves an existing
+    relation's flag untouched, and defaults a newly-created one's to
+    `False`). Shared by `verify_organization_relation` (always passes
+    `verify=True`) and by the `EventReferenceRequest` auto-verify flows
+    (which only ever touch `auto_verify_event_reference_requests`, never
+    `verify`) so every entry point runs identical get-or-create logic in its
+    own transaction.
     """
     organization_relation = uow.organization_relations.get_by_source_and_target(
         source_admin_unit_id, target_admin_unit_id
@@ -73,7 +75,7 @@ def verify_organization_relation(
             actor=actor,
             source_admin_unit_id=source_admin_unit_id,
             target_admin_unit_id=target_admin_unit_id,
-            verify=True,
+            verify=verify or False,
             auto_verify_event_reference_requests=(
                 auto_verify_event_reference_requests or False
             ),
@@ -82,7 +84,7 @@ def verify_organization_relation(
     else:
         organization_relation.update(
             actor=actor,
-            verify=True,
+            verify=verify if verify is not None else unset,
             auto_verify_event_reference_requests=(
                 auto_verify_event_reference_requests
                 if auto_verify_event_reference_requests is not None
@@ -92,3 +94,28 @@ def verify_organization_relation(
         uow.organization_relations.update(organization_relation)
 
     return organization_relation
+
+
+def verify_organization_relation(
+    uow: AbstractUnitOfWork,
+    actor: Actor,
+    source_admin_unit_id: ObjectId,
+    target_admin_unit_id: ObjectId,
+    auto_verify_event_reference_requests: Optional[bool] = None,
+) -> OrganizationRelationAggregate:
+    """Mark `source_admin_unit` as having verified `target_admin_unit`.
+
+    Thin wrapper around `get_or_create_organization_relation` that always
+    forces `verify=True`. Shared by the pure `VerifyOrganizationCommand` and
+    by `ApproveOrganizationVerificationRequestCommand` (which resolves this
+    function's arguments from the approved request before calling it) so both
+    entry points run identical domain logic in their own transaction.
+    """
+    return get_or_create_organization_relation(
+        uow,
+        actor,
+        source_admin_unit_id,
+        target_admin_unit_id,
+        verify=True,
+        auto_verify_event_reference_requests=auto_verify_event_reference_requests,
+    )

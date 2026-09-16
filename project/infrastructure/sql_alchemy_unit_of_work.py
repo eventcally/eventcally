@@ -12,6 +12,7 @@ from project.infrastructure.repositories import (
     SqlAlchemyEventOrganizerRepository,
     SqlAlchemyEventPlaceRepository,
     SqlAlchemyEventReferenceRepository,
+    SqlAlchemyEventReferenceRequestRepository,
     SqlAlchemyEventRepository,
     SqlAlchemyMemberInvitationRepository,
     SqlAlchemyOAuth2ClientRepository,
@@ -63,6 +64,9 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.events = SqlAlchemyEventRepository(self.session)
         self.event_organizers = SqlAlchemyEventOrganizerRepository(self.session)
         self.event_references = SqlAlchemyEventReferenceRepository(self.session)
+        self.event_reference_requests = SqlAlchemyEventReferenceRequestRepository(
+            self.session
+        )
         self.event_places = SqlAlchemyEventPlaceRepository(self.session)
         self.organizations = SqlAlchemyOrganizationRepository(self.session)
         self.organization_relations = SqlAlchemyOrganizationRelationRepository(

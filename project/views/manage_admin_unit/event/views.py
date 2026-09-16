@@ -5,17 +5,16 @@ from flask import flash, redirect, request, url_for
 from flask_babel import gettext
 
 from project.access import can_request_event_reference_from_admin_unit
+from project.application.commands import RequestEventReferenceCommand
 from project.application.commands.delete_event_command import DeleteEventCommand
 from project.dateutils import get_next_full_hour, get_today
 from project.models import Event, EventPublicStatus
-from project.models.event_reference_request import EventReferenceRequest
 from project.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
     BaseListView,
     BaseUpdateView,
 )
-from project.services import organization_service
 from project.services.admin_unit import (
     get_admin_unit_suggestions_for_reference_requests,
 )
@@ -60,10 +59,6 @@ def prepare_form_reference_requests(form, admin_unit):
 class CreateView(BaseCreateView):
     form_class = CreateForm
     event_service: Annotated[EventService, Provide["services.event_service"]]
-    organization_service: Annotated[
-        organization_service.OrganizationService,
-        Provide["services.organization_service"],
-    ]
     event_category_service: Annotated[
         EventCategoryService,
         Provide["services.event_category_service"],
@@ -139,15 +134,18 @@ class CreateView(BaseCreateView):
             cmd.public_status == EventPublicStatus.published
             and form.reference_request_admin_unit_id.data
         ):
+            admin_unit_names = dict(form.reference_request_admin_unit_id.choices)
             for target_admin_unit_id in form.reference_request_admin_unit_id.data:
-                reference_request = EventReferenceRequest()
-                reference_request.event_id = cmd_result.id
-                reference_request.admin_unit_id = target_admin_unit_id
-
-                self.organization_service.insert_outgoing_event_reference_request(
-                    reference_request
+                reference_cmd = RequestEventReferenceCommand(
+                    actor=self.app_context_provider.get_current_actor(),
+                    admin_unit_id=target_admin_unit_id,
+                    event_id=cmd_result.id,
                 )
-                msg = get_success_text_for_request_creation(reference_request)
+                reference_cmd_result = self.message_bus.handle_command(reference_cmd)
+                msg = get_success_text_for_request_creation(
+                    admin_unit_names.get(target_admin_unit_id),
+                    reference_cmd_result.verified,
+                )
                 flash(msg, "success")
 
         return redirect(self.get_redirect_url(object=cmd_result))

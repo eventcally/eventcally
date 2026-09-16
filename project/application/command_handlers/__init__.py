@@ -37,10 +37,12 @@ from .install_app_handler import InstallAppHandler
 from .invite_organization_handler import InviteOrganizationHandler
 from .invite_user_to_organization_handler import InviteUserToOrganizationHandler
 from .leave_organization_handler import LeaveOrganizationHandler
+from .reject_event_reference_request_handler import RejectEventReferenceRequestHandler
 from .reject_organization_verification_request_handler import (
     RejectOrganizationVerificationRequestHandler,
 )
 from .remove_organization_member_handler import RemoveOrganizationMemberHandler
+from .request_event_reference_handler import RequestEventReferenceHandler
 from .request_organization_deletion_handler import RequestOrganizationDeletionHandler
 from .request_organization_verification_handler import (
     RequestOrganizationVerificationHandler,
@@ -63,7 +65,11 @@ from .update_member_invitation_handler import UpdateMemberInvitationHandler
 from .update_oauth2_client_handler import UpdateOAuth2ClientHandler
 from .update_organization_invitation_handler import UpdateOrganizationInvitationHandler
 from .update_organization_relation_handler import UpdateOrganizationRelationHandler
+from .verify_event_reference_request_handler import VerifyEventReferenceRequestHandler
 from .verify_organization_handler import VerifyOrganizationHandler
+from .withdraw_event_reference_request_handler import (
+    WithdrawEventReferenceRequestHandler,
+)
 from .withdraw_organization_verification_request_handler import (
     WithdrawOrganizationVerificationRequestHandler,
 )
@@ -125,4 +131,8 @@ __all__ = [
     "ChangeOrganizationMemberRolesHandler",
     "RemoveOrganizationMemberHandler",
     "LeaveOrganizationHandler",
+    "RequestEventReferenceHandler",
+    "VerifyEventReferenceRequestHandler",
+    "RejectEventReferenceRequestHandler",
+    "WithdrawEventReferenceRequestHandler",
 ]

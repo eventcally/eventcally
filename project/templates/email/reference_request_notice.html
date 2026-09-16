@@ -2,6 +2,6 @@
 {% from "_macros.html" import render_event_in_email, render_email_button %}
 {% block content %}
 <p>{{ _('There is a new event reference request that needs to be reviewed.') }}</p>
-{{ render_event_in_email(request.event) }}
-{{ render_email_button(url_for('manage_admin_unit.incoming_event_reference_request_review', id=request.admin_unit.id, event_reference_request_id=request.id, _external=True), _('Click here to review the request')) }}
+{{ render_event_in_email(event) }}
+{{ render_email_button(url_for('manage_admin_unit.incoming_event_reference_request_review', id=request.admin_unit_id, event_reference_request_id=request.id, _external=True), _('Click here to review the request')) }}
 {% endblock %}

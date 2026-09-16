@@ -167,6 +167,7 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         self.events = FakeRepo()
         self.event_organizers = FakeRepo()
         self.event_references = FakeEventReferenceRepo()
+        self.event_reference_requests = FakeRepo()
         self.event_places = FakeRepo()
         self.organizations = FakeRepo()
         self.organization_relations = FakeOrganizationRelationRepo()

@@ -1,6 +1,15 @@
 from .abstract_event_handler import AbstractEventHandler
 from .app_installation_webhook_event_handler import AppInstallationWebhookEventHandler
 from .app_webhook_event_handler import AppWebhookEventHandler
+from .event_reference_request_auto_verified_email_event_handler import (
+    EventReferenceRequestAutoVerifiedEmailEventHandler,
+)
+from .event_reference_request_created_email_event_handler import (
+    EventReferenceRequestCreatedEmailEventHandler,
+)
+from .event_reference_request_reviewed_email_event_handler import (
+    EventReferenceRequestReviewedEmailEventHandler,
+)
 from .member_invitation_created_email_event_handler import (
     MemberInvitationCreatedEmailEventHandler,
 )
@@ -34,4 +43,7 @@ __all__ = [
     "OrganizationVerificationRequestReviewedEmailEventHandler",
     "MemberInvitationCreatedEmailEventHandler",
     "OrganizationInvitationCreatedEmailEventHandler",
+    "EventReferenceRequestCreatedEmailEventHandler",
+    "EventReferenceRequestAutoVerifiedEmailEventHandler",
+    "EventReferenceRequestReviewedEmailEventHandler",
 ]
