@@ -47,6 +47,8 @@ class _ConcreteUoW(AbstractUnitOfWork):
         self.users = _MockRepo()
         self.custom_widgets = _MockRepo()
         self.api_keys = _MockRepo()
+        self.oauth2_clients = _MockRepo()
+        self.oauth2_tokens = _MockRepo()
         self.commit_called = False
         self.rollback_called = False
 

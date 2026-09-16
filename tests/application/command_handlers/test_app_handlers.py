@@ -9,7 +9,11 @@ from project.application.command_handlers.update_app_handler import UpdateAppHan
 from project.domain.errors import NotFoundError, UnauthorizedError
 from project.domain.models.aggregates.app_aggregate import AppAggregate
 from project.domain.models.entities.actor import Actor
-from tests.application.conftest import ACTOR, grant_permission
+from tests.application.conftest import (
+    ACTOR,
+    FakeOAuth2ClientCredentialsGenerator,
+    grant_permission,
+)
 
 # ---------------------------------------------------------------------------
 # CreateAppHandler
@@ -17,6 +21,11 @@ from tests.application.conftest import ACTOR, grant_permission
 
 
 class TestCreateAppHandler:
+    def _handler(self):
+        return CreateAppHandler(
+            credentials_generator=FakeOAuth2ClientCredentialsGenerator()
+        )
+
     def test_creates_app_and_returns_result(self, uow):
         grant_permission(uow, 1, "apps:write")
         cmd = commands.CreateAppCommand.model_construct(
@@ -31,12 +40,14 @@ class TestCreateAppHandler:
             webhook=None,
         )
 
-        result = CreateAppHandler().handle(cmd, uow)
+        result = self._handler().handle(cmd, uow)
 
         assert result.id > 0
         created = uow.apps.get(result.id)
         assert created is not None
         assert created.name == "My App"
+        assert created.client_id == "fake-client-id"
+        assert created.client_secret == "fake-client-secret"
 
     def test_actor_without_permission_raises_unauthorized_error(self, uow):
         cmd = commands.CreateAppCommand.model_construct(
@@ -52,7 +63,7 @@ class TestCreateAppHandler:
         )
 
         with pytest.raises(UnauthorizedError):
-            CreateAppHandler().handle(cmd, uow)
+            self._handler().handle(cmd, uow)
 
 
 # ---------------------------------------------------------------------------
@@ -67,6 +78,8 @@ class TestUpdateAppHandler:
             admin_unit_id=1,
             name="Old App",
             app_permissions=["events:read"],
+            client_id="test-client-id",
+            client_secret="test-client-secret",
         )
         uow.apps.add(app)
         return app
@@ -128,6 +141,8 @@ class TestDeleteAppHandler:
             admin_unit_id=1,
             name="To Delete",
             app_permissions=["events:read"],
+            client_id="test-client-id",
+            client_secret="test-client-secret",
         )
         uow.apps.add(app)
         return app

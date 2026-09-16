@@ -31,6 +31,8 @@ def _make_app_with_webhook(uow, webhook=None, app_id=None):
         admin_unit_id=1,
         name="App",
         app_permissions=["events:read"],
+        client_id="test-client-id",
+        client_secret="test-client-secret",
     )
     uow.apps.add(app)
     if app_id is not None:
@@ -108,7 +110,12 @@ class TestAppWebhookEventHandler:
     def test_app_installation_deleted_event_type(self, uow):
         webhook = _make_webhook(enabled=False)
         app = AppAggregate.create(
-            actor=Actor(), admin_unit_id=1, name="App", app_permissions=["x"]
+            actor=Actor(),
+            admin_unit_id=1,
+            name="App",
+            app_permissions=["x"],
+            client_id="test-client-id",
+            client_secret="test-client-secret",
         )
         uow.apps.add(app)
         app.webhook = webhook
@@ -127,7 +134,12 @@ class TestAppWebhookEventHandler:
     def test_app_installation_permissions_updated_event_type(self, uow):
         webhook = _make_webhook(enabled=True)
         app = AppAggregate.create(
-            actor=Actor(), admin_unit_id=1, name="App", app_permissions=["x"]
+            actor=Actor(),
+            admin_unit_id=1,
+            name="App",
+            app_permissions=["x"],
+            client_id="test-client-id",
+            client_secret="test-client-secret",
         )
         uow.apps.add(app)
         app.webhook = webhook

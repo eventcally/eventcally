@@ -11,6 +11,8 @@ from project.domain.repositories import (
     AbstractEventPlaceRepository,
     AbstractEventReferenceRepository,
     AbstractEventRepository,
+    AbstractOAuth2ClientRepository,
+    AbstractOAuth2TokenRepository,
     AbstractOrganizationRelationRepository,
     AbstractOrganizationRepository,
     AbstractOrganizationVerificationRequestRepository,
@@ -53,6 +55,8 @@ class AbstractUnitOfWork(abc.ABC):
     users: AbstractUserRepository
     custom_widgets: AbstractCustomWidgetRepository
     api_keys: AbstractApiKeyRepository
+    oauth2_clients: AbstractOAuth2ClientRepository
+    oauth2_tokens: AbstractOAuth2TokenRepository
 
     def __init__(self):
         self.pending_events: List[Event] = []
@@ -89,6 +93,8 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.users)
         self._collect_domain_events_from_repo(self.custom_widgets)
         self._collect_domain_events_from_repo(self.api_keys)
+        self._collect_domain_events_from_repo(self.oauth2_clients)
+        self._collect_domain_events_from_repo(self.oauth2_tokens)
 
     def _collect_domain_events_from_repo(self, repo):
         for model in repo.seen:

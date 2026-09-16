@@ -173,6 +173,8 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         self.users = FakeUserRepo()
         self.custom_widgets = FakeRepo()
         self.api_keys = FakeApiKeyRepo()
+        self.oauth2_clients = FakeRepo()
+        self.oauth2_tokens = FakeRepo()
         self.committed = False
 
     def _commit(self):
@@ -226,6 +228,15 @@ class FakeApiKeyGenerator:
 
     def generate(self):
         return self.key, self.key_hash
+
+
+class FakeOAuth2ClientCredentialsGenerator:
+    def __init__(self, client_id="fake-client-id", client_secret="fake-client-secret"):
+        self.client_id = client_id
+        self.client_secret = client_secret
+
+    def generate(self):
+        return self.client_id, self.client_secret
 
 
 # ---------------------------------------------------------------------------

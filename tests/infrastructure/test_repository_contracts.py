@@ -6,7 +6,11 @@ from project.domain.errors import DuplicateError
 from project.domain.events.event_place_created import EventPlaceCreated
 from project.domain.events.event_place_updated import EventPlaceUpdated
 from project.domain.models.aggregates.api_key_aggregate import ApiKeyAggregate
+from project.domain.models.aggregates.app_aggregate import AppAggregate
 from project.domain.models.aggregates.event_place_aggregate import EventPlaceAggregate
+from project.domain.models.aggregates.oauth2_client_aggregate import (
+    OAuth2ClientAggregate,
+)
 from project.domain.models.aggregates.organization_app_installation_aggregate import (
     OrganisationAppInstallationAggregate,
 )
@@ -43,11 +47,20 @@ from project.infrastructure.read_repositories.sql_alchemy_webhook_delivery_read_
 from project.infrastructure.repositories.sql_alchemy_api_key_repository import (
     SqlAlchemyApiKeyRepository,
 )
+from project.infrastructure.repositories.sql_alchemy_app_repository import (
+    SqlAlchemyAppRepository,
+)
 from project.infrastructure.repositories.sql_alchemy_event_place_repository import (
     SqlAlchemyEventPlaceRepository,
 )
 from project.infrastructure.repositories.sql_alchemy_event_reference_repository import (
     SqlAlchemyEventReferenceRepository,
+)
+from project.infrastructure.repositories.sql_alchemy_oauth2_client_repository import (
+    SqlAlchemyOAuth2ClientRepository,
+)
+from project.infrastructure.repositories.sql_alchemy_oauth2_token_repository import (
+    SqlAlchemyOAuth2TokenRepository,
 )
 from project.infrastructure.repositories.sql_alchemy_organization_app_installation_repository import (
     SqlAlchemyOrganizationAppInstallationRepository,
@@ -494,6 +507,127 @@ def test_api_key_repository_count_for_owner(app, db, seeder):
 
     assert count_a == 2
     assert count_b == 1
+
+
+def test_oauth2_client_repository_add_get_update_remove_roundtrip(app, db, seeder):
+    user_id = seeder.create_user(email="oauth2-client-owner@test.de")
+
+    with app.app_context():
+        repo = SqlAlchemyOAuth2ClientRepository(db.session)
+        oauth2_client = OAuth2ClientAggregate.create(
+            actor=Actor(user_id=user_id),
+            name="My Client",
+            client_id="client-id",
+            client_secret="client-secret",
+            redirect_uris=["https://example.com/callback"],
+            scope="events:read",
+            user_id=user_id,
+        )
+        repo.add(oauth2_client)
+        db.session.commit()
+
+        loaded = repo.get(oauth2_client.id)
+        loaded_name = loaded.name
+        loaded_client_id = loaded.client_id
+        loaded_client_secret = loaded.client_secret
+        loaded_redirect_uris = loaded.redirect_uris
+        loaded_scope = loaded.scope
+        loaded_user_id = loaded.user_id
+        loaded_admin_unit_id = loaded.admin_unit_id
+
+        loaded.name = "Renamed Client"
+        repo.update(loaded)
+        db.session.commit()
+
+        renamed = repo.get(oauth2_client.id)
+
+        repo.remove(renamed)
+        db.session.commit()
+
+        removed = repo.get(oauth2_client.id)
+
+    assert isinstance(loaded, OAuth2ClientAggregate)
+    assert loaded_name == "My Client"
+    assert loaded_client_id == "client-id"
+    assert loaded_client_secret == "client-secret"
+    assert loaded_redirect_uris == ["https://example.com/callback"]
+    assert loaded_scope == "events:read"
+    assert loaded_user_id == user_id
+    assert loaded_admin_unit_id is None
+    assert renamed.name == "Renamed Client"
+    assert removed is None
+
+
+def test_oauth2_client_repository_excludes_app_rows(app, db, seeder):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    app_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
+    plain_client_id = seeder.insert_default_oauth2_client(admin_unit_id=admin_unit_id)
+
+    with app.app_context():
+        repo = SqlAlchemyOAuth2ClientRepository(db.session)
+
+        loaded_app_as_client = repo.get(app_id)
+        loaded_plain_client = repo.get(plain_client_id)
+
+    assert loaded_app_as_client is None
+    assert loaded_plain_client is not None
+    assert loaded_plain_client.id == plain_client_id
+
+
+def test_app_repository_sets_client_credentials(app, db, seeder):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+
+    with app.app_context():
+        repo = SqlAlchemyAppRepository(db.session)
+        app_aggregate = AppAggregate.create(
+            actor=Actor(user_id=user_id),
+            admin_unit_id=admin_unit_id,
+            name="My App",
+            app_permissions={"events:read"},
+            client_id="app-client-id",
+            client_secret="app-client-secret",
+        )
+        repo.add(app_aggregate)
+        db.session.commit()
+
+        loaded = repo.get(app_aggregate.id)
+
+    assert loaded.client_id == "app-client-id"
+    assert loaded.client_secret == "app-client-secret"
+
+
+def test_oauth2_token_repository_get_and_update_roundtrip(app, db, seeder):
+    user_id = seeder.create_user(email="oauth2-token-owner@test.de")
+
+    with app.app_context():
+        from project.models import OAuth2Token
+
+        token = OAuth2Token()
+        token.user_id = user_id
+        token.access_token = "test-access-token"
+        db.session.add(token)
+        db.session.commit()
+        token_id = token.id
+
+    with app.app_context():
+        repo = SqlAlchemyOAuth2TokenRepository(db.session)
+
+        not_found = repo.get(999999)
+
+        loaded = repo.get(token_id)
+        loaded_user_id = loaded.user_id
+        loaded_is_revoked = loaded.is_revoked
+
+        loaded.is_revoked = True
+        repo.update(loaded)
+        db.session.commit()
+
+        revoked = repo.get(token_id)
+
+    assert not_found is None
+    assert loaded_user_id == user_id
+    assert loaded_is_revoked is False
+    assert revoked.is_revoked is True
 
 
 def test_organization_repository_updates_with_aggregate(app, db, seeder):

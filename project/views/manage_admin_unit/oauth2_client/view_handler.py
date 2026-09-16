@@ -4,18 +4,19 @@ from dependency_injector.wiring import Provide
 from flask_babel import gettext
 
 from project.models import OAuth2Client
-from project.services.oauth2_client import complete_oauth2_client
 from project.services.oauth2_client_service import OAuth2ClientService
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
+from project.views.manage_admin_unit.oauth2_client.views import CreateView
 from project.views.user_blueprint.oauth2_client.displays import ListDisplay, ReadDisplay
 from project.views.user_blueprint.oauth2_client.forms import (
     CreateOAuth2ClientForm,
     DeleteOAuth2ClientForm,
     UpdateOAuth2ClientForm,
 )
+from project.views.user_blueprint.oauth2_client.views import DeleteView, UpdateView
 from project.views.utils import flash_non_match_for_deletion
 
 
@@ -24,15 +25,14 @@ class OAuth2ClientViewHandler(ManageAdminUnitChildViewHandler):
     object_service: Annotated[
         OAuth2ClientService, Provide["services.oauth2_client_service"]
     ]
+    create_view_class = CreateView
     create_form_class = CreateOAuth2ClientForm
+    update_view_class = UpdateView
     update_form_class = UpdateOAuth2ClientForm
+    delete_view_class = DeleteView
     delete_form_class = DeleteOAuth2ClientForm
     read_display_class = ReadDisplay
     list_display_class = ListDisplay
-
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-        complete_oauth2_client(object)
 
     def apply_base_filter(self, query, **kwargs):
         return (

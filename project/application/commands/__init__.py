@@ -24,6 +24,10 @@ from .create_event_reference_command import (
     CreateEventReferenceCommand,
     CreateEventReferenceCommandResult,
 )
+from .create_oauth2_client_command import (
+    CreateOAuth2ClientCommand,
+    CreateOAuth2ClientCommandResult,
+)
 from .create_organization_relation_command import (
     CreateOrganizationRelationCommand,
     CreateOrganizationRelationCommandResult,
@@ -35,6 +39,7 @@ from .delete_event_command import DeleteEventCommand
 from .delete_event_organizer_command import DeleteEventOrganizerCommand
 from .delete_event_place_command import DeleteEventPlaceCommand
 from .delete_event_reference_command import DeleteEventReferenceCommand
+from .delete_oauth2_client_command import DeleteOAuth2ClientCommand
 from .delete_old_webhook_events_command import DeleteOldWebhookEventsCommand
 from .delete_organization_relation_command import DeleteOrganizationRelationCommand
 from .install_app_command import InstallAppCommand, InstallAppCommandResult
@@ -46,6 +51,7 @@ from .request_organization_verification_command import (
     RequestOrganizationVerificationCommand,
     RequestOrganizationVerificationCommandResult,
 )
+from .revoke_oauth2_token_command import RevokeOAuth2TokenCommand
 from .uninstall_app_command import UninstallAppCommand
 from .update_api_key_command import UpdateApiKeyCommand
 from .update_app_command import UpdateAppCommand
@@ -57,6 +63,7 @@ from .update_event_command import UpdateEventCommand
 from .update_event_organizer_command import UpdateEventOrganizerCommand
 from .update_event_place_command import UpdateEventPlaceCommand
 from .update_event_reference_command import UpdateEventReferenceCommand
+from .update_oauth2_client_command import UpdateOAuth2ClientCommand
 from .update_organization_relation_command import UpdateOrganizationRelationCommand
 from .verify_organization_command import (
     VerifyOrganizationCommand,
@@ -99,6 +106,11 @@ __all__ = [
     "UpdateAppCommand",
     "UpdateAppInstallationPermissionsCommand",
     "UninstallAppCommand",
+    "CreateOAuth2ClientCommand",
+    "CreateOAuth2ClientCommandResult",
+    "UpdateOAuth2ClientCommand",
+    "DeleteOAuth2ClientCommand",
+    "RevokeOAuth2TokenCommand",
     "CreateEventCommand",
     "CreateEventCommandResult",
     "UpdateEventCommand",

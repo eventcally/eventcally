@@ -12,6 +12,8 @@ from project.infrastructure.repositories import (
     SqlAlchemyEventPlaceRepository,
     SqlAlchemyEventReferenceRepository,
     SqlAlchemyEventRepository,
+    SqlAlchemyOAuth2ClientRepository,
+    SqlAlchemyOAuth2TokenRepository,
     SqlAlchemyOrganizationRelationRepository,
     SqlAlchemyOrganizationRepository,
     SqlAlchemyOrganizationVerificationRequestRepository,
@@ -79,6 +81,8 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.organization_members = SqlAlchemyOrganizationMemberRepository(self.session)
         self.custom_widgets = SqlAlchemyCustomWidgetRepository(self.session)
         self.api_keys = SqlAlchemyApiKeyRepository(self.session)
+        self.oauth2_clients = SqlAlchemyOAuth2ClientRepository(self.session)
+        self.oauth2_tokens = SqlAlchemyOAuth2TokenRepository(self.session)
 
     def _commit(self):
         try:

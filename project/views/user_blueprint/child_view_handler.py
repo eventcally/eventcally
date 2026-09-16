@@ -22,10 +22,6 @@ class UserChildViewHandler(BaseViewHandler):
         )
         return result
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-        object.user_id = current_user.id
-
     def apply_base_filter(self, query, **kwargs):
         return (
             super()

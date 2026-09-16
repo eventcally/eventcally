@@ -30,6 +30,8 @@ class TestInstallAppHandler:
             admin_unit_id=1,
             name="App",
             app_permissions=["events:read"],
+            client_id="test-client-id",
+            client_secret="test-client-secret",
         )
         uow.apps.add(app)
         return app

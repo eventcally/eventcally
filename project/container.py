@@ -42,6 +42,9 @@ from project.infrastructure.services.requests_webhook_delivery_sender import (
 from project.infrastructure.services.werkzeug_api_key_generator import (
     WerkzeugApiKeyGenerator,
 )
+from project.infrastructure.services.werkzeug_oauth2_client_credentials_generator import (
+    WerkzeugOAuth2ClientCredentialsGenerator,
+)
 from project.infrastructure.sql_alchemy_unit_of_work import SqlAlchemyUnitOfWork
 
 
@@ -69,6 +72,9 @@ class Infrastructure(containers.DeclarativeContainer):
     )
     api_key_generator = providers.Singleton(
         WerkzeugApiKeyGenerator,
+    )
+    oauth2_client_credentials_generator = providers.Singleton(
+        WerkzeugOAuth2ClientCredentialsGenerator,
     )
 
 
@@ -544,7 +550,8 @@ class Cqrs(containers.DeclarativeContainer):
                     command_handlers.DeleteApiKeyHandler
                 ),
                 commands.CreateAppCommand: providers.Factory(
-                    command_handlers.CreateAppHandler
+                    command_handlers.CreateAppHandler,
+                    credentials_generator=infrastructure.oauth2_client_credentials_generator,
                 ),
                 commands.UpdateAppCommand: providers.Factory(
                     command_handlers.UpdateAppHandler
@@ -560,6 +567,19 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.InstallAppCommand: providers.Factory(
                     command_handlers.InstallAppHandler
+                ),
+                commands.CreateOAuth2ClientCommand: providers.Factory(
+                    command_handlers.CreateOAuth2ClientHandler,
+                    credentials_generator=infrastructure.oauth2_client_credentials_generator,
+                ),
+                commands.UpdateOAuth2ClientCommand: providers.Factory(
+                    command_handlers.UpdateOAuth2ClientHandler
+                ),
+                commands.DeleteOAuth2ClientCommand: providers.Factory(
+                    command_handlers.DeleteOAuth2ClientHandler
+                ),
+                commands.RevokeOAuth2TokenCommand: providers.Factory(
+                    command_handlers.RevokeOAuth2TokenHandler
                 ),
                 commands.AttemptToDeliverWebhookCommand: providers.Factory(
                     command_handlers.AttemptToDeliverWebhookHandler,
