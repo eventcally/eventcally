@@ -5,6 +5,7 @@ import pytest
 from project.domain.errors import DuplicateError
 from project.domain.events.event_place_created import EventPlaceCreated
 from project.domain.events.event_place_updated import EventPlaceUpdated
+from project.domain.models.aggregates.api_key_aggregate import ApiKeyAggregate
 from project.domain.models.aggregates.event_place_aggregate import EventPlaceAggregate
 from project.domain.models.aggregates.organization_app_installation_aggregate import (
     OrganisationAppInstallationAggregate,
@@ -38,6 +39,9 @@ from project.infrastructure.read_repositories.sql_alchemy_event_read_repository 
 )
 from project.infrastructure.read_repositories.sql_alchemy_webhook_delivery_read_repository import (
     SqlAlchemyWebhookDeliveryReadRepository,
+)
+from project.infrastructure.repositories.sql_alchemy_api_key_repository import (
+    SqlAlchemyApiKeyRepository,
 )
 from project.infrastructure.repositories.sql_alchemy_event_place_repository import (
     SqlAlchemyEventPlaceRepository,
@@ -405,6 +409,91 @@ def test_user_repository_marks_platform_admins(app, db, seeder):
         loaded_admin = repo.get(admin_user_id)
 
     assert loaded_admin.is_platform_admin is True
+
+
+def test_api_key_repository_add_and_get_round_trip(app, db, seeder):
+    user_id = seeder.create_user(email="api-key-owner@test.de")
+
+    with app.app_context():
+        repo = SqlAlchemyApiKeyRepository(db.session)
+        api_key = ApiKeyAggregate.create(
+            actor=Actor(user_id=user_id),
+            name="My Key",
+            key_hash="hash",
+            user_id=user_id,
+        )
+        repo.add(api_key)
+        db.session.commit()
+
+        loaded = repo.get(api_key.id)
+        loaded_name = loaded.name
+        loaded_key_hash = loaded.key_hash
+        loaded_user_id = loaded.user_id
+        loaded_admin_unit_id = loaded.admin_unit_id
+
+        loaded.name = "Renamed Key"
+        repo.update(loaded)
+        db.session.commit()
+
+        renamed = repo.get(api_key.id)
+
+        repo.remove(renamed)
+        db.session.commit()
+
+        removed = repo.get(api_key.id)
+
+        not_found = repo.get(999999)
+
+    assert isinstance(loaded, ApiKeyAggregate)
+    assert loaded_name == "My Key"
+    assert loaded_key_hash == "hash"
+    assert loaded_user_id == user_id
+    assert loaded_admin_unit_id is None
+    assert renamed.name == "Renamed Key"
+    assert removed is None
+    assert not_found is None
+
+
+def test_api_key_repository_count_for_owner(app, db, seeder):
+    user_a = seeder.create_user(email="api-key-count-a@test.de")
+    user_b = seeder.create_user(email="api-key-count-b@test.de")
+
+    with app.app_context():
+        repo = SqlAlchemyApiKeyRepository(db.session)
+
+        assert repo.count_for_owner(user_a, None) == 0
+
+        repo.add(
+            ApiKeyAggregate.create(
+                actor=Actor(user_id=user_a),
+                name="Key 1",
+                key_hash="hash-1",
+                user_id=user_a,
+            )
+        )
+        repo.add(
+            ApiKeyAggregate.create(
+                actor=Actor(user_id=user_a),
+                name="Key 2",
+                key_hash="hash-2",
+                user_id=user_a,
+            )
+        )
+        repo.add(
+            ApiKeyAggregate.create(
+                actor=Actor(user_id=user_b),
+                name="Other Owner's Key",
+                key_hash="hash-3",
+                user_id=user_b,
+            )
+        )
+        db.session.commit()
+
+        count_a = repo.count_for_owner(user_a, None)
+        count_b = repo.count_for_owner(user_b, None)
+
+    assert count_a == 2
+    assert count_b == 1
 
 
 def test_organization_repository_updates_with_aggregate(app, db, seeder):

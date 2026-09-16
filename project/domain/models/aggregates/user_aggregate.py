@@ -11,3 +11,4 @@ class UserAggregate(BaseAggregate):
     email: str
     locale: Optional[str]
     is_platform_admin: bool = False
+    max_api_keys: int = 1

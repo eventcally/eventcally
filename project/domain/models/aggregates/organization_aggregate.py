@@ -25,6 +25,7 @@ class OrganizationAggregate(BaseAggregate):
     incoming_verification_requests_allowed: bool = False
     incoming_verification_requests_postal_codes: List[str] = []
     location: Optional[LocationValueObject] = None
+    max_api_keys: int = 1
 
     def request_deletion(
         self,

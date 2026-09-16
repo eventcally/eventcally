@@ -1,3 +1,4 @@
+from .abstract_api_key_repository import AbstractApiKeyRepository
 from .abstract_custom_widget_repository import AbstractCustomWidgetRepository
 from .abstract_event_organizer_repository import AbstractEventOrganizerRepository
 from .abstract_event_place_repository import AbstractEventPlaceRepository
@@ -12,6 +13,7 @@ from .abstract_organization_verification_request_repository import (
 )
 
 __all__ = [
+    "AbstractApiKeyRepository",
     "AbstractCustomWidgetRepository",
     "AbstractEventOrganizerRepository",
     "AbstractEventReferenceRepository",

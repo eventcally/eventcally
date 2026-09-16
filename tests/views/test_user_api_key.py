@@ -52,6 +52,28 @@ def test_create(client, app, seeder: Seeder, utils: UtilActions):
     )
 
 
+def test_update(client, seeder: Seeder, utils: UtilActions, app, db):
+    user_id, admin_unit_id = seeder.setup_base(True)
+    api_key_id, key = seeder.insert_default_api_key(user_id)
+
+    url = utils.get_url("user.api_key_update", api_key_id=api_key_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Neuer Name",
+        },
+    )
+
+    with app.app_context():
+        from project.models import ApiKey
+
+        api_key = db.session.get(ApiKey, api_key_id)
+        assert api_key.name == "Neuer Name"
+
+
 def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     user_id, admin_unit_id = seeder.setup_base(True)
     api_key_id, key = seeder.insert_default_api_key(user_id)

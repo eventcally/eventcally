@@ -6,6 +6,7 @@ from sqlalchemy.orm.session import Session
 
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.infrastructure.repositories import (
+    SqlAlchemyApiKeyRepository,
     SqlAlchemyCustomWidgetRepository,
     SqlAlchemyEventOrganizerRepository,
     SqlAlchemyEventPlaceRepository,
@@ -77,6 +78,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         )
         self.organization_members = SqlAlchemyOrganizationMemberRepository(self.session)
         self.custom_widgets = SqlAlchemyCustomWidgetRepository(self.session)
+        self.api_keys = SqlAlchemyApiKeyRepository(self.session)
 
     def _commit(self):
         try:

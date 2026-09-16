@@ -48,3 +48,11 @@ def ensure_actor_has_permission_for_admin_unit(
             f"Actor is not permitted to perform '{permission}' "
             f"for admin unit {admin_unit_id}."
         )
+
+
+def ensure_actor_is_user(actor: Actor, user_id: ObjectId):
+    """Guard for a user-owned resource: the actor must *be* `user_id`, not
+    merely act on its behalf — there is no delegation or platform-admin
+    bypass for a user's own resources, unlike admin-unit permissions."""
+    if actor.user_id != user_id:
+        raise UnauthorizedError(f"Actor is not permitted to act as user {user_id}.")

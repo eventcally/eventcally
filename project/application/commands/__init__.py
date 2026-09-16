@@ -5,6 +5,7 @@ from .approve_organization_verification_request_command import (
 from .attempt_to_deliver_webhook_command import AttemptToDeliverWebhookCommand
 from .base import Command, CommandResult, CommandResultType, CommandWithResult
 from .cancel_organization_deletion_command import CancelOrganizationDeletionCommand
+from .create_api_key_command import CreateApiKeyCommand, CreateApiKeyCommandResult
 from .create_app_command import CreateAppCommand, CreateAppCommandResult
 from .create_custom_widget_command import (
     CreateCustomWidgetCommand,
@@ -27,6 +28,7 @@ from .create_organization_relation_command import (
     CreateOrganizationRelationCommand,
     CreateOrganizationRelationCommandResult,
 )
+from .delete_api_key_command import DeleteApiKeyCommand
 from .delete_app_command import DeleteAppCommand
 from .delete_custom_widget_command import DeleteCustomWidgetCommand
 from .delete_event_command import DeleteEventCommand
@@ -45,6 +47,7 @@ from .request_organization_verification_command import (
     RequestOrganizationVerificationCommandResult,
 )
 from .uninstall_app_command import UninstallAppCommand
+from .update_api_key_command import UpdateApiKeyCommand
 from .update_app_command import UpdateAppCommand
 from .update_app_installation_permissions_command import (
     UpdateAppInstallationPermissionsCommand,
@@ -84,6 +87,10 @@ __all__ = [
     "RequestOrganizationDeletionCommand",
     "CancelOrganizationDeletionCommand",
     "AttemptToDeliverWebhookCommand",
+    "CreateApiKeyCommand",
+    "CreateApiKeyCommandResult",
+    "UpdateApiKeyCommand",
+    "DeleteApiKeyCommand",
     "CreateAppCommand",
     "CreateAppCommandResult",
     "DeleteAppCommand",

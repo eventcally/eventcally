@@ -39,6 +39,9 @@ from project.infrastructure.services.flask_url_provider import FlaskUrlProvider
 from project.infrastructure.services.requests_webhook_delivery_sender import (
     RequestsWebhookDeliverySender,
 )
+from project.infrastructure.services.werkzeug_api_key_generator import (
+    WerkzeugApiKeyGenerator,
+)
 from project.infrastructure.sql_alchemy_unit_of_work import SqlAlchemyUnitOfWork
 
 
@@ -63,6 +66,9 @@ class Infrastructure(containers.DeclarativeContainer):
         RequestsWebhookDeliverySender,
         logger=logger,
         url_provider=url_provider,
+    )
+    api_key_generator = providers.Singleton(
+        WerkzeugApiKeyGenerator,
     )
 
 
@@ -526,6 +532,16 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.CancelOrganizationDeletionCommand: providers.Factory(
                     command_handlers.CancelOrganizationDeletionHandler
+                ),
+                commands.CreateApiKeyCommand: providers.Factory(
+                    command_handlers.CreateApiKeyHandler,
+                    api_key_generator=infrastructure.api_key_generator,
+                ),
+                commands.UpdateApiKeyCommand: providers.Factory(
+                    command_handlers.UpdateApiKeyHandler
+                ),
+                commands.DeleteApiKeyCommand: providers.Factory(
+                    command_handlers.DeleteApiKeyHandler
                 ),
                 commands.CreateAppCommand: providers.Factory(
                     command_handlers.CreateAppHandler

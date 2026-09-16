@@ -140,6 +140,15 @@ class FakeOrgAppInstallationRepo(FakeRepo):
         return list(self._webhook_installations)
 
 
+class FakeApiKeyRepo(FakeRepo):
+    def count_for_owner(self, user_id, admin_unit_id):
+        return sum(
+            1
+            for obj in self._store.values()
+            if obj.user_id == user_id and obj.admin_unit_id == admin_unit_id
+        )
+
+
 # ---------------------------------------------------------------------------
 # Fake Unit of Work
 # ---------------------------------------------------------------------------
@@ -163,6 +172,7 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         self.organization_members = FakeOrganizationMemberRepo()
         self.users = FakeUserRepo()
         self.custom_widgets = FakeRepo()
+        self.api_keys = FakeApiKeyRepo()
         self.committed = False
 
     def _commit(self):
@@ -207,6 +217,15 @@ class FakeAppContextProvider:
 
     def get_current_actor(self):
         return self._actor
+
+
+class FakeApiKeyGenerator:
+    def __init__(self, key="plaintext-key", key_hash="hashed-key"):
+        self.key = key
+        self.key_hash = key_hash
+
+    def generate(self):
+        return self.key, self.key_hash
 
 
 # ---------------------------------------------------------------------------

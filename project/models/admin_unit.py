@@ -190,14 +190,10 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
                 model.incoming_verification_requests_postal_codes or []
             ),
             location=model.location.to_value_object() if model.location else None,
+            max_api_keys=model.max_api_keys,
         )
 
         return aggregate
-
-    def get_number_of_api_keys(self):
-        from project.models.api_key import ApiKey
-
-        return ApiKey.query.filter(ApiKey.admin_unit_id == self.id).count()
 
     @hybrid_property
     def is_verified(self):

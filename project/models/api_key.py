@@ -1,8 +1,10 @@
-from sqlalchemy.event import listens_for
+from __future__ import annotations
 
+from typing import Optional
+
+from project.domain.models.aggregates.api_key_aggregate import ApiKeyAggregate
 from project.extensions import db
 from project.models.api_key_generated import ApiKeyGeneratedMixin
-from project.utils import make_check_violation
 
 
 class ApiKey(db.Model, ApiKeyGeneratedMixin):
@@ -33,13 +35,28 @@ class ApiKey(db.Model, ApiKeyGeneratedMixin):
         self.key_hash = hash_api_key(key)
         return key
 
-    def check_max_count(self):
-        if not self.owner.allows_another_api_key():
-            raise make_check_violation(
-                "The maximum number of API keys has been reached."
-            )
+    @classmethod
+    def from_aggregate(cls, aggregate: ApiKeyAggregate) -> ApiKey:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
 
+    def fill_from_aggregate(self, aggregate: ApiKeyAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.name = aggregate.name
+        self.key_hash = aggregate.key_hash
+        self.user_id = aggregate.user_id
+        self.admin_unit_id = aggregate.admin_unit_id
 
-@listens_for(ApiKey, "before_insert")
-def before_saving_api_key(mapper, connect, self):
-    self.check_max_count()
+    @classmethod
+    def to_aggregate(cls, model: Optional[ApiKey]) -> Optional[ApiKeyAggregate]:
+        if model is None:  # pragma: no cover
+            return None
+
+        return ApiKeyAggregate(
+            id=model.id,
+            name=model.name,
+            key_hash=model.key_hash,
+            user_id=model.user_id,
+            admin_unit_id=model.admin_unit_id,
+        )

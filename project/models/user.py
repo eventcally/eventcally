@@ -37,13 +37,9 @@ class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
             email=model.email,
             locale=model.locale,
             is_platform_admin=any(role.name == "admin" for role in model.roles),
+            max_api_keys=model.max_api_keys,
         )
         return aggregate
-
-    def get_number_of_api_keys(self):
-        from project.models.api_key import ApiKey
-
-        return ApiKey.query.filter(ApiKey.user_id == self.id).count()
 
     @property
     def is_member_of_verified_admin_unit(self):
