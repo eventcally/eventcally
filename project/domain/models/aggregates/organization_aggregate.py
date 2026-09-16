@@ -19,6 +19,7 @@ from project.domain.types.object_id import ObjectId
 
 class OrganizationAggregate(BaseAggregate):
     id: ObjectId
+    name: Optional[str] = None
     deletion_requested_at: Optional[datetime.datetime] = None
     deletion_requested_by_id: Optional[ObjectId] = None
     can_verify_other: bool = False

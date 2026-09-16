@@ -101,6 +101,13 @@ class FakeOrganizationMemberRepo(FakeRepo):
         """Test helper: seed members for a given admin_unit_id."""
         self._members_by_unit[admin_unit_id] = members
 
+    def get_by_admin_unit_and_user(self, admin_unit_id, user_id):
+        for obj in self._store.values():
+            if obj.admin_unit_id == admin_unit_id and obj.user_id == user_id:
+                self.seen.add(obj)
+                return obj
+        return None
+
 
 class FakeUserRepo(FakeRepo):
     def __init__(self):
@@ -175,6 +182,8 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         self.api_keys = FakeApiKeyRepo()
         self.oauth2_clients = FakeRepo()
         self.oauth2_tokens = FakeRepo()
+        self.organization_invitations = FakeRepo()
+        self.member_invitations = FakeRepo()
         self.committed = False
 
     def _commit(self):
@@ -195,6 +204,9 @@ class FakeEmailService:
 
     def send_template_mails_to_users_async(self, users, template, **context):
         self.calls.append({"users": users, "template": template, "context": context})
+
+    def send_template_mail_to_address_async(self, email, template, **context):
+        self.calls.append({"email": email, "template": template, "context": context})
 
 
 class FakeEventDispatcher:

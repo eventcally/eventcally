@@ -21,6 +21,7 @@ from project.views.manage_admin_unit.organization_invitation.forms import (
 )
 from project.views.manage_admin_unit.organization_invitation.views import (
     CreateView,
+    DeleteView,
     UpdateView,
 )
 
@@ -38,6 +39,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     update_view_class = UpdateView
     update_display_class = UpdateDisplay
     delete_form_class = BaseDeleteForm
+    delete_view_class = DeleteView
     list_display_class = ListDisplay
 
     def apply_objects_query_order(self, query, **kwargs):

@@ -25,6 +25,7 @@ from project.api.user.schemas import (
     UserAppInstallationListRequestSchema,
     UserAppInstallationListResponseSchema,
 )
+from project.application.commands import DeclineOrganizationInvitationCommand
 from project.extensions import db
 from project.models import AdminUnitInvitation, Event
 from project.models.admin_unit import AdminUnit, AdminUnitMember
@@ -86,8 +87,10 @@ class UserOrganizationInvitationResource(BaseResource):
         invitation = AdminUnitInvitation.query.get_or_404(id)
         invitation_receiver_or_401(invitation)
 
-        db.session.delete(invitation)
-        db.session.commit()
+        cmd = DeclineOrganizationInvitationCommand(
+            id=id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 

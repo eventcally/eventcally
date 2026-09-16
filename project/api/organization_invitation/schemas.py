@@ -1,14 +1,20 @@
-from marshmallow import fields, validate
+from marshmallow import fields, post_load, validate
 
 from project.api import marshmallow
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
+    IdPlainSchemaMixin,
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
+    PlainBaseSchema,
     SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
+)
+from project.application.commands import (
+    InviteOrganizationCommand,
+    UpdateOrganizationInvitationCommand,
 )
 from project.models import AdminUnitInvitation
 
@@ -95,3 +101,50 @@ class OrganizationInvitationPatchRequestSchema(
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.make_patch_schema()
+
+
+class OrganizationInvitationIdPlainSchema(PlainBaseSchema, IdPlainSchemaMixin):
+    pass
+
+
+class OrganizationInvitationCreateRequestPlainSchema(PlainBaseSchema):
+    email = fields.Email(required=True)
+    organization_name = fields.Str(attribute="admin_unit_name", load_default=None)
+    relation_auto_verify_event_reference_requests = fields.Bool(load_default=False)
+    relation_verify = fields.Bool(load_default=False)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["admin_unit_id"] = self.context.get("admin_unit_id")
+        data["actor"] = self.context.get("actor")
+        return InviteOrganizationCommand(**data)
+
+
+class OrganizationInvitationPutRequestPlainSchema(PlainBaseSchema):
+    organization_name = fields.Str(attribute="admin_unit_name", load_default=None)
+    relation_auto_verify_event_reference_requests = fields.Bool(load_default=False)
+    relation_verify = fields.Bool(load_default=False)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        data["actor"] = self.context.get("actor")
+        return UpdateOrganizationInvitationCommand(**data)
+
+
+class OrganizationInvitationPatchRequestPlainSchema(PlainBaseSchema):
+    organization_name = fields.Str(attribute="admin_unit_name", allow_none=True)
+    relation_auto_verify_event_reference_requests = fields.Bool(allow_none=True)
+    relation_verify = fields.Bool(allow_none=True)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        for key in (
+            "relation_auto_verify_event_reference_requests",
+            "relation_verify",
+        ):
+            if data.get(key) is None:
+                data.pop(key, None)
+        data["id"] = self.context.get("id")
+        data["actor"] = self.context.get("actor")
+        return UpdateOrganizationInvitationCommand(**data)

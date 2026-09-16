@@ -4,8 +4,12 @@ from .abstract_event_organizer_repository import AbstractEventOrganizerRepositor
 from .abstract_event_place_repository import AbstractEventPlaceRepository
 from .abstract_event_reference_repository import AbstractEventReferenceRepository
 from .abstract_event_repository import AbstractEventRepository
+from .abstract_member_invitation_repository import AbstractMemberInvitationRepository
 from .abstract_oauth2_client_repository import AbstractOAuth2ClientRepository
 from .abstract_oauth2_token_repository import AbstractOAuth2TokenRepository
+from .abstract_organization_invitation_repository import (
+    AbstractOrganizationInvitationRepository,
+)
 from .abstract_organization_relation_repository import (
     AbstractOrganizationRelationRepository,
 )
@@ -26,4 +30,6 @@ __all__ = [
     "AbstractOrganizationRelationRepository",
     "AbstractOrganizationRepository",
     "AbstractOrganizationVerificationRequestRepository",
+    "AbstractMemberInvitationRepository",
+    "AbstractOrganizationInvitationRepository",
 ]

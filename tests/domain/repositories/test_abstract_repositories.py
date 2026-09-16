@@ -199,12 +199,22 @@ class _ConcreteOrgAppInstallationRepo(AbstractOrganizationAppInstallationReposit
 
 
 class _ConcreteOrgMemberRepo(AbstractOrganizationMemberRepository):
-    def __init__(self, return_values=None):
+    def __init__(self, return_values=None, member=None):
         super().__init__()
         self._return_values = return_values or []
+        self._member = member
 
     def _get_all_with_permission(self, admin_unit_id, permission):
         return self._return_values
+
+    def _get_by_admin_unit_and_user(self, admin_unit_id, user_id):
+        return self._member
+
+    def _add(self, member):
+        member.id = 1
+
+    def _update(self, member):
+        pass
 
 
 class _ConcreteWebhookDeliveryRepo(AbstractWebhookDeliveryRepository):
@@ -635,6 +645,31 @@ class TestAbstractOrganizationMemberRepository:
         repo = _ConcreteOrgMemberRepo(return_values=[])
         results = repo.get_all_with_permission(admin_unit_id=2, permission="admin")
         assert results == []
+
+    def test_get_by_admin_unit_and_user_adds_to_seen(self):
+        member = _member_agg()
+        repo = _ConcreteOrgMemberRepo(member=member)
+        result = repo.get_by_admin_unit_and_user(admin_unit_id=2, user_id=3)
+        assert result is member
+        assert member in repo.seen
+
+    def test_get_by_admin_unit_and_user_none_does_not_add_to_seen(self):
+        repo = _ConcreteOrgMemberRepo(member=None)
+        result = repo.get_by_admin_unit_and_user(admin_unit_id=2, user_id=3)
+        assert result is None
+        assert len(repo.seen) == 0
+
+    def test_add_adds_to_seen(self):
+        member = _member_agg()
+        repo = _ConcreteOrgMemberRepo()
+        repo.add(member)
+        assert member in repo.seen
+
+    def test_update_adds_to_seen(self):
+        member = _member_agg()
+        repo = _ConcreteOrgMemberRepo()
+        repo.update(member)
+        assert member in repo.seen
 
 
 # ---------------------------------------------------------------------------

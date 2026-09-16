@@ -55,8 +55,9 @@ from project.api.organization.schemas import (
     OrganizationSchema,
 )
 from project.api.organization_invitation.schemas import (
+    OrganizationInvitationCreateRequestPlainSchema,
     OrganizationInvitationCreateRequestSchema,
-    OrganizationInvitationIdSchema,
+    OrganizationInvitationIdPlainSchema,
     OrganizationInvitationListRequestSchema,
     OrganizationInvitationListResponseSchema,
 )
@@ -107,9 +108,6 @@ from project.services.admin_unit import (
 )
 from project.services.event import get_event_dates_query, get_events_query
 from project.services.event_service import EventService
-from project.services.organization_invitation_service import (
-    OrganizationInvitationService,
-)
 from project.services.reference import (
     get_reference_incoming_query,
     get_reference_outgoing_query,
@@ -550,11 +548,6 @@ class OrganizationOutgoingRelationResource(BaseResource):
 
 
 class OrganizationOrganizationInvitationListResource(BaseResource):
-    organization_invitation_service: Annotated[
-        OrganizationInvitationService,
-        Provide["services.organization_invitation_service"],
-    ]
-
     @doc(
         summary="List organization invitations of organization",
         tags=["Organizations", "Organization Invitations"],
@@ -578,17 +571,15 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
         tags=["Organizations", "Organization Invitations"],
     )
     @use_kwargs(OrganizationInvitationCreateRequestSchema, location="json", apply=False)
-    @marshal_with(OrganizationInvitationIdSchema, 201)
+    @marshal_with(OrganizationInvitationIdPlainSchema, 201)
     @require_organization_api_access("organization.organization_invitations:write")
     def post(self, id):
-        admin_unit = g.manage_admin_unit
+        cmd = OrganizationInvitationCreateRequestPlainSchema(
+            context=g.api_command_context
+        ).load(request.json)
+        cmd_result = self.message_bus.handle_command(cmd)
 
-        invitation = self.create_instance(
-            OrganizationInvitationCreateRequestSchema, admin_unit_id=admin_unit.id
-        )
-        self.organization_invitation_service.insert_object(invitation)
-
-        return invitation, 201
+        return cmd_result, 201
 
 
 class OrganizationEventListListResource(BaseResource):

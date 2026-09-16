@@ -8,6 +8,12 @@ from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import aliased
 
+from project.domain.models.aggregates.admin_unit_invitation_aggregate import (
+    AdminUnitInvitationAggregate,
+)
+from project.domain.models.aggregates.admin_unit_member_invitation_aggregate import (
+    AdminUnitMemberInvitationAggregate,
+)
 from project.domain.models.aggregates.organization_aggregate import (
     OrganizationAggregate,
 )
@@ -47,6 +53,20 @@ class AdminUnitMemberRole(db.Model, AdminUnitMemberRoleGeneratedMixin, RoleMixin
 
 class AdminUnitMember(db.Model, AdminUnitMemberGeneratedMixin):
     @classmethod
+    def from_aggregate(cls, aggregate: OrganisationMemberAggregate) -> AdminUnitMember:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
+
+    def fill_from_aggregate(self, aggregate: OrganisationMemberAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.admin_unit_id = aggregate.admin_unit_id
+        self.user_id = aggregate.user_id
+        self.roles = AdminUnitMemberRole.query.filter(
+            AdminUnitMemberRole.name.in_(aggregate.roles)
+        ).all()
+
+    @classmethod
     def to_aggregate(cls, model: AdminUnitMember) -> OrganisationMemberAggregate:
         if model is None:  # pragma: no cover
             return None
@@ -55,6 +75,7 @@ class AdminUnitMember(db.Model, AdminUnitMemberGeneratedMixin):
             id=model.id,
             admin_unit_id=model.admin_unit_id,
             user_id=model.user_id,
+            roles=[role.name for role in model.roles],
         )
 
         return aggregate
@@ -104,11 +125,71 @@ class AdminUnitMember(db.Model, AdminUnitMemberGeneratedMixin):
 
 
 class AdminUnitMemberInvitation(db.Model, AdminUnitMemberInvitationGeneratedMixin):
-    pass
+    @classmethod
+    def from_aggregate(
+        cls, aggregate: AdminUnitMemberInvitationAggregate
+    ) -> AdminUnitMemberInvitation:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
+
+    def fill_from_aggregate(self, aggregate: AdminUnitMemberInvitationAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.admin_unit_id = aggregate.admin_unit_id
+        self.email = aggregate.email
+        self.roles = ",".join(aggregate.roles) if aggregate.roles else None
+
+    @classmethod
+    def to_aggregate(
+        cls, model: Optional[AdminUnitMemberInvitation]
+    ) -> Optional[AdminUnitMemberInvitationAggregate]:
+        if model is None:  # pragma: no cover
+            return None
+
+        return AdminUnitMemberInvitationAggregate(
+            id=model.id,
+            admin_unit_id=model.admin_unit_id,
+            email=model.email,
+            roles=model.roles.split(",") if model.roles else [],
+        )
 
 
 class AdminUnitInvitation(db.Model, AdminUnitInvitationGeneratedMixin):
-    pass
+    @classmethod
+    def from_aggregate(
+        cls, aggregate: AdminUnitInvitationAggregate
+    ) -> AdminUnitInvitation:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
+
+    def fill_from_aggregate(self, aggregate: AdminUnitInvitationAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.admin_unit_id = aggregate.admin_unit_id
+        self.email = aggregate.email
+        self.admin_unit_name = aggregate.admin_unit_name
+        self.relation_auto_verify_event_reference_requests = (
+            aggregate.relation_auto_verify_event_reference_requests
+        )
+        self.relation_verify = aggregate.relation_verify
+
+    @classmethod
+    def to_aggregate(
+        cls, model: Optional[AdminUnitInvitation]
+    ) -> Optional[AdminUnitInvitationAggregate]:
+        if model is None:  # pragma: no cover
+            return None
+
+        return AdminUnitInvitationAggregate(
+            id=model.id,
+            admin_unit_id=model.admin_unit_id,
+            email=model.email,
+            admin_unit_name=model.admin_unit_name,
+            relation_auto_verify_event_reference_requests=(
+                model.relation_auto_verify_event_reference_requests
+            ),
+            relation_verify=model.relation_verify,
+        )
 
 
 class AdminUnitRelation(db.Model, AdminUnitRelationGeneratedMixin):
@@ -182,6 +263,7 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
 
         aggregate = OrganizationAggregate(
             id=model.id,
+            name=model.name,
             deletion_requested_at=model.deletion_requested_at,
             deletion_requested_by_id=model.deletion_requested_by_id,
             can_verify_other=model.can_verify_other,

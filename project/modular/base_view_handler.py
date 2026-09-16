@@ -95,9 +95,6 @@ class BaseViewHandler:
     def get_object_by_id(self, object_id):
         return self.object_service.get_object_by_id(object_id)
 
-    def insert_object(self, object):
-        self.object_service.insert_object(object)
-
     def save_object(self, object):
         self.object_service.update_object(object)
 

@@ -5,6 +5,16 @@ import pytest
 from project.domain.errors import DuplicateError
 from project.domain.events.event_place_created import EventPlaceCreated
 from project.domain.events.event_place_updated import EventPlaceUpdated
+from project.domain.events.member_invitation_created import MemberInvitationCreated
+from project.domain.events.organization_invitation_created import (
+    OrganizationInvitationCreated,
+)
+from project.domain.models.aggregates.admin_unit_invitation_aggregate import (
+    AdminUnitInvitationAggregate,
+)
+from project.domain.models.aggregates.admin_unit_member_invitation_aggregate import (
+    AdminUnitMemberInvitationAggregate,
+)
 from project.domain.models.aggregates.api_key_aggregate import ApiKeyAggregate
 from project.domain.models.aggregates.app_aggregate import AppAggregate
 from project.domain.models.aggregates.event_place_aggregate import EventPlaceAggregate
@@ -13,6 +23,9 @@ from project.domain.models.aggregates.oauth2_client_aggregate import (
 )
 from project.domain.models.aggregates.organization_app_installation_aggregate import (
     OrganisationAppInstallationAggregate,
+)
+from project.domain.models.aggregates.organization_member_aggregate import (
+    OrganisationMemberAggregate,
 )
 from project.domain.models.aggregates.organization_relation_aggregate import (
     OrganizationRelationAggregate,
@@ -56,6 +69,9 @@ from project.infrastructure.repositories.sql_alchemy_event_place_repository impo
 from project.infrastructure.repositories.sql_alchemy_event_reference_repository import (
     SqlAlchemyEventReferenceRepository,
 )
+from project.infrastructure.repositories.sql_alchemy_member_invitation_repository import (
+    SqlAlchemyMemberInvitationRepository,
+)
 from project.infrastructure.repositories.sql_alchemy_oauth2_client_repository import (
     SqlAlchemyOAuth2ClientRepository,
 )
@@ -64,6 +80,12 @@ from project.infrastructure.repositories.sql_alchemy_oauth2_token_repository imp
 )
 from project.infrastructure.repositories.sql_alchemy_organization_app_installation_repository import (
     SqlAlchemyOrganizationAppInstallationRepository,
+)
+from project.infrastructure.repositories.sql_alchemy_organization_invitation_repository import (
+    SqlAlchemyOrganizationInvitationRepository,
+)
+from project.infrastructure.repositories.sql_alchemy_organization_member_repository import (
+    SqlAlchemyOrganizationMemberRepository,
 )
 from project.infrastructure.repositories.sql_alchemy_organization_relation_repository import (
     SqlAlchemyOrganizationRelationRepository,
@@ -918,3 +940,129 @@ def test_organization_verification_request_repository_duplicate_raises_duplicate
 
         with pytest.raises(DuplicateError):
             repo.add(second)
+
+
+def test_organization_invitation_repository_add_get_update_remove_roundtrip(
+    app, db, seeder: Seeder
+):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+
+    with app.app_context():
+        repo = SqlAlchemyOrganizationInvitationRepository(db.session)
+        invitation = AdminUnitInvitationAggregate.create(
+            actor=Actor(user_id=1),
+            admin_unit_id=admin_unit_id,
+            email="invitee@test.de",
+            admin_unit_name="Future Org",
+        )
+
+        repo.add(invitation)
+        db.session.commit()
+
+        created_event = invitation.get_first_domain_event_by_type(
+            OrganizationInvitationCreated
+        )
+        assert created_event.id == invitation.id
+
+        loaded = repo.get(invitation.id)
+
+        assert isinstance(loaded, AdminUnitInvitationAggregate)
+        assert loaded.id == invitation.id
+        assert loaded.admin_unit_id == admin_unit_id
+        assert loaded.email == "invitee@test.de"
+        assert loaded.admin_unit_name == "Future Org"
+        assert loaded.relation_verify is False
+        assert loaded in repo.seen
+
+        loaded.update(actor=Actor(user_id=1), relation_verify=True)
+        repo.update(loaded)
+        db.session.commit()
+
+        updated = repo.get(invitation.id)
+        assert updated.relation_verify is True
+        assert updated.admin_unit_name == "Future Org"
+
+        repo.remove(updated)
+        db.session.commit()
+
+        assert repo.get(invitation.id) is None
+
+
+def test_member_invitation_repository_add_get_update_remove_roundtrip(
+    app, db, seeder: Seeder
+):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+
+    with app.app_context():
+        repo = SqlAlchemyMemberInvitationRepository(db.session)
+        invitation = AdminUnitMemberInvitationAggregate.create(
+            actor=Actor(user_id=1),
+            admin_unit_id=admin_unit_id,
+            email="invitee@test.de",
+            roles=["admin"],
+        )
+
+        repo.add(invitation)
+        db.session.commit()
+
+        created_event = invitation.get_first_domain_event_by_type(
+            MemberInvitationCreated
+        )
+        assert created_event.id == invitation.id
+
+        loaded = repo.get(invitation.id)
+
+        assert isinstance(loaded, AdminUnitMemberInvitationAggregate)
+        assert loaded.id == invitation.id
+        assert loaded.admin_unit_id == admin_unit_id
+        assert loaded.email == "invitee@test.de"
+        assert loaded.roles == ["admin"]
+        assert loaded in repo.seen
+
+        loaded.update(actor=Actor(user_id=1), roles=["event_verifier"])
+        repo.update(loaded)
+        db.session.commit()
+
+        updated = repo.get(invitation.id)
+        assert updated.roles == ["event_verifier"]
+
+        repo.remove(updated)
+        db.session.commit()
+
+        assert repo.get(invitation.id) is None
+
+
+def test_organization_member_repository_add_get_update_roundtrip_with_roles(
+    app, db, seeder: Seeder
+):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    # A fresh user with no existing AdminUnitMember row for this admin unit —
+    # setup_base's own user is auto-added as an admin member by
+    # insert_admin_unit_for_user, which would make get_by_admin_unit_and_user
+    # non-None from the start.
+    new_user_id = seeder.create_user(email="new-member@test.de")
+
+    with app.app_context():
+        repo = SqlAlchemyOrganizationMemberRepository(db.session)
+
+        assert repo.get_by_admin_unit_and_user(admin_unit_id, new_user_id) is None
+
+        member = OrganisationMemberAggregate.create(
+            admin_unit_id=admin_unit_id, user_id=new_user_id, roles=["admin"]
+        )
+        repo.add(member)
+        db.session.commit()
+
+        loaded = repo.get_by_admin_unit_and_user(admin_unit_id, new_user_id)
+        assert isinstance(loaded, OrganisationMemberAggregate)
+        assert loaded.roles == ["admin"]
+        assert loaded in repo.seen
+
+        loaded.add_roles(["event_verifier", "not-a-real-role"])
+        repo.update(loaded)
+        db.session.commit()
+
+        updated = repo.get_by_admin_unit_and_user(admin_unit_id, new_user_id)
+        # "not-a-real-role" doesn't resolve to an AdminUnitMemberRole row and
+        # is silently dropped, mirroring add_roles_to_admin_unit_member.
+        assert updated.roles == ["admin", "event_verifier"]

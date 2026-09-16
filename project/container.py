@@ -585,6 +585,33 @@ class Cqrs(containers.DeclarativeContainer):
                     command_handlers.AttemptToDeliverWebhookHandler,
                     webhook_delivery_service=services.webhook_delivery_service,
                 ),
+                commands.InviteOrganizationCommand: providers.Factory(
+                    command_handlers.InviteOrganizationHandler
+                ),
+                commands.UpdateOrganizationInvitationCommand: providers.Factory(
+                    command_handlers.UpdateOrganizationInvitationHandler
+                ),
+                commands.RevokeOrganizationInvitationCommand: providers.Factory(
+                    command_handlers.RevokeOrganizationInvitationHandler
+                ),
+                commands.DeclineOrganizationInvitationCommand: providers.Factory(
+                    command_handlers.DeclineOrganizationInvitationHandler
+                ),
+                commands.InviteUserToOrganizationCommand: providers.Factory(
+                    command_handlers.InviteUserToOrganizationHandler
+                ),
+                commands.UpdateMemberInvitationCommand: providers.Factory(
+                    command_handlers.UpdateMemberInvitationHandler
+                ),
+                commands.RevokeMemberInvitationCommand: providers.Factory(
+                    command_handlers.RevokeMemberInvitationHandler
+                ),
+                commands.AcceptMemberInvitationCommand: providers.Factory(
+                    command_handlers.AcceptMemberInvitationHandler
+                ),
+                commands.DeclineMemberInvitationCommand: providers.Factory(
+                    command_handlers.DeclineMemberInvitationHandler
+                ),
             }
         ),
     )
@@ -694,6 +721,18 @@ class Cqrs(containers.DeclarativeContainer):
                     providers.Factory(
                         event_handlers.OrganizationVerificationRequestReviewedEmailEventHandler,
                         organization_service=services.organization_application_service,
+                    )
+                ),
+                events.OrganizationInvitationCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.OrganizationInvitationCreatedEmailEventHandler,
+                        email_service=services.email_service,
+                    )
+                ),
+                events.MemberInvitationCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.MemberInvitationCreatedEmailEventHandler,
+                        email_service=services.email_service,
                     )
                 ),
             }

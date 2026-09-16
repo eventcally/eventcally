@@ -4,8 +4,14 @@ from .sql_alchemy_event_organizer_repository import SqlAlchemyEventOrganizerRepo
 from .sql_alchemy_event_place_repository import SqlAlchemyEventPlaceRepository
 from .sql_alchemy_event_reference_repository import SqlAlchemyEventReferenceRepository
 from .sql_alchemy_event_repository import SqlAlchemyEventRepository
+from .sql_alchemy_member_invitation_repository import (
+    SqlAlchemyMemberInvitationRepository,
+)
 from .sql_alchemy_oauth2_client_repository import SqlAlchemyOAuth2ClientRepository
 from .sql_alchemy_oauth2_token_repository import SqlAlchemyOAuth2TokenRepository
+from .sql_alchemy_organization_invitation_repository import (
+    SqlAlchemyOrganizationInvitationRepository,
+)
 from .sql_alchemy_organization_relation_repository import (
     SqlAlchemyOrganizationRelationRepository,
 )
@@ -26,4 +32,6 @@ __all__ = [
     "SqlAlchemyOrganizationRelationRepository",
     "SqlAlchemyOrganizationRepository",
     "SqlAlchemyOrganizationVerificationRequestRepository",
+    "SqlAlchemyMemberInvitationRepository",
+    "SqlAlchemyOrganizationInvitationRepository",
 ]

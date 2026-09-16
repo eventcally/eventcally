@@ -49,6 +49,8 @@ class _ConcreteUoW(AbstractUnitOfWork):
         self.api_keys = _MockRepo()
         self.oauth2_clients = _MockRepo()
         self.oauth2_tokens = _MockRepo()
+        self.organization_invitations = _MockRepo()
+        self.member_invitations = _MockRepo()
         self.commit_called = False
         self.rollback_called = False
 

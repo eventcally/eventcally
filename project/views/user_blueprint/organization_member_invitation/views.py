@@ -2,13 +2,15 @@ from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 from flask_security import current_user
 
-from project.extensions import db
+from project.application.commands import (
+    AcceptMemberInvitationCommand,
+    DeclineMemberInvitationCommand,
+)
 from project.modular.base_views import BaseObjectFormView
-from project.services.admin_unit import add_user_to_admin_unit_with_roles
 from project.views.user_blueprint.organization_member_invitation.forms import (
     NegotiateForm,
 )
-from project.views.utils import handle_db_error
+from project.views.utils import handle_base_error
 
 
 class NegotiateView(BaseObjectFormView):
@@ -22,26 +24,27 @@ class NegotiateView(BaseObjectFormView):
             name=invitation.admin_unit.name,
         )
 
-    @handle_db_error
+    @handle_base_error
     def dispatch_validated_form(self, form, object, **kwargs):
         invitation = object
+        actor = self.app_context_provider.get_current_actor()
 
         if form.accept.data:
             if current_user.deletion_requested_at:  # pragma: no cover
                 flash(gettext("Your account is scheduled for deletion."), "danger")
                 return redirect(url_for("main.profile"))
 
-            message = gettext("Invitation successfully accepted")
-            roles = invitation.roles.split(",")
-            add_user_to_admin_unit_with_roles(
-                current_user, invitation.admin_unit, roles
+            self.message_bus.handle_command(
+                AcceptMemberInvitationCommand(id=invitation.id, actor=actor)
             )
+            message = gettext("Invitation successfully accepted")
             url = url_for("main.manage_admin_unit", id=invitation.admin_unit_id)
         else:
+            self.message_bus.handle_command(
+                DeclineMemberInvitationCommand(id=invitation.id, actor=actor)
+            )
             message = gettext("Invitation successfully declined")
             url = url_for("main.manage")
 
-        db.session.delete(invitation)
-        db.session.commit()
         flash(message, "success")
         return redirect(url)

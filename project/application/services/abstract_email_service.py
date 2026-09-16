@@ -45,6 +45,10 @@ class AbstractEmailService(abc.ABC):
 
         return self.send_mails_with_signatures_async(signatures)
 
+    def send_template_mail_to_address_async(self, email, template, **context):
+        subject, body, html = self._render_mail_body_with_subject(template, **context)
+        return self.send_mails_with_signatures_async([(email, subject, body, html)])
+
     def _get_subject_for_template(self, template):
         if self.mail_template_subject_mapping is None:
 

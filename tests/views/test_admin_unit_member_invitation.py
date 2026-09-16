@@ -4,8 +4,7 @@ from tests.seeder import Seeder
 from tests.utils import UtilActions
 
 
-def test_create(client, app, utils: UtilActions, seeder, mocker):
-    mail_mock = utils.mock_send_mails_async(mocker)
+def test_create(client, app, utils: UtilActions, seeder):
     _, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url(
@@ -37,11 +36,19 @@ def test_create(client, app, utils: UtilActions, seeder, mocker):
         assert invitation.roles == "admin"
         assert invitation is not None
 
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
     invitation_url = utils.get_url(
         "main.admin_unit_member_invitation",
         id=invitation.id,
     )
-    utils.assert_send_mail_called(mail_mock, "invited@test.de", invitation_url)
+
+    assert len(app.test_email_service.sent_emails) == 1
+    sent_email = app.test_email_service.sent_emails[0]
+    assert sent_email["recipient"] == "invited@test.de"
+    assert invitation_url in sent_email["body"]
+    assert invitation_url in sent_email["html"]
 
 
 def test_update(client, app, utils: UtilActions, seeder: Seeder):
@@ -66,6 +73,35 @@ def test_update(client, app, utils: UtilActions, seeder: Seeder):
     utils.assert_response_redirect(
         response, "manage_admin_unit.organization_member_invitations", id=admin_unit_id
     )
+
+
+def test_delete(client, app, db, utils: UtilActions, seeder: Seeder):
+    user_id, admin_unit_id = seeder.setup_base()
+    invitation_id = seeder.create_invitation(admin_unit_id, "invited@test.de")
+
+    url = utils.get_url(
+        "manage_admin_unit.organization_member_invitation_delete",
+        id=admin_unit_id,
+        organization_member_invitation_id=invitation_id,
+    )
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "submit": "Submit",
+        },
+    )
+
+    utils.assert_response_redirect(
+        response, "manage_admin_unit.organization_member_invitations", id=admin_unit_id
+    )
+
+    with app.app_context():
+        from project.models import AdminUnitMemberInvitation
+
+        assert db.session.get(AdminUnitMemberInvitation, invitation_id) is None
 
 
 def test_list(client, app, db, utils: UtilActions, seeder):

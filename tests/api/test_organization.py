@@ -899,8 +899,7 @@ def test_organization_invitation_list(client, seeder: Seeder, utils: UtilActions
     assert response.json["items"][0]["organization_name"] == "Invited Organization"
 
 
-def test_organization_invitation_list_post(client, app, seeder, db, utils, mocker):
-    mail_mock = utils.mock_send_mails_async(mocker)
+def test_organization_invitation_list_post(client, app, seeder, db, utils):
     _, admin_unit_id = seeder.setup_api_access()
 
     url = utils.get_url(
@@ -930,11 +929,19 @@ def test_organization_invitation_list_post(client, app, seeder, db, utils, mocke
         assert invitation.relation_auto_verify_event_reference_requests
         assert invitation.relation_verify
 
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
     invitation_url = utils.get_url(
         "main.user_organization_invitation",
         id=invitation_id,
     )
-    utils.assert_send_mail_called(mail_mock, "invited@test.de", invitation_url)
+
+    assert len(app.test_email_service.sent_emails) == 1
+    sent_email = app.test_email_service.sent_emails[0]
+    assert sent_email["recipient"] == "invited@test.de"
+    assert invitation_url in sent_email["body"]
+    assert invitation_url in sent_email["html"]
 
 
 def test_custom_widgets(client, seeder: Seeder, utils: UtilActions):

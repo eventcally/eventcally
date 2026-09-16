@@ -11,8 +11,10 @@ from project.domain.repositories import (
     AbstractEventPlaceRepository,
     AbstractEventReferenceRepository,
     AbstractEventRepository,
+    AbstractMemberInvitationRepository,
     AbstractOAuth2ClientRepository,
     AbstractOAuth2TokenRepository,
+    AbstractOrganizationInvitationRepository,
     AbstractOrganizationRelationRepository,
     AbstractOrganizationRepository,
     AbstractOrganizationVerificationRequestRepository,
@@ -57,6 +59,8 @@ class AbstractUnitOfWork(abc.ABC):
     api_keys: AbstractApiKeyRepository
     oauth2_clients: AbstractOAuth2ClientRepository
     oauth2_tokens: AbstractOAuth2TokenRepository
+    organization_invitations: AbstractOrganizationInvitationRepository
+    member_invitations: AbstractMemberInvitationRepository
 
     def __init__(self):
         self.pending_events: List[Event] = []
@@ -95,6 +99,8 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.api_keys)
         self._collect_domain_events_from_repo(self.oauth2_clients)
         self._collect_domain_events_from_repo(self.oauth2_tokens)
+        self._collect_domain_events_from_repo(self.organization_invitations)
+        self._collect_domain_events_from_repo(self.member_invitations)
 
     def _collect_domain_events_from_repo(self, repo):
         for model in repo.seen:
