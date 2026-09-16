@@ -24,12 +24,22 @@ class AbstractOrganizationMemberRepository(abc.ABC):
             self.seen.add(member)
         return member
 
+    def get(self, object_id: ObjectId) -> Optional[OrganisationMemberAggregate]:
+        member = self._get(object_id)
+        if member:
+            self.seen.add(member)
+        return member
+
     def add(self, member: OrganisationMemberAggregate):
         self._add(member)
         self.seen.add(member)
 
     def update(self, member: OrganisationMemberAggregate):
         self._update(member)
+        self.seen.add(member)
+
+    def remove(self, member: OrganisationMemberAggregate):
+        self._remove(member)
         self.seen.add(member)
 
     @abc.abstractmethod
@@ -45,9 +55,19 @@ class AbstractOrganizationMemberRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def _get(
+        self, object_id: ObjectId
+    ) -> Optional[OrganisationMemberAggregate]:  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def _add(self, member: OrganisationMemberAggregate):  # pragma: no cover
         raise NotImplementedError
 
     @abc.abstractmethod
     def _update(self, member: OrganisationMemberAggregate):  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _remove(self, member: OrganisationMemberAggregate):  # pragma: no cover
         raise NotImplementedError

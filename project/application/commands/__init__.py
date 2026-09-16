@@ -6,6 +6,9 @@ from .approve_organization_verification_request_command import (
 from .attempt_to_deliver_webhook_command import AttemptToDeliverWebhookCommand
 from .base import Command, CommandResult, CommandResultType, CommandWithResult
 from .cancel_organization_deletion_command import CancelOrganizationDeletionCommand
+from .change_organization_member_roles_command import (
+    ChangeOrganizationMemberRolesCommand,
+)
 from .create_api_key_command import CreateApiKeyCommand, CreateApiKeyCommandResult
 from .create_app_command import CreateAppCommand, CreateAppCommandResult
 from .create_custom_widget_command import (
@@ -56,9 +59,11 @@ from .invite_user_to_organization_command import (
     InviteUserToOrganizationCommand,
     InviteUserToOrganizationCommandResult,
 )
+from .leave_organization_command import LeaveOrganizationCommand
 from .reject_organization_verification_request_command import (
     RejectOrganizationVerificationRequestCommand,
 )
+from .remove_organization_member_command import RemoveOrganizationMemberCommand
 from .request_organization_deletion_command import RequestOrganizationDeletionCommand
 from .request_organization_verification_command import (
     RequestOrganizationVerificationCommand,
@@ -159,4 +164,7 @@ __all__ = [
     "RevokeMemberInvitationCommand",
     "AcceptMemberInvitationCommand",
     "DeclineMemberInvitationCommand",
+    "ChangeOrganizationMemberRolesCommand",
+    "RemoveOrganizationMemberCommand",
+    "LeaveOrganizationCommand",
 ]

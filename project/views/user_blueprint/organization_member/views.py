@@ -2,9 +2,10 @@ from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 
 from project.access import can_current_user_delete_member
+from project.application.commands import LeaveOrganizationCommand
 from project.modular.base_views import BaseDeleteView
 from project.views.user_blueprint.organization_member.forms import DeleteForm
-from project.views.utils import flash_non_match_for_deletion
+from project.views.utils import flash_non_match_for_deletion, handle_base_error
 
 
 class DeleteView(BaseDeleteView):
@@ -45,3 +46,12 @@ class DeleteView(BaseDeleteView):
 
     def get_success_text(self, object, form):
         return lazy_gettext("Organization successfully left")
+
+    @handle_base_error
+    def dispatch_validated_form_deletable(self, form, object, **kwargs):
+        cmd = LeaveOrganizationCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url())

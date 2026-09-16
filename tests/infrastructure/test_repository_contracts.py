@@ -1066,3 +1066,14 @@ def test_organization_member_repository_add_get_update_roundtrip_with_roles(
         # "not-a-real-role" doesn't resolve to an AdminUnitMemberRole row and
         # is silently dropped, mirroring add_roles_to_admin_unit_member.
         assert updated.roles == ["admin", "event_verifier"]
+
+        loaded_by_id = repo.get(updated.id)
+        assert isinstance(loaded_by_id, OrganisationMemberAggregate)
+        assert loaded_by_id.id == updated.id
+        assert loaded_by_id.roles == ["admin", "event_verifier"]
+
+        repo.remove(loaded_by_id)
+        db.session.commit()
+
+        assert repo.get(updated.id) is None
+        assert repo.get_by_admin_unit_and_user(admin_unit_id, new_user_id) is None

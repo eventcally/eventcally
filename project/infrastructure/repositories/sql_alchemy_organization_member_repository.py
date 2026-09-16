@@ -40,6 +40,13 @@ class SqlAlchemyOrganizationMemberRepository(AbstractOrganizationMemberRepositor
             admin_unit_id=admin_unit_id, user_id=user_id
         ).first()
 
+    def _get(self, object_id: int) -> Optional[OrganisationMemberAggregate]:
+        model = self._get_model(object_id)
+        return AdminUnitMember.to_aggregate(model) if model else None
+
+    def _get_model(self, object_id: int) -> Optional[AdminUnitMember]:
+        return AdminUnitMember.query.filter_by(id=object_id).first()
+
     def _add(self, member: OrganisationMemberAggregate):
         model = AdminUnitMember.from_aggregate(member)
         self.session.add(model)
@@ -48,9 +55,11 @@ class SqlAlchemyOrganizationMemberRepository(AbstractOrganizationMemberRepositor
         member.id = model.id
 
     def _update(self, member: OrganisationMemberAggregate):
-        model = self._get_model_by_admin_unit_and_user(
-            member.admin_unit_id, member.user_id
-        )
+        model = self._get_model(member.id)
         model.fill_from_aggregate(member)
         self.session.merge(model)
         flush(self.session)
+
+    def _remove(self, member: OrganisationMemberAggregate):
+        model = self._get_model(member.id)
+        self.session.delete(model)

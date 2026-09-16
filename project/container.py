@@ -612,6 +612,15 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.DeclineMemberInvitationCommand: providers.Factory(
                     command_handlers.DeclineMemberInvitationHandler
                 ),
+                commands.ChangeOrganizationMemberRolesCommand: providers.Factory(
+                    command_handlers.ChangeOrganizationMemberRolesHandler
+                ),
+                commands.RemoveOrganizationMemberCommand: providers.Factory(
+                    command_handlers.RemoveOrganizationMemberHandler
+                ),
+                commands.LeaveOrganizationCommand: providers.Factory(
+                    command_handlers.LeaveOrganizationHandler
+                ),
             }
         ),
     )

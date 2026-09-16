@@ -210,10 +210,16 @@ class _ConcreteOrgMemberRepo(AbstractOrganizationMemberRepository):
     def _get_by_admin_unit_and_user(self, admin_unit_id, user_id):
         return self._member
 
+    def _get(self, object_id):
+        return self._member
+
     def _add(self, member):
         member.id = 1
 
     def _update(self, member):
+        pass
+
+    def _remove(self, member):
         pass
 
 

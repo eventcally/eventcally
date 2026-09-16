@@ -5,6 +5,9 @@ from .approve_organization_verification_request_handler import (
 )
 from .attempt_to_deliver_webhook_command_handler import AttemptToDeliverWebhookHandler
 from .cancel_organization_deletion_handler import CancelOrganizationDeletionHandler
+from .change_organization_member_roles_handler import (
+    ChangeOrganizationMemberRolesHandler,
+)
 from .create_api_key_handler import CreateApiKeyHandler
 from .create_app_handler import CreateAppHandler
 from .create_custom_widget_handler import CreateCustomWidgetHandler
@@ -31,9 +34,11 @@ from .delete_organization_relation_handler import DeleteOrganizationRelationHand
 from .install_app_handler import InstallAppHandler
 from .invite_organization_handler import InviteOrganizationHandler
 from .invite_user_to_organization_handler import InviteUserToOrganizationHandler
+from .leave_organization_handler import LeaveOrganizationHandler
 from .reject_organization_verification_request_handler import (
     RejectOrganizationVerificationRequestHandler,
 )
+from .remove_organization_member_handler import RemoveOrganizationMemberHandler
 from .request_organization_deletion_handler import RequestOrganizationDeletionHandler
 from .request_organization_verification_handler import (
     RequestOrganizationVerificationHandler,
@@ -113,4 +118,7 @@ __all__ = [
     "RevokeMemberInvitationHandler",
     "AcceptMemberInvitationHandler",
     "DeclineMemberInvitationHandler",
+    "ChangeOrganizationMemberRolesHandler",
+    "RemoveOrganizationMemberHandler",
+    "LeaveOrganizationHandler",
 ]
