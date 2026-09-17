@@ -319,9 +319,6 @@ class BaseFormView(BaseObjectView):
     def create_form(self, **kwargs):
         return self.form_class(**kwargs)
 
-    def create_object(self):
-        return self.model()
-
     def complete_object(self, object, form):
         self.handler.complete_object(object, form)
 
@@ -403,17 +400,6 @@ class BaseCreateView(BaseFormView):
             flash_errors(form)
 
         return self.render_template(form=form, object=object)
-
-    @handle_base_error
-    @handle_db_error
-    def dispatch_validated_form(self, form, object, **kwargs):
-        object = self.create_object()
-        form.populate_obj(object)
-
-        self.complete_object(object, form)
-        self.insert_object(object, form)
-        self.flash_success_message(object, form)
-        return redirect(self.get_redirect_url(object=object))
 
 
 class BaseObjectFormView(BaseFormView):

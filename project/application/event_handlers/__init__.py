@@ -16,6 +16,9 @@ from .member_invitation_created_email_event_handler import (
 from .organization_deletion_requested_email_event_handler import (
     OrganizationDeletionRequestedEmailEventHandler,
 )
+from .organization_invitation_accepted_email_event_handler import (
+    OrganizationInvitationAcceptedEmailEventHandler,
+)
 from .organization_invitation_created_email_event_handler import (
     OrganizationInvitationCreatedEmailEventHandler,
 )
@@ -43,6 +46,7 @@ __all__ = [
     "OrganizationVerificationRequestReviewedEmailEventHandler",
     "MemberInvitationCreatedEmailEventHandler",
     "OrganizationInvitationCreatedEmailEventHandler",
+    "OrganizationInvitationAcceptedEmailEventHandler",
     "EventReferenceRequestCreatedEmailEventHandler",
     "EventReferenceRequestAutoVerifiedEmailEventHandler",
     "EventReferenceRequestReviewedEmailEventHandler",

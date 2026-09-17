@@ -1,6 +1,6 @@
 {% extends "email/layout.html" %}
 {% from "_macros.html" import render_email_button %}
 {% block content %}
-<p>{{ _('%(email)s accepted your invitation to create the organisation %(admin_unit_name)s.', email=invitation.email, admin_unit_name=admin_unit.name) }}</p>
-{{ render_email_button(url_for('manage_admin_unit.outgoing_organization_relation_update', id=invitation.admin_unit_id, organization_relation_id=relation.id, _external=True), _('Click here to view the relation')) }}
+<p>{{ _('%(email)s accepted your invitation to create the organisation %(admin_unit_name)s.', email=email, admin_unit_name=new_admin_unit_name) }}</p>
+{{ render_email_button(url_for('manage_admin_unit.outgoing_organization_relation_update', id=inviting_admin_unit_id, organization_relation_id=relation_id, _external=True), _('Click here to view the relation')) }}
 {% endblock %}

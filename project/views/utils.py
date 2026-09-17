@@ -16,7 +16,6 @@ from wtforms import FormField
 from project.access import (
     get_admin_unit_for_manage,
     get_admin_unit_for_manage_or_404,
-    get_admin_unit_members_with_permission,
     get_admin_units_for_manage,
     has_access,
 )
@@ -245,15 +244,6 @@ def render_mail_body_with_subject(template, **context):
         body, html = render_mail_body(template, **context)
 
     return subject, body, html
-
-
-def send_template_mails_to_admin_unit_members_async(
-    admin_unit_id, permissions, template, **context
-):
-    members = get_admin_unit_members_with_permission(admin_unit_id, permissions)
-    users = [member.user for member in members]
-
-    return send_template_mails_to_users_async(users, template, **context)
 
 
 def send_template_mails_to_users_async(users, template, **context):

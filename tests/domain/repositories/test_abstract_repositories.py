@@ -151,6 +151,9 @@ class _ConcreteOrganizationRepo(AbstractOrganizationRepository):
         super().__init__()
         self._return_value = return_value
 
+    def _add(self, org):
+        pass
+
     def _get(self, oid):
         return self._return_value
 

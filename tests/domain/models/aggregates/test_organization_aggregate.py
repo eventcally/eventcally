@@ -79,3 +79,55 @@ class TestOrganizationAggregateDefaults:
     def test_deletion_requested_by_id_defaults_none(self):
         org = OrganizationAggregate(id=1)
         assert org.deletion_requested_by_id is None
+
+
+class TestOrganizationAggregateCreate:
+    def test_creates_instance_with_required_fields(self, actor):
+        org = OrganizationAggregate.create(
+            actor=actor, name="My Crew", short_name="my_crew"
+        )
+        assert org.id == -1
+        assert org.name == "My Crew"
+        assert org.short_name == "my_crew"
+        assert org.description is None
+        assert org.url is None
+        assert org.email is None
+        assert org.phone is None
+        assert org.fax is None
+        assert org.location is None
+        assert org.logo is None
+
+    def test_creates_instance_with_all_fields(self, actor):
+        from project.domain.models.entities.image_entity import ImageEntity
+        from project.domain.models.value_objects.location_value_object import (
+            LocationValueObject,
+        )
+
+        location = LocationValueObject(city="Goslar")
+        logo = ImageEntity(id=-1, hash=-1, data=b"x", encoding_format="image/png")
+
+        org = OrganizationAggregate.create(
+            actor=actor,
+            name="My Crew",
+            short_name="my_crew",
+            description="A crew",
+            url="https://example.com",
+            email="crew@example.com",
+            phone="123",
+            fax="456",
+            location=location,
+            logo=logo,
+        )
+        assert org.description == "A crew"
+        assert org.url == "https://example.com"
+        assert org.email == "crew@example.com"
+        assert org.phone == "123"
+        assert org.fax == "456"
+        assert org.location == location
+        assert org.logo == logo
+
+    def test_create_raises_no_domain_event(self, actor):
+        org = OrganizationAggregate.create(
+            actor=actor, name="My Crew", short_name="my_crew"
+        )
+        assert org.domain_events == []

@@ -17,6 +17,7 @@ from .create_event_organizer_handler import CreateEventOrganizerHandler
 from .create_event_place_handler import CreateEventPlaceHandler
 from .create_event_reference_handler import CreateEventReferenceHandler
 from .create_oauth2_client_handler import CreateOAuth2ClientHandler
+from .create_organization_handler import CreateOrganizationHandler
 from .create_organization_relation_handler import CreateOrganizationRelationHandler
 from .decline_member_invitation_handler import DeclineMemberInvitationHandler
 from .decline_organization_invitation_handler import (
@@ -111,6 +112,7 @@ __all__ = [
     "CreateEventReferenceHandler",
     "UpdateEventReferenceHandler",
     "DeleteEventReferenceHandler",
+    "CreateOrganizationHandler",
     "CreateOrganizationRelationHandler",
     "UpdateOrganizationRelationHandler",
     "DeleteOrganizationRelationHandler",

@@ -1,6 +1,3 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import flash, redirect, request, url_for
 from flask_babel import gettext, lazy_gettext
 from flask_security import current_user
@@ -8,24 +5,17 @@ from flask_security import current_user
 from project.access import can_create_admin_unit, has_access
 from project.models import AdminUnitInvitation
 from project.modular.base_views import BaseCreateView
-from project.services.admin_unit import add_relation, insert_admin_unit_for_user
-from project.services.organization_invitation_service import (
-    OrganizationInvitationService,
-)
 from project.utils import strings_are_equal_ignoring_case
 from project.views.manage_blueprint.organization.forms import CreateForm
 from project.views.utils import (
     flash_message,
     get_current_admin_unit,
+    handle_base_error,
     permission_missing,
 )
 
 
 class CreateView(BaseCreateView):
-    organization_invitation_service: Annotated[
-        OrganizationInvitationService,
-        Provide["services.organization_invitation_service"],
-    ]
     form_class = CreateForm
 
     def check_access(self, **kwargs):
@@ -103,23 +93,16 @@ class CreateView(BaseCreateView):
 
         return form
 
-    def insert_object(self, admin_unit, form):
-        _, _, self.relation = insert_admin_unit_for_user(
-            admin_unit, current_user, self.invitation
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        cmd = form.create_create_command(
+            invitation=self.invitation,
+            current_admin_unit=self.current_admin_unit,
+            embedded_relation_enabled=self.embedded_relation_enabled,
         )
+        cmd_result = self.message_bus.handle_command(cmd)
 
-        if self.embedded_relation_enabled:
-            self.relation = add_relation(admin_unit, form, self.current_admin_unit)
-
-        if self.invitation and self.relation:
-            self.organization_invitation_service.send_admin_unit_invitation_accepted_mails(
-                self.invitation, self.relation, admin_unit
-            )
-
-        if self.invitation:
-            self.organization_invitation_service.delete_object(self.invitation)
-
-        if not self.relation or not self.relation.verify:
+        if not cmd_result.verified:
             flash(
                 gettext(
                     "The organization is not verified. Events are therefore not publicly visible."
@@ -127,13 +110,16 @@ class CreateView(BaseCreateView):
                 "warning",
             )
 
-    def get_redirect_url(self, object, **kwargs):
-        admin_unit = object
+        self.flash_success_message(cmd_result, form)
+        return redirect(self.get_redirect_url(object=cmd_result))
 
-        if self.relation and self.relation.verify:
-            return url_for("main.manage_admin_unit", id=admin_unit.id)
+    def get_redirect_url(self, object, **kwargs):
+        cmd_result = object
+
+        if cmd_result.verified:
+            return url_for("main.manage_admin_unit", id=cmd_result.id)
 
         return url_for(
             "manage_admin_unit.outgoing_organization_verification_requests",
-            id=admin_unit.id,
+            id=cmd_result.id,
         )

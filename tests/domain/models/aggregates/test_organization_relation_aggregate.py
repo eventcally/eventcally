@@ -1,6 +1,9 @@
 import pytest
 
 from project.domain.errors import ConstraintError
+from project.domain.events.organization_invitation_accepted import (
+    OrganizationInvitationAccepted,
+)
 from project.domain.models.aggregates.organization_relation_aggregate import (
     OrganizationRelationAggregate,
 )
@@ -51,6 +54,45 @@ class TestOrganizationRelationAggregateCreate:
             OrganizationRelationAggregate.create(
                 actor=actor, source_admin_unit_id=1, target_admin_unit_id=1
             )
+
+    def test_no_event_without_invitation_acceptance_info(self, actor):
+        relation = OrganizationRelationAggregate.create(
+            actor=actor, source_admin_unit_id=1, target_admin_unit_id=2
+        )
+        assert relation.domain_events == []
+
+    def test_no_event_with_only_email(self, actor):
+        relation = OrganizationRelationAggregate.create(
+            actor=actor,
+            source_admin_unit_id=1,
+            target_admin_unit_id=2,
+            accepted_invitation_email="invited@test.de",
+        )
+        assert relation.domain_events == []
+
+    def test_no_event_with_only_name(self, actor):
+        relation = OrganizationRelationAggregate.create(
+            actor=actor,
+            source_admin_unit_id=1,
+            target_admin_unit_id=2,
+            target_admin_unit_name="New Org",
+        )
+        assert relation.domain_events == []
+
+    def test_appends_invitation_accepted_event_when_both_given(self, actor):
+        relation = OrganizationRelationAggregate.create(
+            actor=actor,
+            source_admin_unit_id=1,
+            target_admin_unit_id=2,
+            accepted_invitation_email="invited@test.de",
+            target_admin_unit_name="New Org",
+        )
+        event = relation.get_first_domain_event_by_type(OrganizationInvitationAccepted)
+        assert event is not None
+        assert event.inviting_admin_unit_id == 1
+        assert event.new_admin_unit_id == 2
+        assert event.new_admin_unit_name == "New Org"
+        assert event.accepting_user_email == "invited@test.de"
 
 
 class TestOrganizationRelationAggregateUpdate:

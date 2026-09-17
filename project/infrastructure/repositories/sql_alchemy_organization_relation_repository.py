@@ -1,5 +1,8 @@
 from typing import Optional
 
+from project.domain.events.organization_invitation_accepted import (
+    OrganizationInvitationAccepted,
+)
 from project.domain.models.aggregates.organization_relation_aggregate import (
     OrganizationRelationAggregate,
 )
@@ -19,6 +22,12 @@ class SqlAlchemyOrganizationRelationRepository(AbstractOrganizationRelationRepos
         flush(self.session)
 
         organization_relation.id = model.id
+
+        domain_event = organization_relation.get_first_domain_event_by_type(
+            OrganizationInvitationAccepted
+        )
+        if domain_event:
+            domain_event.id = model.id
 
     def _update(self, organization_relation: OrganizationRelationAggregate):
         model = self._get_model(organization_relation.id)

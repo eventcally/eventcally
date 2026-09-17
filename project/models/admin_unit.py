@@ -39,6 +39,8 @@ from project.models.admin_unit_relation_generated import AdminUnitRelationGenera
 from project.models.association_tables.admin_unit_member_roles_members_generated import (
     AdminUnitMemberRolesMembersGeneratedMixin,
 )
+from project.models.image import Image
+from project.models.location import Location
 from project.models.mixins.api_key_owner_mixin import ApiKeyOwnerMixin
 from project.utils import make_check_violation
 
@@ -249,10 +251,37 @@ def before_saving_admin_unit_relation(mapper, connect, self):
 
 
 class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
+    @classmethod
+    def from_aggregate(cls, aggregate: OrganizationAggregate) -> AdminUnit:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
+
     def fill_from_aggregate(self, aggregate: OrganizationAggregate):
         self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.name = aggregate.name
+        self.short_name = aggregate.short_name
+        self.description = aggregate.description
+        self.url = aggregate.url
+        self.email = aggregate.email
+        self.phone = aggregate.phone
+        self.fax = aggregate.fax
         self.deletion_requested_at = aggregate.deletion_requested_at
         self.deletion_requested_by_id = aggregate.deletion_requested_by_id
+
+        if aggregate.location:
+            if not self.location:
+                self.location = Location()
+            self.location.fill_from_value_object(aggregate.location)
+        else:
+            self.location = None
+
+        if aggregate.logo:
+            if not self.logo:
+                self.logo = Image()
+            self.logo.fill_from_entity(aggregate.logo)
+        else:
+            self.logo = None
 
     @classmethod
     def to_aggregate(
@@ -264,6 +293,12 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
         aggregate = OrganizationAggregate(
             id=model.id,
             name=model.name,
+            short_name=model.short_name,
+            description=model.description,
+            url=model.url,
+            email=model.email,
+            phone=model.phone,
+            fax=model.fax,
             deletion_requested_at=model.deletion_requested_at,
             deletion_requested_by_id=model.deletion_requested_by_id,
             can_verify_other=model.can_verify_other,
@@ -271,7 +306,11 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
             incoming_verification_requests_postal_codes=list(
                 model.incoming_verification_requests_postal_codes or []
             ),
+            incoming_reference_requests_allowed=bool(
+                model.incoming_reference_requests_allowed
+            ),
             location=model.location.to_value_object() if model.location else None,
+            logo=model.logo.to_entity() if model.logo else None,
             max_api_keys=model.max_api_keys,
         )
 

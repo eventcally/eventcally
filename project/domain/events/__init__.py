@@ -20,6 +20,7 @@ from .event_updated import EventUpdated
 from .member_invitation_created import MemberInvitationCreated
 from .organization_deletion_cancelled import OrganizationDeletionCancelled
 from .organization_deletion_requested import OrganizationDeletionRequested
+from .organization_invitation_accepted import OrganizationInvitationAccepted
 from .organization_invitation_created import OrganizationInvitationCreated
 from .organization_verification_request_reviewed import (
     OrganizationVerificationRequestReviewed,
@@ -51,6 +52,7 @@ __all__ = [
     "OrganizationVerificationRequestReviewed",
     "MemberInvitationCreated",
     "OrganizationInvitationCreated",
+    "OrganizationInvitationAccepted",
     "EventReferenceRequestCreated",
     "EventReferenceRequestAutoVerified",
     "EventReferenceRequestReviewed",

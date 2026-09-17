@@ -518,6 +518,9 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.DeleteCustomWidgetCommand: providers.Factory(
                     command_handlers.DeleteCustomWidgetHandler
                 ),
+                commands.CreateOrganizationCommand: providers.Factory(
+                    command_handlers.CreateOrganizationHandler
+                ),
                 commands.CreateOrganizationRelationCommand: providers.Factory(
                     command_handlers.CreateOrganizationRelationHandler
                 ),
@@ -755,6 +758,12 @@ class Cqrs(containers.DeclarativeContainer):
                     providers.Factory(
                         event_handlers.OrganizationInvitationCreatedEmailEventHandler,
                         email_service=services.email_service,
+                    )
+                ),
+                events.OrganizationInvitationAccepted: providers.List(
+                    providers.Factory(
+                        event_handlers.OrganizationInvitationAcceptedEmailEventHandler,
+                        organization_service=services.organization_application_service,
                     )
                 ),
                 events.MemberInvitationCreated: providers.List(
