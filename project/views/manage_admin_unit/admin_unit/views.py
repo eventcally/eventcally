@@ -12,7 +12,11 @@ from project.views.manage_admin_unit.admin_unit.forms import (
     UpdateForm,
     UpdateWidgetForm,
 )
-from project.views.utils import current_admin_unit, flash_non_match_for_deletion
+from project.views.utils import (
+    current_admin_unit,
+    flash_non_match_for_deletion,
+    handle_base_error,
+)
 
 
 class UpdateView(BaseUpdateView):
@@ -29,6 +33,13 @@ class UpdateView(BaseUpdateView):
             del form.verfication_requests
 
         return form
+
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        cmd = form.create_update_command(object.id)
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
 
     def get_redirect_url(self, **kwargs):
         return url_for(request.endpoint)
@@ -56,17 +67,12 @@ class UpdateWidgetView(BaseUpdateView):
 
         return form
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-
-        if form.widget_background_color.data == widget_default_background_color:
-            object.widget_background_color = None
-
-        if form.widget_primary_color.data == widget_default_primary_color:
-            object.widget_primary_color = None
-
-        if form.widget_link_color.data == widget_default_primary_color:
-            object.widget_link_color = None
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        cmd = form.create_update_command(object.id)
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
 
     def get_success_text(self, object, form):
         return gettext("Settings successfully updated")

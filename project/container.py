@@ -521,6 +521,12 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.CreateOrganizationCommand: providers.Factory(
                     command_handlers.CreateOrganizationHandler
                 ),
+                commands.UpdateOrganizationCommand: providers.Factory(
+                    command_handlers.UpdateOrganizationHandler
+                ),
+                commands.UpdateOrganizationWidgetSettingsCommand: providers.Factory(
+                    command_handlers.UpdateOrganizationWidgetSettingsHandler
+                ),
                 commands.CreateOrganizationRelationCommand: providers.Factory(
                     command_handlers.CreateOrganizationRelationHandler
                 ),

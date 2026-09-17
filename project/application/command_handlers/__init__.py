@@ -64,8 +64,12 @@ from .update_event_place_handler import UpdateEventPlaceHandler
 from .update_event_reference_handler import UpdateEventReferenceHandler
 from .update_member_invitation_handler import UpdateMemberInvitationHandler
 from .update_oauth2_client_handler import UpdateOAuth2ClientHandler
+from .update_organization_handler import UpdateOrganizationHandler
 from .update_organization_invitation_handler import UpdateOrganizationInvitationHandler
 from .update_organization_relation_handler import UpdateOrganizationRelationHandler
+from .update_organization_widget_settings_handler import (
+    UpdateOrganizationWidgetSettingsHandler,
+)
 from .verify_event_reference_request_handler import VerifyEventReferenceRequestHandler
 from .verify_organization_handler import VerifyOrganizationHandler
 from .withdraw_event_reference_request_handler import (
@@ -114,6 +118,8 @@ __all__ = [
     "DeleteEventReferenceHandler",
     "CreateOrganizationHandler",
     "CreateOrganizationRelationHandler",
+    "UpdateOrganizationHandler",
+    "UpdateOrganizationWidgetSettingsHandler",
     "UpdateOrganizationRelationHandler",
     "DeleteOrganizationRelationHandler",
     "RequestOrganizationVerificationHandler",

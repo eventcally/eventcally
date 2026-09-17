@@ -1,10 +1,5 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
-
 from project.application.commands import RequestOrganizationDeletionCommand
 from project.models.admin_unit import AdminUnit
-from project.services.organization_service import OrganizationService
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.admin_unit.views import (
     CancelDeletionView,
@@ -20,9 +15,6 @@ from project.views.utils import current_admin_unit
 
 class ViewHandler(ManageAdminUnitBaseViewHandler):
     model = AdminUnit
-    object_service: Annotated[
-        OrganizationService, Provide["services.organization_service"]
-    ]
     create_view_class = None
     read_view_class = None
     update_view_class = None

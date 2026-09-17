@@ -6,6 +6,10 @@ from wtforms.fields import BooleanField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp
 from wtforms.widgets import ColorInput
 
+from project.application.commands import (
+    UpdateOrganizationCommand,
+    UpdateOrganizationWidgetSettingsCommand,
+)
 from project.forms.common import Base64ImageForm, StrictGooglePlaceLocationForm
 from project.forms.widgets import HTML5StringField
 from project.models import Image, Location
@@ -13,6 +17,7 @@ from project.models.admin_unit import AdminUnit
 from project.modular.base_form import BaseForm, BaseUpdateForm
 from project.modular.fields import SelectMultipleTagField, VirtualFormField
 from project.modular.widgets import AjaxValidationWidget
+from project.utils import widget_default_background_color, widget_default_primary_color
 from project.views.utils import current_admin_unit
 
 
@@ -137,13 +142,35 @@ class UpdateForm(BaseUpdateForm, AdminUnitFormMixin):
         VerificationRequestsForm, lazy_gettext("Verification requests")
     )
 
-    def populate_obj(self, obj):
-        for name, field in self._fields.items():
-            if name == "location" and not obj.location:  # pragma: no cover
-                obj.location = Location()
-            elif name == "logo" and not obj.logo:
-                obj.logo = Image()
-            field.populate_obj(obj, name)
+    def create_update_command(self, admin_unit_id: int) -> UpdateOrganizationCommand:
+        kwargs = dict(
+            actor=self.get_current_actor(),
+            id=admin_unit_id,
+            name=self.name.data,
+            short_name=self.short_name.data,
+            description=self.description.data,
+            location=self.location.form.create_update_command(),
+            logo=self.logo.form.create_update_command(),
+            url=self.additional_information.form.url.data,
+            email=self.additional_information.form.email.data,
+            phone=self.additional_information.form.phone.data,
+            fax=self.additional_information.form.fax.data,
+        )
+
+        verification_requests_field = getattr(self, "verfication_requests", None)
+        if verification_requests_field is not None:
+            verification_requests_form = verification_requests_field.form
+            kwargs["incoming_verification_requests_allowed"] = (
+                verification_requests_form.incoming_verification_requests_allowed.data
+            )
+            kwargs["incoming_verification_requests_text"] = (
+                verification_requests_form.incoming_verification_requests_text.data
+            )
+            kwargs["incoming_verification_requests_postal_codes"] = (
+                verification_requests_form.incoming_verification_requests_postal_codes.data
+            )
+
+        return UpdateOrganizationCommand(**kwargs)
 
 
 class UpdateWidgetForm(BaseUpdateForm):
@@ -168,6 +195,30 @@ class UpdateWidgetForm(BaseUpdateForm):
         widget=ColorInput(),
         validators=[Optional()],
     )
+
+    def create_update_command(
+        self, admin_unit_id: int
+    ) -> UpdateOrganizationWidgetSettingsCommand:
+        widget_background_color = self.widget_background_color.data
+        if widget_background_color == widget_default_background_color:
+            widget_background_color = None
+
+        widget_primary_color = self.widget_primary_color.data
+        if widget_primary_color == widget_default_primary_color:
+            widget_primary_color = None
+
+        widget_link_color = self.widget_link_color.data
+        if widget_link_color == widget_default_primary_color:
+            widget_link_color = None
+
+        return UpdateOrganizationWidgetSettingsCommand(
+            actor=self.get_current_actor(),
+            id=admin_unit_id,
+            widget_font=self.widget_font.data,
+            widget_background_color=widget_background_color,
+            widget_primary_color=widget_primary_color,
+            widget_link_color=widget_link_color,
+        )
 
 
 class RequestDeletionForm(BaseForm):

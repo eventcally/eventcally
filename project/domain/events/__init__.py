@@ -22,6 +22,7 @@ from .organization_deletion_cancelled import OrganizationDeletionCancelled
 from .organization_deletion_requested import OrganizationDeletionRequested
 from .organization_invitation_accepted import OrganizationInvitationAccepted
 from .organization_invitation_created import OrganizationInvitationCreated
+from .organization_updated import OrganizationUpdated
 from .organization_verification_request_reviewed import (
     OrganizationVerificationRequestReviewed,
 )
@@ -40,6 +41,7 @@ __all__ = [
     "EventPlaceUpdated",
     "OrganizationDeletionRequested",
     "OrganizationDeletionCancelled",
+    "OrganizationUpdated",
     "WebhookDeliveryCreated",
     "AppInstallationCreated",
     "AppInstallationPermissionsUpdated",

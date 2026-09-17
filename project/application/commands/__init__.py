@@ -96,8 +96,12 @@ from .update_event_place_command import UpdateEventPlaceCommand
 from .update_event_reference_command import UpdateEventReferenceCommand
 from .update_member_invitation_command import UpdateMemberInvitationCommand
 from .update_oauth2_client_command import UpdateOAuth2ClientCommand
+from .update_organization_command import UpdateOrganizationCommand
 from .update_organization_invitation_command import UpdateOrganizationInvitationCommand
 from .update_organization_relation_command import UpdateOrganizationRelationCommand
+from .update_organization_widget_settings_command import (
+    UpdateOrganizationWidgetSettingsCommand,
+)
 from .verify_event_reference_request_command import (
     VerifyEventReferenceRequestCommand,
     VerifyEventReferenceRequestCommandResult,
@@ -166,6 +170,8 @@ __all__ = [
     "CreateOrganizationCommandResult",
     "CreateOrganizationRelationCommand",
     "CreateOrganizationRelationCommandResult",
+    "UpdateOrganizationCommand",
+    "UpdateOrganizationWidgetSettingsCommand",
     "UpdateOrganizationRelationCommand",
     "DeleteOrganizationRelationCommand",
     "RequestOrganizationVerificationCommand",

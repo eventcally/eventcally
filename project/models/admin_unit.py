@@ -268,6 +268,19 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
         self.fax = aggregate.fax
         self.deletion_requested_at = aggregate.deletion_requested_at
         self.deletion_requested_by_id = aggregate.deletion_requested_by_id
+        self.incoming_verification_requests_allowed = (
+            aggregate.incoming_verification_requests_allowed
+        )
+        self.incoming_verification_requests_text = (
+            aggregate.incoming_verification_requests_text
+        )
+        self.incoming_verification_requests_postal_codes = (
+            aggregate.incoming_verification_requests_postal_codes
+        )
+        self.widget_font = aggregate.widget_font
+        self.widget_background_color = aggregate.widget_background_color
+        self.widget_primary_color = aggregate.widget_primary_color
+        self.widget_link_color = aggregate.widget_link_color
 
         if aggregate.location:
             if not self.location:
@@ -303,6 +316,7 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
             deletion_requested_by_id=model.deletion_requested_by_id,
             can_verify_other=model.can_verify_other,
             incoming_verification_requests_allowed=model.incoming_verification_requests_allowed,
+            incoming_verification_requests_text=model.incoming_verification_requests_text,
             incoming_verification_requests_postal_codes=list(
                 model.incoming_verification_requests_postal_codes or []
             ),
@@ -312,6 +326,10 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
             location=model.location.to_value_object() if model.location else None,
             logo=model.logo.to_entity() if model.logo else None,
             max_api_keys=model.max_api_keys,
+            widget_font=model.widget_font,
+            widget_background_color=model.widget_background_color,
+            widget_primary_color=model.widget_primary_color,
+            widget_link_color=model.widget_link_color,
         )
 
         return aggregate
