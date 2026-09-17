@@ -89,10 +89,15 @@ class TestEventReferenceRequestAggregateVerify:
         assert event.admin_unit_id == request_.admin_unit_id
         assert event.event_id == request_.event_id
 
-    def test_already_reviewed_raises_constraint_error(self, request_, actor):
+    def test_already_verified_raises_constraint_error(self, request_, actor):
         request_.verify(actor)
         with pytest.raises(ConstraintError):
             request_.verify(actor)
+
+    def test_reject_after_verify_raises_constraint_error(self, request_, actor):
+        request_.verify(actor)
+        with pytest.raises(ConstraintError):
+            request_.reject(actor)
 
 
 class TestEventReferenceRequestAggregateReject:
@@ -115,15 +120,15 @@ class TestEventReferenceRequestAggregateReject:
         assert event is not None
         assert event.review_status == EventReferenceRequestReviewStatus.rejected
 
-    def test_already_reviewed_raises_constraint_error(self, request_, actor):
+    def test_reject_after_reject_does_not_raise(self, request_, actor):
         request_.reject(actor)
-        with pytest.raises(ConstraintError):
-            request_.reject(actor)
+        request_.reject(actor)
+        assert request_.review_status == EventReferenceRequestReviewStatus.rejected
 
-    def test_verify_after_reject_raises_constraint_error(self, request_, actor):
+    def test_verify_after_reject_succeeds(self, request_, actor):
         request_.reject(actor)
-        with pytest.raises(ConstraintError):
-            request_.verify(actor)
+        request_.verify(actor)
+        assert request_.review_status == EventReferenceRequestReviewStatus.verified
 
 
 class TestEventReferenceRequestAggregateDelete:

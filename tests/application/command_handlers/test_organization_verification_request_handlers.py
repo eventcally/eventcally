@@ -343,7 +343,7 @@ class TestApproveOrganizationVerificationRequestHandler:
         unchanged = uow.organization_verification_requests.get(request.id)
         assert unchanged.review_status.name == "inbox"
 
-    def test_already_reviewed_raises_constraint_error(self, uow):
+    def test_already_verified_raises_constraint_error(self, uow):
         request = self._seed_request(uow)
         _seed_organizations(uow)
         self._grant_approve_permission(uow)
@@ -356,6 +356,22 @@ class TestApproveOrganizationVerificationRequestHandler:
 
         with pytest.raises(ConstraintError):
             ApproveOrganizationVerificationRequestHandler().handle(cmd, uow)
+
+    def test_approve_after_reject_succeeds(self, uow):
+        request = self._seed_request(uow)
+        _seed_organizations(uow)
+        self._grant_approve_permission(uow)
+        request.reject(ACTOR)
+        uow.organization_verification_requests.update(request)
+
+        cmd = commands.ApproveOrganizationVerificationRequestCommand.model_construct(
+            actor=ACTOR, id=request.id
+        )
+
+        ApproveOrganizationVerificationRequestHandler().handle(cmd, uow)
+
+        updated = uow.organization_verification_requests.get(request.id)
+        assert updated.review_status.name == "verified"
 
     def test_target_cannot_verify_raises_constraint_error(self, uow):
         request = self._seed_request(
@@ -471,6 +487,21 @@ class TestRejectOrganizationVerificationRequestHandler:
             rejected.rejection_reason
             == OrganizationVerificationRequestRejectionReason.unknown
         )
+
+    def test_reject_after_reject_does_not_raise(self, uow):
+        request = self._seed_request(uow)
+        _grant_permission(uow, 2, "incoming_organization_verification_requests:write")
+        cmd = commands.RejectOrganizationVerificationRequestCommand.model_construct(
+            actor=ACTOR,
+            id=request.id,
+            rejection_reason=OrganizationVerificationRequestRejectionReason.unknown,
+        )
+
+        RejectOrganizationVerificationRequestHandler().handle(cmd, uow)
+        RejectOrganizationVerificationRequestHandler().handle(cmd, uow)
+
+        rejected = uow.organization_verification_requests.get(request.id)
+        assert rejected.review_status.name == "rejected"
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.RejectOrganizationVerificationRequestCommand.model_construct(

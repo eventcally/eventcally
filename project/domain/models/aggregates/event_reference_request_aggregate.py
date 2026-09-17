@@ -71,12 +71,12 @@ class EventReferenceRequestAggregate(BaseAggregate):
 
         return instance
 
-    def _ensure_not_yet_reviewed(self):
-        if self.review_status != EventReferenceRequestReviewStatus.inbox:
-            raise ConstraintError("Reference request already reviewed.")
+    def _ensure_not_yet_verified(self):
+        if self.review_status == EventReferenceRequestReviewStatus.verified:
+            raise ConstraintError("Reference request already verified.")
 
     def verify(self, actor: Actor):
-        self._ensure_not_yet_reviewed()
+        self._ensure_not_yet_verified()
 
         self.review_status = EventReferenceRequestReviewStatus.verified
         self.rejection_reason = None
@@ -96,7 +96,7 @@ class EventReferenceRequestAggregate(BaseAggregate):
         actor: Actor,
         rejection_reason: Optional[EventReferenceRequestRejectionReason] = None,
     ):
-        self._ensure_not_yet_reviewed()
+        self._ensure_not_yet_verified()
 
         self.review_status = EventReferenceRequestReviewStatus.rejected
         self.rejection_reason = rejection_reason

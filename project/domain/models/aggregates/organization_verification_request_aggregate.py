@@ -56,12 +56,12 @@ class OrganizationVerificationRequestAggregate(BaseAggregate):
 
         return instance
 
-    def _ensure_not_yet_reviewed(self):
-        if self.review_status != OrganizationVerificationRequestReviewStatus.inbox:
-            raise ConstraintError("Verification request already reviewed.")
+    def _ensure_not_yet_verified(self):
+        if self.review_status == OrganizationVerificationRequestReviewStatus.verified:
+            raise ConstraintError("Verification request already verified.")
 
     def approve(self, actor: Actor):
-        self._ensure_not_yet_reviewed()
+        self._ensure_not_yet_verified()
 
         self.review_status = OrganizationVerificationRequestReviewStatus.verified
         self.rejection_reason = None
@@ -83,7 +83,7 @@ class OrganizationVerificationRequestAggregate(BaseAggregate):
             OrganizationVerificationRequestRejectionReason
         ] = None,
     ):
-        self._ensure_not_yet_reviewed()
+        self._ensure_not_yet_verified()
 
         self.review_status = OrganizationVerificationRequestReviewStatus.rejected
         self.rejection_reason = rejection_reason

@@ -82,10 +82,15 @@ class TestOrganizationVerificationRequestAggregateApprove:
         assert event.source_admin_unit_id == request_.source_admin_unit_id
         assert event.target_admin_unit_id == request_.target_admin_unit_id
 
-    def test_already_reviewed_raises_constraint_error(self, request_, actor):
+    def test_already_verified_raises_constraint_error(self, request_, actor):
         request_.approve(actor)
         with pytest.raises(ConstraintError):
             request_.approve(actor)
+
+    def test_reject_after_approve_raises_constraint_error(self, request_, actor):
+        request_.approve(actor)
+        with pytest.raises(ConstraintError):
+            request_.reject(actor)
 
 
 class TestOrganizationVerificationRequestAggregateReject:
@@ -118,10 +123,19 @@ class TestOrganizationVerificationRequestAggregateReject:
             OrganizationVerificationRequestReviewStatus.rejected
         )
 
-    def test_already_reviewed_raises_constraint_error(self, request_, actor):
+    def test_reject_after_reject_does_not_raise(self, request_, actor):
         request_.reject(actor)
-        with pytest.raises(ConstraintError):
-            request_.reject(actor)
+        request_.reject(actor)
+        assert request_.review_status == (
+            OrganizationVerificationRequestReviewStatus.rejected
+        )
+
+    def test_approve_after_reject_succeeds(self, request_, actor):
+        request_.reject(actor)
+        request_.approve(actor)
+        assert request_.review_status == (
+            OrganizationVerificationRequestReviewStatus.verified
+        )
 
 
 class TestOrganizationVerificationRequestAggregateDelete:

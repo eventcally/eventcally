@@ -171,7 +171,7 @@ class TestVerifyEventReferenceRequestHandler:
         assert relation is not None
         assert relation.auto_verify_event_reference_requests is True
 
-    def test_already_reviewed_raises_constraint_error(self, uow):
+    def test_already_verified_raises_constraint_error(self, uow):
         event = _make_event(uow, admin_unit_id=2)
         request = _make_request(uow, admin_unit_id=1, event_id=event.id)
         grant_permission(uow, 1, "incoming_event_reference_requests:write")
@@ -182,6 +182,23 @@ class TestVerifyEventReferenceRequestHandler:
 
         with pytest.raises(ConstraintError):
             VerifyEventReferenceRequestHandler().handle(cmd, uow)
+
+    def test_verify_after_reject_succeeds(self, uow):
+        event = _make_event(uow, admin_unit_id=2)
+        request = _make_request(uow, admin_unit_id=1, event_id=event.id)
+        grant_permission(uow, 1, "incoming_event_reference_requests:write")
+        reject_cmd = commands.RejectEventReferenceRequestCommand.model_construct(
+            actor=ACTOR, id=request.id
+        )
+        RejectEventReferenceRequestHandler().handle(reject_cmd, uow)
+
+        verify_cmd = commands.VerifyEventReferenceRequestCommand.model_construct(
+            actor=ACTOR, id=request.id
+        )
+        VerifyEventReferenceRequestHandler().handle(verify_cmd, uow)
+
+        updated = uow.event_reference_requests.get(request.id)
+        assert updated.review_status.name == "verified"
 
     def test_not_found_raises_not_found_error(self, uow):
         cmd = commands.VerifyEventReferenceRequestCommand.model_construct(
@@ -254,7 +271,7 @@ class TestRejectEventReferenceRequestHandler:
         assert relation is not None
         assert relation.auto_verify_event_reference_requests is True
 
-    def test_already_reviewed_raises_constraint_error(self, uow):
+    def test_reject_after_reject_does_not_raise(self, uow):
         event = _make_event(uow, admin_unit_id=2)
         request = _make_request(uow, admin_unit_id=1, event_id=event.id)
         grant_permission(uow, 1, "incoming_event_reference_requests:write")
@@ -263,8 +280,25 @@ class TestRejectEventReferenceRequestHandler:
         )
         RejectEventReferenceRequestHandler().handle(cmd, uow)
 
+        RejectEventReferenceRequestHandler().handle(cmd, uow)
+
+        updated = uow.event_reference_requests.get(request.id)
+        assert updated.review_status.name == "rejected"
+
+    def test_already_verified_raises_constraint_error(self, uow):
+        event = _make_event(uow, admin_unit_id=2)
+        request = _make_request(uow, admin_unit_id=1, event_id=event.id)
+        grant_permission(uow, 1, "incoming_event_reference_requests:write")
+        verify_cmd = commands.VerifyEventReferenceRequestCommand.model_construct(
+            actor=ACTOR, id=request.id
+        )
+        VerifyEventReferenceRequestHandler().handle(verify_cmd, uow)
+
+        reject_cmd = commands.RejectEventReferenceRequestCommand.model_construct(
+            actor=ACTOR, id=request.id
+        )
         with pytest.raises(ConstraintError):
-            RejectEventReferenceRequestHandler().handle(cmd, uow)
+            RejectEventReferenceRequestHandler().handle(reject_cmd, uow)
 
     def test_actor_without_permission_raises_unauthorized_error(self, uow):
         event = _make_event(uow, admin_unit_id=2)
