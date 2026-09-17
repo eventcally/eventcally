@@ -20,3 +20,18 @@ class SqlAlchemyUserRepository(AbstractUserRepository):
     def _get_all_with_ids(self, object_ids: list[int]) -> list[UserAggregate]:
         models = self.session.query(User).filter(User.id.in_(object_ids)).all()
         return [User.to_aggregate(m) for m in models]
+
+    def _update(self, user: UserAggregate):
+        model = self._get_model(user.id)
+        model.fill_from_aggregate(user)
+        self.session.merge(model)
+        self.session.flush()
+
+    def _remove(self, user: UserAggregate):
+        model = self._get_model(user.id)
+        self.session.delete(model)
+
+    def _reset_tos_accepted_for_all(self) -> int:
+        return self.session.query(User).update(
+            {"tos_accepted_at": None}, synchronize_session=False
+        )

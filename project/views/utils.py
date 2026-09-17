@@ -21,7 +21,7 @@ from project.access import (
 )
 from project.dateutils import berlin_tz, round_to_next_day
 from project.domain.errors import BaseError
-from project.extensions import db, mail
+from project.extensions import mail
 from project.models import Event, EventAttendanceMode, EventDate
 from project.utils import dummy_gettext, get_place_str, strings_are_equal_ignoring_case
 
@@ -501,18 +501,6 @@ def get_docs_url(path: str, **kwargs):  # pragma: no cover
         return None
 
     return f"{base_url}{path}"
-
-
-def handle_db_error(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
-
-    return wrapper
 
 
 def handle_base_error(func):

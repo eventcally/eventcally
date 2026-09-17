@@ -288,10 +288,17 @@ def test_admin_unit_delete(client, seeder, utils, app, db, mocker, db_error, non
         assert admin_unit is None
 
 
-def test_admin_reset_tos_accepted(client, app, db, seeder: Seeder, utils: UtilActions):
+@pytest.mark.parametrize("db_error", [True, False])
+def test_admin_reset_tos_accepted(
+    client, app, db, seeder: Seeder, utils: UtilActions, mocker, db_error
+):
     seeder.setup_base(admin=True)
 
     response = utils.get_endpoint_ok("admin.admin_reset_tos_accepted")
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
     response = utils.post_form(
         response.request.url,
         response,
@@ -300,6 +307,11 @@ def test_admin_reset_tos_accepted(client, app, db, seeder: Seeder, utils: UtilAc
             "submit": "Reset",
         },
     )
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
     utils.assert_response_redirect(response, "admin.admin")
 
     with app.app_context():

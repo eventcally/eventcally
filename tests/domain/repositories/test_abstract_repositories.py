@@ -24,6 +24,8 @@ from project.domain.models.aggregates.organization_app_installation_aggregate im
 from project.domain.models.aggregates.organization_member_aggregate import (
     OrganisationMemberAggregate,
 )
+from project.domain.models.aggregates.settings_aggregate import SettingsAggregate
+from project.domain.models.aggregates.user_aggregate import UserAggregate
 from project.domain.models.aggregates.webhook_delivery_aggregate import (
     WebhookDeliveryAggregate,
 )
@@ -55,6 +57,10 @@ from project.domain.repositories.abstract_organization_member_repository import 
 from project.domain.repositories.abstract_organization_repository import (
     AbstractOrganizationRepository,
 )
+from project.domain.repositories.abstract_settings_repository import (
+    AbstractSettingsRepository,
+)
+from project.domain.repositories.abstract_user_repository import AbstractUserRepository
 from project.domain.repositories.abstract_webhook_delivery_attempt_repository import (
     AbstractWebhookDeliveryAttemptRepository,
 )
@@ -269,6 +275,44 @@ class _ConcreteWebhookEventRepo(AbstractWebhookEventRepository):
         return self._deleted_count
 
 
+class _ConcreteUserRepo(AbstractUserRepository):
+    def __init__(self, return_value=None, return_values=None, reset_count=0):
+        super().__init__()
+        self._return_value = return_value
+        self._return_values = return_values or []
+        self._reset_count = reset_count
+
+    def _get(self, object_id):
+        return self._return_value
+
+    def _get_all_with_ids(self, object_ids):
+        return self._return_values
+
+    def _update(self, user):
+        pass
+
+    def _remove(self, user):
+        pass
+
+    def _reset_tos_accepted_for_all(self):
+        return self._reset_count
+
+
+class _ConcreteSettingsRepo(AbstractSettingsRepository):
+    def __init__(self, return_value=None):
+        super().__init__()
+        self._return_value = return_value
+
+    def _add(self, settings):
+        pass
+
+    def _update(self, settings):
+        pass
+
+    def _get(self):
+        return self._return_value
+
+
 # ---------------------------------------------------------------------------
 # Helper aggregates (constructed without going through create() factory to
 # avoid domain event baggage)
@@ -295,6 +339,14 @@ def _ref_agg(event_id=10):
 
 def _org_agg():
     return OrganizationAggregate.model_construct(id=1, domain_events=[])
+
+
+def _user_agg():
+    return UserAggregate.model_construct(id=1, domain_events=[])
+
+
+def _settings_agg():
+    return SettingsAggregate.model_construct(id=1, domain_events=[])
 
 
 def _app_agg():
@@ -765,3 +817,75 @@ class TestAbstractWebhookEventRepository:
         repo = _ConcreteWebhookEventRepo(deleted_count=5)
         result = repo.delete_old_events(days=30)
         assert result == 5
+
+
+# ---------------------------------------------------------------------------
+# AbstractUserRepository
+# ---------------------------------------------------------------------------
+
+
+class TestAbstractUserRepository:
+    def test_get_with_result_adds_to_seen(self):
+        user = _user_agg()
+        repo = _ConcreteUserRepo(return_value=user)
+        assert repo.get(1) is user
+        assert user in repo.seen
+
+    def test_get_none_does_not_add_to_seen(self):
+        repo = _ConcreteUserRepo(return_value=None)
+        assert repo.get(1) is None
+        assert len(repo.seen) == 0
+
+    def test_get_all_with_ids_adds_to_seen(self):
+        user = _user_agg()
+        repo = _ConcreteUserRepo(return_values=[user])
+        result = repo.get_all_with_ids([1])
+        assert result == [user]
+        assert user in repo.seen
+
+    def test_update_adds_to_seen(self):
+        repo = _ConcreteUserRepo()
+        user = _user_agg()
+        repo.update(user)
+        assert user in repo.seen
+
+    def test_remove_adds_to_seen(self):
+        repo = _ConcreteUserRepo()
+        user = _user_agg()
+        repo.remove(user)
+        assert user in repo.seen
+
+    def test_reset_tos_accepted_for_all_returns_count(self):
+        repo = _ConcreteUserRepo(reset_count=3)
+        result = repo.reset_tos_accepted_for_all()
+        assert result == 3
+
+
+# ---------------------------------------------------------------------------
+# AbstractSettingsRepository
+# ---------------------------------------------------------------------------
+
+
+class TestAbstractSettingsRepository:
+    def test_add_adds_to_seen(self):
+        repo = _ConcreteSettingsRepo()
+        settings = _settings_agg()
+        repo.add(settings)
+        assert settings in repo.seen
+
+    def test_update_adds_to_seen(self):
+        repo = _ConcreteSettingsRepo()
+        settings = _settings_agg()
+        repo.update(settings)
+        assert settings in repo.seen
+
+    def test_get_with_result_adds_to_seen(self):
+        settings = _settings_agg()
+        repo = _ConcreteSettingsRepo(return_value=settings)
+        assert repo.get() is settings
+        assert settings in repo.seen
+
+    def test_get_none_does_not_add_to_seen(self):
+        repo = _ConcreteSettingsRepo(return_value=None)
+        assert repo.get() is None
+        assert len(repo.seen) == 0

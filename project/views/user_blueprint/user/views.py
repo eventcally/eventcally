@@ -1,15 +1,15 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 from flask_security import auth_required, current_user
 from flask_security.utils import get_post_login_redirect
 
-from project.extensions import db
+from project.application.commands import (
+    AcceptTosCommand,
+    CancelUserDeletionCommand,
+    RequestUserDeletionCommand,
+)
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
-from project.services.user import is_user_admin_member, set_user_accepted_tos
-from project.services.user_service import UserService
+from project.services.user import is_user_admin_member
 from project.views.user_blueprint.user.forms import (
     AcceptTosForm,
     CancelDeletionForm,
@@ -20,12 +20,11 @@ from project.views.user_blueprint.user.forms import (
 from project.views.utils import (
     current_admin_unit,
     flash_non_match_for_deletion,
-    handle_db_error,
+    handle_base_error,
 )
 
 
 class RequestDeletionView(BaseDeleteView):
-    user_service: Annotated[UserService, Provide["services.user_service"]]
     decorators = [auth_required()]
     template_file_name = "delete.html"
     form_class = RequestDeletionForm
@@ -64,7 +63,10 @@ class RequestDeletionView(BaseDeleteView):
         )
 
     def delete_object_from_db(self, object):
-        self.user_service.request_deletion(object)
+        cmd = RequestUserDeletionCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
 
     def get_redirect_url(self, **kwargs):
         return url_for("main.profile")
@@ -103,8 +105,10 @@ class CancelDeletionView(BaseDeleteView):
         )
 
     def delete_object_from_db(self, object):
-        object.deletion_requested_at = None
-        db.session.commit()
+        cmd = CancelUserDeletionCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
 
     def get_redirect_url(self, **kwargs):
         return url_for("main.profile")
@@ -121,6 +125,13 @@ class BaseSettingView(BaseUpdateView):
 
     def get_redirect_url(self, **kwargs):
         return url_for("main.profile")
+
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        cmd = form.create_update_command(object.id)
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
 
 
 class GeneralView(BaseSettingView):
@@ -155,8 +166,10 @@ class AcceptTosView(BaseUpdateView):
         if object.tos_accepted_at:  # pragma: no cover
             return redirect(get_post_login_redirect())
 
-    @handle_db_error
+    @handle_base_error
     def dispatch_validated_form(self, form, object, **kwargs):
-        set_user_accepted_tos(current_user)
-        db.session.commit()
+        cmd = AcceptTosCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
         return redirect(get_post_login_redirect())

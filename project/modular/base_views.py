@@ -23,7 +23,6 @@ from project.views.utils import (
     flash_errors,
     get_pagination_urls,
     handle_base_error,
-    handle_db_error,
     non_match_for_deletion,
 )
 
@@ -319,9 +318,6 @@ class BaseFormView(BaseObjectView):
     def create_form(self, **kwargs):
         return self.form_class(**kwargs)
 
-    def complete_object(self, object, form):
-        self.handler.complete_object(object, form)
-
     def get_redirect_url(self, **kwargs):  # pragma: no cover
         return None
 
@@ -459,19 +455,6 @@ class BaseUpdateView(BaseObjectFormView):
             model_display_name=self.handler.get_model_display_name(),
         )
 
-    def save_object(self, object, form):
-        self.handler.save_object(object)
-
-    @handle_base_error
-    @handle_db_error
-    def dispatch_validated_form(self, form, object, **kwargs):
-        form.populate_obj(object)
-
-        self.complete_object(object, form)
-        self.save_object(object, form)
-        self.flash_success_message(object, form)
-        return redirect(self.get_redirect_url(object=object))
-
 
 class BaseDeleteView(BaseObjectFormView):
     template_file_name = "delete.html"
@@ -534,7 +517,6 @@ class BaseDeleteView(BaseObjectFormView):
         return self.handler.get_list_url(**kwargs)
 
     @handle_base_error
-    @handle_db_error
     def dispatch_validated_form(self, form, object, **kwargs):
         if self.can_object_be_deleted(form, object):
             return self.dispatch_validated_form_deletable(form, object, **kwargs)

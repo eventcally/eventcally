@@ -27,6 +27,13 @@ class Role(db.Model, RoleGeneratedMixin, RoleMixin):
 
 
 class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
+    def fill_from_aggregate(self, aggregate: UserAggregate):
+        self.locale = aggregate.locale
+        self.newsletter_enabled = aggregate.newsletter_enabled
+        self.deletion_requested_at = aggregate.deletion_requested_at
+        self.tos_accepted_at = aggregate.tos_accepted_at
+        self.roles = Role.query.filter(Role.name.in_(aggregate.roles)).all()
+
     @classmethod
     def to_aggregate(cls, model: User) -> UserAggregate:
         if model is None:  # pragma: no cover
@@ -38,6 +45,10 @@ class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
             locale=model.locale,
             is_platform_admin=any(role.name == "admin" for role in model.roles),
             max_api_keys=model.max_api_keys,
+            newsletter_enabled=bool(model.newsletter_enabled),
+            deletion_requested_at=model.deletion_requested_at,
+            tos_accepted_at=model.tos_accepted_at,
+            roles=[r.name for r in model.roles],
         )
         return aggregate
 

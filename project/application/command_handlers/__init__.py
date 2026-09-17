@@ -1,10 +1,12 @@
 from .abstract_command_handler import AbstractCommandHandler
 from .accept_member_invitation_handler import AcceptMemberInvitationHandler
+from .accept_tos_handler import AcceptTosHandler
 from .approve_organization_verification_request_handler import (
     ApproveOrganizationVerificationRequestHandler,
 )
 from .attempt_to_deliver_webhook_command_handler import AttemptToDeliverWebhookHandler
 from .cancel_organization_deletion_handler import CancelOrganizationDeletionHandler
+from .cancel_user_deletion_handler import CancelUserDeletionHandler
 from .change_organization_member_roles_handler import (
     ChangeOrganizationMemberRolesHandler,
 )
@@ -35,6 +37,7 @@ from .delete_oauth2_client_handler import DeleteOAuth2ClientHandler
 from .delete_old_webhook_events_handler import DeleteOldWebhookEventsHandler
 from .delete_organization_handler import DeleteOrganizationHandler
 from .delete_organization_relation_handler import DeleteOrganizationRelationHandler
+from .delete_user_handler import DeleteUserHandler
 from .install_app_handler import InstallAppHandler
 from .invite_organization_handler import InviteOrganizationHandler
 from .invite_user_to_organization_handler import InviteUserToOrganizationHandler
@@ -49,6 +52,8 @@ from .request_organization_deletion_handler import RequestOrganizationDeletionHa
 from .request_organization_verification_handler import (
     RequestOrganizationVerificationHandler,
 )
+from .request_user_deletion_handler import RequestUserDeletionHandler
+from .reset_tos_accepted_for_users_handler import ResetTosAcceptedForUsersHandler
 from .revoke_member_invitation_handler import RevokeMemberInvitationHandler
 from .revoke_oauth2_token_handler import RevokeOAuth2TokenHandler
 from .revoke_organization_invitation_handler import RevokeOrganizationInvitationHandler
@@ -74,6 +79,13 @@ from .update_organization_relation_handler import UpdateOrganizationRelationHand
 from .update_organization_widget_settings_handler import (
     UpdateOrganizationWidgetSettingsHandler,
 )
+from .update_planning_settings_handler import UpdatePlanningSettingsHandler
+from .update_settings_handler import UpdateSettingsHandler
+from .update_user_general_settings_handler import UpdateUserGeneralSettingsHandler
+from .update_user_notification_settings_handler import (
+    UpdateUserNotificationSettingsHandler,
+)
+from .update_user_roles_handler import UpdateUserRolesHandler
 from .verify_event_reference_request_handler import VerifyEventReferenceRequestHandler
 from .verify_organization_handler import VerifyOrganizationHandler
 from .withdraw_event_reference_request_handler import (
@@ -149,4 +161,14 @@ __all__ = [
     "VerifyEventReferenceRequestHandler",
     "RejectEventReferenceRequestHandler",
     "WithdrawEventReferenceRequestHandler",
+    "RequestUserDeletionHandler",
+    "CancelUserDeletionHandler",
+    "AcceptTosHandler",
+    "UpdateUserGeneralSettingsHandler",
+    "UpdateUserNotificationSettingsHandler",
+    "UpdateUserRolesHandler",
+    "DeleteUserHandler",
+    "ResetTosAcceptedForUsersHandler",
+    "UpdateSettingsHandler",
+    "UpdatePlanningSettingsHandler",
 ]

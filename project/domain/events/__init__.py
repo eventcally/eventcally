@@ -27,6 +27,8 @@ from .organization_verification_request_reviewed import (
     OrganizationVerificationRequestReviewed,
 )
 from .organization_verification_requested import OrganizationVerificationRequested
+from .user_deletion_cancelled import UserDeletionCancelled
+from .user_deletion_requested import UserDeletionRequested
 from .webhook_delivery_created import WebhookDeliveryCreated
 
 __all__ = [
@@ -58,4 +60,6 @@ __all__ = [
     "EventReferenceRequestCreated",
     "EventReferenceRequestAutoVerified",
     "EventReferenceRequestReviewed",
+    "UserDeletionRequested",
+    "UserDeletionCancelled",
 ]

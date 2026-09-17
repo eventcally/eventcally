@@ -116,6 +116,14 @@ class FakeUserRepo(FakeRepo):
     def get_all_with_ids(self, user_ids):
         return [self._store[uid] for uid in user_ids if uid in self._store]
 
+    def reset_tos_accepted_for_all(self):
+        count = 0
+        for user in self._store.values():
+            if user.tos_accepted_at is not None:
+                user.tos_accepted_at = None
+                count += 1
+        return count
+
 
 class FakeEventReferenceRepo(FakeRepo):
     def __init__(self):
@@ -156,6 +164,30 @@ class FakeApiKeyRepo(FakeRepo):
         )
 
 
+class FakeSettingsRepo:
+    """Singleton-shaped fake — get() takes no id, mirrors the Settings table
+    having exactly one row."""
+
+    def __init__(self):
+        self._store = None
+        self.seen = set()
+
+    def add(self, settings):
+        if not settings.id or settings.id < 0:
+            settings.id = 1
+        self._store = settings
+        self.seen.add(settings)
+
+    def update(self, settings):
+        self._store = settings
+        self.seen.add(settings)
+
+    def get(self):
+        if self._store:
+            self.seen.add(self._store)
+        return self._store
+
+
 # ---------------------------------------------------------------------------
 # Fake Unit of Work
 # ---------------------------------------------------------------------------
@@ -186,6 +218,7 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         self.oauth2_tokens = FakeRepo()
         self.organization_invitations = FakeRepo()
         self.member_invitations = FakeRepo()
+        self.settings = FakeSettingsRepo()
         self.committed = False
 
     def _commit(self):

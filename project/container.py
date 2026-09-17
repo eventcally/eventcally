@@ -566,6 +566,36 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.DeleteOrganizationCommand: providers.Factory(
                     command_handlers.DeleteOrganizationHandler
                 ),
+                commands.RequestUserDeletionCommand: providers.Factory(
+                    command_handlers.RequestUserDeletionHandler
+                ),
+                commands.CancelUserDeletionCommand: providers.Factory(
+                    command_handlers.CancelUserDeletionHandler
+                ),
+                commands.AcceptTosCommand: providers.Factory(
+                    command_handlers.AcceptTosHandler
+                ),
+                commands.UpdateUserGeneralSettingsCommand: providers.Factory(
+                    command_handlers.UpdateUserGeneralSettingsHandler
+                ),
+                commands.UpdateUserNotificationSettingsCommand: providers.Factory(
+                    command_handlers.UpdateUserNotificationSettingsHandler
+                ),
+                commands.UpdateUserRolesCommand: providers.Factory(
+                    command_handlers.UpdateUserRolesHandler
+                ),
+                commands.DeleteUserCommand: providers.Factory(
+                    command_handlers.DeleteUserHandler
+                ),
+                commands.ResetTosAcceptedForUsersCommand: providers.Factory(
+                    command_handlers.ResetTosAcceptedForUsersHandler
+                ),
+                commands.UpdateSettingsCommand: providers.Factory(
+                    command_handlers.UpdateSettingsHandler
+                ),
+                commands.UpdatePlanningSettingsCommand: providers.Factory(
+                    command_handlers.UpdatePlanningSettingsHandler
+                ),
                 commands.CreateApiKeyCommand: providers.Factory(
                     command_handlers.CreateApiKeyHandler,
                     api_key_generator=infrastructure.api_key_generator,
@@ -769,6 +799,12 @@ class Cqrs(containers.DeclarativeContainer):
                 events.OrganizationInvitationCreated: providers.List(
                     providers.Factory(
                         event_handlers.OrganizationInvitationCreatedEmailEventHandler,
+                        email_service=services.email_service,
+                    )
+                ),
+                events.UserDeletionRequested: providers.List(
+                    providers.Factory(
+                        event_handlers.UserDeletionRequestedEmailEventHandler,
                         email_service=services.email_service,
                     )
                 ),

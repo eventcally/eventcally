@@ -34,6 +34,7 @@ from project.domain.models.aggregates.organization_relation_aggregate import (
 from project.domain.models.aggregates.organization_verification_request_aggregate import (
     OrganizationVerificationRequestAggregate,
 )
+from project.domain.models.aggregates.settings_aggregate import SettingsAggregate
 from project.domain.models.aggregates.user_aggregate import UserAggregate
 from project.domain.models.aggregates.webhook_delivery_aggregate import (
     WebhookDeliveryAggregate,
@@ -99,6 +100,9 @@ from project.infrastructure.repositories.sql_alchemy_organization_repository imp
 )
 from project.infrastructure.repositories.sql_alchemy_organization_verification_request_repository import (
     SqlAlchemyOrganizationVerificationRequestRepository,
+)
+from project.infrastructure.repositories.sql_alchemy_settings_repository import (
+    SqlAlchemySettingsRepository,
 )
 from project.infrastructure.repositories.sql_alchemy_user_repository import (
     SqlAlchemyUserRepository,
@@ -448,6 +452,73 @@ def test_user_repository_marks_platform_admins(app, db, seeder):
         loaded_admin = repo.get(admin_user_id)
 
     assert loaded_admin.is_platform_admin is True
+
+
+def test_user_repository_update_remove_and_reset_tos_round_trip(app, db, seeder):
+    user_id = seeder.create_user(email="repo-user-update@test.de")
+
+    with app.app_context():
+        repo = SqlAlchemyUserRepository(db.session)
+        user = repo.get(user_id)
+        user.locale = "de"
+        user.newsletter_enabled = False
+        user.roles = ["admin"]
+        repo.update(user)
+        db.session.commit()
+
+        updated = repo.get(user_id)
+        updated_locale = updated.locale
+        updated_newsletter_enabled = updated.newsletter_enabled
+        updated_roles = updated.roles
+
+        updated.tos_accepted_at = datetime.datetime.now(datetime.UTC)
+        repo.update(updated)
+        db.session.commit()
+
+        reset_count = repo.reset_tos_accepted_for_all()
+        db.session.commit()
+
+        after_reset = repo.get(user_id)
+        after_reset_tos_accepted_at = after_reset.tos_accepted_at
+
+        repo.remove(updated)
+        db.session.commit()
+
+        removed = repo.get(user_id)
+
+    assert updated_locale == "de"
+    assert updated_newsletter_enabled is False
+    assert updated_roles == ["admin"]
+    assert reset_count >= 1
+    assert after_reset_tos_accepted_at is None
+    assert removed is None
+
+
+def test_settings_repository_add_update_and_get_round_trip(app, db):
+    with app.app_context():
+        repo = SqlAlchemySettingsRepository(db.session)
+
+        assert repo.get() is None
+
+        settings = SettingsAggregate.create(actor=Actor())
+        repo.add(settings)
+        db.session.commit()
+
+        loaded = repo.get()
+        loaded_id = loaded.id
+
+        loaded.tos = "Terms"
+        loaded.planning_external_calendars = "[]"
+        repo.update(loaded)
+        db.session.commit()
+
+        updated = repo.get()
+        updated_tos = updated.tos
+        updated_planning_external_calendars = updated.planning_external_calendars
+
+    assert loaded_id is not None
+    assert updated_tos == "Terms"
+    assert updated_planning_external_calendars == "[]"
 
 
 def test_api_key_repository_add_and_get_round_trip(app, db, seeder):

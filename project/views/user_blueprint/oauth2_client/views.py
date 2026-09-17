@@ -3,7 +3,7 @@ from flask_security import current_user
 
 from project.application.commands import DeleteOAuth2ClientCommand
 from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
-from project.views.utils import handle_base_error, handle_db_error
+from project.views.utils import handle_base_error
 
 
 class CreateView(BaseCreateView):
@@ -11,7 +11,6 @@ class CreateView(BaseCreateView):
         return form.create_create_command(user_id=current_user.id)
 
     @handle_base_error
-    @handle_db_error
     def dispatch_validated_form(self, form, object, **kwargs):
         cmd = self.build_create_command(form)
         cmd_result = self.message_bus.handle_command(cmd)
@@ -21,7 +20,6 @@ class CreateView(BaseCreateView):
 
 class UpdateView(BaseUpdateView):
     @handle_base_error
-    @handle_db_error
     def dispatch_validated_form(self, form, object, **kwargs):
         cmd = form.create_update_command(object.id)
         self.message_bus.handle_command(cmd)
@@ -31,7 +29,6 @@ class UpdateView(BaseUpdateView):
 
 class DeleteView(BaseDeleteView):
     @handle_base_error
-    @handle_db_error
     def dispatch_validated_form_deletable(self, form, object, **kwargs):
         cmd = DeleteOAuth2ClientCommand(
             id=object.id, actor=self.app_context_provider.get_current_actor()

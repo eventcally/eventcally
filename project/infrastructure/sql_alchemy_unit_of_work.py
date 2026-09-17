@@ -31,6 +31,9 @@ from project.infrastructure.repositories.sql_alchemy_organization_app_installati
 from project.infrastructure.repositories.sql_alchemy_organization_member_repository import (
     SqlAlchemyOrganizationMemberRepository,
 )
+from project.infrastructure.repositories.sql_alchemy_settings_repository import (
+    SqlAlchemySettingsRepository,
+)
 from project.infrastructure.repositories.sql_alchemy_user_repository import (
     SqlAlchemyUserRepository,
 )
@@ -95,6 +98,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             self.session
         )
         self.member_invitations = SqlAlchemyMemberInvitationRepository(self.session)
+        self.settings = SqlAlchemySettingsRepository(self.session)
 
     def _commit(self):
         try:

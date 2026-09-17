@@ -1,4 +1,5 @@
 from .accept_member_invitation_command import AcceptMemberInvitationCommand
+from .accept_tos_command import AcceptTosCommand
 from .approve_organization_verification_request_command import (
     ApproveOrganizationVerificationRequestCommand,
     ApproveOrganizationVerificationRequestCommandResult,
@@ -6,6 +7,7 @@ from .approve_organization_verification_request_command import (
 from .attempt_to_deliver_webhook_command import AttemptToDeliverWebhookCommand
 from .base import Command, CommandResult, CommandResultType, CommandWithResult
 from .cancel_organization_deletion_command import CancelOrganizationDeletionCommand
+from .cancel_user_deletion_command import CancelUserDeletionCommand
 from .change_organization_member_roles_command import (
     ChangeOrganizationMemberRolesCommand,
 )
@@ -57,6 +59,7 @@ from .delete_oauth2_client_command import DeleteOAuth2ClientCommand
 from .delete_old_webhook_events_command import DeleteOldWebhookEventsCommand
 from .delete_organization_command import DeleteOrganizationCommand
 from .delete_organization_relation_command import DeleteOrganizationRelationCommand
+from .delete_user_command import DeleteUserCommand
 from .install_app_command import InstallAppCommand, InstallAppCommandResult
 from .invite_organization_command import (
     InviteOrganizationCommand,
@@ -81,6 +84,8 @@ from .request_organization_verification_command import (
     RequestOrganizationVerificationCommand,
     RequestOrganizationVerificationCommandResult,
 )
+from .request_user_deletion_command import RequestUserDeletionCommand
+from .reset_tos_accepted_for_users_command import ResetTosAcceptedForUsersCommand
 from .revoke_member_invitation_command import RevokeMemberInvitationCommand
 from .revoke_oauth2_token_command import RevokeOAuth2TokenCommand
 from .revoke_organization_invitation_command import RevokeOrganizationInvitationCommand
@@ -106,6 +111,13 @@ from .update_organization_relation_command import UpdateOrganizationRelationComm
 from .update_organization_widget_settings_command import (
     UpdateOrganizationWidgetSettingsCommand,
 )
+from .update_planning_settings_command import UpdatePlanningSettingsCommand
+from .update_settings_command import UpdateSettingsCommand
+from .update_user_general_settings_command import UpdateUserGeneralSettingsCommand
+from .update_user_notification_settings_command import (
+    UpdateUserNotificationSettingsCommand,
+)
+from .update_user_roles_command import UpdateUserRolesCommand
 from .verify_event_reference_request_command import (
     VerifyEventReferenceRequestCommand,
     VerifyEventReferenceRequestCommandResult,
@@ -208,4 +220,14 @@ __all__ = [
     "VerifyEventReferenceRequestCommandResult",
     "RejectEventReferenceRequestCommand",
     "WithdrawEventReferenceRequestCommand",
+    "RequestUserDeletionCommand",
+    "CancelUserDeletionCommand",
+    "AcceptTosCommand",
+    "UpdateUserGeneralSettingsCommand",
+    "UpdateUserNotificationSettingsCommand",
+    "UpdateUserRolesCommand",
+    "DeleteUserCommand",
+    "ResetTosAcceptedForUsersCommand",
+    "UpdateSettingsCommand",
+    "UpdatePlanningSettingsCommand",
 ]

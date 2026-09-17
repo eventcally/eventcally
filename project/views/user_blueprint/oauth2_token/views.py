@@ -4,7 +4,7 @@ from flask_babel import lazy_gettext
 from project.application.commands import RevokeOAuth2TokenCommand
 from project.modular.base_views import BaseUpdateView
 from project.views.user_blueprint.oauth2_token.forms import RevokeOAuth2TokenForm
-from project.views.utils import handle_base_error, handle_db_error
+from project.views.utils import handle_base_error
 
 
 class RevokeView(BaseUpdateView):
@@ -22,7 +22,6 @@ class RevokeView(BaseUpdateView):
         return None
 
     @handle_base_error
-    @handle_db_error
     def dispatch_validated_form(self, form, object, **kwargs):
         cmd = RevokeOAuth2TokenCommand(
             id=object.id, actor=self.app_context_provider.get_current_actor()

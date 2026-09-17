@@ -53,6 +53,7 @@ class _ConcreteUoW(AbstractUnitOfWork):
         self.oauth2_tokens = _MockRepo()
         self.organization_invitations = _MockRepo()
         self.member_invitations = _MockRepo()
+        self.settings = _MockRepo()
         self.commit_called = False
         self.rollback_called = False
 

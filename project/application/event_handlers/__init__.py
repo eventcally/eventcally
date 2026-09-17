@@ -31,6 +31,9 @@ from .organization_verification_requested_email_event_handler import (
 from .reference_event_changed_email_event_handler import (
     ReferenceEventChangedEmailEventHandler,
 )
+from .user_deletion_requested_email_event_handler import (
+    UserDeletionRequestedEmailEventHandler,
+)
 from .webhook_delivery_created_attempt_event_handler import (
     WebhookDeliveryCreatedAttemptEventHandler,
 )
@@ -50,4 +53,5 @@ __all__ = [
     "EventReferenceRequestCreatedEmailEventHandler",
     "EventReferenceRequestAutoVerifiedEmailEventHandler",
     "EventReferenceRequestReviewedEmailEventHandler",
+    "UserDeletionRequestedEmailEventHandler",
 ]

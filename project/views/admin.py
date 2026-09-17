@@ -1,10 +1,19 @@
+from dependency_injector.wiring import Provide, inject
 from flask import current_app, flash, redirect, render_template, request, url_for
 from flask_babel import gettext
 from flask_security import roles_required
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
 
-from project.extensions import db
+from project.application.commands import (
+    DeleteUserCommand,
+    ResetTosAcceptedForUsersCommand,
+    UpdatePlanningSettingsCommand,
+    UpdateSettingsCommand,
+    UpdateUserRolesCommand,
+)
+from project.application.message_bus import MessageBus
+from project.container import Application
+from project.domain.errors import BaseError
 from project.forms.admin import (
     AdminNewsletterForm,
     AdminPlanningForm,
@@ -16,13 +25,12 @@ from project.forms.admin import (
 )
 from project.models import Role, User
 from project.services.admin import upsert_settings
-from project.services.user import delete_user, set_roles_for_user
 from project.views.admin_blueprint import admin_bp
 from project.views.utils import (
     flash_errors,
     get_celery_poll_group_result,
     get_pagination_urls,
-    handleSqlError,
+    handleBaseError,
     non_match_for_deletion,
     send_template_mail,
     send_template_mail_async,
@@ -32,18 +40,21 @@ from project.views.utils import (
 
 @admin_bp.route("/reset-tos-accepted", methods=("GET", "POST"))
 @roles_required("admin")
-def admin_reset_tos_accepted():
-    from project.services.admin import reset_tos_accepted_for_users
-
+@inject
+def admin_reset_tos_accepted(
+    message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+):
     form = ResetTosAceptedForm()
 
     if form.validate_on_submit():
         try:
-            reset_tos_accepted_for_users()
+            cmd = ResetTosAcceptedForUsersCommand(
+                actor=current_app.container.context.context_provider().current_actor
+            )
+            message_bus.handle_command(cmd)
             return redirect(url_for("admin.admin"))
-        except SQLAlchemyError as e:  # pragma: no cover
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
+        except BaseError as e:
+            flash(handleBaseError(e), "danger")
     else:
         flash_errors(form)
 
@@ -52,20 +63,27 @@ def admin_reset_tos_accepted():
 
 @admin_bp.route("/settings", methods=("GET", "POST"))
 @roles_required("admin")
-def admin_settings():
+@inject
+def admin_settings(message_bus: MessageBus = Provide[Application.cqrs.message_bus]):
     settings = upsert_settings()
     form = AdminSettingsForm(obj=settings)
 
     if form.validate_on_submit():
-        form.populate_obj(settings)
-
         try:
-            db.session.commit()
+            cmd = UpdateSettingsCommand(
+                actor=current_app.container.context.context_provider().current_actor,
+                tos=form.tos.data,
+                legal_notice=form.legal_notice.data,
+                contact=form.contact.data,
+                privacy=form.privacy.data,
+                start_page=form.start_page.data,
+                announcement=form.announcement.data,
+            )
+            message_bus.handle_command(cmd)
             flash(gettext("Settings successfully updated"), "success")
             return redirect(url_for("admin.admin"))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
+        except BaseError as e:
+            flash(handleBaseError(e), "danger")
     else:
         flash_errors(form)
 
@@ -151,7 +169,10 @@ def admin_users():
 
 @admin_bp.route("/user/<int:id>/update", methods=("GET", "POST"))
 @roles_required("admin")
-def admin_user_update(id):
+@inject
+def admin_user_update(
+    id, message_bus: MessageBus = Provide[Application.cqrs.message_bus]
+):
     user = User.query.get_or_404(id)
 
     form = UpdateUserForm()
@@ -160,15 +181,17 @@ def admin_user_update(id):
     ]
 
     if form.validate_on_submit():
-        set_roles_for_user(user.email, form.roles.data)
-
         try:
-            db.session.commit()
+            cmd = UpdateUserRolesCommand(
+                actor=current_app.container.context.context_provider().current_actor,
+                id=user.id,
+                roles=form.roles.data,
+            )
+            message_bus.handle_command(cmd)
             flash(gettext("User successfully updated"), "success")
             return redirect(url_for("admin.admin_users"))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
+        except BaseError as e:
+            flash(handleBaseError(e), "danger")
     else:
         form.roles.data = [c.name for c in user.roles]
 
@@ -177,7 +200,10 @@ def admin_user_update(id):
 
 @admin_bp.route("/user/<int:id>/delete", methods=("GET", "POST"))
 @roles_required("admin")
-def admin_user_delete(id):
+@inject
+def admin_user_delete(
+    id, message_bus: MessageBus = Provide[Application.cqrs.message_bus]
+):
     user = User.query.get_or_404(id)
 
     form = DeleteUserForm()
@@ -187,12 +213,15 @@ def admin_user_delete(id):
             flash(gettext("Entered email does not match user email"), "danger")
         else:
             try:
-                delete_user(user)
+                cmd = DeleteUserCommand(
+                    actor=current_app.container.context.context_provider().current_actor,
+                    id=user.id,
+                )
+                message_bus.handle_command(cmd)
                 flash(gettext("User successfully deleted"), "success")
                 return redirect(url_for("admin.admin_users"))
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                flash(handleSqlError(e), "danger")
+            except BaseError as e:
+                flash(handleBaseError(e), "danger")
     else:
         flash_errors(form)
 
@@ -201,20 +230,22 @@ def admin_user_delete(id):
 
 @admin_bp.route("/planning", methods=("GET", "POST"))
 @roles_required("admin")
-def admin_planning():
+@inject
+def admin_planning(message_bus: MessageBus = Provide[Application.cqrs.message_bus]):
     settings = upsert_settings()
     form = AdminPlanningForm(obj=settings)
 
     if form.validate_on_submit():
-        form.populate_obj(settings)
-
         try:
-            db.session.commit()
+            cmd = UpdatePlanningSettingsCommand(
+                actor=current_app.container.context.context_provider().current_actor,
+                planning_external_calendars=form.planning_external_calendars.data,
+            )
+            message_bus.handle_command(cmd)
             flash(gettext("Settings successfully updated"), "success")
             return redirect(url_for("admin.admin"))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
+        except BaseError as e:
+            flash(handleBaseError(e), "danger")
     else:
         flash_errors(form)
 

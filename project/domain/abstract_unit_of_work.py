@@ -28,6 +28,9 @@ from project.domain.repositories.abstract_organization_app_installation_reposito
 from project.domain.repositories.abstract_organization_member_repository import (
     AbstractOrganizationMemberRepository,
 )
+from project.domain.repositories.abstract_settings_repository import (
+    AbstractSettingsRepository,
+)
 from project.domain.repositories.abstract_user_repository import AbstractUserRepository
 from project.domain.repositories.abstract_webhook_delivery_attempt_repository import (
     AbstractWebhookDeliveryAttemptRepository,
@@ -65,6 +68,7 @@ class AbstractUnitOfWork(abc.ABC):
     oauth2_tokens: AbstractOAuth2TokenRepository
     organization_invitations: AbstractOrganizationInvitationRepository
     member_invitations: AbstractMemberInvitationRepository
+    settings: AbstractSettingsRepository
 
     def __init__(self):
         self.pending_events: List[Event] = []
@@ -107,6 +111,7 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.oauth2_tokens)
         self._collect_domain_events_from_repo(self.organization_invitations)
         self._collect_domain_events_from_repo(self.member_invitations)
+        self._collect_domain_events_from_repo(self.settings)
 
     def _collect_domain_events_from_repo(self, repo):
         for model in repo.seen:
