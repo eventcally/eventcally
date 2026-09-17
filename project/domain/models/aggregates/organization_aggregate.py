@@ -34,6 +34,8 @@ class OrganizationAggregate(BaseAggregate):
     deletion_requested_at: Optional[datetime.datetime] = None
     deletion_requested_by_id: Optional[ObjectId] = None
     can_verify_other: bool = False
+    can_create_other: bool = False
+    can_invite_other: bool = False
     incoming_verification_requests_allowed: bool = False
     incoming_verification_requests_text: Optional[str] = None
     incoming_verification_requests_postal_codes: List[str] = []
@@ -117,6 +119,10 @@ class OrganizationAggregate(BaseAggregate):
         widget_background_color: NullableUnsetable[str] = unset,
         widget_primary_color: NullableUnsetable[str] = unset,
         widget_link_color: NullableUnsetable[str] = unset,
+        incoming_reference_requests_allowed: Unsetable[bool] = unset,
+        can_create_other: Unsetable[bool] = unset,
+        can_invite_other: Unsetable[bool] = unset,
+        can_verify_other: Unsetable[bool] = unset,
     ):
         self._update_field_with_value("name", name)
         self._update_field_with_value("short_name", short_name)
@@ -147,7 +153,16 @@ class OrganizationAggregate(BaseAggregate):
         )
         self._update_field_with_value("widget_primary_color", widget_primary_color)
         self._update_field_with_value("widget_link_color", widget_link_color)
+        self._update_field_with_value(
+            "incoming_reference_requests_allowed", incoming_reference_requests_allowed
+        )
+        self._update_field_with_value("can_create_other", can_create_other)
+        self._update_field_with_value("can_invite_other", can_invite_other)
+        self._update_field_with_value("can_verify_other", can_verify_other)
 
         self.validate_self()
 
         self.domain_events.append(OrganizationUpdated(actor=actor, id=self.id))
+
+    def delete(self, actor: Actor):
+        pass

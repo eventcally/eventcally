@@ -21,6 +21,3 @@ class BaseService(Generic[TModel]):
 
     def update_object(self, object: TModel):
         self.repo.update_object(object)
-
-    def delete_object(self, object: TModel) -> TModel:
-        self.repo.delete_object(object)

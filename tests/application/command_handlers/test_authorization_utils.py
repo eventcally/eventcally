@@ -9,6 +9,7 @@ import pytest
 
 from project.application.command_handlers.authorization_utils import (
     ensure_actor_has_permission_for_admin_unit,
+    ensure_actor_is_platform_admin,
     has_actor_permission_for_admin_unit,
 )
 from project.domain.errors import UnauthorizedError
@@ -148,3 +149,47 @@ class TestEnsureActorHasPermissionForAdminUnit:
             ensure_actor_has_permission_for_admin_unit(
                 Actor(user_id=7), 2, PERMISSION, uow
             )
+
+
+class TestEnsureActorIsPlatformAdmin:
+    def test_passes_silently_for_platform_admin(self, uow):
+        uow.users.add(
+            UserAggregate(
+                id=7, email="admin@test.de", locale=None, is_platform_admin=True
+            )
+        )
+
+        ensure_actor_is_platform_admin(Actor(user_id=7), uow)
+
+    def test_raises_for_non_admin_user(self, uow):
+        uow.users.add(
+            UserAggregate(
+                id=7, email="user@test.de", locale=None, is_platform_admin=False
+            )
+        )
+
+        with pytest.raises(UnauthorizedError):
+            ensure_actor_is_platform_admin(Actor(user_id=7), uow)
+
+    def test_raises_for_org_member_with_permission_but_not_platform_admin(self, uow):
+        uow.users.add(
+            UserAggregate(
+                id=7, email="user@test.de", locale=None, is_platform_admin=False
+            )
+        )
+        uow.organization_members.set_members_for(
+            2,
+            PERMISSION,
+            [OrganisationMemberAggregate(id=1, admin_unit_id=2, user_id=7)],
+        )
+
+        with pytest.raises(UnauthorizedError):
+            ensure_actor_is_platform_admin(Actor(user_id=7), uow)
+
+    def test_raises_for_actor_with_no_user_id(self, uow):
+        with pytest.raises(UnauthorizedError):
+            ensure_actor_is_platform_admin(Actor(), uow)
+
+    def test_raises_for_unknown_user_id(self, uow):
+        with pytest.raises(UnauthorizedError):
+            ensure_actor_is_platform_admin(Actor(user_id=999), uow)

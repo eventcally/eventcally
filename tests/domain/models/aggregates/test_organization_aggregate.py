@@ -227,3 +227,36 @@ class TestOrganizationAggregateUpdate:
         org.update(actor=actor)
 
         assert org.get_first_domain_event_by_type(OrganizationUpdated) is not None
+
+    def test_updates_admin_settings_fields(self, org, actor):
+        org.update(
+            actor=actor,
+            incoming_reference_requests_allowed=True,
+            can_create_other=True,
+            can_invite_other=True,
+            can_verify_other=True,
+        )
+        assert org.incoming_reference_requests_allowed is True
+        assert org.can_create_other is True
+        assert org.can_invite_other is True
+        assert org.can_verify_other is True
+
+    def test_leaves_admin_settings_fields_untouched_when_omitted(self, org, actor):
+        org.update(
+            actor=actor,
+            incoming_reference_requests_allowed=True,
+            can_create_other=True,
+            can_invite_other=True,
+            can_verify_other=True,
+        )
+        org.update(actor=actor, name="New Name")
+
+        assert org.incoming_reference_requests_allowed is True
+        assert org.can_create_other is True
+        assert org.can_invite_other is True
+        assert org.can_verify_other is True
+
+
+class TestOrganizationAggregateDelete:
+    def test_delete_does_not_raise(self, org, actor):
+        org.delete(actor=actor)

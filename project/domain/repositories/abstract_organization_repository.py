@@ -24,6 +24,10 @@ class AbstractOrganizationRepository(abc.ABC):
             self.seen.add(organization)
         return organization
 
+    def remove(self, organization: OrganizationAggregate):
+        self._remove(organization)
+        self.seen.add(organization)
+
     @abc.abstractmethod
     def _add(self, organization: OrganizationAggregate):  # pragma: no cover
         raise NotImplementedError
@@ -34,4 +38,8 @@ class AbstractOrganizationRepository(abc.ABC):
 
     @abc.abstractmethod
     def _update(self, organization: OrganizationAggregate):  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _remove(self, organization: OrganizationAggregate):  # pragma: no cover
         raise NotImplementedError

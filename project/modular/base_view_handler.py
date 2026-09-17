@@ -98,9 +98,6 @@ class BaseViewHandler:
     def save_object(self, object):
         self.object_service.update_object(object)
 
-    def delete_object(self, object):
-        self.object_service.delete_object(object)
-
     def complete_object(self, object, form):  # pragma: no cover
         pass
 

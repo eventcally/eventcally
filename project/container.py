@@ -527,6 +527,9 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.UpdateOrganizationWidgetSettingsCommand: providers.Factory(
                     command_handlers.UpdateOrganizationWidgetSettingsHandler
                 ),
+                commands.UpdateOrganizationAdminSettingsCommand: providers.Factory(
+                    command_handlers.UpdateOrganizationAdminSettingsHandler
+                ),
                 commands.CreateOrganizationRelationCommand: providers.Factory(
                     command_handlers.CreateOrganizationRelationHandler
                 ),
@@ -559,6 +562,9 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.CancelOrganizationDeletionCommand: providers.Factory(
                     command_handlers.CancelOrganizationDeletionHandler
+                ),
+                commands.DeleteOrganizationCommand: providers.Factory(
+                    command_handlers.DeleteOrganizationHandler
                 ),
                 commands.CreateApiKeyCommand: providers.Factory(
                     command_handlers.CreateApiKeyHandler,

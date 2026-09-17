@@ -55,6 +55,7 @@ from .delete_event_place_command import DeleteEventPlaceCommand
 from .delete_event_reference_command import DeleteEventReferenceCommand
 from .delete_oauth2_client_command import DeleteOAuth2ClientCommand
 from .delete_old_webhook_events_command import DeleteOldWebhookEventsCommand
+from .delete_organization_command import DeleteOrganizationCommand
 from .delete_organization_relation_command import DeleteOrganizationRelationCommand
 from .install_app_command import InstallAppCommand, InstallAppCommandResult
 from .invite_organization_command import (
@@ -96,6 +97,9 @@ from .update_event_place_command import UpdateEventPlaceCommand
 from .update_event_reference_command import UpdateEventReferenceCommand
 from .update_member_invitation_command import UpdateMemberInvitationCommand
 from .update_oauth2_client_command import UpdateOAuth2ClientCommand
+from .update_organization_admin_settings_command import (
+    UpdateOrganizationAdminSettingsCommand,
+)
 from .update_organization_command import UpdateOrganizationCommand
 from .update_organization_invitation_command import UpdateOrganizationInvitationCommand
 from .update_organization_relation_command import UpdateOrganizationRelationCommand
@@ -137,6 +141,7 @@ __all__ = [
     "UpdateEventPlaceCommand",
     "RequestOrganizationDeletionCommand",
     "CancelOrganizationDeletionCommand",
+    "DeleteOrganizationCommand",
     "AttemptToDeliverWebhookCommand",
     "CreateApiKeyCommand",
     "CreateApiKeyCommandResult",
@@ -172,6 +177,7 @@ __all__ = [
     "CreateOrganizationRelationCommandResult",
     "UpdateOrganizationCommand",
     "UpdateOrganizationWidgetSettingsCommand",
+    "UpdateOrganizationAdminSettingsCommand",
     "UpdateOrganizationRelationCommand",
     "DeleteOrganizationRelationCommand",
     "RequestOrganizationVerificationCommand",

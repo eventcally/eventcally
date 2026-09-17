@@ -160,6 +160,9 @@ class _ConcreteOrganizationRepo(AbstractOrganizationRepository):
     def _update(self, org):
         pass
 
+    def _remove(self, org):
+        pass
+
 
 class _ConcreteAppRepo(AbstractAppRepository):
     def __init__(self, return_value=None):
@@ -524,6 +527,12 @@ class TestAbstractOrganizationRepository:
         repo = _ConcreteOrganizationRepo()
         org = _org_agg()
         repo.update(org)
+        assert org in repo.seen
+
+    def test_remove_adds_to_seen(self):
+        repo = _ConcreteOrganizationRepo()
+        org = _org_agg()
+        repo.remove(org)
         assert org in repo.seen
 
     def test_get_with_result_adds_to_seen(self):

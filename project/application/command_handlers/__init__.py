@@ -33,6 +33,7 @@ from .delete_event_place_handler import DeleteEventPlaceHandler
 from .delete_event_reference_handler import DeleteEventReferenceHandler
 from .delete_oauth2_client_handler import DeleteOAuth2ClientHandler
 from .delete_old_webhook_events_handler import DeleteOldWebhookEventsHandler
+from .delete_organization_handler import DeleteOrganizationHandler
 from .delete_organization_relation_handler import DeleteOrganizationRelationHandler
 from .install_app_handler import InstallAppHandler
 from .invite_organization_handler import InviteOrganizationHandler
@@ -64,6 +65,9 @@ from .update_event_place_handler import UpdateEventPlaceHandler
 from .update_event_reference_handler import UpdateEventReferenceHandler
 from .update_member_invitation_handler import UpdateMemberInvitationHandler
 from .update_oauth2_client_handler import UpdateOAuth2ClientHandler
+from .update_organization_admin_settings_handler import (
+    UpdateOrganizationAdminSettingsHandler,
+)
 from .update_organization_handler import UpdateOrganizationHandler
 from .update_organization_invitation_handler import UpdateOrganizationInvitationHandler
 from .update_organization_relation_handler import UpdateOrganizationRelationHandler
@@ -82,6 +86,7 @@ from .withdraw_organization_verification_request_handler import (
 __all__ = [
     "AbstractCommandHandler",
     "CancelOrganizationDeletionHandler",
+    "DeleteOrganizationHandler",
     "CreateCustomWidgetHandler",
     "DeleteCustomWidgetHandler",
     "UpdateCustomWidgetHandler",
@@ -120,6 +125,7 @@ __all__ = [
     "CreateOrganizationRelationHandler",
     "UpdateOrganizationHandler",
     "UpdateOrganizationWidgetSettingsHandler",
+    "UpdateOrganizationAdminSettingsHandler",
     "UpdateOrganizationRelationHandler",
     "DeleteOrganizationRelationHandler",
     "RequestOrganizationVerificationHandler",

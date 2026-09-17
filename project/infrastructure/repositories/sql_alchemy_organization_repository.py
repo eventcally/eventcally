@@ -32,3 +32,7 @@ class SqlAlchemyOrganizationRepository(AbstractOrganizationRepository):
     def _get(self, object_id: int) -> Optional[OrganizationAggregate]:
         model = self._get_model(object_id)
         return AdminUnit.to_aggregate(model) if model else None
+
+    def _remove(self, organization: OrganizationAggregate):
+        model = self._get_model(organization.id)
+        self.session.delete(model)

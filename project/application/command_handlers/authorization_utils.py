@@ -56,3 +56,14 @@ def ensure_actor_is_user(actor: Actor, user_id: ObjectId):
     bypass for a user's own resources, unlike admin-unit permissions."""
     if actor.user_id != user_id:
         raise UnauthorizedError(f"Actor is not permitted to act as user {user_id}.")
+
+
+def ensure_actor_is_platform_admin(actor: Actor, uow: AbstractUnitOfWork):
+    """Guard for platform-admin-only actions (the admin backoffice). No
+    admin-unit-membership or app-installation fallback — being a member
+    with e.g. settings:write on some org must never satisfy this."""
+    user = uow.users.get(actor.user_id) if actor.user_id is not None else None
+    if user is None or not user.is_platform_admin:
+        raise UnauthorizedError(
+            "Actor is not permitted to perform this platform-admin action."
+        )

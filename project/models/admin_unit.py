@@ -268,6 +268,12 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
         self.fax = aggregate.fax
         self.deletion_requested_at = aggregate.deletion_requested_at
         self.deletion_requested_by_id = aggregate.deletion_requested_by_id
+        self.incoming_reference_requests_allowed = (
+            aggregate.incoming_reference_requests_allowed
+        )
+        self.can_create_other = aggregate.can_create_other
+        self.can_invite_other = aggregate.can_invite_other
+        self.can_verify_other = aggregate.can_verify_other
         self.incoming_verification_requests_allowed = (
             aggregate.incoming_verification_requests_allowed
         )
@@ -315,6 +321,8 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
             deletion_requested_at=model.deletion_requested_at,
             deletion_requested_by_id=model.deletion_requested_by_id,
             can_verify_other=model.can_verify_other,
+            can_create_other=model.can_create_other,
+            can_invite_other=model.can_invite_other,
             incoming_verification_requests_allowed=model.incoming_verification_requests_allowed,
             incoming_verification_requests_text=model.incoming_verification_requests_text,
             incoming_verification_requests_postal_codes=list(
