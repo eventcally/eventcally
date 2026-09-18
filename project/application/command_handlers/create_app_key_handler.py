@@ -6,6 +6,7 @@ from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.domain.models.aggregates.app_key_aggregate import AppKeyAggregate
 
 from .abstract_command_handler import AbstractCommandHandler
+from .app_utils import ensure_app_belongs_to_admin_unit, ensure_app_exists
 from .authorization_utils import ensure_actor_has_permission_for_admin_unit
 
 
@@ -18,6 +19,9 @@ class CreateAppKeyHandler(AbstractCommandHandler):
         ensure_actor_has_permission_for_admin_unit(
             cmd.actor, cmd.admin_unit_id, "app_keys:write", uow
         )
+
+        app = ensure_app_exists(cmd.app_id, uow)
+        ensure_app_belongs_to_admin_unit(app, cmd.admin_unit_id)
 
         checksum, kid, public_key, private_pem = self.app_key_generator.generate()
         app_key = AppKeyAggregate.create(

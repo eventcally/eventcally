@@ -3,12 +3,13 @@ from functools import wraps
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
 from dependency_injector.wiring import Provide, inject
-from flask import abort, current_app, request
+from flask import abort, current_app, g, request
 from flask_apispec import marshal_with
 from flask_apispec.annotations import annotate
 from flask_apispec.views import MethodResource
 from flask_limiter.extension import LimitDecorator
 from flask_wtf.csrf import validate_csrf
+from werkzeug.exceptions import UnsupportedMediaType
 
 from project.api.schemas import (
     ErrorResponseSchema,
@@ -205,6 +206,29 @@ class BaseResource(MethodResource):
     ):
         self.message_bus = message_bus
         self.app_context_provider = app_context_provider
+
+    def get_json_body(self) -> dict:
+        """Parsed JSON body, treating a missing one as empty.
+
+        Resources that build their command from a plain schema must not use
+        `request.json` directly: it raises on a request without a body, while
+        webargs' `use_kwargs` — which those resources replaced — parsed the
+        same request as `{}`. Endpoints whose payload is entirely optional
+        stay callable with no body that way. A malformed non-empty body still
+        raises, so it keeps answering 400 rather than being read as empty.
+        """
+        if not request.get_data(cache=True):
+            return {}
+
+        try:
+            return request.get_json() or {}
+        except UnsupportedMediaType:
+            return {}
+
+    def load_command(self, schema_cls):
+        """Build a command from the request body via a plain schema, so an
+        invalid payload surfaces as a 422 instead of escaping as a 500."""
+        return schema_cls(context=g.api_command_context).load(self.get_json_body())
 
     def create_instance(self, schema_cls, **kwargs):
         instance = schema_cls().load(request.json, session=db.session)

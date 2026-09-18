@@ -1,21 +1,18 @@
-from flask import g, make_response, request
+from flask import g, make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 
 from project.api import add_api_resource
 from project.api.event_reference.schemas import EventReferenceIdSchema
 from project.api.event_reference_request.schemas import (
+    EventReferenceRequestRejectRequestPlainSchema,
     EventReferenceRequestRejectRequestSchema,
     EventReferenceRequestSchema,
     EventReferenceRequestVerifyRequestSchema,
 )
 from project.api.resources import BaseResource, require_organization_api_access
 from project.application.commands import (
-    RejectEventReferenceRequestCommand,
     VerifyEventReferenceRequestCommand,
     WithdrawEventReferenceRequestCommand,
-)
-from project.domain.models.enums.event_reference_request_rejection_reason import (
-    EventReferenceRequestRejectionReason,
 )
 from project.models import EventReference, EventReferenceRequest
 
@@ -84,18 +81,7 @@ class EventReferenceRequestRejectResource(BaseResource):
         "organization.incoming_event_reference_requests:write", EventReferenceRequest
     )
     def post(self, id):
-        rejection_reason_name = (request.json or {}).get("rejection_reason")
-        rejection_reason = (
-            EventReferenceRequestRejectionReason[rejection_reason_name]
-            if rejection_reason_name
-            else None
-        )
-
-        cmd = RejectEventReferenceRequestCommand(
-            id=id,
-            rejection_reason=rejection_reason,
-            actor=self.app_context_provider.get_current_actor(),
-        )
+        cmd = self.load_command(EventReferenceRequestRejectRequestPlainSchema)
         self.message_bus.handle_command(cmd)
 
         return make_response("", 204)

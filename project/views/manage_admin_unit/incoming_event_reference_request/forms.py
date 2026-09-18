@@ -31,14 +31,14 @@ class DeleteEventReferenceRequestForm(BaseForm):
 
 
 class ReferenceRequestReviewForm(BaseForm):
+    # A review is a decision: only verified and rejected are valid outcomes.
+    # `inbox` is the not-yet-reviewed state and has no transition back to it in
+    # EventReferenceRequestAggregate, so offering it here would let a crafted
+    # POST fall into the reject branch of ReviewView.dispatch_validated_form.
     review_status = SelectField(
         lazy_gettext("Review status"),
         coerce=int,
         choices=[
-            (
-                int(EventReferenceRequestReviewStatus.inbox),
-                lazy_gettext("EventReferenceRequestReviewStatus.inbox"),
-            ),
             (
                 int(EventReferenceRequestReviewStatus.verified),
                 lazy_gettext("EventReferenceRequestReviewStatus.verified"),

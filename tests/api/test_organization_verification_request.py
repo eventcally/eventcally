@@ -103,6 +103,42 @@ def test_verify(client, app, db, seeder: Seeder, utils: UtilActions, mocker):
         assert relation.auto_verify_event_reference_requests
 
 
+def test_verify_withoutBody(client, app, db, seeder: Seeder, utils: UtilActions):
+    (
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario(
+        log_in_verifier=True, api=True
+    )
+    reference_request_id = seeder.create_admin_unit_verification_request(
+        unverified_admin_unit_id, verifier_admin_unit_id
+    )
+
+    url = utils.get_url(
+        "api_v1_organization_verification_request_verify", id=reference_request_id
+    )
+    response = client.post(url, headers=utils.get_headers())
+    utils.assert_response_created(response)
+
+    with app.app_context():
+        from project.models import AdminUnitVerificationRequest
+        from project.services.admin_unit import get_admin_unit_relation
+
+        verification_request = db.session.get(
+            AdminUnitVerificationRequest, reference_request_id
+        )
+        assert verification_request.verified
+
+        relation = get_admin_unit_relation(
+            verifier_admin_unit_id, unverified_admin_unit_id
+        )
+        assert relation is not None
+        assert relation.verify
+        assert not relation.auto_verify_event_reference_requests
+
+
 def test_verify_alreadyVerified(
     client, app, db, seeder: Seeder, utils: UtilActions, mocker
 ):

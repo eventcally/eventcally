@@ -10,6 +10,7 @@ from project.application.command_handlers.delete_app_key_handler import (
     DeleteAppKeyHandler,
 )
 from project.domain.errors import NotFoundError, UnauthorizedError
+from project.domain.models.aggregates.app_aggregate import AppAggregate
 from project.domain.models.aggregates.app_key_aggregate import AppKeyAggregate
 from project.domain.models.entities.actor import Actor
 from tests.application.conftest import ACTOR, FakeAppKeyGenerator, grant_permission
@@ -20,6 +21,20 @@ APP_ID = 2
 
 def _handler():
     return CreateAppKeyHandler(app_key_generator=FakeAppKeyGenerator())
+
+
+def _seed_app(uow, admin_unit_id=ADMIN_UNIT_ID, app_id=APP_ID):
+    app = AppAggregate.create(
+        actor=Actor(),
+        admin_unit_id=admin_unit_id,
+        name="App",
+        app_permissions=set(),
+        client_id="client-id",
+        client_secret="client-secret",
+    )
+    app.id = app_id
+    uow.apps.add(app)
+    return app
 
 
 def _seed_app_key(uow, admin_unit_id=ADMIN_UNIT_ID, app_id=APP_ID):
@@ -37,6 +52,7 @@ def _seed_app_key(uow, admin_unit_id=ADMIN_UNIT_ID, app_id=APP_ID):
 
 class TestCreateAppKeyHandler:
     def test_creates_app_key_and_returns_result(self, uow):
+        _seed_app(uow)
         grant_permission(uow, ADMIN_UNIT_ID, "app_keys:write")
         cmd = commands.CreateAppKeyCommand.model_construct(
             actor=ACTOR, admin_unit_id=ADMIN_UNIT_ID, app_id=APP_ID
@@ -55,11 +71,31 @@ class TestCreateAppKeyHandler:
         assert app_key.public_key == "fake-public-key"
 
     def test_unauthorized_actor_raises(self, uow):
+        _seed_app(uow)
         cmd = commands.CreateAppKeyCommand.model_construct(
             actor=ACTOR, admin_unit_id=ADMIN_UNIT_ID, app_id=APP_ID
         )
 
         with pytest.raises(UnauthorizedError):
+            _handler().handle(cmd, uow)
+
+    def test_app_of_other_admin_unit_raises(self, uow):
+        _seed_app(uow, admin_unit_id=ADMIN_UNIT_ID + 1)
+        grant_permission(uow, ADMIN_UNIT_ID, "app_keys:write")
+        cmd = commands.CreateAppKeyCommand.model_construct(
+            actor=ACTOR, admin_unit_id=ADMIN_UNIT_ID, app_id=APP_ID
+        )
+
+        with pytest.raises(UnauthorizedError):
+            _handler().handle(cmd, uow)
+
+    def test_unknown_app_raises(self, uow):
+        grant_permission(uow, ADMIN_UNIT_ID, "app_keys:write")
+        cmd = commands.CreateAppKeyCommand.model_construct(
+            actor=ACTOR, admin_unit_id=ADMIN_UNIT_ID, app_id=999
+        )
+
+        with pytest.raises(NotFoundError):
             _handler().handle(cmd, uow)
 
 

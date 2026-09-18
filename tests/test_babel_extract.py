@@ -30,6 +30,18 @@ assert isinstance(comments, list)
 extracted = {entry[2] for entry in messages}
 for expected in ("Event", "Events", "Webhook", "Webhooks"):
     assert expected in extracted, f"{expected} missing from {sorted(extracted)}"
+
+# Review statuses are localized from the enum member at runtime, so every
+# member has to be extracted here -- including the ones no form offers.
+for expected in (
+    "EventReferenceRequestReviewStatus.inbox",
+    "EventReferenceRequestReviewStatus.verified",
+    "EventReferenceRequestReviewStatus.rejected",
+    "AdminUnitVerificationRequestReviewStatus.inbox",
+    "AdminUnitVerificationRequestReviewStatus.verified",
+    "AdminUnitVerificationRequestReviewStatus.rejected",
+):
+    assert expected in extracted, f"{expected} missing from {sorted(extracted)}"
 """
 
     result = subprocess.run(

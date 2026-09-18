@@ -31,6 +31,15 @@ def babel_extract(fileobj, keywords, comment_tags, options):
         _add_key(model_class.__display_name__)
         _add_key(model_class.__display_name_plural__)
 
+    def _add_enum(enum_class):
+        # get_localized_enum_name() builds "<EnumName>.<member>" at runtime, so
+        # the extractor cannot see those keys in the source. Enums rendered that
+        # way are listed here instead of relying on an incidental lazy_gettext()
+        # elsewhere -- e.g. the review forms, which only offer the members a
+        # reviewer may pick, never the pending `inbox` state the pills show.
+        for member in enum_class:
+            _add_key(f"{enum_class.__name__}.{member.name}")
+
     # Importing the models registers every mapper. Extraction runs under a bare
     # `pybabel` process, so there is no application to borrow a context from --
     # and none is needed: __display_name__ and __display_name_plural__ are plain
@@ -38,8 +47,15 @@ def babel_extract(fileobj, keywords, comment_tags, options):
     # time, not lazily evaluated translations.
     import project.models  # noqa: F401
     from project.extensions import db
+    from project.models import (
+        AdminUnitVerificationRequestReviewStatus,
+        EventReferenceRequestReviewStatus,
+    )
 
     for mapper in db.Model.registry.mappers:
         _add_model(mapper.class_)
+
+    _add_enum(EventReferenceRequestReviewStatus)
+    _add_enum(AdminUnitVerificationRequestReviewStatus)
 
     return result

@@ -1,4 +1,4 @@
-from marshmallow import fields, validate
+from marshmallow import fields, post_load, validate
 from marshmallow_enum import EnumField
 
 from project.api.event.schemas import EventRefSchema, EventWriteIdSchema
@@ -10,9 +10,14 @@ from project.api.schemas import (
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
+    PlainBaseSchema,
     SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
+)
+from project.application.commands import RejectEventReferenceRequestCommand
+from project.domain.models.enums.event_reference_request_rejection_reason import (
+    EventReferenceRequestRejectionReason as DomainEventReferenceRequestRejectionReason,
 )
 from project.models import (
     EventReferenceRequest,
@@ -115,3 +120,17 @@ class EventReferenceRequestRejectRequestSchema(
     rejection_reason = EnumField(
         EventReferenceRequestRejectionReason,
     )
+
+
+class EventReferenceRequestRejectRequestPlainSchema(PlainBaseSchema):
+    rejection_reason = EnumField(
+        DomainEventReferenceRequestRejectionReason,
+        allow_none=True,
+        load_default=None,
+    )
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        data["actor"] = self.context.get("actor")
+        return RejectEventReferenceRequestCommand(**data)

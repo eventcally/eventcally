@@ -16,6 +16,7 @@ from project.domain.models.aggregates.organization_relation_aggregate import (
 from project.domain.models.entities.image_entity import ImageEntity
 
 from .abstract_command_handler import AbstractCommandHandler
+from .authorization_utils import ensure_actor_has_permission_for_admin_unit
 from .invitation_utils import (
     ensure_actor_is_invitation_receiver,
     ensure_organization_invitation_exists,
@@ -100,6 +101,15 @@ class CreateOrganizationHandler(AbstractCommandHandler):
             uow.organization_relations.add(relation)
             uow.organization_invitations.remove(invitation)
         elif cmd.current_admin_unit_id is not None:
+            # The relation is created on behalf of the current organization and
+            # may mark the new one as verified by it, so the actor has to hold
+            # the same permission the creating view checks before offering it.
+            ensure_actor_has_permission_for_admin_unit(
+                cmd.actor,
+                cmd.current_admin_unit_id,
+                "outgoing_organization_relations:write",
+                uow,
+            )
             current_organization = ensure_organization_exists(
                 cmd.current_admin_unit_id, uow
             )

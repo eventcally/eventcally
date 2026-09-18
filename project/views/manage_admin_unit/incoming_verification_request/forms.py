@@ -17,14 +17,14 @@ from project.modular.base_form import BaseForm
 
 
 class VerificationRequestReviewForm(BaseForm):
+    # A review is a decision: only verified and rejected are valid outcomes.
+    # `inbox` is the not-yet-reviewed state and has no transition back to it in
+    # OrganizationVerificationRequestAggregate, so offering it here would let a
+    # crafted POST fall into the reject branch of ReviewView.dispatch_validated_form.
     review_status = SelectField(
         lazy_gettext("Review status"),
         coerce=int,
         choices=[
-            (
-                int(AdminUnitVerificationRequestReviewStatus.inbox),
-                lazy_gettext("AdminUnitVerificationRequestReviewStatus.inbox"),
-            ),
             (
                 int(AdminUnitVerificationRequestReviewStatus.verified),
                 lazy_gettext("AdminUnitVerificationRequestReviewStatus.verified"),

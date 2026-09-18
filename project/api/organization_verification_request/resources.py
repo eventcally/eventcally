@@ -1,4 +1,4 @@
-from flask import g, make_response, request
+from flask import g, make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 from marshmallow import ValidationError
 
@@ -77,9 +77,7 @@ class OrganizationVerificationRequestVerifyResource(BaseResource):
         ):
             raise ValidationError("Verification request already verified")
 
-        cmd = OrganizationVerificationRequestVerifyRequestPlainSchema(
-            context=g.api_command_context
-        ).load(request.json)
+        cmd = self.load_command(OrganizationVerificationRequestVerifyRequestPlainSchema)
         cmd_result = self.message_bus.handle_command(cmd)
 
         return cmd_result, 201
@@ -108,9 +106,7 @@ class OrganizationVerificationRequestRejectResource(BaseResource):
         ):  # pragma: no cover
             raise ValidationError("Verification request already verified")
 
-        cmd = OrganizationVerificationRequestRejectRequestPlainSchema(
-            context=g.api_command_context
-        ).load(request.json)
+        cmd = self.load_command(OrganizationVerificationRequestRejectRequestPlainSchema)
         self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
