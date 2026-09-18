@@ -28,10 +28,22 @@ docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@host.docker.inter
 ./runtests.sh
 ```
 
-### Run a single test
+### Run a single test or a subset
+
+Pass the paths after `--`. The `--group` is what creates that group's database and
+exports `TEST_DATABASE_URL`, so it is required even for one test — without it the run
+fails with `could not translate host name "myserver"`. `--no-cov` skips collecting
+coverage, which is only useful for the full suite.
 
 ```sh
-docker compose -f docker-compose.test.yml run --rm pytest pytest tests/views/test_event.py -v
+./runtests.sh --splits 1 --group 1 -- tests/views/test_event.py -v --no-cov
+```
+
+Tests under `tests/application/` and `tests/domain/` need no services and can also be
+run directly in the container:
+
+```sh
+docker compose -f docker-compose.test.yml run --rm pytest pytest tests/domain -q
 ```
 
 ## Linting

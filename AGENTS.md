@@ -25,7 +25,7 @@ Violations fail `lint-imports`. Check both files before adding imports:
 
 - `tests/application/` and `tests/domain/` run without external dependencies.
 - All other tests (views, api, infrastructure, service_layer) require PostGIS + Redis. Use `docker compose -f docker-compose.test.yml up -d --wait` for local testing, or run the full dockerized suite with `./runtests.sh`.
-- Run a single test: `pytest tests/views/test_event.py::TestEventView::test_create -v`
+- Run a single test or subset: `./runtests.sh --splits 1 --group 1 -- tests/views/test_event.py::test_create_allday -v --no-cov`. The `--group` creates that group's database and exports `TEST_DATABASE_URL`; without it the run fails with `could not translate host name "myserver"`.
 - Key fixtures: `app`, `db`, `client`, `seeder`, `utils`, `container`, `message_bus` (see `tests/conftest.py`).
 - Test base classes in `tests/base_test.py` — use these for view tests instead of writing boilerplate.
 

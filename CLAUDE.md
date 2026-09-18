@@ -42,7 +42,10 @@ docker-compose up --build                      # full stack: PostGIS, Redis, Mai
 
 # Test — dockerized, no host Postgres/Redis/venv needed (application/ + domain/ need no services)
 ./runtests.sh                                  # full parallel suite + coverage, in Docker
-docker compose -f docker-compose.test.yml run --rm pytest pytest tests/views/test_event.py::TestEventView::test_create -v   # single test
+# Subset/single test: pass paths after `--`. Needs a group, which creates that group's
+# database and exports TEST_DATABASE_URL — plain `run --rm pytest pytest <path>` fails
+# with `could not translate host name "myserver"`.
+./runtests.sh --splits 1 --group 1 -- tests/views/test_event.py::test_create_allday -v --no-cov
 npm install && npx playwright test             # e2e
 
 # Regenerate model/repo code after editing codegen/config/*.yaml
