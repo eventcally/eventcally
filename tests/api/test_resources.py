@@ -20,22 +20,3 @@ def test_create_instance_calls_validate_when_present(app):
 
         with pytest.raises(ValueError, match="URL is required for a webhook"):
             resource.create_instance(WebhookModelSchema)
-
-
-def test_update_instance_calls_validate_when_present(app):
-    """Same hook, exercised via `update_instance`."""
-    from project.api.resources import BaseResource
-    from project.api.schemas import SQLAlchemyBaseSchema
-    from project.models.webhook import Webhook
-
-    class WebhookModelSchema(SQLAlchemyBaseSchema):
-        class Meta:
-            model = Webhook
-            load_instance = True
-
-    with app.test_request_context(json={}):
-        resource = BaseResource()
-        instance = Webhook()
-
-        with pytest.raises(ValueError, match="URL is required for a webhook"):
-            resource.update_instance(WebhookModelSchema, instance=instance)

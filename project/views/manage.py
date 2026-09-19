@@ -1,14 +1,6 @@
 import os
 
-from flask import (
-    abort,
-    current_app,
-    redirect,
-    render_template,
-    request,
-    send_from_directory,
-    url_for,
-)
+from flask import redirect, render_template, request, send_from_directory, url_for
 from flask_security import auth_required, current_user
 
 from project import dump_org_path
@@ -112,26 +104,6 @@ def manage_admin_unit(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
     set_current_admin_unit(admin_unit)
     return redirect(url_for("manage_admin_unit.events", id=admin_unit.id))
-
-
-@main_bp.route("/manage/admin_unit/<int:id>/event-lists")
-@main_bp.route("/manage/admin_unit/<int:id>/event-lists/<path:path>")
-@auth_required()
-def manage_admin_unit_event_lists(id, path=None):
-    if not current_app.config.get("FEATURE_EVENT_LISTS_ENABLED", True):
-        abort(404)
-
-    admin_unit = get_admin_unit_for_manage_or_404(id)
-
-    if not has_access(admin_unit, "event_lists:read"):  # pragma: no cover
-        return permission_missing(url_for("main.manage_admin_unit", id=admin_unit.id))
-
-    set_current_admin_unit(admin_unit)
-
-    return render_template(
-        "manage/event_lists.html",
-        admin_unit=admin_unit,
-    )
 
 
 @main_bp.route("/manage/admin_unit/<int:id>/custom-widgets")

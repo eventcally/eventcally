@@ -230,28 +230,12 @@ class BaseResource(MethodResource):
         invalid payload surfaces as a 422 instead of escaping as a 500."""
         return schema_cls(context=g.api_command_context).load(self.get_json_body())
 
-    def create_instance(self, schema_cls, **kwargs):
+    def create_instance(self, schema_cls):
         instance = schema_cls().load(request.json, session=db.session)
-
-        for key, value in kwargs.items():
-            if hasattr(instance, key):
-                setattr(instance, key, value)
 
         validate = getattr(instance, "validate", None)
         if callable(validate):
             validate()
-
-        return instance
-
-    def update_instance(self, schema_cls, instance):
-        with db.session.no_autoflush:
-            instance = schema_cls().load(
-                request.json, session=db.session, instance=instance
-            )
-
-            validate = getattr(instance, "validate", None)
-            if callable(validate):
-                validate()
 
         return instance
 

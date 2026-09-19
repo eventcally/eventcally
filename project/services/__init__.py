@@ -9,7 +9,6 @@ from .custom_widget_service import CustomWidgetService
 from .event_category_service import EventCategoryService
 from .event_date_definition_service import EventDateDefinitionService
 from .event_date_service import EventDateService
-from .event_list_service import EventListService
 from .event_organizer_service import EventOrganizerService
 from .event_place_service import EventPlaceService
 from .event_reference_request_service import EventReferenceRequestService
@@ -49,7 +48,6 @@ __all__ = [
     "EventCategoryService",
     "EventDateDefinitionService",
     "EventDateService",
-    "EventListService",
     "EventOrganizerService",
     "EventPlaceService",
     "EventReferenceRequestService",

@@ -10,7 +10,6 @@ from .custom_widget_repo import CustomWidgetRepo
 from .event_category_repo import EventCategoryRepo
 from .event_date_definition_repo import EventDateDefinitionRepo
 from .event_date_repo import EventDateRepo
-from .event_list_repo import EventListRepo
 from .event_organizer_repo import EventOrganizerRepo
 from .event_place_repo import EventPlaceRepo
 from .event_reference_repo import EventReferenceRepo
@@ -49,7 +48,6 @@ __all__ = [
     "EventCategoryRepo",
     "EventDateDefinitionRepo",
     "EventDateRepo",
-    "EventListRepo",
     "EventOrganizerRepo",
     "EventPlaceRepo",
     "EventReferenceRepo",

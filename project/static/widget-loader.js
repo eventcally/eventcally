@@ -80,7 +80,6 @@
           src += "/organizations/" + organizationId + "/widget/eventdates?";
         }
 
-        src = addParamToQuery(element, src, 'event-list', 'event_list_id');
         src = addParamToQuery(element, src, 'font', 's_ft');
         src = addParamToQuery(element, src, 'background', 's_bg');
         src = addParamToQuery(element, src, 'primary', 's_pr');

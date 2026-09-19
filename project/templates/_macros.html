@@ -611,7 +611,7 @@
 {{ render_fax_prop(organizer.fax) }}
 {% endmacro %}
 
-{% macro render_event_props_seo(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None, current_user=None, can_add_to_list=False) %}
+{% macro render_event_props_seo(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None, current_user=None) %}
 <div class="w-normal mx-auto">
 
   {% if event.photo_id %}
@@ -622,7 +622,7 @@
 
     {% if user_rights %}
     <div class="float-sm-right">
-      {{ render_event_menu(user_rights, event, can_add_to_list) }}
+      {{ render_event_menu(user_rights, event) }}
     </div>
     {% endif %}
 
@@ -1187,7 +1187,7 @@
   {% endif %}
 {% endmacro %}
 
-{% macro render_event_menu(user_rights, event, can_add_to_list) %}
+{% macro render_event_menu(user_rights, event) %}
 {% if user_rights|any_dict_value_true %}
   <div class="dropdown my-1">
       <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -1207,10 +1207,6 @@
           {% endif %}
           {% if user_rights['can_reference_event'] %}
             <a class="dropdown-item" href="{{ url_for('main.event_reference_create', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
-          {% endif %}
-          {% if can_add_to_list %}
-          <div class="dropdown-divider"></div>
-            <a class="dropdown-item" onclick="app.$bvModal.show('add-event-to-list-modal'); return false;" href="#"><i class="fa fa-plus-circle"></i> {{ _('Add to list') }}</a>
           {% endif %}
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{{ url_for('main.event_actions', event_id=event.id) }}">{{ _('More') }}&hellip;</a>
@@ -1575,33 +1571,5 @@ $('#co_organizer_ids').select2({
     }
   },
   placeholder: "{{ _('Enter organizer') }}"
-});
-{% endmacro %}
-
-{% macro render_event_list_select2(admin_unit_id) %}
-$('#event_list_ids').select2({
-  width: '100%',
-  ajax: {
-    url: "{{ url_for('api_v1_organization_event_list_list', id=admin_unit_id) }}",
-    dataType: 'json',
-    delay: 250,
-    cache: true,
-    data: function (params) {
-      return {
-        name: params.term,
-        per_page: 5,
-        page: params.page || 1
-      };
-    },
-    processResults: function (data) {
-      return {
-        results: data.items.map(p => ({"id": p.id, "text": p.name})),
-        pagination: {
-            more: data.has_next
-        }
-      };
-    }
-  },
-  placeholder: "{{ _('Enter list name') }}"
 });
 {% endmacro %}

@@ -5,7 +5,6 @@ const {
   createAdminUnitOrganizationInvitation,
   createAdminUnitMemberInvitation,
   createEvent,
-  createEventList,
 } = require("../fixtures/flask");
 
 test.describe("Manage", () => {
@@ -30,7 +29,6 @@ test.describe("Manage", () => {
     await login();
     const adminUnitId = createAdminUnit();
     createEvent(adminUnitId);
-    createEventList(adminUnitId);
 
     await page.goto(`/manage/admin_unit/${adminUnitId}`);
     await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/events`));

@@ -34,7 +34,6 @@ from project.models import (
     EventCategory,
     EventDate,
     EventDateDefinition,
-    EventList,
     EventOrganizer,
     EventPlace,
     EventPublicStatus,
@@ -131,15 +130,6 @@ def fill_event_filter(event_filter, params: EventSearchParams):
         )
 
     event_filter = and_(event_filter, Event.public_status.in_(public_stati))
-
-    if params.event_list_id:
-        if type(params.event_list_id) is list:
-            event_list_ids = params.event_list_id
-        else:
-            event_list_ids = [params.event_list_id]
-        event_filter = and_(
-            event_filter, Event.event_lists.any(EventList.id.in_(event_list_ids))
-        )
 
     if params.organizer_id:
         event_filter = and_(event_filter, Event.organizer_id == params.organizer_id)

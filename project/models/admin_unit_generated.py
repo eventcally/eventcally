@@ -249,15 +249,6 @@ class AdminUnitGeneratedMixin(TrackableMixin, ApiKeyOwnerMixin):
         )
 
     @declared_attr
-    def event_lists(cls):
-        return relationship(
-            "EventList",
-            cascade="all, delete-orphan",
-            back_populates="admin_unit",
-            primaryjoin="EventList.admin_unit_id == AdminUnit.id",
-        )
-
-    @declared_attr
     def custom_widgets(cls):
         return relationship(
             "CustomWidget",

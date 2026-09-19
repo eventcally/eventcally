@@ -88,12 +88,6 @@ models:
         association_model: EventCoOrganizers
         association_table: event_coorganizers
         back_populates: co_organized_events
-      - name: event_lists
-        target_model: EventList
-        pattern: many-to-many
-        association_model: EventEventLists
-        association_table: event_eventlists
-        back_populates: events
       - name: date_definitions
         target_model: EventDateDefinition
         pattern: one-to-many

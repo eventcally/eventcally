@@ -27,7 +27,6 @@ from project.models.event_generated import (
     EventStatus,
     EventTargetGroupOrigin,
 )
-from project.models.event_list import EventEventLists, EventList
 from project.models.event_organizer import EventOrganizer
 from project.models.event_place import EventPlace
 from project.models.event_reference import EventReference

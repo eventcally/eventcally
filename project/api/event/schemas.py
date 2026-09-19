@@ -373,10 +373,6 @@ class EventSearchRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMi
     event_place_id = fields.Int(
         metadata={"description": "Looks for events with this event place id."},
     )
-    event_list_id = fields.List(
-        fields.Int(),
-        metadata={"description": "Looks for events with this event list ids."},
-    )
     sort = fields.Str(
         metadata={"description": "Sort result items."},
         validate=validate.OneOf(

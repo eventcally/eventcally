@@ -57,8 +57,6 @@ organization_admin_permissions = [
     "widgets:write",
 ]
 organization_event_expert_permissions = [
-    "event_lists:read",
-    "event_lists:write",
     "event_organizers:read",
     "event_organizers:write",
     "event_places:read",

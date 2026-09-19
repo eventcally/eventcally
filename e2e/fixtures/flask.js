@@ -229,10 +229,6 @@ function createAdminUnitOrganizationInvitation(adminUnitId, email = "invited@tes
   ]).invitation_id;
 }
 
-function createEventList(adminUnitId) {
-  return runJson(["test", "event-list-create", String(adminUnitId)]).event_list_id;
-}
-
 module.exports = {
   run,
   runJson,
@@ -250,5 +246,4 @@ module.exports = {
   createIncomingReference,
   createAdminUnitRelation,
   createAdminUnitOrganizationInvitation,
-  createEventList,
 };

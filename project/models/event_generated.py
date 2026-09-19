@@ -232,14 +232,6 @@ class EventGeneratedMixin(TrackableMixin):
         )
 
     @declared_attr
-    def event_lists(cls):
-        return relationship(
-            "EventList",
-            back_populates="events",
-            secondary="event_eventlists",
-        )
-
-    @declared_attr
     def date_definitions(cls):
         return relationship(
             "EventDateDefinition",

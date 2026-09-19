@@ -129,11 +129,6 @@ models:
         pattern: one-to-many
         relation: owned
         back_populates: admin_unit
-      - name: event_lists
-        target_model: EventList
-        pattern: one-to-many
-        relation: owned
-        back_populates: admin_unit
       - name: custom_widgets
         target_model: CustomWidget
         pattern: one-to-many

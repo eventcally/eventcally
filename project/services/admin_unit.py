@@ -12,8 +12,6 @@ from project.models import (
     AdminUnitMemberRole,
     AdminUnitRelation,
     CustomWidget,
-    EventEventLists,
-    EventList,
     EventOrganizer,
     EventPlace,
     Location,
@@ -265,37 +263,6 @@ def get_place_query(params: EventPlaceSearchParams):
 
     query = params.get_trackable_order_by(query, EventPlace)
     return query.order_by(func.lower(EventPlace.name))
-
-
-def get_event_list_query(admin_unit_id, name=None, event_id=None):
-    query = EventList.query.filter(EventList.admin_unit_id == admin_unit_id)
-
-    if name:
-        like_name = "%" + name + "%"
-        query = query.filter(EventList.name.ilike(like_name))
-
-    return query.order_by(func.lower(EventList.name))
-
-
-def get_event_list_status_query(admin_unit_id, event_id, name=None):
-    event_count = (
-        db.session.query(func.count(EventEventLists.id))
-        .filter(
-            EventEventLists.event_id == event_id,
-            EventEventLists.list_id == EventList.id,
-        )
-        .label("event_count")
-    )
-
-    query = db.session.query(EventList, event_count).filter(
-        EventList.admin_unit_id == admin_unit_id
-    )
-
-    if name:
-        like_name = "%" + name + "%"
-        query = query.filter(EventList.name.ilike(like_name))
-
-    return query.group_by(EventList.id).order_by(func.lower(EventList.name))
 
 
 def insert_admin_unit_relation(source_admin_unit_id: int, target_admin_unit_id: int):

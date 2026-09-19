@@ -145,10 +145,6 @@ class Repos(containers.DeclarativeContainer):
         repos.EventDateDefinitionRepo,
         db=infrastructure.db,
     )
-    event_list_repo = providers.Factory(
-        repos.EventListRepo,
-        db=infrastructure.db,
-    )
     event_organizer_repo = providers.Factory(
         repos.EventOrganizerRepo,
         db=infrastructure.db,
@@ -315,11 +311,6 @@ class Services(containers.DeclarativeContainer):
     event_date_definition_service = providers.Factory(
         services.EventDateDefinitionService,
         repo=repos.event_date_definition_repo,
-        context_provider=context.context_provider,
-    )
-    event_list_service = providers.Factory(
-        services.EventListService,
-        repo=repos.event_list_repo,
         context_provider=context.context_provider,
     )
     event_organizer_service = providers.Factory(

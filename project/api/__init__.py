@@ -187,14 +187,6 @@ rest_api = None
 api_docs = None
 resource_registry = {}
 
-EVENT_LIST_ENDPOINTS = {
-    "api_v1_event_list_model",
-    "api_v1_event_list_event_list",
-    "api_v1_event_list_event_list_write",
-    "api_v1_organization_event_list_list",
-    "api_v1_organization_event_list_status_list",
-}
-
 USER_FAVORITE_ENDPOINTS = {
     "api_v1_user_favorite_event_list",
     "api_v1_user_favorite_event_search",
@@ -208,7 +200,6 @@ API_EVENT_LIST_ENDPOINTS = {"api_v1_event_list"}
 
 # app.config key (from project.feature_flags) -> endpoints hidden when it is False.
 FEATURE_ENDPOINTS = {
-    "FEATURE_EVENT_LISTS_ENABLED": EVENT_LIST_ENDPOINTS,
     "FEATURE_USER_FAVORITES_ENABLED": USER_FAVORITE_ENDPOINTS,
     "FEATURE_API_EVENT_DATE_ENABLED": API_EVENT_DATE_ENDPOINTS,
     "FEATURE_API_EVENT_DATES_ENABLED": API_EVENT_DATES_ENDPOINTS,
@@ -257,7 +248,6 @@ def init_api(app):
     import project.api.event.resources
     import project.api.event_category.resources
     import project.api.event_date.resources
-    import project.api.event_list.resources
     import project.api.event_reference.resources
     import project.api.event_reference_request.resources
     import project.api.license.resources

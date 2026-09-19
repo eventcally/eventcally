@@ -22,8 +22,6 @@ from project.models import (
     AdminUnitMember,
     AdminUnitVerificationRequest,
     AdminUnitVerificationRequestReviewStatus,
-    Event,
-    EventList,
     EventReference,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
@@ -475,39 +473,5 @@ def create_admin_unit_organization_invitation(admin_unit_id, email):
     invitation_id = _create_admin_unit_invitation(admin_unit_id, email)
     result = {
         "invitation_id": invitation_id,
-    }
-    click.echo(json.dumps(result))
-
-
-def _add_event_to_list(event_list_id, event_id):
-    event = db.session.get(Event, event_id)
-    event_list = db.session.get(EventList, event_list_id)
-    event_list.events.append(event)
-    db.session.commit()
-
-
-def _create_event_list(admin_unit_id, event_ids=list(), name="My list"):
-    event_list = EventList()
-    event_list.name = name
-    event_list.admin_unit_id = admin_unit_id
-    db.session.add(event_list)
-    db.session.commit()
-    event_list_id = event_list.id
-
-    if type(event_ids) is not list:
-        event_ids = [event_ids]
-
-    for event_id in event_ids:
-        _add_event_to_list(event_list_id, event_id)
-
-    return event_list_id
-
-
-@test_cli.command("event-list-create")
-@click.argument("admin_unit_id", type=click.INT)
-def create_event_list(admin_unit_id):
-    event_list_id = _create_event_list(admin_unit_id)
-    result = {
-        "event_list_id": event_list_id,
     }
     click.echo(json.dumps(result))

@@ -30,13 +30,6 @@ from project.api.event_date.schemas import (
     EventDateSearchRequestSchema,
     EventDateSearchResponseSchema,
 )
-from project.api.event_list.schemas import (
-    EventListCreateRequestSchema,
-    EventListIdSchema,
-    EventListListRequestSchema,
-    EventListListResponseSchema,
-    EventListStatusListResponseSchema,
-)
 from project.api.event_reference.schemas import (
     EventReferenceCreateRequestPlainSchema,
     EventReferenceIdPlainSchema,
@@ -94,15 +87,12 @@ from project.api.resources import (
     require_organization_api_access,
 )
 from project.application.commands import RequestEventReferenceCommand
-from project.extensions import db
 from project.models import AdminUnit, Event, EventPublicStatus, EventReferenceRequest
 from project.models.admin_unit import AdminUnitInvitation, AdminUnitRelation
 from project.services.admin_unit import (
     get_admin_unit_invitation_query,
     get_admin_unit_query,
     get_custom_widget_query,
-    get_event_list_query,
-    get_event_list_status_query,
     get_organizer_query,
     get_place_query,
 )
@@ -582,58 +572,6 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
         return cmd_result, 201
 
 
-class OrganizationEventListListResource(BaseResource):
-    @doc(
-        summary="List event lists of organization",
-        tags=["Organizations", "Event Lists"],
-    )
-    @use_kwargs(EventListListRequestSchema, location=("query"))
-    @marshal_with(EventListListResponseSchema)
-    @require_api_access("organization.event_lists:read")
-    def get(self, id, **kwargs):
-        admin_unit = AdminUnit.query.get_or_404(id)
-        name = kwargs["name"] if "name" in kwargs else None
-
-        pagination = get_event_list_query(admin_unit.id, name).paginate()
-        return pagination
-
-    @doc(
-        summary="Add new event list",
-        tags=["Organizations", "Event Lists"],
-    )
-    @use_kwargs(EventListCreateRequestSchema, location="json", apply=False)
-    @marshal_with(EventListIdSchema, 201)
-    @require_organization_api_access("organization.event_lists:write")
-    def post(self, id):
-        admin_unit = g.manage_admin_unit
-
-        event_list = self.create_instance(
-            EventListCreateRequestSchema, admin_unit_id=admin_unit.id
-        )
-        db.session.add(event_list)
-        db.session.commit()
-
-        return event_list, 201
-
-
-class OrganizationEventListStatusListResource(BaseResource):
-    @doc(
-        summary="List event lists of organization with status",
-        tags=["Organizations", "Event Lists"],
-    )
-    @use_kwargs(EventListListRequestSchema, location=("query"))
-    @marshal_with(EventListStatusListResponseSchema)
-    @require_organization_api_access("organization.event_lists:read")
-    def get(self, id, event_id, **kwargs):
-        admin_unit = g.manage_admin_unit
-        name = kwargs["name"] if "name" in kwargs else None
-
-        pagination = get_event_list_status_query(
-            admin_unit.id, event_id, name
-        ).paginate()
-        return pagination
-
-
 class OrganizationCustomWidgetListResource(BaseResource):
     @doc(
         summary="List custom widgets of organization",
@@ -679,16 +617,6 @@ add_api_resource(
     OrganizationEventListResource,
     "/organizations/<int:id>/events",
     "api_v1_organization_event_list",
-)
-add_api_resource(
-    OrganizationEventListListResource,
-    "/organizations/<int:id>/event-lists",
-    "api_v1_organization_event_list_list",
-)
-add_api_resource(
-    OrganizationEventListStatusListResource,
-    "/organizations/<int:id>/event-lists/status/<int:event_id>",
-    "api_v1_organization_event_list_status_list",
 )
 add_api_resource(OrganizationListResource, "/organizations", "api_v1_organization_list")
 add_api_resource(
