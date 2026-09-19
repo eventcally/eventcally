@@ -9,9 +9,6 @@ from project.extensions import db
 from project.models.association_tables.roles_users_generated import (
     RolesUsersGeneratedMixin,
 )
-from project.models.association_tables.user_favorite_event_generated import (
-    UserFavoriteEventGeneratedMixin,
-)
 from project.models.mixins.api_key_owner_mixin import ApiKeyOwnerMixin
 from project.models.role_generated import RoleGeneratedMixin
 from project.models.user_generated import UserGeneratedMixin
@@ -64,10 +61,6 @@ class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
 
     def __str__(self):
         return self.email or super().__str__()
-
-
-class UserFavoriteEvents(db.Model, UserFavoriteEventGeneratedMixin):
-    pass
 
 
 # OAuth Consumer: Wenn wir OAuth consumen und sich ein Nutzer per Google oder Facebook anmelden möchte

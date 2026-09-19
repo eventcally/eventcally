@@ -31,7 +31,6 @@ from .organization_repo import OrganizationRepo
 from .organization_verification_request_repo import OrganizationVerificationRequestRepo
 from .role_repo import RoleRepo
 from .settings_repo import SettingsRepo
-from .user_favorite_events_repo import UserFavoriteEventsRepo
 from .user_repo import UserRepo
 
 __all__ = [
@@ -67,6 +66,5 @@ __all__ = [
     "OrganizationVerificationRequestRepo",
     "RoleRepo",
     "SettingsRepo",
-    "UserFavoriteEventsRepo",
     "UserRepo",
 ]

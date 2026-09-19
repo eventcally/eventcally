@@ -185,7 +185,6 @@ class EventSearchParams(TrackableSearchParams):
         self.weekday = None
         self.status = None
         self.public_status = None
-        self.favored_by_user_id = None
         self.postal_code = None
         self.not_referenced_by_organization_id = None
         self.exclude_recurring = False

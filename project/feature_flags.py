@@ -2,7 +2,6 @@
 # Opt-out semantics: token present => that feature's *_ENABLED key is False.
 # Add a future flag by adding one entry here.
 FEATURE_FLAGS = {
-    "UserFavoritesDisabled": "FEATURE_USER_FAVORITES_ENABLED",
     "ApiEventDateDisabled": "FEATURE_API_EVENT_DATE_ENABLED",
     "ApiEventDatesDisabled": "FEATURE_API_EVENT_DATES_ENABLED",
     "ApiEventListDisabled": "FEATURE_API_EVENT_LIST_ENABLED",

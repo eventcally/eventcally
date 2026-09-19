@@ -136,24 +136,6 @@ def test_add_oauth2_scheme(app, utils):
         add_oauth2_scheme_with_transport(False)
 
 
-def test_init_api_user_favorites_disabled():
-    from project import create_app
-    from project.api import USER_FAVORITE_ENDPOINTS
-
-    app = create_app(
-        {
-            "TESTING": True,
-            "SERVER_NAME": "localhost",
-            "FEATURE_USER_FAVORITES_ENABLED": False,
-        }
-    )
-
-    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
-
-    assert endpoints.isdisjoint(USER_FAVORITE_ENDPOINTS)
-    assert "api_v1_user_organization_membership_list" in endpoints
-
-
 # (endpoint set in project.api, derived config key, FEATURE_FLAGS token)
 UNUSED_API_ENDPOINT_FLAGS = [
     (

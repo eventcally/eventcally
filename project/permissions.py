@@ -173,7 +173,6 @@ _add_org("app_installations", lazy_gettext("App installations"), no_api_access=T
 _add_user("api_keys", lazy_gettext("API keys"), no_api_access=True)
 _add_user("organization_memberships", lazy_gettext("Organization memberships"))
 _add_user("organization_invitations", lazy_gettext("Organization invitations"))
-_add_user("favorite_events", lazy_gettext("Favorite events"))
 
 api_permission_infos = [p for p in permission_infos if not p.no_api_access]
 organization_app_permission_infos = [

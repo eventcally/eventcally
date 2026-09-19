@@ -469,17 +469,6 @@ def test_admin_unit_invitations(client, app, db, seeder: Seeder):
         assert invitation is None
 
 
-def test_event_is_favored_by_current_user(client, app, db, seeder: Seeder):
-    _, admin_unit_id = seeder.setup_base(log_in=False)
-    event_id = seeder.create_event(admin_unit_id)
-
-    with app.app_context():
-        from project.models import Event
-
-        event = db.session.get(Event, event_id)
-        assert event.is_favored_by_current_user() is False
-
-
 def test_purge_event_photo(client, app, db, seeder: Seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
     event_id = seeder.create_event(admin_unit_id)

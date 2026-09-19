@@ -164,8 +164,8 @@ legacy_scope_mapping = {
     "organizer:write": "organization.event_organizers:write",
     "place:write": "organization.event_places:write",
     "event:write": "organization.events:write",
-    "user:read": "user.organization_invitations:read user.favorite_events:read",
-    "user:write": "user.organization_invitations:write user.favorite_events:write",
+    "user:read": "user.organization_invitations:read",
+    "user:write": "user.organization_invitations:write",
 }
 
 
@@ -187,12 +187,6 @@ rest_api = None
 api_docs = None
 resource_registry = {}
 
-USER_FAVORITE_ENDPOINTS = {
-    "api_v1_user_favorite_event_list",
-    "api_v1_user_favorite_event_search",
-    "api_v1_user_favorite_event_list_write",
-}
-
 # Unused endpoints, each hidden behind its own flag so they can be retired one by one.
 API_EVENT_DATE_ENDPOINTS = {"api_v1_event_date"}
 API_EVENT_DATES_ENDPOINTS = {"api_v1_event_dates"}
@@ -200,7 +194,6 @@ API_EVENT_LIST_ENDPOINTS = {"api_v1_event_list"}
 
 # app.config key (from project.feature_flags) -> endpoints hidden when it is False.
 FEATURE_ENDPOINTS = {
-    "FEATURE_USER_FAVORITES_ENABLED": USER_FAVORITE_ENDPOINTS,
     "FEATURE_API_EVENT_DATE_ENABLED": API_EVENT_DATE_ENDPOINTS,
     "FEATURE_API_EVENT_DATES_ENABLED": API_EVENT_DATES_ENDPOINTS,
     "FEATURE_API_EVENT_LIST_ENABLED": API_EVENT_LIST_ENDPOINTS,

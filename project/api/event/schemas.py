@@ -164,21 +164,6 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
     )
 
 
-class EventCurrentUserMixin(object):
-    is_favored = fields.Method(
-        "get_is_favored",
-        metadata={"description": "True, if event is favored by current user"},
-    )
-
-    def get_is_favored(self, event):
-        if not current_user or not current_user.is_authenticated:
-            return False
-
-        from project.services.user import has_favorite_event
-
-        return has_favorite_event(current_user.id, event.id)
-
-
 class EventCurrentOrganizationMixin(object):
     reference_id = fields.Method(
         "get_reference_id",
@@ -219,7 +204,6 @@ class EventCurrentOrganizationMixin(object):
 class EventSchema(
     EventIdSchema,
     EventBaseSchemaMixin,
-    EventCurrentUserMixin,
     EventCurrentOrganizationMixin,
 ):
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
@@ -256,7 +240,6 @@ class EventRefSchema(EventIdSchema):
 class EventSearchItemSchema(
     EventIdSchema,
     EventBaseSchemaMixin,
-    EventCurrentUserMixin,
     EventCurrentOrganizationMixin,
     TrackableSchemaMixin,
 ):
@@ -288,28 +271,6 @@ class EventListItemRefSchema(EventRefSchema, TrackableSchemaMixin):
 
 
 class EventListResponseSchema(PaginationResponseSchema):
-    items = fields.List(
-        fields.Nested(EventListItemRefSchema), metadata={"description": "Events"}
-    )
-
-
-class UserFavoriteEventListRequestSchema(
-    PaginationRequestSchema, TrackableRequestSchemaMixin
-):
-    sort = fields.Str(
-        metadata={"description": "Sort result items."},
-        validate=validate.OneOf(
-            [
-                "-created_at",
-                "-updated_at",
-                "-last_modified_at",
-                "start",
-            ]
-        ),
-    )
-
-
-class UserFavoriteEventListResponseSchema(PaginationResponseSchema):
     items = fields.List(
         fields.Nested(EventListItemRefSchema), metadata={"description": "Events"}
     )

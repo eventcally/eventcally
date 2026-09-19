@@ -32,7 +32,6 @@ from .organization_verification_request_service import (
 )
 from .role_service import RoleService
 from .settings_service import SettingsService
-from .user_favorite_events_service import UserFavoriteEventsService
 from .user_service import UserService
 
 __all__ = [
@@ -67,6 +66,5 @@ __all__ = [
     "OrganizationVerificationRequestService",
     "RoleService",
     "SettingsService",
-    "UserFavoriteEventsService",
     "UserService",
 ]

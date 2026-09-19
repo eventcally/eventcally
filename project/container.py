@@ -229,10 +229,6 @@ class Repos(containers.DeclarativeContainer):
         repos.SettingsRepo,
         db=infrastructure.db,
     )
-    user_favorite_events_repo = providers.Factory(
-        repos.UserFavoriteEventsRepo,
-        db=infrastructure.db,
-    )
     user_repo = providers.Factory(
         repos.UserRepo,
         db=infrastructure.db,
@@ -416,11 +412,6 @@ class Services(containers.DeclarativeContainer):
     settings_service = providers.Factory(
         services.SettingsService,
         repo=repos.settings_repo,
-        context_provider=context.context_provider,
-    )
-    user_favorite_events_service = providers.Factory(
-        services.UserFavoriteEventsService,
-        repo=repos.user_favorite_events_repo,
         context_provider=context.context_provider,
     )
     user_service = providers.Factory(

@@ -8,11 +8,6 @@
 {% block vue_container %}
 {% endblock %}
 
-{% block header_before_site_js %}
-<script src="{{ url_for('static', filename='user.js')}}"></script>
-{{ super() }}
-{%- endblock -%}
-
 {% block content_container_attribs %}{% endblock %}
 
 {% block content %}

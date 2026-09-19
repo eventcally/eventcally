@@ -43,7 +43,7 @@ from project.models.location import Location
 from project.models.oauth import OAuth2AuthorizationCode, OAuth2Client, OAuth2Token
 from project.models.session_events import before_flush
 from project.models.settings import Settings
-from project.models.user import OAuth, Role, User, UserFavoriteEvents
+from project.models.user import OAuth, Role, User
 from project.models.webhook import Webhook
 from project.models.webhook_delivery import WebhookDelivery
 from project.models.webhook_delivery_attempt import WebhookDeliveryAttempt

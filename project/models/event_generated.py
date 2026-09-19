@@ -267,11 +267,3 @@ class EventGeneratedMixin(TrackableMixin):
             back_populates="event",
             primaryjoin="EventReferenceRequest.event_id == Event.id",
         )
-
-    @declared_attr
-    def favored_by_users(cls):
-        return relationship(
-            "User",
-            back_populates="favorite_events",
-            secondary="user_favoriteevents",
-        )

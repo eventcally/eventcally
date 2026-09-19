@@ -106,22 +106,6 @@ def test_organization_invitation_list(client, seeder, utils):
     utils.get_ok(url)
 
 
-def test_user_favorite_events(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
-
-    url = utils.get_url("main.user_favorite_events")
-    utils.get_ok(url)
-
-
-def test_user_favorite_events_disabled(client, seeder, utils, app):
-    app.config["FEATURE_USER_FAVORITES_ENABLED"] = False
-    _, admin_unit_id = seeder.setup_base()
-
-    url = utils.get_url("main.user_favorite_events")
-    response = utils.get(url)
-    utils.assert_response_notFound(response)
-
-
 @pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("locale", [None, "de"])
 def test_user_general(client, seeder, utils, app, db, mocker, locale, db_error):

@@ -69,67 +69,6 @@ def test_organization_invitation_delete(client, app, seeder, utils, db):
         assert invitation is None
 
 
-def test_favorite_event_list(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_api_access()
-    event_id = seeder.create_event(admin_unit_id)
-    seeder.create_event(admin_unit_id)
-    seeder.add_favorite_event(user_id, event_id)
-
-    url = utils.get_url("api_v1_user_favorite_event_list")
-    response = utils.get_json(url)
-    assert len(response.json["items"]) == 1
-    assert response.json["items"][0]["id"] == event_id
-
-    seeder.remove_favorite_event(user_id, event_id)
-
-    url = utils.get_url("api_v1_user_favorite_event_list")
-    response = utils.get_json(url)
-    assert len(response.json["items"]) == 0
-
-
-def test_favorite_event_search(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_api_access()
-    event_id = seeder.create_event(admin_unit_id)
-    seeder.create_event(admin_unit_id)
-    seeder.add_favorite_event(user_id, event_id)
-
-    url = utils.get_url("api_v1_user_favorite_event_search")
-    response = utils.get_json(url)
-    assert len(response.json["items"]) == 1
-    assert response.json["items"][0]["id"] == event_id
-
-
-def test_favorite_event_list_put(client, seeder, utils, app):
-    user_id, admin_unit_id = seeder.setup_api_access()
-    event_id = seeder.create_event(admin_unit_id)
-
-    url = utils.get_url("api_v1_user_favorite_event_list_write", event_id=event_id)
-    response = utils.put_json(url)
-    utils.assert_response_no_content(response)
-
-    with app.app_context():
-        from project.services.user import get_favorite_event
-
-        favorite = get_favorite_event(user_id, event_id)
-        assert favorite is not None
-
-
-def test_favorite_event_list_delete(client, seeder, utils, app):
-    user_id, admin_unit_id = seeder.setup_api_access()
-    event_id = seeder.create_event(admin_unit_id)
-    seeder.add_favorite_event(user_id, event_id)
-
-    url = utils.get_url("api_v1_user_favorite_event_list_write", event_id=event_id)
-    response = utils.delete(url)
-    utils.assert_response_no_content(response)
-
-    with app.app_context():
-        from project.services.user import get_favorite_event
-
-        favorite = get_favorite_event(user_id, event_id)
-        assert favorite is None
-
-
 def test_app_installations(app, db, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(admin=True, log_in=False)
     oauth2_client_id = seeder.insert_default_oauth2_client_app(
