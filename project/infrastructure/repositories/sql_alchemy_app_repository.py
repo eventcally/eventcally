@@ -1,3 +1,4 @@
+import time
 from typing import Optional
 
 from project.domain.events.app_created import AppCreated
@@ -13,6 +14,7 @@ class SqlAlchemyAppRepository(AbstractAppRepository):
 
     def _add(self, app: AppAggregate):
         model = OAuth2Client.from_aggregate(app)
+        model.client_id_issued_at = int(time.time())
         self.session.add(model)
         self.session.flush()
 

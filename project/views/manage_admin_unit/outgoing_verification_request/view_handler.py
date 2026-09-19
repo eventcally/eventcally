@@ -18,7 +18,10 @@ from project.views.manage_admin_unit.outgoing_verification_request.displays impo
     ListDisplay,
     ReadDisplay,
 )
-from project.views.manage_admin_unit.outgoing_verification_request.views import ListView
+from project.views.manage_admin_unit.outgoing_verification_request.views import (
+    DeleteView,
+    ListView,
+)
 from project.views.utils import current_admin_unit
 
 
@@ -32,6 +35,7 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     create_view_class = None
     read_display_class = ReadDisplay
     update_view_class = None
+    delete_view_class = DeleteView
     list_view_class = ListView
     list_display_class = ListDisplay
     generic_prefix = "outgoing_"

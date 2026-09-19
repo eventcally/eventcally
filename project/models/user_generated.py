@@ -96,14 +96,6 @@ class UserGeneratedMixin(ApiKeyOwnerMixin):
         )
 
     @declared_attr
-    def favorite_events(cls):
-        return relationship(
-            "Event",
-            back_populates="favored_by_users",
-            secondary="user_favoriteevents",
-        )
-
-    @declared_attr
     def api_keys(cls):
         return relationship(
             "ApiKey",

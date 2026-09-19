@@ -1,26 +1,22 @@
+from dependency_injector.wiring import Provide, inject
 from flask import current_app, flash, g, redirect, render_template, url_for
 from flask_babel import gettext
 from flask_security import auth_required
-from sqlalchemy.exc import SQLAlchemyError
 
-from project.extensions import db
+from project.application.commands import RequestOrganizationVerificationCommand
+from project.application.message_bus import MessageBus
+from project.container import Application
+from project.domain.errors import BaseError
 from project.forms.verification_request import CreateAdminUnitVerificationRequestForm
-from project.models import (
-    AdminUnitVerificationRequest,
-    AdminUnitVerificationRequestReviewStatus,
-)
 from project.models.admin_unit import AdminUnit
 from project.services.admin_unit import get_admin_unit_query
-from project.services.organization_verification_request_service import (
-    OrganizationVerificationRequestService,
-)
 from project.services.search_params import AdminUnitSearchParams
 from project.services.verification import admin_unit_can_verify_admin_unit
 from project.views.main_blueprint import main_bp
 from project.views.utils import (
     flash_errors,
     get_pagination_urls,
-    handleSqlError,
+    handleBaseError,
     manage_required,
 )
 
@@ -52,9 +48,11 @@ def manage_organization_verification_requests_outgoing_create_select(id):
 )
 @auth_required()
 @manage_required("outgoing_organization_verification_requests:write")
+@inject
 def manage_organization_requests_outgoing_create(
     id,
     target_id,
+    message_bus: MessageBus = Provide[Application.cqrs.message_bus],
 ):
     admin_unit = g.manage_admin_unit
     target_admin_unit = AdminUnit.query.get_or_404(target_id)
@@ -72,22 +70,13 @@ def manage_organization_requests_outgoing_create(
     form = CreateAdminUnitVerificationRequestForm()
 
     if form.validate_on_submit():
-        request = AdminUnitVerificationRequest()
-        form.populate_obj(request)
-        request.source_admin_unit = admin_unit
-        request.target_admin_unit = target_admin_unit
-
         try:
-            db.session.add(request)
-
-            request.review_status = AdminUnitVerificationRequestReviewStatus.inbox
-
-            organization_verification_request_service: (
-                OrganizationVerificationRequestService
-            ) = (
-                current_app.container.services.organization_verification_request_service()
+            cmd = RequestOrganizationVerificationCommand(
+                actor=current_app.container.context.context_provider().current_actor,
+                source_admin_unit_id=admin_unit.id,
+                target_admin_unit_id=target_admin_unit.id,
             )
-            organization_verification_request_service.insert_object(request)
+            message_bus.handle_command(cmd)
             msg = gettext(
                 "Request successfully created. You will be notified after the other organization reviewed the request."
             )
@@ -98,9 +87,8 @@ def manage_organization_requests_outgoing_create(
                     id=admin_unit.id,
                 )
             )
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
+        except BaseError as e:
+            flash(handleBaseError(e), "danger")
     else:
         flash_errors(form)
 

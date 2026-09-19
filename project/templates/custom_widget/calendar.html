@@ -144,9 +144,6 @@ Vue.component('event-warning-pills', {
       watch: {
           'widget.settings.organizationId': function(val) {
             this.parameterChanged();
-          },
-          'widget.settings.eventListId': function(val) {
-            this.parameterChanged();
           }
       },
       methods: {
@@ -171,10 +168,7 @@ Vue.component('event-warning-pills', {
                 per_page: 50,
             };
 
-            if (this.widget.settings.eventListId) {
-                params.event_list_id = this.widget.settings.eventListId;
-            }
-            else if (this.widget.settings.organizationId) {
+            if (this.widget.settings.organizationId) {
                 params.organization_id = this.widget.settings.organizationId;
             }
 

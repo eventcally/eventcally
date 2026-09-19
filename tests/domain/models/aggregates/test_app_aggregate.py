@@ -21,34 +21,58 @@ def app(actor):
         admin_unit_id=2,
         name="My App",
         app_permissions=["read"],
+        client_id="test-client-id",
+        client_secret="test-client-secret",
     )
 
 
 class TestAppAggregateCreate:
     def test_creates_instance(self, actor):
         app = AppAggregate.create(
-            actor=actor, admin_unit_id=2, name="App", app_permissions=["write"]
+            actor=actor,
+            admin_unit_id=2,
+            name="App",
+            app_permissions=["write"],
+            client_id="test-client-id",
+            client_secret="test-client-secret",
         )
         assert app.name == "App"
         assert app.admin_unit_id == 2
         assert app.app_permissions == {"write"}
+        assert app.client_id == "test-client-id"
+        assert app.client_secret == "test-client-secret"
 
     def test_appends_created_event(self, actor):
         app = AppAggregate.create(
-            actor=actor, admin_unit_id=2, name="App", app_permissions=[]
+            actor=actor,
+            admin_unit_id=2,
+            name="App",
+            app_permissions=[],
+            client_id="test-client-id",
+            client_secret="test-client-secret",
         )
         assert len(app.domain_events) == 1
         assert isinstance(app.domain_events[0], AppCreated)
 
     def test_created_event_has_correct_name(self, actor):
         app = AppAggregate.create(
-            actor=actor, admin_unit_id=2, name="App", app_permissions=[]
+            actor=actor,
+            admin_unit_id=2,
+            name="App",
+            app_permissions=[],
+            client_id="test-client-id",
+            client_secret="test-client-secret",
         )
         assert app.domain_events[0].name == "App"
 
     def test_optional_fields_default_none(self, actor):
         app = AppAggregate.create(
-            actor=actor, admin_unit_id=2, name="App", app_permissions=[]
+            actor=actor,
+            admin_unit_id=2,
+            name="App",
+            app_permissions=[],
+            client_id="test-client-id",
+            client_secret="test-client-secret",
         )
         assert app.redirect_uris == set()
         assert app.scope is None
@@ -64,6 +88,8 @@ class TestAppAggregateCreate:
             admin_unit_id=2,
             name="App",
             app_permissions=[],
+            client_id="test-client-id",
+            client_secret="test-client-secret",
             webhook=webhook,
         )
         assert app.webhook is webhook

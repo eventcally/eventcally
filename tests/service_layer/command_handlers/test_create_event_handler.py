@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 from project.application import commands
+from project.domain.models.entities.actor import Actor
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
 )
@@ -16,6 +17,7 @@ def test_create_event_command_creates_event(app, db, seeder):
     with app.app_context():
         message_bus = app.container.cqrs.message_bus()
         cmd = commands.CreateEventCommand.model_construct(
+            actor=Actor(user_id=user_id),
             admin_unit_id=admin_unit_id,
             name="Test Event",
             organizer_id=organizer_id,

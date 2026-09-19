@@ -95,18 +95,6 @@ class BaseViewHandler:
     def get_object_by_id(self, object_id):
         return self.object_service.get_object_by_id(object_id)
 
-    def insert_object(self, object):
-        self.object_service.insert_object(object)
-
-    def save_object(self, object):
-        self.object_service.update_object(object)
-
-    def delete_object(self, object):
-        self.object_service.delete_object(object)
-
-    def complete_object(self, object, form):  # pragma: no cover
-        pass
-
     def check_object_access(self, object):  # pragma: no cover
         return None
 

@@ -1,10 +1,8 @@
 import sqlalchemy
 
 
-def test_mail_server():
-    import os
-
-    os.environ["MAIL_SERVER"] = "mailserver.com"
+def test_mail_server(monkeypatch):
+    monkeypatch.setenv("MAIL_SERVER", "mailserver.com")
 
     from project import create_app
 

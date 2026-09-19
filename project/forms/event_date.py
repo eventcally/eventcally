@@ -31,7 +31,6 @@ class FindEventDateForm(FindEventDateBaseForm):
         coerce=int,
         choices=distance_choices,
     )
-    event_list_id = HiddenField(validators=[Optional()])
     admin_unit_id = SelectField(
         lazy_gettext("Organization"),
         validators=[Optional()],

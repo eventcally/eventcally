@@ -10,7 +10,6 @@ from .custom_widget_repo import CustomWidgetRepo
 from .event_category_repo import EventCategoryRepo
 from .event_date_definition_repo import EventDateDefinitionRepo
 from .event_date_repo import EventDateRepo
-from .event_list_repo import EventListRepo
 from .event_organizer_repo import EventOrganizerRepo
 from .event_place_repo import EventPlaceRepo
 from .event_reference_repo import EventReferenceRepo
@@ -32,7 +31,6 @@ from .organization_repo import OrganizationRepo
 from .organization_verification_request_repo import OrganizationVerificationRequestRepo
 from .role_repo import RoleRepo
 from .settings_repo import SettingsRepo
-from .user_favorite_events_repo import UserFavoriteEventsRepo
 from .user_repo import UserRepo
 
 __all__ = [
@@ -49,7 +47,6 @@ __all__ = [
     "EventCategoryRepo",
     "EventDateDefinitionRepo",
     "EventDateRepo",
-    "EventListRepo",
     "EventOrganizerRepo",
     "EventPlaceRepo",
     "EventReferenceRepo",
@@ -69,6 +66,5 @@ __all__ = [
     "OrganizationVerificationRequestRepo",
     "RoleRepo",
     "SettingsRepo",
-    "UserFavoriteEventsRepo",
     "UserRepo",
 ]

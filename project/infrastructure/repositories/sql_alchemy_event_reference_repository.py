@@ -21,6 +21,16 @@ class SqlAlchemyEventReferenceRepository(AbstractEventReferenceRepository):
         )
         return [EventReference.to_aggregate(er) for er in event_references]
 
+    def _get_by_event_and_admin_unit(
+        self, event_id: int, admin_unit_id: int
+    ) -> Optional[EventReferenceAggregate]:
+        model = (
+            self.session.query(EventReference)
+            .filter_by(event_id=event_id, admin_unit_id=admin_unit_id)
+            .first()
+        )
+        return EventReference.to_aggregate(model) if model else None
+
     def _add(self, event_reference: EventReferenceAggregate):
         model = EventReference.from_aggregate(event_reference)
         self.session.add(model)

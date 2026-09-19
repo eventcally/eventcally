@@ -5,6 +5,7 @@ from flask import url_for
 from flask_babel import gettext
 from sqlalchemy import func
 
+from project.application.commands import DeleteOrganizationCommand
 from project.models.admin_unit import AdminUnit
 from project.modular.search_definition import SearchDefinition
 from project.services.organization_service import OrganizationService
@@ -15,7 +16,7 @@ from project.views.admin_blueprint.organization.displays import (
     UpdateDisplay,
 )
 from project.views.admin_blueprint.organization.forms import DeleteForm, UpdateForm
-from project.views.admin_blueprint.organization.views import DeleteView
+from project.views.admin_blueprint.organization.views import DeleteView, UpdateView
 
 
 class ViewHandler(AdminChildViewHandler):
@@ -25,12 +26,19 @@ class ViewHandler(AdminChildViewHandler):
     ]
     create_view_class = None
     read_view_class = None
+    update_view_class = UpdateView
     update_form_class = UpdateForm
     update_display_class = UpdateDisplay
     delete_view_class = DeleteView
     delete_form_class = DeleteForm
     list_display_class = ListDisplay
     list_search_definitions = [SearchDefinition(AdminUnit.name)]
+
+    def delete_object(self, object):
+        cmd = DeleteOrganizationCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
 
     def apply_objects_query_order(self, query, **kwargs):
         return (

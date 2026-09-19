@@ -7,12 +7,17 @@ from project.domain.models.aggregates.event_reference_aggregate import (
 )
 
 from .abstract_command_handler import AbstractCommandHandler
+from .authorization_utils import ensure_actor_has_permission_for_admin_unit
 
 
 class CreateEventReferenceHandler(AbstractCommandHandler):
     def handle(
         self, cmd: commands.CreateEventReferenceCommand, uow: AbstractUnitOfWork
     ):
+        ensure_actor_has_permission_for_admin_unit(
+            cmd.actor, cmd.admin_unit_id, "incoming_event_references:write", uow
+        )
+
         event = ensure_event_exists(cmd.event_id, uow)
         if event.admin_unit_id == cmd.admin_unit_id:
             raise ConstraintError("Own events cannot be referenced")

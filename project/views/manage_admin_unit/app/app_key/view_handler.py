@@ -11,7 +11,11 @@ from project.views.manage_admin_unit.app.app_key.displays import (
     ReadDisplay,
 )
 from project.views.manage_admin_unit.app.app_key.forms import DeleteForm
-from project.views.manage_admin_unit.app.app_key.views import CreateView, ReadView
+from project.views.manage_admin_unit.app.app_key.views import (
+    CreateView,
+    DeleteView,
+    ReadView,
+)
 from project.views.manage_admin_unit.app.child_view_handler import AppChildViewHandler
 from project.views.manage_admin_unit.app.view_handler import handler as app_view_handler
 
@@ -22,18 +26,13 @@ class AppKeyViewHandler(AppChildViewHandler):
     create_view_class = CreateView
     update_view_class = None
     delete_form_class = DeleteForm
+    delete_view_class = DeleteView
     list_display_class = ListDisplay
     read_view_class = ReadView
     read_display_class = ReadDisplay
 
     def get_object_by_id(self, object_id):
         return self.object_service.get_app_key_by_id(g.current_app, object_id)
-
-    def insert_object(self, object):
-        self.object_service.insert_app_key(g.current_app, object)
-
-    def delete_object(self, object):
-        self.object_service.delete_app_key(g.current_app, object)
 
 
 handler = AppKeyViewHandler(parent=app_view_handler)

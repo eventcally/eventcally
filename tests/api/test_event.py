@@ -3,6 +3,7 @@ import base64
 import pytest
 
 from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.entities.actor import Actor
 from project.domain.models.enums.event_status import EventStatus
 from tests.seeder import Seeder
 from tests.utils import UtilActions
@@ -14,7 +15,7 @@ def test_read(client, app, db, seeder: Seeder, utils: UtilActions):
 
     with app.app_context():
         command = UpdateEventCommand.model_construct(
-            id=event_id, status=EventStatus.scheduled
+            id=event_id, status=EventStatus.scheduled, actor=Actor(user_id=user_id)
         )
         message_bus = app.container.cqrs.message_bus()
         message_bus.handle(command)
@@ -145,18 +146,6 @@ def test_search_with_custom_category(client, seeder: Seeder, utils: UtilActions)
         response.json["items"][0]["custom_categories"][0]["id"]
         == custom_event_category_id
     )
-
-
-def test_search_is_favored(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_api_access()
-    event_id = seeder.create_event(admin_unit_id)
-    seeder.add_favorite_event(user_id, event_id)
-
-    url = utils.get_url("api_v1_event_search")
-    response = utils.get_json_ok(url)
-    assert len(response.json["items"]) == 1
-    assert response.json["items"][0]["id"] == event_id
-    assert response.json["items"][0]["is_favored"]
 
 
 def test_dates(client, seeder: Seeder, utils: UtilActions):

@@ -1,22 +1,19 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
-from flask import redirect, url_for
+from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 
+from project.application.commands import (
+    RejectEventReferenceRequestCommand,
+    VerifyEventReferenceRequestCommand,
+)
 from project.dateutils import get_today
 from project.models.event_date import EventDate
 from project.models.event_reference_request import EventReferenceRequestReviewStatus
 from project.modular.base_views import BaseListView, BaseUpdateView
 from project.services.admin_unit import get_admin_unit_relation
-from project.services.event_reference_request_service import (
-    EventReferenceRequestService,
-)
-from project.services.organization_service import OrganizationService
 from project.views.manage_admin_unit.incoming_event_reference_request.forms import (
     ReferenceRequestReviewForm,
 )
-from project.views.utils import flash_message
+from project.views.utils import flash_message, handle_base_error
 
 
 class ListView(BaseListView):
@@ -27,13 +24,6 @@ class ListView(BaseListView):
 
 
 class ReviewView(BaseUpdateView):
-    organization_service: Annotated[
-        OrganizationService, Provide["services.organization_service"]
-    ]
-    event_reference_request_service: Annotated[
-        EventReferenceRequestService,
-        Provide["services.event_reference_request_service"],
-    ]
     form_class = ReferenceRequestReviewForm
     template_file_name = "review.html"
 
@@ -82,26 +72,35 @@ class ReviewView(BaseUpdateView):
 
         return super().render_template(form=form, object=object, dates=dates, **kwargs)
 
-    def save_object(self, object, form):
-        if object.review_status == EventReferenceRequestReviewStatus.verified:
-            self.organization_service.verify_incoming_event_reference_request(
-                object, form.rating.data
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        actor = self.app_context_provider.get_current_actor()
+        auto_verify = form.auto_verify.data
+
+        if form.review_status.data == EventReferenceRequestReviewStatus.verified:
+            cmd = VerifyEventReferenceRequestCommand(
+                actor=actor,
+                id=object.id,
+                rating=form.rating.data,
+                auto_verify=auto_verify,
             )
+            self.message_bus.handle_command(cmd)
+            success_text = gettext("Reference successfully created")
         else:
-            self.event_reference_request_service.update_object(object)
-
-        if form.auto_verify.data:
-            self.organization_service.update_organization_relation(
-                object.admin_unit_id,
-                object.event.admin_unit_id,
-                auto_verify_event_reference_requests=True,
+            rejection_reason = (
+                form.rejection_reason.data if form.rejection_reason.data else None
             )
+            cmd = RejectEventReferenceRequestCommand(
+                actor=actor,
+                id=object.id,
+                rejection_reason=rejection_reason,
+                auto_verify=auto_verify,
+            )
+            self.message_bus.handle_command(cmd)
+            success_text = gettext("Request successfully updated")
 
-    def get_success_text(self, object, form):
-        if object.review_status == EventReferenceRequestReviewStatus.verified:
-            return gettext("Reference successfully created")
-
-        return gettext("Request successfully updated")
+        flash(success_text, "success")
+        return redirect(self.get_redirect_url(object=object))
 
     def get_redirect_url(self, **kwargs):
         return self.handler.get_list_url(**kwargs)

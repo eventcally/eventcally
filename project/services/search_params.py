@@ -182,11 +182,9 @@ class EventSearchParams(TrackableSearchParams):
         self.custom_category_set_id = None
         self.organizer_id = None
         self.event_place_id = None
-        self.event_list_id = None
         self.weekday = None
         self.status = None
         self.public_status = None
-        self.favored_by_user_id = None
         self.postal_code = None
         self.not_referenced_by_organization_id = None
         self.exclude_recurring = False
@@ -321,9 +319,6 @@ class EventSearchParams(TrackableSearchParams):
 
         if "expected_participants_min" in request.args:
             self.expected_participants_min = request.args["expected_participants_min"]
-
-        if "event_list_id" in request.args:
-            self.event_list_id = self.load_list_param("event_list_id")
 
         if "postal_code" in request.args:
             self.postal_code = self.load_list_param("postal_code")

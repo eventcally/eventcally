@@ -27,9 +27,6 @@ class VirtualFormField(FormField):
     def process(self, formdata, data=unset_value, extra_filters=None):
         return super().process(formdata, data, extra_filters)
 
-    def populate_obj(self, obj, name):
-        self.form.populate_obj(obj)
-
 
 class DateRangeField(FormField):
     widget = DateRangeWidget()

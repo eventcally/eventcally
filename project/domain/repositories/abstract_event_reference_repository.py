@@ -15,6 +15,14 @@ class AbstractEventReferenceRepository(abc.ABC):
         self.seen.update(event_references)
         return event_references
 
+    def get_by_event_and_admin_unit(
+        self, event_id: int, admin_unit_id: int
+    ) -> Optional[EventReferenceAggregate]:
+        event_reference = self._get_by_event_and_admin_unit(event_id, admin_unit_id)
+        if event_reference:
+            self.seen.add(event_reference)
+        return event_reference
+
     def add(self, event_reference: EventReferenceAggregate):
         self._add(event_reference)
         self.seen.add(event_reference)
@@ -37,6 +45,12 @@ class AbstractEventReferenceRepository(abc.ABC):
     def _get_by_event_id(
         self, event_id: int
     ) -> list[EventReferenceAggregate]:  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _get_by_event_and_admin_unit(
+        self, event_id: int, admin_unit_id: int
+    ) -> Optional[EventReferenceAggregate]:  # pragma: no cover
         raise NotImplementedError
 
     @abc.abstractmethod

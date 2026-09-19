@@ -105,8 +105,6 @@ instead.
 
 | Token                   | Effect                                                                                                                       |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `EventListsDisabled`    | Hides the Event Lists feature: menu item, manage view, "Add to list" event actions, and the 5 EventList REST endpoints/Swagger docs |
-| `UserFavoritesDisabled` | Hides the user favorites feature: menu item, favorite event actions, and the 3 favorite REST endpoints/Swagger docs           |
 | `ApiEventDateDisabled`  | Hides the unused `GET /api/v1/event-dates/<id>` endpoint and its Swagger docs                                                 |
 | `ApiEventDatesDisabled` | Hides the unused `GET /api/v1/events/<id>/dates` endpoint and its Swagger docs                                                |
 | `ApiEventListDisabled`  | Hides the unused `GET /api/v1/events` endpoint and its Swagger docs                                                           |

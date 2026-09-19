@@ -4,7 +4,7 @@ from flask import current_app
 from flask_security import hash_password
 
 from project.extensions import db
-from project.models import Event, Role, User, UserFavoriteEvents
+from project.models import Role, User
 from project.models.admin_unit import AdminUnitMember
 
 
@@ -57,45 +57,6 @@ def get_user(id):
 
 def find_all_users_with_role(role_name: str) -> list:
     return User.query.filter(User.roles.any(Role.name == role_name)).all()
-
-
-def get_favorite_events_query(user_id: int):
-    return Event.query.join(
-        UserFavoriteEvents, UserFavoriteEvents.event_id == Event.id
-    ).filter(UserFavoriteEvents.user_id == user_id)
-
-
-def get_favorite_event(user_id: int, event_id: int) -> UserFavoriteEvents:
-    return UserFavoriteEvents.query.filter(
-        UserFavoriteEvents.event_id == event_id,
-        UserFavoriteEvents.user_id == user_id,
-    ).first()
-
-
-def has_favorite_event(user_id: int, event_id: int) -> bool:
-    if get_favorite_event(user_id, event_id):
-        return True
-
-    return False
-
-
-def add_favorite_event(user_id: int, event_id: int) -> bool:
-    if has_favorite_event(user_id, event_id):
-        return False
-
-    favorite = UserFavoriteEvents(user_id=user_id, event_id=event_id)
-    db.session.add(favorite)
-    return True
-
-
-def remove_favorite_event(user_id: int, event_id: int):
-    favorite = get_favorite_event(user_id, event_id)
-
-    if not favorite:
-        return False
-
-    db.session.delete(favorite)
-    return True
 
 
 def get_users_with_due_delete_request():

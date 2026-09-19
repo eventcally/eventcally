@@ -34,8 +34,11 @@ class _ConcreteUoW(AbstractUnitOfWork):
         self.events = _MockRepo()
         self.event_organizers = _MockRepo()
         self.event_references = _MockRepo()
+        self.event_reference_requests = _MockRepo()
         self.event_places = _MockRepo()
         self.organizations = _MockRepo()
+        self.organization_relations = _MockRepo()
+        self.organization_verification_requests = _MockRepo()
         self.webhook_events = _MockRepo()
         self.webhook_deliveries = _MockRepo()
         self.webhook_delivery_attempts = _MockRepo()
@@ -44,6 +47,13 @@ class _ConcreteUoW(AbstractUnitOfWork):
         self.organization_members = _MockRepo()
         self.users = _MockRepo()
         self.custom_widgets = _MockRepo()
+        self.api_keys = _MockRepo()
+        self.app_keys = _MockRepo()
+        self.oauth2_clients = _MockRepo()
+        self.oauth2_tokens = _MockRepo()
+        self.organization_invitations = _MockRepo()
+        self.member_invitations = _MockRepo()
+        self.settings = _MockRepo()
         self.commit_called = False
         self.rollback_called = False
 

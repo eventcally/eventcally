@@ -137,7 +137,6 @@ _add_org("apps", lazy_gettext("Apps"), no_api_access=True)
 _add_org("app_keys", lazy_gettext("App keys"), no_api_access=True)
 _add_org("api_keys", lazy_gettext("API keys"), no_api_access=True)
 _add_org("custom_widgets", lazy_gettext("Custom widgets"))
-_add_org("event_lists", lazy_gettext("Event lists"))
 _add_org("event_organizers", lazy_gettext("Event organizers"))
 _add_org("event_places", lazy_gettext("Places"))
 _add_org("events", lazy_gettext("Events"))
@@ -174,7 +173,6 @@ _add_org("app_installations", lazy_gettext("App installations"), no_api_access=T
 _add_user("api_keys", lazy_gettext("API keys"), no_api_access=True)
 _add_user("organization_memberships", lazy_gettext("Organization memberships"))
 _add_user("organization_invitations", lazy_gettext("Organization invitations"))
-_add_user("favorite_events", lazy_gettext("Favorite events"))
 
 api_permission_infos = [p for p in permission_infos if not p.no_api_access]
 organization_app_permission_infos = [

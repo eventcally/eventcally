@@ -6,12 +6,21 @@ from sqlalchemy.orm.session import Session
 
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.infrastructure.repositories import (
+    SqlAlchemyApiKeyRepository,
+    SqlAlchemyAppKeyRepository,
     SqlAlchemyCustomWidgetRepository,
     SqlAlchemyEventOrganizerRepository,
     SqlAlchemyEventPlaceRepository,
     SqlAlchemyEventReferenceRepository,
+    SqlAlchemyEventReferenceRequestRepository,
     SqlAlchemyEventRepository,
+    SqlAlchemyMemberInvitationRepository,
+    SqlAlchemyOAuth2ClientRepository,
+    SqlAlchemyOAuth2TokenRepository,
+    SqlAlchemyOrganizationInvitationRepository,
+    SqlAlchemyOrganizationRelationRepository,
     SqlAlchemyOrganizationRepository,
+    SqlAlchemyOrganizationVerificationRequestRepository,
 )
 from project.infrastructure.repositories.sql_alchemy_app_repository import (
     SqlAlchemyAppRepository,
@@ -21,6 +30,9 @@ from project.infrastructure.repositories.sql_alchemy_organization_app_installati
 )
 from project.infrastructure.repositories.sql_alchemy_organization_member_repository import (
     SqlAlchemyOrganizationMemberRepository,
+)
+from project.infrastructure.repositories.sql_alchemy_settings_repository import (
+    SqlAlchemySettingsRepository,
 )
 from project.infrastructure.repositories.sql_alchemy_user_repository import (
     SqlAlchemyUserRepository,
@@ -55,8 +67,17 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.events = SqlAlchemyEventRepository(self.session)
         self.event_organizers = SqlAlchemyEventOrganizerRepository(self.session)
         self.event_references = SqlAlchemyEventReferenceRepository(self.session)
+        self.event_reference_requests = SqlAlchemyEventReferenceRequestRepository(
+            self.session
+        )
         self.event_places = SqlAlchemyEventPlaceRepository(self.session)
         self.organizations = SqlAlchemyOrganizationRepository(self.session)
+        self.organization_relations = SqlAlchemyOrganizationRelationRepository(
+            self.session
+        )
+        self.organization_verification_requests = (
+            SqlAlchemyOrganizationVerificationRequestRepository(self.session)
+        )
         self.webhook_events = SqlAlchemyWebhookEventRepository(self.session)
         self.webhook_deliveries = SqlAlchemyWebhookDeliveryRepository(self.session)
         self.webhook_delivery_attempts = SqlAlchemyWebhookDeliveryAttemptRepository(
@@ -69,6 +90,15 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         )
         self.organization_members = SqlAlchemyOrganizationMemberRepository(self.session)
         self.custom_widgets = SqlAlchemyCustomWidgetRepository(self.session)
+        self.api_keys = SqlAlchemyApiKeyRepository(self.session)
+        self.app_keys = SqlAlchemyAppKeyRepository(self.session)
+        self.oauth2_clients = SqlAlchemyOAuth2ClientRepository(self.session)
+        self.oauth2_tokens = SqlAlchemyOAuth2TokenRepository(self.session)
+        self.organization_invitations = SqlAlchemyOrganizationInvitationRepository(
+            self.session
+        )
+        self.member_invitations = SqlAlchemyMemberInvitationRepository(self.session)
+        self.settings = SqlAlchemySettingsRepository(self.session)
 
     def _commit(self):
         try:

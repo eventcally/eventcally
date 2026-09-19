@@ -67,6 +67,20 @@ def test_handle_error_domain_error(app):
     assert data["message"] == "Custom message"
 
 
+def test_handle_error_unauthorized(app):
+    from project.api import RestApi
+    from project.domain.errors import UnauthorizedError
+
+    error = UnauthorizedError("Custom message")
+
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+    api = RestApi(app)
+    (data, code) = api.handle_error(error)
+    assert code == 401
+    assert data["name"] == "Unauthorized"
+    assert data["message"] == "Custom message"
+
+
 def test_handle_error_unprocessableEntity(app):
     from marshmallow import ValidationError
     from werkzeug.exceptions import UnprocessableEntity
@@ -120,82 +134,6 @@ def test_add_oauth2_scheme(app, utils):
     app.config["SERVER_NAME"] = "127.0.0.1"
     with app.app_context():
         add_oauth2_scheme_with_transport(False)
-
-
-def test_init_api_event_lists_disabled():
-    from project import create_app
-    from project.api import EVENT_LIST_ENDPOINTS
-
-    app = create_app(
-        {
-            "TESTING": True,
-            "SERVER_NAME": "localhost",
-            "FEATURE_EVENT_LISTS_ENABLED": False,
-        }
-    )
-
-    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
-
-    assert endpoints.isdisjoint(EVENT_LIST_ENDPOINTS)
-    assert "api_v1_organization_event_list" in endpoints
-
-
-def test_init_api_event_lists_enabled():
-    from project import create_app
-    from project.api import EVENT_LIST_ENDPOINTS
-
-    app = create_app(
-        {
-            "TESTING": True,
-            "SERVER_NAME": "localhost",
-            "FEATURE_EVENT_LISTS_ENABLED": True,
-        }
-    )
-
-    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
-
-    assert EVENT_LIST_ENDPOINTS.issubset(endpoints)
-    assert "api_v1_organization_event_list" in endpoints
-
-
-def test_init_api_event_lists_disabled_via_feature_flags_env(monkeypatch):
-    from project import create_app
-    from project.api import EVENT_LIST_ENDPOINTS
-
-    monkeypatch.setenv("FEATURE_FLAGS", "EventListsDisabled")
-
-    app = create_app(
-        {
-            "TESTING": True,
-            "SERVER_NAME": "localhost",
-        }
-    )
-
-    assert app.config["FEATURE_EVENT_LISTS_ENABLED"] is False
-    assert app.config["FEATURE_FLAGS"] == {"EventListsDisabled"}
-
-    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
-
-    assert endpoints.isdisjoint(EVENT_LIST_ENDPOINTS)
-    assert "api_v1_organization_event_list" in endpoints
-
-
-def test_init_api_user_favorites_disabled():
-    from project import create_app
-    from project.api import USER_FAVORITE_ENDPOINTS
-
-    app = create_app(
-        {
-            "TESTING": True,
-            "SERVER_NAME": "localhost",
-            "FEATURE_USER_FAVORITES_ENABLED": False,
-        }
-    )
-
-    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
-
-    assert endpoints.isdisjoint(USER_FAVORITE_ENDPOINTS)
-    assert "api_v1_user_organization_membership_list" in endpoints
 
 
 # (endpoint set in project.api, derived config key, FEATURE_FLAGS token)

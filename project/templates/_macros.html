@@ -611,7 +611,7 @@
 {{ render_fax_prop(organizer.fax) }}
 {% endmacro %}
 
-{% macro render_event_props_seo(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None, current_user=None, can_add_to_list=False) %}
+{% macro render_event_props_seo(event, start, end, allday, dates = None, show_rating = False, show_admin_unit = True, user_rights=None, share_links=None, calendar_links=None, current_user=None) %}
 <div class="w-normal mx-auto">
 
   {% if event.photo_id %}
@@ -622,7 +622,7 @@
 
     {% if user_rights %}
     <div class="float-sm-right">
-      {{ render_event_menu(user_rights, event, can_add_to_list) }}
+      {{ render_event_menu(user_rights, event) }}
     </div>
     {% endif %}
 
@@ -671,9 +671,6 @@
         {% if calendar_links %}
           <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#calendarExportModal"><i class="fa fa-calendar"></i> {{ _('Add to calendar') }}</button>
           {{ render_calendar_export_modal(calendar_links) }}
-        {% endif %}
-        {% if current_user and current_user.is_authenticated and config["FEATURE_USER_FAVORITES_ENABLED"] %}
-          <button type="button" class="btn btn-outline-secondary mb-1 toggle-user-event-favorite" data-event-id="{{ event.id }}"><i class="{%if event.is_favored_by_current_user() %}fa{% else %}far{% endif %} fa-bookmark"></i> {{ _('Favorite events') }}</button>
         {% endif %}
         {% if user_rights['can_update_event'] %}
           <a href="{{ url_for('manage_admin_unit.event_update', id=event.admin_unit_id, event_id=event.id) }}" class="btn btn-outline-secondary mb-1"><i class="fa fa-edit"></i> {{ _('Edit') }}</a>
@@ -1187,7 +1184,7 @@
   {% endif %}
 {% endmacro %}
 
-{% macro render_event_menu(user_rights, event, can_add_to_list) %}
+{% macro render_event_menu(user_rights, event) %}
 {% if user_rights|any_dict_value_true %}
   <div class="dropdown my-1">
       <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -1207,10 +1204,6 @@
           {% endif %}
           {% if user_rights['can_reference_event'] %}
             <a class="dropdown-item" href="{{ url_for('main.event_reference_create', event_id=event.id) }}"><i class="fa fa-link"></i> {{ _('Reference event') }}</a>
-          {% endif %}
-          {% if can_add_to_list %}
-          <div class="dropdown-divider"></div>
-            <a class="dropdown-item" onclick="app.$bvModal.show('add-event-to-list-modal'); return false;" href="#"><i class="fa fa-plus-circle"></i> {{ _('Add to list') }}</a>
           {% endif %}
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{{ url_for('main.event_actions', event_id=event.id) }}">{{ _('More') }}&hellip;</a>
@@ -1575,33 +1568,5 @@ $('#co_organizer_ids').select2({
     }
   },
   placeholder: "{{ _('Enter organizer') }}"
-});
-{% endmacro %}
-
-{% macro render_event_list_select2(admin_unit_id) %}
-$('#event_list_ids').select2({
-  width: '100%',
-  ajax: {
-    url: "{{ url_for('api_v1_organization_event_list_list', id=admin_unit_id) }}",
-    dataType: 'json',
-    delay: 250,
-    cache: true,
-    data: function (params) {
-      return {
-        name: params.term,
-        per_page: 5,
-        page: params.page || 1
-      };
-    },
-    processResults: function (data) {
-      return {
-        results: data.items.map(p => ({"id": p.id, "text": p.name})),
-        pagination: {
-            more: data.has_next
-        }
-      };
-    }
-  },
-  placeholder: "{{ _('Enter list name') }}"
 });
 {% endmacro %}

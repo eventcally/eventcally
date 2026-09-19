@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import time
+from typing import Optional
 
 from authlib.integrations.sqla_oauth2 import (
     OAuth2AuthorizationCodeMixin,
@@ -14,6 +15,9 @@ from sqlalchemy.orm import object_session
 
 from project.dateutils import gmt_tz
 from project.domain.models.aggregates.app_aggregate import AppAggregate
+from project.domain.models.aggregates.oauth2_client_aggregate import (
+    OAuth2ClientAggregate,
+)
 from project.extensions import db
 from project.models.mixins.rate_limit_provider_mixin import RateLimitProviderMixin
 from project.models.oauth2_authorization_code_generated import (
@@ -47,6 +51,8 @@ class OAuth2Client(
         self.app_permissions = list(aggregate.app_permissions)
         self.homepage_url = aggregate.homepage_url
         self.setup_url = aggregate.setup_url
+        self.client_id = aggregate.client_id
+        self.client_secret = aggregate.client_secret
 
         metadata = self.client_metadata or {}
         metadata["client_name"] = aggregate.name
@@ -83,9 +89,54 @@ class OAuth2Client(
             homepage_url=model.homepage_url,
             setup_url=model.setup_url,
             webhook=model.webhook.to_value_object() if model.webhook else None,
+            client_id=model.client_id,
+            client_secret=model.client_secret,
         )
 
         return aggregate
+
+    @classmethod
+    def from_oauth2_client_aggregate(
+        cls, aggregate: OAuth2ClientAggregate
+    ) -> OAuth2Client:
+        model = cls()
+        model.fill_from_oauth2_client_aggregate(aggregate)
+        return model
+
+    def fill_from_oauth2_client_aggregate(self, aggregate: OAuth2ClientAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.admin_unit_id = aggregate.admin_unit_id
+        self.user_id = aggregate.user_id
+        self.client_id = aggregate.client_id
+        self.client_secret = aggregate.client_secret
+
+        metadata = self.client_metadata or {}
+        metadata["client_name"] = aggregate.name
+        metadata["scope"] = aggregate.scope
+        metadata["redirect_uris"] = list(aggregate.redirect_uris)
+        self.set_client_metadata(metadata)
+
+        return self
+
+    @classmethod
+    def to_oauth2_client_aggregate(
+        cls, model: OAuth2Client
+    ) -> Optional[OAuth2ClientAggregate]:
+        if model is None:  # pragma: no cover
+            return None
+
+        metadata = model.client_metadata or {}
+
+        return OAuth2ClientAggregate(
+            id=model.id,
+            name=metadata.get("client_name"),
+            redirect_uris=list(metadata.get("redirect_uris") or []),
+            scope=metadata.get("scope"),
+            client_id=model.client_id,
+            client_secret=model.client_secret,
+            user_id=model.user_id,
+            admin_unit_id=model.admin_unit_id,
+        )
 
     @hybrid_property
     def is_app(self):  # pragma: no cover

@@ -232,14 +232,6 @@ class EventGeneratedMixin(TrackableMixin):
         )
 
     @declared_attr
-    def event_lists(cls):
-        return relationship(
-            "EventList",
-            back_populates="events",
-            secondary="event_eventlists",
-        )
-
-    @declared_attr
     def date_definitions(cls):
         return relationship(
             "EventDateDefinition",
@@ -274,12 +266,4 @@ class EventGeneratedMixin(TrackableMixin):
             cascade="all, delete-orphan",
             back_populates="event",
             primaryjoin="EventReferenceRequest.event_id == Event.id",
-        )
-
-    @declared_attr
-    def favored_by_users(cls):
-        return relationship(
-            "User",
-            back_populates="favorite_events",
-            secondary="user_favoriteevents",
         )

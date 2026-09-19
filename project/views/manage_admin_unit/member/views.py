@@ -2,9 +2,10 @@ from flask import redirect, url_for
 from flask_babel import gettext
 from flask_security import current_user
 
+from project.application.commands import RemoveOrganizationMemberCommand
 from project.models.admin_unit import AdminUnitMemberRole
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
-from project.services.admin_unit import add_roles_to_admin_unit_member
+from project.views.utils import handle_base_error
 
 
 class UpdateView(BaseUpdateView):
@@ -23,15 +24,12 @@ class UpdateView(BaseUpdateView):
 
         return super().render_template(form=form, object=object, **kwargs)
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-
-        member = object
-        member.roles.clear()
-        add_roles_to_admin_unit_member(member, form.role_names.data)
-
-        if member.user_id == current_user.id and not current_user.has_role("admin"):
-            add_roles_to_admin_unit_member(member, ["admin"])
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        cmd = form.create_update_command(object.id)
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
 
 
 class DeleteView(BaseDeleteView):
@@ -48,3 +46,12 @@ class DeleteView(BaseDeleteView):
             )
 
         return None
+
+    @handle_base_error
+    def dispatch_validated_form_deletable(self, form, object, **kwargs):
+        cmd = RemoveOrganizationMemberCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url())

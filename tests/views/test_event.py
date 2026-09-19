@@ -28,25 +28,6 @@ def test_read(client, seeder: Seeder, utils: UtilActions, external_link):
     utils.assert_response_unauthorized(response)
 
 
-def test_read_favorite_button(seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
-
-    url = utils.get_url("main.event", event_id=event_id)
-    response = utils.get_ok(url)
-    assert b"toggle-user-event-favorite" in response.data
-
-
-def test_read_favorite_button_disabled(seeder: Seeder, utils: UtilActions, app):
-    app.config["FEATURE_USER_FAVORITES_ENABLED"] = False
-    user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
-
-    url = utils.get_url("main.event", event_id=event_id)
-    response = utils.get_ok(url)
-    assert b"toggle-user-event-favorite" not in response.data
-
-
 def test_read_containsActionLink(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     other_user_id = seeder.create_user("other@test.de")
@@ -619,25 +600,6 @@ def test_actions(seeder: Seeder, utils: UtilActions):
     url = utils.get_url("main.event_actions", event_id=event_id)
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
-
-
-def test_actions_addToList(seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
-
-    url = utils.get_url("main.event_actions", event_id=event_id)
-    response = utils.get_ok(url)
-    assert "Zu Liste hinzufügen".encode() in response.data
-
-
-def test_actions_addToList_disabled(seeder: Seeder, utils: UtilActions, app):
-    app.config["FEATURE_EVENT_LISTS_ENABLED"] = False
-    user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
-
-    url = utils.get_url("main.event_actions", event_id=event_id)
-    response = utils.get_ok(url)
-    assert "Zu Liste hinzufügen".encode() not in response.data
 
 
 def test_actions_withReferenceRequestLink(seeder: Seeder, utils: UtilActions):

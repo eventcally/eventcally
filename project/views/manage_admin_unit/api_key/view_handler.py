@@ -8,6 +8,7 @@ from project.models import ApiKey
 from project.modular.sort_definition import SortDefinition
 from project.services.api_key_service import ApiKeyService
 from project.views.manage_admin_unit import manage_admin_unit_bp
+from project.views.manage_admin_unit.api_key.views import CreateView
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
@@ -17,7 +18,7 @@ from project.views.user_blueprint.api_key.forms import (
     DeleteForm,
     UpdateForm,
 )
-from project.views.user_blueprint.api_key.views import CreateView
+from project.views.user_blueprint.api_key.views import DeleteView, UpdateView
 
 
 class ApiKeyViewHandler(ManageAdminUnitChildViewHandler):
@@ -25,7 +26,9 @@ class ApiKeyViewHandler(ManageAdminUnitChildViewHandler):
     object_service: Annotated[ApiKeyService, Provide["services.api_key_service"]]
     create_view_class = CreateView
     create_form_class = CreateForm
+    update_view_class = UpdateView
     update_form_class = UpdateForm
+    delete_view_class = DeleteView
     delete_form_class = DeleteForm
     read_display_class = ReadDisplay
     list_display_class = ListDisplay

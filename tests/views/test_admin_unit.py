@@ -142,10 +142,7 @@ def test_create_requiresAdmin_memberOfOrgWithFlag(
     assert response.status_code == 302
 
 
-def test_create_from_invitation(
-    client, app, db, utils: UtilActions, seeder: Seeder, mocker
-):
-    mail_mock = utils.mock_send_mails_async(mocker)
+def test_create_from_invitation(client, app, db, utils: UtilActions, seeder: Seeder):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(
         user_id, can_invite_other=True, can_verify_other=True
@@ -189,12 +186,19 @@ def test_create_from_invitation(
         invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is None
 
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
     relation_url = utils.get_url(
         "manage_admin_unit.outgoing_organization_relation_update",
         id=admin_unit_id,
         organization_relation_id=relation_id,
     )
-    utils.assert_send_mail_called(mail_mock, "test@test.de", relation_url)
+    assert len(app.test_email_service.sent_emails) == 1
+    sent_email = app.test_email_service.sent_emails[0]
+    assert sent_email["recipient"] == "test@test.de"
+    assert relation_url in sent_email["body"]
+    assert relation_url in sent_email["html"]
 
 
 def test_create_from_invitation_currentUserDoesNotMatchInvitationEmail(
@@ -288,7 +292,8 @@ def test_create_with_relation_auto_verify(
         assert relation.verify is False
 
 
-def test_update(db, app, utils: UtilActions, seeder: Seeder):
+@pytest.mark.parametrize("db_error", [True, False])
+def test_update(db, app, utils: UtilActions, seeder: Seeder, mocker, db_error):
     seeder.create_user()
     user_id = utils.login()
     admin_unit_id = seeder.create_admin_unit(user_id, "Initial name")
@@ -303,11 +308,52 @@ def test_update(db, app, utils: UtilActions, seeder: Seeder):
     url = utils.get_url("manage_admin_unit.update", id=admin_unit_id)
     response = utils.get_ok(url)
 
+    if db_error:
+        utils.mock_db_commit(mocker)
+
     response = utils.post_form(
         url,
         response,
         {
             "name": "Meine Crew",
+        },
+    )
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
+    assert response.status_code == 302
+
+    with app.app_context():
+        from project.services.admin_unit import get_admin_unit_by_id
+
+        admin_unit_from_db = get_admin_unit_by_id(admin_unit_id)
+        assert admin_unit_from_db is not None
+        assert admin_unit_from_db.name == "Meine Crew"
+
+
+def test_update_with_verification_requests(db, app, utils: UtilActions, seeder: Seeder):
+    seeder.create_user()
+    user_id = utils.login()
+    admin_unit_id = seeder.create_admin_unit(
+        user_id, "Initial name", can_verify_other=True
+    )
+
+    url = utils.get_url("manage_admin_unit.update", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Meine Crew",
+            "verfication_requests-incoming_verification_requests_allowed": "y",
+            "verfication_requests-incoming_verification_requests_text": "Please verify us",
+            "verfication_requests-incoming_verification_requests_postal_codes": [
+                "12345",
+                "54321",
+            ],
         },
     )
     assert response.status_code == 302
@@ -317,7 +363,14 @@ def test_update(db, app, utils: UtilActions, seeder: Seeder):
 
         admin_unit_from_db = get_admin_unit_by_id(admin_unit_id)
         assert admin_unit_from_db is not None
-        assert admin_unit_from_db.name == "Meine Crew"
+        assert admin_unit_from_db.incoming_verification_requests_allowed is True
+        assert (
+            admin_unit_from_db.incoming_verification_requests_text == "Please verify us"
+        )
+        assert admin_unit_from_db.incoming_verification_requests_postal_codes == [
+            "12345",
+            "54321",
+        ]
 
 
 def test_update_duplicate(client, app, utils: UtilActions, seeder: Seeder):

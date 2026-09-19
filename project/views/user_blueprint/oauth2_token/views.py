@@ -1,8 +1,10 @@
 from flask import redirect
 from flask_babel import lazy_gettext
 
+from project.application.commands import RevokeOAuth2TokenCommand
 from project.modular.base_views import BaseUpdateView
 from project.views.user_blueprint.oauth2_token.forms import RevokeOAuth2TokenForm
+from project.views.utils import handle_base_error
 
 
 class RevokeView(BaseUpdateView):
@@ -19,9 +21,14 @@ class RevokeView(BaseUpdateView):
 
         return None
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-        object.revoke_token()
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        cmd = RevokeOAuth2TokenCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
 
     def get_redirect_url(self, **kwargs):
         return self.handler.get_list_url(**kwargs)

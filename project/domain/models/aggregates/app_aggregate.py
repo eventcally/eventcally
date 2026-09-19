@@ -22,6 +22,8 @@ class AppAggregate(BaseAggregate):
     homepage_url: Optional[str] = None
     setup_url: Optional[str] = None
     webhook: Optional[WebhookValueObject] = None
+    client_id: Optional[str] = None
+    client_secret: Optional[str] = None
 
     @classmethod
     def create(
@@ -30,6 +32,8 @@ class AppAggregate(BaseAggregate):
         admin_unit_id: ObjectId,
         name: str,
         app_permissions: set[str],
+        client_id: str,
+        client_secret: str,
         redirect_uris: set[str] = set(),
         scope: Optional[str] = None,
         description: Optional[str] = None,
@@ -48,6 +52,8 @@ class AppAggregate(BaseAggregate):
             webhook=webhook,
             redirect_uris=redirect_uris,
             scope=scope,
+            client_id=client_id,
+            client_secret=client_secret,
         )
 
         event = events.AppCreated(

@@ -124,3 +124,91 @@ def test_reject(client, app, db, seeder: Seeder, utils: UtilActions):
             reference_request.rejection_reason
             == EventReferenceRequestRejectionReason.duplicate
         )
+
+
+def test_reject_invalidRejectionReason(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    (
+        other_user_id,
+        other_admin_unit_id,
+        event_id,
+        reference_request_id,
+    ) = seeder.create_incoming_reference_request(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_event_reference_request_reject", id=reference_request_id
+    )
+    data = {
+        "rejection_reason": "bogus",
+    }
+    response = utils.post_json(url, data)
+    utils.assert_response_unprocessable_entity(response)
+
+
+def test_reject_nonJsonBody(client, app, db, seeder: Seeder, utils: UtilActions):
+    """A non-JSON body is ignored rather than answered with 415.
+
+    webargs parsed a body whose content type is not JSON as no payload at all,
+    so clients sending a form-encoded body kept working. The command carries
+    only optional fields, so it stays valid without them.
+    """
+    user_id, admin_unit_id = seeder.setup_api_access()
+    (
+        other_user_id,
+        other_admin_unit_id,
+        event_id,
+        reference_request_id,
+    ) = seeder.create_incoming_reference_request(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_event_reference_request_reject", id=reference_request_id
+    )
+    response = client.post(
+        url,
+        data="rejection_reason=duplicate",
+        content_type="application/x-www-form-urlencoded",
+        headers=utils.get_headers(),
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import (
+            EventReferenceRequest,
+            EventReferenceRequestReviewStatus,
+        )
+
+        reference_request = db.session.get(EventReferenceRequest, reference_request_id)
+        assert (
+            reference_request.review_status
+            == EventReferenceRequestReviewStatus.rejected
+        )
+        assert reference_request.rejection_reason is None
+
+
+def test_reject_withoutBody(client, app, db, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    (
+        other_user_id,
+        other_admin_unit_id,
+        event_id,
+        reference_request_id,
+    ) = seeder.create_incoming_reference_request(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_event_reference_request_reject", id=reference_request_id
+    )
+    response = client.post(url, headers=utils.get_headers())
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import (
+            EventReferenceRequest,
+            EventReferenceRequestReviewStatus,
+        )
+
+        reference_request = db.session.get(EventReferenceRequest, reference_request_id)
+        assert (
+            reference_request.review_status
+            == EventReferenceRequestReviewStatus.rejected
+        )
+        assert reference_request.rejection_reason is None

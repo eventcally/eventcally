@@ -381,62 +381,6 @@ def test_events_post_photo_too_small(client, seeder: Seeder, utils: UtilActions,
     assert error["message"] == "Image is too small (1x1px). At least 320x320px."
 
 
-def test_event_lists(client, seeder: Seeder, utils: UtilActions):
-    _, admin_unit_id = seeder.setup_api_access(user_access=False)
-    event_list_id = seeder.create_event_list(admin_unit_id, name="Meine Liste")
-
-    url = utils.get_url(
-        "api_v1_organization_event_list_list", id=admin_unit_id, name="meine"
-    )
-    response = utils.get_json_ok(url)
-    assert len(response.json["items"]) == 1
-    assert response.json["items"][0]["id"] == event_list_id
-
-
-def test_event_lists_post(client, seeder: Seeder, utils: UtilActions, app):
-    _, admin_unit_id = seeder.setup_api_access()
-
-    url = utils.get_url("api_v1_organization_event_list_list", id=admin_unit_id)
-    response = utils.post_json(
-        url,
-        {
-            "name": "Neue Liste",
-        },
-    )
-    utils.assert_response_created(response)
-    assert "id" in response.json
-
-    with app.app_context():
-        from project.models import EventList
-
-        event_list = (
-            EventList.query.filter(EventList.admin_unit_id == admin_unit_id)
-            .filter(EventList.name == "Neue Liste")
-            .first()
-        )
-        assert event_list is not None
-        assert event_list.name == "Neue Liste"
-
-
-def test_event_lists_status(client, seeder: Seeder, utils: UtilActions):
-    _, admin_unit_id = seeder.setup_api_access()
-    event_id = seeder.create_event(admin_unit_id)
-    event_list_id = seeder.create_event_list(
-        admin_unit_id, event_id, name="Meine Liste"
-    )
-
-    url = utils.get_url(
-        "api_v1_organization_event_list_status_list",
-        id=admin_unit_id,
-        event_id=event_id,
-        name="meine",
-    )
-    response = utils.get_json_ok(url)
-    assert len(response.json["items"]) == 1
-    assert response.json["items"][0]["event_list"]["id"] == event_list_id
-    assert response.json["items"][0]["contains_event"]
-
-
 def test_references_incoming(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access()
     (
@@ -545,9 +489,8 @@ def test_reference_requests_outgoing(client, seeder: Seeder, utils: UtilActions)
 
 
 def test_reference_requests_outgoing_post(
-    client, app, seeder: Seeder, utils: UtilActions, db, mocker
+    client, app, seeder: Seeder, utils: UtilActions, db
 ):
-    mail_mock = utils.mock_send_mails_async(mocker)
     user_id, admin_unit_id = seeder.setup_api_access()
     other_user_id = seeder.create_user("other@test.de")
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
@@ -565,7 +508,12 @@ def test_reference_requests_outgoing_post(
     response = utils.post_json(url, data)
     utils.assert_response_created(response)
     assert "id" in response.json
-    utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
         from project.models import (
@@ -585,9 +533,8 @@ def test_reference_requests_outgoing_post(
 
 
 def test_reference_requests_outgoing_post_autoVerify(
-    client, app, seeder: Seeder, utils: UtilActions, db, mocker
+    client, app, seeder: Seeder, utils: UtilActions, db
 ):
-    mail_mock = utils.mock_send_mails_async(mocker)
     user_id, admin_unit_id = seeder.setup_api_access()
     event_id = seeder.create_event(admin_unit_id)
     other_user_id = seeder.create_user("other@test.de")
@@ -606,7 +553,12 @@ def test_reference_requests_outgoing_post_autoVerify(
     response = utils.post_json(url, data)
     utils.assert_response_created(response)
     assert "id" in response.json
-    utils.assert_send_mail_called(mail_mock, "other@test.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
         from project.models import (
@@ -712,7 +664,6 @@ def test_organization_verification_requests_outgoing(
 def test_organization_verification_requests_outgoing_post(
     client, app, seeder: Seeder, utils: UtilActions, db, mocker
 ):
-    mail_mock = utils.mock_send_mails_async(mocker)
     (
         verifier_user_id,
         verifier_admin_unit_id,
@@ -731,7 +682,12 @@ def test_organization_verification_requests_outgoing_post(
     response = utils.post_json(url, data)
     utils.assert_response_created(response)
     assert "id" in response.json
-    utils.assert_send_mail_called(mail_mock, "test@test.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "test@test.de"
 
     with app.app_context():
         from project.models import (
@@ -895,8 +851,7 @@ def test_organization_invitation_list(client, seeder: Seeder, utils: UtilActions
     assert response.json["items"][0]["organization_name"] == "Invited Organization"
 
 
-def test_organization_invitation_list_post(client, app, seeder, db, utils, mocker):
-    mail_mock = utils.mock_send_mails_async(mocker)
+def test_organization_invitation_list_post(client, app, seeder, db, utils):
     _, admin_unit_id = seeder.setup_api_access()
 
     url = utils.get_url(
@@ -926,11 +881,19 @@ def test_organization_invitation_list_post(client, app, seeder, db, utils, mocke
         assert invitation.relation_auto_verify_event_reference_requests
         assert invitation.relation_verify
 
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
     invitation_url = utils.get_url(
         "main.user_organization_invitation",
         id=invitation_id,
     )
-    utils.assert_send_mail_called(mail_mock, "invited@test.de", invitation_url)
+
+    assert len(app.test_email_service.sent_emails) == 1
+    sent_email = app.test_email_service.sent_emails[0]
+    assert sent_email["recipient"] == "invited@test.de"
+    assert invitation_url in sent_email["body"]
+    assert invitation_url in sent_email["html"]
 
 
 def test_custom_widgets(client, seeder: Seeder, utils: UtilActions):

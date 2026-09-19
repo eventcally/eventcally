@@ -34,6 +34,8 @@ def _setup_app_with_webhook(uow, app_id=10):
         admin_unit_id=1,
         name="App",
         app_permissions=["events:read"],
+        client_id="test-client-id",
+        client_secret="test-client-secret",
     )
     app.id = app_id
     uow.apps.add(app)

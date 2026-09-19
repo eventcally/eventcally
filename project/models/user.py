@@ -9,9 +9,6 @@ from project.extensions import db
 from project.models.association_tables.roles_users_generated import (
     RolesUsersGeneratedMixin,
 )
-from project.models.association_tables.user_favorite_event_generated import (
-    UserFavoriteEventGeneratedMixin,
-)
 from project.models.mixins.api_key_owner_mixin import ApiKeyOwnerMixin
 from project.models.role_generated import RoleGeneratedMixin
 from project.models.user_generated import UserGeneratedMixin
@@ -27,6 +24,13 @@ class Role(db.Model, RoleGeneratedMixin, RoleMixin):
 
 
 class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
+    def fill_from_aggregate(self, aggregate: UserAggregate):
+        self.locale = aggregate.locale
+        self.newsletter_enabled = aggregate.newsletter_enabled
+        self.deletion_requested_at = aggregate.deletion_requested_at
+        self.tos_accepted_at = aggregate.tos_accepted_at
+        self.roles = Role.query.filter(Role.name.in_(aggregate.roles)).all()
+
     @classmethod
     def to_aggregate(cls, model: User) -> UserAggregate:
         if model is None:  # pragma: no cover
@@ -36,13 +40,14 @@ class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
             id=model.id,
             email=model.email,
             locale=model.locale,
+            is_platform_admin=any(role.name == "admin" for role in model.roles),
+            max_api_keys=model.max_api_keys,
+            newsletter_enabled=bool(model.newsletter_enabled),
+            deletion_requested_at=model.deletion_requested_at,
+            tos_accepted_at=model.tos_accepted_at,
+            roles=[r.name for r in model.roles],
         )
         return aggregate
-
-    def get_number_of_api_keys(self):
-        from project.models.api_key import ApiKey
-
-        return ApiKey.query.filter(ApiKey.user_id == self.id).count()
 
     @property
     def is_member_of_verified_admin_unit(self):
@@ -56,10 +61,6 @@ class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
 
     def __str__(self):
         return self.email or super().__str__()
-
-
-class UserFavoriteEvents(db.Model, UserFavoriteEventGeneratedMixin):
-    pass
 
 
 # OAuth Consumer: Wenn wir OAuth consumen und sich ein Nutzer per Google oder Facebook anmelden möchte

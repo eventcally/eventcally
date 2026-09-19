@@ -9,7 +9,6 @@ from .custom_widget_service import CustomWidgetService
 from .event_category_service import EventCategoryService
 from .event_date_definition_service import EventDateDefinitionService
 from .event_date_service import EventDateService
-from .event_list_service import EventListService
 from .event_organizer_service import EventOrganizerService
 from .event_place_service import EventPlaceService
 from .event_reference_request_service import EventReferenceRequestService
@@ -33,7 +32,6 @@ from .organization_verification_request_service import (
 )
 from .role_service import RoleService
 from .settings_service import SettingsService
-from .user_favorite_events_service import UserFavoriteEventsService
 from .user_service import UserService
 
 __all__ = [
@@ -49,7 +47,6 @@ __all__ = [
     "EventCategoryService",
     "EventDateDefinitionService",
     "EventDateService",
-    "EventListService",
     "EventOrganizerService",
     "EventPlaceService",
     "EventReferenceRequestService",
@@ -69,6 +66,5 @@ __all__ = [
     "OrganizationVerificationRequestService",
     "RoleService",
     "SettingsService",
-    "UserFavoriteEventsService",
     "UserService",
 ]

@@ -1,17 +1,28 @@
-from marshmallow import fields
+from marshmallow import fields, post_load
 from marshmallow_enum import EnumField
 
 from project.api.organization.schemas import (
     OrganizationRefSchema,
+    OrganizationWriteIdPlainSchema,
     OrganizationWriteIdSchema,
 )
 from project.api.schemas import (
+    IdPlainSchemaMixin,
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
+    PlainBaseSchema,
     SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
+)
+from project.application.commands import (
+    ApproveOrganizationVerificationRequestCommand,
+    RejectOrganizationVerificationRequestCommand,
+    RequestOrganizationVerificationCommand,
+)
+from project.domain.models.enums.organization_verification_request_rejection_reason import (
+    OrganizationVerificationRequestRejectionReason,
 )
 from project.models import (
     AdminUnitVerificationRequest,
@@ -114,3 +125,48 @@ class OrganizationVerificationRequestRejectRequestSchema(
     rejection_reason = EnumField(
         AdminUnitVerificationRequestRejectionReason,
     )
+
+
+class OrganizationVerificationRequestIdPlainSchema(PlainBaseSchema, IdPlainSchemaMixin):
+    pass
+
+
+class OrganizationVerificationRequestCreateRequestPlainSchema(PlainBaseSchema):
+    target_organization = fields.Nested(
+        OrganizationWriteIdPlainSchema,
+        attribute="target_admin_unit_id",
+        required=True,
+        metadata={"description": "Target organization."},
+    )
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["source_admin_unit_id"] = self.context.get("admin_unit_id")
+        data["actor"] = self.context.get("actor")
+        return RequestOrganizationVerificationCommand(**data)
+
+
+class OrganizationVerificationRequestVerifyRequestPlainSchema(PlainBaseSchema):
+    auto_verify_event_reference_requests = fields.Bool(
+        allow_none=True, load_default=None
+    )
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        data["actor"] = self.context.get("actor")
+        return ApproveOrganizationVerificationRequestCommand(**data)
+
+
+class OrganizationVerificationRequestRejectRequestPlainSchema(PlainBaseSchema):
+    rejection_reason = EnumField(
+        OrganizationVerificationRequestRejectionReason,
+        allow_none=True,
+        load_default=None,
+    )
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        data["actor"] = self.context.get("actor")
+        return RejectOrganizationVerificationRequestCommand(**data)

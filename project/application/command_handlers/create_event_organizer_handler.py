@@ -6,12 +6,17 @@ from project.domain.models.aggregates.event_organizer_aggregate import (
 from project.domain.models.entities.image_entity import ImageEntity
 
 from .abstract_command_handler import AbstractCommandHandler
+from .authorization_utils import ensure_actor_has_permission_for_admin_unit
 
 
 class CreateEventOrganizerHandler(AbstractCommandHandler):
     def handle(
         self, cmd: commands.CreateEventOrganizerCommand, uow: AbstractUnitOfWork
     ):
+        ensure_actor_has_permission_for_admin_unit(
+            cmd.actor, cmd.admin_unit_id, "event_organizers:write", uow
+        )
+
         event_organizer = EventOrganizerAggregate.create(
             actor=cmd.actor,
             admin_unit_id=cmd.admin_unit_id,

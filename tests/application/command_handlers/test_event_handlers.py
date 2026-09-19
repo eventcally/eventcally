@@ -8,7 +8,7 @@ from project.application import commands
 from project.application.command_handlers.create_event_handler import CreateEventHandler
 from project.application.command_handlers.delete_event_handler import DeleteEventHandler
 from project.application.command_handlers.update_event_handler import UpdateEventHandler
-from project.domain.errors import NotFoundError
+from project.domain.errors import NotFoundError, UnauthorizedError
 from project.domain.errors.constraint_error import ConstraintError
 from project.domain.models.aggregates.event_aggregate import EventAggregate
 from project.domain.models.aggregates.event_organizer_aggregate import (
@@ -21,7 +21,7 @@ from project.domain.models.enums.event_status import EventStatus
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
 )
-from tests.application.conftest import FakeUnitOfWork
+from tests.application.conftest import ACTOR, FakeUnitOfWork, grant_permission
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -54,7 +54,7 @@ def _date_def():
 
 def _make_create_cmd(admin_unit_id, organizer_id, event_place_id, **kwargs):
     return commands.CreateEventCommand.model_construct(
-        actor=Actor(),
+        actor=ACTOR,
         admin_unit_id=admin_unit_id,
         name="Test Event",
         organizer_id=organizer_id,
@@ -95,6 +95,7 @@ class TestCreateEventHandler:
     def test_creates_event_and_returns_result(self, uow):
         org = _make_organizer(uow, admin_unit_id=1)
         place = _make_place(uow, admin_unit_id=1)
+        grant_permission(uow, 1, "events:write")
         cmd = _make_create_cmd(1, org.id, place.id)
 
         result = CreateEventHandler().handle(cmd, uow)
@@ -108,6 +109,7 @@ class TestCreateEventHandler:
     def test_organizer_wrong_admin_unit_raises_constraint_error(self, uow):
         org = _make_organizer(uow, admin_unit_id=2)  # different unit
         place = _make_place(uow, admin_unit_id=1)
+        grant_permission(uow, 1, "events:write")
         cmd = _make_create_cmd(1, org.id, place.id)
 
         with pytest.raises(ConstraintError):
@@ -117,6 +119,7 @@ class TestCreateEventHandler:
         org = _make_organizer(uow, admin_unit_id=1)
         co_org = _make_organizer(uow, admin_unit_id=2)  # different unit
         place = _make_place(uow, admin_unit_id=1)
+        grant_permission(uow, 1, "events:write")
         cmd = _make_create_cmd(1, org.id, place.id, co_organizer_ids=[co_org.id])
 
         with pytest.raises(ConstraintError):
@@ -126,6 +129,7 @@ class TestCreateEventHandler:
         org = _make_organizer(uow, admin_unit_id=1)
         co_org = _make_organizer(uow, admin_unit_id=1)
         place = _make_place(uow, admin_unit_id=1)
+        grant_permission(uow, 1, "events:write")
         cmd = _make_create_cmd(1, org.id, place.id, co_organizer_ids=[co_org.id])
 
         result = CreateEventHandler().handle(cmd, uow)
@@ -134,9 +138,18 @@ class TestCreateEventHandler:
     def test_place_wrong_admin_unit_raises_constraint_error(self, uow):
         org = _make_organizer(uow, admin_unit_id=1)
         place = _make_place(uow, admin_unit_id=2)  # different unit
+        grant_permission(uow, 1, "events:write")
         cmd = _make_create_cmd(1, org.id, place.id)
 
         with pytest.raises(ConstraintError):
+            CreateEventHandler().handle(cmd, uow)
+
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        org = _make_organizer(uow, admin_unit_id=1)
+        place = _make_place(uow, admin_unit_id=1)
+        cmd = _make_create_cmd(1, org.id, place.id)
+
+        with pytest.raises(UnauthorizedError):
             CreateEventHandler().handle(cmd, uow)
 
 
@@ -164,8 +177,9 @@ class TestUpdateEventHandler:
 
     def test_updates_event(self, uow):
         event, _, _ = self._seed_event(uow)
+        grant_permission(uow, 1, "events:write")
         cmd = commands.UpdateEventCommand.model_construct(
-            actor=Actor(),
+            actor=ACTOR,
             id=event.id,
         )
 
@@ -183,8 +197,9 @@ class TestUpdateEventHandler:
     def test_wrong_organizer_unit_raises_constraint_error(self, uow):
         event, _, _ = self._seed_event(uow, admin_unit_id=1)
         wrong_org = _make_organizer(uow, admin_unit_id=2)
+        grant_permission(uow, 1, "events:write")
         cmd = commands.UpdateEventCommand.model_construct(
-            actor=Actor(),
+            actor=ACTOR,
             id=event.id,
             organizer_id=wrong_org.id,
         )
@@ -195,8 +210,9 @@ class TestUpdateEventHandler:
     def test_wrong_co_organizer_unit_raises_constraint_error(self, uow):
         event, _, _ = self._seed_event(uow, admin_unit_id=1)
         wrong_co_org = _make_organizer(uow, admin_unit_id=2)
+        grant_permission(uow, 1, "events:write")
         cmd = commands.UpdateEventCommand.model_construct(
-            actor=Actor(),
+            actor=ACTOR,
             id=event.id,
             co_organizer_ids=[wrong_co_org.id],
         )
@@ -207,13 +223,24 @@ class TestUpdateEventHandler:
     def test_wrong_place_unit_raises_constraint_error(self, uow):
         event, _, _ = self._seed_event(uow, admin_unit_id=1)
         wrong_place = _make_place(uow, admin_unit_id=2)
+        grant_permission(uow, 1, "events:write")
         cmd = commands.UpdateEventCommand.model_construct(
-            actor=Actor(),
+            actor=ACTOR,
             id=event.id,
             event_place_id=wrong_place.id,
         )
 
         with pytest.raises(ConstraintError):
+            UpdateEventHandler().handle(cmd, uow)
+
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        event, _, _ = self._seed_event(uow)
+        cmd = commands.UpdateEventCommand.model_construct(
+            actor=ACTOR,
+            id=event.id,
+        )
+
+        with pytest.raises(UnauthorizedError):
             UpdateEventHandler().handle(cmd, uow)
 
 
@@ -223,12 +250,12 @@ class TestUpdateEventHandler:
 
 
 class TestDeleteEventHandler:
-    def test_removes_event(self, uow):
-        org = _make_organizer(uow, admin_unit_id=1)
-        place = _make_place(uow, admin_unit_id=1)
+    def _seed(self, uow, admin_unit_id=1):
+        org = _make_organizer(uow, admin_unit_id=admin_unit_id)
+        place = _make_place(uow, admin_unit_id=admin_unit_id)
         event = EventAggregate.create(
             actor=Actor(),
-            admin_unit_id=1,
+            admin_unit_id=admin_unit_id,
             name="To Delete",
             organizer_id=org.id,
             event_place_id=place.id,
@@ -237,9 +264,14 @@ class TestDeleteEventHandler:
             public_status=EventPublicStatus.published,
         )
         uow.events.add(event)
-        event_id = event.id
+        return event
 
-        cmd = commands.DeleteEventCommand.model_construct(actor=Actor(), id=event_id)
+    def test_removes_event(self, uow):
+        event = self._seed(uow)
+        event_id = event.id
+        grant_permission(uow, 1, "events:write")
+
+        cmd = commands.DeleteEventCommand.model_construct(actor=ACTOR, id=event_id)
         DeleteEventHandler().handle(cmd, uow)
 
         assert uow.events.get(event_id) is None
@@ -248,4 +280,11 @@ class TestDeleteEventHandler:
         cmd = commands.DeleteEventCommand.model_construct(actor=Actor(), id=9999)
 
         with pytest.raises(NotFoundError):
+            DeleteEventHandler().handle(cmd, uow)
+
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        event = self._seed(uow)
+        cmd = commands.DeleteEventCommand.model_construct(actor=ACTOR, id=event.id)
+
+        with pytest.raises(UnauthorizedError):
             DeleteEventHandler().handle(cmd, uow)

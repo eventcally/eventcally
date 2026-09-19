@@ -12,11 +12,12 @@ from project.application.command_handlers.delete_event_organizer_handler import 
 from project.application.command_handlers.update_event_organizer_handler import (
     UpdateEventOrganizerHandler,
 )
-from project.domain.errors import NotFoundError
+from project.domain.errors import NotFoundError, UnauthorizedError
 from project.domain.models.aggregates.event_organizer_aggregate import (
     EventOrganizerAggregate,
 )
 from project.domain.models.entities.actor import Actor
+from tests.application.conftest import ACTOR, grant_permission
 
 # ---------------------------------------------------------------------------
 # CreateEventOrganizerHandler
@@ -25,8 +26,9 @@ from project.domain.models.entities.actor import Actor
 
 class TestCreateEventOrganizerHandler:
     def test_creates_organizer_and_returns_result(self, uow):
+        grant_permission(uow, 1, "event_organizers:write")
         cmd = commands.CreateEventOrganizerCommand.model_construct(
-            actor=Actor(),
+            actor=ACTOR,
             admin_unit_id=1,
             name="Test Organizer",
             url=None,
@@ -44,6 +46,22 @@ class TestCreateEventOrganizerHandler:
         assert created is not None
         assert created.name == "Test Organizer"
 
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        cmd = commands.CreateEventOrganizerCommand.model_construct(
+            actor=ACTOR,
+            admin_unit_id=1,
+            name="Test Organizer",
+            url=None,
+            email=None,
+            phone=None,
+            fax=None,
+            location=None,
+            logo=None,
+        )
+
+        with pytest.raises(UnauthorizedError):
+            CreateEventOrganizerHandler().handle(cmd, uow)
+
 
 # ---------------------------------------------------------------------------
 # UpdateEventOrganizerHandler
@@ -60,8 +78,9 @@ class TestUpdateEventOrganizerHandler:
 
     def test_updates_organizer(self, uow):
         org = self._seed(uow)
+        grant_permission(uow, 1, "event_organizers:write")
         cmd = commands.UpdateEventOrganizerCommand.model_construct(
-            actor=Actor(), id=org.id
+            actor=ACTOR, id=org.id
         )
 
         UpdateEventOrganizerHandler().handle(cmd, uow)
@@ -74,6 +93,15 @@ class TestUpdateEventOrganizerHandler:
         with pytest.raises(NotFoundError):
             UpdateEventOrganizerHandler().handle(cmd, uow)
 
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        org = self._seed(uow)
+        cmd = commands.UpdateEventOrganizerCommand.model_construct(
+            actor=ACTOR, id=org.id
+        )
+
+        with pytest.raises(UnauthorizedError):
+            UpdateEventOrganizerHandler().handle(cmd, uow)
+
 
 # ---------------------------------------------------------------------------
 # DeleteEventOrganizerHandler
@@ -81,15 +109,20 @@ class TestUpdateEventOrganizerHandler:
 
 
 class TestDeleteEventOrganizerHandler:
-    def test_removes_organizer(self, uow):
+    def _seed(self, uow):
         org = EventOrganizerAggregate.create(
             actor=Actor(), admin_unit_id=1, name="To Delete"
         )
         uow.event_organizers.add(org)
+        return org
+
+    def test_removes_organizer(self, uow):
+        org = self._seed(uow)
         org_id = org.id
+        grant_permission(uow, 1, "event_organizers:write")
 
         cmd = commands.DeleteEventOrganizerCommand.model_construct(
-            actor=Actor(), id=org_id
+            actor=ACTOR, id=org_id
         )
         DeleteEventOrganizerHandler().handle(cmd, uow)
 
@@ -101,4 +134,13 @@ class TestDeleteEventOrganizerHandler:
         )
 
         with pytest.raises(NotFoundError):
+            DeleteEventOrganizerHandler().handle(cmd, uow)
+
+    def test_actor_without_permission_raises_unauthorized_error(self, uow):
+        org = self._seed(uow)
+        cmd = commands.DeleteEventOrganizerCommand.model_construct(
+            actor=ACTOR, id=org.id
+        )
+
+        with pytest.raises(UnauthorizedError):
             DeleteEventOrganizerHandler().handle(cmd, uow)

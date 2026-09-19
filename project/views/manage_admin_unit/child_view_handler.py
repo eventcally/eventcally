@@ -46,12 +46,6 @@ class ManageAdminUnitChildViewHandler(ManageAdminUnitBaseViewHandler):
             columns = class_mapper(self.model).columns
             self.admin_unit_id_column = columns.get(self.admin_unit_id_attribute_name)
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-
-        if self.admin_unit_id_attribute_name:
-            setattr(object, self.admin_unit_id_attribute_name, current_admin_unit.id)
-
     def apply_base_filter(self, query, **kwargs):
         query = super().apply_base_filter(query, **kwargs)
 

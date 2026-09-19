@@ -376,9 +376,6 @@ var app = new Vue({
         'widget.settings.organizationId': function(val) {
             this.parameterChanged();
         },
-        'widget.settings.eventListId': function(val) {
-            this.parameterChanged();
-        },
         'widget.settings.eventsPerPage': function(val) {
             this.currentPage = 1;
             this.parameterChanged();
@@ -406,10 +403,7 @@ var app = new Vue({
                 date_from: moment(this.form.dateFrom).format("YYYY-MM-DD"),
             };
 
-            if (this.widget.settings.eventListId) {
-                params.event_list_id = this.widget.settings.eventListId;
-            }
-            else if (this.widget.settings.organizationId) {
+            if (this.widget.settings.organizationId) {
                 params.organization_id = this.widget.settings.organizationId;
             }
 

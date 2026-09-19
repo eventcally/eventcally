@@ -13,6 +13,7 @@ from werkzeug.exceptions import HTTPException, UnprocessableEntity
 
 from project.domain.errors import BaseError, DuplicateError
 from project.domain.errors.constraint_error import ConstraintError
+from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.utils import get_localized_scope
 
 
@@ -52,6 +53,11 @@ class RestApi(Api):
                 data["name"] = "Integrity Error"
                 data["message"] = "Action violates database integrity."
             code = 400
+            schema = ErrorResponseSchema()
+        elif isinstance(err, UnauthorizedError):
+            data["name"] = "Unauthorized"
+            data["message"] = err.message
+            code = 401
             schema = ErrorResponseSchema()
         elif isinstance(err, BaseError):
             if isinstance(err, DuplicateError):
@@ -158,8 +164,8 @@ legacy_scope_mapping = {
     "organizer:write": "organization.event_organizers:write",
     "place:write": "organization.event_places:write",
     "event:write": "organization.events:write",
-    "user:read": "user.organization_invitations:read user.favorite_events:read",
-    "user:write": "user.organization_invitations:write user.favorite_events:write",
+    "user:read": "user.organization_invitations:read",
+    "user:write": "user.organization_invitations:write",
 }
 
 
@@ -181,20 +187,6 @@ rest_api = None
 api_docs = None
 resource_registry = {}
 
-EVENT_LIST_ENDPOINTS = {
-    "api_v1_event_list_model",
-    "api_v1_event_list_event_list",
-    "api_v1_event_list_event_list_write",
-    "api_v1_organization_event_list_list",
-    "api_v1_organization_event_list_status_list",
-}
-
-USER_FAVORITE_ENDPOINTS = {
-    "api_v1_user_favorite_event_list",
-    "api_v1_user_favorite_event_search",
-    "api_v1_user_favorite_event_list_write",
-}
-
 # Unused endpoints, each hidden behind its own flag so they can be retired one by one.
 API_EVENT_DATE_ENDPOINTS = {"api_v1_event_date"}
 API_EVENT_DATES_ENDPOINTS = {"api_v1_event_dates"}
@@ -202,8 +194,6 @@ API_EVENT_LIST_ENDPOINTS = {"api_v1_event_list"}
 
 # app.config key (from project.feature_flags) -> endpoints hidden when it is False.
 FEATURE_ENDPOINTS = {
-    "FEATURE_EVENT_LISTS_ENABLED": EVENT_LIST_ENDPOINTS,
-    "FEATURE_USER_FAVORITES_ENABLED": USER_FAVORITE_ENDPOINTS,
     "FEATURE_API_EVENT_DATE_ENABLED": API_EVENT_DATE_ENDPOINTS,
     "FEATURE_API_EVENT_DATES_ENABLED": API_EVENT_DATES_ENDPOINTS,
     "FEATURE_API_EVENT_LIST_ENABLED": API_EVENT_LIST_ENDPOINTS,
@@ -251,7 +241,6 @@ def init_api(app):
     import project.api.event.resources
     import project.api.event_category.resources
     import project.api.event_date.resources
-    import project.api.event_list.resources
     import project.api.event_reference.resources
     import project.api.event_reference_request.resources
     import project.api.license.resources

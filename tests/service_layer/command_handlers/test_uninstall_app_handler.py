@@ -1,5 +1,6 @@
 from project.application import commands
 from project.domain import events
+from project.domain.models.entities.actor import Actor
 from project.models import AppInstallation
 
 
@@ -12,6 +13,7 @@ def test_uninstall_app_command_removes_app_installation(app, db, seeder):
     with app.app_context():
         message_bus = app.container.cqrs.message_bus()
         cmd = commands.UninstallAppCommand.model_construct(
+            actor=Actor(user_id=user_id),
             id=app_installation_id,
         )
 

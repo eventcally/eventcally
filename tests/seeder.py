@@ -1,5 +1,6 @@
 from project.application.commands.create_event_command import CreateEventCommand
 from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.entities.actor import Actor
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from tests.utils import UtilActions
@@ -117,6 +118,19 @@ class Seeder(object):
 
         return admin_unit_id
 
+    def get_admin_unit_owner_id(self, admin_unit_id):
+        """The user_id of an AdminUnitMember with the "admin" role for
+        `admin_unit_id` — a permitted actor for commands guarded by
+        ensure_actor_has_permission_for_admin_unit."""
+        from project.models.admin_unit import AdminUnitMember
+
+        with self._app.app_context():
+            member = AdminUnitMember.query.filter(
+                AdminUnitMember.admin_unit_id == admin_unit_id,
+                AdminUnitMember.is_admin,
+            ).first()
+            return member.user_id if member else None
+
     def get_eventcally_admin_unit_id(self):
         from project.services.admin_unit import get_admin_unit_by_name
 
@@ -201,20 +215,6 @@ class Seeder(object):
             invitation_id = invitation.id
 
         return invitation_id
-
-    def add_favorite_event(self, user_id, event_id):
-        from project.services.user import add_favorite_event
-
-        with self._app.app_context():
-            if add_favorite_event(user_id, event_id):
-                self._db.session.commit()
-
-    def remove_favorite_event(self, user_id, event_id):
-        from project.services.user import remove_favorite_event
-
-        with self._app.app_context():
-            if remove_favorite_event(user_id, event_id):
-                self._db.session.commit()
 
     def create_admin_unit_member_event_verifier(
         self,
@@ -508,6 +508,10 @@ class Seeder(object):
             command = CreateEventCommand.model_construct()
             command.__dict__.update(kwargs)
             command.admin_unit_id = admin_unit_id
+            if "actor" not in kwargs:
+                command.actor = Actor(
+                    user_id=self.get_admin_unit_owner_id(admin_unit_id)
+                )
             command.category_ids = {
                 event_category_service.upsert_event_category("Other").id
             }
@@ -598,7 +602,9 @@ class Seeder(object):
             date_definitions.append(new_date_definition)
 
             command = UpdateEventCommand.model_construct(
-                id=event_id, date_definitions=date_definitions
+                id=event_id,
+                date_definitions=date_definitions,
+                actor=Actor(user_id=self.get_admin_unit_owner_id(event.admin_unit_id)),
             )
             message_bus.handle(command)
 
@@ -689,34 +695,6 @@ class Seeder(object):
             event = self._db.session.get(Event, event_id)
             event.photo_id = image_id
             self._db.session.commit()
-
-    def add_event_to_list(self, event_list_id, event_id):
-        from project.models import Event, EventList
-
-        with self._app.app_context():
-            event = self._db.session.get(Event, event_id)
-            event_list = self._db.session.get(EventList, event_list_id)
-            event_list.events.append(event)
-            self._db.session.commit()
-
-    def create_event_list(self, admin_unit_id, event_ids=list(), name="My list"):
-        from project.models import EventList
-
-        with self._app.app_context():
-            event_list = EventList()
-            event_list.name = name
-            event_list.admin_unit_id = admin_unit_id
-            self._db.session.add(event_list)
-            self._db.session.commit()
-            event_list_id = event_list.id
-
-        if type(event_ids) is not list:
-            event_ids = [event_ids]
-
-        for event_id in event_ids:
-            self.add_event_to_list(event_list_id, event_id)
-
-        return event_list_id
 
     def create_reference(self, event_id, admin_unit_id):
         from project.models import EventReference

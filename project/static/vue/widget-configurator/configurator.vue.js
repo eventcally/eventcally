@@ -30,15 +30,6 @@ const WidgetConfigurator = {
             <b-tabs card>
               <b-tab :title="$t('comp.tabSettings')" active>
                 <div v-if="widgetType == 'search'">
-                  <custom-typeahead
-                    v-model="searchEventList"
-                    rules=""
-                    validClass=""
-                    :fetchURL="eventListFetchUrl"
-                    :labelValue="$t('comp.search.eventListId')"
-                    :showOnFocus="true"
-                    :serializer="i => i.name"
-                  />
                   <b-form-group :label="$t('comp.search.layout')">
                     <b-form-select v-model="form.search.layout" :options="searchLayouts"></b-form-select>
                   </b-form-group>
@@ -261,7 +252,6 @@ const WidgetConfigurator = {
           search: {
             iFrameMinHeight: "Min. Height",
             iFrameMaxHeight: "Max. Height",
-            eventListId: "Event list",
             view: "Display",
             showFilter: "Filter",
             showEventCallyLink: "Link",
@@ -307,7 +297,6 @@ const WidgetConfigurator = {
           search: {
             iFrameMinHeight: "Min. Höhe",
             iFrameMaxHeight: "Max. Höhe",
-            eventListId: "Veranstaltungsliste",
             view: "Anzeige",
             showFilter: "Filter",
             showEventCallyLink: "Link",
@@ -349,7 +338,6 @@ const WidgetConfigurator = {
         iFrameMaxHeight: "Infinity",
         iFrameAutoResize: true,
         organizationId: null,
-        eventListId: null,
         eventsPerPage: 10,
         showFilter: true,
         showPagination: true,
@@ -391,7 +379,6 @@ const WidgetConfigurator = {
         iFrameHeight: 600,
         iFrameAutoResize: false,
         organizationId: null,
-        eventListId: null,
         calendarType: "week",
         eventBackgroundColor: "#007bff",
       }
@@ -407,7 +394,6 @@ const WidgetConfigurator = {
     widgetType: "search",
     widgetTypes: [],
     name: "Widget",
-    searchEventList: null,
   }),
   computed: {
     iFrameSource() {
@@ -429,9 +415,6 @@ const WidgetConfigurator = {
         maxHeight: this.settings.iFrameMaxHeight != null ? this.settings.iFrameMaxHeight : this.settings.iFrameHeight,
         scrolling: "omit",
       };
-    },
-    eventListFetchUrl() {
-      return `/api/v1/organizations/${this.organizationId}/event-lists?name={query}`;
     },
   },
   mounted() {
@@ -462,9 +445,6 @@ const WidgetConfigurator = {
         this.reloadIframe();
       },
       deep: true
-    },
-    searchEventList: function(val) {
-      this.form.search.eventListId = val != null ? val.id : null;
     },
     previewSize: function(val) {
       this.resizePreview();

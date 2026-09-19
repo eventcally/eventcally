@@ -23,7 +23,6 @@ from project.views.utils import (
     flash_errors,
     get_pagination_urls,
     handle_base_error,
-    handle_db_error,
     non_match_for_deletion,
 )
 
@@ -319,12 +318,6 @@ class BaseFormView(BaseObjectView):
     def create_form(self, **kwargs):
         return self.form_class(**kwargs)
 
-    def create_object(self):
-        return self.model()
-
-    def complete_object(self, object, form):
-        self.handler.complete_object(object, form)
-
     def get_redirect_url(self, **kwargs):  # pragma: no cover
         return None
 
@@ -404,20 +397,6 @@ class BaseCreateView(BaseFormView):
 
         return self.render_template(form=form, object=object)
 
-    @handle_base_error
-    @handle_db_error
-    def dispatch_validated_form(self, form, object, **kwargs):
-        object = self.create_object()
-        form.populate_obj(object)
-
-        self.complete_object(object, form)
-        self.insert_object(object, form)
-        self.flash_success_message(object, form)
-        return redirect(self.get_redirect_url(object=object))
-
-    def insert_object(self, object, form):
-        self.handler.insert_object(object)
-
 
 class BaseObjectFormView(BaseFormView):
     def dispatch_request(self, **kwargs):
@@ -475,19 +454,6 @@ class BaseUpdateView(BaseObjectFormView):
             "%(model_display_name)s successfully updated",
             model_display_name=self.handler.get_model_display_name(),
         )
-
-    def save_object(self, object, form):
-        self.handler.save_object(object)
-
-    @handle_base_error
-    @handle_db_error
-    def dispatch_validated_form(self, form, object, **kwargs):
-        form.populate_obj(object)
-
-        self.complete_object(object, form)
-        self.save_object(object, form)
-        self.flash_success_message(object, form)
-        return redirect(self.get_redirect_url(object=object))
 
 
 class BaseDeleteView(BaseObjectFormView):
@@ -551,7 +517,6 @@ class BaseDeleteView(BaseObjectFormView):
         return self.handler.get_list_url(**kwargs)
 
     @handle_base_error
-    @handle_db_error
     def dispatch_validated_form(self, form, object, **kwargs):
         if self.can_object_be_deleted(form, object):
             return self.dispatch_validated_form_deletable(form, object, **kwargs)

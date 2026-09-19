@@ -1,4 +1,5 @@
-from marshmallow import fields, post_dump, validate
+from marshmallow import ValidationError, fields, post_dump, validate
+from marshmallow.decorators import pre_load
 
 from project.access import has_access, login_api_user
 from project.api import marshmallow
@@ -15,6 +16,7 @@ from project.api.schemas import (
     SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
+    WriteIdPlainSchema,
     WriteIdSchemaMixin,
 )
 from project.models import AdminUnit
@@ -32,6 +34,14 @@ class OrganizationIdSchema(OrganizationModelSchema, IdSchemaMixin):
 
 class OrganizationWriteIdSchema(OrganizationModelSchema, WriteIdSchemaMixin):
     pass
+
+
+class OrganizationWriteIdPlainSchema(WriteIdPlainSchema):
+    @pre_load()
+    def validate_exists(self, data, **kwargs):
+        if not AdminUnit.query.get(data.get("id")):
+            raise ValidationError("Referenced object does not exist")
+        return data
 
 
 class OrganizationBaseSchema(OrganizationIdSchema):

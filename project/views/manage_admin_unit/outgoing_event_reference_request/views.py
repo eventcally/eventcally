@@ -1,18 +1,16 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
-from flask import abort, g, url_for
+from flask import abort, flash, g, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
 
 from project.access import can_request_event_reference
+from project.application.commands import RequestEventReferenceCommand
 from project.models import Event
 from project.modular.base_views import BaseCreateView, BaseListView
-from project.services import organization_service
 from project.views.manage_admin_unit.outgoing_event_reference_request.forms import (
     CreateForm,
 )
 from project.views.reference_request import get_success_text_for_request_creation
+from project.views.utils import handle_base_error
 
 
 class ListView(BaseListView):
@@ -40,10 +38,6 @@ class ListView(BaseListView):
 
 class CreateView(BaseCreateView):
     form_class = CreateForm
-    organization_service: Annotated[
-        organization_service.OrganizationService,
-        Provide["services.organization_service"],
-    ]
 
     def get_instruction(self, **kwargs):
         return lazy_gettext(
@@ -63,15 +57,20 @@ class CreateView(BaseCreateView):
 
         self.event = event
 
-    def complete_object(self, object, form):
-        super().complete_object(object, form)
-        object.event = self.event
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        cmd = RequestEventReferenceCommand(
+            actor=self.app_context_provider.get_current_actor(),
+            admin_unit_id=form.admin_unit.data.id,
+            event_id=self.event.id,
+        )
+        cmd_result = self.message_bus.handle_command(cmd)
 
-    def insert_object(self, object, form):
-        self.organization_service.insert_outgoing_event_reference_request(object)
-
-    def get_success_text(self, object, form):
-        return get_success_text_for_request_creation(object)
+        text = get_success_text_for_request_creation(
+            form.admin_unit.data.name, cmd_result.verified
+        )
+        flash(text, "success")
+        return redirect(self.get_redirect_url())
 
     def get_redirect_url(self, **kwargs):
         return self.handler.get_list_url(**kwargs)

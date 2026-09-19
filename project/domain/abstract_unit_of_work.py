@@ -5,12 +5,21 @@ from typing import List
 
 from project.domain.events import Event
 from project.domain.repositories import (
+    AbstractApiKeyRepository,
+    AbstractAppKeyRepository,
     AbstractCustomWidgetRepository,
     AbstractEventOrganizerRepository,
     AbstractEventPlaceRepository,
     AbstractEventReferenceRepository,
+    AbstractEventReferenceRequestRepository,
     AbstractEventRepository,
+    AbstractMemberInvitationRepository,
+    AbstractOAuth2ClientRepository,
+    AbstractOAuth2TokenRepository,
+    AbstractOrganizationInvitationRepository,
+    AbstractOrganizationRelationRepository,
     AbstractOrganizationRepository,
+    AbstractOrganizationVerificationRequestRepository,
 )
 from project.domain.repositories.abstract_app_repository import AbstractAppRepository
 from project.domain.repositories.abstract_organization_app_installation_repository import (
@@ -18,6 +27,9 @@ from project.domain.repositories.abstract_organization_app_installation_reposito
 )
 from project.domain.repositories.abstract_organization_member_repository import (
     AbstractOrganizationMemberRepository,
+)
+from project.domain.repositories.abstract_settings_repository import (
+    AbstractSettingsRepository,
 )
 from project.domain.repositories.abstract_user_repository import AbstractUserRepository
 from project.domain.repositories.abstract_webhook_delivery_attempt_repository import (
@@ -35,8 +47,13 @@ class AbstractUnitOfWork(abc.ABC):
     events: AbstractEventRepository
     event_organizers: AbstractEventOrganizerRepository
     event_references: AbstractEventReferenceRepository
+    event_reference_requests: AbstractEventReferenceRequestRepository
     event_places: AbstractEventPlaceRepository
     organizations: AbstractOrganizationRepository
+    organization_relations: AbstractOrganizationRelationRepository
+    organization_verification_requests: (
+        AbstractOrganizationVerificationRequestRepository
+    )
     webhook_events: AbstractWebhookEventRepository
     webhook_deliveries: AbstractWebhookDeliveryRepository
     webhook_delivery_attempts: AbstractWebhookDeliveryAttemptRepository
@@ -45,6 +62,13 @@ class AbstractUnitOfWork(abc.ABC):
     organization_members: AbstractOrganizationMemberRepository
     users: AbstractUserRepository
     custom_widgets: AbstractCustomWidgetRepository
+    api_keys: AbstractApiKeyRepository
+    app_keys: AbstractAppKeyRepository
+    oauth2_clients: AbstractOAuth2ClientRepository
+    oauth2_tokens: AbstractOAuth2TokenRepository
+    organization_invitations: AbstractOrganizationInvitationRepository
+    member_invitations: AbstractMemberInvitationRepository
+    settings: AbstractSettingsRepository
 
     def __init__(self):
         self.pending_events: List[Event] = []
@@ -68,8 +92,11 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.events)
         self._collect_domain_events_from_repo(self.event_organizers)
         self._collect_domain_events_from_repo(self.event_references)
+        self._collect_domain_events_from_repo(self.event_reference_requests)
         self._collect_domain_events_from_repo(self.event_places)
         self._collect_domain_events_from_repo(self.organizations)
+        self._collect_domain_events_from_repo(self.organization_relations)
+        self._collect_domain_events_from_repo(self.organization_verification_requests)
         self._collect_domain_events_from_repo(self.webhook_events)
         self._collect_domain_events_from_repo(self.apps)
         self._collect_domain_events_from_repo(self.organization_app_installations)
@@ -78,6 +105,13 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.webhook_delivery_attempts)
         self._collect_domain_events_from_repo(self.users)
         self._collect_domain_events_from_repo(self.custom_widgets)
+        self._collect_domain_events_from_repo(self.api_keys)
+        self._collect_domain_events_from_repo(self.app_keys)
+        self._collect_domain_events_from_repo(self.oauth2_clients)
+        self._collect_domain_events_from_repo(self.oauth2_tokens)
+        self._collect_domain_events_from_repo(self.organization_invitations)
+        self._collect_domain_events_from_repo(self.member_invitations)
+        self._collect_domain_events_from_repo(self.settings)
 
     def _collect_domain_events_from_repo(self, repo):
         for model in repo.seen:

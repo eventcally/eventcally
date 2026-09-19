@@ -9,6 +9,7 @@ from sqlalchemy import MetaData, text
 
 from project.api import scope_list
 from project.application.commands.create_event_command import CreateEventCommand
+from project.domain.models.entities.actor import Actor
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
@@ -18,10 +19,9 @@ from project.init_data import create_initial_data
 from project.models import (
     AdminUnit,
     AdminUnitInvitation,
+    AdminUnitMember,
     AdminUnitVerificationRequest,
     AdminUnitVerificationRequestReviewStatus,
-    Event,
-    EventList,
     EventReference,
     EventReferenceRequest,
     EventReferenceRequestReviewStatus,
@@ -201,11 +201,20 @@ def create_admin_unit_member(admin_unit_id, user_email):
     click.echo(json.dumps(result))
 
 
+def _get_admin_unit_owner_id(admin_unit_id):
+    member = AdminUnitMember.query.filter(
+        AdminUnitMember.admin_unit_id == admin_unit_id,
+        AdminUnitMember.is_admin,
+    ).first()
+    return member.user_id if member else None
+
+
 def _create_event(admin_unit_id):
     event_category_service = current_app.container.services.event_category_service()
 
     command = CreateEventCommand.model_construct()
     command.admin_unit_id = admin_unit_id
+    command.actor = Actor(user_id=_get_admin_unit_owner_id(admin_unit_id))
     command.category_ids = {event_category_service.upsert_event_category("Other").id}
     command.name = "Name"
     command.description = "Beschreibung"
@@ -464,39 +473,5 @@ def create_admin_unit_organization_invitation(admin_unit_id, email):
     invitation_id = _create_admin_unit_invitation(admin_unit_id, email)
     result = {
         "invitation_id": invitation_id,
-    }
-    click.echo(json.dumps(result))
-
-
-def _add_event_to_list(event_list_id, event_id):
-    event = db.session.get(Event, event_id)
-    event_list = db.session.get(EventList, event_list_id)
-    event_list.events.append(event)
-    db.session.commit()
-
-
-def _create_event_list(admin_unit_id, event_ids=list(), name="My list"):
-    event_list = EventList()
-    event_list.name = name
-    event_list.admin_unit_id = admin_unit_id
-    db.session.add(event_list)
-    db.session.commit()
-    event_list_id = event_list.id
-
-    if type(event_ids) is not list:
-        event_ids = [event_ids]
-
-    for event_id in event_ids:
-        _add_event_to_list(event_list_id, event_id)
-
-    return event_list_id
-
-
-@test_cli.command("event-list-create")
-@click.argument("admin_unit_id", type=click.INT)
-def create_event_list(admin_unit_id):
-    event_list_id = _create_event_list(admin_unit_id)
-    result = {
-        "event_list_id": event_list_id,
     }
     click.echo(json.dumps(result))

@@ -5,12 +5,14 @@ from flask_apispec.annotations import use_kwargs
 
 from project.api import add_api_resource
 from project.api.organization_invitation.schemas import (
+    OrganizationInvitationPatchRequestPlainSchema,
     OrganizationInvitationPatchRequestSchema,
+    OrganizationInvitationPutRequestPlainSchema,
     OrganizationInvitationSchema,
     OrganizationInvitationUpdateRequestSchema,
 )
 from project.api.resources import BaseResource, require_organization_api_access
-from project.extensions import db
+from project.application.commands import RevokeOrganizationInvitationCommand
 from project.models import AdminUnitInvitation
 
 
@@ -38,11 +40,8 @@ class OrganizationInvitationResource(BaseResource):
         "organization.organization_invitations:write", AdminUnitInvitation
     )
     def put(self, id):
-        invitation = g.manage_admin_unit_instance
-        invitation = self.update_instance(
-            OrganizationInvitationUpdateRequestSchema, instance=invitation
-        )
-        db.session.commit()
+        cmd = self.load_command(OrganizationInvitationPutRequestPlainSchema)
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -56,11 +55,8 @@ class OrganizationInvitationResource(BaseResource):
         "organization.organization_invitations:write", AdminUnitInvitation
     )
     def patch(self, id):
-        invitation = g.manage_admin_unit_instance
-        invitation = self.update_instance(
-            OrganizationInvitationPatchRequestSchema, instance=invitation
-        )
-        db.session.commit()
+        cmd = self.load_command(OrganizationInvitationPatchRequestPlainSchema)
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -73,9 +69,10 @@ class OrganizationInvitationResource(BaseResource):
         "organization.organization_invitations:write", AdminUnitInvitation
     )
     def delete(self, id):
-        invitation = g.manage_admin_unit_instance
-        db.session.delete(invitation)
-        db.session.commit()
+        cmd = RevokeOrganizationInvitationCommand(
+            id=id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 

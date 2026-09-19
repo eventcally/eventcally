@@ -30,13 +30,6 @@ from project.api.event_date.schemas import (
     EventDateSearchRequestSchema,
     EventDateSearchResponseSchema,
 )
-from project.api.event_list.schemas import (
-    EventListCreateRequestSchema,
-    EventListIdSchema,
-    EventListListRequestSchema,
-    EventListListResponseSchema,
-    EventListStatusListResponseSchema,
-)
 from project.api.event_reference.schemas import (
     EventReferenceCreateRequestPlainSchema,
     EventReferenceIdPlainSchema,
@@ -55,20 +48,23 @@ from project.api.organization.schemas import (
     OrganizationSchema,
 )
 from project.api.organization_invitation.schemas import (
+    OrganizationInvitationCreateRequestPlainSchema,
     OrganizationInvitationCreateRequestSchema,
-    OrganizationInvitationIdSchema,
+    OrganizationInvitationIdPlainSchema,
     OrganizationInvitationListRequestSchema,
     OrganizationInvitationListResponseSchema,
 )
 from project.api.organization_relation.schemas import (
+    OrganizationRelationCreateRequestPlainSchema,
     OrganizationRelationCreateRequestSchema,
-    OrganizationRelationIdSchema,
+    OrganizationRelationIdPlainSchema,
     OrganizationRelationListRequestSchema,
     OrganizationRelationListResponseSchema,
     OrganizationRelationSchema,
 )
 from project.api.organization_verification_request.schemas import (
-    OrganizationVerificationRequestIdSchema,
+    OrganizationVerificationRequestCreateRequestPlainSchema,
+    OrganizationVerificationRequestIdPlainSchema,
     OrganizationVerificationRequestListRequestSchema,
     OrganizationVerificationRequestListResponseSchema,
     OrganizationVerificationRequestPostRequestSchema,
@@ -90,30 +86,18 @@ from project.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
-from project.extensions import db
-from project.models import AdminUnit, Event, EventPublicStatus
+from project.application.commands import RequestEventReferenceCommand
+from project.models import AdminUnit, Event, EventPublicStatus, EventReferenceRequest
 from project.models.admin_unit import AdminUnitInvitation, AdminUnitRelation
-from project.models.admin_unit_verification_request import (
-    AdminUnitVerificationRequestReviewStatus,
-)
-from project.services import organization_service
 from project.services.admin_unit import (
     get_admin_unit_invitation_query,
     get_admin_unit_query,
     get_custom_widget_query,
-    get_event_list_query,
-    get_event_list_status_query,
     get_organizer_query,
     get_place_query,
 )
 from project.services.event import get_event_dates_query, get_events_query
 from project.services.event_service import EventService
-from project.services.organization_invitation_service import (
-    OrganizationInvitationService,
-)
-from project.services.organization_verification_request_service import (
-    OrganizationVerificationRequestService,
-)
 from project.services.reference import (
     get_reference_incoming_query,
     get_reference_outgoing_query,
@@ -385,11 +369,6 @@ class OrganizationIncomingEventReferenceRequestListResource(BaseResource):
 
 
 class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
-    organization_service: Annotated[
-        organization_service.OrganizationService,
-        Provide["services.organization_service"],
-    ]
-
     @doc(
         summary="List outgoing event reference requests of organization",
         tags=["Organizations", "Event Reference Requests"],
@@ -429,10 +408,15 @@ class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
         if not can_request_event_reference(event):
             abort(401)
 
-        self.organization_service.insert_outgoing_event_reference_request(
-            reference_request
+        cmd = RequestEventReferenceCommand(
+            actor=self.app_context_provider.get_current_actor(),
+            admin_unit_id=reference_request.admin_unit.id,
+            event_id=event.id,
         )
-        return reference_request, 201
+        cmd_result = self.message_bus.handle_command(cmd)
+
+        created = EventReferenceRequest.query.get(cmd_result.id)
+        return created, 201
 
 
 class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResource):
@@ -456,11 +440,6 @@ class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResour
 
 
 class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResource):
-    organization_verification_request_service: Annotated[
-        OrganizationVerificationRequestService,
-        Provide["services.organization_verification_request_service"],
-    ]
-
     @doc(
         summary="List outgoing organization verification requests of organization",
         tags=["Organizations", "Organization Verification Requests"],
@@ -486,29 +465,23 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
     @use_kwargs(
         OrganizationVerificationRequestPostRequestSchema, location="json", apply=False
     )
-    @marshal_with(OrganizationVerificationRequestIdSchema, 201)
+    @marshal_with(OrganizationVerificationRequestIdPlainSchema, 201)
     @require_organization_api_access(
         "organization.outgoing_organization_verification_requests:write"
     )
     def post(self, id):
         admin_unit = g.manage_admin_unit
-        verification_request = self.create_instance(
-            OrganizationVerificationRequestPostRequestSchema,
-            source_admin_unit_id=admin_unit.id,
-            review_status=AdminUnitVerificationRequestReviewStatus.inbox,
-        )
-        target_admin_unit = verification_request.target_admin_unit
+        cmd = self.load_command(OrganizationVerificationRequestCreateRequestPlainSchema)
+        target_admin_unit = AdminUnit.query.get_or_404(cmd.target_admin_unit_id)
 
         if not admin_unit_can_verify_admin_unit(
             admin_unit, target_admin_unit
         ):  # pragma: no cover
             abort(401)
 
-        self.organization_verification_request_service.insert_object(
-            verification_request
-        )
+        cmd_result = self.message_bus.handle_command(cmd)
 
-        return verification_request, 201
+        return cmd_result, 201
 
 
 class OrganizationOutgoingRelationListResource(BaseResource):
@@ -532,20 +505,15 @@ class OrganizationOutgoingRelationListResource(BaseResource):
         tags=["Organizations", "Organization Relations"],
     )
     @use_kwargs(OrganizationRelationCreateRequestSchema, location="json", apply=False)
-    @marshal_with(OrganizationRelationIdSchema, 201)
+    @marshal_with(OrganizationRelationIdPlainSchema, 201)
     @require_organization_api_access(
         "organization.outgoing_organization_relations:write"
     )
     def post(self, id):
-        admin_unit = g.manage_admin_unit
+        cmd = self.load_command(OrganizationRelationCreateRequestPlainSchema)
+        cmd_result = self.message_bus.handle_command(cmd)
 
-        relation = self.create_instance(
-            OrganizationRelationCreateRequestSchema, source_admin_unit_id=admin_unit.id
-        )
-        db.session.add(relation)
-        db.session.commit()
-
-        return relation, 201
+        return cmd_result, 201
 
 
 class OrganizationOutgoingRelationResource(BaseResource):
@@ -566,11 +534,6 @@ class OrganizationOutgoingRelationResource(BaseResource):
 
 
 class OrganizationOrganizationInvitationListResource(BaseResource):
-    organization_invitation_service: Annotated[
-        OrganizationInvitationService,
-        Provide["services.organization_invitation_service"],
-    ]
-
     @doc(
         summary="List organization invitations of organization",
         tags=["Organizations", "Organization Invitations"],
@@ -594,69 +557,13 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
         tags=["Organizations", "Organization Invitations"],
     )
     @use_kwargs(OrganizationInvitationCreateRequestSchema, location="json", apply=False)
-    @marshal_with(OrganizationInvitationIdSchema, 201)
+    @marshal_with(OrganizationInvitationIdPlainSchema, 201)
     @require_organization_api_access("organization.organization_invitations:write")
     def post(self, id):
-        admin_unit = g.manage_admin_unit
+        cmd = self.load_command(OrganizationInvitationCreateRequestPlainSchema)
+        cmd_result = self.message_bus.handle_command(cmd)
 
-        invitation = self.create_instance(
-            OrganizationInvitationCreateRequestSchema, admin_unit_id=admin_unit.id
-        )
-        self.organization_invitation_service.insert_object(invitation)
-
-        return invitation, 201
-
-
-class OrganizationEventListListResource(BaseResource):
-    @doc(
-        summary="List event lists of organization",
-        tags=["Organizations", "Event Lists"],
-    )
-    @use_kwargs(EventListListRequestSchema, location=("query"))
-    @marshal_with(EventListListResponseSchema)
-    @require_api_access("organization.event_lists:read")
-    def get(self, id, **kwargs):
-        admin_unit = AdminUnit.query.get_or_404(id)
-        name = kwargs["name"] if "name" in kwargs else None
-
-        pagination = get_event_list_query(admin_unit.id, name).paginate()
-        return pagination
-
-    @doc(
-        summary="Add new event list",
-        tags=["Organizations", "Event Lists"],
-    )
-    @use_kwargs(EventListCreateRequestSchema, location="json", apply=False)
-    @marshal_with(EventListIdSchema, 201)
-    @require_organization_api_access("organization.event_lists:write")
-    def post(self, id):
-        admin_unit = g.manage_admin_unit
-
-        event_list = self.create_instance(
-            EventListCreateRequestSchema, admin_unit_id=admin_unit.id
-        )
-        db.session.add(event_list)
-        db.session.commit()
-
-        return event_list, 201
-
-
-class OrganizationEventListStatusListResource(BaseResource):
-    @doc(
-        summary="List event lists of organization with status",
-        tags=["Organizations", "Event Lists"],
-    )
-    @use_kwargs(EventListListRequestSchema, location=("query"))
-    @marshal_with(EventListStatusListResponseSchema)
-    @require_organization_api_access("organization.event_lists:read")
-    def get(self, id, event_id, **kwargs):
-        admin_unit = g.manage_admin_unit
-        name = kwargs["name"] if "name" in kwargs else None
-
-        pagination = get_event_list_status_query(
-            admin_unit.id, event_id, name
-        ).paginate()
-        return pagination
+        return cmd_result, 201
 
 
 class OrganizationCustomWidgetListResource(BaseResource):
@@ -704,16 +611,6 @@ add_api_resource(
     OrganizationEventListResource,
     "/organizations/<int:id>/events",
     "api_v1_organization_event_list",
-)
-add_api_resource(
-    OrganizationEventListListResource,
-    "/organizations/<int:id>/event-lists",
-    "api_v1_organization_event_list_list",
-)
-add_api_resource(
-    OrganizationEventListStatusListResource,
-    "/organizations/<int:id>/event-lists/status/<int:event_id>",
-    "api_v1_organization_event_list_status_list",
 )
 add_api_resource(OrganizationListResource, "/organizations", "api_v1_organization_list")
 add_api_resource(

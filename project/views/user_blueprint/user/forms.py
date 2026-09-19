@@ -2,6 +2,10 @@ from flask_babel import lazy_gettext
 from wtforms import BooleanField, EmailField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional
 
+from project.application.commands import (
+    UpdateUserGeneralSettingsCommand,
+    UpdateUserNotificationSettingsCommand,
+)
 from project.forms.common import get_accept_tos_markup
 from project.modular.base_form import BaseForm
 
@@ -28,10 +32,16 @@ class GeneralForm(BaseForm):
     )
     submit = SubmitField(lazy_gettext("Save"))
 
-    def populate_obj(self, obj):
-        super().populate_obj(obj)
-        if obj.locale == "None":
-            obj.locale = None
+    def create_update_command(self, user_id: int) -> UpdateUserGeneralSettingsCommand:
+        locale = self.locale.data
+        if locale == "None":
+            locale = None
+
+        return UpdateUserGeneralSettingsCommand(
+            actor=self.get_current_actor(),
+            id=user_id,
+            locale=locale,
+        )
 
 
 class NotificationForm(BaseForm):
@@ -44,6 +54,15 @@ class NotificationForm(BaseForm):
         },
     )
     submit = SubmitField(lazy_gettext("Save"))
+
+    def create_update_command(
+        self, user_id: int
+    ) -> UpdateUserNotificationSettingsCommand:
+        return UpdateUserNotificationSettingsCommand(
+            actor=self.get_current_actor(),
+            id=user_id,
+            newsletter_enabled=self.newsletter_enabled.data,
+        )
 
 
 class AcceptTosForm(BaseForm):

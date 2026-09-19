@@ -67,7 +67,6 @@ def test_review_verify(
     if db_error:
         utils.mock_db_commit(mocker)
 
-    mail_mock = utils.mock_send_mails_async(mocker)
     response = utils.post_form(
         url,
         response,
@@ -86,7 +85,12 @@ def test_review_verify(
         "manage_admin_unit.incoming_organization_verification_requests",
         id=verifier_admin_unit_id,
     )
-    utils.assert_send_mail_called(mail_mock, "mitglied@verein.de")
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    assert app.test_email_service.sent_emails[0]["recipient"] == "mitglied@verein.de"
 
     with app.app_context():
         from project.models import (

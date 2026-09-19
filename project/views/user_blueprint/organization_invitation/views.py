@@ -1,10 +1,10 @@
 from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 
-from project.extensions import db
+from project.application.commands import DeclineOrganizationInvitationCommand
 from project.modular.base_views import BaseObjectFormView
 from project.views.user_blueprint.organization_invitation.forms import NegotiateForm
-from project.views.utils import handle_db_error
+from project.views.utils import handle_base_error
 
 
 class NegotiateView(BaseObjectFormView):
@@ -18,7 +18,7 @@ class NegotiateView(BaseObjectFormView):
             name=invitation.admin_unit.name,
         )
 
-    @handle_db_error
+    @handle_base_error
     def dispatch_validated_form(self, form, object, **kwargs):
         invitation = object
 
@@ -27,7 +27,9 @@ class NegotiateView(BaseObjectFormView):
                 url_for("manage.organization_create", invitation_id=invitation.id)
             )
 
-        db.session.delete(invitation)
-        db.session.commit()
+        cmd = DeclineOrganizationInvitationCommand(
+            id=invitation.id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
         flash(gettext("Invitation successfully declined"), "success")
         return redirect(self.handler.get_list_url())

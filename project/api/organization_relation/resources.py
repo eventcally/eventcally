@@ -5,12 +5,14 @@ from flask_apispec.annotations import use_kwargs
 
 from project.api import add_api_resource
 from project.api.organization_relation.schemas import (
+    OrganizationRelationPatchRequestPlainSchema,
     OrganizationRelationPatchRequestSchema,
+    OrganizationRelationPutRequestPlainSchema,
     OrganizationRelationSchema,
     OrganizationRelationUpdateRequestSchema,
 )
 from project.api.resources import BaseResource, require_organization_api_access
-from project.extensions import db
+from project.application.commands import DeleteOrganizationRelationCommand
 from project.models import AdminUnitRelation
 
 
@@ -42,11 +44,8 @@ class OrganizationRelationResource(BaseResource):
         admin_unit_id_path="source_admin_unit_id",
     )
     def put(self, id):
-        relation = g.manage_admin_unit_instance
-        relation = self.update_instance(
-            OrganizationRelationUpdateRequestSchema, instance=relation
-        )
-        db.session.commit()
+        cmd = self.load_command(OrganizationRelationPutRequestPlainSchema)
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -62,11 +61,8 @@ class OrganizationRelationResource(BaseResource):
         admin_unit_id_path="source_admin_unit_id",
     )
     def patch(self, id):
-        relation = g.manage_admin_unit_instance
-        relation = self.update_instance(
-            OrganizationRelationPatchRequestSchema, instance=relation
-        )
-        db.session.commit()
+        cmd = self.load_command(OrganizationRelationPatchRequestPlainSchema)
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 
@@ -81,9 +77,10 @@ class OrganizationRelationResource(BaseResource):
         admin_unit_id_path="source_admin_unit_id",
     )
     def delete(self, id):
-        relation = g.manage_admin_unit_instance
-        db.session.delete(relation)
-        db.session.commit()
+        cmd = DeleteOrganizationRelationCommand(
+            id=id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
 

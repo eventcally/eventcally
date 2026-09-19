@@ -2,6 +2,13 @@ from flask_babel import lazy_gettext
 from wtforms import BooleanField, SelectField, SubmitField
 from wtforms.validators import Optional
 
+from project.application.commands import (
+    ApproveOrganizationVerificationRequestCommand,
+    RejectOrganizationVerificationRequestCommand,
+)
+from project.domain.models.enums.organization_verification_request_rejection_reason import (
+    OrganizationVerificationRequestRejectionReason,
+)
 from project.models import (
     AdminUnitVerificationRequestRejectionReason,
     AdminUnitVerificationRequestReviewStatus,
@@ -10,14 +17,14 @@ from project.modular.base_form import BaseForm
 
 
 class VerificationRequestReviewForm(BaseForm):
+    # A review is a decision: only verified and rejected are valid outcomes.
+    # `inbox` is the not-yet-reviewed state and has no transition back to it in
+    # OrganizationVerificationRequestAggregate, so offering it here would let a
+    # crafted POST fall into the reject branch of ReviewView.dispatch_validated_form.
     review_status = SelectField(
         lazy_gettext("Review status"),
         coerce=int,
         choices=[
-            (
-                int(AdminUnitVerificationRequestReviewStatus.inbox),
-                lazy_gettext("AdminUnitVerificationRequestReviewStatus.inbox"),
-            ),
             (
                 int(AdminUnitVerificationRequestReviewStatus.verified),
                 lazy_gettext("AdminUnitVerificationRequestReviewStatus.verified"),
@@ -78,3 +85,29 @@ class VerificationRequestReviewForm(BaseForm):
     )
 
     submit = SubmitField(lazy_gettext("Save review"))
+
+    def create_approve_command(
+        self, verification_request_id: int
+    ) -> ApproveOrganizationVerificationRequestCommand:
+        return ApproveOrganizationVerificationRequestCommand(
+            actor=self.get_current_actor(),
+            id=verification_request_id,
+            auto_verify_event_reference_requests=(
+                self.auto_verify.data if self.auto_verify.data else None
+            ),
+        )
+
+    def create_reject_command(
+        self, verification_request_id: int
+    ) -> RejectOrganizationVerificationRequestCommand:
+        return RejectOrganizationVerificationRequestCommand(
+            actor=self.get_current_actor(),
+            id=verification_request_id,
+            rejection_reason=(
+                OrganizationVerificationRequestRejectionReason(
+                    self.rejection_reason.data
+                )
+                if self.rejection_reason.data
+                else None
+            ),
+        )

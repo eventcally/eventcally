@@ -106,24 +106,9 @@ def test_organization_invitation_list(client, seeder, utils):
     utils.get_ok(url)
 
 
-def test_user_favorite_events(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
-
-    url = utils.get_url("main.user_favorite_events")
-    utils.get_ok(url)
-
-
-def test_user_favorite_events_disabled(client, seeder, utils, app):
-    app.config["FEATURE_USER_FAVORITES_ENABLED"] = False
-    _, admin_unit_id = seeder.setup_base()
-
-    url = utils.get_url("main.user_favorite_events")
-    response = utils.get(url)
-    utils.assert_response_notFound(response)
-
-
+@pytest.mark.parametrize("db_error", [True, False])
 @pytest.mark.parametrize("locale", [None, "de"])
-def test_user_general(client, seeder, utils, app, db, locale):
+def test_user_general(client, seeder, utils, app, db, mocker, locale, db_error):
     user_id, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("user.general")
@@ -136,11 +121,18 @@ def test_user_general(client, seeder, utils, app, db, locale):
             "locale": locale,
         }
 
+    if db_error:
+        utils.mock_db_commit(mocker)
+
     response = utils.post_form(
         url,
         response,
         values,
     )
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
 
     utils.assert_response_redirect(response, "main.profile")
 
@@ -151,11 +143,15 @@ def test_user_general(client, seeder, utils, app, db, locale):
         assert user.locale == locale
 
 
-def test_user_notifications(client, seeder, utils, app, db):
+@pytest.mark.parametrize("db_error", [True, False])
+def test_user_notifications(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("user.notifications")
     response = utils.get_ok(url)
+
+    if db_error:
+        utils.mock_db_commit(mocker)
 
     response = utils.post_form(
         url,
@@ -164,6 +160,10 @@ def test_user_notifications(client, seeder, utils, app, db):
             "newsletter_enabled": None,
         },
     )
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
 
     utils.assert_response_redirect(response, "main.profile")
 
@@ -266,6 +266,28 @@ def test_user_request_deletion(
         assert user.deletion_requested_at is not None
 
 
+def test_user_request_deletion_sends_mail(client, seeder: Seeder, utils, app, db):
+    seeder.setup_base_event_verifier()
+
+    url = utils.get_url("user.request_deletion")
+    response = utils.get_ok(url)
+
+    utils.post_form(
+        url,
+        response,
+        {
+            "email": "test@test.de",
+        },
+    )
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 1
+    sent_email = app.test_email_service.sent_emails[0]
+    assert sent_email["recipient"] == "test@test.de"
+
+
 def test_user_request_deletion_admin_member(
     client, seeder: Seeder, utils: UtilActions, app, db
 ):
@@ -333,7 +355,10 @@ def test_user_cancel_deletion(
         assert user.deletion_requested_at is None
 
 
-def test_user_accept_tos(client, app, db, seeder: Seeder, utils: UtilActions):
+@pytest.mark.parametrize("db_error", [True, False])
+def test_user_accept_tos(
+    client, app, db, seeder: Seeder, utils: UtilActions, mocker, db_error
+):
     seeder.setup_base()
 
     with app.app_context():
@@ -347,6 +372,10 @@ def test_user_accept_tos(client, app, db, seeder: Seeder, utils: UtilActions):
     )
 
     response = utils.get_endpoint_ok("user.accept_tos", next="/profile")
+
+    if db_error:
+        utils.mock_db_commit(mocker)
+
     response = utils.post_form(
         response.request.url,
         response,
@@ -355,4 +384,9 @@ def test_user_accept_tos(client, app, db, seeder: Seeder, utils: UtilActions):
             "submit": "Confirm",
         },
     )
+
+    if db_error:
+        utils.assert_response_db_error(response)
+        return
+
     utils.assert_response_redirect(response, "main.profile")

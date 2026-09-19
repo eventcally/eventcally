@@ -21,7 +21,3 @@ class BaseRepo(Generic[TModel]):
 
     def update_object(self, object: TModel):
         self.db.session.commit()
-
-    def delete_object(self, object: TModel) -> TModel:
-        self.db.session.delete(object)
-        self.db.session.commit()

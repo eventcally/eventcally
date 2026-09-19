@@ -16,13 +16,12 @@ from wtforms import FormField
 from project.access import (
     get_admin_unit_for_manage,
     get_admin_unit_for_manage_or_404,
-    get_admin_unit_members_with_permission,
     get_admin_units_for_manage,
     has_access,
 )
 from project.dateutils import berlin_tz, round_to_next_day
 from project.domain.errors import BaseError
-from project.extensions import db, mail
+from project.extensions import mail
 from project.models import Event, EventAttendanceMode, EventDate
 from project.utils import dummy_gettext, get_place_str, strings_are_equal_ignoring_case
 
@@ -245,15 +244,6 @@ def render_mail_body_with_subject(template, **context):
         body, html = render_mail_body(template, **context)
 
     return subject, body, html
-
-
-def send_template_mails_to_admin_unit_members_async(
-    admin_unit_id, permissions, template, **context
-):
-    members = get_admin_unit_members_with_permission(admin_unit_id, permissions)
-    users = [member.user for member in members]
-
-    return send_template_mails_to_users_async(users, template, **context)
 
 
 def send_template_mails_to_users_async(users, template, **context):
@@ -511,18 +501,6 @@ def get_docs_url(path: str, **kwargs):  # pragma: no cover
         return None
 
     return f"{base_url}{path}"
-
-
-def handle_db_error(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(handleSqlError(e), "danger")
-
-    return wrapper
 
 
 def handle_base_error(func):

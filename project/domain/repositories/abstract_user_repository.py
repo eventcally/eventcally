@@ -19,6 +19,17 @@ class AbstractUserRepository(abc.ABC):
         self.seen.update(users)
         return users
 
+    def update(self, user: UserAggregate):
+        self._update(user)
+        self.seen.add(user)
+
+    def remove(self, user: UserAggregate):
+        self._remove(user)
+        self.seen.add(user)
+
+    def reset_tos_accepted_for_all(self) -> int:
+        return self._reset_tos_accepted_for_all()
+
     @abc.abstractmethod
     def _get(self, object_id: int) -> Optional[UserAggregate]:  # pragma: no cover
         raise NotImplementedError
@@ -27,4 +38,16 @@ class AbstractUserRepository(abc.ABC):
     def _get_all_with_ids(
         self, object_ids: list[int]
     ) -> list[UserAggregate]:  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _update(self, user: UserAggregate):  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _remove(self, user: UserAggregate):  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _reset_tos_accepted_for_all(self) -> int:  # pragma: no cover
         raise NotImplementedError

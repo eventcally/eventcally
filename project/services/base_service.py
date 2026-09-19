@@ -18,12 +18,3 @@ class BaseService(Generic[TModel]):
 
     def get_object_by_id(self, object_id) -> TModel:  # pragma: no cover
         return self.repo.get_object_by_id(object_id)
-
-    def insert_object(self, object: TModel) -> TModel:
-        self.repo.insert_object(object)
-
-    def update_object(self, object: TModel):
-        self.repo.update_object(object)
-
-    def delete_object(self, object: TModel) -> TModel:
-        self.repo.delete_object(object)

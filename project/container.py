@@ -39,6 +39,13 @@ from project.infrastructure.services.flask_url_provider import FlaskUrlProvider
 from project.infrastructure.services.requests_webhook_delivery_sender import (
     RequestsWebhookDeliverySender,
 )
+from project.infrastructure.services.rsa_app_key_generator import RsaAppKeyGenerator
+from project.infrastructure.services.werkzeug_api_key_generator import (
+    WerkzeugApiKeyGenerator,
+)
+from project.infrastructure.services.werkzeug_oauth2_client_credentials_generator import (
+    WerkzeugOAuth2ClientCredentialsGenerator,
+)
 from project.infrastructure.sql_alchemy_unit_of_work import SqlAlchemyUnitOfWork
 
 
@@ -63,6 +70,15 @@ class Infrastructure(containers.DeclarativeContainer):
         RequestsWebhookDeliverySender,
         logger=logger,
         url_provider=url_provider,
+    )
+    api_key_generator = providers.Singleton(
+        WerkzeugApiKeyGenerator,
+    )
+    app_key_generator = providers.Singleton(
+        RsaAppKeyGenerator,
+    )
+    oauth2_client_credentials_generator = providers.Singleton(
+        WerkzeugOAuth2ClientCredentialsGenerator,
     )
 
 
@@ -127,10 +143,6 @@ class Repos(containers.DeclarativeContainer):
     )
     event_date_definition_repo = providers.Factory(
         repos.EventDateDefinitionRepo,
-        db=infrastructure.db,
-    )
-    event_list_repo = providers.Factory(
-        repos.EventListRepo,
         db=infrastructure.db,
     )
     event_organizer_repo = providers.Factory(
@@ -217,10 +229,6 @@ class Repos(containers.DeclarativeContainer):
         repos.SettingsRepo,
         db=infrastructure.db,
     )
-    user_favorite_events_repo = providers.Factory(
-        repos.UserFavoriteEventsRepo,
-        db=infrastructure.db,
-    )
     user_repo = providers.Factory(
         repos.UserRepo,
         db=infrastructure.db,
@@ -299,11 +307,6 @@ class Services(containers.DeclarativeContainer):
     event_date_definition_service = providers.Factory(
         services.EventDateDefinitionService,
         repo=repos.event_date_definition_repo,
-        context_provider=context.context_provider,
-    )
-    event_list_service = providers.Factory(
-        services.EventListService,
-        repo=repos.event_list_repo,
         context_provider=context.context_provider,
     )
     event_organizer_service = providers.Factory(
@@ -400,11 +403,6 @@ class Services(containers.DeclarativeContainer):
         services.OrganizationService,
         repo=repos.organization_repo,
         context_provider=context.context_provider,
-        event_reference_request_service=event_reference_request_service,
-        organization_relation_repo=repos.organization_relation_repo,
-        event_repo=repos.event_repo,
-        event_reference_service=event_reference_service,
-        organization_verification_request_service=organization_verification_request_service,
     )
     role_service = providers.Factory(
         services.RoleService,
@@ -414,11 +412,6 @@ class Services(containers.DeclarativeContainer):
     settings_service = providers.Factory(
         services.SettingsService,
         repo=repos.settings_repo,
-        context_provider=context.context_provider,
-    )
-    user_favorite_events_service = providers.Factory(
-        services.UserFavoriteEventsService,
-        repo=repos.user_favorite_events_repo,
         context_provider=context.context_provider,
     )
     user_service = providers.Factory(
@@ -486,6 +479,18 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.DeleteEventReferenceCommand: providers.Factory(
                     command_handlers.DeleteEventReferenceHandler
                 ),
+                commands.RequestEventReferenceCommand: providers.Factory(
+                    command_handlers.RequestEventReferenceHandler
+                ),
+                commands.VerifyEventReferenceRequestCommand: providers.Factory(
+                    command_handlers.VerifyEventReferenceRequestHandler
+                ),
+                commands.RejectEventReferenceRequestCommand: providers.Factory(
+                    command_handlers.RejectEventReferenceRequestHandler
+                ),
+                commands.WithdrawEventReferenceRequestCommand: providers.Factory(
+                    command_handlers.WithdrawEventReferenceRequestHandler
+                ),
                 commands.CreateCustomWidgetCommand: providers.Factory(
                     command_handlers.CreateCustomWidgetHandler
                 ),
@@ -494,6 +499,42 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.DeleteCustomWidgetCommand: providers.Factory(
                     command_handlers.DeleteCustomWidgetHandler
+                ),
+                commands.CreateOrganizationCommand: providers.Factory(
+                    command_handlers.CreateOrganizationHandler
+                ),
+                commands.UpdateOrganizationCommand: providers.Factory(
+                    command_handlers.UpdateOrganizationHandler
+                ),
+                commands.UpdateOrganizationWidgetSettingsCommand: providers.Factory(
+                    command_handlers.UpdateOrganizationWidgetSettingsHandler
+                ),
+                commands.UpdateOrganizationAdminSettingsCommand: providers.Factory(
+                    command_handlers.UpdateOrganizationAdminSettingsHandler
+                ),
+                commands.CreateOrganizationRelationCommand: providers.Factory(
+                    command_handlers.CreateOrganizationRelationHandler
+                ),
+                commands.UpdateOrganizationRelationCommand: providers.Factory(
+                    command_handlers.UpdateOrganizationRelationHandler
+                ),
+                commands.DeleteOrganizationRelationCommand: providers.Factory(
+                    command_handlers.DeleteOrganizationRelationHandler
+                ),
+                commands.RequestOrganizationVerificationCommand: providers.Factory(
+                    command_handlers.RequestOrganizationVerificationHandler
+                ),
+                commands.VerifyOrganizationCommand: providers.Factory(
+                    command_handlers.VerifyOrganizationHandler
+                ),
+                commands.ApproveOrganizationVerificationRequestCommand: providers.Factory(
+                    command_handlers.ApproveOrganizationVerificationRequestHandler
+                ),
+                commands.RejectOrganizationVerificationRequestCommand: providers.Factory(
+                    command_handlers.RejectOrganizationVerificationRequestHandler
+                ),
+                commands.WithdrawOrganizationVerificationRequestCommand: providers.Factory(
+                    command_handlers.WithdrawOrganizationVerificationRequestHandler
                 ),
                 commands.DeleteOldWebhookEventsCommand: providers.Factory(
                     command_handlers.DeleteOldWebhookEventsHandler
@@ -504,8 +545,52 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.CancelOrganizationDeletionCommand: providers.Factory(
                     command_handlers.CancelOrganizationDeletionHandler
                 ),
+                commands.DeleteOrganizationCommand: providers.Factory(
+                    command_handlers.DeleteOrganizationHandler
+                ),
+                commands.RequestUserDeletionCommand: providers.Factory(
+                    command_handlers.RequestUserDeletionHandler
+                ),
+                commands.CancelUserDeletionCommand: providers.Factory(
+                    command_handlers.CancelUserDeletionHandler
+                ),
+                commands.AcceptTosCommand: providers.Factory(
+                    command_handlers.AcceptTosHandler
+                ),
+                commands.UpdateUserGeneralSettingsCommand: providers.Factory(
+                    command_handlers.UpdateUserGeneralSettingsHandler
+                ),
+                commands.UpdateUserNotificationSettingsCommand: providers.Factory(
+                    command_handlers.UpdateUserNotificationSettingsHandler
+                ),
+                commands.UpdateUserRolesCommand: providers.Factory(
+                    command_handlers.UpdateUserRolesHandler
+                ),
+                commands.DeleteUserCommand: providers.Factory(
+                    command_handlers.DeleteUserHandler
+                ),
+                commands.ResetTosAcceptedForUsersCommand: providers.Factory(
+                    command_handlers.ResetTosAcceptedForUsersHandler
+                ),
+                commands.UpdateSettingsCommand: providers.Factory(
+                    command_handlers.UpdateSettingsHandler
+                ),
+                commands.UpdatePlanningSettingsCommand: providers.Factory(
+                    command_handlers.UpdatePlanningSettingsHandler
+                ),
+                commands.CreateApiKeyCommand: providers.Factory(
+                    command_handlers.CreateApiKeyHandler,
+                    api_key_generator=infrastructure.api_key_generator,
+                ),
+                commands.UpdateApiKeyCommand: providers.Factory(
+                    command_handlers.UpdateApiKeyHandler
+                ),
+                commands.DeleteApiKeyCommand: providers.Factory(
+                    command_handlers.DeleteApiKeyHandler
+                ),
                 commands.CreateAppCommand: providers.Factory(
-                    command_handlers.CreateAppHandler
+                    command_handlers.CreateAppHandler,
+                    credentials_generator=infrastructure.oauth2_client_credentials_generator,
                 ),
                 commands.UpdateAppCommand: providers.Factory(
                     command_handlers.UpdateAppHandler
@@ -522,9 +607,65 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.InstallAppCommand: providers.Factory(
                     command_handlers.InstallAppHandler
                 ),
+                commands.CreateAppKeyCommand: providers.Factory(
+                    command_handlers.CreateAppKeyHandler,
+                    app_key_generator=infrastructure.app_key_generator,
+                ),
+                commands.DeleteAppKeyCommand: providers.Factory(
+                    command_handlers.DeleteAppKeyHandler
+                ),
+                commands.CreateOAuth2ClientCommand: providers.Factory(
+                    command_handlers.CreateOAuth2ClientHandler,
+                    credentials_generator=infrastructure.oauth2_client_credentials_generator,
+                ),
+                commands.UpdateOAuth2ClientCommand: providers.Factory(
+                    command_handlers.UpdateOAuth2ClientHandler
+                ),
+                commands.DeleteOAuth2ClientCommand: providers.Factory(
+                    command_handlers.DeleteOAuth2ClientHandler
+                ),
+                commands.RevokeOAuth2TokenCommand: providers.Factory(
+                    command_handlers.RevokeOAuth2TokenHandler
+                ),
                 commands.AttemptToDeliverWebhookCommand: providers.Factory(
                     command_handlers.AttemptToDeliverWebhookHandler,
                     webhook_delivery_service=services.webhook_delivery_service,
+                ),
+                commands.InviteOrganizationCommand: providers.Factory(
+                    command_handlers.InviteOrganizationHandler
+                ),
+                commands.UpdateOrganizationInvitationCommand: providers.Factory(
+                    command_handlers.UpdateOrganizationInvitationHandler
+                ),
+                commands.RevokeOrganizationInvitationCommand: providers.Factory(
+                    command_handlers.RevokeOrganizationInvitationHandler
+                ),
+                commands.DeclineOrganizationInvitationCommand: providers.Factory(
+                    command_handlers.DeclineOrganizationInvitationHandler
+                ),
+                commands.InviteUserToOrganizationCommand: providers.Factory(
+                    command_handlers.InviteUserToOrganizationHandler
+                ),
+                commands.UpdateMemberInvitationCommand: providers.Factory(
+                    command_handlers.UpdateMemberInvitationHandler
+                ),
+                commands.RevokeMemberInvitationCommand: providers.Factory(
+                    command_handlers.RevokeMemberInvitationHandler
+                ),
+                commands.AcceptMemberInvitationCommand: providers.Factory(
+                    command_handlers.AcceptMemberInvitationHandler
+                ),
+                commands.DeclineMemberInvitationCommand: providers.Factory(
+                    command_handlers.DeclineMemberInvitationHandler
+                ),
+                commands.ChangeOrganizationMemberRolesCommand: providers.Factory(
+                    command_handlers.ChangeOrganizationMemberRolesHandler
+                ),
+                commands.RemoveOrganizationMemberCommand: providers.Factory(
+                    command_handlers.RemoveOrganizationMemberHandler
+                ),
+                commands.LeaveOrganizationCommand: providers.Factory(
+                    command_handlers.LeaveOrganizationHandler
                 ),
             }
         ),
@@ -622,6 +763,62 @@ class Cqrs(containers.DeclarativeContainer):
                 events.OrganizationDeletionRequested: providers.List(
                     providers.Factory(
                         event_handlers.OrganizationDeletionRequestedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                    )
+                ),
+                events.OrganizationVerificationRequested: providers.List(
+                    providers.Factory(
+                        event_handlers.OrganizationVerificationRequestedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                    )
+                ),
+                events.OrganizationVerificationRequestReviewed: providers.List(
+                    providers.Factory(
+                        event_handlers.OrganizationVerificationRequestReviewedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                    )
+                ),
+                events.OrganizationInvitationCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.OrganizationInvitationCreatedEmailEventHandler,
+                        email_service=services.email_service,
+                    )
+                ),
+                events.UserDeletionRequested: providers.List(
+                    providers.Factory(
+                        event_handlers.UserDeletionRequestedEmailEventHandler,
+                        email_service=services.email_service,
+                    )
+                ),
+                events.OrganizationInvitationAccepted: providers.List(
+                    providers.Factory(
+                        event_handlers.OrganizationInvitationAcceptedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                    )
+                ),
+                events.MemberInvitationCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.MemberInvitationCreatedEmailEventHandler,
+                        email_service=services.email_service,
+                    )
+                ),
+                events.EventReferenceRequestCreated: providers.List(
+                    providers.Factory(
+                        event_handlers.EventReferenceRequestCreatedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                        event_read_repo=read_repos.event_read_repo,
+                    )
+                ),
+                events.EventReferenceRequestAutoVerified: providers.List(
+                    providers.Factory(
+                        event_handlers.EventReferenceRequestAutoVerifiedEmailEventHandler,
+                        organization_service=services.organization_application_service,
+                        event_read_repo=read_repos.event_read_repo,
+                    )
+                ),
+                events.EventReferenceRequestReviewed: providers.List(
+                    providers.Factory(
+                        event_handlers.EventReferenceRequestReviewedEmailEventHandler,
                         organization_service=services.organization_application_service,
                     )
                 ),

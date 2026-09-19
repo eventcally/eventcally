@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from flask_security import current_user
 from sqlalchemy import and_, func, select
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -351,14 +350,6 @@ class Event(db.Model, EventGeneratedMixin):
 
     def has_multiple_dates(self) -> bool:
         return self.is_recurring or len(self.date_definitions) > 1
-
-    def is_favored_by_current_user(self) -> bool:
-        if not current_user or not current_user.is_authenticated:
-            return False
-
-        from project.services.user import has_favorite_event
-
-        return has_favorite_event(current_user.id, self.id)
 
     def validate(self):
         if self.organizer and self.organizer.admin_unit_id != self.admin_unit_id:
