@@ -471,9 +471,7 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
     )
     def post(self, id):
         admin_unit = g.manage_admin_unit
-        cmd = OrganizationVerificationRequestCreateRequestPlainSchema(
-            context=g.api_command_context
-        ).load(request.json)
+        cmd = self.load_command(OrganizationVerificationRequestCreateRequestPlainSchema)
         target_admin_unit = AdminUnit.query.get_or_404(cmd.target_admin_unit_id)
 
         if not admin_unit_can_verify_admin_unit(
@@ -512,9 +510,7 @@ class OrganizationOutgoingRelationListResource(BaseResource):
         "organization.outgoing_organization_relations:write"
     )
     def post(self, id):
-        cmd = OrganizationRelationCreateRequestPlainSchema(
-            context=g.api_command_context
-        ).load(request.json)
+        cmd = self.load_command(OrganizationRelationCreateRequestPlainSchema)
         cmd_result = self.message_bus.handle_command(cmd)
 
         return cmd_result, 201
@@ -564,9 +560,7 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
     @marshal_with(OrganizationInvitationIdPlainSchema, 201)
     @require_organization_api_access("organization.organization_invitations:write")
     def post(self, id):
-        cmd = OrganizationInvitationCreateRequestPlainSchema(
-            context=g.api_command_context
-        ).load(request.json)
+        cmd = self.load_command(OrganizationInvitationCreateRequestPlainSchema)
         cmd_result = self.message_bus.handle_command(cmd)
 
         return cmd_result, 201

@@ -428,6 +428,36 @@ def test_event_reference_repository_get_by_event_id_returns_aggregates(
     assert references[0] in repo.seen
 
 
+def test_event_reference_repository_get_by_event_and_admin_unit(
+    app, db, seeder: Seeder
+):
+    _, source_admin_unit_id = seeder.setup_base(
+        log_in=False, email="source@test.de", name="Source Unit"
+    )
+    _, target_admin_unit_id = seeder.setup_base(
+        log_in=False, email="target@test.de", name="Target Unit"
+    )
+    event_id = seeder.create_event(admin_unit_id=source_admin_unit_id)
+
+    with app.app_context():
+        reference = EventReference(
+            admin_unit_id=target_admin_unit_id,
+            event_id=event_id,
+        )
+        db.session.add(reference)
+        db.session.commit()
+
+        repo = SqlAlchemyEventReferenceRepository(db.session)
+        found = repo.get_by_event_and_admin_unit(event_id, target_admin_unit_id)
+        missing = repo.get_by_event_and_admin_unit(event_id, source_admin_unit_id)
+
+    assert found is not None
+    assert found.event_id == event_id
+    assert found.admin_unit_id == target_admin_unit_id
+    assert found in repo.seen
+    assert missing is None
+
+
 def test_user_repository_get_and_get_all_with_ids_return_aggregates(app, db, seeder):
     user_a = seeder.create_user(email="repo-user-a@test.de")
     user_b = seeder.create_user(email="repo-user-b@test.de")

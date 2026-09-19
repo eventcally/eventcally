@@ -1,4 +1,4 @@
-from flask import g, request
+from flask import g
 from flask.helpers import make_response
 from flask_apispec import doc, marshal_with
 from flask_apispec.annotations import use_kwargs
@@ -44,9 +44,7 @@ class OrganizationRelationResource(BaseResource):
         admin_unit_id_path="source_admin_unit_id",
     )
     def put(self, id):
-        cmd = OrganizationRelationPutRequestPlainSchema(
-            context=g.api_command_context
-        ).load(request.json)
+        cmd = self.load_command(OrganizationRelationPutRequestPlainSchema)
         self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
@@ -63,9 +61,7 @@ class OrganizationRelationResource(BaseResource):
         admin_unit_id_path="source_admin_unit_id",
     )
     def patch(self, id):
-        cmd = OrganizationRelationPatchRequestPlainSchema(
-            context=g.api_command_context
-        ).load(request.json)
+        cmd = self.load_command(OrganizationRelationPatchRequestPlainSchema)
         self.message_bus.handle_command(cmd)
 
         return make_response("", 204)

@@ -37,7 +37,18 @@ def create_event_reference_for_request(
     checked its own permission for `event_reference_request.admin_unit_id` —
     called directly against the shared `uow` rather than dispatched as a
     nested command (which would open a second transaction).
+
+    An existing reference is returned as is: `EventReference` is unique per
+    (event, admin unit), so inserting a second one would roll the whole
+    command back and leave the request stuck.
     """
+    existing_reference = uow.event_references.get_by_event_and_admin_unit(
+        event_reference_request.event_id,
+        event_reference_request.admin_unit_id,
+    )
+    if existing_reference:
+        return existing_reference
+
     event_reference = EventReferenceAggregate.create(
         actor=actor,
         admin_unit_id=event_reference_request.admin_unit_id,

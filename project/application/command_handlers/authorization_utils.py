@@ -50,6 +50,23 @@ def ensure_actor_has_permission_for_admin_unit(
         )
 
 
+def ensure_actor_is_authenticated_user(actor: Actor, uow: AbstractUnitOfWork):
+    """Guard for actions that have no admin unit to check a permission
+    against, but that act *as* the user — creating a resource the actor is
+    then made a member of, say. `Actor` can also represent an app
+    installation (`user_id is None`), which has no user to own the result,
+    so those actions must be refused rather than silently persisting a
+    member row without a user."""
+    user = uow.users.get(actor.user_id) if actor.user_id is not None else None
+
+    if user is None:
+        raise UnauthorizedError(
+            "Actor is not permitted to perform this action on behalf of a user."
+        )
+
+    return user
+
+
 def ensure_actor_is_user(actor: Actor, user_id: ObjectId):
     """Guard for a user-owned resource: the actor must *be* `user_id`, not
     merely act on its behalf — there is no delegation or platform-admin

@@ -16,7 +16,10 @@ from project.domain.models.aggregates.organization_relation_aggregate import (
 from project.domain.models.entities.image_entity import ImageEntity
 
 from .abstract_command_handler import AbstractCommandHandler
-from .authorization_utils import ensure_actor_has_permission_for_admin_unit
+from .authorization_utils import (
+    ensure_actor_has_permission_for_admin_unit,
+    ensure_actor_is_authenticated_user,
+)
 from .invitation_utils import (
     ensure_actor_is_invitation_receiver,
     ensure_organization_invitation_exists,
@@ -28,6 +31,14 @@ class CreateOrganizationHandler(AbstractCommandHandler):
     def handle(
         self, cmd: commands.CreateOrganizationCommand, uow: AbstractUnitOfWork
     ) -> commands.CreateOrganizationCommandResult:
+        # Every path makes the actor the new organization's admin member, so
+        # the actor has to be a user on all of them — including the plain
+        # create path, which has no admin unit to check a permission against.
+        # (Whether a given user may create an organization at all is the
+        # `ADMIN_UNIT_CREATE_REQUIRES_ADMIN` policy, checked by the view: it
+        # reads Flask config, which this layer must not import.)
+        ensure_actor_is_authenticated_user(cmd.actor, uow)
+
         logo = ImageEntity.from_value_object(cmd.logo)
 
         organization = OrganizationAggregate.create(

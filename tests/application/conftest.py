@@ -133,6 +133,13 @@ class FakeEventReferenceRepo(FakeRepo):
     def get_by_event_id(self, event_id):
         return self._references_by_event.get(event_id, [])
 
+    def get_by_event_and_admin_unit(self, event_id, admin_unit_id):
+        for obj in self._store.values():
+            if obj.event_id == event_id and obj.admin_unit_id == admin_unit_id:
+                self.seen.add(obj)
+                return obj
+        return None
+
 
 class FakeOrganizationRelationRepo(FakeRepo):
     def get_by_source_and_target(self, source_admin_unit_id, target_admin_unit_id):

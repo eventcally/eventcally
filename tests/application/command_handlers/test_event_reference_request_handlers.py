@@ -19,6 +19,9 @@ from project.application.command_handlers.withdraw_event_reference_request_handl
 )
 from project.domain.errors import ConstraintError, NotFoundError, UnauthorizedError
 from project.domain.models.aggregates.event_aggregate import EventAggregate
+from project.domain.models.aggregates.event_reference_aggregate import (
+    EventReferenceAggregate,
+)
 from project.domain.models.aggregates.event_reference_request_aggregate import (
     EventReferenceRequestAggregate,
 )
@@ -63,6 +66,17 @@ def _make_request(uow, admin_unit_id, event_id, auto_verified=False):
     )
     uow.event_reference_requests.add(request)
     return request
+
+
+def _make_reference(uow, admin_unit_id, event_id, rating=50):
+    reference = EventReferenceAggregate.create(
+        actor=Actor(),
+        admin_unit_id=admin_unit_id,
+        event_id=event_id,
+        rating=rating,
+    )
+    uow.event_references.add(reference)
+    return reference
 
 
 # ---------------------------------------------------------------------------
@@ -113,6 +127,28 @@ class TestRequestEventReferenceHandler:
         assert references[0].admin_unit_id == 1
         assert references[0].event_id == event.id
 
+    def test_auto_verify_reuses_existing_reference(self, uow):
+        event = _make_event(uow, admin_unit_id=2)
+        grant_permission(uow, 2, "outgoing_event_reference_requests:write")
+        relation = OrganizationRelationAggregate.create(
+            actor=Actor(),
+            source_admin_unit_id=1,
+            target_admin_unit_id=2,
+            auto_verify_event_reference_requests=True,
+        )
+        uow.organization_relations.add(relation)
+        existing = _make_reference(uow, admin_unit_id=1, event_id=event.id)
+        cmd = commands.RequestEventReferenceCommand.model_construct(
+            actor=ACTOR, admin_unit_id=1, event_id=event.id
+        )
+
+        result = RequestEventReferenceHandler().handle(cmd, uow)
+
+        assert result.verified is True
+        # A second reference would violate the (event, admin unit) unique
+        # constraint and roll the whole command back.
+        assert list(uow.event_references._store.values()) == [existing]
+
     def test_unpublished_event_raises_constraint_error(self, uow):
         event = _make_event(uow, admin_unit_id=2, public_status=EventPublicStatus.draft)
         grant_permission(uow, 2, "outgoing_event_reference_requests:write")
@@ -156,6 +192,22 @@ class TestVerifyEventReferenceRequestHandler:
         assert reference.admin_unit_id == 1
         assert reference.event_id == event.id
         assert reference.rating == 70
+
+    def test_reuses_existing_reference(self, uow):
+        event = _make_event(uow, admin_unit_id=2)
+        request = _make_request(uow, admin_unit_id=1, event_id=event.id)
+        grant_permission(uow, 1, "incoming_event_reference_requests:write")
+        existing = _make_reference(uow, admin_unit_id=1, event_id=event.id)
+        cmd = commands.VerifyEventReferenceRequestCommand.model_construct(
+            actor=ACTOR, id=request.id, rating=70
+        )
+
+        result = VerifyEventReferenceRequestHandler().handle(cmd, uow)
+
+        assert result.reference_id == existing.id
+        assert list(uow.event_references._store.values()) == [existing]
+        updated = uow.event_reference_requests.get(request.id)
+        assert updated.review_status.name == "verified"
 
     def test_auto_verify_creates_relation(self, uow):
         event = _make_event(uow, admin_unit_id=2)

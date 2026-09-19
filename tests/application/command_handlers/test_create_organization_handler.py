@@ -102,6 +102,26 @@ class TestCreateOrganizationHandlerPlain:
 
         assert list(uow.organization_relations._store.values()) == []
 
+    def test_app_installation_actor_raises_unauthorized_error(self, uow):
+        cmd = commands.CreateOrganizationCommand.model_construct(
+            actor=Actor(app_installation_id=1), name="My Crew", short_name="my_crew"
+        )
+
+        with pytest.raises(UnauthorizedError):
+            CreateOrganizationHandler().handle(cmd, uow)
+
+        assert list(uow.organizations._store.values()) == []
+
+    def test_unknown_actor_user_raises_unauthorized_error(self, uow):
+        cmd = commands.CreateOrganizationCommand.model_construct(
+            actor=ACTOR, name="My Crew", short_name="my_crew"
+        )
+
+        with pytest.raises(UnauthorizedError):
+            CreateOrganizationHandler().handle(cmd, uow)
+
+        assert list(uow.organizations._store.values()) == []
+
 
 class TestCreateOrganizationHandlerInvitation:
     def _make_invitation(

@@ -139,6 +139,9 @@ class _ConcreteEventReferenceRepo(AbstractEventReferenceRepository):
     def _get_by_event_id(self, event_id):
         return self._return_values
 
+    def _get_by_event_and_admin_unit(self, event_id, admin_unit_id):
+        return self._return_value
+
     def _add(self, event_reference):
         pass
 
@@ -536,6 +539,17 @@ class TestAbstractEventReferenceRepository:
         repo = _ConcreteEventReferenceRepo(return_values=[])
         results = repo.get_by_event_id(10)
         assert results == []
+        assert len(repo.seen) == 0
+
+    def test_get_by_event_and_admin_unit_adds_to_seen(self):
+        agg = _ref_agg()
+        repo = _ConcreteEventReferenceRepo(return_value=agg)
+        assert repo.get_by_event_and_admin_unit(10, 20) is agg
+        assert agg in repo.seen
+
+    def test_get_by_event_and_admin_unit_none_does_not_add_to_seen(self):
+        repo = _ConcreteEventReferenceRepo(return_value=None)
+        assert repo.get_by_event_and_admin_unit(10, 20) is None
         assert len(repo.seen) == 0
 
     def test_add_adds_to_seen(self):

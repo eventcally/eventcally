@@ -1,4 +1,4 @@
-from flask import g, request
+from flask import g
 from flask.helpers import make_response
 from flask_apispec import doc, marshal_with
 from flask_apispec.annotations import use_kwargs
@@ -40,9 +40,7 @@ class OrganizationInvitationResource(BaseResource):
         "organization.organization_invitations:write", AdminUnitInvitation
     )
     def put(self, id):
-        cmd = OrganizationInvitationPutRequestPlainSchema(
-            context=g.api_command_context
-        ).load(request.json)
+        cmd = self.load_command(OrganizationInvitationPutRequestPlainSchema)
         self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
@@ -57,9 +55,7 @@ class OrganizationInvitationResource(BaseResource):
         "organization.organization_invitations:write", AdminUnitInvitation
     )
     def patch(self, id):
-        cmd = OrganizationInvitationPatchRequestPlainSchema(
-            context=g.api_command_context
-        ).load(request.json)
+        cmd = self.load_command(OrganizationInvitationPatchRequestPlainSchema)
         self.message_bus.handle_command(cmd)
 
         return make_response("", 204)
