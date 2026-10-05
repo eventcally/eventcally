@@ -301,6 +301,70 @@ class TestEventAggregateUpdate:
         event.update(actor=actor, date_definitions=[new_date_def1, new_date_def2])
         assert not isinstance(event.domain_events[-1], EventUpdated)
 
+    def test_update_allday_form_shape_does_not_create_domain_event(self, actor):
+        # The edit form's time widget has no seconds field, so an untouched
+        # all-day end posts back as 23:59:00 instead of the canonical
+        # 23:59:59 stored in the database.
+        from project.domain.dateutils import berlin_tz
+
+        canonical = EventDateDefinitionValueObject(
+            start=berlin_tz.localize(datetime.datetime(2028, 6, 1, 0, 0, 0)),
+            end=berlin_tz.localize(datetime.datetime(2028, 6, 1, 23, 59, 59)),
+            allday=True,
+        )
+        event = _make_event(actor, canonical)
+        initial_count = len(event.domain_events)
+
+        form_shape = EventDateDefinitionValueObject(
+            start=berlin_tz.localize(datetime.datetime(2028, 6, 1, 0, 0, 0)),
+            end=berlin_tz.localize(datetime.datetime(2028, 6, 1, 23, 59, 0)),
+            allday=True,
+        )
+        event.update(actor=actor, date_definitions=[form_shape])
+        assert len(event.domain_events) == initial_count
+
+    def test_update_allday_api_shape_without_end_does_not_create_domain_event(
+        self, actor
+    ):
+        from project.domain.dateutils import berlin_tz
+
+        canonical = EventDateDefinitionValueObject(
+            start=berlin_tz.localize(datetime.datetime(2028, 6, 1, 0, 0, 0)),
+            end=berlin_tz.localize(datetime.datetime(2028, 6, 1, 23, 59, 59)),
+            allday=True,
+        )
+        event = _make_event(actor, canonical)
+        initial_count = len(event.domain_events)
+
+        api_shape = EventDateDefinitionValueObject(
+            start=berlin_tz.localize(datetime.datetime(2028, 6, 1, 0, 0, 0)),
+            allday=True,
+        )
+        event.update(actor=actor, date_definitions=[api_shape])
+        assert len(event.domain_events) == initial_count
+
+    def test_update_allday_genuine_day_change_creates_domain_event(self, actor):
+        from project.domain.dateutils import berlin_tz
+
+        canonical = EventDateDefinitionValueObject(
+            start=berlin_tz.localize(datetime.datetime(2028, 6, 1, 0, 0, 0)),
+            end=berlin_tz.localize(datetime.datetime(2028, 6, 1, 23, 59, 59)),
+            allday=True,
+        )
+        event = _make_event(actor, canonical)
+        initial_count = len(event.domain_events)
+
+        changed = EventDateDefinitionValueObject(
+            start=berlin_tz.localize(datetime.datetime(2028, 6, 2, 0, 0, 0)),
+            end=berlin_tz.localize(datetime.datetime(2028, 6, 2, 23, 59, 59)),
+            allday=True,
+        )
+        event.update(actor=actor, date_definitions=[changed])
+        assert len(event.domain_events) == initial_count + 1
+        updated = event.domain_events[-1]
+        assert isinstance(updated, EventUpdated)
+        assert isinstance(updated.date_definitions, ChangedValue)
+
     def test_update_organizer_id_sets_changed_value(self, actor, date_def):
         event = _make_event(actor, date_def)
         event.update(actor=actor, organizer_id=99)

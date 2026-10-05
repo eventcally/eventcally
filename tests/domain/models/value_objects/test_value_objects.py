@@ -96,9 +96,84 @@ class TestEventDateDefinitionValueObject:
         vo = EventDateDefinitionValueObject(
             start=start,
             end=end,
-            allday=True,
+            allday=False,
             recurrence_rule="FREQ=WEEKLY;COUNT=3",
         )
         assert vo.end == end
-        assert vo.allday is True
+        assert vo.allday is False
         assert vo.recurrence_rule == "FREQ=WEEKLY;COUNT=3"
+
+
+class TestEventDateDefinitionValueObjectCompare:
+    @property
+    def berlin_tz(self):
+        from project.domain.dateutils import berlin_tz
+
+        return berlin_tz
+
+    def _canonical(self):
+        # The database's canonical, Berlin-widened representation of an
+        # all-day event on 2024-06-01: 00:00:00 ... 23:59:59 Berlin.
+        return EventDateDefinitionValueObject(
+            start=self.berlin_tz.localize(datetime.datetime(2024, 6, 1, 0, 0, 0)),
+            end=self.berlin_tz.localize(datetime.datetime(2024, 6, 1, 23, 59, 59)),
+            allday=True,
+        )
+
+    def test_form_shape_without_seconds_compares_equal(self):
+        # The edit form's time widget has no seconds field, so an untouched
+        # all-day end posts back as 23:59:00 instead of 23:59:59.
+        old = self._canonical()
+        new = EventDateDefinitionValueObject(
+            start=self.berlin_tz.localize(datetime.datetime(2024, 6, 1, 0, 0, 0)),
+            end=self.berlin_tz.localize(datetime.datetime(2024, 6, 1, 23, 59, 0)),
+            allday=True,
+        )
+        assert old == new
+
+    def test_api_shape_without_end_compares_equal(self):
+        old = self._canonical()
+        new = EventDateDefinitionValueObject(
+            start=self.berlin_tz.localize(datetime.datetime(2024, 6, 1, 0, 0, 0)),
+            end=None,
+            allday=True,
+        )
+        assert old == new
+
+    def test_different_day_compares_unequal(self):
+        old = self._canonical()
+        new = EventDateDefinitionValueObject(
+            start=self.berlin_tz.localize(datetime.datetime(2024, 6, 2, 0, 0, 0)),
+            end=self.berlin_tz.localize(datetime.datetime(2024, 6, 2, 23, 59, 59)),
+            allday=True,
+        )
+        assert old != new
+
+    def test_changed_recurrence_rule_compares_unequal(self):
+        old = self._canonical()
+        new = EventDateDefinitionValueObject(
+            start=old.start,
+            end=old.end,
+            allday=True,
+            recurrence_rule="FREQ=WEEKLY;COUNT=3",
+        )
+        assert old != new
+
+    def test_allday_mismatch_compares_unequal(self):
+        old = self._canonical()
+        new = EventDateDefinitionValueObject(
+            start=old.start,
+            end=old.end,
+            allday=False,
+        )
+        assert old != new
+
+    def test_timed_definitions_59_seconds_apart_compare_unequal(self):
+        # The all-day fallback must not soften comparison for timed definitions.
+        old = EventDateDefinitionValueObject(
+            start=self.berlin_tz.localize(datetime.datetime(2024, 6, 1, 10, 0, 0)),
+        )
+        new = EventDateDefinitionValueObject(
+            start=self.berlin_tz.localize(datetime.datetime(2024, 6, 1, 10, 0, 59)),
+        )
+        assert old != new

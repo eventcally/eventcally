@@ -17,12 +17,6 @@ def create_tsvector(*args):
 
 
 def sanitize_allday_instance(instance):
-    if instance.allday:
-        from project.dateutils import date_set_begin_of_day, date_set_end_of_day
+    from project.domain.dateutils import sanitize_allday_instance as domain_sanitize
 
-        instance.start = date_set_begin_of_day(instance.start)
-
-        if instance.end:
-            instance.end = date_set_end_of_day(instance.end)
-        else:
-            instance.end = date_set_end_of_day(instance.start)
+    domain_sanitize(instance)

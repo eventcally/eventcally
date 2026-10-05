@@ -200,18 +200,18 @@ class TestBuild:
     def test_maps_date_definitions_to_read_models(self):
         service = EventChangeSummaryService(FakeEventReadRepo())
         old_start = datetime(2020, 1, 1, tzinfo=timezone.utc)
-        new_start = datetime(2021, 1, 1, tzinfo=timezone.utc)
+        # An all-day definition widens itself to the whole Berlin day, so the
+        # expectation is taken from the value object rather than restated here.
+        old_value_object = EventDateDefinitionValueObject(start=old_start)
+        new_value_object = EventDateDefinitionValueObject(
+            start=datetime(2021, 1, 1, tzinfo=timezone.utc),
+            end=datetime(2021, 1, 2, tzinfo=timezone.utc),
+            allday=True,
+            recurrence_rule="RRULE:FREQ=DAILY",
+        )
         event = _make_event(
             date_definitions=ChangedValue(
-                old=[EventDateDefinitionValueObject(start=old_start)],
-                new=[
-                    EventDateDefinitionValueObject(
-                        start=new_start,
-                        end=datetime(2021, 1, 2, tzinfo=timezone.utc),
-                        allday=True,
-                        recurrence_rule="RRULE:FREQ=DAILY",
-                    )
-                ],
+                old=[old_value_object], new=[new_value_object]
             )
         )
 
@@ -219,7 +219,8 @@ class TestBuild:
 
         assert [d.start for d in summary.date_definitions.old] == [old_start]
         new_definition = summary.date_definitions.new[0]
-        assert new_definition.start == new_start
+        assert new_definition.start == new_value_object.start
+        assert new_definition.end == new_value_object.end
         assert new_definition.allday is True
         assert new_definition.recurrence_rule == "RRULE:FREQ=DAILY"
 

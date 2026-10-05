@@ -622,23 +622,29 @@ class Seeder(object):
         )
         return (event_id, organizer_a_id, organizer_b_id)
 
-    def create_event_via_form(self, admin_unit_id: int) -> str:
+    def create_event_via_form(self, admin_unit_id: int, allday: bool = False) -> str:
         place_id = self.upsert_default_event_place(admin_unit_id)
         organizer_id = self.upsert_default_event_organizer(admin_unit_id)
         url = self._utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
         response = self._utils.get_ok(url)
+
+        data = {
+            "name": "Name",
+            "description": "Beschreibung",
+            "date_definitions-0-start": ["2030-12-31", "00:00" if allday else "23:59"],
+            "event_place": place_id,
+            "organizer": organizer_id,
+            "photo-image_base64": self.get_default_image_upload_base64(),
+            "photo-copyright_text": "EventCally",
+        }
+
+        if allday:
+            data["date_definitions-0-allday"] = "y"
+
         response = self._utils.post_form(
             url,
             response,
-            {
-                "name": "Name",
-                "description": "Beschreibung",
-                "date_definitions-0-start": ["2030-12-31", "23:59"],
-                "event_place": place_id,
-                "organizer": organizer_id,
-                "photo-image_base64": self.get_default_image_upload_base64(),
-                "photo-copyright_text": "EventCally",
-            },
+            data,
         )
 
         with self._app.app_context():
