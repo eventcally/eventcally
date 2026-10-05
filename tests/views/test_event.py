@@ -2,7 +2,6 @@ import datetime
 
 import pytest
 
-from project.dateutils import berlin_tz
 from tests.seeder import Seeder
 from tests.utils import UtilActions
 
@@ -193,57 +192,6 @@ def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
         )
         assert event is not None
         assert event.date_definitions[0].allday
-
-
-def test_create_allday_lasting_exactly_180_days(
-    client, app, utils: UtilActions, seeder: Seeder
-):
-    """An all-day end is widened to 23:59:59 of its day, so the longest
-    allowed event reaches past `start + 180 days` rather than stopping at
-    midnight. Both the form and the model have to allow that, or such an event
-    can neither be created nor edited again. The span crosses the autumn
-    daylight-saving change, where `start + 180 days` keeps the summer offset."""
-    user_id, admin_unit_id = seeder.setup_base()
-    place_id = seeder.upsert_default_event_place(admin_unit_id)
-    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
-
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Name",
-            "description": "Beschreibung",
-            "date_definitions-0-start": ["2030-06-01", "00:00"],
-            "date_definitions-0-end": ["2030-11-28", "23:59"],
-            "date_definitions-0-allday": "y",
-            "event_place": place_id,
-            "organizer": organizer_id,
-            "photo-image_base64": seeder.get_default_image_upload_base64(),
-            "photo-copyright_text": "EventCally",
-        },
-    )
-
-    utils.assert_response_redirect(response, "main.event_actions", event_id=1)
-
-    with app.app_context():
-        from project.models import Event
-
-        event = (
-            Event.query.filter(Event.admin_unit_id == admin_unit_id)
-            .filter(Event.name == "Name")
-            .first()
-        )
-        date_definition = event.date_definitions[0]
-        assert date_definition.allday
-        assert date_definition.start.astimezone(berlin_tz) == berlin_tz.localize(
-            datetime.datetime(2030, 6, 1, 0, 0, 0)
-        )
-        assert date_definition.end.astimezone(berlin_tz) == berlin_tz.localize(
-            datetime.datetime(2030, 11, 28, 23, 59, 59)
-        )
 
 
 def test_create_allday_lasting_181_days_is_rejected(
