@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 import icalendar
-import pytz
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import rrulestr
 
-berlin_tz = pytz.timezone("Europe/Berlin")
-gmt_tz = pytz.timezone("GMT")
+berlin_tz = ZoneInfo("Europe/Berlin")
+gmt_tz = ZoneInfo("GMT")
 
 
 def get_now():
@@ -19,8 +19,8 @@ def get_today():
 
 
 def create_berlin_date(year, month, day, hour=0, minute=0, second=0):
-    return berlin_tz.localize(
-        datetime(year, month, day, hour=hour, minute=minute, second=second)
+    return datetime(
+        year, month, day, hour=hour, minute=minute, second=second, tzinfo=berlin_tz
     )
 
 
@@ -74,7 +74,7 @@ def form_input_to_date(date_str, hour=0, minute=0, second=0):
         return None
     date = datetime.strptime(date_str, "%Y-%m-%d")
     date_time = date_add_time(date, hour=hour, minute=minute, second=second)
-    return berlin_tz.localize(date_time)
+    return date_time.replace(tzinfo=berlin_tz)
 
 
 def form_input_from_date(date):
@@ -99,7 +99,7 @@ def dates_from_recurrence_rule(start, recurrence_rule):
     for rule_date in rule_set.between(
         start_date_begin_of_day, end_date_end_of_day, inc=True
     ):
-        rule_data_w_tz = berlin_tz.localize(rule_date)
+        rule_data_w_tz = rule_date.replace(tzinfo=berlin_tz)
         result.append(rule_data_w_tz)
 
     return result
@@ -231,11 +231,11 @@ def create_icalendar() -> icalendar.Calendar:
     cal = icalendar.Calendar()
     cal.add("prodid", "-//eventcally//github.com/eventcally/eventcally//")
     cal.add("version", "2.0")
-    cal.add("x-wr-timezone", berlin_tz.zone)
+    cal.add("x-wr-timezone", berlin_tz.key)
 
     tzc = icalendar.Timezone()
-    tzc.add("tzid", berlin_tz.zone)
-    tzc.add("x-lic-location", berlin_tz.zone)
+    tzc.add("tzid", berlin_tz.key)
+    tzc.add("x-lic-location", berlin_tz.key)
 
     tzs = icalendar.TimezoneStandard()
     tzs.add("tzname", "CET")

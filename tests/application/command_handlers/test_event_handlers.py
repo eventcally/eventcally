@@ -1,6 +1,7 @@
 """Unit tests for event command handlers (Create, Update, Delete)."""
 
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -49,7 +50,7 @@ def _make_place(uow: FakeUnitOfWork, admin_unit_id=1):
 
 
 def _date_def():
-    return EventDateDefinitionValueObject(start=datetime.now(timezone.utc))
+    return EventDateDefinitionValueObject(start=datetime.now(ZoneInfo("UTC")))
 
 
 def _make_create_cmd(admin_unit_id, organizer_id, event_place_id, **kwargs):

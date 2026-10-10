@@ -1,7 +1,8 @@
 """Unit tests for EventReferenceRequestReviewedEmailEventHandler."""
 
-from datetime import datetime, timezone
+from datetime import datetime
 from unittest.mock import MagicMock
+from zoneinfo import ZoneInfo
 
 from project.application.event_handlers.event_reference_request_reviewed_email_event_handler import (
     EventReferenceRequestReviewedEmailEventHandler,
@@ -27,7 +28,7 @@ def _make_event(uow, admin_unit_id=99):
         organizer_id=1,
         event_place_id=1,
         date_definitions=[
-            EventDateDefinitionValueObject(start=datetime.now(timezone.utc))
+            EventDateDefinitionValueObject(start=datetime.now(ZoneInfo("UTC")))
         ],
         status=EventStatus.scheduled,
         public_status=EventPublicStatus.published,

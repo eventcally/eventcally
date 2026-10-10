@@ -1,4 +1,5 @@
 import datetime
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -45,7 +46,7 @@ def actor():
 
 @pytest.fixture
 def now():
-    return datetime.datetime(2024, 1, 15, 12, 0, 0, tzinfo=datetime.timezone.utc)
+    return datetime.datetime(2024, 1, 15, 12, 0, 0, tzinfo=ZoneInfo("UTC"))
 
 
 @pytest.fixture

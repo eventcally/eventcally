@@ -347,8 +347,8 @@ def test_referencedAlldayEventNonDirtyUpdate_doesNotSendMail2(
         # Without these the test degrades into a copy of the one above as soon
         # as the seeder stops producing an all-day event, and still passes.
         assert date_definition.allday
-        assert date_definition.end.astimezone(berlin_tz) == berlin_tz.localize(
-            datetime(2030, 12, 31, 23, 59, 59)
+        assert date_definition.end.astimezone(berlin_tz) == datetime(
+            2030, 12, 31, 23, 59, 59, tzinfo=berlin_tz
         )
 
     url = utils.get_url(

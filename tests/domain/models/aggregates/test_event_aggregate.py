@@ -1,4 +1,5 @@
 import datetime
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -25,7 +26,7 @@ def actor():
 
 @pytest.fixture
 def now():
-    return datetime.datetime(2028, 6, 1, 10, 0, 0, tzinfo=datetime.timezone.utc)
+    return datetime.datetime(2028, 6, 1, 10, 0, 0, tzinfo=ZoneInfo("UTC"))
 
 
 @pytest.fixture
@@ -169,7 +170,7 @@ class TestEventAggregateUpdateEventDatesWithRecurrenceRule:
 
     def test_recurring_rule_generates_multiple_dates(self, actor):
         # Use a future date so the recurrence utility does not filter it out
-        start = datetime.datetime(2028, 6, 1, 10, 0, 0, tzinfo=datetime.timezone.utc)
+        start = datetime.datetime(2028, 6, 1, 10, 0, 0, tzinfo=ZoneInfo("UTC"))
         date_def = EventDateDefinitionValueObject(
             start=start,
             recurrence_rule="FREQ=WEEKLY;COUNT=3",
@@ -178,7 +179,7 @@ class TestEventAggregateUpdateEventDatesWithRecurrenceRule:
         assert len(event.dates) == 3
 
     def test_allday_normalizes_start_to_begin_of_day(self, actor):
-        start = datetime.datetime(2024, 6, 1, 14, 30, 0, tzinfo=datetime.timezone.utc)
+        start = datetime.datetime(2024, 6, 1, 14, 30, 0, tzinfo=ZoneInfo("UTC"))
         date_def = EventDateDefinitionValueObject(start=start, allday=True)
         event = _make_event(actor, date_def)
         assert event.dates[0].allday is True
@@ -186,8 +187,8 @@ class TestEventAggregateUpdateEventDatesWithRecurrenceRule:
         assert event.dates[0].start.minute == 0
 
     def test_allday_normalizes_end_to_end_of_day(self, actor):
-        start = datetime.datetime(2024, 6, 1, 0, 0, 0, tzinfo=datetime.timezone.utc)
-        end = datetime.datetime(2024, 6, 1, 14, 30, 0, tzinfo=datetime.timezone.utc)
+        start = datetime.datetime(2024, 6, 1, 0, 0, 0, tzinfo=ZoneInfo("UTC"))
+        end = datetime.datetime(2024, 6, 1, 14, 30, 0, tzinfo=ZoneInfo("UTC"))
         date_def = EventDateDefinitionValueObject(start=start, end=end, allday=True)
         event = _make_event(actor, date_def)
         assert event.dates[0].end.hour == 23
@@ -285,18 +286,18 @@ class TestEventAggregateUpdate:
         self, actor
     ):
         date_def1 = EventDateDefinitionValueObject(
-            start=datetime.datetime(2028, 6, 1, 10, 0, 0, tzinfo=datetime.timezone.utc)
+            start=datetime.datetime(2028, 6, 1, 10, 0, 0, tzinfo=ZoneInfo("UTC"))
         )
         date_def2 = EventDateDefinitionValueObject(
-            start=datetime.datetime(2028, 6, 2, 10, 0, 0, tzinfo=datetime.timezone.utc)
+            start=datetime.datetime(2028, 6, 2, 10, 0, 0, tzinfo=ZoneInfo("UTC"))
         )
         event = _make_event(actor, date_def1, date_definitions=[date_def1, date_def2])
 
         new_date_def1 = EventDateDefinitionValueObject(
-            start=datetime.datetime(2028, 6, 1, 10, 0, 0, tzinfo=datetime.timezone.utc)
+            start=datetime.datetime(2028, 6, 1, 10, 0, 0, tzinfo=ZoneInfo("UTC"))
         )
         new_date_def2 = EventDateDefinitionValueObject(
-            start=datetime.datetime(2028, 6, 2, 10, 0, 0, tzinfo=datetime.timezone.utc)
+            start=datetime.datetime(2028, 6, 2, 10, 0, 0, tzinfo=ZoneInfo("UTC"))
         )
         event.update(actor=actor, date_definitions=[new_date_def1, new_date_def2])
         assert not isinstance(event.domain_events[-1], EventUpdated)
@@ -308,16 +309,16 @@ class TestEventAggregateUpdate:
         from project.domain.dateutils import berlin_tz
 
         canonical = EventDateDefinitionValueObject(
-            start=berlin_tz.localize(datetime.datetime(2028, 6, 1, 0, 0, 0)),
-            end=berlin_tz.localize(datetime.datetime(2028, 6, 1, 23, 59, 59)),
+            start=datetime.datetime(2028, 6, 1, 0, 0, 0, tzinfo=berlin_tz),
+            end=datetime.datetime(2028, 6, 1, 23, 59, 59, tzinfo=berlin_tz),
             allday=True,
         )
         event = _make_event(actor, canonical)
         initial_count = len(event.domain_events)
 
         form_shape = EventDateDefinitionValueObject(
-            start=berlin_tz.localize(datetime.datetime(2028, 6, 1, 0, 0, 0)),
-            end=berlin_tz.localize(datetime.datetime(2028, 6, 1, 23, 59, 0)),
+            start=datetime.datetime(2028, 6, 1, 0, 0, 0, tzinfo=berlin_tz),
+            end=datetime.datetime(2028, 6, 1, 23, 59, 0, tzinfo=berlin_tz),
             allday=True,
         )
         event.update(actor=actor, date_definitions=[form_shape])
@@ -329,15 +330,15 @@ class TestEventAggregateUpdate:
         from project.domain.dateutils import berlin_tz
 
         canonical = EventDateDefinitionValueObject(
-            start=berlin_tz.localize(datetime.datetime(2028, 6, 1, 0, 0, 0)),
-            end=berlin_tz.localize(datetime.datetime(2028, 6, 1, 23, 59, 59)),
+            start=datetime.datetime(2028, 6, 1, 0, 0, 0, tzinfo=berlin_tz),
+            end=datetime.datetime(2028, 6, 1, 23, 59, 59, tzinfo=berlin_tz),
             allday=True,
         )
         event = _make_event(actor, canonical)
         initial_count = len(event.domain_events)
 
         api_shape = EventDateDefinitionValueObject(
-            start=berlin_tz.localize(datetime.datetime(2028, 6, 1, 0, 0, 0)),
+            start=datetime.datetime(2028, 6, 1, 0, 0, 0, tzinfo=berlin_tz),
             allday=True,
         )
         event.update(actor=actor, date_definitions=[api_shape])
@@ -347,16 +348,16 @@ class TestEventAggregateUpdate:
         from project.domain.dateutils import berlin_tz
 
         canonical = EventDateDefinitionValueObject(
-            start=berlin_tz.localize(datetime.datetime(2028, 6, 1, 0, 0, 0)),
-            end=berlin_tz.localize(datetime.datetime(2028, 6, 1, 23, 59, 59)),
+            start=datetime.datetime(2028, 6, 1, 0, 0, 0, tzinfo=berlin_tz),
+            end=datetime.datetime(2028, 6, 1, 23, 59, 59, tzinfo=berlin_tz),
             allday=True,
         )
         event = _make_event(actor, canonical)
         initial_count = len(event.domain_events)
 
         changed = EventDateDefinitionValueObject(
-            start=berlin_tz.localize(datetime.datetime(2028, 6, 2, 0, 0, 0)),
-            end=berlin_tz.localize(datetime.datetime(2028, 6, 2, 23, 59, 59)),
+            start=datetime.datetime(2028, 6, 2, 0, 0, 0, tzinfo=berlin_tz),
+            end=datetime.datetime(2028, 6, 2, 23, 59, 59, tzinfo=berlin_tz),
             allday=True,
         )
         event.update(actor=actor, date_definitions=[changed])

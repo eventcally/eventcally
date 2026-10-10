@@ -2,6 +2,7 @@
 
 import datetime
 from unittest.mock import MagicMock
+from zoneinfo import ZoneInfo
 
 from project.application.event_handlers.app_installation_webhook_event_handler import (
     AppInstallationWebhookEventHandler,
@@ -193,14 +194,22 @@ class TestAppInstallationWebhookEventHandler:
             date_definitions=ChangedValue(
                 old=[
                     EventDateDefinitionValueObject(
-                        start=datetime.datetime(2024, 1, 1, 10, 0),
-                        end=datetime.datetime(2024, 1, 1, 12, 0),
+                        start=datetime.datetime(
+                            2024, 1, 1, 10, 0, tzinfo=ZoneInfo("UTC")
+                        ),
+                        end=datetime.datetime(
+                            2024, 1, 1, 12, 0, tzinfo=ZoneInfo("UTC")
+                        ),
                     )
                 ],
                 new=[
                     EventDateDefinitionValueObject(
-                        start=datetime.datetime(2024, 1, 1, 10, 0),
-                        end=datetime.datetime(2024, 1, 1, 12, 0),
+                        start=datetime.datetime(
+                            2024, 1, 1, 10, 0, tzinfo=ZoneInfo("UTC")
+                        ),
+                        end=datetime.datetime(
+                            2024, 1, 1, 12, 0, tzinfo=ZoneInfo("UTC")
+                        ),
                     )
                 ],
             ),
@@ -208,15 +217,23 @@ class TestAppInstallationWebhookEventHandler:
                 old=[
                     EventDateEntity(
                         id=1,
-                        start=datetime.datetime(2024, 1, 1, 10, 0),
-                        end=datetime.datetime(2024, 1, 1, 12, 0),
+                        start=datetime.datetime(
+                            2024, 1, 1, 10, 0, tzinfo=ZoneInfo("UTC")
+                        ),
+                        end=datetime.datetime(
+                            2024, 1, 1, 12, 0, tzinfo=ZoneInfo("UTC")
+                        ),
                     )
                 ],
                 new=[
                     EventDateEntity(
                         id=2,
-                        start=datetime.datetime(2024, 1, 1, 10, 0),
-                        end=datetime.datetime(2024, 1, 1, 12, 0),
+                        start=datetime.datetime(
+                            2024, 1, 1, 10, 0, tzinfo=ZoneInfo("UTC")
+                        ),
+                        end=datetime.datetime(
+                            2024, 1, 1, 12, 0, tzinfo=ZoneInfo("UTC")
+                        ),
                     )
                 ],
             ),

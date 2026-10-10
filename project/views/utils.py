@@ -355,7 +355,7 @@ def get_calendar_links_for_event_date(event_date: EventDate) -> dict:
     url = url_for("main.event_date", id=event_date.id, _external=True)
     encoded_url = quote_plus(url)
     encoded_title = quote_plus(event_date.event.name)
-    encoded_timezone = quote_plus(berlin_tz.zone)
+    encoded_timezone = quote_plus(berlin_tz.key)
 
     start_date = event_date.start
     end_date = event_date.end if event_date.end else start_date

@@ -41,8 +41,8 @@ def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app, db)
         assert len_dates == 1
 
         event_date = event.dates[0]
-        assert event_date.start == date_definition.start
-        assert event_date.end == date_definition.end
+        assert event_date.start == create_berlin_date(2030, 12, 31)
+        assert event_date.end == create_berlin_date(2030, 12, 31, 23, 59, 59)
         assert event_date.allday
 
         # Wiederholt sich alle 1 Tage, endet nach 7 Ereigniss(en)
@@ -52,6 +52,71 @@ def test_update_event_dates_with_recurrence_rule(client, seeder, utils, app, db)
 
         len_dates = len(event.dates)
         assert len_dates == 7
+
+
+@pytest.mark.parametrize("allday", [False, True])
+def test_update_event_dates_with_recurrence_rule_utc_values(
+    client, seeder, utils, app, db, allday
+):
+    # Values as returned by a UTC DB session must yield Berlin wall-clock dates,
+    # including across the DST change at the end of March.
+    import datetime
+
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    with app.app_context():
+        from project.dateutils import create_berlin_date
+        from project.models import Event
+        from project.services.event import update_event_dates_with_recurrence_rule
+
+        utc = datetime.timezone.utc
+        event = db.session.get(Event, event_id)
+        date_definition = event.date_definitions[0]
+        if allday:
+            # 2030-03-30 00:00 / 23:59:59 Berlin (CET)
+            date_definition.start = datetime.datetime(2030, 3, 29, 23, 0, tzinfo=utc)
+            date_definition.end = datetime.datetime(2030, 3, 30, 22, 59, 59, tzinfo=utc)
+        else:
+            # 2030-03-30 19:00 - 21:00 Berlin (CET)
+            date_definition.start = datetime.datetime(2030, 3, 30, 18, 0, tzinfo=utc)
+            date_definition.end = datetime.datetime(2030, 3, 30, 20, 0, tzinfo=utc)
+        date_definition.allday = allday
+        date_definition.recurrence_rule = "RRULE:FREQ=DAILY;COUNT=2"
+
+        # No autoflush: the save hook would re-sanitize the definition first,
+        # but the nightly job only reads already stored definitions.
+        with db.session.no_autoflush:
+            update_event_dates_with_recurrence_rule(event)
+
+        dates = sorted(event.dates, key=lambda d: d.start)
+        assert len(dates) == 2
+
+        if allday:
+            expected = [
+                (
+                    create_berlin_date(2030, 3, 30),
+                    create_berlin_date(2030, 3, 30, 23, 59, 59),
+                ),
+                (
+                    create_berlin_date(2030, 3, 31),
+                    create_berlin_date(2030, 3, 31, 23, 59, 59),
+                ),
+            ]
+        else:
+            expected = [
+                (
+                    create_berlin_date(2030, 3, 30, 19),
+                    create_berlin_date(2030, 3, 30, 21),
+                ),
+                (
+                    create_berlin_date(2030, 3, 31, 19),
+                    create_berlin_date(2030, 3, 31, 21),
+                ),
+            ]
+
+        assert [(d.start, d.end) for d in dates] == expected
+        assert all(d.allday == allday for d in dates)
 
 
 def test_update_event_dates_with_recurrence_rule_past(

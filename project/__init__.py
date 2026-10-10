@@ -98,10 +98,26 @@ def load_app_config_from_env(app: Flask):
 
 def load_app_config_from_sys(app: Flask):
     if "celery" in sys.argv[0]:  # pragma: no cover
+        engine_options = app.config.get("SQLALCHEMY_ENGINE_OPTIONS") or {}
         app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+            **engine_options,
             "pool_recycle": 60,
             "pool_pre_ping": True,
         }
+
+
+def pin_db_session_timezone(app: Flask):
+    # Pin the Postgres session timezone so timestamptz values are returned with
+    # the same offset in every environment, regardless of the server default.
+    engine_options = dict(app.config.get("SQLALCHEMY_ENGINE_OPTIONS") or {})
+    connect_args = dict(engine_options.get("connect_args") or {})
+    options = connect_args.get("options", "")
+
+    if "timezone=" not in options:
+        connect_args["options"] = f"{options} -c timezone=UTC".strip()
+
+    engine_options["connect_args"] = connect_args
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = engine_options
 
 
 def create_app(config_override: dict | None = None) -> Flask:
@@ -124,6 +140,8 @@ def create_app(config_override: dict | None = None) -> Flask:
 
     if config_override:
         app.config.update(config_override)
+
+    pin_db_session_timezone(app)
 
     # if app.config["FLASK_DEBUG"]:
     #     logging.basicConfig(level=logging.DEBUG)

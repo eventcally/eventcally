@@ -3,6 +3,7 @@ from sqlalchemy import func
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
 
+from project.domain.dateutils import berlin_tz
 from project.domain.models.entities.event_date_entity import EventDateEntity
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
@@ -27,8 +28,8 @@ class EventDate(db.Model, EventDateGeneratedMixin):
     def to_entity(self) -> EventDateEntity:
         return EventDateEntity(
             id=self.id,
-            start=self.start,
-            end=self.end,
+            start=self.start.astimezone(berlin_tz),
+            end=self.end.astimezone(berlin_tz) if self.end else None,
             allday=self.allday,
         )
 
@@ -56,8 +57,8 @@ class EventDateDefinition(db.Model, EventDateDefinitionGeneratedMixin):
 
     def to_value_object(self) -> EventDateDefinitionValueObject:
         return EventDateDefinitionValueObject(
-            start=self.start,
-            end=self.end,
+            start=self.start.astimezone(berlin_tz),
+            end=self.end.astimezone(berlin_tz) if self.end else None,
             allday=self.allday,
             recurrence_rule=self.recurrence_rule,
         )

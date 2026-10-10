@@ -1,4 +1,5 @@
 import datetime
+from zoneinfo import ZoneInfo
 
 import pytest
 from pydantic import ValidationError
@@ -34,24 +35,24 @@ class TestActor:
 
 class TestEventDateEntity:
     def test_required_fields(self):
-        now = datetime.datetime(2024, 6, 1, 10, 0, 0)
+        now = datetime.datetime(2024, 6, 1, 10, 0, 0, tzinfo=ZoneInfo("UTC"))
         entity = EventDateEntity(id=1, start=now)
         assert entity.id == 1
         assert entity.start == now
 
     def test_end_defaults_to_none(self):
-        now = datetime.datetime(2024, 6, 1, 10, 0, 0)
+        now = datetime.datetime(2024, 6, 1, 10, 0, 0, tzinfo=ZoneInfo("UTC"))
         entity = EventDateEntity(id=1, start=now)
         assert entity.end is None
 
     def test_allday_defaults_to_false(self):
-        now = datetime.datetime(2024, 6, 1, 10, 0, 0)
+        now = datetime.datetime(2024, 6, 1, 10, 0, 0, tzinfo=ZoneInfo("UTC"))
         entity = EventDateEntity(id=1, start=now)
         assert entity.allday is False
 
     def test_with_end_and_allday(self):
-        start = datetime.datetime(2024, 6, 1, 0, 0, 0)
-        end = datetime.datetime(2024, 6, 1, 23, 59, 59)
+        start = datetime.datetime(2024, 6, 1, 0, 0, 0, tzinfo=ZoneInfo("UTC"))
+        end = datetime.datetime(2024, 6, 1, 23, 59, 59, tzinfo=ZoneInfo("UTC"))
         entity = EventDateEntity(id=2, start=start, end=end, allday=True)
         assert entity.end == end
         assert entity.allday is True

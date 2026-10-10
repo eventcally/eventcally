@@ -37,8 +37,11 @@ class TimezoneDateTimeField(fields.DateTime):
         except ValidationError:
             result = super().deserialize(value + "T00:00:00", attr, data, **kwargs)
 
-        if result and result.tzinfo is None:
-            result = self.custom_timezone.localize(result)
+        if result:
+            if result.tzinfo is None:
+                result = result.replace(tzinfo=self.custom_timezone)
+            else:
+                result = result.astimezone(self.custom_timezone)
 
         return result
 

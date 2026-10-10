@@ -69,7 +69,7 @@ class CustomDateTimeField(DateTimeField):
 
                 date_time_str = date_str + " " + time_str
                 date_time = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M")
-                self.data = berlin_tz.localize(date_time)
+                self.data = date_time.replace(tzinfo=berlin_tz)
             except Exception:
                 raise ValueError(
                     "Not a valid datetime value. Looking for YYYY-MM-DD HH:mm."
@@ -127,7 +127,7 @@ class CustomDateField(DateTimeField):
 
                 date_str_p = date_str.split(" ")[0].split("T")[0]
                 date = datetime.strptime(date_str_p, "%Y-%m-%d")
-                localized_date = berlin_tz.localize(date)
+                localized_date = date.replace(tzinfo=berlin_tz)
 
                 if self.set_end_of_day:
                     localized_date = date_set_end_of_day(localized_date)
