@@ -63,6 +63,11 @@ class TestEventAggregateCreate:
         assert event.organizer_id == 3
         assert event.event_place_id == 4
 
+    def test_name_trimmed_on_create(self, actor, date_def):
+        event = _make_event(actor, date_def, name=" Event ")
+        assert event.name == "Event"
+        assert event.domain_events[0].name == "Event"
+
     def test_appends_created_event(self, actor, date_def):
         event = _make_event(actor, date_def)
         assert len(event.domain_events) == 1
@@ -228,6 +233,18 @@ class TestEventAggregateUpdate:
         event.update(actor=actor, name="New Name")
         assert len(event.domain_events) == initial_count + 1
         assert isinstance(event.domain_events[-1], EventUpdated)
+
+    def test_update_name_whitespace_only_appends_no_event(self, actor, date_def):
+        event = _make_event(actor, date_def)
+        initial_count = len(event.domain_events)
+        event.update(actor=actor, name="  Test Event  ")
+        assert len(event.domain_events) == initial_count
+
+    def test_update_name_is_trimmed(self, actor, date_def):
+        event = _make_event(actor, date_def)
+        event.update(actor=actor, name=" New ")
+        assert event.name == "New"
+        assert event.domain_events[-1].name.new == "New"
 
     def test_update_name_sets_changed_value(self, actor, date_def):
         event = _make_event(actor, date_def)

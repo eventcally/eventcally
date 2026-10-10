@@ -3,6 +3,8 @@ from __future__ import annotations
 import datetime
 from typing import List, Optional, Set
 
+from pydantic import ConfigDict
+
 from project.domain.errors.constraint_error import ConstraintError
 from project.domain.events.event_created import EventCreated
 from project.domain.events.event_deleted import EventDeleted
@@ -22,13 +24,16 @@ from project.domain.models.value_objects.event_date_definition_value_object impo
 from project.domain.types import unset
 from project.domain.types.changed_value import ChangedValue
 from project.domain.types.object_id import ObjectId
+from project.domain.types.text import TrimmedText
 from project.domain.types.unsetable import NullableUnsetable, Unsetable
 
 
 class EventAggregate(BaseAggregate):
+    model_config = ConfigDict(validate_assignment=True)
+
     id: ObjectId
     admin_unit_id: ObjectId
-    name: str
+    name: TrimmedText
     organizer_id: ObjectId
     event_place_id: ObjectId
     date_definitions: List[EventDateDefinitionValueObject]

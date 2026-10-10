@@ -368,6 +368,92 @@ def test_referencedAlldayEventNonDirtyUpdate_doesNotSendMail2(
     assert len(app.test_email_service.sent_emails) == 0
 
 
+def test_referencedRecurringEventNonDirtyUpdate_doesNotSendMail(
+    client, seeder, utils, app
+):
+    # Reproduction for a real-world report: a recurring event re-posted
+    # unchanged through the edit form sent a "referenced event changed" mail
+    # whose old/new summary printed identically (the notice only renders
+    # start + a "Recurring event" flag, never the recurrence_rule content or
+    # end -- see project/templates/email/referenced_event_changed_notice.txt).
+    #
+    # EventDateDefinitionValueObject equality is plain pydantic ``==``, which
+    # is exact on strings, so ``recurrence_rule`` is normalized by the
+    # ``NullableRecurrenceRule`` type. The recurrence widget
+    # (project/static/jquery.recurrenceinput.js) appends an EXDATE line with
+    # a bare "\n" once a single occurrence is excluded from
+    # a series -- e.g. "RRULE:FREQ=WEEKLY;COUNT=5\nEXDATE:20260504". Real
+    # browsers normalize textarea line breaks to CRLF ("\r\n") when
+    # submitting form data (HTML forms spec), so re-editing such an event
+    # round-trips the *same* rule with different line endings, which compare
+    # unequal byte-for-byte even though nothing changed.
+    user_id, admin_unit_id = seeder.setup_base()
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+
+    utils.logout()
+    utils.login("other@test.de")
+
+    place_id = seeder.upsert_default_event_place(other_admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(other_admin_unit_id)
+
+    recurrence_rule_lf = "RRULE:FREQ=WEEKLY;COUNT=5\nEXDATE:20260504"
+
+    url = utils.get_url("manage_admin_unit.event_create", id=other_admin_unit_id)
+    response = utils.get_ok(url)
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "description": "Beschreibung",
+            "date_definitions-0-start": ["2026-04-06", "11:00"],
+            "date_definitions-0-recurrence_rule": recurrence_rule_lf,
+            "event_place": place_id,
+            "organizer": organizer_id,
+            "photo-image_base64": seeder.get_default_image_upload_base64(),
+            "photo-copyright_text": "EventCally",
+        },
+    )
+    utils.assert_response_redirect(response, "main.event_actions", event_id=1)
+
+    with app.app_context():
+        from project.models import Event
+
+        event = (
+            Event.query.filter(Event.admin_unit_id == other_admin_unit_id)
+            .filter(Event.name == "Name")
+            .first()
+        )
+        event_id = event.id
+        assert event.date_definitions[0].recurrence_rule == recurrence_rule_lf
+
+    seeder.create_reference(event_id, admin_unit_id)
+
+    url = utils.get_url(
+        "manage_admin_unit.event_update", id=other_admin_unit_id, event_id=event_id
+    )
+    response = utils.get_ok(url)
+
+    # Simulate a real browser's textarea CRLF normalization on submit -- the
+    # test client's form helper (tests/form.py) extracts the textarea's text
+    # verbatim (LF), which would never reproduce this on its own.
+    recurrence_rule_crlf = recurrence_rule_lf.replace("\n", "\r\n")
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "date_definitions-0-recurrence_rule": recurrence_rule_crlf,
+        },
+    )
+
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+    assert len(app.test_email_service.sent_emails) == 0
+
+
 def test_referencedRecurringEventChange_sendsMail_butDiffIsIndistinguishable(
     client, seeder, utils, app
 ):
