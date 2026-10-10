@@ -1835,7 +1835,7 @@ msgstr "Zuletzt geändert zuerst"
 #: project/views/user_blueprint/organization_member/views.py:31
 msgid "Last remaining administrator can not leave the organization."
 msgstr ""
-"Der:die letzte verbleibende Administrator:in kann die Organisation nicht "
+"Der letzte verbleibende Administrator kann die Organisation nicht "
 "verlassen."
 
 #: project/templates/_macros.html:437
@@ -3088,7 +3088,7 @@ msgstr "An diese Email-Adresse wird die Einladung gesendet."
 #: project/application/command_handlers/leave_organization_handler.py:28
 msgid "The last remaining administrator can not leave the organization."
 msgstr ""
-"Der:die letzte verbleibende Administrator:in kann die Organisation nicht "
+"Der letzte verbleibende Administrator kann die Organisation nicht "
 "verlassen."
 
 #: project/views/manage_admin_unit/event/forms.py:211
