@@ -159,6 +159,22 @@ class TestEventDateDefinitionValueObjectCompare:
         )
         assert old != new
 
+    def test_recurrence_rule_crlf_compares_equal_to_lf(self):
+        start = datetime.datetime(2026, 4, 6, 11, 0, tzinfo=self.berlin_tz)
+        rule = "RRULE:FREQ=WEEKLY;COUNT=5\nEXDATE:20260504"
+        old = EventDateDefinitionValueObject(start=start, recurrence_rule=rule)
+        new = EventDateDefinitionValueObject(
+            start=start, recurrence_rule=rule.replace("\n", "\r\n")
+        )
+        assert old == new
+        assert new.recurrence_rule == rule
+
+    def test_empty_recurrence_rule_compares_equal_to_none(self):
+        start = datetime.datetime(2026, 4, 6, 11, 0, tzinfo=self.berlin_tz)
+        old = EventDateDefinitionValueObject(start=start)
+        new = EventDateDefinitionValueObject(start=start, recurrence_rule="")
+        assert old == new
+
     def test_changed_recurrence_rule_compares_unequal(self):
         old = self._canonical()
         new = EventDateDefinitionValueObject(

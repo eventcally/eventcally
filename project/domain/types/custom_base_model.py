@@ -50,6 +50,13 @@ def _extract_changed_value_cls(model: BaseModel, field_name: str):
 
 
 class CustomBaseModel(BaseModel):
+    def _validate_field_value(self, field_name: str, value):
+        # Validate through a throwaway shallow copy so the field's type
+        # (e.g. TrimmedText) normalizes the value before it is compared.
+        copy = self.model_copy()
+        setattr(copy, field_name, value)
+        return getattr(copy, field_name)
+
     def validate_self(self) -> "CustomBaseModel":
         return self.model_validate(self.model_dump(round_trip=True), strict=True)
 
@@ -65,6 +72,9 @@ class CustomBaseModel(BaseModel):
 
         if new_value == types.unset:
             return False
+
+        if not isinstance(self, dict) and self.model_config.get("validate_assignment"):
+            new_value = self._validate_field_value(field_name, new_value)
 
         old_value = (
             self.get(field_name)

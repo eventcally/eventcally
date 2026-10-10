@@ -1,10 +1,11 @@
 from typing import Optional
 
 import pytest
-from pydantic import ValidationError
+from pydantic import ConfigDict, ValidationError
 
 from project.domain.types.changed_value import ChangedValue, OptionalChangedValue
 from project.domain.types.custom_base_model import CustomBaseModel
+from project.domain.types.text import TrimmedText
 from project.domain.types.unset import unset
 
 
@@ -218,3 +219,45 @@ class TestUpdateFieldWithValueCompareFn:
             "name", "new", event, compare_fn=lambda o, n: True
         )
         assert not hasattr(event, "name")
+
+
+class _ValidatingModel(CustomBaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    name: TrimmedText
+
+
+class _PlainModel(CustomBaseModel):
+    name: str
+
+
+class TestUpdateFieldWithValidateAssignment:
+    def test_whitespace_only_difference_is_not_a_change(self):
+        model = _ValidatingModel(name="Name")
+        event = _MockEvent()
+        assert model._update_field_with_value("name", " Name ", event) is False
+        assert model.name == "Name"
+        assert not hasattr(event, "name")
+
+    def test_records_normalized_new_value(self):
+        model = _ValidatingModel(name="Name")
+        event = _TypedEvent()
+        assert model._update_field_with_value("name", " Other ", event) is True
+        assert model.name == "Other"
+        assert event.name.old == "Name"
+        assert event.name.new == "Other"
+
+    def test_direct_assignment_is_trimmed(self):
+        model = _ValidatingModel(name="Name")
+        model.name = " x "
+        assert model.name == "x"
+
+    def test_invalid_value_raises_and_leaves_model_unchanged(self):
+        model = _ValidatingModel(name="Name")
+        with pytest.raises(ValidationError):
+            model._update_field_with_value("name", 5)
+        assert model.name == "Name"
+
+    def test_without_validate_assignment_compares_raw(self):
+        model = _PlainModel(name="Name")
+        assert model._update_field_with_value("name", " Name ") is True
+        assert model.name == " Name "
