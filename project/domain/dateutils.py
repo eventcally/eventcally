@@ -1,10 +1,10 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-import pytz
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import rrulestr
 
-berlin_tz = pytz.timezone("Europe/Berlin")
+berlin_tz = ZoneInfo("Europe/Berlin")
 
 
 def get_now():
@@ -38,6 +38,18 @@ def date_set_end_of_day(date, remove_tz=False):
     return date_add_time(date, hour=23, minute=59, second=59, tzinfo=tzinfo)
 
 
+def sanitize_allday_instance(instance):
+    if not instance.allday:
+        return
+
+    instance.start = date_set_begin_of_day(instance.start)
+
+    if instance.end:
+        instance.end = date_set_end_of_day(instance.end)
+    else:
+        instance.end = date_set_end_of_day(instance.start)
+
+
 def dates_from_recurrence_rule(start, recurrence_rule):
     result = []
 
@@ -54,7 +66,7 @@ def dates_from_recurrence_rule(start, recurrence_rule):
     for rule_date in rule_set.between(
         start_date_begin_of_day, end_date_end_of_day, inc=True
     ):
-        rule_data_w_tz = berlin_tz.localize(rule_date)
+        rule_data_w_tz = rule_date.replace(tzinfo=berlin_tz)
         result.append(rule_data_w_tz)
 
     return result

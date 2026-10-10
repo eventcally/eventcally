@@ -796,3 +796,45 @@ def test_report_mail(client, seeder: Seeder, utils: UtilActions, app, mocker):
             "Diese Veranstaltung wird nicht stattfinden.",
         ],
     )
+
+
+def test_update_allday_unrelated_change_keeps_stored_dates(
+    client, seeder: Seeder, utils: UtilActions, app
+):
+    # Regression test for the pre-existing UTC re-sanitize bug: an update that
+    # does not touch date_definitions at all (the API PATCH path) must not
+    # re-widen the already-canonical, UTC-aware stored value in UTC.
+    from project.dateutils import berlin_tz, create_berlin_date
+
+    user_id, admin_unit_id = seeder.setup_api_access()
+    start = create_berlin_date(2030, 12, 31)
+    event_id = seeder.create_event(admin_unit_id, allday=True, start=start)
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.patch_json(url, {"name": "Neuer Name"})
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import Event
+
+        event = Event.query.filter(Event.id == event_id).first()
+        date_definition = event.date_definitions[0]
+        start_berlin = date_definition.start.astimezone(berlin_tz)
+        end_berlin = date_definition.end.astimezone(berlin_tz)
+
+        assert (start_berlin.year, start_berlin.month, start_berlin.day) == (
+            2030,
+            12,
+            31,
+        )
+        assert (start_berlin.hour, start_berlin.minute, start_berlin.second) == (
+            0,
+            0,
+            0,
+        )
+        assert (end_berlin.year, end_berlin.month, end_berlin.day) == (2030, 12, 31)
+        assert (end_berlin.hour, end_berlin.minute, end_berlin.second) == (
+            23,
+            59,
+            59,
+        )

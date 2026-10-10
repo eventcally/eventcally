@@ -21,6 +21,7 @@ from project.application.commands.create_event_place_command import (
     CreateEventPlaceCommand,
 )
 from project.application.commands.update_event_command import UpdateEventCommand
+from project.dateutils import date_set_end_of_day
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_status import EventStatus
@@ -76,8 +77,12 @@ class EventDateDefinitionFormMixin:
                 self.start.errors.append(msg)
                 return False
 
+            end = self.end.data
+            if self.allday.data:
+                end = date_set_end_of_day(end)
+
             max_end = self.start.data + relativedelta(days=180)
-            if self.end.data > max_end:
+            if end > max_end:
                 msg = gettext("An event can last a maximum of 180 days.")
                 self.end.errors.append(msg)
                 return False

@@ -21,6 +21,8 @@ from project.dateutils import (
     berlin_tz,
     date_add_time,
     date_parts_are_equal,
+    date_set_begin_of_day,
+    date_set_end_of_day,
     dates_from_recurrence_rule,
     get_today,
     round_to_next_day,
@@ -41,7 +43,6 @@ from project.models import (
     EventStatus,
     Image,
     Location,
-    sanitize_allday_instance,
 )
 from project.models.event_category import CustomEventCategory
 from project.services.reference import get_event_reference, upsert_event_reference
@@ -458,9 +459,13 @@ def update_event_dates_with_recurrence_rule(event):
     dates_to_remove = list(event.dates)
 
     for date_definition in event.date_definitions:
-        sanitize_allday_instance(date_definition)
-        start = date_definition.start
-        end = date_definition.end
+        # Work in Berlin wall-clock time, independent of the DB session timezone
+        start = date_definition.start.astimezone(berlin_tz)
+        end = date_definition.end.astimezone(berlin_tz) if date_definition.end else None
+
+        if date_definition.allday:
+            start = date_set_begin_of_day(start)
+            end = date_set_end_of_day(end or start)
 
         if end:
             time_difference = relativedelta(end, start)
@@ -702,11 +707,6 @@ def create_ical_events_for_search(
 
 
 def update_recurring_dates():
-    from sqlalchemy import text
-
-    # Setting the timezone is neccessary for cli command
-    db.session.execute(text("SET timezone TO :val;"), {"val": berlin_tz.zone})
-
     events = get_recurring_events()
 
     for event in events:

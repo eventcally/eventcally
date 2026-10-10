@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from project.application import commands
 from project.domain.models.entities.actor import Actor
@@ -23,7 +24,7 @@ def test_create_event_command_creates_event(app, db, seeder):
             organizer_id=organizer_id,
             event_place_id=place_id,
             date_definitions=[
-                EventDateDefinitionValueObject(start=datetime.now(timezone.utc))
+                EventDateDefinitionValueObject(start=datetime.now(ZoneInfo("UTC")))
             ],
         )
 

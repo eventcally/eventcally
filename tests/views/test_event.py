@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from tests.seeder import Seeder
@@ -190,6 +192,41 @@ def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
         )
         assert event is not None
         assert event.date_definitions[0].allday
+
+
+def test_create_allday_lasting_181_days_is_rejected(
+    client, app, utils: UtilActions, seeder: Seeder
+):
+    """Widening the end to 23:59:59 buys the 180th day, not a 181st."""
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "description": "Beschreibung",
+            "date_definitions-0-start": ["2030-06-01", "00:00"],
+            "date_definitions-0-end": ["2030-11-29", "23:59"],
+            "date_definitions-0-allday": "y",
+            "event_place": place_id,
+            "organizer": organizer_id,
+            "photo-image_base64": seeder.get_default_image_upload_base64(),
+            "photo-copyright_text": "EventCally",
+        },
+    )
+
+    assert response.status_code == 200
+
+    with app.app_context():
+        from project.models import Event
+
+        assert Event.query.filter(Event.name == "Name").first() is None
 
 
 def test_create_with_reference_requests(
@@ -544,6 +581,95 @@ def test_create_durationMoreThanMaxAllowedDuration(
         response,
         "Eine Veranstaltung darf maximal 180 Tage dauern",
     )
+
+
+def test_create_allday_180DayCapCountsBerlinWallClockAcrossDstChange(
+    client, app, utils: UtilActions, seeder: Seeder
+):
+    # 2030-06-01 -> 2030-11-27 is exactly 180 calendar days and crosses the
+    # autumn DST change. On main, relativedelta(days=180) on an aware
+    # datetime keeps the start's CEST offset, so this span was rejected a
+    # day early.
+    from project.dateutils import berlin_tz
+
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "date_definitions-0-start": ["2030-06-01", "00:00"],
+            "date_definitions-0-end": ["2030-11-27", "23:59"],
+            "date_definitions-0-allday": "y",
+            "event_place": place_id,
+            "organizer": organizer_id,
+        },
+    )
+
+    utils.assert_response_redirect(response, "main.event_actions", event_id=1)
+
+    with app.app_context():
+        from project.models import Event
+
+        event = (
+            Event.query.filter(Event.admin_unit_id == admin_unit_id)
+            .filter(Event.name == "Name")
+            .first()
+        )
+        assert event is not None
+        end_berlin = event.date_definitions[0].end.astimezone(berlin_tz)
+        assert end_berlin.date() == datetime.date(2030, 11, 27)
+        assert (end_berlin.hour, end_berlin.minute, end_berlin.second) == (
+            23,
+            59,
+            59,
+        )
+        assert end_berlin.utcoffset() == datetime.timedelta(hours=1)
+
+
+def test_create_allday_181DaySpanAcrossDstChangeIsRejected(
+    client, app, utils: UtilActions, seeder: Seeder
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    response = utils.post_form(
+        url,
+        response,
+        {
+            "name": "Name",
+            "date_definitions-0-start": ["2030-06-01", "00:00"],
+            "date_definitions-0-end": ["2030-11-28", "00:00"],
+            "date_definitions-0-allday": "y",
+            "event_place": place_id,
+            "organizer": organizer_id,
+        },
+    )
+
+    utils.assert_response_error_message(
+        response,
+        "Eine Veranstaltung darf maximal 180 Tage dauern",
+    )
+
+    with app.app_context():
+        from project.models import Event
+
+        event = (
+            Event.query.filter(Event.admin_unit_id == admin_unit_id)
+            .filter(Event.name == "Name")
+            .first()
+        )
+        assert event is None
 
 
 @pytest.mark.parametrize("allday", [True, False])

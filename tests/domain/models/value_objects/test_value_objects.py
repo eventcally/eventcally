@@ -1,4 +1,8 @@
 import datetime
+from zoneinfo import ZoneInfo
+
+import pytest
+from pydantic import ValidationError
 
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
@@ -79,26 +83,107 @@ class TestWebhookValueObject:
 
 class TestEventDateDefinitionValueObject:
     def test_required_start(self):
-        start = datetime.datetime(2024, 6, 1, 10, 0)
+        start = datetime.datetime(2024, 6, 1, 10, 0, tzinfo=ZoneInfo("UTC"))
         vo = EventDateDefinitionValueObject(start=start)
         assert vo.start == start
 
     def test_optional_defaults(self):
-        start = datetime.datetime(2024, 6, 1, 10, 0)
+        start = datetime.datetime(2024, 6, 1, 10, 0, tzinfo=ZoneInfo("UTC"))
         vo = EventDateDefinitionValueObject(start=start)
         assert vo.end is None
         assert vo.allday is False
         assert vo.recurrence_rule is None
 
     def test_with_all_fields(self):
-        start = datetime.datetime(2024, 6, 1, 10, 0)
-        end = datetime.datetime(2024, 6, 1, 12, 0)
+        start = datetime.datetime(2024, 6, 1, 10, 0, tzinfo=ZoneInfo("UTC"))
+        end = datetime.datetime(2024, 6, 1, 12, 0, tzinfo=ZoneInfo("UTC"))
         vo = EventDateDefinitionValueObject(
             start=start,
             end=end,
-            allday=True,
+            allday=False,
             recurrence_rule="FREQ=WEEKLY;COUNT=3",
         )
         assert vo.end == end
-        assert vo.allday is True
+        assert vo.allday is False
         assert vo.recurrence_rule == "FREQ=WEEKLY;COUNT=3"
+
+    def test_rejects_fixed_offset_timezone(self):
+        with pytest.raises(ValidationError, match="IANA timezone"):
+            EventDateDefinitionValueObject(
+                start=datetime.datetime(2024, 6, 1, 10, 0, tzinfo=datetime.timezone.utc)
+            )
+
+
+class TestEventDateDefinitionValueObjectCompare:
+    @property
+    def berlin_tz(self):
+        from project.domain.dateutils import berlin_tz
+
+        return berlin_tz
+
+    def _canonical(self):
+        # The database's canonical, Berlin-widened representation of an
+        # all-day event on 2024-06-01: 00:00:00 ... 23:59:59 Berlin.
+        return EventDateDefinitionValueObject(
+            start=datetime.datetime(2024, 6, 1, 0, 0, 0, tzinfo=self.berlin_tz),
+            end=datetime.datetime(2024, 6, 1, 23, 59, 59, tzinfo=self.berlin_tz),
+            allday=True,
+        )
+
+    def test_form_shape_without_seconds_compares_equal(self):
+        # The edit form's time widget has no seconds field, so an untouched
+        # all-day end posts back as 23:59:00 instead of 23:59:59.
+        old = self._canonical()
+        new = EventDateDefinitionValueObject(
+            start=datetime.datetime(2024, 6, 1, 0, 0, 0, tzinfo=self.berlin_tz),
+            end=datetime.datetime(2024, 6, 1, 23, 59, 0, tzinfo=self.berlin_tz),
+            allday=True,
+        )
+        assert old == new
+
+    def test_api_shape_without_end_compares_equal(self):
+        old = self._canonical()
+        new = EventDateDefinitionValueObject(
+            start=datetime.datetime(2024, 6, 1, 0, 0, 0, tzinfo=self.berlin_tz),
+            end=None,
+            allday=True,
+        )
+        assert old == new
+
+    def test_different_day_compares_unequal(self):
+        old = self._canonical()
+        new = EventDateDefinitionValueObject(
+            start=datetime.datetime(2024, 6, 2, 0, 0, 0, tzinfo=self.berlin_tz),
+            end=datetime.datetime(2024, 6, 2, 23, 59, 59, tzinfo=self.berlin_tz),
+            allday=True,
+        )
+        assert old != new
+
+    def test_changed_recurrence_rule_compares_unequal(self):
+        old = self._canonical()
+        new = EventDateDefinitionValueObject(
+            start=old.start,
+            end=old.end,
+            allday=True,
+            recurrence_rule="FREQ=WEEKLY;COUNT=3",
+        )
+        assert old != new
+
+    def test_allday_mismatch_compares_unequal(self):
+        old = self._canonical()
+        new = EventDateDefinitionValueObject(
+            start=old.start,
+            end=old.end,
+            allday=False,
+        )
+        assert old != new
+
+    def test_timed_definitions_59_seconds_apart_compare_unequal(self):
+        # The all-day fallback must not soften comparison for timed definitions.
+        old = EventDateDefinitionValueObject(
+            start=datetime.datetime(2024, 6, 1, 10, 0, 0, tzinfo=self.berlin_tz),
+        )
+        new = EventDateDefinitionValueObject(
+            start=datetime.datetime(2024, 6, 1, 10, 0, 59, tzinfo=self.berlin_tz),
+        )
+        assert old != new

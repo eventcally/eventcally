@@ -1,6 +1,7 @@
 """Unit tests for command handler utility functions."""
 
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -50,7 +51,7 @@ class TestEnsureEventExists:
             organizer_id=org.id,
             event_place_id=place.id,
             date_definitions=[
-                EventDateDefinitionValueObject(start=datetime.now(timezone.utc))
+                EventDateDefinitionValueObject(start=datetime.now(ZoneInfo("UTC")))
             ],
             status=EventStatus.scheduled,
             public_status=EventPublicStatus.published,

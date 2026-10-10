@@ -1,7 +1,8 @@
 """Unit tests for ReferenceEventChangedEmailEventHandler."""
 
-from datetime import datetime, timezone
+from datetime import datetime
 from unittest.mock import MagicMock
+from zoneinfo import ZoneInfo
 
 from project.application.event_handlers.reference_event_changed_email_event_handler import (
     ReferenceEventChangedEmailEventHandler,
@@ -44,7 +45,7 @@ def _make_event(uow):
         organizer_id=org.id,
         event_place_id=place.id,
         date_definitions=[
-            EventDateDefinitionValueObject(start=datetime.now(timezone.utc))
+            EventDateDefinitionValueObject(start=datetime.now(ZoneInfo("UTC")))
         ],
         status=EventStatus.scheduled,
         public_status=EventPublicStatus.published,
@@ -210,10 +211,10 @@ class TestReferenceEventChangedEmailEventHandler:
         uow.event_references._references_by_event[event.id] = [ref]
 
         old_dd = EventDateDefinitionValueObject(
-            start=datetime(2020, 1, 1, tzinfo=timezone.utc)
+            start=datetime(2020, 1, 1, tzinfo=ZoneInfo("UTC"))
         )
         new_dd = EventDateDefinitionValueObject(
-            start=datetime(2021, 1, 1, tzinfo=timezone.utc)
+            start=datetime(2021, 1, 1, tzinfo=ZoneInfo("UTC"))
         )
         handler, org_service, _ = _make_handler(email_service)
         ev = _make_updated_event(
