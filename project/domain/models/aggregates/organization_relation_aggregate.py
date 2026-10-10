@@ -8,6 +8,7 @@ from project.domain.events.organization_invitation_accepted import (
 )
 from project.domain.models.aggregates.base_aggregate import BaseAggregate
 from project.domain.models.entities.actor import Actor
+from project.domain.translation import dummy_gettext
 from project.domain.types import unset
 from project.domain.types.object_id import ObjectId
 from project.domain.types.unsetable import Unsetable
@@ -34,7 +35,7 @@ class OrganizationRelationAggregate(BaseAggregate):
         target_admin_unit_name: Optional[str] = None,
     ) -> OrganizationRelationAggregate:
         if source_admin_unit_id == target_admin_unit_id:
-            raise ConstraintError("There must be no self-reference.")
+            raise ConstraintError(dummy_gettext("There must be no self-reference."))
 
         instance = cls(
             id=-1,

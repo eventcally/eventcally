@@ -5,6 +5,7 @@ from typing import List, Optional
 from project.domain.errors import ConstraintError
 from project.domain.models.aggregates.base_aggregate import BaseAggregate
 from project.domain.models.entities.actor import Actor
+from project.domain.translation import dummy_gettext
 from project.domain.types import unset
 from project.domain.types.object_id import ObjectId
 from project.domain.types.unsetable import NullableUnsetable, Unsetable
@@ -34,7 +35,7 @@ class OAuth2ClientAggregate(BaseAggregate):
     ) -> OAuth2ClientAggregate:
         if (user_id is None) == (admin_unit_id is None):
             raise ConstraintError(
-                "Exactly one of user_id or admin_unit_id must be set."
+                dummy_gettext("Exactly one of user_id or admin_unit_id must be set.")
             )
 
         instance = cls(

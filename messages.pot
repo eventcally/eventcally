@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-10 17:05+0200\n"
+"POT-Creation-Date: 2026-10-10 18:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -183,6 +183,10 @@ msgstr ""
 msgid "Accessible for free"
 msgstr ""
 
+#: project/domain/errors/constraint_error.py:7
+msgid "Action violates database constraint."
+msgstr ""
+
 #: project/templates/generic/read.html:15
 msgid "Actions"
 msgstr ""
@@ -190,6 +194,22 @@ msgstr ""
 #: project/templates/event/actions.html:5
 #: project/templates/event/actions.html:13
 msgid "Actions for event"
+msgstr ""
+
+#: project/domain/errors/unauthorized_error.py:7
+msgid "Actor is not authorized to perform this action."
+msgstr ""
+
+#: project/application/command_handlers/authorization_utils.py:65
+msgid "Actor is not permitted to perform this action on behalf of a user."
+msgstr ""
+
+#: project/application/command_handlers/authorization_utils.py:88
+msgid "Actor is not permitted to perform this platform-admin action."
+msgstr ""
+
+#: project/application/command_handlers/invitation_utils.py:21
+msgid "Actor is not the recipient of this invitation."
 msgstr ""
 
 #: project/views/manage_admin_unit/event/forms.py:165
@@ -301,15 +321,29 @@ msgstr ""
 msgid "An account already exists with this email."
 msgstr ""
 
+#: project/domain/errors/duplicate_error.py:7
+msgid ""
+"An entry with the entered values already exists. Duplicate entries are "
+"not allowed."
+msgstr ""
+
 #: project/views/utils.py:127
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
 "not allowed."
 msgstr ""
 
+#: project/domain/errors/base_error.py:10
+msgid "An error occurred"
+msgstr ""
+
 #: project/models/event_date.py:73 project/templates/_macros.html:1246
 #: project/views/manage_admin_unit/event/forms.py:86
 msgid "An event can last a maximum of 180 days."
+msgstr ""
+
+#: project/domain/errors/infrastructure_error.py:7
+msgid "An infrastructure error occurred."
 msgstr ""
 
 #: project/views/js.py:71
@@ -377,6 +411,7 @@ msgstr ""
 msgid "Ask another organization to reference your event on their calendar."
 msgstr ""
 
+#: project/domain/models/aggregates/event_aggregate.py:274
 #: project/models/event.py:368
 msgid "At least one date defintion is required."
 msgstr ""
@@ -1344,6 +1379,11 @@ msgstr ""
 msgid "Events"
 msgstr ""
 
+#: project/domain/models/aggregates/api_key_aggregate.py:32
+#: project/domain/models/aggregates/oauth2_client_aggregate.py:38
+msgid "Exactly one of user_id or admin_unit_id must be set."
+msgstr ""
+
 #: project/forms/event_date.py:49 project/forms/planning.py:41
 msgid "Exclude recurring events"
 msgstr ""
@@ -1619,14 +1659,21 @@ msgstr ""
 msgid "Internal tags"
 msgstr ""
 
+#: project/application/command_handlers/create_event_handler.py:32
+#: project/application/command_handlers/update_event_handler.py:36
+#: project/domain/models/aggregates/event_aggregate.py:278
 #: project/models/event.py:362
 msgid "Invalid co-organizer."
 msgstr ""
 
+#: project/application/command_handlers/create_event_handler.py:26
+#: project/application/command_handlers/update_event_handler.py:30
 #: project/models/event.py:354
 msgid "Invalid organizer."
 msgstr ""
 
+#: project/application/command_handlers/create_event_handler.py:36
+#: project/application/command_handlers/update_event_handler.py:41
 #: project/models/event.py:365
 msgid "Invalid place."
 msgstr ""
@@ -2039,6 +2086,10 @@ msgstr ""
 msgid "Okay"
 msgstr ""
 
+#: project/application/command_handlers/request_event_reference_handler.py:31
+msgid "Only published events can be referenced"
+msgstr ""
+
 #: project/babel.py:1 project/forms/event_date.py:35
 #: project/forms/reference.py:12 project/permissions.py:56
 #: project/services/event.py:582 project/templates/_macros.html:574
@@ -2214,6 +2265,7 @@ msgstr ""
 msgid "Own event"
 msgstr ""
 
+#: project/application/command_handlers/create_event_reference_handler.py:24
 #: project/models/event_reference.py:42
 #: project/templates/event_date/list.html:249
 msgid "Own events cannot be referenced"
@@ -2406,6 +2458,10 @@ msgstr ""
 #: project/templates/event/reference.html:8
 #, python-format
 msgid "Reference event \"%(name)s\""
+msgstr ""
+
+#: project/domain/models/aggregates/event_reference_request_aggregate.py:77
+msgid "Reference request already verified."
 msgstr ""
 
 #: project/views/reference_request.py:11
@@ -2805,6 +2861,10 @@ msgstr ""
 msgid "Sort"
 msgstr ""
 
+#: project/domain/services/organization_verification.py:40
+msgid "Source organization is outside the allowed postal codes."
+msgstr ""
+
 #: project/views/manage_admin_unit/event/displays.py:20
 #: project/views/manage_admin_unit/event/forms.py:53
 msgid "Start"
@@ -2868,6 +2928,10 @@ msgstr ""
 msgid "Target group origin"
 msgstr ""
 
+#: project/domain/services/organization_verification.py:26
+msgid "Target organization can no longer verify other organizations."
+msgstr ""
+
 #: project/forms/admin.py:13 project/templates/layout.html:334
 #: project/views/root.py:76
 msgid "Terms of service"
@@ -2919,8 +2983,16 @@ msgstr ""
 msgid "The invitation will be sent to this email address."
 msgstr ""
 
+#: project/application/command_handlers/leave_organization_handler.py:28
+msgid "The last remaining administrator can not leave the organization."
+msgstr ""
+
 #: project/views/manage_admin_unit/event/forms.py:211
 msgid "The maximum age that participants should be."
+msgstr ""
+
+#: project/application/command_handlers/create_api_key_handler.py:32
+msgid "The maximum number of API keys has been reached."
 msgstr ""
 
 #: project/views/manage_admin_unit/event/forms.py:206
@@ -2941,6 +3013,10 @@ msgstr ""
 
 #: project/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:12
 msgid "The organization is scheduled for deletion."
+msgstr ""
+
+#: project/domain/errors/not_found_error.py:7
+msgid "The requested resource was not found"
 msgstr ""
 
 #: project/templates/email/reference_request_review_status_notice.html:4
@@ -2982,9 +3058,15 @@ msgstr ""
 msgid "There is a new verification request that needs to be reviewed."
 msgstr ""
 
+#: project/domain/models/aggregates/organization_relation_aggregate.py:38
+#: project/domain/models/aggregates/organization_verification_request_aggregate.py:41
 #: project/i10n.py:66 project/models/admin_unit.py:244
 #: project/models/admin_unit_verification_request.py:70
 msgid "There must be no self-reference."
+msgstr ""
+
+#: project/domain/models/aggregates/oauth2_token_aggregate.py:20
+msgid "This OAuth2 token has already been revoked."
 msgstr ""
 
 #: project/forms/common.py:145
@@ -3103,6 +3185,10 @@ msgstr ""
 
 #: project/views/manage_admin_unit/incoming_verification_request/views.py:31
 msgid "Verification request already verified"
+msgstr ""
+
+#: project/domain/models/aggregates/organization_verification_request_aggregate.py:63
+msgid "Verification request already verified."
 msgstr ""
 
 #: project/application/services/abstract_email_service.py:90

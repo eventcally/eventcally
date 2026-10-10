@@ -9,6 +9,7 @@ from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.domain.errors.constraint_error import ConstraintError
 from project.domain.models.aggregates.event_aggregate import EventAggregate
 from project.domain.models.entities.image_entity import ImageEntity
+from project.domain.translation import dummy_gettext
 
 from .abstract_command_handler import AbstractCommandHandler
 from .authorization_utils import ensure_actor_has_permission_for_admin_unit
@@ -22,17 +23,17 @@ class CreateEventHandler(AbstractCommandHandler):
 
         event_organizer = ensure_event_organizer_exists(cmd.organizer_id, uow)
         if event_organizer.admin_unit_id != cmd.admin_unit_id:
-            raise ConstraintError("Invalid organizer.")
+            raise ConstraintError(dummy_gettext("Invalid organizer."))
 
         if cmd.co_organizer_ids:
             for co_organizer_id in cmd.co_organizer_ids:
                 co_organizer = ensure_event_organizer_exists(co_organizer_id, uow)
                 if co_organizer.admin_unit_id != cmd.admin_unit_id:
-                    raise ConstraintError("Invalid co-organizer.")
+                    raise ConstraintError(dummy_gettext("Invalid co-organizer."))
 
         event_place = ensure_event_place_exists(cmd.event_place_id, uow)
         if event_place.admin_unit_id != cmd.admin_unit_id:
-            raise ConstraintError("Invalid place.")
+            raise ConstraintError(dummy_gettext("Invalid place."))
 
         event = EventAggregate.create(
             actor=cmd.actor,

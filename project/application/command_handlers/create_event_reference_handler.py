@@ -5,6 +5,7 @@ from project.domain.errors.constraint_error import ConstraintError
 from project.domain.models.aggregates.event_reference_aggregate import (
     EventReferenceAggregate,
 )
+from project.domain.translation import dummy_gettext
 
 from .abstract_command_handler import AbstractCommandHandler
 from .authorization_utils import ensure_actor_has_permission_for_admin_unit
@@ -20,7 +21,7 @@ class CreateEventReferenceHandler(AbstractCommandHandler):
 
         event = ensure_event_exists(cmd.event_id, uow)
         if event.admin_unit_id == cmd.admin_unit_id:
-            raise ConstraintError("Own events cannot be referenced")
+            raise ConstraintError(dummy_gettext("Own events cannot be referenced"))
 
         event_reference = EventReferenceAggregate.create(
             actor=cmd.actor,

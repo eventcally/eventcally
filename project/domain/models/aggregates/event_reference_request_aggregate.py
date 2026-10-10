@@ -20,6 +20,7 @@ from project.domain.models.enums.event_reference_request_rejection_reason import
 from project.domain.models.enums.event_reference_request_review_status import (
     EventReferenceRequestReviewStatus,
 )
+from project.domain.translation import dummy_gettext
 from project.domain.types.object_id import ObjectId
 
 
@@ -73,7 +74,7 @@ class EventReferenceRequestAggregate(BaseAggregate):
 
     def _ensure_not_yet_verified(self):
         if self.review_status == EventReferenceRequestReviewStatus.verified:
-            raise ConstraintError("Reference request already verified.")
+            raise ConstraintError(dummy_gettext("Reference request already verified."))
 
     def verify(self, actor: Actor):
         self._ensure_not_yet_verified()

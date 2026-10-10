@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-10 17:05+0200\n"
+"POT-Creation-Date: 2026-10-10 18:57+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -186,6 +186,10 @@ msgstr "Zugang"
 msgid "Accessible for free"
 msgstr "Kostenlos zugänglich"
 
+#: project/domain/errors/constraint_error.py:7
+msgid "Action violates database constraint."
+msgstr "Die Aktion verletzt eine Datenbankbedingung."
+
 #: project/templates/generic/read.html:15
 msgid "Actions"
 msgstr "Aktionen"
@@ -194,6 +198,22 @@ msgstr "Aktionen"
 #: project/templates/event/actions.html:13
 msgid "Actions for event"
 msgstr "Aktionen für die Veranstaltung"
+
+#: project/domain/errors/unauthorized_error.py:7
+msgid "Actor is not authorized to perform this action."
+msgstr "Du bist nicht berechtigt, diese Aktion auszuführen."
+
+#: project/application/command_handlers/authorization_utils.py:65
+msgid "Actor is not permitted to perform this action on behalf of a user."
+msgstr "Du darfst diese Aktion nicht im Namen eines Benutzers ausführen."
+
+#: project/application/command_handlers/authorization_utils.py:88
+msgid "Actor is not permitted to perform this platform-admin action."
+msgstr "Du darfst diese Plattform-Administrator-Aktion nicht ausführen."
+
+#: project/application/command_handlers/invitation_utils.py:21
+msgid "Actor is not the recipient of this invitation."
+msgstr "Du bist nicht der Empfänger dieser Einladung."
 
 #: project/views/manage_admin_unit/event/forms.py:165
 msgid "Add an description of the event."
@@ -304,6 +324,14 @@ msgstr "Verifizierungsanfragen erlauben"
 msgid "An account already exists with this email."
 msgstr "Mit dieser E-Mail existiert bereits ein Account."
 
+#: project/domain/errors/duplicate_error.py:7
+msgid ""
+"An entry with the entered values already exists. Duplicate entries are "
+"not allowed."
+msgstr ""
+"Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte "
+"Einträge sind nicht erlaubt."
+
 #: project/views/utils.py:127
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
@@ -312,10 +340,18 @@ msgstr ""
 "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte "
 "Einträge sind nicht erlaubt."
 
+#: project/domain/errors/base_error.py:10
+msgid "An error occurred"
+msgstr "Ein Fehler ist aufgetreten"
+
 #: project/models/event_date.py:73 project/templates/_macros.html:1246
 #: project/views/manage_admin_unit/event/forms.py:86
 msgid "An event can last a maximum of 180 days."
 msgstr "Eine Veranstaltung darf maximal 180 Tage dauern."
+
+#: project/domain/errors/infrastructure_error.py:7
+msgid "An infrastructure error occurred."
+msgstr "Ein Infrastrukturfehler ist aufgetreten."
 
 #: project/views/js.py:71
 #: project/views/manage_admin_unit/event_organizer/forms.py:46
@@ -384,6 +420,7 @@ msgstr ""
 "Bitte eine andere Organisation, deine Veranstaltung in ihrem Kalender zu "
 "empfehlen."
 
+#: project/domain/models/aggregates/event_aggregate.py:274
 #: project/models/event.py:368
 msgid "At least one date defintion is required."
 msgstr "Mindestens eine Datums-Definition ist erforderlich."
@@ -1368,6 +1405,11 @@ msgstr "Führung"
 msgid "Events"
 msgstr "Veranstaltungen"
 
+#: project/domain/models/aggregates/api_key_aggregate.py:32
+#: project/domain/models/aggregates/oauth2_client_aggregate.py:38
+msgid "Exactly one of user_id or admin_unit_id must be set."
+msgstr "Es muss genau eines von user_id oder admin_unit_id gesetzt sein."
+
 #: project/forms/event_date.py:49 project/forms/planning.py:41
 msgid "Exclude recurring events"
 msgstr "Serientermine nicht anzeigen"
@@ -1687,14 +1729,21 @@ msgstr ""
 msgid "Internal tags"
 msgstr "Interne Stichworte"
 
+#: project/application/command_handlers/create_event_handler.py:32
+#: project/application/command_handlers/update_event_handler.py:36
+#: project/domain/models/aggregates/event_aggregate.py:278
 #: project/models/event.py:362
 msgid "Invalid co-organizer."
 msgstr "Ungültiger Mitveranstalter."
 
+#: project/application/command_handlers/create_event_handler.py:26
+#: project/application/command_handlers/update_event_handler.py:30
 #: project/models/event.py:354
 msgid "Invalid organizer."
 msgstr "Ungültiger Veranstalter."
 
+#: project/application/command_handlers/create_event_handler.py:36
+#: project/application/command_handlers/update_event_handler.py:41
 #: project/models/event.py:365
 msgid "Invalid place."
 msgstr "Ungültiger Ort."
@@ -2113,6 +2162,10 @@ msgstr "Oauth2 authorization codes"
 msgid "Okay"
 msgstr "OK"
 
+#: project/application/command_handlers/request_event_reference_handler.py:31
+msgid "Only published events can be referenced"
+msgstr "Nur veröffentlichte Veranstaltungen können empfohlen werden"
+
 #: project/babel.py:1 project/forms/event_date.py:35
 #: project/forms/reference.py:12 project/permissions.py:56
 #: project/services/event.py:582 project/templates/_macros.html:574
@@ -2291,6 +2344,7 @@ msgstr "Ausgehende Verifizierungsanfragen"
 msgid "Own event"
 msgstr "Eigene Veranstaltung"
 
+#: project/application/command_handlers/create_event_reference_handler.py:24
 #: project/models/event_reference.py:42
 #: project/templates/event_date/list.html:249
 msgid "Own events cannot be referenced"
@@ -2488,6 +2542,10 @@ msgstr "Veranstaltung empfehlen"
 #, python-format
 msgid "Reference event \"%(name)s\""
 msgstr "Veranstaltung \"%(name)s\" empfehlen"
+
+#: project/domain/models/aggregates/event_reference_request_aggregate.py:77
+msgid "Reference request already verified."
+msgstr "Die Empfehlungsanfrage wurde bereits bestätigt."
 
 #: project/views/reference_request.py:11
 #, python-format
@@ -2899,6 +2957,10 @@ msgstr "Nur nicht empfohlene Veranstaltungen anzeigen"
 msgid "Sort"
 msgstr "Sortierung"
 
+#: project/domain/services/organization_verification.py:40
+msgid "Source organization is outside the allowed postal codes."
+msgstr "Die anfragende Organisation liegt außerhalb der erlaubten Postleitzahlen."
+
 #: project/views/manage_admin_unit/event/displays.py:20
 #: project/views/manage_admin_unit/event/forms.py:53
 msgid "Start"
@@ -2962,6 +3024,10 @@ msgstr "Zielgruppe"
 msgid "Target group origin"
 msgstr "Für Touristen/Einwohner geeignet"
 
+#: project/domain/services/organization_verification.py:26
+msgid "Target organization can no longer verify other organizations."
+msgstr "Die Zielorganisation kann keine anderen Organisationen mehr verifizieren."
+
 #: project/forms/admin.py:13 project/templates/layout.html:334
 #: project/views/root.py:76
 msgid "Terms of service"
@@ -3019,9 +3085,19 @@ msgstr ""
 msgid "The invitation will be sent to this email address."
 msgstr "An diese Email-Adresse wird die Einladung gesendet."
 
+#: project/application/command_handlers/leave_organization_handler.py:28
+msgid "The last remaining administrator can not leave the organization."
+msgstr ""
+"Der letzte verbleibende Administrator kann die Organisation nicht "
+"verlassen."
+
 #: project/views/manage_admin_unit/event/forms.py:211
 msgid "The maximum age that participants should be."
 msgstr "Das maximale Alter, das die Teilnehmer haben sollten."
+
+#: project/application/command_handlers/create_api_key_handler.py:32
+msgid "The maximum number of API keys has been reached."
+msgstr "Die maximale Anzahl an API-Schlüsseln wurde erreicht."
 
 #: project/views/manage_admin_unit/event/forms.py:206
 msgid "The minimum age that participants should be."
@@ -3046,6 +3122,10 @@ msgstr ""
 #: project/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:12
 msgid "The organization is scheduled for deletion."
 msgstr "Die Organisation ist zur Löschung vorgesehen."
+
+#: project/domain/errors/not_found_error.py:7
+msgid "The requested resource was not found"
+msgstr "Die angeforderte Ressource wurde nicht gefunden"
 
 #: project/templates/email/reference_request_review_status_notice.html:4
 #: project/templates/email/reference_request_review_status_notice.txt:1
@@ -3089,10 +3169,16 @@ msgstr "Es gibt eine neue Empfehlung, die automatisch verifiziert wurde."
 msgid "There is a new verification request that needs to be reviewed."
 msgstr "Es gibt eine neue Verifizierungsanfrage, die geprüft werden muss."
 
+#: project/domain/models/aggregates/organization_relation_aggregate.py:38
+#: project/domain/models/aggregates/organization_verification_request_aggregate.py:41
 #: project/i10n.py:66 project/models/admin_unit.py:244
 #: project/models/admin_unit_verification_request.py:70
 msgid "There must be no self-reference."
 msgstr "Es darf keine Selbstreferenz geben."
+
+#: project/domain/models/aggregates/oauth2_token_aggregate.py:20
+msgid "This OAuth2 token has already been revoked."
+msgstr "Dieses OAuth2-Token wurde bereits widerrufen."
 
 #: project/forms/common.py:145
 msgid "This field is required."
@@ -3213,6 +3299,10 @@ msgstr "Nutzer"
 #: project/views/manage_admin_unit/incoming_verification_request/views.py:31
 msgid "Verification request already verified"
 msgstr "Verifizierungsanfrage ist bereits verifiziert"
+
+#: project/domain/models/aggregates/organization_verification_request_aggregate.py:63
+msgid "Verification request already verified."
+msgstr "Die Verifizierungsanfrage wurde bereits bestätigt."
 
 #: project/application/services/abstract_email_service.py:90
 #: project/views/utils.py:52
@@ -3981,9 +4071,6 @@ msgstr "bis"
 
 #~ msgid "Event lists"
 #~ msgstr "Veranstaltungslisten"
-
-#~ msgid "The maximum number of API keys has been reached."
-#~ msgstr "Die maximale Anzahl an API-Schlüsseln wurde erreicht."
 
 #~ msgid "Favorite events"
 #~ msgstr "Merkzettel"

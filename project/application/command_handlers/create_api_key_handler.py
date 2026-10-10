@@ -5,6 +5,7 @@ from project.application.services.abstract_api_key_generator import (
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.domain.errors import ConstraintError
 from project.domain.models.aggregates.api_key_aggregate import ApiKeyAggregate
+from project.domain.translation import dummy_gettext
 
 from .abstract_command_handler import AbstractCommandHandler
 from .api_key_utils import ensure_actor_can_manage_api_key_owner
@@ -27,7 +28,9 @@ class CreateApiKeyHandler(AbstractCommandHandler):
             else uow.organizations.get(cmd.admin_unit_id).max_api_keys
         )
         if count >= max_api_keys:
-            raise ConstraintError("The maximum number of API keys has been reached.")
+            raise ConstraintError(
+                dummy_gettext("The maximum number of API keys has been reached.")
+            )
 
         key, key_hash = self.api_key_generator.generate()
         api_key = ApiKeyAggregate.create(

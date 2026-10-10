@@ -17,6 +17,7 @@ from project.domain.models.enums.organization_verification_request_rejection_rea
 from project.domain.models.enums.organization_verification_request_review_status import (
     OrganizationVerificationRequestReviewStatus,
 )
+from project.domain.translation import dummy_gettext
 from project.domain.types.object_id import ObjectId
 
 
@@ -37,7 +38,7 @@ class OrganizationVerificationRequestAggregate(BaseAggregate):
         target_admin_unit_id: ObjectId,
     ) -> OrganizationVerificationRequestAggregate:
         if source_admin_unit_id == target_admin_unit_id:
-            raise ConstraintError("There must be no self-reference.")
+            raise ConstraintError(dummy_gettext("There must be no self-reference."))
 
         instance = cls(
             id=-1,
@@ -58,7 +59,9 @@ class OrganizationVerificationRequestAggregate(BaseAggregate):
 
     def _ensure_not_yet_verified(self):
         if self.review_status == OrganizationVerificationRequestReviewStatus.verified:
-            raise ConstraintError("Verification request already verified.")
+            raise ConstraintError(
+                dummy_gettext("Verification request already verified.")
+            )
 
     def approve(self, actor: Actor):
         self._ensure_not_yet_verified()

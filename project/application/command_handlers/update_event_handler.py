@@ -9,6 +9,7 @@ from project.application.commands import UpdateEventCommand
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.domain.errors.constraint_error import ConstraintError
 from project.domain.models.entities.image_entity import ImageEntity
+from project.domain.translation import dummy_gettext
 from project.domain.types import unset
 
 from .abstract_command_handler import AbstractCommandHandler
@@ -26,18 +27,18 @@ class UpdateEventHandler(AbstractCommandHandler):
         if cmd.organizer_id != unset:
             event_organizer = ensure_event_organizer_exists(cmd.organizer_id, uow)
             if event_organizer.admin_unit_id != event.admin_unit_id:
-                raise ConstraintError("Invalid organizer.")
+                raise ConstraintError(dummy_gettext("Invalid organizer."))
 
         if cmd.co_organizer_ids and cmd.co_organizer_ids != unset:
             for co_organizer_id in cmd.co_organizer_ids:
                 co_organizer = ensure_event_organizer_exists(co_organizer_id, uow)
                 if co_organizer.admin_unit_id != event.admin_unit_id:
-                    raise ConstraintError("Invalid co-organizer.")
+                    raise ConstraintError(dummy_gettext("Invalid co-organizer."))
 
         if cmd.event_place_id != unset:
             event_place = ensure_event_place_exists(cmd.event_place_id, uow)
             if event_place.admin_unit_id != event.admin_unit_id:
-                raise ConstraintError("Invalid place.")
+                raise ConstraintError(dummy_gettext("Invalid place."))
 
         event.update(
             actor=cmd.actor,
