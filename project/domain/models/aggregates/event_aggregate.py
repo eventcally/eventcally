@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime
 from typing import List, Optional, Set
 
 from pydantic import ConfigDict
@@ -56,7 +55,6 @@ class EventAggregate(BaseAggregate):
     target_group_origin: Optional[EventTargetGroupOrigin] = None
     attendance_mode: Optional[EventAttendanceMode] = None
     photo: Optional[ImageEntity] = None
-    previous_start_date: Optional[datetime.datetime] = None
     category_ids: Set[ObjectId] = set()
     custom_category_ids: Set[ObjectId] = set()
     rating: Optional[int] = None
@@ -89,7 +87,6 @@ class EventAggregate(BaseAggregate):
         target_group_origin: Optional[EventTargetGroupOrigin] = None,
         attendance_mode: Optional[EventAttendanceMode] = None,
         photo: Optional[ImageEntity] = None,
-        previous_start_date: Optional[datetime.datetime] = None,
         category_ids: Set[ObjectId] = set(),
         custom_category_ids: Set[ObjectId] = set(),
         rating: Optional[int] = None,
@@ -120,7 +117,6 @@ class EventAggregate(BaseAggregate):
             target_group_origin=target_group_origin,
             attendance_mode=attendance_mode,
             photo=photo,
-            previous_start_date=previous_start_date,
             category_ids=category_ids,
             custom_category_ids=custom_category_ids,
             rating=rating,
@@ -159,7 +155,6 @@ class EventAggregate(BaseAggregate):
             price_info=instance.price_info,
             target_group_origin=instance.target_group_origin,
             attendance_mode=instance.attendance_mode,
-            previous_start_date=instance.previous_start_date,
             category_ids=instance.category_ids,
             custom_category_ids=instance.custom_category_ids,
             rating=instance.rating,
@@ -199,7 +194,6 @@ class EventAggregate(BaseAggregate):
         target_group_origin: NullableUnsetable[EventTargetGroupOrigin] = unset,
         attendance_mode: NullableUnsetable[EventAttendanceMode] = unset,
         photo: NullableUnsetable[ImageEntity] = unset,
-        previous_start_date: NullableUnsetable[datetime.datetime] = unset,
         category_ids: Unsetable[Set[ObjectId]] = unset,
         custom_category_ids: Unsetable[Set[ObjectId]] = unset,
         rating: NullableUnsetable[int] = unset,
@@ -237,7 +231,6 @@ class EventAggregate(BaseAggregate):
         self._update_field_with_value("price_info", price_info, event)
         self._update_field_with_value("target_group_origin", target_group_origin, event)
         self._update_field_with_value("attendance_mode", attendance_mode, event)
-        self._update_field_with_value("previous_start_date", previous_start_date, event)
         self._update_field_with_value("rating", rating, event)
         self._update_field_with_value("category_ids", category_ids, event)
         self._update_field_with_value("custom_category_ids", custom_category_ids, event)

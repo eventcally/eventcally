@@ -45,9 +45,6 @@ models:
       - name: status
         type: enum
         enum: [scheduled, cancelled, movedOnline, postponed, rescheduled]
-      - name: previous_start_date
-        type: datetimetz
-        nullable: true
       - name: rating
         type: integer
         default: 50

@@ -54,6 +54,7 @@ class EventCreatedPayload(WebhookPayloadBase):
     price_info: Optional[str] = None
     target_group_origin: Optional[WebhookEventTargetGroupOrigin] = None
     attendance_mode: Optional[WebhookEventAttendanceMode] = None
+    # Deprecated: kept for webhook schema compatibility. Always null.
     previous_start_date: Optional[datetime.datetime] = None
     category_ids: Optional[Set[ObjectId]] = None
     custom_category_ids: Optional[Set[ObjectId]] = None
@@ -95,7 +96,6 @@ class EventCreatedPayload(WebhookPayloadBase):
             attendance_mode=WebhookEventAttendanceMode.from_domain_enum(
                 e.attendance_mode
             ),
-            previous_start_date=e.previous_start_date,
             category_ids=e.category_ids,
             custom_category_ids=e.custom_category_ids,
             rating=e.rating,

@@ -23,6 +23,8 @@ def test_read(client, app, db, seeder: Seeder, utils: UtilActions):
     url = utils.get_url("api_v1_event", id=event_id)
     response = utils.get_json_ok(url)
     assert response.json["status"] == "scheduled"
+    assert "previous_start_date" in response.json
+    assert response.json["previous_start_date"] is None
 
 
 def test_read_anonym(client, app, db, seeder: Seeder, utils: UtilActions):
@@ -258,7 +260,6 @@ def test_put(client, seeder: Seeder, utils: UtilActions, app, db, mocker, varian
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.dateutils import create_berlin_date
         from project.models import (
             Event,
             EventAttendanceMode,
@@ -283,7 +284,6 @@ def test_put(client, seeder: Seeder, utils: UtilActions, app, db, mocker, varian
         assert event.target_group_origin == EventTargetGroupOrigin.tourist
         assert event.attendance_mode == EventAttendanceMode.online
         assert event.status == EventStatus.movedOnline
-        assert event.previous_start_date == create_berlin_date(2021, 2, 7, 10, 0)
         assert event.registration_required == put["registration_required"]
         assert event.booked_up == put["booked_up"]
         assert event.expected_participants == put["expected_participants"]
@@ -643,6 +643,19 @@ def test_patch(client, seeder: Seeder, utils: UtilActions, app, db):
         event = db.session.get(Event, event_id)
         assert event.name == "Name"
         assert event.description == "Neu"
+
+
+def test_patch_deprecatedPreviousStartDate_isIgnored(
+    client, seeder: Seeder, utils: UtilActions, app, db
+):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("api_v1_event", id=event_id)
+    response = utils.patch_json(
+        url, {"previous_start_date": "2021-02-07T10:00:00+01:00"}
+    )
+    utils.assert_response_no_content(response)
 
 
 def test_patch_startAfterEnd(client, seeder: Seeder, utils: UtilActions, app, db):

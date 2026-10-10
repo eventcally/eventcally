@@ -1,4 +1,3 @@
-import datetime
 from typing import List, Set
 
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
@@ -40,7 +39,6 @@ class UpdateEventCommand(Command):
     target_group_origin: NullableUnsetable[EventTargetGroupOrigin] = UnsetField()
     attendance_mode: NullableUnsetable[EventAttendanceMode] = UnsetField()
     photo: NullableUnsetable[ImageValueObject] = UnsetField()
-    previous_start_date: NullableUnsetable[datetime.datetime] = UnsetField()
     category_ids: Unsetable[Set[ObjectId]] = UnsetField()
     custom_category_ids: Unsetable[Set[ObjectId]] = UnsetField()
     rating: NullableUnsetable[int] = UnsetField()

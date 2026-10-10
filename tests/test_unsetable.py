@@ -30,12 +30,12 @@ def test_update_event_command_accepts_none_for_nullable_fields():
         id=1,
         actor=Actor(user_id=1),
         description=None,
-        previous_start_date=None,
+        price_info=None,
     )
 
     assert command.id == 1
     assert command.description is None
-    assert command.previous_start_date is None
+    assert command.price_info is None
 
 
 def test_update_event_command_rejects_none_for_non_nullable_fields():

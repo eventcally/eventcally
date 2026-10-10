@@ -1,4 +1,3 @@
-import datetime
 from typing import List, Optional, Set
 
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
@@ -42,7 +41,6 @@ class CreateEventCommand(CommandWithResult[CreateEventCommandResult]):
     target_group_origin: Optional[EventTargetGroupOrigin] = None
     attendance_mode: Optional[EventAttendanceMode] = None
     photo: Optional[ImageValueObject] = None
-    previous_start_date: Optional[datetime.datetime] = None
     category_ids: Set[ObjectId] = set()
     custom_category_ids: Set[ObjectId] = set()
     rating: Optional[int] = None

@@ -63,7 +63,6 @@ class UpdateEventHandler(AbstractCommandHandler):
             target_group_origin=cmd.target_group_origin,
             attendance_mode=cmd.attendance_mode,
             photo=ImageEntity.from_nullable_unsetable_value_object(cmd.photo),
-            previous_start_date=cmd.previous_start_date,
             category_ids=cmd.category_ids,
             custom_category_ids=cmd.custom_category_ids,
             rating=cmd.rating,

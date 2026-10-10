@@ -480,9 +480,6 @@
         {{ render_event_date_with_dates_link(start, end, allday) }}
       </div>
       {{ render_enum_prop(event.status, 'fa-info-circle', 'Status', 1) }}
-      {% if event.previous_start_date %}
-      <div><i class="fa fa-fw fa-calendar-times" data-toggle="tooltip" title="{{ _('Previous start date') }}"></i> {{ event.previous_start_date | datetimeformat('short') }}</div>
-      {% endif %}
 
       {% if show_rating and event.rating and event.rating != 50 %}
           {{ render_string_prop("%d/10" % (event.rating/10), 'fa-adjust', 'Rating') }}
@@ -643,9 +640,6 @@
       <h2 class="mt-0">{{ _('Event') }}</h2>
 
       {{ render_enum_prop(event.status, 'fa-info-circle', 'Status', 1) }}
-      {% if event.previous_start_date %}
-      <div><i class="fa fa-fw fa-calendar-times" data-toggle="tooltip" title="{{ _('Previous start date') }}"></i> {{ event.previous_start_date | datetimeformat('short') }}</div>
-      {% endif %}
 
       {% if show_rating and event.rating and event.rating != 50 %}
           {{ render_string_prop("%d/10" % (event.rating/10), 'fa-adjust', 'Rating') }}
