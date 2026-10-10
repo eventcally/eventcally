@@ -5,6 +5,7 @@ from project.domain.models.aggregates.event_reference_request_aggregate import (
     EventReferenceRequestAggregate,
 )
 from project.domain.models.enums.event_public_status import EventPublicStatus
+from project.domain.translation import dummy_gettext
 
 from .abstract_command_handler import AbstractCommandHandler
 from .authorization_utils import ensure_actor_has_permission_for_admin_unit
@@ -26,7 +27,9 @@ class RequestEventReferenceHandler(AbstractCommandHandler):
         )
 
         if event.public_status != EventPublicStatus.published:
-            raise ConstraintError("Only published events can be referenced")
+            raise ConstraintError(
+                dummy_gettext("Only published events can be referenced")
+            )
 
         relation = uow.organization_relations.get_by_source_and_target(
             cmd.admin_unit_id, event.admin_unit_id

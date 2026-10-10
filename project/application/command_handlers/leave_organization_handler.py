@@ -1,6 +1,7 @@
 from project.application import commands
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.domain.errors import ConstraintError
+from project.domain.translation import dummy_gettext
 
 from .abstract_command_handler import AbstractCommandHandler
 from .authorization_utils import ensure_actor_is_user
@@ -24,7 +25,9 @@ class LeaveOrganizationHandler(AbstractCommandHandler):
             ]
             if not other_admins:
                 raise ConstraintError(
-                    "The last remaining administrator can not leave the organization."
+                    dummy_gettext(
+                        "The last remaining administrator can not leave the organization."
+                    )
                 )
 
         uow.organization_members.remove(member)

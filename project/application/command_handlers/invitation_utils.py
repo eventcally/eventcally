@@ -3,6 +3,7 @@ from typing import Optional
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.domain.errors import NotFoundError, UnauthorizedError
 from project.domain.models.entities.actor import Actor
+from project.domain.translation import dummy_gettext
 
 
 def ensure_actor_is_invitation_receiver(
@@ -16,7 +17,9 @@ def ensure_actor_is_invitation_receiver(
     user = uow.users.get(actor.user_id) if actor.user_id is not None else None
 
     if user is None or user.email.lower() != (invitation_email or "").lower():
-        raise UnauthorizedError("Actor is not the recipient of this invitation.")
+        raise UnauthorizedError(
+            dummy_gettext("Actor is not the recipient of this invitation.")
+        )
 
 
 def ensure_organization_invitation_exists(id: int, uow: AbstractUnitOfWork):

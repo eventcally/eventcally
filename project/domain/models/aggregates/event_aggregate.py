@@ -20,6 +20,7 @@ from project.domain.models.enums.event_target_group_origin import EventTargetGro
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
 )
+from project.domain.translation import dummy_gettext
 from project.domain.types import unset
 from project.domain.types.changed_value import ChangedValue
 from project.domain.types.object_id import ObjectId
@@ -269,10 +270,12 @@ class EventAggregate(BaseAggregate):
 
     def validate_instance(self):
         if not self.date_definitions:
-            raise ConstraintError("At least one date defintion is required.")
+            raise ConstraintError(
+                dummy_gettext("At least one date defintion is required.")
+            )
 
         if self.co_organizer_ids and self.organizer_id in self.co_organizer_ids:
-            raise ConstraintError("Invalid co-organizer.")
+            raise ConstraintError(dummy_gettext("Invalid co-organizer."))
 
     def update_event_dates_with_recurrence_rule(self) -> bool:
         from dateutil.relativedelta import relativedelta

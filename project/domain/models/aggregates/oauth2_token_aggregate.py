@@ -5,6 +5,7 @@ from typing import Optional
 from project.domain.errors import ConstraintError
 from project.domain.models.aggregates.base_aggregate import BaseAggregate
 from project.domain.models.entities.actor import Actor
+from project.domain.translation import dummy_gettext
 from project.domain.types.object_id import ObjectId
 
 
@@ -15,6 +16,8 @@ class OAuth2TokenAggregate(BaseAggregate):
 
     def revoke(self, actor: Actor):
         if self.is_revoked:
-            raise ConstraintError("This OAuth2 token has already been revoked.")
+            raise ConstraintError(
+                dummy_gettext("This OAuth2 token has already been revoked.")
+            )
 
         self.is_revoked = True

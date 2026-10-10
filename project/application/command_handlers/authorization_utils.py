@@ -1,6 +1,7 @@
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.domain.errors import UnauthorizedError
 from project.domain.models.entities.actor import Actor
+from project.domain.translation import dummy_gettext
 from project.domain.types import ObjectId
 
 
@@ -61,7 +62,9 @@ def ensure_actor_is_authenticated_user(actor: Actor, uow: AbstractUnitOfWork):
 
     if user is None:
         raise UnauthorizedError(
-            "Actor is not permitted to perform this action on behalf of a user."
+            dummy_gettext(
+                "Actor is not permitted to perform this action on behalf of a user."
+            )
         )
 
     return user
@@ -82,5 +85,7 @@ def ensure_actor_is_platform_admin(actor: Actor, uow: AbstractUnitOfWork):
     user = uow.users.get(actor.user_id) if actor.user_id is not None else None
     if user is None or not user.is_platform_admin:
         raise UnauthorizedError(
-            "Actor is not permitted to perform this platform-admin action."
+            dummy_gettext(
+                "Actor is not permitted to perform this platform-admin action."
+            )
         )

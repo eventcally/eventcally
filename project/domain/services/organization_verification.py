@@ -2,6 +2,7 @@ from project.domain.errors import ConstraintError
 from project.domain.models.aggregates.organization_aggregate import (
     OrganizationAggregate,
 )
+from project.domain.translation import dummy_gettext
 
 
 def ensure_organization_can_verify(
@@ -22,7 +23,9 @@ def ensure_organization_can_verify(
         or not target_admin_unit.incoming_verification_requests_allowed
     ):
         raise ConstraintError(
-            "Target organization can no longer verify other organizations."
+            dummy_gettext(
+                "Target organization can no longer verify other organizations."
+            )
         )
 
     allowed_postal_codes = target_admin_unit.incoming_verification_requests_postal_codes
@@ -34,5 +37,7 @@ def ensure_organization_can_verify(
         )
         if source_postal_code not in allowed_postal_codes:
             raise ConstraintError(
-                "Source organization is outside the allowed postal codes."
+                dummy_gettext(
+                    "Source organization is outside the allowed postal codes."
+                )
             )
