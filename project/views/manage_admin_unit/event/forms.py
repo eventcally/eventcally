@@ -286,13 +286,6 @@ class EventFormMixin(object):
     date_definition_template = FormField(
         EventDateDefinitionForm, default=lambda: EventDateDefinition()
     )
-    previous_start_date = CustomDateTimeField(
-        lazy_gettext("Previous start date"),
-        validators=[Optional()],
-        description=lazy_gettext(
-            "Enter when the event should have taken place before it was postponed."
-        ),
-    )
     categories = AjaxSelectMultipleField(
         EventCategoryAjaxModelLoader(),
         lazy_gettext("Categories"),
@@ -441,7 +434,6 @@ class CreateForm(BaseCreateForm, EventFormMixin):
             target_group_origin=EventTargetGroupOrigin(self.target_group_origin.data),
             attendance_mode=EventAttendanceMode(self.attendance_mode.data),
             photo=self.photo.form.create_create_command(),
-            previous_start_date=self.previous_start_date.data,
             category_ids=category_ids,
             custom_category_ids=custom_category_ids,
             rating=self.rating.data,
@@ -546,7 +538,6 @@ class UpdateForm(BaseUpdateForm, EventFormMixin):
             target_group_origin=EventTargetGroupOrigin(self.target_group_origin.data),
             attendance_mode=EventAttendanceMode(self.attendance_mode.data),
             photo=self.photo.form.create_update_command(),
-            previous_start_date=self.previous_start_date.data,
             category_ids=category_ids,
             custom_category_ids=custom_category_ids,
             rating=self.rating.data,

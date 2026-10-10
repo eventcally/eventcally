@@ -123,7 +123,6 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
         command = UpdateEventCommand.model_construct(
             id=event_id, date_definitions=[date_definition]
         )
-        command.previous_start_date = create_berlin_date(2030, 12, 30, 14, 30)
         command.external_link = "www.goslar.de"
         command.ticket_link = "www.tickets.de"
         command.accessible_for_free = True
@@ -144,7 +143,7 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
 
         assert result["startDate"] == date_definition.start
         assert result["endDate"] == date_definition.end
-        assert result["previousStartDate"] == event.previous_start_date
+        assert "previousStartDate" not in result
         assert result["isAccessibleForFree"]
         assert result["url"][0] == utils.get_url("main.event_date", id=event_date.id)
         assert result["url"][1] == "www.goslar.de"

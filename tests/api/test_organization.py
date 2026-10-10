@@ -329,6 +329,19 @@ def test_events_post(client, seeder: Seeder, utils: UtilActions, app, variant):
             assert len(event.date_definitions) == 1
 
 
+def test_events_post_deprecatedPreviousStartDate_isIgnored(
+    client, seeder: Seeder, utils: UtilActions, app
+):
+    url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
+        seeder, utils
+    )
+    data["previous_start_date"] = "2021-02-07T10:00:00+01:00"
+
+    response = utils.post_json(url, data)
+    utils.assert_response_created(response)
+    assert "id" in response.json
+
+
 def test_events_post_co_organizers(client, seeder: Seeder, utils: UtilActions, app, db):
     url, data, admin_unit_id, place_id, organizer_id = prepare_events_post_data(
         seeder, utils

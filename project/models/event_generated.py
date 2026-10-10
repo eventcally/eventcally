@@ -145,10 +145,6 @@ class EventGeneratedMixin(TrackableMixin):
         return Column(IntegerEnum(EventStatus), nullable=True)
 
     @declared_attr
-    def previous_start_date(cls):
-        return Column(DateTime(timezone=True), nullable=True)
-
-    @declared_attr
     def rating(cls):
         return Column(Integer(), default=50, nullable=True)
 

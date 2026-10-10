@@ -135,9 +135,9 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
         metadata={"description": "Select the status of the event."},
     )
     previous_start_date = CustomDateTimeField(
-        metadata={
-            "description": "When the event should have taken place before it was postponed."
-        },
+        dump_only=True,
+        dump_default=None,
+        metadata={"description": "Deprecated. Always null."},
     )
     registration_required = marshmallow.auto_field(
         load_default=False,
@@ -480,12 +480,6 @@ class EventCreateRequestPlainSchema(PlainBaseSchema):
         load_default=EventStatus.scheduled,
         metadata={"description": "Select the status of the event."},
     )
-    previous_start_date = CustomDateTimeField(
-        load_default=None,
-        metadata={
-            "description": "When the event should have taken place before it was postponed."
-        },
-    )
     registration_required = fields.Bool(
         load_default=False,
         metadata={
@@ -570,6 +564,7 @@ class EventCreateRequestPlainSchema(PlainBaseSchema):
             if "date_definitions" not in data:
                 data["date_definitions"] = [{"start": data["start"]}]
             data.pop("start")
+        data.pop("previous_start_date", None)
         return data
 
     @post_load
@@ -640,12 +635,6 @@ class EventPutRequestPlainSchema(PlainBaseSchema):
         load_default=EventStatus.scheduled,
         metadata={"description": "Select the status of the event."},
     )
-    previous_start_date = CustomDateTimeField(
-        load_default=None,
-        metadata={
-            "description": "When the event should have taken place before it was postponed."
-        },
-    )
     registration_required = fields.Bool(
         load_default=False,
         metadata={
@@ -730,6 +719,7 @@ class EventPutRequestPlainSchema(PlainBaseSchema):
             if "date_definitions" not in data:
                 data["date_definitions"] = [{"start": data["start"]}]
             data.pop("start")
+        data.pop("previous_start_date", None)
         return data
 
     @post_load
@@ -799,12 +789,6 @@ class EventPatchRequestPlainSchema(PlainBaseSchema):
         EventStatus,
         allow_none=True,
         metadata={"description": "Select the status of the event."},
-    )
-    previous_start_date = CustomDateTimeField(
-        allow_none=True,
-        metadata={
-            "description": "When the event should have taken place before it was postponed."
-        },
     )
     registration_required = fields.Bool(
         allow_none=True,
@@ -885,6 +869,11 @@ class EventPatchRequestPlainSchema(PlainBaseSchema):
             "description": "Comma separated keywords for internal use. These will not be published. Only visible with corresponding rights."
         },
     )
+
+    @pre_load()
+    def handle_deprecated_fields(self, data, **kwargs):
+        data.pop("previous_start_date", None)
+        return data
 
     @post_load
     def make_instance(self, data, **kwargs):

@@ -1,4 +1,3 @@
-import datetime
 from typing import List, Set
 
 from project.domain.events.nested.image_for_event import ImageForEvent
@@ -55,9 +54,6 @@ class EventUpdated(Event):
         OptionalChangedValueField()
     )
     attendance_mode: OptionalChangedOptionalValue[EventAttendanceMode] = (
-        OptionalChangedValueField()
-    )
-    previous_start_date: OptionalChangedOptionalValue[datetime.datetime] = (
         OptionalChangedValueField()
     )
     category_ids: OptionalChangedValue[Set[ObjectId]] = OptionalChangedValueField()

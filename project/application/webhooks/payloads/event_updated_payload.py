@@ -75,6 +75,7 @@ class EventUpdatedPayload(WebhookPayloadBase):
     attendance_mode: OptionalChangedOptionalValue[WebhookEventAttendanceMode] = (
         OptionalChangedValueField()
     )
+    # Deprecated: kept for webhook schema compatibility. Never sent.
     previous_start_date: OptionalChangedOptionalValue[datetime.datetime] = (
         OptionalChangedValueField()
     )
@@ -128,7 +129,6 @@ class EventUpdatedPayload(WebhookPayloadBase):
             attendance_mode=map_changed_value(
                 e.attendance_mode, WebhookEventAttendanceMode.from_domain_enum
             ),
-            previous_start_date=e.previous_start_date,
             category_ids=e.category_ids,
             custom_category_ids=e.custom_category_ids,
             rating=e.rating,

@@ -1,4 +1,3 @@
-import datetime
 from typing import List, Optional, Set
 
 from project.domain.events.nested.image_for_event import ImageForEvent
@@ -41,7 +40,6 @@ class EventCreated(Event):
     price_info: Optional[str] = None
     target_group_origin: Optional[EventTargetGroupOrigin] = None
     attendance_mode: Optional[EventAttendanceMode] = None
-    previous_start_date: Optional[datetime.datetime] = None
     category_ids: Optional[Set[ObjectId]] = None
     custom_category_ids: Optional[Set[ObjectId]] = None
     rating: Optional[int] = None

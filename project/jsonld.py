@@ -115,9 +115,6 @@ def get_sd_for_event_date(event_date):
     if event_date.end:
         result["endDate"] = event_date.end
 
-    if event.previous_start_date:
-        result["previousStartDate"] = event.previous_start_date
-
     if event_date.allday:
         result["startDate"] = get_date_from_datetime(result["startDate"])
 

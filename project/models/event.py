@@ -58,7 +58,6 @@ class Event(db.Model, EventGeneratedMixin):
         self.price_info = aggregate.price_info
         self.target_group_origin = aggregate.target_group_origin
         self.attendance_mode = aggregate.attendance_mode
-        self.previous_start_date = aggregate.previous_start_date
         self.category_ids = aggregate.category_ids
         self.custom_category_ids = aggregate.custom_category_ids
         self.rating = aggregate.rating
@@ -142,7 +141,6 @@ class Event(db.Model, EventGeneratedMixin):
             "attendance_mode": (
                 model.attendance_mode.value if model.attendance_mode else None
             ),
-            "previous_start_date": model.previous_start_date,
             "category_ids": {c.id for c in model.categories},
             "custom_category_ids": {c.id for c in model.custom_categories},
             "rating": model.rating,

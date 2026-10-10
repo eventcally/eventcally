@@ -79,7 +79,6 @@ def _make_create_cmd(admin_unit_id, organizer_id, event_place_id, **kwargs):
         target_group_origin=None,
         attendance_mode=None,
         photo=None,
-        previous_start_date=None,
         category_ids=[],
         custom_category_ids=[],
         rating=None,
