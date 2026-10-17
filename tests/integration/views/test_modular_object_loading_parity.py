@@ -25,7 +25,7 @@ def _set_location_and_image(app, db, seeder, table, image_column, object_id):
     image_id = seeder.upsert_default_image()
 
     with app.app_context():
-        from project.models import Location
+        from project.infrastructure.models import Location
 
         location = Location(
             street="Markt 1",

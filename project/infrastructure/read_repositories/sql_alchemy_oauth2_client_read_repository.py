@@ -20,12 +20,12 @@ from project.application.read_repositories.abstract_oauth2_client_read_repositor
     AbstractOAuth2ClientReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import AdminUnit, OAuth2Client
 from project.infrastructure.read_repositories.query_helpers import paginate
 from project.infrastructure.read_repositories.read_model_mappers import (
     audit_options,
     to_audit_read_model,
 )
-from project.models import AdminUnit, OAuth2Client
 
 
 class SqlAlchemyOAuth2ClientReadRepository(AbstractOAuth2ClientReadRepository):

@@ -23,6 +23,12 @@ from project.domain.models.enums.event_reference_request_review_status import (
     EventReferenceRequestReviewStatus,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import (
+    AdminUnit,
+    AdminUnitRelation,
+    Event,
+    EventReferenceRequest,
+)
 from project.infrastructure.read_repositories.query_helpers import (
     paginate,
     trackable_filters,
@@ -34,7 +40,6 @@ from project.infrastructure.read_repositories.read_model_mappers import (
     to_event_ref_read_model,
     to_organization_ref_read_model,
 )
-from project.models import AdminUnit, AdminUnitRelation, Event, EventReferenceRequest
 
 EventAdminUnit = aliased(AdminUnit)
 

@@ -25,7 +25,7 @@ def test_create(client, app, seeder: Seeder, utils: UtilActions):
     )
 
     with app.app_context():
-        from project.models import ApiKey
+        from project.infrastructure.models import ApiKey
 
         api_key = ApiKey.query.filter(ApiKey.admin_unit_id == admin_unit_id).first()
         assert api_key is not None

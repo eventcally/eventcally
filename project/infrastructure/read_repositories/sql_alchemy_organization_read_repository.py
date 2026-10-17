@@ -22,6 +22,7 @@ from project.application.read_repositories.abstract_organization_read_repository
     AbstractOrganizationReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import AdminUnit, Image, Location
 from project.infrastructure.read_repositories.event_read_model_mappers import (
     to_organization_embed,
 )
@@ -34,7 +35,6 @@ from project.infrastructure.read_repositories.read_model_mappers import (
     to_image_read_model,
     to_location_read_model,
 )
-from project.models import AdminUnit, Image, Location
 
 
 class SqlAlchemyOrganizationReadRepository(AbstractOrganizationReadRepository):

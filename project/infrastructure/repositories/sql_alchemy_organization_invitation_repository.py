@@ -7,8 +7,8 @@ from project.domain.models.aggregates.admin_unit_invitation_aggregate import (
     AdminUnitInvitationAggregate,
 )
 from project.domain.repositories import AbstractOrganizationInvitationRepository
+from project.infrastructure.models.admin_unit import AdminUnitInvitation
 from project.infrastructure.sql_error_translation import flush
-from project.models.admin_unit import AdminUnitInvitation
 
 
 class SqlAlchemyOrganizationInvitationRepository(

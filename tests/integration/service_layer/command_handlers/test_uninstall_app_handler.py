@@ -1,7 +1,7 @@
 from project.application import commands
 from project.domain import events
 from project.domain.models.entities.actor import Actor
-from project.models import AppInstallation
+from project.infrastructure.models import AppInstallation
 
 
 def test_uninstall_app_command_removes_app_installation(app, db, seeder):

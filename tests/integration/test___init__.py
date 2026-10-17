@@ -102,7 +102,7 @@ def test_migration_public_status(app, seeder):
     from flask_migrate import upgrade
 
     from project.extensions import db
-    from project.models import Event, EventPublicStatus
+    from project.infrastructure.models import Event, EventPublicStatus
 
     with app.app_context():
         drop_db(db)
@@ -121,7 +121,7 @@ def test_migration_event_definitions(app, seeder):
     from flask_migrate import upgrade
 
     from project.extensions import db
-    from project.models import Event
+    from project.infrastructure.models import Event
 
     with app.app_context():
         drop_db(db)

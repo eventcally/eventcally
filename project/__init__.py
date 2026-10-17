@@ -235,7 +235,7 @@ def create_app(config_override: dict | None = None) -> Flask:
     )
 
     # Setup Flask-Security
-    from project.models import Role, User
+    from project.infrastructure.models import Role, User
 
     user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
     security.init_app(

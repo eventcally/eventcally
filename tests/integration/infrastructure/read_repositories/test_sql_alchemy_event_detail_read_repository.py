@@ -82,7 +82,7 @@ def test_reference_requests(app, db, seeder, read_repo, world):
 
 
 def test_audit_labels_come_from_the_creator(app, db, seeder, read_repo, world):
-    from project.models import Event, User
+    from project.infrastructure.models import Event, User
 
     with app.app_context():
         user = User.query.first()

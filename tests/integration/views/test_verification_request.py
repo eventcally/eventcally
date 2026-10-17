@@ -46,7 +46,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     assert app.test_email_service.sent_emails[0]["recipient"] == "test@test.de"
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             AdminUnitVerificationRequest,
             AdminUnitVerificationRequestReviewStatus,
         )
@@ -160,7 +160,7 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_
     )
 
     with app.app_context():
-        from project.models import AdminUnitVerificationRequest
+        from project.infrastructure.models import AdminUnitVerificationRequest
 
         request = db.session.get(AdminUnitVerificationRequest, request_id)
         assert request is None

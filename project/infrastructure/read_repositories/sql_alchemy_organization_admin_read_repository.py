@@ -14,12 +14,12 @@ from project.application.read_repositories.abstract_organization_admin_read_repo
     AbstractOrganizationAdminReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import AdminUnit
 from project.infrastructure.read_repositories.query_helpers import paginate
 from project.infrastructure.read_repositories.read_model_mappers import (
     audit_options,
     to_audit_read_model,
 )
-from project.models import AdminUnit
 from project.utils import parse_like_term
 
 

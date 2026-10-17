@@ -27,13 +27,13 @@ from project.application.read_repositories.abstract_reference_data_read_reposito
     AbstractReferenceDataReadRepository,
 )
 from project.domain.types.object_id import ObjectId
-from project.infrastructure.read_repositories.query_helpers import paginate
-from project.models import (
+from project.infrastructure.models import (
     CustomEventCategory,
     CustomEventCategorySet,
     EventCategory,
     License,
 )
+from project.infrastructure.read_repositories.query_helpers import paginate
 from project.utils import parse_like_term
 
 

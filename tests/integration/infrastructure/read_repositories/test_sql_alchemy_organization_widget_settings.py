@@ -23,7 +23,7 @@ def test_configured_colors_come_as_hex_like_the_color_object(app, db, seeder):
     _, admin_unit_id = seeder.setup_base(log_in=False)
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.widget_font = "Arial"
@@ -53,7 +53,7 @@ def test_verifiers_serving_a_postal_code(app, db, seeder):
     )
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         verifier = db.session.get(AdminUnit, verifier_id)
         verifier.can_verify_other = True

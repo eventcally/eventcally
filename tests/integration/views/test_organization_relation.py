@@ -8,7 +8,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, db):
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.can_verify_other = True
@@ -48,7 +48,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, db):
     )
 
     with app.app_context():
-        from project.models import AdminUnitRelation
+        from project.infrastructure.models import AdminUnitRelation
 
         relation = (
             AdminUnitRelation.query.filter(
@@ -71,7 +71,7 @@ def test_update(client, app, utils, seeder, db):
     ) = seeder.create_any_admin_unit_relation(admin_unit_id)
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.can_verify_other = True
@@ -98,7 +98,7 @@ def test_update(client, app, utils, seeder, db):
     )
 
     with app.app_context():
-        from project.models import AdminUnitRelation
+        from project.infrastructure.models import AdminUnitRelation
 
         relation = db.session.get(AdminUnitRelation, relation_id)
         assert relation is not None
@@ -132,7 +132,7 @@ def test_delete(client, app, utils, seeder, db):
     )
 
     with app.app_context():
-        from project.models import AdminUnitRelation
+        from project.infrastructure.models import AdminUnitRelation
 
         relation = db.session.get(AdminUnitRelation, relation_id)
         assert relation is None

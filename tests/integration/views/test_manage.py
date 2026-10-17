@@ -211,7 +211,7 @@ def test_admin_unit_events_place(app, client, seeder: Seeder, utils: UtilActions
         "manage_admin_unit.events", id=admin_unit_id, event_place_id=event_place_id
     )
 
-    from project.models import Location
+    from project.infrastructure.models import Location
 
     place_id = seeder.upsert_event_place(
         admin_unit_id,
@@ -448,6 +448,6 @@ def test_manage_admin_unit_delete_membership(
     utils.assert_response_redirect(response, "user.organization_members")
 
     with app.app_context():
-        from project.models import AdminUnitMember
+        from project.infrastructure.models import AdminUnitMember
 
         assert db.session.get(AdminUnitMember, member_id) is None

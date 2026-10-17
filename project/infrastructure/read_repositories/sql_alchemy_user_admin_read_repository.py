@@ -14,8 +14,8 @@ from project.application.read_repositories.abstract_user_admin_read_repository i
     AbstractUserAdminReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import Role, User
 from project.infrastructure.read_repositories.query_helpers import count
-from project.models import Role, User
 
 
 class SqlAlchemyUserAdminReadRepository(AbstractUserAdminReadRepository):

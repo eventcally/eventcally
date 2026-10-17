@@ -55,7 +55,7 @@ def _normalize_timestamps(db):
 
 
 def seed_event_world(app, db, seeder):
-    from project.models import (
+    from project.infrastructure.models import (
         CustomEventCategory,
         Event,
         EventCategory,

@@ -36,7 +36,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     )
 
     with app.app_context():
-        from project.models import EventPlace
+        from project.infrastructure.models import EventPlace
 
         place = (
             EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
@@ -78,7 +78,7 @@ def test_update(client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_
     )
 
     with app.app_context():
-        from project.models import EventPlace
+        from project.infrastructure.models import EventPlace
 
         place = db.session.get(EventPlace, place_id)
         assert place.name == "Neuer Name"
@@ -90,7 +90,7 @@ def test_update_location(
 ):
     _, admin_unit_id = seeder.setup_base()
 
-    from project.models import Location
+    from project.infrastructure.models import Location
 
     place_id = seeder.upsert_event_place(
         admin_unit_id,
@@ -213,7 +213,7 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     )
 
     with app.app_context():
-        from project.models import EventPlace
+        from project.infrastructure.models import EventPlace
 
         place = db.session.get(EventPlace, place_id)
         assert place is None
@@ -345,7 +345,7 @@ def test_list_renders_list_actions(client, utils, listed_places):
 
 
 def test_list_renders_photo_and_coordinates(client, app, db, seeder, utils):
-    from project.models import EventPlace, Location
+    from project.infrastructure.models import EventPlace, Location
 
     _, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_event_place(admin_unit_id, "Mit Foto")

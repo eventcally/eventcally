@@ -27,13 +27,7 @@ from project.application.read_models.reference_data_read_models import (
     EventCategoryRefReadModel,
 )
 from project.domain.types.object_id import ObjectId
-from project.infrastructure.read_repositories.read_model_mappers import (
-    _actor_label,
-    to_image_edit_read_model,
-    to_image_read_model,
-    to_location_read_model,
-)
-from project.models import (
+from project.infrastructure.models import (
     AdminUnit,
     AppInstallation,
     CustomEventCategory,
@@ -46,6 +40,12 @@ from project.models import (
     Image,
     OAuth2Client,
     User,
+)
+from project.infrastructure.read_repositories.read_model_mappers import (
+    _actor_label,
+    to_image_edit_read_model,
+    to_image_read_model,
+    to_location_read_model,
 )
 
 

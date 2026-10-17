@@ -26,7 +26,7 @@ def _create_org(app, db, seeder, user_id, name, allowed=True):
     org_id = seeder.create_admin_unit(user_id, name)
     if not allowed:
         with app.app_context():
-            from project.models import AdminUnit
+            from project.infrastructure.models import AdminUnit
 
             db.session.get(AdminUnit, org_id).incoming_reference_requests_allowed = (
                 False

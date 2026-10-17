@@ -27,8 +27,7 @@ from project.domain.models.value_objects.event_date_definition_value_object impo
     EventDateDefinitionValueObject,
 )
 from project.extensions import db
-from project.init_data import create_initial_data
-from project.models import (
+from project.infrastructure.models import (
     AdminUnit,
     AdminUnitInvitation,
     AdminUnitMember,
@@ -40,6 +39,7 @@ from project.models import (
     Location,
     OAuth2Client,
 )
+from project.init_data import create_initial_data
 from project.user_datastore import (
     create_user,
     find_user_by_email,
@@ -64,7 +64,7 @@ def _get_now_by_minute():
 def _get_default_event_place_id(admin_unit_id):
     from sqlalchemy import func
 
-    from project.models import EventPlace
+    from project.infrastructure.models import EventPlace
 
     return (
         EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)

@@ -9,10 +9,10 @@ def _create_webhook_delivery(app, db, seeder, admin_unit_id):
     app_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
 
     with app.app_context():
-        from project.models.oauth import OAuth2Client
-        from project.models.webhook import Webhook
-        from project.models.webhook_delivery import WebhookDelivery
-        from project.models.webhook_event import WebhookEvent
+        from project.infrastructure.models.oauth import OAuth2Client
+        from project.infrastructure.models.webhook import Webhook
+        from project.infrastructure.models.webhook_delivery import WebhookDelivery
+        from project.infrastructure.models.webhook_event import WebhookEvent
 
         oauth2_client = db.session.get(OAuth2Client, app_id)
 
@@ -46,7 +46,9 @@ def _create_webhook_delivery(app, db, seeder, admin_unit_id):
 def _create_webhook_delivery_attempt(app, db, webhook_delivery_id):
     """Create a WebhookDeliveryAttempt for the given delivery."""
     with app.app_context():
-        from project.models.webhook_delivery_attempt import WebhookDeliveryAttempt
+        from project.infrastructure.models.webhook_delivery_attempt import (
+            WebhookDeliveryAttempt,
+        )
 
         now = datetime.datetime.now(datetime.timezone.utc)
         attempt = WebhookDeliveryAttempt()
@@ -160,8 +162,8 @@ def test_webhook_delivery_child_view_handler_check_object_access_abort(
 
     # Create a second delivery for the SAME app
     with app.app_context():
-        from project.models.webhook_delivery import WebhookDelivery
-        from project.models.webhook_event import WebhookEvent
+        from project.infrastructure.models.webhook_delivery import WebhookDelivery
+        from project.infrastructure.models.webhook_event import WebhookEvent
 
         webhook_event_2 = WebhookEvent()
         webhook_event_2.event_type = "app.installed"
@@ -169,7 +171,7 @@ def test_webhook_delivery_child_view_handler_check_object_access_abort(
         webhook_event_2.payload = {}
         db.session.add(webhook_event_2)
 
-        from project.models.oauth import OAuth2Client
+        from project.infrastructure.models.oauth import OAuth2Client
 
         oauth2_client = db.session.get(OAuth2Client, app_id)
         webhook_2 = oauth2_client.webhook

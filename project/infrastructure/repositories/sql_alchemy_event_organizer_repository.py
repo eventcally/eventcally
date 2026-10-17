@@ -6,7 +6,7 @@ from project.domain.models.aggregates.event_organizer_aggregate import (
     EventOrganizerAggregate,
 )
 from project.domain.repositories import AbstractEventOrganizerRepository
-from project.models.event_organizer import EventOrganizer
+from project.infrastructure.models.event_organizer import EventOrganizer
 
 
 class SqlAlchemyEventOrganizerRepository(AbstractEventOrganizerRepository):

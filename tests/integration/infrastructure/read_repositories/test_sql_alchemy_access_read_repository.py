@@ -53,7 +53,7 @@ def test_member_organizations_in_membership_order(access, seeder, world):
 
 
 def test_resource_owners(app, db, seeder, access, world):
-    from project.models import EventOrganizer
+    from project.infrastructure.models import EventOrganizer
 
     with app.app_context():
         organizer_id = (
@@ -145,7 +145,7 @@ def test_reference_requests_are_accepted_by_other_organizations(access, world):
 
 
 def test_who_may_ask_whom_for_verification(app, db, seeder, access, world):
-    from project.models import AdminUnit
+    from project.infrastructure.models import AdminUnit
 
     with app.app_context():
         for admin_unit_id in (world["b"],):
@@ -176,7 +176,7 @@ def test_who_may_ask_whom_for_verification(app, db, seeder, access, world):
 
 
 def test_settings_carry_everything_the_forms_show(app, db, access, world):
-    from project.models import AdminUnit
+    from project.infrastructure.models import AdminUnit
 
     with app.app_context():
         admin_unit = db.session.get(AdminUnit, world["a"])
@@ -204,7 +204,7 @@ def test_settings_carry_everything_the_forms_show(app, db, access, world):
 
 def _set_review_status(app, db, model_name, request_id, status_name):
     with app.app_context():
-        import project.models as models
+        import project.infrastructure.models as models
 
         model = getattr(models, model_name)
         status = getattr(getattr(models, f"{model_name}ReviewStatus"), status_name)
@@ -250,7 +250,7 @@ def test_member_grants_of_owner_event_verifier_and_non_member(access, app, db, s
     stranger_id = seeder.create_user("stranger@test.de")
 
     with app.app_context():
-        from project.models import AdminUnitMemberRole, User
+        from project.infrastructure.models import AdminUnitMemberRole, User
 
         expected = {
             role.name: list(role.permissions)

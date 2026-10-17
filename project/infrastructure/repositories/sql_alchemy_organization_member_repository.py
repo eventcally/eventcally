@@ -6,9 +6,9 @@ from project.domain.models.aggregates.organization_member_aggregate import (
 from project.domain.repositories.abstract_organization_member_repository import (
     AbstractOrganizationMemberRepository,
 )
+from project.infrastructure.models.admin_unit import AdminUnitMember
+from project.infrastructure.models.user import User
 from project.infrastructure.sql_error_translation import flush
-from project.models.admin_unit import AdminUnitMember
-from project.models.user import User
 
 
 class SqlAlchemyOrganizationMemberRepository(AbstractOrganizationMemberRepository):

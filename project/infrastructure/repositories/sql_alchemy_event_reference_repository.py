@@ -6,8 +6,8 @@ from project.domain.models.aggregates.event_reference_aggregate import (
 from project.domain.repositories.abstract_event_reference_repository import (
     AbstractEventReferenceRepository,
 )
+from project.infrastructure.models.event_reference import EventReference
 from project.infrastructure.sql_error_translation import flush
-from project.models.event_reference import EventReference
 
 
 class SqlAlchemyEventReferenceRepository(AbstractEventReferenceRepository):

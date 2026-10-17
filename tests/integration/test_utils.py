@@ -6,7 +6,7 @@ def test_get_location_str_none(client, seeder, app, utils):
 
 
 def test_get_location_str_empty(client, seeder, app, utils):
-    from project.models import Location
+    from project.infrastructure.models import Location
     from project.utils import get_location_str
 
     location = Location()
@@ -16,7 +16,7 @@ def test_get_location_str_empty(client, seeder, app, utils):
 
 
 def test_get_location_str_full(client, seeder, app, utils):
-    from project.models import Location
+    from project.infrastructure.models import Location
     from project.utils import get_location_str
 
     location = Location()
@@ -29,7 +29,7 @@ def test_get_location_str_full(client, seeder, app, utils):
 
 
 def test_get_location_str_no_street(client, seeder, app, utils):
-    from project.models import Location
+    from project.infrastructure.models import Location
     from project.utils import get_location_str
 
     location = Location()
@@ -41,7 +41,7 @@ def test_get_location_str_no_street(client, seeder, app, utils):
 
 
 def test_get_place_str_full(client, seeder, app, utils):
-    from project.models import EventPlace, Location
+    from project.infrastructure.models import EventPlace, Location
     from project.utils import get_place_str
 
     place = EventPlace()
@@ -63,7 +63,7 @@ def test_get_place_str_none(client, seeder, app, utils):
 
 
 def test_get_place_str_no_location(client, seeder, app, utils):
-    from project.models import EventPlace
+    from project.infrastructure.models import EventPlace
     from project.utils import get_place_str
 
     place = EventPlace()

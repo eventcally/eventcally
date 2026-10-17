@@ -4,7 +4,7 @@ from tests.integration.seeder import Seeder
 
 
 def test_location_update_coordinate(client, app, db):
-    from project.models import Location
+    from project.infrastructure.models import Location
 
     location = Location()
     location.latitude = 51.9077888
@@ -73,7 +73,7 @@ def test_event_category(client, app, db, seeder: Seeder):
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = db.session.get(Event, event_id)
         event.categories = []
@@ -87,7 +87,7 @@ def test_event_properties(client, app, db, seeder: Seeder):
         from sqlalchemy.exc import IntegrityError
 
         from project.dateutils import create_berlin_date
-        from project.models import Event, EventDateDefinition
+        from project.infrastructure.models import Event, EventDateDefinition
 
         event = Event()
         assert event.min_start_definition is None
@@ -135,7 +135,7 @@ def test_event_allday(client, app, db, seeder: Seeder):
     )
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         # With Start
         event = db.session.get(Event, event_with_start_id)
@@ -170,7 +170,7 @@ def test_event_has_multiple_dates(client, app, db, seeder: Seeder):
     event_without_recc_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event_with_recc = db.session.get(Event, event_with_recc_id)
         assert event_with_recc.has_multiple_dates() is True
@@ -182,7 +182,7 @@ def test_event_has_multiple_dates(client, app, db, seeder: Seeder):
 def test_oauth2_token(client, app, seeder: Seeder):
     import time
 
-    from project.models import OAuth2Token
+    from project.infrastructure.models import OAuth2Token
 
     token = OAuth2Token()
     token.access_token_revoked_at = int(time.time())
@@ -246,7 +246,7 @@ def test_event_date_defintion_deletion(client, app, db, seeder: Seeder):
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
-        from project.models import Event, EventDateDefinition
+        from project.infrastructure.models import Event, EventDateDefinition
 
         # Initial eine Definition
         event = db.session.get(Event, event_id)
@@ -309,7 +309,7 @@ def test_admin_unit_deletion(client, app, db, seeder: Seeder):
 
     with app.app_context():
         from project.cli.seed_helpers import get_admin_unit_by_id
-        from project.models import (
+        from project.infrastructure.models import (
             AdminUnit,
             AdminUnitMemberInvitation,
             AdminUnitRelation,
@@ -373,7 +373,7 @@ def test_event_co_organizers_deletion(client, app, db, seeder: Seeder):
     )
 
     with app.app_context():
-        from project.models import Event, EventOrganizer
+        from project.infrastructure.models import Event, EventOrganizer
 
         event = db.session.get(Event, event_id)
         assert len(event.co_organizers) == 2
@@ -397,7 +397,7 @@ def test_admin_unit_verification(client, app, db, seeder: Seeder):
     other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
 
     with app.app_context():
-        from project.models import AdminUnit, AdminUnitRelation
+        from project.infrastructure.models import AdminUnit, AdminUnitRelation
 
         new_admin_unit = AdminUnit()
         assert not new_admin_unit.is_verified
@@ -438,7 +438,7 @@ def test_admin_unit_relation_self_reference(client, app, db, seeder: Seeder):
     with app.app_context():
         from sqlalchemy.exc import IntegrityError
 
-        from project.models import AdminUnitRelation
+        from project.infrastructure.models import AdminUnitRelation
 
         relation = AdminUnitRelation(
             source_admin_unit_id=admin_unit_id,
@@ -456,7 +456,7 @@ def test_admin_unit_invitations(client, app, db, seeder: Seeder):
 
     with app.app_context():
         from project.cli.seed_helpers import get_admin_unit_by_id
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         assert len(admin_unit.admin_unit_invitations) == 1
@@ -476,7 +476,7 @@ def test_purge_event_photo(client, app, db, seeder: Seeder):
     seeder.assign_image_to_event(event_id, first_image_id)
 
     with app.app_context():
-        from project.models import Event, Image
+        from project.infrastructure.models import Event, Image
 
         event = db.session.get(Event, event_id)
         assert event.photo is not None
@@ -498,7 +498,7 @@ def test_purge_event_place_photo(client, app, db, seeder: Seeder):
     second_image_id = seeder.upsert_default_image()
 
     with app.app_context():
-        from project.models import EventPlace, Image
+        from project.infrastructure.models import EventPlace, Image
 
         place = db.session.get(EventPlace, place_id)
         place.photo = db.session.get(Image, first_image_id)
@@ -535,7 +535,7 @@ def test_purge_adminunit(client, app, db, seeder: Seeder):
     location_id = seeder.create_location(street="Street")
 
     with app.app_context():
-        from project.models import AdminUnit, Image, Location
+        from project.infrastructure.models import AdminUnit, Image, Location
 
         instance = db.session.get(AdminUnit, instance_id)
         instance.logo = db.session.get(Image, image_id)
@@ -567,7 +567,7 @@ def test_purge_eventorganizer(client, app, db, seeder: Seeder):
     location_id = seeder.create_location(street="Street")
 
     with app.app_context():
-        from project.models import EventOrganizer, Image, Location
+        from project.infrastructure.models import EventOrganizer, Image, Location
 
         instance = db.session.get(EventOrganizer, instance_id)
         instance.logo = db.session.get(Image, image_id)
@@ -600,7 +600,12 @@ def test_delete_admin_unit(client, app, db, seeder: Seeder):
 
     with app.app_context():
         from project.cli.seed_helpers import delete_admin_unit
-        from project.models import AdminUnit, EventOrganizer, Image, Location
+        from project.infrastructure.models import (
+            AdminUnit,
+            EventOrganizer,
+            Image,
+            Location,
+        )
 
         instance = db.session.get(EventOrganizer, instance_id)
         instance.logo = db.session.get(Image, image_id)
@@ -628,7 +633,12 @@ def test_delete_user(client, app, db, seeder: Seeder):
     event_id = seeder.create_event(admin_unit_id, created_by_id=user_id)
 
     with app.app_context():
-        from project.models import AdminUnit, AdminUnitMember, Event, User
+        from project.infrastructure.models import (
+            AdminUnit,
+            AdminUnitMember,
+            Event,
+            User,
+        )
         from project.user_datastore import delete_user
 
         user = db.session.get(User, user_id)
@@ -651,7 +661,7 @@ def test_event_place_str(client, app, db, seeder: Seeder):
     place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
 
     with app.app_context():
-        from project.models import EventPlace
+        from project.infrastructure.models import EventPlace
 
         assert str(db.session.get(EventPlace, place_id)) == "Mein Ort"
 
@@ -661,7 +671,12 @@ def test_display_strings_of_models_used_by_flask_admin(client, app, db, seeder: 
     client_id = seeder.insert_default_oauth2_client(user_id)
 
     with app.app_context():
-        from project.models import AdminUnitMember, OAuth2Client, OAuth2Token, User
+        from project.infrastructure.models import (
+            AdminUnitMember,
+            OAuth2Client,
+            OAuth2Token,
+            User,
+        )
 
         user = db.session.get(User, user_id)
         member = AdminUnitMember.query.filter_by(user_id=user_id).first()

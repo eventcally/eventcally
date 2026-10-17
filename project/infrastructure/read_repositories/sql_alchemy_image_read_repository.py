@@ -11,7 +11,7 @@ from project.application.read_repositories.abstract_image_read_repository import
     AbstractImageReadRepository,
 )
 from project.domain.types.object_id import ObjectId
-from project.models import Image
+from project.infrastructure.models import Image
 
 
 class SqlAlchemyImageReadRepository(AbstractImageReadRepository):

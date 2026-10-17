@@ -74,7 +74,7 @@ def test_get_calendar_links(client, seeder, utils, app, db, mocker):
     with app.test_request_context():
         with app.app_context():
             from project.dateutils import create_berlin_date
-            from project.models import Event, EventAttendanceMode
+            from project.infrastructure.models import Event, EventAttendanceMode
             from project.views.utils import get_calendar_links_for_event_date
 
             utils.mock_now(mocker, 2020, 1, 3)
@@ -192,7 +192,7 @@ def test_get_meta_data(seeder, app, db):
     photo_id = seeder.upsert_default_image()
 
     with app.app_context():
-        from project.models import Event, EventAttendanceMode, Location
+        from project.infrastructure.models import Event, EventAttendanceMode, Location
         from project.views.utils import get_meta_data
 
         event = db.session.get(Event, event_id)
@@ -219,7 +219,7 @@ def test_create_ical_events_for_event(client, app, db, utils, seeder):
 
     with app.app_context():
         from project.ical import create_ical_events_for_event
-        from project.models import Event, EventStatus, Location
+        from project.infrastructure.models import Event, EventStatus, Location
 
         event = db.session.get(Event, event_id)
         event.description = "This is a fantastic event. Watch out!"

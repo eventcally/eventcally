@@ -22,6 +22,7 @@ from project.application.read_repositories.abstract_organization_invitation_read
     AbstractOrganizationInvitationReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import AdminUnit, AdminUnitInvitation, User
 from project.infrastructure.read_repositories.query_helpers import (
     paginate,
     trackable_filters,
@@ -30,7 +31,6 @@ from project.infrastructure.read_repositories.read_model_mappers import (
     audit_options,
     to_audit_read_model,
 )
-from project.models import AdminUnit, AdminUnitInvitation, User
 
 # Every ordering ends with the id, which is also the default order.
 _SORT_ORDER = {

@@ -22,7 +22,7 @@ def test_create(client, app, utils, seeder):
     )
 
     with app.app_context():
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         invitation = (
             AdminUnitInvitation.query.filter(
@@ -53,7 +53,7 @@ def test_update(client, app, db, utils, seeder):
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.can_verify_other = True
@@ -81,7 +81,7 @@ def test_update(client, app, db, utils, seeder):
     )
 
     with app.app_context():
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation.admin_unit_name == "Renamed Organization"
@@ -113,6 +113,6 @@ def test_revoke(client, app, db, utils, seeder):
     )
 
     with app.app_context():
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         assert db.session.get(AdminUnitInvitation, invitation_id) is None

@@ -4,7 +4,7 @@ from project.domain.events.event_place_created import EventPlaceCreated
 from project.domain.events.event_place_updated import EventPlaceUpdated
 from project.domain.models.aggregates.event_place_aggregate import EventPlaceAggregate
 from project.domain.repositories import AbstractEventPlaceRepository
-from project.models.event_place import EventPlace
+from project.infrastructure.models.event_place import EventPlace
 
 
 class SqlAlchemyEventPlaceRepository(AbstractEventPlaceRepository):

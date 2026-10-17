@@ -9,15 +9,15 @@ from project.application.read_repositories.abstract_reference_request_suggestion
     AbstractReferenceRequestSuggestionReadRepository,
 )
 from project.domain.types.object_id import ObjectId
-from project.infrastructure.read_repositories.read_model_mappers import (
-    to_organization_ref_read_model,
-)
-from project.models import (
+from project.infrastructure.models import (
     AdminUnit,
     AdminUnitRelation,
     Event,
     EventReference,
     EventReferenceRequest,
+)
+from project.infrastructure.read_repositories.read_model_mappers import (
+    to_organization_ref_read_model,
 )
 
 

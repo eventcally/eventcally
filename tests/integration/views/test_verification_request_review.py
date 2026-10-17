@@ -20,7 +20,7 @@ def test_review_verify(
     )
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, unverified_admin_unit_id)
         admin_unit.description = "Beschreibung"
@@ -41,7 +41,7 @@ def test_review_verify(
 
     if is_verified:
         with app.app_context():
-            from project.models import (
+            from project.infrastructure.models import (
                 AdminUnitVerificationRequest,
                 AdminUnitVerificationRequestReviewStatus,
             )
@@ -94,7 +94,7 @@ def test_review_verify(
 
     with app.app_context():
         from project.cli.seed_helpers import get_admin_unit_relation
-        from project.models import (
+        from project.infrastructure.models import (
             AdminUnitVerificationRequest,
             AdminUnitVerificationRequestReviewStatus,
         )
@@ -146,7 +146,7 @@ def test_review_reject(client, seeder: Seeder, utils: UtilActions, app, db, mock
     )
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             AdminUnitVerificationRequest,
             AdminUnitVerificationRequestReviewStatus,
         )

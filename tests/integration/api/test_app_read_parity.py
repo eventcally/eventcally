@@ -16,9 +16,11 @@ def test_app_read_payloads_match_snapshot(app, db, seeder, utils):
 
     with app.app_context():
         from project.cli.seed_helpers import add_keypair_to_oauth2_client
-        from project.models import OAuth2Client, Webhook, WebhookDelivery
-        from project.models.webhook_delivery_attempt import WebhookDeliveryAttempt
-        from project.models.webhook_event import WebhookEvent
+        from project.infrastructure.models import OAuth2Client, Webhook, WebhookDelivery
+        from project.infrastructure.models.webhook_delivery_attempt import (
+            WebhookDeliveryAttempt,
+        )
+        from project.infrastructure.models.webhook_event import WebhookEvent
 
         client = db.session.get(OAuth2Client, app_id)
         private_pem, app_key = add_keypair_to_oauth2_client(client)

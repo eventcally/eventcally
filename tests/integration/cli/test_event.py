@@ -28,7 +28,7 @@ def test_update_recurring_dates(client, seeder, app):
 def test_update_recurring_dates_adds_missing_dates_and_keeps_existing_ones(
     client, seeder, app, db
 ):
-    from project.models import Event, EventDate
+    from project.infrastructure.models import Event, EventDate
 
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id, "RRULE:FREQ=DAILY;COUNT=7")
@@ -57,7 +57,7 @@ def test_update_recurring_dates_adds_missing_dates_and_keeps_existing_ones(
 
 
 def test_update_recurring_dates_writes_silently(client, seeder, app, db):
-    from project.models import Event, EventDate, WebhookEvent
+    from project.infrastructure.models import Event, EventDate, WebhookEvent
 
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id, "RRULE:FREQ=DAILY;COUNT=3")
@@ -83,7 +83,7 @@ def test_update_recurring_dates_reads_utc_values_as_berlin_wall_clock(
     # Stored UTC values must yield Berlin wall-clock dates, also across the DST change
     # at the end of March.
     from project.dateutils import create_berlin_date
-    from project.models import EventDate
+    from project.infrastructure.models import EventDate
 
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id, "RRULE:FREQ=DAILY;COUNT=2")
@@ -154,7 +154,7 @@ def test_update_recurring_dates_reads_utc_values_as_berlin_wall_clock(
 def test_update_recurring_dates_continues_after_a_broken_event(
     client, seeder, app, db, mocker
 ):
-    from project.models import Event, EventDate
+    from project.infrastructure.models import Event, EventDate
 
     user_id, admin_unit_id = seeder.setup_base()
     broken_id = seeder.create_event(admin_unit_id, "RRULE:FREQ=DAILY;COUNT=3")

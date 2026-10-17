@@ -12,11 +12,11 @@ from project.application.read_repositories.abstract_custom_widget_read_repositor
     AbstractCustomWidgetReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import AdminUnit, CustomWidget
 from project.infrastructure.read_repositories.query_helpers import paginate
 from project.infrastructure.read_repositories.read_model_mappers import (
     to_organization_ref_read_model,
 )
-from project.models import AdminUnit, CustomWidget
 
 _options = [
     undefer_group("trackable"),

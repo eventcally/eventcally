@@ -274,7 +274,7 @@ class SQLAlchemyGenerator:
 
                 mixin_model = self.generated_mixins[mixin_name]
                 model.imports.append(
-                    f"from project.models.mixins.{mixin_model.file_name} import {mixin_class_name}"
+                    f"from project.infrastructure.models.mixins.{mixin_model.file_name} import {mixin_class_name}"
                 )
             else:
                 print(f"Warning: Mixin '{mixin_name}' not found")
@@ -671,7 +671,7 @@ def main():
     mixins_dir = os.path.join(models_dir, "mixins")
     template_dir = os.path.join(script_dir, "templates")
     project_dir = os.path.dirname(script_dir)
-    output_models_dir = os.path.join(project_dir, "project", "models")
+    output_models_dir = os.path.join(project_dir, "project", "infrastructure", "models")
 
     generator = SQLAlchemyGenerator(
         template_dir, output_models_dir, models_dir, mixins_dir

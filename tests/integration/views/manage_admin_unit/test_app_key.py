@@ -1,4 +1,4 @@
-from project.models import AppKey
+from project.infrastructure.models import AppKey
 from tests.integration.base_test import (
     BaseTestCreateView,
     BaseTestDeleteView,

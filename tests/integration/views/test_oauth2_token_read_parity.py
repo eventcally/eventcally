@@ -7,7 +7,7 @@ def _text(utils, response):
 
 def _token_id(app, user_id):
     with app.app_context():
-        from project.models import OAuth2Token
+        from project.infrastructure.models import OAuth2Token
 
         return OAuth2Token.query.filter(OAuth2Token.user_id == user_id).first().id
 

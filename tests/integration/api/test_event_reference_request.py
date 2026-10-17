@@ -45,7 +45,7 @@ def test_delete(client, app, db, seeder: Seeder, utils: UtilActions):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import EventReferenceRequest
+        from project.infrastructure.models import EventReferenceRequest
 
         reference = db.session.get(EventReferenceRequest, reference_request_id)
         assert reference is None
@@ -71,7 +71,7 @@ def test_verify(client, app, db, seeder: Seeder, utils: UtilActions):
     assert "id" in response.json
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReference,
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
@@ -109,7 +109,7 @@ def test_reject(client, app, db, seeder: Seeder, utils: UtilActions):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReferenceRequest,
             EventReferenceRequestRejectionReason,
             EventReferenceRequestReviewStatus,
@@ -172,7 +172,7 @@ def test_reject_nonJsonBody(client, app, db, seeder: Seeder, utils: UtilActions)
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
         )
@@ -201,7 +201,7 @@ def test_reject_withoutBody(client, app, db, seeder: Seeder, utils: UtilActions)
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
         )

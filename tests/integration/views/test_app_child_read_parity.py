@@ -60,8 +60,8 @@ def test_webhook_delivery_pages(app, db, seeder, utils):
     attempt_id = _create_webhook_delivery_attempt(app, db, delivery_id)
 
     with app.app_context():
-        from project.models.webhook_delivery import WebhookDelivery
-        from project.models.webhook_event import WebhookEvent
+        from project.infrastructure.models.webhook_delivery import WebhookDelivery
+        from project.infrastructure.models.webhook_event import WebhookEvent
 
         event = WebhookEvent(
             event_type="app.uninstalled",

@@ -29,7 +29,7 @@ def test_delete(client, app, db, seeder: Seeder, utils: UtilActions):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import EventReference
+        from project.infrastructure.models import EventReference
 
         reference = db.session.get(EventReference, reference_id)
         assert reference is None

@@ -1,0 +1,245 @@
+from __future__ import annotations
+
+import datetime
+import time
+from typing import Optional
+
+from authlib.integrations.sqla_oauth2 import (
+    OAuth2AuthorizationCodeMixin,
+    OAuth2ClientMixin,
+    OAuth2TokenMixin,
+)
+from flask import request
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import object_session
+
+from project.dateutils import gmt_tz
+from project.domain.models.aggregates.app_aggregate import AppAggregate
+from project.domain.models.aggregates.oauth2_client_aggregate import (
+    OAuth2ClientAggregate,
+)
+from project.extensions import db
+from project.infrastructure.models.mixins.rate_limit_provider_mixin import (
+    RateLimitProviderMixin,
+)
+from project.infrastructure.models.oauth2_authorization_code_generated import (
+    OAuth2AuthorizationCodeGeneratedMixin,
+)
+from project.infrastructure.models.oauth2_client_generated import (
+    OAuth2ClientGeneratedMixin,
+)
+from project.infrastructure.models.oauth2_token_generated import (
+    OAuth2TokenGeneratedMixin,
+)
+from project.infrastructure.models.webhook import Webhook
+
+# OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
+oauth_refresh_token_expires_in = 90 * 86400  # 90 days
+
+
+class OAuth2Client(
+    db.Model,
+    OAuth2ClientGeneratedMixin,
+    OAuth2ClientMixin,
+):
+    __default_rate_limit_value__ = "5000/hour"
+
+    @classmethod
+    def from_aggregate(cls, aggregate: AppAggregate) -> AppAggregate:
+        model = cls()
+        model.fill_from_aggregate(aggregate)
+        return model
+
+    def fill_from_aggregate(self, aggregate: AppAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.admin_unit_id = aggregate.admin_unit_id
+        self.description = aggregate.description
+        self.app_permissions = list(aggregate.app_permissions)
+        self.homepage_url = aggregate.homepage_url
+        self.setup_url = aggregate.setup_url
+        self.client_id = aggregate.client_id
+        self.client_secret = aggregate.client_secret
+
+        metadata = self.client_metadata or {}
+        metadata["client_name"] = aggregate.name
+        metadata["scope"] = aggregate.scope
+        metadata["redirect_uris"] = list(aggregate.redirect_uris)
+        self.set_client_metadata(metadata)
+
+        if aggregate.webhook:
+            if not self.webhook:
+                self.webhook = Webhook()
+            self.webhook.fill_from_value_object(aggregate.webhook)
+        else:
+            self.webhook = None
+
+        return self
+
+    @classmethod
+    def to_aggregate(cls, model: OAuth2Client) -> AppAggregate:
+        if model is None:  # pragma: no cover
+            return None
+
+        metadata = model.client_metadata or {}
+
+        aggregate = AppAggregate(
+            id=model.id,
+            admin_unit_id=model.admin_unit_id,
+            name=metadata.get("client_name"),
+            scope=metadata.get("scope"),
+            redirect_uris=set(metadata.get("redirect_uris") or []),
+            app_permissions=(
+                set(model.app_permissions) if model.app_permissions else set()
+            ),
+            description=model.description,
+            homepage_url=model.homepage_url,
+            setup_url=model.setup_url,
+            webhook=model.webhook.to_value_object() if model.webhook else None,
+            client_id=model.client_id,
+            client_secret=model.client_secret,
+        )
+
+        return aggregate
+
+    @classmethod
+    def from_oauth2_client_aggregate(
+        cls, aggregate: OAuth2ClientAggregate
+    ) -> OAuth2Client:
+        model = cls()
+        model.fill_from_oauth2_client_aggregate(aggregate)
+        return model
+
+    def fill_from_oauth2_client_aggregate(self, aggregate: OAuth2ClientAggregate):
+        self.id = aggregate.id if aggregate.id and aggregate.id > 0 else None
+        self.admin_unit_id = aggregate.admin_unit_id
+        self.user_id = aggregate.user_id
+        self.client_id = aggregate.client_id
+        self.client_secret = aggregate.client_secret
+
+        metadata = self.client_metadata or {}
+        metadata["client_name"] = aggregate.name
+        metadata["scope"] = aggregate.scope
+        metadata["redirect_uris"] = list(aggregate.redirect_uris)
+        self.set_client_metadata(metadata)
+
+        return self
+
+    @classmethod
+    def to_oauth2_client_aggregate(
+        cls, model: OAuth2Client
+    ) -> Optional[OAuth2ClientAggregate]:
+        if model is None:  # pragma: no cover
+            return None
+
+        metadata = model.client_metadata or {}
+
+        return OAuth2ClientAggregate(
+            id=model.id,
+            name=metadata.get("client_name"),
+            redirect_uris=list(metadata.get("redirect_uris") or []),
+            scope=metadata.get("scope"),
+            client_id=model.client_id,
+            client_secret=model.client_secret,
+            user_id=model.user_id,
+            admin_unit_id=model.admin_unit_id,
+        )
+
+    @hybrid_property
+    def is_app(self):  # pragma: no cover
+        return self.app_permissions is not None
+
+    @is_app.expression
+    def is_app(cls):
+        return cls.app_permissions.isnot(None)
+
+    @OAuth2ClientMixin.grant_types.getter
+    def grant_types(self):
+        return [
+            "authorization_code",
+            "refresh_token",
+            "client_credentials",
+            "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        ]
+
+    @OAuth2ClientMixin.response_types.getter
+    def response_types(self):
+        return ["code"]
+
+    @OAuth2ClientMixin.token_endpoint_auth_method.getter
+    def token_endpoint_auth_method(self):
+        return ["client_secret_basic", "client_secret_post", "none"]
+
+    def check_redirect_uri(self, redirect_uri):
+        if redirect_uri.startswith(request.host_url):  # pragma: no cover
+            return True
+
+        return super().check_redirect_uri(redirect_uri)
+
+    def check_token_endpoint_auth_method(self, method):
+        return method in self.token_endpoint_auth_method
+
+    def check_endpoint_auth_method(self, method, endpoint):
+        if endpoint == "token":
+            return self.check_token_endpoint_auth_method(method)
+
+        return True
+
+    def __str__(self):
+        return self.client_name or super().__str__()
+
+
+class OAuth2AuthorizationCode(
+    db.Model, OAuth2AuthorizationCodeGeneratedMixin, OAuth2AuthorizationCodeMixin
+):
+    pass
+
+
+class OAuth2Token(
+    db.Model, OAuth2TokenGeneratedMixin, OAuth2TokenMixin, RateLimitProviderMixin
+):
+    @property
+    def client(self):
+        return (
+            object_session(self)
+            .query(OAuth2Client)
+            .filter(OAuth2Client.client_id == self.client_id)
+            .first()
+        )
+
+    @property
+    def expires_at(self):
+        return self.issued_at + self.expires_in
+
+    def is_refresh_token_active(self):
+        if self.is_revoked():
+            return False
+
+        refresh_token_expires_at = self.issued_at + oauth_refresh_token_expires_in
+        return refresh_token_expires_at >= time.time()
+
+    def revoke_token(self):
+        self.access_token_revoked_at = int(time.time())
+
+    @property
+    def expires_at_datetime(self):
+        return datetime.datetime.fromtimestamp(self.expires_at, gmt_tz)
+
+    @property
+    def issued_at_datetime(self):
+        return datetime.datetime.fromtimestamp(self.issued_at, gmt_tz)
+
+    @property
+    def client_name(self):
+        return self.client.client_name
+
+    def __str__(self):
+        return f"{super().__str__()} ({self.client_name})"
+
+    def get_rate_limit_key(self):
+        if self.user_id:
+            return f"{self.client.get_rate_limit_key()}-{self.user_id}"
+
+        return self.client.get_rate_limit_key()
+
+    def get_rate_limit_value(self):
+        return self.client.rate_limit_value

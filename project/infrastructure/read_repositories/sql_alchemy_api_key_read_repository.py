@@ -14,12 +14,12 @@ from project.application.read_repositories.abstract_api_key_read_repository impo
     AbstractApiKeyReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import AdminUnit, ApiKey
 from project.infrastructure.read_repositories.query_helpers import paginate
 from project.infrastructure.read_repositories.read_model_mappers import (
     audit_options,
     to_audit_read_model,
 )
-from project.models import AdminUnit, ApiKey
 
 # Default (no or unknown sort key) is the list form's first choice, the name.
 _SORT_ORDER = {

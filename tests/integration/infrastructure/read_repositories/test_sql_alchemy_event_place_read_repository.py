@@ -281,7 +281,7 @@ def test_list_item_photo_and_coordinates(app, db, seeder, read_repo, places):
     image_id = seeder.upsert_default_image()
 
     with app.app_context():
-        from project.models import EventPlace, Location
+        from project.infrastructure.models import EventPlace, Location
 
         stadthalle = db.session.get(EventPlace, ids["stadthalle"])
         stadthalle.location = Location(
@@ -311,7 +311,7 @@ def test_get_with_location_photo_and_license(app, db, seeder, read_repo, places)
     image_id = seeder.upsert_default_image()
 
     with app.app_context():
-        from project.models import EventPlace, Location
+        from project.infrastructure.models import EventPlace, Location
 
         place = db.session.get(EventPlace, ids["alpha"])
         place.url = "https://example.com"
@@ -440,7 +440,7 @@ def test_suggestions_carry_location(app, db, read_repo, places):
     admin_unit_id, _, ids = places
 
     with app.app_context():
-        from project.models import EventPlace, Location
+        from project.infrastructure.models import EventPlace, Location
 
         db.session.get(EventPlace, ids["alpha"]).location = Location(city="Goslar")
         db.session.commit()
@@ -480,7 +480,7 @@ def test_get_for_edit_with_location_photo_and_license(
     image_id = seeder.upsert_default_image()
 
     with app.app_context():
-        from project.models import EventPlace, Image, Location
+        from project.infrastructure.models import EventPlace, Image, Location
 
         place = db.session.get(EventPlace, ids["alpha"])
         place.url = "https://example.com"

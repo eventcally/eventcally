@@ -53,6 +53,14 @@ from project.domain.models.enums.organization_verification_request_review_status
 from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
 )
+from project.infrastructure.models.admin_unit import AdminUnitRelation
+from project.infrastructure.models.app import AppInstallation
+from project.infrastructure.models.event_place import EventPlace
+from project.infrastructure.models.event_reference import EventReference
+from project.infrastructure.models.oauth import OAuth2Client
+from project.infrastructure.models.webhook import Webhook
+from project.infrastructure.models.webhook_delivery import WebhookDelivery
+from project.infrastructure.models.webhook_event import WebhookEvent
 from project.infrastructure.read_repositories.sql_alchemy_event_read_repository import (
     SqlAlchemyEventReadRepository,
 )
@@ -116,14 +124,6 @@ from project.infrastructure.repositories.sql_alchemy_webhook_delivery_repository
 from project.infrastructure.repositories.sql_alchemy_webhook_repository import (
     SqlAlchemyWebhookEventRepository,
 )
-from project.models.admin_unit import AdminUnitRelation
-from project.models.app import AppInstallation
-from project.models.event_place import EventPlace
-from project.models.event_reference import EventReference
-from project.models.oauth import OAuth2Client
-from project.models.webhook import Webhook
-from project.models.webhook_delivery import WebhookDelivery
-from project.models.webhook_event import WebhookEvent
 from tests.integration.seeder import Seeder
 
 
@@ -727,7 +727,7 @@ def test_oauth2_token_repository_get_and_update_roundtrip(app, db, seeder):
     user_id = seeder.create_user(email="oauth2-token-owner@test.de")
 
     with app.app_context():
-        from project.models import OAuth2Token
+        from project.infrastructure.models import OAuth2Token
 
         token = OAuth2Token()
         token.user_id = user_id

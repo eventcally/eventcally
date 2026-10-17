@@ -7,8 +7,8 @@ from project.domain.models.aggregates.organization_relation_aggregate import (
     OrganizationRelationAggregate,
 )
 from project.domain.repositories import AbstractOrganizationRelationRepository
+from project.infrastructure.models.admin_unit import AdminUnitRelation
 from project.infrastructure.sql_error_translation import flush
-from project.models.admin_unit import AdminUnitRelation
 
 
 class SqlAlchemyOrganizationRelationRepository(AbstractOrganizationRelationRepository):

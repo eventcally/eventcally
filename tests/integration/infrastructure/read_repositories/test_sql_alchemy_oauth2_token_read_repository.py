@@ -7,7 +7,7 @@ def test_tokens_of_user(app, db, seeder):
     user_id, _ = seeder.setup_api_access()
 
     with app.app_context():
-        from project.models import OAuth2Token
+        from project.infrastructure.models import OAuth2Token
 
         token_id = OAuth2Token.query.filter(OAuth2Token.user_id == user_id).first().id
         repo = app.container.read_repos.oauth2_token_read_repo()

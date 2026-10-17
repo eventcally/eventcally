@@ -5,8 +5,8 @@ from project.domain.models.aggregates.admin_unit_member_invitation_aggregate imp
     AdminUnitMemberInvitationAggregate,
 )
 from project.domain.repositories import AbstractMemberInvitationRepository
+from project.infrastructure.models.admin_unit import AdminUnitMemberInvitation
 from project.infrastructure.sql_error_translation import flush
-from project.models.admin_unit import AdminUnitMemberInvitation
 
 
 class SqlAlchemyMemberInvitationRepository(AbstractMemberInvitationRepository):

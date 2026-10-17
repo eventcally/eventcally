@@ -21,7 +21,7 @@ def test_put(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import CustomWidget
+        from project.infrastructure.models import CustomWidget
 
         custom_widget = db.session.get(CustomWidget, custom_widget_id)
         assert custom_widget.name == "Neuer Name"
@@ -37,7 +37,7 @@ def test_patch(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import CustomWidget
+        from project.infrastructure.models import CustomWidget
 
         custom_widget = db.session.get(CustomWidget, custom_widget_id)
         assert custom_widget.name == "Neuer Name"
@@ -53,7 +53,7 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import CustomWidget
+        from project.infrastructure.models import CustomWidget
 
         custom_widget = db.session.get(CustomWidget, custom_widget_id)
         assert custom_widget is None

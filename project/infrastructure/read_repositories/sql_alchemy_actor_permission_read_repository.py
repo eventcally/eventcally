@@ -6,7 +6,7 @@ from project.application.read_repositories.abstract_actor_permission_read_reposi
     AbstractActorPermissionReadRepository,
 )
 from project.domain.types.object_id import ObjectId
-from project.models import (
+from project.infrastructure.models import (
     AdminUnit,
     AdminUnitMember,
     AdminUnitMemberRole,

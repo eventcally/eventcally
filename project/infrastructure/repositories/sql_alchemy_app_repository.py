@@ -4,7 +4,7 @@ from typing import Optional
 from project.domain.events.app_created import AppCreated
 from project.domain.models.aggregates.app_aggregate import AppAggregate
 from project.domain.repositories.abstract_app_repository import AbstractAppRepository
-from project.models.oauth import OAuth2Client
+from project.infrastructure.models.oauth import OAuth2Client
 
 
 class SqlAlchemyAppRepository(AbstractAppRepository):

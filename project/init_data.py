@@ -2,7 +2,12 @@ import os
 
 from project.api import add_oauth2_scheme_with_transport
 from project.extensions import db
-from project.models import AdminUnitMemberRole, EventCategory, Role, Settings
+from project.infrastructure.models import (
+    AdminUnitMemberRole,
+    EventCategory,
+    Role,
+    Settings,
+)
 
 
 def register_oauth2_scheme_once(app):

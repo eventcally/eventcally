@@ -20,8 +20,8 @@ from project.application.read_repositories.abstract_organization_member_invitati
     AbstractOrganizationMemberInvitationReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import AdminUnit, AdminUnitMemberInvitation, User
 from project.infrastructure.read_repositories.query_helpers import paginate
-from project.models import AdminUnit, AdminUnitMemberInvitation, User
 
 _load_admin_unit = joinedload(AdminUnitMemberInvitation.admin_unit).load_only(
     AdminUnit.id, AdminUnit.name
