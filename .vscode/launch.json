@@ -72,7 +72,7 @@
       "name": "Python: generate.py",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/codegen/generate.py",
+      "program": "${workspaceFolder}/.scripts/codegen/generate.py",
       "console": "integratedTerminal",
       "justMyCode": false
     },

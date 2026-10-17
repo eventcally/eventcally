@@ -6,7 +6,7 @@ omit =
     project/babel.py
     project/base_tasks.py
     project/celery_tasks.py
-    project/cli/test.py
+    project/presentation/cli/test.py
     project/templates/email/*
-    project/views/flask_admin.py
+    project/presentation/web/views/flask_admin.py
     project/infrastructure/migrations/*

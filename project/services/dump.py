@@ -5,12 +5,6 @@ import shutil
 from flask import current_app
 
 from project import dump_org_path, dump_path
-from project.api.event.schemas import EventDumpSchema
-from project.api.event_category.schemas import EventCategoryDumpSchema
-from project.api.event_reference.schemas import EventReferenceDumpSchema
-from project.api.organization.schemas import OrganizationDumpSchema
-from project.api.organizer.schemas import OrganizerDumpSchema
-from project.api.place.schemas import PlaceDumpSchema
 from project.application.queries import (
     GetImageFileQuery,
     ListDumpEventCategoriesQuery,
@@ -20,8 +14,14 @@ from project.application.queries import (
     ListDumpOrganizersQuery,
     ListDumpPlacesQuery,
 )
-from project.imageutils import get_image_from_bytes
-from project.utils import clear_files_in_dir, make_dir
+from project.presentation.api.event.schemas import EventDumpSchema
+from project.presentation.api.event_category.schemas import EventCategoryDumpSchema
+from project.presentation.api.event_reference.schemas import EventReferenceDumpSchema
+from project.presentation.api.organization.schemas import OrganizationDumpSchema
+from project.presentation.api.organizer.schemas import OrganizerDumpSchema
+from project.presentation.api.place.schemas import PlaceDumpSchema
+from project.shared.imageutils import get_image_from_bytes
+from project.shared.utils import clear_files_in_dir, make_dir
 
 BATCH_SIZE = 200
 

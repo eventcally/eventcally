@@ -1,6 +1,5 @@
 import os
 
-from project.api import add_oauth2_scheme_with_transport
 from project.extensions import db
 from project.infrastructure.models import (
     AdminUnitMemberRole,
@@ -8,6 +7,7 @@ from project.infrastructure.models import (
     Role,
     Settings,
 )
+from project.presentation.api import add_oauth2_scheme_with_transport
 
 
 def register_oauth2_scheme_once(app):

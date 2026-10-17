@@ -24,7 +24,6 @@ from project.application.services.organization_application_service import (
 )
 from project.application.services.webhook_delivery_service import WebhookDeliveryService
 from project.application.webhooks.webhook_mapper_context import WebhookMapperContext
-from project.context import ContextProvider
 from project.domain import events
 from project.extensions import db
 from project.infrastructure.celery_command_dispatcher import CeleryCommandDispatcher
@@ -143,6 +142,7 @@ from project.infrastructure.services.werkzeug_oauth2_client_credentials_generato
     WerkzeugOAuth2ClientCredentialsGenerator,
 )
 from project.infrastructure.sql_alchemy_unit_of_work import SqlAlchemyUnitOfWork
+from project.shared.context import ContextProvider
 
 
 def get_app_logger():  # pragma: no cover

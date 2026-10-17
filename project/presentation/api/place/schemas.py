@@ -1,0 +1,137 @@
+from marshmallow import fields, post_load, validate
+
+from project.application.commands import (
+    CreateEventPlaceCommand,
+    UpdateEventPlaceCommand,
+)
+from project.presentation.api.image.schemas import ImageDumpSchema, ImageSchema
+from project.presentation.api.location.schemas import (
+    LocationDumpSchema,
+    LocationSchema,
+    LocationSearchItemSchema,
+    LocationWriteRequestPlainSchema,
+)
+from project.presentation.api.organization.schemas import OrganizationRefSchema
+from project.presentation.api.schemas import (
+    IdPlainSchemaMixin,
+    IdSchemaMixin,
+    PaginationRequestSchema,
+    PaginationResponseSchema,
+    PlainBaseSchema,
+    TrackableRequestSchemaMixin,
+    TrackableSchemaMixin,
+    WriteIdSchemaMixin,
+)
+
+
+class PlaceModelSchema(PlainBaseSchema):
+    pass
+
+
+class PlaceIdSchema(PlaceModelSchema, IdSchemaMixin):
+    pass
+
+
+class PlaceIdPlainSchema(PlainBaseSchema, IdPlainSchemaMixin):
+    pass
+
+
+class PlaceWriteIdSchema(PlaceModelSchema, WriteIdSchemaMixin):
+    pass
+
+
+class PlaceBaseSchemaMixin(TrackableSchemaMixin):
+    name = fields.String(required=True, validate=validate.Length(min=3, max=255))
+    url = fields.String(
+        allow_none=True, validate=[validate.URL(), validate.Length(max=255)]
+    )
+    description = fields.String(allow_none=True)
+
+
+class PlaceSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
+    location = fields.Nested(LocationSchema)
+    photo = fields.Nested(ImageSchema)
+    organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
+
+
+class PlaceDumpSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
+    location = fields.Nested(LocationDumpSchema)
+    photo = fields.Nested(ImageDumpSchema)
+    organization_id = fields.Int(attribute="admin_unit_id")
+
+
+class PlaceRefSchema(PlaceIdSchema):
+    name = fields.String(required=True, validate=validate.Length(max=255))
+
+
+class PlaceSearchItemSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
+    location = fields.Nested(LocationSearchItemSchema)
+    photo = fields.Nested(ImageSchema)
+
+
+class PlaceListRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMixin):
+    name = fields.Str(
+        metadata={"description": "Looks for name."},
+    )
+    sort = fields.Str(
+        metadata={"description": "Sort result items."},
+        validate=validate.OneOf(
+            ["-created_at", "-updated_at", "-last_modified_at", "name"]
+        ),
+    )
+
+
+class PlaceListRefSchema(PlaceRefSchema, TrackableSchemaMixin):
+    pass
+
+
+class PlaceListResponseSchema(PaginationResponseSchema):
+    items = fields.List(
+        fields.Nested(PlaceListRefSchema), metadata={"description": "Places"}
+    )
+
+
+class PlaceCreateRequestPlainSchema(PlainBaseSchema):
+    name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
+    url = fields.Str(
+        load_default=None, validate=[validate.URL(), validate.Length(max=255)]
+    )
+    description = fields.Str(load_default=None)
+    location = fields.Nested(LocationWriteRequestPlainSchema, load_default=None)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["admin_unit_id"] = self.context.get("admin_unit_id")
+        data["actor"] = self.context.get("actor")
+        return CreateEventPlaceCommand(**data)
+
+
+class PlacePutRequestPlainSchema(PlainBaseSchema):
+    name = fields.Str(required=True, validate=validate.Length(min=3, max=255))
+    url = fields.Str(
+        load_default=None, validate=[validate.URL(), validate.Length(max=255)]
+    )
+    description = fields.Str(load_default=None)
+    location = fields.Nested(LocationWriteRequestPlainSchema, load_default=None)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        data["actor"] = self.context.get("actor")
+        return UpdateEventPlaceCommand(**data)
+
+
+class PlacePatchRequestPlainSchema(PlainBaseSchema):
+    name = fields.Str(allow_none=True, validate=validate.Length(min=3, max=255))
+    url = fields.Str(
+        allow_none=True,
+        validate=[validate.URL(), validate.Length(max=255)],
+    )
+    description = fields.Str(allow_none=True)
+    location = fields.Nested(LocationWriteRequestPlainSchema, allow_none=True)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["id"] = self.context.get("id")
+        data["actor"] = self.context.get("actor")
+        return UpdateEventPlaceCommand(**data)

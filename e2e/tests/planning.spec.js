@@ -10,7 +10,7 @@ test.describe("Planning", () => {
 
     await page.goto("/planning");
     // Replaces `cy.wait(2000) // Wait for Vue to load`: the calendar is rendered
-    // by project/static/vue/planning/list.vue.js, and the spinner is bound to
+    // by project/presentation/web/static/vue/planning/list.vue.js, and the spinner is bound to
     // `v-show="isLoading"`, so this waits for the real end of loading.
     await expect(page.locator("#vue-container .v-calendar")).toBeVisible();
     await expect(page.locator("#vue-container .v-progress-circular")).toBeHidden();

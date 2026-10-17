@@ -1,0 +1,365 @@
+from flask import current_app, url_for
+from flask_babel import gettext, lazy_gettext
+from markupsafe import Markup
+from wtforms import BooleanField, DecimalField, HiddenField, SelectField, StringField
+from wtforms.validators import DataRequired, Length, Optional
+
+from project.application.queries import GetSiteNoticesQuery
+from project.domain.models.value_objects.image_value_object import ImageValueObject
+from project.domain.models.value_objects.location_value_object import (
+    LocationValueObject,
+)
+from project.domain.models.value_objects.webhook_value_object import WebhookValueObject
+from project.presentation.web.forms.widgets import CustomDateField, MultiCheckboxField
+from project.presentation.web.modular.ajax import LicenseAjaxModelLoader
+from project.presentation.web.modular.base_form import BaseForm
+from project.presentation.web.modular.fields import (
+    AjaxSelectField,
+    GooglePlaceCoordinateField,
+    GooglePlaceField,
+)
+from project.shared.imageutils import (
+    get_bytes_from_image,
+    get_data_uri_from_bytes,
+    get_image_from_base64_str,
+    get_mime_type_from_image,
+    resize_image_to_max,
+    validate_image,
+)
+
+
+class LocationFormMixin(object):
+    street = StringField(
+        lazy_gettext("Street"), validators=[Optional(), Length(max=255)]
+    )
+    state = StringField(lazy_gettext("State"), validators=[Optional(), Length(max=255)])
+    latitude = DecimalField(
+        lazy_gettext("Latitude"), places=16, validators=[Optional()]
+    )
+    longitude = DecimalField(
+        lazy_gettext("Longitude"), places=16, validators=[Optional()]
+    )
+
+
+class LocationCommandFormMixin(object):
+    def create_create_command(self):
+        return LocationValueObject(
+            street=self.street.data,
+            postalCode=self.postalCode.data,
+            city=self.city.data,
+            state=self.state.data,
+            latitude=self.latitude.data,
+            longitude=self.longitude.data,
+        )
+
+    def create_update_command(self):
+        return LocationValueObject(
+            street=self.street.data,
+            postalCode=self.postalCode.data,
+            city=self.city.data,
+            state=self.state.data,
+            latitude=self.latitude.data,
+            longitude=self.longitude.data,
+        )
+
+
+class LocationForm(BaseForm, LocationFormMixin, LocationCommandFormMixin):
+    postalCode = StringField(
+        lazy_gettext("Postal code"), validators=[Optional(), Length(max=10)]
+    )
+    city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
+
+
+class StrictLocationForm(BaseForm, LocationFormMixin, LocationCommandFormMixin):
+    postalCode = StringField(
+        lazy_gettext("Postal code"), validators=[DataRequired(), Length(max=10)]
+    )
+    city = StringField(
+        lazy_gettext("City"), validators=[DataRequired(), Length(max=255)]
+    )
+
+
+class GooglePlaceLocationForm(LocationForm):
+    google_place = GooglePlaceField(location_only=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.move_field_to_top("google_place")
+
+
+class StrictGooglePlaceLocationForm(StrictLocationForm):
+    google_place = GooglePlaceField(location_only=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.move_field_to_top("google_place")
+
+
+class Base64ImageForm(BaseForm):
+    image_base64 = StringField(
+        lazy_gettext("Image"),
+        render_kw={
+            "data-role": "cropper-image",
+            "data-min-width": 320,
+            "data-min-height": 320,
+        },
+    )
+    copyright_text = StringField(
+        lazy_gettext("Copyright text"),
+        validators=[Optional(), Length(max=255)],
+        render_kw={"is_required": True},
+    )
+    license = AjaxSelectField(
+        LicenseAjaxModelLoader(),
+        lazy_gettext("License"),
+        validators=[Optional()],
+        allow_blank=True,
+        description=lazy_gettext(
+            "Please select if the image should be displayed in external event calendars."
+        ),
+    )
+
+    def process(self, formdata=None, obj=None, data=None, **kwargs):
+        super().process(formdata, obj, data, **kwargs)
+
+        self._original_base64 = None
+        self._original_image_data = None
+        self._original_encoding_format = None
+
+        if obj and obj.data:
+            self._original_base64 = get_data_uri_from_bytes(
+                obj.data, obj.encoding_format
+            )
+            self._original_image_data = obj.data
+            self._original_encoding_format = obj.encoding_format
+
+            if self.image_base64.data is None:
+                self.image_base64.data = self._original_base64
+
+    def validate(self, extra_validators=None):
+        result = super().validate(extra_validators)
+        self.image_base64.encoding_format = None
+        self.image_base64.image_data = None
+
+        if self.image_base64.data:
+            if not self.copyright_text.data or not self.copyright_text.data.strip():
+                msg = gettext("This field is required.")
+                self.copyright_text.errors.append(msg)
+                result = False
+
+            if self.image_base64.data == self._original_base64:
+                self.image_base64.encoding_format = self._original_encoding_format
+                self.image_base64.image_data = self._original_image_data
+            else:
+                try:
+                    image = get_image_from_base64_str(self.image_base64.data)
+                    validate_image(image)
+                    resize_image_to_max(image)
+                    self.image_base64.encoding_format = get_mime_type_from_image(image)
+                    self.image_base64.image_data = get_bytes_from_image(image)
+                except Exception as e:
+                    msg = str(e)
+                    self.image_base64.encoding_format = None
+                    self.image_base64.image_data = None
+                    self.image_base64.errors.append(msg)
+                    result = False
+
+        return result
+
+    def populate_obj(self, obj):
+        super().populate_obj(obj)
+
+        if self.image_base64.image_data and self.image_base64.encoding_format:
+            obj.data = self.image_base64.image_data
+            obj.encoding_format = self.image_base64.encoding_format
+        else:
+            obj.data = None
+            obj.encoding_format = None
+
+    def create_create_command(self):
+        if not self.image_base64.image_data:
+            return None
+
+        return ImageValueObject(
+            data=self.image_base64.image_data,
+            encoding_format=self.image_base64.encoding_format,
+            copyright_text=self.copyright_text.data,
+            license_id=self.license.data.id if self.license.data else None,
+        )
+
+    def create_update_command(self):
+        if self.image_base64.image_data and self.image_base64.encoding_format:
+            return ImageValueObject(
+                data=self.image_base64.image_data,
+                encoding_format=self.image_base64.encoding_format,
+                copyright_text=self.copyright_text.data,
+                license_id=self.license.data.id if self.license.data else None,
+            )
+
+        return None
+
+
+class WebhookForm(BaseForm):
+    url = StringField(lazy_gettext("URL"), validators=[Optional(), Length(max=255)])
+    secret = StringField(
+        lazy_gettext("Secret"), validators=[Optional(), Length(max=255)]
+    )
+    disabled = BooleanField(
+        lazy_gettext("Disabled"),
+        validators=[Optional()],
+        render_kw={"ri": "switch"},
+    )
+    event_types = MultiCheckboxField(
+        lazy_gettext("Event types"),
+        validators=[Optional()],
+        render_kw={"ri": "multicheckbox"},
+    )
+
+    def create_create_command(self):
+        if not self.url.data:
+            return None
+
+        return WebhookValueObject(
+            url=self.url.data,
+            secret=self.secret.data,
+            disabled=self.disabled.data,
+            event_types=self.event_types.data,
+        )
+
+    def create_update_command(self):
+        if not self.url.data:
+            return None
+
+        return WebhookValueObject(
+            url=self.url.data,
+            secret=self.secret.data,
+            disabled=self.disabled.data,
+            event_types=self.event_types.data,
+        )
+
+
+def get_accept_tos_markup():
+    tos_open = '<a href="%s">' % url_for("main.tos")
+    tos_close = "</a>"
+
+    privacy_open = '<a href="%s">' % url_for("main.privacy")
+    privacy_close = "</a>"
+
+    if current_app.container.cqrs.query_bus().handle(GetSiteNoticesQuery()).has_tos:
+        return Markup(
+            lazy_gettext(
+                "I read and accept %(tos_open)sTerms of Service%(tos_close)s and %(privacy_open)sPrivacy%(privacy_close)s.",
+                tos_open=tos_open,
+                tos_close=tos_close,
+                privacy_open=privacy_open,
+                privacy_close=privacy_close,
+            )
+        )
+
+    return Markup(
+        lazy_gettext(
+            "I read and accept %(privacy_open)sPrivacy%(privacy_close)s.",
+            tos_open=tos_open,
+            tos_close=tos_close,
+            privacy_open=privacy_open,
+            privacy_close=privacy_close,
+        )
+    )
+
+
+event_rating_choices = [
+    (0, lazy_gettext("0 (Little relevant)")),
+    (10, "1"),
+    (20, "2"),
+    (30, "3"),
+    (40, "4"),
+    (50, lazy_gettext("5 (Default)")),
+    (60, "6"),
+    (70, "7"),
+    (80, "8"),
+    (90, "9"),
+    (100, lazy_gettext("10 (Highlight)")),
+]
+
+weekday_choices = [
+    (1, lazy_gettext("Monday")),
+    (2, lazy_gettext("Tueday")),
+    (3, lazy_gettext("Wednesday")),
+    (4, lazy_gettext("Thursday")),
+    (5, lazy_gettext("Friday")),
+    (6, lazy_gettext("Saturday")),
+    (0, lazy_gettext("Sunday")),
+]
+
+distance_choices = [
+    (500, lazy_gettext("500 m")),
+    (5000, lazy_gettext("5 km")),
+    (10000, lazy_gettext("10 km")),
+    (25000, lazy_gettext("20 km")),
+    (50000, lazy_gettext("50 km")),
+    (100000, lazy_gettext("100 km")),
+]
+
+
+class DateRangeForm(BaseForm):
+    class Meta:
+        csrf = False
+
+    from_field = CustomDateField(
+        lazy_gettext("From"),
+        name="from",
+        validators=[Optional()],
+        clearable=True,
+        render_kw={
+            "class": "datepicker form-control",
+        },
+    )
+    to_field = CustomDateField(
+        lazy_gettext("to"),
+        name="to",
+        set_end_of_day=True,
+        clearable=True,
+        validators=[Optional()],
+        render_kw={
+            "class": "datepicker form-control",
+        },
+    )
+
+    def __init__(self, formdata=..., **kwargs):
+        super().__init__(formdata, **kwargs)
+
+        self.from_field.render_kw["data-range-to"] = f"#{self.to_field.id}"
+
+
+class RadiusForm(BaseForm):
+    class Meta:
+        csrf = False
+
+    coordinate = HiddenField(validators=[Optional()])
+    location_name = HiddenField(validators=[Optional()])
+    location = GooglePlaceCoordinateField(
+        lazy_gettext("Location"), validators=[Optional()]
+    )
+    distance = SelectField(
+        lazy_gettext("Distance"),
+        validators=[Optional()],
+        coerce=int,
+        choices=distance_choices,
+        render_kw={
+            "class": "form-control",
+        },
+    )
+
+    def __init__(self, formdata=..., **kwargs):
+        super().__init__(formdata, **kwargs)
+
+        self.location.render_kw["data-coordinate-field"] = f"#{self.coordinate.id}"
+        self.location.render_kw["data-location-name-field"] = (
+            f"#{self.location_name.id}"
+        )
+
+    def process(self, formdata=None, obj=None, data=None, extra_filters=None, **kwargs):
+        super().process(formdata, obj, data, extra_filters, **kwargs)
+
+        if self.location.data:  # pragma: no cover
+            self.location.choices = [(self.location.data, self.location_name.data)]

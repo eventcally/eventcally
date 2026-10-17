@@ -9,7 +9,7 @@ from project.extensions import db
 from project.infrastructure.models.event_reference_generated import (
     EventReferenceGeneratedMixin,
 )
-from project.utils import make_check_violation
+from project.shared.utils import make_check_violation
 
 
 class EventReference(db.Model, EventReferenceGeneratedMixin):

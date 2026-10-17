@@ -1,0 +1,293 @@
+from apispec import APISpec, BasePlugin
+from apispec.exceptions import DuplicateComponentNameError
+from apispec.ext.marshmallow import MarshmallowPlugin
+from flask import url_for
+from flask_apispec.extension import FlaskApiSpec
+from flask_babel import gettext
+from flask_marshmallow import Marshmallow
+from flask_restful import Api
+from marshmallow import ValidationError
+from psycopg2.errorcodes import CHECK_VIOLATION, UNIQUE_VIOLATION
+from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import HTTPException, UnprocessableEntity
+
+from project.domain.errors import BaseError, DuplicateError
+from project.domain.errors.constraint_error import ConstraintError
+from project.domain.errors.unauthorized_error import UnauthorizedError
+from project.presentation.shared.scopes import scope_list
+
+
+class RestApi(Api):
+    def handle_error(self, err):
+        from project.presentation.api.schemas import (
+            ErrorResponseSchema,
+            UnprocessableEntityResponseSchema,
+        )
+
+        schema = None
+        data = {}
+        code = 500
+
+        if isinstance(err, IntegrityError) and err.orig:
+            from project.extensions import db
+
+            try:
+                db.session.rollback()
+            except Exception:  # pragma: no cover
+                pass
+
+            if err.orig.pgcode == UNIQUE_VIOLATION:
+                data["name"] = "Unique Violation"
+                data["message"] = (
+                    "An entry with the entered values already exists. Duplicate entries are not allowed."
+                )
+            elif err.orig.pgcode == CHECK_VIOLATION:
+                data["name"] = "Check Violation"
+
+                if hasattr(err.orig, "message") and getattr(err.orig, "message", None):
+                    data["message"] = err.orig.message
+                else:
+                    data["message"] = "Action violates database constraint."
+
+            else:
+                data["name"] = "Integrity Error"
+                data["message"] = "Action violates database integrity."
+            code = 400
+            schema = ErrorResponseSchema()
+        elif isinstance(err, UnauthorizedError):
+            data["name"] = "Unauthorized"
+            data["message"] = err.message
+            code = 401
+            schema = ErrorResponseSchema()
+        elif isinstance(err, BaseError):
+            if isinstance(err, DuplicateError):
+                data["name"] = "Unique Violation"
+            elif isinstance(err, ConstraintError):
+                data["name"] = "Check Violation"
+            else:  # pragma: no cover
+                data["name"] = err.__class__.__name__
+            data["message"] = err.message
+            code = 400
+            schema = ErrorResponseSchema()
+        elif isinstance(err, HTTPException):
+            data["name"] = err.name
+            data["message"] = err.description
+            code = err.code
+
+            if isinstance(err, UnprocessableEntity):
+                data["name"] = err.name
+                data["message"] = err.description
+                code = err.code
+                schema = UnprocessableEntityResponseSchema()
+
+                if (
+                    hasattr(err, "exc")
+                    and err.exc
+                    and isinstance(err.exc, ValidationError)
+                ):
+                    self.fill_validation_data(err.exc, data)
+            else:
+                schema = ErrorResponseSchema()
+        elif isinstance(err, ValidationError):
+            data["name"] = "Unprocessable Entity"
+            data["message"] = (
+                "The request was well-formed but was unable to be followed due to semantic errors."
+            )
+            code = 422
+            schema = UnprocessableEntityResponseSchema()
+            self.fill_validation_data(err, data)
+
+        # Call default error handler that propagates error further
+        if code >= 500:
+            try:
+                super().handle_error(err)
+            except Exception:
+                if not schema:
+                    raise
+
+        if data and "message" in data:
+            data["message"] = gettext(data["message"])
+
+        return schema.dump(data), code
+
+    def fill_validation_data(self, err: ValidationError, data: dict):
+        if (
+            getattr(err, "args", None)
+            and isinstance(err.args, tuple)
+            and len(err.args) > 0
+        ):
+            arg = err.args[0]
+            if isinstance(arg, dict):
+                errors = []
+                for field, item in arg.items():
+                    messages = list()
+
+                    if isinstance(item, list):
+                        messages = item
+                    elif isinstance(item, dict):
+                        for item_value in item.values():
+                            if isinstance(item_value, list) or isinstance(
+                                item_value, tuple
+                            ):
+                                messages.extend(item_value)
+
+                    for message in messages:
+                        error = {"field": field, "message": message}
+                        errors.append(error)
+
+                if len(errors) > 0:
+                    data["errors"] = errors
+            elif isinstance(arg, str):
+                if arg:
+                    data["message"] = arg
+
+
+class DocSecurityPlugin(BasePlugin):
+    def operation_helper(self, path=None, operations=None, **kwargs):
+        pass
+
+
+# Module-level instances (marshmallow created here for schema imports)
+marshmallow = Marshmallow()
+marshmallow_plugin = MarshmallowPlugin()
+
+# These will be initialized by init_api()
+rest_api = None
+api_docs = None
+resource_registry = {}
+
+# Unused endpoints, each hidden behind its own flag so they can be retired one by one.
+API_EVENT_DATE_ENDPOINTS = {"api_v1_event_date"}
+API_EVENT_DATES_ENDPOINTS = {"api_v1_event_dates"}
+API_EVENT_LIST_ENDPOINTS = {"api_v1_event_list"}
+
+# app.config key (from project.shared.feature_flags) -> endpoints hidden when it is False.
+FEATURE_ENDPOINTS = {
+    "FEATURE_API_EVENT_DATE_ENABLED": API_EVENT_DATE_ENDPOINTS,
+    "FEATURE_API_EVENT_DATES_ENABLED": API_EVENT_DATES_ENDPOINTS,
+    "FEATURE_API_EVENT_LIST_ENABLED": API_EVENT_LIST_ENDPOINTS,
+}
+
+
+def init_api(app):
+    """Initialize REST API with the Flask app instance.
+
+    This function creates the API instances and registers all resource endpoints.
+    Must be called from create_app() to support the application factory pattern.
+
+    Args:
+        app: Flask application instance
+    """
+    global rest_api, api_docs
+
+    rest_api = RestApi(app, "/api/v1", catch_all_404s=True)
+    marshmallow.init_app(app)
+    app.config.update(
+        {
+            "APISPEC_SPEC": APISpec(
+                title="Event calendar API",
+                version="0.1.0",
+                plugins=[marshmallow_plugin, DocSecurityPlugin()],
+                openapi_version="2.0",
+                info=dict(
+                    description="This API provides endpoints to interact with the event calendar data."
+                ),
+            ),
+            "OAUTH2_SCOPES_SUPPORTED": scope_list,
+        }
+    )
+
+    api_docs = FlaskApiSpec(app)
+
+    # Add enum field support
+    marshmallow_plugin.converter.add_attribute_function(enum_to_properties)
+
+    # Import all API resources to register routes
+    import project.presentation.api.app.resources
+    import project.presentation.api.custom_event_category_set.resources
+    import project.presentation.api.custom_widget.resources
+    import project.presentation.api.dump.resources
+    import project.presentation.api.event.resources
+    import project.presentation.api.event_category.resources
+    import project.presentation.api.event_date.resources
+    import project.presentation.api.event_reference.resources
+    import project.presentation.api.event_reference_request.resources
+    import project.presentation.api.license.resources
+    import project.presentation.api.organization.resources
+    import project.presentation.api.organization_invitation.resources
+    import project.presentation.api.organization_relation.resources
+    import project.presentation.api.organization_verification_request.resources
+    import project.presentation.api.organizer.resources
+    import project.presentation.api.place.resources
+
+    # Re-register all resources for the current app instance.
+    disabled_endpoints = {
+        endpoint
+        for config_key, endpoints in FEATURE_ENDPOINTS.items()
+        if not app.config.get(config_key, True)
+        for endpoint in endpoints
+    }
+    for endpoint, (resource, url, api_docs_flag) in resource_registry.items():
+        if endpoint in disabled_endpoints:
+            continue
+        rest_api.add_resource(resource, url, endpoint=endpoint)
+        if api_docs_flag:
+            api_docs.register(resource, endpoint=endpoint)
+
+
+def enum_to_properties(self, field, **kwargs):
+    """
+    Add an OpenAPI extension for marshmallow_enum.EnumField instances
+    """
+    import marshmallow_enum
+
+    if isinstance(field, marshmallow_enum.EnumField):
+        return {"type": "string", "enum": [m.name for m in field.enum]}
+    return {}
+
+
+def add_api_resource(resource, url, endpoint, api_docs=True):
+    resource_registry[endpoint] = (resource, url, api_docs)
+
+
+def add_oauth2_scheme_with_transport(insecure: bool):
+    def _add_scheme(scheme_name, scheme):
+        try:
+            api_docs.spec.components.security_scheme(scheme_name, scheme)
+        except DuplicateComponentNameError:  # pragma: no cover
+            pass
+
+    if insecure:
+        authorizationUrl = url_for("main.authorize", _external=True)
+        tokenUrl = url_for("main.issue_token", _external=True)
+    else:
+        authorizationUrl = url_for("main.authorize", _external=True, _scheme="https")
+        tokenUrl = url_for("main.issue_token", _external=True, _scheme="https")
+
+    # OAuth2 authorization code flow
+    scopes = {k: k for _, k in enumerate(scope_list)}
+    oauth2_authorization_code_scheme = {
+        "type": "oauth2",
+        "authorizationUrl": authorizationUrl,
+        "tokenUrl": tokenUrl,
+        "flow": "accessCode",
+        "scopes": scopes,
+    }
+    _add_scheme("oauth2AuthCode", oauth2_authorization_code_scheme)
+
+    # OAuth2 client credentials flow
+    oauth2_client_credentials_scheme = {
+        "type": "oauth2",
+        "tokenUrl": tokenUrl,
+        "flow": "application",
+        "scopes": scopes,
+    }
+    _add_scheme("oauth2ClientCredentials", oauth2_client_credentials_scheme)
+
+    # API key
+    api_key_scheme = {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+    }
+    _add_scheme("apiKey", api_key_scheme)

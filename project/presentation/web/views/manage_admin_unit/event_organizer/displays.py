@@ -1,0 +1,22 @@
+from flask_babel import lazy_gettext
+
+from project.presentation.web.modular.base_display import BaseDisplay
+from project.presentation.web.modular.base_props import (
+    BoolProp,
+    DateProp,
+    IntProp,
+    LocationProp,
+    StringProp,
+    URLProp,
+)
+
+
+class ListDisplay(BaseDisplay):
+    name = StringProp(lazy_gettext("Name"))
+    location = LocationProp(lazy_gettext("Location"))
+    phone = StringProp(lazy_gettext("Phone"))
+    email = StringProp(lazy_gettext("Email"))
+    url = URLProp(lazy_gettext("Link URL"))
+    logo = BoolProp(lazy_gettext("Logo"), keypath="has_logo")
+    number_of_events = IntProp(lazy_gettext("Number of events"))
+    last_modified_at = DateProp(lazy_gettext("Last modified at"))

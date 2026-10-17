@@ -13,7 +13,7 @@ from project.infrastructure.models.admin_unit_verification_request_generated imp
     AdminUnitVerificationRequestGeneratedMixin,
     AdminUnitVerificationRequestReviewStatus,
 )
-from project.utils import make_check_violation
+from project.shared.utils import make_check_violation
 
 
 class AdminUnitVerificationRequest(

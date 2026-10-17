@@ -24,7 +24,7 @@ from project.infrastructure.read_repositories.read_model_mappers import (
     to_audit_read_model,
     to_organization_ref_read_model,
 )
-from project.utils import parse_like_term
+from project.shared.utils import parse_like_term
 
 SourceAdminUnit = aliased(AdminUnit)
 _load_source = joinedload(

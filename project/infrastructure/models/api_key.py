@@ -29,7 +29,7 @@ class ApiKey(db.Model, ApiKeyGeneratedMixin):
             return AdminUnit.query.get(self.admin_unit_id)
 
     def generate_key(self) -> str:
-        from project.utils import generate_api_key, hash_api_key
+        from project.shared.utils import generate_api_key, hash_api_key
 
         key = generate_api_key()
         self.key_hash = hash_api_key(key)

@@ -17,9 +17,9 @@ from project.application.queries import (
     TrackableCriteria,
     TrackableSort,
 )
-from project.dateutils import create_berlin_date
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_status import EventStatus
+from project.shared.dateutils import create_berlin_date
 from tests.integration.event_read_seed import seed_event_world
 
 PUBLIC = [

@@ -46,7 +46,7 @@ from project.infrastructure.models.association_tables.admin_unit_member_roles_me
 from project.infrastructure.models.image import Image
 from project.infrastructure.models.location import Location
 from project.infrastructure.models.mixins.api_key_owner_mixin import ApiKeyOwnerMixin
-from project.utils import make_check_violation
+from project.shared.utils import make_check_violation
 
 
 class AdminUnitMemberRolesMembers(db.Model, AdminUnitMemberRolesMembersGeneratedMixin):

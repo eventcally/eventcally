@@ -1,0 +1,39 @@
+from flask import render_template, request, url_for
+from flask_security import auth_required
+
+from project.presentation.shared.access import can_use_planning
+from project.presentation.web.forms.planning import PlanningForm
+from project.presentation.web.views.event import get_event_category_choices
+from project.presentation.web.views.event_search_params import EventSearchParams
+from project.presentation.web.views.main_blueprint import main_bp
+from project.presentation.web.views.utils import get_settings, permission_missing
+
+
+@main_bp.route("/planning")
+@auth_required()
+def planning():
+    if not can_use_planning():
+        return permission_missing(url_for("main.manage_admin_units"))
+
+    params = EventSearchParams()
+    params.set_planning_date_range()
+
+    form = PlanningForm(formdata=request.args, obj=params)
+    form.category_id.choices = get_event_category_choices()
+    form.category_id.data = [c[0] for c in form.category_id.choices]
+    form.weekday.data = [c[0] for c in form.weekday.choices]
+    form.exclude_recurring.data = True
+
+    settings = get_settings()
+    initial_external_calendars = (
+        settings.planning_external_calendars
+        if settings.planning_external_calendars
+        else "[]"
+    )
+
+    return render_template(
+        "planning/list.html",
+        form=form,
+        params=params,
+        initial_external_calendars=initial_external_calendars,
+    )

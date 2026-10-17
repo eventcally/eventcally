@@ -6,7 +6,7 @@ from flask import current_app, url_for
 
 from project import cache_path, robots_txt_path, sitemap_path
 from project.application.queries import ListSitemapEventsQuery
-from project.utils import make_dir
+from project.shared.utils import make_dir
 
 
 def generate_sitemap():

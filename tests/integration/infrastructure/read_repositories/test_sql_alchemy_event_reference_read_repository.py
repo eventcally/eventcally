@@ -68,7 +68,7 @@ def test_trackable_filters_and_sort(app, db, read_repo, seeder):
     from datetime import datetime
 
     from project.application.queries import TrackableCriteria, TrackableSort
-    from tests.integration.api.read_parity import set_trackable
+    from tests.integration.presentation.api.read_parity import set_trackable
 
     _, admin_unit_id = seeder.setup_base(log_in=False)
     other_admin_unit_id = seeder.create_admin_unit(

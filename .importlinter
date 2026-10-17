@@ -6,20 +6,23 @@ include_external_packages=True
 name = My layers contract
 type = layers
 layers =
+    project.presentation
     project.infrastructure
     project.application
     project.domain
 ignore_imports =
   project -> project.**
+  # The Celery mail task (root wiring module, reached by the dispatchers) sends through the
+  # shared mail helper. Follow-up: move the mail sending out of the presentation layer.
+  project.base_tasks -> project.presentation.shared.mail
 
 [importlinter:contract:delivery-reads-through-queries]
 name = Delivery layers and template/access helpers read through queries, not ORM models
 type = forbidden
 source_modules =
-    project.views
-    project.api
-    project.access
-    project.jinja_filters
+    project.presentation.web
+    project.presentation.api
+    project.presentation.shared
 forbidden_modules =
     project.infrastructure.models
 # Indirect chains stay allowed: every module reaches the models through project.container
@@ -29,7 +32,52 @@ allow_indirect_imports = True
 # Unmatched entries fail lint-imports, so a removed import forces removing its entry.
 unmatched_ignore_imports_alerting = error
 ignore_imports =
-    project.views.flask_admin -> project.infrastructure.models
-    project.views.flask_admin -> project.infrastructure.models.admin_unit
-    project.views.flask_admin -> project.infrastructure.models.event_place
-    project.views.flask_admin -> project.infrastructure.models.user
+    project.presentation.web.views.flask_admin -> project.infrastructure.models
+    project.presentation.web.views.flask_admin -> project.infrastructure.models.admin_unit
+    project.presentation.web.views.flask_admin -> project.infrastructure.models.event_place
+    project.presentation.web.views.flask_admin -> project.infrastructure.models.user
+
+[importlinter:contract:shared-is-a-leaf]
+name = Cross-layer helpers in project.shared depend on nothing above the domain
+type = forbidden
+source_modules =
+    project.shared
+forbidden_modules =
+    project.application
+    project.infrastructure
+    project.presentation
+# The root package __init__ is the app factory and imports every layer; every module
+# "imports" it implicitly, so those edges are ignored like in the layers contract.
+ignore_imports =
+    project -> project.**
+
+[importlinter:contract:web-does-not-import-api]
+name = The web channel does not import the API channel
+type = forbidden
+source_modules =
+    project.presentation.web
+forbidden_modules =
+    project.presentation.api
+allow_indirect_imports = True
+# The custom-widget JSON endpoint deliberately serves the API representation.
+ignore_imports =
+    project.presentation.web.views.js -> project.presentation.api.custom_widget.schemas
+
+[importlinter:contract:api-does-not-import-web]
+name = The API channel does not import the web channel
+type = forbidden
+source_modules =
+    project.presentation.api
+forbidden_modules =
+    project.presentation.web
+allow_indirect_imports = True
+
+[importlinter:contract:presentation-shared-is-channel-neutral]
+name = presentation.shared imports neither channel
+type = forbidden
+source_modules =
+    project.presentation.shared
+forbidden_modules =
+    project.presentation.web
+    project.presentation.api
+allow_indirect_imports = True

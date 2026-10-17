@@ -17,7 +17,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy import MetaData
 
-from project.base_model import CustomModel
+from project.infrastructure.base_model import CustomModel
 
 # SQLAlchemy naming convention for constraints
 convention = {

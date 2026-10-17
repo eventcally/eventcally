@@ -7,7 +7,7 @@ from project.application.queries import (
     ListAppWebhookDeliveriesQuery,
     ListAppWebhookDeliveryAttemptsQuery,
 )
-from tests.integration.views.manage_admin_unit.test_webhook_delivery import (
+from tests.integration.presentation.web.views.manage_admin_unit.test_webhook_delivery import (
     _create_webhook_delivery,
     _create_webhook_delivery_attempt,
 )

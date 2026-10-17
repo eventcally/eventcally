@@ -13,7 +13,6 @@ from flask import request
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import object_session
 
-from project.dateutils import gmt_tz
 from project.domain.models.aggregates.app_aggregate import AppAggregate
 from project.domain.models.aggregates.oauth2_client_aggregate import (
     OAuth2ClientAggregate,
@@ -32,6 +31,7 @@ from project.infrastructure.models.oauth2_token_generated import (
     OAuth2TokenGeneratedMixin,
 )
 from project.infrastructure.models.webhook import Webhook
+from project.shared.dateutils import gmt_tz
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
 oauth_refresh_token_expires_in = 90 * 86400  # 90 days

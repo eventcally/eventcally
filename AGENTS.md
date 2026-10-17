@@ -15,8 +15,10 @@ Or just: `pre-commit run --all-files` (runs all hooks in the correct order).
 Enforced by `.importlinter` and the whitelist scripts:
 - **`project/domain/`** — only stdlib, typing, pydantic, abc, datetime, enum, dateutil, pytz. Cannot import application or infrastructure.
 - **`project/application/`** — only stdlib, typing, pydantic, abc, datetime, enum, logging, itertools + domain. Cannot import infrastructure.
-- **`project/services/`** — only `cache`, `dump`, `seo`. Flask-Security calls live in `project/user_datastore.py`; fixture-only ORM helpers in `project/cli/seed_helpers.py` (never import from views/api/application).
-- **`project/infrastructure/`** — can import application and domain.
+- **`project/services/`** — only `cache`, `dump`, `seo`. Flask-Security calls live in `project/infrastructure/user_datastore.py`.
+- **`project/infrastructure/`** — can import application and domain. Fixture-only ORM helpers live in `project/infrastructure/seed_helpers.py` (never import from presentation/application).
+- **`project/presentation/`** — top layer; delivery code split by channel: `web/` (views, modular framework, forms, templates, static, Jinja filters), `api/`, `cli/`, and `shared/` for helpers both channels need. `web` and `api` must not import each other.
+- **`project/shared/`** — cross-layer helpers (`utils`, `dateutils`, `imageutils`, `context`, `feature_flags`); a leaf that imports only the domain. Not the same as `project/presentation/shared/` (cross-channel).
 
 Violations fail `lint-imports`. Check both files before adding imports:
 - `.importlinter`
@@ -25,9 +27,10 @@ Violations fail `lint-imports`. Check both files before adding imports:
 ## Tests
 
 - `tests/unit/` runs without external dependencies or Docker: `pytest tests/unit` (seconds).
-- `tests/integration/` (views, api, infrastructure, service_layer, ...) requires PostGIS + Redis. Use `docker compose -f docker-compose.test.yml up -d --wait` for local testing, or run the full dockerized suite with `./runtests.sh`.
-- Run a single test or subset: `./runtests.sh --splits 1 --group 1 -- tests/integration/views/test_event.py::test_create_allday -v --no-cov`. The `--group` creates that group's database and exports `TEST_DATABASE_URL`; without it the run fails with `could not translate host name "myserver"`.
+- `tests/integration/` (`presentation/{web,api,cli,shared}`, infrastructure, service_layer, ...) requires PostGIS + Redis. Use `docker compose -f docker-compose.test.yml up -d --wait` for local testing, or run the full dockerized suite with `./runtests.sh`.
+- Run a single test or subset: `./runtests.sh --splits 1 --group 1 -- tests/integration/presentation/web/views/test_event.py::test_create_allday -v --no-cov`. The `--group` creates that group's database and exports `TEST_DATABASE_URL`; without it the run fails with `could not translate host name "myserver"`.
 - Key fixtures: `app`, `db`, `client`, `seeder`, `utils`, `container`, `message_bus` (see `tests/integration/conftest.py`).
+- **Tests mirror the source tree**: a module's tests live at the mirrored path (`project/presentation/web/views/event.py` → `tests/integration/presentation/web/views/test_event.py`, `project/shared/utils.py` → `tests/integration/shared/test_utils.py`). Fixtures stay in `tests/integration/`.
 - Test base classes in `tests/integration/base_test.py` — use these for view tests instead of writing boilerplate.
 
 ## End-to-end tests
@@ -62,7 +65,7 @@ Key points:
 
 ## Adding read-side queries
 
-Reads in views (incl. `project/views/modular`) and the API are migrating to the query side
+Reads in views (incl. `project/presentation/web/modular`) and the API are migrating to the query side
 (plan: `.agents/plans/2026-10-13-cqrs-read-side-migration.plan.md`). Scaffold guide:
 `.github/prompts/add-ddd-query.prompt.md`. Reference implementation: event organizers
 (`ListEventOrganizersQuery`, `SqlAlchemyEventOrganizerReadRepository`).
@@ -74,17 +77,17 @@ Reads in views (incl. `project/views/modular`) and the API are migrating to the 
 - Query-side read repos use `infrastructure.read_session` (read-only, removed after each
   top-level query). Event-handler read repos stay on `session_factory`.
 - Delivery: `self.query_bus` in `BaseResource` and modular views; `@inject` +
-  `Provide[Application.cqrs.query_bus]` in flat view functions. Helpers in `project/views/utils.py`:
+  `Provide[Application.cqrs.query_bus]` in flat view functions. Helpers in `project/presentation/shared/query_results.py`:
   `page_request_from_request_args`, `abort_if_page_out_of_range`, `result_or_404`.
 - The `delivery-reads-through-queries` import-linter contract only exempts `views.flask_admin`
-  (Flask-Admin stays ORM); it also covers `project.access` and `project.jinja_filters`. After removing a `project.infrastructure.models` import, run `python .scripts/models_import_ignores.py --write`;
+  (Flask-Admin stays ORM); it also covers `project.presentation.shared` (access, mail, scopes, ...), the Jinja filters and forms. After removing a `project.infrastructure.models` import, run `python .scripts/models_import_ignores.py --write`;
   never add entries by hand.
 
 ## Code generation
 
-- SQLAlchemy models have `*_generated.py` files generated from YAML schemas in `codegen/config/`.
+- SQLAlchemy models have `*_generated.py` files generated from YAML schemas in `.scripts/codegen/config/`.
 - **Never edit `*_generated.py`.** Put custom logic in the handwritten sibling file (e.g., `event.py` extends `event_generated.py`).
-- Regenerate: `python codegen/generate.py`
+- Regenerate: `python .scripts/codegen/generate.py`
 
 ## Environment
 

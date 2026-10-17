@@ -54,7 +54,7 @@ Use the Explore agent to find:
    command handler → repository (`project/domain` via `project/infrastructure`); events via
    `project/application/message_bus.py`
 5. **Data access** - SQLAlchemy repositories in `project/infrastructure/repositories/`; note
-   whether the model is codegen-backed (`*_generated.py` from `codegen/config/`)
+   whether the model is codegen-backed (`*_generated.py` from `.scripts/codegen/config/`)
 6. **Test patterns** - `tests/integration/conftest.py` fixtures and `tests/integration/base_test.py` base classes;
    which suites need PostGIS + Redis vs the `application/` + `domain/` suites that don't
 
@@ -76,8 +76,8 @@ Use the Explore agent to find:
 
 - What files need to be created?
 - What files need to be modified?
-- Is a model codegen-backed? If so, edit the YAML in `codegen/config/` and regenerate
-  (`python codegen/generate.py`) — never hand-edit `*_generated.py`.
+- Is a model codegen-backed? If so, edit the YAML in `.scripts/codegen/config/` and regenerate
+  (`python .scripts/codegen/generate.py`) — never hand-edit `*_generated.py`.
 - New command/event? Register the handler in the DI container (`project/container.py`).
 - New Celery task? Register it in `project/celery_tasks.py`.
 - Any DB schema change → new Alembic migration (`flask db migrate`, then review — PostGIS

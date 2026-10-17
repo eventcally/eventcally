@@ -6,7 +6,7 @@ from project.domain.models.entities.image_entity import ImageEntity
 from project.extensions import db
 from project.infrastructure.models.image_generated import ImageGeneratedMixin
 from project.infrastructure.models.iowned import IOwned
-from project.utils import make_check_violation
+from project.shared.utils import make_check_violation
 
 
 class Image(db.Model, ImageGeneratedMixin, IOwned):

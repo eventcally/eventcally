@@ -15,10 +15,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 TARGETS = (
-    ("views", ROOT / "project" / "views"),
+    ("web", ROOT / "project" / "presentation" / "web"),
     ("api", ROOT / "project" / "api"),
+    ("shared", ROOT / "project" / "presentation" / "shared"),
     ("services", ROOT / "project" / "services"),
-    ("access.py", ROOT / "project" / "access.py"),
     ("oauth2.py", ROOT / "project" / "oauth2.py"),
 )
 
