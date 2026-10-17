@@ -1,10 +1,9 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask_babel import gettext
 
-from project.models import OAuth2Client
-from project.services.oauth2_client_service import OAuth2ClientService
+from project.application.queries import (
+    GetOAuth2ClientQuery,
+    ListOrganizationOAuth2ClientsQuery,
+)
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -17,14 +16,14 @@ from project.views.user_blueprint.oauth2_client.forms import (
     UpdateOAuth2ClientForm,
 )
 from project.views.user_blueprint.oauth2_client.views import DeleteView, UpdateView
-from project.views.utils import flash_non_match_for_deletion
+from project.views.utils import current_admin_unit, flash_non_match_for_deletion
 
 
 class OAuth2ClientViewHandler(ManageAdminUnitChildViewHandler):
-    model = OAuth2Client
-    object_service: Annotated[
-        OAuth2ClientService, Provide["services.oauth2_client_service"]
-    ]
+    model_name = "oauth2_client"
+    model_name_plural = "oauth2_clients"
+    display_name = "OAuth2 client"
+    display_name_plural = "OAuth2 clients"
     create_view_class = CreateView
     create_form_class = CreateOAuth2ClientForm
     update_view_class = UpdateView
@@ -34,17 +33,17 @@ class OAuth2ClientViewHandler(ManageAdminUnitChildViewHandler):
     read_display_class = ReadDisplay
     list_display_class = ListDisplay
 
-    def apply_base_filter(self, query, **kwargs):
-        return (
-            super()
-            .apply_base_filter(query, **kwargs)
-            .filter(OAuth2Client.is_app.is_(False))
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListOrganizationOAuth2ClientsQuery(
+            admin_unit_id=current_admin_unit.id, page=page_request
         )
 
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super().apply_objects_query_order(query, **kwargs).order_by(OAuth2Client.id)
-        )
+    def create_get_query(self, object_id):
+        return GetOAuth2ClientQuery(id=object_id)
+
+    def get_object_title(self, object):
+        # Parity with the ORM `OAuth2Client.__str__`.
+        return object.client_name or f"{self.get_model_display_name()} {object.id}"
 
     def can_object_be_deleted(self, form, object):
         return flash_non_match_for_deletion(

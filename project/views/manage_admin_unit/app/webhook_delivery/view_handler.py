@@ -1,4 +1,9 @@
-from project.models.webhook_delivery import WebhookDelivery
+from flask import g
+
+from project.application.queries import (
+    GetAppWebhookDeliveryQuery,
+    ListAppWebhookDeliveriesQuery,
+)
 from project.views.manage_admin_unit.app import app_bp
 from project.views.manage_admin_unit.app.child_view_handler import AppChildViewHandler
 from project.views.manage_admin_unit.app.view_handler import handler as app_view_handler
@@ -9,25 +14,26 @@ from project.views.manage_admin_unit.app.webhook_delivery.displays import (
 
 
 class WebhookDeliveryViewHandler(AppChildViewHandler):
-    admin_unit_id_attribute_name = "app.admin_unit_id"
     app_id_attribute_name = "app_id"
-    model = WebhookDelivery
+    model_name = "webhook_delivery"
+    model_name_plural = "webhook_deliveries"
+    display_name = "Webhook delivery"
+    display_name_plural = "Webhook deliveries"
     create_view_class = None
     update_view_class = None
     delete_view_class = None
     list_display_class = ListDisplay
     read_display_class = ReadDisplay
 
-    def get_object_by_id(self, object_id):
-        uow = self.message_bus.create_uow()
-        return uow.webhook_deliveries._get_model(object_id)
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListAppWebhookDeliveriesQuery(app_id=g.current_app.id, page=page_request)
 
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(WebhookDelivery.id.desc())
-        )
+    def create_get_query(self, object_id):
+        return GetAppWebhookDeliveryQuery(id=object_id)
+
+    def get_object_title(self, object):
+        # Parity with the ORM `CustomModel.__str__`.
+        return f"{self.get_model_display_name()} {object.id}"
 
 
 handler = WebhookDeliveryViewHandler(parent=app_view_handler)

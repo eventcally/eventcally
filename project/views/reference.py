@@ -4,20 +4,23 @@ from flask_babel import gettext
 
 from project.access import can_reference_event, get_admin_units_for_event_reference
 from project.application.message_bus import MessageBus
+from project.application.queries import GetEventDetailQuery
+from project.application.query_bus import QueryBus
 from project.container import Application
 from project.domain.errors import BaseError
 from project.forms.reference import CreateEventReferenceForm
-from project.models import Event
 from project.views.main_blueprint import main_bp
-from project.views.utils import flash_errors, handleBaseError
+from project.views.utils import flash_errors, handleBaseError, result_or_404
 
 
 @main_bp.route("/event/<int:event_id>/reference", methods=("GET", "POST"))
 @inject
 def event_reference_create(
-    event_id, message_bus: MessageBus = Provide[Application.cqrs.message_bus]
+    event_id,
+    message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
 ):
-    event = Event.query.get_or_404(event_id)
+    event = result_or_404(query_bus.handle(GetEventDetailQuery(id=event_id)))
     user_can_reference_event = can_reference_event(event)
 
     if not user_can_reference_event:

@@ -1,17 +1,14 @@
 from marshmallow import ValidationError, fields, post_load, validate, validates_schema
 
 from project.api.fields import NumericStr
-from project.api.schemas import PlainBaseSchema, SQLAlchemyBaseSchema
+from project.api.schemas import PlainBaseSchema
 from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
 )
-from project.models import Location
 
 
-class LocationModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = Location
-        load_instance = True
+class LocationModelSchema(PlainBaseSchema):
+    pass
 
 
 class LocationCoordinateValidationMixin:

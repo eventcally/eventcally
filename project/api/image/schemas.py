@@ -1,8 +1,7 @@
 from marshmallow import ValidationError, fields, post_load, validate, validates_schema
 
-from project.api import marshmallow
 from project.api.license.schemas import LicenseRefSchema
-from project.api.schemas import IdSchemaMixin, PlainBaseSchema, SQLAlchemyBaseSchema
+from project.api.schemas import IdSchemaMixin, PlainBaseSchema
 from project.domain.models.value_objects.image_value_object import ImageValueObject
 from project.imageutils import (
     get_bytes_from_image,
@@ -13,18 +12,15 @@ from project.imageutils import (
     validate_image,
 )
 from project.jinja_filters import url_for_image
-from project.models import Image
 
 
-class ImageModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = Image
-        load_instance = True
+class ImageModelSchema(PlainBaseSchema):
+    pass
 
 
 class ImageBaseSchemaMixin(object):
-    copyright_text = marshmallow.auto_field(
-        required=True, validate=validate.Length(min=3, max=255)
+    copyright_text = fields.String(
+        required=True, allow_none=True, validate=validate.Length(min=3, max=255)
     )
 
 

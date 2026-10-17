@@ -31,7 +31,7 @@ class PlainBaseSchema(marshmallow.Schema, PostPatchSchemaMixin):
 
 
 class IdSchemaMixin(object):
-    id = marshmallow.auto_field(dump_only=True, dump_default=missing)
+    id = fields.Integer(dump_only=True, dump_default=missing)
 
 
 class IdPlainSchemaMixin(object):
@@ -39,13 +39,18 @@ class IdPlainSchemaMixin(object):
 
 
 class WriteIdSchemaMixin(object):
-    id = marshmallow.auto_field(required=True)
+    """A reference by id; subclasses implement `object_exists(id)`."""
+
+    id = fields.Integer(required=True)
 
     @pre_load()
     def validate_exists(self, data, **kwargs):
-        if not self.get_instance(data):
+        if not self.object_exists(data.get("id")):
             raise ValidationError("Referenced object does not exist")
         return data
+
+    def object_exists(self, object_id) -> bool:  # pragma: no cover
+        raise NotImplementedError("Plain write id schemas implement object_exists")
 
 
 class WriteIdPlainSchema(PlainBaseSchema):

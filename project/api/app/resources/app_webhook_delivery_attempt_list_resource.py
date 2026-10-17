@@ -8,9 +8,14 @@ from project.api.app.schemas import (
     AppWebhookDeliveryAttemptListResponseSchema,
     AppWebhookDeliveryAttemptTriggerRequestSchema,
 )
+from project.api.query_args import page_request_from_kwargs
 from project.api.resources import BaseResource, require_api_access
 from project.application.commands import AttemptToDeliverWebhookCommand
-from project.models import WebhookDelivery, WebhookDeliveryAttempt
+from project.application.queries import (
+    GetWebhookDeliveryForAppQuery,
+    ListWebhookDeliveryAttemptsForAppQuery,
+)
+from project.views.utils import abort_if_page_out_of_range, result_or_404
 
 
 class AppWebhookDeliveryAttemptListResource(BaseResource):
@@ -19,19 +24,17 @@ class AppWebhookDeliveryAttemptListResource(BaseResource):
     @marshal_with(AppWebhookDeliveryAttemptListResponseSchema)
     @require_api_access(app_token_required=True)
     def get(self, id, **kwargs):
-        # First verify the webhook delivery belongs to the current app
-        delivery = (
-            WebhookDelivery.query.filter(WebhookDelivery.app_id == current_token.app_id)
-            .filter(WebhookDelivery.id == id)
-            .first_or_404()
+        page = result_or_404(
+            self.query_bus.handle(
+                ListWebhookDeliveryAttemptsForAppQuery(
+                    app_id=current_token.app_id,
+                    webhook_delivery_id=id,
+                    page=page_request_from_kwargs(kwargs),
+                )
+            )
         )
-
-        query = WebhookDeliveryAttempt.query.filter(
-            WebhookDeliveryAttempt.webhook_delivery_id == delivery.id
-        )
-        query = query.order_by(WebhookDeliveryAttempt.start_at.desc())
-
-        return query.paginate()
+        abort_if_page_out_of_range(page)
+        return page
 
     @doc(summary="Trigger new webhook delivery attempt", tags=["Apps"])
     @use_kwargs(
@@ -41,10 +44,10 @@ class AppWebhookDeliveryAttemptListResource(BaseResource):
     @require_api_access(app_token_required=True)
     def post(self, id):
         # First verify the webhook delivery belongs to the current app
-        delivery = (
-            WebhookDelivery.query.filter(WebhookDelivery.app_id == current_token.app_id)
-            .filter(WebhookDelivery.id == id)
-            .first_or_404()
+        delivery = result_or_404(
+            self.query_bus.handle(
+                GetWebhookDeliveryForAppQuery(app_id=current_token.app_id, id=id)
+            )
         )
 
         cmd = AttemptToDeliverWebhookCommand(

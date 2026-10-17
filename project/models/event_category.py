@@ -25,20 +25,12 @@ class EventEventCategories(db.Model, EventEventCategoriesGeneratedMixin):
 class CustomEventCategorySet(db.Model, CustomEventCategorySetGeneratedMixin):
     pass
 
-    @property
-    def label_or_name(self):
-        return self.label or self.name
-
     def __str__(self):  # pragma: no cover
         return self.name or super().__str__()
 
 
 class CustomEventCategory(db.Model, CustomEventCategoryGeneratedMixin):
     pass
-
-    @property
-    def label_or_name(self):
-        return self.label or self.name
 
     def __str__(self):  # pragma: no cover
         return self.name or super().__str__()

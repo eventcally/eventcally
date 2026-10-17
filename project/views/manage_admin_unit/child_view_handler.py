@@ -1,21 +1,13 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask_security import auth_required
-from sqlalchemy.orm import class_mapper
 
 from project.access import admin_unit_owner_access_or_401
 from project.modular.base_view_handler import BaseViewHandler
-from project.services.organization_service import OrganizationService
 from project.utils import getattr_keypath
-from project.views.utils import current_admin_unit, manage_permission_required
+from project.views.utils import manage_permission_required
 
 
 class ManageAdminUnitBaseViewHandler(BaseViewHandler):
     decorators = [auth_required()]
-    organization_service: Annotated[
-        OrganizationService, Provide["services.organization_service"]
-    ]
 
     def _add_view(self, key, url, view_class, endpoint, app, **kwargs):
         if (
@@ -38,21 +30,6 @@ class ManageAdminUnitBaseViewHandler(BaseViewHandler):
 
 class ManageAdminUnitChildViewHandler(ManageAdminUnitBaseViewHandler):
     admin_unit_id_attribute_name = "admin_unit_id"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if self.admin_unit_id_attribute_name:
-            columns = class_mapper(self.model).columns
-            self.admin_unit_id_column = columns.get(self.admin_unit_id_attribute_name)
-
-    def apply_base_filter(self, query, **kwargs):
-        query = super().apply_base_filter(query, **kwargs)
-
-        if self.admin_unit_id_column is not None:
-            query = query.filter(self.admin_unit_id_column == current_admin_unit.id)
-
-        return query
 
     def check_object_access(self, object):
         assert (

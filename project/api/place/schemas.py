@@ -1,6 +1,5 @@
 from marshmallow import fields, post_load, validate
 
-from project.api import marshmallow
 from project.api.image.schemas import ImageDumpSchema, ImageSchema
 from project.api.location.schemas import (
     LocationDumpSchema,
@@ -15,7 +14,6 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     PlainBaseSchema,
-    SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
     WriteIdSchemaMixin,
@@ -24,13 +22,10 @@ from project.application.commands import (
     CreateEventPlaceCommand,
     UpdateEventPlaceCommand,
 )
-from project.models import EventPlace
 
 
-class PlaceModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = EventPlace
-        load_instance = True
+class PlaceModelSchema(PlainBaseSchema):
+    pass
 
 
 class PlaceIdSchema(PlaceModelSchema, IdSchemaMixin):
@@ -46,11 +41,11 @@ class PlaceWriteIdSchema(PlaceModelSchema, WriteIdSchemaMixin):
 
 
 class PlaceBaseSchemaMixin(TrackableSchemaMixin):
-    name = marshmallow.auto_field(
-        required=True, validate=validate.Length(min=3, max=255)
+    name = fields.String(required=True, validate=validate.Length(min=3, max=255))
+    url = fields.String(
+        allow_none=True, validate=[validate.URL(), validate.Length(max=255)]
     )
-    url = marshmallow.auto_field(validate=[validate.URL(), validate.Length(max=255)])
-    description = marshmallow.auto_field()
+    description = fields.String(allow_none=True)
 
 
 class PlaceSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
@@ -66,7 +61,7 @@ class PlaceDumpSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
 
 
 class PlaceRefSchema(PlaceIdSchema):
-    name = marshmallow.auto_field()
+    name = fields.String(required=True, validate=validate.Length(max=255))
 
 
 class PlaceSearchItemSchema(PlaceIdSchema, PlaceBaseSchemaMixin):

@@ -3,8 +3,6 @@ import os
 import shutil
 
 from flask import current_app
-from sqlalchemy import and_
-from sqlalchemy.orm import joinedload
 
 from project import dump_org_path, dump_path
 from project.api.event.schemas import EventDumpSchema
@@ -13,18 +11,38 @@ from project.api.event_reference.schemas import EventReferenceDumpSchema
 from project.api.organization.schemas import OrganizationDumpSchema
 from project.api.organizer.schemas import OrganizerDumpSchema
 from project.api.place.schemas import PlaceDumpSchema
-from project.extensions import db
-from project.imageutils import get_image_from_bytes
-from project.models import (
-    AdminUnit,
-    Event,
-    EventCategory,
-    EventOrganizer,
-    EventPlace,
-    EventPublicStatus,
-    EventReference,
+from project.application.queries import (
+    GetImageFileQuery,
+    ListDumpEventCategoriesQuery,
+    ListDumpEventReferencesQuery,
+    ListDumpEventsQuery,
+    ListDumpOrganizationsQuery,
+    ListDumpOrganizersQuery,
+    ListDumpPlacesQuery,
 )
+from project.imageutils import get_image_from_bytes
 from project.utils import clear_files_in_dir, make_dir
+
+BATCH_SIZE = 200
+
+
+def _query_bus():
+    return current_app.container.cqrs.query_bus()
+
+
+def _collect(make_query) -> list:
+    """Every item of a keyset-paged query: `make_query(after_id)` per batch."""
+    items = list()
+    after_id = 0
+
+    while True:
+        batch = _query_bus().handle(make_query(after_id))
+        items.extend(batch)
+
+        if len(batch) < BATCH_SIZE:
+            return items
+
+        after_id = batch[-1].id
 
 
 class Dumper(object):
@@ -41,25 +59,21 @@ class Dumper(object):
 
     def dump_data(self):
         # Events
-        events = (
-            Event.query.join(Event.admin_unit)
-            .options(joinedload(Event.categories))
-            .filter(
-                and_(
-                    Event.public_status == EventPublicStatus.published,
-                    AdminUnit.is_verified,
-                )
+        events = _collect(
+            lambda after_id: ListDumpEventsQuery(
+                public_only=True, after_id=after_id, limit=BATCH_SIZE
             )
-            .all()
         )
         self.dump_items(events, EventDumpSchema(many=True), "events")
 
         # Places
-        places = EventPlace.query.all()
+        places = _collect(
+            lambda after_id: ListDumpPlacesQuery(after_id=after_id, limit=BATCH_SIZE)
+        )
         self.dump_items(places, PlaceDumpSchema(many=True), "places")
 
         # Event categories
-        event_categories = EventCategory.query.all()
+        event_categories = _query_bus().handle(ListDumpEventCategoriesQuery())
         self.dump_items(
             event_categories,
             EventCategoryDumpSchema(many=True),
@@ -67,17 +81,29 @@ class Dumper(object):
         )
 
         # Organizers
-        organizers = EventOrganizer.query.all()
+        organizers = _collect(
+            lambda after_id: ListDumpOrganizersQuery(
+                after_id=after_id, limit=BATCH_SIZE
+            )
+        )
         self.dump_items(organizers, OrganizerDumpSchema(many=True), "organizers")
 
         # Organizations
-        organizations = AdminUnit.query.all()
+        organizations = _collect(
+            lambda after_id: ListDumpOrganizationsQuery(
+                after_id=after_id, limit=BATCH_SIZE
+            )
+        )
         self.dump_items(
             organizations, OrganizationDumpSchema(many=True), "organizations"
         )
 
         # Event references
-        event_references = EventReference.query.all()
+        event_references = _collect(
+            lambda after_id: ListDumpEventReferencesQuery(
+                after_id=after_id, limit=BATCH_SIZE
+            )
+        )
         self.dump_items(
             event_references,
             EventReferenceDumpSchema(many=True),
@@ -118,9 +144,10 @@ class Dumper(object):
         if not image:
             return
 
-        extension = image.get_file_extension()
+        image_file = _query_bus().handle(GetImageFileQuery(id=image.id))
+        extension = image_file.get_file_extension()
         file_path = os.path.join(self.tmp_path, f"{image.id}.{extension}")
-        get_image_from_bytes(image.data).save(file_path)
+        get_image_from_bytes(image_file.data).save(file_path)
 
 
 class AdminUnitDumper(Dumper):
@@ -129,27 +156,30 @@ class AdminUnitDumper(Dumper):
         self.admin_unit_id = admin_unit_id
 
     def dump_data(self):
+        admin_unit_id = self.admin_unit_id
+
         # Events
-        events = (
-            Event.query.join(Event.admin_unit)
-            .options(joinedload(Event.categories))
-            .filter(Event.admin_unit_id == self.admin_unit_id)
-            .all()
+        events = _collect(
+            lambda after_id: ListDumpEventsQuery(
+                admin_unit_id=admin_unit_id, after_id=after_id, limit=BATCH_SIZE
+            )
         )
         self.dump_items(events, EventDumpSchema(many=True), "events")
         for event in events:
             self.dump_image(event.photo)
 
         # Places
-        places = EventPlace.query.filter(
-            EventPlace.admin_unit_id == self.admin_unit_id
-        ).all()
+        places = _collect(
+            lambda after_id: ListDumpPlacesQuery(
+                admin_unit_id=admin_unit_id, after_id=after_id, limit=BATCH_SIZE
+            )
+        )
         self.dump_items(places, PlaceDumpSchema(many=True), "places")
         for place in places:
             self.dump_image(place.photo)
 
         # Event categories
-        event_categories = EventCategory.query.all()
+        event_categories = _query_bus().handle(ListDumpEventCategoriesQuery())
         self.dump_items(
             event_categories,
             EventCategoryDumpSchema(many=True),
@@ -157,15 +187,19 @@ class AdminUnitDumper(Dumper):
         )
 
         # Organizers
-        organizers = EventOrganizer.query.filter(
-            EventOrganizer.admin_unit_id == self.admin_unit_id
-        ).all()
+        organizers = _collect(
+            lambda after_id: ListDumpOrganizersQuery(
+                admin_unit_id=admin_unit_id, after_id=after_id, limit=BATCH_SIZE
+            )
+        )
         self.dump_items(organizers, OrganizerDumpSchema(many=True), "organizers")
         for organizer in organizers:
             self.dump_image(organizer.logo)
 
         # Organizations
-        organization = db.session.get(AdminUnit, self.admin_unit_id)
+        (organization,) = _query_bus().handle(
+            ListDumpOrganizationsQuery(admin_unit_id=admin_unit_id)
+        )
         self.dump_item(organization, OrganizationDumpSchema(), "organization")
         self.dump_image(organization.logo)
 

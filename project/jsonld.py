@@ -99,10 +99,11 @@ def get_date_from_datetime(value: datetime.datetime) -> datetime.date:
     return value.astimezone(berlin_tz).date()
 
 
-def get_sd_for_event_date(event_date):
-    from project.models import EventAttendanceMode, EventStatus
+def get_sd_for_event_date(event_date, event=None):
+    from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
+    from project.domain.models.enums.event_status import EventStatus
 
-    event = event_date.event
+    event = event if event is not None else event_date.event
 
     result = {}
     result["@context"] = "https://schema.org"

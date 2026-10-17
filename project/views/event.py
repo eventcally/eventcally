@@ -1,39 +1,38 @@
 from datetime import datetime
 
+from dependency_injector.wiring import Provide, inject
 from flask import Response, current_app, jsonify, render_template, request, url_for
 from flask_security import current_user
 
-from project.access import (
-    can_read_event_or_401,
-    can_reference_event,
-    can_request_event_reference,
-    get_admin_unit_members_with_permission,
-    has_access,
+from project.access import can_reference_event, can_request_event_reference, has_access
+from project.application.queries import (
+    GetEventDetailQuery,
+    ListAllEventCategoriesQuery,
+    ListEventReportRecipientsQuery,
+    ListUpcomingEventDatesQuery,
 )
+from project.application.query_bus import QueryBus
+from project.container import Application
 from project.dateutils import create_icalendar
+from project.ical import create_ical_events_for_event
 from project.jsonld import get_sd_for_event_date
-from project.models import Event, EventCategory
-from project.services.event import (
-    create_ical_events_for_event,
-    get_event_with_details_or_404,
-    get_meta_data,
-    get_upcoming_event_dates,
-)
 from project.utils import get_event_category_name
 from project.views.main_blueprint import main_bp
 from project.views.utils import (
     get_calendar_links_for_event,
+    get_meta_data,
     get_share_links,
+    result_or_404,
     send_template_mails_to_users_async,
 )
 
 
 @main_bp.route("/event/<int:event_id>")
-def event(event_id):
-    event = get_event_with_details_or_404(event_id)
-    can_read_event_or_401(event)
+@inject
+def event(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    event = result_or_404(query_bus.handle(GetEventDetailQuery(id=event_id)))
     user_rights = get_user_rights(event)
-    dates = get_upcoming_event_dates(event.id)
+    dates = query_bus.handle(ListUpcomingEventDatesQuery(event_id=event.id))
     url = url_for("main.event", event_id=event_id, _external=True)
     share_links = get_share_links(url, event.name)
     calendar_links = get_calendar_links_for_event(event)
@@ -41,7 +40,7 @@ def event(event_id):
     structured_datas = list()
     for event_date in dates:
         structured_data = current_app.json.dumps(
-            get_sd_for_event_date(event_date), indent=2
+            get_sd_for_event_date(event_date, event), indent=2
         )
         structured_datas.append(structured_data)
 
@@ -59,9 +58,9 @@ def event(event_id):
 
 
 @main_bp.route("/event/<int:event_id>/actions")
-def event_actions(event_id):
-    event = Event.query.get_or_404(event_id)
-    can_read_event_or_401(event)
+@inject
+def event_actions(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    event = result_or_404(query_bus.handle(GetEventDetailQuery(id=event_id)))
     user_rights = get_user_rights(event)
     url = url_for("main.event", event_id=event_id, _external=True)
     share_links = get_share_links(url, event.name)
@@ -75,9 +74,9 @@ def event_actions(event_id):
 
 
 @main_bp.route("/event/<int:event_id>/report")
-def event_report(event_id):
-    event = Event.query.get_or_404(event_id)
-    can_read_event_or_401(event)
+@inject
+def event_report(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    result_or_404(query_bus.handle(GetEventDetailQuery(id=event_id)))
 
     return render_template("event/report.html")
 
@@ -105,8 +104,11 @@ def event_rrule():
 
 
 def get_event_category_choices():
+    categories = current_app.container.cqrs.query_bus().handle(
+        ListAllEventCategoriesQuery()
+    )
     return sorted(
-        [(c.id, get_event_category_name(c)) for c in EventCategory.query.all()],
+        [(c.id, get_event_category_name(c)) for c in categories],
         key=lambda category: category[1],
     )
 
@@ -123,19 +125,10 @@ def get_user_rights(event):
     }
 
 
-def send_event_report_mails(event: Event, report: dict):
-    from project.services.user import find_all_users_with_role
-
-    # Alle Mitglieder der AdminUnit, die das Recht haben, Events zu bearbeiten
-    members = get_admin_unit_members_with_permission(
-        event.admin_unit_id, "events:write"
-    )
-    users = [member.user for member in members]
-
-    # Alle globalen Admins
-    admins = find_all_users_with_role("admin")
-    users.extend(
-        admin for admin in admins if all(user.id != admin.id for user in users)
+def send_event_report_mails(event, report: dict):
+    # Members of the organization who may edit events, plus platform admins
+    users = current_app.container.cqrs.query_bus().handle(
+        ListEventReportRecipientsQuery(admin_unit_id=event.admin_unit_id)
     )
 
     send_template_mails_to_users_async(
@@ -147,9 +140,9 @@ def send_event_report_mails(event: Event, report: dict):
 
 
 @main_bp.route("/event/<int:id>/ical")
-def event_ical(id):
-    event = get_event_with_details_or_404(id)
-    can_read_event_or_401(event)
+@inject
+def event_ical(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    event = result_or_404(query_bus.handle(GetEventDetailQuery(id=id)))
 
     ical_events = create_ical_events_for_event(event)
 

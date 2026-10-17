@@ -2,7 +2,6 @@ from dependency_injector.wiring import Provide, inject
 from flask import current_app, flash, redirect, render_template, request, url_for
 from flask_babel import gettext
 from flask_security import roles_required
-from sqlalchemy.sql import func
 
 from project.application.commands import (
     DeleteUserCommand,
@@ -12,6 +11,13 @@ from project.application.commands import (
     UpdateUserRolesCommand,
 )
 from project.application.message_bus import MessageBus
+from project.application.queries import (
+    GetUserForAdminQuery,
+    ListNewsletterRecipientsQuery,
+    ListRolesQuery,
+    ListUsersForAdminQuery,
+)
+from project.application.query_bus import QueryBus
 from project.container import Application
 from project.domain.errors import BaseError
 from project.forms.admin import (
@@ -23,15 +29,17 @@ from project.forms.admin import (
     ResetTosAceptedForm,
     UpdateUserForm,
 )
-from project.models import Role, User
-from project.services.admin import upsert_settings
 from project.views.admin_blueprint import admin_bp
 from project.views.utils import (
+    abort_if_page_out_of_range,
     flash_errors,
     get_celery_poll_group_result,
     get_pagination_urls,
+    get_settings,
     handleBaseError,
     non_match_for_deletion,
+    page_request_from_request_args,
+    result_or_404,
     send_template_mail,
     send_template_mail_async,
     send_template_mails_to_users_async,
@@ -65,7 +73,7 @@ def admin_reset_tos_accepted(
 @roles_required("admin")
 @inject
 def admin_settings(message_bus: MessageBus = Provide[Application.cqrs.message_bus]):
-    settings = upsert_settings()
+    settings = get_settings()
     form = AdminSettingsForm(obj=settings)
 
     if form.validate_on_submit():
@@ -120,7 +128,8 @@ def admin_email():
 
 @admin_bp.route("/newsletter", methods=["GET", "POST"])
 @roles_required("admin")
-def admin_newsletter():
+@inject
+def admin_newsletter(query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
     form = AdminNewsletterForm()
 
     if "poll" in request.args:  # pragma: no cover
@@ -140,12 +149,7 @@ def admin_newsletter():
                 **context,
             )
         else:
-            users = (
-                User.query.filter(User.email != None)
-                .filter(User.confirmed_at != None)
-                .filter(User.newsletter_enabled)
-                .all()
-            )
+            users = query_bus.handle(ListNewsletterRecipientsQuery())
             result = send_template_mails_to_users_async(
                 users,
                 template,
@@ -160,8 +164,12 @@ def admin_newsletter():
 
 @admin_bp.route("/users")
 @roles_required("admin")
-def admin_users():
-    users = User.query.order_by(func.lower(User.email)).paginate()
+@inject
+def admin_users(query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    users = query_bus.handle(
+        ListUsersForAdminQuery(page=page_request_from_request_args())
+    )
+    abort_if_page_out_of_range(users)
     return render_template(
         "admin/users.html", users=users.items, pagination=get_pagination_urls(users)
     )
@@ -171,13 +179,15 @@ def admin_users():
 @roles_required("admin")
 @inject
 def admin_user_update(
-    id, message_bus: MessageBus = Provide[Application.cqrs.message_bus]
+    id,
+    message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
 ):
-    user = User.query.get_or_404(id)
+    user = result_or_404(query_bus.handle(GetUserForAdminQuery(id=id)))
 
     form = UpdateUserForm()
     form.roles.choices = [
-        (c.name, gettext(c.title)) for c in Role.query.order_by(Role.id).all()
+        (c.name, gettext(c.title)) for c in query_bus.handle(ListRolesQuery())
     ]
 
     if form.validate_on_submit():
@@ -193,7 +203,7 @@ def admin_user_update(
         except BaseError as e:
             flash(handleBaseError(e), "danger")
     else:
-        form.roles.data = [c.name for c in user.roles]
+        form.roles.data = user.roles
 
     return render_template("admin/update_user.html", user=user, form=form)
 
@@ -202,9 +212,11 @@ def admin_user_update(
 @roles_required("admin")
 @inject
 def admin_user_delete(
-    id, message_bus: MessageBus = Provide[Application.cqrs.message_bus]
+    id,
+    message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
 ):
-    user = User.query.get_or_404(id)
+    user = result_or_404(query_bus.handle(GetUserForAdminQuery(id=id)))
 
     form = DeleteUserForm()
 
@@ -232,7 +244,7 @@ def admin_user_delete(
 @roles_required("admin")
 @inject
 def admin_planning(message_bus: MessageBus = Provide[Application.cqrs.message_bus]):
-    settings = upsert_settings()
+    settings = get_settings()
     form = AdminPlanningForm(obj=settings)
 
     if form.validate_on_submit():

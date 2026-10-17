@@ -23,7 +23,7 @@
 
 {% if display.should_show_audit(object) %}
 <div class="my-4 small text-muted">
-    {{ render_audit(object, display.should_audit_show_user(object)) }}
+    {{ render_audit(display.get_audit(object), display.should_audit_show_user(object)) }}
 </div>
 {% endif %}
 {% endif %}

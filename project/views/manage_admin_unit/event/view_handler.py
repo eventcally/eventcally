@@ -1,27 +1,27 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import url_for
 from flask_babel import gettext, lazy_gettext
 
-from project.models import Event
-from project.models.event_place import EventPlace
-from project.models.location import Location
+from project.application.queries import (
+    EventSearchCriteria,
+    EventSearchSort,
+    GetEventForEditQuery,
+    SearchEventsQuery,
+    TrackableCriteria,
+)
+from project.domain.models.enums.event_public_status import EventPublicStatus
+from project.domain.models.enums.event_status import EventStatus
 from project.modular.ajax import EventCategoryAjaxModelLoader
 from project.modular.filters import (
-    BooleanFilter,
-    DateRangeFilter,
-    EnumFilter,
-    EventCategoryFilter,
-    EventDateRangeFilter,
-    PostalCodeFilter,
-    RadiusFilter,
-    SelectModelFilter,
-    TagFilter,
+    KeyBooleanFilter,
+    KeyDateRangeFilter,
+    KeyEnumFilter,
+    KeyRadiusFilter,
+    KeySelectModelFilter,
+    KeyTagFilter,
+    enum_filter_value_or_none,
 )
-from project.modular.search_definition import SearchDefinition
-from project.modular.sort_definition import SortDefinition
-from project.services.event_service import EventService
+from project.modular.search_definition import KeySearchDefinition
+from project.modular.sort_definition import KeySortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.ajax import (
     EventOrganizerAjaxModelLoader,
@@ -41,8 +41,10 @@ from project.views.utils import current_admin_unit
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
-    model = Event
-    object_service: Annotated[EventService, Provide["services.event_service"]]
+    model_name = "event"
+    model_name_plural = "events"
+    display_name = "Event"
+    display_name_plural = "Events"
     create_view_class = CreateView
     read_view_class = None
     update_view_class = UpdateView
@@ -50,56 +52,96 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     list_view_class = ListView
     list_display_class = ListDisplay
     list_filters = [
-        EventDateRangeFilter(Event.dates, label=lazy_gettext("Date"), key="date"),
-        EventCategoryFilter(
-            Event.categories,
+        KeyDateRangeFilter("date", label=lazy_gettext("Date")),
+        KeySelectModelFilter(
+            "category_id",
             EventCategoryAjaxModelLoader(),
-            key="category_id",
             label=lazy_gettext("Categories"),
         ),
-        TagFilter(Event.tags, key="tag", label=lazy_gettext("Tags")),
-        TagFilter(
-            Event.internal_tags, key="internal_tag", label=lazy_gettext("Internal tags")
-        ),
-        SelectModelFilter(
-            Event.organizer,
+        KeyTagFilter("tag", label=lazy_gettext("Tags")),
+        KeyTagFilter("internal_tag", label=lazy_gettext("Internal tags")),
+        KeySelectModelFilter(
+            "organizer_id",
             EventOrganizerAjaxModelLoader(),
             label=lazy_gettext("Organizer"),
         ),
-        SelectModelFilter(
-            Event.event_place, EventPlaceAjaxModelLoader(), label=lazy_gettext("Place")
+        KeySelectModelFilter(
+            "event_place_id",
+            EventPlaceAjaxModelLoader(),
+            label=lazy_gettext("Place"),
         ),
-        PostalCodeFilter(
-            Location.postalCode, key="postal_code", label=lazy_gettext("Postal code")
+        KeyTagFilter("postal_code", label=lazy_gettext("Postal code")),
+        KeyRadiusFilter("radius", label=lazy_gettext("Radius")),
+        KeyEnumFilter("status", EventStatus, label=lazy_gettext("Status")),
+        KeyEnumFilter(
+            "public_status", EventPublicStatus, label=lazy_gettext("Public status")
         ),
-        RadiusFilter(Location.coordinate, key="radius", label=lazy_gettext("Radius")),
-        EnumFilter(Event.status, label=lazy_gettext("Status")),
-        EnumFilter(Event.public_status, label=lazy_gettext("Public status")),
-        DateRangeFilter(Event.created_at, label=lazy_gettext("Created at")),
-        BooleanFilter(Event.is_recurring, label=lazy_gettext("Recurring event")),
+        KeyDateRangeFilter("created_at", label=lazy_gettext("Created at")),
+        KeyBooleanFilter("is_recurring", label=lazy_gettext("Recurring event")),
     ]
     list_sort_definitions = [
-        SortDefinition(Event.min_start, label=lazy_gettext("Earliest start first")),
-        SortDefinition(
-            Event.last_modified_at,
-            desc=True,
-            label=lazy_gettext("Last modified first"),
+        KeySortDefinition("min_start", label=lazy_gettext("Earliest start first")),
+        KeySortDefinition(
+            "-last_modified_at", label=lazy_gettext("Last modified first")
         ),
-        SortDefinition(
-            Event.created_at,
-            desc=True,
-            label=lazy_gettext("Newest first"),
-        ),
+        KeySortDefinition("-created_at", label=lazy_gettext("Newest first")),
     ]
-    list_search_definitions = [SearchDefinition(Event.name)]
+    list_search_definitions = [KeySearchDefinition("name")]
 
-    def get_objects_base_query_from_kwargs(self, **kwargs):
-        query = super().get_objects_base_query_from_kwargs(**kwargs)
-        return (
-            query.join(Event.event_place, isouter=True)
-            .join(EventPlace.location, isouter=True)
-            .join(Event.organizer, isouter=True)
+    def create_list_query(self, form, page_request, **kwargs):
+        postal_codes = _split(form.postal_code.data)
+        radius = form.radius.form
+        coordinate = radius.coordinate.data
+        latitude = longitude = distance = None
+
+        if coordinate and len(coordinate) > 1 and radius.distance.data:
+            latitude, longitude = coordinate.split(",")
+            distance = radius.distance.data
+
+        status = enum_filter_value_or_none(EventStatus, form.status.data)
+        public_status = enum_filter_value_or_none(
+            EventPublicStatus, form.public_status.data
         )
+        is_recurring = {"1": True, "0": False}.get(form.is_recurring.data)
+
+        criteria = EventSearchCriteria(
+            admin_unit_id=current_admin_unit.id,
+            include_private=True,
+            name=form.keyword.data or None,
+            date_from=form.date.form.from_field.data or None,
+            date_to=form.date.form.to_field.data or None,
+            category_ids=[form.category_id.data.id] if form.category_id.data else [],
+            tags=_split(form.tag.data),
+            internal_tags=_split(form.internal_tag.data),
+            organizer_id=form.organizer_id.data.id if form.organizer_id.data else None,
+            event_place_id=(
+                form.event_place_id.data.id if form.event_place_id.data else None
+            ),
+            postal_codes=postal_codes,
+            latitude=latitude,
+            longitude=longitude,
+            distance=distance,
+            status=[status] if status else [],
+            public_status=[public_status] if public_status else [],
+            is_recurring=is_recurring,
+            trackable=TrackableCriteria(
+                created_at_from=form.created_at.form.from_field.data or None,
+                created_at_to=form.created_at.form.to_field.data or None,
+            ),
+            sort=_SORTS.get(form.sort.data),
+        )
+        return SearchEventsQuery(
+            criteria=criteria,
+            reference_admin_unit_id=current_admin_unit.id,
+            include_counts=True,
+            page=page_request,
+        )
+
+    def create_get_query(self, object_id):
+        return GetEventForEditQuery(id=object_id)
+
+    def get_object_title(self, object):
+        return object.name
 
     def get_list_per_page(self):
         return 50
@@ -150,6 +192,18 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
             result.append(actions_action)
 
         return result
+
+
+_SORTS = {
+    "-last_modified_at": EventSearchSort.last_modified_at_desc,
+    "-created_at": EventSearchSort.created_at_desc,
+}
+
+
+def _split(value) -> list:
+    """Comma separated form input; unknown sort keys fall back to the default order
+    through `_SORTS`, as the ORM path did."""
+    return [item for item in value.split(",") if item] if value else []
 
 
 handler = ViewHandler()

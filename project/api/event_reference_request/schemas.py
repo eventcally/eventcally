@@ -1,9 +1,14 @@
 from marshmallow import fields, post_load, validate
 from marshmallow_enum import EnumField
 
-from project.api.event.schemas import EventRefSchema, EventWriteIdSchema
+from project.api.event.schemas import (
+    EventRefSchema,
+    EventWriteIdPlainSchema,
+    EventWriteIdSchema,
+)
 from project.api.organization.schemas import (
     OrganizationRefSchema,
+    OrganizationWriteIdPlainSchema,
     OrganizationWriteIdSchema,
 )
 from project.api.schemas import (
@@ -17,19 +22,15 @@ from project.api.schemas import (
 )
 from project.application.commands import RejectEventReferenceRequestCommand
 from project.domain.models.enums.event_reference_request_rejection_reason import (
-    EventReferenceRequestRejectionReason as DomainEventReferenceRequestRejectionReason,
-)
-from project.models import (
-    EventReferenceRequest,
     EventReferenceRequestRejectionReason,
+)
+from project.domain.models.enums.event_reference_request_review_status import (
     EventReferenceRequestReviewStatus,
 )
 
 
-class EventReferenceRequestModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = EventReferenceRequest
-        load_instance = True
+class EventReferenceRequestModelSchema(PlainBaseSchema):
+    pass
 
 
 class EventReferenceRequestIdSchema(EventReferenceRequestModelSchema, IdSchemaMixin):
@@ -124,7 +125,7 @@ class EventReferenceRequestRejectRequestSchema(
 
 class EventReferenceRequestRejectRequestPlainSchema(PlainBaseSchema):
     rejection_reason = EnumField(
-        DomainEventReferenceRequestRejectionReason,
+        EventReferenceRequestRejectionReason,
         allow_none=True,
         load_default=None,
     )
@@ -134,3 +135,13 @@ class EventReferenceRequestRejectRequestPlainSchema(PlainBaseSchema):
         data["id"] = self.context.get("id")
         data["actor"] = self.context.get("actor")
         return RejectEventReferenceRequestCommand(**data)
+
+
+class EventReferenceRequestCreateRequestPlainSchema(PlainBaseSchema):
+    """Loads the ids of `EventReferenceRequestPostRequestSchema` (which documents
+    the request); both references must exist."""
+
+    event = fields.Nested(EventWriteIdPlainSchema, attribute="event_id", required=True)
+    target_organization = fields.Nested(
+        OrganizationWriteIdPlainSchema, attribute="admin_unit_id", required=True
+    )

@@ -1,6 +1,5 @@
 from marshmallow import fields, post_load
 
-from project.api import marshmallow
 from project.api.organization.schemas import (
     OrganizationRefSchema,
     OrganizationWriteIdPlainSchema,
@@ -12,20 +11,16 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     PlainBaseSchema,
-    SQLAlchemyBaseSchema,
     TrackableSchemaMixin,
 )
 from project.application.commands import (
     CreateOrganizationRelationCommand,
     UpdateOrganizationRelationCommand,
 )
-from project.models import AdminUnitRelation
 
 
-class OrganizationRelationModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = AdminUnitRelation
-        load_instance = True
+class OrganizationRelationModelSchema(PlainBaseSchema):
+    pass
 
 
 class OrganizationRelationIdSchema(OrganizationRelationModelSchema, IdSchemaMixin):
@@ -33,8 +28,8 @@ class OrganizationRelationIdSchema(OrganizationRelationModelSchema, IdSchemaMixi
 
 
 class OrganizationRelationBaseSchemaMixin(TrackableSchemaMixin):
-    auto_verify_event_reference_requests = marshmallow.auto_field()
-    verify = marshmallow.auto_field()
+    auto_verify_event_reference_requests = fields.Boolean()
+    verify = fields.Boolean()
 
 
 class OrganizationRelationSchema(

@@ -3,12 +3,22 @@
 from dependency_injector import containers, providers
 from flask import current_app
 
-from project import repos, services
-from project.application import command_handlers, commands, event_handlers
+from project.application import (
+    command_handlers,
+    commands,
+    event_handlers,
+    queries,
+    query_handlers,
+)
 from project.application.message_bus import MessageBus
+from project.application.query_bus import QueryBus
+from project.application.services.actor_authorization_service import (
+    ActorAuthorizationService,
+)
 from project.application.services.event_change_summary_service import (
     EventChangeSummaryService,
 )
+from project.application.services.event_visibility_service import EventVisibilityService
 from project.application.services.organization_application_service import (
     OrganizationApplicationService,
 )
@@ -21,11 +31,97 @@ from project.infrastructure.celery_command_dispatcher import CeleryCommandDispat
 from project.infrastructure.celery_event_dispatcher import CeleryEventDispatcher
 from project.infrastructure.command_handler_factory import CommandHandlerFactory
 from project.infrastructure.event_handler_factory import EventHandlerFactory
+from project.infrastructure.query_handler_factory import QueryHandlerFactory
+from project.infrastructure.read_repositories.sql_alchemy_access_read_repository import (
+    SqlAlchemyAccessReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_actor_permission_read_repository import (
+    SqlAlchemyActorPermissionReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_api_key_read_repository import (
+    SqlAlchemyApiKeyReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_app_child_read_repository import (
+    SqlAlchemyAppChildReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_app_installation_read_repository import (
+    SqlAlchemyAppInstallationReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_batch_read_repository import (
+    SqlAlchemyBatchReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_custom_widget_read_repository import (
+    SqlAlchemyCustomWidgetReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_event_detail_read_repository import (
+    SqlAlchemyEventDetailReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_event_organizer_read_repository import (
+    SqlAlchemyEventOrganizerReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_event_place_read_repository import (
+    SqlAlchemyEventPlaceReadRepository,
+)
 from project.infrastructure.read_repositories.sql_alchemy_event_read_repository import (
     SqlAlchemyEventReadRepository,
 )
+from project.infrastructure.read_repositories.sql_alchemy_event_reference_read_repository import (
+    SqlAlchemyEventReferenceReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_event_reference_request_read_repository import (
+    SqlAlchemyEventReferenceRequestReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_event_search_read_repository import (
+    SqlAlchemyEventSearchReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_image_read_repository import (
+    SqlAlchemyImageReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_oauth2_client_read_repository import (
+    SqlAlchemyOAuth2ClientReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_oauth2_token_read_repository import (
+    SqlAlchemyOAuth2TokenReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_organization_admin_read_repository import (
+    SqlAlchemyOrganizationAdminReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_organization_invitation_read_repository import (
+    SqlAlchemyOrganizationInvitationReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_organization_member_invitation_read_repository import (
+    SqlAlchemyOrganizationMemberInvitationReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_organization_member_read_repository import (
+    SqlAlchemyOrganizationMemberReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_organization_read_repository import (
+    SqlAlchemyOrganizationReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_organization_relation_read_repository import (
+    SqlAlchemyOrganizationRelationReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_organization_verification_request_read_repository import (
+    SqlAlchemyOrganizationVerificationRequestReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_reference_data_read_repository import (
+    SqlAlchemyReferenceDataReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_reference_request_suggestion_read_repository import (
+    SqlAlchemyReferenceRequestSuggestionReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_site_settings_read_repository import (
+    SqlAlchemySiteSettingsReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_user_admin_read_repository import (
+    SqlAlchemyUserAdminReadRepository,
+)
 from project.infrastructure.read_repositories.sql_alchemy_webhook_delivery_read_repository import (
     SqlAlchemyWebhookDeliveryReadRepository,
+)
+from project.infrastructure.read_session import (
+    SqlAlchemyReadSessionScope,
+    create_read_session,
 )
 from project.infrastructure.services.app_context_provider import AppContextProvider
 from project.infrastructure.services.celery_email_service import CeleryEmailService
@@ -56,6 +152,12 @@ def get_app_logger():  # pragma: no cover
 class Infrastructure(containers.DeclarativeContainer):
     db = providers.Object(db)  # SQLAlchemy database instance
     session_factory = providers.Callable(lambda: db.session)
+    # Query side: read-only session, released after every top-level query.
+    read_session = providers.Singleton(create_read_session, db=db)
+    read_session_scope = providers.Factory(
+        SqlAlchemyReadSessionScope,
+        read_session=read_session,
+    )
     logger = providers.Callable(get_app_logger)
     localization_service = providers.Singleton(
         FlaskBabelLocalizationService,
@@ -92,6 +194,9 @@ class Context(containers.DeclarativeContainer):
 class ReadRepos(containers.DeclarativeContainer):
     infrastructure = providers.DependenciesContainer()
 
+    # Event-handler read repos run inside the handler's unit of work and stay on
+    # session_factory. Read repos for query handlers use infrastructure.read_session.
+
     event_read_repo = providers.Factory(
         SqlAlchemyEventReadRepository,
         session=infrastructure.session_factory,
@@ -101,144 +206,133 @@ class ReadRepos(containers.DeclarativeContainer):
         session=infrastructure.session_factory,
     )
 
+    event_organizer_read_repo = providers.Factory(
+        SqlAlchemyEventOrganizerReadRepository,
+        session=infrastructure.read_session,
+    )
+    event_place_read_repo = providers.Factory(
+        SqlAlchemyEventPlaceReadRepository,
+        session=infrastructure.read_session,
+    )
+    user_admin_read_repo = providers.Factory(
+        SqlAlchemyUserAdminReadRepository,
+        session=infrastructure.read_session,
+    )
+    access_read_repo = providers.Factory(
+        SqlAlchemyAccessReadRepository,
+        session=infrastructure.read_session,
+    )
+    site_settings_read_repo = providers.Factory(
+        SqlAlchemySiteSettingsReadRepository,
+        session=infrastructure.read_session,
+    )
+    batch_read_repo = providers.Factory(
+        SqlAlchemyBatchReadRepository,
+        session=infrastructure.read_session,
+    )
+    image_read_repo = providers.Factory(
+        SqlAlchemyImageReadRepository,
+        session=infrastructure.read_session,
+    )
+    event_search_read_repo = providers.Factory(
+        SqlAlchemyEventSearchReadRepository,
+        session=infrastructure.read_session,
+    )
+    event_detail_read_repo = providers.Factory(
+        SqlAlchemyEventDetailReadRepository,
+        session=infrastructure.read_session,
+    )
+    actor_permission_read_repo = providers.Factory(
+        SqlAlchemyActorPermissionReadRepository,
+        session=infrastructure.read_session,
+    )
+    organization_invitation_read_repo = providers.Factory(
+        SqlAlchemyOrganizationInvitationReadRepository,
+        session=infrastructure.read_session,
+    )
+    organization_member_read_repo = providers.Factory(
+        SqlAlchemyOrganizationMemberReadRepository,
+        session=infrastructure.read_session,
+    )
 
-class Repos(containers.DeclarativeContainer):
-    infrastructure = providers.DependenciesContainer()
+    organization_member_invitation_read_repo = providers.Factory(
+        SqlAlchemyOrganizationMemberInvitationReadRepository,
+        session=infrastructure.read_session,
+    )
 
-    api_key_repo = providers.Factory(
-        repos.ApiKeyRepo,
-        db=infrastructure.db,
+    api_key_read_repo = providers.Factory(
+        SqlAlchemyApiKeyReadRepository,
+        session=infrastructure.read_session,
     )
-    app_installation_repo = providers.Factory(
-        repos.AppInstallationRepo,
-        db=infrastructure.db,
+
+    oauth2_client_read_repo = providers.Factory(
+        SqlAlchemyOAuth2ClientReadRepository,
+        session=infrastructure.read_session,
     )
-    app_repo = providers.Factory(
-        repos.AppRepo,
-        db=infrastructure.db,
+
+    app_child_read_repo = providers.Factory(
+        SqlAlchemyAppChildReadRepository,
+        session=infrastructure.read_session,
     )
-    app_key_repo = providers.Factory(
-        repos.AppKeyRepo,
-        db=infrastructure.db,
+
+    app_installation_read_repo = providers.Factory(
+        SqlAlchemyAppInstallationReadRepository,
+        session=infrastructure.read_session,
     )
-    custom_event_category_repo = providers.Factory(
-        repos.CustomEventCategoryRepo,
-        db=infrastructure.db,
+
+    oauth2_token_read_repo = providers.Factory(
+        SqlAlchemyOAuth2TokenReadRepository,
+        session=infrastructure.read_session,
     )
-    custom_event_category_set_repo = providers.Factory(
-        repos.CustomEventCategorySetRepo,
-        db=infrastructure.db,
+
+    event_reference_read_repo = providers.Factory(
+        SqlAlchemyEventReferenceReadRepository,
+        session=infrastructure.read_session,
     )
-    custom_widget_repo = providers.Factory(
-        repos.CustomWidgetRepo,
-        db=infrastructure.db,
+
+    event_reference_request_read_repo = providers.Factory(
+        SqlAlchemyEventReferenceRequestReadRepository,
+        session=infrastructure.read_session,
     )
-    event_category_repo = providers.Factory(
-        repos.EventCategoryRepo,
-        db=infrastructure.db,
+
+    organization_verification_request_read_repo = providers.Factory(
+        SqlAlchemyOrganizationVerificationRequestReadRepository,
+        session=infrastructure.read_session,
     )
-    event_date_repo = providers.Factory(
-        repos.EventDateRepo,
-        db=infrastructure.db,
+
+    reference_request_suggestion_read_repo = providers.Factory(
+        SqlAlchemyReferenceRequestSuggestionReadRepository,
+        session=infrastructure.read_session,
     )
-    event_date_definition_repo = providers.Factory(
-        repos.EventDateDefinitionRepo,
-        db=infrastructure.db,
+
+    organization_relation_read_repo = providers.Factory(
+        SqlAlchemyOrganizationRelationReadRepository,
+        session=infrastructure.read_session,
     )
-    event_organizer_repo = providers.Factory(
-        repos.EventOrganizerRepo,
-        db=infrastructure.db,
+
+    organization_admin_read_repo = providers.Factory(
+        SqlAlchemyOrganizationAdminReadRepository,
+        session=infrastructure.read_session,
     )
-    event_place_repo = providers.Factory(
-        repos.EventPlaceRepo,
-        db=infrastructure.db,
+
+    organization_read_repo = providers.Factory(
+        SqlAlchemyOrganizationReadRepository,
+        session=infrastructure.read_session,
     )
-    event_reference_repo = providers.Factory(
-        repos.EventReferenceRepo,
-        db=infrastructure.db,
+
+    custom_widget_read_repo = providers.Factory(
+        SqlAlchemyCustomWidgetReadRepository,
+        session=infrastructure.read_session,
     )
-    event_reference_request_repo = providers.Factory(
-        repos.EventReferenceRequestRepo,
-        db=infrastructure.db,
-    )
-    event_repo = providers.Factory(
-        repos.EventRepo,
-        db=infrastructure.db,
-    )
-    image_repo = providers.Factory(
-        repos.ImageRepo,
-        db=infrastructure.db,
-    )
-    license_repo = providers.Factory(
-        repos.LicenseRepo,
-        db=infrastructure.db,
-    )
-    location_repo = providers.Factory(
-        repos.LocationRepo,
-        db=infrastructure.db,
-    )
-    oauth2_authorization_code_repo = providers.Factory(
-        repos.OAuth2AuthorizationCodeRepo,
-        db=infrastructure.db,
-    )
-    oauth2_client_repo = providers.Factory(
-        repos.OAuth2ClientRepo,
-        db=infrastructure.db,
-    )
-    oauth2_token_repo = providers.Factory(
-        repos.OAuth2TokenRepo,
-        db=infrastructure.db,
-    )
-    oauth_repo = providers.Factory(
-        repos.OAuthRepo,
-        db=infrastructure.db,
-    )
-    organization_invitation_repo = providers.Factory(
-        repos.OrganizationInvitationRepo,
-        db=infrastructure.db,
-    )
-    organization_member_repo = providers.Factory(
-        repos.OrganizationMemberRepo,
-        db=infrastructure.db,
-    )
-    organization_member_invitation_repo = providers.Factory(
-        repos.OrganizationMemberInvitationRepo,
-        db=infrastructure.db,
-    )
-    organization_member_role_repo = providers.Factory(
-        repos.OrganizationMemberRoleRepo,
-        db=infrastructure.db,
-    )
-    organization_relation_repo = providers.Factory(
-        repos.OrganizationRelationRepo,
-        db=infrastructure.db,
-    )
-    organization_repo = providers.Factory(
-        repos.OrganizationRepo,
-        db=infrastructure.db,
-    )
-    organization_verification_request_repo = providers.Factory(
-        repos.OrganizationVerificationRequestRepo,
-        db=infrastructure.db,
-    )
-    role_repo = providers.Factory(
-        repos.RoleRepo,
-        db=infrastructure.db,
-    )
-    settings_repo = providers.Factory(
-        repos.SettingsRepo,
-        db=infrastructure.db,
-    )
-    user_repo = providers.Factory(
-        repos.UserRepo,
-        db=infrastructure.db,
+
+    reference_data_read_repo = providers.Factory(
+        SqlAlchemyReferenceDataReadRepository,
+        session=infrastructure.read_session,
     )
 
 
 class Services(containers.DeclarativeContainer):
-    repos = providers.DependenciesContainer()
     read_repos = providers.DependenciesContainer()
-    context = providers.DependenciesContainer()
     config = providers.Configuration()
     infrastructure = providers.DependenciesContainer()
 
@@ -261,163 +355,6 @@ class Services(containers.DeclarativeContainer):
     event_change_summary_service = providers.Factory(
         EventChangeSummaryService,
         event_read_repo=read_repos.event_read_repo,
-    )
-
-    app_service = providers.Factory(
-        services.AppService,
-        repo=repos.app_repo,
-        context_provider=context.context_provider,
-        app_key_repo=repos.app_key_repo,
-    )
-    api_key_service = providers.Factory(
-        services.ApiKeyService,
-        repo=repos.api_key_repo,
-        context_provider=context.context_provider,
-    )
-    app_installation_service = providers.Factory(
-        services.AppInstallationService,
-        repo=repos.app_installation_repo,
-        context_provider=context.context_provider,
-    )
-    custom_event_category_service = providers.Factory(
-        services.CustomEventCategoryService,
-        repo=repos.custom_event_category_repo,
-        context_provider=context.context_provider,
-    )
-    custom_event_category_set_service = providers.Factory(
-        services.CustomEventCategorySetService,
-        repo=repos.custom_event_category_set_repo,
-        context_provider=context.context_provider,
-    )
-    custom_widget_service = providers.Factory(
-        services.CustomWidgetService,
-        repo=repos.custom_widget_repo,
-        context_provider=context.context_provider,
-    )
-    event_category_service = providers.Factory(
-        services.EventCategoryService,
-        repo=repos.event_category_repo,
-        context_provider=context.context_provider,
-    )
-    event_date_service = providers.Factory(
-        services.EventDateService,
-        repo=repos.event_date_repo,
-        context_provider=context.context_provider,
-    )
-    event_date_definition_service = providers.Factory(
-        services.EventDateDefinitionService,
-        repo=repos.event_date_definition_repo,
-        context_provider=context.context_provider,
-    )
-    event_organizer_service = providers.Factory(
-        services.EventOrganizerService,
-        repo=repos.event_organizer_repo,
-        context_provider=context.context_provider,
-    )
-    event_place_service = providers.Factory(
-        services.EventPlaceService,
-        repo=repos.event_place_repo,
-        context_provider=context.context_provider,
-    )
-    event_reference_service = providers.Factory(
-        services.EventReferenceService,
-        repo=repos.event_reference_repo,
-        context_provider=context.context_provider,
-    )
-    event_reference_request_service = providers.Factory(
-        services.EventReferenceRequestService,
-        repo=repos.event_reference_request_repo,
-        context_provider=context.context_provider,
-    )
-    event_service = providers.Factory(
-        services.EventService,
-        repo=repos.event_repo,
-        context_provider=context.context_provider,
-    )
-    image_service = providers.Factory(
-        services.ImageService,
-        repo=repos.image_repo,
-        context_provider=context.context_provider,
-    )
-    license_service = providers.Factory(
-        services.LicenseService,
-        repo=repos.license_repo,
-        context_provider=context.context_provider,
-    )
-    location_service = providers.Factory(
-        services.LocationService,
-        repo=repos.location_repo,
-        context_provider=context.context_provider,
-    )
-    oauth2_authorization_code_service = providers.Factory(
-        services.OAuth2AuthorizationCodeService,
-        repo=repos.oauth2_authorization_code_repo,
-        context_provider=context.context_provider,
-    )
-    oauth2_client_service = providers.Factory(
-        services.OAuth2ClientService,
-        repo=repos.oauth2_client_repo,
-        context_provider=context.context_provider,
-    )
-    oauth2_token_service = providers.Factory(
-        services.OAuth2TokenService,
-        repo=repos.oauth2_token_repo,
-        context_provider=context.context_provider,
-    )
-    oauth_service = providers.Factory(
-        services.OAuthService,
-        repo=repos.oauth_repo,
-        context_provider=context.context_provider,
-    )
-    organization_invitation_service = providers.Factory(
-        services.OrganizationInvitationService,
-        repo=repos.organization_invitation_repo,
-        context_provider=context.context_provider,
-    )
-    organization_member_service = providers.Factory(
-        services.OrganizationMemberService,
-        repo=repos.organization_member_repo,
-        context_provider=context.context_provider,
-    )
-    organization_member_invitation_service = providers.Factory(
-        services.OrganizationMemberInvitationService,
-        repo=repos.organization_member_invitation_repo,
-        context_provider=context.context_provider,
-    )
-    organization_relation_service = providers.Factory(
-        services.OrganizationRelationService,
-        repo=repos.organization_relation_repo,
-        context_provider=context.context_provider,
-    )
-    organization_member_role_service = providers.Factory(
-        services.OrganizationMemberRoleService,
-        repo=repos.organization_member_role_repo,
-        context_provider=context.context_provider,
-    )
-    organization_verification_request_service = providers.Factory(
-        services.OrganizationVerificationRequestService,
-        repo=repos.organization_verification_request_repo,
-        context_provider=context.context_provider,
-    )
-    organization_service = providers.Factory(
-        services.OrganizationService,
-        repo=repos.organization_repo,
-        context_provider=context.context_provider,
-    )
-    role_service = providers.Factory(
-        services.RoleService,
-        repo=repos.role_repo,
-        context_provider=context.context_provider,
-    )
-    settings_service = providers.Factory(
-        services.SettingsService,
-        repo=repos.settings_repo,
-        context_provider=context.context_provider,
-    )
-    user_service = providers.Factory(
-        services.UserService,
-        repo=repos.user_repo,
-        context_provider=context.context_provider,
     )
 
 
@@ -448,6 +385,9 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.UpdateEventCommand: providers.Factory(
                     command_handlers.UpdateEventHandler
+                ),
+                commands.UpdateEventRecurringDatesCommand: providers.Factory(
+                    command_handlers.UpdateEventRecurringDatesHandler
                 ),
                 commands.DeleteEventCommand: providers.Factory(
                     command_handlers.DeleteEventHandler
@@ -538,6 +478,18 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.DeleteOldWebhookEventsCommand: providers.Factory(
                     command_handlers.DeleteOldWebhookEventsHandler
+                ),
+                commands.DeleteOrganizationDueForDeletionCommand: providers.Factory(
+                    command_handlers.DeleteOrganizationDueForDeletionHandler
+                ),
+                commands.DeleteUserDueForDeletionCommand: providers.Factory(
+                    command_handlers.DeleteUserDueForDeletionHandler
+                ),
+                commands.DeleteGhostUserCommand: providers.Factory(
+                    command_handlers.DeleteGhostUserHandler
+                ),
+                commands.DeleteOldEventCommand: providers.Factory(
+                    command_handlers.DeleteOldEventHandler
                 ),
                 commands.RequestOrganizationDeletionCommand: providers.Factory(
                     command_handlers.RequestOrganizationDeletionHandler
@@ -839,6 +791,636 @@ class Cqrs(containers.DeclarativeContainer):
         command_dispatcher=command_dispatcher,
     )
 
+    actor_authorization_service = providers.Factory(
+        ActorAuthorizationService,
+        reader=read_repos.actor_permission_read_repo,
+    )
+
+    event_visibility_service = providers.Factory(
+        EventVisibilityService,
+        authz=actor_authorization_service,
+    )
+
+    query_handler_factory = providers.Singleton(
+        QueryHandlerFactory,
+        factory_aggregate=providers.FactoryAggregate(
+            {
+                queries.ListEventOrganizersQuery: providers.Factory(
+                    query_handlers.ListEventOrganizersHandler,
+                    repo=read_repos.event_organizer_read_repo,
+                ),
+                queries.GetEventOrganizerQuery: providers.Factory(
+                    query_handlers.GetEventOrganizerHandler,
+                    repo=read_repos.event_organizer_read_repo,
+                ),
+                queries.GetEventOrganizerForEditQuery: providers.Factory(
+                    query_handlers.GetEventOrganizerForEditHandler,
+                    repo=read_repos.event_organizer_read_repo,
+                ),
+                queries.IsEventOrganizerNameTakenQuery: providers.Factory(
+                    query_handlers.IsEventOrganizerNameTakenHandler,
+                    repo=read_repos.event_organizer_read_repo,
+                ),
+                queries.ListEventPlacesQuery: providers.Factory(
+                    query_handlers.ListEventPlacesHandler,
+                    repo=read_repos.event_place_read_repo,
+                ),
+                queries.GetEventPlaceQuery: providers.Factory(
+                    query_handlers.GetEventPlaceHandler,
+                    repo=read_repos.event_place_read_repo,
+                ),
+                queries.GetEventPlaceForEditQuery: providers.Factory(
+                    query_handlers.GetEventPlaceForEditHandler,
+                    repo=read_repos.event_place_read_repo,
+                ),
+                queries.IsEventPlaceNameTakenQuery: providers.Factory(
+                    query_handlers.IsEventPlaceNameTakenHandler,
+                    repo=read_repos.event_place_read_repo,
+                ),
+                queries.ListEventPlaceSuggestionsQuery: providers.Factory(
+                    query_handlers.ListEventPlaceSuggestionsHandler,
+                    repo=read_repos.event_place_read_repo,
+                ),
+                # S7 entries
+                queries.LookupLicensesQuery: providers.Factory(
+                    query_handlers.LookupLicensesHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.GetLicenseQuery: providers.Factory(
+                    query_handlers.GetLicenseHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.ListAllEventCategoriesQuery: providers.Factory(
+                    query_handlers.ListAllEventCategoriesHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.GetEventCategoryByNameQuery: providers.Factory(
+                    query_handlers.GetEventCategoryByNameHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.GetEventCategoryQuery: providers.Factory(
+                    query_handlers.GetEventCategoryHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.LookupCustomEventCategoriesQuery: providers.Factory(
+                    query_handlers.LookupCustomEventCategoriesHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.GetCustomEventCategoryQuery: providers.Factory(
+                    query_handlers.GetCustomEventCategoryHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.LookupEventOrganizersQuery: providers.Factory(
+                    query_handlers.LookupEventOrganizersHandler,
+                    repo=read_repos.event_organizer_read_repo,
+                ),
+                queries.GetEventOrganizerRefQuery: providers.Factory(
+                    query_handlers.GetEventOrganizerRefHandler,
+                    repo=read_repos.event_organizer_read_repo,
+                ),
+                queries.LookupEventPlacesQuery: providers.Factory(
+                    query_handlers.LookupEventPlacesHandler,
+                    repo=read_repos.event_place_read_repo,
+                ),
+                queries.GetEventPlaceRefQuery: providers.Factory(
+                    query_handlers.GetEventPlaceRefHandler,
+                    repo=read_repos.event_place_read_repo,
+                ),
+                # S8 entries
+                queries.SearchEventDatesQuery: providers.Factory(
+                    query_handlers.SearchEventDatesHandler,
+                    repo=read_repos.event_search_read_repo,
+                    visibility=event_visibility_service,
+                ),
+                queries.SearchEventsQuery: providers.Factory(
+                    query_handlers.SearchEventsHandler,
+                    repo=read_repos.event_search_read_repo,
+                    visibility=event_visibility_service,
+                ),
+                queries.ListEventsQuery: providers.Factory(
+                    query_handlers.ListEventsHandler,
+                    repo=read_repos.event_search_read_repo,
+                    visibility=event_visibility_service,
+                ),
+                queries.ListAllEventsQuery: providers.Factory(
+                    query_handlers.ListAllEventsHandler,
+                    repo=read_repos.event_search_read_repo,
+                    visibility=event_visibility_service,
+                ),
+                queries.ListEventDatesQuery: providers.Factory(
+                    query_handlers.ListEventDatesHandler,
+                    repo=read_repos.event_search_read_repo,
+                ),
+                queries.GetEventDetailQuery: providers.Factory(
+                    query_handlers.GetEventDetailHandler,
+                    repo=read_repos.event_detail_read_repo,
+                    visibility=event_visibility_service,
+                ),
+                queries.GetEventForEditQuery: providers.Factory(
+                    query_handlers.GetEventForEditHandler,
+                    repo=read_repos.event_detail_read_repo,
+                    visibility=event_visibility_service,
+                ),
+                queries.EventExistsQuery: providers.Factory(
+                    query_handlers.EventExistsHandler,
+                    repo=read_repos.event_detail_read_repo,
+                ),
+                queries.GetEventDateDetailQuery: providers.Factory(
+                    query_handlers.GetEventDateDetailHandler,
+                    repo=read_repos.event_detail_read_repo,
+                    visibility=event_visibility_service,
+                ),
+                queries.ListEventDatesOfEventQuery: providers.Factory(
+                    query_handlers.ListEventDatesOfEventHandler,
+                    repo=read_repos.event_detail_read_repo,
+                    visibility=event_visibility_service,
+                ),
+                queries.ListUpcomingEventDatesQuery: providers.Factory(
+                    query_handlers.ListUpcomingEventDatesHandler,
+                    repo=read_repos.event_detail_read_repo,
+                ),
+                # S9 entries
+                queries.ListDumpEventsQuery: providers.Factory(
+                    query_handlers.ListDumpEventsHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListDumpPlacesQuery: providers.Factory(
+                    query_handlers.ListDumpPlacesHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListDumpOrganizersQuery: providers.Factory(
+                    query_handlers.ListDumpOrganizersHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListDumpOrganizationsQuery: providers.Factory(
+                    query_handlers.ListDumpOrganizationsHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListDumpEventCategoriesQuery: providers.Factory(
+                    query_handlers.ListDumpEventCategoriesHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListDumpEventReferencesQuery: providers.Factory(
+                    query_handlers.ListDumpEventReferencesHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListSitemapEventsQuery: providers.Factory(
+                    query_handlers.ListSitemapEventsHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListOrganizationIdsDueForDeletionQuery: providers.Factory(
+                    query_handlers.ListOrganizationIdsDueForDeletionHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListUserIdsDueForDeletionQuery: providers.Factory(
+                    query_handlers.ListUserIdsDueForDeletionHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListGhostUserIdsQuery: providers.Factory(
+                    query_handlers.ListGhostUserIdsHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListRecurringEventIdsQuery: providers.Factory(
+                    query_handlers.ListRecurringEventIdsHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListOldEventIdsQuery: providers.Factory(
+                    query_handlers.ListOldEventIdsHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.GetImageMetaQuery: providers.Factory(
+                    query_handlers.GetImageMetaHandler,
+                    repo=read_repos.image_read_repo,
+                ),
+                queries.GetImageFileQuery: providers.Factory(
+                    query_handlers.GetImageFileHandler,
+                    repo=read_repos.image_read_repo,
+                ),
+                # S10 entries
+                queries.GetCurrentOrganizationQuery: providers.Factory(
+                    query_handlers.GetCurrentOrganizationHandler,
+                    repo=read_repos.access_read_repo,
+                ),
+                queries.GetResourceOwnerQuery: providers.Factory(
+                    query_handlers.GetResourceOwnerHandler,
+                    repo=read_repos.access_read_repo,
+                ),
+                queries.HasOtherAdminQuery: providers.Factory(
+                    query_handlers.HasOtherAdminHandler,
+                    repo=read_repos.access_read_repo,
+                ),
+                # Jinja/access helper entries
+                queries.GetManageMenuOptionsQuery: providers.Factory(
+                    query_handlers.GetManageMenuOptionsHandler,
+                    repo=read_repos.access_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetCurrentMemberGrantsQuery: providers.Factory(
+                    query_handlers.GetCurrentMemberGrantsHandler,
+                    repo=read_repos.access_read_repo,
+                ),
+                queries.GetSettingsQuery: providers.Factory(
+                    query_handlers.GetSettingsHandler,
+                    repo=read_repos.site_settings_read_repo,
+                ),
+                queries.GetSiteNoticesQuery: providers.Factory(
+                    query_handlers.GetSiteNoticesHandler,
+                    repo=read_repos.site_settings_read_repo,
+                ),
+                queries.ListEventReportRecipientsQuery: providers.Factory(
+                    query_handlers.ListEventReportRecipientsHandler,
+                    repo=read_repos.access_read_repo,
+                ),
+                queries.GetApiKeyByHashQuery: providers.Factory(
+                    query_handlers.GetApiKeyByHashHandler,
+                    repo=read_repos.access_read_repo,
+                ),
+                queries.IsOrganizationNameTakenQuery: providers.Factory(
+                    query_handlers.IsOrganizationNameTakenHandler,
+                    repo=read_repos.access_read_repo,
+                ),
+                queries.IsOrganizationShortNameTakenQuery: providers.Factory(
+                    query_handlers.IsOrganizationShortNameTakenHandler,
+                    repo=read_repos.access_read_repo,
+                ),
+                queries.CanRequestVerificationQuery: providers.Factory(
+                    query_handlers.CanRequestVerificationHandler,
+                    repo=read_repos.access_read_repo,
+                ),
+                queries.AnyOrganizationAcceptsReferenceRequestsQuery: providers.Factory(
+                    query_handlers.AnyOrganizationAcceptsReferenceRequestsHandler,
+                    repo=read_repos.access_read_repo,
+                ),
+                queries.GetOrganizationSettingsQuery: providers.Factory(
+                    query_handlers.GetOrganizationSettingsHandler,
+                    repo=read_repos.access_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetManageableOrganizationQuery: providers.Factory(
+                    query_handlers.GetManageableOrganizationHandler,
+                    repo=read_repos.access_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListUsersForAdminQuery: providers.Factory(
+                    query_handlers.ListUsersForAdminHandler,
+                    repo=read_repos.user_admin_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetUserForAdminQuery: providers.Factory(
+                    query_handlers.GetUserForAdminHandler,
+                    repo=read_repos.user_admin_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListRolesQuery: providers.Factory(
+                    query_handlers.ListRolesHandler,
+                    repo=read_repos.user_admin_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListNewsletterRecipientsQuery: providers.Factory(
+                    query_handlers.ListNewsletterRecipientsHandler,
+                    repo=read_repos.user_admin_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListManageableOrganizationsQuery: providers.Factory(
+                    query_handlers.ListManageableOrganizationsHandler,
+                    repo=read_repos.access_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListReferenceRequestSuggestionsQuery: providers.Factory(
+                    query_handlers.ListReferenceRequestSuggestionsHandler,
+                    repo=read_repos.reference_request_suggestion_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListOrganizationInvitationsQuery: providers.Factory(
+                    query_handlers.ListOrganizationInvitationsHandler,
+                    repo=read_repos.organization_invitation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOrganizationInvitationQuery: providers.Factory(
+                    query_handlers.GetOrganizationInvitationHandler,
+                    repo=read_repos.organization_invitation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                # S5 entries
+                queries.GetIncomingOrganizationVerificationRequestReviewQuery: providers.Factory(
+                    query_handlers.GetIncomingOrganizationVerificationRequestReviewHandler,
+                    repo=read_repos.organization_verification_request_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListLicensesQuery: providers.Factory(
+                    query_handlers.ListLicensesHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.ListEventCategoriesQuery: providers.Factory(
+                    query_handlers.ListEventCategoriesHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.ListCustomEventCategorySetsQuery: providers.Factory(
+                    query_handlers.ListCustomEventCategorySetsHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.ListCustomEventCategoriesQuery: providers.Factory(
+                    query_handlers.ListCustomEventCategoriesHandler,
+                    repo=read_repos.reference_data_read_repo,
+                ),
+                queries.ListCustomWidgetsQuery: providers.Factory(
+                    query_handlers.ListCustomWidgetsHandler,
+                    repo=read_repos.custom_widget_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetCustomWidgetQuery: providers.Factory(
+                    query_handlers.GetCustomWidgetHandler,
+                    repo=read_repos.custom_widget_read_repo,
+                ),
+                queries.SearchOrganizationsQuery: providers.Factory(
+                    query_handlers.SearchOrganizationsHandler,
+                    repo=read_repos.organization_read_repo,
+                ),
+                queries.GetOrganizationWidgetSettingsQuery: providers.Factory(
+                    query_handlers.GetOrganizationWidgetSettingsHandler,
+                    repo=read_repos.organization_read_repo,
+                ),
+                queries.ListVerifierOrganizationsQuery: providers.Factory(
+                    query_handlers.ListVerifierOrganizationsHandler,
+                    repo=read_repos.organization_read_repo,
+                ),
+                queries.GetOrganizationQuery: providers.Factory(
+                    query_handlers.GetOrganizationHandler,
+                    repo=read_repos.organization_read_repo,
+                ),
+                queries.ListWebhookDeliveriesForAppQuery: providers.Factory(
+                    query_handlers.ListWebhookDeliveriesForAppHandler,
+                    repo=read_repos.app_child_read_repo,
+                ),
+                queries.GetWebhookDeliveryForAppQuery: providers.Factory(
+                    query_handlers.GetWebhookDeliveryForAppHandler,
+                    repo=read_repos.app_child_read_repo,
+                ),
+                queries.ListWebhookDeliveryAttemptsForAppQuery: providers.Factory(
+                    query_handlers.ListWebhookDeliveryAttemptsForAppHandler,
+                    repo=read_repos.app_child_read_repo,
+                ),
+                queries.ListAppInstallationsForAppQuery: providers.Factory(
+                    query_handlers.ListAppInstallationsForAppHandler,
+                    repo=read_repos.app_installation_read_repo,
+                ),
+                queries.GetAppInstallationForAppQuery: providers.Factory(
+                    query_handlers.GetAppInstallationForAppHandler,
+                    repo=read_repos.app_installation_read_repo,
+                ),
+                queries.ListUserAppInstallationsQuery: providers.Factory(
+                    query_handlers.ListUserAppInstallationsHandler,
+                    repo=read_repos.app_installation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOutgoingOrganizationRelationByTargetQuery: providers.Factory(
+                    query_handlers.GetOutgoingOrganizationRelationByTargetHandler,
+                    repo=read_repos.organization_relation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetEventReferenceQuery: providers.Factory(
+                    query_handlers.GetEventReferenceHandler,
+                    repo=read_repos.event_reference_read_repo,
+                ),
+                queries.ListOrganizationsForAdminQuery: providers.Factory(
+                    query_handlers.ListOrganizationsForAdminHandler,
+                    repo=read_repos.organization_admin_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOrganizationForAdminQuery: providers.Factory(
+                    query_handlers.GetOrganizationForAdminHandler,
+                    repo=read_repos.organization_admin_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListOutgoingOrganizationRelationsQuery: providers.Factory(
+                    query_handlers.ListOutgoingOrganizationRelationsHandler,
+                    repo=read_repos.organization_relation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOutgoingOrganizationRelationQuery: providers.Factory(
+                    query_handlers.GetOutgoingOrganizationRelationHandler,
+                    repo=read_repos.organization_relation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListIncomingOrganizationVerificationRequestsQuery: providers.Factory(
+                    query_handlers.ListIncomingOrganizationVerificationRequestsHandler,
+                    repo=read_repos.organization_verification_request_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListOutgoingOrganizationVerificationRequestsQuery: providers.Factory(
+                    query_handlers.ListOutgoingOrganizationVerificationRequestsHandler,
+                    repo=read_repos.organization_verification_request_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOutgoingOrganizationVerificationRequestQuery: providers.Factory(
+                    query_handlers.GetOutgoingOrganizationVerificationRequestHandler,
+                    repo=read_repos.organization_verification_request_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListIncomingEventReferenceRequestsQuery: providers.Factory(
+                    query_handlers.ListIncomingEventReferenceRequestsHandler,
+                    repo=read_repos.event_reference_request_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListOutgoingEventReferenceRequestsQuery: providers.Factory(
+                    query_handlers.ListOutgoingEventReferenceRequestsHandler,
+                    repo=read_repos.event_reference_request_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetIncomingEventReferenceRequestReviewQuery: providers.Factory(
+                    query_handlers.GetIncomingEventReferenceRequestReviewHandler,
+                    repo=read_repos.event_reference_request_read_repo,
+                    event_repo=read_repos.event_detail_read_repo,
+                    authz=actor_authorization_service,
+                    visibility=event_visibility_service,
+                ),
+                queries.GetOutgoingEventReferenceRequestQuery: providers.Factory(
+                    query_handlers.GetOutgoingEventReferenceRequestHandler,
+                    repo=read_repos.event_reference_request_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListIncomingEventReferencesQuery: providers.Factory(
+                    query_handlers.ListIncomingEventReferencesHandler,
+                    repo=read_repos.event_reference_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListOutgoingEventReferencesQuery: providers.Factory(
+                    query_handlers.ListOutgoingEventReferencesHandler,
+                    repo=read_repos.event_reference_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetIncomingEventReferenceQuery: providers.Factory(
+                    query_handlers.GetIncomingEventReferenceHandler,
+                    repo=read_repos.event_reference_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListUserOAuth2TokensQuery: providers.Factory(
+                    query_handlers.ListUserOAuth2TokensHandler,
+                    repo=read_repos.oauth2_token_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetUserOAuth2TokenQuery: providers.Factory(
+                    query_handlers.GetUserOAuth2TokenHandler,
+                    repo=read_repos.oauth2_token_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListAppInstallationsQuery: providers.Factory(
+                    query_handlers.ListAppInstallationsHandler,
+                    repo=read_repos.app_installation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetAppInstallationQuery: providers.Factory(
+                    query_handlers.GetAppInstallationHandler,
+                    repo=read_repos.app_installation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetInstallableAppQuery: providers.Factory(
+                    query_handlers.GetInstallableAppHandler,
+                    repo=read_repos.app_installation_read_repo,
+                ),
+                queries.GetAppWebhookDeliveryAttemptQuery: providers.Factory(
+                    query_handlers.GetAppWebhookDeliveryAttemptHandler,
+                    repo=read_repos.app_child_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListAppWebhookDeliveryAttemptsQuery: providers.Factory(
+                    query_handlers.ListAppWebhookDeliveryAttemptsHandler,
+                    repo=read_repos.app_child_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetAppWebhookDeliveryQuery: providers.Factory(
+                    query_handlers.GetAppWebhookDeliveryHandler,
+                    repo=read_repos.app_child_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListAppWebhookDeliveriesQuery: providers.Factory(
+                    query_handlers.ListAppWebhookDeliveriesHandler,
+                    repo=read_repos.app_child_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetAppKeyQuery: providers.Factory(
+                    query_handlers.GetAppKeyHandler,
+                    repo=read_repos.app_child_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListAppKeysQuery: providers.Factory(
+                    query_handlers.ListAppKeysHandler,
+                    repo=read_repos.app_child_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOAuth2ClientQuery: providers.Factory(
+                    query_handlers.GetOAuth2ClientHandler,
+                    repo=read_repos.oauth2_client_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListOrganizationOAuth2ClientsQuery: providers.Factory(
+                    query_handlers.ListOrganizationOAuth2ClientsHandler,
+                    repo=read_repos.oauth2_client_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListUserOAuth2ClientsQuery: providers.Factory(
+                    query_handlers.ListUserOAuth2ClientsHandler,
+                    repo=read_repos.oauth2_client_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListAppsQuery: providers.Factory(
+                    query_handlers.ListAppsHandler,
+                    repo=read_repos.oauth2_client_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetAppQuery: providers.Factory(
+                    query_handlers.GetAppHandler,
+                    repo=read_repos.oauth2_client_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetApiKeyQuery: providers.Factory(
+                    query_handlers.GetApiKeyHandler,
+                    repo=read_repos.api_key_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListOrganizationApiKeysQuery: providers.Factory(
+                    query_handlers.ListOrganizationApiKeysHandler,
+                    repo=read_repos.api_key_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListUserApiKeysQuery: providers.Factory(
+                    query_handlers.ListUserApiKeysHandler,
+                    repo=read_repos.api_key_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListUserOrganizationInvitationsQuery: providers.Factory(
+                    query_handlers.ListUserOrganizationInvitationsHandler,
+                    repo=read_repos.organization_invitation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetUserOrganizationInvitationQuery: providers.Factory(
+                    query_handlers.GetUserOrganizationInvitationHandler,
+                    repo=read_repos.organization_invitation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOrganizationInvitationRecipientQuery: providers.Factory(
+                    query_handlers.GetOrganizationInvitationRecipientHandler,
+                    repo=read_repos.organization_invitation_read_repo,
+                ),
+                queries.ListOrganizationMemberInvitationsQuery: providers.Factory(
+                    query_handlers.ListOrganizationMemberInvitationsHandler,
+                    repo=read_repos.organization_member_invitation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOrganizationMemberInvitationQuery: providers.Factory(
+                    query_handlers.GetOrganizationMemberInvitationHandler,
+                    repo=read_repos.organization_member_invitation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListUserMemberInvitationsQuery: providers.Factory(
+                    query_handlers.ListUserMemberInvitationsHandler,
+                    repo=read_repos.organization_member_invitation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetUserMemberInvitationQuery: providers.Factory(
+                    query_handlers.GetUserMemberInvitationHandler,
+                    repo=read_repos.organization_member_invitation_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetMemberInvitationRecipientQuery: providers.Factory(
+                    query_handlers.GetMemberInvitationRecipientHandler,
+                    repo=read_repos.organization_member_invitation_read_repo,
+                ),
+                queries.ListOrganizationMembersQuery: providers.Factory(
+                    query_handlers.ListOrganizationMembersHandler,
+                    repo=read_repos.organization_member_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOrganizationMemberQuery: providers.Factory(
+                    query_handlers.GetOrganizationMemberHandler,
+                    repo=read_repos.organization_member_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListUserOrganizationMembershipsQuery: providers.Factory(
+                    query_handlers.ListUserOrganizationMembershipsHandler,
+                    repo=read_repos.organization_member_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetUserOrganizationMembershipQuery: providers.Factory(
+                    query_handlers.GetUserOrganizationMembershipHandler,
+                    repo=read_repos.organization_member_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListOrganizationMemberRolesQuery: providers.Factory(
+                    query_handlers.ListOrganizationMemberRolesHandler,
+                    repo=read_repos.organization_member_read_repo,
+                ),
+            }
+        ),
+    )
+
+    query_bus = providers.Factory(
+        QueryBus,
+        app_context_provider=context.app_context_provider,
+        query_handler_factory=query_handler_factory,
+        read_session_scope=infrastructure.read_session_scope,
+    )
+
 
 class Application(containers.DeclarativeContainer):
     config = providers.Configuration()
@@ -846,18 +1428,12 @@ class Application(containers.DeclarativeContainer):
 
     infrastructure = providers.Container(Infrastructure)
     context = providers.Container(Context)
-    repos = providers.Container(
-        Repos,
-        infrastructure=infrastructure,
-    )
     read_repos = providers.Container(
         ReadRepos,
         infrastructure=infrastructure,
     )
     services = providers.Container(
         Services,
-        repos=repos,
-        context=context,
         config=config,
         read_repos=read_repos,
         infrastructure=infrastructure,

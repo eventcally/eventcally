@@ -1,8 +1,8 @@
-from flask import flash, redirect
+from flask import abort, flash, redirect
 from flask_babel import gettext, lazy_gettext
 
 from project.application.commands import UninstallAppCommand
-from project.models.oauth import OAuth2Client
+from project.application.queries import GetInstallableAppQuery
 from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
 from project.permissions import get_organization_permission_infos
 from project.views.manage_admin_unit.app_installation.displays import (
@@ -22,7 +22,13 @@ class InstallView(BaseCreateView):
     display_class = InstallDisplay
 
     def dispatch_request(self, **kwargs):
-        self.oauth2_client = OAuth2Client.query.get_or_404(kwargs.get("app_id"))
+        self.oauth2_client = self.query_bus.handle(
+            GetInstallableAppQuery(id=kwargs.get("app_id"))
+        )
+
+        if self.oauth2_client is None:
+            abort(404)
+
         return super().dispatch_request(**kwargs)
 
     def get_instruction(self, **kwargs):

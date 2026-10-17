@@ -1,5 +1,5 @@
 from project.application.commands import RequestOrganizationDeletionCommand
-from project.models.admin_unit import AdminUnit
+from project.application.queries import GetOrganizationSettingsQuery
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.admin_unit.views import (
     CancelDeletionView,
@@ -14,7 +14,10 @@ from project.views.utils import current_admin_unit
 
 
 class ViewHandler(ManageAdminUnitBaseViewHandler):
-    model = AdminUnit
+    model_name = "organization"
+    model_name_plural = "organizations"
+    display_name = "Organization"
+    display_name_plural = "Organizations"
     create_view_class = None
     read_view_class = None
     update_view_class = None
@@ -22,7 +25,9 @@ class ViewHandler(ManageAdminUnitBaseViewHandler):
     list_view_class = None
 
     def get_object_from_kwargs(self, **kwargs):
-        return current_admin_unit
+        return self.query_bus.handle(
+            GetOrganizationSettingsQuery(id=current_admin_unit.id)
+        )
 
     def _add_views(
         self,

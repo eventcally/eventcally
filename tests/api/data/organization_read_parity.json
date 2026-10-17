@@ -1,0 +1,98 @@
+{
+  "detail_full": {
+    "body": "{\"created_at\":\"2026-01-01T10:00:00\",\"description\":\"Beschreibung\",\"email\":\"alpha@example.com\",\"fax\":\"0124\",\"id\":3,\"is_verified\":true,\"location\":{\"city\":\"Goslar\",\"country\":null,\"latitude\":\"51.9077888000000000\",\"longitude\":\"10.4333312000000000\",\"postalCode\":\"38640\",\"state\":null,\"street\":\"Markt 1\"},\"logo\":{\"copyright_text\":\"EventCally\",\"image_url\":\"/image/1/1767342600000\",\"license\":null},\"name\":\"Alpha Crew\",\"phone\":\"0123\",\"short_name\":\"alphacrew\",\"updated_at\":\"2026-03-01T12:00:00\",\"url\":\"https://alpha.example.com\"}\n",
+    "etag": "\"e59049c8d838e68662c92fb7855d93f764efa796\"",
+    "status": 200,
+    "url": "/api/v1/organizations/3"
+  },
+  "detail_own": {
+    "body": "{\"can_verify_other\":false,\"created_at\":\"2025-12-01T00:00:00\",\"description\":null,\"email\":null,\"fax\":null,\"id\":1,\"incoming_reference_requests_allowed\":true,\"is_verified\":true,\"location\":{\"city\":\"City\",\"country\":null,\"latitude\":null,\"longitude\":null,\"postalCode\":\"12345\",\"state\":null,\"street\":null},\"logo\":null,\"name\":\"Meine Crew\",\"phone\":null,\"short_name\":\"meinecrew\",\"updated_at\":null,\"url\":null}\n",
+    "etag": "\"702e68fe017195abb337cc2fc2d0c69c80f34011\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1"
+  },
+  "detail_unknown": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organizations/4711"
+  },
+  "detail_unverified": {
+    "body": "{\"created_at\":\"2026-01-20T00:00:00\",\"description\":null,\"email\":null,\"fax\":null,\"id\":6,\"is_verified\":false,\"location\":{\"city\":\"City\",\"country\":null,\"latitude\":null,\"longitude\":null,\"postalCode\":\"12345\",\"state\":null,\"street\":null},\"logo\":null,\"name\":\"Unverified Crew\",\"phone\":null,\"short_name\":\"unverifiedcrew\",\"updated_at\":null,\"url\":null}\n",
+    "etag": "\"d537a37662951b48ee76d089f5d778869153fbc5\"",
+    "status": 200,
+    "url": "/api/v1/organizations/6"
+  },
+  "list": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":3,\"is_verified\":true,\"name\":\"Alpha Crew\",\"short_name\":\"alphacrew\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":4,\"is_verified\":true,\"name\":\"Crew am See\",\"short_name\":\"crewamsee\",\"updated_at\":null},{\"created_at\":\"2025-11-01T00:00:00+00:00\",\"id\":2,\"is_verified\":false,\"name\":\"eventcally\",\"short_name\":\"eventcally\",\"updated_at\":null},{\"created_at\":\"2025-12-01T00:00:00+00:00\",\"id\":1,\"is_verified\":true,\"name\":\"Meine Crew\",\"short_name\":\"meinecrew\",\"updated_at\":null},{\"created_at\":\"2026-01-20T00:00:00+00:00\",\"id\":6,\"is_verified\":false,\"name\":\"Unverified Crew\",\"short_name\":\"unverifiedcrew\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":5,\"is_verified\":true,\"name\":\"Zentrale\",\"short_name\":\"crewzentrale\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
+    "etag": "\"41b5e6baf278b6c37b1f6bdb63ef507b39d47bfc\"",
+    "status": 200,
+    "url": "/api/v1/organizations"
+  },
+  "list_created_at_from": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":4,\"is_verified\":true,\"name\":\"Crew am See\",\"short_name\":\"crewamsee\",\"updated_at\":null},{\"created_at\":\"2026-01-20T00:00:00+00:00\",\"id\":6,\"is_verified\":false,\"name\":\"Unverified Crew\",\"short_name\":\"unverifiedcrew\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":5,\"is_verified\":true,\"name\":\"Zentrale\",\"short_name\":\"crewzentrale\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"7c741449b282128896463965fd8c932d12e33135\"",
+    "status": 200,
+    "url": "/api/v1/organizations?created_at_from=2026-01-12T00:00:00"
+  },
+  "list_keyword": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":4,\"is_verified\":true,\"name\":\"Crew am See\",\"short_name\":\"crewamsee\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":5,\"is_verified\":true,\"name\":\"Zentrale\",\"short_name\":\"crewzentrale\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":3,\"is_verified\":true,\"name\":\"Alpha Crew\",\"short_name\":\"alphacrew\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2025-12-01T00:00:00+00:00\",\"id\":1,\"is_verified\":true,\"name\":\"Meine Crew\",\"short_name\":\"meinecrew\",\"updated_at\":null},{\"created_at\":\"2026-01-20T00:00:00+00:00\",\"id\":6,\"is_verified\":false,\"name\":\"Unverified Crew\",\"short_name\":\"unverifiedcrew\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":5}\n",
+    "etag": "\"ac1daad4acd45418f98b857d524f2cd39e0fbc56\"",
+    "status": 200,
+    "url": "/api/v1/organizations?keyword=crew"
+  },
+  "list_keyword_sort_created_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":4,\"is_verified\":true,\"name\":\"Crew am See\",\"short_name\":\"crewamsee\",\"updated_at\":null},{\"created_at\":\"2026-01-20T00:00:00+00:00\",\"id\":6,\"is_verified\":false,\"name\":\"Unverified Crew\",\"short_name\":\"unverifiedcrew\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":5,\"is_verified\":true,\"name\":\"Zentrale\",\"short_name\":\"crewzentrale\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":3,\"is_verified\":true,\"name\":\"Alpha Crew\",\"short_name\":\"alphacrew\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2025-12-01T00:00:00+00:00\",\"id\":1,\"is_verified\":true,\"name\":\"Meine Crew\",\"short_name\":\"meinecrew\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":5}\n",
+    "etag": "\"20542139d60e8a68a2af6cca938595b348b70e7e\"",
+    "status": 200,
+    "url": "/api/v1/organizations?keyword=crew&sort=-created_at"
+  },
+  "list_out_of_range": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organizations?page=5&per_page=2"
+  },
+  "list_page_2": {
+    "body": "{\"has_next\":true,\"has_prev\":true,\"items\":[{\"created_at\":\"2025-11-01T00:00:00+00:00\",\"id\":2,\"is_verified\":false,\"name\":\"eventcally\",\"short_name\":\"eventcally\",\"updated_at\":null},{\"created_at\":\"2025-12-01T00:00:00+00:00\",\"id\":1,\"is_verified\":true,\"name\":\"Meine Crew\",\"short_name\":\"meinecrew\",\"updated_at\":null}],\"next_num\":3,\"page\":2,\"pages\":3,\"per_page\":2,\"prev_num\":1,\"total\":6}\n",
+    "etag": "\"3e5f430b2f7162b48d1e158ff49c6b1431660ca4\"",
+    "status": 200,
+    "url": "/api/v1/organizations?page=2&per_page=2"
+  },
+  "list_postal_code": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":3,\"is_verified\":true,\"name\":\"Alpha Crew\",\"short_name\":\"alphacrew\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":5,\"is_verified\":true,\"name\":\"Zentrale\",\"short_name\":\"crewzentrale\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"ab85ee811678afdeacd9a55b3c04c7e8c95ccca8\"",
+    "status": 200,
+    "url": "/api/v1/organizations?postal_code=386"
+  },
+  "list_postal_codes": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":3,\"is_verified\":true,\"name\":\"Alpha Crew\",\"short_name\":\"alphacrew\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":5,\"is_verified\":true,\"name\":\"Zentrale\",\"short_name\":\"crewzentrale\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"ab85ee811678afdeacd9a55b3c04c7e8c95ccca8\"",
+    "status": 200,
+    "url": "/api/v1/organizations?postal_code=38640&postal_code=3869"
+  },
+  "list_sort_last_modified_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":3,\"is_verified\":true,\"name\":\"Alpha Crew\",\"short_name\":\"alphacrew\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":5,\"is_verified\":true,\"name\":\"Zentrale\",\"short_name\":\"crewzentrale\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":4,\"is_verified\":true,\"name\":\"Crew am See\",\"short_name\":\"crewamsee\",\"updated_at\":null},{\"created_at\":\"2026-01-20T00:00:00+00:00\",\"id\":6,\"is_verified\":false,\"name\":\"Unverified Crew\",\"short_name\":\"unverifiedcrew\",\"updated_at\":null},{\"created_at\":\"2025-12-01T00:00:00+00:00\",\"id\":1,\"is_verified\":true,\"name\":\"Meine Crew\",\"short_name\":\"meinecrew\",\"updated_at\":null},{\"created_at\":\"2025-11-01T00:00:00+00:00\",\"id\":2,\"is_verified\":false,\"name\":\"eventcally\",\"short_name\":\"eventcally\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
+    "etag": "\"7f948653a2310a8ab8ba695f7967012f71cad9f9\"",
+    "status": 200,
+    "url": "/api/v1/organizations?sort=-last_modified_at"
+  },
+  "list_sort_name": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":3,\"is_verified\":true,\"name\":\"Alpha Crew\",\"short_name\":\"alphacrew\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":4,\"is_verified\":true,\"name\":\"Crew am See\",\"short_name\":\"crewamsee\",\"updated_at\":null},{\"created_at\":\"2025-11-01T00:00:00+00:00\",\"id\":2,\"is_verified\":false,\"name\":\"eventcally\",\"short_name\":\"eventcally\",\"updated_at\":null},{\"created_at\":\"2025-12-01T00:00:00+00:00\",\"id\":1,\"is_verified\":true,\"name\":\"Meine Crew\",\"short_name\":\"meinecrew\",\"updated_at\":null},{\"created_at\":\"2026-01-20T00:00:00+00:00\",\"id\":6,\"is_verified\":false,\"name\":\"Unverified Crew\",\"short_name\":\"unverifiedcrew\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":5,\"is_verified\":true,\"name\":\"Zentrale\",\"short_name\":\"crewzentrale\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
+    "etag": "\"41b5e6baf278b6c37b1f6bdb63ef507b39d47bfc\"",
+    "status": 200,
+    "url": "/api/v1/organizations?sort=name"
+  },
+  "list_sort_updated_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":3,\"is_verified\":true,\"name\":\"Alpha Crew\",\"short_name\":\"alphacrew\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":5,\"is_verified\":true,\"name\":\"Zentrale\",\"short_name\":\"crewzentrale\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":4,\"is_verified\":true,\"name\":\"Crew am See\",\"short_name\":\"crewamsee\",\"updated_at\":null},{\"created_at\":\"2025-11-01T00:00:00+00:00\",\"id\":2,\"is_verified\":false,\"name\":\"eventcally\",\"short_name\":\"eventcally\",\"updated_at\":null},{\"created_at\":\"2025-12-01T00:00:00+00:00\",\"id\":1,\"is_verified\":true,\"name\":\"Meine Crew\",\"short_name\":\"meinecrew\",\"updated_at\":null},{\"created_at\":\"2026-01-20T00:00:00+00:00\",\"id\":6,\"is_verified\":false,\"name\":\"Unverified Crew\",\"short_name\":\"unverifiedcrew\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
+    "etag": "\"03e4aee737fc63884b781d56dcb1217754a272d7\"",
+    "status": 200,
+    "url": "/api/v1/organizations?sort=-updated_at"
+  },
+  "list_updated_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":5,\"is_verified\":true,\"name\":\"Zentrale\",\"short_name\":\"crewzentrale\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
+    "etag": "\"97f0157419a95a4fb4a85bf379658cc44b0dca7a\"",
+    "status": 200,
+    "url": "/api/v1/organizations?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-28T00:00:00"
+  }
+}

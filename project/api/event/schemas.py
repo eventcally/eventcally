@@ -1,9 +1,7 @@
-from flask_security import current_user
-from marshmallow import fields, post_load, validate
+from marshmallow import ValidationError, fields, post_load, validate
 from marshmallow.decorators import pre_load
 from marshmallow_enum import EnumField
 
-from project.access import can_read_private_events
 from project.api import marshmallow
 from project.api.custom_event_category.schemas import (
     CustomEventCategoryIdSchema,
@@ -46,7 +44,6 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     PlainBaseSchema,
-    SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
     WriteIdPlainSchema,
@@ -58,13 +55,10 @@ from project.domain.models.enums.event_attendance_mode import EventAttendanceMod
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_status import EventStatus
 from project.domain.models.enums.event_target_group_origin import EventTargetGroupOrigin
-from project.models import Event
 
 
-class EventModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = Event
-        load_instance = True
+class EventModelSchema(PlainBaseSchema):
+    pass
 
 
 class EventIdSchema(EventModelSchema, IdSchemaMixin):
@@ -76,45 +70,73 @@ class EventIdPlainSchema(PlainBaseSchema, IdPlainSchemaMixin):
 
 
 class EventWriteIdSchema(EventModelSchema, WriteIdSchemaMixin):
-    pass
+    def object_exists(self, object_id) -> bool:
+        return _event_exists(object_id)
+
+
+def _event_exists(event_id) -> bool:
+    from flask import current_app
+
+    from project.application.queries import EventExistsQuery
+
+    if not isinstance(event_id, int):
+        return False
+
+    return current_app.container.cqrs.query_bus().handle(EventExistsQuery(id=event_id))
+
+
+class EventWriteIdPlainSchema(WriteIdPlainSchema):
+    @pre_load()
+    def validate_exists(self, data, **kwargs):
+        if not _event_exists(data.get("id")):
+            raise ValidationError("Referenced object does not exist")
+        return data
 
 
 class EventBaseSchemaMixin(TrackableSchemaMixin):
-    name = marshmallow.auto_field(
+    name = fields.String(
         required=True,
         validate=validate.Length(min=3, max=255),
         metadata={"description": "A short, meaningful name for the event."},
     )
-    description = marshmallow.auto_field(
+    description = fields.String(
+        allow_none=True,
         metadata={"description": "Description of the event"},
     )
-    external_link = marshmallow.auto_field(
+    external_link = fields.String(
+        allow_none=True,
         validate=[validate.URL(), validate.Length(max=255)],
         metadata={
             "description": "A link to an external website containing more information about the event."
         },
     )
-    ticket_link = marshmallow.auto_field(
+    ticket_link = fields.String(
+        allow_none=True,
         validate=[validate.URL(), validate.Length(max=255)],
         metadata={"description": "A link where tickets can be purchased."},
     )
-    tags = marshmallow.auto_field(
+    tags = fields.String(
+        allow_none=True,
         metadata={
             "description": "Comma separated keywords with which the event should be found. Words do not need to be entered if they are already in the name or description."
-        }
+        },
     )
-    kid_friendly = marshmallow.auto_field(
+    kid_friendly = fields.Boolean(
+        allow_none=True,
         load_default=False,
         metadata={"description": "If the event is particularly suitable for children."},
     )
-    accessible_for_free = marshmallow.auto_field(
+    accessible_for_free = fields.Boolean(
+        allow_none=True,
         load_default=False,
         metadata={"description": "If the event is accessible for free."},
     )
-    age_from = marshmallow.auto_field(
+    age_from = fields.Integer(
+        allow_none=True,
         metadata={"description": "The minimum age that participants should be."},
     )
-    age_to = marshmallow.auto_field(
+    age_to = fields.Integer(
+        allow_none=True,
         metadata={"description": "The maximum age that participants should be."},
     )
     target_group_origin = EnumField(
@@ -139,20 +161,24 @@ class EventBaseSchemaMixin(TrackableSchemaMixin):
         dump_default=None,
         metadata={"description": "Deprecated. Always null."},
     )
-    registration_required = marshmallow.auto_field(
+    registration_required = fields.Boolean(
+        allow_none=True,
         load_default=False,
         metadata={
             "description": "If the participants needs to register for the event."
         },
     )
-    booked_up = marshmallow.auto_field(
+    booked_up = fields.Boolean(
+        allow_none=True,
         load_default=False,
         metadata={"description": "If the event is booked up or sold out."},
     )
-    expected_participants = marshmallow.auto_field(
+    expected_participants = fields.Integer(
+        allow_none=True,
         metadata={"description": "The estimated expected attendance."},
     )
-    price_info = marshmallow.auto_field(
+    price_info = fields.String(
+        allow_none=True,
         metadata={
             "description": "Price information in textual form. E.g., different prices for adults and children."
         },
@@ -179,26 +205,12 @@ class EventCurrentOrganizationMixin(object):
     )
 
     def get_reference_id(self, event):
-        if not current_user or not current_user.is_authenticated:
-            return None
-
-        from project.views.utils import get_current_admin_unit_for_api
-
-        admin_unit = get_current_admin_unit_for_api()
-
-        if not admin_unit:
-            return None
-
-        from project.services.reference import get_event_reference
-
-        reference = get_event_reference(event.id, admin_unit.id)
-        return reference.id if reference is not None else None
+        # Filled by the query for the calling organization (`reference_admin_unit_id`).
+        return getattr(event, "reference_id", None)
 
     def get_internal_tags(self, event):
-        if not event or not can_read_private_events(event.admin_unit):
-            return None
-
-        return event.internal_tags
+        # Cleared by the query handler unless the caller may read private events.
+        return getattr(event, "internal_tags", None)
 
 
 class EventSchema(
@@ -234,7 +246,7 @@ class EventDumpSchema(EventIdSchema, EventBaseSchemaMixin):
 
 
 class EventRefSchema(EventIdSchema):
-    name = marshmallow.auto_field()
+    name = fields.String(required=True, validate=validate.Length(max=255))
 
 
 class EventSearchItemSchema(
@@ -404,7 +416,8 @@ class EventWriteSchemaMixin(object):
         fields.Nested(CustomEventCategoryWriteIdSchema),
         metadata={"description": "Custom categories that fit the event."},
     )
-    rating = marshmallow.auto_field(
+    rating = fields.Integer(
+        allow_none=True,
         load_default=50,
         dump_default=50,
         validate=validate.OneOf([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]),
@@ -412,10 +425,11 @@ class EventWriteSchemaMixin(object):
             "description": "How relevant the event is to your organization. 0 (Little relevant), 50 (Default), 100 (Highlight)."
         },
     )
-    internal_tags = marshmallow.auto_field(
+    internal_tags = fields.String(
+        allow_none=True,
         metadata={
             "description": "Comma separated keywords for internal use. These will not be published. Only visible with corresponding rights."
-        }
+        },
     )
 
 

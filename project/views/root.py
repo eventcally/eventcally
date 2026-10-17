@@ -16,8 +16,8 @@ from sqlalchemy import text
 
 from project import cache_path, dump_path, robots_txt_file, sitemap_file
 from project.extensions import db, limiter
-from project.services.admin import upsert_settings
 from project.views.main_blueprint import main_bp
+from project.views.utils import get_settings
 
 
 @main_bp.route("/")
@@ -31,7 +31,7 @@ def home():
         }
     )
 
-    settings = upsert_settings()
+    settings = get_settings()
     content = Markup(settings.start_page) if settings.start_page else None
 
     return render_template(
@@ -74,7 +74,7 @@ def up():
 @main_bp.route("/tos")
 def tos():
     title = gettext("Terms of service")
-    settings = upsert_settings()
+    settings = get_settings()
 
     if not settings.tos:
         abort(404)
@@ -86,7 +86,7 @@ def tos():
 @main_bp.route("/legal_notice")
 def legal_notice():
     title = gettext("Legal notice")
-    settings = upsert_settings()
+    settings = get_settings()
     content = Markup(settings.legal_notice)
     return render_template("legal.html", title=title, content=content)
 
@@ -94,7 +94,7 @@ def legal_notice():
 @main_bp.route("/contact")
 def contact():
     title = gettext("Contact")
-    settings = upsert_settings()
+    settings = get_settings()
     content = Markup(settings.contact)
     return render_template("legal.html", title=title, content=content)
 
@@ -102,7 +102,7 @@ def contact():
 @main_bp.route("/privacy")
 def privacy():
     title = gettext("Privacy")
-    settings = upsert_settings()
+    settings = get_settings()
     content = Markup(settings.privacy)
     return render_template("legal.html", title=title, content=content)
 

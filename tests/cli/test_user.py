@@ -2,7 +2,7 @@ def test_add_admin_roles(client, seeder, app):
     user_id, admin_unit_id = seeder.setup_base()
 
     with app.app_context():
-        from project.services.user import get_user
+        from project.user_datastore import get_user
 
         user = get_user(user_id)
         assert not user.has_role("admin")
@@ -12,7 +12,7 @@ def test_add_admin_roles(client, seeder, app):
     assert "Admin roles were added to test@test.de." in result.output
 
     with app.app_context():
-        from project.services.user import get_user
+        from project.user_datastore import get_user
 
         user = get_user(user_id)
         is_admin = user.has_role("admin")
@@ -30,7 +30,7 @@ def test_add_admin_roles_UserDoesNotExist(client, seeder, app):
 
 def test_create(client, seeder, app):
     with app.app_context():
-        from project.services.user import find_user_by_email
+        from project.user_datastore import find_user_by_email
 
         user = find_user_by_email("test@test.de")
         assert not user
@@ -50,7 +50,7 @@ def test_create(client, seeder, app):
     assert "user_id" in result.output
 
     with app.app_context():
-        from project.services.user import find_user_by_email
+        from project.user_datastore import find_user_by_email
 
         user = find_user_by_email("test@test.de")
         assert user.confirmed_at is not None
@@ -62,7 +62,7 @@ def test_confirm(client, seeder, app):
     result = runner.invoke(args=["user", "create", "test@test.de", "password"])
 
     with app.app_context():
-        from project.services.user import find_user_by_email
+        from project.user_datastore import find_user_by_email
 
         user = find_user_by_email("test@test.de")
         assert user.confirmed_at is None
@@ -71,7 +71,7 @@ def test_confirm(client, seeder, app):
     assert "Confirmed user test@test.de." in result.output
 
     with app.app_context():
-        from project.services.user import find_user_by_email
+        from project.user_datastore import find_user_by_email
 
         user = find_user_by_email("test@test.de")
         assert user.confirmed_at is not None

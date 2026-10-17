@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import icalendar
-from dateutil.relativedelta import relativedelta
 from dateutil.rrule import rrulestr
 
 berlin_tz = ZoneInfo("Europe/Berlin")
@@ -79,30 +78,6 @@ def form_input_to_date(date_str, hour=0, minute=0, second=0):
 
 def form_input_from_date(date):
     return date.strftime("%Y-%m-%d") if date else ""
-
-
-def dates_from_recurrence_rule(start, recurrence_rule):
-    result = list()
-
-    start_begin_of_day = date_set_begin_of_day(start, remove_tz=True)
-    rule_set = rrulestr(recurrence_rule, forceset=True, dtstart=start_begin_of_day)
-
-    # Keine Daten in der Vergangenheit erstellen
-    today = get_today()
-    start_date = today if today > start else start
-    start_date_begin_of_day = date_set_begin_of_day(start_date, remove_tz=True)
-
-    # Max. 1 Jahr in die Zukunft
-    end_date = start_date_begin_of_day + relativedelta(years=1)
-    end_date_end_of_day = date_set_end_of_day(end_date, remove_tz=True)
-
-    for rule_date in rule_set.between(
-        start_date_begin_of_day, end_date_end_of_day, inc=True
-    ):
-        rule_data_w_tz = rule_date.replace(tzinfo=berlin_tz)
-        result.append(rule_data_w_tz)
-
-    return result
 
 
 BATCH_DELTA = 3  # How many batches to show before + after current batch

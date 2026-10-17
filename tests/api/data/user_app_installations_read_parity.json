@@ -1,0 +1,20 @@
+{
+  "installations": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":1,\"membership\":{\"id\":1,\"is_admin\":true,\"organization\":{\"id\":1,\"name\":\"Meine Crew\"}},\"organization\":{\"id\":1,\"name\":\"Meine Crew\"}},{\"id\":2,\"membership\":{\"id\":6,\"is_admin\":false,\"organization\":{\"id\":3,\"name\":\"Andere Crew\"}},\"organization\":{\"id\":3,\"name\":\"Andere Crew\"}}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"c892c4b80f21c6b24a419e665083b09a176efe13\"",
+    "status": 200,
+    "url": "/api/v1/user/app_installations"
+  },
+  "installations_admin_only": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":1,\"membership\":{\"id\":1,\"is_admin\":true,\"organization\":{\"id\":1,\"name\":\"Meine Crew\"}},\"organization\":{\"id\":1,\"name\":\"Meine Crew\"}}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
+    "etag": "\"509dbee900b76ecdbb25004734af4d3806afdc7a\"",
+    "status": 200,
+    "url": "/api/v1/user/app_installations?admin_only=1"
+  },
+  "installations_page_2": {
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"id\":2,\"membership\":{\"id\":6,\"is_admin\":false,\"organization\":{\"id\":3,\"name\":\"Andere Crew\"}},\"organization\":{\"id\":3,\"name\":\"Andere Crew\"}}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":1,\"prev_num\":1,\"total\":2}\n",
+    "etag": "\"3aaf1bfdbc60f02d92edd3b5de0e5acad0a49814\"",
+    "status": 200,
+    "url": "/api/v1/user/app_installations?page=2&per_page=1"
+  }
+}

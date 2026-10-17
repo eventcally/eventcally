@@ -93,11 +93,11 @@ def test_review_verify(
     assert app.test_email_service.sent_emails[0]["recipient"] == "mitglied@verein.de"
 
     with app.app_context():
+        from project.cli.seed_helpers import get_admin_unit_relation
         from project.models import (
             AdminUnitVerificationRequest,
             AdminUnitVerificationRequestReviewStatus,
         )
-        from project.services.admin_unit import get_admin_unit_relation
 
         verification_request = db.session.get(
             AdminUnitVerificationRequest, verification_request_id

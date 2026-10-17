@@ -49,16 +49,6 @@ class User(db.Model, UserGeneratedMixin, UserMixin, ApiKeyOwnerMixin):
         )
         return aggregate
 
-    @property
-    def is_member_of_verified_admin_unit(self):
-        if not self.admin_unit_memberships:  # pragma: no cover
-            return False
-
-        return any(
-            m.admin_unit and m.admin_unit.is_verified
-            for m in self.admin_unit_memberships
-        )
-
     def __str__(self):
         return self.email or super().__str__()
 

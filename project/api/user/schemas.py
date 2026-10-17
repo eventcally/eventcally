@@ -1,4 +1,3 @@
-from flask_login import current_user
 from marshmallow import fields
 
 from project.api.app.schemas import AppInstallationModelSchema
@@ -7,16 +6,12 @@ from project.api.schemas import (
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
-    SQLAlchemyBaseSchema,
+    PlainBaseSchema,
 )
-from project.models import AdminUnitMember
-from project.models.app import AppInstallation
 
 
-class OrganizationMembershipModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = AdminUnitMember
-        load_instance = True
+class OrganizationMembershipModelSchema(PlainBaseSchema):
+    pass
 
 
 class OrganizationMembershipIdSchema(OrganizationMembershipModelSchema, IdSchemaMixin):
@@ -48,9 +43,7 @@ class OrganizationMembershipListResponseSchema(PaginationResponseSchema):
 
 
 class UserAppInstallationModelSchema(AppInstallationModelSchema):
-    class Meta:
-        model = AppInstallation
-        load_instance = True
+    pass
 
 
 class UserAppInstallationIdSchema(UserAppInstallationModelSchema, IdSchemaMixin):
@@ -62,21 +55,10 @@ class UserAppInstallationSchema(UserAppInstallationIdSchema):
     membership = fields.Method("get_membership", dump_only=True)
 
     def get_membership(self, app_installation):
-        if not current_user or not current_user.is_authenticated:  # pragma: no cover
+        if app_installation.membership is None:  # pragma: no cover
             return None
 
-        admin_unit_member = (
-            AdminUnitMember.query.filter(
-                AdminUnitMember.admin_unit_id == app_installation.admin_unit_id
-            )
-            .filter(AdminUnitMember.user_id == current_user.id)
-            .first()
-        )
-
-        if not admin_unit_member:  # pragma: no cover
-            return None
-
-        return OrganizationMembershipSchema().dump(admin_unit_member)
+        return OrganizationMembershipSchema().dump(app_installation.membership)
 
 
 class UserAppInstallationRefSchema(UserAppInstallationSchema):

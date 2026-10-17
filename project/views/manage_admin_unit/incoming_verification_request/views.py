@@ -1,8 +1,8 @@
 from flask import redirect, url_for
 from flask_babel import gettext, lazy_gettext
 
-from project.models.admin_unit_verification_request import (
-    AdminUnitVerificationRequestReviewStatus,
+from project.domain.models.enums.organization_verification_request_review_status import (
+    OrganizationVerificationRequestReviewStatus,
 )
 from project.modular.base_views import BaseUpdateView
 from project.views.manage_admin_unit.incoming_verification_request.forms import (
@@ -18,7 +18,7 @@ class ReviewView(BaseUpdateView):
     def get_title(self, **kwargs):
         return lazy_gettext(
             "Review %(model_display_name)s",
-            model_display_name=self.model.get_display_name(),
+            model_display_name=self.handler.get_model_display_name(),
         )
 
     def check_object_access(self, object):
@@ -26,7 +26,7 @@ class ReviewView(BaseUpdateView):
         if result:  # pragma: no cover
             return result
 
-        if object.review_status == AdminUnitVerificationRequestReviewStatus.verified:
+        if object.review_status == OrganizationVerificationRequestReviewStatus.verified:
             flash_message(
                 gettext("Verification request already verified"),
                 url_for("main.organizations", path=object.source_admin_unit_id),
@@ -47,7 +47,10 @@ class ReviewView(BaseUpdateView):
 
     @handle_base_error
     def dispatch_validated_form(self, form, object, **kwargs):
-        if form.review_status.data == AdminUnitVerificationRequestReviewStatus.verified:
+        if (
+            form.review_status.data
+            == OrganizationVerificationRequestReviewStatus.verified
+        ):
             cmd = form.create_approve_command(object.id)
         else:
             cmd = form.create_reject_command(object.id)
@@ -57,7 +60,10 @@ class ReviewView(BaseUpdateView):
         return redirect(self.get_redirect_url())
 
     def get_success_text(self, object, form):
-        if form.review_status.data == AdminUnitVerificationRequestReviewStatus.verified:
+        if (
+            form.review_status.data
+            == OrganizationVerificationRequestReviewStatus.verified
+        ):
             return gettext("Organization successfully verified")
 
         return gettext("Verification request successfully updated")

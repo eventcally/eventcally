@@ -3,9 +3,20 @@ from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import FormField, HiddenField, SubmitField
 
+from project.application.query_bus import QueryBus
 from project.domain.models.entities.actor import Actor
 from project.modular.fields import VirtualFormField
-from project.modular.search_definition import apply_search_definitions
+
+
+class BlankFormData:
+    """Stand-in for an empty object behind a sub-form: every field reads as unset,
+    like a fresh model instance (whose attributes are all `None`)."""
+
+    def __getattr__(self, name):
+        if name.startswith("__"):
+            raise AttributeError(name)
+
+        return None
 
 
 class BaseForm(FlaskForm):
@@ -13,6 +24,11 @@ class BaseForm(FlaskForm):
         from flask import current_app
 
         return current_app.container.context.context_provider().current_actor
+
+    def get_query_bus(self) -> QueryBus:
+        from flask import current_app
+
+        return current_app.container.cqrs.query_bus()
 
     def get_input_fields(self):
         return list(
@@ -95,28 +111,6 @@ class BaseListForm(BaseForm):
     submit = SubmitField(
         lazy_gettext("Refresh"), render_kw={"class": "btn btn-primary"}
     )
-
-    def apply_query_filter(self, query, **kwargs):
-        if self.filters:
-            for filter in self.filters:
-                form_field = getattr(self, filter.key)
-                if form_field and form_field.data:
-                    query = filter.apply(query, form_field.data, None)
-
-        if self.search_definitions and self.keyword and self.keyword.data:
-            query = apply_search_definitions(
-                query, self.search_definitions, self.keyword.data
-            )
-
-        return query
-
-    def apply_query_order(self, query, **kwargs):
-        if self.sort_definitions:
-            for definition in self.sort_definitions:
-                if self.sort.data == definition.key:
-                    return definition.apply(query)
-
-        return query  # pragma: no cover
 
     def is_submitted(self):  # pragma: no cover
         return super().is_submitted() or "submit" in request.args

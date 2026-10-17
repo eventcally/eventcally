@@ -1,18 +1,30 @@
 from flask_babel import lazy_gettext
 
-from project.models.admin_unit_verification_request import (
-    AdminUnitVerificationRequestReviewStatus,
+from project.domain.models.enums.organization_verification_request_review_status import (
+    OrganizationVerificationRequestReviewStatus,
 )
 from project.modular.base_display import BaseDisplay
-from project.modular.base_props import BadgePropFormatter, BaseProp, DateProp, EnumProp
+from project.modular.base_props import (
+    BadgePropFormatter,
+    BaseProp,
+    DateProp,
+    EnumProp,
+    EnumPropFormatter,
+)
 
 
 class AdminUnitVerificationRequestReviewStatusPropFormatter(BadgePropFormatter):
+    # The domain enum is named differently; keep the ORM enum's msgids.
+    enum_name = "AdminUnitVerificationRequestReviewStatus"
     badge_mapping = {
-        AdminUnitVerificationRequestReviewStatus.inbox: "info",
-        AdminUnitVerificationRequestReviewStatus.rejected: "danger",
-        AdminUnitVerificationRequestReviewStatus.verified: "success",
+        OrganizationVerificationRequestReviewStatus.inbox: "info",
+        OrganizationVerificationRequestReviewStatus.rejected: "danger",
+        OrganizationVerificationRequestReviewStatus.verified: "success",
     }
+
+
+class AdminUnitVerificationRequestRejectionReasonPropFormatter(EnumPropFormatter):
+    enum_name = "AdminUnitVerificationRequestRejectionReason"
 
 
 class ReadDisplay(BaseDisplay):
@@ -21,7 +33,11 @@ class ReadDisplay(BaseDisplay):
         lazy_gettext("Review status"),
         formatter=AdminUnitVerificationRequestReviewStatusPropFormatter(),
     )
-    rejection_reason = EnumProp(lazy_gettext("Rejection reason"), hide_when_empty=True)
+    rejection_reason = EnumProp(
+        lazy_gettext("Rejection reason"),
+        hide_when_empty=True,
+        formatter=AdminUnitVerificationRequestRejectionReasonPropFormatter(),
+    )
 
 
 class ListDisplay(BaseDisplay):

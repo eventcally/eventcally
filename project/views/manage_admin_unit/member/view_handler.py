@@ -1,13 +1,10 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import url_for
-from sqlalchemy.sql import func
 
-from project.models import AdminUnitMember
-from project.models.user import User
+from project.application.queries import (
+    GetOrganizationMemberQuery,
+    ListOrganizationMembersQuery,
+)
 from project.modular.base_form import BaseDeleteForm
-from project.services.organization_member_service import OrganizationMemberService
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -15,13 +12,14 @@ from project.views.manage_admin_unit.child_view_handler import (
 from project.views.manage_admin_unit.member.displays import ListDisplay, UpdateDisplay
 from project.views.manage_admin_unit.member.forms import UpdateForm
 from project.views.manage_admin_unit.member.views import DeleteView, UpdateView
+from project.views.utils import current_admin_unit
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
-    model = AdminUnitMember
-    object_service: Annotated[
-        OrganizationMemberService, Provide["services.organization_member_service"]
-    ]
+    model_name = "organization_member"
+    model_name_plural = "organization_members"
+    display_name = "Organization member"
+    display_name_plural = "Organization members"
     create_view_class = None
     read_view_class = None
     update_form_class = UpdateForm
@@ -31,15 +29,17 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     delete_view_class = DeleteView
     list_display_class = ListDisplay
 
-    def get_objects_base_query_from_kwargs(self, **kwargs):
-        return super().get_objects_base_query_from_kwargs(**kwargs).join(User)
-
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(func.lower(User.email))
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListOrganizationMembersQuery(
+            admin_unit_id=current_admin_unit.id, page=page_request
         )
+
+    def create_get_query(self, object_id):
+        return GetOrganizationMemberQuery(id=object_id)
+
+    def get_object_title(self, object):
+        # Parity with the ORM `AdminUnitMember.__str__` (the user's email).
+        return object.user.email
 
     def get_create_url(self, **kwargs):
         return url_for(

@@ -54,7 +54,7 @@ def test_admin_settings(client, seeder, utils, app, mocker, db_error):
     utils.assert_response_redirect(response, "admin.admin")
 
     with app.app_context():
-        from project.services.admin import upsert_settings
+        from project.init_data import upsert_settings
 
         settings = upsert_settings()
         assert settings.tos == "Meine Nutzungsbedingungen"
@@ -120,7 +120,7 @@ def test_admin_user_update(client, seeder, utils, app, mocker, db, db_error):
 
     with app.app_context():
         from project.models import User
-        from project.services.user import set_roles_for_user
+        from project.user_datastore import set_roles_for_user
 
         user = User.query.get_or_404(other_user_id)
         set_roles_for_user(user.email, [])
@@ -345,7 +345,7 @@ def test_admin_planning(client, seeder, utils, app, mocker, db_error):
     utils.assert_response_redirect(response, "admin.admin")
 
     with app.app_context():
-        from project.services.admin import upsert_settings
+        from project.init_data import upsert_settings
 
         settings = upsert_settings()
         assert settings.planning_external_calendars == "[]"

@@ -1,4 +1,5 @@
 from functools import wraps
+from typing import Optional, Protocol
 
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
@@ -17,21 +18,34 @@ from project.api.schemas import (
     UnprocessableEntityResponseSchema,
 )
 from project.application.message_bus import MessageBus
+from project.application.queries import (
+    GetApiKeyByHashQuery,
+    GetCurrentOrganizationQuery,
+    GetResourceOwnerQuery,
+    ResourceKind,
+)
+from project.application.query_bus import QueryBus
 from project.application.services.abstract_app_context_provider import (
     AbstractAppContextProvider,
 )
 from project.container import Application
-from project.extensions import csrf, db, limiter
-from project.models.api_key import ApiKey
-from project.models.mixins.rate_limit_provider_mixin import RateLimitProviderMixin
+from project.extensions import csrf, limiter
 from project.oauth2_extensions import require_oauth
-from project.utils import getattr_keypath, hash_api_key
+from project.utils import hash_api_key
 
 api_rate_limit_scope = "api"
 
 
+class RateLimitProvider(Protocol):
+    def get_rate_limit_key(self) -> str:  # pragma: no cover
+        ...
+
+    def get_rate_limit_value(self) -> str:  # pragma: no cover
+        ...
+
+
 def get_limit_decorator_for_provider(
-    provider: RateLimitProviderMixin,
+    provider: RateLimitProvider,
 ) -> LimitDecorator:
     key = provider.get_rate_limit_key()
     return limiter.shared_limit(
@@ -64,12 +78,10 @@ def get_api_key_from_request() -> bool:
     if not request_api_key:
         return False
 
-    key_hash = hash_api_key(request_api_key)
-    api_key = db.session.query(ApiKey).filter_by(key_hash=key_hash).first()
-    if not api_key:
-        return False
-
-    return api_key
+    api_key = current_app.container.cqrs.query_bus().handle(
+        GetApiKeyByHashQuery(key_hash=hash_api_key(request_api_key))
+    )
+    return api_key if api_key else False
 
 
 class AppTokenRequiredException(OAuth2Error):
@@ -139,7 +151,12 @@ def require_api_access(scopes=None, app_token_required=False):
     return inner_decorator
 
 
-def require_organization_api_access(scope: str, model=None, **outer_kwargs):
+def require_organization_api_access(
+    scope: str, resource: Optional[ResourceKind] = None, **outer_kwargs
+):
+    """Gate an endpoint on an organization permission. Without `resource` the path id
+    is the organization, with it the id of a resource owned by one."""
+
     def inner_decorator(func):
         @require_api_access([scope])
         @wraps(func)
@@ -149,19 +166,16 @@ def require_organization_api_access(scope: str, model=None, **outer_kwargs):
 
             from project.access import access_or_401, login_api_user_or_401
             from project.context import ContextProvider
-            from project.models import AdminUnit
-            from project.views.utils import set_current_admin_unit
+            from project.views.utils import result_or_404, set_current_admin_unit
 
+            query_bus = current_app.container.cqrs.query_bus()
             api_command_context = {}
             id = kwargs.get("id")
 
-            if model:
-                instance = model.query.get_or_404(id)
-                admin_unit_id_path = outer_kwargs.get(
-                    "admin_unit_id_path", "admin_unit_id"
+            if resource:
+                admin_unit_id = result_or_404(
+                    query_bus.handle(GetResourceOwnerQuery(kind=resource, id=id))
                 )
-                admin_unit_id = getattr_keypath(instance, admin_unit_id_path)
-                setattr(g, "manage_admin_unit_instance", instance)
                 api_command_context["id"] = id
             else:
                 admin_unit_id = id
@@ -174,7 +188,9 @@ def require_organization_api_access(scope: str, model=None, **outer_kwargs):
             else:
                 login_api_user_or_401()
 
-            admin_unit = AdminUnit.query.get_or_404(admin_unit_id)
+            admin_unit = result_or_404(
+                query_bus.handle(GetCurrentOrganizationQuery(id=admin_unit_id))
+            )
             permission = scope.replace("organization.", "")
             access_or_401(admin_unit, permission)
             set_current_admin_unit(admin_unit)
@@ -200,11 +216,13 @@ class BaseResource(MethodResource):
     def __init__(
         self,
         message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+        query_bus: QueryBus = Provide[Application.cqrs.query_bus],
         app_context_provider: AbstractAppContextProvider = Provide[
             Application.context.app_context_provider
         ],
     ):
         self.message_bus = message_bus
+        self.query_bus = query_bus
         self.app_context_provider = app_context_provider
 
     def get_json_body(self) -> dict:
@@ -229,15 +247,6 @@ class BaseResource(MethodResource):
         """Build a command from the request body via a plain schema, so an
         invalid payload surfaces as a 422 instead of escaping as a 500."""
         return schema_cls(context=g.api_command_context).load(self.get_json_body())
-
-    def create_instance(self, schema_cls):
-        instance = schema_cls().load(request.json, session=db.session)
-
-        validate = getattr(instance, "validate", None)
-        if callable(validate):
-            validate()
-
-        return instance
 
 
 def current_token_as_app_or_401():

@@ -4,13 +4,13 @@ from markupsafe import Markup
 
 from project.access import can_request_event_reference
 from project.application.commands import RequestEventReferenceCommand
-from project.models import Event
+from project.application.queries import GetEventDetailQuery
 from project.modular.base_views import BaseCreateView, BaseListView
 from project.views.manage_admin_unit.outgoing_event_reference_request.forms import (
     CreateForm,
 )
 from project.views.reference_request import get_success_text_for_request_creation
-from project.views.utils import handle_base_error
+from project.views.utils import handle_base_error, result_or_404
 
 
 class ListView(BaseListView):
@@ -50,7 +50,7 @@ class CreateView(BaseCreateView):
             return response
 
         event_id = int(kwargs.get("event_id", 0))
-        event = Event.query.get_or_404(event_id)
+        event = result_or_404(self.query_bus.handle(GetEventDetailQuery(id=event_id)))
 
         if not can_request_event_reference(event):
             abort(401)

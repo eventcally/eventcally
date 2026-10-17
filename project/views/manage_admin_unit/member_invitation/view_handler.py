@@ -1,13 +1,8 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
-from sqlalchemy.sql import func
-
-from project.models import AdminUnitMemberInvitation
-from project.modular.base_form import BaseDeleteForm
-from project.services.organization_member_invitation_service import (
-    OrganizationMemberInvitationService,
+from project.application.queries import (
+    GetOrganizationMemberInvitationQuery,
+    ListOrganizationMemberInvitationsQuery,
 )
+from project.modular.base_form import BaseDeleteForm
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -25,14 +20,14 @@ from project.views.manage_admin_unit.member_invitation.views import (
     DeleteView,
     UpdateView,
 )
+from project.views.utils import current_admin_unit
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
-    model = AdminUnitMemberInvitation
-    object_service: Annotated[
-        OrganizationMemberInvitationService,
-        Provide["services.organization_member_invitation_service"],
-    ]
+    model_name = "organization_member_invitation"
+    model_name_plural = "organization_member_invitations"
+    display_name = "Organization member invitation"
+    display_name_plural = "Organization member invitations"
     create_form_class = CreateForm
     create_view_class = CreateView
     read_view_class = None
@@ -43,12 +38,17 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     delete_view_class = DeleteView
     list_display_class = ListDisplay
 
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(func.lower(AdminUnitMemberInvitation.email))
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListOrganizationMemberInvitationsQuery(
+            admin_unit_id=current_admin_unit.id, page=page_request
         )
+
+    def create_get_query(self, object_id):
+        return GetOrganizationMemberInvitationQuery(id=object_id)
+
+    def get_object_title(self, object):
+        # Parity with the ORM `CustomModel.__str__`.
+        return f"{self.get_model_display_name()} {object.id}"
 
 
 handler = ViewHandler()

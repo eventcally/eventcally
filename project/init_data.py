@@ -1,10 +1,8 @@
 import os
 
-from flask import current_app
-
 from project.api import add_oauth2_scheme_with_transport
 from project.extensions import db
-from project.models import Location
+from project.models import AdminUnitMemberRole, EventCategory, Role, Settings
 
 
 def register_oauth2_scheme_once(app):
@@ -74,45 +72,74 @@ organization_event_expert_permissions = [
 ]
 
 
-def create_initial_data():
-    organization_member_role_service = (
-        current_app.container.services.organization_member_role_service()
-    )
-    organization_member_role_service.upsert_role(
-        "admin", "Administrator", organization_admin_permissions
-    )
-    organization_member_role_service.upsert_role(
-        "event_verifier", "Event expert", organization_event_expert_permissions
-    )
+def upsert_settings() -> Settings:
+    """The one settings row, created (not committed) if missing. Bootstrap and test
+    seeding only; the application reads settings through `GetSettingsQuery`."""
+    result = Settings.query.first()
+    if result is None:
+        result = Settings()
+        db.session.add(result)
 
-    role_service = current_app.container.services.role_service()
-    role_service.upsert_role("admin", "Administrator", [])
+    return result
 
-    Location.update_coordinates()
+
+def _upsert_role(model_class, name, title, permissions):
+    role = model_class.query.filter_by(name=name).first()
+
+    if role is None:
+        role = model_class(name=name)
+        db.session.add(role)
+
+    role.title = title
+    role.permissions = permissions
     db.session.commit()
 
-    event_category_service = current_app.container.services.event_category_service()
-    event_category_service.upsert_event_category("Art")
-    event_category_service.upsert_event_category("Book")
-    event_category_service.upsert_event_category("Movie")
-    event_category_service.upsert_event_category("Family")
-    event_category_service.upsert_event_category("Festival")
-    event_category_service.upsert_event_category("Religious")
-    event_category_service.upsert_event_category("Shopping")
-    event_category_service.upsert_event_category("Comedy")
-    event_category_service.upsert_event_category("Music")
-    event_category_service.upsert_event_category("Dance")
-    event_category_service.upsert_event_category("Nightlife")
-    event_category_service.upsert_event_category("Theater")
-    event_category_service.upsert_event_category("Dining")
-    event_category_service.upsert_event_category("Conference")
-    event_category_service.upsert_event_category("Meetup")
-    event_category_service.upsert_event_category("Fitness")
-    event_category_service.upsert_event_category("Sports")
-    event_category_service.upsert_event_category("Other")
-    event_category_service.upsert_event_category("Exhibition")
-    event_category_service.upsert_event_category("Culture")
-    event_category_service.upsert_event_category("Tour")
-    event_category_service.upsert_event_category("OpenAir")
-    event_category_service.upsert_event_category("Stage")
-    event_category_service.upsert_event_category("Lecture")
+
+def _upsert_event_category(name):
+    if EventCategory.query.filter_by(name=name).first() is None:
+        db.session.add(EventCategory(name=name))
+        db.session.commit()
+
+
+EVENT_CATEGORY_NAMES = [
+    "Art",
+    "Book",
+    "Movie",
+    "Family",
+    "Festival",
+    "Religious",
+    "Shopping",
+    "Comedy",
+    "Music",
+    "Dance",
+    "Nightlife",
+    "Theater",
+    "Dining",
+    "Conference",
+    "Meetup",
+    "Fitness",
+    "Sports",
+    "Other",
+    "Exhibition",
+    "Culture",
+    "Tour",
+    "OpenAir",
+    "Stage",
+    "Lecture",
+]
+
+
+def create_initial_data():
+    _upsert_role(
+        AdminUnitMemberRole, "admin", "Administrator", organization_admin_permissions
+    )
+    _upsert_role(
+        AdminUnitMemberRole,
+        "event_verifier",
+        "Event expert",
+        organization_event_expert_permissions,
+    )
+    _upsert_role(Role, "admin", "Administrator", [])
+
+    for name in EVENT_CATEGORY_NAMES:
+        _upsert_event_category(name)

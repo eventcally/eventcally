@@ -5,19 +5,24 @@ from flask_security import auth_required
 
 from project.application.commands import RequestOrganizationVerificationCommand
 from project.application.message_bus import MessageBus
+from project.application.queries import (
+    CanRequestVerificationQuery,
+    GetOrganizationQuery,
+    ListVerifierOrganizationsQuery,
+)
+from project.application.query_bus import QueryBus
 from project.container import Application
 from project.domain.errors import BaseError
 from project.forms.verification_request import CreateAdminUnitVerificationRequestForm
-from project.models.admin_unit import AdminUnit
-from project.services.admin_unit import get_admin_unit_query
-from project.services.search_params import AdminUnitSearchParams
-from project.services.verification import admin_unit_can_verify_admin_unit
 from project.views.main_blueprint import main_bp
 from project.views.utils import (
+    abort_if_page_out_of_range,
     flash_errors,
     get_pagination_urls,
     handleBaseError,
     manage_required,
+    page_request_from_request_args,
+    result_or_404,
 )
 
 
@@ -26,13 +31,19 @@ from project.views.utils import (
 )
 @auth_required()
 @manage_required("outgoing_organization_verification_requests:write")
-def manage_organization_verification_requests_outgoing_create_select(id):
+@inject
+def manage_organization_verification_requests_outgoing_create_select(
+    id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]
+):
     admin_unit = g.manage_admin_unit
 
-    params = AdminUnitSearchParams()
-    params.only_verifier = True
-    params.incoming_verification_requests_postal_code = admin_unit.location.postalCode
-    admin_units = get_admin_unit_query(params).paginate()
+    admin_units = query_bus.handle(
+        ListVerifierOrganizationsQuery(
+            postal_code=admin_unit.location.postalCode,
+            page=page_request_from_request_args(),
+        )
+    )
+    abort_if_page_out_of_range(admin_units)
 
     return render_template(
         "manage/verification_requests_outgoing_create_select.html",
@@ -53,12 +64,18 @@ def manage_organization_requests_outgoing_create(
     id,
     target_id,
     message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
 ):
     admin_unit = g.manage_admin_unit
-    target_admin_unit = AdminUnit.query.get_or_404(target_id)
+    target_admin_unit = result_or_404(
+        query_bus.handle(GetOrganizationQuery(id=target_id))
+    )
 
-    if not admin_unit_can_verify_admin_unit(
-        admin_unit, target_admin_unit
+    if not query_bus.handle(
+        CanRequestVerificationQuery(
+            source_admin_unit_id=admin_unit.id,
+            target_admin_unit_id=target_admin_unit.id,
+        )
     ):  # pragma: no cover
         return redirect(
             url_for(

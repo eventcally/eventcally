@@ -36,17 +36,17 @@ class RevokeView(BaseUpdateView):
     def get_title(self, **kwargs):
         return lazy_gettext(
             "Revoke %(model_display_name)s",
-            model_display_name=self.model.get_display_name(),
+            model_display_name=self.handler.get_model_display_name(),
         )
 
     def get_instruction(self, **kwargs):
         return lazy_gettext(
             "Do you want to revoke '%(object_title)s'?",
-            object_title=str(kwargs["object"]),
+            object_title=self.handler.get_object_title(kwargs["object"]),
         )
 
     def get_success_text(self, object, form):
         return lazy_gettext(
             "%(model_display_name)s successfully revoked",
-            model_display_name=self.model.get_display_name(),
+            model_display_name=self.handler.get_model_display_name(),
         )

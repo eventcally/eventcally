@@ -6,6 +6,8 @@ from flask import Blueprint, abort, current_app, url_for
 from flask_babel import gettext
 
 from project.application.message_bus import MessageBus
+from project.application.queries.page_request import PageRequest
+from project.application.query_bus import QueryBus
 from project.application.services.abstract_app_context_provider import (
     AbstractAppContextProvider,
 )
@@ -27,11 +29,18 @@ class BaseViewHandler:
     message_bus_factory: Annotated[
         Factory[MessageBus], Provider[Application.cqrs.message_bus]
     ]
+    query_bus_factory: Annotated[
+        Factory[QueryBus], Provider[Application.cqrs.query_bus]
+    ]
     app_context_provider: Annotated[
         AbstractAppContextProvider, Provide[Application.context.app_context_provider]
     ]
-    model = None
-    object_service = None
+    # These name the entity (URLs, endpoints, permissions, titles). Display names are
+    # English msgids, translated at call time.
+    model_name = None
+    model_name_plural = None
+    display_name = None
+    display_name_plural = None
     create_view_class = BaseCreateView
     create_form_class = None
     create_decorators = []
@@ -77,11 +86,18 @@ class BaseViewHandler:
     def message_bus(self) -> MessageBus:
         return self.message_bus_factory()
 
+    @property
+    def query_bus(self) -> QueryBus:
+        return self.query_bus_factory()
+
     def get_model_display_name(self):
-        return self.model.get_display_name()
+        return gettext(self.display_name)
 
     def get_model_display_name_plural(self):
-        return self.model.get_display_name_plural()
+        return gettext(self.display_name_plural)
+
+    def get_object_title(self, object) -> str:  # pragma: no cover
+        return str(object)
 
     def get_object_from_kwargs(self, **kwargs):
         object_id = kwargs.get(self.get_id_query_arg_name())
@@ -93,7 +109,11 @@ class BaseViewHandler:
         return object
 
     def get_object_by_id(self, object_id):
-        return self.object_service.get_object_by_id(object_id)
+        return self.query_bus.handle(self.create_get_query(object_id))
+
+    def create_get_query(self, object_id):
+        """The Query whose result is the object (a read model) or `None`."""
+        raise NotImplementedError  # pragma: no cover
 
     def check_object_access(self, object):  # pragma: no cover
         return None
@@ -101,30 +121,9 @@ class BaseViewHandler:
     def check_access(self, **kwargs):
         return None
 
-    def get_objects_base_query_from_kwargs(self, **kwargs):
-        return self.model.query
-
-    def get_objects_query_from_kwargs(self, **kwargs):
-        query = self.get_objects_base_query_from_kwargs(**kwargs)
-        query = self.apply_base_filter(query, **kwargs)
-
-        form = kwargs.get("form", None)
-        if form:
-            query = form.apply_query_filter(query, **kwargs)
-
-        query = self.apply_objects_query_order(query, **kwargs)
-        return query
-
-    def apply_base_filter(self, query, **kwargs):
-        return query
-
-    def apply_objects_query_order(self, query, **kwargs):
-        form = kwargs.get("form", None)
-
-        if form:
-            return form.apply_query_order(query, **kwargs)
-
-        return query
+    def create_list_query(self, form, page_request: PageRequest, **kwargs):
+        """The Query whose result is a `Page` of the list's read models."""
+        raise NotImplementedError  # pragma: no cover
 
     def can_object_be_deleted(self, form, object):  # pragma: no cover
         return True
@@ -264,10 +263,10 @@ class BaseViewHandler:
         self.endpoints[key] = endpoint
 
     def get_model_name(self):
-        return self.model.__model_name__
+        return self.model_name
 
     def get_model_name_plural(self):
-        return self.model.__model_name_plural__
+        return self.model_name_plural
 
     def get_permission_entity(self):
         return f"{self.generic_prefix}{self.get_model_name_plural()}"

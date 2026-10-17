@@ -144,6 +144,26 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
             assert event_created.dates[0].id == event.dates[0].id
 
 
+def test_create_does_not_insert_the_default_category(
+    client, app, db, utils: UtilActions, seeder: Seeder
+):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    with app.app_context():
+        from project.models import EventCategory
+
+        db.session.query(EventCategory).filter_by(name="Other").delete()
+        db.session.commit()
+        count = db.session.query(EventCategory).count()
+
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    utils.get_ok(url)
+
+    with app.app_context():
+        assert db.session.query(EventCategory).count() == count
+        assert db.session.query(EventCategory).filter_by(name="Other").first() is None
+
+
 def test_create_unauthorized(client, app, utils: UtilActions, seeder: Seeder):
     owner_id = seeder.create_user("owner@owner")
     admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")

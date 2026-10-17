@@ -1,94 +1,91 @@
-from flask import request
+from typing import Optional
 
-from project import db
-from project.models.event_category import CustomEventCategory, EventCategory
-from project.models.license import License
-from project.modular.search_definition import SearchDefinition, apply_search_definitions
-from project.modular.sort_definition import SortDefinition
+from flask import current_app, request
+
+from project.application.queries import (
+    GetCustomEventCategoryQuery,
+    GetEventCategoryQuery,
+    GetLicenseQuery,
+    ListAllEventCategoriesQuery,
+    LookupCustomEventCategoriesQuery,
+    LookupLicensesQuery,
+    PageRequest,
+)
+from project.application.queries.base import Query
+from project.application.query_bus import QueryBus
 from project.utils import get_event_category_name
+from project.views.utils import (
+    abort_if_page_out_of_range,
+    page_request_from_request_args,
+)
 
 
-def get_primary_key(model):
+class QueryAjaxLoader:
+    """Select2 loader backed by queries.
+
+    Subclasses build the lookup and get queries; both answer read models that expose
+    at least `id`. `format_model` may also receive ORM objects (forms still filled from
+    the ORM), so it only reads attributes both have.
     """
-    Return primary key name from a model. If the primary key consists of multiple columns,
-    return the corresponding tuple
 
-    :param model:
-        Model class
-    """
-    mapper = model._sa_class_manager.mapper
-    pks = [mapper.get_property_by_column(c).key for c in mapper.primary_key]
-    if len(pks) == 1:
-        return pks[0]
-
-    if len(pks) > 1:  # pragma: no cover
-        return tuple(pks)
-
-    return None  # pragma: no cover
-
-
-class AjaxModelLoader:
-    def __init__(self, session, model, **kwargs):
-        self.session = session
-        self.model = model
-        self.pk = get_primary_key(model)
+    def __init__(self, **kwargs):
         self.placeholder = kwargs.pop("placeholder", None)
-        self.search_definitions = kwargs.pop("search_definitions", None)
-        self.sort_definitions = kwargs.pop("sort_definitions", None)
         self.minimum_input_length = int(kwargs.pop("minimum_input_length", 0))
         self.options = kwargs
+
+    @property
+    def query_bus(self) -> QueryBus:
+        return current_app.container.cqrs.query_bus()
+
+    def get_lookup_query(
+        self, term: Optional[str], page_request: PageRequest
+    ) -> Query:  # pragma: no cover
+        raise NotImplementedError
+
+    def get_one_query(self, pk: int) -> Query:  # pragma: no cover
+        raise NotImplementedError
 
     def format(self, model):
         if not model:  # pragma: no cover
             return None
 
-        return getattr(model, self.pk), self.format_model(model)
+        return model.id, self.format_model(model)
 
     def format_model(self, model):
-        return str(model)
-
-    def get_query(self):
-        return self.session.query(self.model)
+        return model.name
 
     def get_one(self, pk):
-        # prevent autoflush from occuring during populate_obj
-        with self.session.no_autoflush:
-            return self.get_query().filter_by(id=pk).first()
+        try:
+            pk = int(pk)
+        except (TypeError, ValueError):
+            return None
+
+        return self.query_bus.handle(self.get_one_query(pk))
 
     def get_pagination(self, term):
-        query = self.get_query()
-        query = self.apply_query_filter(query, term)
-        query = self.apply_query_order(query)
-        return query.paginate()
-
-    def apply_query_filter(self, query, term):
-        query = apply_search_definitions(query, self.search_definitions, term)
-        return query
-
-    def apply_query_order(self, query):
-        if self.sort_definitions:
-            for definition in self.sort_definitions:
-                query = definition.apply(query)
-
-        return query
+        page_request = page_request_from_request_args()
+        page = self.query_bus.handle(self.get_lookup_query(term, page_request))
+        abort_if_page_out_of_range(page)
+        return page
 
     def get_ajax_pagination(self, term):
         pagination = self.get_pagination(term)
-        result = {
+        return {
             "items": [self.format(m) for m in pagination.items],
             "has_next": pagination.has_next,
         }
-        return result
 
 
-class EventCategoryAjaxModelLoader(AjaxModelLoader):
-    def __init__(self, **kwargs):
-        super().__init__(db.session, EventCategory, **kwargs)
+class EventCategoryAjaxModelLoader(QueryAjaxLoader):
+    def get_one_query(self, pk):
+        return GetEventCategoryQuery(id=pk)
 
     def get_ajax_pagination(self, term):
-        from project.views.event import get_event_category_choices
-
-        all = get_event_category_choices()
+        categories = self.query_bus.handle(ListAllEventCategoriesQuery())
+        all = sorted(
+            [(c.id, self.format_model(c)) for c in categories],
+            key=lambda category: category[1],
+        )
         matching = [i for i in all if term in i[1]] if term else all
 
         page = int(request.args.get("page", 1))
@@ -97,48 +94,38 @@ class EventCategoryAjaxModelLoader(AjaxModelLoader):
         end = start + per_page
         sliced = matching[start:end]
 
-        result = {
+        return {
             "items": sliced,
             "has_next": len(matching) > len(sliced),
         }
-        return result
 
     def format_model(self, model):
         return get_event_category_name(model)
 
 
-class CustomEventCategoryLoader(AjaxModelLoader):
+class CustomEventCategoryLoader(QueryAjaxLoader):
     def __init__(self, **kwargs):
         self.category_set_id = kwargs.pop("category_set_id")
-        kwargs["search_definitions"] = [
-            SearchDefinition(CustomEventCategory.name),
-            SearchDefinition(CustomEventCategory.label),
-        ]
-        kwargs["sort_definitions"] = [
-            SortDefinition(CustomEventCategory.name),
-            SortDefinition(CustomEventCategory.label),
-        ]
-        super().__init__(db.session, CustomEventCategory, **kwargs)
+        super().__init__(**kwargs)
 
-    def get_query(self):
-        return (
-            super()
-            .get_query()
-            .filter(CustomEventCategory.category_set_id == self.category_set_id)
+    def get_lookup_query(self, term, page_request):
+        return LookupCustomEventCategoriesQuery(
+            category_set_id=self.category_set_id, term=term, page=page_request
         )
+
+    def get_one_query(self, pk):
+        return GetCustomEventCategoryQuery(id=pk)
 
     def format_model(self, model):
         return model.label_or_name
 
 
-class LicenseAjaxModelLoader(AjaxModelLoader):
-    def __init__(self, **kwargs):
-        kwargs["search_definitions"] = [
-            SearchDefinition(License.code),
-            SearchDefinition(License.name),
-        ]
-        kwargs["sort_definitions"] = [SortDefinition(License.sort)]
-        super().__init__(db.session, License, **kwargs)
+class LicenseAjaxModelLoader(QueryAjaxLoader):
+    def get_lookup_query(self, term, page_request):
+        return LookupLicensesQuery(term=term, page=page_request)
+
+    def get_one_query(self, pk):
+        return GetLicenseQuery(id=pk)
 
     def format_model(self, model):
         return f"{model.code} ({model.name})"

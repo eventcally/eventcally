@@ -4,28 +4,37 @@ from datetime import datetime
 import icalendar
 import recurring_ical_events
 import requests
+from dependency_injector.wiring import Provide, inject
 from flask import current_app, request
 from flask.json import jsonify
 from flask_babel import gettext
 from flask_cors import cross_origin
 from flask_security import auth_required, url_for_security
 from flask_security.utils import localize_callback
-from sqlalchemy import func
 
 from project.api.custom_widget.schemas import CustomWidgetSchema
+from project.application.queries import (
+    GetCustomWidgetQuery,
+    IsEventOrganizerNameTakenQuery,
+    IsEventPlaceNameTakenQuery,
+    ListEventPlaceSuggestionsQuery,
+)
+from project.application.query_bus import QueryBus
+from project.container import Application
 from project.dateutils import form_input_to_date
 from project.extensions import csrf
 from project.maputils import find_gmaps_places, get_gmaps_place
-from project.models import CustomWidget, EventOrganizer, EventPlace
-from project.services.admin import upsert_settings
-from project.services.place import get_event_places
-from project.services.user import find_user_by_email
+from project.user_datastore import find_user_by_email
 from project.utils import decode_response_content, get_place_str
 from project.views.main_blueprint import main_bp
+from project.views.utils import get_settings, result_or_404
 
 
 @main_bp.route("/js/check/event_place/name", methods=["POST"])
-def js_check_event_place_name():
+@inject
+def js_check_event_place_name(
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
     csrf.protect()
 
     name = request.form["name"]
@@ -33,15 +42,15 @@ def js_check_event_place_name():
         int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
     )
     event_place_id = (
-        int(request.form["event_place_id"]) if "event_place_id" in request.form else -1
+        int(request.form["event_place_id"])
+        if "event_place_id" in request.form
+        else None
     )
-    event_place = (
-        EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
-        .filter(func.lower(EventPlace.name) == name.lower())
-        .first()
+    query = IsEventPlaceNameTakenQuery(
+        admin_unit_id=admin_unit_id, name=name, exclude_id=event_place_id
     )
 
-    if not event_place or event_place.id == event_place_id:
+    if not query_bus.handle(query):
         return jsonify(True)
 
     error = gettext("A place already exists with this name.")
@@ -49,7 +58,10 @@ def js_check_event_place_name():
 
 
 @main_bp.route("/js/check/organizer/name", methods=["POST"])
-def js_check_organizer_name():
+@inject
+def js_check_organizer_name(
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
     csrf.protect()
 
     name = request.form["name"]
@@ -57,15 +69,13 @@ def js_check_organizer_name():
         int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
     )
     organizer_id = (
-        int(request.form["organizer_id"]) if "organizer_id" in request.form else -1
+        int(request.form["organizer_id"]) if "organizer_id" in request.form else None
     )
-    organizer = (
-        EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit_id)
-        .filter(func.lower(EventOrganizer.name) == name.lower())
-        .first()
+    query = IsEventOrganizerNameTakenQuery(
+        admin_unit_id=admin_unit_id, name=name, exclude_id=organizer_id
     )
 
-    if not organizer or organizer.id == organizer_id:
+    if not query_bus.handle(query):
         return jsonify(True)
 
     error = gettext("An organizer already exists with this name.")
@@ -91,7 +101,10 @@ def js_check_register_email():
 
 
 @main_bp.route("/js/autocomplete/place")
-def js_autocomplete_place():
+@inject
+def js_autocomplete_place(
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
     csrf.protect()
 
     admin_unit_id = int(request.args.get("admin_unit_id", "0"))
@@ -101,7 +114,11 @@ def js_autocomplete_place():
     google_places_result = list()
 
     if admin_unit_id > 0:
-        places = get_event_places(admin_unit_id, keyword, 5)
+        places = query_bus.handle(
+            ListEventPlaceSuggestionsQuery(
+                admin_unit_id=admin_unit_id, keyword=keyword or None, limit=5
+            )
+        )
         places_result = [{"id": p.id, "text": get_place_str(p)} for p in places]
 
     if not exclude_gmaps:
@@ -165,7 +182,7 @@ def js_icalevents():
         start_date = form_input_to_date(date_from).date()
         end_date = form_input_to_date(date_to).date()
 
-        settings = upsert_settings()
+        settings = get_settings()
         planning_external_calendars_str = (
             settings.planning_external_calendars
             if settings.planning_external_calendars
@@ -227,7 +244,10 @@ def js_icalevents():
 
 @main_bp.route("/js/wlcw/<int:id>")
 @cross_origin()
-def js_widget_loader_custom_widget(id: int):
-    widget = CustomWidget.query.get_or_404(id)
+@inject
+def js_widget_loader_custom_widget(
+    id: int, query_bus: QueryBus = Provide[Application.cqrs.query_bus]
+):
+    widget = result_or_404(query_bus.handle(GetCustomWidgetQuery(id=id)))
     schema = CustomWidgetSchema()
     return schema.dump(widget)

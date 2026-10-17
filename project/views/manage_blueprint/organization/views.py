@@ -1,11 +1,11 @@
-from flask import flash, redirect, request, url_for
+from flask import abort, flash, redirect, request, url_for
 from flask_babel import gettext, lazy_gettext
 from flask_security import current_user
 
 from project.access import can_create_admin_unit, has_access
-from project.models import AdminUnitInvitation
+from project.application.queries import GetUserOrganizationInvitationQuery
+from project.domain.errors import UnauthorizedError
 from project.modular.base_views import BaseCreateView
-from project.utils import strings_are_equal_ignoring_case
 from project.views.manage_blueprint.organization.forms import CreateForm
 from project.views.utils import (
     flash_message,
@@ -31,12 +31,15 @@ class CreateView(BaseCreateView):
             else 0
         )
         if invitation_id > 0:
-            invitation = AdminUnitInvitation.query.get_or_404(invitation_id)
-
-            if not strings_are_equal_ignoring_case(
-                invitation.email, current_user.email
-            ):
+            try:
+                invitation = self.query_bus.handle(
+                    GetUserOrganizationInvitationQuery(id=invitation_id)
+                )
+            except UnauthorizedError:
                 return permission_missing(url_for("main.manage_admin_units"))
+
+            if invitation is None:
+                abort(404)
 
         if not invitation:
             if not can_create_admin_unit():

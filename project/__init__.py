@@ -253,7 +253,7 @@ def create_app(config_override: dict | None = None) -> Flask:
         sender, user, confirm_token, confirmation_token, form_data
     ):
         if "accept_tos" in form_data and form_data["accept_tos"]:
-            from project.services.user import set_user_accepted_tos
+            from project.user_datastore import set_user_accepted_tos
 
             set_user_accepted_tos(user)
             db.session.commit()
@@ -287,6 +287,11 @@ def create_app(config_override: dict | None = None) -> Flask:
 
     # Make container available in Flask app
     app.container = container
+
+    @app.teardown_appcontext
+    def remove_read_session(exception=None):
+        # Safety net for reads that bypassed SqlAlchemyReadSessionScope.
+        container.infrastructure.read_session().remove()
 
     # Command line
     import project.cli.cache
@@ -335,6 +340,16 @@ def create_app(config_override: dict | None = None) -> Flask:
     app.register_blueprint(manage_admin_unit_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(main_bp)
+
+    # Query handlers authorize the actor themselves; map their refusal to 401 for
+    # views. API routes are handled by `RestApi.handle_error` first.
+    from project.domain.errors.unauthorized_error import UnauthorizedError
+
+    @app.errorhandler(UnauthorizedError)
+    def handle_unauthorized_error(error):
+        from werkzeug.exceptions import Unauthorized
+
+        return Unauthorized()
 
     # Initialize Jinja filters and context processors
     from project.jinja_filters import init_jinja_filters

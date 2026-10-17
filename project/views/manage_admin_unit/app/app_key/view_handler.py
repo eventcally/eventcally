@@ -1,10 +1,6 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import g
 
-from project.models import AppKey
-from project.services.app_service import AppService
+from project.application.queries import GetAppKeyQuery, ListAppKeysQuery
 from project.views.manage_admin_unit.app import app_bp
 from project.views.manage_admin_unit.app.app_key.displays import (
     ListDisplay,
@@ -21,8 +17,10 @@ from project.views.manage_admin_unit.app.view_handler import handler as app_view
 
 
 class AppKeyViewHandler(AppChildViewHandler):
-    model = AppKey
-    object_service: Annotated[AppService, Provide["services.app_service"]]
+    model_name = "app_key"
+    model_name_plural = "app_keys"
+    display_name = "App key"
+    display_name_plural = "App keys"
     create_view_class = CreateView
     update_view_class = None
     delete_form_class = DeleteForm
@@ -31,8 +29,24 @@ class AppKeyViewHandler(AppChildViewHandler):
     read_view_class = ReadView
     read_display_class = ReadDisplay
 
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListAppKeysQuery(app_id=g.current_app.id, page=page_request)
+
+    def create_get_query(self, object_id):
+        return GetAppKeyQuery(id=object_id)
+
     def get_object_by_id(self, object_id):
-        return self.object_service.get_app_key_by_id(g.current_app, object_id)
+        # A key of another app is not found (not unauthorized), as before.
+        app_key = super().get_object_by_id(object_id)
+        return (
+            app_key
+            if app_key and app_key.oauth2_client_id == g.current_app.id
+            else None
+        )
+
+    def get_object_title(self, object):
+        # Parity with the ORM `CustomModel.__str__`.
+        return f"{self.get_model_display_name()} {object.id}"
 
 
 handler = AppKeyViewHandler(parent=app_view_handler)

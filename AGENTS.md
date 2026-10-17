@@ -15,6 +15,7 @@ Or just: `pre-commit run --all-files` (runs all hooks in the correct order).
 Enforced by `.importlinter` and the whitelist scripts:
 - **`project/domain/`** — only stdlib, typing, pydantic, abc, datetime, enum, dateutil, pytz. Cannot import application or infrastructure.
 - **`project/application/`** — only stdlib, typing, pydantic, abc, datetime, enum, logging, itertools + domain. Cannot import infrastructure.
+- **`project/services/`** — only `cache`, `dump`, `seo`. Flask-Security calls live in `project/user_datastore.py`; fixture-only ORM helpers in `project/cli/seed_helpers.py` (never import from views/api/application).
 - **`project/infrastructure/`** — can import application and domain.
 
 Violations fail `lint-imports`. Check both files before adding imports:
@@ -31,8 +32,11 @@ Violations fail `lint-imports`. Check both files before adding imports:
 
 ## End-to-end tests
 
-Playwright, in `e2e/tests/*.spec.js`. Run with `npx playwright test`; `--ui` gives a
-time-travel debugger.
+Playwright, in `e2e/tests/*.spec.js`. Easiest: `.scripts/run_e2e.sh [playwright args]` runs
+everything in Docker (PostGIS service, throwaway `eventcally_e2e` database, app on :5000,
+Chromium; `--project desktop` unless you pass one), e.g.
+`.scripts/run_e2e.sh e2e/tests/event.spec.js -g "create"`. Or run `npx playwright test` on the
+host against your own app; `--ui` gives a time-travel debugger.
 
 - Every e2e test starts with `flask test reset --seed`, which **truncates every table in
   whatever `DATABASE_URL` points at**. Point it at a throwaway database before running the
@@ -56,6 +60,26 @@ Key points:
 - New Celery tasks must be imported in `project/celery_tasks.py`.
 - Commands are Pydantic models (`Command` or `CommandWithResult[T]`). The `actor` field is auto-added.
 
+## Adding read-side queries
+
+Reads in views, the API and `project/modular` are migrating to the query side
+(plan: `.agents/plans/2026-10-13-cqrs-read-side-migration.plan.md`). Scaffold guide:
+`.github/prompts/add-ddd-query.prompt.md`. Reference implementation: event organizers
+(`ListEventOrganizersQuery`, `SqlAlchemyEventOrganizerReadRepository`).
+
+- Queries (`Query[T]`, `actor` optional — the bus fills it) go in `project/application/queries/`,
+  handlers in `project/application/query_handlers/`, registered in `Cqrs.query_handler_factory`.
+- Handlers return hand-written, use-case shaped read models (`Page[T]` for lists) — never ORM objects.
+- Query handlers for private data authorize the actor via `ActorAuthorizationService` (same rule as commands, `actor_permission_policy`); reference: organization invitations (`ListOrganizationInvitationsQuery`).
+- Query-side read repos use `infrastructure.read_session` (read-only, removed after each
+  top-level query). Event-handler read repos stay on `session_factory`.
+- Delivery: `self.query_bus` in `BaseResource` and modular views; `@inject` +
+  `Provide[Application.cqrs.query_bus]` in flat view functions. Helpers in `project/views/utils.py`:
+  `page_request_from_request_args`, `abort_if_page_out_of_range`, `result_or_404`.
+- The `delivery-reads-through-queries` import-linter contract only exempts `views.flask_admin`
+  (Flask-Admin stays ORM); it also covers `project.access` and `project.jinja_filters`. After removing a `project.models` import, run `python .scripts/models_import_ignores.py --write`;
+  never add entries by hand.
+
 ## Code generation
 
 - SQLAlchemy models have `*_generated.py` files generated from YAML schemas in `codegen/config/`.
@@ -73,5 +97,6 @@ Key points:
 
 - PostGIS migration diffs sometimes need manual correction after `flask db migrate`.
 - Deferred SQLAlchemy columns may require explicit `undefer()` in query options.
+- Query handlers must return materialized read models; the read session is closed when the bus returns.
 - `isort` skips `*_generated.py` files — don't fight it.
 - flake8 ignores E501 (line length) — Black handles formatting.

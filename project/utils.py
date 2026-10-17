@@ -24,8 +24,10 @@ def get_event_category_name(category):
     return lazy_gettext("Event_" + category.name)
 
 
-def get_localized_enum_name(enum):
-    return lazy_gettext(enum.__class__.__name__ + "." + enum.name)
+def get_localized_enum_name(enum, enum_name=None):
+    """`enum_name` keeps an existing msgid when a differently named enum (e.g. the
+    domain enum behind a read model) carries the same members."""
+    return lazy_gettext((enum_name or enum.__class__.__name__) + "." + enum.name)
 
 
 def get_localized_scope(scope: str) -> str:

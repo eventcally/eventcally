@@ -1,11 +1,12 @@
 from flask import request
 from flask_apispec import doc, marshal_with, use_kwargs
-from sqlalchemy import and_
-from sqlalchemy.orm import defaultload, lazyload
 
-from project.access import can_use_planning, login_api_user
+from project.access import login_api_user
 from project.api import add_api_resource
-from project.api.event.resources import api_can_read_event_or_401
+from project.api.event.query_args import (
+    event_search_criteria_from_request,
+    reference_admin_unit_id_for_api,
+)
 from project.api.event_date.schemas import (
     EventDateListRequestSchema,
     EventDateListResponseSchema,
@@ -13,11 +14,23 @@ from project.api.event_date.schemas import (
     EventDateSearchRequestSchema,
     EventDateSearchResponseSchema,
 )
+from project.api.query_args import (
+    enum_or_none,
+    page_request_from_kwargs,
+    trackable_criteria_from_kwargs,
+)
 from project.api.resources import BaseResource, require_api_access
-from project.models import AdminUnit, Event, EventDate, EventPublicStatus
-from project.services.event import get_event_dates_query
-from project.services.search_params import EventSearchParams
-from project.views.utils import get_current_admin_unit_for_api
+from project.application.queries import (
+    GetEventDateDetailQuery,
+    ListEventDatesQuery,
+    SearchEventDatesQuery,
+    TrackableSort,
+)
+from project.views.utils import (
+    abort_if_page_out_of_range,
+    get_current_admin_unit_for_api,
+    result_or_404,
+)
 
 
 class EventDateListResource(BaseResource):
@@ -26,24 +39,15 @@ class EventDateListResource(BaseResource):
     @marshal_with(EventDateListResponseSchema)
     @require_api_access()
     def get(self, **kwargs):
-        query = (
-            EventDate.query.join(EventDate.event)
-            .join(Event.admin_unit)
-            .options(lazyload(EventDate.event))
-            .filter(
-                and_(
-                    Event.public_status == EventPublicStatus.published,
-                    AdminUnit.is_verified,
-                )
+        page = self.query_bus.handle(
+            ListEventDatesQuery(
+                trackable=trackable_criteria_from_kwargs(kwargs),
+                sort=enum_or_none(TrackableSort, kwargs.get("sort")),
+                page=page_request_from_kwargs(kwargs),
             )
         )
-
-        params = EventSearchParams()
-        params.load_from_request(**kwargs)
-        query = params.get_trackable_query(query, Event)
-        query = params.get_trackable_order_by(query, Event)
-        query = query.order_by(EventDate.start)
-        return query.paginate()
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class EventDateResource(BaseResource):
@@ -51,13 +55,8 @@ class EventDateResource(BaseResource):
     @marshal_with(EventDateSchema)
     @require_api_access()
     def get(self, id):
-        event_date = EventDate.query.options(
-            defaultload(EventDate.event).load_only(
-                Event.id, Event.name, Event.public_status
-            )
-        ).get_or_404(id)
-        api_can_read_event_or_401(event_date.event)
-        return event_date
+        login_api_user()
+        return result_or_404(self.query_bus.handle(GetEventDateDetailQuery(id=id)))
 
 
 class EventDateSearchResource(BaseResource):
@@ -67,19 +66,27 @@ class EventDateSearchResource(BaseResource):
     @require_api_access()
     def get(self, **kwargs):
         login_api_user()
-        params = EventSearchParams()
-        params.include_admin_unit_references = True
-        params.load_from_request(**kwargs)
-        params.can_read_planned_events = can_use_planning()
+        overrides = dict(include_planned=True)
 
         if "not_referenced" in request.args:
             admin_unit = get_current_admin_unit_for_api()
 
             if admin_unit:
-                params.not_referenced_by_organization_id = admin_unit.id
+                overrides["not_referenced_by_admin_unit_id"] = admin_unit.id
 
-        pagination = get_event_dates_query(params).paginate()
-        return pagination
+        page = self.query_bus.handle(
+            SearchEventDatesQuery(
+                criteria=event_search_criteria_from_request(
+                    kwargs,
+                    defaults=dict(include_admin_unit_references=True),
+                    **overrides,
+                ),
+                reference_admin_unit_id=reference_admin_unit_id_for_api(),
+                page=page_request_from_kwargs(kwargs),
+            )
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 add_api_resource(EventDateListResource, "/event-dates", "api_v1_event_date_list")

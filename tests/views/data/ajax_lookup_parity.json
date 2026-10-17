@@ -1,0 +1,453 @@
+{
+  "categories": {
+    "has_next": true,
+    "items": [
+      [
+        19,
+        "Ausstellung"
+      ],
+      [
+        23,
+        "Bühne"
+      ],
+      [
+        8,
+        "Comedy"
+      ],
+      [
+        13,
+        "Essen"
+      ],
+      [
+        4,
+        "Familie"
+      ],
+      [
+        5,
+        "Festival"
+      ],
+      [
+        3,
+        "Film"
+      ],
+      [
+        16,
+        "Fitness"
+      ],
+      [
+        21,
+        "Führung"
+      ],
+      [
+        14,
+        "Konferenz"
+      ]
+    ]
+  },
+  "categories_page_2": {
+    "has_next": true,
+    "items": [
+      [
+        13,
+        "Essen"
+      ],
+      [
+        4,
+        "Familie"
+      ],
+      [
+        5,
+        "Festival"
+      ]
+    ]
+  },
+  "categories_term": {
+    "has_next": false,
+    "items": []
+  },
+  "co_organizers": {
+    "has_next": false,
+    "items": [
+      [
+        5,
+        "Alpha"
+      ],
+      [
+        6,
+        "Bravo"
+      ],
+      [
+        7,
+        "crew am See"
+      ],
+      [
+        9,
+        "Delta"
+      ],
+      [
+        8,
+        "Zentrale Crew"
+      ]
+    ]
+  },
+  "custom_categories": {
+    "has_next": false,
+    "items": [
+      [
+        1,
+        "Custom Category 1"
+      ],
+      [
+        2,
+        "Custom Category 2"
+      ],
+      [
+        3,
+        "Custom Category 3"
+      ]
+    ]
+  },
+  "custom_categories_term": {
+    "has_next": false,
+    "items": [
+      [
+        1,
+        "Custom Category 1"
+      ],
+      [
+        2,
+        "Custom Category 2"
+      ],
+      [
+        3,
+        "Custom Category 3"
+      ]
+    ]
+  },
+  "event_place": {
+    "has_next": false,
+    "items": [
+      [
+        5,
+        "Alpha"
+      ],
+      [
+        6,
+        "Bravo"
+      ],
+      [
+        1,
+        "City, 12345 City"
+      ],
+      [
+        7,
+        "crew am See"
+      ],
+      [
+        9,
+        "Delta"
+      ],
+      [
+        11,
+        "Meine Crew"
+      ],
+      [
+        8,
+        "Zentrale Halle"
+      ]
+    ]
+  },
+  "event_place_term": {
+    "has_next": false,
+    "items": [
+      [
+        8,
+        "Zentrale Halle"
+      ]
+    ]
+  },
+  "license": {
+    "has_next": false,
+    "items": [
+      [
+        1,
+        "CC0 1.0 (Creative Commons Zero v1.0 Universal)"
+      ],
+      [
+        2,
+        "CC BY 4.0 (Creative Commons Attribution 4.0 International)"
+      ],
+      [
+        3,
+        "CC BY-SA 4.0 (Creative Commons Attribution-ShareAlike 4.0 International)"
+      ],
+      [
+        4,
+        "CC BY-NC-SA 4.0 (Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International)"
+      ],
+      [
+        5,
+        "CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International)"
+      ],
+      [
+        6,
+        "CC BY-ND 4.0 (Creative Commons Attribution-NoDerivatives 4.0 International)"
+      ],
+      [
+        7,
+        "CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International)"
+      ]
+    ]
+  },
+  "license_page_2": {
+    "has_next": true,
+    "items": [
+      [
+        3,
+        "CC BY-SA 4.0 (Creative Commons Attribution-ShareAlike 4.0 International)"
+      ],
+      [
+        4,
+        "CC BY-NC-SA 4.0 (Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International)"
+      ]
+    ]
+  },
+  "license_term": {
+    "has_next": false,
+    "items": [
+      [
+        1,
+        "CC0 1.0 (Creative Commons Zero v1.0 Universal)"
+      ],
+      [
+        2,
+        "CC BY 4.0 (Creative Commons Attribution 4.0 International)"
+      ],
+      [
+        3,
+        "CC BY-SA 4.0 (Creative Commons Attribution-ShareAlike 4.0 International)"
+      ],
+      [
+        4,
+        "CC BY-NC-SA 4.0 (Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International)"
+      ],
+      [
+        5,
+        "CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0 International)"
+      ],
+      [
+        6,
+        "CC BY-ND 4.0 (Creative Commons Attribution-NoDerivatives 4.0 International)"
+      ],
+      [
+        7,
+        "CC BY-NC-ND 4.0 (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International)"
+      ]
+    ]
+  },
+  "list_category": {
+    "has_next": true,
+    "items": [
+      [
+        19,
+        "Ausstellung"
+      ],
+      [
+        23,
+        "Bühne"
+      ],
+      [
+        8,
+        "Comedy"
+      ],
+      [
+        13,
+        "Essen"
+      ],
+      [
+        4,
+        "Familie"
+      ],
+      [
+        5,
+        "Festival"
+      ],
+      [
+        16,
+        "Fitness"
+      ],
+      [
+        14,
+        "Konferenz"
+      ],
+      [
+        2,
+        "Literatur"
+      ],
+      [
+        15,
+        "Networking"
+      ]
+    ]
+  },
+  "list_organizer": {
+    "has_next": false,
+    "items": [
+      [
+        5,
+        "Alpha"
+      ],
+      [
+        6,
+        "Bravo"
+      ],
+      [
+        7,
+        "crew am See"
+      ],
+      [
+        9,
+        "Delta"
+      ],
+      [
+        1,
+        "Meine Crew"
+      ],
+      [
+        8,
+        "Zentrale Crew"
+      ]
+    ]
+  },
+  "list_place": {
+    "has_next": false,
+    "items": [
+      [
+        7,
+        "crew am See"
+      ],
+      [
+        9,
+        "Delta"
+      ],
+      [
+        11,
+        "Meine Crew"
+      ],
+      [
+        8,
+        "Zentrale Halle"
+      ]
+    ]
+  },
+  "organization": {
+    "has_next": false,
+    "items": [
+      [
+        4,
+        "Another Crew"
+      ],
+      [
+        2,
+        "eventcally"
+      ],
+      [
+        1,
+        "Meine Crew"
+      ],
+      [
+        3,
+        "Other Crew"
+      ]
+    ]
+  },
+  "organization_request": {
+    "has_next": false,
+    "items": [
+      [
+        4,
+        "Another Crew"
+      ],
+      [
+        2,
+        "eventcally"
+      ],
+      [
+        3,
+        "Other Crew"
+      ]
+    ]
+  },
+  "organization_term": {
+    "has_next": false,
+    "items": [
+      [
+        3,
+        "Other Crew"
+      ],
+      [
+        4,
+        "Another Crew"
+      ]
+    ]
+  },
+  "organizer": {
+    "has_next": false,
+    "items": [
+      [
+        5,
+        "Alpha"
+      ],
+      [
+        6,
+        "Bravo"
+      ],
+      [
+        7,
+        "crew am See"
+      ],
+      [
+        9,
+        "Delta"
+      ],
+      [
+        1,
+        "Meine Crew"
+      ],
+      [
+        8,
+        "Zentrale Crew"
+      ]
+    ]
+  },
+  "organizer_page_2": {
+    "has_next": true,
+    "items": [
+      [
+        7,
+        "crew am See"
+      ],
+      [
+        9,
+        "Delta"
+      ]
+    ]
+  },
+  "organizer_term": {
+    "has_next": false,
+    "items": [
+      [
+        7,
+        "crew am See"
+      ],
+      [
+        1,
+        "Meine Crew"
+      ],
+      [
+        8,
+        "Zentrale Crew"
+      ]
+    ]
+  }
+}

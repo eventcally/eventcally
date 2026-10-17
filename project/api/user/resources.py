@@ -3,7 +3,6 @@ from flask import abort
 from flask.helpers import make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 from flask_security import current_user
-from sqlalchemy import and_
 
 from project.access import login_api_user_or_401
 from project.api import add_api_resource
@@ -11,6 +10,11 @@ from project.api.organization_invitation.schemas import (
     OrganizationInvitationListRequestSchema,
     OrganizationInvitationListResponseSchema,
     OrganizationInvitationSchema,
+)
+from project.api.query_args import (
+    enum_or_none,
+    page_request_from_kwargs,
+    trackable_criteria_from_kwargs,
 )
 from project.api.resources import BaseResource, require_api_access
 from project.api.user.schemas import (
@@ -20,17 +24,14 @@ from project.api.user.schemas import (
     UserAppInstallationListResponseSchema,
 )
 from project.application.commands import DeclineOrganizationInvitationCommand
-from project.models import AdminUnitInvitation
-from project.models.admin_unit import AdminUnit, AdminUnitMember
-from project.models.app import AppInstallation
-from project.services.admin_unit import get_admin_unit_organization_invitations_query
-from project.services.search_params import TrackableSearchParams
-from project.utils import strings_are_equal_ignoring_case
-
-
-def invitation_receiver_or_401(invitation: AdminUnitInvitation):
-    if not strings_are_equal_ignoring_case(invitation.email, current_user.email):
-        abort(401)
+from project.application.queries import (
+    GetUserOrganizationInvitationQuery,
+    ListUserAppInstallationsQuery,
+    ListUserOrganizationInvitationsQuery,
+    ListUserOrganizationMembershipsQuery,
+    OrganizationInvitationSort,
+)
+from project.views.utils import abort_if_page_out_of_range, result_or_404
 
 
 class UserOrganizationInvitationListResource(BaseResource):
@@ -44,14 +45,16 @@ class UserOrganizationInvitationListResource(BaseResource):
     def get(self, **kwargs):
         login_api_user_or_401()
 
-        params = TrackableSearchParams()
-        params.load_from_request(**kwargs)
-
-        query = get_admin_unit_organization_invitations_query(current_user.email)
-        query = params.get_trackable_query(query, AdminUnitInvitation)
-        query = params.get_trackable_order_by(query, AdminUnitInvitation)
-
-        return query.paginate()
+        page = self.query_bus.handle(
+            ListUserOrganizationInvitationsQuery(
+                user_id=current_user.id,
+                sort=enum_or_none(OrganizationInvitationSort, kwargs.get("sort")),
+                trackable=trackable_criteria_from_kwargs(kwargs),
+                page=page_request_from_kwargs(kwargs),
+            )
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class UserOrganizationInvitationResource(BaseResource):
@@ -63,10 +66,9 @@ class UserOrganizationInvitationResource(BaseResource):
     @require_api_access("user.organization_invitations:read")
     def get(self, id):
         login_api_user_or_401()
-        invitation = AdminUnitInvitation.query.get_or_404(id)
-        invitation_receiver_or_401(invitation)
-
-        return invitation
+        return result_or_404(
+            self.query_bus.handle(GetUserOrganizationInvitationQuery(id=id))
+        )
 
     @doc(
         summary="Delete organization invitation of user",
@@ -76,8 +78,7 @@ class UserOrganizationInvitationResource(BaseResource):
     @require_api_access("user.organization_invitations:write")
     def delete(self, id):
         login_api_user_or_401()
-        invitation = AdminUnitInvitation.query.get_or_404(id)
-        invitation_receiver_or_401(invitation)
+        result_or_404(self.query_bus.handle(GetUserOrganizationInvitationQuery(id=id)))
 
         cmd = DeclineOrganizationInvitationCommand(
             id=id, actor=self.app_context_provider.get_current_actor()
@@ -98,8 +99,13 @@ class UserOrganizationMembershipListResource(BaseResource):
     def get(self, **kwargs):
         login_api_user_or_401()
 
-        query = AdminUnitMember.query.filter_by(user_id=current_user.id)
-        return query.paginate()
+        page = self.query_bus.handle(
+            ListUserOrganizationMembershipsQuery(
+                user_id=current_user.id, page=page_request_from_kwargs(kwargs)
+            )
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class UserAppInstallationListResource(BaseResource):
@@ -115,27 +121,16 @@ class UserAppInstallationListResource(BaseResource):
             abort(401)
         login_api_user_or_401()
 
-        app_id = current_token.client.id
-        user_id = current_user.id
-
-        query = AppInstallation.query.join(
-            AdminUnit, AdminUnit.id == AppInstallation.admin_unit_id
-        ).filter(AppInstallation.oauth2_client_id == app_id)
-
-        admin_only = "admin_only" in kwargs and kwargs.get("admin_only", False)
-        if admin_only:
-            query = query.filter(
-                AdminUnit.members.any(
-                    and_(AdminUnitMember.user_id == user_id, AdminUnitMember.is_admin)
-                )
+        page = self.query_bus.handle(
+            ListUserAppInstallationsQuery(
+                user_id=current_user.id,
+                app_id=current_token.client.id,
+                admin_only=bool(kwargs.get("admin_only", False)),
+                page=page_request_from_kwargs(kwargs),
             )
-        else:
-            query = query.filter(
-                AdminUnit.members.any(AdminUnitMember.user_id == user_id)
-            )
-
-        pagination = query.paginate()
-        return pagination
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 add_api_resource(

@@ -1,9 +1,5 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import abort, g, request
 from flask_apispec import doc, marshal_with, use_kwargs
-from sqlalchemy import and_
 
 from project.access import (
     can_request_event_reference,
@@ -17,7 +13,10 @@ from project.api.custom_widget.schemas import (
     CustomWidgetListRequestSchema,
     CustomWidgetListResponseSchema,
 )
-from project.api.event.resources import api_can_read_private_events
+from project.api.event.query_args import (
+    event_search_criteria_from_request,
+    reference_admin_unit_id_for_api,
+)
 from project.api.event.schemas import (
     EventCreateRequestPlainSchema,
     EventIdPlainSchema,
@@ -37,6 +36,7 @@ from project.api.event_reference.schemas import (
     EventReferenceListResponseSchema,
 )
 from project.api.event_reference_request.schemas import (
+    EventReferenceRequestCreateRequestPlainSchema,
     EventReferenceRequestIdSchema,
     EventReferenceRequestListRequestSchema,
     EventReferenceRequestListResponseSchema,
@@ -81,46 +81,48 @@ from project.api.place.schemas import (
     PlaceListRequestSchema,
     PlaceListResponseSchema,
 )
+from project.api.query_args import (
+    enum_or_none,
+    list_arg_from_request,
+    page_request_from_kwargs,
+    trackable_criteria_from_kwargs,
+    trackable_sort_from_kwargs,
+)
 from project.api.resources import (
     BaseResource,
     require_api_access,
     require_organization_api_access,
 )
 from project.application.commands import RequestEventReferenceCommand
-from project.models import AdminUnit, Event, EventPublicStatus, EventReferenceRequest
-from project.models.admin_unit import AdminUnitInvitation, AdminUnitRelation
-from project.services.admin_unit import (
-    get_admin_unit_invitation_query,
-    get_admin_unit_query,
-    get_custom_widget_query,
-    get_organizer_query,
-    get_place_query,
+from project.application.queries import (
+    CanRequestVerificationQuery,
+    GetEventDetailQuery,
+    GetOrganizationQuery,
+    GetOutgoingOrganizationRelationByTargetQuery,
+    ListCustomWidgetsQuery,
+    ListEventOrganizersQuery,
+    ListEventPlacesQuery,
+    ListEventsQuery,
+    ListIncomingEventReferenceRequestsQuery,
+    ListIncomingEventReferencesQuery,
+    ListIncomingOrganizationVerificationRequestsQuery,
+    ListOrganizationInvitationsQuery,
+    ListOutgoingEventReferenceRequestsQuery,
+    ListOutgoingEventReferencesQuery,
+    ListOutgoingOrganizationRelationsQuery,
+    ListOutgoingOrganizationVerificationRequestsQuery,
+    OrganizationInvitationSort,
+    SearchEventDatesQuery,
+    SearchEventsQuery,
+    SearchOrganizationsQuery,
+    TrackableSort,
 )
-from project.services.event import get_event_dates_query, get_events_query
-from project.services.event_service import EventService
-from project.services.reference import (
-    get_reference_incoming_query,
-    get_reference_outgoing_query,
-    get_reference_requests_incoming_query,
-    get_reference_requests_outgoing_query,
-    get_relation_outgoing_query,
+from project.domain.errors import UnauthorizedError
+from project.views.utils import (
+    abort_if_page_out_of_range,
+    get_current_admin_unit_for_api,
+    result_or_404,
 )
-from project.services.search_params import (
-    AdminUnitSearchParams,
-    AdminUnitVerificationRequestSearchParams,
-    EventPlaceSearchParams,
-    EventReferenceRequestSearchParams,
-    EventReferenceSearchParams,
-    EventSearchParams,
-    OrganizerSearchParams,
-    TrackableSearchParams,
-)
-from project.services.verification import (
-    admin_unit_can_verify_admin_unit,
-    get_verification_requests_incoming_query,
-    get_verification_requests_outgoing_query,
-)
-from project.views.utils import get_current_admin_unit_for_api
 
 
 class OrganizationResource(BaseResource):
@@ -128,7 +130,7 @@ class OrganizationResource(BaseResource):
     @marshal_with(OrganizationSchema)
     @require_api_access()
     def get(self, id):
-        return AdminUnit.query.get_or_404(id)
+        return result_or_404(self.query_bus.handle(GetOrganizationQuery(id=id)))
 
 
 class OrganizationEventDateSearchResource(BaseResource):
@@ -141,16 +143,23 @@ class OrganizationEventDateSearchResource(BaseResource):
     @marshal_with(EventDateSearchResponseSchema)
     @require_api_access()
     def get(self, id, **kwargs):
-        admin_unit = AdminUnit.query.get_or_404(id)
+        result_or_404(self.query_bus.handle(GetOrganizationQuery(id=id)))
+        login_api_user()
 
-        params = EventSearchParams()
-        params.include_admin_unit_references = True
-        params.load_from_request(**kwargs)
-        params.admin_unit_id = admin_unit.id
-        params.can_read_private_events = api_can_read_private_events(admin_unit)
-
-        pagination = get_event_dates_query(params).paginate()
-        return pagination
+        page = self.query_bus.handle(
+            SearchEventDatesQuery(
+                criteria=event_search_criteria_from_request(
+                    kwargs,
+                    defaults=dict(include_admin_unit_references=True),
+                    admin_unit_id=id,
+                    include_private=True,
+                ),
+                reference_admin_unit_id=reference_admin_unit_id_for_api(),
+                page=page_request_from_kwargs(kwargs),
+            )
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class OrganizationEventSearchResource(BaseResource):
@@ -159,44 +168,43 @@ class OrganizationEventSearchResource(BaseResource):
     @marshal_with(EventSearchResponseSchema)
     @require_api_access()
     def get(self, id, **kwargs):
-        admin_unit = AdminUnit.query.get_or_404(id)
+        result_or_404(self.query_bus.handle(GetOrganizationQuery(id=id)))
+        login_api_user()
 
-        params = EventSearchParams()
-        params.load_from_request(**kwargs)
-        params.admin_unit_id = admin_unit.id
-        params.can_read_private_events = api_can_read_private_events(admin_unit)
-
-        pagination = get_events_query(params).paginate()
-        return pagination
+        page = self.query_bus.handle(
+            SearchEventsQuery(
+                criteria=event_search_criteria_from_request(
+                    kwargs, admin_unit_id=id, include_private=True
+                ),
+                reference_admin_unit_id=reference_admin_unit_id_for_api(),
+                page=page_request_from_kwargs(kwargs),
+            )
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class OrganizationEventListResource(BaseResource):
-    event_service: Annotated[EventService, Provide["services.event_service"]]
 
     @doc(summary="List events of organization", tags=["Organizations", "Events"])
     @use_kwargs(EventListRequestSchema, location=("query"))
     @marshal_with(EventListResponseSchema)
     @require_api_access()
     def get(self, id, **kwargs):
-        params = EventSearchParams()
-        params.load_from_request(**kwargs)
-
-        admin_unit = AdminUnit.query.get_or_404(id)
-        event_filter = Event.admin_unit_id == admin_unit.id
-
-        if not api_can_read_private_events(admin_unit):
-            event_filter = and_(
-                event_filter,
-                Event.public_status == EventPublicStatus.published,
-                AdminUnit.is_verified,
+        login_api_user()
+        page = result_or_404(
+            self.query_bus.handle(
+                ListEventsQuery(
+                    admin_unit_id=id,
+                    include_private=True,
+                    trackable=trackable_criteria_from_kwargs(kwargs),
+                    sort=enum_or_none(TrackableSort, kwargs.get("sort")),
+                    page=page_request_from_kwargs(kwargs),
+                )
             )
-
-        query = Event.query.join(Event.admin_unit).filter(event_filter)
-        query = params.get_trackable_query(query, Event)
-        query = params.get_trackable_order_by(query, Event)
-        query = query.order_by(Event.min_start)
-
-        return query.paginate()
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
     @doc(
         summary="Add new event",
@@ -232,12 +240,19 @@ class OrganizationListResource(BaseResource):
             if admin_unit:
                 reference_request_for_admin_unit_id = admin_unit.id
 
-        params = AdminUnitSearchParams()
-        params.load_from_request(**kwargs)
-        params.include_unverified = include_unverified
-        params.reference_request_for_admin_unit_id = reference_request_for_admin_unit_id
-        pagination = get_admin_unit_query(params).paginate()
-        return pagination
+        page = self.query_bus.handle(
+            SearchOrganizationsQuery(
+                keyword=kwargs.get("keyword") or None,
+                postal_codes=list_arg_from_request("postal_code"),
+                include_unverified=include_unverified,
+                reference_request_for_admin_unit_id=reference_request_for_admin_unit_id,
+                trackable=trackable_criteria_from_kwargs(kwargs),
+                sort=enum_or_none(TrackableSort, kwargs.get("sort")),
+                page=page_request_from_kwargs(kwargs),
+            )
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class OrganizationOrganizerListResource(BaseResource):
@@ -248,13 +263,16 @@ class OrganizationOrganizerListResource(BaseResource):
     @marshal_with(OrganizerListResponseSchema)
     @require_api_access()
     def get(self, id, **kwargs):
-        admin_unit = AdminUnit.query.get_or_404(id)
-
-        params = OrganizerSearchParams()
-        params.load_from_request(**kwargs)
-        params.admin_unit_id = admin_unit.id
-        pagination = get_organizer_query(params).paginate()
-        return pagination
+        query = ListEventOrganizersQuery(
+            admin_unit_id=id,
+            name=kwargs.get("name"),
+            sort=kwargs.get("sort"),
+            trackable=trackable_criteria_from_kwargs(kwargs),
+            page=page_request_from_kwargs(kwargs),
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
     @doc(
         summary="Add new organizer",
@@ -277,13 +295,16 @@ class OrganizationPlaceListResource(BaseResource):
     @marshal_with(PlaceListResponseSchema)
     @require_api_access()
     def get(self, id, **kwargs):
-        admin_unit = AdminUnit.query.get_or_404(id)
-
-        params = EventPlaceSearchParams()
-        params.load_from_request(**kwargs)
-        params.admin_unit_id = admin_unit.id
-        pagination = get_place_query(params).paginate()
-        return pagination
+        query = ListEventPlacesQuery(
+            admin_unit_id=id,
+            name=kwargs.get("name"),
+            sort=kwargs.get("sort"),
+            trackable=trackable_criteria_from_kwargs(kwargs),
+            page=page_request_from_kwargs(kwargs),
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
     @doc(
         summary="Add new place",
@@ -309,13 +330,15 @@ class OrganizationIncomingEventReferenceListResource(BaseResource):
     @marshal_with(EventReferenceListResponseSchema)
     @require_organization_api_access("organization.incoming_event_references:read")
     def get(self, id, **kwargs):
-        admin_unit = g.manage_admin_unit
-
-        params = EventReferenceSearchParams()
-        params.load_from_request(**kwargs)
-        params.admin_unit_id = admin_unit.id
-        pagination = get_reference_incoming_query(params).paginate()
-        return pagination
+        query = ListIncomingEventReferencesQuery(
+            admin_unit_id=id,
+            trackable=trackable_criteria_from_kwargs(kwargs),
+            sort=trackable_sort_from_kwargs(kwargs),
+            page=page_request_from_kwargs(kwargs),
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
     @doc(
         summary="Add reference",
@@ -341,13 +364,15 @@ class OrganizationOutgoingEventReferenceListResource(BaseResource):
     @marshal_with(EventReferenceListResponseSchema)
     @require_organization_api_access("organization.outgoing_event_references:read")
     def get(self, id, **kwargs):
-        admin_unit = g.manage_admin_unit
-
-        params = EventReferenceSearchParams()
-        params.load_from_request(**kwargs)
-        params.admin_unit_id = admin_unit.id
-        pagination = get_reference_outgoing_query(params).paginate()
-        return pagination
+        query = ListOutgoingEventReferencesQuery(
+            admin_unit_id=id,
+            trackable=trackable_criteria_from_kwargs(kwargs),
+            sort=trackable_sort_from_kwargs(kwargs),
+            page=page_request_from_kwargs(kwargs),
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class OrganizationIncomingEventReferenceRequestListResource(BaseResource):
@@ -359,13 +384,15 @@ class OrganizationIncomingEventReferenceRequestListResource(BaseResource):
     @marshal_with(EventReferenceRequestListResponseSchema)
     @require_organization_api_access("organization.incoming_event_references:read")
     def get(self, id, **kwargs):
-        admin_unit = g.manage_admin_unit
-
-        params = EventReferenceRequestSearchParams()
-        params.load_from_request(**kwargs)
-        params.admin_unit_id = admin_unit.id
-        pagination = get_reference_requests_incoming_query(params).paginate()
-        return pagination
+        query = ListIncomingEventReferenceRequestsQuery(
+            admin_unit_id=id,
+            trackable=trackable_criteria_from_kwargs(kwargs),
+            sort=trackable_sort_from_kwargs(kwargs),
+            page=page_request_from_kwargs(kwargs),
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
@@ -379,13 +406,15 @@ class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
         "organization.outgoing_event_reference_requests:read"
     )
     def get(self, id, **kwargs):
-        admin_unit = g.manage_admin_unit
-
-        params = EventReferenceRequestSearchParams()
-        params.load_from_request(**kwargs)
-        params.admin_unit_id = admin_unit.id
-        pagination = get_reference_requests_outgoing_query(params).paginate()
-        return pagination
+        query = ListOutgoingEventReferenceRequestsQuery(
+            admin_unit_id=id,
+            trackable=trackable_criteria_from_kwargs(kwargs),
+            sort=trackable_sort_from_kwargs(kwargs),
+            page=page_request_from_kwargs(kwargs),
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
     @doc(
         summary="Add reference request",
@@ -399,8 +428,13 @@ class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
     def post(self, id):
         admin_unit = g.manage_admin_unit
 
-        reference_request = self.create_instance(EventReferenceRequestPostRequestSchema)
-        event = reference_request.event
+        data = self.load_command(EventReferenceRequestCreateRequestPlainSchema)
+        try:
+            event = result_or_404(
+                self.query_bus.handle(GetEventDetailQuery(id=data["event_id"]))
+            )
+        except UnauthorizedError:
+            abort(404)
 
         if event.admin_unit_id != admin_unit.id:
             abort(404)
@@ -410,13 +444,12 @@ class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
 
         cmd = RequestEventReferenceCommand(
             actor=self.app_context_provider.get_current_actor(),
-            admin_unit_id=reference_request.admin_unit.id,
+            admin_unit_id=data["admin_unit_id"],
             event_id=event.id,
         )
         cmd_result = self.message_bus.handle_command(cmd)
 
-        created = EventReferenceRequest.query.get(cmd_result.id)
-        return created, 201
+        return {"id": cmd_result.id}, 201
 
 
 class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResource):
@@ -430,13 +463,15 @@ class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResour
         "organization.outgoing_event_reference_requests:read"
     )
     def get(self, id, **kwargs):
-        admin_unit = g.manage_admin_unit
-
-        params = AdminUnitVerificationRequestSearchParams()
-        params.load_from_request(**kwargs)
-        params.target_admin_unit_id = admin_unit.id
-        pagination = get_verification_requests_incoming_query(params).paginate()
-        return pagination
+        query = ListIncomingOrganizationVerificationRequestsQuery(
+            admin_unit_id=id,
+            trackable=trackable_criteria_from_kwargs(kwargs),
+            sort=trackable_sort_from_kwargs(kwargs),
+            page=page_request_from_kwargs(kwargs),
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResource):
@@ -450,13 +485,15 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
         "organization.outgoing_event_reference_requests:read"
     )
     def get(self, id, **kwargs):
-        admin_unit = g.manage_admin_unit
-
-        params = AdminUnitVerificationRequestSearchParams()
-        params.load_from_request(**kwargs)
-        params.source_admin_unit_id = admin_unit.id
-        pagination = get_verification_requests_outgoing_query(params).paginate()
-        return pagination
+        query = ListOutgoingOrganizationVerificationRequestsQuery(
+            admin_unit_id=id,
+            trackable=trackable_criteria_from_kwargs(kwargs),
+            sort=trackable_sort_from_kwargs(kwargs),
+            page=page_request_from_kwargs(kwargs),
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
     @doc(
         summary="Add verification request",
@@ -472,10 +509,15 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
     def post(self, id):
         admin_unit = g.manage_admin_unit
         cmd = self.load_command(OrganizationVerificationRequestCreateRequestPlainSchema)
-        target_admin_unit = AdminUnit.query.get_or_404(cmd.target_admin_unit_id)
+        result_or_404(
+            self.query_bus.handle(GetOrganizationQuery(id=cmd.target_admin_unit_id))
+        )
 
-        if not admin_unit_can_verify_admin_unit(
-            admin_unit, target_admin_unit
+        if not self.query_bus.handle(
+            CanRequestVerificationQuery(
+                source_admin_unit_id=admin_unit.id,
+                target_admin_unit_id=cmd.target_admin_unit_id,
+            )
         ):  # pragma: no cover
             abort(401)
 
@@ -495,10 +537,12 @@ class OrganizationOutgoingRelationListResource(BaseResource):
         "organization.outgoing_organization_relations:read"
     )
     def get(self, id, **kwargs):
-        admin_unit = g.manage_admin_unit
-
-        pagination = get_relation_outgoing_query(admin_unit).paginate()
-        return pagination
+        query = ListOutgoingOrganizationRelationsQuery(
+            admin_unit_id=id, page=page_request_from_kwargs(kwargs)
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
     @doc(
         summary="Add new outgoing relation",
@@ -526,11 +570,22 @@ class OrganizationOutgoingRelationResource(BaseResource):
         "organization.outgoing_organization_relations:read"
     )
     def get(self, id, target_id):
-        relation = AdminUnitRelation.query.filter(
-            AdminUnitRelation.source_admin_unit_id == id,
-            AdminUnitRelation.target_admin_unit_id == target_id,
-        ).first_or_404(id)
-        return relation
+        return result_or_404(
+            self.query_bus.handle(
+                GetOutgoingOrganizationRelationByTargetQuery(
+                    admin_unit_id=id, target_admin_unit_id=target_id
+                )
+            )
+        )
+
+
+def _invitation_sort_or_none(value):
+    """The schema accepts `name`, but invitations have no name; the ORM path
+    ignored it, so it falls back to the default order."""
+    try:
+        return OrganizationInvitationSort(value)
+    except ValueError:
+        return None
 
 
 class OrganizationOrganizationInvitationListResource(BaseResource):
@@ -542,15 +597,15 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
     @marshal_with(OrganizationInvitationListResponseSchema)
     @require_organization_api_access("organization.organization_invitations:read")
     def get(self, id, **kwargs):
-        admin_unit = g.manage_admin_unit
-
-        params = TrackableSearchParams()
-        params.load_from_request(**kwargs)
-
-        query = get_admin_unit_invitation_query(admin_unit)
-        query = params.get_trackable_query(query, AdminUnitInvitation)
-        query = params.get_trackable_order_by(query, AdminUnitInvitation)
-        return query.paginate()
+        query = ListOrganizationInvitationsQuery(
+            admin_unit_id=id,
+            sort=_invitation_sort_or_none(kwargs.get("sort")),
+            trackable=trackable_criteria_from_kwargs(kwargs),
+            page=page_request_from_kwargs(kwargs),
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
     @doc(
         summary="Add new organization invitation",
@@ -575,11 +630,14 @@ class OrganizationCustomWidgetListResource(BaseResource):
     @marshal_with(CustomWidgetListResponseSchema)
     @require_organization_api_access("organization.custom_widgets:read")
     def get(self, id, **kwargs):
-        admin_unit = g.manage_admin_unit
-        name = kwargs["name"] if "name" in kwargs else None
-
-        pagination = get_custom_widget_query(admin_unit.id, name).paginate()
-        return pagination
+        query = ListCustomWidgetsQuery(
+            admin_unit_id=id,
+            name=kwargs.get("name") or None,
+            page=page_request_from_kwargs(kwargs),
+        )
+        page = result_or_404(self.query_bus.handle(query))
+        abort_if_page_out_of_range(page)
+        return page
 
     @doc(
         summary="Add new custom widget",

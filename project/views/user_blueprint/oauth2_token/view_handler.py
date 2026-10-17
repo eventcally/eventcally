@@ -1,11 +1,11 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask_babel import gettext
+from flask_login import current_user
 from flask_security import auth_required
 
-from project.models import OAuth2Token
-from project.services.oauth2_token_service import OAuth2TokenService
+from project.application.queries import (
+    GetUserOAuth2TokenQuery,
+    ListUserOAuth2TokensQuery,
+)
 from project.views.user_blueprint import user_bp
 from project.views.user_blueprint.child_view_handler import UserChildViewHandler
 from project.views.user_blueprint.oauth2_token.displays import ListDisplay
@@ -14,10 +14,10 @@ from project.views.user_blueprint.oauth2_token.views import RevokeView
 
 class OAuth2TokenViewHandler(UserChildViewHandler):
     decorators = [auth_required()]
-    object_service: Annotated[
-        OAuth2TokenService, Provide["services.oauth2_token_service"]
-    ]
-    model = OAuth2Token
+    model_name = "oauth2_token"
+    model_name_plural = "oauth2_tokens"
+    display_name = "OAuth2 token"
+    display_name_plural = "OAuth2 tokens"
     create_view_class = None
     read_view_class = None
     update_view_class = None
@@ -64,12 +64,15 @@ class OAuth2TokenViewHandler(UserChildViewHandler):
 
         return result
 
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(OAuth2Token.issued_at.desc())
-        )
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListUserOAuth2TokensQuery(user_id=current_user.id, page=page_request)
+
+    def create_get_query(self, object_id):
+        return GetUserOAuth2TokenQuery(id=object_id)
+
+    def get_object_title(self, object):
+        # Parity with the ORM `OAuth2Token.__str__`.
+        return f"{self.get_model_display_name()} {object.id} ({object.client_name})"
 
 
 handler = OAuth2TokenViewHandler()

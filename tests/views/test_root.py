@@ -27,7 +27,7 @@ def test_tos(app, db, utils: UtilActions):
     utils.assert_response_notFound(response)
 
     with app.app_context():
-        from project.services.admin import upsert_settings
+        from project.init_data import upsert_settings
 
         settings = upsert_settings()
         settings.tos = "Meine Nutzungsbedingungen"
@@ -40,7 +40,7 @@ def test_tos(app, db, utils: UtilActions):
 
 def test_legal_notice(app, db, utils):
     with app.app_context():
-        from project.services.admin import upsert_settings
+        from project.init_data import upsert_settings
 
         settings = upsert_settings()
         settings.legal_notice = "Mein Impressum"
@@ -53,7 +53,7 @@ def test_legal_notice(app, db, utils):
 
 def test_contact(app, db, utils):
     with app.app_context():
-        from project.services.admin import upsert_settings
+        from project.init_data import upsert_settings
 
         settings = upsert_settings()
         settings.contact = "Mein Kontakt"
@@ -66,7 +66,7 @@ def test_contact(app, db, utils):
 
 def test_privacy(app, db, utils):
     with app.app_context():
-        from project.services.admin import upsert_settings
+        from project.init_data import upsert_settings
 
         settings = upsert_settings()
         settings.privacy = "Mein Datenschutz"
@@ -116,7 +116,7 @@ def test_sitemap_xml(seeder, app, utils):
 
 def test_announcement(app, db, utils: UtilActions):
     with app.app_context():
-        from project.services.admin import upsert_settings
+        from project.init_data import upsert_settings
 
         settings = upsert_settings()
         settings.announcement = "Wartungsarbeiten"

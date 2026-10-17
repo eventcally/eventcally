@@ -1,28 +1,30 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import flash, redirect, request, url_for
 from flask_babel import gettext
 
 from project.access import can_request_event_reference_from_admin_unit
 from project.application.commands import RequestEventReferenceCommand
 from project.application.commands.delete_event_command import DeleteEventCommand
+from project.application.queries import (
+    GetEventCategoryByNameQuery,
+    GetEventForEditQuery,
+    ListReferenceRequestSuggestionsQuery,
+)
 from project.dateutils import get_next_full_hour, get_today
-from project.models import Event, EventPublicStatus
+from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
     BaseListView,
     BaseUpdateView,
 )
-from project.services.admin_unit import (
-    get_admin_unit_suggestions_for_reference_requests,
-)
-from project.services.event_category_service import EventCategoryService
-from project.services.event_service import EventService
 from project.views.manage_admin_unit.event.forms import CreateForm, UpdateForm
 from project.views.reference_request import get_success_text_for_request_creation
-from project.views.utils import current_admin_unit, flash_message, handle_base_error
+from project.views.utils import (
+    current_admin_unit,
+    flash_message,
+    handle_base_error,
+    result_or_404,
+)
 
 
 def prepare_date_definition(form):
@@ -37,40 +39,35 @@ def prepare_event_form(form):
     prepare_date_definition(form)
 
 
-def prepare_form_reference_requests(form, admin_unit):
+def prepare_form_reference_requests(form, admin_unit, query_bus):
     if not can_request_event_reference_from_admin_unit(admin_unit):
         form.reference_request_admin_unit_id.choices = []
         return
 
-    (
-        admin_unit_choices,
-        selected_ids,
-    ) = get_admin_unit_suggestions_for_reference_requests(admin_unit)
+    suggestions = query_bus.handle(
+        ListReferenceRequestSuggestionsQuery(admin_unit_id=admin_unit.id)
+    )
 
     form.reference_request_admin_unit_id.choices = sorted(
-        [(a.id, a.name) for a in admin_unit_choices],
+        [(a.id, a.name) for a in suggestions.choices],
         key=lambda a: a[1],
     )
 
     if not form.is_submitted():
-        form.reference_request_admin_unit_id.data = selected_ids
+        form.reference_request_admin_unit_id.data = suggestions.selected_ids
 
 
 class CreateView(BaseCreateView):
     form_class = CreateForm
-    event_service: Annotated[EventService, Provide["services.event_service"]]
-    event_category_service: Annotated[
-        EventCategoryService,
-        Provide["services.event_category_service"],
-    ]
 
     def create_form(self, **kwargs):
-        kwargs.setdefault(
-            "categories", [self.event_category_service.upsert_event_category("Other")]
-        )
+        if "categories" not in kwargs:
+            # Nothing is created here: without the initial data there is no default.
+            category = self.query_bus.handle(GetEventCategoryByNameQuery(name="Other"))
+            kwargs["categories"] = [category] if category else []
         form = super().create_form(**kwargs)
         prepare_event_form(form)
-        prepare_form_reference_requests(form, current_admin_unit)
+        prepare_form_reference_requests(form, current_admin_unit, self.query_bus)
 
         # Vorlagen
         if not form.is_submitted():
@@ -80,7 +77,9 @@ class CreateView(BaseCreateView):
                 else 0
             )
             if event_template_id > 0:
-                event_template = Event.query.get_or_404(event_template_id)
+                event_template = result_or_404(
+                    self.query_bus.handle(GetEventForEditQuery(id=event_template_id))
+                )
                 form.process(obj=event_template)
 
         return form

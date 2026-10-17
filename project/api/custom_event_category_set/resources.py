@@ -5,8 +5,13 @@ from project.api.custom_event_category_set.schemas import (
     CustomEventCategorySetListRequestSchema,
     CustomEventCategorySetListResponseSchema,
 )
+from project.api.query_args import page_request_from_kwargs
 from project.api.resources import BaseResource, require_api_access
-from project.models import CustomEventCategory, CustomEventCategorySet
+from project.application.queries import (
+    ListCustomEventCategoriesQuery,
+    ListCustomEventCategorySetsQuery,
+)
+from project.views.utils import abort_if_page_out_of_range
 
 
 class CustomEventCategorySetListResource(BaseResource):
@@ -15,8 +20,11 @@ class CustomEventCategorySetListResource(BaseResource):
     @marshal_with(CustomEventCategorySetListResponseSchema)
     @require_api_access()
     def get(self, **kwargs):
-        pagination = CustomEventCategorySet.query.paginate()
-        return pagination
+        page = self.query_bus.handle(
+            ListCustomEventCategorySetsQuery(page=page_request_from_kwargs(kwargs))
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class CustomEventCategorySetEventCategoryListResource(BaseResource):
@@ -25,10 +33,13 @@ class CustomEventCategorySetEventCategoryListResource(BaseResource):
     @marshal_with(CustomEventCategorySetListResponseSchema)
     @require_api_access()
     def get(self, id, **kwargs):
-        pagination = CustomEventCategory.query.filter(
-            CustomEventCategory.category_set_id == id
-        ).paginate()
-        return pagination
+        page = self.query_bus.handle(
+            ListCustomEventCategoriesQuery(
+                category_set_id=id, page=page_request_from_kwargs(kwargs)
+            )
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 add_api_resource(

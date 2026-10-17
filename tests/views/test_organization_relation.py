@@ -136,3 +136,40 @@ def test_delete(client, app, utils, seeder, db):
 
         relation = db.session.get(AdminUnitRelation, relation_id)
         assert relation is None
+
+
+def test_list_keyword_and_filters(client, app, utils: UtilActions, seeder: Seeder):
+    user_id, admin_unit_id = seeder.setup_base()
+    alpha_id = seeder.create_admin_unit(
+        seeder.create_user("alpha@test.de"), "Alpha Crew"
+    )
+    beta_id = seeder.create_admin_unit(seeder.create_user("beta@test.de"), "Beta Crew")
+    seeder.create_admin_unit_relation(admin_unit_id, alpha_id, verify=True)
+    seeder.create_admin_unit_relation(
+        admin_unit_id, beta_id, auto_verify_event_reference_requests=True
+    )
+
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_organization_relations", id=admin_unit_id
+    )
+    response = utils.get_ok(url)
+    utils.assert_response_contains(response, "Alpha Crew")
+    utils.assert_response_contains(response, "Beta Crew")
+
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_organization_relations",
+        id=admin_unit_id,
+        keyword="alp",
+    )
+    response = utils.get_ok(url)
+    utils.assert_response_contains(response, "Alpha Crew")
+    utils.assert_response_contains_not(response, "Beta Crew")
+
+    url = utils.get_url(
+        "manage_admin_unit.outgoing_organization_relations",
+        id=admin_unit_id,
+        auto_verify_event_reference_requests="1",
+    )
+    response = utils.get_ok(url)
+    utils.assert_response_contains_not(response, "Alpha Crew")
+    utils.assert_response_contains(response, "Beta Crew")

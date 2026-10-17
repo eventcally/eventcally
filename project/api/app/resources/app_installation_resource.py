@@ -4,7 +4,8 @@ from flask_apispec import doc, marshal_with
 from project.api import add_api_resource
 from project.api.app.schemas import AppInstallationSchema
 from project.api.resources import BaseResource, require_api_access
-from project.models import AppInstallation
+from project.application.queries import GetAppInstallationForAppQuery
+from project.views.utils import result_or_404
 
 
 class AppInstallationResource(BaseResource):
@@ -15,12 +16,10 @@ class AppInstallationResource(BaseResource):
     @marshal_with(AppInstallationSchema)
     @require_api_access(app_token_required=True)
     def get(self, id):
-        return (
-            AppInstallation.query.filter(
-                AppInstallation.oauth2_client_id == current_token.app_id
+        return result_or_404(
+            self.query_bus.handle(
+                GetAppInstallationForAppQuery(app_id=current_token.app_id, id=id)
             )
-            .filter(AppInstallation.id == id)
-            .first_or_404()
         )
 
 

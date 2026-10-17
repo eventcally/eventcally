@@ -3,12 +3,9 @@ import shutil
 from io import StringIO
 
 from flask import current_app, url_for
-from sqlalchemy import and_
-from sqlalchemy.orm import load_only
 
 from project import cache_path, robots_txt_path, sitemap_path
-from project.dateutils import get_today
-from project.models import AdminUnit, Event, EventDate, EventPublicStatus
+from project.application.queries import ListSitemapEventsQuery
 from project.utils import make_dir
 
 
@@ -20,19 +17,7 @@ def generate_sitemap():
     buf.write('<?xml version="1.0" encoding="UTF-8"?>')
     buf.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
 
-    today = get_today()
-    events = (
-        Event.query.join(Event.admin_unit)
-        .options(load_only(Event.id, Event.created_at, Event.updated_at))
-        .filter(Event.dates.any(EventDate.start >= today))
-        .filter(
-            and_(
-                Event.public_status == EventPublicStatus.published,
-                AdminUnit.is_verified,
-            )
-        )
-        .all()
-    )
+    events = current_app.container.cqrs.query_bus().handle(ListSitemapEventsQuery())
     current_app.logger.info(f"Found {len(events)} events")
 
     for event in events:

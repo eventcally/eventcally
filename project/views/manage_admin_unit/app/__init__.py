@@ -1,4 +1,4 @@
-from flask import g
+from flask import current_app, g
 
 from project.modular.base_blueprint import BaseBlueprint
 
@@ -19,11 +19,18 @@ def app_bp_url_defaults(endpoint, values):
 
 @app_bp.url_value_preprocessor
 def app_bp_url_value_preprocessor(endpoint, values):
+    from flask import abort
+
     from project.access import admin_unit_owner_access_or_401
-    from project.models import OAuth2Client
+    from project.application.queries import GetAppQuery
 
     app_id = values.pop("app_id", None)
-    app = OAuth2Client.query.get_or_404(app_id)
+    query_bus = current_app.container.cqrs.query_bus()
+    app = query_bus.handle(GetAppQuery(id=app_id))
+
+    if app is None:
+        abort(404)
+
     admin_unit_owner_access_or_401(app.admin_unit_id)
     g.current_app = app
 

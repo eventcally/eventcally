@@ -1,11 +1,10 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import url_for
 from flask_babel import gettext, lazy_gettext
 
-from project.models import EventReference
-from project.services.event_reference_service import EventReferenceService
+from project.application.queries import (
+    GetIncomingEventReferenceQuery,
+    ListIncomingEventReferencesQuery,
+)
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -23,13 +22,14 @@ from project.views.manage_admin_unit.incoming_event_reference.views import (
     ListView,
     UpdateView,
 )
+from project.views.utils import current_admin_unit
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
-    model = EventReference
-    object_service: Annotated[
-        EventReferenceService, Provide["services.event_reference_service"]
-    ]
+    model_name = "event_reference"
+    model_name_plural = "event_references"
+    display_name = "Event reference"
+    display_name_plural = "Event references"
     create_view_class = None
     read_display_class = ReadDisplay
     update_form_class = UpdateEventReferenceForm
@@ -46,12 +46,17 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     def get_model_display_name_plural(self):
         return lazy_gettext("Incoming references")
 
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(EventReference.created_at.desc())
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListIncomingEventReferencesQuery(
+            admin_unit_id=current_admin_unit.id, page=page_request
         )
+
+    def create_get_query(self, object_id):
+        return GetIncomingEventReferenceQuery(id=object_id)
+
+    def get_object_title(self, object):
+        # Parity with the ORM `CustomModel.__str__` (the model's display name).
+        return f"{gettext(self.display_name)} {object.id}"
 
     def get_list_per_page(self):
         return 50

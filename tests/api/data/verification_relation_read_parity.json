@@ -1,0 +1,140 @@
+{
+  "incoming": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":2,\"source_organization\":{\"id\":4,\"name\":\"Crew 1\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":3,\"source_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":1,\"source_organization\":{\"id\":3,\"name\":\"Crew 0\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"efcb2cd183d289ce4bbb3c431fc10f429a572d7d\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/incoming"
+  },
+  "incoming_created_at_from": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":2,\"source_organization\":{\"id\":4,\"name\":\"Crew 1\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":3,\"source_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"42cff898bebed59d8a0c4d3a68cb1f42393cdd8f\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/incoming?created_at_from=2026-01-12T00:00:00"
+  },
+  "incoming_out_of_range": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organizations/1/organization-verification-requests/incoming?page=4&per_page=2"
+  },
+  "incoming_page_2": {
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":1,\"source_organization\":{\"id\":3,\"name\":\"Crew 0\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":3}\n",
+    "etag": "\"28573e4ecad9c67170589092e23c33e431a5537a\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/incoming?page=2&per_page=2"
+  },
+  "incoming_sort_last_modified_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":1,\"source_organization\":{\"id\":3,\"name\":\"Crew 0\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":3,\"source_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":2,\"source_organization\":{\"id\":4,\"name\":\"Crew 1\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"372d0ac9d1013bb060aa4ad54d4fb6102ed1b208\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/incoming?sort=-last_modified_at"
+  },
+  "incoming_sort_updated_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":1,\"source_organization\":{\"id\":3,\"name\":\"Crew 0\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":3,\"source_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":2,\"source_organization\":{\"id\":4,\"name\":\"Crew 1\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"372d0ac9d1013bb060aa4ad54d4fb6102ed1b208\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/incoming?sort=-updated_at"
+  },
+  "incoming_updated_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":3,\"source_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"target_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
+    "etag": "\"6a58b9bc60adb310e3b4b5d9d9c237f1f5c519a3\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/incoming?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-28T00:00:00"
+  },
+  "outgoing": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":5,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":4,\"name\":\"Crew 1\"},\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":6,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":4,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":3,\"name\":\"Crew 0\"},\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"873c2705412bb03a0d40294af14b18ea5230eac1\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/outgoing"
+  },
+  "outgoing_created_at_from": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":5,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":4,\"name\":\"Crew 1\"},\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":6,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"b18611c70853f180b12c20162c16c2e5fd1f1c59\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/outgoing?created_at_from=2026-01-12T00:00:00"
+  },
+  "outgoing_out_of_range": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organizations/1/organization-verification-requests/outgoing?page=4&per_page=2"
+  },
+  "outgoing_page_2": {
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":4,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":3,\"name\":\"Crew 0\"},\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":3}\n",
+    "etag": "\"fc0e689c9bf3acda76949105c5632e7a6dbcc6ad\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/outgoing?page=2&per_page=2"
+  },
+  "outgoing_sort_last_modified_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":4,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":3,\"name\":\"Crew 0\"},\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":6,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":5,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":4,\"name\":\"Crew 1\"},\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"dee5242cb610b3bbcbcfaa270522cc48dea78aee\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/outgoing?sort=-last_modified_at"
+  },
+  "outgoing_sort_updated_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":4,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":3,\"name\":\"Crew 0\"},\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":6,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":5,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":4,\"name\":\"Crew 1\"},\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"dee5242cb610b3bbcbcfaa270522cc48dea78aee\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/outgoing?sort=-updated_at"
+  },
+  "outgoing_updated_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":6,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
+    "etag": "\"13c4768bf363acd8fd22c847c6d62972bef94a4f\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/organization-verification-requests/outgoing?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-28T00:00:00"
+  },
+  "relation_by_target": {
+    "body": "{\"auto_verify_event_reference_requests\":true,\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":3,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":3,\"name\":\"Crew 0\"},\"updated_at\":null,\"verify\":false}\n",
+    "etag": "\"80559ff790266e9e4837689064c8c744bc960475\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/relations/outgoing/3"
+  },
+  "relation_by_unknown_target": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organizations/1/relations/outgoing/4711"
+  },
+  "relation_detail": {
+    "body": "{\"auto_verify_event_reference_requests\":false,\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":2,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":5,\"name\":\"Crew 2\"},\"updated_at\":\"2026-03-01T12:00:00+00:00\",\"verify\":true}\n",
+    "etag": "\"69b5105b24755ec18c42b24fe5eb961a4283d790\"",
+    "status": 200,
+    "url": "/api/v1/organization-relation/2"
+  },
+  "relation_detail_unknown": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organization-relation/4711"
+  },
+  "relations": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":2,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":5,\"name\":\"Crew 2\"}},{\"id\":3,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":3,\"name\":\"Crew 0\"}},{\"id\":4,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":4,\"name\":\"Crew 1\"}}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"7bb869cb43e5773035bd8de161ee5cda12aa632e\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/relations/outgoing"
+  },
+  "relations_page_2": {
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"id\":4,\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":4,\"name\":\"Crew 1\"}}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":3}\n",
+    "etag": "\"922974fb006dbdc7e4d86743ef31f80ee7afbd32\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/relations/outgoing?page=2&per_page=2"
+  },
+  "verification_detail": {
+    "body": "{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":4,\"rejection_reason\":\"untrustworthy\",\"review_status\":\"rejected\",\"source_organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"target_organization\":{\"id\":3,\"name\":\"Crew 0\"},\"updated_at\":\"2026-03-01T12:00:00+00:00\"}\n",
+    "etag": "\"ebc2e741c1d7255640b6934d6401a621a8f26441\"",
+    "status": 200,
+    "url": "/api/v1/organization-verification-request/4"
+  },
+  "verification_detail_incoming": {
+    "body": "",
+    "etag": null,
+    "status": 401,
+    "url": "/api/v1/organization-verification-request/2"
+  },
+  "verification_detail_unknown": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organization-verification-request/4711"
+  }
+}

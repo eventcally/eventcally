@@ -18,7 +18,7 @@ def create_form_data(response, utils: UtilActions):
 
 
 def test_create(client, app, utils: UtilActions, seeder: Seeder):
-    seeder.create_user()
+    user_id = seeder.create_user()
     utils.login()
     url = utils.get_url("manage.organization_create")
     response = utils.get_ok(url)
@@ -32,20 +32,20 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder):
         assert response.status_code == 302
 
         with app.app_context():
-            from project.access import has_current_user_member_role_for_admin_unit
-            from project.services.admin_unit import get_admin_unit_by_name
-            from project.services.organizer import get_event_organizer
-            from project.services.place import get_event_place
+            from project.cli.seed_helpers import (
+                get_admin_unit_by_name,
+                get_event_organizer,
+                get_event_place,
+                get_member_for_admin_unit_by_user_id,
+            )
 
             admin_unit = get_admin_unit_by_name("Meine Crew")
             assert admin_unit is not None
             assert admin_unit.name == "Meine Crew"
             assert admin_unit.location.city == "Goslar"
             assert admin_unit.location.postalCode == "38640"
-            assert has_current_user_member_role_for_admin_unit(admin_unit.id, "admin")
-            assert has_current_user_member_role_for_admin_unit(
-                admin_unit.id, "event_verifier"
-            )
+            member = get_member_for_admin_unit_by_user_id(admin_unit.id, user_id)
+            assert {role.name for role in member.roles} >= {"admin", "event_verifier"}
 
             organizer = get_event_organizer(admin_unit.id, "Meine Crew")
             assert organizer.name == "Meine Crew"
@@ -170,8 +170,8 @@ def test_create_from_invitation(client, app, db, utils: UtilActions, seeder: See
     assert response.status_code == 302
 
     with app.app_context():
+        from project.cli.seed_helpers import get_admin_unit_by_name
         from project.models import AdminUnitInvitation
-        from project.services.admin_unit import get_admin_unit_by_name
 
         admin_unit = get_admin_unit_by_name("Invited Organization")
         assert admin_unit is not None
@@ -244,7 +244,7 @@ def test_create_with_relation(client, app, utils: UtilActions, seeder: Seeder):
     assert response.status_code == 302
 
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_by_name
+        from project.cli.seed_helpers import get_admin_unit_by_name
 
         admin_unit = get_admin_unit_by_name("Other Crew")
         assert admin_unit is not None
@@ -281,7 +281,7 @@ def test_create_with_relation_auto_verify(
     assert response.status_code == 302
 
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_by_name
+        from project.cli.seed_helpers import get_admin_unit_by_name
 
         admin_unit = get_admin_unit_by_name("Other Crew")
         assert admin_unit is not None
@@ -326,7 +326,7 @@ def test_update(db, app, utils: UtilActions, seeder: Seeder, mocker, db_error):
     assert response.status_code == 302
 
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_by_id
+        from project.cli.seed_helpers import get_admin_unit_by_id
 
         admin_unit_from_db = get_admin_unit_by_id(admin_unit_id)
         assert admin_unit_from_db is not None
@@ -359,7 +359,7 @@ def test_update_with_verification_requests(db, app, utils: UtilActions, seeder: 
     assert response.status_code == 302
 
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_by_id
+        from project.cli.seed_helpers import get_admin_unit_by_id
 
         admin_unit_from_db = get_admin_unit_by_id(admin_unit_id)
         assert admin_unit_from_db is not None

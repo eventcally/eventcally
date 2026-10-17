@@ -1,20 +1,16 @@
-from marshmallow import fields
+from marshmallow import fields, validate
 
-from project.api import marshmallow
 from project.api.schemas import (
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
-    SQLAlchemyBaseSchema,
+    PlainBaseSchema,
     WriteIdSchemaMixin,
 )
-from project.models import License
 
 
-class LicenseModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = License
-        load_instance = True
+class LicenseModelSchema(PlainBaseSchema):
+    pass
 
 
 class LicenseIdSchema(LicenseModelSchema, IdSchemaMixin):
@@ -22,9 +18,9 @@ class LicenseIdSchema(LicenseModelSchema, IdSchemaMixin):
 
 
 class LicenseRefSchema(LicenseIdSchema):
-    name = marshmallow.auto_field()
-    code = marshmallow.auto_field()
-    url = marshmallow.auto_field()
+    name = fields.String(allow_none=True, validate=validate.Length(max=255))
+    code = fields.String(allow_none=True, validate=validate.Length(max=255))
+    url = fields.String(allow_none=True, validate=validate.Length(max=255))
 
 
 class LicenseWriteIdSchema(LicenseModelSchema, WriteIdSchemaMixin):

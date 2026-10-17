@@ -1,11 +1,13 @@
-from project.models import AdminUnit
 from project.views.manage_blueprint import manage_bp
 from project.views.manage_blueprint.child_view_handler import ManageChildViewHandler
 from project.views.manage_blueprint.organization.views import CreateView
 
 
 class ViewHandler(ManageChildViewHandler):
-    model = AdminUnit
+    model_name = "organization"
+    model_name_plural = "organizations"
+    display_name = "Organization"
+    display_name_plural = "Organizations"
     create_view_class = CreateView
     read_view_class = None
     update_view_class = None

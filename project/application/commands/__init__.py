@@ -55,11 +55,17 @@ from .delete_event_command import DeleteEventCommand
 from .delete_event_organizer_command import DeleteEventOrganizerCommand
 from .delete_event_place_command import DeleteEventPlaceCommand
 from .delete_event_reference_command import DeleteEventReferenceCommand
+from .delete_ghost_user_command import DeleteGhostUserCommand
 from .delete_oauth2_client_command import DeleteOAuth2ClientCommand
+from .delete_old_event_command import DeleteOldEventCommand
 from .delete_old_webhook_events_command import DeleteOldWebhookEventsCommand
 from .delete_organization_command import DeleteOrganizationCommand
+from .delete_organization_due_for_deletion_command import (
+    DeleteOrganizationDueForDeletionCommand,
+)
 from .delete_organization_relation_command import DeleteOrganizationRelationCommand
 from .delete_user_command import DeleteUserCommand
+from .delete_user_due_for_deletion_command import DeleteUserDueForDeletionCommand
 from .install_app_command import InstallAppCommand, InstallAppCommandResult
 from .invite_organization_command import (
     InviteOrganizationCommand,
@@ -99,6 +105,7 @@ from .update_custom_widget_command import UpdateCustomWidgetCommand
 from .update_event_command import UpdateEventCommand
 from .update_event_organizer_command import UpdateEventOrganizerCommand
 from .update_event_place_command import UpdateEventPlaceCommand
+from .update_event_recurring_dates_command import UpdateEventRecurringDatesCommand
 from .update_event_reference_command import UpdateEventReferenceCommand
 from .update_member_invitation_command import UpdateMemberInvitationCommand
 from .update_oauth2_client_command import UpdateOAuth2ClientCommand
@@ -179,6 +186,7 @@ __all__ = [
     "CreateEventCommandResult",
     "UpdateEventCommand",
     "DeleteEventCommand",
+    "UpdateEventRecurringDatesCommand",
     "CreateEventReferenceCommand",
     "CreateEventReferenceCommandResult",
     "UpdateEventReferenceCommand",
@@ -227,6 +235,10 @@ __all__ = [
     "UpdateUserNotificationSettingsCommand",
     "UpdateUserRolesCommand",
     "DeleteUserCommand",
+    "DeleteOrganizationDueForDeletionCommand",
+    "DeleteUserDueForDeletionCommand",
+    "DeleteGhostUserCommand",
+    "DeleteOldEventCommand",
     "ResetTosAcceptedForUsersCommand",
     "UpdateSettingsCommand",
     "UpdatePlanningSettingsCommand",

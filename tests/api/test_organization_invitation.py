@@ -85,3 +85,30 @@ def test_delete(client, app, seeder, utils, db):
 
         invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is None
+
+
+def test_read_as_app_installation(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_api_access(as_app_installation=True)
+    invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
+
+    url = utils.get_url("api_v1_organization_invitation", id=invitation_id)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+    assert response.json["id"] == invitation_id
+
+
+def test_read_app_installation_without_permission(client, app, db, seeder, utils):
+    _, admin_unit_id = seeder.setup_api_access(as_app_installation=True)
+    invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
+
+    with app.app_context():
+        from project.models import AppInstallation
+
+        for app_installation in AppInstallation.query.all():
+            app_installation.permissions = ["organization_invitations:write"]
+
+        db.session.commit()
+
+    url = utils.get_url("api_v1_organization_invitation", id=invitation_id)
+    response = utils.get_json(url)
+    utils.assert_response_unauthorized(response)

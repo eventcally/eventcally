@@ -1,0 +1,278 @@
+{
+  "incoming": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"b5fcd4d0d284e3daf15580fa085bfccbb1922971\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/incoming"
+  },
+  "incoming_created_at_from": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"02e3817ac8fbfcc57f25252e9e8d82f8b495fe62\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/incoming?created_at_from=2026-01-12T00:00:00"
+  },
+  "incoming_created_at_to": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"b5fcd4d0d284e3daf15580fa085bfccbb1922971\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/incoming?created_at_to=2026-02-02T00:00:00"
+  },
+  "incoming_last_modified_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"b5fcd4d0d284e3daf15580fa085bfccbb1922971\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/incoming?last_modified_at_from=2026-02-01T00:00:00&last_modified_at_to=2026-03-02T00:00:00"
+  },
+  "incoming_out_of_range": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organizations/1/event-references/incoming?page=4&per_page=2"
+  },
+  "incoming_page_2": {
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":3}\n",
+    "etag": "\"12f22039e43bfc25fab3e234dca5a9ca96f5c9b2\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/incoming?page=2&per_page=2"
+  },
+  "incoming_sort_created_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"b5fcd4d0d284e3daf15580fa085bfccbb1922971\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/incoming?sort=-created_at"
+  },
+  "incoming_sort_last_modified_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"cbc786accba640dd53d859e615c66aee2f212a78\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/incoming?sort=-last_modified_at"
+  },
+  "incoming_sort_updated_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"cbc786accba640dd53d859e615c66aee2f212a78\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/incoming?sort=-updated_at"
+  },
+  "incoming_updated_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
+    "etag": "\"9c3716ad92496ae4c7e7e1e2ff2226b0dd39b249\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/incoming?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-28T00:00:00"
+  },
+  "outgoing": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"af8ed5f7bd514322f4d81da36033cf1e224769a6\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/outgoing"
+  },
+  "outgoing_created_at_from": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"0800516c28cf132cb00428ee35c4a66f534b90e4\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/outgoing?created_at_from=2026-01-12T00:00:00"
+  },
+  "outgoing_created_at_to": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"af8ed5f7bd514322f4d81da36033cf1e224769a6\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/outgoing?created_at_to=2026-02-02T00:00:00"
+  },
+  "outgoing_last_modified_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"af8ed5f7bd514322f4d81da36033cf1e224769a6\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/outgoing?last_modified_at_from=2026-02-01T00:00:00&last_modified_at_to=2026-03-02T00:00:00"
+  },
+  "outgoing_out_of_range": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organizations/1/event-references/outgoing?page=4&per_page=2"
+  },
+  "outgoing_page_2": {
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":3}\n",
+    "etag": "\"74f96ebb2139a7f6be7fcc899c027c35f64d12ae\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/outgoing?page=2&per_page=2"
+  },
+  "outgoing_sort_created_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"af8ed5f7bd514322f4d81da36033cf1e224769a6\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/outgoing?sort=-created_at"
+  },
+  "outgoing_sort_last_modified_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"13f69d47c730ade5acb045fd3c325004b782fdf3\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/outgoing?sort=-last_modified_at"
+  },
+  "outgoing_sort_updated_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"13f69d47c730ade5acb045fd3c325004b782fdf3\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/outgoing?sort=-updated_at"
+  },
+  "outgoing_updated_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
+    "etag": "\"aebb3e502522e2b23b5eb48ce80b7f58407e1923\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-references/outgoing?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-28T00:00:00"
+  },
+  "reference_detail": {
+    "body": "{\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"organization\":{\"id\":1,\"name\":\"Meine Crew\"}}\n",
+    "etag": "\"d70a392f4b3c144c82e2f5488e0024d4bb578a3e\"",
+    "status": 200,
+    "url": "/api/v1/event-references/1"
+  },
+  "reference_detail_foreign": {
+    "body": "{\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"organization\":{\"id\":3,\"name\":\"Andere Crew\"}}\n",
+    "etag": "\"38c4ff724bfaf75925464760dfa0679cf7a97557\"",
+    "status": 200,
+    "url": "/api/v1/event-references/5"
+  },
+  "reference_detail_unknown": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/event-references/4711"
+  },
+  "request_detail": {
+    "body": "{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"organization\":{\"id\":3,\"name\":\"Andere Crew\"},\"rejection_reason\":\"untrustworthy\",\"review_status\":\"rejected\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"}\n",
+    "etag": "\"4d3da8df4fa911e169cfb7f08774ed9e4df370b9\"",
+    "status": 200,
+    "url": "/api/v1/event-reference-requests/4"
+  },
+  "request_detail_incoming": {
+    "body": "",
+    "etag": null,
+    "status": 401,
+    "url": "/api/v1/event-reference-requests/1"
+  },
+  "request_detail_unknown": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/event-reference-requests/4711"
+  },
+  "requests_in": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"b5fcd4d0d284e3daf15580fa085bfccbb1922971\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/incoming"
+  },
+  "requests_in_created_at_from": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"02e3817ac8fbfcc57f25252e9e8d82f8b495fe62\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/incoming?created_at_from=2026-01-12T00:00:00"
+  },
+  "requests_in_created_at_to": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"b5fcd4d0d284e3daf15580fa085bfccbb1922971\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/incoming?created_at_to=2026-02-02T00:00:00"
+  },
+  "requests_in_last_modified_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"b5fcd4d0d284e3daf15580fa085bfccbb1922971\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/incoming?last_modified_at_from=2026-02-01T00:00:00&last_modified_at_to=2026-03-02T00:00:00"
+  },
+  "requests_in_out_of_range": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organizations/1/event-reference-requests/incoming?page=4&per_page=2"
+  },
+  "requests_in_page_2": {
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":3}\n",
+    "etag": "\"12f22039e43bfc25fab3e234dca5a9ca96f5c9b2\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/incoming?page=2&per_page=2"
+  },
+  "requests_in_sort_created_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"b5fcd4d0d284e3daf15580fa085bfccbb1922971\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/incoming?sort=-created_at"
+  },
+  "requests_in_sort_last_modified_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"cbc786accba640dd53d859e615c66aee2f212a78\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/incoming?sort=-last_modified_at"
+  },
+  "requests_in_sort_updated_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":1,\"name\":\"Fremd 0\"},\"id\":1,\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":2,\"name\":\"Fremd 1\"},\"id\":2,\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"cbc786accba640dd53d859e615c66aee2f212a78\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/incoming?sort=-updated_at"
+  },
+  "requests_in_updated_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":3,\"name\":\"Fremd 2\"},\"id\":3,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
+    "etag": "\"9c3716ad92496ae4c7e7e1e2ff2226b0dd39b249\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/incoming?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-28T00:00:00"
+  },
+  "requests_out": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"af8ed5f7bd514322f4d81da36033cf1e224769a6\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/outgoing"
+  },
+  "requests_out_created_at_from": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"0800516c28cf132cb00428ee35c4a66f534b90e4\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/outgoing?created_at_from=2026-01-12T00:00:00"
+  },
+  "requests_out_created_at_to": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"af8ed5f7bd514322f4d81da36033cf1e224769a6\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/outgoing?created_at_to=2026-02-02T00:00:00"
+  },
+  "requests_out_last_modified_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"af8ed5f7bd514322f4d81da36033cf1e224769a6\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/outgoing?last_modified_at_from=2026-02-01T00:00:00&last_modified_at_to=2026-03-02T00:00:00"
+  },
+  "requests_out_out_of_range": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/organizations/1/event-reference-requests/outgoing?page=4&per_page=2"
+  },
+  "requests_out_page_2": {
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":3}\n",
+    "etag": "\"74f96ebb2139a7f6be7fcc899c027c35f64d12ae\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/outgoing?page=2&per_page=2"
+  },
+  "requests_out_sort_created_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"af8ed5f7bd514322f4d81da36033cf1e224769a6\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/outgoing?sort=-created_at"
+  },
+  "requests_out_sort_last_modified_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"13f69d47c730ade5acb045fd3c325004b782fdf3\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/outgoing?sort=-last_modified_at"
+  },
+  "requests_out_sort_updated_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"event\":{\"id\":4,\"name\":\"Eigen 0\"},\"id\":4,\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"event\":{\"id\":5,\"name\":\"Eigen 1\"},\"id\":5,\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"13f69d47c730ade5acb045fd3c325004b782fdf3\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/outgoing?sort=-updated_at"
+  },
+  "requests_out_updated_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"event\":{\"id\":6,\"name\":\"Eigen 2\"},\"id\":6,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
+    "etag": "\"aebb3e502522e2b23b5eb48ce80b7f58407e1923\"",
+    "status": 200,
+    "url": "/api/v1/organizations/1/event-reference-requests/outgoing?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-28T00:00:00"
+  }
+}

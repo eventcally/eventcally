@@ -1,6 +1,5 @@
 from marshmallow import fields, post_load, validate
 
-from project.api import marshmallow
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
     IdPlainSchemaMixin,
@@ -8,7 +7,6 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     PlainBaseSchema,
-    SQLAlchemyBaseSchema,
     TrackableSchemaMixin,
     WriteIdSchemaMixin,
 )
@@ -16,13 +14,10 @@ from project.application.commands import (
     CreateCustomWidgetCommand,
     UpdateCustomWidgetCommand,
 )
-from project.models import CustomWidget
 
 
-class CustomWidgetModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = CustomWidget
-        load_instance = True
+class CustomWidgetModelSchema(PlainBaseSchema):
+    pass
 
 
 class CustomWidgetIdSchema(CustomWidgetModelSchema, IdSchemaMixin):
@@ -42,12 +37,8 @@ class CustomWidgetWriteIdSchema(CustomWidgetModelSchema, WriteIdSchemaMixin):
 
 
 class CustomWidgetBaseSchemaMixin(TrackableSchemaMixin):
-    widget_type = marshmallow.auto_field(
-        required=True, validate=validate.Length(min=3, max=255)
-    )
-    name = marshmallow.auto_field(
-        required=True, validate=validate.Length(min=3, max=255)
-    )
+    widget_type = fields.String(required=True, validate=validate.Length(min=3, max=255))
+    name = fields.String(required=True, validate=validate.Length(min=3, max=255))
     settings = fields.Dict(keys=fields.Str())
 
 
@@ -60,8 +51,8 @@ class CustomWidgetDumpSchema(CustomWidgetIdSchema, CustomWidgetBaseSchemaMixin):
 
 
 class CustomWidgetRefSchema(CustomWidgetIdSchema):
-    widget_type = marshmallow.auto_field()
-    name = marshmallow.auto_field()
+    widget_type = fields.String(required=True, validate=validate.Length(max=255))
+    name = fields.String(required=True, validate=validate.Length(max=255))
 
 
 class CustomWidgetListRequestSchema(PaginationRequestSchema):

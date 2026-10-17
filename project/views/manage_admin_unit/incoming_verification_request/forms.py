@@ -9,9 +9,8 @@ from project.application.commands import (
 from project.domain.models.enums.organization_verification_request_rejection_reason import (
     OrganizationVerificationRequestRejectionReason,
 )
-from project.models import (
-    AdminUnitVerificationRequestRejectionReason,
-    AdminUnitVerificationRequestReviewStatus,
+from project.domain.models.enums.organization_verification_request_review_status import (
+    OrganizationVerificationRequestReviewStatus,
 )
 from project.modular.base_form import BaseForm
 
@@ -26,11 +25,11 @@ class VerificationRequestReviewForm(BaseForm):
         coerce=int,
         choices=[
             (
-                int(AdminUnitVerificationRequestReviewStatus.verified),
+                int(OrganizationVerificationRequestReviewStatus.verified),
                 lazy_gettext("AdminUnitVerificationRequestReviewStatus.verified"),
             ),
             (
-                int(AdminUnitVerificationRequestReviewStatus.rejected),
+                int(OrganizationVerificationRequestReviewStatus.rejected),
                 lazy_gettext("AdminUnitVerificationRequestReviewStatus.rejected"),
             ),
         ],
@@ -46,33 +45,33 @@ class VerificationRequestReviewForm(BaseForm):
                 lazy_gettext("AdminUnitVerificationRequestRejectionReason.noreason"),
             ),
             (
-                int(AdminUnitVerificationRequestRejectionReason.notresponsible),
+                int(OrganizationVerificationRequestRejectionReason.notresponsible),
                 lazy_gettext(
                     "AdminUnitVerificationRequestRejectionReason.notresponsible"
                 ),
             ),
             (
-                int(AdminUnitVerificationRequestRejectionReason.missinginformation),
+                int(OrganizationVerificationRequestRejectionReason.missinginformation),
                 lazy_gettext(
                     "AdminUnitVerificationRequestRejectionReason.missinginformation"
                 ),
             ),
             (
-                int(AdminUnitVerificationRequestRejectionReason.unknown),
+                int(OrganizationVerificationRequestRejectionReason.unknown),
                 lazy_gettext("AdminUnitVerificationRequestRejectionReason.unknown"),
             ),
             (
-                int(AdminUnitVerificationRequestRejectionReason.untrustworthy),
+                int(OrganizationVerificationRequestRejectionReason.untrustworthy),
                 lazy_gettext(
                     "AdminUnitVerificationRequestRejectionReason.untrustworthy"
                 ),
             ),
             (
-                int(AdminUnitVerificationRequestRejectionReason.illegal),
+                int(OrganizationVerificationRequestRejectionReason.illegal),
                 lazy_gettext("AdminUnitVerificationRequestRejectionReason.illegal"),
             ),
             (
-                int(AdminUnitVerificationRequestRejectionReason.irrelevant),
+                int(OrganizationVerificationRequestRejectionReason.irrelevant),
                 lazy_gettext("AdminUnitVerificationRequestRejectionReason.irrelevant"),
             ),
         ],

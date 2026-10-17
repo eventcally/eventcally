@@ -1,10 +1,9 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask_babel import gettext
 
-from project.models import AppInstallation
-from project.services.app_installation_service import AppInstallationService
+from project.application.queries import (
+    GetAppInstallationQuery,
+    ListAppInstallationsQuery,
+)
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.app_installation.displays import (
     ListDisplay,
@@ -18,18 +17,31 @@ from project.views.manage_admin_unit.app_installation.views import (
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
+from project.views.utils import current_admin_unit
 
 
 class AppInstallationViewHandler(ManageAdminUnitChildViewHandler):
-    model = AppInstallation
-    object_service: Annotated[
-        AppInstallationService, Provide["services.app_installation_service"]
-    ]
+    model_name = "app_installation"
+    model_name_plural = "app_installations"
+    display_name = "App installation"
+    display_name_plural = "App installations"
     create_view_class = None
     update_view_class = None
     delete_view_class = DeleteView
     read_display_class = ReadDisplay
     list_display_class = ListDisplay
+
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListAppInstallationsQuery(
+            admin_unit_id=current_admin_unit.id, page=page_request
+        )
+
+    def create_get_query(self, object_id):
+        return GetAppInstallationQuery(id=object_id)
+
+    def get_object_title(self, object):
+        # Parity with the ORM `CustomModel.__str__`.
+        return f"{self.get_model_display_name()} {object.id}"
 
     def _add_views(
         self,

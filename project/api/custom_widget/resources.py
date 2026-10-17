@@ -15,7 +15,8 @@ from project.api.resources import (
     require_organization_api_access,
 )
 from project.application.commands import DeleteCustomWidgetCommand
-from project.models import CustomWidget
+from project.application.queries import GetCustomWidgetQuery, ResourceKind
+from project.views.utils import result_or_404
 
 
 class CustomWidgetResource(BaseResource):
@@ -23,8 +24,7 @@ class CustomWidgetResource(BaseResource):
     @marshal_with(CustomWidgetSchema)
     @require_api_access("organization.custom_widgets:read")
     def get(self, id):
-        customwidget = CustomWidget.query.get_or_404(id)
-        return customwidget
+        return result_or_404(self.query_bus.handle(GetCustomWidgetQuery(id=id)))
 
     @doc(
         summary="Update custom widget",
@@ -32,7 +32,9 @@ class CustomWidgetResource(BaseResource):
     )
     @use_kwargs(CustomWidgetPostRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_organization_api_access("organization.custom_widgets:write", CustomWidget)
+    @require_organization_api_access(
+        "organization.custom_widgets:write", ResourceKind.custom_widget
+    )
     def put(self, id):
         cmd = CustomWidgetPutRequestPlainSchema(context=g.api_command_context).load(
             request.json
@@ -47,7 +49,9 @@ class CustomWidgetResource(BaseResource):
     )
     @use_kwargs(CustomWidgetPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_organization_api_access("organization.custom_widgets:write", CustomWidget)
+    @require_organization_api_access(
+        "organization.custom_widgets:write", ResourceKind.custom_widget
+    )
     def patch(self, id):
         cmd = CustomWidgetPatchRequestPlainSchema(context=g.api_command_context).load(
             request.json
@@ -61,7 +65,9 @@ class CustomWidgetResource(BaseResource):
         tags=["Custom Widgets"],
     )
     @marshal_with(None, 204)
-    @require_organization_api_access("organization.custom_widgets:write", CustomWidget)
+    @require_organization_api_access(
+        "organization.custom_widgets:write", ResourceKind.custom_widget
+    )
     def delete(self, id):
         cmd = DeleteCustomWidgetCommand(
             id=id, actor=self.app_context_provider.get_current_actor()

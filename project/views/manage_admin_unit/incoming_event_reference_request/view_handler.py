@@ -1,16 +1,15 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import url_for
 from flask_babel import gettext, lazy_gettext
 
-from project.models import EventReferenceRequest
-from project.models.event_reference_request import EventReferenceRequestReviewStatus
-from project.modular.filters import EnumFilter
-from project.modular.sort_definition import SortDefinition
-from project.services.event_reference_request_service import (
-    EventReferenceRequestService,
+from project.application.queries import (
+    GetIncomingEventReferenceRequestReviewQuery,
+    ListIncomingEventReferenceRequestsQuery,
 )
+from project.domain.models.enums.event_reference_request_review_status import (
+    EventReferenceRequestReviewStatus,
+)
+from project.modular.filters import KeyEnumFilter, enum_filter_value_or_none
+from project.modular.sort_definition import KeySortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -22,14 +21,14 @@ from project.views.manage_admin_unit.incoming_event_reference_request.views impo
     ListView,
     ReviewView,
 )
+from project.views.utils import current_admin_unit
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
-    model = EventReferenceRequest
-    object_service: Annotated[
-        EventReferenceRequestService,
-        Provide["services.event_reference_request_service"],
-    ]
+    model_name = "event_reference_request"
+    model_name_plural = "event_reference_requests"
+    display_name = "Event reference request"
+    display_name_plural = "Event reference requests"
     create_view_class = None
     read_view_class = None
     update_view_class = None
@@ -37,21 +36,31 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     list_display_class = ListDisplay
     list_view_class = ListView
     list_filters = [
-        EnumFilter(
-            EventReferenceRequest.review_status, label=lazy_gettext("Review status")
+        KeyEnumFilter(
+            "review_status",
+            EventReferenceRequestReviewStatus,
+            label=lazy_gettext("Review status"),
         ),
     ]
     list_sort_definitions = [
-        SortDefinition(
-            EventReferenceRequest.created_at,
-            desc=True,
-            label=lazy_gettext("Last created first"),
-        ),
+        KeySortDefinition("-created_at", label=lazy_gettext("Last created first")),
     ]
     generic_prefix = "incoming_"
 
     def get_model_display_name_plural(self):
         return lazy_gettext("Incoming reference requests")
+
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListIncomingEventReferenceRequestsQuery(
+            admin_unit_id=current_admin_unit.id,
+            review_status=enum_filter_value_or_none(
+                EventReferenceRequestReviewStatus, form.review_status.data
+            ),
+            page=page_request,
+        )
+
+    def create_get_query(self, object_id):
+        return GetIncomingEventReferenceRequestReviewQuery(id=object_id)
 
     def get_list_per_page(self):
         return 50

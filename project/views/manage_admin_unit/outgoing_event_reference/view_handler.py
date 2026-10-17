@@ -1,7 +1,7 @@
 from flask import url_for
 from flask_babel import gettext, lazy_gettext
 
-from project.models import Event, EventReference
+from project.application.queries import ListOutgoingEventReferencesQuery
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -14,7 +14,10 @@ from project.views.utils import current_admin_unit
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
-    model = EventReference
+    model_name = "event_reference"
+    model_name_plural = "event_references"
+    display_name = "Event reference"
+    display_name_plural = "Event references"
     create_view_class = None
     read_view_class = None
     update_view_class = None
@@ -26,17 +29,9 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     def get_model_display_name_plural(self):
         return lazy_gettext("Outgoing references")
 
-    def get_objects_base_query_from_kwargs(self, **kwargs):
-        return super().get_objects_base_query_from_kwargs(**kwargs).join(Event)
-
-    def apply_base_filter(self, query, **kwargs):
-        return query.filter(Event.admin_unit_id == current_admin_unit.id)
-
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(EventReference.created_at.desc())
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListOutgoingEventReferencesQuery(
+            admin_unit_id=current_admin_unit.id, page=page_request
         )
 
     def get_list_per_page(self):

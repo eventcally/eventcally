@@ -2,8 +2,17 @@ from functools import wraps
 from itertools import groupby
 from urllib.parse import quote_plus
 
-from flask import current_app, flash, g, redirect, render_template, request, url_for
-from flask_babel import force_locale, gettext
+from flask import (
+    abort,
+    current_app,
+    flash,
+    g,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
+from flask_babel import force_locale, format_date, format_time, gettext
 from flask_login.utils import decode_cookie
 from flask_mail import Message
 from flask_security import current_user
@@ -19,10 +28,18 @@ from project.access import (
     get_admin_units_for_manage,
     has_access,
 )
+from project.application.queries import GetSettingsQuery
+from project.application.queries.page_request import (
+    DEFAULT_PER_PAGE,
+    MAX_PER_PAGE,
+    PageRequest,
+)
+from project.application.read_models.page import Page
 from project.dateutils import berlin_tz, round_to_next_day
 from project.domain.errors import BaseError
+from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.extensions import mail
-from project.models import Event, EventAttendanceMode, EventDate
+from project.jinja_filters import url_for_image
 from project.utils import dummy_gettext, get_place_str, strings_are_equal_ignoring_case
 
 mail_template_subject_mapping = {
@@ -61,6 +78,11 @@ current_admin_unit = LocalProxy(lambda: get_current_admin_unit(False, False, Fal
 def set_current_admin_unit(admin_unit):
     if admin_unit:
         setattr(g, "manage_admin_unit", admin_unit)
+
+
+def get_settings():
+    """The site settings through the query bus (empty values without a row)."""
+    return current_app.container.cqrs.query_bus().handle(GetSettingsQuery())
 
 
 def get_current_admin_unit(fallback=True, use_cookies=True, use_headers=False):
@@ -174,6 +196,47 @@ def get_pagination_urls(pagination, **kwargs):
             result["last_url"] = url_for(request.endpoint, **args)
 
     return result
+
+
+def page_request_from_request_args(
+    per_page: int | None = None,
+    default_per_page: int = DEFAULT_PER_PAGE,
+    max_per_page: int | None = None,
+) -> PageRequest:
+    """Read `page` (and `per_page` unless given) from the query string.
+
+    Mirrors Flask-SQLAlchemy's `paginate()` with `error_out=True`: invalid or
+    non-positive values abort with 404, `max_per_page` clamps.
+    """
+    try:
+        page = int(request.args.get("page", 1))
+
+        if per_page is None:
+            per_page = int(request.args.get("per_page", default_per_page))
+    except (TypeError, ValueError):
+        abort(404)
+
+    if max_per_page is not None:
+        per_page = min(per_page, max_per_page)
+
+    if page < 1 or per_page < 1:
+        abort(404)
+
+    return PageRequest(page=page, per_page=min(per_page, MAX_PER_PAGE))
+
+
+def abort_if_page_out_of_range(page: Page):
+    """404 for an empty page beyond the first, like `paginate(error_out=True)`."""
+    if page.is_out_of_range:
+        abort(404)
+
+
+def result_or_404(value):
+    """Single-object queries return None when nothing is found."""
+    if value is None:
+        abort(404)
+
+    return value
 
 
 def flash_errors(form, prefix=None):
@@ -349,7 +412,7 @@ def get_share_links(url: str, title: str) -> dict:
     return share_links
 
 
-def get_calendar_links_for_event_date(event_date: EventDate) -> dict:
+def get_calendar_links_for_event_date(event_date) -> dict:
     calendar_links = dict()
 
     url = url_for("main.event_date", id=event_date.id, _external=True)
@@ -388,14 +451,48 @@ def get_calendar_links_for_event_date(event_date: EventDate) -> dict:
     return calendar_links
 
 
-def get_calendar_links_for_event(event: Event) -> dict:
+def get_meta_data(event, event_date=None) -> dict:
+    """Page meta of an event (read model) and optionally one of its dates."""
+    meta = dict()
+    meta["title"] = event.name
+
+    if (
+        event.attendance_mode
+        and event.attendance_mode != EventAttendanceMode.online
+        and event.event_place
+    ):
+        meta["title"] = f"{meta['title']} @ {event.event_place.name}"
+
+        if event.event_place.location and event.event_place.location.city:
+            meta["title"] = f"{meta['title']}, {event.event_place.location.city}"
+
+    if event_date:
+        date_str = format_date(event_date.start, "full")
+        time_str = format_time(event_date.start, "short")
+        meta["description"] = f"{date_str} {time_str}"
+
+    if event.description:
+        desc_short = truncate(event.description, 300)
+
+        if "description" in meta:
+            meta["description"] = f"{meta['description']}: {desc_short}"
+        else:
+            meta["description"] = desc_short
+
+    if event.photo_id:
+        meta["image"] = url_for_image(event.photo, _external=True)
+
+    return meta
+
+
+def get_calendar_links_for_event(event) -> dict:
     calendar_links = dict()
     calendar_links["ics"] = url_for("main.event_ical", id=event.id, _external=True)
     return calendar_links
 
 
 def get_invitation_access_result(email: str):
-    from project.services.user import find_user_by_email
+    from project.user_datastore import find_user_by_email
 
     # Wenn der aktuelle Nutzer nicht der Empfänger der Einladung ist, Meldung ausgeben
     if current_user.is_authenticated and not strings_are_equal_ignoring_case(

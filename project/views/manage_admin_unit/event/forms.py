@@ -21,6 +21,7 @@ from project.application.commands.create_event_place_command import (
     CreateEventPlaceCommand,
 )
 from project.application.commands.update_event_command import UpdateEventCommand
+from project.application.queries import ListCustomEventCategorySetsQuery
 from project.dateutils import date_set_end_of_day
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.enums.event_public_status import EventPublicStatus
@@ -35,12 +36,13 @@ from project.forms.widgets import (
     HTML5StringField,
     MultiCheckboxField,
 )
-from project.models import EventDateDefinition, Image
-from project.models.event_organizer import EventOrganizer
-from project.models.event_place import EventPlace
-from project.models.location import Location
 from project.modular.ajax import CustomEventCategoryLoader, EventCategoryAjaxModelLoader
-from project.modular.base_form import BaseCreateForm, BaseForm, BaseUpdateForm
+from project.modular.base_form import (
+    BaseCreateForm,
+    BaseForm,
+    BaseUpdateForm,
+    BlankFormData,
+)
 from project.modular.fields import AjaxSelectField, AjaxSelectMultipleField
 from project.views.manage_admin_unit.ajax import (
     EventOrganizerAjaxModelLoader,
@@ -112,9 +114,7 @@ class EventDateDefinitionForm(BaseForm, EventDateDefinitionFormMixin):
 
 class CustomEventCategoryForm(BaseForm):
     def __init__(self, *args, **kwargs):
-        from project.models.event_category import CustomEventCategorySet
-
-        for category_set in CustomEventCategorySet.query.all():
+        for category_set in self._category_sets():
             field_name = f"set_{category_set.id}"
             field = AjaxSelectMultipleField(
                 CustomEventCategoryLoader(category_set_id=category_set.id),
@@ -125,12 +125,13 @@ class CustomEventCategoryForm(BaseForm):
 
         super().__init__(*args, **kwargs)
 
-    def process(self, formdata=None, obj=None, data=None, extra_filters=None, **kwargs):
-        from project.models.event_category import CustomEventCategorySet
+    def _category_sets(self):
+        return self.get_query_bus().handle(ListCustomEventCategorySetsQuery()).items
 
+    def process(self, formdata=None, obj=None, data=None, extra_filters=None, **kwargs):
         if obj:
             categories = obj
-            for category_set in CustomEventCategorySet.query.all():
+            for category_set in self._category_sets():
                 field_name = f"set_{category_set.id}"
                 field_data = list(
                     filter(lambda c: c.category_set_id == category_set.id, categories)
@@ -274,18 +275,16 @@ class EventFormMixin(object):
     photo = FormField(
         Base64ImageForm,
         lazy_gettext("Photo"),
-        default=lambda: Image(),
+        default=BlankFormData,
         description=lazy_gettext(
             "We recommend uploading a photo for the event. It looks a lot more, but of course it works without it."
         ),
     )
     date_definitions = FieldList(
-        FormField(EventDateDefinitionForm, default=lambda: EventDateDefinition()),
+        FormField(EventDateDefinitionForm, default=BlankFormData),
         min_entries=1,
     )
-    date_definition_template = FormField(
-        EventDateDefinitionForm, default=lambda: EventDateDefinition()
-    )
+    date_definition_template = FormField(EventDateDefinitionForm, default=BlankFormData)
     categories = AjaxSelectMultipleField(
         EventCategoryAjaxModelLoader(),
         lazy_gettext("Categories"),
@@ -320,7 +319,7 @@ class EventPlaceForm(BaseForm):
         lazy_gettext("Name"),
         validators=[Optional()],
     )
-    location = FormField(LocationForm, default=lambda: Location())
+    location = FormField(LocationForm, default=BlankFormData)
 
     def create_create_command(self, admin_unit_id: int) -> CreateEventPlaceCommand:
         return CreateEventPlaceCommand(
@@ -336,7 +335,7 @@ class OrganizerForm(BaseForm):
         lazy_gettext("Name"),
         validators=[Optional()],
     )
-    location = FormField(LocationForm, default=lambda: Location())
+    location = FormField(LocationForm, default=BlankFormData)
 
     def create_create_command(self, admin_unit_id: int) -> CreateEventOrganizerCommand:
         return CreateEventOrganizerCommand(
@@ -363,7 +362,7 @@ class CreateForm(BaseCreateForm, EventFormMixin):
         validators=[Optional()],
         allow_blank=True,
     )
-    new_event_place = FormField(EventPlaceForm, default=lambda: EventPlace())
+    new_event_place = FormField(EventPlaceForm, default=BlankFormData)
 
     organizer_choice = RadioField(
         lazy_gettext("Organizer"),
@@ -380,7 +379,7 @@ class CreateForm(BaseCreateForm, EventFormMixin):
         validators=[Optional()],
         allow_blank=True,
     )
-    new_organizer = FormField(OrganizerForm, default=lambda: EventOrganizer())
+    new_organizer = FormField(OrganizerForm, default=BlankFormData)
 
     reference_request_admin_unit_id = MultiCheckboxField(
         lazy_gettext("Reference requests"), validators=[Optional()], coerce=int

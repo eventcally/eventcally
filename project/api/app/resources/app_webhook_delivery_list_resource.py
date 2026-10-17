@@ -6,9 +6,10 @@ from project.api.app.schemas import (
     AppWebhookDeliveryListRequestSchema,
     AppWebhookDeliveryListResponseSchema,
 )
+from project.api.query_args import page_request_from_kwargs
 from project.api.resources import BaseResource, require_api_access
-from project.models import WebhookDelivery
-from project.models.webhook_event import WebhookEvent
+from project.application.queries import ListWebhookDeliveriesForAppQuery
+from project.views.utils import abort_if_page_out_of_range
 
 
 class AppWebhookDeliveryListResource(BaseResource):
@@ -17,14 +18,13 @@ class AppWebhookDeliveryListResource(BaseResource):
     @marshal_with(AppWebhookDeliveryListResponseSchema)
     @require_api_access(app_token_required=True)
     def get(self, **kwargs):
-        query = WebhookDelivery.query.filter(
-            WebhookDelivery.app_id == current_token.app_id
+        page = self.query_bus.handle(
+            ListWebhookDeliveriesForAppQuery(
+                app_id=current_token.app_id, page=page_request_from_kwargs(kwargs)
+            )
         )
-        query = query.join(WebhookDelivery.webhook_event).order_by(
-            WebhookEvent.timestamp.desc()
-        )
-
-        return query.paginate()
+        abort_if_page_out_of_range(page)
+        return page
 
 
 add_api_resource(

@@ -70,12 +70,12 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
     assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
+        from project.cli.seed_helpers import get_admin_unit_relation
         from project.models import (
             EventReference,
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
         )
-        from project.services.admin_unit import get_admin_unit_relation
 
         reference_request = db.session.get(EventReferenceRequest, reference_request_id)
         assert reference_request.verified

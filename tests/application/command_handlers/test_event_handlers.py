@@ -9,6 +9,9 @@ from project.application import commands
 from project.application.command_handlers.create_event_handler import CreateEventHandler
 from project.application.command_handlers.delete_event_handler import DeleteEventHandler
 from project.application.command_handlers.update_event_handler import UpdateEventHandler
+from project.application.command_handlers.update_event_recurring_dates_handler import (
+    UpdateEventRecurringDatesHandler,
+)
 from project.domain.errors import NotFoundError, UnauthorizedError
 from project.domain.errors.constraint_error import ConstraintError
 from project.domain.models.aggregates.event_aggregate import EventAggregate
@@ -288,3 +291,51 @@ class TestDeleteEventHandler:
 
         with pytest.raises(UnauthorizedError):
             DeleteEventHandler().handle(cmd, uow)
+
+
+class TestUpdateEventRecurringDatesHandler:
+    def _seed_event(self, uow, date_definition):
+        event = EventAggregate.create(
+            actor=Actor(),
+            admin_unit_id=1,
+            name="Recurring",
+            organizer_id=2,
+            event_place_id=3,
+            date_definitions=[date_definition],
+            status=EventStatus.scheduled,
+            public_status=EventPublicStatus.published,
+        )
+        uow.events.add(event)
+        return event
+
+    def test_unchanged_dates_are_not_saved(self, uow, mocker):
+        event = self._seed_event(uow, _date_def())
+        update = mocker.spy(uow.events, "update")
+        cmd = commands.UpdateEventRecurringDatesCommand(
+            actor=Actor(), event_id=event.id
+        )
+
+        assert UpdateEventRecurringDatesHandler().handle(cmd, uow) is False
+        update.assert_not_called()
+
+    def test_changed_dates_are_saved_without_a_new_domain_event(self, uow, mocker):
+        date_def = _date_def()
+        event = self._seed_event(uow, date_def)
+        domain_events = list(event.domain_events)
+        date_def.recurrence_rule = "RRULE:FREQ=DAILY;COUNT=3"
+        update = mocker.spy(uow.events, "update")
+        cmd = commands.UpdateEventRecurringDatesCommand(
+            actor=Actor(), event_id=event.id
+        )
+
+        assert UpdateEventRecurringDatesHandler().handle(cmd, uow) is True
+
+        assert len(event.dates) == 3
+        update.assert_called_once_with(event)
+        assert event.domain_events == domain_events
+
+    def test_unknown_event_raises_not_found_error(self, uow):
+        cmd = commands.UpdateEventRecurringDatesCommand(actor=Actor(), event_id=9999)
+
+        with pytest.raises(NotFoundError):
+            UpdateEventRecurringDatesHandler().handle(cmd, uow)

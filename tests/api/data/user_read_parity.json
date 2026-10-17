@@ -1,0 +1,80 @@
+{
+  "invitation": {
+    "body": "{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"invited@test.de\",\"id\":2,\"organization\":{\"id\":3,\"name\":\"Zweite Crew\"},\"organization_name\":\"Bravo\",\"relation_auto_verify_event_reference_requests\":false,\"relation_verify\":false,\"updated_at\":null}\n",
+    "etag": "\"1a9f89e8f61c4a5d1906a4b821ab2b3fb029a856\"",
+    "status": 200,
+    "url": "/api/v1/user/organization-invitation/2"
+  },
+  "invitation_foreign": {
+    "body": "",
+    "etag": null,
+    "status": 401,
+    "url": "/api/v1/user/organization-invitation/4"
+  },
+  "invitation_unknown": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/user/organization-invitation/4711"
+  },
+  "invitations": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"Invited@test.de\",\"id\":1,\"organization_name\":\"Alpha\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"invited@test.de\",\"id\":2,\"organization_name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"invited@TEST.de\",\"id\":3,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"0f3dd9e854ab263a582db1695be9117b07595a94\"",
+    "status": 200,
+    "url": "/api/v1/user/organization-invitations"
+  },
+  "invitations_created_at_from": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"invited@test.de\",\"id\":2,\"organization_name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"invited@TEST.de\",\"id\":3,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"92effa331de76a2bbd2d8e0f5821746b9644bfbc\"",
+    "status": 200,
+    "url": "/api/v1/user/organization-invitations?created_at_from=2026-01-12T00:00:00"
+  },
+  "invitations_out_of_range": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/user/organization-invitations?page=4&per_page=2"
+  },
+  "invitations_page_2": {
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"invited@TEST.de\",\"id\":3,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":3}\n",
+    "etag": "\"d9c20568cf47c03dc0e30d7d3ab51e6d00212855\"",
+    "status": 200,
+    "url": "/api/v1/user/organization-invitations?page=2&per_page=2"
+  },
+  "invitations_sort_last_modified_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"Invited@test.de\",\"id\":1,\"organization_name\":\"Alpha\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"invited@TEST.de\",\"id\":3,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"invited@test.de\",\"id\":2,\"organization_name\":\"Bravo\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"d1039373e9e0d2e259e75727ec9c9714ce60a28b\"",
+    "status": 200,
+    "url": "/api/v1/user/organization-invitations?sort=-last_modified_at"
+  },
+  "invitations_sort_name": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"Invited@test.de\",\"id\":1,\"organization_name\":\"Alpha\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"invited@test.de\",\"id\":2,\"organization_name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"invited@TEST.de\",\"id\":3,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"0f3dd9e854ab263a582db1695be9117b07595a94\"",
+    "status": 200,
+    "url": "/api/v1/user/organization-invitations?sort=name"
+  },
+  "invitations_sort_updated_at": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"Invited@test.de\",\"id\":1,\"organization_name\":\"Alpha\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"invited@TEST.de\",\"id\":3,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"invited@test.de\",\"id\":2,\"organization_name\":\"Bravo\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"d1039373e9e0d2e259e75727ec9c9714ce60a28b\"",
+    "status": 200,
+    "url": "/api/v1/user/organization-invitations?sort=-updated_at"
+  },
+  "invitations_updated_at_range": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"invited@TEST.de\",\"id\":3,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
+    "etag": "\"034bb59a3c4ab1941b915f1187ae81e1ec6d3399\"",
+    "status": 200,
+    "url": "/api/v1/user/organization-invitations?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-28T00:00:00"
+  },
+  "memberships": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":5,\"is_admin\":true,\"organization\":{\"id\":1,\"name\":\"Meine Crew\"}},{\"id\":6,\"is_admin\":false,\"organization\":{\"id\":3,\"name\":\"Zweite Crew\"}}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
+    "etag": "\"69afa80532fa57aea2fb5935142cd016c33eab7d\"",
+    "status": 200,
+    "url": "/api/v1/user/organization-memberships"
+  },
+  "memberships_page_2": {
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"id\":6,\"is_admin\":false,\"organization\":{\"id\":3,\"name\":\"Zweite Crew\"}}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":1,\"prev_num\":1,\"total\":2}\n",
+    "etag": "\"d2693ff727f5949dfbf1b2c1c2a9cea85d4da132\"",
+    "status": 200,
+    "url": "/api/v1/user/organization-memberships?page=2&per_page=1"
+  }
+}
