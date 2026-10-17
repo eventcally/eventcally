@@ -16,7 +16,7 @@ def _app(app, db, seeder, admin_unit_id):
     app_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
 
     with app.app_context():
-        from project.models import OAuth2Client
+        from project.infrastructure.models import OAuth2Client
 
         client = db.session.get(OAuth2Client, app_id)
         client.homepage_url = "https://example.com"

@@ -30,7 +30,7 @@ def _set_trackable(db, table, object_id, created_at, updated_at=None):
 
 def seed_organizers(app, db, seeder: Seeder, admin_unit_id):
     """Organizers with fixed timestamps, so the payloads are deterministic."""
-    from project.models import EventOrganizer, Location
+    from project.infrastructure.models import EventOrganizer, Location
 
     full_id = seeder.upsert_default_event_organizer(admin_unit_id)
     alpha_id = seeder.upsert_event_organizer(admin_unit_id, "Alpha")

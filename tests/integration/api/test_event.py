@@ -260,7 +260,7 @@ def test_put(client, seeder: Seeder, utils: UtilActions, app, db, mocker, varian
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             Event,
             EventAttendanceMode,
             EventPublicStatus,
@@ -414,7 +414,7 @@ def test_put_co_organizers(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = db.session.get(Event, event_id)
         assert len(event.co_organizers) == 2
@@ -504,7 +504,7 @@ def test_put_categories(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = db.session.get(Event, event_id)
         assert event.category.name == "Art"
@@ -525,7 +525,7 @@ def test_put_dateWithTimezone(client, seeder: Seeder, utils: UtilActions, app, d
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         expected = create_berlin_date(2030, 12, 31, 14, 30)
 
@@ -548,7 +548,7 @@ def test_put_dateWithoutTimezone(client, seeder: Seeder, utils: UtilActions, app
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         expected = create_berlin_date(2030, 12, 31, 14, 30)
 
@@ -620,7 +620,7 @@ def test_put_photo_delete(client, db, seeder: Seeder, utils: UtilActions, app):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import Event, Image
+        from project.infrastructure.models import Event, Image
 
         event = db.session.get(Event, event_id)
         assert event.photo_id is None
@@ -638,7 +638,7 @@ def test_patch(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = db.session.get(Event, event_id)
         assert event.name == "Name"
@@ -712,7 +712,7 @@ def test_patch_photo(
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = db.session.get(Event, event_id)
         assert event.photo is not None
@@ -758,7 +758,7 @@ def test_patch_photo_delete(client, db, seeder: Seeder, utils: UtilActions, app)
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import Event, Image
+        from project.infrastructure.models import Event, Image
 
         event = db.session.get(Event, event_id)
         assert event.photo_id is None
@@ -776,7 +776,7 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = db.session.get(Event, event_id)
         assert event is None
@@ -828,7 +828,7 @@ def test_update_allday_unrelated_change_keeps_stored_dates(
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = Event.query.filter(Event.id == event_id).first()
         date_definition = event.date_definitions[0]

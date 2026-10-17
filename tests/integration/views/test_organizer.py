@@ -51,7 +51,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     )
 
     with app.app_context():
-        from project.models import EventOrganizer
+        from project.infrastructure.models import EventOrganizer
 
         organizer = (
             EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit_id)
@@ -125,7 +125,7 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
     )
 
     with app.app_context():
-        from project.models import EventOrganizer
+        from project.infrastructure.models import EventOrganizer
 
         organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer.name == "Neuer Name"
@@ -156,7 +156,7 @@ def test_update_logo(client, seeder, utils, app, db, mocker):
     )
 
     with app.app_context():
-        from project.models import EventOrganizer
+        from project.infrastructure.models import EventOrganizer
 
         organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer.logo is not None
@@ -208,7 +208,7 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     )
 
     with app.app_context():
-        from project.models import EventOrganizer
+        from project.infrastructure.models import EventOrganizer
 
         organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer is None

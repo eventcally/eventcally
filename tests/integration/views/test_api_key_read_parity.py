@@ -17,7 +17,7 @@ def _first_cells(utils, response):
 
 def _insert_key(app, db, name, created_at, user_id=None, admin_unit_id=None):
     with app.app_context():
-        from project.models import ApiKey
+        from project.infrastructure.models import ApiKey
 
         api_key = ApiKey(name=name, user_id=user_id, admin_unit_id=admin_unit_id)
         api_key.generate_key()

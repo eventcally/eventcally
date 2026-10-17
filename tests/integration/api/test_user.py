@@ -63,7 +63,7 @@ def test_organization_invitation_delete(client, app, seeder, utils, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is None

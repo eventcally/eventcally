@@ -99,7 +99,7 @@ def test_delete(client, app, db, utils: UtilActions, seeder: Seeder):
     )
 
     with app.app_context():
-        from project.models import AdminUnitMemberInvitation
+        from project.infrastructure.models import AdminUnitMemberInvitation
 
         assert db.session.get(AdminUnitMemberInvitation, invitation_id) is None
 

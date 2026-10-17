@@ -80,7 +80,7 @@ def audit_options(model) -> list:
     """Eager loads for `to_audit_read_model` on a `TrackableMixin` model."""
     from sqlalchemy.orm import joinedload, undefer_group
 
-    from project.models import AppInstallation, OAuth2Client, User
+    from project.infrastructure.models import AppInstallation, OAuth2Client, User
 
     def installation(relationship):
         return (

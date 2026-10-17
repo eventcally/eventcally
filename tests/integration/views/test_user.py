@@ -137,7 +137,7 @@ def test_user_general(client, seeder, utils, app, db, mocker, locale, db_error):
     utils.assert_response_redirect(response, "main.profile")
 
     with app.app_context():
-        from project.models import User
+        from project.infrastructure.models import User
 
         user = db.session.get(User, user_id)
         assert user.locale == locale
@@ -168,7 +168,7 @@ def test_user_notifications(client, seeder, utils, app, db, mocker, db_error):
     utils.assert_response_redirect(response, "main.profile")
 
     with app.app_context():
-        from project.models import User
+        from project.infrastructure.models import User
 
         user = db.session.get(User, user_id)
         assert not user.newsletter_enabled
@@ -260,7 +260,7 @@ def test_user_request_deletion(
     utils.assert_response_redirect(response, "main.profile")
 
     with app.app_context():
-        from project.models import User
+        from project.infrastructure.models import User
 
         user = db.session.get(User, member_id)
         assert user.deletion_requested_at is not None
@@ -311,7 +311,7 @@ def test_user_cancel_deletion(
     with app.app_context():
         import datetime
 
-        from project.models import User
+        from project.infrastructure.models import User
 
         user = db.session.get(User, user_id)
         user.deletion_requested_at = datetime.datetime.now(datetime.UTC)
@@ -349,7 +349,7 @@ def test_user_cancel_deletion(
     utils.assert_response_redirect(response, "main.profile")
 
     with app.app_context():
-        from project.models import User
+        from project.infrastructure.models import User
 
         user = db.session.get(User, user_id)
         assert user.deletion_requested_at is None

@@ -24,7 +24,7 @@ def _checked(soup, name):
 
 def _set_webhook(app, db, oauth2_client_id):
     with app.app_context():
-        from project.models import OAuth2Client, Webhook
+        from project.infrastructure.models import OAuth2Client, Webhook
 
         client = db.session.get(OAuth2Client, oauth2_client_id)
         client.description = "Beschreibung"

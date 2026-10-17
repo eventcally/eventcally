@@ -33,7 +33,7 @@ def test_create(client, app, seeder: Seeder, utils: UtilActions):
     )
 
     with app.app_context():
-        from project.models import ApiKey
+        from project.infrastructure.models import ApiKey
 
         api_key = ApiKey.query.filter(ApiKey.user_id == user_id).first()
         assert api_key is not None
@@ -68,7 +68,7 @@ def test_update(client, seeder: Seeder, utils: UtilActions, app, db):
     )
 
     with app.app_context():
-        from project.models import ApiKey
+        from project.infrastructure.models import ApiKey
 
         api_key = db.session.get(ApiKey, api_key_id)
         assert api_key.name == "Neuer Name"
@@ -102,7 +102,7 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_redirect(response, "user.api_keys")
 
     with app.app_context():
-        from project.models import ApiKey
+        from project.infrastructure.models import ApiKey
 
         api_key = db.session.get(ApiKey, api_key_id)
         assert api_key is None

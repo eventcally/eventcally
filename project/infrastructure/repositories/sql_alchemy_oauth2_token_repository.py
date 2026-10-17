@@ -5,8 +5,8 @@ from project.domain.models.aggregates.oauth2_token_aggregate import OAuth2TokenA
 from project.domain.repositories.abstract_oauth2_token_repository import (
     AbstractOAuth2TokenRepository,
 )
+from project.infrastructure.models.oauth import OAuth2Token
 from project.infrastructure.sql_error_translation import flush
-from project.models.oauth import OAuth2Token
 
 
 class SqlAlchemyOAuth2TokenRepository(AbstractOAuth2TokenRepository):

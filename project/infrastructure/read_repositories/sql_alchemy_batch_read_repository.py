@@ -35,16 +35,7 @@ from project.dateutils import get_today
 from project.domain.models.deletion_policy import DELETION_GRACE_PERIOD
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.types.object_id import ObjectId
-from project.infrastructure.read_repositories.event_read_model_mappers import (
-    event_load_options,
-    image_options,
-    to_event_detail,
-    to_organization_embed,
-    to_organizer_embed,
-    to_place_embed,
-    verified_admin_units,
-)
-from project.models import (
+from project.infrastructure.models import (
     AdminUnit,
     Event,
     EventCategory,
@@ -53,6 +44,15 @@ from project.models import (
     EventPlace,
     EventReference,
     User,
+)
+from project.infrastructure.read_repositories.event_read_model_mappers import (
+    event_load_options,
+    image_options,
+    to_event_detail,
+    to_organization_embed,
+    to_organizer_embed,
+    to_place_embed,
+    verified_admin_units,
 )
 
 

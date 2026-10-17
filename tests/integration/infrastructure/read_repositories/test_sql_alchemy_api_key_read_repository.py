@@ -30,7 +30,7 @@ def keys(app, db, seeder):
 
     def insert(name, created_at, **owner):
         with app.app_context():
-            from project.models import ApiKey
+            from project.infrastructure.models import ApiKey
 
             api_key = ApiKey(name=name, **owner)
             api_key.generate_key()

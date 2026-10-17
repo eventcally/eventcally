@@ -77,7 +77,7 @@ Reads in views (incl. `project/views/modular`) and the API are migrating to the 
   `Provide[Application.cqrs.query_bus]` in flat view functions. Helpers in `project/views/utils.py`:
   `page_request_from_request_args`, `abort_if_page_out_of_range`, `result_or_404`.
 - The `delivery-reads-through-queries` import-linter contract only exempts `views.flask_admin`
-  (Flask-Admin stays ORM); it also covers `project.access` and `project.jinja_filters`. After removing a `project.models` import, run `python .scripts/models_import_ignores.py --write`;
+  (Flask-Admin stays ORM); it also covers `project.access` and `project.jinja_filters`. After removing a `project.infrastructure.models` import, run `python .scripts/models_import_ignores.py --write`;
   never add entries by hand.
 
 ## Code generation

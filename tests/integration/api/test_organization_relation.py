@@ -45,7 +45,7 @@ def test_put(client, app, seeder, utils, db):
     ) = seeder.create_any_admin_unit_relation(admin_unit_id)
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.can_verify_other = True
@@ -64,7 +64,7 @@ def test_put(client, app, seeder, utils, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import AdminUnitRelation
+        from project.infrastructure.models import AdminUnitRelation
 
         relation = db.session.get(AdminUnitRelation, relation_id)
         assert relation is not None
@@ -94,7 +94,7 @@ def test_patch(client, app, seeder, utils, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import AdminUnitRelation
+        from project.infrastructure.models import AdminUnitRelation
 
         relation = db.session.get(AdminUnitRelation, relation_id)
         assert relation is not None
@@ -119,7 +119,7 @@ def test_delete(client, app, seeder, utils, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import AdminUnitRelation
+        from project.infrastructure.models import AdminUnitRelation
 
         relation = db.session.get(AdminUnitRelation, relation_id)
         assert relation is None

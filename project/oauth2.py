@@ -16,7 +16,7 @@ from flask import request as flask_req
 from flask import url_for
 
 from project.extensions import db
-from project.models import (
+from project.infrastructure.models import (
     AppInstallation,
     AppKey,
     OAuth2AuthorizationCode,

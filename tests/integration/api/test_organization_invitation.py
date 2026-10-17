@@ -34,7 +34,7 @@ def test_put(client, app, seeder, utils, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is not None
@@ -61,7 +61,7 @@ def test_patch(client, app, seeder, utils, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is not None
@@ -81,7 +81,7 @@ def test_delete(client, app, seeder, utils, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is None
@@ -102,7 +102,7 @@ def test_read_app_installation_without_permission(client, app, db, seeder, utils
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     with app.app_context():
-        from project.models import AppInstallation
+        from project.infrastructure.models import AppInstallation
 
         for app_installation in AppInstallation.query.all():
             app_installation.permissions = ["organization_invitations:write"]

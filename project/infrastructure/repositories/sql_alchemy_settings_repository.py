@@ -4,7 +4,7 @@ from project.domain.models.aggregates.settings_aggregate import SettingsAggregat
 from project.domain.repositories.abstract_settings_repository import (
     AbstractSettingsRepository,
 )
-from project.models.settings import Settings
+from project.infrastructure.models.settings import Settings
 
 
 class SqlAlchemySettingsRepository(AbstractSettingsRepository):

@@ -6,7 +6,7 @@ from project.domain.models.aggregates.webhook_event_aggregate import (
 from project.domain.repositories.abstract_webhook_event_repository import (
     AbstractWebhookEventRepository,
 )
-from project.models.webhook_event import WebhookEvent
+from project.infrastructure.models.webhook_event import WebhookEvent
 
 
 class SqlAlchemyWebhookEventRepository(AbstractWebhookEventRepository):

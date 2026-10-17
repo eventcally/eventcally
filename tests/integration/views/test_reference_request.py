@@ -47,7 +47,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_erro
     assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
         )
@@ -153,7 +153,7 @@ def test_create_autoVerify(client, app, utils: UtilActions, seeder: Seeder):
     assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReference,
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,

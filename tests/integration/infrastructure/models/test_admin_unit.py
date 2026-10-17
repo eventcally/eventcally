@@ -3,7 +3,7 @@ def test_fill_from_aggregate_clears_existing_location(app):
         from project.domain.models.aggregates.organization_aggregate import (
             OrganizationAggregate,
         )
-        from project.models import AdminUnit, Location
+        from project.infrastructure.models import AdminUnit, Location
 
         model = AdminUnit()
         model.location = Location(city="Goslar")

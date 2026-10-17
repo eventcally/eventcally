@@ -14,8 +14,8 @@ def test_get_sd_for_admin_unit(client, app, db, seeder):
     user_id, admin_unit_id = seeder.setup_base()
 
     with app.app_context():
+        from project.infrastructure.models import AdminUnit
         from project.jsonld import get_sd_for_admin_unit
-        from project.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.url = "http://www.goslar.de"
@@ -29,8 +29,8 @@ def test_get_sd_for_organizer(client, app, db, seeder):
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
     with app.app_context():
+        from project.infrastructure.models import EventOrganizer
         from project.jsonld import get_sd_for_organizer
-        from project.models import EventOrganizer
 
         organizer = db.session.get(EventOrganizer, organizer_id)
         organizer.email = "info@goslar.de"
@@ -52,8 +52,8 @@ def test_get_sd_for_place(client, app, db, utils, seeder):
     with app.app_context():
         from math import isclose
 
+        from project.infrastructure.models import EventPlace, Image, Location
         from project.jsonld import get_sd_for_place
-        from project.models import EventPlace, Image, Location
 
         place = db.session.get(EventPlace, place_id)
         place.url = "http://www.goslar.de"
@@ -90,8 +90,8 @@ def test_get_sd_for_place_noCoordinates(client, app, db, utils, seeder):
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
     with app.app_context():
+        from project.infrastructure.models import EventPlace, Location
         from project.jsonld import get_sd_for_place
-        from project.models import EventPlace, Location
 
         place = db.session.get(EventPlace, place_id)
 
@@ -113,8 +113,8 @@ def test_get_sd_for_event_date(client, app, db, seeder, utils):
 
     with app.app_context():
         from project.dateutils import create_berlin_date
+        from project.infrastructure.models import Event
         from project.jsonld import get_sd_for_event_date
-        from project.models import Event
 
         date_definition = EventDateDefinitionValueObject(
             start=create_berlin_date(2030, 12, 31, 14, 30),
@@ -157,8 +157,8 @@ def test_get_sd_for_event_date_allday(client, app, db, seeder, utils):
 
     with app.app_context():
         from project.dateutils import create_berlin_date
+        from project.infrastructure.models import Event
         from project.jsonld import get_sd_for_event_date
-        from project.models import Event
 
         date_definition = EventDateDefinitionValueObject(
             start=create_berlin_date(2030, 12, 31, 14, 30),
@@ -190,8 +190,8 @@ def test_get_sd_for_event_date_with_co_organizer(client, app, db, seeder, utils)
     )
 
     with app.app_context():
+        from project.infrastructure.models import Event
         from project.jsonld import get_sd_for_event_date
-        from project.models import Event
 
         event = db.session.get(Event, event_id)
         event_date = event.dates[0]
@@ -213,8 +213,8 @@ def test_get_sd_for_event_date_ageRange(
     event_id = seeder.create_event(admin_unit_id, age_from=age_from, age_to=age_to)
 
     with app.app_context():
+        from project.infrastructure.models import Event
         from project.jsonld import get_sd_for_event_date
-        from project.models import Event
 
         event = db.session.get(Event, event_id)
         event_date = event.dates[0]
@@ -246,8 +246,8 @@ def test_get_sd_for_event_date_eventAttendanceMode(
         command.actor = Actor(user_id=user_id)
         seeder.handle_message(command)
 
+        from project.infrastructure.models import Event
         from project.jsonld import get_sd_for_event_date
-        from project.models import Event
 
         event = db.session.get(Event, event_id)
         event_date = event.dates[0]
@@ -281,8 +281,8 @@ def test_get_sd_for_event_date_eventStatus(
         command.actor = Actor(user_id=user_id)
         seeder.handle_message(command)
 
+        from project.infrastructure.models import Event
         from project.jsonld import get_sd_for_event_date
-        from project.models import Event
 
         event = db.session.get(Event, event_id)
         event_date = event.dates[0]

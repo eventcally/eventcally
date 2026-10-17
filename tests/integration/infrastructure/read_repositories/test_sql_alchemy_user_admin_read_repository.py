@@ -35,7 +35,7 @@ def test_a_user_and_the_roles(app, db, seeder):
 
 
 def test_newsletter_recipients_are_confirmed_and_opted_in(app, db, seeder):
-    from project.models import User
+    from project.infrastructure.models import User
 
     seeder.create_user("in@test.de")
     seeder.create_user("unconfirmed@test.de", confirm=False)

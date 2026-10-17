@@ -39,7 +39,7 @@ def test_ajax_lookup_parity(client, app, db, utils: UtilActions, seeder: Seeder)
     set_id, _ = seeder.get_one_custom_event_category_set()
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         db.session.get(AdminUnit, admin_unit_id).can_verify_other = True
         db.session.commit()

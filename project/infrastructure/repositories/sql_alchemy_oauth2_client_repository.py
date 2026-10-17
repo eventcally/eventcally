@@ -4,8 +4,8 @@ from project.domain.models.aggregates.oauth2_client_aggregate import (
     OAuth2ClientAggregate,
 )
 from project.domain.repositories import AbstractOAuth2ClientRepository
+from project.infrastructure.models.oauth import OAuth2Client
 from project.infrastructure.sql_error_translation import flush
-from project.models.oauth import OAuth2Client
 
 
 class SqlAlchemyOAuth2ClientRepository(AbstractOAuth2ClientRepository):

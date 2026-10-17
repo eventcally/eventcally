@@ -37,7 +37,7 @@ def test_list_search_and_pages(app, db, seeder, utils):
     assert _first_cells(utils, response) == ["Zeta Crew"]
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.can_verify_other = True

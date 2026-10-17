@@ -9,7 +9,7 @@ from sqlalchemy import and_, func, update
 from werkzeug.security import gen_salt
 
 from project.extensions import db
-from project.models import (
+from project.infrastructure.models import (
     AdminUnit,
     AdminUnitMember,
     AdminUnitMemberInvitation,

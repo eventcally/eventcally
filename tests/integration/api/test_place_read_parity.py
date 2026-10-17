@@ -35,7 +35,7 @@ def _set_trackable(db, table, object_id, created_at, updated_at=None):
 
 def seed_places(app, db, seeder: Seeder, admin_unit_id):
     """Places with fixed timestamps, so the payloads are deterministic."""
-    from project.models import EventPlace, Location
+    from project.infrastructure.models import EventPlace, Location
 
     full_id = seeder.upsert_event_place(admin_unit_id, "Stadthalle")
     alpha_id = seeder.upsert_event_place(admin_unit_id, "Alpha")

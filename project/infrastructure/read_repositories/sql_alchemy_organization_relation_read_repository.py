@@ -17,13 +17,13 @@ from project.application.read_repositories.abstract_organization_relation_read_r
     AbstractOrganizationRelationReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import AdminUnit, AdminUnitRelation
 from project.infrastructure.read_repositories.query_helpers import paginate
 from project.infrastructure.read_repositories.read_model_mappers import (
     audit_options,
     to_audit_read_model,
     to_organization_ref_read_model,
 )
-from project.models import AdminUnit, AdminUnitRelation
 from project.utils import parse_like_term
 
 SourceAdminUnit = aliased(AdminUnit)

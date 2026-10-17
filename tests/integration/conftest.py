@@ -206,7 +206,11 @@ def message_bus(container):
 
 def create_initial_test_data():
     from project.extensions import db
-    from project.models import CustomEventCategory, CustomEventCategorySet, License
+    from project.infrastructure.models import (
+        CustomEventCategory,
+        CustomEventCategorySet,
+        License,
+    )
 
     db.session.add(
         License(

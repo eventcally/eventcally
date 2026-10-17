@@ -9,7 +9,7 @@ from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import backref, deferred, relationship, remote
 from sqlalchemy_utils import ColorType
 import datetime
-from project.dbtypes import IntegerEnum
+from project.infrastructure.dbtypes import IntegerEnum
 from sqlalchemy.ext.declarative import declared_attr
 {%- for import_statement in model.imports %}
 {{ import_statement }}

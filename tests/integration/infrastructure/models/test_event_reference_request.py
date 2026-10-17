@@ -5,7 +5,7 @@ def test_rejection_reason_zero_is_normalized_to_none(app, db, seeder):
     event_id = seeder.create_event(admin_unit_id)
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
         )

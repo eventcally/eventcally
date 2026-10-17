@@ -20,7 +20,7 @@ def _exists(app, db, model, id):
 
 def test_delete_admin_unit_task(client, seeder, app, db):
     from project.celery_tasks import delete_admin_unit_task
-    from project.models import AdminUnit
+    from project.infrastructure.models import AdminUnit
 
     owner_id = seeder.create_user()
     old_id = seeder.create_admin_unit(owner_id, "Old")
@@ -40,7 +40,7 @@ def test_delete_admin_unit_task(client, seeder, app, db):
 
 def test_delete_user_task(client, seeder, app, db):
     from project.celery_tasks import delete_user_task
-    from project.models import User
+    from project.infrastructure.models import User
 
     due_id = seeder.create_user("due@test.de")
     cancelled_id = seeder.create_user("cancelled@test.de")
@@ -58,7 +58,7 @@ def test_delete_user_task(client, seeder, app, db):
 
 def test_delete_ghost_user_task(client, seeder, app, db):
     from project.celery_tasks import delete_ghost_user_task
-    from project.models import User
+    from project.infrastructure.models import User
 
     ghost_id = seeder.create_user("ghost@test.de", confirm=False)
 
@@ -71,7 +71,7 @@ def test_delete_ghost_user_task(client, seeder, app, db):
 
 def test_delete_event_task(client, seeder, app, db):
     from project.celery_tasks import delete_event_task
-    from project.models import Event, EventDate
+    from project.infrastructure.models import Event, EventDate
 
     _, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id, "RRULE:FREQ=DAILY;COUNT=3")

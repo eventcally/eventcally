@@ -29,7 +29,7 @@ def scenario(app, db, seeder):
     platform_admin_id = seeder.create_user(email="platform@test.de", admin=True)
 
     with app.app_context():
-        from project.models import User
+        from project.infrastructure.models import User
 
         verifier_id = User.query.filter_by(email="verifier@test.de").one().id
         other_owner_id = User.query.filter_by(email="other@test.de").one().id

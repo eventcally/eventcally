@@ -2,8 +2,8 @@ from typing import Optional
 
 from project.domain.models.aggregates.app_key_aggregate import AppKeyAggregate
 from project.domain.repositories import AbstractAppKeyRepository
+from project.infrastructure.models.app import AppKey
 from project.infrastructure.sql_error_translation import flush
-from project.models.app import AppKey
 
 
 class SqlAlchemyAppKeyRepository(AbstractAppKeyRepository):

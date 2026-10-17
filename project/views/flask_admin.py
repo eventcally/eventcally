@@ -7,9 +7,9 @@ from flask_security import current_user
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from project.extensions import db
-from project.models.admin_unit import AdminUnit
-from project.models.event_place import EventPlace
-from project.models.user import User
+from project.infrastructure.models.admin_unit import AdminUnit
+from project.infrastructure.models.event_place import EventPlace
+from project.infrastructure.models.user import User
 
 
 class AuthAdminIndexView(AdminIndexView):
@@ -183,7 +183,10 @@ class CustomCategoryExtensionView(AuthBaseView):
             try:
                 import json
 
-                from project.models import CustomEventCategory, CustomEventCategorySet
+                from project.infrastructure.models import (
+                    CustomEventCategory,
+                    CustomEventCategorySet,
+                )
 
                 category_set_id = request.form.get("category_set_id")
                 category_set = db.session.get(CustomEventCategorySet, category_set_id)

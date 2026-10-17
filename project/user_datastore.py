@@ -1,5 +1,5 @@
 """Flask-Security datastore access: the one place that talks to the user datastore
-(users, roles, ToS). It deliberately imports no `project.models`."""
+(users, roles, ToS). It deliberately imports no `project.infrastructure.models`."""
 
 import datetime
 

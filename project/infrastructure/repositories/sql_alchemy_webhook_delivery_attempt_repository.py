@@ -6,7 +6,9 @@ from project.domain.models.aggregates.webhook_delivery_attempt_aggregate import 
 from project.domain.repositories.abstract_webhook_delivery_attempt_repository import (
     AbstractWebhookDeliveryAttemptRepository,
 )
-from project.models.webhook_delivery_attempt import WebhookDeliveryAttempt
+from project.infrastructure.models.webhook_delivery_attempt import (
+    WebhookDeliveryAttempt,
+)
 
 
 class SqlAlchemyWebhookDeliveryAttemptRepository(

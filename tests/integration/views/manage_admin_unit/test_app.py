@@ -1,5 +1,5 @@
 from project.api import scope_list
-from project.models.oauth import OAuth2Client
+from project.infrastructure.models.oauth import OAuth2Client
 from project.permissions import organization_app_permission_infos
 from tests.integration.base_test import (
     BaseTestCreateView,

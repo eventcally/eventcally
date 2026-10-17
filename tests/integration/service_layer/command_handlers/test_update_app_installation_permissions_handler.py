@@ -1,7 +1,7 @@
 from project.application import commands
 from project.domain import events
 from project.domain.models.entities.actor import Actor
-from project.models import AppInstallation
+from project.infrastructure.models import AppInstallation
 
 
 def test_update_app_installation_permissions_command_sets_current_app_permissions(

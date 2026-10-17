@@ -119,7 +119,7 @@ def test_admin_user_update(client, seeder, utils, app, mocker, db, db_error):
     other_user_id = seeder.create_user("other@test.de")
 
     with app.app_context():
-        from project.models import User
+        from project.infrastructure.models import User
         from project.user_datastore import set_roles_for_user
 
         user = User.query.get_or_404(other_user_id)
@@ -147,7 +147,7 @@ def test_admin_user_update(client, seeder, utils, app, mocker, db, db_error):
     utils.assert_response_redirect(response, "admin.admin_users")
 
     with app.app_context():
-        from project.models import User
+        from project.infrastructure.models import User
 
         user = User.query.get_or_404(other_user_id)
         assert len(user.roles) == 1
@@ -192,7 +192,7 @@ def test_user_delete(client, seeder, utils, app, db, mocker, db_error, non_match
     utils.assert_response_redirect(response, "admin.admin_users")
 
     with app.app_context():
-        from project.models import User
+        from project.infrastructure.models import User
 
         user = db.session.get(User, other_user_id)
         assert user is None
@@ -203,7 +203,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
     user_id, admin_unit_id = seeder.setup_base(True)
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = AdminUnit.query.get_or_404(admin_unit_id)
         admin_unit.incoming_reference_requests_allowed = False
@@ -236,7 +236,7 @@ def test_admin_admin_unit_update(client, seeder, utils, app, mocker, db, db_erro
     utils.assert_response_redirect(response, "admin.organizations")
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = AdminUnit.query.get_or_404(admin_unit_id)
         assert admin_unit.incoming_reference_requests_allowed
@@ -282,7 +282,7 @@ def test_admin_unit_delete(client, seeder, utils, app, db, mocker, db_error, non
     utils.assert_response_redirect(response, "admin.organizations")
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         assert admin_unit is None
@@ -315,7 +315,7 @@ def test_admin_reset_tos_accepted(
     utils.assert_response_redirect(response, "admin.admin")
 
     with app.app_context():
-        from project.models.user import User
+        from project.infrastructure.models.user import User
 
         assert len(User.query.filter(User.tos_accepted_at.isnot(None)).all()) == 0
 

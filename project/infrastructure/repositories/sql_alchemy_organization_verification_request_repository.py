@@ -9,8 +9,10 @@ from project.domain.models.aggregates.organization_verification_request_aggregat
 from project.domain.repositories import (
     AbstractOrganizationVerificationRequestRepository,
 )
+from project.infrastructure.models.admin_unit_verification_request import (
+    AdminUnitVerificationRequest,
+)
 from project.infrastructure.sql_error_translation import flush
-from project.models.admin_unit_verification_request import AdminUnitVerificationRequest
 
 
 class SqlAlchemyOrganizationVerificationRequestRepository(

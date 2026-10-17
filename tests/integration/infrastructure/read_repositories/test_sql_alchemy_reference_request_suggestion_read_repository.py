@@ -2,7 +2,7 @@
 
 
 def test_sources_order_filter_and_limit(app, db, seeder):
-    from project.models import AdminUnit
+    from project.infrastructure.models import AdminUnit
 
     _, admin_unit_id = seeder.setup_base(log_in=False)
     other_user_id = seeder.create_user("other@test.de")

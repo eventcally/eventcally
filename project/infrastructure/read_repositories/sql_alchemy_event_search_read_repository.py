@@ -25,6 +25,17 @@ from project.application.read_repositories.abstract_event_search_read_repository
 )
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import (
+    AdminUnit,
+    CustomEventCategory,
+    Event,
+    EventCategory,
+    EventDate,
+    EventOrganizer,
+    EventPlace,
+    EventReference,
+    Location,
+)
 from project.infrastructure.read_repositories.event_read_model_mappers import (
     event_counts,
     event_load_options,
@@ -37,17 +48,6 @@ from project.infrastructure.read_repositories.query_helpers import (
     paginate,
     trackable_filters,
     trackable_order,
-)
-from project.models import (
-    AdminUnit,
-    CustomEventCategory,
-    Event,
-    EventCategory,
-    EventDate,
-    EventOrganizer,
-    EventPlace,
-    EventReference,
-    Location,
 )
 from project.utils import parse_like_term
 

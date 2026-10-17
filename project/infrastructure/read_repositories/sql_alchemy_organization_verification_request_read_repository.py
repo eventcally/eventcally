@@ -25,6 +25,13 @@ from project.domain.models.enums.organization_verification_request_review_status
     OrganizationVerificationRequestReviewStatus,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import (
+    AdminUnit,
+    AdminUnitMember,
+    AdminUnitVerificationRequest,
+    Image,
+    User,
+)
 from project.infrastructure.read_repositories.query_helpers import (
     paginate,
     trackable_filters,
@@ -37,13 +44,6 @@ from project.infrastructure.read_repositories.read_model_mappers import (
     to_location_read_model,
     to_organization_member_read_model,
     to_organization_ref_read_model,
-)
-from project.models import (
-    AdminUnit,
-    AdminUnitMember,
-    AdminUnitVerificationRequest,
-    Image,
-    User,
 )
 
 _options = [

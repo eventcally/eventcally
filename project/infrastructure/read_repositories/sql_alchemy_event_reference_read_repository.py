@@ -17,6 +17,7 @@ from project.application.read_repositories.abstract_event_reference_read_reposit
     AbstractEventReferenceReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import AdminUnit, Event, EventReference
 from project.infrastructure.read_repositories.query_helpers import (
     paginate,
     trackable_filters,
@@ -28,7 +29,6 @@ from project.infrastructure.read_repositories.read_model_mappers import (
     to_event_ref_read_model,
     to_organization_ref_read_model,
 )
-from project.models import AdminUnit, Event, EventReference
 
 EventAdminUnit = aliased(AdminUnit)
 

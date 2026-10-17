@@ -1,4 +1,4 @@
-from project.models import AppInstallation
+from project.infrastructure.models import AppInstallation
 from tests.integration.base_test import (
     BaseTestCreateView,
     BaseTestDeleteView,

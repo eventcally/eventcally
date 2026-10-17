@@ -20,7 +20,7 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
 
     if is_verified:
         with app.app_context():
-            from project.models import (
+            from project.infrastructure.models import (
                 EventReferenceRequest,
                 EventReferenceRequestReviewStatus,
             )
@@ -71,7 +71,7 @@ def test_review_verify(client, seeder, utils, app, mocker, db, db_error, is_veri
 
     with app.app_context():
         from project.cli.seed_helpers import get_admin_unit_relation
-        from project.models import (
+        from project.infrastructure.models import (
             EventReference,
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
@@ -123,7 +123,7 @@ def test_review_reject(client, seeder, utils, app, db, mocker):
     )
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
         )

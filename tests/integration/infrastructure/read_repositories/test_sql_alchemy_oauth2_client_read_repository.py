@@ -31,7 +31,7 @@ def clients(app, db, seeder):
     }
 
     with app.app_context():
-        from project.models import OAuth2Client, Webhook
+        from project.infrastructure.models import OAuth2Client, Webhook
 
         client = db.session.get(OAuth2Client, ids["app"])
         client.homepage_url = "https://example.com"

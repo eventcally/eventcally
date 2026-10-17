@@ -155,7 +155,7 @@ def test_search(client, seeder: Seeder, utils: UtilActions, app, db):
     assert len(response.json["items"]) == 2
 
     with app.app_context():
-        from project.models import Event, EventStatus
+        from project.infrastructure.models import Event, EventStatus
 
         event = db.session.get(Event, event_id)
         event.status = EventStatus.cancelled

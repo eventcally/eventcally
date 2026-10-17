@@ -10,8 +10,8 @@ from project.domain.models.aggregates.event_reference_request_aggregate import (
     EventReferenceRequestAggregate,
 )
 from project.domain.repositories import AbstractEventReferenceRequestRepository
+from project.infrastructure.models.event_reference_request import EventReferenceRequest
 from project.infrastructure.sql_error_translation import flush
-from project.models.event_reference_request import EventReferenceRequest
 
 
 class SqlAlchemyEventReferenceRequestRepository(

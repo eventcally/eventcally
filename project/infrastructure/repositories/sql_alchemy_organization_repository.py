@@ -4,8 +4,8 @@ from project.domain.models.aggregates.organization_aggregate import (
     OrganizationAggregate,
 )
 from project.domain.repositories import AbstractOrganizationRepository
+from project.infrastructure.models import AdminUnit
 from project.infrastructure.sql_error_translation import flush
-from project.models import AdminUnit
 
 
 class SqlAlchemyOrganizationRepository(AbstractOrganizationRepository):

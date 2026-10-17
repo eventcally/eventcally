@@ -47,7 +47,7 @@ def test_create(client, app, utils, seeder, mocker, db_error):
     utils.assert_response_redirect(response, "main.event", event_id=event_id)
 
     with app.app_context():
-        from project.models import EventReference
+        from project.infrastructure.models import EventReference
 
         reference = (
             EventReference.query.filter(EventReference.admin_unit_id == admin_unit_id)
@@ -131,7 +131,7 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
     )
 
     with app.app_context():
-        from project.models import EventReference
+        from project.infrastructure.models import EventReference
 
         reference = db.session.get(EventReference, reference_id)
         assert reference.rating == 70
@@ -172,7 +172,7 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error):
     )
 
     with app.app_context():
-        from project.models import EventReference
+        from project.infrastructure.models import EventReference
 
         reference = db.session.get(EventReference, reference_id)
         assert reference is None
@@ -292,7 +292,7 @@ def test_referencedAlldayEventNonDirtyUpdate_doesNotSendMail(
     seeder.create_reference(event_id, admin_unit_id)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = Event.query.filter(Event.id == event_id).first()
         date_definition = event.date_definitions[0]
@@ -341,7 +341,7 @@ def test_referencedAlldayEventNonDirtyUpdate_doesNotSendMail2(
     seeder.create_reference(event_id, admin_unit_id)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         date_definition = Event.query.get(event_id).date_definitions[0]
         # Without these the test degrades into a copy of the one above as soon
@@ -418,7 +418,7 @@ def test_referencedRecurringEventNonDirtyUpdate_doesNotSendMail(
     utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = (
             Event.query.filter(Event.admin_unit_id == other_admin_unit_id)
@@ -492,7 +492,7 @@ def test_referencedRecurringEventChange_sendsMail_butDiffIsIndistinguishable(
     utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = (
             Event.query.filter(Event.admin_unit_id == other_admin_unit_id)
@@ -520,7 +520,7 @@ def test_referencedRecurringEventChange_sendsMail_butDiffIsIndistinguishable(
     with app.app_context():
         app.test_event_dispatcher.handle_pending_events()
 
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = Event.query.filter(Event.id == event_id).first()
         assert event.date_definitions[0].recurrence_rule == "RRULE:FREQ=WEEKLY;COUNT=3"

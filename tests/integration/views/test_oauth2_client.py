@@ -53,7 +53,7 @@ def test_create_authorization_code(client, app, utils, seeder, mocker, db_error)
         return
 
     with app.app_context():
-        from project.models import OAuth2Client
+        from project.infrastructure.models import OAuth2Client
 
         oauth2_client = OAuth2Client.query.filter(
             OAuth2Client.user_id == user_id
@@ -95,7 +95,7 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
     )
 
     with app.app_context():
-        from project.models import OAuth2Client
+        from project.infrastructure.models import OAuth2Client
 
         oauth2_client = db.session.get(OAuth2Client, oauth2_client_id)
         assert oauth2_client.client_name == "Neuer Name"
@@ -138,7 +138,7 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
     utils.assert_response_redirect(response, "user.oauth2_clients")
 
     with app.app_context():
-        from project.models import OAuth2Client
+        from project.infrastructure.models import OAuth2Client
 
         oauth2_client = db.session.get(OAuth2Client, oauth2_client_id)
         assert oauth2_client is None

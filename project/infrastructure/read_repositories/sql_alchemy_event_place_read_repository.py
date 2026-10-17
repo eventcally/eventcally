@@ -25,6 +25,7 @@ from project.application.read_repositories.abstract_event_place_read_repository 
     AbstractEventPlaceReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import AdminUnit, Event, EventPlace, Image, Location
 from project.infrastructure.read_repositories.query_helpers import (
     paginate,
     trackable_filters,
@@ -34,7 +35,6 @@ from project.infrastructure.read_repositories.read_model_mappers import (
     to_image_read_model,
     to_location_read_model,
 )
-from project.models import AdminUnit, Event, EventPlace, Image, Location
 from project.utils import parse_like_term
 
 _number_of_events = (

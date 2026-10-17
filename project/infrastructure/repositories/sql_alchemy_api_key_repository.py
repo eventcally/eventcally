@@ -3,8 +3,8 @@ from typing import Optional
 from project.domain.models.aggregates.api_key_aggregate import ApiKeyAggregate
 from project.domain.repositories import AbstractApiKeyRepository
 from project.domain.types import ObjectId
+from project.infrastructure.models.api_key import ApiKey
 from project.infrastructure.sql_error_translation import flush
-from project.models.api_key import ApiKey
 
 
 class SqlAlchemyApiKeyRepository(AbstractApiKeyRepository):

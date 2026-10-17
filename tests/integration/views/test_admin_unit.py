@@ -171,7 +171,7 @@ def test_create_from_invitation(client, app, db, utils: UtilActions, seeder: See
 
     with app.app_context():
         from project.cli.seed_helpers import get_admin_unit_by_name
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         admin_unit = get_admin_unit_by_name("Invited Organization")
         assert admin_unit is not None
@@ -299,7 +299,7 @@ def test_update(db, app, utils: UtilActions, seeder: Seeder, mocker, db_error):
     admin_unit_id = seeder.create_admin_unit(user_id, "Initial name")
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.incoming_verification_requests_postal_codes = ["12345"]
@@ -454,7 +454,7 @@ def test_admin_unit_request_deletion(
     utils.assert_response_redirect(response, "main.manage_admin_unit", id=admin_unit_id)
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         assert admin_unit.deletion_requested_at is not None
@@ -477,7 +477,7 @@ def test_admin_unit_cancel_deletion(
     with app.app_context():
         import datetime
 
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.deletion_requested_at = datetime.datetime.now(datetime.UTC)
@@ -515,7 +515,7 @@ def test_admin_unit_cancel_deletion(
     utils.assert_response_redirect(response, "main.manage_admin_unit", id=admin_unit_id)
 
     with app.app_context():
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         assert admin_unit.deletion_requested_at is None

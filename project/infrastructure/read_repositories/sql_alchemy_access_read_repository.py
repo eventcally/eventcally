@@ -19,11 +19,7 @@ from project.application.read_repositories.abstract_access_read_repository impor
     AbstractAccessReadRepository,
 )
 from project.domain.types.object_id import ObjectId
-from project.infrastructure.read_repositories.read_model_mappers import (
-    to_image_edit_read_model,
-    to_location_read_model,
-)
-from project.models import (
+from project.infrastructure.models import (
     AdminUnit,
     AdminUnitInvitation,
     AdminUnitMember,
@@ -43,6 +39,10 @@ from project.models import (
     Location,
     Role,
     User,
+)
+from project.infrastructure.read_repositories.read_model_mappers import (
+    to_image_edit_read_model,
+    to_location_read_model,
 )
 
 _ORGANIZATION_COLUMNS = (

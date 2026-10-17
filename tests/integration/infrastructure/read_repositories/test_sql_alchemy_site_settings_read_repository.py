@@ -44,7 +44,7 @@ def test_no_settings_row_means_empty_settings(app, db, settings):
     assert result.planning_external_calendars is None
 
     with app.app_context():
-        from project.models import Settings
+        from project.infrastructure.models import Settings
 
         assert db.session.query(Settings).count() == 0
 
@@ -104,6 +104,6 @@ def test_reading_never_inserts_a_settings_row(app, db, notices):
     notices()
 
     with app.app_context():
-        from project.models import Settings
+        from project.infrastructure.models import Settings
 
         assert db.session.query(Settings).count() == 0

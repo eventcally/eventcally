@@ -4,7 +4,7 @@ from project.domain.models.aggregates.custom_widget_aggregate import (
     CustomWidgetAggregate,
 )
 from project.domain.repositories import AbstractCustomWidgetRepository
-from project.models.custom_widget import CustomWidget
+from project.infrastructure.models.custom_widget import CustomWidget
 
 
 class SqlAlchemyCustomWidgetRepository(AbstractCustomWidgetRepository):

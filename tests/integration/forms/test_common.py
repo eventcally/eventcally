@@ -1,6 +1,6 @@
 def test_base64_image_form_populate_obj_clears_when_no_image(app):
     from project.forms.common import Base64ImageForm
-    from project.models import Image
+    from project.infrastructure.models import Image
 
     with app.test_request_context():
         form = Base64ImageForm(meta={"csrf": False})
@@ -16,7 +16,7 @@ def test_base64_image_form_populate_obj_clears_when_no_image(app):
 
 def test_base64_image_form_populate_obj_sets_image_data(app):
     from project.forms.common import Base64ImageForm
-    from project.models import Image
+    from project.infrastructure.models import Image
 
     with app.test_request_context():
         form = Base64ImageForm(meta={"csrf": False})

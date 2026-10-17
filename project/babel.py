@@ -45,9 +45,9 @@ def babel_extract(fileobj, keywords, comment_tags, options):
     # and none is needed: __display_name__ and __display_name_plural__ are plain
     # attributes assigned by CustomModel.__init_subclass__ at class definition
     # time, not lazily evaluated translations.
-    import project.models  # noqa: F401
+    import project.infrastructure.models  # noqa: F401
     from project.extensions import db
-    from project.models import (
+    from project.infrastructure.models import (
         AdminUnitVerificationRequestReviewStatus,
         EventReferenceRequestReviewStatus,
     )

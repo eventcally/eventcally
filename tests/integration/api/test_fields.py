@@ -3,7 +3,7 @@ import pytest
 
 def test_numeric_str_serialize(client, seeder, utils):
     from project.api.location.schemas import LocationSchema
-    from project.models import Location
+    from project.infrastructure.models import Location
 
     location = Location()
     location.street = "Markt 7"

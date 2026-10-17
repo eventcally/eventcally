@@ -61,7 +61,7 @@ def _build_actors(app, db, seeder: Seeder, utils: UtilActions):
     actors["api_key_owner_a"] = ((None, key), None)
 
     with app.app_context():
-        from project.models import EventOrganizer, EventPlace
+        from project.infrastructure.models import EventOrganizer, EventPlace
 
         ids["organizer_a"] = (
             EventOrganizer.query.filter_by(admin_unit_id=ids["a"]).first().id

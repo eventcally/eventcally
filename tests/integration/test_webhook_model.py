@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from project.models.webhook import Webhook, before_saving_webhook
+from project.infrastructure.models.webhook import Webhook, before_saving_webhook
 
 
 def test_validate_raises_when_url_missing_and_passes_when_present():

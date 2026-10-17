@@ -3,7 +3,7 @@
 import pytest
 
 from project.application.commands.update_app_command import UpdateAppCommand
-from project.models.webhook import Webhook
+from project.infrastructure.models.webhook import Webhook
 
 # ---------------------------------------------------------------------------
 # update_app_command.py line 25 – validator raises ValueError for empty list

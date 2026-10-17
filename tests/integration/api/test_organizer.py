@@ -44,7 +44,7 @@ def test_organizers_post(client, seeder: Seeder, utils: UtilActions, app):
         app.container.cqrs.event_dispatcher.override(app.test_event_dispatcher)
 
     with app.app_context():
-        from project.models import EventOrganizer
+        from project.infrastructure.models import EventOrganizer
 
         organizer = (
             EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit_id)
@@ -82,7 +82,7 @@ def test_put(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import EventOrganizer
+        from project.infrastructure.models import EventOrganizer
 
         organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer.name == "Neuer Name"
@@ -99,7 +99,7 @@ def test_put_location(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import EventOrganizer
+        from project.infrastructure.models import EventOrganizer
 
         organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer.name == "Neuer Name"
@@ -115,7 +115,7 @@ def test_patch(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import EventOrganizer
+        from project.infrastructure.models import EventOrganizer
 
         organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer.name == "Meine Crew"
@@ -131,7 +131,7 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import EventOrganizer
+        from project.infrastructure.models import EventOrganizer
 
         organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer is None

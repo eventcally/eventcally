@@ -5,7 +5,7 @@ from project.application.read_models.site_notices_read_model import SiteNoticesR
 from project.application.read_repositories.abstract_site_settings_read_repository import (
     AbstractSiteSettingsReadRepository,
 )
-from project.models import Settings
+from project.infrastructure.models import Settings
 
 
 class SqlAlchemySiteSettingsReadRepository(AbstractSiteSettingsReadRepository):

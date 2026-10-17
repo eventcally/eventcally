@@ -19,6 +19,7 @@ from project.application.read_repositories.abstract_event_detail_read_repository
 )
 from project.dateutils import get_today
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import Event, EventDate
 from project.infrastructure.read_repositories.event_read_model_mappers import (
     event_edit_load_options,
     event_load_options,
@@ -30,7 +31,6 @@ from project.infrastructure.read_repositories.event_read_model_mappers import (
     verified_admin_units,
 )
 from project.infrastructure.read_repositories.query_helpers import paginate
-from project.models import Event, EventDate
 
 
 class SqlAlchemyEventDetailReadRepository(AbstractEventDetailReadRepository):

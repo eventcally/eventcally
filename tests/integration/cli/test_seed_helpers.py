@@ -6,7 +6,7 @@ def test_insert_admin_unit_for_user_copies_logo_to_organizer(client, seeder, db,
 
     with app.app_context():
         from project.cli.seed_helpers import insert_admin_unit_for_user
-        from project.models import AdminUnit, Image, User
+        from project.infrastructure.models import AdminUnit, Image, User
 
         user = db.session.get(User, user_id)
         admin_unit = AdminUnit()
@@ -31,7 +31,7 @@ def test_add_roles_to_admin_unit_member_skips_unknown_role(client, seeder, db, a
             add_roles_to_admin_unit_member,
             add_user_to_admin_unit,
         )
-        from project.models import AdminUnit, User
+        from project.infrastructure.models import AdminUnit, User
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         user = db.session.get(User, other_user_id)
@@ -47,7 +47,7 @@ def test_add_roles_to_admin_unit_member_skips_unknown_role(client, seeder, db, a
 def test_upsert_event_category_creates_once(client, app, db):
     with app.app_context():
         from project.cli.seed_helpers import upsert_event_category
-        from project.models import EventCategory
+        from project.infrastructure.models import EventCategory
 
         first = upsert_event_category("Brand New")
         second = upsert_event_category("Brand New")

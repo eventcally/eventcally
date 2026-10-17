@@ -12,7 +12,7 @@ def _setup_app_auth(seeder: Seeder, utils: UtilActions, app, db, admin_unit_id):
     private_pem, app_key_id = seeder.insert_app_key(oauth2_client_id)
 
     with app.app_context():
-        from project.models import AppKey
+        from project.infrastructure.models import AppKey
 
         app_key = app.extensions["sqlalchemy"].session.get(AppKey, app_key_id)
         kid = app_key.kid
@@ -24,10 +24,10 @@ def _setup_app_auth(seeder: Seeder, utils: UtilActions, app, db, admin_unit_id):
 def _create_webhook_delivery(app, db, oauth2_client_id):
     """Create a Webhook + WebhookEvent + WebhookDelivery for the given app and return delivery_id."""
     with app.app_context():
-        from project.models import OAuth2Client
-        from project.models.webhook import Webhook
-        from project.models.webhook_delivery import WebhookDelivery
-        from project.models.webhook_event import WebhookEvent
+        from project.infrastructure.models import OAuth2Client
+        from project.infrastructure.models.webhook import Webhook
+        from project.infrastructure.models.webhook_delivery import WebhookDelivery
+        from project.infrastructure.models.webhook_event import WebhookEvent
 
         session = app.extensions["sqlalchemy"].session
 

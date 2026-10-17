@@ -13,8 +13,8 @@ from project.application.read_repositories.abstract_oauth2_token_read_repository
     AbstractOAuth2TokenReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import OAuth2Client, OAuth2Token
 from project.infrastructure.read_repositories.query_helpers import paginate
-from project.models import OAuth2Client, OAuth2Token
 
 
 def _select():

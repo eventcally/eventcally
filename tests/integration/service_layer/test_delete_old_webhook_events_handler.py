@@ -10,7 +10,7 @@ class TestDeleteOldWebhookEventsHandler(BaseTest):
             WebhookEventAggregate,
         )
         from project.domain.models.entities.actor import Actor
-        from project.models.webhook_event import WebhookEvent
+        from project.infrastructure.models.webhook_event import WebhookEvent
 
         # Arrange: Create webhook events - some old, some new
         message_bus = app.container.cqrs.message_bus()

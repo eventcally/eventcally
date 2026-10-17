@@ -6,7 +6,7 @@ from project.application.read_models.webhook_delivery_read_model import (
 from project.application.read_repositories.abstract_webhook_delivery_read_repository import (
     AbstractWebhookDeliveryReadRepository,
 )
-from project.models.webhook_delivery import WebhookDelivery
+from project.infrastructure.models.webhook_delivery import WebhookDelivery
 
 
 class SqlAlchemyWebhookDeliveryReadRepository(AbstractWebhookDeliveryReadRepository):

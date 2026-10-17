@@ -306,7 +306,7 @@ def test_events_post(client, seeder: Seeder, utils: UtilActions, app, variant):
     assert "id" in response.json
 
     with app.app_context():
-        from project.models import Event, EventPublicStatus
+        from project.infrastructure.models import Event, EventPublicStatus
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -356,7 +356,7 @@ def test_events_post_co_organizers(client, seeder: Seeder, utils: UtilActions, a
     event_id = int(response.json["id"])
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = db.session.get(Event, event_id)
         assert len(event.co_organizers) == 2
@@ -434,7 +434,7 @@ def test_references_incoming_post(client, app, seeder: Seeder, utils: UtilAction
     assert "id" in response.json
 
     with app.app_context():
-        from project.models import EventReference
+        from project.infrastructure.models import EventReference
 
         reference = db.session.get(EventReference, int(response.json["id"]))
         assert reference is not None
@@ -527,7 +527,7 @@ def test_reference_requests_outgoing_post(
     assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
         )
@@ -572,7 +572,7 @@ def test_reference_requests_outgoing_post_autoVerify(
     assert app.test_email_service.sent_emails[0]["recipient"] == "other@test.de"
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReference,
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
@@ -722,7 +722,7 @@ def test_organization_verification_requests_outgoing_post(
     assert app.test_email_service.sent_emails[0]["recipient"] == "test@test.de"
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             AdminUnitVerificationRequest,
             AdminUnitVerificationRequestReviewStatus,
         )
@@ -822,7 +822,7 @@ def test_outgoing_relation_post(client, app, seeder: Seeder, utils: UtilActions,
     assert "id" in response.json
 
     with app.app_context():
-        from project.models import AdminUnitRelation
+        from project.infrastructure.models import AdminUnitRelation
 
         relation = db.session.get(AdminUnitRelation, int(response.json["id"]))
         assert relation is not None
@@ -903,7 +903,7 @@ def test_organization_invitation_list_post(client, app, seeder, db, utils):
     invitation_id = int(response.json["id"])
 
     with app.app_context():
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         invitation = db.session.get(AdminUnitInvitation, invitation_id)
         assert invitation is not None
@@ -954,7 +954,7 @@ def test_custom_widgets_post(client, seeder: Seeder, utils: UtilActions, app):
     assert "id" in response.json
 
     with app.app_context():
-        from project.models import CustomWidget
+        from project.infrastructure.models import CustomWidget
 
         custom_widget = (
             CustomWidget.query.filter(CustomWidget.admin_unit_id == admin_unit_id)
@@ -968,7 +968,7 @@ def test_custom_widgets_post(client, seeder: Seeder, utils: UtilActions, app):
 
 def _restrict_app_installation_permissions(app, db, permissions):
     with app.app_context():
-        from project.models import AppInstallation
+        from project.infrastructure.models import AppInstallation
 
         for app_installation in AppInstallation.query.all():
             app_installation.permissions = permissions

@@ -50,7 +50,7 @@ def test_delete(client, app, db, seeder: Seeder, utils: UtilActions):
     utils.assert_response_no_content(response)
 
     with app.app_context():
-        from project.models import EventReferenceRequest
+        from project.infrastructure.models import EventReferenceRequest
 
         reference = db.session.get(EventReferenceRequest, reference_request_id)
         assert reference is None
@@ -87,7 +87,7 @@ def test_verify(client, app, db, seeder: Seeder, utils: UtilActions, mocker):
 
     with app.app_context():
         from project.cli.seed_helpers import get_admin_unit_relation
-        from project.models import AdminUnitVerificationRequest
+        from project.infrastructure.models import AdminUnitVerificationRequest
 
         verification_request = db.session.get(
             AdminUnitVerificationRequest, reference_request_id
@@ -124,7 +124,7 @@ def test_verify_withoutBody(client, app, db, seeder: Seeder, utils: UtilActions)
 
     with app.app_context():
         from project.cli.seed_helpers import get_admin_unit_relation
-        from project.models import AdminUnitVerificationRequest
+        from project.infrastructure.models import AdminUnitVerificationRequest
 
         verification_request = db.session.get(
             AdminUnitVerificationRequest, reference_request_id
@@ -155,7 +155,7 @@ def test_verify_alreadyVerified(
     )
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             AdminUnitVerificationRequest,
             AdminUnitVerificationRequestReviewStatus,
         )
@@ -208,7 +208,7 @@ def test_reject(client, app, db, seeder: Seeder, utils: UtilActions, mocker):
     assert app.test_email_service.sent_emails[0]["recipient"] == "mitglied@verein.de"
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             AdminUnitVerificationRequest,
             AdminUnitVerificationRequestRejectionReason,
             AdminUnitVerificationRequestReviewStatus,

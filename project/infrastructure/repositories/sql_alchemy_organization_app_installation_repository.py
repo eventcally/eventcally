@@ -7,9 +7,9 @@ from project.domain.models.aggregates.organization_app_installation_aggregate im
 from project.domain.repositories.abstract_organization_app_installation_repository import (
     AbstractOrganizationAppInstallationRepository,
 )
-from project.models.app import AppInstallation
-from project.models.oauth import OAuth2Client
-from project.models.webhook import Webhook
+from project.infrastructure.models.app import AppInstallation
+from project.infrastructure.models.oauth import OAuth2Client
+from project.infrastructure.models.webhook import Webhook
 
 
 class SqlAlchemyOrganizationAppInstallationRepository(

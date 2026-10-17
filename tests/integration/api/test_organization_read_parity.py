@@ -22,7 +22,7 @@ def test_organization_read_payloads_match_snapshot(app, db, seeder, utils):
     image_id = seeder.upsert_default_image()
 
     with app.app_context():
-        from project.models import AdminUnit, Location
+        from project.infrastructure.models import AdminUnit, Location
 
         alpha = db.session.get(AdminUnit, ids["alpha"])
         alpha.url = "https://alpha.example.com"

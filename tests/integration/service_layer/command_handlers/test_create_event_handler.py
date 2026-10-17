@@ -6,7 +6,7 @@ from project.domain.models.entities.actor import Actor
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
 )
-from project.models import Event
+from project.infrastructure.models import Event
 
 
 def test_create_event_command_creates_event(app, db, seeder):

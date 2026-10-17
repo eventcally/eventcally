@@ -31,7 +31,7 @@ def _seed_incoming_requests(seeder, admin_unit_id):
 
 def _verify_reference_request(app, db, request_id):
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
         )
@@ -77,7 +77,7 @@ def test_vue_current_admin_unit_grants_of_owner(app, db, seeder, utils):
     response = utils.get_ok(f"/manage/admin_unit/{admin_unit_id}/custom-widgets")
 
     with app.app_context():
-        from project.models import AdminUnitMemberRole
+        from project.infrastructure.models import AdminUnitMemberRole
 
         roles = db.session.query(AdminUnitMemberRole).all()
         expected_roles = {
@@ -154,6 +154,6 @@ def test_rendering_a_page_without_settings_inserts_no_row(app, db, utils):
     utils.get_ok("/register")
 
     with app.app_context():
-        from project.models import Settings
+        from project.infrastructure.models import Settings
 
         assert db.session.query(Settings).count() == 0

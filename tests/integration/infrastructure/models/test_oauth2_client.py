@@ -1,7 +1,7 @@
 def test_to_aggregate(app, db, seeder):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
     with app.app_context():
-        from project.models import OAuth2Client, Webhook
+        from project.infrastructure.models import OAuth2Client, Webhook
 
         client = OAuth2Client(
             id=1,

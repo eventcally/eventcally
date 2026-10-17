@@ -22,7 +22,9 @@ TARGETS = (
     ("oauth2.py", ROOT / "project" / "oauth2.py"),
 )
 
-MODELS_IMPORT = re.compile(r"^\s*(from project\.models\b|import project\.models\b)")
+MODELS_IMPORT = re.compile(
+    r"^\s*(from project\.infrastructure\.models\b|import project\.infrastructure\.models\b)"
+)
 METRICS = (
     ("`.query`", re.compile(r"\.query\b")),
     ("`select(`", re.compile(r"\bselect\(")),
@@ -56,7 +58,7 @@ def collect(path: Path) -> list[int]:
 
 
 def main() -> int:
-    headers = ["Target", "Files", "Files importing `project.models`"]
+    headers = ["Target", "Files", "Files importing `project.infrastructure.models`"]
     headers += [label for label, _ in METRICS]
     rows = [[label, *collect(path)] for label, path in TARGETS]
 

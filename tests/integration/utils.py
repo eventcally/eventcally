@@ -280,7 +280,7 @@ class UtilActions(object):
 
     def get_image_url_for_id(self, image_id, **values):
         from project.extensions import db
-        from project.models import Image
+        from project.infrastructure.models import Image
 
         with self._app.app_context():
             image = db.session.get(Image, image_id)
@@ -625,7 +625,7 @@ class UtilActions(object):
 
     def authorize_as_app(self, oauth2_client_id, private_pem, kid):
         with self._app.app_context():
-            from project.models import OAuth2Client
+            from project.infrastructure.models import OAuth2Client
 
             oauth2_client = OAuth2Client.query.get(oauth2_client_id)
             oauth2_client_client_id = oauth2_client.client_id
@@ -654,7 +654,7 @@ class UtilActions(object):
         self, app_installation_id, private_pem, kid, **kwargs
     ):
         with self._app.app_context():
-            from project.models import AppInstallation
+            from project.infrastructure.models import AppInstallation
 
             app_installation = AppInstallation.query.get(app_installation_id)
             oauth2_client = app_installation.oauth2_client

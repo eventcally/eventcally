@@ -26,7 +26,7 @@ def test_jwt_bearer_grant(app, db, seeder: Seeder, utils: UtilActions):
 
     with app.app_context():
         from project.cli.seed_helpers import add_keypair_to_oauth2_client
-        from project.models import OAuth2Client
+        from project.infrastructure.models import OAuth2Client
 
         oauth2_client = OAuth2Client.query.get(oauth2_client_id)
 

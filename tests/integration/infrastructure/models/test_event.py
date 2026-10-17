@@ -5,7 +5,7 @@ def test_event_validate_organizer(client, app):
     with app.app_context():
         from sqlalchemy.exc import IntegrityError
 
-        from project.models import Event, EventOrganizer
+        from project.infrastructure.models import Event, EventOrganizer
 
         event = Event()
         event.admin_unit_id = 1
@@ -20,7 +20,7 @@ def test_event_validate_place(client, app):
     with app.app_context():
         from sqlalchemy.exc import IntegrityError
 
-        from project.models import Event, EventPlace
+        from project.infrastructure.models import Event, EventPlace
 
         event = Event()
         event.admin_unit_id = 1
@@ -35,7 +35,7 @@ def test_event_validate_co_organizer(client, app):
     with app.app_context():
         from sqlalchemy.exc import IntegrityError
 
-        from project.models import Event, EventOrganizer
+        from project.infrastructure.models import Event, EventOrganizer
 
         event = Event()
         event.admin_unit_id = 1

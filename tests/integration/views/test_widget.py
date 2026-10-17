@@ -108,7 +108,7 @@ def test_event_dates_colors(client, seeder, utils, app, db):
     with app.app_context():
         from colour import Color
 
-        from project.models import AdminUnit
+        from project.infrastructure.models import AdminUnit
 
         admin_unit = db.session.get(AdminUnit, admin_unit_id)
         admin_unit.widget_font = "Verdana"

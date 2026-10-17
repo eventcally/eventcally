@@ -272,7 +272,7 @@ def test_get_with_location_logo_and_license(app, db, seeder, read_repo, organize
     image_id = seeder.upsert_default_image()
 
     with app.app_context():
-        from project.models import EventOrganizer, Location
+        from project.infrastructure.models import EventOrganizer, Location
 
         organizer = db.session.get(EventOrganizer, ids["alpha"])
         organizer.url = "https://example.com"
@@ -390,7 +390,7 @@ def test_get_for_edit_with_location_logo_and_license(
     image_id = seeder.upsert_default_image()
 
     with app.app_context():
-        from project.models import EventOrganizer, Image, Location
+        from project.infrastructure.models import EventOrganizer, Image, Location
 
         organizer = db.session.get(EventOrganizer, ids["alpha"])
         organizer.url = "https://example.com"

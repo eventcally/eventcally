@@ -21,7 +21,7 @@ source_modules =
     project.access
     project.jinja_filters
 forbidden_modules =
-    project.models
+    project.infrastructure.models
 # Indirect chains stay allowed: every module reaches the models through project.container
 # (-> infrastructure) and the remaining write-side services. Tried False in S11: 220+ chains.
 allow_indirect_imports = True
@@ -29,7 +29,7 @@ allow_indirect_imports = True
 # Unmatched entries fail lint-imports, so a removed import forces removing its entry.
 unmatched_ignore_imports_alerting = error
 ignore_imports =
-    project.views.flask_admin -> project.models
-    project.views.flask_admin -> project.models.admin_unit
-    project.views.flask_admin -> project.models.event_place
-    project.views.flask_admin -> project.models.user
+    project.views.flask_admin -> project.infrastructure.models
+    project.views.flask_admin -> project.infrastructure.models.admin_unit
+    project.views.flask_admin -> project.infrastructure.models.event_place
+    project.views.flask_admin -> project.infrastructure.models.user

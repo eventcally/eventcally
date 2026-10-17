@@ -124,7 +124,7 @@ def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant
 
     with app.app_context():
         from project.domain.events.event_created import EventCreated
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -150,7 +150,7 @@ def test_create_does_not_insert_the_default_category(
     user_id, admin_unit_id = seeder.setup_base()
 
     with app.app_context():
-        from project.models import EventCategory
+        from project.infrastructure.models import EventCategory
 
         db.session.query(EventCategory).filter_by(name="Other").delete()
         db.session.commit()
@@ -203,7 +203,7 @@ def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
     utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -244,7 +244,7 @@ def test_create_allday_lasting_181_days_is_rejected(
     assert response.status_code == 200
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         assert Event.query.filter(Event.name == "Name").first() is None
 
@@ -291,7 +291,7 @@ def test_create_with_reference_requests(
     utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
-        from project.models import (
+        from project.infrastructure.models import (
             Event,
             EventReference,
             EventReferenceRequest,
@@ -376,7 +376,7 @@ def test_create_with_custom_category(client, app, utils: UtilActions, seeder: Se
     utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -413,7 +413,7 @@ def test_create_newPlaceAndOrganizer(
     utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -635,7 +635,7 @@ def test_create_allday_180DayCapCountsBerlinWallClockAcrossDstChange(
     utils.assert_response_redirect(response, "main.event_actions", event_id=1)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -682,7 +682,7 @@ def test_create_allday_181DaySpanAcrossDstChangeIsRejected(
     )
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -708,7 +708,7 @@ def test_duplicate(client, app, utils: UtilActions, seeder: Seeder, mocker, alld
     utils.assert_response_redirect(response, "main.event_actions", event_id=2)
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         events = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -849,7 +849,7 @@ def test_update(client, seeder: Seeder, utils: UtilActions, app, mocker, variant
 
     with app.app_context():
         from project.domain.events.event_updated import EventUpdated
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -952,7 +952,7 @@ def test_update_with_custom_category(client, seeder: Seeder, utils: UtilActions,
     )
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = Event.query.filter(Event.id == event_id).first()
         assert event is not None
@@ -989,7 +989,7 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, mocker, db_erro
     )
 
     with app.app_context():
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         event = (
             Event.query.filter(Event.admin_unit_id == admin_unit_id)

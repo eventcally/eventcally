@@ -5,9 +5,9 @@ from project.application.read_repositories.abstract_event_read_repository import
     AbstractEventReadRepository,
 )
 from project.domain.types.object_id import ObjectId
-from project.models.event import Event
-from project.models.event_organizer import EventOrganizer
-from project.models.event_place import EventPlace
+from project.infrastructure.models.event import Event
+from project.infrastructure.models.event_organizer import EventOrganizer
+from project.infrastructure.models.event_place import EventPlace
 
 
 class SqlAlchemyEventReadRepository(AbstractEventReadRepository):

@@ -23,8 +23,13 @@ from project.application.read_repositories.abstract_organization_member_read_rep
     AbstractOrganizationMemberReadRepository,
 )
 from project.domain.types.object_id import ObjectId
+from project.infrastructure.models import (
+    AdminUnit,
+    AdminUnitMember,
+    AdminUnitMemberRole,
+    User,
+)
 from project.infrastructure.read_repositories.query_helpers import paginate
-from project.models import AdminUnit, AdminUnitMember, AdminUnitMemberRole, User
 
 
 class SqlAlchemyOrganizationMemberReadRepository(

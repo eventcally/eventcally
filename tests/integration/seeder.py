@@ -87,7 +87,7 @@ class Seeder(object):
         **kwargs
     ):
         from project.cli.seed_helpers import insert_admin_unit_for_user
-        from project.models import AdminUnit, Location
+        from project.infrastructure.models import AdminUnit, Location
         from project.user_datastore import get_user
 
         with self._app.app_context():
@@ -122,7 +122,7 @@ class Seeder(object):
         """The user_id of an AdminUnitMember with the "admin" role for
         `admin_unit_id` — a permitted actor for commands guarded by
         ensure_actor_has_permission_for_admin_unit."""
-        from project.models.admin_unit import AdminUnitMember
+        from project.infrastructure.models.admin_unit import AdminUnitMember
 
         with self._app.app_context():
             member = AdminUnitMember.query.filter(
@@ -199,7 +199,7 @@ class Seeder(object):
         relation_auto_verify_event_reference_requests=False,
         relation_verify=False,
     ):
-        from project.models import AdminUnitInvitation
+        from project.infrastructure.models import AdminUnitInvitation
 
         with self._app.app_context():
             invitation = AdminUnitInvitation()
@@ -272,7 +272,7 @@ class Seeder(object):
         name="Mein Widget",
         settings={"color": "black"},
     ):
-        from project.models import CustomWidget
+        from project.infrastructure.models import CustomWidget
 
         with self._app.app_context():
             custom_widget = CustomWidget()
@@ -290,7 +290,7 @@ class Seeder(object):
     def insert_default_oauth2_client(self, user_id=None, admin_unit_id=None):
         from project.api import scope_list
         from project.cli.seed_helpers import complete_oauth2_client
-        from project.models import OAuth2Client
+        from project.infrastructure.models import OAuth2Client
 
         with self._app.app_context():
             client = OAuth2Client()
@@ -318,7 +318,7 @@ class Seeder(object):
         oauth2_client_id = self.insert_default_oauth2_client(user_id, admin_unit_id)
 
         with self._app.app_context():
-            from project.models import OAuth2Client
+            from project.infrastructure.models import OAuth2Client
             from project.permissions import organization_app_permission_infos
 
             oauth2_client = OAuth2Client.query.get(oauth2_client_id)
@@ -333,7 +333,7 @@ class Seeder(object):
     def insert_app_key(self, oauth2_client_id) -> tuple[bytes, int]:
         with self._app.app_context():
             from project.cli.seed_helpers import add_keypair_to_oauth2_client
-            from project.models import OAuth2Client
+            from project.infrastructure.models import OAuth2Client
 
             oauth2_client = OAuth2Client.query.get(oauth2_client_id)
             private_pem, app_key = add_keypair_to_oauth2_client(oauth2_client)
@@ -343,7 +343,7 @@ class Seeder(object):
         return (private_pem, app_key_id)
 
     def insert_default_api_key(self, user_id=None, admin_unit_id=None):
-        from project.models import ApiKey
+        from project.infrastructure.models import ApiKey
 
         with self._app.app_context():
             api_key = ApiKey()
@@ -359,7 +359,7 @@ class Seeder(object):
         return (api_key_id, key)
 
     def install_app(self, oauth2_client_id, admin_unit_id):
-        from project.models import AppInstallation, OAuth2Client
+        from project.infrastructure.models import AppInstallation, OAuth2Client
 
         with self._app.app_context():
             app_installation = AppInstallation()
@@ -410,7 +410,7 @@ class Seeder(object):
         self, oauth2_client_id, user_id, admin_unit_id, authorize_scope=None
     ):
         with self._app.app_context():
-            from project.models import OAuth2Client
+            from project.infrastructure.models import OAuth2Client
             from project.user_datastore import get_user
 
             user = get_user(user_id)
@@ -437,7 +437,7 @@ class Seeder(object):
         oauth2_client_id = self.insert_default_oauth2_client(user_id)
 
         with self._app.app_context():
-            from project.models import OAuth2Client
+            from project.infrastructure.models import OAuth2Client
 
             oauth2_client = self._db.session.get(OAuth2Client, oauth2_client_id)
             client_id = oauth2_client.client_id
@@ -454,7 +454,7 @@ class Seeder(object):
         app_installation_id = self.install_app(oauth2_client_id, admin_unit_id)
 
         with self._app.app_context():
-            from project.models import AppKey
+            from project.infrastructure.models import AppKey
 
             app_key = AppKey.query.get(app_key_id)
             kid = app_key.kid
@@ -470,7 +470,7 @@ class Seeder(object):
         return category.id
 
     def get_event_date_id(self, event_id):
-        from project.models import Event
+        from project.infrastructure.models import Event
 
         with self._app.app_context():
             event = self._db.session.get(Event, event_id)
@@ -497,7 +497,7 @@ class Seeder(object):
         custom_category_ids=None,
         **kwargs
     ):
-        from project.models import CustomEventCategory, EventOrganizer
+        from project.infrastructure.models import CustomEventCategory, EventOrganizer
 
         with self._app.app_context():
             from project.cli.seed_helpers import upsert_event_category
@@ -555,7 +555,7 @@ class Seeder(object):
 
     def get_one_custom_event_category_set(self) -> tuple[int, int]:
         with self._app.app_context():
-            from project.models import CustomEventCategorySet
+            from project.infrastructure.models import CustomEventCategorySet
 
             custom_event_category_set = CustomEventCategorySet.query.first()
             custom_event_category_set_id = custom_event_category_set.id
@@ -566,7 +566,7 @@ class Seeder(object):
     def create_event_date_definition(
         self, start=None, end=None, allday=False, recurrence_rule=""
     ):
-        from project.models import EventDateDefinition
+        from project.infrastructure.models import EventDateDefinition
 
         with self._app.app_context():
             date_definition = EventDateDefinition()
@@ -643,7 +643,7 @@ class Seeder(object):
         )
 
         with self._app.app_context():
-            from project.models import Event
+            from project.infrastructure.models import Event
 
             event = (
                 Event.query.filter(Event.admin_unit_id == admin_unit_id)
@@ -691,14 +691,14 @@ class Seeder(object):
 
     def assign_image_to_event(self, event_id, image_id):
         with self._app.app_context():
-            from project.models import Event
+            from project.infrastructure.models import Event
 
             event = self._db.session.get(Event, event_id)
             event.photo_id = image_id
             self._db.session.commit()
 
     def create_reference(self, event_id, admin_unit_id):
-        from project.models import EventReference
+        from project.infrastructure.models import EventReference
 
         with self._app.app_context():
             reference = EventReference()
@@ -798,7 +798,7 @@ class Seeder(object):
     def create_admin_unit_verification_request(
         self, source_admin_unit_id, target_admin_unit_id
     ):
-        from project.models import (
+        from project.infrastructure.models import (
             AdminUnitVerificationRequest,
             AdminUnitVerificationRequestReviewStatus,
         )
@@ -830,7 +830,7 @@ class Seeder(object):
         return (other_user_id, other_admin_unit_id, request_id)
 
     def create_reference_request(self, event_id, admin_unit_id):
-        from project.models import (
+        from project.infrastructure.models import (
             EventReferenceRequest,
             EventReferenceRequestReviewStatus,
         )
@@ -874,7 +874,7 @@ class Seeder(object):
     def create_common_scenario(self):
         from dateutil.relativedelta import relativedelta
 
-        from project.models import Location
+        from project.infrastructure.models import Location
 
         with self._app.app_context():
             now = self.get_now_by_minute()
@@ -941,7 +941,7 @@ class Seeder(object):
         latitude=None,
         longitude=None,
     ):
-        from project.models import Location
+        from project.infrastructure.models import Location
 
         with self._app.app_context():
             location = Location(

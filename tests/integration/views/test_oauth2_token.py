@@ -15,7 +15,7 @@ def test_revoke(client, seeder, utils, app, db, mocker, db_error):
     utils.login()
 
     with app.app_context():
-        from project.models import OAuth2Token
+        from project.infrastructure.models import OAuth2Token
 
         oauth2_token = OAuth2Token.query.filter(OAuth2Token.user_id == user_id).first()
         oauth2_token_id = oauth2_token.id
@@ -39,7 +39,7 @@ def test_revoke(client, seeder, utils, app, db, mocker, db_error):
     utils.assert_response_redirect(response, "user.oauth2_tokens")
 
     with app.app_context():
-        from project.models import OAuth2Token
+        from project.infrastructure.models import OAuth2Token
 
         oauth2_token = db.session.get(OAuth2Token, oauth2_token_id)
         assert oauth2_token.is_revoked() > 0

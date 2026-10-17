@@ -31,12 +31,7 @@ from project.application.read_repositories.abstract_app_child_read_repository im
     AbstractAppChildReadRepository,
 )
 from project.domain.types.object_id import ObjectId
-from project.infrastructure.read_repositories.query_helpers import paginate
-from project.infrastructure.read_repositories.read_model_mappers import (
-    audit_options,
-    to_audit_read_model,
-)
-from project.models import (
+from project.infrastructure.models import (
     AdminUnit,
     AppInstallation,
     AppKey,
@@ -44,6 +39,11 @@ from project.models import (
     WebhookDelivery,
     WebhookDeliveryAttempt,
     WebhookEvent,
+)
+from project.infrastructure.read_repositories.query_helpers import paginate
+from project.infrastructure.read_repositories.read_model_mappers import (
+    audit_options,
+    to_audit_read_model,
 )
 
 _delivery_options = [

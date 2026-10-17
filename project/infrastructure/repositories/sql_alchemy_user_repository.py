@@ -2,7 +2,7 @@ from typing import Optional
 
 from project.domain.models.aggregates.user_aggregate import UserAggregate
 from project.domain.repositories.abstract_user_repository import AbstractUserRepository
-from project.models.user import User
+from project.infrastructure.models.user import User
 
 
 class SqlAlchemyUserRepository(AbstractUserRepository):

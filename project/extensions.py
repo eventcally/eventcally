@@ -4,6 +4,8 @@ These extension instances are created here without being bound to a Flask app.
 They will be initialized with an app using init_app() in the application factory.
 """
 
+import os
+
 from flask_babel import Babel
 from flask_cors import CORS
 from flask_limiter import Limiter
@@ -34,6 +36,9 @@ cors = CORS()
 csrf = CSRFProtect()
 mail = Mail()
 db = SQLAlchemy(model_class=CustomModel, metadata=metadata)
-migrate = Migrate()
+MIGRATIONS_DIRECTORY = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "infrastructure", "migrations"
+)
+migrate = Migrate(directory=MIGRATIONS_DIRECTORY)
 limiter = Limiter(key_func=get_remote_address)
 security = Security()
