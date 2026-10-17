@@ -60,7 +60,7 @@ jobs:
             echo "image=" >> "$GITHUB_OUTPUT"
           fi
 
-  # Fast lane: no services, no image build. Gates the PostGIS groups below.
+  # Fast lane: no services, no image build. Runs in parallel with the PostGIS groups.
   unit-tests:
     runs-on: ubuntu-latest
     permissions:
@@ -92,7 +92,7 @@ jobs:
 
   # Label of the container job
   integration-tests:
-    needs: [build-image, unit-tests]
+    needs: build-image
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     permissions:
