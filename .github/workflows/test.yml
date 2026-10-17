@@ -60,9 +60,39 @@ jobs:
             echo "image=" >> "$GITHUB_OUTPUT"
           fi
 
+  # Fast lane: no services, no image build. Gates the PostGIS groups below.
+  unit-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: pytest tests/unit --cov=project
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-unit
+          path: .coverage
+          include-hidden-files: true
+
   # Label of the container job
   integration-tests:
-    needs: build-image
+    needs: [build-image, unit-tests]
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     permissions:
@@ -142,7 +172,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run tests
-        run: pytest --cov=project --splits 4 --group ${{ matrix.group }}
+        run: pytest tests/integration --cov=project --splits 4 --group ${{ matrix.group }}
         env:
           # Inside the job container, services resolve by service name, not
           # localhost; limiter_redis is always reached on its container port
@@ -159,7 +189,7 @@ jobs:
           include-hidden-files: true
 
   coverage:
-    needs: integration-tests
+    needs: [unit-tests, integration-tests]
     if: ${{ success() }}
     runs-on: ubuntu-latest
     steps:
@@ -176,7 +206,7 @@ jobs:
         run: pip install coverage
 
       - name: Download all artifacts
-        # Downloads coverage1, coverage2, etc. Scoped by pattern because
+        # Downloads coverage-unit, coverage1, coverage2, etc. Scoped by pattern because
         # build-image's docker/build-push-action also uploads a Docker Build
         # Cloud summary artifact (*.dockerbuild) to the same run, which an
         # unscoped download tries to fetch too and fails to extract.

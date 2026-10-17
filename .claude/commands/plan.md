@@ -55,7 +55,7 @@ Use the Explore agent to find:
    `project/application/message_bus.py`
 5. **Data access** - SQLAlchemy repositories in `project/infrastructure/repositories/`; note
    whether the model is codegen-backed (`*_generated.py` from `codegen/config/`)
-6. **Test patterns** - `tests/conftest.py` fixtures and `tests/base_test.py` base classes;
+6. **Test patterns** - `tests/integration/conftest.py` fixtures and `tests/integration/base_test.py` base classes;
    which suites need PostGIS + Redis vs the `application/` + `domain/` suites that don't
 
 ### Document Patterns
@@ -181,7 +181,7 @@ Execute in order. Each task is atomic and verifiable.
 - **Action**: UPDATE
 - **Implement**: {register the new handler}
 - **Mirror**: `project/container.py:lines`
-- **Validate**: `pytest tests/application -k foo`
+- **Validate**: `pytest tests/unit/application -k foo`
 
 {Continue for each task...}
 

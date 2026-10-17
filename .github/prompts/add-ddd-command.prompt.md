@@ -118,7 +118,7 @@ Keep consistent with the existing grouping order within the FactoryAggregate.
 
 ### 6. Create Tests
 
-Location: `tests/service_layer/command_handlers/test_<snake_case_name>_handler.py`
+Location: `tests/integration/service_layer/command_handlers/test_<snake_case_name>_handler.py`
 
 ```python
 from project.application import commands
@@ -142,7 +142,7 @@ def test_your_command(app, db, seeder):
         # ... verify state changes
 ```
 
-Use fixtures from [`tests/conftest.py`](../../tests/conftest.py). Database rolls back after each test.
+Use fixtures from [`tests/integration/conftest.py`](../../tests/integration/conftest.py). Database rolls back after each test.
 
 ## Usage After Creation
 
@@ -167,7 +167,7 @@ current_app.container.cqrs.message_bus().dispatch_command(
 
 After scaffolding:
 
-- [ ] Run `pytest tests/service_layer/command_handlers/test_your_handler.py`
+- [ ] Run `pytest tests/integration/service_layer/command_handlers/test_your_handler.py`
 - [ ] Check `flask routes` includes endpoint if wired to API/view
 - [ ] Verify imports with `pre-commit run --all-files`
 - [ ] Ensure no circular imports (Domain → Service Layer → Infrastructure)

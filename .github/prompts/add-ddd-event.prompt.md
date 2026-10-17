@@ -145,7 +145,7 @@ Keep event registration order consistent with nearby entries.
 
 ### 6. Create Tests
 
-Location: `tests/service_layer/command_handlers/test_<snake_case_name>_handler.py` or update the focused command-handler test that emits the event.
+Location: `tests/integration/service_layer/command_handlers/test_<snake_case_name>_handler.py` or update the focused command-handler test that emits the event.
 
 ```python
 from project.application import commands
@@ -169,7 +169,7 @@ def test_your_event_is_dispatched(app, db, seeder):
     assert event.id == result.id
 ```
 
-Use fixtures from [`tests/conftest.py`](../../tests/conftest.py). Prefer verifying the exact event payload that downstream consumers rely on.
+Use fixtures from [`tests/integration/conftest.py`](../../tests/integration/conftest.py). Prefer verifying the exact event payload that downstream consumers rely on.
 
 ## Usage After Creation
 
@@ -198,7 +198,7 @@ assert matching_events[0].id == result.id
 
 After scaffolding:
 
-- [ ] Run the narrowest affected test, usually `pytest tests/service_layer/command_handlers/test_your_handler.py`
+- [ ] Run the narrowest affected test, usually `pytest tests/integration/service_layer/command_handlers/test_your_handler.py`
 - [ ] Verify the event is exported from [`project/domain/events/__init__.py`](../../project/domain/events/__init__.py)
 - [ ] Run `flake8` on touched files
 - [ ] Ensure payload fields match real consumers and no unused fields were added

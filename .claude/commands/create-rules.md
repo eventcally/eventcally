@@ -101,7 +101,7 @@ Study existing code for:
 - **Commands/events**: Pydantic `Command`/`CommandWithResult[T]` in `project/application/commands/`, handlers in `command_handlers/`, wired through the message bus and DI container (`project/container.py`)
 - **Generated code**: `*_generated.py` from `codegen/config/` YAML — never edit by hand; put custom logic in the handwritten sibling (e.g. `event.py` extends `event_generated.py`)
 - **Data access**: SQLAlchemy ORM via repositories; watch for deferred columns needing `undefer()`
-- **Tests**: fixtures/base classes in `tests/conftest.py` + `tests/base_test.py`; assert through message bus / repositories, not around the architecture
+- **Tests**: fixtures/base classes in `tests/integration/conftest.py` + `tests/integration/base_test.py`; assert through message bus / repositories, not around the architecture
 - **Errors, naming, structure**: snake_case, thin views delegating into application/domain
 
 ### Find Key Files
@@ -114,7 +114,7 @@ Study existing code for:
 - API wiring: `project/api/__init__.py`
 - Tasks/schedules: `project/celery_tasks.py`, `project/base_tasks.py`
 - Codegen: `codegen/generate.py`, `codegen/config/`
-- Test fixtures: `tests/conftest.py`, `tests/base_test.py`, `tests/seeder.py`
+- Test fixtures: `tests/integration/conftest.py`, `tests/integration/base_test.py`, `tests/integration/seeder.py`
 - CI: `.github/workflows/lint.yml`, `.github/workflows/test.yml`, `.github/workflows/playwright.yml`
 - Agent docs: `AGENTS.md`, `.github/copilot-instructions.md`, `doc/development.md`, `doc/deployment.md`
 
@@ -202,7 +202,7 @@ docker-compose up --build
 docker compose -f docker-compose.test.yml up -d --wait
 pytest                             # all tests
 pytest --cov=project --cov-report=html   # with coverage
-pytest tests/views/test_event.py::TestEventView::test_create -v   # single test
+pytest tests/integration/views/test_event.py::TestEventView::test_create -v   # single test
 
 # End-to-end
 npm install && npx playwright test

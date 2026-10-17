@@ -55,7 +55,7 @@ importing `project.models` from new modules; its `ignore_imports` list only shri
 
 ## Testing Conventions
 
-- Prefer existing fixtures and app context setup from [tests/conftest.py](../tests/conftest.py).
+- Prefer existing fixtures and app context setup from [tests/integration/conftest.py](../tests/integration/conftest.py).
 - Keep tests aligned with source structure (application/api/infrastructure/domain).
 - For command/event flows, assert behavior through the message bus and repository interfaces instead of bypassing architecture.
 
