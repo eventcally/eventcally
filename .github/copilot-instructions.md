@@ -20,7 +20,7 @@ Respect strict DDD layering:
 
 - `project/domain/`: core business logic and abstract interfaces
 - `project/application/`: commands, handlers, message bus orchestration; queries, query handlers, read models, query bus
-- `project/infrastructure/`: concrete adapters (SQLAlchemy, Celery, external services)
+- `project/infrastructure/`: concrete adapters (SQLAlchemy, Celery, external services), ORM `models/`, Alembic `migrations/`, `dbtypes.py`
 
 The layering rule is enforced by [.importlinter](../.importlinter). Avoid introducing imports that violate these boundaries.
 
@@ -37,7 +37,7 @@ models, and a read repository on the read-only `infrastructure.read_session`. Se
 [add-ddd-query.prompt.md](prompts/add-ddd-query.prompt.md); the event organizer reads are
 the reference implementation. The
 `delivery-reads-through-queries` contract in `.importlinter` keeps delivery code from
-importing `project.models` from new modules; its `ignore_imports` list only shrinks
+importing `project.infrastructure.models` from new modules; its `ignore_imports` list only shrinks
 (`python .scripts/models_import_ignores.py --write`).
 - API wiring: [project/api/__init__.py](../project/api/__init__.py)
 

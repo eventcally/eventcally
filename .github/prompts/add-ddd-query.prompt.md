@@ -276,7 +276,7 @@ def organizer_list(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]
 
 ### 8. Ratchet the import-linter contract
 
-If the delivery module no longer imports `project.models`, its `ignore_imports` line in
+If the delivery module no longer imports `project.infrastructure.models`, its `ignore_imports` line in
 the `delivery-reads-through-queries` contract of [`.importlinter`](../../.importlinter)
 is now unmatched and `lint-imports` fails. Regenerate the list:
 
