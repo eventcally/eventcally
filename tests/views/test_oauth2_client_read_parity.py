@@ -1,5 +1,7 @@
 """Parity of the OAuth2 client and app pages. Written against the ORM path first."""
 
+import re
+
 
 def _text(utils, response):
     return " ".join(utils.get_soup(response).get_text().split())
@@ -93,8 +95,8 @@ def test_app_pages(app, db, seeder, utils):
         utils.get_url("manage_admin_unit.app", id=admin_unit_id, app_id=app_id)
     )
     text = _text(utils, response)
-    assert "https://hook.example.com" in text
-    assert "https://example.com" in text
+    assert re.search(r"https://hook\.example\.com", text)
+    assert re.search(r"https://example\.com", text)
     assert "Beschreibung" in text
 
     response = utils.get_ok(

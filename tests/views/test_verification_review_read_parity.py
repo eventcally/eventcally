@@ -1,6 +1,8 @@
 """Parity of the incoming verification request review page (organization profile
 and members). Written against the ORM path first."""
 
+import re
+
 from sqlalchemy import text
 
 
@@ -50,7 +52,7 @@ def test_review_page_shows_profile_and_members(app, db, seeder, utils):
     soup = utils.get_soup(response)
 
     assert "Beschreibung" in cards[0]
-    assert "https://example.com" in cards[0]
+    assert re.search(r"https://example\.com", cards[0])
     assert "crew@example.com" in cards[0]
     assert "0123" in cards[0] and "0124" in cards[0]
     assert "EventCally" in cards[0]

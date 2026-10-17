@@ -1,5 +1,7 @@
 """Parity of the app installation pages. Written against the ORM path first."""
 
+import re
+
 
 def _text(utils, response):
     return " ".join(utils.get_soup(response).get_text().split())
@@ -38,7 +40,7 @@ def test_install_page_shows_app(app, db, seeder, utils):
     )
     text = _text(utils, response)
     assert "Do you want to install 'Mein Client'?" in text
-    assert "https://example.com" in text
+    assert re.search(r"https://example\.com", text)
     assert "Eine App" in text
 
     utils.assert_response_notFound(
