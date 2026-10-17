@@ -2,7 +2,7 @@ from flask_babel import lazy_gettext
 from flask_login import current_user
 
 from project.application.queries import ApiKeySort, GetApiKeyQuery, ListUserApiKeysQuery
-from project.modular.sort_definition import KeySortDefinition, sort_key_or_none
+from project.views.modular.sort_definition import KeySortDefinition, sort_key_or_none
 from project.views.user_blueprint import user_bp
 from project.views.user_blueprint.api_key.displays import ListDisplay, ReadDisplay
 from project.views.user_blueprint.api_key.forms import (

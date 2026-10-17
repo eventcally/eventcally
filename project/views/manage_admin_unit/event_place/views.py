@@ -1,11 +1,15 @@
 from flask import redirect
 
 from project.application.commands import DeleteEventPlaceCommand
-from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
 from project.views.manage_admin_unit.event_place.forms import (
     CreateEventPlaceForm,
     DeleteEventPlaceForm,
     UpdateEventPlaceForm,
+)
+from project.views.modular.base_views import (
+    BaseCreateView,
+    BaseDeleteView,
+    BaseUpdateView,
 )
 from project.views.utils import handle_base_error
 

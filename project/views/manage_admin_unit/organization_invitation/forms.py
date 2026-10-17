@@ -7,7 +7,7 @@ from project.application.commands import (
     UpdateOrganizationInvitationCommand,
 )
 from project.domain.types import ObjectId, unset
-from project.modular.base_form import BaseCreateForm, BaseUpdateForm
+from project.views.modular.base_form import BaseCreateForm, BaseUpdateForm
 
 
 class SharedFormMixin(object):

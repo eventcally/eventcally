@@ -2,7 +2,7 @@ from flask import flash, redirect, url_for
 from flask_babel import gettext, lazy_gettext
 
 from project.application.commands import DeclineOrganizationInvitationCommand
-from project.modular.base_views import BaseObjectFormView
+from project.views.modular.base_views import BaseObjectFormView
 from project.views.user_blueprint.organization_invitation.forms import NegotiateForm
 from project.views.utils import handle_base_error
 

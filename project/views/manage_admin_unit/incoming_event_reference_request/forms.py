@@ -9,7 +9,7 @@ from project.domain.models.enums.event_reference_request_review_status import (
     EventReferenceRequestReviewStatus,
 )
 from project.forms.common import event_rating_choices
-from project.modular.base_form import BaseForm
+from project.views.modular.base_form import BaseForm
 
 
 class BaseEventReferenceRequestForm(BaseForm):

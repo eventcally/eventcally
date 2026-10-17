@@ -1,8 +1,8 @@
 from flask import redirect
 
 from project.application.commands import WithdrawOrganizationVerificationRequestCommand
-from project.modular.base_views import BaseDeleteView, BaseListView
 from project.views import utils
+from project.views.modular.base_views import BaseDeleteView, BaseListView
 from project.views.utils import handle_base_error
 
 

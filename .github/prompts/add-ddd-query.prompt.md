@@ -6,7 +6,7 @@ argument-hint: "Query name (e.g., ListEventOrganizers, GetEventOrganizer)"
 # Add DDD Query
 
 Scaffold a read path that replaces direct ORM access (`Model.query`, `get_or_404`,
-`paginate()`, `project/services` read helpers) in views, the API and `project/modular`.
+`paginate()`, `project/services` read helpers) in views (incl. `project/views/modular`) and the API.
 
 Reads go: view / API → `query_bus.handle(query)` → query handler → read repository →
 read-only session. The bus has no unit of work, no commit and no event dispatch.

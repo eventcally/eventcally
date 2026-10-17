@@ -3,8 +3,8 @@ from flask_babel import lazy_gettext
 from project.domain.models.enums.organization_verification_request_review_status import (
     OrganizationVerificationRequestReviewStatus,
 )
-from project.modular.base_display import BaseDisplay
-from project.modular.base_props import (
+from project.views.modular.base_display import BaseDisplay
+from project.views.modular.base_props import (
     BadgePropFormatter,
     BaseProp,
     DateProp,

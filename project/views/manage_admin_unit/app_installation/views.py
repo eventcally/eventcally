@@ -3,7 +3,6 @@ from flask_babel import gettext, lazy_gettext
 
 from project.application.commands import UninstallAppCommand
 from project.application.queries import GetInstallableAppQuery
-from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
 from project.permissions import get_organization_permission_infos
 from project.views.manage_admin_unit.app_installation.displays import (
     AcceptPermissionsDisplay,
@@ -12,6 +11,11 @@ from project.views.manage_admin_unit.app_installation.displays import (
 from project.views.manage_admin_unit.app_installation.forms import (
     AcceptPermissionsForm,
     InstallAppForm,
+)
+from project.views.modular.base_views import (
+    BaseCreateView,
+    BaseDeleteView,
+    BaseUpdateView,
 )
 from project.views.utils import current_admin_unit, flash_message, handle_base_error
 

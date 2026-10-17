@@ -1,7 +1,7 @@
 from flask import redirect, request
 
 from project.application.commands import DeleteOrganizationRelationCommand
-from project.modular.base_views import (
+from project.views.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
     BaseListView,

@@ -19,9 +19,9 @@ from project.imageutils import (
     resize_image_to_max,
     validate_image,
 )
-from project.modular.ajax import LicenseAjaxModelLoader
-from project.modular.base_form import BaseForm
-from project.modular.fields import (
+from project.views.modular.ajax import LicenseAjaxModelLoader
+from project.views.modular.base_form import BaseForm
+from project.views.modular.fields import (
     AjaxSelectField,
     GooglePlaceCoordinateField,
     GooglePlaceField,

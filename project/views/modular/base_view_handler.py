@@ -12,9 +12,9 @@ from project.application.services.abstract_app_context_provider import (
     AbstractAppContextProvider,
 )
 from project.container import Application
-from project.modular.base_blueprint import BaseBlueprint
-from project.modular.base_form import BaseDeleteForm, BaseListForm
-from project.modular.base_views import (
+from project.views.modular.base_blueprint import BaseBlueprint
+from project.views.modular.base_form import BaseDeleteForm, BaseListForm
+from project.views.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
     BaseListView,

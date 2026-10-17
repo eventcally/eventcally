@@ -18,7 +18,6 @@ type = forbidden
 source_modules =
     project.views
     project.api
-    project.modular
     project.access
     project.jinja_filters
 forbidden_modules =

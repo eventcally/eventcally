@@ -8,7 +8,7 @@ from wtforms import (
 from wtforms.utils import unset_value
 
 from project.maputils import find_gmaps_places, get_gmaps_place
-from project.modular.widgets import (
+from project.views.modular.widgets import (
     AjaxSelect2Widget,
     DateRangeWidget,
     GooglePlaceCoordinateWidget,

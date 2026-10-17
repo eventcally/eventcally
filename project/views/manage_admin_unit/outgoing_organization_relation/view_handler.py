@@ -5,10 +5,6 @@ from project.application.queries import (
     ListOutgoingOrganizationRelationsQuery,
     OrganizationRelationSort,
 )
-from project.modular.base_form import BaseDeleteForm
-from project.modular.filters import KeyBooleanFilter
-from project.modular.search_definition import KeySearchDefinition
-from project.modular.sort_definition import KeySortDefinition, sort_key_or_none
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -27,6 +23,10 @@ from project.views.manage_admin_unit.outgoing_organization_relation.views import
     ListView,
     UpdateView,
 )
+from project.views.modular.base_form import BaseDeleteForm
+from project.views.modular.filters import KeyBooleanFilter
+from project.views.modular.search_definition import KeySearchDefinition
+from project.views.modular.sort_definition import KeySortDefinition, sort_key_or_none
 from project.views.utils import current_admin_unit
 
 

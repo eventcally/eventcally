@@ -112,7 +112,7 @@ def test_lookup_out_of_range_page_is_404(client, app, db, utils: UtilActions, se
 
 
 def test_get_one_ignores_a_non_numeric_value(app, db):
-    from project.modular.ajax import LicenseAjaxModelLoader
+    from project.views.modular.ajax import LicenseAjaxModelLoader
 
     with app.test_request_context():
         assert LicenseAjaxModelLoader().get_one("not-a-number") is None

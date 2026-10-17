@@ -4,8 +4,12 @@ from flask import abort, g, redirect, request, send_file, session
 from flask_babel import gettext
 
 from project.application.commands import CreateAppKeyCommand, DeleteAppKeyCommand
-from project.modular.base_form import BaseCreateForm
-from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseReadView
+from project.views.modular.base_form import BaseCreateForm
+from project.views.modular.base_views import (
+    BaseCreateView,
+    BaseDeleteView,
+    BaseReadView,
+)
 from project.views.utils import current_admin_unit, flash_message, handle_base_error
 
 

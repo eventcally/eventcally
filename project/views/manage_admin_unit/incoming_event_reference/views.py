@@ -3,10 +3,14 @@ from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
 
 from project.application.commands import DeleteEventReferenceCommand
-from project.modular.base_views import BaseDeleteView, BaseListView, BaseUpdateView
 from project.views.manage_admin_unit.incoming_event_reference.forms import (
     DeleteEventReferenceForm,
     UpdateEventReferenceForm,
+)
+from project.views.modular.base_views import (
+    BaseDeleteView,
+    BaseListView,
+    BaseUpdateView,
 )
 from project.views.utils import handle_base_error
 

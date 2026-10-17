@@ -4,7 +4,6 @@ from flask_babel import gettext, lazy_gettext
 from project.application.commands.cancel_organization_deletion_command import (
     CancelOrganizationDeletionCommand,
 )
-from project.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.utils import widget_default_background_color, widget_default_primary_color
 from project.views.manage_admin_unit.admin_unit.forms import (
     CancelDeletionForm,
@@ -12,6 +11,7 @@ from project.views.manage_admin_unit.admin_unit.forms import (
     UpdateForm,
     UpdateWidgetForm,
 )
+from project.views.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.views.utils import (
     current_admin_unit,
     flash_non_match_for_deletion,

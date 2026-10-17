@@ -1,6 +1,6 @@
 from flask import current_app, g
 
-from project.modular.base_blueprint import BaseBlueprint
+from project.views.modular.base_blueprint import BaseBlueprint
 
 app_bp = BaseBlueprint(
     "app",

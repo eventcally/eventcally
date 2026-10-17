@@ -12,7 +12,7 @@ from project.domain.models.enums.organization_verification_request_rejection_rea
 from project.domain.models.enums.organization_verification_request_review_status import (
     OrganizationVerificationRequestReviewStatus,
 )
-from project.modular.base_form import BaseForm
+from project.views.modular.base_form import BaseForm
 
 
 class VerificationRequestReviewForm(BaseForm):

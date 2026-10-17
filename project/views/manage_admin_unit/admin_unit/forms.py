@@ -15,10 +15,10 @@ from project.application.queries import (
 )
 from project.forms.common import Base64ImageForm, StrictGooglePlaceLocationForm
 from project.forms.widgets import HTML5StringField
-from project.modular.base_form import BaseForm, BaseUpdateForm, BlankFormData
-from project.modular.fields import SelectMultipleTagField, VirtualFormField
-from project.modular.widgets import AjaxValidationWidget
 from project.utils import widget_default_background_color, widget_default_primary_color
+from project.views.modular.base_form import BaseForm, BaseUpdateForm, BlankFormData
+from project.views.modular.fields import SelectMultipleTagField, VirtualFormField
+from project.views.modular.widgets import AjaxValidationWidget
 from project.views.utils import current_admin_unit
 
 

@@ -10,7 +10,7 @@ from project.application.commands import (
 )
 from project.application.queries import ListUserOrganizationMembershipsQuery
 from project.application.queries.page_request import MAX_PER_PAGE, PageRequest
-from project.modular.base_views import BaseDeleteView, BaseUpdateView
+from project.views.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.views.user_blueprint.user.forms import (
     AcceptTosForm,
     CancelDeletionForm,

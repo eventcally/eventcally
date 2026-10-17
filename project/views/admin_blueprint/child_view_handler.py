@@ -2,7 +2,7 @@ from flask import url_for
 from flask_babel import gettext
 from flask_security import roles_required
 
-from project.modular.base_view_handler import BaseViewHandler
+from project.views.modular.base_view_handler import BaseViewHandler
 
 
 class AdminChildViewHandler(BaseViewHandler):

@@ -7,7 +7,7 @@ from project.application.commands import (
     UpdateUserNotificationSettingsCommand,
 )
 from project.forms.common import get_accept_tos_markup
-from project.modular.base_form import BaseForm
+from project.views.modular.base_form import BaseForm
 
 
 class RequestDeletionForm(BaseForm):

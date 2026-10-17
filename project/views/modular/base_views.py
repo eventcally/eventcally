@@ -10,8 +10,9 @@ from project.application.query_bus import QueryBus
 from project.application.services.abstract_app_context_provider import (
     AbstractAppContextProvider,
 )
-from project.modular.fields import AjaxSelectField, DateRangeField, RadiusField
-from project.modular.filters import (
+from project.permissions import PermissionAction
+from project.views.modular.fields import AjaxSelectField, DateRangeField, RadiusField
+from project.views.modular.filters import (
     BooleanFilter,
     DateRangeFilter,
     EnumFilter,
@@ -19,7 +20,6 @@ from project.modular.filters import (
     SelectModelFilter,
     StringFilter,
 )
-from project.permissions import PermissionAction
 from project.views.utils import (
     abort_if_page_out_of_range,
     flash_errors,
@@ -36,7 +36,7 @@ class BaseView(View):
     permission_action: PermissionAction = None
 
     def __init__(self, *args, **kwargs):
-        from project.modular.base_view_handler import BaseViewHandler
+        from project.views.modular.base_view_handler import BaseViewHandler
 
         super().__init__()
 

@@ -6,8 +6,6 @@ from project.application.queries import (
     GetEventOrganizerForEditQuery,
     ListEventOrganizersQuery,
 )
-from project.modular.search_definition import KeySearchDefinition
-from project.modular.sort_definition import KeySortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -18,6 +16,8 @@ from project.views.manage_admin_unit.event_organizer.views import (
     DeleteView,
     UpdateView,
 )
+from project.views.modular.search_definition import KeySearchDefinition
+from project.views.modular.sort_definition import KeySortDefinition
 from project.views.utils import current_admin_unit, non_match_for_deletion
 
 

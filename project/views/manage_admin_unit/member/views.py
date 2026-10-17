@@ -4,7 +4,7 @@ from flask_security import current_user
 
 from project.application.commands import RemoveOrganizationMemberCommand
 from project.application.queries import ListOrganizationMemberRolesQuery
-from project.modular.base_views import BaseDeleteView, BaseUpdateView
+from project.views.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.views.utils import handle_base_error
 
 

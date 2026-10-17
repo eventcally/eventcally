@@ -1,7 +1,7 @@
 from flask_babel import lazy_gettext
 
-from project.modular.base_display import BaseDisplay
-from project.modular.base_props import BoolProp, DateProp, StringProp
+from project.views.modular.base_display import BaseDisplay
+from project.views.modular.base_props import BoolProp, DateProp, StringProp
 
 
 class ListDisplay(BaseDisplay):

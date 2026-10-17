@@ -3,7 +3,11 @@ from flask_babel import gettext
 
 from project.application.commands import RevokeMemberInvitationCommand
 from project.application.queries import ListOrganizationMemberRolesQuery
-from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
+from project.views.modular.base_views import (
+    BaseCreateView,
+    BaseDeleteView,
+    BaseUpdateView,
+)
 from project.views.utils import current_admin_unit, handle_base_error
 
 

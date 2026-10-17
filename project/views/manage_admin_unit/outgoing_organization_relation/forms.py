@@ -7,9 +7,9 @@ from project.application.commands import (
     UpdateOrganizationRelationCommand,
 )
 from project.domain.types import unset
-from project.modular.base_form import BaseCreateForm, BaseUpdateForm
-from project.modular.fields import AjaxSelectField
 from project.views.manage_admin_unit.ajax import OrganizationAjaxModelLoader
+from project.views.modular.base_form import BaseCreateForm, BaseUpdateForm
+from project.views.modular.fields import AjaxSelectField
 
 
 class SharedFormMixin(object):

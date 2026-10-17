@@ -1,4 +1,4 @@
-from project.modular.base_blueprint import BaseBlueprint
+from project.views.modular.base_blueprint import BaseBlueprint
 
 admin_bp = BaseBlueprint(
     "admin",

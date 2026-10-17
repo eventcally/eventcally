@@ -3,7 +3,6 @@ from project.application.queries import (
     ListOrganizationInvitationsQuery,
     OrganizationInvitationSort,
 )
-from project.modular.base_form import BaseDeleteForm
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -21,6 +20,7 @@ from project.views.manage_admin_unit.organization_invitation.views import (
     DeleteView,
     UpdateView,
 )
+from project.views.modular.base_form import BaseDeleteForm
 from project.views.utils import current_admin_unit
 
 

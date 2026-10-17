@@ -62,7 +62,7 @@ Key points:
 
 ## Adding read-side queries
 
-Reads in views, the API and `project/modular` are migrating to the query side
+Reads in views (incl. `project/views/modular`) and the API are migrating to the query side
 (plan: `.agents/plans/2026-10-13-cqrs-read-side-migration.plan.md`). Scaffold guide:
 `.github/prompts/add-ddd-query.prompt.md`. Reference implementation: event organizers
 (`ListEventOrganizersQuery`, `SqlAlchemyEventOrganizerReadRepository`).

@@ -1,11 +1,11 @@
 from flask import url_for
 from flask_babel import lazy_gettext
 
-from project.modular.base_display import BaseDisplay
-from project.modular.base_props import BaseProp, DateProp, EnumProp, EventProp
 from project.views.manage_admin_unit.incoming_event_reference_request.displays import (
     EventReferenceRequestReviewStatusPropFormatter,
 )
+from project.views.modular.base_display import BaseDisplay
+from project.views.modular.base_props import BaseProp, DateProp, EnumProp, EventProp
 
 
 class ReadDisplay(BaseDisplay):

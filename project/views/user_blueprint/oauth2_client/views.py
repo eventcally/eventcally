@@ -2,7 +2,11 @@ from flask import redirect
 from flask_security import current_user
 
 from project.application.commands import DeleteOAuth2ClientCommand
-from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
+from project.views.modular.base_views import (
+    BaseCreateView,
+    BaseDeleteView,
+    BaseUpdateView,
+)
 from project.views.utils import handle_base_error
 
 

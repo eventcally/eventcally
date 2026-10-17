@@ -1,7 +1,7 @@
 from flask_babel import lazy_gettext
 from wtforms import SubmitField
 
-from project.modular.base_form import BaseForm
+from project.views.modular.base_form import BaseForm
 
 
 class NegotiateForm(BaseForm):

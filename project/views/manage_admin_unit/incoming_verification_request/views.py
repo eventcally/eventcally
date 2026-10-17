@@ -4,10 +4,10 @@ from flask_babel import gettext, lazy_gettext
 from project.domain.models.enums.organization_verification_request_review_status import (
     OrganizationVerificationRequestReviewStatus,
 )
-from project.modular.base_views import BaseUpdateView
 from project.views.manage_admin_unit.incoming_verification_request.forms import (
     VerificationRequestReviewForm,
 )
+from project.views.modular.base_views import BaseUpdateView
 from project.views.utils import flash_message, handle_base_error
 
 

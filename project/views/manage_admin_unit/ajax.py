@@ -6,8 +6,8 @@ from project.application.queries import (
     LookupEventPlacesQuery,
     SearchOrganizationsQuery,
 )
-from project.modular.ajax import QueryAjaxLoader
 from project.utils import get_place_str
+from project.views.modular.ajax import QueryAjaxLoader
 from project.views.utils import current_admin_unit
 
 

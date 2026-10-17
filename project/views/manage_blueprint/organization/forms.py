@@ -4,8 +4,8 @@ from wtforms.fields import BooleanField
 from wtforms.validators import Optional
 
 from project.application.commands import CreateOrganizationCommand
-from project.modular.base_form import BaseCreateForm, BaseForm, BlankFormData
 from project.views.manage_admin_unit.admin_unit.forms import AdminUnitFormMixin
+from project.views.modular.base_form import BaseCreateForm, BaseForm, BlankFormData
 
 
 class AdminUnitRelationForm(BaseForm):

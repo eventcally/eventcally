@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired
 
 from project.application.commands import CreateEventReferenceCommand
 from project.forms.common import event_rating_choices
-from project.modular.base_form import BaseForm
+from project.views.modular.base_form import BaseForm
 
 
 class CreateEventReferenceForm(BaseForm):

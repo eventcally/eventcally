@@ -6,7 +6,6 @@ from project.application.queries import (
     GetOrganizationForAdminQuery,
     ListOrganizationsForAdminQuery,
 )
-from project.modular.search_definition import KeySearchDefinition
 from project.views.admin_blueprint import admin_bp
 from project.views.admin_blueprint.child_view_handler import AdminChildViewHandler
 from project.views.admin_blueprint.organization.displays import (
@@ -15,6 +14,7 @@ from project.views.admin_blueprint.organization.displays import (
 )
 from project.views.admin_blueprint.organization.forms import DeleteForm, UpdateForm
 from project.views.admin_blueprint.organization.views import DeleteView, UpdateView
+from project.views.modular.search_definition import KeySearchDefinition
 
 
 class ViewHandler(AdminChildViewHandler):

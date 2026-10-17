@@ -1,8 +1,8 @@
 from flask import url_for
 from flask_babel import lazy_gettext
 
-from project.modular.base_display import BaseDisplay
-from project.modular.base_props import BaseProp, DateProp, EventProp
+from project.views.modular.base_display import BaseDisplay
+from project.views.modular.base_props import BaseProp, DateProp, EventProp
 
 
 class ReadDisplay(BaseDisplay):

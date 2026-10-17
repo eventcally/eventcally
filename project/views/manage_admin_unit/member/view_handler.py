@@ -4,7 +4,6 @@ from project.application.queries import (
     GetOrganizationMemberQuery,
     ListOrganizationMembersQuery,
 )
-from project.modular.base_form import BaseDeleteForm
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -12,6 +11,7 @@ from project.views.manage_admin_unit.child_view_handler import (
 from project.views.manage_admin_unit.member.displays import ListDisplay, UpdateDisplay
 from project.views.manage_admin_unit.member.forms import UpdateForm
 from project.views.manage_admin_unit.member.views import DeleteView, UpdateView
+from project.views.modular.base_form import BaseDeleteForm
 from project.views.utils import current_admin_unit
 
 

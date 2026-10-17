@@ -6,7 +6,7 @@ from project.application.commands import (
     AcceptMemberInvitationCommand,
     DeclineMemberInvitationCommand,
 )
-from project.modular.base_views import BaseObjectFormView
+from project.views.modular.base_views import BaseObjectFormView
 from project.views.user_blueprint.organization_member_invitation.forms import (
     NegotiateForm,
 )

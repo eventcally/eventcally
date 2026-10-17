@@ -12,8 +12,8 @@ from project.application.commands import (
 )
 from project.domain.types import ObjectId
 from project.forms.widgets import MultiCheckboxField
-from project.modular.base_form import BaseDeleteForm, BaseForm
 from project.utils import split_by_crlf
+from project.views.modular.base_form import BaseDeleteForm, BaseForm
 
 
 class BaseOAuth2ClientForm(BaseForm):

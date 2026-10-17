@@ -8,7 +8,7 @@ from project.application.commands import (
 )
 from project.domain.types import ObjectId
 from project.forms.widgets import MultiCheckboxField
-from project.modular.base_form import BaseCreateForm, BaseUpdateForm
+from project.views.modular.base_form import BaseCreateForm, BaseUpdateForm
 
 
 class SharedFormMixin(object):

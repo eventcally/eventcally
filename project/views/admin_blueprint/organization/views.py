@@ -1,8 +1,8 @@
 from flask import redirect
 from flask_babel import gettext
 
-from project.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.views.admin_blueprint.organization.forms import DeleteForm, UpdateForm
+from project.views.modular.base_views import BaseDeleteView, BaseUpdateView
 from project.views.utils import flash_non_match_for_deletion, handle_base_error
 
 

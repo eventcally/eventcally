@@ -8,8 +8,6 @@ from project.application.queries import (
 from project.domain.models.enums.event_reference_request_review_status import (
     EventReferenceRequestReviewStatus,
 )
-from project.modular.filters import KeyEnumFilter, enum_filter_value_or_none
-from project.modular.sort_definition import KeySortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -22,6 +20,8 @@ from project.views.manage_admin_unit.outgoing_event_reference_request.views impo
     CreateView,
     ListView,
 )
+from project.views.modular.filters import KeyEnumFilter, enum_filter_value_or_none
+from project.views.modular.sort_definition import KeySortDefinition
 from project.views.utils import current_admin_unit
 
 
