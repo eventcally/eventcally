@@ -2,7 +2,6 @@ from marshmallow import ValidationError, fields, post_dump, validate
 from marshmallow.decorators import pre_load
 
 from project.access import has_access, login_api_user
-from project.api import marshmallow
 from project.api.image.schemas import ImageDumpSchema, ImageSchema
 from project.api.location.schemas import (
     LocationDumpSchema,
@@ -13,55 +12,62 @@ from project.api.schemas import (
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
-    SQLAlchemyBaseSchema,
+    PlainBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
     WriteIdPlainSchema,
     WriteIdSchemaMixin,
 )
-from project.models import AdminUnit
 
 
-class OrganizationModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = AdminUnit
-        load_instance = True
+class OrganizationModelSchema(PlainBaseSchema):
+    pass
 
 
 class OrganizationIdSchema(OrganizationModelSchema, IdSchemaMixin):
     pass
 
 
+def _organization_exists(organization_id) -> bool:
+    from flask import current_app
+
+    from project.application.queries import GetOrganizationQuery
+
+    query_bus = current_app.container.cqrs.query_bus()
+    return query_bus.handle(GetOrganizationQuery(id=organization_id)) is not None
+
+
 class OrganizationWriteIdSchema(OrganizationModelSchema, WriteIdSchemaMixin):
-    pass
+    def object_exists(self, object_id) -> bool:
+        return _organization_exists(object_id)
 
 
 class OrganizationWriteIdPlainSchema(WriteIdPlainSchema):
     @pre_load()
     def validate_exists(self, data, **kwargs):
-        if not AdminUnit.query.get(data.get("id")):
+        if not _organization_exists(data.get("id")):
             raise ValidationError("Referenced object does not exist")
         return data
 
 
 class OrganizationBaseSchema(OrganizationIdSchema):
-    created_at = marshmallow.auto_field()
-    updated_at = marshmallow.auto_field()
-    name = marshmallow.auto_field()
-    short_name = marshmallow.auto_field()
-    url = marshmallow.auto_field()
-    email = marshmallow.auto_field()
-    phone = marshmallow.auto_field()
-    fax = marshmallow.auto_field()
-    description = marshmallow.auto_field()
+    created_at = fields.DateTime(allow_none=True)
+    updated_at = fields.DateTime(allow_none=True)
+    name = fields.String(allow_none=True, validate=validate.Length(max=255))
+    short_name = fields.String(allow_none=True, validate=validate.Length(max=100))
+    url = fields.String(allow_none=True, validate=validate.Length(max=255))
+    email = fields.String(allow_none=True, validate=validate.Length(max=255))
+    phone = fields.String(allow_none=True, validate=validate.Length(max=255))
+    fax = fields.String(allow_none=True, validate=validate.Length(max=255))
+    description = fields.String(allow_none=True)
     is_verified = fields.Boolean()
 
 
 class OrganizationSchema(OrganizationBaseSchema):
     location = fields.Nested(LocationSchema)
     logo = fields.Nested(ImageSchema)
-    can_verify_other = marshmallow.auto_field()
-    incoming_reference_requests_allowed = marshmallow.auto_field()
+    can_verify_other = fields.Boolean()
+    incoming_reference_requests_allowed = fields.Boolean(allow_none=True)
 
     @post_dump(pass_original=True)
     def remove_private_fields(self, data, original_data, **kwargs):
@@ -84,11 +90,11 @@ class OrganizationSearchItemSchema(OrganizationBaseSchema):
 
 
 class OrganizationRefSchema(OrganizationIdSchema):
-    name = marshmallow.auto_field()
+    name = fields.String(allow_none=True, validate=validate.Length(max=255))
 
 
 class OrganizationListRefSchema(OrganizationRefSchema, TrackableSchemaMixin):
-    short_name = marshmallow.auto_field()
+    short_name = fields.String(allow_none=True, validate=validate.Length(max=100))
     is_verified = fields.Boolean()
 
 

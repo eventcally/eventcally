@@ -6,9 +6,14 @@ from project.api.app.schemas import (
     AppInstallationListRequestSchema,
     AppInstallationListResponseSchema,
 )
+from project.api.query_args import (
+    page_request_from_kwargs,
+    trackable_criteria_from_kwargs,
+    trackable_sort_from_kwargs,
+)
 from project.api.resources import BaseResource, require_api_access
-from project.models import AppInstallation
-from project.services.search_params import TrackableSearchParams
+from project.application.queries import ListAppInstallationsForAppQuery
+from project.views.utils import abort_if_page_out_of_range
 
 
 class AppInstallationListResource(BaseResource):
@@ -17,16 +22,16 @@ class AppInstallationListResource(BaseResource):
     @marshal_with(AppInstallationListResponseSchema)
     @require_api_access(app_token_required=True)
     def get(self, **kwargs):
-        params = TrackableSearchParams()
-        params.load_from_request(**kwargs)
-
-        query = AppInstallation.query.filter(
-            AppInstallation.oauth2_client_id == current_token.app_id
+        page = self.query_bus.handle(
+            ListAppInstallationsForAppQuery(
+                app_id=current_token.app_id,
+                trackable=trackable_criteria_from_kwargs(kwargs),
+                sort=trackable_sort_from_kwargs(kwargs),
+                page=page_request_from_kwargs(kwargs),
+            )
         )
-        query = params.get_trackable_query(query, AppInstallation)
-        query = params.get_trackable_order_by(query, AppInstallation)
-
-        return query.paginate()
+        abort_if_page_out_of_range(page)
+        return page
 
 
 add_api_resource(

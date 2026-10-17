@@ -5,11 +5,10 @@ from project.application.commands import (
     RejectEventReferenceRequestCommand,
     VerifyEventReferenceRequestCommand,
 )
-from project.dateutils import get_today
-from project.models.event_date import EventDate
-from project.models.event_reference_request import EventReferenceRequestReviewStatus
+from project.domain.models.enums.event_reference_request_review_status import (
+    EventReferenceRequestReviewStatus,
+)
 from project.modular.base_views import BaseListView, BaseUpdateView
-from project.services.admin_unit import get_admin_unit_relation
 from project.views.manage_admin_unit.incoming_event_reference_request.forms import (
     ReferenceRequestReviewForm,
 )
@@ -30,7 +29,7 @@ class ReviewView(BaseUpdateView):
     def get_title(self, **kwargs):
         return lazy_gettext(
             "Review %(model_display_name)s",
-            model_display_name=self.model.get_display_name(),
+            model_display_name=self.handler.get_model_display_name(),
         )
 
     def check_object_access(self, object):
@@ -51,10 +50,7 @@ class ReviewView(BaseUpdateView):
 
     def render_template(self, form, object, **kwargs):
         request = object
-        relation = get_admin_unit_relation(
-            request.admin_unit_id, request.event.admin_unit_id
-        )
-        auto_verify = relation and relation.auto_verify_event_reference_requests
+        auto_verify = request.auto_verify
 
         if not auto_verify:
             form.auto_verify.description = gettext(
@@ -62,13 +58,7 @@ class ReviewView(BaseUpdateView):
                 admin_unit_name=request.admin_unit.name,
             )
 
-        today = get_today()
-        dates = (
-            EventDate.query.with_parent(request.event)
-            .filter(EventDate.start >= today)
-            .order_by(EventDate.start)
-            .all()
-        )
+        dates = request.upcoming_dates
 
         return super().render_template(form=form, object=object, dates=dates, **kwargs)
 

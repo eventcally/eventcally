@@ -182,15 +182,6 @@ class Event(db.Model, EventGeneratedMixin):
         )
 
     @property
-    def custom_categories_by_set(self):
-        categories_by_set = {}
-        for category in self.custom_categories:
-            if category.category_set_id not in categories_by_set:
-                categories_by_set[category.category_set_id] = []
-            categories_by_set[category.category_set_id].append(category)
-        return categories_by_set
-
-    @property
     def min_start_definition(self):
         if self.date_definitions:
             return min(self.date_definitions, key=lambda d: d.start)
@@ -367,7 +358,7 @@ class Event(db.Model, EventGeneratedMixin):
         if not self.date_definitions or len(self.date_definitions) == 0:
             raise make_check_violation("At least one date defintion is required.")
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return self.name or super().__str__()
 
     @validates("tags")

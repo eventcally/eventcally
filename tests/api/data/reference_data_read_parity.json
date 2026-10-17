@@ -1,0 +1,56 @@
+{
+  "categories_of_set": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":1,\"label\":\"Custom Category 1\",\"name\":\"Custom Category 1\"},{\"id\":2,\"label\":\"Custom Category 2\",\"name\":\"Custom Category 2\"},{\"id\":3,\"label\":\"Custom Category 3\",\"name\":\"Custom Category 3\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":50,\"prev_num\":null,\"total\":3}\n",
+    "etag": "\"bbb06645376b07843f85fe25572a7dcc71a25c92\"",
+    "status": 200,
+    "url": "/api/v1/custom-event-category-set/1/custom-event-categories?per_page=50"
+  },
+  "categories_of_set_page_2": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/custom-event-category-set/1/custom-event-categories?page=2&per_page=3"
+  },
+  "categories_of_unknown_set": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[],\"next_num\":null,\"page\":1,\"pages\":0,\"per_page\":20,\"prev_num\":null,\"total\":0}\n",
+    "etag": "\"baeb13beb05ceda54645d6931b22d09f516e3310\"",
+    "status": 200,
+    "url": "/api/v1/custom-event-category-set/4711/custom-event-categories"
+  },
+  "category_sets": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":1,\"label\":\"Default Custom Categories\",\"name\":\"Default\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
+    "etag": "\"54e2ed87b58fc2386ddda083aca9d34d3c0f9a87\"",
+    "status": 200,
+    "url": "/api/v1/custom-event-category-sets"
+  },
+  "event_categories": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":1,\"name\":\"Art\"},{\"id\":2,\"name\":\"Book\"},{\"id\":3,\"name\":\"Movie\"},{\"id\":4,\"name\":\"Family\"},{\"id\":5,\"name\":\"Festival\"},{\"id\":6,\"name\":\"Religious\"},{\"id\":7,\"name\":\"Shopping\"},{\"id\":8,\"name\":\"Comedy\"},{\"id\":9,\"name\":\"Music\"},{\"id\":10,\"name\":\"Dance\"},{\"id\":11,\"name\":\"Nightlife\"},{\"id\":12,\"name\":\"Theater\"},{\"id\":13,\"name\":\"Dining\"},{\"id\":14,\"name\":\"Conference\"},{\"id\":15,\"name\":\"Meetup\"},{\"id\":16,\"name\":\"Fitness\"},{\"id\":17,\"name\":\"Sports\"},{\"id\":18,\"name\":\"Other\"},{\"id\":19,\"name\":\"Exhibition\"},{\"id\":20,\"name\":\"Culture\"},{\"id\":21,\"name\":\"Tour\"},{\"id\":22,\"name\":\"OpenAir\"},{\"id\":23,\"name\":\"Stage\"},{\"id\":24,\"name\":\"Lecture\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":50,\"prev_num\":null,\"total\":24}\n",
+    "etag": "\"52222e86c14b689e4d57727db224877029661729\"",
+    "status": 200,
+    "url": "/api/v1/event-categories?per_page=50"
+  },
+  "event_categories_page_2": {
+    "body": "{\"has_next\":true,\"has_prev\":true,\"items\":[{\"id\":6,\"name\":\"Religious\"},{\"id\":7,\"name\":\"Shopping\"},{\"id\":8,\"name\":\"Comedy\"},{\"id\":9,\"name\":\"Music\"},{\"id\":10,\"name\":\"Dance\"}],\"next_num\":3,\"page\":2,\"pages\":5,\"per_page\":5,\"prev_num\":1,\"total\":24}\n",
+    "etag": "\"58f61220683dd025c971da75a7f544cfb6146878\"",
+    "status": 200,
+    "url": "/api/v1/event-categories?page=2&per_page=5"
+  },
+  "licenses": {
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"code\":\"CC0 1.0\",\"id\":1,\"name\":\"Creative Commons Zero v1.0 Universal\",\"url\":\"https://creativecommons.org/publicdomain/zero/1.0/\"},{\"code\":\"CC BY 4.0\",\"id\":2,\"name\":\"Creative Commons Attribution 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by/4.0/\"},{\"code\":\"CC BY-SA 4.0\",\"id\":3,\"name\":\"Creative Commons Attribution-ShareAlike 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by-sa/4.0/\"},{\"code\":\"CC BY-NC-SA 4.0\",\"id\":4,\"name\":\"Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by-nc-sa/4.0/\"},{\"code\":\"CC BY-NC 4.0\",\"id\":5,\"name\":\"Creative Commons Attribution-NonCommercial 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by-nc/4.0/\"},{\"code\":\"CC BY-ND 4.0\",\"id\":6,\"name\":\"Creative Commons Attribution-NoDerivatives 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by-nd/4.0/\"},{\"code\":\"CC BY-NC-ND 4.0\",\"id\":7,\"name\":\"Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by-nc-nd/4.0/\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":7}\n",
+    "etag": "\"dc3bfd8656e857c613ffb9c1bd36e854f4f300c4\"",
+    "status": 200,
+    "url": "/api/v1/licenses"
+  },
+  "licenses_out_of_range": {
+    "body": "",
+    "etag": null,
+    "status": 404,
+    "url": "/api/v1/licenses?page=50&per_page=2"
+  },
+  "licenses_page_2": {
+    "body": "{\"has_next\":true,\"has_prev\":true,\"items\":[{\"code\":\"CC BY-SA 4.0\",\"id\":3,\"name\":\"Creative Commons Attribution-ShareAlike 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by-sa/4.0/\"},{\"code\":\"CC BY-NC-SA 4.0\",\"id\":4,\"name\":\"Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by-nc-sa/4.0/\"}],\"next_num\":3,\"page\":2,\"pages\":4,\"per_page\":2,\"prev_num\":1,\"total\":7}\n",
+    "etag": "\"7b96f8ff66337913d73328a367d503da279f6a0b\"",
+    "status": 200,
+    "url": "/api/v1/licenses?page=2&per_page=2"
+  }
+}

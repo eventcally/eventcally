@@ -1,14 +1,12 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import url_for
 from flask_babel import gettext
-from sqlalchemy import func
 
 from project.application.commands import DeleteOrganizationCommand
-from project.models.admin_unit import AdminUnit
-from project.modular.search_definition import SearchDefinition
-from project.services.organization_service import OrganizationService
+from project.application.queries import (
+    GetOrganizationForAdminQuery,
+    ListOrganizationsForAdminQuery,
+)
+from project.modular.search_definition import KeySearchDefinition
 from project.views.admin_blueprint import admin_bp
 from project.views.admin_blueprint.child_view_handler import AdminChildViewHandler
 from project.views.admin_blueprint.organization.displays import (
@@ -20,10 +18,10 @@ from project.views.admin_blueprint.organization.views import DeleteView, UpdateV
 
 
 class ViewHandler(AdminChildViewHandler):
-    model = AdminUnit
-    object_service: Annotated[
-        OrganizationService, Provide["services.organization_service"]
-    ]
+    model_name = "organization"
+    model_name_plural = "organizations"
+    display_name = "Organization"
+    display_name_plural = "Organizations"
     create_view_class = None
     read_view_class = None
     update_view_class = UpdateView
@@ -32,7 +30,7 @@ class ViewHandler(AdminChildViewHandler):
     delete_view_class = DeleteView
     delete_form_class = DeleteForm
     list_display_class = ListDisplay
-    list_search_definitions = [SearchDefinition(AdminUnit.name)]
+    list_search_definitions = [KeySearchDefinition("name")]
 
     def delete_object(self, object):
         cmd = DeleteOrganizationCommand(
@@ -40,12 +38,16 @@ class ViewHandler(AdminChildViewHandler):
         )
         self.message_bus.handle_command(cmd)
 
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(func.lower(AdminUnit.name))
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListOrganizationsForAdminQuery(
+            keyword=form.keyword.data or None, page=page_request
         )
+
+    def create_get_query(self, object_id):
+        return GetOrganizationForAdminQuery(id=object_id)
+
+    def get_object_title(self, object):
+        return object.name
 
     def get_additional_list_actions(self, object):
         result = super().get_additional_list_actions(object)

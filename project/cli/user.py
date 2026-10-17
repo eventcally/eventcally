@@ -5,7 +5,7 @@ from flask.cli import AppGroup
 from flask_security.confirmable import confirm_user
 
 from project.extensions import db
-from project.services.user import (
+from project.user_datastore import (
     add_admin_roles_to_user,
     create_user,
     find_user_by_email,

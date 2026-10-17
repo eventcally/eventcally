@@ -1,18 +1,19 @@
 from authlib.integrations.flask_oauth2 import current_token
 from flask import abort, current_app, g
 from flask_login import login_user
-from flask_principal import Permission, RoleNeed
 from flask_security import current_user
-from sqlalchemy import and_, exists
 
-from project.extensions import db
-from project.models import AdminUnit, AdminUnitMember, Event, EventPublicStatus, User
-from project.models.admin_unit import AdminUnitMemberRole
-
-
-def has_current_user_role(role):
-    user_perm = Permission(RoleNeed(role))
-    return user_perm.can()
+from project.application.queries import (
+    AnyOrganizationAcceptsReferenceRequestsQuery,
+    GetCurrentOrganizationQuery,
+    GetManageableOrganizationQuery,
+    HasOtherAdminQuery,
+    ListManageableOrganizationsQuery,
+)
+from project.application.read_models.organization_member_read_models import (
+    UserOrganizationMembershipReadModel,
+)
+from project.domain.models.enums.event_public_status import EventPublicStatus
 
 
 def has_owner_access(user_id):
@@ -40,72 +41,46 @@ def login_api_user_or_401() -> bool:
         abort(401)
 
 
-def has_admin_unit_member_role(admin_unit_member, role_name):
-    for role in admin_unit_member.roles:
-        if role.name == role_name:
-            return True
-    return False
+def _query_bus():
+    return current_app.container.cqrs.query_bus()
 
 
-def has_admin_unit_member_permission(admin_unit_member, permission):
-    for role in admin_unit_member.roles:
-        if permission in role.get_permissions():
-            return True
-    return False
+def _authorization():
+    """The one permission policy, answered on the read session (released with the
+    app context)."""
+    return current_app.container.cqrs.actor_authorization_service()
 
 
-def get_current_user_member_for_admin_unit(admin_unit_id):
-    from project.services.admin_unit import get_member_for_admin_unit_by_user_id
+def _current_actor():
+    from project.context import ContextProvider
 
-    return get_member_for_admin_unit_by_user_id(admin_unit_id, current_user.id)
-
-
-def has_current_user_member_permission_for_admin_unit(admin_unit_id, permission):
-    admin_unit_member = get_current_user_member_for_admin_unit(admin_unit_id)
-    if admin_unit_member is not None:
-        if has_admin_unit_member_permission(admin_unit_member, permission):
-            return True
-    return False
+    return ContextProvider().current_actor
 
 
-def has_current_user_member_role_for_admin_unit(admin_unit_id, role_name):
-    admin_unit_member = get_current_user_member_for_admin_unit(admin_unit_id)
-    if admin_unit_member is not None:
-        if has_admin_unit_member_role(admin_unit_member, role_name):
-            return True
-    return False
-
-
-def has_current_user_permission_for_admin_unit(admin_unit, permission):
-    if not current_user.is_authenticated:
-        return False
-
-    if has_current_user_role("admin"):
-        return True
-
-    if has_current_user_member_permission_for_admin_unit(admin_unit.id, permission):
-        return True
-
-    return False
-
-
-def has_current_token_permission_for_admin_unit(admin_unit, permission):
-    if not current_token:
-        return False
-
-    if not current_token.app_installation:
-        return False
-
-    if current_token.app_installation.admin_unit_id != admin_unit.id:
-        return False
-
-    return permission in current_token.app_installation.permissions
+def _is_platform_admin() -> bool:
+    actor = _current_actor()
+    return actor.user_id is not None and _authorization().reader.is_platform_admin(
+        actor.user_id
+    )
 
 
 def has_access(admin_unit, permission):
-    return has_current_user_permission_for_admin_unit(
-        admin_unit, permission
-    ) or has_current_token_permission_for_admin_unit(admin_unit, permission)
+    """Whether the current actor (user or app installation) has `permission` for the
+    organization; `admin_unit` only needs an `id`.
+
+    A user who authenticated with an OAuth token has no platform-admin bypass here:
+    the bypass was always tied to the session identity, so an admin's API token only
+    reaches the organizations the admin is a member of (the query handlers apply the
+    actor-based rule themselves)."""
+    actor = _current_actor()
+    authz = _authorization()
+
+    if actor.user_id is not None and current_token and current_token.user:
+        return authz.reader.member_has_permission(
+            admin_unit.id, actor.user_id, permission
+        )
+
+    return authz.has_permission_for_admin_unit(actor, admin_unit.id, permission)
 
 
 def access_or_401(admin_unit, permission):
@@ -129,7 +104,7 @@ def get_admin_units_with_current_user_permission(permission):
 
     admin_units = get_admin_units_for_manage()
     for admin_unit in admin_units:
-        if has_current_user_permission_for_admin_unit(admin_unit, permission):
+        if has_access(admin_unit, permission):
             result.append(admin_unit)
 
     return result
@@ -147,7 +122,11 @@ def get_admin_units_with_current_token_permission(permission):  # pragma: no cov
     if permission not in current_token.app_installation.permissions:
         return result
 
-    result.append(current_token.app_installation.admin_unit)
+    result.append(
+        _query_bus().handle(
+            GetCurrentOrganizationQuery(id=current_token.app_installation.admin_unit_id)
+        )
+    )
     return result
 
 
@@ -192,42 +171,23 @@ def can_request_event_reference(event):
     if event.public_status != EventPublicStatus.published:
         return False
 
-    return db.session.scalar(
-        exists()
-        .where(
-            and_(
-                AdminUnit.id != event.admin_unit_id,
-                AdminUnit.incoming_reference_requests_allowed,
-            )
+    return _query_bus().handle(
+        AnyOrganizationAcceptsReferenceRequestsQuery(
+            exclude_admin_unit_id=event.admin_unit_id
         )
-        .select()
     )
 
 
 def admin_units_the_current_user_is_member_of():
-    result = list()
-
-    if current_user.is_authenticated:
-        admin_unit_members = AdminUnitMember.query.filter_by(
-            user_id=current_user.id
-        ).all()
-        for admin_unit_member in admin_unit_members:
-            result.append(admin_unit_member.admin_unit)
-
-    return result
+    return _query_bus().handle(ListManageableOrganizationsQuery(member_only=True))
 
 
 def get_admin_units_for_manage():
-    # Global admin
-    if current_user.has_role("admin"):
-        return AdminUnit.query.all()
-
-    return admin_units_the_current_user_is_member_of()
+    return _query_bus().handle(ListManageableOrganizationsQuery())
 
 
 def get_admin_unit_for_manage(admin_unit_id):
-    admin_units = get_admin_units_for_manage()
-    return next((au for au in admin_units if au.id == admin_unit_id), None)
+    return _query_bus().handle(GetManageableOrganizationQuery(id=admin_unit_id))
 
 
 def get_admin_unit_for_manage_or_404(admin_unit_id):
@@ -250,42 +210,22 @@ def can_create_admin_unit():
     if not current_app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"]:
         return True
 
-    if has_current_user_role("admin"):
+    if _is_platform_admin():
         return True
 
     admin_units = get_admin_units_for_manage()
     return any(admin_unit.can_create_other for admin_unit in admin_units)
 
 
-def can_use_planning_user():
-    if not current_user.is_authenticated:  # pragma: no cover
-        return False
-
-    if has_current_user_role("admin"):  # pragma: no cover
-        return True
-
-    return current_user.is_member_of_verified_admin_unit
-
-
-def can_use_planning_token():
-    if not current_token:  # pragma: no cover
-        return False
-
-    if not current_token.app_installation:
-        return False
-
-    return current_token.app_installation.admin_unit.is_verified
-
-
 def can_use_planning():
-    return can_use_planning_user() or can_use_planning_token()
+    return _authorization().can_use_planning(_current_actor())
 
 
 def can_verify_admin_unit_user():
     if not current_user.is_authenticated:  # pragma: no cover
         return False
 
-    if has_current_user_role("admin"):  # pragma: no cover
+    if _is_platform_admin():  # pragma: no cover
         return True
 
     admin_units = get_admin_units_for_manage()
@@ -299,63 +239,21 @@ def can_verify_admin_unit_token():
     if not current_token.app_installation:
         return False
 
-    return current_token.app_installation.admin_unit.can_verify_other
+    organization = _query_bus().handle(
+        GetCurrentOrganizationQuery(id=current_token.app_installation.admin_unit_id)
+    )
+    return organization.can_verify_other
 
 
 def can_verify_admin_unit():
     return can_verify_admin_unit_user() or can_verify_admin_unit_token()
 
 
-def can_read_event(event: Event) -> bool:
-    if (
-        event.public_status == EventPublicStatus.published
-        and event.admin_unit.is_verified
-    ):
-        return True
-
-    if (
-        event.public_status == EventPublicStatus.planned
-        and event.admin_unit.is_verified
-        and can_use_planning()
-    ):
-        return True
-
-    return has_access(event.admin_unit, "events:read")
-
-
-def can_read_event_or_401(event: Event):
-    if not can_read_event(event):
-        abort(401)
-
-
-def can_read_private_events(admin_unit: AdminUnit) -> bool:
-    return has_access(admin_unit, "events:read")
-
-
-def get_admin_unit_members_with_permission(admin_unit_id: int, permission: str) -> list:
-    members = (
-        AdminUnitMember.query.join(User)
-        .filter(AdminUnitMember.admin_unit_id == admin_unit_id)
-        .all()
-    )
-
-    return list(
-        filter(
-            lambda member: has_admin_unit_member_permission(member, permission), members
-        )
-    )
-
-
-def can_current_user_delete_member(member: AdminUnitMember) -> bool:
-    if current_user.has_role("admin"):  # pragma: no cover
+def can_current_user_delete_member(member: UserOrganizationMembershipReadModel) -> bool:
+    if _is_platform_admin():  # pragma: no cover
         return True
 
     # Check if there is another admin
-    return (
-        AdminUnitMember.query.filter(
-            AdminUnitMember.user_id != member.user_id,
-            AdminUnitMember.admin_unit_id == member.admin_unit_id,
-            AdminUnitMember.roles.any(AdminUnitMemberRole.name == "admin"),
-        ).first()
-        is not None
+    return _query_bus().handle(
+        HasOtherAdminQuery(admin_unit_id=member.admin_unit_id, user_id=member.user_id)
     )

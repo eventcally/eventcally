@@ -1,6 +1,5 @@
-from flask import request
+from flask import current_app, request
 from flask_babel import lazy_gettext
-from sqlalchemy import func
 from wtforms import FormField, StringField, SubmitField, TextAreaField, ValidationError
 from wtforms.fields import BooleanField, EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp
@@ -10,11 +9,13 @@ from project.application.commands import (
     UpdateOrganizationCommand,
     UpdateOrganizationWidgetSettingsCommand,
 )
+from project.application.queries import (
+    IsOrganizationNameTakenQuery,
+    IsOrganizationShortNameTakenQuery,
+)
 from project.forms.common import Base64ImageForm, StrictGooglePlaceLocationForm
 from project.forms.widgets import HTML5StringField
-from project.models import Image, Location
-from project.models.admin_unit import AdminUnit
-from project.modular.base_form import BaseForm, BaseUpdateForm
+from project.modular.base_form import BaseForm, BaseUpdateForm, BlankFormData
 from project.modular.fields import SelectMultipleTagField, VirtualFormField
 from project.modular.widgets import AjaxValidationWidget
 from project.utils import widget_default_background_color, widget_default_primary_color
@@ -54,6 +55,10 @@ class VerificationRequestsForm(BaseForm):
     )
 
 
+def _query_bus():
+    return current_app.container.cqrs.query_bus()
+
+
 def validate_organization_name(form, field):
     name = field.data
     admin_unit_id = (
@@ -61,13 +66,11 @@ def validate_organization_name(form, field):
         if current_admin_unit and request.endpoint == "manage_admin_unit.update"
         else -1
     )
-    organization = (
-        AdminUnit.query.filter(AdminUnit.id != admin_unit_id)
-        .filter(func.lower(AdminUnit.name) == name.lower())
-        .first()
-    )
+    exclude_id = admin_unit_id if admin_unit_id != -1 else None
 
-    if organization:
+    if _query_bus().handle(
+        IsOrganizationNameTakenQuery(name=name, exclude_id=exclude_id)
+    ):
         raise ValidationError(lazy_gettext("Name is already taken"))
 
 
@@ -78,13 +81,11 @@ def validate_organization_short_name(form, field):
         if current_admin_unit and request.endpoint == "manage_admin_unit.update"
         else -1
     )
-    organization = (
-        AdminUnit.query.filter(AdminUnit.id != admin_unit_id)
-        .filter(func.lower(AdminUnit.short_name) == short_name.lower())
-        .first()
-    )
+    exclude_id = admin_unit_id if admin_unit_id != -1 else None
 
-    if organization:
+    if _query_bus().handle(
+        IsOrganizationShortNameTakenQuery(short_name=short_name, exclude_id=exclude_id)
+    ):
         raise ValidationError(lazy_gettext("Short name is already taken"))
 
 
@@ -128,10 +129,10 @@ class AdminUnitFormMixin(object):
     )
     location = FormField(
         StrictGooglePlaceLocationForm,
-        default=lambda: Location(),
+        default=BlankFormData,
         label=lazy_gettext("Location"),
     )
-    logo = FormField(Base64ImageForm, lazy_gettext("Logo"), default=lambda: Image())
+    logo = FormField(Base64ImageForm, lazy_gettext("Logo"), default=BlankFormData)
     additional_information = VirtualFormField(
         AdditionalInformationForm, lazy_gettext("Additional information")
     )

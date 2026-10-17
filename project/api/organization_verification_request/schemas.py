@@ -24,17 +24,13 @@ from project.application.commands import (
 from project.domain.models.enums.organization_verification_request_rejection_reason import (
     OrganizationVerificationRequestRejectionReason,
 )
-from project.models import (
-    AdminUnitVerificationRequest,
-    AdminUnitVerificationRequestRejectionReason,
-    AdminUnitVerificationRequestReviewStatus,
+from project.domain.models.enums.organization_verification_request_review_status import (
+    OrganizationVerificationRequestReviewStatus,
 )
 
 
-class OrganizationVerificationRequestModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = AdminUnitVerificationRequest
-        load_instance = True
+class OrganizationVerificationRequestModelSchema(PlainBaseSchema):
+    pass
 
 
 class OrganizationVerificationRequestIdSchema(
@@ -45,11 +41,11 @@ class OrganizationVerificationRequestIdSchema(
 
 class OrganizationVerificationRequestBaseSchemaMixin(TrackableSchemaMixin):
     review_status = EnumField(
-        AdminUnitVerificationRequestReviewStatus,
-        load_default=AdminUnitVerificationRequestReviewStatus.inbox,
+        OrganizationVerificationRequestReviewStatus,
+        load_default=OrganizationVerificationRequestReviewStatus.inbox,
     )
     rejection_reason = EnumField(
-        AdminUnitVerificationRequestRejectionReason,
+        OrganizationVerificationRequestRejectionReason,
     )
 
 
@@ -123,7 +119,7 @@ class OrganizationVerificationRequestRejectRequestSchema(
         self.make_post_schema()
 
     rejection_reason = EnumField(
-        AdminUnitVerificationRequestRejectionReason,
+        OrganizationVerificationRequestRejectionReason,
     )
 
 

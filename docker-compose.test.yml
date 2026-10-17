@@ -56,3 +56,22 @@ services:
         condition: service_healthy
       limiter_redis:
         condition: service_healthy
+
+  e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    entrypoint: []
+    working_dir: /app
+    volumes:
+      - .:/app
+      # hide the host's node_modules; the image carries its own in /opt/e2e
+      - /app/node_modules
+    profiles:
+      - test
+    environment:
+      E2E_DB_ADMIN_URL: postgresql://eventcally:pass@db:5432/eventcally
+      E2E_DB_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy

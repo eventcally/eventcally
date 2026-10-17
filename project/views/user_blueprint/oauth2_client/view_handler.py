@@ -1,10 +1,7 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask_babel import gettext
+from flask_login import current_user
 
-from project.models import OAuth2Client
-from project.services.oauth2_client_service import OAuth2ClientService
+from project.application.queries import GetOAuth2ClientQuery, ListUserOAuth2ClientsQuery
 from project.views.user_blueprint import user_bp
 from project.views.user_blueprint.child_view_handler import UserChildViewHandler
 from project.views.user_blueprint.oauth2_client.displays import ListDisplay, ReadDisplay
@@ -22,10 +19,10 @@ from project.views.utils import flash_non_match_for_deletion
 
 
 class OAuth2ClientViewHandler(UserChildViewHandler):
-    model = OAuth2Client
-    object_service: Annotated[
-        OAuth2ClientService, Provide["services.oauth2_client_service"]
-    ]
+    model_name = "oauth2_client"
+    model_name_plural = "oauth2_clients"
+    display_name = "OAuth2 client"
+    display_name_plural = "OAuth2 clients"
     create_view_class = CreateView
     create_form_class = CreateOAuth2ClientForm
     update_view_class = UpdateView
@@ -35,10 +32,15 @@ class OAuth2ClientViewHandler(UserChildViewHandler):
     read_display_class = ReadDisplay
     list_display_class = ListDisplay
 
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super().apply_objects_query_order(query, **kwargs).order_by(OAuth2Client.id)
-        )
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListUserOAuth2ClientsQuery(user_id=current_user.id, page=page_request)
+
+    def create_get_query(self, object_id):
+        return GetOAuth2ClientQuery(id=object_id)
+
+    def get_object_title(self, object):
+        # Parity with the ORM `OAuth2Client.__str__`.
+        return object.client_name or f"{self.get_model_display_name()} {object.id}"
 
     def can_object_be_deleted(self, form, object):
         return flash_non_match_for_deletion(

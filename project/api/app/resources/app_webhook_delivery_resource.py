@@ -4,7 +4,8 @@ from flask_apispec import doc, marshal_with
 from project.api import add_api_resource
 from project.api.app.schemas import AppWebhookDeliverySchema
 from project.api.resources import BaseResource, require_api_access
-from project.models import WebhookDelivery
+from project.application.queries import GetWebhookDeliveryForAppQuery
+from project.views.utils import result_or_404
 
 
 class AppWebhookDeliveryResource(BaseResource):
@@ -15,10 +16,10 @@ class AppWebhookDeliveryResource(BaseResource):
     @marshal_with(AppWebhookDeliverySchema)
     @require_api_access(app_token_required=True)
     def get(self, id):
-        return (
-            WebhookDelivery.query.filter(WebhookDelivery.app_id == current_token.app_id)
-            .filter(WebhookDelivery.id == id)
-            .first_or_404()
+        return result_or_404(
+            self.query_bus.handle(
+                GetWebhookDeliveryForAppQuery(app_id=current_token.app_id, id=id)
+            )
         )
 
 

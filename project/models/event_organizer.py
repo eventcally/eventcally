@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from typing import Optional
 
-from sqlalchemy import func, select
-from sqlalchemy.ext.hybrid import hybrid_property
-
 from project.domain.models.aggregates.event_organizer_aggregate import (
     EventOrganizerAggregate,
 )
@@ -71,19 +68,7 @@ class EventOrganizer(db.Model, EventOrganizerGeneratedMixin):
 
         return aggregate
 
-    @hybrid_property
-    def number_of_events(self):
-        return len(self.events)
-
-    @number_of_events.expression
-    def number_of_events(cls):
-        from project.models.event import Event
-
-        return (
-            select(func.count()).where(Event.organizer_id == cls.id).scalar_subquery()
-        )
-
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return self.name or super().__str__()
 
 

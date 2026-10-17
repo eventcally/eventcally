@@ -30,7 +30,7 @@ def test_create(client, app, utils: UtilActions, seeder):
     )
 
     with app.app_context():
-        from project.services.admin_unit import find_admin_unit_member_invitation
+        from project.cli.seed_helpers import find_admin_unit_member_invitation
 
         invitation = find_admin_unit_member_invitation("invited@test.de", admin_unit_id)
         assert invitation.roles == "admin"
@@ -152,7 +152,7 @@ def test_read_accept(client, app, db, utils: UtilActions, seeder):
             response, "main.manage_admin_unit", id=admin_unit_id
         )
 
-        from project.services.admin_unit import (
+        from project.cli.seed_helpers import (
             find_admin_unit_member_invitation,
             get_member_for_admin_unit_by_user_id,
         )
@@ -222,7 +222,7 @@ def test_read_decline(client, app, db, utils: UtilActions, seeder):
         )
         utils.assert_response_redirect(response, "main.manage")
 
-        from project.services.admin_unit import (
+        from project.cli.seed_helpers import (
             find_admin_unit_member_invitation,
             get_member_for_admin_unit_by_user_id,
         )

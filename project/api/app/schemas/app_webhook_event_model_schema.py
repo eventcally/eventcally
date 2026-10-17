@@ -1,8 +1,5 @@
-from project.api.schemas import SQLAlchemyBaseSchema
-from project.models import WebhookEvent
+from project.api.schemas import PlainBaseSchema
 
 
-class AppWebhookEventModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = WebhookEvent
-        load_instance = True
+class AppWebhookEventModelSchema(PlainBaseSchema):
+    pass

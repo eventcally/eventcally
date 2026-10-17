@@ -1,10 +1,6 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask_babel import gettext
 
-from project.models import OAuth2Client
-from project.services.app_service import AppService
+from project.application.queries import GetAppQuery, ListAppsQuery
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.app.displays import ListDisplay, ReadDisplay
 from project.views.manage_admin_unit.app.forms import (
@@ -16,12 +12,14 @@ from project.views.manage_admin_unit.app.views import CreateView, DeleteView, Up
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
-from project.views.utils import flash_non_match_for_deletion
+from project.views.utils import current_admin_unit, flash_non_match_for_deletion
 
 
 class AppViewHandler(ManageAdminUnitChildViewHandler):
-    model = OAuth2Client
-    object_service: Annotated[AppService, Provide["services.app_service"]]
+    model_name = "app"
+    model_name_plural = "apps"
+    display_name = "App"
+    display_name_plural = "Apps"
     create_form_class = CreateAppForm
     create_view_class = CreateView
     update_form_class = UpdateAppForm
@@ -31,25 +29,15 @@ class AppViewHandler(ManageAdminUnitChildViewHandler):
     read_display_class = ReadDisplay
     list_display_class = ListDisplay
 
-    def get_model_name(self):
-        return "app"
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListAppsQuery(admin_unit_id=current_admin_unit.id, page=page_request)
 
-    def get_model_name_plural(self):
-        return "apps"
+    def create_get_query(self, object_id):
+        return GetAppQuery(id=object_id)
 
-    def get_model_display_name(self):
-        return gettext("App")
-
-    def get_model_display_name_plural(self):
-        return gettext("Apps")
-
-    def apply_base_filter(self, query, **kwargs):
-        return super().apply_base_filter(query, **kwargs).filter(OAuth2Client.is_app)
-
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super().apply_objects_query_order(query, **kwargs).order_by(OAuth2Client.id)
-        )
+    def get_object_title(self, object):
+        # Parity with the ORM `OAuth2Client.__str__`.
+        return object.client_name or f"{gettext('OAuth2 client')} {object.id}"
 
     def can_object_be_deleted(self, form, object):
         return flash_non_match_for_deletion(

@@ -47,7 +47,7 @@ class Seeder(object):
     ):
         from flask_security.confirmable import confirm_user
 
-        from project.services.user import (
+        from project.user_datastore import (
             add_admin_roles_to_user,
             create_user,
             find_user_by_email,
@@ -86,9 +86,9 @@ class Seeder(object):
         incoming_verification_requests_allowed=False,
         **kwargs
     ):
+        from project.cli.seed_helpers import insert_admin_unit_for_user
         from project.models import AdminUnit, Location
-        from project.services.admin_unit import insert_admin_unit_for_user
-        from project.services.user import get_user
+        from project.user_datastore import get_user
 
         with self._app.app_context():
             user = get_user(user_id)
@@ -132,14 +132,14 @@ class Seeder(object):
             return member.user_id if member else None
 
     def get_eventcally_admin_unit_id(self):
-        from project.services.admin_unit import get_admin_unit_by_name
+        from project.cli.seed_helpers import get_admin_unit_by_name
 
         with self._app.app_context():
             other_admin_unit = get_admin_unit_by_name("eventcally")
             return other_admin_unit.id if other_admin_unit else None
 
     def verify_admin_unit(self, admin_unit_id):
-        from project.services.admin_unit import get_admin_unit_by_name
+        from project.cli.seed_helpers import get_admin_unit_by_name
 
         with self._app.app_context():
             other_admin_unit = get_admin_unit_by_name("eventcally")
@@ -164,11 +164,11 @@ class Seeder(object):
         role_names,
         email="test@test.de",
     ):
-        from project.services.admin_unit import (
+        from project.cli.seed_helpers import (
             add_user_to_admin_unit_with_roles,
             get_admin_unit_by_id,
         )
-        from project.services.user import get_user
+        from project.user_datastore import get_user
 
         with self._app.app_context():
             user_id = self.create_user(email=email)
@@ -181,7 +181,7 @@ class Seeder(object):
         return member_id
 
     def create_invitation(self, admin_unit_id, email, role_names=["admin"]):
-        from project.services.admin_unit import insert_admin_unit_member_invitation
+        from project.cli.seed_helpers import insert_admin_unit_member_invitation
 
         with self._app.app_context():
             invitation = insert_admin_unit_member_invitation(
@@ -224,7 +224,7 @@ class Seeder(object):
         return self.create_admin_unit_member(admin_unit_id, ["event_verifier"], email)
 
     def upsert_event_place(self, admin_unit_id, name, location=None):
-        from project.services.place import upsert_event_place
+        from project.cli.seed_helpers import upsert_event_place
 
         with self._app.app_context():
             place = upsert_event_place(admin_unit_id, name)
@@ -238,7 +238,7 @@ class Seeder(object):
         return place_id
 
     def upsert_default_event_place(self, admin_unit_id):
-        from project.services.admin_unit import get_admin_unit_by_id
+        from project.cli.seed_helpers import get_admin_unit_by_id
 
         with self._app.app_context():
             admin_unit = get_admin_unit_by_id(admin_unit_id)
@@ -247,7 +247,7 @@ class Seeder(object):
         return place_id
 
     def upsert_event_organizer(self, admin_unit_id, name):
-        from project.services.organizer import upsert_event_organizer
+        from project.cli.seed_helpers import upsert_event_organizer
 
         with self._app.app_context():
             organizer = upsert_event_organizer(admin_unit_id, name)
@@ -257,7 +257,7 @@ class Seeder(object):
         return organizer_id
 
     def upsert_default_event_organizer(self, admin_unit_id):
-        from project.services.admin_unit import get_admin_unit_by_id
+        from project.cli.seed_helpers import get_admin_unit_by_id
 
         with self._app.app_context():
             admin_unit = get_admin_unit_by_id(admin_unit_id)
@@ -289,8 +289,8 @@ class Seeder(object):
 
     def insert_default_oauth2_client(self, user_id=None, admin_unit_id=None):
         from project.api import scope_list
+        from project.cli.seed_helpers import complete_oauth2_client
         from project.models import OAuth2Client
-        from project.services.oauth2_client import complete_oauth2_client
 
         with self._app.app_context():
             client = OAuth2Client()
@@ -332,8 +332,8 @@ class Seeder(object):
 
     def insert_app_key(self, oauth2_client_id) -> tuple[bytes, int]:
         with self._app.app_context():
+            from project.cli.seed_helpers import add_keypair_to_oauth2_client
             from project.models import OAuth2Client
-            from project.services.oauth2_client import add_keypair_to_oauth2_client
 
             oauth2_client = OAuth2Client.query.get(oauth2_client_id)
             private_pem, app_key = add_keypair_to_oauth2_client(oauth2_client)
@@ -411,7 +411,7 @@ class Seeder(object):
     ):
         with self._app.app_context():
             from project.models import OAuth2Client
-            from project.services.user import get_user
+            from project.user_datastore import get_user
 
             user = get_user(user_id)
             email = user.email
@@ -463,10 +463,9 @@ class Seeder(object):
 
     def get_event_category_id(self, category_name):
         with self._app.app_context():
-            event_category_service = (
-                self._app.container.services.event_category_service()
-            )
-            category = event_category_service.get_event_category(category_name)
+            from project.cli.seed_helpers import get_event_category
+
+            category = get_event_category(category_name)
 
         return category.id
 
@@ -501,9 +500,7 @@ class Seeder(object):
         from project.models import CustomEventCategory, EventOrganizer
 
         with self._app.app_context():
-            event_category_service = (
-                self._app.container.services.event_category_service()
-            )
+            from project.cli.seed_helpers import upsert_event_category
 
             command = CreateEventCommand.model_construct()
             command.__dict__.update(kwargs)
@@ -512,9 +509,7 @@ class Seeder(object):
                 command.actor = Actor(
                     user_id=self.get_admin_unit_owner_id(admin_unit_id)
                 )
-            command.category_ids = {
-                event_category_service.upsert_event_category("Other").id
-            }
+            command.category_ids = {upsert_event_category("Other").id}
             command.name = name
             command.description = description
             command.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
@@ -683,7 +678,7 @@ class Seeder(object):
         return "data:image/png;base64,{}".format(base64_str)
 
     def upsert_default_image(self):
-        from project.services.image import upsert_image_with_base64_str
+        from project.cli.seed_helpers import upsert_image_with_base64_str
 
         with self._app.app_context():
             base64_str = self.get_default_image_base64()
@@ -729,7 +724,7 @@ class Seeder(object):
         auto_verify_event_reference_requests=False,
         verify=False,
     ):
-        from project.services.admin_unit import upsert_admin_unit_relation
+        from project.cli.seed_helpers import upsert_admin_unit_relation
 
         with self._app.app_context():
             relation = upsert_admin_unit_relation(admin_unit_id, target_admin_unit_id)
@@ -809,7 +804,7 @@ class Seeder(object):
         )
 
         with self._app.app_context():
-            from project.services.admin_unit import get_admin_unit_by_id
+            from project.cli.seed_helpers import get_admin_unit_by_id
 
             target_admin_unit = get_admin_unit_by_id(target_admin_unit_id)
             target_admin_unit.can_verify_other = True

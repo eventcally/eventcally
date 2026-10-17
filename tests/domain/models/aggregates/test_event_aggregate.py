@@ -220,6 +220,110 @@ class TestEventAggregateUpdateEventDatesWithRecurrenceRule:
         assert len(event.dates) == 1
 
 
+def _berlin(year, month, day, hour=0, minute=0, second=0):
+    return datetime.datetime(
+        year, month, day, hour, minute, second, tzinfo=ZoneInfo("Europe/Berlin")
+    )
+
+
+def _mock_now(mocker, year, month, day):
+    mocker.patch(
+        "project.domain.dateutils.get_now", return_value=_berlin(year, month, day)
+    )
+
+
+class TestEventAggregateRecurrenceRefresh:
+    """The nightly job (`UpdateEventRecurringDatesCommand`) refreshes the dates of
+    events that were created long ago."""
+
+    def test_no_change_returns_false(self, actor):
+        event = _make_event(
+            actor,
+            EventDateDefinitionValueObject(
+                start=_berlin(2030, 12, 31, 14, 30), end=_berlin(2030, 12, 31, 16, 30)
+            ),
+        )
+
+        assert event.update_event_dates_with_recurrence_rule() is False
+        assert len(event.dates) == 1
+
+    def test_allday_is_expanded_to_the_whole_day(self, actor):
+        date_def = EventDateDefinitionValueObject(
+            start=_berlin(2030, 12, 31, 14, 30),
+            end=_berlin(2030, 12, 31, 16, 30),
+        )
+        event = _make_event(actor, date_def)
+
+        date_def.allday = True
+
+        assert event.update_event_dates_with_recurrence_rule() is True
+        assert len(event.dates) == 1
+        assert event.dates[0].start == _berlin(2030, 12, 31)
+        assert event.dates[0].end == _berlin(2030, 12, 31, 23, 59, 59)
+        assert event.dates[0].allday
+
+    def test_recurrence_rule_adds_dates(self, actor):
+        date_def = EventDateDefinitionValueObject(
+            start=_berlin(2030, 12, 31, 14, 30),
+            end=_berlin(2030, 12, 31, 16, 30),
+        )
+        event = _make_event(actor, date_def)
+
+        date_def.recurrence_rule = "RRULE:FREQ=DAILY;COUNT=7"
+
+        assert event.update_event_dates_with_recurrence_rule() is True
+        assert len(event.dates) == 7
+
+    def test_past_dates_are_dropped(self, actor, mocker):
+        _mock_now(mocker, 2020, 1, 3)
+        event = _make_event(
+            actor,
+            EventDateDefinitionValueObject(
+                start=_berlin(2020, 1, 2, 14, 30),
+                end=_berlin(2020, 1, 2, 16, 30),
+                recurrence_rule="RRULE:FREQ=DAILY;COUNT=7",
+            ),
+        )
+
+        # Six dates remain (the first one was yesterday), the first is today.
+        assert len(event.dates) == 6
+        assert event.dates[0].start == _berlin(2020, 1, 3, 14, 30)
+        assert event.dates[0].end == _berlin(2020, 1, 3, 16, 30)
+
+    def test_forever_recurrence_covers_one_year(self, actor, mocker):
+        _mock_now(mocker, 2020, 1, 3)
+        event = _make_event(
+            actor,
+            EventDateDefinitionValueObject(
+                start=_berlin(2019, 1, 1, 14, 30),
+                end=_berlin(2019, 1, 1, 16, 30),
+                recurrence_rule="RRULE:FREQ=DAILY",
+            ),
+        )
+
+        # 367 dates (leap year + 1), from today to one year later
+        assert len(event.dates) == 367
+        assert event.dates[0].start == _berlin(2020, 1, 3, 14, 30)
+        assert event.dates[366].start == _berlin(2021, 1, 3, 14, 30)
+        assert event.dates[366].end == _berlin(2021, 1, 3, 16, 30)
+
+    def test_exdate_is_excluded(self, actor, mocker):
+        _mock_now(mocker, 2021, 6, 1)
+        event = _make_event(
+            actor,
+            EventDateDefinitionValueObject(
+                start=_berlin(2021, 4, 21, 17, 0),
+                end=_berlin(2021, 4, 21, 18, 0),
+                recurrence_rule="RRULE:FREQ=WEEKLY;BYDAY=WE;UNTIL=20211231T000000\n"
+                "EXDATE:20210216T000000,20210223T000000,20210602T000000",
+            ),
+        )
+
+        # Not the excluded 2021-06-02 but 2021-06-09
+        assert event.dates[0].start == _berlin(2021, 6, 9, 17, 0)
+        assert event.dates[0].end == _berlin(2021, 6, 9, 18, 0)
+
+
 class TestEventAggregateUpdate:
     def test_update_with_no_changes_appends_no_event(self, actor, date_def):
         event = _make_event(actor, date_def)

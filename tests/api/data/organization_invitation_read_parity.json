@@ -1,0 +1,104 @@
+{
+  "list": {
+    "url": "/api/v1/organizations/1/organization-invitations",
+    "status": 200,
+    "etag": "\"4b87fd4158ff977508d58a4ba6d17f385343c477\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"full@test.de\",\"id\":2,\"organization_name\":\"Voll\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"alpha@test.de\",\"id\":3,\"organization_name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"email\":\"bravo@test.de\",\"id\":5,\"organization_name\":\"Bravo\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n"
+  },
+  "list_sort_name": {
+    "url": "/api/v1/organizations/1/organization-invitations?sort=name",
+    "status": 200,
+    "etag": "\"4b87fd4158ff977508d58a4ba6d17f385343c477\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"full@test.de\",\"id\":2,\"organization_name\":\"Voll\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"alpha@test.de\",\"id\":3,\"organization_name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"email\":\"bravo@test.de\",\"id\":5,\"organization_name\":\"Bravo\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n"
+  },
+  "list_sort_created_at": {
+    "url": "/api/v1/organizations/1/organization-invitations?sort=-created_at",
+    "status": 200,
+    "etag": "\"e843bf4e6f0f0bb3199ccdc25e11a9c8da0eeba9\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"email\":\"bravo@test.de\",\"id\":5,\"organization_name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"alpha@test.de\",\"id\":3,\"organization_name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"full@test.de\",\"id\":2,\"organization_name\":\"Voll\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n"
+  },
+  "list_sort_updated_at": {
+    "url": "/api/v1/organizations/1/organization-invitations?sort=-updated_at",
+    "status": 200,
+    "etag": "\"55bc22b7f3fdef9c4a792000d9ea71839957696e\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"full@test.de\",\"id\":2,\"organization_name\":\"Voll\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"alpha@test.de\",\"id\":3,\"organization_name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"email\":\"bravo@test.de\",\"id\":5,\"organization_name\":\"Bravo\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n"
+  },
+  "list_sort_last_modified_at": {
+    "url": "/api/v1/organizations/1/organization-invitations?sort=-last_modified_at",
+    "status": 200,
+    "etag": "\"bf6f38a1997de9b375f2c2fa414139e8ba680304\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"email\":\"bravo@test.de\",\"id\":5,\"organization_name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"full@test.de\",\"id\":2,\"organization_name\":\"Voll\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"alpha@test.de\",\"id\":3,\"organization_name\":\"Alpha\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n"
+  },
+  "list_created_at_from": {
+    "url": "/api/v1/organizations/1/organization-invitations?created_at_from=2026-01-12T00:00:00",
+    "status": 200,
+    "etag": "\"9e7f1150ea8e4043cb9ed7bb81cbe40a0a792af1\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"alpha@test.de\",\"id\":3,\"organization_name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"email\":\"bravo@test.de\",\"id\":5,\"organization_name\":\"Bravo\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n"
+  },
+  "list_created_at_to": {
+    "url": "/api/v1/organizations/1/organization-invitations?created_at_to=2026-02-02T00:00:00",
+    "status": 200,
+    "etag": "\"f8f94a11c61d50cee33844aadd2ceb3902d12cc6\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"full@test.de\",\"id\":2,\"organization_name\":\"Voll\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"alpha@test.de\",\"id\":3,\"organization_name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n"
+  },
+  "list_updated_at_range": {
+    "url": "/api/v1/organizations/1/organization-invitations?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-28T00:00:00",
+    "status": 200,
+    "etag": "\"593729f2261c73f10de7441599bf08d6c928784c\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n"
+  },
+  "list_last_modified_at_range": {
+    "url": "/api/v1/organizations/1/organization-invitations?last_modified_at_from=2026-02-01T00:00:00&last_modified_at_to=2026-03-02T00:00:00",
+    "status": 200,
+    "etag": "\"f8f94a11c61d50cee33844aadd2ceb3902d12cc6\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"full@test.de\",\"id\":2,\"organization_name\":\"Voll\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"email\":\"alpha@test.de\",\"id\":3,\"organization_name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n"
+  },
+  "list_page_2": {
+    "url": "/api/v1/organizations/1/organization-invitations?page=2&per_page=2",
+    "status": 200,
+    "etag": "\"3421dbb47f15efee3cf7a92f7700e9022c4bc5ac\"",
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization_name\":null,\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"email\":\"bravo@test.de\",\"id\":5,\"organization_name\":\"Bravo\",\"updated_at\":null}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":4}\n"
+  },
+  "list_last_page": {
+    "url": "/api/v1/organizations/1/organization-invitations?page=2&per_page=3",
+    "status": 200,
+    "etag": "\"ab3c027f096b5df26d030a6b09a831aa5d7b05d5\"",
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"email\":\"bravo@test.de\",\"id\":5,\"organization_name\":\"Bravo\",\"updated_at\":null}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":3,\"prev_num\":1,\"total\":4}\n"
+  },
+  "list_out_of_range": {
+    "url": "/api/v1/organizations/1/organization-invitations?page=4&per_page=2",
+    "status": 404,
+    "etag": null,
+    "body": ""
+  },
+  "list_unknown_org": {
+    "url": "/api/v1/organizations/4711/organization-invitations",
+    "status": 404,
+    "etag": null,
+    "body": ""
+  },
+  "detail_full": {
+    "url": "/api/v1/organization-invitation/2",
+    "status": 200,
+    "etag": "\"a4cf68fb94392f0feed01b31e7d5c965db370454\"",
+    "body": "{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"email\":\"full@test.de\",\"id\":2,\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organization_name\":\"Voll\",\"relation_auto_verify_event_reference_requests\":true,\"relation_verify\":true,\"updated_at\":\"2026-03-01T12:00:00+00:00\"}\n"
+  },
+  "detail_bare": {
+    "url": "/api/v1/organization-invitation/4",
+    "status": 200,
+    "etag": "\"02ad680eea6ad2df5bcd7c4c03c54f7580772d97\"",
+    "body": "{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"email\":\"bare@test.de\",\"id\":4,\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organization_name\":null,\"relation_auto_verify_event_reference_requests\":false,\"relation_verify\":false,\"updated_at\":\"2026-02-20T16:00:00+00:00\"}\n"
+  },
+  "detail_unknown": {
+    "url": "/api/v1/organization-invitation/4711",
+    "status": 404,
+    "etag": null,
+    "body": ""
+  },
+  "detail_other_org": {
+    "url": "/api/v1/organization-invitation/1",
+    "status": 401,
+    "etag": null,
+    "body": ""
+  }
+}

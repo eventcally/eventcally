@@ -238,3 +238,146 @@ def test_create_admin(client, app, utils, seeder):
 
     url = utils.get_url("manage_admin_unit.event_place_create", id=admin_unit_id)
     utils.get_ok(url)
+
+
+def test_update_name_validation(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    seeder.upsert_event_place(admin_unit_id, "Andere")
+
+    url = utils.get_url(
+        "manage_admin_unit.event_place_update",
+        id=admin_unit_id,
+        event_place_id=place_id,
+    )
+    utils.get_ok(url)
+
+    utils.ajax_validation(url, "name", "Meine Crew", True)  # its own name
+    utils.ajax_validation(url, "name", "meine crew", True)
+    utils.ajax_validation(url, "name", "ANDERE", False)
+
+
+def _list_url(utils, admin_unit_id, **kwargs):
+    return utils.get_url("manage_admin_unit.event_places", id=admin_unit_id, **kwargs)
+
+
+def _assert_order(response, *names):
+    table = response.data[response.data.index(b"<table") :]
+    positions = [table.index(name.encode()) for name in names]
+    assert positions == sorted(positions), names
+
+
+@pytest.fixture
+def listed_places(app, db, seeder):
+    from datetime import datetime
+
+    from sqlalchemy import text
+
+    _, admin_unit_id = seeder.setup_base()
+    ids = {
+        "meine_crew": seeder.upsert_default_event_place(admin_unit_id),
+        "alpha": seeder.upsert_event_place(admin_unit_id, "Alpha Halle"),
+        "bravo": seeder.upsert_event_place(admin_unit_id, "Bravo Halle"),
+    }
+    event_ids = [seeder.create_event(admin_unit_id) for _ in range(3)]
+
+    with app.app_context():
+        for name, created_at in [
+            ("Meine Crew", datetime(2026, 1, 1)),
+            ("City", datetime(2026, 1, 2)),
+            ("Alpha Halle", datetime(2026, 3, 1)),
+            ("Bravo Halle", datetime(2026, 2, 1)),
+        ]:
+            db.session.execute(
+                text("UPDATE eventplace SET created_at = :c WHERE name = :name"),
+                {"c": created_at, "name": name},
+            )
+        db.session.execute(
+            text("UPDATE event SET event_place_id = :place_id WHERE id IN :ids"),
+            {"place_id": ids["bravo"], "ids": tuple(event_ids[:2])},
+        )
+        db.session.commit()
+
+    return admin_unit_id, ids
+
+
+@pytest.mark.parametrize(
+    "sort, expected",
+    [
+        (None, ["Alpha Halle", "Bravo Halle", "City", "Meine Crew"]),
+        ("name", ["Alpha Halle", "Bravo Halle", "City", "Meine Crew"]),
+        ("-last_modified_at", ["Alpha Halle", "Bravo Halle", "City", "Meine Crew"]),
+        ("-number_of_events", ["Bravo Halle", "Meine Crew", "Alpha Halle", "City"]),
+        ("unknown", ["Alpha Halle", "Bravo Halle", "City", "Meine Crew"]),
+    ],
+)
+def test_list_sort(client, utils, listed_places, sort, expected):
+    admin_unit_id, _ = listed_places
+    kwargs = {"sort": sort} if sort else {}
+
+    response = utils.get_ok(_list_url(utils, admin_unit_id, **kwargs))
+
+    _assert_order(response, *expected)
+
+
+def test_list_keyword(client, utils, listed_places):
+    admin_unit_id, _ = listed_places
+
+    response = utils.get_ok(_list_url(utils, admin_unit_id, keyword="halle"))
+
+    assert b"Alpha Halle" in response.data
+    assert b"Bravo Halle" in response.data
+    table = response.data[response.data.index(b"<table") :]
+    assert b"Meine Crew" not in table
+
+
+def test_list_renders_list_actions(client, utils, listed_places):
+    admin_unit_id, ids = listed_places
+
+    response = utils.get_ok(_list_url(utils, admin_unit_id))
+
+    update_url = utils.get_url(
+        "manage_admin_unit.event_place_update",
+        id=admin_unit_id,
+        event_place_id=ids["bravo"],
+    )
+    assert update_url.encode() in response.data
+
+
+def test_list_renders_photo_and_coordinates(client, app, db, seeder, utils):
+    from project.models import EventPlace, Location
+
+    _, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_event_place(admin_unit_id, "Mit Foto")
+    seeder.upsert_event_place(admin_unit_id, "Ohne Foto")
+    image_id = seeder.upsert_default_image()
+
+    with app.app_context():
+        place = db.session.get(EventPlace, place_id)
+        place.photo_id = image_id
+        place.location = Location(
+            city="Goslar", latitude="51.9077888", longitude="10.4333312"
+        )
+        db.session.commit()
+
+    response = utils.get_ok(_list_url(utils, admin_unit_id))
+
+    _assert_order(response, "Mit Foto", "Ohne Foto")
+    assert b"Goslar" in response.data
+
+
+def test_list_pages_by_fifty(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+
+    for i in range(60):
+        seeder.upsert_event_place(admin_unit_id, "Place %02d" % i)
+
+    # The list's own page size wins over a per_page query arg.
+    response = utils.get_ok(_list_url(utils, admin_unit_id, page=2, per_page=5))
+
+    assert b"Place 48" not in response.data
+    assert b"Place 49" in response.data  # 61 places incl. "City"
+    assert b"Place 59" in response.data
+
+    response = utils.get(_list_url(utils, admin_unit_id, page=3))
+    utils.assert_response_notFound(response)

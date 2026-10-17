@@ -1,6 +1,5 @@
 from marshmallow import fields, post_load, validate
 
-from project.api import marshmallow
 from project.api.image.schemas import ImageDumpSchema, ImageSchema
 from project.api.location.schemas import (
     LocationDumpSchema,
@@ -15,7 +14,6 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     PlainBaseSchema,
-    SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
     WriteIdSchemaMixin,
@@ -24,13 +22,10 @@ from project.application.commands import (
     CreateEventOrganizerCommand,
     UpdateEventOrganizerCommand,
 )
-from project.models import EventOrganizer
 
 
-class OrganizerModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = EventOrganizer
-        load_instance = True
+class OrganizerModelSchema(PlainBaseSchema):
+    pass
 
 
 class OrganizerIdSchema(OrganizerModelSchema, IdSchemaMixin):
@@ -70,7 +65,7 @@ class OrganizerDumpSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):
 
 
 class OrganizerRefSchema(OrganizerIdSchema):
-    name = marshmallow.auto_field()
+    name = fields.String(required=True, validate=validate.Length(max=255))
 
 
 class OrganizerSearchItemSchema(OrganizerIdSchema, OrganizerBaseSchemaMixin):

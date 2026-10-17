@@ -1,29 +1,35 @@
+from dependency_injector.wiring import Provide, inject
 from flask import current_app, render_template, request, url_for
 from flask.wrappers import Response
 
-from project.access import can_read_event_or_401
-from project.dateutils import create_icalendar
-from project.extensions import db
-from project.forms.event_date import FindEventDateForm
-from project.jsonld import get_sd_for_event_date
-from project.models import AdminUnit, EventOrganizer
-from project.services.event import (
-    create_ical_event_for_date,
-    get_event_date_with_details_or_404,
-    get_meta_data,
-    get_upcoming_event_dates,
+from project.application.queries import (
+    GetEventDateDetailQuery,
+    GetEventOrganizerQuery,
+    GetOrganizationQuery,
+    ListUpcomingEventDatesQuery,
 )
-from project.services.search_params import EventSearchParams
+from project.application.query_bus import QueryBus
+from project.container import Application
+from project.dateutils import create_icalendar
+from project.forms.event_date import FindEventDateForm
+from project.ical import create_ical_event_for_date
+from project.jsonld import get_sd_for_event_date
 from project.views.event import get_event_category_choices, get_user_rights
+from project.views.event_search_params import EventSearchParams
 from project.views.main_blueprint import main_bp
 from project.views.utils import (
     flash_errors,
     get_calendar_links_for_event_date,
+    get_meta_data,
     get_share_links,
+    result_or_404,
 )
 
 
-def prepare_event_date_form(form):
+@inject
+def prepare_event_date_form(
+    form, query_bus: QueryBus = Provide[Application.cqrs.query_bus]
+):
     form.category_id.choices = get_event_category_choices()
     form.category_id.choices.insert(0, (0, ""))
     form.location.choices = []
@@ -32,14 +38,14 @@ def prepare_event_date_form(form):
     admin_unit = None
 
     if form.organizer_id.data and form.organizer_id.data > 0:
-        organizer = db.session.get(EventOrganizer, form.organizer_id.data)
+        organizer = query_bus.handle(GetEventOrganizerQuery(id=form.organizer_id.data))
 
         if organizer:
             form.organizer_id.choices = [(organizer.id, organizer.name)]
             admin_unit = organizer.admin_unit
 
     if not admin_unit and form.admin_unit_id.data and form.admin_unit_id.data > 0:
-        admin_unit = db.session.get(AdminUnit, form.admin_unit_id.data)
+        admin_unit = query_bus.handle(GetOrganizationQuery(id=form.admin_unit_id.data))
 
     if admin_unit:
         form.admin_unit_id.choices = [(admin_unit.id, admin_unit.name)]
@@ -68,9 +74,9 @@ def event_dates():
 
 
 @main_bp.route("/eventdate/<int:id>")
-def event_date(id):
-    event_date = get_event_date_with_details_or_404(id)
-    can_read_event_or_401(event_date.event)
+@inject
+def event_date(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    event_date = result_or_404(query_bus.handle(GetEventDateDetailQuery(id=id)))
 
     structured_data = current_app.json.dumps(
         get_sd_for_event_date(event_date), indent=2
@@ -87,16 +93,18 @@ def event_date(id):
         meta=get_meta_data(event_date.event, event_date),
         canonical_url=url_for("main.event_date", id=id, _external=True),
         user_rights=get_user_rights(event_date.event),
-        dates=get_upcoming_event_dates(event_date.event_id),
+        dates=query_bus.handle(
+            ListUpcomingEventDatesQuery(event_id=event_date.event.id)
+        ),
         share_links=share_links,
         calendar_links=calendar_links,
     )
 
 
 @main_bp.route("/eventdate/<int:id>/ical")
-def event_date_ical(id):
-    event_date = get_event_date_with_details_or_404(id)
-    can_read_event_or_401(event_date.event)
+@inject
+def event_date_ical(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    event_date = result_or_404(query_bus.handle(GetEventDateDetailQuery(id=id)))
     event = create_ical_event_for_date(event_date)
 
     cal = create_icalendar()

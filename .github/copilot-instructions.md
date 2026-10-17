@@ -19,7 +19,7 @@ For full environment setup, use [doc/development.md](../doc/development.md).
 Respect strict DDD layering:
 
 - `project/domain/`: core business logic and abstract interfaces
-- `project/application/`: commands, handlers, message bus orchestration
+- `project/application/`: commands, handlers, message bus orchestration; queries, query handlers, read models, query bus
 - `project/infrastructure/`: concrete adapters (SQLAlchemy, Celery, external services)
 
 The layering rule is enforced by [.importlinter](../.importlinter). Avoid introducing imports that violate these boundaries.
@@ -28,6 +28,17 @@ Primary integration points:
 
 - DI container: [project/container.py](../project/container.py)
 - Message bus: [project/application/message_bus.py](../project/application/message_bus.py)
+- Query bus (reads): [project/application/query_bus.py](../project/application/query_bus.py)
+- Query authorization: Query handlers for private data authorize the actor via `ActorAuthorizationService` (same rule as commands, `actor_permission_policy`); reference: organization invitations (`ListOrganizationInvitationsQuery`).
+
+Reads in views, the API and `project/modular` go through queries: a `Query[T]` in
+`project/application/queries/`, a handler in `query_handlers/` returning hand-written read
+models, and a read repository on the read-only `infrastructure.read_session`. See
+[add-ddd-query.prompt.md](prompts/add-ddd-query.prompt.md); the event organizer reads are
+the reference implementation. The
+`delivery-reads-through-queries` contract in `.importlinter` keeps delivery code from
+importing `project.models` from new modules; its `ignore_imports` list only shrinks
+(`python .scripts/models_import_ignores.py --write`).
 - API wiring: [project/api/__init__.py](../project/api/__init__.py)
 
 ## Generated Code Rules
@@ -53,6 +64,7 @@ Primary integration points:
 - New Celery tasks must be imported/registered in [project/celery_tasks.py](../project/celery_tasks.py).
 - Deferred SQLAlchemy columns may require explicit `undefer()` in query options.
 - Avoid editing generated files or relying on behavior that codegen overwrites.
+- Query handlers must return materialized read models; the read session is closed when the bus returns.
 - Commands are defined in [project/application/commands/](../project/application/commands/), not in a domain commands package.
 
 ## Canonical References

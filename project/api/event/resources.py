@@ -1,17 +1,12 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import g, make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
-from sqlalchemy import and_
-from sqlalchemy.orm import lazyload, load_only
 
-from project.access import (
-    can_read_event_or_401,
-    can_read_private_events,
-    login_api_user,
-)
+from project.access import login_api_user
 from project.api import add_api_resource
+from project.api.event.query_args import (
+    event_search_criteria_from_request,
+    reference_admin_unit_id_for_api,
+)
 from project.api.event.schemas import (
     EventListRequestSchema,
     EventListResponseSchema,
@@ -26,6 +21,11 @@ from project.api.event_date.schemas import (
     EventDateListRequestSchema,
     EventDateListResponseSchema,
 )
+from project.api.query_args import (
+    enum_or_none,
+    page_request_from_kwargs,
+    trackable_criteria_from_kwargs,
+)
 from project.api.resources import (
     BaseResource,
     require_api_access,
@@ -33,25 +33,16 @@ from project.api.resources import (
 )
 from project.api.schemas import NoneSchema
 from project.application.commands.delete_event_command import DeleteEventCommand
-from project.models import AdminUnit, Event, EventDate, EventPublicStatus
-from project.services.event import get_event_with_details_or_404, get_events_query
-from project.services.event_service import EventService
-from project.services.search_params import EventSearchParams
+from project.application.queries import (
+    GetEventDetailQuery,
+    ListEventDatesOfEventQuery,
+    ListEventsQuery,
+    ResourceKind,
+    SearchEventsQuery,
+    TrackableSort,
+)
 from project.views.event import send_event_report_mails
-
-
-def api_can_read_event_or_401(event: Event):
-    if (
-        event.public_status != EventPublicStatus.published
-        or not event.admin_unit.is_verified
-    ):
-        login_api_user()
-        can_read_event_or_401(event)
-
-
-def api_can_read_private_events(admin_unit: AdminUnit):
-    login_api_user()
-    return can_read_private_events(admin_unit)
+from project.views.utils import abort_if_page_out_of_range, result_or_404
 
 
 class EventListResource(BaseResource):
@@ -60,33 +51,31 @@ class EventListResource(BaseResource):
     @marshal_with(EventListResponseSchema)
     @require_api_access()
     def get(self, **kwargs):
-        params = EventSearchParams()
-        params.load_from_request(**kwargs)
-
-        query = Event.query.join(Event.admin_unit).filter(
-            and_(
-                Event.public_status == EventPublicStatus.published,
-                AdminUnit.is_verified,
+        page = self.query_bus.handle(
+            ListEventsQuery(
+                trackable=trackable_criteria_from_kwargs(kwargs),
+                sort=enum_or_none(TrackableSort, kwargs.get("sort")),
+                page=page_request_from_kwargs(kwargs),
             )
         )
-        query = params.get_trackable_query(query, Event)
-        query = params.get_trackable_order_by(query, Event)
-        query = query.order_by(Event.min_start)
-
-        return query.paginate()
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class EventResource(BaseResource):
-    event_service: Annotated[EventService, Provide["services.event_service"]]
 
     @doc(summary="Get event", tags=["Events"])
     @marshal_with(EventSchema)
     @require_api_access()
     def get(self, id):
         login_api_user()
-        event = get_event_with_details_or_404(id)
-        api_can_read_event_or_401(event)
-        return event
+        return result_or_404(
+            self.query_bus.handle(
+                GetEventDetailQuery(
+                    id=id, reference_admin_unit_id=reference_admin_unit_id_for_api()
+                )
+            )
+        )
 
     @doc(
         summary="Update event",
@@ -94,7 +83,7 @@ class EventResource(BaseResource):
     )
     @use_kwargs(EventPutRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_organization_api_access("organization.events:write", Event)
+    @require_organization_api_access("organization.events:write", ResourceKind.event)
     def put(self, id):
         cmd = EventPutRequestPlainSchema(context=g.api_command_context).load(
             request.json
@@ -109,7 +98,7 @@ class EventResource(BaseResource):
     )
     @use_kwargs(EventPatchRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_organization_api_access("organization.events:write", Event)
+    @require_organization_api_access("organization.events:write", ResourceKind.event)
     def patch(self, id):
         cmd = EventPatchRequestPlainSchema(context=g.api_command_context).load(
             request.json
@@ -123,7 +112,7 @@ class EventResource(BaseResource):
         tags=["Events"],
     )
     @marshal_with(None, 204)
-    @require_organization_api_access("organization.events:write", Event)
+    @require_organization_api_access("organization.events:write", ResourceKind.event)
     def delete(self, id):
         cmd = DeleteEventCommand(
             id=id, actor=self.app_context_provider.get_current_actor()
@@ -139,17 +128,16 @@ class EventDatesResource(BaseResource):
     @marshal_with(EventDateListResponseSchema)
     @require_api_access()
     def get(self, id, **kwargs):
-        event = Event.query.options(
-            load_only(Event.id, Event.public_status)
-        ).get_or_404(id)
-        api_can_read_event_or_401(event)
-
-        return (
-            EventDate.query.options(lazyload(EventDate.event))
-            .filter(EventDate.event_id == event.id)
-            .order_by(EventDate.start)
-            .paginate()
+        login_api_user()
+        page = result_or_404(
+            self.query_bus.handle(
+                ListEventDatesOfEventQuery(
+                    event_id=id, page=page_request_from_kwargs(kwargs)
+                )
+            )
         )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class EventSearchResource(BaseResource):
@@ -159,10 +147,15 @@ class EventSearchResource(BaseResource):
     @require_api_access()
     def get(self, **kwargs):
         login_api_user()
-        params = EventSearchParams()
-        params.load_from_request(**kwargs)
-        pagination = get_events_query(params).paginate()
-        return pagination
+        page = self.query_bus.handle(
+            SearchEventsQuery(
+                criteria=event_search_criteria_from_request(kwargs),
+                reference_admin_unit_id=reference_admin_unit_id_for_api(),
+                page=page_request_from_kwargs(kwargs),
+            )
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 class EventReportsResource(BaseResource):
@@ -171,10 +164,8 @@ class EventReportsResource(BaseResource):
     @marshal_with(NoneSchema, 204)
     @require_api_access()
     def post(self, id):
-        event = Event.query.options(
-            load_only(Event.id, Event.public_status)
-        ).get_or_404(id)
-        api_can_read_event_or_401(event)
+        login_api_user()
+        event = result_or_404(self.query_bus.handle(GetEventDetailQuery(id=id)))
 
         report = EventReportPostSchema().load(request.json)
         send_event_report_mails(event, report)

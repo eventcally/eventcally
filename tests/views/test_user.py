@@ -362,7 +362,7 @@ def test_user_accept_tos(
     seeder.setup_base()
 
     with app.app_context():
-        from project.services.admin import reset_tos_accepted_for_users
+        from project.cli.seed_helpers import reset_tos_accepted_for_users
 
         reset_tos_accepted_for_users()
 

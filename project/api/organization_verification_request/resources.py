@@ -1,4 +1,4 @@
-from flask import g, make_response
+from flask import make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 from marshmallow import ValidationError
 
@@ -13,10 +13,15 @@ from project.api.organization_verification_request.schemas import (
 )
 from project.api.resources import BaseResource, require_organization_api_access
 from project.application.commands import WithdrawOrganizationVerificationRequestCommand
-from project.models import AdminUnitVerificationRequest
-from project.models.admin_unit_verification_request import (
-    AdminUnitVerificationRequestReviewStatus,
+from project.application.queries import (
+    GetIncomingOrganizationVerificationRequestReviewQuery,
+    GetOutgoingOrganizationVerificationRequestQuery,
+    ResourceKind,
 )
+from project.domain.models.enums.organization_verification_request_review_status import (
+    OrganizationVerificationRequestReviewStatus,
+)
+from project.views.utils import result_or_404
 
 
 class OrganizationVerificationRequestResource(BaseResource):
@@ -27,13 +32,14 @@ class OrganizationVerificationRequestResource(BaseResource):
     @marshal_with(OrganizationVerificationRequestSchema)
     @require_organization_api_access(
         "organization.outgoing_organization_verification_requests:read",
-        AdminUnitVerificationRequest,
-        admin_unit_id_path="source_admin_unit_id",
+        ResourceKind.verification_request_source,
     )
     def get(self, id):
-        verification_request = g.manage_admin_unit_instance
-
-        return verification_request
+        return result_or_404(
+            self.query_bus.handle(
+                GetOutgoingOrganizationVerificationRequestQuery(id=id)
+            )
+        )
 
     @doc(
         summary="Delete verification request",
@@ -42,8 +48,7 @@ class OrganizationVerificationRequestResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access(
         "organization.outgoing_organization_verification_requests:write",
-        AdminUnitVerificationRequest,
-        admin_unit_id_path="source_admin_unit_id",
+        ResourceKind.verification_request_source,
     )
     def delete(self, id):
         cmd = WithdrawOrganizationVerificationRequestCommand(
@@ -65,15 +70,18 @@ class OrganizationVerificationRequestVerifyResource(BaseResource):
     @marshal_with(OrganizationRelationIdPlainSchema, 201)
     @require_organization_api_access(
         "organization.incoming_organization_verification_requests:write",
-        AdminUnitVerificationRequest,
-        admin_unit_id_path="target_admin_unit_id",
+        ResourceKind.verification_request_target,
     )
     def post(self, id, **kwargs):
-        verification_request = g.manage_admin_unit_instance
+        verification_request = result_or_404(
+            self.query_bus.handle(
+                GetIncomingOrganizationVerificationRequestReviewQuery(id=id)
+            )
+        )
 
         if (
             verification_request.review_status
-            == AdminUnitVerificationRequestReviewStatus.verified
+            == OrganizationVerificationRequestReviewStatus.verified
         ):
             raise ValidationError("Verification request already verified")
 
@@ -94,15 +102,18 @@ class OrganizationVerificationRequestRejectResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access(
         "organization.incoming_organization_verification_requests:write",
-        AdminUnitVerificationRequest,
-        admin_unit_id_path="target_admin_unit_id",
+        ResourceKind.verification_request_target,
     )
     def post(self, id):
-        verification_request = g.manage_admin_unit_instance
+        verification_request = result_or_404(
+            self.query_bus.handle(
+                GetIncomingOrganizationVerificationRequestReviewQuery(id=id)
+            )
+        )
 
         if (
             verification_request.review_status
-            == AdminUnitVerificationRequestReviewStatus.verified
+            == OrganizationVerificationRequestReviewStatus.verified
         ):  # pragma: no cover
             raise ValidationError("Verification request already verified")
 

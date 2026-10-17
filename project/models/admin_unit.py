@@ -85,7 +85,7 @@ class AdminUnitMember(db.Model, AdminUnitMemberGeneratedMixin):
     def __str__(self):
         return self.user.__str__() if self.user else super().__str__()
 
-    def has_role(self, role: str | RoleMixin) -> bool:
+    def has_role(self, role: str | RoleMixin) -> bool:  # pragma: no cover
         """Returns `True` if the user identifies with the specified role.
 
         :param role: A role name or `Role` instance"""
@@ -104,7 +104,7 @@ class AdminUnitMember(db.Model, AdminUnitMemberGeneratedMixin):
         return False  # pragma: no cover
 
     @hybrid_property
-    def is_admin(self):
+    def is_admin(self):  # pragma: no cover
         return self.has_role("admin")
 
     @is_admin.expression
@@ -374,7 +374,7 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
             > 0
         )
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return self.name or super().__str__()
 
 

@@ -1,4 +1,4 @@
-from flask import g, make_response
+from flask import make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 
 from project.api import add_api_resource
@@ -14,7 +14,11 @@ from project.application.commands import (
     VerifyEventReferenceRequestCommand,
     WithdrawEventReferenceRequestCommand,
 )
-from project.models import EventReference, EventReferenceRequest
+from project.application.queries import (
+    GetOutgoingEventReferenceRequestQuery,
+    ResourceKind,
+)
+from project.views.utils import result_or_404
 
 
 class EventReferenceRequestResource(BaseResource):
@@ -22,12 +26,12 @@ class EventReferenceRequestResource(BaseResource):
     @marshal_with(EventReferenceRequestSchema)
     @require_organization_api_access(
         "organization.outgoing_event_reference_requests:read",
-        EventReferenceRequest,
-        admin_unit_id_path="event.admin_unit_id",
+        ResourceKind.event_reference_request,
     )
     def get(self, id):
-        reference_request = g.manage_admin_unit_instance
-        return reference_request
+        return result_or_404(
+            self.query_bus.handle(GetOutgoingEventReferenceRequestQuery(id=id))
+        )
 
     @doc(
         summary="Delete reference request",
@@ -36,8 +40,7 @@ class EventReferenceRequestResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access(
         "organization.outgoing_event_reference_requests:write",
-        EventReferenceRequest,
-        admin_unit_id_path="event.admin_unit_id",
+        ResourceKind.event_reference_request,
     )
     def delete(self, id):
         cmd = WithdrawEventReferenceRequestCommand(
@@ -56,7 +59,8 @@ class EventReferenceRequestVerifyResource(BaseResource):
     @use_kwargs(EventReferenceRequestVerifyRequestSchema, location="json", apply=True)
     @marshal_with(EventReferenceIdSchema, 201)
     @require_organization_api_access(
-        "organization.incoming_event_reference_requests:write", EventReferenceRequest
+        "organization.incoming_event_reference_requests:write",
+        ResourceKind.event_reference_request_target,
     )
     def post(self, id, **kwargs):
         cmd = VerifyEventReferenceRequestCommand(
@@ -66,8 +70,7 @@ class EventReferenceRequestVerifyResource(BaseResource):
         )
         cmd_result = self.message_bus.handle_command(cmd)
 
-        reference = EventReference.query.get(cmd_result.reference_id)
-        return reference, 201
+        return {"id": cmd_result.reference_id}, 201
 
 
 class EventReferenceRequestRejectResource(BaseResource):
@@ -78,7 +81,8 @@ class EventReferenceRequestRejectResource(BaseResource):
     @use_kwargs(EventReferenceRequestRejectRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access(
-        "organization.incoming_event_reference_requests:write", EventReferenceRequest
+        "organization.incoming_event_reference_requests:write",
+        ResourceKind.event_reference_request_target,
     )
     def post(self, id):
         cmd = self.load_command(EventReferenceRequestRejectRequestPlainSchema)

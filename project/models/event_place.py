@@ -1,11 +1,7 @@
 from __future__ import annotations
 
-from sqlalchemy import func, select
-from sqlalchemy.ext.hybrid import hybrid_property
-
 from project.domain.models.aggregates.event_place_aggregate import EventPlaceAggregate
 from project.extensions import db
-from project.models.event import Event
 from project.models.event_place_generated import EventPlaceGeneratedMixin
 from project.models.image import Image
 from project.models.location import Location
@@ -60,16 +56,6 @@ class EventPlace(db.Model, EventPlaceGeneratedMixin):
         )
 
         return aggregate
-
-    @hybrid_property
-    def number_of_events(self):
-        return len(self.events)
-
-    @number_of_events.expression
-    def number_of_events(cls):
-        return (
-            select(func.count()).where(Event.event_place_id == cls.id).scalar_subquery()
-        )
 
     def __str__(self):
         return self.name or super().__str__()

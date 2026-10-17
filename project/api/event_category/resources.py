@@ -5,8 +5,10 @@ from project.api.event_category.schemas import (
     EventCategoryListRequestSchema,
     EventCategoryListResponseSchema,
 )
+from project.api.query_args import page_request_from_kwargs
 from project.api.resources import BaseResource, require_api_access
-from project.models import EventCategory
+from project.application.queries import ListEventCategoriesQuery
+from project.views.utils import abort_if_page_out_of_range
 
 
 class EventCategoryListResource(BaseResource):
@@ -15,8 +17,11 @@ class EventCategoryListResource(BaseResource):
     @marshal_with(EventCategoryListResponseSchema)
     @require_api_access()
     def get(self, **kwargs):
-        pagination = EventCategory.query.paginate()
-        return pagination
+        page = self.query_bus.handle(
+            ListEventCategoriesQuery(page=page_request_from_kwargs(kwargs))
+        )
+        abort_if_page_out_of_range(page)
+        return page
 
 
 add_api_resource(

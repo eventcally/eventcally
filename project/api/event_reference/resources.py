@@ -9,7 +9,8 @@ from project.api.resources import (
     require_organization_api_access,
 )
 from project.application.commands import DeleteEventReferenceCommand
-from project.models import EventReference
+from project.application.queries import GetEventReferenceQuery, ResourceKind
+from project.views.utils import result_or_404
 
 
 class EventReferenceResource(BaseResource):
@@ -17,7 +18,7 @@ class EventReferenceResource(BaseResource):
     @marshal_with(EventReferenceSchema)
     @require_api_access()
     def get(self, id):
-        return EventReference.query.get_or_404(id)
+        return result_or_404(self.query_bus.handle(GetEventReferenceQuery(id=id)))
 
     @doc(
         summary="Delete reference",
@@ -25,7 +26,7 @@ class EventReferenceResource(BaseResource):
     )
     @marshal_with(None, 204)
     @require_organization_api_access(
-        "organization.incoming_event_references:write", EventReference
+        "organization.incoming_event_references:write", ResourceKind.event_reference
     )
     def delete(self, id):
         cmd = DeleteEventReferenceCommand(

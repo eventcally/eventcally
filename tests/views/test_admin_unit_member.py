@@ -31,7 +31,7 @@ def test_update(client, app, utils: UtilActions, seeder):
     )
 
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_member
+        from project.cli.seed_helpers import get_admin_unit_member
 
         member = get_admin_unit_member(member_id)
         assert len(member.roles) == 1
@@ -44,7 +44,7 @@ def test_update_self(client, app, utils: UtilActions, seeder: Seeder):
     admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 
     with app.app_context():
-        from project.services.admin_unit import get_member_for_admin_unit_by_user_id
+        from project.cli.seed_helpers import get_member_for_admin_unit_by_user_id
 
         member = get_member_for_admin_unit_by_user_id(admin_unit_id, user_id)
         member_id = member.id
@@ -70,7 +70,7 @@ def test_update_self(client, app, utils: UtilActions, seeder: Seeder):
     )
 
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_member
+        from project.cli.seed_helpers import get_admin_unit_member
 
         member = get_admin_unit_member(member_id)
         assert len(member.roles) == 2
@@ -118,7 +118,7 @@ def test_delete(client, app, db, utils: UtilActions, seeder: Seeder, scenario: s
     )
 
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_member
+        from project.cli.seed_helpers import get_admin_unit_member
 
         member = get_admin_unit_member(member_id)
         assert member is None

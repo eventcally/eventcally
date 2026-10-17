@@ -1,8 +1,5 @@
-from project.api.schemas import SQLAlchemyBaseSchema
-from project.models import AppInstallation
+from project.api.schemas import PlainBaseSchema
 
 
-class AppInstallationModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = AppInstallation
-        load_instance = True
+class AppInstallationModelSchema(PlainBaseSchema):
+    pass

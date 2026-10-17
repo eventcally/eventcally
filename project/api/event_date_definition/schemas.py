@@ -2,17 +2,14 @@ from dateutil.rrule import rrulestr
 from marshmallow import ValidationError, fields, post_load
 
 from project.api.fields import CustomDateTimeField
-from project.api.schemas import IdSchemaMixin, PlainBaseSchema, SQLAlchemyBaseSchema
+from project.api.schemas import IdSchemaMixin, PlainBaseSchema
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
 )
-from project.models import EventDateDefinition
 
 
-class EventDateDefinitionModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = EventDateDefinition
-        load_instance = True
+class EventDateDefinitionModelSchema(PlainBaseSchema):
+    pass
 
 
 class EventDateDefinitionIdSchema(EventDateDefinitionModelSchema, IdSchemaMixin):

@@ -3,11 +3,10 @@ from flask_security import auth_required
 
 from project.access import can_use_planning
 from project.forms.planning import PlanningForm
-from project.services.admin import upsert_settings
-from project.services.search_params import EventSearchParams
 from project.views.event import get_event_category_choices
+from project.views.event_search_params import EventSearchParams
 from project.views.main_blueprint import main_bp
-from project.views.utils import permission_missing
+from project.views.utils import get_settings, permission_missing
 
 
 @main_bp.route("/planning")
@@ -25,7 +24,7 @@ def planning():
     form.weekday.data = [c[0] for c in form.weekday.choices]
     form.exclude_recurring.data = True
 
-    settings = upsert_settings()
+    settings = get_settings()
     initial_external_calendars = (
         settings.planning_external_calendars
         if settings.planning_external_calendars

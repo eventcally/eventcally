@@ -63,18 +63,23 @@ isort . && black . && flake8 && lint-imports && \
 - `project/` — Flask wiring (`__init__.py` → `create_app`), DI (`container.py`), tasks, views, forms, templates
 - `project/domain/` — models, abstract interfaces, business logic (**no** application/infrastructure imports)
 - `project/application/` — pydantic commands, command/event handlers, `message_bus.py`, read models
+- `project/services/` — only `cache`, `dump`, `seo`; no ORM read/write services (settings are read via `GetSettingsQuery`; `upsert_settings` lives in `init_data.py`)
+- `project/user_datastore.py` — the Flask-Security datastore adapter (users, roles, ToS); imports no models
+- `project/cli/seed_helpers.py` — fixture-only ORM helpers for `cli/test.py` and `tests/seeder.py`; never import from views/api/application
 - `project/infrastructure/` — concrete adapters (SQLAlchemy repos, Celery dispatchers, external services)
 - `project/api/` — REST resources + marshmallow schemas
 - `codegen/` — `generate.py` + YAML schemas in `codegen/config/`
 - `tests/` — mirrors source; `conftest.py`, `base_test.py`, `seeder.py`
 - `e2e/`, `doc/`, `deployment/`, `.scripts/`
 
-**Flow:** view / API → application command → handler → repository (domain via infrastructure); events dispatch through the message bus, some onto Celery.
+**Flow:** reads: view / API → `query_bus` → query handler → read repository (read model out); writes: view / API → `message_bus` → command handler → repository (domain via infrastructure); events dispatch through the message bus, some onto Celery.
 
 ## Patterns
 
 - **DDD layering (strict):** `domain` ← `application` ← `infrastructure`. Never import "up" a layer. Enforced by `.importlinter` (`lint-imports`) and `.scripts/module_import_whitelist.py`; allowed imports live in `project/domain/allowed_imports.cfg` and `project/application/allowed_imports.cfg`.
 - **Commands/events:** pydantic `Command` / `CommandWithResult[T]` in `project/application/commands/`, handlers in `command_handlers/`, registered in the DI container (`project/container.py`) and driven through `message_bus.py`. The `actor` field is auto-added.
+- **Read side (queries):** every read in views/API/modular goes through pydantic `Query[T]` objects in `project/application/queries/`, dispatched via `QueryBus` (`Application.cqrs.query_bus`; `BaseResource.query_bus`, `BaseView.query_bus`). Handlers in `query_handlers/` get read repos by constructor injection and return hand-written, use-case shaped read models (`read_models/`, `Page[T]` for lists). Query read repos use `infrastructure.read_session` (read-only, released after each top-level query); event-handler read repos stay on `session_factory`. Modular list and object views implement `create_list_query()` / `create_get_query()` (there is no ORM list path any more). Search criteria are pydantic models (`EventSearchCriteria`); visibility rules live in handlers/services (`EventVisibilityService`). Access decisions use the same permission policy (`project/access.py` is a thin wrapper; API decorators take a `ResourceKind`). Scaffold: `.github/prompts/add-ddd-query.prompt.md`; reference implementation: event organizers (`ListEventOrganizersQuery`, `SqlAlchemyEventOrganizerReadRepository`). Query handlers for private data authorize the actor via `ActorAuthorizationService` (same rule as commands, `actor_permission_policy`); reference: organization invitations (`ListOrganizationInvitationsQuery`).
+- **Import ratchet:** the `delivery-reads-through-queries` contract in `.importlinter` forbids `project.views` / `project.api` / `project.modular` / `project.access` / `project.jinja_filters` → `project.models`, with an `ignore_imports` list that only holds the permanent exemption `views.flask_admin` (Flask-Admin stays ORM; Flask-Security `current_user` and Authlib stay too). Regenerate with `python .scripts/models_import_ignores.py --write` after removing imports; never add entries by hand. Progress: `python .scripts/read_path_report.py`.
 - **Generated code:** `*_generated.py` is generated from `codegen/config/` YAML — **never edit it**. Put custom logic in the handwritten sibling (e.g. `event.py` extends `event_generated.py`). isort/flake8 already skip these files.
 - **Data access:** SQLAlchemy ORM through repositories; deferred columns may need explicit `undefer()`.
 - **Tests:** reuse fixtures from `tests/conftest.py` (`app`, `db`, `client`, `seeder`, `utils`, `container`, `message_bus`) and base classes in `tests/base_test.py`; assert through the message bus / repositories, not around the architecture.
@@ -82,6 +87,7 @@ isort . && black . && flake8 && lint-imports && \
 ## Pitfalls
 
 - New Celery tasks must be imported/registered in `project/celery_tasks.py`.
+- Query handlers must return materialized read models; the read session is closed when the bus returns, so lazy loads fail. The read session only sees committed data.
 - PostGIS migration diffs from `flask db migrate` sometimes need manual correction — always review before `upgrade`.
 - flake8 ignores E501/E203/E711 (Black owns formatting); don't fight isort skipping `*_generated.py`.
 - Required env vars for running: `DATABASE_URL`, `SECRET_KEY`, `SERVER_NAME`, `REDIS_URL`, `LIMITER_REDIS_URL`, `GOOGLE_MAPS_API_KEY`, mail settings (see `doc/development.md`).

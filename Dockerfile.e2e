@@ -1,0 +1,26 @@
+# Image for the Playwright e2e suite (see .scripts/run_e2e.sh): the app's Python
+# dependencies plus node, the pinned Playwright runner and Chromium, in one container,
+# because the specs start .scripts/e2e_fixture_server.py (python) from node.
+# Keep the tag in step with @playwright/test in package.json.
+FROM mcr.microsoft.com/playwright:v1.62.1-noble
+
+RUN apt-get update -qq \
+    && apt-get install -y --no-install-recommends python3-venv python3-pip python3-dev build-essential libpq-dev libffi-dev libssl-dev postgresql-client curl \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
+
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# Node modules live outside /app so the bind-mounted repo (and a macOS node_modules in
+# it) cannot shadow them.
+COPY package.json package-lock.json /opt/e2e/
+RUN cd /opt/e2e && npm ci
+ENV NODE_PATH=/opt/e2e/node_modules
+ENV PATH="/opt/e2e/node_modules/.bin:$PATH"
+
+WORKDIR /app

@@ -9,6 +9,18 @@ from sqlalchemy import MetaData, text
 
 from project.api import scope_list
 from project.application.commands.create_event_command import CreateEventCommand
+from project.cli.seed_helpers import (
+    add_user_to_admin_unit_with_roles,
+    complete_oauth2_client,
+    get_admin_unit_by_id,
+    get_event_organizer,
+    insert_admin_unit_for_user,
+    insert_admin_unit_member_invitation,
+    upsert_admin_unit_relation,
+    upsert_event_category,
+    upsert_event_organizer,
+    upsert_event_place,
+)
 from project.domain.models.entities.actor import Actor
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.value_objects.event_date_definition_value_object import (
@@ -28,17 +40,7 @@ from project.models import (
     Location,
     OAuth2Client,
 )
-from project.services.admin_unit import (
-    add_user_to_admin_unit_with_roles,
-    get_admin_unit_by_id,
-    insert_admin_unit_for_user,
-    insert_admin_unit_member_invitation,
-    upsert_admin_unit_relation,
-)
-from project.services.oauth2_client import complete_oauth2_client
-from project.services.organizer import get_event_organizer, upsert_event_organizer
-from project.services.place import get_event_places, upsert_event_place
-from project.services.user import (
+from project.user_datastore import (
     create_user,
     find_user_by_email,
     get_user,
@@ -60,7 +62,16 @@ def _get_now_by_minute():
 
 
 def _get_default_event_place_id(admin_unit_id):
-    return get_event_places(admin_unit_id, limit=1)[0].id
+    from sqlalchemy import func
+
+    from project.models import EventPlace
+
+    return (
+        EventPlace.query.filter(EventPlace.admin_unit_id == admin_unit_id)
+        .order_by(func.lower(EventPlace.name))
+        .first()
+        .id
+    )
 
 
 def _get_default_organizer_id(admin_unit_id):
@@ -129,7 +140,7 @@ def seed():
 
 
 def _verify_admin_unit(admin_unit_id):
-    from project.services.admin_unit import get_admin_unit_by_name
+    from project.cli.seed_helpers import get_admin_unit_by_name
 
     other_admin_unit = get_admin_unit_by_name("eventcally")
 
@@ -210,12 +221,10 @@ def _get_admin_unit_owner_id(admin_unit_id):
 
 
 def _create_event(admin_unit_id):
-    event_category_service = current_app.container.services.event_category_service()
-
     command = CreateEventCommand.model_construct()
     command.admin_unit_id = admin_unit_id
     command.actor = Actor(user_id=_get_admin_unit_owner_id(admin_unit_id))
-    command.category_ids = {event_category_service.upsert_event_category("Other").id}
+    command.category_ids = {upsert_event_category("Other").id}
     command.name = "Name"
     command.description = "Beschreibung"
     command.event_place_id = _get_default_event_place_id(admin_unit_id)

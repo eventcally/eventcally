@@ -1,14 +1,10 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import abort
 from flask_babel import gettext
 from flask_login import current_user
-from sqlalchemy import func
 
-from project.models import AdminUnitInvitation
-from project.services.organization_invitation_service import (
-    OrganizationInvitationService,
+from project.application.queries import (
+    GetUserOrganizationInvitationQuery,
+    ListUserOrganizationInvitationsQuery,
 )
 from project.utils import strings_are_equal_ignoring_case
 from project.views.user_blueprint import user_bp
@@ -18,21 +14,23 @@ from project.views.user_blueprint.organization_invitation.views import Negotiate
 
 
 class ViewHandler(UserChildViewHandler):
-    model = AdminUnitInvitation
-    object_service: Annotated[
-        OrganizationInvitationService,
-        Provide["services.organization_invitation_service"],
-    ]
+    model_name = "organization_invitation"
+    model_name_plural = "organization_invitations"
+    display_name = "Organization invitation"
+    display_name_plural = "Organization invitations"
     create_view_class = None
     read_view_class = None
     update_view_class = None
     delete_view_class = None
     list_display_class = ListDisplay
 
-    def apply_base_filter(self, query, **kwargs):
-        return query.filter(
-            func.lower(self.model.email) == func.lower(current_user.email)
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListUserOrganizationInvitationsQuery(
+            user_id=current_user.id, page=page_request
         )
+
+    def create_get_query(self, object_id):
+        return GetUserOrganizationInvitationQuery(id=object_id)
 
     def check_object_access(self, object):
         if not strings_are_equal_ignoring_case(

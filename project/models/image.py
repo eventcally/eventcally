@@ -29,9 +29,6 @@ class Image(db.Model, ImageGeneratedMixin, IOwned):
     def is_empty(self):
         return not self.data
 
-    def get_file_extension(self):
-        return self.encoding_format.split("/")[-1] if self.encoding_format else "png"
-
     def before_flush(self, session, is_dirty):
         if self.is_empty():
             if self.admin_unit:

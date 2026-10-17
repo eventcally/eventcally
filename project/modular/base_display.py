@@ -2,8 +2,6 @@ from typing import OrderedDict
 
 from markupsafe import Markup
 
-from project.models.mixins.trackable_mixin import TrackableMixin
-
 
 class BaseDisplay:
     main_index = 0
@@ -55,8 +53,13 @@ class BaseDisplay:
     def get_prop_link(self, prop, object):
         return prop.get_link(object)
 
+    def get_audit(self, object):
+        """The read model's `audit` part (`AuditReadModel`)."""
+        return getattr(object, "audit", None)
+
     def should_show_audit(self, object):
-        return isinstance(object, TrackableMixin) and object.created_at is not None
+        audit = self.get_audit(object)
+        return audit is not None and audit.created_at is not None
 
     def should_audit_show_user(self, object):
         return self.should_show_audit(object)

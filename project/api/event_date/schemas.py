@@ -1,6 +1,5 @@
 from marshmallow import fields, validate
 
-from project.api import marshmallow
 from project.api.event.schemas import (
     EventRefSchema,
     EventSearchItemSchema,
@@ -10,30 +9,22 @@ from project.api.fields import CustomDateTimeField
 from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
+    PlainBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
 )
-from project.models import EventDate
 
 
-class EventDateSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = EventDate
-        load_instance = True
-
-    id = marshmallow.auto_field()
+class EventDateSchema(PlainBaseSchema):
+    id = fields.Integer()
     start = CustomDateTimeField()
     end = CustomDateTimeField()
-    allday = marshmallow.auto_field()
+    allday = fields.Boolean()
     event = fields.Nested(EventRefSchema)
 
 
-class EventDateRefSchema(marshmallow.SQLAlchemySchema):
-    class Meta:
-        model = EventDate
-        load_instance = True
-
-    id = marshmallow.auto_field()
+class EventDateRefSchema(PlainBaseSchema):
+    id = fields.Integer()
     start = CustomDateTimeField()
 
 
@@ -66,12 +57,8 @@ class EventDateSearchRequestSchema(EventSearchRequestSchema):
 
 
 class EventDateSearchItemSchema(EventDateRefSchema):
-    class Meta:
-        model = EventDate
-        load_instance = True
-
     end = CustomDateTimeField()
-    allday = marshmallow.auto_field()
+    allday = fields.Boolean()
     event = fields.Nested(EventSearchItemSchema)
 
 

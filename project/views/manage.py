@@ -1,6 +1,13 @@
 import os
 
-from flask import redirect, render_template, request, send_from_directory, url_for
+from flask import (
+    current_app,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
 from flask_security import auth_required, current_user
 
 from project import dump_org_path
@@ -11,11 +18,12 @@ from project.access import (
     get_admin_units_for_manage,
     has_access,
 )
-from project.celery_tasks import dump_admin_unit_task
-from project.services.admin_unit import (
-    get_admin_unit_member_invitations,
-    get_admin_unit_organization_invitations,
+from project.application.queries import (
+    ListUserMemberInvitationsQuery,
+    ListUserOrganizationInvitationsQuery,
 )
+from project.application.queries.page_request import MAX_PER_PAGE, PageRequest
+from project.celery_tasks import dump_admin_unit_task
 from project.views.main_blueprint import main_bp
 from project.views.utils import (
     get_celery_poll_result,
@@ -23,6 +31,20 @@ from project.views.utils import (
     permission_missing,
     set_current_admin_unit,
 )
+
+
+def _get_invitations():
+    # A user is not realistically invited more often than one page holds; the cap is
+    # the query bus page limit.
+    query_bus = current_app.container.cqrs.query_bus()
+    page = PageRequest(per_page=MAX_PER_PAGE)
+    invitations = query_bus.handle(
+        ListUserMemberInvitationsQuery(user_id=current_user.id, page=page)
+    ).items
+    organization_invitations = query_bus.handle(
+        ListUserOrganizationInvitationsQuery(user_id=current_user.id, page=page)
+    ).items
+    return list(invitations), list(organization_invitations)
 
 
 @main_bp.route("/manage_after_login")
@@ -41,10 +63,7 @@ def manage():
 
     if "from_login" in request.args:
         admin_units = get_admin_units_for_manage()
-        invitations = get_admin_unit_member_invitations(current_user.email)
-        organization_invitations = get_admin_unit_organization_invitations(
-            current_user.email
-        )
+        invitations, organization_invitations = _get_invitations()
 
         if (
             len(admin_units) == 1
@@ -81,14 +100,11 @@ def manage():
 @auth_required()
 def manage_admin_units():
     admin_units = admin_units_the_current_user_is_member_of()
-    invitations = get_admin_unit_member_invitations(current_user.email)
-    organization_invitations = get_admin_unit_organization_invitations(
-        current_user.email
-    )
+    invitations, organization_invitations = _get_invitations()
 
     admin_units.sort(key=lambda x: x.name)
     invitations.sort(key=lambda x: x.admin_unit.name)
-    organization_invitations.sort(key=lambda x: x.admin_unit.name)
+    organization_invitations.sort(key=lambda x: x.admin_unit_name)
 
     return render_template(
         "manage/admin_units.html",

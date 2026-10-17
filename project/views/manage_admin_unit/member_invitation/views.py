@@ -2,7 +2,7 @@ from flask import redirect
 from flask_babel import gettext
 
 from project.application.commands import RevokeMemberInvitationCommand
-from project.models.admin_unit import AdminUnitMemberRole
+from project.application.queries import ListOrganizationMemberRolesQuery
 from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
 from project.views.utils import current_admin_unit, handle_base_error
 
@@ -12,8 +12,8 @@ class SharedFormViewMixin(object):
         form = super().create_form(**kwargs)
 
         form.roles.choices = [
-            (c.name, gettext(c.title))
-            for c in AdminUnitMemberRole.query.order_by(AdminUnitMemberRole.id).all()
+            (role.name, gettext(role.title))
+            for role in self.query_bus.handle(ListOrganizationMemberRolesQuery())
         ]
 
         return form

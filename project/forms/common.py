@@ -1,9 +1,10 @@
-from flask import url_for
+from flask import current_app, url_for
 from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
 from wtforms import BooleanField, DecimalField, HiddenField, SelectField, StringField
 from wtforms.validators import DataRequired, Length, Optional
 
+from project.application.queries import GetSiteNoticesQuery
 from project.domain.models.value_objects.image_value_object import ImageValueObject
 from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
@@ -238,15 +239,13 @@ class WebhookForm(BaseForm):
 
 
 def get_accept_tos_markup():
-    from project.services.admin import has_tos
-
     tos_open = '<a href="%s">' % url_for("main.tos")
     tos_close = "</a>"
 
     privacy_open = '<a href="%s">' % url_for("main.privacy")
     privacy_close = "</a>"
 
-    if has_tos():
+    if current_app.container.cqrs.query_bus().handle(GetSiteNoticesQuery()).has_tos:
         return Markup(
             lazy_gettext(
                 "I read and accept %(tos_open)sTerms of Service%(tos_close)s and %(privacy_open)sPrivacy%(privacy_close)s.",

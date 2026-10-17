@@ -106,7 +106,7 @@ def test_event_properties(client, app, db, seeder: Seeder):
 
 
 def test_image_copyright_text(client, app, db, seeder: Seeder):
-    from project.services.image import upsert_image_with_base64_str
+    from project.cli.seed_helpers import upsert_image_with_base64_str
 
     with app.app_context():
         from sqlalchemy.exc import IntegrityError
@@ -202,7 +202,7 @@ def test_admin_unit_relations(client, app, db, seeder: Seeder):
     ) = seeder.create_any_admin_unit_relation(admin_unit_id)
 
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_by_id
+        from project.cli.seed_helpers import get_admin_unit_by_id
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         assert len(admin_unit.outgoing_relations) == 1
@@ -223,7 +223,7 @@ def test_admin_unit_verification_requests(client, app, db, seeder: Seeder):
     ) = seeder.create_incoming_admin_unit_verification_request(admin_unit_id)
 
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_by_id
+        from project.cli.seed_helpers import get_admin_unit_by_id
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         assert len(admin_unit.incoming_verification_requests) == 1
@@ -308,6 +308,7 @@ def test_admin_unit_deletion(client, app, db, seeder: Seeder):
     )
 
     with app.app_context():
+        from project.cli.seed_helpers import get_admin_unit_by_id
         from project.models import (
             AdminUnit,
             AdminUnitMemberInvitation,
@@ -321,7 +322,6 @@ def test_admin_unit_deletion(client, app, db, seeder: Seeder):
             EventReference,
             EventReferenceRequest,
         )
-        from project.services.admin_unit import get_admin_unit_by_id
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         other_admin_unit = get_admin_unit_by_id(other_admin_unit_id)
@@ -455,8 +455,8 @@ def test_admin_unit_invitations(client, app, db, seeder: Seeder):
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     with app.app_context():
+        from project.cli.seed_helpers import get_admin_unit_by_id
         from project.models import AdminUnitInvitation
-        from project.services.admin_unit import get_admin_unit_by_id
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         assert len(admin_unit.admin_unit_invitations) == 1
@@ -599,8 +599,8 @@ def test_delete_admin_unit(client, app, db, seeder: Seeder):
     location_id = seeder.create_location(street="Street")
 
     with app.app_context():
+        from project.cli.seed_helpers import delete_admin_unit
         from project.models import AdminUnit, EventOrganizer, Image, Location
-        from project.services.admin_unit import delete_admin_unit
 
         instance = db.session.get(EventOrganizer, instance_id)
         instance.logo = db.session.get(Image, image_id)
@@ -629,7 +629,7 @@ def test_delete_user(client, app, db, seeder: Seeder):
 
     with app.app_context():
         from project.models import AdminUnit, AdminUnitMember, Event, User
-        from project.services.user import delete_user
+        from project.user_datastore import delete_user
 
         user = db.session.get(User, user_id)
         member_id = user.admin_unit_memberships[0].id
@@ -644,3 +644,33 @@ def test_delete_user(client, app, db, seeder: Seeder):
         event = db.session.get(Event, event_id)
         event is not None
         event.created_by_id is None
+
+
+def test_event_place_str(client, app, db, seeder: Seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
+
+    with app.app_context():
+        from project.models import EventPlace
+
+        assert str(db.session.get(EventPlace, place_id)) == "Mein Ort"
+
+
+def test_display_strings_of_models_used_by_flask_admin(client, app, db, seeder: Seeder):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    client_id = seeder.insert_default_oauth2_client(user_id)
+
+    with app.app_context():
+        from project.models import AdminUnitMember, OAuth2Client, OAuth2Token, User
+
+        user = db.session.get(User, user_id)
+        member = AdminUnitMember.query.filter_by(user_id=user_id).first()
+        oauth2_client = db.session.get(OAuth2Client, client_id)
+        token = OAuth2Token.query.filter_by(user_id=user_id).first()
+
+        assert str(user) == user.email
+        assert str(member) == user.email
+        assert str(oauth2_client) == "Mein Client"
+        assert token.client_name == "Mein Client"
+        assert str(token).endswith("(Mein Client)")
+        assert token.issued_at_datetime < token.expires_at_datetime

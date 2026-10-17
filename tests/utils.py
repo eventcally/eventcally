@@ -60,7 +60,7 @@ class UtilActions(object):
         email="test@test.de",
         password="MeinPasswortIstDasBeste",
     ):
-        from project.services.user import find_user_by_email
+        from project.user_datastore import find_user_by_email
 
         response = self._client.get("/login")
         assert response.status_code == 200

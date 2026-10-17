@@ -1,6 +1,5 @@
 from marshmallow import fields, post_load, validate
 
-from project.api import marshmallow
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
     IdPlainSchemaMixin,
@@ -8,7 +7,6 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     PlainBaseSchema,
-    SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
 )
@@ -16,13 +14,10 @@ from project.application.commands import (
     InviteOrganizationCommand,
     UpdateOrganizationInvitationCommand,
 )
-from project.models import AdminUnitInvitation
 
 
-class OrganizationInvitationModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = AdminUnitInvitation
-        load_instance = True
+class OrganizationInvitationModelSchema(PlainBaseSchema):
+    pass
 
 
 class OrganizationInvitationIdSchema(OrganizationInvitationModelSchema, IdSchemaMixin):
@@ -31,20 +26,20 @@ class OrganizationInvitationIdSchema(OrganizationInvitationModelSchema, IdSchema
 
 class OrganizationInvitationBaseSchemaMixin(TrackableSchemaMixin):
     organization_name = fields.Str(attribute="admin_unit_name")
-    relation_auto_verify_event_reference_requests = marshmallow.auto_field()
-    relation_verify = marshmallow.auto_field()
+    relation_auto_verify_event_reference_requests = fields.Boolean()
+    relation_verify = fields.Boolean()
 
 
 class OrganizationInvitationSchema(
     OrganizationInvitationIdSchema, OrganizationInvitationBaseSchemaMixin
 ):
-    email = marshmallow.auto_field()
+    email = fields.String(required=True, validate=validate.Length(max=255))
     organization = fields.Nested(OrganizationRefSchema, attribute="admin_unit")
 
 
 class OrganizationInvitationRefSchema(OrganizationInvitationIdSchema):
     organization_name = fields.Str(attribute="admin_unit_name")
-    email = marshmallow.auto_field()
+    email = fields.String(required=True, validate=validate.Length(max=255))
 
 
 class OrganizationInvitationListRequestSchema(
@@ -72,7 +67,7 @@ class OrganizationInvitationListResponseSchema(PaginationResponseSchema):
 
 
 class OrganizationInvitationWriteSchemaMixin(object):
-    email = marshmallow.auto_field()
+    email = fields.String(required=True, validate=validate.Length(max=255))
 
 
 class OrganizationInvitationCreateRequestSchema(

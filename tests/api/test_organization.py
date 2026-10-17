@@ -76,7 +76,7 @@ def test_list_unverified(client, app, seeder: Seeder, utils: UtilActions):
     # Authorisierte Nutzer, die Organisationen verifizieren dürfen, sehen alle Organisationen.
     # "admin@eventcally.com" ist Mitglied der Organisation "eventcally", die andere Organisationen verifizieren darf.
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_by_name
+        from project.cli.seed_helpers import get_admin_unit_by_name
 
         eventcally_id = get_admin_unit_by_name("eventcally").id
 
@@ -113,7 +113,7 @@ def test_list_unverified_app_installation(
     )
 
     with app.app_context():
-        from project.services.admin_unit import get_admin_unit_by_name
+        from project.cli.seed_helpers import get_admin_unit_by_name
 
         eventcally_id = get_admin_unit_by_name("eventcally").id
 
@@ -241,14 +241,12 @@ def test_event_search_internal_tags(
     response = utils.get_json_ok(url)
 
     if user_access:
-        assert len(response.json["items"]) == 3
-        assert response.json["items"][0]["id"] == event_id_2
-        assert (
-            response.json["items"][0]["internal_tags"]
-            == "ical-importer,ical-importer-uuid-2"
+        # The events start at the same time, so their order is not specified.
+        items = {item["id"]: item for item in response.json["items"]}
+        assert sorted(items) == sorted([event_id_1, event_id_2, event_id_11])
+        assert items[event_id_2]["internal_tags"] == (
+            "ical-importer,ical-importer-uuid-2"
         )
-        assert response.json["items"][1]["id"] == event_id_11
-        assert response.json["items"][2]["id"] == event_id_1
     else:
         assert len(response.json["items"]) == 4
         assert response.json["items"][0]["internal_tags"] is None
@@ -621,6 +619,27 @@ def test_reference_requests_outgoing_post_foreignEvent(
     utils.assert_response_notFound(response)
 
 
+def test_reference_requests_outgoing_post_unreadableForeignEvent(
+    client, app, seeder: Seeder, utils: UtilActions, db
+):
+    user_id, admin_unit_id = seeder.setup_api_access(admin=False)
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    event_id = seeder.create_event(other_admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_event_reference_request_list",
+        id=admin_unit_id,
+    )
+    data = {
+        "event": {"id": event_id},
+        "target_organization": {"id": other_admin_unit_id},
+    }
+
+    response = utils.post_json(url, data)
+    utils.assert_response_notFound(response)
+
+
 def test_reference_requests_outgoing_post_draft(
     client, app, seeder: Seeder, utils: UtilActions, db
 ):
@@ -945,3 +964,41 @@ def test_custom_widgets_post(client, seeder: Seeder, utils: UtilActions, app):
         assert custom_widget is not None
         assert custom_widget.widget_type == "search"
         assert custom_widget.settings["color"] == "black"
+
+
+def _restrict_app_installation_permissions(app, db, permissions):
+    with app.app_context():
+        from project.models import AppInstallation
+
+        for app_installation in AppInstallation.query.all():
+            app_installation.permissions = permissions
+
+        db.session.commit()
+
+
+def test_organization_invitation_list_as_app_installation(
+    client, app, db, seeder: Seeder, utils: UtilActions
+):
+    _, admin_unit_id = seeder.setup_api_access(as_app_installation=True)
+    invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_organization_invitation_list", id=admin_unit_id
+    )
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+    assert [item["id"] for item in response.json["items"]] == [invitation_id]
+
+
+def test_organization_invitation_list_app_installation_without_permission(
+    client, app, db, seeder: Seeder, utils: UtilActions
+):
+    _, admin_unit_id = seeder.setup_api_access(as_app_installation=True)
+    seeder.create_admin_unit_invitation(admin_unit_id)
+    _restrict_app_installation_permissions(app, db, ["organization_invitations:write"])
+
+    url = utils.get_url(
+        "api_v1_organization_organization_invitation_list", id=admin_unit_id
+    )
+    response = utils.get_json(url)
+    utils.assert_response_unauthorized(response)

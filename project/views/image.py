@@ -1,22 +1,24 @@
 import os
 
 import PIL
+from dependency_injector.wiring import Provide, inject
 from flask import request, send_file
-from sqlalchemy.orm import load_only
 
 from project import img_path
+from project.application.queries import GetImageFileQuery, GetImageMetaQuery
+from project.application.query_bus import QueryBus
+from project.container import Application
 from project.imageutils import get_image_from_bytes
-from project.models import Image
 from project.utils import make_dir
 from project.views.main_blueprint import main_bp
+from project.views.utils import result_or_404
 
 
 @main_bp.route("/image/<int:id>")
 @main_bp.route("/image/<int:id>/<hash>")
-def image(id, hash=None):
-    image = Image.query.options(
-        load_only(Image.id, Image.encoding_format, Image.created_at, Image.updated_at)
-    ).get_or_404(id)
+@inject
+def image(id, hash=None, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    image = result_or_404(query_bus.handle(GetImageMetaQuery(id=id)))
 
     # Dimensions
     width = 500
@@ -42,7 +44,8 @@ def image(id, hash=None):
 
     # Save from database to disk
     make_dir(img_path)
-    img = get_image_from_bytes(image.data)
+    image_file = result_or_404(query_bus.handle(GetImageFileQuery(id=id)))
+    img = get_image_from_bytes(image_file.data)
     img.thumbnail((width, height), PIL.Image.Resampling.LANCZOS)
     img.save(file_path)
 

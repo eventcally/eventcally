@@ -4,8 +4,7 @@ from wtforms.fields import BooleanField
 from wtforms.validators import Optional
 
 from project.application.commands import CreateOrganizationCommand
-from project.models import AdminUnitRelation
-from project.modular.base_form import BaseCreateForm, BaseForm
+from project.modular.base_form import BaseCreateForm, BaseForm, BlankFormData
 from project.views.manage_admin_unit.admin_unit.forms import AdminUnitFormMixin
 
 
@@ -29,9 +28,7 @@ class AdminUnitRelationForm(BaseForm):
 
 
 class CreateForm(BaseCreateForm, AdminUnitFormMixin):
-    embedded_relation = FormField(
-        AdminUnitRelationForm, default=lambda: AdminUnitRelation()
-    )
+    embedded_relation = FormField(AdminUnitRelationForm, default=BlankFormData)
 
     def create_create_command(
         self, invitation=None, current_admin_unit=None, embedded_relation_enabled=False

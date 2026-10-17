@@ -1,6 +1,5 @@
 from marshmallow import fields, post_load
 
-from project.api import marshmallow
 from project.api.event.schemas import EventRefSchema
 from project.api.organization.schemas import OrganizationRefSchema
 from project.api.schemas import (
@@ -9,19 +8,15 @@ from project.api.schemas import (
     PaginationRequestSchema,
     PaginationResponseSchema,
     PlainBaseSchema,
-    SQLAlchemyBaseSchema,
     TrackableRequestSchemaMixin,
     TrackableSchemaMixin,
     WriteIdPlainSchema,
 )
 from project.application.commands import CreateEventReferenceCommand
-from project.models import EventReference
 
 
-class EventReferenceModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = EventReference
-        load_instance = True
+class EventReferenceModelSchema(PlainBaseSchema):
+    pass
 
 
 class EventReferenceIdSchema(EventReferenceModelSchema, IdSchemaMixin):
@@ -38,7 +33,7 @@ class EventReferenceSchema(EventReferenceIdSchema):
 
 
 class EventReferenceDumpSchema(EventReferenceIdSchema):
-    event_id = marshmallow.auto_field()
+    event_id = fields.Integer(required=True)
     organization_id = fields.Int(attribute="admin_unit_id")
 
 

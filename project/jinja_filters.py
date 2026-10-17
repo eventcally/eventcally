@@ -1,15 +1,24 @@
 import os
 from urllib.parse import quote_plus
 
-from flask import url_for
+from flask import current_app, url_for
 from markupsafe import Markup
 
+from project.application.queries import (
+    GetCurrentMemberGrantsQuery,
+    GetManageMenuOptionsQuery,
+    GetSiteNoticesQuery,
+)
 from project.utils import (
     get_event_category_name,
     get_localized_enum_name,
     get_location_str,
     get_place_str,
 )
+
+
+def _query_bus():
+    return current_app.container.cqrs.query_bus()
 
 
 def env_override(value, key):
@@ -91,38 +100,18 @@ def init_jinja_filters(app):
         from project.views.utils import get_current_admin_unit
 
         def get_manage_menu_options(admin_unit):
-            from project.services.reference import (
-                get_reference_requests_incoming_badge_query,
+            return (
+                _query_bus()
+                .handle(GetManageMenuOptionsQuery(admin_unit_id=admin_unit.id))
+                .model_dump()
             )
-            from project.services.verification import (
-                get_verification_requests_incoming_badge_query,
-            )
-
-            reference_requests_incoming_badge = (
-                get_reference_requests_incoming_badge_query(admin_unit).count()
-            )
-            verification_requests_incoming_badge = (
-                get_verification_requests_incoming_badge_query(admin_unit).count()
-            )
-
-            return {
-                "reference_requests_incoming_badge": reference_requests_incoming_badge,
-                "verification_requests_incoming_badge": verification_requests_incoming_badge,
-            }
 
         def has_tos():
-            from project.services.admin import has_tos
-
-            return has_tos()
+            return _query_bus().handle(GetSiteNoticesQuery()).has_tos
 
         def get_announcement():
-            from project.services.admin import has_announcement, upsert_settings
-
-            if not has_announcement():
-                return None
-
-            settings = upsert_settings()
-            return Markup(settings.announcement) if settings.announcement else None
+            announcement = _query_bus().handle(GetSiteNoticesQuery()).announcement
+            return Markup(announcement) if announcement else None
 
         def get_current_user_roles():
             from flask_security import current_user
@@ -141,34 +130,32 @@ def init_jinja_filters(app):
             return sum([r.permissions for r in current_user.roles], [])
 
         def get_current_admin_unit_roles():
-            from project.access import get_current_user_member_for_admin_unit
-
             current_admin_unit = get_current_admin_unit()
 
             if not current_admin_unit:  # pragma: no cover
                 return []
 
-            member = get_current_user_member_for_admin_unit(current_admin_unit.id)
-
-            if not member:  # pragma: no cover
-                return []
-
-            return [r.name for r in member.roles]
+            return (
+                _query_bus()
+                .handle(
+                    GetCurrentMemberGrantsQuery(admin_unit_id=current_admin_unit.id)
+                )
+                .roles
+            )
 
         def get_current_admin_unit_permissions():
-            from project.access import get_current_user_member_for_admin_unit
-
             current_admin_unit = get_current_admin_unit()
 
             if not current_admin_unit:  # pragma: no cover
                 return []
 
-            member = get_current_user_member_for_admin_unit(current_admin_unit.id)
-
-            if not member:  # pragma: no cover
-                return []
-
-            return sum([r.permissions for r in member.roles], [])
+            return (
+                _query_bus()
+                .handle(
+                    GetCurrentMemberGrantsQuery(admin_unit_id=current_admin_unit.id)
+                )
+                .permissions
+            )
 
         return dict(
             current_admin_unit=get_current_admin_unit(),

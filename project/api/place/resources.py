@@ -13,7 +13,8 @@ from project.api.resources import (
     require_organization_api_access,
 )
 from project.application.commands import DeleteEventPlaceCommand
-from project.models import EventPlace
+from project.application.queries import GetEventPlaceQuery, ResourceKind
+from project.views.utils import result_or_404
 
 
 class PlaceResource(BaseResource):
@@ -21,7 +22,7 @@ class PlaceResource(BaseResource):
     @marshal_with(PlaceSchema)
     @require_api_access()
     def get(self, id):
-        return EventPlace.query.get_or_404(id)
+        return result_or_404(self.query_bus.handle(GetEventPlaceQuery(id=id)))
 
     @doc(
         summary="Update place",
@@ -29,7 +30,9 @@ class PlaceResource(BaseResource):
     )
     @use_kwargs(PlacePutRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_organization_api_access("organization.event_places:write", EventPlace)
+    @require_organization_api_access(
+        "organization.event_places:write", ResourceKind.event_place
+    )
     def put(self, id):
         cmd = PlacePutRequestPlainSchema(context=g.api_command_context).load(
             request.json
@@ -44,7 +47,9 @@ class PlaceResource(BaseResource):
     )
     @use_kwargs(PlacePatchRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
-    @require_organization_api_access("organization.event_places:write", EventPlace)
+    @require_organization_api_access(
+        "organization.event_places:write", ResourceKind.event_place
+    )
     def patch(self, id):
         cmd = PlacePatchRequestPlainSchema(context=g.api_command_context).load(
             request.json
@@ -58,7 +63,9 @@ class PlaceResource(BaseResource):
         tags=["Places"],
     )
     @marshal_with(None, 204)
-    @require_organization_api_access("organization.event_places:write", EventPlace)
+    @require_organization_api_access(
+        "organization.event_places:write", ResourceKind.event_place
+    )
     def delete(self, id):
         cmd = DeleteEventPlaceCommand(
             id=id, actor=self.app_context_provider.get_current_actor()

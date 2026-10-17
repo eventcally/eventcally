@@ -1,8 +1,5 @@
-from project.api.schemas import SQLAlchemyBaseSchema
-from project.models import WebhookDeliveryAttempt
+from project.api.schemas import PlainBaseSchema
 
 
-class AppWebhookDeliveryAttemptModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = WebhookDeliveryAttempt
-        load_instance = True
+class AppWebhookDeliveryAttemptModelSchema(PlainBaseSchema):
+    pass

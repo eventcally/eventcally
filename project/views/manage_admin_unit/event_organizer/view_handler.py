@@ -1,14 +1,13 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask import flash, url_for
 from flask_babel import gettext, lazy_gettext
-from sqlalchemy.sql import func
 
-from project.models import EventOrganizer
-from project.modular.search_definition import SearchDefinition
-from project.modular.sort_definition import SortDefinition
-from project.services.event_organizer_service import EventOrganizerService
+from project.application.queries import (
+    EventOrganizerSort,
+    GetEventOrganizerForEditQuery,
+    ListEventOrganizersQuery,
+)
+from project.modular.search_definition import KeySearchDefinition
+from project.modular.sort_definition import KeySortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -23,38 +22,41 @@ from project.views.utils import current_admin_unit, non_match_for_deletion
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
-    model = EventOrganizer
-    object_service: Annotated[
-        EventOrganizerService, Provide["services.event_organizer_service"]
-    ]
+    model_name = "event_organizer"
+    model_name_plural = "event_organizers"
+    display_name = "Event organizer"
+    display_name_plural = "Event organizers"
     create_view_class = CreateView
     update_view_class = UpdateView
     delete_view_class = DeleteView
     read_view_class = None
     list_display_class = ListDisplay
     list_sort_definitions = [
-        SortDefinition(
-            EventOrganizer.name, func=func.lower, label=lazy_gettext("Name")
-        ),
-        SortDefinition(
-            EventOrganizer.last_modified_at,
-            desc=True,
+        KeySortDefinition(EventOrganizerSort.name.value, label=lazy_gettext("Name")),
+        KeySortDefinition(
+            EventOrganizerSort.last_modified_at_desc.value,
             label=lazy_gettext("Last modified first"),
         ),
-        SortDefinition(
-            EventOrganizer.number_of_events,
-            desc=True,
+        KeySortDefinition(
+            EventOrganizerSort.number_of_events_desc.value,
             label=lazy_gettext("Number of events"),
         ),
     ]
-    list_search_definitions = [SearchDefinition(EventOrganizer.name)]
+    list_search_definitions = [KeySearchDefinition("name")]
 
-    def apply_objects_query_order(self, query, **kwargs):
-        return (
-            super()
-            .apply_objects_query_order(query, **kwargs)
-            .order_by(func.lower(EventOrganizer.name))
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListEventOrganizersQuery(
+            admin_unit_id=current_admin_unit.id,
+            keyword=form.keyword.data or None,
+            sort=_sort_or_none(form.sort.data),
+            page=page_request,
         )
+
+    def create_get_query(self, object_id):
+        return GetEventOrganizerForEditQuery(id=object_id)
+
+    def get_object_title(self, object):
+        return object.name
 
     def get_list_per_page(self):
         return 50
@@ -90,6 +92,14 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
             flash(gettext("Entered name does not match organizer name"), "danger")
             return False
         return True
+
+
+def _sort_or_none(value):
+    """Unknown sort keys fall back to the default order, as the ORM path did."""
+    try:
+        return EventOrganizerSort(value)
+    except ValueError:
+        return None
 
 
 handler = ViewHandler()

@@ -6,6 +6,7 @@ from flask_babel import lazy_gettext
 from wtforms import RadioField, SelectField, StringField
 
 from project.application.message_bus import MessageBus
+from project.application.query_bus import QueryBus
 from project.application.services.abstract_app_context_provider import (
     AbstractAppContextProvider,
 )
@@ -20,10 +21,12 @@ from project.modular.filters import (
 )
 from project.permissions import PermissionAction
 from project.views.utils import (
+    abort_if_page_out_of_range,
     flash_errors,
     get_pagination_urls,
     handle_base_error,
     non_match_for_deletion,
+    page_request_from_request_args,
 )
 
 
@@ -44,6 +47,10 @@ class BaseView(View):
         return self.handler.message_bus
 
     @property
+    def query_bus(self) -> QueryBus:
+        return self.handler.query_bus
+
+    @property
     def app_context_provider(self) -> AbstractAppContextProvider:
         return self.handler.app_context_provider
 
@@ -58,10 +65,6 @@ class BaseView(View):
             view = decorator(view)
 
         return view
-
-    @property
-    def model(self):
-        return self.handler.model
 
     def get_title(self, **kwargs):  # pragma: no cover
         return ""
@@ -139,8 +142,8 @@ class BaseListView(BaseView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if not self.list_context_name and self.model:
-            self.list_context_name = f"{self.model.__model_name_plural__}"
+        if not self.list_context_name:
+            self.list_context_name = self.handler.model_name_plural
 
     def create_display(self, **kwargs):
         return self.display_class(**kwargs)
@@ -234,9 +237,6 @@ class BaseListView(BaseView):
     def get_title(self, **kwargs):
         return self.handler.get_model_display_name_plural()
 
-    def get_objects_query_from_kwargs(self, **kwargs):
-        return self.handler.get_objects_query_from_kwargs(**kwargs)
-
     def render_template(self, **kwargs):
         if "objects" in kwargs and self.list_context_name:
             kwargs[self.list_context_name] = kwargs.get("objects")
@@ -258,8 +258,14 @@ class BaseListView(BaseView):
         if response:
             return response
 
-        query = self.get_objects_query_from_kwargs(form=form, **kwargs)
-        paginate = query.paginate(per_page=self.get_list_per_page())
+        page_request = page_request_from_request_args(per_page=self.get_list_per_page())
+        list_query = self.handler.create_list_query(
+            form=form, page_request=page_request, **kwargs
+        )
+
+        paginate = self.query_bus.handle(list_query)
+        abort_if_page_out_of_range(paginate)
+
         objects = paginate.items
         pagination = get_pagination_urls(paginate, **kwargs)
         display = self.create_display()
@@ -275,8 +281,8 @@ class BaseObjectView(BaseView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not self.object_context_name and self.model:
-            self.object_context_name = f"{self.model.__model_name__}"
+        if not self.object_context_name:
+            self.object_context_name = self.handler.model_name
 
     def get_object_from_kwargs(self, **kwargs):
         return self.handler.get_object_from_kwargs(**kwargs)
@@ -333,7 +339,7 @@ class BaseReadView(BaseObjectView):
     permission_action = PermissionAction.read
 
     def get_title(self, **kwargs):
-        return str(kwargs["object"])
+        return self.handler.get_object_title(kwargs["object"])
 
     def dispatch_request(self, **kwargs):
         response = self.check_access(**kwargs)
@@ -497,7 +503,7 @@ class BaseDeleteView(BaseObjectFormView):
     def get_instruction(self, **kwargs):
         return lazy_gettext(
             "Do you want to delete '%(object_title)s'?",
-            object_title=str(kwargs["object"]),
+            object_title=self.handler.get_object_title(kwargs["object"]),
         )
 
     def get_success_text(self, object, form):

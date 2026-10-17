@@ -17,6 +17,6 @@ class ListDisplay(BaseDisplay):
     phone = StringProp(lazy_gettext("Phone"))
     email = StringProp(lazy_gettext("Email"))
     url = URLProp(lazy_gettext("Link URL"))
-    logo = BoolProp(lazy_gettext("Logo"))
+    logo = BoolProp(lazy_gettext("Logo"), keypath="has_logo")
     number_of_events = IntProp(lazy_gettext("Number of events"))
     last_modified_at = DateProp(lazy_gettext("Last modified at"))

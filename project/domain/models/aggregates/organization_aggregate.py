@@ -11,6 +11,7 @@ from project.domain.events.organization_deletion_requested import (
 )
 from project.domain.events.organization_updated import OrganizationUpdated
 from project.domain.models.aggregates.base_aggregate import BaseAggregate
+from project.domain.models.deletion_policy import is_deletion_due
 from project.domain.models.entities.actor import Actor
 from project.domain.models.entities.image_entity import ImageEntity
 from project.domain.models.value_objects.location_value_object import (
@@ -166,3 +167,6 @@ class OrganizationAggregate(BaseAggregate):
 
     def delete(self, actor: Actor):
         pass
+
+    def is_deletion_due(self, now: Optional[datetime.datetime] = None) -> bool:
+        return is_deletion_due(self.deletion_requested_at, now)

@@ -1,4 +1,3 @@
-from flask import g
 from flask.helpers import make_response
 from flask_apispec import doc, marshal_with
 from flask_apispec.annotations import use_kwargs
@@ -13,7 +12,8 @@ from project.api.organization_invitation.schemas import (
 )
 from project.api.resources import BaseResource, require_organization_api_access
 from project.application.commands import RevokeOrganizationInvitationCommand
-from project.models import AdminUnitInvitation
+from project.application.queries import GetOrganizationInvitationQuery, ResourceKind
+from project.views.utils import result_or_404
 
 
 class OrganizationInvitationResource(BaseResource):
@@ -23,12 +23,13 @@ class OrganizationInvitationResource(BaseResource):
     )
     @marshal_with(OrganizationInvitationSchema)
     @require_organization_api_access(
-        "organization.organization_invitations:read", AdminUnitInvitation
+        "organization.organization_invitations:read",
+        ResourceKind.organization_invitation,
     )
     def get(self, id):
-        invitation = g.manage_admin_unit_instance
-
-        return invitation
+        return result_or_404(
+            self.query_bus.handle(GetOrganizationInvitationQuery(id=id))
+        )
 
     @doc(
         summary="Update organization invitation",
@@ -37,7 +38,8 @@ class OrganizationInvitationResource(BaseResource):
     @use_kwargs(OrganizationInvitationUpdateRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access(
-        "organization.organization_invitations:write", AdminUnitInvitation
+        "organization.organization_invitations:write",
+        ResourceKind.organization_invitation,
     )
     def put(self, id):
         cmd = self.load_command(OrganizationInvitationPutRequestPlainSchema)
@@ -52,7 +54,8 @@ class OrganizationInvitationResource(BaseResource):
     @use_kwargs(OrganizationInvitationPatchRequestSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access(
-        "organization.organization_invitations:write", AdminUnitInvitation
+        "organization.organization_invitations:write",
+        ResourceKind.organization_invitation,
     )
     def patch(self, id):
         cmd = self.load_command(OrganizationInvitationPatchRequestPlainSchema)
@@ -66,7 +69,8 @@ class OrganizationInvitationResource(BaseResource):
     )
     @marshal_with(None, 204)
     @require_organization_api_access(
-        "organization.organization_invitations:write", AdminUnitInvitation
+        "organization.organization_invitations:write",
+        ResourceKind.organization_invitation,
     )
     def delete(self, id):
         cmd = RevokeOrganizationInvitationCommand(

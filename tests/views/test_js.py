@@ -42,6 +42,43 @@ def test_js_check_event_place_name_exists(client, seeder: Seeder, utils: UtilAct
         assert response.json == "Mit diesem Namen existiert bereits ein Ort."
 
 
+def test_js_check_event_place_name_own(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(admin=True)
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit.event_place_create", id=admin_unit_id)
+    utils.get(url)
+
+    with client:
+        url = utils.get_url("main.js_check_event_place_name")
+        response = utils.post_form_data(
+            url,
+            {
+                "admin_unit_id": admin_unit_id,
+                "event_place_id": place_id,
+                "name": "meine crew",
+            },
+        )
+        utils.assert_response_ok(response)
+        assert response.json is True
+
+
+def test_js_check_event_place_name_without_admin_unit(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_base(admin=True)
+    seeder.upsert_default_event_place(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit.event_place_create", id=admin_unit_id)
+    utils.get(url)
+
+    with client:
+        url = utils.get_url("main.js_check_event_place_name")
+        response = utils.post_form_data(url, {"name": "Meine Crew"})
+        utils.assert_response_ok(response)
+        assert response.json is True
+
+
 def test_js_check_organizer_name(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(admin=True)
     seeder.upsert_default_event_place(admin_unit_id)
@@ -80,6 +117,42 @@ def test_js_check_organizer_name_exists(client, seeder: Seeder, utils: UtilActio
         )
         utils.assert_response_ok(response)
         assert response.json == "Mit diesem Namen existiert bereits ein Veranstalter."
+
+
+def test_js_check_organizer_name_own(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(admin=True)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    url = utils.get_url("manage_admin_unit.event_organizer_create", id=admin_unit_id)
+    response = utils.get(url)
+
+    with client:
+        url = utils.get_url("main.js_check_organizer_name")
+        response = utils.post_form_data(
+            url,
+            {
+                "admin_unit_id": admin_unit_id,
+                "organizer_id": organizer_id,
+                "name": "meine crew",
+            },
+        )
+        utils.assert_response_ok(response)
+        assert response.json is True
+
+
+def test_js_check_organizer_name_without_admin_unit(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_base(admin=True)
+
+    url = utils.get_url("manage_admin_unit.event_organizer_create", id=admin_unit_id)
+    response = utils.get(url)
+
+    with client:
+        url = utils.get_url("main.js_check_organizer_name")
+        response = utils.post_form_data(url, {"name": "Meine Crew"})
+        utils.assert_response_ok(response)
+        assert response.json is True
 
 
 def test_js_js_check_register_email(client, seeder: Seeder, utils: UtilActions):
@@ -238,7 +311,7 @@ def test_js_icalevents(
     with app.app_context():
         import json
 
-        from project.services.admin import upsert_settings
+        from project.init_data import upsert_settings
 
         settings = upsert_settings()
         settings.planning_external_calendars = json.dumps(
@@ -274,3 +347,48 @@ def _assert_icalevents(params, filename):
         json = response.json
         first = json["items"][0]
         assert first["name"]
+
+
+def test_js_autocomplete_place_ranks_prefix_matches_first(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.upsert_event_place(admin_unit_id, "Stadthalle")
+    seeder.upsert_event_place(admin_unit_id, "Halle Nord")
+    seeder.upsert_event_place(admin_unit_id, "Bahnhof")
+
+    url = utils.get_url(
+        "main.js_autocomplete_place",
+        admin_unit_id=admin_unit_id,
+        keyword="halle",
+        exclude_gmaps=1,
+    )
+    response = utils.get(url)
+
+    utils.assert_response_ok(response)
+    assert [r["text"] for r in response.json["results"]] == [
+        "Halle Nord",
+        "Stadthalle",
+    ]
+
+
+def test_js_autocomplete_place_limits_to_five(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    for i in range(7):
+        seeder.upsert_event_place(admin_unit_id, "Halle %d" % i)
+
+    url = utils.get_url(
+        "main.js_autocomplete_place",
+        admin_unit_id=admin_unit_id,
+        keyword="halle",
+        exclude_gmaps=1,
+    )
+    response = utils.get(url)
+
+    utils.assert_response_ok(response)
+    assert [r["text"] for r in response.json["results"]] == [
+        "Halle %d" % i for i in range(5)
+    ]

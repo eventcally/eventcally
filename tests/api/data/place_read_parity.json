@@ -1,0 +1,128 @@
+{
+  "list": {
+    "url": "/api/v1/organizations/1/places",
+    "status": 200,
+    "etag": "\"7401ff8c2faeb348cf6545bdf1ab1771139c1fac\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":6,\"name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"id\":9,\"name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-01-20T11:00:00+00:00\",\"id\":1,\"name\":\"City\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"id\":8,\"name\":\"Zentrale Halle\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n"
+  },
+  "list_other_org": {
+    "url": "/api/v1/organizations/3/places",
+    "status": 200,
+    "etag": "\"f7fc1671b166062a0ceb672febcd7214f133e66a\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-05T00:00:00+00:00\",\"id\":3,\"name\":\"City\",\"updated_at\":null},{\"created_at\":\"2026-01-05T00:00:00+00:00\",\"id\":4,\"name\":\"Halle B\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n"
+  },
+  "list_name": {
+    "url": "/api/v1/organizations/1/places?name=halle",
+    "status": 200,
+    "etag": "\"505d2a8f744b3254c123fa6e7ff13e9ce6bf0cd5\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"id\":8,\"name\":\"Zentrale Halle\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n"
+  },
+  "list_name_sort_created_at": {
+    "url": "/api/v1/organizations/1/places?name=Halle&sort=-created_at",
+    "status": 200,
+    "etag": "\"bc0e1779850da9d3f3d519083f03855f6b63f370\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"id\":8,\"name\":\"Zentrale Halle\",\"updated_at\":null},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n"
+  },
+  "list_name_sort_name": {
+    "url": "/api/v1/organizations/1/places?name=halle&sort=name",
+    "status": 200,
+    "etag": "\"505d2a8f744b3254c123fa6e7ff13e9ce6bf0cd5\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"id\":8,\"name\":\"Zentrale Halle\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n"
+  },
+  "list_sort_name": {
+    "url": "/api/v1/organizations/1/places?sort=name",
+    "status": 200,
+    "etag": "\"7401ff8c2faeb348cf6545bdf1ab1771139c1fac\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":6,\"name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"id\":9,\"name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-01-20T11:00:00+00:00\",\"id\":1,\"name\":\"City\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"id\":8,\"name\":\"Zentrale Halle\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n"
+  },
+  "list_sort_created_at": {
+    "url": "/api/v1/organizations/1/places?sort=-created_at",
+    "status": 200,
+    "etag": "\"8b130733cb92da2f98c7c8dcda54a6ed93c76009\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"id\":9,\"name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":6,\"name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-01-20T11:00:00+00:00\",\"id\":1,\"name\":\"City\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"id\":8,\"name\":\"Zentrale Halle\",\"updated_at\":null},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n"
+  },
+  "list_sort_updated_at": {
+    "url": "/api/v1/organizations/1/places?sort=-updated_at",
+    "status": 200,
+    "etag": "\"8bf052d8607570edde020bd34c3be031d9a24a56\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":6,\"name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"id\":9,\"name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-01-20T11:00:00+00:00\",\"id\":1,\"name\":\"City\",\"updated_at\":null},{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"id\":8,\"name\":\"Zentrale Halle\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n"
+  },
+  "list_sort_last_modified_at": {
+    "url": "/api/v1/organizations/1/places?sort=-last_modified_at",
+    "status": 200,
+    "etag": "\"38788f9636cb8b8dbf1fdcd8935bdc75c0f2d305\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"id\":9,\"name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":6,\"name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-01-20T11:00:00+00:00\",\"id\":1,\"name\":\"City\",\"updated_at\":null},{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"id\":8,\"name\":\"Zentrale Halle\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n"
+  },
+  "list_created_at_from": {
+    "url": "/api/v1/organizations/1/places?created_at_from=2026-01-12T00:00:00",
+    "status": 200,
+    "etag": "\"d397d9120613f2f1aa6227eb51e670289ea55aaa\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":6,\"name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-03-05T18:00:00+00:00\",\"id\":9,\"name\":\"Bravo\",\"updated_at\":null},{\"created_at\":\"2026-01-20T11:00:00+00:00\",\"id\":1,\"name\":\"City\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n"
+  },
+  "list_created_at_to": {
+    "url": "/api/v1/organizations/1/places?created_at_to=2026-01-31T00:00:00",
+    "status": 200,
+    "etag": "\"2ff69de8bd4311541852163a32239adcbf2828a3\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-20T11:00:00+00:00\",\"id\":1,\"name\":\"City\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"id\":8,\"name\":\"Zentrale Halle\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n"
+  },
+  "list_updated_at_range": {
+    "url": "/api/v1/organizations/1/places?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-28T00:00:00",
+    "status": 200,
+    "etag": "\"d76fa0b6bac6e98b2547234e0f2ce124e30bd514\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n"
+  },
+  "list_last_modified_at_range": {
+    "url": "/api/v1/organizations/1/places?last_modified_at_from=2026-02-01T00:00:00&last_modified_at_to=2026-03-02T00:00:00",
+    "status": 200,
+    "etag": "\"21359c253a4addfc48c4c6c200c86cd671dfd15a\"",
+    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"id\":6,\"name\":\"Alpha\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"},{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n"
+  },
+  "list_page_2": {
+    "url": "/api/v1/organizations/1/places?page=2&per_page=2",
+    "status": 200,
+    "etag": "\"007933571b265ed064ad26fbc4f0f9c0b754433c\"",
+    "body": "{\"has_next\":true,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-20T11:00:00+00:00\",\"id\":1,\"name\":\"City\",\"updated_at\":null},{\"created_at\":\"2026-01-15T14:00:00+00:00\",\"id\":7,\"name\":\"halle am See\",\"updated_at\":\"2026-02-20T16:00:00+00:00\"}],\"next_num\":3,\"page\":2,\"pages\":3,\"per_page\":2,\"prev_num\":1,\"total\":6}\n"
+  },
+  "list_last_page": {
+    "url": "/api/v1/organizations/1/places?page=3&per_page=2",
+    "status": 200,
+    "etag": "\"3f7c9e4dc492d6d4cdafb1b009537d8f78b0dcdc\"",
+    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"id\":5,\"name\":\"Stadthalle\",\"updated_at\":\"2026-03-01T12:00:00+00:00\"},{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"id\":8,\"name\":\"Zentrale Halle\",\"updated_at\":null}],\"next_num\":null,\"page\":3,\"pages\":3,\"per_page\":2,\"prev_num\":2,\"total\":6}\n"
+  },
+  "list_out_of_range": {
+    "url": "/api/v1/organizations/1/places?page=4&per_page=2",
+    "status": 404,
+    "etag": null,
+    "body": ""
+  },
+  "list_unknown_org": {
+    "url": "/api/v1/organizations/4711/places",
+    "status": 404,
+    "etag": null,
+    "body": ""
+  },
+  "detail_full": {
+    "url": "/api/v1/places/5",
+    "status": 200,
+    "etag": "\"f4eaa55fda93b862bab1e0db78fb4b1d7ffcd724\"",
+    "body": "{\"created_at\":\"2026-01-01T10:00:00+00:00\",\"description\":\"Die gro\\u00dfe Halle\",\"id\":5,\"location\":{\"city\":\"Goslar\",\"country\":\"DE\",\"latitude\":\"51.9077888000000000\",\"longitude\":\"10.4333312000000000\",\"postalCode\":\"38640\",\"state\":\"Niedersachsen\",\"street\":\"Markt 1\"},\"name\":\"Stadthalle\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":{\"copyright_text\":\"EventCally\",\"image_url\":\"/image/1/1767342600000\",\"license\":{\"code\":\"CC BY 4.0\",\"id\":2,\"name\":\"Creative Commons Attribution 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by/4.0/\"}},\"updated_at\":\"2026-03-01T12:00:00+00:00\",\"url\":\"https://example.com\"}\n"
+  },
+  "detail_bare": {
+    "url": "/api/v1/places/6",
+    "status": 200,
+    "etag": "\"6b813c41f80610a49c1c9e477c480c24d5045513\"",
+    "body": "{\"created_at\":\"2026-02-01T09:00:00+00:00\",\"description\":null,\"id\":6,\"location\":null,\"name\":\"Alpha\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":null,\"updated_at\":null,\"url\":null}\n"
+  },
+  "detail_city_only": {
+    "url": "/api/v1/places/8",
+    "status": 200,
+    "etag": "\"a3ac86262eeb2c91f0ea79299ee2167a053cdfbd\"",
+    "body": "{\"created_at\":\"2026-01-10T07:00:00+00:00\",\"description\":null,\"id\":8,\"location\":{\"city\":\"Hamburg\",\"country\":null,\"latitude\":null,\"longitude\":null,\"postalCode\":null,\"state\":null,\"street\":null},\"name\":\"Zentrale Halle\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":null,\"updated_at\":null,\"url\":null}\n"
+  },
+  "detail_unknown": {
+    "url": "/api/v1/places/4711",
+    "status": 404,
+    "etag": null,
+    "body": ""
+  }
+}

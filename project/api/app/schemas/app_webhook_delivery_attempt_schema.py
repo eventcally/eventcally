@@ -1,4 +1,5 @@
-from project.api import marshmallow
+from marshmallow import fields, validate
+
 from project.api.app.schemas.app_webhook_delivery_attempt_id_schema import (
     AppWebhookDeliveryAttemptIdSchema,
 )
@@ -6,8 +7,14 @@ from project.api.fields import GmtDateTimeField
 
 
 class AppWebhookDeliveryAttemptSchema(AppWebhookDeliveryAttemptIdSchema):
-    url = marshmallow.auto_field(dump_only=True)
-    status = marshmallow.auto_field(dump_only=True)
-    status_code = marshmallow.auto_field(dump_only=True)
+    url = fields.String(
+        required=True, dump_only=True, validate=validate.Length(max=255)
+    )
+    status = fields.String(
+        allow_none=True, dump_only=True, validate=validate.Length(max=255)
+    )
+    status_code = fields.String(
+        allow_none=True, dump_only=True, validate=validate.Length(max=255)
+    )
     start_at = GmtDateTimeField(dump_only=True)
     end_at = GmtDateTimeField(dump_only=True)

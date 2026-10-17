@@ -13,7 +13,8 @@ from project.api.resources import (
     require_organization_api_access,
 )
 from project.application.commands import DeleteEventOrganizerCommand
-from project.models import EventOrganizer
+from project.application.queries import GetEventOrganizerQuery, ResourceKind
+from project.views.utils import result_or_404
 
 
 class OrganizerResource(BaseResource):
@@ -21,7 +22,7 @@ class OrganizerResource(BaseResource):
     @marshal_with(OrganizerSchema)
     @require_api_access()
     def get(self, id):
-        return EventOrganizer.query.get_or_404(id)
+        return result_or_404(self.query_bus.handle(GetEventOrganizerQuery(id=id)))
 
     @doc(
         summary="Update organizer",
@@ -30,7 +31,7 @@ class OrganizerResource(BaseResource):
     @use_kwargs(OrganizerPutRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access(
-        "organization.event_organizers:write", EventOrganizer
+        "organization.event_organizers:write", ResourceKind.event_organizer
     )
     def put(self, id):
         cmd = OrganizerPutRequestPlainSchema(context=g.api_command_context).load(
@@ -47,7 +48,7 @@ class OrganizerResource(BaseResource):
     @use_kwargs(OrganizerPatchRequestPlainSchema, location="json", apply=False)
     @marshal_with(None, 204)
     @require_organization_api_access(
-        "organization.event_organizers:write", EventOrganizer
+        "organization.event_organizers:write", ResourceKind.event_organizer
     )
     def patch(self, id):
         cmd = OrganizerPatchRequestPlainSchema(context=g.api_command_context).load(
@@ -63,7 +64,7 @@ class OrganizerResource(BaseResource):
     )
     @marshal_with(None, 204)
     @require_organization_api_access(
-        "organization.event_organizers:write", EventOrganizer
+        "organization.event_organizers:write", ResourceKind.event_organizer
     )
     def delete(self, id):
         cmd = DeleteEventOrganizerCommand(

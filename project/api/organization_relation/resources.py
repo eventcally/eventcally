@@ -1,4 +1,3 @@
-from flask import g
 from flask.helpers import make_response
 from flask_apispec import doc, marshal_with
 from flask_apispec.annotations import use_kwargs
@@ -13,7 +12,11 @@ from project.api.organization_relation.schemas import (
 )
 from project.api.resources import BaseResource, require_organization_api_access
 from project.application.commands import DeleteOrganizationRelationCommand
-from project.models import AdminUnitRelation
+from project.application.queries import (
+    GetOutgoingOrganizationRelationQuery,
+    ResourceKind,
+)
+from project.views.utils import result_or_404
 
 
 class OrganizationRelationResource(BaseResource):
@@ -24,13 +27,12 @@ class OrganizationRelationResource(BaseResource):
     @marshal_with(OrganizationRelationSchema)
     @require_organization_api_access(
         "organization.outgoing_organization_relations:read",
-        AdminUnitRelation,
-        admin_unit_id_path="source_admin_unit_id",
+        ResourceKind.organization_relation,
     )
     def get(self, id):
-        relation = g.manage_admin_unit_instance
-
-        return relation
+        return result_or_404(
+            self.query_bus.handle(GetOutgoingOrganizationRelationQuery(id=id))
+        )
 
     @doc(
         summary="Update organization relation",
@@ -40,8 +42,7 @@ class OrganizationRelationResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access(
         "organization.outgoing_organization_relations:write",
-        AdminUnitRelation,
-        admin_unit_id_path="source_admin_unit_id",
+        ResourceKind.organization_relation,
     )
     def put(self, id):
         cmd = self.load_command(OrganizationRelationPutRequestPlainSchema)
@@ -57,8 +58,7 @@ class OrganizationRelationResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access(
         "organization.outgoing_organization_relations:write",
-        AdminUnitRelation,
-        admin_unit_id_path="source_admin_unit_id",
+        ResourceKind.organization_relation,
     )
     def patch(self, id):
         cmd = self.load_command(OrganizationRelationPatchRequestPlainSchema)
@@ -73,8 +73,7 @@ class OrganizationRelationResource(BaseResource):
     @marshal_with(None, 204)
     @require_organization_api_access(
         "organization.outgoing_organization_relations:write",
-        AdminUnitRelation,
-        admin_unit_id_path="source_admin_unit_id",
+        ResourceKind.organization_relation,
     )
     def delete(self, id):
         cmd = DeleteOrganizationRelationCommand(

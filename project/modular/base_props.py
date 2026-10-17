@@ -3,7 +3,8 @@ import os
 from flask_babel import format_date, format_datetime, format_time
 from markupsafe import Markup
 
-from project.models import EventPublicStatus, EventStatus
+from project.domain.models.enums.event_public_status import EventPublicStatus
+from project.domain.models.enums.event_status import EventStatus
 from project.permissions import get_organization_permission_infos
 from project.utils import (
     get_event_category_name,
@@ -78,8 +79,10 @@ class EventPropFormatter(BasePropFormatter):
 
 
 class EnumPropFormatter(BasePropFormatter):
+    enum_name = None
+
     def format(self, data):
-        return get_localized_enum_name(data) if data else ""
+        return get_localized_enum_name(data, self.enum_name) if data else ""
 
 
 class BadgePropFormatter(EnumPropFormatter):

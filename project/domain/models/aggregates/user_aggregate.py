@@ -6,6 +6,7 @@ from typing import List, Optional
 from project.domain.events.user_deletion_cancelled import UserDeletionCancelled
 from project.domain.events.user_deletion_requested import UserDeletionRequested
 from project.domain.models.aggregates.base_aggregate import BaseAggregate
+from project.domain.models.deletion_policy import is_deletion_due
 from project.domain.models.entities.actor import Actor
 from project.domain.types import unset
 from project.domain.types.object_id import ObjectId
@@ -65,3 +66,6 @@ class UserAggregate(BaseAggregate):
 
     def delete(self, actor: Actor):
         pass
+
+    def is_deletion_due(self, now: Optional[datetime.datetime] = None) -> bool:
+        return is_deletion_due(self.deletion_requested_at, now)

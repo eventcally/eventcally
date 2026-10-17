@@ -1,20 +1,16 @@
-from marshmallow import fields
+from marshmallow import fields, validate
 
-from project.api import marshmallow
 from project.api.schemas import (
     IdSchemaMixin,
     PaginationRequestSchema,
     PaginationResponseSchema,
-    SQLAlchemyBaseSchema,
+    PlainBaseSchema,
     WriteIdSchemaMixin,
 )
-from project.models import EventCategory
 
 
-class EventCategoryModelSchema(SQLAlchemyBaseSchema):
-    class Meta:
-        model = EventCategory
-        load_instance = True
+class EventCategoryModelSchema(PlainBaseSchema):
+    pass
 
 
 class EventCategoryIdSchema(EventCategoryModelSchema, IdSchemaMixin):
@@ -22,7 +18,7 @@ class EventCategoryIdSchema(EventCategoryModelSchema, IdSchemaMixin):
 
 
 class EventCategoryRefSchema(EventCategoryIdSchema):
-    name = marshmallow.auto_field()
+    name = fields.String(required=True, validate=validate.Length(max=255))
 
 
 class EventCategoryWriteIdSchema(EventCategoryModelSchema, WriteIdSchemaMixin):

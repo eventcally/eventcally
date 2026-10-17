@@ -1,12 +1,8 @@
-from typing import Annotated
-
-from dependency_injector.wiring import Provide
 from flask_babel import lazy_gettext
-from sqlalchemy import func
+from flask_login import current_user
 
-from project.models import ApiKey
-from project.modular.sort_definition import SortDefinition
-from project.services.api_key_service import ApiKeyService
+from project.application.queries import ApiKeySort, GetApiKeyQuery, ListUserApiKeysQuery
+from project.modular.sort_definition import KeySortDefinition, sort_key_or_none
 from project.views.user_blueprint import user_bp
 from project.views.user_blueprint.api_key.displays import ListDisplay, ReadDisplay
 from project.views.user_blueprint.api_key.forms import (
@@ -23,8 +19,10 @@ from project.views.user_blueprint.child_view_handler import UserChildViewHandler
 
 
 class ApiKeyViewHandler(UserChildViewHandler):
-    model = ApiKey
-    object_service: Annotated[ApiKeyService, Provide["services.api_key_service"]]
+    model_name = "api_key"
+    model_name_plural = "api_keys"
+    display_name = "API key"
+    display_name_plural = "API keys"
     create_view_class = CreateView
     create_form_class = CreateForm
     update_view_class = UpdateView
@@ -34,13 +32,26 @@ class ApiKeyViewHandler(UserChildViewHandler):
     read_display_class = ReadDisplay
     list_display_class = ListDisplay
     list_sort_definitions = [
-        SortDefinition(ApiKey.name, func=func.lower, label=lazy_gettext("Name")),
-        SortDefinition(
-            ApiKey.created_at,
-            desc=True,
+        KeySortDefinition(ApiKeySort.name.value, label=lazy_gettext("Name")),
+        KeySortDefinition(
+            ApiKeySort.created_at_desc.value,
             label=lazy_gettext("Last created first"),
         ),
     ]
+
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListUserApiKeysQuery(
+            user_id=current_user.id,
+            sort=sort_key_or_none(ApiKeySort, form.sort.data),
+            page=page_request,
+        )
+
+    def create_get_query(self, object_id):
+        return GetApiKeyQuery(id=object_id)
+
+    def get_object_title(self, object):
+        # Parity with the ORM `CustomModel.__str__`.
+        return f"{self.get_model_display_name()} {object.id}"
 
 
 handler = ApiKeyViewHandler()

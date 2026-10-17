@@ -8,8 +8,9 @@ from project.application.commands import (
     CancelUserDeletionCommand,
     RequestUserDeletionCommand,
 )
+from project.application.queries import ListUserOrganizationMembershipsQuery
+from project.application.queries.page_request import MAX_PER_PAGE, PageRequest
 from project.modular.base_views import BaseDeleteView, BaseUpdateView
-from project.services.user import is_user_admin_member
 from project.views.user_blueprint.user.forms import (
     AcceptTosForm,
     CancelDeletionForm,
@@ -38,7 +39,13 @@ class RequestDeletionView(BaseDeleteView):
         if object.deletion_requested_at:  # pragma: no cover
             return redirect(url_for("user.cancel_deletion"))
 
-        if is_user_admin_member(current_user):
+        # The cap is the query bus page limit; one admin membership is enough anyway.
+        memberships = self.query_bus.handle(
+            ListUserOrganizationMembershipsQuery(
+                user_id=current_user.id, page=PageRequest(per_page=MAX_PER_PAGE)
+            )
+        )
+        if any(membership.is_admin for membership in memberships.items):
             flash(
                 gettext(
                     "You are administrator of at least one organization. Cancel your membership to delete your account."

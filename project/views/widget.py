@@ -1,17 +1,31 @@
+from dependency_injector.wiring import Provide, inject
 from flask import render_template, request
 
+from project.application.queries import (
+    GetOrganizationWidgetSettingsQuery,
+    SearchEventDatesQuery,
+)
+from project.application.query_bus import QueryBus
+from project.container import Application
 from project.forms.event_date import FindEventDateWidgetForm
-from project.models import AdminUnit
-from project.services.event import get_event_dates_query
-from project.services.search_params import EventSearchParams
 from project.views.event import get_event_category_choices
+from project.views.event_search_criteria import criteria_from_search_params
+from project.views.event_search_params import EventSearchParams
 from project.views.main_blueprint import main_bp
-from project.views.utils import get_pagination_urls
+from project.views.utils import (
+    abort_if_page_out_of_range,
+    get_pagination_urls,
+    page_request_from_request_args,
+    result_or_404,
+)
 
 
 @main_bp.route("/organizations/<int:id>/widget/eventdates")
-def widget_event_dates(id):
-    admin_unit = AdminUnit.query.get_or_404(id)
+@inject
+def widget_event_dates(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    admin_unit = result_or_404(
+        query_bus.handle(GetOrganizationWidgetSettingsQuery(id=id))
+    )
 
     params = EventSearchParams()
     params.set_default_date_range()
@@ -26,7 +40,15 @@ def widget_event_dates(id):
     params.admin_unit_id = admin_unit.id
 
     params.include_admin_unit_references = True
-    dates = get_event_dates_query(params).paginate()
+    dates = query_bus.handle(
+        SearchEventDatesQuery(
+            criteria=criteria_from_search_params(
+                params, admin_unit_id=admin_unit.id, include_admin_unit_references=True
+            ),
+            page=page_request_from_request_args(),
+        )
+    )
+    abort_if_page_out_of_range(dates)
 
     return render_template(
         "widget/event_date/list.html",
@@ -50,16 +72,16 @@ def get_styles(admin_unit):
     if request.args.get("s_bg", None):
         styles["background"] = request.args["s_bg"]
     elif admin_unit.widget_background_color:
-        styles["background"] = admin_unit.widget_background_color.hex
+        styles["background"] = admin_unit.widget_background_color
 
     if request.args.get("s_pr", None):
         styles["primary"] = request.args["s_pr"]
     elif admin_unit.widget_primary_color:
-        styles["primary"] = admin_unit.widget_primary_color.hex
+        styles["primary"] = admin_unit.widget_primary_color
 
     if request.args.get("s_li", None):
         styles["link"] = request.args["s_li"]
     elif admin_unit.widget_link_color:
-        styles["link"] = admin_unit.widget_link_color.hex
+        styles["link"] = admin_unit.widget_link_color
 
     return styles
