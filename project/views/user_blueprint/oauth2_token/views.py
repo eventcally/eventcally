@@ -2,7 +2,7 @@ from flask import redirect
 from flask_babel import lazy_gettext
 
 from project.application.commands import RevokeOAuth2TokenCommand
-from project.modular.base_views import BaseUpdateView
+from project.views.modular.base_views import BaseUpdateView
 from project.views.user_blueprint.oauth2_token.forms import RevokeOAuth2TokenForm
 from project.views.utils import handle_base_error
 

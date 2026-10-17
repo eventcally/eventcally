@@ -3,7 +3,7 @@ from wtforms import SelectField, SubmitField
 
 from project.application.commands import UpdateEventReferenceCommand
 from project.forms.common import event_rating_choices
-from project.modular.base_form import BaseForm
+from project.views.modular.base_form import BaseForm
 
 
 class BaseEventReferenceForm(BaseForm):

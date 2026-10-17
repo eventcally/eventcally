@@ -6,7 +6,11 @@ from wtforms.validators import DataRequired
 
 from project.application.commands import CreateApiKeyCommand, UpdateApiKeyCommand
 from project.domain.types import ObjectId
-from project.modular.base_form import BaseCreateForm, BaseDeleteForm, BaseUpdateForm
+from project.views.modular.base_form import (
+    BaseCreateForm,
+    BaseDeleteForm,
+    BaseUpdateForm,
+)
 
 
 class CreateForm(BaseCreateForm):

@@ -1,6 +1,6 @@
 from flask import current_app, g
 
-from project.modular.base_blueprint import BaseBlueprint
+from project.views.modular.base_blueprint import BaseBlueprint
 
 webhook_delivery_bp = BaseBlueprint(
     "webhook_delivery",

@@ -5,8 +5,8 @@ from flask_security import current_user
 from project.access import can_create_admin_unit, has_access
 from project.application.queries import GetUserOrganizationInvitationQuery
 from project.domain.errors import UnauthorizedError
-from project.modular.base_views import BaseCreateView
 from project.views.manage_blueprint.organization.forms import CreateForm
+from project.views.modular.base_views import BaseCreateView
 from project.views.utils import (
     flash_message,
     get_current_admin_unit,

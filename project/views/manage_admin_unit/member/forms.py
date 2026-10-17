@@ -3,7 +3,7 @@ from flask_babel import lazy_gettext
 from project.application.commands import ChangeOrganizationMemberRolesCommand
 from project.domain.types import ObjectId
 from project.forms.widgets import MultiCheckboxField
-from project.modular.base_form import BaseUpdateForm
+from project.views.modular.base_form import BaseUpdateForm
 
 
 class UpdateForm(BaseUpdateForm):

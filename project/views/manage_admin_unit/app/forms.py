@@ -6,8 +6,8 @@ from project.application.commands.create_app_command import CreateAppCommand
 from project.application.commands.update_app_command import UpdateAppCommand
 from project.forms.common import WebhookForm
 from project.forms.widgets import MultiCheckboxField
-from project.modular.base_form import BaseDeleteForm
 from project.utils import split_by_crlf
+from project.views.modular.base_form import BaseDeleteForm
 from project.views.user_blueprint.oauth2_client.forms import BaseOAuth2ClientForm
 
 

@@ -1,6 +1,6 @@
 from flask import g
 
-from project.modular.base_blueprint import BaseBlueprint
+from project.views.modular.base_blueprint import BaseBlueprint
 
 manage_admin_unit_bp = BaseBlueprint(
     "manage_admin_unit",

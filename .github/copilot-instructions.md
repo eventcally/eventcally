@@ -31,7 +31,7 @@ Primary integration points:
 - Query bus (reads): [project/application/query_bus.py](../project/application/query_bus.py)
 - Query authorization: Query handlers for private data authorize the actor via `ActorAuthorizationService` (same rule as commands, `actor_permission_policy`); reference: organization invitations (`ListOrganizationInvitationsQuery`).
 
-Reads in views, the API and `project/modular` go through queries: a `Query[T]` in
+Reads in views (incl. `project/views/modular`) and the API go through queries: a `Query[T]` in
 `project/application/queries/`, a handler in `query_handlers/` returning hand-written read
 models, and a read repository on the read-only `infrastructure.read_session`. See
 [add-ddd-query.prompt.md](prompts/add-ddd-query.prompt.md); the event organizer reads are

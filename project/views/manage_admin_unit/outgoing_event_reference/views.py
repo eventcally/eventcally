@@ -2,7 +2,7 @@ from flask import g, url_for
 from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
 
-from project.modular.base_views import BaseListView
+from project.views.modular.base_views import BaseListView
 
 
 class ListView(BaseListView):

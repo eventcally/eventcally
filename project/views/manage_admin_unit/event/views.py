@@ -11,13 +11,13 @@ from project.application.queries import (
 )
 from project.dateutils import get_next_full_hour, get_today
 from project.domain.models.enums.event_public_status import EventPublicStatus
-from project.modular.base_views import (
+from project.views.manage_admin_unit.event.forms import CreateForm, UpdateForm
+from project.views.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
     BaseListView,
     BaseUpdateView,
 )
-from project.views.manage_admin_unit.event.forms import CreateForm, UpdateForm
 from project.views.reference_request import get_success_text_for_request_creation
 from project.views.utils import (
     current_admin_unit,

@@ -5,10 +5,10 @@ from markupsafe import Markup
 from project.access import can_request_event_reference
 from project.application.commands import RequestEventReferenceCommand
 from project.application.queries import GetEventDetailQuery
-from project.modular.base_views import BaseCreateView, BaseListView
 from project.views.manage_admin_unit.outgoing_event_reference_request.forms import (
     CreateForm,
 )
+from project.views.modular.base_views import BaseCreateView, BaseListView
 from project.views.reference_request import get_success_text_for_request_creation
 from project.views.utils import handle_base_error, result_or_404
 

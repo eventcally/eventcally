@@ -3,7 +3,11 @@ from flask_babel import lazy_gettext
 from flask_security import current_user
 
 from project.application.commands import DeleteApiKeyCommand
-from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
+from project.views.modular.base_views import (
+    BaseCreateView,
+    BaseDeleteView,
+    BaseUpdateView,
+)
 from project.views.utils import handle_base_error
 
 

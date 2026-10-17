@@ -142,7 +142,7 @@ def test_display_audit_of_read_models(app):
     from datetime import datetime
 
     from project.application.read_models.audit_read_model import AuditReadModel
-    from project.modular.base_display import BaseDisplay
+    from project.views.modular.base_display import BaseDisplay
 
     class Display(BaseDisplay):
         pass

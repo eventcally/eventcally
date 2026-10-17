@@ -1,7 +1,7 @@
 from flask_login import current_user
 from flask_security import auth_required
 
-from project.modular.base_view_handler import BaseViewHandler
+from project.views.modular.base_view_handler import BaseViewHandler
 from project.views.user_blueprint import user_bp
 from project.views.user_blueprint.user.views import (
     AcceptTosView,

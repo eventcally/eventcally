@@ -14,9 +14,9 @@ from dependency_injector import providers
 from project.application.queries import PageRequest, Query
 from project.application.read_models.base_read_model import BaseReadModel
 from project.application.read_models.page import Page
-from project.modular.search_definition import KeySearchDefinition
-from project.modular.sort_definition import KeySortDefinition
 from project.views.manage_admin_unit.event_organizer.view_handler import ViewHandler
+from project.views.modular.search_definition import KeySearchDefinition
+from project.views.modular.sort_definition import KeySortDefinition
 from project.views.utils import current_admin_unit
 
 
@@ -182,7 +182,7 @@ def test_key_search_definition():
 
 
 def test_key_boolean_filter():
-    from project.modular.filters import BooleanFilter, KeyBooleanFilter
+    from project.views.modular.filters import BooleanFilter, KeyBooleanFilter
 
     definition = KeyBooleanFilter("verify", label="Verify")
 
@@ -195,7 +195,7 @@ def test_key_enum_filter_keeps_msgids_of_the_named_enum(app):
     from project.domain.models.enums.organization_verification_request_review_status import (
         OrganizationVerificationRequestReviewStatus,
     )
-    from project.modular.filters import EnumFilter, KeyEnumFilter
+    from project.views.modular.filters import EnumFilter, KeyEnumFilter
 
     definition = KeyEnumFilter(
         "review_status",
@@ -215,7 +215,7 @@ def test_key_enum_filter_keeps_msgids_of_the_named_enum(app):
 
 def test_sort_key_or_none():
     from project.application.queries import ApiKeySort
-    from project.modular.sort_definition import sort_key_or_none
+    from project.views.modular.sort_definition import sort_key_or_none
 
     assert sort_key_or_none(ApiKeySort, "name") is ApiKeySort.name
     assert sort_key_or_none(ApiKeySort, "bogus") is None

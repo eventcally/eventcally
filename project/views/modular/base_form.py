@@ -5,7 +5,7 @@ from wtforms import FormField, HiddenField, SubmitField
 
 from project.application.query_bus import QueryBus
 from project.domain.models.entities.actor import Actor
-from project.modular.fields import VirtualFormField
+from project.views.modular.fields import VirtualFormField
 
 
 class BlankFormData:

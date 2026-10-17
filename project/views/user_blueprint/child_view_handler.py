@@ -3,7 +3,7 @@ from flask_babel import gettext
 from flask_security import auth_required
 
 from project.access import owner_access_or_401
-from project.modular.base_view_handler import BaseViewHandler
+from project.views.modular.base_view_handler import BaseViewHandler
 
 
 class UserChildViewHandler(BaseViewHandler):

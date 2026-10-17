@@ -1,7 +1,7 @@
 from flask_babel import lazy_gettext
 from flask_security import roles_required
 
-from project.modular.base_views import BaseView
+from project.views.modular.base_views import BaseView
 
 
 class AdminView(BaseView):

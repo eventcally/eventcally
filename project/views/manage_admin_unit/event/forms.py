@@ -36,18 +36,21 @@ from project.forms.widgets import (
     HTML5StringField,
     MultiCheckboxField,
 )
-from project.modular.ajax import CustomEventCategoryLoader, EventCategoryAjaxModelLoader
-from project.modular.base_form import (
+from project.views.manage_admin_unit.ajax import (
+    EventOrganizerAjaxModelLoader,
+    EventPlaceAjaxModelLoader,
+)
+from project.views.modular.ajax import (
+    CustomEventCategoryLoader,
+    EventCategoryAjaxModelLoader,
+)
+from project.views.modular.base_form import (
     BaseCreateForm,
     BaseForm,
     BaseUpdateForm,
     BlankFormData,
 )
-from project.modular.fields import AjaxSelectField, AjaxSelectMultipleField
-from project.views.manage_admin_unit.ajax import (
-    EventOrganizerAjaxModelLoader,
-    EventPlaceAjaxModelLoader,
-)
+from project.views.modular.fields import AjaxSelectField, AjaxSelectMultipleField
 
 
 class EventDateDefinitionFormMixin:

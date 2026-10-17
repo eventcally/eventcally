@@ -3,7 +3,7 @@ from wtforms import BooleanField, StringField
 from wtforms.validators import DataRequired, Optional
 
 from project.application.commands import UpdateOrganizationAdminSettingsCommand
-from project.modular.base_form import BaseDeleteForm, BaseUpdateForm
+from project.views.modular.base_form import BaseDeleteForm, BaseUpdateForm
 
 
 class UpdateForm(BaseUpdateForm):

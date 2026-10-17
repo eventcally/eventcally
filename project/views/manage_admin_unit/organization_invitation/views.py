@@ -1,7 +1,11 @@
 from flask import redirect
 
 from project.application.commands import RevokeOrganizationInvitationCommand
-from project.modular.base_views import BaseCreateView, BaseDeleteView, BaseUpdateView
+from project.views.modular.base_views import (
+    BaseCreateView,
+    BaseDeleteView,
+    BaseUpdateView,
+)
 from project.views.utils import current_admin_unit, handle_base_error
 
 

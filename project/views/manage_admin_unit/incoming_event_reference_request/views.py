@@ -8,10 +8,10 @@ from project.application.commands import (
 from project.domain.models.enums.event_reference_request_review_status import (
     EventReferenceRequestReviewStatus,
 )
-from project.modular.base_views import BaseListView, BaseUpdateView
 from project.views.manage_admin_unit.incoming_event_reference_request.forms import (
     ReferenceRequestReviewForm,
 )
+from project.views.modular.base_views import BaseListView, BaseUpdateView
 from project.views.utils import flash_message, handle_base_error
 
 

@@ -3,8 +3,8 @@ from flask import g, redirect
 from project.application.commands.attempt_to_deliver_webhook_command import (
     AttemptToDeliverWebhookCommand,
 )
-from project.modular.base_form import BaseCreateForm
-from project.modular.base_views import BaseCreateView
+from project.views.modular.base_form import BaseCreateForm
+from project.views.modular.base_views import BaseCreateView
 from project.views.utils import handle_base_error
 
 

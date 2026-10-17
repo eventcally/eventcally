@@ -1,6 +1,6 @@
 import pytest
 
-from project.modular.base_form import BlankFormData
+from project.views.modular.base_form import BlankFormData
 
 
 def test_every_field_reads_as_unset():

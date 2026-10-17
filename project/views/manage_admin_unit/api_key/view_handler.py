@@ -5,12 +5,12 @@ from project.application.queries import (
     GetApiKeyQuery,
     ListOrganizationApiKeysQuery,
 )
-from project.modular.sort_definition import KeySortDefinition, sort_key_or_none
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.api_key.views import CreateView
 from project.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
+from project.views.modular.sort_definition import KeySortDefinition, sort_key_or_none
 from project.views.user_blueprint.api_key.displays import ListDisplay, ReadDisplay
 from project.views.user_blueprint.api_key.forms import (
     CreateForm,

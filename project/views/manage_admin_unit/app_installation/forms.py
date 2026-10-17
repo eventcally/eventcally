@@ -7,7 +7,7 @@ from project.application.commands.update_app_installation_permissions_command im
     UpdateAppInstallationPermissionsCommand,
 )
 from project.forms.widgets import MultiCheckboxField
-from project.modular.base_form import BaseForm, BaseUpdateForm
+from project.views.modular.base_form import BaseForm, BaseUpdateForm
 
 
 class InstallAppForm(BaseForm):

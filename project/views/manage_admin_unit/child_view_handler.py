@@ -1,8 +1,8 @@
 from flask_security import auth_required
 
 from project.access import admin_unit_owner_access_or_401
-from project.modular.base_view_handler import BaseViewHandler
 from project.utils import getattr_keypath
+from project.views.modular.base_view_handler import BaseViewHandler
 from project.views.utils import manage_permission_required
 
 

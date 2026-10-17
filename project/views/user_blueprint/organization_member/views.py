@@ -3,7 +3,7 @@ from flask_babel import gettext, lazy_gettext
 
 from project.access import can_current_user_delete_member
 from project.application.commands import LeaveOrganizationCommand
-from project.modular.base_views import BaseDeleteView
+from project.views.modular.base_views import BaseDeleteView
 from project.views.user_blueprint.organization_member.forms import DeleteForm
 from project.views.utils import flash_non_match_for_deletion, handle_base_error
 

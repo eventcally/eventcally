@@ -1,7 +1,7 @@
 from flask_babel import gettext, lazy_gettext
 
-from project.modular.base_display import BaseDisplay
-from project.modular.base_props import BasePropFormatter, StringProp
+from project.views.modular.base_display import BaseDisplay
+from project.views.modular.base_props import BasePropFormatter, StringProp
 
 
 class RolesPropFormatter(BasePropFormatter):

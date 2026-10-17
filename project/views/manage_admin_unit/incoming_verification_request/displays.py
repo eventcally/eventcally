@@ -1,10 +1,10 @@
 from flask_babel import lazy_gettext
 
-from project.modular.base_display import BaseDisplay
-from project.modular.base_props import BaseProp, DateProp, EnumProp
 from project.views.manage_admin_unit.outgoing_verification_request.displays import (
     AdminUnitVerificationRequestReviewStatusPropFormatter,
 )
+from project.views.modular.base_display import BaseDisplay
+from project.views.modular.base_props import BaseProp, DateProp, EnumProp
 
 
 class ListDisplay(BaseDisplay):

@@ -10,18 +10,6 @@ from project.application.queries import (
 )
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_status import EventStatus
-from project.modular.ajax import EventCategoryAjaxModelLoader
-from project.modular.filters import (
-    KeyBooleanFilter,
-    KeyDateRangeFilter,
-    KeyEnumFilter,
-    KeyRadiusFilter,
-    KeySelectModelFilter,
-    KeyTagFilter,
-    enum_filter_value_or_none,
-)
-from project.modular.search_definition import KeySearchDefinition
-from project.modular.sort_definition import KeySortDefinition
 from project.views.manage_admin_unit import manage_admin_unit_bp
 from project.views.manage_admin_unit.ajax import (
     EventOrganizerAjaxModelLoader,
@@ -37,6 +25,18 @@ from project.views.manage_admin_unit.event.views import (
     ListView,
     UpdateView,
 )
+from project.views.modular.ajax import EventCategoryAjaxModelLoader
+from project.views.modular.filters import (
+    KeyBooleanFilter,
+    KeyDateRangeFilter,
+    KeyEnumFilter,
+    KeyRadiusFilter,
+    KeySelectModelFilter,
+    KeyTagFilter,
+    enum_filter_value_or_none,
+)
+from project.views.modular.search_definition import KeySearchDefinition
+from project.views.modular.sort_definition import KeySortDefinition
 from project.views.utils import current_admin_unit
 
 

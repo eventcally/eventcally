@@ -17,7 +17,6 @@ ROOT = Path(__file__).resolve().parent.parent
 TARGETS = (
     ("views", ROOT / "project" / "views"),
     ("api", ROOT / "project" / "api"),
-    ("modular", ROOT / "project" / "modular"),
     ("services", ROOT / "project" / "services"),
     ("access.py", ROOT / "project" / "access.py"),
     ("oauth2.py", ROOT / "project" / "oauth2.py"),

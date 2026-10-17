@@ -10,9 +10,9 @@ from project.application.commands import (
 )
 from project.application.queries import IsEventPlaceNameTakenQuery
 from project.forms.common import Base64ImageForm, LocationForm
-from project.modular.base_form import BaseForm
-from project.modular.fields import GooglePlaceField
-from project.modular.widgets import AjaxValidationWidget
+from project.views.modular.base_form import BaseForm
+from project.views.modular.fields import GooglePlaceField
+from project.views.modular.widgets import AjaxValidationWidget
 from project.views.utils import current_admin_unit
 
 
