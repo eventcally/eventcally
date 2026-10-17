@@ -135,14 +135,14 @@ pytest
 You MUST write tests for new code:
 
 - Every new command handler / function needs at least one test in the matching suite
-  (`tests/application/`, `tests/domain/`, `tests/api/`, `tests/views/`, `tests/infrastructure/`)
+  (`tests/unit/application/`, `tests/unit/domain/`, `tests/integration/api/`, `tests/integration/views/`, `tests/integration/infrastructure/`)
 - Error cases and edge cases need tests
 - Update existing tests if behavior changed
 - **Assert through the architecture** — exercise command/event flows via the message bus and
   repository interfaces rather than bypassing them; test routes via the `client` fixture
-- Reuse fixtures from `tests/conftest.py` (`app`, `db`, `client`, `seeder`, `utils`,
-  `container`, `message_bus`) and base classes in `tests/base_test.py`
-- Note: `tests/application/` and `tests/domain/` run with no external services; other suites
+- Reuse fixtures from `tests/integration/conftest.py` (`app`, `db`, `client`, `seeder`, `utils`,
+  `container`, `message_bus`) and base classes in `tests/integration/base_test.py`
+- Note: `tests/unit/` runs with no external services; other suites
   need PostGIS + Redis
 
 **If tests fail:**
@@ -233,7 +233,7 @@ date +%F   # e.g. 2026-09-01 -> .agents/reports/2026-09-01-my-feature-report.md
 
 | Test File | Test Cases |
 | ----------- | ------------ |
-| `tests/application/test_foo.py` | {list} |
+| `tests/unit/application/test_foo.py` | {list} |
 ```
 
 ### Archive Plan

@@ -40,12 +40,12 @@ flask db upgrade
 flask run --host 0.0.0.0
 docker-compose up --build                      # full stack: PostGIS, Redis, Mailhog, Flask, Celery, Flower
 
-# Test — dockerized, no host Postgres/Redis/venv needed (application/ + domain/ need no services)
+# Test — dockerized, no host Postgres/Redis/venv needed (`pytest tests/unit` needs no services)
 ./runtests.sh                                  # full parallel suite + coverage, in Docker
 # Subset/single test: pass paths after `--`. Needs a group, which creates that group's
 # database and exports TEST_DATABASE_URL — plain `run --rm pytest pytest <path>` fails
 # with `could not translate host name "myserver"`.
-./runtests.sh --splits 1 --group 1 -- tests/views/test_event.py::test_create_allday -v --no-cov
+./runtests.sh --splits 1 --group 1 -- tests/integration/views/test_event.py::test_create_allday -v --no-cov
 npm install && npx playwright test             # e2e
 
 # Regenerate model/repo code after editing codegen/config/*.yaml
@@ -65,11 +65,11 @@ isort . && black . && flake8 && lint-imports && \
 - `project/application/` — pydantic commands, command/event handlers, `message_bus.py`, read models
 - `project/services/` — only `cache`, `dump`, `seo`; no ORM read/write services (settings are read via `GetSettingsQuery`; `upsert_settings` lives in `init_data.py`)
 - `project/user_datastore.py` — the Flask-Security datastore adapter (users, roles, ToS); imports no models
-- `project/cli/seed_helpers.py` — fixture-only ORM helpers for `cli/test.py` and `tests/seeder.py`; never import from views/api/application
+- `project/cli/seed_helpers.py` — fixture-only ORM helpers for `cli/test.py` and `tests/integration/seeder.py`; never import from views/api/application
 - `project/infrastructure/` — concrete adapters (SQLAlchemy repos, Celery dispatchers, external services)
 - `project/api/` — REST resources + marshmallow schemas
 - `codegen/` — `generate.py` + YAML schemas in `codegen/config/`
-- `tests/` — mirrors source; `conftest.py`, `base_test.py`, `seeder.py`
+- `tests/` — `unit/` (no services: domain, application, pure helpers) and `integration/` (PostGIS + Redis; holds `conftest.py`, `base_test.py`, `seeder.py`)
 - `e2e/`, `doc/`, `deployment/`, `.scripts/`
 
 **Flow:** reads: view / API → `query_bus` → query handler → read repository (read model out); writes: view / API → `message_bus` → command handler → repository (domain via infrastructure); events dispatch through the message bus, some onto Celery.
@@ -82,7 +82,7 @@ isort . && black . && flake8 && lint-imports && \
 - **Import ratchet:** the `delivery-reads-through-queries` contract in `.importlinter` forbids `project.views` / `project.api` / `project.modular` / `project.access` / `project.jinja_filters` → `project.models`, with an `ignore_imports` list that only holds the permanent exemption `views.flask_admin` (Flask-Admin stays ORM; Flask-Security `current_user` and Authlib stay too). Regenerate with `python .scripts/models_import_ignores.py --write` after removing imports; never add entries by hand. Progress: `python .scripts/read_path_report.py`.
 - **Generated code:** `*_generated.py` is generated from `codegen/config/` YAML — **never edit it**. Put custom logic in the handwritten sibling (e.g. `event.py` extends `event_generated.py`). isort/flake8 already skip these files.
 - **Data access:** SQLAlchemy ORM through repositories; deferred columns may need explicit `undefer()`.
-- **Tests:** reuse fixtures from `tests/conftest.py` (`app`, `db`, `client`, `seeder`, `utils`, `container`, `message_bus`) and base classes in `tests/base_test.py`; assert through the message bus / repositories, not around the architecture.
+- **Tests:** reuse fixtures from `tests/integration/conftest.py` (`app`, `db`, `client`, `seeder`, `utils`, `container`, `message_bus`) and base classes in `tests/integration/base_test.py`; assert through the message bus / repositories, not around the architecture.
 
 ## Pitfalls
 
@@ -101,6 +101,6 @@ isort . && black . && flake8 && lint-imports && \
 - API wiring: `project/api/__init__.py`
 - Tasks: `project/celery_tasks.py`, `project/base_tasks.py`
 - Codegen: `codegen/generate.py`, `codegen/config/`
-- Tests: `tests/conftest.py`, `tests/base_test.py`, `tests/seeder.py`
+- Tests: `tests/integration/conftest.py`, `tests/integration/base_test.py`, `tests/integration/seeder.py`
 - CI: `.github/workflows/{lint,test,playwright}.yml`
 - Docs: `doc/development.md`, `doc/deployment.md`

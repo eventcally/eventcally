@@ -289,16 +289,16 @@ Never add an entry by hand: new delivery code reads through queries.
 
 ### 9. Tests
 
-- **Handler** (no DB): `tests/application/query_handlers/test_<entity>_query_handlers.py`
+- **Handler** (no DB): `tests/unit/application/query_handlers/test_<entity>_query_handlers.py`
   with a fake read repository.
-- **Read repository** (DB): `tests/infrastructure/read_repositories/test_sql_alchemy_<entity>_read_repository.py`.
+- **Read repository** (DB): `tests/integration/infrastructure/read_repositories/test_sql_alchemy_<entity>_read_repository.py`.
   Seed with `seeder`, resolve the repo inside `app.app_context()` from
   `app.container.read_repos`, and wrap calls in `app.container.infrastructure.read_session_scope()`.
 - **Delivery**: the existing view / API tests must pass unchanged; add parity cases
   (404s, sort keys, out-of-range pages).
 - **API parity snapshot**: before switching an endpoint, capture its responses with fixed
   seed data and timestamps, then assert byte equality after the switch. Example:
-  [`tests/api/test_organizer_read_parity.py`](../../tests/api/test_organizer_read_parity.py).
+  [`tests/integration/api/test_organizer_read_parity.py`](../../tests/integration/api/test_organizer_read_parity.py).
 
 ## Pitfalls
 

@@ -43,8 +43,8 @@ Drive measured coverage from current 99% to 100% by adding targeted tests only (
 - `/Users/daniel/Projects/eventcally/project/api/app/resources/app_webhook_delivery_resource.py` — remaining single branch.
 - `/Users/daniel/Projects/eventcally/project/__init__.py` — minor remaining bootstrap branch.
 - `/Users/daniel/Projects/eventcally/project/container.py` — minor DI branch.
-- `/Users/daniel/Projects/eventcally/tests/application/test_app_installation_webhook_event_handler.py` — primary pattern to mirror for event-handler tests.
-- `/Users/daniel/Projects/eventcally/tests/conftest.py` — fixture behavior to reuse for deterministic DB-backed tests.
+- `/Users/daniel/Projects/eventcally/tests/unit/application/test_app_installation_webhook_event_handler.py` — primary pattern to mirror for event-handler tests.
+- `/Users/daniel/Projects/eventcally/tests/integration/conftest.py` — fixture behavior to reuse for deterministic DB-backed tests.
 
 **Verification**
 1. Run `./runtests.sh` to obtain the fresh baseline `coverage report --show-missing` output.

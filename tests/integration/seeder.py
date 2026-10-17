@@ -1,0 +1,958 @@
+from project.application.commands.create_event_command import CreateEventCommand
+from project.application.commands.update_event_command import UpdateEventCommand
+from project.domain.models.entities.actor import Actor
+from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
+from project.domain.models.enums.event_public_status import EventPublicStatus
+from tests.integration.utils import UtilActions
+
+
+class Seeder(object):
+    def __init__(self, app, db, utils: UtilActions):
+        self._app = app
+        self._db = db
+        self._utils = utils
+
+    def setup_base(
+        self,
+        admin=False,
+        log_in=True,
+        admin_unit_verified=True,
+        email="test@test.de",
+        name="Meine Crew",
+        password="MeinPasswortIstDasBeste",
+    ):
+        user_id = self.create_user(email=email, admin=admin)
+        if log_in:
+            self._utils.login(email, password)
+        admin_unit_id = self.create_admin_unit(
+            user_id, name=name, verified=admin_unit_verified
+        )
+        return (user_id, admin_unit_id)
+
+    def setup_base_event_verifier(self):
+        owner_id = self.create_user("owner@owner")
+        admin_unit_id = self.create_admin_unit(owner_id, "Other crew")
+        member_id = self.create_admin_unit_member_event_verifier(admin_unit_id)
+        self._utils.login()
+        return (owner_id, admin_unit_id, member_id)
+
+    def create_user(
+        self,
+        email="test@test.de",
+        password="MeinPasswortIstDasBeste",
+        admin=False,
+        confirm=True,
+        tos_accepted=True,
+        locale=None,
+    ):
+        from flask_security.confirmable import confirm_user
+
+        from project.user_datastore import (
+            add_admin_roles_to_user,
+            create_user,
+            find_user_by_email,
+            set_user_accepted_tos,
+        )
+
+        with self._app.app_context():
+            user = find_user_by_email(email)
+
+            if user is None:
+                user = create_user(email, password)
+
+                if confirm:
+                    confirm_user(user)
+
+                if tos_accepted:
+                    set_user_accepted_tos(user)
+
+            if admin:
+                add_admin_roles_to_user(email)
+
+            user.locale = locale
+            self._db.session.commit()
+            user_id = user.id
+
+        return user_id
+
+    def create_admin_unit(
+        self,
+        user_id,
+        name="Meine Crew",
+        can_create_other=False,
+        can_verify_other=False,
+        verified=False,
+        can_invite_other=True,
+        incoming_verification_requests_allowed=False,
+        **kwargs
+    ):
+        from project.cli.seed_helpers import insert_admin_unit_for_user
+        from project.models import AdminUnit, Location
+        from project.user_datastore import get_user
+
+        with self._app.app_context():
+            user = get_user(user_id)
+            admin_unit = AdminUnit()
+            admin_unit.name = name
+            admin_unit.short_name = name.lower().replace(" ", "")
+            admin_unit.incoming_reference_requests_allowed = True
+            admin_unit.can_create_other = can_create_other
+            admin_unit.can_verify_other = can_verify_other
+            admin_unit.can_invite_other = can_invite_other
+            admin_unit.incoming_verification_requests_allowed = (
+                incoming_verification_requests_allowed
+            )
+
+            location = Location()
+            location.postalCode = "12345"
+            location.city = "City"
+            admin_unit.location = location
+
+            admin_unit.__dict__.update(kwargs)
+            insert_admin_unit_for_user(admin_unit, user)
+            self._db.session.commit()
+            admin_unit_id = admin_unit.id
+
+        if verified:
+            self.verify_admin_unit(admin_unit_id)
+
+        return admin_unit_id
+
+    def get_admin_unit_owner_id(self, admin_unit_id):
+        """The user_id of an AdminUnitMember with the "admin" role for
+        `admin_unit_id` — a permitted actor for commands guarded by
+        ensure_actor_has_permission_for_admin_unit."""
+        from project.models.admin_unit import AdminUnitMember
+
+        with self._app.app_context():
+            member = AdminUnitMember.query.filter(
+                AdminUnitMember.admin_unit_id == admin_unit_id,
+                AdminUnitMember.is_admin,
+            ).first()
+            return member.user_id if member else None
+
+    def get_eventcally_admin_unit_id(self):
+        from project.cli.seed_helpers import get_admin_unit_by_name
+
+        with self._app.app_context():
+            other_admin_unit = get_admin_unit_by_name("eventcally")
+            return other_admin_unit.id if other_admin_unit else None
+
+    def verify_admin_unit(self, admin_unit_id):
+        from project.cli.seed_helpers import get_admin_unit_by_name
+
+        with self._app.app_context():
+            other_admin_unit = get_admin_unit_by_name("eventcally")
+
+            if other_admin_unit:
+                other_admin_unit_id = other_admin_unit.id
+            else:
+                other_user_id = self.create_user("admin@eventcally.com")
+                other_admin_unit_id = self.create_admin_unit(
+                    other_user_id, "eventcally", can_verify_other=True
+                )
+
+            self.create_admin_unit_relation(
+                other_admin_unit_id,
+                admin_unit_id,
+                verify=True,
+            )
+
+    def create_admin_unit_member(
+        self,
+        admin_unit_id,
+        role_names,
+        email="test@test.de",
+    ):
+        from project.cli.seed_helpers import (
+            add_user_to_admin_unit_with_roles,
+            get_admin_unit_by_id,
+        )
+        from project.user_datastore import get_user
+
+        with self._app.app_context():
+            user_id = self.create_user(email=email)
+            user = get_user(user_id)
+            admin_unit = get_admin_unit_by_id(admin_unit_id)
+            member = add_user_to_admin_unit_with_roles(user, admin_unit, role_names)
+            self._db.session.commit()
+            member_id = member.id
+
+        return member_id
+
+    def create_invitation(self, admin_unit_id, email, role_names=["admin"]):
+        from project.cli.seed_helpers import insert_admin_unit_member_invitation
+
+        with self._app.app_context():
+            invitation = insert_admin_unit_member_invitation(
+                admin_unit_id, email, role_names
+            )
+            invitation_id = invitation.id
+
+        return invitation_id
+
+    def create_admin_unit_invitation(
+        self,
+        admin_unit_id,
+        email="invited@test.de",
+        admin_unit_name="Invited Organization",
+        relation_auto_verify_event_reference_requests=False,
+        relation_verify=False,
+    ):
+        from project.models import AdminUnitInvitation
+
+        with self._app.app_context():
+            invitation = AdminUnitInvitation()
+            invitation.admin_unit_id = admin_unit_id
+            invitation.email = email
+            invitation.admin_unit_name = admin_unit_name
+            invitation.relation_auto_verify_event_reference_requests = (
+                relation_auto_verify_event_reference_requests
+            )
+            invitation.relation_verify = relation_verify
+            self._db.session.add(invitation)
+            self._db.session.commit()
+            invitation_id = invitation.id
+
+        return invitation_id
+
+    def create_admin_unit_member_event_verifier(
+        self,
+        admin_unit_id,
+        email="test@test.de",
+    ):
+        return self.create_admin_unit_member(admin_unit_id, ["event_verifier"], email)
+
+    def upsert_event_place(self, admin_unit_id, name, location=None):
+        from project.cli.seed_helpers import upsert_event_place
+
+        with self._app.app_context():
+            place = upsert_event_place(admin_unit_id, name)
+
+            if location:
+                place.location = location
+
+            self._db.session.commit()
+            place_id = place.id
+
+        return place_id
+
+    def upsert_default_event_place(self, admin_unit_id):
+        from project.cli.seed_helpers import get_admin_unit_by_id
+
+        with self._app.app_context():
+            admin_unit = get_admin_unit_by_id(admin_unit_id)
+            place_id = self.upsert_event_place(admin_unit_id, admin_unit.name)
+
+        return place_id
+
+    def upsert_event_organizer(self, admin_unit_id, name):
+        from project.cli.seed_helpers import upsert_event_organizer
+
+        with self._app.app_context():
+            organizer = upsert_event_organizer(admin_unit_id, name)
+            self._db.session.commit()
+            organizer_id = organizer.id
+
+        return organizer_id
+
+    def upsert_default_event_organizer(self, admin_unit_id):
+        from project.cli.seed_helpers import get_admin_unit_by_id
+
+        with self._app.app_context():
+            admin_unit = get_admin_unit_by_id(admin_unit_id)
+            organizer_id = self.upsert_event_organizer(admin_unit_id, admin_unit.name)
+
+        return organizer_id
+
+    def insert_event_custom_widget(
+        self,
+        admin_unit_id,
+        widget_type="search",
+        name="Mein Widget",
+        settings={"color": "black"},
+    ):
+        from project.models import CustomWidget
+
+        with self._app.app_context():
+            custom_widget = CustomWidget()
+            custom_widget.admin_unit_id = admin_unit_id
+            custom_widget.widget_type = widget_type
+            custom_widget.name = name
+            custom_widget.settings = settings
+
+            self._db.session.add(custom_widget)
+            self._db.session.commit()
+            custom_widget_id = custom_widget.id
+
+        return custom_widget_id
+
+    def insert_default_oauth2_client(self, user_id=None, admin_unit_id=None):
+        from project.api import scope_list
+        from project.cli.seed_helpers import complete_oauth2_client
+        from project.models import OAuth2Client
+
+        with self._app.app_context():
+            client = OAuth2Client()
+            client.user_id = user_id
+            client.admin_unit_id = admin_unit_id
+            complete_oauth2_client(client)
+
+            metadata = dict()
+            metadata["client_name"] = "Mein Client"
+            metadata["scope"] = " ".join(scope_list)
+            metadata["redirect_uris"] = [
+                self._utils.get_url("main.swagger_oauth2_redirect")
+            ]
+            client.set_client_metadata(metadata)
+
+            self._db.session.add(client)
+            self._db.session.commit()
+            client_id = client.id
+
+        return client_id
+
+    def insert_default_oauth2_client_app(
+        self, user_id=None, admin_unit_id=None, **kwargs
+    ):
+        oauth2_client_id = self.insert_default_oauth2_client(user_id, admin_unit_id)
+
+        with self._app.app_context():
+            from project.models import OAuth2Client
+            from project.permissions import organization_app_permission_infos
+
+            oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+            oauth2_client.app_permissions = [
+                i.permission for i in organization_app_permission_infos
+            ]
+            oauth2_client.__dict__.update(kwargs)
+            self._db.session.commit()
+
+        return oauth2_client_id
+
+    def insert_app_key(self, oauth2_client_id) -> tuple[bytes, int]:
+        with self._app.app_context():
+            from project.cli.seed_helpers import add_keypair_to_oauth2_client
+            from project.models import OAuth2Client
+
+            oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+            private_pem, app_key = add_keypair_to_oauth2_client(oauth2_client)
+            self._db.session.commit()
+            app_key_id = app_key.id
+
+        return (private_pem, app_key_id)
+
+    def insert_default_api_key(self, user_id=None, admin_unit_id=None):
+        from project.models import ApiKey
+
+        with self._app.app_context():
+            api_key = ApiKey()
+            api_key.user_id = user_id
+            api_key.admin_unit_id = admin_unit_id
+            api_key.name = "Mein API Key"
+            key = api_key.generate_key()
+
+            self._db.session.add(api_key)
+            self._db.session.commit()
+            api_key_id = api_key.id
+
+        return (api_key_id, key)
+
+    def install_app(self, oauth2_client_id, admin_unit_id):
+        from project.models import AppInstallation, OAuth2Client
+
+        with self._app.app_context():
+            app_installation = AppInstallation()
+            app_installation.oauth2_client_id = oauth2_client_id
+            app_installation.admin_unit_id = admin_unit_id
+
+            oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+            app_installation.permissions = oauth2_client.app_permissions
+
+            self._db.session.add(app_installation)
+            self._db.session.commit()
+            app_installation_id = app_installation.id
+
+        return app_installation_id
+
+    def setup_api_access(
+        self,
+        admin=True,
+        admin_unit_verified=True,
+        user_access=True,
+        email="test@test.de",
+        admin_unit_name="Meine Crew",
+        use_api_key=False,
+        as_app_installation=False,
+    ):
+        user_id, admin_unit_id = self.setup_base(
+            admin, False, admin_unit_verified, email, admin_unit_name
+        )
+
+        if as_app_installation:
+            self.authorize_api_access_as_app_installation(admin_unit_id)
+        elif user_access:
+            self.authorize_api_access(user_id, admin_unit_id)
+        elif use_api_key:
+            self.api_key_api_access(user_id)
+        else:
+            self.grant_client_credentials_api_access(user_id)
+
+        return (user_id, admin_unit_id)
+
+    def authorize_api_access(self, user_id, admin_unit_id, authorize_scope=None):
+        oauth2_client_id = self.insert_default_oauth2_client(user_id)
+        self.authorize_api_access_with_client(
+            oauth2_client_id, user_id, admin_unit_id, authorize_scope
+        )
+
+    def authorize_api_access_with_client(
+        self, oauth2_client_id, user_id, admin_unit_id, authorize_scope=None
+    ):
+        with self._app.app_context():
+            from project.models import OAuth2Client
+            from project.user_datastore import get_user
+
+            user = get_user(user_id)
+            email = user.email
+
+            oauth2_client = self._db.session.get(OAuth2Client, oauth2_client_id)
+            client_id = oauth2_client.client_id
+            client_secret = oauth2_client.client_secret
+            scope = oauth2_client.scope
+
+        if authorize_scope:
+            scope = authorize_scope
+
+        self._utils.login(email=email)
+        self._utils.authorize(client_id, client_secret, scope)
+        self._utils.logout()
+        return (user_id, admin_unit_id)
+
+    def api_key_api_access(self, user_id):
+        api_key_id, key = self.insert_default_api_key(user_id)
+        self._utils.setup_api_key(key)
+
+    def grant_client_credentials_api_access(self, user_id):
+        oauth2_client_id = self.insert_default_oauth2_client(user_id)
+
+        with self._app.app_context():
+            from project.models import OAuth2Client
+
+            oauth2_client = self._db.session.get(OAuth2Client, oauth2_client_id)
+            client_id = oauth2_client.client_id
+            client_secret = oauth2_client.client_secret
+            scope = oauth2_client.scope
+
+        self._utils.grant_client_credentials(client_id, client_secret, scope)
+
+    def authorize_api_access_as_app_installation(self, admin_unit_id):
+        oauth2_client_id = self.insert_default_oauth2_client_app(
+            admin_unit_id=admin_unit_id
+        )
+        private_pem, app_key_id = self.insert_app_key(oauth2_client_id)
+        app_installation_id = self.install_app(oauth2_client_id, admin_unit_id)
+
+        with self._app.app_context():
+            from project.models import AppKey
+
+            app_key = AppKey.query.get(app_key_id)
+            kid = app_key.kid
+
+        self._utils.authorize_as_app_installation(app_installation_id, private_pem, kid)
+
+    def get_event_category_id(self, category_name):
+        with self._app.app_context():
+            from project.cli.seed_helpers import get_event_category
+
+            category = get_event_category(category_name)
+
+        return category.id
+
+    def get_event_date_id(self, event_id):
+        from project.models import Event
+
+        with self._app.app_context():
+            event = self._db.session.get(Event, event_id)
+            event_date_id = event.dates[0].id
+
+        return event_date_id
+
+    def create_event(
+        self,
+        admin_unit_id,
+        recurrence_rule="",
+        external_link="",
+        end=None,
+        draft=False,
+        name="Name",
+        start=None,
+        allday=False,
+        co_organizer_ids=None,
+        description="Beschreibung",
+        tags="",
+        place_id=None,
+        planned=False,
+        internal_tags="",
+        custom_category_ids=None,
+        **kwargs
+    ):
+        from project.models import CustomEventCategory, EventOrganizer
+
+        with self._app.app_context():
+            from project.cli.seed_helpers import upsert_event_category
+
+            command = CreateEventCommand.model_construct()
+            command.__dict__.update(kwargs)
+            command.admin_unit_id = admin_unit_id
+            if "actor" not in kwargs:
+                command.actor = Actor(
+                    user_id=self.get_admin_unit_owner_id(admin_unit_id)
+                )
+            command.category_ids = {upsert_event_category("Other").id}
+            command.name = name
+            command.description = description
+            command.organizer_id = self.upsert_default_event_organizer(admin_unit_id)
+            command.external_link = external_link
+            command.ticket_link = ""
+            command.tags = tags
+            command.internal_tags = internal_tags
+            command.price_info = ""
+            command.attendance_mode = EventAttendanceMode.offline
+
+            if place_id:
+                command.event_place_id = place_id
+            else:
+                command.event_place_id = self.upsert_default_event_place(admin_unit_id)
+
+            date_definition = self.create_event_date_definition(
+                start, end, allday, recurrence_rule
+            )
+            command.date_definitions = [date_definition.to_value_object()]
+
+            if planned:
+                command.public_status = EventPublicStatus.planned
+
+            if draft:
+                command.public_status = EventPublicStatus.draft
+
+            if co_organizer_ids:
+                co_organizers = EventOrganizer.query.filter(
+                    EventOrganizer.id.in_(co_organizer_ids)
+                ).all()
+                command.co_organizer_ids = {c.id for c in co_organizers}
+
+            if custom_category_ids:
+                custom_categories = CustomEventCategory.query.filter(
+                    CustomEventCategory.id.in_(custom_category_ids)
+                ).all()
+                command.custom_category_ids = {c.id for c in custom_categories}
+
+            message_bus = self._app.container.cqrs.message_bus()
+            result = message_bus.handle(command)
+            event_id = result.id
+        return event_id
+
+    def get_one_custom_event_category_set(self) -> tuple[int, int]:
+        with self._app.app_context():
+            from project.models import CustomEventCategorySet
+
+            custom_event_category_set = CustomEventCategorySet.query.first()
+            custom_event_category_set_id = custom_event_category_set.id
+            custom_event_category_id = custom_event_category_set.categories[0].id
+
+        return (custom_event_category_set_id, custom_event_category_id)
+
+    def create_event_date_definition(
+        self, start=None, end=None, allday=False, recurrence_rule=""
+    ):
+        from project.models import EventDateDefinition
+
+        with self._app.app_context():
+            date_definition = EventDateDefinition()
+            date_definition.start = start if start else self.get_now_by_minute()
+            date_definition.end = end
+            date_definition.allday = allday
+            date_definition.recurrence_rule = recurrence_rule
+
+            return date_definition
+
+    def handle_message(self, message):
+        message_bus = self._app.container.cqrs.message_bus()
+        return message_bus.handle(message)
+
+    def add_event_date_definition(
+        self, event_id, start=None, end=None, allday=False, recurrence_rule=""
+    ):
+        with self._app.app_context():
+            new_date_definition = self.create_event_date_definition(
+                start, end, allday, recurrence_rule
+            ).to_value_object()
+
+            message_bus = self._app.container.cqrs.message_bus()
+            uow = message_bus.create_uow()
+            event = uow.events.get(event_id)
+            date_definitions = event.date_definitions
+
+            date_definitions.append(new_date_definition)
+
+            command = UpdateEventCommand.model_construct(
+                id=event_id,
+                date_definitions=date_definitions,
+                actor=Actor(user_id=self.get_admin_unit_owner_id(event.admin_unit_id)),
+            )
+            message_bus.handle(command)
+
+    def create_event_unverified(self):
+        user_id = self.create_user("unverified@test.de")
+        admin_unit_id = self.create_admin_unit(user_id, "Unverified Crew")
+        event_id = self.create_event(admin_unit_id)
+        return (user_id, admin_unit_id, event_id)
+
+    def create_event_with_co_organizers(self, admin_unit_id):
+        organizer_a_id = self.upsert_event_organizer(admin_unit_id, "Organizer A")
+        organizer_b_id = self.upsert_event_organizer(admin_unit_id, "Organizer B")
+        event_id = self.create_event(
+            admin_unit_id, co_organizer_ids=[organizer_a_id, organizer_b_id]
+        )
+        return (event_id, organizer_a_id, organizer_b_id)
+
+    def create_event_via_form(self, admin_unit_id: int, allday: bool = False) -> str:
+        place_id = self.upsert_default_event_place(admin_unit_id)
+        organizer_id = self.upsert_default_event_organizer(admin_unit_id)
+        url = self._utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+        response = self._utils.get_ok(url)
+
+        data = {
+            "name": "Name",
+            "description": "Beschreibung",
+            "date_definitions-0-start": ["2030-12-31", "00:00" if allday else "23:59"],
+            "event_place": place_id,
+            "organizer": organizer_id,
+            "photo-image_base64": self.get_default_image_upload_base64(),
+            "photo-copyright_text": "EventCally",
+        }
+
+        if allday:
+            data["date_definitions-0-allday"] = "y"
+
+        response = self._utils.post_form(
+            url,
+            response,
+            data,
+        )
+
+        with self._app.app_context():
+            from project.models import Event
+
+            event = (
+                Event.query.filter(Event.admin_unit_id == admin_unit_id)
+                .filter(Event.name == "Name")
+                .first()
+            )
+            return event.id
+
+    def create_event_via_api(self, admin_unit_id: int) -> int:
+        place_id = self.upsert_default_event_place(admin_unit_id)
+        organizer_id = self.upsert_default_event_organizer(admin_unit_id)
+
+        url = self._utils.get_url("api_v1_organization_event_list", id=admin_unit_id)
+        response = self._utils.post_json(
+            url,
+            {
+                "name": "Name",
+                "start": "2021-02-07T11:00:00.000Z",
+                "place": {"id": place_id},
+                "organizer": {"id": organizer_id},
+            },
+        )
+        self._utils.assert_response_created(response)
+        assert "id" in response.json
+        return response.json["id"]
+
+    def get_default_image_base64(self):
+        return """iVBORw0KGgoAAAANSUhEUgAAAUAAAAFABAMAAAA/vriZAAAAG1BMVEUAAAD///9fX1+fn5+/v7/f398/Pz8fHx9/f38YYyahAAAACXBIWXMAAA7EAAAOxAGVKw4bAAADAklEQVR4nO3XzVPaQBzG8RQw4dhosB6hdexVhPZM6lg9mlrGHkFH7RGmhfYIM53aP7v7lhBeNgqul/b7OZBNzOPu/DbZBc8DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8O97c9I97qlWqd39fO+lzbOBNSJvfO+tl9lU0AyPW3Ek//G3MDo+CSfyqp9E7WTPlhE3ttrhqbdOZmPlnZ4Y5fRSNJuyKDeqi/626DA+tGTUjT9rg3UyG/PVpPiR+HgrW0EiB6w6r9jKcac++511Mk8VZw9PQ9SgvKuaSeETVXmVNR+d2dy0l7ZenHvesKP7nRRFqrtZ89GZzc0GWHkpzuq6305RJDfAR2c2F891ZiY8ncRqTx9fz0XkjfaMY/5O1twS09U1AzM1GuljKZrL9A+LMo7dXGZN8SwFZiSlbX1Ub6l4vE7zEb87KMq4dR3NOmvUPd+sFelRl7AU5V9Qv5kb7qqMw9G1TqL67DSZdRKkE69KmCug32onH7zijDvTMLyYDbC6t6ozUcJ8AathWDvyHsg4NN6vZSMcnq/qTJRw/gkMruJPXnHGqe/Zox33VnY22osWtoggrj+QcSrdocpypCs6C5LLxchWuuLZMk6lO1Rzkusk90aWwqX1rZT+1ZZxyuxQVd3N8prW+KjXwjxzlzXzHAOc6t0h0RfL2bYlXuHRUgnNkGyZ5xigKYbX7KmD3ME08QoHSyXUA7Rm3BqqMjTN9tqf6EO626o1cLGE5qmzZRyb1j359d+cmRfUFMVsIoslrKqnzZpxK6jJj3hiTkuq1+zbi9lEFkool2d7xpmtuvy8kX2PZi+gmrdGuvQN9SYSmG9UntpDfFVQa8aZSu3o7vZXWJdTePZHuldXf4v9r2fu8c0q/sOcxxcH46+xHJo94851InZ+2UEQamoi98XFiS3ivxO3fRmslXmC4Op2xS+x8UHRz7Pxwd3Kq8/0kw4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4L/0FiGF8UcQrzsIAAAAASUVORK5CYII="""
+
+    def get_default_image_upload_base64(self):
+        base64_str = self.get_default_image_base64()
+        return "data:image/png;base64,{}".format(base64_str)
+
+    def upsert_default_image(self):
+        from project.cli.seed_helpers import upsert_image_with_base64_str
+
+        with self._app.app_context():
+            base64_str = self.get_default_image_base64()
+            image = upsert_image_with_base64_str(None, base64_str, "image/png")
+            self._db.session.add(image)
+            self._db.session.commit()
+            image_id = image.id
+
+        return image_id
+
+    def assign_image_to_event(self, event_id, image_id):
+        with self._app.app_context():
+            from project.models import Event
+
+            event = self._db.session.get(Event, event_id)
+            event.photo_id = image_id
+            self._db.session.commit()
+
+    def create_reference(self, event_id, admin_unit_id):
+        from project.models import EventReference
+
+        with self._app.app_context():
+            reference = EventReference()
+            reference.event_id = event_id
+            reference.admin_unit_id = admin_unit_id
+            self._db.session.add(reference)
+            self._db.session.commit()
+            reference_id = reference.id
+        return reference_id
+
+    def create_any_reference(self, admin_unit_id):
+        (other_user_id, other_admin_unit_id) = self.setup_base(
+            email="other@test.de", name="Other Crew", log_in=False
+        )
+        event_id = self.create_event(other_admin_unit_id)
+        reference_id = self.create_reference(event_id, admin_unit_id)
+        return (other_user_id, other_admin_unit_id, event_id, reference_id)
+
+    def create_admin_unit_relation(
+        self,
+        admin_unit_id,
+        target_admin_unit_id,
+        auto_verify_event_reference_requests=False,
+        verify=False,
+    ):
+        from project.cli.seed_helpers import upsert_admin_unit_relation
+
+        with self._app.app_context():
+            relation = upsert_admin_unit_relation(admin_unit_id, target_admin_unit_id)
+            relation.auto_verify_event_reference_requests = (
+                auto_verify_event_reference_requests
+            )
+            relation.verify = verify
+            self._db.session.commit()
+            relation_id = relation.id
+
+        return relation_id
+
+    def create_any_admin_unit_relation(
+        self,
+        admin_unit_id,
+        admin_unit_name="Other Crew",
+        auto_verify_event_reference_requests=False,
+        verify=False,
+    ):
+        other_user_id = self.create_user("other@test.de")
+        other_admin_unit_id = self.create_admin_unit(other_user_id, admin_unit_name)
+        relation_id = self.create_admin_unit_relation(
+            admin_unit_id,
+            other_admin_unit_id,
+            auto_verify_event_reference_requests,
+            verify,
+        )
+        return (other_user_id, other_admin_unit_id, relation_id)
+
+    def setup_admin_unit_missing_verification_scenario(
+        self, log_in_verifier=False, api=False
+    ):
+        verifier_user_id = self.create_user()
+        verifier_admin_unit_id = self.create_admin_unit(
+            verifier_user_id,
+            "Stadtmarketing",
+            verified=True,
+            can_verify_other=True,
+            incoming_verification_requests_allowed=True,
+            incoming_verification_requests_text="Please give us a call",
+        )
+
+        if api:
+            unverified_user_id, unverified_admin_unit_id = self.setup_api_access(
+                admin=False,
+                admin_unit_verified=False,
+                email="mitglied@verein.de",
+                admin_unit_name="Verein",
+            )
+
+            if log_in_verifier:
+                self.authorize_api_access(verifier_user_id, verifier_admin_unit_id)
+        else:
+            unverified_user_id, unverified_admin_unit_id = self.setup_base(
+                log_in=not log_in_verifier,
+                admin_unit_verified=False,
+                email="mitglied@verein.de",
+                name="Verein",
+            )
+
+            if log_in_verifier:
+                self._utils.login()
+
+        return (
+            verifier_user_id,
+            verifier_admin_unit_id,
+            unverified_user_id,
+            unverified_admin_unit_id,
+        )
+
+    def create_admin_unit_verification_request(
+        self, source_admin_unit_id, target_admin_unit_id
+    ):
+        from project.models import (
+            AdminUnitVerificationRequest,
+            AdminUnitVerificationRequestReviewStatus,
+        )
+
+        with self._app.app_context():
+            from project.cli.seed_helpers import get_admin_unit_by_id
+
+            target_admin_unit = get_admin_unit_by_id(target_admin_unit_id)
+            target_admin_unit.can_verify_other = True
+            target_admin_unit.incoming_verification_requests_allowed = True
+
+            request = AdminUnitVerificationRequest()
+            request.source_admin_unit_id = source_admin_unit_id
+            request.target_admin_unit_id = target_admin_unit_id
+            request.review_status = AdminUnitVerificationRequestReviewStatus.inbox
+            self._db.session.add(request)
+            self._db.session.commit()
+            request_id = request.id
+        return request_id
+
+    def create_incoming_admin_unit_verification_request(self, admin_unit_id):
+        other_user_id = self.create_user("other@test.de")
+        other_admin_unit_id = self.create_admin_unit(
+            other_user_id, "Other Crew", verified=False
+        )
+        request_id = self.create_admin_unit_verification_request(
+            other_admin_unit_id, admin_unit_id
+        )
+        return (other_user_id, other_admin_unit_id, request_id)
+
+    def create_reference_request(self, event_id, admin_unit_id):
+        from project.models import (
+            EventReferenceRequest,
+            EventReferenceRequestReviewStatus,
+        )
+
+        with self._app.app_context():
+            reference_request = EventReferenceRequest()
+            reference_request.event_id = event_id
+            reference_request.admin_unit_id = admin_unit_id
+            reference_request.review_status = EventReferenceRequestReviewStatus.inbox
+            self._db.session.add(reference_request)
+            self._db.session.commit()
+            reference_request_id = reference_request.id
+        return reference_request_id
+
+    def create_incoming_reference_request(self, admin_unit_id):
+        other_user_id = self.create_user("other@test.de")
+        other_admin_unit_id = self.create_admin_unit(other_user_id, "Other Crew")
+        event_id = self.create_event(other_admin_unit_id)
+        reference_request_id = self.create_reference_request(event_id, admin_unit_id)
+        return (other_user_id, other_admin_unit_id, event_id, reference_request_id)
+
+    def create_outgoing_reference_request(self, admin_unit_id):
+        other_user_id = self.create_user("other@test.de")
+        other_admin_unit_id = self.create_admin_unit(other_user_id, "Other Crew")
+        event_id = self.create_event(admin_unit_id)
+        reference_request_id = self.create_reference_request(
+            event_id, other_admin_unit_id
+        )
+        return (other_user_id, other_admin_unit_id, event_id, reference_request_id)
+
+    def get_now_by_minute(self):
+        from datetime import datetime
+
+        from project.dateutils import get_now
+
+        now = get_now()
+        return datetime(
+            now.year, now.month, now.day, now.hour, now.minute, tzinfo=now.tzinfo
+        )
+
+    def create_common_scenario(self):
+        from dateutil.relativedelta import relativedelta
+
+        from project.models import Location
+
+        with self._app.app_context():
+            now = self.get_now_by_minute()
+
+            # Admin with eventcally organisation
+            admin_id = self.create_user(
+                "admin@test.de", "MeinPasswortIstDasBeste", admin=True
+            )
+            eventcally_admin_unit_id = self.create_admin_unit(
+                admin_id,
+                "eventcally",
+                can_create_other=True,
+                can_verify_other=True,
+                verified=False,
+                can_invite_other=True,
+            )
+
+            # User with verified Stadtmarketing organisation
+            user_id = self.create_user("test@test.de", "MeinPasswortIstDasBeste")
+            marketing_admin_unit_id = self.create_admin_unit(
+                user_id,
+                "Stadtmarketing",
+                can_verify_other=True,
+                incoming_verification_requests_allowed=True,
+                incoming_verification_requests_text="Please give us a call",
+            )
+            self.create_admin_unit_relation(
+                eventcally_admin_unit_id,
+                marketing_admin_unit_id,
+                verify=True,
+            )
+            self.create_event(marketing_admin_unit_id)
+            self.create_event(
+                marketing_admin_unit_id,
+                recurrence_rule="RRULE:FREQ=DAILY;COUNT=7",
+                name="Recurring",
+                start=now,
+                end=now + relativedelta(hours=1),
+                place_id=self.upsert_event_place(
+                    marketing_admin_unit_id,
+                    "MachmitHaus",
+                    Location(
+                        street="Markt 7",
+                        postalCode="38640",
+                        city="Goslar",
+                        latitude=51.9077888,
+                        longitude=10.4333312,
+                    ),
+                ),
+            )
+
+            # Unverified Verein organisation
+            verein_admin_unit_id = self.create_admin_unit(
+                user_id,
+                "Verein",
+            )
+            self.create_event(verein_admin_unit_id)
+
+    def create_location(
+        self,
+        street=None,
+        postalCode=None,
+        city=None,
+        latitude=None,
+        longitude=None,
+    ):
+        from project.models import Location
+
+        with self._app.app_context():
+            location = Location(
+                street=street,
+                postalCode=postalCode,
+                city=city,
+                latitude=latitude,
+                longitude=longitude,
+            )
+            self._db.session.add(location)
+            self._db.session.commit()
+            location_id = location.id
+
+        return location_id
