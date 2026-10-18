@@ -9,9 +9,9 @@ from project.application.queries import (
     ListRecurringEventIdsQuery,
     ListUserIdsDueForDeletionQuery,
 )
-from project.celery_init import celery
 from project.domain.models.entities.actor import Actor
-from project.extensions import db
+from project.infrastructure.celery_app import celery
+from project.infrastructure.extensions import db
 
 
 def _query_bus():
@@ -41,7 +41,10 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(crontab(hour=4, minute=0), generate_robots_txt_task)
 
 
+# Task names are a wire contract with queued messages and the beat schedule;
+# they keep their original module path even if this module moves.
 @celery.task(
+    name="project.celery_tasks.delete_old_webhook_events_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -54,6 +57,7 @@ def delete_old_webhook_events_task():
 
 
 @celery.task(
+    name="project.celery_tasks.clear_images_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -89,6 +93,7 @@ def update_recurring_dates():
 
 
 @celery.task(
+    name="project.celery_tasks.update_recurring_dates_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -104,6 +109,7 @@ def update_recurring_dates_task():
 
 
 @celery.task(
+    name="project.celery_tasks.dump_all_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -121,6 +127,7 @@ def dump_all_task():
 
 
 @celery.task(
+    name="project.celery_tasks.dump_admin_unit_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -138,6 +145,7 @@ def dump_admin_unit_task(admin_unit_id):
 
 
 @celery.task(
+    name="project.celery_tasks.clear_admin_unit_dumps_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -148,6 +156,7 @@ def clear_admin_unit_dumps_task():
 
 
 @celery.task(
+    name="project.celery_tasks.delete_admin_units_with_due_request_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -168,6 +177,7 @@ def delete_admin_units_with_due_request_task():
 
 
 @celery.task(
+    name="project.celery_tasks.delete_admin_unit_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -194,6 +204,7 @@ def delete_admin_unit_task(admin_unit_id):
 
 
 @celery.task(
+    name="project.celery_tasks.delete_user_with_due_request_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -214,6 +225,7 @@ def delete_user_with_due_request_task():
 
 
 @celery.task(
+    name="project.celery_tasks.delete_ghost_users_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -234,6 +246,7 @@ def delete_ghost_users_task():
 
 
 @celery.task(
+    name="project.celery_tasks.delete_old_events_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -254,6 +267,7 @@ def delete_old_events_task():
 
 
 @celery.task(
+    name="project.celery_tasks.delete_user_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -278,6 +292,7 @@ def delete_user_task(user_id):
 
 
 @celery.task(
+    name="project.celery_tasks.delete_ghost_user_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -302,6 +317,7 @@ def delete_ghost_user_task(user_id):
 
 
 @celery.task(
+    name="project.celery_tasks.delete_event_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -326,6 +342,7 @@ def delete_event_task(event_id):
 
 
 @celery.task(
+    name="project.celery_tasks.seo_generate_sitemap_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )
@@ -343,6 +360,7 @@ def seo_generate_sitemap_task():
 
 
 @celery.task(
+    name="project.celery_tasks.generate_robots_txt_task",
     acks_late=True,
     reject_on_worker_lost=True,
 )

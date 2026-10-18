@@ -20,7 +20,7 @@ from project.application.queries import (
 )
 from project.application.query_bus import QueryBus
 from project.container import Application
-from project.extensions import csrf
+from project.infrastructure.extensions import csrf
 from project.infrastructure.user_datastore import find_user_by_email
 from project.presentation.api.custom_widget.schemas import CustomWidgetSchema
 from project.presentation.shared.query_results import result_or_404

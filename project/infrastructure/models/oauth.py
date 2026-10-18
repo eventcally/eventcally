@@ -17,7 +17,7 @@ from project.domain.models.aggregates.app_aggregate import AppAggregate
 from project.domain.models.aggregates.oauth2_client_aggregate import (
     OAuth2ClientAggregate,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.mixins.rate_limit_provider_mixin import (
     RateLimitProviderMixin,
 )

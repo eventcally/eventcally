@@ -3,7 +3,7 @@ from __future__ import annotations
 from sqlalchemy.event import listens_for
 
 from project.domain.models.entities.image_entity import ImageEntity
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.image_generated import ImageGeneratedMixin
 from project.infrastructure.models.iowned import IOwned
 from project.shared.utils import make_check_violation

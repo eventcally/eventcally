@@ -4,14 +4,14 @@ import sqlalchemy
 def test_mail_server(monkeypatch):
     monkeypatch.setenv("MAIL_SERVER", "mailserver.com")
 
-    from project import create_app
+    from project.factory import create_app
 
     app = create_app({"TESTING": True})
     app.testing = True
 
 
 def test_log_message_called_via_email_dispatched_signal(app):
-    """Covers __init__.py lines 187-188: log_message function body."""
+    """Covers the log_message function body registered by the factory."""
     from unittest.mock import MagicMock
 
     from flask_mail import email_dispatched
@@ -78,8 +78,8 @@ def migrate_with_result(app):
 def test_migrations(app, seeder):
     from flask_migrate import downgrade, upgrade
 
-    from project.extensions import db
-    from project.init_data import create_initial_data
+    from project.infrastructure.extensions import db
+    from project.infrastructure.init_data import create_initial_data
 
     with app.app_context():
         drop_db(db)
@@ -101,7 +101,7 @@ def test_migrations(app, seeder):
 def test_migration_public_status(app, seeder):
     from flask_migrate import upgrade
 
-    from project.extensions import db
+    from project.infrastructure.extensions import db
     from project.infrastructure.models import Event, EventPublicStatus
 
     with app.app_context():
@@ -120,7 +120,7 @@ def test_migration_public_status(app, seeder):
 def test_migration_event_definitions(app, seeder):
     from flask_migrate import upgrade
 
-    from project.extensions import db
+    from project.infrastructure.extensions import db
     from project.infrastructure.models import Event
 
     with app.app_context():

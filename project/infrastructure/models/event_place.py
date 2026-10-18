@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from project.domain.models.aggregates.event_place_aggregate import EventPlaceAggregate
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.event_place_generated import EventPlaceGeneratedMixin
 from project.infrastructure.models.image import Image
 from project.infrastructure.models.location import Location

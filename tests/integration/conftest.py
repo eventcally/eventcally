@@ -37,7 +37,7 @@ def pytest_generate_tests(metafunc):
 
 @pytest.fixture
 def app():
-    from project import create_app
+    from project.factory import create_app
 
     app = create_app(
         {
@@ -137,7 +137,7 @@ def app():
 
     yield app
 
-    from project.extensions import db
+    from project.infrastructure.extensions import db
 
     with app.app_context():
         db.session.remove()
@@ -179,8 +179,8 @@ def force_drop_all(db):
 def db(app):
     from flask_migrate import stamp
 
-    from project.extensions import db
-    from project.init_data import create_initial_data
+    from project.infrastructure.extensions import db
+    from project.infrastructure.init_data import create_initial_data
 
     assert os.environ["DATABASE_URL"] == os.environ.get(
         "TEST_DATABASE_URL", "postgresql://user:pass@myserver/ec_tests"
@@ -215,7 +215,7 @@ def message_bus(container):
 
 
 def create_initial_test_data():
-    from project.extensions import db
+    from project.infrastructure.extensions import db
     from project.infrastructure.models import (
         CustomEventCategory,
         CustomEventCategorySet,

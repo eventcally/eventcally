@@ -212,13 +212,17 @@ class UtilActions(object):
         return response
 
     def mock_db_commit(self, mocker):
-        mocked_commit = mocker.patch("project.db.session.commit")
+        mocked_commit = mocker.patch(
+            "project.infrastructure.extensions.db.session.commit"
+        )
         mocked_commit.side_effect = IntegrityError(
             "MockException", "MockException", None
         )
 
     def mock_db_commit_with_error(self, mocker, error: IntegrityError):
-        mocked_commit = mocker.patch("project.db.session.commit")
+        mocked_commit = mocker.patch(
+            "project.infrastructure.extensions.db.session.commit"
+        )
         mocked_commit.side_effect = error
 
     def assert_send_mail_called(self, expected_recipients, expected_contents=None):
@@ -267,7 +271,7 @@ class UtilActions(object):
         return url
 
     def get_image_url_for_id(self, image_id, **values):
-        from project.extensions import db
+        from project.infrastructure.extensions import db
         from project.infrastructure.models import Image
 
         with self._app.app_context():

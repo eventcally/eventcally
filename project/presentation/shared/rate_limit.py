@@ -2,7 +2,7 @@ from typing import Protocol
 
 from flask_limiter.extension import LimitDecorator
 
-from project.extensions import limiter
+from project.infrastructure.extensions import limiter
 
 api_rate_limit_scope = "api"
 

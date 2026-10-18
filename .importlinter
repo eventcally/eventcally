@@ -10,8 +10,6 @@ layers =
     project.infrastructure
     project.application
     project.domain
-ignore_imports =
-  project -> project.**
 
 [importlinter:contract:delivery-reads-through-queries]
 name = Delivery layers and template/access helpers read through queries, not ORM models
@@ -20,6 +18,7 @@ source_modules =
     project.presentation.web
     project.presentation.api
     project.presentation.shared
+    project.presentation.tasks
 forbidden_modules =
     project.infrastructure.models
 # Indirect chains stay allowed: every module reaches the models through project.container
@@ -43,10 +42,6 @@ forbidden_modules =
     project.application
     project.infrastructure
     project.presentation
-# The root package __init__ is the app factory and imports every layer; every module
-# "imports" it implicitly, so those edges are ignored like in the layers contract.
-ignore_imports =
-    project -> project.**
 
 [importlinter:contract:web-does-not-import-api]
 name = The web channel does not import the API channel
@@ -77,4 +72,31 @@ source_modules =
 forbidden_modules =
     project.presentation.web
     project.presentation.api
+allow_indirect_imports = True
+
+[importlinter:contract:core-does-not-import-composition-root]
+name = Layers do not import the composition root
+type = forbidden
+source_modules =
+    project.domain
+    project.application
+    project.infrastructure
+    project.shared
+    project.presentation
+forbidden_modules =
+    project.factory
+    project.config
+    project.celery
+allow_indirect_imports = True
+
+[importlinter:contract:inner-layers-do-not-import-container]
+name = Domain, application, infrastructure and shared do not import the DI container
+type = forbidden
+source_modules =
+    project.domain
+    project.application
+    project.infrastructure
+    project.shared
+forbidden_modules =
+    project.container
 allow_indirect_imports = True

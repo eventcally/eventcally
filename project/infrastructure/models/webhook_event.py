@@ -3,7 +3,7 @@ from __future__ import annotations
 from project.domain.models.aggregates.webhook_event_aggregate import (
     WebhookEventAggregate,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.webhook_event_generated import (
     WebhookEventGeneratedMixin,
 )

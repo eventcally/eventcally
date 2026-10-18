@@ -14,10 +14,10 @@ from flask_babel import gettext
 from markupsafe import Markup
 from sqlalchemy import text
 
-from project import cache_path, dump_path, robots_txt_file, sitemap_file
-from project.extensions import db, limiter
+from project.infrastructure.extensions import db, limiter
 from project.presentation.web.views.main_blueprint import main_bp
 from project.presentation.web.views.utils import get_settings
+from project.shared.paths import cache_path, dump_path, robots_txt_file, sitemap_file
 
 
 @main_bp.route("/")
@@ -43,7 +43,7 @@ def home():
 
 @main_bp.route("/up")
 def up():
-    from project.celery_init import celery
+    from project.infrastructure.celery_app import celery
 
     with db.engine.connect() as conn:
         conn.execute(text("SELECT 1"))

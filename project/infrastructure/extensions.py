@@ -37,7 +37,7 @@ csrf = CSRFProtect()
 mail = Mail()
 db = SQLAlchemy(model_class=CustomModel, metadata=metadata)
 MIGRATIONS_DIRECTORY = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "infrastructure", "migrations"
+    os.path.dirname(os.path.abspath(__file__)), "migrations"
 )
 migrate = Migrate(directory=MIGRATIONS_DIRECTORY)
 limiter = Limiter(key_func=get_remote_address)

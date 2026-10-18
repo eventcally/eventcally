@@ -1,3 +1,3 @@
-from project import create_app
+from project.factory import create_app
 
 app = create_app()

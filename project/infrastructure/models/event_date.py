@@ -8,7 +8,7 @@ from project.domain.models.entities.event_date_entity import EventDateEntity
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.event_date_definition_generated import (
     EventDateDefinitionGeneratedMixin,
 )

@@ -2,10 +2,10 @@
 relative_files = True
 omit =
     project/celery.py
-    project/celery_init.py
-    project/babel.py
-    project/base_tasks.py
-    project/celery_tasks.py
+    project/infrastructure/celery_app.py
+    project/infrastructure/babel_extract.py
+    project/infrastructure/celery_base_tasks.py
+    project/presentation/tasks/celery_tasks.py
     project/presentation/cli/test.py
     project/templates/email/*
     project/presentation/web/views/flask_admin.py

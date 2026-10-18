@@ -8,7 +8,7 @@ from project.application.read_models.webhook_delivery_read_model import (
 from project.domain.models.aggregates.webhook_delivery_aggregate import (
     WebhookDeliveryAggregate,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.oauth import OAuth2Client
 from project.infrastructure.models.webhook_delivery_generated import (
     WebhookDeliveryGeneratedMixin,

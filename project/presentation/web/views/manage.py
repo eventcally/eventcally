@@ -10,13 +10,11 @@ from flask import (
 )
 from flask_security import auth_required, current_user
 
-from project import dump_org_path
 from project.application.queries import (
     ListUserMemberInvitationsQuery,
     ListUserOrganizationInvitationsQuery,
 )
 from project.application.queries.page_request import MAX_PER_PAGE, PageRequest
-from project.celery_tasks import dump_admin_unit_task
 from project.presentation.shared.access import (
     access_or_401,
     admin_units_the_current_user_is_member_of,
@@ -28,11 +26,13 @@ from project.presentation.shared.current_admin_unit import (
     get_current_admin_unit,
     set_current_admin_unit,
 )
+from project.presentation.tasks.celery_tasks import dump_admin_unit_task
 from project.presentation.web.views.main_blueprint import main_bp
 from project.presentation.web.views.utils import (
     get_celery_poll_result,
     permission_missing,
 )
+from project.shared.paths import dump_org_path
 
 
 def _get_invitations():

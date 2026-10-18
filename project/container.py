@@ -25,11 +25,11 @@ from project.application.services.organization_application_service import (
 from project.application.services.webhook_delivery_service import WebhookDeliveryService
 from project.application.webhooks.webhook_mapper_context import WebhookMapperContext
 from project.domain import events
-from project.extensions import db
 from project.infrastructure.celery_command_dispatcher import CeleryCommandDispatcher
 from project.infrastructure.celery_event_dispatcher import CeleryEventDispatcher
 from project.infrastructure.command_handler_factory import CommandHandlerFactory
 from project.infrastructure.event_handler_factory import EventHandlerFactory
+from project.infrastructure.extensions import db
 from project.infrastructure.query_handler_factory import QueryHandlerFactory
 from project.infrastructure.read_repositories.sql_alchemy_access_read_repository import (
     SqlAlchemyAccessReadRepository,

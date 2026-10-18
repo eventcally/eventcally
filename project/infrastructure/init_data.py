@@ -1,32 +1,10 @@
-import os
-
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models import (
     AdminUnitMemberRole,
     EventCategory,
     Role,
     Settings,
 )
-from project.presentation.api import add_oauth2_scheme_with_transport
-
-
-def register_oauth2_scheme_once(app):
-    """Register OAuth2 scheme once on first request.
-
-    This function should be called from create_app() to register
-    a before_request handler that adds the OAuth2 scheme.
-    """
-
-    @app.before_request
-    def add_oauth2_scheme():
-        app.before_request_funcs[None].remove(add_oauth2_scheme)
-        # At some sites the https scheme is not set yet
-        insecure = os.getenv("AUTHLIB_INSECURE_TRANSPORT", "False").lower() in [
-            "true",
-            "1",
-        ]
-        add_oauth2_scheme_with_transport(insecure)
-
 
 organization_admin_permissions = [
     "api_keys:read",

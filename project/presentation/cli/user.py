@@ -4,7 +4,7 @@ import click
 from flask.cli import AppGroup
 from flask_security.confirmable import confirm_user
 
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.user_datastore import (
     add_admin_roles_to_user,
     create_user,

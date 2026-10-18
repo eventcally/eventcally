@@ -5,7 +5,7 @@ from sqlalchemy.event import listens_for
 from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.iowned import IOwned
 from project.infrastructure.models.location_generated import LocationGeneratedMixin
 

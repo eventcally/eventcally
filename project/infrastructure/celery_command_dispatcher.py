@@ -4,7 +4,7 @@ from project.application.abstract_command_dispatcher import AbstractCommandDispa
 
 class CeleryCommandDispatcher(AbstractCommandDispatcher):
     def dispatch(self, command: commands.Command):
-        from project.base_tasks import process_delayed_command_v2
+        from project.infrastructure.celery_base_tasks import process_delayed_command_v2
 
         command_class_path = (
             f"{command.__class__.__module__}.{command.__class__.__name__}"

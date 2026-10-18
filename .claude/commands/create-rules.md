@@ -38,7 +38,7 @@ nothing has diverged from that, then note the shape:
 | ------ | ------------ |
 | Web app + REST API | Flask app (`bootstrap.py` → `create_app()`), `project/presentation/web/views/`, `project/presentation/api/` |
 | DDD command/event core | `project/application/` (commands, handlers, message bus) over `project/domain/` |
-| Async workers | Celery tasks (`project/celery_tasks.py`), celery beat, Flower |
+| Async workers | Celery tasks (`project/presentation/tasks/celery_tasks.py`), celery beat, Flower |
 | Geo data | PostGIS + GeoAlchemy2 for locations/places |
 
 ### Analyze Configuration
@@ -112,7 +112,7 @@ Study existing code for:
 - Commands / handlers: `project/application/commands/`, `project/application/command_handlers/`
 - Domain models: `project/domain/models/`
 - API wiring: `project/presentation/api/__init__.py`
-- Tasks/schedules: `project/celery_tasks.py`, `project/base_tasks.py`
+- Tasks/schedules: `project/presentation/tasks/celery_tasks.py`, `project/infrastructure/celery_base_tasks.py`
 - Codegen: `.scripts/codegen/generate.py`, `.scripts/codegen/config/`
 - Test fixtures: `tests/integration/conftest.py`, `tests/integration/base_test.py`, `tests/integration/seeder.py`
 - CI: `.github/workflows/lint.yml`, `.github/workflows/test.yml`, `.github/workflows/playwright.yml`
@@ -226,5 +226,5 @@ pre-commit run --all-files
 - Focus on patterns and conventions, not exhaustive documentation
 - Respect the DDD import layering (`domain` ← `application` ← `infrastructure`) — never cross it
 - Never edit `*_generated.py`; change the YAML in `.scripts/codegen/config/` and regenerate
-- Register new Celery tasks in `project/celery_tasks.py`
+- Register new Celery tasks in `project/presentation/tasks/celery_tasks.py`
 - Update it as the project evolves

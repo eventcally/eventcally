@@ -122,7 +122,7 @@ def test_tos_link_and_announcement_follow_settings(app, db, seeder, utils):
     assert b"alert-warning" not in response.data
 
     with app.app_context():
-        from project.init_data import upsert_settings
+        from project.infrastructure.init_data import upsert_settings
 
         settings = upsert_settings()
         settings.tos = "x"
@@ -136,7 +136,7 @@ def test_tos_link_and_announcement_follow_settings(app, db, seeder, utils):
 
 def test_empty_announcement_renders_nothing(app, db, utils):
     with app.app_context():
-        from project.init_data import upsert_settings
+        from project.infrastructure.init_data import upsert_settings
 
         settings = upsert_settings()
         settings.tos = ""

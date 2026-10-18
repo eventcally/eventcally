@@ -1,4 +1,4 @@
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.association_tables.event_custom_event_categories_generated import (
     EventCustomEventCategoriesGeneratedMixin,
 )

@@ -63,7 +63,8 @@ importing `project.infrastructure.models` from new modules; its `ignore_imports`
 
 ## Common Pitfalls
 
-- New Celery tasks must be imported/registered in [project/celery_tasks.py](../project/celery_tasks.py).
+- New Celery tasks must be imported/registered in [project/presentation/tasks/celery_tasks.py](../project/presentation/tasks/celery_tasks.py).
+- Celery task names are a wire contract: every `@celery.task` passes an explicit `name=`; never rename it or derive it from `__name__`. New tasks use `project.<module path>.<func>` of their real module; the frozen set lives in `tests/integration/infrastructure/test_celery_app.py`.
 - Deferred SQLAlchemy columns may require explicit `undefer()` in query options.
 - Avoid editing generated files or relying on behavior that codegen overwrites.
 - Query handlers must return materialized read models; the read session is closed when the bus returns.

@@ -23,7 +23,7 @@ from project.application.services.abstract_app_context_provider import (
     AbstractAppContextProvider,
 )
 from project.container import Application
-from project.extensions import csrf, limiter
+from project.infrastructure.extensions import csrf, limiter
 from project.presentation.api.schemas import (
     ErrorResponseSchema,
     TooManyRequestsResponseSchema,

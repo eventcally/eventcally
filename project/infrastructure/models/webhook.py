@@ -1,7 +1,7 @@
 from sqlalchemy.event import listens_for
 
 from project.domain.models.value_objects.webhook_value_object import WebhookValueObject
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.iowned import IOwned
 from project.infrastructure.models.webhook_generated import WebhookGeneratedMixin
 

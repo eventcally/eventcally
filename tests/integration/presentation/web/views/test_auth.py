@@ -7,7 +7,7 @@ def test_register(client, app, db, utils, settings):
 
     if settings:
         with app.app_context():
-            from project.init_data import upsert_settings
+            from project.infrastructure.init_data import upsert_settings
 
             settings = upsert_settings()
             settings.tos = "Meine Nutzungsbedingungen"

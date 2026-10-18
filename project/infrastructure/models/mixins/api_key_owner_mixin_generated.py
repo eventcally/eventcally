@@ -1,7 +1,7 @@
 from enum import IntEnum
 from flask_security import AsaList
 from geoalchemy2 import Geometry
-from project.extensions import db
+from project.infrastructure.extensions import db
 from sqlalchemy import (
     Index,
     Boolean,
@@ -26,7 +26,7 @@ from sqlalchemy_utils import ColorType
 import datetime
 from project.infrastructure.dbtypes import IntegerEnum
 from sqlalchemy.ext.declarative import declared_attr
-from project.actor import current_actor
+from project.infrastructure.actor import current_actor
 
 
 class ApiKeyOwnerGeneratedMixin:

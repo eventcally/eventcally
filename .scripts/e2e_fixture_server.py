@@ -36,8 +36,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
 os.environ.setdefault("TESTING", "1")
 
-from project import create_app  # noqa: E402
-from project.extensions import db  # noqa: E402
+from project.factory import create_app  # noqa: E402
+from project.infrastructure.extensions import db  # noqa: E402
 
 
 def database_fingerprint():

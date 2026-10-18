@@ -9,7 +9,7 @@ import difflib
 import json
 import os
 
-from project.extensions import limiter
+from project.infrastructure.extensions import limiter
 from tests.integration.event_read_seed import seed_event_world
 from tests.integration.presentation.api import read_parity
 from tests.integration.seeder import Seeder

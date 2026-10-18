@@ -79,7 +79,7 @@ Use the Explore agent to find:
 - Is a model codegen-backed? If so, edit the YAML in `.scripts/codegen/config/` and regenerate
   (`python .scripts/codegen/generate.py`) — never hand-edit `*_generated.py`.
 - New command/event? Register the handler in the DI container (`project/container.py`).
-- New Celery task? Register it in `project/celery_tasks.py`.
+- New Celery task? Register it in `project/presentation/tasks/celery_tasks.py`.
 - Any DB schema change → new Alembic migration (`flask db migrate`, then review — PostGIS
   diffs sometimes need manual correction).
 - Do the changes respect the import layering (`domain` ← `application` ← `infrastructure`)?

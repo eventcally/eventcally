@@ -220,7 +220,7 @@ def test_access_decisions_match_snapshot(client, app, db, seeder, utils):
         for key, (method, url, body) in api_requests.items():
             utils._access_token = token
             utils._api_key = api_key
-            from project.extensions import limiter
+            from project.infrastructure.extensions import limiter
 
             with app.app_context():
                 limiter.reset()

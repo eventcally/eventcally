@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Optional
 
 from project.domain.models.aggregates.api_key_aggregate import ApiKeyAggregate
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.api_key_generated import ApiKeyGeneratedMixin
 
 
