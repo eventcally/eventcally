@@ -5,7 +5,7 @@ from typing import Optional
 from project.domain.models.aggregates.event_organizer_aggregate import (
     EventOrganizerAggregate,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.association_tables.event_co_organizers_generated import (
     EventCoOrganizersGeneratedMixin,
 )

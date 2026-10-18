@@ -1,4 +1,4 @@
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.license_generated import LicenseGeneratedMixin
 
 

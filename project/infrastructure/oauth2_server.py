@@ -15,7 +15,7 @@ from flask import current_app
 from flask import request as flask_req
 from flask import url_for
 
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models import (
     AppInstallation,
     AppKey,
@@ -179,17 +179,22 @@ def save_token(token, request):
 query_client = create_query_client_func(db.session, OAuth2Client)
 
 
-class CustomFlaskOAuth2Request(FlaskOAuth2Request):
-    @property
-    def scope(self) -> str:
-        from project.presentation.shared.scopes import replace_legacy_scopes
+def _create_request_class(scope_normalizer):
+    class CustomFlaskOAuth2Request(FlaskOAuth2Request):
+        @property
+        def scope(self) -> str:
+            return scope_normalizer(super().scope)
 
-        return replace_legacy_scopes(super().scope)
+    return CustomFlaskOAuth2Request
 
 
 class OAuth2AuthorizationServer(AuthorizationServer):
+    def __init__(self, *args, scope_normalizer=lambda scope: scope, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._request_cls = _create_request_class(scope_normalizer)
+
     def create_oauth2_request(self, request):
-        return CustomFlaskOAuth2Request(flask_req)
+        return self._request_cls(flask_req)
 
 
 def create_revocation_endpoint(session, token_model):
@@ -244,36 +249,38 @@ class JWTBearerGrant(_JWTBearerGrant):
         return False  # pragma: no cover
 
 
-def config_oauth(app):
-    """Initialize OAuth2 authorization with the Flask app."""
-    import project.presentation.shared.oauth2_extensions as oauth2_ext
-    from project.presentation.shared.oauth2_extensions import require_oauth
+def create_authorization_server(app, scope_normalizer) -> OAuth2AuthorizationServer:
+    """Creates the authorization server with all grants and endpoints registered.
 
+    `scope_normalizer` maps the requested scope string (e.g. legacy scope names) and is
+    supplied by the composition root, so infrastructure does not import presentation.
+    """
     app.config["OAUTH2_REFRESH_TOKEN_GENERATOR"] = True
 
-    # Create authorization server
-    oauth2_ext.authorization = OAuth2AuthorizationServer(
+    authorization = OAuth2AuthorizationServer(
         query_client=query_client,
         save_token=save_token,
+        scope_normalizer=scope_normalizer,
     )
-    oauth2_ext.authorization.init_app(app)
+    authorization.init_app(app)
 
     # support grants
-    oauth2_ext.authorization.register_grant(
+    authorization.register_grant(
         AuthorizationCodeGrant,
         [CodeChallenge(required=True), OpenIDCode()],
     )
-    oauth2_ext.authorization.register_grant(ClientCredentialsGrant)
-    oauth2_ext.authorization.register_grant(RefreshTokenGrant)
-    oauth2_ext.authorization.register_grant(JWTBearerGrant)
+    authorization.register_grant(ClientCredentialsGrant)
+    authorization.register_grant(RefreshTokenGrant)
+    authorization.register_grant(JWTBearerGrant)
 
     # support revocation
-    revocation_cls = create_revocation_endpoint(db.session, OAuth2Token)
-    oauth2_ext.authorization.register_endpoint(revocation_cls)
+    authorization.register_endpoint(create_revocation_endpoint(db.session, OAuth2Token))
 
     # support introspect
-    oauth2_ext.authorization.register_endpoint(MyIntrospectionEndpoint)
+    authorization.register_endpoint(MyIntrospectionEndpoint)
 
-    # protect resource
-    bearer_cls = create_bearer_token_validator(db.session, OAuth2Token)
-    require_oauth.register_token_validator(bearer_cls())
+    return authorization
+
+
+def create_bearer_token_validator_cls():
+    return create_bearer_token_validator(db.session, OAuth2Token)

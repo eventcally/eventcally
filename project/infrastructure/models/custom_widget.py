@@ -5,7 +5,7 @@ from typing import Optional
 from project.domain.models.aggregates.custom_widget_aggregate import (
     CustomWidgetAggregate,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.custom_widget_generated import (
     CustomWidgetGeneratedMixin,
 )

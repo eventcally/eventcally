@@ -2,7 +2,7 @@ from flask import current_app
 from flask_mail import Message
 
 from project.application.services.abstract_mail_sender import AbstractMailSender
-from project.extensions import mail
+from project.infrastructure.extensions import mail
 
 
 class FlaskMailSender(AbstractMailSender):

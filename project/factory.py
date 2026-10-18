@@ -8,8 +8,17 @@ from flask_security import SQLAlchemySessionUserDatastore, user_registered
 from jinja2 import ChoiceLoader, FileSystemLoader
 
 from project.config import getenv_bool, load_config
-from project.extensions import babel, cors, csrf, db, limiter, mail, migrate, security
 from project.infrastructure.custom_session_interface import CustomSessionInterface
+from project.infrastructure.extensions import (
+    babel,
+    cors,
+    csrf,
+    db,
+    limiter,
+    mail,
+    migrate,
+    security,
+)
 
 
 def create_app(config_override: dict | None = None) -> Flask:
@@ -36,7 +45,7 @@ def create_app(config_override: dict | None = None) -> Flask:
     app.wsgi_app = ReverseProxied(app.wsgi_app, app.config["PREFERRED_URL_SCHEME"])
 
     # Celery
-    from project.celery_init import init_celery
+    from project.infrastructure.celery_app import init_celery
 
     init_celery(app)
 
@@ -87,8 +96,8 @@ def create_app(config_override: dict | None = None) -> Flask:
     limiter.init_app(app)
 
     # Celery tasks - import to register tasks
-    import project.base_tasks  # noqa: F401
     import project.celery_tasks  # noqa: F401
+    import project.infrastructure.celery_base_tasks  # noqa: F401
 
     # JSON provider
     from project.presentation.web.jsonld import CustomJsonProvider
@@ -129,9 +138,17 @@ def create_app(config_override: dict | None = None) -> Flask:
             db.session.commit()
 
     # OAuth2
-    from project.oauth2 import config_oauth
+    import project.presentation.shared.oauth2_extensions as oauth2_ext
+    from project.infrastructure.oauth2_server import (
+        create_authorization_server,
+        create_bearer_token_validator_cls,
+    )
+    from project.presentation.shared.scopes import replace_legacy_scopes
 
-    config_oauth(app)
+    oauth2_ext.authorization = create_authorization_server(app, replace_legacy_scopes)
+    oauth2_ext.require_oauth.register_token_validator(
+        create_bearer_token_validator_cls()()
+    )
 
     # Initialize REST API (must happen before container.wire() imports api modules)
     from project.presentation.api import init_api
@@ -194,7 +211,7 @@ def create_app(config_override: dict | None = None) -> Flask:
     init_admin(app)
 
     # Register OAuth2 scheme handler
-    from project.init_data import register_oauth2_scheme_once
+    from project.presentation.api import register_oauth2_scheme_once
 
     register_oauth2_scheme_once(app)
 

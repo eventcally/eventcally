@@ -23,7 +23,7 @@ from project.domain.models.aggregates.organization_member_aggregate import (
 from project.domain.models.aggregates.organization_relation_aggregate import (
     OrganizationRelationAggregate,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.admin_unit_generated import AdminUnitGeneratedMixin
 from project.infrastructure.models.admin_unit_invitation_generated import (
     AdminUnitInvitationGeneratedMixin,

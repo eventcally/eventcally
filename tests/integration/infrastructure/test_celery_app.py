@@ -35,7 +35,7 @@ LEGACY_TASK_NAMES = frozenset(
 
 
 def test_registered_task_names_are_frozen(app):
-    from project.celery_init import celery
+    from project.infrastructure.celery_app import celery
 
     registered = {n for n in celery.tasks if not n.startswith("celery.")}
 
@@ -64,7 +64,7 @@ def test_periodic_tasks_use_frozen_names(app):
 
 
 def test_legacy_name_lookup_executes(app, db):
-    from project.celery_init import celery
+    from project.infrastructure.celery_app import celery
 
     command = commands.DeleteOldWebhookEventsCommand(actor=Actor())
     path = f"{command.__class__.__module__}.{command.__class__.__name__}"
@@ -77,6 +77,6 @@ def test_legacy_name_lookup_executes(app, db):
 
 
 def test_celery_main_is_project(app):
-    from project.celery_init import celery
+    from project.infrastructure.celery_app import celery
 
     assert celery.main == "project"

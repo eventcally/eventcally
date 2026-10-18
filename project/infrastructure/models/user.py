@@ -5,7 +5,7 @@ from flask_security import RoleMixin, UserMixin
 from sqlalchemy import Column, ForeignKey, Integer, String
 
 from project.domain.models.aggregates.user_aggregate import UserAggregate
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.association_tables.roles_users_generated import (
     RolesUsersGeneratedMixin,
 )

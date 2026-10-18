@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Optional
 
 from project.domain.models.aggregates.settings_aggregate import SettingsAggregate
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.settings_generated import SettingsGeneratedMixin
 
 

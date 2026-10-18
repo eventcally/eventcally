@@ -8,7 +8,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from project.domain.models.aggregates.event_reference_request_aggregate import (
     EventReferenceRequestAggregate,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.event_reference_request_generated import (
     EventReferenceRequestGeneratedMixin,
     EventReferenceRequestReviewStatus,

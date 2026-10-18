@@ -2,7 +2,7 @@ import importlib
 
 from flask import current_app
 
-from project.celery_init import celery, force_locale
+from project.infrastructure.celery_app import celery, force_locale
 
 
 def _load_class(class_path: str):

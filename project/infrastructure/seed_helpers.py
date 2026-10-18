@@ -8,7 +8,7 @@ import time
 from sqlalchemy import and_, func, update
 from werkzeug.security import gen_salt
 
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models import (
     AdminUnit,
     AdminUnitMember,

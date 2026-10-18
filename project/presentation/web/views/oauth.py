@@ -3,7 +3,7 @@ from authlib.oauth2 import OAuth2Error
 from flask import current_app, jsonify, redirect, render_template, request, url_for
 from flask_security import current_user
 
-from project.oauth2 import generate_user_info, get_issuer
+from project.infrastructure.oauth2_server import generate_user_info, get_issuer
 from project.presentation.shared.oauth2_extensions import authorization, require_oauth
 from project.presentation.shared.scopes import scope_list, scopes
 from project.presentation.web.forms.security import AuthorizeForm

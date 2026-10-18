@@ -299,7 +299,7 @@ class EventCategoryListProp(BaseProp):
 
 class RateLimitPropPropFormatter(BasePropFormatter):
     def format(self, data):
-        from project.extensions import limiter
+        from project.infrastructure.extensions import limiter
         from project.presentation.shared.rate_limit import (
             get_limit_decorator_for_provider,
         )

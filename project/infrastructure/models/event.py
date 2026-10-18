@@ -12,7 +12,7 @@ from project.application.read_models.event_read_model import (
     OrganizerReadModel,
 )
 from project.domain.models.aggregates.event_aggregate import EventAggregate
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.event_category import (
     CustomEventCategory,
     EventCategory,

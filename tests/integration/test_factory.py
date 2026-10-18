@@ -78,8 +78,8 @@ def migrate_with_result(app):
 def test_migrations(app, seeder):
     from flask_migrate import downgrade, upgrade
 
-    from project.extensions import db
-    from project.init_data import create_initial_data
+    from project.infrastructure.extensions import db
+    from project.infrastructure.init_data import create_initial_data
 
     with app.app_context():
         drop_db(db)
@@ -101,7 +101,7 @@ def test_migrations(app, seeder):
 def test_migration_public_status(app, seeder):
     from flask_migrate import upgrade
 
-    from project.extensions import db
+    from project.infrastructure.extensions import db
     from project.infrastructure.models import Event, EventPublicStatus
 
     with app.app_context():
@@ -120,7 +120,7 @@ def test_migration_public_status(app, seeder):
 def test_migration_event_definitions(app, seeder):
     from flask_migrate import upgrade
 
-    from project.extensions import db
+    from project.infrastructure.extensions import db
     from project.infrastructure.models import Event
 
     with app.app_context():

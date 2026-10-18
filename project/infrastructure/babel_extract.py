@@ -46,7 +46,7 @@ def babel_extract(fileobj, keywords, comment_tags, options):
     # attributes assigned by CustomModel.__init_subclass__ at class definition
     # time, not lazily evaluated translations.
     import project.infrastructure.models  # noqa: F401
-    from project.extensions import db
+    from project.infrastructure.extensions import db
     from project.infrastructure.models import (
         AdminUnitVerificationRequestReviewStatus,
         EventReferenceRequestReviewStatus,

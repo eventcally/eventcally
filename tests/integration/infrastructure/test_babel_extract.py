@@ -15,7 +15,7 @@ def test_babel_extract_runs_without_app_context_or_database_url():
         env.pop(key, None)
 
     code = """
-from project.babel import babel_extract
+from project.infrastructure.babel_extract import babel_extract
 
 messages = babel_extract(None, [], [], {})
 

@@ -12,10 +12,10 @@ import project.application
 import project.domain
 from project.application import commands
 from project.application.commands.base import Command
-from project.base_tasks import _load_class
 from project.domain import events
 from project.domain.events.base import Event
 from project.domain.models.entities.actor import Actor
+from project.infrastructure.celery_base_tasks import _load_class
 from project.infrastructure.celery_command_dispatcher import CeleryCommandDispatcher
 from project.infrastructure.celery_event_dispatcher import CeleryEventDispatcher
 
@@ -65,7 +65,7 @@ def test_command_dispatcher_writes_resolvable_paths(monkeypatch):
     import sys
 
     fake = MagicMock()
-    monkeypatch.setitem(sys.modules, "project.base_tasks", fake)
+    monkeypatch.setitem(sys.modules, "project.infrastructure.celery_base_tasks", fake)
     command = commands.DeleteOldWebhookEventsCommand(actor=Actor())
 
     CeleryCommandDispatcher().dispatch(command)
@@ -79,7 +79,7 @@ def test_event_dispatcher_writes_resolvable_paths(monkeypatch):
     import sys
 
     fake = MagicMock()
-    monkeypatch.setitem(sys.modules, "project.base_tasks", fake)
+    monkeypatch.setitem(sys.modules, "project.infrastructure.celery_base_tasks", fake)
     event = events.Event(actor=Actor())
 
     CeleryEventDispatcher().dispatch(event)

@@ -5,7 +5,7 @@ from sqlalchemy.event import listens_for
 from project.domain.models.aggregates.event_reference_aggregate import (
     EventReferenceAggregate,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.event_reference_generated import (
     EventReferenceGeneratedMixin,
 )

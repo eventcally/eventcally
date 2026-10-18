@@ -13,7 +13,8 @@ from project.domain.models.enums.event_attendance_mode import EventAttendanceMod
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
+from project.infrastructure.init_data import create_initial_data
 from project.infrastructure.models import (
     AdminUnit,
     AdminUnitInvitation,
@@ -44,7 +45,6 @@ from project.infrastructure.user_datastore import (
     get_user,
     set_user_accepted_tos,
 )
-from project.init_data import create_initial_data
 from project.presentation.shared.scopes import scope_list
 
 test_cli = AppGroup("test")

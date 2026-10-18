@@ -54,7 +54,7 @@ def test_admin_settings(client, seeder, utils, app, mocker, db_error):
     utils.assert_response_redirect(response, "admin.admin")
 
     with app.app_context():
-        from project.init_data import upsert_settings
+        from project.infrastructure.init_data import upsert_settings
 
         settings = upsert_settings()
         assert settings.tos == "Meine Nutzungsbedingungen"
@@ -344,7 +344,7 @@ def test_admin_planning(client, seeder, utils, app, mocker, db_error):
     utils.assert_response_redirect(response, "admin.admin")
 
     with app.app_context():
-        from project.init_data import upsert_settings
+        from project.infrastructure.init_data import upsert_settings
 
         settings = upsert_settings()
         assert settings.planning_external_calendars == "[]"

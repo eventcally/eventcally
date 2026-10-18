@@ -14,11 +14,13 @@ def test_dispatch_calls_process_delayed_command_v2(monkeypatch):
 
     fake_task = MagicMock()
 
-    # The dispatch method does `from project.base_tasks import process_delayed_command_v2`
+    # The dispatch method does `from project.infrastructure.celery_base_tasks import process_delayed_command_v2`
     # at call time, so we inject a fake module into sys.modules before the call.
     fake_base_tasks = MagicMock()
     fake_base_tasks.process_delayed_command_v2 = fake_task
-    monkeypatch.setitem(sys.modules, "project.base_tasks", fake_base_tasks)
+    monkeypatch.setitem(
+        sys.modules, "project.infrastructure.celery_base_tasks", fake_base_tasks
+    )
 
     dispatcher.dispatch(cmd)
 

@@ -17,7 +17,7 @@ def notices(app, db):
 
 def _set(app, db, **values):
     with app.app_context():
-        from project.init_data import upsert_settings
+        from project.infrastructure.init_data import upsert_settings
 
         settings = upsert_settings()
         for key, value in values.items():

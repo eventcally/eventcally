@@ -9,9 +9,9 @@ from project.application.queries import (
     ListRecurringEventIdsQuery,
     ListUserIdsDueForDeletionQuery,
 )
-from project.celery_init import celery
 from project.domain.models.entities.actor import Actor
-from project.extensions import db
+from project.infrastructure.celery_app import celery
+from project.infrastructure.extensions import db
 
 
 def _query_bus():

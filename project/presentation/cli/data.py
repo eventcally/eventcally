@@ -1,7 +1,7 @@
 import click
 from flask.cli import AppGroup
 
-from project.init_data import create_initial_data
+from project.infrastructure.init_data import create_initial_data
 
 data_cli = AppGroup("data")
 

@@ -1,4 +1,4 @@
-from project.extensions import db
+from project.infrastructure.extensions import db
 from sqlalchemy import Column, ForeignKey, Integer, UniqueConstraint
 
 

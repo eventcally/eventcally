@@ -311,7 +311,7 @@ def test_js_icalevents(
     with app.app_context():
         import json
 
-        from project.init_data import upsert_settings
+        from project.infrastructure.init_data import upsert_settings
 
         settings = upsert_settings()
         settings.planning_external_calendars = json.dumps(

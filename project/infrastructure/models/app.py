@@ -6,7 +6,7 @@ from project.domain.models.aggregates.app_key_aggregate import AppKeyAggregate
 from project.domain.models.aggregates.organization_app_installation_aggregate import (
     OrganisationAppInstallationAggregate,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.app_installation_generated import (
     AppInstallationGeneratedMixin,
 )

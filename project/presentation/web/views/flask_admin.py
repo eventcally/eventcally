@@ -6,7 +6,7 @@ from flask_babel import lazy_gettext
 from flask_security import current_user
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.admin_unit import AdminUnit
 from project.infrastructure.models.event_place import EventPlace
 from project.infrastructure.models.user import User

@@ -6,7 +6,7 @@ import datetime
 from flask import current_app
 from flask_security import hash_password
 
-from project.extensions import db
+from project.infrastructure.extensions import db
 
 
 def create_user(email, password):

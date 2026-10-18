@@ -8,7 +8,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from project.domain.models.aggregates.organization_verification_request_aggregate import (
     OrganizationVerificationRequestAggregate,
 )
-from project.extensions import db
+from project.infrastructure.extensions import db
 from project.infrastructure.models.admin_unit_verification_request_generated import (
     AdminUnitVerificationRequestGeneratedMixin,
     AdminUnitVerificationRequestReviewStatus,

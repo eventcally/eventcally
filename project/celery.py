@@ -4,8 +4,8 @@ This module keeps backward compatibility for commands like:
     celery -A project.celery worker
 """
 
-from project.celery_init import celery
 from project.factory import create_app
+from project.infrastructure.celery_app import celery
 
 # Initialize Flask app so init_celery() configures the shared Celery instance.
 # Worker, beat and flower hold DB connections for long; keep them fresh.
