@@ -11,7 +11,7 @@ docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/eventca
 ### Requirements
 
 - Python 3.12
-- pip
+- [uv](https://docs.astral.sh/uv/)
 - Postgres with postgis
 
 ### Create database
@@ -23,14 +23,11 @@ psql -c 'create database eventcally;' -U postgres
 ### Install and run
 
 ```sh
-python3 -m venv
-source venv/bin/activate
-(env) pip install -r requirements.txt
-(env) export DATABASE_URL='postgresql://postgres@localhost/eventcally'
-(env) flask db upgrade
-(env) flask db upgrade
-(env) flask data seed
-(env) gunicorn -c gunicorn.conf.py main:app
+uv sync --locked --no-dev
+export DATABASE_URL='postgresql://postgres@localhost/eventcally'
+uv run flask db upgrade
+uv run flask data seed
+uv run gunicorn -c gunicorn.conf.py main:app
 ```
 
 ## Scheduled/Cron jobs

@@ -46,7 +46,7 @@ nothing has diverged from that, then note the shape:
 Look at root configuration files:
 
 ```text
-requirements.txt        → dependencies (pinned)
+pyproject.toml / uv.lock → dependencies (pinned)
 .flake8                 → flake8 rules (ignores E501/E203/E711; per-file ignores)
 .isort.cfg              → import sort (black profile; skips *_generated.py)
 pytest.ini              → pytest config
@@ -80,9 +80,9 @@ Explore the codebase to understand organization:
 
 ### Extract Tech Stack
 
-From `requirements.txt` and configs, identify:
+From `pyproject.toml` / `uv.lock` and configs, identify:
 
-- **Language/Runtime**: Python (3.12 in CI, 3.11 for pre-commit), virtualenv in `venv/`
+- **Language/Runtime**: Python (3.12 in CI, 3.11 for pre-commit), virtualenv in `.venv/` (uv)
 - **Web framework**: Flask 3 (+ Flask-SQLAlchemy, Flask-Migrate, Flask-Security-Too, Flask-Admin, Flask-RESTful, flask-apispec)
 - **Architecture**: DDD with a `dependency-injector` DI container; import layering enforced by `import-linter`
 - **Task queue**: Celery 5 (+ Redis broker, celery beat, Flower)
@@ -189,8 +189,7 @@ Flask event-calendar platform (Flask + SQLAlchemy + Celery + PostGIS + Redis), D
 
 ```bash
 # Setup
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
+uv sync && source .venv/bin/activate
 
 # Run (needs DATABASE_URL, SECRET_KEY, SERVER_NAME, REDIS_URL, LIMITER_REDIS_URL, GOOGLE_MAPS_API_KEY, mail settings)
 flask db upgrade

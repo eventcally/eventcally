@@ -131,7 +131,7 @@ def run_migrations_online():
             include_object=include_object,
             include_name=include_name,
             include_schemas=True,
-            **current_app.extensions["migrate"].configure_args
+            **current_app.extensions["migrate"].configure_args,
         )
 
         with context.begin_transaction():

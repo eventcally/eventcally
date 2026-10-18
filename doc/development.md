@@ -1,5 +1,16 @@
 # Development
 
+## Dependencies
+
+Dependencies are declared in `pyproject.toml` and pinned in `uv.lock` (managed by [uv](https://docs.astral.sh/uv/)). Never edit `uv.lock` by hand.
+
+```sh
+uv sync                              # install runtime + dev dependencies into .venv
+uv add <package>                     # add a runtime dependency
+uv add --dev <package>               # add a dev dependency (pytest, linters, ...)
+uv lock --upgrade-package <package>  # upgrade one package
+```
+
 ## Docker
 
 ### Compose (including dependencies)

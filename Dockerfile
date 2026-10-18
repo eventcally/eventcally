@@ -30,12 +30,23 @@ ENV DOCS_URL=""
 ARG APP_TAGS=""
 ENV APP_TAGS=${APP_TAGS}
 
-# Install pip requirements
-COPY requirements.txt .
-RUN python -m pip install --upgrade pip
-RUN python -m pip install -r requirements.txt
+# uv, pinned; copied from its distroless image rather than installed via pip.
+COPY --from=ghcr.io/astral-sh/uv:0.12.1 /uv /uvx /bin/
+
+# Install into /opt/venv, outside /app: the pytest service in docker-compose.test.yml
+# bind-mounts the repo over /app, which would hide an in-tree .venv. The dev group is
+# included because that service, CI's build-image job and docker-compose.debug.yml
+# (debugpy) run from this same image.
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=never
+ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /app
+COPY pyproject.toml uv.lock .python-version ./
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked
+
 COPY . /app
 
 RUN chmod u+x ./entrypoint.sh
