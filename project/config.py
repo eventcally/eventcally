@@ -82,6 +82,8 @@ def load_app_config_from_env(app: Flask):
         app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
         app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 
+    app.config["ENABLE_TEST_CLI"] = getenv_bool("TESTING")
+
     if getenv_bool("TESTING"):  # pragma: no cover
         app.config["SECURITY_EMAIL_VALIDATOR_ARGS"] = {"check_deliverability": False}
 

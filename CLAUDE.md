@@ -60,11 +60,11 @@ isort . && black . && flake8 && lint-imports && \
 
 ## Structure
 
-- `project/` — Flask wiring (`__init__.py` → `create_app`), DI (`container.py`), tasks and the other app-wiring modules; the delivery code lives in `project/presentation/`
+- `project/` — the composition root: `factory.py` (`create_app`; `__init__.py` is empty), `config.py`, DI (`container.py`) and the `celery.py` worker entrypoint; the delivery code lives in `project/presentation/` (web, api, cli, `tasks/` for Celery tasks), Flask extensions/Celery app/OAuth2 server/`init_data` in `project/infrastructure/`
 - `project/shared/` — cross-**layer** helpers (`utils`, `dateutils`, `imageutils`, `context`, `feature_flags`); a leaf that may import only the domain
 - `project/domain/` — models, abstract interfaces, business logic (**no** application/infrastructure imports)
 - `project/application/` — pydantic commands, command/event handlers, `message_bus.py`, read models
-- `project/services/` — only `cache`, `dump`, `seo`; no ORM read/write services (settings are read via `GetSettingsQuery`; `upsert_settings` lives in `init_data.py`)
+- `project/services/` — only `cache`, `dump`, `seo`; no ORM read/write services (settings are read via `GetSettingsQuery`; `upsert_settings` lives in `infrastructure/init_data.py`)
 - `project/infrastructure/user_datastore.py` — the Flask-Security datastore adapter (users, roles, ToS); imports no models
 - `project/infrastructure/seed_helpers.py` — fixture-only ORM helpers for `presentation/cli/test.py` and `tests/integration/seeder.py`; never import from presentation/application
 - `project/infrastructure/` — concrete adapters (SQLAlchemy repos, Celery dispatchers, external services), plus the ORM `models/` (codegen output), Alembic `migrations/` and `dbtypes.py`
@@ -94,7 +94,8 @@ isort . && black . && flake8 && lint-imports && \
 
 ## Pitfalls
 
-- New Celery tasks must be imported/registered in `project/celery_tasks.py`.
+- New Celery tasks must be imported/registered in `project/presentation/tasks/celery_tasks.py`.
+- Celery task names are a wire contract: every `@celery.task` passes an explicit `name=`; never rename it or derive it from `__name__`. New tasks use `project.<module path>.<func>` of their real module; the frozen set lives in `tests/integration/infrastructure/test_celery_app.py`.
 - E-mail templates stay in `project/templates/email/` and import the web macros (`_macros.html`); Flask resolves both roots (`presentation/web/templates`, then `project/templates`) via a `ChoiceLoader` set in `create_app`. `babel.cfg` lists both.
 - `project/translations/` stays in `project/` (Flask-Babel resolves it from `app.root_path`).
 - `presentation/cli` is outside the read-path contract (it writes fixtures through the ORM via `infrastructure/seed_helpers.py`).
@@ -105,13 +106,13 @@ isort . && black . && flake8 && lint-imports && \
 
 ## Key Files
 
-- Bootstrap/wiring: `project/__init__.py`, `bootstrap.py` (`FLASK_APP` set in `.flaskenv`)
+- Bootstrap/wiring: `project/factory.py`, `project/config.py`, `bootstrap.py` (`FLASK_APP` set in `.flaskenv`)
 - DI container: `project/container.py`
 - Message bus: `project/application/message_bus.py`
 - Commands / handlers: `project/application/commands/`, `project/application/command_handlers/`
 - API wiring: `project/presentation/api/__init__.py`
 - Cross-layer / cross-channel helpers: `project/shared/`, `project/presentation/shared/`
-- Tasks: `project/celery_tasks.py`, `project/base_tasks.py`
+- Tasks: `project/presentation/tasks/celery_tasks.py`, `project/infrastructure/celery_base_tasks.py`
 - Codegen: `.scripts/codegen/generate.py`, `.scripts/codegen/config/`
 - Tests: `tests/integration/conftest.py`, `tests/integration/base_test.py`, `tests/integration/seeder.py`
 - CI: `.github/workflows/{lint,test,playwright}.yml`

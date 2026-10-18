@@ -26,7 +26,7 @@ module.exports = defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
 
-    // The app picks its language from Accept-Language (project/i10n.py:24-29),
+    // The app picks its language from Accept-Language (project/presentation/shared/i10n.py:24-29),
     // so the browser locale decides whether the UI is German or English.
     // Chromium defaults to en-US, which would fail every German assertion in the
     // suite. This is as load-bearing as the viewport.

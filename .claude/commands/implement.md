@@ -84,7 +84,7 @@ Before writing any code for a task:
   `python .scripts/codegen/generate.py`; put custom logic in the handwritten sibling
 - **Check integration**: do imports resolve? Do callers still work? Is a new command/event
   handler registered in the DI container (`project/container.py`)? Is a new Celery task
-  imported in `project/celery_tasks.py`? Is a DB schema change accompanied by an Alembic
+  imported in `project/presentation/tasks/celery_tasks.py`? Is a DB schema change accompanied by an Alembic
   migration (`flask db migrate`)?
 
 ### 3.3 Validate Immediately

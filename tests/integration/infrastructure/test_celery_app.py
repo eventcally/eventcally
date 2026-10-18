@@ -43,7 +43,7 @@ def test_registered_task_names_are_frozen(app):
 
 
 def test_periodic_tasks_use_frozen_names(app):
-    from project.celery_tasks import setup_periodic_tasks
+    from project.presentation.tasks.celery_tasks import setup_periodic_tasks
 
     sender = Mock()
     setup_periodic_tasks(sender=sender)

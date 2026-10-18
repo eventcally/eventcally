@@ -40,7 +40,7 @@ repo has no GitHub remote configured, note that and continue with codebase analy
    - `project/application/` — commands, command/event handlers, `message_bus.py`
    - `project/infrastructure/` — SQLAlchemy repos, Celery dispatchers, external services
 4. Study the delivery layers: `project/presentation/api/` (REST + marshmallow schemas), `project/presentation/web/views/`
-5. Note the async + codegen entry points: `project/celery_tasks.py`, `.scripts/codegen/generate.py`
+5. Note the async + codegen entry points: `project/presentation/tasks/celery_tasks.py`, `.scripts/codegen/generate.py`
    (+ YAML in `.scripts/codegen/config/`)
 6. Check recent commits with `git log --oneline -5`
 

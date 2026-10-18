@@ -60,7 +60,8 @@ Templates with scaffolding guides exist in `.github/prompts/`:
 Key points:
 - Commands go in `project/application/commands/`, handlers in `project/application/command_handlers/`.
 - Register new handlers in the DI container (`project/container.py`) via `FactoryAggregate`.
-- New Celery tasks must be imported in `project/celery_tasks.py`.
+- New Celery tasks must be imported in `project/presentation/tasks/celery_tasks.py`.
+- Celery task names are a wire contract: every `@celery.task` passes an explicit `name=`; never rename it or derive it from `__name__`. New tasks use `project.<module path>.<func>` of their real module; the frozen set lives in `tests/integration/infrastructure/test_celery_app.py`.
 - Commands are Pydantic models (`Command` or `CommandWithResult[T]`). The `actor` field is auto-added.
 
 ## Adding read-side queries
@@ -91,7 +92,7 @@ Reads in views (incl. `project/presentation/web/modular`) and the API are migrat
 
 ## Environment
 
-- Entry point: `bootstrap.py` (set via `FLASK_APP=.flaskenv`).
+- Entry point: `bootstrap.py` (set via `FLASK_APP=.flaskenv`); it calls `create_app` from `project/factory.py`.
 - Dev server: `flask run --host 0.0.0.0`.
 - Docker Compose (`docker-compose up --build`) runs everything: PostGIS, Redis, Mailhog, Flask, Celery worker/beat, Flower.
 - Required env vars: `DATABASE_URL`, `SECRET_KEY`, `SERVER_NAME`, `REDIS_URL`, `LIMITER_REDIS_URL`, `GOOGLE_MAPS_API_KEY`, mail settings. See `doc/development.md` for full list.
