@@ -92,8 +92,6 @@ def load_app_config_from_env(app: Flask):
         app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 
     if getenv_bool("TESTING"):  # pragma: no cover
-        import project.presentation.cli.test
-
         app.config["SECURITY_EMAIL_VALIDATOR_ARGS"] = {"check_deliverability": False}
 
 
@@ -156,11 +154,6 @@ def create_app(config_override: dict | None = None) -> Flask:
 
     pin_db_session_timezone(app)
 
-    # if app.config["FLASK_DEBUG"]:
-    #     logging.basicConfig(level=logging.DEBUG)
-    #     logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
-    #     logging.getLogger("authlib").setLevel(logging.DEBUG)
-
     from project.infrastructure.reverse_proxied import ReverseProxied
 
     app.wsgi_app = ReverseProxied(app.wsgi_app, app.config["PREFERRED_URL_SCHEME"])
@@ -177,7 +170,6 @@ def create_app(config_override: dict | None = None) -> Flask:
                 "queue_order_strategy": "priority",
                 "priority_steps": list(range(3)),
                 "sep": ":",
-                "queue_order_strategy": "priority",
             },
             "task_default_priority": 1,  # 0=high, 1=normal, 2=low priority
             "task_always_eager": task_always_eager,
@@ -189,11 +181,10 @@ def create_app(config_override: dict | None = None) -> Flask:
     init_celery(app)
 
     # Gunicorn logging
-    if __name__ != "__main__":
-        gunicorn_logger = logging.getLogger("gunicorn.error")
-        if gunicorn_logger.hasHandlers():
-            app.logger.handlers = gunicorn_logger.handlers
-            app.logger.setLevel(gunicorn_logger.level)
+    gunicorn_logger = logging.getLogger("gunicorn.error")
+    if gunicorn_logger.hasHandlers():
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
 
     # One line logging
     from project.infrastructure.one_line_formatter import (
@@ -308,46 +299,6 @@ def create_app(config_override: dict | None = None) -> Flask:
         # Safety net for reads that bypassed SqlAlchemyReadSessionScope.
         container.infrastructure.read_session().remove()
 
-    # Command line
-    import project.presentation.cli.cache
-    import project.presentation.cli.data
-    import project.presentation.cli.dump
-    import project.presentation.cli.event
-    import project.presentation.cli.seo
-    import project.presentation.cli.user
-    from project import init_data
-    from project.presentation.web import requests
-
-    # Routes
-    from project.presentation.web.views import (
-        admin,
-        admin_blueprint,
-        admin_unit_member_invitation,
-        custom_widget,
-        dump,
-        event,
-        event_date,
-        flask_admin,
-        image,
-        js,
-        manage,
-        manage_admin_unit,
-        manage_blueprint,
-        oauth,
-        organization,
-        organizer,
-        planning,
-        reference,
-        reference_request,
-        root,
-    )
-    from project.presentation.web.views import user as user_view
-    from project.presentation.web.views import (
-        user_blueprint,
-        verification_request,
-        widget,
-    )
-
     # Register blueprints
     from project.presentation.web.views.admin_blueprint import admin_bp
     from project.presentation.web.views.main_blueprint import main_bp
@@ -426,8 +377,3 @@ sitemap_file = "sitemap.xml"
 robots_txt_file = "robots.txt"
 sitemap_path = os.path.join(cache_path, sitemap_file)
 robots_txt_path = os.path.join(cache_path, robots_txt_file)
-
-
-if __name__ == "__main__":  # pragma: no cover
-    app = create_app()
-    app.run()
