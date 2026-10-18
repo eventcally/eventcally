@@ -170,7 +170,7 @@ def save_token(token, request):
         user_id=user_id,
         app_id=app_id,
         app_installation_id=app_installation_id,
-        **token
+        **token,
     )
     db.session.add(item)
     db.session.commit()

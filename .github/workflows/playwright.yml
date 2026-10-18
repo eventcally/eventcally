@@ -5,7 +5,7 @@ on: [pull_request, workflow_dispatch]
 
 # This workflow never uses GITHUB_TOKEN; checkout only needs to read the repo.
 # The repository default is currently `write`, so without this the job would hand
-# a write-capable token to everything `pip install` and `npm ci` pull in.
+# a write-capable token to everything `uv sync` and `npm ci` pull in.
 permissions:
   contents: read
 
@@ -47,16 +47,21 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
         with:
+          version: "0.12.1"
           python-version: "3.12"
-          cache: "pip"
+          enable-cache: true
+          # Old pins (cffi 1.14.4) have no cp312 wheel and are built from source on the runner.
+          # Keep this job's cache apart from the ubuntu-latest jobs, whose wheels need a newer
+          # glibc than ubuntu-22.04 provides.
+          cache-suffix: ubuntu-22.04
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          uv sync --locked
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Start server
         run: |
@@ -148,7 +153,7 @@ jobs:
     if: always() && github.event_name == 'pull_request'
     runs-on: ubuntu-22.04
 
-    # Scoped deliberately: the test job runs `pip install`, `npm ci` and a browser
+    # Scoped deliberately: the test job runs `uv sync`, `npm ci` and a browser
     # with a read-only token, and only this job — which runs no third-party code
     # beyond the pinned action — can write to the pull request.
     permissions:

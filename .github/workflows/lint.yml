@@ -19,8 +19,14 @@ jobs:
           flake8_version: "6.1.0"
       - name: Run import whitelist check
         run: python .scripts/module_import_whitelist.py project/domain project/application
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.1"
+          python-version: "3.12"
+          enable-cache: true
       - name: Install import-linter
-        run: pip install import-linter==1.12.1
+        run: uv sync --locked --only-dev
       - name: Run import-linter
-        run: lint-imports
+        run: uv run --no-sync lint-imports
 

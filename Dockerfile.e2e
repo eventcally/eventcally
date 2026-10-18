@@ -5,16 +5,23 @@
 FROM mcr.microsoft.com/playwright:v1.62.1-noble
 
 RUN apt-get update -qq \
-    && apt-get install -y --no-install-recommends python3-venv python3-pip python3-dev build-essential libpq-dev libffi-dev libssl-dev postgresql-client curl \
+    && apt-get install -y --no-install-recommends python3-dev build-essential libpq-dev libffi-dev libssl-dev postgresql-client curl \
     && rm -rf /var/lib/apt/lists/*
 
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
+COPY --from=ghcr.io/astral-sh/uv:0.12.1 /uv /uvx /bin/
+
+# The venv lives in /opt/venv and the lock files are staged in /opt/py, both outside
+# /app, so the bind-mounted repo cannot shadow them.
+ENV VIRTUAL_ENV=/opt/venv \
+    UV_PROJECT_ENVIRONMENT=/opt/venv \
+    UV_PYTHON=python3 \
+    UV_PYTHON_DOWNLOADS=never \
+    UV_LINK_MODE=copy
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+COPY pyproject.toml uv.lock .python-version /opt/py/
+RUN cd /opt/py && uv sync --locked
 
 # Node modules live outside /app so the bind-mounted repo (and a macOS node_modules in
 # it) cannot shadow them.

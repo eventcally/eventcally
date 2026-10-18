@@ -26,6 +26,7 @@ README.md
 tmp
 celerybeat-schedule
 venv/
+.venv/
 htmlcov/
 .pytest_cache/
 .coverage

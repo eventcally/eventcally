@@ -15,7 +15,7 @@ background work on Celery, and stores geo data in PostgreSQL/PostGIS.
 
 ## Tech Stack
 
-- **Runtime**: Python (3.12 in CI, 3.11 for pre-commit); venv in `venv/`
+- **Runtime**: Python 3.12 (`.python-version`; 3.11 for pre-commit hook envs); deps in `pyproject.toml` + `uv.lock`, managed by uv; venv in `.venv/`
 - **Web**: Flask 3 (Flask-SQLAlchemy, Flask-Migrate, Flask-Security-Too, Flask-Admin, Flask-RESTful, flask-apispec)
 - **Architecture**: DDD with a `dependency-injector` container; layering enforced by `import-linter`
 - **Tasks**: Celery 5 (Redis broker, celery beat, Flower)
@@ -31,8 +31,8 @@ background work on Celery, and stores geo data in PostgreSQL/PostGIS.
 
 ```bash
 # Setup
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
+uv sync                                        # creates .venv with runtime + dev deps
+source .venv/bin/activate                      # or prefix commands with `uv run`
 
 # Run locally (needs DATABASE_URL, SECRET_KEY, SERVER_NAME, REDIS_URL,
 #              LIMITER_REDIS_URL, GOOGLE_MAPS_API_KEY, mail settings)
@@ -102,6 +102,7 @@ isort . && black . && flake8 && lint-imports && \
 - Query handlers must return materialized read models; the read session is closed when the bus returns, so lazy loads fail. The read session only sees committed data.
 - PostGIS migration diffs from `flask db migrate` sometimes need manual correction — always review before `upgrade`.
 - flake8 ignores E501/E203/E711 (Black owns formatting); don't fight isort skipping `*_generated.py`.
+- Never hand-edit `uv.lock`: use `uv add <pkg>` / `uv add --dev <pkg>` / `uv lock --upgrade-package <pkg>`. CI and Docker run `uv sync --locked`, so commit `uv.lock` together with `pyproject.toml`. `setuptools` stays pinned (jsonschema 3.2.0 needs `pkg_resources`).
 - Required env vars for running: `DATABASE_URL`, `SECRET_KEY`, `SERVER_NAME`, `REDIS_URL`, `LIMITER_REDIS_URL`, `GOOGLE_MAPS_API_KEY`, mail settings (see `doc/development.md`).
 
 ## Key Files

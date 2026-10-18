@@ -84,7 +84,7 @@ class Seeder(object):
         verified=False,
         can_invite_other=True,
         incoming_verification_requests_allowed=False,
-        **kwargs
+        **kwargs,
     ):
         from project.infrastructure.models import AdminUnit, Location
         from project.infrastructure.seed_helpers import insert_admin_unit_for_user
@@ -499,7 +499,7 @@ class Seeder(object):
         planned=False,
         internal_tags="",
         custom_category_ids=None,
-        **kwargs
+        **kwargs,
     ):
         from project.infrastructure.models import CustomEventCategory, EventOrganizer
 
