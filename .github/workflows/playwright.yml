@@ -53,6 +53,10 @@ jobs:
           version: "0.12.1"
           python-version: "3.12"
           enable-cache: true
+          # Old pins (cffi 1.14.4) have no cp312 wheel and are built from source on the runner.
+          # Keep this job's cache apart from the ubuntu-latest jobs, whose wheels need a newer
+          # glibc than ubuntu-22.04 provides.
+          cache-suffix: ubuntu-22.04
 
       - name: Install dependencies
         run: |
