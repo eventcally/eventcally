@@ -4,8 +4,8 @@ from io import StringIO
 
 from flask import current_app, url_for
 
-from project import cache_path, robots_txt_path, sitemap_path
 from project.application.queries import ListSitemapEventsQuery
+from project.shared.paths import cache_path, robots_txt_path, sitemap_path
 from project.shared.utils import make_dir
 
 

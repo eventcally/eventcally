@@ -212,13 +212,13 @@ class UtilActions(object):
         return response
 
     def mock_db_commit(self, mocker):
-        mocked_commit = mocker.patch("project.db.session.commit")
+        mocked_commit = mocker.patch("project.extensions.db.session.commit")
         mocked_commit.side_effect = IntegrityError(
             "MockException", "MockException", None
         )
 
     def mock_db_commit_with_error(self, mocker, error: IntegrityError):
-        mocked_commit = mocker.patch("project.db.session.commit")
+        mocked_commit = mocker.patch("project.extensions.db.session.commit")
         mocked_commit.side_effect = error
 
     def assert_send_mail_called(self, expected_recipients, expected_contents=None):

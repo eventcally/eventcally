@@ -1,6 +1,6 @@
 from flask import current_app
 
-from project import img_path
+from project.shared.paths import img_path
 from project.shared.utils import clear_files_in_dir
 
 

@@ -4,14 +4,14 @@ import sqlalchemy
 def test_mail_server(monkeypatch):
     monkeypatch.setenv("MAIL_SERVER", "mailserver.com")
 
-    from project import create_app
+    from project.factory import create_app
 
     app = create_app({"TESTING": True})
     app.testing = True
 
 
 def test_log_message_called_via_email_dispatched_signal(app):
-    """Covers __init__.py lines 187-188: log_message function body."""
+    """Covers the log_message function body registered by the factory."""
     from unittest.mock import MagicMock
 
     from flask_mail import email_dispatched

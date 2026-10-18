@@ -10,8 +10,6 @@ layers =
     project.infrastructure
     project.application
     project.domain
-ignore_imports =
-  project -> project.**
 
 [importlinter:contract:delivery-reads-through-queries]
 name = Delivery layers and template/access helpers read through queries, not ORM models
@@ -43,10 +41,6 @@ forbidden_modules =
     project.application
     project.infrastructure
     project.presentation
-# The root package __init__ is the app factory and imports every layer; every module
-# "imports" it implicitly, so those edges are ignored like in the layers contract.
-ignore_imports =
-    project -> project.**
 
 [importlinter:contract:web-does-not-import-api]
 name = The web channel does not import the API channel

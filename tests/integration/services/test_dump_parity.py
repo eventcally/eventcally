@@ -60,9 +60,9 @@ def test_dumps_and_sitemap_match_snapshot(client, app, db, seeder: Seeder):
     actual = {}
 
     with app.app_context():
-        from project import dump_org_path, dump_path, sitemap_path
         from project.services.dump import dump_admin_unit, dump_all
         from project.services.seo import generate_sitemap
+        from project.shared.paths import dump_org_path, dump_path, sitemap_path
 
         app.config["SERVER_NAME"] = "localhost"
         dump_all()

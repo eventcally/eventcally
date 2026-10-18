@@ -87,7 +87,7 @@ def test_delete_event_task(client, seeder, app, db):
 
 
 def test_delete_ghost_users_task_fans_out_to_ghost_task(client, seeder, app, mocker):
-    from project import celery_tasks
+    import project.celery_tasks as celery_tasks
 
     ghost_id = seeder.create_user("ghost@test.de", confirm=False)
     mocker.patch.object(celery_tasks, "group")

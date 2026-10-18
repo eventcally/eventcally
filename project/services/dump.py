@@ -4,7 +4,6 @@ import shutil
 
 from flask import current_app
 
-from project import dump_org_path, dump_path
 from project.application.queries import (
     GetImageFileQuery,
     ListDumpEventCategoriesQuery,
@@ -21,6 +20,7 @@ from project.presentation.api.organization.schemas import OrganizationDumpSchema
 from project.presentation.api.organizer.schemas import OrganizerDumpSchema
 from project.presentation.api.place.schemas import PlaceDumpSchema
 from project.shared.imageutils import get_image_from_bytes
+from project.shared.paths import dump_org_path, dump_path
 from project.shared.utils import clear_files_in_dir, make_dir
 
 BATCH_SIZE = 200

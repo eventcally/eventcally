@@ -30,3 +30,23 @@ assert not hasattr(project, 'app')
         f"Import should work without DATABASE_URL or app creation. "
         f"stderr={result.stderr} stdout={result.stdout}"
     )
+
+
+def test_importing_domain_does_not_load_flask_or_the_factory():
+    code = """
+import sys
+import project.domain
+
+assert not any(m == "flask" or m.startswith("flask.") for m in sys.modules)
+assert "project.factory" not in sys.modules
+"""
+
+    result = subprocess.run(
+        [sys.executable, "-c", code],
+        env=os.environ.copy(),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, f"stderr={result.stderr} stdout={result.stdout}"

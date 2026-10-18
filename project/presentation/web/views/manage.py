@@ -10,7 +10,6 @@ from flask import (
 )
 from flask_security import auth_required, current_user
 
-from project import dump_org_path
 from project.application.queries import (
     ListUserMemberInvitationsQuery,
     ListUserOrganizationInvitationsQuery,
@@ -33,6 +32,7 @@ from project.presentation.web.views.utils import (
     get_celery_poll_result,
     permission_missing,
 )
+from project.shared.paths import dump_org_path
 
 
 def _get_invitations():

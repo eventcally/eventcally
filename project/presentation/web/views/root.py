@@ -14,10 +14,10 @@ from flask_babel import gettext
 from markupsafe import Markup
 from sqlalchemy import text
 
-from project import cache_path, dump_path, robots_txt_file, sitemap_file
 from project.extensions import db, limiter
 from project.presentation.web.views.main_blueprint import main_bp
 from project.presentation.web.views.utils import get_settings
+from project.shared.paths import cache_path, dump_path, robots_txt_file, sitemap_file
 
 
 @main_bp.route("/")

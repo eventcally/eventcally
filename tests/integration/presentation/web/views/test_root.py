@@ -78,7 +78,7 @@ def test_privacy(app, db, utils):
 
 
 def test_developer(client, seeder, utils):
-    from project import dump_path
+    from project.shared.paths import dump_path
 
     file_name = "all.zip"
     all_path = os.path.join(dump_path, file_name)

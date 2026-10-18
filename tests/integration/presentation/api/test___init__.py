@@ -166,7 +166,7 @@ def _endpoint_set(name):
     "endpoint_set_name, config_key, token", UNUSED_API_ENDPOINT_FLAGS
 )
 def test_init_api_unused_endpoints_disabled(endpoint_set_name, config_key, token):
-    from project import create_app
+    from project.factory import create_app
 
     app = create_app(
         {
@@ -188,7 +188,7 @@ def test_init_api_unused_endpoints_disabled(endpoint_set_name, config_key, token
 def test_init_api_unused_endpoints_enabled_by_default(
     endpoint_set_name, config_key, token
 ):
-    from project import create_app
+    from project.factory import create_app
 
     app = create_app(
         {
@@ -209,7 +209,7 @@ def test_init_api_unused_endpoints_enabled_by_default(
 def test_init_api_unused_endpoints_disabled_via_feature_flags_env(
     endpoint_set_name, config_key, token, monkeypatch
 ):
-    from project import create_app
+    from project.factory import create_app
 
     monkeypatch.setenv("FEATURE_FLAGS", token)
 
