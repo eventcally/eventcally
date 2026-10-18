@@ -72,7 +72,7 @@ isort . && black . && flake8 && lint-imports && \
   - `web/` — server-rendered site: `views/`, `modular/` (the shared modular CRUD view framework), `forms/`, `templates/`, `static/`, `jinja_filters.py`
   - `api/` — REST resources + marshmallow schemas (flat; the version lives in the `/api/v1` URL prefix)
   - `cli/` — Flask CLI commands (outside the read-path contract: `cli/test.py` is a dev/e2e fixture CLI)
-  - `shared/` — cross-**channel** helpers (`access`, `permissions`, `oauth2_extensions`, `query_args`, `query_results`, `current_admin_unit`, `mail`, `scopes`, `rate_limit`, `urls`)
+  - `shared/` — cross-**channel** helpers (`access`, `permissions`, `oauth2_extensions`, `query_args`, `query_results`, `current_admin_unit`, `scopes`, `rate_limit`, `urls`)
 - `project/templates/email/` — e-mail templates; they stay outside `presentation/web` because infrastructure renders them (also from Celery). Flask loads both template roots through a `ChoiceLoader`
 - `.scripts/codegen/` — `generate.py` + YAML schemas in `.scripts/codegen/config/`
 - `tests/` — `unit/` (no services: domain, application, pure helpers) and `integration/` (PostGIS + Redis; holds `conftest.py`, `base_test.py`, `seeder.py`). **Tests mirror the source tree**: the tests of `project/presentation/web/views/event.py` live in `tests/integration/presentation/web/views/test_event.py`

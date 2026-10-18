@@ -221,27 +221,13 @@ class UtilActions(object):
         mocked_commit = mocker.patch("project.db.session.commit")
         mocked_commit.side_effect = error
 
-    def mock_send_mails(self, mocker):
-        return mocker.patch("project.presentation.shared.mail.send_mails_with_body")
+    def assert_send_mail_called(self, expected_recipients, expected_contents=None):
+        sent_emails = self._app.test_email_service.sent_emails
+        assert len(sent_emails) > 0, "No mail sent"
 
-    def mock_send_mails_async(self, mocker):
-        return mocker.patch(
-            "project.presentation.shared.mail.send_mails_with_signatures_async"
-        )
-
-    def assert_send_mail_called(
-        self, mock, expected_recipients, expected_contents=None
-    ):
-        mock.assert_called_once()
-        args, kwargs = mock.call_args
-
-        if mock._extract_mock_name() == "send_mails_with_signatures_async":
-            signatures = args[0]
-            send_recipients = [s[0] for s in signatures]
-            first_signature = signatures[0]
-            _, subject, body, html = first_signature
-        else:
-            send_recipients, subject, body, html = args
+        send_recipients = [m["recipient"] for m in sent_emails]
+        body = sent_emails[0]["body"]
+        html = sent_emails[0]["html"]
 
         if not isinstance(expected_recipients, list):
             expected_recipients = [expected_recipients]

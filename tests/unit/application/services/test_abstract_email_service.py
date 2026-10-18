@@ -36,6 +36,9 @@ class _ConcreteEmailService(AbstractEmailService):
         )
         self.sent_signatures = []
 
+    def send_mails_with_signatures(self, signatures):
+        self.sent_signatures = signatures
+
     def send_mails_with_signatures_async(self, signatures):
         self.sent_signatures = signatures
         return signatures
@@ -89,6 +92,29 @@ class TestAbstractEmailService:
 
         try:
             AbstractEmailService.send_mails_with_signatures_async(svc, [])
+            assert False, "Expected NotImplementedError"
+        except NotImplementedError:
+            pass
+
+    def test_send_template_mail_to_address_sends_one_signature_sync(self):
+        svc = _ConcreteEmailService()
+
+        svc.send_template_mail_to_address(
+            "a@example.com", "test_email", site_name="EventCally"
+        )
+
+        assert len(svc.sent_signatures) == 1
+        email, subject, body, html = svc.sent_signatures[0]
+        assert email == "a@example.com"
+        assert subject.startswith("en:")
+        assert body == "en:email/test_email.txt"
+        assert html == "en:email/test_email.html"
+
+    def test_base_send_mails_with_signatures_raises(self):
+        svc = _ConcreteEmailService()
+
+        try:
+            AbstractEmailService.send_mails_with_signatures(svc, [])
             assert False, "Expected NotImplementedError"
         except NotImplementedError:
             pass

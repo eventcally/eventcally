@@ -116,7 +116,6 @@ from .list_event_dates_of_event_handler import ListEventDatesOfEventHandler
 from .list_event_organizers_handler import ListEventOrganizersHandler
 from .list_event_place_suggestions_handler import ListEventPlaceSuggestionsHandler
 from .list_event_places_handler import ListEventPlacesHandler
-from .list_event_report_recipients_handler import ListEventReportRecipientsHandler
 from .list_events_handler import ListEventsHandler
 from .list_ghost_user_ids_handler import ListGhostUserIdsHandler
 from .list_incoming_event_reference_requests_handler import (

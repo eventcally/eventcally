@@ -6,7 +6,6 @@ from project.application.query_handlers import (
     GetManageMenuOptionsHandler,
     GetSettingsHandler,
     GetSiteNoticesHandler,
-    ListEventReportRecipientsHandler,
 )
 from project.application.read_models.access_helper_read_models import (
     ManageMenuOptionsReadModel,
@@ -97,11 +96,3 @@ def test_settings_pass_through():
     assert settings.tos == "Terms"
     assert settings.privacy == "Privacy"
     assert settings.contact is None
-
-
-def test_event_report_recipients_ask_for_events_write():
-    recipients = ListEventReportRecipientsHandler(FakeAccessRepo()).handle(
-        queries.ListEventReportRecipientsQuery(admin_unit_id=4)
-    )
-
-    assert [(r.id, r.email) for r in recipients] == [(4, "events:write")]

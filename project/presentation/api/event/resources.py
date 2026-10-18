@@ -2,6 +2,7 @@ from flask import g, make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
 
 from project.application.commands.delete_event_command import DeleteEventCommand
+from project.application.commands.report_event_command import ReportEventCommand
 from project.application.queries import (
     GetEventDetailQuery,
     ListEventDatesOfEventQuery,
@@ -36,7 +37,6 @@ from project.presentation.shared.event_query_args import (
     event_search_criteria_from_request,
     reference_admin_unit_id_for_api,
 )
-from project.presentation.shared.mail import send_event_report_mails
 from project.presentation.shared.query_args import (
     enum_or_none,
     page_request_from_kwargs,
@@ -171,7 +171,13 @@ class EventReportsResource(BaseResource):
         event = result_or_404(self.query_bus.handle(GetEventDetailQuery(id=id)))
 
         report = EventReportPostSchema().load(request.json)
-        send_event_report_mails(event, report)
+        self.message_bus.handle_command(
+            ReportEventCommand(
+                event_id=event.id,
+                actor=self.app_context_provider.get_current_actor(),
+                **report,
+            )
+        )
         return make_response("", 204)
 
 

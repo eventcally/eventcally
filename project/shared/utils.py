@@ -12,10 +12,6 @@ widget_default_background_color = "#ffffff"
 widget_default_primary_color = "#007bff"
 
 
-def dummy_gettext(message: str):
-    return message
-
-
 def strings_are_equal_ignoring_case(string1: str, string2: str):
     return string1 and string2 and string1.casefold() == string2.casefold()
 

@@ -782,13 +782,12 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
         assert event is None
 
 
-def test_report_mail(client, seeder: Seeder, utils: UtilActions, app, mocker):
+def test_report_mail(client, seeder: Seeder, utils: UtilActions, app):
     user_id, admin_unit_id = seeder.setup_api_access(admin=False, user_access=False)
     event_id = seeder.create_event(admin_unit_id)
     seeder.create_user(email="admin@test.de", admin=True)
     seeder.create_user(email="normal@test.de", admin=False)
 
-    mail_mock = utils.mock_send_mails_async(mocker)
     url = utils.get_url("api_v1_event_reports", id=event_id)
     response = utils.post_json(
         url,
@@ -801,7 +800,6 @@ def test_report_mail(client, seeder: Seeder, utils: UtilActions, app, mocker):
 
     utils.assert_response_no_content(response)
     utils.assert_send_mail_called(
-        mail_mock,
         ["test@test.de", "admin@test.de"],
         [
             "Firstname Lastname",

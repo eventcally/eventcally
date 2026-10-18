@@ -81,6 +81,7 @@ from .reject_organization_verification_request_command import (
     RejectOrganizationVerificationRequestCommand,
 )
 from .remove_organization_member_command import RemoveOrganizationMemberCommand
+from .report_event_command import ReportEventCommand
 from .request_event_reference_command import (
     RequestEventReferenceCommand,
     RequestEventReferenceCommandResult,
@@ -159,6 +160,7 @@ __all__ = [
     "UpdateEventOrganizerCommand",
     "UpdateEventPlaceCommand",
     "RequestOrganizationDeletionCommand",
+    "ReportEventCommand",
     "CancelOrganizationDeletionCommand",
     "DeleteOrganizationCommand",
     "AttemptToDeliverWebhookCommand",

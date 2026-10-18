@@ -53,6 +53,7 @@ from .reject_organization_verification_request_handler import (
     RejectOrganizationVerificationRequestHandler,
 )
 from .remove_organization_member_handler import RemoveOrganizationMemberHandler
+from .report_event_handler import ReportEventHandler
 from .request_event_reference_handler import RequestEventReferenceHandler
 from .request_organization_deletion_handler import RequestOrganizationDeletionHandler
 from .request_organization_verification_handler import (
@@ -119,6 +120,7 @@ __all__ = [
     "UpdateEventPlaceHandler",
     "UpdateEventHandler",
     "RequestOrganizationDeletionHandler",
+    "ReportEventHandler",
     "CreateApiKeyHandler",
     "UpdateApiKeyHandler",
     "DeleteApiKeyHandler",

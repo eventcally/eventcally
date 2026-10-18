@@ -18,13 +18,9 @@ from project.application.queries import (
     ListUsersForAdminQuery,
 )
 from project.application.query_bus import QueryBus
+from project.application.services.abstract_email_service import AbstractEmailService
 from project.container import Application
 from project.domain.errors import BaseError
-from project.presentation.shared.mail import (
-    send_template_mail,
-    send_template_mail_async,
-    send_template_mails_to_users_async,
-)
 from project.presentation.shared.query_results import (
     abort_if_page_out_of_range,
     page_request_from_request_args,
@@ -104,7 +100,10 @@ def admin_settings(message_bus: MessageBus = Provide[Application.cqrs.message_bu
 
 @admin_bp.route("/email", methods=["GET", "POST"])
 @roles_required("admin")
-def admin_email():
+@inject
+def admin_email(
+    email_service: AbstractEmailService = Provide[Application.services.email_service],
+):
     form = AdminTestEmailForm()
 
     if "poll" in request.args:  # pragma: no cover
@@ -115,12 +114,16 @@ def admin_email():
         context = {"site_name": current_app.config["SITE_NAME"]}
 
         if "async" in request.args:  # pragma: no cover
-            result = send_template_mail_async(form.recipient.data, template, **context)
+            result = email_service.send_template_mail_to_address_async(
+                form.recipient.data, template, **context
+            )
             result.save()
             return {"result_id": result.id}
 
         try:
-            send_template_mail(form.recipient.data, template, **context)
+            email_service.send_template_mail_to_address(
+                form.recipient.data, template, **context
+            )
             flash(gettext("Mail sent successfully"), "success")
         except Exception as e:  # pragma: no cover
             flash(str(e), "danger")
@@ -133,7 +136,10 @@ def admin_email():
 @admin_bp.route("/newsletter", methods=["GET", "POST"])
 @roles_required("admin")
 @inject
-def admin_newsletter(query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+def admin_newsletter(
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+    email_service: AbstractEmailService = Provide[Application.services.email_service],
+):
     form = AdminNewsletterForm()
 
     if "poll" in request.args:  # pragma: no cover
@@ -147,14 +153,14 @@ def admin_newsletter(query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
         }
 
         if form.recipient_choice.data == 1:  # pragma: no cover
-            result = send_template_mail_async(
+            result = email_service.send_template_mail_to_address_async(
                 form.test_recipient.data,
                 template,
                 **context,
             )
         else:
             users = query_bus.handle(ListNewsletterRecipientsQuery())
-            result = send_template_mails_to_users_async(
+            result = email_service.send_template_mails_to_users_async(
                 users,
                 template,
                 **context,

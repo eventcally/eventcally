@@ -9,10 +9,10 @@ from project.celery_init import celery, force_locale
     priority=0,
 )
 def send_mail_with_body_task(recipient, subject, body, html):
-    from project.presentation.shared.mail import send_mails_with_body
+    mail_sender = current_app.container.infrastructure.mail_sender()
 
     with force_locale():
-        send_mails_with_body([recipient], subject, body, html)
+        mail_sender.send_mails_with_body([recipient], subject, body, html)
 
 
 @celery.task(

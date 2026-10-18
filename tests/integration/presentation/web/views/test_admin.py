@@ -63,13 +63,12 @@ def test_admin_settings(client, seeder, utils, app, mocker, db_error):
         assert settings.privacy == "Mein Datenschutz"
 
 
-def test_admin_email(client, seeder, utils, app, mocker):
+def test_admin_email(client, seeder, utils, app):
     user_id, admin_unit_id = seeder.setup_base(True)
 
     url = utils.get_url("admin.admin_email")
     response = utils.get_ok(url)
 
-    mail_mock = utils.mock_send_mails(mocker)
     response = utils.post_form(
         url,
         response,
@@ -79,7 +78,7 @@ def test_admin_email(client, seeder, utils, app, mocker):
     )
 
     utils.assert_response_ok(response)
-    utils.assert_send_mail_called(mail_mock, "test@test.de")
+    utils.assert_send_mail_called("test@test.de")
 
 
 def test_newsletter(app, utils, seeder):
