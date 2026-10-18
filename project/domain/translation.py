@@ -3,6 +3,6 @@ def dummy_gettext(message: str) -> str:
 
     Domain and application code cannot depend on flask_babel. Errors carry the
     untranslated text, and the delivery layer translates it at runtime
-    (see ``project/views/utils.py::handleBaseError``).
+    (see ``project/presentation/web/views/utils.py::handleBaseError``).
     """
     return message

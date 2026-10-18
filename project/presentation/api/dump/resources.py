@@ -1,0 +1,22 @@
+from flask_apispec import doc, marshal_with
+
+from project.presentation.api import add_api_resource
+from project.presentation.api.dump.schemas import DumpResponseSchema
+from project.presentation.api.resources import BaseResource, require_api_access
+from project.presentation.api.schemas import NoneSchema
+
+
+class DumpResource(BaseResource):
+    @doc(
+        summary="Dump model definition",
+        description="Always returns 404 because the endpoint is just for response definition of the dump data file. Go to the developers page to learn how to download the dump data file.",
+        tags=["Dump"],
+    )
+    @marshal_with(NoneSchema, 404)
+    @marshal_with(DumpResponseSchema, 200)
+    @require_api_access()
+    def get(self, **kwargs):
+        return None, 404
+
+
+add_api_resource(DumpResource, "/dump", "api_v1_dump")

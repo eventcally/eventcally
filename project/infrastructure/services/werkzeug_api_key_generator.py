@@ -1,7 +1,7 @@
 from project.application.services.abstract_api_key_generator import (
     AbstractApiKeyGenerator,
 )
-from project.utils import generate_api_key, hash_api_key
+from project.shared.utils import generate_api_key, hash_api_key
 
 
 class WerkzeugApiKeyGenerator(AbstractApiKeyGenerator):

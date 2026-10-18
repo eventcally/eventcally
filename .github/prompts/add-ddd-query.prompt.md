@@ -6,7 +6,7 @@ argument-hint: "Query name (e.g., ListEventOrganizers, GetEventOrganizer)"
 # Add DDD Query
 
 Scaffold a read path that replaces direct ORM access (`Model.query`, `get_or_404`,
-`paginate()`, `project/services` read helpers) in views (incl. `project/views/modular`) and the API.
+`paginate()`, `project/services` read helpers) in views (incl. `project/presentation/web/modular`) and the API.
 
 Reads go: view / API → `query_bus.handle(query)` → query handler → read repository →
 read-only session. The bus has no unit of work, no commit and no event dispatch.
@@ -204,10 +204,10 @@ class Cqrs(containers.DeclarativeContainer):
 ### 7. Call it from delivery code
 
 **API resource** (`BaseResource` has `self.query_bus`). Build paging and trackable
-criteria from the webargs kwargs with [`project/api/query_args.py`](../../project/api/query_args.py):
+criteria from the webargs kwargs with [`project/presentation/shared/query_args.py`](../../project/presentation/shared/query_args.py):
 ```python
-from project.api.query_args import page_request_from_kwargs, trackable_criteria_from_kwargs
-from project.views.utils import abort_if_page_out_of_range, result_or_404
+from project.presentation.shared.query_args import page_request_from_kwargs, trackable_criteria_from_kwargs
+from project.presentation.shared.query_results import abort_if_page_out_of_range, result_or_404
 
 query = ListEventOrganizersQuery(
     admin_unit_id=id,
@@ -264,7 +264,7 @@ def get_object_title(self, object):
 
 **Modular forms** (e.g. `ajax_validate_<field>`): `self.get_query_bus().handle(query)`.
 
-**Flat view functions** (`project/views/*.py`): inject the bus like the message bus.
+**Flat view functions** (`project/presentation/web/views/*.py`): inject the bus like the message bus.
 ```python
 from dependency_injector.wiring import Provide, inject
 
@@ -298,7 +298,7 @@ Never add an entry by hand: new delivery code reads through queries.
   (404s, sort keys, out-of-range pages).
 - **API parity snapshot**: before switching an endpoint, capture its responses with fixed
   seed data and timestamps, then assert byte equality after the switch. Example:
-  [`tests/integration/api/test_organizer_read_parity.py`](../../tests/integration/api/test_organizer_read_parity.py).
+  [`tests/integration/presentation/api/test_organizer_read_parity.py`](../../tests/integration/presentation/api/test_organizer_read_parity.py).
 
 ## Pitfalls
 
@@ -316,6 +316,6 @@ Never add an entry by hand: new delivery code reads through queries.
 - Bus: [`project/application/query_bus.py`](../../project/application/query_bus.py)
 - Read session + scope: [`project/infrastructure/read_session.py`](../../project/infrastructure/read_session.py)
 - Pagination: [`project/application/read_models/page.py`](../../project/application/read_models/page.py),
-  [`project/views/utils.py`](../../project/views/utils.py) (`page_request_from_request_args`,
+  [`project/presentation/shared/query_results.py`](../../project/presentation/shared/query_results.py) (`page_request_from_request_args`,
   `abort_if_page_out_of_range`, `result_or_404`)
 - Migration plan: `.agents/plans/2026-10-13-cqrs-read-side-migration.plan.md`

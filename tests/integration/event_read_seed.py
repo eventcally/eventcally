@@ -7,7 +7,7 @@ verified) owns one that A references; C ("Unverified Crew") is not verified.
 
 from sqlalchemy import text
 
-from project.dateutils import create_berlin_date
+from project.shared.dateutils import create_berlin_date
 
 TRACKED_TABLES = [
     "adminunit",

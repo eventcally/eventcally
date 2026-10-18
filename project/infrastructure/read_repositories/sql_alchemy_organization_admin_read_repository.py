@@ -20,7 +20,7 @@ from project.infrastructure.read_repositories.read_model_mappers import (
     audit_options,
     to_audit_read_model,
 )
-from project.utils import parse_like_term
+from project.shared.utils import parse_like_term
 
 
 def _select():

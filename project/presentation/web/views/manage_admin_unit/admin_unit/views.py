@@ -1,0 +1,159 @@
+from flask import redirect, request, url_for
+from flask_babel import gettext, lazy_gettext
+
+from project.application.commands.cancel_organization_deletion_command import (
+    CancelOrganizationDeletionCommand,
+)
+from project.presentation.shared.current_admin_unit import current_admin_unit
+from project.presentation.web.modular.base_views import BaseDeleteView, BaseUpdateView
+from project.presentation.web.views.manage_admin_unit.admin_unit.forms import (
+    CancelDeletionForm,
+    RequestDeletionForm,
+    UpdateForm,
+    UpdateWidgetForm,
+)
+from project.presentation.web.views.utils import (
+    flash_non_match_for_deletion,
+    handle_base_error,
+)
+from project.shared.utils import (
+    widget_default_background_color,
+    widget_default_primary_color,
+)
+
+
+class UpdateView(BaseUpdateView):
+    form_class = UpdateForm
+    permission = "settings:write"
+
+    def get_title(self, **kwargs):
+        return lazy_gettext("Settings")
+
+    def create_form(self, **kwargs):
+        form = super().create_form(**kwargs)
+
+        if not current_admin_unit.can_verify_other:
+            del form.verfication_requests
+
+        return form
+
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        cmd = form.create_update_command(object.id)
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
+
+    def get_redirect_url(self, **kwargs):
+        return url_for(request.endpoint)
+
+
+class UpdateWidgetView(BaseUpdateView):
+    template_file_name = "widgets.html"
+    form_class = UpdateWidgetForm
+    permission = "widgets:write"
+
+    def get_title(self, **kwargs):
+        return lazy_gettext("Widgets")
+
+    def create_form(self, **kwargs):
+        form = super().create_form(**kwargs)
+
+        if not form.widget_background_color.data:
+            form.widget_background_color.data = widget_default_background_color
+
+        if not form.widget_primary_color.data:
+            form.widget_primary_color.data = widget_default_primary_color
+
+        if not form.widget_link_color.data:
+            form.widget_link_color.data = widget_default_primary_color
+
+        return form
+
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        cmd = form.create_update_command(object.id)
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
+
+    def get_success_text(self, object, form):
+        return gettext("Settings successfully updated")
+
+    def get_redirect_url(self, **kwargs):
+        return url_for(request.endpoint)
+
+
+class RequestDeletionView(BaseDeleteView):
+    template_file_name = "delete.html"
+    form_class = RequestDeletionForm
+    permission = "settings:write"
+
+    def check_object_access(self, object):
+        result = super().check_object_access(object)
+
+        if result:  # pragma: no cover
+            return result
+
+        if object.deletion_requested_at:  # pragma: no cover
+            return redirect(url_for("manage_admin_unit.cancel_deletion", id=object.id))
+
+    def get_instruction(self, **kwargs):
+        return lazy_gettext(
+            "The organization is not deleted immediately. After a period of time, the organization will be deleted. Until then, the deletion can be canceled."
+        )
+
+    def can_object_be_deleted(self, form, object):
+        return flash_non_match_for_deletion(
+            form.name.data,
+            object.name,
+            gettext("Entered name does not match organization name"),
+        )
+
+    def get_redirect_url(self, **kwargs):
+        return url_for("main.manage_admin_unit", id=current_admin_unit.id)
+
+    def flash_success_message(self, form, object):
+        pass
+
+
+class CancelDeletionView(BaseDeleteView):
+    template_file_name = "delete.html"
+    form_class = CancelDeletionForm
+    permission = "settings:write"
+
+    def check_object_access(self, object):
+        result = super().check_object_access(object)
+
+        if result:  # pragma: no cover
+            return result
+
+        if not object.deletion_requested_at:  # pragma: no cover
+            return redirect(
+                url_for("manage_admin_unit.request_deletion", id=current_admin_unit.id)
+            )
+
+    def get_title(self, **kwargs):
+        return lazy_gettext("Cancel deletion")
+
+    def get_instruction(self, **kwargs):
+        return ""
+
+    def can_object_be_deleted(self, form, object):
+        return flash_non_match_for_deletion(
+            form.name.data,
+            object.name,
+            gettext("Entered name does not match organization name"),
+        )
+
+    def delete_object_from_db(self, object):
+        cmd = CancelOrganizationDeletionCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
+
+    def get_redirect_url(self, **kwargs):
+        return url_for("main.manage_admin_unit", id=current_admin_unit.id)
+
+    def flash_success_message(self, form, object):
+        pass

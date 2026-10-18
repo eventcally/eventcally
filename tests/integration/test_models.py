@@ -86,8 +86,8 @@ def test_event_properties(client, app, db, seeder: Seeder):
     with app.app_context():
         from sqlalchemy.exc import IntegrityError
 
-        from project.dateutils import create_berlin_date
         from project.infrastructure.models import Event, EventDateDefinition
+        from project.shared.dateutils import create_berlin_date
 
         event = Event()
         assert event.min_start_definition is None
@@ -106,7 +106,7 @@ def test_event_properties(client, app, db, seeder: Seeder):
 
 
 def test_image_copyright_text(client, app, db, seeder: Seeder):
-    from project.cli.seed_helpers import upsert_image_with_base64_str
+    from project.infrastructure.seed_helpers import upsert_image_with_base64_str
 
     with app.app_context():
         from sqlalchemy.exc import IntegrityError
@@ -121,7 +121,7 @@ def test_image_copyright_text(client, app, db, seeder: Seeder):
 
 
 def test_event_allday(client, app, db, seeder: Seeder):
-    from project.dateutils import create_berlin_date
+    from project.shared.dateutils import create_berlin_date
 
     user_id, admin_unit_id = seeder.setup_base()
     event_with_start_id = seeder.create_event(
@@ -202,7 +202,7 @@ def test_admin_unit_relations(client, app, db, seeder: Seeder):
     ) = seeder.create_any_admin_unit_relation(admin_unit_id)
 
     with app.app_context():
-        from project.cli.seed_helpers import get_admin_unit_by_id
+        from project.infrastructure.seed_helpers import get_admin_unit_by_id
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         assert len(admin_unit.outgoing_relations) == 1
@@ -223,7 +223,7 @@ def test_admin_unit_verification_requests(client, app, db, seeder: Seeder):
     ) = seeder.create_incoming_admin_unit_verification_request(admin_unit_id)
 
     with app.app_context():
-        from project.cli.seed_helpers import get_admin_unit_by_id
+        from project.infrastructure.seed_helpers import get_admin_unit_by_id
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         assert len(admin_unit.incoming_verification_requests) == 1
@@ -308,7 +308,6 @@ def test_admin_unit_deletion(client, app, db, seeder: Seeder):
     )
 
     with app.app_context():
-        from project.cli.seed_helpers import get_admin_unit_by_id
         from project.infrastructure.models import (
             AdminUnit,
             AdminUnitMemberInvitation,
@@ -322,6 +321,7 @@ def test_admin_unit_deletion(client, app, db, seeder: Seeder):
             EventReference,
             EventReferenceRequest,
         )
+        from project.infrastructure.seed_helpers import get_admin_unit_by_id
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         other_admin_unit = get_admin_unit_by_id(other_admin_unit_id)
@@ -455,8 +455,8 @@ def test_admin_unit_invitations(client, app, db, seeder: Seeder):
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
     with app.app_context():
-        from project.cli.seed_helpers import get_admin_unit_by_id
         from project.infrastructure.models import AdminUnitInvitation
+        from project.infrastructure.seed_helpers import get_admin_unit_by_id
 
         admin_unit = get_admin_unit_by_id(admin_unit_id)
         assert len(admin_unit.admin_unit_invitations) == 1
@@ -599,13 +599,13 @@ def test_delete_admin_unit(client, app, db, seeder: Seeder):
     location_id = seeder.create_location(street="Street")
 
     with app.app_context():
-        from project.cli.seed_helpers import delete_admin_unit
         from project.infrastructure.models import (
             AdminUnit,
             EventOrganizer,
             Image,
             Location,
         )
+        from project.infrastructure.seed_helpers import delete_admin_unit
 
         instance = db.session.get(EventOrganizer, instance_id)
         instance.logo = db.session.get(Image, image_id)
@@ -639,7 +639,7 @@ def test_delete_user(client, app, db, seeder: Seeder):
             Event,
             User,
         )
-        from project.user_datastore import delete_user
+        from project.infrastructure.user_datastore import delete_user
 
         user = db.session.get(User, user_id)
         member_id = user.admin_unit_memberships[0].id

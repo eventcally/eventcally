@@ -7,11 +7,12 @@ from flask import Flask, url_for
 from flask_gzip import Gzip
 from flask_mail import email_dispatched
 from flask_security import Security, SQLAlchemySessionUserDatastore, user_registered
+from jinja2 import ChoiceLoader, FileSystemLoader
 from werkzeug.routing.exceptions import BuildError
 
-from project.custom_session_interface import CustomSessionInterface
 from project.extensions import babel, cors, csrf, db, limiter, mail, migrate, security
-from project.feature_flags import apply_feature_flags_to_config
+from project.infrastructure.custom_session_interface import CustomSessionInterface
+from project.shared.feature_flags import apply_feature_flags_to_config
 
 
 def getenv_bool(name: str, default: str = "False"):
@@ -91,7 +92,7 @@ def load_app_config_from_env(app: Flask):
         app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 
     if getenv_bool("TESTING"):  # pragma: no cover
-        import project.cli.test
+        import project.presentation.cli.test
 
         app.config["SECURITY_EMAIL_VALIDATOR_ARGS"] = {"check_deliverability": False}
 
@@ -122,7 +123,19 @@ def pin_db_session_timezone(app: Flask):
 
 def create_app(config_override: dict | None = None) -> Flask:
     """Application factory function."""
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        template_folder="presentation/web/templates",
+        static_folder="presentation/web/static",
+    )
+    # E-mail templates live outside the web channel: infrastructure renders them
+    # (also from Celery), and they import the web macros (`_macros.html`).
+    app.jinja_loader = ChoiceLoader(
+        [
+            FileSystemLoader(os.path.join(app.root_path, "presentation/web/templates")),
+            FileSystemLoader(os.path.join(app.root_path, "templates")),
+        ]
+    )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECURITY_CONFIRMABLE"] = True
     app.config["SECURITY_POST_LOGIN_VIEW"] = "manage_after_login"
@@ -148,7 +161,7 @@ def create_app(config_override: dict | None = None) -> Flask:
     #     logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
     #     logging.getLogger("authlib").setLevel(logging.DEBUG)
 
-    from project.reverse_proxied import ReverseProxied
+    from project.infrastructure.reverse_proxied import ReverseProxied
 
     app.wsgi_app = ReverseProxied(app.wsgi_app, app.config["PREFERRED_URL_SCHEME"])
 
@@ -183,7 +196,9 @@ def create_app(config_override: dict | None = None) -> Flask:
             app.logger.setLevel(gunicorn_logger.level)
 
     # One line logging
-    from project.one_line_formatter import init_logger_with_one_line_formatter
+    from project.infrastructure.one_line_formatter import (
+        init_logger_with_one_line_formatter,
+    )
 
     init_logger_with_one_line_formatter(logging.getLogger())
     init_logger_with_one_line_formatter(app.logger)
@@ -224,18 +239,17 @@ def create_app(config_override: dict | None = None) -> Flask:
     from project import base_tasks, celery_tasks
 
     # JSON provider
-    from project.jsonld import CustomJsonProvider
+    from project.presentation.web.jsonld import CustomJsonProvider
 
     app.json_provider_class = CustomJsonProvider
 
-    from project.forms.security import (
+    # Setup Flask-Security
+    from project.infrastructure.models import Role, User
+    from project.presentation.web.forms.security import (
         ExtendedConfirmRegisterForm,
         ExtendedForgotPasswordForm,
         ExtendedLoginForm,
     )
-
-    # Setup Flask-Security
-    from project.infrastructure.models import Role, User
 
     user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
     security.init_app(
@@ -253,7 +267,7 @@ def create_app(config_override: dict | None = None) -> Flask:
         sender, user, confirm_token, confirmation_token, form_data
     ):
         if "accept_tos" in form_data and form_data["accept_tos"]:
-            from project.user_datastore import set_user_accepted_tos
+            from project.infrastructure.user_datastore import set_user_accepted_tos
 
             set_user_accepted_tos(user)
             db.session.commit()
@@ -268,7 +282,7 @@ def create_app(config_override: dict | None = None) -> Flask:
     config_oauth(app)
 
     # Initialize REST API (must happen before container.wire() imports api modules)
-    from project.api import init_api
+    from project.presentation.api import init_api
 
     init_api(app)
 
@@ -279,8 +293,9 @@ def create_app(config_override: dict | None = None) -> Flask:
     container.config.from_dict(app.config)
     container.wire(
         packages=[
-            "project.views",
-            "project.api",
+            "project.presentation.web.views",
+            "project.presentation.web.modular",
+            "project.presentation.api",
         ],
         warn_unresolved=True,
     )
@@ -294,16 +309,17 @@ def create_app(config_override: dict | None = None) -> Flask:
         container.infrastructure.read_session().remove()
 
     # Command line
-    import project.cli.cache
-    import project.cli.data
-    import project.cli.dump
-    import project.cli.event
-    import project.cli.seo
-    import project.cli.user
-    from project import init_data, jinja_filters, requests
+    import project.presentation.cli.cache
+    import project.presentation.cli.data
+    import project.presentation.cli.dump
+    import project.presentation.cli.event
+    import project.presentation.cli.seo
+    import project.presentation.cli.user
+    from project import init_data
+    from project.presentation.web import requests
 
     # Routes
-    from project.views import (
+    from project.presentation.web.views import (
         admin,
         admin_blueprint,
         admin_unit_member_invitation,
@@ -325,15 +341,19 @@ def create_app(config_override: dict | None = None) -> Flask:
         reference_request,
         root,
     )
-    from project.views import user as user_view
-    from project.views import user_blueprint, verification_request, widget
+    from project.presentation.web.views import user as user_view
+    from project.presentation.web.views import (
+        user_blueprint,
+        verification_request,
+        widget,
+    )
 
     # Register blueprints
-    from project.views.admin_blueprint import admin_bp
-    from project.views.main_blueprint import main_bp
-    from project.views.manage_admin_unit import manage_admin_unit_bp
-    from project.views.manage_blueprint import manage_bp
-    from project.views.user_blueprint import user_bp
+    from project.presentation.web.views.admin_blueprint import admin_bp
+    from project.presentation.web.views.main_blueprint import main_bp
+    from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
+    from project.presentation.web.views.manage_blueprint import manage_bp
+    from project.presentation.web.views.user_blueprint import user_bp
 
     app.register_blueprint(admin_bp)
     app.register_blueprint(manage_bp)
@@ -352,12 +372,12 @@ def create_app(config_override: dict | None = None) -> Flask:
         return Unauthorized()
 
     # Initialize Jinja filters and context processors
-    from project.jinja_filters import init_jinja_filters
+    from project.presentation.web.jinja_filters import init_jinja_filters
 
     init_jinja_filters(app)
 
     # Initialize Flask-Admin
-    from project.views.flask_admin import init_admin
+    from project.presentation.web.views.flask_admin import init_admin
 
     init_admin(app)
 
@@ -367,17 +387,17 @@ def create_app(config_override: dict | None = None) -> Flask:
     register_oauth2_scheme_once(app)
 
     # Register request hooks
-    from project.requests import init_requests
+    from project.presentation.web.requests import init_requests
 
     init_requests(app)
 
     # Register CLI command groups
-    from project.cli.cache import cache_cli
-    from project.cli.data import data_cli
-    from project.cli.dump import dump_cli
-    from project.cli.event import event_cli
-    from project.cli.seo import seo_cli
-    from project.cli.user import user_cli
+    from project.presentation.cli.cache import cache_cli
+    from project.presentation.cli.data import data_cli
+    from project.presentation.cli.dump import dump_cli
+    from project.presentation.cli.event import event_cli
+    from project.presentation.cli.seo import seo_cli
+    from project.presentation.cli.user import user_cli
 
     app.cli.add_command(cache_cli)
     app.cli.add_command(data_cli)
@@ -387,7 +407,7 @@ def create_app(config_override: dict | None = None) -> Flask:
     app.cli.add_command(user_cli)
 
     if getenv_bool("TESTING"):  # pragma: no cover
-        from project.cli.test import test_cli
+        from project.presentation.cli.test import test_cli
 
         app.cli.add_command(test_cli)
 

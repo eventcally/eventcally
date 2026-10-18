@@ -39,9 +39,9 @@ repo has no GitHub remote configured, note that and continue with codebase analy
    - `project/domain/` — models, abstract interfaces, business logic
    - `project/application/` — commands, command/event handlers, `message_bus.py`
    - `project/infrastructure/` — SQLAlchemy repos, Celery dispatchers, external services
-4. Study the delivery layers: `project/api/` (REST + marshmallow schemas), `project/views/`
-5. Note the async + codegen entry points: `project/celery_tasks.py`, `codegen/generate.py`
-   (+ YAML in `codegen/config/`)
+4. Study the delivery layers: `project/presentation/api/` (REST + marshmallow schemas), `project/presentation/web/views/`
+5. Note the async + codegen entry points: `project/celery_tasks.py`, `.scripts/codegen/generate.py`
+   (+ YAML in `.scripts/codegen/config/`)
 6. Check recent commits with `git log --oneline -5`
 
 ## Output
@@ -54,7 +54,7 @@ Produce a scannable summary of what you learned:
   - Architecture: DDD with a `dependency-injector` container; layering enforced by `import-linter`
   - Data: PostgreSQL + PostGIS via SQLAlchemy 2 ORM + GeoAlchemy2; Alembic migrations
   - Async: Celery workers + beat scheduler (Redis broker), Flower
-- **Data Model**: Core entities (from `project/domain/models/` and `codegen/config/models/`)
+- **Data Model**: Core entities (from `project/domain/models/` and `.scripts/codegen/config/models/`)
 - **Key Patterns**: DDD layering (`domain` ← `application` ← `infrastructure`); commands →
   handlers → message bus; repositories over the ORM; `*_generated.py` from codegen
 - **Current State**: Recent commits, current branch, any issue context loaded

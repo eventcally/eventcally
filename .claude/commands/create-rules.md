@@ -36,7 +36,7 @@ nothing has diverged from that, then note the shape:
 
 | Type | Indicators |
 | ------ | ------------ |
-| Web app + REST API | Flask app (`bootstrap.py` → `create_app()`), `project/views/`, `project/api/` |
+| Web app + REST API | Flask app (`bootstrap.py` → `create_app()`), `project/presentation/web/views/`, `project/presentation/api/` |
 | DDD command/event core | `project/application/` (commands, handlers, message bus) over `project/domain/` |
 | Async workers | Celery tasks (`project/celery_tasks.py`), celery beat, Flower |
 | Geo data | PostGIS + GeoAlchemy2 for locations/places |
@@ -56,7 +56,7 @@ pytest.ini              → pytest config
 Dockerfile / docker-compose*.yml → container + local dev services
 bootstrap.py / main.py  → entrypoints (both call create_app())
 migrations/             → Alembic (Flask-Migrate) DB migrations
-codegen/                → YAML-driven model/repo code generation
+`.scripts/codegen/`      → YAML-driven model/repo code generation
 ```
 
 ### Map Directory Structure
@@ -67,9 +67,9 @@ Explore the codebase to understand organization:
 - `project/domain/` — models, abstract interfaces, business logic (no app/infra imports)
 - `project/application/` — commands, command/event handlers, message bus, read models
 - `project/infrastructure/` — concrete adapters (SQLAlchemy repos, Celery dispatchers, services)
-- `project/api/` — REST API resources and marshmallow schemas
-- `project/views/`, `project/forms/`, `project/templates/` — server-rendered UI
-- `codegen/` — `generate.py` + YAML schemas under `codegen/config/`
+- `project/presentation/api/` — REST API resources and marshmallow schemas
+- `project/presentation/web/views/`, `project/presentation/web/forms/`, `project/templates/` — server-rendered UI
+- `.scripts/codegen/` — `generate.py` + YAML schemas under `.scripts/codegen/config/`
 - `tests/` — pytest suites mirroring source structure; `conftest.py`, `base_test.py`, `seeder.py`
 - `e2e/` — end-to-end tests
 - `doc/`, `deployment/`, `.scripts/` — docs and ops/lint helpers
@@ -99,7 +99,7 @@ Study existing code for:
 
 - **DDD layering**: `domain` ← `application` ← `infrastructure`; never import "up" a layer (checked by `lint-imports` and `.scripts/module_import_whitelist.py`)
 - **Commands/events**: Pydantic `Command`/`CommandWithResult[T]` in `project/application/commands/`, handlers in `command_handlers/`, wired through the message bus and DI container (`project/container.py`)
-- **Generated code**: `*_generated.py` from `codegen/config/` YAML — never edit by hand; put custom logic in the handwritten sibling (e.g. `event.py` extends `event_generated.py`)
+- **Generated code**: `*_generated.py` from `.scripts/codegen/config/` YAML — never edit by hand; put custom logic in the handwritten sibling (e.g. `event.py` extends `event_generated.py`)
 - **Data access**: SQLAlchemy ORM via repositories; watch for deferred columns needing `undefer()`
 - **Tests**: fixtures/base classes in `tests/integration/conftest.py` + `tests/integration/base_test.py`; assert through message bus / repositories, not around the architecture
 - **Errors, naming, structure**: snake_case, thin views delegating into application/domain
@@ -111,9 +111,9 @@ Study existing code for:
 - Message bus: `project/application/message_bus.py`
 - Commands / handlers: `project/application/commands/`, `project/application/command_handlers/`
 - Domain models: `project/domain/models/`
-- API wiring: `project/api/__init__.py`
+- API wiring: `project/presentation/api/__init__.py`
 - Tasks/schedules: `project/celery_tasks.py`, `project/base_tasks.py`
-- Codegen: `codegen/generate.py`, `codegen/config/`
+- Codegen: `.scripts/codegen/generate.py`, `.scripts/codegen/config/`
 - Test fixtures: `tests/integration/conftest.py`, `tests/integration/base_test.py`, `tests/integration/seeder.py`
 - CI: `.github/workflows/lint.yml`, `.github/workflows/test.yml`, `.github/workflows/playwright.yml`
 - Agent docs: `AGENTS.md`, `.github/copilot-instructions.md`, `doc/development.md`, `doc/deployment.md`
@@ -202,13 +202,13 @@ docker-compose up --build
 docker compose -f docker-compose.test.yml up -d --wait
 pytest                             # all tests
 pytest --cov=project --cov-report=html   # with coverage
-pytest tests/integration/views/test_event.py::TestEventView::test_create -v   # single test
+pytest tests/integration/presentation/web/views/test_event.py::TestEventView::test_create -v   # single test
 
 # End-to-end
 npm install && npx playwright test
 
-# Regenerate model/repo code after editing codegen/config/ YAML
-python codegen/generate.py
+# Regenerate model/repo code after editing .scripts/codegen/config/ YAML
+python .scripts/codegen/generate.py
 
 # Lint / format (order matters — run before commit)
 isort . && black . && flake8 && lint-imports && \
@@ -225,6 +225,6 @@ pre-commit run --all-files
 - Link to `AGENTS.md`, `.github/copilot-instructions.md`, and `doc/` instead of duplicating them
 - Focus on patterns and conventions, not exhaustive documentation
 - Respect the DDD import layering (`domain` ← `application` ← `infrastructure`) — never cross it
-- Never edit `*_generated.py`; change the YAML in `codegen/config/` and regenerate
+- Never edit `*_generated.py`; change the YAML in `.scripts/codegen/config/` and regenerate
 - Register new Celery tasks in `project/celery_tasks.py`
 - Update it as the project evolves

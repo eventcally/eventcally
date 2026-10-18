@@ -14,7 +14,7 @@ from project.infrastructure.models.event_date_definition_generated import (
 )
 from project.infrastructure.models.event_date_generated import EventDateGeneratedMixin
 from project.infrastructure.models.functions import sanitize_allday_instance
-from project.utils import make_check_violation
+from project.shared.utils import make_check_violation
 
 
 class EventDate(db.Model, EventDateGeneratedMixin):

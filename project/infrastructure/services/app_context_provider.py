@@ -1,8 +1,8 @@
 from project.application.services.abstract_app_context_provider import (
     AbstractAppContextProvider,
 )
-from project.context import ContextProvider
 from project.domain.models.entities.actor import Actor
+from project.shared.context import ContextProvider
 
 
 class AppContextProvider(AbstractAppContextProvider):

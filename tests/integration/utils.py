@@ -60,7 +60,7 @@ class UtilActions(object):
         email="test@test.de",
         password="MeinPasswortIstDasBeste",
     ):
-        from project.user_datastore import find_user_by_email
+        from project.infrastructure.user_datastore import find_user_by_email
 
         response = self._client.get("/login")
         assert response.status_code == 200
@@ -222,10 +222,12 @@ class UtilActions(object):
         mocked_commit.side_effect = error
 
     def mock_send_mails(self, mocker):
-        return mocker.patch("project.views.utils.send_mails_with_body")
+        return mocker.patch("project.presentation.shared.mail.send_mails_with_body")
 
     def mock_send_mails_async(self, mocker):
-        return mocker.patch("project.views.utils.send_mails_with_signatures_async")
+        return mocker.patch(
+            "project.presentation.shared.mail.send_mails_with_signatures_async"
+        )
 
     def assert_send_mail_called(
         self, mock, expected_recipients, expected_contents=None
@@ -260,10 +262,10 @@ class UtilActions(object):
                 assert content in html, f"{content} not in html"
 
     def mock_now(self, mocker, year, month, day):
-        from project.dateutils import create_berlin_date
+        from project.shared.dateutils import create_berlin_date
 
         now = create_berlin_date(year, month, day)
-        mocker.patch("project.dateutils.get_now", return_value=now)
+        mocker.patch("project.shared.dateutils.get_now", return_value=now)
         mocker.patch("project.domain.dateutils.get_now", return_value=now)
 
     def get_url(self, endpoint, **values):
@@ -272,7 +274,7 @@ class UtilActions(object):
         return url
 
     def get_image_url(self, image, **values):
-        from project.jinja_filters import url_for_image
+        from project.presentation.shared.urls import url_for_image
 
         with self._app.test_request_context():
             url = url_for_image(image, **values, _external=False)
@@ -483,7 +485,7 @@ class UtilActions(object):
         if grant_type == "authorization_code":
             assert "refresh_token" in response.json
 
-        from project.api import replace_legacy_scopes
+        from project.presentation.shared.scopes import replace_legacy_scopes
 
         assert response.json["scope"] == replace_legacy_scopes(scope)
         assert response.json["token_type"] == "Bearer"

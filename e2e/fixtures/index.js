@@ -33,7 +33,7 @@ const test = base.test.extend({
 
   // Playwright dismisses every dialog by default, so a `confirm()` returns false.
   // Without this, a custom_widget "delete" silently does nothing: the delete menu
-  // item is guarded by `confirm()` (project/static/vue/widget-configurator/list.vue.js).
+  // item is guarded by `confirm()` (project/presentation/web/static/vue/widget-configurator/list.vue.js).
   acceptDialogs: [
     async ({ page }, use) => {
       page.on("dialog", (dialog) => dialog.accept());

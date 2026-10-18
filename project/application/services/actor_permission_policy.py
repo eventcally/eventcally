@@ -21,7 +21,7 @@ def actor_has_permission_for_admin_unit(
 
     Covers the two cases `Actor` can represent: an `AdminUnitMember`'s role
     permissions (with a platform-admin bypass, mirroring
-    `has_current_user_role("admin")` in `project/access.py` — `UserAggregate.
+    `has_current_user_role("admin")` in `project/presentation/shared/access.py` — `UserAggregate.
     is_platform_admin` is this check's domain-layer equivalent), or an app
     installation's granted permissions. A user actor never falls through to
     the installation branch.

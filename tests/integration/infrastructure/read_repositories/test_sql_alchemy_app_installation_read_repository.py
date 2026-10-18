@@ -47,11 +47,11 @@ def test_installations_of_app_for_user(app, db, seeder):
     other_admin_unit_id = seeder.create_admin_unit(other_owner_id, "Andere Crew")
     foreign_admin_unit_id = seeder.create_admin_unit(other_owner_id, "Fremde Crew")
 
-    from project.cli.seed_helpers import (
+    from project.infrastructure.seed_helpers import (
         add_user_to_admin_unit_with_roles,
         get_admin_unit_by_id,
     )
-    from project.user_datastore import get_user
+    from project.infrastructure.user_datastore import get_user
 
     with app.app_context():
         add_user_to_admin_unit_with_roles(

@@ -24,7 +24,7 @@ from project.infrastructure.models.event_reference import EventReference
 from project.infrastructure.models.event_reference_request import EventReferenceRequest
 from project.infrastructure.models.functions import create_tsvector
 from project.infrastructure.models.image import Image
-from project.utils import make_check_violation
+from project.shared.utils import make_check_violation
 
 
 class Event(db.Model, EventGeneratedMixin):

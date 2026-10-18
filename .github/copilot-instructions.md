@@ -20,7 +20,9 @@ Respect strict DDD layering:
 
 - `project/domain/`: core business logic and abstract interfaces
 - `project/application/`: commands, handlers, message bus orchestration; queries, query handlers, read models, query bus
-- `project/infrastructure/`: concrete adapters (SQLAlchemy, Celery, external services), ORM `models/`, Alembic `migrations/`, `dbtypes.py`
+- `project/infrastructure/`: concrete adapters (SQLAlchemy, Celery, external services), ORM `models/`, Alembic `migrations/`, `dbtypes.py`, `seed_helpers.py`
+- `project/presentation/`: delivery layer on top, split by channel: `web/` (views, modular framework, forms, templates, static), `api/`, `cli/`; `shared/` holds helpers both channels need. Web and API must not import each other.
+- `project/shared/`: cross-layer helpers (`utils`, `dateutils`, `imageutils`, `context`, `feature_flags`); a leaf that imports only the domain
 
 The layering rule is enforced by [.importlinter](../.importlinter). Avoid introducing imports that violate these boundaries.
 
@@ -31,7 +33,7 @@ Primary integration points:
 - Query bus (reads): [project/application/query_bus.py](../project/application/query_bus.py)
 - Query authorization: Query handlers for private data authorize the actor via `ActorAuthorizationService` (same rule as commands, `actor_permission_policy`); reference: organization invitations (`ListOrganizationInvitationsQuery`).
 
-Reads in views (incl. `project/views/modular`) and the API go through queries: a `Query[T]` in
+Reads in views (incl. `project/presentation/web/modular`) and the API go through queries: a `Query[T]` in
 `project/application/queries/`, a handler in `query_handlers/` returning hand-written read
 models, and a read repository on the read-only `infrastructure.read_session`. See
 [add-ddd-query.prompt.md](prompts/add-ddd-query.prompt.md); the event organizer reads are
@@ -39,12 +41,12 @@ the reference implementation. The
 `delivery-reads-through-queries` contract in `.importlinter` keeps delivery code from
 importing `project.infrastructure.models` from new modules; its `ignore_imports` list only shrinks
 (`python .scripts/models_import_ignores.py --write`).
-- API wiring: [project/api/__init__.py](../project/api/__init__.py)
+- API wiring: [project/presentation/api/__init__.py](../project/presentation/api/__init__.py)
 
 ## Generated Code Rules
 
 - Never edit `*_generated.py` files directly.
-- Update YAML model schemas under [codegen/config/](../codegen/config/) and regenerate with `python codegen/generate.py`.
+- Update YAML model schemas under [.scripts/codegen/config/](../.scripts/codegen/config/) and regenerate with `python .scripts/codegen/generate.py`.
 - Put custom model logic in handwritten extensions (for example `event.py` extending `event_generated.py`).
 
 ## Database, Migrations, and PostGIS
@@ -56,7 +58,7 @@ importing `project.infrastructure.models` from new modules; its `ignore_imports`
 ## Testing Conventions
 
 - Prefer existing fixtures and app context setup from [tests/integration/conftest.py](../tests/integration/conftest.py).
-- Keep tests aligned with source structure (application/api/infrastructure/domain).
+- Keep tests aligned with source structure: tests live at the mirrored path (`tests/{unit,integration}/<path below project/>/test_<module>.py`, e.g. `tests/integration/presentation/web/views/` for `project/presentation/web/views/`).
 - For command/event flows, assert behavior through the message bus and repository interfaces instead of bypassing architecture.
 
 ## Common Pitfalls

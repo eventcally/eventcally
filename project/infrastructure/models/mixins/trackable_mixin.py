@@ -1,10 +1,10 @@
 from sqlalchemy import func
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from project.dateutils import gmt_tz
 from project.infrastructure.models.mixins.trackable_mixin_generated import (
     TrackableGeneratedMixin,
 )
+from project.shared.dateutils import gmt_tz
 
 
 class TrackableMixin(TrackableGeneratedMixin):

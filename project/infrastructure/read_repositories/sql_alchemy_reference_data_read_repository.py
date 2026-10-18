@@ -34,7 +34,7 @@ from project.infrastructure.models import (
     License,
 )
 from project.infrastructure.read_repositories.query_helpers import paginate
-from project.utils import parse_like_term
+from project.shared.utils import parse_like_term
 
 
 class SqlAlchemyReferenceDataReadRepository(AbstractReferenceDataReadRepository):

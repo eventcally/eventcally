@@ -60,14 +60,18 @@ def init_celery(app):
 
 @after_setup_logger.connect
 def setup_logger(logger, *args, **kwargs):
-    from project.one_line_formatter import init_logger_with_one_line_formatter
+    from project.infrastructure.one_line_formatter import (
+        init_logger_with_one_line_formatter,
+    )
 
     init_logger_with_one_line_formatter(logger)
 
 
 @after_setup_task_logger.connect
 def setup_task_logger(logger, *args, **kwargs):
-    from project.one_line_formatter import init_logger_with_one_line_formatter
+    from project.infrastructure.one_line_formatter import (
+        init_logger_with_one_line_formatter,
+    )
 
     init_logger_with_one_line_formatter(logger)
 

@@ -1,7 +1,7 @@
 const { test, expect } = require("../fixtures");
 const { screenshot, assertValid, assertInvalid, assertRequired, shouldContain } = require("../fixtures/helpers");
 
-// These forms are validated by jQuery Validate (see project/templates/_macros.html
+// These forms are validated by jQuery Validate (see project/presentation/web/templates/_macros.html
 // and security/register_user.html), which binds to `keyup` — not `input`. `fill()`
 // would set the value without ever triggering validation, so every field that is
 // asserted on immediately after typing must use `pressSequentially`.

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Generate and verify the ignore list of the delivery-reads-through-queries contract.
 
-The contract in `.importlinter` forbids `project.views` (including
-`project.views.modular`) and `project.api` from importing `project.infrastructure.models`. Every module
+The contract in `.importlinter` forbids `project.presentation.web` (views, modular
+framework, forms, Jinja filters), `project.presentation.api` and `project.presentation.shared` from importing
+`project.infrastructure.models`. Every module
 that still does is listed in its `ignore_imports`, one line per (importer, imported module) pair. The
 list must only shrink: delete an entry as soon as its import is gone.
 
@@ -28,14 +29,18 @@ IGNORE_KEY = "ignore_imports ="
 INDENT = "    "
 
 ROOT_PACKAGE = "project"
-SOURCE_PACKAGES = ("project.views", "project.api")
+SOURCE_PACKAGES = (
+    "project.presentation.web",
+    "project.presentation.api",
+    "project.presentation.shared",
+)
 FORBIDDEN_PACKAGE = "project.infrastructure.models"
 
 # Delivery modules that stay on the ORM for good: Flask-Admin, Flask-Security
 # login flows and the Authlib OAuth2 integration (see the read-side migration plan).
 PERMANENT_EXEMPTIONS = (
-    "project.views.flask_admin",
-    "project.views.oauth",
+    "project.presentation.web.views.flask_admin",
+    "project.presentation.web.views.oauth",
 )
 
 

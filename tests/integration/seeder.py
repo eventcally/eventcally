@@ -47,7 +47,7 @@ class Seeder(object):
     ):
         from flask_security.confirmable import confirm_user
 
-        from project.user_datastore import (
+        from project.infrastructure.user_datastore import (
             add_admin_roles_to_user,
             create_user,
             find_user_by_email,
@@ -86,9 +86,9 @@ class Seeder(object):
         incoming_verification_requests_allowed=False,
         **kwargs
     ):
-        from project.cli.seed_helpers import insert_admin_unit_for_user
         from project.infrastructure.models import AdminUnit, Location
-        from project.user_datastore import get_user
+        from project.infrastructure.seed_helpers import insert_admin_unit_for_user
+        from project.infrastructure.user_datastore import get_user
 
         with self._app.app_context():
             user = get_user(user_id)
@@ -132,14 +132,14 @@ class Seeder(object):
             return member.user_id if member else None
 
     def get_eventcally_admin_unit_id(self):
-        from project.cli.seed_helpers import get_admin_unit_by_name
+        from project.infrastructure.seed_helpers import get_admin_unit_by_name
 
         with self._app.app_context():
             other_admin_unit = get_admin_unit_by_name("eventcally")
             return other_admin_unit.id if other_admin_unit else None
 
     def verify_admin_unit(self, admin_unit_id):
-        from project.cli.seed_helpers import get_admin_unit_by_name
+        from project.infrastructure.seed_helpers import get_admin_unit_by_name
 
         with self._app.app_context():
             other_admin_unit = get_admin_unit_by_name("eventcally")
@@ -164,11 +164,11 @@ class Seeder(object):
         role_names,
         email="test@test.de",
     ):
-        from project.cli.seed_helpers import (
+        from project.infrastructure.seed_helpers import (
             add_user_to_admin_unit_with_roles,
             get_admin_unit_by_id,
         )
-        from project.user_datastore import get_user
+        from project.infrastructure.user_datastore import get_user
 
         with self._app.app_context():
             user_id = self.create_user(email=email)
@@ -181,7 +181,9 @@ class Seeder(object):
         return member_id
 
     def create_invitation(self, admin_unit_id, email, role_names=["admin"]):
-        from project.cli.seed_helpers import insert_admin_unit_member_invitation
+        from project.infrastructure.seed_helpers import (
+            insert_admin_unit_member_invitation,
+        )
 
         with self._app.app_context():
             invitation = insert_admin_unit_member_invitation(
@@ -224,7 +226,7 @@ class Seeder(object):
         return self.create_admin_unit_member(admin_unit_id, ["event_verifier"], email)
 
     def upsert_event_place(self, admin_unit_id, name, location=None):
-        from project.cli.seed_helpers import upsert_event_place
+        from project.infrastructure.seed_helpers import upsert_event_place
 
         with self._app.app_context():
             place = upsert_event_place(admin_unit_id, name)
@@ -238,7 +240,7 @@ class Seeder(object):
         return place_id
 
     def upsert_default_event_place(self, admin_unit_id):
-        from project.cli.seed_helpers import get_admin_unit_by_id
+        from project.infrastructure.seed_helpers import get_admin_unit_by_id
 
         with self._app.app_context():
             admin_unit = get_admin_unit_by_id(admin_unit_id)
@@ -247,7 +249,7 @@ class Seeder(object):
         return place_id
 
     def upsert_event_organizer(self, admin_unit_id, name):
-        from project.cli.seed_helpers import upsert_event_organizer
+        from project.infrastructure.seed_helpers import upsert_event_organizer
 
         with self._app.app_context():
             organizer = upsert_event_organizer(admin_unit_id, name)
@@ -257,7 +259,7 @@ class Seeder(object):
         return organizer_id
 
     def upsert_default_event_organizer(self, admin_unit_id):
-        from project.cli.seed_helpers import get_admin_unit_by_id
+        from project.infrastructure.seed_helpers import get_admin_unit_by_id
 
         with self._app.app_context():
             admin_unit = get_admin_unit_by_id(admin_unit_id)
@@ -288,9 +290,9 @@ class Seeder(object):
         return custom_widget_id
 
     def insert_default_oauth2_client(self, user_id=None, admin_unit_id=None):
-        from project.api import scope_list
-        from project.cli.seed_helpers import complete_oauth2_client
         from project.infrastructure.models import OAuth2Client
+        from project.infrastructure.seed_helpers import complete_oauth2_client
+        from project.presentation.shared.scopes import scope_list
 
         with self._app.app_context():
             client = OAuth2Client()
@@ -319,7 +321,9 @@ class Seeder(object):
 
         with self._app.app_context():
             from project.infrastructure.models import OAuth2Client
-            from project.permissions import organization_app_permission_infos
+            from project.presentation.shared.permissions import (
+                organization_app_permission_infos,
+            )
 
             oauth2_client = OAuth2Client.query.get(oauth2_client_id)
             oauth2_client.app_permissions = [
@@ -332,8 +336,8 @@ class Seeder(object):
 
     def insert_app_key(self, oauth2_client_id) -> tuple[bytes, int]:
         with self._app.app_context():
-            from project.cli.seed_helpers import add_keypair_to_oauth2_client
             from project.infrastructure.models import OAuth2Client
+            from project.infrastructure.seed_helpers import add_keypair_to_oauth2_client
 
             oauth2_client = OAuth2Client.query.get(oauth2_client_id)
             private_pem, app_key = add_keypair_to_oauth2_client(oauth2_client)
@@ -411,7 +415,7 @@ class Seeder(object):
     ):
         with self._app.app_context():
             from project.infrastructure.models import OAuth2Client
-            from project.user_datastore import get_user
+            from project.infrastructure.user_datastore import get_user
 
             user = get_user(user_id)
             email = user.email
@@ -463,7 +467,7 @@ class Seeder(object):
 
     def get_event_category_id(self, category_name):
         with self._app.app_context():
-            from project.cli.seed_helpers import get_event_category
+            from project.infrastructure.seed_helpers import get_event_category
 
             category = get_event_category(category_name)
 
@@ -500,7 +504,7 @@ class Seeder(object):
         from project.infrastructure.models import CustomEventCategory, EventOrganizer
 
         with self._app.app_context():
-            from project.cli.seed_helpers import upsert_event_category
+            from project.infrastructure.seed_helpers import upsert_event_category
 
             command = CreateEventCommand.model_construct()
             command.__dict__.update(kwargs)
@@ -678,7 +682,7 @@ class Seeder(object):
         return "data:image/png;base64,{}".format(base64_str)
 
     def upsert_default_image(self):
-        from project.cli.seed_helpers import upsert_image_with_base64_str
+        from project.infrastructure.seed_helpers import upsert_image_with_base64_str
 
         with self._app.app_context():
             base64_str = self.get_default_image_base64()
@@ -724,7 +728,7 @@ class Seeder(object):
         auto_verify_event_reference_requests=False,
         verify=False,
     ):
-        from project.cli.seed_helpers import upsert_admin_unit_relation
+        from project.infrastructure.seed_helpers import upsert_admin_unit_relation
 
         with self._app.app_context():
             relation = upsert_admin_unit_relation(admin_unit_id, target_admin_unit_id)
@@ -804,7 +808,7 @@ class Seeder(object):
         )
 
         with self._app.app_context():
-            from project.cli.seed_helpers import get_admin_unit_by_id
+            from project.infrastructure.seed_helpers import get_admin_unit_by_id
 
             target_admin_unit = get_admin_unit_by_id(target_admin_unit_id)
             target_admin_unit.can_verify_other = True
@@ -864,7 +868,7 @@ class Seeder(object):
     def get_now_by_minute(self):
         from datetime import datetime
 
-        from project.dateutils import get_now
+        from project.shared.dateutils import get_now
 
         now = get_now()
         return datetime(

@@ -36,7 +36,7 @@ fails with `could not translate host name "myserver"`. `--no-cov` skips collecti
 coverage, which is only useful for the full suite.
 
 ```sh
-./runtests.sh --splits 1 --group 1 -- tests/integration/views/test_event.py -v --no-cov
+./runtests.sh --splits 1 --group 1 -- tests/integration/presentation/web/views/test_event.py -v --no-cov
 ```
 
 Tests under `tests/unit/` need no services and can also be run directly on the host

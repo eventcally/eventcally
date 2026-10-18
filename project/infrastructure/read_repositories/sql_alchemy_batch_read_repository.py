@@ -31,7 +31,6 @@ from project.application.read_models.reference_data_read_models import (
 from project.application.read_repositories.abstract_batch_read_repository import (
     AbstractBatchReadRepository,
 )
-from project.dateutils import get_today
 from project.domain.models.deletion_policy import DELETION_GRACE_PERIOD
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.types.object_id import ObjectId
@@ -54,6 +53,7 @@ from project.infrastructure.read_repositories.event_read_model_mappers import (
     to_place_embed,
     verified_admin_units,
 )
+from project.shared.dateutils import get_today
 
 
 class SqlAlchemyBatchReadRepository(AbstractBatchReadRepository):

@@ -1,0 +1,81 @@
+from flask import abort
+from flask_babel import gettext
+from flask_login import current_user
+
+from project.application.queries import (
+    GetUserMemberInvitationQuery,
+    ListUserMemberInvitationsQuery,
+)
+from project.presentation.web.views.user_blueprint import user_bp
+from project.presentation.web.views.user_blueprint.child_view_handler import (
+    UserChildViewHandler,
+)
+from project.presentation.web.views.user_blueprint.organization_member_invitation.displays import (
+    ListDisplay,
+)
+from project.presentation.web.views.user_blueprint.organization_member_invitation.views import (
+    NegotiateView,
+)
+from project.shared.utils import strings_are_equal_ignoring_case
+
+
+class ViewHandler(UserChildViewHandler):
+    model_name = "organization_member_invitation"
+    model_name_plural = "organization_member_invitations"
+    display_name = "Organization member invitation"
+    display_name_plural = "Organization member invitations"
+    create_view_class = None
+    read_view_class = None
+    update_view_class = None
+    delete_view_class = None
+    list_display_class = ListDisplay
+
+    def create_list_query(self, form, page_request, **kwargs):
+        return ListUserMemberInvitationsQuery(
+            user_id=current_user.id, page=page_request
+        )
+
+    def create_get_query(self, object_id):
+        return GetUserMemberInvitationQuery(id=object_id)
+
+    def check_object_access(self, object):
+        if not strings_are_equal_ignoring_case(
+            object.email, current_user.email
+        ):  # pragma: no cover
+            abort(401)
+        return None
+
+    def get_default_list_action(self, object):
+        url = self._get_object_url("negotiate", object)
+        return self._create_action(url, gettext("View"))
+
+    def _add_views(
+        self,
+        app,
+        single_url_folder,
+        plural_url_folder,
+        single_endpoint_name,
+        plural_endpoint_name,
+        id_query_arg_name,
+    ):
+        result = super()._add_views(
+            app,
+            single_url_folder,
+            plural_url_folder,
+            single_endpoint_name,
+            plural_endpoint_name,
+            id_query_arg_name,
+        )
+        self._add_view(
+            "negotiate",
+            f"/{single_url_folder}/<int:{id_query_arg_name}>/negotiate",
+            NegotiateView,
+            f"{single_endpoint_name}_negotiate",
+            app,
+        )
+
+        return result
+
+
+handler = ViewHandler()
+handler.init_app(user_bp)

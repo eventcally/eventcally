@@ -114,7 +114,7 @@ def test_other_admin(app, db, seeder, access, world):
 
 
 def test_api_key_by_hash(app, seeder, access, world):
-    from project.utils import hash_api_key
+    from project.shared.utils import hash_api_key
 
     owner_id = seeder.get_admin_unit_owner_id(world["a"])
     api_key_id, key = seeder.insert_default_api_key(owner_id)

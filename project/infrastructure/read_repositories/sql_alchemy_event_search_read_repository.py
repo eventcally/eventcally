@@ -49,7 +49,7 @@ from project.infrastructure.read_repositories.query_helpers import (
     trackable_filters,
     trackable_order,
 )
-from project.utils import parse_like_term
+from project.shared.utils import parse_like_term
 
 _LOAD_CHUNK = 200
 

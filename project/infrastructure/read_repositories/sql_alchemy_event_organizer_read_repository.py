@@ -34,7 +34,7 @@ from project.infrastructure.read_repositories.read_model_mappers import (
     to_image_read_model,
     to_location_read_model,
 )
-from project.utils import parse_like_term
+from project.shared.utils import parse_like_term
 
 _number_of_events = (
     select(func.count())

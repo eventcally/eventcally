@@ -1,0 +1,54 @@
+from flask import redirect
+from flask_babel import lazy_gettext
+
+from project.application.commands import RevokeOAuth2TokenCommand
+from project.presentation.web.modular.base_views import BaseUpdateView
+from project.presentation.web.views.user_blueprint.oauth2_token.forms import (
+    RevokeOAuth2TokenForm,
+)
+from project.presentation.web.views.utils import handle_base_error
+
+
+class RevokeView(BaseUpdateView):
+    form_class = RevokeOAuth2TokenForm
+    template_file_name = "update.html"
+
+    def check_object_access(self, object):
+        result = super().check_object_access(object)
+        if result:  # pragma: no cover
+            return result
+
+        if object.is_revoked() > 0:
+            return redirect(self.get_redirect_url())
+
+        return None
+
+    @handle_base_error
+    def dispatch_validated_form(self, form, object, **kwargs):
+        cmd = RevokeOAuth2TokenCommand(
+            id=object.id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
+        self.flash_success_message(object, form)
+        return redirect(self.get_redirect_url(object=object))
+
+    def get_redirect_url(self, **kwargs):
+        return self.handler.get_list_url(**kwargs)
+
+    def get_title(self, **kwargs):
+        return lazy_gettext(
+            "Revoke %(model_display_name)s",
+            model_display_name=self.handler.get_model_display_name(),
+        )
+
+    def get_instruction(self, **kwargs):
+        return lazy_gettext(
+            "Do you want to revoke '%(object_title)s'?",
+            object_title=self.handler.get_object_title(kwargs["object"]),
+        )
+
+    def get_success_text(self, object, form):
+        return lazy_gettext(
+            "%(model_display_name)s successfully revoked",
+            model_display_name=self.handler.get_model_display_name(),
+        )

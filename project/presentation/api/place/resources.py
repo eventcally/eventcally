@@ -1,0 +1,78 @@
+from flask import g, make_response, request
+from flask_apispec import doc, marshal_with, use_kwargs
+
+from project.application.commands import DeleteEventPlaceCommand
+from project.application.queries import GetEventPlaceQuery, ResourceKind
+from project.presentation.api import add_api_resource
+from project.presentation.api.place.schemas import (
+    PlacePatchRequestPlainSchema,
+    PlacePutRequestPlainSchema,
+    PlaceSchema,
+)
+from project.presentation.api.resources import (
+    BaseResource,
+    require_api_access,
+    require_organization_api_access,
+)
+from project.presentation.shared.query_results import result_or_404
+
+
+class PlaceResource(BaseResource):
+    @doc(summary="Get place", tags=["Places"])
+    @marshal_with(PlaceSchema)
+    @require_api_access()
+    def get(self, id):
+        return result_or_404(self.query_bus.handle(GetEventPlaceQuery(id=id)))
+
+    @doc(
+        summary="Update place",
+        tags=["Places"],
+    )
+    @use_kwargs(PlacePutRequestPlainSchema, location="json", apply=False)
+    @marshal_with(None, 204)
+    @require_organization_api_access(
+        "organization.event_places:write", ResourceKind.event_place
+    )
+    def put(self, id):
+        cmd = PlacePutRequestPlainSchema(context=g.api_command_context).load(
+            request.json
+        )
+        self.message_bus.handle_command(cmd)
+
+        return make_response("", 204)
+
+    @doc(
+        summary="Patch place",
+        tags=["Places"],
+    )
+    @use_kwargs(PlacePatchRequestPlainSchema, location="json", apply=False)
+    @marshal_with(None, 204)
+    @require_organization_api_access(
+        "organization.event_places:write", ResourceKind.event_place
+    )
+    def patch(self, id):
+        cmd = PlacePatchRequestPlainSchema(context=g.api_command_context).load(
+            request.json
+        )
+        self.message_bus.handle_command(cmd)
+
+        return make_response("", 204)
+
+    @doc(
+        summary="Delete place",
+        tags=["Places"],
+    )
+    @marshal_with(None, 204)
+    @require_organization_api_access(
+        "organization.event_places:write", ResourceKind.event_place
+    )
+    def delete(self, id):
+        cmd = DeleteEventPlaceCommand(
+            id=id, actor=self.app_context_provider.get_current_actor()
+        )
+        self.message_bus.handle_command(cmd)
+
+        return make_response("", 204)
+
+
+add_api_resource(PlaceResource, "/places/<int:id>", "api_v1_place")

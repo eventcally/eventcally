@@ -182,7 +182,7 @@ query_client = create_query_client_func(db.session, OAuth2Client)
 class CustomFlaskOAuth2Request(FlaskOAuth2Request):
     @property
     def scope(self) -> str:
-        from project.api import replace_legacy_scopes
+        from project.presentation.shared.scopes import replace_legacy_scopes
 
         return replace_legacy_scopes(super().scope)
 
@@ -246,8 +246,8 @@ class JWTBearerGrant(_JWTBearerGrant):
 
 def config_oauth(app):
     """Initialize OAuth2 authorization with the Flask app."""
-    import project.oauth2_extensions as oauth2_ext
-    from project.oauth2_extensions import require_oauth
+    import project.presentation.shared.oauth2_extensions as oauth2_ext
+    from project.presentation.shared.oauth2_extensions import require_oauth
 
     app.config["OAUTH2_REFRESH_TOKEN_GENERATOR"] = True
 

@@ -80,8 +80,8 @@ Before writing any code for a task:
 - **Respect the DDD import layering** (`domain` ← `application` ← `infrastructure`) — never
   import "up" a layer; check `project/domain/allowed_imports.cfg` and
   `project/application/allowed_imports.cfg` before adding imports
-- **Never hand-edit `*_generated.py`** — change the YAML in `codegen/config/` and run
-  `python codegen/generate.py`; put custom logic in the handwritten sibling
+- **Never hand-edit `*_generated.py`** — change the YAML in `.scripts/codegen/config/` and run
+  `python .scripts/codegen/generate.py`; put custom logic in the handwritten sibling
 - **Check integration**: do imports resolve? Do callers still work? Is a new command/event
   handler registered in the DI container (`project/container.py`)? Is a new Celery task
   imported in `project/celery_tasks.py`? Is a DB schema change accompanied by an Alembic
