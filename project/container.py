@@ -127,6 +127,7 @@ from project.infrastructure.services.celery_email_service import CeleryEmailServ
 from project.infrastructure.services.flask_babel_localization_service import (
     FlaskBabelLocalizationService,
 )
+from project.infrastructure.services.flask_mail_sender import FlaskMailSender
 from project.infrastructure.services.flask_template_render_service import (
     FlaskTemplateRenderService,
 )
@@ -168,6 +169,9 @@ class Infrastructure(containers.DeclarativeContainer):
     url_provider = providers.Singleton(
         FlaskUrlProvider,
     )
+    mail_sender = providers.Singleton(
+        FlaskMailSender,
+    )
     webhook_delivery_sender = providers.Singleton(
         RequestsWebhookDeliverySender,
         logger=logger,
@@ -203,6 +207,10 @@ class ReadRepos(containers.DeclarativeContainer):
     )
     webhook_delivery_read_repo = providers.Factory(
         SqlAlchemyWebhookDeliveryReadRepository,
+        session=infrastructure.session_factory,
+    )
+    uow_access_read_repo = providers.Factory(
+        SqlAlchemyAccessReadRepository,
         session=infrastructure.session_factory,
     )
 
@@ -341,6 +349,7 @@ class Services(containers.DeclarativeContainer):
         default_locale=config.BABEL_DEFAULT_LOCALE,
         localization_service=infrastructure.localization_service,
         template_render_service=infrastructure.template_render_service,
+        mail_sender=infrastructure.mail_sender,
     )
     webhook_delivery_service = providers.Factory(
         WebhookDeliveryService,
@@ -582,6 +591,11 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.AttemptToDeliverWebhookCommand: providers.Factory(
                     command_handlers.AttemptToDeliverWebhookHandler,
                     webhook_delivery_service=services.webhook_delivery_service,
+                ),
+                commands.ReportEventCommand: providers.Factory(
+                    command_handlers.ReportEventHandler,
+                    access_read_repo=read_repos.uow_access_read_repo,
+                    email_service=services.email_service,
                 ),
                 commands.InviteOrganizationCommand: providers.Factory(
                     command_handlers.InviteOrganizationHandler
@@ -1026,10 +1040,6 @@ class Cqrs(containers.DeclarativeContainer):
                 queries.GetSiteNoticesQuery: providers.Factory(
                     query_handlers.GetSiteNoticesHandler,
                     repo=read_repos.site_settings_read_repo,
-                ),
-                queries.ListEventReportRecipientsQuery: providers.Factory(
-                    query_handlers.ListEventReportRecipientsHandler,
-                    repo=read_repos.access_read_repo,
                 ),
                 queries.GetApiKeyByHashQuery: providers.Factory(
                     query_handlers.GetApiKeyByHashHandler,

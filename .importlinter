@@ -12,9 +12,6 @@ layers =
     project.domain
 ignore_imports =
   project -> project.**
-  # The Celery mail task (root wiring module, reached by the dispatchers) sends through the
-  # shared mail helper. Follow-up: move the mail sending out of the presentation layer.
-  project.base_tasks -> project.presentation.shared.mail
 
 [importlinter:contract:delivery-reads-through-queries]
 name = Delivery layers and template/access helpers read through queries, not ORM models

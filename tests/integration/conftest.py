@@ -95,6 +95,12 @@ def app():
 
     from project.application.services.abstract_email_service import AbstractEmailService
 
+    class _FakeGroupResult:
+        id = "test-group-result"
+
+        def save(self):
+            pass
+
     class TestEmailService(AbstractEmailService):
         def __init__(
             self, default_locale, localization_service, template_render_service
@@ -104,7 +110,7 @@ def app():
             )
             self.sent_emails = []
 
-        def send_mails_with_signatures_async(self, signatures):
+        def send_mails_with_signatures(self, signatures):
             for signature in signatures:
                 recipient, subject, body, html = signature
                 self.sent_emails.append(
@@ -115,6 +121,10 @@ def app():
                         "html": html,
                     }
                 )
+
+        def send_mails_with_signatures_async(self, signatures):
+            self.send_mails_with_signatures(signatures)
+            return _FakeGroupResult()
 
     localization_service = app.container.infrastructure.localization_service()
     template_render_service = app.container.infrastructure.template_render_service()
