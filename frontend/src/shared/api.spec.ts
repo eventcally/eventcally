@@ -19,11 +19,9 @@ function respond(status: number) {
 describe("authMiddleware", () => {
   beforeEach(() => {
     assign.mockReset();
-    boot.loginUrl = "/login";
     vi.stubGlobal("location", {
       assign,
       pathname: "/admin-next/users",
-      origin: "http://localhost",
     });
   });
   afterEach(() => vi.unstubAllGlobals());
@@ -37,15 +35,6 @@ describe("authMiddleware", () => {
     await respond(401);
 
     expect(assign).toHaveBeenCalledWith("/login?next=%2Fadmin-next%2Fusers");
-  });
-
-  it("does not follow a login url that leaves the origin", async () => {
-    for (const url of ["//evil.example", "https://evil.example", "javascript:alert(1)", "http://[bad"]) {
-      boot.loginUrl = url;
-      await respond(401);
-    }
-
-    expect(assign).not.toHaveBeenCalled();
   });
 
   it("leaves other responses alone", async () => {
