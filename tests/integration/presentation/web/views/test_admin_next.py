@@ -41,7 +41,7 @@ def test_main_menu_contains_docs_link(app, client, seeder, utils):
 
     response = client.get("/admin-next/")
 
-    assert b"https://docs.example.org" in response.data
+    assert b'href="https://docs.example.org"' in response.data
 
 
 def test_shell_shows_manage_toolbar(client, seeder, utils):

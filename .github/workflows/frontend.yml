@@ -40,6 +40,9 @@ jobs:
       - name: Check the generated contract is committed
         run: git diff --exit-code frontend/openapi.json frontend/src/api/schema.d.ts
 
+      - name: Generate the locale messages
+        run: npm run i18n --prefix frontend
+
       - name: Type-check
         run: npm run typecheck --prefix frontend
 

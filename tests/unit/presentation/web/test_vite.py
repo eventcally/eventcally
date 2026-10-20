@@ -85,3 +85,20 @@ def test_manifest_is_cached_outside_debug(vite_app):
         second = str(vite_entry("admin"))
 
     assert first == second
+
+
+def test_unknown_and_repeated_imports_are_skipped(vite_app):
+    app, dist = vite_app
+    manifest = {
+        **MANIFEST,
+        "src/apps/admin/main.ts": {
+            **MANIFEST["src/apps/admin/main.ts"],
+            "imports": ["_shared.js", "_shared.js", "_missing.js"],
+        },
+    }
+    (dist / "manifest.json").write_text(json.dumps(manifest))
+
+    with app.test_request_context():
+        html = str(vite_entry("admin"))
+
+    assert html.count('rel="modulepreload"') == 1
