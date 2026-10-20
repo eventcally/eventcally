@@ -21,7 +21,7 @@ Respect strict DDD layering:
 - `project/domain/`: core business logic and abstract interfaces
 - `project/application/`: commands, handlers, message bus orchestration; queries, query handlers, read models, query bus
 - `project/infrastructure/`: concrete adapters (SQLAlchemy, Celery, external services), ORM `models/`, Alembic `migrations/`, `dbtypes.py`, `seed_helpers.py`
-- `project/presentation/`: delivery layer on top, split by channel: `web/` (views, modular framework, forms, templates, static), `api/`, `cli/`; `shared/` holds helpers both channels need. Web and API must not import each other.
+- `project/presentation/`: delivery layer on top, split by channel: `web/` (views, modular framework, forms, templates, static), `api/`, `bff/` (view-shaped JSON for the Vue frontends under `/bff`, session + CSRF auth, reads via the query bus, OpenAPI generated from pydantic by `bff_route`), `cli/`; `shared/` holds helpers all channels need. Web, API and BFF must not import each other.
 - `project/shared/`: cross-layer helpers (`utils`, `dateutils`, `imageutils`, `context`, `feature_flags`); a leaf that imports only the domain
 
 The layering rule is enforced by [.importlinter](../.importlinter). Avoid introducing imports that violate these boundaries.
@@ -60,6 +60,14 @@ importing `project.infrastructure.models` from new modules; its `ignore_imports`
 - Prefer existing fixtures and app context setup from [tests/integration/conftest.py](../tests/integration/conftest.py).
 - Keep tests aligned with source structure: tests live at the mirrored path (`tests/{unit,integration}/<path below project/>/test_<module>.py`, e.g. `tests/integration/presentation/web/views/` for `project/presentation/web/views/`).
 - For command/event flows, assert behavior through the message bus and repository interfaces instead of bypassing architecture.
+
+## Frontend (Vue 3 + BFF)
+
+- `frontend/` is one Vite + TypeScript + Vue 3 + bootstrap-vue-next project with one entry per area (`src/apps/<area>/main.ts`, registered in `vite.config.ts` and `project/presentation/web/vite.py:ENTRIES`). The build lands in `project/presentation/web/static/dist/` (gitignored); the Jinja global `vite_entry(name)` renders its tags (or the dev server's when `VITE_DEV_SERVER_URL` is set).
+- Pages are shells: `layout_vue3.html` extends the Bootstrap 5 frame `layout_bs5.html` and hands the SPA its boot JSON. The SPA must not import Bootstrap CSS (the frame provides it). The old frames `layout.html` (BS4) / `layout_vue.html` (Vue 2) stay untouched; the navbar links of both frames come from `get_main_menu()`.
+- BFF routes are declared with `bff_route(...)` (`project/presentation/bff/routing.py`) with pydantic query/body/response models. After changing a BFF model: `python -m project.presentation.bff.openapi > frontend/openapi.json && npm run gen:api --prefix frontend` and commit both outputs (pytest and CI check the drift). Never hand-edit `frontend/src/api/schema.d.ts`.
+- Strangler fig: `/admin-next/*` runs in parallel to `/admin/*`; links to not-yet-migrated pages live only in `frontend/src/apps/admin/legacy.ts`.
+- Translations: the Babel `.po` files stay the single source. Use literal `t("English msgid")` calls in `.vue`/`.ts` (dynamic keys are not extracted); `npm run i18n` turns the `.po` files into `src/locales/*.json`.
 
 ## Common Pitfalls
 

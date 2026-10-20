@@ -113,6 +113,34 @@ flask db upgrade
 .scripts/translations/compile.sh
 ```
 
+## Frontend (Vue 3)
+
+The Vue 3 frontend lives in `frontend/` (Vite, TypeScript, bootstrap-vue-next). The Python side exposes it through the BFF channel (`project/presentation/bff`, JSON under `/bff`) and shell pages rendered with `layout_vue3.html` (Bootstrap 5 frame `layout_bs5.html`). The first area is the admin SPA at `/admin-next`, which runs next to the Jinja admin at `/admin`.
+
+```sh
+npm ci --prefix frontend
+npm run dev --prefix frontend                          # Vite dev server on :5173
+VITE_DEV_SERVER_URL=http://localhost:5173 flask run    # Flask renders the shells and loads the dev server
+npm run typecheck --prefix frontend
+npm test --prefix frontend
+npm run build --prefix frontend                        # writes project/presentation/web/static/dist/
+```
+
+The Docker image builds the bundle in a Node stage; Node is not needed at runtime.
+
+### API contract
+
+BFF routes declare pydantic models with `bff_route`. The OpenAPI document and the TypeScript types are generated and committed; pytest and CI fail when they drift:
+
+```sh
+python -m project.presentation.bff.openapi > frontend/openapi.json
+npm run gen:api --prefix frontend
+```
+
+### Frontend translations
+
+The `.po` files stay the single source. Use literal `t("English msgid")` calls in `.vue`/`.ts` files; `.scripts/translations/extract.sh` picks them up and `npm run i18n --prefix frontend` converts the `.po` files to `frontend/src/locales/*.json` (also part of `npm run build`).
+
 ## Celery
 
 ```sh

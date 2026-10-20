@@ -1,3 +1,12 @@
+# Build the Vue frontend; Node is not part of the runtime image.
+FROM node:22-slim AS frontend
+WORKDIR /src
+COPY frontend/package.json frontend/package-lock.json frontend/.npmrc frontend/
+RUN cd frontend && npm ci
+COPY frontend/ frontend/
+COPY project/translations/ project/translations/
+RUN cd frontend && npm run build
+
 FROM python:3.12
 
 # Add rsync
@@ -48,6 +57,7 @@ COPY pyproject.toml uv.lock .python-version ./
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked
 
 COPY . /app
+COPY --from=frontend /src/project/presentation/web/static/dist /app/project/presentation/web/static/dist
 
 RUN chmod u+x ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]

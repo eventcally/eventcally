@@ -67,6 +67,8 @@ services:
       - .:/app
       # hide the host's node_modules; the image carries its own in /opt/e2e
       - /app/node_modules
+      # same for the frontend toolchain (native esbuild/rollup binaries)
+      - /app/frontend/node_modules
     profiles:
       - test
     environment:

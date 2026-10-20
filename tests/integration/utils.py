@@ -108,6 +108,10 @@ class UtilActions(object):
         match = re.search(pattern.encode("utf-8"), response.data)
 
         if not match:
+            # The Vue 3 shell carries the token in its boot JSON.
+            match = re.search(rb'"csrfToken":\s*"([^"]+)"', response.data)
+
+        if not match:
             return None
 
         return match.group(1).decode("utf-8")
@@ -205,9 +209,9 @@ class UtilActions(object):
         self.log_response(response)
         return response
 
-    def delete(self, url):
-        self.log_request(url)
-        response = self._client.delete(url, headers=self.get_headers())
+    def delete(self, url, data: dict = None):
+        self.log_json_request(url, data)
+        response = self._client.delete(url, json=data, headers=self.get_headers())
         self.log_response(response)
         return response
 

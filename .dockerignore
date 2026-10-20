@@ -40,3 +40,4 @@ e2e/screenshots/
 *.crt
 *.csr
 *.key
+project/presentation/web/static/dist

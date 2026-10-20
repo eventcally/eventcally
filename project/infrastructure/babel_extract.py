@@ -1,3 +1,6 @@
+import re
+
+
 def babel_extract(fileobj, keywords, comment_tags, options):
     """Extract messages.
 
@@ -59,3 +62,20 @@ def babel_extract(fileobj, keywords, comment_tags, options):
     _add_enum(AdminUnitVerificationRequestReviewStatus)
 
     return result
+
+
+_FRONTEND_T_CALL = re.compile(r"""\bt\(\s*(["'])(.+?)(?<!\\)\1""")
+
+
+def babel_extract_frontend(fileobj, keywords, comment_tags, options):
+    """Extract the literal msgids of `t("...")` calls from `.vue` / `.ts` files.
+
+    Only literal keys are found; build keys dynamically and they are missed.
+    """
+    source = fileobj.read().decode(options.get("encoding", "utf-8"))
+
+    for lineno, line in enumerate(source.splitlines(), start=1):
+        for match in _FRONTEND_T_CALL.finditer(line):
+            quote, msgid = match.group(1), match.group(2)
+            msgid = msgid.replace("\\" + quote, quote)
+            yield (lineno, "gettext", msgid, [])

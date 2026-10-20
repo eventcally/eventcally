@@ -31,6 +31,10 @@
         Flask-Admin
         <i class="fa fa-caret-right"></i>
     </a>
+    <a href="{{ url_for('admin_next.shell', path='') }}" class="list-group-item">
+        {{ _('New admin (beta)') }}
+        <i class="fa fa-caret-right"></i>
+    </a>
 </div>
 
 {% endblock %}

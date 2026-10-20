@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-10 18:57+0200\n"
+"POT-Creation-Date: 2026-10-19 23:57+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -93,7 +93,7 @@ msgstr ""
 msgid "(deleted)"
 msgstr ""
 
-#: project/shared/utils.py:30
+#: project/shared/utils.py:26
 msgid "."
 msgstr ""
 
@@ -143,13 +143,14 @@ msgstr ""
 msgid "A referenced event was changed."
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "API key"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:138
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:138
 #: project/presentation/shared/permissions.py:173
-#: project/presentation/web/templates/layout.html:291
+#: project/presentation/web/templates/layout.html:287
 #: project/presentation/web/templates/profile.html:75
 msgid "API keys"
 msgstr ""
@@ -238,18 +239,21 @@ msgstr ""
 msgid "Additional information"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/AdminHome.vue:21
+#: frontend/src/apps/admin/pages/UsersPage.vue:62
+#: project/presentation/web/jinja_filters.py:92
 #: project/presentation/web/templates/admin/email.html:65
 #: project/presentation/web/templates/admin/newsletter.html:92
 #: project/presentation/web/templates/admin/planning.html:10
 #: project/presentation/web/templates/admin/settings.html:10
 #: project/presentation/web/templates/admin/users.html:10
-#: project/presentation/web/templates/layout.html:193
 #: project/presentation/web/views/admin_blueprint/admin/views.py:12
 #: project/presentation/web/views/admin_blueprint/child_view_handler.py:13
+#: project/presentation/web/views/admin_next_blueprint/__init__.py:17
 msgid "Admin"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Admin unit member roles members"
 msgstr ""
 
@@ -281,21 +285,21 @@ msgstr ""
 msgid "AdminUnitVerificationRequestRejectionReason.untrustworthy"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "AdminUnitVerificationRequestReviewStatus.inbox"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/forms.py:33
 msgid "AdminUnitVerificationRequestReviewStatus.rejected"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/forms.py:29
 msgid "AdminUnitVerificationRequestReviewStatus.verified"
 msgstr ""
 
-#: project/i10n.py:59
+#: project/presentation/shared/i10n.py:59
 msgid "Administrator"
 msgstr ""
 
@@ -370,19 +374,21 @@ msgstr ""
 msgid "App"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "App installation"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:171
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:171
 msgid "App installations"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "App key"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:137
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:137
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:27
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:38
 msgid "App keys"
@@ -644,8 +650,13 @@ msgstr ""
 msgid "Confirmation required"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/UsersPage.vue:32
+msgid "Confirmed at"
+msgstr ""
+
 #: project/presentation/web/forms/admin.py:15
-#: project/presentation/web/templates/layout.html:343
+#: project/presentation/web/templates/layout.html:339
+#: project/presentation/web/templates/layout_bs5.html:106
 #: project/presentation/web/views/manage_blueprint/organization/views.py:53
 #: project/presentation/web/views/root.py:96
 msgid "Contact"
@@ -682,7 +693,7 @@ msgstr ""
 msgid "Create another event for %(admin_unit_name)s"
 msgstr ""
 
-#: project/presentation/web/templates/layout.html:226
+#: project/presentation/web/templates/layout.html:222
 msgid "Create event"
 msgstr ""
 
@@ -707,6 +718,7 @@ msgstr ""
 msgid "Create place"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/UsersPage.vue:31
 #: project/presentation/web/templates/event_date/list.html:504
 #: project/presentation/web/views/admin_blueprint/organization/displays.py:10
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:16
@@ -741,29 +753,30 @@ msgstr ""
 msgid "Current permissions"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:306
 msgid "Custom event categories"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Custom event category"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Custom event category set"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Custom event category sets"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Custom widget"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:139
-#: project/presentation/web/templates/layout.html:288
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:139
+#: project/presentation/web/templates/layout.html:284
 #: project/presentation/web/templates/manage/custom_widgets.html:13
 msgid "Custom widgets"
 msgstr ""
@@ -793,6 +806,7 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/UsersPage.vue:80
 #: project/presentation/web/modular/base_form.py:100
 #: project/presentation/web/modular/base_view_handler.py:204
 #: project/presentation/web/templates/admin/users.html:37
@@ -848,6 +862,7 @@ msgstr ""
 msgid "Delete verification request"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/UsersPage.vue:34
 #: project/presentation/web/views/admin_blueprint/organization/displays.py:11
 msgid "Deletion requested at"
 msgstr ""
@@ -871,7 +886,8 @@ msgstr ""
 
 #: project/presentation/web/templates/developer/read.html:4
 #: project/presentation/web/templates/developer/read.html:8
-#: project/presentation/web/templates/layout.html:351
+#: project/presentation/web/templates/layout.html:347
+#: project/presentation/web/templates/layout_bs5.html:114
 #: project/presentation/web/templates/profile.html:67
 msgid "Developer"
 msgstr ""
@@ -906,8 +922,8 @@ msgstr ""
 msgid "Do you want to revoke '%(object_title)s'?"
 msgstr ""
 
+#: project/presentation/web/jinja_filters.py:78
 #: project/presentation/web/templates/home.html:38
-#: project/presentation/web/templates/layout.html:181
 #: project/presentation/web/templates/macros/nav.html.j2:15
 #: project/presentation/web/templates/manage/admin_units.html:28
 #: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:13
@@ -937,6 +953,7 @@ msgstr ""
 msgid "Earliest start first"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/UsersPage.vue:79
 #: project/presentation/web/modular/base_view_handler.py:200
 #: project/presentation/web/templates/_macros.html:670
 #: project/presentation/web/templates/_macros.html:713
@@ -955,6 +972,8 @@ msgstr ""
 msgid "Edit image"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/AdminHome.vue:10
+#: frontend/src/apps/admin/pages/UsersPage.vue:30
 #: project/presentation/web/forms/admin.py:61
 #: project/presentation/web/templates/_macros.html:296
 #: project/presentation/web/templates/_macros.html:1416
@@ -1037,7 +1056,7 @@ msgid ""
 "%(property_name)s"
 msgstr ""
 
-#: project/presentation/web/views/admin.py:229
+#: project/presentation/web/views/admin.py:235
 msgid "Entered email does not match user email"
 msgstr ""
 
@@ -1070,12 +1089,17 @@ msgstr ""
 msgid "Entered name does not match place name"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/UsersPage.vue:49
+msgid "Error"
+msgstr ""
+
 #: project/presentation/web/views/utils.py:104
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/web/templates/_macros.html:473
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/templates/_macros.html:473
 #: project/presentation/web/templates/_macros.html:640
 #: project/presentation/web/templates/event/actions.html:16
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference/displays.py:9
@@ -1106,77 +1130,76 @@ msgstr ""
 msgid "Event Type"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event categories"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event category"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event co organizers"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event custom event categories"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event date"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event date definition"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event date definitions"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/event/displays.py:22
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/create.html:148
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/update.html:84
 msgid "Event dates"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event event categories"
 msgstr ""
 
-#: project/i10n.py:60
+#: project/presentation/shared/i10n.py:60
 msgid "Event expert"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event organizer"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:140
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:140
 msgid "Event organizers"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event reference"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event reference request"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event reference requests"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Event references"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:75
-#: project/application/services/abstract_email_service.py:82
-#: project/presentation/shared/mail.py:26
-#: project/presentation/shared/mail.py:31
+#: project/application/services/abstract_email_service.py:79
+#: project/application/services/abstract_email_service.py:86
 msgid "Event review status updated"
 msgstr ""
 
@@ -1244,29 +1267,29 @@ msgstr "No reason"
 msgid "EventReferenceRequestRejectionReason.untrustworthy"
 msgstr "Untrustworthy"
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "EventReferenceRequestReviewStatus.inbox"
 msgstr "Inbox"
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/forms.py:50
 msgid "EventReferenceRequestReviewStatus.rejected"
 msgstr "Rejected"
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/forms.py:46
 msgid "EventReferenceRequestReviewStatus.verified"
 msgstr "Verified"
 
-#: project/i10n.py:61
+#: project/presentation/shared/i10n.py:61
 msgid "EventReviewStatus.inbox"
 msgstr "Inbox"
 
-#: project/i10n.py:63
+#: project/presentation/shared/i10n.py:63
 msgid "EventReviewStatus.rejected"
 msgstr "Rejected"
 
-#: project/i10n.py:62
+#: project/presentation/shared/i10n.py:62
 msgid "EventReviewStatus.verified"
 msgstr "Verified"
 
@@ -1310,109 +1333,110 @@ msgstr "Mainly for residents"
 msgid "EventTargetGroupOrigin.tourist"
 msgstr "Mainly for tourists"
 
-#: project/shared/utils.py:24
+#: project/shared/utils.py:20
 msgid "Event_"
 msgstr ""
 
-#: project/i10n.py:34
+#: project/presentation/shared/i10n.py:34
 msgid "Event_Art"
 msgstr "Art"
 
-#: project/i10n.py:35
+#: project/presentation/shared/i10n.py:35
 msgid "Event_Book"
 msgstr "Book"
 
-#: project/i10n.py:41
+#: project/presentation/shared/i10n.py:41
 msgid "Event_Comedy"
 msgstr "Comedy"
 
-#: project/i10n.py:47
+#: project/presentation/shared/i10n.py:47
 msgid "Event_Conference"
 msgstr "Conference"
 
-#: project/i10n.py:53
+#: project/presentation/shared/i10n.py:53
 msgid "Event_Culture"
 msgstr "Culture"
 
-#: project/i10n.py:43
+#: project/presentation/shared/i10n.py:43
 msgid "Event_Dance"
 msgstr "Dance"
 
-#: project/i10n.py:46
+#: project/presentation/shared/i10n.py:46
 msgid "Event_Dining"
 msgstr "Dining"
 
-#: project/i10n.py:52
+#: project/presentation/shared/i10n.py:52
 msgid "Event_Exhibition"
 msgstr "Exhibition"
 
-#: project/i10n.py:37
+#: project/presentation/shared/i10n.py:37
 msgid "Event_Family"
 msgstr "Family"
 
-#: project/i10n.py:38
+#: project/presentation/shared/i10n.py:38
 msgid "Event_Festival"
 msgstr "Festival"
 
-#: project/i10n.py:49
+#: project/presentation/shared/i10n.py:49
 msgid "Event_Fitness"
 msgstr "Fitness"
 
-#: project/i10n.py:57
+#: project/presentation/shared/i10n.py:57
 msgid "Event_Lecture"
 msgstr "Lecture"
 
-#: project/i10n.py:48
+#: project/presentation/shared/i10n.py:48
 msgid "Event_Meetup"
 msgstr "Meetup"
 
-#: project/i10n.py:36
+#: project/presentation/shared/i10n.py:36
 msgid "Event_Movie"
 msgstr "Movie"
 
-#: project/i10n.py:42
+#: project/presentation/shared/i10n.py:42
 msgid "Event_Music"
 msgstr "Music"
 
-#: project/i10n.py:44
+#: project/presentation/shared/i10n.py:44
 msgid "Event_Nightlife"
 msgstr "Nightlife"
 
-#: project/i10n.py:55
+#: project/presentation/shared/i10n.py:55
 msgid "Event_OpenAir"
 msgstr "Open Air"
 
-#: project/i10n.py:51
+#: project/presentation/shared/i10n.py:51
 msgid "Event_Other"
 msgstr "Other"
 
-#: project/i10n.py:39
+#: project/presentation/shared/i10n.py:39
 msgid "Event_Religious"
 msgstr "Religious"
 
-#: project/i10n.py:40
+#: project/presentation/shared/i10n.py:40
 msgid "Event_Shopping"
 msgstr "Shopping"
 
-#: project/i10n.py:50
+#: project/presentation/shared/i10n.py:50
 msgid "Event_Sports"
 msgstr "Sports"
 
-#: project/i10n.py:56
+#: project/presentation/shared/i10n.py:56
 msgid "Event_Stage"
 msgstr "Stage"
 
-#: project/i10n.py:45
+#: project/presentation/shared/i10n.py:45
 msgid "Event_Theater"
 msgstr "Theater"
 
-#: project/i10n.py:54
+#: project/presentation/shared/i10n.py:54
 msgid "Event_Tour"
 msgstr "Tour"
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:142
-#: project/presentation/web/templates/layout.html:175
-#: project/presentation/web/templates/layout.html:222
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:142
+#: project/presentation/web/jinja_filters.py:72
+#: project/presentation/web/templates/layout.html:218
 msgid "Events"
 msgstr ""
 
@@ -1439,7 +1463,7 @@ msgid "Expires"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:143
-#: project/presentation/web/templates/layout.html:286
+#: project/presentation/web/templates/layout.html:282
 #: project/presentation/web/templates/manage/export.html:3
 #: project/presentation/web/templates/manage/export.html:63
 msgid "Export"
@@ -1646,11 +1670,12 @@ msgstr ""
 msgid "If the participants needs to register for the event."
 msgstr ""
 
-#: project/babel.py:1 project/presentation/web/forms/common.py:100
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/forms/common.py:100
 msgid "Image"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Images"
 msgstr ""
 
@@ -1659,7 +1684,7 @@ msgid "Incoming reference"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:149
-#: project/presentation/web/templates/layout.html:240
+#: project/presentation/web/templates/layout.html:236
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/view_handler.py:54
 msgid "Incoming reference requests"
 msgstr ""
@@ -1669,13 +1694,13 @@ msgid "Incoming reference requests allowed"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:151
-#: project/presentation/web/templates/layout.html:237
+#: project/presentation/web/templates/layout.html:233
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference/view_handler.py:47
 msgid "Incoming references"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:146
-#: project/presentation/web/templates/layout.html:273
+#: project/presentation/web/templates/layout.html:269
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/view_handler.py:66
 msgid "Incoming verification requests"
 msgstr ""
@@ -1835,16 +1860,18 @@ msgid "Leave organization"
 msgstr ""
 
 #: project/presentation/web/forms/admin.py:14
-#: project/presentation/web/templates/layout.html:339
+#: project/presentation/web/templates/layout.html:335
+#: project/presentation/web/templates/layout_bs5.html:102
 #: project/presentation/web/views/root.py:88
 msgid "Legal notice"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/web/forms/common.py:114
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/forms/common.py:114
 msgid "License"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Licenses"
 msgstr ""
 
@@ -1878,7 +1905,8 @@ msgstr ""
 msgid "List all events of %(admin_unit_name)s"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/web/forms/common.py:341
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/forms/common.py:341
 #: project/presentation/web/forms/event_date.py:27
 #: project/presentation/web/forms/planning.py:27
 #: project/presentation/web/templates/_macros.html:374
@@ -1890,7 +1918,7 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Locations"
 msgstr ""
 
@@ -1900,7 +1928,7 @@ msgstr ""
 msgid "Logo"
 msgstr ""
 
-#: project/presentation/web/templates/layout.html:197
+#: project/presentation/web/jinja_filters.py:95
 msgid "Logout"
 msgstr ""
 
@@ -1909,7 +1937,7 @@ msgid "Longitude"
 msgstr ""
 
 #: project/presentation/web/templates/admin/email.html:47
-#: project/presentation/web/views/admin.py:124
+#: project/presentation/web/views/admin.py:127
 msgid "Mail sent successfully"
 msgstr ""
 
@@ -1927,7 +1955,7 @@ msgstr ""
 msgid "Map view"
 msgstr ""
 
-#: project/presentation/web/templates/layout.html:264
+#: project/presentation/web/templates/layout.html:260
 #: project/presentation/web/templates/verification_request/review.html:54
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/incoming_organization_verification_request/review.html:52
 msgid "Members"
@@ -1995,13 +2023,15 @@ msgstr ""
 msgid "Name of organization"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:59
-#: project/presentation/shared/mail.py:12
+#: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:35
+msgid "New admin (beta)"
+msgstr ""
+
+#: project/application/services/abstract_email_service.py:63
 msgid "New event report"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:81
-#: project/presentation/shared/mail.py:30
+#: project/application/services/abstract_email_service.py:85
 msgid "New event review"
 msgstr ""
 
@@ -2013,18 +2043,15 @@ msgstr ""
 msgid "New permissions"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:71
-#: project/presentation/shared/mail.py:22
+#: project/application/services/abstract_email_service.py:75
 msgid "New reference automatically verified"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:74
-#: project/presentation/shared/mail.py:25
+#: project/application/services/abstract_email_service.py:78
 msgid "New reference request"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:87
-#: project/presentation/shared/mail.py:34
+#: project/application/services/abstract_email_service.py:91
 msgid "New verification request"
 msgstr ""
 
@@ -2033,6 +2060,7 @@ msgstr ""
 msgid "Newest first"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/AdminHome.vue:11
 #: project/presentation/web/templates/admin/newsletter.html:4
 #: project/presentation/web/templates/admin/newsletter.html:93
 #: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:23
@@ -2040,8 +2068,7 @@ msgstr ""
 msgid "Newsletter"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:61
-#: project/presentation/shared/mail.py:14
+#: project/application/services/abstract_email_service.py:65
 #, python-format
 msgid "Newsletter from %(site_name)s"
 msgstr ""
@@ -2103,37 +2130,38 @@ msgstr ""
 msgid "Number of events"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "OAuth connection"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "OAuth connections"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/app/view_handler.py:48
 msgid "OAuth2 client"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:170
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:170
 #: project/presentation/web/templates/profile.html:71
 msgid "OAuth2 clients"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "OAuth2 token"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "OAuth2 tokens"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Oauth2 authorization code"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Oauth2 authorization codes"
 msgstr ""
 
@@ -2145,14 +2173,15 @@ msgstr ""
 msgid "Only published events can be referenced"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:56
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:56
 #: project/presentation/web/forms/event_date.py:35
 #: project/presentation/web/forms/reference.py:12
 #: project/presentation/web/ical.py:38
 #: project/presentation/web/templates/_macros.html:574
 #: project/presentation/web/templates/_macros.html:744
 #: project/presentation/web/templates/_macros.html:1007
-#: project/presentation/web/templates/layout.html:250
+#: project/presentation/web/templates/layout.html:246
 #: project/presentation/web/templates/verification_request/delete.html:13
 #: project/presentation/web/templates/verification_request/review.html:28
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:16
@@ -2176,51 +2205,52 @@ msgstr ""
 msgid "Organization"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:62
-#: project/presentation/shared/mail.py:15
+#: project/application/services/abstract_email_service.py:66
 msgid "Organization deletion requested"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Organization invitation"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:65
-#: project/presentation/shared/mail.py:18
+#: project/application/services/abstract_email_service.py:69
 msgid "Organization invitation accepted"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:152
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:152
 #: project/presentation/shared/permissions.py:175
-#: project/presentation/web/templates/layout.html:281
+#: project/presentation/web/templates/layout.html:277
 #: project/presentation/web/templates/manage/admin_units.html:17
 #: project/presentation/web/templates/profile.html:62
 msgid "Organization invitations"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Organization member"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Organization member invitation"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:154
-#: project/presentation/web/templates/layout.html:265
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:154
+#: project/presentation/web/templates/layout.html:261
 #: project/presentation/web/templates/profile.html:58
 msgid "Organization member invitations"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Organization member role"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Organization member roles"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:156
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:156
 msgid "Organization members"
 msgstr ""
 
@@ -2228,11 +2258,11 @@ msgstr ""
 msgid "Organization memberships"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Organization relation"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Organization relations"
 msgstr ""
 
@@ -2244,16 +2274,18 @@ msgstr ""
 msgid "Organization successfully verified"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Organization verification request"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Organization verification requests"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/web/templates/layout.html:176
-#: project/presentation/web/templates/layout.html:189
+#: frontend/src/apps/admin/pages/AdminHome.vue:9
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/jinja_filters.py:73
+#: project/presentation/web/jinja_filters.py:85
 #: project/presentation/web/templates/manage/admin_units.html:3
 #: project/presentation/web/templates/manage/admin_units.html:26
 #: project/presentation/web/templates/organization/main.html:4
@@ -2288,7 +2320,7 @@ msgstr ""
 msgid "Organizer"
 msgstr ""
 
-#: project/presentation/web/templates/layout.html:261
+#: project/presentation/web/templates/layout.html:257
 #: project/presentation/web/templates/organizer/main.html:4
 msgid "Organizers"
 msgstr ""
@@ -2312,19 +2344,19 @@ msgid "Outgoing organization relations"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:163
-#: project/presentation/web/templates/layout.html:245
+#: project/presentation/web/templates/layout.html:241
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/view_handler.py:59
 msgid "Outgoing reference requests"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:165
-#: project/presentation/web/templates/layout.html:238
+#: project/presentation/web/templates/layout.html:234
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference/view_handler.py:32
 msgid "Outgoing references"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:160
-#: project/presentation/web/templates/layout.html:257
+#: project/presentation/web/templates/layout.html:253
 #: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/view_handler.py:62
 msgid "Outgoing verification requests"
 msgstr ""
@@ -2365,7 +2397,8 @@ msgstr ""
 msgid "Photo"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/web/templates/_macros.html:521
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/templates/_macros.html:521
 #: project/presentation/web/templates/_macros.html:684
 #: project/presentation/web/templates/_macros.html:1056
 #: project/presentation/web/views/manage_admin_unit/event/displays.py:25
@@ -2379,8 +2412,9 @@ msgstr ""
 msgid "Place"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:141
-#: project/presentation/web/templates/layout.html:262
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:141
+#: project/presentation/web/templates/layout.html:258
 msgid "Places"
 msgstr ""
 
@@ -2397,9 +2431,10 @@ msgstr ""
 msgid "Planned events appear in the scheduling view, but not on public calendars."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/AdminHome.vue:12
+#: project/presentation/web/jinja_filters.py:74
 #: project/presentation/web/templates/admin/planning.html:4
 #: project/presentation/web/templates/admin/planning.html:11
-#: project/presentation/web/templates/layout.html:177
 #: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:27
 msgid "Planning"
 msgstr ""
@@ -2454,13 +2489,14 @@ msgid "Print"
 msgstr ""
 
 #: project/presentation/web/forms/admin.py:16
-#: project/presentation/web/templates/layout.html:347
+#: project/presentation/web/templates/layout.html:343
+#: project/presentation/web/templates/layout_bs5.html:110
 #: project/presentation/web/views/root.py:104
 msgid "Privacy"
 msgstr ""
 
-#: project/presentation/web/templates/layout.html:190
-#: project/presentation/web/templates/layout.html:293
+#: project/presentation/web/jinja_filters.py:88
+#: project/presentation/web/templates/layout.html:289
 #: project/presentation/web/templates/profile.html:4
 #: project/presentation/web/templates/profile.html:17
 #: project/presentation/web/views/user_blueprint/child_view_handler.py:15
@@ -2574,12 +2610,11 @@ msgstr ""
 msgid "Referenced by"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:78
-#: project/presentation/shared/mail.py:29
+#: project/application/services/abstract_email_service.py:82
 msgid "Referenced event changed"
 msgstr ""
 
-#: project/presentation/web/templates/layout.html:231
+#: project/presentation/web/templates/layout.html:227
 #: project/presentation/web/views/manage_admin_unit/event/displays.py:34
 msgid "References"
 msgstr ""
@@ -2629,7 +2664,7 @@ msgstr ""
 msgid "Relation to %(admin_unit_name)s"
 msgstr ""
 
-#: project/presentation/web/templates/layout.html:272
+#: project/presentation/web/templates/layout.html:268
 msgid "Relations"
 msgstr ""
 
@@ -2754,18 +2789,19 @@ msgstr ""
 msgid "Revoked"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Role"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/web/forms/admin.py:55
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/forms/admin.py:55
 #: project/presentation/web/views/manage_admin_unit/member/displays.py:15
 #: project/presentation/web/views/manage_admin_unit/member/forms.py:11
 #: project/presentation/web/views/manage_admin_unit/member_invitation/forms.py:16
 msgid "Roles"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Roles users"
 msgstr ""
 
@@ -2803,11 +2839,11 @@ msgstr ""
 msgid "Scope"
 msgstr ""
 
-#: project/i10n.py:64
+#: project/presentation/shared/i10n.py:64
 msgid "Scope_openid"
 msgstr "Verify identity"
 
-#: project/i10n.py:65
+#: project/presentation/shared/i10n.py:65
 msgid "Scope_profile"
 msgstr "Read Profile information"
 
@@ -2880,18 +2916,20 @@ msgstr ""
 msgid "Send test mail synchronously"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:157
+#: frontend/src/apps/admin/pages/AdminHome.vue:8
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:157
 #: project/presentation/web/templates/admin/settings.html:4
 #: project/presentation/web/templates/admin/settings.html:11
-#: project/presentation/web/templates/layout.html:285
+#: project/presentation/web/templates/layout.html:281
 #: project/presentation/web/templates/profile.html:32
 #: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:7
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:30
 msgid "Settings"
 msgstr ""
 
-#: project/presentation/web/views/admin.py:95
-#: project/presentation/web/views/admin.py:261
+#: project/presentation/web/views/admin.py:91
+#: project/presentation/web/views/admin.py:267
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:81
 #: project/presentation/web/views/user_blueprint/user/views.py:131
 msgid "Settings successfully updated"
@@ -2934,7 +2972,7 @@ msgstr ""
 msgid "Show directions"
 msgstr ""
 
-#: project/presentation/web/templates/layout.html:225
+#: project/presentation/web/templates/layout.html:221
 msgid "Show events"
 msgstr ""
 
@@ -2998,7 +3036,7 @@ msgstr ""
 msgid "Sunday"
 msgstr ""
 
-#: project/presentation/web/templates/layout.html:303
+#: project/presentation/web/templates/layout.html:299
 msgid "Switch organization"
 msgstr ""
 
@@ -3023,17 +3061,21 @@ msgid "Target organization can no longer verify other organizations."
 msgstr ""
 
 #: project/presentation/web/forms/admin.py:13
-#: project/presentation/web/templates/layout.html:334
+#: project/presentation/web/templates/layout.html:330
+#: project/presentation/web/templates/layout_bs5.html:97
 #: project/presentation/web/views/root.py:76
 msgid "Terms of service"
+msgstr ""
+
+#: frontend/src/apps/admin/pages/UsersPage.vue:33
+msgid "Terms of service accepted at"
 msgstr ""
 
 #: project/presentation/web/templates/admin/email.html:103
 msgid "Test mail"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:86
-#: project/presentation/shared/mail.py:33
+#: project/application/services/abstract_email_service.py:90
 #, python-format
 msgid "Test mail from %(site_name)s"
 msgstr ""
@@ -3155,8 +3197,9 @@ msgstr ""
 
 #: project/domain/models/aggregates/organization_relation_aggregate.py:38
 #: project/domain/models/aggregates/organization_verification_request_aggregate.py:41
-#: project/i10n.py:66 project/infrastructure/models/admin_unit.py:248
+#: project/infrastructure/models/admin_unit.py:248
 #: project/infrastructure/models/admin_unit_verification_request.py:70
+#: project/presentation/shared/i10n.py:66
 msgid "There must be no self-reference."
 msgstr ""
 
@@ -3210,7 +3253,7 @@ msgstr ""
 msgid "Typical Age from"
 msgstr ""
 
-#: project/i10n.py:58
+#: project/presentation/shared/i10n.py:58
 msgid "Typical Age range"
 msgstr ""
 
@@ -3255,25 +3298,28 @@ msgstr ""
 msgid "Update user"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/shared/permissions.py:54
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/shared/permissions.py:54
 #: project/presentation/web/templates/admin/delete_user.html:13
 msgid "User"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:83
-#: project/presentation/shared/mail.py:32
+#: project/application/services/abstract_email_service.py:87
 msgid "User deletion requested"
 msgstr ""
 
-#: project/presentation/web/views/admin.py:237
+#: project/presentation/web/views/admin.py:243
 msgid "User successfully deleted"
 msgstr ""
 
-#: project/presentation/web/views/admin.py:205
+#: project/presentation/web/views/admin.py:211
 msgid "User successfully updated"
 msgstr ""
 
-#: project/babel.py:1 project/presentation/web/templates/admin/users.html:4
+#: frontend/src/apps/admin/pages/AdminHome.vue:25
+#: frontend/src/apps/admin/pages/UsersPage.vue:64
+#: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/templates/admin/users.html:4
 #: project/presentation/web/templates/admin/users.html:11
 #: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:15
 msgid "Users"
@@ -3287,8 +3333,7 @@ msgstr ""
 msgid "Verification request already verified."
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:90
-#: project/presentation/shared/mail.py:35
+#: project/application/services/abstract_email_service.py:94
 msgid "Verification request review status updated"
 msgstr ""
 
@@ -3377,7 +3422,7 @@ msgid ""
 " course it works without it."
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:32
 msgid "Webhook"
 msgstr ""
@@ -3386,35 +3431,35 @@ msgstr ""
 msgid "Webhook URL"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:32
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:44
 msgid "Webhook deliveries"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Webhook delivery"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Webhook delivery attempt"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:19
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:25
 msgid "Webhook delivery attempts"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Webhook event"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Webhook events"
 msgstr ""
 
-#: project/babel.py:1
+#: project/infrastructure/babel_extract.py:1
 msgid "Webhooks"
 msgstr ""
 
@@ -3436,7 +3481,7 @@ msgid "Widget"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:169
-#: project/presentation/web/templates/layout.html:289
+#: project/presentation/web/templates/layout.html:285
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:57
 msgid "Widgets"
 msgstr ""
@@ -3487,10 +3532,8 @@ msgstr ""
 msgid "You have been invited to join %(admin_unit_name)s."
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:60
-#: project/application/services/abstract_email_service.py:68
-#: project/presentation/shared/mail.py:13
-#: project/presentation/shared/mail.py:21
+#: project/application/services/abstract_email_service.py:64
+#: project/application/services/abstract_email_service.py:72
 msgid "You have received an invitation"
 msgstr ""
 
@@ -3509,7 +3552,7 @@ msgstr ""
 "Please note that it may take a few minutes for the email to reach you. To"
 " be on the safe side, also check the spam folder."
 
-#: project/presentation/api/__init__.py:109
+#: project/presentation/api/__init__.py:111
 msgid "message"
 msgstr ""
 
