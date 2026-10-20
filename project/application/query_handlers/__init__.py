@@ -72,6 +72,7 @@ from .get_outgoing_organization_verification_request_handler import (
     GetOutgoingOrganizationVerificationRequestHandler,
 )
 from .get_resource_owner_handler import GetResourceOwnerHandler
+from .get_settings_for_admin_handler import GetSettingsForAdminHandler
 from .get_settings_handler import GetSettingsHandler
 from .get_site_notices_handler import GetSiteNoticesHandler
 from .get_user_for_admin_handler import GetUserForAdminHandler

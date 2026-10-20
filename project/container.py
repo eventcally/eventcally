@@ -1033,6 +1033,11 @@ class Cqrs(containers.DeclarativeContainer):
                     query_handlers.GetCurrentMemberGrantsHandler,
                     repo=read_repos.access_read_repo,
                 ),
+                queries.GetSettingsForAdminQuery: providers.Factory(
+                    query_handlers.GetSettingsForAdminHandler,
+                    repo=read_repos.site_settings_read_repo,
+                    authz=actor_authorization_service,
+                ),
                 queries.GetSettingsQuery: providers.Factory(
                     query_handlers.GetSettingsHandler,
                     repo=read_repos.site_settings_read_repo,
