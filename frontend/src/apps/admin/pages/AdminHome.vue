@@ -9,7 +9,7 @@ type Entry = { label: string; href?: string; to?: { name: string } };
 
 const entries: Entry[] = [
   { label: t("Settings"), to: { name: "settings" } },
-  { label: t("Organizations"), href: legacy.organizations },
+  { label: t("Organizations"), to: { name: "organizations" } },
   { label: t("Users"), to: { name: "users" } },
   { label: t("Email"), href: legacy.email },
   { label: t("Newsletter"), href: legacy.newsletter },

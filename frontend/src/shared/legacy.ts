@@ -10,4 +10,10 @@ export const publicPages = {
   legalNotice: "/legal_notice",
   contact: "/contact",
   privacy: "/privacy",
+  organization: (id: number) => `/organizations/${id}`,
+};
+
+// Jinja manage area the admin links to.
+export const manage = {
+  organization: (id: number) => `/manage/admin_unit/${id}`,
 };

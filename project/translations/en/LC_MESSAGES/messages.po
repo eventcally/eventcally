@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-20 23:05+0200\n"
+"POT-Creation-Date: 2026-10-21 00:03+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -244,6 +244,8 @@ msgid "Additional information"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/AdminHome.vue:23
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:137
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:98
 #: frontend/src/apps/admin/pages/PlanningPage.vue:54
 #: frontend/src/apps/admin/pages/SettingsPage.vue:62
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:69
@@ -461,8 +463,8 @@ msgid "Booked up"
 msgstr ""
 
 #: frontend/src/apps/admin/components/ResetTosModal.vue:44
-#: frontend/src/apps/admin/components/SettingCard.vue:99
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:62
+#: frontend/src/apps/admin/components/SettingCard.vue:102
+#: frontend/src/apps/admin/components/TypeToConfirmModal.vue:64
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:100
 #: project/presentation/web/templates/verification_request/review.html:90
 #: project/presentation/web/templates/verification_request/review.html:115
@@ -728,6 +730,7 @@ msgstr ""
 msgid "Create organizer"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:44
 #: project/presentation/web/views/admin_blueprint/organization/forms.py:19
 msgid "Create other organizations"
 msgstr ""
@@ -736,6 +739,7 @@ msgstr ""
 msgid "Create place"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:57
 #: frontend/src/apps/admin/pages/UsersPage.vue:35
 #: project/presentation/web/templates/event_date/list.html:504
 #: project/presentation/web/views/admin_blueprint/organization/displays.py:10
@@ -755,12 +759,14 @@ msgstr ""
 msgid "Created at"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:68
 #: project/presentation/web/templates/_macros.html:428
 #: project/presentation/web/templates/macros/display.html.j2:36
 #, python-format
 msgid "Created at %(created_at)s by %(created_by)s."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:72
 #: project/presentation/web/templates/_macros.html:430
 #: project/presentation/web/templates/macros/display.html.j2:39
 #, python-format
@@ -824,6 +830,7 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:144
 #: frontend/src/apps/admin/pages/UsersPage.vue:93
 #: project/presentation/web/modular/base_form.py:100
 #: project/presentation/web/modular/base_view_handler.py:204
@@ -850,6 +857,9 @@ msgstr ""
 msgid "Delete event"
 msgstr ""
 
+#: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:31
+#: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:32
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:183
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:23
 msgid "Delete organization"
 msgstr ""
@@ -871,8 +881,8 @@ msgstr ""
 msgid "Delete reference request"
 msgstr ""
 
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:60
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:61
+#: frontend/src/apps/admin/components/UserDeleteModal.vue:31
+#: frontend/src/apps/admin/components/UserDeleteModal.vue:32
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:98
 #: project/presentation/web/forms/admin.py:60
 #: project/presentation/web/templates/admin/delete_user.html:6
@@ -883,6 +893,7 @@ msgstr ""
 msgid "Delete verification request"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:58
 #: frontend/src/apps/admin/pages/UsersPage.vue:38
 #: project/presentation/web/views/admin_blueprint/organization/displays.py:11
 msgid "Deletion requested at"
@@ -974,7 +985,8 @@ msgstr ""
 msgid "Earliest start first"
 msgstr ""
 
-#: frontend/src/apps/admin/components/SettingCard.vue:77
+#: frontend/src/apps/admin/components/SettingCard.vue:81
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:141
 #: frontend/src/apps/admin/pages/UsersPage.vue:90
 #: project/presentation/web/modular/base_view_handler.py:200
 #: project/presentation/web/templates/_macros.html:670
@@ -994,7 +1006,7 @@ msgstr ""
 msgid "Edit image"
 msgstr ""
 
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:71
+#: frontend/src/apps/admin/components/UserDeleteModal.vue:34
 #: frontend/src/apps/admin/pages/AdminHome.vue:14
 #: frontend/src/apps/admin/pages/UsersPage.vue:34
 #: project/presentation/web/forms/admin.py:61
@@ -1098,6 +1110,7 @@ msgstr ""
 msgid "Entered name does not match app client name"
 msgstr ""
 
+#: project/presentation/bff/admin/organizations.py:135
 #: project/presentation/web/views/admin_blueprint/organization/views.py:33
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:110
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:146
@@ -1113,9 +1126,14 @@ msgstr ""
 msgid "Entered name does not match place name"
 msgstr ""
 
+#: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:22
 #: frontend/src/apps/admin/components/ResetTosModal.vue:30
-#: frontend/src/apps/admin/components/SettingCard.vue:62
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:47
+#: frontend/src/apps/admin/components/SettingCard.vue:66
+#: frontend/src/apps/admin/components/TypeToConfirmModal.vue:48
+#: frontend/src/apps/admin/components/UserDeleteModal.vue:22
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:98
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:122
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:73
 #: frontend/src/apps/admin/pages/PlanningPage.vue:32
 #: frontend/src/apps/admin/pages/PlanningPage.vue:43
 #: frontend/src/apps/admin/pages/SettingsPage.vue:40
@@ -1670,14 +1688,17 @@ msgstr ""
 msgid "If set, events of the other organization are publicly visible."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:45
 #: project/presentation/web/views/admin_blueprint/organization/forms.py:20
 msgid "If set, members of the organization can create other organizations."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:50
 #: project/presentation/web/views/admin_blueprint/organization/forms.py:28
 msgid "If set, members of the organization can invite other organizations."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:55
 #: project/presentation/web/views/admin_blueprint/organization/forms.py:36
 msgid "If set, members of the organization can verify other organizations."
 msgstr ""
@@ -1727,6 +1748,7 @@ msgstr ""
 msgid "Incoming reference requests"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:37
 #: project/presentation/web/views/admin_blueprint/organization/forms.py:11
 msgid "Incoming reference requests allowed"
 msgstr ""
@@ -1808,6 +1830,7 @@ msgstr ""
 msgid "Invite organization"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:49
 #: project/presentation/web/views/admin_blueprint/organization/forms.py:27
 msgid "Invite other organizations"
 msgstr ""
@@ -1827,6 +1850,8 @@ msgstr ""
 msgid "KID"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:105
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:106
 #: project/presentation/web/forms/event_date.py:18
 #: project/presentation/web/modular/base_views.py:224
 msgid "Keyword"
@@ -1876,12 +1901,14 @@ msgstr ""
 msgid "Last remaining administrator can not leave the organization."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:78
 #: project/presentation/web/templates/_macros.html:437
 #: project/presentation/web/templates/macros/display.html.j2:46
 #, python-format
 msgid "Last updated at %(updated_at)s by %(updated_by)s."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:82
 #: project/presentation/web/templates/_macros.html:439
 #: project/presentation/web/templates/macros/display.html.j2:49
 #, python-format
@@ -1984,6 +2011,8 @@ msgstr ""
 msgid "Mails sent successfully"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:154
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:135
 #: project/presentation/web/templates/home.html:26
 #: project/presentation/web/views/admin_blueprint/organization/view_handler.py:78
 #: project/presentation/web/views/flask_admin.py:125
@@ -2021,6 +2050,8 @@ msgstr ""
 msgid "More filters"
 msgstr ""
 
+#: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:34
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:55
 #: project/presentation/web/templates/_macros.html:1041
 #: project/presentation/web/views/admin_blueprint/organization/displays.py:8
 #: project/presentation/web/views/admin_blueprint/organization/displays.py:15
@@ -2118,6 +2149,7 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
 #: project/presentation/web/modular/filters.py:31
 #: project/presentation/web/templates/_macros.html:1019
 msgid "No"
@@ -2126,6 +2158,10 @@ msgstr ""
 #: project/presentation/web/templates/developer/read.html:31
 #: project/presentation/web/templates/manage/export.html:71
 msgid "No files available"
+msgstr ""
+
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:117
+msgid "No organizations found"
 msgstr ""
 
 #: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:44
@@ -2145,7 +2181,7 @@ msgstr ""
 msgid "Not referenced"
 msgstr ""
 
-#: frontend/src/apps/admin/components/SettingCard.vue:106
+#: frontend/src/apps/admin/components/SettingCard.vue:109
 #: project/presentation/web/templates/_macros.html:1019
 #: project/presentation/web/templates/_macros.html:1023
 #: project/presentation/web/templates/_macros.html:1032
@@ -2307,8 +2343,16 @@ msgstr ""
 msgid "Organization relations"
 msgstr ""
 
+#: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:24
+msgid "Organization successfully deleted"
+msgstr ""
+
 #: project/presentation/web/views/user_blueprint/organization_member/views.py:53
 msgid "Organization successfully left"
+msgstr ""
+
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:127
+msgid "Organization successfully updated"
 msgstr ""
 
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:67
@@ -2324,6 +2368,8 @@ msgid "Organization verification requests"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/AdminHome.vue:12
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:138
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:98
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/jinja_filters.py:73
 #: project/presentation/web/jinja_filters.py:85
@@ -2859,7 +2905,7 @@ msgstr ""
 msgid "Saturday"
 msgstr ""
 
-#: frontend/src/apps/admin/components/SettingCard.vue:96
+#: frontend/src/apps/admin/components/SettingCard.vue:99
 #: project/presentation/web/forms/admin.py:20
 #: project/presentation/web/forms/admin.py:28
 #: project/presentation/web/views/user_blueprint/oauth2_client/forms.py:31
@@ -2981,7 +3027,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: frontend/src/apps/admin/components/SettingCard.vue:60
+#: frontend/src/apps/admin/components/SettingCard.vue:64
 #: project/presentation/web/views/admin.py:91
 #: project/presentation/web/views/admin.py:267
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:81
@@ -3017,7 +3063,7 @@ msgstr ""
 msgid "Short name must contain only letters numbers or underscore"
 msgstr ""
 
-#: frontend/src/apps/admin/components/SettingCard.vue:74
+#: frontend/src/apps/admin/components/SettingCard.vue:78
 #: project/presentation/web/views/utils.py:111
 msgid "Show"
 msgstr ""
@@ -3367,7 +3413,7 @@ msgstr ""
 msgid "User deletion requested"
 msgstr ""
 
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:51
+#: frontend/src/apps/admin/components/UserDeleteModal.vue:24
 #: project/presentation/web/views/admin.py:243
 msgid "User successfully deleted"
 msgstr ""
@@ -3417,6 +3463,8 @@ msgstr ""
 msgid "Verification requests postal codes"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:150
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:56
 #: project/presentation/web/templates/_macros.html:353
 #: project/presentation/web/views/admin_blueprint/organization/displays.py:9
 msgid "Verified"
@@ -3433,6 +3481,7 @@ msgstr ""
 msgid "Verify other organization"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:54
 #: project/presentation/web/views/admin_blueprint/organization/forms.py:35
 msgid "Verify other organizations"
 msgstr ""
@@ -3447,6 +3496,8 @@ msgstr ""
 msgid "Verify reference requests automatically"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:155
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:136
 #: project/presentation/web/modular/base_view_handler.py:197
 #: project/presentation/web/views/admin_blueprint/organization/view_handler.py:68
 #: project/presentation/web/views/flask_admin.py:128
@@ -3563,6 +3614,7 @@ msgstr ""
 msgid "Yahoo calendar"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
 #: project/presentation/web/modular/filters.py:30
 #: project/presentation/web/templates/_macros.html:1019
 msgid "Yes"

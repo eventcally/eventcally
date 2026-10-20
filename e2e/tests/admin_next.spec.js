@@ -1,5 +1,6 @@
 const { test, expect } = require("../fixtures");
-const { createUser } = require("../fixtures/flask");
+const { screenshot } = require("../fixtures/helpers");
+const { createUser, createAdminUnit } = require("../fixtures/flask");
 
 test.describe("Admin (Vue 3)", () => {
   test("users", async ({ page, login }) => {
@@ -61,6 +62,68 @@ test.describe("Admin (Vue 3)", () => {
     await expect(ok).toBeDisabled();
     await modal.locator("input").fill("OTHER@test.de");
     await expect(ok).toBeEnabled();
+    await ok.click();
+
+    await expect(page.locator(".toast")).toBeVisible();
+    await expect(row).toHaveCount(0);
+  });
+
+  test("organizations: search", async ({ page, login }) => {
+    createUser("admin@test.de", "password", true);
+    createAdminUnit("admin@test.de", "Alpha Crew");
+    createAdminUnit("admin@test.de", "Beta Crew");
+    await login("admin@test.de");
+
+    await page.goto("/admin-next/organizations");
+    // The seed data brings one organization of its own.
+    await expect(page.locator("table tbody tr")).toHaveCount(3);
+    await page.locator("input[type=search]").fill("alp");
+
+    await expect(page.locator("table tbody tr")).toHaveCount(1);
+    await expect(page.locator("table tbody tr", { hasText: "Alpha Crew" })).toBeVisible();
+    await expect(page).toHaveURL(/keyword=alp/);
+    await screenshot(page, "organizations-list-search");
+  });
+
+  test("organizations: toggle capability", async ({ page, login }) => {
+    createUser("admin@test.de", "password", true);
+    createAdminUnit("admin@test.de", "Alpha Crew");
+    await login("admin@test.de");
+
+    await page.goto("/admin-next/organizations");
+    const row = page.locator("table tbody tr", { hasText: "Alpha Crew" });
+    await row.locator("a", { hasText: /^\s*(Edit|Bearbeiten)\s*$/ }).click();
+
+    await expect(page).toHaveURL(/\/admin-next\/organizations\/\d+\/update/);
+    const verify = page.getByLabel(/^(Verify other organizations|Andere Organisationen verifizieren)/);
+    await expect(verify).toBeChecked(); // the fixture organizations have all capabilities
+    await screenshot(page, "organization-update");
+    await verify.uncheck();
+
+    await expect(page.locator(".toast")).toBeVisible();
+    await screenshot(page, "organization-update-saved");
+    await page.reload();
+    await expect(
+      page.getByLabel(/^(Verify other organizations|Andere Organisationen verifizieren)/),
+    ).not.toBeChecked();
+  });
+
+  test("organizations: delete", async ({ page, login }) => {
+    createUser("admin@test.de", "password", true);
+    createAdminUnit("admin@test.de", "Alpha Crew");
+    await login("admin@test.de");
+
+    await page.goto("/admin-next/organizations");
+    const row = page.locator("table tbody tr", { hasText: "Alpha Crew" });
+    await row.locator("button", { hasText: /^\s*(Delete|Löschen)\s*$/ }).click();
+
+    const modal = page.locator(".modal.show");
+    const ok = modal.locator(".btn-danger");
+    await expect(ok).toBeDisabled();
+    await modal.locator("input").fill("alpha crew");
+    await expect(ok).toBeEnabled();
+    await page.waitForTimeout(500); // let the modal fade in
+    await screenshot(page, "organization-delete-modal");
     await ok.click();
 
     await expect(page.locator(".toast")).toBeVisible();
