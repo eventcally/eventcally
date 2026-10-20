@@ -1,4 +1,6 @@
 import { createBootstrap } from "bootstrap-vue-next";
+// Component styles of bootstrap-vue-next only (toast, modal, ...); Bootstrap itself comes from the Jinja frame.
+import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import { createApp, type Component } from "vue";
 import type { Router } from "vue-router";
 import { i18n } from "./i18n";

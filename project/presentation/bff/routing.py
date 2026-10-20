@@ -1,4 +1,5 @@
 import functools
+import re
 from dataclasses import dataclass
 from typing import Optional, Type
 
@@ -15,8 +16,9 @@ class RouteSpec:
     endpoint: str
     query_model: Optional[Type[BaseModel]]
     body_model: Optional[Type[BaseModel]]
-    response_model: Type[BaseModel]
+    response_model: Optional[Type[BaseModel]]
     summary: Optional[str]
+    status: int = 200
 
     @property
     def full_rule(self) -> str:
@@ -24,6 +26,21 @@ class RouteSpec:
         prefix = _blueprint_prefix(self.blueprint)
         return prefix + self.rule
 
+    @property
+    def path_params(self) -> tuple[tuple[str, str], ...]:
+        """The `(name, converter)` pairs of the rule, e.g. `("id", "int")`."""
+        return tuple(
+            (name, converter or "string")
+            for converter, name in _RULE_PARAM.findall(self.full_rule)
+        )
+
+    @property
+    def openapi_rule(self) -> str:
+        """`full_rule` in OpenAPI notation: `<int:id>` becomes `{id}`."""
+        return _RULE_PARAM.sub(lambda m: "{" + m.group(2) + "}", self.full_rule)
+
+
+_RULE_PARAM = re.compile(r"<(?:(\w+):)?(\w+)>")
 
 ROUTES: list[RouteSpec] = []
 
@@ -51,17 +68,20 @@ def bff_route(
     method: str = "GET",
     query: Optional[Type[BaseModel]] = None,
     body: Optional[Type[BaseModel]] = None,
-    response: Type[BaseModel],
-    status: int = 200,
+    response: Optional[Type[BaseModel]] = None,
+    status: Optional[int] = None,
     summary: Optional[str] = None,
 ):
     """Register a JSON view on `bp` and record it for the OpenAPI document.
 
     The query string / JSON body are validated with the given pydantic models and
     passed to the view as the `query=` / `body=` keyword arguments. The return value
-    is validated through `response` and serialized to JSON. A pydantic
-    `ValidationError` propagates to the BFF error handler (422).
+    is validated through `response` and serialized to JSON; without a `response` the
+    route answers `204 No Content`. A pydantic `ValidationError` propagates to the BFF
+    error handler (422).
     """
+    if status is None:
+        status = 200 if response is not None else 204
 
     def decorator(view):
         @functools.wraps(view)
@@ -75,6 +95,8 @@ def bff_route(
             if isinstance(result, Response):
                 # e.g. the 401 of an auth decorator in front of the view
                 return result
+            if response is None:
+                return "", status
             payload = response.model_validate(result).model_dump(mode="json")
             return jsonify(payload), status
 
@@ -89,6 +111,7 @@ def bff_route(
                 body_model=body,
                 response_model=response,
                 summary=summary,
+                status=status,
             )
         )
         return wrapper

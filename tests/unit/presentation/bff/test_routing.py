@@ -95,3 +95,31 @@ def test_body_and_response_passthrough(bp):
     set_parent(bp, Blueprint("t_root", __name__, url_prefix="/r"))
     operation = build_openapi()["paths"]["/r/t/echo"]["post"]
     assert operation["requestBody"]["required"] is True
+
+
+def test_path_params_and_no_content(bp):
+    @bff_route(bp, "/items/<int:id>", method="DELETE")
+    def remove(id: int):
+        assert isinstance(id, int)
+
+    @bff_route(bp, "/items/<int:id>/tags/<tag>", response=Out)
+    def tag(id: int, tag: str):
+        return {"doubled": id}
+
+    app = Flask(__name__)
+    app.register_blueprint(bp)
+    client = app.test_client()
+
+    deleted = client.delete("/t/items/3")
+    assert deleted.status_code == 204
+    assert deleted.data == b""
+    assert client.get("/t/items/3/tags/x").json == {"doubled": 3}
+
+    remove_spec, tag_spec = ROUTES[-2:]
+    assert remove_spec.status == 204
+    assert remove_spec.response_model is None
+    assert remove_spec.openapi_rule == "/t/items/{id}"
+    assert remove_spec.path_params == (("id", "int"),)
+    assert tag_spec.status == 200
+    assert tag_spec.openapi_rule == "/t/items/{id}/tags/{tag}"
+    assert tag_spec.path_params == (("id", "int"), ("tag", "string"))

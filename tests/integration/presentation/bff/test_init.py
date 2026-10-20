@@ -80,3 +80,17 @@ def test_integrity_error_maps_to_400(app):
     with app.test_request_context("/bff/admin/users"):
         _, code = _handle_integrity_error(IntegrityError("s", {}, Exception()))
     assert code == 400
+
+
+def test_field_validation_error_is_422(app):
+    from project.presentation.bff import _handle_field_validation_error
+    from project.presentation.bff.errors import FieldValidationError
+
+    with app.test_request_context("/bff/admin/users"):
+        response, code = _handle_field_validation_error(
+            FieldValidationError(["email"], "Does not match")
+        )
+
+    assert code == 422
+    assert response.json["name"] == "Unprocessable Entity"
+    assert response.json["errors"] == [{"loc": ["email"], "msg": "Does not match"}]

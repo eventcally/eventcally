@@ -17,6 +17,28 @@ def test_users_path():
     assert "ErrorResponse" in spec["components"]["schemas"]
 
 
+def test_user_paths():
+    spec = build_openapi()
+
+    detail = spec["paths"]["/bff/admin/users/{id}"]
+    assert detail["get"]["parameters"] == [
+        {"name": "id", "in": "path", "required": True, "schema": {"type": "integer"}}
+    ]
+    assert detail["get"]["responses"]["200"]["content"]["application/json"][
+        "schema"
+    ] == {"$ref": "#/components/schemas/AdminUserDetail"}
+    assert "404" in detail["get"]["responses"]
+    assert "400" not in detail["get"]["responses"]
+    assert "204" in detail["delete"]["responses"]
+    assert "200" not in detail["delete"]["responses"]
+    assert "400" in detail["delete"]["responses"]
+    assert detail["delete"]["requestBody"]["required"] is True
+
+    roles = spec["paths"]["/bff/admin/users/{id}/roles"]["put"]
+    assert "204" in roles["responses"]
+    assert roles["requestBody"]["required"] is True
+
+
 def test_committed_spec_is_up_to_date():
     path = Path(__file__).parents[4] / "frontend" / "openapi.json"
     committed = json.loads(path.read_text(encoding="utf-8"))

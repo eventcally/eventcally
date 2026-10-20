@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from project.application.read_models.page import Page
 from project.application.read_models.user_admin_read_models import UserAdminReadModel
@@ -15,6 +15,24 @@ class AdminUserRow(BaseModel):
     tos_accepted_at: Optional[datetime] = None
     deletion_requested_at: Optional[datetime] = None
     roles: List[str] = []
+
+
+class AdminRoleOption(BaseModel):
+    name: str
+    title: str
+
+
+class AdminUserDetail(BaseModel):
+    user: AdminUserRow
+    available_roles: List[AdminRoleOption]
+
+
+class AdminUserRolesUpdate(BaseModel):
+    roles: List[str]
+
+
+class AdminUserDelete(BaseModel):
+    email: str = Field(min_length=1)
 
 
 class AdminUserPage(BaseModel):

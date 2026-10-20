@@ -7,10 +7,15 @@ from werkzeug.exceptions import HTTPException
 
 from project.domain.errors import BaseError
 from project.domain.errors.unauthorized_error import UnauthorizedError
+from project.presentation.bff.errors import FieldValidationError
 
 bff_bp = Blueprint("bff", __name__, url_prefix="/bff")
 
 _UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+
+_UNPROCESSABLE_MESSAGE = (
+    "The request was well-formed but was unable to be followed due to semantic errors."
+)
 
 
 def _error_response(name: str, message: str, code: int, **extra):
@@ -49,8 +54,20 @@ def _handle_validation_error(err: ValidationError):
     ]
     payload = ValidationErrorResponse(
         name="Unprocessable Entity",
-        message="The request was well-formed but was unable to be followed due to semantic errors.",
+        message=_UNPROCESSABLE_MESSAGE,
         errors=errors,
+    )
+    return jsonify(payload.model_dump(mode="json")), 422
+
+
+@bff_bp.errorhandler(FieldValidationError)
+def _handle_field_validation_error(err: FieldValidationError):
+    from project.presentation.bff.schemas import FieldError, ValidationErrorResponse
+
+    payload = ValidationErrorResponse(
+        name="Unprocessable Entity",
+        message=_UNPROCESSABLE_MESSAGE,
+        errors=[FieldError(loc=err.loc, msg=err.msg)],
     )
     return jsonify(payload.model_dump(mode="json")), 422
 

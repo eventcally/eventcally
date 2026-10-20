@@ -7,6 +7,4 @@ export const legacy = {
   newsletter: "/admin/newsletter",
   planning: "/admin/planning",
   flaskAdmin: "/admin/flask-admin/",
-  userUpdate: (id: number) => `/admin/user/${id}/update`,
-  userDelete: (id: number) => `/admin/user/${id}/delete`,
 };

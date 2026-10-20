@@ -8,8 +8,30 @@ from project.presentation.bff.schemas import ErrorResponse, ValidationErrorRespo
 _REF = "#/components/schemas/{model}"
 
 
+_UNSAFE_METHODS = {"post", "put", "patch", "delete"}
+
+
+def _error(description: str) -> dict:
+    return {
+        "description": description,
+        "content": {"application/json": {"schema": _ref("ErrorResponse")}},
+    }
+
+
 def _ref(name: str) -> dict:
     return {"$ref": _REF.format(model=name)}
+
+
+def _path_parameters(route) -> list[dict]:
+    return [
+        {
+            "name": name,
+            "in": "path",
+            "required": True,
+            "schema": {"type": "integer" if converter == "int" else "string"},
+        }
+        for name, converter in route.path_params
+    ]
 
 
 def _parameters(model) -> list[dict]:
@@ -36,7 +58,8 @@ def build_openapi() -> dict[str, Any]:
 
     models: list = [ErrorResponse, ValidationErrorResponse]
     for route in ROUTES:
-        models.append(route.response_model)
+        if route.response_model:
+            models.append(route.response_model)
         if route.body_model:
             models.append(route.body_model)
     unique = list({m: None for m in models})
@@ -46,22 +69,21 @@ def build_openapi() -> dict[str, Any]:
     )
 
     paths: dict[str, dict] = {}
-    for route in sorted(ROUTES, key=lambda r: (r.full_rule, r.method)):
-        responses = {
-            "200": {
+    for route in sorted(ROUTES, key=lambda r: (r.openapi_rule, r.method)):
+        if route.response_model is None:
+            success = {"description": "No Content"}
+        else:
+            success = {
                 "description": "OK",
                 "content": {
                     "application/json": {"schema": _ref(route.response_model.__name__)}
                 },
-            },
-            "401": {
-                "description": "Unauthorized",
-                "content": {"application/json": {"schema": _ref("ErrorResponse")}},
-            },
-            "403": {
-                "description": "Forbidden",
-                "content": {"application/json": {"schema": _ref("ErrorResponse")}},
-            },
+            }
+        responses = {
+            str(route.status): success,
+            "401": _error("Unauthorized"),
+            "403": _error("Forbidden"),
+            "404": _error("Not Found"),
             "422": {
                 "description": "Unprocessable Entity",
                 "content": {
@@ -69,14 +91,19 @@ def build_openapi() -> dict[str, Any]:
                 },
             },
         }
+        if route.method in _UNSAFE_METHODS:
+            responses["400"] = _error("Bad Request")
         operation: dict[str, Any] = {
             "operationId": route.endpoint.replace(".", "_"),
             "responses": responses,
         }
         if route.summary:
             operation["summary"] = route.summary
+        parameters = _path_parameters(route)
         if route.query_model:
-            operation["parameters"] = _parameters(route.query_model)
+            parameters += _parameters(route.query_model)
+        if parameters:
+            operation["parameters"] = parameters
         if route.body_model:
             operation["requestBody"] = {
                 "required": True,
@@ -84,7 +111,7 @@ def build_openapi() -> dict[str, Any]:
                     "application/json": {"schema": _ref(route.body_model.__name__)}
                 },
             }
-        paths.setdefault(route.full_rule, {})[route.method] = operation
+        paths.setdefault(route.openapi_rule, {})[route.method] = operation
 
     return {
         "openapi": "3.1.0",

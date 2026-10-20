@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BOverlay, BTable, type TableFieldRaw } from "bootstrap-vue-next";
+import { BButton, BOverlay, BTable, type TableFieldRaw } from "bootstrap-vue-next";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -9,7 +9,7 @@ import { boot } from "@/shared/boot";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
 import AppPager from "@/shared/AppPager.vue";
 import { formatDate } from "@/shared/format";
-import { legacy } from "../legacy";
+import UserDeleteModal from "../components/UserDeleteModal.vue";
 
 type UserPage = components["schemas"]["AdminUserPage"];
 
@@ -19,6 +19,8 @@ const router = useRouter();
 
 const page = ref<UserPage | null>(null);
 const loading = ref(false);
+const deleting = ref<{ id: number; email: string } | null>(null);
+const showDelete = ref(false);
 const error = ref<string | null>(null);
 
 const currentPage = computed({
@@ -53,6 +55,19 @@ async function load() {
   loading.value = false;
 }
 
+function askDelete(item: { id: number; email: string }) {
+  deleting.value = item;
+  showDelete.value = true;
+}
+
+async function onDeleted() {
+  await load();
+  // The deleted user may have been the last one of the page.
+  if (page.value?.items.length === 0 && currentPage.value > 1) {
+    currentPage.value = currentPage.value - 1;
+  }
+}
+
 watch(currentPage, load, { immediate: true });
 </script>
 
@@ -71,11 +86,17 @@ watch(currentPage, load, { immediate: true });
           {{ fmt(item.deletion_requested_at) }}
         </template>
         <template #cell(actions)="{ item }">
-          <a :href="legacy.userUpdate(item.id)" class="me-2">{{ t("Edit") }}</a>
-          <a :href="legacy.userDelete(item.id)">{{ t("Delete") }}</a>
+          <router-link :to="{ name: 'user-update', params: { id: item.id } }" class="me-2">
+            {{ t("Edit") }}
+          </router-link>
+          <BButton variant="link" class="p-0 align-baseline" @click="askDelete(item)">
+            {{ t("Delete") }}
+          </BButton>
         </template>
       </BTable>
     </BOverlay>
+
+    <UserDeleteModal v-model="showDelete" :user="deleting" @deleted="onDeleted" />
 
     <AppPager
       v-if="page && page.pages > 1"
