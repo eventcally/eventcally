@@ -4,9 +4,16 @@ import { boot } from "./boot";
 
 const UNSAFE = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
-/** The boot data is DOM text: only follow a same-origin path, never `//host` or `javascript:`. */
-function isLocalPath(url: string): boolean {
-  return url.startsWith("/") && !url.startsWith("//") && !url.startsWith("/\\");
+/** The boot data is DOM text: only ever redirect to a path on this origin. */
+function loginRedirect(): string | null {
+  try {
+    const url = new URL(boot.loginUrl, location.origin);
+    if (url.origin !== location.origin) return null;
+    url.searchParams.set("next", location.pathname);
+    return url.pathname + url.search;
+  } catch {
+    return null;
+  }
 }
 
 export const authMiddleware: Middleware = {
@@ -18,8 +25,9 @@ export const authMiddleware: Middleware = {
     return request;
   },
   onResponse({ response }) {
-    if (response.status === 401 && isLocalPath(boot.loginUrl)) {
-      location.assign(`${boot.loginUrl}?next=${encodeURIComponent(location.pathname)}`);
+    if (response.status === 401) {
+      const target = loginRedirect();
+      if (target) location.assign(target);
     }
     return response;
   },
