@@ -51,3 +51,24 @@ class AdminUserPage(BaseModel):
             total=page.total,
             pages=page.pages,
         )
+
+
+class AdminSettings(BaseModel):
+    start_page: Optional[str] = None
+    tos: Optional[str] = None
+    legal_notice: Optional[str] = None
+    contact: Optional[str] = None
+    privacy: Optional[str] = None
+    announcement: Optional[str] = None
+
+
+class AdminSettingUpdate(BaseModel):
+    value: Optional[str] = Field(...)
+
+
+class AdminPlanning(BaseModel):
+    planning_external_calendars: Optional[str] = None
+
+
+class AdminPlanningUpdate(BaseModel):
+    planning_external_calendars: Optional[str] = Field(...)

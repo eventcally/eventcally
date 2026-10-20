@@ -70,6 +70,7 @@ from .get_outgoing_organization_verification_request_query import (
     GetOutgoingOrganizationVerificationRequestQuery,
 )
 from .get_resource_owner_query import GetResourceOwnerQuery, ResourceKind
+from .get_settings_for_admin_query import GetSettingsForAdminQuery
 from .get_settings_query import GetSettingsQuery
 from .get_site_notices_query import GetSiteNoticesQuery
 from .get_user_for_admin_query import GetUserForAdminQuery
