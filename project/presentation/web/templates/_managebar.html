@@ -1,0 +1,105 @@
+{#- Management toolbar of the current organization. Include with `bs` = 4 or 5. -#}
+{% if bs == 5 %}
+{% set bs = {"toggle": "data-bs-toggle", "target": "data-bs-target", "me_auto": "me-auto", "menu_end": "dropdown-menu-end", "badge": "badge text-bg-secondary rounded-pill", "ms_auto": "ms-auto"} %}
+{% else %}
+{% set bs = {"toggle": "data-toggle", "target": "data-target", "me_auto": "mr-auto", "menu_end": "dropdown-menu-right", "badge": "badge badge-secondary badge-pill", "ms_auto": "navbar-right"} %}
+{% endif %}
+      {% if current_admin_unit %}
+      {% set menu_options = get_manage_menu_options(current_admin_unit) %}
+      <nav class="navbar navbar-expand-md navbar-light bg-light">
+          <span></span>
+          <button class="navbar-toggler" type="button" {{ bs.toggle }}="collapse" {{ bs.target }}="#navbarNavAdminUnitMarkup" aria-controls="navbarNavAdminUnitMarkup" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAdminUnitMarkup">
+              <div class="navbar-nav {{ bs.me_auto }}">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-truncate" href="#" id="navbarAdminUnitEventsDropdown" role="button" {{ bs.toggle }}="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ _('Events') }}
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarAdminUnitEventsDropdown">
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.events', id=current_admin_unit.id) }}">{{ _('Show events') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_create', id=current_admin_unit.id) }}">{{ _('Create event') }}</a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-truncate" href="#" id="navbarAdminUnitReferencesDropdown" role="button" {{ bs.toggle }}="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ _('References') }}
+                    {% if menu_options['reference_requests_incoming_badge'] > 0 %}
+                      <span class="{{ bs.badge }}">{{ menu_options['reference_requests_incoming_badge'] }}</span>
+                    {% endif %}
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarAdminUnitReferencesDropdown">
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.incoming_event_references', id=current_admin_unit.id) }}">{{ _('Incoming references') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_event_references', id=current_admin_unit.id) }}">{{ _('Outgoing references') }}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.incoming_event_reference_requests', id=current_admin_unit.id) }}">{{ _('Incoming reference requests') }}
+                      {% if menu_options['reference_requests_incoming_badge'] > 0 %}
+                        <span class="{{ bs.badge }}">{{ menu_options['reference_requests_incoming_badge'] }}</span>
+                      {% endif %}
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_event_reference_requests', id=current_admin_unit.id) }}">{{ _('Outgoing reference requests') }}</a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-truncate" href="#" id="navbarAdminUnitOrganizationDropdown" role="button" {{ bs.toggle }}="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ _('Organization') }}
+                    {% if menu_options['verification_requests_incoming_badge'] > 0 %}
+                      <span class="{{ bs.badge }}">{{ menu_options['verification_requests_incoming_badge'] }}</span>
+                    {% endif %}
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarAdminUnitOrganizationDropdown">
+                    {% if not current_admin_unit.is_verified %}
+                      <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_organization_verification_requests', id=current_admin_unit.id) }}">{{ _('Outgoing verification requests') }}</a>
+                      <div class="dropdown-divider"></div>
+                    {% endif %}
+
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_organizers', id=current_admin_unit.id) }}">{{ _('Organizers') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_places', id=current_admin_unit.id) }}">{{ _('Places') }}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.organization_members', id=current_admin_unit.id) }}">{{ _('Members') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.organization_member_invitations', id=current_admin_unit.id) }}">{{ _('Organization member invitations') }}</a>
+
+                    {% if current_admin_unit.can_verify_other or current_admin_unit.can_invite_other %}
+                    <div class="dropdown-divider"></div>
+                    {% endif %}
+
+                    {% if current_admin_unit.can_verify_other %}
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.outgoing_organization_relations', id=current_admin_unit.id) }}">{{ _('Relations') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.incoming_organization_verification_requests', id=current_admin_unit.id) }}">{{ _('Incoming verification requests') }}
+                      {% if menu_options['verification_requests_incoming_badge'] > 0 %}
+                        <span class="{{ bs.badge }}">{{ menu_options['verification_requests_incoming_badge'] }}</span>
+                      {% endif %}
+                    </a>
+                    {% endif %}
+
+                    {% if current_admin_unit.can_invite_other %}
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.organization_invitations', id=current_admin_unit.id) }}">{{ _('Organization invitations') }}</a>
+                    {% endif %}
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.update', id=current_admin_unit.id) }}">{{ _('Settings') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('main.manage_admin_unit_export', id=current_admin_unit.id) }}">{{ _('Export') }}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('main.manage_admin_unit_custom_widgets', id=current_admin_unit.id) }}">{{ _('Custom widgets') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.widgets', id=current_admin_unit.id) }}">{{ _('Widgets') }}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.api_keys', id=current_admin_unit.id) }}">{{ _('API keys') }}</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('main.organizations', path=current_admin_unit.id) }}">{{ _('Profile') }}</a>
+                  </div>
+                </li>
+              </div>
+              <div class="navbar-nav {{ bs.ms_auto }}">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarAdminUnitSwitchDropdown" role="button" {{ bs.toggle }}="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ current_admin_unit.name }}
+                  </a>
+                  <div class="dropdown-menu {{ bs.menu_end }}" aria-labelledby="navbarAdminUnitSwitchDropdown">
+                    <a class="dropdown-item" href="{{ url_for('main.manage_admin_units') }}">{{ _('Switch organization') }}</a>
+                  </div>
+                </li>
+              </div>
+          </div>
+      </nav>
+      {% endif %}

@@ -17,6 +17,7 @@ type = forbidden
 source_modules =
     project.presentation.web
     project.presentation.api
+    project.presentation.bff
     project.presentation.shared
     project.presentation.tasks
 forbidden_modules =
@@ -72,6 +73,27 @@ source_modules =
 forbidden_modules =
     project.presentation.web
     project.presentation.api
+    project.presentation.bff
+allow_indirect_imports = True
+
+[importlinter:contract:bff-is-its-own-channel]
+name = The BFF channel imports neither the web nor the API channel
+type = forbidden
+source_modules =
+    project.presentation.bff
+forbidden_modules =
+    project.presentation.web
+    project.presentation.api
+allow_indirect_imports = True
+
+[importlinter:contract:web-and-api-do-not-import-bff]
+name = The web and API channels do not import the BFF channel
+type = forbidden
+source_modules =
+    project.presentation.web
+    project.presentation.api
+forbidden_modules =
+    project.presentation.bff
 allow_indirect_imports = True
 
 [importlinter:contract:core-does-not-import-composition-root]

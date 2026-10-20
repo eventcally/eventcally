@@ -33,6 +33,7 @@ def load_app_config_from_env(app: Flask):
         "ADMIN_UNIT_CREATE_REQUIRES_ADMIN"
     )
     app.config["GOOGLE_MAPS_API_KEY"] = os.getenv("GOOGLE_MAPS_API_KEY")
+    app.config["VITE_DEV_SERVER_URL"] = os.getenv("VITE_DEV_SERVER_URL", "")
     set_env_to_app(app, "SITE_NAME", "EventCally")
     app.config["FLASK_DEBUG"] = getenv_bool("FLASK_DEBUG", "False")
     app.config["API_READ_ANONYM"] = getenv_bool("API_READ_ANONYM", "False")

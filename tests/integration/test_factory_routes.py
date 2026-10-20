@@ -4,6 +4,8 @@ REPRESENTATIVE_ENDPOINTS = {
     "main.contact",
     "main.authorize",
     "admin.admin",
+    "admin_next.shell",
+    "bff.bff_admin.users",
     "manage.organization_create",
     "manage_admin_unit.api_key",
     "user.api_key",

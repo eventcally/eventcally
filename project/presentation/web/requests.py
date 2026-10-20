@@ -5,6 +5,27 @@ from flask_login.utils import encode_cookie
 from flask_security import current_user
 
 
+def _content_security_policy(app) -> str:
+    script_src = "'self' 'unsafe-eval' 'unsafe-inline'"
+    style_src = "'self' 'unsafe-eval' 'unsafe-inline'"
+    connect_src = "'self' blob: data:"
+
+    # The Vite dev server serves scripts/styles from another origin and
+    # pushes HMR updates over a websocket.
+    dev_server = app.config.get("VITE_DEV_SERVER_URL", "").rstrip("/")
+    if dev_server:
+        websocket = dev_server.replace("http", "ws", 1)
+        script_src += f" {dev_server}"
+        style_src += f" {dev_server}"
+        connect_src += f" {dev_server} {websocket}"
+
+    return (
+        f"default-src 'self'; script-src {script_src}; style-src {style_src}; "
+        "img-src 'self' blob: data: *.openstreetmap.org; "
+        f"connect-src {connect_src};"
+    )
+
+
 def init_requests(app):
     @app.after_request
     def check_tos_accepted(response):
@@ -53,7 +74,5 @@ def init_requests(app):
 
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' blob: data: *.openstreetmap.org; connect-src 'self' blob: data:;"
-        )
+        response.headers["Content-Security-Policy"] = _content_security_policy(app)
         return response

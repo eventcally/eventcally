@@ -16,6 +16,7 @@ def init_web(app: Flask):
     from project.presentation.shared.i10n import get_locale_from_request
     from project.presentation.web.jinja_filters import init_jinja_filters
     from project.presentation.web.views.admin_blueprint import admin_bp
+    from project.presentation.web.views.admin_next_blueprint import admin_next_bp
     from project.presentation.web.views.flask_admin import init_admin
     from project.presentation.web.views.main_blueprint import main_bp
     from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
@@ -37,6 +38,7 @@ def init_web(app: Flask):
             db.session.commit()
 
     app.register_blueprint(admin_bp)
+    app.register_blueprint(admin_next_bp)
     app.register_blueprint(manage_bp)
     app.register_blueprint(manage_admin_unit_bp)
     app.register_blueprint(user_bp)

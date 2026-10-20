@@ -102,3 +102,7 @@ venv.bak/
 *.jwks
 
 .agents
+# Vue 3 frontend build outputs
+project/presentation/web/static/dist/
+frontend/node_modules/
+frontend/src/locales/*.json

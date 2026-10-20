@@ -10,6 +10,7 @@ from project.application.queries import (
     GetSiteNoticesQuery,
 )
 from project.presentation.shared.urls import url_for_image
+from project.presentation.web.vite import vite_entry
 from project.shared.utils import (
     get_event_category_name,
     get_localized_enum_name,
@@ -62,6 +63,46 @@ def get_base_url():
     return url_for("main.home", _external=True).rstrip("/")
 
 
+def get_main_menu():
+    """The main navbar entries, shared by the Bootstrap 4 and 5 frames."""
+    from flask_babel import gettext
+    from flask_security import current_user
+
+    main = [
+        {"label": gettext("Events"), "url": url_for("main.event_dates")},
+        {"label": gettext("Organizations"), "url": url_for("main.organizations")},
+        {"label": gettext("Planning"), "url": url_for("main.planning")},
+    ]
+    docs = None
+    if current_app.config.get("DOCS_URL"):
+        docs = {"label": gettext("Docs"), "url": current_app.config["DOCS_URL"]}
+
+    authenticated = current_user.is_authenticated
+    user_items = []
+    if authenticated:
+        user_items = [
+            {
+                "label": gettext("Organizations"),
+                "url": url_for("main.manage_admin_units"),
+            },
+            {"label": gettext("Profile"), "url": url_for("main.profile")},
+        ]
+        if current_user.has_role("admin"):
+            user_items.append(
+                {"label": gettext("Admin"), "url": url_for("admin.admin")}
+            )
+        user_items.append(
+            {"label": gettext("Logout"), "url": url_for("security.logout")}
+        )
+
+    return {
+        "main": main,
+        "docs": docs,
+        "user_email": current_user.email if authenticated else None,
+        "user_items": user_items,
+    }
+
+
 def init_jinja_filters(app):
     """Initialize Jinja filters and globals with the Flask app instance.
 
@@ -88,6 +129,7 @@ def init_jinja_filters(app):
     app.jinja_env.globals.update(
         get_base_url=get_base_url,
         url_for_image=url_for_image,
+        vite_entry=vite_entry,
     )
 
     # Register context processor
@@ -157,6 +199,7 @@ def init_jinja_filters(app):
             )
 
         return dict(
+            get_main_menu=get_main_menu,
             current_admin_unit=get_current_admin_unit(),
             get_current_admin_unit_roles=get_current_admin_unit_roles,
             get_current_admin_unit_permissions=get_current_admin_unit_permissions,

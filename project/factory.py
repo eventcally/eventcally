@@ -106,6 +106,7 @@ def _init_container(app: Flask):
             "project.presentation.web.views",
             "project.presentation.web.modular",
             "project.presentation.api",
+            "project.presentation.bff",
         ],
         warn_unresolved=True,
     )
@@ -158,12 +159,15 @@ def create_app(config_override: dict | None = None) -> Flask:
     _init_oauth(app)
 
     from project.presentation.api import init_api, register_oauth2_scheme_once
+    from project.presentation.bff import init_bff
     from project.presentation.cli import init_cli
     from project.presentation.web import init_web
     from project.presentation.web.requests import init_requests
 
-    # The REST API must be initialized before container.wire() imports its modules.
+    # The REST API and the BFF must be initialized before container.wire() imports
+    # their modules.
     init_api(app)
+    init_bff(app)
     app.container = _init_container(app)
 
     # `before_request` order matters: web wiring, OAuth2 scheme, then request hooks.

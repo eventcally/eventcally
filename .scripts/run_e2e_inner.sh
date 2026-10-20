@@ -40,6 +40,11 @@ print("export JWT_PUBLIC_JWKS=" + shlex.quote(json.dumps({"keys": [jwk]})))
 PY
 )"
 
+# The bind-mounted repo hides any image-built frontend bundle: build it when missing.
+if [ ! -f project/presentation/web/static/dist/.vite/manifest.json ]; then
+    (cd frontend && npm ci && npm run build)
+fi
+
 flask test create-all
 flask test seed
 gunicorn -b 127.0.0.1:5000 -w 1 main:app --daemon --log-file /tmp/gunicorn.log

@@ -17,7 +17,7 @@ Enforced by `.importlinter` and the whitelist scripts:
 - **`project/application/`** — only stdlib, typing, pydantic, abc, datetime, enum, logging, itertools + domain. Cannot import infrastructure.
 - **`project/services/`** — only `cache`, `dump`, `seo`. Flask-Security calls live in `project/infrastructure/user_datastore.py`.
 - **`project/infrastructure/`** — can import application and domain. Fixture-only ORM helpers live in `project/infrastructure/seed_helpers.py` (never import from presentation/application).
-- **`project/presentation/`** — top layer; delivery code split by channel: `web/` (views, modular framework, forms, templates, static, Jinja filters), `api/`, `cli/`, and `shared/` for helpers both channels need. `web` and `api` must not import each other.
+- **`project/presentation/`** — top layer; delivery code split by channel: `web/` (views, modular framework, forms, templates, static, Jinja filters), `api/`, `bff/` (view-shaped JSON for the Vue frontends under `/bff`, session + CSRF auth, reads via the query bus, OpenAPI generated from pydantic by `bff_route`), `cli/`, and `shared/` for helpers all channels need. `web`, `api` and `bff` must not import each other.
 - **`project/shared/`** — cross-layer helpers (`utils`, `dateutils`, `imageutils`, `context`, `feature_flags`); a leaf that imports only the domain. Not the same as `project/presentation/shared/` (cross-channel).
 
 Violations fail `lint-imports`. Check both files before adding imports:
@@ -97,7 +97,21 @@ Reads in views (incl. `project/presentation/web/modular`) and the API are migrat
 - Docker Compose (`docker-compose up --build`) runs everything: PostGIS, Redis, Mailhog, Flask, Celery worker/beat, Flower.
 - Required env vars: `DATABASE_URL`, `SECRET_KEY`, `SERVER_NAME`, `REDIS_URL`, `LIMITER_REDIS_URL`, `GOOGLE_MAPS_API_KEY`, mail settings. See `doc/development.md` for full list.
 
+## Frontend (Vue 3 + BFF)
+
+See the "Frontend" section of `.github/copilot-instructions.md` for the rules. Workflow:
+
+```bash
+npm ci --prefix frontend
+npm run dev --prefix frontend                       # Vite dev server on :5173
+VITE_DEV_SERVER_URL=http://localhost:5173 flask run  # Flask serving the shells
+npm run typecheck --prefix frontend && npm test --prefix frontend && npm run build --prefix frontend
+python -m project.presentation.bff.openapi > frontend/openapi.json && npm run gen:api --prefix frontend
+```
+
 ## Common gotchas
+
+- Regenerate `frontend/openapi.json` + `frontend/src/api/schema.d.ts` after changing BFF models; never hand-edit `schema.d.ts`; the SPA must not import Bootstrap CSS.
 
 - PostGIS migration diffs sometimes need manual correction after `flask db migrate`.
 - Deferred SQLAlchemy columns may require explicit `undefer()` in query options.

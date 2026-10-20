@@ -63,6 +63,23 @@ jobs:
           uv sync --locked
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+
+      - name: Install node dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: |
+          npm ci --prefix frontend
+          npm run build --prefix frontend
+
       - name: Start server
         run: |
           flask test create-all
@@ -81,15 +98,6 @@ jobs:
             sleep 1
           done
         timeout-minutes: 2
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install node dependencies
-        run: npm ci
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4

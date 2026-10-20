@@ -10,7 +10,7 @@
       "request": "launch",
       "module": "flask",
       "env": {
-        "FLASK_APP": "project",
+        "FLASK_APP": "bootstrap.py",
         "FLASK_ENV": "development",
         "FLASK_DEBUG": "1"
       },
@@ -26,12 +26,50 @@
       "consoleName": "Flask"
     },
     {
+      "name": "Flask (Vite dev server)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "flask",
+      "env": {
+        "FLASK_APP": "bootstrap.py",
+        "FLASK_ENV": "development",
+        "FLASK_DEBUG": "1",
+        "VITE_DEV_SERVER_URL": "http://localhost:5173"
+      },
+      "args": [
+        "run",
+        "--no-debugger",
+        "--host",
+        "0.0.0.0"
+      ],
+      "justMyCode": false,
+      "jinja": true,
+      "console": "integratedTerminal",
+      "consoleName": "Flask (Vite)"
+    },
+    {
+      "name": "Vite dev server",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/frontend/node_modules/vite/bin/vite.js",
+      "cwd": "${workspaceFolder}/frontend",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Chrome: Frontend (/admin-next)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://127.0.0.1:5000/admin-next",
+      "webRoot": "${workspaceFolder}/frontend"
+    },
+    {
       "name": "Flask HTTPS",
       "type": "debugpy",
       "request": "launch",
       "module": "flask",
       "env": {
-        "FLASK_APP": "project",
+        "FLASK_APP": "bootstrap.py",
         "FLASK_ENV": "development",
         "FLASK_DEBUG": "1"
       },
@@ -52,7 +90,7 @@
       "request": "launch",
       "module": "flask",
       "env": {
-        "FLASK_APP": "project",
+        "FLASK_APP": "bootstrap.py",
         "FLASK_ENV": "development",
         "FLASK_DEBUG": "1"
       },
@@ -215,6 +253,23 @@
         "Flask",
         "Celery worker",
         "Celery beat"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "Flask/Vite",
+      "configurations": [
+        "Flask (Vite dev server)",
+        "Vite dev server"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "Flask/Vite/Chrome",
+      "configurations": [
+        "Flask (Vite dev server)",
+        "Vite dev server",
+        "Chrome: Frontend (/admin-next)"
       ],
       "stopAll": true
     },

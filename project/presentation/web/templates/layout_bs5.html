@@ -1,0 +1,132 @@
+{% block doc -%}
+<!doctype html>
+<html lang="{{ boot.locale if boot else 'de' }}"{% block html_attribs %}{% endblock html_attribs %}>
+  {%- block html %}
+  <head>
+    {%- block head %}
+    <title>{%- block title -%}{{ title|default('eventcally') }}{% endblock title %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {%- block metas %}
+      <meta property="og:type" content="website">
+      <meta property="og:title" content="{{ self.title() }}">
+    {%- endblock metas %}
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png')}}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest')}}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='ext/bootstrap.5.3.3.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='ext/font-awesome.5.13.1/css/all.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}" />
+
+    {%- block styles %}
+    {%- endblock styles %}
+
+    {% block header %}
+    {% endblock %}
+    {%- endblock head %}
+  </head>
+  <body{% block body_attribs %}{% endblock body_attribs %}>
+    {% block body -%}
+      {% block navbar %}
+      {% set menu = get_main_menu() %}
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{{ url_for('main.home') }}">
+            <img src="{{ url_for('static', filename='calendar_icon_90.png')}}" width="30" height="30" class="d-inline-block align-top rounded" alt="Logo">
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <ul class="navbar-nav me-auto">
+              {% for item in menu.main %}
+              <li class="nav-item"><a class="nav-link" href="{{ item.url }}">{{ item.label }}</a></li>
+              {% endfor %}
+            </ul>
+            <ul class="navbar-nav">
+              {% if menu.docs %}
+              <li class="nav-item"><a class="nav-link" href="{{ menu.docs.url }}" target="_blank" rel="noopener noreferrer">{{ menu.docs.label }}</a></li>
+              {% endif %}
+              {% if current_user.is_authenticated %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  {{ menu.user_email }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
+                  {% for item in menu.user_items %}
+                  {% if loop.last %}<li><hr class="dropdown-divider"></li>{% endif %}
+                  <li><a class="dropdown-item" href="{{ item.url }}">{{ item.label }}</a></li>
+                  {% endfor %}
+                </ul>
+              </li>
+              {% else %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('security.login') }}">{{ _fsdomain('Login') }}</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('security.register') }}">{{ _fsdomain('Register') }}</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav>
+      {%- endblock navbar %}
+      {% block managebar -%}
+      {% with bs = 5 %}{% include "_managebar.html" %}{% endwith %}
+      {%- endblock managebar %}
+
+      <div class="body-content">
+          {% block content_container -%}
+          <main {% block content_container_attribs %}class="p-3"{% endblock content_container_attribs %}>
+            <div>
+              {% include "_messages_bs5.html" %}
+            </div>
+
+            {% block content -%}
+            {%- endblock content %}
+          </main>
+          {%- endblock content_container %}
+
+          {% block footer -%}
+          <footer class="footer mt-5">
+            <div class="container">
+              <div class="row">
+                <div class="col h-100 text-center my-auto">
+                  <ul class="list-inline mb-2">
+                    {% if has_tos() %}
+                    <li class="list-inline-item">
+                      <a href="{{ url_for('main.tos') }}" class="text-muted text-decoration-none">{{ _('Terms of service') }}</a>
+                    </li>
+                    <li class="list-inline-item">&sdot;</li>
+                    {% endif %}
+                    <li class="list-inline-item">
+                      <a href="{{ url_for('main.legal_notice') }}" class="text-muted text-decoration-none">{{ _('Legal notice') }}</a>
+                    </li>
+                    <li class="list-inline-item">&sdot;</li>
+                    <li class="list-inline-item">
+                      <a href="{{ url_for('main.contact') }}" class="text-muted text-decoration-none">{{ _('Contact') }}</a>
+                    </li>
+                    <li class="list-inline-item">&sdot;</li>
+                    <li class="list-inline-item">
+                      <a href="{{ url_for('main.privacy') }}" class="text-muted text-decoration-none">{{ _('Privacy') }}</a>
+                    </li>
+                    <li class="list-inline-item">&sdot;</li>
+                    <li class="list-inline-item">
+                      <a href="{{ url_for('main.developer') }}" class="text-muted text-decoration-none">{{ _('Developer') }}</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </footer>
+          {%- endblock footer %}
+      </div>
+
+      <script src="{{ url_for('static', filename='ext/bootstrap.5.3.3.bundle.min.js')}}"></script>
+      {% block scripts %}
+      {%- endblock scripts %}
+    {%- endblock body %}
+  </body>
+  {%- endblock html %}
+</html>
+{% endblock doc -%}
