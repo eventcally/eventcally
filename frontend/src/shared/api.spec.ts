@@ -21,7 +21,7 @@ describe("authMiddleware", () => {
     assign.mockReset();
     vi.stubGlobal("location", {
       assign,
-      pathname: "/admin-next/users",
+      pathname: "/admin/users",
     });
   });
   afterEach(() => vi.unstubAllGlobals());
@@ -34,7 +34,7 @@ describe("authMiddleware", () => {
   it("redirects a 401 to the login page", async () => {
     await respond(401);
 
-    expect(assign).toHaveBeenCalledWith("/login?next=%2Fadmin-next%2Fusers");
+    expect(assign).toHaveBeenCalledWith("/login?next=%2Fadmin%2Fusers");
   });
 
   it("leaves other responses alone", async () => {

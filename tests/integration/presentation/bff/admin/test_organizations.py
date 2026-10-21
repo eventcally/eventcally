@@ -1,9 +1,7 @@
 def _login_admin(seeder, utils):
     seeder.create_user(admin=True)
     utils.login()
-    utils.get_ok(
-        "/admin-next/organizations"
-    )  # picks up the CSRF token of the Vue 3 shell
+    utils.get_ok("/admin/organizations")  # picks up the CSRF token of the Vue 3 shell
 
 
 def _create_org(seeder, name="Alpha", **kwargs):

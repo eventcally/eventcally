@@ -121,12 +121,6 @@ def _pages(app, db, seeder, utils):
         event_reference_request_id=request_id,
     )
 
-    # Last: the setup above touches the organization.
-    _stamp(app, db, "adminunit", other_admin_unit_id, user_id)
-    pages["admin_organization_update"] = utils.get_url(
-        "admin.organization_update", id=other_admin_unit_id
-    )
-
     return pages
 
 

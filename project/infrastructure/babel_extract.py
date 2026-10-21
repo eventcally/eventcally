@@ -74,8 +74,9 @@ def babel_extract_frontend(fileobj, keywords, comment_tags, options):
     """
     source = fileobj.read().decode(options.get("encoding", "utf-8"))
 
-    for lineno, line in enumerate(source.splitlines(), start=1):
-        for match in _FRONTEND_T_CALL.finditer(line):
-            quote, msgid = match.group(1), match.group(2)
-            msgid = msgid.replace("\\" + quote, quote)
-            yield (lineno, "gettext", msgid, [])
+    # Scan the whole source: prettier wraps long calls onto a line of their own.
+    for match in _FRONTEND_T_CALL.finditer(source):
+        quote, msgid = match.group(1), match.group(2)
+        msgid = msgid.replace("\\" + quote, quote)
+        lineno = source.count("\n", 0, match.start(2)) + 1
+        yield (lineno, "gettext", msgid, [])

@@ -1,6 +1,7 @@
 // Jinja pages the Vue apps link to (strangler fig); a constant, never taken from the DOM.
 export const legacy = {
   login: "/login",
+  flaskAdmin: "/admin/flask-admin/",
 };
 
 // Public server-rendered pages the admin links to.

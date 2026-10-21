@@ -8,7 +8,7 @@ JOB_ID = "00000000-0000-4000-8000-000000000000"
 def _login_admin(seeder, utils):
     seeder.create_user(admin=True)
     utils.login()
-    utils.get_ok("/admin-next/email")  # picks up the CSRF token of the Vue 3 shell
+    utils.get_ok("/admin/email")  # picks up the CSRF token of the Vue 3 shell
 
 
 def _login_non_admin(seeder, utils):

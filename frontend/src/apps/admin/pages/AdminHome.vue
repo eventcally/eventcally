@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
-import { legacy } from "../legacy";
+import { legacy } from "@/shared/legacy";
 
 const { t } = useI18n();
 

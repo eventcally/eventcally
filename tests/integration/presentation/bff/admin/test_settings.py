@@ -1,7 +1,7 @@
 def _login_admin(seeder, utils):
     seeder.create_user(admin=True)
     utils.login()
-    utils.get_ok("/admin-next/settings")  # picks up the CSRF token of the Vue 3 shell
+    utils.get_ok("/admin/settings")  # picks up the CSRF token of the Vue 3 shell
 
 
 def _put(utils, key, value):

@@ -115,7 +115,7 @@ flask db upgrade
 
 ## Frontend (Vue 3)
 
-The Vue 3 frontend lives in `frontend/` (Vite, TypeScript, bootstrap-vue-next). The Python side exposes it through the BFF channel (`project/presentation/bff`, JSON under `/bff`) and shell pages rendered with `layout_vue3.html` (Bootstrap 5 frame `layout_bs5.html`). The first area is the admin SPA at `/admin-next`, which runs next to the Jinja admin at `/admin`.
+The Vue 3 frontend lives in `frontend/` (Vite, TypeScript, bootstrap-vue-next). The Python side exposes it through the BFF channel (`project/presentation/bff`, JSON under `/bff`) and shell pages rendered with `layout_vue3.html` (Bootstrap 5 frame `layout_bs5.html`). The first area is the admin SPA at `/admin`.
 
 ```sh
 npm ci --prefix frontend

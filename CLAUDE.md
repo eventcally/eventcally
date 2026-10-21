@@ -75,7 +75,7 @@ isort . && black . && flake8 && lint-imports && \
   - `cli/` — Flask CLI commands (outside the read-path contract: `cli/test.py` is a dev/e2e fixture CLI)
   - `shared/` — cross-**channel** helpers (`access`, `permissions`, `oauth2_extensions`, `query_args`, `query_results`, `current_admin_unit`, `scopes`, `rate_limit`, `urls`)
 - `project/templates/email/` — e-mail templates; they stay outside `presentation/web` because infrastructure renders them (also from Celery). Flask loads both template roots through a `ChoiceLoader`
-- `frontend/` — Vite + TypeScript + Vue 3 + bootstrap-vue-next (one entry per area, build → `project/presentation/web/static/dist/`, resolved by the Jinja global `vite_entry`); `/admin-next` is the strangler of `/admin`. See `.github/copilot-instructions.md` § Frontend
+- `frontend/` — Vite + TypeScript + Vue 3 + bootstrap-vue-next (one entry per area, build → `project/presentation/web/static/dist/`, resolved by the Jinja global `vite_entry`); the admin SPA is served at `/admin` (Flask-Admin stays at `/admin/flask-admin/`). See `.github/copilot-instructions.md` § Frontend
 - `.scripts/codegen/` — `generate.py` + YAML schemas in `.scripts/codegen/config/`
 - `tests/` — `unit/` (no services: domain, application, pure helpers) and `integration/` (PostGIS + Redis; holds `conftest.py`, `base_test.py`, `seeder.py`). **Tests mirror the source tree**: the tests of `project/presentation/web/views/event.py` live in `tests/integration/presentation/web/views/test_event.py`
 - `e2e/`, `doc/`, `deployment/`, `.scripts/`

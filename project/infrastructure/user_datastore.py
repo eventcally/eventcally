@@ -29,23 +29,6 @@ def add_admin_roles_to_user(email):
     add_roles_to_user(email, ["admin"])
 
 
-def remove_roles_from_user(email, roles):
-    user = find_user_by_email(email)
-
-    for role in roles:  # pragma: no cover
-        current_app.extensions["security"].datastore.remove_role_from_user(user, role)
-
-
-def remove_all_roles_from_user(email):
-    user = find_user_by_email(email)
-    remove_roles_from_user(email, user.roles)
-
-
-def set_roles_for_user(email, roles):
-    remove_all_roles_from_user(email)
-    add_roles_to_user(email, roles)
-
-
 def find_user_by_email(email):
     return current_app.extensions["security"].datastore.find_user(
         email=email, case_insensitive=True

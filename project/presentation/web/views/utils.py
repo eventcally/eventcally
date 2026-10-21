@@ -282,26 +282,6 @@ def get_celery_poll_result():  # pragma: no cover
         }
 
 
-def get_celery_poll_group_result():  # pragma: no cover
-    from project.infrastructure.celery_app import celery
-
-    try:
-        result = celery.GroupResult.restore(request.args["poll"])
-        ready = result.ready()
-        return {
-            "ready": ready,
-            "count": len(result.children),
-            "completed": result.completed_count(),
-            "successful": result.successful() if ready else None,
-        }
-    except Exception as e:
-        return {
-            "ready": True,
-            "successful": False,
-            "error": getattr(e, "message", "Unknown error"),
-        }
-
-
 def manage_required(permission=None):
     def decorator(f):
         @wraps(f)
