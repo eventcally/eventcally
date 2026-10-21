@@ -3,6 +3,10 @@ name: "eventcally-dev"
 services:
   web:
     entrypoint: []
+    environment:
+      # Flask renders the Vue 3 shells and loads the sources from the Vite dev server
+      # (the browser, not the container, talks to it, hence localhost).
+      VITE_DEV_SERVER_URL: http://localhost:5173
     volumes:
       - .:/app
     command: >
@@ -20,3 +24,18 @@ services:
       --loglevel=debug --concurrency=1 --pool solo
     ports:
       - "5679:5679"
+
+  vite:
+    image: node:22
+    working_dir: /app/frontend
+    volumes:
+      - .:/app
+      # Keep the container's (Linux) dependencies apart from a host node_modules.
+      - frontend_node_modules:/app/frontend/node_modules
+    # `npm run i18n` writes the gitignored src/locales/*.json from the .po files.
+    command: sh -c "npm ci && npm run i18n && npm run dev -- --host 0.0.0.0 --port 5173"
+    ports:
+      - "5173:5173"
+
+volumes:
+  frontend_node_modules:

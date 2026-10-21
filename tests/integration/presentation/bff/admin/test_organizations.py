@@ -105,11 +105,11 @@ def test_organization_forbidden(client, seeder, utils):
     utils.assert_response_forbidden(response)
 
 
-def test_organization_forbidden_missing_id_is_404(client, seeder, utils):
-    # The query handler returns None before it checks the actor.
+def test_organization_forbidden_missing_id_is_403(client, seeder, utils):
+    # The blueprint guard answers before the query handler can look the id up.
     _login_non_admin(seeder, utils)
 
-    utils.assert_response_notFound(utils.get_json("/bff/admin/organizations/12345"))
+    utils.assert_response_forbidden(utils.get_json("/bff/admin/organizations/12345"))
 
 
 def test_organization_unauthorized(client, utils):

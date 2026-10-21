@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 from project.application.read_models.organization_admin_read_models import (
     OrganizationAdminReadModel,
@@ -131,3 +131,42 @@ class AdminOrganizationSettingUpdate(BaseModel):
 
 class AdminOrganizationDelete(BaseModel):
     name: str = Field(min_length=1)
+
+
+class AdminMailConfig(BaseModel):
+    suppress_send: bool
+    server: Optional[str] = None
+    port: Optional[int] = None
+    use_tls: bool = False
+    use_ssl: bool = False
+    username: Optional[str] = None
+    password_set: bool  # never the value
+    default_sender: Optional[str] = None
+
+
+class AdminTestMailSend(BaseModel):
+    recipient: EmailStr
+    asynchronous: bool = False
+
+
+class AdminNewsletterInfo(BaseModel):
+    recipient_count: int
+
+
+class AdminNewsletterSend(BaseModel):
+    audience: Literal["test", "all"]
+    test_recipient: Optional[EmailStr] = None
+    message: str = Field(min_length=1)
+
+
+class AdminMailJob(BaseModel):
+    job_id: Optional[str] = None
+    count: int
+
+
+class AdminMailJobStatus(BaseModel):
+    job_id: str
+    count: int
+    completed: int
+    ready: bool
+    successful: Optional[bool] = None

@@ -188,4 +188,57 @@ test.describe("Admin (Vue 3)", () => {
     await expect(page.locator(".toast")).toBeVisible();
     await expect(calendars.locator("pre")).toContainText('"title": "a"');
   });
+
+  test("email: config and sync test mail", async ({ page, login }) => {
+    createUser("admin@test.de", "password", true);
+    await login("admin@test.de");
+
+    await page.goto("/admin-next/email");
+    await expect(page.locator("table")).toContainText("MAIL_PASSWORD");
+    await expect(page.locator("table")).not.toContainText("password");
+
+    await page.locator("input[type=email]").fill("to@test.de");
+    await page.locator("button[type=submit]").click();
+    await expect(page.locator(".toast")).toBeVisible();
+  });
+
+  test("email: async test mail", async ({ page, login }) => {
+    createUser("admin@test.de", "password", true);
+    await login("admin@test.de");
+
+    await page.goto("/admin-next/email");
+    await page.locator("input[type=email]").fill("to@test.de");
+    await page.locator("button[type=button]", { hasText: /asynchron/i }).click();
+
+    await expect(page.locator(".alert-success")).toBeVisible();
+  });
+
+  test("newsletter: test recipient", async ({ page, login }) => {
+    createUser("admin@test.de", "password", true);
+    await login("admin@test.de");
+
+    await page.goto("/admin-next/newsletter");
+    await page.locator("#newsletter-test-recipient").fill("to@test.de");
+    await page.locator("#newsletter-message").fill("<p>Hello</p>");
+    await page.locator("button[type=submit]").click();
+
+    await expect(page.locator(".alert-success")).toBeVisible();
+  });
+
+  test("newsletter: all users need a confirmation with the count", async ({ page, login }) => {
+    createUser("admin@test.de", "password", true);
+    await login("admin@test.de");
+
+    await page.goto("/admin-next/newsletter");
+    await page.locator("input[type=radio][value=all]").check();
+    await page.locator("#newsletter-message").fill("<p>Hello</p>");
+    await page.locator("button[type=submit]").click();
+
+    const modal = page.locator(".modal.show");
+    await expect(modal).toContainText(/\d+ (Empf|recipients)/);
+    await expect(page.locator(".alert-success")).toHaveCount(0);
+    await modal.locator(".btn-primary").click();
+
+    await expect(page.locator(".alert-success")).toBeVisible();
+  });
 });

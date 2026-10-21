@@ -57,13 +57,6 @@
       "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "Chrome: Frontend (/admin-next)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://127.0.0.1:5000/admin-next",
-      "webRoot": "${workspaceFolder}/frontend"
-    },
-    {
       "name": "Flask HTTPS",
       "type": "debugpy",
       "request": "launch",
@@ -242,7 +235,8 @@
     {
       "name": "Flask/Celery",
       "configurations": [
-        "Flask",
+        "Flask (Vite dev server)",
+        "Vite dev server",
         "Celery worker"
       ],
       "stopAll": true
@@ -250,7 +244,8 @@
     {
       "name": "Flask/Celery/Beat",
       "configurations": [
-        "Flask",
+        "Flask (Vite dev server)",
+        "Vite dev server",
         "Celery worker",
         "Celery beat"
       ],
@@ -261,15 +256,6 @@
       "configurations": [
         "Flask (Vite dev server)",
         "Vite dev server"
-      ],
-      "stopAll": true
-    },
-    {
-      "name": "Flask/Vite/Chrome",
-      "configurations": [
-        "Flask (Vite dev server)",
-        "Vite dev server",
-        "Chrome: Frontend (/admin-next)"
       ],
       "stopAll": true
     },

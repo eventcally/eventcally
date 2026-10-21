@@ -57,7 +57,7 @@ def _current_actor():
     return ContextProvider().current_actor
 
 
-def _is_platform_admin() -> bool:
+def is_platform_admin() -> bool:
     actor = _current_actor()
     return actor.user_id is not None and _authorization().reader.is_platform_admin(
         actor.user_id
@@ -210,7 +210,7 @@ def can_create_admin_unit():
     if not current_app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"]:
         return True
 
-    if _is_platform_admin():
+    if is_platform_admin():
         return True
 
     admin_units = get_admin_units_for_manage()
@@ -225,7 +225,7 @@ def can_verify_admin_unit_user():
     if not current_user.is_authenticated:  # pragma: no cover
         return False
 
-    if _is_platform_admin():  # pragma: no cover
+    if is_platform_admin():  # pragma: no cover
         return True
 
     admin_units = get_admin_units_for_manage()
@@ -250,7 +250,7 @@ def can_verify_admin_unit():
 
 
 def can_current_user_delete_member(member: UserOrganizationMembershipReadModel) -> bool:
-    if _is_platform_admin():  # pragma: no cover
+    if is_platform_admin():  # pragma: no cover
         return True
 
     # Check if there is another admin

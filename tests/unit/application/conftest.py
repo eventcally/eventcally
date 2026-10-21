@@ -5,6 +5,7 @@ All tests in tests/unit/application/ run without a real database.
 
 import pytest
 
+from project.application.read_models.mail_job_read_models import MailJob
 from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.domain.models.aggregates.organization_member_aggregate import (
     OrganisationMemberAggregate,
@@ -241,14 +242,30 @@ class FakeUnitOfWork(AbstractUnitOfWork):
 
 
 class FakeEmailService:
-    def __init__(self):
+    def __init__(self, raise_on_send=None):
         self.calls = []
+        self.raise_on_send = raise_on_send
 
     def send_template_mails_to_users_async(self, users, template, **context):
         self.calls.append({"users": users, "template": template, "context": context})
 
     def send_template_mail_to_address_async(self, email, template, **context):
         self.calls.append({"email": email, "template": template, "context": context})
+
+    def send_template_mail_to_address(self, email, template, **context):
+        if self.raise_on_send is not None:
+            raise self.raise_on_send
+        self.calls.append({"email": email, "template": template, "context": context})
+
+    def send_template_mail_to_address_tracked(self, email, template, **context):
+        self.calls.append({"email": email, "template": template, "context": context})
+        return MailJob(job_id="job-1", count=1)
+
+    def send_template_mails_to_users_tracked(self, users, template, **context):
+        if len(users) == 0:
+            return MailJob(count=0)
+        self.calls.append({"users": users, "template": template, "context": context})
+        return MailJob(job_id="job-1", count=len(users))
 
 
 class FakeEventDispatcher:

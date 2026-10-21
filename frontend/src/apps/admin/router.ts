@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import { boot } from "@/shared/boot";
 import { legacy } from "./legacy";
 import AdminHome from "./pages/AdminHome.vue";
+import EmailPage from "./pages/EmailPage.vue";
+import NewsletterPage from "./pages/NewsletterPage.vue";
 import OrganizationsPage from "./pages/OrganizationsPage.vue";
 import OrganizationUpdatePage from "./pages/OrganizationUpdatePage.vue";
 import PlanningPage from "./pages/PlanningPage.vue";
@@ -14,6 +16,8 @@ export const router = createRouter({
   routes: [
     { path: "/", name: "home", component: AdminHome },
     { path: "/settings", name: "settings", component: SettingsPage },
+    { path: "/email", name: "email", component: EmailPage },
+    { path: "/newsletter", name: "newsletter", component: NewsletterPage },
     { path: "/planning", name: "planning", component: PlanningPage },
     { path: "/organizations", name: "organizations", component: OrganizationsPage },
     {

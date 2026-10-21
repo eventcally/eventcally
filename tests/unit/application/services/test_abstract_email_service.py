@@ -1,5 +1,6 @@
 """Unit tests for AbstractEmailService behavior."""
 
+from project.application.read_models.mail_job_read_models import MailJob
 from project.application.services.abstract_email_service import AbstractEmailService
 from project.application.services.abstract_localization_service import (
     AbstractLocalizationService,
@@ -42,6 +43,10 @@ class _ConcreteEmailService(AbstractEmailService):
     def send_mails_with_signatures_async(self, signatures):
         self.sent_signatures = signatures
         return signatures
+
+    def send_mails_with_signatures_tracked(self, signatures):
+        self.sent_signatures = signatures
+        return MailJob(job_id="job-1", count=len(signatures))
 
 
 class _User:
@@ -115,6 +120,51 @@ class TestAbstractEmailService:
 
         try:
             AbstractEmailService.send_mails_with_signatures(svc, [])
+            assert False, "Expected NotImplementedError"
+        except NotImplementedError:
+            pass
+
+    def test_tracked_users_group_by_locale(self):
+        svc = _ConcreteEmailService()
+        users = [
+            _User(email="b@example.com", locale="de"),
+            _User(email="a@example.com", locale=""),
+        ]
+
+        job = svc.send_template_mails_to_users_tracked(
+            users, "test_email", site_name="EventCally"
+        )
+
+        assert job == MailJob(job_id="job-1", count=2)
+        assert [s[0] for s in svc.sent_signatures] == ["a@example.com", "b@example.com"]
+        assert svc.sent_signatures[0][2].startswith("en:")
+        assert svc.sent_signatures[1][2].startswith("de:")
+
+    def test_tracked_users_empty_has_count_zero(self):
+        svc = _ConcreteEmailService()
+
+        job = svc.send_template_mails_to_users_tracked(
+            [], "test_email", site_name="EventCally"
+        )
+
+        assert job == MailJob(job_id=None, count=0)
+        assert svc.sent_signatures == []
+
+    def test_tracked_address_has_count_one(self):
+        svc = _ConcreteEmailService()
+
+        job = svc.send_template_mail_to_address_tracked(
+            "a@example.com", "test_email", site_name="EventCally"
+        )
+
+        assert job.count == 1
+        assert svc.sent_signatures[0][0] == "a@example.com"
+
+    def test_base_send_mails_with_signatures_tracked_raises(self):
+        svc = _ConcreteEmailService()
+
+        try:
+            AbstractEmailService.send_mails_with_signatures_tracked(svc, [])
             assert False, "Expected NotImplementedError"
         except NotImplementedError:
             pass

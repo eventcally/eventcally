@@ -128,6 +128,12 @@ npm run build --prefix frontend                        # writes project/presenta
 
 The Docker image builds the bundle in a Node stage; Node is not needed at runtime.
 
+With `docker-compose.debug.yml` the Vite dev server runs as the `vite` service (port 5173, hot reload) and `web` is started with `VITE_DEV_SERVER_URL`, so no local Node is needed:
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.debug.yml up
+```
+
 ### API contract
 
 BFF routes declare pydantic models with `bff_route`. The OpenAPI document and the TypeScript types are generated and committed; pytest and CI fail when they drift:

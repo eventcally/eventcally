@@ -11,8 +11,8 @@ const entries: Entry[] = [
   { label: t("Settings"), to: { name: "settings" } },
   { label: t("Organizations"), to: { name: "organizations" } },
   { label: t("Users"), to: { name: "users" } },
-  { label: t("Email"), href: legacy.email },
-  { label: t("Newsletter"), href: legacy.newsletter },
+  { label: t("Email"), to: { name: "email" } },
+  { label: t("Newsletter"), to: { name: "newsletter" } },
   { label: t("Planning"), to: { name: "planning" } },
   { label: "Flask-Admin", href: legacy.flaskAdmin },
 ];
