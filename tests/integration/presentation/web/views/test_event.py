@@ -1040,7 +1040,29 @@ def test_report(seeder: Seeder, utils: UtilActions):
     event_id = seeder.create_event(admin_unit_id)
 
     url = utils.get_url("main.event_report", event_id=event_id)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+    assert b'id="boot"' in response.data
+
+    url = utils.get_url("main.event_report", event_id=4711)
+    utils.assert_response_notFound(utils.get(url))
+
+
+def test_report_draft_anonymous(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id, draft=True)
+
+    url = utils.get_url("main.event_report", event_id=event_id)
+    utils.assert_response_unauthorized(utils.get(url))
+
+
+def test_report_anonymous_shell_has_no_user(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("main.event_report", event_id=event_id)
+    response = utils.get_ok(url)
+
+    assert b'"user": null' in response.data
 
 
 def test_ical(client, seeder: Seeder, utils: UtilActions):

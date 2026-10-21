@@ -11,9 +11,13 @@ def build_boot_data(base: str) -> dict:
         "bffBase": "/bff",
         "locale": str(get_locale() or "en").split("_")[0],
         "csrfToken": generate_csrf(),
-        "user": {
-            "email": current_user.email,
-            "roles": [r.name for r in current_user.roles],
-        },
+        "user": (
+            None
+            if current_user.is_anonymous
+            else {
+                "email": current_user.email,
+                "roles": [r.name for r in current_user.roles],
+            }
+        ),
         "loginUrl": url_for("security.login"),
     }

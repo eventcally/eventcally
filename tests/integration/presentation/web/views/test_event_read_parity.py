@@ -74,8 +74,6 @@ def _requests(utils: UtilActions, ids):
     requests["event_unknown"] = url("main.event", event_id=4711)
     requests["event_unknown_ical"] = url("main.event_ical", id=4711)
     requests["event_unknown_actions"] = url("main.event_actions", event_id=4711)
-    requests["event_full_report"] = url("main.event_report", event_id=ids["full"])
-    requests["event_draft_report"] = url("main.event_report", event_id=ids["draft"])
 
     for date_id in range(1, 21):
         requests[f"event_date_{date_id}"] = url("main.event_date", id=date_id)
