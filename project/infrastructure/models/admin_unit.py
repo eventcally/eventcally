@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
+from colour import Color
 from flask_security import RoleMixin
 from sqlalchemy import and_, func, select
 from sqlalchemy.event import listens_for
@@ -47,6 +48,12 @@ from project.infrastructure.models.image import Image
 from project.infrastructure.models.location import Location
 from project.infrastructure.models.mixins.api_key_owner_mixin import ApiKeyOwnerMixin
 from project.shared.utils import make_check_violation
+
+
+def _color_to_str(value) -> Optional[str]:
+    if not value:
+        return None
+    return value.hex_l if isinstance(value, Color) else str(value)
 
 
 class AdminUnitMemberRolesMembers(db.Model, AdminUnitMemberRolesMembersGeneratedMixin):
@@ -339,9 +346,9 @@ class AdminUnit(db.Model, AdminUnitGeneratedMixin, ApiKeyOwnerMixin):
             logo=model.logo.to_entity() if model.logo else None,
             max_api_keys=model.max_api_keys,
             widget_font=model.widget_font,
-            widget_background_color=model.widget_background_color,
-            widget_primary_color=model.widget_primary_color,
-            widget_link_color=model.widget_link_color,
+            widget_background_color=_color_to_str(model.widget_background_color),
+            widget_primary_color=_color_to_str(model.widget_primary_color),
+            widget_link_color=_color_to_str(model.widget_link_color),
         )
 
         return aggregate

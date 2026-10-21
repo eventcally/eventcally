@@ -189,3 +189,59 @@ def test_review_status_unauthorized_redirects_to_login(
 
     response = client.get(url)
     utils.assert_response_redirect_to_login(response, url)
+
+
+def test_review_verify_with_verifier_widget_colors(
+    client, seeder: Seeder, utils: UtilActions, app, db
+):
+    (
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario(log_in_verifier=True)
+    verification_request_id = seeder.create_admin_unit_verification_request(
+        unverified_admin_unit_id, verifier_admin_unit_id
+    )
+
+    with app.app_context():
+        from colour import Color
+
+        from project.infrastructure.models import AdminUnit
+
+        verifier = db.session.get(AdminUnit, verifier_admin_unit_id)
+        verifier.widget_background_color = Color("#eceef0")
+        verifier.widget_primary_color = Color("#b09641")
+        verifier.widget_link_color = Color("#7b2424")
+
+        unverified = db.session.get(AdminUnit, unverified_admin_unit_id)
+        unverified.description = "Beschreibung"
+        db.session.commit()
+
+    url = utils.get_url(
+        "manage_admin_unit.incoming_organization_verification_request_review",
+        id=verifier_admin_unit_id,
+        organization_verification_request_id=verification_request_id,
+    )
+    response = utils.get_ok(url)
+    response = utils.post_form(url, response, {"review_status": 2, "auto_verify": 1})
+
+    utils.assert_response_redirect(
+        response,
+        "manage_admin_unit.incoming_organization_verification_requests",
+        id=verifier_admin_unit_id,
+    )
+
+    with app.app_context():
+        from project.infrastructure.models import (
+            AdminUnitVerificationRequest,
+            AdminUnitVerificationRequestReviewStatus,
+        )
+
+        verification_request = db.session.get(
+            AdminUnitVerificationRequest, verification_request_id
+        )
+        assert (
+            verification_request.review_status
+            == AdminUnitVerificationRequestReviewStatus.verified
+        )

@@ -53,7 +53,7 @@ from project.domain.models.enums.organization_verification_request_review_status
 from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
 )
-from project.infrastructure.models.admin_unit import AdminUnitRelation
+from project.infrastructure.models.admin_unit import AdminUnit, AdminUnitRelation
 from project.infrastructure.models.app import AppInstallation
 from project.infrastructure.models.event_place import EventPlace
 from project.infrastructure.models.event_reference import EventReference
@@ -773,6 +773,40 @@ def test_organization_repository_updates_with_aggregate(app, db, seeder):
     assert loaded.id == admin_unit_id
     assert loaded.deletion_requested_by_id == user_id
     assert loaded.deletion_requested_at is not None
+
+
+def test_organization_repository_get_and_update_with_widget_colors(app, db, seeder):
+    from colour import Color
+
+    user_id, admin_unit_id = seeder.setup_base(log_in=False, email="org-colors@test.de")
+
+    with app.app_context():
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        admin_unit.widget_background_color = Color("#eceef0")
+        admin_unit.widget_primary_color = Color("#b09641")
+        admin_unit.widget_link_color = Color("#7b2424")
+        db.session.commit()
+
+    with app.app_context():
+        repo = SqlAlchemyOrganizationRepository(db.session)
+        organization = repo.get(admin_unit_id)
+        assert organization.widget_background_color == "#eceef0"
+        assert organization.widget_primary_color == "#b09641"
+        assert organization.widget_link_color == "#7b2424"
+
+        repo.update(organization)
+        db.session.commit()
+
+        loaded = repo.get(admin_unit_id)
+        assert loaded.widget_background_color == "#eceef0"
+        assert loaded.widget_primary_color == "#b09641"
+        assert loaded.widget_link_color == "#7b2424"
+
+    with app.app_context():
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        assert admin_unit.widget_background_color == Color("#eceef0")
+        assert admin_unit.widget_primary_color == Color("#b09641")
+        assert admin_unit.widget_link_color == Color("#7b2424")
 
 
 def test_organization_app_installation_repository_aggregate_and_webhook_filter(

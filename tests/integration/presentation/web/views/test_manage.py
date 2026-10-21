@@ -304,6 +304,41 @@ def test_admin_unit_widgets(
     )
 
 
+def test_admin_unit_widgets_save_twice(
+    client, seeder: Seeder, utils: UtilActions, app, db
+):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("manage_admin_unit.widgets", id=admin_unit_id)
+
+    # The first save stores custom colours, the second loads them
+    # through the organization aggregate.
+    for _ in range(2):
+        response = utils.get_ok(url)
+        response = utils.post_form(
+            url,
+            response,
+            {
+                "widget_background_color": "#eceef0",
+                "widget_primary_color": "#b09641",
+                "widget_link_color": "#7b2424",
+            },
+        )
+        utils.assert_response_redirect(
+            response, "manage_admin_unit.widgets", id=admin_unit_id
+        )
+
+    with app.app_context():
+        from colour import Color
+
+        from project.infrastructure.models import AdminUnit
+
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        assert admin_unit.widget_background_color == Color("#eceef0")
+        assert admin_unit.widget_primary_color == Color("#b09641")
+        assert admin_unit.widget_link_color == Color("#7b2424")
+
+
 def test_admin_unit_relations(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
 
