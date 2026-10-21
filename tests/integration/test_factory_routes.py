@@ -4,7 +4,6 @@ REPRESENTATIVE_ENDPOINTS = {
     "main.contact",
     "main.authorize",
     "admin.shell",
-    "admin_next.redirect_to_admin",
     "bff.bff_admin.users",
     "manage.organization_create",
     "manage_admin_unit.api_key",
@@ -21,7 +20,7 @@ REPRESENTATIVE_ENDPOINTS = {
 def test_url_map_keeps_registered_endpoints(app):
     endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
 
-    assert len(list(app.url_map.iter_rules())) >= 639
+    assert len(list(app.url_map.iter_rules())) >= 637
     assert REPRESENTATIVE_ENDPOINTS <= endpoints
 
 

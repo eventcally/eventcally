@@ -91,18 +91,6 @@ def test_flask_admin_is_not_shadowed(client, seeder, utils, path):
     assert b"flask-admin" in response.data.lower()
 
 
-def test_admin_next_redirects_permanently(client):
-    response = client.get("/admin-next/users?page=2")
-
-    assert response.status_code == 301
-    assert response.headers["Location"].endswith("/admin/users?page=2")
-
-    response = client.get("/admin-next/")
-
-    assert response.status_code == 301
-    assert response.headers["Location"].endswith("/admin/")
-
-
 def test_main_menu_links_to_admin(client, seeder, utils):
     seeder.create_user(admin=True)
     utils.login()
