@@ -10,7 +10,7 @@ export interface Boot {
   bffBase: string;
   locale: string;
   csrfToken: string;
-  user: { email: string; roles: string[] };
+  user: { email: string; roles: string[] } | null;
   loginUrl: string;
 }
 

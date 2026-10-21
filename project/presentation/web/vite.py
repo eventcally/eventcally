@@ -6,7 +6,10 @@ from flask import current_app, url_for
 from markupsafe import Markup, escape
 
 # Entry name -> source path (dev server serves the sources directly).
-ENTRIES = {"admin": "src/apps/admin/main.ts"}
+ENTRIES = {
+    "admin": "src/apps/admin/main.ts",
+    "public": "src/apps/public/main.ts",
+}
 
 _MANIFEST_PATH = ("static", "dist", ".vite", "manifest.json")
 _manifest_cache: Dict[str, dict] = {}

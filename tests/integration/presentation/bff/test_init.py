@@ -94,3 +94,12 @@ def test_field_validation_error_is_422(app):
     assert code == 422
     assert response.json["name"] == "Unprocessable Entity"
     assert response.json["errors"] == [{"loc": ["email"], "msg": "Does not match"}]
+
+
+def test_public_blueprint_is_open_to_anonymous(client, seeder):
+    seeder.setup_base(log_in=False)
+
+    response = client.get("/bff/public/events/4711/report-form")
+
+    # Not the 401 of the session check: the event just does not exist.
+    assert response.status_code == 404

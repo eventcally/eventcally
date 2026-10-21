@@ -56,3 +56,19 @@ def test_main_prints_json(capsys):
     runpy.run_module("project.presentation.bff.openapi", run_name="__main__")
 
     assert json.loads(capsys.readouterr().out)["openapi"] == "3.1.0"
+
+
+def test_public_event_report_paths():
+    spec = build_openapi()
+
+    form = spec["paths"]["/bff/public/events/{id}/report-form"]["get"]
+    assert form["parameters"] == [
+        {"name": "id", "in": "path", "required": True, "schema": {"type": "integer"}}
+    ]
+    assert form["responses"]["200"]["content"]["application/json"]["schema"] == {
+        "$ref": "#/components/schemas/EventReportForm"
+    }
+
+    report = spec["paths"]["/bff/public/events/{id}/reports"]["post"]
+    assert "204" in report["responses"]
+    assert report["requestBody"]["required"] is True

@@ -794,6 +794,53 @@
         "title": "ErrorResponse",
         "type": "object"
       },
+      "EventReportCreate": {
+        "properties": {
+          "contact_email": {
+            "format": "email",
+            "maxLength": 255,
+            "title": "Contact Email",
+            "type": "string"
+          },
+          "contact_name": {
+            "maxLength": 255,
+            "minLength": 5,
+            "title": "Contact Name",
+            "type": "string"
+          },
+          "message": {
+            "maxLength": 1000,
+            "minLength": 20,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contact_name",
+          "contact_email",
+          "message"
+        ],
+        "title": "EventReportCreate",
+        "type": "object"
+      },
+      "EventReportForm": {
+        "properties": {
+          "event_id": {
+            "title": "Event Id",
+            "type": "integer"
+          },
+          "event_name": {
+            "title": "Event Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event_id",
+          "event_name"
+        ],
+        "title": "EventReportForm",
+        "type": "object"
+      },
       "FieldError": {
         "properties": {
           "loc": {
@@ -2169,6 +2216,155 @@
           }
         },
         "summary": "Update user roles"
+      }
+    },
+    "/bff/public/events/{id}/report-form": {
+      "get": {
+        "operationId": "bff_public_get_event_report_form",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventReportForm"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get event report form"
+      }
+    },
+    "/bff/public/events/{id}/reports": {
+      "post": {
+        "operationId": "bff_public_report_event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventReportCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Report event"
       }
     }
   }

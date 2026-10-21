@@ -12,6 +12,7 @@ export const publicPages = {
   contact: "/contact",
   privacy: "/privacy",
   organization: (id: number) => `/organizations/${id}`,
+  event: (id: number) => `/event/${id}`,
 };
 
 // Jinja manage area the admin links to.

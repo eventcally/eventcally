@@ -782,33 +782,6 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
         assert event is None
 
 
-def test_report_mail(client, seeder: Seeder, utils: UtilActions, app):
-    user_id, admin_unit_id = seeder.setup_api_access(admin=False, user_access=False)
-    event_id = seeder.create_event(admin_unit_id)
-    seeder.create_user(email="admin@test.de", admin=True)
-    seeder.create_user(email="normal@test.de", admin=False)
-
-    url = utils.get_url("api_v1_event_reports", id=event_id)
-    response = utils.post_json(
-        url,
-        {
-            "contact_name": "Firstname Lastname",
-            "contact_email": "firstname.lastname@test.de",
-            "message": "Diese Veranstaltung wird nicht stattfinden.",
-        },
-    )
-
-    utils.assert_response_no_content(response)
-    utils.assert_send_mail_called(
-        ["test@test.de", "admin@test.de"],
-        [
-            "Firstname Lastname",
-            "firstname.lastname@test.de",
-            "Diese Veranstaltung wird nicht stattfinden.",
-        ],
-    )
-
-
 def test_update_allday_unrelated_change_keeps_stored_dates(
     client, seeder: Seeder, utils: UtilActions, app
 ):

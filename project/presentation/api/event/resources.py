@@ -2,7 +2,6 @@ from flask import g, make_response, request
 from flask_apispec import doc, marshal_with, use_kwargs
 
 from project.application.commands.delete_event_command import DeleteEventCommand
-from project.application.commands.report_event_command import ReportEventCommand
 from project.application.queries import (
     GetEventDetailQuery,
     ListEventDatesOfEventQuery,
@@ -17,7 +16,6 @@ from project.presentation.api.event.schemas import (
     EventListResponseSchema,
     EventPatchRequestPlainSchema,
     EventPutRequestPlainSchema,
-    EventReportPostSchema,
     EventSchema,
     EventSearchRequestSchema,
     EventSearchResponseSchema,
@@ -31,7 +29,6 @@ from project.presentation.api.resources import (
     require_api_access,
     require_organization_api_access,
 )
-from project.presentation.api.schemas import NoneSchema
 from project.presentation.shared.access import login_api_user
 from project.presentation.shared.event_query_args import (
     event_search_criteria_from_request,
@@ -161,33 +158,7 @@ class EventSearchResource(BaseResource):
         return page
 
 
-class EventReportsResource(BaseResource):
-    @doc(summary="Add event report", tags=["Events"])
-    @use_kwargs(EventReportPostSchema, location="json", apply=False)
-    @marshal_with(NoneSchema, 204)
-    @require_api_access()
-    def post(self, id):
-        login_api_user()
-        event = result_or_404(self.query_bus.handle(GetEventDetailQuery(id=id)))
-
-        report = EventReportPostSchema().load(request.json)
-        self.message_bus.handle_command(
-            ReportEventCommand(
-                event_id=event.id,
-                actor=self.app_context_provider.get_current_actor(),
-                **report,
-            )
-        )
-        return make_response("", 204)
-
-
 add_api_resource(EventListResource, "/events", "api_v1_event_list")
 add_api_resource(EventResource, "/events/<int:id>", "api_v1_event")
 add_api_resource(EventDatesResource, "/events/<int:id>/dates", "api_v1_event_dates")
 add_api_resource(EventSearchResource, "/events/search", "api_v1_event_search")
-add_api_resource(
-    EventReportsResource,
-    "/events/<int:id>/reports",
-    "api_v1_event_reports",
-    api_docs=False,
-)

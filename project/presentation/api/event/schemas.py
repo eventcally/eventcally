@@ -896,20 +896,6 @@ class EventPatchRequestPlainSchema(PlainBaseSchema):
         return UpdateEventCommand(**data)
 
 
-class EventReportPostSchema(marshmallow.Schema):
-    contact_name = fields.Str(
-        required=True,
-        validate=validate.Length(min=5, max=255),
-    )
-    contact_email = fields.Email(
-        required=True, validate=[validate.Email(), validate.Length(max=255)]
-    )
-    message = fields.Str(
-        required=True,
-        validate=validate.Length(min=20, max=1000),
-    )
-
-
 class EventImportRequestSchema(marshmallow.Schema):
     url = fields.URL(
         required=True,

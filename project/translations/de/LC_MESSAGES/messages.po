@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 13:27+0200\n"
+"POT-Creation-Date: 2026-10-21 23:05+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -55,12 +55,12 @@ msgstr ""
 "%(email)s hat deine Einladung akzeptiert, um die Organisation "
 "%(admin_unit_name)s zu erstellen."
 
-#: project/presentation/web/modular/base_views.py:386
+#: project/presentation/web/modular/base_views.py:378
 #, python-format
 msgid "%(model_display_name)s successfully created"
 msgstr "%(model_display_name)s erfolgreich erstellt"
 
-#: project/presentation/web/modular/base_views.py:518
+#: project/presentation/web/modular/base_views.py:510
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr "%(model_display_name)s erfolgreich gelöscht"
@@ -70,7 +70,7 @@ msgstr "%(model_display_name)s erfolgreich gelöscht"
 msgid "%(model_display_name)s successfully revoked"
 msgstr "%(model_display_name)s erfolgreich widerrufen"
 
-#: project/presentation/web/modular/base_views.py:467
+#: project/presentation/web/modular/base_views.py:459
 #, python-format
 msgid "%(model_display_name)s successfully updated"
 msgstr "%(model_display_name)s erfolgreich aktualisiert"
@@ -467,6 +467,10 @@ msgstr "Hintergrundfarbe"
 msgid "Booked up"
 msgstr "Ausgebucht"
 
+#: frontend/src/apps/public/pages/EventReportPage.vue:138
+msgid "Briefly describe in your words why the event is objectionable."
+msgstr "Beschreibe kurz in deinen Worten, warum die Veranstaltung zu beanstanden ist."
+
 #: frontend/src/apps/admin/components/NewsletterConfirmModal.vue:36
 #: frontend/src/apps/admin/components/ResetTosModal.vue:44
 #: frontend/src/apps/admin/components/SettingCard.vue:102
@@ -715,7 +719,7 @@ msgstr "Copyright Text ist erforderlich."
 msgid "Create"
 msgstr "Erstellen"
 
-#: project/presentation/web/modular/base_views.py:380
+#: project/presentation/web/modular/base_views.py:372
 #: project/presentation/web/templates/generic/list.html:18
 #, python-format
 msgid "Create %(model_display_name)s"
@@ -848,7 +852,7 @@ msgstr "Standard"
 msgid "Delete"
 msgstr "Löschen"
 
-#: project/presentation/web/modular/base_views.py:506
+#: project/presentation/web/modular/base_views.py:498
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr "%(model_display_name)s löschen"
@@ -941,7 +945,7 @@ msgstr "Deaktiviert"
 msgid "Distance"
 msgstr "Distanz"
 
-#: project/presentation/web/modular/base_views.py:512
+#: project/presentation/web/modular/base_views.py:504
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr "Möchtest du '%(object_title)s' löschen?"
@@ -1034,6 +1038,10 @@ msgstr "Bild bearbeiten"
 msgid "Email"
 msgstr "Email"
 
+#: frontend/src/apps/public/pages/EventReportPage.vue:118
+msgid "Email address"
+msgstr "Email-Adresse"
+
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:70
 msgid "End"
 msgstr "Ende"
@@ -1093,7 +1101,7 @@ msgstr ""
 "Gib die Preisinformationen in Textform ein. Z.B. unterschiedliche Preise "
 "für Erwachsene und Kinder."
 
-#: project/presentation/web/modular/base_views.py:496
+#: project/presentation/web/modular/base_views.py:488
 #, python-format
 msgid ""
 "Entered %(property_name)s does not match %(model_display_name)s "
@@ -1155,6 +1163,8 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:38
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:54
 #: frontend/src/apps/admin/pages/UsersPage.vue:53
+#: frontend/src/apps/public/pages/EventReportPage.vue:40
+#: frontend/src/apps/public/pages/EventReportPage.vue:71
 msgid "Error"
 msgstr "Fehler"
 
@@ -1279,6 +1289,11 @@ msgstr "Veranstaltung erfolgreich veröffentlicht"
 #: project/presentation/web/views/reference.py:45
 msgid "Event successfully referenced"
 msgstr "Veranstaltung erfolgreich empfohlen"
+
+#: frontend/src/apps/public/pages/EventReportPage.vue:58
+#: frontend/src/apps/public/pages/EventReportPage.vue:91
+msgid "Event successfully reported"
+msgstr "Veranstaltung erfolgreich gemeldet"
 
 #: project/presentation/web/forms/common.py:213
 msgid "Event types"
@@ -1571,6 +1586,10 @@ msgstr "Veranstaltungen finden"
 #: project/presentation/web/templates/event_date/list.html:535
 msgid "First"
 msgstr "Erste"
+
+#: frontend/src/apps/public/pages/EventReportPage.vue:101
+msgid "First and last name"
+msgstr "Vor- und Nachname"
 
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:192
 msgid "Font"
@@ -1905,7 +1924,7 @@ msgstr ""
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:105
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:106
 #: project/presentation/web/forms/event_date.py:18
-#: project/presentation/web/modular/base_views.py:224
+#: project/presentation/web/modular/base_views.py:216
 msgid "Keyword"
 msgstr "Suche"
 
@@ -2083,6 +2102,7 @@ msgid "Members"
 msgstr "Mitglieder"
 
 #: frontend/src/apps/admin/pages/NewsletterPage.vue:115
+#: frontend/src/apps/public/pages/EventReportPage.vue:136
 msgid "Message"
 msgstr "Nachricht"
 
@@ -2105,6 +2125,7 @@ msgstr "Weitere Filter"
 
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:34
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:55
+#: frontend/src/apps/public/pages/EventReportPage.vue:99
 #: project/presentation/web/templates/_macros.html:1041
 #: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:47
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:69
@@ -2825,9 +2846,10 @@ msgstr "Angemeldet bleiben"
 msgid "Remove event date"
 msgstr "Termin entfernen"
 
+#: frontend/src/apps/public/pages/EventReportPage.vue:80
 #: project/presentation/web/templates/_macros.html:515
 #: project/presentation/web/templates/_macros.html:677
-#: project/presentation/web/templates/event/report.html:4
+#: project/presentation/web/views/event.py:88
 msgid "Report event"
 msgstr "Veranstaltung melden"
 
@@ -3144,7 +3166,7 @@ msgid "Show unreferenced events only"
 msgstr "Nur nicht empfohlene Veranstaltungen anzeigen"
 
 #: project/presentation/web/forms/event_date.py:59
-#: project/presentation/web/modular/base_views.py:236
+#: project/presentation/web/modular/base_views.py:228
 msgid "Sort"
 msgstr "Sortierung"
 
@@ -3190,6 +3212,10 @@ msgstr "Statuscode"
 #: project/presentation/web/forms/common.py:33
 msgid "Street"
 msgstr "Straße"
+
+#: frontend/src/apps/public/pages/EventReportPage.vue:156
+msgid "Submit"
+msgstr "Absenden"
 
 #: project/presentation/web/forms/common.py:291
 msgid "Sunday"
@@ -3327,6 +3353,7 @@ msgid "The organization is scheduled for deletion."
 msgstr "Die Organisation ist zur Löschung vorgesehen."
 
 #: frontend/src/apps/admin/pages/NotFoundPage.vue:12
+#: frontend/src/apps/public/pages/NotFoundPage.vue:9
 #: project/domain/errors/not_found_error.py:7
 msgid "The requested resource was not found"
 msgstr "Die angeforderte Ressource wurde nicht gefunden"
@@ -3381,7 +3408,7 @@ msgstr "Es gibt eine neue Verifizierungsanfrage, die geprüft werden muss."
 
 #: project/domain/models/aggregates/organization_relation_aggregate.py:38
 #: project/domain/models/aggregates/organization_verification_request_aggregate.py:41
-#: project/infrastructure/models/admin_unit.py:248
+#: project/infrastructure/models/admin_unit.py:255
 #: project/infrastructure/models/admin_unit_verification_request.py:70
 #: project/presentation/shared/i10n.py:66
 msgid "There must be no self-reference."
@@ -3458,7 +3485,7 @@ msgstr "URL"
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: project/presentation/web/modular/base_views.py:461
+#: project/presentation/web/modular/base_views.py:453
 #, python-format
 msgid "Update %(model_display_name)s"
 msgstr "%(model_display_name)s aktualisieren"

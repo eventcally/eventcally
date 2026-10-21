@@ -2,6 +2,7 @@ from datetime import datetime
 
 from dependency_injector.wiring import Provide, inject
 from flask import Response, current_app, jsonify, render_template, request, url_for
+from flask_babel import gettext
 from flask_security import current_user
 
 from project.application.queries import (
@@ -17,6 +18,7 @@ from project.presentation.shared.access import (
     has_access,
 )
 from project.presentation.shared.query_results import result_or_404
+from project.presentation.web.boot import build_boot_data
 from project.presentation.web.ical import create_ical_events_for_event
 from project.presentation.web.jsonld import get_sd_for_event_date
 from project.presentation.web.views.main_blueprint import main_bp
@@ -80,7 +82,12 @@ def event_actions(event_id, query_bus: QueryBus = Provide[Application.cqrs.query
 def event_report(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
     result_or_404(query_bus.handle(GetEventDetailQuery(id=event_id)))
 
-    return render_template("event/report.html")
+    return render_template(
+        "layout_vue3.html",
+        entry="public",
+        title=gettext("Report event"),
+        boot=build_boot_data(base="/"),
+    )
 
 
 @main_bp.route("/events/rrule", methods=["POST"])
