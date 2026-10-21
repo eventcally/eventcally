@@ -41,6 +41,7 @@ from .get_incoming_organization_verification_request_review_query import (
 )
 from .get_installable_app_query import GetInstallableAppQuery
 from .get_license_query import GetLicenseQuery
+from .get_mail_job_status_query import GetMailJobStatusQuery
 from .get_manage_menu_options_query import GetManageMenuOptionsQuery
 from .get_manageable_organization_query import GetManageableOrganizationQuery
 from .get_member_invitation_recipient_query import GetMemberInvitationRecipientQuery

@@ -7,6 +7,7 @@
       {% if current_admin_unit %}
       {% set menu_options = get_manage_menu_options(current_admin_unit) %}
       <nav class="navbar navbar-expand-md navbar-light bg-light">
+      {% if bs.toggle == "data-bs-toggle" %}<div class="container-fluid">{% endif %}
           <span></span>
           <button class="navbar-toggler" type="button" {{ bs.toggle }}="collapse" {{ bs.target }}="#navbarNavAdminUnitMarkup" aria-controls="navbarNavAdminUnitMarkup" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -101,5 +102,6 @@
                 </li>
               </div>
           </div>
+      {% if bs.toggle == "data-bs-toggle" %}</div>{% endif %}
       </nav>
       {% endif %}

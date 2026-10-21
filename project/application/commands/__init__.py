@@ -96,6 +96,8 @@ from .reset_tos_accepted_for_users_command import ResetTosAcceptedForUsersComman
 from .revoke_member_invitation_command import RevokeMemberInvitationCommand
 from .revoke_oauth2_token_command import RevokeOAuth2TokenCommand
 from .revoke_organization_invitation_command import RevokeOrganizationInvitationCommand
+from .send_newsletter_command import SendNewsletterCommand, SendNewsletterCommandResult
+from .send_test_mail_command import SendTestMailCommand, SendTestMailCommandResult
 from .uninstall_app_command import UninstallAppCommand
 from .update_api_key_command import UpdateApiKeyCommand
 from .update_app_command import UpdateAppCommand
@@ -242,6 +244,10 @@ __all__ = [
     "DeleteGhostUserCommand",
     "DeleteOldEventCommand",
     "ResetTosAcceptedForUsersCommand",
+    "SendNewsletterCommand",
+    "SendNewsletterCommandResult",
+    "SendTestMailCommand",
+    "SendTestMailCommandResult",
     "UpdateSettingsCommand",
     "UpdatePlanningSettingsCommand",
 ]

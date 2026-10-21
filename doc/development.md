@@ -115,7 +115,7 @@ flask db upgrade
 
 ## Frontend (Vue 3)
 
-The Vue 3 frontend lives in `frontend/` (Vite, TypeScript, bootstrap-vue-next). The Python side exposes it through the BFF channel (`project/presentation/bff`, JSON under `/bff`) and shell pages rendered with `layout_vue3.html` (Bootstrap 5 frame `layout_bs5.html`). The first area is the admin SPA at `/admin-next`, which runs next to the Jinja admin at `/admin`.
+The Vue 3 frontend lives in `frontend/` (Vite, TypeScript, bootstrap-vue-next). The Python side exposes it through the BFF channel (`project/presentation/bff`, JSON under `/bff`) and shell pages rendered with `layout_vue3.html` (Bootstrap 5 frame `layout_bs5.html`). The first area is the admin SPA at `/admin`.
 
 ```sh
 npm ci --prefix frontend
@@ -127,6 +127,12 @@ npm run build --prefix frontend                        # writes project/presenta
 ```
 
 The Docker image builds the bundle in a Node stage; Node is not needed at runtime.
+
+With `docker-compose.debug.yml` the Vite dev server runs as the `vite` service (port 5173, hot reload) and `web` is started with `VITE_DEV_SERVER_URL`, so no local Node is needed:
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.debug.yml up
+```
 
 ### API contract
 

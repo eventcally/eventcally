@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
-import { legacy } from "../legacy";
+import { legacy } from "@/shared/legacy";
 
 const { t } = useI18n();
 
@@ -9,10 +9,10 @@ type Entry = { label: string; href?: string; to?: { name: string } };
 
 const entries: Entry[] = [
   { label: t("Settings"), to: { name: "settings" } },
-  { label: t("Organizations"), href: legacy.organizations },
+  { label: t("Organizations"), to: { name: "organizations" } },
   { label: t("Users"), to: { name: "users" } },
-  { label: t("Email"), href: legacy.email },
-  { label: t("Newsletter"), href: legacy.newsletter },
+  { label: t("Email"), to: { name: "email" } },
+  { label: t("Newsletter"), to: { name: "newsletter" } },
   { label: t("Planning"), to: { name: "planning" } },
   { label: "Flask-Admin", href: legacy.flaskAdmin },
 ];

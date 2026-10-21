@@ -64,6 +64,8 @@ from .reset_tos_accepted_for_users_handler import ResetTosAcceptedForUsersHandle
 from .revoke_member_invitation_handler import RevokeMemberInvitationHandler
 from .revoke_oauth2_token_handler import RevokeOAuth2TokenHandler
 from .revoke_organization_invitation_handler import RevokeOrganizationInvitationHandler
+from .send_newsletter_handler import SendNewsletterHandler
+from .send_test_mail_handler import SendTestMailHandler
 from .uninstall_app_handler import UninstallAppHandler
 from .update_api_key_handler import UpdateApiKeyHandler
 from .update_app_handler import UpdateAppHandler
@@ -183,6 +185,8 @@ __all__ = [
     "DeleteGhostUserHandler",
     "DeleteOldEventHandler",
     "ResetTosAcceptedForUsersHandler",
+    "SendNewsletterHandler",
+    "SendTestMailHandler",
     "UpdateSettingsHandler",
     "UpdatePlanningSettingsHandler",
 ]

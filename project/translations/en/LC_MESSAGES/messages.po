@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-20 23:05+0200\n"
+"POT-Creation-Date: 2026-10-21 13:27+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -150,7 +150,7 @@ msgstr ""
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:138
 #: project/presentation/shared/permissions.py:173
-#: project/presentation/web/templates/_managebar.html:87
+#: project/presentation/web/templates/_managebar.html:88
 #: project/presentation/web/templates/profile.html:75
 msgid "API keys"
 msgstr ""
@@ -244,19 +244,17 @@ msgid "Additional information"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/AdminHome.vue:23
+#: frontend/src/apps/admin/pages/EmailPage.vue:92
+#: frontend/src/apps/admin/pages/NewsletterPage.vue:80
+#: frontend/src/apps/admin/pages/NotFoundPage.vue:10
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:137
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:98
 #: frontend/src/apps/admin/pages/PlanningPage.vue:54
 #: frontend/src/apps/admin/pages/SettingsPage.vue:62
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:69
 #: frontend/src/apps/admin/pages/UsersPage.vue:76
 #: project/presentation/web/jinja_filters.py:92
-#: project/presentation/web/templates/admin/email.html:65
-#: project/presentation/web/templates/admin/newsletter.html:92
-#: project/presentation/web/templates/admin/planning.html:10
-#: project/presentation/web/templates/admin/settings.html:10
-#: project/presentation/web/templates/admin/users.html:10
-#: project/presentation/web/views/admin_blueprint/admin/views.py:12
-#: project/presentation/web/views/admin_blueprint/child_view_handler.py:13
-#: project/presentation/web/views/admin_next_blueprint/__init__.py:18
+#: project/presentation/web/views/admin_blueprint/__init__.py:20
 msgid "Admin"
 msgstr ""
 
@@ -325,7 +323,7 @@ msgstr ""
 msgid "All users have to accept the terms of service and privacy again."
 msgstr ""
 
-#: project/presentation/web/forms/admin.py:75
+#: frontend/src/apps/admin/pages/NewsletterPage.vue:91
 msgid "All users with enabled newsletter setting"
 msgstr ""
 
@@ -377,7 +375,6 @@ msgid "An organizer already exists with this name."
 msgstr ""
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:32
-#: project/presentation/web/forms/admin.py:18
 msgid "Announcement"
 msgstr ""
 
@@ -460,9 +457,10 @@ msgstr ""
 msgid "Booked up"
 msgstr ""
 
+#: frontend/src/apps/admin/components/NewsletterConfirmModal.vue:36
 #: frontend/src/apps/admin/components/ResetTosModal.vue:44
-#: frontend/src/apps/admin/components/SettingCard.vue:99
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:62
+#: frontend/src/apps/admin/components/SettingCard.vue:102
+#: frontend/src/apps/admin/components/TypeToConfirmModal.vue:64
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:100
 #: project/presentation/web/templates/verification_request/review.html:90
 #: project/presentation/web/templates/verification_request/review.html:115
@@ -672,7 +670,6 @@ msgid "Confirmed at"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:30
-#: project/presentation/web/forms/admin.py:15
 #: project/presentation/web/templates/layout.html:241
 #: project/presentation/web/templates/layout_bs5.html:107
 #: project/presentation/web/views/manage_blueprint/organization/views.py:53
@@ -711,7 +708,7 @@ msgstr ""
 msgid "Create another event for %(admin_unit_name)s"
 msgstr ""
 
-#: project/presentation/web/templates/_managebar.html:22
+#: project/presentation/web/templates/_managebar.html:23
 msgid "Create event"
 msgstr ""
 
@@ -728,7 +725,7 @@ msgstr ""
 msgid "Create organizer"
 msgstr ""
 
-#: project/presentation/web/views/admin_blueprint/organization/forms.py:19
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:44
 msgid "Create other organizations"
 msgstr ""
 
@@ -736,9 +733,9 @@ msgstr ""
 msgid "Create place"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:57
 #: frontend/src/apps/admin/pages/UsersPage.vue:35
 #: project/presentation/web/templates/event_date/list.html:504
-#: project/presentation/web/views/admin_blueprint/organization/displays.py:10
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:16
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:21
 #: project/presentation/web/views/manage_admin_unit/event/view_handler.py:79
@@ -755,12 +752,14 @@ msgstr ""
 msgid "Created at"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:68
 #: project/presentation/web/templates/_macros.html:428
 #: project/presentation/web/templates/macros/display.html.j2:36
 #, python-format
 msgid "Created at %(created_at)s by %(created_by)s."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:72
 #: project/presentation/web/templates/_macros.html:430
 #: project/presentation/web/templates/macros/display.html.j2:39
 #, python-format
@@ -794,7 +793,7 @@ msgstr ""
 
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:139
-#: project/presentation/web/templates/_managebar.html:84
+#: project/presentation/web/templates/_managebar.html:85
 #: project/presentation/web/templates/manage/custom_widgets.html:13
 msgid "Custom widgets"
 msgstr ""
@@ -824,10 +823,10 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:144
 #: frontend/src/apps/admin/pages/UsersPage.vue:93
 #: project/presentation/web/modular/base_form.py:100
 #: project/presentation/web/modular/base_view_handler.py:204
-#: project/presentation/web/templates/admin/users.html:37
 msgid "Delete"
 msgstr ""
 
@@ -850,6 +849,9 @@ msgstr ""
 msgid "Delete event"
 msgstr ""
 
+#: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:31
+#: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:32
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:181
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:23
 msgid "Delete organization"
 msgstr ""
@@ -871,11 +873,9 @@ msgstr ""
 msgid "Delete reference request"
 msgstr ""
 
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:60
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:61
+#: frontend/src/apps/admin/components/UserDeleteModal.vue:31
+#: frontend/src/apps/admin/components/UserDeleteModal.vue:32
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:98
-#: project/presentation/web/forms/admin.py:60
-#: project/presentation/web/templates/admin/delete_user.html:6
 msgid "Delete user"
 msgstr ""
 
@@ -883,8 +883,8 @@ msgstr ""
 msgid "Delete verification request"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:58
 #: frontend/src/apps/admin/pages/UsersPage.vue:38
-#: project/presentation/web/views/admin_blueprint/organization/displays.py:11
 msgid "Deletion requested at"
 msgstr ""
 
@@ -974,13 +974,13 @@ msgstr ""
 msgid "Earliest start first"
 msgstr ""
 
-#: frontend/src/apps/admin/components/SettingCard.vue:77
+#: frontend/src/apps/admin/components/SettingCard.vue:81
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:141
 #: frontend/src/apps/admin/pages/UsersPage.vue:90
 #: project/presentation/web/modular/base_view_handler.py:200
 #: project/presentation/web/templates/_macros.html:670
 #: project/presentation/web/templates/_macros.html:713
 #: project/presentation/web/templates/_macros.html:845
-#: project/presentation/web/templates/admin/users.html:36
 msgid "Edit"
 msgstr ""
 
@@ -994,16 +994,12 @@ msgstr ""
 msgid "Edit image"
 msgstr ""
 
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:71
+#: frontend/src/apps/admin/components/UserDeleteModal.vue:34
 #: frontend/src/apps/admin/pages/AdminHome.vue:14
+#: frontend/src/apps/admin/pages/EmailPage.vue:92
 #: frontend/src/apps/admin/pages/UsersPage.vue:34
-#: project/presentation/web/forms/admin.py:61
 #: project/presentation/web/templates/_macros.html:296
 #: project/presentation/web/templates/_macros.html:1416
-#: project/presentation/web/templates/admin/email.html:4
-#: project/presentation/web/templates/admin/email.html:66
-#: project/presentation/web/templates/admin/users.html:19
-#: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:19
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:40
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:18
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:31
@@ -1080,7 +1076,6 @@ msgid ""
 msgstr ""
 
 #: project/presentation/bff/admin/users.py:117
-#: project/presentation/web/views/admin.py:235
 msgid "Entered email does not match user email"
 msgstr ""
 
@@ -1098,7 +1093,7 @@ msgstr ""
 msgid "Entered name does not match app client name"
 msgstr ""
 
-#: project/presentation/web/views/admin_blueprint/organization/views.py:33
+#: project/presentation/bff/admin/organizations.py:135
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:110
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:146
 #: project/presentation/web/views/user_blueprint/organization_member/views.py:49
@@ -1113,9 +1108,19 @@ msgstr ""
 msgid "Entered name does not match place name"
 msgstr ""
 
+#: frontend/src/apps/admin/components/NewsletterConfirmModal.vue:22
+#: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:22
 #: frontend/src/apps/admin/components/ResetTosModal.vue:30
-#: frontend/src/apps/admin/components/SettingCard.vue:62
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:47
+#: frontend/src/apps/admin/components/SettingCard.vue:66
+#: frontend/src/apps/admin/components/TypeToConfirmModal.vue:48
+#: frontend/src/apps/admin/components/UserDeleteModal.vue:22
+#: frontend/src/apps/admin/composables/useMailJob.ts:49
+#: frontend/src/apps/admin/pages/EmailPage.vue:54
+#: frontend/src/apps/admin/pages/EmailPage.vue:77
+#: frontend/src/apps/admin/pages/NewsletterPage.vue:72
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:98
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:122
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:73
 #: frontend/src/apps/admin/pages/PlanningPage.vue:32
 #: frontend/src/apps/admin/pages/PlanningPage.vue:43
 #: frontend/src/apps/admin/pages/SettingsPage.vue:40
@@ -1231,8 +1236,8 @@ msgstr ""
 msgid "Event references"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:79
-#: project/application/services/abstract_email_service.py:86
+#: project/application/services/abstract_email_service.py:99
+#: project/application/services/abstract_email_service.py:106
 msgid "Event review status updated"
 msgstr ""
 
@@ -1469,7 +1474,7 @@ msgstr "Tour"
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:142
 #: project/presentation/web/jinja_filters.py:72
-#: project/presentation/web/templates/_managebar.html:18
+#: project/presentation/web/templates/_managebar.html:19
 msgid "Events"
 msgstr ""
 
@@ -1500,14 +1505,13 @@ msgid "Expires"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:143
-#: project/presentation/web/templates/_managebar.html:82
+#: project/presentation/web/templates/_managebar.html:83
 #: project/presentation/web/templates/manage/export.html:3
 #: project/presentation/web/templates/manage/export.html:63
 msgid "Export"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/PlanningPage.vue:64
-#: project/presentation/web/forms/admin.py:25
 msgid "External calendars"
 msgstr ""
 
@@ -1670,19 +1674,19 @@ msgstr ""
 msgid "If set, events of the other organization are publicly visible."
 msgstr ""
 
-#: project/presentation/web/views/admin_blueprint/organization/forms.py:20
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:45
 msgid "If set, members of the organization can create other organizations."
 msgstr ""
 
-#: project/presentation/web/views/admin_blueprint/organization/forms.py:28
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:50
 msgid "If set, members of the organization can invite other organizations."
 msgstr ""
 
-#: project/presentation/web/views/admin_blueprint/organization/forms.py:36
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:55
 msgid "If set, members of the organization can verify other organizations."
 msgstr ""
 
-#: project/presentation/web/views/admin_blueprint/organization/forms.py:12
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:39
 msgid ""
 "If set, other organizations can ask this organization to reference their "
 "event."
@@ -1722,23 +1726,23 @@ msgid "Incoming reference"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:149
-#: project/presentation/web/templates/_managebar.html:36
+#: project/presentation/web/templates/_managebar.html:37
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/view_handler.py:54
 msgid "Incoming reference requests"
 msgstr ""
 
-#: project/presentation/web/views/admin_blueprint/organization/forms.py:11
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:37
 msgid "Incoming reference requests allowed"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:151
-#: project/presentation/web/templates/_managebar.html:33
+#: project/presentation/web/templates/_managebar.html:34
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference/view_handler.py:47
 msgid "Incoming references"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:146
-#: project/presentation/web/templates/_managebar.html:69
+#: project/presentation/web/templates/_managebar.html:70
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/view_handler.py:66
 msgid "Incoming verification requests"
 msgstr ""
@@ -1808,7 +1812,7 @@ msgstr ""
 msgid "Invite organization"
 msgstr ""
 
-#: project/presentation/web/views/admin_blueprint/organization/forms.py:27
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:49
 msgid "Invite other organizations"
 msgstr ""
 
@@ -1827,6 +1831,8 @@ msgstr ""
 msgid "KID"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:105
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:106
 #: project/presentation/web/forms/event_date.py:18
 #: project/presentation/web/modular/base_views.py:224
 msgid "Keyword"
@@ -1876,12 +1882,14 @@ msgstr ""
 msgid "Last remaining administrator can not leave the organization."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:78
 #: project/presentation/web/templates/_macros.html:437
 #: project/presentation/web/templates/macros/display.html.j2:46
 #, python-format
 msgid "Last updated at %(updated_at)s by %(updated_by)s."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:82
 #: project/presentation/web/templates/_macros.html:439
 #: project/presentation/web/templates/macros/display.html.j2:49
 #, python-format
@@ -1898,7 +1906,6 @@ msgid "Leave organization"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:27
-#: project/presentation/web/forms/admin.py:14
 #: project/presentation/web/templates/layout.html:237
 #: project/presentation/web/templates/layout_bs5.html:103
 #: project/presentation/web/views/root.py:88
@@ -1975,17 +1982,17 @@ msgstr ""
 msgid "Longitude"
 msgstr ""
 
-#: project/presentation/web/templates/admin/email.html:47
-#: project/presentation/web/views/admin.py:127
+#: frontend/src/apps/admin/pages/EmailPage.vue:83
 msgid "Mail sent successfully"
 msgstr ""
 
-#: project/presentation/web/templates/admin/newsletter.html:59
+#: frontend/src/apps/admin/components/MailJobProgress.vue:25
 msgid "Mails sent successfully"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:154
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:135
 #: project/presentation/web/templates/home.html:26
-#: project/presentation/web/views/admin_blueprint/organization/view_handler.py:78
 #: project/presentation/web/views/flask_admin.py:125
 msgid "Manage"
 msgstr ""
@@ -1994,13 +2001,13 @@ msgstr ""
 msgid "Map view"
 msgstr ""
 
-#: project/presentation/web/templates/_managebar.html:60
+#: project/presentation/web/templates/_managebar.html:61
 #: project/presentation/web/templates/verification_request/review.html:54
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/incoming_organization_verification_request/review.html:52
 msgid "Members"
 msgstr ""
 
-#: project/presentation/web/forms/admin.py:81
+#: frontend/src/apps/admin/pages/NewsletterPage.vue:115
 msgid "Message"
 msgstr ""
 
@@ -2021,10 +2028,9 @@ msgstr ""
 msgid "More filters"
 msgstr ""
 
+#: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:34
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:55
 #: project/presentation/web/templates/_macros.html:1041
-#: project/presentation/web/views/admin_blueprint/organization/displays.py:8
-#: project/presentation/web/views/admin_blueprint/organization/displays.py:15
-#: project/presentation/web/views/admin_blueprint/organization/forms.py:58
 #: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:47
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:69
 #: project/presentation/web/views/manage_admin_unit/event/displays.py:23
@@ -2062,15 +2068,11 @@ msgstr ""
 msgid "Name of organization"
 msgstr ""
 
-#: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:35
-msgid "New admin (beta)"
-msgstr ""
-
-#: project/application/services/abstract_email_service.py:63
+#: project/application/services/abstract_email_service.py:83
 msgid "New event report"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:85
+#: project/application/services/abstract_email_service.py:105
 msgid "New event review"
 msgstr ""
 
@@ -2082,15 +2084,15 @@ msgstr ""
 msgid "New permissions"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:75
+#: project/application/services/abstract_email_service.py:95
 msgid "New reference automatically verified"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:78
+#: project/application/services/abstract_email_service.py:98
 msgid "New reference request"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:91
+#: project/application/services/abstract_email_service.py:111
 msgid "New verification request"
 msgstr ""
 
@@ -2100,14 +2102,12 @@ msgid "Newest first"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/AdminHome.vue:15
-#: project/presentation/web/templates/admin/newsletter.html:4
-#: project/presentation/web/templates/admin/newsletter.html:93
-#: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:23
+#: frontend/src/apps/admin/pages/NewsletterPage.vue:80
 #: project/presentation/web/views/user_blueprint/user/forms.py:49
 msgid "Newsletter"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:65
+#: project/application/services/abstract_email_service.py:85
 #, python-format
 msgid "Newsletter from %(site_name)s"
 msgstr ""
@@ -2118,6 +2118,8 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/EmailPage.vue:29
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
 #: project/presentation/web/modular/filters.py:31
 #: project/presentation/web/templates/_macros.html:1019
 msgid "No"
@@ -2128,6 +2130,10 @@ msgstr ""
 msgid "No files available"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:117
+msgid "No organizations found"
+msgstr ""
+
 #: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:44
 #, python-format
 msgid ""
@@ -2135,17 +2141,24 @@ msgid ""
 " code %(postal_code)s."
 msgstr ""
 
+#: project/presentation/bff/admin/mail.py:122
 #: project/presentation/bff/admin/users.py:87
 #: project/presentation/web/modular/fields.py:178
 #: project/presentation/web/modular/fields.py:239
 msgid "Not a valid choice"
 msgstr ""
 
+#: frontend/src/apps/admin/composables/useMailJob.ts:62
+msgid "Not all mails could be sent."
+msgstr ""
+
 #: project/presentation/web/templates/event_date/list.html:251
 msgid "Not referenced"
 msgstr ""
 
-#: frontend/src/apps/admin/components/SettingCard.vue:106
+#: frontend/src/apps/admin/components/SettingCard.vue:109
+#: frontend/src/apps/admin/pages/EmailPage.vue:31
+#: frontend/src/apps/admin/pages/EmailPage.vue:44
 #: project/presentation/web/templates/_macros.html:1019
 #: project/presentation/web/templates/_macros.html:1023
 #: project/presentation/web/templates/_macros.html:1032
@@ -2222,7 +2235,7 @@ msgstr ""
 #: project/presentation/web/templates/_macros.html:574
 #: project/presentation/web/templates/_macros.html:744
 #: project/presentation/web/templates/_macros.html:1007
-#: project/presentation/web/templates/_managebar.html:46
+#: project/presentation/web/templates/_managebar.html:47
 #: project/presentation/web/templates/verification_request/delete.html:13
 #: project/presentation/web/templates/verification_request/review.html:28
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:16
@@ -2246,7 +2259,7 @@ msgstr ""
 msgid "Organization"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:66
+#: project/application/services/abstract_email_service.py:86
 msgid "Organization deletion requested"
 msgstr ""
 
@@ -2254,14 +2267,14 @@ msgstr ""
 msgid "Organization invitation"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:69
+#: project/application/services/abstract_email_service.py:89
 msgid "Organization invitation accepted"
 msgstr ""
 
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:152
 #: project/presentation/shared/permissions.py:175
-#: project/presentation/web/templates/_managebar.html:77
+#: project/presentation/web/templates/_managebar.html:78
 #: project/presentation/web/templates/manage/admin_units.html:17
 #: project/presentation/web/templates/profile.html:62
 msgid "Organization invitations"
@@ -2277,7 +2290,7 @@ msgstr ""
 
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:154
-#: project/presentation/web/templates/_managebar.html:61
+#: project/presentation/web/templates/_managebar.html:62
 #: project/presentation/web/templates/profile.html:58
 msgid "Organization member invitations"
 msgstr ""
@@ -2307,8 +2320,16 @@ msgstr ""
 msgid "Organization relations"
 msgstr ""
 
+#: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:24
+msgid "Organization successfully deleted"
+msgstr ""
+
 #: project/presentation/web/views/user_blueprint/organization_member/views.py:53
 msgid "Organization successfully left"
+msgstr ""
+
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:127
+msgid "Organization successfully updated"
 msgstr ""
 
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:67
@@ -2324,6 +2345,8 @@ msgid "Organization verification requests"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/AdminHome.vue:12
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:138
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:98
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/jinja_filters.py:73
 #: project/presentation/web/jinja_filters.py:85
@@ -2332,7 +2355,6 @@ msgstr ""
 #: project/presentation/web/templates/organization/main.html:4
 #: project/presentation/web/templates/profile.html:49
 #: project/presentation/web/templates/profile.html:54
-#: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:11
 #: project/presentation/web/views/user_blueprint/organization_member/view_handler.py:32
 msgid "Organizations"
 msgstr ""
@@ -2361,7 +2383,7 @@ msgstr ""
 msgid "Organizer"
 msgstr ""
 
-#: project/presentation/web/templates/_managebar.html:57
+#: project/presentation/web/templates/_managebar.html:58
 #: project/presentation/web/templates/organizer/main.html:4
 msgid "Organizers"
 msgstr ""
@@ -2385,19 +2407,19 @@ msgid "Outgoing organization relations"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:163
-#: project/presentation/web/templates/_managebar.html:41
+#: project/presentation/web/templates/_managebar.html:42
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/view_handler.py:59
 msgid "Outgoing reference requests"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:165
-#: project/presentation/web/templates/_managebar.html:34
+#: project/presentation/web/templates/_managebar.html:35
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference/view_handler.py:32
 msgid "Outgoing references"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:160
-#: project/presentation/web/templates/_managebar.html:53
+#: project/presentation/web/templates/_managebar.html:54
 #: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/view_handler.py:62
 msgid "Outgoing verification requests"
 msgstr ""
@@ -2456,7 +2478,7 @@ msgstr ""
 
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:141
-#: project/presentation/web/templates/_managebar.html:58
+#: project/presentation/web/templates/_managebar.html:59
 msgid "Places"
 msgstr ""
 
@@ -2477,9 +2499,6 @@ msgstr ""
 #: frontend/src/apps/admin/pages/PlanningPage.vue:54
 #: frontend/src/apps/admin/pages/PlanningPage.vue:57
 #: project/presentation/web/jinja_filters.py:74
-#: project/presentation/web/templates/admin/planning.html:4
-#: project/presentation/web/templates/admin/planning.html:11
-#: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:27
 msgid "Planning"
 msgstr ""
 
@@ -2533,7 +2552,6 @@ msgid "Print"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:31
-#: project/presentation/web/forms/admin.py:16
 #: project/presentation/web/templates/layout.html:245
 #: project/presentation/web/templates/layout_bs5.html:111
 #: project/presentation/web/views/root.py:104
@@ -2541,7 +2559,7 @@ msgid "Privacy"
 msgstr ""
 
 #: project/presentation/web/jinja_filters.py:88
-#: project/presentation/web/templates/_managebar.html:89
+#: project/presentation/web/templates/_managebar.html:90
 #: project/presentation/web/templates/profile.html:4
 #: project/presentation/web/templates/profile.html:17
 #: project/presentation/web/views/user_blueprint/child_view_handler.py:15
@@ -2583,8 +2601,7 @@ msgstr ""
 msgid "Read %(entity_display_name)s"
 msgstr ""
 
-#: project/presentation/web/forms/admin.py:65
-#: project/presentation/web/forms/admin.py:72
+#: frontend/src/apps/admin/pages/EmailPage.vue:115
 msgid "Recipient"
 msgstr ""
 
@@ -2655,11 +2672,11 @@ msgstr ""
 msgid "Referenced by"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:82
+#: project/application/services/abstract_email_service.py:102
 msgid "Referenced event changed"
 msgstr ""
 
-#: project/presentation/web/templates/_managebar.html:27
+#: project/presentation/web/templates/_managebar.html:28
 #: project/presentation/web/views/manage_admin_unit/event/displays.py:34
 msgid "References"
 msgstr ""
@@ -2709,7 +2726,7 @@ msgstr ""
 msgid "Relation to %(admin_unit_name)s"
 msgstr ""
 
-#: project/presentation/web/templates/_managebar.html:68
+#: project/presentation/web/templates/_managebar.html:69
 msgid "Relations"
 msgstr ""
 
@@ -2768,21 +2785,12 @@ msgstr ""
 
 #: frontend/src/apps/admin/components/ResetTosModal.vue:43
 #: frontend/src/apps/admin/pages/SettingsPage.vue:92
-#: project/presentation/web/forms/admin.py:51
 msgid "Reset"
 msgstr ""
 
 #: frontend/src/apps/admin/components/ResetTosModal.vue:42
 #: frontend/src/apps/admin/pages/SettingsPage.vue:86
-#: project/presentation/web/templates/admin/reset_tos_accepted.html:4
-#: project/presentation/web/templates/admin/reset_tos_accepted.html:8
-#: project/presentation/web/templates/admin/settings.html:29
-#: project/presentation/web/templates/admin/users.html:48
 msgid "Reset acceptance of terms of service and privacy"
-msgstr ""
-
-#: project/presentation/web/forms/admin.py:49
-msgid "Reset for all users"
 msgstr ""
 
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:18
@@ -2844,7 +2852,6 @@ msgstr ""
 
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:84
 #: project/infrastructure/babel_extract.py:1
-#: project/presentation/web/forms/admin.py:55
 #: project/presentation/web/views/manage_admin_unit/member/displays.py:15
 #: project/presentation/web/views/manage_admin_unit/member/forms.py:11
 #: project/presentation/web/views/manage_admin_unit/member_invitation/forms.py:16
@@ -2859,9 +2866,7 @@ msgstr ""
 msgid "Saturday"
 msgstr ""
 
-#: frontend/src/apps/admin/components/SettingCard.vue:96
-#: project/presentation/web/forms/admin.py:20
-#: project/presentation/web/forms/admin.py:28
+#: frontend/src/apps/admin/components/SettingCard.vue:99
 #: project/presentation/web/views/user_blueprint/oauth2_client/forms.py:31
 #: project/presentation/web/views/user_blueprint/user/forms.py:33
 #: project/presentation/web/views/user_blueprint/user/forms.py:56
@@ -2955,16 +2960,23 @@ msgstr ""
 msgid "Select the status of the event."
 msgstr ""
 
-#: project/presentation/web/forms/admin.py:82
+#: frontend/src/apps/admin/components/NewsletterConfirmModal.vue:34
+#: frontend/src/apps/admin/components/NewsletterConfirmModal.vue:35
+#: frontend/src/apps/admin/pages/NewsletterPage.vue:133
 msgid "Send newsletter"
 msgstr ""
 
-#: project/presentation/web/templates/admin/email.html:111
+#: frontend/src/apps/admin/pages/EmailPage.vue:136
 msgid "Send test mail asynchronously"
 msgstr ""
 
-#: project/presentation/web/forms/admin.py:67
+#: frontend/src/apps/admin/pages/EmailPage.vue:132
 msgid "Send test mail synchronously"
+msgstr ""
+
+#: frontend/src/apps/admin/components/NewsletterConfirmModal.vue:43
+#, python-format
+msgid "Send to %(count)d recipients?"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/AdminHome.vue:11
@@ -2972,18 +2984,13 @@ msgstr ""
 #: frontend/src/apps/admin/pages/SettingsPage.vue:65
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:157
-#: project/presentation/web/templates/_managebar.html:81
-#: project/presentation/web/templates/admin/settings.html:4
-#: project/presentation/web/templates/admin/settings.html:11
+#: project/presentation/web/templates/_managebar.html:82
 #: project/presentation/web/templates/profile.html:32
-#: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:7
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:30
 msgid "Settings"
 msgstr ""
 
-#: frontend/src/apps/admin/components/SettingCard.vue:60
-#: project/presentation/web/views/admin.py:91
-#: project/presentation/web/views/admin.py:267
+#: frontend/src/apps/admin/components/SettingCard.vue:64
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:81
 #: project/presentation/web/views/user_blueprint/user/views.py:131
 msgid "Settings successfully updated"
@@ -3017,7 +3024,7 @@ msgstr ""
 msgid "Short name must contain only letters numbers or underscore"
 msgstr ""
 
-#: frontend/src/apps/admin/components/SettingCard.vue:74
+#: frontend/src/apps/admin/components/SettingCard.vue:78
 #: project/presentation/web/views/utils.py:111
 msgid "Show"
 msgstr ""
@@ -3027,7 +3034,7 @@ msgstr ""
 msgid "Show directions"
 msgstr ""
 
-#: project/presentation/web/templates/_managebar.html:21
+#: project/presentation/web/templates/_managebar.html:22
 msgid "Show events"
 msgstr ""
 
@@ -3059,7 +3066,6 @@ msgid "Start at"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:23
-#: project/presentation/web/forms/admin.py:17
 msgid "Start page"
 msgstr ""
 
@@ -3092,7 +3098,7 @@ msgstr ""
 msgid "Sunday"
 msgstr ""
 
-#: project/presentation/web/templates/_managebar.html:99
+#: project/presentation/web/templates/_managebar.html:100
 msgid "Switch organization"
 msgstr ""
 
@@ -3117,7 +3123,6 @@ msgid "Target organization can no longer verify other organizations."
 msgstr ""
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:24
-#: project/presentation/web/forms/admin.py:13
 #: project/presentation/web/templates/layout.html:232
 #: project/presentation/web/templates/layout_bs5.html:98
 #: project/presentation/web/views/root.py:76
@@ -3128,17 +3133,17 @@ msgstr ""
 msgid "Terms of service accepted at"
 msgstr ""
 
-#: project/presentation/web/templates/admin/email.html:103
+#: frontend/src/apps/admin/pages/EmailPage.vue:108
 msgid "Test mail"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:90
+#: project/application/services/abstract_email_service.py:110
 #, python-format
 msgid "Test mail from %(site_name)s"
 msgstr ""
 
-#: project/presentation/web/forms/admin.py:74
-#: project/presentation/web/forms/admin.py:80
+#: frontend/src/apps/admin/pages/NewsletterPage.vue:89
+#: frontend/src/apps/admin/pages/NewsletterPage.vue:99
 msgid "Test recipient"
 msgstr ""
 
@@ -3180,6 +3185,10 @@ msgstr ""
 msgid "The last remaining administrator can not leave the organization."
 msgstr ""
 
+#: project/domain/errors/mail_delivery_error.py:7
+msgid "The mail could not be sent."
+msgstr ""
+
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:222
 msgid "The maximum age that participants should be."
 msgstr ""
@@ -3208,6 +3217,7 @@ msgstr ""
 msgid "The organization is scheduled for deletion."
 msgstr ""
 
+#: frontend/src/apps/admin/pages/NotFoundPage.vue:12
 #: project/domain/errors/not_found_error.py:7
 msgid "The requested resource was not found"
 msgstr ""
@@ -3230,6 +3240,11 @@ msgstr ""
 #: project/presentation/web/templates/_macros.html:1229
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:88
 msgid "The start must be before the end."
+msgstr ""
+
+#: frontend/src/apps/admin/components/NewsletterConfirmModal.vue:41
+#: frontend/src/apps/admin/pages/NewsletterPage.vue:57
+msgid "There are no recipients."
 msgstr ""
 
 #: project/templates/email/reference_request_notice.html:4
@@ -3264,6 +3279,7 @@ msgstr ""
 msgid "This OAuth2 token has already been revoked."
 msgstr ""
 
+#: project/presentation/bff/admin/mail.py:119
 #: project/presentation/web/forms/common.py:146
 msgid "This field is required."
 msgstr ""
@@ -3351,29 +3367,23 @@ msgstr ""
 
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:75
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:95
-#: project/presentation/web/forms/admin.py:56
-#: project/presentation/web/templates/admin/update_user.html:4
-#: project/presentation/web/templates/admin/update_user.html:8
 msgid "Update user"
 msgstr ""
 
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:54
-#: project/presentation/web/templates/admin/delete_user.html:13
 msgid "User"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:87
+#: project/application/services/abstract_email_service.py:107
 msgid "User deletion requested"
 msgstr ""
 
-#: frontend/src/apps/admin/components/UserDeleteModal.vue:51
-#: project/presentation/web/views/admin.py:243
+#: frontend/src/apps/admin/components/UserDeleteModal.vue:24
 msgid "User successfully deleted"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:58
-#: project/presentation/web/views/admin.py:211
 msgid "User successfully updated"
 msgstr ""
 
@@ -3381,9 +3391,6 @@ msgstr ""
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:70
 #: frontend/src/apps/admin/pages/UsersPage.vue:76
 #: project/infrastructure/babel_extract.py:1
-#: project/presentation/web/templates/admin/users.html:4
-#: project/presentation/web/templates/admin/users.html:11
-#: project/presentation/web/views/admin_blueprint/templates/admin/admin.html:15
 msgid "Users"
 msgstr ""
 
@@ -3395,7 +3402,7 @@ msgstr ""
 msgid "Verification request already verified."
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:94
+#: project/application/services/abstract_email_service.py:114
 msgid "Verification request review status updated"
 msgstr ""
 
@@ -3417,8 +3424,9 @@ msgstr ""
 msgid "Verification requests postal codes"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:150
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:56
 #: project/presentation/web/templates/_macros.html:353
-#: project/presentation/web/views/admin_blueprint/organization/displays.py:9
 msgid "Verified"
 msgstr ""
 
@@ -3433,7 +3441,7 @@ msgstr ""
 msgid "Verify other organization"
 msgstr ""
 
-#: project/presentation/web/views/admin_blueprint/organization/forms.py:35
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:54
 msgid "Verify other organizations"
 msgstr ""
 
@@ -3447,8 +3455,9 @@ msgstr ""
 msgid "Verify reference requests automatically"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:155
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:136
 #: project/presentation/web/modular/base_view_handler.py:197
-#: project/presentation/web/views/admin_blueprint/organization/view_handler.py:68
 #: project/presentation/web/views/flask_admin.py:128
 #: project/presentation/web/views/manage_admin_unit/event/view_handler.py:157
 #: project/presentation/web/views/manage_admin_unit/event_organizer/view_handler.py:75
@@ -3543,7 +3552,7 @@ msgid "Widget"
 msgstr ""
 
 #: project/presentation/shared/permissions.py:169
-#: project/presentation/web/templates/_managebar.html:85
+#: project/presentation/web/templates/_managebar.html:86
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:57
 msgid "Widgets"
 msgstr ""
@@ -3563,6 +3572,8 @@ msgstr ""
 msgid "Yahoo calendar"
 msgstr ""
 
+#: frontend/src/apps/admin/pages/EmailPage.vue:29
+#: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
 #: project/presentation/web/modular/filters.py:30
 #: project/presentation/web/templates/_macros.html:1019
 msgid "Yes"
@@ -3594,8 +3605,8 @@ msgstr ""
 msgid "You have been invited to join %(admin_unit_name)s."
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:64
-#: project/application/services/abstract_email_service.py:72
+#: project/application/services/abstract_email_service.py:84
+#: project/application/services/abstract_email_service.py:92
 msgid "You have received an invitation"
 msgstr ""
 
@@ -4174,5 +4185,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Previous start date"
+#~ msgstr ""
+
+#~ msgid "New admin (beta)"
+#~ msgstr ""
+
+#~ msgid "Reset for all users"
 #~ msgstr ""
 

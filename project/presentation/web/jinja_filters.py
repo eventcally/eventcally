@@ -89,7 +89,7 @@ def get_main_menu():
         ]
         if current_user.has_role("admin"):
             user_items.append(
-                {"label": gettext("Admin"), "url": url_for("admin.admin")}
+                {"label": gettext("Admin"), "url": url_for("admin.shell", path="")}
             )
         user_items.append(
             {"label": gettext("Logout"), "url": url_for("security.logout")}

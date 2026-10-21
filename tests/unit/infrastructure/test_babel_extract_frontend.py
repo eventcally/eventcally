@@ -22,3 +22,9 @@ def test_ignores_dynamic_keys_and_lookalikes():
 
 def test_unescapes_quotes():
     assert extract("t('It\\'s')")[0][2] == "It's"
+
+
+def test_extracts_calls_wrapped_onto_their_own_line():
+    result = extract('const d = t(\n  "If set, wrapped.",\n);')
+
+    assert result == [(2, "gettext", "If set, wrapped.", [])]

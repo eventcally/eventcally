@@ -124,6 +124,9 @@ from project.infrastructure.read_session import (
 )
 from project.infrastructure.services.app_context_provider import AppContextProvider
 from project.infrastructure.services.celery_email_service import CeleryEmailService
+from project.infrastructure.services.celery_mail_job_status_reader import (
+    CeleryMailJobStatusReader,
+)
 from project.infrastructure.services.flask_babel_localization_service import (
     FlaskBabelLocalizationService,
 )
@@ -225,6 +228,10 @@ class ReadRepos(containers.DeclarativeContainer):
     user_admin_read_repo = providers.Factory(
         SqlAlchemyUserAdminReadRepository,
         session=infrastructure.read_session,
+    )
+    uow_user_admin_read_repo = providers.Factory(
+        SqlAlchemyUserAdminReadRepository,
+        session=infrastructure.session_factory,
     )
     access_read_repo = providers.Factory(
         SqlAlchemyAccessReadRepository,
@@ -351,6 +358,7 @@ class Services(containers.DeclarativeContainer):
         template_render_service=infrastructure.template_render_service,
         mail_sender=infrastructure.mail_sender,
     )
+    mail_job_status_reader = providers.Factory(CeleryMailJobStatusReader)
     webhook_delivery_service = providers.Factory(
         WebhookDeliveryService,
         logger=infrastructure.logger,
@@ -532,6 +540,17 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.ResetTosAcceptedForUsersCommand: providers.Factory(
                     command_handlers.ResetTosAcceptedForUsersHandler
+                ),
+                commands.SendTestMailCommand: providers.Factory(
+                    command_handlers.SendTestMailHandler,
+                    email_service=services.email_service,
+                    site_name=config.SITE_NAME,
+                ),
+                commands.SendNewsletterCommand: providers.Factory(
+                    command_handlers.SendNewsletterHandler,
+                    email_service=services.email_service,
+                    user_admin_read_repo=read_repos.uow_user_admin_read_repo,
+                    site_name=config.SITE_NAME,
                 ),
                 commands.UpdateSettingsCommand: providers.Factory(
                     command_handlers.UpdateSettingsHandler
@@ -1032,6 +1051,11 @@ class Cqrs(containers.DeclarativeContainer):
                 queries.GetCurrentMemberGrantsQuery: providers.Factory(
                     query_handlers.GetCurrentMemberGrantsHandler,
                     repo=read_repos.access_read_repo,
+                ),
+                queries.GetMailJobStatusQuery: providers.Factory(
+                    query_handlers.GetMailJobStatusHandler,
+                    reader=services.mail_job_status_reader,
+                    authz=actor_authorization_service,
                 ),
                 queries.GetSettingsForAdminQuery: providers.Factory(
                     query_handlers.GetSettingsForAdminHandler,

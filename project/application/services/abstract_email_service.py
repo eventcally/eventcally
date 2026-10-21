@@ -1,6 +1,7 @@
 import abc
 from itertools import groupby
 
+from project.application.read_models.mail_job_read_models import MailJob
 from project.application.services.abstract_localization_service import (
     AbstractLocalizationService,
 )
@@ -21,10 +22,7 @@ class AbstractEmailService(abc.ABC):
         self.template_render_service = template_render_service
         self.mail_template_subject_mapping = None
 
-    def send_template_mails_to_users_async(self, users, template, **context):
-        if len(users) == 0:  # pragma: no cover
-            return
-
+    def _signatures_for_users(self, users, template, **context) -> list:
         # Group by locale
         def locale_func(user):
             return user.locale if user.locale else ""
@@ -43,7 +41,29 @@ class AbstractEmailService(abc.ABC):
                 [(user.email, subject, body, html) for user in locale_users]
             )
 
+        return signatures
+
+    def send_template_mails_to_users_async(self, users, template, **context):
+        if len(users) == 0:  # pragma: no cover
+            return
+
+        signatures = self._signatures_for_users(users, template, **context)
         return self.send_mails_with_signatures_async(signatures)
+
+    def send_template_mails_to_users_tracked(
+        self, users, template, **context
+    ) -> MailJob:
+        if len(users) == 0:
+            return MailJob(count=0)
+
+        signatures = self._signatures_for_users(users, template, **context)
+        return self.send_mails_with_signatures_tracked(signatures)
+
+    def send_template_mail_to_address_tracked(
+        self, email, template, **context
+    ) -> MailJob:
+        subject, body, html = self._render_mail_body_with_subject(template, **context)
+        return self.send_mails_with_signatures_tracked([(email, subject, body, html)])
 
     def send_template_mail_to_address_async(self, email, template, **context):
         subject, body, html = self._render_mail_body_with_subject(template, **context)
@@ -122,4 +142,10 @@ class AbstractEmailService(abc.ABC):
 
     @abc.abstractmethod
     def send_mails_with_signatures(self, signatures):  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def send_mails_with_signatures_tracked(
+        self, signatures
+    ) -> MailJob:  # pragma: no cover
         raise NotImplementedError

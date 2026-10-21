@@ -41,6 +41,7 @@ from .get_incoming_organization_verification_request_review_handler import (
 )
 from .get_installable_app_handler import GetInstallableAppHandler
 from .get_license_handler import GetLicenseHandler
+from .get_mail_job_status_handler import GetMailJobStatusHandler
 from .get_manage_menu_options_handler import GetManageMenuOptionsHandler
 from .get_manageable_organization_handler import GetManageableOrganizationHandler
 from .get_member_invitation_recipient_handler import GetMemberInvitationRecipientHandler

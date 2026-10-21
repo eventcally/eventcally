@@ -52,7 +52,7 @@ def test_users_unauthorized(client, utils):
 def _login_admin(seeder, utils):
     seeder.create_user(admin=True)
     utils.login()
-    utils.get_ok("/admin-next/users")  # picks up the CSRF token of the Vue 3 shell
+    utils.get_ok("/admin/users")  # picks up the CSRF token of the Vue 3 shell
 
 
 def _other_user_id(seeder, email="other@test.de"):

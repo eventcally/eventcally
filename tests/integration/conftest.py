@@ -126,6 +126,15 @@ def app():
             self.send_mails_with_signatures(signatures)
             return _FakeGroupResult()
 
+        def send_mails_with_signatures_tracked(self, signatures):
+            from project.application.read_models.mail_job_read_models import MailJob
+
+            self.send_mails_with_signatures(signatures)
+            return MailJob(
+                job_id="00000000-0000-4000-8000-000000000000",
+                count=len(signatures),
+            )
+
     localization_service = app.container.infrastructure.localization_service()
     template_render_service = app.container.infrastructure.template_render_service()
     app.test_email_service = TestEmailService(
