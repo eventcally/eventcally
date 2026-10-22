@@ -10,6 +10,7 @@ from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
 )
 from project.domain.models.value_objects.webhook_value_object import WebhookValueObject
+from project.presentation.shared.search_options import distance_choices
 from project.presentation.web.forms.widgets import CustomDateField, MultiCheckboxField
 from project.presentation.web.modular.ajax import LicenseAjaxModelLoader
 from project.presentation.web.modular.base_form import BaseForm
@@ -289,15 +290,6 @@ weekday_choices = [
     (5, lazy_gettext("Friday")),
     (6, lazy_gettext("Saturday")),
     (0, lazy_gettext("Sunday")),
-]
-
-distance_choices = [
-    (500, lazy_gettext("500 m")),
-    (5000, lazy_gettext("5 km")),
-    (10000, lazy_gettext("10 km")),
-    (25000, lazy_gettext("20 km")),
-    (50000, lazy_gettext("50 km")),
-    (100000, lazy_gettext("100 km")),
 ]
 
 

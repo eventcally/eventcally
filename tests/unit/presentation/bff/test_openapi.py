@@ -39,6 +39,19 @@ def test_user_paths():
     assert roles["requestBody"]["required"] is True
 
 
+def test_manage_planning_paths():
+    spec = build_openapi()
+
+    operation = spec["paths"]["/bff/manage/planning/event-dates"]["get"]
+    params = {p["name"]: p for p in operation["parameters"]}
+    assert params["category_id"]["schema"]["type"] == "array"
+    assert params["category_id"]["schema"]["items"] == {"type": "integer"}
+    assert params["date_from"]["required"] is True
+    assert "/bff/manage/planning" in spec["paths"]
+    assert "/bff/manage/places/{gmaps_id}/coordinate" in spec["paths"]
+    assert "/bff/manage/planning/external-calendar-events" in spec["paths"]
+
+
 def test_committed_spec_is_up_to_date():
     path = Path(__file__).parents[4] / "frontend" / "openapi.json"
     committed = json.loads(path.read_text(encoding="utf-8"))

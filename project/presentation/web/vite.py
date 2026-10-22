@@ -8,6 +8,7 @@ from markupsafe import Markup, escape
 # Entry name -> source path (dev server serves the sources directly).
 ENTRIES = {
     "admin": "src/apps/admin/main.ts",
+    "manage": "src/apps/manage/main.ts",
     "public": "src/apps/public/main.ts",
 }
 

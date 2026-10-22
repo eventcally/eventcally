@@ -14,6 +14,7 @@ export const publicPages = {
   organization: (id: number) => `/organizations/${id}`,
   organizationEventDates: (id: number) => `/eventdates?admin_unit_id=${id}`,
   event: (id: number) => `/event/${id}`,
+  eventDate: (id: number) => `/eventdate/${id}`,
   eventDates: (organizerId: number) => `/eventdates?organizer_id=${organizerId}`,
 };
 

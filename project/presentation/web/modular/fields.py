@@ -7,7 +7,7 @@ from wtforms import (
 )
 from wtforms.utils import unset_value
 
-from project.presentation.web.maputils import find_gmaps_places, get_gmaps_place
+from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_place
 from project.presentation.web.modular.widgets import (
     AjaxSelect2Widget,
     DateRangeWidget,

@@ -13,7 +13,11 @@ export default defineConfig({
     emptyOutDir: true,
     manifest: true,
     rollupOptions: {
-      input: { admin: "src/apps/admin/main.ts", public: "src/apps/public/main.ts" },
+      input: {
+        admin: "src/apps/admin/main.ts",
+        manage: "src/apps/manage/main.ts",
+        public: "src/apps/public/main.ts",
+      },
     },
   },
   server: { origin: "http://localhost:5173" },

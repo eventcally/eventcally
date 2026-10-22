@@ -1,10 +1,4 @@
-from dateutil.relativedelta import relativedelta
-
-from project.shared.dateutils import (
-    date_set_end_of_day,
-    form_input_from_date,
-    get_today,
-)
+from project.shared.dateutils import form_input_from_date, get_today
 
 
 class EventSearchParams(object):
@@ -90,8 +84,3 @@ class EventSearchParams(object):
         today = get_today()
         self.date_from = today
         self.date_to = None
-
-    def set_planning_date_range(self):
-        today = get_today()
-        self.date_from = today
-        self.date_to = date_set_end_of_day(today + relativedelta(months=3))

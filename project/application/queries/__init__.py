@@ -111,6 +111,7 @@ from .list_event_organizers_query import EventOrganizerSort, ListEventOrganizers
 from .list_event_place_suggestions_query import ListEventPlaceSuggestionsQuery
 from .list_event_places_query import EventPlaceSort, ListEventPlacesQuery
 from .list_events_query import ListEventsQuery
+from .list_external_calendar_events_query import ListExternalCalendarEventsQuery
 from .list_ghost_user_ids_query import ListGhostUserIdsQuery
 from .list_incoming_event_reference_requests_query import (
     ListIncomingEventReferenceRequestsQuery,
