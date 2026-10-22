@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 23:05+0200\n"
+"POT-Creation-Date: 2026-10-22 15:10+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -469,7 +469,9 @@ msgstr "Ausgebucht"
 
 #: frontend/src/apps/public/pages/EventReportPage.vue:138
 msgid "Briefly describe in your words why the event is objectionable."
-msgstr "Beschreibe kurz in deinen Worten, warum die Veranstaltung zu beanstanden ist."
+msgstr ""
+"Beschreibe kurz in deinen Worten, warum die Veranstaltung zu beanstanden "
+"ist."
 
 #: frontend/src/apps/admin/components/NewsletterConfirmModal.vue:36
 #: frontend/src/apps/admin/components/ResetTosModal.vue:44
@@ -670,6 +672,7 @@ msgstr "Client name"
 msgid "Client secret"
 msgstr "Client secret"
 
+#: frontend/src/shared/IcalExportModal.vue:41
 #: project/presentation/web/templates/_macros.html:171
 #: project/presentation/web/templates/planning/list.html:101
 msgid "Close"
@@ -703,6 +706,7 @@ msgstr "Kontakt"
 msgid "Coordinates"
 msgstr "Koordinaten"
 
+#: frontend/src/shared/IcalExportModal.vue:38
 #: project/presentation/web/templates/_macros.html:1410
 msgid "Copy link"
 msgstr "Link kopieren"
@@ -965,6 +969,7 @@ msgstr "Möchtest du die Organisation %(name)s verlassen?"
 msgid "Do you want to revoke '%(object_title)s'?"
 msgstr "Möchtest du '%(object_title)s' löschen"
 
+#: frontend/src/shared/IcalExportModal.vue:36
 #: project/presentation/web/jinja_filters.py:78
 #: project/presentation/web/templates/home.html:38
 #: project/presentation/web/templates/macros/nav.html.j2:15
@@ -976,6 +981,7 @@ msgstr "Möchtest du '%(object_title)s' löschen"
 msgid "Docs"
 msgstr "Doku"
 
+#: frontend/src/shared/IcalExportModal.vue:39
 #: project/presentation/web/templates/developer/read.html:25
 #: project/presentation/web/templates/manage/export.html:65
 #: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:41
@@ -1165,6 +1171,7 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/admin/pages/UsersPage.vue:53
 #: frontend/src/apps/public/pages/EventReportPage.vue:40
 #: frontend/src/apps/public/pages/EventReportPage.vue:71
+#: frontend/src/apps/public/pages/OrganizerPage.vue:35
 msgid "Error"
 msgstr "Fehler"
 
@@ -1513,6 +1520,7 @@ msgstr "Theater"
 msgid "Event_Tour"
 msgstr "Führung"
 
+#: frontend/src/apps/public/pages/OrganizerPage.vue:95
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:142
 #: project/presentation/web/jinja_filters.py:72
@@ -2036,6 +2044,7 @@ msgstr "Linkfarbe"
 msgid "Link URL"
 msgstr "Link URL"
 
+#: frontend/src/shared/IcalExportModal.vue:18
 #: project/presentation/web/templates/_macros.html:1410
 msgid "Link copied"
 msgstr "Link kopiert"
@@ -2485,7 +2494,6 @@ msgid "Organizer"
 msgstr "Veranstalter"
 
 #: project/presentation/web/templates/_managebar.html:58
-#: project/presentation/web/templates/organizer/main.html:4
 msgid "Organizers"
 msgstr "Veranstalter"
 
@@ -3763,6 +3771,11 @@ msgstr "Du hast eine Einladung erhalten"
 #: project/presentation/web/views/user_blueprint/organization_member_invitation/views.py:34
 msgid "Your account is scheduled for deletion."
 msgstr "Dein Account ist zur Löschung vorgesehen."
+
+#: frontend/src/apps/public/pages/OrganizerPage.vue:103
+#: frontend/src/shared/IcalExportModal.vue:27
+msgid "iCal calendar"
+msgstr "iCal Kalender"
 
 #: project/presentation/web/forms/security.py:49
 #: project/presentation/web/forms/security.py:66

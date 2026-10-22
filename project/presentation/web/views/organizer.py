@@ -9,15 +9,23 @@ from project.presentation.shared.event_query_args import (
     event_search_criteria_from_request,
 )
 from project.presentation.shared.query_results import result_or_404
+from project.presentation.web.boot import build_boot_data
 from project.presentation.web.ical import create_ical_events_for_events
 from project.presentation.web.views.main_blueprint import main_bp
 from project.shared.dateutils import create_icalendar, get_today
 
 
-@main_bp.route("/organizers")
-@main_bp.route("/organizers/<path:path>")
-def organizers(path=None):
-    return render_template("organizer/main.html")
+@main_bp.route("/organizers/<int:id>")
+@inject
+def organizer(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    organizer = result_or_404(query_bus.handle(GetEventOrganizerQuery(id=id)))
+
+    return render_template(
+        "layout_vue3.html",
+        entry="public",
+        title=organizer.name,
+        boot=build_boot_data(base="/"),
+    )
 
 
 @main_bp.route("/organizers/<int:id>/ical")

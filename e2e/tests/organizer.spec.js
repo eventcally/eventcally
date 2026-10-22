@@ -16,6 +16,20 @@ test.describe("Event organizer", () => {
     await screenshot(page, "list");
   });
 
+  test("reads", async ({ page }) => {
+    const adminUnitId = createAdminUnit();
+    const eventOrganizerId = createEventOrganizer(adminUnitId);
+    await page.goto(`/organizers/${eventOrganizerId}`);
+    await expect(page.locator("h1")).toHaveText("Mein Veranstalter");
+    await screenshot(page, "read");
+
+    await page.getByRole("button", { name: /iCal/ }).click();
+    await expect(page.locator("input[name=icalUrl]")).toHaveValue(
+      new RegExp(`/organizers/${eventOrganizerId}/ical$`)
+    );
+    await screenshot(page, "ical");
+  });
+
   test("updates", async ({ page, login }) => {
     await login();
     const adminUnitId = createAdminUnit();
