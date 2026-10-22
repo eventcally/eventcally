@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-22 15:10+0200\n"
+"POT-Creation-Date: 2026-10-22 17:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,6 +80,21 @@ msgstr ""
 #: project/presentation/web/views/reference_request.py:6
 #, python-format
 msgid "%(organization)s accepted your reference request"
+msgstr ""
+
+#: frontend/src/apps/public/pages/OrganizationPage.vue:138
+#, python-format
+msgid "%(organization)s is not verified"
+msgstr ""
+
+#: frontend/src/apps/public/pages/OrganizationPage.vue:102
+#, python-format
+msgid "%(source)s verifies %(target)s"
+msgstr ""
+
+#: frontend/src/apps/public/pages/OrganizationPage.vue:111
+#, python-format
+msgid "%(source)s verifies reference requests from %(target)s automatically"
 msgstr ""
 
 #: project/templates/email/user_deletion_requested_notice.html:4
@@ -738,6 +753,10 @@ msgstr ""
 msgid "Create place"
 msgstr ""
 
+#: frontend/src/apps/public/pages/OrganizationPage.vue:131
+msgid "Create relation"
+msgstr ""
+
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:57
 #: frontend/src/apps/admin/pages/UsersPage.vue:35
 #: project/presentation/web/templates/event_date/list.html:504
@@ -1001,6 +1020,10 @@ msgstr ""
 msgid "Edit image"
 msgstr ""
 
+#: frontend/src/apps/public/pages/OrganizationPage.vue:117
+msgid "Edit relation"
+msgstr ""
+
 #: frontend/src/apps/admin/components/UserDeleteModal.vue:34
 #: frontend/src/apps/admin/pages/AdminHome.vue:14
 #: frontend/src/apps/admin/pages/EmailPage.vue:92
@@ -1141,6 +1164,8 @@ msgstr ""
 #: frontend/src/apps/admin/pages/UsersPage.vue:53
 #: frontend/src/apps/public/pages/EventReportPage.vue:40
 #: frontend/src/apps/public/pages/EventReportPage.vue:71
+#: frontend/src/apps/public/pages/OrganizationPage.vue:35
+#: frontend/src/apps/public/pages/OrganizationsPage.vue:35
 #: frontend/src/apps/public/pages/OrganizerPage.vue:35
 msgid "Error"
 msgstr ""
@@ -1490,6 +1515,7 @@ msgstr ""
 msgid "Event_Tour"
 msgstr ""
 
+#: frontend/src/apps/public/pages/OrganizationPage.vue:150
 #: frontend/src/apps/public/pages/OrganizerPage.vue:95
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:142
@@ -1857,6 +1883,8 @@ msgstr ""
 
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:105
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:106
+#: frontend/src/apps/public/pages/OrganizationsPage.vue:52
+#: frontend/src/apps/public/pages/OrganizationsPage.vue:53
 #: project/presentation/web/forms/event_date.py:18
 #: project/presentation/web/modular/base_views.py:216
 msgid "Keyword"
@@ -2158,6 +2186,7 @@ msgid "No files available"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:117
+#: frontend/src/apps/public/pages/OrganizationsPage.vue:74
 msgid "No organizations found"
 msgstr ""
 
@@ -2374,14 +2403,15 @@ msgstr ""
 #: frontend/src/apps/admin/pages/AdminHome.vue:12
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:138
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:98
+#: frontend/src/apps/public/pages/OrganizationsPage.vue:46
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/jinja_filters.py:73
 #: project/presentation/web/jinja_filters.py:85
 #: project/presentation/web/templates/manage/admin_units.html:3
 #: project/presentation/web/templates/manage/admin_units.html:26
-#: project/presentation/web/templates/organization/main.html:4
 #: project/presentation/web/templates/profile.html:49
 #: project/presentation/web/templates/profile.html:54
+#: project/presentation/web/views/organization.py:25
 #: project/presentation/web/views/user_blueprint/organization_member/view_handler.py:32
 msgid "Organizations"
 msgstr ""
@@ -3299,6 +3329,11 @@ msgstr ""
 msgid "There is a new verification request that needs to be reviewed."
 msgstr ""
 
+#: frontend/src/apps/public/pages/OrganizationPage.vue:125
+#, python-format
+msgid "There is no relation from %(source)s to %(target)s"
+msgstr ""
+
 #: project/domain/models/aggregates/organization_relation_aggregate.py:38
 #: project/domain/models/aggregates/organization_verification_request_aggregate.py:41
 #: project/infrastructure/models/admin_unit.py:255
@@ -3462,6 +3497,11 @@ msgstr ""
 msgid "Verified"
 msgstr ""
 
+#: frontend/src/apps/public/pages/OrganizationPage.vue:141
+#, python-format
+msgid "Verify %(organization)s"
+msgstr ""
+
 #: project/presentation/web/views/manage_admin_unit/organization_invitation/forms.py:19
 #: project/presentation/web/views/manage_blueprint/organization/forms.py:19
 msgid "Verify new organization"
@@ -3490,7 +3530,7 @@ msgstr ""
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:155
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:136
 #: project/presentation/web/modular/base_view_handler.py:197
-#: project/presentation/web/views/flask_admin.py:128
+#: project/presentation/web/views/flask_admin.py:127
 #: project/presentation/web/views/manage_admin_unit/event/view_handler.py:157
 #: project/presentation/web/views/manage_admin_unit/event_organizer/view_handler.py:75
 #: project/presentation/web/views/user_blueprint/organization_invitation/view_handler.py:50
@@ -3648,6 +3688,7 @@ msgstr ""
 msgid "Your account is scheduled for deletion."
 msgstr ""
 
+#: frontend/src/apps/public/pages/OrganizationPage.vue:158
 #: frontend/src/apps/public/pages/OrganizerPage.vue:103
 #: frontend/src/shared/IcalExportModal.vue:27
 msgid "iCal calendar"

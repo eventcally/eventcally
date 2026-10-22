@@ -26,6 +26,16 @@ describe("public router", () => {
     expect(route.params).toMatchObject({ id: "5" });
   });
 
+  it("resolves the organizations pages", async () => {
+    expect((await resolve("/organizations")).name).toBe("organizations");
+
+    const route = await resolve("/organizations/7");
+    expect(route.name).toBe("organization");
+    expect(route.params).toMatchObject({ id: "7" });
+
+    expect((await resolve("/organizations/x")).name).toBe("not-found");
+  });
+
   it("renders unknown paths as not found", async () => {
     expect((await resolve("/event/x/report")).name).toBe("not-found");
   });

@@ -87,7 +87,7 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.api_keys', id=current_admin_unit.id) }}">{{ _('API keys') }}</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ url_for('main.organizations', path=current_admin_unit.id) }}">{{ _('Profile') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('main.organization', id=current_admin_unit.id) }}">{{ _('Profile') }}</a>
                   </div>
                 </li>
               </div>

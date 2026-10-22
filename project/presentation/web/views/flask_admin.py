@@ -124,9 +124,7 @@ class OrganizationView(AuthModelView):
         EndpointLinkRowAction(
             "fa fa-eye", "main.manage_admin_unit", lazy_gettext("Manage")
         ),
-        EndpointLinkRowAction(
-            "fa fa-eye", "main.organizations", lazy_gettext("View"), "path"
-        ),
+        EndpointLinkRowAction("fa fa-eye", "main.organization", lazy_gettext("View")),
     ]
 
 

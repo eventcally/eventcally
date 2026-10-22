@@ -93,9 +93,10 @@ def test_vue_current_admin_unit_grants_of_owner(app, db, seeder, utils):
 
 
 def test_vue_current_admin_unit_grants_of_event_verifier(seeder, utils):
-    seeder.setup_base_event_verifier()
+    _, admin_unit_id, _ = seeder.setup_base_event_verifier()
+    event_id = seeder.create_event(admin_unit_id)
 
-    response = utils.get_ok("/organizations")
+    response = utils.get_ok(f"/event/{event_id}")
 
     assert _vue_list(response, "roles") == {"event_verifier"}
     assert "events:write" in _vue_list(response, "permissions")

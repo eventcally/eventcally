@@ -1,6 +1,7 @@
 from dateutil.relativedelta import relativedelta
 from dependency_injector.wiring import Provide, inject
 from flask import Response, render_template
+from flask_babel import gettext
 
 from project.application.queries import GetOrganizationQuery, ListAllEventsQuery
 from project.application.query_bus import QueryBus
@@ -9,6 +10,7 @@ from project.presentation.shared.event_query_args import (
     event_search_criteria_from_request,
 )
 from project.presentation.shared.query_results import result_or_404
+from project.presentation.web.boot import build_boot_data
 from project.presentation.web.ical import create_ical_events_for_events
 from project.presentation.web.views.main_blueprint import main_bp
 from project.shared.dateutils import create_icalendar, get_today
@@ -16,9 +18,26 @@ from project.shared.dateutils import create_icalendar, get_today
 
 @main_bp.route("/organizations")
 @main_bp.route("/organizations/")
-@main_bp.route("/organizations/<path:path>")
-def organizations(path=None):
-    return render_template("organization/main.html")
+def organizations():
+    return render_template(
+        "layout_vue3.html",
+        entry="public",
+        title=gettext("Organizations"),
+        boot=build_boot_data(base="/"),
+    )
+
+
+@main_bp.route("/organizations/<int:id>")
+@inject
+def organization(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
+    organization = result_or_404(query_bus.handle(GetOrganizationQuery(id=id)))
+
+    return render_template(
+        "layout_vue3.html",
+        entry="public",
+        title=organization.name,
+        boot=build_boot_data(base="/"),
+    )
 
 
 @main_bp.route("/organizations/<int:id>/ical")

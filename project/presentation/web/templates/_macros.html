@@ -750,7 +750,7 @@
 
         <div class="col-12 col-sm">
           <div class="font-weight-bold">
-            <a href="{{ url_for('main.organizations', path=event.admin_unit.id) }}">{{ event.admin_unit.name }}</a>
+            <a href="{{ url_for('main.organization', id=event.admin_unit.id) }}">{{ event.admin_unit.name }}</a>
             {{ render_admin_unit_badges(event.admin_unit) }}
           </div>
 
@@ -773,7 +773,7 @@
     <div class="list-group list-group-flush mb-4" style="max-height: 30vh; overflow: scroll; overflow-y: auto;">
       {% for event_reference in event.references %}
         <span class="list-group-item">
-          <a href="{{ url_for('main.organizations', path=event_reference.admin_unit.id) }}">{{ event_reference.admin_unit.name }}</a>
+          <a href="{{ url_for('main.organization', id=event_reference.admin_unit.id) }}">{{ event_reference.admin_unit.name }}</a>
           {{ render_admin_unit_badges(event_reference.admin_unit) }}
         </span>
       {% endfor %}
