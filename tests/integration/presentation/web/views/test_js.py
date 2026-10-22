@@ -298,7 +298,33 @@ def test_js_widget_loader_custom_widget(client, seeder: Seeder, utils: UtilActio
     custom_widget_id = seeder.insert_event_custom_widget(admin_unit_id)
 
     url = utils.get_url("main.js_widget_loader_custom_widget", id=custom_widget_id)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+
+    # The shape is a wire contract: the widget loader on customer sites reads it.
+    body = response.json
+    assert set(body) == {
+        "id",
+        "widget_type",
+        "name",
+        "settings",
+        "created_at",
+        "updated_at",
+        "organization",
+    }
+    assert body["id"] == custom_widget_id
+    assert body["widget_type"] == "search"
+    assert body["name"] == "Mein Widget"
+    assert body["settings"] == {"color": "black"}
+    assert body["created_at"].endswith("+00:00")
+    assert body["updated_at"] is None
+    assert body["organization"] == {"id": admin_unit_id, "name": "Meine Crew"}
+
+
+def test_js_widget_loader_custom_widget_not_found(
+    client, seeder: Seeder, utils: UtilActions
+):
+    url = utils.get_url("main.js_widget_loader_custom_widget", id=4711)
+    utils.assert_response_notFound(utils.get(url))
 
 
 def test_js_autocomplete_place_ranks_prefix_matches_first(

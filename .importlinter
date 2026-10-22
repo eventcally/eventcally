@@ -52,9 +52,6 @@ source_modules =
 forbidden_modules =
     project.presentation.api
 allow_indirect_imports = True
-# The custom-widget JSON endpoint deliberately serves the API representation.
-ignore_imports =
-    project.presentation.web.views.js -> project.presentation.api.custom_widget.schemas
 
 [importlinter:contract:api-does-not-import-web]
 name = The API channel does not import the web channel

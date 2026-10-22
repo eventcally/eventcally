@@ -928,44 +928,6 @@ def test_organization_invitation_list_post(client, app, seeder, db, utils):
     assert invitation_url in sent_email["html"]
 
 
-def test_custom_widgets(client, seeder: Seeder, utils: UtilActions):
-    _, admin_unit_id = seeder.setup_api_access()
-    seeder.insert_event_custom_widget(admin_unit_id)
-
-    url = utils.get_url(
-        "api_v1_organization_custom_widget_list", id=admin_unit_id, name="mein"
-    )
-    utils.get_json_ok(url)
-
-
-def test_custom_widgets_post(client, seeder: Seeder, utils: UtilActions, app):
-    user_id, admin_unit_id = seeder.setup_api_access()
-
-    url = utils.get_url("api_v1_organization_custom_widget_list", id=admin_unit_id)
-    response = utils.post_json(
-        url,
-        {
-            "widget_type": "search",
-            "name": "Neues Widget",
-            "settings": {"color": "black"},
-        },
-    )
-    utils.assert_response_created(response)
-    assert "id" in response.json
-
-    with app.app_context():
-        from project.infrastructure.models import CustomWidget
-
-        custom_widget = (
-            CustomWidget.query.filter(CustomWidget.admin_unit_id == admin_unit_id)
-            .filter(CustomWidget.name == "Neues Widget")
-            .first()
-        )
-        assert custom_widget is not None
-        assert custom_widget.widget_type == "search"
-        assert custom_widget.settings["color"] == "black"
-
-
 def _restrict_app_installation_permissions(app, db, permissions):
     with app.app_context():
         from project.infrastructure.models import AppInstallation

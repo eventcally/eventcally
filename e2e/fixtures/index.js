@@ -31,17 +31,6 @@ const test = base.test.extend({
     { auto: true },
   ],
 
-  // Playwright dismisses every dialog by default, so a `confirm()` returns false.
-  // Without this, a custom_widget "delete" silently does nothing: the delete menu
-  // item is guarded by `confirm()` (project/presentation/web/static/vue/widget-configurator/list.vue.js).
-  acceptDialogs: [
-    async ({ page }, use) => {
-      page.on("dialog", (dialog) => dialog.accept());
-      await use();
-    },
-    { auto: true },
-  ],
-
   // Strict by default. Every entry in IGNORED_CONSOLE_ERRORS must be justified.
   failOnConsoleError: [
     async ({ page }, use) => {

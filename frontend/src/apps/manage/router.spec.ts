@@ -18,6 +18,26 @@ describe("manage router", () => {
     expect((await resolve("/planning")).name).toBe("planning");
   });
 
+  it("resolves the custom widget list with a numeric organization", async () => {
+    const route = await resolve("/manage/admin_unit/3/custom-widgets");
+    expect(route.name).toBe("custom-widgets");
+    expect(route.params.organizationId).toBe("3");
+  });
+
+  it("resolves the configurator for create and update", async () => {
+    expect((await resolve("/manage/admin_unit/3/custom-widgets/create")).name).toBe(
+      "custom-widget-create",
+    );
+    const update = await resolve("/manage/admin_unit/3/custom-widgets/8/update");
+    expect(update.name).toBe("custom-widget-update");
+    expect(update.params).toMatchObject({ organizationId: "3", id: "8" });
+  });
+
+  it("does not take other organization paths", async () => {
+    expect((await resolve("/manage/admin_unit/x/custom-widgets")).name).toBe("not-found");
+    expect((await resolve("/manage/admin_unit/3/custom-widgets/x/update")).name).toBe("not-found");
+  });
+
   it("renders unknown paths as not found", async () => {
     expect((await resolve("/x")).name).toBe("not-found");
   });

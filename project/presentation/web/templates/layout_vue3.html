@@ -1,6 +1,6 @@
 {% extends "layout_bs5.html" %}
 {% block content %}
-<div id="app"></div>
+<div id="app"{% block app_attribs %}{% endblock app_attribs %}></div>
 <script id="boot" type="application/json">{{ boot | tojson }}</script>
 {{ vite_entry(entry) }}
 {% endblock %}

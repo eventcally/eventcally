@@ -8,6 +8,7 @@ from flask import (
     send_from_directory,
     url_for,
 )
+from flask_babel import gettext
 from flask_security import auth_required, current_user
 
 from project.application.queries import (
@@ -27,6 +28,7 @@ from project.presentation.shared.current_admin_unit import (
     set_current_admin_unit,
 )
 from project.presentation.tasks.celery_tasks import dump_admin_unit_task
+from project.presentation.web.boot import build_boot_data
 from project.presentation.web.views.main_blueprint import main_bp
 from project.presentation.web.views.utils import (
     get_celery_poll_result,
@@ -138,6 +140,9 @@ def manage_admin_unit_custom_widgets(id, path=None):
 
     return render_template(
         "manage/custom_widgets.html",
+        entry="manage",
+        title=gettext("Custom widgets"),
+        boot=build_boot_data(base="/"),
         admin_unit=admin_unit,
         full_height=full_height,
     )

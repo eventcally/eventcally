@@ -1,8 +1,9 @@
 from datetime import date, datetime
-from typing import List, Optional
+from typing import Annotated, Any, Dict, List, Literal, Optional
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, StringConstraints, model_validator
 
+from project.presentation.bff.schemas import PageParams
 from project.presentation.shared.search_options import distance_choices
 
 # A month view with leading and trailing weeks spans at most 42 days.
@@ -130,3 +131,42 @@ class PlaceSuggestionList(BaseModel):
 class PlaceCoordinate(BaseModel):
     latitude: float
     longitude: float
+
+
+class CustomWidgetListParams(PageParams):
+    pass
+
+
+class CustomWidgetListItem(BaseModel):
+    id: int
+    name: str
+    widget_type: str
+
+
+class CustomWidgetPage(BaseModel):
+    items: List[CustomWidgetListItem]
+    page: int
+    per_page: int
+    total: int
+    pages: int
+    can_write: bool
+
+
+class CustomWidgetForm(BaseModel):
+    id: int
+    organization_id: int
+    widget_type: str
+    name: str
+    settings: Dict[str, Any] = {}
+
+
+class CustomWidgetSave(BaseModel):
+    widget_type: Literal["search", "calendar"]
+    name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=3, max_length=255)
+    ]
+    settings: Dict[str, Any] = {}
+
+
+class CustomWidgetCreated(BaseModel):
+    id: int

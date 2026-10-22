@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="{{ boot.locale }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Event calendar widget</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='ext/bootstrap.5.3.3.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='ext/font-awesome.5.13.1/css/all.min.css')}}">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script id="boot" type="application/json">{{ boot | tojson }}</script>
+    <script>
+      // iframeResizer hands over the settings of the embedding page. They can arrive
+      // before the module app has mounted, so buffer them here and replay them there.
+      window.__eventcallyWidget = { settings: null, ready: false };
+      window.iFrameResizer = {
+        onReady: function () {
+          window.__eventcallyWidget.ready = true;
+          window.dispatchEvent(new CustomEvent("eventcally:ready"));
+        },
+        onMessage: function (message) {
+          if (!message || message.type !== "EVENTCALLY_WIDGET_SETTINGS_UPDATE_EVENT") {
+            return;
+          }
+
+          var state = window.__eventcallyWidget;
+          state.settings = Object.assign(state.settings || {}, message.data);
+          window.dispatchEvent(new CustomEvent("eventcally:settings", { detail: message.data }));
+        }
+      };
+    </script>
+    <script src="{{ url_for('static', filename='ext/iframeResizer.4.3.2.contentWindow.min.js')}}"></script>
+    {{ vite_entry("widget") }}
+  </body>
+</html>
