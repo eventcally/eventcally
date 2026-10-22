@@ -1,4 +1,4 @@
-from flask import url_for
+from flask import current_app, url_for
 from flask_babel import get_locale
 from flask_security import current_user
 from flask_wtf.csrf import generate_csrf
@@ -20,4 +20,5 @@ def build_boot_data(base: str) -> dict:
             }
         ),
         "loginUrl": url_for("security.login"),
+        "docsUrl": current_app.config.get("DOCS_URL") or None,
     }

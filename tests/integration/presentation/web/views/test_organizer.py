@@ -214,9 +214,38 @@ def test_delete(client, seeder, utils, app, db, mocker, db_error, non_match):
         assert organizer is None
 
 
-def test_organizers(client, seeder, utils):
-    url = utils.get_url("main.organizers")
-    utils.get_ok(url)
+def test_organizer(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    url = utils.get_url("main.organizer", id=organizer_id)
+    response = utils.get_ok(url)
+
+    assert b'id="boot"' in response.data
+    assert b"<title>Meine Crew" in response.data
+
+
+def test_organizer_boot_docs_url(app, client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+    url = utils.get_url("main.organizer", id=organizer_id)
+
+    app.config["DOCS_URL"] = None
+    assert b'"docsUrl": null' in utils.get_ok(url).data
+
+    app.config["DOCS_URL"] = "https://docs.example.org"
+    assert b'"docsUrl": "https://docs.example.org"' in utils.get_ok(url).data
+
+
+def test_organizer_not_found(client, seeder, utils):
+    seeder.setup_base(log_in=False)
+
+    url = utils.get_url("main.organizer", id=4711)
+    utils.assert_response_notFound(utils.get(url))
+
+
+def test_organizers_index_gone(client, utils):
+    utils.assert_response_notFound(utils.get("/organizers"))
 
 
 def test_ical(client, seeder, utils):

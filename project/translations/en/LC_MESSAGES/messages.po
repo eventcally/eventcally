@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-21 23:05+0200\n"
+"POT-Creation-Date: 2026-10-22 15:10+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -652,6 +652,7 @@ msgstr ""
 msgid "Client secret"
 msgstr ""
 
+#: frontend/src/shared/IcalExportModal.vue:41
 #: project/presentation/web/templates/_macros.html:171
 #: project/presentation/web/templates/planning/list.html:101
 msgid "Close"
@@ -685,6 +686,7 @@ msgstr ""
 msgid "Coordinates"
 msgstr ""
 
+#: frontend/src/shared/IcalExportModal.vue:38
 #: project/presentation/web/templates/_macros.html:1410
 msgid "Copy link"
 msgstr ""
@@ -947,6 +949,7 @@ msgstr ""
 msgid "Do you want to revoke '%(object_title)s'?"
 msgstr ""
 
+#: frontend/src/shared/IcalExportModal.vue:36
 #: project/presentation/web/jinja_filters.py:78
 #: project/presentation/web/templates/home.html:38
 #: project/presentation/web/templates/macros/nav.html.j2:15
@@ -958,6 +961,7 @@ msgstr ""
 msgid "Docs"
 msgstr ""
 
+#: frontend/src/shared/IcalExportModal.vue:39
 #: project/presentation/web/templates/developer/read.html:25
 #: project/presentation/web/templates/manage/export.html:65
 #: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:41
@@ -1138,6 +1142,7 @@ msgstr ""
 #: frontend/src/apps/admin/pages/UsersPage.vue:53
 #: frontend/src/apps/public/pages/EventReportPage.vue:40
 #: frontend/src/apps/public/pages/EventReportPage.vue:71
+#: frontend/src/apps/public/pages/OrganizerPage.vue:35
 msgid "Error"
 msgstr ""
 
@@ -1486,6 +1491,7 @@ msgstr "Theater"
 msgid "Event_Tour"
 msgstr "Tour"
 
+#: frontend/src/apps/public/pages/OrganizerPage.vue:95
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:142
 #: project/presentation/web/jinja_filters.py:72
@@ -1961,6 +1967,7 @@ msgstr ""
 msgid "Link URL"
 msgstr ""
 
+#: frontend/src/shared/IcalExportModal.vue:18
 #: project/presentation/web/templates/_macros.html:1410
 msgid "Link copied"
 msgstr ""
@@ -2405,7 +2412,6 @@ msgid "Organizer"
 msgstr ""
 
 #: project/presentation/web/templates/_managebar.html:58
-#: project/presentation/web/templates/organizer/main.html:4
 msgid "Organizers"
 msgstr ""
 
@@ -3641,6 +3647,11 @@ msgstr ""
 #: project/presentation/web/views/manage_blueprint/organization/views.py:59
 #: project/presentation/web/views/user_blueprint/organization_member_invitation/views.py:34
 msgid "Your account is scheduled for deletion."
+msgstr ""
+
+#: frontend/src/apps/public/pages/OrganizerPage.vue:103
+#: frontend/src/shared/IcalExportModal.vue:27
+msgid "iCal calendar"
 msgstr ""
 
 #: project/presentation/web/forms/security.py:49

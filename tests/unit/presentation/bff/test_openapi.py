@@ -72,3 +72,15 @@ def test_public_event_report_paths():
     report = spec["paths"]["/bff/public/events/{id}/reports"]["post"]
     assert "204" in report["responses"]
     assert report["requestBody"]["required"] is True
+
+
+def test_public_organizer_path():
+    spec = build_openapi()
+
+    organizer = spec["paths"]["/bff/public/organizers/{id}"]["get"]
+    assert organizer["parameters"] == [
+        {"name": "id", "in": "path", "required": True, "schema": {"type": "integer"}}
+    ]
+    assert organizer["responses"]["200"]["content"]["application/json"]["schema"] == {
+        "$ref": "#/components/schemas/PublicOrganizer"
+    }
