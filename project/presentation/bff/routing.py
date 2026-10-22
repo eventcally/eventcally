@@ -1,5 +1,6 @@
 import functools
 import re
+import typing
 from dataclasses import dataclass
 from typing import Optional, Type
 
@@ -61,6 +62,26 @@ def _blueprint_prefix(bp: Blueprint) -> str:
     return prefix
 
 
+def _is_list_annotation(annotation) -> bool:
+    if typing.get_origin(annotation) is typing.Union:
+        args = [a for a in typing.get_args(annotation) if a is not type(None)]
+        return len(args) == 1 and _is_list_annotation(args[0])
+    return typing.get_origin(annotation) is list
+
+
+def _query_args(model: Type[BaseModel]) -> dict:
+    """The query string as a dict; `list[...]` fields read all repeated keys."""
+    args = request.args.to_dict()
+    for name, field in model.model_fields.items():
+        if _is_list_annotation(field.annotation):
+            values = request.args.getlist(name)
+            if values:
+                args[name] = values
+            else:
+                args.pop(name, None)
+    return args
+
+
 def bff_route(
     bp: Blueprint,
     rule: str,
@@ -87,7 +108,7 @@ def bff_route(
         @functools.wraps(view)
         def wrapper(*args, **kwargs):
             if query is not None:
-                kwargs["query"] = query.model_validate(request.args.to_dict())
+                kwargs["query"] = query.model_validate(_query_args(query))
             if body is not None:
                 kwargs["body"] = body.model_validate(request.get_json(silent=True))
 

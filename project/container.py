@@ -135,6 +135,9 @@ from project.infrastructure.services.flask_template_render_service import (
     FlaskTemplateRenderService,
 )
 from project.infrastructure.services.flask_url_provider import FlaskUrlProvider
+from project.infrastructure.services.requests_external_calendar_reader import (
+    RequestsExternalCalendarReader,
+)
 from project.infrastructure.services.requests_webhook_delivery_sender import (
     RequestsWebhookDeliverySender,
 )
@@ -359,6 +362,7 @@ class Services(containers.DeclarativeContainer):
         mail_sender=infrastructure.mail_sender,
     )
     mail_job_status_reader = providers.Factory(CeleryMailJobStatusReader)
+    external_calendar_reader = providers.Factory(RequestsExternalCalendarReader)
     webhook_delivery_service = providers.Factory(
         WebhookDeliveryService,
         logger=infrastructure.logger,
@@ -1055,6 +1059,12 @@ class Cqrs(containers.DeclarativeContainer):
                 queries.GetMailJobStatusQuery: providers.Factory(
                     query_handlers.GetMailJobStatusHandler,
                     reader=services.mail_job_status_reader,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListExternalCalendarEventsQuery: providers.Factory(
+                    query_handlers.ListExternalCalendarEventsHandler,
+                    settings_repo=read_repos.site_settings_read_repo,
+                    reader=services.external_calendar_reader,
                     authz=actor_authorization_service,
                 ),
                 queries.GetSettingsForAdminQuery: providers.Factory(

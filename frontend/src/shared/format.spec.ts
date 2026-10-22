@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDate, formatDateTime } from "./format";
+import { formatDate, formatDateTime, formatEventDate } from "./format";
 
 describe("formatDateTime", () => {
   it("returns an empty string for missing values", () => {
@@ -19,5 +19,35 @@ describe("formatDate", () => {
 
   it("formats the date without time", () => {
     expect(formatDate("2026-10-08T14:49:00", "de")).toBe("08.10.2026");
+  });
+});
+
+describe("formatEventDate", () => {
+  it("shows date and time for a timed date", () => {
+    const text = formatEventDate("2026-10-03T10:00:00", null, false, "en");
+    expect(text).toContain("October 3, 2026");
+    expect(text).toMatch(/10:00/);
+  });
+
+  it("omits the time for all-day dates", () => {
+    const text = formatEventDate("2026-10-03T00:00:00", null, true, "en");
+    expect(text).toContain("October 3, 2026");
+    expect(text).not.toMatch(/\d:\d\d/);
+  });
+
+  it("appends only the end time on the same day", () => {
+    const text = formatEventDate("2026-10-03T10:00:00", "2026-10-03T12:30:00", false, "en");
+    expect(text).toMatch(/10:00.* - 12:30/);
+    expect(text.match(/2026/g)).toHaveLength(1);
+  });
+
+  it("appends the end date on another day", () => {
+    const text = formatEventDate("2026-10-03T10:00:00", "2026-10-04T12:30:00", false, "en");
+    expect(text).toContain("October 4, 2026");
+  });
+
+  it("shows no separator for a one-day all-day date", () => {
+    const text = formatEventDate("2026-10-03T00:00:00", "2026-10-03T00:00:00", true, "en");
+    expect(text).not.toContain(" - ");
   });
 });

@@ -246,6 +246,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/places": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Suggest places (Google Maps) for a location filter */
+        get: operations["bff_manage_list_place_suggestions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/places/{gmaps_id}/coordinate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The coordinate of a Google Maps place */
+        get: operations["bff_manage_get_place_coordinate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/planning": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Options of the planning calendar */
+        get: operations["bff_manage_get_planning_options"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/planning/event-dates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Published and planned event dates of a date range */
+        get: operations["bff_manage_list_planning_event_dates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/planning/external-calendar-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Events of a configured external calendar */
+        get: operations["bff_manage_list_external_calendar_events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/public/events/{id}/report-form": {
         parameters: {
             query?: never;
@@ -688,12 +773,167 @@ export interface components {
             /** Event Name */
             event_name: string;
         };
+        /** ExternalCalendarEvent */
+        ExternalCalendarEvent: {
+            /** Allday */
+            allday: boolean;
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * End
+             * @default null
+             */
+            end: string | null;
+            /**
+             * Location
+             * @default null
+             */
+            location: string | null;
+            /** Name */
+            name: string;
+            /** Start */
+            start: string;
+        };
+        /** ExternalCalendarEventList */
+        ExternalCalendarEventList: {
+            /** Items */
+            items: components["schemas"]["ExternalCalendarEvent"][];
+            /** Url */
+            url: string;
+        };
         /** FieldError */
         FieldError: {
             /** Loc */
             loc: string[];
             /** Msg */
             msg: string;
+        };
+        /** PlaceCoordinate */
+        PlaceCoordinate: {
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+        };
+        /** PlaceSuggestion */
+        PlaceSuggestion: {
+            /** Gmaps Id */
+            gmaps_id: string;
+            /**
+             * Main Text
+             * @default null
+             */
+            main_text: string | null;
+            /** Text */
+            text: string;
+        };
+        /** PlaceSuggestionList */
+        PlaceSuggestionList: {
+            /** Items */
+            items: components["schemas"]["PlaceSuggestion"][];
+        };
+        /** PlanningChoice */
+        PlanningChoice: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+        };
+        /** PlanningDistance */
+        PlanningDistance: {
+            /** Label */
+            label: string;
+            /** Value */
+            value: number;
+        };
+        /** PlanningEvent */
+        PlanningEvent: {
+            /**
+             * Attendance Mode
+             * @default null
+             */
+            attendance_mode: string | null;
+            /**
+             * Booked Up
+             * @default null
+             */
+            booked_up: boolean | null;
+            /** Has Status Info */
+            has_status_info: boolean;
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Organization Name */
+            organization_name: string;
+            /**
+             * Organizer Name
+             * @default null
+             */
+            organizer_name: string | null;
+            /**
+             * Place Name
+             * @default null
+             */
+            place_name: string | null;
+            /** Public Status */
+            public_status: string;
+            /**
+             * Status
+             * @default null
+             */
+            status: string | null;
+        };
+        /** PlanningEventDate */
+        PlanningEventDate: {
+            /** Allday */
+            allday: boolean;
+            /**
+             * End
+             * @default null
+             */
+            end: string | null;
+            event: components["schemas"]["PlanningEvent"];
+            /** Id */
+            id: number;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+        };
+        /** PlanningEventDateList */
+        PlanningEventDateList: {
+            /** Items */
+            items: components["schemas"]["PlanningEventDate"][];
+            /** Truncated */
+            truncated: boolean;
+        };
+        /** PlanningExternalCalendar */
+        PlanningExternalCalendar: {
+            /**
+             * Active
+             * @default false
+             */
+            active: boolean;
+            /** Title */
+            title: string;
+            /** Url */
+            url: string;
+        };
+        /** PlanningOptions */
+        PlanningOptions: {
+            /** Categories */
+            categories: components["schemas"]["PlanningChoice"][];
+            /** Distances */
+            distances: components["schemas"]["PlanningDistance"][];
+            /** External Calendars */
+            external_calendars: components["schemas"]["PlanningExternalCalendar"][];
+            /** Max Dates */
+            max_dates: number;
         };
         /** PublicOrganization */
         PublicOrganization: {
@@ -1985,6 +2225,303 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_place_suggestions: {
+        parameters: {
+            query: {
+                keyword: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlaceSuggestionList"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_place_coordinate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                gmaps_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlaceCoordinate"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_planning_options: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanningOptions"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_planning_event_dates: {
+        parameters: {
+            query: {
+                date_from: string;
+                date_to: string;
+                category_id?: number[];
+                postal_code?: string | null;
+                coordinate?: string | null;
+                distance?: number | null;
+                expected_participants_min?: number | null;
+                exclude_recurring?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanningEventDateList"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_external_calendar_events: {
+        parameters: {
+            query: {
+                url: string;
+                date_from: string;
+                date_to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalCalendarEventList"];
                 };
             };
             /** @description Unauthorized */

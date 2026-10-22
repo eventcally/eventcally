@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField, HiddenField, SelectField, StringField, SubmitField
 from wtforms.validators import Optional
 
-from project.presentation.web.forms.common import distance_choices
+from project.presentation.shared.search_options import distance_choices
 from project.presentation.web.forms.widgets import CustomDateField
 
 

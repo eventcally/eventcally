@@ -116,11 +116,14 @@ def _register_sub_blueprints():
     # Blueprints are module-level singletons shared by every app created in the
     # process (tests build many), so nesting is wired once at import time.
     from project.presentation.bff.admin import bff_admin_bp
+    from project.presentation.bff.manage import bff_manage_bp
     from project.presentation.bff.public import bff_public_bp
     from project.presentation.bff.routing import set_parent
 
     set_parent(bff_admin_bp, bff_bp)
     bff_bp.register_blueprint(bff_admin_bp)
+    set_parent(bff_manage_bp, bff_bp)
+    bff_bp.register_blueprint(bff_manage_bp)
     set_parent(bff_public_bp, bff_bp)
     bff_bp.register_blueprint(bff_public_bp)
 

@@ -1,15 +1,9 @@
-import json
-from datetime import datetime
-
-import icalendar
-import recurring_ical_events
-import requests
 from dependency_injector.wiring import Provide, inject
-from flask import current_app, request
+from flask import request
 from flask.json import jsonify
 from flask_babel import gettext
 from flask_cors import cross_origin
-from flask_security import auth_required, url_for_security
+from flask_security import url_for_security
 from flask_security.utils import localize_callback
 
 from project.application.queries import (
@@ -23,12 +17,10 @@ from project.container import Application
 from project.infrastructure.extensions import csrf
 from project.infrastructure.user_datastore import find_user_by_email
 from project.presentation.api.custom_widget.schemas import CustomWidgetSchema
+from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_place
 from project.presentation.shared.query_results import result_or_404
-from project.presentation.web.maputils import find_gmaps_places, get_gmaps_place
 from project.presentation.web.views.main_blueprint import main_bp
-from project.presentation.web.views.utils import get_settings
-from project.shared.dateutils import form_input_to_date
-from project.shared.utils import decode_response_content, get_place_str
+from project.shared.utils import get_place_str
 
 
 @main_bp.route("/js/check/event_place/name", methods=["POST"])
@@ -168,79 +160,6 @@ def js_autocomplete_gmaps_place():
     gmaps_id = request.args["gmaps_id"]
     place = get_gmaps_place(gmaps_id)
     return jsonify(place)
-
-
-@main_bp.route("/js/icalevents", methods=["POST"])
-@auth_required()
-def js_icalevents():
-    csrf.protect()
-
-    try:
-        url = request.form["url"]
-        date_from = request.form["date_from"]
-        date_to = request.form["date_to"]
-
-        start_date = form_input_to_date(date_from).date()
-        end_date = form_input_to_date(date_to).date()
-
-        settings = get_settings()
-        planning_external_calendars_str = (
-            settings.planning_external_calendars
-            if settings.planning_external_calendars
-            else "[]"
-        )
-        external_calendars = json.loads(planning_external_calendars_str)
-        external_calendar = next((c for c in external_calendars if c["url"] == url))
-
-        response = requests.get(external_calendar["url"])
-        ical_string = decode_response_content(response)
-        calendar = icalendar.Calendar.from_ical(ical_string)
-        events = recurring_ical_events.of(calendar).between(start_date, end_date)
-        items = list()
-
-        for event in events:
-            summary = event.get("SUMMARY")
-            dt_start = event.get("DTSTART")
-            dt_end = event.get("DTEND")
-            location = event.get("LOCATION")
-            description = event.get("DESCRIPTION")
-
-            if not summary or not dt_start:  # pragma: no cover
-                continue
-
-            start = dt_start.dt
-
-            item = {
-                "name": summary,
-                "start": start,
-                "allday": not isinstance(start, datetime),
-            }
-
-            if dt_end:
-                item["end"] = dt_end.dt
-
-            vevent = {
-                "url": url,
-            }
-
-            if location:
-                vevent["location"] = location
-
-            if dt_end:
-                vevent["description"] = description
-
-            item["vevent"] = vevent
-            items.append(item)
-
-        result = {
-            "url": url,
-            "items": items,
-        }
-
-        return jsonify(result)
-    except Exception as e:  # pragma: no cover
-        current_app.logger.exception(url)
-        return getattr(e, "message", "Unknown error"), 400
 
 
 @main_bp.route("/js/wlcw/<int:id>")

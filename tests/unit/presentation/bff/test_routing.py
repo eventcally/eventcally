@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pytest
 from flask import Blueprint, Flask
 from pydantic import BaseModel, ValidationError
@@ -123,3 +125,27 @@ def test_path_params_and_no_content(bp):
     assert tag_spec.status == 200
     assert tag_spec.openapi_rule == "/t/items/{id}/tags/{tag}"
     assert tag_spec.path_params == (("id", "int"), ("tag", "string"))
+
+
+class ListParams(BaseModel):
+    ids: list[int] = []
+    name: Optional[str] = None
+
+
+def test_list_query_fields_read_repeated_keys(bp):
+    @bff_route(bp, "/list", query=ListParams, response=Out)
+    def list_(query: ListParams):
+        assert query.name == "x"
+        return {"doubled": sum(query.ids)}
+
+    @bff_route(bp, "/none", query=ListParams, response=Out)
+    def none(query: ListParams):
+        assert query.ids == []
+        return {"doubled": 0}
+
+    app = Flask(__name__)
+    app.register_blueprint(bp)
+    client = app.test_client()
+
+    assert client.get("/t/list?ids=1&ids=2&name=x").json == {"doubled": 3}
+    assert client.get("/t/none").json == {"doubled": 0}
