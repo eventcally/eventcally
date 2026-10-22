@@ -42,6 +42,13 @@ const options: Record<string, () => { value: string; text: string }[]> = {
   ],
 };
 
+const isFirstCheckbox = (tab: "settings" | "styles", index: number) => {
+  const rows = visible(tab);
+  return rows[index].kind === "checkbox" && rows[index - 1]?.kind !== "checkbox";
+};
+const isLastCheckbox = (tab: "settings" | "styles", index: number) =>
+  visible(tab)[index + 1]?.kind !== "checkbox";
+
 const value = (key: string) => (settings.value as unknown as Record<string, unknown>)[key];
 
 function set(field: Row, raw: unknown) {
@@ -54,13 +61,16 @@ function set(field: Row, raw: unknown) {
   <BTabs card>
     <BTab v-for="tab in ['settings', 'styles'] as const" :key="tab" :active="tab === 'settings'">
       <template #title>{{ tab === "settings" ? t("Settings") : t("Styles") }}</template>
-      <template v-for="field in visible(tab)" :key="field.key">
+      <template v-for="(field, index) in visible(tab)" :key="field.key">
+        <div v-if="isFirstCheckbox(tab, index)" class="mb-2" data-test="display-label">
+          {{ t("Display") }}
+        </div>
         <BFormCheckbox
           v-if="field.kind === 'checkbox'"
           :model-value="Boolean(value(field.key))"
           :value="true"
           :unchecked-value="false"
-          class="mb-2"
+          :class="isLastCheckbox(tab, index) ? 'mb-3' : 'mb-1'"
           @update:model-value="set(field, $event)"
         >
           {{ field.label(t) }}

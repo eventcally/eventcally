@@ -170,7 +170,7 @@ onMounted(load);
         </BOverlay>
       </div>
       <div class="col-sm-9 mh-100 p-3 d-flex flex-column">
-        <div class="d-flex justify-content-end gap-2 mb-2 flex-shrink-0">
+        <div class="d-flex justify-content-end align-items-center gap-2 mb-2 flex-shrink-0">
           <BFormInput
             v-model="previewBackground"
             type="color"
