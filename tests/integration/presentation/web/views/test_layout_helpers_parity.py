@@ -73,8 +73,9 @@ def test_manage_bar_badges_visible_to_event_verifier(app, db, seeder, utils):
 
 def test_vue_current_admin_unit_grants_of_owner(app, db, seeder, utils):
     _, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
 
-    response = utils.get_ok(f"/manage/admin_unit/{admin_unit_id}/custom-widgets")
+    response = utils.get_ok(f"/event/{event_id}")
 
     with app.app_context():
         from project.infrastructure.models import AdminUnitMemberRole
@@ -107,11 +108,12 @@ def test_vue_current_admin_unit_grants_empty_for_platform_admin_non_member(
     seeder, utils
 ):
     _, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
     seeder.create_user("admin@admin.de", admin=True)
     utils.logout()
     utils.login("admin@admin.de")
 
-    response = utils.get_ok(f"/manage/admin_unit/{admin_unit_id}/custom-widgets")
+    response = utils.get_ok(f"/event/{event_id}")
 
     assert _vue_list(response, "roles") == set()
     assert _vue_list(response, "permissions") == set()
