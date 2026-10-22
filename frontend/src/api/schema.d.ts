@@ -280,6 +280,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/public/organizations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List organizations */
+        get: operations["bff_public_list_organizations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/public/organizations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get organization */
+        get: operations["bff_public_get_organization"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/public/organizers/{id}": {
         parameters: {
             query?: never;
@@ -661,12 +695,127 @@ export interface components {
             /** Msg */
             msg: string;
         };
+        /** PublicOrganization */
+        PublicOrganization: {
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Email
+             * @default null
+             */
+            email: string | null;
+            /**
+             * Fax
+             * @default null
+             */
+            fax: string | null;
+            /** Ical Url */
+            ical_url: string;
+            /** Id */
+            id: number;
+            /**
+             * Is Verified
+             * @default false
+             */
+            is_verified: boolean;
+            /** @default null */
+            location: components["schemas"]["PublicOrganizerLocation"] | null;
+            /**
+             * Logo Url
+             * @default null
+             */
+            logo_url: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Phone
+             * @default null
+             */
+            phone: string | null;
+            /** @default null */
+            relation: components["schemas"]["PublicOrganizationRelation"] | null;
+            /**
+             * Short Name
+             * @default null
+             */
+            short_name: string | null;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+        };
+        /** PublicOrganizationPage */
+        PublicOrganizationPage: {
+            /** Items */
+            items: components["schemas"]["PublicOrganizationRow"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
         /** PublicOrganizationRef */
         PublicOrganizationRef: {
             /** Id */
             id: number;
             /** Name */
             name: string;
+        };
+        /**
+         * PublicOrganizationRelation
+         * @description The relation card of the visitor's current organization to this one.
+         */
+        PublicOrganizationRelation: {
+            /**
+             * Auto Verify Event Reference Requests
+             * @default false
+             */
+            auto_verify_event_reference_requests: boolean;
+            /**
+             * Create Url
+             * @default null
+             */
+            create_url: string | null;
+            /**
+             * Edit Url
+             * @default null
+             */
+            edit_url: string | null;
+            /**
+             * Relation Id
+             * @default null
+             */
+            relation_id: number | null;
+            source: components["schemas"]["PublicOrganizationRef"];
+            /**
+             * Verify
+             * @default false
+             */
+            verify: boolean;
+        };
+        /** PublicOrganizationRow */
+        PublicOrganizationRow: {
+            /** Id */
+            id: number;
+            /**
+             * Is Verified
+             * @default false
+             */
+            is_verified: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Short Name
+             * @default null
+             */
+            short_name: string | null;
         };
         /** PublicOrganizer */
         PublicOrganizer: {
@@ -1963,6 +2112,124 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_public_list_organizations: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+                keyword?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicOrganizationPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_public_get_organization: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicOrganization"];
                 };
             };
             /** @description Unauthorized */

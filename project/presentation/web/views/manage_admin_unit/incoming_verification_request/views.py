@@ -29,7 +29,7 @@ class ReviewView(BaseUpdateView):
         if object.review_status == OrganizationVerificationRequestReviewStatus.verified:
             flash_message(
                 gettext("Verification request already verified"),
-                url_for("main.organizations", path=object.source_admin_unit_id),
+                url_for("main.organization", id=object.source_admin_unit_id),
                 gettext("View organization"),
                 "danger",
             )

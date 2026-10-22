@@ -6,6 +6,8 @@ import {
 import { boot } from "@/shared/boot";
 import EventReportPage from "./pages/EventReportPage.vue";
 import NotFoundPage from "./pages/NotFoundPage.vue";
+import OrganizationPage from "./pages/OrganizationPage.vue";
+import OrganizationsPage from "./pages/OrganizationsPage.vue";
 import OrganizerPage from "./pages/OrganizerPage.vue";
 
 export const routes: RouteRecordRaw[] = [
@@ -13,6 +15,13 @@ export const routes: RouteRecordRaw[] = [
     path: "/event/:id(\\d+)/report",
     name: "event-report",
     component: EventReportPage,
+    props: (route) => ({ id: Number(route.params.id) }),
+  },
+  { path: "/organizations", name: "organizations", component: OrganizationsPage },
+  {
+    path: "/organizations/:id(\\d+)",
+    name: "organization",
+    component: OrganizationPage,
     props: (route) => ({ id: Number(route.params.id) }),
   },
   {

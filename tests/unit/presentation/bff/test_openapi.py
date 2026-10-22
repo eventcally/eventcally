@@ -84,3 +84,21 @@ def test_public_organizer_path():
     assert organizer["responses"]["200"]["content"]["application/json"]["schema"] == {
         "$ref": "#/components/schemas/PublicOrganizer"
     }
+
+
+def test_public_organization_paths():
+    spec = build_openapi()
+
+    listing = spec["paths"]["/bff/public/organizations"]["get"]
+    assert {p["name"] for p in listing["parameters"]} == {"page", "per_page", "keyword"}
+    assert listing["responses"]["200"]["content"]["application/json"]["schema"] == {
+        "$ref": "#/components/schemas/PublicOrganizationPage"
+    }
+
+    organization = spec["paths"]["/bff/public/organizations/{id}"]["get"]
+    assert organization["parameters"] == [
+        {"name": "id", "in": "path", "required": True, "schema": {"type": "integer"}}
+    ]
+    assert organization["responses"]["200"]["content"]["application/json"][
+        "schema"
+    ] == {"$ref": "#/components/schemas/PublicOrganization"}
