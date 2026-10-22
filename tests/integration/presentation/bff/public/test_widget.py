@@ -125,3 +125,16 @@ def test_description_preview_empty(value):
 
 def test_description_preview_short_text_is_unchanged():
     assert description_preview("a &amp; b") == "a & b"
+
+
+def test_photo(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id, name="Event", start=START)
+    seeder.assign_image_to_event(event_id, seeder.upsert_default_image())
+
+    photo = utils.get_json_ok(_url()).json["items"][0]["event"]["photo"]
+
+    assert "s=200" in photo["url_200"]
+    assert "s=500" in photo["url_500"]
+    assert "copyright_text" in photo
+    assert "license_code" in photo

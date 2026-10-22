@@ -370,3 +370,14 @@ def test_js_autocomplete_place_limits_to_five(
     assert [r["text"] for r in response.json["results"]] == [
         "Halle %d" % i for i in range(5)
     ]
+
+
+def test_gmt_iso_handles_naive_and_aware_datetimes():
+    from datetime import datetime, timedelta, timezone
+
+    from project.presentation.web.views.js import _gmt_iso
+
+    assert _gmt_iso(None) is None
+    assert _gmt_iso(datetime(2026, 1, 1, 10, 0)) == "2026-01-01T10:00:00+00:00"
+    aware = datetime(2026, 1, 1, 12, 0, tzinfo=timezone(timedelta(hours=2)))
+    assert _gmt_iso(aware) == "2026-01-01T10:00:00+00:00"

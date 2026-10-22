@@ -227,3 +227,20 @@ def test_delete_unknown_is_404(client, seeder, utils):
     _shell(utils, admin_unit_id)
 
     utils.assert_response_notFound(utils.delete(ITEM_URL.format(4711)))
+
+
+def test_list_query_filters_by_name(client, container, seeder):
+    from project.application.queries import ListCustomWidgetsQuery
+    from project.domain.models.entities.actor import Actor
+
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.insert_event_custom_widget(admin_unit_id, name="Zeta Suche")
+    seeder.insert_event_custom_widget(admin_unit_id, name="Alpha")
+
+    page = container.cqrs.query_bus().handle(
+        ListCustomWidgetsQuery(
+            actor=Actor(user_id=user_id), admin_unit_id=admin_unit_id, name="such"
+        )
+    )
+
+    assert [w.name for w in page.items] == ["Zeta Suche"]
