@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-23 23:31+0200\n"
+"POT-Creation-Date: 2026-10-23 23:35+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -252,8 +252,7 @@ msgid "Add event date"
 msgstr ""
 
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:377
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:378
-msgid "Add tag"
+msgid "Add postal code"
 msgstr ""
 
 #: project/presentation/web/templates/_macros.html:507
@@ -974,7 +973,7 @@ msgstr ""
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:31
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:32
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:181
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:396
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:395
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:23
 msgid "Delete organization"
 msgstr ""
@@ -3810,7 +3809,7 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:391
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:390
 #: project/presentation/web/modular/base_form.py:95
 msgid "Update"
 msgstr ""
@@ -4701,5 +4700,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "..."
+#~ msgstr ""
+
+#~ msgid "Add tag"
 #~ msgstr ""
 

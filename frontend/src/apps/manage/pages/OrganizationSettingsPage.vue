@@ -374,8 +374,8 @@ onMounted(() => {
                 v-model="form.verification.postal_codes"
                 input-id="verification-postal-codes"
                 class="postal-codes"
-                :placeholder="t('Add tag') + '...'"
-                :add-button-text="t('Add tag')"
+                placeholder=""
+                :add-button-text="t('Add postal code')"
                 separator=" ,;"
                 :tag-validator="(tag: string) => tag.length <= 10"
                 no-outer-focus
@@ -402,6 +402,27 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* Same height as a single-line input; the tags otherwise make the field taller. */
+.postal-codes {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+.postal-codes :deep(.b-form-tags-list) {
+  margin-top: 0;
+}
+.postal-codes :deep(.b-form-tag),
+.postal-codes :deep(.b-from-tags-field) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.postal-codes :deep(.b-from-tags-field),
+.postal-codes :deep(.b-from-tags-field > div),
+.postal-codes :deep(.b-form-tags-input),
+.postal-codes :deep(.b-form-tags-button) {
+  height: 24px;
+  min-height: 0;
+}
+
 /* The tag's close button is dark on the dark tag: make it white. */
 .postal-codes :deep(.btn-close) {
   filter: invert(1) grayscale(100%) brightness(200%);
