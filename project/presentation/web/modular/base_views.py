@@ -217,11 +217,6 @@ class BaseListView(BaseView):
 
         form = self.create_form(formdata=request.args)
 
-        response = self.handle_backend_for_frontend(None, form, **kwargs)
-
-        if response:
-            return response
-
         page_request = page_request_from_request_args(per_page=self.get_list_per_page())
         list_query = self.handler.create_list_query(
             form=form, page_request=page_request, **kwargs
