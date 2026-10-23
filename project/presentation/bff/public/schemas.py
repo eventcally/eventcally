@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from typing import List, Optional
 
 from pydantic import BaseModel, EmailStr, Field
@@ -108,3 +109,59 @@ class PublicOrganization(BaseModel):
     logo_url: Optional[str] = None
     ical_url: str
     relation: Optional[PublicOrganizationRelation] = None
+
+
+class WidgetEventDateParams(PageParams):
+    per_page: int = Field(default=10, ge=1, le=50)
+    organization_id: Optional[int] = None
+    date_from: date
+    date_to: Optional[date] = None
+    keyword: Optional[str] = Field(default=None, max_length=255)
+    category_id: List[int] = []
+
+
+class WidgetPhoto(BaseModel):
+    url_200: str
+    url_500: str
+    copyright_text: Optional[str] = None
+    license_code: Optional[str] = None
+    license_url: Optional[str] = None
+
+
+class WidgetEvent(BaseModel):
+    id: int
+    name: str
+    description_preview: Optional[str] = None
+    status: Optional[str] = None
+    public_status: str
+    booked_up: Optional[bool] = None
+    attendance_mode: Optional[str] = None
+    organization_name: str
+    organizer_name: Optional[str] = None
+    place_name: Optional[str] = None
+    photo: Optional[WidgetPhoto] = None
+
+
+class WidgetEventDate(BaseModel):
+    id: int
+    start: datetime
+    end: Optional[datetime] = None
+    allday: bool
+    event: WidgetEvent
+
+
+class WidgetEventDatePage(BaseModel):
+    items: List[WidgetEventDate]
+    page: int
+    per_page: int
+    total: int
+    pages: int
+
+
+class WidgetCategory(BaseModel):
+    id: int
+    name: str
+
+
+class WidgetCategoryList(BaseModel):
+    items: List[WidgetCategory]

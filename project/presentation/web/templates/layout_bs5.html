@@ -75,7 +75,7 @@
       {% with bs = 5 %}{% include "_managebar.html" %}{% endwith %}
       {%- endblock managebar %}
 
-      <div class="body-content">
+      <div class="body-content"{% block body_content_attribs %}{% endblock body_content_attribs %}>
           {% block content_container -%}
           <main {% block content_container_attribs %}class="p-3"{% endblock content_container_attribs %}>
             <div>

@@ -21,4 +21,9 @@ export const publicPages = {
 // Jinja manage area the admin links to.
 export const manage = {
   organization: (id: number) => `/manage/admin_unit/${id}`,
+  customWidgets: (organizationId: number) => `/manage/admin_unit/${organizationId}/custom-widgets`,
+  customWidgetCreate: (organizationId: number) =>
+    `/manage/admin_unit/${organizationId}/custom-widgets/create`,
+  customWidgetUpdate: (organizationId: number, id: number) =>
+    `/manage/admin_unit/${organizationId}/custom-widgets/${id}/update`,
 };

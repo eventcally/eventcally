@@ -16,10 +16,10 @@ from project.application.query_bus import QueryBus
 from project.container import Application
 from project.infrastructure.extensions import csrf
 from project.infrastructure.user_datastore import find_user_by_email
-from project.presentation.api.custom_widget.schemas import CustomWidgetSchema
 from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_place
 from project.presentation.shared.query_results import result_or_404
 from project.presentation.web.views.main_blueprint import main_bp
+from project.shared.dateutils import gmt_tz
 from project.shared.utils import get_place_str
 
 
@@ -162,6 +162,34 @@ def js_autocomplete_gmaps_place():
     return jsonify(place)
 
 
+def _gmt_iso(value):
+    if value is None:
+        return None
+
+    if value.tzinfo:
+        value = value.astimezone(gmt_tz)
+    else:
+        value = value.replace(tzinfo=gmt_tz)
+
+    return value.isoformat()
+
+
+def _custom_widget_json(widget) -> dict:
+    """The payload `widget-loader.js` on customer sites reads; keep the keys."""
+    return {
+        "id": widget.id,
+        "widget_type": widget.widget_type,
+        "name": widget.name,
+        "settings": widget.settings,
+        "created_at": _gmt_iso(widget.created_at),
+        "updated_at": _gmt_iso(widget.updated_at),
+        "organization": {
+            "id": widget.admin_unit.id,
+            "name": widget.admin_unit.name,
+        },
+    }
+
+
 @main_bp.route("/js/wlcw/<int:id>")
 @cross_origin()
 @inject
@@ -169,5 +197,4 @@ def js_widget_loader_custom_widget(
     id: int, query_bus: QueryBus = Provide[Application.cqrs.query_bus]
 ):
     widget = result_or_404(query_bus.handle(GetCustomWidgetQuery(id=id)))
-    schema = CustomWidgetSchema()
-    return schema.dump(widget)
+    return _custom_widget_json(widget)

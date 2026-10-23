@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-22 19:26+0200\n"
+"POT-Creation-Date: 2026-10-22 23:43+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -222,6 +222,10 @@ msgstr "Aktionen"
 msgid "Actions for event"
 msgstr "Aktionen für die Veranstaltung"
 
+#: frontend/src/shared/customWidget.ts:170
+msgid "Active"
+msgstr "Aktiv"
+
 #: project/domain/errors/unauthorized_error.py:7
 msgid "Actor is not authorized to perform this action."
 msgstr "Du bist nicht berechtigt, diese Aktion auszuführen."
@@ -254,6 +258,10 @@ msgstr "Termin hinzufügen"
 #: project/presentation/web/templates/_macros.html:1431
 msgid "Add to calendar"
 msgstr "Zum Kalender"
+
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:95
+msgid "Add widget"
+msgstr "Widget hinzufügen"
 
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:150
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/create.html:249
@@ -479,6 +487,12 @@ msgstr "Teilnahme"
 msgid "Background Color"
 msgstr "Hintergrundfarbe"
 
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:178
+#: frontend/src/shared/customWidget.ts:165
+#: frontend/src/shared/customWidget.ts:243
+msgid "Background color"
+msgstr "Hintergrundfarbe"
+
 #: frontend/src/shared/EventWarningPills.vue:49
 #: project/presentation/web/templates/_macros.html:310
 #: project/presentation/web/templates/_macros.html:1050
@@ -488,17 +502,32 @@ msgstr "Hintergrundfarbe"
 msgid "Booked up"
 msgstr "Ausgebucht"
 
+#: frontend/src/shared/customWidget.ts:166
+msgid "Border color"
+msgstr "Rahmenfarbe"
+
 #: frontend/src/apps/public/pages/EventReportPage.vue:138
 msgid "Briefly describe in your words why the event is objectionable."
 msgstr ""
 "Beschreibe kurz in deinen Worten, warum die Veranstaltung zu beanstanden "
 "ist."
 
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:55
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:45
+msgid "Calendar"
+msgstr "Kalender"
+
+#: frontend/src/shared/customWidget.ts:304
+msgid "Calendar type"
+msgstr "Kalendertyp"
+
 #: frontend/src/apps/admin/components/NewsletterConfirmModal.vue:36
 #: frontend/src/apps/admin/components/ResetTosModal.vue:44
 #: frontend/src/apps/admin/components/SettingCard.vue:102
 #: frontend/src/apps/admin/components/TypeToConfirmModal.vue:64
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:100
+#: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:41
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:148
 #: project/presentation/web/templates/verification_request/review.html:90
 #: project/presentation/web/templates/verification_request/review.html:115
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/incoming_event_reference_request/review.html:69
@@ -517,6 +546,10 @@ msgstr "Abbrechen"
 msgid "Cancel deletion"
 msgstr "Löschen abbrechen"
 
+#: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:36
+msgid "Cards"
+msgstr "Karten"
+
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:37
 #: project/presentation/web/views/manage_admin_unit/event/displays.py:26
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:300
@@ -524,6 +557,8 @@ msgstr "Löschen abbrechen"
 msgid "Categories"
 msgstr "Kategorien"
 
+#: frontend/src/apps/widget/pages/SearchWidget.vue:179
+#: frontend/src/apps/widget/pages/SearchWidget.vue:183
 #: project/presentation/web/forms/event_date.py:20
 #: project/presentation/web/templates/_macros.html:454
 msgid "Category"
@@ -693,9 +728,11 @@ msgstr "Client name"
 msgid "Client secret"
 msgstr "Client secret"
 
+#: frontend/src/apps/manage/components/CustomWidgetInstallModal.vue:24
 #: frontend/src/apps/manage/components/ExternalCalendarsModal.vue:52
 #: frontend/src/apps/manage/components/PlanningEventDetailsModal.vue:81
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:102
+#: frontend/src/apps/widget/pages/CalendarWidget.vue:172
 #: frontend/src/shared/IcalExportModal.vue:41
 #: project/presentation/web/templates/_macros.html:171
 msgid "Close"
@@ -704,6 +741,10 @@ msgstr "Schließen"
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:319
 msgid "Co-organizers"
 msgstr "Mitveranstalter"
+
+#: frontend/src/shared/customWidget.ts:168
+msgid "Color"
+msgstr "Farbe"
 
 #: project/presentation/web/views/user_blueprint/user/forms.py:70
 msgid "Confirm"
@@ -729,10 +770,23 @@ msgstr "Kontakt"
 msgid "Coordinates"
 msgstr "Koordinaten"
 
+#: frontend/src/apps/manage/components/CustomWidgetInstallModal.vue:19
+msgid "Copied"
+msgstr "Kopiert"
+
+#: frontend/src/apps/manage/components/CustomWidgetInstallModal.vue:35
+#: frontend/src/apps/manage/components/CustomWidgetInstallModal.vue:48
+msgid "Copy"
+msgstr "Kopieren"
+
 #: frontend/src/shared/IcalExportModal.vue:38
 #: project/presentation/web/templates/_macros.html:1410
 msgid "Copy link"
 msgstr "Link kopieren"
+
+#: frontend/src/apps/manage/components/CustomWidgetInstallModal.vue:25
+msgid "Copy the code below and paste it into your website."
+msgstr "Kopiere den unten stehenden Code und füge ihn auf deiner Website ein."
 
 #: project/presentation/web/forms/common.py:109
 msgid "Copyright text"
@@ -849,10 +903,11 @@ msgstr "Weiteres Veranstaltungskategorie-Sets"
 msgid "Custom widget"
 msgstr "Custom widget"
 
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:91
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:139
 #: project/presentation/web/templates/_managebar.html:85
-#: project/presentation/web/templates/manage/custom_widgets.html:13
+#: project/presentation/web/views/manage.py:144
 msgid "Custom widgets"
 msgstr "Custom widgets"
 
@@ -876,6 +931,10 @@ msgstr "Termine (bisher)"
 msgid "Day"
 msgstr "Tag"
 
+#: frontend/src/shared/customWidget.ts:169
+msgid "Deactivated"
+msgstr "Deaktiviert"
+
 #: project/presentation/web/views/user_blueprint/organization_invitation/forms.py:12
 #: project/presentation/web/views/user_blueprint/organization_member_invitation/forms.py:10
 msgid "Decline"
@@ -887,6 +946,8 @@ msgstr "Standard"
 
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:144
 #: frontend/src/apps/admin/pages/UsersPage.vue:93
+#: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:39
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:125
 #: project/presentation/web/modular/base_form.py:100
 #: project/presentation/web/modular/base_view_handler.py:204
 msgid "Delete"
@@ -945,6 +1006,10 @@ msgstr "Nutzer löschen"
 msgid "Delete verification request"
 msgstr "Verifizierungsanfrage löschen"
 
+#: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:38
+msgid "Delete widget"
+msgstr "Widget löschen"
+
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:58
 #: frontend/src/apps/admin/pages/UsersPage.vue:38
 msgid "Deletion requested at"
@@ -967,6 +1032,14 @@ msgstr "Beschreibe die Organisation in wenigen Worten"
 msgid "Description"
 msgstr "Beschreibung"
 
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:58
+msgid "Desktop"
+msgstr "Desktop"
+
+#: frontend/src/apps/widget/pages/CalendarWidget.vue:175
+msgid "Details"
+msgstr "Details"
+
 #: project/presentation/web/templates/developer/read.html:4
 #: project/presentation/web/templates/developer/read.html:8
 #: project/presentation/web/templates/layout.html:249
@@ -979,12 +1052,20 @@ msgstr "Entwickler"
 msgid "Disabled"
 msgstr "Deaktiviert"
 
+#: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:66
+msgid "Display"
+msgstr "Anzeige"
+
 #: frontend/src/apps/manage/components/LocationFilter.vue:163
 #: frontend/src/apps/manage/components/LocationFilter.vue:166
 #: project/presentation/web/forms/common.py:336
 #: project/presentation/web/forms/event_date.py:29
 msgid "Distance"
 msgstr "Distanz"
+
+#: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:46
+msgid "Do you really want to delete the widget?"
+msgstr "Möchtest du das Widget wirklich löschen?"
 
 #: project/presentation/web/modular/base_views.py:504
 #, python-format
@@ -1042,6 +1123,7 @@ msgstr "Frühester Beginn zuerst"
 #: frontend/src/apps/admin/components/SettingCard.vue:81
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:141
 #: frontend/src/apps/admin/pages/UsersPage.vue:90
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:117
 #: project/presentation/web/modular/base_view_handler.py:200
 #: project/presentation/web/templates/_macros.html:670
 #: project/presentation/web/templates/_macros.html:713
@@ -1210,13 +1292,18 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:38
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:54
 #: frontend/src/apps/admin/pages/UsersPage.vue:53
+#: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:26
 #: frontend/src/apps/manage/components/LocationFilter.vue:158
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:73
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:111
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:59
 #: frontend/src/apps/manage/pages/PlanningPage.vue:75
 #: frontend/src/apps/public/pages/EventReportPage.vue:40
 #: frontend/src/apps/public/pages/EventReportPage.vue:71
 #: frontend/src/apps/public/pages/OrganizationPage.vue:35
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:39
 #: frontend/src/apps/public/pages/OrganizerPage.vue:35
+#: frontend/src/apps/widget/pages/SearchWidget.vue:73
 msgid "Error"
 msgstr "Fehler"
 
@@ -1225,6 +1312,7 @@ msgstr "Fehler"
 msgid "Error in the %s field - %s"
 msgstr "Fehler im Feld %s: %s"
 
+#: frontend/src/shared/customWidget.ts:152
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/templates/_macros.html:473
 #: project/presentation/web/templates/_macros.html:640
@@ -1269,10 +1357,15 @@ msgstr "Veranstaltungskategorie"
 msgid "Event co organizers"
 msgstr "Mitveranstalter"
 
+#: frontend/src/shared/customWidget.ts:313
+msgid "Event color"
+msgstr "Eventfarbe"
+
 #: project/infrastructure/babel_extract.py:1
 msgid "Event custom event categories"
 msgstr "Weitere Veranstaltungskategorien der Veranstaltung"
 
+#: frontend/src/shared/customWidget.ts:154
 #: project/infrastructure/babel_extract.py:1
 msgid "Event date"
 msgstr "Termin"
@@ -1299,6 +1392,18 @@ msgstr "Kategorien"
 #: project/presentation/shared/i10n.py:60
 msgid "Event expert"
 msgstr "Veranstaltungsexpert:in"
+
+#: frontend/src/shared/customWidget.ts:155
+msgid "Event info"
+msgstr "Event-Info"
+
+#: frontend/src/shared/customWidget.ts:157
+msgid "Event info badge"
+msgstr "Event-Infozeichen"
+
+#: frontend/src/shared/customWidget.ts:153
+msgid "Event name"
+msgstr "Event-Name"
 
 #: project/infrastructure/babel_extract.py:1
 msgid "Event organizer"
@@ -1350,6 +1455,10 @@ msgstr "Veranstaltung erfolgreich gemeldet"
 #: project/presentation/web/forms/common.py:214
 msgid "Event types"
 msgstr "Ereignistypen"
+
+#: frontend/src/shared/customWidget.ts:156
+msgid "Event warning badge"
+msgstr "Event-Warnungszeichen"
 
 #: frontend/src/shared/EventWarningPills.vue:59
 #: project/presentation/web/templates/layout.html:114
@@ -1582,6 +1691,10 @@ msgstr "Führung"
 msgid "Events"
 msgstr "Veranstaltungen"
 
+#: frontend/src/shared/customWidget.ts:195
+msgid "Events per page"
+msgstr "Events pro Seite"
+
 #: project/domain/models/aggregates/api_key_aggregate.py:32
 #: project/domain/models/aggregates/oauth2_client_aggregate.py:38
 msgid "Exactly one of user_id or admin_unit_id must be set."
@@ -1633,13 +1746,27 @@ msgstr "Features"
 
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:35
 #: frontend/src/apps/manage/pages/PlanningPage.vue:229
+#: frontend/src/shared/customWidget.ts:201
 msgid "Filter"
 msgstr "Filter"
+
+#: frontend/src/shared/customWidget.ts:160
+msgid "Filter button"
+msgstr "Filter-Button"
+
+#: frontend/src/shared/customWidget.ts:159
+msgid "Filter input"
+msgstr "Filter-Eingabe"
+
+#: frontend/src/shared/customWidget.ts:158
+msgid "Filter label"
+msgstr "Filter-Label"
 
 #: project/presentation/web/templates/generic/list.html:28
 msgid "Filters"
 msgstr "Filter"
 
+#: frontend/src/apps/widget/pages/SearchWidget.vue:196
 #: project/presentation/web/forms/event_date.py:82
 #: project/presentation/web/templates/widget/event_date/list.html:82
 msgid "Find"
@@ -1663,10 +1790,16 @@ msgstr "Vor- und Nachname"
 msgid "Font"
 msgstr "Schriftart"
 
+#: frontend/src/shared/customWidget.ts:240
+msgid "Font family"
+msgstr "Schriftart"
+
 #: project/presentation/web/forms/common.py:290
 msgid "Friday"
 msgstr "Freitag"
 
+#: frontend/src/apps/widget/pages/SearchWidget.vue:162
+#: frontend/src/apps/widget/pages/SearchWidget.vue:163
 #: project/presentation/web/forms/common.py:301
 #: project/presentation/web/forms/event_date.py:14
 #: project/presentation/web/forms/event_date.py:54
@@ -1686,6 +1819,10 @@ msgstr "Google Kalender"
 #: project/presentation/web/views/user_blueprint/oauth2_client/displays.py:11
 msgid "Grant types"
 msgstr "Grant types"
+
+#: frontend/src/shared/customWidget.ts:311
+msgid "Height"
+msgstr "Höhe"
 
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference/views.py:52
 #, python-format
@@ -1922,6 +2059,11 @@ msgstr "Informationen über neue Features und Verbesserungen."
 msgid "Install"
 msgstr ""
 
+#: frontend/src/apps/manage/components/CustomWidgetInstallModal.vue:24
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:114
+msgid "Installation"
+msgstr "Installation"
+
 #: project/presentation/web/views/manage_admin_unit/event/displays.py:29
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:198
 #: project/presentation/web/views/manage_admin_unit/event/view_handler.py:62
@@ -1992,6 +2134,8 @@ msgstr ""
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:106
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:56
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:57
+#: frontend/src/apps/widget/pages/SearchWidget.vue:189
+#: frontend/src/apps/widget/pages/SearchWidget.vue:190
 #: project/presentation/web/forms/event_date.py:18
 #: project/presentation/web/modular/base_views.py:216
 msgid "Keyword"
@@ -2061,6 +2205,10 @@ msgstr "Zuletzt aktualisiert am %(updated_at)s."
 msgid "Latitude"
 msgstr "Breitengrad"
 
+#: frontend/src/shared/customWidget.ts:190
+msgid "Layout"
+msgstr "Layout"
+
 #: project/presentation/web/views/user_blueprint/organization_member/forms.py:15
 #: project/presentation/web/views/user_blueprint/organization_member/views.py:20
 msgid "Leave organization"
@@ -2088,6 +2236,7 @@ msgstr ""
 "Limitiere Verifizierungsanfragen auf Oranisationen mit diesen "
 "Postleitzahlen"
 
+#: frontend/src/shared/customWidget.ts:213
 #: project/presentation/web/templates/_macros.html:287
 msgid "Link"
 msgstr "Link"
@@ -2104,6 +2253,10 @@ msgstr "Linkfarbe"
 #: project/presentation/web/views/manage_admin_unit/event_place/forms.py:29
 msgid "Link URL"
 msgstr "Link URL"
+
+#: frontend/src/shared/customWidget.ts:245
+msgid "Link color"
+msgstr "Linkfarbe"
 
 #: frontend/src/shared/IcalExportModal.vue:18
 #: project/presentation/web/templates/_macros.html:1410
@@ -2167,6 +2320,10 @@ msgstr "Verwaltung"
 msgid "Map view"
 msgstr "Kartenansicht"
 
+#: frontend/src/shared/customWidget.ts:233
+msgid "Max. height"
+msgstr "Max. Höhe"
+
 #: project/presentation/web/templates/_managebar.html:61
 #: project/presentation/web/templates/verification_request/review.html:54
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/incoming_organization_verification_request/review.html:52
@@ -2182,10 +2339,19 @@ msgstr "Nachricht"
 msgid "Min. expected number of participants"
 msgstr "Mind. erwartete Teilnehmerzahl"
 
+#: frontend/src/shared/customWidget.ts:226
+msgid "Min. height"
+msgstr "Min. Höhe"
+
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:60
+msgid "Mobile"
+msgstr "Mobil"
+
 #: project/presentation/web/forms/common.py:286
 msgid "Monday"
 msgstr "Montag"
 
+#: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:41
 #: frontend/src/apps/manage/pages/PlanningPage.vue:51
 msgid "Month"
 msgstr "Monat"
@@ -2201,6 +2367,9 @@ msgstr "Weitere Filter"
 
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:34
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:55
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:139
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:143
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:40
 #: frontend/src/apps/public/pages/EventReportPage.vue:99
 #: project/presentation/web/templates/_macros.html:1041
 #: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:47
@@ -2285,6 +2454,7 @@ msgid "Newsletter from %(site_name)s"
 msgstr "Newsletter von %(site_name)s"
 
 #: frontend/src/apps/manage/pages/PlanningPage.vue:208
+#: frontend/src/apps/widget/pages/CalendarWidget.vue:146
 #: project/presentation/web/templates/_macros.html:1080
 #: project/presentation/web/templates/_macros.html:1082
 #: project/presentation/web/templates/event_date/list.html:538
@@ -2320,6 +2490,10 @@ msgstr ""
 #: frontend/src/apps/manage/components/LocationFilter.vue:156
 msgid "No results"
 msgstr "Keine Ergebnisse"
+
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:106
+msgid "No widgets found"
+msgstr "Keine Widgets gefunden"
 
 #: project/presentation/bff/admin/mail.py:122
 #: project/presentation/bff/admin/users.py:87
@@ -2406,6 +2580,10 @@ msgstr "OK"
 #: project/application/command_handlers/request_event_reference_handler.py:31
 msgid "Only published events can be referenced"
 msgstr "Nur veröffentlichte Veranstaltungen können empfohlen werden"
+
+#: frontend/src/apps/widget/pages/SearchWidget.vue:363
+msgid "Open search"
+msgstr "Suche öffnen"
 
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:56
@@ -2617,11 +2795,32 @@ msgstr "Eigene Veranstaltung"
 msgid "Own events cannot be referenced"
 msgstr "Eigene Veranstaltungen können nicht empfohlen werden"
 
+#: frontend/src/shared/customWidget.ts:242
+msgid "Padding"
+msgstr "Abstand"
+
 #: frontend/src/shared/AppPager.vue:18 frontend/src/shared/AppPager.vue:32
 #: project/presentation/web/templates/_macros.html:1078
 #, python-format
 msgid "Page %(page)d of %(pages)d (%(total)d total)"
 msgstr "Seite %(page)d von %(pages)d (%(total)d insgesamt)"
+
+#: frontend/src/shared/customWidget.ts:161
+#: frontend/src/shared/customWidget.ts:207
+msgid "Pagination"
+msgstr "Seitennavigation"
+
+#: frontend/src/apps/manage/components/CustomWidgetInstallModal.vue:38
+msgid ""
+"Paste the following code into the body of the page, where the widget "
+"should appear."
+msgstr ""
+"Füge den folgenden Code an der Stelle im Body der Seite ein, wo das "
+"Widget dargestellt werden soll."
+
+#: frontend/src/apps/manage/components/CustomWidgetInstallModal.vue:26
+msgid "Paste the following code into the head of the page."
+msgstr "Füge den folgenden Code im Head der Seite ein."
 
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:21
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:18
@@ -2720,7 +2919,12 @@ msgstr ""
 msgid "Postal code"
 msgstr "Postleitzahl"
 
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:193
+msgid "Preview"
+msgstr "Vorschau"
+
 #: frontend/src/apps/manage/pages/PlanningPage.vue:199
+#: frontend/src/apps/widget/pages/CalendarWidget.vue:137
 #: project/presentation/web/templates/_macros.html:1074
 #: project/presentation/web/templates/_macros.html:1076
 #: project/presentation/web/templates/event_date/list.html:536
@@ -2735,9 +2939,15 @@ msgstr "Preisinformation"
 msgid "Primary Color"
 msgstr "Hauptfarbe"
 
+#: frontend/src/apps/widget/pages/SearchWidget.vue:367
 #: project/presentation/web/templates/widget/event_date/list.html:163
 msgid "Print"
 msgstr "Drucken"
+
+#: frontend/src/shared/customWidget.ts:162
+#: frontend/src/shared/customWidget.ts:219
+msgid "Print button"
+msgstr "Drucken-Button"
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:31
 #: project/presentation/web/templates/layout.html:245
@@ -2992,6 +3202,10 @@ msgstr "Akzeptanz der Nutzungsbedingungen und des Datenschutzes zurücksetzen"
 msgid "Response types"
 msgstr "Response types"
 
+#: frontend/src/apps/widget/pages/SearchWidget.vue:207
+msgid "Retry"
+msgstr "Erneut versuchen"
+
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/views.py:32
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:21
 #, python-format
@@ -3061,6 +3275,7 @@ msgid "Saturday"
 msgstr "Samstag"
 
 #: frontend/src/apps/admin/components/SettingCard.vue:99
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:152
 #: project/presentation/web/views/user_blueprint/oauth2_client/forms.py:31
 #: project/presentation/web/views/user_blueprint/user/forms.py:33
 #: project/presentation/web/views/user_blueprint/user/forms.py:56
@@ -3101,6 +3316,11 @@ msgstr "Profil-Informationen lesen"
 #: project/presentation/web/views/user_blueprint/oauth2_token/displays.py:14
 msgid "Scopes"
 msgstr "Scopes"
+
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:54
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:45
+msgid "Search"
+msgstr "Suche"
 
 #: project/presentation/web/modular/widgets.py:13
 #: project/presentation/web/modular/widgets.py:31
@@ -3184,6 +3404,7 @@ msgstr "An %(count)d Empfänger senden?"
 #: frontend/src/apps/admin/pages/AdminHome.vue:11
 #: frontend/src/apps/admin/pages/SettingsPage.vue:62
 #: frontend/src/apps/admin/pages/SettingsPage.vue:65
+#: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:63
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:157
 #: project/presentation/web/templates/_managebar.html:82
@@ -3296,6 +3517,10 @@ msgstr "Statuscode"
 msgid "Street"
 msgstr "Straße"
 
+#: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:63
+msgid "Styles"
+msgstr "Styles"
+
 #: frontend/src/apps/public/pages/EventReportPage.vue:156
 msgid "Submit"
 msgstr "Absenden"
@@ -3307,6 +3532,10 @@ msgstr "Sonntag"
 #: project/presentation/web/templates/_managebar.html:100
 msgid "Switch organization"
 msgstr "Organisation wechseln"
+
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:59
+msgid "Tablet"
+msgstr "Tablet"
 
 #: project/presentation/web/forms/event_date.py:22
 #: project/presentation/web/views/manage_admin_unit/event/displays.py:27
@@ -3352,6 +3581,17 @@ msgstr "Test-Mail von %(site_name)s"
 #: frontend/src/apps/admin/pages/NewsletterPage.vue:99
 msgid "Test recipient"
 msgstr "Test-Empfänger"
+
+#: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:37
+msgid "Text"
+msgstr "Text"
+
+#: frontend/src/shared/customWidget.ts:167
+#: frontend/src/shared/customWidget.ts:169
+#: frontend/src/shared/customWidget.ts:170
+#: frontend/src/shared/customWidget.ts:244
+msgid "Text color"
+msgstr "Textfarbe"
 
 #: project/presentation/web/views/user_blueprint/user/views.py:61
 msgid ""
@@ -3554,6 +3794,11 @@ msgstr "Ticket Link"
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:38
 msgid "Timestamp"
 msgstr "Zeitstempel"
+
+#: frontend/src/apps/widget/pages/SearchWidget.vue:168
+#: frontend/src/apps/widget/pages/SearchWidget.vue:173
+msgid "To"
+msgstr "Bis"
 
 #: frontend/src/apps/manage/pages/PlanningPage.vue:193
 msgid "Today"
@@ -3792,6 +4037,7 @@ msgstr "Webhooks"
 msgid "Wednesday"
 msgstr "Mittwoch"
 
+#: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:40
 #: frontend/src/apps/manage/pages/PlanningPage.vue:50
 msgid "Week"
 msgstr "Woche"
@@ -3804,6 +4050,24 @@ msgstr "Was sich geändert hat"
 #: project/presentation/web/templates/widget/event_date/list.html:5
 msgid "Widget"
 msgstr "Widget"
+
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:126
+msgid "Widget configurator"
+msgstr "Widget-Konfigurator"
+
+#: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:29
+msgid "Widget successfully deleted"
+msgstr "Widget erfolgreich gelöscht"
+
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:116
+msgid "Widget successfully saved"
+msgstr "Widget erfolgreich gespeichert"
+
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:130
+#: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:134
+#: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:41
+msgid "Widget type"
+msgstr "Widget-Typ"
 
 #: project/presentation/shared/permissions.py:169
 #: project/presentation/web/templates/_managebar.html:86
@@ -4459,4 +4723,7 @@ msgstr "bis"
 
 #~ msgid "Weekdays"
 #~ msgstr "Wochentage"
+
+#~ msgid "..."
+#~ msgstr ""
 

@@ -417,7 +417,30 @@ def test_admin_unit_custom_widgets(client, seeder: Seeder, utils: UtilActions):
     _, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("main.manage_admin_unit_custom_widgets", id=admin_unit_id)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+
+    utils.assert_response_contains(response, 'id="boot"')
+    utils.assert_response_contains(response, "navbar-light bg-light")
+    utils.assert_response_contains(response, 'class="footer')
+    assert b"iframeResizer.4.3.2.min.js" in response.data
+
+
+@pytest.mark.parametrize("path", ["create", "1/update"])
+def test_admin_unit_custom_widgets_full_height(
+    client, seeder: Seeder, utils: UtilActions, path: str
+):
+    _, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url(
+        "main.manage_admin_unit_custom_widgets", id=admin_unit_id, path=path
+    )
+    response = utils.get_ok(url)
+
+    utils.assert_response_contains(response, 'id="boot"')
+    utils.assert_response_contains(response, '<body class="h-100">')
+    assert b"navbar-light bg-light" not in response.data
+    assert b"navbar-dark" not in response.data
+    assert b'class="footer' not in response.data
 
 
 @pytest.mark.parametrize("scenario", ["db_error", "default", "last_admin", "non_match"])

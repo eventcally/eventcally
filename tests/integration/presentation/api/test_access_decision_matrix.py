@@ -171,11 +171,6 @@ def _api_requests(utils: UtilActions, ids):
             url("api_v1_organization_organization_invitation_list", id=ids["a"]),
             None,
         ),
-        "custom_widgets": (
-            "GET",
-            url("api_v1_organization_custom_widget_list", id=ids["a"]),
-            None,
-        ),
         "organization_with_settings": (
             "GET",
             url("api_v1_organization", id=ids["a"]),

@@ -10,6 +10,7 @@ ENTRIES = {
     "admin": "src/apps/admin/main.ts",
     "manage": "src/apps/manage/main.ts",
     "public": "src/apps/public/main.ts",
+    "widget": "src/apps/widget/main.ts",
 }
 
 _MANIFEST_PATH = ("static", "dist", ".vite", "manifest.json")

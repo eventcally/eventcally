@@ -207,7 +207,6 @@ def init_api(app):
     # Import all API resources to register routes
     import project.presentation.api.app.resources
     import project.presentation.api.custom_event_category_set.resources
-    import project.presentation.api.custom_widget.resources
     import project.presentation.api.dump.resources
     import project.presentation.api.event.resources
     import project.presentation.api.event_category.resources

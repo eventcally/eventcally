@@ -7,7 +7,6 @@ from project.application.queries import (
     GetEventDetailQuery,
     GetOrganizationQuery,
     GetOutgoingOrganizationRelationByTargetQuery,
-    ListCustomWidgetsQuery,
     ListEventOrganizersQuery,
     ListEventPlacesQuery,
     ListEventsQuery,
@@ -27,12 +26,6 @@ from project.application.queries import (
 )
 from project.domain.errors import UnauthorizedError
 from project.presentation.api import add_api_resource
-from project.presentation.api.custom_widget.schemas import (
-    CustomWidgetCreateRequestPlainSchema,
-    CustomWidgetIdPlainSchema,
-    CustomWidgetListRequestSchema,
-    CustomWidgetListResponseSchema,
-)
 from project.presentation.api.event.schemas import (
     EventCreateRequestPlainSchema,
     EventIdPlainSchema,
@@ -623,39 +616,6 @@ class OrganizationOrganizationInvitationListResource(BaseResource):
         return cmd_result, 201
 
 
-class OrganizationCustomWidgetListResource(BaseResource):
-    @doc(
-        summary="List custom widgets of organization",
-        tags=["Organizations", "Custom Widgets"],
-    )
-    @use_kwargs(CustomWidgetListRequestSchema, location=("query"))
-    @marshal_with(CustomWidgetListResponseSchema)
-    @require_organization_api_access("organization.custom_widgets:read")
-    def get(self, id, **kwargs):
-        query = ListCustomWidgetsQuery(
-            admin_unit_id=id,
-            name=kwargs.get("name") or None,
-            page=page_request_from_kwargs(kwargs),
-        )
-        page = result_or_404(self.query_bus.handle(query))
-        abort_if_page_out_of_range(page)
-        return page
-
-    @doc(
-        summary="Add new custom widget",
-        tags=["Organizations", "CustomWidgets"],
-    )
-    @use_kwargs(CustomWidgetCreateRequestPlainSchema, location="json", apply=False)
-    @marshal_with(CustomWidgetIdPlainSchema, 201)
-    @require_organization_api_access("organization.custom_widgets:write")
-    def post(self, id):
-        cmd = CustomWidgetCreateRequestPlainSchema(context=g.api_command_context).load(
-            request.json
-        )
-        cmd_result = self.message_bus.handle_command(cmd)
-        return cmd_result, 201
-
-
 add_api_resource(OrganizationResource, "/organizations/<int:id>", "api_v1_organization")
 add_api_resource(
     OrganizationEventDateSearchResource,
@@ -727,9 +687,4 @@ add_api_resource(
     OrganizationOrganizationInvitationListResource,
     "/organizations/<int:id>/organization-invitations",
     "api_v1_organization_organization_invitation_list",
-)
-add_api_resource(
-    OrganizationCustomWidgetListResource,
-    "/organizations/<int:id>/custom-widgets",
-    "api_v1_organization_custom_widget_list",
 )
