@@ -5,7 +5,6 @@ from project.application.queries.get_resource_owner_query import ResourceKind
 from project.application.read_models.access_helper_read_models import (
     MailRecipientReadModel,
     ManageMenuOptionsReadModel,
-    MemberGrantsReadModel,
 )
 from project.application.read_models.api_key_read_models import ApiKeyReadModel
 from project.application.read_models.current_organization_read_models import (
@@ -92,13 +91,6 @@ class AbstractAccessReadRepository(abc.ABC):
         self, admin_unit_id: ObjectId
     ) -> ManageMenuOptionsReadModel:  # pragma: no cover
         """Inbox reference and verification requests addressed to the organization."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def member_grants(
-        self, admin_unit_id: ObjectId, user_id: ObjectId
-    ) -> MemberGrantsReadModel:  # pragma: no cover
-        """Empty for a non-member."""
         raise NotImplementedError
 
     @abc.abstractmethod

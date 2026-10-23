@@ -14,7 +14,6 @@ from .get_app_key_query import GetAppKeyQuery
 from .get_app_query import GetAppQuery
 from .get_app_webhook_delivery_attempt_query import GetAppWebhookDeliveryAttemptQuery
 from .get_app_webhook_delivery_query import GetAppWebhookDeliveryQuery
-from .get_current_member_grants_query import GetCurrentMemberGrantsQuery
 from .get_current_organization_query import GetCurrentOrganizationQuery
 from .get_custom_event_category_query import GetCustomEventCategoryQuery
 from .get_custom_widget_query import GetCustomWidgetQuery

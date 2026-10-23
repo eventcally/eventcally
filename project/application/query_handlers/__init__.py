@@ -14,7 +14,6 @@ from .get_app_webhook_delivery_attempt_handler import (
     GetAppWebhookDeliveryAttemptHandler,
 )
 from .get_app_webhook_delivery_handler import GetAppWebhookDeliveryHandler
-from .get_current_member_grants_handler import GetCurrentMemberGrantsHandler
 from .get_current_organization_handler import GetCurrentOrganizationHandler
 from .get_custom_event_category_handler import GetCustomEventCategoryHandler
 from .get_custom_widget_handler import GetCustomWidgetHandler

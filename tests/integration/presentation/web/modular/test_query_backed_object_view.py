@@ -11,7 +11,6 @@ import pytest
 from dependency_injector import providers
 
 from project.application.queries import (
-    GetCurrentMemberGrantsQuery,
     GetCurrentOrganizationQuery,
     GetManageableOrganizationQuery,
     GetManageMenuOptionsQuery,
@@ -30,7 +29,6 @@ ACCESS_QUERIES = (
     GetManageableOrganizationQuery,
     GetCurrentOrganizationQuery,
     GetManageMenuOptionsQuery,
-    GetCurrentMemberGrantsQuery,
     GetSiteNoticesQuery,
     ListManageableOrganizationsQuery,
 )

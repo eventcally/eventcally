@@ -19,7 +19,6 @@ from project.application.query_handlers import (
 from project.application.read_models.access_helper_read_models import (
     MailRecipientReadModel,
     ManageMenuOptionsReadModel,
-    MemberGrantsReadModel,
 )
 from project.application.read_models.current_organization_read_models import (
     CurrentOrganizationReadModel,
@@ -80,9 +79,6 @@ class FakeAccessRepo(AbstractAccessReadRepository):
             reference_requests_incoming_badge=admin_unit_id,
             verification_requests_incoming_badge=1,
         )
-
-    def member_grants(self, admin_unit_id, user_id):
-        return MemberGrantsReadModel(roles=["admin"], permissions=[f"{user_id}:read"])
 
     def event_report_recipients(self, admin_unit_id, permission):
         return [MailRecipientReadModel(id=admin_unit_id, email=permission)]

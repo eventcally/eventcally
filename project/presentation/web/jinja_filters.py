@@ -4,11 +4,7 @@ from urllib.parse import quote_plus
 from flask import current_app, url_for
 from markupsafe import Markup
 
-from project.application.queries import (
-    GetCurrentMemberGrantsQuery,
-    GetManageMenuOptionsQuery,
-    GetSiteNoticesQuery,
-)
+from project.application.queries import GetManageMenuOptionsQuery, GetSiteNoticesQuery
 from project.presentation.shared.urls import url_for_image
 from project.presentation.web.vite import vite_entry
 from project.shared.utils import (
@@ -29,10 +25,6 @@ def env_override(value, key):
 
 def is_list(value):  # pragma: no cover
     return isinstance(value, list)
-
-
-def js_bool(value):
-    return "true" if value else "false"
 
 
 def any_dict_value_true(data: dict):
@@ -57,10 +49,6 @@ def human_file_size(bytes, units=[" bytes", "KB", "MB", "GB", "TB", "PB", "EB"])
             human_file_size(bytes >> 10, units[1:]) if units[1:] else f"{bytes >> 10}ZB"
         )
     )
-
-
-def get_base_url():
-    return url_for("main.home", _external=True).rstrip("/")
 
 
 def get_main_menu():
@@ -118,7 +106,6 @@ def init_jinja_filters(app):
     app.jinja_env.filters["env_override"] = env_override
     app.jinja_env.filters["quote_plus"] = lambda u: quote_plus(u)
     app.jinja_env.filters["is_list"] = is_list
-    app.jinja_env.filters["js_bool"] = js_bool
     app.jinja_env.filters["any_dict_value_true"] = any_dict_value_true
     app.jinja_env.filters["ensure_link_scheme"] = lambda s: ensure_link_scheme(s)
     app.jinja_env.filters["place_str"] = lambda p: get_place_str(p)
@@ -127,7 +114,6 @@ def init_jinja_filters(app):
 
     # Register globals
     app.jinja_env.globals.update(
-        get_base_url=get_base_url,
         url_for_image=url_for_image,
         vite_entry=vite_entry,
     )
@@ -154,59 +140,11 @@ def init_jinja_filters(app):
             announcement = _query_bus().handle(GetSiteNoticesQuery()).announcement
             return Markup(announcement) if announcement else None
 
-        def get_current_user_roles():
-            from flask_security import current_user
-
-            if not current_user.is_authenticated:  # pragma: no cover
-                return []
-
-            return [r.name for r in current_user.roles]
-
-        def get_current_user_permissions():
-            from flask_security import current_user
-
-            if not current_user.is_authenticated:  # pragma: no cover
-                return []
-
-            return sum([r.permissions for r in current_user.roles], [])
-
-        def get_current_admin_unit_roles():
-            current_admin_unit = get_current_admin_unit()
-
-            if not current_admin_unit:  # pragma: no cover
-                return []
-
-            return (
-                _query_bus()
-                .handle(
-                    GetCurrentMemberGrantsQuery(admin_unit_id=current_admin_unit.id)
-                )
-                .roles
-            )
-
-        def get_current_admin_unit_permissions():
-            current_admin_unit = get_current_admin_unit()
-
-            if not current_admin_unit:  # pragma: no cover
-                return []
-
-            return (
-                _query_bus()
-                .handle(
-                    GetCurrentMemberGrantsQuery(admin_unit_id=current_admin_unit.id)
-                )
-                .permissions
-            )
-
         return dict(
             get_main_menu=get_main_menu,
             current_admin_unit=get_current_admin_unit(),
-            get_current_admin_unit_roles=get_current_admin_unit_roles,
-            get_current_admin_unit_permissions=get_current_admin_unit_permissions,
             get_manage_menu_options=get_manage_menu_options,
             has_access=has_access,
             has_tos=has_tos,
             get_announcement=get_announcement,
-            get_current_user_roles=get_current_user_roles,
-            get_current_user_permissions=get_current_user_permissions,
         )

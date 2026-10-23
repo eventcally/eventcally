@@ -7,7 +7,6 @@ from project.application.queries.get_resource_owner_query import ResourceKind
 from project.application.read_models.access_helper_read_models import (
     MailRecipientReadModel,
     ManageMenuOptionsReadModel,
-    MemberGrantsReadModel,
 )
 from project.application.read_models.api_key_read_models import ApiKeyReadModel
 from project.application.read_models.current_organization_read_models import (
@@ -293,31 +292,6 @@ class SqlAlchemyAccessReadRepository(AbstractAccessReadRepository):
         return ManageMenuOptionsReadModel(
             reference_requests_incoming_badge=reference_requests,
             verification_requests_incoming_badge=verification_requests,
-        )
-
-    def member_grants(
-        self, admin_unit_id: ObjectId, user_id: ObjectId
-    ) -> MemberGrantsReadModel:
-        # `permissions` is an AsaList column, so the roles are flattened in Python.
-        roles = (
-            self.session.execute(
-                select(AdminUnitMemberRole)
-                .join(AdminUnitMemberRole.members)
-                .where(
-                    AdminUnitMember.admin_unit_id == admin_unit_id,
-                    AdminUnitMember.user_id == user_id,
-                )
-                .order_by(AdminUnitMemberRole.id)
-            )
-            .scalars()
-            .all()
-        )
-
-        return MemberGrantsReadModel(
-            roles=[role.name for role in roles],
-            permissions=[
-                permission for role in roles for permission in role.permissions or []
-            ],
         )
 
     def event_report_recipients(

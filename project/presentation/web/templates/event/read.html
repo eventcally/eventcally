@@ -1,18 +1,12 @@
-{% extends "layout_vue.html" %}
+{% extends "layout.html" %}
 {% from "_macros.html" import render_event_props_seo %}
 
 {%- block title -%}
 {{ event.name }}
 {%- endblock -%}
 
-{% block vue_container %}
-{% endblock %}
-
 {% block content_container_attribs %}{% endblock %}
 
 {% block content %}
-    {{ render_event_props_seo(event, event.min_start_definition.start, event.min_start_definition.end, event.min_start_definition.allday, dates, user_rights['can_update_event'], user_rights=user_rights, share_links=share_links, calendar_links=calendar_links, current_user=current_user) }}
-
-    <div id="vue-container"></div>
-    {{ super() }}
+    {{ render_event_props_seo(event, event.min_start_definition.start, event.min_start_definition.end, event.min_start_definition.allday, dates, show_rating=user_rights['can_update_event'], user_rights=user_rights, share_links=share_links, calendar_links=calendar_links, current_user=current_user) }}
 {% endblock %}

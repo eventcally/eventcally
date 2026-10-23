@@ -7,7 +7,8 @@ def test_read(client, seeder: Seeder, utils: UtilActions):
     seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
 
     url = utils.get_url("main.event_date", id=1)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+    assert b"vue.2.6.14" not in response.data
 
     seeder.create_event(admin_unit_id, draft=True)
     url = utils.get_url("main.event_date", id=2)

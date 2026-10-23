@@ -14,7 +14,8 @@ def test_read(client, seeder: Seeder, utils: UtilActions, external_link):
     event_id = seeder.create_event(admin_unit_id, external_link=external_link)
 
     url = utils.get_url("main.event", event_id=event_id)
-    utils.get_ok(url)
+    response = utils.get_ok(url)
+    assert b"vue.2.6.14" not in response.data
 
     event_id = seeder.create_event(admin_unit_id, draft=True)
     url = utils.get_url("main.event", event_id=event_id)
@@ -729,6 +730,7 @@ def test_actions(seeder: Seeder, utils: UtilActions):
 
     url = utils.get_url("main.event_actions", event_id=event_id)
     response = utils.get_ok(url)
+    assert b"vue.2.6.14" not in response.data
 
     # Nutzer ist alleine auf der Welt. Deshalb darf es keine Referenz-Links geben
     assert b"Empfehlung anfragen" not in response.data
