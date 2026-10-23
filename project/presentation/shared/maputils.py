@@ -50,3 +50,31 @@ def get_gmaps_place(gmaps_id) -> dict:
             current_app.logger.exception(e)
 
     return result
+
+
+def get_gmaps_place_address(place: dict) -> dict:
+    """Maps the address components of a Google place to location fields."""
+    street_number = ""
+    route = ""
+    address = dict(city="", state="", postalCode="")
+
+    for component in place.get("address_components", []):
+        address_type = component["types"][0]
+        value = component["long_name"]
+
+        if address_type == "street_number":
+            street_number = value
+        elif address_type == "route":
+            route = value
+        elif address_type == "locality":
+            address["city"] = value
+        elif address_type == "administrative_area_level_1":
+            address["state"] = value
+        elif address_type == "postal_code":
+            address["postalCode"] = value
+
+    location = place["geometry"]["location"]
+    address["street"] = " ".join([route, street_number]).strip()
+    address["latitude"] = location["lat"]
+    address["longitude"] = location["lng"]
+    return address

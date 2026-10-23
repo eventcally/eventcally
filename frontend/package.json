@@ -20,6 +20,7 @@
     "@vueuse/integrations": "15.0.0",
     "bootstrap": "5.3.8",
     "bootstrap-vue-next": "1.2.2",
+    "cropperjs": "1.6.2",
     "focus-trap": "8.2.3",
     "leaflet": "1.9.4",
     "leaflet.markercluster": "1.5.3",

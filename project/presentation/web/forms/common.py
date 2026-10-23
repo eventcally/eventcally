@@ -10,18 +10,12 @@ from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
 )
 from project.domain.models.value_objects.webhook_value_object import WebhookValueObject
+from project.presentation.shared.images import image_value_object_from_data_uri
 from project.presentation.web.forms.widgets import MultiCheckboxField
 from project.presentation.web.modular.ajax import LicenseAjaxModelLoader
 from project.presentation.web.modular.base_form import BaseForm
 from project.presentation.web.modular.fields import AjaxSelectField, GooglePlaceField
-from project.shared.imageutils import (
-    get_bytes_from_image,
-    get_data_uri_from_bytes,
-    get_image_from_base64_str,
-    get_mime_type_from_image,
-    resize_image_to_max,
-    validate_image,
-)
+from project.shared.imageutils import get_data_uri_from_bytes
 
 
 class LocationFormMixin(object):
@@ -148,11 +142,11 @@ class Base64ImageForm(BaseForm):
                 self.image_base64.image_data = self._original_image_data
             else:
                 try:
-                    image = get_image_from_base64_str(self.image_base64.data)
-                    validate_image(image)
-                    resize_image_to_max(image)
-                    self.image_base64.encoding_format = get_mime_type_from_image(image)
-                    self.image_base64.image_data = get_bytes_from_image(image)
+                    image = image_value_object_from_data_uri(
+                        self.image_base64.data, None, None
+                    )
+                    self.image_base64.encoding_format = image.encoding_format
+                    self.image_base64.image_data = image.data
                 except Exception as e:
                     msg = str(e)
                     self.image_base64.encoding_format = None

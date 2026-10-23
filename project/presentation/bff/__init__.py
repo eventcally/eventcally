@@ -71,7 +71,7 @@ def _handle_field_validation_error(err: FieldValidationError):
     payload = ValidationErrorResponse(
         name="Unprocessable Entity",
         message=_UNPROCESSABLE_MESSAGE,
-        errors=[FieldError(loc=err.loc, msg=err.msg)],
+        errors=[FieldError(loc=loc, msg=msg) for loc, msg in err.errors],
     )
     return jsonify(payload.model_dump(mode="json")), 422
 

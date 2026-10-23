@@ -1,19 +1,15 @@
-from flask import current_app, request
+from flask import current_app
 from flask_babel import lazy_gettext
 from wtforms import FormField, StringField, SubmitField, TextAreaField, ValidationError
-from wtforms.fields import BooleanField, EmailField, TelField, URLField
+from wtforms.fields import EmailField, TelField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp
 from wtforms.widgets import ColorInput
 
-from project.application.commands import (
-    UpdateOrganizationCommand,
-    UpdateOrganizationWidgetSettingsCommand,
-)
+from project.application.commands import UpdateOrganizationWidgetSettingsCommand
 from project.application.queries import (
     IsOrganizationNameTakenQuery,
     IsOrganizationShortNameTakenQuery,
 )
-from project.presentation.shared.current_admin_unit import current_admin_unit
 from project.presentation.web.forms.common import (
     Base64ImageForm,
     StrictGooglePlaceLocationForm,
@@ -24,10 +20,7 @@ from project.presentation.web.modular.base_form import (
     BaseUpdateForm,
     BlankFormData,
 )
-from project.presentation.web.modular.fields import (
-    SelectMultipleTagField,
-    VirtualFormField,
-)
+from project.presentation.web.modular.fields import VirtualFormField
 from project.presentation.web.modular.widgets import AjaxValidationWidget
 from project.shared.utils import (
     widget_default_background_color,
@@ -42,63 +35,19 @@ class AdditionalInformationForm(BaseForm):
     fax = TelField(lazy_gettext("Fax"), validators=[Optional(), Length(max=255)])
 
 
-class VerificationRequestsForm(BaseForm):
-    incoming_verification_requests_allowed = BooleanField(
-        lazy_gettext("Allow verification requests"),
-        description=lazy_gettext(
-            "If set, unverified organizations may ask you for verification."
-        ),
-        validators=[Optional()],
-        render_kw={"ri": "checkbox"},
-    )
-    incoming_verification_requests_text = TextAreaField(
-        lazy_gettext("Verification requests information"),
-        validators=[Optional()],
-        default="",
-        description=lazy_gettext(
-            "This text is shown to unverified organizations to help them decide whether they ask you for verification."
-        ),
-    )
-    incoming_verification_requests_postal_codes = SelectMultipleTagField(
-        lazy_gettext("Verification requests postal codes"),
-        validators=[Optional()],
-        description=lazy_gettext(
-            "Limit verification requests to organizations with these postal codes."
-        ),
-    )
-
-
 def _query_bus():
     return current_app.container.cqrs.query_bus()
 
 
 def validate_organization_name(form, field):
     name = field.data
-    admin_unit_id = (
-        current_admin_unit.id
-        if current_admin_unit and request.endpoint == "manage_admin_unit.update"
-        else -1
-    )
-    exclude_id = admin_unit_id if admin_unit_id != -1 else None
-
-    if _query_bus().handle(
-        IsOrganizationNameTakenQuery(name=name, exclude_id=exclude_id)
-    ):
+    if _query_bus().handle(IsOrganizationNameTakenQuery(name=name)):
         raise ValidationError(lazy_gettext("Name is already taken"))
 
 
 def validate_organization_short_name(form, field):
     short_name = field.data
-    admin_unit_id = (
-        current_admin_unit.id
-        if current_admin_unit and request.endpoint == "manage_admin_unit.update"
-        else -1
-    )
-    exclude_id = admin_unit_id if admin_unit_id != -1 else None
-
-    if _query_bus().handle(
-        IsOrganizationShortNameTakenQuery(short_name=short_name, exclude_id=exclude_id)
-    ):
+    if _query_bus().handle(IsOrganizationShortNameTakenQuery(short_name=short_name)):
         raise ValidationError(lazy_gettext("Short name is already taken"))
 
 
@@ -149,42 +98,6 @@ class AdminUnitFormMixin(object):
     additional_information = VirtualFormField(
         AdditionalInformationForm, lazy_gettext("Additional information")
     )
-
-
-class UpdateForm(BaseUpdateForm, AdminUnitFormMixin):
-    verfication_requests = VirtualFormField(
-        VerificationRequestsForm, lazy_gettext("Verification requests")
-    )
-
-    def create_update_command(self, admin_unit_id: int) -> UpdateOrganizationCommand:
-        kwargs = dict(
-            actor=self.get_current_actor(),
-            id=admin_unit_id,
-            name=self.name.data,
-            short_name=self.short_name.data,
-            description=self.description.data,
-            location=self.location.form.create_update_command(),
-            logo=self.logo.form.create_update_command(),
-            url=self.additional_information.form.url.data,
-            email=self.additional_information.form.email.data,
-            phone=self.additional_information.form.phone.data,
-            fax=self.additional_information.form.fax.data,
-        )
-
-        verification_requests_field = getattr(self, "verfication_requests", None)
-        if verification_requests_field is not None:
-            verification_requests_form = verification_requests_field.form
-            kwargs["incoming_verification_requests_allowed"] = (
-                verification_requests_form.incoming_verification_requests_allowed.data
-            )
-            kwargs["incoming_verification_requests_text"] = (
-                verification_requests_form.incoming_verification_requests_text.data
-            )
-            kwargs["incoming_verification_requests_postal_codes"] = (
-                verification_requests_form.incoming_verification_requests_postal_codes.data
-            )
-
-        return UpdateOrganizationCommand(**kwargs)
 
 
 class UpdateWidgetForm(BaseUpdateForm):

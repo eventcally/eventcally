@@ -4,13 +4,18 @@ from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.presentation.bff.manage import bff_manage_bp
 from project.presentation.bff.routing import bff_route
 from project.presentation.bff.schemas import (
+    PlaceAddress,
     PlaceCoordinate,
     PlaceSuggestion,
     PlaceSuggestionList,
     PlaceSuggestionParams,
 )
 from project.presentation.shared.access import can_use_manage_place_lookup
-from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_place
+from project.presentation.shared.maputils import (
+    find_gmaps_places,
+    get_gmaps_place,
+    get_gmaps_place_address,
+)
 
 
 @bff_route(
@@ -54,3 +59,21 @@ def get_place_coordinate(gmaps_id: str):
         abort(404)
 
     return PlaceCoordinate(latitude=location["lat"], longitude=location["lng"])
+
+
+@bff_route(
+    bff_manage_bp,
+    "/places/<gmaps_id>/address",
+    response=PlaceAddress,
+    summary="The address fields of a Google Maps place",
+)
+def get_place_address(gmaps_id: str):
+    if not can_use_manage_place_lookup():
+        raise UnauthorizedError()
+
+    place = get_gmaps_place(gmaps_id)
+
+    if not (place or {}).get("geometry", {}).get("location"):
+        abort(404)
+
+    return PlaceAddress(**get_gmaps_place_address(place))
