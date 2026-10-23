@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-23 22:14+0200\n"
+"POT-Creation-Date: 2026-10-23 23:31+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -253,6 +253,11 @@ msgstr "Füge der Veranstaltung eine Beschreibung hinzu."
 msgid "Add event date"
 msgstr "Termin hinzufügen"
 
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:377
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:378
+msgid "Add tag"
+msgstr "Tag hinzufügen"
+
 #: project/presentation/web/templates/_macros.html:507
 #: project/presentation/web/templates/_macros.html:666
 #: project/presentation/web/templates/_macros.html:1329
@@ -263,7 +268,7 @@ msgstr "Zum Kalender"
 msgid "Add widget"
 msgstr "Widget hinzufügen"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:323
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:319
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:99
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/create.html:249
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/update.html:153
@@ -367,7 +372,7 @@ msgstr "Ganztägig"
 msgid "Allow"
 msgstr "Erlauben"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:356
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:352
 msgid "Allow verification requests"
 msgstr "Verifizierungsanfragen erlauben"
 
@@ -594,7 +599,7 @@ msgstr ""
 "Wähle aus, wie relevant die Veranstaltung für deine Organisation ist. Der"
 " Wert ist nicht sichtbar und dient der Sortierung."
 
-#: frontend/src/shared/ImageField.vue:105
+#: frontend/src/shared/ImageField.vue:106
 #: project/presentation/web/templates/_macros.html:185
 msgid "Choose image file"
 msgstr "Bild-Datei auswählen"
@@ -797,7 +802,7 @@ msgstr "Link kopieren"
 msgid "Copy the code below and paste it into your website."
 msgstr "Kopiere den unten stehenden Code und füge ihn auf deiner Website ein."
 
-#: frontend/src/shared/ImageField.vue:133
+#: frontend/src/shared/ImageField.vue:134
 #: project/presentation/web/forms/common.py:98
 msgid "Copyright text"
 msgstr "Copyright Text"
@@ -989,7 +994,7 @@ msgstr "Veranstaltung löschen"
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:31
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:32
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:181
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:397
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:396
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:23
 msgid "Delete organization"
 msgstr "Organisation löschen"
@@ -1034,12 +1039,12 @@ msgstr "Löschung beantragt am"
 msgid "Deny"
 msgstr "Ablehnen"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:297
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:293
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:89
 msgid "Describe the organization in a few words"
 msgstr "Beschreibe die Organisation in wenigen Worten"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:295
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:291
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:88
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:25
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:29
@@ -1165,7 +1170,7 @@ msgstr "Beziehung bearbeiten"
 #: frontend/src/apps/admin/pages/AdminHome.vue:14
 #: frontend/src/apps/admin/pages/EmailPage.vue:92
 #: frontend/src/apps/admin/pages/UsersPage.vue:34
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:330
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:326
 #: project/presentation/web/templates/_macros.html:296
 #: project/presentation/web/templates/_macros.html:1314
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:33
@@ -1768,7 +1773,7 @@ msgstr "Export"
 msgid "External calendars"
 msgstr "Externe Kalender"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:340
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:336
 #: project/presentation/web/templates/_macros.html:367
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:35
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:33
@@ -2022,7 +2027,7 @@ msgstr ""
 "Wenn gesetzt, können andere Organisationen diese Organisation bitten, "
 "deren Veranstaltungen zu empfehlen."
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:352
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:348
 msgid "If set, unverified organizations may ask you for verification."
 msgstr ""
 "Wenn gesetzt, können nicht verifizierte Organisationen um eine "
@@ -2262,7 +2267,7 @@ msgstr "Organisation verlassen"
 msgid "Legal notice"
 msgstr "Impressum"
 
-#: frontend/src/shared/ImageField.vue:149
+#: frontend/src/shared/ImageField.vue:150
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/forms/common.py:104
 msgid "License"
@@ -2272,7 +2277,7 @@ msgstr "Lizenz"
 msgid "Licenses"
 msgstr "Lizenzen"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:374
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:370
 msgid "Limit verification requests to organizations with these postal codes."
 msgstr ""
 "Limitiere Verifizierungsanfragen auf Oranisationen mit diesen "
@@ -2287,7 +2292,7 @@ msgstr "Link"
 msgid "Link Color"
 msgstr "Linkfarbe"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:325
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:321
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:32
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:14
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:179
@@ -2312,7 +2317,7 @@ msgid "List all events of %(admin_unit_name)s"
 msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
 
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:66
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:304
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:300
 #: frontend/src/shared/LocationFilter.vue:122
 #: frontend/src/shared/LocationFilter.vue:123
 #: project/infrastructure/babel_extract.py:1
@@ -2329,7 +2334,7 @@ msgstr "Standort"
 msgid "Locations"
 msgstr "Orte"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:311
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:307
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:97
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:20
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:29
@@ -2551,8 +2556,8 @@ msgstr "Keine Widgets gefunden"
 
 #: project/presentation/bff/admin/mail.py:122
 #: project/presentation/bff/admin/users.py:87
-#: project/presentation/web/modular/fields.py:139
-#: project/presentation/web/modular/fields.py:200
+#: project/presentation/web/modular/fields.py:111
+#: project/presentation/web/modular/fields.py:172
 msgid "Not a valid choice"
 msgstr "Keine gültige Auswahl"
 
@@ -2885,7 +2890,7 @@ msgstr "Füge den folgenden Code im Head der Seite ein."
 msgid "Permissions"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:335
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:331
 #: project/presentation/web/templates/_macros.html:359
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:34
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:17
@@ -2968,7 +2973,7 @@ msgstr "Bitte notiere den Key: %(key)s. Er wird nur einmal angezeigt."
 msgid "Please select"
 msgstr "Bitte auswählen"
 
-#: frontend/src/shared/ImageField.vue:151
+#: frontend/src/shared/ImageField.vue:152
 #: project/presentation/web/forms/common.py:107
 msgid ""
 "Please select if the image should be displayed in external event "
@@ -3523,8 +3528,7 @@ msgstr "Kurzname für die Organisation"
 msgid "Short name is already taken"
 msgstr "Der Kurzname ist bereits vergeben"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:274
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:287
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:283
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:75
 msgid "Short name must contain only letters numbers or underscore"
 msgstr "Der Kurzname darf nur Buchstaben, Nummern und Unterstriche enthalten"
@@ -3797,7 +3801,7 @@ msgstr "Der Prüfungsstatus deiner Empfehlungsanfrage wurde aktualisiert"
 msgid "The review status of your verification request has been updated."
 msgstr "Der Prüfungsstatus deiner Verifizierungsanfrage wurde aktualisiert"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:272
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:271
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:67
 msgid "The short name is used to create a unique identifier for your events"
 msgstr ""
@@ -3864,7 +3868,7 @@ msgstr "Dieses Feld ist erforderlich."
 msgid "This is a test mail"
 msgstr "Das ist eine Test-Mail"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:364
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:360
 msgid ""
 "This text is shown to unverified organizations to help them decide "
 "whether they ask you for verification."
@@ -3926,7 +3930,7 @@ msgstr "Typisches Alter bis"
 msgid "URL"
 msgstr "URL"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:392
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:391
 #: project/presentation/web/modular/base_form.py:95
 msgid "Update"
 msgstr "Aktualisieren"
@@ -3997,17 +4001,17 @@ msgstr "Prüfungsstatus der Verifizierungsanfrage aktualisiert"
 msgid "Verification request successfully updated"
 msgstr "Verifizierungsanfrage erfolgreich aktualisiert"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:349
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:345
 #: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:6
 #: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:11
 msgid "Verification requests"
 msgstr "Verifizierungsanfragen"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:360
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:356
 msgid "Verification requests information"
 msgstr "Text für Verifizierungsanfragen"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:372
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:368
 msgid "Verification requests postal codes"
 msgstr "Postleitzahlen für Verifizierungsanfragen"
 

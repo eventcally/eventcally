@@ -373,6 +373,9 @@ onMounted(() => {
               <BFormTags
                 v-model="form.verification.postal_codes"
                 input-id="verification-postal-codes"
+                class="postal-codes"
+                :placeholder="t('Add tag') + '...'"
+                :add-button-text="t('Add tag')"
                 separator=" ,;"
                 :tag-validator="(tag: string) => tag.length <= 10"
                 no-outer-focus
@@ -397,3 +400,11 @@ onMounted(() => {
     </BOverlay>
   </div>
 </template>
+
+<style scoped>
+/* The tag's close button is dark on the dark tag: make it white. */
+.postal-codes :deep(.btn-close) {
+  filter: invert(1) grayscale(100%) brightness(200%);
+  opacity: 1;
+}
+</style>

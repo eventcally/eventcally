@@ -57,8 +57,8 @@ function toNumber(value: string | number | null | undefined): number | null {
 
 <template>
   <div data-test="location-fields">
-    <div class="input-group mb-3">
-      <span class="input-group-text"><i class="fab fa-google"></i></span>
+    <div class="google-place d-flex mb-3">
+      <span class="input-group-text rounded-end-0"><i class="fab fa-google"></i></span>
       <div class="flex-grow-1">
         <AppTypeahead
           :model-value="place"
@@ -103,3 +103,12 @@ function toNumber(value: string | number | null | undefined): number | null {
     </BFormGroup>
   </div>
 </template>
+
+<style scoped>
+/* Join the Google icon and the typeahead input like one input group. */
+.google-place :deep(.form-control) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 0;
+}
+</style>
