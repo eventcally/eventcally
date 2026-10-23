@@ -72,7 +72,8 @@ describe("EventDateCard", () => {
       },
     });
 
-    expect(wrapper.find("img").attributes("src")).toBe("/img?s=200");
+    expect(wrapper.find(".event-date-photo").attributes("src")).toBe("/img?s=200");
+    expect(wrapper.find(".event-date-photo-mobile").attributes("src")).toBe("/img?s=500");
     expect(wrapper.find('[data-test="copyright"]').text()).toContain("© Jane");
     expect(wrapper.find('[data-test="copyright"] a').attributes("href")).toBe("https://license.test");
   });

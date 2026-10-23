@@ -43,8 +43,18 @@ function toggleReference() {
 
 <template>
   <div :id="`event_card_${eventDate.id}`" class="card mb-3 event-date-card">
+    <div v-if="photo" class="d-sm-none" data-test="photo-mobile">
+      <img
+        :src="photo.url_500"
+        :alt="t('Event image')"
+        class="card-img-top event-date-photo-mobile"
+      />
+      <div v-if="photo.copyright_text" class="small text-muted px-3 pt-1">
+        &copy; {{ photo.copyright_text }}
+      </div>
+    </div>
     <div class="card-body">
-      <div class="row flex-column-reverse flex-sm-row">
+      <div class="row">
         <div class="col-sm" :class="{ 'col-sm-8': photo }">
           <h5 class="card-title">
             <a :href="publicPages.eventDate(eventDate.id)" class="text-body text-decoration-none">{{
@@ -77,7 +87,7 @@ function toggleReference() {
             <template v-else>{{ event.place.name }}</template>
           </small>
         </div>
-        <div v-if="photo" class="col-sm-4 mb-2 mb-sm-0 text-sm-end">
+        <div v-if="photo" class="col-sm-4 d-none d-sm-block text-end">
           <img
             :src="photo.url_200"
             :srcset="`${photo.url_200} 1x, ${photo.url_500} 2x`"
@@ -135,6 +145,12 @@ function toggleReference() {
   width: 160px;
   height: 160px;
   max-width: 100%;
+}
+
+.event-date-photo-mobile {
+  object-fit: cover;
+  width: 100%;
+  height: 150px;
 }
 
 .event-date-card.highlight {
