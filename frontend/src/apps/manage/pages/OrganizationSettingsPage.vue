@@ -374,8 +374,11 @@ onMounted(() => {
                 v-model="form.verification.postal_codes"
                 input-id="verification-postal-codes"
                 class="postal-codes"
-                placeholder=""
-                :add-button-text="t('Add postal code')"
+                :placeholder="t('Add postal code')"
+                :duplicate-tag-text="t('Duplicate postal code(s)')"
+                :invalid-tag-text="t('Invalid postal code(s)')"
+                :tag-remove-label="t('Remove postal code')"
+                :tag-removed-label="t('Postal code removed')"
                 separator=" ,;"
                 :tag-validator="(tag: string) => tag.length <= 10"
                 no-outer-focus
@@ -417,10 +420,13 @@ onMounted(() => {
 }
 .postal-codes :deep(.b-from-tags-field),
 .postal-codes :deep(.b-from-tags-field > div),
-.postal-codes :deep(.b-form-tags-input),
-.postal-codes :deep(.b-form-tags-button) {
+.postal-codes :deep(.b-form-tags-input) {
   height: 24px;
   min-height: 0;
+}
+/* Enter, comma or space adds a tag; the button only overflows the field. */
+.postal-codes :deep(.b-form-tags-button) {
+  display: none;
 }
 
 /* The tag's close button is dark on the dark tag: make it white. */

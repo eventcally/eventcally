@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-23 23:35+0200\n"
+"POT-Creation-Date: 2026-10-23 23:42+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -993,7 +993,7 @@ msgstr "Veranstaltung löschen"
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:31
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:32
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:181
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:395
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:399
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:23
 msgid "Delete organization"
 msgstr "Organisation löschen"
@@ -1133,6 +1133,10 @@ msgstr "Entwurf erfolgreich gespeichert"
 #: project/presentation/web/templates/event/actions.html:40
 msgid "Duplicate event"
 msgstr "Veranstaltung duplizieren"
+
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:378
+msgid "Duplicate postal code(s)"
+msgstr "Doppelte Postleitzahl(en)"
 
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:157
 msgid "Earliest start first"
@@ -2131,6 +2135,10 @@ msgstr "Ungültiger Veranstalter."
 msgid "Invalid place."
 msgstr "Ungültiger Ort."
 
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:379
+msgid "Invalid postal code(s)"
+msgstr "Ungültige Postleitzahl(en)"
+
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/read.html:4
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/read.html:8
 msgid "Invitation"
@@ -2990,6 +2998,10 @@ msgstr ""
 msgid "Postal code"
 msgstr "Postleitzahl"
 
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:381
+msgid "Postal code removed"
+msgstr "Postleitzahl entfernt"
+
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:193
 msgid "Preview"
 msgstr "Vorschau"
@@ -3215,6 +3227,10 @@ msgstr "Angemeldet bleiben"
 #: project/presentation/web/templates/_macros.html:1429
 msgid "Remove event date"
 msgstr "Termin entfernen"
+
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:380
+msgid "Remove postal code"
+msgstr "Postleitzahl entfernen"
 
 #: frontend/src/apps/public/pages/EventReportPage.vue:80
 #: project/presentation/web/templates/_macros.html:515
@@ -3929,7 +3945,7 @@ msgstr "Typisches Alter bis"
 msgid "URL"
 msgstr "URL"
 
-#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:390
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:394
 #: project/presentation/web/modular/base_form.py:95
 msgid "Update"
 msgstr "Aktualisieren"
