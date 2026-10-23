@@ -53,7 +53,6 @@ def test_ajax_lookup_parity(client, app, db, utils: UtilActions, seeder: Seeder)
         id=admin_unit_id,
         event_id=seeder.create_event(admin_unit_id),
     )
-    list_url = utils.get_url("manage_admin_unit.events", id=admin_unit_id)
 
     captured = {
         "license": _lookup(utils, event_url, "photo-license"),
@@ -80,9 +79,6 @@ def test_ajax_lookup_parity(client, app, db, utils: UtilActions, seeder: Seeder)
         "co_organizers": _lookup(utils, event_url, "co_organizers", "a"),
         "event_place": _lookup(utils, event_url, "event_place"),
         "event_place_term": _lookup(utils, event_url, "event_place", "halle"),
-        "list_organizer": _lookup(utils, list_url, "organizer_id"),
-        "list_place": _lookup(utils, list_url, "event_place_id", "e"),
-        "list_category": _lookup(utils, list_url, "category_id", "e"),
         "organization": _lookup(utils, relation_url, "target_admin_unit"),
         "organization_term": _lookup(utils, relation_url, "target_admin_unit", "Other"),
         "organization_request": _lookup(utils, request_url, "admin_unit"),

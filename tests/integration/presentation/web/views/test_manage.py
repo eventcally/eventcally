@@ -112,126 +112,21 @@ def test_admin_unit_404(client, seeder: Seeder, utils: UtilActions):
 
 def test_admin_unit_events(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
-    draft_id = seeder.create_event(admin_unit_id, draft=True)
-    planned_id = seeder.create_event(admin_unit_id, planned=True)
-
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events",
-        id=admin_unit_id,
-        date_from="2020-10-03",
-        date_to="2021-10-03",
-    )
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events",
-        id=admin_unit_id,
-        created_at_from="2020-10-03",
-        created_at_to="2021-10-03",
-    )
-
-    category_id = seeder.get_event_category_id("Other")
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events",
-        id=admin_unit_id,
-        category_id=category_id,
-    )
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events",
-        id=admin_unit_id,
-        tag="Tag",
-    )
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events",
-        id=admin_unit_id,
-        postal_code="38640,38690",
-    )
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events",
-        id=admin_unit_id,
-        date_from="2020-10-03",
-        date_to="2021-10-03",
-    )
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events",
-        id=admin_unit_id,
-        radius_location="current_position",
-        radius_coordinate="51.9077888,10.4333312",
-        radius_distance=500,
-        radius_location_name="Aktuelle Position",
-    )
-
-    for args in [
-        {"keyword": "Name"},
-        {"sort": "-last_modified_at"},
-        {"status": 1},
-        {"status": -1},
-        {"is_recurring": "1"},
-        {"is_recurring": "0"},
-    ]:
-        utils.get_endpoint_ok("manage_admin_unit.events", id=admin_unit_id, **args)
-
-    url = utils.get_url(
-        "manage_admin_unit.events",
-        id=admin_unit_id,
-    )
-    utils.ajax_lookup(url, "category_id")
-    utils.ajax_lookup(url, "event_place_id")
-    utils.ajax_lookup(url, "organizer_id")
 
     response = utils.get_endpoint_ok("manage_admin_unit.events", id=admin_unit_id)
 
-    event_url = utils.get_url("main.event", event_id=draft_id)
-    utils.assert_response_contains(response, event_url)
-
-    planned_url = utils.get_url("main.event", event_id=planned_id)
-    utils.assert_response_contains(response, planned_url)
+    utils.assert_response_contains(response, 'id="app"')
+    utils.assert_response_contains(response, "manage")
 
 
-def test_admin_unit_events_invalidDateFormat(
+def test_admin_unit_events_legacy_query_params_render_the_shell(
     client, seeder: Seeder, utils: UtilActions
 ):
-    user_id, admin_unit_id = seeder.setup_base()
-
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events",
-        id=admin_unit_id,
-        date_from="03.10.2020",
-        date_to="2021-10-03",
-    )
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events", id=admin_unit_id, date_from="", date_to=""
-    )
-
-
-def test_admin_unit_events_place(app, client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
-    seeder.create_event(admin_unit_id, draft=True)
     event_place_id = seeder.upsert_default_event_place(admin_unit_id)
 
     utils.get_endpoint_ok(
         "manage_admin_unit.events", id=admin_unit_id, event_place_id=event_place_id
-    )
-
-    from project.infrastructure.models import Location
-
-    place_id = seeder.upsert_event_place(
-        admin_unit_id,
-        "Place",
-        Location(
-            street="Markt 7",
-            postalCode="38640",
-            city="Goslar",
-            latitude=51.9077888,
-            longitude=10.4333312,
-        ),
-    )
-    seeder.create_event(admin_unit_id, place_id=place_id)
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events", id=admin_unit_id, event_place_id=event_place_id
-    )
-
-    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
-    utils.get_endpoint_ok(
-        "manage_admin_unit.events", id=admin_unit_id, organizer_id=organizer_id
     )
 
 

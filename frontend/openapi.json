@@ -1180,6 +1180,345 @@
         "title": "FieldError",
         "type": "object"
       },
+      "ManageChoice": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value",
+          "name",
+          "label"
+        ],
+        "title": "ManageChoice",
+        "type": "object"
+      },
+      "ManageEventListItem": {
+        "properties": {
+          "allday": {
+            "default": false,
+            "title": "Allday",
+            "type": "boolean"
+          },
+          "category_names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Category Names",
+            "type": "array"
+          },
+          "has_photo": {
+            "title": "Has Photo",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "internal_tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Internal Tags"
+          },
+          "is_recurring": {
+            "title": "Is Recurring",
+            "type": "boolean"
+          },
+          "last_modified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last Modified At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "number_of_dates": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Number Of Dates"
+          },
+          "number_of_reference_requests": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Number Of Reference Requests"
+          },
+          "number_of_references": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Number Of References"
+          },
+          "organizer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Organizer Name"
+          },
+          "place_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Place Label"
+          },
+          "public_status": {
+            "title": "Public Status",
+            "type": "string"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Start"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tags"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "is_recurring",
+          "category_names",
+          "public_status",
+          "has_photo"
+        ],
+        "title": "ManageEventListItem",
+        "type": "object"
+      },
+      "ManageEventListOptions": {
+        "properties": {
+          "can_request_reference": {
+            "title": "Can Request Reference",
+            "type": "boolean"
+          },
+          "can_write": {
+            "title": "Can Write",
+            "type": "boolean"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/PlanningChoice"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "default_date_from": {
+            "format": "date",
+            "title": "Default Date From",
+            "type": "string"
+          },
+          "distances": {
+            "items": {
+              "$ref": "#/components/schemas/PlanningDistance"
+            },
+            "title": "Distances",
+            "type": "array"
+          },
+          "public_statuses": {
+            "items": {
+              "$ref": "#/components/schemas/ManageChoice"
+            },
+            "title": "Public Statuses",
+            "type": "array"
+          },
+          "statuses": {
+            "items": {
+              "$ref": "#/components/schemas/ManageChoice"
+            },
+            "title": "Statuses",
+            "type": "array"
+          }
+        },
+        "required": [
+          "categories",
+          "statuses",
+          "public_statuses",
+          "distances",
+          "default_date_from",
+          "can_write",
+          "can_request_reference"
+        ],
+        "title": "ManageEventListOptions",
+        "type": "object"
+      },
+      "ManageEventPage": {
+        "properties": {
+          "event_place": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ManageRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ManageEventListItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "organizer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ManageRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "pages": {
+            "title": "Pages",
+            "type": "integer"
+          },
+          "per_page": {
+            "title": "Per Page",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "per_page",
+          "total",
+          "pages"
+        ],
+        "title": "ManageEventPage",
+        "type": "object"
+      },
+      "ManageRef": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "ManageRef",
+        "type": "object"
+      },
+      "ManageRefList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ManageRef"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ManageRefList",
+        "type": "object"
+      },
       "PlaceCoordinate": {
         "properties": {
           "latitude": {
@@ -4347,6 +4686,176 @@
         "summary": "Create a custom widget"
       }
     },
+    "/bff/manage/organizations/{id}/event-organizers": {
+      "get": {
+        "operationId": "bff_manage_lookup_event_organizers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "keyword",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManageRefList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Look up the event organizers of an organization"
+      }
+    },
+    "/bff/manage/organizations/{id}/event-places": {
+      "get": {
+        "operationId": "bff_manage_lookup_event_places",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "keyword",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManageRefList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Look up the event places of an organization"
+      }
+    },
     "/bff/manage/organizations/{id}/event-references": {
       "post": {
         "operationId": "bff_manage_create_event_reference",
@@ -4433,6 +4942,446 @@
           }
         },
         "summary": "Reference an event"
+      }
+    },
+    "/bff/manage/organizations/{id}/events": {
+      "get": {
+        "operationId": "bff_manage_list_events",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "keyword",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "date_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "date_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "category_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "tag",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "internal_tag",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "organizer_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "event_place_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "postal_code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "radius_coordinate",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^-?\\d+(\\.\\d+)?,-?\\d+(\\.\\d+)?$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "radius_distance",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "public_status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_at_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_at_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "is_recurring",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "0",
+                    "1"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "min_start",
+              "enum": [
+                "min_start",
+                "-last_modified_at",
+                "-created_at"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManageEventPage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Search the events of an organization"
+      }
+    },
+    "/bff/manage/organizations/{id}/events/options": {
+      "get": {
+        "operationId": "bff_manage_get_event_list_options",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManageEventListOptions"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Filter options of the event list of an organization"
       }
     },
     "/bff/manage/places": {

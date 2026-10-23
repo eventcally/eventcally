@@ -55,3 +55,17 @@ def test_coordinate_unknown_place_is_404(client, seeder, utils, monkeypatch):
     seeder.setup_base()
 
     assert utils.get_json(f"{PLACES_URL}/abc/coordinate").status_code == 404
+
+
+def test_member_without_planning_may_look_up_places(client, seeder, utils):
+    seeder.setup_base(admin_unit_verified=False)
+
+    assert utils.get_json(f"{PLACES_URL}?keyword=x").status_code == 200
+
+
+def test_user_without_organization_is_403(client, seeder, utils):
+    seeder.create_user()
+    utils.login()
+
+    assert utils.get_json(f"{PLACES_URL}?keyword=x").status_code == 403
+    assert utils.get_json(f"{PLACES_URL}/abc/coordinate").status_code == 403

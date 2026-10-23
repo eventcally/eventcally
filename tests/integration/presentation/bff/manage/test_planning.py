@@ -65,8 +65,6 @@ def test_non_planner_is_403(client, seeder, utils):
         f"{EXTERNAL_URL}?url={CALENDAR_URL}&date_from=2020-10-01&date_to=2020-10-31"
     )
     assert utils.get_json(external).status_code == 403
-    assert utils.get_json("/bff/manage/places?keyword=x").status_code == 403
-    assert utils.get_json("/bff/manage/places/abc/coordinate").status_code == 403
 
 
 # options
