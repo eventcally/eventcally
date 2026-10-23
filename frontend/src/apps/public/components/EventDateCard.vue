@@ -43,55 +43,63 @@ function toggleReference() {
 
 <template>
   <div :id="`event_card_${eventDate.id}`" class="card mb-3 event-date-card">
-    <div class="row g-0 flex-column-reverse flex-sm-row">
-      <div class="col-sm" :class="{ 'col-sm-8': photo }">
-        <div class="card-body">
+    <div class="card-body">
+      <div class="row flex-column-reverse flex-sm-row">
+        <div class="col-sm" :class="{ 'col-sm-8': photo }">
           <h5 class="card-title">
-            <a :href="publicPages.eventDate(eventDate.id)" class="text-body">{{ event.name }}</a>
+            <a :href="publicPages.eventDate(eventDate.id)" class="text-body text-decoration-none">{{
+              event.name
+            }}</a>
             <span class="small align-middle ms-1"><EventWarningPills :event="event" /></span>
           </h5>
           <h6 class="card-subtitle mb-2 text-body">
-            <i class="fa fa-calendar"></i>
+            <i class="fa fa-calendar me-1"></i>
             {{ formatEventDate(eventDate.start, eventDate.end, eventDate.allday, locale) }}
           </h6>
           <p v-if="event.description_preview" class="card-text">{{ event.description_preview }}</p>
           <small v-if="event.organizer_name" class="text-muted me-2" data-test="organizer">
-            <i class="fa fa-server"></i> {{ event.organizer_name }}
+            <i class="fa fa-server me-1"></i>{{ event.organizer_name }}
           </small>
           <small v-if="showOrganization" class="text-muted me-2" data-test="organization">
-            <i class="fa fa-database"></i> {{ event.organization.name }}
+            <i class="fa fa-database me-1"></i>{{ event.organization.name }}
           </small>
           <small v-if="event.place" class="text-muted">
-            <i class="fa fa-map-marker"></i>
-            <a v-if="coordinates" href="#" class="text-secondary" data-test="place" @click.prevent="flyTo">
+            <i class="fa fa-map-marker me-1"></i>
+            <a
+              v-if="coordinates"
+              href="#"
+              class="text-secondary text-decoration-none"
+              data-test="place"
+              @click.prevent="flyTo"
+            >
               {{ event.place.name }}
             </a>
             <template v-else>{{ event.place.name }}</template>
           </small>
         </div>
-      </div>
-      <div v-if="photo" class="col-sm-4 p-2 text-sm-end">
-        <img
-          :src="photo.url_200"
-          :srcset="`${photo.url_200} 1x, ${photo.url_500} 2x`"
-          :alt="t('Event image')"
-          class="event-date-photo"
-        />
-        <div v-if="photo.copyright_text || photo.license_code" class="small text-muted" data-test="copyright">
-          <template v-if="photo.copyright_text">&copy; {{ photo.copyright_text }}</template>
-          <a
-            v-if="photo.license_code && photo.license_url"
-            :href="photo.license_url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="ms-1"
-            >{{ photo.license_code }}</a
-          >
-          <template v-else-if="photo.license_code"> {{ photo.license_code }}</template>
+        <div v-if="photo" class="col-sm-4 mb-2 mb-sm-0 text-sm-end">
+          <img
+            :src="photo.url_200"
+            :srcset="`${photo.url_200} 1x, ${photo.url_500} 2x`"
+            :alt="t('Event image')"
+            class="event-date-photo"
+          />
+          <div v-if="photo.copyright_text || photo.license_code" class="small text-muted" data-test="copyright">
+            <template v-if="photo.copyright_text">&copy; {{ photo.copyright_text }}</template>
+            <a
+              v-if="photo.license_code && photo.license_url"
+              :href="photo.license_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="ms-1"
+              >{{ photo.license_code }}</a
+            >
+            <template v-else-if="photo.license_code"> {{ photo.license_code }}</template>
+          </div>
         </div>
       </div>
     </div>
-    <div v-if="reference" class="card-footer py-1 bg-transparent">
+    <div v-if="reference" class="card-footer py-1">
       <button
         v-if="reference.state === 'own'"
         type="button"
@@ -100,7 +108,7 @@ function toggleReference() {
         :title="t('Own events cannot be referenced')"
         data-test="reference-own"
       >
-        <i class="fa fa-fw fa-link"></i> <span class="small">{{ t("Own event") }}</span>
+        <i class="fa fa-fw fa-link me-1"></i><span class="small">{{ t("Own event") }}</span>
       </button>
       <button
         v-else
@@ -112,7 +120,7 @@ function toggleReference() {
         :data-test="`reference-${reference.state}`"
         @click="toggleReference"
       >
-        <i class="fa fa-fw fa-link"></i>
+        <i class="fa fa-fw fa-link me-1"></i>
         <span class="small">{{
           reference.state === "referenced" ? t("Referenced") : t("Not referenced")
         }}</span>
@@ -124,8 +132,9 @@ function toggleReference() {
 <style scoped>
 .event-date-photo {
   object-fit: contain;
+  width: 160px;
+  height: 160px;
   max-width: 100%;
-  max-height: 160px;
 }
 
 .event-date-card.highlight {
