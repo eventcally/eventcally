@@ -10,10 +10,7 @@ from wtforms.utils import unset_value
 from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_place
 from project.presentation.web.modular.widgets import (
     AjaxSelect2Widget,
-    DateRangeWidget,
-    GooglePlaceCoordinateWidget,
     GooglePlaceWidget,
-    RadiusWidget,
 )
 
 
@@ -26,38 +23,6 @@ class VirtualFormField(FormField):
 
     def process(self, formdata, data=unset_value, extra_filters=None):
         return super().process(formdata, data, extra_filters)
-
-
-class DateRangeField(FormField):
-    widget = DateRangeWidget()
-
-    def __init__(
-        self, form_class=None, label=None, validators=None, separator="_", **kwargs
-    ):
-        if not form_class:
-            from project.presentation.web.forms.common import DateRangeForm
-
-            form_class = DateRangeForm
-        kwargs.setdefault("default", dict)
-        render_kw = kwargs.setdefault("render_kw", dict())
-        render_kw.setdefault("group_class", "")
-        super().__init__(form_class, label, validators, separator, **kwargs)
-
-
-class RadiusField(FormField):
-    widget = RadiusWidget()
-
-    def __init__(
-        self, form_class=None, label=None, validators=None, separator="_", **kwargs
-    ):
-        if not form_class:
-            from project.presentation.web.forms.common import RadiusForm
-
-            form_class = RadiusForm
-        kwargs.setdefault("default", dict)
-        render_kw = kwargs.setdefault("render_kw", dict())
-        render_kw.setdefault("group_class", "")
-        super().__init__(form_class, label, validators, separator, **kwargs)
 
 
 class GooglePlaceField(SelectField):
@@ -87,10 +52,6 @@ class GooglePlaceField(SelectField):
 
     def get_bff_google_place(self, gmaps_id):
         return get_gmaps_place(gmaps_id)
-
-
-class GooglePlaceCoordinateField(GooglePlaceField):
-    widget = GooglePlaceCoordinateWidget()
 
 
 class SelectMultipleTagField(SelectMultipleField):

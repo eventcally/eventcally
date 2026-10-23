@@ -15,19 +15,7 @@ from project.presentation.shared.query_results import (
     abort_if_page_out_of_range,
     page_request_from_request_args,
 )
-from project.presentation.web.modular.fields import (
-    AjaxSelectField,
-    DateRangeField,
-    RadiusField,
-)
-from project.presentation.web.modular.filters import (
-    BooleanFilter,
-    DateRangeFilter,
-    EnumFilter,
-    RadiusFilter,
-    SelectModelFilter,
-    StringFilter,
-)
+from project.presentation.web.modular.filters import BooleanFilter, EnumFilter
 from project.presentation.web.views.utils import (
     flash_errors,
     get_pagination_urls,
@@ -183,28 +171,6 @@ class BaseListView(BaseView):
                 choices=filter.options,
                 default="",
                 coerce=int,
-                render_kw={"formrow": True},
-            )
-        elif isinstance(filter, DateRangeFilter):
-            field = DateRangeField(
-                label=filter.label,
-                render_kw={"formrow": True},
-            )
-        elif isinstance(filter, RadiusFilter):
-            field = RadiusField(
-                label=filter.label,
-                render_kw={"formrow": True},
-            )
-        elif isinstance(filter, SelectModelFilter):
-            field = AjaxSelectField(
-                filter.loader,
-                label=filter.label,
-                allow_blank=filter.allow_blank,
-                render_kw={"formrow": True},
-            )
-        elif isinstance(filter, StringFilter):
-            field = StringField(
-                label=filter.label,
                 render_kw={"formrow": True},
             )
         else:

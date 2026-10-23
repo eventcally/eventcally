@@ -1,13 +1,10 @@
 import os
 
-from flask_babel import format_date, format_datetime, format_time
+from flask_babel import format_date, format_datetime
 from markupsafe import Markup
 
-from project.domain.models.enums.event_public_status import EventPublicStatus
-from project.domain.models.enums.event_status import EventStatus
 from project.presentation.shared.permissions import get_organization_permission_infos
 from project.shared.utils import (
-    get_event_category_name,
     get_localized_enum_name,
     get_location_str,
     getattr_keypath,
@@ -34,43 +31,14 @@ class DatePropFormatter(BasePropFormatter):
         return format_date(data) if data else ""
 
 
-class EventDateStartPropFormatter(BasePropFormatter):
-    def format(self, data):
-        parts = [format_date(data.start, "short")]
-
-        if not data.allday:
-            parts.append(format_time(data.start, "short"))
-
-        return " ".join(parts)
-
-
 class StringPropFormatter(BasePropFormatter):
     def format(self, data):
         return data if data is not None else ""
 
 
-class TagPropFormatter(BasePropFormatter):
-    def format(self, data):
-        return data.replace(",", ", ") if data is not None else ""
-
-
 class LocationPropFormatter(BasePropFormatter):
     def format(self, data):
         return get_location_str(data)
-
-
-class EventPlacePropFormatter(BasePropFormatter):
-    def format(self, data):
-        parts = [data.name]
-
-        location = data.location
-        if location:
-            if location.postalCode:
-                parts.append(location.postalCode)
-            if location.city:
-                parts.append(location.city)
-
-        return " ".join(parts)
 
 
 class EventPropFormatter(BasePropFormatter):
@@ -200,12 +168,6 @@ class LocationProp(BaseProp):
         super().__init__(*args, **kwargs)
 
 
-class EventPlaceProp(BaseProp):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("formatter", EventPlacePropFormatter())
-        super().__init__(*args, **kwargs)
-
-
 class EventProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", EventPropFormatter())
@@ -230,13 +192,6 @@ class DateTimeProp(BaseProp):
         super().__init__(*args, **kwargs)
 
 
-class EventDateStartProp(BaseProp):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("formatter", EventDateStartPropFormatter())
-        kwargs.setdefault("no_wrap", True)
-        super().__init__(*args, **kwargs)
-
-
 class DateProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", DatePropFormatter())
@@ -253,48 +208,6 @@ class CountProp(BaseProp):  # pragma: no cover
     def get_display_data(self, object):
         data = super().get_display_data(object)
         return len(data) if hasattr(data, "__len__") else None
-
-
-class PublicStatusPropFormatter(BadgePropFormatter):
-    badge_mapping = {
-        EventPublicStatus.draft: "light",
-        EventPublicStatus.published: "success",
-        EventPublicStatus.planned: "secondary",
-    }
-
-
-class PublicStatusProp(BaseProp):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("formatter", PublicStatusPropFormatter())
-        super().__init__(*args, **kwargs)
-
-
-class EventStatusPropFormatter(BadgePropFormatter):
-    badge_mapping = {
-        EventStatus.scheduled: "success",
-        EventStatus.cancelled: "danger",
-        EventStatus.movedOnline: "warning",
-        EventStatus.postponed: "warning",
-        EventStatus.rescheduled: "warning",
-    }
-
-
-class EventStatusProp(BaseProp):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("formatter", EventStatusPropFormatter())
-        super().__init__(*args, **kwargs)
-
-
-class EventCategoryListPropFormatter(BasePropFormatter):
-    def format(self, data):
-        names = [str(get_event_category_name(c)) for c in data]
-        return ", ".join(names)
-
-
-class EventCategoryListProp(BaseProp):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("formatter", EventCategoryListPropFormatter())
-        super().__init__(*args, **kwargs)
 
 
 class RateLimitPropPropFormatter(BasePropFormatter):

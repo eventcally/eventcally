@@ -1,7 +1,7 @@
 from flask import current_app, url_for
 from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
-from wtforms import BooleanField, DecimalField, HiddenField, SelectField, StringField
+from wtforms import BooleanField, DecimalField, StringField
 from wtforms.validators import DataRequired, Length, Optional
 
 from project.application.queries import GetSiteNoticesQuery
@@ -10,15 +10,10 @@ from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
 )
 from project.domain.models.value_objects.webhook_value_object import WebhookValueObject
-from project.presentation.shared.search_options import distance_choices
-from project.presentation.web.forms.widgets import CustomDateField, MultiCheckboxField
+from project.presentation.web.forms.widgets import MultiCheckboxField
 from project.presentation.web.modular.ajax import LicenseAjaxModelLoader
 from project.presentation.web.modular.base_form import BaseForm
-from project.presentation.web.modular.fields import (
-    AjaxSelectField,
-    GooglePlaceCoordinateField,
-    GooglePlaceField,
-)
+from project.presentation.web.modular.fields import AjaxSelectField, GooglePlaceField
 from project.shared.imageutils import (
     get_bytes_from_image,
     get_data_uri_from_bytes,
@@ -291,67 +286,3 @@ weekday_choices = [
     (6, lazy_gettext("Saturday")),
     (0, lazy_gettext("Sunday")),
 ]
-
-
-class DateRangeForm(BaseForm):
-    class Meta:
-        csrf = False
-
-    from_field = CustomDateField(
-        lazy_gettext("From"),
-        name="from",
-        validators=[Optional()],
-        clearable=True,
-        render_kw={
-            "class": "datepicker form-control",
-        },
-    )
-    to_field = CustomDateField(
-        lazy_gettext("to"),
-        name="to",
-        set_end_of_day=True,
-        clearable=True,
-        validators=[Optional()],
-        render_kw={
-            "class": "datepicker form-control",
-        },
-    )
-
-    def __init__(self, formdata=..., **kwargs):
-        super().__init__(formdata, **kwargs)
-
-        self.from_field.render_kw["data-range-to"] = f"#{self.to_field.id}"
-
-
-class RadiusForm(BaseForm):
-    class Meta:
-        csrf = False
-
-    coordinate = HiddenField(validators=[Optional()])
-    location_name = HiddenField(validators=[Optional()])
-    location = GooglePlaceCoordinateField(
-        lazy_gettext("Location"), validators=[Optional()]
-    )
-    distance = SelectField(
-        lazy_gettext("Distance"),
-        validators=[Optional()],
-        coerce=int,
-        choices=distance_choices,
-        render_kw={
-            "class": "form-control",
-        },
-    )
-
-    def __init__(self, formdata=..., **kwargs):
-        super().__init__(formdata, **kwargs)
-
-        self.location.render_kw["data-coordinate-field"] = f"#{self.coordinate.id}"
-        self.location.render_kw["data-location-name-field"] = (
-            f"#{self.location_name.id}"
-        )
-
-    def process(self, formdata=None, obj=None, data=None, extra_filters=None, **kwargs):
-        super().process(formdata, obj, data, extra_filters, **kwargs)
-
-        if self.location.data:  # pragma: no cover
-            self.location.choices = [(self.location.data, self.location_name.data)]
