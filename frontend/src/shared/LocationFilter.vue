@@ -9,7 +9,14 @@ interface Suggestion {
   main_text?: string | null;
 }
 
-defineProps<{ distances: { value: number; label: string }[] }>();
+const props = withDefaults(
+  defineProps<{
+    distances: { value: number; label: string }[];
+    /** Which BFF area serves the place lookups: planning (session) or anonymous visitors. */
+    scope?: "public" | "manage";
+  }>(),
+  { scope: "manage" },
+);
 const coordinate = defineModel<string>("coordinate", { default: "" });
 const name = defineModel<string>("name", { default: "" });
 const distance = defineModel<number | null>("distance", { default: null });
@@ -41,7 +48,11 @@ function onInput(event: Event) {
 }
 
 async function search(keyword: string) {
-  const { data } = await api.GET("/bff/manage/places", { params: { query: { keyword } } });
+  const query = { params: { query: { keyword } } };
+  const { data } =
+    props.scope === "public"
+      ? await api.GET("/bff/public/places", query)
+      : await api.GET("/bff/manage/places", query);
   suggestions.value = data?.items ?? [];
   searched.value = true;
 }
@@ -50,9 +61,11 @@ async function pick(suggestion: Suggestion) {
   suggestions.value = [];
   searched.value = false;
   failed.value = false;
-  const { data } = await api.GET("/bff/manage/places/{gmaps_id}/coordinate", {
-    params: { path: { gmaps_id: suggestion.gmaps_id } },
-  });
+  const path = { params: { path: { gmaps_id: suggestion.gmaps_id } } };
+  const { data } =
+    props.scope === "public"
+      ? await api.GET("/bff/public/places/{gmaps_id}/coordinate", path)
+      : await api.GET("/bff/manage/places/{gmaps_id}/coordinate", path);
   if (!data) {
     failed.value = true;
     return;

@@ -129,7 +129,7 @@ def _reference_of(event, referencing_organization):
 def _place_of(event):
     place = event.event_place
 
-    if not place:
+    if not place:  # pragma: no cover
         return None
 
     location = place.location

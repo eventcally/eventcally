@@ -2,8 +2,8 @@
 import { BModal } from "bootstrap-vue-next";
 import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import LocationFilter from "@/shared/LocationFilter.vue";
 import { emptyFilter, type PlanningFilter } from "../planning";
-import LocationFilter from "./LocationFilter.vue";
 
 const props = defineProps<{
   categories: { id: number; name: string }[];
@@ -69,6 +69,7 @@ function refresh() {
         v-model:name="draft.location_name"
         v-model:distance="draft.distance"
         :distances="distances"
+        scope="manage"
       />
     </div>
 

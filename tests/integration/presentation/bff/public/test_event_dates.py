@@ -72,6 +72,25 @@ def test_options_unknown_ids_are_none(client, seeder, utils):
     assert body["organizer"] is None
 
 
+def test_options_without_permission_has_no_referencing_organization(
+    client, seeder, utils
+):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    seeder.create_admin_unit_member(admin_unit_id, [], email="member@test.de")
+    utils.login("member@test.de")
+
+    body = utils.get_json_ok(OPTIONS_URL).json
+
+    assert body["referencing_organization"] is None
+
+
+def test_options_user_without_organization(client, seeder, utils):
+    seeder.create_user(email="lonely@test.de")
+    utils.login("lonely@test.de")
+
+    assert utils.get_json_ok(OPTIONS_URL).json["referencing_organization"] is None
+
+
 # search
 
 

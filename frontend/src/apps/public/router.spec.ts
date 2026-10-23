@@ -26,6 +26,13 @@ describe("public router", () => {
     expect(route.params).toMatchObject({ id: "5" });
   });
 
+  it("resolves the event dates page with legacy query arguments", async () => {
+    const route = await resolve("/eventdates?admin_unit_id=3&keyword=jam");
+
+    expect(route.name).toBe("event-dates");
+    expect(route.query).toMatchObject({ admin_unit_id: "3", keyword: "jam" });
+  });
+
   it("resolves the organizations pages", async () => {
     expect((await resolve("/organizations")).name).toBe("organizations");
 
