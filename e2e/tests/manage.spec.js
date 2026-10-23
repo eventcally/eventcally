@@ -36,6 +36,9 @@ test.describe("Manage", () => {
     await expect(row).toBeVisible();
     await screenshot(page, "events");
 
+    // The filter is collapsed until it is opened or the URL sets a filter.
+    await expect(page.locator("#keyword")).toBeHidden();
+    await page.locator("[data-test=toggle-filter]").click();
     await page.getByRole("button", { name: "Weitere Filter" }).click();
     await screenshot(page, "search-form");
     await page.getByRole("button", { name: "Weitere Filter" }).click();

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDate, formatDateTime, formatEventDate } from "./format";
+import { formatDate, formatDateTime, formatEventDate, formatStart } from "./format";
 
 describe("formatDateTime", () => {
   it("returns an empty string for missing values", () => {
@@ -49,5 +49,14 @@ describe("formatEventDate", () => {
   it("shows no separator for a one-day all-day date", () => {
     const text = formatEventDate("2026-10-03T00:00:00", "2026-10-03T00:00:00", true, "en");
     expect(text).not.toContain(" - ");
+  });
+});
+
+describe("formatStart", () => {
+  it("joins date and time without a comma and leaves the time out when all-day", () => {
+    const iso = new Date(2026, 0, 8, 10, 30).toISOString();
+    expect(formatStart(iso, false, "de")).toBe("08.01.26 10:30");
+    expect(formatStart(iso, true, "de")).toBe("08.01.26");
+    expect(formatStart(null, false, "de")).toBe("");
   });
 });

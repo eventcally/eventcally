@@ -12,9 +12,10 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
+import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
 import AppPager from "@/shared/AppPager.vue";
 import { boot } from "@/shared/boot";
-import { formatDateTime, formatStart } from "@/shared/format";
+import { formatDate, formatStart } from "@/shared/format";
 import { manage, publicPages } from "@/shared/legacy";
 import { useNotify } from "@/shared/notify";
 import { takeFlash } from "../flash";
@@ -63,6 +64,10 @@ const fields = computed<TableFieldRaw[]>(() => [
   { key: "number_of_reference_requests", label: t("Reference requests") },
   { key: "last_modified_at", label: t("Last modified at") },
 ]);
+
+// The caret stays with the last word of a wrapping name.
+const nameHead = (name: string) => name.slice(0, name.lastIndexOf(" ") + 1);
+const nameTail = (name: string) => name.slice(name.lastIndexOf(" ") + 1);
 
 const publicStatusVariant: Record<string, string> = {
   draft: "light",
@@ -133,7 +138,7 @@ onMounted(async () => {
 
 <template>
   <div>
-    <h1>{{ t("Events") }}</h1>
+    <AppBreadcrumb :items="[{ label: t('Events') }]" />
 
     <div v-if="options?.can_write" class="my-4">
       <a :href="manage.eventCreate(organizationId)" class="btn btn-outline-secondary">
@@ -171,17 +176,25 @@ onMounted(async () => {
         <template #head(number_of_reference_requests)><i class="fa fa-question" :title="t('Reference requests')"></i></template>
         <template #head(last_modified_at)><i class="fa fa-save" :title="t('Last modified at')"></i></template>
 
-        <template #cell(start)="{ item }">{{ formatStart(item.start, item.allday, boot.locale) }}</template>
+        <template #cell(start)="{ item }"
+          ><span class="text-nowrap">{{
+            formatStart(item.start, item.allday, boot.locale)
+          }}</span></template
+        >
         <template #cell(is_recurring)="{ item }">
-          <i v-if="item.is_recurring" class="fas fa-history" :title="t('Recurring event')"></i>
+          <i v-if="item.is_recurring" class="fa fa-check-circle" :title="t('Recurring event')"></i>
         </template>
         <template #cell(name)="{ item }">
           <BDropdown
-            :text="item.name"
             variant="link"
+            no-caret
+            toggle-class="p-0 border-0 text-start align-baseline"
             class="event-actions"
             teleport-to="body"
           >
+            <template #button-content>
+              {{ nameHead(item.name) }}<span class="text-nowrap">{{ nameTail(item.name) }}<i class="fa fa-caret-down ms-1"></i></span>
+            </template>
             <BDropdownItem :href="publicPages.event(item.id)">{{ t("View") }}</BDropdownItem>
             <BDropdownItem :href="manage.eventUpdate(organizationId, item.id)">
               {{ t("Edit") }}
@@ -211,9 +224,9 @@ onMounted(async () => {
           }}</span>
         </template>
         <template #cell(has_photo)="{ item }">
-          <i v-if="item.has_photo" class="fa fa-check" :title="t('Photo')"></i>
+          <i v-if="item.has_photo" class="fa fa-check-circle" :title="t('Photo')"></i>
         </template>
-        <template #cell(last_modified_at)="{ item }">{{ formatDateTime(item.last_modified_at, boot.locale) }}</template>
+        <template #cell(last_modified_at)="{ item }">{{ formatDate(item.last_modified_at, boot.locale) }}</template>
       </BTable>
     </BOverlay>
 

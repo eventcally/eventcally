@@ -36,8 +36,9 @@ export function formatEventDate(
 /** Short date, plus the short time unless the event is all-day (the manage list's start column). */
 export function formatStart(iso: string | null | undefined, allday: boolean, locale: string): string {
   if (!iso) return "";
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: "short",
-    ...(allday ? {} : { timeStyle: "short" as const }),
-  }).format(new Date(iso));
+  const date = new Date(iso);
+  const day = new Intl.DateTimeFormat(locale, { dateStyle: "short" }).format(date);
+  if (allday) return day;
+  // Joined by a space: a combined date-time format would put a comma between them.
+  return `${day} ${new Intl.DateTimeFormat(locale, { timeStyle: "short" }).format(date)}`;
 }

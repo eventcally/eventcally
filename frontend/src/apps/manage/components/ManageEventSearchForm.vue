@@ -28,6 +28,19 @@ const organizer = ref<Ref | null>(null);
 const eventPlace = ref<Ref | null>(null);
 const extended = ref(hasExtendedFilter(props.filter));
 
+/** Whether the URL sets any filter beyond the defaults (the form starts collapsed otherwise). */
+function isActive(filter: ManageEventFilter): boolean {
+  return Boolean(
+    hasExtendedFilter(filter) ||
+      filter.keyword ||
+      filter.date_to ||
+      filter.date_from !== props.options.default_date_from ||
+      filter.sort !== "min_start",
+  );
+}
+
+const open = ref(isActive(props.filter));
+
 watch(
   () => [props.filter, props.organizer, props.eventPlace] as const,
   () => {
@@ -43,6 +56,13 @@ watch(
   () => hasExtendedFilter(props.filter),
   (value) => {
     if (value) extended.value = true;
+  },
+);
+
+watch(
+  () => isActive(props.filter),
+  (value) => {
+    if (value) open.value = true;
   },
 );
 
@@ -80,7 +100,27 @@ function reset() {
 </script>
 
 <template>
-  <form class="my-4" autocomplete="off" @submit.prevent="submit">
+  <div class="my-4">
+    <button
+      type="button"
+      class="btn btn-outline-primary"
+      data-test="toggle-filter"
+      :aria-expanded="open"
+      aria-controls="search_form"
+      @click="open = !open"
+    >
+      <i class="fa fa-filter"></i> {{ t("Filter") }}
+    </button>
+  </div>
+
+  <form
+    v-show="open"
+    id="search_form"
+    data-test="form"
+    class="mb-4"
+    autocomplete="off"
+    @submit.prevent="submit"
+  >
     <div class="row g-2 mb-3">
       <label class="col-sm-2 col-form-label" for="keyword">{{ t("Keyword") }}</label>
       <div class="col-sm-10">

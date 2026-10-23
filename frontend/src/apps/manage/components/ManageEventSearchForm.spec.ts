@@ -49,6 +49,24 @@ describe("ManageEventSearchForm", () => {
   });
   afterEach(() => vi.useRealTimers());
 
+  const formVisible = (wrapper: ReturnType<typeof mountForm>) =>
+    (wrapper.find('[data-test="form"]').element as HTMLElement).style.display !== "none";
+
+  it("is collapsed without active filters and opens with the Filter button", async () => {
+    const wrapper = mountForm();
+    expect(formVisible(wrapper)).toBe(false);
+
+    await wrapper.find('[data-test="toggle-filter"]').trigger("click");
+    expect(formVisible(wrapper)).toBe(true);
+  });
+
+  it("starts open when the URL sets a filter", () => {
+    expect(formVisible(mountForm({ keyword: "Jam" }))).toBe(true);
+    expect(formVisible(mountForm({ sort: "-created_at" }))).toBe(true);
+    expect(formVisible(mountForm({ date_from: "2031-01-01" }))).toBe(true);
+    expect(formVisible(mountForm({ is_recurring: "1" }))).toBe(true);
+  });
+
   it("starts collapsed and expands on demand", async () => {
     const wrapper = mountForm();
     expect(extendedVisible(wrapper)).toBe(false);
