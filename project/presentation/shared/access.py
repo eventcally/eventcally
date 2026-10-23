@@ -219,6 +219,12 @@ def can_use_planning():
     return _authorization().can_use_planning(_current_actor())
 
 
+def can_use_manage_place_lookup():
+    """The Google place lookup of the location filters: planning users and every
+    member of an organization (the manage event list)."""
+    return can_use_planning() or bool(get_admin_units_for_manage())
+
+
 def can_verify_admin_unit_user():
     if not current_user.is_authenticated:  # pragma: no cover
         return False

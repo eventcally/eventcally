@@ -6,5 +6,6 @@ bff_manage_bp = Blueprint("bff_manage", __name__, url_prefix="/manage")
 
 from project.presentation.bff.manage import custom_widgets  # noqa: E402, F401
 from project.presentation.bff.manage import event_references  # noqa: E402, F401
+from project.presentation.bff.manage import events  # noqa: E402, F401
 from project.presentation.bff.manage import places  # noqa: E402, F401
 from project.presentation.bff.manage import planning  # noqa: E402, F401

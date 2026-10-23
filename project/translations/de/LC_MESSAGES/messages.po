@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-23 11:25+0200\n"
+"POT-Creation-Date: 2026-10-23 16:10+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -334,6 +334,9 @@ msgstr "Verifiziert"
 msgid "Administrator"
 msgstr "Administrator:in"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:211
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:223
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:261
 #: project/presentation/web/modular/filters.py:29
 #: project/presentation/web/modular/filters.py:46
 msgid "All"
@@ -550,10 +553,10 @@ msgstr "Löschen abbrechen"
 msgid "Cards"
 msgstr "Karten"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:126
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:37
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:26
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:56
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:300
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:59
 msgid "Categories"
 msgstr "Kategorien"
 
@@ -812,6 +815,7 @@ msgstr "%(model_display_name)s erstellen"
 msgid "Create another event for %(admin_unit_name)s"
 msgstr "Erstelle eine weitere Veranstaltung für %(admin_unit_name)s"
 
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:140
 #: project/presentation/web/templates/_managebar.html:23
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
@@ -843,10 +847,10 @@ msgstr "Beziehung erstellen"
 
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:57
 #: frontend/src/apps/admin/pages/UsersPage.vue:35
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:232
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:180
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:16
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:21
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:79
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference/displays.py:25
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/displays.py:34
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/displays.py:16
@@ -914,9 +918,9 @@ msgstr "Custom widget"
 msgid "Custom widgets"
 msgstr "Custom widgets"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:98
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:86
 #: project/presentation/web/templates/_macros.html:479
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:55
 msgid "Date"
 msgstr "Datum"
 
@@ -951,6 +955,7 @@ msgstr "Standard"
 #: frontend/src/apps/admin/pages/UsersPage.vue:93
 #: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:39
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:125
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:190
 #: project/presentation/web/modular/base_form.py:100
 #: project/presentation/web/modular/base_view_handler.py:204
 msgid "Delete"
@@ -990,7 +995,7 @@ msgstr "Veranstalter löschen"
 msgid "Delete place"
 msgstr "Ort löschen"
 
-#: frontend/src/apps/public/components/EventDateCard.vue:110
+#: frontend/src/apps/public/components/EventDateCard.vue:128
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference/forms.py:35
 msgid "Delete reference"
 msgstr "Empfehlung löschen"
@@ -1108,7 +1113,7 @@ msgstr "Doku"
 msgid "Download"
 msgstr "Download"
 
-#: project/presentation/web/views/manage_admin_unit/event/views.py:126
+#: project/presentation/web/views/manage_admin_unit/event/views.py:132
 msgid "Draft successfully saved"
 msgstr "Entwurf erfolgreich gespeichert"
 
@@ -1117,7 +1122,7 @@ msgstr "Entwurf erfolgreich gespeichert"
 msgid "Duplicate event"
 msgstr "Veranstaltung duplizieren"
 
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:83
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:117
 msgid "Earliest start first"
 msgstr "Frühester Beginn zuerst"
 
@@ -1125,6 +1130,7 @@ msgstr "Frühester Beginn zuerst"
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:141
 #: frontend/src/apps/admin/pages/UsersPage.vue:90
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:117
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:187
 #: project/presentation/web/modular/base_view_handler.py:200
 #: project/presentation/web/templates/_macros.html:670
 #: project/presentation/web/templates/_macros.html:713
@@ -1218,6 +1224,7 @@ msgstr "Neuen Ort eingeben"
 msgid "Enter organization"
 msgstr "Organisation eingeben"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:162
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:148
 msgid "Enter organizer"
 msgstr "Veranstalter eingeben"
@@ -1296,6 +1303,8 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:73
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:111
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:59
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:84
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:98
 #: frontend/src/apps/manage/pages/PlanningPage.vue:75
 #: frontend/src/apps/public/pages/EventDatesPage.vue:59
 #: frontend/src/apps/public/pages/EventDatesPage.vue:73
@@ -1382,8 +1391,9 @@ msgstr "Termin-Definition"
 msgid "Event date definitions"
 msgstr "Termin-Definitionen"
 
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:52
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:168
 #: project/infrastructure/babel_extract.py:1
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:22
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/create.html:148
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/update.html:82
 msgid "Event dates"
@@ -1397,7 +1407,8 @@ msgstr "Kategorien"
 msgid "Event expert"
 msgstr "Veranstaltungsexpert:in"
 
-#: frontend/src/apps/public/components/EventDateCard.vue:77
+#: frontend/src/apps/public/components/EventDateCard.vue:49
+#: frontend/src/apps/public/components/EventDateCard.vue:94
 msgid "Event image"
 msgstr "Veranstaltungsbild"
 
@@ -1443,11 +1454,11 @@ msgstr "Empfehlungen"
 msgid "Event review status updated"
 msgstr "Prüfungsstatus aktualisiert"
 
-#: project/presentation/web/views/manage_admin_unit/event/views.py:128
+#: project/presentation/web/views/manage_admin_unit/event/views.py:134
 msgid "Event successfully planned"
 msgstr "Veranstaltung erfolgreich geplant"
 
-#: project/presentation/web/views/manage_admin_unit/event/views.py:123
+#: project/presentation/web/views/manage_admin_unit/event/views.py:129
 msgid "Event successfully published"
 msgstr "Veranstaltung erfolgreich veröffentlicht"
 
@@ -1690,12 +1701,14 @@ msgstr "Theater"
 msgid "Event_Tour"
 msgstr "Führung"
 
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:136
 #: frontend/src/apps/public/pages/OrganizationPage.vue:150
 #: frontend/src/apps/public/pages/OrganizerPage.vue:95
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:142
 #: project/presentation/web/jinja_filters.py:60
 #: project/presentation/web/templates/_managebar.html:19
+#: project/presentation/web/views/manage_admin_unit/event/views.py:200
 msgid "Events"
 msgstr "Veranstaltungen"
 
@@ -1780,6 +1793,7 @@ msgstr "Filter"
 msgid "Find"
 msgstr "Finden"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:270
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:251
 msgid "Find events"
 msgstr "Veranstaltungen finden"
@@ -1805,6 +1819,8 @@ msgstr "Schriftart"
 msgid "Friday"
 msgstr "Freitag"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:101
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:235
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:89
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:183
 #: frontend/src/apps/widget/pages/SearchWidget.vue:162
@@ -2072,9 +2088,9 @@ msgstr ""
 msgid "Installation"
 msgstr "Installation"
 
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:29
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:143
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:58
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:198
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:62
 msgid "Internal tags"
 msgstr "Interne Stichworte"
 
@@ -2140,6 +2156,7 @@ msgstr ""
 
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:105
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:106
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:85
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:102
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:56
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:57
@@ -2175,14 +2192,15 @@ msgstr "Letzte"
 msgid "Last created first"
 msgstr "Zuletzt erstellt zuerst"
 
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:38
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:64
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:172
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:22
 #: project/presentation/web/views/manage_admin_unit/event_place/displays.py:19
 #: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:15
 msgid "Last modified at"
 msgstr "Zuletzt geändert am"
 
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:85
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:118
 #: project/presentation/web/views/manage_admin_unit/event_organizer/view_handler.py:41
 #: project/presentation/web/views/manage_admin_unit/event_place/view_handler.py:41
 #: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:66
@@ -2364,11 +2382,12 @@ msgstr "Montag"
 msgid "Month"
 msgstr "Monat"
 
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:199
 #: project/presentation/web/templates/_macros.html:1101
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:189
 msgid "More"
 msgstr "Mehr"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:279
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:260
 msgid "More filters"
 msgstr "Weitere Filter"
@@ -2378,11 +2397,11 @@ msgstr "Weitere Filter"
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:139
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:143
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:40
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:53
 #: frontend/src/apps/public/pages/EventReportPage.vue:99
 #: project/presentation/web/templates/_macros.html:994
 #: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:47
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:69
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:23
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:169
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:329
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:345
@@ -2445,7 +2464,7 @@ msgstr "Neue Empfehlungsanfrage"
 msgid "New verification request"
 msgstr "Neue Verifizierungsanfrage"
 
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:87
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:119
 msgid "Newest first"
 msgstr "Neuste zuerst"
 
@@ -2469,11 +2488,13 @@ msgstr "Weiter"
 
 #: frontend/src/apps/admin/pages/EmailPage.vue:29
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:263
 #: project/presentation/web/modular/filters.py:31
 #: project/presentation/web/templates/_macros.html:972
 msgid "No"
 msgstr "Nein"
 
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:161
 #: frontend/src/apps/public/pages/EventDatesPage.vue:220
 msgid "No events found"
 msgstr "Keine Veranstaltungen gefunden"
@@ -2517,7 +2538,7 @@ msgstr "Keine gültige Auswahl"
 msgid "Not all mails could be sent."
 msgstr "Nicht alle E-Mails konnten gesendet werden."
 
-#: frontend/src/apps/public/components/EventDateCard.vue:117
+#: frontend/src/apps/public/components/EventDateCard.vue:135
 msgid "Not referenced"
 msgstr "Nicht empfohlen"
 
@@ -2738,17 +2759,17 @@ msgstr ""
 " sich in einer geschlossenen Test-Phase. Bei Interesse kannst du uns "
 "kontaktieren."
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:156
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:54
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:140
 #: project/presentation/web/ical.py:34
 #: project/presentation/web/templates/_macros.html:558
 #: project/presentation/web/templates/_macros.html:727
 #: project/presentation/web/templates/_macros.html:961
 #: project/presentation/web/templates/_macros.html:1006
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:24
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:378
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:388
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:481
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:66
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/create.html:161
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/update.html:105
 #: project/templates/email/referenced_event_changed_notice.txt:7
@@ -2796,11 +2817,11 @@ msgstr "Ausgehende Empfehlungen"
 msgid "Outgoing verification requests"
 msgstr "Ausgehende Verifizierungsanfragen"
 
-#: frontend/src/apps/public/components/EventDateCard.vue:103
+#: frontend/src/apps/public/components/EventDateCard.vue:121
 msgid "Own event"
 msgstr "Eigene Veranstaltung"
 
-#: frontend/src/apps/public/components/EventDateCard.vue:100
+#: frontend/src/apps/public/components/EventDateCard.vue:118
 #: project/application/command_handlers/create_event_reference_handler.py:24
 #: project/infrastructure/models/event_reference.py:44
 msgid "Own events cannot be referenced"
@@ -2847,22 +2868,25 @@ msgstr ""
 msgid "Phone"
 msgstr "Telefon"
 
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:33
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:61
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:169
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:214
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:287
 #: project/presentation/web/views/manage_admin_unit/event_place/displays.py:17
 #: project/presentation/web/views/manage_admin_unit/event_place/forms.py:28
 msgid "Photo"
 msgstr "Foto"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:169
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:175
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:55
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/templates/_macros.html:521
 #: project/presentation/web/templates/_macros.html:684
 #: project/presentation/web/templates/_macros.html:1009
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:25
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:361
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:371
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:473
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:71
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/create.html:188
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/update.html:115
 #: project/templates/email/referenced_event_changed_notice.txt:26
@@ -2922,11 +2946,11 @@ msgstr ""
 "Bitte auswählen, wenn die Veranstaltung in externen, z.B. überregionalen "
 "Veranstaltungskalendern angezeigt werden soll."
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:182
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:55
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:154
 #: project/presentation/web/forms/common.py:69
 #: project/presentation/web/forms/common.py:76
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:73
 msgid "Postal code"
 msgstr "Postleitzahl"
 
@@ -2974,9 +2998,9 @@ msgstr "Datenschutz"
 msgid "Profile"
 msgstr "Profil"
 
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:32
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:220
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:60
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:502
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:77
 msgid "Public status"
 msgstr "Öffentlicher Status"
 
@@ -2984,8 +3008,8 @@ msgstr "Öffentlicher Status"
 msgid "Publish event"
 msgstr "Veranstaltung veröffentlichen"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:195
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:167
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:74
 msgid "Radius"
 msgstr "Umkreis"
 
@@ -3013,12 +3037,14 @@ msgstr "%(entity_display_name)s lesen"
 msgid "Recipient"
 msgstr "Empfänger"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:258
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:51
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:167
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:176
 #: project/presentation/web/templates/_macros.html:958
 #: project/presentation/web/templates/_macros.html:983
 #: project/presentation/web/templates/_macros.html:1428
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:21
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:81
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:80
 #: project/templates/email/referenced_event_changed_notice.txt:5
 #: project/templates/email/referenced_event_changed_notice.txt:30
 #: project/templates/email/referenced_event_changed_notice.txt:34
@@ -3031,11 +3057,10 @@ msgstr "Serientermin"
 msgid "Redirect URIs"
 msgstr "Redirect URIs"
 
-#: frontend/src/apps/public/components/EventDateCard.vue:110
+#: frontend/src/apps/public/components/EventDateCard.vue:128
 #: project/presentation/web/templates/_macros.html:783
 #: project/presentation/web/templates/_macros.html:1098
 #: project/presentation/web/templates/event/actions.html:26
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:179
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference/views.py:46
 msgid "Reference event"
 msgstr "Veranstaltung empfehlen"
@@ -3059,8 +3084,9 @@ msgstr ""
 "benachrichtigt, nachdem die andere Organisation die Veranstaltung geprüft"
 " hat."
 
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:63
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:171
 #: project/presentation/web/templates/_macros.html:792
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:36
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:395
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/create.html:275
 msgid "Reference requests"
@@ -3080,7 +3106,7 @@ msgstr "Empfehlung erfolgreich gelöscht"
 msgid "Reference this event on your organization's calendar."
 msgstr "Empfehle diese Veranstaltung im Kalender deiner Organisation."
 
-#: frontend/src/apps/public/components/EventDateCard.vue:117
+#: frontend/src/apps/public/components/EventDateCard.vue:135
 msgid "Referenced"
 msgstr "Empfohlen"
 
@@ -3092,8 +3118,9 @@ msgstr "Empfohlen von"
 msgid "Referenced event changed"
 msgstr "Empfohlene Veranstaltung wurde geändert"
 
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:62
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:170
 #: project/presentation/web/templates/_managebar.html:28
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:34
 msgid "References"
 msgstr "Empfehlungen"
 
@@ -3169,10 +3196,10 @@ msgstr "Empfehlungsanfrage ist bereits verifiziert"
 msgid "Request deletion"
 msgstr "Löschung beantragen"
 
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:196
 #: project/presentation/web/templates/_macros.html:803
 #: project/presentation/web/templates/_macros.html:1095
 #: project/presentation/web/templates/event/actions.html:20
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:169
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference/views.py:12
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/views.py:23
 msgid "Request reference"
@@ -3203,6 +3230,7 @@ msgstr "Verifizierung für Organisation \"%(name)s\" anfragen"
 
 #: frontend/src/apps/admin/components/ResetTosModal.vue:43
 #: frontend/src/apps/admin/pages/SettingsPage.vue:92
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:282
 #: frontend/src/shared/AppTypeahead.vue:125
 #: frontend/src/shared/LocationFilter.vue:142
 msgid "Reset"
@@ -3485,6 +3513,7 @@ msgstr "Auf Google Maps anzeigen"
 msgid "Show unreferenced events only"
 msgstr "Nur nicht empfohlene Veranstaltungen anzeigen"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:114
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:206
 #: project/presentation/web/modular/base_views.py:228
 msgid "Sort"
@@ -3494,7 +3523,7 @@ msgstr "Sortierung"
 msgid "Source organization is outside the allowed postal codes."
 msgstr "Die anfragende Organisation liegt außerhalb der erlaubten Postleitzahlen."
 
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:20
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:50
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:65
 msgid "Start"
 msgstr "Beginn"
@@ -3512,12 +3541,12 @@ msgstr "Startseite"
 msgid "State"
 msgstr "Bundesland"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:208
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:59
 #: project/presentation/web/templates/_macros.html:997
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:12
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:21
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:31
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:489
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:75
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/update.html:95
 #: project/presentation/web/views/user_blueprint/oauth2_token/displays.py:17
 #: project/templates/email/referenced_event_changed_notice.txt:14
@@ -3553,11 +3582,11 @@ msgstr "Organisation wechseln"
 msgid "Tablet"
 msgstr "Tablet"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:136
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:57
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:120
 #: project/presentation/web/forms/event_date.py:21
-#: project/presentation/web/views/manage_admin_unit/event/displays.py:27
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:191
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:61
 msgid "Tags"
 msgstr "Stichworte"
 
@@ -3971,9 +4000,9 @@ msgstr "Empfehlungsanfragen automatisch verifizieren"
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:155
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:136
 #: frontend/src/apps/manage/components/PlanningEventDetailsModal.vue:78
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:185
 #: project/presentation/web/modular/base_view_handler.py:197
 #: project/presentation/web/views/flask_admin.py:127
-#: project/presentation/web/views/manage_admin_unit/event/view_handler.py:157
 #: project/presentation/web/views/manage_admin_unit/event_organizer/view_handler.py:75
 #: project/presentation/web/views/user_blueprint/organization_invitation/view_handler.py:50
 #: project/presentation/web/views/user_blueprint/organization_member_invitation/view_handler.py:50
@@ -4109,6 +4138,7 @@ msgstr "Yahoo Kalender"
 
 #: frontend/src/apps/admin/pages/EmailPage.vue:29
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:262
 #: project/presentation/web/modular/filters.py:30
 #: project/presentation/web/templates/_macros.html:972
 msgid "Yes"
@@ -4187,6 +4217,8 @@ msgstr ""
 msgid "this is a message from %(site_name)s."
 msgstr "das ist eine Nachricht von %(site_name)s."
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:107
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:246
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:95
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:194
 #: project/presentation/web/forms/common.py:310

@@ -5,6 +5,8 @@ argument-hint: "Event name (e.g., AppInstallationCreated, OrganizationArchived)"
 
 # Add DDD Event
 
+**Event**: $ARGUMENTS
+
 Scaffold a complete DDD event following EventCally's architecture patterns.
 
 ## Pre-Flight Checks
@@ -219,7 +221,7 @@ self.domain_events.append(events.YourDeletedEvent(actor=cmd.actor, id=self.id))
 
 ## References
 
-- Architecture overview: [copilot-instructions.md](../copilot-instructions.md#architecture)
+- Architecture overview: [CLAUDE.md](../../CLAUDE.md) (Patterns)
 - Event examples: [`event_place_created.py`](../../project/domain/events/event_place_created.py), [`app_installation_created.py`](../../project/domain/events/app_installation_created.py)
 - Base event class: [`project/domain/events/base.py`](../../project/domain/events/base.py)
 - Handler helper methods: [`abstract_command_handler.py`](../../project/application/command_handlers/abstract_command_handler.py)

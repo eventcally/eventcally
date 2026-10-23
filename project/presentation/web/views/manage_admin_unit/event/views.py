@@ -1,5 +1,6 @@
-from flask import flash, redirect, request, url_for
+from flask import flash, redirect, render_template, request, url_for
 from flask_babel import gettext
+from flask_security import auth_required
 
 from project.application.commands import RequestEventReferenceCommand
 from project.application.commands.delete_event_command import DeleteEventCommand
@@ -14,12 +15,13 @@ from project.presentation.shared.access import (
 )
 from project.presentation.shared.current_admin_unit import current_admin_unit
 from project.presentation.shared.query_results import result_or_404
+from project.presentation.web.boot import build_boot_data
 from project.presentation.web.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
-    BaseListView,
     BaseUpdateView,
 )
+from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
 from project.presentation.web.views.manage_admin_unit.event.forms import (
     CreateForm,
     UpdateForm,
@@ -27,8 +29,12 @@ from project.presentation.web.views.manage_admin_unit.event.forms import (
 from project.presentation.web.views.reference_request import (
     get_success_text_for_request_creation,
 )
-from project.presentation.web.views.utils import flash_message, handle_base_error
-from project.shared.dateutils import get_next_full_hour, get_today
+from project.presentation.web.views.utils import (
+    flash_message,
+    handle_base_error,
+    manage_permission_required,
+)
+from project.shared.dateutils import get_next_full_hour
 
 
 def prepare_date_definition(form):
@@ -184,11 +190,13 @@ class DeleteView(BaseDeleteView):
         return redirect(self.get_redirect_url())
 
 
-class ListView(BaseListView):
-    def create_form(self, **kwargs):
-        form = super().create_form(**kwargs)
-
-        if not form.is_submitted() and not form.date.form.from_field.data:
-            form.date.form.from_field.data = get_today()
-
-        return form
+@manage_admin_unit_bp.route("/events")
+@auth_required()
+@manage_permission_required("events:read")
+def events():
+    return render_template(
+        "manage/events.html",
+        entry="manage",
+        title=gettext("Events"),
+        boot=build_boot_data(base="/"),
+    )

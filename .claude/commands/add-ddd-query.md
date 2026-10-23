@@ -5,6 +5,8 @@ argument-hint: "Query name (e.g., ListEventOrganizers, GetEventOrganizer)"
 
 # Add DDD Query
 
+**Query**: $ARGUMENTS
+
 Scaffold a read path that replaces direct ORM access (`Model.query`, `get_or_404`,
 `paginate()`, `project/services` read helpers) in views (incl. `project/presentation/web/modular`) and the API.
 

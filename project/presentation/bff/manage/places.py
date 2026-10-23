@@ -9,7 +9,7 @@ from project.presentation.bff.schemas import (
     PlaceSuggestionList,
     PlaceSuggestionParams,
 )
-from project.presentation.shared.access import can_use_planning
+from project.presentation.shared.access import can_use_manage_place_lookup
 from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_place
 
 
@@ -21,7 +21,7 @@ from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_pl
     summary="Suggest places (Google Maps) for a location filter",
 )
 def list_place_suggestions(query: PlaceSuggestionParams):
-    if not can_use_planning():
+    if not can_use_manage_place_lookup():
         raise UnauthorizedError()
 
     places = find_gmaps_places(query.keyword)
@@ -44,7 +44,7 @@ def list_place_suggestions(query: PlaceSuggestionParams):
     summary="The coordinate of a Google Maps place",
 )
 def get_place_coordinate(gmaps_id: str):
-    if not can_use_planning():
+    if not can_use_manage_place_lookup():
         raise UnauthorizedError()
 
     place = get_gmaps_place(gmaps_id)

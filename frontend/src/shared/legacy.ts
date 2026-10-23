@@ -16,11 +16,20 @@ export const publicPages = {
   event: (id: number) => `/event/${id}`,
   eventDate: (id: number) => `/eventdate/${id}`,
   eventDates: (organizerId: number) => `/eventdates?organizer_id=${organizerId}`,
+  eventActions: (id: number) => `/event/${id}/actions`,
 };
 
 // Jinja manage area the admin links to.
 export const manage = {
   organization: (id: number) => `/manage/admin_unit/${id}`,
+  events: (organizationId: number) => `/manage/admin_unit/${organizationId}/events`,
+  eventCreate: (organizationId: number) => `/manage/admin_unit/${organizationId}/event/create`,
+  eventUpdate: (organizationId: number, id: number) =>
+    `/manage/admin_unit/${organizationId}/event/${id}/update`,
+  eventDelete: (organizationId: number, id: number) =>
+    `/manage/admin_unit/${organizationId}/event/${id}/delete`,
+  eventReferenceRequestCreate: (organizationId: number, eventId: number) =>
+    `/manage/admin_unit/${organizationId}/outgoing_event_reference_request/create_for_event/${eventId}`,
   customWidgets: (organizationId: number) => `/manage/admin_unit/${organizationId}/custom-widgets`,
   customWidgetCreate: (organizationId: number) =>
     `/manage/admin_unit/${organizationId}/custom-widgets/create`,

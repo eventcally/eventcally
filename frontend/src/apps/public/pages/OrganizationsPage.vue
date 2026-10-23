@@ -81,7 +81,7 @@ onMounted(load);
     </BOverlay>
 
     <AppPager
-      v-if="page && page.pages > 1"
+      v-if="page && page.total > 0"
       class="mt-3"
       :page="currentPage"
       :pages="page.pages"

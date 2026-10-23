@@ -300,6 +300,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/event-organizers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Look up the event organizers of an organization */
+        get: operations["bff_manage_lookup_event_organizers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/event-places": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Look up the event places of an organization */
+        get: operations["bff_manage_lookup_event_places"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/event-references": {
         parameters: {
             query?: never;
@@ -311,6 +345,40 @@ export interface paths {
         put?: never;
         /** Reference an event */
         post: operations["bff_manage_create_event_reference"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search the events of an organization */
+        get: operations["bff_manage_list_events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/events/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Filter options of the event list of an organization */
+        get: operations["bff_manage_get_event_list_options"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1094,6 +1162,134 @@ export interface components {
             loc: string[];
             /** Msg */
             msg: string;
+        };
+        /** ManageChoice */
+        ManageChoice: {
+            /** Label */
+            label: string;
+            /** Name */
+            name: string;
+            /** Value */
+            value: number;
+        };
+        /** ManageEventListItem */
+        ManageEventListItem: {
+            /**
+             * Allday
+             * @default false
+             */
+            allday: boolean;
+            /** Category Names */
+            category_names: string[];
+            /** Has Photo */
+            has_photo: boolean;
+            /** Id */
+            id: number;
+            /**
+             * Internal Tags
+             * @default null
+             */
+            internal_tags: string | null;
+            /** Is Recurring */
+            is_recurring: boolean;
+            /**
+             * Last Modified At
+             * @default null
+             */
+            last_modified_at: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Number Of Dates
+             * @default null
+             */
+            number_of_dates: number | null;
+            /**
+             * Number Of Reference Requests
+             * @default null
+             */
+            number_of_reference_requests: number | null;
+            /**
+             * Number Of References
+             * @default null
+             */
+            number_of_references: number | null;
+            /**
+             * Organizer Name
+             * @default null
+             */
+            organizer_name: string | null;
+            /**
+             * Place Label
+             * @default null
+             */
+            place_label: string | null;
+            /** Public Status */
+            public_status: string;
+            /**
+             * Start
+             * @default null
+             */
+            start: string | null;
+            /**
+             * Status
+             * @default null
+             */
+            status: string | null;
+            /**
+             * Tags
+             * @default null
+             */
+            tags: string | null;
+        };
+        /** ManageEventListOptions */
+        ManageEventListOptions: {
+            /** Can Request Reference */
+            can_request_reference: boolean;
+            /** Can Write */
+            can_write: boolean;
+            /** Categories */
+            categories: components["schemas"]["PlanningChoice"][];
+            /**
+             * Default Date From
+             * Format: date
+             */
+            default_date_from: string;
+            /** Distances */
+            distances: components["schemas"]["PlanningDistance"][];
+            /** Public Statuses */
+            public_statuses: components["schemas"]["ManageChoice"][];
+            /** Statuses */
+            statuses: components["schemas"]["ManageChoice"][];
+        };
+        /** ManageEventPage */
+        ManageEventPage: {
+            /** @default null */
+            event_place: components["schemas"]["ManageRef"] | null;
+            /** Items */
+            items: components["schemas"]["ManageEventListItem"][];
+            /** @default null */
+            organizer: components["schemas"]["ManageRef"] | null;
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** ManageRef */
+        ManageRef: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+        };
+        /** ManageRefList */
+        ManageRefList: {
+            /** Items */
+            items: components["schemas"]["ManageRef"][];
         };
         /** PlaceCoordinate */
         PlaceCoordinate: {
@@ -3173,6 +3369,126 @@ export interface operations {
             };
         };
     };
+    bff_manage_lookup_event_organizers: {
+        parameters: {
+            query?: {
+                keyword?: string | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageRefList"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_lookup_event_places: {
+        parameters: {
+            query?: {
+                keyword?: string | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageRefList"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_create_event_reference: {
         parameters: {
             query?: never;
@@ -3204,6 +3520,142 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_events: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+                keyword?: string | null;
+                date_from?: string | null;
+                date_to?: string | null;
+                category_id?: number | null;
+                tag?: string | null;
+                internal_tag?: string | null;
+                organizer_id?: number | null;
+                event_place_id?: number | null;
+                postal_code?: string | null;
+                radius_coordinate?: string | null;
+                radius_distance?: number | null;
+                status?: number | null;
+                public_status?: number | null;
+                created_at_from?: string | null;
+                created_at_to?: string | null;
+                is_recurring?: ("0" | "1") | null;
+                sort?: "min_start" | "-last_modified_at" | "-created_at";
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageEventPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_event_list_options: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageEventListOptions"];
                 };
             };
             /** @description Unauthorized */

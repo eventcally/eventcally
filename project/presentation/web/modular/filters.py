@@ -53,34 +53,9 @@ class EnumFilter(BaseFilter):
         super().__init__(key, **kwargs)
 
 
-class DateRangeFilter(BaseFilter):
-    """Form value `from_field` / `to_field` of the date range sub-form."""
-
-
-class RadiusFilter(BaseFilter):
-    """Form value `coordinate` ("lat,lon") and `distance`."""
-
-
-class StringFilter(BaseFilter):
-    pass
-
-
-class SelectModelFilter(BaseFilter):
-    """A loader-backed select; the form value is the loader's read model."""
-
-    def __init__(self, key, loader, **kwargs):
-        self.loader = loader
-        self.allow_blank = kwargs.get("allow_blank", True)
-        super().__init__(key, **kwargs)
-
-
 # The names the view handlers use.
 KeyBooleanFilter = BooleanFilter
 KeyEnumFilter = EnumFilter
-KeyDateRangeFilter = DateRangeFilter
-KeyRadiusFilter = RadiusFilter
-KeyTagFilter = StringFilter
-KeySelectModelFilter = SelectModelFilter
 
 
 def enum_filter_value_or_none(enum_type, value):

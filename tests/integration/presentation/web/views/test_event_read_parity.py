@@ -110,39 +110,6 @@ def _requests(utils: UtilActions, ids):
 
     requests["organizer_unknown_ical"] = url("main.organizer_ical", id=4711)
 
-    manage_args = {
-        "default": {},
-        "page_2": {"page": 2},
-        "keyword": {"keyword": "Jam"},
-        "category": {"category_id": 3},
-        "organizer": {"organizer_id": 1},
-        "place": {"event_place_id": ids["rathaus"]},
-        "tag": {"tag": "music"},
-        "internal_tag": {"internal_tag": "secret"},
-        "postal_code": {"postal_code": "38640,38690"},
-        "date": {"date_from": "2040-03-01", "date_to": "2040-03-02"},
-        "created_at": {"created_at_from": "2026-01-01", "created_at_to": "2026-01-05"},
-        "radius": {
-            "radius_location": "current_position",
-            "radius_coordinate": "51.9077888,10.4333312",
-            "radius_distance": 500,
-            "radius_location_name": "Aktuelle Position",
-        },
-        "status": {"status": 1},
-        "status_cancelled": {"status": -1},
-        "public_status": {"public_status": 1},
-        "recurring": {"is_recurring": "1"},
-        "not_recurring": {"is_recurring": "0"},
-        "sort_start": {"sort": "min_start"},
-        "sort_modified": {"sort": "-last_modified_at"},
-        "sort_created": {"sort": "-created_at"},
-    }
-
-    for key, args in manage_args.items():
-        requests[f"manage_events_{key}"] = url(
-            "manage_admin_unit.events", id=ids["a"], **args
-        )
-
     return requests
 
 
@@ -155,8 +122,6 @@ def test_event_page_payloads_match_snapshot(
 
     utils._access_token = None
     for key, url in requests.items():
-        if key.startswith("manage_"):
-            continue
         actual[f"anon:{key}"] = _capture(utils, url)
 
     utils.login()

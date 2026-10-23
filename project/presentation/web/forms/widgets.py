@@ -89,14 +89,6 @@ class CustomDateWidget:
         html = []
         html.append('<input type="text" {}/>'.format(date_params))
 
-        if field.clearable:
-            html.append("<div %s>" % html_params(class_="input-group-append"))
-            html.append(
-                f'<button class="btn btn-outline-secondary" type="button" data-role="clear-datepicker-btn" data-target="#{id}">'
-            )
-            html.append('<i class="fa fa-times"></i>')
-            html.append("</div>")
-
         return Markup("".join(html))
 
 
@@ -110,12 +102,10 @@ class CustomDateField(DateTimeField):
         validators=None,
         format="%Y-%m-%d %H:%M:%S",
         set_end_of_day=False,
-        clearable=False,
         **kwargs,
     ):
         super(CustomDateField, self).__init__(label, validators, format, **kwargs)
         self.set_end_of_day = set_end_of_day
-        self.clearable = clearable
 
     def process_formdata(self, valuelist):
         if valuelist:

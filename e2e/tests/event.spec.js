@@ -93,7 +93,7 @@ test.describe("Event", () => {
     await screenshot(page, "list");
 
     await page.goto(`/manage/admin_unit/${adminUnitId}/events`);
-    await shouldContain(page.locator("main .badge-pill"), "Entwurf");
+    await shouldContain(page.locator("main .badge"), "Entwurf");
   });
 
   test("read and actions", async ({ page, login }) => {

@@ -4,7 +4,10 @@ link, announcement). Written against the ORM path first."""
 
 def _badges(utils, response):
     soup = utils.get_soup(response)
-    return [span.get_text().strip() for span in soup.select("span.badge-pill")]
+    return [
+        span.get_text().strip()
+        for span in soup.select("span.badge-pill, span.rounded-pill")
+    ]
 
 
 def _seed_incoming_requests(seeder, admin_unit_id):
@@ -49,7 +52,7 @@ def test_manage_bar_badges_count_inbox_requests(app, db, seeder, utils):
 
     # reference badge (dropdown + collapsed duplicate), verification badge likewise
     assert sorted(set(_badges(utils, response))) == ["1", "2"]
-    assert response.data.decode().count("badge-pill") >= 2
+    assert len(_badges(utils, response)) >= 2
 
 
 def test_manage_bar_badges_visible_to_event_verifier(app, db, seeder, utils):

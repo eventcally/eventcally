@@ -38,6 +38,9 @@ Transform the input into a battle-tested implementation plan through codebase ex
   context — from a prior `/prime` command, user mention, or PRD — capture it. This is
   optional but should be included in the plan metadata when available so that `/implement`
   can update and close the issue after completion.
+- **UI migration to Vue 3**: Does the task replace an existing UI (Jinja template, legacy JS)
+  with a Vue 3 page? If so, the plan **must** include a visual baseline (see Phase 2 and the
+  "Visual Baseline" section of the plan template) so the new UI can be aligned to the old one.
 
 ---
 
@@ -67,6 +70,22 @@ Use the Explore agent to find:
 | COMMAND/HANDLER | `project/application/command_handlers/...:1-30` | {command → handler → repo flow} |
 | DATA | `project/infrastructure/repositories/...:1-10` | {repository / codegen model} |
 | TESTS | `tests/.../test_...:1-25` | {pattern description} |
+
+### Capture the Visual Baseline (UI migration to Vue 3 only)
+
+While the old UI still exists, define and capture what the new UI must match:
+
+1. **List the pages and states** to compare: every affected route, plus the relevant states
+   (empty / filled list, validation errors, logged-in vs anonymous, open dropdowns / modals /
+   collapsed filters, long content).
+2. **Fix the viewports**: desktop `1280×800` and mobile `390×844`.
+3. **Take the "before" screenshots** of every page × state × viewport (full page) with the
+   Playwright MCP (`browser_resize` + `browser_take_screenshot`) or a throwaway
+   `npx playwright` script against the running app. Save them to
+   `.agents/screenshots/{YYYY-MM-DD}-{kebab-case-name}/before-{desktop|mobile}-{state}.png`
+   (same date and name as the plan file).
+4. **If the app can't be run now**, still write the list into the plan — `/implement` then
+   captures the baseline before touching any code.
 
 ---
 
@@ -163,6 +182,16 @@ So that {benefit}
 
 ---
 
+## Visual Baseline
+
+{Only for UI migrations to Vue 3 — otherwise write "N/A"}
+
+| Page / route | States | Viewports | Before screenshots |
+| ------ | -------- | --------- | --------- |
+| `/manage/...` | {empty, filled, errors, ...} | desktop 1280×800, mobile 390×844 | `.agents/screenshots/{YYYY-MM-DD}-{name}/` or "to capture in /implement" |
+
+---
+
 ## Tasks
 
 Execute in order. Each task is atomic and verifiable.
@@ -208,6 +237,8 @@ pytest
 - [ ] isort / black / flake8 / lint-imports / import-whitelist pass
 - [ ] Tests pass
 - [ ] Follows existing patterns (DDD import layering respected; no hand-edited `*_generated.py`)
+- [ ] UI migration to Vue 3 only: new UI matches the visual baseline on desktop and mobile
+      (intentional differences listed with rationale)
 ````
 
 ---

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router"
 import { boot } from "@/shared/boot";
 import CustomWidgetEditPage from "./pages/CustomWidgetEditPage.vue";
 import CustomWidgetsPage from "./pages/CustomWidgetsPage.vue";
+import ManageEventsPage from "./pages/ManageEventsPage.vue";
 import NotFoundPage from "./pages/NotFoundPage.vue";
 import PlanningPage from "./pages/PlanningPage.vue";
 
@@ -27,6 +28,12 @@ export const routes: RouteRecordRaw[] = [
       organizationId: Number(route.params.organizationId),
       id: Number(route.params.id),
     }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/events",
+    name: "manage-events",
+    component: ManageEventsPage,
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
   },
   { path: "/:rest(.*)*", name: "not-found", component: NotFoundPage },
 ];

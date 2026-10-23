@@ -5,6 +5,8 @@ argument-hint: "Command name (e.g., PublishEvent, ArchiveOrganization)"
 
 # Add DDD Command
 
+**Command**: $ARGUMENTS
+
 Scaffold a complete DDD command following EventCally's architecture patterns.
 
 ## Pre-Flight Checks
@@ -194,7 +196,7 @@ uow.commit()  # Events dispatched after commit
 
 ## References
 
-- Architecture overview: [copilot-instructions.md](../copilot-instructions.md#architecture)
+- Architecture overview: [CLAUDE.md](../../CLAUDE.md) (Patterns)
 - Example command: [`delete_event_place_command.py`](../../project/application/commands/delete_event_place_command.py)
 - Example handler: [`delete_event_place_handler.py`](../../project/application/command_handlers/delete_event_place_handler.py)
 - Unit of Work pattern: [`project/domain/abstract_unit_of_work.py`](../../project/domain/abstract_unit_of_work.py)
