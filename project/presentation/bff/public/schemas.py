@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -165,3 +165,104 @@ class WidgetCategory(BaseModel):
 
 class WidgetCategoryList(BaseModel):
     items: List[WidgetCategory]
+
+
+class PublicChoice(BaseModel):
+    value: str
+    label: str
+
+
+class PublicDistance(BaseModel):
+    value: int
+    label: str
+
+
+class EventDateSearchParams(PageParams):
+    per_page: int = Field(default=50, ge=1, le=50)
+    date_from: Optional[date] = None
+    date_to: Optional[date] = None
+    keyword: Optional[str] = Field(default=None, max_length=255)
+    category_id: List[int] = []
+    tag: Optional[str] = Field(default=None, max_length=255)
+    admin_unit_id: Optional[int] = None
+    organizer_id: Optional[int] = None
+    postal_code: Optional[str] = Field(default=None, max_length=255)
+    coordinate: Optional[str] = Field(
+        default=None, pattern=r"^-?\d+(\.\d+)?,-?\d+(\.\d+)?$"
+    )
+    distance: Optional[int] = None
+    created_at_from: Optional[date] = None
+    created_at_to: Optional[date] = None
+    sort: Literal["start", "-created_at"] = "start"
+    exclude_recurring: bool = False
+    not_referenced: bool = False
+
+
+class EventDateSearchOptionsParams(BaseModel):
+    admin_unit_id: Optional[int] = None
+    organizer_id: Optional[int] = None
+
+
+class EventDateSearchOptions(BaseModel):
+    default_date_from: date
+    categories: List[WidgetCategory]
+    distances: List[PublicDistance]
+    sorts: List[PublicChoice]
+    organization: Optional[PublicOrganizationRef] = None
+    organizer: Optional[PublicOrganizationRef] = None
+    referencing_organization: Optional[PublicOrganizationRef] = None
+
+
+class PublicEventDatePlace(BaseModel):
+    name: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+
+class PublicEventReference(BaseModel):
+    state: Literal["own", "none", "referenced"]
+    reference_id: Optional[int] = None
+
+
+class PublicEventDateEvent(BaseModel):
+    id: int
+    name: str
+    description_preview: Optional[str] = None
+    status: Optional[str] = None
+    public_status: str
+    booked_up: Optional[bool] = None
+    attendance_mode: Optional[str] = None
+    organization: PublicOrganizationRef
+    organizer_name: Optional[str] = None
+    place: Optional[PublicEventDatePlace] = None
+    photo: Optional[WidgetPhoto] = None
+    reference: Optional[PublicEventReference] = None
+
+
+class PublicEventDate(BaseModel):
+    id: int
+    start: datetime
+    end: Optional[datetime] = None
+    allday: bool
+    event: PublicEventDateEvent
+
+
+class PublicEventDatePage(BaseModel):
+    items: List[PublicEventDate]
+    page: int
+    per_page: int
+    total: int
+    pages: int
+
+
+class PublicOrganizerListParams(PageParams):
+    per_page: int = Field(default=5, ge=1, le=50)
+    keyword: Optional[str] = Field(default=None, max_length=255)
+
+
+class PublicOrganizerRefPage(BaseModel):
+    items: List[PublicOrganizationRef]
+    page: int
+    per_page: int
+    total: int
+    pages: int

@@ -16,7 +16,6 @@ class EventSearchParams(object):
         self._date_to = None
         self._date_from_str = None
         self._date_to_str = None
-        self._coordinate = None
         self.admin_unit_id = None
         self.include_admin_unit_references = None
         self.admin_unit_references_only = None
@@ -66,19 +65,6 @@ class EventSearchParams(object):
     @property
     def date_to_str(self):
         return self._date_to_str
-
-    @property
-    def coordinate(self):
-        return self._coordinate
-
-    @coordinate.setter
-    def coordinate(self, value):
-        self._coordinate = value
-        if value is not None and len(value) > 0:
-            (self.latitude, self.longitude) = value.split(",")
-        else:
-            self.latitude = None
-            self.longitude = None
 
     def set_default_date_range(self):
         today = get_today()

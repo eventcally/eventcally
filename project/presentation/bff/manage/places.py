@@ -2,13 +2,13 @@ from flask import abort
 
 from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.presentation.bff.manage import bff_manage_bp
-from project.presentation.bff.manage.schemas import (
+from project.presentation.bff.routing import bff_route
+from project.presentation.bff.schemas import (
     PlaceCoordinate,
     PlaceSuggestion,
     PlaceSuggestionList,
     PlaceSuggestionParams,
 )
-from project.presentation.bff.routing import bff_route
 from project.presentation.shared.access import can_use_planning
 from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_place
 

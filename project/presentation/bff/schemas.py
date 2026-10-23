@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -29,3 +29,22 @@ class PageParams(BaseModel):
 
     def to_page_request(self) -> PageRequest:
         return PageRequest(page=self.page, per_page=self.per_page)
+
+
+class PlaceSuggestionParams(BaseModel):
+    keyword: str = Field(min_length=1, max_length=255)
+
+
+class PlaceSuggestion(BaseModel):
+    gmaps_id: str
+    text: str
+    main_text: Optional[str] = None
+
+
+class PlaceSuggestionList(BaseModel):
+    items: List[PlaceSuggestion]
+
+
+class PlaceCoordinate(BaseModel):
+    latitude: float
+    longitude: float

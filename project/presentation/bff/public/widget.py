@@ -1,6 +1,3 @@
-import re
-from html import unescape
-
 from dependency_injector.wiring import Provide, inject
 
 from project.application.queries import (
@@ -11,6 +8,10 @@ from project.application.queries.event_search_criteria import EventSearchCriteri
 from project.application.query_bus import QueryBus
 from project.container import Application
 from project.presentation.bff.public import bff_public_bp
+from project.presentation.bff.public.event_date_mapping import (
+    description_preview,
+    photo_of,
+)
 from project.presentation.bff.public.schemas import (
     WidgetCategory,
     WidgetCategoryList,
@@ -18,47 +19,10 @@ from project.presentation.bff.public.schemas import (
     WidgetEventDate,
     WidgetEventDatePage,
     WidgetEventDateParams,
-    WidgetPhoto,
 )
 from project.presentation.bff.routing import bff_route
-from project.presentation.shared.urls import url_for_image
 from project.shared.dateutils import form_input_to_date
 from project.shared.utils import get_event_category_name
-
-DESCRIPTION_PREVIEW_LENGTH = 200
-_TAG = re.compile(r"<[^>]*>")
-_WHITESPACE = re.compile(r"\s+")
-
-
-def description_preview(html, length: int = DESCRIPTION_PREVIEW_LENGTH):
-    """Plain text of a stored HTML description, cut at a word boundary."""
-    if not html:
-        return None
-
-    text = _WHITESPACE.sub(" ", unescape(_TAG.sub(" ", html))).strip()
-
-    if not text:
-        return None
-
-    if len(text) <= length:
-        return text
-
-    cut = text[: length - 1]
-    boundary = cut.rfind(" ")
-    return (cut[:boundary] if boundary > 0 else cut) + "…"
-
-
-def _photo(image):
-    if not image:
-        return None
-
-    return WidgetPhoto(
-        url_200=url_for_image(image, s=200),
-        url_500=url_for_image(image, s=500),
-        copyright_text=image.copyright_text,
-        license_code=image.license.code if image.license else None,
-        license_url=image.license.url if image.license else None,
-    )
 
 
 def _to_widget_date(hit) -> WidgetEventDate:
@@ -81,7 +45,7 @@ def _to_widget_date(hit) -> WidgetEventDate:
             organization_name=event.admin_unit.name,
             organizer_name=event.organizer.name if event.organizer else None,
             place_name=event.event_place.name if event.event_place else None,
-            photo=_photo(event.photo),
+            photo=photo_of(event.photo),
         ),
     )
 

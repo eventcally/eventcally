@@ -31,6 +31,33 @@ function mountFilter(props: Record<string, unknown> = {}) {
   return wrapper;
 }
 
+describe("LocationFilter public scope", () => {
+  it("uses the anonymous place routes", async () => {
+    vi.useFakeTimers();
+    GET.mockReset().mockImplementation((path: string) =>
+      Promise.resolve(
+        path === "/bff/public/places"
+          ? { data: { items: [{ gmaps_id: "abc", text: "Goslar, Germany" }] } }
+          : { data: { latitude: 51.9, longitude: 10.4 } },
+      ),
+    );
+    const wrapper = mountFilter({ scope: "public" });
+    await wrapper.find("input").setValue("Gosl");
+    vi.advanceTimersByTime(250);
+    await flushPromises();
+    expect(GET).toHaveBeenCalledWith("/bff/public/places", { params: { query: { keyword: "Gosl" } } });
+
+    await wrapper.find('[data-test="suggestion"]').trigger("click");
+    await flushPromises();
+
+    expect(GET).toHaveBeenLastCalledWith("/bff/public/places/{gmaps_id}/coordinate", {
+      params: { path: { gmaps_id: "abc" } },
+    });
+    expect(wrapper.props("coordinate")).toBe("51.9,10.4");
+    vi.useRealTimers();
+  });
+});
+
 describe("LocationFilter", () => {
   beforeEach(() => {
     vi.useFakeTimers();

@@ -24,7 +24,8 @@ def test_single_values_become_one_element_lists():
     params.tag = "music"
     params.postal_code = "386"
     params.weekday = [1, 2]
-    params.coordinate = "51.9,10.4"
+    params.latitude = "51.9"
+    params.longitude = "10.4"
     params.distance = 500
     params.exclude_recurring = True
     params.expected_participants_min = 10

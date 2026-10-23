@@ -915,53 +915,6 @@
   </div>
 {% endmacro %}
 
-{% macro render_google_filter_autocomplete_header(dropdownParent=None) %}
-<script>
-  $( function() {
-
-    $('#location').select2({
-      theme: 'bootstrap4',
-      {% if dropdownParent -%}
-      dropdownParent: {{ dropdownParent | safe }},
-      {%- endif %}
-      ajax: {
-        url: "{{ url_for('main.js_autocomplete_place') }}",
-        dataType: 'json',
-        delay: 250,
-        cache: true,
-        data: function (params) {
-          return {
-            keyword: params.term
-          };
-        }
-      },
-      placeholder: $('#location').attr("placeholder"),
-      minimumInputLength: 1,
-      templateResult: select2TemplateResult
-    }).on('select2:close', function (e) {
-      var data = select2GetData(e);
-
-      if ("gmaps_id" in data) {
-        get_gmaps_place_details(data.gmaps_id, data.text);
-      }
-    });
-
-    function get_gmaps_place_details(place_id, place_name) {
-      $.ajax({
-          url: "{{ url_for('main.js_autocomplete_gmaps_place') }}",
-          type: "get",
-          dataType: "json",
-          data: "gmaps_id=" + place_id,
-          success: function (data) {
-            $('#coordinate').val('' + data.geometry.location.lat + ',' + data.geometry.location.lng);
-            $('#location_name').val(place_name);
-          }
-      });
-    }
-  });
-</script>
-{% endmacro %}
-
 {% macro render_event_date_instance(instance, allday, dateModifier = 'short', timeModifier = 'short') %}
   {{ instance | dateformat(dateModifier) }}{% if not allday %} {{ instance | timeformat(timeModifier) }}{% endif %}
 {% endmacro %}
@@ -1121,61 +1074,6 @@
       <td>{{ subfield.label(class="form-check-label") }}</td>
     </div>
 {% endfor %}
-{% endmacro %}
-
-{% macro render_event_dates_date_field(from_field, to_field) %}
-{{ render_date_field_range(from_field, to_field, _('Date')) }}
-{% endmacro %}
-
-{% macro render_date_field_range(from_field, to_field, label) %}
-<div class="form-group row">
-  <label class="col-sm-4 col-form-label">{{ label }}</label>
-  <div class="col-sm-4 mb-1">
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text">{{ from_field.label.text }}</span>
-      </div>
-      {{ from_field(**{"class":"form-control datepicker", "data-range-to":"#" + to_field.id})|safe }}
-    </div>
-  </div>
-  <div class="col-sm-4">
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text">{{ to_field.label.text }}</span>
-      </div>
-      {{ to_field(class="form-control datepicker")|safe }}
-    </div>
-  </div>
-</div>
-{% endmacro %}
-
-{% macro render_event_dates_location_field(location_field, distance_field) %}
-{% if location_field %}
-  <div class="form-group row">
-    <label for="location" class="col-sm-4 col-form-label">{{ _('Radius') }}</label>
-    <div class="col-sm-5 mb-1">
-      <div class="input-group">
-        {{ location_field(class="form-control", placeholder='Ort', autocomplete="off")|safe }}
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button" id="clear_location_btn">
-            <i class="fa fa-times"></i>
-          </button>
-          <button class="btn btn-outline-primary" type="button" id="geolocation_btn">
-            <i class="fa fa-location-arrow"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text">{{ distance_field.label.text }}</span>
-        </div>
-        {{ distance_field(class="form-control")|safe }}
-      </div>
-    </div>
-  </div>
-  {% endif %}
 {% endmacro %}
 
 {% macro render_event_menu(user_rights, event) %}

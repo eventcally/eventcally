@@ -77,20 +77,15 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
 
 def test_list(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
-    seeder.create_event(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("main.event_dates")
-    utils.get_ok(url)
-
-    url = utils.get_url("main.event_dates", keyword="name")
-    utils.get_ok(url)
-
-    url = utils.get_url("main.event_dates", category_id=2000)
-    utils.get_ok(url)
-
-    url = utils.get_url("main.event_dates", admin_unit_id=admin_unit_id)
-    utils.get_ok(url)
-
-    url = utils.get_url("main.event_dates", organizer_id=organizer_id)
-    utils.get_ok(url)
+    for args in (
+        {},
+        {"keyword": "name"},
+        {"category_id": 2000},
+        {"admin_unit_id": admin_unit_id},
+        {"organizer_id": organizer_id},
+    ):
+        response = utils.get(utils.get_url("main.event_dates", **args))
+        utils.assert_response_ok(response)
+        utils.assert_response_contains(response, 'id="boot"')

@@ -4,6 +4,7 @@ import {
   type RouteRecordRaw,
 } from "vue-router";
 import { boot } from "@/shared/boot";
+import EventDatesPage from "./pages/EventDatesPage.vue";
 import EventReportPage from "./pages/EventReportPage.vue";
 import NotFoundPage from "./pages/NotFoundPage.vue";
 import OrganizationPage from "./pages/OrganizationPage.vue";
@@ -17,6 +18,7 @@ export const routes: RouteRecordRaw[] = [
     component: EventReportPage,
     props: (route) => ({ id: Number(route.params.id) }),
   },
+  { path: "/eventdates", name: "event-dates", component: EventDatesPage },
   { path: "/organizations", name: "organizations", component: OrganizationsPage },
   {
     path: "/organizations/:id(\\d+)",
