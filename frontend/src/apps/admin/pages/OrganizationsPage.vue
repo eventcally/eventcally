@@ -150,7 +150,7 @@ watch(() => route.query, load, { immediate: true });
     <OrganizationDeleteModal v-model="showDelete" :organization="deleting" @deleted="onDeleted" />
 
     <AppPager
-      v-if="page && page.pages > 1"
+      v-if="page && page.total > 0"
       v-model:page="currentPage"
       :pages="page.pages"
       :total="page.total"

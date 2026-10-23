@@ -99,7 +99,7 @@ watch(currentPage, load, { immediate: true });
     <UserDeleteModal v-model="showDelete" :user="deleting" @deleted="onDeleted" />
 
     <AppPager
-      v-if="page && page.pages > 1"
+      v-if="page && page.total > 0"
       v-model:page="currentPage"
       :pages="page.pages"
       :total="page.total"

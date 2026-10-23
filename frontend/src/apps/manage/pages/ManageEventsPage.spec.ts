@@ -160,6 +160,12 @@ describe("ManageEventsPage", () => {
     expect(listCalls()[1][1].params.query.keyword).toBe("Jam");
   });
 
+  it("shows the pager with the total even for a single page", async () => {
+    const { wrapper } = await mountPage();
+
+    expect(wrapper.find("nav[aria-label*='total']").exists()).toBe(true);
+  });
+
   it("shows the empty text", async () => {
     GET.mockReset().mockImplementation((path: string) =>
       Promise.resolve(path.endsWith("/options") ? { data: options } : listPage([])),

@@ -132,7 +132,7 @@ onMounted(() => {
     <CustomWidgetDeleteModal v-model="showDelete" :widget="deleting" @deleted="onDeleted" />
 
     <AppPager
-      v-if="page && page.pages > 1"
+      v-if="page && page.total > 0"
       v-model:page="currentPage"
       :pages="page.pages"
       :total="page.total"
