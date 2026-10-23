@@ -10,9 +10,6 @@ def test_organizations(client, seeder: Seeder, utils: UtilActions):
 
     utils.get_ok("/organizations/")
 
-    url = utils.get_url("api_v1_organization_list")
-    utils.get_json_ok(url)
-
 
 def test_organization(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)

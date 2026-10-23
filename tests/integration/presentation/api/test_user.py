@@ -6,8 +6,8 @@ def test_organization_invitation_list(client, seeder, utils):
     _, admin_unit_id = seeder.setup_api_access(user_access=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
-    seeder.create_user("invited@test.de")
-    utils.login("invited@test.de")
+    user_id = seeder.create_user("invited@test.de")
+    seeder.authorize_api_access(user_id, admin_unit_id)
 
     url = utils.get_url("api_v1_user_organization_invitation_list")
     response = utils.get_json(url)
@@ -22,8 +22,8 @@ def test_organization_invitation_read(client, seeder, utils):
     _, admin_unit_id = seeder.setup_api_access(user_access=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
-    seeder.create_user("invited@test.de")
-    utils.login("invited@test.de")
+    user_id = seeder.create_user("invited@test.de")
+    seeder.authorize_api_access(user_id, admin_unit_id)
 
     url = utils.get_url("api_v1_user_organization_invitation", id=invitation_id)
     response = utils.get_json(url)
@@ -40,8 +40,8 @@ def test_organization_invitation_read_wrongEmail(client, seeder, utils):
     _, admin_unit_id = seeder.setup_api_access(user_access=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
-    seeder.create_user("other@test.de")
-    utils.login("other@test.de")
+    user_id = seeder.create_user("other@test.de")
+    seeder.authorize_api_access(user_id, admin_unit_id)
 
     url = utils.get_url("api_v1_user_organization_invitation", id=invitation_id)
     response = utils.get_json(url)
@@ -52,8 +52,8 @@ def test_organization_invitation_delete(client, app, seeder, utils, db):
     _, admin_unit_id = seeder.setup_api_access(user_access=False)
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
 
-    seeder.create_user("invited@test.de")
-    utils.login("invited@test.de")
+    user_id = seeder.create_user("invited@test.de")
+    seeder.authorize_api_access(user_id, admin_unit_id)
 
     url = utils.get_url(
         "api_v1_user_organization_invitation",

@@ -8,7 +8,6 @@ from flask import abort, current_app, g, request
 from flask_apispec import marshal_with
 from flask_apispec.annotations import annotate
 from flask_apispec.views import MethodResource
-from flask_wtf.csrf import validate_csrf
 from werkzeug.exceptions import UnsupportedMediaType
 
 from project.application.message_bus import MessageBus
@@ -23,7 +22,7 @@ from project.application.services.abstract_app_context_provider import (
     AbstractAppContextProvider,
 )
 from project.container import Application
-from project.infrastructure.extensions import csrf, limiter
+from project.infrastructure.extensions import limiter
 from project.presentation.api.schemas import (
     ErrorResponseSchema,
     TooManyRequestsResponseSchema,
@@ -45,14 +44,6 @@ def etag_cache(func):
         return response.make_conditional(request)
 
     return wrapper
-
-
-def is_internal_request() -> bool:
-    try:
-        validate_csrf(csrf._get_csrf_token())
-        return True
-    except Exception:
-        return False
 
 
 def get_api_key_from_request() -> bool:
@@ -89,21 +80,16 @@ def require_api_access(scopes=None, app_token_required=False):
             except Exception as e:
                 if app_token_required:
                     raise e
-                if is_internal_request():
-                    limit_decorator = limiter.shared_limit(
-                        "1000/minute", scope=api_rate_limit_scope
-                    )
+                api_key = get_api_key_from_request()
+                if api_key:
+                    limit_decorator = get_limit_decorator_for_provider(api_key)
                 else:
-                    api_key = get_api_key_from_request()
-                    if api_key:
-                        limit_decorator = get_limit_decorator_for_provider(api_key)
+                    if current_app.config["API_READ_ANONYM"]:
+                        limit_decorator = limiter.shared_limit(
+                            "60/minute", scope=api_rate_limit_scope
+                        )
                     else:
-                        if current_app.config["API_READ_ANONYM"]:
-                            limit_decorator = limiter.shared_limit(
-                                "60/minute", scope=api_rate_limit_scope
-                            )
-                        else:
-                            raise e
+                        raise e
 
             with limit_decorator:
                 return func(*args, **kwargs)

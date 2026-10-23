@@ -68,7 +68,7 @@ def test_list_unverified(client, app, seeder: Seeder, utils: UtilActions):
 
     # user_id1 sieht verified_admin_unit_id, weil sie verifiziert ist,
     # aber nicht unverified_admin_unit_id, weil sie nicht verifiziert ist.
-    utils.login("verified@test.de")
+    seeder.authorize_api_access(user_id, verified_admin_unit_id)
     response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == verified_admin_unit_id
@@ -80,8 +80,8 @@ def test_list_unverified(client, app, seeder: Seeder, utils: UtilActions):
 
         eventcally_id = get_admin_unit_by_name("eventcally").id
 
-    utils.logout()
-    utils.login("admin@eventcally.com")
+    eventcally_user_id = seeder.create_user("admin@eventcally.com")
+    seeder.authorize_api_access(eventcally_user_id, eventcally_id)
     response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 3
     assert response.json["items"][0]["id"] == eventcally_id
@@ -89,9 +89,8 @@ def test_list_unverified(client, app, seeder: Seeder, utils: UtilActions):
     assert response.json["items"][2]["id"] == verified_admin_unit_id
 
     # Globale Admins dürfen alle Organisationen sehen
-    seeder.create_user("admin@test.de", admin=True)
-    utils.logout()
-    utils.login("admin@test.de")
+    admin_user_id = seeder.create_user("admin@test.de", admin=True)
+    seeder.authorize_api_access(admin_user_id, eventcally_id)
     response = utils.get_json_ok(url)
     assert len(response.json["items"]) == 3
 

@@ -56,7 +56,7 @@ def test_user_invitations_and_memberships_match_snapshot(app, db, seeder, utils)
         )
         db.session.commit()
 
-    utils.login("invited@test.de")
+    seeder.authorize_api_access(invited_user_id, admin_unit_id)
 
     def inv_list(**kwargs):
         return utils.get_url("api_v1_user_organization_invitation_list", **kwargs)

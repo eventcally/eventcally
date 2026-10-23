@@ -3,7 +3,7 @@ import os
 from apispec import APISpec, BasePlugin
 from apispec.exceptions import DuplicateComponentNameError
 from apispec.ext.marshmallow import MarshmallowPlugin
-from flask import url_for
+from flask import current_app, g, request, url_for
 from flask_apispec.extension import FlaskApiSpec
 from flask_babel import gettext
 from flask_marshmallow import Marshmallow
@@ -183,6 +183,14 @@ def init_api(app):
     global rest_api, api_docs
 
     rest_api = RestApi(app, "/api/v1", catch_all_404s=True)
+
+    @app.before_request
+    def _api_ignores_session_identity():
+        # The API authenticates with OAuth tokens or API keys only; the session
+        # cookie must not leak into current_user.
+        if request.path.startswith("/api/v1"):
+            g._login_user = current_app.login_manager.anonymous_user()
+
     marshmallow.init_app(app)
     app.config.update(
         {

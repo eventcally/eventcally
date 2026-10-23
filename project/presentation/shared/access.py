@@ -1,6 +1,5 @@
 from authlib.integrations.flask_oauth2 import current_token
 from flask import abort, current_app, g
-from flask_login import login_user
 from flask_security import current_user
 
 from project.application.queries import (
@@ -27,13 +26,12 @@ def owner_access_or_401(user_id):
 
 
 def login_api_user() -> bool:
-    return (
-        current_token
-        and current_token.user
-        and login_user(current_token.user)
-        or current_user
-        and current_user.is_authenticated
-    )
+    """Make the OAuth token's user the current user for this request only.
+    The API never authenticates through the session cookie."""
+    if current_token and current_token.user:
+        g._login_user = current_token.user
+        return True
+    return False
 
 
 def login_api_user_or_401() -> bool:
