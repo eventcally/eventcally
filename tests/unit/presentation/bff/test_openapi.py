@@ -115,3 +115,27 @@ def test_public_organization_paths():
     assert organization["responses"]["200"]["content"]["application/json"][
         "schema"
     ] == {"$ref": "#/components/schemas/PublicOrganization"}
+
+
+def test_public_event_date_paths():
+    spec = build_openapi()
+
+    search = spec["paths"]["/bff/public/event-dates"]["get"]
+    assert {"date_from", "category_id", "coordinate", "not_referenced"} <= {
+        p["name"] for p in search["parameters"]
+    }
+    assert search["responses"]["200"]["content"]["application/json"]["schema"] == {
+        "$ref": "#/components/schemas/PublicEventDatePage"
+    }
+    assert "/bff/public/event-dates/options" in spec["paths"]
+    assert "/bff/public/organizations/{id}/organizers" in spec["paths"]
+    assert "/bff/public/places" in spec["paths"]
+    assert "/bff/public/places/{gmaps_id}/coordinate" in spec["paths"]
+
+
+def test_manage_event_reference_paths():
+    spec = build_openapi()
+
+    create = spec["paths"]["/bff/manage/organizations/{id}/event-references"]["post"]
+    assert "201" in create["responses"]
+    assert "delete" in spec["paths"]["/bff/manage/event-references/{id}"]

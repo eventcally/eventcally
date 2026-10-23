@@ -114,25 +114,6 @@ class ExternalCalendarEventList(BaseModel):
     items: List[ExternalCalendarEvent]
 
 
-class PlaceSuggestionParams(BaseModel):
-    keyword: str = Field(min_length=1, max_length=255)
-
-
-class PlaceSuggestion(BaseModel):
-    gmaps_id: str
-    text: str
-    main_text: Optional[str] = None
-
-
-class PlaceSuggestionList(BaseModel):
-    items: List[PlaceSuggestion]
-
-
-class PlaceCoordinate(BaseModel):
-    latitude: float
-    longitude: float
-
-
 class CustomWidgetListParams(PageParams):
     pass
 
@@ -169,4 +150,12 @@ class CustomWidgetSave(BaseModel):
 
 
 class CustomWidgetCreated(BaseModel):
+    id: int
+
+
+class EventReferenceCreate(BaseModel):
+    event_id: int
+
+
+class EventReferenceCreated(BaseModel):
     id: int

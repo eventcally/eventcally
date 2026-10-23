@@ -23,7 +23,7 @@ SNAPSHOT_PATH = Path(__file__).parent / "data" / "event_read_parity.json.gz"
 def _normalize(text: str) -> str:
     text = re.sub(r'(csrf_token[^>]*value=")[^"]*"', r'\1"', text)
     text = re.sub(r'nonce="[^"]*"', 'nonce=""', text)
-    # The default `date_from` of the event dates form is the day the test runs.
+    # The default `date_from` of the widget form is the day the test runs.
     text = re.sub(
         r'(id="date_from" name="date_from" value=")(?!2040)[0-9-]+"', r'\1TODAY"', text
     )
@@ -109,10 +109,6 @@ def _requests(utils: UtilActions, ids):
         )
 
     requests["organizer_unknown_ical"] = url("main.organizer_ical", id=4711)
-    requests["event_dates_page"] = url("main.event_dates")
-    requests["event_dates_page_filtered"] = url(
-        "main.event_dates", keyword="Jam", date_from="2040-04-01"
-    )
 
     manage_args = {
         "default": {},

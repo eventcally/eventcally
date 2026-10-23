@@ -255,3 +255,37 @@ def test_get_relation_none_for_user_without_organization(client, seeder, utils):
     utils.login("lonely@test.de")
 
     assert utils.get_json_ok(_url(target_id)).json["relation"] is None
+
+
+# organizers
+
+
+def _organizers_url(organization_id, **params):
+    query = "&".join(f"{k}={v}" for k, v in params.items())
+    return f"{_url(organization_id)}/organizers" + (f"?{query}" if query else "")
+
+
+def test_organizers_name_match_and_paging(client, seeder, utils):
+    _, admin_unit_id = _create_org(seeder, "Alpha", verified=True)
+    seeder.upsert_event_organizer(admin_unit_id, "Chor Goslar")
+    seeder.upsert_event_organizer(admin_unit_id, "Goslar Orchester")
+    seeder.upsert_event_organizer(admin_unit_id, "Band")
+    # plus the default organizer of the organization
+
+    body = utils.get_json_ok(_organizers_url(admin_unit_id, keyword="goslar")).json
+
+    assert [o["name"] for o in body["items"]] == ["Goslar Orchester", "Chor Goslar"]
+    assert set(body["items"][0]) == {"id", "name"}
+
+    body = utils.get_json_ok(_organizers_url(admin_unit_id, per_page=1, page=2)).json
+    assert body["total"] == 4 and len(body["items"]) == 1
+
+
+def test_organizers_unknown_organization_is_404(client, seeder, utils):
+    assert utils.get_json(_organizers_url(4711)).status_code == 404
+
+
+def test_organizers_out_of_range_page_is_404(client, seeder, utils):
+    _, admin_unit_id = _create_org(seeder, "Alpha", verified=True)
+
+    assert utils.get_json(_organizers_url(admin_unit_id, page=9)).status_code == 404

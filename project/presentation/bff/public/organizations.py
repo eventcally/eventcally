@@ -5,6 +5,7 @@ from flask_security import current_user
 from project.application.queries import (
     GetOrganizationQuery,
     GetOutgoingOrganizationRelationByTargetQuery,
+    ListEventOrganizersQuery,
     SearchOrganizationsQuery,
 )
 from project.application.query_bus import QueryBus
@@ -17,7 +18,9 @@ from project.presentation.bff.public.schemas import (
     PublicOrganizationPage,
     PublicOrganizationRef,
     PublicOrganizationRelation,
+    PublicOrganizerListParams,
     PublicOrganizerLocation,
+    PublicOrganizerRefPage,
 )
 from project.presentation.bff.routing import bff_route
 from project.presentation.shared.access import can_verify_admin_unit, has_access
@@ -138,4 +141,39 @@ def get_organization(id, query_bus: QueryBus = Provide[Application.cqrs.query_bu
         logo_url=url_for_image(organization.logo, s=120) if organization.logo else None,
         ical_url=url_for("main.organization_ical", id=organization.id, _external=True),
         relation=_relation_for(organization, query_bus),
+    )
+
+
+@bff_route(
+    bff_public_bp,
+    "/organizations/<int:id>/organizers",
+    query=PublicOrganizerListParams,
+    response=PublicOrganizerRefPage,
+    summary="List organizers of an organization",
+)
+@inject
+def list_organization_organizers(
+    id,
+    query: PublicOrganizerListParams,
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    page = result_or_404(
+        query_bus.handle(
+            ListEventOrganizersQuery(
+                admin_unit_id=id,
+                name=(query.keyword or "").strip() or None,
+                page=query.to_page_request(),
+            )
+        )
+    )
+
+    if page.is_out_of_range:
+        abort(404)
+
+    return PublicOrganizerRefPage(
+        items=[PublicOrganizationRef(id=o.id, name=o.name) for o in page.items],
+        page=page.page,
+        per_page=page.per_page,
+        total=page.total,
+        pages=page.pages,
     )

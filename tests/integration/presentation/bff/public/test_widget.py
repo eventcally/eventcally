@@ -1,6 +1,5 @@
 import pytest
 
-from project.presentation.bff.public.widget import description_preview
 from project.shared.dateutils import create_berlin_date
 
 DATES_URL = "/bff/public/widget/event-dates"
@@ -107,24 +106,6 @@ def test_categories(client, utils):
     names = [c["name"] for c in body["items"]]
     assert names and names == sorted(names)
     assert all(isinstance(c["id"], int) for c in body["items"])
-
-
-def test_description_preview_truncates_at_word_boundary():
-    text = " ".join(["wort"] * 100)
-
-    preview = description_preview(f"<p>{text}</p>")
-
-    assert len(preview) <= 200
-    assert preview.endswith("wort…")
-
-
-@pytest.mark.parametrize("value", [None, "", "<p> </p>"])
-def test_description_preview_empty(value):
-    assert description_preview(value) is None
-
-
-def test_description_preview_short_text_is_unchanged():
-    assert description_preview("a &amp; b") == "a & b"
 
 
 def test_photo(client, seeder, utils):
