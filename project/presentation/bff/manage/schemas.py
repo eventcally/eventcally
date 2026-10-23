@@ -266,3 +266,98 @@ class ManageEventPage(BaseModel):
     pages: int
     organizer: Optional[ManageRef] = None
     event_place: Optional[ManageRef] = None
+
+
+def _empty_to_none(value):
+    return None if isinstance(value, str) and not value.strip() else value
+
+
+class OrganizationSettingsLocation(BaseModel):
+    street: Optional[str] = Field(default=None, max_length=255)
+    postalCode: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=10)
+    ]
+    city: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
+    ]
+    state: Optional[str] = Field(default=None, max_length=255)
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+
+class OrganizationSettingsLogo(BaseModel):
+    # A data URI; `None` on save keeps the stored image.
+    image_base64: Optional[str] = None
+    copyright_text: Optional[str] = Field(default=None, max_length=255)
+    license_id: Optional[int] = None
+
+
+class OrganizationSettingsVerificationRequests(BaseModel):
+    allowed: bool = False
+    text: Optional[str] = None
+    postal_codes: List[
+        Annotated[str, StringConstraints(strip_whitespace=True, max_length=10)]
+    ] = []
+
+
+class OrganizationSettingsSave(BaseModel):
+    name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=5, max_length=255)
+    ]
+    short_name: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True, min_length=5, max_length=100, pattern=r"^\w+$"
+        ),
+    ]
+    description: Optional[str] = None
+    location: OrganizationSettingsLocation
+    logo: Optional[OrganizationSettingsLogo] = None
+    url: Optional[str] = Field(default=None, max_length=255)
+    email: Optional[str] = Field(default=None, max_length=255)
+    phone: Optional[str] = Field(default=None, max_length=255)
+    fax: Optional[str] = Field(default=None, max_length=255)
+    verification_requests: Optional[OrganizationSettingsVerificationRequests] = None
+
+    @field_validator("url", "email", "phone", "fax", mode="before")
+    @classmethod
+    def _contact_empty_to_none(cls, value):
+        return _empty_to_none(value)
+
+
+class OrganizationSettingsLocationView(BaseModel):
+    """Stored locations may predate the required postal code and city."""
+
+    street: str = ""
+    postalCode: str = ""
+    city: str = ""
+    state: str = ""
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+
+class OrganizationSettingsForm(BaseModel):
+    id: int
+    name: str
+    short_name: str
+    description: Optional[str] = None
+    location: OrganizationSettingsLocationView
+    logo: Optional[OrganizationSettingsLogo] = None
+    url: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    fax: Optional[str] = None
+    can_verify_other: bool
+    verification_requests: Optional[OrganizationSettingsVerificationRequests] = None
+    licenses: List[PlanningChoice]
+    deletion_requested_at: Optional[datetime] = None
+
+
+class OrganizationNameAvailabilityParams(BaseModel):
+    name: Optional[str] = Field(default=None, max_length=255)
+    short_name: Optional[str] = Field(default=None, max_length=100)
+
+
+class OrganizationNameAvailability(BaseModel):
+    name_taken: Optional[bool] = None
+    short_name_taken: Optional[bool] = None

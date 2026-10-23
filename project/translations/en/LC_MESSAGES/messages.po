@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-23 16:10+0200\n"
+"POT-Creation-Date: 2026-10-23 22:14+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -54,12 +54,12 @@ msgid ""
 "%(admin_unit_name)s."
 msgstr ""
 
-#: project/presentation/web/modular/base_views.py:378
+#: project/presentation/web/modular/base_views.py:339
 #, python-format
 msgid "%(model_display_name)s successfully created"
 msgstr ""
 
-#: project/presentation/web/modular/base_views.py:510
+#: project/presentation/web/modular/base_views.py:471
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr ""
@@ -69,7 +69,7 @@ msgstr ""
 msgid "%(model_display_name)s successfully revoked"
 msgstr ""
 
-#: project/presentation/web/modular/base_views.py:459
+#: project/presentation/web/modular/base_views.py:420
 #, python-format
 msgid "%(model_display_name)s successfully updated"
 msgstr ""
@@ -113,11 +113,11 @@ msgstr ""
 msgid "."
 msgstr ""
 
-#: project/presentation/web/forms/common.py:272
+#: project/presentation/web/forms/common.py:261
 msgid "0 (Little relevant)"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:282
+#: project/presentation/web/forms/common.py:271
 msgid "10 (Highlight)"
 msgstr ""
 
@@ -133,7 +133,7 @@ msgstr ""
 msgid "20 km"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:277
+#: project/presentation/web/forms/common.py:266
 msgid "5 (Default)"
 msgstr ""
 
@@ -261,7 +261,8 @@ msgstr ""
 msgid "Add widget"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:150
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:323
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:99
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/create.html:249
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/update.html:153
 msgid "Additional information"
@@ -332,9 +333,9 @@ msgstr ""
 msgid "Administrator"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:211
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:223
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:261
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:251
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:263
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:301
 #: project/presentation/web/modular/filters.py:29
 #: project/presentation/web/modular/filters.py:46
 msgid "All"
@@ -362,7 +363,7 @@ msgstr ""
 msgid "Allow"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:47
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:356
 msgid "Allow verification requests"
 msgstr ""
 
@@ -476,7 +477,7 @@ msgstr ""
 msgid "Attendance mode"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:195
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:108
 msgid "Background Color"
 msgstr ""
 
@@ -528,9 +529,10 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:244
 #: project/presentation/web/templates/profile.html:13
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:251
-#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:137
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:164
+#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:114
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:13
 #: project/presentation/web/views/user_blueprint/user/forms.py:19
 #: project/presentation/web/views/user_blueprint/user/views.py:102
@@ -541,9 +543,9 @@ msgstr ""
 msgid "Cards"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:126
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:166
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:37
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:56
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:57
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:300
 msgid "Categories"
 msgstr ""
@@ -578,6 +580,7 @@ msgid ""
 "visible and is used for sorting."
 msgstr ""
 
+#: frontend/src/shared/ImageField.vue:105
 #: project/presentation/web/templates/_macros.html:185
 msgid "Choose image file"
 msgstr ""
@@ -610,8 +613,9 @@ msgstr ""
 msgid "Choose why you rejected the request."
 msgstr ""
 
-#: project/presentation/web/forms/common.py:71
-#: project/presentation/web/forms/common.py:79
+#: frontend/src/shared/LocationFields.vue:99
+#: project/presentation/web/forms/common.py:60
+#: project/presentation/web/forms/common.py:68
 msgid "City"
 msgstr ""
 
@@ -718,6 +722,7 @@ msgstr ""
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:103
 #: frontend/src/apps/widget/pages/CalendarWidget.vue:172
 #: frontend/src/shared/IcalExportModal.vue:41
+#: frontend/src/shared/ImageCropper.vue:73
 #: project/presentation/web/templates/_macros.html:171
 msgid "Close"
 msgstr ""
@@ -772,7 +777,8 @@ msgstr ""
 msgid "Copy the code below and paste it into your website."
 msgstr ""
 
-#: project/presentation/web/forms/common.py:109
+#: frontend/src/shared/ImageField.vue:133
+#: project/presentation/web/forms/common.py:98
 msgid "Copyright text"
 msgstr ""
 
@@ -784,7 +790,7 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
-#: project/presentation/web/modular/base_views.py:372
+#: project/presentation/web/modular/base_views.py:333
 #: project/presentation/web/templates/generic/list.html:18
 #, python-format
 msgid "Create %(model_display_name)s"
@@ -795,7 +801,7 @@ msgstr ""
 msgid "Create another event for %(admin_unit_name)s"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:140
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:145
 #: project/presentation/web/templates/_managebar.html:23
 msgid "Create event"
 msgstr ""
@@ -827,7 +833,7 @@ msgstr ""
 
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:57
 #: frontend/src/apps/admin/pages/UsersPage.vue:35
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:232
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:272
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:180
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:16
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:21
@@ -898,7 +904,7 @@ msgstr ""
 msgid "Custom widgets"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:98
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:138
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:86
 #: project/presentation/web/templates/_macros.html:479
 msgid "Date"
@@ -935,13 +941,13 @@ msgstr ""
 #: frontend/src/apps/admin/pages/UsersPage.vue:93
 #: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:39
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:125
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:190
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:203
 #: project/presentation/web/modular/base_form.py:100
 #: project/presentation/web/modular/base_view_handler.py:204
 msgid "Delete"
 msgstr ""
 
-#: project/presentation/web/modular/base_views.py:498
+#: project/presentation/web/modular/base_views.py:459
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr ""
@@ -963,6 +969,7 @@ msgstr ""
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:31
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:32
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:181
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:397
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:23
 msgid "Delete organization"
 msgstr ""
@@ -1007,11 +1014,13 @@ msgstr ""
 msgid "Deny"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:140
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:297
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:89
 msgid "Describe the organization in a few words"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:139
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:295
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:88
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:25
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:29
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:31
@@ -1036,7 +1045,7 @@ msgstr ""
 msgid "Developer"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:209
+#: project/presentation/web/forms/common.py:198
 msgid "Disabled"
 msgstr ""
 
@@ -1046,7 +1055,6 @@ msgstr ""
 
 #: frontend/src/shared/LocationFilter.vue:176
 #: frontend/src/shared/LocationFilter.vue:179
-#: project/presentation/web/forms/common.py:336
 msgid "Distance"
 msgstr ""
 
@@ -1054,7 +1062,7 @@ msgstr ""
 msgid "Do you really want to delete the widget?"
 msgstr ""
 
-#: project/presentation/web/modular/base_views.py:504
+#: project/presentation/web/modular/base_views.py:465
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr ""
@@ -1102,7 +1110,7 @@ msgstr ""
 msgid "Duplicate event"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:117
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:157
 msgid "Earliest start first"
 msgstr ""
 
@@ -1110,7 +1118,7 @@ msgstr ""
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:141
 #: frontend/src/apps/admin/pages/UsersPage.vue:90
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:117
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:187
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:200
 #: project/presentation/web/modular/base_view_handler.py:200
 #: project/presentation/web/templates/_macros.html:670
 #: project/presentation/web/templates/_macros.html:713
@@ -1124,6 +1132,7 @@ msgstr ""
 msgid "Edit event"
 msgstr ""
 
+#: frontend/src/shared/ImageCropper.vue:71
 #: project/presentation/web/templates/_macros.html:150
 msgid "Edit image"
 msgstr ""
@@ -1136,9 +1145,10 @@ msgstr ""
 #: frontend/src/apps/admin/pages/AdminHome.vue:14
 #: frontend/src/apps/admin/pages/EmailPage.vue:92
 #: frontend/src/apps/admin/pages/UsersPage.vue:34
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:330
 #: project/presentation/web/templates/_macros.html:296
 #: project/presentation/web/templates/_macros.html:1314
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:40
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:33
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:18
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:31
 #: project/presentation/web/views/manage_admin_unit/member/displays.py:14
@@ -1199,7 +1209,7 @@ msgstr ""
 msgid "Enter organization"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:162
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:202
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:148
 msgid "Enter organizer"
 msgstr ""
@@ -1210,7 +1220,7 @@ msgid ""
 "adults and children."
 msgstr ""
 
-#: project/presentation/web/modular/base_views.py:488
+#: project/presentation/web/modular/base_views.py:449
 #, python-format
 msgid ""
 "Entered %(property_name)s does not match %(model_display_name)s "
@@ -1236,8 +1246,8 @@ msgid "Entered name does not match app client name"
 msgstr ""
 
 #: project/presentation/bff/admin/organizations.py:135
-#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:110
-#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:146
+#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:87
+#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:123
 #: project/presentation/web/views/user_blueprint/organization_member/views.py:49
 msgid "Entered name does not match organization name"
 msgstr ""
@@ -1274,8 +1284,10 @@ msgstr ""
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:73
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:111
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:59
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:84
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:98
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:89
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:103
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:137
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:222
 #: frontend/src/apps/manage/pages/PlanningPage.vue:75
 #: frontend/src/apps/public/pages/EventDatesPage.vue:59
 #: frontend/src/apps/public/pages/EventDatesPage.vue:73
@@ -1287,6 +1299,7 @@ msgstr ""
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:39
 #: frontend/src/apps/public/pages/OrganizerPage.vue:35
 #: frontend/src/apps/widget/pages/SearchWidget.vue:73
+#: frontend/src/shared/LocationFields.vue:41
 #: frontend/src/shared/LocationFilter.vue:171
 msgid "Error"
 msgstr ""
@@ -1362,8 +1375,8 @@ msgstr ""
 msgid "Event date definitions"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:52
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:168
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:53
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:173
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/create.html:148
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/update.html:82
@@ -1442,7 +1455,7 @@ msgstr ""
 msgid "Event successfully reported"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:214
+#: project/presentation/web/forms/common.py:203
 msgid "Event types"
 msgstr ""
 
@@ -1672,7 +1685,7 @@ msgstr "Theater"
 msgid "Event_Tour"
 msgstr "Tour"
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:136
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:141
 #: frontend/src/apps/public/pages/OrganizationPage.vue:150
 #: frontend/src/apps/public/pages/OrganizerPage.vue:95
 #: project/infrastructure/babel_extract.py:1
@@ -1726,8 +1739,9 @@ msgstr ""
 msgid "External calendars"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:340
 #: project/presentation/web/templates/_macros.html:367
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:42
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:35
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:33
 msgid "Fax"
 msgstr ""
@@ -1736,6 +1750,7 @@ msgstr ""
 msgid "Features"
 msgstr ""
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:112
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:35
 #: frontend/src/apps/manage/pages/PlanningPage.vue:229
 #: frontend/src/shared/customWidget.ts:201
@@ -1764,7 +1779,7 @@ msgstr ""
 msgid "Find"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:270
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:310
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:251
 msgid "Find events"
 msgstr ""
@@ -1778,7 +1793,7 @@ msgstr ""
 msgid "First and last name"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:192
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:105
 msgid "Font"
 msgstr ""
 
@@ -1786,17 +1801,16 @@ msgstr ""
 msgid "Font family"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:290
+#: project/presentation/web/forms/common.py:279
 msgid "Friday"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:101
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:235
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:141
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:275
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:89
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:183
 #: frontend/src/apps/widget/pages/SearchWidget.vue:162
 #: frontend/src/apps/widget/pages/SearchWidget.vue:163
-#: project/presentation/web/forms/common.py:301
 #: project/presentation/web/forms/event_date.py:13
 msgid "From"
 msgstr ""
@@ -1871,12 +1885,12 @@ msgstr ""
 msgid "Homepage URL"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:261
+#: project/presentation/web/forms/common.py:250
 #, python-format
 msgid "I read and accept %(privacy_open)sPrivacy%(privacy_close)s."
 msgstr ""
 
-#: project/presentation/web/forms/common.py:251
+#: project/presentation/web/forms/common.py:240
 #, python-format
 msgid ""
 "I read and accept %(tos_open)sTerms of Service%(tos_close)s and "
@@ -1937,7 +1951,7 @@ msgid ""
 "event."
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:48
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:352
 msgid "If set, unverified organizations may ask you for verification."
 msgstr ""
 
@@ -1958,7 +1972,7 @@ msgid "If the participants needs to register for the event."
 msgstr ""
 
 #: project/infrastructure/babel_extract.py:1
-#: project/presentation/web/forms/common.py:101
+#: project/presentation/web/forms/common.py:90
 msgid "Image"
 msgstr ""
 
@@ -2015,8 +2029,8 @@ msgstr ""
 msgid "Installation"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:143
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:58
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:183
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:59
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:198
 msgid "Internal tags"
 msgstr ""
@@ -2083,14 +2097,14 @@ msgstr ""
 
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:105
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:106
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:85
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:125
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:102
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:56
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:57
 #: frontend/src/apps/widget/pages/SearchWidget.vue:189
 #: frontend/src/apps/widget/pages/SearchWidget.vue:190
 #: project/presentation/web/forms/event_date.py:17
-#: project/presentation/web/modular/base_views.py:216
+#: project/presentation/web/modular/base_views.py:182
 msgid "Keyword"
 msgstr ""
 
@@ -2119,15 +2133,15 @@ msgstr ""
 msgid "Last created first"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:64
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:172
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:65
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:177
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:22
 #: project/presentation/web/views/manage_admin_unit/event_place/displays.py:19
 #: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:15
 msgid "Last modified at"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:118
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:158
 #: project/presentation/web/views/manage_admin_unit/event_organizer/view_handler.py:41
 #: project/presentation/web/views/manage_admin_unit/event_place/view_handler.py:41
 #: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:66
@@ -2152,7 +2166,8 @@ msgstr ""
 msgid "Last updated at %(updated_at)s."
 msgstr ""
 
-#: project/presentation/web/forms/common.py:38
+#: frontend/src/shared/LocationFields.vue:84
+#: project/presentation/web/forms/common.py:27
 msgid "Latitude"
 msgstr ""
 
@@ -2172,8 +2187,9 @@ msgstr ""
 msgid "Legal notice"
 msgstr ""
 
+#: frontend/src/shared/ImageField.vue:149
 #: project/infrastructure/babel_extract.py:1
-#: project/presentation/web/forms/common.py:115
+#: project/presentation/web/forms/common.py:104
 msgid "License"
 msgstr ""
 
@@ -2181,7 +2197,7 @@ msgstr ""
 msgid "Licenses"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:65
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:374
 msgid "Limit verification requests to organizations with these postal codes."
 msgstr ""
 
@@ -2190,11 +2206,12 @@ msgstr ""
 msgid "Link"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:207
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:120
 msgid "Link Color"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:39
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:325
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:32
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:14
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:179
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:19
@@ -2218,12 +2235,12 @@ msgid "List all events of %(admin_unit_name)s"
 msgstr ""
 
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:66
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:304
 #: frontend/src/shared/LocationFilter.vue:122
 #: frontend/src/shared/LocationFilter.vue:123
 #: project/infrastructure/babel_extract.py:1
-#: project/presentation/web/forms/common.py:333
 #: project/presentation/web/templates/_macros.html:374
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:146
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:95
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:16
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:28
 #: project/presentation/web/views/manage_admin_unit/event_place/displays.py:15
@@ -2235,7 +2252,8 @@ msgstr ""
 msgid "Locations"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:148
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:311
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:97
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:20
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:29
 msgid "Logo"
@@ -2245,7 +2263,8 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:41
+#: frontend/src/shared/LocationFields.vue:89
+#: project/presentation/web/forms/common.py:30
 msgid "Longitude"
 msgstr ""
 
@@ -2296,7 +2315,7 @@ msgstr ""
 msgid "Mobile"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:286
+#: project/presentation/web/forms/common.py:275
 msgid "Monday"
 msgstr ""
 
@@ -2305,12 +2324,12 @@ msgstr ""
 msgid "Month"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:199
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:212
 #: project/presentation/web/templates/_macros.html:1101
 msgid "More"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:279
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:319
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:260
 msgid "More filters"
 msgstr ""
@@ -2320,7 +2339,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:139
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:143
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:40
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:53
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:54
 #: frontend/src/apps/public/pages/EventReportPage.vue:99
 #: project/presentation/web/templates/_macros.html:994
 #: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:47
@@ -2350,12 +2369,15 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:87
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:123
+#: project/presentation/bff/manage/organization_settings.py:175
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:45
 msgid "Name is already taken"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:107
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:240
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:249
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:56
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:153
 msgid "Name of organization"
 msgstr ""
 
@@ -2387,7 +2409,7 @@ msgstr ""
 msgid "New verification request"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:119
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:159
 msgid "Newest first"
 msgstr ""
 
@@ -2411,13 +2433,13 @@ msgstr ""
 
 #: frontend/src/apps/admin/pages/EmailPage.vue:29
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:263
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:303
 #: project/presentation/web/modular/filters.py:31
 #: project/presentation/web/templates/_macros.html:972
 msgid "No"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:161
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:166
 #: frontend/src/apps/public/pages/EventDatesPage.vue:220
 msgid "No events found"
 msgstr ""
@@ -2450,8 +2472,8 @@ msgstr ""
 
 #: project/presentation/bff/admin/mail.py:122
 #: project/presentation/bff/admin/users.py:87
-#: project/presentation/web/modular/fields.py:178
-#: project/presentation/web/modular/fields.py:239
+#: project/presentation/web/modular/fields.py:139
+#: project/presentation/web/modular/fields.py:200
 msgid "Not a valid choice"
 msgstr ""
 
@@ -2526,6 +2548,7 @@ msgstr ""
 msgid "Oauth2 authorization codes"
 msgstr ""
 
+#: frontend/src/shared/ImageCropper.vue:72
 #: project/presentation/web/templates/_macros.html:172
 msgid "Okay"
 msgstr ""
@@ -2640,6 +2663,7 @@ msgid "Organization successfully left"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:127
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:211
 msgid "Organization successfully updated"
 msgstr ""
 
@@ -2677,8 +2701,8 @@ msgid ""
 "test phase. If you are interested, you can contact us."
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:156
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:54
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:196
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:55
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:140
 #: project/presentation/web/ical.py:34
 #: project/presentation/web/templates/_macros.html:558
@@ -2777,25 +2801,26 @@ msgstr ""
 msgid "Permissions"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:335
 #: project/presentation/web/templates/_macros.html:359
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:41
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:34
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:17
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:32
 msgid "Phone"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:61
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:169
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:214
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:62
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:174
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:227
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:287
 #: project/presentation/web/views/manage_admin_unit/event_place/displays.py:17
 #: project/presentation/web/views/manage_admin_unit/event_place/forms.py:28
 msgid "Photo"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:169
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:175
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:55
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:209
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:215
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:56
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/templates/_macros.html:521
 #: project/presentation/web/templates/_macros.html:684
@@ -2835,6 +2860,10 @@ msgstr ""
 msgid "Planning"
 msgstr ""
 
+#: frontend/src/shared/ImageField.vue:50
+msgid "Please choose an image file."
+msgstr ""
+
 #: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:35
 msgid "Please download the private key. It will only be available once."
 msgstr ""
@@ -2848,21 +2877,24 @@ msgstr ""
 msgid "Please note the key: %(key)s. It will only be displayed once."
 msgstr ""
 
-#: project/presentation/web/modular/widgets.py:81
+#: frontend/src/shared/ImageField.vue:35
+#: project/presentation/web/modular/widgets.py:44
 msgid "Please select"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:118
+#: frontend/src/shared/ImageField.vue:151
+#: project/presentation/web/forms/common.py:107
 msgid ""
 "Please select if the image should be displayed in external event "
 "calendars."
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:182
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:222
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:55
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:154
-#: project/presentation/web/forms/common.py:69
-#: project/presentation/web/forms/common.py:76
+#: frontend/src/shared/LocationFields.vue:94
+#: project/presentation/web/forms/common.py:58
+#: project/presentation/web/forms/common.py:65
 msgid "Postal code"
 msgstr ""
 
@@ -2881,7 +2913,7 @@ msgstr ""
 msgid "Price info"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:201
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:114
 msgid "Primary Color"
 msgstr ""
 
@@ -2910,8 +2942,8 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:220
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:60
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:260
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:61
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:502
 msgid "Public status"
 msgstr ""
@@ -2920,7 +2952,7 @@ msgstr ""
 msgid "Publish event"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:195
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:235
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:167
 msgid "Radius"
 msgstr ""
@@ -2949,10 +2981,10 @@ msgstr ""
 msgid "Recipient"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:258
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:51
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:167
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:176
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:298
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:52
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:172
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:185
 #: project/presentation/web/templates/_macros.html:958
 #: project/presentation/web/templates/_macros.html:983
 #: project/presentation/web/templates/_macros.html:1428
@@ -2993,8 +3025,8 @@ msgid ""
 "notified after the other organization reviews the event."
 msgstr ""
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:63
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:171
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:64
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:176
 #: project/presentation/web/templates/_macros.html:792
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:395
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/event/create.html:275
@@ -3027,8 +3059,8 @@ msgstr ""
 msgid "Referenced event changed"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:62
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:170
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:63
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:175
 #: project/presentation/web/templates/_managebar.html:28
 msgid "References"
 msgstr ""
@@ -3100,12 +3132,12 @@ msgstr ""
 msgid "Request already verified"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:247
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:160
 #: project/presentation/web/views/user_blueprint/user/forms.py:15
 msgid "Request deletion"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:196
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:209
 #: project/presentation/web/templates/_macros.html:803
 #: project/presentation/web/templates/_macros.html:1095
 #: project/presentation/web/templates/event/actions.html:20
@@ -3137,7 +3169,7 @@ msgstr ""
 
 #: frontend/src/apps/admin/components/ResetTosModal.vue:43
 #: frontend/src/apps/admin/pages/SettingsPage.vue:92
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:282
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:322
 #: frontend/src/shared/AppTypeahead.vue:125
 #: frontend/src/shared/LocationFilter.vue:142
 msgid "Reset"
@@ -3221,7 +3253,7 @@ msgstr ""
 msgid "Roles users"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:291
+#: project/presentation/web/forms/common.py:280
 msgid "Saturday"
 msgstr ""
 
@@ -3273,13 +3305,13 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
+#: frontend/src/shared/LocationFields.vue:66
 #: project/presentation/web/modular/widgets.py:13
-#: project/presentation/web/modular/widgets.py:31
 #: project/presentation/web/templates/_macros.html:912
 msgid "Search location on Google"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:206
+#: project/presentation/web/forms/common.py:195
 msgid "Secret"
 msgstr ""
 
@@ -3348,16 +3380,17 @@ msgstr ""
 #: frontend/src/apps/admin/pages/SettingsPage.vue:62
 #: frontend/src/apps/admin/pages/SettingsPage.vue:65
 #: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:63
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:235
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:157
 #: project/presentation/web/templates/_managebar.html:82
 #: project/presentation/web/templates/profile.html:32
-#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:30
+#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:146
 msgid "Settings"
 msgstr ""
 
 #: frontend/src/apps/admin/components/SettingCard.vue:64
-#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:81
+#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:58
 #: project/presentation/web/views/user_blueprint/user/views.py:131
 msgid "Settings successfully updated"
 msgstr ""
@@ -3378,15 +3411,20 @@ msgstr ""
 msgid "Share"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:117
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:269
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:66
 msgid "Short name for organization"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:102
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:124
+#: project/presentation/bff/manage/organization_settings.py:180
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:51
 msgid "Short name is already taken"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:126
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:274
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:287
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:75
 msgid "Short name must contain only letters numbers or underscore"
 msgstr ""
 
@@ -3412,9 +3450,9 @@ msgstr ""
 msgid "Show unreferenced events only"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:114
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:154
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:206
-#: project/presentation/web/modular/base_views.py:228
+#: project/presentation/web/modular/base_views.py:194
 msgid "Sort"
 msgstr ""
 
@@ -3422,7 +3460,7 @@ msgstr ""
 msgid "Source organization is outside the allowed postal codes."
 msgstr ""
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:50
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:51
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:65
 msgid "Start"
 msgstr ""
@@ -3436,12 +3474,13 @@ msgstr ""
 msgid "Start page"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:36
+#: frontend/src/shared/LocationFields.vue:79
+#: project/presentation/web/forms/common.py:25
 msgid "State"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:208
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:59
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:248
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:60
 #: project/presentation/web/templates/_macros.html:997
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:12
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:21
@@ -3457,7 +3496,8 @@ msgstr ""
 msgid "Status code"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:34
+#: frontend/src/shared/LocationFields.vue:74
+#: project/presentation/web/forms/common.py:23
 msgid "Street"
 msgstr ""
 
@@ -3469,7 +3509,7 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:292
+#: project/presentation/web/forms/common.py:281
 msgid "Sunday"
 msgstr ""
 
@@ -3481,8 +3521,8 @@ msgstr ""
 msgid "Tablet"
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:136
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:57
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:176
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:58
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:120
 #: project/presentation/web/forms/event_date.py:21
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:191
@@ -3562,7 +3602,8 @@ msgstr ""
 msgid "The external calendar could not be loaded."
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:108
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:251
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:57
 msgid "The full name of the organization"
 msgstr ""
 
@@ -3602,7 +3643,7 @@ msgstr ""
 msgid "The minimum age that participants should be."
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:102
+#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:79
 msgid ""
 "The organization is not deleted immediately. After a period of time, the "
 "organization will be deleted. Until then, the deletion can be canceled."
@@ -3614,6 +3655,7 @@ msgid ""
 "visible."
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:242
 #: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:12
 msgid "The organization is scheduled for deletion."
 msgstr ""
@@ -3623,6 +3665,11 @@ msgstr ""
 #: frontend/src/apps/public/pages/NotFoundPage.vue:9
 #: project/domain/errors/not_found_error.py:7
 msgid "The requested resource was not found"
+msgstr ""
+
+#: frontend/src/shared/ImageCropper.vue:37
+#, python-format
+msgid "The resolution is too low. At least %(width)sx%(height)spx."
 msgstr ""
 
 #: project/templates/email/reference_request_review_status_notice.html:4
@@ -3635,7 +3682,8 @@ msgstr ""
 msgid "The review status of your verification request has been updated."
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:118
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:272
+#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:67
 msgid "The short name is used to create a unique identifier for your events"
 msgstr ""
 
@@ -3688,7 +3736,8 @@ msgid "This OAuth2 token has already been revoked."
 msgstr ""
 
 #: project/presentation/bff/admin/mail.py:119
-#: project/presentation/web/forms/common.py:147
+#: project/presentation/bff/manage/organization_settings.py:152
+#: project/presentation/web/forms/common.py:136
 msgid "This field is required."
 msgstr ""
 
@@ -3697,7 +3746,7 @@ msgstr ""
 msgid "This is a test mail"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:58
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:364
 msgid ""
 "This text is shown to unverified organizations to help them decide "
 "whether they ask you for verification."
@@ -3708,7 +3757,7 @@ msgstr ""
 msgid "This will allow \"%(client_name)s\" to:"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:289
+#: project/presentation/web/forms/common.py:278
 msgid "Thursday"
 msgstr ""
 
@@ -3735,7 +3784,7 @@ msgstr ""
 msgid "Token endpoint auth method"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:287
+#: project/presentation/web/forms/common.py:276
 msgid "Tueday"
 msgstr ""
 
@@ -3751,17 +3800,18 @@ msgstr ""
 msgid "Typical Age to"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:204
+#: project/presentation/web/forms/common.py:193
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:11
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:20
 msgid "URL"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:392
 #: project/presentation/web/modular/base_form.py:95
 msgid "Update"
 msgstr ""
 
-#: project/presentation/web/modular/base_views.py:453
+#: project/presentation/web/modular/base_views.py:414
 #, python-format
 msgid "Update %(model_display_name)s"
 msgstr ""
@@ -3827,17 +3877,17 @@ msgstr ""
 msgid "Verification request successfully updated"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:349
 #: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:6
 #: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:11
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:156
 msgid "Verification requests"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:55
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:360
 msgid "Verification requests information"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:63
+#: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:372
 msgid "Verification requests postal codes"
 msgstr ""
 
@@ -3880,7 +3930,7 @@ msgstr ""
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:155
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:136
 #: frontend/src/apps/manage/components/PlanningEventDetailsModal.vue:78
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:185
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:198
 #: project/presentation/web/modular/base_view_handler.py:197
 #: project/presentation/web/views/flask_admin.py:127
 #: project/presentation/web/views/manage_admin_unit/event_organizer/view_handler.py:75
@@ -3957,7 +4007,7 @@ msgstr ""
 msgid "Webhooks"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:288
+#: project/presentation/web/forms/common.py:277
 msgid "Wednesday"
 msgstr ""
 
@@ -3995,7 +4045,7 @@ msgstr ""
 
 #: project/presentation/shared/permissions.py:169
 #: project/presentation/web/templates/_managebar.html:86
-#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:57
+#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:34
 msgid "Widgets"
 msgstr ""
 
@@ -4016,7 +4066,7 @@ msgstr ""
 
 #: frontend/src/apps/admin/pages/EmailPage.vue:29
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:262
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:302
 #: project/presentation/web/modular/filters.py:30
 #: project/presentation/web/templates/_macros.html:972
 msgid "Yes"
@@ -4090,11 +4140,10 @@ msgstr ""
 msgid "this is a message from %(site_name)s."
 msgstr ""
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:107
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:246
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:147
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:286
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:95
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:194
-#: project/presentation/web/forms/common.py:310
 #: project/presentation/web/forms/event_date.py:15
 msgid "to"
 msgstr ""

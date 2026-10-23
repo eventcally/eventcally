@@ -385,6 +385,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the settings form of an organization */
+        get: operations["bff_manage_get_organization_settings"];
+        /** Update the settings of an organization */
+        put: operations["bff_manage_update_organization_settings"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/settings/name-availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Whether the name and short name of an organization are taken */
+        get: operations["bff_manage_get_organization_name_availability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/places": {
         parameters: {
             query?: never;
@@ -394,6 +429,23 @@ export interface paths {
         };
         /** Suggest places (Google Maps) for a location filter */
         get: operations["bff_manage_list_place_suggestions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/places/{gmaps_id}/address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The address fields of a Google Maps place */
+        get: operations["bff_manage_get_place_address"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1290,6 +1342,218 @@ export interface components {
         ManageRefList: {
             /** Items */
             items: components["schemas"]["ManageRef"][];
+        };
+        /** OrganizationNameAvailability */
+        OrganizationNameAvailability: {
+            /**
+             * Name Taken
+             * @default null
+             */
+            name_taken: boolean | null;
+            /**
+             * Short Name Taken
+             * @default null
+             */
+            short_name_taken: boolean | null;
+        };
+        /** OrganizationSettingsForm */
+        OrganizationSettingsForm: {
+            /** Can Verify Other */
+            can_verify_other: boolean;
+            /**
+             * Deletion Requested At
+             * @default null
+             */
+            deletion_requested_at: string | null;
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Email
+             * @default null
+             */
+            email: string | null;
+            /**
+             * Fax
+             * @default null
+             */
+            fax: string | null;
+            /** Id */
+            id: number;
+            /** Licenses */
+            licenses: components["schemas"]["PlanningChoice"][];
+            location: components["schemas"]["OrganizationSettingsLocationView"];
+            /** @default null */
+            logo: components["schemas"]["OrganizationSettingsLogo"] | null;
+            /** Name */
+            name: string;
+            /**
+             * Phone
+             * @default null
+             */
+            phone: string | null;
+            /** Short Name */
+            short_name: string;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+            /** @default null */
+            verification_requests: components["schemas"]["OrganizationSettingsVerificationRequests"] | null;
+        };
+        /** OrganizationSettingsLocation */
+        OrganizationSettingsLocation: {
+            /** City */
+            city: string;
+            /**
+             * Latitude
+             * @default null
+             */
+            latitude: number | null;
+            /**
+             * Longitude
+             * @default null
+             */
+            longitude: number | null;
+            /** Postalcode */
+            postalCode: string;
+            /**
+             * State
+             * @default null
+             */
+            state: string | null;
+            /**
+             * Street
+             * @default null
+             */
+            street: string | null;
+        };
+        /**
+         * OrganizationSettingsLocationView
+         * @description Stored locations may predate the required postal code and city.
+         */
+        OrganizationSettingsLocationView: {
+            /**
+             * City
+             * @default
+             */
+            city: string;
+            /**
+             * Latitude
+             * @default null
+             */
+            latitude: number | null;
+            /**
+             * Longitude
+             * @default null
+             */
+            longitude: number | null;
+            /**
+             * Postalcode
+             * @default
+             */
+            postalCode: string;
+            /**
+             * State
+             * @default
+             */
+            state: string;
+            /**
+             * Street
+             * @default
+             */
+            street: string;
+        };
+        /** OrganizationSettingsLogo */
+        OrganizationSettingsLogo: {
+            /**
+             * Copyright Text
+             * @default null
+             */
+            copyright_text: string | null;
+            /**
+             * Image Base64
+             * @default null
+             */
+            image_base64: string | null;
+            /**
+             * License Id
+             * @default null
+             */
+            license_id: number | null;
+        };
+        /** OrganizationSettingsSave */
+        OrganizationSettingsSave: {
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Email
+             * @default null
+             */
+            email: string | null;
+            /**
+             * Fax
+             * @default null
+             */
+            fax: string | null;
+            location: components["schemas"]["OrganizationSettingsLocation"];
+            /** @default null */
+            logo: components["schemas"]["OrganizationSettingsLogo"] | null;
+            /** Name */
+            name: string;
+            /**
+             * Phone
+             * @default null
+             */
+            phone: string | null;
+            /** Short Name */
+            short_name: string;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+            /** @default null */
+            verification_requests: components["schemas"]["OrganizationSettingsVerificationRequests"] | null;
+        };
+        /** OrganizationSettingsVerificationRequests */
+        OrganizationSettingsVerificationRequests: {
+            /**
+             * Allowed
+             * @default false
+             */
+            allowed: boolean;
+            /**
+             * Postal Codes
+             * @default []
+             */
+            postal_codes: string[];
+            /**
+             * Text
+             * @default null
+             */
+            text: string | null;
+        };
+        /** PlaceAddress */
+        PlaceAddress: {
+            /** City */
+            city: string;
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /** Postalcode */
+            postalCode: string;
+            /** State */
+            state: string;
+            /** Street */
+            street: string;
         };
         /** PlaceCoordinate */
         PlaceCoordinate: {
@@ -3696,6 +3960,194 @@ export interface operations {
             };
         };
     };
+    bff_manage_get_organization_settings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrganizationSettingsForm"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_update_organization_settings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrganizationSettingsSave"];
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_organization_name_availability: {
+        parameters: {
+            query?: {
+                name?: string | null;
+                short_name?: string | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrganizationNameAvailability"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_list_place_suggestions: {
         parameters: {
             query: {
@@ -3714,6 +4166,64 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlaceSuggestionList"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_place_address: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                gmaps_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlaceAddress"];
                 };
             };
             /** @description Unauthorized */

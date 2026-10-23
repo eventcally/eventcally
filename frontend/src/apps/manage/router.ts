@@ -4,6 +4,7 @@ import CustomWidgetEditPage from "./pages/CustomWidgetEditPage.vue";
 import CustomWidgetsPage from "./pages/CustomWidgetsPage.vue";
 import ManageEventsPage from "./pages/ManageEventsPage.vue";
 import NotFoundPage from "./pages/NotFoundPage.vue";
+import OrganizationSettingsPage from "./pages/OrganizationSettingsPage.vue";
 import PlanningPage from "./pages/PlanningPage.vue";
 
 export const routes: RouteRecordRaw[] = [
@@ -33,6 +34,12 @@ export const routes: RouteRecordRaw[] = [
     path: "/manage/admin_unit/:organizationId(\\d+)/events",
     name: "manage-events",
     component: ManageEventsPage,
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/update",
+    name: "organization-settings",
+    component: OrganizationSettingsPage,
     props: (route) => ({ organizationId: Number(route.params.organizationId) }),
   },
   { path: "/:rest(.*)*", name: "not-found", component: NotFoundPage },

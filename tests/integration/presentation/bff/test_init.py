@@ -96,6 +96,24 @@ def test_field_validation_error_is_422(app):
     assert response.json["errors"] == [{"loc": ["email"], "msg": "Does not match"}]
 
 
+def test_field_validation_error_reports_several_fields(app):
+    from project.presentation.bff import _handle_field_validation_error
+    from project.presentation.bff.errors import FieldValidationError
+
+    with app.test_request_context("/bff/admin/users"):
+        response, code = _handle_field_validation_error(
+            FieldValidationError(
+                errors=[(["name"], "Taken"), (["short_name"], "Taken")]
+            )
+        )
+
+    assert code == 422
+    assert response.json["errors"] == [
+        {"loc": ["name"], "msg": "Taken"},
+        {"loc": ["short_name"], "msg": "Taken"},
+    ]
+
+
 def test_public_blueprint_is_open_to_anonymous(client, seeder):
     seeder.setup_base(log_in=False)
 

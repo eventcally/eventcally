@@ -24,6 +24,13 @@ describe("manage router", () => {
     expect(route.params.organizationId).toBe("3");
   });
 
+  it("resolves the organization settings with a numeric organization", async () => {
+    const route = await resolve("/manage/admin_unit/3/update");
+    expect(route.name).toBe("organization-settings");
+    expect(route.params.organizationId).toBe("3");
+    expect((await resolve("/manage/admin_unit/x/update")).name).toBe("not-found");
+  });
+
   it("resolves the event list with a numeric organization and keeps the query", async () => {
     const route = await resolve("/manage/admin_unit/3/events?event_place_id=5");
     expect(route.name).toBe("manage-events");

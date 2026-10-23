@@ -1,51 +1,28 @@
-from flask import redirect, request, url_for
+from flask import redirect, render_template, request, url_for
 from flask_babel import gettext, lazy_gettext
+from flask_security import auth_required
 
 from project.application.commands.cancel_organization_deletion_command import (
     CancelOrganizationDeletionCommand,
 )
 from project.presentation.shared.current_admin_unit import current_admin_unit
+from project.presentation.web.boot import build_boot_data
 from project.presentation.web.modular.base_views import BaseDeleteView, BaseUpdateView
+from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
 from project.presentation.web.views.manage_admin_unit.admin_unit.forms import (
     CancelDeletionForm,
     RequestDeletionForm,
-    UpdateForm,
     UpdateWidgetForm,
 )
 from project.presentation.web.views.utils import (
     flash_non_match_for_deletion,
     handle_base_error,
+    manage_permission_required,
 )
 from project.shared.utils import (
     widget_default_background_color,
     widget_default_primary_color,
 )
-
-
-class UpdateView(BaseUpdateView):
-    form_class = UpdateForm
-    permission = "settings:write"
-
-    def get_title(self, **kwargs):
-        return lazy_gettext("Settings")
-
-    def create_form(self, **kwargs):
-        form = super().create_form(**kwargs)
-
-        if not current_admin_unit.can_verify_other:
-            del form.verfication_requests
-
-        return form
-
-    @handle_base_error
-    def dispatch_validated_form(self, form, object, **kwargs):
-        cmd = form.create_update_command(object.id)
-        self.message_bus.handle_command(cmd)
-        self.flash_success_message(object, form)
-        return redirect(self.get_redirect_url(object=object))
-
-    def get_redirect_url(self, **kwargs):
-        return url_for(request.endpoint)
 
 
 class UpdateWidgetView(BaseUpdateView):
@@ -157,3 +134,15 @@ class CancelDeletionView(BaseDeleteView):
 
     def flash_success_message(self, form, object):
         pass
+
+
+@manage_admin_unit_bp.route("/update")
+@auth_required()
+@manage_permission_required("settings:write")
+def update():
+    return render_template(
+        "manage/organization_settings.html",
+        entry="manage",
+        title=gettext("Settings"),
+        boot=build_boot_data(base="/"),
+    )

@@ -48,3 +48,12 @@ class PlaceSuggestionList(BaseModel):
 class PlaceCoordinate(BaseModel):
     latitude: float
     longitude: float
+
+
+class PlaceAddress(BaseModel):
+    street: str
+    postalCode: str
+    city: str
+    state: str
+    latitude: float
+    longitude: float

@@ -64,8 +64,11 @@ def test_create_duplicate(client, app, utils: UtilActions, seeder: Seeder):
     seeder.create_admin_unit(user_id, "Meine Crew")
 
     url = utils.get_url("manage.organization_create")
-    response = client.get(url)
-    assert response.status_code == 200
+    response = utils.get_ok(url)
+
+    utils.ajax_validation(url, "name", "Meine Crew", False)
+    utils.ajax_validation(url, "short_name", "meinecrew", False)
+    utils.ajax_validation(url, "short_name", "andere_crew", True)
 
     with client:
         response = utils.post_form(url, response, create_form_data(response, utils))
@@ -292,107 +295,16 @@ def test_create_with_relation_auto_verify(
         assert relation.verify is False
 
 
-@pytest.mark.parametrize("db_error", [True, False])
-def test_update(db, app, utils: UtilActions, seeder: Seeder, mocker, db_error):
-    seeder.create_user()
-    user_id = utils.login()
-    admin_unit_id = seeder.create_admin_unit(user_id, "Initial name")
-
-    with app.app_context():
-        from project.infrastructure.models import AdminUnit
-
-        admin_unit = db.session.get(AdminUnit, admin_unit_id)
-        admin_unit.incoming_verification_requests_postal_codes = ["12345"]
-        db.session.commit()
-
-    url = utils.get_url("manage_admin_unit.update", id=admin_unit_id)
-    response = utils.get_ok(url)
-
-    if db_error:
-        utils.mock_db_commit(mocker)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Meine Crew",
-        },
-    )
-
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
-
-    assert response.status_code == 302
-
-    with app.app_context():
-        from project.infrastructure.seed_helpers import get_admin_unit_by_id
-
-        admin_unit_from_db = get_admin_unit_by_id(admin_unit_id)
-        assert admin_unit_from_db is not None
-        assert admin_unit_from_db.name == "Meine Crew"
-
-
-def test_update_with_verification_requests(db, app, utils: UtilActions, seeder: Seeder):
-    seeder.create_user()
-    user_id = utils.login()
-    admin_unit_id = seeder.create_admin_unit(
-        user_id, "Initial name", can_verify_other=True
-    )
-
-    url = utils.get_url("manage_admin_unit.update", id=admin_unit_id)
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Meine Crew",
-            "verfication_requests-incoming_verification_requests_allowed": "y",
-            "verfication_requests-incoming_verification_requests_text": "Please verify us",
-            "verfication_requests-incoming_verification_requests_postal_codes": [
-                "12345",
-                "54321",
-            ],
-        },
-    )
-    assert response.status_code == 302
-
-    with app.app_context():
-        from project.infrastructure.seed_helpers import get_admin_unit_by_id
-
-        admin_unit_from_db = get_admin_unit_by_id(admin_unit_id)
-        assert admin_unit_from_db is not None
-        assert admin_unit_from_db.incoming_verification_requests_allowed is True
-        assert (
-            admin_unit_from_db.incoming_verification_requests_text == "Please verify us"
-        )
-        assert admin_unit_from_db.incoming_verification_requests_postal_codes == [
-            "12345",
-            "54321",
-        ]
-
-
-def test_update_duplicate(client, app, utils: UtilActions, seeder: Seeder):
+def test_update_renders_vue_shell(client, utils: UtilActions, seeder: Seeder):
     user_id = seeder.create_user()
     utils.login()
-    seeder.create_admin_unit(user_id, "Meine Crew")
-    admin_unit_id = seeder.create_admin_unit(user_id, "Other Crew")
+    admin_unit_id = seeder.create_admin_unit(user_id, "Meine Crew")
 
     url = utils.get_url("manage_admin_unit.update", id=admin_unit_id)
     response = utils.get_ok(url)
 
-    utils.ajax_validation(url, "short_name", "meinecrew", False)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Meine Crew",
-        },
-    )
-    assert response.status_code == 200
-    assert b"Name ist bereits vergeben" in response.data
+    assert b'id="app"' in response.data
+    assert b"manage" in response.data
 
 
 def test_update_permission_missing(client, app, db, utils: UtilActions, seeder: Seeder):

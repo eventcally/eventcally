@@ -22,6 +22,9 @@ export const publicPages = {
 // Jinja manage area the admin links to.
 export const manage = {
   organization: (id: number) => `/manage/admin_unit/${id}`,
+  settings: (id: number) => `/manage/admin_unit/${id}/update`,
+  requestDeletion: (id: number) => `/manage/admin_unit/${id}/request-deletion`,
+  cancelDeletion: (id: number) => `/manage/admin_unit/${id}/cancel-deletion`,
   events: (organizationId: number) => `/manage/admin_unit/${organizationId}/events`,
   eventCreate: (organizationId: number) => `/manage/admin_unit/${organizationId}/event/create`,
   eventUpdate: (organizationId: number, id: number) =>

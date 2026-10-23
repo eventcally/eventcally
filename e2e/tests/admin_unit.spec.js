@@ -1,3 +1,4 @@
+const path = require("path");
 const { test, expect } = require("../fixtures");
 const { screenshot, shouldContain } = require("../fixtures/helpers");
 const { createAdminUnit, createAdminUnitOrganizationInvitation } = require("../fixtures/flask");
@@ -36,10 +37,41 @@ test.describe("Admin Unit", () => {
     await login();
     const adminUnitId = createAdminUnit();
     await page.goto(`/manage/admin_unit/${adminUnitId}/update`);
+    await expect(page.locator("#name")).not.toHaveValue("");
     await screenshot(page, "update");
+
+    await page.locator("#name").fill("Renamed Crew");
+    await page.locator("#location-postalCode").fill("38640");
+    await page.locator("#location-city").fill("Goslar");
+
+    // Logo: choose a file, crop it, give the copyright.
+    await page.locator("input[type=file]").setInputFiles(
+      path.join(__dirname, "..", "..", "project", "presentation", "web", "static", "android-chrome-512x512.png")
+    );
+    await page.locator(".cropper-container").waitFor();
+    await page.locator(".modal-footer .btn-primary").click();
+    await expect(page.locator("[data-test=preview]")).toBeVisible();
+    await page.locator("#logo-copyright_text").fill("Logo by Crew");
+
     await page.locator("#submit").click();
     await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/update`));
-    await shouldContain(page.locator("div.alert"), "Organisation erfolgreich aktualisiert");
+    await shouldContain(page.locator(".toast"), "Organisation erfolgreich aktualisiert");
+    await expect(page.locator("#name")).toHaveValue("Renamed Crew");
+    await expect(page.locator("[data-test=preview]")).toBeVisible();
+  });
+
+  test("update shows a taken name", async ({ page, login }) => {
+    await login();
+    const adminUnitId = createAdminUnit();
+    createAdminUnit("test@test.de", "Other Crew");
+    await page.goto(`/manage/admin_unit/${adminUnitId}/update`);
+    await expect(page.locator("#name")).not.toHaveValue("");
+
+    await page.locator("#name").fill("Other Crew");
+    await expect(page.locator("#name")).toHaveClass(/is-invalid/);
+    await page.locator("#submit").click();
+    await expect(page.locator("#name")).toHaveClass(/is-invalid/);
+    await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/update`));
   });
 
   test("widgets", async ({ page, login }) => {

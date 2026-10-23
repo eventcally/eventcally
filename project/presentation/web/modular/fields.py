@@ -1,10 +1,4 @@
-from wtforms import (
-    FormField,
-    SelectField,
-    SelectFieldBase,
-    SelectMultipleField,
-    ValidationError,
-)
+from wtforms import FormField, SelectField, SelectFieldBase, ValidationError
 from wtforms.utils import unset_value
 
 from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_place
@@ -52,28 +46,6 @@ class GooglePlaceField(SelectField):
 
     def get_bff_google_place(self, gmaps_id):
         return get_gmaps_place(gmaps_id)
-
-
-class SelectMultipleTagField(SelectMultipleField):
-    def __init__(
-        self,
-        label=None,
-        validators=None,
-        coerce=str,
-        **kwargs,
-    ):
-        validate_choice = False
-        choices = []
-        render_kw = kwargs.setdefault("render_kw", dict())
-        render_kw.setdefault("data-role", "select2-tags")
-        super().__init__(label, validators, coerce, choices, validate_choice, **kwargs)
-
-    def process_data(self, value):
-        super().process_data(value)
-
-        if self.data:
-            self.data = sorted(self.data)
-            self.choices = self.data
 
 
 class AjaxSelectField(SelectFieldBase):

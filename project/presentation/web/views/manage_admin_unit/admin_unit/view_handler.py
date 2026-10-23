@@ -5,7 +5,6 @@ from project.presentation.web.views.manage_admin_unit import manage_admin_unit_b
 from project.presentation.web.views.manage_admin_unit.admin_unit.views import (
     CancelDeletionView,
     RequestDeletionView,
-    UpdateView,
     UpdateWidgetView,
 )
 from project.presentation.web.views.manage_admin_unit.child_view_handler import (
@@ -45,14 +44,6 @@ class ViewHandler(ManageAdminUnitBaseViewHandler):
             single_endpoint_name,
             plural_endpoint_name,
             id_query_arg_name,
-        )
-
-        self._add_view(
-            "update",
-            "/update",
-            UpdateView,
-            "update",
-            app,
         )
 
         self._add_view(
