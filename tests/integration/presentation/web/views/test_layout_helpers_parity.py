@@ -1,19 +1,10 @@
-"""Parity of the template helpers used by the layouts (manage bar badges, Vue
-`currentAdminUnit` grants, ToS link, announcement). Written against the ORM path first."""
-
-import re
+"""Parity of the template helpers used by the layouts (manage bar badges, ToS
+link, announcement). Written against the ORM path first."""
 
 
 def _badges(utils, response):
     soup = utils.get_soup(response)
     return [span.get_text().strip() for span in soup.select("span.badge-pill")]
-
-
-def _vue_list(response, key):
-    text = response.data.decode()
-    unit = text[text.index('vue_app_data["currentAdminUnit"]') :]
-    block = re.search(key + r": \[(.*?)\]", unit, re.S).group(1)
-    return set(re.findall(r'"([^"]+)"', block))
 
 
 def _seed_incoming_requests(seeder, admin_unit_id):
@@ -69,54 +60,6 @@ def test_manage_bar_badges_visible_to_event_verifier(app, db, seeder, utils):
     response = utils.get_ok(utils.get_url("manage_admin_unit.events", id=admin_unit_id))
 
     assert sorted(set(_badges(utils, response))) == ["1", "2"]
-
-
-def test_vue_current_admin_unit_grants_of_owner(app, db, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
-
-    response = utils.get_ok(f"/event/{event_id}")
-
-    with app.app_context():
-        from project.infrastructure.models import AdminUnitMemberRole
-
-        roles = db.session.query(AdminUnitMemberRole).all()
-        expected_roles = {
-            r.name for r in roles if r.name in ("admin", "event_verifier")
-        }
-        expected_permissions = set()
-        for role in roles:
-            expected_permissions.update(role.permissions)
-
-    assert _vue_list(response, "roles") == expected_roles == {"admin", "event_verifier"}
-    assert _vue_list(response, "permissions") == expected_permissions
-    assert "custom_widgets:read" in expected_permissions
-
-
-def test_vue_current_admin_unit_grants_of_event_verifier(seeder, utils):
-    _, admin_unit_id, _ = seeder.setup_base_event_verifier()
-    event_id = seeder.create_event(admin_unit_id)
-
-    response = utils.get_ok(f"/event/{event_id}")
-
-    assert _vue_list(response, "roles") == {"event_verifier"}
-    assert "events:write" in _vue_list(response, "permissions")
-    assert "settings:write" not in _vue_list(response, "permissions")
-
-
-def test_vue_current_admin_unit_grants_empty_for_platform_admin_non_member(
-    seeder, utils
-):
-    _, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
-    seeder.create_user("admin@admin.de", admin=True)
-    utils.logout()
-    utils.login("admin@admin.de")
-
-    response = utils.get_ok(f"/event/{event_id}")
-
-    assert _vue_list(response, "roles") == set()
-    assert _vue_list(response, "permissions") == set()
 
 
 def test_tos_link_and_announcement_follow_settings(app, db, seeder, utils):

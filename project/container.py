@@ -1052,10 +1052,6 @@ class Cqrs(containers.DeclarativeContainer):
                     repo=read_repos.access_read_repo,
                     authz=actor_authorization_service,
                 ),
-                queries.GetCurrentMemberGrantsQuery: providers.Factory(
-                    query_handlers.GetCurrentMemberGrantsHandler,
-                    repo=read_repos.access_read_repo,
-                ),
                 queries.GetMailJobStatusQuery: providers.Factory(
                     query_handlers.GetMailJobStatusHandler,
                     reader=services.mail_job_status_reader,

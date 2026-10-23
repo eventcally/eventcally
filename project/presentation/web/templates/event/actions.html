@@ -1,12 +1,9 @@
-{% extends "layout_vue.html" %}
+{% extends "layout.html" %}
 {% from "_macros.html" import render_share_modal %}
 
 {%- block title -%}
 {{ _('Actions for event') }}
 {%- endblock -%}
-
-{% block vue_container %}
-{% endblock %}
 
 {% block content %}
     <div class="w-normal">
@@ -53,8 +50,5 @@
         </div>
 
     </div>
-
-    <div id="vue-container"></div>
-    {{ super() }}
 
 {% endblock %}

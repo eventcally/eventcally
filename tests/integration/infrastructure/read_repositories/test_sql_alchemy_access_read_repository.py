@@ -244,32 +244,6 @@ def test_incoming_badges_count_inbox_requests_of_the_organization(
     )
 
 
-def test_member_grants_of_owner_event_verifier_and_non_member(access, app, db, seeder):
-    owner_id, admin_unit_id = seeder.setup_base()
-    seeder.create_admin_unit_member(admin_unit_id, ["event_verifier"], "ev@test.de")
-    stranger_id = seeder.create_user("stranger@test.de")
-
-    with app.app_context():
-        from project.infrastructure.models import AdminUnitMemberRole, User
-
-        expected = {
-            role.name: list(role.permissions)
-            for role in db.session.query(AdminUnitMemberRole).all()
-        }
-        verifier_id = db.session.query(User).filter_by(email="ev@test.de").one().id
-
-    owner = access("member_grants", admin_unit_id, owner_id)
-    verifier = access("member_grants", admin_unit_id, verifier_id)
-    stranger = access("member_grants", admin_unit_id, stranger_id)
-
-    assert owner.roles == ["admin", "event_verifier"]
-    assert owner.permissions == expected["admin"] + expected["event_verifier"]
-    assert verifier.roles == ["event_verifier"]
-    assert verifier.permissions == expected["event_verifier"]
-    assert stranger.roles == [] and stranger.permissions == []
-    assert access("member_grants", 4711, owner_id).roles == []
-
-
 def test_event_report_recipients_are_writers_and_platform_admins(access, seeder):
     owner_id, admin_unit_id = seeder.setup_base()
     seeder.create_admin_unit_member(admin_unit_id, ["event_verifier"], "ev@test.de")

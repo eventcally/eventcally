@@ -2,14 +2,12 @@
 
 from project.application import queries
 from project.application.query_handlers import (
-    GetCurrentMemberGrantsHandler,
     GetManageMenuOptionsHandler,
     GetSettingsHandler,
     GetSiteNoticesHandler,
 )
 from project.application.read_models.access_helper_read_models import (
     ManageMenuOptionsReadModel,
-    MemberGrantsReadModel,
 )
 from project.application.read_models.settings_read_model import SettingsReadModel
 from project.application.read_models.site_notices_read_model import SiteNoticesReadModel
@@ -64,21 +62,6 @@ def test_manage_menu_options_for_non_member_are_zero():
 
     assert _badges(handler, Actor(user_id=7), 2) == ManageMenuOptionsReadModel()
     assert _badges(handler, Actor(user_id=8), 1) == ManageMenuOptionsReadModel()
-
-
-def test_current_member_grants():
-    handler = GetCurrentMemberGrantsHandler(FakeAccessRepo())
-
-    def grants(actor):
-        return handler.handle(
-            queries.GetCurrentMemberGrantsQuery(admin_unit_id=1, actor=actor)
-        )
-
-    assert grants(None) == MemberGrantsReadModel()
-    assert grants(Actor(app_installation_id=3)) == MemberGrantsReadModel()
-    assert grants(Actor(user_id=7)) == MemberGrantsReadModel(
-        roles=["admin"], permissions=["7:read"]
-    )
 
 
 def test_site_notices_pass_through():

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import ConfigDict
 
@@ -14,17 +14,6 @@ class ManageMenuOptionsReadModel(BaseReadModel):
 
     reference_requests_incoming_badge: int = 0
     verification_requests_incoming_badge: int = 0
-
-
-class MemberGrantsReadModel(BaseReadModel):
-    """Roles and permissions the actor holds in an organization (Vue
-    `currentAdminUnit` in `layout_vue.html`). `permissions` concatenates the roles'
-    permissions in role id order, duplicates kept."""
-
-    model_config = ConfigDict(frozen=True)
-
-    roles: List[str] = []
-    permissions: List[str] = []
 
 
 class MailRecipientReadModel(BaseReadModel):
