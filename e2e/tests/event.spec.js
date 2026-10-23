@@ -1,6 +1,12 @@
 const { test, expect } = require("../fixtures");
-const { screenshot, select2, checkEventStartEnd, shouldContain } = require("../fixtures/helpers");
-const { createAdminUnit, createEvent } = require("../fixtures/flask");
+const {
+  screenshot,
+  select2,
+  select2Multiple,
+  checkEventStartEnd,
+  shouldContain,
+} = require("../fixtures/helpers");
+const { createAdminUnit, createEvent, createEventOrganizer } = require("../fixtures/flask");
 
 test.describe("Event", () => {
   for (const { recurrence } of [{ recurrence: false }, { recurrence: true }]) {
@@ -45,6 +51,25 @@ test.describe("Event", () => {
       await shouldContain(page.locator("div.alert"), "Veranstaltung erfolgreich aktualisiert");
     });
   }
+
+  test("updates co-organizers", async ({ page, login }) => {
+    await login();
+    const adminUnitId = createAdminUnit();
+    const eventId = createEvent(adminUnitId);
+    createEventOrganizer(adminUnitId, "Mein Veranstalter");
+    const updateUrl = `/manage/admin_unit/${adminUnitId}/event/${eventId}/update`;
+
+    await page.goto(updateUrl);
+    await select2Multiple(page, "co_organizers", "Mein V", "Mein Veranstalter");
+    await page.locator("#submit").click();
+    await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/events`));
+    await shouldContain(page.locator("div.alert"), "Veranstaltung erfolgreich aktualisiert");
+
+    await page.goto(updateUrl);
+    await expect(
+      page.locator("#co_organizers + .select2 li.select2-selection__choice"),
+    ).toContainText("Mein Veranstalter");
+  });
 
   test("saves draft", async ({ page, login }) => {
     await login();

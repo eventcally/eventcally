@@ -75,6 +75,22 @@ async function select2(page, selectId, textToEnter, expectedText = null, expecte
 }
 
 /**
+ * Picks an option in an ajax multi-select select2. Unlike the single variant it renders no
+ * `#select2-<id>-container`; the search field lives inside the selection that follows `#<id>`.
+ */
+async function select2Multiple(page, selectId, textToEnter, expectedText) {
+  const selection = page.locator(`#${selectId} + .select2 .select2-selection--multiple`);
+  await selection.click();
+
+  const input = selection.locator("input.select2-search__field");
+  await input.pressSequentially(textToEnter, { delay: 500 });
+  await expect(page.locator(`#select2-${selectId}-results`)).toContainText(expectedText);
+  await input.press("Enter");
+
+  await expect(selection.locator("li.select2-selection__choice")).toContainText(expectedText);
+}
+
+/**
  * Asserts that ANY element in the matched set contains the text. Playwright's
  * `toContainText` on a locator resolving to several elements is a strict-mode
  * violation instead, so selectors like `div.alert` would otherwise break as soon
@@ -244,6 +260,7 @@ module.exports = {
   assertInvalid,
   assertRequired,
   select2,
+  select2Multiple,
   inputsShouldHaveSameValue,
   screenshotDatepicker,
   checkEventStartEnd,

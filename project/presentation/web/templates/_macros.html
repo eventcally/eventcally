@@ -1536,31 +1536,3 @@ $('#allday').on('change', function() {
   </div>
 </div>
 {% endmacro %}
-
-{% macro render_co_organizer_select2(admin_unit_id) %}
-$('#co_organizer_ids').select2({
-  width: '100%',
-  ajax: {
-    url: "{{ url_for('api_v1_organization_organizer_list', id=admin_unit_id) }}",
-    dataType: 'json',
-    delay: 250,
-    cache: true,
-    data: function (params) {
-      return {
-        name: params.term,
-        per_page: 5,
-        page: params.page || 1
-      };
-    },
-    processResults: function (data) {
-      return {
-        results: data.items.map(p => ({"id": p.id, "text": p.name})),
-        pagination: {
-            more: data.has_next
-        }
-      };
-    }
-  },
-  placeholder: "{{ _('Enter organizer') }}"
-});
-{% endmacro %}
