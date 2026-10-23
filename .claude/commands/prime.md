@@ -31,9 +31,9 @@ repo has no GitHub remote configured, note that and continue with codebase analy
 
 ### Step 1: Analyze the Codebase
 
-1. Read `CLAUDE.md`, `AGENTS.md`, and `.github/copilot-instructions.md` for conventions,
+1. Read `CLAUDE.md` and `AGENTS.md` for conventions,
    architecture guardrails, and pitfalls
-2. Study the app wiring: `project/__init__.py` (`create_app`), `project/container.py` (DI),
+2. Study the app wiring: `project/factory.py` (`create_app`), `project/container.py` (DI),
    `bootstrap.py` (entrypoint)
 3. Study the DDD layers:
    - `project/domain/` — models, abstract interfaces, business logic

@@ -28,6 +28,8 @@ Load the plan file and extract:
 - **Files to Change** - CREATE/UPDATE list
 - **Tasks** - Implementation order
 - **Validation Commands** - How to verify
+- **Visual Baseline** - For UI migrations to Vue 3: the pages, states and viewports to match,
+  and where the "before" screenshots are
 - **GitHub Issue** - Check the plan's Metadata table for a GitHub Issue number (e.g. `#11`).
   If present, this issue will be updated/closed after implementation is complete.
 
@@ -56,6 +58,20 @@ git status
 | On `main`, clean | Create branch: `git checkout -b issue/{plan-name}` (if the plan has a linked GitHub Issue number, prefix the plan name with it: `git checkout -b issue/{issue-number}-{plan-name}`) |
 | On `main`, dirty | STOP: "Stash or commit changes first" |
 | On feature branch | Use it |
+
+### Visual Baseline (UI migration to Vue 3 only)
+
+> **⚠️ Do NOT start Phase 3 until the "before" screenshots exist.** Once the old UI is
+> replaced, the baseline is gone.
+
+- If the plan's Visual Baseline section points to existing screenshots, check that every
+  page × state × viewport is there.
+- Otherwise start the app on the **unchanged** code and take them now: full-page screenshots
+  for desktop `1280×800` and mobile `390×844` via the Playwright MCP (`browser_resize` +
+  `browser_take_screenshot`) or a throwaway `npx playwright` script. Save them to
+  `.agents/screenshots/{YYYY-MM-DD}-{plan-name}/before-{desktop|mobile}-{state}.png`.
+- If the task turns out to migrate a UI but the plan has no Visual Baseline section, capture
+  one anyway (derive pages and states from the plan) and note it as a deviation.
 
 ---
 
@@ -123,19 +139,65 @@ isort . && black . && flake8 && lint-imports && \
   python .scripts/module_import_whitelist.py project/domain project/application
 # or: pre-commit run --all-files
 
-# Tests (most suites need PostGIS + Redis)
-docker compose -f docker-compose.test.yml up -d --wait
-pytest
 ```
 
-**All must pass with zero errors.**
+Then run the tests **in tiers, cheapest first, failing fast**. Stop at the first failing
+tier, fix, and re-run that tier before moving on.
+
+**Collect the changed files** (committed on the branch + uncommitted + untracked):
+
+```bash
+{ git diff --name-only main...HEAD; git diff --name-only HEAD; git ls-files --others --exclude-standard; } | sort -u
+```
+
+**Tier 1 — unit tests (always, no services, seconds):**
+
+```bash
+pytest tests/unit -x -q --no-cov
+```
+
+**Tier 2 — frontend (only if `frontend/` or BFF models changed):**
+
+```bash
+npm run typecheck --prefix frontend && npm test --prefix frontend -- --bail 1
+# BFF pydantic models changed → regenerate and check for drift
+python -m project.presentation.bff.openapi > frontend/openapi.json && npm run gen:api --prefix frontend
+git diff --exit-code frontend/openapi.json frontend/src/api/schema.d.ts
+```
+
+**Tier 3 — targeted integration tests (if anything outside `tests/unit` / `frontend/` changed):**
+the mirrored test files of every changed module (`project/<path>/<mod>.py` →
+`tests/integration/<path>/test_<mod>.py`), plus every new or changed test file, plus the
+tests of direct callers you touched (e.g. the view/API tests for a changed handler).
+
+```bash
+./runtests.sh --splits 1 --group 1 -- <test paths> -x
+# coverage of the changed modules (inside the container: the data file holds /app paths)
+docker compose -f docker-compose.test.yml run --rm pytest \
+  coverage report -m --data-file=.coverage.1 --include='project/<changed path>/*'
+```
+
+New or changed modules must show no missed lines here — CI fails below 100% total coverage.
+
+**Tier 4 — full suite (`./runtests.sh`, parallel, ~minutes, enforces 100% coverage):**
+
+| Changes touch… | Action |
+| ------- | -------- |
+| Cross-cutting code: `project/container.py`, `project/factory.py`, `project/config.py`, `project/infrastructure/models/`, migrations, codegen YAML / `*_generated.py`, `message_bus.py` / `query_bus.py`, base classes (`commands/base.py`, `abstract_*`), `project/presentation/shared/`, `project/shared/`, `tests/integration/conftest.py` / `seeder.py` / `base_test.py`, `pyproject.toml` / `uv.lock`, templates or Jinja filters shared across pages | Run `./runtests.sh` without asking |
+| Only modules whose tests Tier 3 already ran | Ask the user (AskUserQuestion): "Run the full suite now (~minutes), or leave it to CI?" — recommend leaving it to CI |
+| Running autonomously / told not to ask | Apply the first row; when unsure, run the full suite |
+
+Record in the report which tiers ran, and if Tier 4 was skipped, that CI will run it.
+
+**Every tier that runs must pass with zero errors.**
 
 ### Write Tests
 
 You MUST write tests for new code:
 
 - Every new command handler / function needs at least one test in the matching suite
-  (`tests/unit/application/`, `tests/unit/domain/`, `tests/integration/api/`, `tests/integration/views/`, `tests/integration/infrastructure/`)
+  at the mirrored path (`tests/unit/application/`, `tests/unit/domain/`,
+  `tests/integration/presentation/{api,bff,web}/`, `tests/integration/infrastructure/`)
 - Error cases and edge cases need tests
 - Update existing tests if behavior changed
 - **Assert through the architecture** — exercise command/event flows via the message bus and
@@ -149,7 +211,8 @@ You MUST write tests for new code:
 
 1. Determine: bug in implementation or test?
 2. Fix the actual issue
-3. Re-run until green
+3. Re-run the failing tier (or just the failing tests with `-x`) until green, then continue
+   with the next tier
 
 ### REQUIRED: End-to-End Verification
 
@@ -172,6 +235,21 @@ flows, the Playwright suite (`npx playwright test`) is available.
 
 **This is a hard gate.** You cannot report the implementation as complete until E2E
 verification passes. Static checks and unit tests alone are never sufficient.
+
+### REQUIRED for UI migrations to Vue 3: Visual Alignment
+
+- [ ] Take "after" screenshots of the same pages, states and viewports as the baseline
+      (`.../after-{desktop|mobile}-{state}.png`, same folder)
+- [ ] Compare each before/after pair (Read both images) for layout, order, spacing, sizes,
+      typography, colors, icons, labels and responsive behavior (stacking, hidden columns,
+      collapsed filters on mobile)
+- [ ] Adjust the Vue UI to match the old UI, re-take the "after" screenshot, repeat until
+      desktop **and** mobile match
+- [ ] Only keep a difference when it is intentional (e.g. a fixed bug or a Bootstrap 5 /
+      bootstrap-vue-next default that can't reasonably be matched) — list each one with its
+      rationale in the report
+
+Don't proceed to Phase 5 while an unexplained difference remains.
 
 ---
 
@@ -216,7 +294,10 @@ date +%F   # e.g. 2026-09-01 -> .agents/reports/2026-09-01-my-feature-report.md
 | isort / black | ✅ |
 | flake8 | ✅ |
 | lint-imports / import-whitelist | ✅ |
-| Tests | ✅ ({N} passed) |
+| Unit tests (Tier 1) | ✅ ({N} passed) |
+| Frontend (Tier 2) | ✅ / N/A |
+| Targeted integration + coverage (Tier 3) | ✅ ({N} passed, changed modules 100%) / N/A |
+| Full suite (Tier 4) | ✅ / skipped — left to CI ({reason}) |
 
 ## Files Changed
 
@@ -228,6 +309,17 @@ date +%F   # e.g. 2026-09-01 -> .agents/reports/2026-09-01-my-feature-report.md
 ## Deviations from Plan
 
 {List any deviations with rationale, or "None"}
+
+## Visual Alignment
+
+{UI migrations to Vue 3 only — otherwise "N/A"}
+
+| Page / state | Viewport | Before | After | Match |
+| ------ | -------- | ------ | ----- | ----- |
+| {page / state} | desktop | `before-desktop-{state}.png` | `after-desktop-{state}.png` | ✅ / {intentional difference + rationale} |
+| {page / state} | mobile | `before-mobile-{state}.png` | `after-mobile-{state}.png` | ✅ / {intentional difference + rationale} |
+
+Screenshots: `.agents/screenshots/{YYYY-MM-DD}-{plan-name}/`
 
 ## Tests Written
 
@@ -294,6 +386,7 @@ The summary should include:
 | flake8 | ✅ |
 | lint-imports / import-whitelist | ✅ |
 | Tests | ✅ |
+| Visual alignment (desktop + mobile) | ✅ / N/A |
 
 ### Files Changed
 
@@ -308,6 +401,7 @@ The summary should include:
 ### Artifacts
 
 - Report: `.agents/reports/{YYYY-MM-DD}-{name}-report.md`
+- Screenshots (UI migrations): `.agents/screenshots/{YYYY-MM-DD}-{name}/`
 - Plan archived: `.agents/plans/completed/`
 
 ### GitHub Issue

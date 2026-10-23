@@ -24,6 +24,14 @@ describe("manage router", () => {
     expect(route.params.organizationId).toBe("3");
   });
 
+  it("resolves the event list with a numeric organization and keeps the query", async () => {
+    const route = await resolve("/manage/admin_unit/3/events?event_place_id=5");
+    expect(route.name).toBe("manage-events");
+    expect(route.params.organizationId).toBe("3");
+    expect(route.query.event_place_id).toBe("5");
+    expect((await resolve("/manage/admin_unit/x/events")).name).toBe("not-found");
+  });
+
   it("resolves the configurator for create and update", async () => {
     expect((await resolve("/manage/admin_unit/3/custom-widgets/create")).name).toBe(
       "custom-widget-create",

@@ -32,3 +32,12 @@ export function formatEventDate(
   }
   return result;
 }
+
+/** Short date, plus the short time unless the event is all-day (the manage list's start column). */
+export function formatStart(iso: string | null | undefined, allday: boolean, locale: string): string {
+  if (!iso) return "";
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: "short",
+    ...(allday ? {} : { timeStyle: "short" as const }),
+  }).format(new Date(iso));
+}

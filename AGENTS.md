@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Primary agent instructions live in [`.github/copilot-instructions.md`](.github/copilot-instructions.md). Read that first. This file supplements it with operational details.
+Primary agent instructions live in [`CLAUDE.md`](CLAUDE.md). Read that first. This file supplements it with operational details.
 
 ## Lint order matters
 
@@ -17,7 +17,7 @@ Enforced by `.importlinter` and the whitelist scripts:
 - **`project/application/`** — only stdlib, typing, pydantic, abc, datetime, enum, logging, itertools + domain. Cannot import infrastructure.
 - **`project/services/`** — only `cache`, `dump`, `seo`. Flask-Security calls live in `project/infrastructure/user_datastore.py`.
 - **`project/infrastructure/`** — can import application and domain. Fixture-only ORM helpers live in `project/infrastructure/seed_helpers.py` (never import from presentation/application).
-- **`project/presentation/`** — top layer; delivery code split by channel: `web/` (views, modular framework, forms, templates, static, Jinja filters), `api/` (REST; token/API-key only, ignores the session cookie), `bff/` (view-shaped JSON for the Vue frontends under `/bff`, session + CSRF auth, reads via the query bus, OpenAPI generated from pydantic by `bff_route`), `cli/`, and `shared/` for helpers all channels need. `web`, `api` and `bff` must not import each other. `/api/v1` authenticates only with OAuth tokens or API keys (anonymous reads when `API_READ_ANONYM`); it ignores the session cookie. Browser clients use `/bff`. BFF routes are session-only except the `bff_public` sub-blueprint (`/bff/public`, anonymous; CSRF on writes plus a rate limit); the `public` Vite entry serves public Vue pages (`/event/<id>/report`, `/organizers/<id>`, `/organizations`, `/organizations/<id>`, `/eventdates`; its anonymous place lookups `/bff/public/places` call Google behind a shared rate limit). The `bff_manage` sub-blueprint (`/bff/manage`) is session only and every route authorizes its own use case (no blanket permission check) — it also holds the event reference writes of `/eventdates`; the `manage` Vite entry serves logged-in pages outside the admin (`/planning`, `/manage/admin_unit/<id>/custom-widgets[/create|/<id>/update]`); the `widget` entry serves the embedded custom widgets (`/custom_widget/<search|calendar>`, anonymous reads through `/bff/public/widget`).
+- **`project/presentation/`** — top layer; delivery code split by channel: `web/` (views, modular framework, forms, templates, static, Jinja filters), `api/` (REST; token/API-key only, ignores the session cookie), `bff/` (view-shaped JSON for the Vue frontends under `/bff`, session + CSRF auth, reads via the query bus, OpenAPI generated from pydantic by `bff_route`), `cli/`, and `shared/` for helpers all channels need. `web`, `api` and `bff` must not import each other. `/api/v1` authenticates only with OAuth tokens or API keys (anonymous reads when `API_READ_ANONYM`); it ignores the session cookie. Browser clients use `/bff`. BFF routes are session-only except the `bff_public` sub-blueprint (`/bff/public`, anonymous; CSRF on writes plus a rate limit); the `public` Vite entry serves public Vue pages (`/event/<id>/report`, `/organizers/<id>`, `/organizations`, `/organizations/<id>`, `/eventdates`; its anonymous place lookups `/bff/public/places` call Google behind a shared rate limit). The `bff_manage` sub-blueprint (`/bff/manage`) is session only and every route authorizes its own use case (no blanket permission check) — it also holds the event reference writes of `/eventdates`; the `manage` Vite entry serves logged-in pages outside the admin (`/planning`, `/manage/admin_unit/<id>/events`, `/manage/admin_unit/<id>/custom-widgets[/create|/<id>/update]`); the `widget` entry serves the embedded custom widgets (`/custom_widget/<search|calendar>`, anonymous reads through `/bff/public/widget`).
 - **`project/shared/`** — cross-layer helpers (`utils`, `dateutils`, `imageutils`, `context`, `feature_flags`); a leaf that imports only the domain. Not the same as `project/presentation/shared/` (cross-channel).
 
 Violations fail `lint-imports`. Check both files before adding imports:
@@ -53,9 +53,9 @@ host against your own app; `--ui` gives a time-travel debugger.
 
 ## Adding new DDD commands/events
 
-Templates with scaffolding guides exist in `.github/prompts/`:
-- `.github/prompts/add-ddd-command.prompt.md` — step-by-step command + handler creation
-- `.github/prompts/add-ddd-event.prompt.md` — step-by-step event + handler creation
+Scaffolding guides live in `.claude/commands/` (Claude Code slash commands):
+- `.claude/commands/add-ddd-command.md` (`/add-ddd-command`) — step-by-step command + handler creation
+- `.claude/commands/add-ddd-event.md` (`/add-ddd-event`) — step-by-step event + handler creation
 
 Key points:
 - Commands go in `project/application/commands/`, handlers in `project/application/command_handlers/`.
@@ -68,7 +68,7 @@ Key points:
 
 Reads in views (incl. `project/presentation/web/modular`) and the API are migrating to the query side
 (plan: `.agents/plans/2026-10-13-cqrs-read-side-migration.plan.md`). Scaffold guide:
-`.github/prompts/add-ddd-query.prompt.md`. Reference implementation: event organizers
+`.claude/commands/add-ddd-query.md` (`/add-ddd-query`). Reference implementation: event organizers
 (`ListEventOrganizersQuery`, `SqlAlchemyEventOrganizerReadRepository`).
 
 - Queries (`Query[T]`, `actor` optional — the bus fills it) go in `project/application/queries/`,
@@ -99,7 +99,7 @@ Reads in views (incl. `project/presentation/web/modular`) and the API are migrat
 
 ## Frontend (Vue 3 + BFF)
 
-See the "Frontend" section of `.github/copilot-instructions.md` for the rules. Workflow:
+See the "Frontend" section of `CLAUDE.md` for the rules. Workflow:
 
 ```bash
 npm ci --prefix frontend

@@ -18,11 +18,10 @@ Create project-specific global rules that give Claude context about:
 - Patterns and conventions to follow
 - How to run, test, and validate
 
-> **Note:** This repo already ships an `AGENTS.md` and, more importantly,
-> `.github/copilot-instructions.md` (the primary agent instructions) with
-> mission-critical context, run commands, architecture boundaries, and pitfalls.
-> Read both first and treat them as the source of truth — CLAUDE.md should reuse
-> and complement them, not contradict them.
+> **Note:** `CLAUDE.md` is the primary agent instruction file and `AGENTS.md` supplements
+> it with operational details. Read both first: keep the mission-critical context, run
+> commands, architecture boundaries and pitfalls already there, update what is stale, and
+> don't contradict `AGENTS.md`. Scaffolding guides live in `.claude/commands/add-ddd-*.md`.
 
 ---
 
@@ -54,8 +53,8 @@ pytest.ini              → pytest config
 .importlinter           → DDD layer contract (infrastructure → application → domain)
 .flaskenv / .env        → Flask + runtime env vars (FLASK_APP=bootstrap.py)
 Dockerfile / docker-compose*.yml → container + local dev services
-bootstrap.py / main.py  → entrypoints (both call create_app())
-migrations/             → Alembic (Flask-Migrate) DB migrations
+bootstrap.py / main.py  → entrypoints (both call project.factory.create_app())
+project/infrastructure/migrations/ → Alembic (Flask-Migrate) DB migrations
 `.scripts/codegen/`      → YAML-driven model/repo code generation
 ```
 
@@ -106,7 +105,7 @@ Study existing code for:
 
 ### Find Key Files
 
-- App bootstrap/wiring: `project/__init__.py`, `bootstrap.py`
+- App bootstrap/wiring: `project/factory.py` (`create_app`), `bootstrap.py`
 - DI container: `project/container.py`
 - Message bus: `project/application/message_bus.py`
 - Commands / handlers: `project/application/commands/`, `project/application/command_handlers/`
@@ -116,7 +115,7 @@ Study existing code for:
 - Codegen: `.scripts/codegen/generate.py`, `.scripts/codegen/config/`
 - Test fixtures: `tests/integration/conftest.py`, `tests/integration/base_test.py`, `tests/integration/seeder.py`
 - CI: `.github/workflows/lint.yml`, `.github/workflows/test.yml`, `.github/workflows/playwright.yml`
-- Agent docs: `AGENTS.md`, `.github/copilot-instructions.md`, `doc/development.md`, `doc/deployment.md`
+- Agent docs: `CLAUDE.md`, `AGENTS.md`, `.claude/commands/`, `doc/development.md`, `doc/deployment.md`
 
 ---
 
@@ -124,8 +123,8 @@ Study existing code for:
 
 ### Create CLAUDE.md
 
-There is no template in `.claude/` — write CLAUDE.md from scratch, drawing on
-`AGENTS.md` and `.github/copilot-instructions.md`.
+There is no template in `.claude/` — rewrite CLAUDE.md from the existing one, drawing on
+`AGENTS.md` and the codebase.
 
 **Output path**: `CLAUDE.md` (project root)
 
@@ -137,7 +136,7 @@ There is no template in `.claude/` — write CLAUDE.md from scratch, drawing on
 
 - Remove sections that don't apply
 - Keep it concise — focus on what's useful
-- Don't restate `AGENTS.md` / `copilot-instructions.md` verbatim; link to them and add only what's missing
+- Don't restate `AGENTS.md` verbatim; link to it and add only what's missing
 
 **Key sections to include:**
 
@@ -178,7 +177,7 @@ Flask event-calendar platform (Flask + SQLAlchemy + Celery + PostGIS + Redis), D
 ### Next Steps
 
 1. Review the generated `CLAUDE.md`
-2. Reconcile with `AGENTS.md` and `.github/copilot-instructions.md` (no contradictions)
+2. Reconcile with `AGENTS.md` (no contradictions)
 3. Add any project-specific notes
 4. Remove any sections that don't apply
 ```
@@ -221,7 +220,7 @@ pre-commit run --all-files
 ## Tips
 
 - Keep CLAUDE.md focused and scannable
-- Link to `AGENTS.md`, `.github/copilot-instructions.md`, and `doc/` instead of duplicating them
+- Link to `AGENTS.md`, `.claude/commands/`, and `doc/` instead of duplicating them
 - Focus on patterns and conventions, not exhaustive documentation
 - Respect the DDD import layering (`domain` ← `application` ← `infrastructure`) — never cross it
 - Never edit `*_generated.py`; change the YAML in `.scripts/codegen/config/` and regenerate

@@ -2,10 +2,10 @@
 
 Guidance for Claude when working in this repository.
 
-> **Read first:** [`.github/copilot-instructions.md`](.github/copilot-instructions.md) is the
-> primary agent instruction file, and [`AGENTS.md`](AGENTS.md) supplements it with
-> operational details. This file complements both — it does not replace them. When in
-> doubt, those two win.
+> This is the primary agent instruction file. [`AGENTS.md`](AGENTS.md) supplements it with
+> operational details (lint order, import whitelists, test and e2e setup, frontend workflow).
+> Scaffolding guides live in `.claude/commands/` (`/add-ddd-command`, `/add-ddd-event`,
+> `/add-ddd-query`).
 
 ## Project Overview
 
@@ -42,6 +42,7 @@ docker-compose up --build                      # full stack: PostGIS, Redis, Mai
 
 # Test — dockerized, no host Postgres/Redis/venv needed (`pytest tests/unit` needs no services)
 ./runtests.sh                                  # full parallel suite + coverage, in Docker
+pytest --cov-report=html --cov=project         # coverage against your own services
 # Subset/single test: pass paths after `--`. Needs a group, which creates that group's
 # database and exports TEST_DATABASE_URL — plain `run --rm pytest pytest <path>` fails
 # with `could not translate host name "myserver"`.
@@ -69,13 +70,13 @@ isort . && black . && flake8 && lint-imports && \
 - `project/infrastructure/seed_helpers.py` — fixture-only ORM helpers for `presentation/cli/test.py` and `tests/integration/seeder.py`; never import from presentation/application
 - `project/infrastructure/` — concrete adapters (SQLAlchemy repos, Celery dispatchers, external services), plus the ORM `models/` (codegen output), Alembic `migrations/` and `dbtypes.py`
 - `project/presentation/` — the delivery layer, split by channel:
-  - `bff/` — JSON for the Vue 3 frontends under `/bff` (blueprint, session + CSRF auth, `bff_route` registry → OpenAPI 3.1 via `python -m project.presentation.bff.openapi`); reads through `query_bus`; imports neither `web` nor `api`; anonymous only under `bff/public` (`/bff/public`: CSRF + rate-limited writes; Vite entry `public`, pages `/event/<id>/report`, `/organizers/<id>`, `/organizations[/<id>]`, `/eventdates`; the place lookups under `/bff/public/places` are rate limited because they call Google); `bff/manage` (`/bff/manage`) is session only, each route authorizes its own use case (Vite entry `manage`, `/planning` and the custom widget configurator; event reference writes of the `/eventdates` page); the `widget` entry is the embedded widget (`/custom_widget/<type>`, reads through `bff/public/widget`)
+  - `bff/` — JSON for the Vue 3 frontends under `/bff` (blueprint, session + CSRF auth, `bff_route` registry → OpenAPI 3.1 via `python -m project.presentation.bff.openapi`); reads through `query_bus`; imports neither `web` nor `api`; anonymous only under `bff/public` (`/bff/public`: CSRF + rate-limited writes; Vite entry `public`, pages `/event/<id>/report`, `/organizers/<id>`, `/organizations[/<id>]`, `/eventdates`; the place lookups under `/bff/public/places` are rate limited because they call Google); `bff/manage` (`/bff/manage`) is session only, each route authorizes its own use case (Vite entry `manage`, `/planning`, the event list `/manage/admin_unit/<id>/events` (endpoint `manage_admin_unit.events`, legacy query names kept) and the custom widget configurator; event reference writes of the `/eventdates` page); the `widget` entry is the embedded widget (`/custom_widget/<type>`, reads through `bff/public/widget`)
   - `web/` — server-rendered site: `views/`, `modular/` (the shared modular CRUD view framework), `forms/`, `templates/`, `static/`, `jinja_filters.py`
   - `api/` — REST resources + marshmallow schemas (flat; the version lives in the `/api/v1` URL prefix). `/api/v1` authenticates only with OAuth tokens or API keys (anonymous reads when `API_READ_ANONYM`); it ignores the session cookie. Browser clients use `/bff`.
   - `cli/` — Flask CLI commands (outside the read-path contract: `cli/test.py` is a dev/e2e fixture CLI)
   - `shared/` — cross-**channel** helpers (`access`, `permissions`, `oauth2_extensions`, `query_args`, `query_results`, `current_admin_unit`, `scopes`, `rate_limit`, `urls`)
 - `project/templates/email/` — e-mail templates; they stay outside `presentation/web` because infrastructure renders them (also from Celery). Flask loads both template roots through a `ChoiceLoader`
-- `frontend/` — Vite + TypeScript + Vue 3 + bootstrap-vue-next (one entry per area, build → `project/presentation/web/static/dist/`, resolved by the Jinja global `vite_entry`); the admin SPA is served at `/admin` (Flask-Admin stays at `/admin/flask-admin/`). See `.github/copilot-instructions.md` § Frontend
+- `frontend/` — Vite + TypeScript + Vue 3 + bootstrap-vue-next (one entry per area, build → `project/presentation/web/static/dist/`, resolved by the Jinja global `vite_entry`); the admin SPA is served at `/admin` (Flask-Admin stays at `/admin/flask-admin/`). See § Frontend below
 - `.scripts/codegen/` — `generate.py` + YAML schemas in `.scripts/codegen/config/`
 - `tests/` — `unit/` (no services: domain, application, pure helpers) and `integration/` (PostGIS + Redis; holds `conftest.py`, `base_test.py`, `seeder.py`). **Tests mirror the source tree**: the tests of `project/presentation/web/views/event.py` live in `tests/integration/presentation/web/views/test_event.py`
 - `e2e/`, `doc/`, `deployment/`, `.scripts/`
@@ -87,17 +88,28 @@ isort . && black . && flake8 && lint-imports && \
 - **DDD layering (strict):** `domain` ← `application` ← `infrastructure` ← `presentation`. Never import "up" a layer. Enforced by `.importlinter` (`lint-imports`) and `.scripts/module_import_whitelist.py`; allowed imports live in `project/domain/allowed_imports.cfg` and `project/application/allowed_imports.cfg`.
 - **Shared packages:** `project.shared` is shared across **layers** and is a leaf (it may import only `project.domain`). `project.presentation.shared` is shared across **channels** (web, API). Web, API and BFF never import each other (contracts `web-does-not-import-api`, `api-does-not-import-web`, `bff-is-its-own-channel`, `web-and-api-do-not-import-bff`, `presentation-shared-is-channel-neutral`). Put a helper both channels need in `presentation/shared/`.
 - **Tests mirror the source tree:** a module's tests live at the mirrored path (`tests/{unit,integration}/<path below project/>/test_<module>.py`). Fixtures stay in `tests/integration/`.
-- **Commands/events:** pydantic `Command` / `CommandWithResult[T]` in `project/application/commands/`, handlers in `command_handlers/`, registered in the DI container (`project/container.py`) and driven through `message_bus.py`. The `actor` field is auto-added.
-- **Read side (queries):** every read in views (incl. `web/modular`)/API goes through pydantic `Query[T]` objects in `project/application/queries/`, dispatched via `QueryBus` (`Application.cqrs.query_bus`; `BaseResource.query_bus`, `BaseView.query_bus`). Handlers in `query_handlers/` get read repos by constructor injection and return hand-written, use-case shaped read models (`read_models/`, `Page[T]` for lists). Query read repos use `infrastructure.read_session` (read-only, released after each top-level query); event-handler read repos stay on `session_factory`. Modular list and object views implement `create_list_query()` / `create_get_query()` (there is no ORM list path any more). Search criteria are pydantic models (`EventSearchCriteria`); visibility rules live in handlers/services (`EventVisibilityService`). Access decisions use the same permission policy (`project/presentation/shared/access.py` is a thin wrapper; API decorators take a `ResourceKind`). Scaffold: `.github/prompts/add-ddd-query.prompt.md`; reference implementation: event organizers (`ListEventOrganizersQuery`, `SqlAlchemyEventOrganizerReadRepository`). Query handlers for private data authorize the actor via `ActorAuthorizationService` (same rule as commands, `actor_permission_policy`); reference: organization invitations (`ListOrganizationInvitationsQuery`).
+- **Commands/events:** pydantic `Command` / `CommandWithResult[T]` in `project/application/commands/`, handlers in `command_handlers/`, registered in the DI container (`project/container.py`) and driven through `message_bus.py`. The `actor` field is auto-added. Scaffolds: `/add-ddd-command`, `/add-ddd-event` (`.claude/commands/`).
+- **Read side (queries):** every read in views (incl. `web/modular`)/API goes through pydantic `Query[T]` objects in `project/application/queries/`, dispatched via `QueryBus` (`Application.cqrs.query_bus`; `BaseResource.query_bus`, `BaseView.query_bus`). Handlers in `query_handlers/` get read repos by constructor injection and return hand-written, use-case shaped read models (`read_models/`, `Page[T]` for lists). Query read repos use `infrastructure.read_session` (read-only, released after each top-level query); event-handler read repos stay on `session_factory`. Modular list and object views implement `create_list_query()` / `create_get_query()` (there is no ORM list path any more). Search criteria are pydantic models (`EventSearchCriteria`); visibility rules live in handlers/services (`EventVisibilityService`). Access decisions use the same permission policy (`project/presentation/shared/access.py` is a thin wrapper; API decorators take a `ResourceKind`). Scaffold: `/add-ddd-query` (`.claude/commands/add-ddd-query.md`); reference implementation: event organizers (`ListEventOrganizersQuery`, `SqlAlchemyEventOrganizerReadRepository`). Query handlers for private data authorize the actor via `ActorAuthorizationService` (same rule as commands, `actor_permission_policy`); reference: organization invitations (`ListOrganizationInvitationsQuery`).
 - **Import ratchet:** the `delivery-reads-through-queries` contract in `.importlinter` forbids `project.presentation.web` / `project.presentation.api` / `project.presentation.shared` → `project.infrastructure.models` (`presentation.cli` is outside), with an `ignore_imports` list that only holds the permanent exemption `presentation.web.views.flask_admin` (Flask-Admin stays ORM; Flask-Security `current_user` and Authlib stay too). Regenerate with `python .scripts/models_import_ignores.py --write` after removing imports; never add entries by hand. Progress: `python .scripts/read_path_report.py`.
 - **Generated code:** `*_generated.py` is generated from `.scripts/codegen/config/` YAML — **never edit it**. Put custom logic in the handwritten sibling (e.g. `event.py` extends `event_generated.py`). isort/flake8 already skip these files.
 - **Data access:** SQLAlchemy ORM through repositories; deferred columns may need explicit `undefer()`.
 - **Tests:** reuse fixtures from `tests/integration/conftest.py` (`app`, `db`, `client`, `seeder`, `utils`, `container`, `message_bus`) and base classes in `tests/integration/base_test.py`; assert through the message bus / repositories, not around the architecture.
 
+## Frontend (Vue 3 + BFF)
+
+- `frontend/` is one Vite + TypeScript + Vue 3 + bootstrap-vue-next project with one entry per area (`src/apps/<area>/main.ts`; areas: `admin`, `public`, `manage`, `widget`, registered in `vite.config.ts` and `project/presentation/web/vite.py:ENTRIES`). The build lands in `project/presentation/web/static/dist/` (gitignored); the Jinja global `vite_entry(name)` renders its tags (or the dev server's when `VITE_DEV_SERVER_URL` is set).
+- Pages are shells: `layout_vue3.html` extends the Bootstrap 5 frame `layout_bs5.html` and hands the SPA its boot JSON. The SPA must not import Bootstrap CSS (the frame provides it). The old frames `layout.html` (BS4) / `layout_vue.html` (Vue 2) stay untouched; the navbar links of both frames come from `get_main_menu()`.
+- `widget` is the embedded custom widget (`/custom_widget/<search|calendar>`, iframe on customer sites): it has its own minimal shell `custom_widget/widget.html`, reads through `/bff/public/widget/...` and keeps the iframeResizer message protocol and the stored settings keys wire-compatible (`/js/wlcw/<id>`, `static/widget-loader.js`).
+- BFF routes are declared with `bff_route(...)` (`project/presentation/bff/routing.py`) with pydantic query/body/response models. After changing a BFF model regenerate `frontend/openapi.json` + `frontend/src/api/schema.d.ts` and commit both (pytest and CI check the drift).
+- The admin SPA owns `/admin/*` (catch-all shell `admin.shell`); unknown paths render the SPA's not-found page. Server-rendered pages the SPA links to live in `frontend/src/shared/legacy.ts`.
+- Translations: the Babel `.po` files stay the single source. Use literal `t("English msgid")` calls in `.vue`/`.ts` (dynamic keys are not extracted); `npm run i18n` turns the `.po` files into `src/locales/*.json`.
+- Workflow commands (dev server, typecheck, tests, build): see `AGENTS.md` § Frontend.
+
 ## Pitfalls
 
 - After changing BFF pydantic models regenerate `frontend/openapi.json` and `frontend/src/api/schema.d.ts` (`python -m project.presentation.bff.openapi > frontend/openapi.json && npm run gen:api --prefix frontend`); never hand-edit `schema.d.ts`. The SPA must not import Bootstrap CSS (the Jinja frame provides it).
 - New Celery tasks must be imported/registered in `project/presentation/tasks/celery_tasks.py`.
+- Commands live in `project/application/commands/`, not in a domain commands package.
 - Celery task names are a wire contract: every `@celery.task` passes an explicit `name=`; never rename it or derive it from `__name__`. New tasks use `project.<module path>.<func>` of their real module; the frozen set lives in `tests/integration/infrastructure/test_celery_app.py`.
 - E-mail templates stay in `project/templates/email/` and import the web macros (`_macros.html`); Flask resolves both roots (`presentation/web/templates`, then `project/templates`) via a `ChoiceLoader` set in `create_app`. `babel.cfg` lists both.
 - `project/translations/` stays in `project/` (Flask-Babel resolves it from `app.root_path`).
@@ -112,7 +124,7 @@ isort . && black . && flake8 && lint-imports && \
 
 - Bootstrap/wiring: `project/factory.py`, `project/config.py`, `bootstrap.py` (`FLASK_APP` set in `.flaskenv`)
 - DI container: `project/container.py`
-- Message bus: `project/application/message_bus.py`
+- Message bus: `project/application/message_bus.py`; query bus: `project/application/query_bus.py`
 - Commands / handlers: `project/application/commands/`, `project/application/command_handlers/`
 - API wiring: `project/presentation/api/__init__.py`
 - Cross-layer / cross-channel helpers: `project/shared/`, `project/presentation/shared/`
@@ -120,4 +132,4 @@ isort . && black . && flake8 && lint-imports && \
 - Codegen: `.scripts/codegen/generate.py`, `.scripts/codegen/config/`
 - Tests: `tests/integration/conftest.py`, `tests/integration/base_test.py`, `tests/integration/seeder.py`
 - CI: `.github/workflows/{lint,test,playwright}.yml`
-- Docs: `doc/development.md`, `doc/deployment.md`
+- Docs: `doc/development.md` (full environment setup), `doc/deployment.md`, `README.md`
