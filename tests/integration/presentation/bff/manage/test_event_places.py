@@ -192,6 +192,80 @@ def test_get_form(client, app, seeder, utils, setup):
     assert body["photo"] is None
 
 
+def test_get_form_prefills_all_fields(client, app, db, seeder, utils, setup):
+    from sqlalchemy import text
+
+    admin_unit_id, _ = setup
+    place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
+    image_id = seeder.upsert_default_image()
+
+    with app.app_context():
+        from project.infrastructure.models import Location
+
+        location = Location(
+            street="Markt 1",
+            postalCode="38640",
+            city="Goslar",
+            state="Niedersachsen",
+            latitude="51.9077888",
+            longitude="10.4333312",
+        )
+        db.session.add(location)
+        db.session.flush()
+        db.session.execute(
+            text(
+                "UPDATE eventplace SET url = 'https://example.com',"
+                " description = 'Beschreibung', location_id = :location_id,"
+                " photo_id = :image_id WHERE id = :id"
+            ),
+            {"location_id": location.id, "image_id": image_id, "id": place_id},
+        )
+        db.session.execute(
+            text(
+                "UPDATE image SET copyright_text = 'EventCally', license_id = 2"
+                " WHERE id = :id"
+            ),
+            {"id": image_id},
+        )
+        db.session.commit()
+
+    body = utils.get_json_ok(_urls(admin_unit_id, place_id)["form"]).json
+
+    assert body["name"] == "Mein Ort"
+    assert body["url"] == "https://example.com"
+    assert body["description"] == "Beschreibung"
+    assert body["location"] == dict(
+        street="Markt 1",
+        postalCode="38640",
+        city="Goslar",
+        state="Niedersachsen",
+        latitude=51.9077888,
+        longitude=10.4333312,
+    )
+    assert body["photo"]["copyright_text"] == "EventCally"
+    assert body["photo"]["license_id"] == 2
+    assert body["photo"]["image_base64"].startswith("data:image/png;base64,")
+
+
+def test_get_form_without_location_and_photo(client, app, db, seeder, utils, setup):
+    from sqlalchemy import text
+
+    admin_unit_id, _ = setup
+    place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
+
+    with app.app_context():
+        db.session.execute(
+            text("UPDATE eventplace SET location_id = NULL WHERE id = :id"),
+            {"id": place_id},
+        )
+        db.session.commit()
+
+    body = utils.get_json_ok(_urls(admin_unit_id, place_id)["form"]).json
+
+    assert body["location"]["city"] is None
+    assert body["photo"] is None
+
+
 def test_get_form_with_photo(client, app, seeder, utils, setup):
     admin_unit_id, place_id = setup
     urls = _urls(admin_unit_id, place_id)

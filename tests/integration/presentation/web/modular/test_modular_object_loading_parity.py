@@ -143,49 +143,6 @@ def test_organizer_update_without_location_and_logo(seeder, utils):
     _assert_empty_location_and_image(soup, "logo")
 
 
-def test_place_update_prefills_all_fields(app, db, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
-    place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
-
-    with app.app_context():
-        db.session.execute(
-            text(
-                "UPDATE eventplace SET url = 'https://example.com',"
-                " description = 'Beschreibung' WHERE id = :id"
-            ),
-            {"id": place_id},
-        )
-        db.session.commit()
-
-    _set_location_and_image(app, db, seeder, "eventplace", "photo_id", place_id)
-
-    response = utils.get_ok(_place_url(utils, "update", admin_unit_id, place_id))
-    soup = utils.get_soup(response)
-
-    assert _input_value(soup, "name") == "Mein Ort"
-    assert _input_value(soup, "url") == "https://example.com"
-    assert _input_value(soup, "description") == "Beschreibung"
-    _assert_location_and_image(soup, response, "photo")
-
-
-def test_place_update_without_location_and_photo(app, db, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
-    place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
-
-    with app.app_context():
-        db.session.execute(
-            text("UPDATE eventplace SET location_id = NULL WHERE id = :id"),
-            {"id": place_id},
-        )
-        db.session.commit()
-
-    response = utils.get_ok(_place_url(utils, "update", admin_unit_id, place_id))
-    soup = utils.get_soup(response)
-
-    assert _input_value(soup, "name") == "Mein Ort"
-    _assert_empty_location_and_image(soup, "photo")
-
-
 def test_organizer_delete_shows_name(seeder, utils):
     _, admin_unit_id = seeder.setup_base()
     organizer_id = seeder.upsert_event_organizer(admin_unit_id, "Mein Organisator")
