@@ -1,19 +1,12 @@
-from flask import abort, flash, g, redirect, url_for
+from flask import abort, g, render_template, url_for
 from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
 
-from project.application.commands import RequestEventReferenceCommand
 from project.application.queries import GetEventDetailQuery
 from project.presentation.shared.access import can_request_event_reference
 from project.presentation.shared.query_results import result_or_404
+from project.presentation.web.boot import build_boot_data
 from project.presentation.web.modular.base_views import BaseCreateView, BaseListView
-from project.presentation.web.views.manage_admin_unit.outgoing_event_reference_request.forms import (
-    CreateForm,
-)
-from project.presentation.web.views.reference_request import (
-    get_success_text_for_request_creation,
-)
-from project.presentation.web.views.utils import handle_base_error
 
 
 class ListView(BaseListView):
@@ -40,12 +33,7 @@ class ListView(BaseListView):
 
 
 class CreateView(BaseCreateView):
-    form_class = CreateForm
-
-    def get_instruction(self, **kwargs):
-        return lazy_gettext(
-            "Ask another organization to reference your event on their calendar."
-        )
+    """A shell: the Vue page reads and saves through `/bff/manage`."""
 
     def check_access(self, **kwargs):
         response = super().check_access(**kwargs)
@@ -58,22 +46,15 @@ class CreateView(BaseCreateView):
         if not can_request_event_reference(event):
             abort(401)
 
-        self.event = event
+    def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
 
-    @handle_base_error
-    def dispatch_validated_form(self, form, object, **kwargs):
-        cmd = RequestEventReferenceCommand(
-            actor=self.app_context_provider.get_current_actor(),
-            admin_unit_id=form.admin_unit.data.id,
-            event_id=self.event.id,
+        if response:  # pragma: no cover
+            return response
+
+        return render_template(
+            "manage/reference_request_form.html",
+            entry="manage",
+            title=self.get_title(),
+            boot=build_boot_data(base="/"),
         )
-        cmd_result = self.message_bus.handle_command(cmd)
-
-        text = get_success_text_for_request_creation(
-            form.admin_unit.data.name, cmd_result.verified
-        )
-        flash(text, "success")
-        return redirect(self.get_redirect_url())
-
-    def get_redirect_url(self, **kwargs):
-        return self.handler.get_list_url(**kwargs)

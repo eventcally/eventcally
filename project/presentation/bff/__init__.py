@@ -1,4 +1,5 @@
 from flask import Blueprint, Flask, jsonify, request
+from flask_babel import gettext
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
 from pydantic import ValidationError
@@ -99,7 +100,7 @@ def _handle_integrity_error(err: IntegrityError):
 
 @bff_bp.errorhandler(BaseError)
 def _handle_base_error(err: BaseError):
-    return _error_response(err.__class__.__name__, err.message, 400)
+    return _error_response(err.__class__.__name__, gettext(err.message), 400)
 
 
 @bff_bp.errorhandler(CSRFError)

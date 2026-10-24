@@ -38,21 +38,9 @@ def test_ajax_lookup_parity(client, app, db, utils: UtilActions, seeder: Seeder)
     seeder.upsert_event_place(other_admin_unit_id, "Foreign Place")
     set_id, _ = seeder.get_one_custom_event_category_set()
 
-    with app.app_context():
-        from project.infrastructure.models import AdminUnit
-
-        db.session.get(AdminUnit, admin_unit_id).can_verify_other = True
-        db.session.commit()
-
+    # Creates the default place of the organization the snapshot contains.
+    seeder.create_event(admin_unit_id)
     event_url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
-    relation_url = utils.get_url(
-        "manage_admin_unit.outgoing_organization_relation_create", id=admin_unit_id
-    )
-    request_url = utils.get_url(
-        "manage_admin_unit.outgoing_event_reference_request_create_for_event",
-        id=admin_unit_id,
-        event_id=seeder.create_event(admin_unit_id),
-    )
 
     captured = {
         "license": _lookup(utils, event_url, "photo-license"),
@@ -79,9 +67,6 @@ def test_ajax_lookup_parity(client, app, db, utils: UtilActions, seeder: Seeder)
         "co_organizers": _lookup(utils, event_url, "co_organizers", "a"),
         "event_place": _lookup(utils, event_url, "event_place"),
         "event_place_term": _lookup(utils, event_url, "event_place", "halle"),
-        "organization": _lookup(utils, relation_url, "target_admin_unit"),
-        "organization_term": _lookup(utils, relation_url, "target_admin_unit", "Other"),
-        "organization_request": _lookup(utils, request_url, "admin_unit"),
     }
 
     if os.environ.get("UPDATE_AJAX_LOOKUP_PARITY"):

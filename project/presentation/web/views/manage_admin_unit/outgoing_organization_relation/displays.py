@@ -13,9 +13,3 @@ class ListDisplay(BaseDisplay):
         lazy_gettext("Verify reference requests automatically")
     )
     last_modified_at = DateProp(lazy_gettext("Last modified at"))
-
-
-class UpdateDisplay(BaseDisplay):
-    organization = StringProp(
-        lazy_gettext("Organization"), keypath="target_admin_unit.name"
-    )

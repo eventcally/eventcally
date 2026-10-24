@@ -75,6 +75,17 @@ async function select2(page, selectId, textToEnter, expectedText = null, expecte
 }
 
 /**
+ * Picks an option in an `AppTypeahead` (Vue 3 pages): types into `#<inputId>`, waits for the
+ * lookup and clicks the option with `expectedText`.
+ */
+async function typeahead(page, inputId, textToEnter, expectedText) {
+  const input = page.locator(`#${inputId}`);
+  await input.pressSequentially(textToEnter);
+  await page.locator("[data-test=option]", { hasText: expectedText }).click();
+  await expect(input).toHaveValue(expectedText);
+}
+
+/**
  * Picks an option in an ajax multi-select select2. Unlike the single variant it renders no
  * `#select2-<id>-container`; the search field lives inside the selection that follows `#<id>`.
  */
@@ -261,6 +272,7 @@ module.exports = {
   assertRequired,
   select2,
   select2Multiple,
+  typeahead,
   inputsShouldHaveSameValue,
   screenshotDatepicker,
   checkEventStartEnd,

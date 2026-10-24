@@ -1,5 +1,5 @@
 const { test, expect } = require("../fixtures");
-const { screenshot, select2 } = require("../fixtures/helpers");
+const { screenshot, typeahead } = require("../fixtures/helpers");
 const { createAdminUnit, createAdminUnitRelation } = require("../fixtures/flask");
 
 test.describe("Admin unit relations", () => {
@@ -18,9 +18,9 @@ test.describe("Admin unit relations", () => {
 
     await page.goto(`/manage/admin_unit/${adminUnitId}/outgoing_organization_relation/create`);
 
-    await select2(page, "target_admin_unit", "Oth", "Other Crew");
+    await typeahead(page, "target_admin_unit", "Oth", "Other Crew");
     await screenshot(page, "create");
-    await page.locator("input[type=submit]").click();
+    await page.locator("#submit").click();
 
     await expect(page).not.toHaveURL(/\/create/);
   });
@@ -34,7 +34,7 @@ test.describe("Admin unit relations", () => {
       `/manage/admin_unit/${adminUnitId}/outgoing_organization_relation/${relationId}/update`
     );
     await screenshot(page, "update");
-    await page.locator("input[type=submit]").click();
+    await page.locator("#submit").click();
     await expect(page).not.toHaveURL(/\/update/);
   });
 

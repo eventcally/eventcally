@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-24 09:50+0200\n"
+"POT-Creation-Date: 2026-10-24 14:07+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -58,6 +58,7 @@ msgstr ""
 "%(admin_unit_name)s zu erstellen."
 
 #: project/presentation/bff/manage/event_places.py:204
+#: project/presentation/bff/manage/outgoing_relations.py:205
 #: project/presentation/web/modular/base_views.py:339
 #, python-format
 msgid "%(model_display_name)s successfully created"
@@ -74,6 +75,7 @@ msgid "%(model_display_name)s successfully revoked"
 msgstr "%(model_display_name)s erfolgreich widerrufen"
 
 #: project/presentation/bff/manage/event_places.py:249
+#: project/presentation/bff/manage/outgoing_relations.py:243
 #: project/presentation/web/modular/base_views.py:420
 #, python-format
 msgid "%(model_display_name)s successfully updated"
@@ -84,7 +86,7 @@ msgstr "%(model_display_name)s erfolgreich aktualisiert"
 msgid "%(name)s invited you to create an organization."
 msgstr "%(name)s hat dich eingeladen, eine Organisation zu erstellen."
 
-#: project/presentation/web/views/reference_request.py:6
+#: project/presentation/shared/reference_request.py:6
 #, python-format
 msgid "%(organization)s accepted your reference request"
 msgstr "%(organization)s hat deine Empfehlungsanfrage akzeptiert"
@@ -164,6 +166,10 @@ msgstr "Mit diesem Namen existiert bereits ein Ort."
 #: project/templates/email/referenced_event_changed_notice.txt:2
 msgid "A referenced event was changed."
 msgstr "Eine empfohlene Veranstaltung wurde geändert."
+
+#: project/presentation/bff/manage/outgoing_relations.py:189
+msgid "A relation to this organization already exists."
+msgstr "Es besteht bereits eine Beziehung zu dieser Organisation."
 
 #: project/infrastructure/babel_extract.py:1
 msgid "API key"
@@ -469,8 +475,8 @@ msgstr ""
 msgid "Ask \"%(name)s\" to verify your organization."
 msgstr "Bitte \"%(name)s\" deine Organisation zu verifizieren."
 
+#: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:130
 #: project/presentation/web/templates/event/actions.html:21
-#: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/views.py:46
 msgid "Ask another organization to reference your event on their calendar."
 msgstr ""
 "Bitte eine andere Organisation, deine Veranstaltung in ihrem Kalender zu "
@@ -528,7 +534,6 @@ msgstr "Kalender"
 msgid "Calendar type"
 msgstr "Kalendertyp"
 
-#: frontend/src/ReviewDecisionBar.vue:59 frontend/src/ReviewDecisionBar.vue:94
 #: frontend/src/apps/admin/components/NewsletterConfirmModal.vue:36
 #: frontend/src/apps/admin/components/ResetTosModal.vue:44
 #: frontend/src/apps/admin/components/SettingCard.vue:102
@@ -624,7 +629,6 @@ msgstr ""
 "Wähle, ob die Veranstaltung besonders für Touristen oder Einwohner "
 "geeignet ist."
 
-#: frontend/src/ReviewDecisionBar.vue:85
 #: frontend/src/apps/manage/components/ReviewDecisionBar.vue:85
 msgid "Choose why you rejected the request."
 msgstr "Wähle aus, warum du die Anfrage abgelehnt hast."
@@ -801,11 +805,14 @@ msgstr "Copyright Text"
 msgid "Copyright text is required."
 msgstr "Copyright Text ist erforderlich."
 
+#: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:152
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:169
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:202
 #: project/presentation/web/modular/base_form.py:83
 msgid "Create"
 msgstr "Erstellen"
 
+#: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:31
 #: project/presentation/web/modular/base_views.py:333
 #: project/presentation/web/templates/generic/list.html:18
 #, python-format
@@ -1159,7 +1166,6 @@ msgstr "Bild bearbeiten"
 msgid "Edit relation"
 msgstr "Beziehung bearbeiten"
 
-#: frontend/src/ContactLines.vue:27
 #: frontend/src/apps/admin/components/UserDeleteModal.vue:34
 #: frontend/src/apps/admin/pages/AdminHome.vue:14
 #: frontend/src/apps/admin/pages/EmailPage.vue:92
@@ -1316,6 +1322,8 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:59
 #: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:89
 #: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:195
+#: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:45
+#: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:100
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:41
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:56
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:89
@@ -1323,6 +1331,8 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:45
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:104
 #: frontend/src/apps/manage/pages/OrganizationExportPage.vue:31
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:64
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:126
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:61
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:148
 #: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:39
@@ -1461,6 +1471,7 @@ msgstr "Veranstalter"
 msgid "Event reference"
 msgstr "Empfehlung"
 
+#: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:32
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:27
 #: project/infrastructure/babel_extract.py:1
 msgid "Event reference request"
@@ -1779,7 +1790,6 @@ msgstr "Export"
 msgid "External calendars"
 msgstr "Externe Kalender"
 
-#: frontend/src/ContactLines.vue:35
 #: frontend/src/apps/manage/components/ContactLines.vue:35
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:191
 #: project/presentation/web/templates/_macros.html:367
@@ -1909,7 +1919,7 @@ msgstr ""
 "auf einer deiner Veranstaltungsseiten, die du über die "
 "%(search_open)sSuche%(search_close)s finden kannst.."
 
-#: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/views.py:31
+#: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/views.py:24
 #, python-format
 msgid ""
 "Here you can find your recommendation requests to other organizations. To"
@@ -1987,7 +1997,7 @@ msgstr ""
 "Wenn gesetzt, werden alle zukünftigen Empfehlungsanfragen der neuen "
 "Organisation automatisch verifiziert."
 
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/forms.py:27
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:189
 msgid ""
 "If set, all upcoming reference requests of the other organization are "
 "verified automatically."
@@ -2002,7 +2012,7 @@ msgstr ""
 "Wenn gesetzt, sind Veranstaltungen der neuen Organisation öffentlich "
 "sichtbar."
 
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/forms.py:20
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:177
 msgid "If set, events of the other organization are publicly visible."
 msgstr ""
 "Wenn gesetzt, sind Veranstaltungen der anderen Organisation öffentlich "
@@ -2237,7 +2247,7 @@ msgstr "Zuletzt geändert am"
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:158
 #: project/presentation/web/views/manage_admin_unit/event_organizer/view_handler.py:41
 #: project/presentation/web/views/manage_admin_unit/event_place/view_handler.py:41
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:66
+#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:58
 msgid "Last modified first"
 msgstr "Zuletzt geändert zuerst"
 
@@ -2299,7 +2309,6 @@ msgstr ""
 "Limitiere Verifizierungsanfragen auf Oranisationen mit diesen "
 "Postleitzahlen"
 
-#: frontend/src/ContactLines.vue:21
 #: frontend/src/apps/manage/components/ContactLines.vue:21
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:68
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:77
@@ -2335,7 +2344,6 @@ msgstr "Link kopiert"
 msgid "List all events of %(admin_unit_name)s"
 msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
 
-#: frontend/src/ContactLines.vue:39
 #: frontend/src/apps/manage/components/ContactLines.vue:39
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:155
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:66
@@ -2455,7 +2463,7 @@ msgstr "Weitere Filter"
 #: project/presentation/web/views/manage_admin_unit/event_place/displays.py:14
 #: project/presentation/web/views/manage_admin_unit/event_place/forms.py:10
 #: project/presentation/web/views/manage_admin_unit/event_place/view_handler.py:38
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:62
+#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:54
 #: project/presentation/web/views/user_blueprint/api_key/displays.py:12
 #: project/presentation/web/views/user_blueprint/api_key/displays.py:18
 #: project/presentation/web/views/user_blueprint/api_key/forms.py:18
@@ -2662,6 +2670,7 @@ msgid "Open search"
 msgstr "Suche öffnen"
 
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:206
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:152
 #: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:94
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:127
 #: project/infrastructure/babel_extract.py:1
@@ -2682,7 +2691,6 @@ msgstr "Suche öffnen"
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/displays.py:23
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/displays.py:38
 #: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:9
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:20
 #: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:31
 #: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:44
 #: project/presentation/web/views/user_blueprint/organization_invitation/displays.py:9
@@ -2835,20 +2843,27 @@ msgstr "Veranstalter"
 msgid "Other calendar"
 msgstr "Anderer Kalender"
 
-#: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/forms.py:14
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/forms.py:37
+#: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:134
+#: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:139
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:156
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:161
 msgid "Other organization"
 msgstr "Andere Organisation"
 
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:72
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:35
+#: project/presentation/bff/manage/outgoing_relations.py:207
+#: project/presentation/bff/manage/outgoing_relations.py:245
+#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:64
 msgid "Outgoing organization relation"
 msgstr "Ausgehende Organisationsbeziehung"
 
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:138
 #: project/presentation/shared/permissions.py:167
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:75
+#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:67
 msgid "Outgoing organization relations"
 msgstr "Ausgehende Organisationsbeziehungen"
 
+#: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:116
 #: project/presentation/shared/permissions.py:163
 #: project/presentation/web/templates/_managebar.html:42
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/view_handler.py:59
@@ -2911,7 +2926,6 @@ msgstr "Füge den folgenden Code im Head der Seite ein."
 msgid "Permissions"
 msgstr ""
 
-#: frontend/src/ContactLines.vue:31
 #: frontend/src/apps/manage/components/ContactLines.vue:31
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:186
 #: project/presentation/web/templates/_macros.html:359
@@ -3142,7 +3156,7 @@ msgstr "Veranstaltung \"%(name)s\" empfehlen"
 msgid "Reference request already verified."
 msgstr "Die Empfehlungsanfrage wurde bereits bestätigt."
 
-#: project/presentation/web/views/reference_request.py:11
+#: project/presentation/shared/reference_request.py:11
 #, python-format
 msgid ""
 "Reference request to %(organization)s successfully created. You will be "
@@ -3219,7 +3233,6 @@ msgstr "Anfrage ablehnen"
 msgid "Reject verification request"
 msgstr "Verifizierungsanfrage ablehnen"
 
-#: frontend/src/ReviewDecisionBar.vue:84
 #: frontend/src/apps/manage/components/ReviewDecisionBar.vue:84
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/displays.py:22
 #: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:37
@@ -3269,7 +3282,7 @@ msgstr "Löschung beantragen"
 #: project/presentation/web/templates/_macros.html:1095
 #: project/presentation/web/templates/event/actions.html:20
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference/views.py:12
-#: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/views.py:23
+#: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/views.py:16
 msgid "Request reference"
 msgstr "Empfehlung anfragen"
 
@@ -3884,6 +3897,8 @@ msgstr "Dieses OAuth2-Token wurde bereits widerrufen."
 
 #: project/presentation/bff/admin/mail.py:119
 #: project/presentation/bff/manage/image_form.py:37
+#: project/presentation/bff/manage/outgoing_reference_requests.py:129
+#: project/presentation/bff/manage/outgoing_relations.py:179
 #: project/presentation/web/forms/common.py:120
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
@@ -3956,6 +3971,7 @@ msgstr "Typisches Alter bis"
 msgid "URL"
 msgstr "URL"
 
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:202
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:233
 #: project/presentation/web/modular/base_form.py:87
 msgid "Update"
@@ -4059,9 +4075,9 @@ msgstr "Verifiziere %(organization)s"
 msgid "Verify new organization"
 msgstr "Neue Organisation verifizieren"
 
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:174
 #: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:11
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/forms.py:19
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:53
+#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:45
 msgid "Verify other organization"
 msgstr "Andere Organisation verifizieren"
 
@@ -4071,11 +4087,11 @@ msgstr "Andere Organisationen verifizieren"
 
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:124
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:159
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:184
 #: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:152
 #: project/presentation/web/views/manage_admin_unit/organization_invitation/forms.py:26
 #: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:13
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/forms.py:26
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:56
+#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:48
 msgid "Verify reference requests automatically"
 msgstr "Empfehlungsanfragen automatisch verifizieren"
 

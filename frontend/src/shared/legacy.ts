@@ -34,6 +34,10 @@ export const manage = {
     `/manage/admin_unit/${organizationId}/event/${id}/delete`,
   eventReferenceRequestCreate: (organizationId: number, eventId: number) =>
     `/manage/admin_unit/${organizationId}/outgoing_event_reference_request/create_for_event/${eventId}`,
+  outgoingOrganizationRelations: (organizationId: number) =>
+    `/manage/admin_unit/${organizationId}/outgoing_organization_relations`,
+  outgoingEventReferenceRequests: (organizationId: number) =>
+    `/manage/admin_unit/${organizationId}/outgoing_event_reference_requests`,
   incomingEventReferenceRequests: (organizationId: number) =>
     `/manage/admin_unit/${organizationId}/incoming_event_reference_requests`,
   incomingVerificationRequests: (organizationId: number) =>

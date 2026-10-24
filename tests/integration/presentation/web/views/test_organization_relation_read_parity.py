@@ -72,11 +72,8 @@ def test_update_and_delete_pages(app, db, seeder, utils):
             organization_relation_id=beta_rel,
         )
     )
-    soup = utils.get_soup(response)
-    assert soup.find(
-        "input", attrs={"name": "auto_verify_event_reference_requests"}
-    ).has_attr("checked")
-    assert "Beta Crew" in _text(utils, response)
+    # The update page is a Vue 3 shell; its content comes from the BFF.
+    assert b'id="app"' in response.data
 
     response = utils.get_ok(
         utils.get_url(

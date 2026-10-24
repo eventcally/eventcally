@@ -3,11 +3,13 @@ import { boot } from "@/shared/boot";
 import CustomWidgetEditPage from "./pages/CustomWidgetEditPage.vue";
 import CustomWidgetsPage from "./pages/CustomWidgetsPage.vue";
 import EventPlaceEditPage from "./pages/EventPlaceEditPage.vue";
+import EventReferenceRequestCreatePage from "./pages/EventReferenceRequestCreatePage.vue";
 import EventReferenceRequestReviewPage from "./pages/EventReferenceRequestReviewPage.vue";
 import ManageEventsPage from "./pages/ManageEventsPage.vue";
 import NotFoundPage from "./pages/NotFoundPage.vue";
 import OrganizationCreatePage from "./pages/OrganizationCreatePage.vue";
 import OrganizationExportPage from "./pages/OrganizationExportPage.vue";
+import OrganizationRelationEditPage from "./pages/OrganizationRelationEditPage.vue";
 import OrganizationSettingsPage from "./pages/OrganizationSettingsPage.vue";
 import OrganizationVerificationRequestReviewPage from "./pages/OrganizationVerificationRequestReviewPage.vue";
 import PlanningPage from "./pages/PlanningPage.vue";
@@ -84,6 +86,30 @@ export const routes: RouteRecordRaw[] = [
     props: (route) => ({
       organizationId: Number(route.params.organizationId),
       id: Number(route.params.id),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/outgoing_organization_relation/create",
+    name: "outgoing-organization-relation-create",
+    component: OrganizationRelationEditPage,
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/outgoing_organization_relation/:id(\\d+)/update",
+    name: "outgoing-organization-relation-update",
+    component: OrganizationRelationEditPage,
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/outgoing_event_reference_request/create_for_event/:eventId(\\d+)",
+    name: "event-reference-request-create",
+    component: EventReferenceRequestCreatePage,
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      eventId: Number(route.params.eventId),
     }),
   },
   { path: "/manage/organization/create", name: "organization-create", component: OrganizationCreatePage },

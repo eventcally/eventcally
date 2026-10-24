@@ -467,6 +467,57 @@ class EventPlaceNameAvailability(BaseModel):
     name_taken: Optional[bool] = None
 
 
+class OrganizationRelationFormParams(BaseModel):
+    """Prefill of the create form (`?target=<id>&verify=1`)."""
+
+    target: Optional[int] = None
+    verify: Optional[int] = None
+
+
+class OrganizationRelationForm(BaseModel):
+    # `id` is `None` and `target` the optional prefill when creating.
+    id: Optional[int] = None
+    target: Optional[ManageRef] = None
+    verify: bool = False
+    auto_verify_event_reference_requests: bool = False
+    # The `verify` switch is only offered to organizations that may verify others.
+    can_verify_other: bool
+    list_url: str
+
+
+class OrganizationRelationCreate(BaseModel):
+    # Optional so that a missing organization is a field error of the form.
+    target_admin_unit_id: Optional[int] = None
+    verify: bool = False
+    auto_verify_event_reference_requests: bool = False
+
+
+class OrganizationRelationUpdate(BaseModel):
+    verify: bool = False
+    auto_verify_event_reference_requests: bool = False
+
+
+class OrganizationRelationSaved(BaseModel):
+    id: int
+    redirect_url: str
+
+
+class EventReferenceRequestForm(BaseModel):
+    event: ManageRef
+    list_url: str
+
+
+class EventReferenceRequestCreate(BaseModel):
+    # Optional so that a missing organization is a field error of the form.
+    admin_unit_id: Optional[int] = None
+
+
+class EventReferenceRequestSaved(BaseModel):
+    id: int
+    verified: bool
+    redirect_url: str
+
+
 class OrganizationExportFile(BaseModel):
     url: str
     size: int
