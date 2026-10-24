@@ -106,3 +106,6 @@ venv.bak/
 project/presentation/web/static/dist/
 frontend/node_modules/
 frontend/src/locales/*.json
+
+# Playwright MCP session logs
+.playwright-mcp/

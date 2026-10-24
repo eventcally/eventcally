@@ -54,14 +54,6 @@ def _pages(app, db, seeder, utils):
         "manage_admin_unit.api_key", id=admin_unit_id, api_key_id=api_key_id
     )
 
-    relation_id = seeder.create_admin_unit_relation(admin_unit_id, other_admin_unit_id)
-    _stamp(app, db, "adminunitrelation", relation_id, user_id)
-    pages["relation_update"] = utils.get_url(
-        "manage_admin_unit.outgoing_organization_relation_update",
-        id=admin_unit_id,
-        organization_relation_id=relation_id,
-    )
-
     verification_id = seeder.create_admin_unit_verification_request(
         admin_unit_id, other_admin_unit_id
     )

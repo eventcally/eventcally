@@ -245,57 +245,6 @@
       ]
     ]
   },
-  "organization": {
-    "has_next": false,
-    "items": [
-      [
-        4,
-        "Another Crew"
-      ],
-      [
-        2,
-        "eventcally"
-      ],
-      [
-        1,
-        "Meine Crew"
-      ],
-      [
-        3,
-        "Other Crew"
-      ]
-    ]
-  },
-  "organization_request": {
-    "has_next": false,
-    "items": [
-      [
-        4,
-        "Another Crew"
-      ],
-      [
-        2,
-        "eventcally"
-      ],
-      [
-        3,
-        "Other Crew"
-      ]
-    ]
-  },
-  "organization_term": {
-    "has_next": false,
-    "items": [
-      [
-        3,
-        "Other Crew"
-      ],
-      [
-        4,
-        "Another Crew"
-      ]
-    ]
-  },
   "organizer": {
     "has_next": false,
     "items": [

@@ -97,4 +97,24 @@ describe("manage router", () => {
       (await resolve("/manage/admin_unit/3/incoming_event_reference_request/x/review")).name,
     ).toBe("not-found");
   });
+
+  it("resolves the outgoing relation and reference request forms with numeric ids", async () => {
+    const create = await resolve("/manage/admin_unit/3/outgoing_organization_relation/create");
+    expect(create.name).toBe("outgoing-organization-relation-create");
+    expect(create.params).toMatchObject({ organizationId: "3" });
+
+    const update = await resolve("/manage/admin_unit/3/outgoing_organization_relation/7/update");
+    expect(update.name).toBe("outgoing-organization-relation-update");
+    expect(update.params).toMatchObject({ organizationId: "3", id: "7" });
+
+    const request = await resolve(
+      "/manage/admin_unit/3/outgoing_event_reference_request/create_for_event/9",
+    );
+    expect(request.name).toBe("event-reference-request-create");
+    expect(request.params).toMatchObject({ organizationId: "3", eventId: "9" });
+
+    expect(
+      (await resolve("/manage/admin_unit/3/outgoing_organization_relation/x/update")).name,
+    ).toBe("not-found");
+  });
 });

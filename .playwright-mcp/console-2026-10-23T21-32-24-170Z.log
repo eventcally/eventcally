@@ -1,4 +1,0 @@
-[   56829ms] [ERROR] Refused to apply style from 'http://127.0.0.1:5000/static/dist/assets/manage-BFu8r6kt.css' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled. @ http://127.0.0.1:5000/manage/admin_unit/1/update:170
-[   56901ms] [ERROR] Failed to load resource: the server responded with a status of 404 (NOT FOUND) @ http://127.0.0.1:5000/static/dist/assets/manage-Bpb5mthn.js:0
-[   93525ms] [ERROR] Refused to apply style from 'http://127.0.0.1:5000/static/dist/assets/manage-BFu8r6kt.css' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled. @ http://127.0.0.1:5000/manage/admin_unit/1/update:170
-[   93666ms] [ERROR] Failed to load resource: the server responded with a status of 404 (NOT FOUND) @ http://127.0.0.1:5000/static/dist/assets/manage-Bpb5mthn.js:0
