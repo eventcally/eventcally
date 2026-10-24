@@ -1,22 +1,10 @@
-from wtforms import FormField, SelectField, SelectFieldBase, ValidationError
-from wtforms.utils import unset_value
+from wtforms import SelectField, SelectFieldBase, ValidationError
 
 from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_place
 from project.presentation.web.modular.widgets import (
     AjaxSelect2Widget,
     GooglePlaceWidget,
 )
-
-
-class VirtualFormField(FormField):
-    def __init__(
-        self, form_class, label=None, validators=None, separator="-", **kwargs
-    ):
-        kwargs.setdefault("default", dict)
-        super().__init__(form_class, label, validators, separator, **kwargs)
-
-    def process(self, formdata, data=unset_value, extra_filters=None):
-        return super().process(formdata, data, extra_filters)
 
 
 class GooglePlaceField(SelectField):

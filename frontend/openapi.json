@@ -1519,6 +1519,336 @@
         "title": "ManageRefList",
         "type": "object"
       },
+      "OrganizationCreateForm": {
+        "properties": {
+          "invitation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Invitation Id"
+          },
+          "licenses": {
+            "items": {
+              "$ref": "#/components/schemas/PlanningChoice"
+            },
+            "title": "Licenses",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "relation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrganizationCreateRelation"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "name",
+          "licenses"
+        ],
+        "title": "OrganizationCreateForm",
+        "type": "object"
+      },
+      "OrganizationCreateRelation": {
+        "description": "The relation to the current organization that is created along with the new\none.",
+        "properties": {
+          "can_auto_verify": {
+            "title": "Can Auto Verify",
+            "type": "boolean"
+          },
+          "can_verify": {
+            "title": "Can Verify",
+            "type": "boolean"
+          },
+          "organization_name": {
+            "title": "Organization Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "organization_name",
+          "can_verify",
+          "can_auto_verify"
+        ],
+        "title": "OrganizationCreateRelation",
+        "type": "object"
+      },
+      "OrganizationCreateSave": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Email"
+          },
+          "fax": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Fax"
+          },
+          "invitation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Invitation Id"
+          },
+          "location": {
+            "$ref": "#/components/schemas/OrganizationLocation"
+          },
+          "logo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrganizationLogo"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "name": {
+            "maxLength": 255,
+            "minLength": 5,
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Phone"
+          },
+          "relation_auto_verify_event_reference_requests": {
+            "default": false,
+            "title": "Relation Auto Verify Event Reference Requests",
+            "type": "boolean"
+          },
+          "relation_verify": {
+            "default": false,
+            "title": "Relation Verify",
+            "type": "boolean"
+          },
+          "short_name": {
+            "maxLength": 100,
+            "minLength": 5,
+            "pattern": "^\\w+$",
+            "title": "Short Name",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          }
+        },
+        "required": [
+          "name",
+          "short_name",
+          "location"
+        ],
+        "title": "OrganizationCreateSave",
+        "type": "object"
+      },
+      "OrganizationCreated": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "redirect_url": {
+            "title": "Redirect Url",
+            "type": "string"
+          },
+          "verified": {
+            "title": "Verified",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "verified",
+          "redirect_url"
+        ],
+        "title": "OrganizationCreated",
+        "type": "object"
+      },
+      "OrganizationLocation": {
+        "properties": {
+          "city": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "City",
+            "type": "string"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Longitude"
+          },
+          "postalCode": {
+            "maxLength": 10,
+            "minLength": 1,
+            "title": "Postalcode",
+            "type": "string"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "State"
+          },
+          "street": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Street"
+          }
+        },
+        "required": [
+          "postalCode",
+          "city"
+        ],
+        "title": "OrganizationLocation",
+        "type": "object"
+      },
+      "OrganizationLogo": {
+        "properties": {
+          "copyright_text": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Copyright Text"
+          },
+          "image_base64": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Image Base64"
+          },
+          "license_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "License Id"
+          }
+        },
+        "title": "OrganizationLogo",
+        "type": "object"
+      },
       "OrganizationNameAvailability": {
         "properties": {
           "name_taken": {
@@ -1621,7 +1951,7 @@
           "logo": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/OrganizationSettingsLogo"
+                "$ref": "#/components/schemas/OrganizationLogo"
               },
               {
                 "type": "null"
@@ -1684,78 +2014,6 @@
         "title": "OrganizationSettingsForm",
         "type": "object"
       },
-      "OrganizationSettingsLocation": {
-        "properties": {
-          "city": {
-            "maxLength": 255,
-            "minLength": 1,
-            "title": "City",
-            "type": "string"
-          },
-          "latitude": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Latitude"
-          },
-          "longitude": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Longitude"
-          },
-          "postalCode": {
-            "maxLength": 10,
-            "minLength": 1,
-            "title": "Postalcode",
-            "type": "string"
-          },
-          "state": {
-            "anyOf": [
-              {
-                "maxLength": 255,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "State"
-          },
-          "street": {
-            "anyOf": [
-              {
-                "maxLength": 255,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Street"
-          }
-        },
-        "required": [
-          "postalCode",
-          "city"
-        ],
-        "title": "OrganizationSettingsLocation",
-        "type": "object"
-      },
       "OrganizationSettingsLocationView": {
         "description": "Stored locations may predate the required postal code and city.",
         "properties": {
@@ -1807,49 +2065,6 @@
         "title": "OrganizationSettingsLocationView",
         "type": "object"
       },
-      "OrganizationSettingsLogo": {
-        "properties": {
-          "copyright_text": {
-            "anyOf": [
-              {
-                "maxLength": 255,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Copyright Text"
-          },
-          "image_base64": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Image Base64"
-          },
-          "license_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "License Id"
-          }
-        },
-        "title": "OrganizationSettingsLogo",
-        "type": "object"
-      },
       "OrganizationSettingsSave": {
         "properties": {
           "description": {
@@ -1891,12 +2106,12 @@
             "title": "Fax"
           },
           "location": {
-            "$ref": "#/components/schemas/OrganizationSettingsLocation"
+            "$ref": "#/components/schemas/OrganizationLocation"
           },
           "logo": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/OrganizationSettingsLogo"
+                "$ref": "#/components/schemas/OrganizationLogo"
               },
               {
                 "type": "null"
@@ -5025,6 +5240,270 @@
         "summary": "Delete an event reference"
       }
     },
+    "/bff/manage/organizations": {
+      "post": {
+        "operationId": "bff_manage_create_organization",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationCreateSave"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationCreated"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Create an organization"
+      }
+    },
+    "/bff/manage/organizations/create-form": {
+      "get": {
+        "operationId": "bff_manage_get_organization_create_form",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "invitation_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationCreateForm"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get the form to create an organization"
+      }
+    },
+    "/bff/manage/organizations/name-availability": {
+      "get": {
+        "operationId": "bff_manage_get_organization_name_availability",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "short_name",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "exclude_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationNameAvailability"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Whether the name and short name of an organization are taken"
+      }
+    },
     "/bff/manage/organizations/{id}/custom-widgets": {
       "get": {
         "operationId": "bff_manage_list_custom_widgets",
@@ -6043,108 +6522,6 @@
           }
         },
         "summary": "Update the settings of an organization"
-      }
-    },
-    "/bff/manage/organizations/{id}/settings/name-availability": {
-      "get": {
-        "operationId": "bff_manage_get_organization_name_availability",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "name",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "maxLength": 255,
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "default": null
-            }
-          },
-          {
-            "in": "query",
-            "name": "short_name",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "maxLength": 100,
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "default": null
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationNameAvailability"
-                }
-              }
-            },
-            "description": "OK"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Forbidden"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not Found"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationErrorResponse"
-                }
-              }
-            },
-            "description": "Unprocessable Entity"
-          }
-        },
-        "summary": "Whether the name and short name of an organization are taken"
       }
     },
     "/bff/manage/places": {

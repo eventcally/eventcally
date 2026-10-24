@@ -13,6 +13,7 @@ test.describe("Admin Unit", () => {
     await screenshot(page, "create");
     await page.locator("#submit").click();
     await expect(page).toHaveURL(/\/manage\/admin_unit\//);
+    await expect(page.getByText("Organisation erfolgreich erstellt")).toBeVisible();
   });
 
   test("creates from invitation", async ({ page, login }) => {
