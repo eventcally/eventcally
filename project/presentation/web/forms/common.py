@@ -10,6 +10,7 @@ from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
 )
 from project.domain.models.value_objects.webhook_value_object import WebhookValueObject
+from project.presentation.shared.event_rating import event_rating_choices  # noqa: F401
 from project.presentation.shared.images import image_value_object_from_data_uri
 from project.presentation.web.forms.widgets import MultiCheckboxField
 from project.presentation.web.modular.ajax import LicenseAjaxModelLoader
@@ -239,20 +240,6 @@ def get_accept_tos_markup():
         )
     )
 
-
-event_rating_choices = [
-    (0, lazy_gettext("0 (Little relevant)")),
-    (10, "1"),
-    (20, "2"),
-    (30, "3"),
-    (40, "4"),
-    (50, lazy_gettext("5 (Default)")),
-    (60, "6"),
-    (70, "7"),
-    (80, "8"),
-    (90, "9"),
-    (100, lazy_gettext("10 (Highlight)")),
-]
 
 weekday_choices = [
     (1, lazy_gettext("Monday")),

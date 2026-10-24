@@ -5,6 +5,20 @@ export function formatDateTime(iso: string | null | undefined, locale: string): 
   );
 }
 
+/** Short date, like the `dateformat('short')` filter (event date lists). */
+export function formatDateShort(iso: string | null | undefined, locale: string): string {
+  if (!iso) return "";
+  return new Intl.DateTimeFormat(locale, { dateStyle: "short" }).format(new Date(iso));
+}
+
+/** Short date and short time, like the `datetimeformat('short')` filter (audit lines). */
+export function formatDateTimeShort(iso: string | null | undefined, locale: string): string {
+  if (!iso) return "";
+  return new Intl.DateTimeFormat(locale, { dateStyle: "short", timeStyle: "short" }).format(
+    new Date(iso),
+  );
+}
+
 export function formatDate(iso: string | null | undefined, locale: string): string {
   if (!iso) return "";
   return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(iso));

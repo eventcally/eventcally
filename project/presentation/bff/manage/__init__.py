@@ -13,3 +13,4 @@ from project.presentation.bff.manage import organization_settings  # noqa: E402,
 from project.presentation.bff.manage import organizations  # noqa: E402, F401
 from project.presentation.bff.manage import places  # noqa: E402, F401
 from project.presentation.bff.manage import planning  # noqa: E402, F401
+from project.presentation.bff.manage import request_reviews  # noqa: E402, F401

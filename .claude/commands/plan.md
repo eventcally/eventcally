@@ -263,3 +263,12 @@ pytest
 
 **Next Step**: Review the plan, then implement tasks in order.
 ```
+
+Always end the output with the implement command for the plan in a code block, so it can be
+copied as is. Print it again at the end of every later reply that changes the plan:
+
+````markdown
+```
+/implement .agents/plans/{YYYY-MM-DD}-{name}.plan.md
+```
+````

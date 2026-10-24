@@ -11,23 +11,24 @@ test.describe("Verification request review", () => {
 
     // Reject
     await page.goto(reviewUrl);
+    await expect(page.locator("[data-test=decision]")).toBeVisible();
     await screenshot(page, "review");
-    await page.locator(".decision-container .btn-danger").click();
-    const rejectionReason = page.locator("#rejectFormModal select[name=rejection_reason]");
+    await page.locator("[data-test=reject]").click();
+    const rejectionReason = page.locator("#rejection_reason");
     await rejectionReason.selectOption({ label: "Nicht relevant" });
     await expect(rejectionReason).toHaveValue("6");
-    await screenshotElement(page.locator("#rejectFormModal"), "reject");
-    await page.locator("#rejectFormModal .btn-danger").click();
+    await screenshotElement(page.locator("[data-test=reject-modal]"), "reject");
+    await page.locator("[data-test=reject-confirm]").click();
     await expect(page).toHaveURL(/\/incoming_organization_verification_requests/);
     await shouldContain(page.locator("div.alert"), "Verifizierungsanfrage erfolgreich aktualisiert");
     await shouldContain(page.locator("main .badge-pill"), "Abgelehnt");
 
     // Accept
     await page.goto(reviewUrl);
-    await page.locator(".decision-container .btn-success").click();
-    await page.locator("#auto_verify").locator("..").click();
-    await screenshotElement(page.locator("#acceptFormModal"), "accept");
-    await page.locator("#acceptFormModal .btn-success").click();
+    await page.locator("[data-test=accept]").click();
+    await page.locator("#auto_verify").check();
+    await screenshotElement(page.locator("[data-test=accept-modal]"), "accept");
+    await page.locator("[data-test=accept-confirm]").click();
     await expect(page).toHaveURL(/\/incoming_organization_verification_requests/);
     await shouldContain(page.locator("div.alert"), "Organisation erfolgreich verifiziert");
   });

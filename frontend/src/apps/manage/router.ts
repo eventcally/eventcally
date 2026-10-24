@@ -3,11 +3,13 @@ import { boot } from "@/shared/boot";
 import CustomWidgetEditPage from "./pages/CustomWidgetEditPage.vue";
 import CustomWidgetsPage from "./pages/CustomWidgetsPage.vue";
 import EventPlaceEditPage from "./pages/EventPlaceEditPage.vue";
+import EventReferenceRequestReviewPage from "./pages/EventReferenceRequestReviewPage.vue";
 import ManageEventsPage from "./pages/ManageEventsPage.vue";
 import NotFoundPage from "./pages/NotFoundPage.vue";
 import OrganizationCreatePage from "./pages/OrganizationCreatePage.vue";
 import OrganizationExportPage from "./pages/OrganizationExportPage.vue";
 import OrganizationSettingsPage from "./pages/OrganizationSettingsPage.vue";
+import OrganizationVerificationRequestReviewPage from "./pages/OrganizationVerificationRequestReviewPage.vue";
 import PlanningPage from "./pages/PlanningPage.vue";
 
 export const routes: RouteRecordRaw[] = [
@@ -65,6 +67,24 @@ export const routes: RouteRecordRaw[] = [
     name: "organization-export",
     component: OrganizationExportPage,
     props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/incoming_event_reference_request/:id(\\d+)/review",
+    name: "event-reference-request-review",
+    component: EventReferenceRequestReviewPage,
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/incoming_organization_verification_request/:id(\\d+)/review",
+    name: "verification-request-review",
+    component: OrganizationVerificationRequestReviewPage,
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
   },
   { path: "/manage/organization/create", name: "organization-create", component: OrganizationCreatePage },
   { path: "/:rest(.*)*", name: "not-found", component: NotFoundPage },
