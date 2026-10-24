@@ -1,164 +1,75 @@
-import pytest
-
 from tests.integration.seeder import Seeder
 from tests.integration.utils import UtilActions
 
 
-@pytest.mark.parametrize("db_error", [True, False])
-@pytest.mark.parametrize("is_verified", [True, False])
-def test_review_verify(
-    client, seeder: Seeder, utils: UtilActions, app, mocker, db, db_error, is_verified
-):
+def _review_url(utils, admin_unit_id, request_id):
+    return utils.get_url(
+        "manage_admin_unit.incoming_organization_verification_request_review",
+        id=admin_unit_id,
+        organization_verification_request_id=request_id,
+    )
+
+
+def test_review_renders_the_shell(client, seeder: Seeder, utils: UtilActions):
     (
-        verifier_user_id,
+        _,
         verifier_admin_unit_id,
-        unverified_user_id,
+        _,
         unverified_admin_unit_id,
     ) = seeder.setup_admin_unit_missing_verification_scenario(log_in_verifier=True)
-    verification_request_id = seeder.create_admin_unit_verification_request(
+    request_id = seeder.create_admin_unit_verification_request(
         unverified_admin_unit_id, verifier_admin_unit_id
     )
-
-    with app.app_context():
-        from project.infrastructure.models import AdminUnit
-
-        admin_unit = db.session.get(AdminUnit, unverified_admin_unit_id)
-        admin_unit.description = "Beschreibung"
-        db.session.commit()
-
-    url = utils.get_url(
-        "manage_admin_unit.incoming_organization_verification_request_review",
-        id=verifier_admin_unit_id,
-        organization_verification_request_id=verification_request_id,
-    )
+    url = _review_url(utils, verifier_admin_unit_id, request_id)
 
     legacy_review_url = utils.get_url(
         "main.manage_admin_unit_incoming_admin_unit_verification_request_review",
         id=verifier_admin_unit_id,
-        admin_unit_verification_request_id=verification_request_id,
+        admin_unit_verification_request_id=request_id,
     )
     utils.assert_response_redirect_to_url(client.get(legacy_review_url), url)
 
-    if is_verified:
-        with app.app_context():
-            from project.infrastructure.models import (
-                AdminUnitVerificationRequest,
-                AdminUnitVerificationRequestReviewStatus,
-            )
-
-            verification_request = db.session.get(
-                AdminUnitVerificationRequest, verification_request_id
-            )
-            verification_request.review_status = (
-                AdminUnitVerificationRequestReviewStatus.verified
-            )
-            db.session.commit()
-
-        response = client.get(url)
-        utils.assert_response_redirect(
-            response,
-            "manage_admin_unit.incoming_organization_verification_requests",
-            id=verifier_admin_unit_id,
-        )
-        return
-
     response = utils.get_ok(url)
 
-    if db_error:
-        utils.mock_db_commit(mocker)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "review_status": 2,
-            "auto_verify": 1,
-        },
-    )
-
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
-
-    utils.assert_response_redirect(
-        response,
-        "manage_admin_unit.incoming_organization_verification_requests",
-        id=verifier_admin_unit_id,
-    )
-
-    with app.app_context():
-        app.test_event_dispatcher.handle_pending_events()
-
-    assert len(app.test_email_service.sent_emails) == 1
-    assert app.test_email_service.sent_emails[0]["recipient"] == "mitglied@verein.de"
-
-    with app.app_context():
-        from project.infrastructure.models import (
-            AdminUnitVerificationRequest,
-            AdminUnitVerificationRequestReviewStatus,
-        )
-        from project.infrastructure.seed_helpers import get_admin_unit_relation
-
-        verification_request = db.session.get(
-            AdminUnitVerificationRequest, verification_request_id
-        )
-        assert verification_request.verified
-
-        relation = get_admin_unit_relation(
-            verifier_admin_unit_id, unverified_admin_unit_id
-        )
-        assert relation is not None
-        assert relation.verify
-        assert relation.auto_verify_event_reference_requests
+    assert b'<div id="app"' in response.data
+    assert "Verifizierungsanfrage prüfen".encode() in response.data
 
 
-def test_review_reject(client, seeder: Seeder, utils: UtilActions, app, db, mocker):
+def test_review_of_a_verified_request_redirects_to_the_list(
+    client, seeder: Seeder, utils: UtilActions, app, db
+):
     (
-        verifier_user_id,
+        _,
         verifier_admin_unit_id,
-        unverified_user_id,
+        _,
         unverified_admin_unit_id,
     ) = seeder.setup_admin_unit_missing_verification_scenario(log_in_verifier=True)
-    verification_request_id = seeder.create_admin_unit_verification_request(
+    request_id = seeder.create_admin_unit_verification_request(
         unverified_admin_unit_id, verifier_admin_unit_id
     )
 
-    url = utils.get_url(
-        "manage_admin_unit.incoming_organization_verification_request_review",
-        id=verifier_admin_unit_id,
-        organization_verification_request_id=verification_request_id,
-    )
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "review_status": 3,
-            "rejection_reason": 0,
-        },
-    )
-
-    utils.assert_response_redirect(
-        response,
-        "manage_admin_unit.incoming_organization_verification_requests",
-        id=verifier_admin_unit_id,
-    )
-
     with app.app_context():
         from project.infrastructure.models import (
             AdminUnitVerificationRequest,
             AdminUnitVerificationRequestReviewStatus,
         )
 
-        verification_request = db.session.get(
-            AdminUnitVerificationRequest, verification_request_id
+        verification_request = db.session.get(AdminUnitVerificationRequest, request_id)
+        verification_request.review_status = (
+            AdminUnitVerificationRequestReviewStatus.verified
         )
-        assert (
-            verification_request.review_status
-            == AdminUnitVerificationRequestReviewStatus.rejected
-        )
-        assert verification_request.rejection_reason is None
+        db.session.commit()
+
+    response = client.get(_review_url(utils, verifier_admin_unit_id, request_id))
+
+    utils.assert_response_redirect(
+        response,
+        "manage_admin_unit.incoming_organization_verification_requests",
+        id=verifier_admin_unit_id,
+    )
+    with client.session_transaction() as session:
+        categories = [category for category, _ in session["_flashes"]]
+    assert categories == ["danger"]
 
 
 def test_review_status_unauthorized_redirects_to_login(
@@ -189,59 +100,3 @@ def test_review_status_unauthorized_redirects_to_login(
 
     response = client.get(url)
     utils.assert_response_redirect_to_login(response, url)
-
-
-def test_review_verify_with_verifier_widget_colors(
-    client, seeder: Seeder, utils: UtilActions, app, db
-):
-    (
-        verifier_user_id,
-        verifier_admin_unit_id,
-        unverified_user_id,
-        unverified_admin_unit_id,
-    ) = seeder.setup_admin_unit_missing_verification_scenario(log_in_verifier=True)
-    verification_request_id = seeder.create_admin_unit_verification_request(
-        unverified_admin_unit_id, verifier_admin_unit_id
-    )
-
-    with app.app_context():
-        from colour import Color
-
-        from project.infrastructure.models import AdminUnit
-
-        verifier = db.session.get(AdminUnit, verifier_admin_unit_id)
-        verifier.widget_background_color = Color("#eceef0")
-        verifier.widget_primary_color = Color("#b09641")
-        verifier.widget_link_color = Color("#7b2424")
-
-        unverified = db.session.get(AdminUnit, unverified_admin_unit_id)
-        unverified.description = "Beschreibung"
-        db.session.commit()
-
-    url = utils.get_url(
-        "manage_admin_unit.incoming_organization_verification_request_review",
-        id=verifier_admin_unit_id,
-        organization_verification_request_id=verification_request_id,
-    )
-    response = utils.get_ok(url)
-    response = utils.post_form(url, response, {"review_status": 2, "auto_verify": 1})
-
-    utils.assert_response_redirect(
-        response,
-        "manage_admin_unit.incoming_organization_verification_requests",
-        id=verifier_admin_unit_id,
-    )
-
-    with app.app_context():
-        from project.infrastructure.models import (
-            AdminUnitVerificationRequest,
-            AdminUnitVerificationRequestReviewStatus,
-        )
-
-        verification_request = db.session.get(
-            AdminUnitVerificationRequest, verification_request_id
-        )
-        assert (
-            verification_request.review_status
-            == AdminUnitVerificationRequestReviewStatus.verified
-        )

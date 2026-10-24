@@ -1,18 +1,21 @@
-from flask import flash, redirect, url_for
+from flask import redirect, render_template, url_for
 from flask_babel import gettext, lazy_gettext
 
-from project.application.commands import (
-    RejectEventReferenceRequestCommand,
-    VerifyEventReferenceRequestCommand,
-)
 from project.domain.models.enums.event_reference_request_review_status import (
     EventReferenceRequestReviewStatus,
 )
+from project.presentation.web.boot import build_boot_data
 from project.presentation.web.modular.base_views import BaseListView, BaseUpdateView
-from project.presentation.web.views.manage_admin_unit.incoming_event_reference_request.forms import (
-    ReferenceRequestReviewForm,
-)
-from project.presentation.web.views.utils import flash_message, handle_base_error
+from project.presentation.web.views.utils import flash_message
+
+
+def _render_shell(title):
+    return render_template(
+        "manage/request_review.html",
+        entry="manage",
+        title=title,
+        boot=build_boot_data(base="/"),
+    )
 
 
 class ListView(BaseListView):
@@ -23,8 +26,7 @@ class ListView(BaseListView):
 
 
 class ReviewView(BaseUpdateView):
-    form_class = ReferenceRequestReviewForm
-    template_file_name = "review.html"
+    """A shell: the Vue page reads and decides through `/bff/manage`."""
 
     def get_title(self, **kwargs):
         return lazy_gettext(
@@ -48,49 +50,19 @@ class ReviewView(BaseUpdateView):
 
         return None
 
-    def render_template(self, form, object, **kwargs):
-        request = object
-        auto_verify = request.auto_verify
+    def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
 
-        if not auto_verify:
-            form.auto_verify.description = gettext(
-                "If all upcoming reference requests of %(admin_unit_name)s should be verified automatically.",
-                admin_unit_name=request.admin_unit.name,
-            )
+        if response:  # pragma: no cover
+            return response
 
-        dates = request.upcoming_dates
+        object = self.get_object_from_kwargs(**kwargs)
+        response = self.check_object_access(object)
 
-        return super().render_template(form=form, object=object, dates=dates, **kwargs)
+        if response:
+            return response
 
-    @handle_base_error
-    def dispatch_validated_form(self, form, object, **kwargs):
-        actor = self.app_context_provider.get_current_actor()
-        auto_verify = form.auto_verify.data
-
-        if form.review_status.data == EventReferenceRequestReviewStatus.verified:
-            cmd = VerifyEventReferenceRequestCommand(
-                actor=actor,
-                id=object.id,
-                rating=form.rating.data,
-                auto_verify=auto_verify,
-            )
-            self.message_bus.handle_command(cmd)
-            success_text = gettext("Reference successfully created")
-        else:
-            rejection_reason = (
-                form.rejection_reason.data if form.rejection_reason.data else None
-            )
-            cmd = RejectEventReferenceRequestCommand(
-                actor=actor,
-                id=object.id,
-                rejection_reason=rejection_reason,
-                auto_verify=auto_verify,
-            )
-            self.message_bus.handle_command(cmd)
-            success_text = gettext("Request successfully updated")
-
-        flash(success_text, "success")
-        return redirect(self.get_redirect_url(object=object))
+        return _render_shell(self.get_title())
 
     def get_redirect_url(self, **kwargs):
         return self.handler.get_list_url(**kwargs)

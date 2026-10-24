@@ -10,8 +10,15 @@ from pydantic import (
 )
 
 from project.domain.models.enums.event_public_status import EventPublicStatus
+from project.domain.models.enums.event_reference_request_rejection_reason import (
+    EventReferenceRequestRejectionReason,
+)
 from project.domain.models.enums.event_status import EventStatus
+from project.domain.models.enums.organization_verification_request_rejection_reason import (
+    OrganizationVerificationRequestRejectionReason,
+)
 from project.presentation.bff.schemas import PageParams
+from project.presentation.shared.event_rating import event_rating_choices
 from project.presentation.shared.search_options import distance_choices
 
 # A month view with leading and trailing weeks spans at most 42 days.
@@ -478,3 +485,167 @@ class OrganizationExportJob(BaseModel):
 class OrganizationExportJobStatus(BaseModel):
     ready: bool
     successful: Optional[bool] = None
+
+
+class ReviewChoice(BaseModel):
+    value: int
+    label: str
+
+
+class ReviewContact(BaseModel):
+    url: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    fax: Optional[str] = None
+    # The location as one line, like `get_location_str`.
+    address: Optional[str] = None
+
+
+class ReviewOrganization(ReviewContact):
+    id: int
+    name: str
+    is_verified: bool = False
+    logo_url: Optional[str] = None
+    description: Optional[str] = None
+
+
+class ReviewOrganizationMember(BaseModel):
+    email: str
+    # Translated role titles.
+    roles: List[str] = []
+
+
+class ReviewEventPlace(BaseModel):
+    name: str
+    photo_url: Optional[str] = None
+    description: Optional[str] = None
+    url: Optional[str] = None
+    address: Optional[str] = None
+    # Set when the attendance mode is not offline, as on the old page.
+    directions_url: Optional[str] = None
+
+
+class ReviewEventOrganizer(BaseModel):
+    name: str
+    logo_url: Optional[str] = None
+    url: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    fax: Optional[str] = None
+
+
+class ReviewCustomCategories(BaseModel):
+    label: str
+    names: List[str]
+
+
+class ReviewEvent(BaseModel):
+    id: int
+    name: str
+    # Raw enum names for the warning pills.
+    public_status: Optional[str] = None
+    status: Optional[str] = None
+    booked_up: Optional[bool] = None
+    attendance_mode: Optional[str] = None
+    start: Optional[datetime] = None
+    end: Optional[datetime] = None
+    allday: bool = False
+    # Translated; `None` where the old page hid the value (the default member).
+    status_label: Optional[str] = None
+    target_group_origin_label: Optional[str] = None
+    attendance_mode_label: Optional[str] = None
+    photo_url: Optional[str] = None
+    description: Optional[str] = None
+    price_info: Optional[str] = None
+    external_link: Optional[str] = None
+    ticket_link: Optional[str] = None
+    category_names: List[str] = []
+    custom_categories: List[ReviewCustomCategories] = []
+    tags: Optional[str] = None
+    kid_friendly: Optional[bool] = None
+    accessible_for_free: Optional[bool] = None
+    age_from: Optional[int] = None
+    age_to: Optional[int] = None
+    registration_required: Optional[bool] = None
+    expected_participants: Optional[int] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    report_url: str
+    place: Optional[ReviewEventPlace] = None
+    organizer: Optional[ReviewEventOrganizer] = None
+    co_organizers: List[ReviewEventOrganizer] = []
+    organization: ReviewOrganization
+
+
+class ReviewEventDate(BaseModel):
+    id: int
+    start: datetime
+
+
+class EventReferenceRequestReview(BaseModel):
+    id: int
+    review_status: str
+    event: ReviewEvent
+    dates: List[ReviewEventDate] = []
+    auto_verify: bool = False
+    auto_verify_description: Optional[str] = None
+    rating_choices: List[ReviewChoice]
+    default_rating: int = 50
+    rejection_reasons: List[ReviewChoice]
+    list_url: str
+
+
+class OrganizationVerificationRequestReview(BaseModel):
+    id: int
+    review_status: str
+    organization: ReviewOrganization
+    members: List[ReviewOrganizationMember] = []
+    auto_verify_description: str
+    rejection_reasons: List[ReviewChoice]
+    list_url: str
+
+
+class EventReferenceRequestVerify(BaseModel):
+    rating: int = 50
+    auto_verify: bool = False
+
+    @field_validator("rating")
+    @classmethod
+    def _rating_is_offered(cls, value):
+        if value not in [rating for rating, _ in event_rating_choices]:
+            raise ValueError("rating is not one of the offered ratings")
+
+        return value
+
+
+class EventReferenceRequestReject(BaseModel):
+    # `0` and `None` both mean no reason.
+    rejection_reason: Optional[int] = None
+
+    @field_validator("rejection_reason")
+    @classmethod
+    def _reason_is_known(cls, value):
+        if value and value not in list(EventReferenceRequestRejectionReason):
+            raise ValueError("rejection_reason is unknown")
+
+        return value or None
+
+
+class OrganizationVerificationRequestApprove(BaseModel):
+    auto_verify: bool = False
+
+
+class OrganizationVerificationRequestReject(BaseModel):
+    rejection_reason: Optional[int] = None
+
+    @field_validator("rejection_reason")
+    @classmethod
+    def _reason_is_known(cls, value):
+        if value and value not in list(OrganizationVerificationRequestRejectionReason):
+            raise ValueError("rejection_reason is unknown")
+
+        return value or None
+
+
+class RequestReviewed(BaseModel):
+    redirect_url: str

@@ -81,4 +81,20 @@ describe("manage router", () => {
   it("renders unknown paths as not found", async () => {
     expect((await resolve("/x")).name).toBe("not-found");
   });
+
+  it("resolves the review pages with numeric ids", async () => {
+    const reference = await resolve("/manage/admin_unit/3/incoming_event_reference_request/7/review");
+    expect(reference.name).toBe("event-reference-request-review");
+    expect(reference.params).toMatchObject({ organizationId: "3", id: "7" });
+
+    const verification = await resolve(
+      "/manage/admin_unit/3/incoming_organization_verification_request/9/review",
+    );
+    expect(verification.name).toBe("verification-request-review");
+    expect(verification.params).toMatchObject({ organizationId: "3", id: "9" });
+
+    expect(
+      (await resolve("/manage/admin_unit/3/incoming_event_reference_request/x/review")).name,
+    ).toBe("not-found");
+  });
 });

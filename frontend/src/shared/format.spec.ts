@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { formatDate, formatDateTime, formatEventDate, formatFileSize, formatStart } from "./format";
+import {
+  formatDate,
+  formatDateShort,
+  formatDateTime,
+  formatDateTimeShort,
+  formatEventDate,
+  formatFileSize,
+  formatStart,
+} from "./format";
 
 describe("formatDateTime", () => {
   it("returns an empty string for missing values", () => {
@@ -71,5 +79,19 @@ describe("formatFileSize", () => {
     expect(formatFileSize(1536)).toBe("1KB");
     expect(formatFileSize(5 * 1024 ** 2)).toBe("5MB");
     expect(formatFileSize(3 * 1024 ** 3)).toBe("3GB");
+  });
+});
+
+describe("formatDateTimeShort", () => {
+  it("formats a short date and time", () => {
+    expect(formatDateTimeShort("2026-10-24T09:42:00", "de")).toBe("24.10.26, 09:42");
+    expect(formatDateTimeShort(null, "de")).toBe("");
+  });
+});
+
+describe("formatDateShort", () => {
+  it("formats a short date", () => {
+    expect(formatDateShort("2026-10-24T09:42:00", "de")).toBe("24.10.26");
+    expect(formatDateShort(undefined, "de")).toBe("");
   });
 });

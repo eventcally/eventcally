@@ -1,19 +1,25 @@
-from flask import redirect, url_for
+from flask import redirect, render_template, url_for
 from flask_babel import gettext, lazy_gettext
 
 from project.domain.models.enums.organization_verification_request_review_status import (
     OrganizationVerificationRequestReviewStatus,
 )
+from project.presentation.web.boot import build_boot_data
 from project.presentation.web.modular.base_views import BaseUpdateView
-from project.presentation.web.views.manage_admin_unit.incoming_verification_request.forms import (
-    VerificationRequestReviewForm,
-)
-from project.presentation.web.views.utils import flash_message, handle_base_error
+from project.presentation.web.views.utils import flash_message
+
+
+def _render_shell(title):
+    return render_template(
+        "manage/request_review.html",
+        entry="manage",
+        title=title,
+        boot=build_boot_data(base="/"),
+    )
 
 
 class ReviewView(BaseUpdateView):
-    form_class = VerificationRequestReviewForm
-    template_file_name = "review.html"
+    """A shell: the Vue page reads and decides through `/bff/manage`."""
 
     def get_title(self, **kwargs):
         return lazy_gettext(
@@ -37,36 +43,19 @@ class ReviewView(BaseUpdateView):
 
         return None
 
-    def render_template(self, form, object, **kwargs):
-        form.auto_verify.description = gettext(
-            "If all upcoming reference requests of %(admin_unit_name)s should be verified automatically.",
-            admin_unit_name=object.source_admin_unit.name,
-        )
+    def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
 
-        return super().render_template(form=form, object=object, **kwargs)
+        if response:  # pragma: no cover
+            return response
 
-    @handle_base_error
-    def dispatch_validated_form(self, form, object, **kwargs):
-        if (
-            form.review_status.data
-            == OrganizationVerificationRequestReviewStatus.verified
-        ):
-            cmd = form.create_approve_command(object.id)
-        else:
-            cmd = form.create_reject_command(object.id)
+        object = self.get_object_from_kwargs(**kwargs)
+        response = self.check_object_access(object)
 
-        self.message_bus.handle_command(cmd)
-        self.flash_success_message(object, form)
-        return redirect(self.get_redirect_url())
+        if response:
+            return response
 
-    def get_success_text(self, object, form):
-        if (
-            form.review_status.data
-            == OrganizationVerificationRequestReviewStatus.verified
-        ):
-            return gettext("Organization successfully verified")
-
-        return gettext("Verification request successfully updated")
+        return _render_shell(self.get_title())
 
     def get_redirect_url(self, **kwargs):
         return self.handler.get_list_url(**kwargs)

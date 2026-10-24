@@ -524,6 +524,108 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/incoming-event-reference-requests/{request_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject an incoming reference request */
+        post: operations["bff_manage_reject_incoming_event_reference_request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/incoming-event-reference-requests/{request_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get an incoming reference request to review */
+        get: operations["bff_manage_get_incoming_event_reference_request_review"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/incoming-event-reference-requests/{request_id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Accept an incoming reference request */
+        post: operations["bff_manage_verify_incoming_event_reference_request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/incoming-verification-requests/{request_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Accept an incoming verification request */
+        post: operations["bff_manage_approve_incoming_verification_request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/incoming-verification-requests/{request_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject an incoming verification request */
+        post: operations["bff_manage_reject_incoming_verification_request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/incoming-verification-requests/{request_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get an incoming verification request to review */
+        get: operations["bff_manage_get_incoming_verification_request_review"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/settings": {
         parameters: {
             query?: never;
@@ -1377,6 +1479,61 @@ export interface components {
             /** Id */
             id: number;
         };
+        /** EventReferenceRequestReject */
+        EventReferenceRequestReject: {
+            /**
+             * Rejection Reason
+             * @default null
+             */
+            rejection_reason: number | null;
+        };
+        /** EventReferenceRequestReview */
+        EventReferenceRequestReview: {
+            /**
+             * Auto Verify
+             * @default false
+             */
+            auto_verify: boolean;
+            /**
+             * Auto Verify Description
+             * @default null
+             */
+            auto_verify_description: string | null;
+            /**
+             * Dates
+             * @default []
+             */
+            dates: components["schemas"]["ReviewEventDate"][];
+            /**
+             * Default Rating
+             * @default 50
+             */
+            default_rating: number;
+            event: components["schemas"]["ReviewEvent"];
+            /** Id */
+            id: number;
+            /** List Url */
+            list_url: string;
+            /** Rating Choices */
+            rating_choices: components["schemas"]["ReviewChoice"][];
+            /** Rejection Reasons */
+            rejection_reasons: components["schemas"]["ReviewChoice"][];
+            /** Review Status */
+            review_status: string;
+        };
+        /** EventReferenceRequestVerify */
+        EventReferenceRequestVerify: {
+            /**
+             * Auto Verify
+             * @default false
+             */
+            auto_verify: boolean;
+            /**
+             * Rating
+             * @default 50
+             */
+            rating: number;
+        };
         /** EventReportCreate */
         EventReportCreate: {
             /**
@@ -1883,6 +2040,41 @@ export interface components {
              */
             text: string | null;
         };
+        /** OrganizationVerificationRequestApprove */
+        OrganizationVerificationRequestApprove: {
+            /**
+             * Auto Verify
+             * @default false
+             */
+            auto_verify: boolean;
+        };
+        /** OrganizationVerificationRequestReject */
+        OrganizationVerificationRequestReject: {
+            /**
+             * Rejection Reason
+             * @default null
+             */
+            rejection_reason: number | null;
+        };
+        /** OrganizationVerificationRequestReview */
+        OrganizationVerificationRequestReview: {
+            /** Auto Verify Description */
+            auto_verify_description: string;
+            /** Id */
+            id: number;
+            /** List Url */
+            list_url: string;
+            /**
+             * Members
+             * @default []
+             */
+            members: components["schemas"]["ReviewOrganizationMember"][];
+            organization: components["schemas"]["ReviewOrganization"];
+            /** Rejection Reasons */
+            rejection_reasons: components["schemas"]["ReviewChoice"][];
+            /** Review Status */
+            review_status: string;
+        };
         /** PlaceAddress */
         PlaceAddress: {
             /** City */
@@ -2325,6 +2517,301 @@ export interface components {
             per_page: number;
             /** Total */
             total: number;
+        };
+        /** RequestReviewed */
+        RequestReviewed: {
+            /** Redirect Url */
+            redirect_url: string;
+        };
+        /** ReviewChoice */
+        ReviewChoice: {
+            /** Label */
+            label: string;
+            /** Value */
+            value: number;
+        };
+        /** ReviewCustomCategories */
+        ReviewCustomCategories: {
+            /** Label */
+            label: string;
+            /** Names */
+            names: string[];
+        };
+        /** ReviewEvent */
+        ReviewEvent: {
+            /**
+             * Accessible For Free
+             * @default null
+             */
+            accessible_for_free: boolean | null;
+            /**
+             * Age From
+             * @default null
+             */
+            age_from: number | null;
+            /**
+             * Age To
+             * @default null
+             */
+            age_to: number | null;
+            /**
+             * Allday
+             * @default false
+             */
+            allday: boolean;
+            /**
+             * Attendance Mode
+             * @default null
+             */
+            attendance_mode: string | null;
+            /**
+             * Attendance Mode Label
+             * @default null
+             */
+            attendance_mode_label: string | null;
+            /**
+             * Booked Up
+             * @default null
+             */
+            booked_up: boolean | null;
+            /**
+             * Category Names
+             * @default []
+             */
+            category_names: string[];
+            /**
+             * Co Organizers
+             * @default []
+             */
+            co_organizers: components["schemas"]["ReviewEventOrganizer"][];
+            /**
+             * Created At
+             * @default null
+             */
+            created_at: string | null;
+            /**
+             * Custom Categories
+             * @default []
+             */
+            custom_categories: components["schemas"]["ReviewCustomCategories"][];
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * End
+             * @default null
+             */
+            end: string | null;
+            /**
+             * Expected Participants
+             * @default null
+             */
+            expected_participants: number | null;
+            /**
+             * External Link
+             * @default null
+             */
+            external_link: string | null;
+            /** Id */
+            id: number;
+            /**
+             * Kid Friendly
+             * @default null
+             */
+            kid_friendly: boolean | null;
+            /** Name */
+            name: string;
+            organization: components["schemas"]["ReviewOrganization"];
+            /** @default null */
+            organizer: components["schemas"]["ReviewEventOrganizer"] | null;
+            /**
+             * Photo Url
+             * @default null
+             */
+            photo_url: string | null;
+            /** @default null */
+            place: components["schemas"]["ReviewEventPlace"] | null;
+            /**
+             * Price Info
+             * @default null
+             */
+            price_info: string | null;
+            /**
+             * Public Status
+             * @default null
+             */
+            public_status: string | null;
+            /**
+             * Registration Required
+             * @default null
+             */
+            registration_required: boolean | null;
+            /** Report Url */
+            report_url: string;
+            /**
+             * Start
+             * @default null
+             */
+            start: string | null;
+            /**
+             * Status
+             * @default null
+             */
+            status: string | null;
+            /**
+             * Status Label
+             * @default null
+             */
+            status_label: string | null;
+            /**
+             * Tags
+             * @default null
+             */
+            tags: string | null;
+            /**
+             * Target Group Origin Label
+             * @default null
+             */
+            target_group_origin_label: string | null;
+            /**
+             * Ticket Link
+             * @default null
+             */
+            ticket_link: string | null;
+            /**
+             * Updated At
+             * @default null
+             */
+            updated_at: string | null;
+        };
+        /** ReviewEventDate */
+        ReviewEventDate: {
+            /** Id */
+            id: number;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+        };
+        /** ReviewEventOrganizer */
+        ReviewEventOrganizer: {
+            /**
+             * Email
+             * @default null
+             */
+            email: string | null;
+            /**
+             * Fax
+             * @default null
+             */
+            fax: string | null;
+            /**
+             * Logo Url
+             * @default null
+             */
+            logo_url: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Phone
+             * @default null
+             */
+            phone: string | null;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+        };
+        /** ReviewEventPlace */
+        ReviewEventPlace: {
+            /**
+             * Address
+             * @default null
+             */
+            address: string | null;
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Directions Url
+             * @default null
+             */
+            directions_url: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Photo Url
+             * @default null
+             */
+            photo_url: string | null;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+        };
+        /** ReviewOrganization */
+        ReviewOrganization: {
+            /**
+             * Address
+             * @default null
+             */
+            address: string | null;
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Email
+             * @default null
+             */
+            email: string | null;
+            /**
+             * Fax
+             * @default null
+             */
+            fax: string | null;
+            /** Id */
+            id: number;
+            /**
+             * Is Verified
+             * @default false
+             */
+            is_verified: boolean;
+            /**
+             * Logo Url
+             * @default null
+             */
+            logo_url: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Phone
+             * @default null
+             */
+            phone: string | null;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+        };
+        /** ReviewOrganizationMember */
+        ReviewOrganizationMember: {
+            /** Email */
+            email: string;
+            /**
+             * Roles
+             * @default []
+             */
+            roles: string[];
         };
         /** ValidationErrorResponse */
         ValidationErrorResponse: {
@@ -4955,6 +5442,412 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrganizationExportJobStatus"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_reject_incoming_event_reference_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                request_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventReferenceRequestReject"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestReviewed"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_incoming_event_reference_request_review: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                request_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventReferenceRequestReview"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_verify_incoming_event_reference_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                request_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventReferenceRequestVerify"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestReviewed"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_approve_incoming_verification_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                request_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrganizationVerificationRequestApprove"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestReviewed"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_reject_incoming_verification_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                request_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrganizationVerificationRequestReject"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestReviewed"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_incoming_verification_request_review: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                request_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrganizationVerificationRequestReview"];
                 };
             };
             /** @description Unauthorized */
