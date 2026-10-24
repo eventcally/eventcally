@@ -6,6 +6,7 @@ import EventPlaceEditPage from "./pages/EventPlaceEditPage.vue";
 import ManageEventsPage from "./pages/ManageEventsPage.vue";
 import NotFoundPage from "./pages/NotFoundPage.vue";
 import OrganizationCreatePage from "./pages/OrganizationCreatePage.vue";
+import OrganizationExportPage from "./pages/OrganizationExportPage.vue";
 import OrganizationSettingsPage from "./pages/OrganizationSettingsPage.vue";
 import PlanningPage from "./pages/PlanningPage.vue";
 
@@ -58,6 +59,12 @@ export const routes: RouteRecordRaw[] = [
       organizationId: Number(route.params.organizationId),
       id: Number(route.params.id),
     }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/export",
+    name: "organization-export",
+    component: OrganizationExportPage,
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
   },
   { path: "/manage/organization/create", name: "organization-create", component: OrganizationCreatePage },
   { path: "/:rest(.*)*", name: "not-found", component: NotFoundPage },

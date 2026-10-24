@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDate, formatDateTime, formatEventDate, formatStart } from "./format";
+import { formatDate, formatDateTime, formatEventDate, formatFileSize, formatStart } from "./format";
 
 describe("formatDateTime", () => {
   it("returns an empty string for missing values", () => {
@@ -58,5 +58,18 @@ describe("formatStart", () => {
     expect(formatStart(iso, false, "de")).toBe("08.01.26 10:30");
     expect(formatStart(iso, true, "de")).toBe("08.01.26");
     expect(formatStart(null, false, "de")).toBe("");
+  });
+});
+
+describe("formatFileSize", () => {
+  it("mirrors the human_file_size Jinja filter", () => {
+    expect(formatFileSize(0)).toBe("0 bytes");
+    expect(formatFileSize(512)).toBe("512 bytes");
+    expect(formatFileSize(1023)).toBe("1023 bytes");
+    expect(formatFileSize(1024)).toBe("1KB");
+    expect(formatFileSize(2048)).toBe("2KB");
+    expect(formatFileSize(1536)).toBe("1KB");
+    expect(formatFileSize(5 * 1024 ** 2)).toBe("5MB");
+    expect(formatFileSize(3 * 1024 ** 3)).toBe("3GB");
   });
 });

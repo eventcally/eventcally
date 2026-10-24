@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-24 04:18+0200\n"
+"POT-Creation-Date: 2026-10-24 05:59+0200\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -347,8 +347,8 @@ msgstr ""
 msgid "All"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationExportPage.vue:55
 #: project/presentation/web/templates/developer/read.html:29
-#: project/presentation/web/templates/manage/export.html:69
 msgid "All data"
 msgstr ""
 
@@ -812,7 +812,7 @@ msgstr ""
 msgid "Create event"
 msgstr ""
 
-#: project/presentation/web/templates/manage/export.html:77
+#: frontend/src/apps/manage/pages/OrganizationExportPage.vue:69
 msgid "Create export files"
 msgstr ""
 
@@ -908,7 +908,7 @@ msgstr ""
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:139
 #: project/presentation/web/templates/_managebar.html:85
-#: project/presentation/web/views/manage.py:144
+#: project/presentation/web/views/manage.py:138
 msgid "Custom widgets"
 msgstr ""
 
@@ -1100,9 +1100,9 @@ msgstr ""
 msgid "Docs"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationExportPage.vue:52
 #: frontend/src/shared/IcalExportModal.vue:39
 #: project/presentation/web/templates/developer/read.html:25
-#: project/presentation/web/templates/manage/export.html:65
 #: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:41
 msgid "Download"
 msgstr ""
@@ -1290,6 +1290,8 @@ msgstr ""
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:54
 #: frontend/src/apps/admin/pages/UsersPage.vue:53
 #: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:26
+#: frontend/src/apps/manage/composables/useExportJob.ts:42
+#: frontend/src/apps/manage/composables/useExportJob.ts:63
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:73
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:111
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:59
@@ -1299,6 +1301,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:103
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:45
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:104
+#: frontend/src/apps/manage/pages/OrganizationExportPage.vue:31
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:61
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:148
 #: frontend/src/apps/manage/pages/PlanningPage.vue:75
@@ -1739,10 +1742,10 @@ msgstr ""
 msgid "Expires"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationExportPage.vue:47
 #: project/presentation/shared/permissions.py:143
 #: project/presentation/web/templates/_managebar.html:83
-#: project/presentation/web/templates/manage/export.html:3
-#: project/presentation/web/templates/manage/export.html:63
+#: project/presentation/web/views/manage.py:158
 msgid "Export"
 msgstr ""
 
@@ -2455,8 +2458,8 @@ msgstr ""
 msgid "No events found"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationExportPage.vue:63
 #: project/presentation/web/templates/developer/read.html:31
-#: project/presentation/web/templates/manage/export.html:71
 msgid "No files available"
 msgstr ""
 
@@ -3617,6 +3620,10 @@ msgstr ""
 #: project/presentation/web/templates/_macros.html:547
 #: project/presentation/web/templates/_macros.html:702
 msgid "The event takes place online."
+msgstr ""
+
+#: frontend/src/apps/manage/composables/useExportJob.ts:48
+msgid "The export files could not be created."
 msgstr ""
 
 #: project/domain/errors/external_calendar_error.py:7

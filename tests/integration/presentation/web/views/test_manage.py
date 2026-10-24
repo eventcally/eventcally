@@ -406,3 +406,13 @@ def test_manage_admin_unit_delete_membership(
         from project.infrastructure.models import AdminUnitMember
 
         assert db.session.get(AdminUnitMember, member_id) is None
+
+
+def test_admin_unit_export(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("main.manage_admin_unit_export", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    utils.assert_response_contains(response, 'id="boot"')
+    utils.assert_response_contains(response, "navbar-light bg-light")

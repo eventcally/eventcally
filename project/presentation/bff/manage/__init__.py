@@ -8,6 +8,7 @@ from project.presentation.bff.manage import custom_widgets  # noqa: E402, F401
 from project.presentation.bff.manage import event_places  # noqa: E402, F401
 from project.presentation.bff.manage import event_references  # noqa: E402, F401
 from project.presentation.bff.manage import events  # noqa: E402, F401
+from project.presentation.bff.manage import organization_export  # noqa: E402, F401
 from project.presentation.bff.manage import organization_settings  # noqa: E402, F401
 from project.presentation.bff.manage import organizations  # noqa: E402, F401
 from project.presentation.bff.manage import places  # noqa: E402, F401

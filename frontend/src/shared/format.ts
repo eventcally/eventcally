@@ -42,3 +42,17 @@ export function formatStart(iso: string | null | undefined, allday: boolean, loc
   // Joined by a space: a combined date-time format would put a comma between them.
   return `${day} ${new Intl.DateTimeFormat(locale, { timeStyle: "short" }).format(date)}`;
 }
+
+const FILE_SIZE_UNITS = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB"];
+
+/** Same output as the Jinja filter `human_file_size`: whole units, shifted by 1024. */
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} bytes`;
+  let value = Math.floor(bytes / 1024);
+  let unit = 0;
+  while (value >= 1024 && unit < FILE_SIZE_UNITS.length - 1) {
+    value = Math.floor(value / 1024);
+    unit++;
+  }
+  return `${value}${FILE_SIZE_UNITS[unit]}`;
+}

@@ -1,5 +1,3 @@
-import os
-
 from flask import (
     current_app,
     redirect,
@@ -27,13 +25,9 @@ from project.presentation.shared.current_admin_unit import (
     get_current_admin_unit,
     set_current_admin_unit,
 )
-from project.presentation.tasks.celery_tasks import dump_admin_unit_task
 from project.presentation.web.boot import build_boot_data
 from project.presentation.web.views.main_blueprint import main_bp
-from project.presentation.web.views.utils import (
-    get_celery_poll_result,
-    permission_missing,
-)
+from project.presentation.web.views.utils import permission_missing
 from project.shared.paths import dump_org_path
 
 
@@ -148,7 +142,7 @@ def manage_admin_unit_custom_widgets(id, path=None):
     )
 
 
-@main_bp.route("/manage/admin_unit/<int:id>/export", methods=["GET", "POST"])
+@main_bp.route("/manage/admin_unit/<int:id>/export")
 @auth_required()
 def manage_admin_unit_export(id):
     admin_unit = get_admin_unit_for_manage_or_404(id)
@@ -156,34 +150,14 @@ def manage_admin_unit_export(id):
     if not has_access(admin_unit, "export:read"):  # pragma: no cover
         return permission_missing(url_for("main.manage_admin_unit", id=admin_unit.id))
 
-    if "poll" in request.args:  # pragma: no cover
-        return get_celery_poll_result()
-
-    if request.method == "POST":  # pragma: no cover
-        result = dump_admin_unit_task.delay(admin_unit.id)
-        return {"result_id": result.id}
-
     set_current_admin_unit(admin_unit)
-
-    file_name = f"org-{admin_unit.id}.zip"
-    file_path = os.path.join(dump_org_path, file_name)
-    dump_file = None
-
-    if os.path.exists(file_path):
-        dump_file = {
-            "url": url_for(
-                "main.manage_admin_unit_export_dump_files",
-                id=admin_unit.id,
-                path=file_name,
-            ),
-            "size": os.path.getsize(file_path),
-            "ctime": os.path.getctime(file_path),
-        }
 
     return render_template(
         "manage/export.html",
+        entry="manage",
+        title=gettext("Export"),
+        boot=build_boot_data(base="/"),
         admin_unit=admin_unit,
-        dump_file=dump_file,
     )
 
 

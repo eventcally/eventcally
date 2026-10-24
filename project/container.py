@@ -127,6 +127,12 @@ from project.infrastructure.services.celery_email_service import CeleryEmailServ
 from project.infrastructure.services.celery_mail_job_status_reader import (
     CeleryMailJobStatusReader,
 )
+from project.infrastructure.services.celery_organization_export_dispatcher import (
+    CeleryOrganizationExportDispatcher,
+)
+from project.infrastructure.services.file_system_organization_export_reader import (
+    FileSystemOrganizationExportReader,
+)
 from project.infrastructure.services.flask_babel_localization_service import (
     FlaskBabelLocalizationService,
 )
@@ -362,6 +368,10 @@ class Services(containers.DeclarativeContainer):
         mail_sender=infrastructure.mail_sender,
     )
     mail_job_status_reader = providers.Factory(CeleryMailJobStatusReader)
+    organization_export_dispatcher = providers.Factory(
+        CeleryOrganizationExportDispatcher
+    )
+    organization_export_reader = providers.Factory(FileSystemOrganizationExportReader)
     external_calendar_reader = providers.Factory(RequestsExternalCalendarReader)
     webhook_delivery_service = providers.Factory(
         WebhookDeliveryService,
@@ -549,6 +559,10 @@ class Cqrs(containers.DeclarativeContainer):
                     command_handlers.SendTestMailHandler,
                     email_service=services.email_service,
                     site_name=config.SITE_NAME,
+                ),
+                commands.StartOrganizationExportCommand: providers.Factory(
+                    command_handlers.StartOrganizationExportHandler,
+                    dispatcher=services.organization_export_dispatcher,
                 ),
                 commands.SendNewsletterCommand: providers.Factory(
                     command_handlers.SendNewsletterHandler,
@@ -1055,6 +1069,16 @@ class Cqrs(containers.DeclarativeContainer):
                 queries.GetMailJobStatusQuery: providers.Factory(
                     query_handlers.GetMailJobStatusHandler,
                     reader=services.mail_job_status_reader,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOrganizationExportQuery: providers.Factory(
+                    query_handlers.GetOrganizationExportHandler,
+                    reader=services.organization_export_reader,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetOrganizationExportJobStatusQuery: providers.Factory(
+                    query_handlers.GetOrganizationExportJobStatusHandler,
+                    reader=services.organization_export_reader,
                     authz=actor_authorization_service,
                 ),
                 queries.ListExternalCalendarEventsQuery: providers.Factory(
