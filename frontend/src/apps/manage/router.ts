@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router"
 import { boot } from "@/shared/boot";
 import CustomWidgetEditPage from "./pages/CustomWidgetEditPage.vue";
 import CustomWidgetsPage from "./pages/CustomWidgetsPage.vue";
+import EventPlaceEditPage from "./pages/EventPlaceEditPage.vue";
 import ManageEventsPage from "./pages/ManageEventsPage.vue";
 import NotFoundPage from "./pages/NotFoundPage.vue";
 import OrganizationCreatePage from "./pages/OrganizationCreatePage.vue";
@@ -42,6 +43,21 @@ export const routes: RouteRecordRaw[] = [
     name: "organization-settings",
     component: OrganizationSettingsPage,
     props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/event_place/create",
+    name: "event-place-create",
+    component: EventPlaceEditPage,
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/event_place/:id(\\d+)/update",
+    name: "event-place-update",
+    component: EventPlaceEditPage,
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
   },
   { path: "/manage/organization/create", name: "organization-create", component: OrganizationCreatePage },
   { path: "/:rest(.*)*", name: "not-found", component: NotFoundPage },

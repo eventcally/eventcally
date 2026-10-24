@@ -7,6 +7,7 @@ test.describe("Event place", () => {
     await login();
     const adminUnitId = createAdminUnit();
     await page.goto(`/manage/admin_unit/${adminUnitId}/event_place/create`);
+    await expect(page.locator("#name")).toBeVisible();
     await page.locator("#name").fill("Mein Platz");
     await screenshot(page, "create");
     await page.locator("#submit").click();
@@ -19,6 +20,7 @@ test.describe("Event place", () => {
     const adminUnitId = createAdminUnit();
     const eventPlaceId = createEventPlace(adminUnitId);
     await page.goto(`/manage/admin_unit/${adminUnitId}/event_place/${eventPlaceId}/update`);
+    await expect(page.locator("#name")).not.toHaveValue("");
     await screenshot(page, "update");
     await page.locator("#submit").click();
     await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/event_places`));

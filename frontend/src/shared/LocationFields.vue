@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { BFormGroup, BFormInput } from "bootstrap-vue-next";
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { api } from "@/shared/api";
-import AppTypeahead from "@/shared/AppTypeahead.vue";
+import PlaceLookup from "./PlaceLookup.vue";
 
 export interface LocationValue {
   street: string;
@@ -14,35 +12,19 @@ export interface LocationValue {
   longitude: number | null;
 }
 
-defineProps<{ errors?: Record<string, string | undefined> }>();
+withDefaults(
+  defineProps<{
+    errors?: Record<string, string | undefined>;
+    // The Google lookup on top (a form may place it elsewhere).
+    lookup?: boolean;
+    // Postal code and city are required (the place location is optional).
+    required?: boolean;
+  }>(),
+  { lookup: true, required: true },
+);
 const model = defineModel<LocationValue>({ required: true });
 
 const { t } = useI18n();
-const place = ref<{ id: number; name: string } | null>(null);
-const lookupError = ref<string | null>(null);
-// The typeahead only knows numeric ids: remember which Google place each one stands for.
-let gmapsIds: string[] = [];
-
-async function fetchPlaces(keyword: string) {
-  const { data } = await api.GET("/bff/manage/places", { params: { query: { keyword } } });
-  gmapsIds = (data?.items ?? []).map((item) => item.gmaps_id);
-  return (data?.items ?? []).map((item, index) => ({ id: index, name: item.text }));
-}
-
-async function onPick(option: { id: number; name: string } | null) {
-  place.value = option;
-  if (!option) return;
-
-  lookupError.value = null;
-  const { data } = await api.GET("/bff/manage/places/{gmaps_id}/address", {
-    params: { path: { gmaps_id: gmapsIds[option.id] } },
-  });
-  if (!data) {
-    lookupError.value = t("Error");
-    return;
-  }
-  model.value = { ...data };
-}
 
 function set<K extends keyof LocationValue>(key: K, value: LocationValue[K]) {
   model.value = { ...model.value, [key]: value };
@@ -57,19 +39,7 @@ function toNumber(value: string | number | null | undefined): number | null {
 
 <template>
   <div data-test="location-fields">
-    <div class="google-place d-flex mb-3">
-      <span class="input-group-text rounded-end-0"><i class="fab fa-google"></i></span>
-      <div class="flex-grow-1">
-        <AppTypeahead
-          :model-value="place"
-          :fetch="fetchPlaces"
-          :placeholder="t('Search location on Google')"
-          input-id="location-google_place"
-          @update:model-value="onPick"
-        />
-      </div>
-    </div>
-    <div v-if="lookupError" class="text-danger small mb-2">{{ lookupError }}</div>
+    <PlaceLookup v-if="lookup" @picked="model = $event.address" />
 
     <BFormGroup :label="t('Street')" label-for="location-street" class="mb-3"
       :state="errors?.street ? false : null" :invalid-feedback="errors?.street">
@@ -91,24 +61,15 @@ function toNumber(value: string | number | null | undefined): number | null {
       <BFormInput id="location-longitude" type="number" step="any" :model-value="model.longitude ?? ''"
         :state="errors?.longitude ? false : null" @update:model-value="set('longitude', toNumber($event))" />
     </BFormGroup>
-    <BFormGroup :label="`${t('Postal code')} *`" label-for="location-postalCode" class="mb-3"
+    <BFormGroup :label="required ? `${t('Postal code')} *` : t('Postal code')" label-for="location-postalCode" class="mb-3"
       :state="errors?.postalCode ? false : null" :invalid-feedback="errors?.postalCode">
-      <BFormInput id="location-postalCode" :model-value="model.postalCode" maxlength="10" required
+      <BFormInput id="location-postalCode" :model-value="model.postalCode" maxlength="10" :required="required"
         :state="errors?.postalCode ? false : null" @update:model-value="set('postalCode', $event as string)" />
     </BFormGroup>
-    <BFormGroup :label="`${t('City')} *`" label-for="location-city" class="mb-3"
+    <BFormGroup :label="required ? `${t('City')} *` : t('City')" label-for="location-city" class="mb-3"
       :state="errors?.city ? false : null" :invalid-feedback="errors?.city">
-      <BFormInput id="location-city" :model-value="model.city" maxlength="255" required
+      <BFormInput id="location-city" :model-value="model.city" maxlength="255" :required="required"
         :state="errors?.city ? false : null" @update:model-value="set('city', $event as string)" />
     </BFormGroup>
   </div>
 </template>
-
-<style scoped>
-/* Join the Google icon and the typeahead input like one input group. */
-.google-place :deep(.form-control) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-left: 0;
-}
-</style>

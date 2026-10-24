@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RouteLocationRaw } from "vue-router";
 
-defineProps<{ items: { label: string; to?: RouteLocationRaw }[] }>();
+defineProps<{ items: { label: string; to?: RouteLocationRaw; href?: string }[] }>();
 </script>
 
 <template>
@@ -12,10 +12,12 @@ defineProps<{ items: { label: string; to?: RouteLocationRaw }[] }>();
         v-for="(item, index) in items"
         :key="index"
         class="breadcrumb-item"
-        :class="{ active: !item.to }"
-        :aria-current="item.to ? undefined : 'page'"
+        :class="{ active: !item.to && !item.href }"
+        :aria-current="item.to || item.href ? undefined : 'page'"
       >
         <router-link v-if="item.to" :to="item.to">{{ item.label }}</router-link>
+        <!-- A server-rendered page (a full page load, no router). -->
+        <a v-else-if="item.href" :href="item.href">{{ item.label }}</a>
         <template v-else>{{ item.label }}</template>
       </li>
     </ol>
