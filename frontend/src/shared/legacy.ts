@@ -26,6 +26,7 @@ export const manage = {
   requestDeletion: (id: number) => `/manage/admin_unit/${id}/request-deletion`,
   cancelDeletion: (id: number) => `/manage/admin_unit/${id}/cancel-deletion`,
   events: (organizationId: number) => `/manage/admin_unit/${organizationId}/events`,
+  eventPlaces: (organizationId: number) => `/manage/admin_unit/${organizationId}/event_places`,
   eventCreate: (organizationId: number) => `/manage/admin_unit/${organizationId}/event/create`,
   eventUpdate: (organizationId: number, id: number) =>
     `/manage/admin_unit/${organizationId}/event/${id}/update`,

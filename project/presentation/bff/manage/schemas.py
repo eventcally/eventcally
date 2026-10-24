@@ -286,6 +286,8 @@ class OrganizationLocation(BaseModel):
 
 
 class OrganizationLogo(BaseModel):
+    """An image field of a form (the organization logo, the place photo)."""
+
     # A data URI; `None` on save keeps the stored image.
     image_base64: Optional[str] = None
     copyright_text: Optional[str] = Field(default=None, max_length=255)
@@ -399,3 +401,60 @@ class OrganizationCreated(BaseModel):
     id: int
     verified: bool
     redirect_url: str
+
+
+class EventPlaceLocation(BaseModel):
+    """Every part of a place location is optional."""
+
+    street: Optional[str] = Field(default=None, max_length=255)
+    postalCode: Optional[str] = Field(default=None, max_length=10)
+    city: Optional[str] = Field(default=None, max_length=255)
+    state: Optional[str] = Field(default=None, max_length=255)
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+    @field_validator("street", "postalCode", "city", "state", mode="before")
+    @classmethod
+    def _empty_to_none(cls, value):
+        return _empty_to_none(value)
+
+
+class EventPlaceSave(BaseModel):
+    name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
+    ]
+    url: Optional[str] = Field(default=None, max_length=255)
+    description: Optional[str] = None
+    location: EventPlaceLocation
+    photo: Optional[OrganizationLogo] = None
+
+    @field_validator("url", mode="before")
+    @classmethod
+    def _url_empty_to_none(cls, value):
+        return _empty_to_none(value)
+
+
+class EventPlaceForm(BaseModel):
+    # `None` and empty fields when creating.
+    id: Optional[int] = None
+    name: str = ""
+    url: Optional[str] = None
+    description: Optional[str] = None
+    location: EventPlaceLocation
+    photo: Optional[OrganizationLogo] = None
+    licenses: List[PlanningChoice]
+
+
+class EventPlaceSaved(BaseModel):
+    id: int
+    redirect_url: str
+
+
+class EventPlaceNameAvailabilityParams(BaseModel):
+    name: Optional[str] = Field(default=None, max_length=255)
+    # The place itself does not count as taken (update form).
+    exclude_id: Optional[int] = None
+
+
+class EventPlaceNameAvailability(BaseModel):
+    name_taken: Optional[bool] = None

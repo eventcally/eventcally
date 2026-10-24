@@ -19,11 +19,16 @@ const empty: LocationValue = {
   longitude: null,
 };
 
-function mountFields(modelValue: LocationValue = empty, errors: Record<string, string> = {}) {
+function mountFields(
+  modelValue: LocationValue = empty,
+  errors: Record<string, string> = {},
+  extra: { lookup?: boolean; required?: boolean } = {},
+) {
   const wrapper: ReturnType<typeof mount> = mount(LocationFields, {
     props: {
       modelValue,
       errors,
+      ...extra,
       // A real parent feeds the value back; without it every change starts from the original.
       "onUpdate:modelValue": (value: LocationValue) => wrapper.setProps({ modelValue: value }),
     },
@@ -135,5 +140,30 @@ describe("LocationFields", () => {
       expect(wrapper.find(`#location-${id}`).classes()).toContain("is-invalid");
     }
     expect(wrapper.text()).toContain("This field is required.");
+  });
+
+  it("hides the Google lookup on request", () => {
+    const wrapper = mountFields(empty, {}, { lookup: false });
+
+    expect(wrapper.find("#location-google_place").exists()).toBe(false);
+    expect(mountFields().find("#location-google_place").exists()).toBe(true);
+  });
+
+  it("marks the postal code and city as required by default", () => {
+    const wrapper = mountFields();
+
+    expect(wrapper.find("label[for=location-postalCode]").text()).toContain("*");
+    expect(wrapper.find("label[for=location-city]").text()).toContain("*");
+    expect(wrapper.find("#location-postalCode").attributes("required")).toBeDefined();
+    expect(wrapper.find("#location-city").attributes("required")).toBeDefined();
+  });
+
+  it("makes the postal code and city optional on request", () => {
+    const wrapper = mountFields(empty, {}, { required: false });
+
+    expect(wrapper.find("label[for=location-postalCode]").text()).not.toContain("*");
+    expect(wrapper.find("label[for=location-city]").text()).not.toContain("*");
+    expect(wrapper.find("#location-postalCode").attributes("required")).toBeUndefined();
+    expect(wrapper.find("#location-city").attributes("required")).toBeUndefined();
   });
 });

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-24 00:43+0200\n"
+"POT-Creation-Date: 2026-10-24 04:18+0200\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -56,6 +56,7 @@ msgstr ""
 "%(email)s hat deine Einladung akzeptiert, um die Organisation "
 "%(admin_unit_name)s zu erstellen."
 
+#: project/presentation/bff/manage/event_places.py:204
 #: project/presentation/web/modular/base_views.py:339
 #, python-format
 msgid "%(model_display_name)s successfully created"
@@ -71,6 +72,7 @@ msgstr "%(model_display_name)s erfolgreich gelöscht"
 msgid "%(model_display_name)s successfully revoked"
 msgstr "%(model_display_name)s erfolgreich widerrufen"
 
+#: project/presentation/bff/manage/event_places.py:249
 #: project/presentation/web/modular/base_views.py:420
 #, python-format
 msgid "%(model_display_name)s successfully updated"
@@ -151,8 +153,9 @@ msgstr "50 km"
 msgid "500 m"
 msgstr "500 m"
 
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:136
+#: project/presentation/bff/manage/event_places.py:66
 #: project/presentation/web/views/js.py:49
-#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:40
 msgid "A place already exists with this name."
 msgstr "Mit diesem Namen existiert bereits ein Ort."
 
@@ -636,7 +639,7 @@ msgstr ""
 msgid "Choose why you rejected the request."
 msgstr "Wähle aus, warum du die Anfrage abgelehnt hast."
 
-#: frontend/src/shared/LocationFields.vue:99
+#: frontend/src/shared/LocationFields.vue:69
 #: project/presentation/web/forms/common.py:60
 msgid "City"
 msgstr "Stadt/Ort"
@@ -809,7 +812,7 @@ msgid "Copyright text is required."
 msgstr "Copyright Text ist erforderlich."
 
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:169
-#: project/presentation/web/modular/base_form.py:91
+#: project/presentation/web/modular/base_form.py:83
 msgid "Create"
 msgstr "Erstellen"
 
@@ -848,7 +851,7 @@ msgstr "Veranstalter hinzufügen"
 msgid "Create other organizations"
 msgstr "Andere Organisationen erstellen"
 
-#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:46
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:280
 msgid "Create place"
 msgstr "Ort hinzufügen"
 
@@ -967,7 +970,7 @@ msgstr "Standard"
 #: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:39
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:125
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:203
-#: project/presentation/web/modular/base_form.py:100
+#: project/presentation/web/modular/base_form.py:92
 #: project/presentation/web/modular/base_view_handler.py:204
 msgid "Delete"
 msgstr "Löschen"
@@ -1003,7 +1006,7 @@ msgstr "Organisation löschen"
 msgid "Delete organizer"
 msgstr "Veranstalter löschen"
 
-#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:76
+#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:9
 msgid "Delete place"
 msgstr "Ort löschen"
 
@@ -1044,11 +1047,11 @@ msgid "Describe the organization in a few words"
 msgstr "Beschreibe die Organisation in wenigen Worten"
 
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:146
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:272
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:25
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:29
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:31
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:174
-#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:30
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -1319,6 +1322,8 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:73
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:111
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:59
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:89
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:195
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:89
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:103
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:45
@@ -1336,8 +1341,8 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:39
 #: frontend/src/apps/public/pages/OrganizerPage.vue:35
 #: frontend/src/apps/widget/pages/SearchWidget.vue:73
-#: frontend/src/shared/LocationFields.vue:41
 #: frontend/src/shared/LocationFilter.vue:171
+#: frontend/src/shared/PlaceLookup.vue:35
 msgid "Error"
 msgstr "Fehler"
 
@@ -2252,7 +2257,7 @@ msgstr "Zuletzt aktualisiert am %(updated_at)s von %(updated_by)s."
 msgid "Last updated at %(updated_at)s."
 msgstr "Zuletzt aktualisiert am %(updated_at)s."
 
-#: frontend/src/shared/LocationFields.vue:84
+#: frontend/src/shared/LocationFields.vue:54
 #: project/presentation/web/forms/common.py:27
 msgid "Latitude"
 msgstr "Breitengrad"
@@ -2299,11 +2304,11 @@ msgid "Link Color"
 msgstr "Linkfarbe"
 
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:176
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:257
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:14
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:179
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:19
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:30
-#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:29
 msgid "Link URL"
 msgstr "Link URL"
 
@@ -2323,6 +2328,7 @@ msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
 
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:155
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:66
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:233
 #: frontend/src/shared/LocationFilter.vue:122
 #: frontend/src/shared/LocationFilter.vue:123
 #: project/infrastructure/babel_extract.py:1
@@ -2330,7 +2336,6 @@ msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:16
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:28
 #: project/presentation/web/views/manage_admin_unit/event_place/displays.py:15
-#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:27
 msgid "Location"
 msgstr "Standort"
 
@@ -2348,7 +2353,7 @@ msgstr "Logo"
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: frontend/src/shared/LocationFields.vue:89
+#: frontend/src/shared/LocationFields.vue:59
 #: project/presentation/web/forms/common.py:30
 msgid "Longitude"
 msgstr "Längengrad"
@@ -2424,6 +2429,7 @@ msgstr "Weitere Filter"
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:139
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:143
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:40
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:215
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:54
 #: frontend/src/apps/public/pages/EventReportPage.vue:99
 #: project/presentation/web/templates/_macros.html:994
@@ -2437,8 +2443,7 @@ msgstr "Weitere Filter"
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:86
 #: project/presentation/web/views/manage_admin_unit/event_organizer/view_handler.py:38
 #: project/presentation/web/views/manage_admin_unit/event_place/displays.py:14
-#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:22
-#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:77
+#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:10
 #: project/presentation/web/views/manage_admin_unit/event_place/view_handler.py:38
 #: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:62
 #: project/presentation/web/views/user_blueprint/api_key/displays.py:12
@@ -2557,8 +2562,8 @@ msgstr "Keine Widgets gefunden"
 
 #: project/presentation/bff/admin/mail.py:122
 #: project/presentation/bff/admin/users.py:87
-#: project/presentation/web/modular/fields.py:111
-#: project/presentation/web/modular/fields.py:172
+#: project/presentation/web/modular/fields.py:99
+#: project/presentation/web/modular/fields.py:160
 msgid "Not a valid choice"
 msgstr "Keine gültige Auswahl"
 
@@ -2902,19 +2907,22 @@ msgstr ""
 msgid "Phone"
 msgstr "Telefon"
 
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:245
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:62
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:174
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:227
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:287
 #: project/presentation/web/views/manage_admin_unit/event_place/displays.py:17
-#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:28
 msgid "Photo"
 msgstr "Foto"
 
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:209
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:215
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:57
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:56
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/bff/manage/event_places.py:206
+#: project/presentation/bff/manage/event_places.py:251
 #: project/presentation/web/templates/_macros.html:521
 #: project/presentation/web/templates/_macros.html:684
 #: project/presentation/web/templates/_macros.html:1009
@@ -2927,6 +2935,7 @@ msgstr "Foto"
 msgid "Place"
 msgstr "Ort"
 
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:205
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:141
 #: project/presentation/web/templates/_managebar.html:59
@@ -2989,7 +2998,7 @@ msgstr ""
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:222
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:55
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:154
-#: frontend/src/shared/LocationFields.vue:94
+#: frontend/src/shared/LocationFields.vue:64
 #: project/presentation/web/forms/common.py:58
 msgid "Postal code"
 msgstr "Postleitzahl"
@@ -3173,7 +3182,7 @@ msgid "References are important for the visibility of your events."
 msgstr "Empfehlungen sind wichtig für die Sichtbarkeit deiner Veranstaltungen."
 
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:106
-#: project/presentation/web/modular/base_form.py:112
+#: project/presentation/web/modular/base_form.py:104
 msgid "Refresh"
 msgstr "Aktualisieren"
 
@@ -3414,7 +3423,7 @@ msgstr "Scopes"
 msgid "Search"
 msgstr "Suche"
 
-#: frontend/src/shared/LocationFields.vue:66
+#: frontend/src/shared/PlaceLookup.vue:50
 #: project/presentation/web/modular/widgets.py:13
 #: project/presentation/web/templates/_macros.html:912
 msgid "Search location on Google"
@@ -3587,7 +3596,7 @@ msgstr "Beginn"
 msgid "Start page"
 msgstr "Startseite"
 
-#: frontend/src/shared/LocationFields.vue:79
+#: frontend/src/shared/LocationFields.vue:49
 #: project/presentation/web/forms/common.py:25
 msgid "State"
 msgstr "Bundesland"
@@ -3609,7 +3618,7 @@ msgstr "Status"
 msgid "Status code"
 msgstr "Statuscode"
 
-#: frontend/src/shared/LocationFields.vue:74
+#: frontend/src/shared/LocationFields.vue:44
 #: project/presentation/web/forms/common.py:23
 msgid "Street"
 msgstr "Straße"
@@ -3864,7 +3873,7 @@ msgid "This OAuth2 token has already been revoked."
 msgstr "Dieses OAuth2-Token wurde bereits widerrufen."
 
 #: project/presentation/bff/admin/mail.py:119
-#: project/presentation/bff/manage/organization_form.py:93
+#: project/presentation/bff/manage/image_form.py:37
 #: project/presentation/web/forms/common.py:119
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
@@ -3937,7 +3946,7 @@ msgid "URL"
 msgstr "URL"
 
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:233
-#: project/presentation/web/modular/base_form.py:95
+#: project/presentation/web/modular/base_form.py:87
 msgid "Update"
 msgstr "Aktualisieren"
 
@@ -3950,7 +3959,7 @@ msgstr "%(model_display_name)s aktualisieren"
 msgid "Update organizer"
 msgstr "Veranstalter aktualisieren"
 
-#: project/presentation/web/views/manage_admin_unit/event_place/forms.py:61
+#: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:280
 msgid "Update place"
 msgstr "Ort aktualisieren"
 

@@ -10,16 +10,16 @@ from project.application.queries import (
 )
 from project.application.queries.page_request import MAX_PER_PAGE, PageRequest
 from project.application.query_bus import QueryBus
-from project.domain.models.value_objects.image_value_object import ImageValueObject
 from project.domain.models.value_objects.location_value_object import (
     LocationValueObject,
 )
+from project.presentation.bff.manage.image_form import image_from_save
 from project.presentation.bff.manage.schemas import (
+    EventPlaceLocation,
     OrganizationBaseSave,
     OrganizationLocation,
     PlanningChoice,
 )
-from project.presentation.shared.images import image_value_object_from_data_uri
 
 
 def actor():
@@ -52,7 +52,9 @@ def name_errors(
     return errors
 
 
-def location_value_object(location: OrganizationLocation) -> LocationValueObject:
+def location_value_object(
+    location: OrganizationLocation | EventPlaceLocation,
+) -> LocationValueObject:
     return LocationValueObject(
         street=location.street,
         postalCode=location.postalCode,
@@ -66,30 +68,4 @@ def location_value_object(location: OrganizationLocation) -> LocationValueObject
 def logo_from_body(body: OrganizationBaseSave, stored_logo, errors: list):
     """The logo of the save body. `image_base64=None` keeps `stored_logo` (none when
     creating)."""
-    logo = body.logo
-
-    if logo is None:
-        return None
-
-    image = None
-
-    if logo.image_base64 is None:
-        if stored_logo and stored_logo.data:
-            image = ImageValueObject(
-                data=stored_logo.data,
-                encoding_format=stored_logo.encoding_format,
-                copyright_text=logo.copyright_text,
-                license_id=logo.license_id,
-            )
-    else:
-        try:
-            image = image_value_object_from_data_uri(
-                logo.image_base64, logo.copyright_text, logo.license_id
-            )
-        except Exception as e:
-            errors.append((["logo", "image_base64"], str(e)))
-
-    if image is not None and not (logo.copyright_text or "").strip():
-        errors.append((["logo", "copyright_text"], gettext("This field is required.")))
-
-    return image
+    return image_from_save(body.logo, stored_logo, errors, ["logo"])
