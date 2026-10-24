@@ -5,7 +5,6 @@ from wtforms import FormField, HiddenField, SubmitField
 
 from project.application.query_bus import QueryBus
 from project.domain.models.entities.actor import Actor
-from project.presentation.web.modular.fields import VirtualFormField
 
 
 class BlankFormData:
@@ -78,13 +77,6 @@ class BaseForm(FlaskForm):
             return method(object, field, **kwargs)
 
         return True  # pragma: no cover
-
-    def process(self, formdata=None, obj=None, data=None, extra_filters=None, **kwargs):
-        for name, field in self._fields.items():
-            if isinstance(field, VirtualFormField):
-                kwargs.setdefault(name, obj)
-
-        super().process(formdata, obj, data, extra_filters, **kwargs)
 
 
 class BaseCreateForm(BaseForm):

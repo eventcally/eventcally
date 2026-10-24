@@ -272,7 +272,7 @@ def _empty_to_none(value):
     return None if isinstance(value, str) and not value.strip() else value
 
 
-class OrganizationSettingsLocation(BaseModel):
+class OrganizationLocation(BaseModel):
     street: Optional[str] = Field(default=None, max_length=255)
     postalCode: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=10)
@@ -285,7 +285,7 @@ class OrganizationSettingsLocation(BaseModel):
     longitude: Optional[float] = None
 
 
-class OrganizationSettingsLogo(BaseModel):
+class OrganizationLogo(BaseModel):
     # A data URI; `None` on save keeps the stored image.
     image_base64: Optional[str] = None
     copyright_text: Optional[str] = Field(default=None, max_length=255)
@@ -300,7 +300,7 @@ class OrganizationSettingsVerificationRequests(BaseModel):
     ] = []
 
 
-class OrganizationSettingsSave(BaseModel):
+class OrganizationBaseSave(BaseModel):
     name: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=5, max_length=255)
     ]
@@ -311,18 +311,21 @@ class OrganizationSettingsSave(BaseModel):
         ),
     ]
     description: Optional[str] = None
-    location: OrganizationSettingsLocation
-    logo: Optional[OrganizationSettingsLogo] = None
+    location: OrganizationLocation
+    logo: Optional[OrganizationLogo] = None
     url: Optional[str] = Field(default=None, max_length=255)
     email: Optional[str] = Field(default=None, max_length=255)
     phone: Optional[str] = Field(default=None, max_length=255)
     fax: Optional[str] = Field(default=None, max_length=255)
-    verification_requests: Optional[OrganizationSettingsVerificationRequests] = None
 
     @field_validator("url", "email", "phone", "fax", mode="before")
     @classmethod
     def _contact_empty_to_none(cls, value):
         return _empty_to_none(value)
+
+
+class OrganizationSettingsSave(OrganizationBaseSave):
+    verification_requests: Optional[OrganizationSettingsVerificationRequests] = None
 
 
 class OrganizationSettingsLocationView(BaseModel):
@@ -342,7 +345,7 @@ class OrganizationSettingsForm(BaseModel):
     short_name: str
     description: Optional[str] = None
     location: OrganizationSettingsLocationView
-    logo: Optional[OrganizationSettingsLogo] = None
+    logo: Optional[OrganizationLogo] = None
     url: Optional[str] = None
     email: Optional[str] = None
     phone: Optional[str] = None
@@ -356,8 +359,43 @@ class OrganizationSettingsForm(BaseModel):
 class OrganizationNameAvailabilityParams(BaseModel):
     name: Optional[str] = Field(default=None, max_length=255)
     short_name: Optional[str] = Field(default=None, max_length=100)
+    # Names of this organization do not count as taken (settings form).
+    exclude_id: Optional[int] = None
 
 
 class OrganizationNameAvailability(BaseModel):
     name_taken: Optional[bool] = None
     short_name_taken: Optional[bool] = None
+
+
+class OrganizationCreateParams(BaseModel):
+    invitation_id: Optional[int] = None
+
+
+class OrganizationCreateRelation(BaseModel):
+    """The relation to the current organization that is created along with the new
+    one."""
+
+    organization_name: str
+    can_verify: bool
+    can_auto_verify: bool
+
+
+class OrganizationCreateForm(BaseModel):
+    # Prefilled from the invitation, empty otherwise.
+    name: str
+    invitation_id: Optional[int] = None
+    relation: Optional[OrganizationCreateRelation] = None
+    licenses: List[PlanningChoice]
+
+
+class OrganizationCreateSave(OrganizationBaseSave):
+    invitation_id: Optional[int] = None
+    relation_verify: bool = False
+    relation_auto_verify_event_reference_requests: bool = False
+
+
+class OrganizationCreated(BaseModel):
+    id: int
+    verified: bool
+    redirect_url: str

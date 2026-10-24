@@ -1,46 +1,33 @@
 from types import SimpleNamespace
 
 from dependency_injector.wiring import Provide, inject
-from flask import current_app
-from flask_babel import gettext
 
 from project.application.commands import UpdateOrganizationCommand
 from project.application.message_bus import MessageBus
-from project.application.queries import (
-    GetOrganizationSettingsQuery,
-    IsOrganizationNameTakenQuery,
-    IsOrganizationShortNameTakenQuery,
-    ListLicensesQuery,
-)
-from project.application.queries.page_request import MAX_PER_PAGE, PageRequest
+from project.application.queries import GetOrganizationSettingsQuery
 from project.application.query_bus import QueryBus
 from project.container import Application
 from project.domain.errors.unauthorized_error import UnauthorizedError
-from project.domain.models.value_objects.image_value_object import ImageValueObject
-from project.domain.models.value_objects.location_value_object import (
-    LocationValueObject,
-)
 from project.presentation.bff.errors import FieldValidationError
 from project.presentation.bff.manage import bff_manage_bp
+from project.presentation.bff.manage.organization_form import (
+    actor,
+    license_choices,
+    location_value_object,
+    logo_from_body,
+    name_errors,
+)
 from project.presentation.bff.manage.schemas import (
-    OrganizationNameAvailability,
-    OrganizationNameAvailabilityParams,
+    OrganizationLogo,
     OrganizationSettingsForm,
     OrganizationSettingsLocationView,
-    OrganizationSettingsLogo,
     OrganizationSettingsSave,
     OrganizationSettingsVerificationRequests,
-    PlanningChoice,
 )
 from project.presentation.bff.routing import bff_route
 from project.presentation.shared.access import has_access
-from project.presentation.shared.images import image_value_object_from_data_uri
 from project.presentation.shared.query_results import result_or_404
 from project.shared.imageutils import get_data_uri_from_bytes
-
-
-def _actor():
-    return current_app.container.context.context_provider().current_actor
 
 
 def _settings_or_forbidden(id: int, query_bus: QueryBus):
@@ -54,10 +41,6 @@ def _float_or_none(value):
     return None if value is None else float(value)
 
 
-def _license_name(license) -> str:
-    return f"{license.code} ({license.name})"
-
-
 @bff_route(
     bff_manage_bp,
     "/organizations/<int:id>/settings",
@@ -69,9 +52,6 @@ def get_organization_settings(
     id: int, query_bus: QueryBus = Provide[Application.cqrs.query_bus]
 ):
     settings = _settings_or_forbidden(id, query_bus)
-    licenses = query_bus.handle(
-        ListLicensesQuery(page=PageRequest(per_page=MAX_PER_PAGE))
-    )
     location = settings.location
     logo = settings.logo
 
@@ -93,7 +73,7 @@ def get_organization_settings(
             else OrganizationSettingsLocationView()
         ),
         logo=(
-            OrganizationSettingsLogo(
+            OrganizationLogo(
                 image_base64=get_data_uri_from_bytes(logo.data, logo.encoding_format),
                 copyright_text=logo.copyright_text,
                 license_id=logo.license.id if logo.license else None,
@@ -115,43 +95,9 @@ def get_organization_settings(
             if settings.can_verify_other
             else None
         ),
-        licenses=[
-            PlanningChoice(id=license.id, name=_license_name(license))
-            for license in licenses.items
-        ],
+        licenses=license_choices(query_bus),
         deletion_requested_at=settings.deletion_requested_at,
     )
-
-
-def _logo_from_body(body: OrganizationSettingsSave, settings, errors: list):
-    logo = body.logo
-
-    if logo is None:
-        return None
-
-    image = None
-
-    if logo.image_base64 is None:
-        stored = settings.logo
-        if stored and stored.data:
-            image = ImageValueObject(
-                data=stored.data,
-                encoding_format=stored.encoding_format,
-                copyright_text=logo.copyright_text,
-                license_id=logo.license_id,
-            )
-    else:
-        try:
-            image = image_value_object_from_data_uri(
-                logo.image_base64, logo.copyright_text, logo.license_id
-            )
-        except Exception as e:
-            errors.append((["logo", "image_base64"], str(e)))
-
-    if image is not None and not (logo.copyright_text or "").strip():
-        errors.append((["logo", "copyright_text"], gettext("This field is required.")))
-
-    return image
 
 
 @bff_route(
@@ -169,35 +115,19 @@ def update_organization_settings(
     query_bus: QueryBus = Provide[Application.cqrs.query_bus],
 ):
     settings = _settings_or_forbidden(id, query_bus)
-    errors = []
-
-    if query_bus.handle(IsOrganizationNameTakenQuery(name=body.name, exclude_id=id)):
-        errors.append((["name"], gettext("Name is already taken")))
-
-    if query_bus.handle(
-        IsOrganizationShortNameTakenQuery(short_name=body.short_name, exclude_id=id)
-    ):
-        errors.append((["short_name"], gettext("Short name is already taken")))
-
-    logo = _logo_from_body(body, settings, errors)
+    errors = name_errors(query_bus, body.name, body.short_name, exclude_id=id)
+    logo = logo_from_body(body, settings.logo, errors)
 
     if errors:
         raise FieldValidationError(errors=errors)
 
     kwargs = dict(
-        actor=_actor(),
+        actor=actor(),
         id=id,
         name=body.name,
         short_name=body.short_name,
         description=body.description,
-        location=LocationValueObject(
-            street=body.location.street,
-            postalCode=body.location.postalCode,
-            city=body.location.city,
-            state=body.location.state,
-            latitude=body.location.latitude,
-            longitude=body.location.longitude,
-        ),
+        location=location_value_object(body.location),
         logo=logo,
         url=body.url,
         email=body.email,
@@ -214,34 +144,3 @@ def update_organization_settings(
         )
 
     message_bus.handle_command(UpdateOrganizationCommand(**kwargs))
-
-
-@bff_route(
-    bff_manage_bp,
-    "/organizations/<int:id>/settings/name-availability",
-    query=OrganizationNameAvailabilityParams,
-    response=OrganizationNameAvailability,
-    summary="Whether the name and short name of an organization are taken",
-)
-@inject
-def get_organization_name_availability(
-    id: int,
-    query: OrganizationNameAvailabilityParams,
-    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
-):
-    _settings_or_forbidden(id, query_bus)
-    result = OrganizationNameAvailability()
-
-    if query.name:
-        result.name_taken = query_bus.handle(
-            IsOrganizationNameTakenQuery(name=query.name, exclude_id=id)
-        )
-
-    if query.short_name:
-        result.short_name_taken = query_bus.handle(
-            IsOrganizationShortNameTakenQuery(
-                short_name=query.short_name, exclude_id=id
-            )
-        )
-
-    return result

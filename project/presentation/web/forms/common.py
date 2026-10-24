@@ -2,7 +2,7 @@ from flask import current_app, url_for
 from flask_babel import gettext, lazy_gettext
 from markupsafe import Markup
 from wtforms import BooleanField, DecimalField, StringField
-from wtforms.validators import DataRequired, Length, Optional
+from wtforms.validators import Length, Optional
 
 from project.application.queries import GetSiteNoticesQuery
 from project.domain.models.value_objects.image_value_object import ImageValueObject
@@ -60,24 +60,7 @@ class LocationForm(BaseForm, LocationFormMixin, LocationCommandFormMixin):
     city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
 
 
-class StrictLocationForm(BaseForm, LocationFormMixin, LocationCommandFormMixin):
-    postalCode = StringField(
-        lazy_gettext("Postal code"), validators=[DataRequired(), Length(max=10)]
-    )
-    city = StringField(
-        lazy_gettext("City"), validators=[DataRequired(), Length(max=255)]
-    )
-
-
 class GooglePlaceLocationForm(LocationForm):
-    google_place = GooglePlaceField(location_only=True)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.move_field_to_top("google_place")
-
-
-class StrictGooglePlaceLocationForm(StrictLocationForm):
     google_place = GooglePlaceField(location_only=True)
 
     def __init__(self, *args, **kwargs):

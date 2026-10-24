@@ -1,7 +1,6 @@
 import pytest
 
 SETTINGS_URL = "/bff/manage/organizations/{}/settings"
-AVAILABILITY_URL = "/bff/manage/organizations/{}/settings/name-availability"
 
 
 def _shell(utils, admin_unit_id):
@@ -82,7 +81,6 @@ def test_anonymous_is_401(client, seeder, utils):
     for call in (
         lambda: utils.get_json(SETTINGS_URL.format(admin_unit_id)),
         lambda: utils.put_json(SETTINGS_URL.format(admin_unit_id), _body()),
-        lambda: utils.get_json(AVAILABILITY_URL.format(admin_unit_id) + "?name=x"),
     ):
         assert call().status_code == 401
 
@@ -95,10 +93,6 @@ def test_member_without_settings_write_is_403(client, seeder, utils):
     assert utils.get_json(SETTINGS_URL.format(admin_unit_id)).status_code == 403
     assert (
         utils.put_json(SETTINGS_URL.format(admin_unit_id), _body()).status_code == 403
-    )
-    assert (
-        utils.get_json(AVAILABILITY_URL.format(admin_unit_id) + "?name=x").status_code
-        == 403
     )
 
 
@@ -414,31 +408,3 @@ def test_put_base_error_is_400(client, seeder, utils, mocker):
     response = utils.put_json(SETTINGS_URL.format(admin_unit_id), _body())
 
     assert response.status_code == 400
-
-
-# name availability
-
-
-def test_name_availability(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
-    owner_id = seeder.create_user(email="other@test.de")
-    seeder.create_admin_unit(owner_id, name="Andere Crew")
-    url = AVAILABILITY_URL.format(admin_unit_id)
-
-    taken = utils.get_json_ok(f"{url}?name=Andere Crew&short_name=anderecrew").json
-    free = utils.get_json_ok(f"{url}?name=Frei&short_name=frei").json
-    own = utils.get_json_ok(f"{url}?name=Meine Crew&short_name=meinecrew").json
-    none_given = utils.get_json_ok(url).json
-
-    assert taken == dict(name_taken=True, short_name_taken=True)
-    assert free == dict(name_taken=False, short_name_taken=False)
-    assert own == dict(name_taken=False, short_name_taken=False)
-    assert none_given == dict(name_taken=None, short_name_taken=None)
-
-
-def test_name_availability_name_only(client, seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
-
-    body = utils.get_json_ok(AVAILABILITY_URL.format(admin_unit_id) + "?name=Frei").json
-
-    assert body == dict(name_taken=False, short_name_taken=None)

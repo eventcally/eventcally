@@ -4,76 +4,21 @@ from tests.integration.seeder import Seeder
 from tests.integration.utils import UtilActions
 
 
-def create_form_data(response, utils: UtilActions):
-    return {
-        "csrf_token": utils.get_csrf(response),
-        "name": "Meine Crew",
-        "short_name": "meine_crew",
-        "location-csrf_token": utils.get_csrf(response, "location"),
-        "location-postalCode": "38640",
-        "location-city": "Goslar",
-        "logo-csrf_token": utils.get_csrf(response, "logo"),
-        "submit": "Submit",
-    }
-
-
-def test_create(client, app, utils: UtilActions, seeder: Seeder):
-    user_id = seeder.create_user()
-    utils.login()
-    url = utils.get_url("manage.organization_create")
-    response = utils.get_ok(url)
-
-    data = create_form_data(response, utils)
-    data["logo-image_base64"] = seeder.get_default_image_upload_base64()
-    data["logo-copyright_text"] = "EventCally"
-
-    with client:
-        response = utils.post_form(url, response, data)
-        assert response.status_code == 302
-
-        with app.app_context():
-            from project.infrastructure.seed_helpers import (
-                get_admin_unit_by_name,
-                get_event_organizer,
-                get_event_place,
-                get_member_for_admin_unit_by_user_id,
-            )
-
-            admin_unit = get_admin_unit_by_name("Meine Crew")
-            assert admin_unit is not None
-            assert admin_unit.name == "Meine Crew"
-            assert admin_unit.location.city == "Goslar"
-            assert admin_unit.location.postalCode == "38640"
-            member = get_member_for_admin_unit_by_user_id(admin_unit.id, user_id)
-            assert {role.name for role in member.roles} >= {"admin", "event_verifier"}
-
-            organizer = get_event_organizer(admin_unit.id, "Meine Crew")
-            assert organizer.name == "Meine Crew"
-            assert organizer.location.city == "Goslar"
-            assert organizer.location.postalCode == "38640"
-
-            place = get_event_place(admin_unit.id, "Goslar")
-            assert place.name == "Goslar"
-            assert place.location.city == "Goslar"
-            assert place.location.postalCode == "38640"
-
-
-def test_create_duplicate(client, app, utils: UtilActions, seeder: Seeder):
+def test_create_renders_vue_shell(client, utils: UtilActions, seeder: Seeder):
     seeder.create_user()
-    user_id = utils.login()
-    seeder.create_admin_unit(user_id, "Meine Crew")
+    utils.login()
 
-    url = utils.get_url("manage.organization_create")
-    response = utils.get_ok(url)
+    response = utils.get_ok(utils.get_url("manage.organization_create"))
 
-    utils.ajax_validation(url, "name", "Meine Crew", False)
-    utils.ajax_validation(url, "short_name", "meinecrew", False)
-    utils.ajax_validation(url, "short_name", "andere_crew", True)
+    assert b'id="app"' in response.data
+    assert b"manage" in response.data
 
-    with client:
-        response = utils.post_form(url, response, create_form_data(response, utils))
-        assert response.status_code == 200
-        assert b"Der Name ist bereits vergeben" in response.data
+
+def test_create_requires_login(client, utils: UtilActions):
+    response = utils.get(utils.get_url("manage.organization_create"))
+
+    assert response.status_code == 302
+    assert "/login" in response.headers["Location"]
 
 
 def test_create_requiresAdmin_nonAdmin(client, app, utils: UtilActions, seeder: Seeder):
@@ -85,6 +30,8 @@ def test_create_requiresAdmin_nonAdmin(client, app, utils: UtilActions, seeder: 
     url = utils.get_url("manage.organization_create")
     response = utils.get(url)
     utils.assert_response_redirect(response, "main.manage_admin_units")
+    with client.session_transaction() as session:
+        assert any("geschlossenen Test-Phase" in str(m) for _, m in session["_flashes"])
 
 
 def test_create_requiresAdmin_globalAdmin(
@@ -94,20 +41,7 @@ def test_create_requiresAdmin_globalAdmin(
     seeder.create_user(admin=True)
     utils.login()
 
-    url = utils.get_url("manage.organization_create")
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Meine Crew",
-            "short_name": "meine_crew",
-            "location-postalCode": "38640",
-            "location-city": "Goslar",
-        },
-    )
-    assert response.status_code == 302
+    utils.get_ok(utils.get_url("manage.organization_create"))
 
 
 def test_create_requiresAdmin_memberOfOrgWithoutFlag(
@@ -129,170 +63,74 @@ def test_create_requiresAdmin_memberOfOrgWithFlag(
     utils.login()
     seeder.create_admin_unit(user_id, can_create_other=True)
 
-    url = utils.get_url("manage.organization_create")
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Other Crew",
-            "short_name": "other_crew",
-            "location-postalCode": "38640",
-            "location-city": "Goslar",
-        },
-    )
-    assert response.status_code == 302
+    utils.get_ok(utils.get_url("manage.organization_create"))
 
 
-def test_create_from_invitation(client, app, db, utils: UtilActions, seeder: Seeder):
+def test_create_deletion_requested(client, app, db, utils: UtilActions, seeder: Seeder):
+    import datetime
+
+    user_id = seeder.create_user()
+    utils.login()
+
+    with app.app_context():
+        from project.infrastructure.models import User
+
+        db.session.get(User, user_id).deletion_requested_at = datetime.datetime.now(
+            datetime.UTC
+        )
+        db.session.commit()
+
+    response = utils.get(utils.get_url("manage.organization_create"))
+    utils.assert_response_redirect(response, "main.profile")
+
+
+def _invitation_id(seeder: Seeder):
     user_id = seeder.create_user()
     admin_unit_id = seeder.create_admin_unit(
         user_id, can_invite_other=True, can_verify_other=True
     )
-    invitation_id = seeder.create_admin_unit_invitation(
-        admin_unit_id,
-        relation_auto_verify_event_reference_requests=True,
-        relation_verify=True,
-    )
+    return seeder.create_admin_unit_invitation(admin_unit_id)
 
+
+def test_create_from_invitation(client, utils: UtilActions, seeder: Seeder):
+    invitation_id = _invitation_id(seeder)
     seeder.create_user("invited@test.de")
     utils.login("invited@test.de")
+
     url = utils.get_url("manage.organization_create", invitation_id=invitation_id)
     response = utils.get_ok(url)
 
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "short_name": "invitedorganization",
-            "location-postalCode": "38640",
-            "location-city": "Goslar",
-        },
-    )
-    assert response.status_code == 302
-
-    with app.app_context():
-        from project.infrastructure.models import AdminUnitInvitation
-        from project.infrastructure.seed_helpers import get_admin_unit_by_name
-
-        admin_unit = get_admin_unit_by_name("Invited Organization")
-        assert admin_unit is not None
-
-        relation = admin_unit.incoming_relations[0]
-        assert relation.source_admin_unit_id == admin_unit_id
-        assert relation.auto_verify_event_reference_requests
-        assert relation.verify
-        assert relation.invited
-        relation_id = relation.id
-
-        invitation = db.session.get(AdminUnitInvitation, invitation_id)
-        assert invitation is None
-
-    with app.app_context():
-        app.test_event_dispatcher.handle_pending_events()
-
-    relation_url = utils.get_url(
-        "manage_admin_unit.outgoing_organization_relation_update",
-        id=admin_unit_id,
-        organization_relation_id=relation_id,
-    )
-    assert len(app.test_email_service.sent_emails) == 1
-    sent_email = app.test_email_service.sent_emails[0]
-    assert sent_email["recipient"] == "test@test.de"
-    assert relation_url in sent_email["body"]
-    assert relation_url in sent_email["html"]
+    assert b'id="app"' in response.data
 
 
 def test_create_from_invitation_currentUserDoesNotMatchInvitationEmail(
-    client, app, utils: UtilActions, seeder: Seeder
+    client, utils: UtilActions, seeder: Seeder
 ):
-    user_id = seeder.create_user()
-    admin_unit_id = seeder.create_admin_unit(
-        user_id, can_invite_other=True, can_verify_other=True
-    )
-    invitation_id = seeder.create_admin_unit_invitation(
-        admin_unit_id,
-        relation_auto_verify_event_reference_requests=True,
-        relation_verify=True,
-    )
-
+    invitation_id = _invitation_id(seeder)
     seeder.create_user("other@test.de")
     utils.login("other@test.de")
+
     url = utils.get_url("manage.organization_create", invitation_id=invitation_id)
     response = utils.get(url)
     utils.assert_response_redirect(response, "main.manage_admin_units")
 
 
-def test_create_with_relation(client, app, utils: UtilActions, seeder: Seeder):
-    user_id = seeder.create_user(admin=False)
+def test_create_from_unknown_invitation(client, utils: UtilActions, seeder: Seeder):
+    seeder.create_user()
     utils.login()
-    admin_unit_id = seeder.create_admin_unit(
-        user_id, can_verify_other=True, incoming_reference_requests_allowed=False
-    )
 
-    url = utils.get_url("manage.organization_create")
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Other Crew",
-            "short_name": "other_crew",
-            "location-postalCode": "38640",
-            "location-city": "Goslar",
-        },
-    )
-    assert response.status_code == 302
-
-    with app.app_context():
-        from project.infrastructure.seed_helpers import get_admin_unit_by_name
-
-        admin_unit = get_admin_unit_by_name("Other Crew")
-        assert admin_unit is not None
-
-        relation = admin_unit.incoming_relations[0]
-        assert relation.source_admin_unit_id == admin_unit_id
-        assert relation.auto_verify_event_reference_requests is False
-        assert relation.verify
+    url = utils.get_url("manage.organization_create", invitation_id=4711)
+    assert utils.get(url).status_code == 404
 
 
-def test_create_with_relation_auto_verify(
-    client, app, utils: UtilActions, seeder: Seeder
+def test_create_from_invalid_invitation_id_is_ignored(
+    client, utils: UtilActions, seeder: Seeder
 ):
-    user_id = seeder.create_user(admin=False)
+    seeder.create_user()
     utils.login()
-    admin_unit_id = seeder.create_admin_unit(
-        user_id, can_verify_other=False, incoming_reference_requests_allowed=True
-    )
 
-    url = utils.get_url("manage.organization_create")
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Other Crew",
-            "short_name": "other_crew",
-            "location-postalCode": "38640",
-            "location-city": "Goslar",
-            "embedded_relation-auto_verify_event_reference_requests": "y",
-        },
-    )
-    assert response.status_code == 302
-
-    with app.app_context():
-        from project.infrastructure.seed_helpers import get_admin_unit_by_name
-
-        admin_unit = get_admin_unit_by_name("Other Crew")
-        assert admin_unit is not None
-
-        relation = admin_unit.incoming_relations[0]
-        assert relation.source_admin_unit_id == admin_unit_id
-        assert relation.auto_verify_event_reference_requests is True
-        assert relation.verify is False
+    url = utils.get_url("manage.organization_create", invitation_id="abc")
+    utils.get_ok(url)
 
 
 def test_update_renders_vue_shell(client, utils: UtilActions, seeder: Seeder):

@@ -1,103 +1,14 @@
-from flask import current_app
 from flask_babel import lazy_gettext
-from wtforms import FormField, StringField, SubmitField, TextAreaField, ValidationError
-from wtforms.fields import EmailField, TelField, URLField
-from wtforms.validators import DataRequired, Length, Optional, Regexp
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired, Length, Optional
 from wtforms.widgets import ColorInput
 
 from project.application.commands import UpdateOrganizationWidgetSettingsCommand
-from project.application.queries import (
-    IsOrganizationNameTakenQuery,
-    IsOrganizationShortNameTakenQuery,
-)
-from project.presentation.web.forms.common import (
-    Base64ImageForm,
-    StrictGooglePlaceLocationForm,
-)
-from project.presentation.web.forms.widgets import HTML5StringField
-from project.presentation.web.modular.base_form import (
-    BaseForm,
-    BaseUpdateForm,
-    BlankFormData,
-)
-from project.presentation.web.modular.fields import VirtualFormField
-from project.presentation.web.modular.widgets import AjaxValidationWidget
+from project.presentation.web.modular.base_form import BaseForm, BaseUpdateForm
 from project.shared.utils import (
     widget_default_background_color,
     widget_default_primary_color,
 )
-
-
-class AdditionalInformationForm(BaseForm):
-    url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
-    email = EmailField(lazy_gettext("Email"), validators=[Optional(), Length(max=255)])
-    phone = TelField(lazy_gettext("Phone"), validators=[Optional(), Length(max=255)])
-    fax = TelField(lazy_gettext("Fax"), validators=[Optional(), Length(max=255)])
-
-
-def _query_bus():
-    return current_app.container.cqrs.query_bus()
-
-
-def validate_organization_name(form, field):
-    name = field.data
-    if _query_bus().handle(IsOrganizationNameTakenQuery(name=name)):
-        raise ValidationError(lazy_gettext("Name is already taken"))
-
-
-def validate_organization_short_name(form, field):
-    short_name = field.data
-    if _query_bus().handle(IsOrganizationShortNameTakenQuery(short_name=short_name)):
-        raise ValidationError(lazy_gettext("Short name is already taken"))
-
-
-class AdminUnitFormMixin(object):
-    name = HTML5StringField(
-        lazy_gettext("Name of organization"),
-        description=lazy_gettext("The full name of the organization"),
-        validators=[DataRequired(), Length(min=5, max=255), validate_organization_name],
-        widget=AjaxValidationWidget(),
-        render_kw={
-            "role": "presentation",
-            "autocomplete": "off",
-        },
-    )
-    short_name = HTML5StringField(
-        lazy_gettext("Short name for organization"),
-        description=lazy_gettext(
-            "The short name is used to create a unique identifier for your events"
-        ),
-        validators=[
-            DataRequired(),
-            Length(min=5, max=100),
-            Regexp(
-                r"^\w+$",
-                message=lazy_gettext(
-                    "Short name must contain only letters numbers or underscore"
-                ),
-            ),
-            validate_organization_short_name,
-        ],
-        widget=AjaxValidationWidget(),
-        render_kw={
-            "role": "presentation",
-            "autocomplete": "off",
-        },
-    )
-    description = TextAreaField(
-        lazy_gettext("Description"),
-        description=lazy_gettext("Describe the organization in a few words"),
-        validators=[Optional()],
-    )
-    location = FormField(
-        StrictGooglePlaceLocationForm,
-        default=BlankFormData,
-        label=lazy_gettext("Location"),
-    )
-    logo = FormField(Base64ImageForm, lazy_gettext("Logo"), default=BlankFormData)
-    additional_information = VirtualFormField(
-        AdditionalInformationForm, lazy_gettext("Additional information")
-    )
 
 
 class UpdateWidgetForm(BaseUpdateForm):

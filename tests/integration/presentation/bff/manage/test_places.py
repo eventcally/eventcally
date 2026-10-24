@@ -116,9 +116,30 @@ def test_member_without_planning_may_look_up_places(client, seeder, utils):
     assert utils.get_json(f"{PLACES_URL}?keyword=x").status_code == 200
 
 
-def test_user_without_organization_is_403(client, seeder, utils):
+def test_user_without_organization_may_look_up_places_to_create_one(
+    client, seeder, utils
+):
+    seeder.create_user()
+    utils.login()
+
+    assert utils.get_json(f"{PLACES_URL}?keyword=x").status_code == 200
+
+
+def test_user_without_organization_is_403_in_closed_phase(client, app, seeder, utils):
+    app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = True
     seeder.create_user()
     utils.login()
 
     assert utils.get_json(f"{PLACES_URL}?keyword=x").status_code == 403
     assert utils.get_json(f"{PLACES_URL}/abc/coordinate").status_code == 403
+
+
+def test_invited_user_may_look_up_places_in_closed_phase(client, app, seeder, utils):
+    app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = True
+    owner_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(owner_id)
+    seeder.create_admin_unit_invitation(admin_unit_id)
+    seeder.create_user("invited@test.de")
+    utils.login("invited@test.de")
+
+    assert utils.get_json(f"{PLACES_URL}?keyword=x").status_code == 200

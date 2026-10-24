@@ -8,7 +8,9 @@ from project.application.queries import (
     GetManageableOrganizationQuery,
     HasOtherAdminQuery,
     ListManageableOrganizationsQuery,
+    ListUserOrganizationInvitationsQuery,
 )
+from project.application.queries.page_request import PageRequest
 from project.application.read_models.organization_member_read_models import (
     UserOrganizationMembershipReadModel,
 )
@@ -219,10 +221,25 @@ def can_use_planning():
     return _authorization().can_use_planning(_current_actor())
 
 
+def _has_organization_invitation() -> bool:
+    page = _query_bus().handle(
+        ListUserOrganizationInvitationsQuery(
+            user_id=current_user.id, page=PageRequest(per_page=1)
+        )
+    )
+    return bool(page.items)
+
+
 def can_use_manage_place_lookup():
-    """The Google place lookup of the location filters: planning users and every
-    member of an organization (the manage event list)."""
-    return can_use_planning() or bool(get_admin_units_for_manage())
+    """The Google place lookup of the location filters and forms: planning users,
+    every member of an organization (the manage event list) and users who can create
+    an organization (the first one has no membership yet) or were invited to one."""
+    return (
+        can_use_planning()
+        or bool(get_admin_units_for_manage())
+        or can_create_admin_unit()
+        or _has_organization_invitation()
+    )
 
 
 def can_verify_admin_unit_user():
