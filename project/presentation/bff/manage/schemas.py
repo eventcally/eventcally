@@ -458,3 +458,23 @@ class EventPlaceNameAvailabilityParams(BaseModel):
 
 class EventPlaceNameAvailability(BaseModel):
     name_taken: Optional[bool] = None
+
+
+class OrganizationExportFile(BaseModel):
+    url: str
+    size: int
+    created_at: datetime
+
+
+class OrganizationExport(BaseModel):
+    file: Optional[OrganizationExportFile] = None
+
+
+class OrganizationExportJob(BaseModel):
+    # None when the export already ran eagerly and there is nothing to poll.
+    job_id: Optional[str] = None
+
+
+class OrganizationExportJobStatus(BaseModel):
+    ready: bool
+    successful: Optional[bool] = None

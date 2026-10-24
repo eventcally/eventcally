@@ -66,6 +66,7 @@ from .revoke_oauth2_token_handler import RevokeOAuth2TokenHandler
 from .revoke_organization_invitation_handler import RevokeOrganizationInvitationHandler
 from .send_newsletter_handler import SendNewsletterHandler
 from .send_test_mail_handler import SendTestMailHandler
+from .start_organization_export_handler import StartOrganizationExportHandler
 from .uninstall_app_handler import UninstallAppHandler
 from .update_api_key_handler import UpdateApiKeyHandler
 from .update_app_handler import UpdateAppHandler
@@ -106,6 +107,7 @@ from .withdraw_organization_verification_request_handler import (
 )
 
 __all__ = [
+    "StartOrganizationExportHandler",
     "AbstractCommandHandler",
     "CancelOrganizationDeletionHandler",
     "DeleteOrganizationHandler",

@@ -263,25 +263,6 @@ def get_invitation_access_result(email: str):
     return None
 
 
-def get_celery_poll_result():  # pragma: no cover
-    from project.infrastructure.celery_app import celery
-
-    try:
-        result = celery.AsyncResult(request.args["poll"])
-        ready = result.ready()
-        return {
-            "ready": ready,
-            "successful": result.successful() if ready else None,
-            "value": result.get() if ready else result.result,
-        }
-    except Exception as e:
-        return {
-            "ready": True,
-            "successful": False,
-            "error": getattr(e, "message", "Unknown error"),
-        }
-
-
 def manage_required(permission=None):
     def decorator(f):
         @wraps(f)
