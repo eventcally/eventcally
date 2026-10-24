@@ -11,5 +11,23 @@ if [ "${1:-}" = "--down" ]; then
     exit 0
 fi
 
+# --changed [BASE] -> --slice <slices touched by the diff against BASE>. Resolved here on the
+# host: it needs git, which the pytest image may not have. BASE defaults to origin/main.
+if [ "${1:-}" = "--changed" ]; then
+    shift
+    BASE="origin/main"
+    if [ $# -gt 0 ] && [ "${1#-}" = "$1" ]; then
+        BASE="$1"
+        shift
+    fi
+    CHANGED="$(python3 .scripts/test_slices.py changed "$BASE" | paste -sd, -)"
+    if [ -z "$CHANGED" ]; then
+        echo "No slice owns the changed files; nothing to run."
+        exit 0
+    fi
+    echo "Changed slices: $CHANGED"
+    set -- --slice "$CHANGED" "$@"
+fi
+
 "${COMPOSE[@]}" up -d --wait db redis limiter_redis
 "${COMPOSE[@]}" run --rm pytest .scripts/run_tests.sh "$@"

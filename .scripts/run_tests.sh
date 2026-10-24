@@ -43,6 +43,8 @@ detect_cpus() {
 SPLITS="${SPLITS:-$(detect_cpus)}"
 GROUP=""
 NO_COV=0
+SLICE=""
+STORE_DURATIONS=0
 EXTRA_ARGS=()
 
 while [ $# -gt 0 ]; do
@@ -57,6 +59,15 @@ while [ $# -gt 0 ]; do
         ;;
     --no-cov)
         NO_COV=1
+        shift
+        ;;
+    --slice)
+        # Comma-separated names from .scripts/test_slices.py (unit, infra, web, api, bff, misc)
+        SLICE="$2"
+        shift 2
+        ;;
+    --store-durations)
+        STORE_DURATIONS=1
         shift
         ;;
     --)
@@ -79,15 +90,57 @@ if [ "$SPLITS" -gt 15 ]; then
     exit 1
 fi
 
+if [ "$STORE_DURATIONS" -eq 1 ] && [ -n "$SLICE" ]; then
+    echo "--store-durations needs the full suite; drop --slice." >&2
+    exit 1
+fi
+
+# Test paths: tests/unit plus the paths of every selected slice, de-duplicated.
+SLICE_PATHS=()
+SLICE_NAMES=()
+if [ -n "$SLICE" ]; then
+    IFS=',' read -r -a SLICE_NAMES <<<"$SLICE"
+    for name in "${SLICE_NAMES[@]}"; do
+        while IFS= read -r path; do
+            SLICE_PATHS+=("$path")
+        done < <(python .scripts/test_slices.py tests "$name")
+    done
+    mapfile -t SLICE_PATHS < <(printf '%s\n' "${SLICE_PATHS[@]}" | awk '!seen[$0]++')
+fi
+
+# The slice check prints a table per slice and fails for an ENFORCED one under 100%.
+check_slices() {
+    local status=0 name
+    for name in "${SLICE_NAMES[@]}"; do
+        python .scripts/test_slices.py check --slice "$name" || status=1
+    done
+    return "$status"
+}
+
 rm -f .coverage .coverage.*
+
+# Unit-only slice: no databases, no Redis, no splitting.
+if [ -n "$SLICE" ] && [ "${SLICE_PATHS[*]}" = "tests/unit" ]; then
+    FAILED=0
+    pytest --cov=project --cov-context=test "${SLICE_PATHS[@]}" "${EXTRA_ARGS[@]}" || FAILED=1
+    if [ "$NO_COV" -eq 0 ]; then
+        check_slices || FAILED=1
+    fi
+    exit "$FAILED"
+fi
 
 run_group() {
     local group="$1"
+    local durations=()
+    if [ "$STORE_DURATIONS" -eq 1 ]; then
+        durations=(--store-durations --durations-path ".test_durations.${group}")
+    fi
     COVERAGE_FILE=".coverage.${group}" \
         TEST_DATABASE_URL="postgresql://eventcally:pass@${TEST_DB_HOST}:5432/eventcally_tests_${group}" \
         TEST_REDIS_URL="redis://default:pass@${TEST_REDIS_HOST}:6379/${group}" \
         TEST_LIMITER_REDIS_URL="redis://default:pass@${TEST_LIMITER_REDIS_HOST}:6379/${group}" \
-        pytest --cov=project --splits "$SPLITS" --group "$group" "${EXTRA_ARGS[@]}"
+        pytest --cov=project --cov-context=test --splits "$SPLITS" --group "$group" \
+        "${durations[@]}" "${SLICE_PATHS[@]}" "${EXTRA_ARGS[@]}"
 }
 
 if [ -n "$GROUP" ]; then
@@ -117,6 +170,29 @@ fi
 
 coverage combine
 coverage html
-coverage report --precision=2 --fail-under=100
+
+if [ "$STORE_DURATIONS" -eq 1 ]; then
+    python - <<'PY'
+import glob
+import json
+
+durations = {}
+for path in sorted(glob.glob(".test_durations.*")):
+    with open(path) as f:
+        durations.update(json.load(f))
+
+with open(".test_durations", "w") as f:
+    json.dump(durations, f, sort_keys=True, indent=4)
+    f.write("\n")
+PY
+    rm -f .test_durations.*
+fi
+
+if [ -n "$SLICE" ]; then
+    # A slice run only covers its own part of project/, so the global gate does not apply.
+    check_slices || FAILED=1
+else
+    coverage report --precision=2 --fail-under=100 || FAILED=1
+fi
 
 exit "$FAILED"
