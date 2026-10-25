@@ -91,6 +91,17 @@ def test_create_401(client, app, utils, seeder, mocker):
     assert response.status_code == 401
 
 
+def test_create_401_without_other_organization_to_reference_from(
+    client, app, utils, seeder
+):
+    _, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("main.event_reference_create", event_id=event_id)
+    response = client.get(url)
+    assert response.status_code == 401
+
+
 @pytest.mark.parametrize("db_error", [True, False])
 def test_update(client, seeder, utils, app, db, mocker, db_error):
     user_id, admin_unit_id = seeder.setup_base()

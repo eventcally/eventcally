@@ -90,6 +90,26 @@ def test_developer(client, seeder, utils):
     utils.get_ok(url)
 
 
+def test_developer_lists_the_dump_and_serves_it(client, utils):
+    from project.shared.paths import dump_path
+    from project.shared.utils import make_dir
+
+    make_dir(dump_path)
+    all_path = os.path.join(dump_path, "all.zip")
+
+    with open(all_path, "wb") as f:
+        f.write(b"zip")
+
+    try:
+        response = utils.get_endpoint_ok("main.developer")
+        utils.assert_response_contains(response, "/dump/all.zip")
+
+        response = utils.get_endpoint_ok("main.dump_files", path="all.zip")
+        assert response.data == b"zip"
+    finally:
+        os.remove(all_path)
+
+
 def test_favicon(app, utils):
     utils.get_ok("favicon.ico")
 

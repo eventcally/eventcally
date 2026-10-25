@@ -55,3 +55,10 @@ def test_api_call_keeps_site_session(app, utils, session_with_csrf):
     utils.get_json_ok(utils.get_url("api_v1_organization_list"))
 
     utils.get_ok(utils.get_url("main.manage_admin_units"))
+
+
+def test_app_endpoints_require_an_app_token(app, utils):
+    app.config["API_READ_ANONYM"] = True
+
+    response = utils.get_json(utils.get_url("api_v1_app_installation_list"))
+    utils.assert_response_unauthorized(response)

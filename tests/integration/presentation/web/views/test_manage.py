@@ -408,6 +408,30 @@ def test_manage_admin_unit_delete_membership(
         assert db.session.get(AdminUnitMember, member_id) is None
 
 
+def test_admin_unit_export_dump_file(client, seeder: Seeder, utils: UtilActions):
+    import os
+
+    from project.shared.paths import dump_org_path
+    from project.shared.utils import make_dir
+
+    _, admin_unit_id = seeder.setup_base()
+    make_dir(dump_org_path)
+    path = os.path.join(dump_org_path, f"org-{admin_unit_id}.zip")
+
+    with open(path, "wb") as f:
+        f.write(b"zip")
+
+    try:
+        response = utils.get_endpoint_ok(
+            "main.manage_admin_unit_export_dump_files",
+            id=admin_unit_id,
+            path=f"org-{admin_unit_id}.zip",
+        )
+        assert response.data == b"zip"
+    finally:
+        os.remove(path)
+
+
 def test_admin_unit_export(client, seeder: Seeder, utils: UtilActions):
     _, admin_unit_id = seeder.setup_base()
 
