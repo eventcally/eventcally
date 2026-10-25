@@ -193,3 +193,25 @@ class TestEnsureActorIsPlatformAdmin:
     def test_raises_for_unknown_user_id(self, uow):
         with pytest.raises(UnauthorizedError):
             ensure_actor_is_platform_admin(Actor(user_id=999), uow)
+
+
+class TestUnitOfWorkActorPermissionReaderUserEmail:
+    def test_returns_the_email_of_a_known_user(self, uow):
+        from project.application.command_handlers.authorization_utils import (
+            _UnitOfWorkActorPermissionReader,
+        )
+
+        uow.users.add(
+            UserAggregate(
+                id=7, email="user@test.de", locale=None, is_platform_admin=False
+            )
+        )
+
+        assert _UnitOfWorkActorPermissionReader(uow).user_email(7) == "user@test.de"
+
+    def test_returns_none_for_an_unknown_user(self, uow):
+        from project.application.command_handlers.authorization_utils import (
+            _UnitOfWorkActorPermissionReader,
+        )
+
+        assert _UnitOfWorkActorPermissionReader(uow).user_email(99) is None

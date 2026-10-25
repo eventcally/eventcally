@@ -65,3 +65,44 @@ def test_locations_only_have_a_coordinate_with_both_values():
     assert LocationReadModel(latitude="51.9", longitude="10.4").coordinate is True
     assert LocationReadModel(latitude="51.9").coordinate is None
     assert LocationReadModel().coordinate is None
+
+
+def test_embedded_organizers_places_and_organizations_expose_image_ids():
+    from project.application.read_models.event_read_models import (
+        EventOrganizerEmbedReadModel,
+        EventPlaceEmbedReadModel,
+    )
+    from project.application.read_models.image_read_model import ImageReadModel
+
+    image = ImageReadModel(id=5)
+
+    assert EventOrganizerEmbedReadModel(id=1, name="o").logo_id is None
+    assert EventOrganizerEmbedReadModel(id=1, name="o", logo=image).logo_id == 5
+    assert EventPlaceEmbedReadModel(id=1, name="p").photo_id is None
+    assert EventPlaceEmbedReadModel(id=1, name="p", photo=image).photo_id == 5
+    assert EventOrganizationReadModel(id=1, name="o").logo_id is None
+    assert EventOrganizationReadModel(id=1, name="o", logo=image).logo_id == 5
+
+
+def test_custom_categories_are_grouped_by_set_and_labelled():
+    from project.application.read_models.event_read_models import (
+        EventCustomCategoryReadModel,
+    )
+    from project.application.read_models.reference_data_read_models import (
+        CustomEventCategorySetRefReadModel,
+    )
+
+    set_a = CustomEventCategorySetRefReadModel(id=1, name="a")
+    set_b = CustomEventCategorySetRefReadModel(id=2, name="b")
+    first = EventCustomCategoryReadModel(id=10, name="x", category_set=set_a)
+    second = EventCustomCategoryReadModel(
+        id=11, name="y", label="Y", category_set=set_b
+    )
+    third = EventCustomCategoryReadModel(id=12, name="z", category_set=set_a)
+
+    assert first.category_set_id == 1
+    assert first.label_or_name == "x"
+    assert second.label_or_name == "Y"
+    assert _event(
+        custom_categories=[first, second, third]
+    ).custom_categories_by_set == {1: [first, third], 2: [second]}

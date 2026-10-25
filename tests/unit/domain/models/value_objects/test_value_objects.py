@@ -203,3 +203,22 @@ class TestEventDateDefinitionValueObjectCompare:
             start=datetime.datetime(2024, 6, 1, 10, 0, 59, tzinfo=self.berlin_tz),
         )
         assert old != new
+
+
+class TestLocationValueObjectCompare:
+    def test_two_empty_locations_are_equal(self):
+        assert LocationValueObject.compare(None, LocationValueObject()) is True
+        assert LocationValueObject.compare(LocationValueObject(), None) is True
+
+    def test_empty_and_filled_locations_differ(self):
+        filled = LocationValueObject(city="Berlin")
+        assert LocationValueObject.compare(None, filled) is False
+        assert LocationValueObject.compare(filled, LocationValueObject()) is False
+
+    def test_filled_locations_compare_by_value(self):
+        assert LocationValueObject.compare(
+            LocationValueObject(city="Berlin"), LocationValueObject(city="Berlin")
+        )
+        assert not LocationValueObject.compare(
+            LocationValueObject(city="Berlin"), LocationValueObject(city="Bonn")
+        )

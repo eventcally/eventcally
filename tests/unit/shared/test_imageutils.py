@@ -59,3 +59,48 @@ def test_get_bytes_from_image():
     new_image = get_image_from_bytes(new_bytes)
 
     assert new_image.format.lower() == "png"
+
+
+def test_data_uri_roundtrip():
+    import PIL
+
+    from project.shared.imageutils import (
+        get_bytes_from_image,
+        get_data_uri_from_bytes,
+        get_image_from_base64_str,
+        get_mime_type_from_image,
+    )
+
+    image = PIL.Image.new("RGB", (4, 4))
+    image.format = "PNG"
+    data = get_bytes_from_image(image)
+
+    data_uri = get_data_uri_from_bytes(data, "image/png")
+    assert data_uri.startswith("data:image/png;base64,")
+
+    loaded = get_image_from_base64_str(data_uri)
+    assert loaded.size == (4, 4)
+    assert get_mime_type_from_image(loaded) == "image/png"
+
+
+def test_get_bytes_from_image_unsupported_format_falls_back_to_png():
+    import PIL
+
+    from project.shared.imageutils import get_bytes_from_image, get_image_from_bytes
+
+    image = PIL.Image.new("RGB", (4, 4))
+    image.format = "BMP"
+
+    assert get_image_from_bytes(get_bytes_from_image(image)).format == "PNG"
+
+
+def test_get_image_from_url(requests_mock):
+    import PIL
+
+    from project.shared.imageutils import get_bytes_from_image, get_image_from_url
+
+    image = PIL.Image.new("RGB", (4, 4))
+    image.format = "PNG"
+    requests_mock.get("https://example.com/i.png", content=get_bytes_from_image(image))
+
+    assert get_image_from_url("https://example.com/i.png").size == (4, 4)

@@ -3,6 +3,7 @@
 from project.application import queries
 from project.application.query_handlers import (
     GetOrganizationHandler,
+    ListVerifierOrganizationsHandler,
     SearchOrganizationsHandler,
 )
 from project.application.read_models.organization_read_models import (
@@ -27,8 +28,9 @@ class FakeRepo(AbstractOrganizationReadRepository):
     def get_widget_settings(self, object_id):  # pragma: no cover
         return None
 
-    def list_verifiers(self, query):  # pragma: no cover
-        return None
+    def list_verifiers(self, query):
+        self.queries.append(query)
+        return Page(items=[], page=1, per_page=20, total=0)
 
     def get(self, object_id):
         return (
@@ -49,3 +51,13 @@ def test_search_and_get_are_public():
     assert (
         GetOrganizationHandler(repo).handle(queries.GetOrganizationQuery(id=2)) is None
     )
+
+
+def test_list_verifiers_is_public():
+    repo = FakeRepo()
+    query = queries.ListVerifierOrganizationsQuery(postal_code="38640")
+
+    result = ListVerifierOrganizationsHandler(repo).handle(query)
+
+    assert result.total == 0
+    assert repo.queries == [query]
