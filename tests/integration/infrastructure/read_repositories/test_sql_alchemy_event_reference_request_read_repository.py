@@ -74,3 +74,17 @@ def test_lists_filters_and_get(app, db, read_repo, seeder):
     assert old.admin_unit.name == "Meine Crew"
     assert read_repo("get", new_id).rejection_reason is None
     assert read_repo("get", 4711) is None
+
+
+def test_organization_exists_and_auto_verifies(app, db, read_repo, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    seeder.create_admin_unit_relation(
+        admin_unit_id, other_admin_unit_id, auto_verify_event_reference_requests=True
+    )
+
+    assert read_repo("organization_exists", admin_unit_id) is True
+    assert read_repo("organization_exists", 4711) is False
+    assert read_repo("auto_verifies", admin_unit_id, other_admin_unit_id) is True
+    assert read_repo("auto_verifies", other_admin_unit_id, admin_unit_id) is False

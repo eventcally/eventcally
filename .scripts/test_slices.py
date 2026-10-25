@@ -34,7 +34,7 @@ INTEGRATION_TESTS = "tests/integration"
 
 # The ratchet: a slice listed here must stay at 100% on its own (unit tests
 # included). Add yours when it gets there.
-ENFORCED: list[str] = ["unit", "web", "api", "bff", "misc"]
+ENFORCED: list[str] = ["unit", "infra", "web", "api", "bff", "misc"]
 
 
 @dataclass(frozen=True)

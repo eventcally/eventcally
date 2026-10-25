@@ -67,3 +67,25 @@ def test_jwt_bearer_grant(app, db, seeder: Seeder, utils: UtilActions):
     )
     response = utils.get_json(url)
     utils.assert_response_bad_request(response)
+
+
+def test_revoke_token_revokes_the_access_token(app, db, seeder: Seeder, utils):
+    seeder.setup_api_access()
+    access_token = utils.get_access_token()
+
+    utils.revoke_token()
+
+    with app.app_context():
+        from project.infrastructure.models import OAuth2Token
+
+        token = OAuth2Token.query.filter_by(access_token=access_token).first()
+        assert token.is_revoked()
+
+
+def test_introspect_finds_tokens_with_and_without_hint(seeder: Seeder, utils):
+    seeder.setup_api_access()
+
+    utils.introspect(utils.get_access_token(), "access_token")
+    utils.introspect(utils.get_refresh_token(), "refresh_token")
+    utils.introspect(utils.get_access_token(), "")
+    utils.introspect(utils.get_refresh_token(), "")
