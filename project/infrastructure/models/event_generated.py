@@ -209,6 +209,7 @@ class EventGeneratedMixin(TrackableMixin):
             "EventCategory",
             back_populates="events",
             secondary="event_eventcategories",
+            order_by="EventCategory.id",
         )
 
     @declared_attr
@@ -217,6 +218,7 @@ class EventGeneratedMixin(TrackableMixin):
             "CustomEventCategory",
             back_populates="events",
             secondary="event_customeventcategories",
+            order_by="CustomEventCategory.id",
         )
 
     @declared_attr
@@ -225,6 +227,7 @@ class EventGeneratedMixin(TrackableMixin):
             "EventOrganizer",
             back_populates="co_organized_events",
             secondary="event_coorganizers",
+            order_by="EventOrganizer.id",
         )
 
     @declared_attr
