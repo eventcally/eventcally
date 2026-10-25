@@ -6,6 +6,8 @@ from project.application.queries import (
     ListAppKeysQuery,
     ListAppWebhookDeliveriesQuery,
     ListAppWebhookDeliveryAttemptsQuery,
+    ListWebhookDeliveriesForAppQuery,
+    ListWebhookDeliveryAttemptsForAppQuery,
 )
 from tests.integration.presentation.web.views.manage_admin_unit.test_webhook_delivery import (
     _create_webhook_delivery,
@@ -68,3 +70,34 @@ def test_deliveries_and_attempts(app, db, read_repo, seeder):
     assert read_repo("webhook_delivery_admin_unit_id", 4711) is None
     assert read_repo("get_delivery", 4711) is None
     assert read_repo("get_attempt", 4711) is None
+
+
+def test_deliveries_and_attempts_for_app(app, db, read_repo, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    app_id, delivery_id = _create_webhook_delivery(app, db, seeder, admin_unit_id)
+    attempt_id = _create_webhook_delivery_attempt(app, db, delivery_id)
+
+    deliveries = read_repo(
+        "list_deliveries_for_app", ListWebhookDeliveriesForAppQuery(app_id=app_id)
+    )
+    attempts = read_repo(
+        "list_attempts_for_app",
+        ListWebhookDeliveryAttemptsForAppQuery(
+            app_id=app_id, webhook_delivery_id=delivery_id
+        ),
+    )
+
+    assert [item.id for item in deliveries.items] == [delivery_id]
+    assert read_repo("get_delivery_for_app", app_id, delivery_id).id == delivery_id
+    assert read_repo("get_delivery_for_app", 4711, delivery_id) is None
+    assert read_repo("get_delivery_for_app", app_id, 4711) is None
+    assert [item.id for item in attempts.items] == [attempt_id]
+    assert (
+        read_repo(
+            "list_attempts_for_app",
+            ListWebhookDeliveryAttemptsForAppQuery(
+                app_id=4711, webhook_delivery_id=delivery_id
+            ),
+        )
+        is None
+    )

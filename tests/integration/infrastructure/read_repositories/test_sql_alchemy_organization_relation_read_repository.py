@@ -53,3 +53,24 @@ def test_list_filters_sort_and_get(app, db, seeder):
     assert relation.target_admin_unit.name == "Beta Crew"
     assert relation.source_admin_unit_id == admin_unit_id
     assert missing is None
+
+
+def test_organization_exists_and_get_by_target(app, db, seeder):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    other_id = seeder.create_admin_unit(seeder.create_user("a@test.de"), "Alpha Crew")
+    relation_id = seeder.create_admin_unit_relation(admin_unit_id, other_id)
+
+    with app.app_context():
+        repo = app.container.read_repos.organization_relation_read_repo()
+
+        with app.container.infrastructure.read_session_scope():
+            exists = repo.organization_exists(admin_unit_id)
+            missing_organization = repo.organization_exists(4711)
+            relation = repo.get_by_target(admin_unit_id, other_id)
+            missing_relation = repo.get_by_target(other_id, admin_unit_id)
+
+    assert exists is True
+    assert missing_organization is False
+    assert relation.id == relation_id
+    assert relation.target_admin_unit.name == "Alpha Crew"
+    assert missing_relation is None

@@ -84,3 +84,20 @@ def test_tracked_saves_the_group_result(app, mocker, set_eager):
 
     result.save.assert_called_once()
     assert (job.job_id, job.count) == ("group-1", 2)
+
+
+def test_async_groups_one_task_per_signature(app, mocker):
+    group = mocker.patch("celery.group")
+    group.side_effect = lambda tasks: mocker.Mock(delay=lambda: list(tasks))
+    task = mocker.patch(
+        "project.infrastructure.celery_base_tasks.send_mail_with_body_task"
+    )
+    signatures = [
+        ("a@test.de", "S1", "B1", "<p>B1</p>"),
+        ("b@test.de", "S2", "B2", "<p>B2</p>"),
+    ]
+
+    result = _service(app).send_mails_with_signatures_async(signatures)
+
+    assert [call.args for call in task.s.call_args_list] == signatures
+    assert result == [task.s.return_value, task.s.return_value]

@@ -54,3 +54,86 @@ def test_upsert_event_category_creates_once(client, app, db):
 
         assert first.id == second.id
         assert EventCategory.query.filter_by(name="Brand New").count() == 1
+
+
+def test_member_and_invitation_lookups(client, seeder, db, app):
+    user_id, admin_unit_id = seeder.setup_base()
+    other_user_id = seeder.create_user("other@test.de")
+
+    with app.app_context():
+        from project.infrastructure.models import AdminUnit, User
+        from project.infrastructure.seed_helpers import (
+            add_user_to_admin_unit,
+            find_admin_unit_member_invitation,
+            get_admin_unit_member,
+            get_member_for_admin_unit_by_user_id,
+            insert_admin_unit_member_invitation,
+        )
+
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        member = add_user_to_admin_unit(db.session.get(User, other_user_id), admin_unit)
+        invitation = insert_admin_unit_member_invitation(
+            admin_unit_id, "Invited@test.de", ["admin"]
+        )
+        db.session.commit()
+
+        assert get_admin_unit_member(member.id).user_id == other_user_id
+        assert (
+            get_member_for_admin_unit_by_user_id(admin_unit_id, other_user_id).id
+            == member.id
+        )
+        assert get_member_for_admin_unit_by_user_id(admin_unit_id, 4711) is None
+        found = find_admin_unit_member_invitation("invited@TEST.de", admin_unit_id)
+        assert found.id == invitation.id
+        assert (
+            find_admin_unit_member_invitation("nobody@test.de", admin_unit_id) is None
+        )
+        assert user_id != other_user_id
+
+
+def test_delete_admin_unit_removes_it(client, seeder, db, app):
+    user_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(user_id, "Doomed Crew")
+
+    with app.app_context():
+        from project.infrastructure.seed_helpers import (
+            delete_admin_unit,
+            get_admin_unit_by_id,
+        )
+
+        delete_admin_unit(get_admin_unit_by_id(admin_unit_id))
+
+        assert get_admin_unit_by_id(admin_unit_id) is None
+
+
+def test_event_category_lookups(client, db, app):
+    with app.app_context():
+        from project.infrastructure.seed_helpers import (
+            get_event_category,
+            upsert_event_category,
+        )
+
+        assert get_event_category("Seed Category") is None
+        category = upsert_event_category("Seed Category")
+
+        assert get_event_category("Seed Category").id == category.id
+        assert upsert_event_category("Seed Category").id == category.id
+
+
+def test_reset_tos_accepted_for_users_clears_the_timestamp(client, seeder, db, app):
+    user_id = seeder.create_user()
+
+    with app.app_context():
+        import datetime
+
+        from project.infrastructure.models import User
+        from project.infrastructure.seed_helpers import reset_tos_accepted_for_users
+
+        user = db.session.get(User, user_id)
+        user.tos_accepted_at = datetime.datetime.now(datetime.UTC)
+        db.session.commit()
+
+        reset_tos_accepted_for_users()
+
+        db.session.expire_all()
+        assert db.session.get(User, user_id).tos_accepted_at is None
