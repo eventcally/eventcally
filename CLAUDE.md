@@ -52,6 +52,11 @@ pytest --cov-report=html --cov=project         # coverage against your own servi
 ./runtests.sh --changed                        # slices touched vs origin/main (coverage ownership, not regression safety)
 python .scripts/test_slices.py check           # per-slice coverage table from the combined .coverage
 ./runtests.sh --store-durations                # refresh .test_durations (full suite only)
+# CI runs `.scripts/run_tests.sh --shard J --shards M --splits N --no-report` (global groups (J-1)*N+1..J*N,
+# database per global group, Redis index per local group; credentials/ports via TEST_DB_CREDENTIALS,
+# TEST_REDIS_CREDENTIALS (empty = no auth), TEST_REDIS_PORT, TEST_LIMITER_REDIS_PORT). CI-speed
+# durations: run the Tests workflow via workflow_dispatch with `store_durations`, commit the
+# `test-durations` artifact as .test_durations.
 npm install && npx playwright test             # e2e
 
 # Regenerate model/repo code after editing .scripts/codegen/config/*.yaml
