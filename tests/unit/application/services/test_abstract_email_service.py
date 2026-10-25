@@ -168,3 +168,19 @@ class TestAbstractEmailService:
             assert False, "Expected NotImplementedError"
         except NotImplementedError:
             pass
+
+
+class TestSendTemplateMailToAddressAsync:
+    def test_sends_one_signature_async(self):
+        svc = _ConcreteEmailService()
+
+        result = svc.send_template_mail_to_address_async(
+            "a@example.com", "test_email", site_name="EventCally"
+        )
+
+        assert result == svc.sent_signatures
+        assert len(result) == 1
+        email, subject, body, html = result[0]
+        assert email == "a@example.com"
+        assert body == "en:email/test_email.txt"
+        assert html == "en:email/test_email.html"

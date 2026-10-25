@@ -6,6 +6,8 @@ implements the abstract private methods with no-op or configurable returns.
 No database or Flask app context is required.
 """
 
+import pytest
+
 from project.domain.models.aggregates.app_aggregate import AppAggregate
 from project.domain.models.aggregates.event_aggregate import EventAggregate
 from project.domain.models.aggregates.event_organizer_aggregate import (
@@ -35,7 +37,16 @@ from project.domain.models.aggregates.webhook_delivery_attempt_aggregate import 
 from project.domain.models.aggregates.webhook_event_aggregate import (
     WebhookEventAggregate,
 )
+from project.domain.repositories.abstract_api_key_repository import (
+    AbstractApiKeyRepository,
+)
+from project.domain.repositories.abstract_app_key_repository import (
+    AbstractAppKeyRepository,
+)
 from project.domain.repositories.abstract_app_repository import AbstractAppRepository
+from project.domain.repositories.abstract_custom_widget_repository import (
+    AbstractCustomWidgetRepository,
+)
 from project.domain.repositories.abstract_event_organizer_repository import (
     AbstractEventOrganizerRepository,
 )
@@ -45,17 +56,38 @@ from project.domain.repositories.abstract_event_place_repository import (
 from project.domain.repositories.abstract_event_reference_repository import (
     AbstractEventReferenceRepository,
 )
+from project.domain.repositories.abstract_event_reference_request_repository import (
+    AbstractEventReferenceRequestRepository,
+)
 from project.domain.repositories.abstract_event_repository import (
     AbstractEventRepository,
+)
+from project.domain.repositories.abstract_member_invitation_repository import (
+    AbstractMemberInvitationRepository,
+)
+from project.domain.repositories.abstract_oauth2_client_repository import (
+    AbstractOAuth2ClientRepository,
+)
+from project.domain.repositories.abstract_oauth2_token_repository import (
+    AbstractOAuth2TokenRepository,
 )
 from project.domain.repositories.abstract_organization_app_installation_repository import (
     AbstractOrganizationAppInstallationRepository,
 )
+from project.domain.repositories.abstract_organization_invitation_repository import (
+    AbstractOrganizationInvitationRepository,
+)
 from project.domain.repositories.abstract_organization_member_repository import (
     AbstractOrganizationMemberRepository,
 )
+from project.domain.repositories.abstract_organization_relation_repository import (
+    AbstractOrganizationRelationRepository,
+)
 from project.domain.repositories.abstract_organization_repository import (
     AbstractOrganizationRepository,
+)
+from project.domain.repositories.abstract_organization_verification_request_repository import (
+    AbstractOrganizationVerificationRequestRepository,
 )
 from project.domain.repositories.abstract_settings_repository import (
     AbstractSettingsRepository,
@@ -903,3 +935,173 @@ class TestAbstractSettingsRepository:
         repo = _ConcreteSettingsRepo(return_value=None)
         assert repo.get() is None
         assert len(repo.seen) == 0
+
+
+# ---------------------------------------------------------------------------
+# Repositories with the plain add / update / get / remove contract
+# ---------------------------------------------------------------------------
+
+
+def _stub(repo_cls, **returns):
+    """Instantiate repo_cls with every abstract method implemented.
+
+    Each implementation records its call in ``calls`` and returns the value
+    configured for it (default None).
+    """
+    calls = []
+
+    def implement(name):
+        def method(self, *args):
+            calls.append((name, args))
+            return returns.get(name)
+
+        return method
+
+    stub_cls = type(
+        f"_Stub{repo_cls.__name__}",
+        (repo_cls,),
+        {name: implement(name) for name in repo_cls.__abstractmethods__},
+    )
+    repo = stub_cls()
+    repo.calls = calls
+    return repo
+
+
+_CRUD_REPOSITORIES = [
+    pytest.param(AbstractApiKeyRepository, id="api_key"),
+    pytest.param(AbstractCustomWidgetRepository, id="custom_widget"),
+    pytest.param(AbstractEventReferenceRequestRepository, id="event_reference_request"),
+    pytest.param(AbstractMemberInvitationRepository, id="member_invitation"),
+    pytest.param(AbstractOAuth2ClientRepository, id="oauth2_client"),
+    pytest.param(AbstractOrganizationInvitationRepository, id="org_invitation"),
+    pytest.param(AbstractOrganizationRelationRepository, id="org_relation"),
+    pytest.param(
+        AbstractOrganizationVerificationRequestRepository, id="verification_request"
+    ),
+]
+
+
+@pytest.mark.parametrize("repo_cls", _CRUD_REPOSITORIES)
+class TestAbstractCrudRepositories:
+    def test_add_delegates_and_adds_to_seen(self, repo_cls):
+        repo = _stub(repo_cls)
+        agg = object()
+        repo.add(agg)
+        assert repo.calls == [("_add", (agg,))]
+        assert agg in repo.seen
+
+    def test_update_delegates_and_adds_to_seen(self, repo_cls):
+        repo = _stub(repo_cls)
+        agg = object()
+        repo.update(agg)
+        assert repo.calls == [("_update", (agg,))]
+        assert agg in repo.seen
+
+    def test_remove_delegates_and_adds_to_seen(self, repo_cls):
+        repo = _stub(repo_cls)
+        agg = object()
+        repo.remove(agg)
+        assert repo.calls == [("_remove", (agg,))]
+        assert agg in repo.seen
+
+    def test_get_with_result_adds_to_seen(self, repo_cls):
+        agg = object()
+        repo = _stub(repo_cls, _get=agg)
+        assert repo.get(5) is agg
+        assert repo.calls == [("_get", (5,))]
+        assert agg in repo.seen
+
+    def test_get_none_does_not_add_to_seen(self, repo_cls):
+        repo = _stub(repo_cls)
+        assert repo.get(5) is None
+        assert len(repo.seen) == 0
+
+
+class TestAbstractApiKeyRepositoryCount:
+    def test_count_for_owner_delegates(self):
+        repo = _stub(AbstractApiKeyRepository, _count_for_owner=3)
+        assert repo.count_for_owner(1, None) == 3
+        assert repo.calls == [("_count_for_owner", (1, None))]
+
+
+class TestAbstractOrganizationRelationRepositoryBySourceAndTarget:
+    def test_with_result_adds_to_seen(self):
+        agg = object()
+        repo = _stub(
+            AbstractOrganizationRelationRepository, _get_by_source_and_target=agg
+        )
+        assert repo.get_by_source_and_target(1, 2) is agg
+        assert repo.calls == [("_get_by_source_and_target", (1, 2))]
+        assert agg in repo.seen
+
+    def test_none_does_not_add_to_seen(self):
+        repo = _stub(AbstractOrganizationRelationRepository)
+        assert repo.get_by_source_and_target(1, 2) is None
+        assert len(repo.seen) == 0
+
+
+class TestAbstractAppKeyRepository:
+    def test_add_and_remove_add_to_seen(self):
+        repo = _stub(AbstractAppKeyRepository)
+        added, removed = object(), object()
+        repo.add(added)
+        repo.remove(removed)
+        assert repo.seen == {added, removed}
+
+    def test_get_with_result_adds_to_seen(self):
+        agg = object()
+        repo = _stub(AbstractAppKeyRepository, _get=agg)
+        assert repo.get(5) is agg
+        assert agg in repo.seen
+
+    def test_get_none_does_not_add_to_seen(self):
+        repo = _stub(AbstractAppKeyRepository)
+        assert repo.get(5) is None
+        assert len(repo.seen) == 0
+
+
+class TestAbstractOAuth2TokenRepository:
+    def test_update_adds_to_seen(self):
+        repo = _stub(AbstractOAuth2TokenRepository)
+        agg = object()
+        repo.update(agg)
+        assert repo.calls == [("_update", (agg,))]
+        assert agg in repo.seen
+
+    def test_get_with_result_adds_to_seen(self):
+        agg = object()
+        repo = _stub(AbstractOAuth2TokenRepository, _get=agg)
+        assert repo.get(5) is agg
+        assert agg in repo.seen
+
+    def test_get_none_does_not_add_to_seen(self):
+        repo = _stub(AbstractOAuth2TokenRepository)
+        assert repo.get(5) is None
+        assert len(repo.seen) == 0
+
+
+class TestAbstractOrganizationMemberRepositoryGetAndRemove:
+    def test_get_with_result_adds_to_seen(self):
+        member = _member_agg()
+        repo = _ConcreteOrgMemberRepo(member=member)
+        assert repo.get(1) is member
+        assert member in repo.seen
+
+    def test_get_none_does_not_add_to_seen(self):
+        repo = _ConcreteOrgMemberRepo(member=None)
+        assert repo.get(1) is None
+        assert len(repo.seen) == 0
+
+    def test_remove_adds_to_seen(self):
+        member = _member_agg()
+        repo = _ConcreteOrgMemberRepo()
+        repo.remove(member)
+        assert member in repo.seen
+
+
+class TestAbstractOrganizationRepositoryAdd:
+    def test_add_adds_to_seen(self):
+        repo = _ConcreteOrganizationRepo()
+        org = _org_agg()
+        repo.add(org)
+        assert org in repo.seen

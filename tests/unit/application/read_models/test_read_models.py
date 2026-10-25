@@ -93,3 +93,59 @@ class TestOrganizerReadModel:
         m = OrganizerReadModel(id=3, name="Club")
         with pytest.raises((ValidationError, TypeError)):
             m.id = 99
+
+
+def test_image_meta_read_model_extension_and_hash():
+    from datetime import datetime, timezone
+
+    from project.application.read_models.batch_read_models import ImageMetaReadModel
+
+    assert ImageMetaReadModel(id=1).get_file_extension() == "png"
+    assert ImageMetaReadModel(id=1).get_hash() == 0
+
+    image = ImageMetaReadModel(
+        id=1,
+        encoding_format="image/jpeg",
+        last_modified_at=datetime(2030, 1, 1, tzinfo=timezone.utc),
+    )
+    assert image.get_file_extension() == "jpeg"
+    assert image.get_hash() == 1893456000000
+
+
+def test_image_file_read_model_extension():
+    from project.application.read_models.batch_read_models import ImageFileReadModel
+
+    assert ImageFileReadModel(id=1).get_file_extension() == "png"
+    assert (
+        ImageFileReadModel(id=1, encoding_format="image/gif").get_file_extension()
+        == "gif"
+    )
+
+
+def test_custom_category_refs_prefer_the_label():
+    from project.application.read_models.reference_data_read_models import (
+        CustomEventCategoryRefReadModel,
+        CustomEventCategorySetRefReadModel,
+    )
+
+    assert CustomEventCategorySetRefReadModel(id=1, name="n").label_or_name == "n"
+    assert (
+        CustomEventCategorySetRefReadModel(id=1, name="n", label="l").label_or_name
+        == "l"
+    )
+    assert (
+        CustomEventCategoryRefReadModel(id=1, name="n", category_set_id=2).label_or_name
+        == "n"
+    )
+    assert (
+        CustomEventCategoryRefReadModel(
+            id=1, name="n", label="l", category_set_id=2
+        ).label_or_name
+        == "l"
+    )
+
+
+def test_user_ref_read_model_renders_as_its_email():
+    from project.application.read_models.user_ref_read_model import UserRefReadModel
+
+    assert str(UserRefReadModel(id=1, email="a@b.de")) == "a@b.de"

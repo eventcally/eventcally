@@ -116,3 +116,34 @@ def test_get_outgoing():
         handler.handle(
             queries.GetOutgoingOrganizationVerificationRequestQuery(id=2, actor=ACTOR)
         )
+
+
+def test_get_incoming_review():
+    from types import SimpleNamespace
+
+    from project.application.query_handlers import (
+        GetIncomingOrganizationVerificationRequestReviewHandler,
+    )
+
+    permission = "incoming_organization_verification_requests:read"
+    review = SimpleNamespace(id=1, target_admin_unit_id=9)
+
+    class ReviewRepo(FakeRepo):
+        def get_review(self, object_id):
+            return review if object_id == 1 else None
+
+    def query(request_id):
+        return queries.GetIncomingOrganizationVerificationRequestReviewQuery(
+            id=request_id, actor=ACTOR
+        )
+
+    handler = GetIncomingOrganizationVerificationRequestReviewHandler(
+        ReviewRepo(), authz(permission, admin_unit_id=9)
+    )
+    assert handler.handle(query(1)) is review
+    assert handler.handle(query(2)) is None
+
+    with pytest.raises(UnauthorizedError):
+        GetIncomingOrganizationVerificationRequestReviewHandler(
+            ReviewRepo(), authz(permission, admin_unit_id=8)
+        ).handle(query(1))
