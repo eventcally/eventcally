@@ -195,7 +195,7 @@ def _slice_report(cov, name: str) -> tuple[int, int, dict[str, str]]:
         rel = Path(measured)
         rel = rel.relative_to(ROOT).as_posix() if rel.is_absolute() else rel.as_posix()
 
-        if owner_of(rel) != name:
+        if not rel.endswith(".py") or owner_of(rel) != name:
             continue
 
         _, executable, _, missing, formatted = cov.analysis2(measured)
