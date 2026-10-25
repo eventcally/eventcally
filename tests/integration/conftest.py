@@ -195,17 +195,52 @@ def drop_all_with_reflection(db):
     metadata.drop_all(bind=db.engine, tables=tables_to_drop)
 
 
+# Tables to empty between tests, set once the schema of this process is built. `None`
+# means the schema is unknown or was dropped, so the next `db` fixture rebuilds it.
+_truncate_sql: Optional[str] = None
+
+
 def force_drop_all(db):
+    global _truncate_sql
+    _truncate_sql = None
     try:
         db.drop_all()
     except Exception:
         drop_all_with_reflection(db)
 
 
+def build_schema(db):
+    """Creates the schema and remembers how to empty it (about 3x cheaper than a rebuild)."""
+    global _truncate_sql
+    from flask_migrate import stamp
+    from sqlalchemy import text
+
+    force_drop_all(db)
+    db.create_all()
+    stamp()
+    result = db.session.execute(
+        text(
+            "SELECT quote_ident(t.tablename) FROM pg_tables t"
+            " WHERE t.schemaname = 'public' AND t.tablename <> 'alembic_version'"
+            " AND NOT EXISTS (SELECT 1 FROM pg_depend d"
+            " WHERE d.objid = to_regclass('public.' || quote_ident(t.tablename))"
+            " AND d.deptype = 'e')"
+        )
+    )
+    _truncate_sql = "TRUNCATE {} RESTART IDENTITY CASCADE".format(
+        ", ".join(row[0] for row in result)
+    )
+
+
+def reset_data(db):
+    from sqlalchemy import text
+
+    db.session.execute(text(_truncate_sql))
+    db.session.commit()
+
+
 @pytest.fixture
 def db(app):
-    from flask_migrate import stamp
-
     from project.infrastructure.extensions import db
     from project.infrastructure.init_data import create_initial_data
 
@@ -215,9 +250,10 @@ def db(app):
     assert app.config["SQLALCHEMY_DATABASE_URI"] == os.environ["DATABASE_URL"]
 
     with app.app_context():
-        force_drop_all(db)
-        db.create_all()
-        stamp()
+        if _truncate_sql is None:
+            build_schema(db)
+        else:
+            reset_data(db)
         create_initial_data()
         create_initial_test_data()
 
