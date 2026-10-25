@@ -47,6 +47,11 @@ pytest --cov-report=html --cov=project         # coverage against your own servi
 # database and exports TEST_DATABASE_URL — plain `run --rm pytest pytest <path>` fails
 # with `could not translate host name "myserver"`.
 ./runtests.sh --splits 1 --group 1 -- tests/integration/presentation/web/views/test_event.py::test_create_allday -v --no-cov
+# Slices (unit, infra, web, api, bff, misc; map in .scripts/test_slices.py): tests/unit + the slice's tests
+./runtests.sh --slice web                      # one slice (comma-separate several); prints its own coverage
+./runtests.sh --changed                        # slices touched vs origin/main (coverage ownership, not regression safety)
+python .scripts/test_slices.py check           # per-slice coverage table from the combined .coverage
+./runtests.sh --store-durations                # refresh .test_durations (full suite only)
 npm install && npx playwright test             # e2e
 
 # Regenerate model/repo code after editing .scripts/codegen/config/*.yaml
@@ -93,6 +98,7 @@ isort . && black . && flake8 && lint-imports && \
 - **Import ratchet:** the `delivery-reads-through-queries` contract in `.importlinter` forbids `project.presentation.web` / `project.presentation.api` / `project.presentation.shared` → `project.infrastructure.models` (`presentation.cli` is outside), with an `ignore_imports` list that only holds the permanent exemption `presentation.web.views.flask_admin` (Flask-Admin stays ORM; Flask-Security `current_user` and Authlib stay too). Regenerate with `python .scripts/models_import_ignores.py --write` after removing imports; never add entries by hand. Progress: `python .scripts/read_path_report.py`.
 - **Generated code:** `*_generated.py` is generated from `.scripts/codegen/config/` YAML — **never edit it**. Put custom logic in the handwritten sibling (e.g. `event.py` extends `event_generated.py`). isort/flake8 already skip these files.
 - **Data access:** SQLAlchemy ORM through repositories; deferred columns may need explicit `undefer()`.
+- **Test slices:** each slice owns part of `project/` (`.scripts/test_slices.py`) and, with `tests/unit`, must cover it at 100% on its own (checked from `--cov-context=test` data). A slice in `ENFORCED` must stay at 100%; add yours when it gets there. CI always runs the full suite and the global 100% gate.
 - **Tests:** reuse fixtures from `tests/integration/conftest.py` (`app`, `db`, `client`, `seeder`, `utils`, `container`, `message_bus`) and base classes in `tests/integration/base_test.py`; assert through the message bus / repositories, not around the architecture.
 
 ## Frontend (Vue 3 + BFF)

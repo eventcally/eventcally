@@ -82,7 +82,7 @@ jobs:
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Run unit tests
-        run: pytest tests/unit --cov=project
+        run: pytest tests/unit --cov=project --cov-context=test
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
@@ -174,7 +174,7 @@ jobs:
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Run tests
-        run: pytest tests/integration --cov=project --splits 4 --group ${{ matrix.group }}
+        run: pytest tests/integration --cov=project --cov-context=test --splits 4 --group ${{ matrix.group }}
         env:
           # Inside the job container, services resolve by service name, not
           # localhost; limiter_redis is always reached on its container port
@@ -226,3 +226,9 @@ jobs:
         run: |
           coverage report --precision=2 --fail-under=100
           coverage report --precision=2 --skip-covered --format=markdown >> "$GITHUB_STEP_SUMMARY"
+
+      # Per-slice ownership (.scripts/test_slices.py): fails only for slices in ENFORCED.
+      - name: Slice coverage
+        run: |
+          python .scripts/test_slices.py check --data .coverage --markdown >> "$GITHUB_STEP_SUMMARY"
+          python .scripts/test_slices.py check --data .coverage
