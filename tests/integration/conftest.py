@@ -1,5 +1,6 @@
 import importlib
 import os
+import pkgutil
 import warnings
 from typing import Optional
 
@@ -22,6 +23,19 @@ _APP_MODULES = [
     "project.presentation.cli.user",
     "project.presentation.shared.oauth2_extensions",
 ]
+
+# Whole packages, same reason: which test imports them first depends on how the groups
+# are split, so every module of these is imported at collection.
+_APP_PACKAGES = [
+    "project.presentation.api",
+    "project.presentation.web",
+]
+
+
+def _import_package_modules(package_name: str) -> None:
+    package = importlib.import_module(package_name)
+    for info in pkgutil.walk_packages(package.__path__, prefix=f"{package_name}."):
+        importlib.import_module(info.name)
 
 
 def pytest_generate_tests(metafunc):
@@ -51,6 +65,8 @@ def pytest_generate_tests(metafunc):
 
     for module in _APP_MODULES:
         importlib.import_module(module)
+    for package_name in _APP_PACKAGES:
+        _import_package_modules(package_name)
 
 
 @pytest.fixture
