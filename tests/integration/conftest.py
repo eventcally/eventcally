@@ -1,3 +1,4 @@
+import importlib
 import os
 import warnings
 from typing import Optional
@@ -7,6 +8,20 @@ from sqlalchemy.exc import SAWarning
 
 from .seeder import Seeder
 from .utils import UtilActions
+
+# Imported while collecting, so the coverage of their import-time lines lands in the
+# empty context that every slice counts, not in the setup of whichever test happens to
+# import them first (which may belong to another slice).
+_APP_MODULES = [
+    "project.config",
+    "project.factory",
+    "project.presentation.cli.cache",
+    "project.presentation.cli.data",
+    "project.presentation.cli.dump",
+    "project.presentation.cli.event",
+    "project.presentation.cli.user",
+    "project.presentation.shared.oauth2_extensions",
+]
 
 
 def pytest_generate_tests(metafunc):
@@ -33,6 +48,9 @@ def pytest_generate_tests(metafunc):
     )
     os.environ["GOOGLE_MAPS_API_KEY"] = "AIzaDummy"
     os.environ["TESTING"] = "1"
+
+    for module in _APP_MODULES:
+        importlib.import_module(module)
 
 
 @pytest.fixture
