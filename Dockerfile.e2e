@@ -6,7 +6,7 @@
 # NodeSource package had at build time); bump it when a Node 24 security release lands.
 FROM node:24.22.1-bookworm-slim AS node
 
-FROM mcr.microsoft.com/playwright:v1.62.1-noble
+FROM mcr.microsoft.com/playwright:v1.64.1-noble
 
 RUN apt-get purge -y nodejs \
     && rm -f /etc/apt/sources.list.d/nodesource.list \
