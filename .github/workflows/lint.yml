@@ -6,8 +6,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
       - uses: jamescurtin/isort-action@master
         with:
           isort-version: "5.12.0"
@@ -20,7 +20,7 @@ jobs:
       - name: Run import whitelist check
         run: python .scripts/module_import_whitelist.py project/domain project/application
       - name: Set up uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.12.1"
           python-version: "3.12"
