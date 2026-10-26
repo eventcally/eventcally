@@ -26,7 +26,7 @@ services:
       - "5679:5679"
 
   vite:
-    image: node:22
+    image: node:22.23.4
     working_dir: /app/frontend
     volumes:
       - .:/app
