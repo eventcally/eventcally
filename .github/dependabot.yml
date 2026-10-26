@@ -1,0 +1,116 @@
+# Version updates. Several versions are pinned in lockstep in places Dependabot cannot
+# update (setup-node `node-version`, setup-uv `version`, lint.yml tool inputs, the uv
+# `COPY --from` tag, .pre-commit-config.yaml); those are ignored here and bumped by hand.
+# The pre-commit ecosystem is left out on purpose: every hook rev is such a lockstep pin.
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: &weekly
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
+    cooldown:
+      default-days: 7
+    labels: [dependencies, github-actions]
+    groups:
+      github-actions:
+        patterns: ["*"]
+      github-actions-security:
+        applies-to: security-updates
+        patterns: ["*"]
+
+  - package-ecosystem: docker
+    directory: /                 # Dockerfile and Dockerfile.e2e
+    schedule: *weekly
+    cooldown:
+      default-days: 7
+      exclude: ["node"]          # Node patch images are security releases
+    labels: [dependencies, docker]
+    ignore:
+      # requires-python ==3.12.*, .python-version, setup-uv python-version: a Python
+      # bump is a deliberate multi-file change.
+      - dependency-name: python
+        versions: [">= 3.13"]
+      # Keep the Node 22 (frontend build) and 24 (e2e image) lines.
+      - dependency-name: node
+        update-types: [version-update:semver-major]
+      # Must equal @playwright/test in package.json; bumped with the npm PR.
+      - dependency-name: mcr.microsoft.com/playwright
+    groups:
+      docker-minor-patch:
+        update-types: [minor, patch]
+        patterns: ["*"]
+
+  - package-ecosystem: docker-compose
+    directory: /                 # docker-compose.yml, .debug.yml, .test.yml
+    schedule: *weekly
+    cooldown:
+      default-days: 7
+      exclude: ["node"]
+    labels: [dependencies, docker]
+    ignore:
+      # PostgreSQL major = data migration; also pinned in test.yml and deployment/.
+      - dependency-name: postgis/postgis
+      - dependency-name: node
+        update-types: [version-update:semver-major]
+    groups:
+      docker-compose-minor-patch:
+        update-types: [minor, patch]
+        patterns: ["*"]
+
+  - package-ecosystem: uv
+    directory: /                 # pyproject.toml + uv.lock
+    schedule: *weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    labels: [dependencies, python]
+    ignore:
+      # jsonschema 3.2.0 imports pkg_resources (see pyproject.toml).
+      - dependency-name: setuptools
+      # Must match lint.yml inputs and .pre-commit-config.yaml; bumped by hand.
+      - dependency-name: black
+      - dependency-name: isort
+      - dependency-name: flake8
+      - dependency-name: import-linter
+    groups:
+      python-minor-patch:
+        update-types: [minor, patch]
+        patterns: ["*"]
+      python-security:
+        applies-to: security-updates
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule: *weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    open-pull-requests-limit: 10
+    labels: [dependencies, javascript]
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: [version-update:semver-major]
+      - dependency-name: bootstrap
+        update-types: [version-update:semver-major]
+    groups:
+      frontend-minor-patch:
+        update-types: [minor, patch]
+        patterns: ["*"]
+      frontend-security:
+        applies-to: security-updates
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /                 # @playwright/test only
+    schedule: *weekly
+    cooldown:
+      default-days: 7
+    labels: [dependencies, javascript]
+    groups:
+      playwright:
+        patterns: ["*"]
