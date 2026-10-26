@@ -66,18 +66,6 @@ class BaseForm(FlaskForm):
     def move_field_to_top(self, key: str):
         self._fields.move_to_end(key, False)
 
-    def handle_bff_ajax_validation(self, object, field, **kwargs):
-        field.validate(self)
-
-        if field.errors:
-            return ". ".join([str(e) for e in field.errors])
-
-        method = getattr(self, f"ajax_validate_{field.name}", None)
-        if callable(method):
-            return method(object, field, **kwargs)
-
-        return True  # pragma: no cover
-
 
 class BaseCreateForm(BaseForm):
     submit = SubmitField(lazy_gettext("Create"))

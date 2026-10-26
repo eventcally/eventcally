@@ -5,6 +5,7 @@ from flask_babel import gettext
 from project.domain.models.value_objects.image_value_object import ImageValueObject
 from project.presentation.bff.manage.schemas import OrganizationLogo
 from project.presentation.shared.images import image_value_object_from_data_uri
+from project.shared.imageutils import get_data_uri_from_bytes
 
 
 def image_from_save(
@@ -37,3 +38,16 @@ def image_from_save(
         errors.append(([*loc, "copyright_text"], gettext("This field is required.")))
 
     return result
+
+
+def image_form_value(image) -> Optional[OrganizationLogo]:
+    """The image field of a form from the stored image's read model (`None` when the
+    image is empty). The data stays a data URI the form can preview."""
+    if not (image and image.data):
+        return None
+
+    return OrganizationLogo(
+        image_base64=get_data_uri_from_bytes(image.data, image.encoding_format),
+        copyright_text=image.copyright_text,
+        license_id=image.license.id if image.license else None,
+    )

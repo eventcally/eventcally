@@ -58,48 +58,6 @@ $.fn.select2.defaults.set("language", "de");
       });
     }
 
-    function processGooglePlace($el) {
-      var target_prefix = $el.attr("data-target-prefix") || "";
-      $el.select2({
-        theme: 'bootstrap4',
-        ajax: {
-          url: $el.attr("data-url"),
-          headers: { "X-Backend-For-Frontend": "google_places" },
-          dataType: 'json',
-          delay: 250,
-          cache: true,
-          data: function (params) {
-            return {
-              keyword: params.term
-            };
-          }
-        },
-        placeholder: $el.attr("data-placeholder"),
-        minimumInputLength: 1,
-        templateResult: select2TemplateResult
-      }).on('select2:close', function (e) {
-        var data = select2GetData(e);
-
-        if ("gmaps_id" in data) {
-          $(this).val(null).trigger('change');
-          var location_only = $(this).attr("data-location-only");
-          if (location_only) {
-            reset_location_form(target_prefix);
-          } else {
-            reset_place_form(target_prefix);
-            $('#place-name').val(data.main_text);
-            if ($('#place-name').length > 0 && $.isFunction($('#place-name').valid)) {
-              $('#place-name').valid();
-            }
-          }
-
-          get_gmaps_place_details($el.attr("data-url"), data.gmaps_id, function(data) {
-            fill_place_form_with_gmaps_place(data, target_prefix, location_only);
-          });
-        }
-      });
-    }
-
     function get_gmaps_place_details(url, place_id, success) {
       $.ajax({
           url: url,
@@ -395,18 +353,6 @@ $.fn.select2.defaults.set("language", "de");
 
     function processFormValidation($form) {
       $form.validate({rules: {}});
-
-      $form.find("input[data-role=ajax-validation]").each(function () {
-        var $input = $(this);
-        $input.rules("add", {
-          remote: {
-            url: $input.attr("data-url"),
-            headers: { "X-Backend-For-Frontend": "ajax_validation" },
-            type: "post",
-            async: false,
-          }
-        });
-      });
     }
 
     function select2TemplateResult(state) {
@@ -425,11 +371,6 @@ $.fn.select2.defaults.set("language", "de");
       $("select[data-role=select2-tags]").each(function () {
         var $el = $(this);
         processSelect2Tags($el);
-      });
-
-      $("select[data-role=google-place]").each(function () {
-        var $el = $(this);
-        processGooglePlace($el);
       });
 
       $("select[data-role=google-place-coordinate]").each(function () {

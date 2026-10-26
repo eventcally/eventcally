@@ -97,17 +97,6 @@ class BaseView(View):
     def handle_bff_ajax_lookup(self, object, form, field, **kwargs):
         return field.loader.get_ajax_pagination(request.args.get("term"))
 
-    def handle_bff_ajax_validation(self, object, form, field, **kwargs):
-        if form:
-            return form.handle_bff_ajax_validation(object, field, **kwargs)
-        return True  # pragma: no cover
-
-    def handle_bff_google_places(self, object, form, field, **kwargs):
-        return field.get_bff_google_places(request.args.get("keyword"))
-
-    def handle_bff_google_place(self, object, form, field, **kwargs):
-        return field.get_bff_google_place(request.args.get("gmaps_id"))
-
     def render_template(self, **kwargs):
         kwargs.setdefault("title", self.get_title(**kwargs))
         kwargs.setdefault("instruction", self.get_instruction(**kwargs))

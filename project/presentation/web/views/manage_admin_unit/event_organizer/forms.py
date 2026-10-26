@@ -1,84 +1,8 @@
-from flask import request
-from flask_babel import gettext, lazy_gettext
-from wtforms import FormField, StringField, SubmitField
-from wtforms.fields import EmailField, TelField, URLField
-from wtforms.validators import DataRequired, Length, Optional
+from flask_babel import lazy_gettext
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
 
-from project.application.commands import (
-    CreateEventOrganizerCommand,
-    UpdateEventOrganizerCommand,
-)
-from project.application.queries import IsEventOrganizerNameTakenQuery
-from project.presentation.shared.current_admin_unit import current_admin_unit
-from project.presentation.web.forms.common import (
-    Base64ImageForm,
-    GooglePlaceLocationForm,
-)
 from project.presentation.web.modular.base_form import BaseForm
-from project.presentation.web.modular.widgets import AjaxValidationWidget
-
-
-class BaseEventOrganizerForm(BaseForm):
-    name = StringField(
-        lazy_gettext("Name"),
-        validators=[DataRequired(), Length(max=255)],
-        widget=AjaxValidationWidget(),
-        render_kw={"role": "presentation", "autocomplete": "off"},
-    )
-    location = FormField(GooglePlaceLocationForm, lazy_gettext("Location"))
-    logo = FormField(Base64ImageForm, lazy_gettext("Logo"))
-    url = URLField(lazy_gettext("Link URL"), validators=[Optional(), Length(max=255)])
-    email = EmailField(lazy_gettext("Email"), validators=[Optional(), Length(max=255)])
-    phone = TelField(lazy_gettext("Phone"), validators=[Optional(), Length(max=255)])
-    fax = TelField(lazy_gettext("Fax"), validators=[Optional()])
-
-    def ajax_validate_name(self, object, field, **kwargs):
-        query = IsEventOrganizerNameTakenQuery(
-            admin_unit_id=current_admin_unit.id,
-            name=request.form["name"],
-            exclude_id=object.id if object else None,
-        )
-
-        if self.get_query_bus().handle(query):
-            return gettext("An organizer already exists with this name.")
-
-        return True
-
-
-class CreateEventOrganizerForm(BaseEventOrganizerForm):
-    submit = SubmitField(lazy_gettext("Create organizer"))
-
-    def create_create_command(self, admin_unit_id: int) -> CreateEventOrganizerCommand:
-        return CreateEventOrganizerCommand(
-            actor=self.get_current_actor(),
-            admin_unit_id=admin_unit_id,
-            name=self.name.data,
-            url=self.url.data,
-            email=self.email.data,
-            phone=self.phone.data,
-            fax=self.fax.data,
-            location=self.location.form.create_create_command(),
-            logo=self.logo.form.create_create_command(),
-        )
-
-
-class UpdateEventOrganizerForm(BaseEventOrganizerForm):
-    submit = SubmitField(lazy_gettext("Update organizer"))
-
-    def create_update_command(
-        self, event_organizer_id: int
-    ) -> UpdateEventOrganizerCommand:
-        return UpdateEventOrganizerCommand(
-            actor=self.get_current_actor(),
-            id=event_organizer_id,
-            name=self.name.data,
-            url=self.url.data,
-            email=self.email.data,
-            phone=self.phone.data,
-            fax=self.fax.data,
-            location=self.location.form.create_update_command(),
-            logo=self.logo.form.create_update_command(),
-        )
 
 
 class DeleteEventOrganizerForm(BaseForm):

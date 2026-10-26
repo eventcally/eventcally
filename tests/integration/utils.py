@@ -564,45 +564,6 @@ class UtilActions(object):
         )
         return ajax_response
 
-    def ajax_validation(self, url: str, field_name: str, field_value: str, expected):
-        ajax_url = f"{url}?field_name={field_name}"
-        ajax_response = self.post_form_data(
-            ajax_url,
-            {
-                field_name: field_value,
-            },
-            headers={"X-Backend-For-Frontend": "ajax_validation"},
-        )
-
-        if expected is True:
-            assert ajax_response.json is True
-        else:
-            assert isinstance(ajax_response.json, str)
-
-    def ajax_google_places(self, url: str, field_name: str, keyword: str):
-        ajax_url = f"{url}?field_name={field_name}"
-        ajax_response = self.post_form_data(
-            ajax_url,
-            {
-                "keyword": keyword,
-            },
-            headers={"X-Backend-For-Frontend": "google_places"},
-        )
-        self.assert_response_ok(ajax_response)
-        return ajax_response
-
-    def ajax_google_place(self, url: str, field_name: str, gmaps_id: str):
-        ajax_url = f"{url}?field_name={field_name}"
-        ajax_response = self.post_form_data(
-            ajax_url,
-            {
-                "gmaps_id": gmaps_id,
-            },
-            headers={"X-Backend-For-Frontend": "google_place"},
-        )
-        self.assert_response_ok(ajax_response)
-        return ajax_response
-
     def _create_jwt_assertion(self, issuer, subject, private_pem, kid):
         from authlib.oauth2.rfc7523.assertion import sign_jwt_bearer_assertion
 

@@ -81,10 +81,7 @@ def test_update_renders_read_model_from_query_bus(seeder, utils, fake_object):
 
     response = utils.get_ok(_url(utils, "update", admin_unit_id))
 
-    soup = utils.get_soup(response)
-    assert soup.find("input", attrs={"name": "name"})["value"] == (
-        "Organizer from the bus"
-    )
+    assert b'<div id="app"' in response.data
     assert [query.id for query in fake.queries] == [4711]
 
 

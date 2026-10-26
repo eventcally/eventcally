@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router"
 import { boot } from "@/shared/boot";
 import CustomWidgetEditPage from "./pages/CustomWidgetEditPage.vue";
 import CustomWidgetsPage from "./pages/CustomWidgetsPage.vue";
+import EventOrganizerEditPage from "./pages/EventOrganizerEditPage.vue";
 import EventPlaceEditPage from "./pages/EventPlaceEditPage.vue";
 import EventReferenceRequestCreatePage from "./pages/EventReferenceRequestCreatePage.vue";
 import EventReferenceRequestReviewPage from "./pages/EventReferenceRequestReviewPage.vue";
@@ -48,6 +49,21 @@ export const routes: RouteRecordRaw[] = [
     name: "organization-settings",
     component: OrganizationSettingsPage,
     props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/event_organizer/create",
+    name: "event-organizer-create",
+    component: EventOrganizerEditPage,
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/event_organizer/:id(\\d+)/update",
+    name: "event-organizer-update",
+    component: EventOrganizerEditPage,
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
   },
   {
     path: "/manage/admin_unit/:organizationId(\\d+)/event_place/create",
