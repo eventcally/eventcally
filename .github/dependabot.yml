@@ -2,7 +2,8 @@
 # update (setup-node `node-version`, setup-uv `version`, lint.yml tool inputs, the uv
 # `COPY --from` tag, .pre-commit-config.yaml); those are ignored here and bumped by hand.
 # The pre-commit ecosystem is left out on purpose: every hook rev is such a lockstep pin.
-# Version updates are minor and patch only; major updates are done by hand.
+# Version updates are minor and patch only (majors are done by hand), except for
+# GitHub Actions, whose majors come grouped with the rest.
 version: 2
 
 updates:
@@ -16,11 +17,8 @@ updates:
     cooldown:
       default-days: 7
     labels: [dependencies, github-actions]
-    ignore:
-      # Major updates are bumped by hand (security updates still come).
-      - dependency-name: "*"
-        update-types: [version-update:semver-major]
     groups:
+      # All update types, majors included, in one PR.
       github-actions:
         patterns: ["*"]
       github-actions-security:
