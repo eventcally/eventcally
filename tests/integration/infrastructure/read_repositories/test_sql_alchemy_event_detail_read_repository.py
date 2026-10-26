@@ -51,7 +51,7 @@ def test_detail_has_everything_the_page_shows(read_repo, world):
     assert [o.name for o in detail.co_organizers] == [
         "Organizer One",
         "Organizer Two",
-    ] or {o.name for o in detail.co_organizers} == {"Organizer One", "Organizer Two"}
+    ]
     assert detail.event_place.name == "Rathaus"
     assert detail.admin_unit.name == "Meine Crew"
     assert detail.photo.license.name
@@ -141,6 +141,18 @@ def test_detail_runs_a_bounded_number_of_statements(app, db, read_repo, world):
         sa_event.remove(engine, "before_cursor_execute", count)
 
     assert len(statements) <= 14
+
+
+def test_co_organizers_come_back_ordered_by_id(read_repo, app, db, seeder, world):
+    # The seeder hands the ids over as a set, so the insert order is arbitrary.
+    event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
+        world["a"]
+    )
+
+    detail = read_repo("get_detail", event_id, world["a"])
+
+    ids = [o.id for o in detail.co_organizers]
+    assert ids == sorted([organizer_a_id, organizer_b_id])
 
 
 def test_edit_model_carries_the_photo_data_and_form_fields(read_repo, world):

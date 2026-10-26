@@ -72,18 +72,21 @@ models:
         pattern: many-to-many
         association_model: EventEventCategories
         association_table: event_eventcategories
+        order_by: id
         back_populates: events
       - name: custom_categories
         target_model: CustomEventCategory
         pattern: many-to-many
         association_table: event_customeventcategories
         association_model: EventCustomEventCategories
+        order_by: id
         back_populates: events
       - name: co_organizers
         target_model: EventOrganizer
         pattern: many-to-many
         association_model: EventCoOrganizers
         association_table: event_coorganizers
+        order_by: id
         back_populates: co_organized_events
       - name: date_definitions
         target_model: EventDateDefinition
