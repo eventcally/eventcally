@@ -61,6 +61,18 @@ describe("manage router", () => {
     expect(update.params).toMatchObject({ organizationId: "3", id: "8" });
   });
 
+  it("resolves the organizer form for create and update", async () => {
+    const create = await resolve("/manage/admin_unit/3/event_organizer/create");
+    expect(create.name).toBe("event-organizer-create");
+    expect(create.params.organizationId).toBe("3");
+
+    const update = await resolve("/manage/admin_unit/3/event_organizer/8/update");
+    expect(update.name).toBe("event-organizer-update");
+    expect(update.params).toMatchObject({ organizationId: "3", id: "8" });
+    expect((await resolve("/manage/admin_unit/3/event_organizer/x/update")).name).toBe("not-found");
+    expect((await resolve("/manage/admin_unit/x/event_organizer/create")).name).toBe("not-found");
+  });
+
   it("resolves the place form for create and update", async () => {
     const create = await resolve("/manage/admin_unit/3/event_place/create");
     expect(create.name).toBe("event-place-create");

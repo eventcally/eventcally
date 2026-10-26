@@ -65,6 +65,25 @@ def location_value_object(
     )
 
 
+def _float_or_none(value):
+    return None if value is None else float(value)
+
+
+def location_form_value(location) -> EventPlaceLocation:
+    """The optional location of a form from the stored location's read model."""
+    if not location:
+        return EventPlaceLocation()
+
+    return EventPlaceLocation(
+        street=location.street,
+        postalCode=location.postalCode,
+        city=location.city,
+        state=location.state,
+        latitude=_float_or_none(location.latitude),
+        longitude=_float_or_none(location.longitude),
+    )
+
+
 def logo_from_body(body: OrganizationBaseSave, stored_logo, errors: list):
     """The logo of the save body. `image_base64=None` keeps `stored_logo` (none when
     creating)."""

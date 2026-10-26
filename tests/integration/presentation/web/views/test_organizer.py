@@ -4,98 +4,18 @@ from tests.integration.seeder import Seeder
 from tests.integration.utils import UtilActions
 
 
-@pytest.mark.parametrize("db_error", [True, False])
-def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_error):
-    user_id, admin_unit_id = seeder.setup_base()
-    seeder.upsert_default_event_organizer(admin_unit_id)
+def test_create_renders_shell(client, utils: UtilActions, seeder: Seeder):
+    _, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url("manage_admin_unit.event_organizer_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
-    # Validation
-    utils.ajax_validation(url, "name", "Meine Crew 2", True)
-    utils.ajax_validation(url, "name", "Meine Crew", False)
-    utils.ajax_validation(url, "name", "x" * 256, False)  # field validator
-
-    # Google Place Autocomplete
-    utils.ajax_google_places(url, "location-google_place", "test")
-    utils.ajax_google_place(url, "location-google_place", "123")
-
-    if db_error:
-        utils.mock_db_commit(mocker)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Neuer Organisator",
-            "url": "http://test.de",
-            "email": "test@example.com",
-            "phone": "1234567890",
-            "fax": "0987654321",
-            "location-street": "Straße 1",
-            "location-postalCode": "38640",
-            "location-city": "Goslar",
-            "location-latitude": "51.9077888",
-            "location-longitude": "10.4333312",
-            "logo-image_base64": seeder.get_default_image_upload_base64(),
-            "logo-copyright_text": "EventCally",
-        },
-    )
-
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
-
-    utils.assert_response_redirect(
-        response, "manage_admin_unit.event_organizers", id=admin_unit_id
-    )
-
-    with app.app_context():
-        from project.infrastructure.models import EventOrganizer
-
-        organizer = (
-            EventOrganizer.query.filter(EventOrganizer.admin_unit_id == admin_unit_id)
-            .filter(EventOrganizer.name == "Neuer Organisator")
-            .first()
-        )
-        assert organizer is not None
-        assert organizer.name == "Neuer Organisator"
-        assert organizer.url == "http://test.de"
-        assert organizer.email == "test@example.com"
-        assert organizer.phone == "1234567890"
-        assert organizer.fax == "0987654321"
-        location = organizer.location
-        assert location.street == "Straße 1"
-        assert location.postalCode == "38640"
-        assert location.city == "Goslar"
-        assert float(location.latitude) == float("51.9077888")
-        assert float(location.longitude) == float("10.4333312")
-        assert organizer.logo is not None
-        assert organizer.logo.copyright_text == "EventCally"
+    assert b'<div id="app"' in response.data
+    assert b"manage" in response.data
 
 
-def test_create_logo_too_small(client, app, utils, seeder, mocker):
-    user_id, admin_unit_id = seeder.setup_base()
-
-    url = utils.get_url("manage_admin_unit.event_organizer_create", id=admin_unit_id)
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Neuer Organisator",
-            "logo-image_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
-        },
-    )
-
-    utils.assert_response_error_message(response)
-
-
-@pytest.mark.parametrize("db_error", [True, False])
-def test_update(client, seeder, utils, app, db, mocker, db_error):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_update_renders_shell(client, utils: UtilActions, seeder: Seeder):
+    _, admin_unit_id = seeder.setup_base()
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
     url = utils.get_url(
@@ -105,63 +25,31 @@ def test_update(client, seeder, utils, app, db, mocker, db_error):
     )
     response = utils.get_ok(url)
 
-    if db_error:
-        utils.mock_db_commit(mocker)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Neuer Name",
-            "logo-delete_flag": "y",
-        },
-    )
-
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
-
-    utils.assert_response_redirect(
-        response, "manage_admin_unit.event_organizers", id=admin_unit_id
-    )
-
-    with app.app_context():
-        from project.infrastructure.models import EventOrganizer
-
-        organizer = db.session.get(EventOrganizer, organizer_id)
-        assert organizer.name == "Neuer Name"
+    assert b'<div id="app"' in response.data
 
 
-def test_update_logo(client, seeder, utils, app, db, mocker):
-    user_id, admin_unit_id = seeder.setup_base()
-    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+def test_update_unknown_organizer(client, utils: UtilActions, seeder: Seeder):
+    _, admin_unit_id = seeder.setup_base()
 
     url = utils.get_url(
         "manage_admin_unit.event_organizer_update",
         id=admin_unit_id,
+        event_organizer_id=4711,
+    )
+    utils.assert_response_notFound(utils.get(url))
+
+
+def test_update_otherAdminUnit(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+    other_admin_unit_id = seeder.create_admin_unit(user_id, "Other crew")
+
+    url = utils.get_url(
+        "manage_admin_unit.event_organizer_update",
+        id=other_admin_unit_id,
         event_organizer_id=organizer_id,
     )
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "logo-image_base64": seeder.get_default_image_upload_base64(),
-            "logo-copyright_text": "New EventCally",
-        },
-    )
-
-    utils.assert_response_redirect(
-        response, "manage_admin_unit.event_organizers", id=admin_unit_id
-    )
-
-    with app.app_context():
-        from project.infrastructure.models import EventOrganizer
-
-        organizer = db.session.get(EventOrganizer, organizer_id)
-        assert organizer.logo is not None
-        assert organizer.logo.copyright_text == "New EventCally"
+    utils.get_unauthorized(url)
 
 
 @pytest.mark.parametrize("db_error", [True, False])
@@ -255,23 +143,6 @@ def test_ical(client, seeder, utils):
     seeder.create_event(admin_unit_id, end=seeder.get_now_by_minute())
     url = utils.get_url("main.organizer_ical", id=admin_unit_id)
     utils.get_ok(url)
-
-
-def test_update_name_validation(client, seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base()
-    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
-    seeder.upsert_event_organizer(admin_unit_id, "Andere")
-
-    url = utils.get_url(
-        "manage_admin_unit.event_organizer_update",
-        id=admin_unit_id,
-        event_organizer_id=organizer_id,
-    )
-    utils.get_ok(url)
-
-    utils.ajax_validation(url, "name", "Meine Crew", True)  # its own name
-    utils.ajax_validation(url, "name", "meine crew", True)
-    utils.ajax_validation(url, "name", "ANDERE", False)
 
 
 def _list_url(utils, admin_unit_id, **kwargs):

@@ -18,10 +18,11 @@ from project.container import Application
 from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.presentation.bff.errors import FieldValidationError
 from project.presentation.bff.manage import bff_manage_bp
-from project.presentation.bff.manage.image_form import image_from_save
+from project.presentation.bff.manage.image_form import image_form_value, image_from_save
 from project.presentation.bff.manage.organization_form import (
     actor,
     license_choices,
+    location_form_value,
     location_value_object,
 )
 from project.presentation.bff.manage.schemas import (
@@ -31,12 +32,10 @@ from project.presentation.bff.manage.schemas import (
     EventPlaceNameAvailabilityParams,
     EventPlaceSave,
     EventPlaceSaved,
-    OrganizationLogo,
 )
 from project.presentation.bff.routing import bff_route
 from project.presentation.shared.access import has_access
 from project.presentation.shared.query_results import result_or_404
-from project.shared.imageutils import get_data_uri_from_bytes
 
 
 def _write_access_or_forbidden(id: int):
@@ -53,10 +52,6 @@ def _place_or_404(id: int, place_id: int, query_bus: QueryBus):
         abort(404)
 
     return place
-
-
-def _float_or_none(value):
-    return None if value is None else float(value)
 
 
 def _name_errors(query_bus: QueryBus, id: int, name: str, exclude_id=None) -> list:
@@ -104,35 +99,14 @@ def get_event_place_form(
     query_bus: QueryBus = Provide[Application.cqrs.query_bus],
 ):
     place = _place_or_404(id, place_id, query_bus)
-    location = place.location
-    photo = place.photo
 
     return EventPlaceForm(
         id=place.id,
         name=place.name,
         url=place.url,
         description=place.description,
-        location=(
-            EventPlaceLocation(
-                street=location.street,
-                postalCode=location.postalCode,
-                city=location.city,
-                state=location.state,
-                latitude=_float_or_none(location.latitude),
-                longitude=_float_or_none(location.longitude),
-            )
-            if location
-            else EventPlaceLocation()
-        ),
-        photo=(
-            OrganizationLogo(
-                image_base64=get_data_uri_from_bytes(photo.data, photo.encoding_format),
-                copyright_text=photo.copyright_text,
-                license_id=photo.license.id if photo.license else None,
-            )
-            if photo and photo.data
-            else None
-        ),
+        location=location_form_value(place.location),
+        photo=image_form_value(place.photo),
         licenses=license_choices(query_bus),
     )
 

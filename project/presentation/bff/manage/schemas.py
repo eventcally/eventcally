@@ -293,7 +293,8 @@ class OrganizationLocation(BaseModel):
 
 
 class OrganizationLogo(BaseModel):
-    """An image field of a form (the organization logo, the place photo)."""
+    """An image field of a form (the organization logo, the place photo, the organizer
+    logo)."""
 
     # A data URI; `None` on save keeps the stored image.
     image_base64: Optional[str] = None
@@ -411,7 +412,7 @@ class OrganizationCreated(BaseModel):
 
 
 class EventPlaceLocation(BaseModel):
-    """Every part of a place location is optional."""
+    """An optional location (places, organizers): every part is optional."""
 
     street: Optional[str] = Field(default=None, max_length=255)
     postalCode: Optional[str] = Field(default=None, max_length=10)
@@ -464,6 +465,51 @@ class EventPlaceNameAvailabilityParams(BaseModel):
 
 
 class EventPlaceNameAvailability(BaseModel):
+    name_taken: Optional[bool] = None
+
+
+class EventOrganizerSave(BaseModel):
+    name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
+    ]
+    url: Optional[str] = Field(default=None, max_length=255)
+    email: Optional[str] = Field(default=None, max_length=255)
+    phone: Optional[str] = Field(default=None, max_length=255)
+    fax: Optional[str] = Field(default=None, max_length=255)
+    location: EventPlaceLocation
+    logo: Optional[OrganizationLogo] = None
+
+    @field_validator("url", "email", "phone", "fax", mode="before")
+    @classmethod
+    def _contact_empty_to_none(cls, value):
+        return _empty_to_none(value)
+
+
+class EventOrganizerForm(BaseModel):
+    # `None` and empty fields when creating.
+    id: Optional[int] = None
+    name: str = ""
+    url: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    fax: Optional[str] = None
+    location: EventPlaceLocation
+    logo: Optional[OrganizationLogo] = None
+    licenses: List[PlanningChoice]
+
+
+class EventOrganizerSaved(BaseModel):
+    id: int
+    redirect_url: str
+
+
+class EventOrganizerNameAvailabilityParams(BaseModel):
+    name: Optional[str] = Field(default=None, max_length=255)
+    # The organizer itself does not count as taken (update form).
+    exclude_id: Optional[int] = None
+
+
+class EventOrganizerNameAvailability(BaseModel):
     name_taken: Optional[bool] = None
 
 

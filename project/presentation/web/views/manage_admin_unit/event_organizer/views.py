@@ -1,41 +1,55 @@
-from flask import redirect
+from flask import redirect, render_template
 
 from project.application.commands import DeleteEventOrganizerCommand
+from project.presentation.web.boot import build_boot_data
 from project.presentation.web.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
     BaseUpdateView,
 )
 from project.presentation.web.views.manage_admin_unit.event_organizer.forms import (
-    CreateEventOrganizerForm,
     DeleteEventOrganizerForm,
-    UpdateEventOrganizerForm,
 )
 from project.presentation.web.views.utils import handle_base_error
 
 
+def _render_shell(title):
+    return render_template(
+        "manage/event_organizer_form.html",
+        entry="manage",
+        title=title,
+        boot=build_boot_data(base="/"),
+    )
+
+
 class CreateView(BaseCreateView):
-    form_class = CreateEventOrganizerForm
+    """A shell: the Vue page reads and saves through `/bff/manage`."""
 
-    @handle_base_error
-    def dispatch_validated_form(self, form: CreateEventOrganizerForm, object, **kwargs):
-        from project.presentation.shared.current_admin_unit import current_admin_unit
+    def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
 
-        cmd = form.create_create_command(current_admin_unit.id)
-        cmd_result = self.message_bus.handle_command(cmd)
-        self.flash_success_message(cmd_result, form)
-        return redirect(self.get_redirect_url(object=cmd_result))
+        if response:  # pragma: no cover
+            return response
+
+        return _render_shell(self.get_title())
 
 
 class UpdateView(BaseUpdateView):
-    form_class = UpdateEventOrganizerForm
+    """A shell, see `CreateView`."""
 
-    @handle_base_error
-    def dispatch_validated_form(self, form: UpdateEventOrganizerForm, object, **kwargs):
-        cmd = form.create_update_command(object.id)
-        self.message_bus.handle_command(cmd)
-        self.flash_success_message(object, form)
-        return redirect(self.get_redirect_url(object=object))
+    def dispatch_request(self, **kwargs):
+        response = self.check_access(**kwargs)
+
+        if response:  # pragma: no cover
+            return response
+
+        object = self.get_object_from_kwargs(**kwargs)
+        response = self.check_object_access(object)
+
+        if response:  # pragma: no cover
+            return response
+
+        return _render_shell(self.get_title())
 
 
 class DeleteView(BaseDeleteView):

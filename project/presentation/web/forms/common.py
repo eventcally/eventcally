@@ -15,7 +15,7 @@ from project.presentation.shared.images import image_value_object_from_data_uri
 from project.presentation.web.forms.widgets import MultiCheckboxField
 from project.presentation.web.modular.ajax import LicenseAjaxModelLoader
 from project.presentation.web.modular.base_form import BaseForm
-from project.presentation.web.modular.fields import AjaxSelectField, GooglePlaceField
+from project.presentation.web.modular.fields import AjaxSelectField
 from project.shared.imageutils import get_data_uri_from_bytes
 
 
@@ -43,30 +43,12 @@ class LocationCommandFormMixin(object):
             longitude=self.longitude.data,
         )
 
-    def create_update_command(self):
-        return LocationValueObject(
-            street=self.street.data,
-            postalCode=self.postalCode.data,
-            city=self.city.data,
-            state=self.state.data,
-            latitude=self.latitude.data,
-            longitude=self.longitude.data,
-        )
-
 
 class LocationForm(BaseForm, LocationFormMixin, LocationCommandFormMixin):
     postalCode = StringField(
         lazy_gettext("Postal code"), validators=[Optional(), Length(max=10)]
     )
     city = StringField(lazy_gettext("City"), validators=[Optional(), Length(max=255)])
-
-
-class GooglePlaceLocationForm(LocationForm):
-    google_place = GooglePlaceField(location_only=True)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.move_field_to_top("google_place")
 
 
 class Base64ImageForm(BaseForm):

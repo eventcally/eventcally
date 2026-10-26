@@ -7,6 +7,7 @@ test.describe("Event organizer", () => {
     await login();
     const adminUnitId = createAdminUnit();
     await page.goto(`/manage/admin_unit/${adminUnitId}/event_organizer/create`);
+    await expect(page.locator("#name")).toBeVisible();
     await page.locator("#name").fill("Mein Veranstalter");
     await screenshot(page, "create");
     await page.locator("#submit").click();
@@ -37,6 +38,7 @@ test.describe("Event organizer", () => {
     await page.goto(
       `/manage/admin_unit/${adminUnitId}/event_organizer/${eventOrganizerId}/update`
     );
+    await expect(page.locator("#name")).not.toHaveValue("");
     await screenshot(page, "update");
     await page.locator("#submit").click();
     await expect(page).toHaveURL(
