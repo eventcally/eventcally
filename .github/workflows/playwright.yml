@@ -206,7 +206,7 @@ jobs:
       - name: Comment test results
         # Pinned to a SHA rather than a tag: this action holds a write token.
         # daun/playwright-report-summary v4.1.0
-        uses: daun/playwright-report-summary@31ed947ec7a623d18a66cfd20ef546dc66ef8063
+        uses: daun/playwright-report-summary@5359ae22f265fd2dfdb7744a0cc6614c5c3abde6
         with:
           report-file: report.json
           report-tag: playwright
