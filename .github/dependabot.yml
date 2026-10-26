@@ -94,6 +94,12 @@ updates:
       - dependency-name: isort
       - dependency-name: flake8
       - dependency-name: import-linter
+      # Need code changes: 5.9 drops flask_security.forms.get_form_field_label,
+      # 2.1 defaults postgresql:// to the psycopg 3 driver.
+      - dependency-name: flask-security-too
+        versions: [">= 5.9"]
+      - dependency-name: sqlalchemy
+        versions: [">= 2.1"]
       # Major updates are bumped by hand (security updates still come).
       - dependency-name: "*"
         update-types: [version-update:semver-major]
