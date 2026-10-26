@@ -2,9 +2,15 @@
 # dependencies plus node, the pinned Playwright runner and Chromium, in one container,
 # because the specs start .scripts/e2e_fixture_server.py (python) from node.
 # Keep the tag in step with @playwright/test in package.json.
+# Node is pinned separately from the Playwright tag (the base ships whatever Node 24 its
+# NodeSource package had at build time); bump it when a Node 24 security release lands.
+FROM node:24.22.1-bookworm-slim AS node
+
 FROM mcr.microsoft.com/playwright:v1.62.1-noble
 
-RUN apt-get update -qq \
+RUN apt-get purge -y nodejs \
+    && rm -f /etc/apt/sources.list.d/nodesource.list \
+    && apt-get update -qq \
     && apt-get install -y --no-install-recommends python3-dev build-essential libpq-dev libffi-dev libssl-dev postgresql-client curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -22,6 +28,13 @@ ENV PYTHONUNBUFFERED=1
 
 COPY pyproject.toml uv.lock .python-version /opt/py/
 RUN cd /opt/py && uv sync --locked
+
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=node /usr/local/include/node /usr/local/include/node
+RUN ln -s ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx \
+    && node -v && npm -v
 
 # Node modules live outside /app so the bind-mounted repo (and a macOS node_modules in
 # it) cannot shadow them.

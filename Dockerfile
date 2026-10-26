@@ -1,5 +1,5 @@
 # Build the Vue frontend; Node is not part of the runtime image.
-FROM node:22-slim AS frontend
+FROM node:22.23.4-slim AS frontend
 WORKDIR /src
 COPY frontend/package.json frontend/package-lock.json frontend/.npmrc frontend/
 RUN cd frontend && npm ci
