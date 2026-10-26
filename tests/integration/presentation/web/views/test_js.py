@@ -190,7 +190,7 @@ def test_js_js_check_register_email_exists(client, seeder: Seeder, utils: UtilAc
         utils.assert_response_ok(response)
         assert (
             response.json
-            == 'Mit dieser E-Mail existiert bereits ein Account. &ndash; <a href="/reset">Passwort vergessen</a>'
+            == 'Mit dieser E-Mail existiert bereits ein Account. &ndash; <a href="/reset">Passwort vergessen?</a>'
         )
 
 

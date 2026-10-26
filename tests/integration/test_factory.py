@@ -23,7 +23,7 @@ def test_log_message_called_via_email_dispatched_signal(app):
     msg.body = "Test Body"
 
     with app.app_context():
-        email_dispatched.send(msg, app=app)
+        email_dispatched.send(app, message=msg)
 
 
 def drop_db(db):

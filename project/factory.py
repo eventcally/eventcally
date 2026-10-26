@@ -51,7 +51,7 @@ def _init_extensions(app: Flask):
 
     if app.config["MAIL_SUPPRESS_SEND"]:
 
-        def log_message(message, app):
+        def log_message(app, message):
             app.logger.info(message.subject)
             app.logger.info(message.body)
 

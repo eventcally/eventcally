@@ -47,7 +47,7 @@ class AjaxSelectField(SelectFieldBase):
 
         if self.data:
             formatted = self.loader.format(self.data)
-            choices.append((formatted[0], formatted[1], True))
+            choices.append((formatted[0], formatted[1], True, {}))
 
         return choices
 
@@ -111,7 +111,7 @@ class AjaxSelectMultipleField(AjaxSelectField):
         if self.data:
             for item in self.data:
                 formatted = self.loader.format(item)
-                choices.append((formatted[0], formatted[1], True))
+                choices.append((formatted[0], formatted[1], True, {}))
 
         return choices
 
