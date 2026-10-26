@@ -60,7 +60,7 @@ def round_to_next_day(date):
 
 def round_to_next_full_hour(date):
     new_date = date + timedelta(hours=1)
-    return date_add_time(date, new_date.hour, tzinfo=date.tzinfo)
+    return new_date.replace(minute=0, second=0, microsecond=0)
 
 
 def get_next_full_hour():

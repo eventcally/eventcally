@@ -2,7 +2,9 @@
 # Runs the pytest-split suite as N parallel groups, each against its own database and
 # Redis index, then combines coverage. Meant to run inside the `pytest` service of
 # docker-compose.test.yml, which supplies TEST_DB_ADMIN_URL / TEST_DB_HOST /
-# TEST_REDIS_HOST / TEST_LIMITER_REDIS_HOST.
+# TEST_REDIS_HOST / TEST_LIMITER_REDIS_HOST. CI overrides the defaults of
+# TEST_DB_CREDENTIALS (eventcally:pass), TEST_REDIS_CREDENTIALS (default:pass; empty = no
+# auth), TEST_REDIS_PORT and TEST_LIMITER_REDIS_PORT (both 6379).
 set -euo pipefail
 
 # Cores visible to this container, capped to what a container CPU quota (not just
@@ -45,6 +47,9 @@ GROUP=""
 NO_COV=0
 SLICE=""
 STORE_DURATIONS=0
+SHARD=1
+SHARDS=1
+NO_REPORT=0
 EXTRA_ARGS=()
 
 while [ $# -gt 0 ]; do
@@ -70,6 +75,20 @@ while [ $# -gt 0 ]; do
         STORE_DURATIONS=1
         shift
         ;;
+    --shard)
+        # 1-based; this invocation runs the global groups (SHARD-1)*SPLITS+1 .. SHARD*SPLITS
+        SHARD="$2"
+        shift 2
+        ;;
+    --shards)
+        SHARDS="$2"
+        shift 2
+        ;;
+    --no-report)
+        # Combine coverage only: no html, no global gate, no slice check (CI gates elsewhere)
+        NO_REPORT=1
+        shift
+        ;;
     --)
         shift
         EXTRA_ARGS=("$@")
@@ -81,6 +100,26 @@ while [ $# -gt 0 ]; do
         ;;
     esac
 done
+
+if [ "$SHARD" -lt 1 ] || [ "$SHARD" -gt "$SHARDS" ]; then
+    echo "--shard $SHARD is outside 1..$SHARDS (--shards)." >&2
+    exit 1
+fi
+
+# pytest-split sees every group of every shard; databases are named by the global group,
+# Redis indexes by the group's position within this shard (see run_group).
+TOTAL_GROUPS=$((SHARDS * SPLITS))
+FIRST_GROUP=$(((SHARD - 1) * SPLITS + 1))
+LAST_GROUP=$((SHARD * SPLITS))
+
+DB_CREDENTIALS="${TEST_DB_CREDENTIALS:-eventcally:pass}"
+REDIS_CREDENTIALS="${TEST_REDIS_CREDENTIALS-default:pass}"
+REDIS_AUTH=""
+if [ -n "$REDIS_CREDENTIALS" ]; then
+    REDIS_AUTH="${REDIS_CREDENTIALS}@"
+fi
+REDIS_PORT="${TEST_REDIS_PORT:-6379}"
+LIMITER_REDIS_PORT="${TEST_LIMITER_REDIS_PORT:-6379}"
 
 # Redis ships 16 logical databases (0-15); index 0 is reserved for anything not
 # opted into per-group isolation, so groups can only use 1-15.
@@ -131,16 +170,17 @@ fi
 
 run_group() {
     local group="$1"
+    local redis_index=$(((group - 1) % SPLITS + 1))
     local durations=()
     if [ "$STORE_DURATIONS" -eq 1 ]; then
         durations=(--store-durations --durations-path ".test_durations.${group}")
     fi
     COVERAGE_FILE=".coverage.${group}" \
-        TEST_DATABASE_URL="postgresql://eventcally:pass@${TEST_DB_HOST}:5432/eventcally_tests_${group}" \
-        TEST_REDIS_URL="redis://default:pass@${TEST_REDIS_HOST}:6379/${group}" \
-        TEST_LIMITER_REDIS_URL="redis://default:pass@${TEST_LIMITER_REDIS_HOST}:6379/${group}" \
-        pytest --cov=project --cov-context=test --splits "$SPLITS" --group "$group" \
-        "${durations[@]}" "${SLICE_PATHS[@]}" "${EXTRA_ARGS[@]}"
+        TEST_DATABASE_URL="postgresql://${DB_CREDENTIALS}@${TEST_DB_HOST}:5432/eventcally_tests_${group}" \
+        TEST_REDIS_URL="redis://${REDIS_AUTH}${TEST_REDIS_HOST}:${REDIS_PORT}/${redis_index}" \
+        TEST_LIMITER_REDIS_URL="redis://${REDIS_AUTH}${TEST_LIMITER_REDIS_HOST}:${LIMITER_REDIS_PORT}/${redis_index}" \
+        pytest --cov=project --cov-context=test --splits "$TOTAL_GROUPS" --group "$group" \
+        --splitting-algorithm least_duration "${durations[@]}" "${SLICE_PATHS[@]}" "${EXTRA_ARGS[@]}"
 }
 
 if [ -n "$GROUP" ]; then
@@ -149,10 +189,10 @@ if [ -n "$GROUP" ]; then
     exit $?
 fi
 
-python .scripts/create_test_databases.py --splits "$SPLITS"
+python .scripts/create_test_databases.py --groups $(seq "$FIRST_GROUP" "$LAST_GROUP")
 
 PIDS=()
-for i in $(seq 1 "$SPLITS"); do
+for i in $(seq "$FIRST_GROUP" "$LAST_GROUP"); do
     run_group "$i" &
     PIDS+=("$!")
 done
@@ -169,7 +209,6 @@ if [ "$NO_COV" -eq 1 ]; then
 fi
 
 coverage combine
-coverage html
 
 if [ "$STORE_DURATIONS" -eq 1 ]; then
     python - <<'PY'
@@ -187,6 +226,12 @@ with open(".test_durations", "w") as f:
 PY
     rm -f .test_durations.*
 fi
+
+if [ "$NO_REPORT" -eq 1 ]; then
+    exit "$FAILED"
+fi
+
+coverage html
 
 if [ -n "$SLICE" ]; then
     # A slice run only covers its own part of project/, so the global gate does not apply.

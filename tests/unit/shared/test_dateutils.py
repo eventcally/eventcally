@@ -119,6 +119,9 @@ def test_round_to_next_day_and_full_hour():
 
     assert round_to_next_day(date) == create_berlin_date(2030, 1, 3)
     assert round_to_next_full_hour(date) == create_berlin_date(2030, 1, 2, 13)
+    # Past 23:00 the next full hour is midnight of the following day.
+    late = create_berlin_date(2030, 1, 2, 23, 30)
+    assert round_to_next_full_hour(late) == create_berlin_date(2030, 1, 3)
 
 
 def test_get_next_full_hour():

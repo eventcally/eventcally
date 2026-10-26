@@ -4,7 +4,8 @@ from flask import current_app, jsonify, redirect, render_template, request, url_
 from flask_security import current_user
 
 from project.infrastructure.oauth2_server import generate_user_info, get_issuer
-from project.presentation.shared.oauth2_extensions import authorization, require_oauth
+from project.presentation.shared import oauth2_extensions
+from project.presentation.shared.oauth2_extensions import require_oauth
 from project.presentation.shared.scopes import scope_list, scopes
 from project.presentation.web.forms.security import AuthorizeForm
 from project.presentation.web.views.main_blueprint import main_bp
@@ -21,10 +22,12 @@ def authorize():
 
     if form.validate_on_submit():
         grant_user = user if form.allow.data else None
-        return authorization.create_authorization_response(grant_user=grant_user)
+        return oauth2_extensions.authorization.create_authorization_response(
+            grant_user=grant_user
+        )
     else:
         try:
-            grant = authorization.get_consent_grant(end_user=user)
+            grant = oauth2_extensions.authorization.get_consent_grant(end_user=user)
         except OAuth2Error as error:
             return error.description, error.status_code
 
@@ -41,17 +44,17 @@ def authorize():
 
 @main_bp.route("/oauth/token", methods=["POST"])
 def issue_token():
-    return authorization.create_token_response()
+    return oauth2_extensions.authorization.create_token_response()
 
 
 @main_bp.route("/oauth/revoke", methods=["POST"])
 def revoke_token():
-    return authorization.create_endpoint_response("revocation")
+    return oauth2_extensions.authorization.create_endpoint_response("revocation")
 
 
 @main_bp.route("/oauth/introspect", methods=["POST"])
 def introspect():
-    return authorization.create_endpoint_response("introspection")
+    return oauth2_extensions.authorization.create_endpoint_response("introspection")
 
 
 @main_bp.route("/oauth2-redirect.html")

@@ -3,7 +3,14 @@
 name: Tests
 
 # Controls when the action will run.
-on: [pull_request, workflow_dispatch]
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      store_durations:
+        description: Record test durations (uploads the merged .test_durations as the test-durations artifact)
+        type: boolean
+        default: false
 
 jobs:
   build-image:
@@ -104,7 +111,7 @@ jobs:
     container: ${{ needs.build-image.outputs.image }}
     strategy:
       matrix:
-        group: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4]
 
     # Service containers to run with `container-job`
     services:
@@ -116,7 +123,9 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: eventcally_tests
+          # Admin database: the runner creates eventcally_tests_<group> from it and refuses an
+          # admin database whose name starts with eventcally_tests.
+          POSTGRES_DB: eventcally
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -173,21 +182,58 @@ jobs:
           uv sync --locked
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
+      # Service containers can't take a `command`, so loosen durability here. Test databases
+      # are throwaway; all three settings are reloadable (same as docker-compose.test.yml).
+      - name: Tune Postgres for tests
+        run: |
+          python - <<'PY'
+          import os
+
+          import psycopg2
+
+          conn = psycopg2.connect(os.environ["TEST_DB_ADMIN_URL"])
+          conn.autocommit = True
+          with conn.cursor() as cur:
+              cur.execute("ALTER SYSTEM SET fsync = off")
+              cur.execute("ALTER SYSTEM SET synchronous_commit = off")
+              cur.execute("ALTER SYSTEM SET full_page_writes = off")
+              cur.execute("SELECT pg_reload_conf()")
+          PY
+        env:
+          TEST_DB_ADMIN_URL: ${{ needs.build-image.outputs.image != '' && 'postgresql://postgres:postgres@postgres/eventcally' || 'postgresql://postgres:postgres@localhost/eventcally' }}
+
+      # 4 shards x 4 pytest-split groups = 16 groups; each shard runs its 4 groups in parallel.
       - name: Run tests
-        run: pytest tests/integration --cov=project --cov-context=test --splits 4 --group ${{ matrix.group }}
+        run: >-
+          .scripts/run_tests.sh --shard ${{ matrix.shard }} --shards 4 --splits 4 --no-report
+          ${{ inputs.store_durations && '--store-durations' || '' }}
+          -- tests/integration
         env:
           # Inside the job container, services resolve by service name, not
           # localhost; limiter_redis is always reached on its container port
           # 6379, not the 6380 published for host-side access.
-          TEST_DATABASE_URL: ${{ needs.build-image.outputs.image != '' && 'postgresql://postgres:postgres@postgres/eventcally_tests' || 'postgresql://postgres:postgres@localhost/eventcally_tests' }}
-          TEST_REDIS_URL: ${{ needs.build-image.outputs.image != '' && 'redis://redis:6379' || 'redis://localhost:6379' }}
-          TEST_LIMITER_REDIS_URL: ${{ needs.build-image.outputs.image != '' && 'redis://limiter_redis:6379' || 'redis://localhost:6380' }}
+          TEST_DB_ADMIN_URL: ${{ needs.build-image.outputs.image != '' && 'postgresql://postgres:postgres@postgres/eventcally' || 'postgresql://postgres:postgres@localhost/eventcally' }}
+          TEST_DB_HOST: ${{ needs.build-image.outputs.image != '' && 'postgres' || 'localhost' }}
+          TEST_DB_CREDENTIALS: postgres:postgres
+          TEST_REDIS_HOST: ${{ needs.build-image.outputs.image != '' && 'redis' || 'localhost' }}
+          TEST_LIMITER_REDIS_HOST: ${{ needs.build-image.outputs.image != '' && 'limiter_redis' || 'localhost' }}
+          TEST_LIMITER_REDIS_PORT: ${{ needs.build-image.outputs.image != '' && '6379' || '6380' }}
+          # The CI Redis services have no password.
+          TEST_REDIS_CREDENTIALS: ""
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
-          name: coverage${{ matrix.group }}
+          name: coverage${{ matrix.shard }}
           path: .coverage
+          include-hidden-files: true
+
+      - name: Upload durations
+        if: ${{ inputs.store_durations }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-durations-${{ matrix.shard }}
+          path: .test_durations
           include-hidden-files: true
 
   coverage:
@@ -232,3 +278,37 @@ jobs:
         run: |
           python .scripts/test_slices.py check --data .coverage --markdown >> "$GITHUB_STEP_SUMMARY"
           python .scripts/test_slices.py check --data .coverage
+
+      # Only when recorded (workflow_dispatch with store_durations). Download the result and
+      # commit it as .test_durations; CI never pushes.
+      - name: Download durations
+        if: ${{ inputs.store_durations }}
+        uses: actions/download-artifact@v4
+        with:
+          pattern: test-durations-*
+          path: durations
+
+      - name: Merge durations
+        if: ${{ inputs.store_durations }}
+        run: |
+          python - <<'PY'
+          import glob
+          import json
+
+          durations = {}
+          for path in sorted(glob.glob("durations/*/.test_durations")):
+              with open(path) as f:
+                  durations.update(json.load(f))
+
+          with open(".test_durations", "w") as f:
+              json.dump(durations, f, sort_keys=True, indent=4)
+              f.write("\n")
+          PY
+
+      - name: Upload merged durations
+        if: ${{ inputs.store_durations }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-durations
+          path: .test_durations
+          include-hidden-files: true
