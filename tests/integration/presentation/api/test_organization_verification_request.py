@@ -103,6 +103,36 @@ def test_verify(client, app, db, seeder: Seeder, utils: UtilActions, mocker):
         assert relation.auto_verify_event_reference_requests
 
 
+def test_verify_outside_allowed_postal_codes(
+    client, app, db, seeder: Seeder, utils: UtilActions
+):
+    (
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario(
+        log_in_verifier=True, api=True
+    )
+    request_id = seeder.create_admin_unit_verification_request(
+        unverified_admin_unit_id, verifier_admin_unit_id
+    )
+
+    with app.app_context():
+        from project.infrastructure.models import AdminUnit
+
+        db.session.get(
+            AdminUnit, verifier_admin_unit_id
+        ).incoming_verification_requests_postal_codes = ["99999"]
+        db.session.commit()
+
+    url = utils.get_url(
+        "api_v1_organization_verification_request_verify", id=request_id
+    )
+    response = utils.post_json(url, {})
+    utils.assert_response_created(response)
+
+
 def test_verify_withoutBody(client, app, db, seeder: Seeder, utils: UtilActions):
     (
         verifier_user_id,

@@ -20,9 +20,10 @@ def ensure_actor_can_verify_organization(
 ) -> None:
     """Guard shared by `VerifyOrganizationHandler` and
     `ApproveOrganizationVerificationRequestHandler`: `actor` must be permitted
-    to act for `verifier_admin_unit_id`, and `verified_admin_unit_id` must be
-    verifiable by it. Both handlers call this right before
-    `verify_organization_relation`.
+    to act for `verifier_admin_unit_id`, and the verifier must currently have
+    `can_verify_other`. Neither `incoming_verification_requests_allowed` nor
+    the postal codes are re-checked here; they only gate request creation.
+    Both handlers call this right before `verify_organization_relation`.
     """
     ensure_actor_has_permission_for_admin_unit(
         actor,
