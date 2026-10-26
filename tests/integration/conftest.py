@@ -1,3 +1,4 @@
+import functools
 import importlib
 import os
 import pkgutil
@@ -68,26 +69,78 @@ def pytest_generate_tests(metafunc):
     for package_name in _APP_PACKAGES:
         _import_package_modules(package_name)
 
+    # Built while collecting for the same reason as the modules above: the lines
+    # create_app() runs belong to the empty context every slice counts.
+    _count_create_app_calls()
+    if not _shared.is_current:
+        _build_shared_app()
 
-@pytest.fixture
-def app():
+
+_APP_CONFIG = {
+    "SERVER_NAME": "localhost",
+    "TESTING": True,
+    "ADMIN_UNIT_CREATE_REQUIRES_ADMIN": False,
+    "API_READ_ANONYM": False,
+    "SECURITY_EMAIL_VALIDATOR_ARGS": {"check_deliverability": False},
+    "SECURITY_PASSWORD_HASH": "plaintext",
+    "SQLALCHEMY_ENGINE_OPTIONS": {
+        "pool_pre_ping": True,
+        "pool_size": 5,
+        "max_overflow": 0,
+    },
+}
+
+
+class _SharedApp:
+    """The Flask app of this test process, built once instead of once per test.
+
+    The `app` fixture hands it out and puts config and container overrides back after
+    each test. A test that calls `create_app()` itself replaces module-level state (the
+    OAuth server, the container wiring), so the shared app is dropped and rebuilt.
+    """
+
+    def __init__(self):
+        self.app = None
+        self.last_created = None
+        self.overrides = []
+        self.create_app_calls = 0
+        self.built_at_calls = 0
+
+    @property
+    def is_current(self):
+        """False when something else called create_app() since the app was built."""
+        return self.app is not None and self.create_app_calls == self.built_at_calls
+
+
+_shared = _SharedApp()
+
+
+def _count_create_app_calls():
+    import project.factory
+
+    if getattr(project.factory.create_app, "counts_calls", False):
+        return
+
+    create_app = project.factory.create_app
+
+    def counting_create_app(*args, **kwargs):
+        _shared.create_app_calls += 1
+        # Markers patched for the previous container would resolve against it while
+        # init_api() runs, before the new container is wired.
+        if _shared.last_created is not None:
+            with _shared.last_created.app_context():
+                _shared.last_created.container.unwire()
+        _shared.last_created = create_app(*args, **kwargs)
+        return _shared.last_created
+
+    counting_create_app.counts_calls = True
+    project.factory.create_app = counting_create_app
+
+
+def _build_shared_app():
     from project.factory import create_app
 
-    app = create_app(
-        {
-            "SERVER_NAME": "localhost",
-            "TESTING": True,
-            "ADMIN_UNIT_CREATE_REQUIRES_ADMIN": False,
-            "API_READ_ANONYM": False,
-            "SECURITY_EMAIL_VALIDATOR_ARGS": {"check_deliverability": False},
-            "SECURITY_PASSWORD_HASH": "plaintext",
-            "SQLALCHEMY_ENGINE_OPTIONS": {
-                "pool_pre_ping": True,
-                "pool_size": 5,
-                "max_overflow": 0,
-            },
-        }
-    )
+    app = create_app(_APP_CONFIG)
 
     assert os.environ["DATABASE_URL"] == os.environ.get(
         "TEST_DATABASE_URL", "postgresql://user:pass@myserver/ec_tests"
@@ -95,8 +148,19 @@ def app():
     assert app.config["SQLALCHEMY_DATABASE_URI"] == os.environ["DATABASE_URL"]
 
     app.testing = True
+    _shared.app = app
+    # Containers are wired together through overrides; only the ones added later go.
+    _shared.overrides = [
+        (provider, provider.overridden) for provider in app.container.traverse()
+    ]
+    # Whatever calls create_app() after this makes the shared app stale.
+    _shared.built_at_calls = _shared.create_app_calls
 
+
+@functools.cache
+def _test_doubles():
     from project.application.abstract_event_dispatcher import AbstractEventDispatcher
+    from project.application.services.abstract_email_service import AbstractEmailService
     from project.domain import events
 
     class TestEventDispatcher(AbstractEventDispatcher):
@@ -123,11 +187,6 @@ def app():
                 if isinstance(event, event_type):
                     return event
             return None  # pragma: no cover
-
-    app.test_event_dispatcher = TestEventDispatcher(app.container)
-    app.container.cqrs.event_dispatcher.override(app.test_event_dispatcher)
-
-    from project.application.services.abstract_email_service import AbstractEmailService
 
     class _FakeGroupResult:
         id = "test-group-result"
@@ -169,6 +228,25 @@ def app():
                 count=len(signatures),
             )
 
+    return TestEventDispatcher, TestEmailService
+
+
+@pytest.fixture
+def app():
+    if not _shared.is_current:
+        _build_shared_app()
+
+    app = _shared.app
+    config = dict(app.config)
+
+    # Fresh singletons, as with a new container.
+    app.container.reset_singletons()
+
+    TestEventDispatcher, TestEmailService = _test_doubles()
+
+    app.test_event_dispatcher = TestEventDispatcher(app.container)
+    app.container.cqrs.event_dispatcher.override(app.test_event_dispatcher)
+
     localization_service = app.container.infrastructure.localization_service()
     template_render_service = app.container.infrastructure.template_render_service()
     app.test_email_service = TestEmailService(
@@ -185,6 +263,17 @@ def app():
     with app.app_context():
         db.session.remove()
         db.engine.dispose()
+
+    if not _shared.is_current:
+        return
+
+    app.config.clear()
+    app.config.update(config)
+    for provider, overridden in _shared.overrides:
+        if provider.overridden != overridden:
+            provider.reset_override()
+            for override in overridden:
+                provider.override(override)
 
 
 def drop_all_with_reflection(db):
