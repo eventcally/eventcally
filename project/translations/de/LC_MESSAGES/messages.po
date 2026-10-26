@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-24 14:07+0200\n"
+"POT-Creation-Date: 2026-10-26 11:55+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -264,7 +264,7 @@ msgstr "Postleitzahl hinzufügen"
 
 #: project/presentation/web/templates/_macros.html:507
 #: project/presentation/web/templates/_macros.html:666
-#: project/presentation/web/templates/_macros.html:1329
+#: project/presentation/web/templates/_macros.html:1310
 msgid "Add to calendar"
 msgstr "Zum Kalender"
 
@@ -402,7 +402,7 @@ msgid "An error occurred"
 msgstr "Ein Fehler ist aufgetreten"
 
 #: project/infrastructure/models/event_date.py:73
-#: project/presentation/web/templates/_macros.html:1144
+#: project/presentation/web/templates/_macros.html:1143
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:98
 msgid "An event can last a maximum of 180 days."
 msgstr "Eine Veranstaltung darf maximal 180 Tage dauern."
@@ -454,7 +454,7 @@ msgstr ""
 msgid "App successfully installed"
 msgstr ""
 
-#: project/presentation/web/templates/_macros.html:1340
+#: project/presentation/web/templates/_macros.html:1321
 msgid "Apple calendar"
 msgstr "Apple Kalender"
 
@@ -550,7 +550,6 @@ msgstr "Abbrechen"
 #: project/presentation/web/templates/profile.html:13
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:75
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:114
-#: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:13
 #: project/presentation/web/views/user_blueprint/user/forms.py:19
 #: project/presentation/web/views/user_blueprint/user/views.py:102
 msgid "Cancel deletion"
@@ -788,7 +787,7 @@ msgid "Copy"
 msgstr "Kopieren"
 
 #: frontend/src/shared/IcalExportModal.vue:38
-#: project/presentation/web/templates/_macros.html:1308
+#: project/presentation/web/templates/_macros.html:1289
 msgid "Copy link"
 msgstr "Link kopieren"
 
@@ -997,7 +996,6 @@ msgstr "Veranstaltung löschen"
 #: frontend/src/apps/admin/components/OrganizationDeleteModal.vue:32
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:181
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:238
-#: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:23
 msgid "Delete organization"
 msgstr "Organisation löschen"
 
@@ -1173,7 +1171,7 @@ msgstr "Beziehung bearbeiten"
 #: frontend/src/apps/manage/components/ContactLines.vue:27
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:181
 #: project/presentation/web/templates/_macros.html:296
-#: project/presentation/web/templates/_macros.html:1314
+#: project/presentation/web/templates/_macros.html:1295
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:18
 #: project/presentation/web/views/manage_admin_unit/event_organizer/forms.py:31
 #: project/presentation/web/views/manage_admin_unit/member/displays.py:14
@@ -1871,7 +1869,7 @@ msgstr "Von"
 msgid "General"
 msgstr "Allgemein"
 
-#: project/presentation/web/templates/_macros.html:1338
+#: project/presentation/web/templates/_macros.html:1319
 msgid "Google calendar"
 msgstr "Google Kalender"
 
@@ -2155,11 +2153,6 @@ msgstr "Ungültiger Ort."
 msgid "Invalid postal code(s)"
 msgstr "Ungültige Postleitzahl(en)"
 
-#: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/read.html:4
-#: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/read.html:8
-msgid "Invitation"
-msgstr "Einladung"
-
 #: project/presentation/web/views/user_blueprint/organization_member_invitation/views.py:40
 msgid "Invitation successfully accepted"
 msgstr "Einladung erfolgreich akzeptiert"
@@ -2185,7 +2178,7 @@ msgstr "Andere Organisationen einladen"
 msgid "Issued"
 msgstr "Ausgestellt"
 
-#: project/presentation/web/templates/_macros.html:1176
+#: project/presentation/web/templates/_macros.html:1175
 #, python-format
 msgid "Just use %(term)s"
 msgstr "Verwende einfach %(term)s"
@@ -2335,7 +2328,7 @@ msgid "Link color"
 msgstr "Linkfarbe"
 
 #: frontend/src/shared/IcalExportModal.vue:18
-#: project/presentation/web/templates/_macros.html:1308
+#: project/presentation/web/templates/_macros.html:1289
 msgid "Link copied"
 msgstr "Link kopiert"
 
@@ -2839,7 +2832,7 @@ msgstr "Veranstalter"
 msgid "Organizers"
 msgstr "Veranstalter"
 
-#: project/presentation/web/templates/_macros.html:1342
+#: project/presentation/web/templates/_macros.html:1323
 msgid "Other calendar"
 msgstr "Anderer Kalender"
 
@@ -3000,7 +2993,7 @@ msgstr "Bitte wähle eine Bilddatei aus."
 msgid "Please download the private key. It will only be available once."
 msgstr ""
 
-#: project/presentation/web/templates/_macros.html:1148
+#: project/presentation/web/templates/_macros.html:1147
 msgid "Please enter a valid time, between 00:00 and 23:59."
 msgstr "Bitte gib eine gültige Uhrzeit zwischen 00:00 und 23:59 ein."
 
@@ -3125,7 +3118,7 @@ msgstr "Empfänger"
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:185
 #: project/presentation/web/templates/_macros.html:958
 #: project/presentation/web/templates/_macros.html:983
-#: project/presentation/web/templates/_macros.html:1428
+#: project/presentation/web/templates/_macros.html:1409
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:81
 #: project/templates/email/referenced_event_changed_notice.txt:5
 #: project/templates/email/referenced_event_changed_notice.txt:30
@@ -3252,7 +3245,7 @@ msgstr "Beziehungen"
 msgid "Remember me"
 msgstr "Angemeldet bleiben"
 
-#: project/presentation/web/templates/_macros.html:1429
+#: project/presentation/web/templates/_macros.html:1410
 msgid "Remove event date"
 msgstr "Termin entfernen"
 
@@ -3545,7 +3538,7 @@ msgstr ""
 
 #: project/presentation/web/templates/_macros.html:503
 #: project/presentation/web/templates/_macros.html:662
-#: project/presentation/web/templates/_macros.html:1299
+#: project/presentation/web/templates/_macros.html:1280
 #: project/presentation/web/templates/event/actions.html:33
 msgid "Share"
 msgstr "Teilen"
@@ -3814,7 +3807,6 @@ msgstr ""
 "öffentlich sichtbar."
 
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:168
-#: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/organization/update.html:12
 msgid "The organization is scheduled for deletion."
 msgstr "Die Organisation ist zur Löschung vorgesehen."
 
@@ -3848,7 +3840,7 @@ msgstr ""
 "und Unterstriche enthalten."
 
 #: project/infrastructure/models/event_date.py:69
-#: project/presentation/web/templates/_macros.html:1127
+#: project/presentation/web/templates/_macros.html:1126
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:88
 msgid "The start must be before the end."
 msgstr "Der Start muss vor dem Ende sein."
@@ -4219,7 +4211,6 @@ msgstr "Widget-Typ"
 msgid "Widgets"
 msgstr "Widgets"
 
-#: project/presentation/web/views/manage_admin_unit/templates/manage_admin_unit/read.html:10
 #: project/presentation/web/views/user_blueprint/organization_member_invitation/views.py:22
 #, python-format
 msgid "Would you like to accept the invitation from %(name)s?"
@@ -4230,7 +4221,7 @@ msgstr "Möchtest du die Einladung von %(name)s akzeptieren?"
 msgid "Write %(entity_display_name)s"
 msgstr "%(entity_display_name)s schreiben"
 
-#: project/presentation/web/templates/_macros.html:1341
+#: project/presentation/web/templates/_macros.html:1322
 msgid "Yahoo calendar"
 msgstr "Yahoo Kalender"
 
@@ -4888,4 +4879,7 @@ msgstr "bis"
 
 #~ msgid "Save review"
 #~ msgstr "Prüfung speichern"
+
+#~ msgid "Invitation"
+#~ msgstr "Einladung"
 

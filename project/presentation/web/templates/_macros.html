@@ -1104,8 +1104,7 @@
 {% endif %}
 {% endmacro %}
 
-{% macro render_jquery_steps_header() %}
-<script src="{{ url_for('static', filename='ext/jquery.steps.1.1.0.min.js')}}"></script>
+{% macro render_jquery_validate_header() %}
 <script src="{{ url_for('static', filename='ext/jquery.validate.1.19.2.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/jquery-validate.1.19.2.additional-methods.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/jquery-validate.1.19.2.messages_de.min.js')}}"></script>
@@ -1267,24 +1266,6 @@ $('#allday').on('change', function() {
   {% if 'link' in styles %}
   .card-title, .page-link, .page-link:hover, a, a:hover {
       color: {{ styles['link'] }};
-  }
-  {% endif %}
-
-  {% if 'primary' in styles %}
-  .wizard > .steps .current a,
-  .wizard > .steps .current a:hover,
-  .wizard > .steps .current a:active,
-  .wizard > .steps .current a,
-  .wizard > .steps .current a:hover,
-  .wizard > .steps .current a:active,
-  .wizard > .steps .done a,
-  .wizard > .steps .done a:hover,
-  .wizard > .steps .done a:active,
-  .wizard > .actions a,
-  .wizard > .actions a:hover,
-  .wizard > .actions a:active
-  {
-      background-color: {{ styles['primary'] }};
   }
   {% endif %}
 
