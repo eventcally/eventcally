@@ -25,26 +25,26 @@
     "leaflet": "1.9.4",
     "leaflet.markercluster": "1.5.3",
     "openapi-fetch": "0.17.0",
-    "reka-ui": "2.10.5",
+    "reka-ui": "2.11.0",
     "temporal-polyfill": "1.0.6",
-    "vue": "3.5.43",
-    "vue-i18n": "11.4.2",
-    "vue-router": "5.3.1"
+    "vue": "3.5.44",
+    "vue-i18n": "11.4.16",
+    "vue-router": "5.4.0"
   },
   "devDependencies": {
     "@types/gettext-parser": "9.0.0",
     "@types/leaflet": "1.9.22",
     "@types/leaflet.markercluster": "1.5.6",
-    "@types/node": "24.10.1",
-    "@vitejs/plugin-vue": "6.0.9",
+    "@types/node": "24.19.2",
+    "@vitejs/plugin-vue": "6.0.10",
     "@vue/test-utils": "2.5.1",
     "gettext-parser": "9.1.1",
     "jsdom": "29.1.1",
     "openapi-typescript": "7.13.0",
     "tsx": "4.23.15",
     "typescript": "5.9.3",
-    "vite": "8.3.2",
-    "vitest": "5.0.3",
-    "vue-tsc": "3.3.12"
+    "vite": "8.3.4",
+    "vitest": "5.0.5",
+    "vue-tsc": "3.3.13"
   }
 }
