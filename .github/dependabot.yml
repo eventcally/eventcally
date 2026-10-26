@@ -2,6 +2,7 @@
 # update (setup-node `node-version`, setup-uv `version`, lint.yml tool inputs, the uv
 # `COPY --from` tag, .pre-commit-config.yaml); those are ignored here and bumped by hand.
 # The pre-commit ecosystem is left out on purpose: every hook rev is such a lockstep pin.
+# Version updates are minor and patch only; major updates are done by hand.
 version: 2
 
 updates:
@@ -15,6 +16,10 @@ updates:
     cooldown:
       default-days: 7
     labels: [dependencies, github-actions]
+    ignore:
+      # Major updates are bumped by hand (security updates still come).
+      - dependency-name: "*"
+        update-types: [version-update:semver-major]
     groups:
       github-actions:
         patterns: ["*"]
@@ -38,11 +43,12 @@ updates:
       # bump is a deliberate multi-file change.
       - dependency-name: python
         versions: [">= 3.13"]
-      # Keep the Node 22 (frontend build) and 24 (e2e image) lines.
-      - dependency-name: node
-        update-types: [version-update:semver-major]
       # Must equal @playwright/test in package.json; bumped with the npm PR.
-      - dependency-name: mcr.microsoft.com/playwright
+      # Dependabot names the image "playwright", without the registry.
+      - dependency-name: "*playwright"
+      # Major updates are bumped by hand (security updates still come).
+      - dependency-name: "*"
+        update-types: [version-update:semver-major]
     groups:
       docker-minor-patch:
         update-types: [minor, patch]
@@ -62,7 +68,8 @@ updates:
     ignore:
       # PostgreSQL major = data migration; also pinned in test.yml and deployment/.
       - dependency-name: postgis/postgis
-      - dependency-name: node
+      # Major updates are bumped by hand (security updates still come).
+      - dependency-name: "*"
         update-types: [version-update:semver-major]
     groups:
       docker-compose-minor-patch:
@@ -78,7 +85,6 @@ updates:
       timezone: Europe/Berlin
     cooldown:
       default-days: 7
-      semver-major-days: 14
     labels: [dependencies, python]
     ignore:
       # jsonschema 3.2.0 imports pkg_resources (see pyproject.toml).
@@ -88,6 +94,9 @@ updates:
       - dependency-name: isort
       - dependency-name: flake8
       - dependency-name: import-linter
+      # Major updates are bumped by hand (security updates still come).
+      - dependency-name: "*"
+        update-types: [version-update:semver-major]
     groups:
       python-minor-patch:
         update-types: [minor, patch]
@@ -105,13 +114,11 @@ updates:
       timezone: Europe/Berlin
     cooldown:
       default-days: 7
-      semver-major-days: 14
     open-pull-requests-limit: 10
     labels: [dependencies, javascript]
     ignore:
-      - dependency-name: "@types/node"
-        update-types: [version-update:semver-major]
-      - dependency-name: bootstrap
+      # Major updates are bumped by hand (security updates still come).
+      - dependency-name: "*"
         update-types: [version-update:semver-major]
     groups:
       frontend-minor-patch:
@@ -131,6 +138,10 @@ updates:
     cooldown:
       default-days: 7
     labels: [dependencies, javascript]
+    ignore:
+      # Major updates are bumped by hand (security updates still come).
+      - dependency-name: "*"
+        update-types: [version-update:semver-major]
     groups:
       playwright:
         patterns: ["*"]
