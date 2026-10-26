@@ -120,7 +120,7 @@ services:
         condition: service_started
 
   flower:
-    image: mher/flower:1.2
+    image: mher/flower:2.1
     ports:
       - "5555:5555"
     environment:
