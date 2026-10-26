@@ -513,7 +513,7 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
                 source_admin_unit_id=admin_unit.id,
                 target_admin_unit_id=cmd.target_admin_unit_id,
             )
-        ):  # pragma: no cover
+        ):
             abort(401)
 
         cmd_result = self.message_bus.handle_command(cmd)

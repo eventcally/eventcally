@@ -164,3 +164,35 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_
 
         request = db.session.get(AdminUnitVerificationRequest, request_id)
         assert request is None
+
+
+def test_create_outside_allowed_postal_codes_redirects_to_select(
+    client, app, db, utils: UtilActions, seeder: Seeder
+):
+    (
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario()
+
+    with app.app_context():
+        from project.infrastructure.models import AdminUnit
+
+        db.session.get(
+            AdminUnit, verifier_admin_unit_id
+        ).incoming_verification_requests_postal_codes = ["99999"]
+        db.session.commit()
+
+    url = utils.get_url(
+        "main.manage_organization_requests_outgoing_create",
+        id=unverified_admin_unit_id,
+        target_id=verifier_admin_unit_id,
+    )
+    response = utils.get(url)
+
+    utils.assert_response_redirect(
+        response,
+        "main.manage_organization_verification_requests_outgoing_create_select",
+        id=unverified_admin_unit_id,
+    )

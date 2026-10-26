@@ -72,8 +72,7 @@ def _seed_organizations(
 
     Naming here matches `ensure_organization_can_verify`'s own convention:
     `target_admin_unit_id` is the verifier (whose capability flags are
-    checked), `source_admin_unit_id` is the one being verified (whose postal
-    code is checked) — the opposite of `verify_organization_relation`'s
+    checked), `source_admin_unit_id` is the one being verified — the opposite of `verify_organization_relation`'s
     source/target, which mean verifier/verified respectively.
     """
     uow.organizations.add(
@@ -220,6 +219,39 @@ class TestVerifyOrganizationHandler:
 
         with pytest.raises(ConstraintError):
             VerifyOrganizationHandler().handle(cmd, uow)
+
+    def test_ignores_allowed_postal_codes(self, uow):
+        self._grant_permission(uow, verifier_admin_unit_id=1)
+        _seed_organizations(
+            uow,
+            source_admin_unit_id=2,
+            target_admin_unit_id=1,
+            target_allowed_postal_codes=["12345"],
+            source_postal_code="99999",
+        )
+        cmd = commands.VerifyOrganizationCommand.model_construct(
+            actor=ACTOR, source_admin_unit_id=1, target_admin_unit_id=2
+        )
+
+        result = VerifyOrganizationHandler().handle(cmd, uow)
+
+        assert uow.organization_relations.get(result.id).verify is True
+
+    def test_ignores_incoming_requests_not_allowed(self, uow):
+        self._grant_permission(uow, verifier_admin_unit_id=1)
+        _seed_organizations(
+            uow,
+            source_admin_unit_id=2,
+            target_admin_unit_id=1,
+            target_incoming_verification_requests_allowed=False,
+        )
+        cmd = commands.VerifyOrganizationCommand.model_construct(
+            actor=ACTOR, source_admin_unit_id=1, target_admin_unit_id=2
+        )
+
+        result = VerifyOrganizationHandler().handle(cmd, uow)
+
+        assert uow.organization_relations.get(result.id).verify is True
 
     def test_platform_admin_bypasses_membership_check(self, uow):
         admin_user_id = 999
@@ -396,7 +428,7 @@ class TestApproveOrganizationVerificationRequestHandler:
         unchanged = uow.organization_verification_requests.get(request.id)
         assert unchanged.review_status.name == "inbox"
 
-    def test_target_not_accepting_requests_raises_constraint_error(self, uow):
+    def test_target_not_accepting_requests_succeeds(self, uow):
         request = self._seed_request(
             uow, source_admin_unit_id=1, target_admin_unit_id=2
         )
@@ -412,10 +444,12 @@ class TestApproveOrganizationVerificationRequestHandler:
             actor=ACTOR, id=request.id
         )
 
-        with pytest.raises(ConstraintError):
-            ApproveOrganizationVerificationRequestHandler().handle(cmd, uow)
+        ApproveOrganizationVerificationRequestHandler().handle(cmd, uow)
 
-    def test_source_outside_allowed_postal_codes_raises_constraint_error(self, uow):
+        updated = uow.organization_verification_requests.get(request.id)
+        assert updated.review_status.name == "verified"
+
+    def test_source_outside_allowed_postal_codes_succeeds(self, uow):
         request = self._seed_request(
             uow, source_admin_unit_id=1, target_admin_unit_id=2
         )
@@ -432,29 +466,11 @@ class TestApproveOrganizationVerificationRequestHandler:
             actor=ACTOR, id=request.id
         )
 
-        with pytest.raises(ConstraintError):
-            ApproveOrganizationVerificationRequestHandler().handle(cmd, uow)
-
-    def test_source_inside_allowed_postal_codes_succeeds(self, uow):
-        request = self._seed_request(
-            uow, source_admin_unit_id=1, target_admin_unit_id=2
-        )
-        _seed_organizations(
-            uow,
-            source_admin_unit_id=1,
-            target_admin_unit_id=2,
-            target_allowed_postal_codes=["12345"],
-            source_postal_code="12345",
-        )
-        self._grant_approve_permission(uow, target_admin_unit_id=2)
-
-        cmd = commands.ApproveOrganizationVerificationRequestCommand.model_construct(
-            actor=ACTOR, id=request.id
-        )
-
         result = ApproveOrganizationVerificationRequestHandler().handle(cmd, uow)
 
         assert result.id > 0
+        updated = uow.organization_verification_requests.get(request.id)
+        assert updated.review_status.name == "verified"
 
 
 # ---------------------------------------------------------------------------

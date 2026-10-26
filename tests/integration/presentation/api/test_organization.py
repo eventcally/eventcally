@@ -692,6 +692,45 @@ def test_organization_verification_requests_outgoing(
     utils.get_json_ok(url)
 
 
+def test_organization_verification_requests_outgoing_post_outside_allowed_postal_codes(
+    client, app, seeder: Seeder, utils: UtilActions, db
+):
+    (
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario(api=True)
+
+    with app.app_context():
+        from project.infrastructure.models import AdminUnit
+
+        db.session.get(
+            AdminUnit, verifier_admin_unit_id
+        ).incoming_verification_requests_postal_codes = ["99999"]
+        db.session.commit()
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_organization_verification_request_list",
+        id=unverified_admin_unit_id,
+    )
+    response = utils.post_json(
+        url, {"target_organization": {"id": verifier_admin_unit_id}}
+    )
+    utils.assert_response_unauthorized(response)
+
+    with app.app_context():
+        from project.infrastructure.models import AdminUnitVerificationRequest
+
+        assert (
+            AdminUnitVerificationRequest.query.filter(
+                AdminUnitVerificationRequest.source_admin_unit_id
+                == unverified_admin_unit_id
+            ).count()
+            == 0
+        )
+
+
 def test_organization_verification_requests_outgoing_post(
     client, app, seeder: Seeder, utils: UtilActions, db, mocker
 ):

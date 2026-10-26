@@ -447,6 +447,33 @@ def test_verification_get_review_shows_profile_and_members(
     )
 
 
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("incoming_verification_requests_postal_codes", ["99999"]),
+        ("incoming_verification_requests_allowed", False),
+    ],
+)
+def test_verification_approve_ignores_creation_only_rules(
+    client, app, db, utils, verification, field, value
+):
+    with app.app_context():
+        from project.infrastructure.models import AdminUnit
+
+        setattr(db.session.get(AdminUnit, verification["admin_unit_id"]), field, value)
+        db.session.commit()
+
+    response = utils.post_json(f"{verification['url']}/approve", {"auto_verify": False})
+
+    assert response.status_code == 200
+    assert _verification_request(app, db, verification["request_id"])[0] == "verified"
+    relation = _relation(
+        app, verification["admin_unit_id"], verification["source_admin_unit_id"]
+    )
+    assert relation is not None
+    assert relation["verify"]
+
+
 def test_verification_approve(client, app, db, utils, verification):
     with app.app_context():
         from project.infrastructure.models import AdminUnit

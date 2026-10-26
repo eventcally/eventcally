@@ -80,7 +80,7 @@ def manage_organization_requests_outgoing_create(
             source_admin_unit_id=admin_unit.id,
             target_admin_unit_id=target_admin_unit.id,
         )
-    ):  # pragma: no cover
+    ):
         return redirect(
             url_for(
                 "main.manage_organization_verification_requests_outgoing_create_select",

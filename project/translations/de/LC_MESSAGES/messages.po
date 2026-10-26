@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-26 11:55+0100\n"
+"POT-Creation-Date: 2026-10-26 14:40+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -3585,10 +3585,6 @@ msgstr "Nur nicht empfohlene Veranstaltungen anzeigen"
 msgid "Sort"
 msgstr "Sortierung"
 
-#: project/domain/services/organization_verification.py:40
-msgid "Source organization is outside the allowed postal codes."
-msgstr "Die anfragende Organisation liegt außerhalb der erlaubten Postleitzahlen."
-
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:51
 #: project/presentation/web/views/manage_admin_unit/event/forms.py:65
 msgid "Start"
@@ -3670,7 +3666,7 @@ msgstr "Zielgruppe"
 msgid "Target group origin"
 msgstr "Für Touristen/Einwohner geeignet"
 
-#: project/domain/services/organization_verification.py:26
+#: project/domain/services/organization_verification.py:32
 msgid "Target organization can no longer verify other organizations."
 msgstr "Die Zielorganisation kann keine anderen Organisationen mehr verifizieren."
 
@@ -4882,4 +4878,9 @@ msgstr "bis"
 
 #~ msgid "Invitation"
 #~ msgstr "Einladung"
+
+#~ msgid "Source organization is outside the allowed postal codes."
+#~ msgstr ""
+#~ "Die anfragende Organisation liegt außerhalb"
+#~ " der erlaubten Postleitzahlen."
 
