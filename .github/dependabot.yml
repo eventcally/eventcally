@@ -7,7 +7,7 @@ version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
-    schedule: &weekly
+    schedule:
       interval: weekly
       day: monday
       time: "06:00"
@@ -24,7 +24,11 @@ updates:
 
   - package-ecosystem: docker
     directory: /                 # Dockerfile and Dockerfile.e2e
-    schedule: *weekly
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
     cooldown:
       default-days: 7
       exclude: ["node"]          # Node patch images are security releases
@@ -46,7 +50,11 @@ updates:
 
   - package-ecosystem: docker-compose
     directory: /                 # docker-compose.yml, .debug.yml, .test.yml
-    schedule: *weekly
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
     cooldown:
       default-days: 7
       exclude: ["node"]
@@ -63,7 +71,11 @@ updates:
 
   - package-ecosystem: uv
     directory: /                 # pyproject.toml + uv.lock
-    schedule: *weekly
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
     cooldown:
       default-days: 7
       semver-major-days: 14
@@ -86,7 +98,11 @@ updates:
 
   - package-ecosystem: npm
     directory: /frontend
-    schedule: *weekly
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
     cooldown:
       default-days: 7
       semver-major-days: 14
@@ -107,7 +123,11 @@ updates:
 
   - package-ecosystem: npm
     directory: /                 # @playwright/test only
-    schedule: *weekly
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
     cooldown:
       default-days: 7
     labels: [dependencies, javascript]
