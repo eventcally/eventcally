@@ -25,7 +25,7 @@ jobs:
       image: ${{ steps.set-image.outputs.image }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
 
       - name: Determine whether this run can push to GHCR
         id: trust
@@ -74,10 +74,10 @@ jobs:
       contents: read
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.12.1"
           python-version: "3.12"
@@ -92,7 +92,7 @@ jobs:
         run: pytest tests/unit --cov=project --cov-context=test
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-unit
           path: .coverage
@@ -164,13 +164,13 @@ jobs:
 
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
 
       # Fallback path only -- inside the build-image container, the
       # interpreter and dependencies are already baked in.
       - name: Set up uv
         if: needs.build-image.outputs.image == ''
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.12.1"
           python-version: "3.12"
@@ -222,7 +222,7 @@ jobs:
           TEST_REDIS_CREDENTIALS: ""
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage${{ matrix.shard }}
           path: .coverage
@@ -230,7 +230,7 @@ jobs:
 
       - name: Upload durations
         if: ${{ inputs.store_durations }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-durations-${{ matrix.shard }}
           path: .test_durations
@@ -242,10 +242,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.12.1"
           python-version: "3.12"
@@ -261,7 +261,7 @@ jobs:
         # build-image's docker/build-push-action also uploads a Docker Build
         # Cloud summary artifact (*.dockerbuild) to the same run, which an
         # unscoped download tries to fetch too and fails to extract.
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: coverage*
 
@@ -283,7 +283,7 @@ jobs:
       # commit it as .test_durations; CI never pushes.
       - name: Download durations
         if: ${{ inputs.store_durations }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: test-durations-*
           path: durations
@@ -307,7 +307,7 @@ jobs:
 
       - name: Upload merged durations
         if: ${{ inputs.store_durations }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-durations
           path: .test_durations
