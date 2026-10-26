@@ -32,7 +32,7 @@ dependencies = [
     "Flask-Migrate>=4.0.4",
     "Flask-QRcode>=3.1.0",
     "Flask-RESTful>=0.3.9",
-    "Flask-Security-Too>=5.5.2",
+    "Flask-Security-Too>=5.5.2,<5.9",  # 5.9 drops forms.get_form_field_label
     "Flask-SQLAlchemy>=3.0.3",
     "Flask-WTF>=1.2.1",
     "GeoAlchemy2>=0.13.1",
@@ -57,7 +57,7 @@ dependencies = [
     # jsonschema 3.2.0 (via swagger-spec-validator) imports pkg_resources, which setuptools
     # removed in 82.0.0; keep it pinned to the last 81.x release.
     "setuptools==81.0.0",
-    "SQLAlchemy>=2.0.9",
+    "SQLAlchemy>=2.0.9,<2.1",  # 2.1 fails to start: "No module named psycopg"
     "SQLAlchemy-Utils>=0.41.0",
     "swagger-spec-validator>=3.0.3",
     "typing_extensions>=4.14.1",
