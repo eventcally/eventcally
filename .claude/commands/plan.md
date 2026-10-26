@@ -23,6 +23,7 @@ Transform the input into a battle-tested implementation plan through codebase ex
 
 | Input | Action |
 | ------- | -------- |
+| GitHub issue reference(s) (`11`, `#11`, `#11,#12`, issue URL), optionally followed by notes | `gh issue view <number> --json number,title,body,labels,state,comments` for each; use title, body and comments as the feature input, the notes as extra requirements |
 | `.prd.md` file | Read PRD, extract next pending phase |
 | Other `.md` file | Read and extract feature description |
 | Free-form text | Use directly as feature input |
@@ -35,7 +36,7 @@ Transform the input into a battle-tested implementation plan through codebase ex
 - **Type**: NEW_CAPABILITY / ENHANCEMENT / REFACTOR / BUG_FIX
 - **Complexity**: LOW / MEDIUM / HIGH
 - **GitHub Issue**: If a GitHub issue number (e.g. `#11`) is available in the conversation
-  context — from a prior `/prime` command, user mention, or PRD — capture it. This is
+  context — from the input, a prior `/prime` command, user mention, or PRD — capture it. This is
   optional but should be included in the plan metadata when available so that `/implement`
   can update and close the issue after completion.
 - **UI migration to Vue 3**: Does the task replace an existing UI (Jinja template, legacy JS)

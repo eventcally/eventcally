@@ -361,10 +361,9 @@ The summary should include:
 
 ### 6.2 Link the Work
 
-- If a PR is created (Phase 7), reference the issue in the PR body with a closing keyword
-  (`Closes #<number>` / `Fixes #<number>`) so merging auto-closes it — this repo's history
-  uses `Fixes #N` in commits/PRs.
-- If no PR yet and the work is complete on `main`, you may close it directly:
+- Don't create the PR here: `/pr` does that and puts `Fixes #<number>` in the body, so
+  merging closes the issue.
+- If the work was done directly on `main` (no PR), close it:
   `gh issue close <number> --comment "Implemented in {branch/commit}"`.
 
 ---
@@ -412,8 +411,8 @@ Otherwise: "No GitHub issue linked."}
 ### Next Steps
 
 1. Review the report
-2. Create PR against `main`: `gh pr create --base main` (include `Fixes #{number}` in body)
-3. Merge when approved
+2. `/pr` — creates the PR (with `Fixes #{number}`) and watches the checks
+3. `/merge` when approved
 ```
 
 ---
