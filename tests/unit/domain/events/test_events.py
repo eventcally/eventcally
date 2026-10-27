@@ -284,3 +284,91 @@ class TestEventUpdated:
         assert event.organizer_id is None
         assert event.photo is None
         assert event.status is None
+
+
+class TestEventJsonRoundTrip:
+    """The Celery dispatcher ships events as JSON (exclude_unset) to the worker."""
+
+    @staticmethod
+    def _berlin(*args, **kwargs):
+        return datetime.datetime(*args, tzinfo=ZoneInfo("Europe/Berlin"), **kwargs)
+
+    def _starts(self):
+        return [
+            self._berlin(2026, 10, 24, 20, 0),
+            self._berlin(2026, 10, 25, 2, 30, fold=0),
+            self._berlin(2026, 10, 25, 2, 30, fold=1),
+            self._berlin(2026, 10, 26, 0, 0),
+            self._berlin(2026, 3, 29, 3, 0),
+        ]
+
+    def _date_definitions(self):
+        starts = self._starts()
+        return [
+            EventDateDefinitionValueObject(start=starts[0], end=starts[3]),
+            EventDateDefinitionValueObject(
+                start=starts[1], recurrence_rule="RRULE:FREQ=DAILY;COUNT=3"
+            ),
+        ]
+
+    def _dates(self):
+        return [
+            EventDateEntity(id=i, start=s, end=s + datetime.timedelta(hours=1))
+            for i, s in enumerate(self._starts(), start=1)
+        ]
+
+    def _assert_dates(self, restored, original):
+        assert len(restored) == len(original)
+        for r, o in zip(restored, original):
+            assert r.start == o.start
+            assert isinstance(r.start.tzinfo, ZoneInfo)
+            assert r.start.tzinfo.key == "Europe/Berlin"
+            assert r.start.utcoffset() == o.start.utcoffset()
+            assert r.start.fold == o.start.fold
+            if o.end is not None:
+                assert r.end == o.end
+                assert r.end.tzinfo.key == "Europe/Berlin"
+                assert r.end.utcoffset() == o.end.utcoffset()
+
+    def test_event_created(self, actor):
+        event = EventCreated(
+            actor=actor,
+            id=1,
+            admin_unit_id=2,
+            name="My Event",
+            organizer_id=3,
+            event_place_id=4,
+            date_definitions=self._date_definitions(),
+            dates=self._dates(),
+            status=EventStatus.scheduled,
+            public_status=EventPublicStatus.published,
+        )
+
+        restored = EventCreated.model_validate_json(
+            event.model_dump_json(exclude_unset=True)
+        )
+
+        self._assert_dates(restored.dates, event.dates)
+        self._assert_dates(restored.date_definitions, event.date_definitions)
+
+    def test_event_updated(self, actor):
+        old_defs = self._date_definitions()
+        new_defs = list(reversed(self._date_definitions()))
+        old_dates = self._dates()
+        new_dates = list(reversed(self._dates()))
+        event = EventUpdated(
+            actor=actor,
+            id=1,
+            admin_unit_id=2,
+            dates=ChangedValue(old=old_dates, new=new_dates),
+            date_definitions=ChangedValue(old=old_defs, new=new_defs),
+        )
+
+        restored = EventUpdated.model_validate_json(
+            event.model_dump_json(exclude_unset=True)
+        )
+
+        self._assert_dates(restored.dates.old, old_dates)
+        self._assert_dates(restored.dates.new, new_dates)
+        self._assert_dates(restored.date_definitions.old, old_defs)
+        self._assert_dates(restored.date_definitions.new, new_defs)
