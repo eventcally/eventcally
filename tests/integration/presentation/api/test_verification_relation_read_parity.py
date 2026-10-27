@@ -1,5 +1,6 @@
 """Byte-level parity of the verification request and relation read endpoints
-(snapshot captured on the ORM path, see `tests/integration/presentation/api/read_parity.py`)."""
+(snapshot captured on the ORM path, see `tests/integration/presentation/api/read_parity.py`).
+"""
 
 from datetime import datetime
 

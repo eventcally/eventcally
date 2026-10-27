@@ -23,15 +23,11 @@ def upgrade():
     op.create_index(
         "idx_event_fulltext",
         "event",
-        [
-            sa.text(
-                """(
+        [sa.text("""(
                 (setweight(to_tsvector('german', coalesce(name, '')), 'A')) ||
                 (setweight(to_tsvector('german', coalesce(tags, '')), 'B')) ||
                 (setweight(to_tsvector('german', coalesce(description, '')), 'C'))
-            )"""
-            )
-        ],
+            )""")],
         postgresql_using="gin",
     )
 

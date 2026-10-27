@@ -714,7 +714,7 @@ class Seeder(object):
         return reference_id
 
     def create_any_reference(self, admin_unit_id):
-        (other_user_id, other_admin_unit_id) = self.setup_base(
+        other_user_id, other_admin_unit_id = self.setup_base(
             email="other@test.de", name="Other Crew", log_in=False
         )
         event_id = self.create_event(other_admin_unit_id)

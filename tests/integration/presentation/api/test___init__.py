@@ -9,7 +9,7 @@ def test_handle_error_unique(app):
 
     app.config["PROPAGATE_EXCEPTIONS"] = False
     api = RestApi(app)
-    (data, code) = api.handle_error(error)
+    data, code = api.handle_error(error)
     assert code == 400
     assert data["name"] == "Unique Violation"
 
@@ -22,7 +22,7 @@ def test_handle_error_checkViolation(app):
 
     app.config["PROPAGATE_EXCEPTIONS"] = False
     api = RestApi(app)
-    (data, code) = api.handle_error(error)
+    data, code = api.handle_error(error)
     assert code == 400
     assert data["name"] == "Check Violation"
 
@@ -35,7 +35,7 @@ def test_handle_error_integrity(app):
 
     app.config["PROPAGATE_EXCEPTIONS"] = False
     api = RestApi(app)
-    (data, code) = api.handle_error(error)
+    data, code = api.handle_error(error)
     assert code == 400
     assert data["name"] == "Integrity Error"
 
@@ -49,7 +49,7 @@ def test_handle_error_httpException(app):
 
     app.config["PROPAGATE_EXCEPTIONS"] = False
     api = RestApi(app)
-    (data, code) = api.handle_error(error)
+    data, code = api.handle_error(error)
     assert code == 500
 
 
@@ -61,7 +61,7 @@ def test_handle_error_domain_error(app):
 
     app.config["PROPAGATE_EXCEPTIONS"] = False
     api = RestApi(app)
-    (data, code) = api.handle_error(error)
+    data, code = api.handle_error(error)
     assert code == 400
     assert data["name"] == "Unique Violation"
     assert data["message"] == "Custom message"
@@ -75,7 +75,7 @@ def test_handle_error_unauthorized(app):
 
     app.config["PROPAGATE_EXCEPTIONS"] = False
     api = RestApi(app)
-    (data, code) = api.handle_error(error)
+    data, code = api.handle_error(error)
     assert code == 401
     assert data["name"] == "Unauthorized"
     assert data["message"] == "Custom message"
@@ -95,7 +95,7 @@ def test_handle_error_unprocessableEntity(app):
 
     app.config["PROPAGATE_EXCEPTIONS"] = False
     api = RestApi(app)
-    (data, code) = api.handle_error(error)
+    data, code = api.handle_error(error)
     assert code == 422
     assert data["errors"][0]["field"] == "name"
     assert data["errors"][0]["message"] == "Required"
@@ -111,7 +111,7 @@ def test_handle_error_validationError(app):
 
     app.config["PROPAGATE_EXCEPTIONS"] = False
     api = RestApi(app)
-    (data, code) = api.handle_error(validation_error)
+    data, code = api.handle_error(validation_error)
     assert code == 422
     assert data["errors"][0]["field"] == "name"
     assert data["errors"][0]["message"] == "Required"
