@@ -15,7 +15,10 @@ test-results/
 playwright-report/
 blob-report/
 e2e/screenshots/
-celerybeat-schedule
+celerybeat-schedule*
+# per-group partials of --store-durations (.test_durations itself is committed)
+.test_durations.*
+.dbg_*
 
 # C extensions
 *.so
@@ -109,3 +112,8 @@ frontend/src/locales/*.json
 
 # Playwright MCP session logs
 .playwright-mcp/
+
+# Local tool and OS state
+.DS_Store
+.claude/settings.local.json
+.claude/scheduled_tasks.lock

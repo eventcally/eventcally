@@ -118,5 +118,6 @@ python -m project.presentation.bff.openapi > frontend/openapi.json && npm run ge
 - PostGIS migration diffs sometimes need manual correction after `flask db migrate`.
 - Deferred SQLAlchemy columns may require explicit `undefer()` in query options.
 - Query handlers must return materialized read models; the read session is closed when the bus returns.
+- Throwaway debug output (rendered pages, dumps) goes to `tmp/` (git and Docker ignored) or the session scratchpad, never the repo root; run `git status` before committing (`.dbg_login.html` slipped into e917e917 that way).
 - `isort` skips `*_generated.py` files — don't fight it.
 - flake8 ignores E501 (line length) — Black handles formatting.
