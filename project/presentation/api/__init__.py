@@ -2,7 +2,6 @@ import os
 
 from apispec import APISpec, BasePlugin
 from apispec.exceptions import DuplicateComponentNameError
-from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import current_app, g, request, url_for
 from flask_apispec.extension import FlaskApiSpec
 from flask_babel import gettext
@@ -16,6 +15,7 @@ from werkzeug.exceptions import HTTPException, UnprocessableEntity
 from project.domain.errors import BaseError, DuplicateError
 from project.domain.errors.constraint_error import ConstraintError
 from project.domain.errors.unauthorized_error import UnauthorizedError
+from project.presentation.api.apispec_plugin import StableMarshmallowPlugin
 from project.presentation.shared.scopes import scope_list
 
 
@@ -151,7 +151,7 @@ class DocSecurityPlugin(BasePlugin):
 
 # Module-level instances (marshmallow created here for schema imports)
 marshmallow = Marshmallow()
-marshmallow_plugin = MarshmallowPlugin()
+marshmallow_plugin = StableMarshmallowPlugin()
 
 # These will be initialized by init_api()
 rest_api = None
