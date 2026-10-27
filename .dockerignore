@@ -24,7 +24,7 @@
 **/values.dev.yaml
 README.md
 tmp
-celerybeat-schedule
+celerybeat-schedule*
 venv/
 .venv/
 htmlcov/
@@ -41,3 +41,12 @@ e2e/screenshots/
 *.csr
 *.key
 project/presentation/web/static/dist
+.test_durations.*
+.dbg_*
+**/.DS_Store
+.claude/
+.grimp_cache
+.playwright-mcp/
+*.pem
+*.jwk
+*.jwks
