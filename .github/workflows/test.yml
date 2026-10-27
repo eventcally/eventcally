@@ -12,6 +12,11 @@ on:
         type: boolean
         default: false
 
+# Jobs that need more (build-image pushes to GHCR, integration-tests pulls from it)
+# declare their own block; coverage only reads artifacts and writes the step summary.
+permissions:
+  contents: read
+
 jobs:
   build-image:
     runs-on: ubuntu-latest

@@ -4,8 +4,7 @@ name: Playwright
 on: [pull_request, workflow_dispatch]
 
 # This workflow never uses GITHUB_TOKEN; checkout only needs to read the repo.
-# The repository default is currently `write`, so without this the job would hand
-# a write-capable token to everything `uv sync` and `npm ci` pull in.
+# Kept explicit so the job never depends on the repository default token permission.
 permissions:
   contents: read
 
