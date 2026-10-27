@@ -6,6 +6,15 @@
 docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/eventcally" eventcally/eventcally:latest
 ```
 
+### Verify the image
+
+Release images carry a signed build provenance attestation and an SBOM:
+
+```sh
+gh attestation verify oci://docker.io/eventcally/eventcally:<version> --repo eventcally/eventcally
+docker buildx imagetools inspect eventcally/eventcally:<version> --format '{{json .SBOM}}'
+```
+
 ## Manual Installation
 
 ### Requirements
