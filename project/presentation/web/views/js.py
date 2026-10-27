@@ -87,7 +87,7 @@ def js_check_register_email():
 
     msg = gettext("An account already exists with this email.")
     url = url_for_security("forgot_password")
-    link_text = localize_callback("Forgot password")
+    link_text = localize_callback("Forgot password?")
     link = ' &ndash; <a href="%s">%s</a>' % (url, link_text)
     error = msg + link
     return jsonify(error)

@@ -327,15 +327,6 @@
       ],
       "type": "object"
     },
-    "CustomEventCategoryId": {
-      "properties": {
-        "id": {
-          "readOnly": true,
-          "type": "integer"
-        }
-      },
-      "type": "object"
-    },
     "CustomEventCategoryRef": {
       "properties": {
         "category_set": {
@@ -697,15 +688,6 @@
       "required": [
         "name"
       ],
-      "type": "object"
-    },
-    "EventCategoryId": {
-      "properties": {
-        "id": {
-          "readOnly": true,
-          "type": "integer"
-        }
-      },
       "type": "object"
     },
     "EventCategoryListResponse": {
@@ -1251,13 +1233,15 @@
         },
         "category_ids": {
           "items": {
-            "$ref": "#/definitions/EventCategoryId"
+            "readOnly": true,
+            "type": "integer"
           },
           "type": "array"
         },
         "co_organizer_ids": {
           "items": {
-            "$ref": "#/definitions/OrganizerDumpId"
+            "readOnly": true,
+            "type": "integer"
           },
           "type": "array"
         },
@@ -1268,7 +1252,8 @@
         },
         "custom_category_ids": {
           "items": {
-            "$ref": "#/definitions/CustomEventCategoryId"
+            "readOnly": true,
+            "type": "integer"
           },
           "type": "array"
         },
@@ -2626,16 +2611,16 @@
         },
         "latitude": {
           "description": "Latitude between (-90, 90)",
-          "maximum": 90,
-          "minimum": -90,
           "type": "string",
+          "x-maximum": 90,
+          "x-minimum": -90,
           "x-nullable": true
         },
         "longitude": {
           "description": "Longitude between (-180, 180)",
-          "maximum": 180,
-          "minimum": -180,
           "type": "string",
+          "x-maximum": 180,
+          "x-minimum": -180,
           "x-nullable": true
         },
         "postalCode": {
@@ -2665,16 +2650,16 @@
         },
         "latitude": {
           "description": "Latitude between (-90, 90)",
-          "maximum": 90,
-          "minimum": -90,
           "type": "string",
+          "x-maximum": 90,
+          "x-minimum": -90,
           "x-nullable": true
         },
         "longitude": {
           "description": "Longitude between (-180, 180)",
-          "maximum": 180,
-          "minimum": -180,
           "type": "string",
+          "x-maximum": 180,
+          "x-minimum": -180,
           "x-nullable": true
         },
         "postalCode": {
@@ -2704,16 +2689,16 @@
         },
         "latitude": {
           "description": "Latitude between (-90, 90)",
-          "maximum": 90,
-          "minimum": -90,
           "type": "string",
+          "x-maximum": 90,
+          "x-minimum": -90,
           "x-nullable": true
         },
         "longitude": {
           "description": "Longitude between (-180, 180)",
-          "maximum": 180,
-          "minimum": -180,
           "type": "string",
+          "x-maximum": 180,
+          "x-minimum": -180,
           "x-nullable": true
         },
         "postalCode": {
@@ -2748,17 +2733,17 @@
         "latitude": {
           "default": null,
           "description": "Latitude between (-90, 90)",
-          "maximum": 90,
-          "minimum": -90,
           "type": "string",
+          "x-maximum": 90,
+          "x-minimum": -90,
           "x-nullable": true
         },
         "longitude": {
           "default": null,
           "description": "Longitude between (-180, 180)",
-          "maximum": 180,
-          "minimum": -180,
           "type": "string",
+          "x-maximum": 180,
+          "x-minimum": -180,
           "x-nullable": true
         },
         "postalCode": {
@@ -3914,15 +3899,6 @@
       ],
       "type": "object"
     },
-    "OrganizerDumpId": {
-      "properties": {
-        "id": {
-          "readOnly": true,
-          "type": "integer"
-        }
-      },
-      "type": "object"
-    },
     "OrganizerIdPlain": {
       "properties": {
         "id": {
@@ -4633,22 +4609,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -4661,18 +4621,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -4692,6 +4640,34 @@
             "name": "per_page",
             "required": false,
             "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -4893,6 +4869,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "The page number (1 indexed).",
             "in": "query",
             "minimum": 1,
@@ -4907,13 +4890,6 @@
             "minimum": 1,
             "name": "per_page",
             "required": false,
-            "type": "integer"
-          },
-          {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
             "type": "integer"
           }
         ],
@@ -5042,6 +5018,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "The page number (1 indexed).",
             "in": "query",
             "minimum": 1,
@@ -5056,13 +5039,6 @@
             "minimum": 1,
             "name": "per_page",
             "required": false,
-            "type": "integer"
-          },
-          {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
             "type": "integer"
           }
         ],
@@ -5302,22 +5278,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -5330,19 +5290,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "start"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -5362,6 +5309,35 @@
             "name": "per_page",
             "required": false,
             "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "start"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -5409,6 +5385,24 @@
       "get": {
         "parameters": [
           {
+            "collectionFormat": "multi",
+            "description": "Looks for events with this category ids.",
+            "in": "query",
+            "items": {
+              "type": "integer"
+            },
+            "name": "category_id",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "description": "Looks for events around this coordinate. Expects comma separated latitude and longitude, e.g. \"51.9077888,10.4333312\". See distance.",
+            "in": "query",
+            "name": "coordinate",
+            "required": false,
+            "type": "string"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -5425,95 +5419,13 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "last_modified_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "-rating",
-              "-reference_created_at",
-              "start"
-            ],
-            "in": "query",
-            "name": "sort",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "The page number (1 indexed).",
-            "in": "query",
-            "minimum": 1,
-            "name": "page",
-            "required": false,
-            "type": "integer"
-          },
-          {
-            "description": "Items per page",
-            "in": "query",
-            "maximum": 50,
-            "minimum": 1,
-            "name": "per_page",
-            "required": false,
-            "type": "integer"
-          },
-          {
-            "description": "Looks for keyword in name, description and tags.",
-            "in": "query",
-            "name": "keyword",
-            "required": false,
-            "type": "string"
-          },
-          {
             "collectionFormat": "multi",
-            "description": "Looks for events having all given tags.",
+            "description": "Looks for events with custom categories from set with this id.",
             "in": "query",
             "items": {
-              "type": "string"
+              "type": "integer"
             },
-            "name": "tag",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "collectionFormat": "multi",
-            "description": "Looks for events having all given internal tags. Only works with corresponding rights.",
-            "in": "query",
-            "items": {
-              "type": "string"
-            },
-            "name": "internal_tag",
+            "name": "custom_category_set_id",
             "required": false,
             "type": "array"
           },
@@ -5534,13 +5446,6 @@
             "type": "string"
           },
           {
-            "description": "Looks for events around this coordinate. Expects comma separated latitude and longitude, e.g. \"51.9077888,10.4333312\". See distance.",
-            "in": "query",
-            "name": "coordinate",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Looks for events around a coordinate within this distance. Expects distance in meters. See coordinate.",
             "in": "query",
             "maximum": 100000,
@@ -5550,39 +5455,59 @@
             "type": "integer"
           },
           {
+            "description": "Looks for events with this event place id.",
+            "in": "query",
+            "name": "event_place_id",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Exclude recurring events",
+            "in": "query",
+            "name": "exclude_recurring",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "description": "Include events referenced by organization. Only valid if there is an organization context.",
+            "in": "query",
+            "name": "include_organization_references",
+            "required": false,
+            "type": "boolean"
+          },
+          {
             "collectionFormat": "multi",
-            "description": "Looks for events with this category ids.",
+            "description": "Looks for events having all given internal tags. Only works with corresponding rights.",
             "in": "query",
             "items": {
-              "type": "integer"
+              "type": "string"
             },
-            "name": "category_id",
+            "name": "internal_tag",
             "required": false,
             "type": "array"
           },
           {
-            "collectionFormat": "multi",
-            "description": "Looks for events with custom categories from set with this id.",
+            "description": "Looks for keyword in name, description and tags.",
             "in": "query",
-            "items": {
-              "type": "integer"
-            },
-            "name": "custom_category_set_id",
+            "name": "keyword",
             "required": false,
-            "type": "array"
+            "type": "string"
           },
           {
-            "collectionFormat": "multi",
-            "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..).",
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
             "in": "query",
-            "items": {
-              "maximum": 6,
-              "minimum": 0,
-              "type": "integer"
-            },
-            "name": "weekday",
+            "name": "last_modified_at_from",
             "required": false,
-            "type": "array"
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
           },
           {
             "description": "Looks for events with this organization id.",
@@ -5592,6 +5517,13 @@
             "type": "integer"
           },
           {
+            "description": "Only events referenced by organization. Only valid if there is an organization context.",
+            "in": "query",
+            "name": "organization_references_only",
+            "required": false,
+            "type": "boolean"
+          },
+          {
             "description": "Looks for events with this organizer id.",
             "in": "query",
             "name": "organizer_id",
@@ -5599,11 +5531,63 @@
             "type": "integer"
           },
           {
-            "description": "Looks for events with this event place id.",
+            "description": "The page number (1 indexed).",
             "in": "query",
-            "name": "event_place_id",
+            "minimum": 1,
+            "name": "page",
             "required": false,
             "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "collectionFormat": "multi",
+            "description": "Looks for events with places with this postal code.",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "name": "postal_code",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "collectionFormat": "multi",
+            "description": "Looks for events with this public stati.",
+            "in": "query",
+            "items": {
+              "enum": [
+                "draft",
+                "published",
+                "planned"
+              ],
+              "type": "string"
+            },
+            "name": "public_status",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "-rating",
+              "-reference_created_at",
+              "start"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
           },
           {
             "collectionFormat": "multi",
@@ -5625,51 +5609,43 @@
           },
           {
             "collectionFormat": "multi",
-            "description": "Looks for events with this public stati.",
+            "description": "Looks for events having all given tags.",
             "in": "query",
             "items": {
-              "enum": [
-                "draft",
-                "published",
-                "planned"
-              ],
               "type": "string"
             },
-            "name": "public_status",
+            "name": "tag",
             "required": false,
             "type": "array"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           },
           {
             "collectionFormat": "multi",
-            "description": "Looks for events with places with this postal code.",
+            "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..).",
             "in": "query",
             "items": {
-              "type": "string"
+              "maximum": 6,
+              "minimum": 0,
+              "type": "integer"
             },
-            "name": "postal_code",
+            "name": "weekday",
             "required": false,
             "type": "array"
-          },
-          {
-            "description": "Exclude recurring events",
-            "in": "query",
-            "name": "exclude_recurring",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "description": "Include events referenced by organization. Only valid if there is an organization context.",
-            "in": "query",
-            "name": "include_organization_references",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "description": "Only events referenced by organization. Only valid if there is an organization context.",
-            "in": "query",
-            "name": "organization_references_only",
-            "required": false,
-            "type": "boolean"
           }
         ],
         "responses": {
@@ -6108,22 +6084,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -6136,19 +6096,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "start"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -6168,6 +6115,35 @@
             "name": "per_page",
             "required": false,
             "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "start"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -6215,6 +6191,24 @@
       "get": {
         "parameters": [
           {
+            "collectionFormat": "multi",
+            "description": "Looks for events with this category ids.",
+            "in": "query",
+            "items": {
+              "type": "integer"
+            },
+            "name": "category_id",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "description": "Looks for events around this coordinate. Expects comma separated latitude and longitude, e.g. \"51.9077888,10.4333312\". See distance.",
+            "in": "query",
+            "name": "coordinate",
+            "required": false,
+            "type": "string"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -6231,95 +6225,13 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "last_modified_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "-rating",
-              "-reference_created_at",
-              "start"
-            ],
-            "in": "query",
-            "name": "sort",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "The page number (1 indexed).",
-            "in": "query",
-            "minimum": 1,
-            "name": "page",
-            "required": false,
-            "type": "integer"
-          },
-          {
-            "description": "Items per page",
-            "in": "query",
-            "maximum": 50,
-            "minimum": 1,
-            "name": "per_page",
-            "required": false,
-            "type": "integer"
-          },
-          {
-            "description": "Looks for keyword in name, description and tags.",
-            "in": "query",
-            "name": "keyword",
-            "required": false,
-            "type": "string"
-          },
-          {
             "collectionFormat": "multi",
-            "description": "Looks for events having all given tags.",
+            "description": "Looks for events with custom categories from set with this id.",
             "in": "query",
             "items": {
-              "type": "string"
+              "type": "integer"
             },
-            "name": "tag",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "collectionFormat": "multi",
-            "description": "Looks for events having all given internal tags. Only works with corresponding rights.",
-            "in": "query",
-            "items": {
-              "type": "string"
-            },
-            "name": "internal_tag",
+            "name": "custom_category_set_id",
             "required": false,
             "type": "array"
           },
@@ -6340,13 +6252,6 @@
             "type": "string"
           },
           {
-            "description": "Looks for events around this coordinate. Expects comma separated latitude and longitude, e.g. \"51.9077888,10.4333312\". See distance.",
-            "in": "query",
-            "name": "coordinate",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Looks for events around a coordinate within this distance. Expects distance in meters. See coordinate.",
             "in": "query",
             "maximum": 100000,
@@ -6356,39 +6261,59 @@
             "type": "integer"
           },
           {
+            "description": "Looks for events with this event place id.",
+            "in": "query",
+            "name": "event_place_id",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Exclude recurring events",
+            "in": "query",
+            "name": "exclude_recurring",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "description": "Include events referenced by organization. Only valid if there is an organization context.",
+            "in": "query",
+            "name": "include_organization_references",
+            "required": false,
+            "type": "boolean"
+          },
+          {
             "collectionFormat": "multi",
-            "description": "Looks for events with this category ids.",
+            "description": "Looks for events having all given internal tags. Only works with corresponding rights.",
             "in": "query",
             "items": {
-              "type": "integer"
+              "type": "string"
             },
-            "name": "category_id",
+            "name": "internal_tag",
             "required": false,
             "type": "array"
           },
           {
-            "collectionFormat": "multi",
-            "description": "Looks for events with custom categories from set with this id.",
+            "description": "Looks for keyword in name, description and tags.",
             "in": "query",
-            "items": {
-              "type": "integer"
-            },
-            "name": "custom_category_set_id",
+            "name": "keyword",
             "required": false,
-            "type": "array"
+            "type": "string"
           },
           {
-            "collectionFormat": "multi",
-            "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..).",
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
             "in": "query",
-            "items": {
-              "maximum": 6,
-              "minimum": 0,
-              "type": "integer"
-            },
-            "name": "weekday",
+            "name": "last_modified_at_from",
             "required": false,
-            "type": "array"
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
           },
           {
             "description": "Looks for events with this organization id.",
@@ -6398,6 +6323,13 @@
             "type": "integer"
           },
           {
+            "description": "Only events referenced by organization. Only valid if there is an organization context.",
+            "in": "query",
+            "name": "organization_references_only",
+            "required": false,
+            "type": "boolean"
+          },
+          {
             "description": "Looks for events with this organizer id.",
             "in": "query",
             "name": "organizer_id",
@@ -6405,11 +6337,63 @@
             "type": "integer"
           },
           {
-            "description": "Looks for events with this event place id.",
+            "description": "The page number (1 indexed).",
             "in": "query",
-            "name": "event_place_id",
+            "minimum": 1,
+            "name": "page",
             "required": false,
             "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "collectionFormat": "multi",
+            "description": "Looks for events with places with this postal code.",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "name": "postal_code",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "collectionFormat": "multi",
+            "description": "Looks for events with this public stati.",
+            "in": "query",
+            "items": {
+              "enum": [
+                "draft",
+                "published",
+                "planned"
+              ],
+              "type": "string"
+            },
+            "name": "public_status",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "-rating",
+              "-reference_created_at",
+              "start"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
           },
           {
             "collectionFormat": "multi",
@@ -6431,51 +6415,43 @@
           },
           {
             "collectionFormat": "multi",
-            "description": "Looks for events with this public stati.",
+            "description": "Looks for events having all given tags.",
             "in": "query",
             "items": {
-              "enum": [
-                "draft",
-                "published",
-                "planned"
-              ],
               "type": "string"
             },
-            "name": "public_status",
+            "name": "tag",
             "required": false,
             "type": "array"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           },
           {
             "collectionFormat": "multi",
-            "description": "Looks for events with places with this postal code.",
+            "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..).",
             "in": "query",
             "items": {
-              "type": "string"
+              "maximum": 6,
+              "minimum": 0,
+              "type": "integer"
             },
-            "name": "postal_code",
+            "name": "weekday",
             "required": false,
             "type": "array"
-          },
-          {
-            "description": "Exclude recurring events",
-            "in": "query",
-            "name": "exclude_recurring",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "description": "Include events referenced by organization. Only valid if there is an organization context.",
-            "in": "query",
-            "name": "include_organization_references",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "description": "Only events referenced by organization. Only valid if there is an organization context.",
-            "in": "query",
-            "name": "organization_references_only",
-            "required": false,
-            "type": "boolean"
           }
         ],
         "responses": {
@@ -6738,6 +6714,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -6754,22 +6737,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -6782,19 +6749,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "start"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -6816,11 +6770,33 @@
             "type": "integer"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "start"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -7601,18 +7577,9 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
+            "description": "Looks for keyword in name and short name.",
             "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
+            "name": "keyword",
             "required": false,
             "type": "string"
           },
@@ -7629,19 +7596,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "name"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -7663,13 +7617,6 @@
             "type": "integer"
           },
           {
-            "description": "Looks for keyword in name and short name.",
-            "in": "query",
-            "name": "keyword",
-            "required": false,
-            "type": "string"
-          },
-          {
             "collectionFormat": "multi",
             "description": "Looks for organizations with this postal code.",
             "in": "query",
@@ -7679,6 +7626,35 @@
             "name": "postal_code",
             "required": false,
             "type": "array"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "name"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -7779,6 +7755,31 @@
         "description": "Includes events that organization is referencing.",
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "collectionFormat": "multi",
+            "description": "Looks for events with this category ids.",
+            "in": "query",
+            "items": {
+              "type": "integer"
+            },
+            "name": "category_id",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "description": "Looks for events around this coordinate. Expects comma separated latitude and longitude, e.g. \"51.9077888,10.4333312\". See distance.",
+            "in": "query",
+            "name": "coordinate",
+            "required": false,
+            "type": "string"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -7795,95 +7796,13 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "last_modified_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "-rating",
-              "-reference_created_at",
-              "start"
-            ],
-            "in": "query",
-            "name": "sort",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "The page number (1 indexed).",
-            "in": "query",
-            "minimum": 1,
-            "name": "page",
-            "required": false,
-            "type": "integer"
-          },
-          {
-            "description": "Items per page",
-            "in": "query",
-            "maximum": 50,
-            "minimum": 1,
-            "name": "per_page",
-            "required": false,
-            "type": "integer"
-          },
-          {
-            "description": "Looks for keyword in name, description and tags.",
-            "in": "query",
-            "name": "keyword",
-            "required": false,
-            "type": "string"
-          },
-          {
             "collectionFormat": "multi",
-            "description": "Looks for events having all given tags.",
+            "description": "Looks for events with custom categories from set with this id.",
             "in": "query",
             "items": {
-              "type": "string"
+              "type": "integer"
             },
-            "name": "tag",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "collectionFormat": "multi",
-            "description": "Looks for events having all given internal tags. Only works with corresponding rights.",
-            "in": "query",
-            "items": {
-              "type": "string"
-            },
-            "name": "internal_tag",
+            "name": "custom_category_set_id",
             "required": false,
             "type": "array"
           },
@@ -7904,13 +7823,6 @@
             "type": "string"
           },
           {
-            "description": "Looks for events around this coordinate. Expects comma separated latitude and longitude, e.g. \"51.9077888,10.4333312\". See distance.",
-            "in": "query",
-            "name": "coordinate",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Looks for events around a coordinate within this distance. Expects distance in meters. See coordinate.",
             "in": "query",
             "maximum": 100000,
@@ -7920,39 +7832,59 @@
             "type": "integer"
           },
           {
+            "description": "Looks for events with this event place id.",
+            "in": "query",
+            "name": "event_place_id",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Exclude recurring events",
+            "in": "query",
+            "name": "exclude_recurring",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "description": "Include events referenced by organization. Only valid if there is an organization context.",
+            "in": "query",
+            "name": "include_organization_references",
+            "required": false,
+            "type": "boolean"
+          },
+          {
             "collectionFormat": "multi",
-            "description": "Looks for events with this category ids.",
+            "description": "Looks for events having all given internal tags. Only works with corresponding rights.",
             "in": "query",
             "items": {
-              "type": "integer"
+              "type": "string"
             },
-            "name": "category_id",
+            "name": "internal_tag",
             "required": false,
             "type": "array"
           },
           {
-            "collectionFormat": "multi",
-            "description": "Looks for events with custom categories from set with this id.",
+            "description": "Looks for keyword in name, description and tags.",
             "in": "query",
-            "items": {
-              "type": "integer"
-            },
-            "name": "custom_category_set_id",
+            "name": "keyword",
             "required": false,
-            "type": "array"
+            "type": "string"
           },
           {
-            "collectionFormat": "multi",
-            "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..).",
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
             "in": "query",
-            "items": {
-              "maximum": 6,
-              "minimum": 0,
-              "type": "integer"
-            },
-            "name": "weekday",
+            "name": "last_modified_at_from",
             "required": false,
-            "type": "array"
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
           },
           {
             "description": "Looks for events with this organization id.",
@@ -7962,6 +7894,13 @@
             "type": "integer"
           },
           {
+            "description": "Only events referenced by organization. Only valid if there is an organization context.",
+            "in": "query",
+            "name": "organization_references_only",
+            "required": false,
+            "type": "boolean"
+          },
+          {
             "description": "Looks for events with this organizer id.",
             "in": "query",
             "name": "organizer_id",
@@ -7969,11 +7908,63 @@
             "type": "integer"
           },
           {
-            "description": "Looks for events with this event place id.",
+            "description": "The page number (1 indexed).",
             "in": "query",
-            "name": "event_place_id",
+            "minimum": 1,
+            "name": "page",
             "required": false,
             "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "collectionFormat": "multi",
+            "description": "Looks for events with places with this postal code.",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "name": "postal_code",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "collectionFormat": "multi",
+            "description": "Looks for events with this public stati.",
+            "in": "query",
+            "items": {
+              "enum": [
+                "draft",
+                "published",
+                "planned"
+              ],
+              "type": "string"
+            },
+            "name": "public_status",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "-rating",
+              "-reference_created_at",
+              "start"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
           },
           {
             "collectionFormat": "multi",
@@ -7995,58 +7986,43 @@
           },
           {
             "collectionFormat": "multi",
-            "description": "Looks for events with this public stati.",
+            "description": "Looks for events having all given tags.",
             "in": "query",
             "items": {
-              "enum": [
-                "draft",
-                "published",
-                "planned"
-              ],
               "type": "string"
             },
-            "name": "public_status",
+            "name": "tag",
             "required": false,
             "type": "array"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           },
           {
             "collectionFormat": "multi",
-            "description": "Looks for events with places with this postal code.",
+            "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..).",
             "in": "query",
             "items": {
-              "type": "string"
+              "maximum": 6,
+              "minimum": 0,
+              "type": "integer"
             },
-            "name": "postal_code",
+            "name": "weekday",
             "required": false,
             "type": "array"
-          },
-          {
-            "description": "Exclude recurring events",
-            "in": "query",
-            "name": "exclude_recurring",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "description": "Include events referenced by organization. Only valid if there is an organization context.",
-            "in": "query",
-            "name": "include_organization_references",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "description": "Only events referenced by organization. Only valid if there is an organization context.",
-            "in": "query",
-            "name": "organization_references_only",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
           }
         ],
         "responses": {
@@ -8095,6 +8071,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8111,22 +8094,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8139,18 +8106,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -8172,11 +8127,32 @@
             "type": "integer"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -8226,6 +8202,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8242,22 +8225,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8270,18 +8237,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -8303,11 +8258,32 @@
             "type": "integer"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -8417,6 +8393,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8433,22 +8416,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8461,18 +8428,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -8494,11 +8449,32 @@
             "type": "integer"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -8608,6 +8584,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8624,22 +8607,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8652,18 +8619,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -8685,11 +8640,32 @@
             "type": "integer"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -8739,6 +8715,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8755,22 +8738,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8783,19 +8750,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "start"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -8817,11 +8771,33 @@
             "type": "integer"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "start"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -8930,6 +8906,31 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "collectionFormat": "multi",
+            "description": "Looks for events with this category ids.",
+            "in": "query",
+            "items": {
+              "type": "integer"
+            },
+            "name": "category_id",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "description": "Looks for events around this coordinate. Expects comma separated latitude and longitude, e.g. \"51.9077888,10.4333312\". See distance.",
+            "in": "query",
+            "name": "coordinate",
+            "required": false,
+            "type": "string"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -8946,95 +8947,13 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "last_modified_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "-rating",
-              "-reference_created_at",
-              "start"
-            ],
-            "in": "query",
-            "name": "sort",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "The page number (1 indexed).",
-            "in": "query",
-            "minimum": 1,
-            "name": "page",
-            "required": false,
-            "type": "integer"
-          },
-          {
-            "description": "Items per page",
-            "in": "query",
-            "maximum": 50,
-            "minimum": 1,
-            "name": "per_page",
-            "required": false,
-            "type": "integer"
-          },
-          {
-            "description": "Looks for keyword in name, description and tags.",
-            "in": "query",
-            "name": "keyword",
-            "required": false,
-            "type": "string"
-          },
-          {
             "collectionFormat": "multi",
-            "description": "Looks for events having all given tags.",
+            "description": "Looks for events with custom categories from set with this id.",
             "in": "query",
             "items": {
-              "type": "string"
+              "type": "integer"
             },
-            "name": "tag",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "collectionFormat": "multi",
-            "description": "Looks for events having all given internal tags. Only works with corresponding rights.",
-            "in": "query",
-            "items": {
-              "type": "string"
-            },
-            "name": "internal_tag",
+            "name": "custom_category_set_id",
             "required": false,
             "type": "array"
           },
@@ -9055,13 +8974,6 @@
             "type": "string"
           },
           {
-            "description": "Looks for events around this coordinate. Expects comma separated latitude and longitude, e.g. \"51.9077888,10.4333312\". See distance.",
-            "in": "query",
-            "name": "coordinate",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Looks for events around a coordinate within this distance. Expects distance in meters. See coordinate.",
             "in": "query",
             "maximum": 100000,
@@ -9071,39 +8983,59 @@
             "type": "integer"
           },
           {
+            "description": "Looks for events with this event place id.",
+            "in": "query",
+            "name": "event_place_id",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Exclude recurring events",
+            "in": "query",
+            "name": "exclude_recurring",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "description": "Include events referenced by organization. Only valid if there is an organization context.",
+            "in": "query",
+            "name": "include_organization_references",
+            "required": false,
+            "type": "boolean"
+          },
+          {
             "collectionFormat": "multi",
-            "description": "Looks for events with this category ids.",
+            "description": "Looks for events having all given internal tags. Only works with corresponding rights.",
             "in": "query",
             "items": {
-              "type": "integer"
+              "type": "string"
             },
-            "name": "category_id",
+            "name": "internal_tag",
             "required": false,
             "type": "array"
           },
           {
-            "collectionFormat": "multi",
-            "description": "Looks for events with custom categories from set with this id.",
+            "description": "Looks for keyword in name, description and tags.",
             "in": "query",
-            "items": {
-              "type": "integer"
-            },
-            "name": "custom_category_set_id",
+            "name": "keyword",
             "required": false,
-            "type": "array"
+            "type": "string"
           },
           {
-            "collectionFormat": "multi",
-            "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..).",
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
             "in": "query",
-            "items": {
-              "maximum": 6,
-              "minimum": 0,
-              "type": "integer"
-            },
-            "name": "weekday",
+            "name": "last_modified_at_from",
             "required": false,
-            "type": "array"
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
           },
           {
             "description": "Looks for events with this organization id.",
@@ -9113,6 +9045,13 @@
             "type": "integer"
           },
           {
+            "description": "Only events referenced by organization. Only valid if there is an organization context.",
+            "in": "query",
+            "name": "organization_references_only",
+            "required": false,
+            "type": "boolean"
+          },
+          {
             "description": "Looks for events with this organizer id.",
             "in": "query",
             "name": "organizer_id",
@@ -9120,11 +9059,63 @@
             "type": "integer"
           },
           {
-            "description": "Looks for events with this event place id.",
+            "description": "The page number (1 indexed).",
             "in": "query",
-            "name": "event_place_id",
+            "minimum": 1,
+            "name": "page",
             "required": false,
             "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "collectionFormat": "multi",
+            "description": "Looks for events with places with this postal code.",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "name": "postal_code",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "collectionFormat": "multi",
+            "description": "Looks for events with this public stati.",
+            "in": "query",
+            "items": {
+              "enum": [
+                "draft",
+                "published",
+                "planned"
+              ],
+              "type": "string"
+            },
+            "name": "public_status",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "-rating",
+              "-reference_created_at",
+              "start"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
           },
           {
             "collectionFormat": "multi",
@@ -9146,58 +9137,43 @@
           },
           {
             "collectionFormat": "multi",
-            "description": "Looks for events with this public stati.",
+            "description": "Looks for events having all given tags.",
             "in": "query",
             "items": {
-              "enum": [
-                "draft",
-                "published",
-                "planned"
-              ],
               "type": "string"
             },
-            "name": "public_status",
+            "name": "tag",
             "required": false,
             "type": "array"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           },
           {
             "collectionFormat": "multi",
-            "description": "Looks for events with places with this postal code.",
+            "description": "Looks for events at this weekdays (0=Sunday, 1=Monday, ..).",
             "in": "query",
             "items": {
-              "type": "string"
+              "maximum": 6,
+              "minimum": 0,
+              "type": "integer"
             },
-            "name": "postal_code",
+            "name": "weekday",
             "required": false,
             "type": "array"
-          },
-          {
-            "description": "Exclude recurring events",
-            "in": "query",
-            "name": "exclude_recurring",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "description": "Include events referenced by organization. Only valid if there is an organization context.",
-            "in": "query",
-            "name": "include_organization_references",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "description": "Only events referenced by organization. Only valid if there is an organization context.",
-            "in": "query",
-            "name": "organization_references_only",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
           }
         ],
         "responses": {
@@ -9246,6 +9222,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -9262,22 +9245,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -9290,19 +9257,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "name"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -9324,11 +9278,33 @@
             "type": "integer"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "name"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -9438,6 +9414,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -9454,22 +9437,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -9482,18 +9449,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -9515,11 +9470,32 @@
             "type": "integer"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -9569,6 +9545,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -9585,22 +9568,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -9613,18 +9580,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -9646,11 +9601,32 @@
             "type": "integer"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -9760,6 +9736,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -9772,22 +9755,6 @@
             "format": "date-time",
             "in": "query",
             "name": "created_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
             "required": false,
             "type": "string"
           },
@@ -9808,15 +9775,9 @@
             "type": "string"
           },
           {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "name"
-            ],
+            "description": "Looks for name.",
             "in": "query",
-            "name": "sort",
+            "name": "name",
             "required": false,
             "type": "string"
           },
@@ -9838,18 +9799,33 @@
             "type": "integer"
           },
           {
-            "description": "Looks for name.",
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "name"
+            ],
             "in": "query",
-            "name": "name",
+            "name": "sort",
             "required": false,
             "type": "string"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -9958,6 +9934,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -9970,22 +9953,6 @@
             "format": "date-time",
             "in": "query",
             "name": "created_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
             "required": false,
             "type": "string"
           },
@@ -10006,15 +9973,9 @@
             "type": "string"
           },
           {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "name"
-            ],
+            "description": "Looks for name.",
             "in": "query",
-            "name": "sort",
+            "name": "name",
             "required": false,
             "type": "string"
           },
@@ -10036,18 +9997,33 @@
             "type": "integer"
           },
           {
-            "description": "Looks for name.",
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "name"
+            ],
             "in": "query",
-            "name": "name",
+            "name": "sort",
             "required": false,
             "type": "string"
           },
           {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "type": "integer"
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -10156,6 +10132,13 @@
       "get": {
         "parameters": [
           {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "description": "The page number (1 indexed).",
             "in": "query",
             "minimum": 1,
@@ -10170,13 +10153,6 @@
             "minimum": 1,
             "name": "per_page",
             "required": false,
-            "type": "integer"
-          },
-          {
-            "format": "int32",
-            "in": "path",
-            "name": "id",
-            "required": true,
             "type": "integer"
           }
         ],
@@ -10289,14 +10265,14 @@
           {
             "format": "int32",
             "in": "path",
-            "name": "target_id",
+            "name": "id",
             "required": true,
             "type": "integer"
           },
           {
             "format": "int32",
             "in": "path",
-            "name": "id",
+            "name": "target_id",
             "required": true,
             "type": "integer"
           }
@@ -10778,6 +10754,13 @@
       "get": {
         "parameters": [
           {
+            "description": "Include only installation where user is admin",
+            "in": "query",
+            "name": "admin_only",
+            "required": false,
+            "type": "boolean"
+          },
+          {
             "description": "The page number (1 indexed).",
             "in": "query",
             "minimum": 1,
@@ -10793,13 +10776,6 @@
             "name": "per_page",
             "required": false,
             "type": "integer"
-          },
-          {
-            "description": "Include only installation where user is admin",
-            "in": "query",
-            "name": "admin_only",
-            "required": false,
-            "type": "boolean"
           }
         ],
         "responses": {
@@ -10968,22 +10944,6 @@
             "type": "string"
           },
           {
-            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_from",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
-            "format": "date-time",
-            "in": "query",
-            "name": "updated_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
             "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
             "format": "date-time",
             "in": "query",
@@ -10996,19 +10956,6 @@
             "format": "date-time",
             "in": "query",
             "name": "last_modified_at_to",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "description": "Sort result items.",
-            "enum": [
-              "-created_at",
-              "-updated_at",
-              "-last_modified_at",
-              "name"
-            ],
-            "in": "query",
-            "name": "sort",
             "required": false,
             "type": "string"
           },
@@ -11028,6 +10975,35 @@
             "name": "per_page",
             "required": false,
             "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "name"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
