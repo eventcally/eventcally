@@ -2,6 +2,9 @@ name: Docker build
 
 on: [pull_request, workflow_dispatch]
 
+permissions:
+  contents: read
+
 jobs:
   main:
     runs-on: ubuntu-latest
