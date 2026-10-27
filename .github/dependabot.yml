@@ -85,9 +85,13 @@ updates:
       default-days: 7
     labels: [dependencies, python]
     ignore:
-      # jsonschema 3.2.0 imports pkg_resources (see pyproject.toml).
+      # jsonschema 3.2.0 / swagger-spec-validator import pkg_resources, apispec 4 and
+      # webargs 7 import distutils (see pyproject.toml). Bumped by hand until those are
+      # upgraded; a name-level ignore also blocks its security updates.
       - dependency-name: setuptools
       # Must match lint.yml inputs and .pre-commit-config.yaml; bumped by hand.
+      # A name-level ignore also blocks security updates, so their security fixes
+      # are manual too: check the alerts for these yourself.
       - dependency-name: black
       - dependency-name: isort
       - dependency-name: flake8

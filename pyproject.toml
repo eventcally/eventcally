@@ -6,7 +6,6 @@ requires-python = "==3.12.*"
 dependencies = [
     "alembic>=1.10.3",
     "apispec>=4.0.0",
-    "apispec-webframeworks>=0.5.2",
     "argon2-cffi>=23.1.0",
     "Authlib>=1.3.1,<1.7",  # 1.9 assigns request.scope, which CustomFlaskOAuth2Request only reads
     "Babel>=2.12.1",
@@ -69,14 +68,14 @@ dependencies = [
 [dependency-groups]
 dev = [
     # Exact pins: black/isort/flake8 must match lint.yml and .pre-commit-config.yaml.
-    "pytest==8.4.2",
+    "pytest==9.1.1",
     "pytest-cov==4.1.0",
     "pytest-mock==3.17.0",
     "pytest-split==0.11.0",
     "pytest-datadir==1.8.0",
     "requests-mock==1.12.1",
     "coverage==7.16.2",
-    "black==24.3.0",
+    "black==26.10.1",
     "isort==5.12.0",
     "flake8==6.1.0",
     "import-linter==1.12.1",
