@@ -50,10 +50,10 @@ def database_fingerprint():
 
 
 app = create_app()
-# mix_stderr=False is required, not cosmetic: click's runner otherwise folds
-# stderr into `result.output`, so a SQLAlchemy warning ends up inside the JSON the
+# Read `result.stdout`, never `result.output`: since click 8.2 the runner folds
+# stderr into `output`, so a SQLAlchemy warning would end up inside the JSON the
 # fixtures parse. A real `flask` subprocess kept warnings on stderr.
-runner = app.test_cli_runner(mix_stderr=False)
+runner = app.test_cli_runner()
 
 
 def run_command(args):
