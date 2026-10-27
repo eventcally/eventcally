@@ -193,7 +193,7 @@ uv sync && source .venv/bin/activate
 # Run (needs DATABASE_URL, SECRET_KEY, SERVER_NAME, REDIS_URL, LIMITER_REDIS_URL, GOOGLE_MAPS_API_KEY, mail settings)
 flask db upgrade
 flask run --host 0.0.0.0
-# or full stack via Docker (PostGIS, Redis, Mailhog, Flask, Celery worker/beat, Flower):
+# or full stack via Docker (PostGIS, Redis, Mailpit, Flask, Celery worker/beat, Flower):
 docker-compose up --build
 
 # Test (application/ and domain/ tests need no services; the rest need PostGIS + Redis)

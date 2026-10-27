@@ -7,7 +7,7 @@ x-web-env:
   REDIS_URL: redis://default:pass@redis
   LIMITER_REDIS_URL: redis://default:pass@limiter_redis
   MAIL_DEFAULT_SENDER: noresponse@eventcally.com
-  MAIL_SERVER: mailhog
+  MAIL_SERVER: mailpit
   MAIL_PORT: 1025
   MAIL_USE_TLS: False
   GUNICORN_ACCESS_LOG: "-"
@@ -57,13 +57,9 @@ services:
     environment:
       REDIS_PASSWORD: pass
 
-  mailhog:
-    image: mailhog/mailhog
-    healthcheck:
-      test: "curl -f localhost:8025"
-      interval: "60s"
-      timeout: "5s"
-      start_period: "5s"
+  mailpit:
+    image: axllent/mailpit:v1.31
+    # no compose healthcheck: the image has no curl and ships its own (mailpit readyz)
     ports:
      - "8026:8025"
 
@@ -86,7 +82,7 @@ services:
         condition: service_healthy
       limiter_redis:
         condition: service_healthy
-      mailhog:
+      mailpit:
         condition: service_started
 
   worker:
@@ -101,7 +97,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      mailhog:
+      mailpit:
         condition: service_started
 
   scheduler:
@@ -116,11 +112,11 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      mailhog:
+      mailpit:
         condition: service_started
 
   flower:
-    image: mher/flower:1.2
+    image: mher/flower:2.1
     ports:
       - "5555:5555"
     environment:
