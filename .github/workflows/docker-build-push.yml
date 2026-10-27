@@ -3,6 +3,9 @@ name: Docker build and push
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   main:
     runs-on: ubuntu-latest
