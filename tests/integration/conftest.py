@@ -170,7 +170,13 @@ def _test_doubles():
             self.events = []
 
         def dispatch(self, event: events.Event):
-            self.events.append(event)
+            # Serialize like CeleryEventDispatcher + process_delayed_event_v2, so
+            # tests exercise the real wire format instead of the in-memory object.
+            self.events.append(
+                type(event).model_validate_json(
+                    event.model_dump_json(exclude_unset=True)
+                )
+            )
 
         def handle_pending_events(self):
             message_bus = self.container.cqrs.message_bus()
