@@ -10,8 +10,9 @@ argument-hint: [pr-number]
 ## Steps
 
 1. **Identify**
-   - `git branch --show-current` and `gh pr view $ARGUMENTS --json number,headRefName,state,mergeable,statusCheckRollup`.
+   - `git branch --show-current` and `gh pr view $ARGUMENTS --json number,headRefName,state,mergeable,mergeStateStatus,statusCheckRollup`.
    - Stop and report if the PR is not open, not mergeable, or has failing checks. Do not merge past red checks.
+   - If the PR is behind `main` (`mergeStateStatus` `BEHIND`), run `gh pr update-branch <number>`, wait for the checks to go green again, then continue.
 
 2. **Merge**
    - `gh pr merge <number> --merge` (this repo's history uses merge commits). Do not pass `--delete-branch`; clean up explicitly below.

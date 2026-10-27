@@ -1,5 +1,5 @@
 # Version updates. Several versions are pinned in lockstep in places Dependabot cannot
-# update (setup-node `node-version`, setup-uv `version`, lint.yml tool inputs, the uv
+# update (setup-node `node-version`, setup-uv `version`, the uv
 # `COPY --from` tag, .pre-commit-config.yaml); those are ignored here and bumped by hand.
 # The pre-commit ecosystem is left out on purpose: every hook rev is such a lockstep pin.
 # Version updates are minor and patch only (majors are done by hand), except for
@@ -85,7 +85,8 @@ updates:
       default-days: 7
     labels: [dependencies, python]
     ignore:
-      # Must match lint.yml inputs and .pre-commit-config.yaml; bumped by hand.
+      # Pinned in lockstep with .pre-commit-config.yaml (hook revs and
+      # import-linter additional_dependencies), which Dependabot cannot update; bumped by hand.
       # A name-level ignore also blocks security updates, so their security fixes
       # are manual too: check the alerts for these yourself.
       - dependency-name: black
