@@ -96,7 +96,7 @@ Reads in views (incl. `project/presentation/web/modular`) and the API are migrat
 
 - Entry point: `bootstrap.py` (set via `FLASK_APP=.flaskenv`); it calls `create_app` from `project/factory.py`.
 - Dev server: `flask run --host 0.0.0.0`.
-- Docker Compose (`docker-compose up --build`) runs everything: PostGIS, Redis, Mailhog, Flask, Celery worker/beat, Flower.
+- Docker Compose (`docker-compose up --build`) runs everything: PostGIS, Redis, Mailpit, Flask, Celery worker/beat, Flower.
 - Required env vars: `DATABASE_URL`, `SECRET_KEY`, `SERVER_NAME`, `REDIS_URL`, `LIMITER_REDIS_URL`, `GOOGLE_MAPS_API_KEY`, mail settings. See `doc/development.md` for full list.
 
 ## Frontend (Vue 3 + BFF)

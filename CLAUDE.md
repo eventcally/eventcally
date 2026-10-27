@@ -38,7 +38,7 @@ source .venv/bin/activate                      # or prefix commands with `uv run
 #              LIMITER_REDIS_URL, GOOGLE_MAPS_API_KEY, mail settings)
 flask db upgrade
 flask run --host 0.0.0.0
-docker-compose up --build                      # full stack: PostGIS, Redis, Mailhog, Flask, Celery, Flower
+docker-compose up --build                      # full stack: PostGIS, Redis, Mailpit, Flask, Celery, Flower
 
 # Test — dockerized, no host Postgres/Redis/venv needed (`pytest tests/unit` needs no services)
 ./runtests.sh                                  # full parallel suite + coverage, in Docker

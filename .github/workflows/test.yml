@@ -142,8 +142,9 @@ jobs:
           - 5432:5432
 
       redis:
-        # Docker Hub image
-        image: redis
+        # Docker Hub image -- pinned to the production Redis line (6.2); moves with production in the
+        # Redis upgrade track. Dependabot does not bump workflow service images.
+        image: redis:6.2
         # Set health checks to wait until redis has started
         options: >-
           --health-cmd "redis-cli ping"
@@ -155,8 +156,9 @@ jobs:
           - 6379:6379
 
       limiter_redis:
-        # Docker Hub image
-        image: redis
+        # Docker Hub image -- pinned to the production Redis line (6.2); moves with production in the
+        # Redis upgrade track. Dependabot does not bump workflow service images.
+        image: redis:6.2
         # Set health checks to wait until redis has started
         options: >-
           --health-cmd "redis-cli ping"
