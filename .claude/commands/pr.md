@@ -23,7 +23,7 @@ Open a pull request for the current branch against `main`, then watch it until i
 
 3. **Monitor**
    - Watch checks with `gh pr checks <pr> --watch` (run in the background, not polling in a loop).
-   - Read findings: review comments, bot comments (Playwright, CodeQL, Snyk, Socket, coverage) via `gh pr view <pr> --comments` and `gh api repos/{owner}/{repo}/pulls/<pr>/comments`.
+   - Read findings: review comments, bot comments (Playwright, CodeQL, Socket, coverage) via `gh pr view <pr> --comments` and `gh api repos/{owner}/{repo}/pulls/<pr>/comments`.
 
 4. **Handle failures and findings**
    - Read the failing job log (`gh run view <run> --log-failed`) and find the root cause.
