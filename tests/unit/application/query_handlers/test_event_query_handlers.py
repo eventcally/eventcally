@@ -14,7 +14,6 @@ from project.application.query_handlers import (
     GetOrganizationWidgetSettingsHandler,
     ListAllEventsHandler,
     ListEventDatesHandler,
-    ListEventDatesOfEventHandler,
     ListEventsHandler,
     ListUpcomingEventDatesHandler,
     SearchEventDatesHandler,
@@ -144,14 +143,6 @@ class FakeDetailRepo(AbstractEventDetailReadRepository):
 
     def get_date_detail(self, event_date_id):
         return EventDateDetailReadModel(id=event_date_id, start=START, event=_detail())
-
-    def list_dates_of_event(self, event_id, page_request):
-        return Page[EventDateListItemReadModel](
-            items=[EventDateListItemReadModel(id=1, start=START)],
-            page=1,
-            per_page=20,
-            total=1,
-        )
 
     def list_upcoming_dates(self, event_id):
         return [EventDateReadModel(id=1, start=START)]
@@ -344,19 +335,6 @@ class TestDetailHandlers:
             )
             is None
         )
-
-    def test_dates_of_an_event(self):
-        handler = self._handler(ListEventDatesOfEventHandler)
-
-        page = handler.handle(queries.ListEventDatesOfEventQuery(event_id=1))
-        assert page.total == 1
-        assert handler.handle(queries.ListEventDatesOfEventQuery(event_id=4711)) is None
-
-        with pytest.raises(UnauthorizedError):
-            self._handler(
-                ListEventDatesOfEventHandler,
-                repo=FakeDetailRepo(EventPublicStatus.draft),
-            ).handle(queries.ListEventDatesOfEventQuery(event_id=1, actor=None))
 
     def test_upcoming_dates_pass_through(self):
         dates = ListUpcomingEventDatesHandler(FakeDetailRepo()).handle(

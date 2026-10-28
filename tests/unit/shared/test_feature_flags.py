@@ -69,8 +69,6 @@ def test_apply_feature_flags_to_config_unknown_token_ignored():
 
 def test_feature_flags_registry_mapping():
     assert FEATURE_FLAGS["ApiEventDateDisabled"] == "FEATURE_API_EVENT_DATE_ENABLED"
-    assert FEATURE_FLAGS["ApiEventDatesDisabled"] == "FEATURE_API_EVENT_DATES_ENABLED"
-    assert FEATURE_FLAGS["ApiEventListDisabled"] == "FEATURE_API_EVENT_LIST_ENABLED"
     assert (
         FEATURE_FLAGS["ReferencedEventChangedDetailsDisabled"]
         == "FEATURE_REFERENCED_EVENT_CHANGED_DETAILS_ENABLED"
@@ -87,10 +85,16 @@ def test_apply_feature_flags_to_config_referenced_event_changed_details_disabled
 
 def test_apply_feature_flags_to_config_api_endpoints_disabled():
     config = {}
-    apply_feature_flags_to_config(
-        config, "ApiEventDateDisabled,ApiEventDatesDisabled,ApiEventListDisabled"
-    )
+    apply_feature_flags_to_config(config, "ApiEventDateDisabled")
     assert config["FEATURE_API_EVENT_DATE_ENABLED"] is False
-    assert config["FEATURE_API_EVENT_DATES_ENABLED"] is False
-    assert config["FEATURE_API_EVENT_LIST_ENABLED"] is False
     assert config["FEATURE_REFERENCED_EVENT_CHANGED_DETAILS_ENABLED"] is True
+
+
+def test_retired_api_tokens_are_ignored():
+    raw = "ApiEventDatesDisabled,ApiEventListDisabled"
+    assert parse_feature_flags(raw) == set()
+
+    config = {}
+    apply_feature_flags_to_config(config, raw)
+    assert "FEATURE_API_EVENT_DATES_ENABLED" not in config
+    assert "FEATURE_API_EVENT_LIST_ENABLED" not in config

@@ -2,10 +2,8 @@ from typing import List, Optional
 
 from sqlalchemy import select
 
-from project.application.queries.page_request import PageRequest
 from project.application.read_models.event_read_models import (
     EventDateDetailReadModel,
-    EventDateListItemReadModel,
     EventDateReadModel,
     EventDetailReadModel,
     EventEditReadModel,
@@ -13,7 +11,6 @@ from project.application.read_models.event_read_models import (
 from project.application.read_models.event_visibility_read_model import (
     EventVisibilityReadModel,
 )
-from project.application.read_models.page import Page
 from project.application.read_repositories.abstract_event_detail_read_repository import (
     AbstractEventDetailReadRepository,
 )
@@ -29,7 +26,6 @@ from project.infrastructure.read_repositories.event_read_model_mappers import (
     to_event_edit,
     verified_admin_units,
 )
-from project.infrastructure.read_repositories.query_helpers import paginate
 from project.shared.dateutils import get_today
 
 
@@ -129,21 +125,6 @@ class SqlAlchemyEventDetailReadRepository(AbstractEventDetailReadRepository):
 
         return EventDateDetailReadModel(
             id=row.id, start=row.start, end=row.end, allday=row.allday, event=event
-        )
-
-    def list_dates_of_event(
-        self, event_id: ObjectId, page_request: PageRequest
-    ) -> Page[EventDateListItemReadModel]:
-        filters = [EventDate.event_id == event_id]
-
-        return paginate(
-            self.session,
-            select(EventDate.id, EventDate.start)
-            .where(*filters)
-            .order_by(EventDate.start, EventDate.id),
-            select(EventDate.id).where(*filters),
-            page_request,
-            lambda row: EventDateListItemReadModel(id=row.id, start=row.start),
         )
 
     def list_upcoming_dates(self, event_id: ObjectId) -> List[EventDateReadModel]:

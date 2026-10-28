@@ -158,16 +158,12 @@ rest_api = None
 api_docs = None
 resource_registry = {}
 
-# Unused endpoints, each hidden behind its own flag so they can be retired one by one.
+# Unused endpoints hidden behind a flag until they are retired.
 API_EVENT_DATE_ENDPOINTS = {"api_v1_event_date"}
-API_EVENT_DATES_ENDPOINTS = {"api_v1_event_dates"}
-API_EVENT_LIST_ENDPOINTS = {"api_v1_event_list"}
 
 # app.config key (from project.shared.feature_flags) -> endpoints hidden when it is False.
 FEATURE_ENDPOINTS = {
     "FEATURE_API_EVENT_DATE_ENABLED": API_EVENT_DATE_ENDPOINTS,
-    "FEATURE_API_EVENT_DATES_ENABLED": API_EVENT_DATES_ENDPOINTS,
-    "FEATURE_API_EVENT_LIST_ENABLED": API_EVENT_LIST_ENDPOINTS,
 }
 
 

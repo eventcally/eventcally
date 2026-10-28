@@ -102,18 +102,6 @@ def test_read_co_organizers(client, app, db, seeder: Seeder, utils: UtilActions)
     assert response.json["co_organizers"][1]["id"] == organizer_b_id
 
 
-def test_list(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
-    event_id = seeder.create_event(admin_unit_id)
-    seeder.create_event(admin_unit_id, draft=True)
-    seeder.create_event_unverified()
-
-    url = utils.get_url("api_v1_event_list")
-    response = utils.get_json_ok(url)
-    assert len(response.json["items"]) == 1
-    assert response.json["items"][0]["id"] == event_id
-
-
 def test_search(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
     event_id = seeder.create_event(admin_unit_id)
@@ -148,52 +136,6 @@ def test_search_with_custom_category(client, seeder: Seeder, utils: UtilActions)
         response.json["items"][0]["custom_categories"][0]["id"]
         == custom_event_category_id
     )
-
-
-def test_dates(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
-    event_id = seeder.create_event(admin_unit_id)
-    url = utils.get_url("api_v1_event_dates", id=event_id)
-    response = utils.get_json(url)
-    utils.assert_response_ok(response)
-
-    event_id = seeder.create_event(admin_unit_id, draft=True)
-    url = utils.get_url("api_v1_event_dates", id=event_id)
-    response = utils.get_json(url)
-    utils.assert_response_unauthorized(response)
-
-    _, _, event_id = seeder.create_event_unverified()
-    url = utils.get_url("api_v1_event_dates", id=event_id)
-    response = utils.get_json(url)
-    utils.assert_response_unauthorized(response)
-
-    event_id = seeder.create_event(
-        admin_unit_id, recurrence_rule="RRULE:FREQ=DAILY;COUNT=51"
-    )
-    url = utils.get_url("api_v1_event_dates", id=event_id)
-    response = utils.get_json(url)
-    utils.assert_response_ok(response)
-    url = utils.get_url("api_v1_event_dates", id=event_id, page=2)
-    response = utils.get_json(url)
-    utils.assert_response_ok(response)
-
-
-def test_dates_myDraft(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_api_access()
-    event_id = seeder.create_event(admin_unit_id, draft=True)
-
-    url = utils.get_url("api_v1_event_dates", id=event_id)
-    response = utils.get_json(url)
-    utils.assert_response_ok(response)
-
-
-def test_dates_myUnverified(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_api_access(admin_unit_verified=False)
-    event_id = seeder.create_event(admin_unit_id)
-
-    url = utils.get_url("api_v1_event_dates", id=event_id)
-    response = utils.get_json(url)
-    utils.assert_response_ok(response)
 
 
 def create_put(

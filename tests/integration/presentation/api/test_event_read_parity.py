@@ -128,7 +128,6 @@ def _requests(utils: UtilActions, ids):
     }
 
     for key, args in list_args.items():
-        requests[f"events_list_{key}"] = url("api_v1_event_list", **args)
         requests[f"event_dates_list_{key}"] = url("api_v1_event_date_list", **args)
 
         for name in ("a", "b", "c"):
@@ -156,13 +155,8 @@ def _requests(utils: UtilActions, ids):
         "unverified",
     ):
         requests[f"event_{name}"] = url("api_v1_event", id=ids[name])
-        requests[f"event_{name}_dates"] = url("api_v1_event_dates", id=ids[name])
 
-    requests["event_dates_page"] = url(
-        "api_v1_event_dates", id=ids["recurring"], page=2, per_page=2
-    )
     requests["event_unknown"] = url("api_v1_event", id=4711)
-    requests["event_unknown_dates"] = url("api_v1_event_dates", id=4711)
 
     for date_id in range(1, 21):
         requests[f"event_date_{date_id}"] = url("api_v1_event_date", id=date_id)

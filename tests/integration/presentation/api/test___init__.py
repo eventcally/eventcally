@@ -143,16 +143,6 @@ UNUSED_API_ENDPOINT_FLAGS = [
         "FEATURE_API_EVENT_DATE_ENABLED",
         "ApiEventDateDisabled",
     ),
-    (
-        "API_EVENT_DATES_ENDPOINTS",
-        "FEATURE_API_EVENT_DATES_ENABLED",
-        "ApiEventDatesDisabled",
-    ),
-    (
-        "API_EVENT_LIST_ENDPOINTS",
-        "FEATURE_API_EVENT_LIST_ENABLED",
-        "ApiEventListDisabled",
-    ),
 ]
 
 
@@ -201,6 +191,8 @@ def test_init_api_unused_endpoints_enabled_by_default(
 
     assert app.config[config_key] is True
     assert _endpoint_set(endpoint_set_name).issubset(endpoints)
+    assert "api_v1_event_list" not in endpoints
+    assert "api_v1_event_dates" not in endpoints
 
 
 @pytest.mark.parametrize(

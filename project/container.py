@@ -981,11 +981,6 @@ class Cqrs(containers.DeclarativeContainer):
                     repo=read_repos.event_detail_read_repo,
                     visibility=event_visibility_service,
                 ),
-                queries.ListEventDatesOfEventQuery: providers.Factory(
-                    query_handlers.ListEventDatesOfEventHandler,
-                    repo=read_repos.event_detail_read_repo,
-                    visibility=event_visibility_service,
-                ),
                 queries.ListUpcomingEventDatesQuery: providers.Factory(
                     query_handlers.ListUpcomingEventDatesHandler,
                     repo=read_repos.event_detail_read_repo,
