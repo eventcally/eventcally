@@ -67,7 +67,7 @@ class FakeChangeSummaryService(EventChangeSummaryService):
         return self.summary
 
 
-def _make_handler(email_service, details_enabled=True, summary=None):
+def _make_handler(email_service, summary=None):
     org_service = MagicMock()
     org_service.send_template_mails_to_members_async = MagicMock()
     # Keep a reference via the email_service attribute so tests can inspect
@@ -80,7 +80,6 @@ def _make_handler(email_service, details_enabled=True, summary=None):
             organization_service=org_service,
             event_read_repo=event_read_repo,
             change_summary_service=change_summary_service,
-            details_enabled=details_enabled,
         ),
         org_service,
         change_summary_service,
@@ -256,36 +255,3 @@ class TestReferenceEventChangedEmailEventHandler:
         assert change_summary_service.build_calls == 1
         for call in org_service.send_template_mails_to_members_async.call_args_list:
             assert call.kwargs["changes"] is summary
-
-    def test_details_enabled_passes_summary_to_the_template(self, uow, email_service):
-        event = _make_event(uow)
-        ref = MagicMock()
-        ref.admin_unit_id = 99
-        uow.event_references._references_by_event[event.id] = [ref]
-
-        summary = EventChangeSummaryReadModel(name=ChangedValue(old="a", new="b"))
-        handler, org_service, _ = _make_handler(
-            email_service, details_enabled=True, summary=summary
-        )
-        ev = _make_updated_event(event, name=ChangedValue(old="a", new="b"))
-        handler.handle(ev, uow)
-
-        call = org_service.send_template_mails_to_members_async.call_args
-        assert call.kwargs["changes"] is summary
-
-    def test_details_disabled_sends_mail_without_summary(self, uow, email_service):
-        event = _make_event(uow)
-        ref = MagicMock()
-        ref.admin_unit_id = 99
-        uow.event_references._references_by_event[event.id] = [ref]
-
-        handler, org_service, change_summary_service = _make_handler(
-            email_service, details_enabled=False
-        )
-        ev = _make_updated_event(event, name=ChangedValue(old="a", new="b"))
-        handler.handle(ev, uow)
-
-        org_service.send_template_mails_to_members_async.assert_called_once()
-        call = org_service.send_template_mails_to_members_async.call_args
-        assert call.kwargs["changes"] is None
-        assert change_summary_service.build_calls == 0

@@ -3302,7 +3302,6 @@
     "tests/unit/shared/test_feature_flags.py::test_apply_feature_flags_to_config_api_endpoints_disabled": 0.007422290997055825,
     "tests/unit/shared/test_feature_flags.py::test_apply_feature_flags_to_config_both_disabled": 0.007707332995778415,
     "tests/unit/shared/test_feature_flags.py::test_apply_feature_flags_to_config_empty": 0.013269499999296386,
-    "tests/unit/shared/test_feature_flags.py::test_apply_feature_flags_to_config_referenced_event_changed_details_disabled": 0.0155519169929903,
     "tests/unit/shared/test_feature_flags.py::test_apply_feature_flags_to_config_unknown_token_ignored": 0.0065232909983024,
     "tests/unit/shared/test_feature_flags.py::test_feature_flags_registry_mapping": 0.005167417002667207,
     "tests/unit/shared/test_feature_flags.py::test_parse_feature_flags_empty": 0.008249582999269478,
