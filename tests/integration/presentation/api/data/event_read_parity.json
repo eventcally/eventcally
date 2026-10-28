@@ -5,23 +5,11 @@
     "status": 200,
     "url": "/api/v1/events/3"
   },
-  "anon:event_allday_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":6,\"start\":\"2040-05-05T00:00:00+02:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"c30a374caa37e766c6c2a38a5e9b27d1e9f6c9f5\"",
-    "status": 200,
-    "url": "/api/v1/events/3/dates"
-  },
   "anon:event_cancelled": {
     "body": "{\"accessible_for_free\":null,\"age_from\":null,\"age_to\":null,\"attendance_mode\":\"offline\",\"booked_up\":null,\"categories\":[{\"id\":18,\"name\":\"Other\"}],\"co_organizers\":[],\"created_at\":\"2026-01-07T08:00:00+00:00\",\"custom_categories\":[],\"date_definitions\":[{\"allday\":false,\"end\":null,\"id\":7,\"recurrence_rule\":null,\"start\":\"2040-07-01T10:00:00+02:00\"}],\"description\":\"Beschreibung\",\"expected_participants\":null,\"external_link\":\"\",\"id\":6,\"internal_tags\":null,\"kid_friendly\":null,\"name\":\"Cancelled Event\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organizer\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":null,\"place\":{\"id\":7,\"name\":\"Meine Crew\"},\"previous_start_date\":null,\"price_info\":\"\",\"public_status\":\"published\",\"reference_id\":null,\"registration_required\":null,\"status\":\"cancelled\",\"tags\":null,\"target_group_origin\":null,\"ticket_link\":\"\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"}\n",
     "etag": "\"d844a5f1fd4a943e0f732399cec625326594e65d\"",
     "status": 200,
     "url": "/api/v1/events/6"
-  },
-  "anon:event_cancelled_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":9,\"start\":\"2040-07-01T10:00:00+02:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"36b2f596efc03458c00d438f6493b498a1046432\"",
-    "status": 200,
-    "url": "/api/v1/events/6/dates"
   },
   "anon:event_date_1": {
     "body": "{\"allday\":false,\"end\":\"2040-03-01T20:00:00+01:00\",\"event\":{\"id\":1,\"name\":\"Full Event\"},\"id\":1,\"start\":\"2040-03-01T18:00:00+01:00\"}\n",
@@ -202,12 +190,6 @@
     "etag": "\"5c2a80a9235a10c0828c51076a358024f5024cd2\"",
     "status": 200,
     "url": "/api/v1/event-dates?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-01T12:00:00"
-  },
-  "anon:event_dates_page": {
-    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"id\":5,\"start\":\"2040-04-16T19:00:00+02:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":3}\n",
-    "etag": "\"550e7e9a7a4fd5090dc9b8877e52ab6c4c78576f\"",
-    "status": 200,
-    "url": "/api/v1/events/2/dates?page=2&per_page=2"
   },
   "anon:event_dates_search_category": {
     "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[],\"next_num\":null,\"page\":1,\"pages\":0,\"per_page\":20,\"prev_num\":null,\"total\":0}\n",
@@ -401,23 +383,11 @@
     "status": 401,
     "url": "/api/v1/events/4"
   },
-  "anon:event_draft_dates": {
-    "body": "",
-    "etag": null,
-    "status": 401,
-    "url": "/api/v1/events/4/dates"
-  },
   "anon:event_full": {
     "body": "{\"accessible_for_free\":true,\"age_from\":6,\"age_to\":12,\"attendance_mode\":\"offline\",\"booked_up\":true,\"categories\":[{\"id\":18,\"name\":\"Other\"},{\"id\":20,\"name\":\"Culture\"}],\"co_organizers\":[{\"id\":6,\"name\":\"Organizer Two\"},{\"id\":5,\"name\":\"Organizer One\"}],\"created_at\":\"2026-01-02T08:00:00+00:00\",\"custom_categories\":[{\"category_set\":{\"id\":1,\"label\":\"Default Custom Categories\",\"name\":\"Default\"},\"id\":1,\"label\":\"Custom Category 1\",\"name\":\"Custom Category 1\"}],\"date_definitions\":[{\"allday\":false,\"end\":\"2040-03-01T20:00:00+01:00\",\"id\":1,\"recurrence_rule\":null,\"start\":\"2040-03-01T18:00:00+01:00\"},{\"allday\":false,\"end\":null,\"id\":2,\"recurrence_rule\":null,\"start\":\"2040-03-08T18:00:00+01:00\"}],\"description\":\"Beschreibung 0 Beschreibung 1 Beschreibung 2 Beschreibung 3 Beschreibung 4 Beschreibung 5 Beschreibung 6 Beschreibung 7 Beschreibung 8 Beschreibung 9 Beschreibung 10 Beschreibung 11 Beschreibung 12 Beschreibung 13 Beschreibung 14 Beschreibung 15 Beschreibung 16 Beschreibung 17 Beschreibung 18 Beschreibung 19 Beschreibung 20 Beschreibung 21 Beschreibung 22 Beschreibung 23 Beschreibung 24 Beschreibung 25 Beschreibung 26 Beschreibung 27 Beschreibung 28 Beschreibung 29 Beschreibung 30 Beschreibung 31 Beschreibung 32 Beschreibung 33 Beschreibung 34 Beschreibung 35 Beschreibung 36 Beschreibung 37 Beschreibung 38 Beschreibung 39 Beschreibung 40 Beschreibung 41 Beschreibung 42 Beschreibung 43 Beschreibung 44 Beschreibung 45 Beschreibung 46 Beschreibung 47 Beschreibung 48 Beschreibung 49 Beschreibung 50 Beschreibung 51 Beschreibung 52 Beschreibung 53 Beschreibung 54 Beschreibung 55 Beschreibung 56 Beschreibung 57 Beschreibung 58 Beschreibung 59\",\"expected_participants\":50,\"external_link\":\"https://example.com/full\",\"id\":1,\"internal_tags\":null,\"kid_friendly\":true,\"name\":\"Full Event\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organizer\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":{\"copyright_text\":\"EventCally\",\"image_url\":\"/image/1/1767340800000\",\"license\":{\"code\":\"CC BY 4.0\",\"id\":2,\"name\":\"Creative Commons Attribution 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by/4.0/\"}},\"place\":{\"id\":5,\"name\":\"Rathaus\"},\"previous_start_date\":null,\"price_info\":\"Free\",\"public_status\":\"published\",\"reference_id\":null,\"registration_required\":true,\"status\":\"scheduled\",\"tags\":\"music,live\",\"target_group_origin\":null,\"ticket_link\":\"https://example.com/tickets\",\"updated_at\":null}\n",
     "etag": "\"70bf35d9088b77ad933beb56f367eadcae47d234\"",
     "status": 200,
     "url": "/api/v1/events/1"
-  },
-  "anon:event_full_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":1,\"start\":\"2040-03-01T18:00:00+01:00\"},{\"id\":2,\"start\":\"2040-03-08T18:00:00+01:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
-    "etag": "\"b6d1f037884920b81bc0c46271cd0e63ed3a9055\"",
-    "status": 200,
-    "url": "/api/v1/events/1/dates"
   },
   "anon:event_other": {
     "body": "{\"accessible_for_free\":null,\"age_from\":null,\"age_to\":null,\"attendance_mode\":\"offline\",\"booked_up\":null,\"categories\":[{\"id\":18,\"name\":\"Other\"}],\"co_organizers\":[],\"created_at\":\"2026-01-09T08:00:00+00:00\",\"custom_categories\":[],\"date_definitions\":[{\"allday\":false,\"end\":null,\"id\":9,\"recurrence_rule\":null,\"start\":\"2040-03-01T12:00:00+01:00\"}],\"description\":\"Beschreibung\",\"expected_participants\":null,\"external_link\":\"\",\"id\":8,\"internal_tags\":null,\"kid_friendly\":null,\"name\":\"Other Event\",\"organization\":{\"id\":3,\"name\":\"Other Crew\"},\"organizer\":{\"id\":3,\"name\":\"Other Crew\"},\"photo\":null,\"place\":{\"id\":8,\"name\":\"Other Crew\"},\"previous_start_date\":null,\"price_info\":\"\",\"public_status\":\"published\",\"reference_id\":null,\"registration_required\":null,\"status\":\"scheduled\",\"tags\":null,\"target_group_origin\":null,\"ticket_link\":\"\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"}\n",
@@ -425,23 +395,11 @@
     "status": 200,
     "url": "/api/v1/events/8"
   },
-  "anon:event_other_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":11,\"start\":\"2040-03-01T12:00:00+01:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"93ba8b87543491d85b1fb39bda09a2e3c0a11d55\"",
-    "status": 200,
-    "url": "/api/v1/events/8/dates"
-  },
   "anon:event_past": {
     "body": "{\"accessible_for_free\":null,\"age_from\":null,\"age_to\":null,\"attendance_mode\":\"offline\",\"booked_up\":null,\"categories\":[{\"id\":18,\"name\":\"Other\"}],\"co_organizers\":[],\"created_at\":\"2026-01-08T08:00:00+00:00\",\"custom_categories\":[],\"date_definitions\":[{\"allday\":false,\"end\":null,\"id\":8,\"recurrence_rule\":null,\"start\":\"2020-01-02T14:30:00+01:00\"}],\"description\":\"Beschreibung\",\"expected_participants\":null,\"external_link\":\"\",\"id\":7,\"internal_tags\":null,\"kid_friendly\":null,\"name\":\"Past Event\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organizer\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":null,\"place\":{\"id\":7,\"name\":\"Meine Crew\"},\"previous_start_date\":null,\"price_info\":\"\",\"public_status\":\"published\",\"reference_id\":null,\"registration_required\":null,\"status\":\"scheduled\",\"tags\":null,\"target_group_origin\":null,\"ticket_link\":\"\",\"updated_at\":null}\n",
     "etag": "\"72f287e7398e05d1def5268384751adcdea91fad\"",
     "status": 200,
     "url": "/api/v1/events/7"
-  },
-  "anon:event_past_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":10,\"start\":\"2020-01-02T14:30:00+01:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"79dafe974a17b67b6bda0a5d1a465f4182d6e5ee\"",
-    "status": 200,
-    "url": "/api/v1/events/7/dates"
   },
   "anon:event_planned": {
     "body": "",
@@ -449,23 +407,11 @@
     "status": 401,
     "url": "/api/v1/events/5"
   },
-  "anon:event_planned_dates": {
-    "body": "",
-    "etag": null,
-    "status": 401,
-    "url": "/api/v1/events/5/dates"
-  },
   "anon:event_recurring": {
     "body": "{\"accessible_for_free\":null,\"age_from\":null,\"age_to\":null,\"attendance_mode\":\"offline\",\"booked_up\":null,\"categories\":[{\"id\":18,\"name\":\"Other\"}],\"co_organizers\":[],\"created_at\":\"2026-01-03T08:00:00+00:00\",\"custom_categories\":[],\"date_definitions\":[{\"allday\":false,\"end\":null,\"id\":3,\"recurrence_rule\":\"RRULE:FREQ=WEEKLY;COUNT=3\",\"start\":\"2040-04-02T19:00:00+02:00\"}],\"description\":\"Beschreibung\",\"expected_participants\":null,\"external_link\":\"\",\"id\":2,\"internal_tags\":null,\"kid_friendly\":null,\"name\":\"Weekly Jam\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organizer\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":null,\"place\":{\"id\":7,\"name\":\"Meine Crew\"},\"previous_start_date\":null,\"price_info\":\"\",\"public_status\":\"published\",\"reference_id\":null,\"registration_required\":null,\"status\":\"scheduled\",\"tags\":\"music\",\"target_group_origin\":null,\"ticket_link\":\"\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"}\n",
     "etag": "\"454b32445cfdecba5e5c336dfcfa75a3b02c0eab\"",
     "status": 200,
     "url": "/api/v1/events/2"
-  },
-  "anon:event_recurring_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":3,\"start\":\"2040-04-02T19:00:00+02:00\"},{\"id\":4,\"start\":\"2040-04-09T19:00:00+02:00\"},{\"id\":5,\"start\":\"2040-04-16T19:00:00+02:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
-    "etag": "\"5c2a80a9235a10c0828c51076a358024f5024cd2\"",
-    "status": 200,
-    "url": "/api/v1/events/2/dates"
   },
   "anon:event_unknown": {
     "body": "",
@@ -473,77 +419,11 @@
     "status": 404,
     "url": "/api/v1/events/4711"
   },
-  "anon:event_unknown_dates": {
-    "body": "",
-    "etag": null,
-    "status": 404,
-    "url": "/api/v1/events/4711/dates"
-  },
   "anon:event_unverified": {
     "body": "",
     "etag": null,
     "status": 401,
     "url": "/api/v1/events/9"
-  },
-  "anon:event_unverified_dates": {
-    "body": "",
-    "etag": null,
-    "status": 401,
-    "url": "/api/v1/events/9/dates"
-  },
-  "anon:events_list_created_from": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n",
-    "etag": "\"040279667b18407bc643556dda9035b7276130b1\"",
-    "status": 200,
-    "url": "/api/v1/events?created_at_from=2026-01-04T00:00:00"
-  },
-  "anon:events_list_default": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
-    "etag": "\"1eac869d6ec918eaeeee2f3bd8f04bb1b653821f\"",
-    "status": 200,
-    "url": "/api/v1/events"
-  },
-  "anon:events_list_last_modified_to": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n",
-    "etag": "\"510b2a64d90b658bceb0249d84d734683e4eabf7\"",
-    "status": 200,
-    "url": "/api/v1/events?last_modified_at_to=2026-02-01T12:00:00"
-  },
-  "anon:events_list_page_2": {
-    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":3,\"prev_num\":1,\"total\":6}\n",
-    "etag": "\"71b17c7cb8029aebe2d8cdfa755414c2d0607613\"",
-    "status": 200,
-    "url": "/api/v1/events?page=2&per_page=3"
-  },
-  "anon:events_list_sort_created": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
-    "etag": "\"0effb7aa0d470dcd09e87518605f1ab3cd9645d9\"",
-    "status": 200,
-    "url": "/api/v1/events?sort=-created_at"
-  },
-  "anon:events_list_sort_modified": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
-    "etag": "\"dcdb97e2957e78a4d51c2c95e4dfe3fb4b70784f\"",
-    "status": 200,
-    "url": "/api/v1/events?sort=-last_modified_at"
-  },
-  "anon:events_list_sort_start": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
-    "etag": "\"1eac869d6ec918eaeeee2f3bd8f04bb1b653821f\"",
-    "status": 200,
-    "url": "/api/v1/events?sort=start"
-  },
-  "anon:events_list_sort_updated": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
-    "etag": "\"2c9989844343a4866db7a418519d141bce726fe4\"",
-    "status": 200,
-    "url": "/api/v1/events?sort=-updated_at"
-  },
-  "anon:events_list_updated_range": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"884c3de8cf5a946be5cd5d6b332cf1c62c76074d\"",
-    "status": 200,
-    "url": "/api/v1/events?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-01T12:00:00"
   },
   "anon:events_search_category": {
     "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[],\"next_num\":null,\"page\":1,\"pages\":0,\"per_page\":20,\"prev_num\":null,\"total\":0}\n",
@@ -1271,23 +1151,11 @@
     "status": 200,
     "url": "/api/v1/events/3"
   },
-  "auth:event_allday_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":6,\"start\":\"2040-05-05T00:00:00+02:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"c30a374caa37e766c6c2a38a5e9b27d1e9f6c9f5\"",
-    "status": 200,
-    "url": "/api/v1/events/3/dates"
-  },
   "auth:event_cancelled": {
     "body": "{\"accessible_for_free\":null,\"age_from\":null,\"age_to\":null,\"attendance_mode\":\"offline\",\"booked_up\":null,\"categories\":[{\"id\":18,\"name\":\"Other\"}],\"co_organizers\":[],\"created_at\":\"2026-01-07T08:00:00+00:00\",\"custom_categories\":[],\"date_definitions\":[{\"allday\":false,\"end\":null,\"id\":7,\"recurrence_rule\":null,\"start\":\"2040-07-01T10:00:00+02:00\"}],\"description\":\"Beschreibung\",\"expected_participants\":null,\"external_link\":\"\",\"id\":6,\"internal_tags\":\"secret\",\"kid_friendly\":null,\"name\":\"Cancelled Event\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organizer\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":null,\"place\":{\"id\":7,\"name\":\"Meine Crew\"},\"previous_start_date\":null,\"price_info\":\"\",\"public_status\":\"published\",\"reference_id\":null,\"registration_required\":null,\"status\":\"cancelled\",\"tags\":null,\"target_group_origin\":null,\"ticket_link\":\"\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"}\n",
     "etag": "\"f1bf01d40b687ade2a16be21131381a602343ea2\"",
     "status": 200,
     "url": "/api/v1/events/6"
-  },
-  "auth:event_cancelled_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":9,\"start\":\"2040-07-01T10:00:00+02:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"36b2f596efc03458c00d438f6493b498a1046432\"",
-    "status": 200,
-    "url": "/api/v1/events/6/dates"
   },
   "auth:event_date_1": {
     "body": "{\"allday\":false,\"end\":\"2040-03-01T20:00:00+01:00\",\"event\":{\"id\":1,\"name\":\"Full Event\"},\"id\":1,\"start\":\"2040-03-01T18:00:00+01:00\"}\n",
@@ -1468,12 +1336,6 @@
     "etag": "\"5c2a80a9235a10c0828c51076a358024f5024cd2\"",
     "status": 200,
     "url": "/api/v1/event-dates?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-01T12:00:00"
-  },
-  "auth:event_dates_page": {
-    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"id\":5,\"start\":\"2040-04-16T19:00:00+02:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":2,\"prev_num\":1,\"total\":3}\n",
-    "etag": "\"550e7e9a7a4fd5090dc9b8877e52ab6c4c78576f\"",
-    "status": 200,
-    "url": "/api/v1/events/2/dates?page=2&per_page=2"
   },
   "auth:event_dates_search_category": {
     "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[],\"next_num\":null,\"page\":1,\"pages\":0,\"per_page\":20,\"prev_num\":null,\"total\":0}\n",
@@ -1667,23 +1529,11 @@
     "status": 200,
     "url": "/api/v1/events/4"
   },
-  "auth:event_draft_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":7,\"start\":\"2040-06-01T10:00:00+02:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"7622b8ded5529ff6d1a73007e505b20235ab9b6f\"",
-    "status": 200,
-    "url": "/api/v1/events/4/dates"
-  },
   "auth:event_full": {
     "body": "{\"accessible_for_free\":true,\"age_from\":6,\"age_to\":12,\"attendance_mode\":\"offline\",\"booked_up\":true,\"categories\":[{\"id\":18,\"name\":\"Other\"},{\"id\":20,\"name\":\"Culture\"}],\"co_organizers\":[{\"id\":6,\"name\":\"Organizer Two\"},{\"id\":5,\"name\":\"Organizer One\"}],\"created_at\":\"2026-01-02T08:00:00+00:00\",\"custom_categories\":[{\"category_set\":{\"id\":1,\"label\":\"Default Custom Categories\",\"name\":\"Default\"},\"id\":1,\"label\":\"Custom Category 1\",\"name\":\"Custom Category 1\"}],\"date_definitions\":[{\"allday\":false,\"end\":\"2040-03-01T20:00:00+01:00\",\"id\":1,\"recurrence_rule\":null,\"start\":\"2040-03-01T18:00:00+01:00\"},{\"allday\":false,\"end\":null,\"id\":2,\"recurrence_rule\":null,\"start\":\"2040-03-08T18:00:00+01:00\"}],\"description\":\"Beschreibung 0 Beschreibung 1 Beschreibung 2 Beschreibung 3 Beschreibung 4 Beschreibung 5 Beschreibung 6 Beschreibung 7 Beschreibung 8 Beschreibung 9 Beschreibung 10 Beschreibung 11 Beschreibung 12 Beschreibung 13 Beschreibung 14 Beschreibung 15 Beschreibung 16 Beschreibung 17 Beschreibung 18 Beschreibung 19 Beschreibung 20 Beschreibung 21 Beschreibung 22 Beschreibung 23 Beschreibung 24 Beschreibung 25 Beschreibung 26 Beschreibung 27 Beschreibung 28 Beschreibung 29 Beschreibung 30 Beschreibung 31 Beschreibung 32 Beschreibung 33 Beschreibung 34 Beschreibung 35 Beschreibung 36 Beschreibung 37 Beschreibung 38 Beschreibung 39 Beschreibung 40 Beschreibung 41 Beschreibung 42 Beschreibung 43 Beschreibung 44 Beschreibung 45 Beschreibung 46 Beschreibung 47 Beschreibung 48 Beschreibung 49 Beschreibung 50 Beschreibung 51 Beschreibung 52 Beschreibung 53 Beschreibung 54 Beschreibung 55 Beschreibung 56 Beschreibung 57 Beschreibung 58 Beschreibung 59\",\"expected_participants\":50,\"external_link\":\"https://example.com/full\",\"id\":1,\"internal_tags\":\"secret,inhouse\",\"kid_friendly\":true,\"name\":\"Full Event\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organizer\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":{\"copyright_text\":\"EventCally\",\"image_url\":\"/image/1/1767340800000\",\"license\":{\"code\":\"CC BY 4.0\",\"id\":2,\"name\":\"Creative Commons Attribution 4.0 International\",\"url\":\"https://creativecommons.org/licenses/by/4.0/\"}},\"place\":{\"id\":5,\"name\":\"Rathaus\"},\"previous_start_date\":null,\"price_info\":\"Free\",\"public_status\":\"published\",\"reference_id\":null,\"registration_required\":true,\"status\":\"scheduled\",\"tags\":\"music,live\",\"target_group_origin\":null,\"ticket_link\":\"https://example.com/tickets\",\"updated_at\":null}\n",
     "etag": "\"efe3032a67bd3049fd90a1b2d98b68fb3a235ac8\"",
     "status": 200,
     "url": "/api/v1/events/1"
-  },
-  "auth:event_full_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":1,\"start\":\"2040-03-01T18:00:00+01:00\"},{\"id\":2,\"start\":\"2040-03-08T18:00:00+01:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":2}\n",
-    "etag": "\"b6d1f037884920b81bc0c46271cd0e63ed3a9055\"",
-    "status": 200,
-    "url": "/api/v1/events/1/dates"
   },
   "auth:event_other": {
     "body": "{\"accessible_for_free\":null,\"age_from\":null,\"age_to\":null,\"attendance_mode\":\"offline\",\"booked_up\":null,\"categories\":[{\"id\":18,\"name\":\"Other\"}],\"co_organizers\":[],\"created_at\":\"2026-01-09T08:00:00+00:00\",\"custom_categories\":[],\"date_definitions\":[{\"allday\":false,\"end\":null,\"id\":9,\"recurrence_rule\":null,\"start\":\"2040-03-01T12:00:00+01:00\"}],\"description\":\"Beschreibung\",\"expected_participants\":null,\"external_link\":\"\",\"id\":8,\"internal_tags\":null,\"kid_friendly\":null,\"name\":\"Other Event\",\"organization\":{\"id\":3,\"name\":\"Other Crew\"},\"organizer\":{\"id\":3,\"name\":\"Other Crew\"},\"photo\":null,\"place\":{\"id\":8,\"name\":\"Other Crew\"},\"previous_start_date\":null,\"price_info\":\"\",\"public_status\":\"published\",\"reference_id\":null,\"registration_required\":null,\"status\":\"scheduled\",\"tags\":null,\"target_group_origin\":null,\"ticket_link\":\"\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"}\n",
@@ -1691,23 +1541,11 @@
     "status": 200,
     "url": "/api/v1/events/8"
   },
-  "auth:event_other_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":11,\"start\":\"2040-03-01T12:00:00+01:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"93ba8b87543491d85b1fb39bda09a2e3c0a11d55\"",
-    "status": 200,
-    "url": "/api/v1/events/8/dates"
-  },
   "auth:event_past": {
     "body": "{\"accessible_for_free\":null,\"age_from\":null,\"age_to\":null,\"attendance_mode\":\"offline\",\"booked_up\":null,\"categories\":[{\"id\":18,\"name\":\"Other\"}],\"co_organizers\":[],\"created_at\":\"2026-01-08T08:00:00+00:00\",\"custom_categories\":[],\"date_definitions\":[{\"allday\":false,\"end\":null,\"id\":8,\"recurrence_rule\":null,\"start\":\"2020-01-02T14:30:00+01:00\"}],\"description\":\"Beschreibung\",\"expected_participants\":null,\"external_link\":\"\",\"id\":7,\"internal_tags\":null,\"kid_friendly\":null,\"name\":\"Past Event\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organizer\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":null,\"place\":{\"id\":7,\"name\":\"Meine Crew\"},\"previous_start_date\":null,\"price_info\":\"\",\"public_status\":\"published\",\"reference_id\":null,\"registration_required\":null,\"status\":\"scheduled\",\"tags\":null,\"target_group_origin\":null,\"ticket_link\":\"\",\"updated_at\":null}\n",
     "etag": "\"72f287e7398e05d1def5268384751adcdea91fad\"",
     "status": 200,
     "url": "/api/v1/events/7"
-  },
-  "auth:event_past_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":10,\"start\":\"2020-01-02T14:30:00+01:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"79dafe974a17b67b6bda0a5d1a465f4182d6e5ee\"",
-    "status": 200,
-    "url": "/api/v1/events/7/dates"
   },
   "auth:event_planned": {
     "body": "{\"accessible_for_free\":null,\"age_from\":null,\"age_to\":null,\"attendance_mode\":\"offline\",\"booked_up\":null,\"categories\":[{\"id\":18,\"name\":\"Other\"}],\"co_organizers\":[],\"created_at\":\"2026-01-06T08:00:00+00:00\",\"custom_categories\":[],\"date_definitions\":[{\"allday\":false,\"end\":null,\"id\":6,\"recurrence_rule\":null,\"start\":\"2040-06-02T10:00:00+02:00\"}],\"description\":\"Beschreibung\",\"expected_participants\":null,\"external_link\":\"\",\"id\":5,\"internal_tags\":null,\"kid_friendly\":null,\"name\":\"Planned Event\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organizer\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":null,\"place\":{\"id\":7,\"name\":\"Meine Crew\"},\"previous_start_date\":null,\"price_info\":\"\",\"public_status\":\"planned\",\"reference_id\":null,\"registration_required\":null,\"status\":\"scheduled\",\"tags\":null,\"target_group_origin\":null,\"ticket_link\":\"\",\"updated_at\":null}\n",
@@ -1715,23 +1553,11 @@
     "status": 200,
     "url": "/api/v1/events/5"
   },
-  "auth:event_planned_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":8,\"start\":\"2040-06-02T10:00:00+02:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"2bf2e03ce29aa5d6f0972345fa218db6c878f298\"",
-    "status": 200,
-    "url": "/api/v1/events/5/dates"
-  },
   "auth:event_recurring": {
     "body": "{\"accessible_for_free\":null,\"age_from\":null,\"age_to\":null,\"attendance_mode\":\"offline\",\"booked_up\":null,\"categories\":[{\"id\":18,\"name\":\"Other\"}],\"co_organizers\":[],\"created_at\":\"2026-01-03T08:00:00+00:00\",\"custom_categories\":[],\"date_definitions\":[{\"allday\":false,\"end\":null,\"id\":3,\"recurrence_rule\":\"RRULE:FREQ=WEEKLY;COUNT=3\",\"start\":\"2040-04-02T19:00:00+02:00\"}],\"description\":\"Beschreibung\",\"expected_participants\":null,\"external_link\":\"\",\"id\":2,\"internal_tags\":null,\"kid_friendly\":null,\"name\":\"Weekly Jam\",\"organization\":{\"id\":1,\"name\":\"Meine Crew\"},\"organizer\":{\"id\":1,\"name\":\"Meine Crew\"},\"photo\":null,\"place\":{\"id\":7,\"name\":\"Meine Crew\"},\"previous_start_date\":null,\"price_info\":\"\",\"public_status\":\"published\",\"reference_id\":null,\"registration_required\":null,\"status\":\"scheduled\",\"tags\":\"music\",\"target_group_origin\":null,\"ticket_link\":\"\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"}\n",
     "etag": "\"454b32445cfdecba5e5c336dfcfa75a3b02c0eab\"",
     "status": 200,
     "url": "/api/v1/events/2"
-  },
-  "auth:event_recurring_dates": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"id\":3,\"start\":\"2040-04-02T19:00:00+02:00\"},{\"id\":4,\"start\":\"2040-04-09T19:00:00+02:00\"},{\"id\":5,\"start\":\"2040-04-16T19:00:00+02:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":3}\n",
-    "etag": "\"5c2a80a9235a10c0828c51076a358024f5024cd2\"",
-    "status": 200,
-    "url": "/api/v1/events/2/dates"
   },
   "auth:event_unknown": {
     "body": "",
@@ -1739,77 +1565,11 @@
     "status": 404,
     "url": "/api/v1/events/4711"
   },
-  "auth:event_unknown_dates": {
-    "body": "",
-    "etag": null,
-    "status": 404,
-    "url": "/api/v1/events/4711/dates"
-  },
   "auth:event_unverified": {
     "body": "",
     "etag": null,
     "status": 401,
     "url": "/api/v1/events/9"
-  },
-  "auth:event_unverified_dates": {
-    "body": "",
-    "etag": null,
-    "status": 401,
-    "url": "/api/v1/events/9/dates"
-  },
-  "auth:events_list_created_from": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n",
-    "etag": "\"040279667b18407bc643556dda9035b7276130b1\"",
-    "status": 200,
-    "url": "/api/v1/events?created_at_from=2026-01-04T00:00:00"
-  },
-  "auth:events_list_default": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
-    "etag": "\"1eac869d6ec918eaeeee2f3bd8f04bb1b653821f\"",
-    "status": 200,
-    "url": "/api/v1/events"
-  },
-  "auth:events_list_last_modified_to": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":4}\n",
-    "etag": "\"510b2a64d90b658bceb0249d84d734683e4eabf7\"",
-    "status": 200,
-    "url": "/api/v1/events?last_modified_at_to=2026-02-01T12:00:00"
-  },
-  "auth:events_list_page_2": {
-    "body": "{\"has_next\":false,\"has_prev\":true,\"items\":[{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"}],\"next_num\":null,\"page\":2,\"pages\":2,\"per_page\":3,\"prev_num\":1,\"total\":6}\n",
-    "etag": "\"71b17c7cb8029aebe2d8cdfa755414c2d0607613\"",
-    "status": 200,
-    "url": "/api/v1/events?page=2&per_page=3"
-  },
-  "auth:events_list_sort_created": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
-    "etag": "\"0effb7aa0d470dcd09e87518605f1ab3cd9645d9\"",
-    "status": 200,
-    "url": "/api/v1/events?sort=-created_at"
-  },
-  "auth:events_list_sort_modified": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
-    "etag": "\"dcdb97e2957e78a4d51c2c95e4dfe3fb4b70784f\"",
-    "status": 200,
-    "url": "/api/v1/events?sort=-last_modified_at"
-  },
-  "auth:events_list_sort_start": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
-    "etag": "\"1eac869d6ec918eaeeee2f3bd8f04bb1b653821f\"",
-    "status": 200,
-    "url": "/api/v1/events?sort=start"
-  },
-  "auth:events_list_sort_updated": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-09T08:00:00+00:00\",\"id\":8,\"name\":\"Other Event\",\"updated_at\":\"2026-02-01T17:30:00+00:00\"},{\"created_at\":\"2026-01-07T08:00:00+00:00\",\"id\":6,\"name\":\"Cancelled Event\",\"updated_at\":\"2026-02-01T15:30:00+00:00\"},{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"},{\"created_at\":\"2026-01-08T08:00:00+00:00\",\"id\":7,\"name\":\"Past Event\",\"updated_at\":null},{\"created_at\":\"2026-01-02T08:00:00+00:00\",\"id\":1,\"name\":\"Full Event\",\"updated_at\":null},{\"created_at\":\"2026-01-04T08:00:00+00:00\",\"id\":3,\"name\":\"Allday Fest\",\"updated_at\":null}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":6}\n",
-    "etag": "\"2c9989844343a4866db7a418519d141bce726fe4\"",
-    "status": 200,
-    "url": "/api/v1/events?sort=-updated_at"
-  },
-  "auth:events_list_updated_range": {
-    "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[{\"created_at\":\"2026-01-03T08:00:00+00:00\",\"id\":2,\"name\":\"Weekly Jam\",\"updated_at\":\"2026-02-01T11:30:00+00:00\"}],\"next_num\":null,\"page\":1,\"pages\":1,\"per_page\":20,\"prev_num\":null,\"total\":1}\n",
-    "etag": "\"884c3de8cf5a946be5cd5d6b332cf1c62c76074d\"",
-    "status": 200,
-    "url": "/api/v1/events?updated_at_from=2026-02-01T00:00:00&updated_at_to=2026-02-01T12:00:00"
   },
   "auth:events_search_category": {
     "body": "{\"has_next\":false,\"has_prev\":false,\"items\":[],\"next_num\":null,\"page\":1,\"pages\":0,\"per_page\":20,\"prev_num\":null,\"total\":0}\n",

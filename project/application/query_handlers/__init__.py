@@ -117,7 +117,6 @@ from .list_dump_organizers_handler import ListDumpOrganizersHandler
 from .list_dump_places_handler import ListDumpPlacesHandler
 from .list_event_categories_handler import ListEventCategoriesHandler
 from .list_event_dates_handler import ListEventDatesHandler
-from .list_event_dates_of_event_handler import ListEventDatesOfEventHandler
 from .list_event_organizers_handler import ListEventOrganizersHandler
 from .list_event_place_suggestions_handler import ListEventPlaceSuggestionsHandler
 from .list_event_places_handler import ListEventPlacesHandler

@@ -3,7 +3,6 @@
 import pytest
 from sqlalchemy import event as sa_event
 
-from project.application.queries import PageRequest
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from tests.integration.event_read_seed import seed_event_world
 
@@ -105,15 +104,6 @@ def test_date_detail_carries_the_event(read_repo, world):
     assert detail.event.id == world["full"]
     assert detail.event.admin_unit.is_verified
     assert detail.end is not None
-
-
-def test_dates_of_an_event_are_paged_by_start(read_repo, world):
-    page = read_repo("list_dates_of_event", world["recurring"], PageRequest(per_page=2))
-
-    assert page.total == 3
-    assert len(page.items) == 2
-    assert page.items[0].start < page.items[1].start
-    assert page.has_next
 
 
 def test_upcoming_dates_skip_the_past(read_repo, world):
