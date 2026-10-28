@@ -333,6 +333,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/custom-event-categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Look up the categories of a custom event category set */
+        get: operations["bff_manage_lookup_custom_event_categories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/custom-widgets": {
         parameters: {
             query?: never;
@@ -518,7 +535,42 @@ export interface paths {
         /** Search the events of an organization */
         get: operations["bff_manage_list_events"];
         put?: never;
+        /** Create an event */
+        post: operations["bff_manage_create_event"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/events/create-form": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the form to create an event */
+        get: operations["bff_manage_get_event_create_form"];
+        put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/events/occurrences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview the occurrences of a recurrence rule */
+        post: operations["bff_manage_get_event_occurrences"];
         delete?: never;
         options?: never;
         head?: never;
@@ -534,6 +586,40 @@ export interface paths {
         };
         /** Filter options of the event list of an organization */
         get: operations["bff_manage_get_event_list_options"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/events/{event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update an event */
+        put: operations["bff_manage_update_event"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/events/{event_id}/form": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the form to update an event */
+        get: operations["bff_manage_get_event_form"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1454,6 +1540,18 @@ export interface components {
              */
             tos_accepted_at: string | null;
         };
+        /** CustomEventCategorySetChoice */
+        CustomEventCategorySetChoice: {
+            /** Id */
+            id: number;
+            /** Label */
+            label: string;
+            /**
+             * Selected
+             * @default []
+             */
+            selected: components["schemas"]["ManageRef"][];
+        };
         /** CustomWidgetCreated */
         CustomWidgetCreated: {
             /** Id */
@@ -1525,6 +1623,153 @@ export interface components {
             /** Name */
             name: string;
         };
+        /**
+         * EventAttendanceMode
+         * @enum {integer}
+         */
+        EventAttendanceMode: 1 | 2 | 3;
+        /** EventCreate */
+        EventCreate: {
+            /**
+             * Accessible For Free
+             * @default false
+             */
+            accessible_for_free: boolean;
+            /**
+             * Age From
+             * @default null
+             */
+            age_from: number | null;
+            /**
+             * Age To
+             * @default null
+             */
+            age_to: number | null;
+            /** @default 1 */
+            attendance_mode: components["schemas"]["EventAttendanceMode"];
+            /**
+             * Booked Up
+             * @default false
+             */
+            booked_up: boolean;
+            /**
+             * Category Ids
+             * @default []
+             */
+            category_ids: number[];
+            /**
+             * Co Organizer Ids
+             * @default []
+             */
+            co_organizer_ids: number[];
+            /**
+             * Custom Category Ids
+             * @default []
+             */
+            custom_category_ids: number[];
+            /** Date Definitions */
+            date_definitions: components["schemas"]["EventDateDefinition"][];
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Event Place Id
+             * @default null
+             */
+            event_place_id: number | null;
+            /**
+             * Expected Participants
+             * @default null
+             */
+            expected_participants: number | null;
+            /**
+             * External Link
+             * @default null
+             */
+            external_link: string | null;
+            /**
+             * Internal Tags
+             * @default null
+             */
+            internal_tags: string | null;
+            /**
+             * Kid Friendly
+             * @default false
+             */
+            kid_friendly: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Organizer Id
+             * @default null
+             */
+            organizer_id: number | null;
+            /** @default null */
+            photo: components["schemas"]["OrganizationLogo"] | null;
+            /**
+             * Price Info
+             * @default null
+             */
+            price_info: string | null;
+            /** @default 2 */
+            public_status: components["schemas"]["EventPublicStatus"];
+            /**
+             * Rating
+             * @default 50
+             */
+            rating: number;
+            /**
+             * Reference Request Ids
+             * @default []
+             */
+            reference_request_ids: number[];
+            /**
+             * Registration Required
+             * @default false
+             */
+            registration_required: boolean;
+            /**
+             * Tags
+             * @default null
+             */
+            tags: string | null;
+            /** @default 1 */
+            target_group_origin: components["schemas"]["EventTargetGroupOrigin"];
+            /**
+             * Ticket Link
+             * @default null
+             */
+            ticket_link: string | null;
+        };
+        /**
+         * EventDateDefinition
+         * @description One date of the event form. `start`/`end` are naive Berlin wall-clock times
+         *     (`YYYY-MM-DDTHH:MM`), as the date and time inputs show them.
+         */
+        EventDateDefinition: {
+            /**
+             * Allday
+             * @default false
+             */
+            allday: boolean;
+            /**
+             * End
+             * @default null
+             */
+            end: string | null;
+            /**
+             * Recurrence Rule
+             * @default null
+             */
+            recurrence_rule: string | null;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+        };
         /** EventDateSearchOptions */
         EventDateSearchOptions: {
             /** Categories */
@@ -1544,6 +1789,211 @@ export interface components {
             referencing_organization: components["schemas"]["PublicOrganizationRef"] | null;
             /** Sorts */
             sorts: components["schemas"]["PublicChoice"][];
+        };
+        /** EventForm */
+        EventForm: {
+            /**
+             * Accessible For Free
+             * @default false
+             */
+            accessible_for_free: boolean;
+            /**
+             * Age From
+             * @default null
+             */
+            age_from: number | null;
+            /**
+             * Age To
+             * @default null
+             */
+            age_to: number | null;
+            /** Attendance Mode */
+            attendance_mode: number;
+            /** Attendance Mode Choices */
+            attendance_mode_choices: components["schemas"]["EventFormChoice"][];
+            /**
+             * Booked Up
+             * @default false
+             */
+            booked_up: boolean;
+            /**
+             * Can Create Organizer
+             * @default false
+             */
+            can_create_organizer: boolean;
+            /**
+             * Can Create Place
+             * @default false
+             */
+            can_create_place: boolean;
+            /** Category Choices */
+            category_choices: components["schemas"]["ManageRef"][];
+            /**
+             * Category Ids
+             * @default []
+             */
+            category_ids: number[];
+            /**
+             * Co Organizers
+             * @default []
+             */
+            co_organizers: components["schemas"]["ManageRef"][];
+            /**
+             * Custom Category Sets
+             * @default []
+             */
+            custom_category_sets: components["schemas"]["CustomEventCategorySetChoice"][];
+            /** Date Definitions */
+            date_definitions: components["schemas"]["EventDateDefinition"][];
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /** @default null */
+            event_place: components["schemas"]["ManageRef"] | null;
+            /**
+             * Expected Participants
+             * @default null
+             */
+            expected_participants: number | null;
+            /**
+             * External Link
+             * @default null
+             */
+            external_link: string | null;
+            /**
+             * Id
+             * @default null
+             */
+            id: number | null;
+            /**
+             * Internal Tags
+             * @default null
+             */
+            internal_tags: string | null;
+            /**
+             * Kid Friendly
+             * @default false
+             */
+            kid_friendly: boolean;
+            /** Licenses */
+            licenses: components["schemas"]["PlanningChoice"][];
+            /**
+             * Name
+             * @default
+             */
+            name: string;
+            /** @default null */
+            organizer: components["schemas"]["ManageRef"] | null;
+            /** @default null */
+            photo: components["schemas"]["OrganizationLogo"] | null;
+            /**
+             * Price Info
+             * @default null
+             */
+            price_info: string | null;
+            /**
+             * Public Status
+             * @default 2
+             */
+            public_status: number;
+            /**
+             * Public Status Choices
+             * @default []
+             */
+            public_status_choices: components["schemas"]["EventFormChoice"][];
+            /**
+             * Rating
+             * @default 50
+             */
+            rating: number;
+            /** Rating Choices */
+            rating_choices: components["schemas"]["EventFormChoice"][];
+            /**
+             * Reference Request Choices
+             * @default []
+             */
+            reference_request_choices: components["schemas"]["ManageRef"][];
+            /**
+             * Reference Request Ids
+             * @default []
+             */
+            reference_request_ids: number[];
+            /**
+             * Registration Required
+             * @default false
+             */
+            registration_required: boolean;
+            /**
+             * Status
+             * @default null
+             */
+            status: number | null;
+            /**
+             * Status Choices
+             * @default []
+             */
+            status_choices: components["schemas"]["EventFormChoice"][];
+            /**
+             * Tags
+             * @default null
+             */
+            tags: string | null;
+            /** Target Group Origin */
+            target_group_origin: number;
+            /** Target Group Origin Choices */
+            target_group_origin_choices: components["schemas"]["EventFormChoice"][];
+            /**
+             * Ticket Link
+             * @default null
+             */
+            ticket_link: string | null;
+        };
+        /**
+         * EventFormChoice
+         * @description An option of a select of the event form (enum values, ratings).
+         */
+        EventFormChoice: {
+            /** Label */
+            label: string;
+            /** Value */
+            value: number;
+        };
+        /** EventOccurrence */
+        EventOccurrence: {
+            /** Date */
+            date: string;
+            /** Formatted Date */
+            formatted_date: string;
+            /** Type */
+            type: string;
+        };
+        /** EventOccurrenceList */
+        EventOccurrenceList: {
+            /** Has More */
+            has_more: boolean;
+            /** Items */
+            items: components["schemas"]["EventOccurrence"][];
+        };
+        /**
+         * EventOccurrencesParams
+         * @description The preview of a recurrence rule. `start` is the naive Berlin wall-clock start of
+         *     the date; `batch_start` pages the preview by ten.
+         */
+        EventOccurrencesParams: {
+            /**
+             * Batch Start
+             * @default 0
+             */
+            batch_start: number;
+            /** Rrule */
+            rrule: string;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
         };
         /** EventOrganizerForm */
         EventOrganizerForm: {
@@ -1603,6 +2053,11 @@ export interface components {
              * @default null
              */
             fax: string | null;
+            /**
+             * Inline
+             * @default false
+             */
+            inline: boolean;
             location: components["schemas"]["EventPlaceLocation"];
             /** @default null */
             logo: components["schemas"]["OrganizationLogo"] | null;
@@ -1705,6 +2160,11 @@ export interface components {
              * @default null
              */
             description: string | null;
+            /**
+             * Inline
+             * @default false
+             */
+            inline: boolean;
             location: components["schemas"]["EventPlaceLocation"];
             /** Name */
             name: string;
@@ -1723,6 +2183,11 @@ export interface components {
             /** Redirect Url */
             redirect_url: string;
         };
+        /**
+         * EventPublicStatus
+         * @enum {integer}
+         */
+        EventPublicStatus: 1 | 2 | 3;
         /** EventReferenceCreate */
         EventReferenceCreate: {
             /** Event Id */
@@ -1829,6 +2294,135 @@ export interface components {
             event_id: number;
             /** Event Name */
             event_name: string;
+        };
+        /** EventSaved */
+        EventSaved: {
+            /** Id */
+            id: number;
+            /** Redirect Url */
+            redirect_url: string;
+        };
+        /**
+         * EventStatus
+         * @enum {integer}
+         */
+        EventStatus: 1 | 2 | 3 | 4 | 5;
+        /**
+         * EventTargetGroupOrigin
+         * @enum {integer}
+         */
+        EventTargetGroupOrigin: 1 | 2 | 3;
+        /** EventUpdate */
+        EventUpdate: {
+            /**
+             * Accessible For Free
+             * @default false
+             */
+            accessible_for_free: boolean;
+            /**
+             * Age From
+             * @default null
+             */
+            age_from: number | null;
+            /**
+             * Age To
+             * @default null
+             */
+            age_to: number | null;
+            /** @default 1 */
+            attendance_mode: components["schemas"]["EventAttendanceMode"];
+            /**
+             * Booked Up
+             * @default false
+             */
+            booked_up: boolean;
+            /**
+             * Category Ids
+             * @default []
+             */
+            category_ids: number[];
+            /**
+             * Co Organizer Ids
+             * @default []
+             */
+            co_organizer_ids: number[];
+            /**
+             * Custom Category Ids
+             * @default []
+             */
+            custom_category_ids: number[];
+            /** Date Definitions */
+            date_definitions: components["schemas"]["EventDateDefinition"][];
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Event Place Id
+             * @default null
+             */
+            event_place_id: number | null;
+            /**
+             * Expected Participants
+             * @default null
+             */
+            expected_participants: number | null;
+            /**
+             * External Link
+             * @default null
+             */
+            external_link: string | null;
+            /**
+             * Internal Tags
+             * @default null
+             */
+            internal_tags: string | null;
+            /**
+             * Kid Friendly
+             * @default false
+             */
+            kid_friendly: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Organizer Id
+             * @default null
+             */
+            organizer_id: number | null;
+            /** @default null */
+            photo: components["schemas"]["OrganizationLogo"] | null;
+            /**
+             * Price Info
+             * @default null
+             */
+            price_info: string | null;
+            /** @default 2 */
+            public_status: components["schemas"]["EventPublicStatus"];
+            /**
+             * Rating
+             * @default 50
+             */
+            rating: number;
+            /**
+             * Registration Required
+             * @default false
+             */
+            registration_required: boolean;
+            /** @default 1 */
+            status: components["schemas"]["EventStatus"];
+            /**
+             * Tags
+             * @default null
+             */
+            tags: string | null;
+            /** @default 1 */
+            target_group_origin: components["schemas"]["EventTargetGroupOrigin"];
+            /**
+             * Ticket Link
+             * @default null
+             */
+            ticket_link: string | null;
         };
         /** ExternalCalendarEvent */
         ExternalCalendarEvent: {
@@ -4858,6 +5452,67 @@ export interface operations {
             };
         };
     };
+    bff_manage_lookup_custom_event_categories: {
+        parameters: {
+            query: {
+                keyword?: string | null;
+                set_id: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageRefList"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_list_custom_widgets: {
         parameters: {
             query?: {
@@ -5901,6 +6556,208 @@ export interface operations {
             };
         };
     };
+    bff_manage_create_event: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventCreate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventSaved"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_event_create_form: {
+        parameters: {
+            query?: {
+                template_id?: number | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventForm"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_event_occurrences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventOccurrencesParams"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventOccurrenceList"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_get_event_list_options: {
         parameters: {
             query?: never;
@@ -5919,6 +6776,137 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ManageEventListOptions"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_update_event: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                event_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventUpdate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventSaved"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_event_form: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                event_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventForm"];
                 };
             };
             /** @description Unauthorized */

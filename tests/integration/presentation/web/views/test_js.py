@@ -198,7 +198,7 @@ def test_js_autocomplete_place(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get(url)
 
     utils.gmaps_places_autocomplete_query.return_value = [
@@ -249,7 +249,7 @@ def test_js_autocomplete_place_exclude_gmaps(
     user_id, admin_unit_id = seeder.setup_base()
     seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get(url)
 
     with client:
@@ -275,7 +275,7 @@ def test_js_autocomplete_gmaps_place(client, seeder: Seeder, utils: UtilActions)
     user_id, admin_unit_id = seeder.setup_base()
     seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get(url)
 
     utils.gmaps_place.return_value = {

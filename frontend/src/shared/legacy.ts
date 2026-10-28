@@ -32,6 +32,15 @@ export const manage = {
   eventCreate: (organizationId: number) => `/manage/admin_unit/${organizationId}/event/create`,
   eventUpdate: (organizationId: number, id: number) =>
     `/manage/admin_unit/${organizationId}/event/${id}/update`,
+  eventLegacyCreate: (organizationId: number, templateId?: number) =>
+    `/manage/admin_unit/${organizationId}/legacy/event/create` +
+    (templateId ? `?template_id=${templateId}` : ""),
+  eventLegacyUpdate: (organizationId: number, id: number) =>
+    `/manage/admin_unit/${organizationId}/legacy/event/${id}/update`,
+  eventPlaceUpdate: (organizationId: number, id: number) =>
+    `/manage/admin_unit/${organizationId}/event_place/${id}/update`,
+  eventOrganizerUpdate: (organizationId: number, id: number) =>
+    `/manage/admin_unit/${organizationId}/event_organizer/${id}/update`,
   eventDelete: (organizationId: number, id: number) =>
     `/manage/admin_unit/${organizationId}/event/${id}/delete`,
   eventReferenceRequestCreate: (organizationId: number, eventId: number) =>

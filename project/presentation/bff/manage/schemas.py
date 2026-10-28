@@ -9,11 +9,13 @@ from pydantic import (
     model_validator,
 )
 
+from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_reference_request_rejection_reason import (
     EventReferenceRequestRejectionReason,
 )
 from project.domain.models.enums.event_status import EventStatus
+from project.domain.models.enums.event_target_group_origin import EventTargetGroupOrigin
 from project.domain.models.enums.organization_verification_request_rejection_reason import (
     OrganizationVerificationRequestRejectionReason,
 )
@@ -435,6 +437,8 @@ class EventPlaceSave(BaseModel):
     description: Optional[str] = None
     location: EventPlaceLocation
     photo: Optional[OrganizationLogo] = None
+    # Created from another form (a modal): no flash. Ignored on update.
+    inline: bool = False
 
     @field_validator("url", mode="before")
     @classmethod
@@ -478,6 +482,8 @@ class EventOrganizerSave(BaseModel):
     fax: Optional[str] = Field(default=None, max_length=255)
     location: EventPlaceLocation
     logo: Optional[OrganizationLogo] = None
+    # Created from another form (a modal): no flash. Ignored on update.
+    inline: bool = False
 
     @field_validator("url", "email", "phone", "fax", mode="before")
     @classmethod
@@ -511,6 +517,182 @@ class EventOrganizerNameAvailabilityParams(BaseModel):
 
 class EventOrganizerNameAvailability(BaseModel):
     name_taken: Optional[bool] = None
+
+
+class EventDateDefinition(BaseModel):
+    """One date of the event form. `start`/`end` are naive Berlin wall-clock times
+    (`YYYY-MM-DDTHH:MM`), as the date and time inputs show them."""
+
+    start: datetime
+    end: Optional[datetime] = None
+    allday: bool = False
+    # The legacy RRULE subset (`RRULE:...`, `EXDATE:...`, `RDATE:...` lines).
+    recurrence_rule: Optional[str] = None
+
+    @field_validator("end", "recurrence_rule", mode="before")
+    @classmethod
+    def _empty_to_none(cls, value):
+        return _empty_to_none(value)
+
+
+class EventFormChoice(BaseModel):
+    """An option of a select of the event form (enum values, ratings)."""
+
+    value: int
+    label: str
+
+
+class CustomEventCategorySetChoice(BaseModel):
+    id: int
+    label: str
+    selected: List[ManageRef] = []
+
+
+class EventFormParams(BaseModel):
+    # Copy the fields of this event ("use as template").
+    template_id: Optional[int] = None
+
+
+class EventForm(BaseModel):
+    # `None` when creating.
+    id: Optional[int] = None
+    name: str = ""
+    description: Optional[str] = None
+    date_definitions: List[EventDateDefinition]
+    # Update only.
+    status: Optional[int] = None
+    public_status: int = int(EventPublicStatus.published)
+    status_choices: List[EventFormChoice] = []
+    public_status_choices: List[EventFormChoice] = []
+    organizer: Optional[ManageRef] = None
+    event_place: Optional[ManageRef] = None
+    co_organizers: List[ManageRef] = []
+    category_ids: List[int] = []
+    category_choices: List[ManageRef]
+    custom_category_sets: List[CustomEventCategorySetChoice] = []
+    photo: Optional[OrganizationLogo] = None
+    licenses: List[PlanningChoice]
+    external_link: Optional[str] = None
+    ticket_link: Optional[str] = None
+    tags: Optional[str] = None
+    internal_tags: Optional[str] = None
+    kid_friendly: bool = False
+    accessible_for_free: bool = False
+    registration_required: bool = False
+    booked_up: bool = False
+    age_from: Optional[int] = None
+    age_to: Optional[int] = None
+    expected_participants: Optional[int] = None
+    price_info: Optional[str] = None
+    target_group_origin: int
+    target_group_origin_choices: List[EventFormChoice]
+    attendance_mode: int
+    attendance_mode_choices: List[EventFormChoice]
+    rating: int = 50
+    rating_choices: List[EventFormChoice]
+    # Create only: organizations that can be asked to reference the event.
+    reference_request_choices: List[ManageRef] = []
+    reference_request_ids: List[int] = []
+    can_create_place: bool = False
+    can_create_organizer: bool = False
+
+
+def _url_field():
+    return Field(default=None, max_length=255)
+
+
+class EventSaveBase(BaseModel):
+    name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=3, max_length=255)
+    ]
+    description: Optional[str] = None
+    date_definitions: List[EventDateDefinition] = Field(min_length=1)
+    # Checked by the route (required, owned by the organization).
+    organizer_id: Optional[int] = None
+    event_place_id: Optional[int] = None
+    co_organizer_ids: List[int] = []
+    category_ids: List[int] = []
+    custom_category_ids: List[int] = []
+    photo: Optional[OrganizationLogo] = None
+    external_link: Optional[str] = _url_field()
+    ticket_link: Optional[str] = _url_field()
+    tags: Optional[str] = None
+    internal_tags: Optional[str] = None
+    kid_friendly: bool = False
+    accessible_for_free: bool = False
+    registration_required: bool = False
+    booked_up: bool = False
+    age_from: Optional[int] = None
+    age_to: Optional[int] = None
+    expected_participants: Optional[int] = None
+    price_info: Optional[str] = None
+    target_group_origin: EventTargetGroupOrigin = EventTargetGroupOrigin.both
+    attendance_mode: EventAttendanceMode = EventAttendanceMode.offline
+    rating: int = 50
+
+    @field_validator(
+        "description",
+        "external_link",
+        "ticket_link",
+        "tags",
+        "internal_tags",
+        "price_info",
+        mode="before",
+    )
+    @classmethod
+    def _text_empty_to_none(cls, value):
+        return _empty_to_none(value)
+
+    @field_validator("rating")
+    @classmethod
+    def _rating_is_offered(cls, value):
+        if value not in [rating for rating, _ in event_rating_choices]:
+            raise ValueError("rating is not one of the offered ratings")
+
+        return value
+
+
+class EventCreate(EventSaveBase):
+    public_status: EventPublicStatus = EventPublicStatus.published
+    # Only ids offered as `reference_request_choices`; sent when published.
+    reference_request_ids: List[int] = []
+
+
+class EventUpdate(EventSaveBase):
+    status: EventStatus = EventStatus.scheduled
+    public_status: EventPublicStatus = EventPublicStatus.published
+
+
+class EventSaved(BaseModel):
+    id: int
+    redirect_url: str
+
+
+class EventOccurrencesParams(BaseModel):
+    """The preview of a recurrence rule. `start` is the naive Berlin wall-clock start of
+    the date; `batch_start` pages the preview by ten."""
+
+    start: datetime
+    rrule: str = Field(max_length=10000)
+    batch_start: int = Field(default=0, ge=0)
+
+
+class EventOccurrence(BaseModel):
+    # `YYYYMMDDTHHMMSS`, the value the rule's EXDATE/RDATE lines use.
+    date: str
+    formatted_date: str
+    # `start`, `rrule`, `rdate` or `exdate`.
+    type: str
+
+
+class EventOccurrenceList(BaseModel):
+    items: List[EventOccurrence]
+    # Whether the next batch holds further occurrences.
+    has_more: bool
+
+
+class CustomEventCategoryLookupParams(ManageRefParams):
+    set_id: int
 
 
 class OrganizationRelationFormParams(BaseModel):

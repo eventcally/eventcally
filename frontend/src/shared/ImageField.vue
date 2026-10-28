@@ -16,6 +16,8 @@ const props = defineProps<{
   /** Messages by sub-field: `image_base64`, `copyright_text`, `license_id`. */
   errors?: Record<string, string | undefined>;
   minSize?: number;
+  // Prefix of the input ids (a second image field on the page, e.g. in a modal).
+  idPrefix?: string;
 }>();
 // `null`: no image. `image_base64` is `null` while the stored image is unchanged.
 const model = defineModel<ImageValue | null>({ default: null });
@@ -31,6 +33,7 @@ const dragover = ref(false);
 const message = ref<string | null>(null);
 
 const minSize = computed(() => props.minSize ?? 320);
+const idPrefix = computed(() => props.idPrefix ?? "logo-");
 const licenseOptions = computed(() => [
   { value: null, text: t("Please select") },
   ...props.licenses.map((license) => ({ value: license.id, text: license.name })),
@@ -132,13 +135,13 @@ function edit() {
     <template v-if="model">
       <BFormGroup
         :label="`${t('Copyright text')} *`"
-        label-for="logo-copyright_text"
+        :label-for="`${idPrefix}copyright_text`"
         :state="errors?.copyright_text ? false : null"
         :invalid-feedback="errors?.copyright_text"
         class="mb-3"
       >
         <BFormInput
-          id="logo-copyright_text"
+          :id="`${idPrefix}copyright_text`"
           :model-value="model.copyright_text ?? ''"
           maxlength="255"
           required
@@ -148,12 +151,12 @@ function edit() {
       </BFormGroup>
       <BFormGroup
         :label="t('License')"
-        label-for="logo-license"
+        :label-for="`${idPrefix}license`"
         :description="t('Please select if the image should be displayed in external event calendars.')"
         class="mb-3"
       >
         <BFormSelect
-          id="logo-license"
+          :id="`${idPrefix}license`"
           :model-value="model.license_id"
           :options="licenseOptions"
           @update:model-value="setField('license_id', $event as number | null)"

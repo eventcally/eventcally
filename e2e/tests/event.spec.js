@@ -2,8 +2,9 @@ const { test, expect } = require("../fixtures");
 const {
   screenshot,
   select2,
-  select2Multiple,
+  typeahead,
   checkEventStartEnd,
+  checkVueEventStartEnd,
   shouldContain,
 } = require("../fixtures/helpers");
 const { createAdminUnit, createEvent, createEventOrganizer } = require("../fixtures/flask");
@@ -15,42 +16,68 @@ test.describe("Event", () => {
       const adminUnitId = createAdminUnit();
       await page.goto(`/manage/admin_unit/${adminUnitId}/event/create`);
 
+      await expect(page.locator("[data-test=legacy-form-link] a")).toHaveAttribute(
+        "href",
+        `/manage/admin_unit/${adminUnitId}/legacy/event/create`,
+      );
+
       await page.locator("#name").fill("Stadtfest");
-      await checkEventStartEnd(page, false, recurrence, "date_definitions-0-");
+      await checkVueEventStartEnd(page, 0, recurrence);
 
-      await page.locator("#add-date-defintion-btn").click();
-      await checkEventStartEnd(page, false, recurrence, "date_definitions-1-");
+      await page.locator("#add-date-definition-btn").click();
+      await checkVueEventStartEnd(page, 1, recurrence);
 
-      await page.locator("#event_place_choice-1").click();
-      await page.locator("#new_event_place-location-city").fill("Goslar");
-      await page.locator("#event_place_choice-0").click();
-      await select2(page, "event_place", "Gos", "Goslar, 38640 Goslar");
+      // A new place from the modal is selected right away.
+      await page.locator("#event_place-new-btn").click();
+      const placeModal = page.locator("[data-test=event-place-create-modal]");
+      await placeModal.locator("#new_event_place-name").fill("Neuer Ort");
+      await placeModal.locator("#location-postalCode").fill("38640");
+      await placeModal.locator("#location-city").fill("Goslar");
+      await placeModal.locator(".modal-footer .btn-primary").click();
+      await expect(placeModal).toBeHidden();
+      await expect(page.locator("#event_place")).toHaveValue("Neuer Ort, 38640 Goslar");
 
-      await page.locator("#organizer_choice-1").click();
-      await page.locator("#new_organizer-location-city").fill("Goslar");
-      await page.locator("#organizer_choice-0").click();
-      await select2(page, "organizer", "Mei", "Meine Crew");
+      await typeahead(page, "organizer", "Mei", "Meine Crew");
 
       await page.locator("#submit").click();
       await expect(page).toHaveURL(/\/actions/);
       await shouldContain(page.locator("div.alert"), "Veranstaltung erfolgreich veröffentlicht");
+      // The inline place create flashed nothing.
+      await expect(page.locator("div.alert", { hasText: "Ort erfolgreich erstellt" })).toHaveCount(0);
 
       await page.getByRole("link", { name: "Veranstaltung bearbeiten" }).click();
       await expect(page).toHaveURL(/\/update/);
+      await expect(page.locator("#name")).toHaveValue("Stadtfest");
+      await expect(page.locator("#event_place")).toHaveValue("Neuer Ort, 38640 Goslar");
 
-      await checkEventStartEnd(page, true, recurrence, "date_definitions-0-");
+      const summary = page.locator("[data-test=date_definitions-0-recurrence-summary]");
+      if (recurrence) {
+        await expect(summary).toContainText("Woche");
+      } else {
+        await expect(summary).toBeHidden();
+      }
 
-      await page
-        .locator('div[data-prefix="date_definitions-1-"] .remove-date-defintion-btn')
-        .filter({ visible: true })
-        .first()
-        .click();
+      await page.locator("[data-test=date_definitions-1-remove]").click();
+      await expect(page.locator("#date_definitions-1-start")).toHaveCount(0);
 
       await page.locator("#submit").click();
       await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/events`));
       await shouldContain(page.locator("div.alert"), "Veranstaltung erfolgreich aktualisiert");
     });
   }
+
+  test("creates organizer inline", async ({ page, login }) => {
+    await login();
+    const adminUnitId = createAdminUnit();
+    await page.goto(`/manage/admin_unit/${adminUnitId}/event/create`);
+
+    await page.locator("#organizer-new-btn").click();
+    const modal = page.locator("[data-test=event-organizer-create-modal]");
+    await modal.locator("#new_organizer-name").fill("Neuer Veranstalter");
+    await modal.locator(".modal-footer .btn-primary").click();
+    await expect(modal).toBeHidden();
+    await expect(page.locator("#organizer")).toHaveValue("Neuer Veranstalter");
+  });
 
   test("updates co-organizers", async ({ page, login }) => {
     await login();
@@ -59,16 +86,24 @@ test.describe("Event", () => {
     createEventOrganizer(adminUnitId, "Mein Veranstalter");
     const updateUrl = `/manage/admin_unit/${adminUnitId}/event/${eventId}/update`;
 
+    const coOrganizerChips = page
+      .locator(".multi-typeahead", { has: page.locator("#co_organizers") })
+      .locator("[data-test=chip]");
+
     await page.goto(updateUrl);
-    await select2Multiple(page, "co_organizers", "Mein V", "Mein Veranstalter");
+    await expect(page.locator("[data-test=legacy-form-link] a")).toHaveAttribute(
+      "href",
+      `/manage/admin_unit/${adminUnitId}/legacy/event/${eventId}/update`,
+    );
+    await page.locator("#co_organizers").pressSequentially("Mein V");
+    await page.locator("[data-test=option]", { hasText: "Mein Veranstalter" }).click();
+    await expect(coOrganizerChips).toContainText("Mein Veranstalter");
     await page.locator("#submit").click();
     await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/events`));
     await shouldContain(page.locator("div.alert"), "Veranstaltung erfolgreich aktualisiert");
 
     await page.goto(updateUrl);
-    await expect(
-      page.locator("#co_organizers + .select2 li.select2-selection__choice"),
-    ).toContainText("Mein Veranstalter");
+    await expect(coOrganizerChips).toContainText("Mein Veranstalter");
   });
 
   test("saves draft", async ({ page, login }) => {
@@ -77,8 +112,8 @@ test.describe("Event", () => {
     await page.goto(`/manage/admin_unit/${adminUnitId}/event/create`);
 
     await page.locator("#name").fill("Stadtfest");
-    await select2(page, "event_place", "Gos", "Goslar, 38640 Goslar");
-    await select2(page, "organizer", "Mei", "Meine Crew");
+    await typeahead(page, "event_place", "Gos", "Goslar, 38640 Goslar");
+    await typeahead(page, "organizer", "Mei", "Meine Crew");
 
     await page.locator("#submit_draft").click();
     await expect(page).toHaveURL(/\/actions/);
@@ -94,6 +129,21 @@ test.describe("Event", () => {
 
     await page.goto(`/manage/admin_unit/${adminUnitId}/events`);
     await shouldContain(page.locator("main .badge"), "Entwurf");
+  });
+
+  test("creates event with the previous form", async ({ page, login }) => {
+    await login();
+    const adminUnitId = createAdminUnit();
+    await page.goto(`/manage/admin_unit/${adminUnitId}/legacy/event/create`);
+
+    await page.locator("#name").fill("Stadtfest");
+    await checkEventStartEnd(page, false, false, "date_definitions-0-");
+    await select2(page, "event_place", "Gos", "Goslar, 38640 Goslar");
+    await select2(page, "organizer", "Mei", "Meine Crew");
+
+    await page.locator("#submit").click();
+    await expect(page).toHaveURL(/\/actions/);
+    await shouldContain(page.locator("div.alert"), "Veranstaltung erfolgreich veröffentlicht");
   });
 
   test("read and actions", async ({ page, login }) => {

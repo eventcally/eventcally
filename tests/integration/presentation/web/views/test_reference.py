@@ -229,7 +229,9 @@ def test_referencedEventUpdate_sendsMail(client, seeder, utils, app):
     seeder.create_reference(event_id, admin_unit_id)
 
     url = utils.get_url(
-        "manage_admin_unit.event_update", id=other_admin_unit_id, event_id=event_id
+        "manage_admin_unit.event_legacy_update",
+        id=other_admin_unit_id,
+        event_id=event_id,
     )
     response = utils.get_ok(url)
 
@@ -264,7 +266,9 @@ def test_referencedEventNonDirtyUpdate_doesNotSendMail(client, seeder, utils, ap
     seeder.create_reference(event_id, admin_unit_id)
 
     url = utils.get_url(
-        "manage_admin_unit.event_update", id=other_admin_unit_id, event_id=event_id
+        "manage_admin_unit.event_legacy_update",
+        id=other_admin_unit_id,
+        event_id=event_id,
     )
     response = utils.get_ok(url)
 
@@ -318,7 +322,9 @@ def test_referencedAlldayEventNonDirtyUpdate_doesNotSendMail(
         )
 
     url = utils.get_url(
-        "manage_admin_unit.event_update", id=other_admin_unit_id, event_id=event_id
+        "manage_admin_unit.event_legacy_update",
+        id=other_admin_unit_id,
+        event_id=event_id,
     )
     response = utils.get_ok(url)
 
@@ -363,7 +369,9 @@ def test_referencedAlldayEventNonDirtyUpdate_doesNotSendMail2(
         )
 
     url = utils.get_url(
-        "manage_admin_unit.event_update", id=other_admin_unit_id, event_id=event_id
+        "manage_admin_unit.event_legacy_update",
+        id=other_admin_unit_id,
+        event_id=event_id,
     )
     response = utils.get_ok(url)
 
@@ -410,7 +418,7 @@ def test_referencedRecurringEventNonDirtyUpdate_doesNotSendMail(
 
     recurrence_rule_lf = "RRULE:FREQ=WEEKLY;COUNT=5\nEXDATE:20260504"
 
-    url = utils.get_url("manage_admin_unit.event_create", id=other_admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=other_admin_unit_id)
     response = utils.get_ok(url)
     response = utils.post_form(
         url,
@@ -442,7 +450,9 @@ def test_referencedRecurringEventNonDirtyUpdate_doesNotSendMail(
     seeder.create_reference(event_id, admin_unit_id)
 
     url = utils.get_url(
-        "manage_admin_unit.event_update", id=other_admin_unit_id, event_id=event_id
+        "manage_admin_unit.event_legacy_update",
+        id=other_admin_unit_id,
+        event_id=event_id,
     )
     response = utils.get_ok(url)
 
@@ -484,7 +494,7 @@ def test_referencedRecurringEventChange_sendsMail_butDiffIsIndistinguishable(
     place_id = seeder.upsert_default_event_place(other_admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(other_admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=other_admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=other_admin_unit_id)
     response = utils.get_ok(url)
     response = utils.post_form(
         url,
@@ -515,7 +525,9 @@ def test_referencedRecurringEventChange_sendsMail_butDiffIsIndistinguishable(
     seeder.create_reference(event_id, admin_unit_id)
 
     url = utils.get_url(
-        "manage_admin_unit.event_update", id=other_admin_unit_id, event_id=event_id
+        "manage_admin_unit.event_legacy_update",
+        id=other_admin_unit_id,
+        event_id=event_id,
     )
     response = utils.get_ok(url)
 

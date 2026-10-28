@@ -31,6 +31,24 @@ describe("manage router", () => {
     expect((await resolve("/manage/admin_unit/x/export")).name).toBe("not-found");
   });
 
+  it("resolves the event create page and passes the template", async () => {
+    const route = await resolve("/manage/admin_unit/3/event/create?template_id=7");
+    expect(route.name).toBe("event-create");
+    const props = route.matched[0].props.default as (r: typeof route) => Record<string, unknown>;
+    expect(props(route)).toEqual({ organizationId: 3, templateId: 7 });
+
+    const plain = await resolve("/manage/admin_unit/3/event/create");
+    expect(props(plain)).toEqual({ organizationId: 3, templateId: undefined });
+  });
+
+  it("resolves the event update page with numeric ids", async () => {
+    const route = await resolve("/manage/admin_unit/3/event/9/update");
+    expect(route.name).toBe("event-update");
+    const props = route.matched[0].props.default as (r: typeof route) => Record<string, unknown>;
+    expect(props(route)).toEqual({ organizationId: 3, id: 9 });
+    expect((await resolve("/manage/admin_unit/3/event/x/update")).name).toBe("not-found");
+  });
+
   it("resolves the organization settings with a numeric organization", async () => {
     const route = await resolve("/manage/admin_unit/3/update");
     expect(route.name).toBe("organization-settings");
