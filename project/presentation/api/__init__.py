@@ -216,6 +216,7 @@ def init_api(app):
     import project.presentation.api.organization_verification_request.resources
     import project.presentation.api.organizer.resources
     import project.presentation.api.place.resources
+    import project.presentation.api.user.resources
 
     # Re-register all resources for the current app instance.
     for endpoint, (resource, url, api_docs_flag) in resource_registry.items():
