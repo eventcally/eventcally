@@ -12,10 +12,14 @@ const props = defineProps<{
   placeholder?: string;
   disabled?: boolean;
   inputId?: string;
+  // Characters needed before a lookup. With 0 (the default) focusing the empty field
+  // already lists the suggestions.
+  minLength?: number;
 }>();
 const model = defineModel<Option | null>({ default: null });
 
 const { t } = useI18n();
+const input = ref<HTMLInputElement | null>(null);
 const text = ref(model.value?.name ?? "");
 const options = ref<Option[]>([]);
 const active = ref(-1);
@@ -41,6 +45,10 @@ function reset() {
   searched.value = false;
 }
 
+function canSearch(keyword: string) {
+  return keyword.length >= (props.minLength ?? 0);
+}
+
 function onInput(event: Event) {
   const keyword = (event.target as HTMLInputElement).value;
   text.value = keyword;
@@ -48,8 +56,17 @@ function onInput(event: Event) {
   setModel(null);
   reset();
 
-  if (!keyword.trim()) return;
+  if (!canSearch(keyword.trim())) return;
   timer = setTimeout(() => search(keyword.trim()), DEBOUNCE_MS);
+}
+
+function onFocus() {
+  if (options.value.length || props.disabled) return;
+  // A picked option shows its name: list all suggestions, not just that one.
+  const keyword = model.value ? "" : text.value.trim();
+  if (!canSearch(keyword)) return;
+  reset();
+  search(keyword);
 }
 
 async function search(keyword: string) {
@@ -71,6 +88,9 @@ function clear() {
   reset();
   text.value = "";
   setModel(null);
+  // The button keeps the focus in the field: list the suggestions again.
+  if (document.activeElement === input.value) onFocus();
+  else input.value?.focus();
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -108,6 +128,7 @@ onBeforeUnmount(() => clearTimeout(timer));
     <div class="input-group">
       <input
         :id="inputId"
+        ref="input"
         :value="text"
         type="text"
         class="form-control"
@@ -117,6 +138,8 @@ onBeforeUnmount(() => clearTimeout(timer));
         autocomplete="off"
         @input="onInput"
         @keydown="onKeydown"
+        @focus="onFocus"
+        @blur="reset"
       />
       <button
         v-if="text && !disabled"
@@ -124,6 +147,7 @@ onBeforeUnmount(() => clearTimeout(timer));
         class="btn btn-outline-secondary"
         :title="t('Reset')"
         data-test="clear"
+        @mousedown.prevent
         @click="clear"
       >
         <i class="fa fa-times"></i>
@@ -143,6 +167,7 @@ onBeforeUnmount(() => clearTimeout(timer));
         :class="{ active: index === active }"
         role="option"
         data-test="option"
+        @mousedown.prevent
         @click="pick(option)"
       >
         {{ option.name }}

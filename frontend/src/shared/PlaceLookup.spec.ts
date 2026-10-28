@@ -40,6 +40,16 @@ describe("PlaceLookup", () => {
     vi.useFakeTimers();
   });
 
+  it("does not ask Google before the first character", async () => {
+    const wrapper = mountLookup();
+
+    await wrapper.find("#location-google_place").trigger("focus");
+    await flushPromises();
+
+    expect(GET).not.toHaveBeenCalled();
+    wrapper.unmount();
+  });
+
   it("emits the address and the main text of the picked place", async () => {
     GET.mockImplementation(async (path: string) =>
       path === "/bff/manage/places"
