@@ -109,7 +109,11 @@ Opt-out semantics: listing a token *disables* that feature. The derived
 `FEATURE_*_ENABLED` config keys are not read from the environment — set `FEATURE_FLAGS`
 instead.
 
-No tokens are currently defined. Retired tokens (`ApiEventDateDisabled`,
+| Token                            | Effect                                                                                                                                                                                                                  |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ApiDeprecatedEndpointsDisabled` | Hides the deprecated `/api/v1` routes and methods (marked `deprecated` in Swagger, e.g. `/event-reference-requests/<id>`, PUT/PATCH/DELETE `/events/<id>`) from routing and Swagger, to test that clients no longer use them |
+
+Retired tokens (`ApiEventDateDisabled`,
 `ReferencedEventChangedDetailsDisabled`, …) are ignored.
 
 ## Generate JWT Keys for OIDC/OAuth

@@ -1297,6 +1297,16 @@ class Cqrs(containers.DeclarativeContainer):
                     authz=actor_authorization_service,
                     visibility=event_visibility_service,
                 ),
+                queries.GetIncomingEventReferenceRequestQuery: providers.Factory(
+                    query_handlers.GetIncomingEventReferenceRequestHandler,
+                    repo=read_repos.event_reference_request_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetIncomingOrganizationVerificationRequestQuery: providers.Factory(
+                    query_handlers.GetIncomingOrganizationVerificationRequestHandler,
+                    repo=read_repos.organization_verification_request_read_repo,
+                    authz=actor_authorization_service,
+                ),
                 queries.GetOutgoingEventReferenceRequestQuery: providers.Factory(
                     query_handlers.GetOutgoingEventReferenceRequestHandler,
                     repo=read_repos.event_reference_request_read_repo,

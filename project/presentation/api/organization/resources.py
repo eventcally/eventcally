@@ -370,6 +370,18 @@ class OrganizationOutgoingEventReferenceListResource(BaseResource):
         return page
 
 
+def _list_incoming_event_reference_requests(resource, id, kwargs):
+    query = ListIncomingEventReferenceRequestsQuery(
+        admin_unit_id=id,
+        trackable=trackable_criteria_from_kwargs(kwargs),
+        sort=trackable_sort_from_kwargs(kwargs),
+        page=page_request_from_kwargs(kwargs),
+    )
+    page = result_or_404(resource.query_bus.handle(query))
+    abort_if_page_out_of_range(page)
+    return page
+
+
 class OrganizationIncomingEventReferenceRequestListResource(BaseResource):
     @doc(
         summary="List incoming event reference requests of organization",
@@ -379,15 +391,24 @@ class OrganizationIncomingEventReferenceRequestListResource(BaseResource):
     @marshal_with(EventReferenceRequestListResponseSchema)
     @require_organization_api_access("organization.incoming_event_references:read")
     def get(self, id, **kwargs):
-        query = ListIncomingEventReferenceRequestsQuery(
-            admin_unit_id=id,
-            trackable=trackable_criteria_from_kwargs(kwargs),
-            sort=trackable_sort_from_kwargs(kwargs),
-            page=page_request_from_kwargs(kwargs),
-        )
-        page = result_or_404(self.query_bus.handle(query))
-        abort_if_page_out_of_range(page)
-        return page
+        return _list_incoming_event_reference_requests(self, id, kwargs)
+
+
+class OrganizationIncomingEventReferenceRequestsResource(BaseResource):
+    """The list under the organization-scoped URL; it requires the scope the
+    handler checks (the deprecated list requires the references scope)."""
+
+    @doc(
+        summary="List incoming event reference requests of organization",
+        tags=["Organizations", "Event Reference Requests"],
+    )
+    @use_kwargs(EventReferenceRequestListRequestSchema, location=("query"))
+    @marshal_with(EventReferenceRequestListResponseSchema)
+    @require_organization_api_access(
+        "organization.incoming_event_reference_requests:read"
+    )
+    def get(self, id, **kwargs):
+        return _list_incoming_event_reference_requests(self, id, kwargs)
 
 
 class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
@@ -447,6 +468,30 @@ class OrganizationOutgoingEventReferenceRequestListResource(BaseResource):
         return {"id": cmd_result.id}, 201
 
 
+def _list_incoming_verification_requests(resource, id, kwargs):
+    query = ListIncomingOrganizationVerificationRequestsQuery(
+        admin_unit_id=id,
+        trackable=trackable_criteria_from_kwargs(kwargs),
+        sort=trackable_sort_from_kwargs(kwargs),
+        page=page_request_from_kwargs(kwargs),
+    )
+    page = result_or_404(resource.query_bus.handle(query))
+    abort_if_page_out_of_range(page)
+    return page
+
+
+def _list_outgoing_verification_requests(resource, id, kwargs):
+    query = ListOutgoingOrganizationVerificationRequestsQuery(
+        admin_unit_id=id,
+        trackable=trackable_criteria_from_kwargs(kwargs),
+        sort=trackable_sort_from_kwargs(kwargs),
+        page=page_request_from_kwargs(kwargs),
+    )
+    page = result_or_404(resource.query_bus.handle(query))
+    abort_if_page_out_of_range(page)
+    return page
+
+
 class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResource):
     @doc(
         summary="List incoming organization verification requests of organization",
@@ -458,15 +503,24 @@ class OrganizationIncomingOrganizationVerificationRequestListResource(BaseResour
         "organization.outgoing_event_reference_requests:read"
     )
     def get(self, id, **kwargs):
-        query = ListIncomingOrganizationVerificationRequestsQuery(
-            admin_unit_id=id,
-            trackable=trackable_criteria_from_kwargs(kwargs),
-            sort=trackable_sort_from_kwargs(kwargs),
-            page=page_request_from_kwargs(kwargs),
-        )
-        page = result_or_404(self.query_bus.handle(query))
-        abort_if_page_out_of_range(page)
-        return page
+        return _list_incoming_verification_requests(self, id, kwargs)
+
+
+class OrganizationIncomingOrganizationVerificationRequestsResource(BaseResource):
+    """The list under the organization-scoped URL; it requires the scope the
+    handler checks (the deprecated list requires a reference request scope)."""
+
+    @doc(
+        summary="List incoming organization verification requests of organization",
+        tags=["Organizations", "Organization Verification Requests"],
+    )
+    @use_kwargs(OrganizationVerificationRequestListRequestSchema, location=("query"))
+    @marshal_with(OrganizationVerificationRequestListResponseSchema)
+    @require_organization_api_access(
+        "organization.incoming_organization_verification_requests:read"
+    )
+    def get(self, id, **kwargs):
+        return _list_incoming_verification_requests(self, id, kwargs)
 
 
 class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResource):
@@ -480,15 +534,7 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
         "organization.outgoing_event_reference_requests:read"
     )
     def get(self, id, **kwargs):
-        query = ListOutgoingOrganizationVerificationRequestsQuery(
-            admin_unit_id=id,
-            trackable=trackable_criteria_from_kwargs(kwargs),
-            sort=trackable_sort_from_kwargs(kwargs),
-            page=page_request_from_kwargs(kwargs),
-        )
-        page = result_or_404(self.query_bus.handle(query))
-        abort_if_page_out_of_range(page)
-        return page
+        return _list_outgoing_verification_requests(self, id, kwargs)
 
     @doc(
         summary="Add verification request",
@@ -502,23 +548,58 @@ class OrganizationOutgoingOrganizationVerificationRequestListResource(BaseResour
         "organization.outgoing_organization_verification_requests:write"
     )
     def post(self, id):
-        admin_unit = g.manage_admin_unit
-        cmd = self.load_command(OrganizationVerificationRequestCreateRequestPlainSchema)
-        result_or_404(
-            self.query_bus.handle(GetOrganizationQuery(id=cmd.target_admin_unit_id))
+        return _post_verification_request(self)
+
+
+class OrganizationOutgoingOrganizationVerificationRequestsResource(BaseResource):
+    """The resource under the organization-scoped URL; its list requires the scope
+    the handler checks (the deprecated list requires a reference request scope)."""
+
+    @doc(
+        summary="List outgoing organization verification requests of organization",
+        tags=["Organizations", "Organization Verification Requests"],
+    )
+    @use_kwargs(OrganizationVerificationRequestListRequestSchema, location=("query"))
+    @marshal_with(OrganizationVerificationRequestListResponseSchema)
+    @require_organization_api_access(
+        "organization.outgoing_organization_verification_requests:read"
+    )
+    def get(self, id, **kwargs):
+        return _list_outgoing_verification_requests(self, id, kwargs)
+
+    @doc(
+        summary="Add verification request",
+        tags=["Organizations", "Organization Verification Requests"],
+    )
+    @use_kwargs(
+        OrganizationVerificationRequestPostRequestSchema, location="json", apply=False
+    )
+    @marshal_with(OrganizationVerificationRequestIdPlainSchema, 201)
+    @require_organization_api_access(
+        "organization.outgoing_organization_verification_requests:write"
+    )
+    def post(self, id):
+        return _post_verification_request(self)
+
+
+def _post_verification_request(resource):
+    admin_unit = g.manage_admin_unit
+    cmd = resource.load_command(OrganizationVerificationRequestCreateRequestPlainSchema)
+    result_or_404(
+        resource.query_bus.handle(GetOrganizationQuery(id=cmd.target_admin_unit_id))
+    )
+
+    if not resource.query_bus.handle(
+        CanRequestVerificationQuery(
+            source_admin_unit_id=admin_unit.id,
+            target_admin_unit_id=cmd.target_admin_unit_id,
         )
+    ):
+        abort(401)
 
-        if not self.query_bus.handle(
-            CanRequestVerificationQuery(
-                source_admin_unit_id=admin_unit.id,
-                target_admin_unit_id=cmd.target_admin_unit_id,
-            )
-        ):
-            abort(401)
+    cmd_result = resource.message_bus.handle_command(cmd)
 
-        cmd_result = self.message_bus.handle_command(cmd)
-
-        return cmd_result, 201
+    return cmd_result, 201
 
 
 class OrganizationOutgoingRelationListResource(BaseResource):
@@ -643,45 +724,100 @@ add_api_resource(
     "/organizations/<int:id>/places",
     "api_v1_organization_place_list",
 )
+_ORG = "/organizations/<int:id>"
+_ORG_DOC = "/organizations/{id}"
+_BY_TARGET = "outgoing-organization-relations/by-target/<int:target_id>"
+
+# Organization-scoped routes (the shape of the web routes) ...
 add_api_resource(
     OrganizationIncomingEventReferenceListResource,
-    "/organizations/<int:id>/event-references/incoming",
-    "api_v1_organization_incoming_event_reference_list",
+    f"{_ORG}/incoming-event-references",
+    "api_v1_organization_incoming_event_references",
 )
 add_api_resource(
     OrganizationOutgoingEventReferenceListResource,
-    "/organizations/<int:id>/event-references/outgoing",
-    "api_v1_organization_outgoing_event_reference_list",
+    f"{_ORG}/outgoing-event-references",
+    "api_v1_organization_outgoing_event_references",
 )
 add_api_resource(
-    OrganizationIncomingEventReferenceRequestListResource,
-    "/organizations/<int:id>/event-reference-requests/incoming",
-    "api_v1_organization_incoming_event_reference_request_list",
+    OrganizationIncomingEventReferenceRequestsResource,
+    f"{_ORG}/incoming-event-reference-requests",
+    "api_v1_organization_incoming_event_reference_requests",
 )
 add_api_resource(
     OrganizationOutgoingEventReferenceRequestListResource,
-    "/organizations/<int:id>/event-reference-requests/outgoing",
-    "api_v1_organization_outgoing_event_reference_request_list",
+    f"{_ORG}/outgoing-event-reference-requests",
+    "api_v1_organization_outgoing_event_reference_requests",
 )
 add_api_resource(
-    OrganizationIncomingOrganizationVerificationRequestListResource,
-    "/organizations/<int:id>/organization-verification-requests/incoming",
-    "api_v1_organization_incoming_organization_verification_request_list",
+    OrganizationIncomingOrganizationVerificationRequestsResource,
+    f"{_ORG}/incoming-organization-verification-requests",
+    "api_v1_organization_incoming_organization_verification_requests",
 )
 add_api_resource(
-    OrganizationOutgoingOrganizationVerificationRequestListResource,
-    "/organizations/<int:id>/organization-verification-requests/outgoing",
-    "api_v1_organization_outgoing_organization_verification_request_list",
+    OrganizationOutgoingOrganizationVerificationRequestsResource,
+    f"{_ORG}/outgoing-organization-verification-requests",
+    "api_v1_organization_outgoing_organization_verification_requests",
 )
 add_api_resource(
     OrganizationOutgoingRelationListResource,
-    "/organizations/<int:id>/relations/outgoing",
-    "api_v1_organization_outgoing_relation_list",
+    f"{_ORG}/outgoing-organization-relations",
+    "api_v1_organization_outgoing_organization_relations",
 )
 add_api_resource(
     OrganizationOutgoingRelationResource,
-    "/organizations/<int:id>/relations/outgoing/<int:target_id>",
+    f"{_ORG}/{_BY_TARGET}",
+    "api_v1_organization_outgoing_organization_relation_by_target",
+)
+
+# ... and the deprecated routes they replace.
+add_api_resource(
+    OrganizationIncomingEventReferenceListResource,
+    f"{_ORG}/event-references/incoming",
+    "api_v1_organization_incoming_event_reference_list",
+    deprecated=f"{_ORG_DOC}/incoming-event-references",
+)
+add_api_resource(
+    OrganizationOutgoingEventReferenceListResource,
+    f"{_ORG}/event-references/outgoing",
+    "api_v1_organization_outgoing_event_reference_list",
+    deprecated=f"{_ORG_DOC}/outgoing-event-references",
+)
+add_api_resource(
+    OrganizationIncomingEventReferenceRequestListResource,
+    f"{_ORG}/event-reference-requests/incoming",
+    "api_v1_organization_incoming_event_reference_request_list",
+    deprecated=f"{_ORG_DOC}/incoming-event-reference-requests",
+)
+add_api_resource(
+    OrganizationOutgoingEventReferenceRequestListResource,
+    f"{_ORG}/event-reference-requests/outgoing",
+    "api_v1_organization_outgoing_event_reference_request_list",
+    deprecated=f"{_ORG_DOC}/outgoing-event-reference-requests",
+)
+add_api_resource(
+    OrganizationIncomingOrganizationVerificationRequestListResource,
+    f"{_ORG}/organization-verification-requests/incoming",
+    "api_v1_organization_incoming_organization_verification_request_list",
+    deprecated=f"{_ORG_DOC}/incoming-organization-verification-requests",
+)
+add_api_resource(
+    OrganizationOutgoingOrganizationVerificationRequestListResource,
+    f"{_ORG}/organization-verification-requests/outgoing",
+    "api_v1_organization_outgoing_organization_verification_request_list",
+    deprecated=f"{_ORG_DOC}/outgoing-organization-verification-requests",
+)
+add_api_resource(
+    OrganizationOutgoingRelationListResource,
+    f"{_ORG}/relations/outgoing",
+    "api_v1_organization_outgoing_relation_list",
+    deprecated=f"{_ORG_DOC}/outgoing-organization-relations",
+)
+add_api_resource(
+    OrganizationOutgoingRelationResource,
+    f"{_ORG}/relations/outgoing/<int:target_id>",
     "api_v1_organization_outgoing_relation",
+    deprecated=f"{_ORG_DOC}/outgoing-organization-relations/by-target/{{target_id}}",
 )
 add_api_resource(
     OrganizationOrganizationInvitationListResource,

@@ -1002,3 +1002,230 @@ def test_organization_invitation_list_app_installation_without_permission(
     )
     response = utils.get_json(url)
     utils.assert_response_unauthorized(response)
+
+
+# Organization-scoped routes (`/organizations/<id>/{incoming,outgoing}-<things>`)
+
+
+def test_scoped_incoming_event_references(client, app, db, seeder: Seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    _, _, _, reference_id = seeder.create_any_reference(admin_unit_id)
+    url = utils.get_url(
+        "api_v1_organization_incoming_event_references", id=admin_unit_id
+    )
+
+    response = utils.get_json_ok(url)
+    assert [item["id"] for item in response.json["items"]] == [reference_id]
+
+    other_admin_unit_id = seeder.create_admin_unit(user_id, "Third Crew")
+    event_id = seeder.create_event(other_admin_unit_id)
+    response = utils.post_json(url, {"event": {"id": event_id}})
+    utils.assert_response_created(response)
+
+    with app.app_context():
+        from project.infrastructure.models import EventReference
+
+        reference = db.session.get(EventReference, int(response.json["id"]))
+        assert reference.admin_unit_id == admin_unit_id
+
+
+def test_scoped_outgoing_event_references(client, seeder: Seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    reference_id = seeder.create_reference(event_id, other_admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_event_references", id=admin_unit_id
+    )
+    response = utils.get_json_ok(url)
+    assert [item["id"] for item in response.json["items"]] == [reference_id]
+
+
+def test_scoped_event_reference_requests(client, seeder: Seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    _, _, _, incoming_id = seeder.create_incoming_reference_request(admin_unit_id)
+    other_user_id = seeder.create_user("third@test.de")
+    third_admin_unit_id = seeder.create_admin_unit(other_user_id, "Third Crew")
+    event_id = seeder.create_event(admin_unit_id)
+    outgoing_id = seeder.create_reference_request(event_id, third_admin_unit_id)
+
+    url = utils.get_url(
+        "api_v1_organization_incoming_event_reference_requests", id=admin_unit_id
+    )
+    response = utils.get_json_ok(url)
+    assert [item["id"] for item in response.json["items"]] == [incoming_id]
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_event_reference_requests", id=admin_unit_id
+    )
+    response = utils.get_json_ok(url)
+    assert [item["id"] for item in response.json["items"]] == [outgoing_id]
+
+
+def test_scoped_incoming_event_reference_requests_needs_the_requests_scope(
+    client, app, db, seeder: Seeder, utils
+):
+    _, admin_unit_id = seeder.setup_api_access(as_app_installation=True)
+    seeder.create_incoming_reference_request(admin_unit_id)
+
+    with app.app_context():
+        from project.infrastructure.models import AppInstallation
+
+        for app_installation in AppInstallation.query.all():
+            app_installation.permissions = ["incoming_event_references:read"]
+
+        db.session.commit()
+
+    url = utils.get_url(
+        "api_v1_organization_incoming_event_reference_requests", id=admin_unit_id
+    )
+    utils.assert_response_unauthorized(utils.get_json(url))
+
+
+def test_scoped_organization_verification_requests(client, seeder: Seeder, utils):
+    (
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario(api=True)
+    request_id = seeder.create_admin_unit_verification_request(
+        unverified_admin_unit_id, verifier_admin_unit_id
+    )
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_organization_verification_requests",
+        id=unverified_admin_unit_id,
+    )
+    response = utils.get_json_ok(url)
+    assert [item["id"] for item in response.json["items"]] == [request_id]
+
+
+def test_scoped_incoming_organization_verification_requests(
+    client, seeder: Seeder, utils
+):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    _, _, request_id = seeder.create_incoming_admin_unit_verification_request(
+        admin_unit_id
+    )
+
+    url = utils.get_url(
+        "api_v1_organization_incoming_organization_verification_requests",
+        id=admin_unit_id,
+    )
+    response = utils.get_json_ok(url)
+    assert [item["id"] for item in response.json["items"]] == [request_id]
+
+
+def test_scoped_outgoing_organization_verification_requests_post(
+    client, app, seeder: Seeder, utils, db
+):
+    (
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario(api=True)
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_organization_verification_requests",
+        id=unverified_admin_unit_id,
+    )
+    response = utils.post_json(
+        url, {"target_organization": {"id": verifier_admin_unit_id}}
+    )
+    utils.assert_response_created(response)
+
+    with app.app_context():
+        from project.infrastructure.models import AdminUnitVerificationRequest
+
+        request = db.session.get(AdminUnitVerificationRequest, int(response.json["id"]))
+        assert request.source_admin_unit_id == unverified_admin_unit_id
+        assert request.target_admin_unit_id == verifier_admin_unit_id
+
+
+def test_scoped_outgoing_organization_verification_requests_post_notAllowed(
+    client, seeder: Seeder, utils
+):
+    user_id, admin_unit_id = seeder.setup_api_access()
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_organization_verification_requests",
+        id=admin_unit_id,
+    )
+    response = utils.post_json(url, {"target_organization": {"id": admin_unit_id}})
+    utils.assert_response_unauthorized(response)
+
+
+def test_scoped_outgoing_organization_relations(client, app, db, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    _, other_admin_unit_id, relation_id = seeder.create_any_admin_unit_relation(
+        admin_unit_id
+    )
+    url = utils.get_url(
+        "api_v1_organization_outgoing_organization_relations", id=admin_unit_id
+    )
+
+    response = utils.get_json_ok(url)
+    assert [item["id"] for item in response.json["items"]] == [relation_id]
+
+    third_user_id = seeder.create_user("third@test.de")
+    third_admin_unit_id = seeder.create_admin_unit(third_user_id, "Third Crew")
+    response = utils.post_json(
+        url, {"target_organization": {"id": third_admin_unit_id}}
+    )
+    utils.assert_response_created(response)
+
+    with app.app_context():
+        from project.infrastructure.models import AdminUnitRelation
+
+        relation = db.session.get(AdminUnitRelation, int(response.json["id"]))
+        assert relation.source_admin_unit_id == admin_unit_id
+        assert relation.target_admin_unit_id == third_admin_unit_id
+
+
+def test_scoped_outgoing_organization_relation_by_target(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    _, other_admin_unit_id, relation_id = seeder.create_any_admin_unit_relation(
+        admin_unit_id
+    )
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_organization_relation_by_target",
+        id=admin_unit_id,
+        target_id=other_admin_unit_id,
+    )
+    assert url.endswith(
+        f"/organizations/{admin_unit_id}/outgoing-organization-relations"
+        f"/by-target/{other_admin_unit_id}"
+    )
+    response = utils.get_json_ok(url)
+    assert response.json["id"] == relation_id
+
+    # The static segment is not read as a relation id, and an unknown target is 404.
+    other_url = utils.get_url(
+        "api_v1_organization_outgoing_organization_relation_by_target",
+        id=admin_unit_id,
+        target_id=4711,
+    )
+    utils.assert_response_notFound(utils.get_json(other_url))
+
+
+def test_deprecated_lists_keep_working(client, seeder: Seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    _, other_admin_unit_id, relation_id = seeder.create_any_admin_unit_relation(
+        admin_unit_id
+    )
+
+    url = utils.get_url("api_v1_organization_outgoing_relation_list", id=admin_unit_id)
+    response = utils.get_json_ok(url)
+    assert [item["id"] for item in response.json["items"]] == [relation_id]
+
+    url = utils.get_url(
+        "api_v1_organization_outgoing_relation",
+        id=admin_unit_id,
+        target_id=other_admin_unit_id,
+    )
+    assert utils.get_json_ok(url).json["id"] == relation_id

@@ -1,6 +1,6 @@
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { createBootstrap } from "bootstrap-vue-next";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createI18n } from "vue-i18n";
 
 vi.mock("@/shared/boot", () => ({ boot: { locale: "en", csrfToken: "x", loginUrl: "/login" } }));
@@ -79,6 +79,8 @@ async function open(wrapper: Awaited<ReturnType<typeof mountPage>>, kind: "accep
 }
 
 describe("EventReferenceRequestReviewPage", () => {
+  enableAutoUnmount(afterEach);
+
   beforeEach(() => {
     document.body.innerHTML = "";
     [GET, POST, assign].forEach((f) => f.mockReset());

@@ -60,8 +60,21 @@ def test_apply_feature_flags_to_config_unknown_token_ignored(fake_flag):
     assert config["FEATURE_FAKE_ENABLED"] is True
 
 
-def test_feature_flags_registry_is_empty():
-    assert feature_flags.FEATURE_FLAGS == {}
+def test_feature_flags_registry_mapping():
+    assert feature_flags.FEATURE_FLAGS == {
+        "ApiDeprecatedEndpointsDisabled": "FEATURE_API_DEPRECATED_ENDPOINTS_ENABLED"
+    }
+
+
+def test_api_deprecated_endpoints_flag():
+    config = {}
+    apply_feature_flags_to_config(config, None)
+    assert config["FEATURE_API_DEPRECATED_ENDPOINTS_ENABLED"] is True
+
+    config = {}
+    apply_feature_flags_to_config(config, "ApiDeprecatedEndpointsDisabled")
+    assert config["FEATURE_FLAGS"] == {"ApiDeprecatedEndpointsDisabled"}
+    assert config["FEATURE_API_DEPRECATED_ENDPOINTS_ENABLED"] is False
 
 
 def test_apply_feature_flags_to_config_disabled(fake_flag):

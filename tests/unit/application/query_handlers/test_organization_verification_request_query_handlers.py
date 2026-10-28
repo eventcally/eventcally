@@ -147,3 +147,28 @@ def test_get_incoming_review():
         GetIncomingOrganizationVerificationRequestReviewHandler(
             ReviewRepo(), authz(permission, admin_unit_id=8)
         ).handle(query(1))
+
+
+def test_get_incoming():
+    from project.application.query_handlers import (
+        GetIncomingOrganizationVerificationRequestHandler,
+    )
+
+    permission = "incoming_organization_verification_requests:read"
+    repo = FakeRepo([_request(1)])
+
+    def query(request_id):
+        return queries.GetIncomingOrganizationVerificationRequestQuery(
+            id=request_id, actor=ACTOR
+        )
+
+    handler = GetIncomingOrganizationVerificationRequestHandler(
+        repo, authz(permission, admin_unit_id=9)
+    )
+    assert handler.handle(query(1)).id == 1
+    assert handler.handle(query(3)) is None
+    # The requesting organization (admin unit 7) is on the other side.
+    with pytest.raises(UnauthorizedError):
+        GetIncomingOrganizationVerificationRequestHandler(
+            repo, authz(permission)
+        ).handle(query(1))

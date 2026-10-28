@@ -120,3 +120,26 @@ def test_get_outgoing_authorizes_on_the_event_organization():
     )
     with pytest.raises(UnauthorizedError):
         handler.handle(queries.GetOutgoingEventReferenceRequestQuery(id=2, actor=ACTOR))
+
+
+def test_get_incoming_authorizes_on_the_requested_organization():
+    from project.application.query_handlers import (
+        GetIncomingEventReferenceRequestHandler,
+    )
+
+    permission = "incoming_event_reference_requests:read"
+    repo = FakeRepo([_request(1)])
+
+    def query(request_id):
+        return queries.GetIncomingEventReferenceRequestQuery(id=request_id, actor=ACTOR)
+
+    handler = GetIncomingEventReferenceRequestHandler(
+        repo, authz(permission, admin_unit_id=9)
+    )
+    assert handler.handle(query(1)).id == 1
+    assert handler.handle(query(3)) is None
+    # The event owner (admin unit 7) is on the other side.
+    with pytest.raises(UnauthorizedError):
+        GetIncomingEventReferenceRequestHandler(repo, authz(permission)).handle(
+            query(1)
+        )

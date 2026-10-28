@@ -119,11 +119,30 @@ def require_api_access(scopes=None, app_token_required=False):
     return inner_decorator
 
 
+def organization_item_or_404(
+    query_bus: QueryBus, kind: ResourceKind, organization_id: int, item_id: int
+) -> None:
+    """404 unless the item exists and belongs to the organization (of the side `kind`
+    names). Other organizations' items are not revealed."""
+    owner_id = query_bus.handle(GetResourceOwnerQuery(kind=kind, id=item_id))
+
+    if owner_id is None or owner_id != organization_id:
+        abort(404)
+
+
 def require_organization_api_access(
-    scope: str, resource: Optional[ResourceKind] = None, **outer_kwargs
+    scope: str,
+    resource: Optional[ResourceKind] = None,
+    item_arg: Optional[str] = None,
+    **outer_kwargs,
 ):
     """Gate an endpoint on an organization permission. Without `resource` the path id
-    is the organization, with it the id of a resource owned by one."""
+    is the organization, with it the id of a resource owned by one.
+
+    With `item_arg` (requires `resource`) the path id is the organization and the
+    path argument `item_arg` the id of an item of the side `resource` names: after the
+    access checks an item of another organization (or of the other side) answers 404.
+    """
 
     def inner_decorator(func):
         @require_api_access([scope])
@@ -146,7 +165,7 @@ def require_organization_api_access(
             api_command_context = {}
             id = kwargs.get("id")
 
-            if resource:
+            if resource and not item_arg:
                 admin_unit_id = result_or_404(
                     query_bus.handle(GetResourceOwnerQuery(kind=resource, id=id))
                 )
@@ -168,6 +187,10 @@ def require_organization_api_access(
             permission = scope.replace("organization.", "")
             access_or_401(admin_unit, permission)
             set_current_admin_unit(admin_unit)
+
+            if item_arg:
+                organization_item_or_404(query_bus, resource, id, kwargs[item_arg])
+                api_command_context["id"] = kwargs[item_arg]
 
             api_command_context["admin_unit_id"] = admin_unit_id
             api_command_context["actor"] = ContextProvider().current_actor

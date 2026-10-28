@@ -1,7 +1,9 @@
 # Single source of truth: env token -> derived app.config boolean key.
 # Opt-out semantics: token present => that feature's *_ENABLED key is False.
 # Add a future flag by adding one entry here.
-FEATURE_FLAGS: dict[str, str] = {}
+FEATURE_FLAGS: dict[str, str] = {
+    "ApiDeprecatedEndpointsDisabled": "FEATURE_API_DEPRECATED_ENDPOINTS_ENABLED",
+}
 
 
 def parse_feature_flags(raw: str | None) -> set[str]:
