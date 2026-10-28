@@ -1,9 +1,7 @@
 # Single source of truth: env token -> derived app.config boolean key.
 # Opt-out semantics: token present => that feature's *_ENABLED key is False.
 # Add a future flag by adding one entry here.
-FEATURE_FLAGS = {
-    "ReferencedEventChangedDetailsDisabled": "FEATURE_REFERENCED_EVENT_CHANGED_DETAILS_ENABLED",
-}
+FEATURE_FLAGS: dict[str, str] = {}
 
 
 def parse_feature_flags(raw: str | None) -> set[str]:

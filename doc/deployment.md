@@ -109,9 +109,8 @@ Opt-out semantics: listing a token *disables* that feature. The derived
 `FEATURE_*_ENABLED` config keys are not read from the environment — set `FEATURE_FLAGS`
 instead.
 
-| Token                   | Effect                                                                                                                       |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `ReferencedEventChangedDetailsDisabled` | Drops the "what changed" block from the referenced-event-changed notice mail, leaving only the event's current state and the link |
+No tokens are currently defined. Retired tokens (`ApiEventDateDisabled`,
+`ReferencedEventChangedDetailsDisabled`, …) are ignored.
 
 ## Generate JWT Keys for OIDC/OAuth
 

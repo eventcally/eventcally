@@ -19,13 +19,11 @@ class ReferenceEventChangedEmailEventHandler(AbstractEventHandler):
         organization_service: OrganizationApplicationService,
         event_read_repo: AbstractEventReadRepository,
         change_summary_service: EventChangeSummaryService,
-        details_enabled: bool,
     ):
         super().__init__()
         self.organization_service = organization_service
         self.event_read_repo = event_read_repo
         self.change_summary_service = change_summary_service
-        self.details_enabled = details_enabled
 
     def handle(self, event: events.EventUpdated, uow: AbstractUnitOfWork):
         event_instance = uow.events.get(event.id)
@@ -44,9 +42,7 @@ class ReferenceEventChangedEmailEventHandler(AbstractEventHandler):
         event_read_model = self.event_read_repo.get(event_instance.id)
 
         # The diff is identical for every reference, so resolve the names once.
-        changes = (
-            self.change_summary_service.build(event) if self.details_enabled else None
-        )
+        changes = self.change_summary_service.build(event)
 
         for reference in references:
             # Alle Mitglieder der AdminUnit, die das Recht haben, Requests zu verifizieren

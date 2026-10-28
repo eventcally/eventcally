@@ -700,7 +700,6 @@ class Cqrs(containers.DeclarativeContainer):
                         organization_service=services.organization_application_service,
                         event_read_repo=read_repos.event_read_repo,
                         change_summary_service=services.event_change_summary_service,
-                        details_enabled=config.FEATURE_REFERENCED_EVENT_CHANGED_DETAILS_ENABLED,
                     ),
                 ),
                 events.EventDeleted: providers.List(
