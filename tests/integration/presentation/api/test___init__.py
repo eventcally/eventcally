@@ -1,3 +1,8 @@
+import json
+import os
+import subprocess
+import sys
+
 import pytest
 
 
@@ -162,3 +167,44 @@ def test_init_api_ignores_retired_event_date_flag(monkeypatch):
     endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
 
     assert "api_v1_event_date" in endpoints
+
+
+_API_RULES_OF_A_FRESH_APP = """
+import json
+from project.factory import create_app
+
+app = create_app({"SERVER_NAME": "localhost"})
+print(json.dumps(sorted(
+    [rule.endpoint, rule.rule]
+    for rule in app.url_map.iter_rules()
+    if rule.rule.startswith("/api/v1/")
+)))
+"""
+
+
+def _api_rules(app):
+    return sorted(
+        [rule.endpoint, rule.rule]
+        for rule in app.url_map.iter_rules()
+        if rule.rule.startswith("/api/v1/")
+    )
+
+
+def test_create_app_registers_every_api_resource(app):
+    # A fresh interpreter: there the conftest has not imported every module of
+    # project.presentation.api, so only the imports in init_api() fill the registry.
+    result = subprocess.run(
+        [sys.executable, "-c", _API_RULES_OF_A_FRESH_APP],
+        env=os.environ.copy(),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, f"stderr={result.stderr}"
+
+    fresh = json.loads(result.stdout.strip().splitlines()[-1])
+    assert fresh == _api_rules(app)
+    assert [
+        "api_v1_user_organization_invitation_list",
+        "/api/v1/user/organization-invitations",
+    ] in fresh
