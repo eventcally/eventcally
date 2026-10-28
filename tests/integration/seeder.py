@@ -624,7 +624,9 @@ class Seeder(object):
     def create_event_via_form(self, admin_unit_id: int, allday: bool = False) -> str:
         place_id = self.upsert_default_event_place(admin_unit_id)
         organizer_id = self.upsert_default_event_organizer(admin_unit_id)
-        url = self._utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+        url = self._utils.get_url(
+            "manage_admin_unit.event_legacy_create", id=admin_unit_id
+        )
         response = self._utils.get_ok(url)
 
         data = {

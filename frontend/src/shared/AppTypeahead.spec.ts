@@ -121,4 +121,94 @@ describe("AppTypeahead", () => {
     expect(wrapper.find("input").attributes("disabled")).toBeDefined();
     expect(wrapper.find('[data-test="clear"]').exists()).toBe(false);
   });
+
+  it("lists the suggestions when the empty field gets the focus", async () => {
+    const wrapper = mountTypeahead();
+
+    await wrapper.find("input").trigger("focus");
+    await flushPromises();
+
+    expect(fetchMock).toHaveBeenCalledWith("");
+    expect(wrapper.findAll('[data-test="option"]')).toHaveLength(2);
+
+    // Focusing again while the list is open does not look up again.
+    await wrapper.find("input").trigger("focus");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    await wrapper.find("input").trigger("blur");
+    expect(wrapper.find('[data-test="option"]').exists()).toBe(false);
+  });
+
+  it("lists all suggestions on focus of a picked value", async () => {
+    const wrapper = mountTypeahead({ modelValue: { id: 1, name: "Alpha" } });
+
+    await wrapper.find("input").trigger("focus");
+    await flushPromises();
+
+    expect(fetchMock).toHaveBeenCalledWith("");
+  });
+
+  it("looks up the typed text on focus", async () => {
+    const wrapper = mountTypeahead();
+    await wrapper.find("input").setValue("Al");
+    await wrapper.find("input").trigger("blur");
+    fetchMock.mockClear();
+
+    await wrapper.find("input").trigger("focus");
+    await flushPromises();
+
+    expect(fetchMock).toHaveBeenCalledWith("Al");
+  });
+
+  it("lists all suggestions again when the text is deleted", async () => {
+    const wrapper = mountTypeahead();
+
+    await wrapper.find("input").setValue("");
+    vi.advanceTimersByTime(250);
+    await flushPromises();
+
+    expect(fetchMock).toHaveBeenCalledWith("");
+  });
+
+  it("needs minLength characters before a lookup", async () => {
+    const wrapper = mountTypeahead({ minLength: 1 });
+
+    await wrapper.find("input").trigger("focus");
+    await wrapper.find("input").setValue("");
+    vi.advanceTimersByTime(250);
+    await flushPromises();
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("does not look up on focus when disabled", async () => {
+    const wrapper = mountTypeahead({ disabled: true });
+
+    await wrapper.find("input").trigger("focus");
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("lists the suggestions again after clearing", async () => {
+    const wrapper = mount(AppTypeahead, {
+      props: { fetch: fetchMock, modelValue: { id: 1, name: "Alpha" } },
+      attachTo: document.body,
+      global: { plugins: [createI18n({ legacy: false, locale: "en", messages: { en: {} } })] },
+    });
+
+    // Not focused yet: clearing moves the focus into the field.
+    await wrapper.find('[data-test="clear"]').trigger("click");
+    await flushPromises();
+    expect(document.activeElement).toBe(wrapper.find("input").element);
+    expect(fetchMock).toHaveBeenCalledWith("");
+
+    // Already focused (the button keeps the focus): it looks up directly.
+    await wrapper.find("input").trigger("blur");
+    await wrapper.setProps({ modelValue: { id: 2, name: "Alpine" } });
+    fetchMock.mockClear();
+    await wrapper.find('[data-test="clear"]').trigger("click");
+    await flushPromises();
+    expect(fetchMock).toHaveBeenCalledWith("");
+    wrapper.unmount();
+  });
 });

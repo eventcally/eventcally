@@ -67,8 +67,10 @@ def _name_errors(query_bus: QueryBus, id: int, name: str, exclude_id=None) -> li
     return []
 
 
-def _saved(id: int, organizer_id: int, text: str) -> EventOrganizerSaved:
-    flash(text, "success")
+def _saved(id: int, organizer_id: int, text: str, inline=False) -> EventOrganizerSaved:
+    if not inline:
+        flash(text, "success")
+
     return EventOrganizerSaved(
         id=organizer_id,
         redirect_url=url_for("manage_admin_unit.event_organizers", id=id),
@@ -188,6 +190,7 @@ def create_event_organizer(
             "%(model_display_name)s successfully created",
             model_display_name=gettext("Event organizer"),
         ),
+        inline=body.inline,
     )
 
 

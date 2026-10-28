@@ -776,6 +776,32 @@
         "title": "AdminUserRow",
         "type": "object"
       },
+      "CustomEventCategorySetChoice": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "selected": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ManageRef"
+            },
+            "title": "Selected",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "CustomEventCategorySetChoice",
+        "type": "object"
+      },
       "CustomWidgetCreated": {
         "properties": {
           "id": {
@@ -935,6 +961,298 @@
         "title": "ErrorResponse",
         "type": "object"
       },
+      "EventAttendanceMode": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "EventAttendanceMode",
+        "type": "integer"
+      },
+      "EventCreate": {
+        "properties": {
+          "accessible_for_free": {
+            "default": false,
+            "title": "Accessible For Free",
+            "type": "boolean"
+          },
+          "age_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Age From"
+          },
+          "age_to": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Age To"
+          },
+          "attendance_mode": {
+            "$ref": "#/components/schemas/EventAttendanceMode",
+            "default": 1
+          },
+          "booked_up": {
+            "default": false,
+            "title": "Booked Up",
+            "type": "boolean"
+          },
+          "category_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Category Ids",
+            "type": "array"
+          },
+          "co_organizer_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Co Organizer Ids",
+            "type": "array"
+          },
+          "custom_category_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Custom Category Ids",
+            "type": "array"
+          },
+          "date_definitions": {
+            "items": {
+              "$ref": "#/components/schemas/EventDateDefinition"
+            },
+            "minItems": 1,
+            "title": "Date Definitions",
+            "type": "array"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "event_place_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Event Place Id"
+          },
+          "expected_participants": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Participants"
+          },
+          "external_link": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "External Link"
+          },
+          "internal_tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Internal Tags"
+          },
+          "kid_friendly": {
+            "default": false,
+            "title": "Kid Friendly",
+            "type": "boolean"
+          },
+          "name": {
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Name",
+            "type": "string"
+          },
+          "organizer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Organizer Id"
+          },
+          "photo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrganizationLogo"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "price_info": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Price Info"
+          },
+          "public_status": {
+            "$ref": "#/components/schemas/EventPublicStatus",
+            "default": 2
+          },
+          "rating": {
+            "default": 50,
+            "title": "Rating",
+            "type": "integer"
+          },
+          "reference_request_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Reference Request Ids",
+            "type": "array"
+          },
+          "registration_required": {
+            "default": false,
+            "title": "Registration Required",
+            "type": "boolean"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tags"
+          },
+          "target_group_origin": {
+            "$ref": "#/components/schemas/EventTargetGroupOrigin",
+            "default": 1
+          },
+          "ticket_link": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Ticket Link"
+          }
+        },
+        "required": [
+          "name",
+          "date_definitions"
+        ],
+        "title": "EventCreate",
+        "type": "object"
+      },
+      "EventDateDefinition": {
+        "description": "One date of the event form. `start`/`end` are naive Berlin wall-clock times\n(`YYYY-MM-DDTHH:MM`), as the date and time inputs show them.",
+        "properties": {
+          "allday": {
+            "default": false,
+            "title": "Allday",
+            "type": "boolean"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "End"
+          },
+          "recurrence_rule": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Recurrence Rule"
+          },
+          "start": {
+            "format": "date-time",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start"
+        ],
+        "title": "EventDateDefinition",
+        "type": "object"
+      },
       "EventDateSearchOptions": {
         "properties": {
           "categories": {
@@ -1004,6 +1322,428 @@
           "sorts"
         ],
         "title": "EventDateSearchOptions",
+        "type": "object"
+      },
+      "EventForm": {
+        "properties": {
+          "accessible_for_free": {
+            "default": false,
+            "title": "Accessible For Free",
+            "type": "boolean"
+          },
+          "age_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Age From"
+          },
+          "age_to": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Age To"
+          },
+          "attendance_mode": {
+            "title": "Attendance Mode",
+            "type": "integer"
+          },
+          "attendance_mode_choices": {
+            "items": {
+              "$ref": "#/components/schemas/EventFormChoice"
+            },
+            "title": "Attendance Mode Choices",
+            "type": "array"
+          },
+          "booked_up": {
+            "default": false,
+            "title": "Booked Up",
+            "type": "boolean"
+          },
+          "can_create_organizer": {
+            "default": false,
+            "title": "Can Create Organizer",
+            "type": "boolean"
+          },
+          "can_create_place": {
+            "default": false,
+            "title": "Can Create Place",
+            "type": "boolean"
+          },
+          "category_choices": {
+            "items": {
+              "$ref": "#/components/schemas/ManageRef"
+            },
+            "title": "Category Choices",
+            "type": "array"
+          },
+          "category_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Category Ids",
+            "type": "array"
+          },
+          "co_organizers": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ManageRef"
+            },
+            "title": "Co Organizers",
+            "type": "array"
+          },
+          "custom_category_sets": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/CustomEventCategorySetChoice"
+            },
+            "title": "Custom Category Sets",
+            "type": "array"
+          },
+          "date_definitions": {
+            "items": {
+              "$ref": "#/components/schemas/EventDateDefinition"
+            },
+            "title": "Date Definitions",
+            "type": "array"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "event_place": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ManageRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "expected_participants": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Participants"
+          },
+          "external_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "External Link"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "internal_tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Internal Tags"
+          },
+          "kid_friendly": {
+            "default": false,
+            "title": "Kid Friendly",
+            "type": "boolean"
+          },
+          "licenses": {
+            "items": {
+              "$ref": "#/components/schemas/PlanningChoice"
+            },
+            "title": "Licenses",
+            "type": "array"
+          },
+          "name": {
+            "default": "",
+            "title": "Name",
+            "type": "string"
+          },
+          "organizer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ManageRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "photo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrganizationLogo"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "price_info": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Price Info"
+          },
+          "public_status": {
+            "default": 2,
+            "title": "Public Status",
+            "type": "integer"
+          },
+          "public_status_choices": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/EventFormChoice"
+            },
+            "title": "Public Status Choices",
+            "type": "array"
+          },
+          "rating": {
+            "default": 50,
+            "title": "Rating",
+            "type": "integer"
+          },
+          "rating_choices": {
+            "items": {
+              "$ref": "#/components/schemas/EventFormChoice"
+            },
+            "title": "Rating Choices",
+            "type": "array"
+          },
+          "reference_request_choices": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ManageRef"
+            },
+            "title": "Reference Request Choices",
+            "type": "array"
+          },
+          "reference_request_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Reference Request Ids",
+            "type": "array"
+          },
+          "registration_required": {
+            "default": false,
+            "title": "Registration Required",
+            "type": "boolean"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "status_choices": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/EventFormChoice"
+            },
+            "title": "Status Choices",
+            "type": "array"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tags"
+          },
+          "target_group_origin": {
+            "title": "Target Group Origin",
+            "type": "integer"
+          },
+          "target_group_origin_choices": {
+            "items": {
+              "$ref": "#/components/schemas/EventFormChoice"
+            },
+            "title": "Target Group Origin Choices",
+            "type": "array"
+          },
+          "ticket_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Ticket Link"
+          }
+        },
+        "required": [
+          "date_definitions",
+          "category_choices",
+          "licenses",
+          "target_group_origin",
+          "target_group_origin_choices",
+          "attendance_mode",
+          "attendance_mode_choices",
+          "rating_choices"
+        ],
+        "title": "EventForm",
+        "type": "object"
+      },
+      "EventFormChoice": {
+        "description": "An option of a select of the event form (enum values, ratings).",
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "value",
+          "label"
+        ],
+        "title": "EventFormChoice",
+        "type": "object"
+      },
+      "EventOccurrence": {
+        "properties": {
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "formatted_date": {
+            "title": "Formatted Date",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "formatted_date",
+          "type"
+        ],
+        "title": "EventOccurrence",
+        "type": "object"
+      },
+      "EventOccurrenceList": {
+        "properties": {
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EventOccurrence"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "has_more"
+        ],
+        "title": "EventOccurrenceList",
+        "type": "object"
+      },
+      "EventOccurrencesParams": {
+        "description": "The preview of a recurrence rule. `start` is the naive Berlin wall-clock start of\nthe date; `batch_start` pages the preview by ten.",
+        "properties": {
+          "batch_start": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Batch Start",
+            "type": "integer"
+          },
+          "rrule": {
+            "maxLength": 10000,
+            "title": "Rrule",
+            "type": "string"
+          },
+          "start": {
+            "format": "date-time",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "rrule"
+        ],
+        "title": "EventOccurrencesParams",
         "type": "object"
       },
       "EventOrganizerForm": {
@@ -1147,6 +1887,11 @@
             ],
             "default": null,
             "title": "Fax"
+          },
+          "inline": {
+            "default": false,
+            "title": "Inline",
+            "type": "boolean"
           },
           "location": {
             "$ref": "#/components/schemas/EventPlaceLocation"
@@ -1407,6 +2152,11 @@
             "default": null,
             "title": "Description"
           },
+          "inline": {
+            "default": false,
+            "title": "Inline",
+            "type": "boolean"
+          },
           "location": {
             "$ref": "#/components/schemas/EventPlaceLocation"
           },
@@ -1465,6 +2215,15 @@
         ],
         "title": "EventPlaceSaved",
         "type": "object"
+      },
+      "EventPublicStatus": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "EventPublicStatus",
+        "type": "integer"
       },
       "EventReferenceCreate": {
         "properties": {
@@ -1702,6 +2461,278 @@
           "event_name"
         ],
         "title": "EventReportForm",
+        "type": "object"
+      },
+      "EventSaved": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "redirect_url": {
+            "title": "Redirect Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "redirect_url"
+        ],
+        "title": "EventSaved",
+        "type": "object"
+      },
+      "EventStatus": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "title": "EventStatus",
+        "type": "integer"
+      },
+      "EventTargetGroupOrigin": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "EventTargetGroupOrigin",
+        "type": "integer"
+      },
+      "EventUpdate": {
+        "properties": {
+          "accessible_for_free": {
+            "default": false,
+            "title": "Accessible For Free",
+            "type": "boolean"
+          },
+          "age_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Age From"
+          },
+          "age_to": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Age To"
+          },
+          "attendance_mode": {
+            "$ref": "#/components/schemas/EventAttendanceMode",
+            "default": 1
+          },
+          "booked_up": {
+            "default": false,
+            "title": "Booked Up",
+            "type": "boolean"
+          },
+          "category_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Category Ids",
+            "type": "array"
+          },
+          "co_organizer_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Co Organizer Ids",
+            "type": "array"
+          },
+          "custom_category_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Custom Category Ids",
+            "type": "array"
+          },
+          "date_definitions": {
+            "items": {
+              "$ref": "#/components/schemas/EventDateDefinition"
+            },
+            "minItems": 1,
+            "title": "Date Definitions",
+            "type": "array"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "event_place_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Event Place Id"
+          },
+          "expected_participants": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Participants"
+          },
+          "external_link": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "External Link"
+          },
+          "internal_tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Internal Tags"
+          },
+          "kid_friendly": {
+            "default": false,
+            "title": "Kid Friendly",
+            "type": "boolean"
+          },
+          "name": {
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Name",
+            "type": "string"
+          },
+          "organizer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Organizer Id"
+          },
+          "photo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OrganizationLogo"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "price_info": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Price Info"
+          },
+          "public_status": {
+            "$ref": "#/components/schemas/EventPublicStatus",
+            "default": 2
+          },
+          "rating": {
+            "default": 50,
+            "title": "Rating",
+            "type": "integer"
+          },
+          "registration_required": {
+            "default": false,
+            "title": "Registration Required",
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EventStatus",
+            "default": 1
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tags"
+          },
+          "target_group_origin": {
+            "$ref": "#/components/schemas/EventTargetGroupOrigin",
+            "default": 1
+          },
+          "ticket_link": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Ticket Link"
+          }
+        },
+        "required": [
+          "name",
+          "date_definitions"
+        ],
+        "title": "EventUpdate",
         "type": "object"
       },
       "ExternalCalendarEvent": {
@@ -7107,6 +8138,99 @@
         "summary": "Whether the name and short name of an organization are taken"
       }
     },
+    "/bff/manage/organizations/{id}/custom-event-categories": {
+      "get": {
+        "operationId": "bff_manage_lookup_custom_event_categories",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "keyword",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "set_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManageRefList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Look up the categories of a custom event category set"
+      }
+    },
     "/bff/manage/organizations/{id}/custom-widgets": {
       "get": {
         "operationId": "bff_manage_list_custom_widgets",
@@ -8760,6 +9884,264 @@
           }
         },
         "summary": "Search the events of an organization"
+      },
+      "post": {
+        "operationId": "bff_manage_create_event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventSaved"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Create an event"
+      }
+    },
+    "/bff/manage/organizations/{id}/events/create-form": {
+      "get": {
+        "operationId": "bff_manage_get_event_create_form",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "template_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventForm"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get the form to create an event"
+      }
+    },
+    "/bff/manage/organizations/{id}/events/occurrences": {
+      "post": {
+        "operationId": "bff_manage_get_event_occurrences",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventOccurrencesParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventOccurrenceList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Preview the occurrences of a recurrence rule"
       }
     },
     "/bff/manage/organizations/{id}/events/options": {
@@ -8828,6 +10210,178 @@
           }
         },
         "summary": "Filter options of the event list of an organization"
+      }
+    },
+    "/bff/manage/organizations/{id}/events/{event_id}": {
+      "put": {
+        "operationId": "bff_manage_update_event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventSaved"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Update an event"
+      }
+    },
+    "/bff/manage/organizations/{id}/events/{event_id}/form": {
+      "get": {
+        "operationId": "bff_manage_get_event_form",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventForm"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get the form to update an event"
       }
     },
     "/bff/manage/organizations/{id}/events/{event_id}/reference-request-form": {

@@ -40,7 +40,7 @@ def test_ajax_lookup_parity(client, app, db, utils: UtilActions, seeder: Seeder)
 
     # Creates the default place of the organization the snapshot contains.
     seeder.create_event(admin_unit_id)
-    event_url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    event_url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
 
     captured = {
         "license": _lookup(utils, event_url, "photo-license"),
@@ -82,7 +82,7 @@ def test_ajax_lookup_parity(client, app, db, utils: UtilActions, seeder: Seeder)
 
 def test_lookup_out_of_range_page_is_404(client, app, db, utils: UtilActions, seeder):
     _, admin_unit_id = seeder.setup_base()
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
 
     response = client.get(
         f"{url}?field_name=photo-license&term=&page=9",

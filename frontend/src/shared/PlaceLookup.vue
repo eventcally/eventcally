@@ -49,6 +49,7 @@ async function onPick(option: { id: number; name: string } | null) {
           :fetch="fetchPlaces"
           :placeholder="t('Search location on Google')"
           input-id="location-google_place"
+          :min-length="1"
           @update:model-value="onPick"
         />
       </div>

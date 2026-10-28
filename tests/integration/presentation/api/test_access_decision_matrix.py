@@ -194,6 +194,12 @@ def _web_requests(utils: UtilActions, ids):
         "manage_event_update": url(
             "manage_admin_unit.event_update", id=ids["a"], event_id=ids["full"]
         ),
+        "manage_event_legacy_create": url(
+            "manage_admin_unit.event_legacy_create", id=ids["a"]
+        ),
+        "manage_event_legacy_update": url(
+            "manage_admin_unit.event_legacy_update", id=ids["a"], event_id=ids["full"]
+        ),
         "main_draft_event": url("main.event", event_id=ids["draft"]),
         "main_planned_event": url("main.event", event_id=ids["planned"]),
         "main_planning": url("main.planning"),

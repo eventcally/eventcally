@@ -84,13 +84,57 @@ def test_read_with_custom_category(seeder: Seeder, utils: UtilActions):
     utils.assert_response_contains(response, "Custom Category")
 
 
+def test_create_renders_shell(client, utils: UtilActions, seeder: Seeder):
+    _, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    response = utils.get_ok(url)
+
+    assert b'<div id="app"' in response.data
+    assert b"manage" in response.data
+
+
+def test_create_shell_anonymous_redirects_to_login(
+    client, utils: UtilActions, seeder: Seeder
+):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+
+    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    response = utils.get(url)
+
+    utils.assert_response_redirect_to_login(response, url)
+
+
+def test_update_renders_shell(client, utils: UtilActions, seeder: Seeder):
+    _, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url(
+        "manage_admin_unit.event_update", id=admin_unit_id, event_id=event_id
+    )
+    response = utils.get_ok(url)
+
+    assert b'<div id="app"' in response.data
+
+
+def test_update_shell_otherAdminUnit(client, utils: UtilActions, seeder: Seeder):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+    other_admin_unit_id = seeder.create_admin_unit(user_id, "Other crew")
+
+    url = utils.get_url(
+        "manage_admin_unit.event_update", id=other_admin_unit_id, event_id=event_id
+    )
+    utils.get_unauthorized(url)
+
+
 @pytest.mark.parametrize("variant", ["normal", "db_error", "two_date_definitions"])
 def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, variant):
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     if variant == "db_error":
@@ -157,7 +201,7 @@ def test_create_does_not_insert_the_default_category(
         db.session.commit()
         count = db.session.query(EventCategory).count()
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     utils.get_ok(url)
 
     with app.app_context():
@@ -171,7 +215,9 @@ def test_create_unauthorized(client, app, utils: UtilActions, seeder: Seeder):
     seeder.create_admin_unit_member(admin_unit_id, [])
     utils.login()
 
-    response = utils.get_endpoint("manage_admin_unit.event_create", id=admin_unit_id)
+    response = utils.get_endpoint(
+        "manage_admin_unit.event_legacy_create", id=admin_unit_id
+    )
     utils.assert_response_permission_missing(
         response, "main.manage_admin_unit", id=admin_unit_id
     )
@@ -182,7 +228,7 @@ def test_create_allday(client, app, utils: UtilActions, seeder: Seeder):
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -223,7 +269,7 @@ def test_create_allday_lasting_181_days_is_rejected(
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -269,7 +315,7 @@ def test_create_with_reference_requests(
         other_admin_unit_id, admin_unit_id, auto_verify_event_reference_requests=True
     )
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -346,7 +392,7 @@ def test_create_with_custom_category(client, app, utils: UtilActions, seeder: Se
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     (
@@ -395,7 +441,7 @@ def test_create_newPlaceAndOrganizer(
 ):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -427,7 +473,7 @@ def test_create_newPlaceAndOrganizer(
 def test_create_missingName(client, app, utils: UtilActions, seeder: Seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -442,7 +488,7 @@ def test_create_missingName(client, app, utils: UtilActions, seeder: Seeder, moc
 def test_create_missingPlace(client, app, utils: UtilActions, seeder: Seeder, mocker):
     user_id, admin_unit_id = seeder.setup_base()
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -464,7 +510,7 @@ def test_create_missingOrganizer(
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -488,7 +534,7 @@ def test_create_invalidOrganizer(
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -514,7 +560,7 @@ def test_create_invalidDateFormat(
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -535,7 +581,7 @@ def test_create_startInvalid(client, app, utils: UtilActions, seeder: Seeder, mo
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -557,7 +603,7 @@ def test_create_startAfterEnd(client, app, utils: UtilActions, seeder: Seeder, m
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -584,7 +630,7 @@ def test_create_durationMoreThanMaxAllowedDuration(
     user_id, admin_unit_id = seeder.setup_base()
     place_id = seeder.upsert_default_event_place(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -617,7 +663,7 @@ def test_create_allday_180DayCapCountsBerlinWallClockAcrossDstChange(
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -661,7 +707,7 @@ def test_create_allday_181DaySpanAcrossDstChangeIsRejected(
     place_id = seeder.upsert_default_event_place(admin_unit_id)
     organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
 
-    url = utils.get_url("manage_admin_unit.event_create", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.event_legacy_create", id=admin_unit_id)
     response = utils.get_ok(url)
 
     response = utils.post_form(
@@ -699,7 +745,7 @@ def test_duplicate(client, app, utils: UtilActions, seeder: Seeder, mocker, alld
     template_event_id = seeder.create_event(admin_unit_id, allday=allday)
 
     url = utils.get_url(
-        "manage_admin_unit.event_create",
+        "manage_admin_unit.event_legacy_create",
         id=admin_unit_id,
         template_id=template_event_id,
     )
@@ -810,7 +856,7 @@ def test_update(client, seeder: Seeder, utils: UtilActions, app, mocker, variant
         seeder.add_event_date_definition(event_id)
 
     url = utils.get_url(
-        "manage_admin_unit.event_update", id=admin_unit_id, event_id=event_id
+        "manage_admin_unit.event_legacy_update", id=admin_unit_id, event_id=event_id
     )
     response = utils.get_ok(url)
 
@@ -877,7 +923,7 @@ def test_update_unchanged(client, seeder: Seeder, utils: UtilActions, app):
     event_id = seeder.create_event(admin_unit_id)
 
     url = utils.get_url(
-        "manage_admin_unit.event_update", id=admin_unit_id, event_id=event_id
+        "manage_admin_unit.event_legacy_update", id=admin_unit_id, event_id=event_id
     )
 
     # First
@@ -912,7 +958,7 @@ def test_update_co_organizers(client, seeder: Seeder, utils: UtilActions, app):
     )
 
     url = utils.get_url(
-        "manage_admin_unit.event_update", id=admin_unit_id, event_id=event_id
+        "manage_admin_unit.event_legacy_update", id=admin_unit_id, event_id=event_id
     )
     response = utils.get_ok(url)
 
@@ -937,7 +983,7 @@ def test_update_with_custom_category(client, seeder: Seeder, utils: UtilActions,
     )
 
     url = utils.get_url(
-        "manage_admin_unit.event_update", id=admin_unit_id, event_id=event_id
+        "manage_admin_unit.event_legacy_update", id=admin_unit_id, event_id=event_id
     )
     response = utils.get_ok(url)
 

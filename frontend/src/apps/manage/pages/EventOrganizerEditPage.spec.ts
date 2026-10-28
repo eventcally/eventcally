@@ -273,6 +273,7 @@ describe("EventOrganizerEditPage", () => {
           longitude: null,
         },
         logo: null,
+        inline: false,
       },
     });
     expect(assign).toHaveBeenCalledWith("/manage/admin_unit/5/event_organizers");

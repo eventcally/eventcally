@@ -63,8 +63,10 @@ def _name_errors(query_bus: QueryBus, id: int, name: str, exclude_id=None) -> li
     return []
 
 
-def _saved(id: int, place_id: int, text: str) -> EventPlaceSaved:
-    flash(text, "success")
+def _saved(id: int, place_id: int, text: str, inline=False) -> EventPlaceSaved:
+    if not inline:
+        flash(text, "success")
+
     return EventPlaceSaved(
         id=place_id, redirect_url=url_for("manage_admin_unit.event_places", id=id)
     )
@@ -179,6 +181,7 @@ def create_event_place(
             "%(model_display_name)s successfully created",
             model_display_name=gettext("Place"),
         ),
+        inline=body.inline,
     )
 
 

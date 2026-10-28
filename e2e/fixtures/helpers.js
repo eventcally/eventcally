@@ -225,6 +225,56 @@ async function checkEventAllday(page, prefix = "") {
 }
 
 /**
+ * One date card of the Vue event form (`EventDateDefinitionFields`): start, the end that
+ * "+ End" opens three hours later, all-day and the recurrence editor. With `recurrence`
+ * the date keeps a weekly rule.
+ */
+async function checkVueEventStartEnd(page, index, recurrence = false) {
+  const prefix = `date_definitions-${index}-`;
+  const id = (suffix) => page.locator(`#${prefix}${suffix}`);
+  const testId = (suffix) => page.locator(`[data-test="${prefix}${suffix}"]`);
+
+  await id("start").fill("2030-12-30");
+  await id("start-time").fill("21:30");
+
+  // The end opens three hours after the start and closes again.
+  await testId("end-show").click();
+  await expect(id("end")).toHaveValue("2030-12-31");
+  await expect(id("end-time")).toHaveValue("00:30");
+  await testId("end-hide").click();
+  await expect(id("end")).toBeHidden();
+
+  // All-day opens the end at the end of the day and hides the times.
+  await id("allday").check();
+  await expect(id("end")).toHaveValue("2030-12-30");
+  await expect(id("start-time")).toBeHidden();
+  await expect(id("end-time")).toBeHidden();
+  // Hiding the end turns all-day off again.
+  await testId("end-hide").click();
+  await expect(id("allday")).not.toBeChecked();
+  await expect(id("start-time")).toBeVisible();
+
+  // The recurrence editor: a new rule is daily until the start, with a preview.
+  await id("recc-button").click();
+  const modal = page.locator(`[data-test="${prefix}recurrence-modal"]`);
+  await expect(modal.locator(`#${prefix}recc-freq`)).toHaveValue("DAILY");
+  await expect(modal.locator(`#${prefix}recc-end-until`)).toBeChecked();
+  await expect(modal.locator("[data-test=occurrence]").first()).toBeVisible();
+  await modal.locator(`#${prefix}recc-freq`).selectOption("WEEKLY");
+  await modal.locator(`#${prefix}recc-end-count`).check();
+  await modal.locator(`#${prefix}recc-count`).fill("3");
+  await expect(modal.locator("[data-test=occurrence]")).toHaveCount(3);
+  await modal.locator("[data-test=apply]").click();
+  await expect(modal).toBeHidden();
+  await expect(testId("recurrence-summary")).toContainText("Woche");
+
+  if (!recurrence) {
+    await testId("recc-remove").click();
+    await expect(testId("recurrence-summary")).toBeHidden();
+  }
+}
+
+/**
  * Uses `page.request` rather than the standalone `request` fixture so the token
  * POST shares the browser's session.
  */
@@ -276,6 +326,7 @@ module.exports = {
   inputsShouldHaveSameValue,
   screenshotDatepicker,
   checkEventStartEnd,
+  checkVueEventStartEnd,
   checkEventAllday,
   authorize,
 };

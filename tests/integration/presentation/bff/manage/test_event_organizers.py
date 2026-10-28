@@ -312,6 +312,20 @@ def test_create(client, app, utils, setup):
     assert _flashes(client) == [("success", "Veranstalter erfolgreich erstellt")]
 
 
+def test_create_inline_does_not_flash(client, app, utils, setup):
+    admin_unit_id, _ = setup
+
+    response = utils.post_json(_urls(admin_unit_id, 0)["base"], _body(inline=True))
+
+    assert response.status_code == 201
+    assert response.json["id"] == _find_organizer(
+        app, admin_unit_id, "Neuer Organisator"
+    )
+
+    with client.session_transaction() as session:
+        assert session.get("_flashes", []) == []
+
+
 def test_create_minimal(client, app, utils, setup):
     admin_unit_id, _ = setup
 
