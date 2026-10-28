@@ -764,3 +764,188 @@ def test_update_allday_unrelated_change_keeps_stored_dates(
             59,
             59,
         )
+
+
+# Organization-scoped routes
+
+
+def _org_event_url(utils, admin_unit_id, event_id):
+    return utils.get_url(
+        "api_v1_organization_event", id=admin_unit_id, event_id=event_id
+    )
+
+
+def _other_organization(seeder: Seeder, verified=True):
+    other_user_id = seeder.create_user("other@test.de")
+    return seeder.create_admin_unit(other_user_id, "Other Crew", verified=verified)
+
+
+def test_organization_read(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+
+    response = utils.get_json_ok(_org_event_url(utils, admin_unit_id, event_id))
+    assert response.json["id"] == event_id
+
+
+def test_organization_read_anonym(client, app, seeder: Seeder, utils: UtilActions):
+    app.config["API_READ_ANONYM"] = True
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+
+    utils.get_json_ok(_org_event_url(utils, admin_unit_id, event_id))
+
+
+def test_organization_read_otherOrganization(client, seeder: Seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_admin_unit_id = _other_organization(seeder)
+    event_id = seeder.create_event(other_admin_unit_id)
+
+    # Public event under the wrong organization.
+    response = utils.get_json(_org_event_url(utils, admin_unit_id, event_id))
+    utils.assert_response_notFound(response)
+    utils.get_json_ok(_org_event_url(utils, other_admin_unit_id, event_id))
+    utils.assert_response_notFound(
+        utils.get_json(_org_event_url(utils, admin_unit_id, 4711))
+    )
+
+
+def test_organization_read_draftOfOtherOrganization(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access(admin=False)
+    other_admin_unit_id = _other_organization(seeder)
+    event_id = seeder.create_event(other_admin_unit_id, draft=True)
+
+    # Readability is checked before ownership: the status code does not reveal
+    # which organization owns the draft.
+    for organization_id in (admin_unit_id, other_admin_unit_id):
+        response = utils.get_json(_org_event_url(utils, organization_id, event_id))
+        utils.assert_response_unauthorized(response)
+
+
+def test_organization_read_myDraft(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id, draft=True)
+
+    response = utils.get_json_ok(_org_event_url(utils, admin_unit_id, event_id))
+    assert response.json["public_status"] == "draft"
+
+
+def test_organization_read_unverifiedOrganization(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access(admin=False)
+    other_admin_unit_id = _other_organization(seeder, verified=False)
+    event_id = seeder.create_event(other_admin_unit_id)
+
+    for organization_id in (admin_unit_id, other_admin_unit_id):
+        response = utils.get_json(_org_event_url(utils, organization_id, event_id))
+        utils.assert_response_unauthorized(response)
+
+
+def test_organization_read_myUnverifiedOrganization(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access(admin_unit_verified=False)
+    event_id = seeder.create_event(admin_unit_id)
+
+    utils.get_json_ok(_org_event_url(utils, admin_unit_id, event_id))
+
+
+def test_organization_read_planned(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(admin=False)
+    other_admin_unit_id = _other_organization(seeder)
+    other_event_id = seeder.create_event(other_admin_unit_id, planned=True)
+
+    # Planned events are readable by actors who may use the planning.
+    url = _org_event_url(utils, other_admin_unit_id, other_event_id)
+    response = utils.get_json_ok(url)
+    assert response.json["public_status"] == "planned"
+    utils.assert_response_notFound(
+        utils.get_json(_org_event_url(utils, admin_unit_id, other_event_id))
+    )
+
+
+def test_organization_read_planned_anonym(client, app, seeder: Seeder, utils):
+    app.config["API_READ_ANONYM"] = True
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id, planned=True)
+
+    for organization_id in (admin_unit_id, admin_unit_id + 1):
+        response = utils.get_json(_org_event_url(utils, organization_id, event_id))
+        utils.assert_response_unauthorized(response)
+
+
+def test_organization_put(client, seeder: Seeder, utils: UtilActions, app, db):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+    place_id = seeder.upsert_default_event_place(admin_unit_id)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    response = utils.put_json(
+        _org_event_url(utils, admin_unit_id, event_id),
+        create_put(place_id, organizer_id),
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.infrastructure.models import Event
+
+        event = db.session.get(Event, event_id)
+        assert event.name == "Neuer Name"
+        assert event.event_place_id == place_id
+
+
+def test_organization_patch(client, seeder: Seeder, utils: UtilActions, app, db):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+
+    response = utils.patch_json(
+        _org_event_url(utils, admin_unit_id, event_id), {"description": "Neu"}
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.infrastructure.models import Event
+
+        assert db.session.get(Event, event_id).description == "Neu"
+
+
+def test_organization_delete(client, seeder: Seeder, utils: UtilActions, app, db):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+
+    response = utils.delete(_org_event_url(utils, admin_unit_id, event_id))
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.infrastructure.models import Event
+
+        assert db.session.get(Event, event_id) is None
+
+
+def test_organization_write_otherOrganization(
+    client, seeder: Seeder, utils: UtilActions, app, db
+):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_admin_unit_id = _other_organization(seeder)
+    event_id = seeder.create_event(other_admin_unit_id)
+
+    # The event belongs to another organization than the path names: 404.
+    url = _org_event_url(utils, admin_unit_id, event_id)
+    utils.assert_response_notFound(utils.patch_json(url, {"description": "Neu"}))
+    utils.assert_response_notFound(utils.delete(url))
+
+    # An outsider of the organization named in the path: 401.
+    url = _org_event_url(utils, other_admin_unit_id, event_id)
+    utils.assert_response_unauthorized(utils.patch_json(url, {"description": "Neu"}))
+    utils.assert_response_unauthorized(utils.delete(url))
+
+    with app.app_context():
+        from project.infrastructure.models import Event
+
+        assert db.session.get(Event, event_id).description == "Beschreibung"
+
+
+def test_organization_event_search_is_not_an_event(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url("api_v1_organization_event_search", id=admin_unit_id)
+    response = utils.get_json_ok(url)
+    assert [item["id"] for item in response.json["items"]] == [event_id]

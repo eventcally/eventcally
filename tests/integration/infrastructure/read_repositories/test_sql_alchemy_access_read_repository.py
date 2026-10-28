@@ -77,6 +77,28 @@ def test_resource_owners(app, db, seeder, access, world):
     assert owner(ResourceKind.event_reference_request, 4711) is None
 
 
+def test_resource_owner_of_the_outgoing_side_of_a_reference(app, db, access, world):
+    from project.infrastructure.models import EventReference
+
+    with app.app_context():
+        reference = db.session.get(EventReference, world["reference"])
+        event_owner_id = reference.event.admin_unit_id
+
+    assert (
+        access(
+            "get_resource_owner",
+            ResourceKind.event_reference_event_owner,
+            world["reference"],
+        )
+        == event_owner_id
+    )
+    assert event_owner_id != world["a"]
+    assert (
+        access("get_resource_owner", ResourceKind.event_reference_event_owner, 4711)
+        is None
+    )
+
+
 def test_resource_owners_of_relations_invitations_widgets_and_requests(
     app, db, seeder, access, world
 ):

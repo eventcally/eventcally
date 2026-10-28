@@ -16,6 +16,7 @@ from project.domain.errors import BaseError, DuplicateError
 from project.domain.errors.constraint_error import ConstraintError
 from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.presentation.api.apispec_plugin import StableMarshmallowPlugin
+from project.presentation.api.deprecation import mark_deprecated, without_methods
 from project.presentation.shared.scopes import scope_list
 
 
@@ -219,10 +220,25 @@ def init_api(app):
     import project.presentation.api.user.resources
 
     # Re-register all resources for the current app instance.
-    for endpoint, (resource, url, api_docs_flag) in resource_registry.items():
+    # Deprecated routes are registered and marked `deprecated` in Swagger, or, with
+    # the ApiDeprecatedEndpointsDisabled flag, left out: a whole route is not routed
+    # (404), a deprecated method of a route that stays answers 405.
+    show_deprecated = app.config.get("FEATURE_API_DEPRECATED_ENDPOINTS_ENABLED", True)
+    for endpoint, entry in resource_registry.items():
+        resource, url, api_docs_flag, deprecated, deprecated_methods = entry
+
+        if deprecated and not show_deprecated:
+            if not deprecated_methods:
+                continue
+            resource = without_methods(resource, deprecated_methods)
+
         rest_api.add_resource(resource, url, endpoint=endpoint)
         if api_docs_flag:
             api_docs.register(resource, endpoint=endpoint)
+            if deprecated and show_deprecated:
+                mark_deprecated(
+                    app, api_docs.spec, endpoint, deprecated, deprecated_methods
+                )
 
 
 def enum_to_properties(self, field, **kwargs):
@@ -236,8 +252,18 @@ def enum_to_properties(self, field, **kwargs):
     return {}
 
 
-def add_api_resource(resource, url, endpoint, api_docs=True):
-    resource_registry[endpoint] = (resource, url, api_docs)
+def add_api_resource(
+    resource, url, endpoint, api_docs=True, deprecated=None, deprecated_methods=None
+):
+    """Register a resource. `deprecated` is the replacement path, shown in Swagger;
+    `deprecated_methods` limits the deprecation to those methods of the route."""
+    resource_registry[endpoint] = (
+        resource,
+        url,
+        api_docs,
+        deprecated,
+        tuple(deprecated_methods) if deprecated_methods else None,
+    )
 
 
 def add_oauth2_scheme_with_transport(insecure: bool):

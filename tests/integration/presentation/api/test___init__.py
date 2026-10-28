@@ -208,3 +208,153 @@ def test_create_app_registers_every_api_resource(app):
         "api_v1_user_organization_invitation_list",
         "/api/v1/user/organization-invitations",
     ] in fresh
+
+
+# Deprecated routes: documented as `deprecated`, hidden by ApiDeprecatedEndpointsDisabled.
+
+
+def _app_with_deprecated_endpoints(shown: bool):
+    from project.factory import create_app
+
+    return create_app(
+        {
+            "TESTING": True,
+            "SERVER_NAME": "localhost",
+            "FEATURE_API_DEPRECATED_ENDPOINTS_ENABLED": shown,
+        }
+    )
+
+
+def _deprecated_entries():
+    from project.presentation.api import resource_registry
+
+    return {
+        endpoint: (url, deprecated, deprecated_methods)
+        for endpoint, (
+            _resource,
+            url,
+            _docs,
+            deprecated,
+            deprecated_methods,
+        ) in resource_registry.items()
+        if deprecated
+    }
+
+
+def _swagger_paths(app):
+    return app.test_client().get("/swagger/").json["paths"]
+
+
+def _swagger_path(url):
+    import re
+
+    return "/api/v1" + re.sub(r"<(?:int:)?(\w+)>", r"{\1}", url)
+
+
+def _rules(app, endpoint):
+    return [rule for rule in app.url_map.iter_rules() if rule.endpoint == endpoint]
+
+
+def test_deprecated_endpoints_are_registered_and_documented_by_default():
+    app = _app_with_deprecated_endpoints(True)
+    entries = _deprecated_entries()
+    paths = _swagger_paths(app)
+
+    assert len(entries) >= 20
+    for endpoint, (url, replacement, methods) in entries.items():
+        assert _rules(app, endpoint)
+        operations = {
+            method: operation
+            for method, operation in paths[_swagger_path(url)].items()
+            if method in ("get", "put", "post", "patch", "delete")
+        }
+        for method, operation in operations.items():
+            if methods is None or method in methods:
+                assert operation["deprecated"] is True
+                assert replacement in operation["description"]
+            else:
+                assert "deprecated" not in operation
+
+
+def test_replacements_are_not_deprecated():
+    app = _app_with_deprecated_endpoints(True)
+    paths = _swagger_paths(app)
+
+    for path in (
+        "/api/v1/organizations/{id}/outgoing-event-reference-requests",
+        "/api/v1/organizations/{id}/incoming-event-reference-requests/{event_reference_request_id}",
+        "/api/v1/organizations/{id}/events/{event_id}",
+        "/api/v1/organizations/{id}/outgoing-organization-relations/by-target/{target_id}",
+        "/api/v1/organizations/{id}/organization-invitations",
+    ):
+        operations = [
+            operation
+            for method, operation in paths[path].items()
+            if method in ("get", "put", "post", "patch", "delete")
+        ]
+        assert operations
+        assert all("deprecated" not in operation for operation in operations)
+
+    # Only the writes of /events/<id> are deprecated, the public read stays.
+    assert "deprecated" not in paths["/api/v1/events/{id}"]["get"]
+    assert paths["/api/v1/events/{id}"]["put"]["deprecated"] is True
+
+
+def test_deprecated_endpoints_are_hidden_with_the_flag():
+    app = _app_with_deprecated_endpoints(False)
+    paths = _swagger_paths(app)
+
+    for endpoint, (url, _replacement, methods) in _deprecated_entries().items():
+        if not methods:
+            assert not _rules(app, endpoint)
+            assert _swagger_path(url) not in paths
+            continue
+
+        (rule,) = _rules(app, endpoint)
+        assert rule.methods.isdisjoint({method.upper() for method in methods})
+        assert {"GET", "HEAD", "OPTIONS"} >= rule.methods
+        assert set(paths[_swagger_path(url)]).isdisjoint(methods)
+        assert "get" in paths[_swagger_path(url)]
+
+    # Every replacement stays.
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+    assert "api_v1_organization_incoming_event_reference_request" in endpoints
+    assert "api_v1_organization_event" in endpoints
+    assert "api_v1_organization_outgoing_organization_relation_by_target" in endpoints
+    assert "api_v1_event" in endpoints
+    assert "api_v1_event_reference_request" not in endpoints
+
+
+def test_hidden_deprecated_method_answers_405():
+    app = _app_with_deprecated_endpoints(False)
+    client = app.test_client()
+
+    for method in ("put", "patch", "delete"):
+        for resource in ("events", "places", "organizers"):
+            response = getattr(client, method)(f"/api/v1/{resource}/1")
+            assert response.status_code == 405
+
+    assert client.post("/api/v1/event-reference-requests/1/verify").status_code == 404
+
+
+def test_deprecated_endpoints_are_hidden_via_feature_flags_env(monkeypatch):
+    from project.factory import create_app
+
+    monkeypatch.setenv("FEATURE_FLAGS", "ApiDeprecatedEndpointsDisabled")
+
+    app = create_app({"TESTING": True, "SERVER_NAME": "localhost"})
+
+    assert app.config["FEATURE_API_DEPRECATED_ENDPOINTS_ENABLED"] is False
+    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
+    assert "api_v1_organization_relation" not in endpoints
+    assert "api_v1_organization_outgoing_organization_relation" in endpoints
+
+
+def test_hiding_does_not_leak_between_apps():
+    hidden = _app_with_deprecated_endpoints(False)
+    shown = _app_with_deprecated_endpoints(True)
+
+    assert not _rules(hidden, "api_v1_organization_relation")
+    assert _rules(shown, "api_v1_organization_relation")
+    assert {"PUT", "PATCH", "DELETE"} <= _rules(shown, "api_v1_event")[0].methods
+    assert not {"PUT", "PATCH", "DELETE"} & _rules(hidden, "api_v1_event")[0].methods

@@ -5743,6 +5743,8 @@
     },
     "/api/v1/event-reference-requests/{id}": {
       "delete": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-event-reference-requests/{event_reference_request_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -5792,6 +5794,8 @@
         ]
       },
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-event-reference-requests/{event_reference_request_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -5845,6 +5849,8 @@
     },
     "/api/v1/event-reference-requests/{id}/reject": {
       "post": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/incoming-event-reference-requests/{event_reference_request_id}/reject.",
         "parameters": [
           {
             "in": "body",
@@ -5904,6 +5910,8 @@
     },
     "/api/v1/event-reference-requests/{id}/verify": {
       "post": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/incoming-event-reference-requests/{event_reference_request_id}/verify.",
         "parameters": [
           {
             "in": "body",
@@ -5965,6 +5973,8 @@
     },
     "/api/v1/event-references/{id}": {
       "delete": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/incoming-event-references/{event_reference_id} or /organizations/{id}/outgoing-event-references/{event_reference_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -6014,6 +6024,8 @@
         ]
       },
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/incoming-event-references/{event_reference_id} or /organizations/{id}/outgoing-event-references/{event_reference_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -6374,6 +6386,8 @@
     },
     "/api/v1/events/{id}": {
       "delete": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/events/{event_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -6473,6 +6487,8 @@
         ]
       },
       "patch": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/events/{event_id}.",
         "parameters": [
           {
             "in": "body",
@@ -6530,6 +6546,8 @@
         ]
       },
       "put": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/events/{event_id}.",
         "parameters": [
           {
             "in": "body",
@@ -6651,6 +6669,8 @@
     },
     "/api/v1/organization-invitation/{id}": {
       "delete": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/organization-invitations/{organization_invitation_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -6700,6 +6720,8 @@
         ]
       },
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/organization-invitations/{organization_invitation_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -6751,6 +6773,8 @@
         ]
       },
       "patch": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/organization-invitations/{organization_invitation_id}.",
         "parameters": [
           {
             "in": "body",
@@ -6808,6 +6832,8 @@
         ]
       },
       "put": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/organization-invitations/{organization_invitation_id}.",
         "parameters": [
           {
             "in": "body",
@@ -6867,6 +6893,8 @@
     },
     "/api/v1/organization-relation/{id}": {
       "delete": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-relations/{organization_relation_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -6916,6 +6944,8 @@
         ]
       },
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-relations/{organization_relation_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -6967,6 +6997,8 @@
         ]
       },
       "patch": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-relations/{organization_relation_id}.",
         "parameters": [
           {
             "in": "body",
@@ -7024,6 +7056,8 @@
         ]
       },
       "put": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-relations/{organization_relation_id}.",
         "parameters": [
           {
             "in": "body",
@@ -7083,6 +7117,8 @@
     },
     "/api/v1/organization-verification-request/{id}": {
       "delete": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-verification-requests/{organization_verification_request_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -7132,6 +7168,8 @@
         ]
       },
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-verification-requests/{organization_verification_request_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -7185,6 +7223,8 @@
     },
     "/api/v1/organization-verification-request/{id}/reject": {
       "post": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/incoming-organization-verification-requests/{organization_verification_request_id}/reject.",
         "parameters": [
           {
             "in": "body",
@@ -7244,6 +7284,8 @@
     },
     "/api/v1/organization-verification-request/{id}/verify": {
       "post": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/incoming-organization-verification-requests/{organization_verification_request_id}/verify.",
         "parameters": [
           {
             "in": "body",
@@ -7815,6 +7857,8 @@
     },
     "/api/v1/organizations/{id}/event-reference-requests/incoming": {
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/incoming-event-reference-requests.",
         "parameters": [
           {
             "format": "int32",
@@ -7946,6 +7990,8 @@
     },
     "/api/v1/organizations/{id}/event-reference-requests/outgoing": {
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-event-reference-requests.",
         "parameters": [
           {
             "format": "int32",
@@ -8075,6 +8121,8 @@
         ]
       },
       "post": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-event-reference-requests.",
         "parameters": [
           {
             "in": "body",
@@ -8137,6 +8185,8 @@
     },
     "/api/v1/organizations/{id}/event-references/incoming": {
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/incoming-event-references.",
         "parameters": [
           {
             "format": "int32",
@@ -8266,6 +8316,8 @@
         ]
       },
       "post": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/incoming-event-references.",
         "parameters": [
           {
             "in": "body",
@@ -8328,6 +8380,8 @@
     },
     "/api/v1/organizations/{id}/event-references/outgoing": {
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-event-references.",
         "parameters": [
           {
             "format": "int32",
@@ -8964,6 +9018,1210 @@
         ]
       }
     },
+    "/api/v1/organizations/{id}/events/{event_id}": {
+      "delete": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.events:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.events:write"
+            ]
+          }
+        ],
+        "summary": "Delete event",
+        "tags": [
+          "Organizations",
+          "Events"
+        ]
+      },
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Event"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [],
+            "oauth2ClientCredentials": []
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "Get event of organization",
+        "tags": [
+          "Organizations",
+          "Events"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/EventPatchRequestPlain"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.events:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.events:write"
+            ]
+          }
+        ],
+        "summary": "Patch event",
+        "tags": [
+          "Organizations",
+          "Events"
+        ]
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/EventPutRequestPlain"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.events:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.events:write"
+            ]
+          }
+        ],
+        "summary": "Update event",
+        "tags": [
+          "Organizations",
+          "Events"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/incoming-event-reference-requests": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items created before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "The page number (1 indexed).",
+            "in": "query",
+            "minimum": 1,
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReferenceRequestListResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_event_reference_requests:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_event_reference_requests:read"
+            ]
+          }
+        ],
+        "summary": "List incoming event reference requests of organization",
+        "tags": [
+          "Organizations",
+          "Event Reference Requests"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/incoming-event-reference-requests/{event_reference_request_id}": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_reference_request_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReferenceRequest"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_event_reference_requests:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_event_reference_requests:read"
+            ]
+          }
+        ],
+        "summary": "Get incoming event reference request",
+        "tags": [
+          "Event Reference Requests"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/incoming-event-reference-requests/{event_reference_request_id}/reject": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/EventReferenceRequestRejectRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_reference_request_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_event_reference_requests:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_event_reference_requests:write"
+            ]
+          }
+        ],
+        "summary": "Reject event reference request",
+        "tags": [
+          "Event Reference Requests"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/incoming-event-reference-requests/{event_reference_request_id}/verify": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/EventReferenceRequestVerifyRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_reference_request_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReferenceId"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_event_reference_requests:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_event_reference_requests:write"
+            ]
+          }
+        ],
+        "summary": "Verify event reference request. Returns reference id.",
+        "tags": [
+          "Event Reference Requests"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/incoming-event-references": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items created before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "The page number (1 indexed).",
+            "in": "query",
+            "minimum": 1,
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReferenceListResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_event_references:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_event_references:read"
+            ]
+          }
+        ],
+        "summary": "List incoming event references of organization",
+        "tags": [
+          "Organizations",
+          "Event References"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/EventReferenceCreateRequestPlain"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReferenceIdPlain"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_event_references:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_event_references:write"
+            ]
+          }
+        ],
+        "summary": "Add reference",
+        "tags": [
+          "Organizations",
+          "Event References"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/incoming-event-references/{event_reference_id}": {
+      "delete": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_reference_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_event_references:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_event_references:write"
+            ]
+          }
+        ],
+        "summary": "Delete reference",
+        "tags": [
+          "Event References"
+        ]
+      },
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_reference_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReference"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_event_references:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_event_references:read"
+            ]
+          }
+        ],
+        "summary": "Get incoming event reference",
+        "tags": [
+          "Event References"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/incoming-organization-verification-requests": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items created before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "The page number (1 indexed).",
+            "in": "query",
+            "minimum": 1,
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationVerificationRequestListResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_organization_verification_requests:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_organization_verification_requests:read"
+            ]
+          }
+        ],
+        "summary": "List incoming organization verification requests of organization",
+        "tags": [
+          "Organizations",
+          "Organization Verification Requests"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/incoming-organization-verification-requests/{organization_verification_request_id}": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_verification_request_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationVerificationRequest"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_organization_verification_requests:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_organization_verification_requests:read"
+            ]
+          }
+        ],
+        "summary": "Get incoming organization verification request",
+        "tags": [
+          "Organization Verification Requests"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/incoming-organization-verification-requests/{organization_verification_request_id}/reject": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OrganizationVerificationRequestRejectRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_verification_request_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_organization_verification_requests:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_organization_verification_requests:write"
+            ]
+          }
+        ],
+        "summary": "Reject organization verification request",
+        "tags": [
+          "Organization Verification Requests"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/incoming-organization-verification-requests/{organization_verification_request_id}/verify": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OrganizationVerificationRequestVerifyRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_verification_request_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationRelationIdPlain"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.incoming_organization_verification_requests:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.incoming_organization_verification_requests:write"
+            ]
+          }
+        ],
+        "summary": "Verify organization verification request. Returns relation id.",
+        "tags": [
+          "Organization Verification Requests"
+        ]
+      }
+    },
     "/api/v1/organizations/{id}/organization-invitations": {
       "get": {
         "parameters": [
@@ -9156,8 +10414,254 @@
         ]
       }
     },
+    "/api/v1/organizations/{id}/organization-invitations/{organization_invitation_id}": {
+      "delete": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_invitation_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.organization_invitations:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.organization_invitations:write"
+            ]
+          }
+        ],
+        "summary": "Delete organization invitation",
+        "tags": [
+          "Organization Invitations"
+        ]
+      },
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_invitation_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationInvitation"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.organization_invitations:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.organization_invitations:read"
+            ]
+          }
+        ],
+        "summary": "Get organization invitation",
+        "tags": [
+          "Organization Invitations"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OrganizationInvitationPatchRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_invitation_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.organization_invitations:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.organization_invitations:write"
+            ]
+          }
+        ],
+        "summary": "Patch organization invitation",
+        "tags": [
+          "Organization Invitations"
+        ]
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OrganizationInvitationUpdateRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_invitation_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.organization_invitations:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.organization_invitations:write"
+            ]
+          }
+        ],
+        "summary": "Update organization invitation",
+        "tags": [
+          "Organization Invitations"
+        ]
+      }
+    },
     "/api/v1/organizations/{id}/organization-verification-requests/incoming": {
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/incoming-organization-verification-requests.",
         "parameters": [
           {
             "format": "int32",
@@ -9289,6 +10793,8 @@
     },
     "/api/v1/organizations/{id}/organization-verification-requests/outgoing": {
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-verification-requests.",
         "parameters": [
           {
             "format": "int32",
@@ -9418,6 +10924,8 @@
         ]
       },
       "post": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-verification-requests.",
         "parameters": [
           {
             "in": "body",
@@ -9676,6 +11184,1494 @@
         ]
       }
     },
+    "/api/v1/organizations/{id}/organizers/{organizer_id}": {
+      "delete": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organizer_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.event_organizers:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.event_organizers:write"
+            ]
+          }
+        ],
+        "summary": "Delete organizer",
+        "tags": [
+          "Organizations",
+          "Organizers"
+        ]
+      },
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organizer_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Organizer"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [],
+            "oauth2ClientCredentials": []
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "Get organizer of organization",
+        "tags": [
+          "Organizations",
+          "Organizers"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OrganizerPatchRequestPlain"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organizer_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.event_organizers:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.event_organizers:write"
+            ]
+          }
+        ],
+        "summary": "Patch organizer",
+        "tags": [
+          "Organizations",
+          "Organizers"
+        ]
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OrganizerPutRequestPlain"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organizer_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.event_organizers:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.event_organizers:write"
+            ]
+          }
+        ],
+        "summary": "Update organizer",
+        "tags": [
+          "Organizations",
+          "Organizers"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/outgoing-event-reference-requests": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items created before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "The page number (1 indexed).",
+            "in": "query",
+            "minimum": 1,
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReferenceRequestListResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_event_reference_requests:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_event_reference_requests:read"
+            ]
+          }
+        ],
+        "summary": "List outgoing event reference requests of organization",
+        "tags": [
+          "Organizations",
+          "Event Reference Requests"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/EventReferenceRequestPostRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReferenceRequestId"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_event_reference_requests:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_event_reference_requests:write"
+            ]
+          }
+        ],
+        "summary": "Add reference request",
+        "tags": [
+          "Organizations",
+          "Event Reference Requests"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/outgoing-event-reference-requests/{event_reference_request_id}": {
+      "delete": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_reference_request_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_event_reference_requests:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_event_reference_requests:write"
+            ]
+          }
+        ],
+        "summary": "Delete reference request",
+        "tags": [
+          "Event Reference Requests"
+        ]
+      },
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_reference_request_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReferenceRequest"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_event_reference_requests:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_event_reference_requests:read"
+            ]
+          }
+        ],
+        "summary": "Get event reference request",
+        "tags": [
+          "Event Reference Requests"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/outgoing-event-references": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items created before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "The page number (1 indexed).",
+            "in": "query",
+            "minimum": 1,
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReferenceListResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_event_references:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_event_references:read"
+            ]
+          }
+        ],
+        "summary": "List outgoing event references of organization",
+        "tags": [
+          "Organizations",
+          "Event References"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/outgoing-event-references/{event_reference_id}": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "event_reference_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EventReference"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_event_references:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_event_references:read"
+            ]
+          }
+        ],
+        "summary": "Get outgoing event reference",
+        "tags": [
+          "Event References"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/outgoing-organization-relations": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "The page number (1 indexed).",
+            "in": "query",
+            "minimum": 1,
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationRelationListResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_relations:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_relations:read"
+            ]
+          }
+        ],
+        "summary": "List outgoing relations of organization",
+        "tags": [
+          "Organizations",
+          "Organization Relations"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OrganizationRelationCreateRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationRelationIdPlain"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_relations:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_relations:write"
+            ]
+          }
+        ],
+        "summary": "Add new outgoing relation",
+        "tags": [
+          "Organizations",
+          "Organization Relations"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/outgoing-organization-relations/by-target/{target_id}": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "target_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationRelation"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_relations:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_relations:read"
+            ]
+          }
+        ],
+        "summary": "Get outgoing relation to given target organization",
+        "tags": [
+          "Organizations",
+          "Organization Relations"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/outgoing-organization-relations/{organization_relation_id}": {
+      "delete": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_relation_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_relations:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_relations:write"
+            ]
+          }
+        ],
+        "summary": "Delete organization relation",
+        "tags": [
+          "Organization Relations"
+        ]
+      },
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_relation_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationRelation"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_relations:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_relations:read"
+            ]
+          }
+        ],
+        "summary": "Get outgoing organization relation",
+        "tags": [
+          "Organization Relations"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OrganizationRelationPatchRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_relation_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_relations:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_relations:write"
+            ]
+          }
+        ],
+        "summary": "Patch organization relation",
+        "tags": [
+          "Organization Relations"
+        ]
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OrganizationRelationUpdateRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_relation_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_relations:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_relations:write"
+            ]
+          }
+        ],
+        "summary": "Update organization relation",
+        "tags": [
+          "Organization Relations"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/outgoing-organization-verification-requests": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items created before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "The page number (1 indexed).",
+            "in": "query",
+            "minimum": 1,
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationVerificationRequestListResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_verification_requests:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_verification_requests:read"
+            ]
+          }
+        ],
+        "summary": "List outgoing organization verification requests of organization",
+        "tags": [
+          "Organizations",
+          "Organization Verification Requests"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OrganizationVerificationRequestPostRequest"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationVerificationRequestIdPlain"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_verification_requests:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_verification_requests:write"
+            ]
+          }
+        ],
+        "summary": "Add verification request",
+        "tags": [
+          "Organizations",
+          "Organization Verification Requests"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/outgoing-organization-verification-requests/{organization_verification_request_id}": {
+      "delete": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_verification_request_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_verification_requests:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_verification_requests:write"
+            ]
+          }
+        ],
+        "summary": "Delete verification request",
+        "tags": [
+          "Organization Verification Requests"
+        ]
+      },
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "organization_verification_request_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/OrganizationVerificationRequest"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.outgoing_organization_verification_requests:read"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.outgoing_organization_verification_requests:read"
+            ]
+          }
+        ],
+        "summary": "Get organization verification request",
+        "tags": [
+          "Organization Verification Requests"
+        ]
+      }
+    },
     "/api/v1/organizations/{id}/places": {
       "get": {
         "parameters": [
@@ -9874,8 +12870,257 @@
         ]
       }
     },
+    "/api/v1/organizations/{id}/places/{place_id}": {
+      "delete": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "place_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.event_places:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.event_places:write"
+            ]
+          }
+        ],
+        "summary": "Delete place",
+        "tags": [
+          "Organizations",
+          "Places"
+        ]
+      },
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "place_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Place"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [],
+            "oauth2ClientCredentials": []
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "Get place of organization",
+        "tags": [
+          "Organizations",
+          "Places"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/PlacePatchRequestPlain"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "place_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.event_places:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.event_places:write"
+            ]
+          }
+        ],
+        "summary": "Patch place",
+        "tags": [
+          "Organizations",
+          "Places"
+        ]
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/PlacePutRequestPlain"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "place_id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.event_places:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.event_places:write"
+            ]
+          }
+        ],
+        "summary": "Update place",
+        "tags": [
+          "Organizations",
+          "Places"
+        ]
+      }
+    },
     "/api/v1/organizations/{id}/relations/outgoing": {
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-relations.",
         "parameters": [
           {
             "format": "int32",
@@ -9945,6 +13190,8 @@
         ]
       },
       "post": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-relations.",
         "parameters": [
           {
             "in": "body",
@@ -10007,6 +13254,8 @@
     },
     "/api/v1/organizations/{id}/relations/outgoing/{target_id}": {
       "get": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/outgoing-organization-relations/by-target/{target_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -10068,6 +13317,8 @@
     },
     "/api/v1/organizers/{id}": {
       "delete": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/organizers/{organizer_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -10167,6 +13418,8 @@
         ]
       },
       "patch": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/organizers/{organizer_id}.",
         "parameters": [
           {
             "in": "body",
@@ -10224,6 +13477,8 @@
         ]
       },
       "put": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/organizers/{organizer_id}.",
         "parameters": [
           {
             "in": "body",
@@ -10283,6 +13538,8 @@
     },
     "/api/v1/places/{id}": {
       "delete": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/places/{place_id}.",
         "parameters": [
           {
             "format": "int32",
@@ -10382,6 +13639,8 @@
         ]
       },
       "patch": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/places/{place_id}.",
         "parameters": [
           {
             "in": "body",
@@ -10439,6 +13698,8 @@
         ]
       },
       "put": {
+        "deprecated": true,
+        "description": "Deprecated, use /organizations/{id}/places/{place_id}.",
         "parameters": [
           {
             "in": "body",

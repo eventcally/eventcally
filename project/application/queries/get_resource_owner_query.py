@@ -13,6 +13,7 @@ class ResourceKind(str, Enum):
     event_organizer = "event_organizer"
     custom_widget = "custom_widget"
     event_reference = "event_reference"
+    event_reference_event_owner = "event_reference_event_owner"
     event_reference_request = "event_reference_request"
     event_reference_request_target = "event_reference_request_target"
     organization_relation = "organization_relation"
@@ -23,7 +24,8 @@ class ResourceKind(str, Enum):
 
 class GetResourceOwnerQuery(Query[Optional[ObjectId]]):
     """The id of the organization a resource belongs to (the requesting side for
-    relations and verification requests, the event owner for reference requests),
+    relations and verification requests, the event owner for reference requests and
+    for the outgoing side of a reference),
     or `None` if the resource does not exist."""
 
     kind: ResourceKind

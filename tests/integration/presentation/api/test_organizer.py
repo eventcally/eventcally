@@ -135,3 +135,112 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
 
         organizer = db.session.get(EventOrganizer, organizer_id)
         assert organizer is None
+
+
+# Organization-scoped routes
+
+
+def _org_url(utils, admin_unit_id, organizer_id):
+    return utils.get_url(
+        "api_v1_organization_organizer", id=admin_unit_id, organizer_id=organizer_id
+    )
+
+
+def _other_organization(seeder: Seeder):
+    other_user_id = seeder.create_user("other@test.de")
+    return seeder.create_admin_unit(other_user_id, "Other Crew")
+
+
+def test_organization_read(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    response = utils.get_json_ok(_org_url(utils, admin_unit_id, organizer_id))
+    assert response.json["id"] == organizer_id
+
+
+def test_organization_read_anonym(client, app, seeder: Seeder, utils: UtilActions):
+    app.config["API_READ_ANONYM"] = True
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    utils.get_json_ok(_org_url(utils, admin_unit_id, organizer_id))
+
+
+def test_organization_read_otherOrganization(client, seeder: Seeder, utils):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_admin_unit_id = _other_organization(seeder)
+    organizer_id = seeder.upsert_default_event_organizer(other_admin_unit_id)
+
+    utils.assert_response_notFound(
+        utils.get_json(_org_url(utils, admin_unit_id, organizer_id))
+    )
+    utils.get_json_ok(_org_url(utils, other_admin_unit_id, organizer_id))
+    utils.assert_response_notFound(utils.get_json(_org_url(utils, admin_unit_id, 4711)))
+
+
+def test_organization_put(client, seeder: Seeder, utils: UtilActions, app, db):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    response = utils.put_json(
+        _org_url(utils, admin_unit_id, organizer_id), {"name": "Neuer Name"}
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.infrastructure.models import EventOrganizer
+
+        assert db.session.get(EventOrganizer, organizer_id).name == "Neuer Name"
+
+
+def test_organization_patch(client, seeder: Seeder, utils: UtilActions, app, db):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    response = utils.patch_json(
+        _org_url(utils, admin_unit_id, organizer_id), {"phone": "12345"}
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.infrastructure.models import EventOrganizer
+
+        assert db.session.get(EventOrganizer, organizer_id).phone == "12345"
+
+
+def test_organization_delete(client, seeder: Seeder, utils: UtilActions, app, db):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    organizer_id = seeder.upsert_default_event_organizer(admin_unit_id)
+
+    response = utils.delete(_org_url(utils, admin_unit_id, organizer_id))
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.infrastructure.models import EventOrganizer
+
+        assert db.session.get(EventOrganizer, organizer_id) is None
+
+
+def test_organization_write_otherOrganization(
+    client, seeder: Seeder, utils: UtilActions, app, db
+):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_admin_unit_id = _other_organization(seeder)
+    organizer_id = seeder.upsert_default_event_organizer(other_admin_unit_id)
+
+    # The organizer belongs to another organization than the path names: 404.
+    url = _org_url(utils, admin_unit_id, organizer_id)
+    utils.assert_response_notFound(utils.put_json(url, {"name": "Neu"}))
+    utils.assert_response_notFound(utils.patch_json(url, {"name": "Neu"}))
+    utils.assert_response_notFound(utils.delete(url))
+
+    # An outsider of the organization named in the path: 401.
+    url = _org_url(utils, other_admin_unit_id, organizer_id)
+    utils.assert_response_unauthorized(utils.put_json(url, {"name": "Neu"}))
+    utils.assert_response_unauthorized(utils.delete(url))
+
+    with app.app_context():
+        from project.infrastructure.models import EventOrganizer
+
+        assert db.session.get(EventOrganizer, organizer_id) is not None

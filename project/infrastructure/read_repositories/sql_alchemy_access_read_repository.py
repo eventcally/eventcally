@@ -117,6 +117,12 @@ class SqlAlchemyAccessReadRepository(AbstractAccessReadRepository):
                 .join(EventReferenceRequest, EventReferenceRequest.event_id == Event.id)
                 .where(EventReferenceRequest.id == resource_id)
             )
+        elif kind == ResourceKind.event_reference_event_owner:
+            stmt = (
+                select(Event.admin_unit_id)
+                .join(EventReference, EventReference.event_id == Event.id)
+                .where(EventReference.id == resource_id)
+            )
         else:
             model, column = _OWNER_COLUMNS[kind]
             stmt = select(column).where(model.id == resource_id)
