@@ -158,14 +158,6 @@ rest_api = None
 api_docs = None
 resource_registry = {}
 
-# Unused endpoints hidden behind a flag until they are retired.
-API_EVENT_DATE_ENDPOINTS = {"api_v1_event_date"}
-
-# app.config key (from project.shared.feature_flags) -> endpoints hidden when it is False.
-FEATURE_ENDPOINTS = {
-    "FEATURE_API_EVENT_DATE_ENABLED": API_EVENT_DATE_ENDPOINTS,
-}
-
 
 def init_api(app):
     """Initialize REST API with the Flask app instance.
@@ -226,15 +218,7 @@ def init_api(app):
     import project.presentation.api.place.resources
 
     # Re-register all resources for the current app instance.
-    disabled_endpoints = {
-        endpoint
-        for config_key, endpoints in FEATURE_ENDPOINTS.items()
-        if not app.config.get(config_key, True)
-        for endpoint in endpoints
-    }
     for endpoint, (resource, url, api_docs_flag) in resource_registry.items():
-        if endpoint in disabled_endpoints:
-            continue
         rest_api.add_resource(resource, url, endpoint=endpoint)
         if api_docs_flag:
             api_docs.register(resource, endpoint=endpoint)

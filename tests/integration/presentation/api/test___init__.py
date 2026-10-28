@@ -136,86 +136,29 @@ def test_add_oauth2_scheme(app, utils):
         add_oauth2_scheme_with_transport(False)
 
 
-# (endpoint set in project.presentation.api, derived config key, FEATURE_FLAGS token)
-UNUSED_API_ENDPOINT_FLAGS = [
-    (
-        "API_EVENT_DATE_ENDPOINTS",
-        "FEATURE_API_EVENT_DATE_ENABLED",
-        "ApiEventDateDisabled",
-    ),
-]
-
-
-def _endpoint_set(name):
-    import project.presentation.api
-
-    return getattr(project.presentation.api, name)
-
-
-@pytest.mark.parametrize(
-    "endpoint_set_name, config_key, token", UNUSED_API_ENDPOINT_FLAGS
-)
-def test_init_api_unused_endpoints_disabled(endpoint_set_name, config_key, token):
+def test_init_api_registers_event_date_endpoint():
     from project.factory import create_app
 
-    app = create_app(
-        {
-            "TESTING": True,
-            "SERVER_NAME": "localhost",
-            config_key: False,
-        }
-    )
+    app = create_app({"TESTING": True, "SERVER_NAME": "localhost"})
 
     endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
 
-    assert endpoints.isdisjoint(_endpoint_set(endpoint_set_name))
+    assert "api_v1_event_date" in endpoints
     assert "api_v1_event_search" in endpoints
-
-
-@pytest.mark.parametrize(
-    "endpoint_set_name, config_key, token", UNUSED_API_ENDPOINT_FLAGS
-)
-def test_init_api_unused_endpoints_enabled_by_default(
-    endpoint_set_name, config_key, token
-):
-    from project.factory import create_app
-
-    app = create_app(
-        {
-            "TESTING": True,
-            "SERVER_NAME": "localhost",
-        }
-    )
-
-    endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
-
-    assert app.config[config_key] is True
-    assert _endpoint_set(endpoint_set_name).issubset(endpoints)
     assert "api_v1_event_list" not in endpoints
     assert "api_v1_event_dates" not in endpoints
 
 
-@pytest.mark.parametrize(
-    "endpoint_set_name, config_key, token", UNUSED_API_ENDPOINT_FLAGS
-)
-def test_init_api_unused_endpoints_disabled_via_feature_flags_env(
-    endpoint_set_name, config_key, token, monkeypatch
-):
+def test_init_api_ignores_retired_event_date_flag(monkeypatch):
     from project.factory import create_app
 
-    monkeypatch.setenv("FEATURE_FLAGS", token)
+    monkeypatch.setenv("FEATURE_FLAGS", "ApiEventDateDisabled")
 
-    app = create_app(
-        {
-            "TESTING": True,
-            "SERVER_NAME": "localhost",
-        }
-    )
+    app = create_app({"TESTING": True, "SERVER_NAME": "localhost"})
 
-    assert app.config[config_key] is False
-    assert app.config["FEATURE_FLAGS"] == {token}
+    assert app.config["FEATURE_FLAGS"] == set()
+    assert "FEATURE_API_EVENT_DATE_ENABLED" not in app.config
 
     endpoints = {rule.endpoint for rule in app.url_map.iter_rules()}
 
-    assert endpoints.isdisjoint(_endpoint_set(endpoint_set_name))
-    assert "api_v1_event_search" in endpoints
+    assert "api_v1_event_date" in endpoints
