@@ -6,6 +6,7 @@ from flask_gzip import Gzip
 from flask_mail import email_dispatched
 from flask_security import SQLAlchemySessionUserDatastore
 from jinja2 import ChoiceLoader, FileSystemLoader
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from project.config import load_config
 from project.infrastructure.custom_session_interface import CustomSessionInterface
@@ -147,6 +148,9 @@ def create_app(config_override: dict | None = None) -> Flask:
     from project.infrastructure.reverse_proxied import ReverseProxied
 
     app.wsgi_app = ReverseProxied(app.wsgi_app, app.config["PREFERRED_URL_SCHEME"])
+    # Rate limits key on the client IP, which the proxies pass in X-Forwarded-For.
+    if app.config["PROXY_FIX_X_FOR"]:
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=app.config["PROXY_FIX_X_FOR"])
     init_celery(app)
     _init_logging(app)
     _init_extensions(app)

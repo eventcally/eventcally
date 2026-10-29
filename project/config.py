@@ -37,6 +37,9 @@ def load_app_config_from_env(app: Flask):
     set_env_to_app(app, "SITE_NAME", "EventCally")
     app.config["FLASK_DEBUG"] = getenv_bool("FLASK_DEBUG", "False")
     app.config["API_READ_ANONYM"] = getenv_bool("API_READ_ANONYM", "False")
+    # Number of proxies in front of the app that append to X-Forwarded-For
+    # (docker-compose: nginx = 1, Plesk + nginx = 2). 0 trusts no header.
+    app.config["PROXY_FIX_X_FOR"] = int(os.getenv("PROXY_FIX_X_FOR", "0"))
     apply_feature_flags_to_config(app.config, os.getenv("FEATURE_FLAGS"))
 
     # Docker image tag names (comma-separated) baked into the image at build

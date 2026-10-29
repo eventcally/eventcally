@@ -1,3 +1,4 @@
+import pytest
 import sqlalchemy
 
 
@@ -24,6 +25,41 @@ def test_log_message_called_via_email_dispatched_signal(app):
 
     with app.app_context():
         email_dispatched.send(app, message=msg)
+
+
+def _remote_address(config_override, forwarded_for=None):
+    from flask_limiter.util import get_remote_address
+
+    from project.factory import create_app
+
+    app = create_app({"TESTING": True, **config_override})
+    app.add_url_rule("/remote-address", "remote_address", get_remote_address)
+
+    headers = {"X-Forwarded-For": forwarded_for} if forwarded_for else {}
+    return app.test_client().get("/remote-address", headers=headers).text
+
+
+def test_proxy_fix_disabled_by_default():
+    assert _remote_address({}, "203.0.113.7, 172.24.0.1") == "127.0.0.1"
+
+
+def test_proxy_fix_from_env(monkeypatch):
+    monkeypatch.setenv("PROXY_FIX_X_FOR", "1")
+
+    assert _remote_address({}, "203.0.113.7, 172.24.0.1") == "172.24.0.1"
+
+
+@pytest.mark.parametrize(
+    "forwarded_for, expected",
+    [
+        ("203.0.113.7, 172.24.0.1", "203.0.113.7"),
+        ("198.51.100.1, 203.0.113.7, 172.24.0.1", "203.0.113.7"),
+        ("172.24.0.1", "127.0.0.1"),
+        (None, "127.0.0.1"),
+    ],
+)
+def test_proxy_fix_behind_two_proxies(forwarded_for, expected):
+    assert _remote_address({"PROXY_FIX_X_FOR": 2}, forwarded_for) == expected
 
 
 def drop_db(db):

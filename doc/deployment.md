@@ -101,6 +101,7 @@ Create `.env` file in the root directory or pass as environment variables.
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | CACHE_PATH                  | Absolute or relative path to root directory for dump and image caching. Default: project/tmp                                             |
 | GOOGLE_MAPS_API_KEY         | Resolve addresses with Google Maps: API Key with Places API enabled                                                                      |
+| PROXY_FIX_X_FOR             | Number of proxies in front of the app that append to `X-Forwarded-For`; the client IP (used by the rate limits) is taken from there. Default: 0 (header ignored) |
 | FEATURE_FLAGS                | Comma-separated list of opt-out feature tokens, see below. Default: empty (all features enabled). Unknown tokens are ignored.                |
 
 #### Feature flag tokens
