@@ -580,7 +580,7 @@ requires-dist = [
     { name = "dependency-injector", specifier = ">=4.48.2" },
     { name = "email-validator", specifier = ">=2.2.0" },
     { name = "flask", specifier = ">=3.0.3" },
-    { name = "flask-admin", specifier = ">=1.6.1" },
+    { name = "flask-admin", specifier = ">=2.2.1" },
     { name = "flask-apispec", specifier = ">=0.11.4" },
     { name = "flask-babel", specifier = ">=4.0.0" },
     { name = "flask-cors", specifier = ">=6.0.0" },
@@ -683,15 +683,18 @@ wheels = [
 
 [[package]]
 name = "flask-admin"
-version = "1.6.1"
+version = "2.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "flask" },
+    { name = "jinja2" },
+    { name = "markupsafe" },
+    { name = "werkzeug" },
     { name = "wtforms" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/be/4d/7cad383a93e3e1dd9378f1fcf05ddc532c6d921fb30c19ce8f8583630f24/Flask-Admin-1.6.1.tar.gz", hash = "sha256:24cae2af832b6a611a01d7dc35f42d266c1d6c75a426b869d8cb241b78233369", size = 6651224, upload-time = "2023-02-20T12:55:41.277Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/08/86/92b2f706fa49a06a546381e809d84a082f70fe782f6f2d50a72e185422ae/flask_admin-2.2.1.tar.gz", hash = "sha256:08b4b6b63d2100598add70c1dc9a695f484e3c16c894c09ac70af26acb26a87d", size = 5155446, upload-time = "2026-09-21T06:11:08.902Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/61/b3/656c78dfef163517dbbc9fd106f0604e37b436ad51f9d9450b60e9407e35/Flask_Admin-1.6.1-py3-none-any.whl", hash = "sha256:fd8190f1ec3355913a22739c46ed3623f1d82b8112cde324c60a6fc9b21c9406", size = 7498141, upload-time = "2023-02-20T12:55:32.767Z" },
+    { url = "https://files.pythonhosted.org/packages/af/a6/7adc0885b5178d13b7b7ee72b8999a808163f382f156dc864b9e2fd1dec5/flask_admin-2.2.1-py3-none-any.whl", hash = "sha256:a0533fd1968543fc621733316bb9c30774b501c119816f1e83d7dcedacb99895", size = 6067393, upload-time = "2026-09-21T06:11:06.542Z" },
 ]
 
 [[package]]
