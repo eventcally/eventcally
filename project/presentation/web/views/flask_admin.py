@@ -2,9 +2,11 @@ from flask import flash, redirect, request, url_for
 from flask_admin import Admin, AdminIndexView, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.model.template import EndpointLinkRowAction
+from flask_admin.theme import Bootstrap4Theme
 from flask_babel import lazy_gettext
 from flask_security import current_user
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import MANYTOMANY, ONETOMANY
 
 from project.infrastructure.extensions import db
 from project.infrastructure.models.admin_unit import AdminUnit
@@ -46,8 +48,28 @@ class AuthModelView(ModelView):
         )
         return redirect(url)
 
+    def _collection_relationship_keys(self):
+        return [
+            relationship.key
+            for relationship in self.model.__mapper__.relationships
+            if relationship.direction in (ONETOMANY, MANYTOMANY)
+        ]
+
+    def scaffold_form(self):
+        if self.form_columns is None:
+            self.form_excluded_columns = [
+                *(self.form_excluded_columns or ()),
+                *self._collection_relationship_keys(),
+            ]
+
+        return super().scaffold_form()
+
     def scaffold_list_columns(self):
         columns = super().scaffold_list_columns()
+
+        for key in self._collection_relationship_keys():
+            if key in columns:
+                columns.remove(key)
 
         for c_attr in self.model.__mapper__.column_attrs:
             if c_attr.key not in columns:
@@ -69,12 +91,6 @@ class AuthModelView(ModelView):
 
         if self.model.__tablename__ == "image":
             columns.remove("data")
-
-        if self.model.__tablename__ == "role":
-            columns.remove("users")
-
-        if self.model.__tablename__ == "adminunitmemberrole":
-            columns.remove("members")
 
         return columns
 
@@ -98,6 +114,7 @@ class OrganizationView(AuthModelView):
         AdminUnit.can_create_other,
         AdminUnit.can_invite_other,
         AdminUnit.can_verify_other,
+        AdminUnit.max_api_keys,
         AdminUnit.created_at,
         AdminUnit.deletion_requested_at,
     )
@@ -118,6 +135,7 @@ class OrganizationView(AuthModelView):
         AdminUnit.can_create_other,
         AdminUnit.can_invite_other,
         AdminUnit.can_verify_other,
+        AdminUnit.max_api_keys,
     )
     edit_modal = True
     column_extra_row_actions = [
@@ -137,6 +155,7 @@ class UserView(AuthModelView):
         User.active,
         User.tos_accepted_at,
         User.locale,
+        User.max_api_keys,
     )
     column_filters = (
         User.email,
@@ -156,6 +175,7 @@ class UserView(AuthModelView):
         User.deletion_requested_at,
         User.tos_accepted_at,
         User.locale,
+        User.max_api_keys,
     )
     edit_modal = True
 
@@ -241,7 +261,7 @@ def init_admin(app):
         index_view=AuthAdminIndexView(url="/admin/flask-admin", endpoint="flask_admin"),
         url="/admin/flask-admin",
         name=app.config["SITE_NAME"],
-        template_mode="bootstrap4",
+        theme=Bootstrap4Theme(),
     )
 
     # Auto-register all SQLAlchemy models
@@ -256,7 +276,7 @@ def init_admin(app):
         admin.add_view(
             AuthModelView(
                 class_,
-                db.session,
+                db,
                 name=name,
                 category=category,
             )
@@ -266,7 +286,7 @@ def init_admin(app):
     admin.add_view(
         OrganizationView(
             AdminUnit,
-            db.session,
+            db,
             name="AdminUnit",
             category="Custom Views",
         )
@@ -275,7 +295,7 @@ def init_admin(app):
     admin.add_view(
         UserView(
             User,
-            db.session,
+            db,
             name="User",
             category="Custom Views",
         )
@@ -284,7 +304,7 @@ def init_admin(app):
     admin.add_view(
         EventPlaceView(
             EventPlace,
-            db.session,
+            db,
             name="EventPlace",
             category="Custom Views",
         )
