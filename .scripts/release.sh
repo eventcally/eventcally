@@ -17,6 +17,8 @@
 # Requires an authenticated gh. Refuses unless the working tree is clean, the current branch
 # is main, it equals origin/main and no check run on that commit failed or is still running
 # (CI runs on PRs; main only gets merges that passed, so this mostly catches CodeQL & co).
+# Dependabot update jobs (security/version updates) attach their check run to the head of
+# main too; their result is about the update, not the commit, so they are skipped.
 set -euo pipefail
 
 DOCKER_WORKFLOW="docker-build-push-v2.yml"
@@ -46,7 +48,7 @@ while [ $# -gt 0 ]; do
         shift
         ;;
     -h | --help)
-        sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'
+        sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'
         exit 0
         ;;
     *) die "unknown argument: $1 (see --help)" ;;
@@ -104,8 +106,13 @@ commit_count="$(git rev-list --count "$last_tag..$sha")"
 # --- checks on the release commit --------------------------------------------------------
 
 repo="$(gh repo view --json nameWithOwner --jq .nameWithOwner)"
+dependabot_suites="$(gh api --paginate "repos/$repo/actions/runs?head_sha=$sha&per_page=100" \
+    --jq '.workflow_runs[]
+          | select(.path == "dynamic/dependabot/dependabot-updates")
+          | .check_suite_id' | paste -sd, -)"
 bad_checks="$(gh api --paginate "repos/$repo/commits/$sha/check-runs" \
     --jq '.check_runs[]
+          | select(.check_suite.id | IN('"[${dependabot_suites}][]"') | not)
           | select(.status != "completed"
                    or (.conclusion | IN("success", "neutral", "skipped") | not))
           | "\(.name): \(.conclusion // .status)"')"
