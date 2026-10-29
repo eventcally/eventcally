@@ -133,6 +133,7 @@ isort . && black . && flake8 && lint-imports && \
 - flake8 ignores E501/E203/E711 (Black owns formatting); don't fight isort skipping `*_generated.py`.
 - Never hand-edit `uv.lock`: use `uv add <pkg>` / `uv add --dev <pkg>` / `uv lock --upgrade-package <pkg>`. CI and Docker run `uv sync --locked`, so commit `uv.lock` together with `pyproject.toml`.
 - The Swagger 2.0 document (`/swagger/`) is kept stable across apispec versions by `StableMarshmallowPlugin` (`presentation/api/apispec_plugin.py`); `test_openapi_snapshot` guards it. Regenerate the snapshot only for intended API changes (`UPDATE_READ_PARITY=1`).
+- Rate limits key on the client IP (`get_remote_address`): `PROXY_FIX_X_FOR` must equal the number of proxies that append to `X-Forwarded-For` (compose nginx 1, Plesk + nginx 2). Too low keys every client as the proxy (one shared bucket), too high lets clients spoof their IP. The test app keeps the default 0.
 - Required env vars for running: `DATABASE_URL`, `SECRET_KEY`, `SERVER_NAME`, `REDIS_URL`, `LIMITER_REDIS_URL`, `GOOGLE_MAPS_API_KEY`, mail settings (see `doc/development.md`).
 
 ## Key Files
