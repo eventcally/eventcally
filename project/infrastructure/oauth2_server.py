@@ -1,5 +1,8 @@
 from authlib.integrations.flask_oauth2 import AuthorizationServer
-from authlib.integrations.flask_oauth2.requests import FlaskOAuth2Request
+from authlib.integrations.flask_oauth2.requests import (
+    FlaskOAuth2Payload,
+    FlaskOAuth2Request,
+)
 from authlib.integrations.sqla_oauth2 import (
     create_bearer_token_validator,
     create_query_client_func,
@@ -36,7 +39,7 @@ def generate_user_info(user, scope):
 
 def exists_nonce(nonce, request):
     exists = OAuth2AuthorizationCode.query.filter_by(
-        client_id=request.client_id, nonce=nonce
+        client_id=request.payload.client_id, nonce=nonce
     ).first()
     return bool(exists)
 
@@ -49,13 +52,13 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
     ]
 
     def save_authorization_code(self, code, request):
-        code_challenge = request.data.get("code_challenge")
-        code_challenge_method = request.data.get("code_challenge_method")
-        nonce = request.data.get("nonce")
+        code_challenge = request.payload.data.get("code_challenge")
+        code_challenge_method = request.payload.data.get("code_challenge_method")
+        nonce = request.payload.data.get("nonce")
         auth_code = OAuth2AuthorizationCode(
             code=code,
             client_id=request.client.client_id,
-            redirect_uri=request.redirect_uri,
+            redirect_uri=request.payload.redirect_uri,
             scope=request.scope,
             user_id=request.user.id,
             code_challenge=code_challenge,
@@ -180,10 +183,15 @@ query_client = create_query_client_func(db.session, OAuth2Client)
 
 
 def _create_request_class(scope_normalizer):
-    class CustomFlaskOAuth2Request(FlaskOAuth2Request):
+    class ScopeNormalizingPayload(FlaskOAuth2Payload):
         @property
         def scope(self) -> str:
             return scope_normalizer(super().scope)
+
+    class CustomFlaskOAuth2Request(FlaskOAuth2Request):
+        def __init__(self, request):
+            super().__init__(request)
+            self.payload = ScopeNormalizingPayload(request)
 
     return CustomFlaskOAuth2Request
 
@@ -219,6 +227,9 @@ def create_revocation_endpoint(session, token_model):
 class JWTBearerGrant(_JWTBearerGrant):
     def resolve_issuer_client(self, issuer):
         return OAuth2Client.query.filter_by(client_id=issuer).first()
+
+    def get_audiences(self):
+        return [url_for("main.issue_token", _external=True), get_issuer()]
 
     def resolve_client_key(self, client, headers, payload):
         app_key = AppKey.query.filter(AppKey.kid == headers["kid"]).first()

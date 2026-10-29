@@ -564,21 +564,41 @@ class UtilActions(object):
         )
         return ajax_response
 
-    def _create_jwt_assertion(self, issuer, subject, private_pem, kid):
+    def _create_jwt_assertion(self, issuer, subject, private_pem, kid, audience=None):
         from authlib.oauth2.rfc7523.assertion import sign_jwt_bearer_assertion
 
-        token_url = self.get_url("main.issue_token")
+        if audience is None:
+            from flask import url_for
+
+            with self._app.test_request_context():
+                audience = url_for("main.issue_token", _external=True)
+
         assertion = sign_jwt_bearer_assertion(
             key=private_pem,
             issuer=issuer,
             subject=subject,
-            audience=token_url,
+            audience=audience,
             claims=None,
             header={"kid": kid},
             alg="RS256",
         )
 
         return assertion
+
+    def post_jwt_bearer_assertion(self, oauth2_client_id, private_pem, kid, audience):
+        with self._app.app_context():
+            from project.infrastructure.models import OAuth2Client
+
+            client_id = OAuth2Client.query.get(oauth2_client_id).client_id
+
+        assertion = self._create_jwt_assertion(
+            client_id, f"app:{oauth2_client_id}", private_pem, kid, audience
+        )
+        data = {
+            "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+            "assertion": assertion,
+        }
+        return self.post_form_data(self.get_url("main.issue_token"), data=data)
 
     def authorize_as_app(self, oauth2_client_id, private_pem, kid):
         with self._app.app_context():

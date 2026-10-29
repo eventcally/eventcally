@@ -13,6 +13,22 @@ def test_legacy(seeder: Seeder, utils: UtilActions):
     utils.refresh_token()
 
 
+def test_legacy_client_credentials(seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_base(admin=True, log_in=False)
+    oauth2_client_id = seeder.insert_default_oauth2_client(user_id)
+
+    with seeder._app.app_context():
+        from project.infrastructure.models import OAuth2Client
+
+        client = seeder._db.session.get(OAuth2Client, oauth2_client_id)
+        client_id = client.client_id
+        client_secret = client.client_secret
+
+    utils.grant_client_credentials(
+        client_id, client_secret, "event:write organizer:write"
+    )
+
+
 def test_refresh_token(seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_api_access()
     utils.refresh_token()
@@ -89,3 +105,26 @@ def test_introspect_finds_tokens_with_and_without_hint(seeder: Seeder, utils):
     utils.introspect(utils.get_refresh_token(), "refresh_token")
     utils.introspect(utils.get_access_token(), "")
     utils.introspect(utils.get_refresh_token(), "")
+
+
+def test_jwt_bearer_grant_rejects_wrong_audience(app, db, seeder: Seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(admin=True, log_in=False)
+    oauth2_client_id = seeder.insert_default_oauth2_client_app(
+        admin_unit_id=admin_unit_id
+    )
+
+    with app.app_context():
+        from project.infrastructure.models import OAuth2Client
+        from project.infrastructure.seed_helpers import add_keypair_to_oauth2_client
+
+        oauth2_client = OAuth2Client.query.get(oauth2_client_id)
+        private_pem, app_key = add_keypair_to_oauth2_client(oauth2_client)
+        kid = app_key.kid
+        db.session.commit()
+
+    response = utils.post_jwt_bearer_assertion(
+        oauth2_client_id, private_pem, kid, "https://evil.example/token"
+    )
+
+    utils.assert_response_bad_request(response)
+    assert response.json["error"] == "invalid_grant"
