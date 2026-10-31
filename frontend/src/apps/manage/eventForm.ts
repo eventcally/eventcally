@@ -14,7 +14,7 @@ export interface Ref {
 export interface DateDefinitionValue {
   startDate: string;
   startTime: string;
-  // The end is collapsed until "+ End" (the legacy `is_collapsible`).
+  // The end is collapsed until "+ End" (as in the legacy form).
   endShown: boolean;
   endDate: string;
   endTime: string;
@@ -110,7 +110,7 @@ function splitWallClock(value: string): { date: string; time: string } {
 
 /**
  * The default end when "+ End" opens it: three hours after the start, or the end of the
- * start day for an all-day date (legacy `site.js`).
+ * start day for an all-day date (legacy event form).
  */
 export function defaultEnd(definition: DateDefinitionValue): { date: string; time: string } {
   if (definition.allday) return { date: definition.startDate, time: "23:59" };
